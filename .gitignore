@@ -29,9 +29,13 @@
 *.opendb
 *.VC.db
 
-# Keep the hand-written Core project files, which are NOT Unity-generated
+# Keep the hand-written Core project files, which are NOT Unity-generated.
+# ⚠️ Core.Tests NEEDS ITS OWN LINE. `Core/**` does not match `Core.Tests/`, so the
+# test project silently failed to reach the first push: the suite was on disk, in
+# the commit message, and absent from the repo.
 !Core/**/*.csproj
-!Core/**/*.sln
+!Core.Tests/**/*.csproj
+!*.sln
 
 # Unity3D generated crash reports
 sysinfo.txt

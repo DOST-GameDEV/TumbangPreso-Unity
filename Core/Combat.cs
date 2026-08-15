@@ -119,15 +119,20 @@ namespace TumbangPreso.Core
                    / Roster.PersonGritScale(blockerPersonIndex);
         }
 
-        /// <summary>How far a blocked slipper deflects. ⚠️ Directed AWAY FROM THE BLOCKER
-        /// rather than mirrored: a true reflection sends it wherever the incoming angle
-        /// points, which is as often as not deeper into the box.</summary>
-        public static float DeflectDistance(float launchSpeed) =>
-            KnockbackDistance(launchSpeed * Balance.DeflectSpeedScale);
-
-        /// <summary>How far a slipper comes off the can it just knocked over.</summary>
-        public static float LataRecoilDistance(float launchSpeed, int canIndex) =>
-            KnockbackDistance(launchSpeed * Balance.LataRecoilScale * Roster.CanReboundScale(canIndex));
+        // ⚠️⚠️ THE DEFLECT AND THE LATA RECOIL ARE DELIBERATELY NOT MODELLED HERE, AND A
+        // FIRST ATTEMPT TO DO SO WAS WRONG AND IS WORTH RECORDING.
+        //
+        // Both were written as KnockbackDistance(launchSpeed * scale), i.e. a body sliding
+        // to a stop against Friction. That is the wrong model: both carry a LIFT
+        // (DeflectLift 5.0, LataRecoilLiftScale 0.55), so a deflected slipper is a
+        // PROJECTILE on a ballistic arc, not a puck. The friction reading gives 0.42 m
+        // against the 2.5 m the deflect is documented and tuned to travel, and it produced
+        // a test that failed against a perfectly correct port.
+        //
+        // Their travel therefore depends on the flight integrator and belongs to Phase 3,
+        // where it can be measured against the Godot build rather than derived. The
+        // SCALES live in Balance where they can be transcribed exactly; only the resulting
+        // distance is out of scope for the rules core.
 
         // -------------------------------------------------------------------
         // STUNS

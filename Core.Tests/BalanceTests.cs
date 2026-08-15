@@ -129,9 +129,14 @@ namespace TumbangPreso.Core.Tests
                 refill += dt;
             }
 
-            // The pool over the rate, plus the regen delay that has to elapse first.
-            float expected = Balance.StaminaMax / Balance.StaminaRegenRate + Balance.StaminaRegenDelay;
-            Assert.Equal(expected, refill, 1);
+            // ⚠️ THE REGEN DELAY IS ALREADY SPENT BY THE TIME FATIGUE ENDS, and that is
+            // the behaviour rather than an accident: the idle timer keeps counting THROUGH
+            // the fatigue window even though the bar is locked, so regen begins on the
+            // frame the lockout expires instead of a further second later. Adding the
+            // delay on top here was wrong, and Design.md's measured 2.97 s says so: the
+            // pool over the rate is 3.0 s, and it lands there directly.
+            Assert.Equal(Balance.StaminaMax / Balance.StaminaRegenRate, refill, 1);
+            Assert.Equal(3.0f, refill, 1);
         }
 
         /// <summary>
@@ -231,18 +236,30 @@ namespace TumbangPreso.Core.Tests
         }
 
         /// <summary>
-        /// ⚠️ A BLOCKED SLIPPER MUST STAY IN THE BOX. At the old 0.62 scale a block threw
-        /// it 5.7 m, to the chalk or past it, so the retrieval never entered the box and
-        /// the tag could never happen: 22.5% of all points before, 1.8% after. It has to
-        /// land well inside the chalk.
+        /// ⚠️ A BLOCKED SLIPPER MUST STAY IN THE BOX, and the two scales that decide it
+        /// must not be collapsed back into one. At the old 0.62 a block threw the slipper
+        /// to the chalk or past it, so the retrieval never entered the box and the tag
+        /// could never happen: 22.5% of all points before, 1.8% after.
+        ///
+        /// ⚠️ THE DISTANCE ITSELF IS NOT ASSERTED HERE, DELIBERATELY. Both impulses carry
+        /// a lift, so they are ballistic rather than sliding, and their travel is a
+        /// property of the flight integrator. That is Phase 3's measurement against the
+        /// Godot build. What IS checkable now is that the two scales stayed separate and
+        /// kept their published ordering: they were ONE constant until 2026-08-01 and had
+        /// to move in opposite directions, and nesting them is what silently collapsed the
+        /// can knock to 0.3 m for a reason that had nothing to do with it.
         /// </summary>
         [Fact]
-        public void DeflectedSlipper_StaysWellInsideTheBox()
+        public void DeflectAndLataRecoil_AreSeparateScalesInTheRightOrder()
         {
-            float deflect = Combat.DeflectDistance(Balance.LaunchSpeed);
-            Assert.InRange(deflect, 2.0f, 3.0f);
-            Assert.True(deflect < Balance.ConfinementRadius,
-                "a blocked slipper that clears the chalk deletes the taya's scoring verb");
+            Assert.Equal(0.27f, Balance.DeflectSpeedScale, 3);
+            Assert.Equal(0.25f, Balance.LataRecoilScale, 3);
+            Assert.NotEqual(Balance.DeflectSpeedScale, Balance.LataRecoilScale);
+
+            // Both are a fraction of LaunchSpeed in their own right, neither nested in
+            // the other, and both well under it.
+            Assert.True(Balance.DeflectSpeedScale < 1.0f);
+            Assert.True(Balance.LataRecoilScale < 1.0f);
         }
 
         /// <summary>
@@ -355,9 +372,15 @@ namespace TumbangPreso.Core.Tests
             float radialDistance = (float)System.Math.Sqrt(corner * corner + corner * corner);
             Assert.True(radialDistance > r, "the corner case only exists if the diagonal exceeds r");
 
-            // The published disagreement on the diagonal, at the shipping radius.
-            float diagonalReach = r * (float)System.Math.Sqrt(2.0);
-            Assert.Equal(2.07f, diagonalReach - r, 2);
+            // ⚠️ THE DISAGREEMENT SCALES WITH THE RADIUS, which is why it is computed and
+            // not pasted. Design.md's published 2.07 is correct AT RADIUS 5.0, the value
+            // in force when it was written; the box has since grown to 7.0 and the gap
+            // with it, to 2.90. Asserting the literal 2.07 was a test that failed against
+            // a correct port because the doc's figure predates the current arena.
+            float gap = r * (float)System.Math.Sqrt(2.0) - r;
+            Assert.Equal(r * 0.41421f, gap, 2);
+            Assert.Equal(2.07f, 5.0f * 0.41421f, 2); // the published figure, at its own radius
+            Assert.Equal(2.90f, gap, 2);             // and what it is today
         }
 
         /// <summary>The clamp and the test must use the same boundary, or the chalk and
