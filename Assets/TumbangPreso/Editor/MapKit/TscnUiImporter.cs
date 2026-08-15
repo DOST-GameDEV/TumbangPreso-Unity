@@ -189,6 +189,14 @@ namespace TumbangPreso.EditorTools.MapKit
                 if (parentLays) ApplyLayoutElement(go, n);
                 else TscnUi.ApplyControlRect(go.GetComponent<RectTransform>(), n);
 
+                // ⚠️⚠️ RESPECT `visible = false`. Several screens carry a hidden duplicate of a
+                // control that the script swaps in for a different state, and converting them
+                // all as visible stacks two identical buttons on top of each other. That is
+                // what put two START MATCH labels on the setup screen, and it is invisible in
+                // the import log because both converted perfectly.
+                if (n.Props.TryGetValue("visible", out var vis) && vis.Trim() == "false")
+                    go.SetActive(false);
+
                 byPath[n.PathKey] = go.transform;
             }
 
@@ -241,6 +249,67 @@ namespace TumbangPreso.EditorTools.MapKit
             // height and the whole column above it silently disappears.
             if (h <= 0.0f && go.GetComponent<Text>() != null)
                 el.preferredHeight = go.GetComponent<Text>().fontSize * 1.6f;
+
+            // ⚠️⚠️ size_flags IS HOW GODOT SPLITS A ROW, AND IGNORING IT COLLAPSES THE LAYOUT.
+            // Bit 1 (value 1) is FILL and bit 2 (value 2) is EXPAND, so the common `3` means
+            // "take a share of the leftover space". The setup screen's two columns are both 3;
+            // without it they fall back to a preferred width of zero and stack on top of each
+            // other, which is exactly how the left and right panels ended up overlapping.
+            int hFlags = (int)TscnUi.Prop(n, "size_flags_horizontal", 1.0f);
+            int vFlags = (int)TscnUi.Prop(n, "size_flags_vertical", 1.0f);
+
+            const int Expand = 2;
+
+            if ((hFlags & Expand) != 0)
+            {
+                el.flexibleWidth = Mathf.Max(1.0f, TscnUi.Prop(n, "size_flags_stretch_ratio", 1.0f));
+                if (w <= 0.0f) el.preferredWidth = -1.0f;
+            }
+
+            if ((vFlags & Expand) != 0)
+            {
+                el.flexibleHeight = Mathf.Max(1.0f, TscnUi.Prop(n, "size_flags_stretch_ratio", 1.0f));
+                if (h <= 0.0f) el.preferredHeight = -1.0f;
+            }
+
+            // ⚠️⚠️ A CHILD WITH NO SIZE HINT AT ALL COLLAPSES TO ZERO AND STACKS AT THE EDGE.
+            // Godot sizes a Label from its text and a container from its contents, neither of
+            // which is written into the scene. Under a Unity layout group that means width
+            // zero, so a row's caption and its selector land on exactly the same pixel and
+            // overlap perfectly, which is what "MAP:" over "ESKINITA" was.
+            if (el.preferredWidth <= 0.0f && el.flexibleWidth <= 0.0f)
+            {
+                var text = go.GetComponent<Text>();
+
+                if (text != null)
+                {
+                    // ⚠️ A ContentSizeFitter, NOT Text.preferredWidth. That property is zero at
+                    // import time because the Text has never been through a layout pass, so
+                    // reading it here silently assigns every label a width of nothing and they
+                    // all pile up on the left edge. A fitter measures at runtime, when the font
+                    // actually has metrics.
+                    var fitter = go.GetComponent<ContentSizeFitter>();
+                    if (fitter == null) fitter = go.AddComponent<ContentSizeFitter>();
+
+                    fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+                    fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+                }
+                else
+                {
+                    el.flexibleWidth = 1.0f;
+                }
+            }
+
+            // ⚠️ A CONTAINER'S HEIGHT COMES FROM ITS TALLEST CHILD, and Godot never writes that
+            // down because it computes it. Without a floor here a row is zero-high and
+            // everything inside it lands on one line. 84 is the authored height of the selector
+            // boxes, which is what actually sets the row height on this screen.
+            if (el.preferredHeight <= 0.0f && el.flexibleHeight <= 0.0f)
+            {
+                bool isRow = n.Type == "HBoxContainer" || n.Type == "VBoxContainer";
+                if (isRow) el.minHeight = 84.0f;
+                else if (go.GetComponent<Text>() == null) el.flexibleHeight = 1.0f;
+            }
         }
 
         private static void EnsureEventSystem()
@@ -359,12 +428,43 @@ namespace TumbangPreso.EditorTools.MapKit
                     }
 
                 case "Panel":
-                case "PanelContainer":
                 case "NinePatchRect":
                     {
                         var img = go.AddComponent<Image>();
                         img.sprite = LoadSprite(n, scene, ref missing);
                         img.color = img.sprite != null ? Color.white : UiTheme.WoodDeep;
+                        break;
+                    }
+
+                // ⚠️⚠️ A PanelContainer IS A CONTAINER, NOT A BACKGROUND. It was treated as a
+                // plain image, so it never sized its child, and everything below it in the tree
+                // collapsed to zero: the margin, the rows, and every caption and selector
+                // inside them, which is why they all landed on the same pixel. The Godot name
+                // says "Panel" first and that is the trap; the word that matters is Container.
+                case "PanelContainer":
+                    {
+                        var img = go.AddComponent<Image>();
+                        img.sprite = LoadSprite(n, scene, ref missing);
+                        img.color = img.sprite != null ? Color.white : UiTheme.WoodDeep;
+
+                        var g = go.AddComponent<VerticalLayoutGroup>();
+                        g.childControlHeight = true;
+                        g.childControlWidth = true;
+                        g.childForceExpandHeight = true;
+                        g.childForceExpandWidth = true;
+                        break;
+                    }
+
+                // Same trap, same fix: these all lay their children out in Godot.
+                case "ScrollContainer":
+                case "CenterContainer":
+                case "AspectRatioContainer":
+                    {
+                        var g = go.AddComponent<VerticalLayoutGroup>();
+                        g.childControlHeight = true;
+                        g.childControlWidth = true;
+                        g.childForceExpandHeight = true;
+                        g.childForceExpandWidth = true;
                         break;
                     }
 
@@ -388,7 +488,14 @@ namespace TumbangPreso.EditorTools.MapKit
                 case "VBoxContainer":
                     {
                         var v = go.AddComponent<VerticalLayoutGroup>();
-                        v.childControlHeight = false;
+
+                        // ⚠️⚠️ childControlHeight MUST BE ON, and this cost several passes to
+                        // find. With it off the group does not size its children vertically, so
+                        // every row kept a height of ZERO. A row with no height collapses its
+                        // own horizontal group, which put each caption exactly on top of its
+                        // value: "MAP:" printed over "ESKINITA" and read as a font bug rather
+                        // than a layout one.
+                        v.childControlHeight = true;
                         v.childControlWidth = true;
                         v.childForceExpandHeight = false;
                         v.childForceExpandWidth = true;
@@ -399,8 +506,12 @@ namespace TumbangPreso.EditorTools.MapKit
                 case "HBoxContainer":
                     {
                         var h = go.AddComponent<HorizontalLayoutGroup>();
+
+                        // ⚠️ childControlWidth MUST BE ON so the group honours flexibleWidth.
+                        // With it off, a child that asked to expand is drawn at its own size
+                        // and the row does not divide at all.
                         h.childControlHeight = true;
-                        h.childControlWidth = false;
+                        h.childControlWidth = true;
                         h.childForceExpandHeight = true;
                         h.childForceExpandWidth = false;
                         h.childAlignment = TextAnchor.MiddleLeft;
@@ -462,6 +573,9 @@ namespace TumbangPreso.EditorTools.MapKit
             colors.fadeDuration = 0.06f;
             btn.colors = colors;
 
+            // ⚠️ ONLY THE NODE THAT AUTHORS THE CAPTION DRAWS IT. A primary action is often a
+            // wrapper node holding the real button, and both carrying the text is how the setup
+            // screen ended up with two overlapping START MATCH labels.
             string caption = TscnUi.Str(n, "caption") ?? TscnUi.Str(n, "text");
             if (string.IsNullOrEmpty(caption)) return;
 

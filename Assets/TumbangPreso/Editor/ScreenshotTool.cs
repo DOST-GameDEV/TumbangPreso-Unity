@@ -87,6 +87,20 @@ namespace TumbangPreso.EditorTools
                 c.planeDistance = 1.0f;
             }
 
+            // ⚠️⚠️ ForceUpdateCanvases DOES NOT RUN THE LAYOUT SYSTEM, and that distinction cost
+            // several passes. In batch mode there is no game loop, so a VerticalLayoutGroup
+            // never executes and every child sits at its unlaid position. The capture then
+            // shows captions stacked on top of their values, which looks exactly like a broken
+            // conversion and is in fact a broken SCREENSHOT of a correct one. Rebuild the
+            // layout explicitly, from the root, before reading pixels.
+            Canvas.ForceUpdateCanvases();
+
+            foreach (var c in canvases)
+            {
+                var rt = c.transform as RectTransform;
+                if (rt != null) UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(rt);
+            }
+
             Canvas.ForceUpdateCanvases();
 
             var rt = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32);
