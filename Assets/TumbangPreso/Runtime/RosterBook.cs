@@ -5,32 +5,6 @@ using UnityEngine;
 namespace TumbangPreso
 {
     /// <summary>
-    /// The Unity-side half of one roster entry: the mesh, the material, the tint.
-    ///
-    /// ⚠️⚠️ THE TRAITS ARE NOT HERE AND MUST NOT BE COPIED HERE. They live in
-    /// <see cref="Roster"/>, in engine-free C#, where they are unit tested. A designer-editable
-    /// copy on a ScriptableObject is the single most tempting change in this whole port and it
-    /// would end the verification strategy: the moment the numbers are editable in the
-    /// Inspector, the tests are asserting something other than what ships.
-    ///
-    /// What this holds is everything the tests do not care about, which is the art.
-    /// </summary>
-    [CreateAssetMenu(menuName = "Tumbang Preso/Roster Entry", fileName = "RosterEntry")]
-    public sealed class RosterEntryAsset : ScriptableObject
-    {
-        [Tooltip("Must match the Id in Roster.cs exactly. The link is by id, never by array " +
-                 "position, so reordering these assets cannot silently repaint the cast.")]
-        public string Id;
-
-        public GameObject Model;
-        public Material Material;
-        public Color Tint = Color.white;
-
-        [TextArea(2, 4)]
-        public string Tagline;
-    }
-
-    /// <summary>
     /// The three pick lists, resolved from id to art.
     ///
     /// ⚠️ INDEX ORDER IS A NETWORK CONTRACT. character_index, can_index and slipper_index all
@@ -43,13 +17,42 @@ namespace TumbangPreso
     /// can send an index this build has no art for, and an AI seat has no pick at all. Both
     /// must produce a visible unit, because an invisible player is unplayable in a way a
     /// slightly wrong-looking one is not.
+    ///
+    /// ⚠️ THE FILE NAME MUST MATCH THE CLASS NAME, or the asset deserialises with a null script
+    /// and every list reads as empty, which looks exactly like nobody built the book.
     /// </summary>
     [CreateAssetMenu(menuName = "Tumbang Preso/Roster Book", fileName = "RosterBook")]
     public sealed class RosterBook : ScriptableObject
     {
+        /// <summary>Where <see cref="Load"/> finds it. Must stay under a Resources folder.</summary>
+        public const string ResourcePath = "RosterBook";
+
         public List<RosterEntryAsset> People = new List<RosterEntryAsset>();
         public List<RosterEntryAsset> Cans = new List<RosterEntryAsset>();
         public List<RosterEntryAsset> Slippers = new List<RosterEntryAsset>();
+
+        private static RosterBook _cached;
+        private static bool _tried;
+
+        /// <summary>
+        /// ⚠️ NULL IS SURVIVABLE. If the book is missing the game falls back to primitives
+        /// rather than refusing to start, because a build that will not boot is worse than one
+        /// that boots looking wrong, and the second failure is far easier to diagnose.
+        /// </summary>
+        public static RosterBook Load()
+        {
+            if (_cached != null) return _cached;
+            if (_tried) return null;
+
+            _tried = true;
+            _cached = Resources.Load<RosterBook>(ResourcePath);
+
+            if (_cached == null)
+                Debug.LogWarning($"[Roster] no book at Resources/{ResourcePath}. " +
+                                 "Run Tumbang Preso > Build Roster Book. Falling back to primitives.");
+
+            return _cached;
+        }
 
         public RosterEntryAsset PersonArt(int index) => Resolve(People, Roster.People, index);
         public RosterEntryAsset CanArt(int index) => Resolve(Cans, Roster.Cans, index);
@@ -67,7 +70,6 @@ namespace TumbangPreso
             for (int i = 0; i < art.Count; i++)
                 if (art[i] != null && art[i].Id == entry.Id) return art[i];
 
-            // No art for this id: render SOMEBODY. See the class note.
             Debug.LogWarning($"[Roster] no art asset for id '{entry.Id}'; falling back to " +
                              $"'{art[0]?.Id}'. A unit with no model is unplayable in a way a " +
                              "wrong-looking one is not.");
@@ -75,9 +77,8 @@ namespace TumbangPreso
         }
 
         /// <summary>
-        /// ⚠️ RUN THIS FROM A PROBE. It is the check that catches the failure mode where an
-        /// artist adds a mesh and nobody wires the id, which is invisible until that character
-        /// is picked in a real match.
+        /// ⚠️ RUN THIS FROM A PROBE. It catches the case where an artist adds a mesh and nobody
+        /// wires the id, which is invisible until that character is picked in a real match.
         /// </summary>
         public bool Validate(out string report)
         {
@@ -131,13 +132,13 @@ namespace TumbangPreso
 
                 if (!known)
                 {
-                    sb.AppendLine($"FAIL {label}: art id '{a.Id}' is not in Roster.cs. " +
-                                  "Art cannot introduce a roster entry; the list order is a " +
-                                  "network contract.");
+                    sb.AppendLine($"FAIL {label}: art id '{a.Id}' is not in Roster.cs. Art cannot " +
+                                  "introduce a roster entry; the list order is a network contract.");
                     ok = false;
                 }
             }
 
+            if (ok) sb.AppendLine($"ok {label}: {truth.Count} entries, all with models.");
             return ok;
         }
     }

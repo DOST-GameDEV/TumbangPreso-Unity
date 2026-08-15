@@ -142,46 +142,123 @@ namespace TumbangPreso.UI
     }
 
     /// <summary>
-    /// Host, join by code, or browse the LAN.
+    /// Host, join by address, or browse the LAN.
     ///
-    /// ⚠️ THE TRANSPORT IS NOT WIRED YET (Port_Plan phase 5), so this screen presents the flow
-    /// and the LAN browser and says plainly that connecting is not live. A button that looks
-    /// live and silently does nothing is worse than one that says what it is waiting for.
+    /// ⚠️ THE LAN LIST REFRESHES ITSELF RATHER THAN NEEDING A BUTTON. Hosts broadcast once a
+    /// second and entries expire after four missed beacons, so a list that only updated on
+    /// demand would show hosts that had already quit and miss ones that had just opened.
     /// </summary>
     public sealed class MultiplayerSetupScreen : MonoBehaviour
     {
+        private Text _status;
+        private Text _lanList;
+        private InputField _address;
+        private Net.NetSession _net;
+
         private void Start()
         {
+            _net = Net.NetSession.Ensure();
+            _net.StatusChanged += OnStatus;
+
             var canvas = MenuKit.BuildCanvas(transform, "MultiplayerSetup");
             MenuKit.Backdrop(canvas.transform, UiTheme.WoodDark);
 
-            MenuKit.Label(canvas.transform, "MULTIPLAYER", 64, UiTheme.Amber,
-                          new Vector2(0.5f, 0.84f), Vector2.zero, new Vector2(1000, 100));
+            MenuKit.Label(canvas.transform, "MULTIPLAYER", 60, UiTheme.Amber,
+                          new Vector2(0.5f, 0.90f), Vector2.zero, new Vector2(1000, 90));
 
-            var size = new Vector2(520, 84);
+            var size = new Vector2(420, 76);
 
-            MenuKit.WoodButton(canvas.transform, "HOST A GAME", new Vector2(0.5f, 0.62f),
-                               Vector2.zero, size, NotWiredYet);
+            MenuKit.WoodButton(canvas.transform, "HOST A GAME", new Vector2(0.28f, 0.72f),
+                               Vector2.zero, size, Host);
 
-            MenuKit.WoodButton(canvas.transform, "JOIN BY CODE", new Vector2(0.5f, 0.50f),
-                               Vector2.zero, size, NotWiredYet);
+            MenuKit.WoodButton(canvas.transform, "JOIN", new Vector2(0.28f, 0.60f),
+                               Vector2.zero, size, Join);
 
-            MenuKit.WoodButton(canvas.transform, "LAN GAMES", new Vector2(0.5f, 0.38f),
-                               Vector2.zero, size, NotWiredYet);
+            _address = BuildAddressField(canvas.transform);
 
-            MenuKit.Label(canvas.transform,
-                          "Transport not wired yet. Lobby seating, reconnection, seat reclaim,\n" +
-                          "join codes and LAN discovery are all ported and unit tested.",
-                          24, UiTheme.CreamMuted,
-                          new Vector2(0.5f, 0.26f), Vector2.zero, new Vector2(1400, 80));
+            MenuKit.WoodButton(canvas.transform, "REFRESH LAN", new Vector2(0.28f, 0.40f),
+                               Vector2.zero, size, () => _net.BrowseLan());
 
-            MenuKit.WoodButton(canvas.transform, "BACK", new Vector2(0.5f, 0.13f),
-                               Vector2.zero, new Vector2(300, 72),
+            MenuKit.WoodButton(canvas.transform, "DISCONNECT", new Vector2(0.28f, 0.28f),
+                               Vector2.zero, size, () => _net.Stop());
+
+            MenuKit.Label(canvas.transform, "GAMES ON THIS NETWORK", 26, UiTheme.CreamMuted,
+                          new Vector2(0.72f, 0.78f), Vector2.zero, new Vector2(600, 50));
+
+            _lanList = MenuKit.Label(canvas.transform, "searching...", 24, UiTheme.Cream,
+                                     new Vector2(0.72f, 0.55f), Vector2.zero,
+                                     new Vector2(640, 420), TextAnchor.UpperLeft);
+
+            _status = MenuKit.Label(canvas.transform, "offline", 26, UiTheme.Highlight,
+                                    new Vector2(0.5f, 0.14f), Vector2.zero, new Vector2(1400, 60));
+
+            MenuKit.WoodButton(canvas.transform, "BACK", new Vector2(0.5f, 0.06f),
+                               Vector2.zero, new Vector2(280, 64),
                                () => SceneFlow.Go(SceneFlow.ModeSelect));
+
+            _net.BrowseLan();
         }
 
-        private static void NotWiredYet() =>
-            Debug.Log("[Net] transport is Phase 5. The lobby logic behind this is ported and tested.");
+        private InputField BuildAddressField(Transform parent)
+        {
+            var go = new GameObject("Address");
+            go.transform.SetParent(parent, false);
+
+            var img = go.AddComponent<Image>();
+            img.color = UiTheme.WoodDark;
+            MenuKit.Place(img.rectTransform, new Vector2(0.28f, 0.50f), Vector2.zero,
+                          new Vector2(420, 62));
+
+            var text = MenuKit.Label(go.transform, "127.0.0.1", 28, UiTheme.Cream,
+                                     new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(400, 56));
+
+            var field = go.AddComponent<InputField>();
+            field.textComponent = text;
+            field.text = "127.0.0.1";
+            return field;
+        }
+
+        private void Host()
+        {
+            if (_net.StartHost()) SceneFlow.Go(SceneFlow.MatchSetup);
+        }
+
+        private void Join()
+        {
+            string addr = string.IsNullOrWhiteSpace(_address.text) ? "127.0.0.1" : _address.text.Trim();
+            _net.StartClient(addr);
+        }
+
+        private void OnStatus(string s)
+        {
+            if (_status != null) _status.text = s;
+        }
+
+        private void Update()
+        {
+            if (_lanList == null || _net == null) return;
+
+            var sb = new System.Text.StringBuilder();
+            int n = 0;
+
+            foreach (var e in _net.LanEntries)
+            {
+                n++;
+                string who = string.IsNullOrEmpty(e.HostName) ? "(unnamed)" : e.HostName;
+                sb.AppendLine($"{who}   {e.Players}/{e.MaxPlayers}   {e.JoinCode}");
+                sb.AppendLine($"   {e.Address}:{e.Port}{(e.InProgress ? "   in progress" : "")}");
+                sb.AppendLine();
+            }
+
+            _lanList.text = n == 0
+                ? "no games found on this network.\n\nhosts broadcast once a second;\nentries expire after four missed beacons."
+                : sb.ToString();
+        }
+
+        private void OnDestroy()
+        {
+            if (_net != null) _net.StatusChanged -= OnStatus;
+        }
     }
 
     /// <summary>

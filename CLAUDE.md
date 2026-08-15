@@ -66,11 +66,24 @@ you find a fifth, add it there rather than silently picking a side.
 The most serious is the **lunge**: `LUNGE_SPEED` 7.746 gives 2.30 m of reach, while Design.md
 reports 3.20 m as measured. That is the taya's primary scoring verb, and it is unresolved.
 
-## 4a · The art in this repo is placeholder
+## 4a · The art AND the animations in this repo are placeholder
 
 Everything under `Assets/TumbangPreso/Art/` was carried over from the Godot build so the game
-can RUN during the port. **All of it is being replaced with the team's own work.** Do not
-polish, retopologise, or build finished materials for a mesh that is scheduled to go.
+can RUN during the port. **All of it is being replaced with the team's own work: models,
+textures and animations alike.** Do not polish, retopologise, or build finished materials for a
+mesh that is scheduled to go.
+
+The 32 animation clips currently driving the characters ship inside the CC0 rigs and are
+**also placeholder**. `CharacterAnimator` therefore invests in the MECHANISM rather than the
+clips: it reads clip names off the asset instead of assuming them, and it chooses a state from
+the MOTOR rather than from input, so a stunned player cannot walk and a bot animates through
+the same path a human does. Swap the clips and that all still holds.
+
+⚠️ **When the new animations land, revisit `ModelImportSetup`.** The rigs are imported as
+**Generic** on purpose, because these clips ship with their own rig and are authored against
+it, so humanoid retargeting would re-solve poses that are already correct and add foot sliding
+for no gain. If animations start coming from a library instead (Mixamo or similar), **Humanoid
+becomes the right answer** and that is the single biggest thing Unity buys over Godot here.
 
 ⚠️ **The IKE slipper carries the real Nike wordmark as geometry, and replacing the mesh is the
 only thing that resolves it.** It is first in the queue. `docs/Port_Plan.md` §8 has the full

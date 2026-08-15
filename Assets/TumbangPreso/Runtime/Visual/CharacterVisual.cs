@@ -59,6 +59,13 @@ namespace TumbangPreso.Visual
             CacheRenderers();
             AlignToCapsuleFloor();
             PushColour();
+
+            // ⚠️ BOUND HERE, NOT IN Awake. The model is instanced at this moment, and an
+            // Animator bound before its rig exists silently drives nothing at all: the
+            // character simply stands still and no error is ever logged.
+            var anim = GetComponent<CharacterAnimator>();
+            if (anim == null) anim = gameObject.AddComponent<CharacterAnimator>();
+            if (_instance != null) anim.Bind(_instance);
         }
 
         private void CacheRenderers()

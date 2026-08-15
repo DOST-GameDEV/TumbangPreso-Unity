@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfef6704477bb4a43bbe2b0106a8d85e, type: 3}
+  m_Name: RosterBook
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterBook
+  People:
+  - {fileID: 11400000, guid: 6349c26e4e30254479f3936e8d9c58b6, type: 2}
+  - {fileID: 11400000, guid: 1650f242fe61f704f9113d66df2cee82, type: 2}
+  - {fileID: 11400000, guid: cd0266a3c5a0ee544b799bc85c68bf5d, type: 2}
+  - {fileID: 11400000, guid: 9d33113825fe9d54b85af9407d0fc4d2, type: 2}
+  - {fileID: 11400000, guid: 926192f18303cf24892f824b508a5881, type: 2}
+  - {fileID: 11400000, guid: fab6f493169058e48a3729f944e576e5, type: 2}
+  - {fileID: 11400000, guid: 5740019657866a54b848d5681a85197d, type: 2}
+  - {fileID: 11400000, guid: 59463cc4bee1e5544894d2474ed94b4d, type: 2}
+  - {fileID: 11400000, guid: fe18a81fc7cfe1d4e8861808d75ec837, type: 2}
+  - {fileID: 11400000, guid: a664a9143af64ab49b73a5b1ecaa0e03, type: 2}
+  - {fileID: 11400000, guid: d5b10303b2ddc354a9517cc13589e29e, type: 2}
+  - {fileID: 11400000, guid: 6cd8ec6e55d51d64bbab750e156dde37, type: 2}
+  Cans:
+  - {fileID: 11400000, guid: 87c3c01b07782624aa1933e1330ab204, type: 2}
+  - {fileID: 11400000, guid: ce0626ac5db14f2409ddadc10dd61d76, type: 2}
+  - {fileID: 11400000, guid: f7c836899f2e4dd4088301d107fd4c4d, type: 2}
+  - {fileID: 11400000, guid: 05399450c0840484c937b3f4f06864ca, type: 2}
+  Slippers:
+  - {fileID: 11400000, guid: e1ab1c92842b6234eb30daa34eb3ab3f, type: 2}
+  - {fileID: 11400000, guid: 15dd4080da6950a41ab6fd5dc27bce9a, type: 2}
+  - {fileID: 11400000, guid: ac56dc6d88002884e8b24ba57e87a57f, type: 2}
+  - {fileID: 11400000, guid: f039e7afe46273c428bdeda0b2c527dd, type: 2}

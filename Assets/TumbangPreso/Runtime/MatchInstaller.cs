@@ -22,8 +22,12 @@ namespace TumbangPreso
         [Tooltip("Seat 0 is the human unless this is left on for a headless probe run.")]
         [SerializeField] private bool _allBots;
 
+        private RosterBook _book;
+
         private void Start()
         {
+            _book = RosterBook.Load();
+
             var lata = BuildLata();
             var seats = new CharacterMotor[Balance.PlayerCount];
             var slippers = new Slipper[Balance.PlayerCount];
@@ -45,37 +49,92 @@ namespace TumbangPreso
             GameServices.Music?.Play("match", GameServices.MatchTrack);
         }
 
+        /// <summary>
+        /// ⚠️ THE REAL MESH IF THERE IS ONE, A PRIMITIVE IF THERE IS NOT. The fallback is not
+        /// laziness: a missing model must still produce a visible, correctly-sized object,
+        /// because an invisible lata is an unplayable game while a cylinder-shaped one is
+        /// merely an ugly one that still tells you exactly what is wrong.
+        /// </summary>
         private Lata BuildLata()
         {
             var go = new GameObject("Lata");
 
-            var visual = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            visual.name = "Visual";
-            visual.transform.SetParent(go.transform);
+            int pick = Settings.SettingsStore.Current.CanPick;
+            var art = _book != null ? _book.CanArt(pick) : null;
 
-            // Sized to the real cans, which span 0.108 to 0.143 in radius. A round placeholder
-            // would make the 0.53 m hit window feel wrong in exactly the way it is meant to be
-            // measured against.
-            visual.transform.localScale = new Vector3(0.26f, 0.15f, 0.26f);
-            visual.transform.localPosition = new Vector3(0, 0.15f, 0);
-            Destroy(visual.GetComponent<Collider>());
+            if (art != null && art.Model != null)
+            {
+                var model = Instantiate(art.Model, go.transform);
+                model.name = "Visual";
+                StripColliders(model);
+            }
+            else
+            {
+                var visual = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                visual.name = "Visual";
+                visual.transform.SetParent(go.transform);
 
-            return go.AddComponent<Lata>();
+                // Sized to the real cans, which span 0.108 to 0.143 in radius. A round
+                // placeholder would make the 0.53 m hit window feel wrong in exactly the way
+                // it is meant to be measured against.
+                visual.transform.localScale = new Vector3(0.26f, 0.15f, 0.26f);
+                visual.transform.localPosition = new Vector3(0, 0.15f, 0);
+                Destroy(visual.GetComponent<Collider>());
+            }
+
+            var lata = go.AddComponent<Lata>();
+            lata.SkinIndex = pick;
+            return lata;
         }
 
         private Slipper BuildSlipper(int slot)
         {
             var go = new GameObject($"Slipper{slot}");
 
-            var visual = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            visual.transform.SetParent(go.transform);
-            visual.transform.localScale = new Vector3(0.12f, 0.045f, 0.28f);
-            Destroy(visual.GetComponent<Collider>());
+            // Seat 0 wears the player's own pick; the bots get one each so the four are
+            // visibly different, which is what the owner arrow and glow read against.
+            int pick = slot == 0 ? Settings.SettingsStore.Current.SlipperPick : slot;
+            var art = _book != null ? _book.SlipperArt(pick) : null;
+
+            if (art != null && art.Model != null)
+            {
+                var model = Instantiate(art.Model, go.transform);
+                model.name = "Visual";
+                StripColliders(model);
+            }
+            else
+            {
+                var visual = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                visual.name = "Visual";
+                visual.transform.SetParent(go.transform);
+                visual.transform.localScale = new Vector3(0.12f, 0.045f, 0.28f);
+                Destroy(visual.GetComponent<Collider>());
+            }
 
             var s = go.AddComponent<Slipper>();
             s.OwnerSlot = slot;
-            s.SkinIndex = slot;
+            s.SkinIndex = pick;
             return s;
+        }
+
+        /// <summary>
+        /// ⚠️ IMPORTED MESHES ARRIVE WITH COLLIDERS AND THEY MUST COME OFF. Every contact in
+        /// this game is a host-side distance check, never an overlap, so a stray MeshCollider
+        /// on a slipper does nothing useful and plenty harmful: it catches the CharacterController
+        /// and a thrown slipper starts shoving players around the arena.
+        /// </summary>
+        private static void StripColliders(GameObject root)
+        {
+            foreach (var c in root.GetComponentsInChildren<Collider>(includeInactive: true))
+            {
+                // ⚠️⚠️ A CharacterController IS A Collider IN UNITY. Stripping colliders off a
+                // seat without this check destroys the thing that moves the player, and the
+                // symptom is a unit that renders perfectly and cannot walk. Never widen this
+                // to a blanket destroy.
+                if (c is CharacterController) continue;
+
+                Destroy(c);
+            }
         }
 
         /// <summary>
@@ -94,12 +153,9 @@ namespace TumbangPreso
             cc.slopeLimit = 45.0f;
             cc.stepOffset = 0.3f;
 
-            var visual = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            visual.name = "Visual";
-            visual.transform.SetParent(go.transform);
-            visual.transform.localScale = new Vector3(0.7f, 0.8f, 0.7f);
-            visual.transform.localPosition = new Vector3(0, 0.8f, 0);
-            Destroy(visual.GetComponent<Collider>());
+            var visualRoot = new GameObject("Visual");
+            visualRoot.transform.SetParent(go.transform);
+            visualRoot.transform.localPosition = Vector3.zero;
 
             var hand = new GameObject("Hand");
             hand.transform.SetParent(go.transform);
@@ -117,7 +173,31 @@ namespace TumbangPreso
             go.AddComponent<Carrier>();
             go.AddComponent<CombatVerbs>();
             go.AddComponent<Social.EmotePlayer>();
-            go.AddComponent<Visual.CharacterVisual>();
+
+            // ⚠️ THE VISUAL MEASURES THE MODEL AND ALIGNS IT TO THE CAPSULE FLOOR rather than
+            // assuming a height, which is what lets twelve differently-authored rigs all stand
+            // correctly without per-character setup. Give it the model and it does the rest.
+            var visual = go.AddComponent<Visual.CharacterVisual>();
+            var art = _book != null ? _book.PersonArt(motor.CharacterIndex) : null;
+
+            if (art != null && art.Model != null)
+            {
+                visual.ApplyModel(art.Model, art.Tint);
+
+                // Strip from the whole seat, because the visual parents the model under the
+                // seat root rather than under visualRoot. The CharacterController survives by
+                // the explicit check inside.
+                StripColliders(go);
+            }
+            else
+            {
+                var caps = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                caps.name = "Fallback";
+                caps.transform.SetParent(visualRoot.transform);
+                caps.transform.localScale = new Vector3(0.7f, 0.8f, 0.7f);
+                caps.transform.localPosition = new Vector3(0, 0.8f, 0);
+                Destroy(caps.GetComponent<Collider>());
+            }
 
             bool human = slot == 0 && !_allBots;
             if (human) go.AddComponent<PlayerInputReader>();
