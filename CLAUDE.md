@@ -54,6 +54,36 @@ drifts is the one nobody runs the tests against.
 dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj
 ```
 
+## 3a · The camera is FPP *and* TPP. Do not "simplify" it to one.
+
+An earlier session recorded "the game is first person, third person was a mistake."
+**That note was wrong.** Acting on it would delete three shipped features. From
+`scripts/systems/camera_rig.gd` in the Godot repo:
+
+- **A Person is always FPP, a Prop (Can/Slipper) is always TPP** (`camera_rig.gd:5`).
+  The mode is derived from `is_character.is_person` and asserted. Nothing else writes it.
+- **Emotes swing to TPP and back** (`camera_rig.gd:425`). The emote camera *orbits*
+  the body, it never steers it, and the swing is local-only — the emote replicates,
+  the camera does not.
+- **A carried slipper's rig follows the carrier in TPP**, because while held it is
+  reparented into the carrier's hand and its own spring arm would sit inside their head.
+- **Spectator is a fourth rig entirely** — `spectator_camera.gd`, free/follow/POV,
+  with its own controls (`Tab` cycle, `V` POV, wheel distance, `spectator_down`).
+
+The genuine earlier mistake was narrower and worth remembering: an *overhead follow*
+camera got built that corresponded to none of these four. Read `camera_rig.gd:21`
+before touching the baked transforms in `CameraRig.tscn`.
+
+## 3b · The port ledger is the definition of done
+
+`docs/Port_Ledger.md` lists **every** Godot script and scene with a CONVERTED /
+PARTIAL / MISSING status, measured from both trees rather than remembered. 45
+gameplay scripts, 31,314 lines, 27 scenes, 14 input actions, 9 autoloads.
+
+Update the row when you finish something. Do not report the port as done, or as
+"mostly done", while any row reads MISSING. Small files are not optional: a
+26-line `kill_plane.gd` is still a feature the player meets.
+
 ## 4 · Design.md is the balance source of truth, and it has drifted
 
 `docs/Design.md` in the **Godot** repo is the balance source of truth for both projects. It

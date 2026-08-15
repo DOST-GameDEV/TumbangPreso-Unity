@@ -1,0 +1,164 @@
+# Port Ledger — every Godot source, and where it went
+
+This file exists because the port kept "finishing" while whole features were
+missing. It is the authoritative checklist. **Nothing is done until every row
+below reads CONVERTED.**
+
+Scope measured 2026-08-15 against `DOST-GameDev` @ Godot 4.7:
+
+- **45 gameplay scripts, 31,314 lines** of GDScript under `scripts/`
+- **27 scenes** under `scenes/`
+- **14 input actions**, **9 autoload singletons**
+- (`tools/` is ~20k more lines of dev probes. NOT game features, NOT in scope,
+  except as a reference for how a system is supposed to behave.)
+
+Unity side today: ~11.6k lines of C#, of which ~1,400 are editor converters.
+
+## How to read the status column
+
+- **CONVERTED** — ported function-by-function against the .gd, behaviour verified
+- **PARTIAL** — a file exists and compiles, but does not do everything the .gd does
+- **MISSING** — no counterpart exists at all
+
+Line counts are given for both sides. A large gap on a PARTIAL row is the honest
+size of the remaining work. Ratios are a smell test, not a spec: `character_roster.gd`
+is CONVERTED at half the lines because GDScript dictionaries became typed records.
+
+## ⚠️ The camera directive — read before touching any camera
+
+A previous session recorded "the game is first person, TPP was a mistake." **That
+is wrong and must not be acted on.** `camera_rig.gd` has FOUR third-person cases:
+
+1. **Prop is always TPP.** `camera_rig.gd:5` — "Person is ALWAYS first-person,
+   Prop (Can/Slipper) is ALWAYS third-person." The mode is derived from
+   `_character.is_person` and is asserted; nothing else may write `_mode`.
+2. **Emote view** (`camera_rig.gd:425`). A Person swings to TPP for the duration
+   of an emote and returns to FPP. The emote camera ORBITS, it does not steer —
+   mouse moves the camera around the body, never the body itself. Pitch clamps
+   to -35/+20, separate from the gameplay clamp. **Local only**: the emote is
+   replicated, the camera swing is not, or every peer would spin when one
+   player danced.
+3. **Carried-prop follow** (`_update_tpp_carry_follow`). A held slipper is
+   reparented to the carrier's hand each physics frame, so its own spring arm
+   would sit inside the carrier's skull. While held, the rig bases its TPP shot
+   on the CARRIER, at `TPP_CARRY_MOUNT_HEIGHT = 0.6`. The player rides behind
+   their teammate until thrown.
+4. **Spectator** — separate rig, see `spectator_camera.gd` below.
+
+The real earlier mistake was narrower: an *overhead follow* camera was built that
+matched none of these. Fix that framing, do not delete TPP.
+
+## Autoload singletons (9)
+
+Godot autoloads are always-on globals. Unity has no equivalent; these become
+`GameServices` entries or `RuntimeInitializeOnLoad` singletons. All 9 must exist.
+
+| Godot autoload | Lines | Unity | Status |
+|---|---|---|---|
+| `audio_manager.gd` | 1125 | `AudioDirector` + `AudioCues` + `MusicDirector` (382) | PARTIAL |
+| `round_manager.gd` | 476 | `RoundDirector.cs` (219) | PARTIAL |
+| `match_manager.gd` | 217 | `MatchDirector.cs` (97) | PARTIAL |
+| `network_manager.gd` | 1413 | `NetSession.cs` (221) | PARTIAL — no gameplay RPCs |
+| `lan_beacon.gd` | 323 | `LanBeacon.cs` (238) | PARTIAL |
+| `server_query.gd` | 536 | — | **MISSING** |
+| `game_launch.gd` | 301 | — | **MISSING** |
+| `settings_manager.gd` | 703 | `GameSettings.cs` (202) | PARTIAL |
+| `debug_player_switcher.gd` | 420 | — | **MISSING** |
+
+## Characters and objects
+
+| Godot | Lines | Unity | Status |
+|---|---|---|---|
+| `character_base.gd` | 1981 | `CharacterMotor` + `CombatVerbs` + `StatusStack` (651) | PARTIAL |
+| `character_visual.gd` | 2182 | `CharacterVisual` + `CharacterAnimator` (401) | PARTIAL |
+| `carrier.gd` | 536 | `Carrier.cs` (210) | PARTIAL |
+| `character_nameplate.gd` | 165 | — | **MISSING** |
+| `slipper.gd` | 1630 | `Slipper.cs` (213) | PARTIAL |
+| `lata.gd` | 534 | `Lata.cs` (118) | PARTIAL |
+
+## Systems
+
+| Godot | Lines | Unity | Status |
+|---|---|---|---|
+| `main.gd` | 3595 | — | **MISSING** — spawning, prop skins, reconnection, late-join sync |
+| `ai_controller.gd` | 2225 | `AIController.cs` (353) | PARTIAL |
+| `camera_rig.gd` | 1111 | `CameraRig.cs` (422) | PARTIAL — ported, NOT wired into match scenes |
+| `spectator_camera.gd` | 431 | — | **MISSING** — see below |
+| `character_roster.gd` | 757 | `Roster` + `RosterBook` (411) | CONVERTED (20/20 validated) |
+| `env_toon_pass.gd` | 391 | — | **MISSING** — the toon shading pass |
+| `trajectory_preview.gd` | 273 | `TrajectoryPreview.cs` (113) | PARTIAL |
+| `hazard_zone.gd` | 133 | — | **MISSING** |
+| `game_version.gd` | 56 | — | **MISSING** — the `v4.68` string in the HUD corner |
+| `kill_plane.gd` | 26 | — | **MISSING** |
+
+### `spectator_camera.gd` — full control set, none of it ported
+
+Free-fly camera with three modes: free, follow, POV. Every constant here is from
+the .gd, transcribe them rather than re-tuning:
+
+- `BASE_SPEED 3.6`, boost ×`2.5` on `sprint`, speed steps ×`1.35` clamped `1.2`–`40.0`
+- Pitch limit `88°`, move smoothing rate `14.0`
+- Follow distance `6.5`, clamped `1.2`–`30.0`, lift ratio `0.34`
+- POV eye height `1.45` Person / `0.42` Prop, forward offset `0.34`
+- `Tab` cycles the follow target, `V` toggles POV — both read in `_input`, NOT
+  `_unhandled_input`, because the HUD is a live CanvasLayer that eats Tab first
+  (`spectator_camera.gd:233` explains this at length — read it before rewiring)
+- Vertical movement uses `jump` up / `spectator_down` down. **Not** `guard_dash`,
+  which no longer exists and threw every frame until it was fixed.
+- `status_text()` drives the spectator's on-screen readout
+
+## UI (scripts/ui — 21 files)
+
+`.tscn` LAYOUTS for 11 screens are converted (see `TscnUiImporter`). Behaviour is
+a separate job, tracked here. A converted layout with no script bound is PARTIAL.
+
+| Godot | Lines | Unity | Status |
+|---|---|---|---|
+| `match_setup.gd` | 2015 | `ConvertedSetupScreens.cs` (385) | PARTIAL — layout still collapsing |
+| `hud.gd` | 1587 | `Hud.cs` (221) | PARTIAL — layout converted, no behaviour bound |
+| `multiplayer_setup.gd` | 1015 | `LobbySession.cs` (287) | PARTIAL |
+| `character_preview.gd` | 623 | — | **MISSING** — spinning 3D preview via SubViewport |
+| `ui_theme.gd` | 551 | `UiTheme.cs` (119) | PARTIAL — `tumbang_preso.tres` (39 KB) NOT converted |
+| `tutorial.gd` | 462 | — | **MISSING** — 8 pages with 3D props |
+| `you_card.gd` | 430 | — | **MISSING** |
+| `settings_panel.gd` | 429 | — | **MISSING** — incl. key rebinding UI |
+| `emote_wheel.gd` | 422 | `Emotes.cs` (168) covers emotes, not the wheel | **MISSING** (wheel) |
+| `character_select.gd` | 341 | — | **MISSING** |
+| `match_result.gd` | 339 | — | **MISSING** |
+| `credits_panel.gd` | 292 | — | **MISSING** |
+| `role_swap_card.gd` | 274 | — | **MISSING** |
+| `arrow_button.gd` | 262 | `MenuKit.cs` (142) | PARTIAL |
+| `offscreen_indicators.gd` | 211 | — | **MISSING** |
+| `map_preview.gd` | 165 | — | **MISSING** — live map render |
+| `splash_screen.gd` | 107 | `SplashScreen.cs` (154) | CONVERTED |
+| `mode_select.gd` | 96 | `MenuScreens.cs` | PARTIAL |
+| `main_menu.gd` | 85 | `MenuScreens.cs` | CONVERTED |
+| `debug_bar.gd` | 47 | — | **MISSING** |
+| `pause_layer.gd` | 21 | — | **MISSING** |
+
+## Scenes (27)
+
+Converted: both maps (969 objects, 0 missing models), 11 UI screens.
+
+Still to convert: `ViewmodelArms.tscn` (blocks FPP arms), `CameraRig.tscn`
+(baked transforms — the .gd warns at line 21 NOT to "correct" them without
+reading the note), `CharacterBase.tscn`, `CanVisual.tscn`, `TsinelasVisual.tscn`,
+`Lata.tscn`, `Slipper.tscn`, `Main.tscn`, `PremiseIcon.tscn`, `DebugBar.tscn`,
+`OffscreenIndicators.tscn`, `YouCard.tscn`, `RoleSwapCard.tscn`, `Tutorial.tscn`.
+
+## Input actions (14) — all must exist in the Input System asset
+
+`move_left` `move_right` `move_up` `move_down` `jump` `sprint` `grab` `lunge`
+`special_ability` `emote_wheel` `ready_up` `spectator_down` `clean_feed`
+`toggle_fullscreen`
+
+`ready_up` is the missing ready-up phase. `spectator_down` is spectator descent.
+`clean_feed` hides HUD for capture. None of these may be dropped — each is
+rebindable through `settings_panel.gd`, and `tools/input_probe.gd` checks them
+for conflicts.
+
+## Rules core — the one part that is genuinely done
+
+`Packages/com.tumbangpreso.core/` — engine-free C#, 32 tests green. Every constant
+transcribed from the .gd, NOT from `Design.md` (which has drifted; see
+`Design_Drift_Report.md` — all 4 discrepancies were stale prose, the code is right).
