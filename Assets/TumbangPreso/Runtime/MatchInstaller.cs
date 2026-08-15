@@ -281,6 +281,10 @@ namespace TumbangPreso
             var resultGo = new GameObject("MatchResult");
             resultGo.AddComponent<UI.MatchResult>();
 
+            // The intermission card, on the same terms: it listens for the round boundary.
+            var swapGo = new GameObject("RoleSwapCard");
+            swapGo.AddComponent<UI.RoleSwapCard>();
+
             var pauseGo = new GameObject("PauseHost");
             pauseGo.AddComponent<PauseWatcher>().Local = local;
         }
