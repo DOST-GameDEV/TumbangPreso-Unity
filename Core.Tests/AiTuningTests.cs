@@ -156,3 +156,61 @@ namespace TumbangPreso.Core.Tests
         }
     }
 }
+
+namespace TumbangPreso.Core.Tests
+{
+    /// <summary>The per-bot roll. These assert REPRODUCIBILITY, which is the property the
+    /// whole fairness measurement rests on.</summary>
+    public class AiPersonalityRollTests
+    {
+        [Fact]
+        public void TheSameSeatRollsTheSameBotEveryTime()
+        {
+            var a = new AiPersonalityRoll(2);
+            var b = new AiPersonalityRoll(2);
+
+            // ⚠️ IF THIS EVER FAILS, EVERY BALANCE MEASUREMENT TAKEN AGAINST BOTS IS NOISE.
+            Assert.Equal(a.Tempo, b.Tempo);
+            Assert.Equal(a.Hands, b.Hands);
+            Assert.Equal(a.Nerves, b.Nerves);
+            Assert.Equal(a.NerveForTheBox, b.NerveForTheBox);
+            Assert.Equal(a.HomeBearing, b.HomeBearing);
+            Assert.Equal(a.Hesitation, b.Hesitation);
+        }
+
+        [Fact]
+        public void DifferentSeatsAreDifferentPeople()
+        {
+            var a = new AiPersonalityRoll(0);
+            var b = new AiPersonalityRoll(1);
+
+            // Three bots that behave identically read as one bot copied three times.
+            Assert.True(a.Tempo != b.Tempo || a.Hands != b.Hands || a.Hesitation != b.Hesitation);
+        }
+
+        [Fact]
+        public void EveryRolledValueLandsInsideItsDocumentedRange()
+        {
+            for (int seat = 0; seat < Balance.PlayerCount; seat++)
+            {
+                var p = new AiPersonalityRoll(seat);
+
+                Assert.InRange(p.Tempo, 0.85f, 1.20f);
+                Assert.InRange(p.Hands, 0.80f, 1.25f);
+                Assert.InRange(p.Nerves, 0.85f, 1.15f);
+                Assert.InRange(p.NerveForTheBox, 0.75f, 1.30f);
+                Assert.InRange(p.HomeBearing, -3.1416f, 3.1416f);
+                Assert.InRange(p.Hesitation, 0.05f, 0.28f);
+            }
+        }
+
+        [Fact]
+        public void HesitationIsNeverZero()
+        {
+            // A bot that switches plan on the frame the world changes is the single most
+            // machine-like thing a bot does.
+            for (int seat = 0; seat < Balance.PlayerCount; seat++)
+                Assert.True(new AiPersonalityRoll(seat).Hesitation > 0.0f);
+        }
+    }
+}

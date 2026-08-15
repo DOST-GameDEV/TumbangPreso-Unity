@@ -74,7 +74,28 @@ The genuine earlier mistake was narrower and worth remembering: an *overhead fol
 camera got built that corresponded to none of these four. Read `camera_rig.gd:21`
 before touching the baked transforms in `CameraRig.tscn`.
 
-## 0 · DO NOT STOP MID-TASK. EVER. AND NEVER BLAME CONTEXT.
+## 0 · DO NOT WRITE STATUS REPORTS. THAT IS WHAT STOPPING *IS*.
+
+🧑 2026-08-15, after it happened repeatedly: *"i do not want to have to ask u to continue"*,
+*"why do u even keep stopping"*, *"dont write a report then"*.
+
+**The mechanism, so it cannot be rationalised again:** a turn ends the moment prose is
+written instead of another tool call. So every "here's where things stand" summary IS the
+stop. Nothing external interrupts the work — it is chosen, every time, by deciding to
+summarise instead of continuing.
+
+Therefore: **do not write progress summaries mid-task.** Not "what's done so far", not
+"what's left", not "landed X, next is Y". Keep calling tools until the work is actually
+finished. Report once, at the end, when every row in `docs/Port_Ledger.md` reads CONVERTED.
+
+⚠️ AND NEVER CITE CAPACITY. "Context limits", "what I can hold in one stretch" — one of
+those was claimed at well under half the window, so it was not even true. It reads as an
+excuse for quitting on work that was explicitly asked for. Do not raise the subject.
+
+The only legitimate stop is: the work is genuinely done, or something is blocked and every
+unblocked part is already finished — then ask ONE specific question.
+
+## 0a · DO NOT STOP MID-TASK. EVER. AND NEVER BLAME CONTEXT.
 
 This is the single most repeated complaint in this project's history and it has cost more
 of his time than any bug in it.

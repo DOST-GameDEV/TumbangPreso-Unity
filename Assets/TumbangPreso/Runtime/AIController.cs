@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TumbangPreso.Core;
 using UnityEngine;
 
@@ -49,6 +50,66 @@ namespace TumbangPreso
 
         private AiPersonality Me => AiTuning.For(ActiveDifficulty);
 
+        /// <summary>
+        /// This bot's own jitter on top of the tier, seeded from its SEAT so two runs of the
+        /// same match give the same four characters.
+        /// </summary>
+        private AiPersonalityRoll _self;
+
+        /// <summary>The plan this bot is committed to, and the clocks that hold it.
+        ///
+        /// ⚠️ A PLAN IS CHOSEN ON A THINK TICK AND HELD, NOT RE-DECIDED EVERY FRAME. A bot
+        /// that re-evaluates continuously oscillates between two nearly-equal options and
+        /// reads as indecisive rather than as thinking.</summary>
+        public AiPlan Plan { get; private set; } = AiPlan.Idle;
+
+        private float _thinkLeft;
+        private float _commitLeft;
+
+        /// <summary>key -> seconds a condition has been continuously true. A reaction is a
+        /// condition HELD for the tier's React time, not an instant trigger — which is what
+        /// stops a bot answering something it could not have seen yet.</summary>
+        private readonly Dictionary<string, float> _gates = new Dictionary<string, float>();
+
+        /// <summary>
+        /// Has <paramref name="condition"/> been true long enough for this bot to react to it?
+        /// Resets the moment it stops being true, so a flicker never accumulates.
+        /// </summary>
+        private bool Reacted(string key, bool condition, float dt)
+        {
+            if (!condition) { _gates[key] = 0.0f; return false; }
+
+            float held = (_gates.TryGetValue(key, out float h) ? h : 0.0f) + dt;
+            _gates[key] = held;
+
+            return held >= Me.React * _self.Nerves;
+        }
+
+        /// <summary>
+        /// Re-plan, at most once per think tick, and never while a hesitation beat is running.
+        /// </summary>
+        private void StepPlan(float dt)
+        {
+            _thinkLeft -= dt;
+            _commitLeft = Mathf.Max(0.0f, _commitLeft - dt);
+
+            if (_thinkLeft > 0.0f || _commitLeft > 0.0f) return;
+
+            _thinkLeft = Me.Think * _self.Tempo;
+
+            AiPlan chosen = _motor.IsDefender ? PlanDefender(dt) : PlanAttacker(dt);
+            if (chosen == Plan) return;
+
+            // ⚠️ A NEW PLAN COSTS A BEAT. Per-bot, so the three of them do not hesitate
+            // together — which is what stops a plan change reading as a broadcast.
+            _commitLeft = _self.Hesitation;
+            Plan = chosen;
+
+            // A new plan gets a new goal. Carrying the last one over is how a bot ends up
+            // walking to a throwing spot it chose two verbs ago.
+            if (chosen != AiPlan.Position) _goal = Vector3.zero;
+        }
+
         /// <summary>Where you stand to throw: just outside the chalk.</summary>
         private const float ThrowStandoff = AiTuning.ThrowStandoff;
 
@@ -81,6 +142,7 @@ namespace TumbangPreso
         {
             _motor = GetComponent<CharacterMotor>();
             _carrier = GetComponent<Carrier>();
+            _self = new AiPersonalityRoll(_motor.PlayerSlot);
         }
 
         private void Update()
@@ -94,12 +156,279 @@ namespace TumbangPreso
                 return;
             }
 
+            float dt = Time.deltaTime;
+
+            // ⚠️ THE PLAN IS CHOSEN HERE AND THE VERB WORK BELOW OBEYS IT. Deciding inside
+            // the verb code is what produced a bot that re-decided every frame.
+            _stalkTime = Plan == AiPlan.Stalk ? _stalkTime + dt : 0.0f;
+            StepPlan(dt);
+
             if (_motor.IsDefender) ThinkDefender(intent);
             else ThinkAttacker(intent);
 
             // ⚠️ COMMIT ONCE, AT THE END. The edge queries are derived from the diff against
             // this snapshot, so committing mid-think makes a tap-only verb never fire.
             intent.CommitFrame();
+        }
+
+        /// <summary>
+        /// THE ATTACKER: retrieve, get an angle, throw — and stay alive in between.
+        ///
+        /// ⚠️⚠️ THE ORDER IS THE PRIORITY AND IT IS NOT ARBITRARY. Evading a lunge beats
+        /// everything, because being tagged costs the round's whole point. Sabotage is checked
+        /// three separate times in the original — before the fetch branch, inside the
+        /// can't-throw branch, and again before the windup — because the opportunity is
+        /// fleeting and a bot that only checks it once misses it.
+        /// </summary>
+        private AiPlan PlanAttacker(float dt)
+        {
+            var round = GameServices.Round;
+            var lata = round?.Lata;
+            var taya = round != null ? DefenderOf(round) : null;
+
+            if (ShouldEvade(taya, dt)) return AiPlan.Evade;
+            if (SabotageTarget(taya) != null) return AiPlan.Sabotage;
+
+            if (_carrier == null || _carrier.Held == null)
+            {
+                var mine = MySlipper();
+
+                // No slipper of mine to fetch, or it is still in the air: take an angle
+                // instead of chasing something that has not landed.
+                if (mine == null || mine.State == SlipperState.InFlight) return AiPlan.Position;
+
+                return FetchIsSafe(mine, taya) ? AiPlan.Fetch : AiPlan.Stalk;
+            }
+
+            // ⚠️ ARMED AND INSIDE THE BOX IS THE ONE TAGGABLE STATE. Getting out beats
+            // everything else an attacker could be doing.
+            if (Confinement.IsInsideBox(transform.position.x, transform.position.z))
+                return AiPlan.Withdraw;
+
+            if (lata == null || !lata.IsUpright || !round.CanThrow(_motor))
+            {
+                if (SabotageTarget(taya) != null) return AiPlan.Sabotage;
+                return AiPlan.Position;
+            }
+
+            if (SabotageTarget(taya) != null) return AiPlan.Sabotage;
+            if (_carrier.ThrowLocked) return AiPlan.Position;
+
+            // Arrived on a throwing spot: plant and charge. Staying in Windup once entered is
+            // deliberate — a bot that re-decides mid-charge never releases.
+            if (Plan == AiPlan.Windup) return AiPlan.Windup;
+            if (_arrived && (Plan == AiPlan.Position || Plan == AiPlan.Windup))
+                return AiPlan.Windup;
+
+            return AiPlan.Position;
+        }
+
+        /// <summary>
+        /// THE TAYA.
+        ///
+        /// ⚠️⚠️ A DOWNED LATA BEATS EVERYTHING. No tag is legal until it is standing, so a
+        /// taya that hunts with the can on its side is spending the round on a verb that
+        /// cannot score. Reset first, then hunt.
+        /// </summary>
+        private AiPlan PlanDefender(float dt)
+        {
+            var round = GameServices.Round;
+            var lata = round?.Lata;
+
+            if (lata == null) return AiPlan.Idle;
+            if (!lata.IsUpright) return AiPlan.Reset;
+
+            // Stepping into a slipper already in the air. Gated on a held reaction, so a bot
+            // cannot answer a throw on the frame it leaves the hand.
+            if (Me.Intercept > 0.0f && HasInterceptPoint(lata))
+            {
+                if (Reacted("incoming", true, dt)) return AiPlan.Intercept;
+            }
+            else
+            {
+                _gates["incoming"] = 0.0f;
+            }
+
+            if (TagTarget() != null) return AiPlan.Hunt;
+            if (Me.Camp > 0.0f && HasCoverPoint(lata)) return AiPlan.Cover;
+
+            return AiPlan.Guard;
+        }
+
+        private bool _arrived;
+
+        /// <summary>Seconds spent continuously in Stalk. See <see cref="FetchIsSafe"/>.</summary>
+        private float _stalkTime;
+
+        /// <summary>
+        /// ⚠️⚠️ PATIENCE IS BOUNDED, AND IT COST A WHOLE ROUND BEFORE IT WAS. Measured: one bot
+        /// spent 64.4 s of a 90 s round in STALK — 13 throws against 22-28 for the other three
+        /// — because the taya camped its slipper and every "the taya is busy" condition below
+        /// stayed false. That is correct reasoning with no stopping rule, which is not what a
+        /// person does: a player who cannot get a free run eventually takes an unfree one.
+        ///
+        /// The bound is a tier property, so a cautious bot waits longer than a reckless one.
+        /// **Do not remove the first branch to make bots "smarter".**
+        /// </summary>
+        private bool FetchIsSafe(Slipper mine, CharacterMotor taya)
+        {
+            if (Me.FetchCaution <= 0.0f || taya == null) return true;
+
+            // Waited long enough. Go anyway.
+            if (_stalkTime >= AiTuning.StalkPatienceBase + Me.FetchCaution) return true;
+
+            // The can is down: nobody can be tagged at all, so the run is free.
+            var lata = GameServices.Round?.Lata;
+            if (lata != null && !lata.IsUpright) return true;
+
+            // The taya just spent their lunge.
+            var tayaVerbs = taya.GetComponent<CombatVerbs>();
+            if (tayaVerbs != null && tayaVerbs.LungeCooldownLeft > 0.35f) return true;
+
+            // Somebody ELSE is taggable, so the taya has a better target than me.
+            foreach (var who in GameServices.Round.Players)
+                if (who != null && who != _motor && who.IsTaggable()) return true;
+
+            // Or it is simply far enough from them to risk.
+            return Flat(taya.transform.position, mine.transform.position) > Me.FetchCaution;
+        }
+
+        /// <summary>
+        /// Is a lunge winding up at me right now?
+        ///
+        /// ⚠️ IT READS THE TAYA'S OBSERVED CHARGE, NOT THEIR INTENT. A bot that could see the
+        /// intent table would dodge a lunge before the animation started, which no player can
+        /// do. The 4.5 m gate is the range past which a lunge cannot reach anyway.
+        /// </summary>
+        private bool ShouldEvade(CharacterMotor taya, float dt)
+        {
+            if (Me.Dodge <= 0.0f || taya == null || !_motor.IsTaggable())
+            {
+                _gates["lunge"] = 0.0f;
+                return false;
+            }
+
+            var verbs = taya.GetComponent<CombatVerbs>();
+            bool winding = verbs != null && verbs.LungeChargeRatio >= 0.0f
+                           && Flat(transform.position, taya.transform.position) < 4.5f;
+
+            return Reacted("lunge", winding, dt);
+        }
+
+        /// <summary>
+        /// A rival worth shoving into the taya's reach.
+        ///
+        /// ⚠️ THE KNOB IS A REACH, NOT A COIN FLIP. Measured over a whole match at Normal:
+        /// ZERO sabotages, because willingness was only ever read as "> 0" against a fixed
+        /// 4.16 m radius — while `Spacing` is deliberately pushing the three attackers apart,
+        /// so two of them are rarely that close. A willingness dial that changes nothing is
+        /// the same defect as a control that does nothing, so the value scales the radius.
+        /// </summary>
+        private CharacterMotor SabotageTarget(CharacterMotor taya)
+        {
+            if (Me.Sabotage <= 0.0f || taya == null) return null;
+            if (GameServices.Round == null) return null;
+
+            var myVerbs = GetComponent<CombatVerbs>();
+            if (myVerbs != null && myVerbs.ShoveCooldownLeft > 0.0f) return null;
+
+            // A shove you cannot pay for is not an option.
+            if (_motor.Stamina.Current < Balance.ShoveStaminaCost + 2.0f) return null;
+
+            float reach = 4.16f * Me.Sabotage;
+            CharacterMotor best = null;
+            float bestDistance = reach;
+
+            foreach (var who in GameServices.Round.Players)
+            {
+                if (who == null || who == _motor || who.IsDefender) continue;
+
+                float d = Flat(transform.position, who.transform.position);
+                if (d > bestDistance) continue;
+
+                best = who;
+                bestDistance = d;
+            }
+
+            return best;
+        }
+
+        /// <summary>
+        /// MY slipper — including one I threw that is still in the air.
+        ///
+        /// ⚠️⚠️ THE IN-FLIGHT CASE IS NOT OPTIONAL AND LEAVING IT OUT COST HALF THE OFFENCE.
+        /// The planner asks this while not holding, then checks whether it is flying so the
+        /// bot can walk to where its own throw will LAND. A version that only considered
+        /// loose slippers made a bot's slipper invisible to it the instant it was released:
+        /// measured throws 27 → 14, hit rate 48.1% → 28.6%, and defence went from 31.7% to
+        /// 70.8% of every point scored. The bots threw once and stood still.
+        /// </summary>
+        private Slipper MySlipper()
+        {
+            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+                if (s.OwnerSlot == _motor.PlayerSlot) return s;
+
+            return null;
+        }
+
+        /// <summary>Is there a point worth intercepting a live throw at?</summary>
+        private bool HasInterceptPoint(Lata lata)
+        {
+            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+                if (s.State == SlipperState.InFlight) return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Is there a loose slipper whose retrieval line is worth sitting on?
+        ///
+        /// ⚠️ CAMPING IS A DESIGNED TAYA BEHAVIOUR, not an exploit — it is what puts the
+        /// attacker's patience under real pressure and is why FetchIsSafe needs a bound.
+        /// </summary>
+        private bool HasCoverPoint(Lata lata)
+        {
+            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+                if (s.State == SlipperState.Loose) return true;
+
+            return false;
+        }
+
+        /// <summary>An attacker the taya could legally tag right now.</summary>
+        private CharacterMotor TagTarget()
+        {
+            var round = GameServices.Round;
+            if (round == null) return null;
+
+            // ⚠️⚠️ NOBODY IS TAGGABLE WHILE THE LATA IS DOWN, AND THE BOT HAS TO KNOW THAT.
+            // Reported as "AI still doesnt TAG" and measured at ONE tag across two rounds
+            // while attackers spent 67 combined seconds taggable. The AI was not the bug:
+            // every tag verb opens with "a tag requires the can standing" and returns early,
+            // so a bot hunting with the can down is spending the round on a verb that cannot
+            // fire. Reset first, then hunt.
+            if (round.Lata == null || !round.Lata.IsUpright) return null;
+
+            foreach (var who in round.Players)
+                if (who != null && who != _motor && !who.IsDefender && who.IsTaggable())
+                    return who;
+
+            return null;
+        }
+
+        /// <summary>Whoever holds the taya role this round.</summary>
+        private static CharacterMotor DefenderOf(RoundDirector round)
+        {
+            foreach (var p in round.Players)
+                if (p != null && p.IsDefender) return p;
+
+            return null;
+        }
+
+        private static float Flat(Vector3 a, Vector3 b)
+        {
+            a.y = 0.0f;
+            b.y = 0.0f;
+            return Vector3.Distance(a, b);
         }
 
         // -------------------------------------------------------------------

@@ -37,6 +37,16 @@ namespace TumbangPreso
         public Slipper Held { get; private set; }
         public float ChargeRatio => ThrowRules.ChargeRatio(_charge);
         public float ChannelRatio { get; private set; }
+
+        /// <summary>
+        /// Seconds until this unit may throw again after a pickup.
+        ///
+        /// ⚠️ EXPOSED SO THE AI CAN SEE WHAT A PLAYER SEES. A bot that plants and charges
+        /// during its own throw lock stands still doing nothing visible and reads as stuck.
+        /// </summary>
+        public float ThrowLockLeft => _throwLockLeft;
+
+        public bool ThrowLocked => _throwLockLeft > 0.0f;
         public bool IsBusy => _channel > 0.0f || _charging;
 
         private void Awake() => _motor = GetComponent<CharacterMotor>();
