@@ -285,6 +285,10 @@ namespace TumbangPreso
             var swapGo = new GameObject("RoleSwapCard");
             swapGo.AddComponent<UI.RoleSwapCard>();
 
+            // Which unit you are driving, and what it can do right now.
+            var youGo = new GameObject("YouCard");
+            youGo.AddComponent<UI.YouCard>().Bind(local);
+
             var pauseGo = new GameObject("PauseHost");
             pauseGo.AddComponent<PauseWatcher>().Local = local;
         }

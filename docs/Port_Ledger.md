@@ -153,7 +153,7 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `character_preview.gd` | 623 | — | **MISSING** — spinning 3D preview via SubViewport |
 | `ui_theme.gd` | 551 | `UiTheme.cs` (119) | PARTIAL — `tumbang_preso.tres` (39 KB) NOT converted |
 | `tutorial.gd` | 462 | — | **MISSING** — 8 pages with 3D props |
-| `you_card.gd` | 430 | — | **MISSING** |
+| `you_card.gd` | 430 | `YouCard.cs` (185) | PARTIAL — role, name, live meters; ready flash pending |
 | `settings_panel.gd` | 429 | — | **MISSING** — incl. key rebinding UI |
 | `emote_wheel.gd` | 422 | `Emotes.cs` (168) covers emotes, not the wheel | **MISSING** (wheel) |
 | `character_select.gd` | 341 | — | **MISSING** |
