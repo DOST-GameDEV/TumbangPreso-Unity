@@ -6,6 +6,33 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/TumbangPreso/Scenes/Splash.unity
+    guid: 0f63df0d1bbef2441b913a2b27840468
+  - enabled: 1
+    path: Assets/TumbangPreso/Scenes/MainMenu.unity
+    guid: 7a70fb05ec31cde438bda7d97696b13c
+  - enabled: 1
+    path: Assets/TumbangPreso/Scenes/ModeSelect.unity
+    guid: 436b571f406d8bb4eb7a92e3e3dfe13e
+  - enabled: 1
+    path: Assets/TumbangPreso/Scenes/MatchSetup.unity
+    guid: 0ce65fd7181ee0b46a4daeacfa92af73
+  - enabled: 1
+    path: Assets/TumbangPreso/Scenes/MultiplayerSetup.unity
+    guid: fde9f07bde256104aafba7681eb3aabc
+  - enabled: 1
+    path: Assets/TumbangPreso/Scenes/CharacterSelect.unity
+    guid: c27cf63efa8c35e48899839d10bd512e
+  - enabled: 1
+    path: Assets/TumbangPreso/Scenes/MatchResult.unity
+    guid: fe36a11b98223e94da8f10202d6ae70a
+  - enabled: 1
+    path: Assets/TumbangPreso/Scenes/Maps/Eskinita.unity
+    guid: f03471617459c54499b12c6965e1cbd7
+  - enabled: 1
+    path: Assets/TumbangPreso/Scenes/Maps/BayanPlaza.unity
+    guid: c9edd12a70832094fa645890b398ef90
+  - enabled: 1
     path: Assets/TumbangPreso/Scenes/VerticalSlice.unity
     guid: c6af136bc050eb446937715d88c57efa
   m_configObjects: {}

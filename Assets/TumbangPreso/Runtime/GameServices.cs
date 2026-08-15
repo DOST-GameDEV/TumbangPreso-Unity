@@ -36,8 +36,39 @@ namespace TumbangPreso
         public static AudioDirector Audio { get; private set; }
         public static MatchDirector Match { get; private set; }
         public static RoundDirector Round { get; private set; }
+        public static Audio.MusicDirector Music { get; private set; }
 
         public static bool Ready => _root != null;
+
+        /// <summary>
+        /// The two OST tracks, loaded from Resources on first use.
+        ///
+        /// ⚠️ LOADED LAZILY AND ALLOWED TO BE NULL. A missing music file must not stop the game
+        /// booting: the bed is the one thing in an audio stack whose absence a player can play
+        /// straight through without noticing anything is broken.
+        /// </summary>
+        public static AudioClip MenuTrack => LoadMusic("ost_menu", ref _menuTrack);
+        public static AudioClip MatchTrack => LoadMusic("ost_match", ref _matchTrack);
+
+        private static AudioClip _menuTrack;
+        private static AudioClip _matchTrack;
+        private static bool _menuTried, _matchTried;
+
+        private static AudioClip LoadMusic(string name, ref AudioClip cache)
+        {
+            if (cache != null) return cache;
+
+            bool tried = name == "ost_menu" ? _menuTried : _matchTried;
+            if (tried) return null;
+
+            if (name == "ost_menu") _menuTried = true; else _matchTried = true;
+
+            cache = Resources.Load<AudioClip>($"Music/{name}");
+            if (cache == null)
+                Debug.Log($"[Audio] no music at Resources/Music/{name}. The game runs without it.");
+
+            return cache;
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Bootstrap()
@@ -56,6 +87,7 @@ namespace TumbangPreso
             Audio = _root.AddComponent<AudioDirector>();
             Match = _root.AddComponent<MatchDirector>();
             Round = _root.AddComponent<RoundDirector>();
+            Music = _root.AddComponent<Audio.MusicDirector>();
         }
 
         /// <summary>
@@ -70,6 +102,12 @@ namespace TumbangPreso
             Audio = null;
             Match = null;
             Round = null;
+            Music = null;
+
+            _menuTrack = null;
+            _matchTrack = null;
+            _menuTried = false;
+            _matchTried = false;
         }
     }
 }

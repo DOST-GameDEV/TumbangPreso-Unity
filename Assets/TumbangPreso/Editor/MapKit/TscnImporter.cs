@@ -303,6 +303,15 @@ namespace TumbangPreso.EditorTools.MapKit
 
             ReportWalls(byPath, report);
 
+            // ⚠️ THE GAMEPLAY IS INSTALLED BY A COMPONENT, NOT AUTHORED INTO THE MAP. The map
+            // is regenerated from the Godot source whenever the builders change, so anything
+            // placed here by hand would be lost on the next import. One component means both
+            // arenas are wired identically by construction rather than by remembering to do
+            // the second one.
+            var installer = new GameObject("~Match");
+            installer.AddComponent<MatchInstaller>();
+            report.AppendLine("   installed the match rig");
+
             string outPath = $"{OutDir}/{mapName}.unity";
             bool saved = UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene, outPath);
             report.AppendLine(saved ? $"   wrote {outPath}" : $"   FAILED to write {outPath}");
