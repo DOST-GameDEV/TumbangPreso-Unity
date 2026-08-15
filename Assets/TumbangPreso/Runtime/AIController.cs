@@ -161,6 +161,7 @@ namespace TumbangPreso
             // ⚠️ THE PLAN IS CHOSEN HERE AND THE VERB WORK BELOW OBEYS IT. Deciding inside
             // the verb code is what produced a bot that re-decided every frame.
             _stalkTime = Plan == AiPlan.Stalk ? _stalkTime + dt : 0.0f;
+            StepUnstick(dt);
             StepPlan(dt);
 
             if (_motor.IsDefender) ThinkDefender(intent);
@@ -259,6 +260,57 @@ namespace TumbangPreso
 
         /// <summary>Seconds spent continuously in Stalk. See <see cref="FetchIsSafe"/>.</summary>
         private float _stalkTime;
+
+        // -------------------------------------------------------------------
+        // UNSTICKING — a general safety net rather than a fix for one plan.
+        //
+        // ⚠️⚠️ A BOT CAN PRESS A DIRECTION AND GO NOWHERE, AND NOTHING ELSE HERE WOULD EVER
+        // NOTICE. The planner sets a goal, the mover presses toward it, and neither reads
+        // back whether the body actually moved. Against a wall, a kerb or another unit, that
+        // is a bot leaning into geometry for the rest of the round while its plan stays
+        // perfectly reasonable. This watches the RESOLVED speed instead of the intent.
+        // -------------------------------------------------------------------
+
+        private float _stuckTime;
+        private float _unstickLeft;
+        private float _unstickSign = 1.0f;
+
+        /// <summary>True on any frame this bot actually asked to move. Cleared each step, so
+        /// standing still on purpose is never mistaken for being stuck.</summary>
+        private bool _driving;
+
+        private void StepUnstick(float dt)
+        {
+            if (_unstickLeft > 0.0f)
+            {
+                _unstickLeft = Mathf.Max(0.0f, _unstickLeft - dt);
+                return;
+            }
+
+            var v = _motor.Velocity;
+            float speed = new Vector2(v.x, v.z).magnitude;
+
+            if (_driving && speed < AiTuning.StuckSpeed)
+            {
+                _stuckTime += dt;
+
+                if (_stuckTime >= AiTuning.StuckTrigger)
+                {
+                    _stuckTime = 0.0f;
+                    _unstickLeft = AiTuning.UnstickTime;
+
+                    // Alternate, so a bot that picks the wrong way out of a corner does not
+                    // keep picking it.
+                    _unstickSign = -_unstickSign;
+                }
+            }
+            else
+            {
+                _stuckTime = 0.0f;
+            }
+
+            _driving = false;
+        }
 
         /// <summary>
         /// ⚠️⚠️ PATIENCE IS BOUNDED, AND IT COST A WHOLE ROUND BEFORE IT WAS. Measured: one bot
@@ -422,6 +474,24 @@ namespace TumbangPreso
                 if (p != null && p.IsDefender) return p;
 
             return null;
+        }
+
+        /// <summary>Snap a heading to the eight directions a keyboard can produce.</summary>
+        private static Vector2 EightWay(Vector3 dir)
+        {
+            float x = 0.0f, z = 0.0f;
+
+            if (dir.x > AiTuning.EightWayThreshold) x = 1.0f;
+            else if (dir.x < -AiTuning.EightWayThreshold) x = -1.0f;
+
+            if (dir.z > AiTuning.EightWayThreshold) z = 1.0f;
+            else if (dir.z < -AiTuning.EightWayThreshold) z = -1.0f;
+
+            var v = new Vector2(x, z);
+
+            // A diagonal is still one unit of speed, exactly as the input system normalises a
+            // two-key press — otherwise a bot moving diagonally outruns a player doing the same.
+            return v.sqrMagnitude > 1.0f ? v.normalized : v;
         }
 
         private static float Flat(Vector3 a, Vector3 b)
@@ -694,11 +764,27 @@ namespace TumbangPreso
             if (to.magnitude <= slop)
             {
                 intent.Move = Vector2.zero;
+                _arrived = true;
                 return false;
             }
 
+            _arrived = false;
+            _driving = true;
+
             Vector3 dir = to.normalized;
-            intent.Move = new Vector2(dir.x, dir.z);
+
+            // ⚠️ NINETY DEGREES OFF THE WANTED HEADING WHILE UNSTICKING. Enough to clear a
+            // corner, and it still makes progress ALONG the obstacle rather than backing away
+            // from it — backing off just walks into the same corner again a second later.
+            if (_unstickLeft > 0.0f)
+                dir = new Vector3(-dir.z * _unstickSign, 0.0f, dir.x * _unstickSign);
+
+            // ⚠️⚠️ EIGHT-WAY, NOT ANALOGUE, AND THAT IS A FAIRNESS RULE. A keyboard player has
+            // exactly eight headings; a bot writing a continuous vector glides along angles no
+            // human can hold, which is invisible in a screenshot and obvious in play. The
+            // threshold is sin(22.5°) — the half-angle of a 45° sector — so a heading snaps to
+            // the same key combination a player would have pressed.
+            intent.Move = EightWay(dir);
 
             // ⚠️ DISTANCE AND A STAMINA RESERVE, NOT A TIER CHECK. The .gd sprints past
             // `SPRINT_DISTANCE` (5.0) and holds back `sprint_reserve` of the meter — Bata

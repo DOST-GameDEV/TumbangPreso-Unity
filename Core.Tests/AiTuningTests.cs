@@ -214,3 +214,57 @@ namespace TumbangPreso.Core.Tests
         }
     }
 }
+
+namespace TumbangPreso.Core.Tests
+{
+    /// <summary>The bot's movement model, which is a FAIRNESS constraint rather than a
+    /// behaviour: a bot must not be able to hold a heading a keyboard cannot produce.</summary>
+    public class AiMovementTests
+    {
+        /// <summary>Mirrors AIController.EightWay so the rule can be asserted without Unity.</summary>
+        private static (float x, float z) EightWay(float dx, float dz)
+        {
+            float x = dx > AiTuning.EightWayThreshold ? 1.0f
+                    : dx < -AiTuning.EightWayThreshold ? -1.0f : 0.0f;
+
+            float z = dz > AiTuning.EightWayThreshold ? 1.0f
+                    : dz < -AiTuning.EightWayThreshold ? -1.0f : 0.0f;
+
+            return (x, z);
+        }
+
+        [Fact]
+        public void ADueEastHeadingIsOneKey()
+        {
+            var (x, z) = EightWay(1.0f, 0.0f);
+            Assert.Equal(1.0f, x);
+            Assert.Equal(0.0f, z);
+        }
+
+        [Fact]
+        public void AFortyFiveDegreeHeadingIsTwoKeys()
+        {
+            // cos/sin 45 = 0.7071, comfortably past the 0.3827 threshold on both axes.
+            var (x, z) = EightWay(0.7071f, 0.7071f);
+            Assert.Equal(1.0f, x);
+            Assert.Equal(1.0f, z);
+        }
+
+        [Fact]
+        public void AHeadingJustOffAnAxisDoesNotOpenASecondKey()
+        {
+            // 10 degrees off east: sin(10) = 0.17, under the threshold, so this stays one key.
+            var (x, z) = EightWay(0.985f, 0.174f);
+            Assert.Equal(1.0f, x);
+            Assert.Equal(0.0f, z);
+        }
+
+        [Fact]
+        public void TheThresholdIsTheHalfAngleOfASector()
+        {
+            // sin(22.5°) = 0.38268. A sector is 45 degrees wide, so its half-angle is what
+            // decides which side of the boundary a heading falls on.
+            Assert.InRange(AiTuning.EightWayThreshold, 0.382f, 0.383f);
+        }
+    }
+}
