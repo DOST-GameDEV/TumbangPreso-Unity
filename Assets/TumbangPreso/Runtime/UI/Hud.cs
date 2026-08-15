@@ -110,6 +110,11 @@ namespace TumbangPreso.UI
         private void UpdateTimer()
         {
             float left = Mathf.Max(0.0f, GameServices.Round.TimeLeft);
+
+            // The announcer's clock warnings ride the same value the clock draws, so "thirty
+            // seconds" is spoken on the frame the HUD first shows 30. Each fires once per
+            // round; the director owns that latch.
+            GameServices.Voice?.TickClock(left);
             _timer.text = $"ROUND {GameServices.Match.RoundNumber}/{Balance.Rounds}   {left:0.0}s";
 
             // ⚠️ THE CLOCK GOES AMBER UNDER PRESSURE RATHER THAN RED. Red means destructive or

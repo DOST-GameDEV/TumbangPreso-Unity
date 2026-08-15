@@ -62,6 +62,64 @@ namespace TumbangPreso.Audio
             _fade = StartCoroutine(Crossfade(clip));
         }
 
+        /// <summary>
+        /// Drop the bed under a voice line, then bring it back.
+        ///
+        /// ⚠️⚠️ THE RECOVERY IS SLOWER THAN THE DROP, AND THAT IS MEASURED. The duck used to
+        /// recover in about the time a line takes to say, so the bed was climbing back
+        /// underneath the last word and the whole thing pumped. Dropping fast and recovering
+        /// slowly is inaudible; the reverse is the artefact.
+        ///
+        /// ⚠️ AND IT DOES NOT OUT-SHOUT THE LINE INSTEAD. Raising the voice alone was tried:
+        /// it made the announcer louder without making it clearer, because the bed was still
+        /// sitting under it at the same level.
+        /// </summary>
+        public void Duck(float depthDb, float hold)
+        {
+            if (_duck != null) StopCoroutine(_duck);
+            _duck = StartCoroutine(DuckRoutine(depthDb, hold));
+        }
+
+        private Coroutine _duck;
+        private float _duckScale = 1.0f;
+
+        /// <summary>The duck multiplier the crossfade must respect, or a fade would write
+        /// straight over it and undo the duck mid-line.</summary>
+        public float DuckScale => _duckScale;
+
+        private System.Collections.IEnumerator DuckRoutine(float depthDb, float hold)
+        {
+            float target = Mathf.Pow(10.0f, depthDb / 20.0f);
+
+            const float dropTime = 0.08f;
+            const float recoverTime = 0.45f;
+
+            float t = 0.0f;
+            float from = _duckScale;
+
+            while (t < dropTime)
+            {
+                t += Time.unscaledDeltaTime;
+                _duckScale = Mathf.Lerp(from, target, t / dropTime);
+                yield return null;
+            }
+
+            _duckScale = target;
+
+            yield return new WaitForSecondsRealtime(hold);
+
+            t = 0.0f;
+            while (t < recoverTime)
+            {
+                t += Time.unscaledDeltaTime;
+                _duckScale = Mathf.Lerp(target, 1.0f, t / recoverTime);
+                yield return null;
+            }
+
+            _duckScale = 1.0f;
+            _duck = null;
+        }
+
         public void Stop()
         {
             Current = null;
@@ -107,16 +165,24 @@ namespace TumbangPreso.Audio
             _fade = null;
         }
 
-        /// <summary>Applied live, so moving the slider in the settings panel is audible at once.</summary>
-        private static float MusicVolume()
+        /// <summary>
+        /// The ONE place a music level is computed: bed level, the player's music slider, the
+        /// master slider, and the announcer duck, multiplied together.
+        ///
+        /// ⚠️ THE DUCK BELONGS IN HERE, NOT WRITTEN ONTO THE SOURCE. Update re-applies this
+        /// every frame so the settings sliders are audible at once — which means a duck poked
+        /// directly onto `volume` is erased on the very next frame, and the announcer plays
+        /// over an undimmed bed. That bug is invisible in code review and obvious in play.
+        /// </summary>
+        private float MusicVolume()
         {
             var s = Settings.SettingsStore.Current;
-            return BedLevel * s.MusicVolume * s.MasterVolume;
+            return BedLevel * s.MusicVolume * s.MasterVolume * _duckScale;
         }
 
         private void Update()
         {
-            // Track the settings sliders without needing them to notify us.
+            // Track the settings sliders and the duck without needing either to notify us.
             if (_fade != null) return;
 
             AudioSource active = _aIsActive ? _a : _b;

@@ -291,35 +291,79 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed class TutorialPanel : Panel
     {
+        private int _page;
+        private Text _title;
+        private Text _lede;
+        private Text _pageCount;
+        private readonly List<Text[]> _rows = new List<Text[]>();
+
+        /// <summary>Enough rows for the longest page; spare ones are hidden.</summary>
+        private const int MaxRows = 6;
+
         protected override void Build()
         {
-            MenuKit.Label(Canvas.transform, "HOW TO PLAY", 60, UiTheme.Amber,
-                          new Vector2(0.5f, 0.88f), Vector2.zero, new Vector2(900, 90));
+            _title = MenuKit.Label(Canvas.transform, "", 56, UiTheme.Amber,
+                                   new Vector2(0.5f, 0.90f), Vector2.zero, new Vector2(1200, 80));
 
-            MenuKit.Label(Canvas.transform,
-                "One taya guards the lata inside the chalk. Three attackers throw tsinelas at it,\n" +
-                "then have to run in and get them back.\n\n" +
-                "THE TENSION IS THE RETRIEVAL, NOT THE THROW.\n" +
-                "Throwing is safe and free. You can only be tagged while holding a slipper\n" +
-                "inside the box, so the trip back in is the whole game.\n\n" +
-                "ATTACKER\n" +
-                "   WASD move   ·   Shift sprint   ·   Space jump\n" +
-                "   Left-click hold to charge a throw, release to throw\n" +
-                "   E  pick up a slipper, or shove another attacker if there is nothing to grab\n\n" +
-                "TAYA (the defender)\n" +
-                "   You cannot leave the box, and you cannot throw\n" +
-                "   Left-click  punch, a quick close tag\n" +
-                "   E held      lunge, a short dash for somebody running past you\n" +
-                "   E held in the ring, can down   stand the lata back up\n\n" +
-                "SCORING\n" +
-                $"   Knock the lata down  +{Balance.ScoreLataKnocked} to the thrower\n" +
-                $"   Tag an attacker      +{Balance.ScoreTag} to the taya\n" +
-                $"   Sabotage             +{Balance.ScoreSabotage} to the shover\n" +
-                $"   Lata upright         +{Balance.ScoreDefensePerTick} per second to the taya\n\n" +
-                $"{Balance.Rounds} rounds of {Balance.RoundTime:0}s. Everyone is taya exactly once. Highest total wins.",
-                24, UiTheme.Cream,
-                new Vector2(0.5f, 0.48f), Vector2.zero, new Vector2(1500, 700),
-                TextAnchor.UpperLeft);
+            _lede = MenuKit.Label(Canvas.transform, "", 24, UiTheme.Cream,
+                                  new Vector2(0.5f, 0.82f), Vector2.zero, new Vector2(1400, 50));
+
+            for (int i = 0; i < MaxRows; i++)
+            {
+                float y = 0.72f - i * 0.085f;
+
+                var chip = MenuKit.Label(Canvas.transform, "", 24, UiTheme.Amber,
+                    new Vector2(0.28f, y), Vector2.zero,
+                    new Vector2(TutorialContent.ChipWidth, 44), TextAnchor.MiddleLeft);
+
+                var body = MenuKit.Label(Canvas.transform, "", 21, UiTheme.Cream,
+                    new Vector2(0.62f, y), Vector2.zero, new Vector2(880, 60), TextAnchor.MiddleLeft);
+
+                body.horizontalOverflow = HorizontalWrapMode.Wrap;
+
+                _rows.Add(new[] { chip, body });
+            }
+
+            _pageCount = MenuKit.Label(Canvas.transform, "", 20, UiTheme.CreamMuted,
+                                       new Vector2(0.5f, 0.20f), Vector2.zero, new Vector2(300, 36));
+
+            MenuKit.WoodButton(Canvas.transform, "PREV", new Vector2(0.34f, 0.20f),
+                               Vector2.zero, new Vector2(200, 56), () => Turn(-1));
+
+            MenuKit.WoodButton(Canvas.transform, "NEXT", new Vector2(0.66f, 0.20f),
+                               Vector2.zero, new Vector2(200, 56), () => Turn(1));
+
+            ApplyPage();
+        }
+
+        /// <summary>⚠️ IT CLAMPS RATHER THAN WRAPPING. Wrapping from the last page back to the
+        /// first reads as the panel having closed and reopened.</summary>
+        private void Turn(int delta)
+        {
+            _page = Mathf.Clamp(_page + delta, 0, TutorialContent.Pages.Length - 1);
+            ApplyPage();
+        }
+
+        private void ApplyPage()
+        {
+            var page = TutorialContent.Pages[_page];
+
+            _title.text = page.Title;
+            _lede.text = page.Lede;
+            _pageCount.text = $"{_page + 1} / {TutorialContent.Pages.Length}";
+
+            for (int i = 0; i < _rows.Count; i++)
+            {
+                bool used = i < page.Rows.Length;
+
+                _rows[i][0].enabled = used;
+                _rows[i][1].enabled = used;
+
+                if (!used) continue;
+
+                _rows[i][0].text = page.Rows[i].Chip;
+                _rows[i][1].text = page.Rows[i].Body;
+            }
         }
     }
 

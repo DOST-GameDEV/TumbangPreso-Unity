@@ -247,6 +247,10 @@ namespace TumbangPreso
                 gate.CountdownHidden += hud.HideCountdown;
             }
 
+            // ⚠️ THE ANNOUNCER SPEAKS THE SAME TICKS THE HUD DRAWS, off the one event, so the
+            // spoken "GO!" cannot drift from the drawn one.
+            gate.CountdownTick += tick => GameServices.Voice?.PlayCountdown(tick);
+
             gate.Open(local);
         }
 
@@ -280,6 +284,18 @@ namespace TumbangPreso
             // MatchEnded fires.
             var resultGo = new GameObject("MatchResult");
             resultGo.AddComponent<UI.MatchResult>();
+
+            // ⚠️ THE ANNOUNCER'S OWN CUE POINTS, wired once here rather than scattered through
+            // the systems that fire them. Godot connected these inside AudioManager; the same
+            // rule applies either way — every line has exactly one call site.
+            if (GameServices.Match != null)
+            {
+                GameServices.Match.RoundStarted += (round, _) =>
+                    GameServices.Voice?.OnRoundStarted(round);
+
+                GameServices.Match.MatchEnded += slot =>
+                    GameServices.Voice?.OnMatchWon(slot);
+            }
 
             // The intermission card, on the same terms: it listens for the round boundary.
             var swapGo = new GameObject("RoleSwapCard");

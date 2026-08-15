@@ -38,6 +38,11 @@ namespace TumbangPreso
         public static RoundDirector Round { get; private set; }
         public static Audio.MusicDirector Music { get; private set; }
 
+        /// <summary>The announcer. Godot had it inside AudioManager; it is its own director
+        /// here because its take pooling, per-line cooldowns and music ducking are a system,
+        /// not three fields on the SFX player.</summary>
+        public static Audio.VoiceDirector Voice { get; private set; }
+
         public static bool Ready => _root != null;
 
         /// <summary>
@@ -88,6 +93,7 @@ namespace TumbangPreso
             Match = _root.AddComponent<MatchDirector>();
             Round = _root.AddComponent<RoundDirector>();
             Music = _root.AddComponent<Audio.MusicDirector>();
+            Voice = _root.AddComponent<Audio.VoiceDirector>();
         }
 
         /// <summary>

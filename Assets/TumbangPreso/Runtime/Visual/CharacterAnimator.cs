@@ -40,17 +40,81 @@ namespace TumbangPreso.Visual
         private const string Interact = "interact-right";
         private const string Die = "die";
 
-        /// <summary>Emote id to clip. ⚠️ "bow" has no clip of its own in these rigs, so it
-        /// borrows the interact bend rather than silently playing nothing.</summary>
-        private static readonly Dictionary<string, string> EmoteClips = new Dictionary<string, string>
+        /// <summary>
+        /// ⚠️ FALLBACK CHAINS, NOT SINGLE CLIPS. Godot stores an ORDERED LIST per key so a rig
+        /// missing the first clip still animates on the second. Flattening these to one name
+        /// each — which this table used to do — means a swapped model with a slightly
+        /// different clip set silently stops animating that verb.
+        /// </summary>
+        private static readonly Dictionary<string, string[]> EmoteClips = new Dictionary<string, string[]>
         {
-            { "yes", "emote-yes" },
-            { "no", "emote-no" },
-            { "sit", "sit" },
-            { "crouch", "crouch" },
-            { "dead", Die },
-            { "tpose", "static" },
-            { "bow", "interact-right" },
+            // A literal thumbs-up on this rig. Also what "ready" plays, deliberately: the
+            // gesture means the same thing in both places.
+            { "yes", new[] { "emote-yes", Interact } },
+            { "no", new[] { "emote-no", "interact-left" } },
+            { "sit", new[] { "sit", "crouch" } },
+
+            // ⚠️ RELABELLED "VICTORY", STILL THE crouch CLIP. 🧑 asked for a victory pose and
+            // this rig does not have one — its clips are locomotion, combat and two gestures,
+            // and nothing reads as arms-up celebration. crouch is the closest available and
+            // is the honest placeholder rather than a promise the animation does not keep.
+            { "crouch", new[] { "crouch", "sit" } },
+
+            // The taunt. `die` is the knockdown clip played on purpose.
+            { "dead", new[] { Die, "crouch" } },
+
+            // `static` is the rig's unanimated bind pose — arms out, feet together — which is
+            // exactly the T-pose the joke is about.
+            { "tpose", new[] { "static", Idle } },
+
+            // ⚠️ `pick-up`, NOT `interact-right`. It bends the torso forward over the legs, so
+            // standing still it reads as a bow. One clip having two jobs costs no new asset;
+            // this table had the wrong clip and the bow read as a shrug.
+            { "bow", new[] { PickUp, Interact } },
+        };
+
+        /// <summary>
+        /// ⚠️⚠️ WHICH EMOTES LOOP AND WHICH HOLD THEIR LAST FRAME. 🧑 2026-08-04: *"play dead
+        /// looks hella weird rn im perma jumping up and down the floor and lying down"*, and
+        /// *"for play dead can u NOT loop the animation and instead js let me stay on the
+        /// floor till i stop"*.
+        ///
+        /// That is what looping does to a clip with a beginning and an end: `die` drops the
+        /// body, finishes, restarts from standing and drops again. Anything that ENDS
+        /// somewhere holds its last frame; only the gestures that read as repeatable loop.
+        /// </summary>
+        private static readonly Dictionary<string, bool> EmoteLoops = new Dictionary<string, bool>
+        {
+            { "yes", true },
+            { "no", true },
+            { "sit", false },      // sitting down ends sitting; standing up every 2s is not sitting
+            { "crouch", false },
+            { "dead", false },
+            { "tpose", false },
+            { "bow", true },
+        };
+
+        /// <summary>
+        /// The gameplay verbs' reads.
+        ///
+        /// ⚠️⚠️ LUNGE AND PUNCH HAVE THEIR OWN CLIPS AND MUST KEEP THEM. Both used to play the
+        /// shove animation, so the taya's one-metre lunge, their close jab and an attacker
+        /// shoving a rival were three different commitments with one animation between them.
+        /// `attack-kick-right` leads with the body, which is what a dash INTO somebody looks
+        /// like; `attack-melee-right` is the arm, which is the punch.
+        ///
+        /// ⚠️ "shove" WAS RENAMED FROM "bump". The bump meter it was built for is deleted, and
+        /// a clip key naming a mechanic that no longer exists is how the next reader concludes
+        /// the mechanic still does.
+        /// </summary>
+        private static readonly Dictionary<string, string[]> ActionClips = new Dictionary<string, string[]>
+        {
+            { "throw", new[] { Throwing, PickUp, Interact } },
+            { "shove", new[] { "attack-melee-right", "attack-kick-right", Interact } },
+            { "ready", new[] { "emote-yes", Interact } },
+            { "grab", new[] { PickUp, Interact, "interact-left" } },
+            { "lunge", new[] { "attack-kick-right", "attack-melee-right", Interact } },
+            { "punch", new[] { "attack-melee-right", "attack-kick-right", Interact } },
         };
 
         [SerializeField] private float _blend = 0.12f;
@@ -154,7 +218,14 @@ namespace TumbangPreso.Visual
                 return;
             }
 
-            Play(Choose(), loop: true);
+            // ⚠️ NOT EVERYTHING LOOPS. Looping `die` is exactly the reported bug: the body
+            // drops, the clip ends, it restarts from standing and drops again — 🧑 *"im perma
+            // jumping up and down the floor and lying down"*. Locomotion loops; an emote loops
+            // only if EmoteLoops says so, and otherwise holds its last frame.
+            bool emoting = _emote != null && _emote.IsEmoting;
+            bool loop = !emoting || !EmoteHoldsLastFrame(_emote.Current);
+
+            Play(Choose(), loop);
             Blend();
         }
 
@@ -166,9 +237,11 @@ namespace TumbangPreso.Visual
         /// </summary>
         private string Choose()
         {
-            if (_emote != null && _emote.IsEmoting
-                && EmoteClips.TryGetValue(_emote.Current, out var emoteClip))
-                return emoteClip;
+            if (_emote != null && _emote.IsEmoting)
+            {
+                string emoteClip = ResolveChain(EmoteClips, _emote.Current);
+                if (emoteClip != null) return emoteClip;
+            }
 
             if (_motor.IsStunned) return Die;
 
@@ -202,6 +275,42 @@ namespace TumbangPreso.Visual
         }
 
         public void PlayPickUp() => PlayOneShot(PickUp);
+
+        /// <summary>
+        /// Play a gameplay verb's read by NAME rather than by clip, so callers ask for
+        /// "lunge" and this file owns which animation that is.
+        ///
+        /// ⚠️ THIS IS THE ONLY ENTRY POINT THAT KEEPS LUNGE, PUNCH AND SHOVE DISTINCT. A
+        /// caller reaching for PlayOneShot("attack-melee-right") directly re-merges the three
+        /// verbs the 2026-08-01 split separated.
+        /// </summary>
+        public void PlayAction(string action)
+        {
+            string clip = ResolveChain(ActionClips, action);
+            if (clip != null) PlayOneShot(clip);
+        }
+
+        /// <summary>
+        /// First clip in the chain this rig actually has.
+        ///
+        /// ⚠️ IT RETURNS null RATHER THAN A GUESS when nothing matches. A missing verb should
+        /// leave the body in its locomotion pose, not snap it to an unrelated animation.
+        /// </summary>
+        private string ResolveChain(Dictionary<string, string[]> table, string key)
+        {
+            if (key == null || !table.TryGetValue(key, out var chain)) return null;
+
+            foreach (string name in chain)
+                if (_clips.ContainsKey(name)) return name;
+
+            return null;
+        }
+
+        /// <summary>Does this emote hold its last frame instead of looping?
+        /// See <see cref="EmoteLoops"/> — `die` restarting from standing is the bug this
+        /// answers.</summary>
+        public static bool EmoteHoldsLastFrame(string emoteId)
+            => EmoteLoops.TryGetValue(emoteId, out bool loops) && !loops;
         public void PlayPunch() => PlayOneShot(Punch);
 
         private void Play(string clipName, bool loop, bool force = false)

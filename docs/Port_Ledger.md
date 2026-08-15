@@ -152,7 +152,7 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `multiplayer_setup.gd` | 1015 | `LobbySession.cs` (287) | PARTIAL |
 | `character_preview.gd` | 623 | `ModelPreview.cs` (215) | PARTIAL — render, framing, turn, drag; idle clip pending |
 | `ui_theme.gd` | 551 | `UiTheme.cs` (119) | PARTIAL — `tumbang_preso.tres` (39 KB) NOT converted |
-| `tutorial.gd` | 462 | — | **MISSING** — 8 pages with 3D props |
+| `tutorial.gd` | 462 | `TutorialContent` + `TutorialPanel` (230) | PARTIAL — all 8 pages; 3D props pending |
 | `you_card.gd` | 430 | `YouCard.cs` (185) | PARTIAL — role, name, live meters; ready flash pending |
 | `settings_panel.gd` | 429 | `SettingsPanel` + `Rebinding.cs` (330) | CONVERTED — rebinding, conflicts, reset |
 | `emote_wheel.gd` | 422 | `EmoteWheel.cs` (215) + `Emotes.cs` | CONVERTED — hold, steer, release |
