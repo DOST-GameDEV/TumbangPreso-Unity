@@ -32,7 +32,6 @@ namespace TumbangPreso.UI
         private Canvas _canvas;
         private Text _timer;
         private Text _round;
-        private Text _scores;
         private Text _status;
         private Image _staminaFill;
         private Image _crosshair;
@@ -137,23 +136,40 @@ namespace TumbangPreso.UI
         private void UpdateScores()
         {
             var m = GameServices.Match;
-            var sb = new System.Text.StringBuilder();
 
             for (int slot = 0; slot < Balance.PlayerCount; slot++)
             {
+                if (_scoreNames[slot] == null) continue;
+
                 bool isTaya = slot == m.DefenderSlot;
+
+                _scoreNames[slot].text = NameFor(slot);
 
                 // ⚠️ THE TAYA IS MARKED BY ROLE, NOT BY SEAT NUMBER. It rotates every round, so
                 // a fixed per-seat colour would be telling the player the wrong thing for three
                 // rounds out of four.
-                sb.Append(isTaya ? "[TAYA] P" : "       P");
-                sb.Append(slot + 1);
-                sb.Append("  ");
-                sb.Append(m.ScoreFor(slot));
-                sb.Append('\n');
+                _scoreNames[slot].color = isTaya ? UiTheme.Card : UiTheme.Offense;
+
+                _scoreMarks[slot].text = isTaya ? "TAYA" : "";
+                _scoreValues[slot].text = m.ScoreFor(slot).ToString();
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ THE NAME, NOT "P3", WHEN THERE IS ONE. An empty name is legal and falls back to
+        /// the seat label, which is the same contract the lobby board keeps: a player who never
+        /// opened Settings still has a row that reads.
+        /// </summary>
+        private static string NameFor(int slot)
+        {
+            if (slot == GameLaunch.SoloSeat)
+            {
+                string chosen = Settings.SettingsStore.Current.PlayerName;
+                if (!string.IsNullOrWhiteSpace(chosen)) return chosen.ToUpperInvariant();
             }
 
-            _scores.text = sb.ToString();
+            var entry = Roster.At(Roster.People, slot);
+            return entry != null ? entry.Name : $"P{slot + 1}";
         }
 
         private void UpdateStamina()
@@ -252,18 +268,59 @@ namespace TumbangPreso.UI
             BuildCrosshair(canvasGo.transform);
         }
 
-        /// <summary>Top-left: SCORES over one row per seat, on a translucent ink card.</summary>
+        /// <summary>
+        /// Top-left: SCORES over one row per seat, on a translucent ink card.
+        ///
+        /// ⚠️ ONE ROW PER SEAT, NOT ONE BLOCK OF TEXT. `HUD.tscn` authors ScoreRow0..3, each a
+        /// name on the left and a number hard against the right edge. A single label with spaces
+        /// in it cannot right-align the numbers, so the scores wander with the length of the
+        /// name above them and the column stops reading as a column.
+        ///
+        /// ⚠️ AND THE TAYA IS MARKED BY ROLE. It rotates every round, so colouring a seat
+        /// permanently would tell the player the wrong thing for three rounds out of four.
+        /// </summary>
         private void BuildScoreboard(Transform parent)
         {
             var card = Card(parent, "Scoreboard", new Vector2(0.0f, 1.0f),
-                            new Vector2(16, -28), new Vector2(420, 0));
+                            new Vector2(16, -28), new Vector2(440, 0));
 
             var title = HudTextIn(card.transform, "ScoreTitle", "HudCaption", TextAnchor.MiddleLeft);
             title.text = "SCORES";
+            title.gameObject.AddComponent<LayoutElement>().preferredHeight = 40.0f;
 
-            _scores = HudTextIn(card.transform, "ScoreRows", "HudBody", TextAnchor.UpperLeft);
-            _scores.gameObject.AddComponent<LayoutElement>().minHeight = 160.0f;
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            {
+                var rowGo = new GameObject($"ScoreRow{slot}");
+                rowGo.transform.SetParent(card.transform, false);
+
+                var row = rowGo.AddComponent<HorizontalLayoutGroup>();
+                row.childControlHeight = true;
+                row.childControlWidth = true;
+                row.childForceExpandHeight = false;
+                row.childForceExpandWidth = false;
+                row.childAlignment = TextAnchor.MiddleLeft;
+                row.spacing = 8.0f;
+
+                rowGo.AddComponent<LayoutElement>().preferredHeight = 42.0f;
+
+                var name = HudTextIn(rowGo.transform, "Name", "HudBody", TextAnchor.MiddleLeft);
+                name.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1.0f;
+
+                var mark = HudTextIn(rowGo.transform, "Taya", "HudCaption", TextAnchor.MiddleRight);
+                mark.gameObject.AddComponent<LayoutElement>().preferredWidth = 96.0f;
+
+                var score = HudTextIn(rowGo.transform, "Score", "HudScore", TextAnchor.MiddleRight);
+                score.gameObject.AddComponent<LayoutElement>().preferredWidth = 56.0f;
+
+                _scoreNames[slot] = name;
+                _scoreMarks[slot] = mark;
+                _scoreValues[slot] = score;
+            }
         }
+
+        private readonly Text[] _scoreNames = new Text[Balance.PlayerCount];
+        private readonly Text[] _scoreMarks = new Text[Balance.PlayerCount];
+        private readonly Text[] _scoreValues = new Text[Balance.PlayerCount];
 
         /// <summary>Top-centre: the clock on its own card, with the round line under it.</summary>
         private void BuildClock(Transform parent)
