@@ -12,7 +12,36 @@ Scope measured 2026-08-15 against `DOST-GameDev` @ Godot 4.7:
 - (`tools/` is ~20k more lines of dev probes. NOT game features, NOT in scope,
   except as a reference for how a system is supposed to behave.)
 
-Unity side today: ~11.6k lines of C#, of which ~1,400 are editor converters.
+Unity side today: ~13k lines of C#, of which ~1,900 are editor converters.
+
+## ⚠️ Unity rules the conversion has to obey, each found by a shipped failure
+
+These are not style. Each one produced a build that looked correct in the editor
+and was broken for a player, which is the most expensive kind of bug this port
+can produce.
+
+1. **One MonoBehaviour per file, named after the class.** Unity only makes a
+   MonoScript asset for the class matching the FILE name. A second MonoBehaviour
+   in the same file serialises into a scene as an embedded `--- !u!115` stub, and
+   the player then reports `The file 'levelN' is corrupted!` and dies on load.
+   Every converted screen carried four to eleven of those. `TscnUiImporter`
+   checks this now and fails the import rather than writing such a scene.
+2. **A scene may only reference assets on disk.** `Sprite.Create` at import time
+   produces an object the scene does not own; same crash. Style boxes and scrim
+   gradients are baked to PNG (`StyleBoxBaker`, `BakeGradient`).
+3. **`AddComponent` cannot carry an inspector reference.** Anything a
+   code-installed component needs must be loaded by the component itself. This is
+   what left `PlayerInputReader` with no action asset in every build, so the
+   human seat could not move.
+4. **A renderer created in code has no material** and draws as a magenta error
+   blob, and any MaterialPropertyBlock written at it is discarded.
+5. **A property block writes a NAMED property**, silently doing nothing when the
+   shader has none. `EnvColourPass` reported 418 of 434 renderers repainted while
+   changing nothing on screen. Tint through a material variant and check
+   `HasProperty`.
+6. **An asset nothing references is stripped from the build.** The 32 animation
+   clips per character live inside the `.glb`; without a serialised reference the
+   whole cast stood still in the player only.
 
 ## How to read the status column
 
@@ -150,12 +179,12 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
-| `match_setup.gd` | 2015 | `ConvertedSetupScreens.cs` (385) | PARTIAL — layout still collapsing |
-| `hud.gd` | 1587 | `Hud.cs` (221) | PARTIAL — layout converted, no behaviour bound |
+| `match_setup.gd` | 2015 | `ConvertedMatchSetup.cs` (440) | PARTIAL — rows, seats, spectate, live map preview; netcode lobby half pending |
+| `hud.gd` | 1587 | `Hud.cs` (420) | PARTIAL — cards, clock, scores, stamina on the theme's Hud* set; per-row scoreboard and toasts pending |
 | `multiplayer_setup.gd` | 1015 | `LobbySession.cs` (287) | PARTIAL |
 | `character_preview.gd` | 623 | `ModelPreview.cs` (215) | PARTIAL — render, framing, turn, drag; idle clip pending |
-| `ui_theme.gd` | 551 | `UiTheme.cs` (119) | PARTIAL — `tumbang_preso.tres` (39 KB) NOT converted |
-| `tutorial.gd` | 462 | `TutorialContent` + `TutorialPanel` (230) | PARTIAL — all 8 pages; 3D props pending |
+| `ui_theme.gd` | 551 | `UiTheme` + `GodotTheme` + `StyleBoxBaker` (520) | CONVERTED — variations, StyleBox geometry and the baked nine-slices |
+| `tutorial.gd` | 462 | `TutorialContent` + `ConvertedTutorialPanel` (230) | PARTIAL — all 8 pages on the converted scene; 3D props pending |
 | `you_card.gd` | 430 | `YouCard.cs` (185) | PARTIAL — role, name, live meters; ready flash pending |
 | `settings_panel.gd` | 429 | `SettingsPanel` + `Rebinding.cs` (330) | CONVERTED — rebinding, conflicts, reset |
 | `emote_wheel.gd` | 422 | `EmoteWheel.cs` (215) + `Emotes.cs` | CONVERTED — hold, steer, release |
@@ -163,12 +192,12 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `match_result.gd` | 339 | `MatchResult.cs` (215) | PARTIAL — board and single-player rematch; peer vote pending netcode |
 | `credits_panel.gd` | 292 | `CreditsContent.cs` + `CreditsPanel` (250) | CONVERTED — CC-BY strings verbatim |
 | `role_swap_card.gd` | 274 | `RoleSwapCard.cs` (250) | CONVERTED — intermission timeline, swap, standings |
-| `arrow_button.gd` | 262 | `MenuKit.cs` (142) | PARTIAL |
+| `arrow_button.gd` | 262 | `ArrowButtonView.cs` (250) | CONVERTED — unfurl, hover, press, both cues |
 | `offscreen_indicators.gd` | 211 | `OffscreenIndicators.cs` (175) | CONVERTED — edge arrows, wired into the HUD |
 | `map_preview.gd` | 165 | `MapPreview.cs` (150) | PARTIAL — sway, cache, silence; needs map prefabs |
 | `splash_screen.gd` | 107 | `SplashScreen.cs` (154) | CONVERTED |
-| `mode_select.gd` | 96 | `MenuScreens.cs` | PARTIAL |
-| `main_menu.gd` | 85 | `MenuScreens.cs` | CONVERTED |
+| `mode_select.gd` | 96 | `ConvertedModeSelect.cs` | CONVERTED |
+| `main_menu.gd` | 85 | `ConvertedMainMenu.cs` | CONVERTED — in-place overlays, pennants re-unfurl |
 | `debug_bar.gd` | 47 | `DebugBar.cs` (110) | CONVERTED — deliberately unstyled |
 | `pause_layer.gd` | 21 | `PauseWatcher` in `MatchInstaller.cs` | CONVERTED — see note |
 
@@ -180,19 +209,19 @@ tree. A collective count is how a missing scene hides.
 
 | Godot scene | Status |
 |---|---|
-| `Eskinita.tscn` | CONVERTED — 416 objects, 0 missing models, walls at ±8.60 |
-| `BayanPlaza.tscn` | CONVERTED — 553 objects, 0 missing models |
+| `Eskinita.tscn` | CONVERTED — 416 objects, 0 missing, walls at ±8.60, light + fog + sky + colour pass |
+| `BayanPlaza.tscn` | CONVERTED — 553 objects, 0 missing, light + fog + sky + colour pass |
 | `SplashScreen.tscn` | CONVERTED |
 | `MainMenu.tscn` | CONVERTED — real backdrop, logo, arrow buttons |
 | `ModeSelect.tscn` | CONVERTED |
-| `MatchSetup.tscn` | PARTIAL — layout converted, captions still overlapping |
+| `MatchSetup.tscn` | CONVERTED — rows, seats, spectate, live map behind |
 | `MultiplayerSetup.tscn` | PARTIAL |
 | `CharacterSelect.tscn` | CONVERTED — tabs, chalk pips, live 3D |
 | `MatchResult.tscn` | CONVERTED — board rebuilt in code |
 | `SettingsPanel.tscn` | CONVERTED — incl. rebinding |
 | `CreditsPanel.tscn` | CONVERTED — CC-BY strings verbatim |
-| `HUD.tscn` | PARTIAL — 35 nodes converted; behaviour built in code |
-| `ArrowButton.tscn` | CONVERTED — `MenuKit.WoodButton` |
+| `HUD.tscn` | PARTIAL — 35 nodes converted; the live HUD is still built in code, on the same theme |
+| `ArrowButton.tscn` | CONVERTED — inlined per instance, `ArrowButtonView` drives it |
 | `Tutorial.tscn` | CONVERTED — 8 pages; 3D props pending |
 | `YouCard.tscn` | CONVERTED |
 | `RoleSwapCard.tscn` | CONVERTED |
