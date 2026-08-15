@@ -11,8 +11,11 @@
 | 3 · Vertical slice | **code complete, NOT verified.** Needs a scene with prefabs wired, then the feel measurement below |
 | 4 · Full offline match | code present (`MatchBootstrap`, `AIController`), unrun |
 | 5 · Netcode | seam only (`NetAuthority`). No transport yet |
-| 6 · Presentation | `StatusStack` only. 21 UI screens outstanding |
+| 6 · Presentation | audio cue table done and validated both ways; `StatusStack` done. **21 UI screens, character visuals, camera and emotes outstanding** |
 | 7 · Probes | structural checks only. The distributions are not measured yet |
+
+**Verified green:** 32 Core tests via `dotnet test`, 8 Unity EditMode tests, the headless
+compile check, and the audio cue check. 32 C# files, ~4,600 lines.
 
 ⚠️ **"Code complete" is not "done", and Phase 3 is the case that matters.** Its exit criterion
 is a MEASUREMENT against the Godot build, not a compile. Nothing in this port has been played.
