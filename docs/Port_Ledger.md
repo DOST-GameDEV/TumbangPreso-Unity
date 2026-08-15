@@ -76,7 +76,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `character_visual.gd` | 2182 | `CharacterVisual` + `CharacterAnimator` (401) | PARTIAL |
 | `carrier.gd` | 536 | `Carrier.cs` (210) | PARTIAL |
 | `character_nameplate.gd` | 165 | `CharacterNameplate.cs` (155) | CONVERTED — ring, tag, role colour, distance fade |
-| `slipper.gd` | 1630 | `Slipper.cs` (213) | PARTIAL |
+| `slipper.gd` | 1630 | `Slipper.cs` (280) | PARTIAL — flight, bounce, spin, void recovery; hand attach and net sync pending |
 | `lata.gd` | 534 | `Lata.cs` (118) | PARTIAL |
 
 ## Systems

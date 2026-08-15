@@ -127,6 +127,15 @@ namespace TumbangPreso
             _velocity.y -= Balance.Gravity * dt;
             transform.position += _velocity * dt;
 
+            BounceOffBounds();
+            SpinInFlight(dt);
+
+            // ⚠️ LOST BELOW THE WORLD IS A REAL CASE, NOT A SAFETY NET. A slipper that
+            // clears the arena falls forever and the round quietly loses a piece of its
+            // ammunition — the attacker who owns it has nothing to fetch and simply stops
+            // playing. Return it to its mark instead.
+            if (transform.position.y < Balance.VoidY) { Land(); return; }
+
             var round = GameServices.Round;
 
             // The can first: it is the thing being aimed at.
@@ -156,8 +165,58 @@ namespace TumbangPreso
                 }
             }
 
-            if (transform.position.y <= 0.045f || _flightTime >= Balance.MaxFlightTime)
+            if (transform.position.y <= Balance.SlipperRestHeight
+                || _flightTime >= Balance.MaxFlightTime)
                 Land();
+        }
+
+        /// <summary>
+        /// Keep a throw inside the arena.
+        ///
+        /// ⚠️ ENERGY IS LOST ON THE BOUNCE. A perfectly elastic wall returns a slipper at
+        /// throw speed, which is a projectile nobody threw and which can still knock the lata
+        /// down — a point scored by the wall. 0.45 carries it clear of the boundary without
+        /// being a shot.
+        ///
+        /// ⚠️ THE FORM IS `-sign(position) * abs(velocity)`, NOT A PLAIN SIGN FLIP. A flip
+        /// would send a slipper that is somehow ALREADY outside and travelling inward back
+        /// out again — and being outside is exactly the state this exists to recover from, so
+        /// it must not have a way to make it worse. This form always ends up pointing at the
+        /// court.
+        /// </summary>
+        private void BounceOffBounds()
+        {
+            float limitX = AIController.PlayableHalfX - Balance.SlipperHitRadius;
+            float limitZ = AIController.PlayableHalfZ - Balance.SlipperHitRadius;
+
+            Vector3 p = transform.position;
+
+            if (limitX > 0.0f && Mathf.Abs(p.x) > limitX)
+            {
+                p.x = Mathf.Sign(p.x) * limitX;
+                _velocity.x = -Mathf.Sign(p.x) * Mathf.Abs(_velocity.x) * Balance.BounceRestitution;
+            }
+
+            if (limitZ > 0.0f && Mathf.Abs(p.z) > limitZ)
+            {
+                p.z = Mathf.Sign(p.z) * limitZ;
+                _velocity.z = -Mathf.Sign(p.z) * Mathf.Abs(_velocity.z) * Balance.BounceRestitution;
+            }
+
+            transform.position = p;
+        }
+
+        /// <summary>
+        /// ⚠️ SPIN AND TUMBLE AT ONCE. A real thrown slipper does both; doing only the spin is
+        /// what made an earlier version read as "flying perfectly flat".
+        ///
+        /// ⚠️ AND IT ROTATES ABOUT THE MESH CENTRE. With the origin at the sole, a thrown
+        /// slipper orbits its own underside instead of spinning in place.
+        /// </summary>
+        private void SpinInFlight(float dt)
+        {
+            transform.Rotate(Vector3.up, Balance.SlipperSpinSpeedDeg * dt, Space.Self);
+            transform.Rotate(Vector3.right, Balance.SlipperTumbleSpeedDeg * dt, Space.Self);
         }
 
         /// <summary>
