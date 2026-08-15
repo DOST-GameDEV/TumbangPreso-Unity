@@ -54,9 +54,14 @@ namespace TumbangPreso.EditorTools
                 return false;
             }
 
-            if (!scenes[0].EndsWith("/Splash.unity"))
+            // ⚠️ THE NAME COMES FROM SceneFlow, NOT A LITERAL. This guard hard-coded
+            // "Splash.unity" while the scene has always been "SplashScreen.unity", so it
+            // rejected a correctly-ordered build every time — a guard that only ever fires on
+            // valid input is worse than no guard, because it trains you to bypass it.
+            if (!scenes[0].EndsWith($"/{TumbangPreso.UI.SceneFlow.Splash}.unity"))
             {
-                Debug.LogError($"[Build] scene 0 is '{scenes[0]}', not Splash.unity. A built " +
+                Debug.LogError($"[Build] scene 0 is '{scenes[0]}', not " +
+                               $"{TumbangPreso.UI.SceneFlow.Splash}.unity. A built " +
                                "player opens on scene 0, so this would ship without the boot " +
                                "sting and land the player somewhere arbitrary. Run " +
                                "Tumbang Preso > Build All Menu Scenes first.");
