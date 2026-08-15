@@ -104,7 +104,19 @@ namespace TumbangPreso
             cue.EverPlayed = true;
             _cues[id] = cue;
 
-            AudioSource.PlayClipAtPoint(cue.Clip, position, cue.Volume);
+            // ⚠️⚠️ THE SLIDERS WERE BEING IGNORED ENTIRELY. Every sound played at its cue's
+            // mix level regardless of what the player set, so turning SFX down did nothing
+            // while the music and the announcer both obeyed. The mix level is the cue's
+            // RELATIVE weight; the sliders scale all of them together.
+            AudioSource.PlayClipAtPoint(cue.Clip, position, cue.Volume * SfxScale());
+        }
+
+        /// <summary>Read fresh on every play, so moving a slider is audible on the next sound
+        /// rather than after a scene change.</summary>
+        private static float SfxScale()
+        {
+            var s = Settings.SettingsStore.Current;
+            return s.SfxVolume * s.MasterVolume;
         }
 
         /// <summary>Call from a probe at the end of a match run.</summary>

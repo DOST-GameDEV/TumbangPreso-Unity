@@ -65,7 +65,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `lan_beacon.gd` | 323 | `LanBeacon.cs` (238) | PARTIAL |
 | `server_query.gd` | 536 | `ServerQuery.cs` (215) | PARTIAL — browse and expiry; join codes pending |
 | `game_launch.gd` | 301 | `GameLaunch.cs` (108) | CONVERTED — map registry, pending action, seating |
-| `settings_manager.gd` | 703 | `GameSettings.cs` (202) | PARTIAL |
+| `settings_manager.gd` | 703 | `GameSettings` + `Rebinding` (400) | CONVERTED — sliders, rebinding, applied on load |
 | `debug_player_switcher.gd` | 420 | `DebugPlayerSwitcher.cs` (115) | PARTIAL — seat drive, cycle, readout |
 
 ## Characters and objects

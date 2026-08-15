@@ -115,6 +115,24 @@ namespace TumbangPreso.Settings
             return clean;
         }
 
+        /// <summary>
+        /// Push the saved settings at the systems that own them.
+        ///
+        /// ⚠️ FULLSCREEN WAS ONLY EVER APPLIED WHEN THE BUTTON WAS PRESSED, so the saved value
+        /// was written to disk, read back on the next launch, displayed correctly on the
+        /// settings screen — and the game still opened in whatever mode Unity felt like. A
+        /// setting that survives a restart everywhere except in the actual window is worse
+        /// than one that does not save at all.
+        ///
+        /// Volumes need no push: the music bed, the announcer and the SFX all read the
+        /// sliders live, which is what makes dragging one audible immediately.
+        /// </summary>
+        public void Apply()
+        {
+            Screen.fullScreen = Fullscreen;
+            AIController.ApplyDifficulty(AiDifficulty);
+        }
+
         public void Validate()
         {
             PlayerName = SanitiseName(PlayerName);
@@ -175,6 +193,10 @@ namespace TumbangPreso.Settings
             }
 
             _current.Validate();
+
+            // ⚠️ VALIDATE THEN APPLY, IN THAT ORDER. Applying an unclamped value read off disk
+            // would push a nonsense difficulty index straight into the AI.
+            _current.Apply();
         }
 
         public static void Save()
