@@ -40,7 +40,10 @@ namespace TumbangPreso.EditorTools
                 $"{UiDir}/{SceneFlow.ModeSelect}.unity",
                 $"{UiDir}/{SceneFlow.MatchSetup}.unity",
                 $"{UiDir}/{SceneFlow.MultiplayerSetup}.unity",
-                $"{UiDir}/{SceneFlow.CharacterSelect}.unity",
+                // ⚠️ CharacterSelect IS NOT HERE ON PURPOSE. `MatchSetup.tscn` instances it as a
+                // hidden child and reveals it in place, so the map, difficulty and seat the
+                // player already chose are still behind it. Shipping it as a scene as well is
+                // how a build ends up with two of them, one of which nothing can reach.
                 $"{UiDir}/{SceneFlow.MatchResult}.unity",
                 $"{MapDir}/{SceneFlow.Eskinita}.unity",
                 $"{MapDir}/{SceneFlow.BayanPlaza}.unity",

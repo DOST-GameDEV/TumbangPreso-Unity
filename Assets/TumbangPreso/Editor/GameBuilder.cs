@@ -41,6 +41,57 @@ namespace TumbangPreso.EditorTools
             return Path.Combine(desktop, "TumbangPreso-Unity", "TumbangPreso.exe");
         }
 
+        /// <summary>
+        /// Puts the studio's mark on the one screen the engine insists on drawing.
+        ///
+        /// ⚠️⚠️ UNITY'S SPLASH CANNOT BE TURNED OFF ON THIS LICENCE, so the alternative is not
+        /// "no engine logo", it is an unbranded engine logo in front of the game's own opening
+        /// animation. Adding the BH Studios mark beside it and matching the background to the
+        /// menu's navy makes the two read as one sequence rather than as an interruption. The
+        /// boot sting starts before this screen (see <c>BootSting</c>), so it has sound too.
+        /// </summary>
+        private static void ConfigureSplash()
+        {
+            var logo = AssetDatabase.LoadAssetAtPath<Sprite>(
+                "Assets/TumbangPreso/Art/ui/brand/bh_studios_logo.png");
+
+            if (logo == null)
+            {
+                var importer = AssetImporter.GetAtPath(
+                    "Assets/TumbangPreso/Art/ui/brand/bh_studios_logo.png") as TextureImporter;
+
+                if (importer != null)
+                {
+                    importer.textureType = TextureImporterType.Sprite;
+                    importer.SaveAndReimport();
+
+                    logo = AssetDatabase.LoadAssetAtPath<Sprite>(
+                        "Assets/TumbangPreso/Art/ui/brand/bh_studios_logo.png");
+                }
+            }
+
+            PlayerSettings.SplashScreen.show = true;
+            PlayerSettings.SplashScreen.showUnityLogo = true;
+            PlayerSettings.SplashScreen.animationMode = PlayerSettings.SplashScreen.AnimationMode.Dolly;
+            PlayerSettings.SplashScreen.unityLogoStyle = PlayerSettings.SplashScreen.UnityLogoStyle.LightOnDark;
+            PlayerSettings.SplashScreen.drawMode = PlayerSettings.SplashScreen.DrawMode.UnityLogoBelow;
+
+            // The menu's own navy, so the engine logo hands over to the sting without a flash.
+            PlayerSettings.SplashScreen.backgroundColor = new Color(0.0157f, 0.0314f, 0.2196f, 1.0f);
+
+            if (logo == null)
+            {
+                Debug.LogWarning("[Build] no BH Studios logo for the splash; " +
+                                 "the engine logo will show on its own.");
+                return;
+            }
+
+            PlayerSettings.SplashScreen.logos = new[]
+            {
+                PlayerSettings.SplashScreenLogo.Create(2.0f, logo),
+            };
+        }
+
         private static bool Execute(string outputPath)
         {
             var scenes = EditorBuildSettings.scenes
@@ -81,6 +132,8 @@ namespace TumbangPreso.EditorTools
 
             PlayerSettings.companyName = "BH Studios";
             PlayerSettings.productName = "Tumbang Preso";
+
+            ConfigureSplash();
 
             // ⚠️ WINDOWED BY DEFAULT FOR A TEST BUILD. An exclusive-fullscreen build that
             // starts on a broken frame is genuinely hard to get out of, and the whole point of

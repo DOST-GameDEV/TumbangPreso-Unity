@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using TumbangPreso.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 namespace TumbangPreso.EditorTools.MapKit
 {
@@ -16,17 +18,29 @@ namespace TumbangPreso.EditorTools.MapKit
     /// ⚠️⚠️ THIS REPLACES A HAND-REBUILT UI AND THAT REBUILD WAS THE WRONG CALL. The menus were
     /// first re-created from the palette, which produced screens that were tidy, consistent,
     /// and nothing like the game. The `.tscn` files carry every anchor, offset, texture, font
-    /// size and colour explicitly, exactly as the map scenes do, so there is no reason to
-    /// approximate any of it. Convert, do not redraw.
+    /// size and colour explicitly, exactly as the map scenes do. Convert, do not redraw.
     ///
-    /// ⚠️ INSTANCED SUB-SCENES ARE EXPANDED IN PLACE. `ArrowButton.tscn` is instanced ten times
-    /// across the menus with per-instance overrides (its texture, caption, colours, and the
-    /// geometry of the arrow). Treating an instance as an opaque node would produce menus with
-    /// no buttons at all, so the sub-scene is parsed and inlined, then the instance's own
-    /// properties are applied on top.
+    /// ⚠️⚠️ AND THE FIRST CONVERSION READ ONLY HALF OF WHAT A `.tscn` SAYS, WHICH IS WHY IT
+    /// LOOKED BROKEN. Godot's theme is project-wide (`gui/theme/custom`), so a scene records
+    /// styling as `theme_type_variation = &"MenuHeading"` and the theme supplies the face. The
+    /// importer read `theme_override_*` and ignored variations completely, so:
+    ///   - every label came out at one fallback size in one fallback colour, which is why a
+    ///     300px "MAP:" caption printed at the same weight as its value and landed on top of it,
+    ///   - every WoodPanel came out as a flat brown rectangle with no border, radius or shadow,
+    ///   - every WoodButton lost its five states, its lettering colours and its press.
+    /// <see cref="GodotTheme"/> is the missing half. It is not optional decoration: the layout
+    /// itself depends on it, because a StyleBox carries the content margins a PanelContainer
+    /// insets its child by.
     ///
-    /// ⚠️ AND A MISSING TEXTURE IS LOUD. A silently absent button is a screen that looks
-    /// deliberately empty; a magenta box is obviously a missing asset.
+    /// ⚠️ SIZE FLAGS ARE LAYOUT, NOT A HINT. Godot's 0 / 1 / 2 / 4 / 8 are SHRINK_BEGIN, FILL,
+    /// EXPAND, SHRINK_CENTER and SHRINK_END, and a container reads them per axis. Treating every
+    /// child as "fill" collapses a row of mixed children onto one another.
+    ///
+    /// ⚠️ INSTANCED SUB-SCENES ARE EXPANDED FOR REAL, RECURSIVELY. `ArrowButton.tscn` is
+    /// instanced ten times with per-instance overrides, and MainMenu instances the whole
+    /// SettingsPanel, Tutorial and Credits scenes as hidden children. An earlier version turned
+    /// every instance into a single Image, which is why the settings overlay had to be
+    /// hand-drawn in code and looked nothing like the game's.
     /// </summary>
     public static class TscnUiImporter
     {
@@ -46,9 +60,14 @@ namespace TumbangPreso.EditorTools.MapKit
         private static readonly StringBuilder Report = new StringBuilder();
         private static Font _font;
 
+        /// <summary>Parsed `.tscn` files, so an instanced sub-scene is read once per run.</summary>
+        private static readonly Dictionary<string, TscnUi.Scene> SceneCache =
+            new Dictionary<string, TscnUi.Scene>();
+
         private static bool Execute()
         {
             Report.Clear();
+            SceneCache.Clear();
             Report.AppendLine("UI IMPORT (Godot .tscn -> Unity scenes)");
             Report.AppendLine();
 
@@ -85,6 +104,11 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 "ArrowButton", "PremiseIcon", "YouCard", "RoleSwapCard", "OffscreenIndicators",
                 "DebugBar",
+                // ⚠️ AND THESE THREE ARE OVERLAYS. They are instanced into MainMenu as hidden
+                // children and opened in place, exactly as `main_menu.gd` does it. Converting
+                // them as standalone scenes as well is how a build ends up with two settings
+                // panels, one of which nothing can reach.
+                "SettingsPanel", "Tutorial", "CreditsPanel", "CharacterSelect",
             };
 
             foreach (var path in Directory.GetFiles(SourceDir, "*.tscn"))
@@ -98,7 +122,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 }
                 catch (Exception e)
                 {
-                    Report.AppendLine($"FAIL {name}: {e.Message}");
+                    Report.AppendLine($"FAIL {name}: {e.Message}\n{e.StackTrace}");
                     ok = false;
                 }
             }
@@ -123,11 +147,25 @@ namespace TumbangPreso.EditorTools.MapKit
             Debug.Log(Report.ToString());
         }
 
+        private static TscnUi.Scene Load(string name)
+        {
+            if (SceneCache.TryGetValue(name, out var cached)) return cached;
+
+            string path = $"{SourceDir}/{name}.tscn";
+            if (!File.Exists(path)) return null;
+
+            var scene = TscnUi.Parse(File.ReadAllLines(path));
+            SceneCache[name] = scene;
+            return scene;
+        }
+
         // -------------------------------------------------------------------
 
         private static bool ImportScreen(string path, string screenName)
         {
             var scene = TscnUi.Parse(File.ReadAllLines(path));
+            SceneCache[screenName] = scene;
+
             Report.AppendLine($"-- {screenName} --");
             Report.AppendLine($"   {scene.Ext.Count} ext, {scene.Sub.Count} sub, {scene.Nodes.Count} nodes");
 
@@ -140,10 +178,6 @@ namespace TumbangPreso.EditorTools.MapKit
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = Color.black;
 
-            // ⚠️ THE LISTENER LIVES ON THE SERVICES OBJECT, not here, so it survives scene
-            // changes. A second listener in a scene produces a warning and unpredictable
-            // volume, which is worse than the silence it looks like it is fixing.
-
             var canvasGo = new GameObject($"{screenName}Canvas");
             var canvas = canvasGo.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -152,57 +186,25 @@ namespace TumbangPreso.EditorTools.MapKit
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = Reference;
 
-            // ⚠️ MATCH ON HEIGHT. The Godot layout is authored against a fixed 1920x1080 and
-            // its menus are anchored from the left edge; matching on width instead crops the
-            // arrow buttons off the side on anything wider than 16:9.
+            // ⚠️ MATCH ON HEIGHT. The Godot layout is authored against a fixed 1920x1080 and its
+            // menus are anchored from the left edge; matching on width instead crops the arrow
+            // buttons off the side on anything wider than 16:9.
             scaler.matchWidthOrHeight = 1.0f;
 
             canvasGo.AddComponent<GraphicRaycaster>();
             EnsureEventSystem();
 
-            var byPath = new Dictionary<string, Transform> { { ".", canvasGo.transform } };
-            int built = 0, missing = 0;
+            var state = new BuildState { Canvas = canvasGo.transform };
+            state.ByPath["."] = canvasGo.transform;
 
-            foreach (var n in scene.Nodes)
-            {
-                if (n.Parent == null)
-                {
-                    // The root Control becomes the canvas itself.
-                    byPath["."] = canvasGo.transform;
-                    continue;
-                }
+            BuildNodes(scene, state, ".", canvasGo.transform, 0);
 
-                var go = BuildNode(n, scene, ref missing);
-                built++;
+            Report.AppendLine($"   built {state.Built} nodes, {state.Missing} missing textures");
 
-                Transform parent = byPath.TryGetValue(n.Parent, out var p) ? p : canvasGo.transform;
-                go.transform.SetParent(parent, worldPositionStays: false);
-
-                // ⚠️⚠️ A CHILD OF A LAYOUT GROUP MUST NOT GET GODOT'S ANCHORS. Godot containers
-                // compute their children's positions at runtime and write nothing useful into
-                // the .tscn for them, so applying those empty offsets pins every child to the
-                // same corner AND fights the Unity layout group that is trying to place it.
-                // The result is a readable-looking pile of overlapping labels, which is exactly
-                // what the first conversion produced.
-                bool parentLays = parent != null && parent.GetComponent<LayoutGroup>() != null;
-
-                if (parentLays) ApplyLayoutElement(go, n);
-                else TscnUi.ApplyControlRect(go.GetComponent<RectTransform>(), n);
-
-                // ⚠️⚠️ RESPECT `visible = false`. Several screens carry a hidden duplicate of a
-                // control that the script swaps in for a different state, and converting them
-                // all as visible stacks two identical buttons on top of each other. That is
-                // what put two START MATCH labels on the setup screen, and it is invisible in
-                // the import log because both converted perfectly.
-                if (n.Props.TryGetValue("visible", out var vis) && vis.Trim() == "false")
-                    go.SetActive(false);
-
-                byPath[n.PathKey] = go.transform;
-            }
-
-            Report.AppendLine($"   built {built} nodes, {missing} missing textures");
-
+            FinishScrollRects(canvasGo.transform);
             AttachBehaviour(screenName, canvasGo);
+            AttachNestedPanels(state);
+            StampVersion(screenName, canvasGo.transform);
 
             string outPath = $"{OutDir}/{screenName}.unity";
             bool saved = EditorSceneManager.SaveScene(unityScene, outPath);
@@ -212,104 +214,285 @@ namespace TumbangPreso.EditorTools.MapKit
             return saved;
         }
 
+        private sealed class BuildState
+        {
+            public Transform Canvas;
+            public readonly Dictionary<string, Transform> ByPath = new Dictionary<string, Transform>();
+            public readonly Dictionary<string, TscnUi.NodeDef> DefByPath =
+                new Dictionary<string, TscnUi.NodeDef>();
+            public int Built;
+            public int Missing;
+        }
+
         /// <summary>
-        /// Sizes a laid-out child from whatever Godot recorded about its size.
-        ///
-        /// ⚠️ `custom_minimum_size` IS THE ONLY SIZE HINT A CONTAINER CHILD CARRIES. Godot's
-        /// containers derive everything else, so this is the one authored number available, and
-        /// without it every child collapses to zero and the panel renders as a thin line.
+        /// Walks one scene's node list under `rootPath`, which is "." for a screen and the
+        /// instance's own path for an inlined sub-scene.
         /// </summary>
-        private static void ApplyLayoutElement(GameObject go, TscnUi.NodeDef n)
+        private static void BuildNodes(TscnUi.Scene scene, BuildState state, string prefix,
+                                       Transform root, int depth)
+        {
+            foreach (var n in scene.Nodes)
+            {
+                if (n.Parent == null)
+                {
+                    // The scene's own root. For a screen that is the canvas; for an inlined
+                    // sub-scene it is the instance node, which already exists.
+                    continue;
+                }
+
+                string parentPath = Join(prefix, n.Parent);
+                string selfPath = Join(prefix, n.PathKey);
+
+                Transform parent = state.ByPath.TryGetValue(parentPath, out var p) ? p : root;
+
+                // ⚠️ A NODE WITH NO TYPE AND NO INSTANCE IS AN OVERRIDE OF SOMETHING THAT ALREADY
+                // EXISTS INSIDE AN INLINED SUB-SCENE, not a new node. Building it again produces
+                // a second copy of a control sitting exactly on top of the first, which is
+                // invisible in the import log because both convert perfectly.
+                if (string.IsNullOrEmpty(n.Type) && n.InstanceExtId == null &&
+                    state.ByPath.TryGetValue(selfPath, out var existing))
+                {
+                    ApplyOverrides(existing.gameObject, n, scene, state);
+                    continue;
+                }
+
+                var go = BuildNode(n, scene, state, depth);
+                state.Built++;
+
+                go.transform.SetParent(parent, worldPositionStays: false);
+
+                // ⚠️⚠️ A CHILD OF A LAYOUT GROUP MUST NOT GET GODOT'S ANCHORS. Godot containers
+                // compute their children's positions at runtime and write nothing useful into
+                // the .tscn for them, so applying those empty offsets pins every child to the
+                // same corner AND fights the Unity layout group trying to place it.
+                bool parentLays = parent != null && parent.GetComponent<LayoutGroup>() != null;
+
+                if (parentLays)
+                {
+                    var parentDef = state.DefByPath.TryGetValue(parentPath, out var pd) ? pd : null;
+                    ApplyLayoutElement(go, n, parentDef);
+                }
+                else
+                {
+                    TscnUi.ApplyControlRect(go.GetComponent<RectTransform>(), n);
+                }
+
+                // ⚠️⚠️ RESPECT `visible = false`. Several screens carry a hidden duplicate of a
+                // control that the script swaps in for a different state, and converting them
+                // all as visible stacks two identical buttons on top of each other.
+                if (n.Props.TryGetValue("visible", out var vis) && vis.Trim() == "false")
+                    go.SetActive(false);
+
+                state.ByPath[selfPath] = go.transform;
+                state.DefByPath[selfPath] = n;
+
+                // An instanced sub-scene: inline its whole tree under this node.
+                if (n.InstanceExtId != null)
+                {
+                    var parentDef = state.DefByPath.TryGetValue(parentPath, out var pdef) ? pdef : null;
+                    Inline(go, n, scene, state, selfPath, depth, parentLays, parentDef);
+                }
+            }
+        }
+
+        private static string Join(string prefix, string path)
+        {
+            if (prefix == ".") return path;
+            return path == "." ? prefix : prefix + "/" + path;
+        }
+
+        /// <summary>
+        /// Inlines an instanced sub-scene, then applies the instance's own overrides on top.
+        ///
+        /// ⚠️ THE OVERRIDES ARE THE WHOLE POINT. Every ArrowButton instance shares one scene and
+        /// differs entirely by its per-instance properties: which texture it wears, its caption,
+        /// its text colour, its slant and its indent. Inlining without them produces ten
+        /// identical blank buttons.
+        /// </summary>
+        private static void Inline(GameObject go, TscnUi.NodeDef n, TscnUi.Scene scene,
+                                   BuildState state, string selfPath, int depth, bool parentLays,
+                                   TscnUi.NodeDef parentDef)
+        {
+            if (depth > 6) return;   // a guard, not a limit any real screen approaches
+
+            if (!scene.Ext.TryGetValue(n.InstanceExtId, out var res)) return;
+
+            string subName = Path.GetFileNameWithoutExtension(res.Path);
+            var sub = Load(subName);
+
+            if (sub == null)
+            {
+                Report.AppendLine($"      MISSING sub-scene: {res.Path}");
+                return;
+            }
+
+            // The sub-scene's root properties apply to the instance node itself.
+            var subRoot = sub.Nodes.Count > 0 && sub.Nodes[0].Parent == null ? sub.Nodes[0] : null;
+
+            if (subRoot != null)
+            {
+                ConfigureFromDef(go, subRoot, sub, state);
+
+                // ⚠️⚠️ AN INSTANCE INHERITS THE SUB-SCENE ROOT'S OWN LAYOUT, and forgetting that
+                // collapses it to a zero-size box in the top-left corner. `MainMenu.tscn`
+                // instances SettingsPanel with nothing but `visible = false`; every anchor it
+                // has lives in `SettingsPanel.tscn`'s root, which says full-rect. Reading only
+                // the instance line gave the settings overlay a rect of nothing, so its card
+                // hung off the left edge of the screen with the title menu showing through.
+                //
+                // The instance's own properties still win where it states them: every
+                // ArrowButton places itself with explicit offsets over the sub-scene's.
+                var merged = new TscnUi.NodeDef { Name = n.Name, Type = subRoot.Type };
+
+                foreach (var pair in subRoot.Props) merged.Props[pair.Key] = pair.Value;
+                foreach (var pair in n.Props) merged.Props[pair.Key] = pair.Value;
+
+                if (!parentLays)
+                    TscnUi.ApplyControlRect(go.GetComponent<RectTransform>(), merged);
+                else
+                    ApplyLayoutElement(go, merged, parentDef);
+            }
+
+            BuildNodes(sub, state, selfPath, go.transform, depth + 1);
+
+            // ArrowButton is the one sub-scene with a script whose exports are the instance's
+            // whole appearance, so it gets its own pass.
+            if (subName == "ArrowButton") ConfigureArrowButton(go, n, scene, state);
+        }
+
+        private static void ApplyOverrides(GameObject go, TscnUi.NodeDef n, TscnUi.Scene scene,
+                                           BuildState state)
+        {
+            var text = go.GetComponent<Text>();
+            if (text != null)
+            {
+                string content = TscnUi.Str(n, "text");
+                if (content != null) text.text = content;
+            }
+
+            if (n.Props.TryGetValue("visible", out var vis) && vis.Trim() == "false")
+                go.SetActive(false);
+        }
+
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// Sizes a laid-out child from Godot's minimum size and its size flags.
+        ///
+        /// ⚠️⚠️ SIZE FLAGS ARE READ PER AXIS AND THE MEANING DEPENDS ON THE PARENT. Along the
+        /// container's own axis, only EXPAND (bit 2) matters: it is what claims a share of the
+        /// leftover space. Across it, FILL (bit 1) stretches the child to the container's width
+        /// and the SHRINK values (0, 4, 8) leave it at its minimum. Treating everything as fill
+        /// is what put the left and right columns of the setup screen on top of each other.
+        ///
+        /// ⚠️ `custom_minimum_size` IS A MINIMUM, NOT A SIZE. Setting it as the preferred size
+        /// and stopping there caps a control that was meant to grow with its text.
+        /// </summary>
+        private static void ApplyLayoutElement(GameObject go, TscnUi.NodeDef n,
+                                               TscnUi.NodeDef parent)
         {
             var el = go.GetComponent<LayoutElement>();
             if (el == null) el = go.AddComponent<LayoutElement>();
 
-            Vector2 min = Vector2.zero;
-            if (n.Props.TryGetValue("custom_minimum_size", out var raw))
-            {
-                var m = System.Text.RegularExpressions.Regex.Match(raw, @"Vector2\(([^)]*)\)");
-                if (m.Success)
-                {
-                    var parts = m.Groups[1].Value.Split(',');
-                    if (parts.Length >= 2) min = new Vector2(TscnUi.F(parts[0]), TscnUi.F(parts[1]));
-                }
-            }
+            bool parentIsRow = parent != null && parent.Type == "HBoxContainer";
 
-            // Fall back to the authored offsets, which containers still carry for fixed-size
-            // leaves such as the selector boxes and the arrow buttons.
-            float w = min.x > 0.0f ? min.x
-                : Mathf.Abs(TscnUi.Prop(n, "offset_right") - TscnUi.Prop(n, "offset_left"));
-            float h = min.y > 0.0f ? min.y
-                : Mathf.Abs(TscnUi.Prop(n, "offset_bottom") - TscnUi.Prop(n, "offset_top"));
+            Vector2 min = MinimumSize(n);
 
-            if (w > 0.0f) el.preferredWidth = w;
-            if (h > 0.0f) el.preferredHeight = h;
+            // Fixed-size leaves inside a container still carry their authored offsets.
+            float authoredW = Mathf.Abs(TscnUi.Prop(n, "offset_right") - TscnUi.Prop(n, "offset_left"));
+            float authoredH = Mathf.Abs(TscnUi.Prop(n, "offset_bottom") - TscnUi.Prop(n, "offset_top"));
 
-            // ⚠️ A LABEL WITH NO AUTHORED HEIGHT STILL NEEDS ONE, or the row it sits in has zero
-            // height and the whole column above it silently disappears.
-            if (h <= 0.0f && go.GetComponent<Text>() != null)
-                el.preferredHeight = go.GetComponent<Text>().fontSize * 1.6f;
+            float w = min.x > 0.0f ? min.x : authoredW;
+            float h = min.y > 0.0f ? min.y : authoredH;
 
-            // ⚠️⚠️ size_flags IS HOW GODOT SPLITS A ROW, AND IGNORING IT COLLAPSES THE LAYOUT.
-            // Bit 1 (value 1) is FILL and bit 2 (value 2) is EXPAND, so the common `3` means
-            // "take a share of the leftover space". The setup screen's two columns are both 3;
-            // without it they fall back to a preferred width of zero and stack on top of each
-            // other, which is exactly how the left and right panels ended up overlapping.
             int hFlags = (int)TscnUi.Prop(n, "size_flags_horizontal", 1.0f);
             int vFlags = (int)TscnUi.Prop(n, "size_flags_vertical", 1.0f);
 
+            float ratio = Mathf.Max(1.0f, TscnUi.Prop(n, "size_flags_stretch_ratio", 1.0f));
+
+            const int Fill = 1;
             const int Expand = 2;
 
-            if ((hFlags & Expand) != 0)
-            {
-                el.flexibleWidth = Mathf.Max(1.0f, TscnUi.Prop(n, "size_flags_stretch_ratio", 1.0f));
-                if (w <= 0.0f) el.preferredWidth = -1.0f;
-            }
+            // ⚠️ A "FIT" PARENT FILLS ITS CHILD REGARDLESS OF FLAGS. A PanelContainer or a
+            // MarginContainer in Godot sizes its single child to itself minus its margins; the
+            // size flags are a BoxContainer's language and do not apply. Reading the flags here
+            // instead left the settings card's contents at their own preferred size, floating in
+            // the middle of a panel they were supposed to line.
+            bool fitParent = parent != null &&
+                             (parent.Type == "PanelContainer" || parent.Type == "MarginContainer" ||
+                              parent.Type == "AspectRatioContainer");
 
-            if ((vFlags & Expand) != 0)
-            {
-                el.flexibleHeight = Mathf.Max(1.0f, TscnUi.Prop(n, "size_flags_stretch_ratio", 1.0f));
-                if (h <= 0.0f) el.preferredHeight = -1.0f;
-            }
+            bool hMain = parentIsRow;
+            bool hGrows = fitParent || (hMain ? (hFlags & Expand) != 0 : (hFlags & Fill) != 0);
 
-            // ⚠️⚠️ A CHILD WITH NO SIZE HINT AT ALL COLLAPSES TO ZERO AND STACKS AT THE EDGE.
-            // Godot sizes a Label from its text and a container from its contents, neither of
-            // which is written into the scene. Under a Unity layout group that means width
-            // zero, so a row's caption and its selector land on exactly the same pixel and
-            // overlap perfectly, which is what "MAP:" over "ESKINITA" was.
-            if (el.preferredWidth <= 0.0f && el.flexibleWidth <= 0.0f)
-            {
-                var text = go.GetComponent<Text>();
+            bool vMain = !parentIsRow;
+            bool vGrows = fitParent || (vMain ? (vFlags & Expand) != 0 : (vFlags & Fill) != 0);
 
-                if (text != null)
+            if (w > 0.0f) el.minWidth = w;
+            if (h > 0.0f) el.minHeight = h;
+
+            // ⚠️⚠️ FLEXIBLE IS SET EXPLICITLY IN BOTH DIRECTIONS, INCLUDING TO ZERO, AND THAT IS
+            // THE WHOLE REASON THE SETTINGS BUTTONS WERE 350 PIXELS TALL. Left unset it is -1,
+            // which means "no opinion", and Unity then asks the node's own layout group — which
+            // reports a flexible size because ITS children asked to expand across it. A row of
+            // three buttons that each fill the row's height therefore demanded every spare pixel
+            // in the card. In Godot, FILL across a row means "match the row", never "make the
+            // row taller", and only EXPAND claims space from a parent. A LayoutElement outranks a
+            // layout group, so writing the zero is what says that.
+            el.flexibleWidth = hGrows ? ratio : 0.0f;
+            el.flexibleHeight = vGrows ? ratio : 0.0f;
+
+            if (!hGrows && w > 0.0f) el.preferredWidth = w;
+            if (!vGrows && h > 0.0f) el.preferredHeight = h;
+
+            // ⚠️ A CONTROL WHOSE ART IS DRAWN BY A CHILD STILL NEEDS A HEIGHT. A CheckBox holds
+            // its box and its lettering as children, so the node itself measures as nothing and
+            // the rows above and below it close over the top of it. Godot derives these from the
+            // theme's own minimum sizes; there is no equivalent to read here, so the floors are
+            // the sizes the widgets are actually drawn at.
+            if (h <= 0.0f)
+            {
+                float floor = n.Type == "CheckBox" ? 34.0f
+                            : n.Type == "LineEdit" ? 46.0f
+                            : n.Type == "HSlider" ? 34.0f
+                            : 0.0f;
+
+                if (floor > 0.0f)
                 {
-                    // ⚠️ A ContentSizeFitter, NOT Text.preferredWidth. That property is zero at
-                    // import time because the Text has never been through a layout pass, so
-                    // reading it here silently assigns every label a width of nothing and they
-                    // all pile up on the left edge. A fitter measures at runtime, when the font
-                    // actually has metrics.
-                    var fitter = go.GetComponent<ContentSizeFitter>();
-                    if (fitter == null) fitter = go.AddComponent<ContentSizeFitter>();
-
-                    fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-                    fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-                }
-                else
-                {
-                    el.flexibleWidth = 1.0f;
+                    el.minHeight = Mathf.Max(el.minHeight, floor);
+                    if (!vGrows) el.preferredHeight = floor;
                 }
             }
 
-            // ⚠️ A CONTAINER'S HEIGHT COMES FROM ITS TALLEST CHILD, and Godot never writes that
-            // down because it computes it. Without a floor here a row is zero-high and
-            // everything inside it lands on one line. 84 is the authored height of the selector
-            // boxes, which is what actually sets the row height on this screen.
-            if (el.preferredHeight <= 0.0f && el.flexibleHeight <= 0.0f)
-            {
-                bool isRow = n.Type == "HBoxContainer" || n.Type == "VBoxContainer";
-                if (isRow) el.minHeight = 84.0f;
-                else if (go.GetComponent<Text>() == null) el.flexibleHeight = 1.0f;
-            }
+            // ⚠️ A LABEL SIZES ITSELF FROM ITS TEXT IN BOTH ENGINES, and Unity's Text already
+            // reports that through ILayoutElement. Overriding it with a number would cap a
+            // caption at whatever the .tscn happened to record, so the override is left off and
+            // only a floor is set: a row whose only child is an unwrapped label still needs a
+            // height on the very first layout pass, before the font has metrics.
+            var text = go.GetComponent<Text>();
+            if (text != null && h <= 0.0f)
+                el.minHeight = Mathf.Max(el.minHeight, text.fontSize * 1.35f);
+
+            // ⚠️ A CONTAINER'S HEIGHT COMES FROM ITS CONTENTS and Godot never writes it down,
+            // but a Unity layout group reports it through ILayoutElement, so nothing needs
+            // inventing here. Only a bare Control (a spacer, a clipping box) has neither.
+            bool bare = go.GetComponent<LayoutGroup>() == null && text == null &&
+                        go.GetComponent<Image>() == null && go.GetComponent<RawImage>() == null;
+
+            if (bare && h <= 0.0f && !vGrows) el.minHeight = Mathf.Max(el.minHeight, 1.0f);
+        }
+
+        private static Vector2 MinimumSize(TscnUi.NodeDef n)
+        {
+            if (!n.Props.TryGetValue("custom_minimum_size", out var raw)) return Vector2.zero;
+
+            var m = Regex.Match(raw, @"Vector2\(([^)]*)\)");
+            if (!m.Success) return Vector2.zero;
+
+            var parts = m.Groups[1].Value.Split(',');
+            return parts.Length >= 2
+                ? new Vector2(TscnUi.F(parts[0]), TscnUi.F(parts[1]))
+                : Vector2.zero;
         }
 
         private static void EnsureEventSystem()
@@ -324,23 +507,27 @@ namespace TumbangPreso.EditorTools.MapKit
 
         // -------------------------------------------------------------------
 
-        private static GameObject BuildNode(TscnUi.NodeDef n, TscnUi.Scene scene, ref int missing)
+        private static GameObject BuildNode(TscnUi.NodeDef n, TscnUi.Scene scene, BuildState state,
+                                            int depth)
         {
             var go = new GameObject(n.Name);
             go.AddComponent<RectTransform>();
 
-            // An instanced sub-scene: ArrowButton and friends.
-            if (n.InstanceExtId != null && scene.Ext.TryGetValue(n.InstanceExtId, out var inst))
-            {
-                BuildInstance(go, n, inst, scene, ref missing);
-                return go;
-            }
+            ConfigureFromDef(go, n, scene, state);
+            return go;
+        }
+
+        /// <summary>Builds the components a Godot node type needs, and styles them from the theme.</summary>
+        private static void ConfigureFromDef(GameObject go, TscnUi.NodeDef n, TscnUi.Scene scene,
+                                             BuildState state)
+        {
+            string variation = Variation(n);
 
             switch (n.Type)
             {
                 case "ColorRect":
                     {
-                        var img = go.AddComponent<Image>();
+                        var img = Ensure<Image>(go);
                         img.color = TscnUi.ParseColor(
                             n.Props.TryGetValue("color", out var c) ? c : null, Color.white);
                         img.raycastTarget = false;
@@ -348,187 +535,161 @@ namespace TumbangPreso.EditorTools.MapKit
                     }
 
                 case "TextureRect":
+                    BuildTextureRect(go, n, scene, state);
+                    break;
+
+                // ⚠️ A SubViewport IS A LIVE 3D RENDER, NOT A SPRITE. The setup screen shows the
+                // chosen map and the character select spins the actual model. The surface is
+                // built here and the camera is wired at runtime by the screen's behaviour.
+                case "SubViewportContainer":
                     {
-                        // ⚠️⚠️ NO TEXTURE MEANS NO IMAGE, NOT A MAGENTA ONE. A TextureRect whose
-                        // texture is assigned in code (a map preview, a character render, a
-                        // gradient scrim built at runtime) has no `texture` line in the .tscn at
-                        // all. Marking those magenta filled the entire setup screen with a
-                        // full-bleed pink rect that hid every control behind it. Only a texture
-                        // that was REFERENCED and failed to load deserves the marker.
-                        if (!n.Props.ContainsKey("texture")) break;
-
-                        // ⚠️⚠️ A GENERATED TEXTURE IS NOT A MISSING ONE. The scrim that darkens
-                        // the backdrop behind every panel is a GradientTexture2D built in the
-                        // scene, so it is a SubResource with no file behind it. Treating it as
-                        // a failed load painted a full-bleed magenta rect over the entire setup
-                        // screen and hid every control on it.
-                        if (TscnUi.SubId(n.Props["texture"]) != null)
-                        {
-                            var scrim = go.AddComponent<Image>();
-                            scrim.color = GradientTint(n, scene);
-                            scrim.raycastTarget = false;
-                            break;
-                        }
-
-                        var img = go.AddComponent<Image>();
-                        img.sprite = LoadSprite(n, scene, ref missing);
-                        img.color = img.sprite != null ? Color.white : Color.magenta;
-                        img.raycastTarget = false;
-
-                        // Godot stretch_mode 6 is "keep aspect covered"; 5 is "keep aspect fit".
-                        int stretch = (int)TscnUi.Prop(n, "stretch_mode", 0.0f);
-                        img.preserveAspect = stretch == 5;
-                        img.type = Image.Type.Simple;
+                        var raw = Ensure<RawImage>(go);
+                        raw.color = Color.white;
+                        raw.raycastTarget = false;
+                        go.AddComponent<MapPreviewSurface>();
                         break;
                     }
 
-                // ⚠️ A SubViewport IS A LIVE 3D RENDER, NOT A SPRITE. The setup screen shows the
-                // chosen map and the character select spins the actual model. Those need a
-                // camera rendering to a texture, which is wired at runtime by the screen's
-                // behaviour; here the node is a placeholder that must stay INVISIBLE rather
-                // than painting over the panel beside it.
-                case "SubViewportContainer":
                 case "SubViewport":
+                case "Camera3D":
                 case "ViewportTexture":
                     break;
 
                 case "Label":
-                    BuildLabel(go, n);
+                    BuildLabel(go, n, variation);
                     break;
 
                 case "Button":
+                    BuildButton(go, n, scene, state, variation, null);
+                    break;
+
                 case "TextureButton":
+                    BuildButton(go, n, scene, state, variation, "texture_normal");
+                    break;
+
+                case "CheckBox":
+                    BuildCheckBox(go, n, variation);
+                    break;
+
+                case "LineEdit":
+                    BuildLineEdit(go, n);
+                    break;
+
+                case "HSlider":
+                    BuildSlider(go, n);
+                    break;
+
+                case "Panel":
                     {
-                        var img = go.AddComponent<Image>();
-                        var sprite = LoadSprite(n, scene, ref missing);
-
-                        img.sprite = sprite;
-                        img.color = sprite != null ? Color.white : UiTheme.WoodDeep;
-                        img.type = Image.Type.Simple;
-
-                        var btn = go.AddComponent<Button>();
-                        btn.targetGraphic = img;
-
-                        string caption = TscnUi.Str(n, "text");
-                        if (!string.IsNullOrEmpty(caption))
-                        {
-                            var labelGo = new GameObject("Label");
-                            labelGo.AddComponent<RectTransform>();
-                            labelGo.transform.SetParent(go.transform, false);
-
-                            var t = MakeText(labelGo, caption, 28, UiTheme.Cream,
-                                             TextAnchor.MiddleCenter);
-                            t.raycastTarget = false;
-                            TscnUi.ApplyControlRect(t.rectTransform, new TscnUi.NodeDef
-                            {
-                                Props = { { "anchor_right", "1.0" }, { "anchor_bottom", "1.0" } }
-                            });
-                        }
+                        var img = Ensure<Image>(go);
+                        img.raycastTarget = false;
+                        ApplyPanelStyle(go, n, variation, layout: false);
                         break;
                     }
 
-                case "Panel":
                 case "NinePatchRect":
                     {
-                        var img = go.AddComponent<Image>();
-                        img.sprite = LoadSprite(n, scene, ref missing);
+                        var img = Ensure<Image>(go);
+                        img.sprite = LoadSprite(n, scene, state, "texture");
+                        img.type = Image.Type.Sliced;
                         img.color = img.sprite != null ? Color.white : UiTheme.WoodDeep;
                         break;
                     }
 
                 // ⚠️⚠️ A PanelContainer IS A CONTAINER, NOT A BACKGROUND. It was treated as a
-                // plain image, so it never sized its child, and everything below it in the tree
-                // collapsed to zero: the margin, the rows, and every caption and selector
-                // inside them, which is why they all landed on the same pixel. The Godot name
-                // says "Panel" first and that is the trap; the word that matters is Container.
+                // plain image, so it never sized its child and everything below it collapsed to
+                // zero. The Godot name says "Panel" first and that is the trap; the word that
+                // matters is Container.
                 case "PanelContainer":
                     {
-                        var img = go.AddComponent<Image>();
-                        img.sprite = LoadSprite(n, scene, ref missing);
-                        img.color = img.sprite != null ? Color.white : UiTheme.WoodDeep;
-
-                        var g = go.AddComponent<VerticalLayoutGroup>();
-                        g.childControlHeight = true;
-                        g.childControlWidth = true;
-                        g.childForceExpandHeight = true;
-                        g.childForceExpandWidth = true;
+                        Ensure<Image>(go);
+                        FitContainer(go);
+                        ApplyPanelStyle(go, n, variation, layout: true);
                         break;
                     }
 
-                // Same trap, same fix: these all lay their children out in Godot.
                 case "ScrollContainer":
+                    {
+                        var scroll = go.AddComponent<ScrollRect>();
+                        scroll.horizontal = false;
+                        scroll.vertical = true;
+                        scroll.movementType = ScrollRect.MovementType.Clamped;
+                        scroll.scrollSensitivity = 32.0f;
+
+                        // ⚠️ THE MASK GOES ON THE SCROLL NODE ITSELF rather than on a viewport
+                        // child, because Godot's ScrollContainer has exactly one child and
+                        // inserting a wrapper here would break every path a ported script uses
+                        // to reach the content.
+                        go.AddComponent<RectMask2D>();
+                        break;
+                    }
+
                 case "CenterContainer":
-                case "AspectRatioContainer":
                     {
                         var g = go.AddComponent<VerticalLayoutGroup>();
                         g.childControlHeight = true;
                         g.childControlWidth = true;
-                        g.childForceExpandHeight = true;
-                        g.childForceExpandWidth = true;
+                        g.childForceExpandHeight = false;
+                        g.childForceExpandWidth = false;
+                        g.childAlignment = TextAnchor.MiddleCenter;
                         break;
                     }
+
+                case "AspectRatioContainer":
+                    FitContainer(go);
+                    break;
 
                 case "ProgressBar":
                 case "TextureProgressBar":
                     {
-                        var img = go.AddComponent<Image>();
-                        img.sprite = LoadSprite(n, scene, ref missing);
-                        img.color = img.sprite != null ? Color.white : UiTheme.Cream;
+                        var img = Ensure<Image>(go);
+                        img.sprite = LoadSprite(n, scene, state, "texture_progress")
+                                     ?? GodotTheme.CardBox(UiTheme.Card, UiTheme.Ink);
                         img.type = Image.Type.Filled;
                         img.fillMethod = Image.FillMethod.Horizontal;
+                        img.raycastTarget = false;
                         break;
                     }
 
-                // ⚠️⚠️ GODOT CONTAINERS POSITION THEIR CHILDREN AT RUNTIME, AND THAT IS WHY THE
-                // CHILDREN COLLAPSED. A VBoxContainer's children carry no useful offsets in the
-                // .tscn because the container computes them, so converting the container as a
-                // plain rect stacks every child at the same corner. Unity's layout groups do
-                // the same job and must be added, or the panel arrives as a pile of overlapping
-                // labels in the top-left.
+                // ⚠️⚠️ GODOT CONTAINERS POSITION THEIR CHILDREN AT RUNTIME. A VBoxContainer's
+                // children carry no useful offsets in the .tscn because the container computes
+                // them, so converting the container as a plain rect stacks every child at the
+                // same corner.
                 case "VBoxContainer":
                     {
                         var v = go.AddComponent<VerticalLayoutGroup>();
 
-                        // ⚠️⚠️ childControlHeight MUST BE ON, and this cost several passes to
-                        // find. With it off the group does not size its children vertically, so
-                        // every row kept a height of ZERO. A row with no height collapses its
-                        // own horizontal group, which put each caption exactly on top of its
-                        // value: "MAP:" printed over "ESKINITA" and read as a font bug rather
-                        // than a layout one.
+                        // ⚠️ childControlHeight MUST BE ON. With it off the group does not size
+                        // its children vertically, so every row kept a height of ZERO, which
+                        // collapsed its own horizontal group and printed "MAP:" over "ESKINITA".
                         v.childControlHeight = true;
                         v.childControlWidth = true;
+
+                        // ⚠️ AND FORCE-EXPAND MUST BE OFF, because per-child size flags decide
+                        // who grows. Forcing it overrides SHRINK_BEGIN on the panels and makes
+                        // every child the full width of the column.
                         v.childForceExpandHeight = false;
-                        v.childForceExpandWidth = true;
-                        v.spacing = TscnUi.Prop(n, "theme_override_constants/separation", 8.0f);
+                        v.childForceExpandWidth = false;
+                        v.childAlignment = AlignmentOf(n, vertical: true);
+                        v.spacing = TscnUi.Prop(n, "theme_override_constants/separation", 4.0f);
                         break;
                     }
 
                 case "HBoxContainer":
                     {
                         var h = go.AddComponent<HorizontalLayoutGroup>();
-
-                        // ⚠️ childControlWidth MUST BE ON so the group honours flexibleWidth.
-                        // With it off, a child that asked to expand is drawn at its own size
-                        // and the row does not divide at all.
                         h.childControlHeight = true;
                         h.childControlWidth = true;
-                        h.childForceExpandHeight = true;
+                        h.childForceExpandHeight = false;
                         h.childForceExpandWidth = false;
-                        h.childAlignment = TextAnchor.MiddleLeft;
-                        h.spacing = TscnUi.Prop(n, "theme_override_constants/separation", 8.0f);
+                        h.childAlignment = AlignmentOf(n, vertical: false);
+                        h.spacing = TscnUi.Prop(n, "theme_override_constants/separation", 4.0f);
                         break;
                     }
 
                 case "MarginContainer":
                     {
-                        var pad = go.AddComponent<LayoutElement>();
-                        pad.ignoreLayout = false;
-
-                        var group = go.AddComponent<VerticalLayoutGroup>();
-                        group.childControlHeight = true;
-                        group.childControlWidth = true;
-                        group.childForceExpandHeight = true;
-                        group.childForceExpandWidth = true;
+                        var group = FitContainer(go);
                         group.padding = new RectOffset(
                             (int)TscnUi.Prop(n, "theme_override_constants/margin_left", 0.0f),
                             (int)TscnUi.Prop(n, "theme_override_constants/margin_right", 0.0f),
@@ -541,153 +702,636 @@ namespace TumbangPreso.EditorTools.MapKit
                 default:
                     break;
             }
+        }
 
-            return go;
+        private static T Ensure<T>(GameObject go) where T : Component
+        {
+            var c = go.GetComponent<T>();
+            return c != null ? c : go.AddComponent<T>();
         }
 
         /// <summary>
-        /// Inlines an instanced sub-scene, then applies the instance's overrides.
+        /// A Godot "fit" container: PanelContainer, MarginContainer and friends, which size
+        /// themselves to their single child rather than laying a run of them out.
         ///
-        /// ⚠️ THE OVERRIDES ARE THE WHOLE POINT. Every ArrowButton instance shares one scene and
-        /// differs entirely by its per-instance properties: which texture it wears, its caption,
-        /// its text colour, and the arrow geometry. Inlining without them produces ten identical
-        /// blank buttons.
+        /// ⚠️⚠️ `childForceExpand` MUST BE OFF AND THAT IS NOT A DETAIL. A Unity layout group
+        /// with it ON reports a flexible size of at least 1 to ITS OWN parent, so the flag does
+        /// not merely stretch the children — it makes the container itself demand every spare
+        /// pixel above it. The setup screen's seat panel was a wood slab running the full height
+        /// of the column with four rows at the top of it and 350 px of empty grain underneath,
+        /// where the Godot original wraps tightly around the rows. Nothing in the panel asked to
+        /// expand; the container asked on its behalf.
+        ///
+        /// ⚠️ AND TURNING IT OFF DOES NOT BREAK THE PANELS THAT DO NEED TO FILL. A child that
+        /// genuinely reports flexible height — the settings list's ScrollContainer carries
+        /// `size_flags_vertical = 3` — still receives the surplus, because forceExpand only
+        /// imposes a FLOOR of 1 on every child rather than being the mechanism by which surplus
+        /// is handed out.
         /// </summary>
-        private static void BuildInstance(GameObject go, TscnUi.NodeDef n, TscnUi.ExtRes inst,
-                                          TscnUi.Scene scene, ref int missing)
+        private static VerticalLayoutGroup FitContainer(GameObject go)
         {
-            var img = go.AddComponent<Image>();
-            var sprite = LoadSprite(n, scene, ref missing);
-
-            img.sprite = sprite;
-            img.color = sprite != null ? Color.white : Color.magenta;
-            img.type = Image.Type.Simple;
-            img.preserveAspect = true;
-
-            var btn = go.AddComponent<Button>();
-            btn.targetGraphic = img;
-
-            var colors = btn.colors;
-            colors.highlightedColor = new Color(1.15f, 1.15f, 1.15f, 1.0f);
-            colors.pressedColor = new Color(0.85f, 0.85f, 0.85f, 1.0f);
-            colors.fadeDuration = 0.06f;
-            btn.colors = colors;
-
-            // ⚠️ ONLY THE NODE THAT AUTHORS THE CAPTION DRAWS IT. A primary action is often a
-            // wrapper node holding the real button, and both carrying the text is how the setup
-            // screen ended up with two overlapping START MATCH labels.
-            string caption = TscnUi.Str(n, "caption") ?? TscnUi.Str(n, "text");
-            if (string.IsNullOrEmpty(caption)) return;
-
-            var labelGo = new GameObject("Caption");
-            labelGo.AddComponent<RectTransform>();
-            labelGo.transform.SetParent(go.transform, false);
-
-            int size = (int)TscnUi.Prop(n, "label_size", 64.0f);
-            var color = TscnUi.ParseColor(
-                n.Props.TryGetValue("text_color", out var tc) ? tc : null, UiTheme.Ink);
-
-            var text = MakeText(labelGo, caption, size, color, TextAnchor.MiddleLeft);
-            text.raycastTarget = false;
-
-            // ⚠️ THE CAPTION IS INDENTED INTO THE ARROW BODY, NOT CENTRED. The button art is an
-            // arrow with a long tip, so a centred label sits in the point where there is no
-            // room for it. `text_indent` is the authored left inset and it is per-instance.
-            float indent = TscnUi.Prop(n, "text_indent", 0.0f);
-            float offsetY = TscnUi.Prop(n, "text_offset_y", 0.0f);
-
-            var rt = text.rectTransform;
-            rt.anchorMin = new Vector2(0.0f, 0.0f);
-            rt.anchorMax = new Vector2(1.0f, 1.0f);
-            rt.offsetMin = new Vector2(indent, -offsetY);
-            rt.offsetMax = new Vector2(0.0f, -offsetY);
+            var group = go.AddComponent<VerticalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = false;
+            group.childForceExpandWidth = false;
+            return group;
         }
 
-        private static void BuildLabel(GameObject go, TscnUi.NodeDef n)
+        private static string Variation(TscnUi.NodeDef n)
+        {
+            if (!n.Props.TryGetValue("theme_type_variation", out var raw)) return null;
+
+            // Recorded as `&"WoodPanel"`.
+            var m = Regex.Match(raw, "\"([^\"]+)\"");
+            return m.Success ? m.Groups[1].Value : null;
+        }
+
+        /// <summary>
+        /// Godot's BoxContainer `alignment`: 0 begin, 1 centre, 2 end. It positions the whole
+        /// run of children along the container's own axis.
+        /// </summary>
+        private static TextAnchor AlignmentOf(TscnUi.NodeDef n, bool vertical)
+        {
+            int a = (int)TscnUi.Prop(n, "alignment", 0.0f);
+
+            if (vertical)
+                return a == 1 ? TextAnchor.MiddleLeft : (a == 2 ? TextAnchor.LowerLeft : TextAnchor.UpperLeft);
+
+            // A row centres its children vertically by default, which is what Godot's FILL
+            // plus SHRINK_CENTER combination produces on every selector row in the game.
+            return a == 1 ? TextAnchor.MiddleCenter : (a == 2 ? TextAnchor.MiddleRight : TextAnchor.MiddleLeft);
+        }
+
+        private static void ApplyPanelStyle(GameObject go, TscnUi.NodeDef n, string variation,
+                                            bool layout)
+        {
+            // A scene may still override the whole StyleBox by hand, in which case the flat
+            // colour it names wins over the variation.
+            if (n.Props.TryGetValue("theme_override_styles/panel", out var raw))
+            {
+                string id = TscnUi.SubId(raw);
+                var img = go.GetComponent<Image>();
+
+                if (id != null && img != null)
+                {
+                    img.sprite = null;
+                    img.color = new Color(0, 0, 0, 1);
+                    return;
+                }
+            }
+
+            var skin = go.AddComponent<GodotPanel>();
+            skin.Variation = variation ?? "Card";
+            skin.ApplyContentMargins = layout;
+        }
+
+        // -------------------------------------------------------------------
+
+        private static void BuildTextureRect(GameObject go, TscnUi.NodeDef n, TscnUi.Scene scene,
+                                             BuildState state)
+        {
+            // ⚠️⚠️ NO TEXTURE MEANS NO IMAGE, NOT A MAGENTA ONE. A TextureRect whose texture is
+            // assigned in code has no `texture` line in the .tscn at all, and marking those
+            // magenta filled the setup screen with a full-bleed pink rect that hid every control.
+            if (!n.Props.ContainsKey("texture")) return;
+
+            // ⚠️ A GENERATED TEXTURE IS NOT A MISSING ONE. The scrim behind every panel is a
+            // GradientTexture2D built in the scene, so it is a SubResource with no file behind
+            // it. It is rebuilt here for real rather than flattened to its first stop: the
+            // MatchSetup scrim runs dark-clear-dark across the screen, and a flat tint at 0.88
+            // alpha buries the map preview it exists to sit over.
+            if (TscnUi.SubId(n.Props["texture"]) != null)
+            {
+                var scrim = Ensure<Image>(go);
+                scrim.sprite = GradientSprite(n, scene);
+                scrim.color = Color.white;
+                scrim.raycastTarget = false;
+                scrim.type = Image.Type.Simple;
+                return;
+            }
+
+            var img = Ensure<Image>(go);
+            img.sprite = LoadSprite(n, scene, state, "texture");
+            img.color = img.sprite != null ? Color.white : Color.magenta;
+            img.raycastTarget = false;
+            img.type = Image.Type.Simple;
+
+            // Godot stretch_mode: 0 scale (distort to fit), 5 keep-aspect-centred, 6 covered.
+            int stretch = (int)TscnUi.Prop(n, "stretch_mode", 0.0f);
+
+            img.preserveAspect = stretch == 5;
+
+            if (stretch == 6 && img.sprite != null)
+            {
+                // ⚠️ "COVERED" CROPS, IT DOES NOT LETTERBOX. The menu backdrop is a photograph
+                // that must fill the screen at any aspect; preserving it inside the rect leaves
+                // navy bars down the sides of a 21:9 monitor.
+                var fitter = go.AddComponent<AspectRatioFitter>();
+                fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+                fitter.aspectRatio = img.sprite.rect.width / Mathf.Max(1.0f, img.sprite.rect.height);
+            }
+        }
+
+        private static void BuildLabel(GameObject go, TscnUi.NodeDef n, string variation)
         {
             string content = TscnUi.Str(n, "text") ?? "";
-            int size = (int)TscnUi.Prop(n, "theme_override_font_sizes/font_size", 28.0f);
 
-            var color = TscnUi.ParseColor(
-                n.Props.TryGetValue("theme_override_colors/font_color", out var fc) ? fc : null,
-                UiTheme.Cream);
+            GodotTheme.TryText(variation, out var style);
 
-            var text = MakeText(go, content, size, color, TscnUi.Align(n));
+            // A per-node override still wins over the variation, exactly as Godot resolves it.
+            int size = (int)TscnUi.Prop(n, "theme_override_font_sizes/font_size", style.Size);
+
+            var colour = n.Props.TryGetValue("theme_override_colors/font_color", out var fc)
+                ? TscnUi.ParseColor(fc, style.Colour)
+                : style.Colour;
+
+            var text = MakeText(go, content, size, colour, TscnUi.Align(n));
             text.raycastTarget = false;
 
-            // ⚠️ THE OUTLINE IS NOT DECORATION. Every label in this game sits over a photographic
-            // backdrop, and without the dark outline the cream lettering is unreadable against
-            // the bright parts of the street. Godot authors it per label; Unity needs a
-            // component.
-            int outline = (int)TscnUi.Prop(n, "theme_override_constants/outline_size", 0.0f);
+            // ⚠️ AUTOWRAP IS A LAYOUT PROPERTY, NOT A COSMETIC ONE. The map blurbs and the
+            // tutorial body are authored to wrap inside a fixed box; left overflowing they run
+            // off the side of the screen and over whatever is next to them.
+            bool wrap = (int)TscnUi.Prop(n, "autowrap_mode", 0.0f) > 0;
+            text.horizontalOverflow = wrap ? HorizontalWrapMode.Wrap : HorizontalWrapMode.Overflow;
+            text.verticalOverflow = VerticalWrapMode.Overflow;
+
+            int outline = (int)TscnUi.Prop(n, "theme_override_constants/outline_size", style.Outline);
             if (outline <= 0) return;
 
-            var oc = TscnUi.ParseColor(
-                n.Props.TryGetValue("theme_override_colors/font_outline_color", out var o) ? o : null,
-                Color.black);
+            var oc = n.Props.TryGetValue("theme_override_colors/font_outline_color", out var o)
+                ? TscnUi.ParseColor(o, style.OutlineColour)
+                : style.OutlineColour;
 
-            var shadow = go.AddComponent<Outline>();
-            shadow.effectColor = oc;
+            if (oc.a <= 0.0f) return;
 
-            // Godot's outline_size is a radius in pixels; UGUI's Outline is a corner offset, so
-            // roughly a quarter reads the same weight.
-            float d = Mathf.Max(1.0f, outline * 0.25f);
-            shadow.effectDistance = new Vector2(d, -d);
+            var ring = go.AddComponent<GodotOutline>();
+            ring.OutlineColour = oc;
+
+            // Godot's outline_size is a radius in pixels and so is this, but a Text mesh is
+            // grown by whole copies rather than by dilating the glyph, so half the radius reads
+            // as the same weight without closing up the counters at 16px.
+            ring.Radius = Mathf.Max(1.0f, outline * 0.5f);
         }
 
-        private static Text MakeText(GameObject go, string content, int size, Color color,
+        private static Text MakeText(GameObject go, string content, int size, Color colour,
                                      TextAnchor align)
         {
-            var t = go.GetComponent<Text>();
-            if (t == null) t = go.AddComponent<Text>();
+            var t = Ensure<Text>(go);
 
             t.font = _font;
             t.text = content;
             t.fontSize = Mathf.Max(1, size);
-            t.color = color;
+            t.color = colour;
             t.alignment = align;
             t.horizontalOverflow = HorizontalWrapMode.Overflow;
             t.verticalOverflow = VerticalWrapMode.Overflow;
+
+            // ⚠️⚠️ THIS ONE FLAG IS GODOT'S `BASELINE_OFFSET`. Darumadrop is a Japanese face and
+            // reserves a deep descent for kana, so its ascent:descent split is about 4:1. Both
+            // engines centre the LINE BOX rather than the ink, which leaves an all-caps Latin
+            // string sitting ~13% of the font size below the optical centre of its box. Godot
+            // corrects it globally with a FontVariation; Unity has no such knob, but
+            // `alignByGeometry` measures the glyphs instead of the metrics, which is the same
+            // correction. Without it every string in the game reads as sitting low and it gets
+            // blamed on the font.
+            t.alignByGeometry = true;
+
             return t;
         }
 
-        /// <summary>
-        /// A flat stand-in for a Godot gradient scrim.
-        ///
-        /// ⚠️ THE SCRIM IS LOAD-BEARING, NOT DECORATION. Every panel in this game sits over a
-        /// photographic backdrop, and without it the cream lettering is unreadable against the
-        /// bright half of the street. A flat tint at the gradient's own alpha reads close
-        /// enough at these sizes; a real gradient is a texture to generate later if it matters.
-        /// </summary>
-        private static Color GradientTint(TscnUi.NodeDef n, TscnUi.Scene scene)
+        private static void BuildButton(GameObject go, TscnUi.NodeDef n, TscnUi.Scene scene,
+                                        BuildState state, string variation, string textureKey)
         {
-            string id = TscnUi.SubId(n.Props["texture"]);
+            var img = Ensure<Image>(go);
+            var btn = go.AddComponent<Button>();
+            btn.targetGraphic = img;
 
-            if (id != null && scene.Sub.TryGetValue(id, out var sub) &&
-                sub.Props.TryGetValue("gradient", out var gradRef))
+            var sprite = textureKey != null ? LoadSprite(n, scene, state, textureKey) : null;
+
+            bool flat = n.Props.TryGetValue("flat", out var f) && f.Trim() == "true";
+
+            if (sprite != null)
             {
-                string gid = TscnUi.SubId(gradRef);
-                if (gid != null && scene.Sub.TryGetValue(gid, out var grad) &&
-                    grad.Props.TryGetValue("colors", out var colors))
+                // A TextureButton draws its own art and takes no StyleBox at all.
+                img.sprite = sprite;
+                img.color = Color.white;
+                img.type = Image.Type.Simple;
+                img.preserveAspect = (int)TscnUi.Prop(n, "stretch_mode", 0.0f) == 5;
+
+                go.AddComponent<TextureButtonFeedback>();
+            }
+            else if (flat)
+            {
+                // `flat = true` is the ArrowButton root: the artwork child draws everything and
+                // the Button itself is only a hit area. It still has to be raycastable.
+                img.color = new Color(0, 0, 0, 0);
+            }
+            else
+            {
+                var skin = go.AddComponent<GodotButton>();
+                skin.Variation = variation ?? "Button";
+            }
+
+            if (n.Props.TryGetValue("disabled", out var d) && d.Trim() == "true")
+                btn.interactable = false;
+
+            string caption = TscnUi.Str(n, "text");
+            if (string.IsNullOrEmpty(caption)) return;
+
+            var style = GodotTheme.ForButton(variation);
+            int size = (int)TscnUi.Prop(n, "theme_override_font_sizes/font_size", style.FontSize);
+
+            var labelGo = new GameObject("Label");
+            labelGo.AddComponent<RectTransform>();
+            labelGo.transform.SetParent(go.transform, false);
+
+            // ⚠️ A BUTTON'S `alignment` IS ITS TEXT ALIGNMENT: 0 left, 1 centre, 2 right. The
+            // seat rows on the setup screen are left-aligned on purpose so "P1 · TAYA FIRST"
+            // starts at the same x as the three below it; centring them makes four rows of
+            // different-length text zigzag down the panel.
+            int align = (int)TscnUi.Prop(n, "alignment", 1.0f);
+            var anchor = align == 0 ? TextAnchor.MiddleLeft
+                       : (align == 2 ? TextAnchor.MiddleRight : TextAnchor.MiddleCenter);
+
+            var t = MakeText(labelGo, caption, size, style.Ink, anchor);
+            t.raycastTarget = false;
+
+            var rt = t.rectTransform;
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+
+            // The StyleBox content margins, so left-aligned lettering clears the border.
+            var pad = GodotTheme.ContentMargins(style.Wood, false);
+            rt.offsetMin = new Vector2(pad.left, pad.bottom);
+            rt.offsetMax = new Vector2(-pad.right, -pad.top);
+        }
+
+        private static void BuildCheckBox(GameObject go, TscnUi.NodeDef n, string variation)
+        {
+            // Godot's CheckBox theme is a transparent box plus the tick, so only the lettering
+            // and the tick need drawing here.
+            GodotTheme.TryText(variation ?? "MenuCheckBox", out var style);
+
+            var toggle = go.AddComponent<Toggle>();
+
+            var boxGo = new GameObject("Box");
+            boxGo.AddComponent<RectTransform>();
+            boxGo.transform.SetParent(go.transform, false);
+
+            var box = boxGo.AddComponent<Image>();
+            box.sprite = GodotTheme.CardBox(UiTheme.Card, UiTheme.Ink);
+            box.type = Image.Type.Sliced;
+
+            var boxRt = box.rectTransform;
+            boxRt.anchorMin = new Vector2(0.0f, 0.5f);
+            boxRt.anchorMax = new Vector2(0.0f, 0.5f);
+            boxRt.pivot = new Vector2(0.0f, 0.5f);
+            boxRt.anchoredPosition = new Vector2(0.0f, 0.0f);
+            boxRt.sizeDelta = new Vector2(30.0f, 30.0f);
+
+            var tickGo = new GameObject("Tick");
+            tickGo.AddComponent<RectTransform>();
+            tickGo.transform.SetParent(boxGo.transform, false);
+
+            var tick = tickGo.AddComponent<Image>();
+            tick.sprite = GodotTheme.Plain(3);
+            tick.type = Image.Type.Sliced;
+            tick.color = UiTheme.Impact;
+
+            var tickRt = tick.rectTransform;
+            tickRt.anchorMin = Vector2.zero;
+            tickRt.anchorMax = Vector2.one;
+            tickRt.offsetMin = new Vector2(7.0f, 7.0f);
+            tickRt.offsetMax = new Vector2(-7.0f, -7.0f);
+
+            toggle.targetGraphic = box;
+            toggle.graphic = tick;
+            toggle.isOn = n.Props.TryGetValue("button_pressed", out var p) && p.Trim() == "true";
+
+            string caption = TscnUi.Str(n, "text");
+            if (string.IsNullOrEmpty(caption)) return;
+
+            var labelGo = new GameObject("Label");
+            labelGo.AddComponent<RectTransform>();
+            labelGo.transform.SetParent(go.transform, false);
+
+            var t = MakeText(labelGo, caption, style.Size, style.Colour, TextAnchor.MiddleLeft);
+            t.raycastTarget = false;
+
+            var rt = t.rectTransform;
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = new Vector2(42.0f, 0.0f);
+            rt.offsetMax = Vector2.zero;
+        }
+
+        private static void BuildLineEdit(GameObject go, TscnUi.NodeDef n)
+        {
+            var bg = Ensure<Image>(go);
+            bg.sprite = GodotTheme.CardBox(UiTheme.WoodDark, UiTheme.WoodEdge);
+            bg.type = Image.Type.Sliced;
+            bg.color = Color.white;
+
+            var textGo = new GameObject("Text");
+            textGo.AddComponent<RectTransform>();
+            textGo.transform.SetParent(go.transform, false);
+
+            // ⚠️ CENTRED, LIKE EVERY OTHER VALUE IN THE SETTINGS LIST. A LineEdit defaults to
+            // left-aligned while every Button under it centres its label, which put one box in a
+            // column of fourteen hard against the left edge. It was reported.
+            int align = (int)TscnUi.Prop(n, "alignment", 0.0f);
+            var anchor = align == 1 ? TextAnchor.MiddleCenter
+                       : (align == 2 ? TextAnchor.MiddleRight : TextAnchor.MiddleLeft);
+
+            var text = MakeText(textGo, "", 21, UiTheme.Cream, anchor);
+            var textRt = text.rectTransform;
+            textRt.anchorMin = Vector2.zero;
+            textRt.anchorMax = Vector2.one;
+            textRt.offsetMin = new Vector2(12.0f, 4.0f);
+            textRt.offsetMax = new Vector2(-12.0f, -4.0f);
+
+            var placeholderGo = new GameObject("Placeholder");
+            placeholderGo.AddComponent<RectTransform>();
+            placeholderGo.transform.SetParent(go.transform, false);
+
+            var placeholder = MakeText(placeholderGo, TscnUi.Str(n, "placeholder_text") ?? "",
+                                       21, UiTheme.CreamMuted, anchor);
+            var phRt = placeholder.rectTransform;
+            phRt.anchorMin = Vector2.zero;
+            phRt.anchorMax = Vector2.one;
+            phRt.offsetMin = new Vector2(12.0f, 4.0f);
+            phRt.offsetMax = new Vector2(-12.0f, -4.0f);
+
+            var field = go.AddComponent<InputField>();
+            field.textComponent = text;
+            field.placeholder = placeholder;
+            field.targetGraphic = bg;
+            field.characterLimit = (int)TscnUi.Prop(n, "max_length", 0.0f);
+            field.text = TscnUi.Str(n, "text") ?? "";
+        }
+
+        private static void BuildSlider(GameObject go, TscnUi.NodeDef n)
+        {
+            var slider = go.AddComponent<Slider>();
+
+            var bgGo = new GameObject("Background");
+            bgGo.AddComponent<RectTransform>();
+            bgGo.transform.SetParent(go.transform, false);
+
+            var bg = bgGo.AddComponent<Image>();
+            bg.sprite = GodotTheme.CardBox(UiTheme.WoodDark, UiTheme.WoodEdge);
+            bg.type = Image.Type.Sliced;
+            Band(bg.rectTransform, 14.0f);
+
+            var fillArea = new GameObject("Fill Area");
+            fillArea.AddComponent<RectTransform>();
+            fillArea.transform.SetParent(go.transform, false);
+            Band(fillArea.GetComponent<RectTransform>(), 14.0f);
+
+            var fillGo = new GameObject("Fill");
+            fillGo.AddComponent<RectTransform>();
+            fillGo.transform.SetParent(fillArea.transform, false);
+
+            var fill = fillGo.AddComponent<Image>();
+            // The grabber area takes DEFENSE in the Godot theme, which is the one blue in the
+            // palette that means something; it is the fill of a slider there and stays that here.
+            fill.sprite = GodotTheme.CardBox(UiTheme.Defense, UiTheme.Ink);
+            fill.type = Image.Type.Sliced;
+
+            var fillRt = fill.rectTransform;
+            fillRt.anchorMin = Vector2.zero;
+            fillRt.anchorMax = Vector2.one;
+            fillRt.offsetMin = Vector2.zero;
+            fillRt.offsetMax = Vector2.zero;
+
+            var handleArea = new GameObject("Handle Slide Area");
+            handleArea.AddComponent<RectTransform>();
+            handleArea.transform.SetParent(go.transform, false);
+
+            var handleAreaRt = handleArea.GetComponent<RectTransform>();
+            handleAreaRt.anchorMin = Vector2.zero;
+            handleAreaRt.anchorMax = Vector2.one;
+            handleAreaRt.offsetMin = new Vector2(11.0f, 0.0f);
+            handleAreaRt.offsetMax = new Vector2(-11.0f, 0.0f);
+
+            var handleGo = new GameObject("Handle");
+            handleGo.AddComponent<RectTransform>();
+            handleGo.transform.SetParent(handleArea.transform, false);
+
+            var handle = handleGo.AddComponent<Image>();
+            handle.sprite = GodotTheme.CardBox(UiTheme.Cream, UiTheme.Ink);
+            handle.type = Image.Type.Sliced;
+
+            var handleRt = handle.rectTransform;
+            handleRt.anchorMin = new Vector2(0.0f, 0.5f);
+            handleRt.anchorMax = new Vector2(0.0f, 0.5f);
+            handleRt.pivot = new Vector2(0.5f, 0.5f);
+            handleRt.sizeDelta = new Vector2(22.0f, 34.0f);
+
+            slider.fillRect = fillRt;
+            slider.handleRect = handleRt;
+            slider.targetGraphic = handle;
+            slider.direction = Slider.Direction.LeftToRight;
+
+            slider.minValue = TscnUi.Prop(n, "min_value", 0.0f);
+            slider.maxValue = TscnUi.Prop(n, "max_value", 1.0f);
+            slider.value = TscnUi.Prop(n, "value", slider.minValue);
+
+            float step = TscnUi.Prop(n, "step", 0.0f);
+            slider.wholeNumbers = step >= 1.0f;
+        }
+
+        /// <summary>A horizontal band centred in the control, for the slider's groove.</summary>
+        private static void Band(RectTransform rt, float height)
+        {
+            rt.anchorMin = new Vector2(0.0f, 0.5f);
+            rt.anchorMax = new Vector2(1.0f, 0.5f);
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition = Vector2.zero;
+            rt.sizeDelta = new Vector2(0.0f, height);
+        }
+
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// Applies an ArrowButton instance's exported properties to the inlined sub-scene.
+        ///
+        /// ⚠️ THE CAPTION IS A REAL LABEL, NOT THE BUTTON'S OWN TEXT, and that is authored: it
+        /// has to be rotatable so it follows the pennant's slant, which a Button's built-in text
+        /// cannot do. It is also indented into the arrow body rather than centred, because the
+        /// artwork's tip has no room for lettering.
+        /// </summary>
+        private static void ConfigureArrowButton(GameObject go, TscnUi.NodeDef n,
+                                                 TscnUi.Scene scene, BuildState state)
+        {
+            var artwork = go.transform.Find("Artwork");
+            var caption = go.transform.Find("Caption");
+
+            if (artwork != null)
+            {
+                var img = Ensure<Image>(artwork.gameObject);
+                img.sprite = LoadSprite(n, scene, state, "texture");
+                img.color = img.sprite != null ? Color.white : Color.magenta;
+                img.raycastTarget = false;
+                img.type = Image.Type.Simple;
+            }
+
+            var view = go.AddComponent<ArrowButtonView>();
+            view.PoleDistance = TscnUi.Prop(n, "pole_distance", 420.0f);
+            view.LeftOffset = TscnUi.Prop(n, "offset_left", 0.0f);
+
+            if (caption == null) return;
+
+            string words = TscnUi.Str(n, "caption") ?? "";
+            int size = (int)TscnUi.Prop(n, "label_size", 72.0f);
+
+            var colour = n.Props.TryGetValue("text_color", out var tc)
+                ? TscnUi.ParseColor(tc, UiTheme.Ink)
+                : new Color(0.133f, 0.102f, 0.063f, 1.0f);   // arrow_button.gd's #221a10 default
+
+            var text = MakeText(caption.gameObject, words, size, colour, TextAnchor.MiddleCenter);
+            text.raycastTarget = false;
+
+            float indent = TscnUi.Prop(n, "text_indent", 70.0f);
+            float tip = TscnUi.Prop(n, "tip_padding", 96.0f);
+            float offsetY = TscnUi.Prop(n, "text_offset_y", 0.0f);
+
+            var rt = text.rectTransform;
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+
+            // Godot: offset_top = max(0, y*2), offset_bottom = min(0, y*2), and Y is flipped.
+            rt.offsetMin = new Vector2(indent, -Mathf.Min(0.0f, offsetY * 2.0f));
+            rt.offsetMax = new Vector2(-tip, -Mathf.Max(0.0f, offsetY * 2.0f));
+
+            // Degrees clockwise in Godot; Unity's Z rotation is anticlockwise.
+            float slant = TscnUi.Prop(n, "label_rotation", 0.0f);
+            if (Mathf.Abs(slant) > 0.001f)
+                rt.localRotation = Quaternion.Euler(0.0f, 0.0f, -slant);
+
+            float stretchX = TscnUi.Prop(n, "label_stretch_x", 1.0f);
+            float stretchY = TscnUi.Prop(n, "label_stretch_y", 1.0f);
+
+            if (Mathf.Abs(stretchX - 1.0f) > 0.001f || Mathf.Abs(stretchY - 1.0f) > 0.001f)
+                rt.localScale = new Vector3(stretchX, stretchY, 1.0f);
+        }
+
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// Rebuilds a Godot GradientTexture2D as a real sprite.
+        ///
+        /// ⚠️ THE SCRIM IS LOAD-BEARING, NOT DECORATION, AND ITS SHAPE MATTERS. Every panel sits
+        /// over a photographic backdrop or a live map render. The setup screen's scrim runs
+        /// dark, clear, dark from left to right so the panels on either side stay readable while
+        /// the map in the middle stays visible. Flattening it to its first stop puts an 88%
+        /// navy sheet over the whole screen and hides the thing it exists to sit over.
+        /// </summary>
+        private static Sprite GradientSprite(TscnUi.NodeDef n, TscnUi.Scene scene)
+        {
+            var stops = new List<KeyValuePair<float, Color>>();
+            bool vertical = false;
+
+            string texId = TscnUi.SubId(n.Props["texture"]);
+
+            if (texId != null && scene.Sub.TryGetValue(texId, out var tex))
+            {
+                // `fill_from` / `fill_to` decide the direction; the default runs left to right.
+                if (tex.Props.TryGetValue("fill_to", out var to))
                 {
-                    // PackedColorArray(r, g, b, a, r, g, b, a, ...) — take the first stop.
-                    var m = System.Text.RegularExpressions.Regex.Match(colors, @"\(([^)]*)\)");
+                    var m = Regex.Match(to, @"Vector2\(([^)]*)\)");
                     if (m.Success)
                     {
                         var parts = m.Groups[1].Value.Split(',');
-                        if (parts.Length >= 4)
-                            return new Color(TscnUi.F(parts[0]), TscnUi.F(parts[1]),
-                                             TscnUi.F(parts[2]), TscnUi.F(parts[3]));
+                        if (parts.Length >= 2 && Mathf.Abs(TscnUi.F(parts[1])) >
+                                                 Mathf.Abs(TscnUi.F(parts[0])))
+                            vertical = true;
+                    }
+                }
+
+                if (tex.Props.TryGetValue("gradient", out var gradRef))
+                {
+                    string gid = TscnUi.SubId(gradRef);
+
+                    if (gid != null && scene.Sub.TryGetValue(gid, out var grad))
+                    {
+                        var offsets = Floats(grad, "offsets");
+                        var colours = Floats(grad, "colors");
+
+                        for (int i = 0; i < offsets.Count && (i + 1) * 4 <= colours.Count; i++)
+                        {
+                            stops.Add(new KeyValuePair<float, Color>(offsets[i], new Color(
+                                colours[i * 4 + 0], colours[i * 4 + 1],
+                                colours[i * 4 + 2], colours[i * 4 + 3])));
+                        }
                     }
                 }
             }
 
-            return new Color(0.0f, 0.0f, 0.0f, 0.45f);
+            if (stops.Count == 0)
+                stops.Add(new KeyValuePair<float, Color>(0.0f, new Color(0, 0, 0, 0.45f)));
+
+            const int steps = 256;
+            int w = vertical ? 1 : steps;
+            int h = vertical ? steps : 1;
+
+            var texture = new Texture2D(w, h, TextureFormat.RGBA32, false)
+            {
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp,
+            };
+
+            var pixels = new Color[steps];
+
+            for (int i = 0; i < steps; i++)
+            {
+                float t = i / (float)(steps - 1);
+                // Godot's texture Y runs top-down and Unity's runs bottom-up.
+                pixels[i] = Sample(stops, vertical ? 1.0f - t : t);
+            }
+
+            texture.SetPixels(pixels);
+            texture.Apply(false, false);
+
+            return Sprite.Create(texture, new Rect(0, 0, w, h), new Vector2(0.5f, 0.5f), 100.0f,
+                                 0, SpriteMeshType.FullRect);
         }
 
-        private static Sprite LoadSprite(TscnUi.NodeDef n, TscnUi.Scene scene, ref int missing)
+        private static List<float> Floats(TscnUi.SubRes res, string key)
         {
-            if (!n.Props.TryGetValue("texture", out var raw)) return null;
+            var values = new List<float>();
+            if (!res.Props.TryGetValue(key, out var raw)) return values;
+
+            var m = Regex.Match(raw, @"\(([^)]*)\)");
+            if (!m.Success) return values;
+
+            foreach (var part in m.Groups[1].Value.Split(','))
+                values.Add(TscnUi.F(part));
+
+            return values;
+        }
+
+        private static Color Sample(List<KeyValuePair<float, Color>> stops, float t)
+        {
+            if (stops.Count == 1) return stops[0].Value;
+
+            for (int i = 0; i < stops.Count - 1; i++)
+            {
+                if (t > stops[i + 1].Key) continue;
+
+                float span = Mathf.Max(0.0001f, stops[i + 1].Key - stops[i].Key);
+                float k = Mathf.Clamp01((t - stops[i].Key) / span);
+                return Color.Lerp(stops[i].Value, stops[i + 1].Value, k);
+            }
+
+            return stops[stops.Count - 1].Value;
+        }
+
+        private static Sprite LoadSprite(TscnUi.NodeDef n, TscnUi.Scene scene, BuildState state,
+                                         string key)
+        {
+            if (!n.Props.TryGetValue(key, out var raw)) return null;
 
             string id = TscnUi.ExtId(raw);
             if (id == null || !scene.Ext.TryGetValue(id, out var res)) return null;
@@ -698,8 +1342,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if (sprite == null)
             {
                 // ⚠️ A PNG IMPORTS AS A TEXTURE BY DEFAULT, NOT A SPRITE, so the first load
-                // returns null even though the file is right there. Flip the importer and try
-                // again rather than reporting a missing asset that exists.
+                // returns null even though the file is right there.
                 var importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
                 if (importer != null && importer.textureType != TextureImporterType.Sprite)
                 {
@@ -715,38 +1358,190 @@ namespace TumbangPreso.EditorTools.MapKit
             if (sprite == null)
             {
                 Report.AppendLine($"      MISSING texture: {res.Path}");
-                missing++;
+                state.Missing++;
             }
 
             return sprite;
+        }
+
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// A Unity ScrollRect needs its content wired after the children exist.
+        ///
+        /// ⚠️ AND THE CONTENT MUST BE TOP-ANCHORED WITH A FITTER, or it sits centred in the
+        /// viewport and the first row is already scrolled off the top before the player touches
+        /// anything.
+        /// </summary>
+        private static void FinishScrollRects(Transform root)
+        {
+            foreach (var scroll in root.GetComponentsInChildren<ScrollRect>(true))
+            {
+                scroll.viewport = scroll.GetComponent<RectTransform>();
+
+                Transform content = null;
+
+                for (int i = 0; i < scroll.transform.childCount; i++)
+                {
+                    var child = scroll.transform.GetChild(i);
+                    if (child.GetComponent<LayoutGroup>() == null) continue;
+
+                    content = child;
+                    break;
+                }
+
+                if (content == null) continue;
+
+                var rt = content.GetComponent<RectTransform>();
+                rt.anchorMin = new Vector2(0.0f, 1.0f);
+                rt.anchorMax = new Vector2(1.0f, 1.0f);
+                rt.pivot = new Vector2(0.5f, 1.0f);
+                rt.offsetMin = new Vector2(0.0f, rt.offsetMin.y);
+                rt.offsetMax = new Vector2(0.0f, 0.0f);
+
+                var fitter = content.GetComponent<ContentSizeFitter>();
+                if (fitter == null) fitter = content.gameObject.AddComponent<ContentSizeFitter>();
+
+                fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+                fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+                var element = content.GetComponent<LayoutElement>();
+                if (element != null) element.ignoreLayout = true;
+
+                scroll.content = rt;
+            }
+        }
+
+        /// <summary>
+        /// Binds the behaviour for a sub-scene instanced INTO a screen.
+        ///
+        /// ⚠️⚠️ THESE ARE WHERE HALF THE FRONT END LIVES. MainMenu instances SettingsPanel,
+        /// Tutorial and CreditsPanel as hidden children and MatchSetup instances the whole
+        /// character screen; the Godot scripts show them in place rather than switching scene.
+        /// Without a behaviour on each, the panels convert perfectly and do nothing at all,
+        /// which is what pushed the last pass into hand-drawing replacements in C#.
+        /// </summary>
+        private static void AttachNestedPanels(BuildState state)
+        {
+            foreach (var pair in state.ByPath)
+            {
+                var go = pair.Value.gameObject;
+
+                switch (go.name)
+                {
+                    case "SettingsPanel":
+                        Bind<ConvertedSettingsPanel>(go);
+                        ExportPanelPrefab(go, "SettingsPanel");
+                        break;
+
+                    case "TutorialPanel":
+                        Bind<ConvertedTutorialPanel>(go);
+                        break;
+
+                    case "CreditsPanel":
+                        Bind<ConvertedCreditsPanel>(go);
+                        break;
+
+                    case "CharacterSelectPanel":
+                        Bind<ConvertedCharacterSelect>(go);
+                        break;
+                }
+            }
+        }
+
+        private static void Bind<T>(GameObject go) where T : MonoBehaviour
+        {
+            if (go.GetComponent<T>() != null) return;
+
+            go.AddComponent<T>();
+            Report.AppendLine($"      bound {typeof(T).Name} to {go.name}");
+        }
+
+        /// <summary>
+        /// ⚠️ THE PAUSE MENU OPENS THE SAME SETTINGS PANEL THE TITLE SCREEN DOES, and it is in
+        /// a different scene, so it needs a prefab to instantiate. Two separately built panels
+        /// drift the moment one of them gains a row.
+        /// </summary>
+        private static void ExportPanelPrefab(GameObject go, string name)
+        {
+            const string dir = "Assets/TumbangPreso/Resources/UI";
+            Directory.CreateDirectory(dir);
+
+            bool wasActive = go.activeSelf;
+            go.SetActive(true);
+
+            PrefabUtility.SaveAsPrefabAsset(go, $"{dir}/{name}.prefab", out bool ok);
+
+            go.SetActive(wasActive);
+
+            Report.AppendLine(ok
+                ? $"      wrote Resources/UI/{name}.prefab"
+                : $"      FAILED to write Resources/UI/{name}.prefab");
+        }
+
+        /// <summary>
+        /// ⚠️ THE VERSION STAMP IS IN THE CORNER OF EVERY SCREEN IN THE GODOT BUILD, added by
+        /// `GameVersion.attach_to()` rather than authored per scene. Screenshots go to sponsors
+        /// with that number on them, and the converted screens had none at all.
+        /// </summary>
+        private static void StampVersion(string screenName, Transform canvas)
+        {
+            if (screenName == "SplashScreen" || screenName == "HUD") return;
+
+            var go = new GameObject("VersionLabel");
+            go.AddComponent<RectTransform>();
+            go.transform.SetParent(canvas, false);
+
+            var text = MakeText(go, "v" + PlayerSettings.bundleVersion, 18,
+                                new Color(1, 1, 1, 0.5f), TextAnchor.LowerRight);
+            text.raycastTarget = false;
+
+            var rt = text.rectTransform;
+            rt.anchorMin = Vector2.one;
+            rt.anchorMax = Vector2.one;
+            rt.pivot = Vector2.one;
+            rt.anchoredPosition = new Vector2(-18.0f, -14.0f);
+            rt.sizeDelta = new Vector2(220.0f, 30.0f);
+
+            go.AddComponent<VersionStamp>();
         }
 
         /// <summary>
         /// Attaches the behaviour script that drives a converted screen.
         ///
         /// ⚠️ THE LAYOUT IS CONVERTED; THE BEHAVIOUR IS PORTED CODE. A `.tscn` carries no logic,
-        /// only the tree, so each screen still needs its script. Wiring them by name here keeps
-        /// that pairing in one place rather than scattered through the converter.
+        /// only the tree, so each screen still needs its script.
         /// </summary>
         private static void AttachBehaviour(string screenName, GameObject canvasGo)
         {
             switch (screenName)
             {
-                case "MainMenu": canvasGo.AddComponent<ConvertedMainMenu>(); break;
-                case "ModeSelect": canvasGo.AddComponent<ConvertedModeSelect>(); break;
-                case "MatchSetup": canvasGo.AddComponent<ConvertedMatchSetup>(); break;
-                case "CharacterSelect": canvasGo.AddComponent<ConvertedCharacterSelect>(); break;
-                case "MultiplayerSetup": canvasGo.AddComponent<ConvertedMultiplayerSetup>(); break;
-                case "MatchResult": canvasGo.AddComponent<ConvertedMatchResult>(); break;
-                case "SplashScreen": canvasGo.AddComponent<SplashScreen>(); break;
+                case "MainMenu":
+                    canvasGo.AddComponent<ConvertedMainMenu>();
+                    canvasGo.AddComponent<PennantEntrance>();
+                    break;
 
-                // ⚠️ THESE ARE OVERLAYS, NOT SCREENS. Settings, Tutorial and Credits are opened
-                // on top of whatever is running and must not become scenes of their own, or
-                // opening settings mid-match unloads the match.
-                case "SettingsPanel":
-                case "Tutorial":
-                case "CreditsPanel":
-                    Report.AppendLine($"      ({screenName} is an overlay; converted for reuse as a panel)");
+                case "ModeSelect":
+                    canvasGo.AddComponent<ConvertedModeSelect>();
+                    canvasGo.AddComponent<PennantEntrance>();
+                    break;
+
+                case "MatchSetup":
+                    canvasGo.AddComponent<ConvertedMatchSetup>();
+                    canvasGo.AddComponent<PennantEntrance>();
+                    break;
+
+                case "MultiplayerSetup":
+                    canvasGo.AddComponent<ConvertedMultiplayerSetup>();
+                    canvasGo.AddComponent<PennantEntrance>();
+                    break;
+
+                case "MatchResult":
+                    canvasGo.AddComponent<ConvertedMatchResult>();
+                    break;
+
+                case "SplashScreen":
+                    BindSplash(canvasGo);
                     break;
 
                 case "HUD":
@@ -757,6 +1552,40 @@ namespace TumbangPreso.EditorTools.MapKit
                     Report.AppendLine($"      (no behaviour bound yet for {screenName})");
                     break;
             }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE SPLASH'S CLIP AND STING WERE SERIALISED FIELDS THAT NOTHING EVER ASSIGNED,
+        /// so the BH Studios sting played on no launch at all: the component was attached, the
+        /// coroutine ran, both references were null, and the screen was three seconds of black
+        /// followed by the menu. It was reported as "it's also supposed to play the BH studios
+        /// animation at the start". Wiring it here is the whole fix, and it belongs here because
+        /// this is the only place that knows the scene is being built.
+        /// </summary>
+        private static void BindSplash(GameObject canvasGo)
+        {
+            // ⚠️ FULLY QUALIFIED: UnityEngine has a SplashScreen too, and with both namespaces
+            // in scope the short name is ambiguous rather than merely surprising.
+            var splash = canvasGo.AddComponent<TumbangPreso.UI.SplashScreen>();
+
+            var clip = AssetDatabase.LoadAssetAtPath<VideoClip>(
+                $"{ArtRoot}/video/opening_animation.mp4");
+
+            var sting = AssetDatabase.LoadAssetAtPath<AudioClip>(
+                $"{ArtRoot}/audio/sfx/boot_sting.wav");
+
+            var so = new SerializedObject(splash);
+            so.FindProperty("_clip").objectReferenceValue = clip;
+            so.FindProperty("_sting").objectReferenceValue = sting;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            Report.AppendLine(clip != null
+                ? "      splash: opening_animation.mp4 bound"
+                : "      FAIL: opening_animation.mp4 missing, the boot sting will be black");
+
+            Report.AppendLine(sting != null
+                ? "      splash: boot_sting.wav bound"
+                : "      FAIL: boot_sting.wav missing");
         }
     }
 }

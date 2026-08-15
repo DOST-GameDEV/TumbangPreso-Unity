@@ -33,9 +33,24 @@ namespace TumbangPreso.EditorTools
             "Assets/TumbangPreso/Scenes/Ui/MainMenu.unity",
             "Assets/TumbangPreso/Scenes/Ui/ModeSelect.unity",
             "Assets/TumbangPreso/Scenes/Ui/MatchSetup.unity",
-            "Assets/TumbangPreso/Scenes/Ui/CharacterSelect.unity",
             "Assets/TumbangPreso/Scenes/Ui/MultiplayerSetup.unity",
             "Assets/TumbangPreso/Scenes/Ui/MatchResult.unity",
+            "Assets/TumbangPreso/Scenes/Ui/HUD.unity",
+        };
+
+        /// <summary>
+        /// ⚠️ THE OVERLAYS ARE HIDDEN CHILDREN AND WOULD NEVER BE PHOTOGRAPHED OTHERWISE. Half
+        /// the front end lives inside MainMenu and MatchSetup as `visible = false` instances, so
+        /// a capture pass that only opens scenes checks the half of the UI that was already
+        /// fine. The settings panel in particular shipped broken through several passes because
+        /// nothing ever rendered it.
+        /// </summary>
+        private static readonly (string Scene, string Node)[] Overlays =
+        {
+            ("Assets/TumbangPreso/Scenes/Ui/MainMenu.unity", "SettingsPanel"),
+            ("Assets/TumbangPreso/Scenes/Ui/MainMenu.unity", "TutorialPanel"),
+            ("Assets/TumbangPreso/Scenes/Ui/MainMenu.unity", "CreditsPanel"),
+            ("Assets/TumbangPreso/Scenes/Ui/MatchSetup.unity", "CharacterSelectPanel"),
         };
 
         [MenuItem("Tumbang Preso/Capture UI Screenshots")]
@@ -62,6 +77,48 @@ namespace TumbangPreso.EditorTools
                 EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
                 Capture(Path.GetFileNameWithoutExtension(scenePath));
             }
+
+            foreach (var overlay in Overlays)
+            {
+                if (!File.Exists(overlay.Scene)) continue;
+
+                EditorSceneManager.OpenScene(overlay.Scene, OpenSceneMode.Single);
+
+                var node = Find(overlay.Node);
+                if (node == null)
+                {
+                    Debug.LogWarning($"[Shot] no '{overlay.Node}' in {overlay.Scene}");
+                    continue;
+                }
+
+                node.SetActive(true);
+                Capture(overlay.Node);
+            }
+        }
+
+        private static GameObject Find(string name)
+        {
+            foreach (var root in UnityEngine.SceneManagement.SceneManager.GetActiveScene()
+                                            .GetRootGameObjects())
+            {
+                var hit = FindIn(root.transform, name);
+                if (hit != null) return hit;
+            }
+
+            return null;
+        }
+
+        private static GameObject FindIn(Transform t, string name)
+        {
+            if (t.name == name) return t.gameObject;
+
+            for (int i = 0; i < t.childCount; i++)
+            {
+                var hit = FindIn(t.GetChild(i), name);
+                if (hit != null) return hit;
+            }
+
+            return null;
         }
 
         private static void Capture(string name)
@@ -85,6 +142,30 @@ namespace TumbangPreso.EditorTools
                 c.renderMode = RenderMode.ScreenSpaceCamera;
                 c.worldCamera = cam;
                 c.planeDistance = 1.0f;
+            }
+
+            // ⚠️⚠️ THE THEME SKINS ARE APPLIED BY HAND HERE. Their StyleBoxes are generated at
+            // runtime, so a saved scene holds no reference to one and the component rebuilds it
+            // in OnEnable. In a player that always happens; in a BATCH-MODE editor, an
+            // ExecuteAlways OnEnable on scene load is not something to rely on, and when it does
+            // not fire the capture shows a white rectangle where a wood panel is. That is a
+            // broken PHOTOGRAPH of a correct screen, which is the most expensive kind of bug to
+            // chase because it looks exactly like the real thing.
+            // ⚠️ WALKED FROM THE ROOTS, NOT FindObjectsByType. In batch mode that call returned
+            // one of the two wood panels on the setup screen and none of its six buttons, so
+            // half the screen was captured unskinned and read as a conversion bug. A hierarchy
+            // walk is exhaustive and costs nothing at this size.
+            foreach (var root in UnityEngine.SceneManagement.SceneManager.GetActiveScene()
+                                            .GetRootGameObjects())
+            {
+                foreach (var panel in root.GetComponentsInChildren<UI.GodotPanel>(true))
+                    panel.Apply();
+
+                foreach (var button in root.GetComponentsInChildren<UI.GodotButton>(true))
+                {
+                    button.Apply();
+                    button.Refresh();
+                }
             }
 
             // ⚠️⚠️ ForceUpdateCanvases DOES NOT RUN THE LAYOUT SYSTEM, and that distinction cost

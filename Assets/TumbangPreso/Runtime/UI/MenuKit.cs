@@ -5,20 +5,40 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// Shared widgets for every menu, in the game's wood-panel style.
+    /// Shared widgets for anything the game builds at runtime rather than converting.
     ///
-    /// ⚠️ THE LOOK IS THE TEAM'S BRAND, NOT JUST A UI SKIN. The same wood, cream and amber
-    /// palette carries the pitch deck and the sponsorship proposals, so it is the thing a
-    /// sponsor recognises. Restyle it freely, but keep it consistent with those documents
-    /// rather than drifting to a Unity default.
+    /// ⚠️⚠️ IT DRAWS THROUGH <see cref="GodotTheme"/> NOW, NOT WITH FLAT RECTANGLES. Every
+    /// widget here used to be a plain Image in a palette colour, so a control built in code and
+    /// a control converted from a `.tscn` sat side by side on the pause overlay looking like
+    /// they came from two different games: one with a tan border, a 12px radius and a drop
+    /// shadow, the other a brown box. The theme is the whole point of having a theme.
     ///
-    /// ⚠️ BUILT IN CODE, LIKE THE ARENA AND THE HUD. Menus authored by hand are binary scene
-    /// blobs that cannot be diffed and cannot be regenerated when the palette moves. Everything
-    /// here is a function, so a palette change is one edit and a rebuild.
+    /// ⚠️ THE DISPLAY FACE IS DARUMADROP, NOT THE BUILT-IN ONE. Godot sets it project-wide, so
+    /// every string in the game is that face. Falling back to LegacyRuntime silently is how the
+    /// converted screens ended up in a different typeface from the ported ones.
     /// </summary>
     public static class MenuKit
     {
-        public static Font Font => Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        private static Font _font;
+
+        public static Font Font
+        {
+            get
+            {
+                if (_font != null) return _font;
+
+                _font = Resources.Load<Font>("UI/fonts/DarumadropOne-Regular");
+
+                if (_font == null)
+                {
+                    Debug.LogWarning("[UI] Darumadrop is missing from Resources/UI/fonts; " +
+                                     "the menus will draw in the wrong face.");
+                    _font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                }
+
+                return _font;
+            }
+        }
 
         public static Canvas BuildCanvas(Transform parent, string name)
         {
@@ -31,7 +51,10 @@ namespace TumbangPreso.UI
             var scaler = go.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
-            scaler.matchWidthOrHeight = 0.5f;
+
+            // ⚠️ MATCH ON HEIGHT, like the converted screens. Matching halfway makes a code-built
+            // overlay drift against the converted screen underneath it on a non-16:9 monitor.
+            scaler.matchWidthOrHeight = 1.0f;
 
             go.AddComponent<GraphicRaycaster>();
 
@@ -58,6 +81,24 @@ namespace TumbangPreso.UI
             return img;
         }
 
+        /// <summary>A label in one of the theme's named variations.</summary>
+        public static Text Styled(Transform parent, string variation, string text,
+                                  TextAnchor align = TextAnchor.MiddleCenter)
+        {
+            GodotTheme.TryText(variation, out var style);
+
+            var t = Label(parent, text, style.Size, style.Colour, Vector2.zero, Vector2.zero,
+                          Vector2.zero, align);
+
+            if (style.Outline <= 0) return t;
+
+            var ring = t.gameObject.AddComponent<GodotOutline>();
+            ring.OutlineColour = style.OutlineColour;
+            ring.Radius = Mathf.Max(1.0f, style.Outline * 0.5f);
+
+            return t;
+        }
+
         public static Text Label(Transform parent, string text, int size, Color color,
                                  Vector2 anchor, Vector2 offset, Vector2 boxSize,
                                  TextAnchor align = TextAnchor.MiddleCenter)
@@ -74,52 +115,66 @@ namespace TumbangPreso.UI
             t.horizontalOverflow = HorizontalWrapMode.Overflow;
             t.verticalOverflow = VerticalWrapMode.Overflow;
 
-            Place(t.rectTransform, anchor, offset, boxSize);
+            // See the note in TscnUiImporter.MakeText: this is Godot's BASELINE_OFFSET.
+            t.alignByGeometry = true;
+
+            if (boxSize != Vector2.zero) Place(t.rectTransform, anchor, offset, boxSize);
             return t;
         }
 
         /// <summary>
-        /// A wood-faced button.
-        ///
-        /// ⚠️ THE HOVER STATE IS THE LIT FACE, NOT A TINT. The palette carries WoodMid
-        /// specifically as "the lit face, on hover", so hovering brightens the wood rather than
-        /// washing the whole control, and the lettering goes amber. Doing it as a generic tint
-        /// makes every control look like the same greyed-out widget.
+        /// A wood-faced button, with the five StyleBox states, the sink on press, and the two
+        /// sounds. Identical to what the converter produces for a `WoodButton`.
         /// </summary>
         public static Button WoodButton(Transform parent, string text, Vector2 anchor,
-                                        Vector2 offset, Vector2 size, Action onClick)
+                                        Vector2 offset, Vector2 size, Action onClick,
+                                        string variation = "WoodButton")
         {
             var go = new GameObject($"Button_{text}");
             go.transform.SetParent(parent, false);
 
             var img = go.AddComponent<Image>();
-            img.color = UiTheme.WoodDeep;
             Place(img.rectTransform, anchor, offset, size);
 
             var btn = go.AddComponent<Button>();
             btn.targetGraphic = img;
 
-            var colors = btn.colors;
-            colors.normalColor = Color.white;
-            colors.highlightedColor = new Color(1.6f, 1.6f, 1.6f, 1.0f);
-            colors.pressedColor = new Color(0.7f, 0.7f, 0.7f, 1.0f);
-            colors.fadeDuration = 0.08f;
-            btn.colors = colors;
+            var style = GodotTheme.ForButton(variation);
 
-            var border = new GameObject("Edge");
-            border.transform.SetParent(go.transform, false);
-            var borderImg = border.AddComponent<Image>();
-            borderImg.color = UiTheme.WoodEdge;
-            borderImg.raycastTarget = false;
-            Stretch(borderImg.rectTransform, 3.0f);
-            border.transform.SetAsFirstSibling();
-
-            var label = Label(go.transform, text, 32, UiTheme.Cream,
+            var label = Label(go.transform, text, style.FontSize, style.Ink,
                               new Vector2(0.5f, 0.5f), Vector2.zero, size);
             label.raycastTarget = false;
 
-            if (onClick != null) btn.onClick.AddListener(() => onClick());
+            var skin = go.AddComponent<GodotButton>();
+            skin.Variation = variation;
+
+            if (onClick != null)
+            {
+                btn.onClick.AddListener(() => onClick());
+            }
+
             return btn;
+        }
+
+        /// <summary>A wood panel with a vertical layout inside it, for a runtime-built card.</summary>
+        public static VerticalLayoutGroup WoodPanel(Transform parent, string name,
+                                                    string variation = "WoodPanel")
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+
+            go.AddComponent<Image>();
+
+            var group = go.AddComponent<VerticalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = false;
+            group.childForceExpandWidth = true;
+
+            var skin = go.AddComponent<GodotPanel>();
+            skin.Variation = variation;
+
+            return group;
         }
 
         public static void Place(RectTransform rt, Vector2 anchor, Vector2 offset, Vector2 size)

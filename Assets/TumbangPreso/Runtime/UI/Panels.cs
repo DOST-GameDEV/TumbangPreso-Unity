@@ -1,19 +1,21 @@
-using System.Collections.Generic;
-using TumbangPreso.Core;
-using TumbangPreso.Settings;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// Overlay panels that sit on top of a screen rather than replacing it.
+    /// The one overlay that is still built in code: the in-match pause card.
     ///
-    /// ⚠️ THEY ARE OVERLAYS, NOT SCENES, AND THAT IS DELIBERATE. Settings opened from the main
-    /// menu and settings opened from the pause menu must be the same panel, or the two drift
-    /// and a slider exists in one and not the other. Making them scenes would also lose the
-    /// match underneath when they are opened mid-game.
+    /// ⚠️⚠️ SETTINGS, TUTORIAL AND CREDITS USED TO LIVE HERE AND THAT WAS THE BUG. All three
+    /// were hand-drawn in C# with absolute anchors while the real screens sat unconverted in
+    /// `MapSource/scenes_ui`, which is how the settings overlay shipped as five labels stacked
+    /// on one pixel with no sliders, no keybind rows and no scroll. They are converted scenes
+    /// now (<see cref="ConvertedSettingsPanel"/> and friends), instanced into the title screen
+    /// exactly as `main_menu.gd` instances them. Do not rebuild one of these in code again.
+    ///
+    /// ⚠️ THE PAUSE CARD IS DIFFERENT: in the Godot build it is authored inside `Main.tscn`
+    /// rather than as its own scene, so there is no `.tscn` to convert. It is drawn here from
+    /// the same theme, so it matches the rest of the front end rather than approximating it.
     /// </summary>
     public abstract class Panel : MonoBehaviour
     {
@@ -42,356 +44,17 @@ namespace TumbangPreso.UI
             // matters, which is mid-match.
             Canvas.sortingOrder = 100;
 
-            var bg = MenuKit.Backdrop(Canvas.transform, new Color(0.11f, 0.05f, 0.02f, 0.94f));
+            var bg = MenuKit.Backdrop(Canvas.transform,
+                new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.78f));
+
             bg.raycastTarget = true; // swallow clicks meant for the screen below
 
             Build();
-
-            MenuKit.WoodButton(Canvas.transform, "BACK", new Vector2(0.5f, 0.09f),
-                               Vector2.zero, new Vector2(320, 74), Close);
         }
 
         protected abstract void Build();
 
         public void Close() => gameObject.SetActive(false);
-    }
-
-    /// <summary>Volume, mouse, display, difficulty, the player's name, and key rebinding.</summary>
-    public sealed class SettingsPanel : Panel
-    {
-        private Text _nameLabel;
-        private Text _values;
-
-        private InputActionAsset _actions;
-        private string _listeningAction;
-        private Text _rebindStatus;
-        private readonly Dictionary<string, Text> _bindingLabels = new Dictionary<string, Text>();
-        private InputActionRebindingExtensions.RebindingOperation _rebindOp;
-
-        /// <summary>
-        /// One row per rebindable action. Godot rebuilt these from
-        /// `SettingsManager.REBINDABLE_ACTIONS`; the list lives in
-        /// <see cref="Settings.Rebinding"/> here for the same reason — one place to fix when
-        /// an action is renamed.
-        /// </summary>
-        private void BuildRebindRows()
-        {
-            _actions = Resources.Load<InputActionAsset>("TumbangPreso");
-
-            // ⚠️ LOAD THE OVERRIDES BEFORE DRAWING A SINGLE LABEL, or every row shows the
-            // default and the player believes their rebind was forgotten.
-            Settings.Rebinding.Load(_actions);
-
-            MenuKit.Label(Canvas.transform, "CONTROLS", 30, UiTheme.Amber,
-                          new Vector2(0.72f, 0.86f), Vector2.zero, new Vector2(420, 50));
-
-            var actions = Settings.Rebinding.RebindableActions;
-
-            for (int i = 0; i < actions.Length; i++)
-            {
-                string action = actions[i];
-                float y = 0.78f - i * 0.058f;
-
-                MenuKit.Label(Canvas.transform, Settings.Rebinding.LabelFor(action), 22,
-                              UiTheme.CreamMuted, new Vector2(0.62f, y), Vector2.zero,
-                              new Vector2(260, 40), TextAnchor.MiddleLeft);
-
-                var btn = MenuKit.WoodButton(Canvas.transform,
-                    Settings.Rebinding.DisplayNameFor(_actions, action),
-                    new Vector2(0.85f, y), Vector2.zero, new Vector2(190, 44),
-                    () => BeginRebind(action));
-
-                _bindingLabels[action] = btn.GetComponentInChildren<Text>();
-            }
-
-            _rebindStatus = MenuKit.Label(Canvas.transform, "", 20, UiTheme.Amber,
-                new Vector2(0.72f, 0.20f), Vector2.zero, new Vector2(560, 40));
-
-            MenuKit.WoodButton(Canvas.transform, "RESET CONTROLS",
-                new Vector2(0.72f, 0.12f), Vector2.zero, new Vector2(300, 48), ResetBindings);
-        }
-
-        private void BeginRebind(string action)
-        {
-            if (_rebindOp != null) return;   // one at a time
-
-            _listeningAction = action;
-            _rebindStatus.text =
-                $"Press any key for \"{Settings.Rebinding.LabelFor(action)}\"…  (Esc to cancel)";
-
-            if (_bindingLabels.TryGetValue(action, out var label)) label.text = "…";
-
-            var target = _actions?.FindActionMap("Player", false)?.FindAction(action, false);
-            if (target == null) { CancelRebind(); return; }
-
-            // The action must be disabled while it is being rebound, or the press being
-            // captured also fires the verb it is bound to.
-            target.Disable();
-
-            _rebindOp = target.PerformInteractiveRebinding()
-                .WithControlsExcluding("<Mouse>/position")
-                .WithControlsExcluding("<Mouse>/delta")
-                .WithCancelingThrough("<Keyboard>/escape")
-                .OnCancel(op => { target.Enable(); CancelRebind(); })
-                .OnComplete(op =>
-                {
-                    var control = op.selectedControl;
-                    op.Dispose();
-                    _rebindOp = null;
-                    target.Enable();
-
-                    // ⚠️ THE OVERRIDE THE OPERATION ALREADY APPLIED IS UNDONE FIRST, because
-                    // the conflict check has to run against the OTHER actions and report a
-                    // refusal — not leave two verbs sharing one key.
-                    target.RemoveBindingOverride(op.bindingMask ?? default);
-
-                    string conflict = Settings.Rebinding.TryRebind(_actions, action, control);
-
-                    _rebindStatus.text = conflict == null
-                        ? ""
-                        : $"That key is already \"{conflict}\".";
-
-                    RefreshBindingLabels();
-                    _listeningAction = null;
-                })
-                .Start();
-        }
-
-        private void CancelRebind()
-        {
-            _rebindOp?.Dispose();
-            _rebindOp = null;
-            _listeningAction = null;
-            _rebindStatus.text = "";
-            RefreshBindingLabels();
-        }
-
-        private void ResetBindings()
-        {
-            Settings.Rebinding.ResetAll(_actions);
-            _rebindStatus.text = "";
-            RefreshBindingLabels();
-        }
-
-        private void RefreshBindingLabels()
-        {
-            foreach (var pair in _bindingLabels)
-                pair.Value.text = Settings.Rebinding.DisplayNameFor(_actions, pair.Key);
-        }
-
-        private void OnDestroy() => _rebindOp?.Dispose();
-
-        protected override void Build()
-        {
-            MenuKit.Label(Canvas.transform, "SETTINGS", 60, UiTheme.Amber,
-                          new Vector2(0.5f, 0.86f), Vector2.zero, new Vector2(900, 90));
-
-            var s = SettingsStore.Current;
-
-            // ⚠️ THE NAME FIELD ENFORCES THE CAP AS A RULE, not by clipping at draw time. An
-            // InputField with a character limit refuses the 15th keystroke, which tells the
-            // player the rule; truncating later tells them nothing and looks like a bug.
-            MenuKit.Label(Canvas.transform, "NAME", 28, UiTheme.CreamMuted,
-                          new Vector2(0.5f, 0.75f), new Vector2(-300, 0), new Vector2(200, 50));
-
-            var fieldGo = new GameObject("NameField");
-            fieldGo.transform.SetParent(Canvas.transform, false);
-
-            var fieldImg = fieldGo.AddComponent<Image>();
-            fieldImg.color = UiTheme.WoodDark;
-            MenuKit.Place(fieldImg.rectTransform, new Vector2(0.5f, 0.75f),
-                          new Vector2(120, 0), new Vector2(560, 62));
-
-            var text = MenuKit.Label(fieldGo.transform, s.PlayerName, 30, UiTheme.Cream,
-                                     new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(540, 56));
-
-            var field = fieldGo.AddComponent<InputField>();
-            field.textComponent = text;
-            field.text = s.PlayerName;
-            field.characterLimit = Balance.PlayerNameMax;
-            field.onValueChanged.AddListener(v =>
-            {
-                SettingsStore.Current.PlayerName = GameSettings.SanitiseName(v);
-                SettingsStore.Save();
-            });
-
-            _values = MenuKit.Label(Canvas.transform, "", 30, UiTheme.Cream,
-                                    new Vector2(0.5f, 0.48f), Vector2.zero, new Vector2(1000, 320));
-
-            Row("MASTER", 0.62f, () => Bump(ref SettingsStore.Current.MasterVolume));
-            Row("SFX", 0.55f, () => Bump(ref SettingsStore.Current.SfxVolume));
-            Row("MUSIC", 0.48f, () => Bump(ref SettingsStore.Current.MusicVolume));
-
-            MenuKit.WoodButton(Canvas.transform, "FULLSCREEN", new Vector2(0.5f, 0.34f),
-                               Vector2.zero, new Vector2(420, 70), () =>
-                               {
-                                   var cur = SettingsStore.Current;
-                                   cur.Fullscreen = !cur.Fullscreen;
-                                   Screen.fullScreen = cur.Fullscreen;
-                                   SettingsStore.Save();
-                                   Refresh();
-                               });
-
-            MenuKit.WoodButton(Canvas.transform, "AI DIFFICULTY", new Vector2(0.5f, 0.25f),
-                               Vector2.zero, new Vector2(420, 70), () =>
-                               {
-                                   var cur = SettingsStore.Current;
-                                   cur.AiDifficulty = (cur.AiDifficulty + 1) % 3;
-                                   SettingsStore.Save();
-
-                                   // ⚠️ APPLY IT, DO NOT ONLY STORE IT. This setting was
-                                   // written and never read back for the whole port, so every
-                                   // bot played at Normal whatever the player chose.
-                                   AIController.ApplyDifficulty(cur.AiDifficulty);
-                                   Refresh();
-                               });
-
-            BuildRebindRows();
-            Refresh();
-        }
-
-        private void Row(string label, float y, System.Action onPress)
-        {
-            MenuKit.WoodButton(Canvas.transform, label, new Vector2(0.5f, y),
-                               new Vector2(-260, 0), new Vector2(300, 62), () =>
-                               {
-                                   onPress();
-                                   SettingsStore.Save();
-                                   Refresh();
-                               });
-        }
-
-        /// <summary>Steps in tenths and wraps, so one control covers the whole range.</summary>
-        private static void Bump(ref float v)
-        {
-            v = Mathf.Round((v + 0.1f) * 10.0f) / 10.0f;
-            if (v > 1.001f) v = 0.0f;
-        }
-
-        private void Refresh()
-        {
-            var s = SettingsStore.Current;
-            string[] tiers = { "EASY", "NORMAL", "HARD" };
-
-            _values.text =
-                $"\n\nMASTER   {s.MasterVolume:0.0}\n" +
-                $"SFX      {s.SfxVolume:0.0}\n" +
-                $"MUSIC    {s.MusicVolume:0.0}\n\n" +
-                $"FULLSCREEN   {(s.Fullscreen ? "ON" : "OFF")}\n" +
-                $"AI           {tiers[Mathf.Clamp(s.AiDifficulty, 0, 2)]}";
-        }
-    }
-
-    /// <summary>
-    /// How to play.
-    ///
-    /// ⚠️ IT TEACHES THE THESIS, NOT JUST THE KEYS. The tension is the retrieval, not the
-    /// throw: throwing is safe and free, and getting your slipper back is what costs you. A
-    /// player who learns only the controls plays the game backwards for their first match.
-    /// </summary>
-    public sealed class TutorialPanel : Panel
-    {
-        private int _page;
-        private Text _title;
-        private Text _lede;
-        private Text _pageCount;
-        private readonly List<Text[]> _rows = new List<Text[]>();
-
-        /// <summary>Enough rows for the longest page; spare ones are hidden.</summary>
-        private const int MaxRows = 6;
-
-        protected override void Build()
-        {
-            _title = MenuKit.Label(Canvas.transform, "", 56, UiTheme.Amber,
-                                   new Vector2(0.5f, 0.90f), Vector2.zero, new Vector2(1200, 80));
-
-            _lede = MenuKit.Label(Canvas.transform, "", 24, UiTheme.Cream,
-                                  new Vector2(0.5f, 0.82f), Vector2.zero, new Vector2(1400, 50));
-
-            for (int i = 0; i < MaxRows; i++)
-            {
-                float y = 0.72f - i * 0.085f;
-
-                var chip = MenuKit.Label(Canvas.transform, "", 24, UiTheme.Amber,
-                    new Vector2(0.28f, y), Vector2.zero,
-                    new Vector2(TutorialContent.ChipWidth, 44), TextAnchor.MiddleLeft);
-
-                var body = MenuKit.Label(Canvas.transform, "", 21, UiTheme.Cream,
-                    new Vector2(0.62f, y), Vector2.zero, new Vector2(880, 60), TextAnchor.MiddleLeft);
-
-                body.horizontalOverflow = HorizontalWrapMode.Wrap;
-
-                _rows.Add(new[] { chip, body });
-            }
-
-            _pageCount = MenuKit.Label(Canvas.transform, "", 20, UiTheme.CreamMuted,
-                                       new Vector2(0.5f, 0.20f), Vector2.zero, new Vector2(300, 36));
-
-            MenuKit.WoodButton(Canvas.transform, "PREV", new Vector2(0.34f, 0.20f),
-                               Vector2.zero, new Vector2(200, 56), () => Turn(-1));
-
-            MenuKit.WoodButton(Canvas.transform, "NEXT", new Vector2(0.66f, 0.20f),
-                               Vector2.zero, new Vector2(200, 56), () => Turn(1));
-
-            ApplyPage();
-        }
-
-        /// <summary>⚠️ IT CLAMPS RATHER THAN WRAPPING. Wrapping from the last page back to the
-        /// first reads as the panel having closed and reopened.</summary>
-        private void Turn(int delta)
-        {
-            _page = Mathf.Clamp(_page + delta, 0, TutorialContent.Pages.Length - 1);
-            ApplyPage();
-        }
-
-        private void ApplyPage()
-        {
-            var page = TutorialContent.Pages[_page];
-
-            _title.text = page.Title;
-            _lede.text = page.Lede;
-            _pageCount.text = $"{_page + 1} / {TutorialContent.Pages.Length}";
-
-            for (int i = 0; i < _rows.Count; i++)
-            {
-                bool used = i < page.Rows.Length;
-
-                _rows[i][0].enabled = used;
-                _rows[i][1].enabled = used;
-
-                if (!used) continue;
-
-                _rows[i][0].text = page.Rows[i].Chip;
-                _rows[i][1].text = page.Rows[i].Body;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Who made it, and — the part that is not optional — who the CC-BY assets belong to.
-    ///
-    /// ⚠️⚠️ THIS SCREEN IS LICENCE COMPLIANCE, NOT POLISH. An earlier Unity pass rebuilt it
-    /// as a studio blurb with NO asset credits at all, which quietly shipped three CC-BY-4.0
-    /// models with their attribution dropped. The credit strings live in
-    /// <see cref="CreditsContent"/>, copied verbatim from each model's own LICENSE.txt.
-    /// **Do not trim them for layout and do not reword them.**
-    /// </summary>
-    public sealed class CreditsPanel : Panel
-    {
-        protected override void Build()
-        {
-            MenuKit.Label(Canvas.transform, "CREDITS", 56, UiTheme.Amber,
-                          new Vector2(0.5f, 0.93f), Vector2.zero, new Vector2(900, 80));
-
-            MenuKit.Label(Canvas.transform,
-                "TUMBANG PRESO  ·  BH Studios\n" +
-                "1st place, Gear Up NCR Esports Game Dev Challenge  ·  " +
-                "NCR's entry at the nationals in General Santos City",
-                22, UiTheme.Cream,
-                new Vector2(0.5f, 0.875f), Vector2.zero, new Vector2(1500, 70));
-
-            CreditsContent.Render(Canvas.transform);
-        }
     }
 
     /// <summary>
@@ -407,24 +70,63 @@ namespace TumbangPreso.UI
 
         protected override void Build()
         {
-            MenuKit.Label(Canvas.transform, "PAUSED", 72, UiTheme.Amber,
-                          new Vector2(0.5f, 0.72f), Vector2.zero, new Vector2(900, 100));
+            var card = MenuKit.WoodPanel(Canvas.transform, "Card");
+            card.spacing = 14.0f;
+            card.childAlignment = TextAnchor.MiddleCenter;
 
-            MenuKit.WoodButton(Canvas.transform, "RESUME", new Vector2(0.5f, 0.55f),
-                               Vector2.zero, new Vector2(460, 84), Resume);
+            var cardRt = card.GetComponent<RectTransform>();
+            MenuKit.Place(cardRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(560.0f, 480.0f));
 
-            MenuKit.WoodButton(Canvas.transform, "SETTINGS", new Vector2(0.5f, 0.44f),
-                               Vector2.zero, new Vector2(460, 84), () => Open<SettingsPanel>(this));
+            var title = MenuKit.Styled(card.transform, "MenuDisplay", "PAUSED");
+            title.gameObject.AddComponent<LayoutElement>().preferredHeight = 90.0f;
 
-            MenuKit.WoodButton(Canvas.transform, "QUIT TO MENU", new Vector2(0.5f, 0.33f),
-                               Vector2.zero, new Vector2(460, 84), () =>
-                               {
-                                   Time.timeScale = 1.0f;
-                                   SceneFlow.Go(SceneFlow.MainMenu);
-                               });
+            Choice(card.transform, "RESUME", Resume);
+            Choice(card.transform, "SETTINGS", OpenSettings);
+
+            Choice(card.transform, "QUIT TO MENU", () =>
+            {
+                Time.timeScale = 1.0f;
+                SceneFlow.Go(SceneFlow.MainMenu);
+            }, "WoodDangerButton");
 
             Time.timeScale = 0.0f;
             if (Local != null) Local.Intent.Parked = true;
+        }
+
+        private void Choice(Transform parent, string label, System.Action onClick,
+                            string variation = "WoodButton")
+        {
+            var button = MenuKit.WoodButton(parent, label, Vector2.zero, Vector2.zero,
+                                            new Vector2(440.0f, 84.0f), onClick, variation);
+
+            var element = button.gameObject.AddComponent<LayoutElement>();
+            element.preferredHeight = 84.0f;
+            element.preferredWidth = 440.0f;
+        }
+
+        /// <summary>
+        /// ⚠️ THE SAME SETTINGS PANEL THE TITLE SCREEN USES, loaded from the converted scene, so
+        /// a slider that exists in one exists in the other. Two panels drift the moment one gets
+        /// a row the other does not.
+        /// </summary>
+        private void OpenSettings()
+        {
+            var existing = GetComponentInChildren<ConvertedSettingsPanel>(true);
+            if (existing != null)
+            {
+                existing.gameObject.SetActive(true);
+                return;
+            }
+
+            var prefab = Resources.Load<GameObject>("UI/SettingsPanel");
+            if (prefab == null)
+            {
+                Debug.LogWarning("[Pause] no SettingsPanel prefab in Resources/UI.");
+                return;
+            }
+
+            var panel = Instantiate(prefab, Canvas.transform, false);
+            panel.SetActive(true);
         }
 
         private void Resume()

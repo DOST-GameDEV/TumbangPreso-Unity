@@ -220,5 +220,22 @@ namespace TumbangPreso.Settings
             _current = s;
             _current?.Validate();
         }
+
+        /// <summary>
+        /// Puts a snapshot back, for the settings panel's DISCARD.
+        ///
+        /// ⚠️ IT DOES NOT SAVE, AND THAT IS THE POINT. Nothing has been written since the panel
+        /// opened, so the FILE is already correct; what has drifted is the RUNNING process,
+        /// where a volume is live on the bus and a difficulty is live on the bots. This restores
+        /// the values and re-applies them, and deliberately leaves the disk alone.
+        /// </summary>
+        public static void Restore(GameSettings snapshot)
+        {
+            if (snapshot == null) return;
+
+            _current = snapshot;
+            _current.Validate();
+            _current.Apply();
+        }
     }
 }
