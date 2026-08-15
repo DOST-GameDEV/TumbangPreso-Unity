@@ -29,6 +29,25 @@ namespace TumbangPreso
         public int ScoreFor(int slot) => _scores[slot];
 
         /// <summary>
+        /// Seats ordered by score, highest first, from `match_manager.gd:154`.
+        ///
+        /// ⚠️ THE TIE-BREAK IS SEAT ORDER AND IT IS DELIBERATE. Equal scores fall back to the
+        /// lower slot index, which makes the ordering STABLE — the results board does not
+        /// reshuffle two tied players between frames, and every peer computes the same board
+        /// from the same scores without sending an ordering over the wire.
+        /// </summary>
+        public int[] Ranking()
+        {
+            var order = new int[Balance.PlayerCount];
+            for (int i = 0; i < order.Length; i++) order[i] = i;
+
+            System.Array.Sort(order, (a, b) =>
+                _scores[a] == _scores[b] ? a.CompareTo(b) : _scores[b].CompareTo(_scores[a]));
+
+            return order;
+        }
+
+        /// <summary>
         /// ⚠️⚠️ HOST-SIDE ONLY, AND DELIBERATELY THE ONLY MUTATOR IN THE GAME.
         ///
         /// The guard is here rather than at each of the four call sites on purpose: a point

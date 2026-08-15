@@ -276,6 +276,11 @@ namespace TumbangPreso
             var hudGo = new GameObject("HUD");
             hudGo.AddComponent<UI.Hud>().Bind(local);
 
+            // The match-end board. Present from the start and listening; it shows itself when
+            // MatchEnded fires.
+            var resultGo = new GameObject("MatchResult");
+            resultGo.AddComponent<UI.MatchResult>();
+
             var pauseGo = new GameObject("PauseHost");
             pauseGo.AddComponent<PauseWatcher>().Local = local;
         }

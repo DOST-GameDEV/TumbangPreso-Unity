@@ -157,7 +157,7 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `settings_panel.gd` | 429 | — | **MISSING** — incl. key rebinding UI |
 | `emote_wheel.gd` | 422 | `Emotes.cs` (168) covers emotes, not the wheel | **MISSING** (wheel) |
 | `character_select.gd` | 341 | — | **MISSING** |
-| `match_result.gd` | 339 | — | **MISSING** |
+| `match_result.gd` | 339 | `MatchResult.cs` (215) | PARTIAL — board and single-player rematch; peer vote pending netcode |
 | `credits_panel.gd` | 292 | — | **MISSING** |
 | `role_swap_card.gd` | 274 | — | **MISSING** |
 | `arrow_button.gd` | 262 | `MenuKit.cs` (142) | PARTIAL |
