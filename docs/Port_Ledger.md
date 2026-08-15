@@ -60,8 +60,8 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `match_manager.gd` | 217 | `MatchDirector.cs` (97) | PARTIAL |
 | `network_manager.gd` | 1413 | `NetSession.cs` (221) | PARTIAL — no gameplay RPCs |
 | `lan_beacon.gd` | 323 | `LanBeacon.cs` (238) | PARTIAL |
-| `server_query.gd` | 536 | — | **MISSING** |
-| `game_launch.gd` | 301 | — | **MISSING** |
+| `server_query.gd` | 536 | `ServerQuery.cs` (215) | PARTIAL — browse and expiry; join codes pending |
+| `game_launch.gd` | 301 | `GameLaunch.cs` (108) | CONVERTED — map registry, pending action, seating |
 | `settings_manager.gd` | 703 | `GameSettings.cs` (202) | PARTIAL |
 | `debug_player_switcher.gd` | 420 | `DebugPlayerSwitcher.cs` (115) | PARTIAL — seat drive, cycle, readout |
 
@@ -156,7 +156,7 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `you_card.gd` | 430 | `YouCard.cs` (185) | PARTIAL — role, name, live meters; ready flash pending |
 | `settings_panel.gd` | 429 | `SettingsPanel` + `Rebinding.cs` (330) | CONVERTED — rebinding, conflicts, reset |
 | `emote_wheel.gd` | 422 | `EmoteWheel.cs` (215) + `Emotes.cs` | CONVERTED — hold, steer, release |
-| `character_select.gd` | 341 | — | **MISSING** |
+| `character_select.gd` | 341 | `CharacterSelectScreen` (200) | CONVERTED — tabs, chalk pips, live 3D |
 | `match_result.gd` | 339 | `MatchResult.cs` (215) | PARTIAL — board and single-player rematch; peer vote pending netcode |
 | `credits_panel.gd` | 292 | `CreditsContent.cs` + `CreditsPanel` (250) | CONVERTED — CC-BY strings verbatim |
 | `role_swap_card.gd` | 274 | `RoleSwapCard.cs` (250) | CONVERTED — intermission timeline, swap, standings |

@@ -287,8 +287,28 @@ namespace TumbangPreso.UI
         private readonly int[] _pick = { 0, 0, 0 };
 
         private Text _name;
-        private Text _meters;
         private Text _tabLabel;
+
+        /// <summary>
+        /// ⚠️⚠️ CHALK MARKS, NOT A TEXT BAR. The whole game is played inside a chalk court and
+        /// the moodboard treats that as its signature; five tally marks scratched on the
+        /// ground is what a kid keeping score in the street actually does. The hash-and-dot
+        /// string this replaced was a placeholder, not the design.
+        /// </summary>
+        public const int TraitSlots = 5;
+        public static readonly Vector2 TraitPipSize = new Vector2(42, 12);
+        public const int TraitPipGap = 6;
+
+        /// <summary>The same yellow as the base-circle decal and the timer's urgency state,
+        /// so a full meter reads as the same game system rather than a new colour.</summary>
+        public static readonly Color TraitPipFilled = new Color(0.973f, 0.816f, 0.157f);
+        public static readonly Color TraitPipEmpty = new Color(0.961f, 0.902f, 0.784f, 0.20f);
+
+        private readonly System.Collections.Generic.List<(Text label, Image[] pips)> _traitRows =
+            new System.Collections.Generic.List<(Text, Image[])>();
+
+        private ModelPreview _preview;
+        private RosterBook _book;
 
         private void Start()
         {
@@ -310,8 +330,43 @@ namespace TumbangPreso.UI
             MenuKit.WoodButton(canvas.transform, ">", new Vector2(0.5f, 0.66f),
                                new Vector2(400, 0), new Vector2(90, 80), () => CycleEntry(1));
 
-            _meters = MenuKit.Label(canvas.transform, "", 30, UiTheme.Cream,
-                                    new Vector2(0.5f, 0.45f), Vector2.zero, new Vector2(900, 200));
+            // The live 3D subject. It turns on its own and can be dragged; the preview owns
+            // both rules.
+            var previewPanel = new GameObject("PreviewPanel", typeof(RectTransform));
+            previewPanel.transform.SetParent(canvas.transform, false);
+            MenuKit.Place(previewPanel.GetComponent<RectTransform>(),
+                new Vector2(0.26f, 0.52f), Vector2.zero, new Vector2(460, 560));
+
+            _book = RosterBook.Load();
+            _preview = gameObject.AddComponent<ModelPreview>();
+            _preview.Attach(previewPanel.GetComponent<RectTransform>());
+
+            for (int r = 0; r < 3; r++)
+            {
+                float y = 0.50f - r * 0.09f;
+
+                var label = MenuKit.Label(canvas.transform, "", 24, UiTheme.Cream,
+                    new Vector2(0.58f, y), Vector2.zero, new Vector2(220, 36),
+                    TextAnchor.MiddleLeft);
+
+                var pips = new Image[TraitSlots];
+                for (int p = 0; p < TraitSlots; p++)
+                {
+                    var go = new GameObject($"Pip{r}_{p}", typeof(RectTransform), typeof(Image));
+                    go.transform.SetParent(canvas.transform, false);
+
+                    var img = go.GetComponent<Image>();
+                    img.color = TraitPipEmpty;
+                    img.raycastTarget = false;
+
+                    MenuKit.Place(img.rectTransform, new Vector2(0.72f, y),
+                        new Vector2(p * (TraitPipSize.x + TraitPipGap), 0), TraitPipSize);
+
+                    pips[p] = img;
+                }
+
+                _traitRows.Add((label, pips));
+            }
 
             MenuKit.WoodButton(canvas.transform, "START MATCH", new Vector2(0.5f, 0.24f),
                                Vector2.zero, new Vector2(520, 92), Begin);
@@ -347,17 +402,44 @@ namespace TumbangPreso.UI
             _name.text = entry.Name;
 
             var labels = MeterLabels[_tab];
-            _meters.text =
-                $"{labels[0],-10}{Bar(entry.Bilis)}\n" +
-                $"{labels[1],-10}{Bar(entry.Lakas)}\n" +
-                $"{labels[2],-10}{Bar(entry.Tatag)}";
+            int[] points = { entry.Bilis, entry.Lakas, entry.Tatag };
+
+            for (int r = 0; r < _traitRows.Count; r++)
+            {
+                _traitRows[r].label.text = labels[r];
+
+                for (int p = 0; p < TraitSlots; p++)
+                    _traitRows[r].pips[p].color = p < points[r] ? TraitPipFilled : TraitPipEmpty;
+            }
+
+            RefreshPreview();
         }
 
-        private static string Bar(int points)
+        /// <summary>A lata and a tsinelas lie on the ground and need the steeper look-down
+        /// angle; a Person stands.</summary>
+        private void RefreshPreview()
         {
-            var sb = new System.Text.StringBuilder();
-            for (int i = 1; i <= Roster.TraitMax; i++) sb.Append(i <= points ? "#" : ".");
-            return sb.ToString();
+            if (_preview == null || _book == null) return;
+
+            int index = _pick[_tab];
+            RosterEntryAsset art = _tab == 0 ? _book.PersonArt(index)
+                                 : _tab == 1 ? _book.CanArt(index)
+                                 : _book.SlipperArt(index);
+
+            _preview.Show(art != null ? art.Model : null, flat: _tab != 0);
+        }
+
+        private void Update()
+        {
+            if (_preview == null) return;
+
+            // Drag to turn the subject. The first drag ends the idle sweep for good.
+            if (Input.GetMouseButton(0))
+                _preview.Orbit(new Vector2(Input.GetAxisRaw("Mouse X") * 10.0f,
+                                           Input.GetAxisRaw("Mouse Y") * 10.0f));
+
+            float wheel = Input.mouseScrollDelta.y;
+            if (Mathf.Abs(wheel) > 0.01f) _preview.Zoom(wheel);
         }
 
         private void Begin()
