@@ -141,6 +141,25 @@ and use `git commit -F`.**
 
 ⚠️ **Bash heredocs are unreliable on this machine.** Write the script to a file and run it.
 
+## 6a · Do the work, do not manage the timeline
+
+**Do not editorialise about deadlines, scope, or whether something is achievable.** This team
+built the entire game, which won its regional, in under two weeks. Estimates and warnings about
+what "realistically" fits are not useful here and have already been wrong once.
+
+**Do not stop to ask for a test until everything you can do yourself is done.** Almost
+everything is doable headlessly and the reflex to hand work back is usually laziness dressed as
+caution:
+
+- Unity **scenes can be built from code** (`EditorSceneManager` + `-executeMethod`). See
+  `Assets/TumbangPreso/Editor/SceneBuilder.cs`. Do not claim a scene needs the GUI.
+- Matches can be **run and measured** in headless Play Mode tests.
+- Compilation, tests, probes and builds all run from the command line.
+
+Hand something back only when it genuinely requires a human judgement (does this FEEL right,
+is this the art we want) or a credential. Everything else: just do it, verify it yourself, and
+report what the measurement said.
+
 ## 7 · Writing style
 
 **No em dashes anywhere**, in code comments, docs, or commit messages. Rewrite the sentence

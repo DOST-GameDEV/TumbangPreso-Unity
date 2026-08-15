@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/TumbangPreso/Scenes/VerticalSlice.unity
+    guid: c6af136bc050eb446937715d88c57efa
   m_configObjects: {}
