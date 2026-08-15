@@ -102,7 +102,17 @@ namespace TumbangPreso
                 m.IsDefender = slot == defenderSlot;
                 m.HoldingSlipper = false;
                 m.Stamina.RefillAndClearFatigue();
-                m.Teleport(m.IsDefender ? DefenderMark() : AttackerSpawn(slot));
+
+                // ⚠️ THE SPAWN IS RECORDED, NOT JUST USED. The kill plane returns whoever falls
+                // off the world to their OWN spawn, and it has no other way to know where that
+                // is. Written every round because the mark moves when roles rotate.
+                Vector3 mark = m.IsDefender ? DefenderMark() : AttackerSpawn(slot);
+                m.SpawnPosition = mark;
+                m.Teleport(mark);
+
+                // Roles rotate every round, so the ring and tag have to re-colour with them.
+                var plate = m.GetComponentInChildren<Visual.CharacterNameplate>();
+                if (plate != null) { plate.ApplySizing(); plate.Refresh(); }
             }
 
             if (Lata != null)

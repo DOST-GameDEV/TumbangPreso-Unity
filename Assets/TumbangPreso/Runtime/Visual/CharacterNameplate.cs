@@ -1,0 +1,162 @@
+using TumbangPreso.UI;
+using UnityEngine;
+
+namespace TumbangPreso.Visual
+{
+    /// <summary>
+    /// The floor ring and the floating tag over a unit, converted from
+    /// `scripts/characters/character_nameplate.gd`.
+    ///
+    /// §4.2: the ACCENT tracks role — blue for the taya, orange for an attacker. Team
+    /// identity is never carried by hue.
+    ///
+    /// ⚠️ THE SEAT IS STABLE FOR THE MATCH; THE ROLE IS NOT. That split is the whole point of
+    /// the tag: "P3" is who you have been chasing all match, "TAYA" is what they happen to be
+    /// doing this round. Roles rotate every round, so the refresh cannot be a one-shot.
+    /// </summary>
+    public sealed class CharacterNameplate : MonoBehaviour
+    {
+        /// <summary>
+        /// §4.5: "Fades out past ~15m." Without this every tag in the match renders at full
+        /// opacity forever, and in a 40x40 arena that means four billboarded labels
+        /// permanently stacked across the middle of a first-person view.
+        /// </summary>
+        public const float FadeStart = 12.0f;
+        public const float FadeEnd = 18.0f;
+
+        /// <summary>Ring radius as a multiple of the unit's own capsule radius.
+        /// 0.55 / 0.4 = 1.375 for the Person, kept as a RATIO rather than a flat number so a
+        /// smaller unit's ring reads as a ring around that unit, not a person-sized ring
+        /// around a small object.</summary>
+        public const float RingRadiusRatio = 1.375f;
+
+        /// <summary>Small and absolute on purpose: it only has to clear the floor mesh, not
+        /// scale with the unit.</summary>
+        public const float RingFloorMargin = 0.02f;
+
+        /// <summary>0.25 at Person scale is where this was tuned; a shorter unit wants a
+        /// proportionally smaller gap, not the same 0.25 floating disconnected above it.</summary>
+        public const float LabelMarginAtPersonScale = 0.25f;
+        public const float PersonCapsuleHeight = 1.6f;
+
+        private CharacterMotor _character;
+        private Transform _ring;
+        private Renderer _ringRenderer;
+        private MaterialPropertyBlock _ringBlock;
+        private TextMesh _label;
+        private Transform _labelTransform;
+        private Color _roleColor = UiTheme.Defense;
+
+        private void Awake()
+        {
+            _character = GetComponentInParent<CharacterMotor>();
+            Build();
+        }
+
+        private void Start()
+        {
+            // ⚠️ SIZING RUNS IN Start, NOT Awake. The capsule this reads is resized by the
+            // unit's own role setup, and in Godot this exact ordering was the bug: a child
+            // readies before its parent, so sizing in Awake reads the prefab's default
+            // capsule on every unit's first frame.
+            ApplySizing();
+            Refresh();
+        }
+
+        private void Build()
+        {
+            // The ring: a flat disc under the unit. Unlit so it reads as a marker painted on
+            // the street rather than as geometry catching the scene light.
+            var ringGo = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            ringGo.name = "NameplateRing";
+            Destroy(ringGo.GetComponent<Collider>());   // a marker must never be collidable
+
+            _ring = ringGo.transform;
+            _ring.SetParent(transform, false);
+            _ringRenderer = ringGo.GetComponent<Renderer>();
+            _ringBlock = new MaterialPropertyBlock();
+
+            var labelGo = new GameObject("NameplateLabel");
+            _labelTransform = labelGo.transform;
+            _labelTransform.SetParent(transform, false);
+
+            _label = labelGo.AddComponent<TextMesh>();
+            _label.anchor = TextAnchor.MiddleCenter;
+            _label.alignment = TextAlignment.Center;
+            _label.characterSize = 0.08f;
+            _label.fontSize = 96;
+        }
+
+        /// <summary>
+        /// Sizes and positions the ring and label from THIS unit's own current capsule rather
+        /// than a shared constant. Public because the role swap has to call it again: a unit
+        /// that changes role can change capsule.
+        /// </summary>
+        public void ApplySizing()
+        {
+            if (_character == null) return;
+
+            var cc = _character.GetComponent<CharacterController>();
+            float height = cc != null ? cc.height : PersonCapsuleHeight;
+            float radius = cc != null ? cc.radius : 0.4f;
+
+            // ⚠️ THE CAPSULE CENTRE IS NOT THE TRANSFORM ORIGIN HERE. Godot's CharacterBody3D
+            // is centred on its origin, so the .gd could write -height/2 for the floor. Unity
+            // seats are built with `center.y = height/2`, putting the origin at the FEET.
+            // Copying the Godot expression across sinks the ring half a body into the street.
+            float centreY = cc != null ? cc.center.y : height / 2.0f;
+            float feetY = centreY - height / 2.0f;
+            float headY = centreY + height / 2.0f;
+
+            float ringRadius = radius * RingRadiusRatio;
+
+            // A Unity cylinder is 2 units tall at scale 1, hence the flat Y — this is a disc,
+            // not a column.
+            _ring.localScale = new Vector3(ringRadius * 2.0f, 0.005f, ringRadius * 2.0f);
+            _ring.localPosition = new Vector3(0.0f, feetY + RingFloorMargin, 0.0f);
+
+            float labelMargin = LabelMarginAtPersonScale * (height / PersonCapsuleHeight);
+            _labelTransform.localPosition = new Vector3(0.0f, headY + labelMargin, 0.0f);
+        }
+
+        /// <summary>Public so a late-joiner sync can force it, matching the HUD's own refresh.</summary>
+        public void Refresh()
+        {
+            if (_character == null) return;
+
+            bool isDefense = _character.IsDefender;
+            _roleColor = isDefense ? UiTheme.Defense : UiTheme.Offense;
+
+            _ringBlock.SetColor("_Color", new Color(_roleColor.r, _roleColor.g, _roleColor.b, 0.8f));
+            _ringBlock.SetColor("_BaseColor", new Color(_roleColor.r, _roleColor.g, _roleColor.b, 0.8f));
+            _ringRenderer.SetPropertyBlock(_ringBlock);
+
+            _label.text = $"{_character.DisplayName()} · {(isDefense ? "TAYA" : "ATK")}";
+            _label.color = _roleColor;
+        }
+
+        /// <summary>
+        /// The tag fade (§4.5) and the billboard. Polled rather than signalled because
+        /// distance to the viewer is a continuously-varying value, not an event.
+        ///
+        /// ⚠️ IT READS THE ACTIVE CAMERA, NOT THE RIG. That makes it automatically correct for
+        /// whichever unit this peer is looking through — FPP, TPP, or the spectator — with no
+        /// reference back to any camera component.
+        /// </summary>
+        private void LateUpdate()
+        {
+            var cam = UnityEngine.Camera.main;
+            if (cam == null || _label == null) return;
+
+            float distance = Vector3.Distance(cam.transform.position, _labelTransform.position);
+
+            // InverseLerp(End, Start, d): 1 up close, 0 past FadeEnd.
+            float alpha = Mathf.Clamp01(Mathf.InverseLerp(FadeEnd, FadeStart, distance));
+            _label.color = new Color(_roleColor.r, _roleColor.g, _roleColor.b, alpha);
+
+            // Face the viewer. Godot's Label3D billboarded itself; a TextMesh does not.
+            _labelTransform.rotation = Quaternion.LookRotation(
+                _labelTransform.position - cam.transform.position, Vector3.up);
+        }
+    }
+}

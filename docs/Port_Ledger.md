@@ -72,7 +72,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `character_base.gd` | 1981 | `CharacterMotor` + `CombatVerbs` + `StatusStack` (651) | PARTIAL |
 | `character_visual.gd` | 2182 | `CharacterVisual` + `CharacterAnimator` (401) | PARTIAL |
 | `carrier.gd` | 536 | `Carrier.cs` (210) | PARTIAL |
-| `character_nameplate.gd` | 165 | — | **MISSING** |
+| `character_nameplate.gd` | 165 | `CharacterNameplate.cs` (155) | CONVERTED — ring, tag, role colour, distance fade |
 | `slipper.gd` | 1630 | `Slipper.cs` (213) | PARTIAL |
 | `lata.gd` | 534 | `Lata.cs` (118) | PARTIAL |
 
@@ -89,7 +89,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `trajectory_preview.gd` | 273 | `TrajectoryPreview.cs` (113) | PARTIAL |
 | `hazard_zone.gd` | 133 | — | **MISSING** |
 | `game_version.gd` | 56 | `GameVersion.cs` (80) | CONVERTED — reads `Application.version`, now 4.68 |
-| `kill_plane.gd` | 26 | `KillPlane.cs` (62) | PARTIAL — logic done, height still borrowed |
+| `kill_plane.gd` | 26 | `KillPlane.cs` (62) | PARTIAL — logic and spawn anchor done, height still borrowed |
 
 ### `spectator_camera.gd` — CONVERTED 2026-08-15, audited line by line
 

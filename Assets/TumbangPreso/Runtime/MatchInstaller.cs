@@ -186,6 +186,12 @@ namespace TumbangPreso
             go.AddComponent<CombatVerbs>();
             go.AddComponent<Social.EmotePlayer>();
 
+            // The role ring and floating tag. Parented under the seat so it inherits position
+            // but sizes itself off the capsule.
+            var plateGo = new GameObject("Nameplate");
+            plateGo.transform.SetParent(go.transform, false);
+            plateGo.AddComponent<Visual.CharacterNameplate>();
+
             // ⚠️ THE VISUAL MEASURES THE MODEL AND ALIGNS IT TO THE CAPSULE FLOOR rather than
             // assuming a height, which is what lets twelve differently-authored rigs all stand
             // correctly without per-character setup. Give it the model and it does the rest.
