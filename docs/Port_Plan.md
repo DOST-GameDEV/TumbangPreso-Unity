@@ -288,7 +288,30 @@ into something a CI run answers:
 
 ## 7 · Decisions and open questions
 
-### 7.1 ⚠️ `Design.md` has drifted from the code in four places. Settle before Phase 1.
+### 7.1 ✅ RESOLVED. `Design.md` drifted in four places, and all four are stale prose.
+
+**Investigated 2026-08-15 against the Godot repo's git history. Full evidence in
+[`Design_Drift_Report.md`](Design_Drift_Report.md).**
+
+**Every constant in the shipping build is deliberate, human-instructed and correctly derived.
+`Balance.cs` needs no change, and the Godot build needs no gameplay change.** Transcribing from
+the GDScript rather than the doc was not merely cautious: three of these four numbers would have
+been wrong had the doc been trusted.
+
+The lunge, which looked worst, is the clearest case. `LUNGE_SPEED` went 12.247 → 7.746 in
+`071061c` on explicit instruction (*"a short 1-meter forward dash"*), re-derived properly as
+`sqrt(1.0 × 60)`, **and the reach loss was compensated in the same commit by giving the taya a
+second tag verb**, the punch, which covers exactly the close-range case the shortened lunge
+gives up. Not a regression. `Design.md`'s §2.6 measurement simply predates it.
+
+⚠️ **One thing remains genuinely unmeasured:** the nerf was compensated *in design*, and no
+`fair_probe` has been run since to confirm it was compensated *in practice*. That is a run on
+the **Godot** build, not a port task, and it is worth doing before nationals.
+
+The original statement of the problem is kept below, because the reasoning that found it is
+what a future reader needs, not just the answer.
+
+### 7.1a ⚠️ The original finding: `Design.md` disagrees with the code in four places.
 
 `Design.md` opens with *"a number in the code must match a number here, or one of the two is
 a bug."* Four are currently out of sync, and in **every** case the code is newer and the

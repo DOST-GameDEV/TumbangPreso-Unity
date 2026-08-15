@@ -30,10 +30,15 @@ namespace TumbangPreso.Core.Tests
         /// <summary>
         /// Sprint to empty.
         ///
-        /// ⚠️ ASSERTS 1.5 s, NOT Design.md's 1.25 s. character_base.gd carries
-        /// STAMINA_MAX 60.0 against a 40/s drain. The doc's §3 note, its §2.5 "MEASURED"
-        /// block and its §5.3 shove arithmetic all still describe a 50-point pool. Drift 1
-        /// of 3.
+        /// ⚠️ ASSERTS 1.5 s, WHERE Design.md's PROSE SAYS 1.25 s. ✅ RESOLVED 2026-08-15:
+        /// the code is right. The pool went 50 → 60 in commit 071061c, on instruction, and
+        /// deliberately: the box had grown, and the raise restored the property that ONE
+        /// SPRINT CROSSES THE DANGER ZONE, which is the retrieval the whole game is about.
+        /// The commit puts a full sprint at 8.2 m against the doc's 6.84.
+        ///
+        /// So the doc's headline stamina finding is the number from BEFORE the correction,
+        /// which is exactly why it reads as contradicting its own table. This is the
+        /// interlock between the pool and the box working, not breaking.
         /// </summary>
         [Fact]
         public void SprintToEmpty_TakesPoolOverDrainRate()
@@ -205,15 +210,17 @@ namespace TumbangPreso.Core.Tests
         }
 
         /// <summary>
-        /// ⚠️⚠️ 2.30 m, AND Design.md REPORTS 3.20 m AS MEASURED. Drift 3 of 3, and the
-        /// most consequential of the three. Design.md's §6 constants table agrees with the
-        /// code (LUNGE_SPEED 7.746, "a 1.0 m dash by v²/60"); its §6 prose and its §2.6
-        /// measurement still describe LUNGE_SPEED 12.247 and a 2.5 m dash, which is where
-        /// 2.5 + 1.3 came from. The lunge was cut by more than half, the table was updated
-        /// and the probe was never re-run.
+        /// ⚠️ 2.30 m, WHERE Design.md REPORTS 3.20 m AS MEASURED. ✅ RESOLVED 2026-08-15:
+        /// the CODE is right and the doc's measurement is stale. LUNGE_SPEED went
+        /// 12.247 → 7.746 in commit 071061c on explicit human instruction ("a short 1-meter
+        /// forward dash"), re-derived as sqrt(1.0 × 60) rather than nudged.
         ///
-        /// This is the taya's primary scoring verb, and §2.6's conclusion that "the tag is
-        /// a lead problem, not a reach problem" was drawn at the old reach.
+        /// ⚠️ AND THE REACH LOSS IS COMPENSATED, WHICH IS WHY THIS IS NOT A REGRESSION. The
+        /// same commit gave the taya a SECOND tag verb. The punch has 1.7 m of reach, no
+        /// charge and a 0.9 s cooldown, and covers exactly the close-range case the
+        /// shortened lunge gives up: the lunge is for somebody running PAST you, and its
+        /// charge is precisely long enough for somebody standing next to you to leave.
+        /// §2.6's measurement predates both changes. See docs/Design_Drift_Report.md.
         /// </summary>
         [Fact]
         public void LungeReach_IsDashPlusSweepRadius()
