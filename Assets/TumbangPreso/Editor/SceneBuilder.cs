@@ -60,6 +60,7 @@ namespace TumbangPreso.EditorTools
             }
 
             BuildCamera(seats[0]);
+            BuildHud(seats[0]);
             BuildDirector(lata, seats, slippers);
 
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath));
@@ -207,10 +208,13 @@ namespace TumbangPreso.EditorTools
 
             go.AddComponent<Carrier>();
             go.AddComponent<CombatVerbs>();
+            go.AddComponent<Social.EmotePlayer>();
+            go.AddComponent<Visual.CharacterVisual>();
 
             // ⚠️ EVERY SEAT IS A BOT IN THE SLICE, INCLUDING SEAT 0. A headless run has no
-            // keyboard, so a human seat would simply stand still and the probe would measure
-            // a match that never happened.
+            // keyboard, so a human seat would simply stand still and the probe would measure a
+            // match that never happened. To play it yourself, delete the AIController on Seat0
+            // in the Inspector and add a PlayerInputReader with the input asset assigned.
             go.AddComponent<AIController>();
 
             return motor;
@@ -223,10 +227,27 @@ namespace TumbangPreso.EditorTools
 
             var cam = go.AddComponent<Camera>();
             cam.fieldOfView = 60.0f;
+            go.transform.position = new Vector3(0, 11.0f, -9.0f);
+            go.transform.rotation = Quaternion.Euler(46.0f, 0, 0);
 
-            // A fixed overhead angle for the slice. The real rig is Phase 6.
-            go.transform.position = new Vector3(0, 14.0f, -14.0f);
-            go.transform.rotation = Quaternion.Euler(40.0f, 0, 0);
+            // ⚠️ THE RIG FOLLOWS SEAT 0, WHICH IS ALSO THE SEAT A HUMAN TAKES. In the headless
+            // probe every seat is a bot, so this is just a viewpoint; the moment somebody
+            // presses Play with a keyboard it is THEIR camera, and the self-hide has to be
+            // pointed at the right body or the player watches their own head fill the screen.
+            var rig = go.AddComponent<CameraSystem.CameraRig>();
+            rig.Follow(follow);
+        }
+
+        /// <summary>
+        /// ⚠️ THE HUD IS BOUND TO SEAT 0 FOR THE SAME REASON THE CAMERA IS. It reads the LOCAL
+        /// player's stamina and status, so binding it to the wrong seat produces a HUD that is
+        /// entirely plausible and entirely about somebody else.
+        /// </summary>
+        private static void BuildHud(CharacterMotor local)
+        {
+            var go = new GameObject("HUD");
+            var hud = go.AddComponent<UI.Hud>();
+            hud.Bind(local);
         }
 
         private static void BuildDirector(Lata lata, CharacterMotor[] seats, Slipper[] slippers)
