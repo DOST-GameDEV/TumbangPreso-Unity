@@ -3,158 +3,420 @@ using UnityEngine;
 
 namespace TumbangPreso.CameraSystem
 {
-    /// <summary>Where a unit's facing comes from.</summary>
-    public enum AimSource
-    {
-        /// <summary>Facing follows the movement direction.</summary>
-        Movement,
+    public enum CameraMode { Fpp, Tpp }
 
-        /// <summary>Facing follows the cursor. Changes how throwing and the taya's verbs aim.</summary>
-        Mouse,
-    }
+    public enum AimSource { Mouse, Movement }
 
     /// <summary>
-    /// The follow camera.
+    /// The player camera. Ported from `camera_rig.gd`.
     ///
-    /// ⚠️⚠️ THE SELF-HIDE WALKS RENDERERS BY TYPE AND NEVER NAMES A MESH, and that is the
-    /// single most important thing to preserve here. Because a roster character is the same rig
-    /// wearing a different palette, hiding "the local player's own body" has to work for any
-    /// pick automatically. The moment this file names a mesh or a child path, adding a
-    /// character breaks the camera for that character only, which is the worst kind of bug to
-    /// find: it looks like an art problem and it is a code problem.
+    /// ⚠️⚠️ THE GAME IS FIRST PERSON. A Person is ALWAYS FPP and a Prop is ALWAYS TPP; that is
+    /// a stated directive, not a preference, and an earlier version of this port used a
+    /// third-person follow camera for everything, which is a different game.
     ///
-    /// ⚠️ THE EYE HEIGHT AND CAPSULE BELONG TO THE PERSON ROLE, NOT TO A MODEL. 1.25 and 1.6.
-    /// Everything ever tuned against a Person assumes them, so they are constants here rather
-    /// than measurements off whatever mesh happens to be instanced.
+    /// ⚠️⚠️ THE CAMERA NEVER INHERITS THE BODY'S ROLL OR PITCH, AND THIS IS THE INVARIANT.
+    /// It was reported three times from playtests, with screenshots: the whole 3D view rolled
+    /// forty degrees while the HUD stayed level. The pivots are children of the body, so they
+    /// inherit its full basis, and anything that leaves a non-yaw component on the body lands
+    /// directly in the player's eye. Patching each writer was tried in pieces and failed. So
+    /// the rig stops trusting its parent: every frame both pivots are given an ABSOLUTE
+    /// rotation built from the body's YAW ONLY plus the rig's own pitch. Whatever the body does
+    /// on the other two axes cannot reach the camera, from any code path, including ones
+    /// nobody has written yet.
+    ///
+    /// ⚠️ AND YAW IS RECOVERED FROM THE FORWARD VECTOR, NOT FROM EULER ANGLES. Decomposing a
+    /// basis that has roll in it does not give back the yaw you want, which is precisely the
+    /// situation this exists to survive.
     /// </summary>
     public sealed class CameraRig : MonoBehaviour
     {
-        public const float EyeHeight = 1.25f;
-        public const float CapsuleHeight = 1.6f;
+        // -------------------------------------------------------------------
+        // Constants, carried over exactly.
+        // -------------------------------------------------------------------
 
-        [SerializeField] private CharacterMotor _target;
-        [SerializeField] private AimSource _aimSource = AimSource.Mouse;
+        public const float PitchMinDeg = -80.0f;
+        public const float PitchMaxDeg = 70.0f;
+        public const float BaseSensitivity = 0.15f;
 
-        [Header("Follow")]
-        [SerializeField] private Vector3 _offset = new Vector3(0.0f, 11.0f, -9.0f);
-        [SerializeField] private float _followLerp = 8.0f;
-        [SerializeField] private float _pitchDegrees = 46.0f;
+        /// <summary>
+        /// ⚠️ MEASURED, AND THE OLD 1.55 MUST NOT BE RESTORED. That value was "eye height on a
+        /// 1.6 unit capsule" and was never checked against a model: it put the whole character
+        /// below the near edge of the frame. 0.45 is 55% of the way up the head mesh, which is
+        /// the eye line on the actual rig.
+        /// </summary>
+        public const float FppEyeHeight = 0.45f;
 
-        private readonly List<Renderer> _hidden = new List<Renderer>();
-        private CharacterMotor _hiddenFor;
+        /// <summary>Meshes whose name contains this are hidden in first person.</summary>
+        public const string FppHiddenMeshHint = "head";
 
+        public const float ViewmodelScale = 0.72f;
+
+        /// <summary>
+        /// ⚠️ PUSHED DOWN AND BACK AFTER SCALING. Shrinking the arms alone just leaves smaller
+        /// arms in the same commanding spot; down clears the centre of frame and back is what
+        /// actually stops them subtending half the vertical FOV.
+        /// </summary>
+        public static readonly Vector3 ViewmodelSeat = new Vector3(0.0f, -0.10f, -0.16f);
+
+        public const float PersonCapsuleHeight = 1.6f;
+        public const float TppMinSpringLength = 1.8f;
+        public const float TppMinPitchDeg = -34.0f;
+        public const float TppBaseSpringLength = 4.5f;
+        public const float TppBasePitchDeg = -15.0f;
+        public const float TppMountHeight = 1.2f;
+
+        public const float VmKickTime = 0.22f;
+
+        public const float EmotePitchMinDeg = -35.0f;
+        public const float EmotePitchMaxDeg = 20.0f;
+
+        // -------------------------------------------------------------------
+
+        [SerializeField] private AimSource _aimSource = AimSource.Movement;
+        [SerializeField] private float _fieldOfView = 75.0f;
+
+        private CharacterMotor _character;
+        private CameraMode _mode = CameraMode.Fpp;
+
+        private Transform _fppPivot;
+        private Transform _tppPivot;
+        private Transform _viewmodel;
+        private UnityEngine.Camera _camera;
+
+        private float _pitchDeg;
+        private float _tppPitchDeg = TppBasePitchDeg;
+        private float _tppSpringLength = TppBaseSpringLength;
+
+        private bool _active;
+
+        private readonly List<Renderer> _hiddenForFpp = new List<Renderer>();
+
+        private float _shakeStrength;
         private float _shakeLeft;
-        private float _shakeMagnitude;
+        private float _vmKickLeft;
+        private Vector3 _vmKickOffset;
 
+        private bool _emoteView;
+        private float _emoteYawDeg;
+        private float _emotePitchDeg;
+        private CameraMode _modeBeforeEmote = CameraMode.Fpp;
+
+        public CameraMode Mode => _mode;
         public AimSource Aim => _aimSource;
-        public CharacterMotor Target => _target;
+        public bool IsLocalFpp => _active && _mode == CameraMode.Fpp;
+        public UnityEngine.Camera Camera => _camera;
 
-        public void Follow(CharacterMotor target)
+        // -------------------------------------------------------------------
+
+        private void Awake()
         {
-            _target = target;
-            RefreshSelfHide();
+            _camera = GetComponent<UnityEngine.Camera>();
+            if (_camera == null) _camera = gameObject.AddComponent<UnityEngine.Camera>();
+
+            _camera.fieldOfView = _fieldOfView;
+            _camera.nearClipPlane = 0.05f;
         }
+
+        /// <summary>
+        /// Attach to a body. ⚠️ A PERSON IS ALWAYS FPP.
+        /// </summary>
+        public void Follow(CharacterMotor character, bool makeActive = true)
+        {
+            _character = character;
+            _mode = CameraMode.Fpp;
+
+            if (_character == null) return;
+
+            BuildPivots();
+            ApplyFppSelfHide();
+            SetActive(makeActive);
+        }
+
+        private void BuildPivots()
+        {
+            // ⚠️ THE PIVOTS ARE NOT PARENTED TO THE BODY. In Godot they were children and
+            // inherited its basis, which is the whole reason the roll bug existed. Here they
+            // are free transforms positioned from the body every frame, so a rolled body
+            // cannot reach them by construction rather than by care.
+            if (_fppPivot == null)
+            {
+                _fppPivot = new GameObject("~FppPivot").transform;
+                _tppPivot = new GameObject("~TppPivot").transform;
+            }
+
+            MountViewmodel();
+        }
+
+        /// <summary>
+        /// ⚠️ FIRST PERSON GETS DEDICATED VIEWMODEL ARMS, NOT THE RIG'S OWN. From playtest:
+        /// "don't see arms of ppl". The real body tops out below the eye line because the chibi
+        /// head is big enough that the eye sits above the shoulders, so looking down showed
+        /// nothing at all. The arms are mounted to the camera pivot and inherit its pitch, so
+        /// they rise and fall with the view, and a remote player's rig is never the one being
+        /// looked through.
+        /// </summary>
+        private void MountViewmodel()
+        {
+            if (_viewmodel != null) return;
+
+            var prefab = Resources.Load<GameObject>("Models/ViewmodelArms");
+            if (prefab == null) return;
+
+            var go = Instantiate(prefab, transform);
+            go.name = "~ViewmodelArms";
+            go.transform.localScale = Vector3.one * ViewmodelScale;
+            go.transform.localPosition = ViewmodelSeat;
+            go.transform.localRotation = Quaternion.identity;
+
+            foreach (var c in go.GetComponentsInChildren<Collider>(true)) Destroy(c);
+
+            _viewmodel = go.transform;
+        }
+
+        public void SetActive(bool active)
+        {
+            _active = active;
+            if (_camera != null) _camera.enabled = active;
+
+            if (_viewmodel != null) _viewmodel.gameObject.SetActive(active && _mode == CameraMode.Fpp);
+
+            if (active) ApplyFppSelfHide();
+            else RestoreSelfHide();
+        }
+
+        public void SetAimSource(AimSource source) => _aimSource = source;
+
+        // -------------------------------------------------------------------
 
         private void LateUpdate()
         {
-            if (_target == null) return;
+            if (_character == null || !_active) return;
 
-            if (_hiddenFor != _target) RefreshSelfHide();
+            if (_emoteView) { ApplyEmoteView(); return; }
 
-            Vector3 focus = _target.transform.position + Vector3.up * EyeHeight;
-            Vector3 wanted = focus + _offset;
+            StepLook();
 
-            transform.position = Vector3.Lerp(transform.position, wanted,
-                                              1.0f - Mathf.Exp(-_followLerp * Time.deltaTime));
-            transform.rotation = Quaternion.Euler(_pitchDegrees, 0.0f, 0.0f);
+            if (_mode == CameraMode.Fpp) ApplyFpp();
+            else ApplyTpp();
 
-            ApplyShake();
+            StepShake();
+            StepViewmodelKick();
+        }
+
+        private void StepLook()
+        {
+            if (_aimSource != AimSource.Mouse) return;
+            if (_character.Intent.Parked) return;
+
+            var s = Settings.SettingsStore.Current;
+            float sens = BaseSensitivity * s.MouseSensitivity;
+
+            float dx = Input.GetAxisRaw("Mouse X") * sens;
+            float dy = Input.GetAxisRaw("Mouse Y") * sens;
+            if (s.InvertY) dy = -dy;
+
+            // ⚠️ YAW GOES ON THE BODY, PITCH STAYS ON THE RIG. The body turning is what makes
+            // a throw leave along the sight line; a rig that yawed on its own would let the
+            // player look one way and throw another.
+            if (Mathf.Abs(dx) > 0.0001f)
+                _character.transform.Rotate(Vector3.up, dx * 10.0f, Space.World);
+
+            _pitchDeg = Mathf.Clamp(_pitchDeg - dy * 10.0f, PitchMinDeg, PitchMaxDeg);
         }
 
         /// <summary>
-        /// ⚠️ BY TYPE, NEVER BY NAME. See the class note: naming a mesh makes the camera
-        /// character-specific, and every future roster addition is then a camera bug waiting
-        /// to be reported as an art bug.
+        /// ⚠️ RECOVERED FROM THE FORWARD VECTOR. Euler decomposition of a basis carrying roll
+        /// does not return the yaw you want, and that is exactly the case this survives.
         /// </summary>
-        private void RefreshSelfHide()
+        private float BodyYawDeg()
         {
-            foreach (var r in _hidden)
-                if (r != null) r.enabled = true;
+            Vector3 forward = _character.transform.forward;
 
-            _hidden.Clear();
-            _hiddenFor = _target;
+            if (Mathf.Abs(forward.x) < 0.00001f && Mathf.Abs(forward.z) < 0.00001f)
+                return _character.transform.eulerAngles.y; // straight up or down: degenerate
 
-            if (_target == null) return;
+            return Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
+        }
 
-            foreach (var r in _target.GetComponentsInChildren<Renderer>(includeInactive: true))
+        private void ApplyFpp()
+        {
+            float yaw = BodyYawDeg();
+            Vector3 eye = _character.transform.position + Vector3.up * (PersonCapsuleHeight * 0.5f + FppEyeHeight);
+
+            // Absolute, from yaw and pitch only. The body's roll cannot reach this.
+            transform.SetPositionAndRotation(eye, Quaternion.Euler(_pitchDeg, yaw, 0.0f));
+
+            if (_viewmodel != null && !_viewmodel.gameObject.activeSelf)
+                _viewmodel.gameObject.SetActive(true);
+        }
+
+        private void ApplyTpp()
+        {
+            float yaw = BodyYawDeg();
+            Vector3 mount = _character.transform.position + Vector3.up * TppMountHeight;
+
+            var rot = Quaternion.Euler(Mathf.Max(_tppPitchDeg, TppMinPitchDeg), yaw, 0.0f);
+            Vector3 wanted = mount - (rot * Vector3.forward) * _tppSpringLength;
+
+            // ⚠️ THE SPRING ARM EXCLUDES THE BODY IT IS WATCHING, or the cast hits the
+            // character's own capsule every frame and drags the camera in against it.
+            float length = _tppSpringLength;
+            if (Physics.SphereCast(mount, 0.2f, (wanted - mount).normalized, out var hit,
+                                   _tppSpringLength, ~0, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.collider.GetComponentInParent<CharacterMotor>() != _character)
+                    length = Mathf.Max(TppMinSpringLength, hit.distance);
+            }
+
+            transform.SetPositionAndRotation(mount - (rot * Vector3.forward) * length, rot);
+
+            if (_viewmodel != null) _viewmodel.gameObject.SetActive(false);
+        }
+
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️ HIDE THE HEAD, NOT THE WHOLE BODY. The chibi head is large enough that in first
+        /// person it fills the frame, but the body itself sits below the eye line and is what
+        /// the player sees when they look down. Hiding everything leaves them floating.
+        /// </summary>
+        private void ApplyFppSelfHide()
+        {
+            RestoreSelfHide();
+
+            if (_character == null || _mode != CameraMode.Fpp) return;
+
+            foreach (var r in _character.GetComponentsInChildren<Renderer>(true))
             {
                 if (!r.enabled) continue;
+                if (r.name.IndexOf(FppHiddenMeshHint, System.StringComparison.OrdinalIgnoreCase) < 0)
+                    continue;
 
                 r.enabled = false;
-                _hidden.Add(r);
+                _hiddenForFpp.Add(r);
             }
         }
 
-        /// <summary>
-        /// ⚠️⚠️ SHAKE IS FOR THE PERSON IT HAPPENED TO, AND ONLY THEM. A body block shakes the
-        /// BLOCKER's camera, because the block is a thing the blocker did and they need to feel
-        /// it. Shaking every camera would tell three other players that something happened to
-        /// them when nothing did.
-        ///
-        /// ⚠️ AND SHAKE IS NOT HITSTOP. Hitstop writes a GLOBAL time scale, which is acceptable
-        /// for a shove on a long cooldown and completely wrong for a body block that can fire
-        /// as fast as three attackers can throw. Never route a block through time scale.
-        /// </summary>
-        public void Shake(float magnitude, float duration)
+        private void RestoreSelfHide()
         {
-            _shakeMagnitude = Mathf.Max(_shakeMagnitude, magnitude);
+            foreach (var r in _hiddenForFpp)
+                if (r != null) r.enabled = true;
+
+            _hiddenForFpp.Clear();
+        }
+
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️ SHAKE IS FOR THE PERSON IT HAPPENED TO. A body block shakes the BLOCKER's camera
+        /// because it is a thing they did. Shaking everyone tells three other players something
+        /// happened to them when nothing did.
+        ///
+        /// ⚠️ AND IT IS NOT HITSTOP. Hitstop writes a global time scale, which is fine for a
+        /// shove on a long cooldown and completely wrong for a block that can fire as fast as
+        /// three attackers can throw.
+        /// </summary>
+        public void Shake(float strength = 0.35f, float duration = 0.18f)
+        {
+            _shakeStrength = Mathf.Max(_shakeStrength, strength);
             _shakeLeft = Mathf.Max(_shakeLeft, duration);
         }
 
-        private void ApplyShake()
+        private void StepShake()
         {
             if (_shakeLeft <= 0.0f) return;
 
             _shakeLeft -= Time.deltaTime;
-            float falloff = Mathf.Clamp01(_shakeLeft);
+            float k = Mathf.Clamp01(_shakeLeft) * _shakeStrength;
 
             transform.position += new Vector3(
-                (Random.value - 0.5f) * 2.0f * _shakeMagnitude * falloff,
-                (Random.value - 0.5f) * 2.0f * _shakeMagnitude * falloff,
+                (Random.value - 0.5f) * 2.0f * k * 0.1f,
+                (Random.value - 0.5f) * 2.0f * k * 0.1f,
                 0.0f);
 
-            if (_shakeLeft <= 0.0f) _shakeMagnitude = 0.0f;
+            if (_shakeLeft <= 0.0f) _shakeStrength = 0.0f;
         }
 
-        /// <summary>
-        /// Where the target should face this frame, in world space.
-        ///
-        /// ⚠️ THE AIM SOURCE CHANGES THE GAME, NOT JUST THE FEEL. Under Mouse the player can
-        /// face one way and run another, which is what makes a retrieval run out of the box
-        /// while still aiming at the can possible. Under Movement they cannot. Keep both, and
-        /// keep the choice explicit.
-        /// </summary>
-        public Vector3 AimPointFor(CharacterMotor who, UnityEngine.Camera cam)
+        /// <summary>A punch of the arms toward the player on an action, so a verb is felt.</summary>
+        public void ViewmodelKick(Vector3 direction, float strength = 1.0f)
         {
-            if (who == null) return Vector3.zero;
+            _vmKickLeft = VmKickTime;
+            _vmKickOffset = direction.normalized * 0.06f * strength;
+        }
 
-            if (_aimSource == AimSource.Movement)
-            {
-                Vector2 move = who.Intent.MoveAxis;
-                Vector3 dir = new Vector3(move.x, 0.0f, move.y);
+        private void StepViewmodelKick()
+        {
+            if (_viewmodel == null) return;
 
-                if (dir.sqrMagnitude < 0.01f) dir = who.transform.forward;
-                return who.transform.position + dir.normalized * 10.0f;
-            }
+            if (_vmKickLeft > 0.0f) _vmKickLeft -= Time.deltaTime;
 
-            if (cam == null) return who.transform.position + who.transform.forward * 10.0f;
+            float k = _vmKickLeft <= 0.0f ? 0.0f : _vmKickLeft / VmKickTime;
+            _viewmodel.localPosition = ViewmodelSeat + _vmKickOffset * k;
+        }
 
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            var ground = new Plane(Vector3.up, new Vector3(0.0f, who.transform.position.y, 0.0f));
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️ AN EMOTE SWITCHES TO A THIRD-PERSON LOOK, because the whole point of an emote is
+        /// that YOU can see it too. In first person a player performing one sees nothing at all
+        /// and reasonably concludes it did not fire.
+        /// </summary>
+        public void BeginEmoteView()
+        {
+            if (_emoteView) return;
+
+            _emoteView = true;
+            _modeBeforeEmote = _mode;
+            _emoteYawDeg = BodyYawDeg() + 180.0f;
+            _emotePitchDeg = -10.0f;
+
+            if (_viewmodel != null) _viewmodel.gameObject.SetActive(false);
+        }
+
+        public void EndEmoteView()
+        {
+            if (!_emoteView) return;
+
+            _emoteView = false;
+            _mode = _modeBeforeEmote;
+
+            if (_viewmodel != null)
+                _viewmodel.gameObject.SetActive(_active && _mode == CameraMode.Fpp);
+        }
+
+        public bool IsEmoteView => _emoteView;
+
+        private void ApplyEmoteView()
+        {
+            _emotePitchDeg = Mathf.Clamp(_emotePitchDeg, EmotePitchMinDeg, EmotePitchMaxDeg);
+
+            Vector3 focus = _character.transform.position + Vector3.up * 1.0f;
+            var rot = Quaternion.Euler(_emotePitchDeg, _emoteYawDeg, 0.0f);
+
+            transform.SetPositionAndRotation(focus - (rot * Vector3.forward) * 2.6f, rot);
+        }
+
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// Where this player is aiming. ⚠️ IN FIRST PERSON IT IS THE SIGHT LINE, which is what
+        /// makes the throw leave along the line the player is looking down. Measured: leaving
+        /// from the hand instead sags the flight 0.38 to 0.43 m below that line and drops the
+        /// slipper out of the bottom of the screen on release.
+        /// </summary>
+        public Vector3 AimPoint()
+        {
+            if (_character == null) return Vector3.zero;
+
+            if (_mode == CameraMode.Fpp)
+                return transform.position + transform.forward * 20.0f;
+
+            var ground = new Plane(Vector3.up, _character.transform.position);
+            var ray = new Ray(transform.position, transform.forward);
 
             return ground.Raycast(ray, out float enter)
                 ? ray.GetPoint(enter)
-                : who.transform.position + who.transform.forward * 10.0f;
+                : _character.transform.position + _character.transform.forward * 10.0f;
         }
     }
 }

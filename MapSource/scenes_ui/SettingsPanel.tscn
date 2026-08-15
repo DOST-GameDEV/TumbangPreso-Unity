@@ -1,0 +1,317 @@
+[gd_scene load_steps=2 format=3 uid="uid://dx1n5r7t9v2w4"]
+
+[ext_resource type="Script" path="res://scripts/ui/settings_panel.gd" id="1"]
+
+[node name="SettingsPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 0
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.015686, 0.031373, 0.219608, 0.78)
+mouse_filter = 2
+
+[node name="Card" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.5
+anchor_top = 0.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = 56.0
+offset_right = 400.0
+offset_bottom = -56.0
+grow_horizontal = 2
+theme_type_variation = &"WoodPanel"
+
+[node name="Margin" type="MarginContainer" parent="Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 14
+
+[node name="Layout" type="VBoxContainer" parent="Card/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="Card/Margin/Layout"]
+layout_mode = 2
+theme_type_variation = &"MenuHeading"
+horizontal_alignment = 1
+text = "SETTINGS"
+
+[node name="HintLabel" type="Label" parent="Card/Margin/Layout"]
+layout_mode = 2
+theme_type_variation = &"MenuCaption"
+horizontal_alignment = 1
+autowrap_mode = 2
+text = "Click a key to rebind it, then press any key on your keyboard."
+
+[node name="Rule" type="ColorRect" parent="Card/Margin/Layout"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 3)
+color = Color(0.545, 0.322, 0.153, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="Card/Margin/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Content" type="VBoxContainer" parent="Card/Margin/Layout/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="BindingsHeading" type="Label" parent="Card/Margin/Layout/Scroll/Content"]
+layout_mode = 2
+theme_type_variation = &"MenuCaption"
+text = "CONTROLS"
+
+[node name="BindingsList" type="VBoxContainer" parent="Card/Margin/Layout/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+; ═══ PLAYER NAME ═══ § CHECKLIST 1.9.
+; ⚠️ AUTHORED HERE RATHER THAN BUILT BY `_build_name_row()`, for the same reason the
+; HUD's scoreboard was: a control that exists only at runtime is a control the scene
+; cannot describe, cannot be styled with the rest of the panel, and — the part that
+; matters — sits OUTSIDE the focus order the .tscn defines. It is first in the list on
+; purpose: it is the only row about WHO you are rather than about how the game reads
+; your hardware.
+[node name="PlayerNameRow" type="HBoxContainer" parent="Card/Margin/Layout/Scroll/Content/BindingsList"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 12
+
+; ⚠️ `MenuBody` LIKE EVERY OTHER ROW LABEL, AND IT IS WHY THIS ONE LOOKED WRONG. It was
+; the only label on the panel with no variation at all, so it fell through to the theme's
+; default Label — a different size, a different weight and no outline — sitting directly
+; above eleven keycap rows that `settings_panel.gd::_rebuild_bindings()` builds with
+; `MenuBody`. 🧑 2026-08-02: *"Username is standing out bcz its the only one that isnt
+; caps"*. Not the letter case; the typeface. The rest of this row was already matched to
+; the built ones (`_build_name_row()` copies ACTION_LABEL_WIDTH and drops the separation
+; override) and only the type was left behind.
+;
+; ⚠️ THE FLAT WHITE OVERRIDE GOES WITH IT. It predates the Menu* set and was the only
+; thing keeping this label legible on the dark wood — the same patch the built rows
+; carried until they were moved onto the variation. `MenuBody` supplies the cream and the
+; navy outline that the panel is actually designed around, and an override on top of it
+; would just reintroduce the odd one out in a new colour.
+[node name="PlayerNameLabel" type="Label" parent="Card/Margin/Layout/Scroll/Content/BindingsList/PlayerNameRow"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+theme_type_variation = &"MenuBody"
+vertical_alignment = 1
+text = "Username"
+
+[node name="PlayerNameField" type="LineEdit" parent="Card/Margin/Layout/Scroll/Content/BindingsList/PlayerNameRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+max_length = 14
+; ⚠️ CENTRED, LIKE EVERY OTHER VALUE IN THIS LIST. 🧑 2026-08-04: *"the username
+; doesnt start in middle in UI for settings pls fix that it stands out"*. A LineEdit
+; defaults to left-aligned while every Button under it centres its label, so one box
+; in a column of fourteen put its text hard against the left edge.
+alignment = 1
+; Empty is legal and means "use the seat label" (Design.md 10), so the placeholder
+; shows what you WILL be called rather than nagging you to fill it in.
+placeholder_text = "P1"
+
+[node name="MouseHeading" type="Label" parent="Card/Margin/Layout/Scroll/Content"]
+layout_mode = 2
+theme_type_variation = &"MenuCaption"
+text = "MOUSE"
+
+[node name="SensitivityRow" type="HBoxContainer" parent="Card/Margin/Layout/Scroll/Content"]
+layout_mode = 2
+
+[node name="SensitivityLabel" type="Label" parent="Card/Margin/Layout/Scroll/Content/SensitivityRow"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+theme_type_variation = &"MenuBody"
+vertical_alignment = 1
+text = "Mouse Sensitivity"
+
+[node name="SensitivitySlider" type="HSlider" parent="Card/Margin/Layout/Scroll/Content/SensitivityRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 0.2
+max_value = 3.0
+step = 0.1
+value = 1.0
+
+[node name="SensitivityValueLabel" type="Label" parent="Card/Margin/Layout/Scroll/Content/SensitivityRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(76, 0)
+layout_mode = 2
+theme_type_variation = &"MenuValue"
+horizontal_alignment = 2
+vertical_alignment = 1
+text = "1.0x"
+
+[node name="InvertYCheck" type="CheckBox" parent="Card/Margin/Layout/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MenuCheckBox"
+text = "Invert Y (mouse look)"
+
+[node name="DisplayHeading" type="Label" parent="Card/Margin/Layout/Scroll/Content"]
+layout_mode = 2
+theme_type_variation = &"MenuCaption"
+text = "DISPLAY"
+
+; The same setting the `toggle_fullscreen` key flips (default F11, rebindable in the
+; CONTROLS list below). Both routes go through `SettingsManager.set_fullscreen()`, so
+; the box and the window can never disagree — see settings_panel.gd `_sync_from_settings`.
+[node name="FullscreenCheck" type="CheckBox" parent="Card/Margin/Layout/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MenuCheckBox"
+text = "Fullscreen"
+
+[node name="AudioHeading" type="Label" parent="Card/Margin/Layout/Scroll/Content"]
+layout_mode = 2
+theme_type_variation = &"MenuCaption"
+text = "AUDIO"
+
+[node name="MasterVolumeRow" type="HBoxContainer" parent="Card/Margin/Layout/Scroll/Content"]
+layout_mode = 2
+
+[node name="MasterVolumeLabel" type="Label" parent="Card/Margin/Layout/Scroll/Content/MasterVolumeRow"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+theme_type_variation = &"MenuBody"
+vertical_alignment = 1
+text = "Master Volume"
+
+[node name="MasterVolumeSlider" type="HSlider" parent="Card/Margin/Layout/Scroll/Content/MasterVolumeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 0.0
+max_value = 1.0
+step = 0.05
+value = 0.8
+
+[node name="MasterVolumeValueLabel" type="Label" parent="Card/Margin/Layout/Scroll/Content/MasterVolumeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(76, 0)
+layout_mode = 2
+theme_type_variation = &"MenuValue"
+horizontal_alignment = 2
+vertical_alignment = 1
+text = "80%"
+
+[node name="SfxVolumeRow" type="HBoxContainer" parent="Card/Margin/Layout/Scroll/Content"]
+layout_mode = 2
+
+[node name="SfxVolumeLabel" type="Label" parent="Card/Margin/Layout/Scroll/Content/SfxVolumeRow"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+theme_type_variation = &"MenuBody"
+vertical_alignment = 1
+text = "SFX Volume"
+
+[node name="SfxVolumeSlider" type="HSlider" parent="Card/Margin/Layout/Scroll/Content/SfxVolumeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 0.0
+max_value = 1.0
+step = 0.05
+value = 0.8
+
+[node name="SfxVolumeValueLabel" type="Label" parent="Card/Margin/Layout/Scroll/Content/SfxVolumeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(76, 0)
+layout_mode = 2
+theme_type_variation = &"MenuValue"
+horizontal_alignment = 2
+vertical_alignment = 1
+text = "80%"
+
+[node name="MusicVolumeRow" type="HBoxContainer" parent="Card/Margin/Layout/Scroll/Content"]
+layout_mode = 2
+
+[node name="MusicVolumeLabel" type="Label" parent="Card/Margin/Layout/Scroll/Content/MusicVolumeRow"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+theme_type_variation = &"MenuBody"
+vertical_alignment = 1
+text = "Music Volume"
+
+[node name="MusicVolumeSlider" type="HSlider" parent="Card/Margin/Layout/Scroll/Content/MusicVolumeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 0.0
+max_value = 1.0
+step = 0.05
+value = 0.8
+
+[node name="MusicVolumeValueLabel" type="Label" parent="Card/Margin/Layout/Scroll/Content/MusicVolumeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(76, 0)
+layout_mode = 2
+theme_type_variation = &"MenuValue"
+horizontal_alignment = 2
+vertical_alignment = 1
+text = "80%"
+
+[node name="SettingsStatusLabel" type="Label" parent="Card/Margin/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MenuCaption"
+horizontal_alignment = 1
+autowrap_mode = 2
+text = ""
+
+[node name="ButtonRow" type="HBoxContainer" parent="Card/Margin/Layout"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 16
+
+[node name="BackButton" type="Button" parent="Card/Margin/Layout/ButtonRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"WoodButton"
+text = "◀  BACK"
+
+[node name="ResetAllButton" type="Button" parent="Card/Margin/Layout/ButtonRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"WoodDangerButton"
+text = "RESET ALL"
+
+[node name="ApplyButton" type="Button" parent="Card/Margin/Layout/ButtonRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"WoodPrimaryButton"
+disabled = true
+text = "APPLY CHANGES"

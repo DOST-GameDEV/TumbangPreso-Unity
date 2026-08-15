@@ -1,15 +1,23 @@
 # ---------------------------------------------------------------------------
 # Unity
+#
+# ⚠️ NO LEADING SLASH. These were anchored to the repo root, which meant a nested
+# Unity project ("My project/") had its entire Library committed: 450 MB of build
+# cache including four copies of the Burst LLVM runtime. The push failed for it,
+# repeatedly, and it looked like a network problem.
 # ---------------------------------------------------------------------------
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Uu]ser[Ss]ettings/
-/[Mm]emoryCaptures/
-/[Rr]ecordings/
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# A stray Unity project created inside the repo. Not part of the port.
+My project/
 
 # Never ignore Asset meta data - Unity's whole reference system depends on them
 !/[Aa]ssets/**/*.meta

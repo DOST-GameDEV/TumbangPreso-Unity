@@ -1,0 +1,426 @@
+[gd_scene load_steps=9 format=3 uid="uid://d5k8m2n4p6q9r"]
+
+[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/YouCard.tscn" id="2"]
+[ext_resource type="Shader" path="res://assets/ui/downed_vignette.gdshader" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/ui/RoleSwapCard.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/OffscreenIndicators.tscn" id="5"]
+[ext_resource type="Script" path="res://scripts/ui/emote_wheel.gd" id="6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+shader = ExtResource("3")
+shader_parameter/vignette_color = Color(0.97, 0.0, 0.0, 0.6)
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("1")
+
+[node name="DownedFlash" type="ColorRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+material = SubResource("ShaderMaterial_1")
+mouse_filter = 2
+visible = false
+
+; ⚠️ 28px OF CLEARANCE AT THE TOP, NOT 8-12 — the same edge-band rule the bottom cards
+; follow, applied to every HUD anchor rather than only the one that was reported. 🧑:
+; *"do it for all huds, js raise it up all by a bit but not too much that it overlaps
+; with something so that it doesnt keep on breaking bcz this is such a reoccuring
+; issue"*. Asserted by `ui_layout_probe.gd` against TOP_SAFE_BAND; the bands and the
+; reasoning for each number live there.
+;
+; ═══ TEAM CARD, LEFT ═══ Restyled 2026-07-30 to the menu's wood-and-amber language.
+;
+; Reported from play: the mid-game HUD "kinda doesnt look like our theme (menu and
+; lobby), it looks ugly and plain and confusing". It was a near-white `card_style`
+; panel — correct per the older §4.1 note, and nothing like the wood the front end
+; actually shipped with.
+;
+; ⚠️ THE STYLEBOX IS NOT SET HERE. `hud.gd::_apply_wood_skin()` builds it from
+; `UiTheme.wood_style()` — the same static call the menu's own `WoodSlot` uses — so the
+; HUD cannot drift from the front end. It is done in code rather than as a theme
+; variation only because the variations live in `ui_theme.gd`, which is ART's file and
+; not writable by this lane; filed for ART to promote.
+;
+; ⚠️ THE LETTER MARK IS WHY THIS IS AN HBOX NOW. The hard rule is that team identity is
+; the A/B letter and NEVER hue — but the letter was buried mid-string in "A · OFFENSE"
+; at body size, so in practice hue was doing all the work and the two cards were
+; distinguished only by which corner they sat in. The letter is now its own amber glyph
+; at display size, and the ROLE word beside it carries the role colour.
+;
+; ⚠️ ZERO-WIDTH BOX ON PURPOSE — `offset_right == offset_left`. Reported on the first
+; restyle render: *"big negative space in the ingame hud"*. The card was a fixed 250px
+; and its content is a glyph plus a seven-letter word, so the right third was empty wood.
+; A Control's size is clamped UP to its content minimum, which is the one place that rule
+; is useful rather than a trap: a zero-width box hugs whatever is in it. TopRight does the
+; same with `grow_horizontal = 0` so it grows leftward from the right anchor instead of
+; off the screen.
+;
+; ⚠️ AND THAT IS WHY THE ROLE LABEL HAS NO `clip_text`. `clip_text` makes a Label report a
+; zero minimum width — correct inside a fixed card, fatal inside a hugging one, where it
+; would collapse the word to nothing. The two role strings are fixed constants of known
+; length, so they are allowed to size the card. Anything variable-length must not go in
+; here without giving the card a floor back.
+; ═══ THE SCOREBOARD ═══
+; ⚠️ THIS PANEL WAS `TopLeft`, A 2v2 TEAM CARD, AND EVERYTHING IN IT IS NEW.
+; It held a big "A" letter mark, an OFFENSE/DEFENSE caption and a three-pip win row,
+; and there was a `TopRight` mirroring it node-for-node for team B. Four players do not
+; have teams and rounds are scored rather than won (`Design.md` §1, §8), so none of
+; those five things describes anything that exists.
+;
+; `hud.gd` had been drawing the real scoreboard in CODE on top of them — hiding six
+; nodes at `_build_scoreboard()` and appending four rows it built by hand — because the
+; scene is this lane's file and `build core`'s pivot could not touch it. That was
+; deliberate and it is § CHECKLIST 1.1. The four rows are AUTHORED HERE now; `hud.gd`
+; binds them and fills them in.
+[node name="Scoreboard" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 0
+offset_left = 16.0
+offset_top = 28.0
+offset_right = 16.0
+offset_bottom = 28.0
+mouse_filter = 2
+
+[node name="Column" type="VBoxContainer" parent="Scoreboard"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 4
+mouse_filter = 2
+
+[node name="ScoreTitle" type="Label" parent="Scoreboard/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "SCORES"
+mouse_filter = 2
+
+[node name="ScoreRow0" type="HBoxContainer" parent="Scoreboard/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 14
+mouse_filter = 2
+
+[node name="Name" type="Label" parent="Scoreboard/Column/ScoreRow0"]
+custom_minimum_size = Vector2(132, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_constants/outline_size = 5
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="Score" type="Label" parent="Scoreboard/Column/ScoreRow0"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_constants/outline_size = 5
+horizontal_alignment = 2
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="ScoreRow1" type="HBoxContainer" parent="Scoreboard/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 14
+mouse_filter = 2
+
+[node name="Name" type="Label" parent="Scoreboard/Column/ScoreRow1"]
+custom_minimum_size = Vector2(132, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_constants/outline_size = 5
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="Score" type="Label" parent="Scoreboard/Column/ScoreRow1"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_constants/outline_size = 5
+horizontal_alignment = 2
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="ScoreRow2" type="HBoxContainer" parent="Scoreboard/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 14
+mouse_filter = 2
+
+[node name="Name" type="Label" parent="Scoreboard/Column/ScoreRow2"]
+custom_minimum_size = Vector2(132, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_constants/outline_size = 5
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="Score" type="Label" parent="Scoreboard/Column/ScoreRow2"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_constants/outline_size = 5
+horizontal_alignment = 2
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="ScoreRow3" type="HBoxContainer" parent="Scoreboard/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 14
+mouse_filter = 2
+
+[node name="Name" type="Label" parent="Scoreboard/Column/ScoreRow3"]
+custom_minimum_size = Vector2(132, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_constants/outline_size = 5
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="Score" type="Label" parent="Scoreboard/Column/ScoreRow3"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_constants/outline_size = 5
+horizontal_alignment = 2
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="TopCentre" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -120.0
+offset_top = 28.0
+offset_right = 120.0
+mouse_filter = 2
+
+[node name="TimerCard" type="PanelContainer" parent="TopCentre"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudCard"
+mouse_filter = 2
+
+[node name="TimerLabel" type="Label" parent="TopCentre/TimerCard"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudTimer"
+horizontal_alignment = 1
+text = "01:30"
+
+[node name="RoundLabel" type="Label" parent="TopCentre"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudBody"
+horizontal_alignment = 1
+text = "Round 1 / 5"
+
+; ⚠️ SAME BOTTOM-EDGE RULE AS `YouCard/Card` — read that node's comment. This one is
+; a 200x84 box holding a caption, a pip row and a dent line that can be turned on, so
+; it has less headroom than the YOU card does. Growth goes UP (`grow_vertical = 0`)
+; and LEFT (`grow_horizontal = 0`, since this card is anchored to the RIGHT edge).
+[node name="LataCard" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -396.0
+offset_top = -172.0
+offset_right = -16.0
+offset_bottom = -64.0
+grow_horizontal = 0
+; ⚠️ GROWS UP, LIKE THE YOU CARD. `grow_vertical = 0` (BEGIN) pins the BOTTOM edge, so
+; the 64px keep-out band along the bottom of the screen survives any content that
+; outgrows the request above. Without it a two-line card at the 2026-08-02 HUD font
+; sizes grows DOWNWARD out of the frame, which is the exact thing YouCard.tscn's own
+; header exists to prevent — and this card had no such guard until now.
+grow_vertical = 0
+grow_vertical = 0
+theme_type_variation = &"HudCard"
+mouse_filter = 2
+visible = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LataCard"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="LataLabel" type="Label" parent="LataCard/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudCaption"
+text = "LATA"
+
+; ⚠️ WAS `DentTextLabel`, AND DENTS DO NOT EXIST (`Design.md` §12). It has carried the
+; lata card's second line — what YOU can do about the lata right now — since the pivot.
+[node name="LataHintLabel" type="Label" parent="LataCard/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudBody"
+text = ""
+visible = false
+
+[node name="YouCard" parent="." instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 1
+
+; ⚠️ PUSHED DOWN TO CLEAR THE TIMER — and it is only here because moving the timer card
+; 20px off the top edge closed the gap this label used to sit in. Measured by
+; `ui_layout_probe`'s own overlap check straight after that move: `TopCentre` ended at
+; y 143 and this began at 132, an 11px collision that no viewport or edge-band check can
+; see. `TopCentre` and `ToastLabel` are now a DISJOINT pair in that probe, so the next
+; nudge to either one fails instead of stacking two boxes down the middle of the screen.
+[node name="ToastLabel" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 160.0
+offset_right = 200.0
+theme_type_variation = &"HudToast"
+horizontal_alignment = 1
+text = "OUT OF BOUNDS"
+visible = false
+
+[node name="CountdownLabel" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -60.0
+offset_right = 100.0
+offset_bottom = 60.0
+theme_type_variation = &"HudBanner"
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "3"
+visible = false
+mouse_filter = 2
+
+[node name="ReadyPrompt" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -158.0
+offset_right = 260.0
+offset_bottom = -118.0
+theme_type_variation = &"HudToast"
+horizontal_alignment = 1
+text = "Walk around freely. Press [R] when you're ready to start the round."
+visible = false
+
+; R-27(b) — WHAT YOUR JOB IS THIS ROUND, on the one screen that had nothing to say.
+; The ready phase told the player how to start the round and not what they were about
+; to do in it. Sits ABOVE ReadyPrompt (which keeps the instruction) and is deliberately
+; larger, because this is the headline and "press R" is the footnote.
+;
+; The colour is NOT set here — `hud.gd::show_ready_prompt()` tints the label OFFENSE or
+; DEFENSE from the local unit's actual role, so it cannot disagree with the team cards
+; along the top.
+;
+; ⚠️ NO PANEL BEHIND IT — TEXT ONLY, AND THAT IS THE SECOND ANSWER TO THIS PROBLEM.
+; The legibility problem is real: bottom-centre of an FPP screen is where the viewmodel
+; arms are, and role-blue on a full-brightness orange arm is the worst pairing on the
+; screen. The first fix was a wood plate, and it was rejected on sight — *"it kinda looks
+; ugly with that hud/ui, can u js do text there but stylized"*. Fair: two stacked boxes at
+; the bottom of the frame fought the 3D instead of sitting on it.
+;
+; So legibility now comes from a heavy INK OUTLINE on the glyphs instead of a box behind
+; them — set in `hud.gd::_apply_wood_skin()`, the same trick the screen-edge arrows use.
+; It reads over the arms, over asphalt and over sky, and it adds no rectangle.
+;
+; CenterContainer so the label hugs its own text and stays centred at any aspect.
+[node name="ReadyObjectiveRow" type="CenterContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -560.0
+offset_top = -232.0
+offset_right = 560.0
+offset_bottom = -168.0
+mouse_filter = 2
+visible = false
+
+[node name="ReadyObjective" type="Label" parent="ReadyObjectiveRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 44
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "KNOCK THE LATA DOWN"
+
+[node name="Crosshair" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.0
+offset_top = -12.0
+offset_right = 12.0
+offset_bottom = 12.0
+mouse_filter = 2
+visible = false
+
+[node name="CrosshairLabel" type="Label" parent="Crosshair"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "+"
+
+[node name="OffscreenIndicators" parent="." instance=ExtResource("5")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="RoleSwapCard" parent="." instance=ExtResource("4")]
+unique_name_in_owner = true
+layout_mode = 1
+
+; ⚠️ LAST CHILD, SO IT DRAWS OVER EVERY OTHER HUD ELEMENT. The wheel is a modal
+; overlay for as long as the key is held and it is meaningless behind the score
+; card. It is hidden by its own _ready() and only shows while held, so it costs a
+; hidden Control the rest of the match.
+;
+; ⚠️ MOUSE_FILTER_IGNORE (set in emote_wheel.gd) — the mouse is CAPTURED during a
+; match, so this must never become the node that eats a click.
+[node name="EmoteWheel" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("6")

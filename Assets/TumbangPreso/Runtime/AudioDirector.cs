@@ -29,6 +29,52 @@ namespace TumbangPreso
 
         private readonly Dictionary<string, Cue> _cues = new Dictionary<string, Cue>();
 
+        /// <summary>
+        /// ⚠️⚠️ WITHOUT AN AudioListener THE WHOLE GAME IS SILENT, AND NOTHING WARNS YOU.
+        /// Unity only puts a listener on the camera a NEW scene is created with; a camera added
+        /// from code has none. Every scene here is generated, so every scene had a camera and
+        /// no listener, and the built game played not one sound. There is no error, no warning,
+        /// and every cue reports as played.
+        ///
+        /// The services object owns one and it persists, so it cannot be forgotten per scene.
+        /// </summary>
+        private void Awake()
+        {
+            if (FindFirstObjectByType<AudioListener>() == null)
+                gameObject.AddComponent<AudioListener>();
+
+            LoadCuesFromResources();
+        }
+
+        /// <summary>
+        /// ⚠️ CUES LOAD THEMSELVES. Nothing in the game called Register, so even with a
+        /// listener present every PlayAt would have logged "no cue registered" and played
+        /// nothing. Loading from Resources means a new sound file is playable the moment it is
+        /// dropped in, which is how the team actually works.
+        /// </summary>
+        private void LoadCuesFromResources()
+        {
+            foreach (var cue in Audio.AudioCues.Live)
+            {
+                string stem = Audio.AudioCues.FileStemFor(cue);
+                var clip = Resources.Load<AudioClip>($"Sfx/{stem}");
+
+                if (clip == null) continue;
+
+                _cues[cue] = new Cue
+                {
+                    Clip = clip,
+                    Volume = DbToLinear(Audio.AudioCues.TrimFor(cue)),
+                    EverPlayed = false,
+                };
+            }
+
+            Debug.Log($"[Audio] loaded {_cues.Count} of {Audio.AudioCues.Live.Count} cues.");
+        }
+
+        /// <summary>The mix table is in dB; Unity wants linear gain.</summary>
+        private static float DbToLinear(float db) => Mathf.Pow(10.0f, db / 20.0f);
+
         public void Register(string id, AudioClip clip, float volume = 1.0f)
         {
             // ⚠️ A DELIVERY'S EXTENSION LIES, AND THIS HAS COST A SESSION TWICE. Voice

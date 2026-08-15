@@ -1,0 +1,204 @@
+[gd_scene load_steps=4 format=3 uid="uid://dqx7h4k9m2n8p"]
+
+[ext_resource type="Script" path="res://scripts/ui/match_result.gd" id="1"]
+[ext_resource type="Shader" path="res://assets/ui/card_fold.gdshader" id="2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fold"]
+shader = ExtResource("2")
+shader_parameter/fold_color = Color(0.016, 0.031, 0.22, 1)
+
+[node name="MatchResult" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+script = ExtResource("1")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.015686, 0.031373, 0.219608, 0.72)
+
+[node name="Card" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -170.0
+offset_right = 300.0
+offset_bottom = 170.0
+
+[node name="Panel" type="VBoxContainer" parent="Card"]
+layout_mode = 2
+alignment = 1
+
+[node name="MessageLabel" type="Label" parent="Card/Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Display"
+horizontal_alignment = 1
+autowrap_mode = 2
+text = "TEAM A WINS THE MATCH!"
+
+[node name="ScoreSpacer" type="Control" parent="Card/Panel"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 16)
+
+; ═══ FINAL STANDINGS ═══
+; ⚠️ THIS REPLACES TWO THREE-PIP WIN ROWS — § CHECKLIST 1.3. The pips counted SETS
+; won by two teams. Four players scoring cumulatively is a table, not a pip row, and
+; squeezing four totals into three squares would be a chart that lies about the margin.
+;
+; `match_result.gd` had already hidden them and appended a newline-joined Label in code,
+; which is exactly what 1.3 called "gutted, not designed". Four authored rows —
+; place, name, points — bound by the script.
+[node name="Standings" type="VBoxContainer" parent="Card/Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Place0" type="HBoxContainer" parent="Card/Panel/Standings"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Place" type="Label" parent="Card/Panel/Standings/Place0"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_constants/outline_size = 4
+vertical_alignment = 1
+
+[node name="Name" type="Label" parent="Card/Panel/Standings/Place0"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+theme_override_constants/outline_size = 4
+vertical_alignment = 1
+
+[node name="Points" type="Label" parent="Card/Panel/Standings/Place0"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_constants/outline_size = 4
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Place1" type="HBoxContainer" parent="Card/Panel/Standings"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Place" type="Label" parent="Card/Panel/Standings/Place1"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_constants/outline_size = 4
+vertical_alignment = 1
+
+[node name="Name" type="Label" parent="Card/Panel/Standings/Place1"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+theme_override_constants/outline_size = 4
+vertical_alignment = 1
+
+[node name="Points" type="Label" parent="Card/Panel/Standings/Place1"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_constants/outline_size = 4
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Place2" type="HBoxContainer" parent="Card/Panel/Standings"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Place" type="Label" parent="Card/Panel/Standings/Place2"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_constants/outline_size = 4
+vertical_alignment = 1
+
+[node name="Name" type="Label" parent="Card/Panel/Standings/Place2"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+theme_override_constants/outline_size = 4
+vertical_alignment = 1
+
+[node name="Points" type="Label" parent="Card/Panel/Standings/Place2"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_constants/outline_size = 4
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Place3" type="HBoxContainer" parent="Card/Panel/Standings"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Place" type="Label" parent="Card/Panel/Standings/Place3"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_constants/outline_size = 4
+vertical_alignment = 1
+
+[node name="Name" type="Label" parent="Card/Panel/Standings/Place3"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+theme_override_constants/outline_size = 4
+vertical_alignment = 1
+
+[node name="Points" type="Label" parent="Card/Panel/Standings/Place3"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_constants/outline_size = 4
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Spacer" type="Control" parent="Card/Panel"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 16)
+
+[node name="RematchButton" type="Button" parent="Card/Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "REMATCH"
+
+[node name="MenuButton" type="Button" parent="Card/Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "MAIN MENU"
+
+[node name="FoldCorner" type="Control" parent="Card"]
+layout_mode = 1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -16.0
+offset_top = -16.0
+custom_minimum_size = Vector2(16, 16)
+mouse_filter = 2
+material = SubResource("ShaderMaterial_fold")
