@@ -226,5 +226,76 @@ namespace TumbangPreso.Core
 
         /// <summary>Also SettingsManager.PLAYER_NAME_MAX. One cap, not two on one row.</summary>
         public const int PlayerNameMax = 14;
+
+        // -------------------------------------------------------------------
+        // SLIPPER FLIGHT — transcribed from slipper.gd. The systems that read these
+        // are still PARTIAL; the numbers land first so the port cannot re-derive them.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️ ENERGY IS LOST ON THE BOUNCE. A perfectly elastic wall would return a slipper
+        /// at throw speed, which is a projectile nobody threw and which can still knock the
+        /// lata down — a point scored by the wall. 0.45 is enough to carry it clear of the
+        /// boundary and not enough to be a shot.
+        /// </summary>
+        public const float BounceRestitution = 0.45f;
+
+        /// <summary>A tap still throws, at this fraction of full speed, so an accidental
+        /// click is a weak throw and not a dropped input. Mirrors Carrier.ChargeMinPower.
+        /// Read as `LaunchSpeed * lerp(MinPowerScale, 1, power)` — the aim line and the
+        /// flight line share the one expression on purpose.</summary>
+        public const float MinPowerScale = 0.35f;
+
+        /// <summary>Where a slipper lies when it is at rest. The three-flat-slipper average,
+        /// so it cannot look wrong on the default skin.</summary>
+        public const float SlipperRestHeight = 0.045f;
+
+        /// <summary>Visual spin about the long axis while airborne, degrees/second.</summary>
+        public const float SlipperSpinSpeedDeg = 900.0f;
+
+        /// <summary>End-over-end tumble, degrees/second. A real thrown slipper does both at
+        /// once; doing only the spin is what made the predecessor read as "flying perfectly
+        /// flat".</summary>
+        public const float SlipperTumbleSpeedDeg = 520.0f;
+
+        /// <summary>
+        /// ⚠️ A GAMEPLAY CONSTANT WEARING A COSMETIC HAT. 0.691 is what the generated meshes
+        /// already measured (0.432 mesh × the 1.6 visual scale in `TsinelasVisual.tscn`),
+        /// kept exactly so the constants that depend on it did not have to move again when
+        /// downloaded models arrived.
+        /// </summary>
+        public const float SlipperModelLength = 0.691f;
+
+        /// <summary>How far below the arena a slipper has to fall before it is considered
+        /// lost and returned to its spawn rather than falling forever.</summary>
+        public const float VoidY = -12.0f;
+
+        /// <summary>
+        /// The rim glow strength on the slipper that belongs to the local player.
+        ///
+        /// ⚠️ PER-PEER, DELIBERATELY NOT REPLICATED. "Yours" is a different slipper on every
+        /// machine, so this is computed locally each time it changes and never sent — a
+        /// networked glow would light one slipper for everybody.
+        /// </summary>
+        public const float OwnerRimStrength = 0.85f;
+
+        // -------------------------------------------------------------------
+        // IMPACT FEEL
+        // -------------------------------------------------------------------
+
+        /// <summary>Global time scale and duration for the freeze on a landed hit.
+        ///
+        /// ⚠️ HITSTOP WRITES A GLOBAL TIME SCALE, which is why CameraRig's shake is
+        /// deliberately NOT built on it — see that file's note. Whatever drives this must
+        /// restore the previous scale even if the round ends mid-freeze.</summary>
+        public const float HitstopDuration = 0.06f;
+        public const float HitstopTimeScale = 0.05f;
+
+        /// <summary>Below this fall speed a landing is silent. Stops a unit that stepped off
+        /// a kerb from thumping like one that fell off a roof.</summary>
+        public const float LandSfxMinSpeed = 2.0f;
+
+        /// <summary>How often a networked slipper's transform is sent.</summary>
+        public const float SlipperSyncInterval = 0.25f;
     }
 }

@@ -88,8 +88,8 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `env_toon_pass.gd` | 391 | — | **MISSING** — the toon shading pass |
 | `trajectory_preview.gd` | 273 | `TrajectoryPreview.cs` (113) | PARTIAL |
 | `hazard_zone.gd` | 133 | — | **MISSING** |
-| `game_version.gd` | 56 | — | **MISSING** — the `v4.68` string in the HUD corner |
-| `kill_plane.gd` | 26 | — | **MISSING** |
+| `game_version.gd` | 56 | `GameVersion.cs` (80) | CONVERTED — reads `Application.version`, now 4.68 |
+| `kill_plane.gd` | 26 | `KillPlane.cs` (62) | PARTIAL — logic done, height still borrowed |
 
 ### `spectator_camera.gd` — CONVERTED 2026-08-15, audited line by line
 
@@ -189,6 +189,32 @@ reading the note), `CharacterBase.tscn`, `CanVisual.tscn`, `TsinelasVisual.tscn`
 `clean_feed` hides HUD for capture. None of these may be dropped — each is
 rebindable through `settings_panel.gd`, and `tools/input_probe.gd` checks them
 for conflicts.
+
+## Constant audit — run it again after every balance change
+
+Every `const` in `character_base.gd`, `slipper.gd`, `lata.gd` and `round_manager.gd`
+was extracted and compared against every `const` in the Unity runtime on 2026-08-15,
+by name (snake → Pascal) and by value.
+
+**Result: 77 constants on each side, and ZERO value mismatches.** The balance layer
+is faithful. That is the single most reassuring measurement taken in this port so far,
+because it is the layer that cannot be verified by looking at a screenshot.
+
+Twelve Godot constants had no Unity counterpart. All twelve are now in `Balance.cs`
+with their original reasoning: `BounceRestitution`, `MinPowerScale`,
+`SlipperRestHeight`, `SlipperSpinSpeedDeg`, `SlipperTumbleSpeedDeg`,
+`SlipperModelLength`, `VoidY`, `OwnerRimStrength`, `HitstopDuration`,
+`HitstopTimeScale`, `LandSfxMinSpeed`, `SlipperSyncInterval`.
+
+⚠️ **The numbers landing is not the feature landing.** Nothing reads most of them yet
+— slipper flight, hitstop and the owner rim glow are all still PARTIAL rows above.
+They are transcribed first so the port cannot quietly re-derive a number by taste.
+
+⚠️ Two earlier passes of this audit gave WRONG answers and both are worth knowing.
+Matching by value alone reports `BounceRestitution` as present because `LungeActiveTime`
+happens to also be 0.45. Scanning only the Core package reports `PerchNormalMin` as
+missing when it is a private const in `CharacterMotor`. Match on name suffix across the
+whole runtime.
 
 ## Rules core — the one part that is genuinely done
 

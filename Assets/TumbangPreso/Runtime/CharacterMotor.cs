@@ -148,6 +148,27 @@ namespace TumbangPreso
             BeginSpawnSettle();
         }
 
+        /// <summary>Where this unit returns to when it falls off the world. Written at
+        /// spawn; the kill plane is the only thing that reads it today.</summary>
+        public Vector3 SpawnPosition { get; set; }
+
+        /// <summary>
+        /// Put this unit back on its own spawn with no velocity, from
+        /// `character_base.gd:1939`.
+        ///
+        /// ⚠️ NOT DESPAWNED AND NOT DAMAGED. The GDD's rule is stun-only, no permanent
+        /// elimination, so falling off the map costs position and nothing else. Anything
+        /// that makes this destructive is changing the design, not fixing a bug.
+        /// </summary>
+        public void Respawn()
+        {
+            Teleport(SpawnPosition);
+            // Godot reached the autoload directly (`AudioManager.play_at`). GameServices is
+            // this port's stand-in for the nine autoloads, and it is null in a bare test
+            // scene, so the call is guarded rather than assumed.
+            GameServices.Audio?.PlayAt("respawn", transform.position);
+        }
+
         private void FixedUpdate()
         {
             float dt = Time.fixedDeltaTime;
