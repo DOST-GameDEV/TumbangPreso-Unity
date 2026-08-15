@@ -215,6 +215,11 @@ namespace TumbangPreso
             // changing a number on the scoreboard.
             Visual.ImpactBurst.SpawnAt(victim.transform.position);
 
+            // ⚠️ THE FLASH WAS BUILT AND NEVER CALLED. It is the read on the BODY, where the
+            // burst is the read in the air: without it a tagged player sees particles beside
+            // someone who looks untouched.
+            victim.GetComponentInChildren<Visual.CharacterVisual>()?.FlashHit();
+
             GameServices.Audio?.PlayAt("tag", victim.transform.position);
             GameServices.Audio?.PlayAt("downed", victim.transform.position);
             GameServices.Voice?.OnAttackerTagged();

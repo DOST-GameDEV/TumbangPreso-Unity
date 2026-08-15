@@ -277,6 +277,10 @@ namespace TumbangPreso
         /// </summary>
         private void HostBlockedBy(CharacterMotor blocker)
         {
+            // A body block is a hit too — it is the taya's entire passive verb.
+            blocker.GetComponentInChildren<Visual.CharacterVisual>()?.FlashHit();
+            Visual.ImpactBurst.SpawnAt(blocker.transform.position);
+
             float speed = Combat.BlockKnockbackSpeed(_skinIndex, blocker.CharacterIndex);
             Vector3 along = _velocity;
             along.y = 0.0f;
