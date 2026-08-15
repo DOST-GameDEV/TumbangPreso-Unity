@@ -81,6 +81,7 @@ namespace TumbangPreso.CameraSystem
         private Transform _fppPivot;
         private Transform _tppPivot;
         private Transform _viewmodel;
+        private ViewmodelArms _arms;
         private UnityEngine.Camera _camera;
 
         private float _pitchDeg;
@@ -209,14 +210,19 @@ namespace TumbangPreso.CameraSystem
         {
             if (_viewmodel != null) return;
 
-            var prefab = Resources.Load<GameObject>("Models/ViewmodelArms");
-            if (prefab == null) return;
-
-            var go = Instantiate(prefab, transform);
-            go.name = "~ViewmodelArms";
+            // ⚠️ BUILT IN CODE, NOT LOADED AS A PREFAB. This used to `Resources.Load` a
+            // "Models/ViewmodelArms" prefab that has never existed, so it returned null and
+            // returned early — every FPP view has been armless for the whole port, silently,
+            // because a missing prefab is not an error. ViewmodelArms builds itself from the
+            // .tscn's own baked transforms instead, so there is nothing to author and nothing
+            // to go missing.
+            var go = new GameObject("~ViewmodelArms");
+            go.transform.SetParent(transform, false);
             go.transform.localScale = Vector3.one * ViewmodelScale;
             go.transform.localPosition = ViewmodelSeat;
             go.transform.localRotation = Quaternion.identity;
+
+            _arms = go.AddComponent<ViewmodelArms>();
 
             foreach (var c in go.GetComponentsInChildren<Collider>(true)) Destroy(c);
 
@@ -304,6 +310,9 @@ namespace TumbangPreso.CameraSystem
 
             if (_viewmodel != null && !_viewmodel.gameObject.activeSelf)
                 _viewmodel.gameObject.SetActive(true);
+
+            // The hand shows what the unit is actually carrying.
+            if (_arms != null) _arms.SetHolding(_character.HoldingSlipper);
         }
 
         private void ApplyTpp()

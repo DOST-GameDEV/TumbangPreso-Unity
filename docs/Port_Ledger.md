@@ -82,7 +82,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 |---|---|---|---|
 | `main.gd` | 3595 | `MatchHost.cs` + `MatchInstaller` (370) | PARTIAL — local half; netcode half pending |
 | `ai_controller.gd` | 2225 | `AIController` + `AiTuning` + `AiPersonalityRoll` (800) | PARTIAL — tiers, personalities, 13-plan machine; lane sampling and unstick pending |
-| `camera_rig.gd` | 1111 | `CameraRig.cs` (470) | PARTIAL — emote swing now wired; viewmodel arms still missing |
+| `camera_rig.gd` | 1111 | `CameraRig` + `ViewmodelArms` (640) | PARTIAL — FPP arms, emote swing; carried-prop follow pending |
 | `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (431) | CONVERTED — call sites pending, see below |
 | `character_roster.gd` | 757 | `Roster` + `RosterBook` (411) | CONVERTED (20/20 validated) |
 | `env_toon_pass.gd` | 391 | `EnvColourPass.cs` (185) | CONVERTED — tints, foliage, laundry sway |
@@ -195,7 +195,7 @@ tree. A collective count is how a missing scene hides.
 | `RoleSwapCard.tscn` | CONVERTED |
 | `OffscreenIndicators.tscn` | CONVERTED |
 | `DebugBar.tscn` | CONVERTED |
-| `ViewmodelArms.tscn` | **MISSING** — blocks the FPP arms |
+| `ViewmodelArms.tscn` | CONVERTED — baked transforms carried across |
 | `CameraRig.tscn` | **MISSING** — ⚠️ baked transforms; read `camera_rig.gd:21` first |
 | `CharacterBase.tscn` | **MISSING** — built in code by `MatchInstaller` instead |
 | `CanVisual.tscn` | **MISSING** |
