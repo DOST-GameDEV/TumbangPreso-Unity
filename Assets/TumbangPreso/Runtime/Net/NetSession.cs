@@ -28,6 +28,9 @@ namespace TumbangPreso.Net
 
         public LobbySession Lobby { get; } = new LobbySession();
 
+        /// <summary>The online pool browser. Idle until a screen calls StartBrowsing.</summary>
+        public ServerQuery Query { get; private set; }
+
         public event Action<string> StatusChanged;
 
         private NetworkManager _nm;
@@ -70,6 +73,12 @@ namespace TumbangPreso.Net
 
             _beacon = GetComponent<LanBeacon>();
             if (_beacon == null) _beacon = gameObject.AddComponent<LanBeacon>();
+
+            // ⚠️ THE ONLINE BROWSER SITS BESIDE THE LAN BEACON, NOT INSIDE IT. They answer
+            // different questions — "what is on this network" and "what is on the pool" — and
+            // a build that cannot reach the pool must still find a game on the LAN.
+            Query = GetComponent<ServerQuery>();
+            if (Query == null) Query = gameObject.AddComponent<ServerQuery>();
 
             NetAuthority.Provider = this;
 
