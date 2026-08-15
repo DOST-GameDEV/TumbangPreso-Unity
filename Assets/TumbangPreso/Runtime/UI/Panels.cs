@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using TumbangPreso.Core;
 using TumbangPreso.Settings;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace TumbangPreso.UI
@@ -54,11 +56,130 @@ namespace TumbangPreso.UI
         public void Close() => gameObject.SetActive(false);
     }
 
-    /// <summary>Volume, mouse, display, difficulty, and the player's name.</summary>
+    /// <summary>Volume, mouse, display, difficulty, the player's name, and key rebinding.</summary>
     public sealed class SettingsPanel : Panel
     {
         private Text _nameLabel;
         private Text _values;
+
+        private InputActionAsset _actions;
+        private string _listeningAction;
+        private Text _rebindStatus;
+        private readonly Dictionary<string, Text> _bindingLabels = new Dictionary<string, Text>();
+        private InputActionRebindingExtensions.RebindingOperation _rebindOp;
+
+        /// <summary>
+        /// One row per rebindable action. Godot rebuilt these from
+        /// `SettingsManager.REBINDABLE_ACTIONS`; the list lives in
+        /// <see cref="Settings.Rebinding"/> here for the same reason — one place to fix when
+        /// an action is renamed.
+        /// </summary>
+        private void BuildRebindRows()
+        {
+            _actions = Resources.Load<InputActionAsset>("TumbangPreso");
+
+            // ⚠️ LOAD THE OVERRIDES BEFORE DRAWING A SINGLE LABEL, or every row shows the
+            // default and the player believes their rebind was forgotten.
+            Settings.Rebinding.Load(_actions);
+
+            MenuKit.Label(Canvas.transform, "CONTROLS", 30, UiTheme.Amber,
+                          new Vector2(0.72f, 0.86f), Vector2.zero, new Vector2(420, 50));
+
+            var actions = Settings.Rebinding.RebindableActions;
+
+            for (int i = 0; i < actions.Length; i++)
+            {
+                string action = actions[i];
+                float y = 0.78f - i * 0.058f;
+
+                MenuKit.Label(Canvas.transform, Settings.Rebinding.LabelFor(action), 22,
+                              UiTheme.CreamMuted, new Vector2(0.62f, y), Vector2.zero,
+                              new Vector2(260, 40), TextAnchor.MiddleLeft);
+
+                var btn = MenuKit.WoodButton(Canvas.transform,
+                    Settings.Rebinding.DisplayNameFor(_actions, action),
+                    new Vector2(0.85f, y), Vector2.zero, new Vector2(190, 44),
+                    () => BeginRebind(action));
+
+                _bindingLabels[action] = btn.GetComponentInChildren<Text>();
+            }
+
+            _rebindStatus = MenuKit.Label(Canvas.transform, "", 20, UiTheme.Amber,
+                new Vector2(0.72f, 0.20f), Vector2.zero, new Vector2(560, 40));
+
+            MenuKit.WoodButton(Canvas.transform, "RESET CONTROLS",
+                new Vector2(0.72f, 0.12f), Vector2.zero, new Vector2(300, 48), ResetBindings);
+        }
+
+        private void BeginRebind(string action)
+        {
+            if (_rebindOp != null) return;   // one at a time
+
+            _listeningAction = action;
+            _rebindStatus.text =
+                $"Press any key for \"{Settings.Rebinding.LabelFor(action)}\"…  (Esc to cancel)";
+
+            if (_bindingLabels.TryGetValue(action, out var label)) label.text = "…";
+
+            var target = _actions?.FindActionMap("Player", false)?.FindAction(action, false);
+            if (target == null) { CancelRebind(); return; }
+
+            // The action must be disabled while it is being rebound, or the press being
+            // captured also fires the verb it is bound to.
+            target.Disable();
+
+            _rebindOp = target.PerformInteractiveRebinding()
+                .WithControlsExcluding("<Mouse>/position")
+                .WithControlsExcluding("<Mouse>/delta")
+                .WithCancelingThrough("<Keyboard>/escape")
+                .OnCancel(op => { target.Enable(); CancelRebind(); })
+                .OnComplete(op =>
+                {
+                    var control = op.selectedControl;
+                    op.Dispose();
+                    _rebindOp = null;
+                    target.Enable();
+
+                    // ⚠️ THE OVERRIDE THE OPERATION ALREADY APPLIED IS UNDONE FIRST, because
+                    // the conflict check has to run against the OTHER actions and report a
+                    // refusal — not leave two verbs sharing one key.
+                    target.RemoveBindingOverride(op.bindingMask ?? default);
+
+                    string conflict = Settings.Rebinding.TryRebind(_actions, action, control);
+
+                    _rebindStatus.text = conflict == null
+                        ? ""
+                        : $"That key is already \"{conflict}\".";
+
+                    RefreshBindingLabels();
+                    _listeningAction = null;
+                })
+                .Start();
+        }
+
+        private void CancelRebind()
+        {
+            _rebindOp?.Dispose();
+            _rebindOp = null;
+            _listeningAction = null;
+            _rebindStatus.text = "";
+            RefreshBindingLabels();
+        }
+
+        private void ResetBindings()
+        {
+            Settings.Rebinding.ResetAll(_actions);
+            _rebindStatus.text = "";
+            RefreshBindingLabels();
+        }
+
+        private void RefreshBindingLabels()
+        {
+            foreach (var pair in _bindingLabels)
+                pair.Value.text = Settings.Rebinding.DisplayNameFor(_actions, pair.Key);
+        }
+
+        private void OnDestroy() => _rebindOp?.Dispose();
 
         protected override void Build()
         {
@@ -117,9 +238,15 @@ namespace TumbangPreso.UI
                                    var cur = SettingsStore.Current;
                                    cur.AiDifficulty = (cur.AiDifficulty + 1) % 3;
                                    SettingsStore.Save();
+
+                                   // ⚠️ APPLY IT, DO NOT ONLY STORE IT. This setting was
+                                   // written and never read back for the whole port, so every
+                                   // bot played at Normal whatever the player chose.
+                                   AIController.ApplyDifficulty(cur.AiDifficulty);
                                    Refresh();
                                });
 
+            BuildRebindRows();
             Refresh();
         }
 

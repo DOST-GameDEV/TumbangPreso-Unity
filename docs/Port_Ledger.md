@@ -154,7 +154,7 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `ui_theme.gd` | 551 | `UiTheme.cs` (119) | PARTIAL — `tumbang_preso.tres` (39 KB) NOT converted |
 | `tutorial.gd` | 462 | — | **MISSING** — 8 pages with 3D props |
 | `you_card.gd` | 430 | `YouCard.cs` (185) | PARTIAL — role, name, live meters; ready flash pending |
-| `settings_panel.gd` | 429 | — | **MISSING** — incl. key rebinding UI |
+| `settings_panel.gd` | 429 | `SettingsPanel` + `Rebinding.cs` (330) | CONVERTED — rebinding, conflicts, reset |
 | `emote_wheel.gd` | 422 | `EmoteWheel.cs` (215) + `Emotes.cs` | CONVERTED — hold, steer, release |
 | `character_select.gd` | 341 | — | **MISSING** |
 | `match_result.gd` | 339 | `MatchResult.cs` (215) | PARTIAL — board and single-player rematch; peer vote pending netcode |
