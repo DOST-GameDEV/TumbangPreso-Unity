@@ -1,0 +1,135 @@
+using System.Collections.Generic;
+
+namespace TumbangPreso.Audio
+{
+    /// <summary>
+    /// Every sound the game can make, its mix level, and what it actually resolves to on disk.
+    ///
+    /// ⚠️ TRANSCRIBED FROM audio_manager.gd, INCLUDING THE MIX LEVELS. The dB values are not
+    /// taste: the SFX bus was measured CLIPPING at +2.0 dBFS with music silent, and these trims
+    /// are what answered it. A cue restored to 0 dB because it "sounded quiet in isolation" is
+    /// how that bug comes back, and it only reappears in a real match where impacts, the tag,
+    /// voice and the music bed all land at once.
+    /// </summary>
+    public static class AudioCues
+    {
+        /// <summary>
+        /// ⚠️ SIX CUE NAMES ARE ALIASES, NOT MISSING FILES. The call sites in the gameplay code
+        /// already used these names before the sounds existed, so rather than rename call sites
+        /// across several files (or synthesise six near-duplicate wavs), the names resolve to
+        /// the real file. Anything that checks "does every cue have a file" MUST resolve
+        /// aliases first or it reports six false orphans.
+        /// </summary>
+        public static readonly IReadOnlyDictionary<string, string> Aliases =
+            new Dictionary<string, string>
+            {
+                { "hit_body",       "bump" },
+                { "bump_swing",     "dash" },
+                { "can_knockdown",  "lata_knockdown" },
+                { "reset_complete", "reset_channel_complete" },
+                { "pickup",         "grab" },
+                { "throw_release",  "throw_whoosh" },
+            };
+
+        /// <summary>
+        /// Per-cue trim in dB, 0 where unlisted.
+        ///
+        /// ⚠️ THE TWO EXTREMES ARE BOTH DELIBERATE AND BOTH ANNOTATED IN THE SOURCE.
+        /// `ui_hover` sits at -8 because it fires on every mouse movement across a menu, and
+        /// `land` at -6 because it fires constantly and has to sit under everything. A sound
+        /// that plays continuously is mixed for the hundredth time it is heard, not the first.
+        /// </summary>
+        public static readonly IReadOnlyDictionary<string, float> TrimDb =
+            new Dictionary<string, float>
+            {
+                { "ui_hover",       -8.0f },
+                { "land",           -6.0f },
+                { "grab",           -6.0f },
+                { "throw_charge",   -5.0f },
+                { "slipper_bounce", -4.0f },
+                { "jump",           -4.0f },
+                { "throw_whoosh",   -4.0f },
+                { "ui_click",       -3.0f },
+                { "slipper_land",   -3.0f },
+                { "dash",           -3.0f },
+                { "lata_impact",     0.0f },
+                { "lata_seal",       0.0f },
+                { "match_win",       0.0f },
+            };
+
+        /// <summary>
+        /// ⚠️⚠️ THESE FIVE SHIP AND CAN NEVER PLAY. `scripts/abilities/**` was deleted outright
+        /// in the design pivot (eight verbs nobody asked for), so every caller for these went
+        /// with it, but the .wav files were never removed from the build.
+        ///
+        /// They are listed rather than silently dropped because they are exactly the failure
+        /// this whole registry exists to catch, in its other direction: a FILE with no cue,
+        /// where the usual bug is a cue with no file. `slipper_land` shipped registered,
+        /// mixed and completely silent for weeks because nothing ever called it, and it was
+        /// the single most common outcome in the game, 38 of 71 flights.
+        ///
+        /// ⚠️ DO NOT PORT THEM AS LIVE CUES. Carry them here so the orphan report can name
+        /// them, and let a human decide whether the files leave the build.
+        /// </summary>
+        public static readonly IReadOnlyList<string> DeletedAbilityCues = new[]
+        {
+            "ability_bagsak_bomb",
+            "ability_bakya_bash",
+            "ability_flick_dash",
+            "ability_shatter_trap",
+            "ability_spin_guard",
+        };
+
+        /// <summary>Every cue the live game can fire. Aliases included; they are real names.</summary>
+        public static readonly IReadOnlyList<string> Live = new[]
+        {
+            // The lata, which is what the whole game is built around.
+            "lata_impact", "lata_knockdown", "lata_seal",
+            "reset_channel_start", "reset_channel_complete",
+
+            // Bodies.
+            "bump", "tag", "downed", "jump", "land", "dash", "guard_block", "respawn",
+            "stamina_empty",
+
+            // The shove and the block, via aliases.
+            "hit_body", "bump_swing",
+
+            // The slipper.
+            "throw_whoosh", "throw_charge", "slipper_land", "slipper_bounce", "grab",
+            "can_knockdown", "reset_complete", "pickup", "throw_release",
+
+            // Match state.
+            "countdown_tick", "countdown_go", "round_win", "round_lose", "match_win",
+            "round_end", "score_award",
+
+            // UI.
+            "ui_click", "ui_hover", "ui_back", "ui_error",
+
+            // The boot sting. ⚠️ It is a separate stream rather than audio on the video
+            // because Godot 4's only core video codec is Theora and the clip was exported
+            // with no audio track. In Unity the video can carry its own audio, so this is one
+            // of the few places the port can SIMPLIFY rather than transcribe. Left as a cue
+            // for now so the boot screen keeps working either way.
+            "boot_sting",
+        };
+
+        public static readonly IReadOnlyDictionary<string, string> Music =
+            new Dictionary<string, string>
+            {
+                { "menu",  "ost_menu.mp3" },
+                { "match", "ost_match.mp3" },
+            };
+
+        public const float MusicCrossfadeTime = 1.5f;
+
+        /// <summary>Resolve a cue name to the file stem that actually exists on disk.</summary>
+        public static string FileStemFor(string cue)
+        {
+            if (cue == null) return null;
+            return Aliases.TryGetValue(cue, out var real) ? real : cue;
+        }
+
+        public static float TrimFor(string cue) =>
+            cue != null && TrimDb.TryGetValue(cue, out var db) ? db : 0.0f;
+    }
+}
