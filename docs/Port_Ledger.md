@@ -85,7 +85,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `camera_rig.gd` | 1111 | `CameraRig.cs` (470) | PARTIAL — emote swing now wired; viewmodel arms still missing |
 | `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (431) | CONVERTED — call sites pending, see below |
 | `character_roster.gd` | 757 | `Roster` + `RosterBook` (411) | CONVERTED (20/20 validated) |
-| `env_toon_pass.gd` | 391 | — | **MISSING** — the toon shading pass |
+| `env_toon_pass.gd` | 391 | `EnvColourPass.cs` (185) | CONVERTED — tints, foliage, laundry sway |
 | `trajectory_preview.gd` | 273 | `TrajectoryPreview.cs` (113) | PARTIAL |
 | `hazard_zone.gd` | 133 | `HazardZone.cs` (108) | CONVERTED — slow zone, visual disc, round-scoped lifetime |
 | `game_version.gd` | 56 | `GameVersion.cs` (80) | CONVERTED — reads `Application.version`, now 4.68 |

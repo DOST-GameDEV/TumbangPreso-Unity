@@ -71,6 +71,13 @@ namespace TumbangPreso.Core
         public const float DefenderStartOffset = 2.5f;
 
         /// <summary>
+        /// How far apart the three attackers stand on their shared line. Two body widths:
+        /// close enough to read as one group, far enough that nobody spawns inside anybody
+        /// and the spawn settle has nothing to untangle.
+        /// </summary>
+        public const float AttackerSpawnSpacing = 1.8f;
+
+        /// <summary>
         /// ⚠️ DO NOT REMOVE ON THE ASSUMPTION UNITY DOES NOT NEED IT. This is the real
         /// fix for B-100 in Godot: writing position on a physics body updates the scene
         /// tree at once and the broadphase only at the next step, so on a role rotation

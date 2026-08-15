@@ -106,7 +106,9 @@ namespace TumbangPreso
                 // ⚠️ THE SPAWN IS RECORDED, NOT JUST USED. The kill plane returns whoever falls
                 // off the world to their OWN spawn, and it has no other way to know where that
                 // is. Written every round because the mark moves when roles rotate.
-                Vector3 mark = m.IsDefender ? DefenderMark() : AttackerSpawn(slot);
+                Vector3 mark = m.IsDefender
+                    ? DefenderMark()
+                    : AttackerSpawn(AttackerRoleFor(slot, defenderSlot));
                 m.SpawnPosition = mark;
                 m.Teleport(mark);
 
@@ -134,21 +136,48 @@ namespace TumbangPreso
         private static Vector3 DefenderMark() =>
             new Vector3(0.0f, 0.0f, -Balance.DefenderStartOffset);
 
-        /// <summary>Spread around the SQUARE ring, matching the confinement shape.</summary>
-        private static Vector3 AttackerSpawn(int slot)
+        /// <summary>
+        /// The three attackers stand on ONE LINE, not spread around the ring.
+        ///
+        /// ⚠️⚠️ THIS WAS A CIRCLE AND THE ORIGINAL IS A LINE. `main.gd::_role_spawn_point`
+        /// puts every attacker at z = the ring with x = (role - 2) × spacing, so they start
+        /// as a row facing the can: "close enough to read as one group, far enough that
+        /// nobody spawns inside anybody". Spreading them around the ring surrounds the taya
+        /// at the whistle, which is a different opening to the one the game was tuned around.
+        ///
+        /// ⚠️ AND IT INDEXES BY ROLE, NOT BY SEAT. Role 0 is the taya; the attackers are
+        /// roles 1-3 whatever seats they hold this round. Feeding a seat index in gives a
+        /// different line every round for no reason a player can see.
+        /// </summary>
+        private static Vector3 AttackerSpawn(int roleIndex)
         {
             float ring = Confinement.AttackerSpawnRing();
-            float angle = (slot / (float)Balance.PlayerCount) * Mathf.PI * 2.0f;
+            float offset = (roleIndex - 2.0f) * Balance.AttackerSpawnSpacing;
 
-            float c = Mathf.Cos(angle), s = Mathf.Sin(angle);
-            float scale = 1.0f / Mathf.Max(Mathf.Abs(c), Mathf.Abs(s));
+            return new Vector3(offset, 0.0f, ring);
+        }
 
-            return new Vector3(c * ring * scale, 0.0f, s * ring * scale);
+        /// <summary>
+        /// Which of the three attacker positions a seat takes this round: 1, 2 or 3, skipping
+        /// whichever seat is the taya.
+        /// </summary>
+        private static int AttackerRoleFor(int slot, int defenderSlot)
+        {
+            int role = 1;
+
+            for (int s = 0; s < Balance.PlayerCount; s++)
+            {
+                if (s == defenderSlot) continue;
+                if (s == slot) return role;
+                role++;
+            }
+
+            return 1;
         }
 
         private static Vector3 SlipperHome(int slot)
         {
-            Vector3 p = AttackerSpawn(slot);
+            Vector3 p = AttackerSpawn(AttackerRoleFor(slot, GameServices.Match?.DefenderSlot ?? 0));
             return new Vector3(p.x, 0.045f, p.z);
         }
     }
