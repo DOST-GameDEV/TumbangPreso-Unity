@@ -121,8 +121,48 @@ namespace TumbangPreso
             var mesh = GetComponentInChildren<Renderer>();
             if (mesh != null) radius = Mathf.Max(mesh.bounds.extents.x, mesh.bounds.extents.z);
 
-            transform.rotation = Quaternion.Euler(Mathf.Lerp(0.0f, Balance.DownedTiltDeg, t), 0.0f, 0.0f);
+            _toppleAngle = Mathf.Lerp(0.0f, Balance.DownedTiltDeg, t);
+            transform.rotation = Quaternion.Euler(_toppleAngle, _rollAngleDeg, 0.0f);
             transform.position = new Vector3(_mark.x, _mark.y + radius * t, _mark.z);
+        }
+
+        private float _toppleAngle;
+        private float _rollAngleDeg;
+        private Vector3 _lastRollPosition;
+
+        /// <summary>
+        /// A knocked can ROLLS when it is pushed, rather than sliding.
+        ///
+        /// ⚠️ THE ROLL IS DERIVED FROM DISTANCE TRAVELLED, NOT FROM A TIMER. A can rolling on
+        /// a clock keeps spinning while it sits still, and one driven by speed alone spins the
+        /// same way whichever direction it is shoved. Angle = distance / radius, signed by
+        /// which way it is actually going, so reversing direction reverses the roll.
+        ///
+        /// ⚠️ AND IT COMES TO REST. Below the settle speed it stops accumulating, because a can
+        /// lying still must lie still rather than creep.
+        /// </summary>
+        private void LateUpdate()
+        {
+            if (_isUpright) { _rollAngleDeg = 0.0f; _lastRollPosition = transform.position; return; }
+
+            Vector3 here = transform.position;
+            Vector3 moved = new Vector3(here.x - _lastRollPosition.x, 0.0f,
+                                        here.z - _lastRollPosition.z);
+            _lastRollPosition = here;
+
+            float speed = moved.magnitude / Mathf.Max(0.0001f, Time.deltaTime);
+            if (speed < Balance.DownedRollSettle) return;
+
+            float radius = 0.14f;
+            var mesh = GetComponentInChildren<Renderer>();
+            if (mesh != null) radius = Mathf.Max(0.05f, Mathf.Max(mesh.bounds.extents.x,
+                                                                 mesh.bounds.extents.z));
+
+            // Along the can's own lying axis, so it rolls the way it is pointing.
+            Vector3 forward = Vector3.Cross(Vector3.up, transform.right).normalized;
+
+            _rollAngleDeg += Vector3.Dot(moved, forward) / radius * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(_toppleAngle, _rollAngleDeg, 0.0f);
         }
     }
 }

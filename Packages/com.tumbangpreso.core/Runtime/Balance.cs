@@ -286,6 +286,10 @@ namespace TumbangPreso.Core
         /// </summary>
         public const float OwnerRimStrength = 0.85f;
 
+        /// <summary>Metres per second below which a downed can stops rolling. A can lying
+        /// still must lie still rather than creep.</summary>
+        public const float DownedRollSettle = 0.35f;
+
         // -------------------------------------------------------------------
         // IMPACT FEEL
         // -------------------------------------------------------------------
