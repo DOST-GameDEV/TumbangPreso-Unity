@@ -52,6 +52,49 @@ namespace TumbangPreso
         public float ThrowLock => ThrowRules.ThrowLockFor(_skinIndex);
 
         /// <summary>
+        /// How a carried tsinelas is turned in the hand.
+        ///
+        /// ⚠️ CONVERTED FROM THE .gd's BAKED `CARRY_BASIS`, which is X=(0,0,1), Y=(0,1,0),
+        /// Z=(-1,0,0) — a quarter turn about Y. Under the handedness flip that becomes
+        /// Z=(1,0,0) forward with Y up, i.e. +90° about Y here. Without it the slipper lies
+        /// across the palm sideways, which reads as a bug in the grab rather than in a
+        /// rotation nobody applied.
+        /// </summary>
+        public static readonly Quaternion CarryRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
+
+        /// <summary>
+        /// Light the slipper that belongs to the local player.
+        ///
+        /// ⚠️ PER-PEER, DELIBERATELY NOT REPLICATED. "Yours" is a different slipper on every
+        /// machine, so this is computed locally and never sent — a networked glow would light
+        /// one slipper for everybody.
+        /// </summary>
+        public void SetOwnerGlow(bool mine)
+        {
+            if (_glowOn == mine) return;
+            _glowOn = mine;
+
+            foreach (var r in GetComponentsInChildren<Renderer>())
+            {
+                var block = new MaterialPropertyBlock();
+                r.GetPropertyBlock(block);
+
+                float rim = mine ? Balance.OwnerRimStrength : 0.0f;
+                block.SetFloat("_RimStrength", rim);
+
+                // Most built-in shaders have no rim term, so also lift the emission — which
+                // every standard shader does honour — or the glow is invisible on the
+                // placeholder materials and reads as "the feature was never built".
+                block.SetColor("_EmissionColor",
+                    mine ? UI.UiTheme.Highlight * Balance.OwnerRimStrength : Color.black);
+
+                r.SetPropertyBlock(block);
+            }
+        }
+
+        private bool _glowOn;
+
+        /// <summary>
         /// ⚠️ THE PREVIEW MUST CALL THIS SAME FUNCTION. The dotted aim arc and the real
         /// flight stay one line only while both integrate the velocity produced here. They
         /// were measured agreeing to 0.000 m on three of the four skins.

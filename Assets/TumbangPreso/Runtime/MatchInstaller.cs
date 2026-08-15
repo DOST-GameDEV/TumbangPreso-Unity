@@ -126,6 +126,11 @@ namespace TumbangPreso
             var s = go.AddComponent<Slipper>();
             s.OwnerSlot = slot;
             s.SkinIndex = pick;
+
+            // Seat 0 is the local player, so seat 0's slipper is the one that glows. Per-peer
+            // by construction: nothing about this crosses the wire.
+            s.SetOwnerGlow(slot == 0);
+
             return s;
         }
 

@@ -82,7 +82,10 @@ namespace TumbangPreso
             else StepAttacker(dt);
 
             if (Held != null && _hand != null)
-                Held.transform.SetPositionAndRotation(_hand.position, _hand.rotation);
+                // ⚠️ THE CARRY ROTATION IS PART OF THE POSE, not decoration. Without it the
+                // slipper lies sideways across the palm.
+                Held.transform.SetPositionAndRotation(
+                    _hand.position, _hand.rotation * Slipper.CarryRotation);
         }
 
         // -------------------------------------------------------------------
