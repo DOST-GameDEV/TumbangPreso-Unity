@@ -3,7 +3,10 @@ using UnityEngine;
 
 namespace TumbangPreso
 {
-    public enum AiTier { Easy, Normal, Hard }
+    /// ⚠️ THE TIERS ARE `Difficulty` IN THE CORE PACKAGE — Bata / Normal / Astig, by their
+    /// Filipino names as in the original. This alias exists only so older serialized scenes
+    /// that stored Easy/Normal/Hard still deserialize; new code takes `Difficulty`.
+    public enum AiTier { Easy = 0, Normal = 1, Hard = 2 }
 
     /// <summary>
     /// A bot seat.
@@ -23,10 +26,35 @@ namespace TumbangPreso
     {
         [SerializeField] private AiTier _tier = AiTier.Normal;
 
-        /// <summary>Where you stand to throw: just outside the chalk.</summary>
-        private const float ThrowStandoff = 1.2f;
+        /// <summary>
+        /// This bot's tuning row. ⚠️ READ THROUGH <see cref="AiTuning"/> RATHER THAN COPIED
+        /// INTO FIELDS, so a difficulty changed from the pause menu mid-match reaches bots
+        /// that were spawned before the change. Godot did this with a `tuning_stamp` each
+        /// controller compared against; a property read is the same guarantee for free.
+        /// </summary>
+        public static Difficulty ActiveDifficulty = Difficulty.Normal;
 
-        private const float ArriveSlop = 0.35f;
+        /// <summary>
+        /// Godot's `AIController.apply_difficulty()`, called off the saved setting index.
+        ///
+        /// ⚠️ NOTHING CALLED THIS BEFORE, so the difficulty in the settings panel was saved,
+        /// displayed, and then ignored — every bot in every match played at Normal. The
+        /// index is clamped rather than trusted: it comes off disk.
+        /// </summary>
+        public static void ApplyDifficulty(int savedIndex)
+            => ActiveDifficulty = (Difficulty)Mathf.Clamp(savedIndex, 0, 2);
+
+        public static void ApplyDifficultyFromSettings()
+            => ApplyDifficulty(Settings.SettingsStore.Current.AiDifficulty);
+
+        private AiPersonality Me => AiTuning.For(ActiveDifficulty);
+
+        /// <summary>Where you stand to throw: just outside the chalk.</summary>
+        private const float ThrowStandoff = AiTuning.ThrowStandoff;
+
+        /// ⚠️ WAS 0.35 AND THAT WAS A DIVERGENCE, NOT A CHOICE. The .gd has 0.55; the tighter
+        /// value made bots jitter on arrival instead of settling on their mark.
+        private const float ArriveSlop = AiTuning.ArriveSlop;
 
         /// <summary>
         /// ⚠️ THE ANSWER TO "EVERY BOT CONVERGES ON THE NEAREST SLIPPER". Only the nearest
@@ -210,7 +238,13 @@ namespace TumbangPreso
                 Vector3 to = prey.transform.position - transform.position;
                 to.y = 0.0f;
 
-                if (to.magnitude <= Combat.LungeReach() && _tier != AiTier.Easy)
+                // ⚠️ RANGE AND CONE, NOT A TIER CHECK. The .gd gates a lunge on `lunge_range`
+                // (Bata 1.9 / Normal 2.6 / Astig 3.1) AND on the target being inside
+                // `lunge_cone` — which is a HALF-ANGLE where smaller is stricter, so Astig's
+                // 28° is more disciplined than Bata's 55°. The earlier "not Easy" test gave
+                // Bata and Astig identical lunges, which is most of why every tier felt the same.
+                if (to.magnitude <= Mathf.Min(Me.LungeRange, Combat.LungeReach())
+                    && WithinLungeCone(to))
                 {
                     FaceToward(prey.transform.position);
                     intent.Set(Verb.Lunge, true);
@@ -336,9 +370,33 @@ namespace TumbangPreso
 
             Vector3 dir = to.normalized;
             intent.Move = new Vector2(dir.x, dir.z);
-            intent.Set(Verb.Sprint, _tier == AiTier.Hard && to.magnitude > 3.0f);
+
+            // ⚠️ DISTANCE AND A STAMINA RESERVE, NOT A TIER CHECK. The .gd sprints past
+            // `SPRINT_DISTANCE` (5.0) and holds back `sprint_reserve` of the meter — Bata
+            // spends everything (0.0), Astig keeps nearly half (0.45) so it still has a
+            // chase left when it matters. Gating on tier alone meant Normal never sprinted.
+            intent.Set(Verb.Sprint,
+                to.magnitude > AiTuning.SprintDistance && StaminaFraction() > Me.SprintReserve);
+
             FaceToward(goal);
             return true;
+        }
+
+        /// <summary>Fraction of the stamina meter still available, 0..1.</summary>
+        private float StaminaFraction() => _motor.Stamina?.Ratio ?? 1.0f;
+
+        /// <summary>
+        /// Is <paramref name="to"/> inside this tier's lunge cone, measured off the body's
+        /// facing? The cone is a HALF-ANGLE in degrees and is floored at
+        /// <see cref="AiTuning.LungeConeFloor"/>, because an eight-way heading cannot aim
+        /// finer than that and a tighter cone would ask for an angle the bot has no key for.
+        /// </summary>
+        private bool WithinLungeCone(Vector3 to)
+        {
+            if (to.sqrMagnitude < 0.0001f) return true;
+
+            float half = AiTuning.EffectiveLungeCone(ActiveDifficulty);
+            return Vector3.Angle(transform.forward, to.normalized) <= half;
         }
 
         private void FaceToward(Vector3 point)

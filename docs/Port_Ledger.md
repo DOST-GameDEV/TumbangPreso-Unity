@@ -81,7 +81,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
 | `main.gd` | 3595 | — | **MISSING** — spawning, prop skins, reconnection, late-join sync |
-| `ai_controller.gd` | 2225 | `AIController.cs` (353) | PARTIAL |
+| `ai_controller.gd` | 2225 | `AIController.cs` (400) + `AiTuning.cs` (215) | PARTIAL — tiers landed and applied; plan machine still missing |
 | `camera_rig.gd` | 1111 | `CameraRig.cs` (470) | PARTIAL — emote swing now wired; viewmodel arms still missing |
 | `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (431) | CONVERTED — call sites pending, see below |
 | `character_roster.gd` | 757 | `Roster` + `RosterBook` (411) | CONVERTED (20/20 validated) |
@@ -178,6 +178,32 @@ Still to convert: `ViewmodelArms.tscn` (blocks FPP arms), `CameraRig.tscn`
 reading the note), `CharacterBase.tscn`, `CanVisual.tscn`, `TsinelasVisual.tscn`,
 `Lata.tscn`, `Slipper.tscn`, `Main.tscn`, `PremiseIcon.tscn`, `DebugBar.tscn`,
 `OffscreenIndicators.tscn`, `YouCard.tscn`, `RoleSwapCard.tscn`, `Tutorial.tscn`.
+
+## Bot difficulty — the tiers landed 2026-08-15, the plan machine has not
+
+`AiTuning.cs` in the engine-free core holds all three tiers (Bata / Normal / Astig)
+with every one of their 17 tuning values, plus the 36 tier-independent geometry and
+cadence constants. 7 tests assert them against `ai_controller.gd`.
+
+**Three real divergences were found and fixed, not cosmetic ones:**
+
+- `ArriveSlop` was **0.35**; the .gd has **0.55**. The tighter value makes bots jitter
+  on arrival rather than settle on a mark.
+- Lunging was gated on `tier != Easy`, so **Bata and Astig lunged identically**. It is
+  now range (1.9 / 2.6 / 3.1) AND cone — a half-angle where smaller is stricter, so
+  Astig's 28° is the disciplined one and Bata's 55° the wild one.
+- Sprinting was gated on `tier == Hard`, so **Normal never sprinted at all**. It is now
+  distance past 5.0 m and a stamina reserve the tier holds back (Bata spends
+  everything, Astig keeps 0.45 for a chase that matters).
+
+⚠️ **The saved difficulty was being ignored entirely.** The settings panel wrote
+`AiDifficulty` and nothing ever read it back, so every bot in every match played at
+Normal regardless of what the player picked. `MatchInstaller` now applies it.
+
+**Still missing:** the plan state machine itself — lane sampling, intercept
+prediction, stalk patience, stuck detection and unsticking, slipper claim TTL, the
+loiter walk, and the deliberate mistake roll. That is the bulk of the 2,225 lines.
+The numbers are now in place for it to be written against.
 
 ## Ready-up phase — CONVERTED 2026-08-15 (local half)
 

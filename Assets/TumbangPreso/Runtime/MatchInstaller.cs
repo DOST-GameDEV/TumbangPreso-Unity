@@ -28,6 +28,11 @@ namespace TumbangPreso
         {
             _book = RosterBook.Load();
 
+            // ⚠️ THE SAVED DIFFICULTY WAS BEING IGNORED. It is written by the settings panel
+            // and was never read back, so every bot played at Normal no matter what the
+            // player chose. Applied once here, before any seat is built.
+            AIController.ApplyDifficultyFromSettings();
+
             var lata = BuildLata();
             var seats = new CharacterMotor[Balance.PlayerCount];
             var slippers = new Slipper[Balance.PlayerCount];
