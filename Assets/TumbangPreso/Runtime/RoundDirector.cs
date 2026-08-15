@@ -210,6 +210,11 @@ namespace TumbangPreso
             // victim teleporting rather than as being caught.
             Hitstop.Trigger();
 
+            // ⚠️ A VERB WITH NO FEEDBACK IS A VERB THE PLAYER CANNOT TELL THEY PERFORMED.
+            // The burst is what makes a tag land visibly on the victim rather than merely
+            // changing a number on the scoreboard.
+            Visual.ImpactBurst.SpawnAt(victim.transform.position);
+
             GameServices.Audio?.PlayAt("tag", victim.transform.position);
             GameServices.Audio?.PlayAt("downed", victim.transform.position);
             GameServices.Voice?.OnAttackerTagged();
