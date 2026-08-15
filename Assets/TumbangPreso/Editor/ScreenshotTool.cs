@@ -97,8 +97,9 @@ namespace TumbangPreso.EditorTools
 
             foreach (var c in canvases)
             {
-                var rt = c.transform as RectTransform;
-                if (rt != null) UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(rt);
+                var canvasRect = c.transform as RectTransform;
+                if (canvasRect != null)
+                    UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(canvasRect);
             }
 
             Canvas.ForceUpdateCanvases();

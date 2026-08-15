@@ -83,7 +83,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `main.gd` | 3595 | — | **MISSING** — spawning, prop skins, reconnection, late-join sync |
 | `ai_controller.gd` | 2225 | `AIController.cs` (353) | PARTIAL |
 | `camera_rig.gd` | 1111 | `CameraRig.cs` (422) | PARTIAL — ported, NOT wired into match scenes |
-| `spectator_camera.gd` | 431 | — | **MISSING** — see below |
+| `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (431) | CONVERTED — call sites pending, see below |
 | `character_roster.gd` | 757 | `Roster` + `RosterBook` (411) | CONVERTED (20/20 validated) |
 | `env_toon_pass.gd` | 391 | — | **MISSING** — the toon shading pass |
 | `trajectory_preview.gd` | 273 | `TrajectoryPreview.cs` (113) | PARTIAL |
@@ -91,7 +91,40 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `game_version.gd` | 56 | — | **MISSING** — the `v4.68` string in the HUD corner |
 | `kill_plane.gd` | 26 | — | **MISSING** |
 
-### `spectator_camera.gd` — full control set, none of it ported
+### `spectator_camera.gd` — CONVERTED 2026-08-15, audited line by line
+
+All 19 behaviours of the .gd are present in `SpectatorCamera.cs`, checked against the
+source after writing rather than from memory: the three speed constants and their
+two human-instruction retunes, the ±88 pitch limit, position smoothing at 14.0 with
+rotation deliberately unsmoothed, follow distance and its 0.34 lift ratio, both POV
+eye heights and the 0.34 forward offset, FOV 78 / far 400, the wheel meaning two
+different things in two modes, Tab / F / V, the every-frame view re-claim, the
+free-flight vector with jump and `SpectatorDown`, the follow-list rebuild with its
+fallback scan, `ControlsText()`, `StatusText()`, and the legend's role suffix.
+
+Three things changed on purpose, each commented in the file:
+
+- **Start position Z is negated** — `(0, 9, 14)` in Godot is `(0, 9, -14)` here. Same
+  handedness flip the map conversion uses. Left alone, the mode opens looking at an
+  empty street with the match behind the camera.
+- **Pitch signs are negated** — Godot's `rotation.x` is positive looking up, Unity's
+  euler X is positive looking down. The .gd's `-26` start is `+26` here.
+- **Yaw adds instead of subtracts** — same flip; copying the sign would invert
+  mouse-look for spectators only.
+
+Held invariants: it is a plain Transform with a Camera and no collider, so clipping
+is structural; it reads hardware directly and never an `InputIntent`, which is what
+keeps a bot from flying it now that the AI writes intents exclusively.
+
+**Still pending — its call sites, all of which live in the unported `main.gd`:**
+seat -1 / no character spawned, exclusion from the ready gate, the placeholder-AI
+fill for the vacated slot, the HUD's spectator branch polling `StatusText()`, and
+the on-screen legend. The camera itself is done; nothing selects it yet.
+
+Registration into the followable set was moved onto `CharacterMotor.OnEnable`
+rather than waiting for `main.gd`, so Tab works as soon as units exist.
+
+### `spectator_camera.gd` — the control set, for reference
 
 Free-fly camera with three modes: free, follow, POV. Every constant here is from
 the .gd, transcribe them rather than re-tuning:

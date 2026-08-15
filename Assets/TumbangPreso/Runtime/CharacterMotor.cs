@@ -26,10 +26,59 @@ namespace TumbangPreso
         [SerializeField] private int _playerSlot;
         [SerializeField] private int _characterIndex = -1;
 
+        /// ⚠️ KEPT ONLY SO CharacterVisual AND CharacterNameplate KEEP THEIR SIGNATURES.
+        /// Every unit is a Person now; nothing sets these to anything else. They are the
+        /// last two lines of the objects-are-players thesis (`character_base.gd:386`).
+        /// The spectator's POV eye height reads IsPerson, so it cannot be folded away
+        /// without giving SpectatorCamera another source for the same question.
+        [SerializeField] private bool _isPerson = true;
+        [SerializeField] private bool _isCan;
+
+        /// ⚠️ RENAMED FROM `team` IN THE ORIGINAL. There are no teams — this is the
+        /// player's seat, the index into MatchManager.scores, and the rotation position
+        /// that decides when they defend. A spectator legend that says "TEAM A" is
+        /// describing a deleted game (`spectator_camera.gd:416`).
+        [SerializeField] private string _playerName = "";
+        [SerializeField] private bool _isBot;
+
         public bool IsDefender { get => _isDefender; set => _isDefender = value; }
         public int PlayerSlot { get => _playerSlot; set => _playerSlot = value; }
         public int CharacterIndex { get => _characterIndex; set => _characterIndex = value; }
         public bool IsAttacker => !_isDefender;
+        public bool IsPerson { get => _isPerson; set => _isPerson = value; }
+        public bool IsCan { get => _isCan; set => _isCan = value; }
+        public bool IsBot { get => _isBot; set => _isBot = value; }
+
+        /// <summary>Empty is a real value: it means "never set one", and every reader
+        /// falls back to <see cref="DisplayName"/> rather than printing a blank row.</summary>
+        public string PlayerName { get => _playerName; set => _playerName = value; }
+
+        /// <summary>
+        /// What to draw over this unit, from `character_base.gd:496`.
+        ///
+        /// ⚠️ IT IS A DISPLAY TRANSFORM, NOT A WRITE. PlayerName keeps the case the player
+        /// typed, so the settings field still shows them their own name as they entered it.
+        /// Case is cosmetic and length is structural, which is why the length limit lives
+        /// on the data (GameSettings.SanitiseName) and the casing lives here.
+        /// </summary>
+        public string DisplayName()
+        {
+            if (_isBot) return CharacterName().ToUpperInvariant();
+            if (_playerName != "") return _playerName.ToUpperInvariant();
+            return $"P{_playerSlot + 1}";
+        }
+
+        /// <summary>The roster pick's name, falling back to the seat number.
+        /// CharacterIndex is -1 until a pick arrives.</summary>
+        private string CharacterName()
+        {
+            // ⚠️ THE CORE ROSTER, NOT RosterBook. RosterBook maps an index to a model; the
+            // NAME is balance-layer data and lives in the engine-free package, so a headless
+            // test can assert a legend without loading a single asset.
+            if (_characterIndex < 0 || _characterIndex >= Roster.People.Count)
+                return $"P{_playerSlot + 1}";
+            return Roster.People[_characterIndex].Name;
+        }
 
         public InputIntent Intent { get; } = new InputIntent();
         public Stamina Stamina { get; private set; }
@@ -55,6 +104,19 @@ namespace TumbangPreso
             _cc = GetComponent<CharacterController>();
             Stamina = new Stamina();
         }
+
+        /// ⚠️ THE SPECTATABLE REGISTRY IS POPULATED HERE, NOT AT THE SPAWN SITE. Godot's
+        /// `main.gd` added each unit to the `spectatable` group as it spawned it; that file
+        /// is 3,595 lines and unported, and hanging the spectator's follow cycle on it would
+        /// mean Tab does nothing until the very last phase of the port. A unit registering
+        /// itself is also the stricter version of the same rule: a unit that exists is
+        /// followable, with no second place to remember.
+        ///
+        /// Registration is not a gameplay write and the spectator never writes back, so this
+        /// does not weaken the "spectator touches nothing" contract.
+        private void OnEnable() => CameraSystem.SpectatorCamera.Register(this);
+
+        private void OnDisable() => CameraSystem.SpectatorCamera.Unregister(this);
 
         /// <summary>
         /// ⚠️ DO NOT REMOVE ON THE ASSUMPTION UNITY DOES NOT NEED THIS.
