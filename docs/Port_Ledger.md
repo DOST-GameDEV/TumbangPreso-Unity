@@ -155,7 +155,7 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `tutorial.gd` | 462 | — | **MISSING** — 8 pages with 3D props |
 | `you_card.gd` | 430 | `YouCard.cs` (185) | PARTIAL — role, name, live meters; ready flash pending |
 | `settings_panel.gd` | 429 | — | **MISSING** — incl. key rebinding UI |
-| `emote_wheel.gd` | 422 | `Emotes.cs` (168) covers emotes, not the wheel | **MISSING** (wheel) |
+| `emote_wheel.gd` | 422 | `EmoteWheel.cs` (215) + `Emotes.cs` | CONVERTED — hold, steer, release |
 | `character_select.gd` | 341 | — | **MISSING** |
 | `match_result.gd` | 339 | `MatchResult.cs` (215) | PARTIAL — board and single-player rematch; peer vote pending netcode |
 | `credits_panel.gd` | 292 | `CreditsContent.cs` + `CreditsPanel` (250) | CONVERTED — CC-BY strings verbatim |

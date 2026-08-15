@@ -289,6 +289,11 @@ namespace TumbangPreso
             var youGo = new GameObject("YouCard");
             youGo.AddComponent<UI.YouCard>().Bind(local);
 
+            // The emote wheel, driven straight to the local unit's emote player.
+            var wheelGo = new GameObject("EmoteWheel");
+            var wheel = wheelGo.AddComponent<UI.EmoteWheel>();
+            wheel.EmoteChosen += id => local.GetComponent<Social.EmotePlayer>()?.Request(id);
+
             var pauseGo = new GameObject("PauseHost");
             pauseGo.AddComponent<PauseWatcher>().Local = local;
         }

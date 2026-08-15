@@ -258,6 +258,12 @@ namespace TumbangPreso.CameraSystem
             if (_aimSource != AimSource.Mouse) return;
             if (_character.Intent.Parked) return;
 
+            // ⚠️ THE EMOTE WHEEL OWNS THE MOUSE WHILE IT IS OPEN. Both this and the wheel are
+            // steered by the same deltas, and without this the player's body spins on the spot
+            // while they pick a slice. Godot got this from `_input` running before
+            // `_unhandled_input`; Unity has no such ordering, so it is an explicit check.
+            if (UI.EmoteWheel.AnyOpen) return;
+
             var s = Settings.SettingsStore.Current;
             float sens = BaseSensitivity * s.MouseSensitivity;
 
