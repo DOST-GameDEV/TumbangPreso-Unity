@@ -195,5 +195,106 @@ namespace TumbangPreso.Net
         /// </summary>
         [ClientRpc]
         public void BeginCountdownClientRpc() { }
+
+        // -------------------------------------------------------------------
+        // PICKS
+        //
+        // ⚠️⚠️ THE WHOLE TABLE IS SENT, NOT A DELTA, AND THAT IS WHAT MAKES LATE JOIN WORK.
+        // A peer arriving mid-match missed every individual pick message that ever went out;
+        // broadcasting the full table on any change means a late joiner is correct after one
+        // message instead of needing a replay of the session's history.
+        // -------------------------------------------------------------------
+
+        /// <summary>slot, character, can, slipper — flattened, four ints per seat.</summary>
+        [ClientRpc]
+        public void SyncPicksClientRpc(int[] table)
+        {
+            if (table == null) return;
+
+            for (int i = 0; i + 3 < table.Length; i += 4)
+            {
+                var who = Unit(table[i]);
+                if (who == null) continue;
+
+                who.CharacterIndex = table[i + 1];
+
+                // ⚠️ THE CAN AND SLIPPER PICKS BELONG TO THE PROPS, NOT THE PERSON. A seat's
+                // can skin is worn by the lata on the round that seat defends, and its
+                // slipper skin by that seat's own tsinelas.
+                ApplySlipperSkin(table[i], table[i + 3]);
+            }
+        }
+
+        /// <summary>Called host-side whenever anything about the picks changes.</summary>
+        public void BroadcastPicks()
+        {
+            if (!NetAuthority.IsHost) return;
+
+            var round = GameServices.Round;
+            if (round == null) return;
+
+            var table = new int[Core.Balance.PlayerCount * 4];
+
+            for (int slot = 0; slot < Core.Balance.PlayerCount; slot++)
+            {
+                var who = round.PlayerAt(slot);
+
+                table[slot * 4] = slot;
+                table[slot * 4 + 1] = who != null ? who.CharacterIndex : -1;
+                table[slot * 4 + 2] = SkinOfLataFor(slot);
+                table[slot * 4 + 3] = SkinOfSlipperFor(slot);
+            }
+
+            SyncPicksClientRpc(table);
+        }
+
+        private static int SkinOfLataFor(int slot)
+        {
+            var lata = GameServices.Round?.Lata;
+            return lata != null && GameServices.Match?.DefenderSlot == slot ? lata.SkinIndex : -1;
+        }
+
+        private static int SkinOfSlipperFor(int slot)
+        {
+            var s = FindSlipper(slot);
+            return s != null ? s.SkinIndex : -1;
+        }
+
+        private static void ApplySlipperSkin(int slot, int skin)
+        {
+            var s = FindSlipper(slot);
+            if (s != null && skin >= 0) s.SkinIndex = skin;
+        }
+
+        // -------------------------------------------------------------------
+        // LATE JOIN
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// A peer that arrives mid-match.
+        ///
+        /// ⚠️ IT IS SPAWNED ONCE AND ONLY ONCE. The original guards on a spawned-peer set
+        /// because the connect and the identify both fire, and a peer spawned twice is two
+        /// bodies answering one set of keys.
+        /// </summary>
+        public void HostLateJoin(int peerId)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (!_spawned.Add(peerId)) return;
+
+            // The joiner needs the whole world state, not just its own seat.
+            BroadcastPicks();
+        }
+
+        public void HostPeerLeft(int peerId)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            _spawned.Remove(peerId);
+            FindFirstObjectByType<ReadyGate>()?.OnPeerLeft(peerId);
+        }
+
+        private readonly System.Collections.Generic.HashSet<int> _spawned =
+            new System.Collections.Generic.HashSet<int>();
     }
 }

@@ -61,7 +61,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `audio_manager.gd` | 1125 | `AudioDirector` + `AudioCues` + `MusicDirector` (382) | PARTIAL |
 | `round_manager.gd` | 476 | `RoundDirector.cs` (219) | PARTIAL |
 | `match_manager.gd` | 217 | `MatchDirector.cs` (97) | PARTIAL |
-| `network_manager.gd` | 1413 | `NetSession` + `LobbySession` + `MatchRpc` (700) | PARTIAL — verbs, emotes, ready gate over the wire; late-join and pick sync pending |
+| `network_manager.gd` | 1413 | `NetSession` + `LobbySession` + `MatchRpc` (800) | PARTIAL — verbs, emotes, ready gate, picks, late join; host migration pending |
 | `lan_beacon.gd` | 323 | `LanBeacon.cs` (238) | PARTIAL |
 | `server_query.gd` | 536 | `ServerQuery.cs` (215) | PARTIAL — browse and expiry; join codes pending |
 | `game_launch.gd` | 301 | `GameLaunch.cs` (108) | CONVERTED — map registry, pending action, seating |
