@@ -196,23 +196,30 @@ namespace TumbangPreso.UI
         }
     }
 
-    /// <summary>Who made it.</summary>
+    /// <summary>
+    /// Who made it, and — the part that is not optional — who the CC-BY assets belong to.
+    ///
+    /// ⚠️⚠️ THIS SCREEN IS LICENCE COMPLIANCE, NOT POLISH. An earlier Unity pass rebuilt it
+    /// as a studio blurb with NO asset credits at all, which quietly shipped three CC-BY-4.0
+    /// models with their attribution dropped. The credit strings live in
+    /// <see cref="CreditsContent"/>, copied verbatim from each model's own LICENSE.txt.
+    /// **Do not trim them for layout and do not reword them.**
+    /// </summary>
     public sealed class CreditsPanel : Panel
     {
         protected override void Build()
         {
-            MenuKit.Label(Canvas.transform, "CREDITS", 60, UiTheme.Amber,
-                          new Vector2(0.5f, 0.86f), Vector2.zero, new Vector2(900, 90));
+            MenuKit.Label(Canvas.transform, "CREDITS", 56, UiTheme.Amber,
+                          new Vector2(0.5f, 0.93f), Vector2.zero, new Vector2(900, 80));
 
             MenuKit.Label(Canvas.transform,
-                "TUMBANG PRESO\n\n" +
-                "BH Studios\n\n" +
-                "1st place, Gear Up NCR Esports Game Dev Challenge\n" +
-                "NCR's entry at the nationals in General Santos City\n\n" +
-                "Five students across four cities.\n" +
-                "Four people, four cities, same street.",
-                30, UiTheme.Cream,
-                new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1200, 500));
+                "TUMBANG PRESO  ·  BH Studios\n" +
+                "1st place, Gear Up NCR Esports Game Dev Challenge  ·  " +
+                "NCR's entry at the nationals in General Santos City",
+                22, UiTheme.Cream,
+                new Vector2(0.5f, 0.875f), Vector2.zero, new Vector2(1500, 70));
+
+            CreditsContent.Render(Canvas.transform);
         }
     }
 

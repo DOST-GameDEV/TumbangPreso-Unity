@@ -158,7 +158,7 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `emote_wheel.gd` | 422 | `Emotes.cs` (168) covers emotes, not the wheel | **MISSING** (wheel) |
 | `character_select.gd` | 341 | — | **MISSING** |
 | `match_result.gd` | 339 | `MatchResult.cs` (215) | PARTIAL — board and single-player rematch; peer vote pending netcode |
-| `credits_panel.gd` | 292 | — | **MISSING** |
+| `credits_panel.gd` | 292 | `CreditsContent.cs` + `CreditsPanel` (250) | CONVERTED — CC-BY strings verbatim |
 | `role_swap_card.gd` | 274 | `RoleSwapCard.cs` (250) | CONVERTED — intermission timeline, swap, standings |
 | `arrow_button.gd` | 262 | `MenuKit.cs` (142) | PARTIAL |
 | `offscreen_indicators.gd` | 211 | `OffscreenIndicators.cs` (175) | CONVERTED — edge arrows, wired into the HUD |
