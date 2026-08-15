@@ -63,7 +63,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `server_query.gd` | 536 | — | **MISSING** |
 | `game_launch.gd` | 301 | — | **MISSING** |
 | `settings_manager.gd` | 703 | `GameSettings.cs` (202) | PARTIAL |
-| `debug_player_switcher.gd` | 420 | — | **MISSING** |
+| `debug_player_switcher.gd` | 420 | `DebugPlayerSwitcher.cs` (115) | PARTIAL — seat drive, cycle, readout |
 
 ## Characters and objects
 
@@ -166,7 +166,7 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `splash_screen.gd` | 107 | `SplashScreen.cs` (154) | CONVERTED |
 | `mode_select.gd` | 96 | `MenuScreens.cs` | PARTIAL |
 | `main_menu.gd` | 85 | `MenuScreens.cs` | CONVERTED |
-| `debug_bar.gd` | 47 | — | **MISSING** |
+| `debug_bar.gd` | 47 | `DebugBar.cs` (110) | CONVERTED — deliberately unstyled |
 | `pause_layer.gd` | 21 | `PauseWatcher` in `MatchInstaller.cs` | CONVERTED — see note |
 
 ## Scenes (27)
