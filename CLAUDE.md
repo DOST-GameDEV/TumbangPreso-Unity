@@ -65,8 +65,10 @@ An earlier session recorded "the game is first person, third person was a mistak
 - **Emotes swing to TPP and back** (`camera_rig.gd:425`). The emote camera *orbits*
   the body, it never steers it, and the swing is local-only — the emote replicates,
   the camera does not.
-- **A carried slipper's rig follows the carrier in TPP**, because while held it is
-  reparented into the carrier's hand and its own spring arm would sit inside their head.
+- ~~A carried slipper's rig follows the carrier in TPP~~ — ⚠️ **VESTIGIAL.** I claimed this
+  was live on 2026-08-15 and it is not: `camera_rig.gd:750` declares its `carrier` as null
+  and never assigns it, so the whole branch is unreachable. It predates §12 deleting
+  playable props. Do not port it unless playable props return.
 - **Spectator is a fourth rig entirely** — `spectator_camera.gd`, free/follow/POV,
   with its own controls (`Tab` cycle, `V` POV, wheel distance, `spectator_down`).
 

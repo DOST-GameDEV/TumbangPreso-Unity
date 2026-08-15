@@ -38,11 +38,14 @@ is wrong and must not be acted on.** `camera_rig.gd` has FOUR third-person cases
    to -35/+20, separate from the gameplay clamp. **Local only**: the emote is
    replicated, the camera swing is not, or every peer would spin when one
    player danced.
-3. **Carried-prop follow** (`_update_tpp_carry_follow`). A held slipper is
-   reparented to the carrier's hand each physics frame, so its own spring arm
-   would sit inside the carrier's skull. While held, the rig bases its TPP shot
-   on the CARRIER, at `TPP_CARRY_MOUNT_HEIGHT = 0.6`. The player rides behind
-   their teammate until thrown.
+3. **Carried-prop follow** (`_update_tpp_carry_follow`) — ⚠️ **VESTIGIAL, DO NOT
+   PORT AS LIVE BEHAVIOUR.** An earlier note here (mine, 2026-08-15) described it
+   as a working fourth case. It is not: `camera_rig.gd:750` declares
+   `var carrier: CharacterBase = null` and nothing ever assigns it, so every
+   branch below that line is unreachable in the shipped build. It dates from when
+   props were playable units; §12 deleted playable props and left the function
+   behind. The constants (`TPP_CARRY_MOUNT_HEIGHT = 0.6`, the -15° base tilt) are
+   real but nothing reads them. Port it only if playable props ever come back.
 4. **Spectator** — separate rig, see `spectator_camera.gd` below.
 
 The real earlier mistake was narrower: an *overhead follow* camera was built that
@@ -82,7 +85,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 |---|---|---|---|
 | `main.gd` | 3595 | `MatchHost.cs` + `MatchInstaller` (370) | PARTIAL — local half; netcode half pending |
 | `ai_controller.gd` | 2225 | `AIController` + `AiTuning` + `AiPersonalityRoll` (800) | PARTIAL — tiers, personalities, 13-plan machine; lane sampling and unstick pending |
-| `camera_rig.gd` | 1111 | `CameraRig` + `ViewmodelArms` (640) | PARTIAL — FPP arms, emote swing; carried-prop follow pending |
+| `camera_rig.gd` | 1111 | `CameraRig` + `ViewmodelArms` (640) | CONVERTED — FPP, prop TPP, emote swing, arms; carry-follow is dead code upstream |
 | `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (431) | CONVERTED — call sites pending, see below |
 | `character_roster.gd` | 757 | `Roster` + `RosterBook` (411) | CONVERTED (20/20 validated) |
 | `env_toon_pass.gd` | 391 | `EnvColourPass.cs` (185) | CONVERTED — tints, foliage, laundry sway |
