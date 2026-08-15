@@ -89,6 +89,16 @@ namespace TumbangPreso
         {
             if (_isUpright == value) return;
             _isUpright = value;
+
+            // ⚠️ ONE PLACE, BOTH DIRECTIONS. The can going over and the can going back up are
+            // the same state change read two ways, and the .gd picks the cue off the same
+            // boolean rather than from two call sites that can drift apart.
+            GameServices.Audio?.PlayAt(value ? "reset_channel_start" : "can_knockdown",
+                                       transform.position);
+
+            if (value) GameServices.Voice?.OnLataRestored();
+            else GameServices.Voice?.OnLataKnocked();
+
             UprightChanged?.Invoke(value);
         }
 

@@ -92,6 +92,7 @@ namespace TumbangPreso
         private CharacterController _cc;
         private Vector3 _velocity;
         private bool _grounded;
+        private float _fallSpeed;
         private int _spawnSettle;
         private Vector3 _spawnSettleAt;
 
@@ -235,7 +236,18 @@ namespace TumbangPreso
             // ⚠️ `isGrounded` ALONE IS NOT TRUSTWORTHY. It reflects only the last Move and
             // goes false on slopes, on steps and on the frame an impulse lifts the capsule.
             // The collision flag is what the controller actually resolved this step.
+            bool wasAirborne = !_grounded;
             _grounded = (flags & CollisionFlags.Below) != 0 || _cc.isGrounded;
+
+            // ⚠️ THE LANDING SOUND HAS A SPEED FLOOR. Below LandSfxMinSpeed a landing is
+            // silent, or a unit stepping off a kerb thumps like one that fell off a roof —
+            // and on uneven ground the grounded flag flickers, so every step would thud.
+            if (_grounded && wasAirborne && _fallSpeed > Balance.LandSfxMinSpeed)
+                GameServices.Audio?.PlayAt("land", transform.position);
+
+            // Tracked on the way down, because by the time the capsule is grounded the
+            // vertical velocity has already been zeroed.
+            _fallSpeed = _grounded ? 0.0f : Mathf.Max(_fallSpeed, -_velocity.y);
 
             ShedCharacterPerch();
             Confine();
@@ -252,7 +264,10 @@ namespace TumbangPreso
                 _velocity.y = -2.0f;
 
                 if (Intent.JustPressed(Verb.Jump) && CanAct())
+                {
                     _velocity.y = Balance.JumpVelocity;
+                    GameServices.Audio?.PlayAt("jump", transform.position);
+                }
             }
             else
             {

@@ -50,6 +50,7 @@ namespace TumbangPreso
         public void NotifyHolding(Slipper what)
         {
             Held = what;
+            GameServices.Audio?.PlayAt("pickup", transform.position);
             _motor.HoldingSlipper = what != null;
 
             if (what != null)
@@ -155,6 +156,7 @@ namespace TumbangPreso
             Vector3 origin = _hand != null ? _hand.position : transform.position + Vector3.up * 1.25f;
             origin += aim.normalized * Balance.MuzzleForward;
 
+            GameServices.Audio?.PlayAt("throw_release", origin);
             Held.HostThrow(_motor, origin, Held.LaunchVelocity(dir, ThrowRules.ChargeRatio(_charge)));
 
             Held = null;

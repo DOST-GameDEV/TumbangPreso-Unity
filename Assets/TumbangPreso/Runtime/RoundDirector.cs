@@ -199,6 +199,12 @@ namespace TumbangPreso
         private void ApplyTagPenalty(CharacterMotor victim)
         {
             victim.ApplyStagger(Balance.TagStunTime);
+
+            // The tag is the taya's moment: the hit itself, the victim going down, and the
+            // announcer, all off the one resolution so they cannot disagree.
+            GameServices.Audio?.PlayAt("tag", victim.transform.position);
+            GameServices.Audio?.PlayAt("downed", victim.transform.position);
+            GameServices.Voice?.OnAttackerTagged();
             victim.Stamina.RefillAndClearFatigue();
             victim.Teleport(SafeZonePointFor(victim));
         }
