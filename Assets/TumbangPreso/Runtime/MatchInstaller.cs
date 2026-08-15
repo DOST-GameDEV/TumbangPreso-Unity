@@ -242,7 +242,7 @@ namespace TumbangPreso
             // The ready press is readable in the world, not only on the HUD — the other
             // players can see somebody signal that they are set.
             gate.ReadyGestureRequested += who =>
-                who.GetComponentInChildren<Visual.CharacterAnimator>()?.PlayOneShot("ready");
+                who.GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("ready");
 
             var hud = UnityEngine.Object.FindFirstObjectByType<UI.Hud>();
             if (hud != null)

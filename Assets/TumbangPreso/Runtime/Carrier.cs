@@ -61,6 +61,9 @@ namespace TumbangPreso
         {
             Held = what;
             GameServices.Audio?.PlayAt("pickup", transform.position);
+
+            // Reaching down for a loose tsinelas — the literal clip for the job.
+            GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("grab");
             _motor.HoldingSlipper = what != null;
 
             if (what != null)
@@ -170,6 +173,7 @@ namespace TumbangPreso
             origin += aim.normalized * Balance.MuzzleForward;
 
             GameServices.Audio?.PlayAt("throw_release", origin);
+            GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
             Held.HostThrow(_motor, origin, Held.LaunchVelocity(dir, ThrowRules.ChargeRatio(_charge)));
 
             Held = null;

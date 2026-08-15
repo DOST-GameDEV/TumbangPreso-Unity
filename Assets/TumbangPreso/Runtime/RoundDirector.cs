@@ -220,6 +220,14 @@ namespace TumbangPreso
             // someone who looks untouched.
             victim.GetComponentInChildren<Visual.CharacterVisual>()?.FlashHit();
 
+            // ⚠️ THE SHAKE GOES TO THE VICTIM'S OWN CAMERA AND NOWHERE ELSE. Shaking every
+            // rig would make one player's tag jolt three other screens.
+            var rig = UnityEngine.Camera.main != null
+                ? UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>()
+                : null;
+
+            if (rig != null && rig.IsFollowing(victim)) rig.Shake();
+
             GameServices.Audio?.PlayAt("tag", victim.transform.position);
             GameServices.Audio?.PlayAt("downed", victim.transform.position);
             GameServices.Voice?.OnAttackerTagged();

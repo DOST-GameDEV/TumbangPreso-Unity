@@ -106,6 +106,10 @@ namespace TumbangPreso.CameraSystem
         public CameraMode Mode => _mode;
         public AimSource Aim => _aimSource;
         public bool IsLocalFpp => _active && _mode == CameraMode.Fpp;
+
+        /// <summary>Is this rig looking through <paramref name="who"/>? A shake or a kick
+        /// applied to another unit's camera is feedback landing on the wrong screen.</summary>
+        public bool IsFollowing(CharacterMotor who) => _character == who && _active;
         public UnityEngine.Camera Camera => _camera;
 
         // -------------------------------------------------------------------

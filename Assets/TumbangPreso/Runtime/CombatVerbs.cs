@@ -33,6 +33,27 @@ namespace TumbangPreso
         public float LungeCooldownLeft => _lungeCooldown;
         public float LungeChargeRatio => Mathf.Clamp01(_lungeCharge / Balance.LungeChargeTime);
 
+        /// <summary>The unit's animator, if it has a model bound yet.</summary>
+        private Visual.CharacterAnimator Animator => _animator != null
+            ? _animator
+            : _animator = GetComponentInChildren<Visual.CharacterAnimator>();
+
+        private Visual.CharacterAnimator _animator;
+
+        /// <summary>The rig, but ONLY when it is looking through this unit — a kick applied to
+        /// somebody else's camera is a hit landing on the wrong screen.</summary>
+        private CameraSystem.CameraRig Rig
+        {
+            get
+            {
+                var rig = UnityEngine.Camera.main != null
+                    ? UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>()
+                    : null;
+
+                return rig != null && rig.IsFollowing(_motor) ? rig : null;
+            }
+        }
+
         private void Awake()
         {
             _motor = GetComponent<CharacterMotor>();
@@ -91,6 +112,12 @@ namespace TumbangPreso
             // that gets you back out of the box, so a shove is paid for in escape distance.
             if (!_motor.Stamina.Spend(Balance.ShoveStaminaCost)) return;
 
+            // ⚠️ THE READ PLAYS ON THE SWING, NOT ON THE HIT. A shove that only animates when
+            // it connects gives the other three players no warning it happened, and a miss
+            // looks identical to not having pressed anything.
+            Animator?.PlayAction("shove");
+            GameServices.Audio?.PlayAt("bump_swing", transform.position);
+
             var victim = FindInCone(Balance.ShoveRange, Balance.ShoveArcDeg, requireTaggable: false);
             if (victim == null)
             {
@@ -124,6 +151,10 @@ namespace TumbangPreso
             if (!_motor.Intent.JustPressed(Verb.SpecialAbility)) return;
 
             _punchCooldown = Balance.PunchCooldown;
+
+            // Same rule as the shove: the jab reads on the swing.
+            Animator?.PlayAction("punch");
+            Rig?.ViewmodelKick(Vector3.forward);
 
             var victim = FindInCone(Balance.PunchRange, Balance.PunchArcDeg, requireTaggable: true);
             if (victim != null) GameServices.Round?.ResolveTag(_motor, victim);
@@ -168,6 +199,12 @@ namespace TumbangPreso
             _lungeCooldown = Balance.LungeCooldown;
             _lungeActiveLeft = Balance.LungeActiveTime;
             _lungeFrom = transform.position;
+
+            // ⚠️ ITS OWN CLIP, NOT THE SHOVE'S. attack-kick-right leads with the body, which is
+            // what a dash INTO somebody looks like; the punch leads with the arm. These were
+            // one animation for three verbs until 2026-08-01.
+            Animator?.PlayAction("lunge");
+            Rig?.ViewmodelKick(Vector3.forward, 1.4f);
 
             // ⚠️ A VELOCITY IMPULSE, NOT A TELEPORT. The friction model integrates it down and
             // the intervening frames are what the sweep reads. It is also why the taya can be
