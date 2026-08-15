@@ -79,6 +79,10 @@ namespace TumbangPreso
         {
             GameServices.Round.EndRound();
             Running = false;
+
+            // ⚠️ END THE FREEZE BEFORE RESTORING THE SCALE, or the restore writes 1.0 and the
+            // freeze's own restore then writes 0.05 back over it a few frames later.
+            Hitstop.End();
             Time.timeScale = 1.0f;
 
             var m = GameServices.Match;

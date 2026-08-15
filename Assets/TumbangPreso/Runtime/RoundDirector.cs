@@ -64,6 +64,10 @@ namespace TumbangPreso
             foreach (var p in _players) p.RoundActive = true;
         }
 
+        /// <summary>⚠️ ANY LIVE FRAME CLEARS THE FREEZE. See Hitstop: no instance owns it, so
+        /// this is one of several equally valid places to step it.</summary>
+        private void Update() => Hitstop.Step();
+
         public void EndRound()
         {
             RoundActive = false;
@@ -202,6 +206,10 @@ namespace TumbangPreso
 
             // The tag is the taya's moment: the hit itself, the victim going down, and the
             // announcer, all off the one resolution so they cannot disagree.
+            // ⚠️ THE FREEZE IS THE HIT'S WEIGHT. Without it a tag is instant and reads as the
+            // victim teleporting rather than as being caught.
+            Hitstop.Trigger();
+
             GameServices.Audio?.PlayAt("tag", victim.transform.position);
             GameServices.Audio?.PlayAt("downed", victim.transform.position);
             GameServices.Voice?.OnAttackerTagged();
