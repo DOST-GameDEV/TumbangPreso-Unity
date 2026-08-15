@@ -125,17 +125,7 @@ namespace TumbangPreso
                 return;
             }
 
-            Vector3 push = (victim.transform.position - transform.position);
-            push.y = 0.0f;
-            push = push.normalized * Balance.ShoveSpeed * Roster.PersonPowerScale(_motor.CharacterIndex)
-                   / Roster.PersonGritScale(victim.CharacterIndex);
-            push.y = Balance.ShoveLift;
-
-            victim.ApplyImpulse(push);
-            victim.ApplyStagger(Balance.ShoveStun);
-
-            GameServices.Round?.NoteShove(victim.PlayerSlot, _motor.PlayerSlot);
-            _shoveCooldown = Balance.ShoveCooldown;
+            ApplyShoveTo(victim);
         }
 
         // -------------------------------------------------------------------
@@ -246,8 +236,90 @@ namespace TumbangPreso
         }
 
         // -------------------------------------------------------------------
+        // HOST-SIDE RESOLUTION.
+        //
+        // ⚠️⚠️ THESE ARE THE ONLY PLACES A VERB LANDS, AND BOTH PATHS COME THROUGH THEM. The
+        // solo game calls them directly; a client asks over the wire and the host calls the
+        // same function. That is what stops networked play quietly obeying different rules
+        // from single player — the failure this whole indirection exists to prevent.
+        // -------------------------------------------------------------------
+
+        /// <summary>The taya's jab. Instant, no charge, more reach than the lunge.</summary>
+        public void HostResolvePunch(Vector3 from, Vector3 facing)
+        {
+            if (!NetAuthority.ShouldResolve()) return;
+
+            var victim = FindInCone(from, facing, Balance.PunchRange, Balance.PunchArcDeg,
+                                    requireTaggable: true);
+
+            if (victim != null) GameServices.Round?.ResolveTag(_motor, victim);
+        }
+
+        /// <summary>
+        /// The taya's dash. ⚠️ THE IMPULSE IS APPLIED HOST-SIDE AND THE SWEEP FOLLOWS IT, so a
+        /// lunge cannot tag from a position the dash never actually reached.
+        /// </summary>
+        public void HostResolveLunge(Vector3 from, Vector3 facing, float power)
+        {
+            if (!NetAuthority.ShouldResolve()) return;
+
+            _lungeCooldown = Balance.LungeCooldown;
+            _lungeActiveLeft = Balance.LungeActiveTime;
+            _lungeFrom = from;
+
+            Vector3 flat = facing;
+            flat.y = 0.0f;
+            _motor.ApplyImpulse(flat.normalized * Balance.LungeSpeed * power);
+        }
+
+        /// <summary>An attacker shoving a rival, resolved from the sender's own frame.</summary>
+        public void HostResolveShove(Vector3 from, Vector3 facing)
+        {
+            if (!NetAuthority.ShouldResolve()) return;
+
+            var victim = FindInCone(from, facing, Balance.ShoveRange, Balance.ShoveArcDeg,
+                                    requireTaggable: false);
+
+            if (victim == null)
+            {
+                _shoveCooldown = Balance.ShoveMissCooldown;
+                return;
+            }
+
+            ApplyShoveTo(victim);
+        }
+
+        /// <summary>The push itself, shared by the local and networked paths.</summary>
+        private void ApplyShoveTo(CharacterMotor victim)
+        {
+            Vector3 push = victim.transform.position - transform.position;
+            push.y = 0.0f;
+            push = push.normalized * Balance.ShoveSpeed
+                   * Roster.PersonPowerScale(_motor.CharacterIndex)
+                   / Roster.PersonGritScale(victim.CharacterIndex);
+            push.y = Balance.ShoveLift;
+
+            victim.ApplyImpulse(push);
+            victim.ApplyStagger(Balance.ShoveStun);
+
+            GameServices.Round?.NoteShove(victim.PlayerSlot, _motor.PlayerSlot);
+            _shoveCooldown = Balance.ShoveCooldown;
+        }
+
+        // -------------------------------------------------------------------
 
         private CharacterMotor FindInCone(float range, float halfAngleDeg, bool requireTaggable)
+            => FindInCone(transform.position, transform.forward, range, halfAngleDeg, requireTaggable);
+
+        /// <summary>
+        /// ⚠️ THE ORIGIN AND FACING ARE PARAMETERS SO THE HOST CAN JUDGE FROM THE CLIENT'S OWN
+        /// FRAME. A networked verb must be resolved against where the client BELIEVED it was
+        /// standing when it pressed, not where the host thinks it is now — otherwise every
+        /// verb is judged a frame or two late and misses on a lagged connection while looking
+        /// like a clean hit on the sender's screen.
+        /// </summary>
+        private CharacterMotor FindInCone(Vector3 origin, Vector3 facingRaw,
+            float range, float halfAngleDeg, bool requireTaggable)
         {
             var round = GameServices.Round;
             if (round == null) return null;
@@ -255,7 +327,7 @@ namespace TumbangPreso
             CharacterMotor best = null;
             float bestDist = float.MaxValue;
 
-            Vector3 facing = transform.forward;
+            Vector3 facing = facingRaw;
             facing.y = 0.0f;
             facing.Normalize();
 
@@ -267,7 +339,7 @@ namespace TumbangPreso
                 // Attackers shove attackers. The defender is neither a shover nor a target.
                 if (!requireTaggable && (p.IsDefender || _motor.IsDefender)) continue;
 
-                Vector3 to = p.transform.position - transform.position;
+                Vector3 to = p.transform.position - origin;
                 to.y = 0.0f;
 
                 float d = to.magnitude;

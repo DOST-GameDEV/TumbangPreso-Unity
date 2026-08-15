@@ -52,6 +52,47 @@ namespace TumbangPreso
         private void Awake() => _motor = GetComponent<CharacterMotor>();
 
         /// <summary>
+        /// HOST-SIDE pickup, shared by the solo path and the networked request.
+        ///
+        /// ⚠️ THE HOST RE-CHECKS ELIGIBILITY EVEN THOUGH THE CLIENT ALREADY DID. A client one
+        /// frame behind asking for a slipper somebody else just took is ordinary, not an
+        /// error; refuse it quietly rather than trusting the request.
+        /// </summary>
+        public void HostPickUp(Slipper what)
+        {
+            if (!NetAuthority.ShouldResolve()) return;
+            if (what == null || !what.CanBeGrabbedBy(_motor)) return;
+
+            what.HostGrab(_motor);
+            NotifyHolding(what);
+        }
+
+        /// <summary>
+        /// HOST-SIDE throw from an explicit origin and aim point, so a networked throw leaves
+        /// along the line the CLIENT was aiming rather than the one the host sees a frame later.
+        /// </summary>
+        public void HostThrowAt(Vector3 origin, Vector3 aimPoint, float charge)
+        {
+            if (!NetAuthority.ShouldResolve() || Held == null) return;
+
+            Vector3 aim = aimPoint - origin;
+            aim.y = 0.0f;
+            if (aim.sqrMagnitude < 0.01f) aim = transform.forward;
+
+            // The same 45 degree launch every range bound in the game is solved against.
+            Vector3 dir = (aim.normalized + Vector3.up).normalized;
+
+            GameServices.Audio?.PlayAt("throw_release", origin);
+            GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
+
+            Held.HostThrow(_motor, origin, Held.LaunchVelocity(dir, Mathf.Clamp01(charge)));
+
+            Held = null;
+            _motor.HoldingSlipper = false;
+            _charge = 0.0f;
+        }
+
+        /// <summary>
         /// ⚠️ THE LOCK IS SET AFTER A PICKUP THE PLAYER HAS ALREADY WALKED OVER AND MADE, so
         /// it covers the beat between HAVING the slipper and being able to throw it. It is
         /// emphatically not a "return" mechanic: nothing in this game hands a slipper back,
