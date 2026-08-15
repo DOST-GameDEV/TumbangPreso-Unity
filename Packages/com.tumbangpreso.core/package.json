@@ -1,0 +1,10 @@
+{
+  "name": "com.tumbangpreso.core",
+  "version": "1.0.0",
+  "displayName": "Tumbang Preso Rules Core",
+  "description": "The engine-free rules layer: match rotation, scoring, traits, stamina, throw legality, the hit window and the combat geometry. Contains no UnityEngine reference by design, so the same source is compiled by Unity here and asserted by `dotnet test` from Core.Tests.",
+  "unity": "6000.0",
+  "author": {
+    "name": "DOST-GameDEV"
+  }
+}

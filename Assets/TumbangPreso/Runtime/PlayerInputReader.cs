@@ -1,0 +1,107 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+namespace TumbangPreso
+{
+    /// <summary>
+    /// Turns hardware into <see cref="InputIntent"/> for a locally-controlled unit.
+    ///
+    /// ⚠️⚠️ THIS IS THE ONLY PLACE IN THE GAME THAT READS HARDWARE. Everything downstream
+    /// asks <see cref="InputIntent"/>, which is also what the AI writes, so one physics step
+    /// serves a human and a bot and there is no second path where one can do something the
+    /// other cannot. Adding a `Keyboard.current` read anywhere else quietly reintroduces the
+    /// divergence the whole indirection exists to prevent.
+    ///
+    /// ⚠️ E IS CONTEXTUAL AND THAT IS RESOLVED DOWNSTREAM, NOT HERE. E is bound to BOTH
+    /// `Grab` and `Lunge`, and left-click to both `Grab` and `SpecialAbility`, exactly as the
+    /// Godot input map has it. This class reports both as held and lets the carrier take
+    /// first refusal: tap with a slipper at your feet is a pickup, tap with nothing grabbable
+    /// is a shove, hold as the taya in the lata's ring is the reset channel, and only a press
+    /// nothing consumed reaches the lunge. Resolving it here would need this class to know
+    /// the world state, which is how one keybind becomes three.
+    /// </summary>
+    public sealed class PlayerInputReader : MonoBehaviour
+    {
+        [SerializeField] private InputActionAsset _actions;
+        [SerializeField] private CharacterMotor _motor;
+        [SerializeField] private Camera _aimCamera;
+
+        private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote;
+
+        private void Awake()
+        {
+            if (_motor == null) _motor = GetComponent<CharacterMotor>();
+            if (_aimCamera == null) _aimCamera = Camera.main;
+
+            if (_actions == null)
+            {
+                Debug.LogError("[Input] no InputActionAsset assigned; this unit is unplayable.");
+                enabled = false;
+                return;
+            }
+
+            var map = _actions.FindActionMap("Player", throwIfNotFound: true);
+            _move = map.FindAction("Move", true);
+            _sprint = map.FindAction("Sprint", true);
+            _jump = map.FindAction("Jump", true);
+            _special = map.FindAction("SpecialAbility", true);
+            _grab = map.FindAction("Grab", true);
+            _lunge = map.FindAction("Lunge", true);
+            _emote = map.FindAction("EmoteWheel", true);
+
+            map.Enable();
+        }
+
+        private void Update()
+        {
+            if (_motor == null) return;
+
+            var intent = _motor.Intent;
+
+            intent.Move = _move.ReadValue<Vector2>();
+            intent.Set(Verb.Sprint, _sprint.IsPressed());
+            intent.Set(Verb.Jump, _jump.IsPressed());
+            intent.Set(Verb.SpecialAbility, _special.IsPressed());
+            intent.Set(Verb.Grab, _grab.IsPressed());
+            intent.Set(Verb.Lunge, _lunge.IsPressed());
+            intent.Set(Verb.EmoteWheel, _emote.IsPressed());
+
+            intent.AimPoint = ReadAimPoint();
+
+            // ⚠️ COMMIT ONCE, AT THE END, AFTER EVERY Set. The edge queries (JustPressed /
+            // JustReleased) are derived from the diff against this snapshot, so committing
+            // mid-frame would make a verb read as never pressed.
+            intent.CommitFrame();
+        }
+
+        /// <summary>
+        /// Where this player is aiming, as a world point on the ground plane.
+        ///
+        /// ⚠️ THE THROW LEAVES FROM THE SIGHT LINE, NOT THE HAND, so this point is what the
+        /// trajectory is solved against. Measured in the original: launching from the hand
+        /// instead sagged the flight 0.38 to 0.43 m below the line the player was aiming
+        /// along and peaked within 0.2 m of them, which drops the slipper out of the bottom
+        /// of the screen the instant it is released.
+        /// </summary>
+        private Vector3 ReadAimPoint()
+        {
+            if (_aimCamera == null || Mouse.current == null)
+                return transform.position + transform.forward * 10.0f;
+
+            Ray ray = _aimCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+            var ground = new Plane(Vector3.up, new Vector3(0.0f, transform.position.y, 0.0f));
+            if (ground.Raycast(ray, out float enter)) return ray.GetPoint(enter);
+
+            return transform.position + transform.forward * 10.0f;
+        }
+
+        private void OnDisable()
+        {
+            // ⚠️ RELEASE EVERYTHING ON THE WAY OUT. A verb held across a disable stays held
+            // in the intent table forever, and the player walks back in already sprinting.
+            _motor?.Intent.Clear();
+            _motor?.Intent.CommitFrame();
+        }
+    }
+}

@@ -117,6 +117,11 @@ assertion (§6).
 
 ### Phase 2 · Unity skeleton and the asset pipeline
 
+⚠️ **THE ART IS PLACEHOLDER AND IS BEING REPLACED. SEE §8.** Import work in this phase is
+about proving the PIPELINE, not about finishing the look. Do not sink time into materials or
+rig cleanup for a mesh that is scheduled to be replaced.
+
+
 - Project layout with **asmdefs**, so `TumbangPreso.Core` physically cannot acquire a
   `UnityEngine` reference by accident
 - 81 GLB models: either the **glTFast** package, or re-export from Blender as FBX. Decide by
@@ -310,3 +315,53 @@ IMPACT ratio 1.14 / 0.86. Both reproduce against Jun-Jun.
 - Whether the Python map builders (`build_eskinita.py`, `mapkit`) keep generating geometry
   or are replaced by authored Unity scenes. They currently derive the chalk from
   `CONFINEMENT_RADIUS` by regexing `character_base.gd`, which will not survive as written.
+
+---
+
+## 8 · Every asset is being replaced with the team's own
+
+**Decided 2026-08-15.** The 280 files copied into `Assets/TumbangPreso/Art/` are the Godot
+build's current art, brought over so the game can RUN during the port. **They are a working
+set, not the shipping set.** All of it is to be replaced with the team's own work.
+
+### 8.1 Why this is not only an originality preference
+
+Two of the current assets are things a competition entry should not be carrying, and both are
+recorded in the Godot repo's own comments rather than being a discovery:
+
+- ⚠️ **The IKE slipper mesh carries the real Nike wordmark as geometry.** The display name
+  was already shortened from "SIKE" to "IKE" because only "IKE" read legibly in play, and the
+  roster comment states plainly that the N could not be swapped for an S *without editing the
+  mesh, which was out of scope*. Replacing the model is what actually resolves it. **This one
+  is not cosmetic and should go first.**
+- **All twelve people are CC0 Kenney rigs**, recoloured through a palette. That is a
+  legitimate and well-chosen placeholder, and the roster header is explicit that a character
+  is "a rig plus a palette, not a new model". It is still someone else's rig in a piece of
+  work being judged.
+
+### 8.2 What the replacement must preserve
+
+The art can change freely. These properties cannot, because gameplay is measured against them:
+
+| Must hold | Why |
+|---|---|
+| **Index order in every roster list** | `character_index`, `can_index` and `slipper_index` cross the wire as bare ints. Append only; never reorder or delete, or two peers on different builds render different people |
+| **The lata silhouettes stay distinguishable at arena distance** | The four cans are told apart by SHAPE, not colour, and each one's STANCE/RESET/REBOUND row was tuned *against the mesh that was drawn*. A new can with a different profile needs its row re-derived, not copied |
+| **Can body radius stays roughly 0.108 to 0.143** | The collider is fitted from the mesh bounds at runtime, but the hit WINDOW is skin-independent except through STANCE. A wildly different radius changes how the two relate |
+| **A slipper's rest height** | CROCS already misses the trajectory preview by 0.263 m purely because it rests 0.161 m off the ground against the others' 0.034 to 0.056. Taller props make that worse |
+| **Character capsule proportions** | The 1.25 eye height, the 1.6 capsule and the viewmodel arms belong to the Person ROLE, not to any model, and the visual aligns by MEASURING the instanced mesh. A new rig must not assume a different scale |
+| **No text rendered on any roster prop** | Currently true by rule. Keep it: it is what makes the props localisation-free and trademark-free |
+
+### 8.3 Order to replace in
+
+1. **IKE**, for the wordmark. It is the only item with a reason beyond preference.
+2. **The four lata and four tsinelas.** Small, high-visibility, already drawn by the team once,
+   and each is a single prop with no rig.
+3. **The twelve people.** Largest job by far, because it is twelve rigs plus animation
+   retargeting. Unity's Humanoid retargeting is the reason this got easier in the port: with a
+   Humanoid avatar set up, the animations survive a rig swap.
+4. **Environment kits and UI art** last, since neither is on the critical path for play.
+
+⚠️ **Replace one at a time and keep the old mesh until the new one is measured.** Every prop
+carries tuning that was derived from its shape, and a batch swap makes it impossible to tell
+which of eight changes moved a number.

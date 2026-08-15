@@ -1,15 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!--
-    ⚠️ netstandard2.1 IS DELIBERATE AND IS NOT A DOWNGRADE.
-    It is what Unity 6 can consume as a referenced assembly, so the exact same
-    source compiles here for `dotnet test` and inside the editor without a second
-    copy. A net9.0 target would build and test perfectly well and then be
-    unreferenceable from the game.
+    ⚠️ THE SOURCE LIVES IN Packages/com.tumbangpreso.core/Runtime/, NOT HERE.
+    Unity can only compile code under Assets/ or Packages/, so the rules layer lives in
+    an embedded local package and THIS PROJECT COMPILES THOSE SAME FILES IN PLACE. One
+    copy of the source, two toolchains: Unity builds it through the package's asmdef, and
+    `dotnet test` builds it through here.
 
-    ⚠️ THERE IS NO UnityEngine REFERENCE IN THIS FILE AND THERE MUST NEVER BE ONE.
-    That absence is the whole design: it is what lets the rules be asserted in a
-    second by `dotnet test` instead of playtested for an afternoon.
+    ⚠️ DO NOT "FIX" THIS BY COPYING THE FILES. Two copies of the balance layer is exactly
+    the failure this whole structure exists to prevent: the copy that drifts is the one
+    nobody is running the tests against.
+
+    ⚠️ netstandard2.1 IS DELIBERATE. It is what Unity 6 consumes, so the same source
+    compiles in both places. A net9.0 target would test perfectly well and then be
+    unusable from the game.
+
+    ⚠️ THERE IS NO UnityEngine REFERENCE HERE AND THERE MUST NEVER BE ONE. The package's
+    asmdef enforces the same rule on the Unity side with "noEngineReferences": true, so
+    adding one is a compile error rather than a review comment.
   -->
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -19,6 +27,11 @@
     <AssemblyName>TumbangPreso.Core</AssemblyName>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Packages\com.tumbangpreso.core\Runtime\**\*.cs" />
+  </ItemGroup>
 
 </Project>
