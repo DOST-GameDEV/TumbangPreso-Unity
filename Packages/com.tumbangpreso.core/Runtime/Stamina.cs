@@ -24,13 +24,24 @@ namespace TumbangPreso.Core
             if (i >= 0) _multipliers.RemoveAt(i);
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE LOWEST WINS; SLOWS DO NOT MULTIPLY. `character_base.gd`'s
+        /// `_recompute_speed_multiplier()` takes `minf` across the stack, and this used to
+        /// take the PRODUCT — a real divergence, not a rounding one.
+        ///
+        /// Fatigue (0.75) rides this same stack, so standing fatigued in a 0.5 hazard gave
+        /// 0.375 here against Godot's 0.5. Two overlapping 0.5 zones gave 0.25 against 0.5.
+        /// Compounding slows turns a pair of hazards into a near-stun, which is the same
+        /// reasoning that keeps stuns on Max() rather than additive.
+        /// </summary>
         public float Value
         {
             get
             {
-                float product = 1.0f;
-                for (int i = 0; i < _multipliers.Count; i++) product *= _multipliers[i];
-                return product;
+                float lowest = 1.0f;
+                for (int i = 0; i < _multipliers.Count; i++)
+                    if (_multipliers[i] < lowest) lowest = _multipliers[i];
+                return lowest;
             }
         }
 

@@ -74,6 +74,36 @@ The genuine earlier mistake was narrower and worth remembering: an *overhead fol
 camera got built that corresponded to none of these four. Read `camera_rig.gd:21`
 before touching the baked transforms in `CameraRig.tscn`.
 
+## 0 · DO NOT STOP MID-TASK. EVER. AND NEVER BLAME CONTEXT.
+
+This is the single most repeated complaint in this project's history and it has cost more
+of his time than any bug in it.
+
+**Never stop, pause, or wind down a turn because of "context limits", "what I can hold in
+one stretch", or any other capacity story.** Do not raise the subject at all. It is not a
+reason, it reads as an excuse, and on 2026-08-15 it was raised at well under half the
+window — so the claim was not even true. Keep converting, keep verifying, keep pushing.
+
+Also do not stop to:
+
+- ask whether to continue work he has already asked for
+- deliver a status report as a substitute for the next conversion
+- request permission for a step already covered by a standing instruction
+  (pushing, in particular — see §1a)
+
+The only legitimate reasons to stop are: the work is genuinely finished (every row in
+`docs/Port_Ledger.md` reads CONVERTED), or something is actually blocked and no other
+part of the task can proceed without an answer only he can give. In the blocked case,
+finish everything that is NOT blocked first, then ask one specific question.
+
+If a turn does end, it ends having just committed and pushed working code, not having
+just explained why more was not attempted.
+
+## 1a · Push automatically. Finished means pushed.
+
+Committed and waiting is not done. Every batch that compiles and passes goes up without
+being asked. He has said this repeatedly and it is in his global memory too.
+
 ## 3aa · Emotes end ONLY by interruption
 
 🧑 2026-08-15: *"the emotes only end when a user does smth to interrupt it like move or

@@ -152,6 +152,21 @@ namespace TumbangPreso
         /// spawn; the kill plane is the only thing that reads it today.</summary>
         public Vector3 SpawnPosition { get; set; }
 
+        // -------------------------------------------------------------------
+        // SPEED ZONES — hazard slows, from character_base.gd:1556.
+        //
+        // ⚠️ ONE STACK, IN Stamina. Fatigue already rides `Stamina.SpeedZones`, and the
+        // movement step already reads it. A second list here would be two copies of the same
+        // state and the copy nobody reads is the one that drifts.
+        // -------------------------------------------------------------------
+
+        public void EnterSpeedZone(float multiplier) => Stamina.SpeedZones.Enter(multiplier);
+
+        public void ExitSpeedZone(float multiplier) => Stamina.SpeedZones.Exit(multiplier);
+
+        /// <summary>The slow currently applied to this unit, 1.0 when clear.</summary>
+        public float SpeedMultiplier => Stamina.SpeedZones.Value;
+
         /// <summary>
         /// Put this unit back on its own spawn with no velocity, from
         /// `character_base.gd:1939`.

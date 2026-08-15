@@ -40,6 +40,28 @@ namespace TumbangPreso.UI
 
         private Text _countdown;
         private Text _readyPrompt;
+        private OffscreenIndicators _indicators;
+
+        /// <summary>
+        /// The screen-edge arrows. Resolved here rather than inside the indicator, because
+        /// the HUD already works out the local unit once a frame and a second scan would be
+        /// a second answer to the same question.
+        /// </summary>
+        private void UpdateIndicators()
+        {
+            if (_indicators == null) return;
+
+            var carrier = _local.GetComponent<Carrier>();
+
+            // Your own slipper is the one that answers to your seat. `OwnerSlot` is what
+            // makes "yours" well-defined at all.
+            Transform mine = null;
+            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+                if (s.OwnerSlot == _local.PlayerSlot) { mine = s.transform; break; }
+
+            var lata = GameServices.Round?.Lata;
+            _indicators.UpdateArrows(_local, carrier, mine, lata != null ? lata.transform : null);
+        }
 
         public void Bind(CharacterMotor local) => _local = local;
 
@@ -80,6 +102,7 @@ namespace TumbangPreso.UI
             UpdateScores();
             UpdateStamina();
             UpdateStatus();
+            UpdateIndicators();
 
             _crosshair.enabled = StatusStack.ShowCrosshair(_local);
         }
@@ -185,6 +208,12 @@ namespace TumbangPreso.UI
                                     new Vector2(0, -140), 32, TextAnchor.MiddleCenter);
             _readyPrompt.text = "Press [R] when you're ready";
             _readyPrompt.enabled = false;
+
+            // Its own canvas, deliberately: the arrows are positioned from screen centre in
+            // raw pixels, and putting them under the scaled HUD canvas would move them.
+            var indicatorGo = new GameObject("OffscreenIndicators");
+            indicatorGo.transform.SetParent(transform, false);
+            _indicators = indicatorGo.AddComponent<OffscreenIndicators>();
 
             BuildStaminaBar(canvasGo.transform);
             BuildCrosshair(canvasGo.transform);

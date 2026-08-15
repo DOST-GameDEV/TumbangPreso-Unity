@@ -87,7 +87,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `character_roster.gd` | 757 | `Roster` + `RosterBook` (411) | CONVERTED (20/20 validated) |
 | `env_toon_pass.gd` | 391 | — | **MISSING** — the toon shading pass |
 | `trajectory_preview.gd` | 273 | `TrajectoryPreview.cs` (113) | PARTIAL |
-| `hazard_zone.gd` | 133 | — | **MISSING** |
+| `hazard_zone.gd` | 133 | `HazardZone.cs` (108) | CONVERTED — slow zone, visual disc, round-scoped lifetime |
 | `game_version.gd` | 56 | `GameVersion.cs` (80) | CONVERTED — reads `Application.version`, now 4.68 |
 | `kill_plane.gd` | 26 | `KillPlane.cs` (62) | PARTIAL — logic and spawn anchor done, height still borrowed |
 
@@ -161,7 +161,7 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `credits_panel.gd` | 292 | — | **MISSING** |
 | `role_swap_card.gd` | 274 | — | **MISSING** |
 | `arrow_button.gd` | 262 | `MenuKit.cs` (142) | PARTIAL |
-| `offscreen_indicators.gd` | 211 | — | **MISSING** |
+| `offscreen_indicators.gd` | 211 | `OffscreenIndicators.cs` (175) | CONVERTED — edge arrows, wired into the HUD |
 | `map_preview.gd` | 165 | — | **MISSING** — live map render |
 | `splash_screen.gd` | 107 | `SplashScreen.cs` (154) | CONVERTED |
 | `mode_select.gd` | 96 | `MenuScreens.cs` | PARTIAL |

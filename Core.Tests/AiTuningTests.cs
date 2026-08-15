@@ -105,3 +105,54 @@ namespace TumbangPreso.Core.Tests
         }
     }
 }
+
+namespace TumbangPreso.Core.Tests
+{
+    /// <summary>
+    /// The speed-zone stack, against `character_base.gd::_recompute_speed_multiplier()`.
+    /// </summary>
+    public class SpeedZoneStackTests
+    {
+        [Fact]
+        public void TwoEqualSlowsDoNotCompound()
+        {
+            var stack = new SpeedZoneStack();
+            stack.Enter(0.5f);
+            stack.Enter(0.5f);
+
+            // ⚠️ 0.5, NOT 0.25. The .gd takes minf across the stack. This implementation took
+            // the product until 2026-08-15, which turned a pair of overlapping hazards into a
+            // near-stun nobody tuned.
+            Assert.Equal(0.5f, stack.Value, 3);
+        }
+
+        [Fact]
+        public void FatigueAndAHazardTakeTheWorseOfTheTwoNotBoth()
+        {
+            var stack = new SpeedZoneStack();
+            stack.Enter(Balance.FatigueSpeedScale);   // 0.75
+            stack.Enter(0.5f);
+
+            // Godot gives 0.5 here. The product would have given 0.375.
+            Assert.Equal(0.5f, stack.Value, 3);
+        }
+
+        [Fact]
+        public void ExitRemovesOneInstanceNotAllMatching()
+        {
+            var stack = new SpeedZoneStack();
+            stack.Enter(0.5f);
+            stack.Enter(0.5f);
+            stack.Exit(0.5f);
+
+            Assert.Equal(1, stack.Count);
+            Assert.Equal(0.5f, stack.Value, 3);
+        }
+
+        [Fact]
+        public void AnEmptyStackIsUnslowed()
+        {
+            Assert.Equal(1.0f, new SpeedZoneStack().Value, 3);
+        }
+    }
+}
