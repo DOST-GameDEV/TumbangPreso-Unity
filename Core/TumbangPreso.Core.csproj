@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    ⚠️ netstandard2.1 IS DELIBERATE AND IS NOT A DOWNGRADE.
+    It is what Unity 6 can consume as a referenced assembly, so the exact same
+    source compiles here for `dotnet test` and inside the editor without a second
+    copy. A net9.0 target would build and test perfectly well and then be
+    unreferenceable from the game.
+
+    ⚠️ THERE IS NO UnityEngine REFERENCE IN THIS FILE AND THERE MUST NEVER BE ONE.
+    That absence is the whole design: it is what lets the rules be asserted in a
+    second by `dotnet test` instead of playtested for an afternoon.
+  -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <RootNamespace>TumbangPreso.Core</RootNamespace>
+    <AssemblyName>TumbangPreso.Core</AssemblyName>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+</Project>

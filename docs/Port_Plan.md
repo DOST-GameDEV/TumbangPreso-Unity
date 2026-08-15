@@ -252,26 +252,49 @@ into something a CI run answers:
 
 ## 7 · Decisions and open questions
 
-### 7.1 ⚠️ `Design.md` has drifted from the code. Settle this before Phase 1.
+### 7.1 ⚠️ `Design.md` has drifted from the code in four places. Settle before Phase 1.
 
 `Design.md` opens with *"a number in the code must match a number here, or one of the two is
-a bug."* Two are currently out of sync, and in both cases **the code is newer and the prose
-is stale**:
+a bug."* Four are currently out of sync, and in **every** case the code is newer and the
+prose is the stale half. Found while transcribing `Balance.cs`, which is exactly the job
+that finds them.
 
-| | Code | `Design.md` |
-|---|---|---|
-| `STAMINA_MAX` | **60.0** (`character_base.gd`), so 1.5 s of sprint at 40/s | §3's table says 60 and 1.50 s, but its ⚠️ note, the §2.5 "MEASURED" block and the §5.3 shove maths all still say a **50**-point pool and **1.25 s** |
-| throw legality | `is_inside_box()` against `CONFINEMENT_RADIUS` **7.0** | §5.1 still writes the gate as `max(\|x\|,\|z\|) >= 5.0` |
+| | Code says | `Design.md` says | Weight |
+|---|---|---|---|
+| `STAMINA_MAX` | **60.0**, so **1.5 s** of sprint at 40/s | §3's table agrees, but its ⚠️ note, the §2.5 "MEASURED" block and the §5.3 shove maths all still describe a **50**-point pool and **1.25 s** | high |
+| **lunge reach** | `LUNGE_SPEED` **7.746** → a 1.0 m dash → **2.30 m** total reach | §6's table agrees ("a 1.0 m dash by v²/60"), but its §6 prose and the **§2.6 measurement** still describe `LUNGE_SPEED` **12.247**, a 2.5 m dash and a **3.20 m** reach | **highest** |
+| reset channel | `1.5 / trait_scale(bilis, 0.05)` → **1.36 s** PASIP, **1.67 s** BOYBEN | §6 says **1.30** and **1.79**, which need ~8% per point | low |
+| throw legality | `is_inside_box()` against `CONFINEMENT_RADIUS` **7.0** | §5.1 still writes the gate as `max(\|x\|,\|z\|) >= 5.0` | low |
 
-This matters more than a doc tidy. §3 argues that `STAMINA_MAX`, `STAMINA_DRAIN_RATE`,
-`SPRINT_SCALE` and `CONFINEMENT_RADIUS` are **one interlocked set** — "move the box and you
-change what a sprint buys" — and its headline finding, that one full sprint covers 6.84 m
-and is dimensioned to one crossing of the danger zone, is computed off a 50-point pool the
-code no longer has. At 60 the sprint is 20% longer than the finding assumes.
+**The lunge is the one that matters.** It is the taya's primary scoring verb, and the
+current constant gives it **less than three quarters of the reach the balance doc reports as
+measured**. §2.6's conclusion that *"the tag is a lead problem, not a reach problem"* was
+drawn at the old value, and TAG's share of all points is one of the numbers `fair_probe`
+gates on. Either the lunge was nerfed deliberately and every measurement downstream of it is
+stale, or the constant was changed by accident and has been shipping wrong.
 
-**Action:** confirm which is intended, fix the losing side in the Godot repo, re-run
-`mech_probe`, and only then transcribe into `Balance.cs`. Porting from a stale doc bakes the
-drift into the new engine permanently.
+**The stamina one is second.** §3 argues that `STAMINA_MAX`, `STAMINA_DRAIN_RATE`,
+`SPRINT_SCALE` and `CONFINEMENT_RADIUS` are **one interlocked set** ("move the box and you
+change what a sprint buys"), and its headline finding — one full sprint covers 6.84 m and is
+dimensioned to one crossing of the danger zone — is computed off a 50-point pool the code no
+longer has. At 60 the sprint is 20% longer than the finding assumes.
+
+**Action:** decide which side is intended for each, fix the losing side **in the Godot
+repo**, re-run `mech_probe`, and let the answer arrive here as a constant change.
+`Core.Tests` currently asserts the CODE and names the disagreement in a comment on each
+affected test, so nothing is silently baked in either direction.
+
+### 7.1a One formula was recovered rather than transcribed
+
+The per-can hit windows (BOYBEN 0.493 m, PASIP 0.579 m) do not come from dividing the whole
+window by STANCE, which yields 0.465 for BOYBEN. `lata.gd:188` divides **only `HIT_MARGIN`**,
+and that reproduces both published figures to three decimals. Worth recording because the
+wrong reading is the natural one, it is off by only ~6%, and it would have shifted every
+knockdown in the game by an amount no playtest would name.
+
+Likewise Design.md's body-block pair (4.238 against 5.618 m/s) reads as one slipper against
+two blockers and is in fact **two slippers against one blocker**: their ratio is exactly the
+IMPACT ratio 1.14 / 0.86. Both reproduce against Jun-Jun.
 
 ### 7.2 Settled
 
