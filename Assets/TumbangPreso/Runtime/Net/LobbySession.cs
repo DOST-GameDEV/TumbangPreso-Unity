@@ -260,6 +260,56 @@ namespace TumbangPreso.Net
         public bool IsLeader(int peerId) => peerId != 0 && peerId == LeaderPeerId;
 
         /// <summary>
+        /// A dedicated server's own peer holds no seat and plays nothing — it referees.
+        /// </summary>
+        public bool IsSeatlessReferee(int peerId) => IsDedicated && peerId == 1;
+
+        /// <summary>
+        /// How many READY presses the host is waiting for: one per connected HUMAN peer.
+        ///
+        /// ⚠️⚠️ COUNTS PEERS, NOT CHARACTERS, AND THAT IS THE WHOLE REASON A LONE HOST CAN
+        /// START. A match always has four characters — the empty seats are filled with bots —
+        /// but an AI cannot press R. Counting characters leaves a solo host waiting forever
+        /// for three bots to agree.
+        ///
+        /// ⚠️ SPECTATORS ARE NOT COUNTED. They hold no seat and own no character, so they have
+        /// nothing to ready; counting them hangs the gate forever on a press nobody can make.
+        ///
+        /// ⚠️ FLOORED AT 1 so a host whose peer list has not populated yet still needs its own
+        /// press rather than starting instantly on an empty count.
+        /// </summary>
+        public int PlayingPeerCount(int localPeerId)
+        {
+            int count = 0;
+
+            foreach (var p in _peers.Values)
+            {
+                if (IsSeatlessReferee(p.PeerId)) continue;
+
+                // The local peer counts even while its own spectator flag is in flight.
+                if (p.PeerId == localPeerId || !p.Spectator) count++;
+            }
+
+            return count < 1 ? 1 : count;
+        }
+
+        /// <summary>Everyone actually holding a seat: no referee, no spectators.</summary>
+        public List<int> SeatedPeerIds()
+        {
+            var ids = new List<int>();
+
+            foreach (var p in _peers.Values)
+            {
+                if (IsSeatlessReferee(p.PeerId) || p.Spectator) continue;
+                ids.Add(p.PeerId);
+            }
+
+            return ids;
+        }
+
+        public int SeatedPeerCount() => SeatedPeerIds().Count;
+
+        /// <summary>
         /// ⚠️ PICKS ARE VALIDATED HOST-SIDE, ALWAYS. A client sends an index; an index off the
         /// end of a roster must resolve to neutral rather than crash or produce a stronger
         /// unit, because a peer on an older build legitimately sends indices this build has no

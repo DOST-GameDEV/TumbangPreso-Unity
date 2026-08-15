@@ -18,13 +18,14 @@ namespace TumbangPreso
     /// ⚠️ THE COUNTDOWN GUARD IS NOT COSMETIC. Without <see cref="_countingDown"/>, a second
     /// READY press mid-count restarts it, and a player mashing R never starts the round at all.
     ///
-    /// ⚠️ ONLY THE LOCAL HALF IS PORTED. Godot also has a networked ready phase where the
-    /// host counts one press per connected human PEER — not per character, because a 2v2
-    /// always has four characters and an AI cannot press R, so counting characters leaves a
-    /// solo host waiting forever for three bots to agree. Spectators are excluded for the
-    /// same reason: they hold no seat and can never press. That half needs
-    /// `NetworkManager.playing_peer_count()`, which is not ported yet — see the netcode row
-    /// in `docs/Port_Ledger.md`. Do not approximate it by counting characters.
+    /// ⚠️⚠️ THE NETWORKED GATE COUNTS PEERS, NEVER CHARACTERS. A match always has four
+    /// characters — the empty seats are bot-filled — and an AI cannot press R, so counting
+    /// characters leaves a solo host waiting forever for three bots to agree. Spectators are
+    /// excluded for the same reason: they hold no seat and can never press. The count comes
+    /// from `LobbySession.PlayingPeerCount` and nowhere else.
+    ///
+    /// ⚠️ A SECOND PRESS IS IDEMPOTENT. Votes go into a set, so mashing R cannot ready you
+    /// twice or start the countdown early.
     /// </summary>
     public sealed class ReadyGate : MonoBehaviour
     {
@@ -51,6 +52,84 @@ namespace TumbangPreso
 
         private bool _awaitingLocalReady;
         private bool _countingDown;
+
+        /// <summary>Peers that have declared ready. Host-side; a set, so a second press from
+        /// the same peer changes nothing.</summary>
+        private readonly System.Collections.Generic.HashSet<int> _netReady =
+            new System.Collections.Generic.HashSet<int>();
+
+        /// <summary>Raised with (ready, expected) whenever the tally moves, so a screen can
+        /// show "2 / 3 ready" without polling.</summary>
+        public event Action<int, int> NetReadyChanged;
+
+        public bool AwaitingNetReady { get; private set; }
+
+        /// <summary>HOST ONLY. Opens the networked phase and clears any stale votes.</summary>
+        public void OpenNetworked()
+        {
+            if (!NetAuthority.IsHost) return;
+
+            _netReady.Clear();
+            AwaitingNetReady = true;
+            _awaitingLocalReady = true;
+            _countingDown = false;
+
+            ReadyPromptChanged?.Invoke(true);
+            RaiseNetReady();
+        }
+
+        /// <summary>
+        /// Any peer to the host: "I am ready."
+        ///
+        /// ⚠️ THE HOST'S OWN PRESS ARRIVES HERE TOO, and in Godot it came through with a
+        /// sender id of 0 rather than the host's real id. Resolve it at the door rather than
+        /// adding a second code path, or the host can never satisfy its own gate.
+        /// </summary>
+        public void DeclareReady(int peerId)
+        {
+            if (!NetAuthority.IsHost || !AwaitingNetReady) return;
+
+            if (peerId == 0) peerId = NetAuthority.LocalSlot;
+
+            if (!_netReady.Add(peerId)) return;   // idempotent
+
+            RaiseNetReady();
+
+            if (_netReady.Count >= ExpectedReadyCount()) BeginNetCountdown();
+        }
+
+        /// <summary>
+        /// ⚠️ RE-CHECKED WHENEVER A PEER LEAVES, NOT ONLY WHEN ONE PRESSES. A peer that
+        /// disconnects mid-vote drops the expected count, and if nobody re-evaluates, the
+        /// remaining players sit on a gate that is already satisfied.
+        /// </summary>
+        public void OnPeerLeft(int peerId)
+        {
+            if (!NetAuthority.IsHost || !AwaitingNetReady) return;
+
+            _netReady.Remove(peerId);
+            RaiseNetReady();
+
+            if (_netReady.Count >= ExpectedReadyCount()) BeginNetCountdown();
+        }
+
+        private int ExpectedReadyCount()
+        {
+            var lobby = Net.NetSession.Instance?.Lobby;
+            return lobby?.PlayingPeerCount(NetAuthority.LocalSlot) ?? 1;
+        }
+
+        private void RaiseNetReady()
+            => NetReadyChanged?.Invoke(_netReady.Count, ExpectedReadyCount());
+
+        private void BeginNetCountdown()
+        {
+            if (_countingDown) return;
+
+            AwaitingNetReady = false;
+            StartCoroutine(RunReadyCountdown());
+        }
+
         private InputAction _readyUp;
         private CharacterMotor _local;
 
@@ -80,7 +159,11 @@ namespace TumbangPreso
             if (_readyUp == null || !_readyUp.WasPressedThisFrame()) return;
 
             if (_local != null) ReadyGestureRequested?.Invoke(_local);
-            StartCoroutine(RunReadyCountdown());
+
+            // Networked: the press is a VOTE, and the countdown waits for everyone. Solo: the
+            // press IS the start.
+            if (NetAuthority.IsNetworked) DeclareReady(NetAuthority.LocalSlot);
+            else StartCoroutine(RunReadyCountdown());
         }
 
         /// <summary>
