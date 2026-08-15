@@ -150,7 +150,7 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `match_setup.gd` | 2015 | `ConvertedSetupScreens.cs` (385) | PARTIAL — layout still collapsing |
 | `hud.gd` | 1587 | `Hud.cs` (221) | PARTIAL — layout converted, no behaviour bound |
 | `multiplayer_setup.gd` | 1015 | `LobbySession.cs` (287) | PARTIAL |
-| `character_preview.gd` | 623 | — | **MISSING** — spinning 3D preview via SubViewport |
+| `character_preview.gd` | 623 | `ModelPreview.cs` (215) | PARTIAL — render, framing, turn, drag; idle clip pending |
 | `ui_theme.gd` | 551 | `UiTheme.cs` (119) | PARTIAL — `tumbang_preso.tres` (39 KB) NOT converted |
 | `tutorial.gd` | 462 | — | **MISSING** — 8 pages with 3D props |
 | `you_card.gd` | 430 | `YouCard.cs` (185) | PARTIAL — role, name, live meters; ready flash pending |
@@ -162,7 +162,7 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `role_swap_card.gd` | 274 | `RoleSwapCard.cs` (250) | CONVERTED — intermission timeline, swap, standings |
 | `arrow_button.gd` | 262 | `MenuKit.cs` (142) | PARTIAL |
 | `offscreen_indicators.gd` | 211 | `OffscreenIndicators.cs` (175) | CONVERTED — edge arrows, wired into the HUD |
-| `map_preview.gd` | 165 | — | **MISSING** — live map render |
+| `map_preview.gd` | 165 | `MapPreview.cs` (150) | PARTIAL — sway, cache, silence; needs map prefabs |
 | `splash_screen.gd` | 107 | `SplashScreen.cs` (154) | CONVERTED |
 | `mode_select.gd` | 96 | `MenuScreens.cs` | PARTIAL |
 | `main_menu.gd` | 85 | `MenuScreens.cs` | CONVERTED |
