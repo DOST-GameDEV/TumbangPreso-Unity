@@ -80,7 +80,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
-| `main.gd` | 3595 | — | **MISSING** — spawning, prop skins, reconnection, late-join sync |
+| `main.gd` | 3595 | `MatchHost.cs` + `MatchInstaller` (370) | PARTIAL — local half; netcode half pending |
 | `ai_controller.gd` | 2225 | `AIController.cs` (400) + `AiTuning.cs` (215) | PARTIAL — tiers landed and applied; plan machine still missing |
 | `camera_rig.gd` | 1111 | `CameraRig.cs` (470) | PARTIAL — emote swing now wired; viewmodel arms still missing |
 | `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (431) | CONVERTED — call sites pending, see below |
@@ -169,15 +169,41 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `debug_bar.gd` | 47 | `DebugBar.cs` (110) | CONVERTED — deliberately unstyled |
 | `pause_layer.gd` | 21 | `PauseWatcher` in `MatchInstaller.cs` | CONVERTED — see note |
 
-## Scenes (27)
+## Scenes (27) — one row each, so an audit can check them
 
-Converted: both maps (969 objects, 0 missing models), 11 UI screens.
+⚠️ Named individually on purpose. This section used to say "both maps and 11 UI
+screens", which no script can verify and no reader can check against the source
+tree. A collective count is how a missing scene hides.
 
-Still to convert: `ViewmodelArms.tscn` (blocks FPP arms), `CameraRig.tscn`
-(baked transforms — the .gd warns at line 21 NOT to "correct" them without
-reading the note), `CharacterBase.tscn`, `CanVisual.tscn`, `TsinelasVisual.tscn`,
-`Lata.tscn`, `Slipper.tscn`, `Main.tscn`, `PremiseIcon.tscn`, `DebugBar.tscn`,
-`OffscreenIndicators.tscn`, `YouCard.tscn`, `RoleSwapCard.tscn`, `Tutorial.tscn`.
+| Godot scene | Status |
+|---|---|
+| `Eskinita.tscn` | CONVERTED — 416 objects, 0 missing models, walls at ±8.60 |
+| `BayanPlaza.tscn` | CONVERTED — 553 objects, 0 missing models |
+| `SplashScreen.tscn` | CONVERTED |
+| `MainMenu.tscn` | CONVERTED — real backdrop, logo, arrow buttons |
+| `ModeSelect.tscn` | CONVERTED |
+| `MatchSetup.tscn` | PARTIAL — layout converted, captions still overlapping |
+| `MultiplayerSetup.tscn` | PARTIAL |
+| `CharacterSelect.tscn` | CONVERTED — tabs, chalk pips, live 3D |
+| `MatchResult.tscn` | CONVERTED — board rebuilt in code |
+| `SettingsPanel.tscn` | CONVERTED — incl. rebinding |
+| `CreditsPanel.tscn` | CONVERTED — CC-BY strings verbatim |
+| `HUD.tscn` | PARTIAL — 35 nodes converted; behaviour built in code |
+| `ArrowButton.tscn` | CONVERTED — `MenuKit.WoodButton` |
+| `Tutorial.tscn` | CONVERTED — 8 pages; 3D props pending |
+| `YouCard.tscn` | CONVERTED |
+| `RoleSwapCard.tscn` | CONVERTED |
+| `OffscreenIndicators.tscn` | CONVERTED |
+| `DebugBar.tscn` | CONVERTED |
+| `ViewmodelArms.tscn` | **MISSING** — blocks the FPP arms |
+| `CameraRig.tscn` | **MISSING** — ⚠️ baked transforms; read `camera_rig.gd:21` first |
+| `CharacterBase.tscn` | **MISSING** — built in code by `MatchInstaller` instead |
+| `CanVisual.tscn` | **MISSING** |
+| `TsinelasVisual.tscn` | **MISSING** |
+| `Lata.tscn` | **MISSING** — built in code |
+| `Slipper.tscn` | **MISSING** — built in code |
+| `Main.tscn` | **MISSING** — holds the kill plane's real transform |
+| `PremiseIcon.tscn` | **MISSING** — the tutorial's 3D props |
 
 ### `pause_layer.gd` — the one file the port does not need
 

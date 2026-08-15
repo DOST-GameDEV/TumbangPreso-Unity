@@ -112,6 +112,11 @@ namespace TumbangPreso
                 m.SpawnPosition = mark;
                 m.Teleport(mark);
 
+                // ⚠️ THE MARK IS FLAT, THE MAP IS NOT. Both arenas have kerbs and slabs at
+                // different heights; without this a unit spawns inside one and the settle
+                // frames shove it out sideways, which reads as a physics bug.
+                MatchHost.SeatOnFloor(m);
+
                 // Roles rotate every round, so the ring and tag have to re-colour with them.
                 var plate = m.GetComponentInChildren<Visual.CharacterNameplate>();
                 if (plate != null) { plate.ApplySizing(); plate.Refresh(); }
