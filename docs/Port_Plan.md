@@ -1,7 +1,21 @@
 # Port Plan — Tumbang Preso, Godot 4.7 → Unity 6
 
-**Status:** Phase 0. Written 2026-08-15.
+**Status:** Phases 0 to 2 done. Phase 3 code complete, feel unverified. Written 2026-08-15.
 **Source of truth for the port:** the GDScript in `DOST-GameDev`, not `docs/Design.md`. See §7.1.
+
+| Phase | State |
+|---|---|
+| 0 · Tooling | **done.** Unity 6000.5.8f1 + Linux Dedicated Server module, .NET SDK 9.0.317 |
+| 1 · Rules core | **done.** 32 tests green via `dotnet test` |
+| 2 · Skeleton + pipeline | **done.** URP, Input System 1.20, glTFast, asmdefs, 280 art files imported |
+| 3 · Vertical slice | **code complete, NOT verified.** Needs a scene with prefabs wired, then the feel measurement below |
+| 4 · Full offline match | code present (`MatchBootstrap`, `AIController`), unrun |
+| 5 · Netcode | seam only (`NetAuthority`). No transport yet |
+| 6 · Presentation | `StatusStack` only. 21 UI screens outstanding |
+| 7 · Probes | structural checks only. The distributions are not measured yet |
+
+⚠️ **"Code complete" is not "done", and Phase 3 is the case that matters.** Its exit criterion
+is a MEASUREMENT against the Godot build, not a compile. Nothing in this port has been played.
 
 ---
 
@@ -169,6 +183,23 @@ existing `ai_probe` and `fair_probe` baselines report.
 ---
 
 ### Phase 5 · Netcode
+
+⚠️ **THE SEAM IS ALREADY IN, SO THIS DOES NOT BLOCK ANYTHING.** `NetAuthority` answers the one
+question every verb has to ask before it acts ("do I decide this, or do I ask?"), and today it
+answers "you are the host, there are no peers", which is exactly true of single player.
+`AddScore`, `ResolveTag` and `HostKnockDown` are already guarded through it.
+
+That matters because authority is not a layer you bolt on afterwards: it is a sentence in the
+middle of every verb, and retrofitting it means touching every file again and getting one
+wrong. The original shipped exactly that bug. The punch and the shove both sent a request when
+not the host; the lunge, added later, guarded its sweep with "if not networked or host" and had
+**no else branch**, so it never ran on a client, and never ran on the host either because the
+host returns at its authority gate before stepping a body it does not own. **The taya's primary
+tag verb was dead for three of the four players in every networked match.**
+
+⚠️ **What is deliberately NOT abstracted is the RPCs themselves.** A generic message layer over
+Mirror and NGO would be a worse version of both, and the original's netcode virtue is that its
+RPCs are explicit and hand-written. Those get written natively, once, against the chosen stack.
 
 **Recommended stack: Mirror.** The existing code hand-writes every RPC and resolves
 authority explicitly, which maps directly onto `[Command]` → server method → `[ClientRpc]`.

@@ -29,11 +29,22 @@ namespace TumbangPreso
         public int ScoreFor(int slot) => _scores[slot];
 
         /// <summary>
-        /// ⚠️ HOST-SIDE ONLY, AND DELIBERATELY THE ONLY MUTATOR. Keep it that way.
+        /// ⚠️⚠️ HOST-SIDE ONLY, AND DELIBERATELY THE ONLY MUTATOR IN THE GAME.
+        ///
+        /// The guard is here rather than at each of the four call sites on purpose: a point
+        /// that can only be CREATED in one function cannot be created on a client at all, and
+        /// spreading the check outward is how the predecessor ended up with rules firing on
+        /// the wrong peer. In single player this is a host with no peers, so it always passes
+        /// and nothing needs special casing.
+        ///
+        /// ⚠️ WHEN PHASE 5 LANDS, THE SCORE IS BROADCAST FROM HERE AND NEVER RECOMPUTED ON A
+        /// CLIENT. A client that derives its own score will disagree at exactly the moments
+        /// that matter, because it cannot see the host's distance checks.
         /// </summary>
         public void AddScore(int slot, ScoreEvent e)
         {
             if (!MatchInProgress) return;
+            if (!NetAuthority.ShouldResolve()) return;
 
             _scores.Add(slot, e);
             Scored?.Invoke(slot, e);

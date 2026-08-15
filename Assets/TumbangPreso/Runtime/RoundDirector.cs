@@ -158,6 +158,12 @@ namespace TumbangPreso
         /// </summary>
         public void ResolveTag(CharacterMotor taya, CharacterMotor victim)
         {
+            // ⚠️ THE HOST RE-CHECKS EVERYTHING THE CLIENT ALREADY CHECKED, and that is not
+            // redundancy. A client says where it stood, which way it faced and how hard it
+            // committed; it never says who it hit. A client that could report a result is a
+            // client that can award itself 100 points.
+            if (!NetAuthority.ShouldResolve()) return;
+
             if (!RoundActive || taya == null || victim == null) return;
             if (!taya.IsDefender || !victim.IsTaggable()) return;
             if (Lata == null || !Lata.IsUpright) return;

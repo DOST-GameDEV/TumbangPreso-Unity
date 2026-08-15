@@ -59,6 +59,7 @@ namespace TumbangPreso
         /// <summary>Host-side. Knock it over and pay the thrower.</summary>
         public void HostKnockDown(int throwerSlot)
         {
+            if (!NetAuthority.ShouldResolve()) return;
             if (!_isUpright) return;
 
             SetUpright(false);

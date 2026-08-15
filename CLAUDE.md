@@ -115,6 +115,26 @@ Do not "improve" any of these. Every one replaced something that failed in play 
 registration and still returns exit code 0, so it looks like a clean build and proves nothing.
 Use `-executeMethod` or `-runTests` when you need an actual compile.
 
+⚠️ **Launch Unity with `Start-Process -Wait -PassThru`, not the `&` call operator.** With `&`,
+`$LASTEXITCODE` comes back empty and the log file is sometimes never created at all, which is
+indistinguishable from a run that failed. `Start-Process` returns a real `ExitCode`.
+
+⚠️ **Unity leaves child processes holding the project lock after it exits.**
+`Unity.ILPP.Runner`, `UnityPackageManager` and `UnityShaderCompiler` can outlive the editor,
+and while they do, the next launch silently does nothing: no log, no error, no exit code. If a
+run produces no log at all, check `Temp/UnityLockfile` and kill the stragglers rather than
+assuming the command was wrong.
+
+Working commands:
+
+```bash
+dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj
+```
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -nographics -projectPath . -testPlatform EditMode -testResults Logs/tests.xml -logFile Logs/tests.log
+```
+
 ⚠️ **PowerShell here-strings break on embedded double quotes** when passed to `git commit -m`.
 The message gets split and the remainder is parsed as pathspecs. **Write the message to a file
 and use `git commit -F`.**
