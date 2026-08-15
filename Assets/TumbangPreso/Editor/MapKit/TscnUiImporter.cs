@@ -178,7 +178,17 @@ namespace TumbangPreso.EditorTools.MapKit
                 Transform parent = byPath.TryGetValue(n.Parent, out var p) ? p : canvasGo.transform;
                 go.transform.SetParent(parent, worldPositionStays: false);
 
-                TscnUi.ApplyControlRect(go.GetComponent<RectTransform>(), n);
+                // ⚠️⚠️ A CHILD OF A LAYOUT GROUP MUST NOT GET GODOT'S ANCHORS. Godot containers
+                // compute their children's positions at runtime and write nothing useful into
+                // the .tscn for them, so applying those empty offsets pins every child to the
+                // same corner AND fights the Unity layout group that is trying to place it.
+                // The result is a readable-looking pile of overlapping labels, which is exactly
+                // what the first conversion produced.
+                bool parentLays = parent != null && parent.GetComponent<LayoutGroup>() != null;
+
+                if (parentLays) ApplyLayoutElement(go, n);
+                else TscnUi.ApplyControlRect(go.GetComponent<RectTransform>(), n);
+
                 byPath[n.PathKey] = go.transform;
             }
 
@@ -192,6 +202,45 @@ namespace TumbangPreso.EditorTools.MapKit
             Report.AppendLine();
 
             return saved;
+        }
+
+        /// <summary>
+        /// Sizes a laid-out child from whatever Godot recorded about its size.
+        ///
+        /// ⚠️ `custom_minimum_size` IS THE ONLY SIZE HINT A CONTAINER CHILD CARRIES. Godot's
+        /// containers derive everything else, so this is the one authored number available, and
+        /// without it every child collapses to zero and the panel renders as a thin line.
+        /// </summary>
+        private static void ApplyLayoutElement(GameObject go, TscnUi.NodeDef n)
+        {
+            var el = go.GetComponent<LayoutElement>();
+            if (el == null) el = go.AddComponent<LayoutElement>();
+
+            Vector2 min = Vector2.zero;
+            if (n.Props.TryGetValue("custom_minimum_size", out var raw))
+            {
+                var m = System.Text.RegularExpressions.Regex.Match(raw, @"Vector2\(([^)]*)\)");
+                if (m.Success)
+                {
+                    var parts = m.Groups[1].Value.Split(',');
+                    if (parts.Length >= 2) min = new Vector2(TscnUi.F(parts[0]), TscnUi.F(parts[1]));
+                }
+            }
+
+            // Fall back to the authored offsets, which containers still carry for fixed-size
+            // leaves such as the selector boxes and the arrow buttons.
+            float w = min.x > 0.0f ? min.x
+                : Mathf.Abs(TscnUi.Prop(n, "offset_right") - TscnUi.Prop(n, "offset_left"));
+            float h = min.y > 0.0f ? min.y
+                : Mathf.Abs(TscnUi.Prop(n, "offset_bottom") - TscnUi.Prop(n, "offset_top"));
+
+            if (w > 0.0f) el.preferredWidth = w;
+            if (h > 0.0f) el.preferredHeight = h;
+
+            // ⚠️ A LABEL WITH NO AUTHORED HEIGHT STILL NEEDS ONE, or the row it sits in has zero
+            // height and the whole column above it silently disappears.
+            if (h <= 0.0f && go.GetComponent<Text>() != null)
+                el.preferredHeight = go.GetComponent<Text>().fontSize * 1.6f;
         }
 
         private static void EnsureEventSystem()
@@ -231,6 +280,27 @@ namespace TumbangPreso.EditorTools.MapKit
 
                 case "TextureRect":
                     {
+                        // ⚠️⚠️ NO TEXTURE MEANS NO IMAGE, NOT A MAGENTA ONE. A TextureRect whose
+                        // texture is assigned in code (a map preview, a character render, a
+                        // gradient scrim built at runtime) has no `texture` line in the .tscn at
+                        // all. Marking those magenta filled the entire setup screen with a
+                        // full-bleed pink rect that hid every control behind it. Only a texture
+                        // that was REFERENCED and failed to load deserves the marker.
+                        if (!n.Props.ContainsKey("texture")) break;
+
+                        // ⚠️⚠️ A GENERATED TEXTURE IS NOT A MISSING ONE. The scrim that darkens
+                        // the backdrop behind every panel is a GradientTexture2D built in the
+                        // scene, so it is a SubResource with no file behind it. Treating it as
+                        // a failed load painted a full-bleed magenta rect over the entire setup
+                        // screen and hid every control on it.
+                        if (TscnUi.SubId(n.Props["texture"]) != null)
+                        {
+                            var scrim = go.AddComponent<Image>();
+                            scrim.color = GradientTint(n, scene);
+                            scrim.raycastTarget = false;
+                            break;
+                        }
+
                         var img = go.AddComponent<Image>();
                         img.sprite = LoadSprite(n, scene, ref missing);
                         img.color = img.sprite != null ? Color.white : Color.magenta;
@@ -242,6 +312,16 @@ namespace TumbangPreso.EditorTools.MapKit
                         img.type = Image.Type.Simple;
                         break;
                     }
+
+                // ⚠️ A SubViewport IS A LIVE 3D RENDER, NOT A SPRITE. The setup screen shows the
+                // chosen map and the character select spins the actual model. Those need a
+                // camera rendering to a texture, which is wired at runtime by the screen's
+                // behaviour; here the node is a placeholder that must stay INVISIBLE rather
+                // than painting over the panel beside it.
+                case "SubViewportContainer":
+                case "SubViewport":
+                case "ViewportTexture":
+                    break;
 
                 case "Label":
                     BuildLabel(go, n);
@@ -299,7 +379,54 @@ namespace TumbangPreso.EditorTools.MapKit
                         break;
                     }
 
-                // Containers, viewports and plain Controls carry layout only.
+                // ⚠️⚠️ GODOT CONTAINERS POSITION THEIR CHILDREN AT RUNTIME, AND THAT IS WHY THE
+                // CHILDREN COLLAPSED. A VBoxContainer's children carry no useful offsets in the
+                // .tscn because the container computes them, so converting the container as a
+                // plain rect stacks every child at the same corner. Unity's layout groups do
+                // the same job and must be added, or the panel arrives as a pile of overlapping
+                // labels in the top-left.
+                case "VBoxContainer":
+                    {
+                        var v = go.AddComponent<VerticalLayoutGroup>();
+                        v.childControlHeight = false;
+                        v.childControlWidth = true;
+                        v.childForceExpandHeight = false;
+                        v.childForceExpandWidth = true;
+                        v.spacing = TscnUi.Prop(n, "theme_override_constants/separation", 8.0f);
+                        break;
+                    }
+
+                case "HBoxContainer":
+                    {
+                        var h = go.AddComponent<HorizontalLayoutGroup>();
+                        h.childControlHeight = true;
+                        h.childControlWidth = false;
+                        h.childForceExpandHeight = true;
+                        h.childForceExpandWidth = false;
+                        h.childAlignment = TextAnchor.MiddleLeft;
+                        h.spacing = TscnUi.Prop(n, "theme_override_constants/separation", 8.0f);
+                        break;
+                    }
+
+                case "MarginContainer":
+                    {
+                        var pad = go.AddComponent<LayoutElement>();
+                        pad.ignoreLayout = false;
+
+                        var group = go.AddComponent<VerticalLayoutGroup>();
+                        group.childControlHeight = true;
+                        group.childControlWidth = true;
+                        group.childForceExpandHeight = true;
+                        group.childForceExpandWidth = true;
+                        group.padding = new RectOffset(
+                            (int)TscnUi.Prop(n, "theme_override_constants/margin_left", 0.0f),
+                            (int)TscnUi.Prop(n, "theme_override_constants/margin_right", 0.0f),
+                            (int)TscnUi.Prop(n, "theme_override_constants/margin_top", 0.0f),
+                            (int)TscnUi.Prop(n, "theme_override_constants/margin_bottom", 0.0f));
+                        break;
+                    }
+
+                // Plain Controls carry layout only.
                 default:
                     break;
             }
@@ -410,6 +537,40 @@ namespace TumbangPreso.EditorTools.MapKit
             return t;
         }
 
+        /// <summary>
+        /// A flat stand-in for a Godot gradient scrim.
+        ///
+        /// ⚠️ THE SCRIM IS LOAD-BEARING, NOT DECORATION. Every panel in this game sits over a
+        /// photographic backdrop, and without it the cream lettering is unreadable against the
+        /// bright half of the street. A flat tint at the gradient's own alpha reads close
+        /// enough at these sizes; a real gradient is a texture to generate later if it matters.
+        /// </summary>
+        private static Color GradientTint(TscnUi.NodeDef n, TscnUi.Scene scene)
+        {
+            string id = TscnUi.SubId(n.Props["texture"]);
+
+            if (id != null && scene.Sub.TryGetValue(id, out var sub) &&
+                sub.Props.TryGetValue("gradient", out var gradRef))
+            {
+                string gid = TscnUi.SubId(gradRef);
+                if (gid != null && scene.Sub.TryGetValue(gid, out var grad) &&
+                    grad.Props.TryGetValue("colors", out var colors))
+                {
+                    // PackedColorArray(r, g, b, a, r, g, b, a, ...) — take the first stop.
+                    var m = System.Text.RegularExpressions.Regex.Match(colors, @"\(([^)]*)\)");
+                    if (m.Success)
+                    {
+                        var parts = m.Groups[1].Value.Split(',');
+                        if (parts.Length >= 4)
+                            return new Color(TscnUi.F(parts[0]), TscnUi.F(parts[1]),
+                                             TscnUi.F(parts[2]), TscnUi.F(parts[3]));
+                    }
+                }
+            }
+
+            return new Color(0.0f, 0.0f, 0.0f, 0.45f);
+        }
+
         private static Sprite LoadSprite(TscnUi.NodeDef n, TscnUi.Scene scene, ref int missing)
         {
             if (!n.Props.TryGetValue("texture", out var raw)) return null;
@@ -459,6 +620,25 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 case "MainMenu": canvasGo.AddComponent<ConvertedMainMenu>(); break;
                 case "ModeSelect": canvasGo.AddComponent<ConvertedModeSelect>(); break;
+                case "MatchSetup": canvasGo.AddComponent<ConvertedMatchSetup>(); break;
+                case "CharacterSelect": canvasGo.AddComponent<ConvertedCharacterSelect>(); break;
+                case "MultiplayerSetup": canvasGo.AddComponent<ConvertedMultiplayerSetup>(); break;
+                case "MatchResult": canvasGo.AddComponent<ConvertedMatchResult>(); break;
+                case "SplashScreen": canvasGo.AddComponent<SplashScreen>(); break;
+
+                // ⚠️ THESE ARE OVERLAYS, NOT SCREENS. Settings, Tutorial and Credits are opened
+                // on top of whatever is running and must not become scenes of their own, or
+                // opening settings mid-match unloads the match.
+                case "SettingsPanel":
+                case "Tutorial":
+                case "CreditsPanel":
+                    Report.AppendLine($"      ({screenName} is an overlay; converted for reuse as a panel)");
+                    break;
+
+                case "HUD":
+                    Report.AppendLine("      (HUD is bound at match start, not here)");
+                    break;
+
                 default:
                     Report.AppendLine($"      (no behaviour bound yet for {screenName})");
                     break;

@@ -2,136 +2,94 @@ using System.Collections.Generic;
 using System.IO;
 using TumbangPreso.UI;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.Video;
 
 namespace TumbangPreso.EditorTools
 {
     /// <summary>
-    /// Generates every menu scene and sets the build order.
+    /// Sets the build order from the CONVERTED scenes.
     ///
-    /// ⚠️ THE SPLASH MUST BE FIRST IN THE BUILD SETTINGS. Scene 0 is what a built game opens
-    /// with, and the boot sting was an explicit requirement: it plays on every launch. Getting
-    /// the order wrong means the shipped build starts on whatever scene happens to be at index
-    /// 0, which in a fresh project is usually the last one somebody saved.
+    /// ⚠️⚠️ THIS USED TO GENERATE MENUS AND THAT WAS THE WRONG CALL. It built tidy screens out
+    /// of the palette which looked nothing like the game. The menus now come from
+    /// `TscnUiImporter`, converted node-for-node out of the Godot `.tscn` with the real
+    /// artwork, so this file only decides what ships and in what order.
     ///
-    /// ⚠️ EVERY MENU IS ONE COMPONENT ON AN EMPTY OBJECT. The screens build their own UI in
-    /// code, so these scenes carry no authored widgets at all. That is what makes them
-    /// regenerable: a palette change is one edit and a rebuild, not seventeen scenes to open.
-    ///
-    /// Run:
-    ///   Unity.exe -batchmode -quit -nographics -projectPath . \
-    ///             -executeMethod TumbangPreso.EditorTools.MenuSceneBuilder.BuildAll
+    /// ⚠️ THE SPLASH MUST BE INDEX 0. A built player opens on scene 0 and the boot sting plays
+    /// on every launch. In the editor the flow works regardless because scenes load by path, so
+    /// a wrong index 0 is a bug you only find after handing somebody the exe.
     /// </summary>
     public static class MenuSceneBuilder
     {
-        private const string OutDir = "Assets/TumbangPreso/Scenes";
+        private const string UiDir = "Assets/TumbangPreso/Scenes/Ui";
         private const string MapDir = "Assets/TumbangPreso/Scenes/Maps";
+        private const string OldDir = "Assets/TumbangPreso/Scenes";
 
-        [MenuItem("Tumbang Preso/Build All Menu Scenes")]
+        [MenuItem("Tumbang Preso/Set Build Order")]
         public static void BuildAllFromMenu() => Execute();
 
         public static void BuildAll() => EditorApplication.Exit(Execute() ? 0 : 1);
 
         private static bool Execute()
         {
-            Directory.CreateDirectory(OutDir);
+            RemoveRebuiltScenes();
 
-            BuildScreen<SplashScreen>(SceneFlow.Splash, WireSplash);
-            BuildScreen<MainMenuScreen>(SceneFlow.MainMenu, null);
-            BuildScreen<ModeSelectScreen>(SceneFlow.ModeSelect, null);
-            BuildScreen<MatchSetupScreen>(SceneFlow.MatchSetup, null);
-            BuildScreen<MultiplayerSetupScreen>(SceneFlow.MultiplayerSetup, null);
-            BuildScreen<CharacterSelectScreen>(SceneFlow.CharacterSelect, null);
-            BuildScreen<MatchResultScreen>(SceneFlow.MatchResult, null);
-
-            SetBuildOrder();
-
-            Debug.Log("[MenuSceneBuilder] built the menu flow and set the build order.");
-            AssetDatabase.SaveAssets();
-            return true;
-        }
-
-        private static void BuildScreen<T>(string sceneName, System.Action<T> wire)
-            where T : MonoBehaviour
-        {
-            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-
-            // ⚠️ A CAMERA EVEN THOUGH THE UI IS SCREEN-SPACE OVERLAY. Without one, Unity logs a
-            // "no cameras rendering" warning over a screen that looks perfectly fine, and it
-            // becomes noise everybody learns to scroll past, including on the day it matters.
-            var camGo = new GameObject("Main Camera");
-            camGo.tag = "MainCamera";
-            var cam = camGo.AddComponent<Camera>();
-            cam.clearFlags = CameraClearFlags.SolidColor;
-            cam.backgroundColor = UiTheme.WoodDark;
-
-            var go = new GameObject(sceneName);
-            var comp = go.AddComponent<T>();
-            wire?.Invoke(comp);
-
-            EditorSceneManager.SaveScene(scene, $"{OutDir}/{sceneName}.unity");
-        }
-
-        /// <summary>
-        /// ⚠️ THE VIDEO AND THE STING ARE WIRED SEPARATELY, matching the Godot build. The clip
-        /// was exported with no audio track because Godot's only core codec is Theora, and the
-        /// sting played as a normal sound cue. Keeping them separate means the sting still
-        /// obeys the volume sliders, which is what a player expects when they turn the game
-        /// down before it has finished booting.
-        /// </summary>
-        private static void WireSplash(SplashScreen splash)
-        {
-            var so = new SerializedObject(splash);
-
-            var clip = AssetDatabase.LoadAssetAtPath<VideoClip>(
-                "Assets/TumbangPreso/Art/video/opening_animation.mp4");
-            var sting = AssetDatabase.LoadAssetAtPath<AudioClip>(
-                "Assets/TumbangPreso/Art/audio/sfx/boot_sting.wav");
-
-            if (clip == null) Debug.LogWarning("[MenuSceneBuilder] opening_animation.mp4 not found.");
-            if (sting == null) Debug.LogWarning("[MenuSceneBuilder] boot_sting.wav not found.");
-
-            so.FindProperty("_clip").objectReferenceValue = clip;
-            so.FindProperty("_sting").objectReferenceValue = sting;
-            so.ApplyModifiedPropertiesWithoutUndo();
-        }
-
-        /// <summary>
-        /// ⚠️ ORDER MATTERS AND SPLASH IS INDEX 0. Everything else can be in any order, but a
-        /// scene missing from this list loads fine in the editor and fails silently in a build,
-        /// which is the classic "the button works on my machine" bug.
-        /// </summary>
-        private static void SetBuildOrder()
-        {
             var wanted = new List<string>
             {
-                $"{OutDir}/{SceneFlow.Splash}.unity",
-                $"{OutDir}/{SceneFlow.MainMenu}.unity",
-                $"{OutDir}/{SceneFlow.ModeSelect}.unity",
-                $"{OutDir}/{SceneFlow.MatchSetup}.unity",
-                $"{OutDir}/{SceneFlow.MultiplayerSetup}.unity",
-                $"{OutDir}/{SceneFlow.CharacterSelect}.unity",
-                $"{OutDir}/{SceneFlow.MatchResult}.unity",
+                $"{UiDir}/{SceneFlow.Splash}.unity",
+                $"{UiDir}/{SceneFlow.MainMenu}.unity",
+                $"{UiDir}/{SceneFlow.ModeSelect}.unity",
+                $"{UiDir}/{SceneFlow.MatchSetup}.unity",
+                $"{UiDir}/{SceneFlow.MultiplayerSetup}.unity",
+                $"{UiDir}/{SceneFlow.CharacterSelect}.unity",
+                $"{UiDir}/{SceneFlow.MatchResult}.unity",
                 $"{MapDir}/{SceneFlow.Eskinita}.unity",
                 $"{MapDir}/{SceneFlow.BayanPlaza}.unity",
-                $"{OutDir}/VerticalSlice.unity",
             };
 
             var list = new List<EditorBuildSettingsScene>();
+            bool ok = true;
+
             foreach (var path in wanted)
             {
                 if (!File.Exists(path))
                 {
-                    Debug.LogWarning($"[MenuSceneBuilder] {path} does not exist yet, skipping.");
+                    Debug.LogError($"[BuildOrder] MISSING {path}. Run " +
+                                   "Tumbang Preso > Import Godot UI and Import Godot Maps first.");
+                    ok = false;
                     continue;
                 }
+
                 list.Add(new EditorBuildSettingsScene(path, true));
             }
 
             EditorBuildSettings.scenes = list.ToArray();
-            Debug.Log($"[MenuSceneBuilder] build order set, {list.Count} scenes, splash first.");
+
+            Debug.Log($"[BuildOrder] {list.Count} scenes, splash first:\n  " +
+                      string.Join("\n  ", list.ConvertAll(s => s.path)));
+
+            AssetDatabase.SaveAssets();
+            return ok;
+        }
+
+        /// <summary>
+        /// ⚠️ THE OLD REBUILT SCENES ARE DELETED, NOT LEFT ALONGSIDE. Two scenes named MainMenu
+        /// in one project is how a build ships the wrong one, and the wrong one here is the one
+        /// that does not look like the game.
+        /// </summary>
+        private static void RemoveRebuiltScenes()
+        {
+            foreach (var name in new[]
+            {
+                "Splash", "MainMenu", "ModeSelect", "MatchSetup",
+                "MultiplayerSetup", "CharacterSelect", "MatchResult",
+            })
+            {
+                string path = $"{OldDir}/{name}.unity";
+                if (!File.Exists(path)) continue;
+
+                AssetDatabase.DeleteAsset(path);
+                Debug.Log($"[BuildOrder] removed the rebuilt {name}.unity");
+            }
         }
     }
 }

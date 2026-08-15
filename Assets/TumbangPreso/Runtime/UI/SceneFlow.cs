@@ -14,7 +14,11 @@ namespace TumbangPreso.UI
     /// </summary>
     public static class SceneFlow
     {
-        public const string Splash = "Splash";
+        // ⚠️ THESE ARE THE CONVERTED SCENES, NOT THE EARLIER REBUILT ONES. The rebuilt menus
+        // were tidy and nothing like the game; these come out of the Godot .tscn with the real
+        // art, the real anchors and the real font. If a name here stops matching a file in
+        // Scenes/Ui, the button that leads to it dies silently in a build.
+        public const string Splash = "SplashScreen";
         public const string MainMenu = "MainMenu";
         public const string ModeSelect = "ModeSelect";
         public const string MatchSetup = "MatchSetup";
