@@ -74,7 +74,35 @@ The genuine earlier mistake was narrower and worth remembering: an *overhead fol
 camera got built that corresponded to none of these four. Read `camera_rig.gd:21`
 before touching the baked transforms in `CameraRig.tscn`.
 
-## 3b · The port ledger is the definition of done
+## 3aa · Emotes end ONLY by interruption
+
+🧑 2026-08-15: *"the emotes only end when a user does smth to interrupt it like move or
+attack or etc — it doesnt end on its own"*.
+
+There is no emote timer and no clip-finished stop. `EmotePlayer.Stop()` is reached by
+movement, a verb, or the unit losing the right to act, and that is the single path the
+camera's `EndEmoteView` hangs off. Do not add a duration. If a clip-finished path is
+ever wanted, route it through `Stop()` rather than restoring the camera from a second
+place — one path returning the view and the other not is how a rig gets stuck in TPP.
+
+## 3b · Build the .exe ONLY when the port is done, and put it on the Desktop
+
+**Do not hand him a build to test before the play path matches his Godot game.** Three
+separate builds were handed over unfinished in earlier sessions and every one of them
+wasted his time; he has said so at least six times. An .exe is the LAST step, not a
+progress report.
+
+When it is genuinely done — every row in `docs/Port_Ledger.md` reading CONVERTED — build
+it to the Desktop:
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -quit -projectPath . -executeMethod TumbangPreso.EditorTools.GameBuilder.BuildWindows -logFile Logs/build.log
+```
+
+`GameBuilder.BuildWindows` already targets `C:\Users\matth\Desktop`. Verify the .exe
+exists and report its path; do not claim a build that was never written.
+
+## 3b2 · The port ledger is the definition of done
 
 `docs/Port_Ledger.md` lists **every** Godot script and scene with a CONVERTED /
 PARTIAL / MISSING status, measured from both trees rather than remembered. 45

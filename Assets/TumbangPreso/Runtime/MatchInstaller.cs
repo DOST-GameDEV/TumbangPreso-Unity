@@ -44,7 +44,14 @@ namespace TumbangPreso
             runner.Lata = lata;
             runner.Seats = seats;
             runner.Slippers = slippers;
-            runner.AutoStart = true;
+
+            // ⚠️ THE READY GATE OWNS THE ROUND START, so AutoStart must be off or the round
+            // begins under the countdown and the free-roam window never happens. A headless
+            // probe has nobody to press R, which is what UseReadyGate is for — leave it true
+            // for anything a human will look at.
+            runner.AutoStart = !UseReadyGate;
+
+            if (UseReadyGate) BuildReadyGate(seats[0], runner);
 
             GameServices.Music?.Play("match", GameServices.MatchTrack);
         }
@@ -204,6 +211,32 @@ namespace TumbangPreso
             else go.AddComponent<AIController>();
 
             return motor;
+        }
+
+        /// <summary>Set false for headless probes: there is nobody to press READY, and the
+        /// gate would hold the round open forever.</summary>
+        public bool UseReadyGate = true;
+
+        private void BuildReadyGate(CharacterMotor local, SliceRunner runner)
+        {
+            var gate = gameObject.AddComponent<ReadyGate>();
+
+            gate.RoundShouldBegin += runner.Begin;
+
+            // The ready press is readable in the world, not only on the HUD — the other
+            // players can see somebody signal that they are set.
+            gate.ReadyGestureRequested += who =>
+                who.GetComponentInChildren<Visual.CharacterAnimator>()?.PlayOneShot("ready");
+
+            var hud = UnityEngine.Object.FindFirstObjectByType<UI.Hud>();
+            if (hud != null)
+            {
+                gate.ReadyPromptChanged += hud.ShowReadyPrompt;
+                gate.CountdownTick += hud.ShowCountdownTick;
+                gate.CountdownHidden += hud.HideCountdown;
+            }
+
+            gate.Open(local);
         }
 
         private void BuildCameraAndHud(CharacterMotor local)

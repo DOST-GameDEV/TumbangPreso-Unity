@@ -97,6 +97,7 @@ namespace TumbangPreso.CameraSystem
         private Vector3 _vmKickOffset;
 
         private bool _emoteView;
+        private Social.EmotePlayer _emotes;
         private float _emoteYawDeg;
         private float _emotePitchDeg;
         private CameraMode _modeBeforeEmote = CameraMode.Fpp;
@@ -122,15 +123,64 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         public void Follow(CharacterMotor character, bool makeActive = true)
         {
+            UnsubscribeEmotes();
+
             _character = character;
             _mode = CameraMode.Fpp;
 
             if (_character == null) return;
 
+            SubscribeEmotes();
             BuildPivots();
             ApplyFppSelfHide();
             SetActive(makeActive);
         }
+
+        /// <summary>
+        /// ⚠️⚠️ THE EMOTE SWING IS WIRED HERE, ON THE RIG, AND THAT IS WHAT KEEPS IT LOCAL.
+        ///
+        /// 🧑 2026-08-04: *"i want the emotes to switch camera to TPP js for the emote and go
+        /// back to FPP after the emote ends"*. The emote itself is replicated; the camera
+        /// swing must NOT be, or every peer would spin to third person because somebody else
+        /// danced.
+        ///
+        /// Subscribing from the rig gets that for free rather than by a flag someone has to
+        /// remember: a rig only ever follows the unit this machine is looking through, so a
+        /// remote player's emote has no rig subscribed to it and cannot move any camera.
+        /// Wiring this the other way round — EmotePlayer reaching for a camera — would need
+        /// an "am I local" test at the call site, which is the check that gets forgotten.
+        /// </summary>
+        private void SubscribeEmotes()
+        {
+            _emotes = _character.GetComponent<Social.EmotePlayer>();
+            if (_emotes == null) return;
+
+            _emotes.EmoteStarted += OnEmoteStarted;
+            _emotes.EmoteStopped += OnEmoteStopped;
+        }
+
+        private void UnsubscribeEmotes()
+        {
+            if (_emotes == null) return;
+
+            _emotes.EmoteStarted -= OnEmoteStarted;
+            _emotes.EmoteStopped -= OnEmoteStopped;
+            _emotes = null;
+        }
+
+        private void OnEmoteStarted(string id) => BeginEmoteView();
+
+        /// ⚠️ AN EMOTE NEVER ENDS ON ITS OWN. 🧑 2026-08-15: *"the emotes only end when a
+        /// user does smth to interrupt it like move or attack"*. So this fires on exactly one
+        /// path — <see cref="Social.EmotePlayer.Stop"/>, reached by movement, a verb, or the
+        /// unit losing the right to act — and there is no timer to race it.
+        ///
+        /// If a clip-finished path is ever added, it MUST route through Stop() as well.
+        /// Restoring the camera from a second place is how a rig ends up stuck in third
+        /// person: one path returns the view and the other silently does not.
+        private void OnEmoteStopped() => EndEmoteView();
+
+        private void OnDestroy() => UnsubscribeEmotes();
 
         private void BuildPivots()
         {

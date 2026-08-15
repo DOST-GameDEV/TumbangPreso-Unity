@@ -82,7 +82,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 |---|---|---|---|
 | `main.gd` | 3595 | — | **MISSING** — spawning, prop skins, reconnection, late-join sync |
 | `ai_controller.gd` | 2225 | `AIController.cs` (353) | PARTIAL |
-| `camera_rig.gd` | 1111 | `CameraRig.cs` (422) | PARTIAL — ported, NOT wired into match scenes |
+| `camera_rig.gd` | 1111 | `CameraRig.cs` (470) | PARTIAL — emote swing now wired; viewmodel arms still missing |
 | `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (431) | CONVERTED — call sites pending, see below |
 | `character_roster.gd` | 757 | `Roster` + `RosterBook` (411) | CONVERTED (20/20 validated) |
 | `env_toon_pass.gd` | 391 | — | **MISSING** — the toon shading pass |
@@ -178,6 +178,24 @@ Still to convert: `ViewmodelArms.tscn` (blocks FPP arms), `CameraRig.tscn`
 reading the note), `CharacterBase.tscn`, `CanVisual.tscn`, `TsinelasVisual.tscn`,
 `Lata.tscn`, `Slipper.tscn`, `Main.tscn`, `PremiseIcon.tscn`, `DebugBar.tscn`,
 `OffscreenIndicators.tscn`, `YouCard.tscn`, `RoleSwapCard.tscn`, `Tutorial.tscn`.
+
+## Ready-up phase — CONVERTED 2026-08-15 (local half)
+
+`ReadyGate.cs`, from the ready-phase half of `main.gd` (~lines 1036-1195). Free-roam
+window, "Press [R] when you're ready", the ready gesture other players can see, then
+3 · 2 · 1 · GO! at 1.0 s a tick and 0.5 s on GO. The round begins when the countdown
+finishes, never on the press, and `_countingDown` stops a second press restarting it.
+
+`SliceRunner.AutoStart` is now off whenever the gate is used, or the round would begin
+underneath the countdown. Headless probes set `MatchInstaller.UseReadyGate = false`,
+because nobody is there to press R.
+
+⚠️ **The networked half is NOT ported.** Godot's host counts one press per connected
+human PEER — never per character, because a 2v2 always has four characters and an AI
+cannot press R, so counting characters leaves a solo host waiting forever for three
+bots to agree. Spectators are excluded for the same reason. That needs
+`NetworkManager.playing_peer_count()`, which is unported. **Do not approximate it by
+counting characters.**
 
 ## Input actions (14) — all must exist in the Input System asset
 

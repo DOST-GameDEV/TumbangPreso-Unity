@@ -38,7 +38,37 @@ namespace TumbangPreso.UI
 
         private readonly List<StatusRow> _rows = new List<StatusRow>();
 
+        private Text _countdown;
+        private Text _readyPrompt;
+
         public void Bind(CharacterMotor local) => _local = local;
+
+        /// <summary>
+        /// "Press [R] when you're ready" — the pre-round free-roam prompt. Driven by
+        /// <see cref="ReadyGate"/>; the HUD does not decide when the window is open.
+        /// </summary>
+        public void ShowReadyPrompt(bool show)
+        {
+            if (_readyPrompt != null) _readyPrompt.enabled = show;
+        }
+
+        /// <summary>One tick of the 3 · 2 · 1 · GO!, centred.</summary>
+        public void ShowCountdownTick(string tick)
+        {
+            if (_countdown == null) return;
+
+            _countdown.enabled = true;
+            _countdown.text = tick;
+
+            // GO! is the one that reads as a release rather than a count, so it takes the
+            // highlight while the numbers stay cream.
+            _countdown.color = tick == "GO!" ? UiTheme.Highlight : UiTheme.Cream;
+        }
+
+        public void HideCountdown()
+        {
+            if (_countdown != null) _countdown.enabled = false;
+        }
 
         private void Awake() => Build();
 
@@ -144,6 +174,17 @@ namespace TumbangPreso.UI
 
             _status = MakeText(canvasGo.transform, "Status", new Vector2(0.0f, 0.0f),
                                new Vector2(200, 190), 26, TextAnchor.LowerLeft);
+
+            // Dead centre and large: the countdown is the one moment the HUD is allowed to
+            // take the middle of the screen, because nothing is in play behind it yet.
+            _countdown = MakeText(canvasGo.transform, "Countdown", new Vector2(0.5f, 0.5f),
+                                  Vector2.zero, 120, TextAnchor.MiddleCenter);
+            _countdown.enabled = false;
+
+            _readyPrompt = MakeText(canvasGo.transform, "ReadyPrompt", new Vector2(0.5f, 0.5f),
+                                    new Vector2(0, -140), 32, TextAnchor.MiddleCenter);
+            _readyPrompt.text = "Press [R] when you're ready";
+            _readyPrompt.enabled = false;
 
             BuildStaminaBar(canvasGo.transform);
             BuildCrosshair(canvasGo.transform);
