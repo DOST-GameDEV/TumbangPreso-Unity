@@ -167,7 +167,7 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `mode_select.gd` | 96 | `MenuScreens.cs` | PARTIAL |
 | `main_menu.gd` | 85 | `MenuScreens.cs` | CONVERTED |
 | `debug_bar.gd` | 47 | — | **MISSING** |
-| `pause_layer.gd` | 21 | — | **MISSING** |
+| `pause_layer.gd` | 21 | `PauseWatcher` in `MatchInstaller.cs` | CONVERTED — see note |
 
 ## Scenes (27)
 
@@ -178,6 +178,18 @@ Still to convert: `ViewmodelArms.tscn` (blocks FPP arms), `CameraRig.tscn`
 reading the note), `CharacterBase.tscn`, `CanVisual.tscn`, `TsinelasVisual.tscn`,
 `Lata.tscn`, `Slipper.tscn`, `Main.tscn`, `PremiseIcon.tscn`, `DebugBar.tscn`,
 `OffscreenIndicators.tscn`, `YouCard.tscn`, `RoleSwapCard.tscn`, `Tutorial.tscn`.
+
+### `pause_layer.gd` — the one file the port does not need
+
+Its entire 21 lines exist to solve a Godot-specific problem: a node at the default
+`PROCESS_MODE_INHERIT` stops receiving `_unhandled_input` once the tree is paused,
+including the very Esc press meant to resume. Godot's fix was a dedicated
+`PROCESS_MODE_ALWAYS` CanvasLayer whose only job is to survive the pause it causes.
+
+Unity's `Update` is frame-driven and keeps running at `timeScale = 0`, so
+`PauseWatcher` reads Escape while paused without any equivalent trick. Marked
+CONVERTED rather than dropped, because "we do not need this" is a claim that has to
+be written down and checked, not assumed.
 
 ## Bot difficulty — the tiers landed 2026-08-15, the plan machine has not
 
