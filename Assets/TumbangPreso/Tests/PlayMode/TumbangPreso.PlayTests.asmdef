@@ -4,7 +4,8 @@
     "references": [
         "TumbangPreso.Core",
         "TumbangPreso.Runtime",
-        "UnityEngine.TestRunner"
+        "UnityEngine.TestRunner",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
