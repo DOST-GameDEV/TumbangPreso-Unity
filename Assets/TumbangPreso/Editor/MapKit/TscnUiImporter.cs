@@ -784,6 +784,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var skin = go.AddComponent<GodotPanel>();
             skin.Variation = variation ?? "Card";
             skin.ApplyContentMargins = layout;
+            skin.Apply();
         }
 
         // -------------------------------------------------------------------
@@ -929,8 +930,12 @@ namespace TumbangPreso.EditorTools.MapKit
             }
             else
             {
+                // ⚠️ APPLIED AGAIN AFTER THE VARIATION IS SET: AddComponent already ran OnEnable
+                // with the field's default, so the assignment alone changes nothing.
                 var skin = go.AddComponent<GodotButton>();
                 skin.Variation = variation ?? "Button";
+                skin.Apply();
+                skin.Refresh();
             }
 
             if (n.Props.TryGetValue("disabled", out var d) && d.Trim() == "true")

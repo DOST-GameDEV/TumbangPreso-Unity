@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: slipper_tsinelas
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: tsinelas
-  Model: {fileID: 919132149155446097, guid: 5b3f894fc329df64fa2e7afe688b0eee, type: 3}
+  Model: {fileID: 919132149155446097, guid: 81fd73f2c00eb3646abb66759d4e7178, type: 3}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}
+  Clips: []
   Tagline: 

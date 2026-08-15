@@ -144,14 +144,20 @@ namespace TumbangPreso.Visual
         /// Awake because the model is instanced later, and an Animator that is bound before its
         /// rig exists silently drives nothing.
         /// </summary>
-        public void Bind(GameObject model)
+        public void Bind(GameObject model) => Bind(model, null);
+
+        /// <summary>
+        /// ⚠️ THE CLIPS ARE HANDED IN, NOT SEARCHED FOR. They come off the roster asset, which
+        /// is the only reference that survives into a build. See the note on CacheClips.
+        /// </summary>
+        public void Bind(GameObject model, AnimationClip[] clips)
         {
             if (model == null) return;
 
             _animator = model.GetComponentInChildren<Animator>();
             if (_animator == null) _animator = model.AddComponent<Animator>();
 
-            CacheClips(model);
+            CacheClips(model, clips);
 
             if (_clips.Count == 0)
             {
@@ -177,11 +183,38 @@ namespace TumbangPreso.Visual
         /// carries no AnimationClip references of its own, so they are loaded from the imported
         /// asset the prefab came from.
         /// </summary>
-        private void CacheClips(GameObject model)
+        /// <summary>
+        /// ⚠️⚠️ THE CLIPS COME FROM THE ROSTER ASSET, AND EVERY OTHER ROUTE TO THEM IS BROKEN IN
+        /// A BUILD. This used to ask the AssetDatabase for the model's source path and fall back
+        /// to `Resources.FindObjectsOfTypeAll`. Both fail, for different reasons:
+        ///
+        ///   - the model is `Instantiate`d at runtime, so it has no prefab link to trace back to
+        ///     the `.glb`, and the editor branch found nothing even in the editor, and
+        ///   - a clip that nothing references is stripped from the player, so the runtime branch
+        ///     searched a set that was empty by construction.
+        ///
+        /// The whole cast stood still, in every build, with one warning per seat in a log nobody
+        /// reads mid-match. `RosterEntryAsset.Clips` is a real serialised reference, which is
+        /// what both makes them ship and makes them findable.
+        /// </summary>
+        private void CacheClips(GameObject model, AnimationClip[] supplied)
         {
             _clips.Clear();
 
+            if (supplied != null)
+            {
+                foreach (var c in supplied)
+                {
+                    if (c == null || c.name.StartsWith("__preview")) continue;
+                    _clips[c.name] = c;
+                }
+            }
+
+            if (_clips.Count > 0) return;
+
 #if UNITY_EDITOR
+            // A last resort for a model dropped straight into a scene by hand, which is how a
+            // probe or a test fixture usually builds one.
             string path = UnityEditor.AssetDatabase.GetAssetPath(
                 UnityEditor.PrefabUtility.GetCorrespondingObjectFromOriginalSource(model) ?? (Object)model);
 
@@ -192,14 +225,6 @@ namespace TumbangPreso.Visual
                         _clips[c.name] = c;
             }
 #endif
-
-            // In a build the clips travel with the prefab through the Animator's controller or
-            // through a direct reference, so anything already reachable is registered too.
-            foreach (var c in Resources.FindObjectsOfTypeAll<AnimationClip>())
-            {
-                if (c == null || c.name.StartsWith("__preview")) continue;
-                if (!_clips.ContainsKey(c.name)) _clips[c.name] = c;
-            }
         }
 
         private void OnDestroy()

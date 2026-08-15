@@ -29,6 +29,22 @@ namespace TumbangPreso
         public Material Material;
         public Color Tint = Color.white;
 
+        /// <summary>
+        /// The model's own animation clips, referenced so they survive into a build.
+        ///
+        /// ⚠️⚠️ WITHOUT THIS REFERENCE THE CLIPS DO NOT SHIP AND NOTHING SAYS SO. The 32 clips
+        /// live inside the `.glb`, and `CharacterAnimator` used to find them by asking the
+        /// AssetDatabase in the editor and `Resources.FindObjectsOfTypeAll` otherwise. Both
+        /// fail: the model is instantiated at runtime so it has no prefab link to trace back to
+        /// the asset, and an asset nothing references is stripped from the player entirely. The
+        /// result was a whole cast standing perfectly still in the T-pose of their idle frame,
+        /// with one warning in a log nobody reads during a match.
+        ///
+        /// ⚠️ FILLED BY `RosterBookBuilder`, NOT BY HAND. Thirty-two clips times twelve people
+        /// is not a list to maintain in the Inspector.
+        /// </summary>
+        public AnimationClip[] Clips;
+
         [TextArea(2, 4)]
         public string Tagline;
     }

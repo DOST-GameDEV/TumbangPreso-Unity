@@ -84,8 +84,17 @@ namespace TumbangPreso.UI
                 yield break;
             }
 
+            // ⚠️⚠️ SET BEFORE THE LOAD, NOT AFTER. `MatchInstaller.Start` runs the instant the
+            // additive scene finishes loading, and by the time this coroutine resumes it has
+            // already spawned four characters, the can and the directors. Stripping them
+            // afterwards left a frame of bots mid-spawn behind the menu and a round timer that
+            // had started. The flag makes the installer stand down before it builds anything.
+            MatchInstaller.PreviewOnly = true;
+
             var load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Additive);
             while (load != null && !load.isDone) yield return null;
+
+            MatchInstaller.PreviewOnly = false;
 
             _loaded = SceneManager.GetSceneByName(map);
             _showing = map;

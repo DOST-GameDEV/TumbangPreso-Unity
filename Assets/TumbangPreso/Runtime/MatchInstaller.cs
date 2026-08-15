@@ -19,13 +19,44 @@ namespace TumbangPreso
     /// </summary>
     public sealed class MatchInstaller : MonoBehaviour
     {
-        [Tooltip("Seat 0 is the human unless this is left on for a headless probe run.")]
+        [Tooltip("Every seat is a bot. For headless probes, which have nobody to drive one.")]
         [SerializeField] private bool _allBots;
+
+        /// <summary>
+        /// ⚠️⚠️ THE PLAYER DOES NOT ALWAYS SIT IN SEAT 0, AND ASSUMING SO BROKE THE ONE CHOICE
+        /// THE SETUP SCREEN IS ABOUT. Four seat rows on that screen exist to be pressed:
+        /// `GameLaunch.SoloSeat` defaults to P2 and is the whole point of the taya rotation
+        /// being visible before the match starts. Hard-coding seat 0 meant picking a chair moved
+        /// a label and nothing else, and the camera then followed a bot.
+        ///
+        /// ⚠️ AND -1 IS SPECTATING, which is a real fifth option rather than an error case. No
+        /// seat is human, and the camera is the free one.
+        /// </summary>
+        public int HumanSeat =>
+            _allBots || GameLaunch.Spectator
+                ? -1
+                : Mathf.Clamp(GameLaunch.SoloSeat, 0, Balance.PlayerCount - 1);
 
         private RosterBook _book;
 
+        /// <summary>
+        /// ⚠️ SET BEFORE LOADING AN ARENA FOR A PREVIEW. The setup screen renders the chosen map
+        /// live behind its panels, and a map scene brings its whole match with it: four
+        /// characters, a can, the slippers and the directors, all spawned by this component the
+        /// instant the scene loads. Without this the menu had a game running behind it, with
+        /// bots moving and the round timer already counting.
+        /// </summary>
+        public static bool PreviewOnly;
+
         private void Start()
         {
+            // The arena was loaded to be looked at, not played. See PreviewOnly.
+            if (PreviewOnly)
+            {
+                enabled = false;
+                return;
+            }
+
             _book = RosterBook.Load();
 
             // ⚠️ THE SAVED DIFFICULTY WAS BEING IGNORED. It is written by the settings panel
@@ -43,7 +74,10 @@ namespace TumbangPreso
                 slippers[slot] = BuildSlipper(slot);
             }
 
-            BuildCameraAndHud(seats[0]);
+            // ⚠️ THE CAMERA FOLLOWS THE SEAT THE PLAYER CHOSE, not seat 0. A spectator has no
+            // seat at all, so it falls back to the first one and the spectator rig takes over.
+            int human = Mathf.Max(0, HumanSeat);
+            BuildCameraAndHud(seats[human]);
 
             var runner = gameObject.AddComponent<SliceRunner>();
             runner.Lata = lata;
@@ -56,7 +90,7 @@ namespace TumbangPreso
             // for anything a human will look at.
             runner.AutoStart = !UseReadyGate;
 
-            if (UseReadyGate) BuildReadyGate(seats[0], runner);
+            if (UseReadyGate) BuildReadyGate(seats[human], runner);
 
             GameServices.Music?.Play("match", GameServices.MatchTrack);
         }
@@ -205,7 +239,7 @@ namespace TumbangPreso
 
             if (art != null && art.Model != null)
             {
-                visual.ApplyModel(art.Model, art.Tint);
+                visual.ApplyModel(art.Model, art.Tint, art.Clips);
 
                 // Strip from the whole seat, because the visual parents the model under the
                 // seat root rather than under visualRoot. The CharacterController survives by
@@ -222,7 +256,7 @@ namespace TumbangPreso
                 Destroy(caps.GetComponent<Collider>());
             }
 
-            bool human = slot == 0 && !_allBots;
+            bool human = slot == HumanSeat;
             if (human) go.AddComponent<PlayerInputReader>();
             else go.AddComponent<AIController>();
 

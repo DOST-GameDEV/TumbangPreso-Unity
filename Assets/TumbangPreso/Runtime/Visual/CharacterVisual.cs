@@ -43,7 +43,14 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>Swap in the model for a roster pick.</summary>
-        public void ApplyModel(GameObject prefab, Color tint)
+        public void ApplyModel(GameObject prefab, Color tint) => ApplyModel(prefab, tint, null);
+
+        /// <summary>
+        /// ⚠️ THE CLIPS TRAVEL WITH THE MODEL. They are sub-assets of the `.glb` and nothing
+        /// else references them, so they have to be passed from the roster asset or they are
+        /// stripped from the build and the character never moves.
+        /// </summary>
+        public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips)
         {
             if (_instance != null) Destroy(_instance);
 
@@ -65,7 +72,7 @@ namespace TumbangPreso.Visual
             // character simply stands still and no error is ever logged.
             var anim = GetComponent<CharacterAnimator>();
             if (anim == null) anim = gameObject.AddComponent<CharacterAnimator>();
-            if (_instance != null) anim.Bind(_instance);
+            if (_instance != null) anim.Bind(_instance, clips);
         }
 
         private void CacheRenderers()

@@ -16,4 +16,37 @@ MonoBehaviour:
   Model: {fileID: -3584597187675866282, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}
+  Clips:
+  - {fileID: 6907475494324315746, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: 2203924018909043761, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -2058715007142741576, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: 6422398547263628574, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: 7394211616443434314, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -5788828422494046478, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -5656197328620225132, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: 8444169216349218833, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -6693012064394926207, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: 5638027722608592375, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: 6316504600807357666, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: 3916641520164824235, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -877892688320884640, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -3534582695741538158, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -6901733776427281509, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -1129283163419233802, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -2474113961476506421, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: 3136869955099575062, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: 6224930689648127318, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: 2652845254095363116, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -4718476750892910589, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: 6316130324300929012, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -2344400992752741691, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: 6669351404405404641, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -4832708865683171987, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: 3450422557711352013, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -3868565323850264498, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: 4889764192148153732, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -1602694845487291149, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -6296422904094572024, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -9152534441998152959, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
+  - {fileID: -4813772699318269175, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
   Tagline: 

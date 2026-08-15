@@ -143,6 +143,28 @@ namespace TumbangPreso.EditorTools
                         Debug.LogError($"[RosterBook] no model at {full} for '{entry.Id}'.");
                         ok = false;
                     }
+
+                    // ⚠️⚠️ THE CLIPS ARE REFERENCED HERE OR THEY DO NOT SHIP. They are
+                    // sub-assets of the `.glb`, and an asset nothing points at is stripped from
+                    // the player. Nothing pointed at them: the animator looked them up through
+                    // the AssetDatabase, which does not exist in a build, so every character in
+                    // every build stood still. See RosterEntryAsset.Clips.
+                    var clips = new System.Collections.Generic.List<AnimationClip>();
+
+                    foreach (var sub in AssetDatabase.LoadAllAssetsAtPath(full))
+                    {
+                        if (sub is AnimationClip clip && !clip.name.StartsWith("__preview"))
+                            clips.Add(clip);
+                    }
+
+                    asset.Clips = clips.ToArray();
+
+                    if (clips.Count == 0 && kind == "person")
+                    {
+                        Debug.LogError($"[RosterBook] '{entry.Id}' has a model with no clips. " +
+                                       "That character will not animate.");
+                        ok = false;
+                    }
                 }
                 else
                 {

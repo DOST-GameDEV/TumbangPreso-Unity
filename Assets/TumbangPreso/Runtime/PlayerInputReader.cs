@@ -33,12 +33,31 @@ namespace TumbangPreso
             if (_motor == null) _motor = GetComponent<CharacterMotor>();
             if (_aimCamera == null) _aimCamera = Camera.main;
 
+            // ⚠️⚠️ IT LOADS ITS OWN ASSET, AND WITHOUT THIS THE GAME IS UNPLAYABLE. Nothing
+            // assigns the serialised field: `MatchInstaller.BuildSeat` reaches the human seat
+            // through `AddComponent<PlayerInputReader>()`, which cannot carry an inspector
+            // reference, so `_actions` was null on every unit in every build. The component
+            // disabled itself with one line in the log and the match then ran perfectly with
+            // three bots and a player who could not move. Every symptom of that points at the
+            // motor, the camera or the arena rather than at an unassigned field.
+            //
+            // ⚠️ THE SAME PATH THE SETTINGS PANEL USES, `Resources/TumbangPreso`, so a rebind
+            // made in the menu is on the asset this reads. Two copies would mean the keys the
+            // player set and the keys the game listens to are different objects.
+            if (_actions == null) _actions = Resources.Load<InputActionAsset>("TumbangPreso");
+
             if (_actions == null)
             {
-                Debug.LogError("[Input] no InputActionAsset assigned; this unit is unplayable.");
+                Debug.LogError("[Input] no InputActionAsset at Resources/TumbangPreso; " +
+                               "this unit is unplayable.");
                 enabled = false;
                 return;
             }
+
+            // ⚠️ AND THE SAVED REBINDS ARE APPLIED BEFORE THE MAP IS ENABLED. A player who
+            // rebound jump in the menu and then found it back on Space would reasonably
+            // conclude the setting does nothing.
+            Settings.Rebinding.Load(_actions);
 
             var map = _actions.FindActionMap("Player", throwIfNotFound: true);
             _move = map.FindAction("Move", true);

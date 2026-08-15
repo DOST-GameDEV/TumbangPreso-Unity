@@ -279,6 +279,26 @@ namespace TumbangPreso.EditorTools.MapKit
                     }
                 }
 
+                // ⚠️⚠️ THE LIGHT AND THE ATMOSPHERE ARE THE MAP'S LOOK AND THEY WERE DROPPED
+                // ENTIRELY. Both arenas converted with ZERO lights and Unity's default skybox,
+                // so the whole game rendered under flat grey ambient while the Godot build sits
+                // in a warm late afternoon: an amber key light at 1.15, warm ambient at 1.65,
+                // and a haze that starts at 14 m. That is not a finishing touch, it is the hour
+                // the game is set at, chosen deliberately, and its absence is most of why the
+                // port "doesn't look like the game".
+                if (go == null && n.Type == "DirectionalLight3D")
+                {
+                    go = new GameObject(n.Name);
+                    ApplyDirectionalLight(go.AddComponent<Light>(), n);
+                    report.AppendLine("   converted the key light");
+                }
+
+                if (go == null && n.Type == "WorldEnvironment")
+                {
+                    go = new GameObject(n.Name);
+                    ApplyEnvironment(n, subs, ext, report);
+                }
+
                 if (go == null) go = new GameObject(n.Name);
                 go.name = n.Name;
 
@@ -312,11 +332,185 @@ namespace TumbangPreso.EditorTools.MapKit
             installer.AddComponent<MatchInstaller>();
             report.AppendLine("   installed the match rig");
 
+            // ⚠️⚠️ THE COLOUR PASS WAS BUILT AND NEVER CALLED. `EnvColourPass` is a full port of
+            // `env_toon_pass.gd` — seeded facade paint, foliage variation, the road's
+            // warm-neutral correction and the sampay wind — and NOTHING in the project ever
+            // attached it. Both arenas therefore rendered in the kit's own factory colours: a
+            // white-and-green suburb where the game is set on a painted Manila street. That is
+            // the single largest visual difference between the two builds and it is invisible
+            // in any check that is not a screenshot.
+            //
+            // ⚠️ ON THE MAP ROOT, because it walks its own children. Attaching it to the match
+            // rig would find nothing at all and report success.
+            if (byPath.TryGetValue(".", out var mapRoot))
+            {
+                mapRoot.gameObject.AddComponent<Visual.EnvColourPass>();
+                report.AppendLine("   attached the environment colour pass");
+            }
+            else
+            {
+                report.AppendLine("   WARNING: no map root, so the street keeps the kit colours");
+            }
+
             string outPath = $"{OutDir}/{mapName}.unity";
             bool saved = UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene, outPath);
             report.AppendLine(saved ? $"   wrote {outPath}" : $"   FAILED to write {outPath}");
 
             return saved && missing == 0;
+        }
+
+        /// <summary>
+        /// The map's key light, from `DirectionalLight3D`.
+        ///
+        /// ⚠️ LATE AFTERNOON, CHOSEN DELIBERATELY. The Godot scene's own comment calls it "the
+        /// hour children actually play": an amber key at 1.15 energy with soft, wide shadows.
+        /// A white light at 1.0 renders the same geometry as a completely different game.
+        ///
+        /// ⚠️ AND THE SHADOW SETTINGS COME ACROSS TOO. `shadow_opacity = 0.62` is what stops
+        /// the shadows reading as black holes in the road, and the bias values were tuned
+        /// against this geometry: a default bias on a low-poly street acnes every flat surface.
+        /// </summary>
+        private static void ApplyDirectionalLight(Light light, NodeDef n)
+        {
+            light.type = LightType.Directional;
+            light.color = ParseColor(n.Props.TryGetValue("light_color", out var c) ? c : null,
+                                     Color.white);
+
+            light.intensity = Prop(n, "light_energy", 1.0f);
+            light.bounceIntensity = Prop(n, "light_indirect_energy", 1.0f);
+
+            bool shadows = !n.Props.TryGetValue("shadow_enabled", out var s) || s.Trim() == "true";
+            light.shadows = shadows ? LightShadows.Soft : LightShadows.None;
+
+            // Godot's bias is in world units against a normalised depth; Unity's is a fraction.
+            // These are the shipped values scaled to Unity's ranges rather than re-tuned.
+            light.shadowBias = Mathf.Clamp01(Prop(n, "shadow_bias", 0.05f));
+            light.shadowNormalBias = Mathf.Clamp(Prop(n, "shadow_normal_bias", 1.0f) * 0.15f,
+                                                 0.0f, 3.0f);
+
+            light.shadowStrength = Mathf.Clamp01(Prop(n, "shadow_opacity", 1.0f));
+            light.shadowNearPlane = 0.2f;
+            light.renderMode = LightRenderMode.ForcePixel;
+        }
+
+        /// <summary>
+        /// The map's `Environment`: ambient, fog, exposure and the sky.
+        ///
+        /// ⚠️ GODOT'S AMBIENT ENERGY IS NOT UNITY'S. Godot multiplies its ambient colour by
+        /// `ambient_light_energy` (1.65 here); Unity's flat ambient takes a single colour and
+        /// an intensity that only applies in the skybox mode. The colour is therefore
+        /// pre-multiplied so the two engines put the same amount of light on a wall.
+        ///
+        /// ⚠️ AND THE FOG IS LINEAR WITH A NEAR START. `fog_depth_begin = 14` is close, and
+        /// that is the point: it separates the near street from the far one and is a large part
+        /// of the depth the arena reads with. Unity's exponential default at the same colour
+        /// looks like weather instead.
+        /// </summary>
+        private static void ApplyEnvironment(NodeDef n, Dictionary<string, SubRes> subs,
+                                             Dictionary<string, ExtRes> ext, StringBuilder report)
+        {
+            if (!n.Props.TryGetValue("environment", out var raw)) return;
+
+            string id = SubId(raw);
+            if (id == null || !subs.TryGetValue(id, out var env)) return;
+
+            var ambient = ParseColor(env.Props.TryGetValue("ambient_light_color", out var a)
+                                     ? a : null, new Color(0.62f, 0.58f, 0.52f));
+
+            float energy = SubProp(env, "ambient_light_energy", 1.0f);
+
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+            RenderSettings.ambientLight = ambient * energy;
+            RenderSettings.ambientIntensity = 1.0f;
+
+            bool fog = env.Props.TryGetValue("fog_enabled", out var f) && f.Trim() == "true";
+
+            RenderSettings.fog = fog;
+
+            if (fog)
+            {
+                RenderSettings.fogMode = FogMode.Linear;
+                RenderSettings.fogColor = ParseColor(
+                    env.Props.TryGetValue("fog_light_color", out var fc) ? fc : null,
+                    new Color(0.92f, 0.78f, 0.60f));
+
+                RenderSettings.fogStartDistance = SubProp(env, "fog_depth_begin", 14.0f);
+                RenderSettings.fogEndDistance = SubProp(env, "fog_depth_end", 58.0f);
+            }
+
+            ApplySky(env, subs, ext, report);
+
+            report.AppendLine($"   environment: ambient {ColorUtility.ToHtmlStringRGB(ambient)}" +
+                              $" x{energy:0.00}, fog {(fog ? "on" : "off")}");
+        }
+
+        /// <summary>
+        /// ⚠️ THE SKY IS A PANORAMA THE MAP SHIPS, not Unity's procedural default. The default
+        /// is a clean blue gradient with a white sun; this one is the painted afternoon sky the
+        /// backdrop art was drawn against, and the two disagree about what time it is.
+        /// </summary>
+        private static void ApplySky(SubRes env, Dictionary<string, SubRes> subs,
+                                     Dictionary<string, ExtRes> ext, StringBuilder report)
+        {
+            string panoramaPath = null;
+
+            foreach (var sub in subs.Values)
+            {
+                if (sub.Type != "PanoramaSkyMaterial") continue;
+                if (!sub.Props.TryGetValue("panorama", out var pano)) continue;
+
+                string extId = ExtId(pano);
+                if (extId != null && ext.TryGetValue(extId, out var res))
+                    panoramaPath = ToUnityAssetPath(res.GodotPath);
+            }
+
+            if (panoramaPath == null) return;
+
+            var texture = AssetDatabase.LoadAssetAtPath<Texture>(panoramaPath);
+            if (texture == null)
+            {
+                report.AppendLine($"   MISSING sky panorama: {panoramaPath}");
+                return;
+            }
+
+            const string matPath = "Assets/TumbangPreso/Art/models/materials/Sky.mat";
+            var material = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+
+            if (material == null)
+            {
+                material = new Material(Shader.Find("Skybox/Panoramic"));
+                AssetDatabase.CreateAsset(material, matPath);
+            }
+
+            material.SetTexture("_MainTex", texture);
+            material.SetFloat("_Mapping", 1.0f);          // latitude-longitude, as Godot stores it
+            material.SetFloat("_ImageType", 0.0f);        // 360 degrees
+            material.SetFloat("_Exposure", 1.0f);
+
+            EditorUtility.SetDirty(material);
+
+            RenderSettings.skybox = material;
+            report.AppendLine("   sky: panorama material bound");
+        }
+
+        private static float SubProp(SubRes res, string key, float fallback) =>
+            res.Props.TryGetValue(key, out var s) ? F(s) : fallback;
+
+        private static float Prop(NodeDef n, string key, float fallback) =>
+            n.Props.TryGetValue(key, out var s) ? F(s) : fallback;
+
+        private static Color ParseColor(string value, Color fallback)
+        {
+            if (string.IsNullOrEmpty(value)) return fallback;
+
+            var m = Regex.Match(value, @"Color\(([^)]*)\)");
+            if (!m.Success) return fallback;
+
+            var parts = m.Groups[1].Value.Split(',');
+            if (parts.Length < 3) return fallback;
+
+            return new Color(F(parts[0]), F(parts[1]), F(parts[2]),
+                             parts.Length > 3 ? F(parts[3]) : 1.0f);
         }
 
         /// <summary>
@@ -351,6 +545,12 @@ namespace TumbangPreso.EditorTools.MapKit
         private static string SubId(string value)
         {
             var m = Regex.Match(value, @"SubResource\(""([^""]+)""\)");
+            return m.Success ? m.Groups[1].Value : null;
+        }
+
+        private static string ExtId(string value)
+        {
+            var m = Regex.Match(value ?? "", @"ExtResource\(""([^""]+)""\)");
             return m.Success ? m.Groups[1].Value : null;
         }
 

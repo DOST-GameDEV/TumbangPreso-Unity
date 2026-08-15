@@ -88,7 +88,11 @@ namespace TumbangPreso.CameraSystem
             {
                 var mf = slipperGo.AddComponent<MeshFilter>();
                 mf.sharedMesh = slipperMesh;
-                slipperGo.AddComponent<MeshRenderer>();
+
+                // ⚠️ WITH A MATERIAL. A renderer built in code has none, and Unity draws that
+                // as a magenta error blob — in this case one sitting in the player's hand.
+                Visual.MaterialKit.Dress(slipperGo.AddComponent<MeshRenderer>(),
+                                         UI.UiTheme.PropFoam);
             }
 
             SetHolding(false);
@@ -112,11 +116,9 @@ namespace TumbangPreso.CameraSystem
                 var mf = armGo.AddComponent<MeshFilter>();
                 mf.sharedMesh = mesh;
 
-                var mr = armGo.AddComponent<MeshRenderer>();
-                var block = new MaterialPropertyBlock();
-                block.SetColor("_Color", ArmColour);
-                block.SetColor("_BaseColor", ArmColour);
-                mr.SetPropertyBlock(block);
+                // See MaterialKit: without a material the block below writes to nothing and
+                // the arms render as the missing-material shader.
+                Visual.MaterialKit.Dress(armGo.AddComponent<MeshRenderer>(), ArmColour);
             }
 
             return pivot;

@@ -16,4 +16,5 @@ MonoBehaviour:
   Model: {fileID: 919132149155446097, guid: 10960945149ff8347af24185edfa1c95, type: 3}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}
+  Clips: []
   Tagline: 

@@ -145,8 +145,15 @@ namespace TumbangPreso.UI
                               new Vector2(0.5f, 0.5f), Vector2.zero, size);
             label.raycastTarget = false;
 
+            // ⚠️ RE-APPLIED AFTER THE VARIATION IS SET. AddComponent runs OnEnable immediately,
+            // which skins the button with the field's DEFAULT variation; assigning the real one
+            // afterwards changes nothing on screen. That is why the settings panel's keycaps
+            // came out as wood planks when they are meant to be the theme's light Button, the
+            // one control on that screen that should read as a physical key.
             var skin = go.AddComponent<GodotButton>();
             skin.Variation = variation;
+            skin.Apply();
+            skin.Refresh();
 
             if (onClick != null)
             {

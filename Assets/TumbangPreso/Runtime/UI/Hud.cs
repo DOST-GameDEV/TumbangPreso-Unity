@@ -31,6 +31,7 @@ namespace TumbangPreso.UI
 
         private Canvas _canvas;
         private Text _timer;
+        private Text _round;
         private Text _scores;
         private Text _status;
         private Image _staminaFill;
@@ -115,7 +116,17 @@ namespace TumbangPreso.UI
             // seconds" is spoken on the frame the HUD first shows 30. Each fires once per
             // round; the director owns that latch.
             GameServices.Voice?.TickClock(left);
-            _timer.text = $"ROUND {GameServices.Match.RoundNumber}/{Balance.Rounds}   {left:0.0}s";
+
+            // ⚠️ MINUTES AND SECONDS, AND THE ROUND ON ITS OWN LINE. `HUD.tscn` draws "01:30"
+            // in the 44px timer face and "ROUND 1 / 4 · TAYA: P1" underneath it in body text.
+            // One run-on line of "ROUND 1/4 89.4s" is a debug readout, not a clock.
+            _timer.text = $"{Mathf.FloorToInt(left / 60.0f):00}:{Mathf.FloorToInt(left % 60.0f):00}";
+
+            if (_round != null)
+            {
+                _round.text = $"ROUND {GameServices.Match.RoundNumber} / {Balance.Rounds}" +
+                              $"  ·  TAYA: P{GameServices.Match.DefenderSlot + 1}";
+            }
 
             // ⚠️ THE CLOCK GOES AMBER UNDER PRESSURE RATHER THAN RED. Red means destructive or
             // out of bounds everywhere else in this palette, and a timer running out is
@@ -182,6 +193,20 @@ namespace TumbangPreso.UI
 
         // -------------------------------------------------------------------
 
+        /// <summary>
+        /// The arrangement is `HUD.tscn`'s, and so is the styling.
+        ///
+        /// ⚠️⚠️ THE PLAIN VERSION OF THIS WAS PHASE-3 PLUMBING AND IT SHIPPED. Built-in font,
+        /// no cards, no outlines, everything one flat cream: the scoreboard was four lines of
+        /// small text floating on the sky and the timer was a line of yellow above them. The
+        /// real HUD is a translucent INK card top-left, a card around the clock, a card for the
+        /// lata and the YOU card bottom-left, all in a face that carries a 6px ink outline
+        /// because it is read at a glance, mid-sprint, over a live 3D scene.
+        ///
+        /// ⚠️ THE POSITIONS ARE THE .tscn's OFFSETS, NOT PICKED BY EYE. Scoreboard at 16,28
+        /// from the top-left; the clock centred at 28 down; the lata card 16 in from the
+        /// bottom-right. Those were arrived at against these arenas.
+        /// </summary>
         private void Build()
         {
             var canvasGo = new GameObject("HudCanvas");
@@ -194,23 +219,27 @@ namespace TumbangPreso.UI
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
 
-            _timer = MakeText(canvasGo.transform, "Timer", new Vector2(0.5f, 1.0f),
-                              new Vector2(0, -40), 34, TextAnchor.UpperCenter);
+            // ⚠️ MATCH ON HEIGHT, like every other screen, or the HUD drifts against the menus
+            // it hands over from on anything that is not 16:9.
+            scaler.matchWidthOrHeight = 1.0f;
 
-            _scores = MakeText(canvasGo.transform, "Scores", new Vector2(0.0f, 1.0f),
-                               new Vector2(200, -40), 26, TextAnchor.UpperLeft);
+            BuildScoreboard(canvasGo.transform);
+            BuildClock(canvasGo.transform);
+            BuildStatusCard(canvasGo.transform);
 
-            _status = MakeText(canvasGo.transform, "Status", new Vector2(0.0f, 0.0f),
-                               new Vector2(200, 190), 26, TextAnchor.LowerLeft);
+            // Dead centre and large: the countdown is the one moment the HUD is allowed to take
+            // the middle of the screen, because nothing is in play behind it yet.
+            _countdown = HudText(canvasGo.transform, "Countdown", "HudBanner",
+                                 new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(400, 160),
+                                 TextAnchor.MiddleCenter);
 
-            // Dead centre and large: the countdown is the one moment the HUD is allowed to
-            // take the middle of the screen, because nothing is in play behind it yet.
-            _countdown = MakeText(canvasGo.transform, "Countdown", new Vector2(0.5f, 0.5f),
-                                  Vector2.zero, 120, TextAnchor.MiddleCenter);
+            _countdown.fontSize = 120;
             _countdown.enabled = false;
 
-            _readyPrompt = MakeText(canvasGo.transform, "ReadyPrompt", new Vector2(0.5f, 0.5f),
-                                    new Vector2(0, -140), 32, TextAnchor.MiddleCenter);
+            _readyPrompt = HudText(canvasGo.transform, "ReadyPrompt", "HudBody",
+                                   new Vector2(0.5f, 0.5f), new Vector2(0, -140),
+                                   new Vector2(900, 60), TextAnchor.MiddleCenter);
+
             _readyPrompt.text = "Press [R] when you're ready";
             _readyPrompt.enabled = false;
 
@@ -220,54 +249,83 @@ namespace TumbangPreso.UI
             indicatorGo.transform.SetParent(transform, false);
             _indicators = indicatorGo.AddComponent<OffscreenIndicators>();
 
-            BuildStaminaBar(canvasGo.transform);
             BuildCrosshair(canvasGo.transform);
         }
 
-        private static Text MakeText(Transform parent, string name, Vector2 anchor,
-                                     Vector2 offset, int size, TextAnchor align)
+        /// <summary>Top-left: SCORES over one row per seat, on a translucent ink card.</summary>
+        private void BuildScoreboard(Transform parent)
         {
-            var go = new GameObject(name);
-            go.transform.SetParent(parent, false);
+            var card = Card(parent, "Scoreboard", new Vector2(0.0f, 1.0f),
+                            new Vector2(16, -28), new Vector2(420, 0));
 
-            var t = go.AddComponent<Text>();
-            t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            t.fontSize = size;
-            t.color = UiTheme.Cream;
-            t.alignment = align;
-            t.horizontalOverflow = HorizontalWrapMode.Overflow;
-            t.verticalOverflow = VerticalWrapMode.Overflow;
+            var title = HudTextIn(card.transform, "ScoreTitle", "HudCaption", TextAnchor.MiddleLeft);
+            title.text = "SCORES";
 
-            var rt = t.rectTransform;
-            rt.anchorMin = anchor;
-            rt.anchorMax = anchor;
-            rt.pivot = anchor;
-            rt.anchoredPosition = offset;
-            rt.sizeDelta = new Vector2(600, 220);
-
-            return t;
+            _scores = HudTextIn(card.transform, "ScoreRows", "HudBody", TextAnchor.UpperLeft);
+            _scores.gameObject.AddComponent<LayoutElement>().minHeight = 160.0f;
         }
 
-        private void BuildStaminaBar(Transform parent)
+        /// <summary>Top-centre: the clock on its own card, with the round line under it.</summary>
+        private void BuildClock(Transform parent)
         {
+            var column = new GameObject("TopCentre");
+            column.transform.SetParent(parent, false);
+
+            var group = column.AddComponent<VerticalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = false;
+            group.childForceExpandWidth = false;
+            group.childAlignment = TextAnchor.UpperCenter;
+            group.spacing = 4.0f;
+
+            var rt = column.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0.5f, 1.0f);
+            rt.anchorMax = new Vector2(0.5f, 1.0f);
+            rt.pivot = new Vector2(0.5f, 1.0f);
+            rt.anchoredPosition = new Vector2(0, -28);
+            rt.sizeDelta = new Vector2(320, 0);
+
+            var card = Card(column.transform, "TimerCard", Vector2.zero, Vector2.zero, Vector2.zero);
+            card.gameObject.AddComponent<LayoutElement>().preferredWidth = 260.0f;
+
+            _timer = HudTextIn(card.transform, "TimerLabel", "HudTimer", TextAnchor.MiddleCenter);
+
+            _round = HudTextIn(column.transform, "RoundLabel", "HudBody", TextAnchor.MiddleCenter);
+            _round.gameObject.AddComponent<LayoutElement>().minHeight = 46.0f;
+        }
+
+        /// <summary>
+        /// The active-effects list and the stamina pool, above the YOU card.
+        ///
+        /// ⚠️⚠️ THE BOTTOM-LEFT CORNER BELONGS TO `YouCard`, WHICH `MatchInstaller` ALREADY
+        /// BUILDS. Drawing a second card there put two overlapping panels in the corner, one
+        /// wood and one ink, saying different things about the same player. This block sits
+        /// ABOVE it and carries only what YouCard does not: the status stack and the stamina
+        /// bar. Two components, one corner, no overlap.
+        /// </summary>
+        private void BuildStatusCard(Transform parent)
+        {
+            var card = Card(parent, "StatusCard", new Vector2(0.0f, 0.0f),
+                            new Vector2(16, 214), new Vector2(460, 0));
+
+            _status = HudTextIn(card.transform, "StatusLabel", "HudBody", TextAnchor.UpperLeft);
+            _status.gameObject.AddComponent<LayoutElement>().minHeight = 96.0f;
+
             var back = new GameObject("StaminaBack");
-            back.transform.SetParent(parent, false);
+            back.transform.SetParent(card.transform, false);
 
             var backImg = back.AddComponent<Image>();
-            backImg.color = UiTheme.WoodDark;
+            backImg.sprite = GodotTheme.Box(UiTheme.WoodDark, UiTheme.WoodEdge, 3, 6);
+            backImg.type = Image.Type.Sliced;
 
-            var brt = backImg.rectTransform;
-            brt.anchorMin = new Vector2(0.5f, 0.0f);
-            brt.anchorMax = new Vector2(0.5f, 0.0f);
-            brt.pivot = new Vector2(0.5f, 0.0f);
-            brt.anchoredPosition = new Vector2(0, 60);
-            brt.sizeDelta = new Vector2(420, 26);
+            back.AddComponent<LayoutElement>().preferredHeight = 26.0f;
 
             var fill = new GameObject("StaminaFill");
             fill.transform.SetParent(back.transform, false);
 
             _staminaFill = fill.AddComponent<Image>();
-            _staminaFill.color = UiTheme.Cream;
+            _staminaFill.sprite = GodotTheme.Box(Color.white, new Color(0, 0, 0, 0), 0, 4);
             _staminaFill.type = Image.Type.Filled;
             _staminaFill.fillMethod = Image.FillMethod.Horizontal;
 
@@ -276,6 +334,93 @@ namespace TumbangPreso.UI
             frt.anchorMax = Vector2.one;
             frt.offsetMin = new Vector2(3, 3);
             frt.offsetMax = new Vector2(-3, -3);
+        }
+
+        /// <summary>
+        /// A `HudCard`: the translucent INK slab the HUD's blocks sit on.
+        ///
+        /// ⚠️ TRANSLUCENT INK, NOT WOOD. The menus are wood over a photograph; the HUD is over
+        /// a live arena that has to stay readable through it. Same theme, different variation,
+        /// and swapping one for the other is how a HUD ends up hiding the game.
+        /// </summary>
+        private static VerticalLayoutGroup Card(Transform parent, string name, Vector2 anchor,
+                                                Vector2 offset, Vector2 size)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            go.AddComponent<Image>();
+
+            var group = go.AddComponent<VerticalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = false;
+            group.childForceExpandWidth = true;
+            group.spacing = 2.0f;
+
+            var fitter = go.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var skin = go.AddComponent<GodotPanel>();
+            skin.Variation = "HudCard";
+            skin.Apply();
+
+            var rt = go.GetComponent<RectTransform>();
+
+            if (size != Vector2.zero || anchor != Vector2.zero || offset != Vector2.zero)
+            {
+                rt.anchorMin = anchor;
+                rt.anchorMax = anchor;
+                rt.pivot = anchor;
+                rt.anchoredPosition = offset;
+                rt.sizeDelta = new Vector2(size.x, 0.0f);
+            }
+
+            return group;
+        }
+
+        private static Text HudText(Transform parent, string name, string variation,
+                                    Vector2 anchor, Vector2 offset, Vector2 size,
+                                    TextAnchor align)
+        {
+            var t = HudTextIn(parent, name, variation, align);
+
+            var rt = t.rectTransform;
+            rt.anchorMin = anchor;
+            rt.anchorMax = anchor;
+            rt.pivot = anchor;
+            rt.anchoredPosition = offset;
+            rt.sizeDelta = size;
+
+            return t;
+        }
+
+        /// <summary>A HUD label in one of the theme's Hud* variations, outline included.</summary>
+        private static Text HudTextIn(Transform parent, string name, string variation,
+                                      TextAnchor align)
+        {
+            GodotTheme.TryText(variation, out var style);
+
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+
+            var t = go.AddComponent<Text>();
+            t.font = MenuKit.Font;
+            t.fontSize = style.Size;
+            t.color = style.Colour;
+            t.alignment = align;
+            t.alignByGeometry = true;
+            t.raycastTarget = false;
+            t.horizontalOverflow = HorizontalWrapMode.Overflow;
+            t.verticalOverflow = VerticalWrapMode.Overflow;
+
+            if (style.Outline > 0)
+            {
+                var ring = go.AddComponent<GodotOutline>();
+                ring.OutlineColour = style.OutlineColour;
+                ring.Radius = Mathf.Max(1.0f, style.Outline * 0.5f);
+            }
+
+            return t;
         }
 
         private void BuildCrosshair(Transform parent)

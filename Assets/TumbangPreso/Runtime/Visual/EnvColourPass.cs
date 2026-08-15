@@ -93,11 +93,22 @@ namespace TumbangPreso.Visual
         {
             Random.InitState(_seed);
 
+            int painted = 0, seen = 0;
+
             foreach (var renderer in GetComponentsInChildren<Renderer>(includeInactive: true))
             {
+                seen++;
+
                 string name = renderer.transform.name;
-                Transform parent = renderer.transform.parent;
-                string group = parent != null ? parent.name : "";
+
+                // ⚠️⚠️ THE GROUP IS FOUND BY WALKING UP, NOT BY READING THE PARENT. In Godot a
+                // MeshInstance3D sits directly under its group node, so `get_parent().name` IS
+                // the group. The Unity conversion instances a PREFAB per dressing item, and the
+                // mesh lives inside that prefab, so the immediate parent is the item and the
+                // group is its grandparent or higher. Reading only the parent matched nothing at
+                // all: the pass ran, reported success, and repainted zero renderers, leaving
+                // both arenas in the kit's factory white-and-green.
+                string group = GroupOf(renderer.transform);
 
                 Color? tint = TintFor(name, group);
                 if (tint == null) continue;
@@ -105,14 +116,104 @@ namespace TumbangPreso.Visual
                 // ⚠️ A PROPERTY BLOCK, NOT A MATERIAL INSTANCE. Writing `renderer.material`
                 // clones the material per renderer, which on a dressed street is hundreds of
                 // materials and the draw-call cost the toon pass was reverted for.
-                var block = new MaterialPropertyBlock();
-                renderer.GetPropertyBlock(block);
-                block.SetColor("_Color", tint.Value);
-                block.SetColor("_BaseColor", tint.Value);
-                renderer.SetPropertyBlock(block);
+                Paint(renderer, tint.Value);
+                painted++;
             }
 
+            // ⚠️ IT REPORTS THE COUNT, because "the pass ran" and "the pass did anything" are
+            // different claims and the first one is what a silent version of this told us for
+            // the whole port. A zero here means the group names moved, not that the street is
+            // already the right colour.
+            Debug.Log($"[Env] repainted {painted} of {seen} renderers.");
+
             CollectWind();
+        }
+
+        /// <summary>
+        /// The colour properties a material might actually carry, in the order they are tried.
+        ///
+        /// ⚠️ THE NAME DEPENDS ON THE SHADER AND THERE IS NO SAFE GUESS. Standard uses `_Color`,
+        /// URP's Lit uses `_BaseColor`, glTF imports use `baseColorFactor`, and older kit
+        /// materials use `_TintColor`. Setting one blindly is a silent no-op on the other three.
+        /// </summary>
+        private static readonly string[] ColourProperties =
+        {
+            "_BaseColor", "_Color", "baseColorFactor", "_TintColor",
+        };
+
+        /// <summary>
+        /// One material per (source, tint) pair, so a street of six colours costs six materials
+        /// rather than one per house.
+        /// </summary>
+        private static readonly Dictionary<(Material, Color), Material> Painted =
+            new Dictionary<(Material, Color), Material>();
+
+        /// <summary>
+        /// ⚠️⚠️ A MATERIAL VARIANT, NOT A PROPERTY BLOCK, AND THAT IS THE WHOLE FIX. The block
+        /// version repainted 418 of 434 renderers on every load and changed nothing on screen:
+        /// a block writes a NAMED property, and if the shader has no property by that name the
+        /// write is discarded without an error. Both arenas therefore shipped in the kit's
+        /// factory white-and-green while the log said the pass had run.
+        ///
+        /// ⚠️ AND THE PROPERTY IS FOUND BY ASKING THE SHADER. `HasProperty` is the only way to
+        /// know which of the four spellings this material answers to, and a material that
+        /// answers to none is left alone rather than silently "painted".
+        /// </summary>
+        private static void Paint(Renderer renderer, Color tint)
+        {
+            var source = renderer.sharedMaterial;
+            if (source == null) return;
+
+            var key = (source, tint);
+
+            if (!Painted.TryGetValue(key, out var material) || material == null)
+            {
+                material = new Material(source) { name = $"{source.name}_{ColorUtility.ToHtmlStringRGB(tint)}" };
+
+                bool set = false;
+
+                foreach (var property in ColourProperties)
+                {
+                    if (!material.HasProperty(property)) continue;
+
+                    material.SetColor(property, tint);
+                    set = true;
+                }
+
+                if (!set)
+                {
+                    Debug.LogWarning($"[Env] '{source.shader.name}' has no colour property this " +
+                                     "pass knows; that surface keeps the kit's own colour.");
+                }
+
+                Painted[key] = material;
+            }
+
+            renderer.sharedMaterial = material;
+        }
+
+        /// <summary>
+        /// The nearest ancestor whose name is one of the dressing groups.
+        ///
+        /// ⚠️ IT STOPS AT THIS COMPONENT'S OWN TRANSFORM. Above that is the scene, and a scene
+        /// named after the map would happily match "Eskinita" against nothing and waste the walk
+        /// on every renderer in the arena.
+        /// </summary>
+        private string GroupOf(Transform t)
+        {
+            for (var step = t; step != null && step != transform; step = step.parent)
+            {
+                string name = step.name;
+
+                if (Contains(RoadGroups, name) || Contains(FacadeGroups, name) ||
+                    Contains(SlabGroups, name) || name.Contains("Trees"))
+                {
+                    return name;
+                }
+            }
+
+            // Fall back to the immediate parent, which is what a hand-built scene looks like.
+            return t.parent != null ? t.parent.name : "";
         }
 
         private Color? TintFor(string name, string group)
