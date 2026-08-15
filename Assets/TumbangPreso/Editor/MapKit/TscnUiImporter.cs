@@ -206,8 +206,15 @@ namespace TumbangPreso.EditorTools.MapKit
             AttachNestedPanels(state);
             StampVersion(screenName, canvasGo.transform);
 
+            // ⚠️ CHECKED BEFORE IT IS WRITTEN. Both of these catch a scene that opens perfectly
+            // in the editor and refuses to load in a player, which is the most expensive kind of
+            // bug this importer can produce: nothing is visibly wrong until the .exe is handed
+            // over. See each method for the failure it exists to stop.
+            bool clean = NothingRuntimeOnly(canvasGo.transform);
+            clean &= ScriptsResolve(canvasGo.transform);
+
             string outPath = $"{OutDir}/{screenName}.unity";
-            bool saved = EditorSceneManager.SaveScene(unityScene, outPath);
+            bool saved = EditorSceneManager.SaveScene(unityScene, outPath) && clean;
             Report.AppendLine(saved ? $"   wrote {outPath}" : $"   FAILED to write {outPath}");
             Report.AppendLine();
 
@@ -1281,12 +1288,6 @@ namespace TumbangPreso.EditorTools.MapKit
             int w = vertical ? 1 : steps;
             int h = vertical ? steps : 1;
 
-            var texture = new Texture2D(w, h, TextureFormat.RGBA32, false)
-            {
-                filterMode = FilterMode.Bilinear,
-                wrapMode = TextureWrapMode.Clamp,
-            };
-
             var pixels = new Color[steps];
 
             for (int i = 0; i < steps; i++)
@@ -1296,11 +1297,60 @@ namespace TumbangPreso.EditorTools.MapKit
                 pixels[i] = Sample(stops, vertical ? 1.0f - t : t);
             }
 
+            return BakeGradient(pixels, w, h, vertical);
+        }
+
+        /// <summary>
+        /// Writes a gradient out as a real sprite asset and returns it.
+        ///
+        /// ⚠️⚠️ IT CANNOT BE A RUNTIME TEXTURE, AND THAT CRASHED THE BUILT GAME. A `Sprite`
+        /// created with `Sprite.Create` is not an asset, so assigning one to an Image and saving
+        /// the scene writes a reference to an object the scene does not own. The editor is
+        /// perfectly happy: the scene opens, the screens photograph correctly, every test
+        /// passes. The PLAYER then reports `The file 'level1' is corrupted!` and dies on the
+        /// first scene load, before it has drawn one frame of the menu.
+        ///
+        /// ⚠️ AND THE SAME RULE COVERS THE STYLE BOXES, which is why `StyleBoxBaker` exists.
+        /// Anything a scene points at has to live on disk.
+        /// </summary>
+        private static Sprite BakeGradient(Color[] pixels, int w, int h, bool vertical)
+        {
+            const string dir = "Assets/TumbangPreso/Art/ui/generated";
+            Directory.CreateDirectory(dir);
+
+            // Named for its contents, so two screens with the same scrim share one asset and a
+            // changed gradient writes a new file rather than silently reusing the old one.
+            int hash = 17;
+            foreach (var c in pixels) hash = hash * 31 + c.GetHashCode();
+
+            string path = $"{dir}/scrim_{(vertical ? "v" : "h")}_{(uint)hash:x8}.png";
+            var existing = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            if (existing != null) return existing;
+
+            var texture = new Texture2D(w, h, TextureFormat.RGBA32, false);
             texture.SetPixels(pixels);
             texture.Apply(false, false);
 
-            return Sprite.Create(texture, new Rect(0, 0, w, h), new Vector2(0.5f, 0.5f), 100.0f,
-                                 0, SpriteMeshType.FullRect);
+            File.WriteAllBytes(path, texture.EncodeToPNG());
+            UnityEngine.Object.DestroyImmediate(texture);
+
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
+
+            var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+
+            if (importer != null)
+            {
+                importer.textureType = TextureImporterType.Sprite;
+                importer.spriteImportMode = SpriteImportMode.Single;
+                importer.mipmapEnabled = false;
+                importer.alphaIsTransparency = true;
+                importer.wrapMode = TextureWrapMode.Clamp;
+                importer.filterMode = FilterMode.Bilinear;
+                importer.textureCompression = TextureImporterCompression.Uncompressed;
+                importer.SaveAndReimport();
+            }
+
+            return AssetDatabase.LoadAssetAtPath<Sprite>(path);
         }
 
         private static List<float> Floats(TscnUi.SubRes res, string key)
@@ -1418,6 +1468,116 @@ namespace TumbangPreso.EditorTools.MapKit
         }
 
         /// <summary>
+        /// Repoints every component at the real `.cs` asset, and says so if one cannot be found.
+        ///
+        /// ⚠️⚠️ THIS IS WHY THE BUILT GAME DIED ON ITS FIRST SCENE. Unity can only produce a
+        /// MonoScript asset for the class whose name matches the FILE name. A second
+        /// MonoBehaviour in the same file has no asset to point at, so `AddComponent` serialises
+        /// an EMBEDDED MonoScript stub instead: the saved scene grows a `--- !u!115` block with
+        /// an empty name and the behaviour references it by local id. The editor resolves that
+        /// fine, so every scene opened, every screen photographed and every test passed, while
+        /// the player reported `The file 'level1' is corrupted!` and crashed before drawing a
+        /// frame. SplashScreen was the one converted scene with no components on its canvas,
+        /// which is exactly why level0 loaded and level1 did not.
+        ///
+        /// The fix is one class per file; this is the check that keeps it that way.
+        /// </summary>
+        private static bool ScriptsResolve(Transform root)
+        {
+            bool ok = true;
+
+            foreach (var behaviour in root.GetComponentsInChildren<MonoBehaviour>(true))
+            {
+                if (behaviour == null) continue;
+
+                var so = new SerializedObject(behaviour);
+                var slot = so.FindProperty("m_Script");
+
+                if (slot == null) continue;
+                if (slot.objectReferenceValue is MonoScript current &&
+                    AssetDatabase.Contains(current))
+                {
+                    continue;
+                }
+
+                var script = FindScript(behaviour.GetType());
+
+                if (script == null)
+                {
+                    Report.AppendLine($"      FAIL: no MonoScript asset for " +
+                                      $"{behaviour.GetType().FullName}. Move that class into a " +
+                                      "file of its own name, or the scene ships with an embedded " +
+                                      "stub and refuses to load.");
+                    ok = false;
+                    continue;
+                }
+
+                slot.objectReferenceValue = script;
+                so.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            return ok;
+        }
+
+        private static readonly Dictionary<Type, MonoScript> ScriptCache =
+            new Dictionary<Type, MonoScript>();
+
+        private static MonoScript FindScript(Type type)
+        {
+            if (ScriptCache.TryGetValue(type, out var cached)) return cached;
+
+            MonoScript found = null;
+
+            foreach (var guid in AssetDatabase.FindAssets($"{type.Name} t:MonoScript"))
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                var script = AssetDatabase.LoadAssetAtPath<MonoScript>(path);
+
+                if (script == null || script.GetClass() != type) continue;
+
+                found = script;
+                break;
+            }
+
+            ScriptCache[type] = found;
+            return found;
+        }
+
+        /// <summary>
+        /// Refuses to save a scene that points at anything not on disk.
+        ///
+        /// ⚠️ A sprite made with `Sprite.Create` is not an asset, so a scene holding one saves a
+        /// reference to an object it does not own, and the built player calls that scene
+        /// corrupted. A failure here means a style box is missing from the bake or a gradient
+        /// was not written out, both of which are one-line fixes once you know which sprite.
+        /// </summary>
+        private static bool NothingRuntimeOnly(Transform root)
+        {
+            bool ok = true;
+
+            foreach (var image in root.GetComponentsInChildren<Image>(true))
+            {
+                if (image.sprite == null) continue;
+                if (AssetDatabase.Contains(image.sprite)) continue;
+
+                Report.AppendLine($"      FAIL: '{image.name}' uses the runtime-only sprite " +
+                                  $"'{image.sprite.name}'. Saving that corrupts the built scene. " +
+                                  "Run Tumbang Preso > Bake UI Style Boxes and re-import.");
+                ok = false;
+            }
+
+            foreach (var raw in root.GetComponentsInChildren<RawImage>(true))
+            {
+                if (raw.texture == null || AssetDatabase.Contains(raw.texture)) continue;
+
+                Report.AppendLine($"      FAIL: '{raw.name}' uses a runtime-only texture.");
+                ok = false;
+            }
+
+            return ok;
+        }
+
+        /// <summary>
         /// Binds the behaviour for a sub-scene instanced INTO a screen.
         ///
         /// ⚠️⚠️ THESE ARE WHERE HALF THE FRONT END LIVES. MainMenu instances SettingsPanel,
@@ -1501,12 +1661,15 @@ namespace TumbangPreso.EditorTools.MapKit
                                 new Color(1, 1, 1, 0.5f), TextAnchor.LowerRight);
             text.raycastTarget = false;
 
+            // ⚠️ BOTTOM-RIGHT, WHICH IS WHERE `GameVersion.attach_to` PUTS IT: preset
+            // BOTTOM_RIGHT, inset 24 from the right edge and 20 from the bottom. Unity's (1,1)
+            // anchor is the TOP right, so the obvious transcription puts it in the wrong corner.
             var rt = text.rectTransform;
-            rt.anchorMin = Vector2.one;
-            rt.anchorMax = Vector2.one;
-            rt.pivot = Vector2.one;
-            rt.anchoredPosition = new Vector2(-18.0f, -14.0f);
-            rt.sizeDelta = new Vector2(220.0f, 30.0f);
+            rt.anchorMin = new Vector2(1.0f, 0.0f);
+            rt.anchorMax = new Vector2(1.0f, 0.0f);
+            rt.pivot = new Vector2(1.0f, 0.0f);
+            rt.anchoredPosition = new Vector2(-24.0f, 20.0f);
+            rt.sizeDelta = new Vector2(132.0f, 22.0f);
 
             go.AddComponent<VersionStamp>();
         }

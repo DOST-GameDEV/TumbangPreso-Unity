@@ -158,7 +158,13 @@ namespace TumbangPreso.UI
             }
 
             _camera.transform.position = CameraPosition;
-            _camera.transform.rotation = Quaternion.identity;
+
+            // ⚠️⚠️ TURNED AROUND, AND THE .tscn LOOKS LIKE IT SHOULD NOT BE. The Godot camera
+            // carries an IDENTITY basis at z = 19, which points it at the arena, because a
+            // Godot camera looks down its own -Z. A Unity camera looks down +Z, so copying the
+            // identity rotation across aims it at the empty half of the map: the preview showed
+            // the backs of the houses behind the spawn instead of the court.
+            _camera.transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
             _camera.fieldOfView = FieldOfView;
             _camera.targetTexture = _target;
             _camera.clearFlags = CameraClearFlags.Skybox;
@@ -173,54 +179,6 @@ namespace TumbangPreso.UI
 
             _target.Release();
             Destroy(_target);
-        }
-    }
-
-    /// <summary>
-    /// Hover and press feedback for a bare TextureButton: the selector arrows.
-    ///
-    /// ⚠️ THESE MAKE A NOISE TOO. `arrow_button.gd` covers the pennants and the wood set covers
-    /// the buttons, but the little arrows either side of MAP and BOTS are plain TextureButtons
-    /// with their own two connections at their call site in the Godot build. Leaving them silent
-    /// makes the one control a player clicks most on that screen the only dead one.
-    /// </summary>
-    public sealed class TextureButtonFeedback : MonoBehaviour,
-        UnityEngine.EventSystems.IPointerEnterHandler,
-        UnityEngine.EventSystems.IPointerExitHandler,
-        UnityEngine.EventSystems.IPointerDownHandler,
-        UnityEngine.EventSystems.IPointerUpHandler
-    {
-        private Image _image;
-        private Vector3 _home = Vector3.one;
-
-        private void Awake()
-        {
-            _image = GetComponent<Image>();
-            _home = transform.localScale;
-        }
-
-        public void OnPointerEnter(UnityEngine.EventSystems.PointerEventData e)
-        {
-            transform.localScale = _home * 1.12f;
-            if (_image != null) _image.color = UiTheme.Amber;
-            MenuSfx.Hover();
-        }
-
-        public void OnPointerExit(UnityEngine.EventSystems.PointerEventData e)
-        {
-            transform.localScale = _home;
-            if (_image != null) _image.color = Color.white;
-        }
-
-        public void OnPointerDown(UnityEngine.EventSystems.PointerEventData e)
-        {
-            transform.localScale = _home * 0.92f;
-            MenuSfx.Click();
-        }
-
-        public void OnPointerUp(UnityEngine.EventSystems.PointerEventData e)
-        {
-            transform.localScale = _home * 1.12f;
         }
     }
 }
