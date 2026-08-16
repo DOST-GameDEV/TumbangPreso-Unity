@@ -90,6 +90,19 @@ namespace TumbangPreso
         private void OnMatchEnded(int winningSlot)
         {
             GameServices.Round.EndRound();
+
+            // ⚠️⚠️ THE CAST FREEZES WHEN THE MATCH IS WON, AND THIS WAS NOT PORTED.
+            // `main.gd::_on_match_won_freeze_physics` zeroes every character's velocity the
+            // moment the match ends, so the last frame of play is the one the result screen sits
+            // over. Without it the winner and three bots carry on walking, throwing and chasing
+            // underneath the result panel, which reads as the game having failed to notice it was
+            // over. Ending the round is not the same thing: that stops the round rules, not the
+            // bodies.
+            foreach (var m in _seats)
+            {
+                if (m == null) continue;
+                m.FreezeForMatchEnd();
+            }
             Debug.Log(winningSlot < 0
                 ? "[Match] draw at the top, reported honestly as -1."
                 : $"[Match] seat {winningSlot} wins with {GameServices.Match.ScoreFor(winningSlot)}.");

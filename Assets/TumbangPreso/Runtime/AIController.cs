@@ -152,7 +152,6 @@ namespace TumbangPreso
             if (!_motor.CanAct())
             {
                 intent.Clear();
-                intent.CommitFrame();
                 return;
             }
 
@@ -167,9 +166,13 @@ namespace TumbangPreso
             if (_motor.IsDefender) ThinkDefender(intent);
             else ThinkAttacker(intent);
 
-            // ⚠️ COMMIT ONCE, AT THE END. The edge queries are derived from the diff against
-            // this snapshot, so committing mid-think makes a tap-only verb never fire.
-            intent.CommitFrame();
+            // ⚠️⚠️ NO COMMIT HERE ANY MORE, AND IT USED TO BE ON THIS LINE. The snapshot is taken
+            // by the consumer at the end of `CharacterMotor.FixedUpdate`, not by each producer at
+            // the end of its own Update. A producer that commits its own frame erases the press
+            // edge before the physics step that resolves the verb ever runs, which silently gave
+            // every bot a shove and a lunge that never fired. See the long note in
+            // `PlayerInputReader.Update`; it is the same fault for a bot and for a human, which
+            // is exactly the property `InputIntent` exists to guarantee.
         }
 
         /// <summary>

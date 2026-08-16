@@ -141,6 +141,25 @@ namespace TumbangPreso
             _externalVelocity = Vector3.zero;
         }
 
+        /// <summary>
+        /// Stop dead. `main.gd::_on_match_won_freeze_physics` runs this over every character the
+        /// moment the match is won.
+        ///
+        /// ⚠️ THE INTENT IS PARKED TOO, NOT JUST THE VELOCITY. Zeroing the velocity alone leaves
+        /// whatever was held still held, so a player who was sprinting when the last point landed
+        /// is moving again on the next physics step and the freeze lasts one frame. `Parked` is
+        /// the flag `InputIntent` already has for exactly this, and it covers a bot as well as a
+        /// human because both go through the same table.
+        /// </summary>
+        public void FreezeForMatchEnd()
+        {
+            _velocity = Vector3.zero;
+            _externalVelocity = Vector3.zero;
+            Intent.Clear();
+            Intent.CommitFrame();
+            Intent.Parked = true;
+        }
+
         public void Teleport(Vector3 position)
         {
             _cc.enabled = false;      // CharacterController fights direct transform writes
@@ -321,6 +340,20 @@ namespace TumbangPreso
 
             ShedCharacterPerch();
             Confine();
+
+            // ⚠️⚠️ THE INTENT SNAPSHOT IS TAKEN HERE, AT THE END OF THE AUTHORITATIVE STEP, AND
+            // NOWHERE ELSE. `JustPressed` and `JustReleased` are a diff against it, so whoever
+            // takes it decides which readers can still see a press edge. Both producers used to
+            // take their own at the end of their Update, which meant the edge was gone before
+            // this step ran: jump, the shove and the lunge all read as never pressed, for a bot
+            // and for a human alike.
+            //
+            // Taken last, after every verb resolved in this step has been read, so an edge
+            // written by an Update survives into the next physics step exactly once. Consumers
+            // that still run in Update (`Carrier`, for the pickup) then see it until this line
+            // runs, which is what stops a press being dropped entirely on a frame that happens to
+            // carry no physics step at all.
+            Intent.CommitFrame();
         }
 
         private void ApplyGravity(float dt)

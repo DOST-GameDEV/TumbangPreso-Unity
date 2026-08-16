@@ -87,10 +87,26 @@ namespace TumbangPreso
 
             intent.AimPoint = ReadAimPoint();
 
-            // ⚠️ COMMIT ONCE, AT THE END, AFTER EVERY Set. The edge queries (JustPressed /
-            // JustReleased) are derived from the diff against this snapshot, so committing
-            // mid-frame would make a verb read as never pressed.
-            intent.CommitFrame();
+            // ⚠️⚠️ THE COMMIT DOES NOT HAPPEN HERE, AND DOING IT HERE IS WHY JUMP AND GRAB DID
+            // NOTHING. The edge queries are a diff against the last committed snapshot, and this
+            // ran at the end of every Update. Unity's order within a frame is FixedUpdate, then
+            // Update, then LateUpdate — so by the time the next FixedUpdate asked
+            // `JustPressed(Jump)`, this had already copied the held set over the previous one and
+            // the answer was false. Every verb resolved in the physics step therefore read as
+            // never pressed, on a human AND on a bot: `CharacterMotor.ApplyGravity` reads
+            // `JustPressed(Verb.Jump)` and `CombatVerbs` reads the shove and the lunge the same
+            // way. Reported as *"some controls also dont exist in unity like jump"* and *"u cant
+            // grab shit"*, which are one fault, not two.
+            //
+            // ⚠️ GODOT DOES NOT HAVE THIS PROBLEM AND THAT IS WHY IT WAS MISSED IN THE PORT. A
+            // human there reads `Input.is_action_just_pressed` straight from the engine, which
+            // stays true for the whole frame including `_physics_process`; only an AI-driven unit
+            // keeps a prev table (`_ai_intent_prev`). Collapsing both onto one table is right and
+            // is what keeps a bot pressing the same buttons a human does, but it means the
+            // snapshot has to be taken by the CONSUMER, not by each producer.
+            //
+            // `CharacterMotor.FixedUpdate` takes it, at the end of the authoritative step. See
+            // the note there.
         }
 
         /// <summary>

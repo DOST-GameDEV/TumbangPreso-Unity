@@ -122,13 +122,16 @@ finish everything that is NOT blocked first, then ask one specific question.
 If a turn does end, it ends having just committed and pushed working code, not having
 just explained why more was not attempted.
 
-## 1b · EVERY task ends the same way: WORK → BUILD → HANDOFF
+## 1b · WORK → BUILD → HANDOFF, and BUILD MEANS *EVERYTHING* IS DONE
 
 🧑 2026-08-16: *"ALL TASKS I ASK -> build -> handoff"*.
+🧑 2026-08-16, later the same day, watching a build start with six items still open:
+*"yo why r u building are u done"*, *"ur supposed to build only when ur done with
+everything"*, *"make sure everythings finished when u come back to me"*.
 
-This is the shape of every session now, not a special case for big ones:
+The shape of a session is:
 
-1. **Do the work** and verify it yourself — `dotnet test`, EditMode, PlayMode, and the
+1. **Do ALL the work** and verify it yourself — `dotnet test`, EditMode, PlayMode, and the
    player probes in `tools/` for anything a screenshot would show.
 2. **Build the .exe to the Desktop**, having deleted the previous output folder first.
    An incremental rebuild once kept a corrupted `level1` and cost an hour chasing a fix
@@ -136,9 +139,14 @@ This is the shape of every session now, not a special case for big ones:
 3. **Write the handoff in the chat reply** — never as a file in the repo (§1). It names
    what changed, what was measured, and what the next session should pick up.
 
-⚠️ This does NOT loosen §3b. The .exe is still the LAST step and still comes after the
-work is actually finished; what changed is that finishing now always includes producing
-one, rather than leaving him to build it himself to see what happened.
+⚠️⚠️ **"TASK" MEANS THE WHOLE REQUEST, NOT EACH ITEM IN IT.** The first reading of this
+rule was one build per item of work, and it produced a build while six reported bugs were
+still open. A build is a claim that there is something worth looking at; handing one over
+mid-list wastes exactly the time §3b exists to protect. **If any item he raised is still
+unfinished, keep working — do not build, and do not come back.**
+
+⚠️ This does NOT loosen §3b. The .exe is still the LAST step. What changed is only that
+finishing now always includes producing one, rather than leaving him to build it himself.
 
 ## 1a · Push automatically. Finished means pushed.
 
