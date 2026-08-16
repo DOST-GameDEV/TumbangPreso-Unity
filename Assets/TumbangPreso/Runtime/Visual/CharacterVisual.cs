@@ -23,8 +23,25 @@ namespace TumbangPreso.Visual
     /// </summary>
     public sealed class CharacterVisual : MonoBehaviour
     {
-        private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
-        private static readonly int ColorId = Shader.PropertyToID("_Color");
+        /// <summary>
+        /// ⚠️⚠️ FOUR SPELLINGS, AND WRITING ONLY TWO OF THEM MADE EVERY CHARACTER TINT A SILENT
+        /// NO-OP. A property block writes a NAMED property and is discarded without an error
+        /// when the shader has none by that name — the same failure that shipped both arenas in
+        /// the kit's factory colours while the log reported the pass had run.
+        ///
+        /// The character models are `.glb` and are claimed by glTFast, whose shader names its
+        /// albedo **`baseColorFactor`**. `_BaseColor` is URP's, `_Color` is the built-in
+        /// pipeline's, and `_TintColor` is what older kit materials answer to. Writing all four
+        /// costs four dictionary entries in a block that is already being built and is the only
+        /// way to be right without knowing which shader an imported model arrived on.
+        /// </summary>
+        private static readonly int[] ColourIds =
+        {
+            Shader.PropertyToID("_BaseColor"),
+            Shader.PropertyToID("_Color"),
+            Shader.PropertyToID("baseColorFactor"),
+            Shader.PropertyToID("_TintColor"),
+        };
 
         [SerializeField] private Transform _modelRoot;
         [SerializeField] private float _flashTime = 0.12f;
@@ -157,11 +174,7 @@ namespace TumbangPreso.Visual
 
                 r.GetPropertyBlock(_block);
 
-                // URP uses _BaseColor; the built-in pipeline and some placeholder shaders use
-                // _Color. Writing both is harmless and means the flash works before the real
-                // toon shader lands.
-                _block.SetColor(BaseColorId, shown);
-                _block.SetColor(ColorId, shown);
+                foreach (int id in ColourIds) _block.SetColor(id, shown);
 
                 r.SetPropertyBlock(_block);
             }

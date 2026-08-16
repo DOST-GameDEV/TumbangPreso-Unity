@@ -56,8 +56,106 @@ namespace TumbangPreso.UI
             if (rows == null) return;
 
             Clear(rows);
+            _previews.Clear();
+
+            // ⚠️⚠️ PAGE 1 IS A PREMISE CARD, NOT A LIST OF CHIPS, and converting it as rows is
+            // what left the game's first teaching screen as four words on four brown plates.
+            // `tutorial.gd::_build_premise_strip` puts the four objects the game is ABOUT across
+            // one row in live 3D with their Filipino names under them, because this page has
+            // nothing to hang a chip on: it is naming things, not explaining a rule.
+            if (_page == 0) { BuildPremiseStrip(rows); return; }
 
             foreach (var row in page.Rows) Row(rows, row.Chip, row.Body);
+        }
+
+        private readonly List<ModelPreview> _previews = new List<ModelPreview>();
+
+        private void BuildPremiseStrip(Transform rows)
+        {
+            var stripGo = new GameObject("PremiseStrip");
+            stripGo.AddComponent<RectTransform>();
+            stripGo.transform.SetParent(rows, false);
+
+            var strip = stripGo.AddComponent<HorizontalLayoutGroup>();
+            strip.childControlHeight = true;
+            strip.childControlWidth = true;
+            strip.childForceExpandHeight = false;
+            strip.childForceExpandWidth = true;
+            strip.childAlignment = TextAnchor.MiddleCenter;
+            strip.spacing = 18.0f;
+
+            stripGo.AddComponent<LayoutElement>().preferredHeight =
+                TutorialContent.TileIconMinHeight + 96.0f;
+
+            foreach (var tile in TutorialContent.PremiseTiles) BuildTile(stripGo.transform, tile);
+        }
+
+        private void BuildTile(Transform parent, TutorialContent.Tile tile)
+        {
+            var columnGo = new GameObject($"Tile_{tile.Fil}");
+            columnGo.AddComponent<RectTransform>();
+            columnGo.transform.SetParent(parent, false);
+
+            var column = columnGo.AddComponent<VerticalLayoutGroup>();
+            column.childControlHeight = true;
+            column.childControlWidth = true;
+            column.childForceExpandHeight = false;
+            column.childForceExpandWidth = true;
+            column.childAlignment = TextAnchor.UpperCenter;
+            column.spacing = 4.0f;
+
+            var element = columnGo.AddComponent<LayoutElement>();
+            element.preferredWidth = TutorialContent.TileWidth;
+            element.flexibleWidth = 1.0f;
+
+            var iconGo = new GameObject("Icon");
+            var iconRect = iconGo.AddComponent<RectTransform>();
+            iconGo.transform.SetParent(columnGo.transform, false);
+            iconGo.AddComponent<LayoutElement>().preferredHeight = TutorialContent.TileIconMinHeight;
+
+            var preview = iconGo.AddComponent<ModelPreview>();
+            preview.Attach(iconRect);
+            _previews.Add(preview);
+
+            ShowSubject(preview, tile);
+
+            Color role = tile.Offense ? UiTheme.Offense : UiTheme.Defense;
+
+            var fil = MenuKit.Label(columnGo.transform, tile.Fil, TutorialContent.TileFilSize,
+                                    role, Vector2.zero, Vector2.zero, Vector2.zero,
+                                    TextAnchor.MiddleCenter);
+            fil.gameObject.AddComponent<LayoutElement>().preferredHeight = 56.0f;
+
+            var eng = MenuKit.Label(columnGo.transform, tile.Eng, TutorialContent.TileEngSize,
+                                    UiTheme.CreamMuted, Vector2.zero, Vector2.zero, Vector2.zero,
+                                    TextAnchor.MiddleCenter);
+            eng.gameObject.AddComponent<LayoutElement>().preferredHeight = 32.0f;
+        }
+
+        /// <summary>
+        /// Puts the right rig in the tile, through the same preview the character screen uses,
+        /// so the framing and the material are the ones that screen would give the same subject.
+        /// </summary>
+        private static void ShowSubject(ModelPreview preview, TutorialContent.Tile tile)
+        {
+            var book = RosterBook.Load();
+            if (book == null) return;
+
+            switch (tile.Kind)
+            {
+                case "can":
+                    preview.Show(book.CanArt(0)?.Model, flat: true);
+                    break;
+
+                case "slipper":
+                    int slipper = Roster.IndexIn(Roster.Slippers, TutorialContent.TileSlipperId);
+                    preview.Show(book.SlipperArt(Mathf.Max(0, slipper))?.Model, flat: true);
+                    break;
+
+                default:
+                    preview.Show(book.PersonArt(tile.Index)?.Model, flat: false);
+                    break;
+            }
         }
     }
 }

@@ -168,6 +168,24 @@ namespace TumbangPreso.Core
         }
 
         /// <summary>Wrapped, never-throwing lookup. See the class note on why.</summary>
+        /// <summary>
+        /// The index of an entry by its stable id, or -1.
+        ///
+        /// ⚠️ BY ID, NEVER BY A TYPED INDEX. `character_roster.gd` records that these tables are
+        /// APPEND-ONLY because the index is a wire format, and it has been reordered before: a
+        /// literal index in a caller silently becomes a different character or a different shoe
+        /// the next time somebody inserts an entry, and nothing errors.
+        /// </summary>
+        public static int IndexIn(IReadOnlyList<RosterEntry> entries, string id)
+        {
+            if (entries == null || id == null) return -1;
+
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].Id == id) return i;
+
+            return -1;
+        }
+
         public static RosterEntry At(IReadOnlyList<RosterEntry> entries, int index)
         {
             if (entries == null || entries.Count == 0) return null;

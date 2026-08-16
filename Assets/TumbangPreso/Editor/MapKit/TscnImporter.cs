@@ -323,6 +323,22 @@ namespace TumbangPreso.EditorTools.MapKit
 
             ReportWalls(byPath, report);
 
+            // ⚠️⚠️ THE KILL PLANE CONVERTED AS GEOMETRY WITH NO BEHAVIOUR. Both maps author an
+            // `Area3D` named KillPlane at y = -10 with a 260 m box, and this importer turns that
+            // into a bare GameObject plus a SOLID BoxCollider — so a player who walked off the
+            // arena edge either fell forever or landed on a giant invisible platform, and either
+            // way the round lost them with no way back. Binding the component here rather than
+            // authoring it into the scene keeps the rule that a map is regenerated wholesale.
+            if (byPath.TryGetValue("KillPlane", out var killPlane))
+            {
+                killPlane.gameObject.AddComponent<TumbangPreso.KillPlane>();
+                report.AppendLine("   bound the kill plane");
+            }
+            else
+            {
+                report.AppendLine("   WARNING: no KillPlane node, so a fall off the edge is fatal");
+            }
+
             // ⚠️ THE GAMEPLAY IS INSTALLED BY A COMPONENT, NOT AUTHORED INTO THE MAP. The map
             // is regenerated from the Godot source whenever the builders change, so anything
             // placed here by hand would be lost on the next import. One component means both

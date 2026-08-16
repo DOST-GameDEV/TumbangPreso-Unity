@@ -17,6 +17,9 @@ namespace TumbangPreso.UI
         private Net.NetSession _net;
         private InputField _address;
 
+        /// <summary>`multiplayer_setup.gd` backs out to the mode screen on Escape.</summary>
+        protected override string CancelTarget => SceneFlow.ModeSelect;
+
         protected override void Wire()
         {
             _net = Net.NetSession.Ensure();

@@ -68,11 +68,44 @@ namespace TumbangPreso.Visual
             var renderer = ps.GetComponent<ParticleSystemRenderer>();
             renderer.renderMode = ParticleSystemRenderMode.Billboard;
 
+            // ⚠️⚠️ A RENDERER CREATED IN CODE HAS NO MATERIAL AND UNITY DRAWS THAT IN MAGENTA.
+            // This is the same rule the port ledger opens with, and a particle system is the
+            // easiest place in the project to miss it: the burst still emits, still moves and
+            // still dies on schedule, so everything about it is correct except that the hit
+            // feedback is a spray of bright pink error quads.
+            renderer.sharedMaterial = BurstMaterial;
+
             ps.Play();
 
             // Belt and braces alongside stopAction: if the system is stopped by anything else,
             // the object still goes rather than sitting in the scene forever.
             Object.Destroy(go, Lifetime * 2.0f);
+        }
+
+        private static Material _burstMaterial;
+
+        /// <summary>
+        /// One shared material for every burst. ⚠️ THE SHADER IS RESOLVED RATHER THAN NAMED
+        /// ONCE: this project renders on the built-in pipeline with the URP package present, so
+        /// a single hard-coded name is a magenta spray the day either changes.
+        ///
+        /// ⚠️ VERTEX-COLOURED AND UNTEXTURED ON PURPOSE. The Godot original draws small flat
+        /// points, so the particle's own start colour IS the look, and a default particle
+        /// texture would put a soft glow on a game with no other soft glows in it.
+        /// </summary>
+        private static Material BurstMaterial
+        {
+            get
+            {
+                if (_burstMaterial != null) return _burstMaterial;
+
+                var shader = Shader.Find("Particles/Standard Unlit")
+                             ?? Shader.Find("Sprites/Default")
+                             ?? Shader.Find("Unlit/Color");
+
+                _burstMaterial = new Material(shader) { name = "ImpactBurst" };
+                return _burstMaterial;
+            }
         }
     }
 }

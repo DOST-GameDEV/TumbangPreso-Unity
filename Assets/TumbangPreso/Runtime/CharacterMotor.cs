@@ -363,12 +363,24 @@ namespace TumbangPreso
         }
 
         private float _stunLeft;
+        private float _stunTotal;
+
+        /// <summary>Seconds of stun left, so the HUD can print the number the player needs.</summary>
+        public float StunLeft => _stunLeft;
+
+        /// <summary>What the current stun started at, so a bar can draw a ratio rather than a
+        /// raw number. Reset with the stun, never accumulated.</summary>
+        public float StunTotal => _stunTotal;
 
         /// <summary>⚠️ Max(), NEVER additive. That is the entire bound on a stun chain in a
         /// 1-vs-3 game.</summary>
         public void ApplyStagger(float duration)
         {
             _stunLeft = Combat.ApplyStagger(_stunLeft, duration);
+
+            // The bar's denominator follows the same Max: a short stun landing inside a longer
+            // one must not rescale the bar and make the remaining time look like it grew.
+            _stunTotal = Mathf.Max(_stunTotal, _stunLeft);
         }
 
         public void ApplyImpulse(Vector3 impulse)
@@ -385,7 +397,10 @@ namespace TumbangPreso
 
         private void Update()
         {
-            if (_stunLeft > 0.0f) _stunLeft = Mathf.Max(0.0f, _stunLeft - Time.deltaTime);
+            if (_stunLeft <= 0.0f) return;
+
+            _stunLeft = Mathf.Max(0.0f, _stunLeft - Time.deltaTime);
+            if (_stunLeft <= 0.0f) _stunTotal = 0.0f;
         }
     }
 }

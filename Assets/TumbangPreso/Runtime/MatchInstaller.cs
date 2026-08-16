@@ -38,6 +38,7 @@ namespace TumbangPreso
                 : Mathf.Clamp(GameLaunch.SoloSeat, 0, Balance.PlayerCount - 1);
 
         private RosterBook _book;
+        private bool _spectating;
 
         /// <summary>
         /// ⚠️ SET BEFORE LOADING AN ARENA FOR A PREVIEW. The setup screen renders the chosen map
@@ -74,10 +75,30 @@ namespace TumbangPreso
                 slippers[slot] = BuildSlipper(slot);
             }
 
+            // ⚠️⚠️ THE SEATS ARE REGISTERED AND GIVEN THEIR ROLES BEFORE THE HUD IS BUILT, AND
+            // NOT ONLY WHEN THE ROUND STARTS. `main.gd` does both at spawn. Deferring them to
+            // `SliceRunner.Begin` meant the whole ready-up window — the first thing a player
+            // ever sees of a match — had no registered players and no assigned taya, so the
+            // scoreboard printed "P1..P4" instead of the cast's names, the round line said
+            // "TAYA: P1" whoever was actually defending, and the role objective told the taya to
+            // knock the lata down. All three were visible in the report's screenshot.
+            int firstDefender = MatchRules.DefenderSlotFor(1);
+
+            GameServices.Round.Clear();
+            GameServices.Round.Lata = lata;
+
+            for (int slot = 0; slot < seats.Length; slot++)
+            {
+                if (seats[slot] == null) continue;
+
+                seats[slot].IsDefender = slot == firstDefender;
+                GameServices.Round.Register(seats[slot]);
+            }
+
             // ⚠️ THE CAMERA FOLLOWS THE SEAT THE PLAYER CHOSE, not seat 0. A spectator has no
             // seat at all, so it falls back to the first one and the spectator rig takes over.
             int human = Mathf.Max(0, HumanSeat);
-            BuildCameraAndHud(seats[human]);
+            BuildCameraAndHud(seats[human], lata);
 
             var runner = gameObject.AddComponent<SliceRunner>();
             runner.Lata = lata;
@@ -90,9 +111,23 @@ namespace TumbangPreso
             // for anything a human will look at.
             runner.AutoStart = !UseReadyGate;
 
+            // ⚠️⚠️ EVERYBODY IS PLACED BEFORE THE READY WINDOW OPENS, NOT WHEN THE ROUND STARTS.
+            // `main.gd` spawns the four on their role marks and THEN waits for R; the free-roam
+            // window is meant to be spent walking around the arena you are about to play in.
+            // Placing them only in `OnRoundStarted` left all four stacked on the world origin
+            // underneath the countdown, so the opening shot was an empty street — which is
+            // exactly what the report's screenshot of the Unity build shows.
+            if (UseReadyGate) runner.ResetWorld(MatchRules.DefenderSlotFor(1));
+
             if (UseReadyGate) BuildReadyGate(seats[human], runner);
 
-            GameServices.Music?.Play("match", GameServices.MatchTrack);
+            // ⚠️⚠️ THE MATCH BED IS NOT STARTED HERE WHEN A READY GATE OWNS THE OPENING. It
+            // starts on the first countdown tick instead — see `Hud.ShowCountdownTick`, which
+            // carries `audio_manager.gd`'s reasoning. Starting it at load put the match music
+            // under the free-roam window and under the countdown, which is a different opening
+            // from the one the game was cut to. A headless probe has no gate and no countdown,
+            // so it still needs the bed started here or the run is silent.
+            if (!UseReadyGate) GameServices.Music?.Play("match", GameServices.MatchTrack);
         }
 
         /// <summary>
@@ -137,9 +172,9 @@ namespace TumbangPreso
         {
             var go = new GameObject($"Slipper{slot}");
 
-            // Seat 0 wears the player's own pick; the bots get one each so the four are
+            // The player's own seat wears their pick; the bots get one each so the four are
             // visibly different, which is what the owner arrow and glow read against.
-            int pick = slot == 0 ? Settings.SettingsStore.Current.SlipperPick : slot;
+            int pick = slot == HumanSeat ? Settings.SettingsStore.Current.SlipperPick : slot;
             var art = _book != null ? _book.SlipperArt(pick) : null;
 
             if (art != null && art.Model != null)
@@ -161,9 +196,9 @@ namespace TumbangPreso
             s.OwnerSlot = slot;
             s.SkinIndex = pick;
 
-            // Seat 0 is the local player, so seat 0's slipper is the one that glows. Per-peer
-            // by construction: nothing about this crosses the wire.
-            s.SetOwnerGlow(slot == 0);
+            // The local player's slipper is the one that glows, and the local player is whichever
+            // seat they chose. Per-peer by construction: nothing about this crosses the wire.
+            s.SetOwnerGlow(slot == HumanSeat);
 
             return s;
         }
@@ -215,11 +250,23 @@ namespace TumbangPreso
             var motor = go.AddComponent<CharacterMotor>();
             motor.PlayerSlot = slot;
 
-            // ⚠️ SEAT 0 WEARS THE PLAYER'S OWN PICK. -1 is legal and resolves to neutral, which
-            // is exactly what an AI seat and a peer on an older build both get.
-            motor.CharacterIndex = slot == 0
+            // ⚠️⚠️ ONLY THE HUMAN SEAT IS A HUMAN, AND EVERY OTHER ROW HAS TO SAY SO. `IsBot`
+            // is what `DisplayName()` branches on: a bot wears its CHARACTER's name (MARING,
+            // LOLA PACING) and a human wears the name they typed in Settings. Left false on
+            // every seat, all four rows printed "P1".."P4" — which is 🧑's *"make sure the bot
+            // names show up everywhere they have to / Not p1 p2 p3 p4"* exactly.
+            motor.IsBot = slot != HumanSeat;
+
+            if (slot == HumanSeat) motor.PlayerName = Settings.SettingsStore.Current.PlayerName;
+
+            // ⚠️⚠️ THE PLAYER'S SEAT WEARS THE PLAYER'S OWN PICK, AND THAT IS NOT SEAT 0.
+            // `GameLaunch.SoloSeat` defaults to P2 and the setup screen exists to change it, so
+            // hard-coding seat 0 gave the player's chosen fighter to a bot and handed the player
+            // whatever the roster's second entry happened to be. -1 is legal and resolves to
+            // neutral, which is what a peer on an older build gets.
+            motor.CharacterIndex = slot == HumanSeat
                 ? Settings.SettingsStore.Current.CharacterPick
-                : slot;
+                : AiCharacterIndex(slot);
 
             go.AddComponent<Carrier>();
             go.AddComponent<CombatVerbs>();
@@ -260,6 +307,14 @@ namespace TumbangPreso
             if (human) go.AddComponent<PlayerInputReader>();
             else go.AddComponent<AIController>();
 
+            // ⚠️⚠️ THE AIM ARC WAS BUILT AND NEVER CREATED. `TrajectoryPreview` is a full port
+            // of `trajectory_preview.gd` and no code path in the project ever instantiated one,
+            // so the dotted line showing where a charged throw will land — a feature the Godot
+            // build has had since 2026-07-30 — was simply absent from every build. It gates
+            // itself on being the local first-person view, so attaching it to every seat costs
+            // nothing and survives the camera moving to another seat.
+            TrajectoryPreview.AttachTo(motor);
+
             return motor;
         }
 
@@ -293,7 +348,7 @@ namespace TumbangPreso
             gate.Open(local);
         }
 
-        private void BuildCameraAndHud(CharacterMotor local)
+        private void BuildCameraAndHud(CharacterMotor local, Lata lata)
         {
             // ⚠️ THE MAP MAY ALREADY CARRY A CAMERA from its Godot original. Reuse it rather
             // than adding a second, because two enabled cameras render over each other and it
@@ -316,8 +371,80 @@ namespace TumbangPreso
             if (rig == null) rig = camGo.AddComponent<CameraSystem.CameraRig>();
             rig.Follow(local);
 
+            // ⚠️⚠️ SPECTATING IS A REAL FIFTH OPTION AND NOTHING EVER SELECTED IT. The setup
+            // screen's SPECTATE button writes `GameLaunch.Spectator`, `HumanSeat` correctly
+            // answers -1, and then the installer fell back to seat 0 and gave the player a
+            // first-person camera bolted to a bot. `SpectatorCamera` has been converted and
+            // audited line by line since 2026-08-15 and had no call site at all: the camera was
+            // done, nothing selected it.
+            //
+            // ⚠️ THE GAMEPLAY RIG IS TURNED OFF RATHER THAN LEFT RUNNING BESIDE IT. Two enabled
+            // cameras render over each other, and the FPP rig would keep writing the followed
+            // bot's yaw from the mouse while the spectator flew.
+            _spectating = GameLaunch.Spectator;
+
+            if (_spectating)
+            {
+                rig.SetActive(false);
+
+                var specGo = new GameObject("SpectatorCamera");
+                specGo.tag = "MainCamera";
+                specGo.AddComponent<CameraSystem.SpectatorCamera>();
+            }
+
             var hudGo = new GameObject("HUD");
-            hudGo.AddComponent<UI.Hud>().Bind(local);
+            var hud = hudGo.AddComponent<UI.Hud>();
+            hud.Bind(local);
+
+            // The HUD STRIPS for a watcher rather than being replaced: the clock and the
+            // scoreboard are facts about the match and are what somebody watching wants.
+            if (_spectating) hud.EnterSpectatorMode();
+
+            // ⚠️⚠️ THE TOASTS AND THE KNOCKDOWN FLASH WERE BUILT AND NEVER SUBSCRIBED. `hud.gd`
+            // connects five signals in `_ready`; the converted HUD had the methods and nothing
+            // ever called them, so the can going over, the can coming back up and a tag landing
+            // all happened in complete silence on screen. These are the moments the whole round
+            // is made of.
+            //
+            // ⚠️ AND EACH ONE IS WRITTEN FROM THE LOCAL PLAYER'S POINT OF VIEW. A defender is
+            // told to reset it; an attacker is told who knocked it down; a tagged player and the
+            // taya who tagged them read two different lines about the same event. A toast that
+            // says the same thing to everybody is a scoreboard, not feedback.
+            if (lata != null)
+            {
+                lata.UprightChanged += up =>
+                {
+                    hud.SetDownedFlash(!up);
+
+                    if (up) { hud.ShowToast("LATA IS BACK UP", 1.2f); return; }
+
+                    hud.ShowToast(local.IsDefender ? "LATA DOWN  ·  RESET IT"
+                                                   : "LATA DOWN", 1.6f);
+                };
+            }
+
+            // ⚠️ THE RESPAWN NEEDS A LINE ON SCREEN. `main.gd::_on_character_respawned` toasts
+            // "OUT OF BOUNDS": falling off the world teleports you back with no animation and no
+            // sound of its own, so without this the player is simply somewhere else with no
+            // explanation and reads it as the game glitching.
+            foreach (var plane in FindObjectsByType<KillPlane>(FindObjectsSortMode.None))
+            {
+                plane.CharacterRespawned.AddListener(who =>
+                {
+                    if (who == local) hud.ShowToast("OUT OF BOUNDS", 1.5f);
+                });
+            }
+
+            if (GameServices.Round != null)
+            {
+                GameServices.Round.Tagged += (taya, victim) =>
+                {
+                    if (local.PlayerSlot == victim)
+                        hud.ShowToast("TAGGED  ·  BACK TO THE SAFE ZONE", 2.0f);
+                    else if (local.PlayerSlot == taya)
+                        hud.ShowToast($"TAG  ·  {NameForSlot(victim)}", 1.4f);
+                };
+            }
 
             // The match-end board. Present from the start and listening; it shows itself when
             // MatchEnded fires.
@@ -329,7 +456,13 @@ namespace TumbangPreso
             // rule applies either way — every line has exactly one call site.
             if (GameServices.Match != null)
             {
-                GameServices.Match.RoundStarted += (round, _) =>
+                // ⚠️ THE MATCH TAKES THE MOUSE. Godot sets `MOUSE_MODE_CAPTURED` when the arena
+            // loads; without it the pointer stays free over a first-person game, drifts onto a
+            // second monitor mid-round, and every click goes to whatever is behind the window.
+            // A spectator flies with the mouse too, so this covers both.
+            UI.CursorMode.Capture();
+
+            GameServices.Match.RoundStarted += (round, _) =>
                     GameServices.Voice?.OnRoundStarted(round);
 
                 GameServices.Match.MatchEnded += slot =>
@@ -351,6 +484,46 @@ namespace TumbangPreso
 
             var pauseGo = new GameObject("PauseHost");
             pauseGo.AddComponent<PauseWatcher>().Local = local;
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE BOTS ARE SPREAD ACROSS THE ROSTER, NOT NUMBERED OFF THE SEAT.
+        /// `main.gd::AI_PERSON_SPREAD` is `[0, 3, 6, 9]`, so the three bots come from four
+        /// corners of a twelve-entry cast and the street reads as four different kids. Using
+        /// the seat index gave seats 0-3 the FIRST FOUR roster entries every single match, which
+        /// is why the Unity build's scoreboard always read BERTO / MARING / TOTOY / INDAY while
+        /// the Godot one varied.
+        ///
+        /// ⚠️ AND IT WALKS FORWARD ON A COLLISION rather than adding a random offset, which
+        /// keeps the whole thing a pure function of the seat and the set already taken.
+        /// </summary>
+        private int AiCharacterIndex(int slot)
+        {
+            int size = Roster.People.Count;
+            if (size <= 0) return 0;
+
+            int start = AiPersonSpread[slot % AiPersonSpread.Length] % size;
+
+            // The human's own pick is taken; a bot must not wear the player's face.
+            int human = HumanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
+
+            for (int step = 0; step < size; step++)
+            {
+                int candidate = (start + step) % size;
+                if (candidate != human) return candidate;
+            }
+
+            return start;
+        }
+
+        private static readonly int[] AiPersonSpread = { 0, 3, 6, 9 };
+
+        /// <summary>The seat's name for a toast. Falls back to the seat label when the slot is
+        /// genuinely nameless, which is what a disconnect looks like before the AI takes over.</summary>
+        private static string NameForSlot(int slot)
+        {
+            var who = GameServices.Round?.PlayerAt(slot);
+            return who != null ? who.DisplayName() : $"P{slot + 1}";
         }
     }
 }

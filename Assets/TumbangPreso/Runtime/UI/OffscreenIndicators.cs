@@ -88,6 +88,21 @@ namespace TumbangPreso.UI
             return rect;
         }
 
+        /// <summary>
+        /// R-28 — the lata arrow takes the LOCAL player's ROLE colour.
+        ///
+        /// ⚠️ DRIVEN OFF THE LOCAL UNIT, NOT OFF WHICHEVER SIDE DEFENDS. Only the local
+        /// character knows which side the person holding this keyboard is on, and this arrow and
+        /// the crosshair are the two in-world markers that answer "what am I doing".
+        /// </summary>
+        public void SetCanArrowColour(Color colour)
+        {
+            if (_canArrow == null) return;
+
+            var label = _canArrow.GetComponent<Text>();
+            if (label != null) label.color = colour;
+        }
+
         /// <summary>Called once a frame by the HUD with the already-resolved local unit.</summary>
         public void UpdateArrows(CharacterMotor local, Carrier carrier, Transform ownSlipper,
             Transform can)

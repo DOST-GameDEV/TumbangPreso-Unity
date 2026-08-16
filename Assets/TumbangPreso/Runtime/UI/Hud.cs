@@ -6,46 +6,756 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// The in-match HUD, built from code.
+    /// The in-match HUD, ported from `hud.gd` (1,588 lines) onto `HUD.tscn`'s arrangement.
     ///
-    /// ⚠️⚠️ IT ASKS THE RULES, IT DOES NOT MIRROR THEM. The VULNERABLE row comes from
+    /// ⚠️⚠️ IT ASKS THE RULES, IT DOES NOT MIRROR THEM. The VULNERABLE warning comes from
     /// `IsTaggable`, which is the same call the tag itself makes, and the crosshair comes from
     /// `CanThrow`, which is the same call the throw makes. That is a rule and not a
     /// convenience: a HUD with its own opinion about legality will eventually promise safety
     /// the tag ignores, or grey out a throw the rules would have allowed, and the player sees
     /// no reason for either.
     ///
-    /// ⚠️ BUILT IN CODE RATHER THAN AUTHORED, for the same reason the arena is. It can be
-    /// diffed, it can be regenerated, and it cannot drift away from the constants it displays.
-    /// The visual design is deliberately plain: the real look uses the team's own wood-panel
-    /// chrome and their own font, and that is Phase 6 art rather than Phase 3 plumbing.
+    /// ⚠️⚠️ IT IS WOOD AND AMBER, NOT PLAIN CARDS, AND THAT WAS A REPORTED BUG BEFORE. 🧑
+    /// 2026-07-30, on the Godot build: the mid-game HUD *"kinda doesnt look like our theme (menu
+    /// and lobby), it looks ugly and plain and confusing"*, and then on the first Unity capture,
+    /// *"ugly ui btw, not even same theme what is that white box"*. The front end is wood and
+    /// amber; a HUD in a different design language is the one the player spends the whole match
+    /// looking at. Every surface here is built from the same `GodotTheme` the menus use, so it
+    /// cannot drift away from them again.
     ///
-    /// ⚠️ LEGACY UI TEXT ON PURPOSE, NOT AN OVERSIGHT. TextMeshPro needs a font asset built
-    /// from a real font file, and the game's font is not imported yet. Legacy Text with a
-    /// built-in font has no asset dependency at all, which means the HUD works in a headless
-    /// test and in a freshly cloned repo. Swap it when the real font lands.
+    /// ⚠️ THE THREE FLOATING LINES ARE STYLISED TEXT, NOT PANELS. The objective, the ready
+    /// prompt and the toast started as bare text, illegible over the orange viewmodel arms; the
+    /// first fix gave all three a wood plate and the plates were rejected on sight: *"it kinda
+    /// looks ugly with that hud/ui, can u js do text there but stylized, right color and font"*.
+    /// Correct call. Legibility comes from a heavy INK outline instead, the same trick the
+    /// screen-edge arrows use, because an outlined glyph survives sky, asphalt and a lit orange
+    /// arm without adding another rectangle to a screen that has enough of them.
     /// </summary>
     public sealed class Hud : MonoBehaviour
     {
+        /// <summary>INK outline on the free-floating lines. Heavy, because it has to carry
+        /// role-orange text over a role-orange viewmodel arm.</summary>
+        public const int TextOutline = 8;
+
+        /// <summary>The crosshair sits at dead centre of the busiest part of an FPP frame, so
+        /// its outline is heavier still relative to its size.</summary>
+        public const int CrosshairOutline = 5;
+
+        /// <summary>
+        /// ⚠️ THE HELD DANGER TINT IS 0.16, NOT THE FLASH'S 0.45, and the distinction is the
+        /// whole reconciliation. Two states last tens of seconds — the taya's can being down,
+        /// and an attacker being catchable — and a full-screen red rect held at flash strength
+        /// *"reads as the renderer being broken: measured on the first captured frame of a live
+        /// match, the entire arena was washed red"*. 0.16 tints the frame enough to be noticed
+        /// in peripheral vision and stays readable through for a whole round. The knockdown
+        /// PULSE is kept on top of it, so the moment still punches.
+        /// </summary>
+        public const float DangerHoldAlpha = 0.16f;
+
+        public const float DownedFlashTime = 0.45f;
+        public const float DownedFlashPeak = 0.45f;
+
+        public const int StatusRowLimit = 4;
+        public const int StatusFontSize = 20;
+        public const int TayaBadgeFontSize = 15;
+        public const string TayaBadge = "TAYA";
+
+        private static readonly Vector2 StatusBarSize = new Vector2(190, 8);
+        private static readonly Vector2 StatusMargin = new Vector2(38, 150);
+        public const float StatusUnderBoardGap = 18.0f;
+
         [SerializeField] private CharacterMotor _local;
 
         private Canvas _canvas;
-        private Text _timer;
-        private Text _round;
-        private Text _status;
-        private Image _staminaFill;
-        private Image _crosshair;
+        private RectTransform _root;
 
-        private readonly List<StatusRow> _rows = new List<StatusRow>();
+        private Text _timer;
+        private Image _timerCard;
+        private RectTransform _timerCardRt;
+        private Text _round;
+
+        private Image _scoreboard;
+        private Text _scoreTitle;
+        private readonly Text[] _scoreNames = new Text[Balance.PlayerCount];
+        private readonly Text[] _scoreMarks = new Text[Balance.PlayerCount];
+        private readonly Text[] _scoreValues = new Text[Balance.PlayerCount];
+        private RectTransform _scoreboardRt;
+
+        private Image _lataCard;
+        private Text _lataLabel;
+        private Text _lataHint;
+
+        private Text _toast;
+        private float _toastLeft;
 
         private Text _countdown;
+        private float _countdownPop;
+        private RectTransform _countdownRt;
+
         private Text _readyPrompt;
+        private Text _readyObjective;
+
+        private Image _dangerFlash;
+        private bool _dangerHeld;
+        private float _flashLeft;
+
+        private Text _vulnerable;
+        private Text _crosshair;
+
         private OffscreenIndicators _indicators;
 
+        private readonly List<StatusRow> _rows = new List<StatusRow>();
+        private readonly List<StatusRow> _states = new List<StatusRow>();
+        private readonly List<StatusRow> _cooldowns = new List<StatusRow>();
+
+        private RectTransform _stackLeft;
+        private RectTransform _stackRight;
+        private readonly List<StatusWidget> _rowsLeft = new List<StatusWidget>();
+        private readonly List<StatusWidget> _rowsRight = new List<StatusWidget>();
+
+        /// <summary>One drawn status row: its label and its bar. A plain struct rather than a
+        /// second MonoBehaviour, because a file may only hold one.</summary>
+        private struct StatusWidget
+        {
+            public GameObject Root;
+            public Text Label;
+            public Image Fill;
+            public Image Back;
+        }
+
+        // -------------------------------------------------------------------
+
+        public void Bind(CharacterMotor local) => _local = local;
+
         /// <summary>
-        /// The screen-edge arrows. Resolved here rather than inside the indicator, because
-        /// the HUD already works out the local unit once a frame and a second scan would be
-        /// a second answer to the same question.
+        /// "Walk around freely. Press [R] when you're ready to start the round." — the pre-round
+        /// free-roam prompt. Driven by <see cref="ReadyGate"/>; the HUD does not decide when the
+        /// window is open.
+        ///
+        /// ⚠️ IT ALSO RAISES THE ROLE OBJECTIVE. The ready phase is the last screen before the
+        /// round and it used to say only how to START one, never what the player was about to be
+        /// doing in it — dead air at exactly the moment somebody who has just read the tutorial
+        /// needs it confirmed.
+        /// </summary>
+        public void ShowReadyPrompt(bool show)
+        {
+            if (_readyPrompt != null) _readyPrompt.enabled = show;
+            RefreshObjective(show);
+        }
+
+        /// <summary>
+        /// ⚠️ THE OBJECTIVE IS DERIVED HERE, NOT PASSED IN, so it cannot drift out of step with
+        /// the role the scoreboard is drawing. Blank when the role cannot be established: NO
+        /// objective is a better failure than confidently telling somebody to guard the lata
+        /// they are about to throw a slipper at.
+        /// </summary>
+        private void RefreshObjective(bool active)
+        {
+            if (_readyObjective == null) return;
+
+            if (!active || _local == null)
+            {
+                _readyObjective.enabled = false;
+                return;
+            }
+
+            bool defending = _local.IsDefender;
+
+            // Two sentences for the taya because it IS two jobs, and a player who only hears
+            // "guard the lata" stands on the base and never tags anybody. Two for the attacker
+            // for the same reason: the retrieval run is the half people miss.
+            _readyObjective.text = defending
+                ? "GUARD THE LATA.  TAG ANYONE HOLDING A SLIPPER."
+                : "KNOCK THE LATA DOWN.  RETRIEVE FROM THE BOX.";
+
+            _readyObjective.color = defending ? UiTheme.Defense : UiTheme.Offense;
+            _readyObjective.enabled = true;
+        }
+
+        /// <summary>
+        /// One tick of the 3 · 2 · 1 · GO!. Each tick pops in oversize and settles, which reads
+        /// far more like a countdown than a static label swap would — the punch is the whole
+        /// effect at this size.
+        /// </summary>
+        public void ShowCountdownTick(string tick)
+        {
+            if (_countdown == null) return;
+
+            // ⚠️ THE SOUND IS PLAYED FROM HERE, NOT FROM THE GATE, so every caller gets it for
+            // free and the pop animation and its sound can never drift apart by a frame. The
+            // announcer's "Tatlo! Dalawa! Isa! Simula!" is wired separately, off the same event.
+            GameServices.Audio?.PlayAt(tick == "GO!" ? "countdown_go" : "countdown_tick",
+                                       UnityEngine.Camera.main != null
+                                           ? UnityEngine.Camera.main.transform.position
+                                           : Vector3.zero);
+
+            // ⚠️⚠️ THE MATCH BED STARTS AT THE FIRST COUNTDOWN TICK, NOT WHEN THE ARENA LOADS.
+            // `audio_manager.gd` hooks it on exactly this cue and explains why: the round does
+            // not begin until AFTER the countdown finishes, so starting the bed on round-start
+            // left the menu bed playing under the entire 3 · 2 · 1 and crossfading on "GO!",
+            // late by the length of the countdown. 🧑 2026-08-01: *"Remove the audio latency
+            // during round initialization. RoundMusic should begin playing immediately."*
+            if (tick != "GO!" && GameServices.Music != null
+                && GameServices.Music.Current != "match")
+            {
+                GameServices.Music.Play("match", GameServices.MatchTrack);
+            }
+
+            _countdown.enabled = true;
+            _countdown.text = tick;
+
+            // HIGHLIGHT matches the same urgency tint the round timer uses under 15 s, so it
+            // reads as the same game system rather than as a one-off UI element.
+            _countdown.color = UiTheme.Highlight;
+            _countdownPop = 0.35f;
+        }
+
+        public void HideCountdown()
+        {
+            if (_countdown != null) _countdown.enabled = false;
+            _countdownPop = 0.0f;
+        }
+
+        /// <summary>Brief on-screen call-out for a locally-relevant event that is not otherwise
+        /// visible on the HUD.</summary>
+        public void ShowToast(string text, float duration = 1.5f)
+        {
+            if (_toast == null) return;
+
+            _toast.text = text;
+            _toast.enabled = true;
+            _toastLeft = duration;
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A PULSE, NOT A STATE, AND THAT DISTINCTION IS THE WHOLE BUG. This was
+        /// `visible = active` driven by whether the LATA was down, which in a real round is most
+        /// of the time. A full-screen red rect left on for forty seconds does not read as
+        /// feedback, it reads as the renderer being broken.
+        /// </summary>
+        public void SetDownedFlash(bool active)
+        {
+            if (_dangerFlash == null) return;
+
+            if (!active)
+            {
+                _flashLeft = 0.0f;
+                ApplyDangerHold();
+                return;
+            }
+
+            _flashLeft = DownedFlashTime;
+        }
+
+        // -------------------------------------------------------------------
+
+        private void Awake() => Build();
+
+        private void OnEnable()
+        {
+            if (GameServices.Match != null) GameServices.Match.Scored += OnScored;
+        }
+
+        private void OnDisable()
+        {
+            if (GameServices.Match != null) GameServices.Match.Scored -= OnScored;
+        }
+
+        /// <summary>
+        /// ⚠️ ONLY THE LOCAL PLAYER'S OWN AWARDS POP A FLOATER, AND THE PASSIVE TICK NEVER DOES.
+        /// Passive defence fires every single second of every round; toasting it would be a
+        /// message that never leaves the screen and says nothing while it is there. The
+        /// scoreboard already carries that number.
+        /// </summary>
+        private void OnScored(int slot, ScoreEvent e)
+        {
+            if (e == ScoreEvent.DefenseTick) return;
+            if (_local == null || _local.PlayerSlot != slot) return;
+
+            ShowToast($"+{MatchRules.PointsFor(e)}  {LabelOf(e)}", 1.2f);
+        }
+
+        private static string LabelOf(ScoreEvent e)
+        {
+            switch (e)
+            {
+                case ScoreEvent.LataKnocked: return "LATA DOWN";
+                case ScoreEvent.Sabotage: return "SABOTAGE";
+                case ScoreEvent.Tag: return "TAG";
+                default: return "DEFENSE";
+            }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE CLEAN FEED IS SPECTATOR ONLY, AND THAT IS ENFORCED RATHER THAN DOCUMENTED.
+        /// 🧑 2026-07-31: *"allow option to remove everything in screen to js do record the game
+        /// bcz we only added spectator for the video record"*, then explicitly: *"the remove hud
+        /// is only for spectator okay, no one else."* A player in a live match must not be able
+        /// to hide their own timer, status stack and charge meters by leaning on a key, which
+        /// would be a competitive advantage handed out by a typo.
+        ///
+        /// ⚠️ IT HIDES THE ROOT, NOT EACH CHILD, AND THE PER-CHILD VERSION WAS A BUG. 🧑
+        /// 2026-08-02: *"clicking H doesnt hide all huds for spectator ... theres popup huds
+        /// midgame and shi"*. Walking the children once at the moment H is pressed is a
+        /// SNAPSHOT, not a state: every transient here shows ITSELF later and unconditionally —
+        /// the toast, the countdown, the flash, the lata card — so anything that fired after H
+        /// went straight back on screen over a "clean" plate. A hidden parent cannot be
+        /// out-voted by a child setting its own visibility, and it deletes the restore
+        /// bookkeeping outright.
+        /// </summary>
+        public void EnterSpectatorMode()
+        {
+            _spectating = true;
+
+            // Every gameplay element on this HUD describes a character and a spectator has
+            // none, so they would draw nothing and read as a broken HUD rather than a
+            // deliberate one. The timer and the scoreboard stay: those are facts about the
+            // MATCH, and they are exactly what somebody watching wants.
+            _lataCard.gameObject.SetActive(false);
+            _crosshair.enabled = false;
+            _vulnerable.enabled = false;
+            _readyPrompt.enabled = false;
+            _readyObjective.enabled = false;
+            _dangerFlash.enabled = false;
+
+            if (_stackLeft != null) _stackLeft.gameObject.SetActive(false);
+            if (_stackRight != null) _stackRight.gameObject.SetActive(false);
+            if (_indicators != null) _indicators.gameObject.SetActive(false);
+        }
+
+        public bool IsCleanFeed => _cleanFeed;
+
+        private bool _spectating;
+        private bool _cleanFeed;
+
+        /// <summary>
+        /// ⚠️ THE NAMEPLATES AND GROUND RINGS ARE NOT PART OF THIS CANVAS, AND A CLEAN FEED THAT
+        /// LEAVES THEM ON IS NOT CLEAN. 🧑 2026-07-31, with a screenshot: *"turn off character
+        /// labels as well as circles around player when click H, we want H turn off hud to make
+        /// it cinematic so turn off that stuff."* They are world objects parented to each unit,
+        /// which is exactly why the first version of the toggle missed them.
+        ///
+        /// ⚠️ RE-SWEPT ON EVERY TOGGLE rather than remembered, because the roster changes: a
+        /// unit that respawns gets a fresh nameplate this has never seen.
+        /// </summary>
+        public void SetCleanFeed(bool on)
+        {
+            if (on == _cleanFeed) return;
+            _cleanFeed = on;
+
+            foreach (var plate in FindObjectsByType<Visual.CharacterNameplate>(
+                         FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                plate.gameObject.SetActive(!on);
+            }
+
+            if (_canvas != null) _canvas.gameObject.SetActive(!on);
+        }
+
+        private void Update()
+        {
+            // ⚠️ READ BEFORE THE LOCAL-UNIT GUARD. A spectator has no character, so anything
+            // below the guard never runs for them — and they are the only person this key is
+            // for. The toggle also has to keep working while the canvas is hidden, which it
+            // does because this is a component callback and not a UI event.
+            if (_spectating && Input.GetKeyDown(KeyCode.H)) SetCleanFeed(!_cleanFeed);
+
+            if (_local == null || GameServices.Match == null || GameServices.Round == null) return;
+            if (_spectating) return;
+
+            float dt = Time.unscaledDeltaTime;
+
+            UpdateTimer(dt);
+            UpdateScores();
+            UpdateLataCard();
+            UpdateStatus();
+            UpdateDanger();
+            UpdateToast(dt);
+            UpdateCountdown(dt);
+            UpdateIndicators();
+
+            bool live = GameServices.Round.CanThrow(_local);
+            _crosshair.enabled = live;
+
+            // R-28 — the two in-world markers that answer "what am I doing" take the LOCAL
+            // player's role colour: the crosshair they aim with, and the edge arrow pointing at
+            // the lata. Driven off the local unit, not off whichever side defends.
+            Color role = _local.IsDefender ? UiTheme.Defense : UiTheme.Offense;
+            _crosshair.color = role;
+            _indicators?.SetCanArrowColour(role);
+
+            _vulnerable.enabled = _local.IsTaggable();
+        }
+
+        // -------------------------------------------------------------------
+
+        private int _secondsShown = -1;
+        private int _urgent = -1;
+
+        private void UpdateTimer(float dt)
+        {
+            float left = Mathf.Max(0.0f, GameServices.Round.TimeLeft);
+
+            // The announcer's clock warnings ride the same value the clock draws, so "thirty
+            // seconds" is spoken on the frame the HUD first shows 30.
+            GameServices.Voice?.TickClock(left);
+
+            // ⚠️ ONLY ON THE SECOND, NOT EVERY FRAME. The clock has one-second resolution, and
+            // assigning `Text.text` invalidates the mesh and queues a reshape whether or not the
+            // characters changed. Measured in the Godot build: the HUD was 0.20 ms of a 0.47 ms
+            // whole-frame script budget, mostly from three unconditional writes.
+            int t = Mathf.CeilToInt(left);
+            if (t != _secondsShown)
+            {
+                _secondsShown = t;
+                _timer.text = $"{t / 60:00}:{t % 60:00}";
+            }
+
+            // ⚠️ THE CLOCK GOES AMBER UNDER PRESSURE AND PULSES UNDER TEN. Red means destructive
+            // or out of bounds everywhere else in this palette, and a timer running out is
+            // neither: it is the round ending normally, for everybody, on schedule.
+            bool urgent = left < 15.0f;
+            int want = urgent ? 1 : 0;
+
+            if (want != _urgent)
+            {
+                _urgent = want;
+
+                // ⚠️ BACK TO AMBER, NOT TO THE VARIATION'S OWN COLOUR. Falling through would
+                // give the near-white the wood restyle replaced, so the timer would go white
+                // the moment it climbed back over 15 s.
+                _timer.color = urgent ? UiTheme.Highlight : UiTheme.Amber;
+            }
+
+            // A scale pulse rather than a colour flash, to avoid colliding with the danger
+            // vignette that may be running at the same time.
+            float scale = 1.0f;
+            if (left < 10.0f) scale = 1.0f + Mathf.Abs(Mathf.Sin(Time.unscaledTime * Mathf.PI)) * 0.05f;
+
+            if (_timerCardRt != null) _timerCardRt.localScale = Vector3.one * scale;
+
+            // ⚠️ maxi(round, 1). `MatchDirector.RoundNumber` is 0 until the match starts, and
+            // the ready-up window happens BEFORE that: the HUD read "ROUND 0 / 4" over the first
+            // thing a player ever sees. The .gd has clamped this since the format was written.
+            int round = Mathf.Max(1, GameServices.Match.RoundNumber);
+
+            // ⚠️ NAME, NOT SEAT. This used to print "P%d" off the raw slot, so a taya who set a
+            // name in Settings still read as "P3" on the one line that most needs to say who is
+            // playing.
+            _round.text = $"ROUND {round} / {Balance.Rounds}  ·  TAYA: {SeatName(GameServices.Match.DefenderSlot)}";
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE NAME FOR A SEAT WHEN ONLY A SLOT NUMBER IS IN HAND. 🧑 2026-08-02: *"make
+        /// sure the bot names show up everywhere they have to / Not p1 p2 p3 p4"*. Three rows
+        /// built their own "P%d" out of a slot and never asked the character at all, so they
+        /// kept printing P2 after bots learned their names. One function now, for the same
+        /// reason `DisplayName()` is one function: a seat cannot be called two different things
+        /// on two rows of one screen.
+        /// </summary>
+        private static string SeatName(int slot)
+        {
+            var who = GameServices.Round?.PlayerAt(slot);
+            return who != null ? who.DisplayName() : $"P{slot + 1}";
+        }
+
+        private string _scoreStamp = "";
+
+        /// <summary>
+        /// ⚠️ SORTED BY SCORE, NOT BY SEAT, AND THE BADGE SAYS WHO IS DEFENDING. Both halves
+        /// matter: the ranking is the story of the match, and the taya marker is the only thing
+        /// on screen that explains why one player is behaving completely differently from the
+        /// other three.
+        /// </summary>
+        private void UpdateScores()
+        {
+            var m = GameServices.Match;
+
+            // ⚠️⚠️ THE NAMES ARE PART OF THE STAMP, AND LEAVING THEM OUT WAS A REAL BUG. A seat
+            // changing hands renames a row without touching a score, so a board keyed on scores
+            // alone went on showing the name of the human who left until somebody scored.
+            var sb = new System.Text.StringBuilder();
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+                sb.Append(m.ScoreFor(slot)).Append(':').Append(SeatName(slot)).Append('|');
+
+            sb.Append(m.DefenderSlot);
+
+            string stamp = sb.ToString();
+            if (stamp == _scoreStamp) return;
+            _scoreStamp = stamp;
+
+            int[] order = m.Ranking();
+            int mine = _local != null ? _local.PlayerSlot : -1;
+
+            for (int i = 0; i < _scoreNames.Length; i++)
+            {
+                if (_scoreNames[i] == null) continue;
+
+                int slot = order[i];
+                bool isTaya = slot == m.DefenderSlot;
+
+                _scoreNames[i].text = SeatName(slot);
+                _scoreMarks[i].text = isTaya ? TayaBadge : "";
+                _scoreValues[i].text = m.ScoreFor(slot).ToString();
+
+                // ⚠️ NO LEADING BULLET — THE COLOUR IS THE MARK. 🧑 2026-08-02: *"the arrow
+                // makes the names of the characters not aligned"*. The prefix was one character
+                // on your own row against two spaces on every other, so all four names started
+                // at a different x and the column read as ragged. Highlighting the row says the
+                // same thing and costs no width.
+                Color colour = isTaya ? UiTheme.Defense : UiTheme.Offense;
+                if (slot == mine) colour = UiTheme.Highlight;
+
+                _scoreNames[i].color = colour;
+                _scoreValues[i].color = colour;
+            }
+        }
+
+        private int _lataUprightShown = -1;
+        private string _lataHintShown = "￿";
+
+        /// <summary>
+        /// `LataCard` is the one readout every player needs whatever their role: the throw is
+        /// illegal while the lata is down, and the passive score only ticks while it is up.
+        /// </summary>
+        private void UpdateLataCard()
+        {
+            var lata = GameServices.Round.Lata;
+
+            if (lata == null || !GameServices.Round.RoundActive)
+            {
+                _lataCard.gameObject.SetActive(false);
+                return;
+            }
+
+            _lataCard.gameObject.SetActive(true);
+
+            if (_lataUprightShown != (lata.IsUpright ? 1 : 0))
+            {
+                _lataUprightShown = lata.IsUpright ? 1 : 0;
+                _lataLabel.text = lata.IsUpright ? "LATA  ·  UPRIGHT" : "LATA  ·  DOWN";
+                _lataLabel.color = lata.IsUpright ? UiTheme.Defense : UiTheme.Offense;
+            }
+
+            // The second line is what THIS player can do about it, which differs by role and is
+            // the whole reason the card is not just a coloured light.
+            string line = "";
+
+            if (_local.IsDefender)
+            {
+                if (!lata.IsUpright)
+                {
+                    var carrier = _local.GetComponent<Carrier>();
+                    float progress = carrier != null ? carrier.ChannelRatio : 0.0f;
+
+                    line = progress > 0.0f
+                        ? $"RESETTING  {Mathf.RoundToInt(progress * 100.0f)}%"
+                        : "HOLD E IN THE RING";
+                }
+            }
+            else if (!_local.HoldingSlipper)
+            {
+                line = "RETRIEVE A SLIPPER";
+            }
+            else if (_local.IsInsideBox())
+            {
+                line = "GET OUT OF THE BOX TO THROW";
+            }
+
+            if (line == _lataHintShown) return;
+
+            _lataHintShown = line;
+            _lataHint.text = line;
+            _lataHint.enabled = line != "";
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ TWO STACKS, NOT ONE. Status effects on the LEFT, ability cooldowns on the RIGHT.
+        /// Both used to come out of one list into one centred stack, which meant "I am STUNNED"
+        /// and "my shove is recharging" competed for the same four rows — and the two are read
+        /// at different moments and mean different things. One is what is being done TO you, the
+        /// other is what you may do next.
+        ///
+        /// ⚠️ THE SUFFIX IS THE ROUTING KEY, deliberately the LABEL rather than a new field.
+        /// "SHOVE CD", "LUNGE CD" and "THROW CD" all end the same way, so a cooldown added later
+        /// routes correctly the day it is added.
+        /// </summary>
+        private void UpdateStatus()
+        {
+            StatusStack.Collect(_local, _local.GetComponent<Carrier>(),
+                                _local.GetComponent<CombatVerbs>(), _rows);
+
+            _states.Clear();
+            _cooldowns.Clear();
+
+            foreach (var row in _rows)
+            {
+                // ⚠️ VULNERABLE IS FILTERED OUT HERE, NOT REMOVED FROM THE COLLECTOR. The
+                // crosshair says it in words now; the RULE stays where it was, and the list is
+                // still the honest account of what is live on this body.
+                if (row.Label == "VULNERABLE") continue;
+
+                if (row.Label.EndsWith(" CD")) _cooldowns.Add(row);
+                else _states.Add(row);
+            }
+
+            FollowScoreboard();
+            Fill(_stackLeft, _rowsLeft, _states, false);
+            Fill(_stackRight, _rowsRight, _cooldowns, true);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE LEFT STACK SAT ON TOP OF THE SCOREBOARD. Reported with a screenshot of
+        /// "STUNNED 0.2s" drawn straight through the P2 and P4 score rows. Both are anchored
+        /// top-left and the stack's margin was written when it was centred under the timer.
+        /// Derived from the board's real height rather than nudged to a bigger number, because
+        /// a second literal would be wrong again the next time a row is added or a name wraps.
+        /// </summary>
+        private void FollowScoreboard()
+        {
+            if (_stackLeft == null) return;
+
+            float top = StatusMargin.y;
+
+            if (_scoreboardRt != null)
+                top = Mathf.Max(top, 28.0f + _scoreboardRt.rect.height + StatusUnderBoardGap);
+
+            _stackLeft.anchoredPosition = new Vector2(StatusMargin.x, -top);
+        }
+
+        private void Fill(RectTransform root, List<StatusWidget> widgets, List<StatusRow> effects,
+                          bool rightSide)
+        {
+            int wanted = Mathf.Min(effects.Count, StatusRowLimit);
+
+            while (widgets.Count < wanted) widgets.Add(BuildStatusRow(root, rightSide));
+
+            for (int i = 0; i < widgets.Count; i++)
+            {
+                var w = widgets[i];
+
+                if (i >= wanted)
+                {
+                    w.Root.SetActive(false);
+                    continue;
+                }
+
+                var e = effects[i];
+                Color colour = ColourFor(e.Label);
+
+                w.Root.SetActive(true);
+
+                // ⚠️ A ROW WITH NO COUNTDOWN IS A REAL CASE, NOT A BUG. An effect that lasts as
+                // long as the player chooses reports no time and draws as a solid bar; printing
+                // "0.0s" would read as already expired.
+                w.Label.text = e.Timed && e.Remaining > 0.0f
+                    ? $"{e.Label}  {e.Remaining:0.0}s"
+                    : e.Label;
+
+                w.Label.color = colour;
+                w.Fill.color = colour;
+                w.Fill.fillAmount = e.Timed && e.Remaining > 0.0f
+                    ? Mathf.Clamp01(e.Remaining / Mathf.Max(0.01f, e.Total))
+                    : 1.0f;
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ THE COLOUR IS THE MESSAGE. Three bands, and they mean three different things to
+        /// somebody glancing at them mid-fight: DANGER is "you cannot act at all", AMBER is
+        /// "something is spent", HIGHLIGHT is "a countdown you are waiting on".
+        /// </summary>
+        private static Color ColourFor(string label)
+        {
+            switch (label)
+            {
+                case "STUNNED":
+                case "DOWNED":
+                case "VULNERABLE":
+                    return UiTheme.Danger;
+
+                case "FATIGUED":
+                    return UiTheme.Amber;
+
+                default:
+                    return UiTheme.Highlight;
+            }
+        }
+
+        private void UpdateDanger()
+        {
+            // ⚠️ PER-SCREEN, WHICH IS THE HALF THAT MAKES IT INFORMATION. A defender sees their
+            // can is down, an attacker sees they are catchable, and neither sees the other's
+            // warning. A vignette everybody gets at the same time tells nobody anything.
+            bool want;
+
+            if (_local.IsDefender)
+            {
+                var can = GameServices.Round.Lata;
+                want = can != null && !can.IsUpright && GameServices.Round.RoundActive;
+            }
+            else
+            {
+                // ⚠️ `IsTaggable()` IS THE WHOLE CONDITION and is deliberately the same function
+                // the tag asks. "Until they cross back out or get tagged" is not two extra
+                // checks: it is exactly what that function stops returning true for.
+                want = _local.IsTaggable();
+            }
+
+            if (want != _dangerHeld)
+            {
+                _dangerHeld = want;
+                ApplyDangerHold();
+            }
+
+            if (_flashLeft <= 0.0f) return;
+
+            _flashLeft = Mathf.Max(0.0f, _flashLeft - Time.unscaledDeltaTime);
+
+            float a = Mathf.Lerp(0.0f, DownedFlashPeak, _flashLeft / DownedFlashTime);
+
+            _dangerFlash.enabled = true;
+            _dangerFlash.color = new Color(UiTheme.Danger.r, UiTheme.Danger.g, UiTheme.Danger.b,
+                                           Mathf.Max(a, _dangerHeld ? DangerHoldAlpha : 0.0f));
+
+            // ⚠️ HANDS BACK TO THE HELD STATE rather than hiding outright — the knockdown pulse
+            // and the defender's "your can is down" hold fire on the same frame, and clearing
+            // here would cancel the hold the pulse announced.
+            if (_flashLeft <= 0.0f) ApplyDangerHold();
+        }
+
+        private void ApplyDangerHold()
+        {
+            if (_dangerFlash == null) return;
+
+            _dangerFlash.enabled = _dangerHeld;
+            _dangerFlash.color = new Color(UiTheme.Danger.r, UiTheme.Danger.g, UiTheme.Danger.b,
+                                           _dangerHeld ? DangerHoldAlpha : 0.0f);
+        }
+
+        private void UpdateToast(float dt)
+        {
+            if (_toastLeft <= 0.0f) return;
+
+            _toastLeft -= dt;
+            if (_toastLeft <= 0.0f) _toast.enabled = false;
+        }
+
+        private void UpdateCountdown(float dt)
+        {
+            if (_countdownPop <= 0.0f || _countdownRt == null) return;
+
+            _countdownPop = Mathf.Max(0.0f, _countdownPop - dt);
+
+            // Pops in oversize and settles back, which is the whole effect at this size.
+            float k = _countdownPop / 0.35f;
+            _countdownRt.localScale = Vector3.one * Mathf.Lerp(1.0f, 1.8f, k * k);
+        }
+
+        /// <summary>
+        /// The screen-edge arrows. Resolved here rather than inside the indicator, because the
+        /// HUD already works out the local unit once a frame and a second scan would be a second
+        /// answer to the same question.
         /// </summary>
         private void UpdateIndicators()
         {
@@ -53,176 +763,25 @@ namespace TumbangPreso.UI
 
             var carrier = _local.GetComponent<Carrier>();
 
-            // Your own slipper is the one that answers to your seat. `OwnerSlot` is what
-            // makes "yours" well-defined at all.
+            // Your own slipper is the one that answers to your seat. `OwnerSlot` is what makes
+            // "yours" well-defined at all.
             Transform mine = null;
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
-                if (s.OwnerSlot == _local.PlayerSlot) { mine = s.transform; break; }
+            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude,
+                                                         FindObjectsSortMode.None))
+            {
+                if (s.OwnerSlot != _local.PlayerSlot) continue;
+                mine = s.transform;
+                break;
+            }
 
             var lata = GameServices.Round?.Lata;
             _indicators.UpdateArrows(_local, carrier, mine, lata != null ? lata.transform : null);
         }
 
-        public void Bind(CharacterMotor local) => _local = local;
-
-        /// <summary>
-        /// "Press [R] when you're ready" — the pre-round free-roam prompt. Driven by
-        /// <see cref="ReadyGate"/>; the HUD does not decide when the window is open.
-        /// </summary>
-        public void ShowReadyPrompt(bool show)
-        {
-            if (_readyPrompt != null) _readyPrompt.enabled = show;
-        }
-
-        /// <summary>One tick of the 3 · 2 · 1 · GO!, centred.</summary>
-        public void ShowCountdownTick(string tick)
-        {
-            if (_countdown == null) return;
-
-            _countdown.enabled = true;
-            _countdown.text = tick;
-
-            // GO! is the one that reads as a release rather than a count, so it takes the
-            // highlight while the numbers stay cream.
-            _countdown.color = tick == "GO!" ? UiTheme.Highlight : UiTheme.Cream;
-        }
-
-        public void HideCountdown()
-        {
-            if (_countdown != null) _countdown.enabled = false;
-        }
-
-        private void Awake() => Build();
-
-        private void Update()
-        {
-            if (_local == null || GameServices.Match == null || GameServices.Round == null) return;
-
-            UpdateTimer();
-            UpdateScores();
-            UpdateStamina();
-            UpdateStatus();
-            UpdateIndicators();
-
-            _crosshair.enabled = StatusStack.ShowCrosshair(_local);
-        }
-
-        private void UpdateTimer()
-        {
-            float left = Mathf.Max(0.0f, GameServices.Round.TimeLeft);
-
-            // The announcer's clock warnings ride the same value the clock draws, so "thirty
-            // seconds" is spoken on the frame the HUD first shows 30. Each fires once per
-            // round; the director owns that latch.
-            GameServices.Voice?.TickClock(left);
-
-            // ⚠️ MINUTES AND SECONDS, AND THE ROUND ON ITS OWN LINE. `HUD.tscn` draws "01:30"
-            // in the 44px timer face and "ROUND 1 / 4 · TAYA: P1" underneath it in body text.
-            // One run-on line of "ROUND 1/4 89.4s" is a debug readout, not a clock.
-            _timer.text = $"{Mathf.FloorToInt(left / 60.0f):00}:{Mathf.FloorToInt(left % 60.0f):00}";
-
-            if (_round != null)
-            {
-                _round.text = $"ROUND {GameServices.Match.RoundNumber} / {Balance.Rounds}" +
-                              $"  ·  TAYA: P{GameServices.Match.DefenderSlot + 1}";
-            }
-
-            // ⚠️ THE CLOCK GOES AMBER UNDER PRESSURE RATHER THAN RED. Red means destructive or
-            // out of bounds everywhere else in this palette, and a timer running out is
-            // neither: it is the round ending normally, for everybody, on schedule.
-            _timer.color = left <= 10.0f ? UiTheme.Highlight : UiTheme.Cream;
-        }
-
-        private void UpdateScores()
-        {
-            var m = GameServices.Match;
-
-            for (int slot = 0; slot < Balance.PlayerCount; slot++)
-            {
-                if (_scoreNames[slot] == null) continue;
-
-                bool isTaya = slot == m.DefenderSlot;
-
-                _scoreNames[slot].text = NameFor(slot);
-
-                // ⚠️ THE TAYA IS MARKED BY ROLE, NOT BY SEAT NUMBER. It rotates every round, so
-                // a fixed per-seat colour would be telling the player the wrong thing for three
-                // rounds out of four.
-                _scoreNames[slot].color = isTaya ? UiTheme.Card : UiTheme.Offense;
-
-                _scoreMarks[slot].text = isTaya ? "TAYA" : "";
-                _scoreValues[slot].text = m.ScoreFor(slot).ToString();
-            }
-        }
-
-        /// <summary>
-        /// ⚠️ THE NAME, NOT "P3", WHEN THERE IS ONE. An empty name is legal and falls back to
-        /// the seat label, which is the same contract the lobby board keeps: a player who never
-        /// opened Settings still has a row that reads.
-        /// </summary>
-        private static string NameFor(int slot)
-        {
-            if (slot == GameLaunch.SoloSeat)
-            {
-                string chosen = Settings.SettingsStore.Current.PlayerName;
-                if (!string.IsNullOrWhiteSpace(chosen)) return chosen.ToUpperInvariant();
-            }
-
-            var entry = Roster.At(Roster.People, slot);
-            return entry != null ? entry.Name : $"P{slot + 1}";
-        }
-
-        private void UpdateStamina()
-        {
-            float ratio = StatusStack.StaminaRatio(_local);
-            _staminaFill.fillAmount = ratio;
-
-            // ⚠️ THE BAR IS A POINT POOL, NOT A TIMER, and it has to read as one. The pool is
-            // dimensioned to roughly one crossing of the danger zone, so what the player needs
-            // from it is "can I get back out from here", not "how many seconds of running".
-            _staminaFill.color = _local.Stamina.IsFatigued
-                ? UiTheme.Danger
-                : (ratio < 0.25f ? UiTheme.Highlight : UiTheme.Cream);
-        }
-
-        private void UpdateStatus()
-        {
-            StatusStack.Collect(_local, _local.GetComponent<Carrier>(),
-                                _local.GetComponent<CombatVerbs>(), _rows);
-
-            var sb = new System.Text.StringBuilder();
-            foreach (var row in _rows)
-            {
-                sb.Append(row.Label);
-
-                // ⚠️ VULNERABLE PRINTS NO NUMBER AND THAT IS CORRECT. It lasts exactly as long
-                // as the player chooses to stand in the box holding a slipper. Printing
-                // "VULNERABLE 0.0s" would read as an effect that had already expired, at the
-                // single most dangerous moment in the game.
-                if (row.Timed && row.Remaining > 0.0f) sb.Append($"  {row.Remaining:0.0}s");
-                sb.Append('\n');
-            }
-
-            _status.text = sb.ToString();
-            _status.color = _local.IsTaggable() ? UiTheme.Impact : UiTheme.Cream;
-        }
-
+        // -------------------------------------------------------------------
+        // BUILD. The arrangement and every offset are `HUD.tscn`'s.
         // -------------------------------------------------------------------
 
-        /// <summary>
-        /// The arrangement is `HUD.tscn`'s, and so is the styling.
-        ///
-        /// ⚠️⚠️ THE PLAIN VERSION OF THIS WAS PHASE-3 PLUMBING AND IT SHIPPED. Built-in font,
-        /// no cards, no outlines, everything one flat cream: the scoreboard was four lines of
-        /// small text floating on the sky and the timer was a line of yellow above them. The
-        /// real HUD is a translucent INK card top-left, a card around the clock, a card for the
-        /// lata and the YOU card bottom-left, all in a face that carries a 6px ink outline
-        /// because it is read at a glance, mid-sprint, over a live 3D scene.
-        ///
-        /// ⚠️ THE POSITIONS ARE THE .tscn's OFFSETS, NOT PICKED BY EYE. Scoreboard at 16,28
-        /// from the top-left; the clock centred at 28 down; the lata card 16 in from the
-        /// bottom-right. Those were arrived at against these arenas.
-        /// </summary>
         private void Build()
         {
             var canvasGo = new GameObject("HudCanvas");
@@ -239,58 +798,73 @@ namespace TumbangPreso.UI
             // it hands over from on anything that is not 16:9.
             scaler.matchWidthOrHeight = 1.0f;
 
-            BuildScoreboard(canvasGo.transform);
-            BuildClock(canvasGo.transform);
-            BuildStatusCard(canvasGo.transform);
+            canvasGo.AddComponent<GraphicRaycaster>();
 
-            // Dead centre and large: the countdown is the one moment the HUD is allowed to take
-            // the middle of the screen, because nothing is in play behind it yet.
-            _countdown = HudText(canvasGo.transform, "Countdown", "HudBanner",
-                                 new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(400, 160),
-                                 TextAnchor.MiddleCenter);
+            _root = canvasGo.GetComponent<RectTransform>();
 
-            _countdown.fontSize = 120;
-            _countdown.enabled = false;
+            // ⚠️ THE BUILD STAMP IS IN-MATCH TOO, not only on the menus. `hud.gd::_ready` calls
+            // `GameVersion.attach_to(self, true)` for the same reason the menus carry it: a
+            // screenshot or a clip of a bug is only actionable if it says which build it came
+            // from, and the frames people send are gameplay frames.
+            GameVersion.AttachTo(_root, over3d: true);
 
-            _readyPrompt = HudText(canvasGo.transform, "ReadyPrompt", "HudBody",
-                                   new Vector2(0.5f, 0.5f), new Vector2(0, -140),
-                                   new Vector2(900, 60), TextAnchor.MiddleCenter);
+            BuildDangerFlash();
+            BuildScoreboard();
+            BuildClock();
+            BuildLataCard();
+            BuildStatusStacks();
+            BuildFloatingText();
+            BuildCrosshair();
 
-            _readyPrompt.text = "Press [R] when you're ready";
-            _readyPrompt.enabled = false;
-
-            // Its own canvas, deliberately: the arrows are positioned from screen centre in
-            // raw pixels, and putting them under the scaled HUD canvas would move them.
+            // Its own object, deliberately: the arrows are positioned from screen centre in raw
+            // pixels, and putting them under the scaled HUD canvas would move them.
             var indicatorGo = new GameObject("OffscreenIndicators");
             indicatorGo.transform.SetParent(transform, false);
             _indicators = indicatorGo.AddComponent<OffscreenIndicators>();
+        }
 
-            BuildCrosshair(canvasGo.transform);
+        /// <summary>Full-screen, behind everything, and never a raycast target.</summary>
+        private void BuildDangerFlash()
+        {
+            var go = new GameObject("DownedFlash");
+            go.transform.SetParent(_root, false);
+
+            _dangerFlash = go.AddComponent<Image>();
+            _dangerFlash.color = new Color(UiTheme.Danger.r, UiTheme.Danger.g, UiTheme.Danger.b, 0.0f);
+            _dangerFlash.raycastTarget = false;
+            _dangerFlash.enabled = false;
+
+            MenuKit.Stretch(_dangerFlash.rectTransform);
         }
 
         /// <summary>
-        /// Top-left: SCORES over one row per seat, on a translucent ink card.
+        /// Top-left, at the .tscn's 16,28: SCORES over one row per seat, on a WOOD panel.
         ///
-        /// ⚠️ ONE ROW PER SEAT, NOT ONE BLOCK OF TEXT. `HUD.tscn` authors ScoreRow0..3, each a
-        /// name on the left and a number hard against the right edge. A single label with spaces
-        /// in it cannot right-align the numbers, so the scores wander with the length of the
-        /// name above them and the column stops reading as a column.
+        /// ⚠️ ONE ROW PER SEAT, NOT ONE BLOCK OF TEXT. A single label with spaces in it cannot
+        /// right-align the numbers, so the scores wander with the length of the name above them
+        /// and the column stops reading as a column.
         ///
-        /// ⚠️ AND THE TAYA IS MARKED BY ROLE. It rotates every round, so colouring a seat
-        /// permanently would tell the player the wrong thing for three rounds out of four.
+        /// ⚠️ AND "TAYA" IS ITS OWN CELL. 🧑 2026-08-02: *"inday taya makes it look like inday
+        /// taya is her name"*. Two spaces are not a grammar: every roster name is uppercase,
+        /// several are two words, and one character is called INDAY, so at the level of pixels
+        /// "INDAY TAYA" IS a two-word name. A separate label can differ in the three ways that
+        /// carry the meaning — smaller, muted, and in its own column.
         /// </summary>
-        private void BuildScoreboard(Transform parent)
+        private void BuildScoreboard()
         {
-            var card = Card(parent, "Scoreboard", new Vector2(0.0f, 1.0f),
-                            new Vector2(16, -28), new Vector2(440, 0));
+            var card = WoodCard("Scoreboard", new Vector2(0.0f, 1.0f), new Vector2(16, -28),
+                                440.0f, out _scoreboard, sink: false);
 
-            var title = HudTextIn(card.transform, "ScoreTitle", "HudCaption", TextAnchor.MiddleLeft);
-            title.text = "SCORES";
-            title.gameObject.AddComponent<LayoutElement>().preferredHeight = 40.0f;
+            _scoreboardRt = card.GetComponent<RectTransform>();
 
-            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            _scoreTitle = HudLabel(card.transform, "ScoreTitle", 22, UiTheme.Amber,
+                                   TextAnchor.MiddleLeft);
+            _scoreTitle.text = "SCORES";
+            _scoreTitle.gameObject.AddComponent<LayoutElement>().preferredHeight = 30.0f;
+
+            for (int i = 0; i < Balance.PlayerCount; i++)
             {
-                var rowGo = new GameObject($"ScoreRow{slot}");
+                var rowGo = new GameObject($"ScoreRow{i}");
                 rowGo.transform.SetParent(card.transform, false);
 
                 var row = rowGo.AddComponent<HorizontalLayoutGroup>();
@@ -301,32 +875,40 @@ namespace TumbangPreso.UI
                 row.childAlignment = TextAnchor.MiddleLeft;
                 row.spacing = 8.0f;
 
-                rowGo.AddComponent<LayoutElement>().preferredHeight = 42.0f;
+                rowGo.AddComponent<LayoutElement>().preferredHeight = 30.0f;
 
-                var name = HudTextIn(rowGo.transform, "Name", "HudBody", TextAnchor.MiddleLeft);
+                var name = HudLabel(rowGo.transform, "Name", 20, UiTheme.Cream,
+                                    TextAnchor.MiddleLeft);
                 name.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1.0f;
 
-                var mark = HudTextIn(rowGo.transform, "Taya", "HudCaption", TextAnchor.MiddleRight);
-                mark.gameObject.AddComponent<LayoutElement>().preferredWidth = 96.0f;
+                // ⚠️ A FIXED WIDTH, ALWAYS PRESENT, NEVER HIDDEN. The badge is empty on three
+                // rows out of four; hiding it would let those three scores slide left and the
+                // column of numbers — the entire point of the board — would stop being a column.
+                var mark = HudLabel(rowGo.transform, "Role", TayaBadgeFontSize,
+                                    UiTheme.CreamMuted, TextAnchor.MiddleRight);
+                mark.gameObject.AddComponent<LayoutElement>().preferredWidth = 60.0f;
 
-                var score = HudTextIn(rowGo.transform, "Score", "HudScore", TextAnchor.MiddleRight);
-                score.gameObject.AddComponent<LayoutElement>().preferredWidth = 56.0f;
+                var score = HudLabel(rowGo.transform, "Score", 20, UiTheme.Cream,
+                                     TextAnchor.MiddleRight);
+                score.gameObject.AddComponent<LayoutElement>().preferredWidth = 72.0f;
 
-                _scoreNames[slot] = name;
-                _scoreMarks[slot] = mark;
-                _scoreValues[slot] = score;
+                _scoreNames[i] = name;
+                _scoreMarks[i] = mark;
+                _scoreValues[i] = score;
             }
         }
 
-        private readonly Text[] _scoreNames = new Text[Balance.PlayerCount];
-        private readonly Text[] _scoreMarks = new Text[Balance.PlayerCount];
-        private readonly Text[] _scoreValues = new Text[Balance.PlayerCount];
-
-        /// <summary>Top-centre: the clock on its own card, with the round line under it.</summary>
-        private void BuildClock(Transform parent)
+        /// <summary>
+        /// Top-centre: the clock on a RECESSED wood slot with the round line under it.
+        ///
+        /// ⚠️ THE RECESSED FACE IS DELIBERATE. It is the same one the map and mode readouts use
+        /// on the setup screen, which is the front end's existing idiom for "a value being
+        /// displayed to you", and the timer is the single most-read element on the screen.
+        /// </summary>
+        private void BuildClock()
         {
             var column = new GameObject("TopCentre");
-            column.transform.SetParent(parent, false);
+            column.transform.SetParent(_root, false);
 
             var group = column.AddComponent<VerticalLayoutGroup>();
             group.childControlHeight = true;
@@ -341,71 +923,217 @@ namespace TumbangPreso.UI
             rt.anchorMax = new Vector2(0.5f, 1.0f);
             rt.pivot = new Vector2(0.5f, 1.0f);
             rt.anchoredPosition = new Vector2(0, -28);
-            rt.sizeDelta = new Vector2(320, 0);
+            rt.sizeDelta = new Vector2(240, 0);
 
-            var card = Card(column.transform, "TimerCard", Vector2.zero, Vector2.zero, Vector2.zero);
-            card.gameObject.AddComponent<LayoutElement>().preferredWidth = 260.0f;
+            var cardGo = new GameObject("TimerCard");
+            cardGo.transform.SetParent(column.transform, false);
 
-            _timer = HudTextIn(card.transform, "TimerLabel", "HudTimer", TextAnchor.MiddleCenter);
+            _timerCard = cardGo.AddComponent<Image>();
+            _timerCard.sprite = GodotTheme.Box(UiTheme.WoodDark, UiTheme.WoodEdge,
+                                               GodotTheme.WoodBorderWidth,
+                                               GodotTheme.WoodCornerRadius);
+            _timerCard.type = Image.Type.Sliced;
+            _timerCard.raycastTarget = false;
 
-            _round = HudTextIn(column.transform, "RoundLabel", "HudBody", TextAnchor.MiddleCenter);
-            _round.gameObject.AddComponent<LayoutElement>().minHeight = 46.0f;
+            _timerCardRt = cardGo.GetComponent<RectTransform>();
+
+            var cardGroup = cardGo.AddComponent<VerticalLayoutGroup>();
+            cardGroup.childControlHeight = true;
+            cardGroup.childControlWidth = true;
+            cardGroup.childForceExpandHeight = false;
+            cardGroup.childForceExpandWidth = true;
+
+            // ⚠️ 22/16 PADDING, NOT 14/8. These margins were chosen against 13/16pt lettering;
+            // at the 2026-08-02 HUD font sizes the same numbers read as text jammed against a
+            // border. 🧑: *"GOOD TEXT NOW ... js make box bigger"*.
+            cardGroup.padding = new RectOffset(22, 22, 16, 16);
+
+            cardGo.AddComponent<LayoutElement>().preferredWidth = 240.0f;
+
+            _timer = HudLabel(cardGo.transform, "TimerLabel", 48, UiTheme.Amber,
+                              TextAnchor.MiddleCenter);
+            _timer.text = "01:30";
+
+            // ⚠️ WAS `CREAM_MUTED`. This line carries the round number and who is playing taya —
+            // the two facts that change everything about how the next 90 s goes — and it was
+            // styled as a caption under the clock.
+            _round = HudLabel(column.transform, "RoundLabel", 20, UiTheme.Cream,
+                              TextAnchor.MiddleCenter);
+            _round.gameObject.AddComponent<LayoutElement>().minHeight = 34.0f;
         }
 
-        /// <summary>
-        /// The active-effects list and the stamina pool, above the YOU card.
-        ///
-        /// ⚠️⚠️ THE BOTTOM-LEFT CORNER BELONGS TO `YouCard`, WHICH `MatchInstaller` ALREADY
-        /// BUILDS. Drawing a second card there put two overlapping panels in the corner, one
-        /// wood and one ink, saying different things about the same player. This block sits
-        /// ABOVE it and carries only what YouCard does not: the status stack and the stamina
-        /// bar. Two components, one corner, no overlap.
-        /// </summary>
-        private void BuildStatusCard(Transform parent)
+        /// <summary>Bottom-right, at the .tscn's -396,-172 to -16,-64.</summary>
+        private void BuildLataCard()
         {
-            var card = Card(parent, "StatusCard", new Vector2(0.0f, 0.0f),
-                            new Vector2(16, 214), new Vector2(460, 0));
+            var card = WoodCard("LataCard", new Vector2(1.0f, 0.0f), new Vector2(-16, 64),
+                                380.0f, out _lataCard, sink: false);
 
-            _status = HudTextIn(card.transform, "StatusLabel", "HudBody", TextAnchor.UpperLeft);
-            _status.gameObject.AddComponent<LayoutElement>().minHeight = 96.0f;
+            _lataLabel = HudLabel(card.transform, "LataLabel", 26, UiTheme.Amber,
+                                  TextAnchor.MiddleLeft);
+            _lataLabel.text = "LATA";
 
-            var back = new GameObject("StaminaBack");
-            back.transform.SetParent(card.transform, false);
+            _lataHint = HudLabel(card.transform, "LataHintLabel", 20, UiTheme.Cream,
+                                 TextAnchor.MiddleLeft);
+            _lataHint.enabled = false;
 
-            var backImg = back.AddComponent<Image>();
-            backImg.sprite = GodotTheme.Box(UiTheme.WoodDark, UiTheme.WoodEdge, 3, 6);
-            backImg.type = Image.Type.Sliced;
+            _lataCard.gameObject.SetActive(false);
+        }
 
-            back.AddComponent<LayoutElement>().preferredHeight = 26.0f;
-
-            var fill = new GameObject("StaminaFill");
-            fill.transform.SetParent(back.transform, false);
-
-            _staminaFill = fill.AddComponent<Image>();
-            _staminaFill.sprite = GodotTheme.Box(Color.white, new Color(0, 0, 0, 0), 0, 4);
-            _staminaFill.type = Image.Type.Filled;
-            _staminaFill.fillMethod = Image.FillMethod.Horizontal;
-
-            var frt = _staminaFill.rectTransform;
-            frt.anchorMin = Vector2.zero;
-            frt.anchorMax = Vector2.one;
-            frt.offsetMin = new Vector2(3, 3);
-            frt.offsetMax = new Vector2(-3, -3);
+        private void BuildStatusStacks()
+        {
+            _stackLeft = BuildStack("StatusStackLeft", false);
+            _stackRight = BuildStack("StatusStackRight", true);
         }
 
         /// <summary>
-        /// A `HudCard`: the translucent INK slab the HUD's blocks sit on.
-        ///
-        /// ⚠️ TRANSLUCENT INK, NOT WOOD. The menus are wood over a photograph; the HUD is over
-        /// a live arena that has to stay readable through it. Same theme, different variation,
-        /// and swapping one for the other is how a HUD ends up hiding the game.
+        /// ⚠️ ANCHORED TO ITS OWN CORNER, NOT PARENTED TO A CARD. A growing stack must never
+        /// push another element around.
         /// </summary>
-        private static VerticalLayoutGroup Card(Transform parent, string name, Vector2 anchor,
-                                                Vector2 offset, Vector2 size)
+        private RectTransform BuildStack(string name, bool rightSide)
         {
             var go = new GameObject(name);
-            go.transform.SetParent(parent, false);
-            go.AddComponent<Image>();
+            go.transform.SetParent(_root, false);
+
+            var group = go.AddComponent<VerticalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = false;
+            group.childForceExpandWidth = true;
+            group.spacing = 6.0f;
+            group.childAlignment = rightSide ? TextAnchor.UpperRight : TextAnchor.UpperLeft;
+
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(rightSide ? 1.0f : 0.0f, 1.0f);
+            rt.anchorMax = rt.anchorMin;
+            rt.pivot = new Vector2(rightSide ? 1.0f : 0.0f, 1.0f);
+            rt.anchoredPosition = new Vector2(rightSide ? -StatusMargin.x : StatusMargin.x,
+                                              -StatusMargin.y);
+            rt.sizeDelta = new Vector2(StatusBarSize.x, 0.0f);
+
+            return rt;
+        }
+
+        private StatusWidget BuildStatusRow(RectTransform parent, bool rightSide)
+        {
+            var rowGo = new GameObject("StatusRow");
+            rowGo.transform.SetParent(parent, false);
+
+            var group = rowGo.AddComponent<VerticalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = false;
+            group.childForceExpandWidth = true;
+            group.spacing = 2.0f;
+
+            var label = HudLabel(rowGo.transform, "Label", StatusFontSize, UiTheme.Cream,
+                                 rightSide ? TextAnchor.MiddleRight : TextAnchor.MiddleLeft);
+            label.gameObject.AddComponent<LayoutElement>().preferredHeight = 26.0f;
+
+            var backGo = new GameObject("Bar");
+            backGo.transform.SetParent(rowGo.transform, false);
+
+            var back = backGo.AddComponent<Image>();
+            back.sprite = GodotTheme.Plain(3);
+            back.type = Image.Type.Sliced;
+            back.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.55f);
+            back.raycastTarget = false;
+
+            backGo.AddComponent<LayoutElement>().preferredHeight = StatusBarSize.y;
+
+            var fillGo = new GameObject("Fill");
+            fillGo.transform.SetParent(backGo.transform, false);
+
+            var fill = fillGo.AddComponent<Image>();
+            fill.sprite = GodotTheme.Plain(3);
+            fill.type = Image.Type.Filled;
+            fill.fillMethod = Image.FillMethod.Horizontal;
+            fill.raycastTarget = false;
+
+            MenuKit.Stretch(fill.rectTransform);
+
+            return new StatusWidget { Root = rowGo, Label = label, Fill = fill, Back = back };
+        }
+
+        private void BuildFloatingText()
+        {
+            // Toast, top-centre under the clock, at the .tscn's +160.
+            _toast = HudLabel(_root, "ToastLabel", 28, UiTheme.Amber, TextAnchor.MiddleCenter);
+            Place(_toast.rectTransform, new Vector2(0.5f, 1.0f), new Vector2(0, -160),
+                  new Vector2(600, 44));
+            _toast.enabled = false;
+
+            // The countdown owns the middle of the screen for its three seconds, because
+            // nothing is in play behind it yet.
+            _countdown = HudLabel(_root, "CountdownLabel", 120, UiTheme.Highlight,
+                                  TextAnchor.MiddleCenter);
+            Place(_countdown.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
+                  new Vector2(400, 160));
+            _countdown.enabled = false;
+            _countdownRt = _countdown.rectTransform;
+
+            _readyPrompt = HudLabel(_root, "ReadyPrompt", 28, UiTheme.Cream,
+                                    TextAnchor.MiddleCenter);
+            Place(_readyPrompt.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 138),
+                  new Vector2(1040, 40));
+            _readyPrompt.text = "Walk around freely. Press [R] when you're ready to start the round.";
+            _readyPrompt.enabled = false;
+
+            _readyObjective = HudLabel(_root, "ReadyObjective", 44, UiTheme.Offense,
+                                       TextAnchor.MiddleCenter);
+            Place(_readyObjective.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 200),
+                  new Vector2(1120, 64));
+            _readyObjective.enabled = false;
+
+            // ⚠️⚠️ THE VULNERABLE LINE IS OFF DEAD CENTRE, ON A PLAYTEST REPORT. 🧑 2026-08-02,
+            // with a first-person screenshot: *"You are vulnerable not in middle"*. In first
+            // person the thing you are looking at while this warning is live is the slipper you
+            // are bending down to pick up, which is the bottom-middle of the screen — so the one
+            // line that means "you are about to lose 5 seconds" was drawn over the exact object
+            // it is about. Bottom-centre, above the ready prompt's band, inside the 64 px safe
+            // band.
+            _vulnerable = HudLabel(_root, "VulnerableWarning", 22, UiTheme.Offense,
+                                   TextAnchor.MiddleCenter);
+            Place(_vulnerable.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 84),
+                  new Vector2(400, 40));
+            _vulnerable.text = "YOU ARE VULNERABLE";
+            _vulnerable.enabled = false;
+        }
+
+        /// <summary>
+        /// The crosshair is a thin `+` at dead centre of an FPP camera, which is the busiest
+        /// part of the frame; role colour alone would lose it against a wall in the same hue, so
+        /// it takes the INK outline too.
+        /// </summary>
+        private void BuildCrosshair()
+        {
+            _crosshair = HudLabel(_root, "CrosshairLabel", 34, UiTheme.Offense,
+                                  TextAnchor.MiddleCenter, CrosshairOutline);
+
+            Place(_crosshair.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
+                  new Vector2(48, 48));
+
+            _crosshair.text = "+";
+            _crosshair.enabled = false;
+        }
+
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// A wood card, built from the same `wood_style()` the menu's own WoodSlot uses, so the
+        /// HUD cannot drift away from the front end again.
+        /// </summary>
+        private VerticalLayoutGroup WoodCard(string name, Vector2 anchor, Vector2 offset,
+                                             float width, out Image face, bool sink)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(_root, false);
+
+            face = go.AddComponent<Image>();
+            face.sprite = GodotTheme.Box(sink ? UiTheme.WoodDark : UiTheme.WoodDeep,
+                                         UiTheme.WoodEdge, GodotTheme.WoodBorderWidth,
+                                         GodotTheme.WoodCornerRadius);
+            face.type = Image.Type.Sliced;
+            face.raycastTarget = false;
 
             var group = go.AddComponent<VerticalLayoutGroup>();
             group.childControlHeight = true;
@@ -413,86 +1141,53 @@ namespace TumbangPreso.UI
             group.childForceExpandHeight = false;
             group.childForceExpandWidth = true;
             group.spacing = 2.0f;
+            group.padding = new RectOffset(22, 22, 16, 16);
 
             var fitter = go.AddComponent<ContentSizeFitter>();
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-            var skin = go.AddComponent<GodotPanel>();
-            skin.Variation = "HudCard";
-            skin.Apply();
-
             var rt = go.GetComponent<RectTransform>();
-
-            if (size != Vector2.zero || anchor != Vector2.zero || offset != Vector2.zero)
-            {
-                rt.anchorMin = anchor;
-                rt.anchorMax = anchor;
-                rt.pivot = anchor;
-                rt.anchoredPosition = offset;
-                rt.sizeDelta = new Vector2(size.x, 0.0f);
-            }
+            rt.anchorMin = anchor;
+            rt.anchorMax = anchor;
+            rt.pivot = anchor;
+            rt.anchoredPosition = offset;
+            rt.sizeDelta = new Vector2(width, 0.0f);
 
             return group;
         }
 
-        private static Text HudText(Transform parent, string name, string variation,
-                                    Vector2 anchor, Vector2 offset, Vector2 size,
-                                    TextAnchor align)
+        private static void Place(RectTransform rt, Vector2 anchor, Vector2 offset, Vector2 size)
         {
-            var t = HudTextIn(parent, name, variation, align);
-
-            var rt = t.rectTransform;
             rt.anchorMin = anchor;
             rt.anchorMax = anchor;
             rt.pivot = anchor;
             rt.anchoredPosition = offset;
             rt.sizeDelta = size;
-
-            return t;
         }
 
-        /// <summary>A HUD label in one of the theme's Hud* variations, outline included.</summary>
-        private static Text HudTextIn(Transform parent, string name, string variation,
-                                      TextAnchor align)
+        /// <summary>A HUD label in the game's own face, with the heavy INK outline everything
+        /// drawn over a live 3D scene needs.</summary>
+        private static Text HudLabel(Transform parent, string name, int size, Color colour,
+                                     TextAnchor align, int outline = TextOutline)
         {
-            GodotTheme.TryText(variation, out var style);
-
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
 
             var t = go.AddComponent<Text>();
             t.font = MenuKit.Font;
-            t.fontSize = style.Size;
-            t.color = style.Colour;
+            t.fontSize = size;
+            t.color = colour;
             t.alignment = align;
             t.alignByGeometry = true;
             t.raycastTarget = false;
             t.horizontalOverflow = HorizontalWrapMode.Overflow;
             t.verticalOverflow = VerticalWrapMode.Overflow;
 
-            if (style.Outline > 0)
-            {
-                var ring = go.AddComponent<GodotOutline>();
-                ring.OutlineColour = style.OutlineColour;
-                ring.Radius = Mathf.Max(1.0f, style.Outline * 0.5f);
-            }
+            var ring = go.AddComponent<GodotOutline>();
+            ring.OutlineColour = UiTheme.Ink;
+            ring.Radius = Mathf.Max(1.0f, outline * 0.5f);
 
             return t;
-        }
-
-        private void BuildCrosshair(Transform parent)
-        {
-            var go = new GameObject("Crosshair");
-            go.transform.SetParent(parent, false);
-
-            _crosshair = go.AddComponent<Image>();
-            _crosshair.color = UiTheme.Offense;
-
-            var rt = _crosshair.rectTransform;
-            rt.anchorMin = new Vector2(0.5f, 0.5f);
-            rt.anchorMax = new Vector2(0.5f, 0.5f);
-            rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.sizeDelta = new Vector2(10, 10);
         }
     }
 }

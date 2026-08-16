@@ -37,6 +37,14 @@ namespace TumbangPreso.UI
 
             Time.timeScale = 0.0f;
             if (Local != null) Local.Intent.Parked = true;
+
+            // ⚠️⚠️ THE CURSOR COMES BACK, OR THE PAUSE MENU IS A PICTURE. A match captures the
+            // mouse so the camera can steer from raw deltas; with it still captured, this
+            // overlay draws perfectly and every button on it is unclickable, because the
+            // pointer is locked to the centre of the screen and never moves. That is
+            // indistinguishable from "the buttons don't work" and it is the state the player
+            // reaches by pressing the one key that is supposed to give them control back.
+            CursorMode.Release();
         }
 
         private void Choice(Transform parent, string label, System.Action onClick,
@@ -79,6 +87,9 @@ namespace TumbangPreso.UI
         {
             Time.timeScale = 1.0f;
             if (Local != null) Local.Intent.Parked = false;
+
+            // Back to the match, so the mouse goes back to steering rather than pointing.
+            CursorMode.Capture();
             Close();
         }
     }

@@ -16,40 +16,68 @@ namespace TumbangPreso
     /// GDD's "stun-only, no permanent elimination" rule and doubling as the landing spot for
     /// Option A's ring-out win condition.
     ///
-    /// ⚠️ THE HEIGHT IS BORROWED AND IS NOT YET THE REAL NUMBER. Godot set this plane's
-    /// position and size in `Main.tscn`, which is unported, so the true transform is not
-    /// available to copy. `Balance.VoidY` (-12) is the SLIPPER's lost-below-arena threshold
-    /// — a different constant for a different object — and it is used here only as a
-    /// plausible default that is definitely below the floor. **When `Main.tscn` is
-    /// converted, take the real transform from it and delete this note.**
-    /// Wide enough in X/Z to catch a character that fell off the 40x40 floor with some
-    /// horizontal drift still on it.
+    /// ⚠️⚠️ THE REAL TRANSFORM IS THE MAP'S, AND IT WAS BORROWED FROM THE WRONG CONSTANT.
+    /// An earlier note here said the true numbers lived in the unported `Main.tscn` and used
+    /// `Balance.VoidY` (-12) as a stand-in — but `VoidY` is the SLIPPER's lost-below-arena
+    /// threshold, a different constant for a different object, and the plane is not in
+    /// `Main.tscn` at all: **both arenas author it themselves**, at y = -10 with a
+    /// 260 x 4 x 260 box. Those are the numbers now, read off the map when there is one.
+    ///
+    /// ⚠️ AND IT WAS NEVER ATTACHED TO ANYTHING. The map converter turns the Godot `Area3D`
+    /// into a bare GameObject and its `CollisionShape3D` into a non-trigger BoxCollider, so
+    /// the plane existed as geometry with no behaviour: a player who walked off the edge fell
+    /// forever with gravity accumulating and the round simply lost them. `TscnImporter` binds
+    /// this component now.
     /// </summary>
-    [RequireComponent(typeof(BoxCollider))]
     public sealed class KillPlane : MonoBehaviour
     {
         /// <summary>Raised after the character has been put back. The Godot signal carried
         /// the character; this carries the same.</summary>
         public UnityEvent<CharacterMotor> CharacterRespawned = new UnityEvent<CharacterMotor>();
 
-        /// Comfortably wider than the 40x40 floor, so drift off a corner still lands in it.
-        public const float PlaneExtent = 120.0f;
+        /// <summary>The arena's own plane: `Shape_killplane` is Vector3(260, 4, 260) in both
+        /// maps, and the Area3D sits at y = -10.</summary>
+        public const float PlaneExtent = 260.0f;
         public const float PlaneThickness = 4.0f;
-
-        private void Reset() => SnapToVoidHeight();
+        public const float PlaneHeight = -10.0f;
 
         private void Awake()
         {
+            // ⚠️ THE TRIGGER MUST BE ON THIS OBJECT. Unity delivers OnTriggerEnter to the
+            // GameObject carrying the collider (and to a parent with a Rigidbody, which this has
+            // none of), so a collider left on the converted child would fire nothing here.
             var box = GetComponent<BoxCollider>();
+            if (box == null) box = gameObject.AddComponent<BoxCollider>();
+
             box.isTrigger = true;
-            box.size = new Vector3(PlaneExtent, PlaneThickness, PlaneExtent);
-            SnapToVoidHeight();
+            box.center = Vector3.zero;
+            box.size = SizeFromChildren();
+
+            // Any collider the conversion left on a child is now a duplicate, and a solid one
+            // at that: left enabled it is a 260 m platform a falling player lands on.
+            foreach (var child in GetComponentsInChildren<Collider>(true))
+            {
+                if (child == box) continue;
+                child.enabled = false;
+            }
+
+            var p = transform.position;
+            transform.position = new Vector3(p.x, PlaneHeight, p.z);
         }
 
-        private void SnapToVoidHeight()
+        /// <summary>The converted `CollisionShape3D`'s box if there is one, so a map that
+        /// re-authors the plane is obeyed rather than overridden.</summary>
+        private Vector3 SizeFromChildren()
         {
-            var p = transform.position;
-            transform.position = new Vector3(p.x, Core.Balance.VoidY, p.z);
+            foreach (var child in GetComponentsInChildren<BoxCollider>(true))
+            {
+                if (child.gameObject == gameObject) continue;
+                if (child.size.sqrMagnitude < 0.01f) continue;
+
+                return child.size;
+            }
+
+            return new Vector3(PlaneExtent, PlaneThickness, PlaneExtent);
         }
 
         private void OnTriggerEnter(Collider other)

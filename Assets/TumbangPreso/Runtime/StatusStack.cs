@@ -11,6 +11,15 @@ namespace TumbangPreso
         public float Remaining;
 
         /// <summary>
+        /// What the row started at, so the bar can draw a RATIO rather than a raw number.
+        ///
+        /// ⚠️ IT IS THE EFFECT'S OWN FULL DURATION, NOT A SHARED MAXIMUM. A 1.25 s shove stun
+        /// and a 5 s tag penalty drawn against one scale makes the shove a stub that never
+        /// visibly empties, which is the opposite of what the bar is for.
+        /// </summary>
+        public float Total;
+
+        /// <summary>
         /// ⚠️ VULNERABLE HAS NO COUNTDOWN AND THAT IS CORRECT. It lasts exactly as long as you
         /// choose to stand in the box holding a slipper, so it draws as a solid bar with no
         /// timer. Printing "VULNERABLE 0.0s" would read as an effect that had already expired,
@@ -46,20 +55,46 @@ namespace TumbangPreso
             into.Clear();
             if (m == null) return;
 
+            // ⚠️⚠️ THE STUN REPORTED NO TIME AT ALL, WHICH IS THE ONE THING THIS STACK EXISTS
+            // FOR. 🧑 on the Godot build: *"add visible UI timers for all stun durations and
+            // status effects so players clearly know when they can move or act again"*, and
+            // most of what "the defender feels overpowered" actually was. A stun you cannot
+            // time is a stun you cannot play around. It was hard-coded to 0.0 here, so the row
+            // appeared with no countdown and drew a full bar for its whole duration.
             if (m.IsStunned)
-                into.Add(new StatusRow { Label = "STUNNED", Remaining = 0.0f, Timed = true });
+                into.Add(new StatusRow
+                {
+                    Label = "STUNNED",
+                    Remaining = m.StunLeft,
+                    Total = m.StunTotal,
+                    Timed = true,
+                });
 
             if (m.Stamina.IsFatigued)
                 into.Add(new StatusRow
                 {
                     Label = "FATIGUED",
                     Remaining = m.Stamina.FatigueLeft,
+                    Total = Balance.FatigueTime,
                     Timed = true,
                 });
 
             // No countdown: it lasts as long as you choose to stand there.
             if (m.IsTaggable())
                 into.Add(new StatusRow { Label = "VULNERABLE", Timed = false });
+
+            // ⚠️ THE THROW LOCK IS A COOLDOWN THE PLAYER MEETS EVERY SINGLE RETRIEVAL and it
+            // was missing from this list entirely. It is the beat between HAVING the slipper and
+            // being able to throw it, and without a row the player presses fire, nothing
+            // happens, and there is no reason on screen for it.
+            if (carrier != null && carrier.ThrowLocked)
+                into.Add(new StatusRow
+                {
+                    Label = "THROW CD",
+                    Remaining = carrier.ThrowLockLeft,
+                    Total = Balance.ThrowLockTime,
+                    Timed = true,
+                });
 
             if (verbs != null)
             {
@@ -68,6 +103,7 @@ namespace TumbangPreso
                     {
                         Label = "SHOVE CD",
                         Remaining = verbs.ShoveCooldownLeft,
+                        Total = Balance.ShoveCooldown,
                         Timed = true,
                     });
 
@@ -76,6 +112,7 @@ namespace TumbangPreso
                     {
                         Label = "LUNGE CD",
                         Remaining = verbs.LungeCooldownLeft,
+                        Total = Balance.LungeCooldown,
                         Timed = true,
                     });
 
@@ -84,6 +121,7 @@ namespace TumbangPreso
                     {
                         Label = "PUNCH CD",
                         Remaining = verbs.PunchCooldownLeft,
+                        Total = Balance.PunchCooldown,
                         Timed = true,
                     });
             }

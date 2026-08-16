@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
@@ -92,6 +93,133 @@ namespace TumbangPreso.EditorTools
             };
         }
 
+        /// <summary>
+        /// The tansan. `project.godot` sets `config/icon="res://icon.png"` and the Windows
+        /// export preset points at `icon.ico`; the same bottlecap has to be on the .exe, on the
+        /// taskbar and in the window corner here.
+        ///
+        /// ⚠️⚠️ THIS WAS NOT SET AT ALL AND THE BUILD SHIPPED WITH UNITY'S OWN CUBE, which is
+        /// the single most obvious "this is not the same game" signal a player gets before the
+        /// game even opens. Reported with a side-by-side of the two shortcuts.
+        ///
+        /// ⚠️ `SetIconsForPlatform` WANTS THE FULL SIZE LIST AND SILENTLY KEEPS THE DEFAULT FOR
+        /// ANY SIZE LEFT NULL. Passing one texture for one size leaves the taskbar on the Unity
+        /// icon while the .exe looks correct in Explorer, which is a confusing half-fix. The same
+        /// source texture is handed to every size and Unity downsamples.
+        /// </summary>
+        private static void ConfigureIcon()
+        {
+            const string path = "Assets/TumbangPreso/Art/ui/brand/app_icon.png";
+
+            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+
+            if (icon == null)
+            {
+                Debug.LogWarning($"[Build] no app icon at {path}; the player keeps Unity's.");
+                return;
+            }
+
+            // ⚠️ IT HAS TO BE READABLE AND UNCOMPRESSED or Unity refuses it as an icon source
+            // and falls back without saying so.
+            if (AssetImporter.GetAtPath(path) is TextureImporter importer)
+            {
+                bool changed = false;
+
+                if (!importer.isReadable) { importer.isReadable = true; changed = true; }
+
+                if (importer.textureCompression != TextureImporterCompression.Uncompressed)
+                {
+                    importer.textureCompression = TextureImporterCompression.Uncompressed;
+                    changed = true;
+                }
+
+                if (importer.npotScale != TextureImporterNPOTScale.None)
+                {
+                    importer.npotScale = TextureImporterNPOTScale.None;
+                    changed = true;
+                }
+
+                if (changed)
+                {
+                    importer.SaveAndReimport();
+                    icon = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+                }
+            }
+
+            var group = NamedBuildTarget.Standalone;
+
+            int[] sizes = PlayerSettings.GetIconSizes(group, IconKind.Any);
+            var icons = new Texture2D[sizes.Length];
+
+            for (int i = 0; i < icons.Length; i++) icons[i] = icon;
+
+            PlayerSettings.SetIcons(group, icons, IconKind.Any);
+
+            // The default icon is what anything without a per-platform entry falls back to,
+            // including the editor's own game view and the WebGL favicon.
+            PlayerSettings.SetIcons(NamedBuildTarget.Unknown, new[] { icon }, IconKind.Any);
+
+            Debug.Log($"[Build] app icon set for {sizes.Length} sizes.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A SHADER ONLY `Shader.Find` REFERENCES IS STRIPPED FROM THE BUILD. Every material
+        /// this game builds at runtime — the arms, the tsinelas in the viewmodel hand, the aim
+        /// arc, the impact burst, the map's sky — is created from a shader looked up by NAME,
+        /// and nothing in any scene or Resources folder points at those shaders. The build
+        /// therefore drops them, `Shader.Find` returns null in the player only, and the objects
+        /// render as the error material. It is the same class of bug as the stripped animation
+        /// clips: correct in the editor, broken exclusively in the thing you hand somebody.
+        /// </summary>
+        private static void EnsureRuntimeShaders()
+        {
+            string[] wanted =
+            {
+                "Standard",
+                "Sprites/Default",
+                "UI/Default",
+                "Particles/Standard Unlit",
+                "Skybox/Panoramic",
+            };
+
+            var settings = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/GraphicsSettings.asset");
+            if (settings == null || settings.Length == 0) return;
+
+            var so = new SerializedObject(settings[0]);
+            var list = so.FindProperty("m_AlwaysIncludedShaders");
+            if (list == null) return;
+
+            int added = 0;
+
+            foreach (string name in wanted)
+            {
+                var shader = Shader.Find(name);
+                if (shader == null) continue;
+
+                bool present = false;
+
+                for (int i = 0; i < list.arraySize; i++)
+                {
+                    if (list.GetArrayElementAtIndex(i).objectReferenceValue != shader) continue;
+                    present = true;
+                    break;
+                }
+
+                if (present) continue;
+
+                list.InsertArrayElementAtIndex(list.arraySize);
+                list.GetArrayElementAtIndex(list.arraySize - 1).objectReferenceValue = shader;
+                added++;
+            }
+
+            if (added == 0) return;
+
+            so.ApplyModifiedProperties();
+            AssetDatabase.SaveAssets();
+
+            Debug.Log($"[Build] added {added} runtime shaders to the always-included list.");
+        }
+
         private static bool Execute(string outputPath)
         {
             var scenes = EditorBuildSettings.scenes
@@ -134,6 +262,8 @@ namespace TumbangPreso.EditorTools
             PlayerSettings.productName = "Tumbang Preso";
 
             ConfigureSplash();
+            ConfigureIcon();
+            EnsureRuntimeShaders();
 
             // ⚠️ WINDOWED BY DEFAULT FOR A TEST BUILD. An exclusive-fullscreen build that
             // starts on a broken frame is genuinely hard to get out of, and the whole point of

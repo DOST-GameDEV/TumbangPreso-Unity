@@ -38,6 +38,24 @@ namespace TumbangPreso
         public float ChargeRatio => ThrowRules.ChargeRatio(_charge);
         public float ChannelRatio { get; private set; }
 
+        /// <summary>True while this unit is winding a throw up. Read by the aim arc and by the
+        /// YOU card's charge meter.</summary>
+        public bool IsCharging => _charging;
+
+        /// <summary>
+        /// ⚠️⚠️ THE WIND-UP EVERY OTHER PLAYER CAN SEE, and it is a SEPARATE value from
+        /// <see cref="ChargeRatio"/> on purpose. `carrier.gd`'s header states it: the charge
+        /// clock only ticks on the peer that controls the unit, so a third-person wind-up pose
+        /// driven from it is invisible to the person being aimed at — which is the whole
+        /// counterplay the 2.5 s charge exists to create.
+        ///
+        /// -1 when nobody is winding up.
+        /// </summary>
+        public float ObservedChargePower =>
+            _observedCharge < 0.0f ? -1.0f : Mathf.Clamp01(_observedCharge / Balance.ChargeFullTime);
+
+        private float _observedCharge = -1.0f;
+
         /// <summary>
         /// Seconds until this unit may throw again after a pickup.
         ///
@@ -116,6 +134,11 @@ namespace TumbangPreso
             float dt = Time.deltaTime;
             if (_throwLockLeft > 0.0f) _throwLockLeft = Mathf.Max(0.0f, _throwLockLeft - dt);
 
+            // The observed wind-up runs on every peer, including the ones that are not driving
+            // this unit. See ObservedChargePower.
+            if (_observedCharge >= 0.0f)
+                _observedCharge = Mathf.Min(_observedCharge + dt, Balance.ChargeFullTime);
+
             if (!_motor.CanAct())
             {
                 CancelAll();
@@ -143,34 +166,75 @@ namespace TumbangPreso
             if (intent.JustPressed(Verb.Grab) && Held == null && TryPickup())
                 return;
 
-            if (Held == null) return;
+            if (Held == null)
+            {
+                CancelCharge();
+                return;
+            }
 
             bool canThrow = GameServices.Round != null
                             && GameServices.Round.CanThrow(_motor)
                             && _throwLockLeft <= 0.0f;
 
-            if (intent.JustPressed(Verb.SpecialAbility) && canThrow)
+            // ⚠️⚠️ `Pressed`, NOT `JustPressed`, TO START A CHARGE, AND THAT IS MEASURED. The
+            // .gd records it: `input_probe` drove a synthetic press that lasted one frame and
+            // the just-pressed form charged to 0.000. A bot writes its intent for a window
+            // rather than for an edge, so the edge form silently gave every AI seat a
+            // zero-power throw.
+            if (!_charging && intent.Pressed(Verb.SpecialAbility))
             {
+                if (!canThrow) return;
+
                 _charging = true;
                 _charge = 0.0f;
+                BroadcastCharge(true);
+
+                // The wind-up is audible as well as visible. It is the taya's cue that a throw
+                // is coming, and it is the only one that reaches a player who is looking away.
+                GameServices.Audio?.PlayAt("throw_charge", transform.position);
+                return;
             }
 
-            if (_charging)
+            if (!_charging) return;
+
+            if (intent.Pressed(Verb.SpecialAbility))
             {
-                _charge += dt;
+                _charge = Mathf.Min(_charge + dt, Balance.ChargeFullTime);
 
-                // ⚠️ A THROW THAT BECOMES ILLEGAL MID-CHARGE IS CANCELLED, NOT FIRED. Walking
-                // into the box while charging must not launch on release: the crosshair has
-                // already greyed out, and firing anyway is the rules disagreeing with the UI.
-                if (!canThrow) { _charging = false; _charge = 0.0f; return; }
-
-                if (intent.JustReleased(Verb.SpecialAbility))
-                {
-                    Release();
-                    _charging = false;
-                }
+                // ⚠️ STEPPING OUT OF LEGALITY MID-CHARGE CANCELS IT RATHER THAN BANKING IT.
+                // Walking into the box while charging must not launch on release: the crosshair
+                // has already greyed out, and firing anyway is the rules disagreeing with the UI.
+                if (!canThrow) CancelCharge();
+                return;
             }
+
+            // Released.
+            float power = ChargeRatio;
+            CancelCharge();
+
+            if (canThrow) Release(power);
         }
+
+        /// <summary>
+        /// Ends a wind-up from one place — released, cancelled, the slipper knocked out of the
+        /// hands, the round reset. An arc left on screen after the throw has gone is worse than
+        /// one that never appeared, so the clear belongs with the cancel and not at each site.
+        /// </summary>
+        private void CancelCharge()
+        {
+            if (!_charging) return;
+
+            _charging = false;
+            _charge = 0.0f;
+            BroadcastCharge(false);
+        }
+
+        /// <summary>
+        /// ⚠️ IT TICKS ON EVERY PEER, which is what makes the wind-up counterplay work. In the
+        /// local game this is simply the same clock; the shape is kept so the networked half
+        /// has one place to become an RPC.
+        /// </summary>
+        private void BroadcastCharge(bool active) => _observedCharge = active ? 0.0f : -1.0f;
 
         private bool TryPickup()
         {
@@ -198,24 +262,88 @@ namespace TumbangPreso
             return true;
         }
 
-        private void Release()
+        /// <summary>
+        /// Where the aim ray points. ⚠️ AN AI AIMS AT A POINT IT WAS TOLD, NOT DOWN A CAMERA.
+        /// A non-mouse-aimed unit's camera follows its body and its body yaw is the direction it
+        /// last WALKED, so the whole cast resolves to "wherever I was heading". Measured over 20
+        /// AI rounds in the original, throws that reached the can: zero.
+        /// </summary>
+        public Vector3 AimPoint()
         {
-            if (Held == null) return;
+            if (_motor.Intent.HasAimPoint) return _motor.Intent.AimPoint;
 
-            Vector3 aim = _motor.Intent.AimPoint - transform.position;
+            var rig = UnityEngine.Camera.main != null
+                ? UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>()
+                : null;
+
+            if (rig != null && rig.IsFollowing(_motor)) return rig.AimPoint();
+
+            return transform.position + transform.forward * CameraSystem.CameraRig.AimRayLength;
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE THROW LEAVES FROM THE SIGHT LINE, NOT THE HAND, and this was measured rather
+        /// than chosen. From the hand a throw sags 0.38 to 0.43 m below the line the player is
+        /// aiming along and peaks within 0.2 m of them, so the slipper drops out of the bottom of
+        /// the screen the instant it is released. From the sight line the same throws sag 0.001
+        /// to 0.043 m. The path was right; the starting height was not.
+        /// </summary>
+        public Vector3 ThrowOrigin()
+        {
+            var rig = UnityEngine.Camera.main != null
+                ? UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>()
+                : null;
+
+            // ⚠️ THE RIG'S OWN EYE WHEN THERE IS ONE, AND THE .gd's 0.9 FALLBACK WHEN THERE IS
+            // NOT. A bot has no rig looking through it, and `throw_origin_for` uses exactly this
+            // constant for that case rather than the FPP eye height, so a bot's throw and a
+            // probe's throw leave from the same place.
+            Vector3 eye = rig != null && rig.IsFollowing(_motor)
+                ? rig.transform.position
+                : transform.position + Vector3.up * 0.9f;
+
+            Vector3 toAim = AimPoint() - eye;
+            if (toAim.magnitude < 0.01f) return eye;
+
+            return eye + toAim.normalized * Balance.MuzzleForward;
+        }
+
+        /// <summary>
+        /// The velocity the throw WOULD leave with right now.
+        ///
+        /// ⚠️ THE AIM ARC ASKS THIS SAME FUNCTION, so the dotted line and the flight are one
+        /// line by construction rather than by two implementations agreeing. A per-skin launch
+        /// speed applied to only one of them would quietly land the preview where a neutral
+        /// slipper lands and the real one five per cent away.
+        /// </summary>
+        public Vector3 LaunchVelocityNow()
+        {
+            if (Held == null) return Vector3.zero;
+
+            Vector3 aim = AimPoint() - transform.position;
             aim.y = 0.0f;
             if (aim.sqrMagnitude < 0.01f) aim = transform.forward;
 
             // A 45 degree launch, which is the arc every range bound in the game is solved
-            // against. The preview integrates this same velocity.
+            // against.
             Vector3 dir = (aim.normalized + Vector3.up).normalized;
+            return Held.LaunchVelocity(dir, ChargeRatio);
+        }
 
-            Vector3 origin = _hand != null ? _hand.position : transform.position + Vector3.up * 1.25f;
-            origin += aim.normalized * Balance.MuzzleForward;
+        private void Release(float power)
+        {
+            if (Held == null) return;
+
+            Vector3 aim = AimPoint() - transform.position;
+            aim.y = 0.0f;
+            if (aim.sqrMagnitude < 0.01f) aim = transform.forward;
+
+            Vector3 dir = (aim.normalized + Vector3.up).normalized;
+            Vector3 origin = ThrowOrigin();
 
             GameServices.Audio?.PlayAt("throw_release", origin);
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
-            Held.HostThrow(_motor, origin, Held.LaunchVelocity(dir, ThrowRules.ChargeRatio(_charge)));
+            Held.HostThrow(_motor, origin, Held.LaunchVelocity(dir, power));
 
             Held = null;
             _motor.HoldingSlipper = false;
@@ -261,8 +389,7 @@ namespace TumbangPreso
 
         private void CancelAll()
         {
-            _charging = false;
-            _charge = 0.0f;
+            CancelCharge();
             _channel = 0.0f;
             ChannelRatio = 0.0f;
         }

@@ -39,6 +39,10 @@ namespace TumbangPreso.Visual
         public const float LabelMarginAtPersonScale = 0.25f;
         public const float PersonCapsuleHeight = 1.6f;
 
+        /// <summary>`font_size = 32` at `pixel_size = 0.005` on the .tscn's Label3D.</summary>
+        public const float LabelWorldHeight = 0.16f;
+        public const int LabelFontSize = 96;
+
         private CharacterMotor _character;
         private Transform _ring;
         private Renderer _ringRenderer;
@@ -83,8 +87,21 @@ namespace TumbangPreso.Visual
             _label = labelGo.AddComponent<TextMesh>();
             _label.anchor = TextAnchor.MiddleCenter;
             _label.alignment = TextAlignment.Center;
-            _label.characterSize = 0.08f;
-            _label.fontSize = 96;
+
+            // ⚠️⚠️ THE TAG IS 0.16 m TALL IN THE WORLD AND IT WAS ABOUT FIVE TIMES THAT.
+            // `CharacterBase.tscn`'s Label3D is `font_size = 32` at `pixel_size = 0.005`, so one
+            // line is exactly 32 × 0.005 = 0.16 m of world. A `TextMesh` expresses the same
+            // thing as `characterSize × fontSize / 10`, and the converted values (0.08 × 96)
+            // came to 0.77 m — a name nearly as tall as the character wearing it.
+            //
+            // At range that only looked slightly heavy; at two metres it was a wall of orange
+            // lettering across the street, which is what the capture shows and reads as a broken
+            // font rather than as a scale.
+            //
+            // ⚠️ THE FONT SIZE STAYS HIGH AND THE CHARACTER SIZE CARRIES THE SCALE. They trade
+            // off exactly, and a large font rendered small is the crisp half of that trade.
+            _label.fontSize = LabelFontSize;
+            _label.characterSize = LabelWorldHeight * 10.0f / LabelFontSize;
         }
 
         /// <summary>
@@ -147,6 +164,26 @@ namespace TumbangPreso.Visual
         {
             var cam = UnityEngine.Camera.main;
             if (cam == null || _label == null) return;
+
+            // ⚠️⚠️ YOUR OWN TAG IS NOT DRAWN ON YOUR OWN SCREEN IN FIRST PERSON. The label hangs
+            // 0.2 m above the head at y ≈ 1.8 and the FPP eye sits at 1.25, so it is half a
+            // metre from the near plane and DIRECTLY over the crosshair: at a 95° vertical FOV
+            // that is a name the height of the frame painted across the middle of the street.
+            // The report's screenshot shows it as a giant orange "· ATK" over the arena.
+            //
+            // ⚠️ IT IS THE RIG THAT DECIDES, NOT A DISTANCE THRESHOLD. A spectator in POV sits
+            // in the same place and SHOULD still see tags, and a taya standing nose to nose with
+            // an attacker must still read theirs. The one case that has to go is the camera
+            // looking out THROUGH this body.
+            bool mine = false;
+
+            var rig = cam.GetComponent<CameraSystem.CameraRig>();
+            if (rig != null && rig.IsLocalFpp && rig.IsFollowing(_character)) mine = true;
+
+            if (_ring != null) _ring.gameObject.SetActive(!mine);
+            _label.gameObject.SetActive(!mine);
+
+            if (mine) return;
 
             float distance = Vector3.Distance(cam.transform.position, _labelTransform.position);
 

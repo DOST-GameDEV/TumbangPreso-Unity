@@ -39,6 +39,67 @@ namespace TumbangPreso.UI
 
         public const float ChipWidth = 330.0f;
 
+        /// <summary>
+        /// One column of the premise card: the real game object in 3D, the Filipino word under
+        /// it in the ROLE colour, and the English gloss under that.
+        ///
+        /// ⚠️ THE PICTURE IS THE ACTUAL ASSET, not an icon drawn for this screen. There is no
+        /// icon art in the project and inventing four pieces of it is the art lane's call —
+        /// but the model preview already loads the real can, slipper and person rigs and frames
+        /// them from their MEASURED bounds, so the card can show the player exactly the object
+        /// they will meet in the match. It also means the page cannot go stale: reskin the lata
+        /// and this page reskins with it.
+        ///
+        /// ⚠️ ONLY THE WORDS TAKE THE ROLE COLOUR, NEVER THE MODEL. Flat-tinting a person orange
+        /// would fight the art palette and stop the person reading as a person. The colour rule
+        /// is about what the UI says, and the words are the UI.
+        /// </summary>
+        public readonly struct Tile
+        {
+            public readonly string Kind;      // "can", "slipper", or a person
+            public readonly int Index;        // roster index, for a person
+            public readonly string Fil;
+            public readonly string Eng;
+            public readonly bool Offense;
+
+            public Tile(string kind, int index, string fil, string eng, bool offense)
+            {
+                Kind = kind; Index = index; Fil = fil; Eng = eng; Offense = offense;
+            }
+        }
+
+        public const float TileWidth = 250.0f;
+
+        /// <summary>A FLOOR, not a height. The icon expands into whatever the panel has left
+        /// after the two words. 210 stranded the strip at the top of a mostly empty panel and
+        /// 330 clipped the English gloss and raised a scrollbar.</summary>
+        public const float TileIconMinHeight = 190.0f;
+
+        public const int TileFilSize = 46;
+        public const int TileEngSize = 24;
+
+        /// <summary>
+        /// ⚠️ CROCS, NOT SLIPPER 0, AND IKE WAS TRIED FIRST AND RENDERED AS A BLACK BLOB. 🧑
+        /// 2026-08-01, looking at this card: *"use ike tsinelas here the tsinelas model here
+        /// looks ugly"*, then *"js do crocs"*. Index 0 is the procedural mesh and at icon size
+        /// it reads as a brown smear; IKE's texture is nearly black and this tile's lighting is
+        /// flat and head-on, so the model that looks best on the character screen loses all its
+        /// shape at 120 px. **A prop that previews well in one frame is not a prop that reads as
+        /// an icon.** Looked up by ID rather than by index, because the table has been reordered
+        /// before and an index here would silently become a different shoe.
+        /// </summary>
+        public const string TileSlipperId = "crocs";
+
+        /// <summary>The premise strip, page 1 only. `tutorial.gd` builds this instead of the
+        /// chip rows, because the page has no hook to hang a chip on: it is naming things.</summary>
+        public static readonly Tile[] PremiseTiles =
+        {
+            new Tile("can", 0, "LATA", "the can", false),
+            new Tile("person", 0, "TAYA", "guards it, alone", false),
+            new Tile("slipper", 0, "TSINELAS", "the slipper", true),
+            new Tile("person", 1, "ATTACKER", "throws, then runs", true),
+        };
+
         public static readonly Page[] Pages =
         {
             new Page("TUMBANG PRESO", "1v1v1v1. One taya.", new[]

@@ -111,6 +111,24 @@ namespace TumbangPreso
             return aimDirection.normalized * speed;
         }
 
+        /// <summary>
+        /// The HELD skin's own resting origin height, measured off the mesh rather than assumed.
+        ///
+        /// ⚠️ THE FOURTH SKIN MISSES BY 0.263 m AND THE ARC IS NOT THE BUG. A crocs RESTS
+        /// 0.161 m off the ground against the other three at 0.034 to 0.056, while a preview
+        /// that stops at a fixed floor epsilon draws its line to the ground. The line is right;
+        /// the tall skin simply stops higher.
+        /// </summary>
+        public float RestHeight
+        {
+            get
+            {
+                var r = GetComponentInChildren<Renderer>();
+                return r != null ? Mathf.Max(Balance.SlipperRestHeight, r.bounds.extents.y)
+                                 : Balance.SlipperRestHeight;
+            }
+        }
+
         public bool CanBeGrabbedBy(CharacterMotor who)
         {
             if (State != SlipperState.Loose || who == null) return false;
@@ -306,8 +324,19 @@ namespace TumbangPreso
             State = SlipperState.Loose;
             _velocity = Vector3.zero;
 
+            // ⚠️ THE TUMBLE IS CLEARED ON LANDING. `_apply_landed` sets `rotation = Vector3.ZERO`
+            // on both the body and its Visual, and skipping it leaves the slipper resting at
+            // whatever angle the spin happened to stop at — standing on its edge, or on its toe,
+            // or half inside the road. It is also the pose the pickup prompt is judged against.
+            transform.rotation = Quaternion.identity;
+
+            var visual = transform.Find("Visual");
+            if (visual != null) visual.localRotation = Quaternion.identity;
+
+            // ⚠️ THE SKIN'S OWN REST HEIGHT, NOT A LITERAL. The four skins rest between 0.034
+            // and 0.161 off the ground, so one number leaves the tall one buried.
             Vector3 p = transform.position;
-            transform.position = new Vector3(p.x, 0.045f, p.z);
+            transform.position = new Vector3(p.x, Mathf.Max(p.y, RestHeight), p.z);
 
             // ⚠️ AND IT MAKES A SOUND. A throw that hit a body played one cue and a throw that
             // hit the can played another, but a throw that simply MISSED, 38 of 71 flights in

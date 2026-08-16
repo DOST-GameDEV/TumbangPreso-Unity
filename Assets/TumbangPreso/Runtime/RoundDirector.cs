@@ -24,7 +24,17 @@ namespace TumbangPreso
         public event Action<int, int> Tagged; // (defenderSlot, attackerSlot)
 
         public bool RoundActive { get; private set; }
-        public float TimeLeft { get; private set; }
+
+        /// <summary>
+        /// ⚠️⚠️ IT STARTS FULL, NOT AT ZERO, AND THAT WAS A REPORTED BUG. `round_manager.gd`
+        /// declares `var time_left: float = ROUND_TIME`, so during the ready-up window — which
+        /// is the first thing a player ever sees of a match — the Godot HUD reads **01:30**.
+        /// Defaulting to 0 here drew **00:00** over a free-roam phase that had not started
+        /// counting, which reads as a clock that has already expired and was reported as the
+        /// match "starting with no time left".
+        /// </summary>
+        public float TimeLeft { get; private set; } = Balance.RoundTime;
+
         public Lata Lata { get; set; }
 
         private readonly List<CharacterMotor> _players = new List<CharacterMotor>();

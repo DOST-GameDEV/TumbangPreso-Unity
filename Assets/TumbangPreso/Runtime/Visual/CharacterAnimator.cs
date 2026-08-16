@@ -271,7 +271,15 @@ namespace TumbangPreso.Visual
             if (_motor.IsStunned) return Die;
 
             if (_carrier != null && _carrier.ChannelRatio > 0.0f) return Interact;
-            if (_carrier != null && _carrier.ChargeRatio > 0.0f) return Throwing;
+
+            // ⚠️⚠️ THE **OBSERVED** WIND-UP, NOT THIS PEER'S OWN CHARGE CLOCK, AND THE
+            // DIFFERENCE IS THE ENTIRE COUNTERPLAY. `carrier.gd`'s header spells it out: the
+            // charge timer only ticks on the peer that controls the unit, so a third-person
+            // pose driven from it is invisible to the person being AIMED AT. The 2.5 s charge
+            // exists precisely so *"the taya now has a window in which they can see an attacker
+            // winding up and act on it"*, and a wind-up nobody else can see deletes that window
+            // while leaving the cost.
+            if (_carrier != null && _carrier.ObservedChargePower >= 0.0f) return Throwing;
 
             if (!_motor.IsGrounded) return _motor.Velocity.y > 0.5f ? Jump : Fall;
 

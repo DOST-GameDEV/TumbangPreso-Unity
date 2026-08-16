@@ -72,13 +72,43 @@ namespace TumbangPreso.UI
             _captured = true;
         }
 
-        /// <summary>Sets the pivot and puts the rect back where the .tscn said it was.</summary>
+        /// <summary>
+        /// Sets the pivot and puts the rect back where the .tscn said it was.
+        ///
+        /// ⚠️⚠️ THIS IS ONLY EVER CALLED WITH THE RESTING VALUE NOW, AND THE REASON IS A DEAD
+        /// BUTTON IN THE SHIPPED PLAYER. The entrance used to park the pivot on the off-screen
+        /// flagpole, 300 to 420 px to the LEFT of the control, and hand it back when the unfurl
+        /// landed. Two things went wrong with that:
+        ///
+        ///   · `_rt.rect.width` is ZERO before the first layout pass, so `pixelsFromLeft / width`
+        ///     was divided by the `max(1, …)` floor and produced a pivot of -300 rather than
+        ///     -0.49 — three hundred TIMES the control's width, not a fraction of it, and
+        ///   · the restore then wrote back offsets that no longer described the same rect.
+        ///
+        /// The result was a pennant whose ARTWORK drew exactly where the .tscn put it — the
+        /// child fills the parent, and the parent's own layout was recomputed — while the
+        /// Button's hit rect sat 300 px off to the left. It looked perfect and could not be
+        /// clicked, which is precisely the reported *"buttons dont work"*: SINGLE PLAYER on the
+        /// mode screen swallowed every press while the title screen's PLAY, whose resting pivot
+        /// happens to be non-zero, worked.
+        ///
+        /// ⚠️ AND THE ENTRANCE DOES NOT NEED IT. `localScale` on a RectTransform scales about
+        /// the PIVOT, and the pivot is already the button's crossing of the left screen edge,
+        /// which is the point `arrow_button.gd` chose for hover and press. Unfurling about the
+        /// left edge instead of about a pole a further 300 px out is a difference of a few
+        /// pixels over 0.45 s. A hit area that never moves is worth more than that.
+        /// </summary>
         private void SetPivot(float pixelsFromLeft)
         {
             if (_rt == null) return;
 
-            float width = Mathf.Max(1.0f, _rt.rect.width);
-            _rt.pivot = new Vector2(pixelsFromLeft / width, 0.5f);
+            // ⚠️ NO LAYOUT, NO PIVOT. Called before the first pass the width is zero and every
+            // number computed from it is nonsense; the resting pivot is re-applied on the next
+            // frame that has a real rect.
+            float width = _rt.rect.width;
+            if (width <= 1.0f) return;
+
+            _rt.pivot = new Vector2(Mathf.Clamp01(pixelsFromLeft / width), 0.5f);
 
             _rt.offsetMin = _offMin;
             _rt.offsetMax = _offMax;
@@ -98,7 +128,9 @@ namespace TumbangPreso.UI
             EnsureGroup();
             _group.alpha = 0.0f;
 
-            SetPivot(-PoleDistance);
+            // ⚠️ THE PIVOT IS NOT TOUCHED. See SetPivot: parking it on the pole is what left the
+            // hit rect 300 px away from the artwork in the shipped player.
+            RestingPivot();
             transform.localScale = new Vector3(0.0f, 0.7f, 1.0f);
         }
 
@@ -112,9 +144,21 @@ namespace TumbangPreso.UI
 
         private void Update()
         {
+            // ⚠️ RE-APPLIED UNTIL IT TAKES. `OnEnable` runs before the first layout pass, where
+            // the rect has no width and the pivot cannot be computed; without this the control
+            // keeps whatever pivot the scene serialised and hover scales it about the wrong
+            // point. One comparison a frame until it lands, then never again.
+            if (!_pivotSet && _rt != null && _rt.rect.width > 1.0f)
+            {
+                RestingPivot();
+                _pivotSet = true;
+            }
+
             if (_entering) StepEntrance();
             else StepScale();
         }
+
+        private bool _pivotSet;
 
         private void StepEntrance()
         {

@@ -55,8 +55,18 @@ namespace TumbangPreso.CameraSystem
         /// ⚠️ PUSHED DOWN AND BACK AFTER SCALING. Shrinking the arms alone just leaves smaller
         /// arms in the same commanding spot; down clears the centre of frame and back is what
         /// actually stops them subtending half the vertical FOV.
+        ///
+        /// ⚠️⚠️ THE Z IS FLIPPED FROM THE .gd's `Vector3(0.0, -0.10, -0.16)` AND IT WAS COPIED
+        /// ACROSS UNCHANGED, WHICH PUT THE ARMS BEHIND THE CAMERA. Godot looks down -Z, so -0.16
+        /// there is 16 cm IN FRONT of the eye; Unity looks down +Z, so the same number is 16 cm
+        /// BEHIND it. Every other converted vector in this file and in `ViewmodelArms` takes the
+        /// flip — the arm origins, the carry anchor, the carry direction — and this one was
+        /// missed because it is the only one written as a plain "push it back" offset rather
+        /// than as a transcribed transform. The visible result is the arms straddling the near
+        /// plane and drawing as two enormous slabs across the top of the frame, which is exactly
+        /// what the report's screenshot shows.
         /// </summary>
-        public static readonly Vector3 ViewmodelSeat = new Vector3(0.0f, -0.10f, -0.16f);
+        public static readonly Vector3 ViewmodelSeat = new Vector3(0.0f, -0.10f, 0.16f);
 
         public const float PersonCapsuleHeight = 1.6f;
         public const float TppMinSpringLength = 1.8f;
@@ -73,7 +83,29 @@ namespace TumbangPreso.CameraSystem
         // -------------------------------------------------------------------
 
         [SerializeField] private AimSource _aimSource = AimSource.Movement;
-        [SerializeField] private float _fieldOfView = 75.0f;
+        /// <summary>
+        /// ⚠️⚠️ 95 IN FIRST PERSON AND 70 IN THIRD, FROM `CameraRig.tscn`, AND A SINGLE 75 FOR
+        /// BOTH WAS WRONG IN BOTH DIRECTIONS. The .tscn's FppCamera is `fov = 95.0` and its
+        /// TppCamera is `fov = 70.0`; Godot's `keep_aspect` defaults to KEEP_HEIGHT, so both are
+        /// VERTICAL angles and transcribe straight into Unity's `fieldOfView`.
+        ///
+        /// This is not a taste setting. A first-person view at 75 where the game was framed at
+        /// 95 shows a third less of the street, which changes how much of the box a taya can
+        /// watch at once and how early an attacker sees a lunge coming, and it is most of why
+        /// the two builds' arena screenshots do not look like the same game even with identical
+        /// geometry. It also decides how much of the frame the viewmodel arms occupy.
+        /// </summary>
+        public const float FppFieldOfView = 95.0f;
+        public const float TppFieldOfView = 70.0f;
+
+        /// <summary>
+        /// The spring arm's standoff. ⚠️ DELIBERATELY LARGER THAN THE NEAR PLANE (0.15 against
+        /// 0.05): the arm stops that far short of whatever it hit, and a margin under the near
+        /// plane lets the wall clip through the camera exactly when the arm bottoms out.
+        /// </summary>
+        public const float TppArmMargin = 0.15f;
+
+        [SerializeField] private float _fieldOfView = FppFieldOfView;
 
         private CharacterMotor _character;
         private CameraMode _mode = CameraMode.Fpp;
@@ -121,6 +153,20 @@ namespace TumbangPreso.CameraSystem
 
             _camera.fieldOfView = _fieldOfView;
             _camera.nearClipPlane = 0.05f;
+        }
+
+        /// <summary>
+        /// ⚠️ THE FOV FOLLOWS THE MODE, because the two cameras in `CameraRig.tscn` are two
+        /// different lenses and the mode swap is what switches between them. Applied every frame
+        /// rather than on the transition, so the emote swing and the spectator handover cannot
+        /// leave the wrong one on.
+        /// </summary>
+        private void ApplyLens()
+        {
+            if (_camera == null) return;
+
+            float want = _mode == CameraMode.Fpp && !_emoteView ? FppFieldOfView : TppFieldOfView;
+            if (!Mathf.Approximately(_camera.fieldOfView, want)) _camera.fieldOfView = want;
         }
 
         /// <summary>
@@ -252,6 +298,8 @@ namespace TumbangPreso.CameraSystem
         {
             if (_character == null || !_active) return;
 
+            ApplyLens();
+
             if (_emoteView) { ApplyEmoteView(); return; }
 
             StepLook();
@@ -316,7 +364,19 @@ namespace TumbangPreso.CameraSystem
                 _viewmodel.gameObject.SetActive(true);
 
             // The hand shows what the unit is actually carrying.
-            if (_arms != null) _arms.SetHolding(_character.HoldingSlipper);
+            if (_arms == null) return;
+
+            // ⚠️ ASKED PER FRAME, NOT ON A PICK-UP EVENT. What a character holds changes
+            // DURING a round, and the self-hide only re-runs on activation and model changes,
+            // so an event-driven version showed both slippers until the next swap.
+            var carrier = _character.GetComponent<Carrier>();
+            var held = carrier != null ? carrier.Held : null;
+
+            _arms.SetHolding(held != null);
+
+            // ⚠️ THE VIEWMODEL WEARS THE PICKED SKIN. A player who chose CROCS held a brown
+            // flip-flop in their own hands while every peer saw what they had actually picked.
+            if (held != null) _arms.MatchSkin(held);
         }
 
         private void ApplyTpp()
@@ -334,7 +394,7 @@ namespace TumbangPreso.CameraSystem
                                    _tppSpringLength, ~0, QueryTriggerInteraction.Ignore))
             {
                 if (hit.collider.GetComponentInParent<CharacterMotor>() != _character)
-                    length = Mathf.Max(TppMinSpringLength, hit.distance);
+                    length = Mathf.Max(TppMinSpringLength, hit.distance - TppArmMargin);
             }
 
             transform.SetPositionAndRotation(mount - (rot * Vector3.forward) * length, rot);
@@ -473,12 +533,32 @@ namespace TumbangPreso.CameraSystem
         /// from the hand instead sags the flight 0.38 to 0.43 m below that line and drops the
         /// slipper out of the bottom of the screen on release.
         /// </summary>
+        /// <summary>How far along the crosshair to look for something to aim AT, before giving
+        /// up and treating the aim as a bearing rather than a target. `carrier.gd:60`.</summary>
+        public const float AimRayLength = 40.0f;
+
         public Vector3 AimPoint()
         {
             if (_character == null) return Vector3.zero;
 
             if (_mode == CameraMode.Fpp)
-                return transform.position + transform.forward * 20.0f;
+            {
+                // ⚠️ IT CASTS, IT DOES NOT PROJECT A FIXED DISTANCE. `carrier.gd::_aim_point`
+                // raycasts the crosshair and returns the hit, so aiming at the lata twelve
+                // metres away throws AT the lata rather than at a point twenty metres past it.
+                // A fixed projection makes every close-range throw overshoot, and the aiming
+                // arc drawn from it lands somewhere the slipper never goes.
+                var sight = new Ray(transform.position, transform.forward);
+
+                if (Physics.Raycast(sight, out var hit, AimRayLength, ~0,
+                                    QueryTriggerInteraction.Ignore)
+                    && hit.collider.GetComponentInParent<CharacterMotor>() != _character)
+                {
+                    return hit.point;
+                }
+
+                return transform.position + transform.forward * AimRayLength;
+            }
 
             var ground = new Plane(Vector3.up, _character.transform.position);
             var ray = new Ray(transform.position, transform.forward);

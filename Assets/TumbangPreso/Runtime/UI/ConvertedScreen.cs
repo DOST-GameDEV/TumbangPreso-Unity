@@ -25,8 +25,37 @@ namespace TumbangPreso.UI
 
         protected virtual void Start()
         {
+            // ⚠️⚠️ EVERY MENU RELEASES THE MOUSE, AND ONLY THE TITLE SCREEN USED TO. A match
+            // captures the pointer; a screen reached straight from a match — the results board,
+            // the setup screen after a rematch, anything the pause menu leads to — inherited
+            // that capture and became completely unclickable while drawing perfectly. Doing it
+            // in the base class means a screen added later cannot forget.
+            CursorMode.Release();
+
             Index(transform);
             Wire();
+        }
+
+        /// <summary>
+        /// Where Escape goes on this screen. Null means "nowhere", which is correct for the
+        /// title.
+        ///
+        /// ⚠️⚠️ EVERY GODOT SCREEN HANDLES `ui_cancel` AND NOT ONE CONVERTED SCREEN DID.
+        /// `match_setup.gd::_unhandled_input`, `multiplayer_setup.gd`, `character_select.gd`
+        /// and the three overlays all back out on Escape, and the conversion dropped the
+        /// handler along with the input map entry. On a screen whose BACK button is also being
+        /// blocked, that leaves a player with no way out of the menu at all, which is exactly
+        /// how "buttons dont work, back etc" reads from the other side.
+        /// </summary>
+        protected virtual string CancelTarget => null;
+
+        protected virtual void Update()
+        {
+            if (CancelTarget == null) return;
+            if (!Input.GetKeyDown(KeyCode.Escape)) return;
+
+            MenuSfx.Back();
+            SceneFlow.Go(CancelTarget);
         }
 
         private void Index(Transform t)
@@ -60,6 +89,15 @@ namespace TumbangPreso.UI
             }
 
             btn.onClick.RemoveAllListeners();
+
+            // ⚠️ EVERY MENU PRESS IS LOGGED, AND IT IS NOT DEBUG LEAVINGS. "The buttons don't
+            // work" has at least four causes that all look identical on screen — a covered
+            // raycast, a control off the viewport, a locked cursor, a dead input backend — and
+            // the ONLY way to tell "the press never happened" from "the press happened and the
+            // screen did not change" in a shipped .exe is a line in `Player.log`. One line per
+            // deliberate press costs nothing and has already saved a session.
+            btn.onClick.AddListener(() => Debug.Log($"[UI] pressed {nodeName}"));
+
             btn.onClick.AddListener(action);
 
             // ⚠️ EVERY BUTTON MAKES A SOUND. The Godot build wires ui_click and ui_hover on the

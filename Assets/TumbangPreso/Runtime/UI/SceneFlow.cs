@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// The screen graph, and the one place a scene name is written down.
+    /// The screen graph, the map registry, and the one place a scene name is written down.
     ///
     /// ⚠️ NAMES IN ONE PLACE, NOT SCATTERED THROUGH THE SCREENS. In the Godot build each screen
     /// carried its own `res://scenes/ui/Whatever.tscn` constant, which is fine until a scene is
@@ -30,7 +30,73 @@ namespace TumbangPreso.UI
         public const string Eskinita = "Eskinita";
         public const string BayanPlaza = "BayanPlaza";
 
+        /// <summary>
+        /// One map's registry row, from `game_launch.gd`'s `MAPS`.
+        ///
+        /// ⚠️ `Yaw`, `Distance` and `Height` ARE THE PREVIEW BEAUTY SHOT and they live here for
+        /// the reason the .gd states: `tools/maps/build_*.py` emit the map scenes WHOLESALE, so
+        /// a camera added to Eskinita.tscn by hand survives exactly until the next layout run.
+        ///
+        ///   yaw       degrees around the play area, measured off +Z
+        ///   distance  metres back from the pivot
+        ///   height    metres above it
+        /// </summary>
+        public readonly struct MapEntry
+        {
+            public readonly string Id;
+            public readonly string Name;
+            public readonly string Tagline;
+            public readonly float Yaw;
+            public readonly float Distance;
+            public readonly float Height;
+
+            public MapEntry(string id, string name, string tagline,
+                            float yaw, float distance, float height)
+            {
+                Id = id;
+                Name = name;
+                Tagline = tagline;
+                Yaw = yaw;
+                Distance = distance;
+                Height = height;
+            }
+
+            /// <summary>The setup screen's detail line: the arena's name then what it is, in the
+            /// vocabulary the game teaches. Word for word from the .gd.</summary>
+            public string Detail => $"{Name}   {Tagline}";
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE MAP REGISTRY, AND THE SINGLE PLACE A MAP IS NAMED. Order is the order the
+        /// picker shows them in. `Id` is what travels between the menu and the match and what a
+        /// saved preference stores, so it must stay stable even if the display name changes.
+        ///
+        /// Adding a map is one entry here plus the scene. The picker, the launch path, the
+        /// setup screen's live 3D backdrop and the fallback all read this.
+        /// </summary>
+        public static readonly MapEntry[] MapRegistry =
+        {
+            new MapEntry(Eskinita, "ESKINITA",
+                         "Urban side street. Sari-sari, sampay, kanal.", 0.0f, 22.0f, 16.0f),
+
+            new MapEntry(BayanPlaza, "BAYAN PLAZA",
+                         "Barangay plaza. Church, basketball ring, acacia.", 0.0f, 22.0f, 16.0f),
+        };
+
         public static readonly string[] Maps = { Eskinita, BayanPlaza };
+
+        /// <summary>
+        /// The registry row for a map id, or the first map's. ⚠️ It never returns a default
+        /// struct: a zero distance would put the preview camera inside the play area.
+        /// </summary>
+        public static MapEntry PreviewFor(string id)
+        {
+            foreach (var entry in MapRegistry)
+                if (entry.Id == id) return entry;
+
+            Debug.LogWarning($"[Flow] unknown map '{id}', falling back to '{MapRegistry[0].Id}'.");
+            return MapRegistry[0];
+        }
 
         /// <summary>Which map the next match loads. Set by the setup screen.</summary>
         public static string SelectedMap = Eskinita;
@@ -55,6 +121,12 @@ namespace TumbangPreso.UI
                                "Add it, or the button that asked for it will do nothing in a build.");
                 return;
             }
+
+            // ⚠️ TIME SCALE IS RESTORED ON EVERY TRANSITION. The pause overlay and the hitstop
+            // both write `Time.timeScale`, and a scene change that happens while either is live
+            // carries the frozen scale into the next screen, where nothing ever restores it.
+            // The symptom is a menu that responds at one twentieth speed and reads as a hang.
+            Time.timeScale = 1.0f;
 
             SceneManager.LoadScene(scene);
         }

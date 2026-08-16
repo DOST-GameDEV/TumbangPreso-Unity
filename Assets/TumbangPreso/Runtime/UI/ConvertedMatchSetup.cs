@@ -30,6 +30,23 @@ namespace TumbangPreso.UI
         private int _map;
         private int _difficulty = 1;
 
+        /// <summary>`match_setup.gd::_unhandled_input` backs out to the mode screen on Escape.</summary>
+        protected override string CancelTarget => SceneFlow.ModeSelect;
+
+        /// <summary>
+        /// ⚠️⚠️ ONE STEP PER PRESS, ENFORCED, BECAUSE THE SELECTORS WERE REPORTED AS
+        /// UNCONTROLLABLE: *"clicking next on stuff like bot is a shitty experience u cant
+        /// control it it goes too fast"*. `match_setup.gd` wires `pressed` and has NO repeat and
+        /// NO hold behaviour at all — one click is one step, and anything faster than that is
+        /// the conversion adding a behaviour the original never had.
+        ///
+        /// The guard is a time window rather than a flag because it has to survive whatever is
+        /// producing the extra step (a doubled event, a second raycaster, a held pointer), and
+        /// 0.12 s is under any real double-click while being far longer than a frame.
+        /// </summary>
+        private const float CycleGuard = 0.12f;
+        private float _lastCycle = -1.0f;
+
         private MapPreviewSurface _preview;
         private Transform _characterPanel;
         private Button _spectate;
@@ -40,20 +57,25 @@ namespace TumbangPreso.UI
 
         private static readonly string[] Difficulties = { "EASY", "NORMAL", "HARD" };
 
-        /// <summary>
-        /// ⚠️ THE BLURBS ARE THE GODOT ONES, WORD FOR WORD. They tell a player what the arena
-        /// actually is in the vocabulary the game teaches (sari-sari, sampay, kanal), which is
-        /// how those words get learned.
-        /// </summary>
-        private static readonly Dictionary<string, string> MapBlurbs = new Dictionary<string, string>
-        {
-            { "Eskinita", "ESKINITA   Urban side street. Sari-sari, sampay, kanal." },
-            { "BayanPlaza", "BAYAN PLAZA   Barangay plaza. Church, basketball ring, acacia." },
-        };
-
         protected override void Wire()
         {
             SetText("BannerLabel", SceneFlow.Networked ? "MULTIPLAYER" : "SINGLE PLAYER");
+
+            SetText("SeatHeading", "YOUR CHARACTER");
+
+            // ⚠️ THE WHOLE HINT, WORD FOR WORD FROM `match_setup.gd::_setup_solo`. The
+            // conversion carried the first sentence and dropped the second, which is the half
+            // that explains what the empty seats are: *"Empty seats are bots — the kids from
+            // the street who fill in."* It also carries the taya rotation, which is the game's
+            // fairness argument and the reason the seat board is clickable at all.
+            //
+            // ⚠️ THE DASH IS THE GAME'S OWN, NOT THIS FILE'S PROSE. The house style bans em
+            // dashes in anything WE write; this is a shipped string being transcribed verbatim
+            // so the two builds read identically on screen, and changing it would be a
+            // divergence, not a style fix.
+            SetText("SeatHint",
+                    "Four players, one taya. The taya rotates every round, so everyone defends "
+                    + "exactly once. Empty seats are bots — the kids from the street who fill in.");
 
             _map = Mathf.Max(0, System.Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap));
             _difficulty = Mathf.Clamp(Settings.SettingsStore.Current.AiDifficulty, 0, 2);
@@ -200,8 +222,17 @@ namespace TumbangPreso.UI
         private void Cycle(ref int index, int count, int delta)
         {
             if (count <= 0) return;
+            if (Time.unscaledTime - _lastCycle < CycleGuard) return;
+
+            _lastCycle = Time.unscaledTime;
 
             index = ((index + delta) % count + count) % count;
+
+            // ⚠️ THE ARROWS CARRY THEIR OWN AUDIO. `match_setup.gd::_wire_selector` exists for
+            // exactly this reason — "one helper rather than six pairs of lines, so a new
+            // selector row cannot be added with half its audio missing". These are TextureButtons
+            // rather than pennants, so they get nothing from the shared button skin.
+            MenuSfx.Click();
             Refresh();
         }
 
@@ -238,9 +269,10 @@ namespace TumbangPreso.UI
 
             SetText("DifficultyValueLabel", Difficulties[_difficulty]);
 
-            SetText("DetailLabel", MapBlurbs.TryGetValue(SceneFlow.SelectedMap, out var blurb)
-                ? blurb
-                : SceneFlow.SelectedMap);
+            // ⚠️ FROM THE MAP REGISTRY, NOT A SECOND TABLE. `game_launch.gd` calls itself "the
+            // single place a map is named", and a blurb dictionary living here is a second place
+            // that is free to disagree with the picker beside it.
+            SetText("DetailLabel", SceneFlow.PreviewFor(SceneFlow.SelectedMap).Detail);
 
             // ⚠️ THE PREVIEW FOLLOWS THE SELECTOR. Picking a map that changes only a word is the
             // single loudest "this screen is a mock-up" signal the front end can send.

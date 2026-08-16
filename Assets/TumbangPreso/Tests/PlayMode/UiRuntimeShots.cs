@@ -128,10 +128,11 @@ namespace TumbangPreso.PlayTests
             var load = SceneManager.LoadSceneAsync(scene, LoadSceneMode.Single);
             while (load != null && !load.isDone) yield return null;
 
-            // Two frames: one for Start, one for the layout it dirtied.
-            yield return null;
-            yield return null;
-            yield return null;
+            // ⚠️ LONG ENOUGH FOR THE PENNANTS TO FINISH UNFURLING. `arrow_button.gd::animate_in`
+            // runs for 0.45 s with a per-button stagger on top, and a capture three frames after
+            // load photographs the buttons mid-animation at a fraction of their width. That
+            // looks exactly like a layout bug and sent one pass chasing anchors that were right.
+            for (int i = 0; i < 90; i++) yield return null;
 
             Capture(scene);
         }

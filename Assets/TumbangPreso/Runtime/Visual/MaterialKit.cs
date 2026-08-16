@@ -26,9 +26,27 @@ namespace TumbangPreso.Visual
             {
                 if (_lit != null) return _lit;
 
-                var shader = Shader.Find("Universal Render Pipeline/Lit")
-                             ?? Shader.Find("Standard")
-                             ?? Shader.Find("Diffuse");
+                // ⚠️⚠️ ASK WHICH PIPELINE IS *RUNNING*, NOT WHICH SHADER *EXISTS*. This project
+                // has the URP package installed and NO pipeline asset assigned, so it renders on
+                // the built-in pipeline — but `Shader.Find("Universal Render Pipeline/Lit")`
+                // still returns that shader, because it is in the project. A URP shader under
+                // the built-in pipeline has no matching subshader and draws as the error
+                // material, so the first-person arms and the tsinelas in the player's own hand
+                // rendered wrong in every build while the lookup "succeeded".
+                //
+                // `currentRenderPipeline` is null exactly when the built-in pipeline is active,
+                // which is the only reliable way to ask.
+                bool scriptable = UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline != null;
+
+                var shader = scriptable
+                    ? Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard")
+                    : Shader.Find("Standard") ?? Shader.Find("Diffuse");
+
+                if (shader == null)
+                {
+                    Debug.LogError("[Material] no usable lit shader; runtime meshes will be pink.");
+                    shader = Shader.Find("Sprites/Default");
+                }
 
                 _lit = new Material(shader) { name = "RuntimeLit" };
                 return _lit;

@@ -4,8 +4,8 @@ using UnityEngine;
 namespace TumbangPreso.Visual
 {
     /// <summary>
-    /// Per-instance COLOUR for the map's dressing: seeded facade tints, foliage variation,
-    /// and the road's warm-neutral correction. Converted from
+    /// Per-instance COLOUR for the map's dressing: seeded facade tints, recoloured roof
+    /// atlases, foliage variation, and the road's warm-neutral correction. Converted from
     /// `scripts/systems/env_toon_pass.gd`.
     ///
     /// ⚠️⚠️ IT DOES NOT APPLY TOON SHADING OR OUTLINES, AND THE GODOT NAME IS A LEFTOVER —
@@ -23,6 +23,35 @@ namespace TumbangPreso.Visual
     /// What survives is the part that was actually working: colour variety. Kenney's kits
     /// ship one material per prop, so an unretinted street is fifty identical cream houses.
     /// </summary>
+    /// <remarks>
+    /// ⚠️⚠️ THREE THINGS WERE MISSING FROM THE FIRST CONVERSION AND ALL THREE WERE VISIBLE.
+    /// Reported from a side-by-side screenshot of the two builds:
+    ///
+    ///  1. **THE ROOF ATLASES.** `FACADE_TINTS` multiplies the whole atlas, which varies the
+    ///     near-white WALL and does nothing at all to the roof: the roof swatch is a saturated
+    ///     green (#61CB8B) and green multiplied by any tint is still green. A City Kit
+    ///     building is ONE mesh with ONE material, so there is no surface index to tint
+    ///     separately either. Godot swaps the whole ATLAS per instance, from the six
+    ///     pre-generated `colormap_roof_*.png` files, and those files are already in this
+    ///     repo. Without the swap the Unity street had terracotta walls under mint roofs,
+    ///     which is exactly what the report showed.
+    ///
+    ///  2. **THE TINT WAS RANDOM RATHER THAN NAME-HASHED.** `Random.Range` walks a sequence
+    ///     in renderer order, so a house's colour depends on how many renderers happened to
+    ///     be visited before it. Godot hashes the instance's own stable NAME. The visible
+    ///     difference is that consecutive houses walked the palette in order here and read as
+    ///     a repeating rainbow, which is the exact thing the multiplier in `_facade_tint` was
+    ///     chosen to avoid.
+    ///
+    ///  3. **CARS AND TREES WERE PAINTED AS FACADES.** `Layer1` holds houses AND parked cars;
+    ///     `Layer2` holds houses AND street trees. Godot classifies by the map generator's own
+    ///     instance name (`_is_building`) and leaves a car alone. Tinting by group handed
+    ///     every van a house colour.
+    ///
+    /// ⚠️ AND THE ALBEDO IS MULTIPLIED, NOT REPLACED. `mat.albedo_color = base * tint` in the
+    /// .gd. Assigning the tint outright throws away whatever the kit material already carried
+    /// and flattens two different props to one colour.
+    /// </remarks>
     public sealed class EnvColourPass : MonoBehaviour
     {
         /// <summary>
@@ -46,6 +75,22 @@ namespace TumbangPreso.Visual
             new Color(0.95f, 0.90f, 0.66f),
             new Color(0.62f, 0.76f, 0.58f),
             new Color(0.80f, 0.86f, 0.70f),
+        };
+
+        /// <summary>
+        /// ⚠️ THE ROOF VARIANTS, IN THE .gd's ORDER. `tools/models/make_roof_atlases.py` emits
+        /// one atlas per roof colour from the shipped one; the six PNGs are committed in both
+        /// repos. Order is load-bearing because the atlas is chosen by an index into this list
+        /// and a reordering repaints every roof in the game.
+        /// </summary>
+        public static readonly string[] RoofAtlases =
+        {
+            "colormap_roof_terra",
+            "colormap_roof_rust",
+            "colormap_roof_slate",
+            "colormap_roof_ochre",
+            "colormap_roof_galv",
+            "colormap_roof_teal",
         };
 
         public static readonly string[] RoadGroups = { "Kalsada", "Road", "Slab", "Apron" };
@@ -75,58 +120,184 @@ namespace TumbangPreso.Visual
         public const float WindAnchorY = 2.62f;
         public const float WindDrop = 0.70f;
 
-        [Tooltip("Same seed, same street. Change it and every house repaints.")]
-        [SerializeField] private int _seed = 20260729;
-
         private readonly List<Transform> _wind = new List<Transform>();
         private readonly List<Vector3> _windHome = new List<Vector3>();
 
+        /// <summary>
+        /// ⚠️ THE LAYERS ARE THE CHILDREN OF `Dressing`, exactly as in the .gd, where the
+        /// script IS that node. Walking from the map root instead would treat `Bounds`,
+        /// `Floor` and `SpawnPoints` as dressing groups and would find no group name at all
+        /// for the meshes inside them.
+        /// </summary>
+        private Transform DressingRoot()
+        {
+            var dressing = transform.Find("Dressing");
+            return dressing != null ? dressing : transform;
+        }
+
         private void Start() => Apply();
 
-        /// <summary>
-        /// ⚠️ SEEDED, NOT RANDOM. The same map must repaint identically every run, or a
-        /// screenshot cannot be compared against the last one and two peers see different
-        /// streets. `Random.InitState` here rather than a shared generator, so nothing else
-        /// in the frame perturbs the sequence.
-        /// </summary>
         public void Apply()
         {
-            Random.InitState(_seed);
+            var root = DressingRoot();
+            int painted = 0, seen = 0, roofed = 0;
 
-            int painted = 0, seen = 0;
-
-            foreach (var renderer in GetComponentsInChildren<Renderer>(includeInactive: true))
+            foreach (var renderer in root.GetComponentsInChildren<Renderer>(includeInactive: true))
             {
                 seen++;
 
-                string name = renderer.transform.name;
+                // ⚠️⚠️ THE GROUP IS THE LAYER NODE, AND THE INSTANCE IS ITS DIRECT CHILD. In
+                // Godot a layer's children ARE the generator's named instances ("L1_7_E",
+                // "BeltX_31") and the Kenney mesh sits somewhere inside. The Unity conversion
+                // keeps that shape, so both facts come from one walk up the chain.
+                if (!Resolve(renderer.transform, root, out string group, out string instance))
+                    continue;
 
-                // ⚠️⚠️ THE GROUP IS FOUND BY WALKING UP, NOT BY READING THE PARENT. In Godot a
-                // MeshInstance3D sits directly under its group node, so `get_parent().name` IS
-                // the group. The Unity conversion instances a PREFAB per dressing item, and the
-                // mesh lives inside that prefab, so the immediate parent is the item and the
-                // group is its grandparent or higher. Reading only the parent matched nothing at
-                // all: the pass ran, reported success, and repainted zero renderers, leaving
-                // both arenas in the kit's factory white-and-green.
-                string group = GroupOf(renderer.transform);
+                Color tint = Color.white;
+                string roof = null;
 
-                Color? tint = TintFor(name, group);
-                if (tint == null) continue;
+                if (Contains(SlabGroups, group))
+                {
+                    tint = SlabTint;
+                }
+                else if (Contains(RoadGroups, group))
+                {
+                    tint = RoadTint;
+                }
+                else if (Contains(FacadeGroups, group))
+                {
+                    // ⚠️ CLASSIFY BY THE GENERATOR'S OWN NAME. "Is this a building?" cannot be
+                    // answered from the mesh: Layer1 holds houses AND parked cars, Layer2 holds
+                    // houses AND street trees, and the Belt holds both again. Keying off the
+                    // LAYER handed a City Kit roof atlas to every van in the street.
+                    if (IsBuilding(instance))
+                    {
+                        tint = FacadeTints[Pick(instance, 7, 0, FacadeTints.Length)];
+                        roof = RoofAtlases[Pick(instance, 13, 5, RoofAtlases.Length)];
+                    }
+                    else if (instance.Contains("Tree") || instance.Contains("Puno"))
+                    {
+                        tint = FoliageTints[Pick(instance, 11, 3, FoliageTints.Length)];
+                    }
 
-                // ⚠️ A PROPERTY BLOCK, NOT A MATERIAL INSTANCE. Writing `renderer.material`
-                // clones the material per renderer, which on a dressed street is hundreds of
-                // materials and the draw-call cost the toon pass was reverted for.
-                Paint(renderer, tint.Value);
-                painted++;
+                    // Everything else in these layers (parked cars) keeps its kit colours. A car
+                    // is small, already varied by model, and is the one thing on the street that
+                    // is SUPPOSED to be a bright manufactured colour.
+                    if (group == "Belt" || group == "Malayo")
+                        tint = Color.Lerp(tint, BeltFade, BeltFadeAmount);
+                }
+                else
+                {
+                    continue;
+                }
+
+                if (Paint(renderer, tint, roof)) painted++;
+                if (roof != null) roofed++;
             }
 
             // ⚠️ IT REPORTS THE COUNT, because "the pass ran" and "the pass did anything" are
             // different claims and the first one is what a silent version of this told us for
             // the whole port. A zero here means the group names moved, not that the street is
             // already the right colour.
-            Debug.Log($"[Env] repainted {painted} of {seen} renderers.");
+            Debug.Log($"[Env] repainted {painted} of {seen} renderers, {roofed} with a roof variant.");
 
             CollectWind();
+        }
+
+        /// <summary>
+        /// The layer (group) this renderer belongs to, and the generator's name for the
+        /// instance directly under it. Both are needed and both come from the same walk.
+        /// </summary>
+        private static bool Resolve(Transform t, Transform root, out string group, out string instance)
+        {
+            group = null;
+            instance = null;
+
+            for (var step = t; step != null && step != root; step = step.parent)
+            {
+                if (step.parent != root) continue;
+
+                group = step.name;
+
+                // The instance is the child of the layer on this same chain. Walk back down by
+                // remembering the node whose parent is the layer.
+                for (var down = t; down != null && down != step; down = down.parent)
+                {
+                    if (down.parent != step) continue;
+
+                    instance = down.name;
+                    break;
+                }
+
+                // A mesh parented straight onto the layer is its own instance.
+                if (instance == null) instance = t.name;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// The map generator's building names, and nothing else. Layer1/Layer2 rows are
+        /// `L1_&lt;i&gt;_&lt;side&gt;` / `L2_&lt;i&gt;`, the silhouette belt is `BeltX_&lt;i&gt;` /
+        /// `BeltZ_&lt;i&gt;`, and its trees are `BeltTreeX_&lt;i&gt;` — which is why this checks the
+        /// belt prefixes BEFORE falling through, or every belt tree would match.
+        ///
+        /// ⚠️ EVERY `Puno*` NAME IS REJECTED BEFORE THE BUILDING TEST. A tree handed a City Kit
+        /// roof atlas is the bug this guard exists for.
+        /// </summary>
+        private static bool IsBuilding(string name)
+        {
+            if (name.StartsWith("BeltTree") || name.Contains("Puno")) return false;
+
+            return name.StartsWith("Bahay_")
+                || name.StartsWith("Likod_")
+                || name.StartsWith("Kanto_")
+                || name.StartsWith("MalayoX_")
+                || name.StartsWith("MalayoZ_")
+                || name.StartsWith("L1_")
+                || name.StartsWith("L2_")
+                || name.StartsWith("Cross_")
+                || name.StartsWith("BeltX_")
+                || name.StartsWith("BeltZ_");
+        }
+
+        /// <summary>
+        /// ⚠️ SEEDED OFF THE NAME, NEVER RANDOM — the same rule the map generator works under.
+        /// A street that repaints itself every load cannot be reviewed in a screenshot and
+        /// cannot be reproduced from a bug report, and two peers would see different streets.
+        ///
+        /// The exact GDScript hash, including the 31-multiply and the 0x7fffffff mask, so a
+        /// given house is the same colour in both builds rather than merely stable in each.
+        /// </summary>
+        private static int NameHash(string text)
+        {
+            int value = 0;
+            for (int i = 0; i < text.Length; i++)
+                value = (value * 31 + text[i]) & 0x7fffffff;
+
+            return value;
+        }
+
+        /// <summary>
+        /// Index into a palette from an instance name, stirred by a per-palette multiplier.
+        ///
+        /// ⚠️⚠️ THE ARITHMETIC IS 64-BIT, AND DOING IT IN `int` THREW ON THE FIRST LOAD. The
+        /// .gd is `FACADE_TINTS[(_name_hash(name) * 7) % FACADE_TINTS.size()]` and GDScript ints
+        /// are 64-bit, so that product simply cannot overflow. A C# `int` holds the hash's full
+        /// 0x7fffffff range with nothing to spare, so multiplying by 7 wraps NEGATIVE, `%` in
+        /// C# keeps the sign of the dividend, and the lookup goes off the front of the array.
+        /// Transcribing the expression faithfully is exactly what broke it.
+        ///
+        /// ⚠️ THE MULTIPLIERS ARE DIFFERENT PER PALETTE, ON PURPOSE. Sharing one would lock each
+        /// wall colour to one roof and give six house types instead of the thirty the two
+        /// palettes make between them, and consecutive houses (L1_0, L1_1, L1_2) would walk the
+        /// palette in order and read as a repeating rainbow.
+        /// </summary>
+        private static int Pick(string instance, long multiplier, long offset, int count)
+        {
+            long value = (long)NameHash(instance) * multiplier + offset;
+            return (int)(value % count);
         }
 
         /// <summary>
@@ -141,34 +312,41 @@ namespace TumbangPreso.Visual
             "_BaseColor", "_Color", "baseColorFactor", "_TintColor",
         };
 
-        /// <summary>
-        /// One material per (source, tint) pair, so a street of six colours costs six materials
-        /// rather than one per house.
-        /// </summary>
-        private static readonly Dictionary<(Material, Color), Material> Painted =
-            new Dictionary<(Material, Color), Material>();
+        private static readonly string[] TextureProperties = { "_BaseMap", "_MainTex" };
 
         /// <summary>
-        /// ⚠️⚠️ A MATERIAL VARIANT, NOT A PROPERTY BLOCK, AND THAT IS THE WHOLE FIX. The block
+        /// One material per (source, tint, roof) triple, so a street of six colours and six
+        /// roofs costs at most thirty-six materials rather than one per house.
+        /// </summary>
+        private static readonly Dictionary<(Material, Color, string), Material> Painted =
+            new Dictionary<(Material, Color, string), Material>();
+
+        private static readonly Dictionary<string, Texture2D> RoofCache =
+            new Dictionary<string, Texture2D>();
+
+        /// <summary>
+        /// ⚠️⚠️ A MATERIAL VARIANT, NOT A PROPERTY BLOCK, AND THAT IS HALF THE FIX. The block
         /// version repainted 418 of 434 renderers on every load and changed nothing on screen:
         /// a block writes a NAMED property, and if the shader has no property by that name the
-        /// write is discarded without an error. Both arenas therefore shipped in the kit's
-        /// factory white-and-green while the log said the pass had run.
+        /// write is discarded without an error.
         ///
-        /// ⚠️ AND THE PROPERTY IS FOUND BY ASKING THE SHADER. `HasProperty` is the only way to
-        /// know which of the four spellings this material answers to, and a material that
-        /// answers to none is left alone rather than silently "painted".
+        /// ⚠️ AND THE ALBEDO IS MULTIPLIED INTO WHATEVER THE KIT ALREADY HAD, matching
+        /// `mat.albedo_color = base_mat.albedo_color * tint`. Overwriting it flattens two
+        /// differently-authored props to the same colour.
         /// </summary>
-        private static void Paint(Renderer renderer, Color tint)
+        private static bool Paint(Renderer renderer, Color tint, string roof)
         {
             var source = renderer.sharedMaterial;
-            if (source == null) return;
+            if (source == null) return false;
 
-            var key = (source, tint);
+            var key = (source, tint, roof ?? "");
 
             if (!Painted.TryGetValue(key, out var material) || material == null)
             {
-                material = new Material(source) { name = $"{source.name}_{ColorUtility.ToHtmlStringRGB(tint)}" };
+                material = new Material(source)
+                {
+                    name = $"{source.name}_{ColorUtility.ToHtmlStringRGB(tint)}{(roof == null ? "" : "_" + roof)}",
+                };
 
                 bool set = false;
 
@@ -176,8 +354,22 @@ namespace TumbangPreso.Visual
                 {
                     if (!material.HasProperty(property)) continue;
 
-                    material.SetColor(property, tint);
+                    material.SetColor(property, material.GetColor(property) * tint);
                     set = true;
+                }
+
+                if (roof != null)
+                {
+                    var atlas = LoadRoof(roof);
+
+                    if (atlas != null)
+                    {
+                        foreach (var property in TextureProperties)
+                        {
+                            if (!material.HasProperty(property)) continue;
+                            material.SetTexture(property, atlas);
+                        }
+                    }
                 }
 
                 if (!set)
@@ -190,51 +382,29 @@ namespace TumbangPreso.Visual
             }
 
             renderer.sharedMaterial = material;
+            return true;
         }
 
         /// <summary>
-        /// The nearest ancestor whose name is one of the dressing groups.
-        ///
-        /// ⚠️ IT STOPS AT THIS COMPONENT'S OWN TRANSFORM. Above that is the scene, and a scene
-        /// named after the map would happily match "Eskinita" against nothing and waste the walk
-        /// on every renderer in the arena.
+        /// ⚠️ FROM `Resources`, NOT FROM THE ART FOLDER. A texture referenced only by a string
+        /// is stripped from a player build; `RoofAtlasSync` copies the six PNGs under
+        /// `Resources/Models/roofs` so the reference survives. A missing atlas leaves the kit's
+        /// own roof rather than drawing magenta.
         /// </summary>
-        private string GroupOf(Transform t)
+        private static Texture2D LoadRoof(string atlas)
         {
-            for (var step = t; step != null && step != transform; step = step.parent)
-            {
-                string name = step.name;
+            if (RoofCache.TryGetValue(atlas, out var cached)) return cached;
 
-                if (Contains(RoadGroups, name) || Contains(FacadeGroups, name) ||
-                    Contains(SlabGroups, name) || name.Contains("Trees"))
-                {
-                    return name;
-                }
+            var texture = Resources.Load<Texture2D>($"Models/roofs/{atlas}");
+
+            if (texture == null)
+            {
+                Debug.LogWarning($"[Env] roof atlas '{atlas}' is not in Resources/Models/roofs; " +
+                                 "that building keeps the kit's mint roof.");
             }
 
-            // Fall back to the immediate parent, which is what a hand-built scene looks like.
-            return t.parent != null ? t.parent.name : "";
-        }
-
-        private Color? TintFor(string name, string group)
-        {
-            if (Contains(RoadGroups, group) || Contains(RoadGroups, name))
-                return Contains(SlabGroups, group) ? SlabTint : RoadTint;
-
-            if (name.Contains("Puno") || name.Contains("Tree") || group.Contains("Trees"))
-                return FoliageTints[Random.Range(0, FoliageTints.Length)];
-
-            if (Contains(FacadeGroups, group))
-            {
-                Color tint = FacadeTints[Random.Range(0, FacadeTints.Length)];
-
-                // The far belt washes toward the sky colour so distance reads as distance.
-                if (group == "Belt") tint = Color.Lerp(tint, BeltFade, BeltFadeAmount);
-
-                return tint;
-            }
-
-            return null;
+            RoofCache[atlas] = texture;
+            return texture;
         }
 
         private void CollectWind()

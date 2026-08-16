@@ -44,6 +44,33 @@ namespace TumbangPreso
                 gameObject.AddComponent<AudioListener>();
 
             LoadCuesFromResources();
+
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += (_, __) => KeepOneListener();
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ EXACTLY ONE LISTENER, AND UNITY WILL NOT ENFORCE IT FOR YOU. This object owns a
+        /// listener and survives scene changes; a scene that brings its own — an arena camera, a
+        /// menu camera, a preview rig — makes two, and Unity's response is a per-frame warning
+        /// plus undefined behaviour about which one actually hears. It surfaced as a test
+        /// failure rather than as a bug report, which is the only reason it was seen at all.
+        ///
+        /// ⚠️ THE OTHERS ARE DISABLED, NOT DESTROYED. They belong to scenes this object does not
+        /// own, and destroying a component out of somebody else's scene is how a re-import
+        /// silently puts it back.
+        /// </summary>
+        private void KeepOneListener()
+        {
+            var mine = GetComponent<AudioListener>();
+
+            foreach (var listener in FindObjectsByType<AudioListener>(FindObjectsInactive.Include,
+                                                                      FindObjectsSortMode.None))
+            {
+                if (listener == mine) continue;
+                listener.enabled = false;
+            }
+
+            if (mine != null) mine.enabled = true;
         }
 
         /// <summary>

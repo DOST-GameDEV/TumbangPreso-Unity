@@ -21,9 +21,6 @@ EditorBuildSettings:
     path: Assets/TumbangPreso/Scenes/Ui/MultiplayerSetup.unity
     guid: 9dd20d6bb770f114187a0d6ae191dc84
   - enabled: 1
-    path: Assets/TumbangPreso/Scenes/Ui/CharacterSelect.unity
-    guid: 0d36054ea36d42b4dab7928aad73a1ed
-  - enabled: 1
     path: Assets/TumbangPreso/Scenes/Ui/MatchResult.unity
     guid: 93726539048f0944c8a2323c83fb123a
   - enabled: 1

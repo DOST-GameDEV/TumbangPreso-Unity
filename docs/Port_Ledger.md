@@ -14,6 +14,42 @@ Scope measured 2026-08-15 against `DOST-GameDev` @ Godot 4.7:
 
 Unity side today: ~13k lines of C#, of which ~1,900 are editor converters.
 
+## 2026-08-16 — the parity pass, and the nine faults it found
+
+Reported from a side-by-side of the two builds. Every one of these is written down
+because each was invisible to a test, a compile and a screenshot of the editor, and
+several are the SAME failure mode wearing a different hat: something converted, went
+unread, and reported success.
+
+1. **The viewmodel seat kept Godot's Z.** `Vector3(0, -0.10, -0.16)` is 16 cm in FRONT
+   of a Godot camera and 16 cm BEHIND a Unity one. The arms straddled the near plane
+   and drew as slabs across the top of the frame.
+2. **`MaterialKit` asked which shader EXISTS, not which pipeline is RUNNING.** The URP
+   package is installed and no pipeline asset is assigned, so `Shader.Find` returned a
+   URP shader that the built-in pipeline cannot draw: the arms and the tsinelas in the
+   player's own hand rendered as the error material, bright magenta, in every build.
+3. **The map preview copied the .tscn's placeholder camera** instead of the registry's
+   framing, which `map_preview.gd` overwrites every frame. 8.5 m and no pitch where the
+   game frames from 16 m looking down.
+4. **The FPP field of view was 75 for both cameras**; `CameraRig.tscn` is 95 and 70.
+5. **The splash built its canvas as a CHILD** of a converted node, so it inherited that
+   node's rect: a hundred-pixel video in the middle of a black screen.
+6. **`EnvColourPass` had no roof atlases**, tinted by `Random` rather than by the
+   instance name hash, and painted parked cars as houses.
+7. **The kill plane was geometry with no behaviour**, and its collider was solid.
+8. **`TrajectoryPreview` had never been instantiated by any code path.**
+9. **Nothing captured or released the mouse except the title screen**, so a menu
+   reached from a match was unclickable while drawing perfectly.
+
+⚠️ **The tool that found half of these is `UiClickProbe`**, a PlayMode test that
+raycasts every button on every screen and names what is on top of it. Do not delete it:
+"the buttons don't work" is invisible to every other check in this project.
+
+⚠️ **And its first two runs lied.** It probed three frames after load, before the
+pennants had finished unfurling and before the layout groups had run, and reported six
+working controls as unreachable. It waits 120 frames now and reports OFF SCREEN
+separately from BLOCKED, because those are different faults with different fixes.
+
 ## ⚠️ Unity rules the conversion has to obey, each found by a shipped failure
 
 These are not style. Each one produced a build that looked correct in the editor
@@ -103,7 +139,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 |---|---|---|---|
 | `character_base.gd` | 1981 | `CharacterMotor` + `CombatVerbs` + `StatusStack` (651) | PARTIAL |
 | `character_visual.gd` | 2182 | `CharacterVisual` + `CharacterAnimator` + `ImpactBurst` (560) | PARTIAL — clips, flash, burst wired; prop attachments and remote smoothing pending |
-| `carrier.gd` | 536 | `Carrier.cs` (210) | PARTIAL |
+| `carrier.gd` | 536 | `Carrier.cs` (350) | CONVERTED 2026-08-16 — the 2.5 s wind-up on `Pressed` not `JustPressed`, its sound, the OBSERVED charge every peer can see, the aim cast from the camera, the sight-line throw origin, and the arc |
 | `character_nameplate.gd` | 165 | `CharacterNameplate.cs` (155) | CONVERTED — ring, tag, role colour, distance fade |
 | `slipper.gd` | 1630 | `Slipper.cs` (280) | PARTIAL — flight, bounce, spin, void recovery; hand attach and net sync pending |
 | `lata.gd` | 534 | `Lata.cs` (175) | PARTIAL — topple, roll, hit window; skins and net sync pending |
@@ -117,11 +153,11 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `camera_rig.gd` | 1111 | `CameraRig` + `ViewmodelArms` (640) | CONVERTED — FPP, prop TPP, emote swing, arms; carry-follow is dead code upstream |
 | `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (431) | CONVERTED — call sites pending, see below |
 | `character_roster.gd` | 757 | `Roster` + `RosterBook` (411) | CONVERTED (20/20 validated) |
-| `env_toon_pass.gd` | 391 | `EnvColourPass.cs` (185) | CONVERTED — tints, foliage, laundry sway |
-| `trajectory_preview.gd` | 273 | `TrajectoryPreview.cs` (113) | PARTIAL |
+| `env_toon_pass.gd` | 391 | `EnvColourPass.cs` (400) | CONVERTED 2026-08-16 — tints, foliage, laundry sway, **the six roof atlases**, name-hash seeding and the building/car/tree classification |
+| `trajectory_preview.gd` | 273 | `TrajectoryPreview.cs` (330) | CONVERTED 2026-08-16 — camera-facing ribbon, both fades, landing mark, physics-tick integration; **and it is finally instantiated** |
 | `hazard_zone.gd` | 133 | `HazardZone.cs` (108) | CONVERTED — slow zone, visual disc, round-scoped lifetime |
-| `game_version.gd` | 56 | `GameVersion.cs` (80) | CONVERTED — reads `Application.version`, now 4.68 |
-| `kill_plane.gd` | 26 | `KillPlane.cs` (62) | PARTIAL — logic and spawn anchor done, height still borrowed |
+| `game_version.gd` | 56 | `GameVersion.cs` (80) | CONVERTED — reads `Application.version`, now 4.68; the in-match stamp is bound too |
+| `kill_plane.gd` | 26 | `KillPlane.cs` (95) | CONVERTED 2026-08-16 — the real transform (y -10, 260x4x260) read off the MAP, and the importer binds it |
 
 ### `spectator_camera.gd` — CONVERTED 2026-08-15, audited line by line
 
@@ -180,12 +216,12 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
 | `match_setup.gd` | 2015 | `ConvertedMatchSetup.cs` (440) | PARTIAL — rows, seats, spectate, live map preview; netcode lobby half pending |
-| `hud.gd` | 1587 | `Hud.cs` (420) | PARTIAL — cards, clock, scores, stamina on the theme's Hud* set; per-row scoreboard and toasts pending |
+| `hud.gd` | 1587 | `Hud.cs` (900) | CONVERTED 2026-08-16 — wood skin, recessed clock with its urgency colour and pulse, ranked four-row board with the TAYA badge, lata card and its per-role hint, toasts off all five events, ready prompt AND role objective, split status stacks, held danger vignette, VULNERABLE line, role-coloured crosshair, clean feed, spectator strip, version stamp |
 | `multiplayer_setup.gd` | 1015 | `LobbySession.cs` (287) | PARTIAL |
 | `character_preview.gd` | 623 | `ModelPreview.cs` (215) | PARTIAL — render, framing, turn, drag; idle clip pending |
 | `ui_theme.gd` | 551 | `UiTheme` + `GodotTheme` + `StyleBoxBaker` (520) | CONVERTED — variations, StyleBox geometry and the baked nine-slices |
-| `tutorial.gd` | 462 | `TutorialContent` + `ConvertedTutorialPanel` (230) | PARTIAL — all 8 pages on the converted scene; 3D props pending |
-| `you_card.gd` | 430 | `YouCard.cs` (185) | PARTIAL — role, name, live meters; ready flash pending |
+| `tutorial.gd` | 462 | `TutorialContent` + `ConvertedTutorialPanel` (350) | CONVERTED 2026-08-16 — all 8 pages, plus page 1's premise strip with the four real models in live 3D |
+| `you_card.gd` | 430 | `YouCard.cs` (380) | CONVERTED 2026-08-16 — wood face with the role border, the STAMINA bar it was missing entirely, the FATIGUED read, the ready flash, and the two role-exclusive meters |
 | `settings_panel.gd` | 429 | `SettingsPanel` + `Rebinding.cs` (330) | CONVERTED — rebinding, conflicts, reset |
 | `emote_wheel.gd` | 422 | `EmoteWheel.cs` (215) + `Emotes.cs` | CONVERTED — hold, steer, release |
 | `character_select.gd` | 341 | `CharacterSelectScreen` (200) | CONVERTED — tabs, chalk pips, live 3D |
@@ -194,7 +230,7 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `role_swap_card.gd` | 274 | `RoleSwapCard.cs` (250) | CONVERTED — intermission timeline, swap, standings |
 | `arrow_button.gd` | 262 | `ArrowButtonView.cs` (250) | CONVERTED — unfurl, hover, press, both cues |
 | `offscreen_indicators.gd` | 211 | `OffscreenIndicators.cs` (175) | CONVERTED — edge arrows, wired into the HUD |
-| `map_preview.gd` | 165 | `MapPreview.cs` (150) | PARTIAL — sway, cache, silence; needs map prefabs |
+| `map_preview.gd` | 165 | `MapPreviewSurface.cs` (330) | CONVERTED 2026-08-16 — the registry's yaw/distance/height, the spawn-point pivot, the 7°/26 s sway, the parked-not-unloaded cache with its lights killed, and the silencing |
 | `splash_screen.gd` | 107 | `SplashScreen.cs` (154) | CONVERTED |
 | `mode_select.gd` | 96 | `ConvertedModeSelect.cs` | CONVERTED |
 | `main_menu.gd` | 85 | `ConvertedMainMenu.cs` | CONVERTED — in-place overlays, pennants re-unfurl |

@@ -47,11 +47,19 @@ namespace TumbangPreso.UI
         private RawImage _surface;
         private RenderTexture _target;
         private Image _fade;
+        private GameObject _canvas;
         private AsyncOperation _menu;
         private float _elapsed;
         private bool _leaving;
 
-        private void Start() => StartCoroutine(Run());
+        private void Start()
+        {
+            // `splash_screen.gd::_ready` opens with `Input.mouse_mode = MOUSE_MODE_VISIBLE`.
+            // A game whose very first frame hides the cursor cannot be quit with the mouse.
+            CursorMode.Release();
+
+            StartCoroutine(Run());
+        }
 
         private IEnumerator Run()
         {
@@ -138,8 +146,21 @@ namespace TumbangPreso.UI
 
         private void BuildSurface()
         {
+            // ⚠️⚠️ A ROOT OBJECT, NOT A CHILD OF THE CONVERTED NODE, AND THAT IS THE WHOLE FIX
+            // FOR "THE LOGO IS A POSTAGE STAMP". A nested Canvas inherits its PARENT's rect, and
+            // the node the importer attaches this component to is a converted Control whose rect
+            // is whatever the .tscn happened to leave it at before Godot's own layout pass ran.
+            // Every child here then stretched to that little box: the video came out about a
+            // hundred pixels square in the middle of a black screen, and the skip hint, anchored
+            // to the box's bottom-right corner, landed beside it in the middle of the frame
+            // instead of in the corner. Both were visible in the report's screenshot and both are
+            // the same bug.
+            //
+            // A root Canvas has the SCREEN as its rect by definition, so the sting fills the
+            // window whatever the converted scene does, and cannot regress if that scene is
+            // re-imported.
             var canvasGo = new GameObject("SplashCanvas");
-            canvasGo.transform.SetParent(transform, false);
+            _canvas = canvasGo;
 
             var canvas = canvasGo.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -148,6 +169,14 @@ namespace TumbangPreso.UI
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
+            scaler.matchWidthOrHeight = 1.0f;
+
+            // ⚠️ THE CONVERTED SCENE'S OWN CONTENT IS HIDDEN, not drawn underneath. `SplashScreen.tscn`
+            // authors a Letterbox panel, a Video rect, a Fade and a SkipHint, and every one of
+            // those is reproduced here at the right size. Leaving the converted copies visible
+            // put a second "press any key to skip" on screen in a different font, which is what
+            // the report's two overlapping hints actually were.
+            HideConvertedContent();
 
             // ⚠️ A BLACK BACKDROP UNDER THE VIDEO. The clip is 16:9 and the window may not be,
             // so without this the player sees whatever the camera happened to be rendering
@@ -173,14 +202,18 @@ namespace TumbangPreso.UI
             var hintGo = new GameObject("SkipHint");
             hintGo.transform.SetParent(canvasGo.transform, false);
 
+            // ⚠️ THE GAME'S OWN FACE, NOT LegacyRuntime. Godot sets Darumadrop project-wide, so
+            // every string in the game is that face; the built-in fallback is the single most
+            // obvious tell that a screen was rebuilt rather than converted.
             var hint = hintGo.AddComponent<Text>();
-            hint.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            hint.font = MenuKit.Font;
             hint.text = "press any key to skip";
             hint.fontSize = 20;
             hint.color = new Color(1, 1, 1, 0.45f);
             hint.alignment = TextAnchor.LowerRight;
             hint.raycastTarget = false;
 
+            // The .tscn's own numbers: -320/-64 to -32/-28 off the bottom-right corner.
             var hintRt = hint.rectTransform;
             hintRt.anchorMin = Vector2.one;
             hintRt.anchorMax = Vector2.one;
@@ -191,13 +224,50 @@ namespace TumbangPreso.UI
             _target = new RenderTexture(1280, 720, 0);
             _surface.texture = _target;
 
-            _video = gameObject.AddComponent<VideoPlayer>();
+            _video = canvasGo.AddComponent<VideoPlayer>();
             _video.playOnAwake = false;
             _video.isLooping = false;
             _video.renderMode = VideoRenderMode.RenderTexture;
             _video.targetTexture = _target;
             _video.audioOutputMode = VideoAudioOutputMode.None; // the sting is its own cue
-            _video.aspectRatio = VideoAspectRatio.FitInside;
+
+            // ⚠️ STRETCH, MATCHING `expand = true` ON THE .tscn's VideoStreamPlayer. The clip and
+            // the reference resolution are both 16:9, so on any ordinary window this is identical
+            // to fitting inside; the black Backdrop above is what covers the difference on a
+            // window that is not.
+            _video.aspectRatio = VideoAspectRatio.Stretch;
+        }
+
+        /// <summary>
+        /// ⚠️ THE CONVERTED SPLASH SCENE HAS A SECOND COPY OF EVERY ELEMENT ON THIS SCREEN, and
+        /// it is not usable: `Letterbox`, `Video`, `Fade` and `SkipHint` come across as flat
+        /// rects at whatever size the .tscn stored, because Godot's layout solves them at
+        /// runtime and the converter cannot. Drawing them under the real ones put a second skip
+        /// hint on screen in a second font.
+        ///
+        /// Hidden rather than destroyed, so re-importing the scene is still the way to change
+        /// what it authors, and so nothing here depends on a node existing.
+        /// </summary>
+        private void HideConvertedContent()
+        {
+            foreach (string node in new[] { "Letterbox", "Video", "Fade", "SkipHint" })
+            {
+                var found = FindChild(transform, node);
+                if (found != null) found.gameObject.SetActive(false);
+            }
+        }
+
+        private static Transform FindChild(Transform root, string name)
+        {
+            if (root.name == name) return root;
+
+            foreach (Transform child in root)
+            {
+                var hit = FindChild(child, name);
+                if (hit != null) return hit;
+            }
+
+            return null;
         }
 
         private static void Stretch(RectTransform rt)
@@ -222,6 +292,11 @@ namespace TumbangPreso.UI
                 _video.targetTexture = null;
                 _target.Release();
             }
+
+            // ⚠️ THE CANVAS IS A ROOT OBJECT NOW, so the scene change does NOT take it with it
+            // on the frame it is torn down; a stale black plate over the title menu is exactly
+            // the failure this file exists to avoid.
+            if (_canvas != null) Destroy(_canvas);
 
             if (_menu != null)
             {

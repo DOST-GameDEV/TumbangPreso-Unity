@@ -96,7 +96,7 @@ namespace TumbangPreso
         /// trade marks and each stands on the other's stale collider for a frame. Teleport()
         /// arms the settle, and it is not an optimisation to skip.
         /// </summary>
-        private void ResetWorld(int defenderSlot)
+        public void ResetWorld(int defenderSlot)
         {
             for (int slot = 0; slot < Seats.Length; slot++)
             {
@@ -115,6 +115,22 @@ namespace TumbangPreso
                     : AttackerSpawn(AttackerRoleFor(slot, defenderSlot));
                 m.SpawnPosition = mark;
                 m.Teleport(mark);
+
+                // ⚠️⚠️ EVERYONE FACES THE LATA AT THE START OF A ROUND, and nothing set a
+                // rotation at all. `main.gd::_role_spawn_yaw` exists for one reason: the taya
+                // because the can is what they are guarding, the attackers because it is what
+                // they are aiming at. Spawned facing world +Z instead, three of the four opened
+                // every round looking at a wall, and the human seat began the match with its
+                // camera pointed away from the game.
+                //
+                // ⚠️ AND IT IS THE WHOLE ROTATION, NOT JUST THE YAW. Writing only the y leaves
+                // whatever pitch and roll the body carried, which is exactly the class of
+                // leftover basis that ends up in a player's eye.
+                Vector3 toCan = -new Vector3(mark.x, 0.0f, mark.z);
+
+                m.transform.rotation = toCan.sqrMagnitude < 0.0001f
+                    ? Quaternion.identity
+                    : Quaternion.LookRotation(toCan.normalized, Vector3.up);
 
                 // ⚠️ THE MARK IS FLAT, THE MAP IS NOT. Both arenas have kerbs and slabs at
                 // different heights; without this a unit spawns inside one and the settle

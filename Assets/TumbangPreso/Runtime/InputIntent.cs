@@ -43,7 +43,23 @@ namespace TumbangPreso
 
         /// <summary>Where this unit is aiming, in world space. AI writes it directly;
         /// a human's comes from the camera ray.</summary>
-        public Vector3 AimPoint { get; set; }
+        public Vector3 AimPoint
+        {
+            get => _aimPoint;
+            set { _aimPoint = value; HasAimPoint = true; }
+        }
+
+        private Vector3 _aimPoint;
+
+        /// <summary>
+        /// ⚠️⚠️ "NOBODY HAS WRITTEN AN AIM POINT" IS A REAL STATE AND IT IS NOT THE ORIGIN. The
+        /// .gd spells it `ai_aim_point == Vector3.INF` and branches on it, because a default
+        /// Vector3 is a legal position in the arena — the middle of the base circle, which is
+        /// exactly where the lata stands. A human seat that has never had a point written would
+        /// otherwise aim at the can from wherever it stood, which looks like a working aim
+        /// assist right up until the player turns around.
+        /// </summary>
+        public bool HasAimPoint { get; private set; }
 
         /// <summary>
         /// ⚠️ PARKED INPUT IS NOT THE SAME AS NO INPUT. A unit whose input is parked (a
@@ -70,6 +86,7 @@ namespace TumbangPreso
         {
             _held.Clear();
             Move = Vector2.zero;
+            HasAimPoint = false;
         }
 
         public bool Pressed(Verb v) => !Parked && _held.Contains(v);

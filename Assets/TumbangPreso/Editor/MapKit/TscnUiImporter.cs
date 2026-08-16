@@ -202,6 +202,7 @@ namespace TumbangPreso.EditorTools.MapKit
             Report.AppendLine($"   built {state.Built} nodes, {state.Missing} missing textures");
 
             FinishScrollRects(canvasGo.transform);
+            ClearStrayRaycastTargets(canvasGo.transform);
             AttachBehaviour(screenName, canvasGo);
             AttachNestedPanels(state);
             StampVersion(screenName, canvasGo.transform);
@@ -459,10 +460,25 @@ namespace TumbangPreso.EditorTools.MapKit
             // the sizes the widgets are actually drawn at.
             if (h <= 0.0f)
             {
+                // ⚠️⚠️ A BUTTON COLLAPSES TO NOTHING WITHOUT A FLOOR, AND IT LOOKS LIKE A
+                // MISSING CONTROL RATHER THAN A SIZING BUG. Its art is an Image, which reports
+                // no preferred height at all, and its caption is a CHILD, so a Button with no
+                // authored `custom_minimum_size` measures as zero inside a VBox. The match
+                // result screen's REMATCH and MAIN MENU came out as a single 6-pixel bar across
+                // the bottom of the card — visible in the capture, and easy to read as "the
+                // buttons did not convert".
+                //
+                // Godot derives this from the theme's own content margins; there is nothing to
+                // read here, so the floor is the caption's line height plus the wood face's
+                // vertical padding, which is what the control is actually drawn at.
+                float buttonFloor = n.Type == "Button" || n.Type == "TextureButton"
+                    ? (int)TscnUi.Prop(n, "theme_override_font_sizes/font_size", 30.0f) * 1.35f + 24.0f
+                    : 0.0f;
+
                 float floor = n.Type == "CheckBox" ? 34.0f
                             : n.Type == "LineEdit" ? 46.0f
                             : n.Type == "HSlider" ? 34.0f
-                            : 0.0f;
+                            : buttonFloor;
 
                 if (floor > 0.0f)
                 {
@@ -501,6 +517,73 @@ namespace TumbangPreso.EditorTools.MapKit
                 ? new Vector2(TscnUi.F(parts[0]), TscnUi.F(parts[1]))
                 : Vector2.zero;
         }
+
+        /// <summary>
+        /// ⚠️⚠️ THIS IS THE FIX FOR "THE BUTTONS DON'T WORK, BACK ETC", AND THE CAUSE IS ONE
+        /// PROPERTY UNITY DEFAULTS THE WRONG WAY FOR A CONVERTED SCENE.
+        ///
+        /// Every Godot decorative node in these .tscn files carries `mouse_filter = 2`
+        /// (MOUSE_FILTER_IGNORE) — the scrims, the banners, the backdrops, the panel bodies, the
+        /// margin containers, all of it. Unity has no equivalent property on the node; it has
+        /// `Graphic.raycastTarget`, and it defaults to **true**. So every converted decoration
+        /// with an Image on it is a click-eater by default, and a full-screen scrim laid over a
+        /// screen swallows every button underneath it while drawing perfectly.
+        ///
+        /// The individual branches in `ConfigureFromDef` turn it off one node TYPE at a time,
+        /// which means the property is only correct for the types somebody remembered. This
+        /// sweep inverts the default instead: NOTHING is a raycast target unless it is the
+        /// graphic a Selectable actually uses to receive its clicks.
+        ///
+        /// ⚠️ IT REPORTS THE COUNT. "The importer ran" and "the importer fixed anything" are
+        /// different claims, and this whole class of bug is invisible in a screenshot.
+        /// </summary>
+        private static void ClearStrayRaycastTargets(Transform root)
+        {
+            int cleared = 0, kept = 0;
+
+            foreach (var graphic in root.GetComponentsInChildren<Graphic>(includeInactive: true))
+            {
+                // A Selectable receives through its own targetGraphic. Anything else on the
+                // control — its label, its icon, its shadow — must not.
+                var selectable = graphic.GetComponent<Selectable>();
+
+                if (selectable != null && selectable.targetGraphic == graphic)
+                {
+                    graphic.raycastTarget = true;
+                    kept++;
+                    continue;
+                }
+
+                // ⚠️ A Selectable WITH NO targetGraphic STILL NEEDS ONE HIT AREA, or the control
+                // converts, skins, wires its listener and is simply not clickable. Give it the
+                // graphic on its own node rather than leaving it dead.
+                if (selectable != null && selectable.targetGraphic == null)
+                {
+                    selectable.targetGraphic = graphic;
+                    graphic.raycastTarget = true;
+                    kept++;
+                    continue;
+                }
+
+                if (!graphic.raycastTarget) continue;
+
+                graphic.raycastTarget = false;
+                cleared++;
+            }
+
+            Report.AppendLine($"   raycast: {kept} live hit areas, {cleared} decorations muted");
+        }
+
+        /// <summary>
+        /// Is this the viewport that renders an ARENA, as opposed to the one that renders a
+        /// character model?
+        ///
+        /// ⚠️ IT ASKS THE NODE'S OWN NAME, because the .tscn's script reference is an
+        /// `ExtResource` id that means nothing outside its own file. `MapPreview` is the setup
+        /// screen's node and `CharacterPreview` is the character screen's, and both names are
+        /// stable: a ported script reaches them by exactly these strings.
+        /// </summary>
+        private static bool IsMapViewport(TscnUi.NodeDef n) => n.Name == "MapPreview";
 
         private static void EnsureEventSystem()
         {
@@ -548,12 +631,26 @@ namespace TumbangPreso.EditorTools.MapKit
                 // ⚠️ A SubViewport IS A LIVE 3D RENDER, NOT A SPRITE. The setup screen shows the
                 // chosen map and the character select spins the actual model. The surface is
                 // built here and the camera is wired at runtime by the screen's behaviour.
+                // ⚠️ A SubViewport IS A LIVE 3D RENDER, NOT A SPRITE. The setup screen shows the
+                // chosen map and the character screen spins the actual model.
+                //
+                // ⚠️⚠️ AND THE TWO ARE NOT THE SAME VIEWPORT. Godot distinguishes them by the
+                // SCRIPT the .tscn attaches — `map_preview.gd` on one, `character_preview.gd` on
+                // the other — and this branch attached the MAP surface to every one it found.
+                // The character screen therefore rendered an ARENA where the fighter should be:
+                // a full-screen close-up of somebody's roof behind the stat card, which is
+                // exactly what the capture showed. The model preview is created by
+                // `ConvertedCharacterSelect` at runtime, so this node only has to stay out of
+                // its way.
                 case "SubViewportContainer":
                     {
                         var raw = Ensure<RawImage>(go);
                         raw.color = Color.white;
                         raw.raycastTarget = false;
-                        go.AddComponent<MapPreviewSurface>();
+
+                        if (IsMapViewport(n)) go.AddComponent<MapPreviewSurface>();
+                        else raw.color = new Color(1, 1, 1, 0);
+
                         break;
                     }
 
