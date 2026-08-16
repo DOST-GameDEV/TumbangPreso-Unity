@@ -151,11 +151,13 @@ namespace TumbangPreso
 
             if (!_motor.CanAct())
             {
-                intent.Clear();
+                ReleaseAll(intent);
                 return;
             }
 
             float dt = Time.deltaTime;
+
+            Observe(dt);
 
             // ⚠️ THE PLAN IS CHOSEN HERE AND THE VERB WORK BELOW OBEYS IT. Deciding inside
             // the verb code is what produced a bot that re-decided every frame.
@@ -163,8 +165,7 @@ namespace TumbangPreso
             StepUnstick(dt);
             StepPlan(dt);
 
-            if (_motor.IsDefender) ThinkDefender(intent);
-            else ThinkAttacker(intent);
+            Act(intent, dt);
 
             // ⚠️⚠️ NO COMMIT HERE ANY MORE, AND IT USED TO BE ON THIS LINE. The snapshot is taken
             // by the consumer at the end of `CharacterMotor.FixedUpdate`, not by each producer at
@@ -618,79 +619,590 @@ namespace TumbangPreso
 
         // -------------------------------------------------------------------
 
-        private void ThinkAttacker(InputIntent intent)
+        /// <summary>
+        /// ⚠️⚠️ THE PLAN IS THE THING THAT ACTS. THE PORT COMPUTED A PLAN AND THEN IGNORED IT.
+        ///
+        /// `PlanAttacker`/`PlanDefender` were transcribed faithfully, and what consumed them was
+        /// a pair of hand-written routines that re-derived a much simpler behaviour from
+        /// scratch. So thirteen plans existed, were chosen, were held through their commit beat
+        /// — and then nothing read the answer. Everything the plans exist to express went with
+        /// it: Evade, Sabotage, Stalk, Withdraw, Intercept, Cover and Reset had no bodies at
+        /// all, the taya never punched and never charged a lunge, and no bot ever loitered,
+        /// separated, or picked a throwing bearing.
+        ///
+        /// This is `ai_controller.gd::_act()`, which is a `match` on the plan and nothing else.
+        ///
+        /// ⚠️ AND THE RELEASE SWEEP AT THE BOTTOM IS LOAD-BEARING. An intent table is STICKY: it
+        /// holds whatever was last written, so a plan that simply stops mentioning a verb leaves
+        /// the previous plan's press held for the rest of the round. The .gd records what the
+        /// naive version of that sweep cost — it tested the PLAN ID rather than whether the
+        /// button had been touched, and since the punch and the throw charge share one action,
+        /// the janitor cleared the taya's punch in the same frame the hunt pressed it. Measured
+        /// then: the punch fired zero times in the game's life, reported as *"AI cant tag human
+        /// for some reason"*. Ask what was touched, never which plan is running.
+        /// </summary>
+        private void Act(InputIntent intent, float dt)
         {
-            var round = GameServices.Round;
-            if (round == null) return;
+            _touched.Clear();
 
-            if (_carrier != null && _carrier.Held != null)
+            // ⚠️ THE STICK IS CLEARED FIRST, THE VERBS ARE NOT. Every branch below either
+            // drives or stops, exactly as the .gd's do, and clearing here makes "the plan
+            // forgot to move" a stand rather than the last plan's heading held forever. The
+            // VERBS cannot be cleared the same way: a throw charge and a lunge are both held
+            // across frames on purpose, which is what the touch sweep at the bottom is for.
+            intent.Move = Vector2.zero;
+            intent.Set(Verb.Sprint, false);
+
+            switch (Plan)
             {
-                // Holding: get to a legal throwing position and let go.
-                Vector3 ring = RingPoint(Balance.ConfinementRadius + ThrowStandoff);
-                if (MoveToward(intent, ring)) return;
+                case AiPlan.Idle:      DoIdle(intent); break;
+                case AiPlan.Fetch:     DoFetch(intent); break;
+                case AiPlan.Stalk:     DoStalk(intent); break;
+                case AiPlan.Withdraw:  DoWithdraw(intent); break;
+                case AiPlan.Position:  DoPosition(intent); break;
+                case AiPlan.Windup:    DoWindup(intent, dt); break;
+                case AiPlan.Evade:     DoEvade(intent); break;
+                case AiPlan.Sabotage:  DoSabotage(intent); break;
+                case AiPlan.Reset:     DoReset(intent); break;
+                case AiPlan.Intercept: DoIntercept(intent); break;
+                case AiPlan.Hunt:      DoHunt(intent, dt); break;
+                case AiPlan.Cover:     DoCover(intent); break;
+                case AiPlan.Guard:     DoGuard(intent); break;
+            }
 
-                if (round.CanThrow(_motor))
+            if (!_touched.Contains(Verb.SpecialAbility)) Press(intent, Verb.SpecialAbility, false);
+            if (Plan != AiPlan.Windup) _windup = false;
+            if (!_touched.Contains(Verb.Lunge)) Press(intent, Verb.Lunge, false);
+            if (Plan != AiPlan.Hunt) _lungeHeld = -1.0f;
+            if (!_touched.Contains(Verb.Grab)) Press(intent, Verb.Grab, false);
+        }
+
+        // ---- ATTACKER VERBS -------------------------------------------------
+
+        private void DoFetch(InputIntent intent)
+        {
+            var mine = MySlipper();
+
+            if (mine == null) { Stop(intent); return; }
+
+            Vector3 where = mine.transform.position;
+            float distance = Flat(transform.position, where);
+
+            // ⚠️ SPRINT THE LAST STRETCH INTO THE BOX AND NOTHING ELSE. The retrieval is the
+            // only moment an attacker is taggable, and the whole bar is 1.25 s of sprint.
+            // Spending it anywhere else spends it where it does not matter.
+            bool hurry = distance > AiTuning.Reach
+                         && (MineIsExposed(mine) || distance > AiTuning.SprintDistance);
+
+            Goto(intent, where, AiTuning.Reach * 0.75f, hurry);
+
+            // ⚠️ THE PICKUP IS A TAP AND A HELD BUTTON WOULD DO NOTHING AT ALL. The carrier
+            // reads `JustPressed`, so holding produces exactly one edge in a lifetime and then
+            // a bot that stands on its own slipper for the rest of the round. Tap alternates,
+            // so an edge lands every other frame for as long as it is in range.
+            if (distance <= AiTuning.Reach) Tap(intent, Verb.Grab);
+            else Press(intent, Verb.Grab, false);
+        }
+
+        /// <summary>True while the slipper is somewhere the taya can contest. Decides a sprint
+        /// against a walk and nothing else.</summary>
+        private bool MineIsExposed(Slipper mine)
+        {
+            var taya = GameServices.Round != null ? DefenderOf(GameServices.Round) : null;
+            return taya != null && Flat(At(taya), mine.transform.position) < 4.5f;
+        }
+
+        private void DoStalk(InputIntent intent)
+        {
+            // My slipper is in the box and the taya is sitting on it. Standing on the line
+            // outside, at my own bearing, is the safest place to be and the place the run
+            // starts from, and it keeps the bot MOVING, which is what a person waiting for an
+            // opening actually looks like.
+            var mine = MySlipper();
+            Vector3 anchor = mine != null ? mine.transform.position : Vector3.zero;
+            float bearing = Mathf.Atan2(anchor.x, anchor.z);
+
+            Goto(intent, RingPoint(bearing, Balance.ConfinementRadius + 0.6f),
+                 AiTuning.ArriveSlop, false);
+
+            if (_arrived) Loiter(intent);
+        }
+
+        private void DoWithdraw(InputIntent intent)
+        {
+            // Straight out along the bearing already held: a step back, not a lap of the
+            // arena, and sprinting, because this is the taggable window.
+            Goto(intent, SafeSpot(), AiTuning.ArriveSlop, true);
+        }
+
+        private void DoPosition(InputIntent intent)
+        {
+            if (_carrier == null || _carrier.Held == null)
+            {
+                // Waiting for my own throw to resolve: walk to where it will come down, so the
+                // retrieval starts from the right side of the court.
+                var mine = MySlipper();
+
+                // ⚠️ NOTHING FETCHABLE MEANS GO WHERE ONE WILL BE. `MySlipper` is null whenever
+                // every slipper is in a hand or in the air, and standing still through that
+                // window is the reported bug. The nearest slipper already in flight is the one
+                // that becomes available first, whoever threw it.
+                if (mine == null) mine = NearestFlyingSlipper();
+
+                if (mine != null && mine.State == SlipperState.InFlight
+                    && TryPredictedLanding(mine, out Vector3 landing))
                 {
-                    Vector3 mark = round.Lata != null ? round.Lata.transform.position : Vector3.zero;
-                    intent.AimPoint = mark;
-
-                    // Charge, then release. Held across frames until the charge is enough.
-                    float need = MinPowerForRange();
-                    bool longEnough = _carrier.ChargeRatio >= need;
-
-                    // ⚠️⚠️ AND THE LANE HAS TO BE CLEAR. Without this the bot releases into
-                    // whoever is standing between it and the can, every single time, which
-                    // reads as an AI that cannot aim rather than as one with no idea anybody
-                    // is there. Blocked means step sideways and try again, not never throw:
-                    // the ring point below moves on its own and the shot opens up.
-                    if (longEnough && LaneBlocked(transform.position, mark, need))
-                    {
-                        intent.Set(Verb.SpecialAbility, true);   // hold the charge
-                        MoveToward(intent, RingPoint(Balance.ConfinementRadius + ThrowStandoff));
-                        return;
-                    }
-
-                    intent.Set(Verb.SpecialAbility, !longEnough);
+                    Goto(intent, PullOutside(landing, 0.4f), AiTuning.ArriveSlop, false);
+                    return;
                 }
+
+                // ⚠️ STILL NOTHING IN THE AIR: WAIT ON THE THROWING RING, NOT WHEREVER YOU
+                // HAPPEN TO BE STANDING. Loitering alone is what a screenshot caught — three
+                // empty-handed attackers milling about wherever their last plan left them,
+                // which from outside reads as the bots having given up.
+                if (!_goalValid) { _goal = ThrowSpot(); _goalValid = true; }
+
+                Goto(intent, _goal, AiTuning.ArriveSlop, false);
+                if (_arrived) Loiter(intent);
                 return;
             }
 
-            // Not holding: go get one, if this bot is the nearest claimant.
-            Slipper target = ChooseSlipper();
-            if (target == null)
-            {
-                MoveToward(intent, RingPoint(Balance.ConfinementRadius + ThrowStandoff));
-                return;
-            }
+            if (!_goalValid) { _goal = ThrowSpot(); _goalValid = true; }
 
-            if (!MoveToward(intent, target.transform.position))
-                intent.Set(Verb.Grab, true); // arrived: tap to pick up
+            Goto(intent, _goal, AiTuning.ArriveSlop,
+                 Flat(transform.position, _goal) > AiTuning.SprintDistance);
+
+            Claim(Mathf.Atan2(_goal.x, _goal.z));
+
+            // ⚠️⚠️ ARRIVING IS NOT A REASON TO STOP EXISTING, AND THIS COST A MEASUREMENT IN THE
+            // ORIGINAL. Two bots stood still for 22 s and 57 s inside live rounds, both here:
+            // armed, in position, and refused the throw because the lata was lying down, so
+            // they walked to their spot, arrived, and politely stopped for as long as the taya
+            // took to stand it up. A plan that can WAIT needs somewhere to put the waiting.
+            if (_arrived) Loiter(intent);
         }
 
         /// <summary>
-        /// ⚠️ THE CHARGE IS SOLVED, NOT GUESSED, by inverting the range equation against the
-        /// launch speed. This is exactly why a per-skin launch speed had to stay narrow: it is
-        /// an error term inside this solve, which lives in a different file from the stat that
-        /// moves it. At the shipping 5% spread it sits inside the margin already charged to;
-        /// at 20% every bot holding a slow slipper would fall short, and it would read as an
-        /// AI regression rather than as a balance change.
+        /// The wind-up: solve the power, hold the charge, and release only into a clear lane.
+        ///
+        /// ⚠️⚠️ A BOT HOLDS THE SHOT RATHER THAN FIRING THE INSTANT IT IS CHARGED, and that is
+        /// not flavour. Nothing in this file reads whether a player is human, but the taya's
+        /// threat model pays for "is charging" — a person aims for most of the 2.5 s and a bot
+        /// that released on the first legal frame was charging for a fraction of one, so the
+        /// only attacker ever visibly winding up was the human and the taya guarded them
+        /// permanently. Reported from a playtest as *"the defender ai only attack him"*. It is
+        /// also the counterplay the charge exists for, in the other direction: a human taya can
+        /// now read a bot the same way a bot taya reads them.
+        ///
+        /// ⚠️ THE HOLD IS DERIVED FROM `AimSettle`, NOT A NEW TIER KNOB. Bata carries the 99.0
+        /// "never settles" sentinel and therefore holds nothing, which is exactly the impatient
+        /// kid it is meant to be; Normal holds 0.91 s and Astig 0.52 s, because a better player
+        /// lines a shot up faster rather than staring at it longer.
         /// </summary>
-        private float MinPowerForRange()
+        private void DoWindup(InputIntent intent, float dt)
         {
             var round = GameServices.Round;
-            if (round?.Lata == null) return 1.0f;
+            var lata = round?.Lata;
 
-            float dist = Vector3.Distance(
-                new Vector3(transform.position.x, 0, transform.position.z),
-                new Vector3(round.Lata.transform.position.x, 0, round.Lata.transform.position.z));
+            if (lata == null || _carrier == null || _carrier.Held == null
+                || !round.CanThrow(_motor))
+            {
+                // The gate closed under us. The carrier has already cancelled the charge, so
+                // holding the button here would wait out the timeout for nothing.
+                _windup = false;
+                Press(intent, Verb.SpecialAbility, false);
+                Plan = AiPlan.Position;
+                _goalValid = false;
+                return;
+            }
 
-            int skin = _carrier != null && _carrier.Held != null ? _carrier.Held.SkinIndex : -1;
-            float full = ThrowRules.MaxRange(Balance.LaunchSpeed * Roster.SlipperFlightScale(skin));
-            if (full <= 0.0f) return 1.0f;
+            if (!_windup)
+            {
+                _windup = true;
+                _windupTime = 0.0f;
+                _windupWait = 0.0f;
+                _blundering = Blunder();
+                _windupScatter = RollScatter();
+                _windupPower = PlanPower(lata);
+            }
 
-            // range scales with speed², and speed scales with power, so power = sqrt(d/full).
-            return Mathf.Clamp(Mathf.Sqrt(dist / full), Balance.ChargeMinPower, 1.0f);
+            _windupTime += dt;
+            Stop(intent);
+
+            Vector3 aim = lata.transform.position + Vector3.up * AiTuning.AimHeight;
+
+            // ⚠️ THE SCATTER SHRINKS AS THE SHOT IS HELD, and that is what `AimSettle` buys. A
+            // bot whose error is constant reads as a dice roll; one whose error closes over the
+            // wind-up reads as somebody lining a shot up.
+            float settle = 1.0f;
+
+            if (Me.AimSettle < 90.0f)
+                settle = Mathf.Lerp(1.0f, AiTuning.AimSettleFloor,
+                                    Mathf.Clamp01(_windupTime / Mathf.Max(Me.AimSettle, 0.05f)));
+
+            intent.AimPoint = aim + _windupScatter * settle;
+
+            float power = _carrier.ChargeRatio;
+            Press(intent, Verb.SpecialAbility, true);
+
+            if (_windupTime >= AiTuning.WindupTimeout)
+            {
+                // Out of patience. Throw what we have: it may fall short, and a bot that lets
+                // go is still a bot playing the game.
+                ReleaseThrow(intent);
+                return;
+            }
+
+            if (power < _windupPower) return;
+
+            float minHold = Me.AimSettle < 90.0f
+                ? Mathf.Min(Me.AimSettle, Balance.ChargeFullTime) * AiTuning.WindupMinHoldShare
+                : 0.0f;
+
+            if (_windupTime < minHold) return;
+
+            // Charged and committed. The only question left is whether the lane is open.
+            Vector3 origin = _carrier.ThrowOrigin();
+
+            if (!_blundering && LaneBlocked(origin, intent.AimPoint, power))
+            {
+                _windupWait += dt;
+                if (_windupWait < Me.LanePatience) return;
+
+                // Waited long enough and still blocked: give up the ANGLE rather than the
+                // round. Dropping the plan sends this bot to a new spot on the ring, which is
+                // what a player does when somebody stands in front of them.
+                _windup = false;
+                _goalValid = false;
+                Plan = AiPlan.Position;
+                Press(intent, Verb.SpecialAbility, false);
+                return;
+            }
+
+            ReleaseThrow(intent);
         }
+
+        private void ReleaseThrow(InputIntent intent)
+        {
+            Press(intent, Verb.SpecialAbility, false);   // the release IS the throw
+            _windup = false;
+            _goalValid = false;
+            _commitLeft = 0.0f;
+            Plan = AiPlan.Idle;
+        }
+
+        private void DoEvade(InputIntent intent)
+        {
+            var round = GameServices.Round;
+            var taya = round != null ? DefenderOf(round) : null;
+
+            if (taya == null) { DoWithdraw(intent); return; }
+
+            // ⚠️ BREAK PERPENDICULAR TO THE LUNGE, NOT AWAY FROM IT. A 2.5 m dash beats a
+            // 3.45 m/s attacker running in a straight line down the same axis; stepping across
+            // it is the only answer the geometry allows.
+            Vector3 toward = transform.position - At(taya);
+            toward.y = 0.0f;
+            if (toward.magnitude < 0.05f) toward = Vector3.forward;
+
+            Vector3 across = new Vector3(-toward.z, 0.0f, toward.x).normalized;
+            if (Vector3.Dot(across, OutOfBoxDir()) < 0.0f) across = -across;
+
+            Drive(intent, (across * 0.75f + OutOfBoxDir() * 0.75f).normalized, true);
+            Press(intent, Verb.Grab, false);
+        }
+
+        private void DoSabotage(InputIntent intent)
+        {
+            var round = GameServices.Round;
+            var victim = SabotageTarget(round != null ? DefenderOf(round) : null);
+
+            if (victim == null) { Stop(intent); return; }
+
+            // ⚠️ IT DRIVES ALL THE WAY IN AND NEVER PARKS, for the same reason the hunt does:
+            // the body only turns on a frame it walks, and the shove tests a 70 degree arc off
+            // the facing. Arriving and stopping freezes the facing at whatever the approach
+            // happened to end on, and the shove then fires into the wrong quadrant.
+            float distance = Flat(transform.position, victim.transform.position);
+            Vector3 toward = victim.transform.position - transform.position;
+            toward.y = 0.0f;
+
+            Drive(intent, toward, distance > 3.0f);
+
+            if (distance <= Balance.ShoveRange * 0.9f
+                && Facing(victim, Balance.ShoveArcDeg * 0.6f))
+                Tap(intent, Verb.Grab);
+            else
+                Press(intent, Verb.Grab, false);
+        }
+
+        private void DoIdle(InputIntent intent) => Loiter(intent);
+
+        // ---- DEFENDER VERBS -------------------------------------------------
+
+        private void DoReset(InputIntent intent)
+        {
+            var lata = GameServices.Round?.Lata;
+
+            if (lata == null) { Stop(intent); return; }
+
+            bool inside = Flat(transform.position, lata.transform.position)
+                          <= Balance.InteractionRadius;
+
+            if (inside) Stop(intent);
+            else Goto(intent, lata.transform.position, Balance.InteractionRadius * 0.55f, true);
+
+            // ⚠️ HELD, NOT TAPPED, AND THIS IS THE ONE PLACE THAT IS TRUE. The reset channel
+            // reads `Pressed` and zeroes itself the instant it goes false, so an alternating
+            // tap would restart the channel every other frame and never finish it.
+            Press(intent, Verb.Grab, inside);
+        }
+
+        private void DoIntercept(InputIntent intent)
+        {
+            if (!TryInterceptPoint(out Vector3 point)) { DoGuard(intent); return; }
+
+            Goto(intent, point, 0.3f, true);
+        }
+
+        private void DoHunt(InputIntent intent, float dt)
+        {
+            var victim = TagTarget();
+
+            if (victim == null) { DoGuard(intent); return; }
+
+            // Close on where they are GOING. `Lead` is the tier's willingness to do that and is
+            // 0 on the kid, which is why the kid chases a shadow.
+            Vector3 toward = AheadOf(victim, 0.35f) - transform.position;
+            toward.y = 0.0f;
+
+            // ⚠️⚠️ IT NEVER STOPS CLOSING, AND THAT IS FORCED BY THE GAME RATHER THAN CHOSEN.
+            // The body only turns on a frame it actually MOVES, and the lunge fires along the
+            // facing, so a taya that parks next to its target can never aim the dash at it.
+            // Measured in the original with an arrival stop here: one seat stood still for
+            // 42.9 s of a 90 s round, adjacent to a vulnerable attacker, firing lunges into
+            // whatever direction it had last walked in.
+            Drive(intent, toward, MaySprint() && toward.magnitude > 1.5f);
+            StepLungeIntent(intent, victim, dt);
+        }
+
+        private void DoCover(InputIntent intent)
+        {
+            if (!TryCoverPoint(out Vector3 point)) { DoGuard(intent); return; }
+
+            Goto(intent, point, AiTuning.ArriveSlop, false);
+            if (_arrived) Loiter(intent);
+        }
+
+        private void DoGuard(InputIntent intent)
+        {
+            var lata = GameServices.Round?.Lata;
+
+            if (lata == null) { Stop(intent); return; }
+
+            var threat = LiveThreat();
+
+            if (threat == null)
+            {
+                Goto(intent, ClampToBox(lata.transform.position), AiTuning.ArriveSlop, false);
+                return;
+            }
+
+            // Stand BETWEEN the lata and the threat, not on top of the lata: the body is the
+            // block, and a taya standing on its own can blocks nothing.
+            Vector3 toward = At(threat) - lata.transform.position;
+            toward.y = 0.0f;
+
+            if (toward.magnitude < 0.05f)
+            {
+                Goto(intent, ClampToBox(lata.transform.position), AiTuning.ArriveSlop, false);
+                return;
+            }
+
+            Vector3 post = lata.transform.position + toward.normalized * AiTuning.GuardRadius;
+
+            Goto(intent, ClampToBox(post), AiTuning.ArriveSlop,
+                 Flat(transform.position, post) > AiTuning.SprintDistance);
+
+            // Same reason as the position plan: a taya whose threat is not moving has a post
+            // that is not moving, and a bot that has reached a stationary post never moves
+            // again.
+            if (_arrived) Loiter(intent);
+        }
+
+        /// <summary>
+        /// The taya's two tag verbs, in the order a person would reach for them.
+        ///
+        /// ⚠️⚠️ THE PUNCH COMES FIRST WHEN IT IS IN RANGE, and a bot that only knew the lunge
+        /// would charge half a second at a target standing next to it — which is exactly the
+        /// case the punch was added for, and exactly long enough for the attacker to leave.
+        ///
+        /// ⚠️ THE LUNGE CHARGES BY HOLDING AND FIRES BY RELEASING, the same contract a human's
+        /// right-click has. Holding it forever charges and never lunges.
+        ///
+        /// ⚠️ AND BOTH ARE AIMED. Both verbs fire along the facing and the body only turns on a
+        /// frame it walks, so a taya that releases while side-stepping dashes past at 12 m/s
+        /// and puts its own tag on cooldown for 1.5 s.
+        /// </summary>
+        private void StepLungeIntent(InputIntent intent, CharacterMotor victim, float dt)
+        {
+            var verbs = GetComponent<CombatVerbs>();
+            if (verbs == null) return;
+
+            if (verbs.PunchCooldownLeft <= 0.0f && victim != null
+                && Flat(transform.position, victim.transform.position) <= Balance.PunchRange
+                && Facing(victim, Balance.PunchArcDeg))
+            {
+                // ⚠️ A TAP, NOT A HOLD. The punch reads `JustPressed`, so it needs a false
+                // frame before the true one.
+                Tap(intent, Verb.SpecialAbility);
+                return;
+            }
+
+            Press(intent, Verb.SpecialAbility, false);
+
+            if (verbs.LungeCooldownLeft > 0.0f)
+            {
+                _lungeHeld = -1.0f;
+                Press(intent, Verb.Lunge, false);
+                return;
+            }
+
+            float reach = Flat(transform.position, AheadOf(victim, AiTuning.LungeHoldTime));
+
+            if (_lungeHeld < 0.0f)
+            {
+                // ⚠️ THERE IS NO LOWER BOUND HERE, AND THE ONE THAT USED TO BE WAS A DEADLOCK.
+                // It refused to start the charge inside 0.9 m on the reasoning that walking
+                // would tag them anyway, but the tag has not been passive since the punch
+                // landed, so a taya 0.78 m from a vulnerable attacker had no verb at all.
+                if (reach > Me.LungeRange) { Press(intent, Verb.Lunge, false); return; }
+
+                _lungeHeld = 0.0f;
+            }
+
+            _lungeHeld += dt;
+
+            // ⚠️ THE CONE IS FLOORED. An eight-way heading cannot aim finer than
+            // `LungeConeFloor`, so a tighter tier value would ask for an angle the bot has no
+            // key for and the release would never pass its own test.
+            if (_lungeHeld >= AiTuning.LungeHoldTime
+                && Facing(victim, AiTuning.EffectiveLungeCone(ActiveDifficulty)))
+            {
+                _lungeHeld = -1.0f;
+                Press(intent, Verb.Lunge, false);   // the release edge is what fires it
+                return;
+            }
+
+            if (_lungeHeld >= AiTuning.LungeHoldTime + 0.45f)
+            {
+                // Fully charged and still not lined up. Let it go rather than hold a dash for
+                // ever: the cooldown is 1.5 s and the attacker is leaving.
+                _lungeHeld = -1.0f;
+                Press(intent, Verb.Lunge, false);
+                return;
+            }
+
+            Press(intent, Verb.Lunge, true);
+        }
+
+        // ---- THE THROW SOLVE ------------------------------------------------
+        //
+        // Everything here is arithmetic on the flight model the slipper actually uses,
+        // deliberately, so the AI cannot be right about a flight the game then flies
+        // differently.
+
+        /// <summary>
+        /// The smallest power whose launch speed has ANY solution from origin to target.
+        ///
+        /// The arc discriminant is v⁴ - g(g·d² + 2·Δy·v²) &gt;= 0; solving for u = v² gives
+        /// u &gt;= g·(Δy + sqrt(Δy² + d²)).
+        ///
+        /// ⚠️ AT EXACTLY THAT SPEED THE SOLUTION IS THE GRAZING ONE: maximum range, maximum
+        /// airtime, minimum speed — the easiest possible throw to body-block and the one most
+        /// damaged by aim scatter. `PowerMargin` is what buys a flatter shot, and it is a tier
+        /// knob for exactly that reason.
+        /// </summary>
+        private float MinPowerFor(Vector3 origin, Vector3 target)
+        {
+            float flat = new Vector2(target.x - origin.x, target.z - origin.z).magnitude;
+            float rise = target.y - origin.y;
+
+            float speed = Mathf.Sqrt(Mathf.Max(
+                Balance.Gravity * (rise + Mathf.Sqrt(rise * rise + flat * flat)), 0.0f));
+
+            return PowerForSpeed(speed);
+        }
+
+        /// <summary>Inverts the per-skin launch speed back to the 0..1 charge that produces
+        /// it, so the solve above lands on a number the carrier can actually hold to.</summary>
+        private float PowerForSpeed(float speed)
+        {
+            int skin = _carrier != null && _carrier.Held != null ? _carrier.Held.SkinIndex : -1;
+
+            float full = ThrowRules.LaunchSpeedFor(skin, 1.0f);
+            float min = ThrowRules.LaunchSpeedFor(skin, 0.0f);
+
+            if (full - min < 0.01f) return 1.0f;
+
+            return Mathf.Clamp01((speed - min) / (full - min));
+        }
+
+        /// <summary>The power this wind-up commits to, rolled once when it starts.</summary>
+        private float PlanPower(Lata lata)
+        {
+            Vector3 aim = lata.transform.position + Vector3.up * AiTuning.AimHeight;
+            Vector3 origin = _carrier != null ? _carrier.ThrowOrigin()
+                                              : transform.position + Vector3.up * 0.9f;
+
+            float floorPower = MinPowerFor(origin, aim);
+
+            // The margin is applied in SPEED, not in power, because it is a statement about
+            // the flight and power is only a dial onto it.
+            float flat = new Vector2(aim.x - origin.x, aim.z - origin.z).magnitude;
+            float rise = aim.y - origin.y;
+
+            float wanted = Mathf.Sqrt(Mathf.Max(
+                Balance.Gravity * (rise + Mathf.Sqrt(rise * rise + flat * flat)), 0.0f));
+
+            // ⚠️ THE KID'S CHARACTERISTIC MISS IS A THROW THAT ONLY JUST GETS THERE, which
+            // floats, and which the taya can walk into. A readable mistake rather than noise:
+            // the point of `Mistake` is that a player can SEE the bot make one.
+            float margin = _blundering ? 1.0f : Me.PowerMargin;
+
+            return Mathf.Clamp01(Mathf.Max(PowerForSpeed(wanted * margin), floorPower + 0.02f));
+        }
+
+        /// <summary>
+        /// Metres of scatter, rolled once per wind-up.
+        ///
+        /// ⚠️ PER SHOT, NOT PER FRAME AND NOT PER THINK TICK. Re-rolling inside a charge
+        /// averages to a perfect shot over the length of it, which is the opposite of what an
+        /// aim error is for.
+        ///
+        /// ⚠️ AND IT SCALES WITH RANGE. A fixed metre of scatter is a wide miss at 7 m and an
+        /// impossible one at 12 m; quoting it at a reference range and scaling keeps the tier's
+        /// ANGULAR error constant, which is what a person's actually is.
+        /// </summary>
+        private Vector3 RollScatter()
+        {
+            var lata = GameServices.Round?.Lata;
+            float rangeScale = 1.0f;
+
+            if (lata != null)
+                rangeScale = Mathf.Clamp(
+                    Flat(transform.position, lata.transform.position) / AiTuning.AimReferenceRange,
+                    AiTuning.AimRangeScaleMin, AiTuning.AimRangeScaleMax);
+
+            float spread = Me.AimError * rangeScale * (_blundering ? 2.2f : 1.0f);
+            float bearing = UnityEngine.Random.Range(-Mathf.PI, Mathf.PI);
+            float reach = Mathf.Sqrt(UnityEngine.Random.value) * spread;
+
+            return new Vector3(Mathf.Cos(bearing) * reach, 0.0f, Mathf.Sin(bearing) * reach);
+        }
+
+        /// <summary>One coin flip per wind-up, at the tier's mistake rate.</summary>
+        private bool Blunder() => UnityEngine.Random.value < Me.Mistake;
 
         private Slipper ChooseSlipper()
         {
@@ -743,108 +1255,6 @@ namespace TumbangPreso
 
         // -------------------------------------------------------------------
 
-        private void ThinkDefender(InputIntent intent)
-        {
-            var round = GameServices.Round;
-            var lata = round?.Lata;
-            if (lata == null) return;
-
-            // Can down: get to the ring and hold E. Passive defence pays only while it stands,
-            // so this is the highest-value thing a taya can be doing.
-            if (!lata.IsUpright)
-            {
-                if (!MoveToward(intent, lata.transform.position, Balance.InteractionRadius * 0.6f))
-                    intent.Set(Verb.Grab, true);
-                return;
-            }
-
-            // Can up: guard, and lunge at a vulnerable attacker if one is in reach.
-            CharacterMotor prey = NearestTaggable();
-            if (prey != null)
-            {
-                Vector3 to = prey.transform.position - transform.position;
-                to.y = 0.0f;
-
-                // ⚠️ RANGE AND CONE, NOT A TIER CHECK. The .gd gates a lunge on `lunge_range`
-                // (Bata 1.9 / Normal 2.6 / Astig 3.1) AND on the target being inside
-                // `lunge_cone` — which is a HALF-ANGLE where smaller is stricter, so Astig's
-                // 28° is more disciplined than Bata's 55°. The earlier "not Easy" test gave
-                // Bata and Astig identical lunges, which is most of why every tier felt the same.
-                if (to.magnitude <= Mathf.Min(Me.LungeRange, Combat.LungeReach())
-                    && WithinLungeCone(to))
-                {
-                    FaceToward(prey.transform.position);
-                    intent.Set(Verb.Lunge, true);
-                    return;
-                }
-
-                MoveToward(intent, prey.transform.position);
-                return;
-            }
-
-            // Nobody to chase: hold the post between the can and the nearest attacker.
-            MoveToward(intent, GuardPost(lata.transform.position));
-        }
-
-        private CharacterMotor NearestTaggable()
-        {
-            var round = GameServices.Round;
-            if (round == null) return null;
-
-            CharacterMotor best = null;
-            float bestDist = float.MaxValue;
-
-            foreach (var p in round.Players)
-            {
-                if (p == null || !p.IsTaggable()) continue;
-
-                float d = Vector3.Distance(transform.position, p.transform.position);
-                if (d >= bestDist) continue;
-
-                bestDist = d;
-                best = p;
-            }
-
-            return best;
-        }
-
-        private Vector3 GuardPost(Vector3 lataPos)
-        {
-            var round = GameServices.Round;
-            if (round == null) return lataPos;
-
-            CharacterMotor threat = null;
-            float bestDist = float.MaxValue;
-
-            foreach (var p in round.Players)
-            {
-                if (p == null || p.IsDefender) continue;
-
-                float d = Vector3.Distance(lataPos, p.transform.position);
-                if (d >= bestDist) continue;
-
-                bestDist = d;
-                threat = p;
-            }
-
-            if (threat == null) return lataPos;
-
-            Vector3 dir = threat.transform.position - lataPos;
-            dir.y = 0.0f;
-            return lataPos + dir.normalized * Balance.DefenderStartOffset;
-        }
-
-        // -------------------------------------------------------------------
-
-        /// <summary>
-        /// ⚠️⚠️ EVERY GOAL IS CLAMPED INTO THE PLAYABLE AREA, AND THAT IS NOT BELT AND BRACES.
-        /// A goal outside the world is not merely unreachable, it looks like a completely
-        /// different bug: bots jammed against a wall were reported as "pathfinding broken,
-        /// they just walk up the houses", when the houses have no collision at all and the
-        /// bots were simply pinned trying to reach a point they could never stand on. It cost
-        /// most of the offence in the match, and the radius alone was not the fix. Making an
-        /// out-of-world goal IMPOSSIBLE TO GENERATE is.
-        /// </summary>
         private Vector3 ClampToPlayable(Vector3 goal)
         {
             float halfX = PlayableHalfX, halfZ = PlayableHalfZ;
@@ -881,74 +1291,717 @@ namespace TumbangPreso
             return ClampToPlayable(p);
         }
 
-        /// <summary>Returns true while still travelling.</summary>
-        private bool MoveToward(InputIntent intent, Vector3 goal, float slop = ArriveSlop)
+        /// <summary>
+        /// Walk to a point, stopping inside <paramref name="stopAt"/> and not resuming until
+        /// well outside it. Returns true once arrived.
+        ///
+        /// ⚠️⚠️ THE HYSTERESIS IS WHY A BOT SETTLES INSTEAD OF SHUFFLING. The port stopped and
+        /// started on the same radius, so a body pushed a centimetre past it by a neighbour, by
+        /// a slope or by its own last step immediately walked back — which reads as twitching
+        /// rather than as standing. `ArriveHysteresis` is 1.8, so leaving costs almost twice
+        /// what arriving did.
+        ///
+        /// ⚠️ AND A GOAL THAT HAS MOVED FAR RESETS THE ARRIVAL. Without `GoalMoved` a bot that
+        /// arrived at one point counts as arrived at the next one it is handed, so the plan
+        /// after this one starts by believing it is already standing where it wants to be.
+        /// </summary>
+        private bool Goto(InputIntent intent, Vector3 point, float stopAt, bool sprint)
         {
-            goal = ClampToPlayable(goal);
+            point = ClampToPlayable(point);
 
-            Vector3 to = goal - transform.position;
-            to.y = 0.0f;
+            if (Flat(_goal, point) > AiTuning.GoalMoved) _arrived = false;
 
-            if (to.magnitude <= slop)
+            _goal = point;
+
+            Vector3 delta = point - transform.position;
+            delta.y = 0.0f;
+
+            float distance = delta.magnitude;
+            float threshold = _arrived ? stopAt * AiTuning.ArriveHysteresis : stopAt;
+
+            if (distance <= threshold)
             {
-                intent.Move = Vector2.zero;
                 _arrived = true;
-                return false;
+                Stop(intent);
+                return true;
             }
 
             _arrived = false;
-            _driving = true;
 
-            Vector3 dir = to.normalized;
+            Vector3 heading = delta / Mathf.Max(distance, 0.001f);
+
+            // ⚠️⚠️ SEPARATION, AND ITS ABSENCE IS WHY BODIES ENDED UP PRESSED AGAINST THE
+            // PLAYER'S LENS. `AiTuning` has carried both constants since the tuning table was
+            // ported and nothing ever read them, so three attackers converging on one box
+            // arrived as one clump — measured from a live round with `GameplayShots`, a
+            // neighbouring head 0.87 m from the first-person camera covering 28% of the frame.
+            // This is not collision, which the motor already does; it is the reason three
+            // people read as three people.
+            heading += Separation() * AiTuning.SeparationWeight;
+
+            Drive(intent, heading, sprint && distance > AiTuning.Reach);
+            return false;
+        }
+
+        /// <summary>
+        /// Four digital presses in world space. See the class header on why a bot is given a
+        /// keyboard rather than a bearing.
+        ///
+        /// ⚠️ `EightWayThreshold` IS sin(22.5°) AND NOT A ROUND NUMBER ON PURPOSE. It is the
+        /// exact bisector between two adjacent keyboard headings, so a desired bearing always
+        /// resolves to its NEAREST of the eight rather than to a band where both neighbours
+        /// qualify and the bot presses three keys.
+        /// </summary>
+        private void Drive(InputIntent intent, Vector3 direction, bool sprint)
+        {
+            Vector3 flat = new Vector3(direction.x, 0.0f, direction.z);
+
+            if (flat.magnitude < 0.001f) { Stop(intent); return; }
+
+            flat = flat.normalized;
+            _driving = true;
 
             // ⚠️ NINETY DEGREES OFF THE WANTED HEADING WHILE UNSTICKING. Enough to clear a
             // corner, and it still makes progress ALONG the obstacle rather than backing away
             // from it — backing off just walks into the same corner again a second later.
             if (_unstickLeft > 0.0f)
-                dir = new Vector3(-dir.z * _unstickSign, 0.0f, dir.x * _unstickSign);
+                flat = new Vector3(-flat.z * _unstickSign, 0.0f, flat.x * _unstickSign);
 
-            // ⚠️⚠️ EIGHT-WAY, NOT ANALOGUE, AND THAT IS A FAIRNESS RULE. A keyboard player has
-            // exactly eight headings; a bot writing a continuous vector glides along angles no
-            // human can hold, which is invisible in a screenshot and obvious in play. The
-            // threshold is sin(22.5°) — the half-angle of a 45° sector — so a heading snaps to
-            // the same key combination a player would have pressed.
-            intent.Move = EightWay(dir);
-
-            // ⚠️ DISTANCE AND A STAMINA RESERVE, NOT A TIER CHECK. The .gd sprints past
-            // `SPRINT_DISTANCE` (5.0) and holds back `sprint_reserve` of the meter — Bata
-            // spends everything (0.0), Astig keeps nearly half (0.45) so it still has a
-            // chase left when it matters. Gating on tier alone meant Normal never sprinted.
-            intent.Set(Verb.Sprint,
-                to.magnitude > AiTuning.SprintDistance && StaminaFraction() > Me.SprintReserve);
-
-            FaceToward(goal);
-            return true;
+            intent.Move = EightWay(flat);
+            intent.Set(Verb.Sprint, sprint && MaySprint());
         }
 
-        /// <summary>Fraction of the stamina meter still available, 0..1.</summary>
-        private float StaminaFraction() => _motor.Stamina?.Ratio ?? 1.0f;
+        private void Stop(InputIntent intent)
+        {
+            intent.Move = Vector2.zero;
+            intent.Set(Verb.Sprint, false);
+        }
 
         /// <summary>
-        /// Is <paramref name="to"/> inside this tier's lunge cone, measured off the body's
-        /// facing? The cone is a HALF-ANGLE in degrees and is floored at
-        /// <see cref="AiTuning.LungeConeFloor"/>, because an eight-way heading cannot aim
-        /// finer than that and a tighter cone would ask for an angle the bot has no key for.
+        /// ⚠️ THE RESERVE IS THE POINT AND IT IS A DIFFICULTY KNOB. The bar is 1.25 seconds of
+        /// sprint and fatigue costs two seconds at three-quarter speed with regen locked. A bot
+        /// that sprints whenever it is far away arrives fatigued and is then tagged standing
+        /// still, which is precisely what "the AI gives up" looks like from the stands. Bata's
+        /// 0 reserve is that mistake, kept on purpose.
         /// </summary>
-        private bool WithinLungeCone(Vector3 to)
+        private bool MaySprint()
         {
-            if (to.sqrMagnitude < 0.0001f) return true;
+            var stamina = _motor.Stamina;
+            if (stamina == null) return true;
 
-            float half = AiTuning.EffectiveLungeCone(ActiveDifficulty);
-            return Vector3.Angle(transform.forward, to.normalized) <= half;
+            return !stamina.IsFatigued && stamina.Ratio > Me.SprintReserve;
         }
 
-        private void FaceToward(Vector3 point)
+        /// <summary>
+        /// Steers away from bodies that are too close. Not collision — the motor does that —
+        /// but the reason three attackers converging on one box read as three people rather
+        /// than as one clump.
+        /// </summary>
+        private Vector3 Separation()
         {
-            Vector3 to = point - transform.position;
-            to.y = 0.0f;
-            if (to.sqrMagnitude < 0.01f) return;
+            var round = GameServices.Round;
+            if (round == null) return Vector3.zero;
 
-            transform.rotation = Quaternion.LookRotation(to.normalized, Vector3.up);
+            Vector3 push = Vector3.zero;
+            Vector3 here = transform.position;
+
+            foreach (var who in round.Players)
+            {
+                if (who == null || who == _motor) continue;
+
+                Vector3 away = here - who.transform.position;
+                away.y = 0.0f;
+
+                float distance = away.magnitude;
+                if (distance > AiTuning.SeparationRadius || distance < 0.01f) continue;
+
+                push += (away / distance) * (1.0f - distance / AiTuning.SeparationRadius);
+            }
+
+            return push;
         }
+
+        /// <summary>
+        /// A bot with nothing to do shifts its weight instead of standing at attention.
+        ///
+        /// ⚠️⚠️ LEASHED TO WHERE IT IS STANDING, AND THAT LEASH IS THE BUG FIX. Without it the
+        /// drift walks the body out of arrival range, the next `Goto` walks it back, and the
+        /// two pace against each other for as long as the plan holds. Nothing here may take the
+        /// body further than `LoiterLeash` from its anchor, so arrival cannot flip.
+        ///
+        /// ⚠️ THE BEATS ARE ROLLED, NOT PHASED. A sine gives every bot the same rhythm at a
+        /// different offset, which still reads as clockwork once you watch two of them. Each
+        /// beat draws its own length and its own direction, so a bot can step twice the same
+        /// way or stand for three seconds, and four of them never fall into step.
+        /// </summary>
+        private void Loiter(InputIntent intent)
+        {
+            Vector3 here = transform.position;
+            Vector3 anchor = Flat(here, _goal) <= AiTuning.ArriveSlop ? _goal : here;
+
+            Vector3 outward = here - anchor;
+            outward.y = 0.0f;
+
+            if (outward.magnitude > AiTuning.LoiterLeash)
+            {
+                // Past the leash. Come back and stand a while — deliberately NOT "step the
+                // other way", which is the alternation that read as pacing to begin with.
+                _loiterDir = 0.0f;
+                _loiterLeft = UnityEngine.Random.Range(AiTuning.LoiterRestMin,
+                                                       AiTuning.LoiterRestMax);
+                Drive(intent, -outward, false);
+                return;
+            }
+
+            _loiterLeft -= Time.deltaTime;
+
+            if (_loiterLeft <= 0.0f)
+            {
+                if (Mathf.Approximately(_loiterDir, 0.0f))
+                {
+                    _loiterDir = UnityEngine.Random.value < 0.5f ? 1.0f : -1.0f;
+                    _loiterLeft = UnityEngine.Random.Range(AiTuning.LoiterStepMin,
+                                                           AiTuning.LoiterStepMax);
+                }
+                else
+                {
+                    _loiterDir = 0.0f;
+                    _loiterLeft = UnityEngine.Random.Range(AiTuning.LoiterRestMin,
+                                                           AiTuning.LoiterRestMax);
+                }
+            }
+
+            if (Mathf.Approximately(_loiterDir, 0.0f)) { Stop(intent); return; }
+
+            var lata = GameServices.Round?.Lata;
+            Vector3 pivot = lata != null ? lata.transform.position : Vector3.zero;
+
+            Vector3 radial = here - pivot;
+            radial.y = 0.0f;
+            if (radial.magnitude < 0.05f) radial = Vector3.forward;
+            radial = radial.normalized;
+
+            // Across the bearing out from the lata, so the shift never walks into or away from
+            // the thing this bot is lined up on.
+            Drive(intent, new Vector3(-radial.z, 0.0f, radial.x) * _loiterDir, false);
+        }
+
+        // ---- THE BOARD ------------------------------------------------------
+
+        /// <summary>
+        /// Where to throw from, scored over sixteen bearings.
+        ///
+        /// ⚠️ NOBODY IS COOPERATING. Each bot picks the bearing that is best FOR IT, and "not
+        /// where my rivals already are" is part of that for the same reason it is for a human:
+        /// two attackers on the same bearing share one taya, one blocking body and one blocked
+        /// lane. The claim board is a way to READ the court, not an agreement.
+        /// </summary>
+        private Vector3 ThrowSpot()
+        {
+            var round = GameServices.Round;
+            var lata = round?.Lata;
+
+            if (lata == null) return SafeSpot();
+
+            float ring = Balance.ConfinementRadius + AiTuning.ThrowStandoff;
+            Vector3 here = transform.position;
+
+            var taya = DefenderOf(round);
+            float tayaBearing = 0.0f;
+
+            if (taya != null)
+            {
+                Vector3 offset = At(taya) - lata.transform.position;
+                tayaBearing = Mathf.Atan2(offset.x, offset.z);
+            }
+
+            var rivals = RivalBearings();
+
+            Vector3 best = SafeSpot();
+            float bestScore = float.NegativeInfinity;
+
+            for (int i = 0; i < SpotSamples; i++)
+            {
+                float bearing = -Mathf.PI + 2.0f * Mathf.PI * i / SpotSamples;
+                Vector3 point = RingPoint(bearing, ring);
+
+                float score = 0.0f;
+
+                // Away from the taya. Half a turn is the ideal and is worth the most.
+                if (taya != null)
+                    score += 2.4f * (Mathf.Abs(AngleBetween(bearing, tayaBearing)) / Mathf.PI);
+
+                // Away from my rivals, weighted by the tier's spacing.
+                float nearestRival = Mathf.PI;
+                foreach (float claimed in rivals)
+                    nearestRival = Mathf.Min(nearestRival,
+                                             Mathf.Abs(AngleBetween(bearing, claimed)));
+
+                score += 2.0f * Me.Spacing * (nearestRival / Mathf.PI);
+
+                // My own corner of the court, so the four of them do not all drift to the same
+                // side of the map over a round.
+                score += 0.5f * (1.0f - Mathf.Abs(AngleBetween(bearing, _self.HomeBearing))
+                                        / Mathf.PI);
+
+                // And it has to be worth walking to.
+                score -= 0.11f * Flat(here, point);
+
+                if (score <= bestScore) continue;
+
+                bestScore = score;
+                best = point;
+            }
+
+            return best;
+        }
+
+        private const int SpotSamples = 16;
+
+        /// <summary>Bearings other bots have staked out recently, as a list. Entries older than
+        /// <see cref="AiTuning.ClaimTtl"/> are ignored rather than removed, so a bot that dies
+        /// mid-round cannot hold a bearing for ever.</summary>
+        private List<float> RivalBearings()
+        {
+            var found = new List<float>();
+            float now = Time.time;
+
+            foreach (var pair in _claims)
+            {
+                if (pair.Key == _motor.PlayerSlot) continue;
+                if (now - pair.Value.At > AiTuning.ClaimTtl) continue;
+
+                found.Add(pair.Value.Bearing);
+            }
+
+            return found;
+        }
+
+        private void Claim(float bearing)
+            => _claims[_motor.PlayerSlot] = new BearingClaim(bearing, Time.time);
+
+        private readonly struct BearingClaim
+        {
+            public readonly float Bearing;
+            public readonly float At;
+
+            public BearingClaim(float bearing, float at) { Bearing = bearing; At = at; }
+        }
+
+        /// <summary>⚠️ SHARED ACROSS EVERY BOT ON PURPOSE, exactly as the .gd's `static var`
+        /// is. It is a board, not a negotiation: each bot writes its own row and reads the
+        /// others, and nothing waits for anybody.</summary>
+        private static readonly Dictionary<int, BearingClaim> _claims =
+            new Dictionary<int, BearingClaim>();
+
+        // ---- GEOMETRY -------------------------------------------------------
+
+        /// <summary>
+        /// The nearest point outside the box, straight out along the bearing already held.
+        ///
+        /// ⚠️⚠️ IT PROJECTS ONTO THE SQUARE, NOT ONTO A CIRCLE, AND THAT IS WHY BOTS USED TO
+        /// FREEZE IN THE ORIGINAL. The box is a SQUARE: X and Z clamp independently and the
+        /// throw gate asks max(|x|,|z|). Normalising a bearing and multiplying lands on a
+        /// CIRCLE, and a circle of radius r is INSIDE a square of half-width r everywhere but
+        /// the four edge midpoints — so on a diagonal the bot walked to its "safe spot", was
+        /// still inside the box, was refused the throw, and walked to the same spot again for
+        /// the rest of the round. Scaling by the CHEBYSHEV distance puts the point exactly on
+        /// the square ring for every bearing, by construction.
+        /// </summary>
+        private Vector3 SafeSpot()
+        {
+            Vector3 here = transform.position;
+            var flat = new Vector2(here.x, here.z);
+
+            float reach = Mathf.Max(Mathf.Abs(flat.x), Mathf.Abs(flat.y));
+
+            if (reach < 0.01f) { flat = new Vector2(0.0f, 1.0f); reach = 1.0f; }
+
+            float ring = Balance.ConfinementRadius + AiTuning.ThrowStandoff;
+            flat *= ring / reach;
+
+            return ClampToPlayable(new Vector3(flat.x, 0.0f, flat.y));
+        }
+
+        /// <summary>A point on the square ring at the given Chebyshev radius and bearing. Same
+        /// projection as <see cref="SafeSpot"/>, for a bearing this bot chose rather than the
+        /// one it happens to be standing on.</summary>
+        private Vector3 RingPoint(float bearing, float ring)
+        {
+            var direction = new Vector2(Mathf.Sin(bearing), Mathf.Cos(bearing));
+            float reach = Mathf.Max(Mathf.Abs(direction.x), Mathf.Abs(direction.y));
+
+            if (reach < 0.001f) return new Vector3(0.0f, 0.0f, ring);
+
+            direction *= ring / reach;
+            return ClampToPlayable(new Vector3(direction.x, 0.0f, direction.y));
+        }
+
+        /// <summary>The shortest way out of the box from here, as a unit heading.</summary>
+        private Vector3 OutOfBoxDir()
+        {
+            Vector3 here = transform.position;
+
+            if (Mathf.Abs(here.x) >= Mathf.Abs(here.z))
+                return new Vector3(Mathf.Abs(here.x) > 0.01f ? Mathf.Sign(here.x) : 1.0f, 0, 0);
+
+            return new Vector3(0, 0, Mathf.Abs(here.z) > 0.01f ? Mathf.Sign(here.z) : 1.0f);
+        }
+
+        /// <summary>Pushes a point a margin outside the box along its own bearing. Used to
+        /// stand NEAR a landing spot without standing inside the danger zone waiting for
+        /// it.</summary>
+        private static Vector3 PullOutside(Vector3 point, float margin)
+        {
+            float reach = Mathf.Max(Mathf.Abs(point.x), Mathf.Abs(point.z));
+            float ring = Balance.ConfinementRadius + margin;
+
+            if (reach >= ring || reach < 0.01f) return point;
+
+            var flat = new Vector2(point.x, point.z) * (ring / reach);
+            return new Vector3(flat.x, 0.0f, flat.y);
+        }
+
+        /// <summary>Keeps a taya's goal inside its own box, so it walks somewhere it can stand
+        /// rather than pressing itself against the confinement clamp — which looks exactly like
+        /// a bot stuck on a wall, because it is one.</summary>
+        private static Vector3 ClampToBox(Vector3 point)
+        {
+            float edge = Balance.ConfinementRadius - 0.35f;
+            return new Vector3(Mathf.Clamp(point.x, -edge, edge), point.y,
+                               Mathf.Clamp(point.z, -edge, edge));
+        }
+
+        /// <summary>Where a slipper already in flight will come down.</summary>
+        private static bool TryPredictedLanding(Slipper slipper, out Vector3 landing)
+        {
+            landing = Vector3.zero;
+
+            Vector3 launch = slipper.Velocity;
+            if (launch.magnitude < 0.5f) return false;
+
+            Vector3 from = slipper.transform.position;
+
+            for (float t = 0.0f; t < Balance.MaxFlightTime; t += 0.05f)
+            {
+                Vector3 point = from + launch * t
+                                + Vector3.down * (0.5f * Balance.Gravity * t * t);
+
+                if (point.y > from.y - 1.2f && point.y > 0.2f) continue;
+
+                landing = new Vector3(point.x, 0.0f, point.z);
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Is this unit inside <paramref name="cone"/> degrees of the way the body faces? The
+        /// lunge, the punch and the shove all fire along the facing, so this is the difference
+        /// between a dash that tags and one that misses by a metre.
+        /// </summary>
+        private bool Facing(CharacterMotor who, float cone)
+        {
+            if (who == null) return false;
+
+            Vector3 forward = transform.forward;
+            forward.y = 0.0f;
+
+            Vector3 toward = who.transform.position - transform.position;
+            toward.y = 0.0f;
+
+            if (forward.magnitude < 0.01f || toward.magnitude < 0.01f) return false;
+
+            return Vector3.Angle(forward.normalized, toward.normalized) <= cone;
+        }
+
+        /// <summary>Signed shortest angle from b to a, in radians.</summary>
+        private static float AngleBetween(float a, float b)
+        {
+            float d = Mathf.Repeat(a - b + Mathf.PI, 2.0f * Mathf.PI) - Mathf.PI;
+            return d;
+        }
+
+        // ---- READING THE BOARD ----------------------------------------------
+
+        /// <summary>
+        /// The attacker this taya should be standing in front of.
+        ///
+        /// ⚠️⚠️ THE CHARGE BONUS IS SMALL ON PURPOSE, AND A BIG ONE SINGLED OUT THE HUMAN.
+        /// Nothing here reads whether a player is human: the bias was entirely about TIME. A
+        /// person aims for most of the 2.5 s charge and a bot releases the moment it has
+        /// enough power, so a large "is charging" bonus was a bonus only one of the three
+        /// attackers ever held, and the taya spent whole rounds standing in front of them.
+        /// Reported from a playtest as *"the defender ai only attack him"*. At this weight it
+        /// is what it was meant to be: a tiebreak that says "this one is about to throw",
+        /// which distance and possession can still outweigh.
+        ///
+        /// ⚠️ AND THE ANTI-FIXATION TERM IS THE OTHER HALF. Whoever was guarded last tick is
+        /// worth slightly less than an equal rival, so a genuine tie rotates instead of
+        /// sticking. Small, so it never pulls the taya off somebody who really is the threat.
+        /// </summary>
+        private CharacterMotor LiveThreat()
+        {
+            var round = GameServices.Round;
+            if (round == null) return null;
+
+            CharacterMotor best = null;
+            float bestScore = float.NegativeInfinity;
+
+            foreach (var who in round.Players)
+            {
+                if (who == null || who.IsDefender) continue;
+
+                float score = 0.0f;
+
+                if (who.HoldingSlipper) score += 2.0f;
+                if (!Confinement.IsInsideBox(who.transform.position.x, who.transform.position.z))
+                    score += 1.0f;
+
+                var carrier = who.GetComponent<Carrier>();
+                if (carrier != null && carrier.ObservedChargePower >= 0.0f)
+                    score += 1.0f + carrier.ObservedChargePower;
+
+                score -= 0.08f * Flat(transform.position, At(who));
+
+                if (who == _lastThreat) score -= 0.6f;
+
+                if (score <= bestScore) continue;
+
+                bestScore = score;
+                best = who;
+            }
+
+            _lastThreat = best;
+            return best;
+        }
+
+        /// <summary>
+        /// Where a taya waits for a retrieval: between a loose slipper in its box and the
+        /// attacker who has to come and get it.
+        ///
+        /// ⚠️ WHOEVER IS ACTUALLY COMING, NOT WHOEVER OWNS IT. Any attacker may pick up any
+        /// slipper, so camping the OWNER's bearing puts the taya on an approach nobody is
+        /// using — and it skips a spare slipper with no owner entirely, which is every spare
+        /// slipper in a short-handed match.
+        /// </summary>
+        private bool TryCoverPoint(out Vector3 point)
+        {
+            point = Vector3.zero;
+
+            var round = GameServices.Round;
+            var lata = round?.Lata;
+            if (lata == null) return false;
+
+            bool found = false;
+            float bestDistance = float.MaxValue;
+
+            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            {
+                if (s.State != SlipperState.Loose) continue;
+
+                Vector3 at = s.transform.position;
+
+                // Outside the box: not the taya's problem, and not reachable.
+                if (Mathf.Max(Mathf.Abs(at.x), Mathf.Abs(at.z)) >= Balance.ConfinementRadius)
+                    continue;
+
+                var holder = NearestClaimantTo(s);
+                if (holder == null) continue;
+
+                Vector3 toward = At(holder) - at;
+                toward.y = 0.0f;
+                if (toward.magnitude < 0.05f) continue;
+
+                // Sit on the approach line, one body-length out from the slipper, so the
+                // retrieval has to come through the taya rather than around it. `Camp` decides
+                // how far up the line that is: 0 leaves it standing on the can.
+                Vector3 candidate = at + toward.normalized * (0.6f + 0.9f * Me.Camp);
+                float distance = Flat(transform.position, candidate);
+
+                if (distance >= bestDistance) continue;
+
+                bestDistance = distance;
+                point = ClampToBox(candidate);
+                found = true;
+            }
+
+            return found;
+        }
+
+        /// <summary>The attacker most likely to come for a slipper: the nearest one with free
+        /// hands. Mirrors the attackers' own claim rule, so the taya camps the line the bot
+        /// that is actually coming will walk up.</summary>
+        private static CharacterMotor NearestClaimantTo(Slipper slipper)
+        {
+            var round = GameServices.Round;
+            if (round == null) return null;
+
+            CharacterMotor best = null;
+            float bestDistance = float.MaxValue;
+
+            foreach (var who in round.Players)
+            {
+                if (who == null || who.IsDefender || !who.CanAct()) continue;
+                if (who.HoldingSlipper) continue;
+
+                float d = Vector3.Distance(who.transform.position, slipper.transform.position);
+                if (d >= bestDistance) continue;
+
+                bestDistance = d;
+                best = who;
+            }
+
+            return best;
+        }
+
+        /// <summary>
+        /// The slipper in the air that will land nearest this bot, whoever threw it.
+        ///
+        /// ⚠️ DELIBERATELY IGNORES OWNERSHIP AND CLAIMS. This is only reached when NOTHING is
+        /// fetchable, so there is no claim to respect and no rival being cut off, and the
+        /// alternative is standing still.
+        /// </summary>
+        private Slipper NearestFlyingSlipper()
+        {
+            Slipper best = null;
+            float bestDistance = float.MaxValue;
+
+            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            {
+                if (s.State != SlipperState.InFlight) continue;
+
+                float d = Vector3.Distance(transform.position, s.transform.position);
+                if (d >= bestDistance) continue;
+
+                bestDistance = d;
+                best = s;
+            }
+
+            return best;
+        }
+
+        // ---- PERCEPTION -----------------------------------------------------
+
+        /// <summary>
+        /// What this bot BELIEVES about where everybody is, lagged by its own reaction time.
+        ///
+        /// ⚠️ THE BOT'S OWN BODY IS NEVER LAGGED. Proprioception is not perception: a player
+        /// always knows exactly where their own feet are, and a bot steering off a lagged copy
+        /// of ITSELF oscillates around every goal it is given.
+        /// </summary>
+        private void Observe(float dt)
+        {
+            var round = GameServices.Round;
+            if (round == null) return;
+
+            float alpha = 1.0f - Mathf.Exp(-dt / Mathf.Max(Me.React, 0.02f));
+
+            foreach (var who in round.Players)
+            {
+                if (who == null) continue;
+
+                int slot = who.PlayerSlot;
+                Vector3 truth = who.transform.position;
+                Vector3 velocity = new Vector3(who.Velocity.x, 0.0f, who.Velocity.z);
+
+                if (who == _motor || !_seenPos.ContainsKey(slot))
+                {
+                    _seenPos[slot] = truth;
+                    _seenVel[slot] = velocity;
+                    continue;
+                }
+
+                _seenPos[slot] = Vector3.Lerp(_seenPos[slot], truth, alpha);
+                _seenVel[slot] = Vector3.Lerp(_seenVel[slot], velocity, alpha);
+            }
+        }
+
+        /// <summary>Where this bot believes a unit is.</summary>
+        private Vector3 At(CharacterMotor who)
+        {
+            if (who == null) return Vector3.zero;
+
+            return _seenPos.TryGetValue(who.PlayerSlot, out Vector3 p)
+                ? p : who.transform.position;
+        }
+
+        /// <summary>Where this bot believes a unit will be, at its tier's willingness to
+        /// extrapolate. A `Lead` of 0 is a bot that runs at your shadow.</summary>
+        private Vector3 AheadOf(CharacterMotor who, float horizon)
+        {
+            if (who == null) return Vector3.zero;
+
+            Vector3 velocity = _seenVel.TryGetValue(who.PlayerSlot, out Vector3 v)
+                ? v : Vector3.zero;
+
+            return At(who) + velocity * horizon * Me.Lead;
+        }
+
+        private readonly Dictionary<int, Vector3> _seenPos = new Dictionary<int, Vector3>();
+        private readonly Dictionary<int, Vector3> _seenVel = new Dictionary<int, Vector3>();
+
+        // ---- THE BUTTONS ----------------------------------------------------
+
+        /// <summary>Verbs written during the current <see cref="Act"/> frame, so the release
+        /// sweep can tell "the plan chose to hold this" from "the plan forgot about it". An
+        /// explicit release counts as a touch: writing false over false is the same state.
+        /// </summary>
+        private readonly HashSet<Verb> _touched = new HashSet<Verb>();
+
+        private readonly HashSet<Verb> _pressed = new HashSet<Verb>();
+
+        private void Press(InputIntent intent, Verb verb, bool pressed)
+        {
+            intent.Set(verb, pressed);
+
+            if (pressed) _pressed.Add(verb);
+            else _pressed.Remove(verb);
+
+            _touched.Add(verb);
+        }
+
+        /// <summary>Produces a real press EDGE by alternating. The pickup, the shove and the
+        /// punch all read `JustPressed`, which needs a false frame before every true one — a
+        /// button simply held down fires once in a lifetime, which is how a bot ends up
+        /// standing on its own slipper for ninety seconds.</summary>
+        private void Tap(InputIntent intent, Verb verb)
+            => Press(intent, verb, !_pressed.Contains(verb));
+
+        /// <summary>
+        /// Everything down, and every accumulator with it.
+        ///
+        /// ⚠️ THE LUNGE HOLD RESETS HERE TOO, NOT JUST THE BUTTON. A bot stunned mid-charge
+        /// otherwise resumes from wherever its accumulator stopped and fires the instant it
+        /// recovers, which is a lunge nobody saw wind up.
+        /// </summary>
+        private void ReleaseAll(InputIntent intent)
+        {
+            _windup = false;
+            _lungeHeld = -1.0f;
+            _goalValid = false;
+            _arrived = false;
+            _stuckTime = 0.0f;
+            _unstickLeft = 0.0f;
+            _driving = false;
+
+            intent.Clear();
+            _pressed.Clear();
+        }
+
+        // ---- WIND-UP AND LOITER STATE ---------------------------------------
+
+        private bool _goalValid;
+        private bool _windup;
+        private float _windupTime;
+        private float _windupWait;
+        private float _windupPower = 1.0f;
+        private Vector3 _windupScatter;
+        private bool _blundering;
+        private float _lungeHeld = -1.0f;
+        private float _loiterLeft;
+        private float _loiterDir;
+        private CharacterMotor _lastThreat;
     }
 }

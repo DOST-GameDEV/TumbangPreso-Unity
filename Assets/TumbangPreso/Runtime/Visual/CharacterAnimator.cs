@@ -40,6 +40,14 @@ namespace TumbangPreso.Visual
         private const string Interact = "interact-right";
         private const string Die = "die";
 
+        /// <summary>The fatigued pose. ⚠️ THE RIG SHIPS NO PANTING CLIP — enumerated in full it
+        /// carries attack-melee ×4, crouch, die, drive, emote-no, emote-yes, fall, holding-* ×6,
+        /// idle, interact-* ×2, jump, pick-up, sit, sprint, static, walk and wheelchair-* ×6 —
+        /// and `crouch` is the only one of them that reads as out of breath rather than as an
+        /// action. Authoring a real one is the art lane's call, on a CC0 rig this project ships
+        /// unmodified.</summary>
+        private const string Crouch = "crouch";
+
         /// <summary>
         /// ⚠️ FALLBACK CHAINS, NOT SINGLE CLIPS. Godot stores an ORDERED LIST per key so a rig
         /// missing the first clip still animates on the second. Flattening these to one name
@@ -289,20 +297,46 @@ namespace TumbangPreso.Visual
 
             if (!_motor.IsGrounded) return _motor.Velocity.y > 0.5f ? Jump : Fall;
 
+            // ⚠️⚠️ FATIGUE HAS A POSE, AND THE PORT HAD NONE. 🧑 asked the original for *"a
+            // heavy panting animation"* on the empty bar, and `character_visual.gd` answers it
+            // with `crouch` — doubled over with the weight forward, the universal hands-on-knees
+            // silhouette and the only clip on this rig that reads as exhaustion rather than as
+            // an action. Without it, running the bar dry changed nothing a player could see,
+            // which is *"shift drains stamina but it isnt noticeable like in godot"*.
+            //
+            // ⚠️ IT OUTRANKS WALK AND SPRINT, NOT STUN OR AIRBORNE. A fatigued player is still
+            // moving, at three-quarter speed, and the whole point is that the state is legible
+            // to the three people deciding whether to chase them.
+            if (_motor.Stamina.IsFatigued) return Crouch;
+
+            // ⚠️⚠️ CARRYING BEATS WALK AND SPRINT OUTRIGHT, NOT ONLY WHEN STANDING STILL, AND
+            // GETTING THAT WRONG IS *"the hands are just floating"*. The rig has no
+            // holding-right-walk, so a carrying unit that switches to `walk` swings the arm bone
+            // through a full walk cycle — and the carried tsinelas is snapped to that bone every
+            // frame while the first-person viewmodel chases the same pose. Both then swim with
+            // every step. `character_visual.gd` records the same conclusion and the report that
+            // forced it: *"my arms float during windup and when i run while holding"*. Legs that
+            // stop swinging while carrying are a far smaller cost than a hand that does.
+            if (_motor.HoldingSlipper) return HoldingRight;
+
             Vector3 flat = _motor.Velocity;
             flat.y = 0.0f;
             float speed = flat.magnitude;
 
-            if (speed > 0.15f)
-            {
-                // Sprinting reads off the actual speed rather than the key, so fatigue and the
-                // attacker speed scale both show up honestly.
-                bool fast = _motor.Stamina.IsSprinting;
-                return fast ? Sprint : Walk;
-            }
+            // ⚠️ SPEED THRESHOLDS, NOT THE SPRINT KEY, AND THEY ARE THE .gd's OWN NUMBERS.
+            // Reading `IsSprinting` gave a bot — which never presses the key on a peer that is
+            // not simulating it — a walk cycle at 6.9 m/s. 7.5 sits above the sprint speed the
+            // rules can produce for a walker and below the dash, so the clip follows the body
+            // rather than the input, and fatigue and the role speed scale both show up honestly.
+            if (speed > RunSpeedThreshold) return Sprint;
+            if (speed > WalkSpeedThreshold) return Walk;
 
-            return _motor.HoldingSlipper ? HoldingRight : Idle;
+            return Idle;
         }
+
+        /// <summary>`character_visual.gd`'s own thresholds. See <see cref="Choose"/>.</summary>
+        public const float WalkSpeedThreshold = 0.4f;
+        public const float RunSpeedThreshold = 7.5f;
 
         /// <summary>A non-looping action that owns the body until it finishes.</summary>
         public void PlayOneShot(string clipName)

@@ -153,6 +153,15 @@ namespace TumbangPreso
         {
             transform.position = _mark;
             transform.rotation = Quaternion.identity;
+
+            // ⚠️ THE TILT STATE IS CLEARED, NOT JUST THE TRANSFORM. `_toppleAngle` and the roll
+            // survive a restore otherwise, and the next knockdown starts its lift from wherever
+            // the last one ended — which lands the can in the air on its second topple.
+            _toppleAngle = 0.0f;
+            _rollAngleDeg = 0.0f;
+            _toppleTimer = 0.0f;
+            _lastRollPosition = _mark;
+
             SetUpright(true);
 
             // ⚠️ NO CUE HERE EITHER. `SetUpright(true)` above already sounds the restore; see
@@ -192,14 +201,77 @@ namespace TumbangPreso
             _toppleTimer = Mathf.Max(0.0f, _toppleTimer - Time.deltaTime);
             float t = 1.0f - (_toppleTimer / Balance.ToppleTime);
 
-            float radius = 0.14f;
-            var mesh = GetComponentInChildren<Renderer>();
-            if (mesh != null) radius = Mathf.Max(mesh.bounds.extents.x, mesh.bounds.extents.z);
-
             _toppleAngle = Mathf.Lerp(0.0f, Balance.DownedTiltDeg, t);
-            transform.rotation = Quaternion.Euler(_toppleAngle, _rollAngleDeg, 0.0f);
-            transform.position = new Vector3(_mark.x, _mark.y + radius * t, _mark.z);
+            ApplyTilt(_toppleAngle);
         }
+
+        /// <summary>
+        /// The tilt and the lift that exactly matches it, written together.
+        ///
+        /// ⚠️⚠️ THE LIFT IS `radius · |sin(angle)|`, NOT A STRAIGHT LINE, AND THE PORT SHIPPED
+        /// THE STRAIGHT LINE. At angle t the can's lowest point is -radius·sin(t), so that is
+        /// the lift that keeps it exactly on the road; a linear ramp agrees with it only at the
+        /// two ends. `lata.gd::_set_tilt` carries the same note and the measurement that forced
+        /// it — at the halfway point the rotation needed 0.076 of lift and the linear one
+        /// supplied 0.054, dipping the can 22 mm through the floor mid-animation.
+        ///
+        /// ⚠️⚠️ AND THE RADIUS IS MEASURED ONCE, FROM THE UPRIGHT CAN. It was being re-measured
+        /// every frame off `Renderer.bounds`, which is a WORLD-space AABB of a mesh that is in
+        /// the middle of rotating: as the can lies down, its X/Z extents stop being its radius
+        /// and become half its LENGTH. Measured on the shipped skins, that walks the lift from
+        /// 0.14 up to about 0.19, so a settled can ends the topple hanging five centimetres off
+        /// the road for the rest of the round. Reported as *"the can randomly floats"*.
+        ///
+        /// ⚠️ AND X AND Z ARE LEFT ALONE. Rewriting them from the mark every frame drags a can
+        /// that has been shoved back to the middle of its own topple.
+        /// </summary>
+        private void ApplyTilt(float angleDeg)
+        {
+            transform.rotation = Quaternion.Euler(angleDeg, _rollAngleDeg, 0.0f);
+
+            float lift = DownedLift * Mathf.Abs(Mathf.Sin(angleDeg * Mathf.Deg2Rad));
+
+            Vector3 at = transform.position;
+            transform.position = new Vector3(at.x, _mark.y + lift, at.z);
+        }
+
+        /// <summary>
+        /// Half the can's width, measured off the UPRIGHT mesh the first time it is asked for.
+        ///
+        /// ⚠️ THE SKINS SPAN 0.108 TO 0.143 AND THE DEFAULT IS THE SLIMMEST OF THEM, so this is
+        /// measured rather than assumed: a constant would sink the fattest can by 3.5 cm.
+        /// </summary>
+        private float DownedLift
+        {
+            get
+            {
+                if (_downedLift > 0.0f) return _downedLift;
+
+                _downedLift = 0.14f;
+
+                var mesh = GetComponentInChildren<Renderer>();
+
+                // ⚠️ `localBounds` ON A MESH FILTER, NOT `Renderer.bounds`. The renderer's are
+                // in world space and already carry whatever rotation the can is wearing at the
+                // moment of the call, which is the fault this property exists to end.
+                var filter = GetComponentInChildren<MeshFilter>();
+
+                if (filter != null && filter.sharedMesh != null)
+                {
+                    Vector3 e = filter.sharedMesh.bounds.extents;
+                    Vector3 s = filter.transform.lossyScale;
+                    _downedLift = Mathf.Max(e.x * Mathf.Abs(s.x), e.z * Mathf.Abs(s.z));
+                }
+                else if (mesh != null)
+                {
+                    _downedLift = Mathf.Max(mesh.bounds.extents.x, mesh.bounds.extents.z);
+                }
+
+                return _downedLift;
+            }
+        }
+
+        private float _downedLift;
 
         private float _toppleAngle;
         private float _rollAngleDeg;
@@ -228,16 +300,19 @@ namespace TumbangPreso
             float speed = moved.magnitude / Mathf.Max(0.0001f, Time.deltaTime);
             if (speed < Balance.DownedRollSettle) return;
 
-            float radius = 0.14f;
-            var mesh = GetComponentInChildren<Renderer>();
-            if (mesh != null) radius = Mathf.Max(0.05f, Mathf.Max(mesh.bounds.extents.x,
-                                                                 mesh.bounds.extents.z));
+            // ⚠️ THE SAME MEASURED RADIUS THE LIFT USES. It was read off the rotating world
+            // bounds here too, so a can lying down rolled against a radius half again too big
+            // and turned more slowly the flatter it got.
+            float radius = Mathf.Max(0.05f, DownedLift);
 
             // Along the can's own lying axis, so it rolls the way it is pointing.
             Vector3 forward = Vector3.Cross(Vector3.up, transform.right).normalized;
 
             _rollAngleDeg += Vector3.Dot(moved, forward) / radius * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(_toppleAngle, _rollAngleDeg, 0.0f);
+
+            // ⚠️ THROUGH `ApplyTilt`, so the roll cannot leave the can at a height that
+            // disagrees with its tilt. The two used to be written from two places.
+            ApplyTilt(_toppleAngle);
         }
     }
 }

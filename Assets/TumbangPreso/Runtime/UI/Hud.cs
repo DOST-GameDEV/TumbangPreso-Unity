@@ -938,7 +938,18 @@ namespace TumbangPreso.UI
             _indicators = indicatorGo.AddComponent<OffscreenIndicators>();
         }
 
-        /// <summary>Full-screen, behind everything, and never a raycast target.</summary>
+        /// <summary>
+        /// Full-screen, behind everything, and never a raycast target.
+        ///
+        /// ⚠️⚠️ IT CARRIES A VIGNETTE MATERIAL, AND SHIPPING IT WITHOUT ONE IS WHY THE TAYA'S
+        /// SCREEN WAS *"just red"*. `HUD.tscn` puts `downed_vignette.gdshader` on this rect and
+        /// this was a bare `Image` with a flat colour, so a ramp that is meant to be clear
+        /// through the middle of the frame was a uniform wash over all of it — held, for a
+        /// defender, through most of a round.
+        ///
+        /// See `DownedVignette.shader`: it is the same falloff, and the level still comes off
+        /// this Image's own colour so `ApplyDangerHold` and the knockdown pulse are unchanged.
+        /// </summary>
         private void BuildDangerFlash()
         {
             var go = new GameObject("DownedFlash");
@@ -949,8 +960,25 @@ namespace TumbangPreso.UI
             _dangerFlash.raycastTarget = false;
             _dangerFlash.enabled = false;
 
+            // ⚠️ AN OWNED INSTANCE, for the same reason the frost keeps one: a second HUD in a
+            // PlayMode test running beside this one must not share a material with it.
+            var shader = Shader.Find("TumbangPreso/DownedVignette");
+
+            if (shader != null)
+            {
+                _dangerMaterial = new Material(shader) { hideFlags = HideFlags.DontSave };
+                _dangerFlash.material = _dangerMaterial;
+            }
+            else
+            {
+                Debug.LogWarning("[HUD] TumbangPreso/DownedVignette is missing, so the danger " +
+                                 "tint will draw as a flat full-screen rect.");
+            }
+
             MenuKit.Stretch(_dangerFlash.rectTransform);
         }
+
+        private Material _dangerMaterial;
 
         /// <summary>
         /// § THE STUN FROST — the screen half, for the player who is stunned.
@@ -988,10 +1016,16 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
-            if (_frostMaterial == null) return;
+            Dispose(_frostMaterial);
+            Dispose(_dangerMaterial);
+        }
 
-            if (Application.isPlaying) Destroy(_frostMaterial);
-            else DestroyImmediate(_frostMaterial);
+        private static void Dispose(Material m)
+        {
+            if (m == null) return;
+
+            if (Application.isPlaying) Destroy(m);
+            else DestroyImmediate(m);
         }
 
         /// <summary>

@@ -40,9 +40,19 @@ namespace TumbangPreso.Visual
 
             var ps = go.AddComponent<ParticleSystem>();
 
-            // ⚠️ CONFIGURE BEFORE THE FIRST PLAY. A ParticleSystem added at runtime starts
-            // playing on the frame it is added, so a burst configured afterwards emits one
-            // frame of defaults first — which looks like a white puff nobody asked for.
+            // ⚠️⚠️ IT IS ALREADY PLAYING BY THE TIME WE GET IT, AND `main.duration` IS ILLEGAL
+            // WHILE IT IS. `AddComponent<ParticleSystem>` returns a system that is live on the
+            // frame it is added, so the very next line logged
+            // *"Setting the duration while system is still playing is not supported"* — every
+            // single time a tag landed. In a player that is silent log spam; in a PlayMode test
+            // an unexpected assert FAILS THE RUN, which is how the first bot punch this port
+            // ever landed came back as a red test rather than as the fix it was.
+            //
+            // Stopping with `StopEmittingAndClear` is the form the message itself asks for.
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+            // ⚠️ CONFIGURE BEFORE THE FIRST PLAY. A burst configured after it starts emits one
+            // frame of defaults first, which looks like a white puff nobody asked for.
             var main = ps.main;
             main.duration = Lifetime;
             main.loop = false;

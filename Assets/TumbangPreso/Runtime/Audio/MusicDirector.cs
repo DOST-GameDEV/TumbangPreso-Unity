@@ -1,14 +1,25 @@
-using System.Collections;
 using UnityEngine;
 
 namespace TumbangPreso.Audio
 {
     /// <summary>
-    /// The music bed, and the crossfade between menu and match.
+    /// The music bed.
     ///
-    /// ⚠️ TWO SOURCES, NOT ONE. A single source cannot cross-fade with itself: swapping its
-    /// clip cuts the old track dead on the frame the new one starts, and "round 1 begins" would
-    /// chop the menu bed off mid-bar. Two sources, one fading down while the other fades up.
+    /// ⚠️⚠️ EVERY TRACK CHANGE IS A CUT. THERE IS NO CROSSFADE, AND REMOVING IT IS THE ASK ON
+    /// BOTH BUILDS. 🧑 on this port: *"please remove music fade, js let it end abruptly"*, and
+    /// on the original before it: *"pls js abruptly cut it"*. `audio_manager.gd` carries the
+    /// same conclusion at all three of its edges — the menu bed starts with `play_music("menu",
+    /// 0.0)`, the match bed with `play_music("match", 0.0)`, and entering the arena calls
+    /// `stop_music_now()` rather than fading. Its own notes record why: a cross-fade needs
+    /// something to fade FROM, and at every one of these edges there is nothing, so the ramp was
+    /// pure latency. *"Remove the audio playback delay when transitioning from the intro
+    /// video"*, *"Remove the audio latency during round initialization"*. The 1.5 s constant
+    /// survives in the cue table and is used by nothing.
+    ///
+    /// ⚠️ TWO SOURCES ARE KEPT EVEN THOUGH NOTHING CROSSFADES. Swapping the clip on a single
+    /// playing source is a stall on the audio thread while the new clip loads; handing the new
+    /// track to the idle source and stopping the old one is a clean frame-accurate cut, which
+    /// is what "abruptly" has to mean to be an improvement rather than a click.
     ///
     /// ⚠️ THE BED STARTS QUIETER THAN EVERYTHING ELSE, DELIBERATELY. The SFX bus was measured
     /// clipping at +2.0 dBFS with music silent, and the delivered OST masters' own peak was
@@ -19,15 +30,12 @@ namespace TumbangPreso.Audio
     /// </summary>
     public sealed class MusicDirector : MonoBehaviour
     {
-        public const float CrossfadeTime = AudioCues.MusicCrossfadeTime;
-
         /// <summary>See the class note: a starting point, not a measured value.</summary>
         public const float BedLevel = 0.55f;
 
         private AudioSource _a;
         private AudioSource _b;
         private bool _aIsActive;
-        private Coroutine _fade;
 
         public string Current { get; private set; }
 
@@ -58,8 +66,7 @@ namespace TumbangPreso.Audio
             if (Current == cue) return;
             Current = cue;
 
-            if (_fade != null) StopCoroutine(_fade);
-            _fade = StartCoroutine(Crossfade(clip));
+            Cut(clip);
         }
 
         /// <summary>
@@ -120,49 +127,36 @@ namespace TumbangPreso.Audio
             _duck = null;
         }
 
-        public void Stop()
-        {
-            Current = null;
+        /// <summary>Silence, immediately. An alias for <see cref="StopNow"/> now that every
+        /// transition is a cut and there is no other kind of stop left.</summary>
+        public void Stop() => StopNow();
 
-            if (_fade != null) StopCoroutine(_fade);
-            _fade = StartCoroutine(Crossfade(null));
-        }
+        /// <summary>
+        /// Both players dead, this frame, with the name cleared.
+        ///
+        /// ⚠️⚠️ CLEARING <see cref="Current"/> IS NOT BOOKKEEPING. <see cref="Play"/> opens by
+        /// returning early when the requested cue is already the current one, so stopping the
+        /// sources while the name still reads "menu" makes the next `Play("menu")` a no-op and
+        /// the menu bed never comes back — silence for the rest of the session, produced by the
+        /// function whose whole job is to be quiet. `stop_music_now()` carries the same warning.
+        /// </summary>
+        public void StopNow() { Current = null; Cut(null); }
 
-        private IEnumerator Crossfade(AudioClip next)
+        private void Cut(AudioClip next)
         {
             AudioSource outgoing = _aIsActive ? _a : _b;
             AudioSource incoming = _aIsActive ? _b : _a;
             _aIsActive = !_aIsActive;
 
-            float target = MusicVolume();
-
-            if (next != null)
-            {
-                incoming.clip = next;
-                incoming.volume = 0.0f;
-                incoming.Play();
-            }
-
-            float startOut = outgoing.volume;
-            float t = 0.0f;
-
-            while (t < CrossfadeTime)
-            {
-                t += Time.unscaledDeltaTime;
-                float k = Mathf.Clamp01(t / CrossfadeTime);
-
-                outgoing.volume = Mathf.Lerp(startOut, 0.0f, k);
-                if (next != null) incoming.volume = Mathf.Lerp(0.0f, target, k);
-
-                yield return null;
-            }
-
             outgoing.Stop();
             outgoing.clip = null;
             outgoing.volume = 0.0f;
 
-            if (next != null) incoming.volume = target;
-            _fade = null;
+            if (next == null) return;
+
+            incoming.clip = next;
+            incoming.volume = MusicVolume();
+            incoming.Play();
         }
 
         /// <summary>
@@ -183,8 +177,6 @@ namespace TumbangPreso.Audio
         private void Update()
         {
             // Track the settings sliders and the duck without needing either to notify us.
-            if (_fade != null) return;
-
             AudioSource active = _aIsActive ? _a : _b;
             if (active.isPlaying) active.volume = MusicVolume();
         }

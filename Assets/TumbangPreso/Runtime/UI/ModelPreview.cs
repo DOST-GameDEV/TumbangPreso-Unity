@@ -755,22 +755,29 @@ namespace TumbangPreso.UI
         {
             _userTookOver = true;
 
-            // ⚠️⚠️ BOTH SIGNS ARE FLIPPED FROM THE .gd, AND COPYING THEM STRAIGHT ACROSS IS WHY
-            // THE DRAG WENT THE WRONG WAY. `character_preview.gd:363` subtracts on both axes, and
-            // this did the same, but neither input means the same thing in Unity:
+            // ⚠️⚠️ THE TWO AXES DO NOT TAKE THE SAME CORRECTION, AND ASSUMING THEY DID IS WHY
+            // THIS HAS BEEN WRONG TWICE. The signs were first copied straight from
+            // `character_preview.gd:363`, which subtracts on both; then BOTH were flipped on an
+            // argument about handedness. The screen still turned the wrong way.
             //
-            //  X — a positive Y rotation turns the opposite way in the two engines. Godot is
-            //      right-handed and Unity left-handed, so the same subtraction orbits the camera
-            //      the other way round the subject. Reported as *"when i drag this, it goes the
-            //      opposite way"*.
-            //  Y — Godot's `InputEventMouseMotion.relative` counts DOWN as positive, matching
-            //      screen space. Unity's `PointerEventData.delta` counts UP as positive. So the
-            //      subtraction that tilts a Godot camera down tilts a Unity one up.
+            // A drag is a GRAB: the surface of the subject nearest the camera follows the
+            // pointer. That is what the original does on both axes, and `PreviewDragProbe`
+            // measures it here by projecting a fixed world point on that near surface and
+            // watching which way it travels.
             //
-            // Two different reasons landing on the same correction, which is why they are written
-            // out separately rather than as one "flip the drag" note.
+            //  X — ALREADY CORRECT, MEASURED. A rightward drag moved the near face from
+            //      viewport 0.689 to 0.712, i.e. right, which is the grab. The .gd reaches the
+            //      same picture through a minus because its own camera sits on the opposite
+            //      side of the subject at the same yaw. **Do not flip this a third time on an
+            //      argument about handedness. Run the probe.**
+            //  Y — INVERTED, AND THIS IS THE HALF THAT WAS BROKEN. Two things differ from the
+            //      .gd rather than one, and they do NOT cancel: `PointerEventData.delta` counts
+            //      UP as positive where `InputEventMouseMotion.relative` counts DOWN, and a
+            //      positive pitch here puts the camera ABOVE the subject where the .gd's puts
+            //      it below. Reported as *"i move model up, it goes down"*, and measured as
+            //      0.415 -> 0.397 on a 40 px upward drag before this minus.
             _userYaw += delta.x * OrbitSensitivity;
-            _userPitch = Mathf.Clamp(_userPitch + delta.y * OrbitSensitivity,
+            _userPitch = Mathf.Clamp(_userPitch - delta.y * OrbitSensitivity,
                                      OrbitPitchMin - _framePitch, OrbitPitchMax - _framePitch);
         }
 

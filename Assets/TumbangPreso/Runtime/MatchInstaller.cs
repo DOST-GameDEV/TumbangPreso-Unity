@@ -162,7 +162,15 @@ namespace TumbangPreso
             // under the free-roam window and under the countdown, which is a different opening
             // from the one the game was cut to. A headless probe has no gate and no countdown,
             // so it still needs the bed started here or the run is silent.
-            if (!UseReadyGate) GameServices.Music?.Play("match", GameServices.MatchTrack);
+            // ⚠️⚠️ AND THE MENU BED IS CUT DEAD THE MOMENT THE ARENA EXISTS. Without this it
+            // played on under the free-roam window and the countdown and was only replaced on
+            // the first tick — so the title-screen track scored the opening of every match.
+            // Reported here as *"the OST is supposed to change as soon as i leave the screen
+            // and it enters the actual game"*, and `audio_manager.gd::_poll_scene_state()`
+            // already answers it on the "match" branch with `stop_music_now()` rather than a
+            // fade, under 🧑's *"pls js abruptly cut it"*.
+            if (UseReadyGate) GameServices.Music?.StopNow();
+            else GameServices.Music?.Play("match", GameServices.MatchTrack);
         }
 
         /// <summary>

@@ -80,6 +80,36 @@ namespace TumbangPreso.Visual
         /// </summary>
         public const float PersonScale = 2.38f;
 
+        /// <summary>
+        /// ⚠️⚠️ THE PERSON RIG WEARS ITS FACE ON -Z AND UNITY'S FORWARD IS +Z. THIS IS THE FIX,
+        /// AND `character_visual.gd:212` HAS CARRIED THE SAME CONSTANT SINCE THE ORIGINAL BUILT
+        /// IT. The port shipped without it, so every character in every match rendered with its
+        /// back to whatever it was walking towards, aiming at, or throwing at.
+        ///
+        /// The .gd's own header records what that costs to diagnose: *"reported across more than
+        /// ten sessions as the attacker spawns facing backward and the AI moves and attacks in
+        /// reverse"*, with every previous attempt going looking in the yaw maths — the spawn
+        /// yaw, the marker rotations, the look-at. All of those are correct here too, which is
+        /// exactly why re-deriving them proves nothing. The fault is one layer lower: the mesh.
+        ///
+        /// ⚠️ MEASURED, NOT INFERRED. `ModelFacingProbe` pins a seat to yaw 0 and photographs it
+        /// from both sides, which is the Unity transcription of `tools/model_facing_probe.tscn`:
+        ///     camera at +Z (Unity's "in front") -> the back of the head
+        ///     camera at -Z (Unity's "behind")   -> the face
+        /// Both PNGs are unambiguous, and the same pair is the check to repeat if this is ever
+        /// questioned. Do not set this to 0 to "test" a yaw change: measure instead.
+        ///
+        /// ⚠️ IT IS APPLIED TO THE MODEL, NEVER TO THE SEAT. Rotating the seat would fix the
+        /// render and break everything derived from the body basis at once: the melee reach is
+        /// measured off `transform.forward`, the first-person camera looks down it, and the AI's
+        /// own lunge cone is an angle against it.
+        ///
+        /// ⚠️ AND THE HAND ANCHOR RIDES UNDER THE MODEL, so a carried tsinelas moves to the
+        /// correct side with it. The first-person arms hang off the camera rather than the
+        /// skeleton and are untouched.
+        /// </summary>
+        public const float PersonModelYaw = 180.0f;
+
         [SerializeField] private Transform _modelRoot;
         [SerializeField] private float _flashTime = 0.12f;
 
@@ -89,6 +119,11 @@ namespace TumbangPreso.Visual
         private Color _tint = Color.white;
         private float _flashLeft;
         private GameObject _instance;
+
+        /// <summary>The instanced rig, or null before a model has been applied. Read-only:
+        /// <see cref="ApplyModel"/> is the one writer, and the facing correction lives on this
+        /// transform rather than on the seat.</summary>
+        public GameObject Model => _instance;
 
         private void Awake()
         {
@@ -149,7 +184,13 @@ namespace TumbangPreso.Visual
             {
                 _instance = Instantiate(prefab, _modelRoot);
                 _instance.transform.localPosition = Vector3.zero;
-                _instance.transform.localRotation = Quaternion.identity;
+
+                // ⚠️⚠️ THE RIG'S FACE IS ON -Z AND UNITY'S FORWARD IS +Z. See PersonModelYaw.
+                // Applied to the MODEL, never to the seat, so nothing derived from the body
+                // basis moves with it.
+                _instance.transform.localRotation = person
+                    ? Quaternion.Euler(0.0f, PersonModelYaw, 0.0f)
+                    : Quaternion.identity;
 
                 // See PersonScale. A Prop is authored at its own size and keeps it, exactly as
                 // `character_visual.gd` only scales the branch it took for a Person.
