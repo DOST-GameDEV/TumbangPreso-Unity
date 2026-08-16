@@ -69,6 +69,27 @@ namespace TumbangPreso.Visual
             if (_modelRoot == null) _modelRoot = transform;
         }
 
+        /// <summary>
+        /// The node the model hangs under, and the node the smoothing moves.
+        ///
+        /// ⚠️⚠️ IT MUST NOT BE THE SEAT ITSELF, AND IT DEFAULTED TO EXACTLY THAT. Two things
+        /// write to this transform: `AlignToCapsuleFloor` drops it so the rig's feet meet the
+        /// capsule floor, and the remote smoothing lags it behind the body. With the seat as
+        /// its own model root, the first of those moves the CharacterController along with the
+        /// mesh, which quietly re-sinks the capsule it was measuring against, and the second
+        /// cannot run at all. `MatchInstaller` already builds a `Visual` child for this and
+        /// nothing was pointing at it.
+        ///
+        /// ⚠️ CALL IT BEFORE ApplyModel. The model is instanced under whatever this is at the
+        /// moment it runs.
+        /// </summary>
+        public void SetModelRoot(Transform root)
+        {
+            if (root == null) return;
+
+            _modelRoot = root;
+        }
+
         /// <summary>Swap in the model for a roster pick.</summary>
         public void ApplyModel(GameObject prefab, Color tint) => ApplyModel(prefab, tint, null);
 
@@ -291,6 +312,119 @@ namespace TumbangPreso.Visual
             return true;
         }
 
+        /// <summary>
+        /// How fast the rendered mesh closes the gap on the body it belongs to, for a unit this
+        /// peer does not simulate. Higher closes faster, hiding less jitter.
+        /// </summary>
+        public const float RemoteSmoothRate = 18.0f;
+
+        /// <summary>Where the floor alignment left the model root. See AlignToCapsuleFloor.</summary>
+        private Vector3 _alignedLocal;
+
+        private CharacterMotor _motor;
+
+        private Vector3 _smoothedWorld;
+        private float _smoothedYawDeg;
+        private bool _smoothing;
+
+        /// <summary>
+        /// Whether this visual should lag its body. Set by whatever knows the unit is remote.
+        ///
+        /// ⚠️⚠️ NOT DERIVED FROM THE NETWORK LAYER HERE, AND THAT IS DELIBERATE. This file has
+        /// no business asking who owns what: `NetAuthority` already answers that question once,
+        /// and a second implementation of it is a second thing to get wrong when host migration
+        /// lands. Off is the correct default, so a single-player match is bit-for-bit unchanged.
+        /// </summary>
+        public bool SmoothRemote
+        {
+            get => _smoothRemote;
+            set
+            {
+                if (_smoothRemote == value) return;
+
+                _smoothRemote = value;
+
+                // Turning it off returns the mesh to the body immediately; leaving the offset
+                // behind would park every character permanently beside itself.
+                if (!_smoothRemote) SnapRemoteTransform();
+            }
+        }
+
+        private bool _smoothRemote;
+
+        /// <summary>
+        /// Resets the smoothing to "caught up, right now".
+        ///
+        /// ⚠️⚠️ CALL THIS AFTER ANY TELEPORT. A round reset and a kill-plane respawn both move
+        /// the body without walking it, and a visual that glides to the new spot crosses the
+        /// whole arena in front of everybody. The Godot side records this as its own rule.
+        /// </summary>
+        public void SnapRemoteTransform()
+        {
+            _smoothedWorld = transform.position;
+            _smoothedYawDeg = transform.eulerAngles.y;
+            _smoothing = true;
+
+            if (_modelRoot == null || _modelRoot == transform) return;
+
+            _modelRoot.localPosition = _alignedLocal;
+            _modelRoot.localRotation = Quaternion.identity;
+        }
+
+        /// <summary>
+        /// Lags a world-space copy of the body behind it and renders the mesh from that.
+        ///
+        /// ⚠️⚠️ THE BODY KEEPS SNAPPING AND ONLY THE MESH GLIDES, WHICH IS THE WHOLE POINT. A
+        /// replicated update is written straight onto the body every time one lands, because
+        /// collision, the hitbox offset and every directional verb read the body transform
+        /// directly. Smoothing the BODY would make the gameplay lag; smoothing the mesh means
+        /// what you see glides while what the rules read stays exact.
+        ///
+        /// ⚠️ AND THE GAP IS ROTATED INTO THE BODY'S OWN FRAME. The model root is a child of
+        /// the body, so a world-space offset written as a local one reads as the wrong
+        /// direction the instant the body turns.
+        ///
+        /// ⚠️ ONLY YAW. Airborne pitch and the downed tilt are somebody else's to write.
+        /// </summary>
+        private void StepRemoteSmoothing(float dt)
+        {
+            if (_modelRoot == null || _modelRoot == transform) return;
+
+            if (!SmoothRemote)
+            {
+                if (!_smoothing) return;
+
+                _modelRoot.localPosition = _alignedLocal;
+                _modelRoot.localRotation = Quaternion.identity;
+                _smoothing = false;
+                return;
+            }
+
+            if (!_smoothing) { SnapRemoteTransform(); return; }
+
+            Vector3 body = transform.position;
+            float bodyYaw = transform.eulerAngles.y;
+
+            // ⚠️ FRAMERATE-INDEPENDENT, NOT A BARE LERP. `1 - exp(-rate * dt)` closes the same
+            // fraction of the gap per SECOND whatever the frame time is; a raw `lerp(a, b, rate
+            // * dt)` closes more of it on a slow frame and the lag visibly changes with the
+            // framerate.
+            float t = 1.0f - Mathf.Exp(-RemoteSmoothRate * dt);
+
+            _smoothedWorld = Vector3.Lerp(_smoothedWorld, body, t);
+            _smoothedYawDeg = Mathf.LerpAngle(_smoothedYawDeg, bodyYaw, t);
+
+            // ⚠️⚠️ ADDED TO THE FLOOR ALIGNMENT, NEVER WRITTEN OVER IT. 
+            // already owns this transform: it drops the rig so its feet meet the bottom of the
+            // capsule, and that offset has to survive. Writing the lag as the whole local
+            // position throws the alignment away and the character rides up out of the ground
+            // the moment smoothing turns on.
+            _modelRoot.localPosition = _alignedLocal
+                                       + transform.InverseTransformVector(_smoothedWorld - body);
+            _modelRoot.localRotation = Quaternion.Euler(
+                0.0f, Mathf.DeltaAngle(bodyYaw, _smoothedYawDeg), 0.0f);
+        }
+
         private void CacheRenderers()
         {
             _renderers.Clear();
@@ -329,6 +463,10 @@ namespace TumbangPreso.Visual
 
             if (Mathf.Abs(drop) > 0.0005f)
                 _modelRoot.position -= new Vector3(0.0f, drop, 0.0f);
+
+            // The alignment is the model root's resting place, and the remote smoothing offsets
+            // from it rather than replacing it. See StepRemoteSmoothing.
+            _alignedLocal = _modelRoot == transform ? Vector3.zero : _modelRoot.localPosition;
         }
 
         /// <summary>
@@ -350,6 +488,27 @@ namespace TumbangPreso.Visual
 
         private void Update()
         {
+            // ⚠️⚠️ ASKED EVERY FRAME RATHER THAN SET ONCE, AND THAT IS NOT LAZINESS. Who
+            // simulates a seat changes at runtime: the debug player switcher hands a seat over,
+            // a peer joins, and host migration moves the whole set. A flag written at spawn
+            // would be stale the first time any of those happened, and the symptom is a
+            // character that renders permanently beside itself with nothing in the log.
+            //
+            // ⚠️ AND IT IS OFF IN SINGLE PLAYER BY CONSTRUCTION. `IsNetworked` is false with no
+            // transport running, so an offline match is bit-for-bit what it was.
+            //
+            // ⚠️ AND IT IS ONLY DRIVEN WHILE A TRANSPORT IS RUNNING. Offline the flag is left
+            // exactly as it was, which is off, so a single-player match is bit-for-bit what it
+            // was and nothing here has to know that single player is "a host with no peers".
+            if (NetAuthority.IsNetworked)
+            {
+                if (_motor == null) _motor = GetComponent<CharacterMotor>();
+
+                SmoothRemote = _motor != null && _motor.PlayerSlot != NetAuthority.LocalSlot;
+            }
+
+            StepRemoteSmoothing(Time.deltaTime);
+
             if (_flashLeft <= 0.0f) return;
 
             _flashLeft = Mathf.Max(0.0f, _flashLeft - Time.deltaTime);

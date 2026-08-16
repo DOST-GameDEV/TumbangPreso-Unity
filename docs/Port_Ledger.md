@@ -148,6 +148,50 @@ importer's own success report.
 plain backdrop in about forty seconds. A player build plus a scripted playthrough is four
 minutes per look, and a shading question takes several looks.
 
+## 2026-08-16 — the hand, the lane, and the mesh that lags
+
+Four more, all of them the same shape as everything above: something was built, nothing
+called it, and no check could tell.
+
+1. **⚠️⚠️ `Carrier` TOOK ITS HAND FROM A `[SerializeField]` AND NOTHING EVER ASSIGNED IT.**
+   `MatchInstaller` installs the component with `AddComponent`, which cannot carry an
+   inspector reference (rule 3, again), so the field was null on every unit in every build
+   and the one line that keeps a held slipper in the hand never ran once. A picked-up
+   tsinelas stayed exactly where the pickup left it and its carrier walked away from it.
+   That is the third-person half of *"the slippers just float when you hold it, its
+   completely unattached to person"*; the viewmodel fix hid it from the only player who
+   could not see it.
+
+   ⚠️ **The anchor is MEASURED off the skin, not transcribed.** The Godot side records eight
+   guessed offsets that each landed somewhere wrong, and copying its final number would have
+   repeated that: Godot's glTF importer keeps the file's right-handed axes and glTFast
+   negates X, so the same three numbers are not the same place. Both engines skin through
+   `bindpose[b]`, so the arm's own weighted vertices pushed through it give the hand's
+   coordinates in the frame that rides the bone. Only the lift onto the TOP of the hand
+   transcribes as a bare number, because Y is the axis neither importer flips.
+
+2. **The seat was its own model root.** `CharacterVisual._modelRoot` defaulted to the seat,
+   so `AlignToCapsuleFloor` moved the CharacterController along with the mesh and quietly
+   re-sank the capsule it had just measured against. `MatchInstaller` has always built a
+   `Visual` child for this and nothing pointed at it.
+
+3. **⚠️⚠️ THE AI NEVER ASKED WHETHER ITS THROW WOULD REACH.** `_lane_blocked()` walks the arc
+   the slipper will actually fly and asks the same question the flight asks, sample by
+   sample, with the step sized off the SPEED so a body cannot fall between two samples. This
+   port released the throw regardless: a bot with somebody between it and the can hit that
+   body every single time, which reads as an AI that cannot aim rather than one that has no
+   idea anybody is there. And `HasInterceptPoint` answered "is anything in flight", which is
+   not a point to run to, so the taya committed to the plan and stood still.
+
+4. **Remote smoothing had no counterpart at all.** A replicated update is written straight
+   onto the body because collision, the hitbox offset and every directional verb read the
+   body transform; the MESH is what glides. It is off unless a transport is running, so a
+   single-player match is bit-for-bit unchanged.
+
+⚠️ **And a test can fail for being right.** The smoothing test waited ninety FRAMES for a
+rate expressed per SECOND, and the batch runner renders at over 500 fps: a sixth of a second
+is not enough time and the maths was correct throughout. Wait on time.
+
 ## ⚠️ Unity rules the conversion has to obey, each found by a shipped failure
 
 These are not style. Each one produced a build that looked correct in the editor
@@ -251,7 +295,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
 | `character_base.gd` | 1981 | `CharacterMotor` + `CombatVerbs` + `StatusStack` (651) | PARTIAL |
-| `character_visual.gd` | 2182 | `CharacterVisual` + `CharacterAnimator` + `ImpactBurst` + `ToonSkin` (700) | PARTIAL — clips, flash, burst, toon pass and ink outline wired; prop attachments and remote smoothing pending |
+| `character_visual.gd` | 2182 | `CharacterVisual` + `CharacterAnimator` + `ImpactBurst` + `ToonSkin` (900) | CONVERTED — clips, flash, burst, toon pass, ink outline, palette remap, measured hand attachment, remote smoothing |
 | `carrier.gd` | 536 | `Carrier.cs` (350) | CONVERTED 2026-08-16 — the 2.5 s wind-up on `Pressed` not `JustPressed`, its sound, the OBSERVED charge every peer can see, the aim cast from the camera, the sight-line throw origin, and the arc |
 | `character_nameplate.gd` | 165 | `CharacterNameplate.cs` (155) | CONVERTED — ring, tag, role colour, distance fade |
 | `slipper.gd` | 1630 | `Slipper.cs` (280) | PARTIAL — flight, bounce, spin, void recovery; hand attach and net sync pending |
@@ -262,7 +306,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
 | `main.gd` | 3595 | `MatchHost.cs` + `MatchInstaller` (370) | PARTIAL — local half; netcode half pending |
-| `ai_controller.gd` | 2225 | `AIController` + `AiTuning` + `AiPersonalityRoll` (800) | PARTIAL — tiers, personalities, 13-plan machine; lane sampling and unstick pending |
+| `ai_controller.gd` | 2225 | `AIController` + `AiTuning` + `AiPersonalityRoll` (900) | PARTIAL — tiers, personalities, 13-plan machine, unstick, lane sampling, intercept prediction; per-plan polish pending |
 | `camera_rig.gd` | 1111 | `CameraRig` + `ViewmodelArms` (640) | CONVERTED — FPP, prop TPP, emote swing, arms; carry-follow is dead code upstream |
 | `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (431) | CONVERTED — call sites pending, see below |
 | `character_roster.gd` | 757 | `Roster` + `RosterBook` (411) | CONVERTED (20/20 validated) |

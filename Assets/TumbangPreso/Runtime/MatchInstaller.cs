@@ -253,9 +253,13 @@ namespace TumbangPreso
             visualRoot.transform.SetParent(go.transform);
             visualRoot.transform.localPosition = Vector3.zero;
 
-            var hand = new GameObject("Hand");
-            hand.transform.SetParent(go.transform);
-            hand.transform.localPosition = new Vector3(0.3f, 1.1f, 0.35f);
+            // ⚠️⚠️ THERE IS NO FIXED "Hand" NODE ANY MORE, AND ITS REMOVAL IS THE FIX. A carry
+            // point at a constant body-space offset is the exact thing `character_visual.gd`
+            // records as tried and reverted: 🧑 *"it doesnt stick to their arm anymore when
+            // theyre walking"*. A short lever off the body barely swings while the arm swings a
+            // lot, so the hand walks away from the shoe. `CharacterVisual` measures the real
+            // hand off the skin and parks an anchor ON the arm bone instead, and leaving a
+            // plausible-looking empty here would invite somebody to wire it back up.
 
             var motor = go.AddComponent<CharacterMotor>();
             motor.PlayerSlot = slot;
@@ -292,6 +296,12 @@ namespace TumbangPreso
             // assuming a height, which is what lets twelve differently-authored rigs all stand
             // correctly without per-character setup. Give it the model and it does the rest.
             var visual = go.AddComponent<Visual.CharacterVisual>();
+
+            // ⚠️ THE MODEL HANGS UNDER `Visual`, NOT UNDER THE SEAT. Nothing pointed at this
+            // child, so CharacterVisual fell back to the seat itself and its floor alignment
+            // moved the CharacterController along with the mesh. See SetModelRoot.
+            visual.SetModelRoot(visualRoot.transform);
+
             var art = _book != null ? _book.PersonArt(motor.CharacterIndex) : null;
 
             if (art != null && art.Model != null)
