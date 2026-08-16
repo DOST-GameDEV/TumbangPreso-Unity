@@ -170,7 +170,28 @@ namespace TumbangPreso
 
             if (_motor.IsDefender) StepDefender(dt);
             else StepAttacker(dt);
+        }
 
+        /// <summary>
+        /// Rides the hand. Godot parents the tsinelas to a `BoneAttachment3D`, so it inherits the
+        /// arm bone's transform for free and cannot come off it; Unity has no bone-parenting on a
+        /// SkinnedMeshRenderer, so the carry is a per-frame follow instead. Same result, and the
+        /// TPP object and the viewmodel one stay in sync because both are driven from the same
+        /// measured anchor rather than from two hand-tuned offsets.
+        ///
+        /// ⚠️⚠️ IT HAS TO BE LateUpdate, AND IN Update IT DETACHED WHENEVER A CLIP PLAYED. Unity
+        /// evaluates the Animator BETWEEN Update and LateUpdate, so a bone read during Update is
+        /// the pose from the PREVIOUS frame. Standing still that is invisible, because last
+        /// frame's hand and this frame's hand are the same place. The moment an arm actually
+        /// moves — the pickup, the wind-up, the throw, a run cycle — the slipper trails the hand
+        /// by exactly one frame of animation, which is the *"slippers deattach when animations
+        /// play"* report and is worst during precisely the clips a player is looking at.
+        ///
+        /// ⚠️ AND IT IS NOT GATED ON CanAct. A stunned carrier still holds their tsinelas, and
+        /// returning early above used to leave it frozen in the air where the stun started.
+        /// </summary>
+        private void LateUpdate()
+        {
             if (Held == null) return;
 
             var hand = Hand();

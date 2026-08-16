@@ -1,10 +1,4 @@
 using UnityEngine;
-// ⚠️ BOTH ARE NEEDED FOR THE PREVIEW'S ANIMATION GRAPH, AND ONE OF THEM IS NOT OBVIOUS.
-// `SetSourcePlayable` is an EXTENSION method on PlayableOutput (PlayableOutputExtensions), so
-// fully qualifying the types is not enough: without the namespace imported it fails to resolve
-// with "does not contain a definition for SetSourcePlayable", which reads like a wrong type.
-using UnityEngine.Animations;
-using UnityEngine.Playables;
 using UnityEngine.UI;
 
 namespace TumbangPreso.UI
@@ -472,11 +466,9 @@ namespace TumbangPreso.UI
         /// </summary>
         public void Show(GameObject prefab, AnimationClip[] clips, Color[] palette)
         {
-            // ⚠️ THE GRAPH GOES FIRST. It holds an output bound to the outgoing model's Animator,
-            // and destroying the GameObject under a live graph leaves a dangling output.
-            if (_graph.IsValid()) _graph.Destroy();
-
             if (_model != null) Destroy(_model);
+
+            _idle = null;
 
             if (prefab == null) return;
 
@@ -520,8 +512,6 @@ namespace TumbangPreso.UI
         /// </summary>
         private void PlayIdle(AnimationClip[] clips)
         {
-            if (_graph.IsValid()) _graph.Destroy();
-
             if (clips == null || clips.Length == 0 || _model == null) return;
 
             AnimationClip idle = null;
@@ -551,46 +541,48 @@ namespace TumbangPreso.UI
             if (idle == null) idle = clips[0];
             if (idle == null) return;
 
-            // ⚠️⚠️ A PLAYABLES GRAPH, NOT `SampleAnimation`, AND THAT WAS THE T-POSE. The old
-            // path wrote the pose by hand every LateUpdate and DISABLED every Animator on the
-            // model first, on the reasoning that an enabled avatar-less Animator overwrites the
-            // sample. Both halves are true and together they animate nothing: with the Animator
-            // disabled there is no rig binding for `SampleAnimation` to drive, so the model kept
-            // its bind pose, which on a Kenney rig is arms straight out. That is the "stretched"
-            // silhouette on this screen, and it is nearly twice as wide as the real one, so it
-            // also wrecks the framing that is measured off it.
+            _idle = idle;
+
+            // ⚠️⚠️ AN ANIMATOR ON THE PREVIEW FIGHTS THE SAMPLING AND WINS. `SampleAnimation`
+            // writes the pose straight onto the transforms; an Animator that is enabled with no
+            // controller then writes its own bind pose back over it in the same frame, and the
+            // result is the smeared half-posed figure this screen showed. The match's own
+            // animator is a Playables graph on a live unit, which is a different arrangement
+            // entirely; a menu portrait needs one clip and no state machine.
             //
-            // `CharacterAnimator` already proves the working arrangement on a live unit: give
-            // the Animator a generic avatar built from the hierarchy, then drive it from a
-            // graph. A portrait needs one clip and no mixer, so this is the same thing with the
-            // state machine left out.
-            var animator = _model.GetComponentInChildren<Animator>(true);
-
-            if (animator == null) animator = _model.AddComponent<Animator>();
-
-            animator.enabled = true;
-            animator.runtimeAnimatorController = null;
-            animator.applyRootMotion = false;
-            animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
-
-            EnsureAvatar(animator);
-
-            _graph = PlayableGraph.Create($"Preview_{_model.name}");
-            _graph.SetTimeUpdateMode(DirectorUpdateMode.UnscaledGameTime);
-
-            var playable = AnimationClipPlayable.Create(_graph, idle);
-            playable.SetApplyFootIK(false);
-
-            var output = AnimationPlayableOutput.Create(_graph, "preview", animator);
-
-            output.SetSourcePlayable(playable);
-            _graph.Play();
+            // ⚠️⚠️ AND A PLAYABLES GRAPH WAS TRIED HERE AND IS WRONG. On the reasoning that a
+            // disabled Animator leaves nothing for `SampleAnimation` to bind to, this was
+            // rewritten to build a graph the way `CharacterAnimator` does. It compiles, it runs,
+            // and it animates NOTHING: `ModelPreviewTests` caught it immediately with *"'arm-left'
+            // has not moved in 30 frames"*. The premise was simply false — `SampleAnimation`
+            // binds curves to transforms BY PATH and needs neither an Avatar nor an enabled
+            // Animator, which is exactly why it suits a portrait. The arms-out silhouette that
+            // prompted the rewrite is not a bind pose at all; it is what this rig's `idle`
+            // actually looks like, confirmed against the toon bench, which poses nothing and
+            // renders the arms DOWN.
+            foreach (var animator in _model.GetComponentsInChildren<Animator>(true))
+                animator.enabled = false;
         }
 
         /// <summary>`character_visual.gd` resolves a pose through a chain. See PlayIdle.</summary>
         private static readonly string[] IdleNames = { "idle", "static" };
 
-        private PlayableGraph _graph;
+        /// <summary>The clip the preview stands in, sampled by hand. See PlayIdle.</summary>
+        private AnimationClip _idle;
+
+        /// <summary>
+        /// ⚠️ SAMPLED RATHER THAN PLAYED THROUGH A GRAPH, AND THAT IS DELIBERATE.
+        /// `AnimationClip.SampleAnimation` binds the curves to transforms BY PATH, which needs no
+        /// Avatar and no controller, and the `.glb` rigs arrive from glTFast with neither. It is
+        /// also the whole of what a portrait needs: one clip, looping, no blending and no state.
+        /// A graph was tried here and animated nothing. See PlayIdle.
+        /// </summary>
+        private void SampleIdle()
+        {
+            if (_idle == null || _model == null) return;
+
+            _idle.SampleAnimation(_model, Time.unscaledTime % Mathf.Max(0.01f, _idle.length));
+        }
 
         /// <summary>
         /// ⚠️⚠️ A GENERIC ANIMATOR WITH NO AVATAR PLAYS NOTHING, AND IT SAYS NOTHING ABOUT IT.
@@ -709,6 +701,8 @@ namespace TumbangPreso.UI
             if (_texture != null && _texture.height > 0)
                 _camera.aspect = (float)_texture.width / _texture.height;
 
+            SampleIdle();
+
             if (_needsFrame) Frame();
 
             // THE MODEL TURNS. The idle sweep is a there-and-back through TurnDegrees either
@@ -760,8 +754,23 @@ namespace TumbangPreso.UI
         public void Orbit(Vector2 delta)
         {
             _userTookOver = true;
-            _userYaw -= delta.x * OrbitSensitivity;
-            _userPitch = Mathf.Clamp(_userPitch - delta.y * OrbitSensitivity,
+
+            // ⚠️⚠️ BOTH SIGNS ARE FLIPPED FROM THE .gd, AND COPYING THEM STRAIGHT ACROSS IS WHY
+            // THE DRAG WENT THE WRONG WAY. `character_preview.gd:363` subtracts on both axes, and
+            // this did the same, but neither input means the same thing in Unity:
+            //
+            //  X — a positive Y rotation turns the opposite way in the two engines. Godot is
+            //      right-handed and Unity left-handed, so the same subtraction orbits the camera
+            //      the other way round the subject. Reported as *"when i drag this, it goes the
+            //      opposite way"*.
+            //  Y — Godot's `InputEventMouseMotion.relative` counts DOWN as positive, matching
+            //      screen space. Unity's `PointerEventData.delta` counts UP as positive. So the
+            //      subtraction that tilts a Godot camera down tilts a Unity one up.
+            //
+            // Two different reasons landing on the same correction, which is why they are written
+            // out separately rather than as one "flip the drag" note.
+            _userYaw += delta.x * OrbitSensitivity;
+            _userPitch = Mathf.Clamp(_userPitch + delta.y * OrbitSensitivity,
                                      OrbitPitchMin - _framePitch, OrbitPitchMax - _framePitch);
         }
 
@@ -794,7 +803,6 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
-            if (_graph.IsValid()) _graph.Destroy();
             if (_texture != null) _texture.Release();
             if (_pivot != null) Destroy(_pivot.gameObject);
 

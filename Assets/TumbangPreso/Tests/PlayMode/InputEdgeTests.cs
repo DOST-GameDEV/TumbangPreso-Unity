@@ -168,6 +168,41 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>
+        /// 🧑: *"the slippers are floating for everyone"*, and *"make sure the slippers dont
+        /// deattach when animations play"*.
+        ///
+        /// ⚠️ EVERY PERSON, NOT JUST ONE. `CarryTests` asserts that SOME seat built a hand
+        /// anchor, which passes while three of the four are missing one: a unit whose rig did not
+        /// resolve `arm-right` has `Hand()` return null, `Carrier` never writes the slipper's
+        /// transform, and it hangs wherever the pickup left it. "Floating for everyone" is what
+        /// a per-seat failure looks like from the outside.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator EveryPersonBuildsAHandAnchor()
+        {
+            yield return LoadArena();
+
+            int people = 0;
+
+            foreach (var m in Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None))
+            {
+                if (!m.IsPerson) continue;
+
+                people++;
+
+                var visual = m.GetComponentInChildren<Visual.CharacterVisual>(true);
+
+                Assert.IsNotNull(visual, $"seat {m.PlayerSlot} has no CharacterVisual");
+                Assert.IsNotNull(visual.HandAnchor,
+                    $"seat {m.PlayerSlot} built no hand anchor, so anything it carries will " +
+                    "hang in the air instead of riding the arm");
+            }
+
+            Assert.AreEqual(Core.Balance.PlayerCount, people,
+                "the arena did not build a full cast of People");
+        }
+
+        /// <summary>
         /// 🧑: *"make sure they have the outline that theyre supposed to and stuff"*. Every hero
         /// prop wears the toon material and its ink border; a slipper on the stock lit shader is
         /// the single most visible way this port stops looking like the game.

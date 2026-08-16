@@ -852,8 +852,9 @@ namespace TumbangPreso.UI
         /// </summary>
         private void BuildScoreboard()
         {
+            // Amber, per `hud.gd::_build_scoreboard`. See WoodCard.
             var card = WoodCard("Scoreboard", new Vector2(0.0f, 1.0f), new Vector2(16, -28),
-                                440.0f, out _scoreboard, sink: false);
+                                440.0f, out _scoreboard, sink: false, border: UiTheme.Amber);
 
             _scoreboardRt = card.GetComponent<RectTransform>();
 
@@ -1122,15 +1123,26 @@ namespace TumbangPreso.UI
         /// A wood card, built from the same `wood_style()` the menu's own WoodSlot uses, so the
         /// HUD cannot drift away from the front end again.
         /// </summary>
+        /// <summary>
+        /// ⚠️ THE BORDER IS A PARAMETER BECAUSE THE SCOREBOARD'S IS AMBER, NOT WOOD_EDGE.
+        /// `hud.gd::_build_scoreboard` re-skins that panel with
+        /// `_style_team_card(scoreboard_panel, score_title, UiTheme.AMBER)`, and its comment
+        /// records why: the panel used to render on the stock theme and 🧑 called it *"ugly ui
+        /// btw, not even same theme what is that white box"*. Every HUD card here took WOOD_EDGE,
+        /// so the scoreboard was brown where the Godot build is amber. Measured off the two
+        /// captures of the same moment: Godot (248,184,0), this build (136,80,32).
+        /// </summary>
         private VerticalLayoutGroup WoodCard(string name, Vector2 anchor, Vector2 offset,
-                                             float width, out Image face, bool sink)
+                                             float width, out Image face, bool sink,
+                                             Color? border = null)
         {
             var go = new GameObject(name);
             go.transform.SetParent(_root, false);
 
             face = go.AddComponent<Image>();
             face.sprite = GodotTheme.Box(sink ? UiTheme.WoodDark : UiTheme.WoodDeep,
-                                         UiTheme.WoodEdge, GodotTheme.WoodBorderWidth,
+                                         border ?? UiTheme.WoodEdge,
+                                         GodotTheme.WoodBorderWidth,
                                          GodotTheme.WoodCornerRadius);
             face.type = Image.Type.Sliced;
             face.raycastTarget = false;

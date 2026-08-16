@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+// ShadowCastingMode, for the first-person self-hide. See ApplyFppSelfHide.
+using UnityEngine.Rendering;
 
 namespace TumbangPreso.CameraSystem
 {
@@ -426,9 +428,25 @@ namespace TumbangPreso.CameraSystem
         // -------------------------------------------------------------------
 
         /// <summary>
-        /// ⚠️ HIDE THE HEAD, NOT THE WHOLE BODY. The chibi head is large enough that in first
-        /// person it fills the frame, but the body itself sits below the eye line and is what
-        /// the player sees when they look down. Hiding everything leaves them floating.
+        /// ⚠️⚠️ THE WHOLE BODY GOES SHADOWS-ONLY, NOT JUST THE HEAD, AND HEAD-ONLY IS A BUG THE
+        /// GODOT BUILD ALREADY REVERTED. This hid only renderers whose name contained "head",
+        /// which is B-73's original behaviour, and `camera_rig.gd` carries the note explaining
+        /// why that stopped being right:
+        ///
+        ///   *"B-73 kept `body-mesh` visible because there was nothing else to look at in first
+        ///   person. There is now — the viewmodel. Keeping the real body as well means two sets
+        ///   of arms in the same frustum: the viewmodel ones mounted to the camera, and the
+        ///   skinned ones hanging 0.37 below it."*
+        ///
+        /// Reported against this build in exactly those words: *"tf is this why do i have two
+        /// sets of arms"*. It only became visible once `PERSON_SCALE` was applied, because at 42%
+        /// of its height the real body genuinely did sit below the frustum and nobody could see
+        /// the second pair. The scale fix did not cause this; it uncovered it.
+        ///
+        /// ⚠️ SHADOWS-ONLY, NEVER DISABLED. Losing your own shadow in first person destroys the
+        /// ground read, and it is the only cue a Person has for where they are standing relative
+        /// to the base circle. `r.enabled = false` takes the shadow with it, which is the other
+        /// half of what was wrong here.
         /// </summary>
         private void ApplyFppSelfHide()
         {
@@ -438,22 +456,38 @@ namespace TumbangPreso.CameraSystem
 
             foreach (var r in _character.GetComponentsInChildren<Renderer>(true))
             {
-                if (!r.enabled) continue;
-                if (r.name.IndexOf(FppHiddenMeshHint, System.StringComparison.OrdinalIgnoreCase) < 0)
-                    continue;
+                if (r == null) continue;
+                if (r.shadowCastingMode == ShadowCastingMode.ShadowsOnly) continue;
 
-                r.enabled = false;
+                _selfShadowModes.Add(r.shadowCastingMode);
+                r.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
                 _hiddenForFpp.Add(r);
             }
         }
 
         private void RestoreSelfHide()
         {
-            foreach (var r in _hiddenForFpp)
-                if (r != null) r.enabled = true;
+            for (int i = 0; i < _hiddenForFpp.Count; i++)
+            {
+                var r = _hiddenForFpp[i];
+                if (r == null) continue;
+
+                // ⚠️ RESTORED TO WHAT IT WAS, not to On. A mesh the artist authored as
+                // shadows-only or shadowless stays that way when the rig hands it back.
+                r.shadowCastingMode = i < _selfShadowModes.Count
+                    ? _selfShadowModes[i]
+                    : ShadowCastingMode.On;
+
+                // The head-only pass used to disable renderers outright. Anything still carrying
+                // that from an older build is put back here too.
+                r.enabled = true;
+            }
 
             _hiddenForFpp.Clear();
+            _selfShadowModes.Clear();
         }
+
+        private readonly List<ShadowCastingMode> _selfShadowModes = new List<ShadowCastingMode>();
 
         // -------------------------------------------------------------------
 
