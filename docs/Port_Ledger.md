@@ -362,8 +362,29 @@ rather than by comparing two shots that do not even frame the same street:
 - **No warnings**: the pass logs a line per surface whose shader carries no colour property it
   knows, and there are none.
 
-Same names, same hash, same formula, same order, same files: the assignment cannot differ. The
-earlier reading came off the stale 1600x900 capture taken BEFORE the roof atlases landed.
+Same names, same hash, same formula, same order, same files: the assignment cannot differ.
+
+⚠️⚠️ **AND THE ASSIGNMENT WAS NEVER THE PROBLEM — THE ATLAS WAS NEVER APPLIED, AND THE PASS
+REPORTED SUCCESS THE WHOLE TIME.** With the capture finally un-stretched and framing the same
+street as `g04-ready.png`, the comparison could actually be made: the Godot street is red, rust
+and slate, and this build had **no red roof anywhere in frame**. Every roof in the game was the
+kit's shipped green.
+
+The cause is one list. `Paint` writes the roof texture through `TextureProperties`, which held
+`_BaseMap` and `_MainTex` — and these materials arrive through glTFast carrying
+**`baseColorTexture`**, which is in neither. The TINT landed, because `baseColorFactor` IS in
+`ColourProperties`, and that is what made this so hard to see: the street was visibly being
+repainted per instance, so the pass looked like it was working, and only the ROOFS were
+untouched — the one thing a tint cannot vary, since green multiplied by anything is still green.
+
+⚠️ **And it failed in exactly the silence rule 5 was written about**: *"a property block writes
+a NAMED property, silently doing nothing when the shader has none."* `Paint` warned when no
+COLOUR property matched and said nothing when no TEXTURE property did, while
+`repainted 418 of 494 renderers, 99 with a roof variant` — a count that was correct and meant
+nothing — printed every load. Both glTF names are in the list now and a miss is reported.
+
+The earlier "house colours do not match" was therefore right, and every attempt to confirm it
+was defeated by a capture that was stretched, colour-graded and framing a different street.
 
 ### The YOU card had a second, permanently empty bar — and one missing meter
 

@@ -312,7 +312,27 @@ namespace TumbangPreso.Visual
             "_BaseColor", "_Color", "baseColorFactor", "_TintColor",
         };
 
-        private static readonly string[] TextureProperties = { "_BaseMap", "_MainTex" };
+        /// <summary>
+        /// ⚠️⚠️ THE glTF NAMES ARE IN HERE AND LEAVING THEM OUT MADE EVERY ROOF IN THE GAME
+        /// GREEN. The pass reported `99 with a roof variant` on Eskinita — the exact number of
+        /// buildings on the map — and not one of them changed colour, because the kit materials
+        /// arrive through glTFast and carry `baseColorTexture`, which was in neither of the two
+        /// names this list held. The TINT landed (`baseColorFactor` IS in
+        /// <see cref="ColourProperties"/>, so the walls varied correctly), which is what made
+        /// the fault so hard to see: the street was visibly being repainted, and only the roofs
+        /// — the one thing a tint cannot vary, because green multiplied by anything is still
+        /// green — were untouched. Measured against `Logs/shots-godot/g04-ready.png`, where the
+        /// same street is red, rust and slate and this build had no red roof anywhere in frame.
+        ///
+        /// ⚠️ AND A MISS IS REPORTED NOW. `Paint` warned when no COLOUR property matched and
+        /// said nothing when no TEXTURE property did, so the roof half failed in exactly the
+        /// silence rule 5 exists to stop: *"a property block writes a NAMED property, silently
+        /// doing nothing when the shader has none"*. Same trap, one list along.
+        /// </summary>
+        private static readonly string[] TextureProperties =
+        {
+            "_BaseMap", "_MainTex", "baseColorTexture", "_BaseColorMap",
+        };
 
         /// <summary>
         /// One material per (source, tint, roof) triple, so a street of six colours and six
@@ -364,10 +384,26 @@ namespace TumbangPreso.Visual
 
                     if (atlas != null)
                     {
+                        bool swapped = false;
+
                         foreach (var property in TextureProperties)
                         {
                             if (!material.HasProperty(property)) continue;
+
                             material.SetTexture(property, atlas);
+                            swapped = true;
+                        }
+
+                        // ⚠️ IT SAYS SO WHEN IT MISSES. See TextureProperties: this half failed
+                        // silently for the whole port while the pass reported a roof count that
+                        // was correct and meant nothing. Rule 5 in this ledger is about exactly
+                        // this — a named property that does not exist is a no-op, not an error.
+                        if (!swapped)
+                        {
+                            Debug.LogWarning(
+                                $"[Env] '{source.shader.name}' has no texture property this pass " +
+                                "knows, so its roof atlas was not applied and it keeps the kit's " +
+                                "own roof. Add the name to EnvColourPass.TextureProperties.");
                         }
                     }
                 }
