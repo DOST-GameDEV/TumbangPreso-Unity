@@ -362,6 +362,15 @@ namespace TumbangPreso.UI
             _camera.targetTexture = _texture;
             _surface.texture = _texture;
 
+            // ⚠️⚠️ THE CAMERA'S ASPECT DOES NOT FOLLOW ITS TARGET TEXTURE ON ITS OWN ONCE IT HAS
+            // RENDERED ONCE, AND THAT IS THE WHOLE OF "its stretched". A camera created before
+            // its target caches the aspect of the MAIN DISPLAY, so a square-ish frustum was
+            // being drawn into a 16:9 texture and every subject came out wide. Measured off the
+            // capture: the face rendered at 2.38 wide-to-tall against the mesh's own 1.36, a
+            // factor of 1.75, which is 1600/900 to within a percent. Setting the target texture
+            // is not enough; the aspect has to be re-derived.
+            _camera.aspect = (float)width / height;
+
             if (old != null) old.Release();
 
             _frameAspect = (float)width / height;
