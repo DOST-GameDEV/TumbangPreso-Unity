@@ -62,6 +62,37 @@ namespace TumbangPreso.PlayTests
             yield return Eyes("round-eyes-late");
             yield return Witness("round-witness-late");
 
+            // ---- THE TAYA'S OWN SCREEN --------------------------------------------------
+            CharacterMotor taya = null;
+
+            foreach (var m in Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None))
+                if (m.IsDefender) { taya = m; break; }
+
+            if (taya != null)
+            {
+                var hud = Object.FindFirstObjectByType<UI.Hud>();
+                if (hud != null) hud.Bind(taya);
+
+                var rig = Object.FindFirstObjectByType<TumbangPreso.CameraSystem.CameraRig>();
+                if (rig != null) rig.Follow(taya);
+
+                yield return new WaitForSecondsRealtime(1.0f);
+                yield return Eyes("taya-eyes");
+
+                // ⚠️ THE DANGER HOLD, WHICH IS THE STATE THE COMPLAINT IS ABOUT. A taya's tint
+                // is live while the can is DOWN — most of a round — and every capture so far
+                // has been taken with it standing, so the one screen 🧑 called *"just red"* had
+                // never been photographed at all. Knocked down through the host path so the HUD
+                // is driven by the event rather than by the probe.
+                if (round.Lata != null)
+                {
+                    round.Lata.HostKnockDown(-1);
+
+                    yield return new WaitForSecondsRealtime(1.2f);
+                    yield return Eyes("taya-danger");
+                }
+            }
+
             // ---- A CHARGED THROW, HELD ---------------------------------------------------
             // 🧑, on a cropped frame of one: *"THIS charge outline is so ugly, it doesnt behave
             // naturally"*. Nothing in the suite has ever photographed a wind-up, so this puts
@@ -134,6 +165,11 @@ namespace TumbangPreso.PlayTests
 
                 yield return new WaitForSecondsRealtime(2.0f);
                 yield return Eyes("intermission");
+
+                // ⚠️ TAKEN BACK DOWN, or it sits over every shot after this one. The first pass
+                // photographed the taya's danger vignette through this card's own backdrop and
+                // proved nothing about either.
+                card.gameObject.SetActive(false);
             }
 
             // ---- THE MATCH-END BOARD -----------------------------------------------------
@@ -154,23 +190,6 @@ namespace TumbangPreso.PlayTests
                 board.gameObject.SetActive(false);
             }
 
-            // ---- THE TAYA'S OWN SCREEN --------------------------------------------------
-            CharacterMotor taya = null;
-
-            foreach (var m in Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None))
-                if (m.IsDefender) { taya = m; break; }
-
-            if (taya != null)
-            {
-                var hud = Object.FindFirstObjectByType<UI.Hud>();
-                if (hud != null) hud.Bind(taya);
-
-                var rig = Object.FindFirstObjectByType<TumbangPreso.CameraSystem.CameraRig>();
-                if (rig != null) rig.Follow(taya);
-
-                yield return new WaitForSecondsRealtime(1.0f);
-                yield return Eyes("taya-eyes");
-            }
         }
 
         /// <summary>The player's own camera, HUD and all.</summary>

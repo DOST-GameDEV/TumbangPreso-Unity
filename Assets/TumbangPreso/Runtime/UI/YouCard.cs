@@ -66,6 +66,10 @@ namespace TumbangPreso.UI
         private bool _isDefenderPerson;
         private bool _wasFatigued;
 
+        /// <summary>Has the stamina row had its one-time state written? See UpdateStamina.
+        /// </summary>
+        private bool _staminaPrimed;
+
         /// <summary>
         /// ⚠️⚠️ IT STARTS TRUE, AND FALSE MADE THE BAR SPAWN WHITE. The ready flash fires on the
         /// TRANSITION from not-full to full, so that "you can sprint again" is readable without
@@ -268,6 +272,19 @@ namespace TumbangPreso.UI
             SetFill(_staminaFill, ratio);
 
             bool fatigued = _character.Stamina.IsFatigued;
+
+            // ⚠️⚠️ THE EDGE CHECK BELOW CANNOT FIRE AT SETUP, AND THAT IS WHY THE BAR SAT OFF
+            // CENTRE. Both sides start false, so the very first pass through this function does
+            // nothing at all, and the key label stays ACTIVE and EMPTY — spending its 110 px of
+            // preferred width on nothing while the bar ends flush with the right margin. The
+            // .gd carries the identical warning against its own `_was_fatigued` check and the
+            // identical fix: hide the label rather than blank it, because a zero-width child is
+            // still a child and the row still pays for it.
+            if (!_staminaPrimed)
+            {
+                _staminaPrimed = true;
+                _staminaKey.gameObject.SetActive(fatigued);
+            }
 
             if (fatigued != _wasFatigued)
             {
