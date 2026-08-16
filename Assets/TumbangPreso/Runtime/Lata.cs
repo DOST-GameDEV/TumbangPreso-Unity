@@ -41,6 +41,57 @@ namespace TumbangPreso
         private void Awake() => _mark = transform.position;
 
         /// <summary>
+        /// ⚠️⚠️ THE MARK IS SNAPPED TO THE GROUND BY RAYCAST, AND WITHOUT THIS THE CAN SINKS.
+        /// Reported against this build as *"can clips thru the floor"*. The lata's mark comes
+        /// from a marker the map author placed, and a marker's Y is whatever it was dragged to;
+        /// `lata.gd::_snap_home_to_ground` exists because that was already wrong in the Godot
+        /// build. Ported rather than fixed by adding a constant, and for the reason that file
+        /// records: the two maps can disagree, and the mark is the one spot in the arena whose
+        /// height a map is most likely to change, because Bayan Plaza has a step there.
+        ///
+        /// ⚠️ IT IS THE MARK THAT MOVES, NOT ONLY THE TRANSFORM. `_mark` is what `HostRestore`
+        /// puts the can back on, so snapping only the live position would seat the can correctly
+        /// on the first round and drop it through the floor on the first reset.
+        ///
+        /// ⚠️ AND THE CAN'S OWN COLLIDERS ARE EXCLUDED. A ray dropped from two metres up hits
+        /// the top of the can before it reaches the road, so the "ground" comes back as the
+        /// can's own lid and the snap lifts it by its full height. The Godot note records that
+        /// measured as +0.385, which is the can's height exactly.
+        ///
+        /// ⚠️ IN Start, NOT Awake. The arena's own colliders have to be in the scene before the
+        /// ray is cast, and in Awake they are not.
+        /// </summary>
+        private void Start() => SnapHomeToGround();
+
+        private void SnapHomeToGround()
+        {
+            var hits = Physics.RaycastAll(_mark + Vector3.up * 2.0f, Vector3.down, 8.0f,
+                                          ~0, QueryTriggerInteraction.Ignore);
+
+            if (hits == null || hits.Length == 0) return;
+
+            bool found = false;
+            float bestY = 0.0f;
+
+            foreach (var hit in hits)
+            {
+                if (hit.collider == null) continue;
+                if (hit.collider.transform == transform ||
+                    hit.collider.transform.IsChildOf(transform)) continue;
+
+                if (found && hit.point.y <= bestY) continue;
+
+                bestY = hit.point.y;
+                found = true;
+            }
+
+            if (!found) return;
+
+            _mark = new Vector3(_mark.x, bestY, _mark.z);
+            transform.position = _mark;
+        }
+
+        /// <summary>
         /// Host-side. Did a slipper at this position connect?
         ///
         /// ⚠️ FLAT DISTANCE, TESTED PER PHYSICS FRAME, AND NOT AN OVERLAP VOLUME. The Godot

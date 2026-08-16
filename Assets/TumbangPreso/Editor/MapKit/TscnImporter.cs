@@ -582,8 +582,28 @@ namespace TumbangPreso.EditorTools.MapKit
 
             float energy = SubProp(env, "ambient_light_energy", 1.0f);
 
+            // ⚠️⚠️ THE SKY CONTRIBUTION IS PART OF THE SUM AND IGNORING IT OVEREXPOSED ESKINITA
+            // BY HALF. `ambient_light_source = 2` means the ambient comes from the COLOUR, but
+            // `ambient_light_sky_contribution` still blends the sky back in over the top of it,
+            // so only `1 - contribution` of the light comes from the colour that is being read
+            // here. Eskinita sets 0.35, which this took as 1.0: the arena ran at 0.62745 x 1.65
+            // = 1.035 of untonemapped ambient where Godot puts 0.673 on the same wall.
+            //
+            // It shows worst on anything close to the camera. The first-person arms sit at an
+            // albedo of 0.784 and were reported as *"very ugly"* and washed out, which is that
+            // albedo multiplied by an ambient over 1 before a single light is added. The toon
+            // shader tonemaps the DIRECT term only, because Unity's built-in pipeline injects
+            // ambient into the lit pass after the lighting function has returned, so an ambient
+            // over 1 cannot be rolled off and simply clips.
+            //
+            // ⚠️ IT ALSO EXPLAINS WHY THE TWO MAPS DID NOT MATCH. Bayan Plaza never sets the
+            // property, so it defaults to 0 and was already correct at 0.706. Eskinita was 47%
+            // brighter than its neighbour for no authored reason. With this they read as 0.673
+            // and 0.706, which is the small difference the two Environments actually carry.
+            float sky = SubProp(env, "ambient_light_sky_contribution", 0.0f);
+
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
-            RenderSettings.ambientLight = ambient * energy;
+            RenderSettings.ambientLight = ambient * energy * Mathf.Clamp01(1.0f - sky);
             RenderSettings.ambientIntensity = 1.0f;
 
             bool fog = env.Props.TryGetValue("fog_enabled", out var f) && f.Trim() == "true";
@@ -603,8 +623,48 @@ namespace TumbangPreso.EditorTools.MapKit
 
             ApplySky(env, subs, ext, report);
 
+            // ⚠️⚠️ THE COLOUR GRADE, WHICH THE PORT DROPPED ENTIRELY. Godot's Environment carries
+            // an `adjustment_*` block and Eskinita enables it at contrast 1.03 and saturation
+            // 1.18. There is no RenderSettings field for that in the built-in pipeline, so the
+            // numbers had nowhere to land on import and were silently discarded: the whole game
+            // has been rendering ungraded. Recorded into the scene as data instead, and
+            // `Visual.ColourGrade` on the camera is what applies it. See MapGrade.
+            //
+            // ⚠️ DISABLED MEANS 1/1/1, NOT "SKIP". Bayan Plaza has no adjustment block, and an
+            // identity grade is what makes that map render exactly as it does now rather than
+            // inheriting whichever map was imported before it.
+            bool graded = env.Props.TryGetValue("adjustment_enabled", out var ge)
+                          && ge.Trim() == "true";
+
+            float brightness = graded ? SubProp(env, "adjustment_brightness", 1.0f) : 1.0f;
+            float contrast = graded ? SubProp(env, "adjustment_contrast", 1.0f) : 1.0f;
+            float saturation = graded ? SubProp(env, "adjustment_saturation", 1.0f) : 1.0f;
+
+            // ⚠️⚠️ THE TONEMAP TRAVELS WITH THE GRADE NOW, AND IT USED TO LIVE ON THE MATERIAL.
+            // `Toon.shader` carried the ACES curve, which tonemapped the CAST and left the sky,
+            // the fog and every world surface raw. Godot tonemaps the composited frame, so the
+            // curve is a camera pass here too and these are the numbers it needs.
+            //
+            // ⚠️ `tonemap_mode = 0` IS LINEAR, i.e. NO TONEMAP, and Bayan Plaza is set that way.
+            // Exposure 0 is how that is expressed downstream, so a map that does not tonemap does
+            // not silently acquire Eskinita's curve.
+            int tonemapMode = (int)SubProp(env, "tonemap_mode", 0.0f);
+
+            float exposure = tonemapMode > 0 ? SubProp(env, "tonemap_exposure", 1.0f) : 0.0f;
+            float white = SubProp(env, "tonemap_white", 1.9f);
+
+            var gradeGo = new GameObject("MapGrade");
+            gradeGo.AddComponent<TumbangPreso.Visual.MapGrade>()
+                   .Set(brightness, contrast, saturation, exposure, white);
+
+            report.AppendLine($"   grade: {(graded ? "on" : "off")} brightness {brightness:0.00}" +
+                              $", contrast {contrast:0.00}, saturation {saturation:0.00}" +
+                              $", tonemap {tonemapMode} exposure {exposure:0.00} white {white:0.00}");
+
             report.AppendLine($"   environment: ambient {ColorUtility.ToHtmlStringRGB(ambient)}" +
-                              $" x{energy:0.00}, fog {(fog ? "on" : "off")}");
+                              $" x{energy:0.00} sky {sky:0.00} -> " +
+                              $"{ColorUtility.ToHtmlStringRGB(RenderSettings.ambientLight)}, " +
+                              $"fog {(fog ? "on" : "off")}");
         }
 
         /// <summary>
@@ -650,10 +710,31 @@ namespace TumbangPreso.EditorTools.MapKit
             material.SetFloat("_ImageType", 0.0f);        // 360 degrees
             material.SetFloat("_Exposure", 1.0f);
 
+            // ⚠️⚠️ `fog_sky_affect` IS WHY THE FOG "DOESNT COVER THE WHOLE SCREEN". Godot's fog
+            // tints the SKY as well as the geometry, by this fraction. Unity's built-in linear
+            // fog never touches the skybox at all, so the fogged distance faded to warm haze and
+            // then met a completely unfogged sky along a hard horizontal line. Reported exactly
+            // that way: *"the fog doesnt cover the whole screen, the top isnt covered"*, with the
+            // seam circled on the setup screen.
+            //
+            // There is no per-camera sky fog in the built-in pipeline, so the blend is baked into
+            // the skybox tint instead. It is a constant tint rather than a gradient, which is
+            // what Godot's own `fog_sky_affect` is too.
+            float skyAffect = Mathf.Clamp01(SubProp(env, "fog_sky_affect", 0.0f));
+
+            bool fogOn = env.Props.TryGetValue("fog_enabled", out var fe) && fe.Trim() == "true";
+
+            var fogTint = ParseColor(env.Props.TryGetValue("fog_light_color", out var flc)
+                                     ? flc : null, new Color(0.92f, 0.78f, 0.60f));
+
+            material.SetColor("_Tint", fogOn && skyAffect > 0.0f
+                              ? Color.Lerp(Color.white, fogTint, skyAffect)
+                              : Color.white);
+
             EditorUtility.SetDirty(material);
 
             RenderSettings.skybox = material;
-            report.AppendLine("   sky: panorama material bound");
+            report.AppendLine($"   sky: panorama material bound, fog affect {skyAffect:0.00}");
         }
 
         private static float SubProp(SubRes res, string key, float fallback) =>

@@ -187,6 +187,13 @@ namespace TumbangPreso.EditorTools
                 // and the first-person arms render as the missing-shader material in the player
                 // and are correct in the editor.
                 "TumbangPreso/Toon",
+
+                // ⚠️ THE COLOUR GRADE, FOR THE SAME REASON AND WITH A WORSE FAILURE. `ColourGrade`
+                // reaches it through `Shader.Find` too, and its miss path blits the frame through
+                // untouched. So a build that strips this looks merely a little flatter than the
+                // editor rather than obviously broken, which is the kind of difference nobody
+                // catches until the grade is being compared against the Godot build side by side.
+                "TumbangPreso/ColourGrade",
             };
 
             var settings = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/GraphicsSettings.asset");

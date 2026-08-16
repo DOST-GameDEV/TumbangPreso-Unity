@@ -84,6 +84,14 @@ namespace TumbangPreso.PlayTests
                 return;
             }
 
+            // ⚠️ THE TARGET GOES ON FIRST. See the note in Capture: a ScreenSpaceCamera canvas
+            // lays out against the camera's pixel rect, so assigning the 1600x900 target after
+            // the layout photographs the batch runner's own resolution stretched into 16:9.
+            var rt = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32);
+            var prev = cam.targetTexture;
+
+            cam.targetTexture = rt;
+
             foreach (var c in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Exclude,
                                                               FindObjectsSortMode.None))
             {
@@ -99,11 +107,6 @@ namespace TumbangPreso.PlayTests
             }
 
             Canvas.ForceUpdateCanvases();
-
-            var rt = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32);
-            var prev = cam.targetTexture;
-
-            cam.targetTexture = rt;
             cam.Render();
 
             RenderTexture.active = rt;
@@ -134,7 +137,7 @@ namespace TumbangPreso.PlayTests
             // looks exactly like a layout bug and sent one pass chasing anchors that were right.
             for (int i = 0; i < 90; i++) yield return null;
 
-            Capture(scene);
+            yield return Capture(scene);
         }
 
         /// <summary>Opens an overlay that lives inside the screen already loaded.</summary>
@@ -154,7 +157,7 @@ namespace TumbangPreso.PlayTests
             yield return null;
             yield return null;
 
-            Capture(node);
+            yield return Capture(node);
             target.SetActive(false);
         }
 
@@ -182,14 +185,29 @@ namespace TumbangPreso.PlayTests
             return null;
         }
 
-        private static void Capture(string name)
+        private static IEnumerator Capture(string name)
         {
             var cam = UnityEngine.Camera.main;
             if (cam == null)
             {
                 Debug.LogWarning($"[Shot] {name} has no main camera.");
-                return;
+                yield break;
             }
+
+            // ⚠️⚠️ THE TARGET IS ASSIGNED BEFORE THE CANVAS IS LAID OUT, AND THE OTHER ORDER
+            // FAKED A STRETCH THAT COST TWO SESSIONS. A ScreenSpaceCamera canvas sizes itself
+            // from its camera's pixel rect, which follows `targetTexture` when there is one and
+            // the SCREEN when there is not. Laying out first and assigning the 1600x900 target
+            // afterwards means the whole UI, every RenderTexture derived from a panel rect, and
+            // every camera aspect derived from that, were all computed at whatever resolution the
+            // batch runner happened to open, and then photographed into 16:9. On a 4:3 runner
+            // that is a 1.33x horizontal stretch applied to the picture and to nothing else, and
+            // it was read off the capture twice as a fault in `ModelPreview`. Measured: the
+            // subject's head came out 1.31x wide against the same model on the toon bench.
+            var rt = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32);
+            var prev = cam.targetTexture;
+
+            cam.targetTexture = rt;
 
             // ⚠️ AN OVERLAY CANVAS IS INVISIBLE TO Camera.Render. It draws straight to the back
             // buffer, so a capture through a camera photographs an empty scene unless the canvas
@@ -215,10 +233,16 @@ namespace TumbangPreso.PlayTests
 
             Canvas.ForceUpdateCanvases();
 
-            var rt = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32);
-            var prev = cam.targetTexture;
+            // ⚠️ TWO REAL FRAMES, SO THE PREVIEW RIGS SEE THE NEW RECT. `ModelPreview` and
+            // `MapPreviewSurface` size their render targets from a panel rect in LateUpdate, so
+            // the frame that first lays the canvas out at the capture size is the one that
+            // rebuilds them, and only the frame AFTER that draws at the new size. Rendering
+            // immediately photographs the previous resolution's target scaled onto the new rect,
+            // which is the same class of fault this function's own header describes.
+            yield return null;
+            yield return null;
 
-            cam.targetTexture = rt;
+            Canvas.ForceUpdateCanvases();
             cam.Render();
 
             RenderTexture.active = rt;

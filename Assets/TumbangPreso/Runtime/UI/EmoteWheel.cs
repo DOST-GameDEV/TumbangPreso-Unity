@@ -37,6 +37,10 @@ namespace TumbangPreso.UI
 
         public const float RadiusOuter = 270.0f;
         public const float RadiusInner = 104.0f;
+
+        /// <summary>`emote_wheel.gd::SLICE_GAP` is 0.012 rad, which is this in degrees. Shared
+        /// between neighbouring wedges rather than taken off one side. See Build.</summary>
+        public const float SliceGapDegrees = 1.375f;
         public const float LabelRadiusFraction = 0.62f;
         public const int LabelFontSize = 20;
         public const int CentreFontSize = 26;
@@ -159,14 +163,97 @@ namespace TumbangPreso.UI
             {
                 bool selected = i == _selection;
 
+                // ⚠️ THE RESTING WEDGE IS TRANSLUCENT INK, NOT OPAQUE WOOD. This wheel opens
+                // over a live match and the player is still steering; a solid brown disc across
+                // the middle of the screen hides the thing they are about to emote at. Ink at
+                // 0.62 reads as a scrim, matches the panel language everywhere else in the game,
+                // and leaves the amber highlight as the only saturated thing on screen, which is
+                // what makes the selection obvious at a glance.
                 _slices[i].color = selected
                     ? UiTheme.Highlight
-                    : new Color(UiTheme.WoodDeep.r, UiTheme.WoodDeep.g, UiTheme.WoodDeep.b, 0.86f);
+                    : new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.62f);
 
                 _labels[i].color = selected ? UiTheme.Ink : UiTheme.Cream;
+                _labels[i].fontStyle = selected ? FontStyle.Bold : FontStyle.Normal;
             }
 
             _centreLabel.text = _selection >= 0 ? Emotes.All[_selection].Name : "";
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A UI Image WITH NO SPRITE IS A WHITE SQUARE, AND THAT IS THE WHOLE OF "the emote
+        /// screen is completely broken". Every slice was an `Image` with `type = Filled` and
+        /// `fillMethod = Radial360` and NO sprite assigned, so the radial fill was cutting
+        /// sectors out of a SQUARE. Eight of those, each rotated by 45 degrees, is the pile of
+        /// overlapping dark slabs with labels crossing each other that was reported: the shape
+        /// is only a wheel if the thing being filled is a circle.
+        ///
+        /// So the sprite is baked here. An annulus rather than a disc, because the wheel has a
+        /// hub the labels must not run into, and because a filled sector of a disc converges to
+        /// a point at the centre where three labels would collide.
+        ///
+        /// ⚠️ A RUNTIME SPRITE IS SAFE HERE AND IS NOT SAFE IN AN IMPORTER. `TscnUiImporter`
+        /// bakes its gradients to disk because a scene SAVED with a reference to a runtime
+        /// `Sprite.Create` object is a corrupt scene in the player. This wheel is built by
+        /// `AddComponent` at runtime and nothing serialises it, so the same object is fine.
+        ///
+        /// ⚠️ AND IT IS ANTIALIASED BY MEASURING COVERAGE, not by a mipmap. The wheel is drawn
+        /// at 540 px across from a 256 px texture, so a hard alpha cutoff gives a visibly
+        /// stepped rim on the one screen whose entire job is to look good.
+        /// </summary>
+        private static Sprite _ringSprite;
+        private static Sprite _discSprite;
+
+        private static Sprite Ring(bool solid)
+        {
+            if (solid && _discSprite != null) return _discSprite;
+            if (!solid && _ringSprite != null) return _ringSprite;
+
+            const int size = 256;
+            const float edge = 1.25f;
+
+            float outer = size * 0.5f - 1.0f;
+            float inner = solid ? 0.0f : outer * (RadiusInner / RadiusOuter);
+
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
+            {
+                name = solid ? "WheelDisc" : "WheelRing",
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Bilinear,
+            };
+
+            var pixels = new Color32[size * size];
+            float centre = size * 0.5f - 0.5f;
+
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float dx = x - centre;
+                    float dy = y - centre;
+                    float r = Mathf.Sqrt(dx * dx + dy * dy);
+
+                    // Coverage falls off over `edge` pixels at both rims, which is what keeps
+                    // the border smooth when the texture is scaled up.
+                    float a = Mathf.Clamp01((outer - r) / edge);
+
+                    if (!solid) a = Mathf.Min(a, Mathf.Clamp01((r - inner) / edge));
+
+                    pixels[y * size + x] = new Color32(255, 255, 255, (byte)(a * 255.0f));
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply(false, false);
+
+            var sprite = Sprite.Create(texture, new Rect(0, 0, size, size),
+                                       new Vector2(0.5f, 0.5f), 100.0f, 0,
+                                       SpriteMeshType.FullRect);
+
+            if (solid) _discSprite = sprite;
+            else _ringSprite = sprite;
+
+            return sprite;
         }
 
         private void Build()
@@ -196,35 +283,57 @@ namespace TumbangPreso.UI
                 sliceGo.transform.SetParent(_root, false);
 
                 var img = sliceGo.GetComponent<Image>();
+
+                // The annulus. See Ring: without a sprite this fills a SQUARE.
+                img.sprite = Ring(solid: false);
                 img.type = Image.Type.Filled;
                 img.fillMethod = Image.FillMethod.Radial360;
                 img.fillOrigin = (int)Image.Origin360.Top;
-                img.fillAmount = (1.0f / count) - 0.004f;   // the gap between slices
+
+                // ⚠️ THE GAP IS WHAT SEPARATES THE SLICES, and it has to be big enough to read
+                // as a divider at 540 px across. A single hairline is invisible once the rim is
+                // antialiased, so the wedge is pulled in by a whole degree either side.
+                img.fillAmount = (1.0f / count) - (SliceGapDegrees / 360.0f);
                 img.raycastTarget = false;
 
                 var sr = img.rectTransform;
                 sr.anchorMin = sr.anchorMax = sr.pivot = new Vector2(0.5f, 0.5f);
                 sr.sizeDelta = new Vector2(RadiusOuter * 2.0f, RadiusOuter * 2.0f);
-                sr.localRotation = Quaternion.Euler(0.0f, 0.0f, -span * i);
+
+                // ⚠️ HALF A GAP OF EXTRA ROTATION, so the gap is SHARED between neighbours and
+                // each wedge stays centred on its own bisector. Trimming the fill alone eats the
+                // gap off one side only, which walks every label off its own centre line.
+                sr.localRotation = Quaternion.Euler(
+                    0.0f, 0.0f, -(span * i + SliceGapDegrees * 0.5f));
 
                 _slices[i] = img;
 
                 // The label sits along the slice's own bisector, upright regardless of where
                 // that bisector points — a rotated word is unreadable at a glance.
+                //
+                // ⚠️ THE RADIUS IS MEASURED BETWEEN THE RIMS, NOT FROM THE CENTRE. This read
+                // `RadiusOuter * LabelRadiusFraction`, which is 167 against an inner rim at 104:
+                // the words sat almost on the hub, in the narrowest part of the wedge, which is
+                // exactly where `emote_wheel.gd` records them overflowing four times.
                 float mid = Mathf.Deg2Rad * (span * i + span * 0.5f);
                 var pos = new Vector2(Mathf.Sin(mid), Mathf.Cos(mid))
-                          * (RadiusOuter * LabelRadiusFraction);
+                          * (RadiusInner + (RadiusOuter - RadiusInner) * LabelRadiusFraction);
 
                 _labels[i] = MenuKit.Label(_root, Emotes.All[i].Label, LabelFontSize,
                     UiTheme.Cream, new Vector2(0.5f, 0.5f), pos, new Vector2(150, 40));
             }
 
-            // The hub, which reads as the "release here to cancel" target.
+            // The hub, which reads as the "release here to cancel" target. Round, like the rest
+            // of it: a square hub inside a circular wheel was the other half of what was wrong.
             var hubGo = new GameObject("Hub", typeof(RectTransform), typeof(Image));
             hubGo.transform.SetParent(_root, false);
-            hubGo.GetComponent<Image>().color = UiTheme.WoodDark;
-            hubGo.GetComponent<Image>().raycastTarget = false;
-            MenuKit.Place(hubGo.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f),
+
+            var hub = hubGo.GetComponent<Image>();
+            hub.sprite = Ring(solid: true);
+            hub.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.92f);
+            hub.raycastTarget = false;
+
+            MenuKit.Place(hub.rectTransform, new Vector2(0.5f, 0.5f),
                 Vector2.zero, new Vector2(RadiusInner * 2.0f, RadiusInner * 2.0f));
 
             _centreLabel = MenuKit.Label(_root, "", CentreFontSize, UiTheme.Cream,

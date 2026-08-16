@@ -1,4 +1,10 @@
 using UnityEngine;
+// ⚠️ BOTH ARE NEEDED FOR THE PREVIEW'S ANIMATION GRAPH, AND ONE OF THEM IS NOT OBVIOUS.
+// `SetSourcePlayable` is an EXTENSION method on PlayableOutput (PlayableOutputExtensions), so
+// fully qualifying the types is not enough: without the namespace imported it fails to resolve
+// with "does not contain a definition for SetSourcePlayable", which reads like a wrong type.
+using UnityEngine.Animations;
+using UnityEngine.Playables;
 using UnityEngine.UI;
 
 namespace TumbangPreso.UI
@@ -101,14 +107,53 @@ namespace TumbangPreso.UI
 
         /// <summary>
         /// ⚠️⚠️ THE .tscn's TWO ENERGIES ARE 1.35 AND 0.45 AND THEY ARE SCALED HERE, NOT
-        /// RETUNED. Godot's preview Environment runs a filmic tonemap at exposure 0.92 with a
-        /// white point of 1.9, so two lights summing past 1.0 on a face roll off. Unity's
-        /// built-in pipeline has no tonemapper at all: the same two energies clip, and the
-        /// character rendered as a white silhouette inside its own ink outline. One factor
-        /// keeps the RATIO between key and fill exactly as authored, which is the part that
-        /// makes the shot read as lit rather than flat.
+        /// RETUNED. One factor keeps the RATIO between key and fill exactly as authored, which is
+        /// the part that makes the shot read as lit rather than flat.
+        ///
+        /// ⚠️ IT WENT TO 1.0 FOR ONE BUILD AND BLEW THE FACE OUT TO NEAR WHITE. The reasoning
+        /// was that the tonemap and the ambient had since been built, so the compensation was no
+        /// longer needed. Measured against the toon bench, which is the render that reads
+        /// correctly: the bench lights a character with ONE key at 1.15 plus its ambient, and
+        /// 1.35 + 0.45 unscaled is 1.8 of direct light, 57% more. 0.66 puts the key at 0.891 and
+        /// the fill at 0.297, so the direct total lands at 1.19 against the bench's 1.15. That
+        /// agreement is why the number is this and not something rounder.
         /// </summary>
         public const float LightExposure = 0.66f;
+
+        /// <summary>
+        /// ⚠️⚠️ THE PREVIEW HAD NO AMBIENT OF ITS OWN AND INHERITED THE MENU'S, WHICH IS WHY THE
+        /// CAST WENT BLUE. Reported as *"the characters looked blue"*, and measured off the two
+        /// renders of the same model: the toon bench gives Berto skin (255,169,101) and a shirt
+        /// (112,163,112), while the character screen gave (120,101,102) and (83,209,166). That is
+        /// not a lighting nuance, it is a different character.
+        ///
+        /// The cause is that `TumbangPreso/Toon` is a SURFACE shader with no `noambient`, so
+        /// Unity adds `RenderSettings.ambientLight` into the lit pass AFTER the tonemap and
+        /// outside the palette remap. On a menu scene that ambient is Unity's default skybox
+        /// wash, which is blue-grey, so every Person got a raw blue layer added on top of its
+        /// palette. Godot never had this: `CharacterSelect.tscn`'s SubViewport is `own_world_3d`
+        /// and carries its own Environment, and this is that Environment's ambient.
+        ///
+        /// ⚠️ IT IS THE PREVIEW'S 1.35, NOT THE ARENA'S 1.65. `ToonProbe` sets the arena value
+        /// because the bench exists to answer "does a character look right in a MATCH". This
+        /// screen is a different Environment in the same game and the two are authored apart.
+        ///
+        /// ⚠️ AND IT IS GLOBAL STATE, WHICH IS THE ONE UGLY PART. `RenderSettings.ambientLight`
+        /// has no per-layer form in the built-in pipeline, so isolating by layer (which is what
+        /// keeps foreign LIGHTS off the subject) cannot reach it. Written on every Show so a map
+        /// load cannot land after it and win, and restored on destroy.
+        /// </summary>
+        /// <remarks>
+        /// ⚠️ THE SKY CONTRIBUTION IS PART OF THE SUM AND LEAVING IT OUT OVEREXPOSED THE FACE.
+        /// The Environment reads `ambient_light_energy = 1.35` AND
+        /// `ambient_light_sky_contribution = 0.35`, and Godot blends the two sources by that
+        /// fraction: only 65% of the ambient comes from the colour, the rest from a sky this
+        /// preview does not have. Taking the colour at the full 1.35 put 0.847 of untonemapped
+        /// light on every surface and Berto rendered as pale yellow with no skin tone left.
+        /// 0.65 of it is 0.5506, which is the number that belongs here.
+        /// </remarks>
+        public static readonly Color PreviewAmbient =
+            new Color(0.62745f, 0.57647f, 0.52157f) * (1.35f * 0.65f);
 
         public const float TurnDegrees = 38.0f;
         public const float TurnPeriod = 9.0f;
@@ -264,6 +309,18 @@ namespace TumbangPreso.UI
             _camera.fieldOfView = FieldOfView;
             _camera.nearClipPlane = 0.05f;
 
+            // ⚠️⚠️ THE PORTRAIT NEEDS ITS OWN GRADE NOW THAT `Toon.shader` NO LONGER TONEMAPS.
+            // The curve moved to a full-screen camera pass so that the sky and the world get it
+            // too (see ColourGrade), which means any camera rendering toon surfaces has to carry
+            // one or the subject clips to white with nothing to roll it off.
+            //
+            // ⚠️ AND THE NUMBERS ARE THIS SCREEN'S, NOT A MAP'S. `CharacterSelect.tscn` has its
+            // own Environment: tonemap mode 3 at exposure 0.92 with white 1.9, and an adjustment
+            // at contrast 1.03 and saturation 1.18. Adopting an arena's grade here instead would
+            // make the character you pick a different colour from the one who walks out.
+            camGo.AddComponent<Visual.ColourGrade>()
+                 .Set(1.0f, 1.03f, 1.18f, 0.92f, 1.9f);
+
             BuildLights();
             IsolateFromForeignLights();
             EnsureTexture();
@@ -283,6 +340,28 @@ namespace TumbangPreso.UI
         /// loads asynchronously and brings its light with it, so a pass that ran once at build
         /// time misses the one light that actually causes this.
         /// </summary>
+        /// <summary>See <see cref="PreviewAmbient"/>. Remembers what it replaced so a screen
+        /// that tears this rig down leaves the scene as it found it.</summary>
+        private void ApplyPreviewAmbient()
+        {
+            if (!_ambientSaved)
+            {
+                _savedAmbientMode = RenderSettings.ambientMode;
+                _savedAmbient = RenderSettings.ambientLight;
+                _savedAmbientIntensity = RenderSettings.ambientIntensity;
+                _ambientSaved = true;
+            }
+
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+            RenderSettings.ambientLight = PreviewAmbient;
+            RenderSettings.ambientIntensity = 1.0f;
+        }
+
+        private bool _ambientSaved;
+        private UnityEngine.Rendering.AmbientMode _savedAmbientMode;
+        private Color _savedAmbient;
+        private float _savedAmbientIntensity;
+
         private void IsolateFromForeignLights()
         {
             foreach (var light in FindObjectsByType<Light>(FindObjectsInactive.Include,
@@ -393,9 +472,11 @@ namespace TumbangPreso.UI
         /// </summary>
         public void Show(GameObject prefab, AnimationClip[] clips, Color[] palette)
         {
-            if (_model != null) Destroy(_model);
+            // ⚠️ THE GRAPH GOES FIRST. It holds an output bound to the outgoing model's Animator,
+            // and destroying the GameObject under a live graph leaves a dangling output.
+            if (_graph.IsValid()) _graph.Destroy();
 
-            _idle = null;
+            if (_model != null) Destroy(_model);
 
             if (prefab == null) return;
 
@@ -415,6 +496,7 @@ namespace TumbangPreso.UI
 
             PlayIdle(clips);
             IsolateFromForeignLights();
+            ApplyPreviewAmbient();
 
             // A new subject gets a fresh sweep: the player picked this one to look at, and the
             // arc's phase carrying over means one pick greets you front-on and the next shows
@@ -438,46 +520,77 @@ namespace TumbangPreso.UI
         /// </summary>
         private void PlayIdle(AnimationClip[] clips)
         {
-            if (clips == null || clips.Length == 0) return;
+            if (_graph.IsValid()) _graph.Destroy();
+
+            if (clips == null || clips.Length == 0 || _model == null) return;
 
             AnimationClip idle = null;
 
-            foreach (var clip in clips)
+            // ⚠️ MATCHED CASE-INSENSITIVELY AND WITH THE .gd's OWN FALLBACK CHAIN.
+            // `character_visual.gd` resolves a pose through a list rather than one literal,
+            // precisely so a rig that spells it differently still animates, and this screen
+            // hard-matched the string "idle". A rig that misses turns into a bind pose, which on
+            // these models is arms straight out.
+            foreach (string want in IdleNames)
             {
-                if (clip == null || clip.name != "idle") continue;
-                idle = clip;
-                break;
+                foreach (var clip in clips)
+                {
+                    if (clip == null) continue;
+                    if (!string.Equals(clip.name, want, System.StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    idle = clip;
+                    break;
+                }
+
+                if (idle != null) break;
             }
 
+            // Better a wrong pose than a T-pose: the rest pose is the one thing guaranteed to
+            // read as broken art, so anything the asset ships beats it.
+            if (idle == null) idle = clips[0];
             if (idle == null) return;
 
-            _idle = idle;
+            // ⚠️⚠️ A PLAYABLES GRAPH, NOT `SampleAnimation`, AND THAT WAS THE T-POSE. The old
+            // path wrote the pose by hand every LateUpdate and DISABLED every Animator on the
+            // model first, on the reasoning that an enabled avatar-less Animator overwrites the
+            // sample. Both halves are true and together they animate nothing: with the Animator
+            // disabled there is no rig binding for `SampleAnimation` to drive, so the model kept
+            // its bind pose, which on a Kenney rig is arms straight out. That is the "stretched"
+            // silhouette on this screen, and it is nearly twice as wide as the real one, so it
+            // also wrecks the framing that is measured off it.
+            //
+            // `CharacterAnimator` already proves the working arrangement on a live unit: give
+            // the Animator a generic avatar built from the hierarchy, then drive it from a
+            // graph. A portrait needs one clip and no mixer, so this is the same thing with the
+            // state machine left out.
+            var animator = _model.GetComponentInChildren<Animator>(true);
 
-            // ⚠️⚠️ AN ANIMATOR ON THE PREVIEW FIGHTS THE SAMPLING AND WINS. `SampleAnimation`
-            // writes the pose straight onto the transforms; an Animator that is enabled with no
-            // controller then writes its own bind pose back over it in the same frame, and the
-            // result is the smeared half-posed figure this screen showed. The match's own
-            // animator is a Playables graph on a live unit, which is a different arrangement
-            // entirely; a menu portrait needs one clip and no state machine.
-            foreach (var animator in _model.GetComponentsInChildren<Animator>(true))
-                animator.enabled = false;
+            if (animator == null) animator = _model.AddComponent<Animator>();
+
+            animator.enabled = true;
+            animator.runtimeAnimatorController = null;
+            animator.applyRootMotion = false;
+            animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+
+            EnsureAvatar(animator);
+
+            _graph = PlayableGraph.Create($"Preview_{_model.name}");
+            _graph.SetTimeUpdateMode(DirectorUpdateMode.UnscaledGameTime);
+
+            var playable = AnimationClipPlayable.Create(_graph, idle);
+            playable.SetApplyFootIK(false);
+
+            var output = AnimationPlayableOutput.Create(_graph, "preview", animator);
+
+            output.SetSourcePlayable(playable);
+            _graph.Play();
         }
 
-        /// <summary>The clip the preview stands in, sampled by hand. See PlayIdle.</summary>
-        private AnimationClip _idle;
+        /// <summary>`character_visual.gd` resolves a pose through a chain. See PlayIdle.</summary>
+        private static readonly string[] IdleNames = { "idle", "static" };
 
-        /// <summary>
-        /// ⚠️ SAMPLED RATHER THAN PLAYED THROUGH A GRAPH. `AnimationClip.SampleAnimation` binds
-        /// the curves to transforms BY PATH, which needs no Avatar and no controller, and the
-        /// `.glb` rigs arrive from glTFast with neither. It is also the whole of what a portrait
-        /// needs: one clip, looping, no blending and no state.
-        /// </summary>
-        private void SampleIdle()
-        {
-            if (_idle == null || _model == null) return;
-
-            _idle.SampleAnimation(_model, Time.unscaledTime % Mathf.Max(0.01f, _idle.length));
-        }
+        private PlayableGraph _graph;
 
         /// <summary>
         /// ⚠️⚠️ A GENERIC ANIMATOR WITH NO AVATAR PLAYS NOTHING, AND IT SAYS NOTHING ABOUT IT.
@@ -588,7 +701,13 @@ namespace TumbangPreso.UI
 
             EnsureTexture();
 
-            SampleIdle();
+            // ⚠️ RE-DERIVED EVERY FRAME, NOT ONLY WHEN THE TARGET IS BUILT. Setting it once in
+            // `EnsureTexture` is correct until something resets it, and a camera's aspect is
+            // reset by the engine on a resolution change as well as by any code that assigns
+            // `targetTexture`. One frame of the wrong aspect is a visibly stretched portrait, and
+            // this costs a float divide.
+            if (_texture != null && _texture.height > 0)
+                _camera.aspect = (float)_texture.width / _texture.height;
 
             if (_needsFrame) Frame();
 
@@ -675,8 +794,15 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
+            if (_graph.IsValid()) _graph.Destroy();
             if (_texture != null) _texture.Release();
             if (_pivot != null) Destroy(_pivot.gameObject);
+
+            if (!_ambientSaved) return;
+
+            RenderSettings.ambientMode = _savedAmbientMode;
+            RenderSettings.ambientLight = _savedAmbient;
+            RenderSettings.ambientIntensity = _savedAmbientIntensity;
         }
     }
 }

@@ -200,6 +200,14 @@ namespace TumbangPreso.EditorTools
             cam.fieldOfView = 40.0f;
             cam.nearClipPlane = 0.01f;
 
+            // ⚠️ THE BENCH GRADES ITSELF, because `Toon.shader` stopped tonemapping when the
+            // curve moved to a full-screen camera pass. Without this the bench renders a whole
+            // stop hotter than the game does and stops being a reference: its entire job is to
+            // answer "does a character look right in a MATCH", so it takes the ARENA's numbers,
+            // the same ones it already borrows the key light and ambient from.
+            camGo.AddComponent<TumbangPreso.Visual.ColourGrade>()
+                 .Set(1.0f, 1.03f, 1.18f, 0.92f, 1.9f);
+
             var dir = Quaternion.Euler(14.0f, 155.0f, 0.0f) * Vector3.forward;
             cam.transform.position = bounds.center - dir * (extent * 2.4f);
             cam.transform.rotation = Quaternion.LookRotation(dir, Vector3.up);

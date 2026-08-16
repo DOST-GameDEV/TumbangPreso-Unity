@@ -60,7 +60,20 @@ namespace TumbangPreso.UI
         private bool _isAttackerPerson;
         private bool _isDefenderPerson;
         private bool _wasFatigued;
-        private bool _wasReady;
+
+        /// <summary>
+        /// ⚠️⚠️ IT STARTS TRUE, AND FALSE MADE THE BAR SPAWN WHITE. The ready flash fires on the
+        /// TRANSITION from not-full to full, so that "you can sprint again" is readable without
+        /// watching the bar. Initialised to false, a character who spawns with full stamina
+        /// counts as having just transitioned, so every round opened by lerping the bar to
+        /// `Card` (#f5f7fa) for the flash duration.
+        ///
+        /// Measured against the Godot build's own capture of the same moment: its role panel is
+        /// dominated by HIGHLIGHT (248,208,40) where this build's was a flat near-white, which
+        /// is what *"some of ur ui isnt the right color"* was looking at. Nobody ever sees the
+        /// flash it was meant to be, because a full bar at spawn has nothing to announce.
+        /// </summary>
+        private bool _wasReady = true;
         private float _readyFlashLeft;
         private bool _accentKnown;
         private bool _accentDefense;

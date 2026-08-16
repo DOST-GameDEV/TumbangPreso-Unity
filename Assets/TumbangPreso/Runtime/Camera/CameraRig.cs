@@ -153,6 +153,27 @@ namespace TumbangPreso.CameraSystem
 
             _camera.fieldOfView = _fieldOfView;
             _camera.nearClipPlane = 0.05f;
+
+            // ⚠️⚠️ THE MAP'S COLOUR GRADE, WHICH NOTHING IN THE PORT APPLIED. Every Godot
+            // Environment in this game enables `adjustment_*` and Eskinita runs contrast 1.03 and
+            // saturation 1.18 over the whole frame. There is no RenderSettings field for that, so
+            // the numbers were dropped at import and the match has been rendering ungraded
+            // against a Godot build that never is. `MapGrade` is what the importer leaves behind;
+            // adopting it here means the match camera and the setup screen's preview camera are
+            // reading the same three numbers off the same object.
+            //
+            // ⚠️ ADOPTED IN Start, NOT HERE. The arena's own objects are not guaranteed to be in
+            // the scene during this component's Awake, and a grade that finds nothing quietly
+            // resolves to an identity blit that looks like the feature was never added.
+            _grade = gameObject.GetComponent<Visual.ColourGrade>();
+            if (_grade == null) _grade = gameObject.AddComponent<Visual.ColourGrade>();
+        }
+
+        private Visual.ColourGrade _grade;
+
+        private void Start()
+        {
+            if (_grade != null) _grade.AdoptFromScene();
         }
 
         /// <summary>

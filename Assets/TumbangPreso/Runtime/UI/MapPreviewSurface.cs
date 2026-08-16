@@ -75,6 +75,30 @@ namespace TumbangPreso.UI
         private const int Width = 960;
         private const int Height = 540;
 
+        /// <summary>
+        /// ⚠️⚠️ THE PREVIEW ARENA MUST BE ON ITS OWN LAYER, AND ITS ABSENCE IS THE FULL-WIDTH
+        /// BAND ACROSS EVERY MENU. This screen loads a whole dressed street ADDITIVELY into the
+        /// menu's own world, at the origin, on the DEFAULT layer, while the menu camera ships
+        /// with a culling mask of every layer. So the arena was never confined to the render
+        /// texture it exists for: the road slab sits a couple of units from the menu camera and
+        /// gets drawn straight into the frame, which is the grey band with a cream kerb line
+        /// running the full width of MatchSetup and CharacterSelect. It reads as a UI seam
+        /// because a slab seen almost edge-on is a straight horizontal strip, and it was
+        /// diagnosed as one twice.
+        ///
+        /// ⚠️ IT IS VISIBLE IN THE CAPTURES BECAUSE OF HOW THEY ARE TAKEN, and that is not a
+        /// reason to dismiss it. `UiRuntimeShots.Capture` flips the Overlay canvas to
+        /// ScreenSpaceCamera at a plane distance of 1 so a camera can photograph it at all, which
+        /// puts any geometry nearer than 1 unit IN FRONT of the whole UI. In the shipped player
+        /// the canvas is an Overlay and the same slab is merely behind it, which is not correct
+        /// either: it is lit by the arena's sun, it costs a draw, and any transparent panel shows
+        /// it. Confining it is the fix in both cases.
+        ///
+        /// 29 rather than `ModelPreview.PreviewLayer` 30, so the character portrait and the map
+        /// behind it stay independently cullable.
+        /// </summary>
+        public const int PreviewLayer = 29;
+
         private RawImage _surface;
         private RenderTexture _target;
         private Camera _camera;
@@ -154,12 +178,21 @@ namespace TumbangPreso.UI
 
                 StripMatchObjects(loaded);
                 Silence(loaded);
+
+                // ⚠️ AFTER the strip, never before. `StripMatchObjects` destroys whole
+                // GameObjects, and re-layering a subtree that is about to be deleted is wasted
+                // work on the one screen that must not stall.
+                Confine(loaded);
             }
 
             _showing = map;
 
             AimAt(map);
             EnsureCamera();
+
+            // ⚠️ AFTER EnsureCamera, because it attaches the grade to that camera and the camera
+            // does not exist on the first swap until EnsureCamera has run.
+            ApplyMapEnvironment(map);
 
             _surface.texture = _target;
             _surface.color = Color.white;
@@ -291,6 +324,151 @@ namespace TumbangPreso.UI
         /// name: the name is a convention both maps happen to share, and a map that grew a
         /// second player somewhere else would silently start making noise on the menu.
         /// </summary>
+        /// <summary>
+        /// ⚠️⚠️ AN ADDITIVE SCENE'S LIGHTING IS NEVER APPLIED, AND THAT IS "its completely dark,
+        /// no sky". Ambient, fog and the skybox are not properties of the objects in a scene:
+        /// they live in that scene's own RenderSettings, and Unity only ever uses the ACTIVE
+        /// scene's. This screen loads the arena ADDITIVELY, so everything `TscnImporter` baked
+        /// out of the Godot Environment (the warm 0.673 ambient, the linear fog from 14 to 58,
+        /// and the sky itself) was sitting in a scene that was never active, and the preview was
+        /// lit by the MENU's default settings instead: a flat dark blue with no sky behind it.
+        /// Against the Godot build's own capture of the same screen, which shows a dusk street
+        /// with the sky visible above the rooftops, the port rendered a navy silhouette.
+        ///
+        /// ⚠️ THE VALUES ARE COPIED OUT, NOT LEFT ACTIVE. Making the arena the active scene would
+        /// do the same job in one line and would also send every GameObject the menu creates from
+        /// then on into the arena scene, including the character portrait's own rig, which then
+        /// gets unloaded with the map on the next arrow press. So the scene is made active just
+        /// long enough to READ its settings and is handed straight back.
+        ///
+        /// ⚠️ AND IT IS CACHED PER MAP. Cycling the picker is the one thing a player does fast on
+        /// this screen, and the whole caching design here exists so that costs nothing.
+        /// </summary>
+        private struct MapEnvironment
+        {
+            public Color Ambient;
+            public UnityEngine.Rendering.AmbientMode Mode;
+            public float Intensity;
+            public Material Skybox;
+            public bool Fog;
+            public Color FogColour;
+            public FogMode FogMode;
+            public float FogStart;
+            public float FogEnd;
+
+            /// <summary>The map's own colour grade. See Visual.MapGrade.</summary>
+            public float Brightness;
+            public float Contrast;
+            public float Saturation;
+            public float Exposure;
+            public float White;
+        }
+
+        private readonly System.Collections.Generic.Dictionary<string, MapEnvironment> _envs =
+            new System.Collections.Generic.Dictionary<string, MapEnvironment>();
+
+        private void ApplyMapEnvironment(string map)
+        {
+            if (!_envs.TryGetValue(map, out var env))
+            {
+                if (!_cache.TryGetValue(map, out var scene) || !scene.IsValid() || !scene.isLoaded)
+                    return;
+
+                var previous = SceneManager.GetActiveScene();
+
+                if (!SceneManager.SetActiveScene(scene)) return;
+
+                env = new MapEnvironment
+                {
+                    Ambient = RenderSettings.ambientLight,
+                    Mode = RenderSettings.ambientMode,
+                    Intensity = RenderSettings.ambientIntensity,
+                    Skybox = RenderSettings.skybox,
+                    Fog = RenderSettings.fog,
+                    FogColour = RenderSettings.fogColor,
+                    FogMode = RenderSettings.fogMode,
+                    FogStart = RenderSettings.fogStartDistance,
+                    FogEnd = RenderSettings.fogEndDistance,
+                    Brightness = 1.0f,
+                    Contrast = 1.0f,
+                    Saturation = 1.0f,
+                    Exposure = 0.0f,
+                    White = 1.9f,
+                };
+
+                // ⚠️ SEARCHED INSIDE THIS SCENE, NOT WITH FindObjectOfType. Every map this screen
+                // has shown stays loaded and deactivated on purpose, so a global search would
+                // find whichever map's grade happened to be first and colour Eskinita with Bayan
+                // Plaza's numbers.
+                foreach (var root in scene.GetRootGameObjects())
+                {
+                    var grade = root.GetComponentInChildren<Visual.MapGrade>(true);
+                    if (grade == null) continue;
+
+                    env.Brightness = grade.Brightness;
+                    env.Contrast = grade.Contrast;
+                    env.Saturation = grade.Saturation;
+                    env.Exposure = grade.Exposure;
+                    env.White = grade.White;
+                    break;
+                }
+
+                if (previous.IsValid()) SceneManager.SetActiveScene(previous);
+
+                _envs[map] = env;
+            }
+
+            RenderSettings.ambientMode = env.Mode;
+            RenderSettings.ambientLight = env.Ambient;
+            RenderSettings.ambientIntensity = env.Intensity;
+            RenderSettings.fog = env.Fog;
+            RenderSettings.fogColor = env.FogColour;
+            RenderSettings.fogMode = env.FogMode;
+            RenderSettings.fogStartDistance = env.FogStart;
+            RenderSettings.fogEndDistance = env.FogEnd;
+
+            // ⚠️ THE SKY IS THE HALF THAT WAS MOST VISIBLE. Without it the preview camera clears
+            // to whatever the menu's skybox is, which is nothing, so the top of every map
+            // preview was flat black above the rooftops.
+            if (env.Skybox != null) RenderSettings.skybox = env.Skybox;
+
+            // The map you are picking is graded the way it will be when you play it.
+            if (_camera == null) return;
+
+            var cameraGrade = _camera.GetComponent<Visual.ColourGrade>();
+
+            if (cameraGrade == null)
+                cameraGrade = _camera.gameObject.AddComponent<Visual.ColourGrade>();
+
+            cameraGrade.Set(env.Brightness, env.Contrast, env.Saturation,
+                            env.Exposure, env.White);
+        }
+
+        /// <summary>
+        /// Puts the whole arena on <see cref="PreviewLayer"/> so only this screen's camera can
+        /// see it. See that constant for what leaking out of the render texture looked like.
+        ///
+        /// ⚠️ THE LIGHTS ARE LEFT ALONE ON PURPOSE. A directional light culls by its own mask,
+        /// and the arena's sun ships with every layer set, so moving the geometry to 29 does not
+        /// unlight it. Narrowing the sun here would instead unlight the arena the moment the same
+        /// scene is loaded for a real match.
+        /// </summary>
+        private static void Confine(Scene scene)
+        {
+            if (!scene.IsValid()) return;
+
+            foreach (var root in scene.GetRootGameObjects())
+                SetLayerRecursively(root.transform, PreviewLayer);
+        }
+
+        private static void SetLayerRecursively(Transform t, int layer)
+        {
+            t.gameObject.layer = layer;
+
+            for (int i = 0; i < t.childCount; i++)
+                SetLayerRecursively(t.GetChild(i), layer);
+        }
+
         private static void Silence(Scene scene)
         {
             if (!scene.IsValid()) return;
@@ -329,6 +507,27 @@ namespace TumbangPreso.UI
             _camera.targetTexture = _target;
             _camera.clearFlags = CameraClearFlags.Skybox;
             _camera.depth = -10;
+
+            // The other half of Confine: this camera draws the arena and nothing else does.
+            _camera.cullingMask = 1 << PreviewLayer;
+
+            // ⚠️ AND EVERY OTHER CAMERA IS TOLD TO IGNORE IT. The menu scenes ship a UI camera
+            // with a culling mask of every layer, so confining the geometry is only half a fix:
+            // without this the same slab is still drawn by whichever camera owns the screen.
+            // Same shape as `ModelPreview.IsolateFromForeignLights`, and for the same reason.
+            foreach (var other in FindObjectsByType<Camera>(FindObjectsInactive.Include,
+                                                            FindObjectsSortMode.None))
+            {
+                if (other == null || other == _camera) continue;
+
+                other.cullingMask &= ~(1 << PreviewLayer);
+            }
+
+            // ⚠️ THE RENDER TEXTURE'S ASPECT DOES NOT REACH THE CAMERA ON ITS OWN. Same fault
+            // `ModelPreview.EnsureTexture` carries a note about: a camera that has already
+            // rendered keeps the aspect it cached, so the arena came out stretched into a 16:9
+            // target. Derived from the target rather than assumed.
+            _camera.aspect = (float)Width / Height;
 
             ApplyCamera();
         }

@@ -190,18 +190,22 @@ Shader "TumbangPreso/Toon"
         half _Exposure;
         half _White;
 
-        half3 Tonemap (half3 colour)
-        {
-            colour *= _Exposure;
-
-            // Narkowicz's ACES fit, scaled so the white point lands where Godot's does. The
-            // 0.6 is the standard input scale for this curve; without it the whole image
-            // darkens by about a stop rather than only rolling off the highlights.
-            half3 x = colour * 0.6h / max(0.001h, _White / 1.9h);
-
-            half3 mapped = (x * (2.51h * x + 0.03h)) / (x * (2.43h * x + 0.59h) + 0.14h);
-            return saturate(mapped);
-        }
+        // ⚠️⚠️ THE TONEMAP MOVED OUT OF THIS SHADER AND MUST NOT COME BACK. It used to run here,
+        // on the direct term, because Unity's built-in pipeline has no tonemapper and the cast
+        // was clipping to white. That solved it for the CAST and for nothing else: the sky, the
+        // fogged distance and every world surface are deliberately not on this shader (see
+        // EnvColourPass and the 2026-07-29 revert), so they all stayed raw. The result was a flat
+        // blown-out band across the top of every map preview and first-person arms rendering near
+        // white beside a correctly-lit character.
+        //
+        // Godot never split them: its Environment tonemaps the composited frame. So the curve now
+        // lives in `TumbangPreso/ColourGrade`, a full-screen pass on the camera, where it catches
+        // everything at once. Putting it back here would tonemap the characters TWICE and crush
+        // the midtones their whole palette sits in.
+        //
+        // ⚠️ Ambient is ALSO why it cannot work here. Unity's surface-shader path adds
+        // `RenderSettings.ambientLight` AFTER this function returns, so anything rolled off in
+        // here has raw ambient added on top of it and can clip anyway.
 
         struct Input
         {
@@ -221,7 +225,7 @@ Shader "TumbangPreso/Toon"
             half level = lerp(_ShadowBand, 1.0h, band);
 
             half4 c;
-            c.rgb = Tonemap(s.Albedo * _LightColor0.rgb * level);
+            c.rgb = s.Albedo * _LightColor0.rgb * level;
             c.a = s.Alpha;
             return c;
         }

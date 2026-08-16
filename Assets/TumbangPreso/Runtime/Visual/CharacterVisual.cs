@@ -53,6 +53,28 @@ namespace TumbangPreso.Visual
         /// </summary>
         private static readonly int FlashAmountId = Shader.PropertyToID("_FlashAmount");
 
+        /// <summary>
+        /// ⚠️⚠️ THE KENNEY RIG IS AUTHORED ~0.67 UNITS TALL AND NOTHING HERE WAS SCALING IT.
+        /// `character_visual.gd:714` runs `model.scale = Vector3.ONE * PERSON_SCALE` on every
+        /// Person, which is what lifts the rig to the ~1.6 units of the capsule it is supposed to
+        /// fill. The port instanced the prefab and wrote only position and rotation, so all
+        /// twelve people walked around the street at 42% of their height: reported as *"the
+        /// characters are way too small"*, and visible against the Godot build's own capture
+        /// where a figure beside the lata is half again as tall as the one here.
+        ///
+        /// ⚠️ IT IS THE MODEL THAT SCALES, NEVER THE SEAT. The CharacterController capsule, the
+        /// contact distances and every number in the Core package are authored in world units
+        /// and are already correct; scaling the body would retune all of them at once. This
+        /// writes `_instance`, which is the instanced mesh under `_modelRoot`, and
+        /// `AlignToCapsuleFloor` then re-measures the scaled bounds and drops the feet onto the
+        /// capsule floor, so the two agree by construction rather than by a second constant.
+        ///
+        /// ⚠️ 2.38 IS MEASURED, NOT CHOSEN. The Godot constant records that it came from the
+        /// imported model's AABB rather than from taste, so it transcribes as a number and must
+        /// not be re-derived by eye against a screenshot.
+        /// </summary>
+        public const float PersonScale = 2.38f;
+
         [SerializeField] private Transform _modelRoot;
         [SerializeField] private float _flashTime = 0.12f;
 
@@ -112,11 +134,21 @@ namespace TumbangPreso.Visual
 
             _tint = tint;
 
+            // Asked before the model is instanced, because a Person is the only thing that takes
+            // PERSON_SCALE and the scale has to be on the transform before `CacheRenderers` and
+            // `AlignToCapsuleFloor` measure the bounds it produces.
+            var motor = GetComponent<CharacterMotor>();
+            bool person = motor == null || motor.IsPerson;
+
             if (prefab != null)
             {
                 _instance = Instantiate(prefab, _modelRoot);
                 _instance.transform.localPosition = Vector3.zero;
                 _instance.transform.localRotation = Quaternion.identity;
+
+                // See PersonScale. A Prop is authored at its own size and keeps it, exactly as
+                // `character_visual.gd` only scales the branch it took for a Person.
+                _instance.transform.localScale = person ? Vector3.one * PersonScale : Vector3.one;
             }
 
             CacheRenderers();
@@ -132,9 +164,11 @@ namespace TumbangPreso.Visual
             // discarded.
             // A Person's border is the one `person_outline.tres` carries; everything else takes
             // the prop width. Asked of the motor rather than stored, so the two cannot drift.
-            var motor = GetComponent<CharacterMotor>();
-            bool person = motor == null || motor.IsPerson;
-
+            //
+            // ⚠️ THE WIDTH PASSED HERE IS A WORLD WIDTH AND MUST STAY ONE. `ToonSkin.Apply`
+            // divides by the renderer's own measured scale, so the value does NOT get corrected
+            // for PERSON_SCALE at this call site. `PersonOutlineWidth` already carries the 2.38
+            // inside it, as its own comment records.
             ToonSkin.Apply(_instance, person ? ToonSkin.PersonOutlineWidth
                                              : ToonSkin.PropOutlineWidth, palette);
 
