@@ -26,6 +26,7 @@ using System;
 using System.Runtime.InteropServices;
 public class Vis {
   [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
+  [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
   [DllImport("user32.dll")] public static extern bool GetClientRect(IntPtr h, out RECT r);
   [DllImport("user32.dll")] public static extern bool ClientToScreen(IntPtr h, ref POINT p);
   [DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);
@@ -54,7 +55,21 @@ public class Vis {
 
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 
-$proc = Start-Process -FilePath $Exe -PassThru
+# ⚠️⚠️ A LEFTOVER INSTANCE POISONS THE WHOLE RUN, AND IT LOOKS LIKE A GAME BUG. Any earlier
+# attempt that threw before its Stop-Process leaves a player running, so the next launch has a
+# SECOND window at the same place: SetForegroundWindow targets the new one, the clicks land on
+# whichever is actually on top, `CopyFromScreen` photographs the old one, and both write to the
+# same Player.log. One run "opened the settings panel from the title screen" that way.
+Get-Process -Name "TumbangPreso" -ErrorAction SilentlyContinue | Stop-Process -Force
+Start-Sleep -Seconds 2
+
+# ⚠️⚠️ THE RESOLUTION IS FORCED, AND EVERY MISS-CLICK IN THIS PROBE'S HISTORY CAME FROM NOT
+# FORCING IT. Unity remembers the last window size in the registry, so a run that was killed
+# mid-way leaves the next one a different client rect. Every coordinate here is a point in the
+# .tscn's own 1920x1080 space mapped through the client HEIGHT, so a client that is not 1080
+# tall rescales every press: one run pressed SETTINGS where it meant PLAY, and then QUIT where
+# it meant BACK, and reported that it had driven the menus.
+$proc = Start-Process -FilePath $Exe -ArgumentList "-screen-width","1920","-screen-height","1080","-screen-fullscreen","0" -PassThru
 
 # ⚠️⚠️ WAIT FOR THE WINDOW, DO NOT SLEEP A GUESS AT IT. `MainWindowHandle` is 0 until the
 # player has actually opened one, and a cached Process object never notices it appearing
@@ -75,6 +90,17 @@ if ($proc.MainWindowHandle -eq 0) { throw "the player never opened a window" }
 Start-Sleep -Seconds 9
 [void][Vis]::SetForegroundWindow($proc.MainWindowHandle)
 Start-Sleep -Seconds 2
+
+# ⚠️⚠️ ANOTHER FULLSCREEN APP MAKES THIS PROBE LIE, LOUDLY AND CONVINCINGLY. Windows will not
+# let SetForegroundWindow steal focus from an exclusive-fullscreen game, and `CopyFromScreen`
+# photographs whatever owns the display rather than our window: one run came back with clean
+# captures of an entirely different game, and every click in it landed on that game instead.
+# The failure looks like the menus misbehaving, so it has to be caught here rather than
+# reasoned about later.
+if ([Vis]::GetForegroundWindow() -ne $proc.MainWindowHandle) {
+  Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+  throw "another window is in front of the player; close any fullscreen app and re-run"
+}
 
 function Client() {
   $proc.Refresh()

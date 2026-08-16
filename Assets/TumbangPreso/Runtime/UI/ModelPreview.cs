@@ -124,6 +124,21 @@ namespace TumbangPreso.UI
         /// <summary>Where preview models live, well clear of any loaded arena.</summary>
         public static readonly Vector3 Stage = new Vector3(0.0f, -500.0f, 0.0f);
 
+        /// <summary>
+        /// ⚠️⚠️ EVERY PREVIEW NEEDS ITS OWN STAGE, AND SHARING ONE PUT FOUR SUBJECTS IN EVERY
+        /// TILE. The rig isolates itself by LAYER, which is enough when there is one of it and
+        /// wrong the moment there are several: the tutorial's premise strip builds four, they
+        /// all parked at `Stage`, and each tile's camera then photographed all four models
+        /// stacked inside one another. The strip read as four identical people, two of them
+        /// upside down, because the framing was measured against the union of the four.
+        ///
+        /// Far enough apart that a neighbour is outside a 42-degree frustum from two units
+        /// away by three orders of magnitude, which is cheaper than reasoning about it again.
+        /// </summary>
+        public const float StageSpacing = 200.0f;
+
+        private static int _stageCount;
+
         /// <summary>The layer the preview camera draws and nothing else does.</summary>
         public const int PreviewLayer = 30;
 
@@ -142,6 +157,9 @@ namespace TumbangPreso.UI
         private float _frameDistance = 4.0f;
         private float _framePitch = CameraPitchDegrees;
         private Vector3 _frameAim = Stage;
+
+        /// <summary>This instance's own patch of nowhere. See StageSpacing.</summary>
+        private Vector3 _stage = Stage;
         private float _frameAspect = 1.0f;
 
         // The player's offsets on top of it. All three survive a subject change on purpose:
@@ -227,8 +245,10 @@ namespace TumbangPreso.UI
             _surface.raycastTarget = true;
             surfaceGo.AddComponent<ModelPreviewInput>().Bind(this);
 
+            _stage = Stage + Vector3.right * (StageSpacing * _stageCount++);
+
             var stageGo = new GameObject("PreviewStage");
-            stageGo.transform.position = Stage;
+            stageGo.transform.position = _stage;
             _pivot = stageGo.transform;
 
             var camGo = new GameObject("PreviewCamera");
