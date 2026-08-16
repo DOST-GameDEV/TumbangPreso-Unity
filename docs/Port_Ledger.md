@@ -45,6 +45,31 @@ unread, and reported success.
 raycasts every button on every screen and names what is on top of it. Do not delete it:
 "the buttons don't work" is invisible to every other check in this project.
 
+### The one visual delta left in the boot sting, and the exact fix
+
+The BH Studios animation now fills the screen and plays correctly, which was the reported
+fault. What still differs is the BACKGROUND TONE: Godot's Theora decode renders it as a
+mid grey and Windows Media Foundation renders it clipped to pure white, measured at
+(255, 255, 255) across the whole frame.
+
+It is a container tag, not a rendering bug, and the player log names it outright:
+
+> `Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to
+> default may result in color shift.`
+
+`opening_animation.mp4` carries no colour primaries, so the decoder guesses and expands the
+range. Re-encode it with the tags stated and both decoders agree:
+
+```bash
+ffmpeg -i opening_animation.mp4 -c:v libx264 -pix_fmt yuv420p \
+  -color_primaries bt709 -color_trc bt709 -colorspace bt709 -an opening_animation.mp4
+```
+
+⚠️ **NOT fixed by tinting the RawImage.** The frame is clipped at 255, so the original
+tone is no longer in the image to scale back down, and a guessed multiplier would be wrong
+in a new direction. ffmpeg is not installed on this machine, which is the only reason this
+is written down rather than done.
+
 ⚠️ **And its first two runs lied.** It probed three frames after load, before the
 pennants had finished unfurling and before the layout groups had run, and reported six
 working controls as unreachable. It waits 120 frames now and reports OFF SCREEN
