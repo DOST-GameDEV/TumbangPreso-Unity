@@ -582,28 +582,29 @@ namespace TumbangPreso.EditorTools.MapKit
 
             float energy = SubProp(env, "ambient_light_energy", 1.0f);
 
-            // ⚠️⚠️ THE SKY CONTRIBUTION IS PART OF THE SUM AND IGNORING IT OVEREXPOSED ESKINITA
-            // BY HALF. `ambient_light_source = 2` means the ambient comes from the COLOUR, but
-            // `ambient_light_sky_contribution` still blends the sky back in over the top of it,
-            // so only `1 - contribution` of the light comes from the colour that is being read
-            // here. Eskinita sets 0.35, which this took as 1.0: the arena ran at 0.62745 x 1.65
-            // = 1.035 of untonemapped ambient where Godot puts 0.673 on the same wall.
+            // ⚠️⚠️ THE SKY CONTRIBUTION DOES NOT APPLY TO A COLOUR AMBIENT, AND SCALING BY IT
+            // TOOK A THIRD OF ESKINITA'S LIGHT AWAY. `ambient_light_source = 2` is
+            // AMBIENT_SOURCE_COLOR, and `ambient_light_sky_contribution` is only read for the
+            // SKY and BG sources — so Godot puts the full 0.62745 x 1.65 = 1.035 on that wall,
+            // not 0.673.
             //
-            // It shows worst on anything close to the camera. The first-person arms sit at an
-            // albedo of 0.784 and were reported as *"very ugly"* and washed out, which is that
-            // albedo multiplied by an ambient over 1 before a single light is added. The toon
-            // shader tonemaps the DIRECT term only, because Unity's built-in pipeline injects
-            // ambient into the lit pass after the lighting function has returned, so an ambient
-            // over 1 cannot be rolled off and simply clips.
+            // This scaled by `1 - contribution` anyway, which was a real fix for a real symptom
+            // and in the wrong place. At the time `Toon.shader` carried the ACES curve and
+            // tonemapped only the DIRECT term, so ambient was injected afterwards and could not
+            // be rolled off: at 1.035 the first-person arms clipped and were reported as *"very
+            // ugly"* and washed out. Darkening the ambient hid it. `ColourGrade` now tonemaps
+            // the whole composited frame at the Environment's own exposure, exactly as Godot
+            // does, so an ambient over 1 rolls off instead of clipping and the compensation is
+            // no longer paying for anything.
             //
-            // ⚠️ IT ALSO EXPLAINS WHY THE TWO MAPS DID NOT MATCH. Bayan Plaza never sets the
-            // property, so it defaults to 0 and was already correct at 0.706. Eskinita was 47%
-            // brighter than its neighbour for no authored reason. With this they read as 0.673
-            // and 0.706, which is the small difference the two Environments actually carry.
-            float sky = SubProp(env, "ambient_light_sky_contribution", 0.0f);
-
+            // ⚠️ AND IT IS WHY THE TWO MAPS DID NOT MATCH. Bayan Plaza never sets the property,
+            // so it kept its authored 0.61176 x 1.15 = 0.706 while Eskinita ran a third under
+            // its own. Measured across the two builds' arena frames before this: mean value
+            // 0.42 in the port against 0.57 in the original on the same street, which reads as
+            // the whole game being flatter and greyer. 🧑: *"its also not as saturated as
+            // original"*.
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
-            RenderSettings.ambientLight = ambient * energy * Mathf.Clamp01(1.0f - sky);
+            RenderSettings.ambientLight = ambient * energy;
             RenderSettings.ambientIntensity = 1.0f;
 
             bool fog = env.Props.TryGetValue("fog_enabled", out var f) && f.Trim() == "true";
@@ -661,8 +662,13 @@ namespace TumbangPreso.EditorTools.MapKit
                               $", contrast {contrast:0.00}, saturation {saturation:0.00}" +
                               $", tonemap {tonemapMode} exposure {exposure:0.00} white {white:0.00}");
 
+            // ⚠️ THE SKY SHARE IS REPORTED BUT NOT APPLIED. It is in the line so a map that
+            // switches to a SKY ambient source is visible in the log rather than silently
+            // converting as if it had not; see the block that writes `ambientLight`.
+            float sky = SubProp(env, "ambient_light_sky_contribution", 0.0f);
+
             report.AppendLine($"   environment: ambient {ColorUtility.ToHtmlStringRGB(ambient)}" +
-                              $" x{energy:0.00} sky {sky:0.00} -> " +
+                              $" x{energy:0.00} sky {sky:0.00} (colour source) -> " +
                               $"{ColorUtility.ToHtmlStringRGB(RenderSettings.ambientLight)}, " +
                               $"fog {(fog ? "on" : "off")}");
         }

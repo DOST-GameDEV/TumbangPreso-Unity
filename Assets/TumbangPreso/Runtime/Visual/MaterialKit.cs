@@ -55,17 +55,62 @@ namespace TumbangPreso.Visual
 
         /// <summary>Gives a renderer the shared material, so a property block has something
         /// to write to.</summary>
+        /// <summary>
+        /// ⚠️⚠️ ONE MATERIAL PER SUBMESH, NOT ONE MATERIAL. A renderer draws submesh `i` with
+        /// `sharedMaterials[i]` and simply DOES NOT DRAW the submeshes past the end of that
+        /// array, silently. `renderer.sharedMaterial = x` sets an array of length one, so every
+        /// multi-surface mesh in the game was rendering its first surface and nothing else.
+        ///
+        /// It was worst on the thing the local player looks at constantly.
+        /// `viewmodel_arm.obj` is two `usemtl` groups — `skin` at y 0.62..0.84, which is the
+        /// FIST, and `skin_shade` at y 0.00..0.62, which is the FOREARM — and `.obj` orders the
+        /// fist first. So the arm drew as a hand with nothing under it, hanging in mid-air with
+        /// clear road between it and the bottom of the screen. Reported exactly as *"the hands
+        /// are just floating"*, and measured against the original's own frame of the same pose:
+        /// the arm ended 88 px short of where Godot's does on a 1080-tall capture, while its top
+        /// edge matched to within 8 px. `ViewmodelArms.tscn` says the same thing from the other
+        /// side by setting `surface_material_override/0` AND `/1` on both arms.
+        ///
+        /// ⚠️ `ToonSkin.Apply` CANNOT FIX IT AFTERWARDS. It maps whatever array it is handed one
+        /// for one, so a length-one array in is a length-one array out. The count has to be
+        /// right here, at the only place a material is first assigned.
+        /// </summary>
         public static void Dress(Renderer renderer, Color tint)
         {
             if (renderer == null) return;
 
-            renderer.sharedMaterial = Lit;
+            int surfaces = SubMeshCount(renderer);
+
+            if (surfaces <= 1)
+            {
+                renderer.sharedMaterial = Lit;
+            }
+            else
+            {
+                var slots = new Material[surfaces];
+                for (int i = 0; i < surfaces; i++) slots[i] = Lit;
+                renderer.sharedMaterials = slots;
+            }
 
             var block = new MaterialPropertyBlock();
             renderer.GetPropertyBlock(block);
             block.SetColor("_Color", tint);
             block.SetColor("_BaseColor", tint);
             renderer.SetPropertyBlock(block);
+        }
+
+        /// <summary>How many surfaces this renderer's mesh actually has. 1 when there is no mesh
+        /// to ask, which is the safe answer: a renderer with no mesh draws nothing either
+        /// way.</summary>
+        private static int SubMeshCount(Renderer renderer)
+        {
+            if (renderer is SkinnedMeshRenderer skinned)
+                return skinned.sharedMesh != null ? skinned.sharedMesh.subMeshCount : 1;
+
+            var filter = renderer.GetComponent<MeshFilter>();
+            return filter != null && filter.sharedMesh != null
+                ? filter.sharedMesh.subMeshCount
+                : 1;
         }
     }
 }

@@ -102,6 +102,26 @@ namespace TumbangPreso.Visual
             // off exactly, and a large font rendered small is the crisp half of that trade.
             _label.fontSize = LabelFontSize;
             _label.characterSize = LabelWorldHeight * 10.0f / LabelFontSize;
+
+            // ⚠️⚠️ THE GAME'S OWN FACE, AND WITHOUT THIS IT IS ARIAL. A `TextMesh` with no font
+            // assigned falls back to Unity's built-in, so the one piece of type that is IN the
+            // world — over every character's head, for the whole match — was the only thing in
+            // the build not set in Darumadrop. Reported as *"the font for names look ugly"*, and
+            // it reads exactly as a placeholder next to the HUD directly above it.
+            //
+            // ⚠️ THE MATERIAL COMES WITH IT. A TextMesh draws through a MeshRenderer, and the
+            // font's own atlas material is what puts the glyphs on it. Assigning the font and
+            // leaving the renderer alone draws the new glyph quads with the OLD atlas, which is
+            // a nameplate of scrambled letters rather than a wrong typeface.
+            var font = UI.MenuKit.Font;
+
+            if (font != null)
+            {
+                _label.font = font;
+
+                var renderer = labelGo.GetComponent<MeshRenderer>();
+                if (renderer != null) renderer.sharedMaterial = font.material;
+            }
         }
 
         /// <summary>

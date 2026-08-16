@@ -167,47 +167,168 @@ namespace TumbangPreso.UI
             scaler.referenceResolution = new Vector2(1920, 1080);
             canvasGo.AddComponent<GraphicRaycaster>();
 
-            // A dimmed backdrop so the board reads over whatever the arena was showing.
-            MenuKit.Backdrop(canvasGo.transform, new Color(0.0f, 0.0f, 0.0f, 0.55f));
+            // ⚠️ THE BACKDROP IS THE INK NAVY AT 0.72, NOT BLACK AT 0.55. `MatchResult.tscn`
+            // authors `Color(0.015686, 0.031373, 0.219608, 0.72)`, the same colour the
+            // intermission card dims with. Black at half strength leaves the lit arena reading
+            // through the standings, which is a large part of why this screen photographed as
+            // muddy rather than as a board.
+            MenuKit.Backdrop(canvasGo.transform, new Color(0.015686f, 0.031373f, 0.219608f, 0.72f));
 
-            var cardGo = new GameObject("Card");
-            cardGo.transform.SetParent(canvasGo.transform, false);
-            var cardImg = cardGo.AddComponent<Image>();
-            cardImg.color = UiTheme.WoodDeep;
-            MenuKit.Place(cardImg.rectTransform, Centre, Vector2.zero, new Vector2(860, 660));
+            // ⚠️⚠️ 600 x 340 IS THE .tscn's CARD AND THE PORT DREW 860 x 660. Nearly double the
+            // area, with everything inside it placed by hand at a size chosen to fill that area
+            // rather than at the size it is authored — the message at 42 against a Display
+            // variation, the standings at 30 against 24. Everything read oversized and loose,
+            // which is 🧑's *"the end win screen UI ... looks ugly comapred to godot"*.
+            //
+            // ⚠️ AND IT IS A FLOOR, NOT A FIXED SIZE. Godot's `PanelContainer` clamps UP to its
+            // content, so a long name grows the card instead of clipping. A layout group plus a
+            // minimum is the same rule here. Nothing on this card gets a hard maximum.
+            var card = BuildCard(canvasGo.transform);
 
-            var edge = new GameObject("Edge");
-            edge.transform.SetParent(cardGo.transform, false);
-            var edgeImg = edge.AddComponent<Image>();
-            edgeImg.color = UiTheme.WoodEdge;
-            edgeImg.raycastTarget = false;
-            MenuKit.Stretch(edgeImg.rectTransform, 4.0f);
-            edge.transform.SetAsFirstSibling();
+            _message = CardLabel(card, "MessageLabel", 34, UiTheme.Cream, 76,
+                                 TextAnchor.MiddleCenter);
 
-            var card = cardGo.transform;
+            Spacer(card, 16.0f);
 
-            _message = MenuKit.Label(card, "", 42, UiTheme.Cream,
-                Centre, new Vector2(0, 235), new Vector2(800, 70));
+            var standings = SubStack(card, "Standings", 10.0f);
 
-            for (int i = 0; i < Core.Balance.PlayerCount; i++)
-            {
-                float y = 100 - i * 64;
+            for (int i = 0; i < Core.Balance.PlayerCount; i++) _rows.Add(BuildPlaceRow(standings));
 
-                var place = MenuKit.Label(card, "", 30, UiTheme.Cream,
-                    Centre, new Vector2(-330, y), new Vector2(60, 40), TextAnchor.MiddleLeft);
-                var name = MenuKit.Label(card, "", 30, UiTheme.Cream,
-                    Centre, new Vector2(-60, y), new Vector2(420, 40), TextAnchor.MiddleLeft);
-                var pts = MenuKit.Label(card, "", 30, UiTheme.Cream,
-                    Centre, new Vector2(300, y), new Vector2(160, 40), TextAnchor.MiddleRight);
+            Spacer(card, 16.0f);
 
-                _rows.Add(new[] { place, name, pts });
-            }
+            // ⚠️ STACKED, NOT SIDE BY SIDE, AND THE SECOND ONE SAYS "MAIN MENU". Both come
+            // straight off the .tscn, which puts `RematchButton` above `MenuButton` in the same
+            // VBox. Two 280-wide buttons in a row do not fit a 600-wide card at all, which is
+            // the kind of thing an oversized card hides.
+            _rematch = StackedButton(card, "REMATCH", OnRematchPressed);
+            _menu = StackedButton(card, "MAIN MENU", OnMenuPressed);
+        }
 
-            _rematch = MenuKit.WoodButton(card, "REMATCH", Centre,
-                new Vector2(-160, -240), new Vector2(280, 72), OnRematchPressed);
+        /// <summary>The wood card: a centred column that grows to fit what is put in it.</summary>
+        private static VerticalLayoutGroup BuildCard(Transform parent)
+        {
+            var go = new GameObject("Card");
+            go.transform.SetParent(parent, false);
 
-            _menu = MenuKit.WoodButton(card, "MENU", Centre,
-                new Vector2(160, -240), new Vector2(280, 72), OnMenuPressed);
+            var rt = go.AddComponent<RectTransform>();
+            rt.anchorMin = Centre;
+            rt.anchorMax = Centre;
+            rt.pivot = Centre;
+            rt.anchoredPosition = Vector2.zero;
+            rt.sizeDelta = new Vector2(600.0f, 0.0f);
+
+            var img = go.AddComponent<Image>();
+            img.color = Color.white;
+            img.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
+            img.type = Image.Type.Sliced;
+
+            var column = go.AddComponent<VerticalLayoutGroup>();
+            column.spacing = 8.0f;
+            column.padding = new RectOffset(28, 28, 22, 22);
+            column.childAlignment = TextAnchor.MiddleCenter;
+            column.childForceExpandHeight = false;
+            column.childForceExpandWidth = true;
+            column.childControlHeight = true;
+            column.childControlWidth = true;
+
+            var fitter = go.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+            return column;
+        }
+
+        private static Text CardLabel(VerticalLayoutGroup card, string name, int size,
+                                      Color colour, float height, TextAnchor align)
+        {
+            var label = MenuKit.Label(card.transform, "", size, colour,
+                Centre, Vector2.zero, new Vector2(540.0f, height), align);
+
+            label.gameObject.name = name;
+            label.horizontalOverflow = HorizontalWrapMode.Wrap;
+
+            var element = label.gameObject.AddComponent<LayoutElement>();
+            element.minHeight = height;
+            element.preferredHeight = height;
+
+            return label;
+        }
+
+        private static void Spacer(VerticalLayoutGroup card, float height)
+        {
+            var go = new GameObject("Spacer", typeof(RectTransform));
+            go.transform.SetParent(card.transform, false);
+
+            var element = go.AddComponent<LayoutElement>();
+            element.minHeight = height;
+            element.preferredHeight = height;
+        }
+
+        private static VerticalLayoutGroup SubStack(VerticalLayoutGroup card, string name,
+                                                    float spacing)
+        {
+            var go = new GameObject(name, typeof(RectTransform));
+            go.transform.SetParent(card.transform, false);
+
+            var stack = go.AddComponent<VerticalLayoutGroup>();
+            stack.spacing = spacing;
+            stack.childForceExpandHeight = false;
+            stack.childForceExpandWidth = true;
+            stack.childControlHeight = true;
+            stack.childControlWidth = true;
+
+            return stack;
+        }
+
+        /// <summary>Place, name, points. The .tscn's own 48 / 260 / 120 columns at 24, with 18
+        /// between them, so the three columns line up down the table.</summary>
+        private static Text[] BuildPlaceRow(VerticalLayoutGroup standings)
+        {
+            var rowGo = new GameObject("Place", typeof(RectTransform));
+            rowGo.transform.SetParent(standings.transform, false);
+
+            var row = rowGo.AddComponent<HorizontalLayoutGroup>();
+            row.spacing = 18.0f;
+            row.childForceExpandWidth = false;
+            row.childControlWidth = true;
+            row.childControlHeight = true;
+            row.childAlignment = TextAnchor.MiddleLeft;
+
+            var place = PlaceCell(rowGo.transform, "Place", TextAnchor.MiddleLeft, 48.0f, 0.0f);
+            var name = PlaceCell(rowGo.transform, "Name", TextAnchor.MiddleLeft, 260.0f, 1.0f);
+            var points = PlaceCell(rowGo.transform, "Points", TextAnchor.MiddleRight, 120.0f, 0.0f);
+
+            return new[] { place, name, points };
+        }
+
+        private static Text PlaceCell(Transform parent, string name, TextAnchor align,
+                                      float width, float flexible)
+        {
+            var label = MenuKit.Label(parent, "", 24, UiTheme.Cream,
+                Centre, Vector2.zero, new Vector2(width, 34.0f), align);
+
+            label.gameObject.name = name;
+
+            var element = label.gameObject.AddComponent<LayoutElement>();
+            element.minWidth = width;
+            element.preferredWidth = width;
+            element.minHeight = 34.0f;
+            element.flexibleWidth = flexible;
+
+            return label;
+        }
+
+        private static Button StackedButton(VerticalLayoutGroup card, string text,
+                                            System.Action onPressed)
+        {
+            var button = MenuKit.WoodButton(card.transform, text, Centre,
+                Vector2.zero, new Vector2(360.0f, 60.0f), onPressed);
+
+            var element = button.gameObject.AddComponent<LayoutElement>();
+            element.minHeight = 60.0f;
+            element.preferredHeight = 60.0f;
+
+            return button;
         }
 
         private void OnRematchPressed()

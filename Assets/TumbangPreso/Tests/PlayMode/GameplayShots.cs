@@ -109,6 +109,43 @@ namespace TumbangPreso.PlayTests
                 shot++;
             }
 
+            // ---- THE INTERMISSION CARD ---------------------------------------------------
+            // ⚠️ NOTHING HAS EVER PHOTOGRAPHED IT. It is only reachable through a round
+            // boundary, so every capture pass so far has stopped short of the one screen 🧑
+            // singled out by screenshot: *"PIC 5 ugly ui unlike in godot"*.
+            var card = Object.FindFirstObjectByType<UI.RoleSwapCard>();
+
+            if (card != null && GameServices.Match != null)
+            {
+                GameServices.Match.AddScore(GameServices.Match.DefenderSlot,
+                                            Core.ScoreEvent.DefenseTick);
+
+                // Driven through the event the card actually listens to, so the shot is the
+                // screen a player gets and not a hand-filled mock of it.
+                card.ShowForShot(nextRound: 3, nextDefenderSlot: 2);
+
+                yield return new WaitForSecondsRealtime(2.0f);
+                yield return Eyes("intermission");
+            }
+
+            // ---- THE MATCH-END BOARD -----------------------------------------------------
+            // 🧑: *"the end win screen UI and round end ui or hud looks ugly comapred to
+            // godot"*. Raised through the same entry point the match-won event uses.
+            var board = Object.FindFirstObjectByType<UI.MatchResult>();
+
+            if (board != null)
+            {
+                board.OnMatchWon(0);
+
+                yield return new WaitForSecondsRealtime(0.6f);
+                yield return Eyes("result");
+
+                // ⚠️ TIME IS PUT BACK. The board freezes the game in single player, and every
+                // shot after this one would be of a stopped world.
+                Time.timeScale = 1.0f;
+                board.gameObject.SetActive(false);
+            }
+
             // ---- THE TAYA'S OWN SCREEN --------------------------------------------------
             CharacterMotor taya = null;
 
