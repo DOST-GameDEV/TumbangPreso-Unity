@@ -22,10 +22,47 @@ namespace TumbangPreso
     /// </summary>
     public sealed class DebugPlayerSwitcher : MonoBehaviour
     {
-        public const int DefaultSlot = 0;
+        /// <summary>
+        /// ⚠️⚠️ A FALLBACK, NOT THE ANSWER — SEE <see cref="DefaultSlot"/>. Hardcoding seat 0
+        /// meant F6 handed "your own character back" to whoever happened to sit in slot 0, and
+        /// the player's real seat is whichever one the setup screen chose. `GameLaunch.SoloSeat`
+        /// defaults to P2, so on a default match this constant was wrong every time.
+        /// </summary>
+        public const int FallbackSlot = 0;
+
+        /// <summary>
+        /// The seat the PLAYER is driving, discovered rather than declared.
+        ///
+        /// ⚠️ THE HUMAN'S UNIT IS EXACTLY THE ONE WITH NO AI ON IT, which this can read off the
+        /// seats directly and needs no cooperation from gameplay. `debug_player_switcher.gd`
+        /// records what the hardcoded version cost there: a player who picked a different seat
+        /// got, one frame into the match, their own character parked, the camera snapped
+        /// elsewhere, and the unit they chose handed to a bot.
+        /// </summary>
+        public static int DefaultSlot
+        {
+            get
+            {
+                foreach (var unit in FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude))
+                {
+                    var ai = unit.GetComponent<AIController>();
+                    if (ai == null || !ai.enabled) return unit.PlayerSlot;
+                }
+
+                return FallbackSlot;
+            }
+        }
 
         /// <summary>Seat currently driven by the human, or -1 for none.</summary>
-        public int DrivenSlot { get; private set; } = DefaultSlot;
+        public int DrivenSlot { get; private set; } = FallbackSlot;
+
+        /// <summary>
+        /// ⚠️ RESOLVED ON THE FIRST PRESS, NOT AT AWAKE. `MatchInstaller` builds the seats in
+        /// its own Start, so at this component's Awake the honest answer to "which unit has no
+        /// AI" is "all of them" — the failure the .gd had to defer around. Reading it lazily
+        /// gets the same guarantee without a deferred call.
+        /// </summary>
+        private bool _resolved;
 
         private UI.DebugBar _bar;
 
@@ -50,6 +87,10 @@ namespace TumbangPreso
 
             var kb = Keyboard.current;
             if (kb == null) return;
+
+            // The player's own seat, before any key is read, so a cycle starts from where they
+            // actually are rather than from slot 0.
+            if (!_resolved) { DrivenSlot = DefaultSlot; _resolved = true; }
 
             if (kb.f1Key.wasPressedThisFrame) Assign(0);
             else if (kb.f2Key.wasPressedThisFrame) Assign(1);

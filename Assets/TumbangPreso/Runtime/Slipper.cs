@@ -121,6 +121,62 @@ namespace TumbangPreso
         }
 
         /// <summary>
+        /// The velocity that puts this slipper THROUGH a point, at the speed its charge buys.
+        ///
+        /// ⚠️⚠️ THE PORT THREW AT A FIXED 45 DEGREES AND THIS IS THE FUNCTION THAT WAS MISSING.
+        /// `slipper.gd::_solve_arc` solves the launch ANGLE for the target, and its header notes
+        /// that `trajectory_preview.gd` calls the same function precisely so the dotted line and
+        /// the flight cannot drift apart. Unity had the "cannot drift apart" half — the preview
+        /// integrates whatever `Carrier` hands it — around the wrong velocity.
+        ///
+        /// What a fixed 45 does to the game: the throw ignores where the player is aiming
+        /// vertically and lobs at maximum-range angle whatever the distance, so a can eight
+        /// metres away and a can two metres away get the same towering arc, and the aim line
+        /// leaves the frame near-vertically instead of pointing at the mark. Reported against a
+        /// cropped frame of exactly that: *"THIS charge outline is so ugly, it doesnt behave
+        /// naturally"*.
+        ///
+        /// ⚠️ THE LOW ROOT, NOT THE HIGH ONE. `(v² - root)` is the flatter of the two solutions:
+        /// less airtime, harder to body-block, and the one a person throwing a slipper at a can
+        /// actually produces. The .gd drops the lob root for the same reason.
+        ///
+        /// ⚠️ AND OUT OF RANGE THROWS ALONG THE PLAYER'S OWN LINE rather than falling back to
+        /// 45. The .gd is explicit about why: aiming at a distant wall would otherwise fire a
+        /// lob straight up, which is a far stranger thing to have happen than a throw that
+        /// visibly does not get there.
+        /// </summary>
+        public Vector3 LaunchVelocityTo(Vector3 origin, Vector3 target, float charge01)
+        {
+            float speed = ThrowRules.LaunchSpeedFor(_skinIndex, charge01);
+            return SolveArc(origin, target, speed) * speed;
+        }
+
+        /// <summary>The unit launch direction from origin to target at a given speed.</summary>
+        public static Vector3 SolveArc(Vector3 origin, Vector3 target, float speed)
+        {
+            Vector3 toTarget = target - origin;
+            Vector3 flat = new Vector3(toTarget.x, 0.0f, toTarget.z);
+            float distance = flat.magnitude;
+
+            // Straight up, straight down, or on top of us: no arc to solve, throw along the
+            // line. Also guards the division below.
+            if (distance < 0.05f || speed < 0.01f)
+                return toTarget.magnitude > 0.01f ? toTarget.normalized : Vector3.forward;
+
+            float g = Balance.Gravity;
+            float v2 = speed * speed;
+
+            float discriminant = v2 * v2 - g * (g * distance * distance + 2.0f * toTarget.y * v2);
+
+            if (discriminant < 0.0f) return toTarget.normalized;
+
+            float root = Mathf.Sqrt(discriminant);
+            float tangent = (v2 - root) / (g * distance);
+
+            return (flat.normalized + Vector3.up * tangent).normalized;
+        }
+
+        /// <summary>
         /// The HELD skin's own resting origin height, measured off the mesh rather than assumed.
         ///
         /// ⚠️ THE FOURTH SKIN MISSES BY 0.263 m AND THE ARC IS NOT THE BUG. A crocs RESTS

@@ -434,30 +434,25 @@ namespace TumbangPreso
         {
             if (Held == null) return Vector3.zero;
 
-            Vector3 aim = AimPoint() - transform.position;
-            aim.y = 0.0f;
-            if (aim.sqrMagnitude < 0.01f) aim = transform.forward;
-
-            // A 45 degree launch, which is the arc every range bound in the game is solved
-            // against.
-            Vector3 dir = (aim.normalized + Vector3.up).normalized;
-            return Held.LaunchVelocity(dir, ChargeRatio);
+            // ⚠️⚠️ SOLVED THROUGH THE AIM POINT, NOT LOBBED AT 45 DEGREES. See
+            // `Slipper.SolveArc`: the fixed 45 threw the same towering arc at every range and
+            // ignored the vertical half of where the player was pointing entirely.
+            return Held.LaunchVelocityTo(ThrowOrigin(), AimPoint(), ChargeRatio);
         }
 
         private void Release(float power)
         {
             if (Held == null) return;
 
-            Vector3 aim = AimPoint() - transform.position;
-            aim.y = 0.0f;
-            if (aim.sqrMagnitude < 0.01f) aim = transform.forward;
-
-            Vector3 dir = (aim.normalized + Vector3.up).normalized;
             Vector3 origin = ThrowOrigin();
 
             GameServices.Audio?.PlayAt("throw_release", origin);
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
-            Held.HostThrow(_motor, origin, Held.LaunchVelocity(dir, power));
+
+            // ⚠️ THE SAME SOLVE THE PREVIEW DREW. The dotted line and the flight are one line
+            // only while both come out of `LaunchVelocityTo`; two call sites building a
+            // direction by hand is exactly how they drift.
+            Held.HostThrow(_motor, origin, Held.LaunchVelocityTo(origin, AimPoint(), power));
 
             Held = null;
             _motor.HoldingSlipper = false;

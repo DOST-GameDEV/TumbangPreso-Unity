@@ -81,6 +81,14 @@ namespace TumbangPreso.PlayTests
                 var rig0 = Object.FindFirstObjectByType<TumbangPreso.CameraSystem.CameraRig>();
                 if (rig0 != null) rig0.Follow(thrower);
 
+                // ⚠️ THE BOT HAS TO LET GO OF THE BUTTONS FIRST. `AIController.Act` rewrites
+                // this seat's whole intent every frame, including a release sweep over any verb
+                // its plan did not touch, so a charge poked in from outside is cancelled before
+                // the physics step reads it. The first version of this shot photographed a
+                // wind-up that was never running.
+                var brain = thrower.GetComponent<AIController>();
+                if (brain != null) brain.enabled = false;
+
                 var lata = round.Lata;
                 if (lata != null) thrower.Intent.AimPoint = lata.transform.position;
 

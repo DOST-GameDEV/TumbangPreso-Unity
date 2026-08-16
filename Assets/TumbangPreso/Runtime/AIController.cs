@@ -502,9 +502,10 @@ namespace TumbangPreso
             float distance = flat.magnitude;
             if (distance < 0.01f) return false;
 
-            // The same 45-degree launch the throw itself uses, which is what makes this a
-            // prediction rather than a second opinion.
-            Vector3 launch = (flat.normalized + Vector3.up).normalized * speed;
+            // ⚠️ THE SAME SOLVE THE THROW ITSELF USES, which is what makes this a prediction
+            // rather than a second opinion. It was a fixed 45-degree lob here too, so the bot
+            // was walking an arc the game does not fly and answering about the wrong lane.
+            Vector3 launch = Slipper.SolveArc(origin, target, speed) * speed;
 
             float step = Mathf.Clamp(AiTuning.LaneSampleArc / Mathf.Max(speed, 1.0f),
                                      AiTuning.LaneStepMin, AiTuning.LaneStepMax);
