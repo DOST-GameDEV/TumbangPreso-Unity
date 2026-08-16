@@ -22,12 +22,34 @@ namespace TumbangPreso.PlayTests
     /// ⚠️ AND IT IS A TEST RATHER THAN AN -executeMethod TOOL because entering play mode is what
     /// makes the behaviours run at all. The assertions are deliberately thin: the value is the
     /// images plus the fact that nothing threw on the way to them.
+    ///
+    /// ⚠️⚠️ DO NOT MEASURE A UI **COLOUR** OFF THESE PNGs. Every canvas in the game is
+    /// `ScreenSpaceOverlay`, which a real frame composites AFTER post, so the HUD a player sees
+    /// is ungraded. `Camera.Render` cannot see an overlay canvas at all, so this harness flips
+    /// every canvas to `ScreenSpaceCamera` to photograph it — and that puts the UI THROUGH
+    /// `ColourGrade` (contrast 1.03 on Eskinita, 1.07 on Bayan Plaza, saturation 1.18 on both).
+    /// Amber `ffba00` does not come back as `ffba00` in these files, and an exact-match search
+    /// for it finds nothing: that is a property of the capture, not of the build.
+    ///
+    /// GEOMETRY is unaffected and is what these files are for. For an exact, grade-proof reading
+    /// of where each HUD element actually landed, use `HudLayoutProbe`, which dumps rects in the
+    /// .tscn's own 1920x1080 space instead of photographing them.
     /// </summary>
     public class UiRuntimeShots
     {
         private const string OutDir = "Logs/shots-runtime";
-        private const int Width = 1600;
-        private const int Height = 900;
+
+        /// <summary>
+        /// ⚠️ 1920x1080, THE SAME FRAME THE GODOT REFERENCE SHOTS WERE TAKEN AT, AND THAT IS THE
+        /// ONLY REASON TO PIN IT. `Logs/shots-godot/*.png` are 1920x1080 captures of the running
+        /// Godot build, every HUD number in this port is transcribed from a .tscn authored in
+        /// 1920x1080 space, and both canvases match on HEIGHT. Capturing at 1600x900 meant every
+        /// comparison against the reference had to be rescaled by hand before it could be
+        /// measured, which is how "it looks about right" kept standing in for a measurement. At
+        /// the reference size a pixel here is a pixel there and a wrong font size is countable.
+        /// </summary>
+        private const int Width = 1920;
+        private const int Height = 1080;
 
         [UnityTest]
         public IEnumerator EveryScreenBootsAndDraws()
@@ -48,6 +70,59 @@ namespace TumbangPreso.PlayTests
             yield return Arena("Eskinita");
             yield return EmoteWheelShot();
             yield return Arena("BayanPlaza");
+
+            // ⚠️ LAST, BECAUSE IT LEAVES A 5 SECOND STUN RUNNING. The frost recedes with the
+            // stun rather than being switched off, so a shot taken after this one would carry
+            // whatever ice was left.
+            yield return StunFrostShot();
+        }
+
+        /// <summary>
+        /// § THE STUN FROST, photographed.
+        ///
+        /// ⚠️⚠️ IT SHIPPED WITHOUT ANYBODY EVER LOOKING AT IT. Both halves were ported, three
+        /// tests were written for them, and every value in the shader was transcribed from the
+        /// .gdshader — and not one frame of it had been rendered when it was handed over. The
+        /// tests can say the coverage is 1.0 and the uniform is bound; they cannot say the ice
+        /// reads as ice, that the band is even on all four edges, or that the centre is still
+        /// clear enough to watch the round through. That is what this picture is for, and there
+        /// is a Godot frame of the same effect to hold it against.
+        /// </summary>
+        private static IEnumerator StunFrostShot()
+        {
+            var hud = Object.FindFirstObjectByType<UI.Hud>();
+
+            if (hud == null)
+            {
+                Debug.LogWarning("[Shot] no HUD in the arena to frost.");
+                yield break;
+            }
+
+            CharacterMotor victim = null;
+
+            foreach (var m in Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None))
+            {
+                if (!m.IsPerson || m.IsDefender) continue;
+                victim = m;
+                break;
+            }
+
+            if (victim == null)
+            {
+                Debug.LogWarning("[Shot] no attacker seat to stun.");
+                yield break;
+            }
+
+            // Drive the HUD from the seat this shot stuns, rather than guessing which one the
+            // installer handed the keyboard to: the screen half is the VICTIM's screen only.
+            hud.Bind(victim);
+            victim.ApplyStagger(Core.Balance.TagStunTime);
+
+            // Past the ramp — `Hud.FrostRampIn` is 0.14 s and the body's is its own — and taken
+            // on TIME rather than on a frame count, because both are rates per second.
+            yield return new WaitForSecondsRealtime(0.6f);
+
+            yield return CaptureScreen("StunFrost");
         }
 
         /// <summary>
@@ -68,7 +143,7 @@ namespace TumbangPreso.PlayTests
             // land on the ground before they are worth photographing.
             for (int i = 0; i < 12; i++) yield return null;
 
-            CaptureScreen(map);
+            yield return CaptureScreen(map);
         }
 
         /// <summary>
@@ -109,13 +184,13 @@ namespace TumbangPreso.PlayTests
         /// The match camera is the first-person rig on the local seat, and moving it to frame a
         /// nicer shot would photograph a view the player never has.
         /// </summary>
-        private static void CaptureScreen(string name)
+        private static IEnumerator CaptureScreen(string name)
         {
             var cam = UnityEngine.Camera.main;
             if (cam == null)
             {
                 Debug.LogWarning($"[Shot] {name} has no main camera.");
-                return;
+                yield break;
             }
 
             // ⚠️ THE TARGET GOES ON FIRST. See the note in Capture: a ScreenSpaceCamera canvas
@@ -139,6 +214,24 @@ namespace TumbangPreso.PlayTests
                 // behind the street.
                 c.planeDistance = cam.nearClipPlane + 0.01f;
             }
+
+            // ⚠️⚠️ TWO REAL FRAMES BEFORE RENDERING, AND WITHOUT THEM EVERY ARENA SHOT WAS
+            // HORIZONTALLY STRETCHED. `CanvasScaler` recomputes in its own Update from the
+            // canvas's rendering display size, which only becomes the render target once the
+            // target has been assigned AND a frame has run. Rendering in the same frame as the
+            // assignment lays the HUD out at the BATCH RUNNER's aspect — measured at 1440x1080
+            // in reference units, a 4:3 window — and then draws that into a 1920x1080 texture,
+            // which is a 1.33x horizontal stretch on the picture and on nothing else.
+            //
+            // ⚠️ THIS IS THE SECOND TIME THIS EXACT FAULT HAS SHIPPED IN THIS FILE. `Capture`
+            // below already carries the fix and its own note about it, and the ledger records
+            // that the stretch was read off the captures TWICE as a bug in `ModelPreview`. The
+            // arena path was written separately and never got it — and the arena is the shot the
+            // port is actually judged on. Measured again 2026-08-16 by comparing the capture's
+            // scoreboard, 456 px wide, against `HudLayoutProbe`'s reading of the same panel at
+            // 440: exactly 1440/1920.
+            yield return null;
+            yield return null;
 
             Canvas.ForceUpdateCanvases();
             cam.Render();
@@ -169,7 +262,18 @@ namespace TumbangPreso.PlayTests
             // runs for 0.45 s with a per-button stagger on top, and a capture three frames after
             // load photographs the buttons mid-animation at a fraction of their width. That
             // looks exactly like a layout bug and sent one pass chasing anchors that were right.
-            for (int i = 0; i < 90; i++) yield return null;
+            //
+            // ⚠️⚠️ AND WAITING 90 FRAMES FOR IT WAS THE SAME MISTAKE IN A THINNER DISGUISE, WHICH
+            // THIS LEDGER HAS ALREADY RECORDED ONCE: *"a test can fail for being right. The
+            // smoothing test waited ninety FRAMES for a rate expressed per SECOND, and the batch
+            // runner renders at over 500 fps."* An empty menu scene runs far faster than that, so
+            // 90 frames is a fraction of a second and every menu capture was taken mid-unfurl —
+            // which is why the main menu's QUIT pennant photographed half-transparent and
+            // oversized, and why the buttons measured taller than `MainMenu.tscn` authors them.
+            // WAIT ON TIME. Realtime, so a probe that has left `Time.timeScale` alone and one
+            // that has not both get the same wait.
+            yield return new WaitForSecondsRealtime(1.6f);
+            yield return null;
 
             yield return Capture(scene);
         }

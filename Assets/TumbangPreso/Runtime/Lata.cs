@@ -116,8 +116,24 @@ namespace TumbangPreso
             SetUpright(false);
             _toppleTimer = Balance.ToppleTime;
 
-            if (throwerSlot >= 0)
-                GameServices.Match.AddScore(throwerSlot, ScoreEvent.LataKnocked);
+            // ⚠️⚠️ THE TAYA IS NOT PAID FOR KNOCKING THEIR OWN CAN OVER, AND THIS PORT WAS
+            // PAYING THEM 100 FOR IT. `round_manager.gd::host_note_lata_knocked` is
+            //
+            //     if by_slot >= 0 and by_slot != MatchManager.defender_slot:
+            //
+            // and only the `>= 0` half made it across. The defender's own slipper, their body
+            // clipping the can, or anything else that credits their slot would have scored the
+            // attackers' event for them — and since the can spends most of a round on its side,
+            // the taya standing it up and knocking it down is a loop worth 100 a go.
+            //
+            // ⚠️ AND THE ROUND HAS TO BE LIVE. The .gd returns before scoring when it is not.
+            // The topple above still happens either way: that is physics, and a can knocked
+            // over between rounds is still knocked over.
+            if (throwerSlot < 0) return;
+            if (GameServices.Round == null || !GameServices.Round.RoundActive) return;
+            if (GameServices.Match != null && throwerSlot == GameServices.Match.DefenderSlot) return;
+
+            GameServices.Match.AddScore(throwerSlot, ScoreEvent.LataKnocked);
         }
 
         /// <summary>

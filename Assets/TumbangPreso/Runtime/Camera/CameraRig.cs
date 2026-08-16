@@ -146,6 +146,10 @@ namespace TumbangPreso.CameraSystem
         public bool IsFollowing(CharacterMotor who) => _character == who && _active;
         public UnityEngine.Camera Camera => _camera;
 
+        /// <summary>The seat this rig is looking through, or null. Read-only: `Bind` is the one
+        /// writer, and the mode is derived from the subject rather than set beside it.</summary>
+        public CharacterMotor Following => _character;
+
         // -------------------------------------------------------------------
 
         private void Awake()

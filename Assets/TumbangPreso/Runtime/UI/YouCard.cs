@@ -39,7 +39,12 @@ namespace TumbangPreso.UI
 
         private CharacterMotor _character;
         private Carrier _carrier;
+        private CombatVerbs _verbs;
         private float _refreshLeft;
+
+        /// <summary>True while the taya is winding a lunge. Named after the row's own history;
+        /// see <see cref="UpdateLungeMeter"/>.</summary>
+        private bool _bumpCharging;
 
         private Image _card;
         private Text _class;
@@ -145,16 +150,44 @@ namespace TumbangPreso.UI
             if (_isDefenderPerson) _resetKey.text = "RIGHTING LATA [E]";
 
             _carrier = _character.GetComponent<Carrier>();
-
-            // ⚠️ ONLY THE ROW THAT APPLIES TO THIS ROLE IS SHOWN. An attacker has no righting
-            // channel and a taya has no throw charge; drawing an empty meter for the verb you do
-            // not have is the "too much stuff happening" the box was cut down for.
-            _chargeRow.SetActive(_isAttackerPerson);
-            _resetRow.SetActive(_isDefenderPerson);
+            _verbs = _character.GetComponent<CombatVerbs>();
 
             // ⚠️ EVERY UNIT, ALWAYS. The row used to be a Guard/Dash meter that only a Prop had;
             // it is STAMINA now and stamina is universal.
             _staminaRow.SetActive(true);
+
+            RefreshRowVisibility();
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE ROLE GATE IS ONLY HALF OF IT, AND SHIPPING JUST THE ROLE GATE PUT A SECOND,
+        /// PERMANENTLY EMPTY BAR IN THE CORNER OF THE SCREEN FOR THE WHOLE MATCH. This read
+        /// `_chargeRow.SetActive(_isAttackerPerson)`, so every attacker carried an empty `[LMB]`
+        /// meter from spawn to final whistle and every taya carried an empty righting bar.
+        /// Measured against `Logs/shots-godot/g04-ready.png`, whose YOU card has exactly ONE bar.
+        /// `you_card.gd::_update_row_visibility` is two conditions:
+        ///
+        ///     charge_row.visible = (_is_attacker_person and _charging) or _bump_charging
+        ///     reset_channel_row.visible = _is_defender_person and _channeling
+        ///
+        /// ⚠️ AND THE CHARGE ROW IS SHARED WITH THE TAYA'S LUNGE METER, which this port did not
+        /// have at all. Sharing is safe precisely because the two belong to DIFFERENT ROLES, so
+        /// no unit can ever be charging both — it used to be shared by the throw and the shove,
+        /// which were the same role and genuinely could collide. The taya's card showed a
+        /// righting channel and nothing else; the verb that scores their points now has a
+        /// readout, which is the whole of the .gd's own argument for the row.
+        ///
+        /// ⚠️ POLLED FOR THE LUNGE, SIGNALLED FOR THE THROW, exactly as the .gd splits it: the
+        /// throw lives on `Carrier`, the lunge lives on the combat step, and a poll is
+        /// self-healing across the role swap that re-resolves the local unit every round.
+        /// </summary>
+        private void RefreshRowVisibility()
+        {
+            bool charging = _isAttackerPerson && _carrier != null && _carrier.IsCharging;
+            bool channeling = _isDefenderPerson && _carrier != null && _carrier.ChannelRatio > 0.0f;
+
+            _chargeRow.SetActive(charging || _bumpCharging);
+            _resetRow.SetActive(channeling);
         }
 
         private void UpdateMeters()
@@ -162,9 +195,13 @@ namespace TumbangPreso.UI
             if (_character == null) return;
 
             UpdateStamina();
+            UpdateLungeMeter();
 
-            if (_isAttackerPerson && _chargeFill != null)
+            if (_isAttackerPerson && _chargeFill != null && !_bumpCharging)
+            {
+                _chargeKey.text = "[LMB]";
                 SetFill(_chargeFill, _carrier != null ? _carrier.ChargeRatio : 0.0f);
+            }
 
             if (_isDefenderPerson && _resetFill != null)
             {
@@ -173,6 +210,39 @@ namespace TumbangPreso.UI
                 // no unit is attacker and taya at once.
                 SetFill(_resetFill, _carrier != null ? _carrier.ChannelRatio : 0.0f);
             }
+
+            // The rows appear and disappear with the verb, so this has to be asked every frame
+            // rather than once per `RefreshInterval` — a meter that shows up a sixth of a second
+            // after the key goes down misses most of a 0.5 s lunge wind-up entirely.
+            RefreshRowVisibility();
+        }
+
+        /// <summary>
+        /// § THE TAYA'S LUNGE METER, on the same bar as the attacker's throw charge.
+        ///
+        /// ⚠️ THIS ROW WAS THE BUMP METER, THEN THE SHOVE METER, AND SINCE 2026-08-01 IT IS THE
+        /// LUNGE. Worth stating because the row keeps outliving the mechanic it was built for:
+        /// bump died with the 2v2 pivot, the shove inherited it, and the shove then became a
+        /// single tap with no charge at all, which leaves nothing to draw. The lunge took its
+        /// place because it is the only charged commitment left in the game — hold, 0.5 s to
+        /// full power, release to dash and tag — and it belongs to the one role that had no
+        /// meter at all.
+        /// </summary>
+        private void UpdateLungeMeter()
+        {
+            if (!_isDefenderPerson || _verbs == null)
+            {
+                _bumpCharging = false;
+                return;
+            }
+
+            float ratio = _verbs.ObservedLungeCharge;
+            _bumpCharging = ratio >= 0.0f;
+
+            if (!_bumpCharging) return;
+
+            _chargeKey.text = "LUNGE [RMB]";
+            SetFill(_chargeFill, ratio);
         }
 
         /// <summary>
@@ -273,15 +343,41 @@ namespace TumbangPreso.UI
             var fitter = cardGo.AddComponent<ContentSizeFitter>();
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-            var identity = Row(cardGo.transform, "IdentityRow", 34.0f);
+            // ⚠️⚠️ 132 IS A FLOOR, NOT A CEILING, AND WITHOUT IT THE CARD CAME OUT 96. Measured
+            // off `Logs/shots-godot/g04-ready.png` at 1920x1080: the Godot card's role-coloured
+            // border runs y882 to y1015, which is the .tscn's own `-196 .. -64` to the pixel.
+            // The port had the fitter alone, so an ATTACKER — who shows two rows of the four —
+            // got a card sized to those two rows and it sat 36 px lower than the original with
+            // its bar crowding the bottom edge. The .tscn authors a FIXED 132 and grows UP from
+            // the pinned bottom edge; a floor plus the fitter is the same behaviour, and it
+            // keeps the growth the fitter was added for.
+            cardGo.AddComponent<LayoutElement>().minHeight = CardSize.y;
 
-            _class = Label(identity.transform, "ClassLabel", 24, UiTheme.Cream,
+            // ⚠️ 44, BECAUSE THE ROW HOLDS 32/34pt TEXT. `Row`'s height is the box, not the
+            // glyphs; 34 here clipped the taller of the two labels against the row above it.
+            var identity = Row(cardGo.transform, "IdentityRow", 44.0f, separation: 10.0f);
+
+            // ⚠️⚠️ 32 AND 34, THE `HudCaption` AND `HudBody` VARIATIONS `YouCard.tscn` ASSIGNS
+            // THESE TWO NODES, AND THE 24 HERE WAS INVENTED. Same fault the lata card had and
+            // for the same reason: `ui_theme.gd`'s HUD_SIZES dict is the seam that lets the HUD
+            // grow without dragging the menus with it, and reading a plausible number instead of
+            // that dict is how the whole card ended up reading a size small beside the Godot
+            // build. Its own note is worth reading before anyone trims them again — 16/13 to
+            // 22/19 to 30/28, with a screenshot answered *"text still small"* each time.
+            _class = Label(identity.transform, "ClassLabel", 32, UiTheme.Cream,
                            TextAnchor.MiddleLeft);
             _class.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1.0f;
 
-            _detail = Label(identity.transform, "DetailLabel", 24, UiTheme.Offense,
+            _detail = Label(identity.transform, "DetailLabel", 34, UiTheme.Offense,
                             TextAnchor.MiddleRight);
             _detail.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1.0f;
+
+            // `GuardDashSpacer`, 6 px, straight out of the .tscn. It separates the identity line
+            // from the meters by more than the column's own spacing, so the card reads as a name
+            // over a set of gauges rather than as three evenly-spaced rows.
+            var spacer = new GameObject("GuardDashSpacer", typeof(RectTransform));
+            spacer.transform.SetParent(cardGo.transform, false);
+            spacer.AddComponent<LayoutElement>().preferredHeight = 6.0f;
 
             (_staminaRow, _staminaKey, _staminaFill) =
                 BuildMeter(cardGo.transform, "GuardDashRow", UiTheme.Highlight);
@@ -295,7 +391,12 @@ namespace TumbangPreso.UI
             _staminaKey.gameObject.SetActive(false);
         }
 
-        private static GameObject Row(Transform parent, string name, float height)
+        /// <summary>
+        /// One row of the card. `separation` is the .tscn's own
+        /// `theme_override_constants/separation`: 10 on `IdentityRow`, 8 on all three meters.
+        /// </summary>
+        private static GameObject Row(Transform parent, string name, float height,
+                                      float separation = 8.0f)
         {
             var go = new GameObject(name, typeof(RectTransform));
             go.transform.SetParent(parent, false);
@@ -306,7 +407,7 @@ namespace TumbangPreso.UI
             row.childForceExpandHeight = false;
             row.childForceExpandWidth = false;
             row.childAlignment = TextAnchor.MiddleLeft;
-            row.spacing = 8.0f;
+            row.spacing = separation;
 
             go.AddComponent<LayoutElement>().preferredHeight = height;
             return go;
@@ -331,9 +432,14 @@ namespace TumbangPreso.UI
             track.color = UiTheme.WoodDark;
             track.raycastTarget = false;
 
+            // ⚠️ (160, 26), THE .tscn's `custom_minimum_size` ON ALL THREE BARS. The 18 here was
+            // invented and it is most of why the port's meters read as pinstripes beside the
+            // Godot build's. A MINIMUM width rather than a fixed one, so the bar still takes the
+            // rest of the row once the key label has had its 110.
             var element = trackGo.AddComponent<LayoutElement>();
             element.flexibleWidth = 1.0f;
-            element.preferredHeight = 18.0f;
+            element.minWidth = 160.0f;
+            element.preferredHeight = 26.0f;
 
             var fillGo = new GameObject("Fill", typeof(RectTransform), typeof(Image));
             fillGo.transform.SetParent(trackGo.transform, false);

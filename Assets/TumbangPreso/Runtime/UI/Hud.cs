@@ -1140,6 +1140,35 @@ namespace TumbangPreso.UI
                               TextAnchor.MiddleCenter);
             _timer.text = "01:30";
 
+            // ⚠️⚠️ AN EXPLICIT HEIGHT, BECAUSE UGUI MEASURED THIS LABEL AT **ZERO** AND THE CARD
+            // COLLAPSED ONTO IT. Found by `HudLayoutProbe`, not by looking: `TimerLabel` laid out
+            // 196 wide and 0 tall, so the card came out 240 x 32 — the two 16 px margins and
+            // nothing between them — against Godot's 240 x 97. The clock, the single most-read
+            // element on the screen, was drawing as a thin pill with its digits jammed under the
+            // top border. Every neighbouring label already carries a `LayoutElement` for this
+            // reason (`ScoreTitle` 30, `RoundLabel` 34); this one did not and inherited whatever
+            // the text generator felt like reporting.
+            //
+            // ⚠️ 64 IS MEASURED, NOT CHOSEN. `Logs/shots-godot/g04-ready.png` at 1920x1080: the
+            // card's wood edge runs y28 to y124, and `hud.gd::_hud_wood_style` sets a 16 px top
+            // and bottom content margin, which leaves 64 for the label. That reproduces the
+            // Godot card to within a pixel and, unlike a font-metric guess, cannot drift when the
+            // font asset is replaced.
+            //
+            // ⚠️⚠️ `minHeight` AS WELL AS `preferredHeight`, AND `preferredHeight` ALONE DID
+            // NOTHING — THE FIRST ATTEMPT AT THIS FIX CHANGED THE CARD BY ZERO PIXELS. `TopCentre`
+            // is a `VerticalLayoutGroup` whose own rect is 240 x **0**: it is anchored to the top
+            // edge with a top pivot and nothing sizes it, which is correct and is how it lays its
+            // children downward from y28. But a layout group with less space than its children's
+            // total MINIMUM hands every child its `minHeight` and never reaches `preferredHeight`
+            // — and a zero-tall rect is always less. `RoundLabel` below survived this by using
+            // `minHeight`, which is why it alone came out at its authored size while the clock
+            // collapsed. Setting both is what makes the number mean the same thing whether the
+            // column is measured or not.
+            var timerBox = _timer.gameObject.AddComponent<LayoutElement>();
+            timerBox.minHeight = 64.0f;
+            timerBox.preferredHeight = 64.0f;
+
             // ⚠️ WAS `CREAM_MUTED`. This line carries the round number and who is playing taya —
             // the two facts that change everything about how the next 90 s goes — and it was
             // styled as a caption under the clock.
@@ -1202,6 +1231,21 @@ namespace TumbangPreso.UI
                                               -StatusMargin.y);
             rt.sizeDelta = new Vector2(StatusBarSize.x, 0.0f);
 
+            // ⚠️⚠️ WITHOUT THIS THE ROWS DREW ON TOP OF EACH OTHER, AND IT IS THE SAME ZERO-HEIGHT
+            // TRAP THE CLOCK CARD FELL INTO. This rect is anchored to a corner with a top pivot
+            // and a `sizeDelta.y` of 0, which is right for growing downward — but a layout group
+            // with less room than its children's total MINIMUM gives every child its `minHeight`
+            // and never reaches `preferredHeight`, and zero room is always less. Every status row
+            // therefore laid out 0 px tall at the same y: photographed in
+            // `Logs/shots-runtime/StunFrost.png` as "THROW CD" and "SHOVE CD 1.0s" superimposed
+            // in the top-right corner, one legible line made of two.
+            //
+            // The fitter makes the stack as tall as its rows, which is what a Godot `VBoxContainer`
+            // does by default and what the .tscn assumes. The rows also carry their own minimums
+            // now, so neither mechanism is load-bearing alone.
+            var fitter = go.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
             return rt;
         }
 
@@ -1219,7 +1263,12 @@ namespace TumbangPreso.UI
 
             var label = HudLabel(rowGo.transform, "Label", StatusFontSize, UiTheme.Cream,
                                  rightSide ? TextAnchor.MiddleRight : TextAnchor.MiddleLeft);
-            label.gameObject.AddComponent<LayoutElement>().preferredHeight = 26.0f;
+
+            // ⚠️ MIN AND PREFERRED, for the reason `BuildStack` records: a group with no room
+            // hands out minimums, and a `preferredHeight` on its own is then simply ignored.
+            var labelBox = label.gameObject.AddComponent<LayoutElement>();
+            labelBox.minHeight = 26.0f;
+            labelBox.preferredHeight = 26.0f;
 
             var backGo = new GameObject("Bar");
             backGo.transform.SetParent(rowGo.transform, false);
@@ -1230,7 +1279,9 @@ namespace TumbangPreso.UI
             back.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.55f);
             back.raycastTarget = false;
 
-            backGo.AddComponent<LayoutElement>().preferredHeight = StatusBarSize.y;
+            var barBox = backGo.AddComponent<LayoutElement>();
+            barBox.minHeight = StatusBarSize.y;
+            barBox.preferredHeight = StatusBarSize.y;
 
             var fillGo = new GameObject("Fill");
             fillGo.transform.SetParent(backGo.transform, false);

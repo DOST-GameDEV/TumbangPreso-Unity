@@ -54,6 +54,21 @@ namespace TumbangPreso.PlayTests
 
             Assert.IsNotNull(mover, "no Person in the arena to jump");
 
+            // ⚠️⚠️ THE SEAT'S OWN PRODUCER HAS TO BE STOPPED FIRST, AND THIS TEST FAILED FOR THE
+            // WHOLE OF ITS FIRST LIFE WITHOUT IT — reporting "the capsule never left the ground"
+            // against a jump that works perfectly in the player. `PlayerInputReader.Update` and
+            // `AIController.Update` both write the ENTIRE intent table every frame, so the
+            // `Set(Jump, true)` below was overwritten with `Jump = _jump.IsPressed()` — false, in
+            // a batch runner with no keyboard — before the next physics step could read it. The
+            // table is designed for exactly one writer; a test that writes it is that writer.
+            //
+            // ⚠️ AND THAT IS NOT A WEAKER TEST. What is being asserted is that a press edge
+            // written in Update survives into FixedUpdate, which is a question about
+            // `Intent.CommitFrame`'s owner and nothing else. Hardware is read in exactly one
+            // place and everything downstream asks `InputIntent`, so the intent IS what a human
+            // press reduces to.
+            Silence(mover);
+
             // Let it settle so the test is not measuring a spawn drop.
             for (int i = 0; i < 30; i++) yield return new WaitForFixedUpdate();
 
@@ -221,6 +236,25 @@ namespace TumbangPreso.PlayTests
                 checkedProps += AssertOutlined(lata.gameObject, "lata");
 
             Assert.Greater(checkedProps, 0, "no hero prop renderers were found to check");
+        }
+
+        /// <summary>
+        /// Stop whatever normally drives this seat, so the test owns its intent table.
+        ///
+        /// ⚠️ BOTH PRODUCERS, because which one a given seat has is decided by the installer and
+        /// is not this test's business: the human seat carries `PlayerInputReader`, every other
+        /// carries `AIController`, and both write the whole table every Update.
+        /// </summary>
+        private static void Silence(CharacterMotor motor)
+        {
+            var reader = motor.GetComponent<PlayerInputReader>();
+            if (reader != null) reader.enabled = false;
+
+            var ai = motor.GetComponent<AIController>();
+            if (ai != null) ai.enabled = false;
+
+            motor.Intent.Clear();
+            motor.Intent.CommitFrame();
         }
 
         private static int AssertOutlined(GameObject root, string what)

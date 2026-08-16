@@ -33,6 +33,29 @@ namespace TumbangPreso
         public float LungeCooldownLeft => _lungeCooldown;
         public float LungeChargeRatio => Mathf.Clamp01(_lungeCharge / Balance.LungeChargeTime);
 
+        /// <summary>
+        /// The wind-up as a ratio, or <b>-1 when nobody is winding up at all</b>. Mirrors
+        /// `character_base.gd::observed_lunge_charge()`, whose `_observed_lunge_charge` rests at
+        /// -1 for exactly this reason.
+        ///
+        /// ⚠️⚠️ THE -1 IS THE WHOLE POINT AND ITS ABSENCE WAS TWO LIVE BUGS. <see
+        /// cref="LungeChargeRatio"/> is a `Clamp01`, so it is never negative and `>= 0.0f` is a
+        /// tautology against it. Both call sites that wanted "is a lunge being wound up right
+        /// now" asked it that way and both were therefore always-true:
+        ///
+        ///  * `AIController` reacted to a taya "winding up" on every frame of every round, so
+        ///    the dodge that is supposed to be a read on a tell fired against no tell.
+        ///  * `YouCard` drew the taya's LUNGE meter, and the attacker's throw meter, for the
+        ///    whole match instead of only while the key is held — a permanently empty second
+        ///    bar in the corner the player looks at most. `you_card.gd::_update_row_visibility`
+        ///    gates both rows on activity and this is the value it gates on.
+        ///
+        /// A ratio and a state deliberately travel in one number here rather than two, because
+        /// that is what the .gd replicates and two fields can disagree across a peer boundary.
+        /// </summary>
+        public float ObservedLungeCharge =>
+            _lungeCharging ? Mathf.Clamp01(_lungeCharge / Balance.LungeChargeTime) : -1.0f;
+
         /// <summary>The unit's animator, if it has a model bound yet.</summary>
         private Visual.CharacterAnimator Animator => _animator != null
             ? _animator

@@ -261,12 +261,325 @@ a correct thing is how a port acquires a bug.
 - **You cannot throw from inside the box.** `ThrowRules.CanThrow` ends in
   `!Confinement.IsInsideBox(...)`, in the engine-free core, covered by its tests.
 - **The tag stun is 5.0 s** (`TagStunTime` → `ApplyStagger`), `CanAct()` goes false and
-  the status stack reads STUNNED. There is no frost VFX in the Godot build either; that
-  is a new feature request, not a port gap.
+  the status stack reads STUNNED.
+
+  ⚠️⚠️ **THE SECOND HALF OF THIS ROW WAS WRONG AND IT COST A SESSION.** It read "there is
+  no frost VFX in the Godot build either; that is a new feature request, not a port gap."
+  There is. It is on `main` at commit `3eed6d3`, in both halves — `frost_vignette.gdshader`
+  on the HUD and a `FROST_AMOUNT` term in `toon.gdshader` on the body. The claim came from
+  searching a LOCAL MIRROR that was a month stale and sat on `online/dedicated-lobbies`.
+  **`git fetch` before writing "does not exist in Godot" about anything**, or read `main`
+  directly with `gh api repos/DOST-GameDEV/DOST-GameDev/contents/<path>?ref=main`, which is
+  what a full fetch of that 260 MB repo is not worth.
 - **The chalk is all there** — piko, tao, bulaklak, gulo and the two repeats.
 - **`Main.tscn`'s kill plane row below is STALE.** The plane is not in `Main.tscn` at
   all: both arenas author it at y = -10 with a 260x4x260 box, and the importer binds
   `KillPlane` to it.
+
+## 2026-08-16 — the stun frost, and the four checks that had never been run
+
+The frost landed the session before this one and its three PlayMode tests were written,
+committed and **never executed**, because the command they were handed carried
+`-nographics`. Running them found one shipped defect and three faults in the tests
+themselves. All four are written down because the shape is the one this ledger keeps
+recording: something was built, nothing exercised it, and every other check said fine.
+
+1. **⚠️⚠️ `-nographics` CRASHES THE EDITOR ON PLAYMODE AND EXITS 0.** It selects
+   `NullGfxDevice`, and the first offscreen camera to render dies inside it
+   (`RenderOffscreenCameras → RenderShadowMaps → ShadowMapJob →
+   GfxDevice::DrawSharedGeometryJobs`). This project has three such cameras. The run
+   died 360 log lines in, wrote no `.xml`, and returned success. **Assert on the result
+   file, never on the exit code** — a crash and a failure both come back as 0.
+
+2. **⚠️⚠️ `FrostVignette.shader` HAD NO `_MainTex`, AND A UI MATERIAL MUST HAVE ONE.**
+   *"Material 'TumbangPreso/FrostVignette' … doesn't have a texture property '_MainTex'"*,
+   logged on every canvas rebuild for as long as the frost was drawing. UGUI hands a
+   Graphic's texture to the CanvasRenderer through that exact name and does not care that
+   the effect is procedural. The ice rendered correctly throughout, which is why only a
+   test that fails on unexpected error lines could see it. Declared and never sampled.
+
+3. **The screen-half test waited on the wrong thing.** `UpdateFrost` enables the Image the
+   moment coverage crosses 0.001 and then ramps for `FrostRampIn`; a loop that stopped at
+   `frost.enabled` stopped on the first frame of that ramp and then asserted the coverage
+   was above 0.5. It read 0.018. Wait on the value the assertion is about.
+
+4. **⚠️ A `CharacterController` OVERWRITES A DIRECT `transform.position` WRITE.** The
+   taggable-in-the-box test placed its victim by assignment and got "the harness failed to
+   put the victim in the box" — the capsule was back at its spawn before the rule was
+   asked. `CharacterMotor.Teleport` disables the controller around the write for exactly
+   this reason and is the only supported way to place a unit. `Confine` does the same dance.
+
+5. **⚠️⚠️ THE INTENT TABLE HAS EXACTLY ONE WRITER, AND A TEST THAT WRITES IT IS THAT
+   WRITER.** `AJumpPressReachesThePhysicsStep` reported "the capsule never left the ground"
+   against a jump that works in the player: `PlayerInputReader.Update` and
+   `AIController.Update` both rewrite the WHOLE table every frame, so `Set(Jump, true)` was
+   overwritten with `IsPressed()` — false, in a runner with no keyboard — before the next
+   physics step could read it. Both producers are disabled on the seat under test now.
+
+⚠️ **The lesson that generalises: a test written and not run is not a test.** Three of
+these four were faults in checks that had never executed once, and the fourth was a real
+defect that only running them could surface.
+
+### `max_reach` is 0.36 and the ambiguity is CLOSED
+
+Flagged in the last handoff as a guess. It is not one. `frost_vignette.gdshader` defaults
+the uniform to `0.15` with a comment saying it was tuned down from `0.36` because the frost
+"met in the middle and the arena read as fog" — but `HUD.tscn` sets
+`shader_parameter/max_reach = 0.36` on the material, read off `main` and quoted here, and a
+scene parameter overrides a uniform default. **0.36 is what the shipped Godot build
+renders; the tuning pass never took effect.** The port matches the running game.
+
+### The HUD's transcribed constants were re-checked against `main`, and they all hold
+
+Read off `hud.gd` and `ui_theme.gd` at `main` rather than from memory, because the last session
+proved a stale local mirror can be believed for a month: `TEXT_OUTLINE 8`, `CROSSHAIR_OUTLINE 5`,
+`STATUS_ROW_LIMIT 4`, `STATUS_BAR_SIZE (190, 8)`, `STATUS_FONT_SIZE 20`, `STATUS_MARGIN (38,
+150)`, `STATUS_UNDER_BOARD_GAP 18`, `DANGER_HOLD_ALPHA 0.16`, `FROST_RAMP_IN 0.14`,
+`FROST_RAMP_OUT 0.5`, `FROST_THAW_TIME 1.6`, `DOWNED_FLASH_TIME` and `_PEAK 0.45`,
+`TAYA_BADGE_FONT_SIZE 15`. **Zero mismatches against `Hud.cs`.**
+
+Font sizes likewise: `HudTimer` 44, `HudBanner` 40, `HudToast` 28, `HudBody` 34, `HudCaption` 32,
+`HudScore` 32, plus the two per-node overrides `hud.gd` applies on top — the round line down to
+**20**, so the port's 20 is right and is NOT `HudBody`'s 34, and the vulnerable line at 22. The
+.tscn's `ScoreTitle` 22, name cell 132, score cell 64, row separation 14, column separation 4 and
+`outline_size` 5 all match. The countdown's 40 is `HudBanner` and is correct parity; with the
+existing 1.8x pop its effective peak is 72 px, which is a look decision rather than a port gap.
+
+### The roof atlases: the mechanism is identical in both trees, verified end to end
+
+The last handoff left "house colours still do not match" open. Checked as a chain of identities
+rather than by comparing two shots that do not even frame the same street:
+
+- **The instance names**, read out of `Eskinita.unity`: `Bahay_*` 10, `Likod_*` 12, `Kanto_*` 9,
+  `MalayoX_*` 34, `MalayoZ_*` 34. Those are exactly the five prefixes `IsBuilding` accepts, and
+  they total **99** — which is what `[Env] repainted 418 of 494 renderers, 99 with a roof
+  variant` reports. Every building on the map gets a roof; none is missed.
+- **The hash**: a C# `int` wraps on `value * 31` where GDScript's 64-bit int does not, but
+  `& 0x7fffffff` keeps the low 31 bits either way and a two's-complement multiply's low bits are
+  unaffected by the overflow. Same answer, and the `long` in `Pick` covers the other half.
+- **The pick**: `(hash * 13 + 5) % 6` roof, `(hash * 7) % 6` facade, `(hash * 11 + 3) % 5` foliage.
+- **The atlases**: all six PNGs are byte-identical between the two repos (MD5).
+- **No warnings**: the pass logs a line per surface whose shader carries no colour property it
+  knows, and there are none.
+
+Same names, same hash, same formula, same order, same files: the assignment cannot differ. The
+earlier reading came off the stale 1600x900 capture taken BEFORE the roof atlases landed.
+
+### The YOU card had a second, permanently empty bar — and one missing meter
+
+Found by putting the fresh 1920x1080 arena capture beside `Logs/shots-godot/g04-ready.png`,
+whose YOU card has exactly ONE bar. The port's had two.
+
+`YouCard.Refresh` gated the meter rows on the ROLE alone — `_chargeRow.SetActive(_isAttackerPerson)`
+— so every attacker carried an empty `[LMB]` meter from spawn to final whistle and every taya
+carried an empty righting bar. `you_card.gd::_update_row_visibility` gates on role AND activity:
+
+```gdscript
+charge_row.visible = (_is_attacker_person and _charging) or _bump_charging
+reset_channel_row.visible = _is_defender_person and _channeling
+```
+
+⚠️ **And the second half of that first line did not exist in this port at all.** The charge row
+is SHARED: the attacker's throw charge and **the taya's lunge meter**. Sharing is safe precisely
+because the two belong to different roles, so no unit can ever be charging both. The taya's card
+showed a righting channel and nothing else, which left the verb that scores their points with no
+readout. It has one now.
+
+⚠️⚠️ **`LungeChargeRatio` IS A `Clamp01`, SO `>= 0.0f` AGAINST IT IS A TAUTOLOGY, AND TWO CALL
+SITES ASKED IT THAT WAY.** `character_base.gd` keeps `_observed_lunge_charge` at **-1** when
+nobody is winding up, and every reader compares against zero for that reason. The port had no
+such value, so:
+
+- **`AIController.ShouldEvade` believed a lunge was winding up on every frame of every round**,
+  reducing a reaction to a TELL down to a proximity rule and spending the dodge budget on nothing.
+- **`YouCard` had no way to ask "is a lunge happening"** and so could not draw the meter at all.
+
+`CombatVerbs.ObservedLungeCharge` is the missing value and both now read it. A ratio and a state
+travel in one number here, as they do in the .gd, because two fields can disagree across a peer
+boundary.
+
+### The runtime captures are 1920x1080 now
+
+`UiRuntimeShots` shot at 1600x900 while every Godot reference in `Logs/shots-godot` is
+1920x1080 and every HUD number in this port is transcribed from a .tscn authored in
+1920x1080 space. Every comparison therefore needed a rescale before it could be measured,
+which is how "it looks about right" kept standing in for a measurement. At the reference
+size a pixel here is a pixel there.
+
+⚠️⚠️ **AND THE ARENA SHOT WAS HORIZONTALLY STRETCHED 1.33x, WHICH IS THE SAME FAULT THIS FILE
+ALREADY FIXED ONCE.** `CanvasScaler` recomputes in its own Update from the canvas's rendering
+display size, so a capture rendered in the SAME frame the render target is assigned lays the HUD
+out at the batch runner's own aspect and then draws it into a 16:9 texture. `Capture` (the menu
+path) waits two frames for exactly this and carries a note about it; `CaptureScreen` (the arena
+path) was written separately and never got the fix — and the arena is the shot the port is
+actually judged on. Measured: the capture's scoreboard is 456 px wide where `HudLayoutProbe`
+reads the same panel at 440, and 456/440 is 1920/1440, the runner's 4:3 canvas.
+
+⚠️⚠️ **DO NOT MEASURE A UI COLOUR OFF THESE PNGs EITHER.** Every canvas in the game is
+`ScreenSpaceOverlay`, which a real frame composites AFTER post, so the HUD a player sees is
+ungraded. `Camera.Render` cannot see an overlay canvas at all, so the harness flips every canvas
+to `ScreenSpaceCamera` to photograph it, and that puts the UI THROUGH `ColourGrade` (contrast
+1.03 / 1.07, saturation 1.18). An exact-match search for amber `ffba00` in these files returns
+ZERO pixels. That is the capture, not the build.
+
+### `HudLayoutProbe` — HUD parity is measured now, not looked at
+
+Every previous "the HUD matches" ended in a screenshot comparison, which cannot see a padding
+that failed to apply or a label that measured itself at zero. `HudLayoutProbe` dumps every HUD
+element's laid-out rect to `Logs/hud-layout.txt` through the CANVAS rather than off screen
+pixels, so no colour grade can touch it and the answer does not depend on the resolution the
+runner opened at. `HUD.tscn` is numbers; this makes the port numbers too.
+
+It asserts almost nothing on purpose — only that the elements exist with non-degenerate rects. A
+rect that disagrees with the .tscn can be a container legitimately hugging its content, and a
+test that guessed which would fail for the wrong reason and be deleted.
+
+⚠️ **Widths and heights are comparable to the .tscn; a centre-anchored X is not**, unless the
+canvas width it prints is 1920. Every canvas matches on HEIGHT, so a 4:3 runner gives a
+1440-wide canvas and centre-anchored elements land 240 px left of where a 16:9 one puts them.
+
+**Two faults it found on its first run, both invisible to every check that came before:**
+
+1. **⚠️⚠️ `TimerLabel` LAID OUT 196 WIDE AND *ZERO* TALL, SO THE CLOCK CARD COLLAPSED.** 240 x 32
+   — the two 16 px margins with nothing between them — against Godot's 240 x 97. The single
+   most-read element on the screen was a thin pill with its digits jammed under the top border,
+   and the horizontal half of the padding applied perfectly, which is why it read as a font
+   problem in the captures. Every neighbouring label already carries a `LayoutElement` for this
+   (`ScoreTitle` 30, `RoundLabel` 34); this one inherited whatever the text generator reported.
+   Fixed at **64**, measured off `g04-ready.png`: the Godot card's wood edge runs y28 to y124 and
+   `_hud_wood_style` sets 16 px top and bottom margins.
+
+2. **The YOU card was 96 tall and should be 132.** `YouCard.tscn` authors a fixed
+   `16, -196 to 396, -64` and grows UP from the pinned bottom edge; the port had a
+   `ContentSizeFitter` alone, so an ATTACKER — who shows two of the four rows — got a card sized
+   to those two rows, sitting 36 px lower with its bar crowding the bottom edge. Confirmed
+   against the reference by scanning the capture's own pixel column: the Godot card's
+   role-coloured border runs y882 to y1015, which is the .tscn to the pixel. A `minHeight` floor
+   plus the fitter is the .tscn's behaviour and keeps the growth the fitter was added for.
+
+**And three more YOU card numbers were invented rather than read**, all from `YouCard.tscn`:
+`ClassLabel` is `HudCaption` **32** and `DetailLabel` is `HudBody` **34** (both were 24), the
+three meters are `custom_minimum_size` **(160, 26)** (the bar height was 18), and `IdentityRow`
+has `separation` **10** (it was 8). The 6 px `GuardDashSpacer` between the name line and the
+meters was missing entirely.
+
+## 2026-08-16 — the line-by-line pass against `main`, and what it found
+
+Asked for directly: *"compare thoroughly the logic of everything in godot as well to what is
+in unity to make sure its working and well and is almost a one to one copy"*. Read off `main`
+through `gh api`, never off the local mirror. Four live faults, and each is a line of GDScript
+that did not make it rather than a system that was missing.
+
+1. **⚠️⚠️ NEITHER AUTOLOAD RESET BETWEEN MATCHES, WHICH THE .gd FIXED AS B-14 AND THE PORT DID
+   NOT CARRY ACROSS.** `match_manager.gd::reset()` and `round_manager.gd::reset()` both exist
+   upstream, both carry the same note — *"nothing reset this autoload between matches, so a
+   second match resumed the first one's score and round number"* / *"...the first one's
+   timer"* — and neither had a counterpart here. Unity's `GameServices` is `DontDestroyOnLoad`,
+   which reproduces an autoload's lifetime exactly, **including the bug it needed a reset for**.
+
+   The symptom is worse here than upstream, because this port's free-roam window happens
+   BEFORE `StartMatch`: a second match opened its whole ready phase showing the first match's
+   final scores, its round number and its clock, with the LATA card up because `RoundActive`
+   was still true, and snapped all of it to zero on "GO!". Caught in the arena capture — a
+   freshly-loaded Eskinita opening on four seats holding 900 points each and a 01:11 clock.
+   `MatchInstaller` now calls both, in the same place `main.gd::_ready()` calls them.
+
+2. **⚠️⚠️ THE TAYA WAS PAID 100 FOR KNOCKING THEIR OWN CAN OVER.**
+   `round_manager.gd::host_note_lata_knocked` is
+
+   ```gdscript
+   if by_slot >= 0 and by_slot != MatchManager.defender_slot:
+   ```
+
+   and only the `>= 0` half reached `Lata.HostKnockDown`. The defender's own slipper — or
+   anything else that credited their slot — scored the attackers' event for them, and since the
+   can spends most of a round on its side, standing it up and putting it back down is a loop
+   worth 100 a go. The `round_active` guard was missing from the same function.
+
+3. **⚠️⚠️ `AIController` BELIEVED A LUNGE WAS WINDING UP ON EVERY FRAME OF EVERY ROUND.**
+   `character_base.gd` rests `_observed_lunge_charge` at **-1** and every reader compares
+   `>= 0.0` against it. The port had only `LungeChargeRatio`, a `Clamp01`, so that comparison
+   was a tautology: `ShouldEvade` reduced a reaction to a TELL down to a proximity rule and
+   spent the whole dodge budget on nothing. `CombatVerbs.ObservedLungeCharge` is the missing
+   value. The same absence is why the YOU card could not draw the taya's lunge meter at all.
+
+4. **The seats were not registered until the countdown ended.** `SliceRunner.Begin` is what
+   registers them and it does not run until "GO!", so for the entire free-roam window
+   `RoundDirector` knew about nobody: no screen-edge arrow to the can, no `Players`-driven
+   query answering truthfully. `main.gd` has the four on their marks and registered before it
+   waits for R. ⚠️ **And `AiLaneTests` was passing only because a previous test in the same
+   batch had left its seats on the persistent director** — it failed the moment that stale
+   state was cleared, which is the leak doing the work of the feature.
+
+### § THE SLIPPER STAYS ON THE ARM, NO MATTER WHAT
+
+🧑 2026-08-16: *"make sure the slippers in unity stay on the arm no matter what — for others
+and for yourself in ur FPP"*. Two mechanisms, because there are two views, and the report has
+already been made twice about two unrelated causes.
+
+⚠️⚠️ **`Carrier.LateUpdate` RETURNED EARLY ON A NULL HAND ANCHOR, WHICH ABANDONED THE SLIPPER.**
+The anchor is measured off the skin's own weighted vertices, so it is absent while a model is
+missing, mid-swap, or authored with a bone the resolver does not recognise — and in every one of
+those the tsinelas simply stopped where it was and its carrier walked away from it. That IS the
+reported *"the slippers just float when you hold it, its completely unattached to person"*,
+reachable again through any rig whose arm does not resolve. It rides the body now
+(`Carrier.CarryAnchor`), which is worse-looking than the measured pose and is not a bug anybody
+reports: an object in roughly the right place moving with its owner reads as held. It is a
+FALLBACK, re-asked every frame, so a model that finishes loading takes the real anchor back on
+the next frame with no state to reset.
+
+The rest was already right and is now asserted rather than assumed:
+
+- **The carry runs in `LateUpdate`**, because Unity evaluates the Animator between Update and
+  LateUpdate and a bone read in Update is the previous frame's pose.
+- **The remote smoothing runs in `Update`**, so the model root has already moved before the
+  Animator and the anchor is final by LateUpdate. The two orders compose; neither is accidental.
+- **The viewmodel carries its OWN slipper.** The real hand is below the frustum in first person,
+  so the local player's copy is a separate object under the arm pivot, wearing the picked skin
+  copied off the world object.
+
+`CarryTests` now covers all three: a slipper drifting from the hand while its carrier walks and
+animates, a slipper left behind when the anchor is destroyed outright, and an empty viewmodel
+hand after a pickup.
+
+⚠️ **And writing those tests found a fourth thing, which was a TRAP rather than a live bug —
+worth being precise about.** `Slipper.HostGrab` set `State`, `Holder` and
+`motor.HoldingSlipper` and stopped, leaving `Carrier.Held` for the caller to fill in. All three
+shipped callers already did that on the next line, so nothing was broken in the build; but a
+grab that skipped it produced a slipper that believed it was held, a motor that reported
+holding one, and a carrier with nothing in hand — after which the carry never ran and the
+viewmodel stayed empty, because both read `Held`. `slipper.gd` owns this relationship for that
+reason and says so: *"Two writers of the same relationship is how it ends up half-cleared."*
+The port had two. It has one now, and `NotifyHolding` is idempotent so the existing call sites
+are unaffected.
+
+### Checked against the .gd and CORRECT, so they were left alone
+
+Written down because re-fixing a correct thing is how a port acquires a bug.
+
+- **The tag requires the lata standing.** `_sweep_lunge_tag` returns early on a downed can
+  (*"a tag requires the lata standing, exactly as the proximity tag did"*), and
+  `RoundDirector.ResolveTag` asks the same question. It reads like an invented extra condition
+  and is not.
+- **The passive tick drains by subtraction, not by zeroing.** `while (accum >= 1.0) accum -= 1.0`
+  on both sides, which the .gd notes is the difference between 90 ticks a round and 89.
+- **`Rounds` is 4, `PlayerCount` 4, `RoundTime` 90, `IntermissionDuration` 3.0**, and the four
+  score values 100 / 50 / 100 / 10 — all matching `match_manager.gd` and `round_manager.gd`.
+- **`SabotageWindow` 2.5 and `ThrowRestoreCooldown` 1.25** match, as does the restore cooldown
+  being armed by the RESTORE rather than by the knock.
+- **The defender-slot derivation** `(max(1, round) - 1) % 4` is the same pure function on both
+  sides, never an accumulated counter.
+
+### ⚠️ ONE DELIBERATE DIVERGENCE, AND IT IS A DESIGN CALL RATHER THAN A BUG
+
+`IsTaggable()` asks `RoundActive`; `character_base.gd::is_taggable()` asks `can_act()`, whose
+second half is "not stunned". The port changed it on the reading that 🧑 2026-08-06 —
+*"a player that has been sabotaged by a player cannot be tagged by the defender. when the
+attacker is in a frozen state, it cannot be tagged"* — was a bug REPORT rather than a rule.
+That reading also unblocks the 50-point sabotage award, which is otherwise unreachable in both
+trees: the shove that earns the credit is the same event that makes the victim refuse the tag
+that pays it. **Godot still has `can_act()`.** If the sentence was a rule and not a report, this
+is the one line to put back.
 
 ## ⚠️ Unity rules the conversion has to obey, each found by a shipped failure
 
@@ -371,7 +684,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
 | `character_base.gd` | 1981 | `CharacterMotor` + `CombatVerbs` + `StatusStack` (651) | PARTIAL |
-| `character_visual.gd` | 2182 | `CharacterVisual` + `CharacterAnimator` + `ImpactBurst` + `ToonSkin` (900) | CONVERTED — clips, flash, burst, toon pass, ink outline, palette remap, measured hand attachment, remote smoothing |
+| `character_visual.gd` | 2182 | `CharacterVisual` + `CharacterAnimator` + `ImpactBurst` + `ToonSkin` (900) | CONVERTED — clips, flash, burst, toon pass, ink outline, palette remap, measured hand attachment, remote smoothing, **§ the stun frost's body half** |
 | `carrier.gd` | 536 | `Carrier.cs` (350) | CONVERTED 2026-08-16 — the 2.5 s wind-up on `Pressed` not `JustPressed`, its sound, the OBSERVED charge every peer can see, the aim cast from the camera, the sight-line throw origin, and the arc |
 | `character_nameplate.gd` | 165 | `CharacterNameplate.cs` (155) | CONVERTED — ring, tag, role colour, distance fade |
 | `slipper.gd` | 1630 | `Slipper.cs` (280) | PARTIAL — flight, bounce, spin, void recovery; hand attach and net sync pending |
@@ -449,12 +762,12 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
 | `match_setup.gd` | 2015 | `ConvertedMatchSetup.cs` (440) | PARTIAL — rows, seats, spectate, live map preview; netcode lobby half pending |
-| `hud.gd` | 1587 | `Hud.cs` (900) | CONVERTED 2026-08-16 — wood skin, recessed clock with its urgency colour and pulse, ranked four-row board with the TAYA badge, lata card and its per-role hint, toasts off all five events, ready prompt AND role objective, split status stacks, held danger vignette, VULNERABLE line, role-coloured crosshair, clean feed, spectator strip, version stamp |
+| `hud.gd` | 1587 | `Hud.cs` (900) | CONVERTED 2026-08-16 — wood skin, recessed clock with its urgency colour and pulse, ranked four-row board with the TAYA badge, lata card and its per-role hint, toasts off all five events, ready prompt AND role objective, split status stacks, held danger vignette, VULNERABLE line, role-coloured crosshair, clean feed, spectator strip, version stamp, **§ the stun frost's screen half**, and a clock card that is 97 tall like the original's |
 | `multiplayer_setup.gd` | 1015 | `LobbySession.cs` (287) | PARTIAL |
 | `character_preview.gd` | 623 | `ModelPreview.cs` (470) + `ModelPreviewInput.cs` | CONVERTED — aspect-correct target, three-term framing, pitch lerp, h_offset, idle clip, drag/zoom/reset, tile framing |
 | `ui_theme.gd` | 551 | `UiTheme` + `GodotTheme` + `StyleBoxBaker` (520) | CONVERTED — variations, StyleBox geometry and the baked nine-slices |
 | `tutorial.gd` | 462 | `TutorialContent` + `ConvertedTutorialPanel` (350) | CONVERTED 2026-08-16 — all 8 pages, plus page 1's premise strip with the four real models in live 3D |
-| `you_card.gd` | 430 | `YouCard.cs` (380) | CONVERTED 2026-08-16 — wood face with the role border, the STAMINA bar it was missing entirely, the FATIGUED read, the ready flash, and the two role-exclusive meters |
+| `you_card.gd` | 430 | `YouCard.cs` (380) | CONVERTED 2026-08-16 — wood face with the role border, the STAMINA bar it was missing entirely, the FATIGUED read, the ready flash, the meters gated on ACTIVITY as well as role, the taya's LUNGE meter, and the .tscn's own 132/32/34/26/160/10/6 geometry |
 | `settings_panel.gd` | 429 | `SettingsPanel` + `Rebinding.cs` (330) | CONVERTED — rebinding, conflicts, reset |
 | `emote_wheel.gd` | 422 | `EmoteWheel.cs` (215) + `Emotes.cs` | CONVERTED — hold, steer, release |
 | `character_select.gd` | 341 | `CharacterSelectScreen` (200) | CONVERTED — tabs, chalk pips, live 3D |

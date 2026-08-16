@@ -50,6 +50,45 @@ namespace TumbangPreso
             return visual != null ? visual.HandAnchor : null;
         }
 
+        /// <summary>
+        /// The hand if there is one, and the BODY if there is not.
+        ///
+        /// ⚠️⚠️ A HELD SLIPPER MUST NEVER BE LEFT BEHIND, AND `return`-ING ON A NULL ANCHOR DID
+        /// EXACTLY THAT. 🧑 2026-08-16: *"make sure the slippers in unity stay on the arm no
+        /// matter what"*. The anchor is built from the skin's own weighted vertices, so it is
+        /// absent for as long as a model is missing, mid-swap, or authored with a bone this
+        /// project's resolver does not recognise — and the old early return meant the tsinelas
+        /// simply stopped where it was and the carrier walked away from it. That is the reported
+        /// *"the slippers just float when you hold it, its completely unattached to person"*,
+        /// reachable again through any rig whose arm does not resolve.
+        ///
+        /// A body-relative pose is worse-looking than the measured one and is not the fault
+        /// anybody reports: an object in roughly the right place moving with its owner reads as
+        /// held. An object standing still in the street does not.
+        ///
+        /// ⚠️ AND IT IS A FALLBACK, NOT A DEFAULT. `Hand()` is asked first on every frame, so a
+        /// model that finishes loading, or a swap that completes, takes the real anchor back on
+        /// the very next frame with no state to reset.
+        /// </summary>
+        private Transform CarryAnchor()
+        {
+            var hand = Hand();
+            if (hand != null) return hand;
+
+            var visual = GetComponent<Visual.CharacterVisual>();
+            if (visual != null && visual.ModelRoot != null) return visual.ModelRoot;
+
+            return transform;
+        }
+
+        /// <summary>
+        /// How far in front of and above the body the fallback pose sits, in the body's own
+        /// frame. Chest height and a hand's reach forward: it is where a carried thing looks
+        /// like it is being carried, and it is only ever seen when the measured anchor is
+        /// missing.
+        /// </summary>
+        private static readonly Vector3 FallbackCarryOffset = new Vector3(0.28f, 1.05f, 0.32f);
+
         private CharacterMotor _motor;
 
         private float _charge;
@@ -141,15 +180,23 @@ namespace TumbangPreso
         /// </summary>
         public void NotifyHolding(Slipper what)
         {
+            // ⚠️ IDEMPOTENT, BECAUSE THERE ARE NOW TWO CALLERS ON ONE PICKUP. `Slipper.HostGrab`
+            // tells this component itself (see its own note on owning the relationship) and
+            // `HostPickUp` calls it again straight afterwards. Without this guard the pickup
+            // sound plays twice on the same frame and the grab clip restarts on its second frame.
+            if (Held == what && what != null) return;
+
             Held = what;
+            _motor.HoldingSlipper = what != null;
+
+            if (what == null) return;
+
             GameServices.Audio?.PlayAt("pickup", transform.position);
 
             // Reaching down for a loose tsinelas — the literal clip for the job.
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("grab");
-            _motor.HoldingSlipper = what != null;
 
-            if (what != null)
-                _throwLockLeft = what.ThrowLock;
+            _throwLockLeft = what.ThrowLock;
         }
 
         private void Update()
@@ -195,17 +242,30 @@ namespace TumbangPreso
             if (Held == null) return;
 
             var hand = Hand();
-            if (hand == null) return;
 
-            // ⚠️ THE CARRY ROTATION IS PART OF THE POSE, not decoration. Without it the
-            // slipper lies sideways across the palm.
-            //
-            // ⚠️ AND THE SOLE HANGS BELOW THE ORIGIN BY AN AMOUNT THAT DIFFERS PER SKIN, so the
-            // last lift comes off the drawn bounds rather than from a constant. A clog and a
-            // flip-flop cannot share one number, which `slipper.gd::_attach_to_hand()` records.
+            if (hand != null)
+            {
+                // ⚠️ THE CARRY ROTATION IS PART OF THE POSE, not decoration. Without it the
+                // slipper lies sideways across the palm.
+                //
+                // ⚠️ AND THE SOLE HANGS BELOW THE ORIGIN BY AN AMOUNT THAT DIFFERS PER SKIN, so
+                // the last lift comes off the drawn bounds rather than from a constant. A clog
+                // and a flip-flop cannot share one number, which `slipper.gd::_attach_to_hand()`
+                // records.
+                Held.transform.SetPositionAndRotation(
+                    hand.position + hand.up * (Held.RestHeight * hand.lossyScale.y),
+                    hand.rotation * Slipper.CarryRotation);
+
+                return;
+            }
+
+            // No anchor this frame. See CarryAnchor: it rides the body rather than being
+            // abandoned in the street.
+            var fallback = CarryAnchor();
+
             Held.transform.SetPositionAndRotation(
-                hand.position + hand.up * (Held.RestHeight * hand.lossyScale.y),
-                hand.rotation * Slipper.CarryRotation);
+                fallback.TransformPoint(FallbackCarryOffset),
+                fallback.rotation * Slipper.CarryRotation);
         }
 
         // -------------------------------------------------------------------

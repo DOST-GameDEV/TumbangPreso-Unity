@@ -111,6 +111,41 @@ namespace TumbangPreso
             // for anything a human will look at.
             runner.AutoStart = !UseReadyGate;
 
+            // ⚠️⚠️ THE BOARD IS WIPED HERE, NOT AT `StartMatch`, BECAUSE THE PLAYER LOOKS AT IT
+            // FIRST. `GameServices` is `DontDestroyOnLoad`, so the match and round directors
+            // outlive the scene change out of a finished match — and `SliceRunner.Begin`, which
+            // is what calls `StartMatch`, does not run until the countdown ends. A second match
+            // therefore opened its whole free-roam window showing the FIRST match's final scores
+            // and round number, with the LATA card up because the old round was still flagged
+            // active, and snapped it all to zero on "GO!". Caught in the arena capture, where a
+            // freshly-loaded Eskinita opens on four seats holding 900 points each.
+            //
+            // ⚠️ THE ROUND IS ENDED AS WELL AS THE SCORES CLEARED, and it is the half that is
+            // easy to miss: `RoundActive` gates the lata card, the passive defence tick and
+            // `IsTaggable`, so a stale true is a rule left running over a match that has not
+            // begun.
+            GameServices.Match?.ResetForNewMatch();
+            GameServices.Round?.ResetForNewMatch();
+
+            // ⚠️⚠️ THE SEATS AND THE CAN GO IN IMMEDIATELY, NOT AT `SliceRunner.Begin`, AND THE
+            // FREE-ROAM WINDOW IS WHY. `Begin` does not run until the countdown ends, so with the
+            // ready gate on, `RoundDirector` knew about nobody and nothing for the whole time the
+            // player was walking around: no screen-edge arrow to the can, no nameplate distance
+            // fade, and every `Players`-driven query answering as though the arena were empty.
+            // `main.gd` has the four on their marks and registered before it waits for R.
+            //
+            // ⚠️ AND IT IS NOT COSMETIC. `AiLaneTests` was passing only because a PREVIOUS test in
+            // the same batch had left its seats registered on this `DontDestroyOnLoad` director —
+            // it failed the moment the stale state was cleared, which is the leak doing the work
+            // of the feature. `Begin` still calls `Clear` and re-registers, so this is idempotent.
+            if (GameServices.Round != null)
+            {
+                GameServices.Round.Lata = lata;
+
+                foreach (var seat in seats)
+                    if (seat != null) GameServices.Round.Register(seat);
+            }
+
             // ⚠️⚠️ EVERYBODY IS PLACED BEFORE THE READY WINDOW OPENS, NOT WHEN THE ROUND STARTS.
             // `main.gd` spawns the four on their role marks and THEN waits for R; the free-roam
             // window is meant to be spent walking around the arena you are about to play in.

@@ -84,6 +84,36 @@ namespace TumbangPreso
             foreach (var p in _players) p.RoundActive = false;
         }
 
+        /// <summary>
+        /// Put the director back to the state it boots in, for a match that has not begun. This
+        /// is `round_manager.gd::reset()`, which the port never carried across.
+        ///
+        /// ⚠️⚠️ **B-14 IN THE .gd**, and its note names the same symptom: *"nothing reset this
+        /// autoload between matches, so a second match resumed the first one's timer. Counterpart
+        /// to `MatchManager.reset()`."* Both halves were missing here.
+        ///
+        /// ⚠️⚠️ THE CLOCK IS PART OF IT, AND LEAVING IT OUT IS WHY A SECOND MATCH OPENED ON
+        /// **01:11**. This director is `DontDestroyOnLoad`, so `TimeLeft`'s field initialiser
+        /// only ever runs once per session: the second arena inherited whatever the first match
+        /// had counted down to and drew it over the free-roam window. The .gd cannot have this
+        /// problem — Godot rebuilds the autoload's state with the scene — and the field's own
+        /// note above already records what a wrong clock in this window reads as.
+        ///
+        /// ⚠️ THE ROSTER IS DROPPED FIRST, because the seats in it belong to the scene that has
+        /// just been unloaded and touching a destroyed MonoBehaviour throws.
+        /// </summary>
+        public void ResetForNewMatch()
+        {
+            _players.Clear();
+
+            RoundActive = false;
+            TimeLeft = Balance.RoundTime;
+            _throwCooldownLeft = 0.0f;
+            _defenseTickAccum = 0.0f;
+            _shoveCredit.Clear();
+            Lata = null;
+        }
+
         private void FixedUpdate()
         {
             if (!RoundActive) return;

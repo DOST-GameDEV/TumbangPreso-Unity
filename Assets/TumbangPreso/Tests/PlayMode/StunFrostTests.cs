@@ -111,8 +111,15 @@ namespace TumbangPreso.PlayTests
 
             victim.ApplyStagger(Balance.TagStunTime);
 
+            // ⚠️ WAIT FOR THE RAMP, NOT FOR THE ENABLE FLAG, AND THE FIRST VERSION OF THIS TEST
+            // FAILED ON EXACTLY THAT. `UpdateFrost` enables the Image the moment coverage crosses
+            // 0.001 and then takes `FrostRampIn` seconds to climb to 1, so a loop that stops at
+            // `frost.enabled` stops on the FIRST frame of the ramp and the coverage assertion
+            // below read 0.018. Waiting on the value the assertion is about is the fix; the
+            // enabled flag is checked separately, because the two can genuinely disagree.
             float deadline = Time.time + UI.Hud.FrostRampIn + 0.5f;
-            while (Time.time < deadline && !frost.enabled) yield return null;
+            while (Time.time < deadline && frost.material.GetFloat("_Coverage") < 0.99f)
+                yield return null;
 
             Assert.IsTrue(frost.enabled,
                           $"the screen never frosted with {victim.StunLeft:0.00} s of stun left");
@@ -147,12 +154,30 @@ namespace TumbangPreso.PlayTests
             var victim = FirstAttacker();
             Assert.IsNotNull(victim, "no attacker seat in the arena");
 
+            // ⚠️ NOTHING ELSE MAY STEER THE VICTIM WHILE THIS RULE IS BEING ASKED. Turning
+            // `RoundActive` on below is what lets a bot start playing, and a seat that walks out
+            // of the box mid-test fails the assertion for a reason that has nothing to do with
+            // the stun. Silencing the producer is the same trick `InputEdgeTests` needs and for
+            // the same reason: the intent table has exactly one writer at a time.
+            Silence(victim);
+
             victim.RoundActive = true;
             victim.HoldingSlipper = true;
 
             // Stand them squarely in the box, which is the other half of the rule.
-            victim.transform.position = new Vector3(0.0f, victim.transform.position.y, 0.0f);
-            yield return new WaitForFixedUpdate();
+            //
+            // ⚠️⚠️ THROUGH `Teleport`, NEVER BY WRITING `transform.position`, AND THAT IS WHY
+            // THIS TEST REPORTED "the harness failed to put the victim in the box". A
+            // CharacterController keeps its own authoritative position and overwrites a direct
+            // transform write on its next `Move`, so the capsule was back at its spawn before
+            // `IsInsideBox()` was ever asked. `CharacterMotor.Teleport` disables the controller
+            // around the write for exactly this reason and is the only supported way to place a
+            // unit; `Confine` uses the same dance.
+            victim.Teleport(new Vector3(0.0f, victim.transform.position.y, 0.0f));
+
+            // Past the spawn-settle frames `Teleport` opens, which hold the position and return
+            // early from the step.
+            for (int i = 0; i < 6; i++) yield return new WaitForFixedUpdate();
 
             Assert.IsTrue(victim.IsInsideBox(), "the harness failed to put the victim in the box");
             Assert.IsTrue(victim.IsTaggable(), "an unstunned attacker in the box holding a " +
@@ -175,6 +200,25 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(victim.IsTaggable(),
                            "a tag landed between rounds. RoundActive is the half of CanAct() " +
                            "that genuinely belongs in IsTaggable and must not have gone with it.");
+        }
+
+        /// <summary>
+        /// Stop whatever normally drives this seat, so the test owns its intent and its position.
+        ///
+        /// ⚠️ BOTH PRODUCERS, because which one a given seat has is decided by the installer and
+        /// is not this test's business: the human seat carries `PlayerInputReader`, every other
+        /// carries `AIController`, and both write the whole intent table every Update.
+        /// </summary>
+        private static void Silence(CharacterMotor motor)
+        {
+            var reader = motor.GetComponent<PlayerInputReader>();
+            if (reader != null) reader.enabled = false;
+
+            var ai = motor.GetComponent<AIController>();
+            if (ai != null) ai.enabled = false;
+
+            motor.Intent.Clear();
+            motor.Intent.CommitFrame();
         }
 
         private static Image FindFrostImage(UI.Hud hud)

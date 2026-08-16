@@ -285,6 +285,22 @@ dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj
 "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -nographics -projectPath . -testPlatform EditMode -testResults Logs/tests.xml -logFile Logs/tests.log
 ```
 
+⚠️⚠️ **PlayMode has NO `-nographics`, and adding it CRASHES the editor**, not the tests:
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testResults Logs/play.xml -logFile Logs/play.log
+```
+
+With `-nographics` Unity selects `NullGfxDevice`, and the first frame that renders an offscreen
+camera dies inside it: the stack is `RenderOffscreenCameras → RenderShadowMaps → ShadowMapJob →
+GfxDevice::DrawSharedGeometryJobs`. This project has several such cameras (`ModelPreview`,
+`MapPreviewSurface`, `UiRuntimeShots`), so the run dies about 360 log lines in, writes NO
+`.xml`, and **still exits 0** — indistinguishable from a pass unless the result file is checked.
+Verified 2026-08-16; the earlier handoff's command carried the flag and this is what it did.
+
+⚠️ **Always assert on the `.xml`, never on the exit code.** Both the crash above and a genuine
+failure come back as 0.
+
 ⚠️ **PowerShell here-strings break on embedded double quotes** when passed to `git commit -m`.
 The message gets split and the remainder is parsed as pathspecs. **Write the message to a file
 and use `git commit -F`.**

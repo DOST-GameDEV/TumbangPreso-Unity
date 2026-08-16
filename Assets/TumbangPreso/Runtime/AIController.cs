@@ -363,8 +363,14 @@ namespace TumbangPreso
                 return false;
             }
 
+            // ⚠️⚠️ `ObservedLungeCharge`, NOT `LungeChargeRatio`, AND THE WRONG ONE WAS ALWAYS
+            // TRUE. `LungeChargeRatio` is a `Clamp01`, so `>= 0.0f` against it is a tautology and
+            // this read "a lunge is winding up at me" on every frame the taya was within 4.5 m —
+            // which turned a reaction to a TELL into a proximity rule, and spent the dodge
+            // budget on nothing. The .gd asks `observed_lunge_charge() >= 0.0`, whose rest value
+            // is -1 precisely so that comparison means something.
             var verbs = taya.GetComponent<CombatVerbs>();
-            bool winding = verbs != null && verbs.LungeChargeRatio >= 0.0f
+            bool winding = verbs != null && verbs.ObservedLungeCharge >= 0.0f
                            && Flat(transform.position, taya.transform.position) < 4.5f;
 
             return Reacted("lunge", winding, dt);

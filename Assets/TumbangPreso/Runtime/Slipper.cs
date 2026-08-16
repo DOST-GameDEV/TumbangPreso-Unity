@@ -154,6 +154,24 @@ namespace TumbangPreso
         /// first line of <see cref="CanBeGrabbedBy"/>. There is no window in which two
         /// attackers both succeed.
         /// </summary>
+        /// <remarks>
+        /// ⚠️⚠️ IT TELLS THE CARRIER ITSELF, RATHER THAN LEAVING THAT TO THE CALLER.
+        ///
+        /// **This was not a live bug**, and saying so matters: all three shipped callers
+        /// (`Carrier.HostPickUp`, `Carrier.TryGrab`, and the networked grab through `MatchRpc`)
+        /// already called `NotifyHolding` on the very next line. It was a TRAP, found by a test
+        /// that called this directly and got a slipper that believed it was held, a motor that
+        /// reported holding one, and a `Carrier` with nothing in hand — after which nothing
+        /// moved the slipper (the carry reads `Held`) and the local player's viewmodel stayed
+        /// empty (the rig reads `Held` too). That is *"the slippers just float when you hold
+        /// it"* one careless call site away, in a codebase where the pickup already has three.
+        ///
+        /// `slipper.gd` owns this relationship for exactly that reason and says so: *"Written
+        /// only by `slipper.gd` through `notify_holding()`, so there is one owner of the
+        /// relationship. Two writers of the same relationship is how it ends up half-cleared."*
+        /// The port had two. The existing calls stay and are harmless — `NotifyHolding` is
+        /// idempotent now — but nothing depends on them any more.
+        /// </remarks>
         public bool HostGrab(CharacterMotor who)
         {
             if (!CanBeGrabbedBy(who)) return false;
@@ -162,6 +180,8 @@ namespace TumbangPreso
             Holder = who;
             who.HoldingSlipper = true;
             _velocity = Vector3.zero;
+
+            who.GetComponent<Carrier>()?.NotifyHolding(this);
             return true;
         }
 

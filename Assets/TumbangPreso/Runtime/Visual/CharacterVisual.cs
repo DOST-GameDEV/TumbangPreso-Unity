@@ -197,6 +197,13 @@ namespace TumbangPreso.Visual
         /// </summary>
         public Transform HandAnchor { get; private set; }
 
+        /// <summary>
+        /// The node the model hangs under. Exposed so `Carrier` has something body-shaped to
+        /// hang a held slipper off while <see cref="HandAnchor"/> is still null — see its
+        /// `CarryAnchor`. Read-only on purpose: <see cref="SetModelRoot"/> is the one writer.
+        /// </summary>
+        public Transform ModelRoot => _modelRoot;
+
         /// <summary>`character_visual.gd::HAND_BONE_CANDIDATES`. The right arm first, because
         /// the rig ships `holding-right` and `holding-right-shoot` and nothing for the left.</summary>
         private static readonly string[] HandBones = { "arm-right", "arm-left" };

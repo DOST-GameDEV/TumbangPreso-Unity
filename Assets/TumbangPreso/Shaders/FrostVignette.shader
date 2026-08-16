@@ -22,6 +22,20 @@ Shader "TumbangPreso/FrostVignette"
 {
     Properties
     {
+        // ⚠️⚠️ `_MainTex` IS NOT OPTIONAL ON A UI MATERIAL EVEN WHEN NOTHING SAMPLES IT, AND
+        // LEAVING IT OUT LOGGED AN ERROR ON EVERY CANVAS REBUILD: *"Material
+        // 'TumbangPreso/FrostVignette' with Shader 'TumbangPreso/FrostVignette' doesn't have a
+        // texture property '_MainTex'"*. UGUI hands a Graphic's texture to the CanvasRenderer
+        // through that exact name and does not care that this effect is procedural, so the
+        // property has to exist for the material to be a legal UI material at all. Found by
+        // `StunFrostTests`, which fails on any unexpected error line — the frost itself drew
+        // correctly the whole time, which is why nothing else noticed.
+        //
+        // Declared and deliberately never sampled: the ice is generated, and an Image with no
+        // sprite hands over a 1x1 white anyway, so reading it would multiply by 1 and cost a
+        // fetch per pixel of a full-screen quad.
+        _MainTex ("Sprite Texture (unused, required by UGUI)", 2D) = "white" {}
+
         // 0 = clear, 1 = fully iced. Driven from the remaining stun, so the frost RECEDES as
         // the effect wears off, which is the "tell the player when it is ending" half of the
         // accessible-status guidance this was designed against.

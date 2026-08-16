@@ -75,6 +75,193 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>
+        /// § THE SLIPPER STAYS ON THE ARM, NO MATTER WHAT. 🧑 2026-08-16: *"make sure the
+        /// slippers in unity stay on the arm no matter what — for others and for yourself in ur
+        /// FPP"*.
+        ///
+        /// ⚠️⚠️ THREE THINGS ARE ASSERTED AND THEY ARE THREE DIFFERENT FAILURES. The report has
+        /// been made twice about two unrelated causes, so the check covers all of the ways a
+        /// carried tsinelas has actually come off:
+        ///
+        ///  1. **It rides a MOVING, ANIMATING carrier**, frame by frame, not just at rest. The
+        ///     original detachment was a one-frame lag that is invisible standing still and
+        ///     obvious the moment an arm swings — *"the slippers deattach when animations play"*.
+        ///  2. **It survives the anchor disappearing.** A rig whose arm bone does not resolve
+        ///     leaves `HandAnchor` null, and the old code returned early and abandoned the
+        ///     slipper in the street. It rides the body now; this destroys the anchor outright
+        ///     and asserts the slipper still travels with its owner.
+        ///  3. **The local player sees one in their own hand.** The viewmodel carries its OWN
+        ///     copy, because the real hand is below the frustum in first person, so "attached"
+        ///     is two separate mechanisms and only one of them is the world object.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor()
+        {
+            var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
+            while (load != null && !load.isDone) yield return null;
+
+            for (int i = 0; i < 20; i++) yield return null;
+
+            CharacterMotor carrier = null;
+
+            foreach (var m in Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None))
+            {
+                if (!m.IsPerson || m.IsDefender) continue;
+                if (m.GetComponent<CharacterVisual>()?.HandAnchor == null) continue;
+                carrier = m;
+                break;
+            }
+
+            Assert.IsNotNull(carrier, "no attacker seat with a hand anchor to carry anything");
+
+            Slipper slipper = null;
+
+            foreach (var s in Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
+            {
+                if (s.State != SlipperState.Loose) continue;
+                slipper = s;
+                break;
+            }
+
+            Assert.IsNotNull(slipper, "no loose slipper in the arena");
+
+            // ⚠️ THE SLIPPER MOVES ONTO THE CARRIER, NOT THE OTHER WAY AROUND. `Confine` clamps a
+            // unit back into the box every step, so walking the capsule to a slipper that happens
+            // to lie outside it fails the pickup for a reason that has nothing to do with this.
+            var stand = carrier.transform.position;
+            slipper.transform.position = new Vector3(stand.x, slipper.transform.position.y, stand.z);
+
+            carrier.RoundActive = true;
+
+            for (int i = 0; i < 3; i++) yield return new WaitForFixedUpdate();
+
+            Assert.IsTrue(slipper.HostGrab(carrier), "the harness failed to put a slipper in hand");
+
+            var visual = carrier.GetComponent<CharacterVisual>();
+
+            // 1 — it rides a moving, animating carrier.
+            carrier.Intent.Move = new Vector2(0.0f, 1.0f);
+
+            float worst = 0.0f;
+
+            for (int i = 0; i < 60; i++)
+            {
+                yield return null;
+
+                var anchor = visual.HandAnchor;
+                if (anchor == null) continue;
+
+                // The carry lifts the slipper off the anchor by its own rest height, so the
+                // distance is never zero. It must never GROW, which is what coming off looks like.
+                float lift = slipper.RestHeight * anchor.lossyScale.y;
+                float slack = Vector3.Distance(slipper.transform.position, anchor.position) - lift;
+
+                worst = Mathf.Max(worst, Mathf.Abs(slack));
+            }
+
+            carrier.Intent.Move = Vector2.zero;
+
+            Assert.Less(worst, 0.05f,
+                $"a held slipper drifted {worst:0.000} m from the hand while its carrier walked. " +
+                "The carry has to run in LateUpdate: Unity evaluates the Animator between Update " +
+                "and LateUpdate, so a bone read in Update is the PREVIOUS frame's pose and the " +
+                "slipper trails the hand by one frame of animation.");
+
+            // 2 — it survives the anchor going away.
+            Object.DestroyImmediate(visual.HandAnchor.gameObject);
+
+            yield return null;
+
+            Vector3 body = carrier.transform.position;
+            float reach = Vector3.Distance(slipper.transform.position, body);
+
+            Assert.Less(reach, 2.0f,
+                $"with no hand anchor the slipper sat {reach:0.00} m from its carrier, so it was " +
+                "abandoned rather than falling back to the body. See Carrier.CarryAnchor.");
+
+            Vector3 before = slipper.transform.position;
+            carrier.Teleport(body + new Vector3(3.0f, 0.0f, 0.0f));
+
+            for (int i = 0; i < 8; i++) yield return null;
+
+            Assert.Greater(Vector3.Distance(before, slipper.transform.position), 1.0f,
+                "the carrier moved 3 m and the slipper stayed put, which is exactly the reported " +
+                "\"the slippers just float when you hold it, its completely unattached to person\".");
+        }
+
+        /// <summary>
+        /// The first-person half: the local player has a tsinelas in their OWN hands.
+        ///
+        /// ⚠️ A SECOND OBJECT, NOT THE WORLD ONE. The world slipper sits in the real hand, which
+        /// in first person is hidden and below the frustum entirely; moving the visible hand onto
+        /// the world slipper instead is what made every other player see a tsinelas hovering
+        /// beside its carrier's head. Two views, two objects.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheViewmodelCarriesItsOwnSlipperInFirstPerson()
+        {
+            var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
+            while (load != null && !load.isDone) yield return null;
+
+            for (int i = 0; i < 20; i++) yield return null;
+
+            var rig = Object.FindFirstObjectByType<CameraSystem.CameraRig>();
+            Assert.IsNotNull(rig, "no camera rig in the arena");
+
+            var arms = rig.GetComponentInChildren<CameraSystem.ViewmodelArms>(true);
+            Assert.IsNotNull(arms, "the rig built no viewmodel arms");
+
+            Transform held = null;
+
+            foreach (var t in arms.GetComponentsInChildren<Transform>(true))
+            {
+                if (t.name != "HeldSlipper") continue;
+                held = t;
+                break;
+            }
+
+            Assert.IsNotNull(held,
+                "the viewmodel has no HeldSlipper node, so the local player holds nothing " +
+                "visible in first person however well the world object is attached.");
+
+            Assert.IsFalse(held.gameObject.activeSelf,
+                "the viewmodel slipper is showing before anything was picked up");
+
+            var mine = rig.Following;
+            Assert.IsNotNull(mine, "the rig is following no character");
+
+            Slipper loose = null;
+
+            foreach (var s in Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
+            {
+                if (s.State != SlipperState.Loose) continue;
+                loose = s;
+                break;
+            }
+
+            Assert.IsNotNull(loose, "no loose slipper in the arena");
+
+            mine.RoundActive = true;
+            loose.transform.position = mine.transform.position;
+
+            yield return new WaitForFixedUpdate();
+
+            Assert.IsTrue(loose.HostGrab(mine), "the harness failed to put a slipper in hand");
+
+            // The rig writes the viewmodel in LateUpdate, so give it a whole frame.
+            for (int i = 0; i < 3; i++) yield return null;
+
+            Assert.IsTrue(held.gameObject.activeSelf,
+                "the local player picked a slipper up and their own hands are still empty. " +
+                "CameraRig.ApplyFpp calls ViewmodelArms.SetHolding; nothing else does.");
+
+            var renderer = held.GetComponent<Renderer>();
+
+            Assert.IsNotNull(renderer, "the viewmodel slipper has no renderer, so it draws nothing");
+            Assert.IsTrue(renderer.enabled, "the viewmodel slipper's renderer is off");
+        }
+
+        /// <summary>
         /// A remote unit's MESH glides while its BODY snaps.
         ///
         /// ⚠️⚠️ THE BODY MUST KEEP SNAPPING AND ONLY THE MESH MAY GLIDE. A replicated update is
