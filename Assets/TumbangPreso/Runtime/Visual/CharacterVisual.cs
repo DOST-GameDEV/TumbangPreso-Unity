@@ -78,6 +78,14 @@ namespace TumbangPreso.Visual
         /// stripped from the build and the character never moves.
         /// </summary>
         public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips)
+            => ApplyModel(prefab, tint, clips, null);
+
+        /// <summary>
+        /// ⚠️ THE PALETTE TRAVELS WITH THE MODEL TOO. The twelve people share twelve rigs and
+        /// differ only by which sixteen colours their atlas is remapped to; a seat handed the
+        /// model and no palette is a character wearing somebody else's clothes.
+        /// </summary>
+        public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips, Color[] palette)
         {
             if (_instance != null) Destroy(_instance);
 
@@ -107,7 +115,7 @@ namespace TumbangPreso.Visual
             bool person = motor == null || motor.IsPerson;
 
             ToonSkin.Apply(_instance, person ? ToonSkin.PersonOutlineWidth
-                                             : ToonSkin.PropOutlineWidth);
+                                             : ToonSkin.PropOutlineWidth, palette);
 
             AlignToCapsuleFloor();
             PushColour();

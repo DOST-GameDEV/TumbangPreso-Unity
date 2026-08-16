@@ -248,7 +248,8 @@ namespace TumbangPreso.UI
             //
             // ⚠️ AND THE CLIPS TRAVEL WITH THE MODEL, or the preview stands in a T-pose. They
             // are sub-assets of the `.glb` and this reference is what makes them ship.
-            preview.Show(art == null ? null : art.Model, art == null ? null : art.Clips);
+            preview.Show(art == null ? null : art.Model, art == null ? null : art.Clips,
+                         art == null ? null : art.Palette);
         }
 
         /// <summary>

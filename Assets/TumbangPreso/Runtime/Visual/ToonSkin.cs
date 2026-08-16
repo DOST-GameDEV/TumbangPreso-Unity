@@ -41,6 +41,8 @@ namespace TumbangPreso.Visual
         public static readonly Color Ink = new Color(0.0156863f, 0.0313725f, 0.219608f, 1.0f);
 
         private static readonly int ColorId = Shader.PropertyToID("_Color");
+        private static readonly int UsePaletteId = Shader.PropertyToID("_UsePalette");
+        private static readonly int PaletteId = Shader.PropertyToID("_Palette");
         private static readonly int MainTexId = Shader.PropertyToID("_MainTex");
         private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
         private static readonly int OutlineWidthId = Shader.PropertyToID("_OutlineWidth");
@@ -94,21 +96,36 @@ namespace TumbangPreso.Visual
         private static readonly Dictionary<(Material, int), Material> Cache =
             new Dictionary<(Material, int), Material>();
 
-        public static void Apply(GameObject model, float worldWidth)
+        public static void Apply(GameObject model, float worldWidth) => Apply(model, worldWidth, null);
+
+        /// <summary>
+        /// ⚠️ THE PALETTE IS APPLIED HERE RATHER THAN AS A SEPARATE MATERIAL, and that is what
+        /// keeps a Person's toon shading, its ink outline and its colours on one surface. In
+        /// Godot they are one `.tres` chaining one `next_pass`; splitting them in Unity would
+        /// mean two materials fighting for the same submesh slot.
+        /// </summary>
+        public static void Apply(GameObject model, float worldWidth, Color[] palette)
         {
             if (model == null || Shader == null) return;
 
             foreach (var renderer in model.GetComponentsInChildren<Renderer>(includeInactive: true))
-                Apply(renderer, worldWidth);
+                Apply(renderer, worldWidth, palette);
         }
 
-        public static void Apply(Renderer renderer, float worldWidth)
+        public static void Apply(Renderer renderer, float worldWidth) =>
+            Apply(renderer, worldWidth, null);
+
+        public static void Apply(Renderer renderer, float worldWidth, Color[] palette)
         {
             if (renderer == null || Shader == null) return;
 
             float scale = Mathf.Max(0.0001f, EffectiveScale(renderer));
             float modelWidth = worldWidth / scale;
-            int key = Mathf.RoundToInt(modelWidth * 10000.0f);
+
+            // ⚠️ THE PALETTE IS PART OF THE CACHE KEY. Twelve characters share one source
+            // material and one outline width, so keying on those two alone would hand the whole
+            // cast whichever palette was applied first.
+            int key = Mathf.RoundToInt(modelWidth * 10000.0f) * 31 + PaletteKey(palette);
 
             var sources = renderer.sharedMaterials;
             if (sources == null || sources.Length == 0) return;
@@ -116,12 +133,24 @@ namespace TumbangPreso.Visual
             var dressed = new Material[sources.Length];
 
             for (int i = 0; i < sources.Length; i++)
-                dressed[i] = Variant(sources[i], key, modelWidth);
+                dressed[i] = Variant(sources[i], key, modelWidth, palette);
 
             renderer.sharedMaterials = dressed;
         }
 
-        private static Material Variant(Material source, int key, float modelWidth)
+        private static int PaletteKey(Color[] palette)
+        {
+            if (palette == null || palette.Length == 0) return 0;
+
+            int value = 17;
+
+            foreach (var c in palette)
+                value = value * 31 + c.GetHashCode();
+
+            return value & 0x7fffffff;
+        }
+
+        private static Material Variant(Material source, int key, float modelWidth, Color[] palette)
         {
             if (Cache.TryGetValue((source, key), out var cached) && cached != null) return cached;
 
@@ -163,6 +192,21 @@ namespace TumbangPreso.Visual
 
             material.SetColor(ColorId, albedo);
             material.SetColor(OutlineColorId, Ink);
+
+            // ⚠️ SIXTEEN OR NOTHING. The shader indexes sixteen slots and a short array reads
+            // past its end for the highest one, which on every Person is the lit skin tone.
+            if (palette != null && palette.Length == 16)
+            {
+                var slots = new Vector4[16];
+                for (int i = 0; i < 16; i++) slots[i] = palette[i];
+
+                material.SetVectorArray(PaletteId, slots);
+                material.SetFloat(UsePaletteId, 1.0f);
+            }
+            else
+            {
+                material.SetFloat(UsePaletteId, 0.0f);
+            }
             material.SetFloat(OutlineWidthId, modelWidth);
 
             Cache[(source, key)] = material;

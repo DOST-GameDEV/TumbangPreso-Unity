@@ -175,6 +175,7 @@ namespace TumbangPreso.UI
         /// as wide as the real silhouette so it wrecks the framing measured off it.
         /// </summary>
         private static void Put(ModelPreview preview, RosterEntryAsset art)
-            => preview.Show(art == null ? null : art.Model, art == null ? null : art.Clips);
+            => preview.Show(art == null ? null : art.Model, art == null ? null : art.Clips,
+                            art == null ? null : art.Palette);
     }
 }

@@ -45,6 +45,23 @@ namespace TumbangPreso
         /// </summary>
         public AnimationClip[] Clips;
 
+        /// <summary>
+        /// The sixteen colours this character's atlas is remapped to, or empty for a prop.
+        ///
+        /// ⚠️⚠️ A CHARACTER IS A RIG PLUS A PALETTE. The twelve people wear twelve CC0 rigs and
+        /// differ ONLY by these numbers: without them the whole cast renders in Kenney's stock
+        /// colours and several characters are indistinguishable from each other on the select
+        /// screen, where the meters still read correctly and nothing looks broken.
+        ///
+        /// ⚠️ READ OUT OF THE GODOT `.tres` BY `RosterBookBuilder`, NEVER TYPED IN. Twelve
+        /// characters times sixteen colours is not a table to maintain by hand, and the Godot
+        /// build remains the reference for every one of them.
+        ///
+        /// ⚠️ SLOT 8 CARRIES THE FACE and must stay dark. See the palette block in
+        /// `Shaders/Toon.shader` for the atlas layout and why.
+        /// </summary>
+        public Color[] Palette;
+
         [TextArea(2, 4)]
         public string Tagline;
     }

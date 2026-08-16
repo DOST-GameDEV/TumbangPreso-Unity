@@ -375,7 +375,14 @@ namespace TumbangPreso.UI
         /// nothing else references them, so an asset nothing points at is stripped from the
         /// build. `RosterEntryAsset.Clips` is the reference that makes them ship.
         /// </summary>
-        public void Show(GameObject prefab, AnimationClip[] clips)
+        public void Show(GameObject prefab, AnimationClip[] clips) => Show(prefab, clips, null);
+
+        /// <summary>
+        /// ⚠️ THE SCREEN AND THE MATCH MUST APPLY THE PALETTE THE SAME WAY. What you pick and
+        /// what walks out cannot look like two different characters, and the only way to
+        /// guarantee that is for both to go through `ToonSkin` with the same sixteen colours.
+        /// </summary>
+        public void Show(GameObject prefab, AnimationClip[] clips, Color[] palette)
         {
             if (_model != null) Destroy(_model);
 
@@ -395,7 +402,7 @@ namespace TumbangPreso.UI
             // `.tres` carries the toon shading and the ink outline, and this screen applies it
             // by the same mechanism a spawn does, precisely so what you pick and what walks out
             // cannot look like two different characters.
-            Visual.ToonSkin.Apply(_model, Visual.ToonSkin.PersonOutlineWidth * PreviewScale);
+            Visual.ToonSkin.Apply(_model, Visual.ToonSkin.PersonOutlineWidth * PreviewScale, palette);
 
             PlayIdle(clips);
             IsolateFromForeignLights();

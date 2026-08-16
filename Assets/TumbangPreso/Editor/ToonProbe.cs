@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text;
+using TumbangPreso;
 using TumbangPreso.Visual;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -128,6 +129,37 @@ namespace TumbangPreso.EditorTools
                   ToonSkin.PropOutlineWidth);
             Shoot(outDir, "arm", "Assets/TumbangPreso/Art/models/viewmodel_arm.obj",
                   ToonSkin.PersonOutlineWidth);
+
+            Cast(outDir);
+        }
+
+        /// <summary>
+        /// Four of the twelve, each wearing its own palette.
+        ///
+        /// ⚠️⚠️ THE ONLY WAY TO SEE THAT THE PALETTES LANDED IS TO LOOK AT TWO OF THEM. A rig
+        /// with no palette renders in Kenney's factory colours and looks completely fine on its
+        /// own: the fault is that `berto` and `totoy` are then the same man in the same clothes,
+        /// which is invisible until they are side by side. Every check short of this one passes
+        /// while half of who a character is has gone missing.
+        /// </summary>
+        private static void Cast(string outDir)
+        {
+            var book = Resources.Load<RosterBook>(RosterBook.ResourcePath);
+
+            if (book == null)
+            {
+                Debug.LogWarning("[Toon] no roster book; skipping the cast bench.");
+                return;
+            }
+
+            foreach (int index in new[] { 0, 2, 9, 11 })
+            {
+                var art = book.PersonArt(index);
+                if (art == null || art.Model == null) continue;
+
+                ShootPrefab(outDir, $"cast-{index}-{art.Id}", art.Model,
+                            ToonSkin.PersonOutlineWidth, art.Palette);
+            }
         }
 
         private static void Shoot(string outDir, string label, string path, float width,
@@ -136,11 +168,17 @@ namespace TumbangPreso.EditorTools
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             if (prefab == null) return;
 
+            ShootPrefab(outDir, label, prefab, width, null, scale, skin);
+        }
+
+        private static void ShootPrefab(string outDir, string label, GameObject prefab, float width,
+                                        Color[] palette, float scale = 1.0f, bool skin = true)
+        {
             var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
             instance.transform.position = Vector3.zero;
             instance.transform.localScale = Vector3.one * scale;
 
-            if (skin) ToonSkin.Apply(instance, width);
+            if (skin) ToonSkin.Apply(instance, width, palette);
 
             bool any = false;
             Bounds bounds = default;

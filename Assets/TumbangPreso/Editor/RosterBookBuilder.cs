@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using TumbangPreso;
 using TumbangPreso.Core;
 using UnityEditor;
@@ -52,6 +53,35 @@ namespace TumbangPreso.EditorTools
             { "mang_kanor",  "characters/persons/character-male-e.glb" },
             { "aling_nena",  "characters/persons/character-female-e.glb" },
         };
+
+        /// <summary>
+        /// ⚠️⚠️ A CHARACTER IS A RIG PLUS A PALETTE, AND THE PALETTE IS HALF OF WHO THEY ARE.
+        /// Twelve people share twelve CC0 rigs and differ only by which sixteen colours their
+        /// shared atlas is remapped to. Without them the whole cast renders in Kenney's factory
+        /// colours: `berto` and `totoy` are the same man in the same clothes, and the select
+        /// screen still shows the right name and the right meters over the top of it.
+        ///
+        /// ⚠️ THE ORDER OF THIS TABLE DOES NOT MATTER AND THE IDS DO. Matched by id exactly as
+        /// the model table above is, because index order is a network contract owned by
+        /// `Roster.cs`.
+        /// </summary>
+        private static readonly Dictionary<string, string> PersonPalettes = new Dictionary<string, string>
+        {
+            { "berto",       "person_a.tres" },
+            { "maring",      "person_b.tres" },
+            { "totoy",       "person_totoy.tres" },
+            { "inday",       "person_inday.tres" },
+            { "kuya_boy",    "person_kuya-boy.tres" },
+            { "ate_girlie",  "person_ate-girlie.tres" },
+            { "tikboy",      "person_tikboy.tres" },
+            { "bebang",      "person_bebang.tres" },
+            { "jun_jun",     "person_jun-jun.tres" },
+            { "lola_pacing", "person_lola-pacing.tres" },
+            { "mang_kanor",  "person_mang-kanor.tres" },
+            { "aling_nena",  "person_aling-nena.tres" },
+        };
+
+        private const string PaletteDir = "MapSource/materials_persons";
 
         private static readonly Dictionary<string, string> CanModels = new Dictionary<string, string>
         {
@@ -112,6 +142,64 @@ namespace TumbangPreso.EditorTools
             return ok;
         }
 
+        /// <summary>
+        /// The sixteen colours out of a Godot `.tres`, or null for anything that has none.
+        ///
+        /// ⚠️⚠️ PARSED FROM THE SOURCE, NOT TRANSCRIBED. Twelve times sixteen is 192 numbers,
+        /// and a table typed by hand is one that silently drifts from the build it is meant to
+        /// match. The `.tres` files are copied into `MapSource/` for the same reason the maps
+        /// are: this repo converts the Godot output rather than reimplementing it.
+        ///
+        /// ⚠️ AND A SHORT ARRAY IS A FAILURE, NOT A PARTIAL SUCCESS. The shader indexes sixteen
+        /// slots; fifteen colours would read whatever is past the end for one of them, and the
+        /// slot most likely to be missing is 15, which is the lit skin tone on every Person.
+        /// </summary>
+        private static Color[] ReadPalette(string id, ref bool ok)
+        {
+            if (!PersonPalettes.TryGetValue(id, out var file)) return null;
+
+            string path = Path.Combine(PaletteDir, file);
+
+            if (!File.Exists(path))
+            {
+                Debug.LogError($"[RosterBook] no palette at {path} for '{id}'. Copy the .tres " +
+                               "out of the Godot repo; that character will wear stock colours.");
+                ok = false;
+                return null;
+            }
+
+            var match = Regex.Match(File.ReadAllText(path),
+                                    @"shader_parameter/palette\s*=\s*PackedColorArray\(([^)]*)\)");
+
+            if (!match.Success)
+            {
+                Debug.LogError($"[RosterBook] {file} carries no palette array.");
+                ok = false;
+                return null;
+            }
+
+            var parts = match.Groups[1].Value.Split(',');
+            var colours = new List<Color>();
+
+            for (int i = 0; i + 3 < parts.Length; i += 4)
+            {
+                colours.Add(new Color(F(parts[i]), F(parts[i + 1]), F(parts[i + 2]), F(parts[i + 3])));
+            }
+
+            if (colours.Count != 16)
+            {
+                Debug.LogError($"[RosterBook] {file} has {colours.Count} palette entries, not 16.");
+                ok = false;
+                return null;
+            }
+
+            return colours.ToArray();
+        }
+
+        private static float F(string s) =>
+            float.TryParse(s.Trim(), System.Globalization.NumberStyles.Float,
+                           System.Globalization.CultureInfo.InvariantCulture, out float v) ? v : 0.0f;
+
         private static bool Fill(List<RosterEntryAsset> into,
                                  IReadOnlyList<RosterEntry> truth,
                                  Dictionary<string, string> models,
@@ -132,6 +220,7 @@ namespace TumbangPreso.EditorTools
 
                 asset.Id = entry.Id;
                 asset.Tint = Color.white;
+                asset.Palette = ReadPalette(entry.Id, ref ok);
 
                 if (models.TryGetValue(entry.Id, out var rel))
                 {
