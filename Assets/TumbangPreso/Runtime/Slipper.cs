@@ -44,6 +44,15 @@ namespace TumbangPreso
         public CharacterMotor Holder { get; private set; }
 
         private Vector3 _velocity;
+
+        /// <summary>
+        /// Where this slipper is going, for anything that has to predict it.
+        ///
+        /// ⚠️ READ BY THE TAYA'S INTERCEPT, which walks this forward under gravity to find the
+        /// part of the arc a body can actually stand in. Without it the AI could only ask
+        /// "is anything in flight", which is not a point to run to.
+        /// </summary>
+        public Vector3 Velocity => _velocity;
         private float _flightTime;
         private int _throwerSlot = -1;
         private float _throwerIgnoreLeft;

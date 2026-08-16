@@ -27,6 +27,29 @@ namespace TumbangPreso
     {
         [SerializeField] private Transform _hand;
 
+        /// <summary>
+        /// Where a carried slipper rides.
+        ///
+        /// ⚠️⚠️ THE SERIALISED FIELD ABOVE WAS NEVER ASSIGNED BY ANYTHING, IN ANY BUILD.
+        /// `MatchInstaller` installs this component with `AddComponent`, which cannot carry an
+        /// inspector reference (rule 3), so `_hand` was null on every unit and the block that
+        /// keeps a held slipper in the hand never ran once. A picked-up tsinelas simply stayed
+        /// where the pickup left it and the carrier walked away from it, which is the
+        /// third-person half of *"the slippers just float when you hold it, its completely
+        /// unattached to person"*. The viewmodel fix addressed the local player's own view and
+        /// left every OTHER player seeing exactly the reported bug.
+        ///
+        /// ⚠️ RE-ASKED WHILE IT IS NULL, NOT CACHED ONCE. `CharacterVisual` rebuilds the anchor
+        /// on every model swap, and a Prop round swaps models mid-match.
+        /// </summary>
+        private Transform Hand()
+        {
+            if (_hand != null) return _hand;
+
+            var visual = GetComponent<Visual.CharacterVisual>();
+            return visual != null ? visual.HandAnchor : null;
+        }
+
         private CharacterMotor _motor;
 
         private float _charge;
@@ -148,11 +171,20 @@ namespace TumbangPreso
             if (_motor.IsDefender) StepDefender(dt);
             else StepAttacker(dt);
 
-            if (Held != null && _hand != null)
-                // ⚠️ THE CARRY ROTATION IS PART OF THE POSE, not decoration. Without it the
-                // slipper lies sideways across the palm.
-                Held.transform.SetPositionAndRotation(
-                    _hand.position, _hand.rotation * Slipper.CarryRotation);
+            if (Held == null) return;
+
+            var hand = Hand();
+            if (hand == null) return;
+
+            // ⚠️ THE CARRY ROTATION IS PART OF THE POSE, not decoration. Without it the
+            // slipper lies sideways across the palm.
+            //
+            // ⚠️ AND THE SOLE HANGS BELOW THE ORIGIN BY AN AMOUNT THAT DIFFERS PER SKIN, so the
+            // last lift comes off the drawn bounds rather than from a constant. A clog and a
+            // flip-flop cannot share one number, which `slipper.gd::_attach_to_hand()` records.
+            Held.transform.SetPositionAndRotation(
+                hand.position + hand.up * (Held.RestHeight * hand.lossyScale.y),
+                hand.rotation * Slipper.CarryRotation);
         }
 
         // -------------------------------------------------------------------

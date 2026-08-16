@@ -118,6 +118,7 @@ namespace TumbangPreso.Visual
                                              : ToonSkin.PropOutlineWidth, palette);
 
             AlignToCapsuleFloor();
+            BuildHandAnchor();
             PushColour();
 
             // ⚠️ BOUND HERE, NOT IN Awake. The model is instanced at this moment, and an
@@ -126,6 +127,168 @@ namespace TumbangPreso.Visual
             var anim = GetComponent<CharacterAnimator>();
             if (anim == null) anim = gameObject.AddComponent<CharacterAnimator>();
             if (_instance != null) anim.Bind(_instance, clips);
+        }
+
+        /// <summary>
+        /// The point a carried tsinelas sits on, riding the hand bone through every clip.
+        ///
+        /// ⚠️⚠️ NULL UNTIL A MODEL EXISTS, and callers must treat that as "not ready yet"
+        /// rather than as "no hand". Same contract `get_hand_attachment()` carries.
+        /// </summary>
+        public Transform HandAnchor { get; private set; }
+
+        /// <summary>`character_visual.gd::HAND_BONE_CANDIDATES`. The right arm first, because
+        /// the rig ships `holding-right` and `holding-right-shoot` and nothing for the left.</summary>
+        private static readonly string[] HandBones = { "arm-right", "arm-left" };
+
+        /// <summary>
+        /// How far above the measured palm centre the carried shoe's ORIGIN sits, along the
+        /// bone's own +Y.
+        ///
+        /// ⚠️ IT SITS ON THE HAND, NOT IN A GRIP. The Godot measure put the palm centre at
+        /// bone-local y -0.0062 and the hand's TOP SURFACE at +0.0555, and +0.0400 was tried
+        /// first and reported as "its almost on the arm, js phasing a bit thru it" because it
+        /// is inside the hand box. This is that difference.
+        ///
+        /// ⚠️ Y IS THE ONE AXIS NEITHER IMPORTER FLIPS, which is why the lift transcribes as a
+        /// bare number while the palm centre below has to be measured rather than copied.
+        /// </summary>
+        public const float HandTopLift = 0.0617f;
+
+        /// <summary>
+        /// Finds the hand bone and parks an anchor on the top of its hand.
+        ///
+        /// ⚠️⚠️ THE OFFSET IS MEASURED FROM THE SKIN, NOT TRANSCRIBED, AND THAT IS NOT
+        /// PEDANTRY. The Godot side records eight guessed values that each came back wrong in a
+        /// different category, in the chest, under the arm, inside the forearm, on the neck, on
+        /// the face, because every one of them was measured in the wrong frame. Copying its
+        /// final number here would repeat that once more: Godot's glTF importer keeps the
+        /// file's right-handed axes and glTFast negates X, so the same three numbers do not
+        /// mean the same place in the two engines and nothing about them says so.
+        ///
+        /// The frame that is not a matter of opinion is the one both engines skin in:
+        ///
+        ///     skinned_vertex = boneMatrix[b] * bindpose[b] * v
+        ///
+        /// and a child of the bone at local position `p` lands on vertex `v` when
+        /// `p == bindpose[b] * v`, for every pose of every clip, because the animated half
+        /// cancels out of both sides. So push the arm's own weighted vertices through the bind
+        /// pose and the hand's coordinates fall out.
+        ///
+        /// ⚠️ AND IT IS A CHILD OF THE BONE, never a write onto the bone. The bone's transform
+        /// is overwritten from the pose every frame and anything written onto it is discarded.
+        /// </summary>
+        private void BuildHandAnchor()
+        {
+            HandAnchor = null;
+            if (_instance == null) return;
+
+            var skinned = _instance.GetComponentInChildren<SkinnedMeshRenderer>();
+            if (skinned == null || skinned.sharedMesh == null || skinned.bones == null) return;
+
+            int bone = -1;
+
+            foreach (string wanted in HandBones)
+            {
+                for (int i = 0; i < skinned.bones.Length; i++)
+                {
+                    if (skinned.bones[i] == null) continue;
+                    if (!string.Equals(skinned.bones[i].name, wanted,
+                                       System.StringComparison.OrdinalIgnoreCase)) continue;
+
+                    bone = i;
+                    break;
+                }
+
+                if (bone >= 0) break;
+            }
+
+            if (bone < 0)
+            {
+                Debug.LogWarning($"[Visual] {name}: no hand bone on this rig (looked for " +
+                                 "arm-right then arm-left); a carried slipper cannot follow the arm.");
+                return;
+            }
+
+            if (!PalmCentre(skinned, bone, out Vector3 palm)) return;
+
+            // The shoe rests ON the hand. See HandTopLift.
+            palm.y += HandTopLift;
+
+            var anchorGo = new GameObject("HandAnchor");
+            anchorGo.transform.SetParent(skinned.bones[bone], false);
+            anchorGo.transform.localPosition = palm;
+            anchorGo.transform.localRotation = Quaternion.identity;
+
+            HandAnchor = anchorGo.transform;
+        }
+
+        /// <summary>
+        /// The centre of the hand blob in the bone's own space.
+        ///
+        /// ⚠️ THE FAR EIGHTH OF THE LIMB, NOT THE WHOLE BONE. Everything the arm bone owns is
+        /// weighted to it, shoulder included, so averaging all of it lands the shoe in the
+        /// armpit. The hand is the far end, and "far" is measured along whichever axis the limb
+        /// actually runs down rather than assumed to be one of them.
+        /// </summary>
+        private static bool PalmCentre(SkinnedMeshRenderer skinned, int bone, out Vector3 palm)
+        {
+            palm = Vector3.zero;
+
+            var mesh = skinned.sharedMesh;
+            var weights = mesh.boneWeights;
+            var vertices = mesh.vertices;
+            var binds = mesh.bindposes;
+
+            if (weights == null || weights.Length != vertices.Length ||
+                binds == null || bone >= binds.Length) return false;
+
+            var local = new List<Vector3>();
+
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                var w = weights[i];
+
+                float weight = (w.boneIndex0 == bone ? w.weight0 : 0.0f)
+                             + (w.boneIndex1 == bone ? w.weight1 : 0.0f)
+                             + (w.boneIndex2 == bone ? w.weight2 : 0.0f)
+                             + (w.boneIndex3 == bone ? w.weight3 : 0.0f);
+
+                if (weight < 0.5f) continue;
+
+                local.Add(binds[bone].MultiplyPoint3x4(vertices[i]));
+            }
+
+            if (local.Count < 8) return false;
+
+            // Which way the limb runs, taken from the spread of what is weighted to it.
+            Vector3 min = local[0], max = local[0];
+
+            foreach (var v in local)
+            {
+                min = Vector3.Min(min, v);
+                max = Vector3.Max(max, v);
+            }
+
+            Vector3 size = max - min;
+            int axis = size.x >= size.y && size.x >= size.z ? 0 : (size.y >= size.z ? 1 : 2);
+
+            // The far end is whichever end is further from the bone's own origin, because the
+            // bone sits at the shoulder and the hand does not.
+            bool towardMax = Mathf.Abs(max[axis]) > Mathf.Abs(min[axis]);
+            float cut = towardMax ? max[axis] - size[axis] * 0.125f : min[axis] + size[axis] * 0.125f;
+
+            var blob = new List<Vector3>();
+
+            foreach (var v in local)
+                if (towardMax ? v[axis] >= cut : v[axis] <= cut) blob.Add(v);
+
+            if (blob.Count == 0) return false;
+
+            foreach (var v in blob) palm += v;
+            palm /= blob.Count;
+
+            return true;
         }
 
         private void CacheRenderers()

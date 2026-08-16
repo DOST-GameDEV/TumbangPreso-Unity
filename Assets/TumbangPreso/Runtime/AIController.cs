@@ -423,13 +423,119 @@ namespace TumbangPreso
             return null;
         }
 
-        /// <summary>Is there a point worth intercepting a live throw at?</summary>
-        private bool HasInterceptPoint(Lata lata)
+        /// <summary>
+        /// Where a slipper already in the air can actually be stepped into, or null.
+        ///
+        /// ⚠️⚠️ "SOMETHING IS IN FLIGHT" IS NOT AN INTERCEPT AND THIS USED TO RETURN EXACTLY
+        /// THAT. The plan then ran with no point to run to, so the taya committed to a verb it
+        /// could not execute and stood still while a throw sailed past. `_intercept_point()`
+        /// walks the arc and takes the first sample inside the band a body can actually block.
+        ///
+        /// ⚠️ AND THE BAND IS HALF A CAPSULE, NOT THE WHOLE ARC. A slipper passing two metres
+        /// overhead is unblockable, and running under it is running nowhere.
+        /// </summary>
+        private bool TryInterceptPoint(out Vector3 point)
         {
+            point = Vector3.zero;
+
             foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
-                if (s.State == SlipperState.InFlight) return true;
+            {
+                if (s.State != SlipperState.InFlight) continue;
+
+                Vector3 p = s.transform.position;
+                Vector3 v = s.Velocity;
+                float t = 0.0f;
+
+                while (t < AiTuning.InterceptHorizon)
+                {
+                    t += AiTuning.InterceptStep;
+
+                    Vector3 at = p + v * t
+                                 + Vector3.down * (0.5f * Balance.Gravity * t * t);
+
+                    float rise = at.y - transform.position.y;
+                    if (rise < -AiTuning.InterceptBand || rise > AiTuning.InterceptBand) continue;
+
+                    point = new Vector3(at.x, transform.position.y, at.z);
+                    return true;
+                }
+            }
 
             return false;
+        }
+
+        private bool HasInterceptPoint(Lata lata) => TryInterceptPoint(out _);
+
+        /// <summary>
+        /// Walks the arc the slipper will actually fly and asks the same question the flight
+        /// itself will ask of it, frame by frame.
+        ///
+        /// ⚠️⚠️ NOTHING IN THIS PORT ASKED IT AT ALL, so a bot threw straight through whoever
+        /// happened to be standing between it and the can, every time, and read as an AI that
+        /// simply misses. The .gd has had this since the AI rewrite.
+        ///
+        /// ⚠️ IT RETURNS TRUE FOR A THROW THAT NEVER ARRIVES, and that is not a shortcut: a
+        /// shot that falls short is as useless as a blocked one, and the bot should go and find
+        /// a better angle either way.
+        /// </summary>
+        private bool LaneBlocked(Vector3 origin, Vector3 target, float power)
+        {
+            var round = GameServices.Round;
+            if (round == null) return false;
+
+            int skin = _carrier != null && _carrier.Held != null ? _carrier.Held.SkinIndex : -1;
+            float speed = ThrowRules.LaunchSpeedFor(skin, power);
+
+            Vector3 flat = target - origin;
+            flat.y = 0.0f;
+
+            float distance = flat.magnitude;
+            if (distance < 0.01f) return false;
+
+            // The same 45-degree launch the throw itself uses, which is what makes this a
+            // prediction rather than a second opinion.
+            Vector3 launch = (flat.normalized + Vector3.up).normalized * speed;
+
+            float step = Mathf.Clamp(AiTuning.LaneSampleArc / Mathf.Max(speed, 1.0f),
+                                     AiTuning.LaneStepMin, AiTuning.LaneStepMax);
+
+            float t = 0.0f;
+
+            for (int i = 0; i < AiTuning.LaneMaxSteps; i++)
+            {
+                t += step;
+
+                Vector3 point = origin + launch * t
+                                + Vector3.down * (0.5f * Balance.Gravity * t * t);
+
+                if (Flat(point, target) <= Balance.SlipperHitRadius + 0.30f)
+                    return false;                       // it gets there
+
+                if (point.y < target.y - 1.0f)
+                    return true;                        // it fell short of the can's hit band
+
+                foreach (var who in round.Players)
+                {
+                    if (who == null || who == _motor) continue;
+
+                    // ⚠️ THE CAPSULE COMES OFF THE CONTROLLER, not off a constant. The one
+                    // number that must not be guessed here is how wide a body is, because it
+                    // is what decides whether a sample falls between two people.
+                    var body = who.GetComponent<CharacterController>();
+                    float radius = body != null ? body.radius : 0.35f;
+                    float height = body != null ? body.height : CameraSystem.CameraRig.PersonCapsuleHeight;
+
+                    if (Flat(point, who.transform.position) >
+                        Balance.SlipperHitRadius + radius) continue;
+
+                    float rise = point.y - who.transform.position.y;
+                    if (rise < 0.0f || rise > height) continue;
+
+                    return true;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -516,12 +622,25 @@ namespace TumbangPreso
 
                 if (round.CanThrow(_motor))
                 {
-                    intent.AimPoint = round.Lata != null
-                        ? round.Lata.transform.position
-                        : Vector3.zero;
+                    Vector3 mark = round.Lata != null ? round.Lata.transform.position : Vector3.zero;
+                    intent.AimPoint = mark;
 
                     // Charge, then release. Held across frames until the charge is enough.
-                    bool longEnough = _carrier.ChargeRatio >= MinPowerForRange();
+                    float need = MinPowerForRange();
+                    bool longEnough = _carrier.ChargeRatio >= need;
+
+                    // ⚠️⚠️ AND THE LANE HAS TO BE CLEAR. Without this the bot releases into
+                    // whoever is standing between it and the can, every single time, which
+                    // reads as an AI that cannot aim rather than as one with no idea anybody
+                    // is there. Blocked means step sideways and try again, not never throw:
+                    // the ring point below moves on its own and the shot opens up.
+                    if (longEnough && LaneBlocked(transform.position, mark, need))
+                    {
+                        intent.Set(Verb.SpecialAbility, true);   // hold the charge
+                        MoveToward(intent, RingPoint(Balance.ConfinementRadius + ThrowStandoff));
+                        return;
+                    }
+
                     intent.Set(Verb.SpecialAbility, !longEnough);
                 }
                 return;

@@ -173,13 +173,41 @@ namespace TumbangPreso.PlayTests
                 "The Animator has no Avatar, so its animation output binds to nothing and the " +
                 "character stands in its bind pose for the whole match.");
 
-            var bone = DeepestChild(skinned.transform.root);
+            // ⚠️ A BONE, NOT MERELY THE DEEPEST CHILD.  parks a HandAnchor
+            // under the hand bone, and that node is deeper than any bone and never rotates on
+            // its own: sampling it asserts that a static child is static, which it always is.
+            var bone = DeepestBone(skinned);
+            Assert.IsNotNull(bone, "The skinned renderer has no bones.");
+
             Quaternion pose = bone.localRotation;
 
             for (int i = 0; i < 40; i++) yield return null;
 
             Assert.Greater(Quaternion.Angle(pose, bone.localRotation), 0.01f,
                 $"'{bone.name}' has not moved in 40 frames of a live match.");
+        }
+
+        /// <summary>The bone furthest down the rig, so the sample is a limb rather than the
+        /// root the clip may deliberately leave still.</summary>
+        private static Transform DeepestBone(SkinnedMeshRenderer skinned)
+        {
+            Transform best = null;
+            int depth = -1;
+
+            foreach (var bone in skinned.bones)
+            {
+                if (bone == null) continue;
+
+                int d = 0;
+                for (var step = bone; step != null; step = step.parent) d++;
+
+                if (d <= depth) continue;
+
+                depth = d;
+                best = bone;
+            }
+
+            return best;
         }
 
         /// <summary>A bone well down the rig, so the sample is a limb rather than the root the
