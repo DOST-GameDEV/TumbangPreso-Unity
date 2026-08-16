@@ -203,6 +203,13 @@ namespace TumbangPreso.EditorTools
                 // `StunFrostTests.TheVictimsScreenFrostsOver` is the editor-side guard; this line
                 // is the player-side one, and only the pair covers both.
                 "TumbangPreso/FrostVignette",
+
+                // ⚠️ THE DANGER VIGNETTE, AND ITS MISS PATH IS A REGRESSION RATHER THAN AN
+                // ABSENCE. `Hud.BuildDangerFlash` warns and falls back to a flat `Image` when
+                // the lookup fails, which is exactly the uniform full-screen red the vignette
+                // was added to replace — so a build that strips this ships the bug back while
+                // the editor stays fixed.
+                "TumbangPreso/DownedVignette",
             };
 
             var settings = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/GraphicsSettings.asset");
