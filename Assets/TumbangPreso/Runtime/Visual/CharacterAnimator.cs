@@ -157,6 +157,12 @@ namespace TumbangPreso.Visual
             _animator = model.GetComponentInChildren<Animator>();
             if (_animator == null) _animator = model.AddComponent<Animator>();
 
+            // ⚠️⚠️ AN AVATAR-LESS ANIMATOR PLAYS NOTHING AND REPORTS NOTHING. glTFast emits an
+            // Animator with a null controller, which is right for Playables, and no Avatar,
+            // which is not: an animation output bound to one drives no transforms at all and
+            // the whole cast stands in its bind pose. See ModelPreview.EnsureAvatar.
+            UI.ModelPreview.EnsureAvatar(_animator);
+
             CacheClips(model, clips);
 
             if (_clips.Count == 0)

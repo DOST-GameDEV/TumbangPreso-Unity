@@ -611,7 +611,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static void ConfigureFromDef(GameObject go, TscnUi.NodeDef n, TscnUi.Scene scene,
                                              BuildState state)
         {
-            string variation = Variation(n);
+            string variation = Variation(n, scene);
 
             switch (n.Type)
             {
@@ -842,14 +842,60 @@ namespace TumbangPreso.EditorTools.MapKit
             return group;
         }
 
-        private static string Variation(TscnUi.NodeDef n)
+        private static string Variation(TscnUi.NodeDef n, TscnUi.Scene scene)
         {
-            if (!n.Props.TryGetValue("theme_type_variation", out var raw)) return null;
+            if (n.Props.TryGetValue("theme_type_variation", out var raw))
+            {
+                // Recorded as `&"WoodPanel"`.
+                var m = Regex.Match(raw, "\"([^\"]+)\"");
+                if (m.Success) return m.Groups[1].Value;
+            }
 
-            // Recorded as `&"WoodPanel"`.
-            var m = Regex.Match(raw, "\"([^\"]+)\"");
-            return m.Success ? m.Groups[1].Value : null;
+            return VariationFromStyleBox(n, scene);
         }
+
+        /// <summary>
+        /// The variation a hand-written StyleBox is really asking for.
+        ///
+        /// ⚠️⚠️ A BUTTON CAN NAME ITS LOOK TWO WAYS AND ONLY ONE OF THEM WAS READ. Most controls
+        /// carry `theme_type_variation`, but `CharacterSelect.tscn`'s BACK button spells the
+        /// same thing out as three `theme_override_styles` StyleBoxFlats. With no variation to
+        /// find, it fell through to the theme's plain Button — CARD face, INK border — and came
+        /// out WHITE, sitting under a dark brown CHOOSE button on the same panel. Reported as
+        /// *"wrong back button colour"*, and it is the only white control on the screen.
+        ///
+        /// ⚠️ MATCHED ON THE COLOURS RATHER THAN SPECIAL-CASED BY NODE NAME. The .tscn's
+        /// `bg_color` is 0.192/0.098/0.043 and its `border_color` is 0.545/0.322/0.153, which
+        /// are WoodDeep and WoodEdge to five decimal places: the author was writing out the wood
+        /// button by hand. Matching the palette means any other control that does the same gets
+        /// the right skin without a second special case here.
+        /// </summary>
+        private static string VariationFromStyleBox(TscnUi.NodeDef n, TscnUi.Scene scene)
+        {
+            if (scene == null) return null;
+            if (!n.Props.TryGetValue("theme_override_styles/normal", out var raw)) return null;
+
+            string id = TscnUi.SubId(raw);
+            if (id == null || !scene.Sub.TryGetValue(id, out var box)) return null;
+            if (box.Type != "StyleBoxFlat") return null;
+
+            var fill = TscnUi.ParseColor(box.Props.TryGetValue("bg_color", out var bg) ? bg : null,
+                                         Color.clear);
+
+            foreach (string candidate in new[] { "WoodButton", "WoodPrimaryButton",
+                                                 "WoodDangerButton", "PrimaryButton" })
+            {
+                var style = GodotTheme.ForButton(candidate);
+                if (Near(style.Fill, fill)) return candidate;
+            }
+
+            return null;
+        }
+
+        /// <summary>Godot writes these to three decimals, so an exact compare never matches.</summary>
+        private static bool Near(Color a, Color b) =>
+            Mathf.Abs(a.r - b.r) < 0.004f && Mathf.Abs(a.g - b.g) < 0.004f &&
+            Mathf.Abs(a.b - b.b) < 0.004f;
 
         /// <summary>
         /// Godot's BoxContainer `alignment`: 0 begin, 1 centre, 2 end. It positions the whole

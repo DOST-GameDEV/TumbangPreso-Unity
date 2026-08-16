@@ -144,6 +144,13 @@ namespace TumbangPreso.CameraSystem
 
             // The mesh changed, so the length-normalising scale has to be recomputed.
             NormaliseHeldSize();
+
+            // ⚠️ AND THE TOON MATERIAL RE-APPLIED. The line above copies the WORLD slipper's
+            // material, which is already a toon variant carrying that skin's colour, but its
+            // outline width was measured against the world object's scale rather than the
+            // fistful-sized copy in the viewmodel. Re-deriving it here is what keeps the border
+            // the same thickness in both views.
+            Visual.ToonSkin.Apply(_heldRenderer, Visual.ToonSkin.PropOutlineWidth);
         }
 
         /// <summary>
@@ -204,7 +211,11 @@ namespace TumbangPreso.CameraSystem
                 _heldRenderer = slipperGo.AddComponent<MeshRenderer>();
                 Visual.MaterialKit.Dress(_heldRenderer, UI.UiTheme.PropFoam);
 
+                // ⚠️ AFTER NormaliseHeldSize, NOT BEFORE. ToonSkin measures what the mesh
+                // actually renders at to turn a world outline width into a model-space one, and
+                // that function rescales this node by up to 3x.
                 NormaliseHeldSize();
+                Visual.ToonSkin.Apply(_heldRenderer, Visual.ToonSkin.PropOutlineWidth);
             }
 
             SetHolding(false);
@@ -230,7 +241,17 @@ namespace TumbangPreso.CameraSystem
 
                 // See MaterialKit: without a material the block below writes to nothing and
                 // the arms render as the missing-material shader.
-                Visual.MaterialKit.Dress(armGo.AddComponent<MeshRenderer>(), ArmColour);
+                var mr = armGo.AddComponent<MeshRenderer>();
+                Visual.MaterialKit.Dress(mr, ArmColour);
+
+                // ⚠️⚠️ THE ARMS WEAR THE TOON MATERIAL, AND THIS IS WHY THEY LOOKED "too small
+                // and too pale" IN THE SIDE-BY-SIDE. `ViewmodelArms.tscn` puts `Mat_arm` on both
+                // surfaces of both arms: `toon.gdshader` at this exact colour, with
+                // `person_outline.tres` chained behind it. On the stock lit shader the same
+                // 0.784/0.529/0.353 is washed out by a warm key plus 1.65 ambient and has no
+                // border, so it reads as two flat tan quads instead of two outlined orange arms.
+                // The colour was never wrong; the material was missing.
+                Visual.ToonSkin.Apply(mr, Visual.ToonSkin.PersonOutlineWidth);
             }
 
             return pivot;

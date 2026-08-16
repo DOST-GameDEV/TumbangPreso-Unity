@@ -185,9 +185,80 @@ namespace TumbangPreso
             GameServices.Audio?.PlayAt("respawn", transform.position);
         }
 
+        /// <summary>
+        /// The move axis as a world direction.
+        ///
+        /// ⚠️⚠️ MOUSE-AIMED MOVEMENT IS RELATIVE TO THE BODY AND THIS WAS THE "controls are
+        /// inverted and most dont work" REPORT IN FULL. `character_base.gd:912` reads
+        ///
+        ///     direction = transform.basis * Vector3(input.x, 0, input.y)
+        ///
+        /// for a mouse-aimed unit, and a bare world-space `Vector3(x, 0, y)` only for one that
+        /// steers by movement. This file had the world-space form for BOTH, so W walked the
+        /// player toward world +Z no matter which way they were facing: pointing south made W
+        /// reverse, pointing east made it strafe, and only one of the four cardinal headings
+        /// behaved. Nothing about it reads as a movement bug from inside the game.
+        ///
+        /// ⚠️ AND A MOVEMENT-AIMED UNIT TURNS TO FACE ITS DIRECTION, which is `look_at` on the
+        /// same line. Every bot steers this way, and without it a bot slides sideways while its
+        /// punch, its lunge and its shove all fire along a forward vector that never moved. The
+        /// three verbs all derive their direction from the body (`-basis.z` in the .gd), so this
+        /// is combat correctness rather than an animation nicety.
+        /// </summary>
+        private Vector3 Steer(Vector2 axis)
+        {
+            Vector3 wish = new Vector3(axis.x, 0.0f, axis.y);
+            if (wish.sqrMagnitude > 1.0f) wish.Normalize();
+
+            if (wish.sqrMagnitude < 0.0001f) return Vector3.zero;
+
+            if (MouseAimed)
+            {
+                wish = transform.TransformDirection(wish);
+                wish.y = 0.0f;
+                return wish.normalized;
+            }
+
+            wish = wish.normalized;
+            transform.rotation = Quaternion.LookRotation(wish, Vector3.up);
+            return wish;
+        }
+
+        /// <summary>
+        /// True when a local player is steering this unit with the mouse, from
+        /// `character_base.gd::_is_mouse_aimed()`.
+        ///
+        /// ⚠️ ASKED OF THE RIG, NOT STORED HERE. One flag on the motor would have to be kept in
+        /// step with every camera handover: spectating, the debug player switcher, and a peer
+        /// that stops being the authority for a body. The rig is the thing that actually knows.
+        /// </summary>
+        private bool MouseAimed
+        {
+            get
+            {
+                if (_rig == null || !_rig.IsFollowing(this)) return false;
+                return _rig.Aim == CameraSystem.AimSource.Mouse;
+            }
+        }
+
+        private CameraSystem.CameraRig _rig;
+
+        /// <summary>
+        /// ⚠️ RE-RESOLVED WHILE IT IS NULL, NOT ONCE IN Awake. `MatchInstaller` builds the rig
+        /// after the seats, so a unit that cached the answer at Awake would cache "no rig" and
+        /// the human seat would steer like a bot for the whole match.
+        /// </summary>
+        private void ResolveRig()
+        {
+            if (_rig != null) return;
+            _rig = FindFirstObjectByType<CameraSystem.CameraRig>();
+        }
+
         private void FixedUpdate()
         {
             float dt = Time.fixedDeltaTime;
+
+            ResolveRig();
 
             if (_spawnSettle > 0)
             {
@@ -211,8 +282,7 @@ namespace TumbangPreso
                           * sprint
                           * Stamina.SpeedZones.Value;
 
-            Vector3 wish = new Vector3(axis.x, 0.0f, axis.y);
-            if (wish.sqrMagnitude > 1.0f) wish.Normalize();
+            Vector3 wish = Steer(axis);
 
             _velocity.x = wish.x * speed;
             _velocity.z = wish.z * speed;

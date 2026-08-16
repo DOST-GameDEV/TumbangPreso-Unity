@@ -180,6 +180,13 @@ namespace TumbangPreso.EditorTools
                 "UI/Default",
                 "Particles/Standard Unlit",
                 "Skybox/Panoramic",
+
+                // ⚠️ THE CHARACTER AND PROP MATERIAL. Nothing in a scene references it: every
+                // material that uses it is built at runtime through `Shader.Find`, which is
+                // exactly the case rule 10 exists for. Left out, the whole cast, both hero props
+                // and the first-person arms render as the missing-shader material in the player
+                // and are correct in the editor.
+                "TumbangPreso/Toon",
             };
 
             var settings = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/GraphicsSettings.asset");

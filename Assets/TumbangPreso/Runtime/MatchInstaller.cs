@@ -148,6 +148,12 @@ namespace TumbangPreso
                 var model = Instantiate(art.Model, go.transform);
                 model.name = "Visual";
                 StripColliders(model);
+
+                // ⚠️ THE LATA IS A HERO PROP AND WEARS THE INK OUTLINE. `_apply_toon_pass`
+                // applies it to every Prop in the Godot build, and this is the object the whole
+                // sport is about hitting: without a border it reads as untextured placeholder
+                // geometry from throwing distance.
+                Visual.ToonSkin.Apply(model, Visual.ToonSkin.PropOutlineWidth);
             }
             else
             {
@@ -182,6 +188,10 @@ namespace TumbangPreso
                 var model = Instantiate(art.Model, go.transform);
                 model.name = "Visual";
                 StripColliders(model);
+
+                // The other hero prop. Same reasoning as the lata, and the owner glow below
+                // drives `_RimStrength`, which this shader is the one that actually carries.
+                Visual.ToonSkin.Apply(model, Visual.ToonSkin.PropOutlineWidth);
             }
             else
             {
@@ -370,6 +380,15 @@ namespace TumbangPreso
             var rig = camGo.GetComponent<CameraSystem.CameraRig>();
             if (rig == null) rig = camGo.AddComponent<CameraSystem.CameraRig>();
             rig.Follow(local);
+
+            // ⚠️⚠️ NOTHING IN THE PROJECT EVER SELECTED MOUSE AIM AND THE GAME WAS UNPLAYABLE
+            // BECAUSE OF IT. `AimSource` defaults to MOVEMENT, `CameraRig.StepLook` returns on
+            // the first line unless it is MOUSE, and `SetAimSource` had no call site at all. So
+            // the mouse turned nothing: the view was frozen on whatever heading the seat spawned
+            // at, the body never yawed, and W therefore walked the player along a fixed world
+            // axis for the entire match. `main.gd:751` sets this on the local rig the moment a
+            // single-player match starts, which is the line this restores.
+            rig.SetAimSource(CameraSystem.AimSource.Mouse);
 
             // ⚠️⚠️ SPECTATING IS A REAL FIFTH OPTION AND NOTHING EVER SELECTED IT. The setup
             // screen's SPECTATE button writes `GameLaunch.Spectator`, `HumanSeat` correctly

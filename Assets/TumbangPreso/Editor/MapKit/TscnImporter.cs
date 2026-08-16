@@ -221,12 +221,20 @@ namespace TumbangPreso.EditorTools.MapKit
 
             // Godot paths ("." and "Bounds/WallEast") to the Unity transform we made for them.
             var byPath = new Dictionary<string, Transform>();
-            int instanced = 0, missing = 0, primitives = 0;
+            int instanced = 0, missing = 0, primitives = 0, meshed = 0;
             var missingPaths = new HashSet<string>();
+            var materials = new Dictionary<string, Material>();
 
             foreach (var n in nodes)
             {
                 GameObject go = null;
+
+                // ⚠️ A BoxMesh's SIZE IS A MESH PROPERTY, NOT A TRANSFORM, and applying it as a
+                // scale before ApplyGodotTransform is why the ground disappeared. That call
+                // WRITES localScale from the node's basis, so the 200x1x200 floor slab was
+                // rebuilt as a 1x1x1 cube on the very next line. Carried instead and multiplied
+                // in afterwards, which composes with whatever scale the basis really had.
+                Vector3 meshSize = Vector3.one;
 
                 // An instanced model: this is the bulk of a map.
                 if (n.InstanceExtId != null && ext.TryGetValue(n.InstanceExtId, out var res))
@@ -251,16 +259,65 @@ namespace TumbangPreso.EditorTools.MapKit
                     }
                 }
 
-                // A box mesh authored inline (the road slab, the chalk lines).
                 if (go == null && n.Props.TryGetValue("mesh", out var meshRef))
                 {
-                    string id = SubId(meshRef);
+                    // ⚠️⚠️ `mesh = ExtResource(...)` WAS NOT HANDLED AT ALL, AND IT IS EVERY
+                    // HAND-MODELLED PROP ON BOTH MAPS. A node that instances a .glb comes in
+                    // through the branch above; a node that merely POINTS AT a mesh resource
+                    // fell all the way through to "make an empty GameObject", so it kept its
+                    // name, its parent and its transform and drew absolutely nothing.
+                    //
+                    // 74 nodes on Eskinita and 36 on Bayan Plaza went that way: every electric
+                    // post, the laundry lines strung between them, both sari-sari stores, the
+                    // tricycle, the tires, crates, drums, monobloc chairs and bollards, the
+                    // corrugated walls, and ALL of the chalk. That is the whole reason the
+                    // street looked empty and the road had no markings on it, and the importer
+                    // reported "0 MISSING" throughout because `missing` only ever counted the
+                    // instance branch.
+                    string extId = ExtId(meshRef);
+
+                    if (extId != null && ext.TryGetValue(extId, out var meshRes))
+                    {
+                        string assetPath = ToUnityAssetPath(meshRes.GodotPath);
+
+                        // ⚠️ THE MODEL PREFAB, NOT THE BARE Mesh, AND THAT IS WHAT KEEPS THE
+                        // COLOUR. These are generated .obj files with a .mtl beside them, and
+                        // the importer is set to embed those materials in the prefab. Loading
+                        // the Mesh alone and adding a MeshRenderer gives it NO material, which
+                        // Unity draws in bright magenta.
+                        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+
+                        if (prefab != null)
+                        {
+                            go = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+                            meshed++;
+                        }
+                        else
+                        {
+                            go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            go.transform.localScale = Vector3.one * 0.5f;
+                            missing++;
+                            missingPaths.Add(meshRes.GodotPath);
+                        }
+                    }
+                }
+
+                // A box mesh authored inline (the ground slab, the chalk lines).
+                if (go == null && n.Props.TryGetValue("mesh", out var boxRef))
+                {
+                    string id = SubId(boxRef);
                     if (id != null && subs.TryGetValue(id, out var sub) && sub.Type == "BoxMesh")
                     {
                         go = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         UnityEngine.Object.DestroyImmediate(go.GetComponent<Collider>());
-                        go.transform.localScale = ParseVec3(sub.Props.TryGetValue("size", out var s) ? s : "Vector3(1, 1, 1)");
+                        meshSize = ParseVec3(sub.Props.TryGetValue("size", out var s) ? s : "Vector3(1, 1, 1)");
                         primitives++;
+
+                        // ⚠️ AND THE BOX CARRIES A MATERIAL. Eskinita's ground slab is
+                        // `Mat_floor`, a dark asphalt grey; without it the slab renders in
+                        // Unity's default white and lights the whole street from below.
+                        if (sub.Props.TryGetValue("material", out var boxMat))
+                            Dress(go, boxMat, subs, ext, materials);
                     }
                 }
 
@@ -313,12 +370,23 @@ namespace TumbangPreso.EditorTools.MapKit
                 if (n.Props.TryGetValue("transform", out var t)) ApplyGodotTransform(go.transform, t);
                 else { go.transform.localPosition = Vector3.zero; go.transform.localRotation = Quaternion.identity; }
 
+                // See meshSize: the mesh's own dimensions compose with the node's scale rather
+                // than being overwritten by it.
+                if (meshSize != Vector3.one)
+                    go.transform.localScale = Vector3.Scale(go.transform.localScale, meshSize);
+
+                // ⚠️ AFTER THE PREFAB IS INSTANTIATED, because it overrides what the model
+                // imported with. Every chalk mark on both maps arrives this way.
+                if (n.Props.TryGetValue("surface_material_override/0", out var overrideRef))
+                    Dress(go, overrideRef, subs, ext, materials);
+
                 string myPath = n.Parent == null ? "." :
                                 (n.Parent == "." ? n.Name : n.Parent + "/" + n.Name);
                 byPath[myPath] = go.transform;
             }
 
-            report.AppendLine($"   built: {instanced} models, {primitives} primitives, {missing} MISSING");
+            report.AppendLine($"   built: {instanced} models, {meshed} meshes, " +
+                              $"{primitives} primitives, {missing} MISSING");
             foreach (var p in missingPaths) report.AppendLine($"      missing model: {p}");
 
             ReportWalls(byPath, report);
@@ -373,6 +441,85 @@ namespace TumbangPreso.EditorTools.MapKit
             report.AppendLine(saved ? $"   wrote {outPath}" : $"   FAILED to write {outPath}");
 
             return saved && missing == 0;
+        }
+
+        /// <summary>
+        /// Puts a Godot `StandardMaterial3D` sub-resource on every renderer under
+        /// <paramref name="go"/>.
+        ///
+        /// ⚠️⚠️ THE TEXTURE IS DELIBERATELY DROPPED WHEN THE MESH HAS NO UVs, AND THAT IS NOT A
+        /// SHORTCUT. `Mat_chalk` is white albedo times `chalk.png` with `uv1_triplanar = true`,
+        /// and triplanar is there because the generated `.obj` decals carry NO texture
+        /// coordinates at all (measured: `env_chalk_piko.obj` has 644 vertices and zero `vt`
+        /// lines). Binding that texture to a Standard material would sample one texel for the
+        /// whole mesh, which is a worse lie than a flat colour. So the albedo colour is honoured
+        /// and the texture is bound only where there is something to look it up with.
+        ///
+        /// ⚠️ ONE MATERIAL PER SUB-RESOURCE, SHARED. Thirteen chalk marks on Eskinita all name
+        /// `Mat_chalk`; a fresh Material each would be thirteen assets saved into the scene.
+        /// </summary>
+        private static void Dress(GameObject go, string reference,
+                                  Dictionary<string, SubRes> subs, Dictionary<string, ExtRes> ext,
+                                  Dictionary<string, Material> cache)
+        {
+            string id = SubId(reference);
+            if (id == null || !subs.TryGetValue(id, out var sub)) return;
+            if (sub.Type != "StandardMaterial3D" && sub.Type != "ORMMaterial3D") return;
+
+            if (!cache.TryGetValue(id, out var material) || material == null)
+            {
+                var shader = Shader.Find("Standard");
+                if (shader == null) return;
+
+                material = new Material(shader) { name = id };
+
+                var albedo = ParseColor(sub.Props.TryGetValue("albedo_color", out var a) ? a : null,
+                                        Color.white);
+
+                material.SetColor("_Color", albedo);
+                material.SetColor("_BaseColor", albedo);
+
+                // Godot's `roughness` is Unity's inverse smoothness, and these surfaces are all
+                // matte: chalk on asphalt and painted concrete. A default 0.5 smoothness puts a
+                // specular sheen on a chalk line.
+                material.SetFloat("_Glossiness", 1.0f - SubProp(sub, "roughness", 1.0f));
+                material.SetFloat("_Metallic", SubProp(sub, "metallic", 0.0f));
+
+                cache[id] = material;
+            }
+
+            bool textured = sub.Props.ContainsKey("albedo_texture");
+
+            foreach (var renderer in go.GetComponentsInChildren<Renderer>(includeInactive: true))
+            {
+                if (textured && material.mainTexture == null)
+                {
+                    var filter = renderer.GetComponent<MeshFilter>();
+                    var mesh = filter != null ? filter.sharedMesh : null;
+
+                    if (mesh != null && mesh.uv != null && mesh.uv.Length == mesh.vertexCount &&
+                        mesh.vertexCount > 0)
+                    {
+                        string texId = ExtId(sub.Props["albedo_texture"]);
+
+                        if (texId != null && ext.TryGetValue(texId, out var texRes))
+                        {
+                            var texture = AssetDatabase.LoadAssetAtPath<Texture>(
+                                ToUnityAssetPath(texRes.GodotPath));
+
+                            if (texture != null)
+                            {
+                                material.SetTexture("_MainTex", texture);
+                                material.SetTexture("_BaseMap", texture);
+                            }
+                        }
+                    }
+                }
+
+                var slots = new Material[Mathf.Max(1, renderer.sharedMaterials.Length)];
+                for (int i = 0; i < slots.Length; i++) slots[i] = material;
+                renderer.sharedMaterials = slots;
+            }
         }
 
         /// <summary>

@@ -75,6 +75,17 @@ namespace TumbangPreso.UI
         /// 330 clipped the English gloss and raised a scrollbar.</summary>
         public const float TileIconMinHeight = 190.0f;
 
+        /// <summary>
+        /// Pulls the camera in on the preview's measured shot, and centres the subject with it.
+        ///
+        /// ⚠️ `ModelPreview.FrameMargin` LEAVES 62% AIR, sized for a T-pose sharing the frame
+        /// with a wood panel; in a tile that is the big empty box that was reported. 0.62 was
+        /// tried and was too tight even centred, because it cancels the margin exactly and
+        /// cropped the lata top and bottom. 0.80 fills the tile with a little air left, which is
+        /// what a picture wants.
+        /// </summary>
+        public const float TileZoom = 0.80f;
+
         public const int TileFilSize = 46;
         public const int TileEngSize = 24;
 

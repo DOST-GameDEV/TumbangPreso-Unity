@@ -240,9 +240,15 @@ namespace TumbangPreso.UI
             var art = _tab == 0 ? book.PersonArt(_pick[0])
                     : (_tab == 1 ? book.CanArt(_pick[1]) : book.SlipperArt(_pick[2]));
 
-            // ⚠️ A LATA AND A TSINELAS LIE ON THE GROUND and need the steeper look-down angle;
-            // a person is framed standing. Same preview, two framings, chosen by category.
-            preview.Show(art == null ? null : art.Model, flat: _tab != 0);
+            // ⚠️ THE LOOK-DOWN ANGLE IS NOT PASSED IN ANY MORE, IT IS MEASURED. A lata and a
+            // tsinelas lie on the ground and need a steeper pitch than a standing Person, and
+            // the category is a poor proxy for that: `character_preview.gd` lerps the pitch on
+            // the subject's own height:width ratio so a tall lata and a flat slipper get
+            // different angles even though both are "not a person".
+            //
+            // ⚠️ AND THE CLIPS TRAVEL WITH THE MODEL, or the preview stands in a T-pose. They
+            // are sub-assets of the `.glb` and this reference is what makes them ship.
+            preview.Show(art == null ? null : art.Model, art == null ? null : art.Clips);
         }
 
         /// <summary>

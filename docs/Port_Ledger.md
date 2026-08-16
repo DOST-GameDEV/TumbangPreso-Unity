@@ -45,35 +45,108 @@ unread, and reported success.
 raycasts every button on every screen and names what is on top of it. Do not delete it:
 "the buttons don't work" is invisible to every other check in this project.
 
-### The one visual delta left in the boot sting, and the exact fix
+### The boot sting's background is WHITE in both engines, and the grey was a fade
 
-The BH Studios animation now fills the screen and plays correctly, which was the reported
-fault. What still differs is the BACKGROUND TONE: Godot's Theora decode renders it as a
-mid grey and Windows Media Foundation renders it clipped to pure white, measured at
-(255, 255, 255) across the whole frame.
+⚠️ **A "colour delta" was recorded here and it was not real.** The reasoning was: the Unity
+player renders the sting on white, a screenshot of the Godot build showed it on mid grey,
+and `Player.log` warns that `opening_animation.mp4` carries no colour primaries and Media
+Foundation may shift the colour. Three true facts and a wrong conclusion.
 
-It is a container tag, not a rendering bug, and the player log names it outright:
+Both files were then decoded and sampled, which is what should have happened first:
 
-> `Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to
-> default may result in color shift.`
+| file | codec | background at t = 2 s |
+|---|---|---|
+| `Art/video/opening_animation.mp4` (Unity) | h264 | 255, 255, 255 |
+| `assets/video/opening_animation.ogv` (Godot) | theora | 255, 255, 255 |
 
-`opening_animation.mp4` carries no colour primaries, so the decoder guesses and expands the
-range. Re-encode it with the tags stated and both decoders agree:
+Identical. The grey in the comparison shot is the SPLASH'S OWN FADE: `splash_screen.gd`
+starts opaque black and tweens it out over 0.35 s, and a white frame under a black plate at
+about 20% alpha is exactly that grey. The screenshot was taken during the fade-in.
 
-```bash
-ffmpeg -i opening_animation.mp4 -c:v libx264 -pix_fmt yuv420p \
-  -color_primaries bt709 -color_trc bt709 -colorspace bt709 -an opening_animation.mp4
-```
-
-⚠️ **NOT fixed by tinting the RawImage.** The frame is clipped at 255, so the original
-tone is no longer in the image to scale back down, and a guessed multiplier would be wrong
-in a new direction. ffmpeg is not installed on this machine, which is the only reason this
-is written down rather than done.
+⚠️ **The lesson is the one this ledger keeps re-learning: measure the asset, do not infer
+it from a screenshot.** A capture carries the frame's animation state, the engine's
+tonemap and whatever the chat client did to the PNG. The decoder warning in the log is
+still true and still harmless.
 
 ⚠️ **And its first two runs lied.** It probed three frames after load, before the
 pennants had finished unfurling and before the layout groups had run, and reported six
 working controls as unreachable. It waits 120 frames now and reports OFF SCREEN
 separately from BLOCKED, because those are different faults with different fixes.
+
+## 2026-08-16 — the look pass: the street, the ink outline and the character screen
+
+Reported from playing the build. Four complaints, and between them they turned out to be
+six separate faults. Every one of them was invisible to a compile, a test and the
+importer's own success report.
+
+1. **⚠️⚠️ `mesh = ExtResource(...)` WAS NOT HANDLED BY THE MAP IMPORTER AT ALL, AND IT IS
+   EVERY HAND-MODELLED PROP ON BOTH MAPS.** A node that INSTANCES a `.glb` came through the
+   prefab branch; a node that merely POINTS AT a mesh resource fell through to "make an
+   empty GameObject", so it kept its name, its parent and its transform and drew nothing.
+   That is **74 nodes on Eskinita and 36 on Bayan Plaza**: every electric post, the laundry
+   lines strung between them, both sari-sari stores, the tricycle, the tires, crates, oil
+   drums, monobloc chairs and bollards, the corrugated walls, and **all of the chalk** — the
+   hopscotch, the base circle, the confinement square and both throwing lines.
+
+   ⚠️ **And the importer reported `0 MISSING` throughout**, because `missing` only ever
+   counted the instance branch. It counts meshes now and reports them separately.
+
+2. **The ground slab was rebuilt as a 1x1x1 cube.** A `BoxMesh`'s `size` was applied as a
+   scale and then `ApplyGodotTransform` overwrote `localScale` from the node's basis on the
+   very next line. The size is carried and multiplied in afterwards now. Its material was
+   dropped as well, so Eskinita's asphalt slab was Unity white.
+
+3. **⚠️⚠️ NO TOON MATERIAL AND NO INK OUTLINE EXISTED IN THE PORT.** `character_visual.gd`
+   puts a two-band toon material with an inverted-hull outline on every Prop, and a Person
+   gets the same two things from its palette `.tres`. Unity rendered the whole cast, both
+   hero props and the first-person arms on the stock lit shader: no border, and a warm key
+   plus 1.65 ambient washing every colour pale. It is the single largest reason the two
+   builds did not read as the same game. `Shaders/Toon.shader` and `ToonSkin.cs` are the port.
+
+   ⚠️ **The outline is a PASS in the shader, not a second material.** Unity's material slots
+   map one-to-one onto SUBMESHES, so an extra material redraws only the last submesh: the
+   border would have appeared on part of each model and nowhere else.
+
+   ⚠️ **The world is still not allowed to wear it.** `env_toon_pass.gd` records the
+   2026-07-29 revert (banding on flat surfaces, and the cost of a hull on every mesh in a
+   dressed street), and the CHARACTER outline was confirmed as still wanted on 2026-08-16.
+   Characters and props only.
+
+4. **⚠️⚠️ NOTHING EVER SELECTED MOUSE AIM, SO THE GAME WAS UNPLAYABLE.** `AimSource`
+   defaults to MOVEMENT, `CameraRig.StepLook` returns on its first line unless it is MOUSE,
+   and `SetAimSource` had **no call site at all**. The mouse turned nothing, the body never
+   yawed, and `CharacterMotor` compounded it by steering in WORLD space for every unit:
+   `character_base.gd:912` is body-relative for a mouse-aimed unit and world-space only for
+   one that steers by movement. W therefore walked the player along a fixed compass heading
+   for the whole match. Reported as "controls are inverted and most dont work".
+
+   ⚠️ A movement-aimed unit now turns to face its direction, which is `look_at` on the same
+   line. Every bot steers that way, and its punch, lunge and shove all fire along the body's
+   forward vector.
+
+5. **The CHARACTER screen's model preview was broken four ways at once** — see
+   `ModelPreview`'s own remarks. Nothing ever called `Orbit` or `Zoom` while the panel
+   printed a hint line promising three controls; the render target was a fixed 512x640
+   stretched over a panel of another shape; the framing fitted height alone and ignored the
+   aspect; and the subject faced AWAY from the camera because Godot looks down -Z. The FOV
+   was 32 against the .tscn's 42.
+
+   ⚠️ **And the preview was lit by the arena behind it.** Godot's SubViewport is
+   `own_world_3d`, so the map's sun cannot reach it. Unity has one world and the setup
+   screen loads the chosen arena live, so the subject took its own key at 1.35, its own fill
+   at 0.45 and Eskinita's key at 1.15 on top, and rendered as a white silhouette inside its
+   own ink border.
+
+6. **The BACK button was white.** `CharacterSelect.tscn` spells its look out as three
+   `theme_override_styles` StyleBoxFlats instead of a `theme_type_variation`, and the
+   importer only read the variation. With none to find it fell through to the theme's plain
+   Button, CARD face and INK border, and came out as the only white control on a screen of
+   brown wood. It is matched on the stylebox's own colours now, so any other control that
+   spells itself out gets the right skin too.
+
+⚠️ **The tool that found the shader fault is `ToonProbe`**, which renders one model on a
+plain backdrop in about forty seconds. A player build plus a scripted playthrough is four
+minutes per look, and a shading question takes several looks.
 
 ## ⚠️ Unity rules the conversion has to obey, each found by a shipped failure
 
@@ -103,6 +176,21 @@ can produce.
 6. **An asset nothing references is stripped from the build.** The 32 animation
    clips per character live inside the `.glb`; without a serialised reference the
    whole cast stood still in the player only.
+7. **A surface shader declares `_MainTex_ST` for you.** Naming an Input field
+   `uv_MainTex` makes the generator emit that declaration, and a second one is a
+   hard "redefinition" error that kills ONLY the lit pass. A hand-written outline
+   Pass in the same shader still compiles, so the model draws a perfect ink
+   silhouette filled with the error shader: a solid navy blob in a build, with no
+   error anywhere except the shader import log.
+8. **A generic Animator with no Avatar plays nothing and says nothing.** glTFast
+   emits an Animator with a null controller (correct for Playables) and no Avatar,
+   and an `AnimationPlayableOutput` bound to one drives no transforms at all.
+   `ModelPreview.EnsureAvatar` builds one with `AvatarBuilder.BuildGenericAvatar`.
+   The symptom is the whole cast standing in its bind pose, which on these rigs is
+   arms out, and it reads as unfinished art rather than as a bug.
+9. **A shader only `Shader.Find` reaches is stripped from the player.**
+   `TumbangPreso/Toon` is built into materials at runtime and is named in
+   `GameBuilder.EnsureRuntimeShaders` for exactly that reason.
 
 ## How to read the status column
 
@@ -163,7 +251,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
 | `character_base.gd` | 1981 | `CharacterMotor` + `CombatVerbs` + `StatusStack` (651) | PARTIAL |
-| `character_visual.gd` | 2182 | `CharacterVisual` + `CharacterAnimator` + `ImpactBurst` (560) | PARTIAL — clips, flash, burst wired; prop attachments and remote smoothing pending |
+| `character_visual.gd` | 2182 | `CharacterVisual` + `CharacterAnimator` + `ImpactBurst` + `ToonSkin` (700) | PARTIAL — clips, flash, burst, toon pass and ink outline wired; prop attachments and remote smoothing pending |
 | `carrier.gd` | 536 | `Carrier.cs` (350) | CONVERTED 2026-08-16 — the 2.5 s wind-up on `Pressed` not `JustPressed`, its sound, the OBSERVED charge every peer can see, the aim cast from the camera, the sight-line throw origin, and the arc |
 | `character_nameplate.gd` | 165 | `CharacterNameplate.cs` (155) | CONVERTED — ring, tag, role colour, distance fade |
 | `slipper.gd` | 1630 | `Slipper.cs` (280) | PARTIAL — flight, bounce, spin, void recovery; hand attach and net sync pending |
@@ -243,7 +331,7 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `match_setup.gd` | 2015 | `ConvertedMatchSetup.cs` (440) | PARTIAL — rows, seats, spectate, live map preview; netcode lobby half pending |
 | `hud.gd` | 1587 | `Hud.cs` (900) | CONVERTED 2026-08-16 — wood skin, recessed clock with its urgency colour and pulse, ranked four-row board with the TAYA badge, lata card and its per-role hint, toasts off all five events, ready prompt AND role objective, split status stacks, held danger vignette, VULNERABLE line, role-coloured crosshair, clean feed, spectator strip, version stamp |
 | `multiplayer_setup.gd` | 1015 | `LobbySession.cs` (287) | PARTIAL |
-| `character_preview.gd` | 623 | `ModelPreview.cs` (215) | PARTIAL — render, framing, turn, drag; idle clip pending |
+| `character_preview.gd` | 623 | `ModelPreview.cs` (470) + `ModelPreviewInput.cs` | CONVERTED — aspect-correct target, three-term framing, pitch lerp, h_offset, idle clip, drag/zoom/reset, tile framing |
 | `ui_theme.gd` | 551 | `UiTheme` + `GodotTheme` + `StyleBoxBaker` (520) | CONVERTED — variations, StyleBox geometry and the baked nine-slices |
 | `tutorial.gd` | 462 | `TutorialContent` + `ConvertedTutorialPanel` (350) | CONVERTED 2026-08-16 — all 8 pages, plus page 1's premise strip with the four real models in live 3D |
 | `you_card.gd` | 430 | `YouCard.cs` (380) | CONVERTED 2026-08-16 — wood face with the role border, the STAMINA bar it was missing entirely, the FATIGUED read, the ready flash, and the two role-exclusive meters |

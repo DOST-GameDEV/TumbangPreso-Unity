@@ -43,6 +43,16 @@ namespace TumbangPreso.Visual
             Shader.PropertyToID("_TintColor"),
         };
 
+        /// <summary>
+        /// ⚠️⚠️ THE FLASH IS ITS OWN UNIFORM AND WRITING IT AS A COLOUR CANNOT WORK ON A
+        /// TEXTURED MODEL. Checklist 7.1 in the Godot repo split these for a measured reason: a
+        /// kit mesh's resting tint is white, so lerping the base colour toward white is a no-op
+        /// and a hit on the lata showed nothing at all. It is worse here, because the toon
+        /// material now carries the model's real albedo in `_Color` and a block that wrote white
+        /// into it would erase the character's colours outright for the duration of the flash.
+        /// </summary>
+        private static readonly int FlashAmountId = Shader.PropertyToID("_FlashAmount");
+
         [SerializeField] private Transform _modelRoot;
         [SerializeField] private float _flashTime = 0.12f;
 
@@ -81,6 +91,24 @@ namespace TumbangPreso.Visual
             }
 
             CacheRenderers();
+
+            // ⚠️⚠️ THE TOON PASS AND THE INK OUTLINE, WHICH THE PORT HAD NO EQUIVALENT OF.
+            // `character_visual.gd` puts a toon material with an inverted-hull outline on every
+            // Prop, and a Person gets the same two things from its palette `.tres`. Nothing here
+            // did either, so the whole cast rendered on the stock lit shader with no border. See
+            // ToonSkin: it is the largest single difference between the two builds.
+            //
+            // ⚠️ BEFORE PushColour, because the tint and the flash are written as property
+            // blocks ONTO these materials and a block set before the material exists is
+            // discarded.
+            // A Person's border is the one `person_outline.tres` carries; everything else takes
+            // the prop width. Asked of the motor rather than stored, so the two cannot drift.
+            var motor = GetComponent<CharacterMotor>();
+            bool person = motor == null || motor.IsPerson;
+
+            ToonSkin.Apply(_instance, person ? ToonSkin.PersonOutlineWidth
+                                             : ToonSkin.PropOutlineWidth);
+
             AlignToCapsuleFloor();
             PushColour();
 
@@ -166,7 +194,13 @@ namespace TumbangPreso.Visual
         private void PushColour()
         {
             float flash = _flashTime <= 0.0f ? 0.0f : Mathf.Clamp01(_flashLeft / _flashTime);
-            Color shown = Color.Lerp(_tint, Color.white, flash);
+
+            // ⚠️⚠️ WHITE MEANS "DO NOT TINT", MATCHING `lata.gd` AND `slipper.gd`. Writing white
+            // into the albedo is a no-op on a textured prop and a repaint on an untextured one,
+            // and since ToonSkin now bakes each model's real albedo into `_Color`, an
+            // unconditional white write would flatten every character to a blank silhouette. The
+            // Godot original guards on exactly this and says so.
+            bool tinted = _tint != Color.white;
 
             foreach (var r in _renderers)
             {
@@ -174,7 +208,10 @@ namespace TumbangPreso.Visual
 
                 r.GetPropertyBlock(_block);
 
-                foreach (int id in ColourIds) _block.SetColor(id, shown);
+                if (tinted)
+                    foreach (int id in ColourIds) _block.SetColor(id, _tint);
+
+                _block.SetFloat(FlashAmountId, flash);
 
                 r.SetPropertyBlock(_block);
             }

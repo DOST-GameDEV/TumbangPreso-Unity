@@ -141,21 +141,40 @@ namespace TumbangPreso.UI
             var book = RosterBook.Load();
             if (book == null) return;
 
+            // ⚠️ TURNABLE, BUT THE WHEEL STILL SCROLLS THE PAGE. 🧑: *"in tutorial allow us to
+            // play around with the models like in char select"*. These four sit inside this
+            // page's scroll view, so the preview takes the two gestures a scroller has no use
+            // for and leaves the wheel alone. See EnableTileInteraction.
+            preview.EnableTileInteraction();
+
             switch (tile.Kind)
             {
                 case "can":
-                    preview.Show(book.CanArt(0)?.Model, flat: true);
+                    Put(preview, book.CanArt(0));
                     break;
 
                 case "slipper":
                     int slipper = Roster.IndexIn(Roster.Slippers, TutorialContent.TileSlipperId);
-                    preview.Show(book.SlipperArt(Mathf.Max(0, slipper))?.Model, flat: true);
+                    Put(preview, book.SlipperArt(Mathf.Max(0, slipper)));
                     break;
 
                 default:
-                    preview.Show(book.PersonArt(tile.Index)?.Model, flat: false);
+                    Put(preview, book.PersonArt(tile.Index));
                     break;
             }
+
+            // ⚠️ AFTER THE SUBJECT, because the tile framing multiplies the MEASURED shot and
+            // showing a subject is what measures it. The other way round it is overwritten by
+            // the frame that follows.
+            preview.SetTileFraming(TutorialContent.TileZoom, uniformExtent: true);
         }
+
+        /// <summary>
+        /// ⚠️ THE CLIPS TRAVEL WITH THE MODEL. Without them the tile stands in the rig's bind
+        /// pose, which is arms straight out: it reads as broken art, and it is also nearly twice
+        /// as wide as the real silhouette so it wrecks the framing measured off it.
+        /// </summary>
+        private static void Put(ModelPreview preview, RosterEntryAsset art)
+            => preview.Show(art == null ? null : art.Model, art == null ? null : art.Clips);
     }
 }
