@@ -138,6 +138,9 @@ namespace TumbangPreso
             // ⚠️ THE READ PLAYS ON THE SWING, NOT ON THE HIT. A shove that only animates when
             // it connects gives the other three players no warning it happened, and a miss
             // looks identical to not having pressed anything.
+            // § THE VIEWMODEL RIDES ALONG. `PlayAction` drives the first-person arm too, from
+            // its one call site — see its note. The arms carry no `shove` clip, so this resolves
+            // to the procedural kick, which is exactly what the .gd does for it.
             Animator?.PlayAction("shove");
             GameServices.Audio?.PlayAt("bump_swing", transform.position);
 
@@ -165,9 +168,9 @@ namespace TumbangPreso
 
             _punchCooldown = Balance.PunchCooldown;
 
-            // Same rule as the shove: the jab reads on the swing.
+            // Same rule as the shove: the jab reads on the swing, and `PlayAction` now carries
+            // the first-person kick with it.
             Animator?.PlayAction("punch");
-            Rig?.ViewmodelKick(Vector3.forward);
 
             var victim = FindInCone(Balance.PunchRange, Balance.PunchArcDeg, requireTaggable: true);
             if (victim != null) GameServices.Round?.ResolveTag(_motor, victim);
@@ -216,6 +219,9 @@ namespace TumbangPreso
             // ⚠️ ITS OWN CLIP, NOT THE SHOVE'S. attack-kick-right leads with the body, which is
             // what a dash INTO somebody looks like; the punch leads with the arm. These were
             // one animation for three verbs until 2026-08-01.
+            // § THE TAG, IN THE PLAYER'S OWN HANDS TOO. `PlayAction` reaches the viewmodel; the
+            // 1.4 kick here is the lunge's own harder shove of the view, kept because a dash is
+            // meant to hit the camera harder than a jab.
             Animator?.PlayAction("lunge");
             Rig?.ViewmodelKick(Vector3.forward, 1.4f);
 

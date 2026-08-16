@@ -193,7 +193,8 @@ namespace TumbangPreso
 
             GameServices.Audio?.PlayAt("pickup", transform.position);
 
-            // Reaching down for a loose tsinelas — the literal clip for the job.
+            // Reaching down for a loose tsinelas — the literal clip for the job, and it now
+            // reaches the first-person arm through the same call. See CharacterAnimator.PlayAction.
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("grab");
 
             _throwLockLeft = what.ThrowLock;
@@ -488,6 +489,19 @@ namespace TumbangPreso
                 ChannelRatio = 0.0f;
                 return;
             }
+
+            // § THE ARM DOES THE WORK, and in first person the arm IS the viewmodel: righting
+            // the can is the same reach-down gesture as picking a tsinelas up. 🧑 2026-08-16:
+            // *"make sure my arm moves or does an animation when i interact with objects like in
+            // the real game — raise can, tag someone"*. Raising the can is this.
+            //
+            // ⚠️ ON THE OPENING FRAME ONLY, or the clip restarts every frame of a 1.5 s hold and
+            // the arm never leaves the first pose.
+            //
+            // ⚠️ AND NO CUE HERE. `Lata.SetUpright` owns the channel's sound off the can's own
+            // state; a `PlayAt` on this frame would be a second source for the same event.
+            if (_channel <= 0.0f)
+                GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("grab");
 
             _channel += dt;
             ChannelRatio = Mathf.Clamp01(_channel / lata.ResetChannelTime);

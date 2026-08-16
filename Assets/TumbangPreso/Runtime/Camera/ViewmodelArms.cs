@@ -175,6 +175,182 @@ namespace TumbangPreso.CameraSystem
             _heldSlipper.localScale = Vector3.one * (SlipperLength / longest / parent);
         }
 
+        // -------------------------------------------------------------------
+        // § THE ACTION CLIPS — `ViewmodelArms.tscn`'s `throw` and `grab`.
+        //
+        // ⚠️⚠️ THE PORT HAD NEITHER, SO THE FIRST-PERSON ARM NEVER MOVED FOR ANYTHING. 🧑
+        // 2026-08-16: *"make sure my arm moves or does an animation when i interact with
+        // objects like in the real game — raise can, tag someone, etc"*. It breathed and it
+        // held a carry pose, and that was all: throwing, picking up, righting the can, tagging
+        // and shoving all happened with a perfectly still arm in the corner of the frame. The
+        // third-person body animated correctly the whole time, so every OTHER player saw the
+        // gesture and the person performing it did not.
+        //
+        // The keyframes are the .tscn's own, on `RightPivot/Arm:rotation`:
+        //
+        //   throw  0.46 s   0 -> (0.52, 0.10, 0) at 0.14 -> (-0.68, -0.06, 0) at 0.24 -> 0
+        //   grab   0.40 s   0 -> (0.46, -0.14, 0) at 0.18 -> 0
+        //
+        // ⚠️ ONLY THE RIGHT ARM MOVES, in both clips. The left one keeps breathing, which is
+        // what makes the right one read as deliberate rather than as the whole view lurching.
+        // -------------------------------------------------------------------
+
+        /// <summary>One keyframe: when, and the Godot euler it holds, in radians.</summary>
+        private readonly struct Key
+        {
+            public readonly float T;
+            public readonly Vector3 Godot;
+
+            public Key(float t, float x, float y, float z)
+            {
+                T = t;
+                Godot = new Vector3(x, y, z);
+            }
+        }
+
+        private static readonly Key[] ThrowClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f, 0.0f),
+            new Key(0.14f,  0.52f,  0.10f, 0.0f),
+            new Key(0.24f, -0.68f, -0.06f, 0.0f),
+            new Key(0.46f,  0.00f,  0.00f, 0.0f),
+        };
+
+        private static readonly Key[] GrabClip =
+        {
+            new Key(0.00f, 0.00f,  0.00f, 0.0f),
+            new Key(0.18f, 0.46f, -0.14f, 0.0f),
+            new Key(0.40f, 0.00f,  0.00f, 0.0f),
+        };
+
+        private Key[] _clip;
+        private float _clipTime;
+
+        /// <summary>
+        /// § THE WIND-UP. How far the throwing arm cocks back at full charge, radians.
+        ///
+        /// ⚠️ 0.62 (~36°) IS THE .gd's OWN NUMBER AND ITS REASONING IS WHY IT IS NOT SMALLER:
+        /// *"the HUD charge meter is on the YOU card at the bottom corner, which nobody looks at
+        /// while aiming. 0.62 rad is enough to be unmistakable in peripheral vision without the
+        /// fist leaving the frame."* The arm IS the charge meter in first person.
+        /// </summary>
+        public const float WindupRad = 0.62f;
+
+        /// <summary>-1 when nothing is charging, 0..1 while something is.</summary>
+        private float _charge = -1.0f;
+
+        /// <summary>
+        /// Drive the wind-up from live charge power, 0..1, or -1 for "not charging".
+        /// `camera_rig.gd::set_viewmodel_charge`.
+        ///
+        /// ⚠️⚠️ THE PORT HAD NO WIND-UP POSE AT ALL, IN EITHER VIEW. The 2.5 s throw charge, the
+        /// taya's 0.5 s lunge and the shove all wound up with a completely motionless arm, so the
+        /// commitment the whole design hangs counterplay on was invisible to the person making it
+        /// and to everybody watching. The .gd carries two separate 🧑 reports about exactly this
+        /// — *"no hand animation kapag nag tag ka as defender"* and *"is that on purpose theres
+        /// no taya animation? can u make sure theres an animation or atleast a hand movement for
+        /// all movements"* — and both were fixed there and never came across.
+        ///
+        /// ⚠️ IT SUPPRESSES THE ACTION CLIP WHILE IT HOLDS. The .gd stops the idle for the same
+        /// reason: *"the idle clip animates the SAME rotation this writes, so it has to be
+        /// stopped while charging or it overwrites the pose every frame and the arm just sways
+        /// instead of cocking."*
+        ///
+        /// ⚠️ THE SIGN IS FLIPPED FROM THE .gd's `-WINDUP * power` by the same mirror every other
+        /// rotation in this file uses. Getting it wrong is B-131 — *"a wind-up that travelled the
+        /// right distance in the wrong direction"*, the hand dropping instead of cocking.
+        /// </summary>
+        public void SetCharge(float power)
+        {
+            _charge = power < 0.0f ? -1.0f : Mathf.Clamp01(power);
+
+            if (_charge >= 0.0f) _clip = null;
+        }
+
+        /// <summary>
+        /// Play `throw` or `grab` on the right arm.
+        ///
+        /// ⚠️ IT REPORTS WHETHER IT HAD THE CLIP, because the caller's fallback depends on the
+        /// answer: `camera_rig.gd::play_viewmodel_action` plays a procedural kick for every
+        /// kind these arms carry no animation for, which is the punch, the shove and the lunge.
+        /// Returning void here is what made those three verbs silent in first person.
+        /// </summary>
+        public bool PlayAction(string clip)
+        {
+            _clip = clip == "throw" ? ThrowClip
+                  : clip == "grab" ? GrabClip
+                  : null;
+
+            _clipTime = 0.0f;
+            return _clip != null;
+        }
+
+        /// <summary>
+        /// ⚠️ THE MIRROR IS THE SAME ONE THE PIVOTS USE, and a rotation does not flip the way a
+        /// position does. Reflecting through the XY plane turns a rotation about X or Y into its
+        /// negative and leaves one about Z alone, so `(x, y, z)` in Godot is `(-x, -y, z)` here.
+        /// Copying the three numbers straight across bends the arm the wrong way on the axis
+        /// that matters most: the throw's whole shape is its pitch.
+        /// </summary>
+        private static Quaternion ToUnityLocal(Vector3 godotEuler) =>
+            Quaternion.Euler(-godotEuler.x * Mathf.Rad2Deg,
+                             -godotEuler.y * Mathf.Rad2Deg,
+                              godotEuler.z * Mathf.Rad2Deg);
+
+        /// <summary>
+        /// ⚠️ IT DRIVES `RightPivot/Arm`, NOT THE PIVOT. The pivot carries the carry pose and the
+        /// idle swing; putting the action on the same transform would make a throw fight the
+        /// carry it is supposed to end, and the two would average into a shrug.
+        /// </summary>
+        private void StepAction(float dt)
+        {
+            if (_rightArm == null) return;
+
+            // § THE WIND-UP WINS WHILE IT IS HELD. See SetCharge: a clip animating the same
+            // rotation would overwrite the pose every frame and the arm would sway rather than
+            // cock. A one-shot fired mid-charge (the release throw) clears the charge first, so
+            // the two never fight for more than the frame the release happens on.
+            if (_charge >= 0.0f)
+            {
+                _rightArm.localRotation = Quaternion.Euler(WindupRad * _charge * Mathf.Rad2Deg,
+                                                           0.0f, 0.0f);
+                return;
+            }
+
+            if (_clip == null)
+            {
+                _rightArm.localRotation = Quaternion.identity;
+                return;
+            }
+
+            _clipTime += dt;
+
+            if (_clipTime >= _clip[_clip.Length - 1].T)
+            {
+                _clip = null;
+                _rightArm.localRotation = Quaternion.identity;
+                return;
+            }
+
+            for (int i = 1; i < _clip.Length; i++)
+            {
+                if (_clipTime > _clip[i].T) continue;
+
+                float span = Mathf.Max(0.0001f, _clip[i].T - _clip[i - 1].T);
+                float t = (_clipTime - _clip[i - 1].T) / span;
+
+                // The .tscn's tracks are `interp = 2`, which is Godot's CUBIC. Smoothstep is the
+                // same shape to the eye over a tenth of a second and needs no tangents.
+                t = t * t * (3.0f - 2.0f * t);
+
+                _rightArm.localRotation = Quaternion.Slerp(ToUnityLocal(_clip[i - 1].Godot),
+                                                           ToUnityLocal(_clip[i].Godot), t);
+                return;
+            }
+        }
+
+        private Transform _rightArm;
+
         private void Awake() => Build();
 
         private void Build()
@@ -185,6 +361,9 @@ namespace TumbangPreso.CameraSystem
                 RightOrigin, armMesh);
             _leftPivot = BuildArm("LeftPivot", LeftBasisX, LeftBasisY, LeftBasisZ,
                 LeftOrigin, armMesh);
+
+            // The action clips drive this, not the pivot. See StepAction.
+            _rightArm = _rightPivot.Find("Arm");
 
             _rightRest = _rightPivot.localRotation;
             _leftRest = _leftPivot.localRotation;
@@ -292,6 +471,10 @@ namespace TumbangPreso.CameraSystem
         private void LateUpdate()
         {
             _phase += Time.deltaTime;
+
+            // § THE ACTION CLIPS, stepped before the pose below so a throw reads over whatever
+            // the pivot is doing rather than under it.
+            StepAction(Time.deltaTime);
 
             float t = Mathf.Sin(_phase / IdlePeriod * Mathf.PI * 2.0f);
 

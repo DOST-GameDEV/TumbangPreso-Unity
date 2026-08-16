@@ -150,6 +150,43 @@ namespace TumbangPreso.CameraSystem
         /// writer, and the mode is derived from the subject rather than set beside it.</summary>
         public CharacterMotor Following => _character;
 
+        /// <summary>
+        /// § THE VERB, IN THE PLAYER'S OWN HANDS. `camera_rig.gd::play_viewmodel_action`.
+        ///
+        /// ⚠️⚠️ A CLIP IF THE ARMS HAVE ONE, A PROCEDURAL KICK IF THEY DO NOT, AND THE SECOND
+        /// HALF IS THE POINT. `ViewmodelArms.tscn` carries `throw` and `grab` and nothing else,
+        /// so the punch, the shove and the lunge have no clip — and in first person the body is
+        /// SHADOWS_ONLY, which means those three verbs had NO first-person feedback whatsoever.
+        /// The .gd's own note: *"you pressed shove and the screen did not move"*, added for 🧑
+        /// 2026-08-01: *"add visual cue for first person and for everyone else that shove and
+        /// sunok and other skills and abilities shit is happening"*.
+        ///
+        /// The kick is not a substitute for an authored clip. It is what makes the verb legible
+        /// until somebody animates it, and it disappears on its own the day a clip with that
+        /// name is added, because the branch above wins.
+        ///
+        /// ⚠️ THE GUARD IS THE OTHER HALF. Every verb runs on all four seats, so an unguarded
+        /// call would swing the PLAYER's arm every time a bot threw — three phantom throws a
+        /// second, none of them theirs. Same rule the camera shake follows: feedback belongs to
+        /// the person it happened to.
+        ///
+        /// ⚠️ AND IT IS A STATIC ON THE RIG. `CharacterAnimator` is installed with
+        /// `AddComponent` and cannot carry an inspector reference (rule 3), and the rig is the
+        /// only thing that knows whether it is in FPP at all.
+        /// </summary>
+        public static void PlayViewmodelAction(CharacterMotor who, string kind)
+        {
+            if (who == null) return;
+
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._mode != CameraMode.Fpp) return;
+            if (rig._arms == null || !rig._arms.gameObject.activeInHierarchy) return;
+
+            if (rig._arms.PlayAction(kind)) return;
+
+            rig.ViewmodelKick(Vector3.forward);
+        }
+
         // -------------------------------------------------------------------
 
         private void Awake()
@@ -400,6 +437,28 @@ namespace TumbangPreso.CameraSystem
             var held = carrier != null ? carrier.Held : null;
 
             _arms.SetHolding(held != null);
+
+            // § THE WIND-UP, POLLED. `character_visual.gd` polls charge for the same reason it
+            // polls carry scale and spin: *"charge is a continuously-varying value, not an event,
+            // and a poll self-heals across a model rebuild on the round swap."*
+            //
+            // ⚠️ THREE SOURCES IN ONE ORDER, AND THE ORDER MATTERS, because the .gd's own note
+            // records the bug it fixes: the throw branch requires something in hand, so a TAYA —
+            // who holds nothing — fell through every branch and *"the attacker got an arm; the
+            // defender got a statue"*. The lunge is the taya's commitment and the one thing an
+            // attacker has to read to dodge it. All three rest at -1, so they compose without any
+            // of them knowing about the others.
+            float charge = -1.0f;
+
+            if (held != null && carrier != null) charge = carrier.ObservedChargePower;
+
+            if (charge < 0.0f)
+            {
+                var verbs = _character.GetComponent<CombatVerbs>();
+                if (verbs != null) charge = verbs.ObservedLungeCharge;
+            }
+
+            _arms.SetCharge(charge);
 
             // ⚠️ THE VIEWMODEL WEARS THE PICKED SKIN. A player who chose CROCS held a brown
             // flip-flop in their own hands while every peer saw what they had actually picked.

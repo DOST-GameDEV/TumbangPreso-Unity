@@ -602,6 +602,102 @@ trees: the shove that earns the credit is the same event that makes the victim r
 that pays it. **Godot still has `can_act()`.** If the sentence was a rule and not a report, this
 is the one line to put back.
 
+## 2026-08-16 — the arm, the wind-up, and two things this pass got wrong first
+
+🧑, after spotting three of these in a row from screenshots: *"theres details like this man that
+u missed — can u thoroughly find them"*, and *"make sure my arm moves or does an animation when
+i interact with objects like in the real game — raise can, tag someone, etc"*.
+
+### § THE FIRST-PERSON ARM NEVER MOVED FOR ANY VERB
+
+`ViewmodelArms.tscn` ships an `AnimationPlayer` with **three** clips — `idle`, `throw` (0.46 s)
+and `grab` (0.40 s) — and the port had only the idle breathe. So throwing, picking up, righting
+the can, shoving, punching and lunging all happened with a completely motionless arm in the
+corner of the frame, while the third-person body animated correctly for every one of them. The
+person performing the gesture was the only one who could not see it.
+
+Both clips are ported at the .tscn's own keyframes. And the second half matters as much:
+
+⚠️⚠️ **A PROCEDURAL KICK FOR EVERY VERB THE ARMS HAVE NO CLIP FOR** — the punch, the shove and
+the lunge. In first person the body is `ShadowsOnly`, so those three had NO first-person feedback
+at all. The .gd's own note: *"you pressed shove and the screen did not move"*, written for 🧑
+2026-08-01: *"add visual cue for first person and for everyone else that shove and sunok and
+other skills and abilities shit is happening"*.
+
+⚠️ **AND IT IS DRIVEN FROM EXACTLY ONE CALL SITE, WHICH THIS PASS GOT WRONG ON THE FIRST TRY.**
+`character_visual.gd::play_action` opens with `rig.play_viewmodel_action(kind)` *"so the two
+views can never disagree about whether a throw happened"*. The first attempt here scattered the
+call across `Carrier` and `CombatVerbs` instead — six sites, each free to be forgotten by the
+next verb. It now sits at the top of `CharacterAnimator.PlayAction`, before the clip lookup for
+the same reason the .gd puts it there: a Prop has no animator, and resolving the body clip first
+would return before the rig is told. `DeadFeatureAudit` asserts there is still exactly one caller.
+
+### § THE WIND-UP POSE DID NOT EXIST IN EITHER VIEW
+
+The 2.5 s throw charge, the taya's 0.5 s lunge and the shove all wound up with a motionless arm,
+so the commitment the whole counterplay design hangs on was invisible. `Design.md` §4 requires
+the wind-up to be *"visible on **every peer** ... so the attacker can dash, jump or throw through
+the commitment"*, and §11 answers the charged melee with exactly *"1.35 s of visible wind-up"*.
+
+The .gd carries **two** separate reports about this, both fixed there and neither ported:
+*"no hand animation kapag nag tag ka as defender"* and *"is that on purpose theres no taya
+animation? can u make sure theres an animation or atleast a hand movement for all movements"*.
+
+`ViewmodelArms.SetCharge` is the first-person half, at the .gd's `VIEWMODEL_WINDUP_RAD` of 0.62
+rad — chosen because *"the HUD charge meter is on the YOU card at the bottom corner, which nobody
+looks at while aiming"*. It is polled, not evented, and it reads three sources in the .gd's order:
+the throw charge, then the lunge. That order is load-bearing — the throw branch requires
+something in hand, and **a taya holds nothing**, which is how *"the attacker got an arm; the
+defender got a statue"* happened twice upstream.
+
+⚠️ **STILL MISSING: the THIRD-PERSON half.** `character_visual.gd::_drive_charge_pose` writes the
+same wind-up onto the `arm-right` bone so OPPONENTS can read it, which is the half the counterplay
+actually depends on. It needs skeleton access on a SkinnedMeshRenderer and is the next item.
+
+### Two corrections, because both were stated confidently and both were wrong
+
+1. **"Most SFX never play" was FALSE.** It came from a `grep` truncated at 70 results. Checked
+   exhaustively afterwards: **all 37 live cues had a call site and a .wav before this session
+   touched anything.** Three cues were then "fixed" on that bad reading — `lata_knockdown`,
+   `reset_complete` and `reset_channel_start` — and every one of them was a DUPLICATE that would
+   have double-played the game's loudest moment. `Lata.SetUpright` already sounds both directions
+   off one boolean, deliberately: *"one state change read two ways, rather than two call sites
+   free to drift apart."* All three additions were removed.
+
+2. **The floating slipper fix broke the pickup.** Resting a slipper on the ground needs a
+   downward raycast, and every slipper starts at its owner's FEET — so the first thing the cast
+   met was the owner's own capsule and the tsinelas was placed on their head, out of its own
+   pickup radius. `AnyAttackerCanPickUpAnySlipper` failed immediately. The cast skips bodies,
+   slippers and the can now.
+
+⚠️ **The lesson both share is the ledger's oldest one, in a new place: MEASURE, and then measure
+what the fix did.** A truncated grep and an unqualified raycast are the same mistake — trusting a
+tool's answer without asking what it actually looked at.
+
+### The floating slipper, and the floor that is not at zero
+
+🧑: *"also ur slippers are floating"*. `Land()` clamped to `Mathf.Max(p.y, RestHeight)` and the
+flight ended at `position.y <= SlipperRestHeight` — both absolute, and **neither arena's floor is
+at y = 0**. The .gd's `REST_HEIGHT` is a height ABOVE THE GROUND, so using it as a world y is
+correct only by accident. Both now measure the floor underneath, as does the round-start
+placement, which is the other half — a slipper that is never thrown never lands.
+
+### `FppFrameProbe` — what the camera can actually see
+
+Written to answer *"look the hands are floating this still isnt good"* by NAMING the mesh instead
+of guessing from pixels. It dumps every renderer in front of the FPP camera with its full
+hierarchy path, viewport position, world size and shadow mode, to `Logs/fpp-frame.txt`.
+
+It answered in one run: the two arms are correct and symmetric (viewport x 0.31 and 0.68), the
+seats are at exactly the authored 1.80 m spacing, and the pale slab in the corner is **Seat 2's
+body**, 0.4 m from the eye with its bounds centre a full screen-width off the left edge.
+
+⚠️ **AND A SKINNED RENDERER'S `bounds` ARE ITS BIND POSE.** These rigs bind arms-out, so
+`body-mesh` measures 1.90 m wide against a 1.80 m spawn spacing — every seat's box overlaps its
+neighbour's whatever the animation is doing. `TestPlanesAABB` against that box says "possibly
+visible" for a body drawn well outside the frame, so the frustum test alone proves nothing about
+what a player sees. The probe's first assertion did not know that and flagged the road.
+
 ## ⚠️ Unity rules the conversion has to obey, each found by a shipped failure
 
 These are not style. Each one produced a build that looked correct in the editor

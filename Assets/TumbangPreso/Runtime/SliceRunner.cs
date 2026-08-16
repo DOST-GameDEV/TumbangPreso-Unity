@@ -200,10 +200,23 @@ namespace TumbangPreso
             return 1;
         }
 
+        /// <summary>
+        /// Where a slipper waits at the start of a round: at its owner's feet.
+        ///
+        /// ⚠️⚠️ THE HEIGHT COMES FROM THE FLOOR, NOT FROM A LITERAL 0.045. That number is the
+        /// .gd's `REST_HEIGHT`, which is a height ABOVE THE GROUND, and using it as a world y
+        /// is only correct on a map whose floor is at zero. Neither of ours is, so every round
+        /// opened with three tsinelas hovering over the road. 🧑 2026-08-16: *"also ur slippers
+        /// are floating"*. `Slipper.Land` had the same fault and is fixed the same way; this is
+        /// the other half, because a slipper that is never thrown never lands.
+        /// </summary>
         private static Vector3 SlipperHome(int slot)
         {
             Vector3 p = AttackerSpawn(AttackerRoleFor(slot, GameServices.Match?.DefenderSlot ?? 0));
-            return new Vector3(p.x, 0.045f, p.z);
+
+            // ⚠️ THROUGH `Slipper.GroundY`, WHICH SKIPS BODIES. A slipper starts at its owner's
+            // feet, so a naive downward cast from above that mark lands on the owner's own head.
+            return new Vector3(p.x, Slipper.GroundY(p) + Balance.SlipperRestHeight, p.z);
         }
     }
 }

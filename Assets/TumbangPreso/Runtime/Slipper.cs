@@ -255,7 +255,10 @@ namespace TumbangPreso
                 }
             }
 
-            if (transform.position.y <= Balance.SlipperRestHeight
+            // ⚠️ AGAINST THE GROUND UNDER IT, NOT AGAINST WORLD ZERO. See GroundY: a flight that
+            // ends at an absolute height either stops in mid-air over a raised slab or carries on
+            // through a lowered one, and both were reachable on the shipped maps.
+            if (transform.position.y <= GroundY(transform.position) + Balance.SlipperRestHeight
                 || _flightTime >= Balance.MaxFlightTime)
                 Land();
         }
@@ -348,6 +351,50 @@ namespace TumbangPreso
             _throwerSlot = -1; // a deflected slipper credits nobody
         }
 
+        /// <summary>
+        /// The height of the floor under a point, or 0 when nothing is there.
+        ///
+        /// ⚠️⚠️ NEITHER ARENA'S FLOOR IS AT y = 0, AND EVERY PLACE THIS PORT ASSUMED IT WAS PUT A
+        /// SLIPPER IN THE AIR. Eskinita's asphalt is a slab with its own thickness and Bayan
+        /// Plaza's paving is another; a rest height added to world zero is only correct by
+        /// accident. Cast from well above and take the first hit, which is what "lying on the
+        /// ground" means whatever the map is built out of.
+        ///
+        /// ⚠️ TRIGGERS ARE IGNORED. The confinement chalk, the hazard discs and the kill plane
+        /// are all colliders a downward ray would otherwise stop on, and a slipper resting on
+        /// the chalk's trigger volume floats by exactly its thickness.
+        ///
+        /// ⚠️ AND A MISS RETURNS ZERO RATHER THAN LEAVING THE SLIPPER WHERE IT WAS. Off the edge
+        /// of the map there is no floor to rest on, and `VoidY` already owns that case: a
+        /// slipper below the world is recovered to its spawn, not balanced on nothing.
+        /// </summary>
+        public static float GroundY(Vector3 at)
+        {
+            var from = new Vector3(at.x, at.y + 6.0f, at.z);
+
+            var hits = Physics.RaycastAll(from, Vector3.down, 40.0f, ~0,
+                                          QueryTriggerInteraction.Ignore);
+
+            float best = float.NegativeInfinity;
+
+            foreach (var hit in hits)
+            {
+                // ⚠️⚠️ A BODY IS NOT THE GROUND, AND SKIPPING THIS PUT SLIPPERS ON PEOPLE'S
+                // HEADS. Every slipper starts at its owner's FEET, so the first thing a downward
+                // cast from above that mark meets is the owner's own capsule — and the slipper
+                // was then placed 2 m up, out of its own pickup radius. `AnyAttackerCanPickUpAny
+                // Slipper` caught it immediately: the attacker was standing on a grabbable
+                // tsinelas that was actually floating over their head.
+                if (hit.collider.GetComponentInParent<CharacterMotor>() != null) continue;
+                if (hit.collider.GetComponentInParent<Slipper>() != null) continue;
+                if (hit.collider.GetComponentInParent<Lata>() != null) continue;
+
+                if (hit.point.y > best) best = hit.point.y;
+            }
+
+            return float.IsNegativeInfinity(best) ? 0.0f : best;
+        }
+
         private void Land()
         {
             State = SlipperState.Loose;
@@ -364,8 +411,15 @@ namespace TumbangPreso
 
             // ⚠️ THE SKIN'S OWN REST HEIGHT, NOT A LITERAL. The four skins rest between 0.034
             // and 0.161 off the ground, so one number leaves the tall one buried.
+            //
+            // ⚠️⚠️ AND IT IS MEASURED FROM THE GROUND UNDERNEATH, NOT FROM WORLD ZERO. This read
+            // `Mathf.Max(p.y, RestHeight)`, which is only the ground when the ground happens to
+            // be at y = 0 — and neither arena's floor is. 🧑 2026-08-16, on a Bayan Plaza
+            // capture: *"also ur slippers are floating"*. The .gd's own note is about the mesh
+            // ORIGIN sitting at the volume centroid, so "resting on the floor is half a slipper
+            // up" — half a slipper up FROM THE FLOOR, which is what has to be found first.
             Vector3 p = transform.position;
-            transform.position = new Vector3(p.x, Mathf.Max(p.y, RestHeight), p.z);
+            transform.position = new Vector3(p.x, GroundY(p) + RestHeight, p.z);
 
             // ⚠️ AND IT MAKES A SOUND. A throw that hit a body played one cue and a throw that
             // hit the can played another, but a throw that simply MISSED, 38 of 71 flights in

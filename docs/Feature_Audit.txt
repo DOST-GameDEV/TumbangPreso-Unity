@@ -1,0 +1,172 @@
+﻿main.gd                       96 funcs,  86 with no Unity counterpart
+match_setup.gd                82 funcs,  72 with no Unity counterpart
+character_base.gd            109 funcs,  68 with no Unity counterpart
+ai_controller.gd              76 funcs,  43 with no Unity counterpart
+character_visual.gd           49 funcs,  37 with no Unity counterpart
+slipper.gd                    49 funcs,  36 with no Unity counterpart
+network_manager.gd            46 funcs,  34 with no Unity counterpart
+multiplayer_setup.gd          32 funcs,  30 with no Unity counterpart
+hud.gd                        51 funcs,  30 with no Unity counterpart
+settings_manager.gd           31 funcs,  28 with no Unity counterpart
+round_manager.gd              36 funcs,  26 with no Unity counterpart
+audio_manager.gd              37 funcs,  26 with no Unity counterpart
+arrow_button.gd               28 funcs,  24 with no Unity counterpart
+settings_panel.gd             20 funcs,  18 with no Unity counterpart
+lata.gd                       26 funcs,  17 with no Unity counterpart
+carrier.gd                    34 funcs,  17 with no Unity counterpart
+you_card.gd                   19 funcs,  16 with no Unity counterpart
+camera_rig.gd                 27 funcs,  14 with no Unity counterpart
+server_query.gd               20 funcs,  14 with no Unity counterpart
+debug_player_switcher.gd      17 funcs,  10 with no Unity counterpart
+match_manager.gd              17 funcs,  10 with no Unity counterpart
+main_menu.gd                  10 funcs,   8 with no Unity counterpart
+lan_beacon.gd                 15 funcs,   8 with no Unity counterpart
+character_select.gd           13 funcs,   8 with no Unity counterpart
+match_result.gd               15 funcs,   7 with no Unity counterpart
+tutorial.gd                   12 funcs,   7 with no Unity counterpart
+character_preview.gd          17 funcs,   7 with no Unity counterpart
+emote_wheel.gd                13 funcs,   6 with no Unity counterpart
+credits_panel.gd               7 funcs,   5 with no Unity counterpart
+mode_select.gd                 6 funcs,   5 with no Unity counterpart
+role_swap_card.gd             10 funcs,   4 with no Unity counterpart
+spectator_camera.gd           11 funcs,   3 with no Unity counterpart
+offscreen_indicators.gd        7 funcs,   3 with no Unity counterpart
+hazard_zone.gd                 6 funcs,   3 with no Unity counterpart
+env_toon_pass.gd               9 funcs,   3 with no Unity counterpart
+map_preview.gd                 7 funcs,   3 with no Unity counterpart
+splash_screen.gd               4 funcs,   1 with no Unity counterpart
+kill_plane.gd                  2 funcs,   1 with no Unity counterpart
+trajectory_preview.gd          5 funcs,   1 with no Unity counterpart
+game_launch.gd                10 funcs,   1 with no Unity counterpart
+debug_bar.gd                   3 funcs,   1 with no Unity counterpart
+pause_layer.gd                 1 funcs,   1 with no Unity counterpart
+character_nameplate.gd         5 funcs,   0 with no Unity counterpart
+
+================ THE MISSES, BY FILE ================
+
+--- main.gd (86) ---
+_load_map, _publish_playable_extent, _role_spawn_point, _role_spawn_yaw, _place_at_spawn, _start_local_test, _local_unit_for_seat, _give_human_player_one, _reassert_spectated_bots, _dress_spectated_units, _on_provisional_spectator_changed, _promote_waiting_spectators, _unhandled_input, _enter_net_ready_phase, _rpc_declare_ready, _rpc_ready_phase, _rpc_begin_ready_countdown, _start_hosting, _start_joining, _on_joined_ready_for_spawn, _clear_local_test_characters, _on_player_connected, _on_player_identified, _rpc_client_ready_for_spawn, _refresh_ai_prop_picks, _release_bot_picks_colliding_with_humans, _seat_characters, _picks_table, _rpc_sync_picks, _apply_known_picks, _apply_own_pick, _try_late_join, _on_character_respawned, _notification, _on_player_disconnected, _is_dedicated_referee, _recycle_dedicated_lobby_if_abandoned, _arm_post_match_reset, _on_post_match_window_elapsed, _disarm_post_match_reset, _close_finished_dedicated_match, _evict_and_recycle, _recycle_dedicated_lobby, _index_for_character, _spawn_player, _claim_join_index, _seat_is_taken, _apply_reclaimed_picks, _build_spawn_data, _fill_empty_slots_with_placeholders, _build_networked_character, _on_match_round_started, _equip_owned_slippers, _push_pre_round_prop_skins, _push_prop_skins, _rpc_prop_skins, _apply_prop_skins, _refresh_seat_prop_picks, _human_prop_picks_for_slot, _ai_prop_index, _reset_slippers, _character_in_seat, _on_round_intermission_started, _on_match_won_freeze_physics, _all_characters, _sync_state_to_late_joiner, _sync_slipper_carry_to_late_joiner, get_local_character, _rpc_show_toast, _wire_downed_flash, _attach_ai, _on_pause_toggle_requested, _on_resume_pressed, _on_return_to_menu_pressed, _on_server_disconnected, _on_connection_failed, _bail_to_browser, _rpc_convert_to_ai, _rpc_reclaim_character, _rpc_slipper_owner, _rpc_slipper_grabbed, _rpc_slipper_thrown, _rpc_slipper_landed, _rpc_slipper_deflected, _apply_reclaim, _refresh_rig_ownership
+
+--- match_setup.gd (72) ---
+_unhandled_input, _wire_selector, _setup_solo, _read_dedicated_args, _setup_host, _setup_join, _lock_host_only_controls, _is_networked_lobby, _is_lobby_host, _is_lobby_leader, _refresh_leader_controls, _unlock_leader_controls, _on_lobby_leader_changed, _can_rpc, _on_connected_to_host, _on_connection_failed, _on_server_disconnected, _on_peer_joined, _on_peer_spectator_changed, _rpc_sync_state, _rpc_sync_seats, _rpc_sync_config, _apply_host_config, _rpc_request_seat, _rpc_seat_denied, _rpc_set_ready, _rpc_begin_match, _on_map_prev, _on_map_next, _on_difficulty_prev, _on_difficulty_next, _cycle_difficulty, _broadcast_config, _rpc_request_config, _on_character_pressed, _on_character_panel_closed, _refresh_character_button, _refresh_detail, detail_text_for, _focus_detail, _wire_detail_focus, _seat_detail, _local_seat, _on_seat_pressed, _build_code_row, _on_code_copy_pressed, _build_address_row, _build_firewall_hint, _small_button, _show_join_code, _local_join_code, _show_addresses, _refresh_address_text, _on_address_copy_pressed, _on_address_cycle_pressed, _on_spectate_pressed, _refresh_spectate_button, _refresh_seat_hint, _refresh_primary_button, _player_number, _occupant_of, _peer_display_name, _seat_row_text, _everyone_ready_to_start, _refresh_start_button, _can_start_match, _on_primary_pressed, _launch_solo, _on_start_pressed, _rpc_request_begin_match, _begin_match_as_host, _on_back_pressed
+
+--- character_base.gd (68) ---
+_repaint_for_pick, trait_speed_scale, trait_power_scale, trait_grit_scale, _is_mouse_aimed, can_be_hit_by_slipper, _is_confined_to_base, _move_and_confine, _on_state_changed_emote, _physics_process, _step_stamina, get_stamina_ratio, spend_stamina, _rpc_request_punch, _lunge_pressed_now, _lunge_held_now, _cancel_lunge, _rpc_request_lunge, _broadcast_lunge_charge, _rpc_lunge_charge_visual, _cancel_shove, _release_shove, host_start_shove_cooldown, apply_shove_cooldown_local, _apply_shove_cooldown, _rpc_request_shove, host_apply_shove, apply_shove_local, _broadcast_shove_charge, _rpc_shove_charge_visual, shove_charge_ratio, observed_shove_charge, host_apply_block, apply_block_local, _apply_block, host_apply_tag_penalty, apply_tag_penalty_local, go_downed, _recompute_speed_multiplier, apply_knockback, status_effects, _exit_tree, _on_state_changed_audio, is_ai_driven, _ai_driven, ai_set_intent, ai_commit_intent_frame, ai_clear_intent, _reads_hardware, input_pressed, input_just_pressed, input_just_released, input_vector, action_name, get_hand_attachment, play_visual_action, try_emote, broadcast_emote, _rpc_emote, _rpc_stop_emote, _apply_stop_emote, _restore_emote_camera, _cancel_emote_on_input, broadcast_visual_action, _rpc_visual_action, snap_visual_interpolation, capsule_radius, reset_for_new_round
+
+--- ai_controller.gd (43) ---
+set_enabled, is_enabled, _read_tuning, _track_flights, _ahead_of, _replan, _do_fetch, _mine_is_exposed, _do_stalk, _do_withdraw, _do_position, _do_windup, _release_throw, _do_evade, _do_sabotage, _do_idle, _do_reset, _do_intercept, _do_hunt, _do_cover, _do_guard, _step_lunge_intent, _power_for_speed, _plan_power, _roll_scatter, _throw_spot, _rival_bearings, _nearest_flying_slipper, _claim_penalty, _live_threat, _heading_for, _nearest_claimant_to, _goto, _may_sprint, _safe_spot, _out_of_box_dir, _pull_outside, _predicted_landing, _angle_between, _blunder, _release_all, _plan_name, current_plan
+
+--- character_visual.gd (37) ---
+visual_centre_offset, _on_state_changed, _mesh_from, _refresh_can_damage, _refresh_downed_tilt, _begin_roll, _end_roll, _model_node, _process_downed_roll, _build_prop_attachments, _build_attachment_part, get_hand_attachment, _build_hand_attachment, _aim_carry_point, _carry_offset_for, _capsule_half_height_down, _model_path, _person_material_path, _apply_prop_tint, _apply_prop_surface, _apply_person_material, _collect_meshes, _apply_toon_pass, _simulated_here, _observe_motion, _play_locomotion, _process_remote_smoothing, _should_smooth_remote, _drive_charge_pose, _resolve_charge_bone, _clear_charge_pose, _drive_viewmodel_charge, _spin_while_airborne, _is_holding, _on_animation_finished, _spawn_impact_particles, flash_blocked
+
+--- slipper.gd (36) ---
+is_loose, is_flying, _main_rpc, host_assign_owner, _apply_owner, host_force_equip, _apply_grabbed, _resolve_pending_carrier, _apply_thrown, host_drop, _host_recoil_from, _host_deflect_from, _apply_deflected, _apply_landed, host_reset_for_new_round, _set_state, _restore_shadow_casting, _set_sync_enabled, _attach_to_hand, _visual_centre_local, _visual_bounds_local, _detach_from_hand, _physics_process, _step_carried, _step_flying, _first_body_hit, _ground_under, _sample_floor, apply_skin, _measure_rest_height, _swap_scene_model, _merged_bounds, _update_owner_glow, _local_owner_slot, _set_rim, _tint_meshes
+
+--- network_manager.gd (34) ---
+picks_for, publish_spectator, _rpc_set_spectator, _apply_spectator, publish_picks, _rpc_set_picks, _apply_picks, _local_picks, is_lobby_leader, _set_lobby_leader, _claim_lobby_leader_if_vacant, _rpc_announce_leader, host_game, join_game, announce_host_leaving, _rpc_host_closing, disconnect_network, is_solo_session, _on_peer_connected, _on_peer_disconnected, _on_connected_to_server, _on_connection_failed, _on_server_disconnected, _rpc_identify, _rule_on_mid_match_arrival, _token_was_in_this_match, peer_id_for_token, take_promotable_tokens, seat_provisional_spectator, _rpc_announce_join_code, _rpc_announce_dedicated, _rpc_route_to_running_match, _load_or_create_token, _apply_peer_timeout
+
+--- multiplayer_setup.gd (30) ---
+_build_lan_browser, _build_lan_box, _on_browse_pressed, _close_lan_box, _refresh_lan_browser, _on_lan_row_pressed, _build_online_browser, _build_online_box, _fit_online_box, _on_online_browse_pressed, _close_online_box, _pool_configured, _pool_answered_enough, _refresh_online_browser, _on_online_row_pressed, _join_by_code, _cancel_pending_code, _on_join_text_changed, _begin_join, _tick_hosting_online, _exit_tree, _unhandled_input, _free_pool_address, _cancel_hosting_online, _on_host_online_pressed, _claim_online_server, _on_host_pressed, _on_join_pressed, _on_back_pressed, _reset_match_state
+
+--- hud.gd (30) ---
+_set_timer_urgent, _hud_wood_style, _apply_wood_skin, _style_team_card, _refresh_role_accents, _ensure_status_root, _status_colour, _refresh_danger, _ensure_vulnerable_label, _refresh_vulnerable_text, _refresh_status_stack, _fill_status_side, _status_fill, _handle_emote_input, _on_emote_chosen, _apply_clean_feed_to_world, _build_spectator_label, _refresh_spectator_panel, _kill_pulse_tween, _fill_pips, _refresh_ready_objective, set_round_display, refresh_you_card, _on_round_intermission_audio, _build_role_cell, _widen_name_cell, _refresh_scoreboard, _refresh_lata_card, _refresh_stamina, _on_score_changed
+
+--- settings_manager.gd (28) ---
+set_fullscreen, _apply_fullscreen, set_ai_difficulty, _apply_ai_difficulty, set_mouse_sensitivity, set_invert_y, set_master_volume, set_sfx_volume, set_music_volume, _apply_volumes, _capture_defaults, _first_physical_keycode, get_binding_display_name, rebind_action, _find_conflicting_action, _replace_key_binding, _set_binding, reset_action_to_default, reset_all_to_default, set_player_name, begin_edit, is_editing, has_unsaved_changes, commit_edit, revert_edit, _current_binding_map, _migrate_bindings, _load_and_apply
+
+--- round_manager.gd (26) ---
+register_player, clear_players, _consume_shove_credit, host_note_lata_knocked, host_note_lata_restored, _sync_lata_event, _step_tag, host_resolve_lunge_tag, _sync_tag, host_broadcast_tag_penalty, _sync_tag_penalty, _apply_tag_penalty_to, host_broadcast_shove, _sync_shove, host_broadcast_block, _sync_block, _apply_block_to, host_broadcast_shove_cooldown, _sync_shove_cooldown, _apply_shove_cooldown_to, start_round, _physics_process, _step_passive_defense, _on_time_up, _sync_round_ended, _sync_state
+
+--- audio_manager.gd (26) ---
+_build_music_players, play_music, _fade_music_player, _music_target_db, _scene_state, _poll_scene_state, stop_music_now, _set_music_lift, _duck_music, _on_round_started_music, _on_match_won_music, _load_vo, _vo_id_from_filename, _build_vo_voices, play_vo, _on_round_started_vo, _on_match_won_vo, _on_lata_knocked_vo, _on_lata_restored_vo, _on_attacker_tagged_vo, _on_score_changed_audio, _install_master_limiter, _load_streams, _retrigger_window, apply_volumes, _apply_bus
+
+--- arrow_button.gd (24) ---
+_on_resized, _update_pivot, _apply_texture, _set_caption, _apply_caption, _set_text_color, _apply_text_color, _set_label_size, _apply_label_size, _set_label_stretch_x, _set_label_stretch_y, _apply_label_stretch, _set_label_spacing, _set_label_rotation, _apply_label_spacing, _set_text_indent, _set_tip_padding, _set_text_offset_y, _apply_layout, _on_hover_start, _on_hover_end, _on_press_start, _on_press_end, _retween
+
+--- settings_panel.gd (18) ---
+_build_name_row, _on_player_name_typed, _on_player_name_submitted, _push_name_to_live_character, _on_sensitivity_changed, _on_invert_y_toggled, _on_fullscreen_toggled, _on_settings_fullscreen_changed, _init_volume_rows, _on_volume_changed, _volume_text, _build_rows, _on_rebind_button_pressed, _unhandled_input, _on_binding_changed, _on_reset_all_pressed, _on_apply_pressed, _on_back_pressed
+
+--- lata.gd (17) ---
+is_in_ring, can_be_reset_by, host_reset_for_new_round, _broadcast_upright, _broadcast_home, _rpc_set_upright, _rpc_place, _apply_upright, _apply_place, _measure_downed_lift, _mesh_bounds, _fit_collision_to_mesh, _apply_upright_visual, _set_tilt, adopt_state, apply_skin, _tint_meshes
+
+--- carrier.gd (17) ---
+_physics_process, channel_progress, input_step, _step_grab, _find_grabbable, _step_reset_channel, _cancel_channel, _step_throw, _rpc_charge_visual, _ensure_trajectory, _update_trajectory, _rpc_request_grab, _rpc_request_throw, _resolve_slipper, _rpc_request_reset, _set_held, reset_for_new_round
+
+--- you_card.gd (16) ---
+_update_guard_dash_meter, _sprint_key_text, _flash_bar_ready, _bar_style, _guard_dash_key_label, _action_key_label, _set_carrier, _on_charge_changed, _set_charge_shader_param, _on_held_changed, _on_reset_channel_changed, _update_row_visibility, _update_bump_meter, get_local_character, _find_local_character, _find_hardware_character
+
+--- camera_rig.gd (14) ---
+_apply_upright_pose, _apply_tpp_framing, _mount_height_for, get_aim_basis, _update_viewmodel_carry, _sync_viewmodel_slipper, _update_tpp_carry_follow, _apply_shake_offset, set_viewmodel_charge, play_viewmodel_action, _apply_carried_self_hide, _on_held_changed, _unhandled_input, apply_mouse_delta
+
+--- server_query.gd (14) ---
+_read_pool_override, start_responding, stop_responding, is_responding, is_browsing, query_pool, request_lobby, resolve_code, _step_respond, _is_query, _status_payload, _step_browse, _ingest_reply, _emit_if_changed
+
+--- debug_player_switcher.gd (10) ---
+_default_unit, debug_register_bar, _resolve_default, debug_unregister_bar, _match_root, _find_unit, _solo_networked_unit, _describe_unit, debug_refresh_readout, _refresh_bar
+
+--- match_manager.gd (10) ---
+_apply_score, _sync_score, begin_next_round, report_round_result, _leading_slot, _finish_match, _sync_round_started, _sync_match_won, _sync_intermission_started, _adopt_scores
+
+--- main_menu.gd (8) ---
+_on_start_pressed, _on_quit_pressed, _on_tutorial_pressed, _on_tutorial_back_pressed, _on_credits_pressed, _on_credits_back_pressed, _on_settings_pressed, _on_settings_back_pressed
+
+--- lan_beacon.gd (8) ---
+_broadcast_destinations, stop_advertising, stop_listening, _step_advertise, _host_label, _step_listen, _ingest, _emit_if_changed
+
+--- character_select.gd (8) ---
+_build_tabs, _refresh_tab_buttons, _on_tab_pressed, _unhandled_input, _on_prev_pressed, _on_next_pressed, _on_back_pressed, _on_confirm_pressed
+
+--- match_result.gd (7) ---
+_style_buttons, _unhandled_input, _rpc_vote_rematch, _on_peer_disconnected, _voting_peer_ids, _check_rematch_ready, _refresh_rematch_button
+
+--- tutorial.gd (7) ---
+_unhandled_input, _on_prev_pressed, _on_next_pressed, _build_row, _build_premise_tile, _populate_premise, _on_back_pressed
+
+--- character_preview.gd (7) ---
+_on_resized, _gui_input, _zoom_by, _exit_tree, show_character, show_prop, _apply_material
+
+--- emote_wheel.gd (6) ---
+_resolve_label, _label_lines, _label_fits, overflow_report, _draw_label_bounds, _draw_slice
+
+--- credits_panel.gd (5) ---
+_unhandled_input, _build_heading, _build_made_by, _build_row, _on_back_pressed
+
+--- mode_select.gd (5) ---
+_unhandled_input, _begin_session, _on_solo_pressed, _on_multi_pressed, _on_back_pressed
+
+--- role_swap_card.gd (4) ---
+_apply_wood_skin, _build_standings_rows, _show_headline, _show_fight
+
+--- spectator_camera.gd (3) ---
+_unhandled_input, _camera_forward, _camera_right
+
+--- offscreen_indicators.gd (3) ---
+_find_own_slipper, _find_can, _find_character
+
+--- hazard_zone.gd (3) ---
+_find_collision_shape, _on_body_entered, _on_body_exited
+
+--- env_toon_pass.gd (3) ---
+_instance_name, _wants_wind, _set_wind
+
+--- map_preview.gd (3) ---
+_exit_tree, show_map, _play_area_centre
+
+--- splash_screen.gd (1) ---
+_unhandled_input
+
+--- kill_plane.gd (1) ---
+_on_body_entered
+
+--- trajectory_preview.gd (1) ---
+draw_arc
+
+--- game_launch.gd (1) ---
+fit_window_to_usable_screen
+
+--- debug_bar.gd (1) ---
+debug_refresh
+
+--- pause_layer.gd (1) ---
+_unhandled_input
+

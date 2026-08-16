@@ -325,6 +325,22 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void PlayAction(string action)
         {
+            // ⚠️⚠️ THE FIRST-PERSON ARM IS DRIVEN FROM HERE, AND FROM NOWHERE ELSE.
+            // `character_visual.gd::play_action` opens with exactly this call and says why:
+            // *"the third-person model has always animated here; in FIRST person the player sees
+            // the viewmodel instead, and it was static. Driven from this one call site rather
+            // than from the input code so the two views can never disagree about whether a throw
+            // happened"*. 🧑 re-reported it against this port in the same words as the original
+            // playtest: *"make sure my arm moves or does an animation when i interact with
+            // objects like in the real game — raise can, tag someone"*.
+            //
+            // ⚠️ BEFORE THE CLIP LOOKUP, NOT AFTER, AND THE .gd IS EMPHATIC ABOUT THE ORDER: a
+            // Prop has no AnimationPlayer, so resolving the body clip first and returning on a
+            // miss would leave the rig untold. Every verb already calls this one method, so
+            // throw, grab, shove, punch and lunge all reach the viewmodel for free — and a verb
+            // added later cannot forget to.
+            CameraSystem.CameraRig.PlayViewmodelAction(_motor, action);
+
             string clip = ResolveChain(ActionClips, action);
             if (clip != null) PlayOneShot(clip);
         }

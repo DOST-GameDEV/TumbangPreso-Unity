@@ -116,6 +116,12 @@ namespace TumbangPreso
             SetUpright(false);
             _toppleTimer = Balance.ToppleTime;
 
+            // ⚠️ THE KNOCKDOWN CUE IS NOT PLAYED HERE, AND ADDING ONE DOUBLED IT. `SetUpright`
+            // below picks `can_knockdown` or `reset_channel_start` off the same boolean, for the
+            // reason its own note gives: one state change read two ways, rather than two call
+            // sites free to drift apart. A second `PlayAt` here fires the same sample twice on
+            // the same frame, which is a flam rather than a hit.
+
             // ⚠️⚠️ THE TAYA IS NOT PAID FOR KNOCKING THEIR OWN CAN OVER, AND THIS PORT WAS
             // PAYING THEM 100 FOR IT. `round_manager.gd::host_note_lata_knocked` is
             //
@@ -149,6 +155,8 @@ namespace TumbangPreso
             transform.rotation = Quaternion.identity;
             SetUpright(true);
 
+            // ⚠️ NO CUE HERE EITHER. `SetUpright(true)` above already sounds the restore; see
+            // the note in HostKnockDown.
             GameServices.Round.NotifyLataRestored();
         }
 
