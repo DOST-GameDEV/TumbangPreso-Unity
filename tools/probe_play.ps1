@@ -81,6 +81,22 @@ function Aim([double]$fx, [double]$fy) {
   Start-Sleep -Milliseconds 350
 }
 
+# ⚠️ AIM IN THE .tscn's OWN COORDINATES, NOT IN FRACTIONS OF THE WINDOW. The canvases match
+# on HEIGHT against a 1920x1080 reference, so a reference point maps to the client area by
+# one scale factor derived from the HEIGHT alone, whatever the window's width happens to be.
+# Fractions of the window drift the moment the player remembers a different size from its
+# last run, and a drift of three per cent is the difference between SINGLE PLAYER and
+# MULTIPLAYER on the mode screen.
+function AimRef([double]$rx, [double]$ry) {
+  $c = Client
+  $k = $c.H / 1080.0
+  $x = [int]($c.X + $c.W * 0.5 + ($rx - 960.0) * $k)
+  $y = [int]($c.Y + $ry * $k)
+  [void][Play]::SetForegroundWindow($proc.MainWindowHandle)
+  [void][Play]::SetCursorPos($x, $y)
+  Start-Sleep -Milliseconds 350
+}
+
 function Tap() {
   [Play]::mouse_event(0x0002, 0, 0, 0, 0)
   Start-Sleep -Milliseconds 90
@@ -96,9 +112,9 @@ function Press([UInt16]$scan, [int]$ms) {
   Start-Sleep -Milliseconds 200
 }
 
-Aim 0.12 0.436 ; Tap             # PLAY
-Aim 0.209 0.417; Tap             # SINGLE PLAYER
-Aim 0.20 0.62  ; Tap             # START MATCH
+AimRef 236 471 ; Tap            # PLAY
+AimRef 402 450 ; Tap            # SINGLE PLAYER
+AimRef 390 672 ; Tap            # START MATCH
 Start-Sleep -Seconds 4
 
 Snap "10-ready"

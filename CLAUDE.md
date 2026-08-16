@@ -122,6 +122,24 @@ finish everything that is NOT blocked first, then ask one specific question.
 If a turn does end, it ends having just committed and pushed working code, not having
 just explained why more was not attempted.
 
+## 1b · EVERY task ends the same way: WORK → BUILD → HANDOFF
+
+🧑 2026-08-16: *"ALL TASKS I ASK -> build -> handoff"*.
+
+This is the shape of every session now, not a special case for big ones:
+
+1. **Do the work** and verify it yourself — `dotnet test`, EditMode, PlayMode, and the
+   player probes in `tools/` for anything a screenshot would show.
+2. **Build the .exe to the Desktop**, having deleted the previous output folder first.
+   An incremental rebuild once kept a corrupted `level1` and cost an hour chasing a fix
+   that had already landed.
+3. **Write the handoff in the chat reply** — never as a file in the repo (§1). It names
+   what changed, what was measured, and what the next session should pick up.
+
+⚠️ This does NOT loosen §3b. The .exe is still the LAST step and still comes after the
+work is actually finished; what changed is that finishing now always includes producing
+one, rather than leaving him to build it himself to see what happened.
+
 ## 1a · Push automatically. Finished means pushed.
 
 Committed and waiting is not done. Every batch that compiles and passes goes up without
