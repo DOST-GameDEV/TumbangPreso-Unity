@@ -33,6 +33,27 @@ Shader "TumbangPreso/Toon"
         _FlashColor ("Flash Colour", Color) = (1, 1, 1, 1)
         _FlashAmount ("Flash Amount", Range(0, 1)) = 0
 
+        // ⚠️⚠️ § THE STUN FROST — the body half. 🧑 2026-08-06, on the Godot build: *"can we
+        // have like a frost effect to indicate that an attacker is stunned after getting
+        // tagged?"* The screen half is `TumbangPreso/FrostVignette` and it is the VICTIM's
+        // only; this half is what everybody ELSE sees, and the split is the danger vignette's
+        // own rule applied again: a screen effect everybody gets at the same time tells nobody
+        // anything. The taya who spent their one scoring verb on the tag has to watch the
+        // attacker freeze.
+        //
+        // ⚠️ IN GODOT THIS TERM LIVES IN `person_palette.gdshader`, NOT HERE, and the reason
+        // does not survive the port. There `_apply_toon_pass()` returns early for a Person, so
+        // a Person never receives `toon.gdshader` and has no lever on it at all; the frost had
+        // to go in the palette shader plus a hand-rolled per-unit material duplicate, because a
+        // palette `.tres` is shared across every Person wearing that character and writing into
+        // it would freeze all of them at once. Unity has one toon shader for cast and props
+        // alike, and `CharacterVisual` already drives it through a MaterialPropertyBlock, which
+        // IS per-renderer. So the duplication problem the Godot side had to solve by hand does
+        // not exist here, and `_collect_frost_material` has no counterpart on purpose.
+        _FrostAmount ("Frost Amount", Range(0, 1)) = 0
+        _FrostColor ("Frost Colour", Color) = (0.62, 0.87, 0.95, 1)
+        _FrostRimColor ("Frost Rim Colour", Color) = (0.85, 0.98, 1, 1)
+
         // ⚠️ RIM DEFAULTS TO ZERO AND IS ENABLED PER MATERIAL. The Can's colour is
         // load-bearing (orange is always offence, blue is always defence), and a rim term that
         // shipped on by default would tint a team-critical silhouette on every map.
@@ -168,6 +189,9 @@ Shader "TumbangPreso/Toon"
         fixed4 _Palette[16];
         fixed4 _FlashColor;
         half _FlashAmount;
+        half _FrostAmount;
+        fixed4 _FrostColor;
+        fixed4 _FrostRimColor;
         fixed4 _RimColor;
         half _RimStrength;
         half _RimPower;
@@ -255,6 +279,46 @@ Shader "TumbangPreso/Toon"
                 base = lerp(base, _RimColor.rgb, rim * _RimStrength);
             }
 
+            // § THE STUN FROST. Applied AFTER the palette so it reads as ice ON the character
+            // rather than as a different character, which is the same constraint the slipper
+            // highlight settled on and for the same reason: the player picked that look on the
+            // CHARACTER screen and a status effect must not overwrite it.
+            if (_FrostAmount > 0.0)
+            {
+                // ⚠️ IT SETTLES FROM ABOVE, like real rime, which is what stops a flat tint
+                // from reading as "somebody recoloured the model". Upward-facing surfaces take
+                // it first; undersides keep more of their own colour.
+                //
+                // ⚠️ Godot has to push its `NORMAL` back through `INV_VIEW_MATRIX` here,
+                // because a Godot fragment normal is VIEW space and its Y would otherwise mean
+                // "up on screen" and rotate the ice with the camera. Unity's surface shader
+                // hands `worldNormal` in already, so the transform has no counterpart. Do not
+                // "restore" one.
+                half settle = lerp(0.42h, 1.0h,
+                                   saturate(normalize(IN.worldNormal).y * 0.5h + 0.5h));
+
+                // ⚠️ CAPPED WELL BELOW A FULL REPAINT, and the cap is the whole point. Rendered
+                // uncapped on the Godot build the body went solid pale blue and the character
+                // the player picked vanished into an anonymous ice block. A status effect says
+                // "this body is frozen", never "this is a different body". At 0.68 roughly a
+                // third of the original palette still reads through.
+                base = lerp(base, _FrostColor.rgb, _FrostAmount * settle * 0.68h);
+
+                // The icy edge. The two-band ramp flattens the interior, so without this a
+                // frozen body loses its silhouette against a pale background.
+                half frostRim = pow(1.0h - saturate(dot(normalize(IN.viewDir),
+                                                        normalize(IN.worldNormal))), 3.0h);
+                base = lerp(base, _FrostRimColor.rgb, frostRim * _FrostAmount);
+
+                // ⚠️ NO ROUGHNESS/SPECULAR CUE, AND THAT IS NOT AN OMISSION. Godot's version
+                // also writes `ROUGHNESS 1.0 -> 0.25` and `SPECULAR 0.0 -> 0.5` so ice reads as
+                // slick where cloth is not. `LightingToon` above has no specular term at all,
+                // by design, so `o.Specular`/`o.Gloss` are read by nothing here. Writing them
+                // would be dead code that looks like a working feature.
+            }
+
+            // ⚠️ THE FLASH GOES ON TOP OF THE FROST, not under it. A stunned attacker can still
+            // be shoved, and a hit flash buried beneath a 0.68 ice mix would not register.
             o.Albedo = lerp(base, _FlashColor.rgb, _FlashAmount);
             o.Alpha = 1.0;
             o.Specular = 0.0;

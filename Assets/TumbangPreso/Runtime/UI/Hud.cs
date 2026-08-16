@@ -60,6 +60,30 @@ namespace TumbangPreso.UI
         public const int TayaBadgeFontSize = 15;
         public const string TayaBadge = "TAYA";
 
+        /// <summary>
+        /// ⚠️ 5, NOT `TextOutline`'s 8. The .tscn sets `outline_size = 5` on every scoreboard
+        /// cell and `hud.gd::_build_role_cell` sets the same 5 on the badge it inserts. The heavy
+        /// 8 belongs to the free-floating lines, which are drawn straight over a live 3D scene
+        /// with no panel behind them; these cells sit on wood and a ring that thick closes up the
+        /// counters of the glyphs at font size 20.
+        /// </summary>
+        public const int ScoreOutline = 5;
+
+        /// <summary>
+        /// ⚠️ A FIXED WIDTH, ALWAYS PRESENT, NEVER HIDDEN. The badge is empty on three rows out
+        /// of four; hiding it would let those three scores slide left and the column of numbers,
+        /// which is the entire point of the board, would stop being a column. `_build_role_cell`
+        /// measures "TAYA" at font 15 and falls back to 54 when it has no font, which is what
+        /// this is.
+        /// </summary>
+        public const float TayaBadgeWidth = 54.0f;
+
+        /// <summary>
+        /// The .tscn's authored floor for the name cell, from when every row read "P1".."P4".
+        /// <see cref="WorstCaseNameWidth"/> only ever widens past it.
+        /// </summary>
+        public const float ScoreNameFloor = 132.0f;
+
         private static readonly Vector2 StatusBarSize = new Vector2(190, 8);
         private static readonly Vector2 StatusMargin = new Vector2(38, 150);
         public const float StatusUnderBoardGap = 18.0f;
@@ -98,6 +122,11 @@ namespace TumbangPreso.UI
         private Image _dangerFlash;
         private bool _dangerHeld;
         private float _flashLeft;
+
+        /// <summary>§ THE STUN FROST — the screen half. See <see cref="UpdateFrost"/>.</summary>
+        private Image _frostVignette;
+        private Material _frostMaterial;
+        private float _frostCoverage;
 
         private Text _vulnerable;
         private Text _crosshair;
@@ -318,6 +347,11 @@ namespace TumbangPreso.UI
             _readyObjective.enabled = false;
             _dangerFlash.enabled = false;
 
+            // § THE STUN FROST rides along: it is a transient like the flash above, and a
+            // spectator has no stun of their own to be told about. A clean feed needs no
+            // equivalent, because that path disables the whole canvas.
+            ClearFrost();
+
             if (_stackLeft != null) _stackLeft.gameObject.SetActive(false);
             if (_stackRight != null) _stackRight.gameObject.SetActive(false);
             if (_indicators != null) _indicators.gameObject.SetActive(false);
@@ -372,6 +406,7 @@ namespace TumbangPreso.UI
             UpdateDanger();
             UpdateToast(dt);
             UpdateCountdown(dt);
+            UpdateFrost(dt);
             UpdateIndicators();
 
             bool live = GameServices.Round.CanThrow(_local);
@@ -442,7 +477,9 @@ namespace TumbangPreso.UI
             // ⚠️ NAME, NOT SEAT. This used to print "P%d" off the raw slot, so a taya who set a
             // name in Settings still read as "P3" on the one line that most needs to say who is
             // playing.
-            _round.text = $"ROUND {round} / {Balance.Rounds}  ·  TAYA: {SeatName(GameServices.Match.DefenderSlot)}";
+            // ⚠️ THREE SPACES EACH SIDE OF THE DOT, matching `hud.gd`'s own format string. Two
+            // reads as a tighter line than the original at the same font size.
+            _round.text = $"ROUND {round} / {Balance.Rounds}   ·   TAYA: {SeatName(GameServices.Match.DefenderSlot)}";
         }
 
         /// <summary>
@@ -724,6 +761,83 @@ namespace TumbangPreso.UI
             if (_flashLeft <= 0.0f) ApplyDangerHold();
         }
 
+        // -------------------------------------------------------------------
+        // ⚠️⚠️ § THE STUN FROST — THE SCREEN HALF. 🧑 2026-08-06, on the Godot build: *"can we
+        // have like a frost effect to indicate that an attacker is stunned after getting
+        // tagged?"*, with a reference image of an icy frame around a clear centre.
+        //
+        // ⚠️ IT IS THE VICTIM'S SCREEN ONLY, and the body half in `CharacterVisual` is what
+        // everybody else sees. That split is `UpdateDanger`'s own rule applied again: a vignette
+        // everybody gets at the same time tells nobody anything. The taya spent their one
+        // scoring verb on that tag and needs to watch the attacker freeze; the attacker needs to
+        // know why their controls stopped answering. Two messages, two places.
+        //
+        // ⚠️⚠️ AND IT IS WHY THE SHAPE MATTERS RATHER THAN THE ALPHA. `SetDownedFlash` records
+        // the measurement that governs this whole file: a held full-screen tint reads as the
+        // renderer being broken. That is why held states sit at `DangerHoldAlpha` 0.16 while
+        // only a 0.45 s pulse goes to 0.45. A tag stun is FIVE SECONDS: too long for a flash,
+        // far too punchy to hold at flash strength, and too important to drop to 0.16, because
+        // it is the single biggest moment in the defender's game. The reference resolves it by
+        // putting the opacity where the player is not looking, so there is no alpha ceiling here
+        // at all. The shader's own coverage is the dial and the centre stays readable at 1.0.
+        //
+        // ⚠️ IT RECEDES, so the ice visibly retreats toward the frame as the five seconds run
+        // out. That is the accessible-status requirement to signal when an effect is ending, in
+        // a channel the player's eyes are already on, unlike the STUNNED countdown bar in the
+        // status stack which is correct and easy to miss.
+        // -------------------------------------------------------------------
+
+        public const float FrostRampIn = 0.14f;
+        public const float FrostRampOut = 0.5f;
+
+        /// <summary>Coverage holds at full until the stun has this long left, then thaws.</summary>
+        public const float FrostThawTime = 1.6f;
+
+        private static readonly int FrostCoverageId = Shader.PropertyToID("_Coverage");
+        private static readonly int FrostAspectId = Shader.PropertyToID("_Aspect");
+
+        private void UpdateFrost(float dt)
+        {
+            if (_frostVignette == null) return;
+
+            float target = 0.0f;
+
+            if (_local != null && _local.IsStunned)
+            {
+                // ⚠️ THE LOCAL CHARACTER IS ALWAYS THE ONE THIS PEER SIMULATES, so unlike the
+                // body half this side can always trust the countdown. `StunLeft` reads 0 only
+                // for a body somebody else is running, and that is never this one.
+                float left = _local.StunLeft;
+                target = left < FrostThawTime ? Mathf.Clamp01(left / FrostThawTime) : 1.0f;
+            }
+
+            float rate = target > _frostCoverage ? FrostRampIn : FrostRampOut;
+            _frostCoverage = Mathf.MoveTowards(_frostCoverage, target, dt / Mathf.Max(rate, 0.001f));
+
+            // Disabled outright at zero rather than left drawing a fully transparent full-screen
+            // quad every frame for the whole match.
+            _frostVignette.enabled = _frostCoverage > 0.001f;
+            if (!_frostVignette.enabled) return;
+
+            _frostMaterial.SetFloat(FrostCoverageId, _frostCoverage);
+
+            // ⚠️ THE SHADER CANNOT WORK THIS OUT FOR ITSELF. UV is 0..1 on both axes whatever
+            // the window's shape, so without the real ratio the frost band is ~1.8x thicker in
+            // pixels down the sides than across the top on 16:9. Pushed every frame rather than
+            // on a resize event, because the window can also change shape via the fullscreen
+            // toggle, which fires no resize on this rect.
+            var size = _frostVignette.rectTransform.rect.size;
+            if (size.y > 0.0f) _frostMaterial.SetFloat(FrostAspectId, size.x / size.y);
+        }
+
+        /// <summary>Clears the frost outright. The spectator has no stun of their own to be told
+        /// about, and a clean feed shows no HUD at all.</summary>
+        private void ClearFrost()
+        {
+            _frostCoverage = 0.0f;
+            if (_frostVignette != null) _frostVignette.enabled = false;
+        }
+
         private void ApplyDangerHold()
         {
             if (_dangerFlash == null) return;
@@ -809,6 +923,7 @@ namespace TumbangPreso.UI
             GameVersion.AttachTo(_root, over3d: true);
 
             BuildDangerFlash();
+            BuildFrostVignette();
             BuildScoreboard();
             BuildClock();
             BuildLataCard();
@@ -838,6 +953,48 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
+        /// § THE STUN FROST — the screen half, for the player who is stunned.
+        ///
+        /// ⚠️ A SEPARATE IMAGE FROM `DownedFlash`, NOT A SECOND MODE OF IT. The two can be live
+        /// on the same frame and mean different things: an attacker inside the box is VULNERABLE
+        /// (red hold), and the moment they are tagged they become STUNNED (frost). Sharing one
+        /// rect would make the tag cancel its own warning colour, and `ApplyDangerHold` would
+        /// fight the frost for the same alpha.
+        ///
+        /// ⚠️ BUILT AFTER `DownedFlash`, so the ice sits over the red rather than under it. A
+        /// tagged attacker stops being taggable, so the red is on its way out on the same frame;
+        /// the frost being on top is what makes that handover read as one event.
+        /// </summary>
+        private void BuildFrostVignette()
+        {
+            var shader = Shader.Find("TumbangPreso/FrostVignette");
+            if (shader == null) return;
+
+            var go = new GameObject("FrostVignette");
+            go.transform.SetParent(_root, false);
+
+            // ⚠️ `hideFlags` AND AN OWNED INSTANCE. `Shader.Find` plus `new Material` gives this
+            // HUD its own copy, so the coverage this canvas writes cannot leak into a second HUD
+            // in a PlayMode test running beside it.
+            _frostMaterial = new Material(shader) { hideFlags = HideFlags.DontSave };
+
+            _frostVignette = go.AddComponent<Image>();
+            _frostVignette.material = _frostMaterial;
+            _frostVignette.raycastTarget = false;
+            _frostVignette.enabled = false;
+
+            MenuKit.Stretch(_frostVignette.rectTransform);
+        }
+
+        private void OnDestroy()
+        {
+            if (_frostMaterial == null) return;
+
+            if (Application.isPlaying) Destroy(_frostMaterial);
+            else DestroyImmediate(_frostMaterial);
+        }
+
+        /// <summary>
         /// Top-left, at the .tscn's 16,28: SCORES over one row per seat, on a WOOD panel.
         ///
         /// ⚠️ ONE ROW PER SEAT, NOT ONE BLOCK OF TEXT. A single label with spaces in it cannot
@@ -855,6 +1012,11 @@ namespace TumbangPreso.UI
             // Amber, per `hud.gd::_build_scoreboard`. See WoodCard.
             var card = WoodCard("Scoreboard", new Vector2(0.0f, 1.0f), new Vector2(16, -28),
                                 440.0f, out _scoreboard, sink: false, border: UiTheme.Amber);
+
+            // ⚠️ 4, THE .tscn's `separation` ON `Scoreboard/Column`. `WoodCard`'s own 2 is the
+            // right default for a two-line card like the lata readout, but this column is a
+            // title over four rows and the tighter value stacks them.
+            card.spacing = 4.0f;
 
             _scoreboardRt = card.GetComponent<RectTransform>();
 
@@ -874,24 +1036,44 @@ namespace TumbangPreso.UI
                 row.childForceExpandHeight = false;
                 row.childForceExpandWidth = false;
                 row.childAlignment = TextAnchor.MiddleLeft;
-                row.spacing = 8.0f;
+
+                // ⚠️ 14, THE .tscn's `theme_override_constants/separation` ON EVERY SCORE ROW.
+                // The 8 here was invented and it is most of why the port's board reads tighter
+                // than the Godot build's at the same font size.
+                row.spacing = 14.0f;
 
                 rowGo.AddComponent<LayoutElement>().preferredHeight = 30.0f;
 
                 var name = HudLabel(rowGo.transform, "Name", 20, UiTheme.Cream,
-                                    TextAnchor.MiddleLeft);
-                name.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1.0f;
+                                    TextAnchor.MiddleLeft, ScoreOutline);
+
+                // ⚠️⚠️ A FIXED WIDTH SIZED FROM THE CAP AND THE FONT, NOT `flexibleWidth`, AND
+                // THE FLEXIBLE VERSION FAILED BOTH WAYS AT ONCE. 🧑 2026-08-02 on the original:
+                // *"make sure the 14 character names fit in the hud and if the name is too short
+                // like CP it doesnt look ugly"*. A flexible cell overruns on a long name and
+                // pushes the right-aligned score out; it collapses on a short one and lets that
+                // row's score slide left, so the column of numbers stops being a column. A fixed
+                // width serves both: nothing moves, whatever the name.
+                //
+                // ⚠️ MEASURED, NOT TYPED. `HUD.tscn` authors 132, which was chosen when every
+                // row read "P1".."P4"; `hud.gd::_widen_name_cell` then widens it at runtime to
+                // the real width of `PlayerNameMax` "W"s in the real theme font, and keeps 132
+                // as the floor. Same derivation here, so this cannot drift when the font size in
+                // this file changes.
+                name.gameObject.AddComponent<LayoutElement>().preferredWidth =
+                    WorstCaseNameWidth(name);
 
                 // ⚠️ A FIXED WIDTH, ALWAYS PRESENT, NEVER HIDDEN. The badge is empty on three
                 // rows out of four; hiding it would let those three scores slide left and the
                 // column of numbers — the entire point of the board — would stop being a column.
                 var mark = HudLabel(rowGo.transform, "Role", TayaBadgeFontSize,
-                                    UiTheme.CreamMuted, TextAnchor.MiddleRight);
-                mark.gameObject.AddComponent<LayoutElement>().preferredWidth = 60.0f;
+                                    UiTheme.CreamMuted, TextAnchor.MiddleRight, ScoreOutline);
+                mark.gameObject.AddComponent<LayoutElement>().preferredWidth = TayaBadgeWidth;
 
+                // ⚠️ 64, THE .tscn's `custom_minimum_size` ON THE SCORE CELL. 72 was invented.
                 var score = HudLabel(rowGo.transform, "Score", 20, UiTheme.Cream,
-                                     TextAnchor.MiddleRight);
-                score.gameObject.AddComponent<LayoutElement>().preferredWidth = 72.0f;
+                                     TextAnchor.MiddleRight, ScoreOutline);
+                score.gameObject.AddComponent<LayoutElement>().preferredWidth = 64.0f;
 
                 _scoreNames[i] = name;
                 _scoreMarks[i] = mark;
@@ -951,7 +1133,10 @@ namespace TumbangPreso.UI
 
             cardGo.AddComponent<LayoutElement>().preferredWidth = 240.0f;
 
-            _timer = HudLabel(cardGo.transform, "TimerLabel", 48, UiTheme.Amber,
+            // ⚠️ 44, NOT 48. `HUD.tscn` gives TimerLabel the `HudTimer` variation and
+            // `ui_theme.gd` binds that to `FONT_SIZE_TIMER`, which is 44. `hud.gd` overrides the
+            // COLOUR to amber and nothing else, so 44 is what ships. The 48 here was invented.
+            _timer = HudLabel(cardGo.transform, "TimerLabel", 44, UiTheme.Amber,
                               TextAnchor.MiddleCenter);
             _timer.text = "01:30";
 
@@ -969,11 +1154,17 @@ namespace TumbangPreso.UI
             var card = WoodCard("LataCard", new Vector2(1.0f, 0.0f), new Vector2(-16, 64),
                                 380.0f, out _lataCard, sink: false);
 
-            _lataLabel = HudLabel(card.transform, "LataLabel", 26, UiTheme.Amber,
+            // ⚠️ 32 AND 34, FROM THE `HudCaption` AND `HudBody` VARIATIONS THE .tscn ASSIGNS
+            // THESE TWO NODES. `ui_theme.gd`'s own note on those numbers is worth reading before
+            // anyone trims them again: they went 16/13 to 22/19 to 30/28 and 🧑 answered a
+            // screenshot of each with *"text still small"*, because the theme dict was never
+            // being regenerated. The 26/20 here was the same mistake arrived at independently,
+            // and it is why the lata card reads a size smaller than the Godot build's.
+            _lataLabel = HudLabel(card.transform, "LataLabel", 32, UiTheme.Amber,
                                   TextAnchor.MiddleLeft);
             _lataLabel.text = "LATA";
 
-            _lataHint = HudLabel(card.transform, "LataHintLabel", 20, UiTheme.Cream,
+            _lataHint = HudLabel(card.transform, "LataHintLabel", 34, UiTheme.Cream,
                                  TextAnchor.MiddleLeft);
             _lataHint.enabled = false;
 
@@ -1065,7 +1256,14 @@ namespace TumbangPreso.UI
 
             // The countdown owns the middle of the screen for its three seconds, because
             // nothing is in play behind it yet.
-            _countdown = HudLabel(_root, "CountdownLabel", 120, UiTheme.Highlight,
+            //
+            // ⚠️ 40, THE `HudBanner` VARIATION THE .tscn ASSIGNS, AND THE 120 HERE WAS THREE
+            // TIMES THE ORIGINAL. `hud.gd::show_countdown_tick` overrides the colour and drives
+            // the scale pop, never the size, so 40 is what the Godot build renders. The pop
+            // below is already the original's 1.8 -> 1.0 over 0.35 s, which means the effective
+            // peak is 72 px rather than 216. Verified against `Logs/shots-godot/g05-countdown.png`,
+            // where the "2" is a small glyph beside the character rather than a banner.
+            _countdown = HudLabel(_root, "CountdownLabel", 40, UiTheme.Highlight,
                                   TextAnchor.MiddleCenter);
             Place(_countdown.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
                   new Vector2(400, 160));
@@ -1166,6 +1364,31 @@ namespace TumbangPreso.UI
             rt.sizeDelta = new Vector2(width, 0.0f);
 
             return group;
+        }
+
+        /// <summary>
+        /// How wide the name cell has to be for the longest name this game can produce, measured
+        /// off the real font at the real size rather than typed in.
+        ///
+        /// ⚠️ "W" IS THE WORST CASE, not an average-case guess a name like MMMMMM would beat, and
+        /// `PlayerNameMax` of them is the true ceiling because that is the same constant the name
+        /// field itself clamps to. Typing the answer here would be correct until somebody changes
+        /// the font size a few lines up, and then silently wrong.
+        ///
+        /// ⚠️ IT MEASURES THROUGH THE LABEL, NOT THROUGH A SPARE `Font` CALL, because
+        /// `preferredWidth` is the number this exact component will lay out to: same font, same
+        /// size, same generator settings. Reading a raw font metric instead is how a cell ends up
+        /// a few pixels short of the string it was sized for.
+        /// </summary>
+        private static float WorstCaseNameWidth(Text probe)
+        {
+            string keep = probe.text;
+            probe.text = new string('W', Balance.PlayerNameMax);
+
+            float needed = Mathf.Ceil(probe.preferredWidth);
+
+            probe.text = keep;
+            return Mathf.Max(ScoreNameFloor, needed);
         }
 
         private static void Place(RectTransform rt, Vector2 anchor, Vector2 offset, Vector2 size)

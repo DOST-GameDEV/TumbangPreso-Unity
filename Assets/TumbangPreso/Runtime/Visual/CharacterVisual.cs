@@ -54,6 +54,11 @@ namespace TumbangPreso.Visual
         private static readonly int FlashAmountId = Shader.PropertyToID("_FlashAmount");
 
         /// <summary>
+        /// § THE STUN FROST — the body half. See the block comment on <see cref="ProcessFrost"/>.
+        /// </summary>
+        private static readonly int FrostAmountId = Shader.PropertyToID("_FrostAmount");
+
+        /// <summary>
         /// ⚠️⚠️ THE KENNEY RIG IS AUTHORED ~0.67 UNITS TALL AND NOTHING HERE WAS SCALING IT.
         /// `character_visual.gd:714` runs `model.scale = Vector3.ONE * PERSON_SCALE` on every
         /// Person, which is what lifts the rig to the ~1.6 units of the capsule it is supposed to
@@ -463,6 +468,15 @@ namespace TumbangPreso.Visual
         {
             _renderers.Clear();
             _renderers.AddRange(_modelRoot.GetComponentsInChildren<Renderer>(includeInactive: true));
+
+            // ⚠️⚠️ § THE STUN FROST — RESET, OR THE FIRST STUN AFTER A MODEL SWAP DOES NOTHING.
+            // The level is cached to make `SetFrost` a no-op on unchanged frames, and a fresh
+            // renderer arrives with an empty property block reading frost 0. Leaving the cached
+            // level at whatever the OLD model was showing means the equality guard rejects the
+            // write that would have re-established it, and the body stays unfrosted for the
+            // whole stun. Godot clears its per-unit material list at the same two points and
+            // zeroes the level beside it for exactly this reason.
+            _frostLevel = 0.0f;
         }
 
         /// <summary>
@@ -542,11 +556,87 @@ namespace TumbangPreso.Visual
             }
 
             StepRemoteSmoothing(Time.deltaTime);
+            ProcessFrost(Time.deltaTime);
 
             if (_flashLeft <= 0.0f) return;
 
             _flashLeft = Mathf.Max(0.0f, _flashLeft - Time.deltaTime);
             PushColour();
+        }
+
+        // -------------------------------------------------------------------
+        // § THE STUN FROST — the body half.
+        //
+        // 🧑 2026-08-06, on the Godot build: *"can we have like a frost effect to indicate that
+        // an attacker is stunned after getting tagged?"*
+        //
+        // ⚠️ THIS HALF IS FOR EVERYBODY ELSE. The screen vignette in `Hud` is the victim's own,
+        // and the split is the danger vignette's rule applied again: a screen effect tells
+        // nobody anything about anyone else. The taya who just spent their one scoring verb on
+        // a tag needs to SEE the attacker freeze, and the other two attackers need to know that
+        // seat is out of the round for five seconds.
+        //
+        // ⚠️ IT RAMPS RATHER THAN SNAPS, AND ON A REMOTE PEER THE RAMP IS THE WHOLE EFFECT.
+        // Stun STATE replicates; the remaining stun does not, and it deliberately is not going
+        // to: it changes every physics step, so replicating it is a float per character per
+        // tick forever to drive a cosmetic taper. On the machine that owns the countdown the
+        // ice additionally thaws over the last `FrostThawTime`; everywhere else it simply holds
+        // until the state clears and the ramp-out smooths the handover.
+        //
+        // ⚠️ NOT REPLICATED AND NOT NEEDING TO BE. Every peer sees the same seat enter the
+        // stunned state and drives this from it, the same way the landed-slipper highlight
+        // derives itself from already-replicated state instead of adding a packet.
+        // -------------------------------------------------------------------
+
+        public const float FrostRampIn = 0.18f;
+        public const float FrostRampOut = 0.45f;
+
+        /// <summary>How long before the stun ends the body starts thawing, where the countdown
+        /// is known. Zero on a peer that is not simulating this body.</summary>
+        public const float FrostThawTime = 1.2f;
+
+        private float _frostLevel;
+
+        /// <summary>0 = normal, 1 = fully iced.</summary>
+        public float FrostLevel => _frostLevel;
+
+        /// <summary>
+        /// ⚠️ WRITTEN THROUGH THE SAME PROPERTY BLOCK AS THE TINT AND THE FLASH, which is what
+        /// makes this per-body for free. The Godot version needs a hand-rolled per-unit material
+        /// duplicate here, because a Person's palette `.tres` is one shared resource across every
+        /// Person wearing that character and writing frost into it would freeze all of them at
+        /// once, including the one posing on the CHARACTER screen. A property block is
+        /// per-renderer by construction, so that whole mechanism has no counterpart.
+        /// </summary>
+        public void SetFrost(float amount)
+        {
+            float clamped = Mathf.Clamp01(amount);
+            if (Mathf.Approximately(clamped, _frostLevel)) return;
+
+            _frostLevel = clamped;
+            PushColour();
+        }
+
+        private void ProcessFrost(float dt)
+        {
+            if (_motor == null) _motor = GetComponent<CharacterMotor>();
+            if (_motor == null) return;
+
+            float target = 0.0f;
+
+            if (_motor.IsStunned)
+            {
+                target = 1.0f;
+
+                // `StunLeft` is 0 on any peer that is not simulating this body, so the guard is
+                // `> 0` rather than a plain compare: there, the frost holds until the replicated
+                // state clears rather than thawing instantly off a number it does not have.
+                float left = _motor.StunLeft;
+                if (left > 0.0f && left < FrostThawTime) target = left / FrostThawTime;
+            }
+
+            float rate = target > _frostLevel ? FrostRampIn : FrostRampOut;
+            SetFrost(Mathf.MoveTowards(_frostLevel, target, dt / Mathf.Max(rate, 0.001f)));
         }
 
         /// <summary>
@@ -576,6 +666,7 @@ namespace TumbangPreso.Visual
                     foreach (int id in ColourIds) _block.SetColor(id, _tint);
 
                 _block.SetFloat(FlashAmountId, flash);
+                _block.SetFloat(FrostAmountId, _frostLevel);
 
                 r.SetPropertyBlock(_block);
             }

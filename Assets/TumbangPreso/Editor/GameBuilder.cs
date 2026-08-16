@@ -194,6 +194,15 @@ namespace TumbangPreso.EditorTools
                 // editor rather than obviously broken, which is the kind of difference nobody
                 // catches until the grade is being compared against the Godot build side by side.
                 "TumbangPreso/ColourGrade",
+
+                // ⚠️ § THE STUN FROST's SCREEN HALF, AND ITS MISS PATH IS THE QUIETEST OF THE
+                // THREE. `Hud.BuildFrostVignette` returns without building anything when the
+                // lookup fails, so a build that strips this has no frost at all and no error:
+                // the body still ices over for everybody watching, which is the half that makes
+                // it look like a working feature from every seat except the one it is for.
+                // `StunFrostTests.TheVictimsScreenFrostsOver` is the editor-side guard; this line
+                // is the player-side one, and only the pair covers both.
+                "TumbangPreso/FrostVignette",
             };
 
             var settings = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/GraphicsSettings.asset");

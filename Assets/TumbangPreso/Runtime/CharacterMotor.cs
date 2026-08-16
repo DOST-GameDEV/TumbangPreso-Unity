@@ -457,10 +457,40 @@ namespace TumbangPreso
         /// 100% safe until they pick a slipper up. The HUD's VULNERABLE row reads this same
         /// function, so the warning a player sees cannot disagree with the rule that tags
         /// them.
+        ///
+        /// ⚠️⚠️ IT ASKS `RoundActive`, NOT `CanAct()`, AND THAT ONE WORD IS A SHIPPED BUG FIX.
+        /// 🧑 2026-08-06, on the Godot build: *"a player that has been sabotaged by a player
+        /// cannot be tagged by the defender. when the attacker is in a frozen state, it cannot
+        /// be tagged."*
+        ///
+        /// `CanAct()` is `RoundActive &amp;&amp; !IsStunned`. The second half is a rule about whether
+        /// this player can DO something; being tagged is something done TO them, and the two
+        /// are not the same question. Reading it here made a stunned attacker IMMUNE, which is
+        /// exactly backwards: standing in the box, holding a slipper, unable to move is the most
+        /// vulnerable a player is ever going to be.
+        ///
+        /// ⚠️ AND IT MADE THE SABOTAGE SCORE UNREACHABLE, which is the proof it was never
+        /// intended. `MatchRules` pays `ScoreSabotage` (50) to whoever shoved the victim inside
+        /// `SabotageWindow`, and only a connecting shove records that credit. But a shove
+        /// staggers, so the very act that earns the credit put the victim into the state that
+        /// made this function refuse the tag that would have paid it. Shove into tag into
+        /// sabotage is a designed combo whose middle step could not happen: a whole scoring
+        /// event dead behind one word, in this port exactly as in the original.
+        ///
+        /// ⚠️ IT DOES NOT OPEN A CHAIN-TAG, AND THE GUARD IS POSITIONAL RATHER THAN THIS ONE.
+        /// The obvious worry is that a tag itself applies a 5 s stun, so allowing a stunned
+        /// attacker to be tagged lets the taya re-lunge on a 1.5 s cooldown and cash the same
+        /// victim twice. It cannot: the tag penalty teleports the victim to their safe spot, so
+        /// `IsInsideBox()` below is already false for the whole stun. The victim is protected by
+        /// where they ARE, which is the check that was doing the work all along.
+        ///
+        /// ⚠️ `RoundActive` IS KEPT, because it is the half of `CanAct()` that genuinely
+        /// belongs. Nobody is taggable between rounds, and dropping it would let a lunge left
+        /// over from the last frame of a round score into the intermission.
         /// </summary>
         public bool IsTaggable()
         {
-            if (_isDefender || !CanAct()) return false;
+            if (_isDefender || !RoundActive) return false;
             if (!HoldingSlipper) return false;
             return IsInsideBox();
         }
