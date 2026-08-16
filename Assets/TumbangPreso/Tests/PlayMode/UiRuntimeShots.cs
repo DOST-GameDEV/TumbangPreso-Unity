@@ -46,6 +46,7 @@ namespace TumbangPreso.PlayTests
             yield return Shoot("MatchResult");
 
             yield return Arena("Eskinita");
+            yield return EmoteWheelShot();
             yield return Arena("BayanPlaza");
         }
 
@@ -68,6 +69,39 @@ namespace TumbangPreso.PlayTests
             for (int i = 0; i < 12; i++) yield return null;
 
             CaptureScreen(map);
+        }
+
+        /// <summary>
+        /// The emote wheel, open, over a live arena.
+        ///
+        /// ⚠️⚠️ IT IS PHOTOGRAPHED BECAUSE IT SHIPPED AS A PILE OF WHITE SQUARES AND NOTHING
+        /// CAUGHT IT. Every slice was an `Image` with a radial fill and no sprite assigned, so
+        /// the fill was cutting sectors out of a SQUARE; eight of those rotated 45 degrees apart
+        /// is overlapping slabs with the labels crossing each other. Every test passed the whole
+        /// time, because a wheel that is built without throwing is a wheel that "works". This is
+        /// the only kind of check that can see it.
+        ///
+        /// ⚠️ OPENED THROUGH `Open()`, NOT BY A KEY. The wheel reads relative mouse motion and
+        /// the batch runner has no mouse, so the selection stays at -1 and the shot shows the
+        /// resting state, which is the one that was broken.
+        /// </summary>
+        private static IEnumerator EmoteWheelShot()
+        {
+            var wheel = Object.FindFirstObjectByType<UI.EmoteWheel>();
+
+            if (wheel == null)
+            {
+                Debug.LogWarning("[Shot] no EmoteWheel in the arena.");
+                yield break;
+            }
+
+            wheel.Open();
+
+            for (int i = 0; i < 5; i++) yield return null;
+
+            yield return Capture("EmoteWheel");
+
+            wheel.Close(play: false);
         }
 
         /// <summary>
