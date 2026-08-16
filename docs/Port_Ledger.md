@@ -192,6 +192,82 @@ called it, and no check could tell.
 rate expressed per SECOND, and the batch runner renders at over 500 fps: a sixth of a second
 is not enough time and the maths was correct throughout. Wait on time.
 
+## 2026-08-16 — the playtest pass: one input bug wearing five hats
+
+Reported from playing the build, not from reading it. The through-line is that
+**several complaints that sounded like separate features were one fault each**, and
+two of them were the same fault.
+
+1. **Jump and grab both did nothing, and it was ONE bug.** `JustPressed` is a diff
+   against the last committed snapshot, and BOTH producers (`PlayerInputReader` and
+   `AIController`) took that snapshot at the end of their own `Update`. Unity runs
+   FixedUpdate BEFORE Update inside a frame, so by the time `ApplyGravity` asked
+   `JustPressed(Verb.Jump)` the answer was always false. Every verb resolved in the
+   physics step was unreachable — jump, the shove, the lunge — for a bot as much as a
+   human. Godot never had it: a human there reads `Input.is_action_just_pressed`
+   straight from the engine, which stays true through `_physics_process`, and only an
+   AI keeps a prev table. The snapshot is now taken once, by the consumer, at the end
+   of `CharacterMotor.FixedUpdate`.
+2. **The whole cast rendered at 42% of its height.** `PERSON_SCALE` 2.38 was never
+   applied to the model. It also put the hand anchor at 42% of where it belongs,
+   because that anchor is measured off the skin.
+3. **The tonemap was on the material instead of the frame.** `Toon.shader` carried
+   the ACES curve, so it rolled off the CAST and nothing else — the sky, the fog and
+   every world surface stayed raw and clipped. That is the blown band across the top
+   of the map preview AND the first-person arms rendering near white beside a
+   correctly-lit character. It now lives in `TumbangPreso/ColourGrade`, a camera pass,
+   which is where Godot's Environment has it.
+4. **The `adjustment_*` colour grade had never been ported at all.** Eskinita runs
+   contrast 1.03, Bayan Plaza 1.07, both at saturation 1.18.
+5. **Three more Environment fields the import dropped**: `ambient_light_sky_contribution`
+   (Eskinita 0.35, so the arena ran 54% hot and 47% brighter than its neighbour for no
+   authored reason), `fog_sky_affect` (0.22, why the fog "didn't cover the top" and met
+   an unfogged sky along a hard line), and **the whole environment on the setup screen**,
+   because ambient, fog and the sky live in the ACTIVE scene's RenderSettings and the
+   preview arena is loaded additively.
+6. **The full-width band across the menus was never a UI seam.** `MapPreviewSurface`
+   loads a dressed street additively at the origin on the default layer, and the menu
+   camera's culling mask is every layer, so the road slab was drawn into the frame.
+   Seen almost edge-on a slab is a straight horizontal strip, which is why it was
+   diagnosed as a UI rect edge twice.
+7. **The emote wheel was eight white squares.** Every slice was an `Image` with a
+   radial fill and NO sprite, so the fill cut sectors out of a square.
+8. **Two sets of arms in FPP**, because the self-hide was still B-73's head-only
+   version that `camera_rig.gd` had already reverted.
+9. **The held slipper trailed the hand by a frame**, because the carry ran in Update
+   and Unity evaluates the Animator between Update and LateUpdate.
+10. **The lata's mark was never snapped to the ground** (`_snap_home_to_ground`).
+
+⚠️ **And the capture harness was lying.** `UiRuntimeShots` assigned the render target
+AFTER laying out the canvas, so every shot was the batch runner's own resolution
+stretched into 16:9 — a 1.33x horizontal stretch on the picture and nothing else. It
+was read off the captures TWICE as a fault in `ModelPreview`. A tool that measures the
+build is part of the build.
+
+⚠️ **One "fix" here was wrong and the tests caught it.** `ModelPreview.PlayIdle` was
+rewritten from `SampleAnimation` to a Playables graph, on the reasoning that a
+disabled Animator leaves nothing to bind to. False — `SampleAnimation` binds by PATH —
+and the graph animated nothing: *"'arm-left' has not moved in 30 frames"*. Reverted.
+The arms-out silhouette that prompted it is what this rig's `idle` actually looks
+like, confirmed against the toon bench, which poses nothing and renders the arms down.
+
+### Verified CORRECT while looking, so they were not touched
+
+Written down because "I checked and it was already right" is a result, and re-fixing
+a correct thing is how a port acquires a bug.
+
+- **The taya cannot pick up a slipper.** `carrier.gd::_step_grab` returns early on
+  `is_defender`. Any ATTACKER can pick up ANY slipper; ownership does not gate it.
+- **You cannot throw from inside the box.** `ThrowRules.CanThrow` ends in
+  `!Confinement.IsInsideBox(...)`, in the engine-free core, covered by its tests.
+- **The tag stun is 5.0 s** (`TagStunTime` → `ApplyStagger`), `CanAct()` goes false and
+  the status stack reads STUNNED. There is no frost VFX in the Godot build either; that
+  is a new feature request, not a port gap.
+- **The chalk is all there** — piko, tao, bulaklak, gulo and the two repeats.
+- **`Main.tscn`'s kill plane row below is STALE.** The plane is not in `Main.tscn` at
+  all: both arenas author it at y = -10 with a 260x4x260 box, and the importer binds
+  `KillPlane` to it.
+
 ## ⚠️ Unity rules the conversion has to obey, each found by a shipped failure
 
 These are not style. Each one produced a build that looked correct in the editor
