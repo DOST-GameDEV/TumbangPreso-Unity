@@ -250,6 +250,11 @@ namespace TumbangPreso.Visual
         {
             if (!_graph.IsValid()) return;
 
+            // ⚠️ BEFORE EVERYTHING BELOW, and it returns early while a pose is held. See
+            // StepChargePose: a locomotion clip re-selected every frame keys the same arm bone
+            // straight back over the wind-up.
+            if (StepChargePose()) return;
+
             if (_oneShotLeft > 0.0f)
             {
                 _oneShotLeft -= Time.deltaTime;
@@ -337,6 +342,137 @@ namespace TumbangPreso.Visual
         /// <summary>`character_visual.gd`'s own thresholds. See <see cref="Choose"/>.</summary>
         public const float WalkSpeedThreshold = 0.4f;
         public const float RunSpeedThreshold = 7.5f;
+
+        // ---- THE THIRD-PERSON WIND-UP ---------------------------------------
+
+        /// <summary>
+        /// How far the arm cocks back at full charge, in radians. ⚠️ READ FROM THE VIEWMODEL
+        /// RATHER THAN RESTATED: this is the same wind-up the thrower sees on their own arm, and
+        /// the two views disagreeing about how far back it went would be its own bug.
+        /// </summary>
+        public const float ChargePoseRad = CameraSystem.ViewmodelArms.WindupRad;
+
+        /// <summary>
+        /// ⚠️ THE SIGN AND THE AXIS ARE MEASURED. `character_visual.gd` records that the first
+        /// build of this used -X and the hand DROPPED instead of cocking. A bone's local basis
+        /// is not readable by eye; flip the constant, never the caller.
+        /// </summary>
+        private static readonly Vector3 ChargePoseAxis = new Vector3(1.0f, 0.0f, 0.0f);
+
+        private static readonly string[] ChargePoseBones = { "arm-right", "arm-left" };
+
+        private Transform _chargeBone;
+        private Quaternion _chargeBoneRest;
+        private bool _chargePosing;
+
+        /// <summary>
+        /// The wind-up, written onto the arm bone so OPPONENTS can read the commitment.
+        ///
+        /// ⚠️⚠️ THE PORT HAD ONLY THE FIRST-PERSON HALF, WHICH IS THE HALF NOBODY ELSE SEES.
+        /// `Design.md` §4 says the whole wind-up "is visible on every peer ... so the attacker
+        /// can dash, jump or throw through the commitment", and §11's counterplay table answers
+        /// the charged melee with exactly *"1.35 s of visible wind-up"*. With nothing on the
+        /// body, that counterplay was being PAID for by the charging player and shown to nobody:
+        /// a charge you cannot see is a charge you cannot dodge.
+        ///
+        /// ⚠️ THREE CHARGES WIND THIS ARM UP, NOT ONE. The throw is the obvious one and was the
+        /// only one the .gd had at first — which left the taya, who holds nothing, posing
+        /// nothing for the entire defending role. 🧑 on that build: *"is that on purpose theres
+        /// no taya animation? can u make sure theres an animation or atleast a hand movement for
+        /// all movements"*. The lunge and the shove are the other two, and all three report a
+        /// 0..1 ratio with -1 at rest, so they compose without any of them knowing about the
+        /// others.
+        ///
+        /// ⚠️⚠️ AND THE PLAYBACK HAS TO STOP, WHICH IS THE WHOLE DIFFERENCE BETWEEN A POSE AND A
+        /// FLICKER. Every clip on this rig keys `arm-right`, and the graph writes the bone after
+        /// this component's Update — so a bone write that merely races it lands only on frames
+        /// where the clip happens to have ended. Measured in the original: 0.025 m of hand
+        /// travel while racing, against 0.62 rad of rotation that should move it eight times
+        /// that. With the graph stopped nothing else writes the bone and the pose is exactly
+        /// what this function says it is.
+        /// </summary>
+        /// <returns>True while a pose is being held, so the caller leaves locomotion alone.</returns>
+        private bool StepChargePose()
+        {
+            float power = ObservedCharge();
+            bool winding = power >= 0.0f && !_motor.IsStunned;
+
+            if (!winding)
+            {
+                if (_chargePosing) ClearChargePose();
+                return false;
+            }
+
+            if (!_chargePosing)
+            {
+                if (!ResolveChargeBone()) return false;
+
+                _chargePosing = true;
+                _graph.Stop();
+            }
+
+            // Written every frame, and the graph is stopped, so nothing else is fighting for it.
+            _chargeBone.localRotation = _chargeBoneRest * Quaternion.AngleAxis(
+                ChargePoseRad * Mathf.Clamp01(power) * Mathf.Rad2Deg, ChargePoseAxis);
+
+            return true;
+        }
+
+        /// <summary>The deepest live charge on this unit, or -1 when none is running. The three
+        /// are mutually exclusive in practice — an attacker cannot lunge and a defender cannot
+        /// throw — so the first one answering wins.</summary>
+        private float ObservedCharge()
+        {
+            if (_carrier != null && _carrier.Held != null && _carrier.ObservedChargePower >= 0.0f)
+                return Mathf.Clamp01(_carrier.ObservedChargePower);
+
+            var verbs = _motor != null ? _motor.GetComponent<CombatVerbs>() : null;
+            if (verbs == null) return -1.0f;
+
+            if (verbs.ObservedLungeCharge >= 0.0f) return Mathf.Clamp01(verbs.ObservedLungeCharge);
+
+            // ⚠️ NO SHOVE BRANCH, AND ITS ABSENCE IS CORRECT RATHER THAN AN OMISSION. The .gd
+            // has one because the shove used to be a 1.25 s hold; it became a single tap and
+            // was taken off the defender entirely, so that clock jumps 0 to 1 in one frame and
+            // has nothing to tell anybody. Do not add a tell for a verb with no wind-up.
+            return -1.0f;
+        }
+
+        private bool ResolveChargeBone()
+        {
+            var skinned = GetComponentInChildren<SkinnedMeshRenderer>();
+            if (skinned == null || skinned.bones == null) return false;
+
+            foreach (string wanted in ChargePoseBones)
+            {
+                foreach (var bone in skinned.bones)
+                {
+                    if (bone == null || bone.name != wanted) continue;
+
+                    _chargeBone = bone;
+
+                    // The pose the clip left the bone in, restored on release so two wind-ups
+                    // cannot accumulate.
+                    _chargeBoneRest = bone.localRotation;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void ClearChargePose()
+        {
+            _chargePosing = false;
+
+            if (_chargeBone != null) _chargeBone.localRotation = _chargeBoneRest;
+            _chargeBone = null;
+
+            // ⚠️ THE GRAPH RESTARTS BEFORE ANYTHING ELSE PLAYS. The end of a charge is usually
+            // a THROW, and the release fires that one-shot through `PlayAction` on the very next
+            // frame; a stopped graph would swallow the one part of the verb everybody watches.
+            if (_graph.IsValid()) _graph.Play();
+        }
 
         /// <summary>A non-looping action that owns the body until it finishes.</summary>
         public void PlayOneShot(string clipName)
