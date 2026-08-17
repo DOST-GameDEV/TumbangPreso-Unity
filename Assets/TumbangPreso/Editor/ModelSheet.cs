@@ -244,8 +244,15 @@ namespace TumbangPreso.EditorTools
             // Three-quarter view, so a box reads as a box rather than as a rectangle.
             model.transform.localRotation = CellRotation;
 
-            ToonSkin.Apply(model, _charactersOnly ? ToonSkin.PersonOutlineWidth
-                                                  : ToonSkin.PropOutlineWidth);
+            // ⚠️⚠️ THE PALETTE IS PASSED, AND WITHOUT IT THIS SHEET WAS A PICTURE OF THE WRONG
+            // CAST. A character is a rig plus a palette; `ToonSkin.Apply` leaves `_UsePalette`
+            // at zero when handed none, so every cell rendered in Kenney's factory colours and
+            // several of the twelve came out as the same person in the same clothes. That is
+            // precisely the failure `RosterEntryAsset.Palette` documents on the play side, and
+            // the sheet exists to show what play shows.
+            ToonSkin.Apply(model,
+                           _charactersOnly ? ToonSkin.PersonOutlineWidth : ToonSkin.PropOutlineWidth,
+                           _charactersOnly ? PaletteFor(path) : null);
 
             if (_charactersOnly) PoseIdle(path, model);
 
@@ -278,6 +285,33 @@ namespace TumbangPreso.EditorTools
             }
 
             Caption(pivot.transform, Path.GetFileNameWithoutExtension(path));
+        }
+
+        /// <summary>
+        /// The sixteen colours the roster dresses this model in, or null if nothing wears it.
+        ///
+        /// ⚠️ RESOLVED THROUGH THE ROSTER BOOK BY MODEL, NOT BY FILENAME. Several ids could
+        /// share one rig, and during the art replacement one id points at a new mesh while the
+        /// old one is still in the folder and still shot by this sheet. Matching on the asset
+        /// the roster actually references keeps the retired mesh in the sheet, wearing nothing,
+        /// which is the honest picture of where the replacement has got to.
+        /// </summary>
+        private static Color[] PaletteFor(string path)
+        {
+            var book = AssetDatabase.LoadAssetAtPath<RosterBook>(
+                "Assets/TumbangPreso/Resources/RosterBook.asset");
+
+            if (book == null) return null;
+
+            foreach (var entry in book.People)
+            {
+                if (entry == null || entry.Model == null) continue;
+                if (AssetDatabase.GetAssetPath(entry.Model) != path) continue;
+
+                return entry.Palette != null && entry.Palette.Length == 16 ? entry.Palette : null;
+            }
+
+            return null;
         }
 
         /// <summary>

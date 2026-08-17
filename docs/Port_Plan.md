@@ -422,3 +422,54 @@ The art can change freely. These properties cannot, because gameplay is measured
 ⚠️ **Replace one at a time and keep the old mesh until the new one is measured.** Every prop
 carries tuning that was derived from its shape, and a batch swap makes it impossible to tell
 which of eight changes moved a number.
+
+### 8.4 What the first person replacement learned
+
+`ate_girlie` is the first row of §8.3 item 3 to land, as `team-ate-girlie.glb`, built by
+`tools/build_person_voxel.py` from the CC0 `character-female-b.glb`. The old mesh is still in
+the repo and still imports; nothing points at it. Four things came out of it that the other
+eleven should not have to rediscover.
+
+**The rig is a pile of boxes and so is the replacement.** Seven bones, both meshes rigidly
+weighted (every vertex at weight 1.0 to exactly one bone), and one material. A voxel character
+is therefore a table of boxes with a bone name and a palette slot each, which is why this is a
+script rather than a modelling session. Adding the next character is a new table and a new
+palette in the same file.
+
+**The skeleton can be RETARGETED, which §8.2 implied it could not.** The constraint is not
+"the bones cannot move", it is "the clips must not be contradicted", and those are different:
+
+- `head`, `arm-left` and `arm-right` translations are never keyed by any of the 32 clips, so
+  those bones are free.
+- `root`, both legs and `torso` are keyed by four clips, and every track is an ABSOLUTE local
+  position, so shifting the rest position and every keyframe by the same vector moves the bone
+  and preserves the animation exactly.
+- The inverse bind matrices must then be RECOMPUTED. Skipping that skins the mesh against the
+  old bind pose and the character comes apart the first time it moves, with no error.
+
+`tools/glb_anim_channels.py` reports which bones a rig's clips actually key, so this is a
+measurement rather than a hope. It is what let this character be 33/37/30 legs/torso/head
+against the Kenney rig's 24/23/53, which is most of the difference between the reference art
+and a recolour of somebody else's proportions.
+
+⚠️ **Limb LENGTHS are a different question from limb POSITIONS.** These limbs have no knee or
+elbow, so a clip's hip rotation sweeps the whole leg and doubling the leg doubles the stride the
+animator authored. Moving a bone costs nothing; lengthening one costs animation quality. The
+legs here grow 36% and nothing else grows at all.
+
+**What a replacement must still preserve**, on top of the §8.2 table, all of it asserted by
+`Assets/TumbangPreso/Editor/PersonSwapProbe.cs`:
+
+| Must hold | Why |
+|---|---|
+| The seven bone NAMES | `CharacterVisual.BuildHandAnchor` and `CharacterAnimator.ResolveChargeBone` both hunt `arm-right` then `arm-left` by string. A miss is one warning in a match log and a tsinelas hanging in the air |
+| Authored height 0.7234 | `PersonScale` is one constant of 2.38 for the whole cast |
+| The hand's top surface at palm + `HandTopLift` | A carried tsinelas is parked there. A chunkier hand buries it, which is the Godot side's *"js phasing a bit thru it"* |
+| The face on the same side as the base rig | `PersonModelYaw` is one constant too, so a rig facing the other way walks, aims and throws backwards. Measured off the slot-8 vertices by `tools/glb_face_side.py`, which put the base rig's eyes at z +0.1596 |
+| UVs in Unity atlas rows 0-7 | See below |
+
+**The palette was dead in this port until this landed.** glTFast flips V on import, so a cell
+authored in `.glb` row *r* arrives in Unity row *15 - r*, and `Toon.shader`'s `row >= 8` test
+was written against the file's rows. It was never true for any character, so all twelve rendered
+in Kenney's factory colours with sixteen correct values uploaded to the GPU and nothing logged.
+Fixed on `main` separately from this work.

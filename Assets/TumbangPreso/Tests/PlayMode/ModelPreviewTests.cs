@@ -187,6 +187,116 @@ namespace TumbangPreso.PlayTests
                 $"'{bone.name}' has not moved in 40 frames of a live match.");
         }
 
+        /// <summary>
+        /// The REPLACED character on the CHARACTER screen: the new mesh, posed, in its palette.
+        ///
+        /// ⚠️⚠️ THE SELECT SCREEN IS A SECOND CONSUMER OF THE ROSTER ART AND IT FAILS
+        /// DIFFERENTLY FROM THE MATCH. Both resolve a pick through `RosterBook`, so a swapped
+        /// model reaches both for free, but the screen instances the prefab ITSELF rather than
+        /// going through `CharacterVisual`: it applies its own scale, its own yaw and its own
+        /// `ToonSkin` call, and it plays the idle clip through `PlayIdle` instead of the
+        /// Playables graph. So "it works in a match" is not evidence that it works here, and the
+        /// screen is where a player meets a character first.
+        ///
+        /// 🧑 2026-08-17, on the first swapped rig: *"i want u to make sure the mdoel works
+        /// everuywhere even in char select"*.
+        ///
+        /// ⚠️ IT ASSERTS THE PALETTE IS LIVE, not merely supplied. `_UsePalette` is the flag
+        /// `ToonSkin` sets only when it is handed sixteen colours, and with it at zero the
+        /// character renders in the atlas's stock colours while every name and meter around it
+        /// stays correct. That is the exact failure mode the cast sheet was hiding.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheReplacedCharacterShowsOnTheSelectScreen()
+        {
+            var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
+            while (load != null && !load.isDone) yield return null;
+
+            for (int i = 0; i < 30; i++) yield return null;
+
+            var panel = Find("CharacterSelectPanel");
+            Assert.IsNotNull(panel, "MatchSetup has no CharacterSelectPanel to open.");
+
+            panel.SetActive(true);
+
+            for (int i = 0; i < 20; i++) yield return null;
+
+            var preview = panel.GetComponentInChildren<ModelPreview>(true);
+            Assert.IsNotNull(preview, "The character panel built no ModelPreview.");
+
+            var book = RosterBook.Load();
+            Assert.IsNotNull(book, "No RosterBook. Run RosterBookBuilder.Build.");
+
+            // ⚠️ BY ID THROUGH `IndexIn`, NEVER A LITERAL INDEX. The index is a wire format and
+            // the list is append-only precisely because a number written into a caller silently
+            // becomes a different character the next time somebody inserts a row.
+            int index = Core.Roster.IndexIn(Core.Roster.People, ReplacedId);
+            Assert.GreaterOrEqual(index, 0, $"No roster entry '{ReplacedId}'.");
+
+            var art = book.PersonArt(index);
+            Assert.IsNotNull(art, $"The roster book has no art for '{ReplacedId}'.");
+
+            Assert.IsNotNull(art.Model, $"'{ReplacedId}' has no model.");
+            Assert.AreEqual(ReplacedMesh, art.Model.name,
+                "The select screen would show the retired CC0 rig for this pick.");
+
+            Assert.IsNotNull(art.Palette);
+            Assert.AreEqual(16, art.Palette.Length,
+                "A short palette reads past its end for whichever slot is missing.");
+
+            preview.Show(art.Model, art.Clips, art.Palette);
+
+            for (int i = 0; i < 20; i++) yield return null;
+
+            Assert.IsNotNull(preview.Subject, "Nothing was instanced to look at.");
+
+            var skinned = preview.Subject.GetComponentInChildren<SkinnedMeshRenderer>();
+            Assert.IsNotNull(skinned, "The previewed model has no skinned mesh.");
+
+            // The two bones the game hunts by name, checked HERE as well as in the probe because
+            // this is the path that runs in a build.
+            foreach (string wanted in new[] { "arm-right", "head" })
+            {
+                bool found = false;
+                foreach (var b in skinned.bones) found |= b != null && b.name == wanted;
+
+                Assert.IsTrue(found, $"The previewed rig has no '{wanted}' bone.");
+            }
+
+            var bone = DeepestBone(skinned);
+            Assert.IsNotNull(bone);
+
+            Quaternion pose = bone.localRotation;
+
+            for (int i = 0; i < 30; i++) yield return null;
+
+            Assert.Greater(Quaternion.Angle(pose, bone.localRotation), 0.01f,
+                $"'{bone.name}' has not moved in 30 frames, so the select screen is showing " +
+                "this character's bind pose.");
+
+            bool palettedAny = false;
+
+            foreach (var r in preview.Subject.GetComponentsInChildren<Renderer>())
+            {
+                foreach (var material in r.sharedMaterials)
+                {
+                    if (material == null || !material.HasProperty("_UsePalette")) continue;
+                    palettedAny |= material.GetFloat("_UsePalette") > 0.5f;
+                }
+            }
+
+            Assert.IsTrue(palettedAny,
+                "No material on the preview has the palette switched on, so this character is " +
+                "wearing the atlas's stock colours on the screen the player picks from.");
+
+            Capture("character-replaced");
+        }
+
+        /// <summary>The roster id whose art has been replaced, and the mesh it must now be
+        /// wearing. See `docs/Port_Plan.md` section 8.4.</summary>
+        private const string ReplacedId = "ate_girlie";
+        private const string ReplacedMesh = "team-ate-girlie";
+
         /// <summary>The bone furthest down the rig, so the sample is a limb rather than the
         /// root the clip may deliberately leave still.</summary>
         private static Transform DeepestBone(SkinnedMeshRenderer skinned)

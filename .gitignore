@@ -83,3 +83,7 @@ sysinfo.txt
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Python bytecode from the tools/ scripts.
+__pycache__/
+*.pyc

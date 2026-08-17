@@ -38,6 +38,18 @@ namespace TumbangPreso.EditorTools
         /// the same person, which is invisible on the select screen because the meters still
         /// look right.
         /// </summary>
+        /// <remarks>
+        /// ⚠️⚠️ `ate_girlie` IS THE FIRST ROW OF THE ART REPLACEMENT AND THE ONLY ONE SO FAR.
+        /// `docs/Port_Plan.md` section 8.3 says replace one at a time and keep the old mesh until
+        /// the new one is measured, so `character-female-b.glb` is still in the repo and still
+        /// imports; nothing points at it. Repointing an EXISTING id is what keeps this safe:
+        /// `character_index` crosses the wire as a bare int and the mapping here is by id, so a
+        /// new model cannot move anybody's seat.
+        ///
+        /// The replacement is `tools/build_person_voxel.py`, which keeps the CC0 rig's skeleton
+        /// and all 32 clips and rebuilds only the mesh. See that file for why the skeleton is
+        /// untouchable while the clips are the ones that ship.
+        /// </remarks>
         private static readonly Dictionary<string, string> PersonModels = new Dictionary<string, string>
         {
             { "berto",       "characters/persons/character-male-f.glb" },
@@ -45,7 +57,7 @@ namespace TumbangPreso.EditorTools
             { "totoy",       "characters/persons/character-male-a.glb" },
             { "inday",       "characters/persons/character-female-a.glb" },
             { "kuya_boy",    "characters/persons/character-male-b.glb" },
-            { "ate_girlie",  "characters/persons/character-female-b.glb" },
+            { "ate_girlie",  "characters/persons/team-ate-girlie.glb" },
             { "tikboy",      "characters/persons/character-male-c.glb" },
             { "bebang",      "characters/persons/character-female-c.glb" },
             { "jun_jun",     "characters/persons/character-male-d.glb" },
@@ -72,7 +84,14 @@ namespace TumbangPreso.EditorTools
             { "totoy",       "person_totoy.tres" },
             { "inday",       "person_inday.tres" },
             { "kuya_boy",    "person_kuya-boy.tres" },
-            { "ate_girlie",  "person_ate-girlie.tres" },
+            // ⚠️ THE ONE PALETTE IN THIS TABLE THAT IS NOT A COPY OF A GODOT FILE. The other
+            // eleven are carried over from `generate_person_palettes.py` in the Godot repo and
+            // must not be hand-edited there or here. This one is emitted by
+            // `tools/build_person_voxel.py`, in the same run and from the same table that lays
+            // out the model's UVs, because a slot number in the mesh and a colour in the palette
+            // are two halves of one decision: separate them and a renumbered slot silently
+            // repaints a limb with nothing failing.
+            { "ate_girlie",  "person_team-ate-girlie.tres" },
             { "tikboy",      "person_tikboy.tres" },
             { "bebang",      "person_bebang.tres" },
             { "jun_jun",     "person_jun-jun.tres" },

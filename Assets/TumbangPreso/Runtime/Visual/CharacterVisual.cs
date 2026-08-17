@@ -338,8 +338,14 @@ namespace TumbangPreso.Visual
         /// weighted to it, shoulder included, so averaging all of it lands the shoe in the
         /// armpit. The hand is the far end, and "far" is measured along whichever axis the limb
         /// actually runs down rather than assumed to be one of them.
+        ///
+        /// ⚠️ PUBLIC SO `PersonSwapProbe` CAN ASK THE GAME WHERE THE HAND IS, rather than
+        /// carrying a copy of this. A replacement rig has to be checked for exactly this, and a
+        /// probe that reimplemented the search would be measuring its own opinion: the eight
+        /// wrong values the Godot side recorded all came from measuring in a frame nobody else
+        /// was measuring in. It is a read with no side effects, so exposing it costs nothing.
         /// </summary>
-        private static bool PalmCentre(SkinnedMeshRenderer skinned, int bone, out Vector3 palm)
+        public static bool PalmCentre(SkinnedMeshRenderer skinned, int bone, out Vector3 palm)
         {
             palm = Vector3.zero;
 
