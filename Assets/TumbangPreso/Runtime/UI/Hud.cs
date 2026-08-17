@@ -280,14 +280,82 @@ namespace TumbangPreso.UI
 
         private void Awake() => Build();
 
+        /// <summary>
+        /// ⚠️⚠️ THE HUD SUBSCRIBED TO EXACTLY ONE EVENT AND `hud.gd` SUBSCRIBES TO THREE.
+        /// `ShowToast` was built, styled, placed at the .tscn's own offset and then called from
+        /// a single site — the local player's own score floater — so three of the four things
+        /// the original announces were never announced at all. 🧑 on this build: *"theres also
+        /// text for lata is back up"*, which is `hud.gd:1634`:
+        ///
+        ///     func _on_lata_restored() -> void:
+        ///         show_toast("LATA IS BACK UP", 1.2)
+        ///
+        /// The two tag lines beside it (`hud.gd:1637`) were missing for the same reason and are
+        /// wired here too, because they are the same fault and splitting them would leave the
+        /// port announcing a reset it never announced the cause of.
+        /// </summary>
         private void OnEnable()
         {
             if (GameServices.Match != null) GameServices.Match.Scored += OnScored;
+            TrySubscribeRound();
         }
 
         private void OnDisable()
         {
             if (GameServices.Match != null) GameServices.Match.Scored -= OnScored;
+
+            if (_roundHooked && GameServices.Round != null)
+            {
+                GameServices.Round.LataRestored -= OnLataRestored;
+                GameServices.Round.Tagged -= OnTagged;
+            }
+
+            _roundHooked = false;
+        }
+
+        private bool _roundHooked;
+
+        /// <summary>
+        /// ⚠️ RETRIED UNTIL IT TAKES, NOT ATTEMPTED ONCE AT OnEnable. `MatchInstaller` builds this
+        /// HUD as part of the same pass that stands the directors up, so `GameServices.Round` is
+        /// legitimately null on the frame this component wakes. Subscribing once and giving up
+        /// would leave the toasts silently unwired for the whole match, which is the same class
+        /// of failure as the camera the input reader had to re-resolve.
+        /// </summary>
+        private void TrySubscribeRound()
+        {
+            if (_roundHooked || GameServices.Round == null) return;
+
+            GameServices.Round.LataRestored += OnLataRestored;
+            GameServices.Round.Tagged += OnTagged;
+            _roundHooked = true;
+        }
+
+        private void OnLataRestored() => ShowToast("LATA IS BACK UP", 1.2f);
+
+        /// <summary>
+        /// ⚠️ IT SAYS SOMETHING DIFFERENT TO EACH OF THE TWO PEOPLE INVOLVED AND NOTHING TO THE
+        /// OTHER TWO, exactly as `hud.gd::_on_attacker_tagged` does. A tag is the taya's one
+        /// scoring verb and the attacker's worst moment; a line that read the same on all four
+        /// screens would be telling two bystanders about something that did not happen to them.
+        /// </summary>
+        private void OnTagged(int defenderSlot, int victimSlot)
+        {
+            if (_local == null) return;
+
+            if (_local.PlayerSlot == victimSlot)
+                ShowToast("TAGGED  ·  BACK TO THE SAFE ZONE", 2.0f);
+            else if (_local.PlayerSlot == defenderSlot)
+                ShowToast($"TAG  ·  {SeatName(victimSlot)}", 1.4f);
+        }
+
+        /// <summary>The display name for a seat, or the bare slot label when the unit is not in
+        /// hand. `hud.gd::seat_name` does the same, and for the same reason: a toast must never
+        /// print an empty string where a name should be.</summary>
+        private static string SeatName(int slot)
+        {
+            var who = GameServices.Round != null ? GameServices.Round.PlayerAt(slot) : null;
+            return who != null ? who.DisplayName() : $"P{slot + 1}";
         }
 
         /// <summary>
@@ -398,6 +466,9 @@ namespace TumbangPreso.UI
             if (_spectating) return;
 
             float dt = Time.unscaledDeltaTime;
+
+            // See TrySubscribeRound: the director may not exist yet on the frame this HUD wakes.
+            TrySubscribeRound();
 
             UpdateTimer(dt);
             UpdateScores();

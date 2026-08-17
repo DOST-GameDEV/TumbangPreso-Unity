@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace TumbangPreso.Audio
 {
@@ -129,7 +130,42 @@ namespace TumbangPreso.Audio
             return Aliases.TryGetValue(cue, out var real) ? real : cue;
         }
 
-        public static float TrimFor(string cue) =>
-            cue != null && TrimDb.TryGetValue(cue, out var db) ? db : 0.0f;
+        /// <summary>
+        /// ⚠️⚠️ B-121 — HEADROOM. EVERY SFX VOICE IS ATTENUATED BY THIS AND IT IS THE FIX FOR
+        /// THE DISTORTION REPORT. 🧑 on this build: *"audio feels sabog or distorted if that
+        /// makes sense"*, *"the audio feels so off in the unity gaem"*. `audio_manager.gd`
+        /// carries this constant with a measurement beside it: the SFX bus was measured at
+        /// **peak +2.0 dBFS** during a real match, i.e. over full scale, i.e. digital clipping,
+        /// which is what a buzz IS. The port carried the per-cue `TrimDb` table across and left
+        /// the headroom behind, so it reproduced the mix BALANCE without the gap that mix was
+        /// designed to sit inside.
+        ///
+        /// Two independent causes, and the trim table only answers the first:
+        ///
+        ///   1. Every source is normalised to peak 0.85, so a trim above 0 dB clips on its own.
+        ///      The table below is already all &lt;= 0, so that half came across.
+        ///   2. VOICES SUM. Four concurrent voices is normal in a fight, and four sounds each
+        ///      peaking at 0.85 go well past 1.0 together however well behaved each is alone.
+        ///      That needs a real gap, and nothing here provided one.
+        ///
+        /// ⚠️ DO NOT REMOVE IT TO "MAKE THE GAME LOUDER". The .gd says the same, and says why:
+        /// that is precisely the change that caused the bug. The player's own sliders are the
+        /// volume control; this is the mix.
+        /// </summary>
+        public const float HeadroomDb = -7.0f;
+
+        /// <summary>
+        /// The cue's own trim, WITH the headroom already in it.
+        ///
+        /// ⚠️ THE CLAMP IS A BACKSTOP, NOT DECORATION. `_trim()` in the .gd clamps for the same
+        /// reason: every source is normalised to 0.85 peak, so there is no headroom above 0 dB
+        /// to boost into and a positive trim added later would clip on its own before any
+        /// summing. To make one sound stand out, pull the others down.
+        /// </summary>
+        public static float TrimFor(string cue)
+        {
+            float db = cue != null && TrimDb.TryGetValue(cue, out var t) ? t : 0.0f;
+            return Mathf.Min(db, 0.0f) + HeadroomDb;
+        }
     }
 }

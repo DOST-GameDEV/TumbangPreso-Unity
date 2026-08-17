@@ -135,7 +135,64 @@ namespace TumbangPreso
             // mix level regardless of what the player set, so turning SFX down did nothing
             // while the music and the announcer both obeyed. The mix level is the cue's
             // RELATIVE weight; the sliders scale all of them together.
-            AudioSource.PlayClipAtPoint(cue.Clip, position, cue.Volume * SfxScale());
+            var voice = TakeVoice();
+
+            voice.transform.position = position;
+            voice.clip = cue.Clip;
+            voice.volume = cue.Volume * SfxScale();
+            voice.Play();
+        }
+
+        /// <summary>
+        /// How many world one-shots may ring at once.
+        ///
+        /// ⚠️⚠️ POLYPHONY IS BOUNDED HERE AND IT WAS NOT BOUNDED AT ALL. `PlayClipAtPoint`
+        /// creates a fresh AudioSource per call and destroys it when the clip ends, so the port
+        /// had NO ceiling on concurrent voices: every cue that fired got its own source and they
+        /// all summed. That is the second half of B-121, which `audio_manager.gd` states
+        /// directly — *"Voices SUM. Four concurrent voices is normal in a fight"* — and it is
+        /// why the distortion was reported during play rather than in the menu.
+        ///
+        /// `default_bus_layout.tres` pools 20 (8 UI + 12 world). Twelve is the world half, which
+        /// is what this plays.
+        ///
+        /// ⚠️ THE OLDEST IS STOLEN, NOT THE NEWEST DROPPED. A pile-up is exactly when the most
+        /// recent event matters most: dropping the new sound would silence the hit that caused
+        /// the pile-up and leave the footsteps that preceded it ringing.
+        /// </summary>
+        private const int WorldVoices = 12;
+
+        private readonly List<AudioSource> _voices = new List<AudioSource>(WorldVoices);
+        private int _nextVoice;
+
+        private AudioSource TakeVoice()
+        {
+            // Prefer a voice that has finished on its own.
+            foreach (var free in _voices)
+                if (!free.isPlaying) return free;
+
+            if (_voices.Count < WorldVoices)
+            {
+                var go = new GameObject($"Voice{_voices.Count}");
+                go.transform.SetParent(transform, false);
+
+                var made = go.AddComponent<AudioSource>();
+
+                // ⚠️ 3D, LIKE `PlayClipAtPoint` WAS. These cues are positional: a shove across
+                // the arena must not be as loud as one at your shoulder. A pooled source
+                // defaults to 2D, so this is not a preference, it is preserving the behaviour
+                // the call site already had.
+                made.spatialBlend = 1.0f;
+                made.playOnAwake = false;
+
+                _voices.Add(made);
+                return made;
+            }
+
+            // Full and all ringing: steal round-robin, which is the oldest start.
+            var stolen = _voices[_nextVoice];
+            _nextVoice = (_nextVoice + 1) % _voices.Count;
+            return stolen;
         }
 
         /// <summary>Read fresh on every play, so moving a slider is audible on the next sound

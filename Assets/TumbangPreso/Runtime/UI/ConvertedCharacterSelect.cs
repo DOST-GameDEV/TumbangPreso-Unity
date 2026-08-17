@@ -301,6 +301,22 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
+        /// ⚠️ ESCAPE LEAVES THIS SCREEN TOO. `character_select.gd` handles `ui_cancel` and the
+        /// conversion dropped it; this is the only converted screen that is neither an overlay
+        /// (which cancels through `ConvertedOverlay.Cancel`) nor a plain scene change (which
+        /// declares a `CancelTarget`), so it was the one left with a dead Escape key.
+        ///
+        /// ⚠️ IT ROUTES THROUGH `Dismiss`, THE SAME METHOD THE BACK BUTTON CALLS, so the key and
+        /// the button cannot come to mean different things — including the standalone fallback
+        /// below, which a scene name in `CancelTarget` could not have expressed.
+        /// </summary>
+        protected override bool Cancel()
+        {
+            Dismiss();
+            return true;
+        }
+
+        /// <summary>
         /// Closes the panel if it is one, and falls back to a scene change if this screen was
         /// ever loaded standalone.
         /// </summary>

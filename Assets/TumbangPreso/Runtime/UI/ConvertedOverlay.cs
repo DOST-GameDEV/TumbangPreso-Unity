@@ -37,13 +37,18 @@ namespace TumbangPreso.UI
         /// ⚠️ EVERY PANEL IN THE GAME HAS A WORKING ESC. It is in the Godot build's own
         /// checklist as U-7, and a panel you can only leave with the mouse is the one that
         /// strands a player who opened it with the keyboard.
+        ///
+        /// ⚠️⚠️ IT OVERRIDES `Cancel` RATHER THAN REDECLARING `Update`. This was a second
+        /// `protected virtual void Update()` that HID the base one instead of overriding it
+        /// (CS0114). It happened to work, because Unity dispatches to the most-derived type, but
+        /// it meant an overlay silently ran a different Escape path from every other screen and
+        /// the base's would never run again whatever it grew. One path now: the base reads the
+        /// key, this decides what it means.
         /// </summary>
-        protected virtual void Update()
+        protected override bool Cancel()
         {
-            if (!Input.GetKeyDown(KeyCode.Escape)) return;
-
-            MenuSfx.Back();
             Close();
+            return true;
         }
 
         /// <summary>

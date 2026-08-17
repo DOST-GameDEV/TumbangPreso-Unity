@@ -296,9 +296,13 @@ namespace TumbangPreso.Visual
         /// anywhere in the Godot tree, and an ordinary stun is STAGGERED — which falls straight
         /// through this chain to its normal locomotion pose. What actually reads a stun in the
         /// original is not a clip at all: it is § THE STUN FROST, a material effect over the
-        /// whole body (`character_visual.gd:1879`). The port has the SCREEN half of that in
-        /// `Hud.UpdateFrost` and the body half is the honest gap, tracked rather than papered
-        /// over with a clip that means something else.
+        /// whole body (`character_visual.gd:1879`).
+        ///
+        /// ⚠️ AND BOTH HALVES OF THAT ARE ALREADY BUILT HERE, which is what makes removing the
+        /// clip safe rather than a net loss of feedback: `CharacterVisual.ProcessFrost` drives
+        /// `_FrostAmount` on the body for everyone watching, and `Hud.UpdateFrost` runs the
+        /// screen vignette for the victim. So a stun is read by the same two channels the
+        /// original reads it by, and the knockdown pose is not one of them.
         ///
         /// `Die` is kept below: the `dead` EMOTE resolves to it, which is the one place the
         /// knockdown pose is played on purpose.

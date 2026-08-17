@@ -21,7 +21,31 @@ namespace TumbangPreso.UI
     /// </summary>
     public abstract class ConvertedScreen : MonoBehaviour
     {
-        private readonly Dictionary<string, Transform> _byName = new Dictionary<string, Transform>();
+        /// <summary>
+        /// Every converted node, indexed by the name Godot gave it.
+        ///
+        /// ⚠️⚠️ A LIST PER NAME, BECAUSE NAMES ARE NOT UNIQUE AND ASSUMING THEY WERE KILLED THE
+        /// BACK BUTTON. 🧑 on this build: *"btw back buttons dont work in some pages like in pic
+        /// 1"*, pic 1 being the Single Player setup screen. This was a
+        /// `Dictionary&lt;string, Transform&gt;` written as `_byName[t.name] = t`, so on a name
+        /// collision the LAST node indexed silently won and every earlier one was unreachable.
+        /// Counted in the converted scenes: `MatchSetup` carries TWO nodes called `BackButton`
+        /// and `MainMenu` carries THREE. The wiring therefore landed on whichever the recursive
+        /// walk happened to reach last, and the one the player could actually see got no
+        /// listener at all.
+        ///
+        /// It failed in the one way this class exists to prevent, too: `Node()` logs loudly when
+        /// a name is MISSING, and a collision is not a miss — it found a node, returned it, and
+        /// reported nothing. The screen drew a perfect button that did nothing, which is the
+        /// exact failure the header calls the most confusing a menu can have.
+        ///
+        /// ⚠️ IT IS A GODOT-SIDE PROPERTY THAT DID NOT SURVIVE. There, `%BackButton` is a scene-
+        /// unique name and the editor refuses to create a second one in the same scene, so the
+        /// original could rely on uniqueness. The converter reproduces the TREE, which has no
+        /// such guarantee once a name appears in two branches.
+        /// </summary>
+        private readonly Dictionary<string, List<Transform>> _byName =
+            new Dictionary<string, List<Transform>>();
 
         protected virtual void Start()
         {
@@ -49,38 +73,97 @@ namespace TumbangPreso.UI
         /// </summary>
         protected virtual string CancelTarget => null;
 
+        /// <summary>
+        /// What Escape actually does. Returns false when this screen has nowhere to go, which is
+        /// correct for the title.
+        ///
+        /// ⚠️⚠️ IT IS AN ACTION, NOT A SCENE NAME, BECAUSE HALF THE SCREENS DO NOT CHANGE SCENE.
+        /// `CancelTarget` alone could only express "go to scene X", so the four screens that back
+        /// out by CLOSING IN PLACE — character select, credits, settings, tutorial — had no way
+        /// to say what they do and were left with `null`. Escape was therefore dead on exactly
+        /// the screens the header above says the original backs out of, while the three that
+        /// happen to be scene changes worked. Overriding this lets an overlay hand back its own
+        /// `Close`/`Dismiss`, which is the same method its BACK button already calls, so the key
+        /// and the button cannot drift apart.
+        /// </summary>
+        protected virtual bool Cancel()
+        {
+            if (CancelTarget == null) return false;
+
+            SceneFlow.Go(CancelTarget);
+            return true;
+        }
+
         protected virtual void Update()
         {
-            if (CancelTarget == null) return;
             if (!Input.GetKeyDown(KeyCode.Escape)) return;
 
-            MenuSfx.Back();
-            SceneFlow.Go(CancelTarget);
+            // ⚠️ THE SOUND FOLLOWS THE DECISION. Playing it before asking would click on a
+            // screen that then does nothing, which reads as a press that was swallowed.
+            if (Cancel()) MenuSfx.Back();
         }
 
         private void Index(Transform t)
         {
-            _byName[t.name] = t;
+            if (!_byName.TryGetValue(t.name, out var bucket))
+                _byName[t.name] = bucket = new List<Transform>();
+
+            bucket.Add(t);
+
             for (int i = 0; i < t.childCount; i++) Index(t.GetChild(i));
         }
 
         protected abstract void Wire();
 
+        /// <summary>
+        /// The first node with this name, for the readers that want exactly one — a label to set,
+        /// a panel to show. See <see cref="Nodes"/> for why "first" needs saying at all.
+        /// </summary>
         protected Transform Node(string name)
         {
-            if (_byName.TryGetValue(name, out var t)) return t;
+            var all = Nodes(name);
+            return all.Count > 0 ? all[0] : null;
+        }
+
+        /// <summary>
+        /// EVERY node with this name, in tree order. Empty and logged loudly when there are none.
+        /// </summary>
+        protected IReadOnlyList<Transform> Nodes(string name)
+        {
+            if (_byName.TryGetValue(name, out var all) && all.Count > 0) return all;
 
             Debug.LogError($"[{GetType().Name}] no node named '{name}' in the converted scene. " +
                            "The Godot scene was renamed, or the conversion dropped it.");
-            return null;
+
+            return System.Array.Empty<Transform>();
         }
 
-        /// <summary>Wire a converted button. Logs loudly rather than failing quietly.</summary>
+        /// <summary>
+        /// Wire a converted button. Logs loudly rather than failing quietly.
+        ///
+        /// ⚠️⚠️ IT WIRES EVERY NODE OF THAT NAME, NOT THE FIRST. See the note on `_byName`: two
+        /// `BackButton`s in one converted scene meant one of them was dead, and which one was
+        /// decided by tree order rather than by anything a reader could see. Nodes that share a
+        /// name are the same logical control — the converter took the name from Godot, where it
+        /// is unique per scene — so giving all of them the same handler is the behaviour the
+        /// original had, and it cannot leave a visible button inert.
+        ///
+        /// ⚠️ AND THE COLLISION IS REPORTED. It is legitimate here but it is also how the bug
+        /// hid, so it says so once per wiring rather than passing in silence.
+        /// </summary>
         protected void OnClick(string nodeName, UnityEngine.Events.UnityAction action)
         {
-            var t = Node(nodeName);
-            if (t == null) return;
+            var all = Nodes(nodeName);
+            if (all.Count == 0) return;
 
+            if (all.Count > 1)
+                Debug.Log($"[UI] '{nodeName}' matches {all.Count} nodes; wiring all of them.");
+
+            foreach (var t in all) WireOne(nodeName, t, action);
+        }
+
+        private void WireOne(string nodeName, Transform t, UnityEngine.Events.UnityAction action)
+        {
             var btn = t.GetComponent<Button>();
             if (btn == null)
             {

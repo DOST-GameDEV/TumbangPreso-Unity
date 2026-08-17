@@ -23,6 +23,15 @@ namespace TumbangPreso
     {
         public event Action<int, int> Tagged; // (defenderSlot, attackerSlot)
 
+        /// <summary>
+        /// The taya finished the reset channel and the can is standing again.
+        ///
+        /// ⚠️ `round_manager.gd` DECLARES `lata_restored` AND THE HUD IS ITS ONLY LISTENER
+        /// (`hud.gd:88`). The port had the state change and no signal, so nothing could be told
+        /// about it: see `Hud.OnLataRestored` for what was missing on screen.
+        /// </summary>
+        public event Action LataRestored;
+
         public bool RoundActive { get; private set; }
 
         /// <summary>
@@ -187,7 +196,11 @@ namespace TumbangPreso
         /// being re-knocked by a slipper already charged and waiting on the last frame of the
         /// reset channel, which would make the channel unfinishable.
         /// </summary>
-        public void NotifyLataRestored() => _throwCooldownLeft = Balance.ThrowRestoreCooldown;
+        public void NotifyLataRestored()
+        {
+            _throwCooldownLeft = Balance.ThrowRestoreCooldown;
+            LataRestored?.Invoke();
+        }
 
         public void NoteShove(int victimSlot, int shoverSlot)
         {
