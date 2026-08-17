@@ -86,6 +86,28 @@ namespace TumbangPreso.UI
         public static readonly string[] Maps = { Eskinita, BayanPlaza };
 
         /// <summary>
+        /// True while an ARENA is the active scene rather than a menu.
+        ///
+        /// ⚠️ ASKED OF THE LOADED SCENE, NOT OF A FLAG SOMEBODY SETS. The pause card has to know
+        /// whether to hand the mouse back to a camera or leave it with a menu, and it is
+        /// deactivated on BOTH paths: Resume, and QUIT TO MENU on its way out. A flag written by
+        /// whoever remembers is how the title screen ends up with a captured cursor and no
+        /// pointer, which looks like the front end has hung.
+        /// </summary>
+        public static bool InMatch
+        {
+            get
+            {
+                string active = SceneManager.GetActiveScene().name;
+
+                foreach (string map in Maps)
+                    if (map == active) return true;
+
+                return false;
+            }
+        }
+
+        /// <summary>
         /// The registry row for a map id, or the first map's. ⚠️ It never returns a default
         /// struct: a zero distance would put the preview camera inside the play area.
         /// </summary>

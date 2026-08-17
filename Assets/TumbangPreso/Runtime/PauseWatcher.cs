@@ -14,9 +14,18 @@ namespace TumbangPreso
     {
         public CharacterMotor Local;
 
+        /// <summary>
+        /// ⚠️ ESCAPE TOGGLES. It used to only ever OPEN, so the key that put the card up could
+        /// not take it down again and the only way out was to hit RESUME with a mouse the build
+        /// was not releasing. Pressing it twice also re-entered `Open`, which re-activated an
+        /// already active card.
+        /// </summary>
         private void Update()
         {
             if (!Input.GetKeyDown(KeyCode.Escape)) return;
+
+            var open = GetComponentInChildren<UI.PausePanel>(includeInactive: false);
+            if (open != null) { open.Close(); return; }
 
             var panel = UI.Panel.Open<UI.PausePanel>(this);
             panel.Local = Local;

@@ -34,17 +34,46 @@ namespace TumbangPreso.UI
                 Time.timeScale = 1.0f;
                 SceneFlow.Go(SceneFlow.MainMenu);
             }, "WoodDangerButton");
+        }
 
+        /// <summary>
+        /// ⚠️⚠️ THIS USED TO LIVE AT THE BOTTOM OF <see cref="Build"/> AND THAT IS WHY PAUSE
+        /// STOPPED WORKING AFTER THE FIRST TIME. Build runs from `Start`, once per component
+        /// for its whole life, and the card is reused rather than rebuilt (see
+        /// <see cref="Panel.Open{T}"/>). So the second Escape re-activated a fully drawn card
+        /// over a match that was never stopped, with the cursor never released: 🧑 *"clicking
+        /// pause doesnt do shit, the game still plays in BG AND I CANT click resume, settings
+        /// or quick to menu, my mouse is still in camera"*. All three halves of that report are
+        /// this one mistake.
+        ///
+        /// ⚠️⚠️ AND THE CURSOR IS THE HALF THAT LOOKS LIKE A UI BUG. A match captures the mouse
+        /// so the camera can steer from raw deltas; with it captured, the pointer is pinned to
+        /// the centre of the screen and every UI raycast lands on the same pixel forever. The
+        /// overlay draws perfectly, hovers nothing and clicks nothing, with no error anywhere.
+        /// </summary>
+        protected override void OnOpened()
+        {
             Time.timeScale = 0.0f;
             if (Local != null) Local.Intent.Parked = true;
 
-            // ⚠️⚠️ THE CURSOR COMES BACK, OR THE PAUSE MENU IS A PICTURE. A match captures the
-            // mouse so the camera can steer from raw deltas; with it still captured, this
-            // overlay draws perfectly and every button on it is unclickable, because the
-            // pointer is locked to the centre of the screen and never moves. That is
-            // indistinguishable from "the buttons don't work" and it is the state the player
-            // reaches by pressing the one key that is supposed to give them control back.
             CursorMode.Release();
+        }
+
+        /// <summary>
+        /// ⚠️ THE EXACT UNDO, ON EVERY CLOSE PATH. Resume is not the only way out of this card:
+        /// Escape closes it too, and QUIT TO MENU deactivates it on the way to the title screen.
+        /// Restoring time and the cursor from `Resume` alone left the other two paths to
+        /// remember it themselves, which is how a menu ships that un-pauses on one button and
+        /// not on another.
+        /// </summary>
+        protected override void OnClosed()
+        {
+            Time.timeScale = 1.0f;
+            if (Local != null) Local.Intent.Parked = false;
+
+            // Only the match wants the mouse back. A close on the way to the title screen has
+            // already handed the pointer to the menu and must not have it taken away again.
+            if (SceneFlow.InMatch) CursorMode.Capture();
         }
 
         private void Choice(Transform parent, string label, System.Action onClick,
@@ -83,14 +112,8 @@ namespace TumbangPreso.UI
             panel.SetActive(true);
         }
 
-        private void Resume()
-        {
-            Time.timeScale = 1.0f;
-            if (Local != null) Local.Intent.Parked = false;
-
-            // Back to the match, so the mouse goes back to steering rather than pointing.
-            CursorMode.Capture();
-            Close();
-        }
+        /// <summary>⚠️ IT ONLY CLOSES. Time, the input park and the cursor are restored by
+        /// <see cref="OnClosed"/>, which every exit from this card goes through.</summary>
+        private void Resume() => Close();
     }
 }

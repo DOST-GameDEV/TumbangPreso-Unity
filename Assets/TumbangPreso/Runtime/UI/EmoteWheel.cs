@@ -123,6 +123,15 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Update()
         {
+            // ⚠️ A PAUSE CANCELS THE WHEEL RATHER THAN LEAVING IT ARMED. The emote key is held,
+            // so a player who pauses mid-pick would otherwise release it over a menu and play
+            // whatever slice the pointer happened to be nearest.
+            if (Panel.AnyOpen)
+            {
+                if (_open) Close(play: false);
+                return;
+            }
+
             // Hold to open, release to commit. A tap that never leaves the dead zone opens
             // and closes with nothing played, which is the intended escape hatch.
             if (_emoteAction != null)
