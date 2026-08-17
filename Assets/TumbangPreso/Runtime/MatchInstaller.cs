@@ -549,13 +549,60 @@ namespace TumbangPreso
             var youGo = new GameObject("YouCard");
             youGo.AddComponent<UI.YouCard>().Bind(local);
 
-            // The emote wheel, driven straight to the local unit's emote player.
-            var wheelGo = new GameObject("EmoteWheel");
-            var wheel = wheelGo.AddComponent<UI.EmoteWheel>();
-            wheel.EmoteChosen += id => local.GetComponent<Social.EmotePlayer>()?.Request(id);
+            // ⚠️⚠️ THE EMOTE WHEEL FOLLOWS WHOEVER IS BEING DRIVEN, NOT THE SEAT THIS MATCH
+            // OPENED ON. It captured `local` in a lambda, so after Tab handed the player a
+            // different body the wheel still emoted on the seat they had LEFT: the emote played
+            // correctly, on a character somewhere else on the street, and read as *"emotes dont
+            // work at all"*. `Driven()` answers the same question the switcher does, off the
+            // scene, so the two cannot disagree.
+            //
+            // ⚠️ AND NOT AT ALL FOR A SPECTATOR. A watcher has no body (§ SpectatorCamera), so
+            // wiring the wheel to a seat would let them puppet a bot's emotes from a camera
+            // whose whole contract is that it writes no gameplay state.
+            if (!_spectating)
+            {
+                var wheelGo = new GameObject("EmoteWheel");
+                var wheel = wheelGo.AddComponent<UI.EmoteWheel>();
+                wheel.EmoteChosen += id => Driven(local)?.GetComponent<Social.EmotePlayer>()?.Request(id);
+            }
 
             var pauseGo = new GameObject("PauseHost");
             pauseGo.AddComponent<PauseWatcher>().Local = local;
+
+            // ⚠️⚠️ TAB, AND NOTHING IN THE PROJECT EVER CREATED THE COMPONENT THAT READS IT.
+            // 🧑 *"tab doesnt let me switch characters in single player"*, and *"some controls
+            // didnt get ported"* before that. `DebugPlayerSwitcher` is a complete conversion of
+            // `debug_player_switcher.gd`, its self-destruct in release builds was already fixed
+            // on human instruction, and it had NO call site anywhere: no scene held one, no
+            // installer added one. The key was dead because the reader did not exist, which is
+            // why fixing the gate alone did not bring it back.
+            //
+            // ⚠️ SINGLE PLAYER ONLY, AND NOT FOR A SPECTATOR. Seizing a seat locally would
+            // desync every peer's idea of who drives what, which is the switcher's own rule; and
+            // a spectator's Tab already means "cycle the follow target", so installing both
+            // would put two readers on one key and hand a watcher a body at the same time.
+            if (!NetAuthority.IsNetworked && !_spectating)
+                new GameObject("DebugPlayerSwitcher").AddComponent<DebugPlayerSwitcher>();
+        }
+
+        /// <summary>
+        /// The unit the human is actually driving right now.
+        ///
+        /// ⚠️ DISCOVERED, NOT REMEMBERED. Tab moves the player between bodies mid-match, so any
+        /// reference captured at install time is stale the moment they use it. The human's unit
+        /// is exactly the one with no active AI on it, which is the same fact
+        /// <see cref="DebugPlayerSwitcher.DefaultSlot"/> reads and needs no cooperation from
+        /// gameplay to stay true.
+        /// </summary>
+        private static CharacterMotor Driven(CharacterMotor fallback)
+        {
+            foreach (var unit in FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude))
+            {
+                var ai = unit.GetComponent<AIController>();
+                if (ai == null || !ai.enabled) return unit;
+            }
+
+            return fallback;
         }
 
         /// <summary>
@@ -568,16 +615,38 @@ namespace TumbangPreso
         ///
         /// ⚠️ AND IT WALKS FORWARD ON A COLLISION rather than adding a random offset, which
         /// keeps the whole thing a pure function of the seat and the set already taken.
+        ///
+        /// ⚠️⚠️ THE SPREAD IS ROTATED, AND WITHOUT THAT EIGHT OF THE TWELVE PEOPLE COULD NEVER
+        /// APPEAR AS A BOT AT ALL. 🧑 *"does zack even render for other characters? can bots get
+        /// zach?"* — and the honest answer was no. `[0, 3, 6, 9]` against a twelve-entry cast is
+        /// a fixed set of four rows, so BERTO, INDAY, TIKBOY and LOLA PACING were the entire bot
+        /// cast of every match ever played, and ZACK at index 5 was unreachable unless the
+        /// player picked him. That is also exactly the scoreboard in every screenshot of this
+        /// build.
+        ///
+        /// The stride is what the spread is FOR — four corners of the cast rather than four
+        /// consecutive rows — so it is kept and the offset moves instead.
+        ///
+        /// ⚠️⚠️ ROTATED BY THE PLAYER'S OWN PICK, NOT BY A RANDOM AND NOT BY THE ROUND. It has to
+        /// stay a pure function of things every peer already agrees on, or two machines render
+        /// different people into the same seat and a screenshot stops being reproducible from a
+        /// bug report — the same rule `EnvColourPass` follows for the street, and the reason
+        /// `Random.Range` is wrong here. The round number is not usable: seats are built ONCE,
+        /// before round 1 starts, so it reads 0 at every install and rotates nothing.
+        ///
+        /// The pick is known to everybody, is stable for the whole match, and changes when the
+        /// player changes theirs, which is what makes the rest of the cast reachable in play.
         /// </summary>
         private int AiCharacterIndex(int slot)
         {
             int size = Roster.People.Count;
             if (size <= 0) return 0;
 
-            int start = AiPersonSpread[slot % AiPersonSpread.Length] % size;
-
             // The human's own pick is taken; a bot must not wear the player's face.
             int human = HumanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
+
+            int rotation = human >= 0 ? human % AiPersonSpread.Length : 0;
+            int start = (AiPersonSpread[slot % AiPersonSpread.Length] + rotation) % size;
 
             for (int step = 0; step < size; step++)
             {
