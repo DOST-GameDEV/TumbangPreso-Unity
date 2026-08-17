@@ -94,7 +94,8 @@ namespace TumbangPreso.PlayTests
             lines.AppendLine(new string('-', 128));
 
             var planes = GeometryUtility.CalculateFrustumPlanes(cam);
-            var seen = new List<(float dist, string line, string path, Vector3 view)>();
+            var seen = new List<(float dist, string line, string path, Vector3 view,
+                                 ShadowCastingMode shadow)>();
 
             foreach (var r in Object.FindObjectsByType<Renderer>(FindObjectsInactive.Exclude,
                                                                  FindObjectsSortMode.None))
@@ -116,7 +117,8 @@ namespace TumbangPreso.PlayTests
                           $"{r.bounds.size.ToString("0.00"),22} " +
                           $"{r.shadowCastingMode,12}  {path}",
                           path,
-                          view));
+                          view,
+                          r.shadowCastingMode));
             }
 
             seen.Sort((a, b) => a.dist.CompareTo(b.dist));
@@ -150,6 +152,23 @@ namespace TumbangPreso.PlayTests
                 if (s.dist > 0.6f) continue;
                 if (s.view.x < 0.0f || s.view.x > 1.0f) continue;
                 if (s.view.y < 0.0f || s.view.y > 1.0f) continue;
+
+                // ⚠️⚠️ `ShadowsOnly` IS THE FIRST-PERSON SELF-HIDE, SO IT IS NOT DRAWING.
+                // `CameraRig.cs:523` walks every renderer on the local character and parks it
+                // here on entering FPP, which is exactly why the dump above prints the mode at
+                // all (see the class comment). The assertion then never read the column it was
+                // printing, so it reported the self-hide WORKING as the bug it was written to
+                // catch: `Seat1/.../head-mesh at viewport 0.50,0.33, 0.12 m from the eye`.
+                //
+                // ⚠️ AND IT ONLY FAILED SOMETIMES, which is what made it worth writing down.
+                // Whether a head's BOUNDS CENTRE lands inside the 0..1 viewport box within 0.6 m
+                // depends on which character is sitting in the seat: `character-female-e` trips
+                // it, others do not. So the same commit passed 32/32 on one machine and 31/32 on
+                // the next, and neither number was measuring the thing it claimed to.
+                //
+                // A renderer that genuinely draws in the player's face still has mode `On` and
+                // is still caught.
+                if (s.shadow == ShadowCastingMode.ShadowsOnly) continue;
                 if (s.path.Contains("Viewmodel") || s.path.Contains("HeldSlipper")) continue;
 
                 // The floor is allowed to be under your feet.
