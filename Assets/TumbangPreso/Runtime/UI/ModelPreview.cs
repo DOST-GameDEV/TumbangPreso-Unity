@@ -484,7 +484,24 @@ namespace TumbangPreso.UI
             // `.tres` carries the toon shading and the ink outline, and this screen applies it
             // by the same mechanism a spawn does, precisely so what you pick and what walks out
             // cannot look like two different characters.
-            Visual.ToonSkin.Apply(_model, Visual.ToonSkin.PersonOutlineWidth * PreviewScale, palette);
+            // ⚠️⚠️ NO `* PreviewScale`, AND THE ONE THAT WAS HERE IS "zach in char select is
+            // buggy, his face specifically is weird af". `PersonOutlineWidth` is ALREADY a WORLD
+            // width and already carries the 2.38 — `CharacterVisual` says so at its own call site
+            // and warns against exactly this multiply — so scaling it by `PreviewScale` here
+            // asked for a 45 mm ink border on a character who wears 19 mm everywhere else,
+            // 2.38 times too thick.
+            //
+            // ⚠️ AND THE FACE IS WHERE IT SHOWS FIRST, WHICH IS WHY IT READ AS A FACE BUG RATHER
+            // THAN AN OUTLINE ONE. The features are 20 mm pixels on the skull's own front plane
+            // (`build_person_voxel.py`, FACE_PIXELS). The outline is an inverted hull that pushes
+            // every vertex along its SMOOTHED normal, so at 45 mm each eye grows a shell wider
+            // than the eye itself and fans sideways off the corner normals: the eyes smear, the
+            // smile grows a tooth, and the hair merges into one lump. At the correct 19 mm the
+            // shell sits inside the feature and draws the border it is supposed to.
+            //
+            // This screen is the one place a player looks at a character up close, so it is also
+            // the only place the error was ever going to be visible.
+            Visual.ToonSkin.Apply(_model, Visual.ToonSkin.PersonOutlineWidth, palette);
 
             PlayIdle(clips);
             IsolateFromForeignLights();

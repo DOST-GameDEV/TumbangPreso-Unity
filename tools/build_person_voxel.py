@@ -444,22 +444,45 @@ HEAD = [
     # version of these was authored INSIDE the mop's own bounds and almost none of it was
     # visible: hair is opaque, so a coloured box buried in it is a coloured box nobody
     # will ever see, and all that showed was the sliver poking out of the top. Each of
-    # these now extends a few millimetres past the black box it shares space with, on the
-    # face it is meant to be seen from. The black hair's extremes, for reference:
-    # front -0.148, sides +/-0.164, back +0.176, top 0.712.
-    # ⚠️ IT IS ABOUT A THIRD OF THE MOP, NOT A HIGHLIGHT. Sized down it read as a band
-    # along the top edge and nothing else, because the only part of it above the black
-    # was the last centimetre. In the reference the dye owns one whole side of the hair
-    # from the fringe up over the crown and out the back, and that is what these are.
-    ("streak-front", "head", (0.010, 0.616, -0.164), (0.160, 0.712, -0.070), CLIP),
-    ("streak-crown", "head", (0.006, 0.684, -0.100), (0.152, 0.7234, 0.070), CLIP),
-    ("streak-side",  "head", (0.120, 0.620, -0.090), (0.186, 0.716, 0.090), CLIP),
-    ("streak-back",  "head", (0.000, 0.672, 0.040), (0.132, 0.722, 0.192), CLIP),
+    # these extends about 8 mm past the black box it shares space with, on the face it is
+    # meant to be seen from. The black hair's extremes, for reference:
+    # front -0.148, sides +/-0.164, back +0.176, top 0.712, and the rig ceiling is 0.7234.
+    #
+    # ⚠️⚠️ STRANDS WITH BLACK BETWEEN THEM, NOT ONE SOLID MASS, AND THE SOLID VERSION READ
+    # AS A HAT. 🧑 on the character screen: *"zach in char select is buggy, his face
+    # specifically is weird af"*, with the crimson the first thing in frame. The
+    # turnaround says why: four large boxes, one of them 146 mm wide across the whole
+    # crown and the tallest geometry on the model, drew a flat red slab capping one half
+    # of the head with a hard straight edge down the middle. Nothing about that reads as
+    # hair. It is the exact failure the header above already records twice — *"it reads as
+    # a bow because it is one solid mass on one side"* — arrived at from the other
+    # direction, by making the mass bigger rather than by moving it.
+    #
+    # So the dye is a SWEPT FORELOCK: it takes the fringe on one side, crosses the crown
+    # as a band, and runs back down the side and out the nape. Every piece is a PLATE on
+    # the surface it is seen from rather than a solid block filling the mop, which is what
+    # leaves black hair above, below and between them.
+    #
+    # ⚠️⚠️ EACH PIECE IS THIN ON THE AXIS THE VIEWER IS LOOKING ALONG, AND A PASS THAT GOT
+    # THAT WRONG IN THE OTHER DIRECTION IS WHY THIS NOTE IS LONG. Front-to-back strands
+    # read correctly from the FRONT and, from the SIDE, are a 100 mm tall rectangle of
+    # solid crimson down the whole side of the head — the same red-hat read as the block
+    # they replaced, rotated 90 degrees. The turnaround caught it; no assertion could
+    # have. So the side piece is now 50 mm of Y and the crown piece is 22 mm, and each of
+    # them is a stripe from every angle it is visible from.
+    #
+    # ⚠️ THE 8 MM PROUD IS STILL THE RULE. Hair is opaque, so a coloured box inside the
+    # mop is one nobody will ever see. Black extremes, for reference: front -0.148, sides
+    # +/-0.164, back +0.176, top 0.712, and the rig ceiling is 0.7234.
+    ("streak-fringe", "head", (0.020, 0.604, -0.158), (0.150, 0.652, -0.144), CLIP),
+    ("streak-crown",  "head", (0.030, 0.700, -0.150), (0.150, 0.7220, 0.060), CLIP),
+    ("streak-side",   "head", (0.156, 0.640, -0.140), (0.174, 0.690,  0.060), CLIP),
+    ("streak-back",   "head", (0.040, 0.638,  0.168), (0.120, 0.688,  0.184), CLIP),
 
     # ⚠️ ONE TUFT ON THE OTHER SIDE, AND ONLY ONE. The dye is meant to read as a streak
     # through the hair rather than as a hat, and a single small piece on the opposite
     # side is what stops the whole mass looking like it was painted in two halves.
-    ("streak-tuft",  "head", (-0.112, 0.690, -0.050), (-0.052, 0.7234, 0.046), CLIP),
+    ("streak-tuft",  "head", (-0.112, 0.694, -0.050), (-0.060, 0.7180, 0.046), CLIP),
 ]
 
 # ---------------------------------------------------------------------------
@@ -489,6 +512,25 @@ HEAD = [
 # The grid covers the skull's front rectangle, rows written TOP DOWN. The top two rows
 # are behind the fringe and are drawn anyway, because the fringe is geometry and not a
 # promise. `.` is skin, `X` is slot 8.
+#
+# ⚠️⚠️ THE SMILE'S CORNERS SIT DIRECTLY ABOVE THE ENDS OF THE BAR, NOT DIAGONALLY OFF
+# THEM, AND THE DIAGONAL VERSION IS WHY THE FACE READ WRONG. It was `...X....X...` over
+# `....XXXX....`: the two raised pixels touched the bar only at a CORNER, and a corner
+# contact is not a contact at this resolution. Rendered, that is a straight black bar
+# with two separate specks floating above it — nostrils, or teeth, depending on how
+# charitable you are feeling, but not a mouth. 🧑 *"his face specifically is weird af"*,
+# and the turnaround shows exactly this.
+#
+# Sharing a full edge makes one connected shape whose ends turn up, which is the whole
+# of "smile" at eight rows. It is also two cells wider, because the old mouth spanned
+# half the eye separation and read as a small dark rectangle rather than an expression.
+#
+# ⚠️ AND THE MOUTH STAYS OFF THE BOTTOM ROW. Row 7 is y 0.491 to 0.470 and the neck box
+# starts at 0.482, so its lower half is behind the neck: anything drawn there is a
+# feature cut in half by a body part, which is what the chin already looked like.
+#
+# ⚠️ THE EYES ARE UNCHANGED. Two cells square, four apart, is the Kenney read and it is
+# the one part of this face the turnaround got right.
 FACE_PIXELS = ("face", "head", (-0.122, 0.470), (0.122, 0.638), -0.122, [
     "............",
     "............",
@@ -496,7 +538,7 @@ FACE_PIXELS = ("face", "head", (-0.122, 0.470), (0.122, 0.638), -0.122, [
     "..XX....XX..",
     "............",
     "...X....X...",
-    "....XXXX....",
+    "...XXXXXX...",
     "............",
 ])
 
@@ -531,12 +573,42 @@ FACES = [
 
 
 # Which entry of FACES a name refers to, for boxes that leave one out.
-SKIPPABLE = {"front": 0, "back": 1, "left": 3, "right": 2, "top": 4, "bottom": 5}
+#
+# ⚠️⚠️ THE NAMES ARE RESOLVED AFTER THE `FRONT_IS_MINUS_Z` FLIP, NOT BEFORE IT, AND GETTING
+# THAT BACKWARDS IS WHY THE FACE WAS SHREDDED. 🧑 *"zach in char select is buggy, his face
+# specifically is weird af"*.
+#
+# The tables are authored facing -Z and the flip NEGATES AND SWAPS each box's z bounds, so
+# the authored front wall (the lower z) comes out as the box's UPPER z. `FACES[0]` is the
+# lower-z quad and `FACES[1]` the upper one, so under the flip "front" is entry 1 — while
+# this table said 0. The skull therefore kept the wall it was supposed to lose and lost the
+# one behind it, which put a full skin-coloured quad in EXACTLY the plane `FACE_PIXELS`
+# draws into.
+#
+# Two opaque surfaces in one plane is z-fighting, and z-fighting is resolved per fragment
+# by depth precision rather than by anything stable: head on it happened to land mostly on
+# the panel, which is why the front-only turnaround looked correct and passed every
+# assertion, and at the three-quarter angle the character screen actually uses it tore each
+# eye and the smile into triangular shards. The whole point of the panel is that the wall
+# it replaces is GONE ("no z-fighting, because there is nothing to fight with").
+#
+# ⚠️ NOTE THAT left/right WERE ALREADY SWAPPED HERE and front/back were not, which is what
+# hid this: the table looks like it has been through exactly this correction once.
+_FACE_NAMES = {"front": 0, "back": 1, "left": 3, "right": 2, "top": 4, "bottom": 5}
+
+SKIPPABLE = dict(_FACE_NAMES)
+
+if FRONT_IS_MINUS_Z:
+    SKIPPABLE["front"], SKIPPABLE["back"] = _FACE_NAMES["back"], _FACE_NAMES["front"]
 
 
 def build_mesh(boxes, panels=()):
     """Boxes and pixel panels to flat glTF attribute arrays."""
     pos, nrm, uv, joints, weights, idx = [], [], [], [], [], []
+
+    # Which vertices came from a pixel panel rather than from a box. See smooth_normals:
+    # they are held out of the averaging in both directions.
+    panel_indices = []
 
     for entry in boxes:
         name, bone, lo, hi, slot = entry[:5]
@@ -602,6 +674,7 @@ def build_mesh(boxes, panels=()):
                 first = len(pos)
 
                 for x, y in quad:
+                    panel_indices.append(len(pos))
                     pos.append((x, y, z))
                     nrm.append(normal)
                     uv.append((u, v))
@@ -610,10 +683,10 @@ def build_mesh(boxes, panels=()):
 
                 idx += [first, first + 1, first + 2, first, first + 2, first + 3]
 
-    return pos, smooth_normals(pos, nrm), uv, joints, weights, idx
+    return pos, smooth_normals(pos, nrm, panel_indices), uv, joints, weights, idx
 
 
-def smooth_normals(pos, nrm):
+def smooth_normals(pos, nrm, panel_indices=()):
     """Averages the face normals meeting at each position, in place of the flat ones.
 
     ⚠️⚠️ THIS IS WHAT MAKES THE MODEL LOOK LIKE THE REST OF THE CAST, AND THE REASON IS
@@ -634,10 +707,38 @@ def smooth_normals(pos, nrm):
     ⚠️ THE VERTICES ARE STILL SPLIT PER FACE. They have to be: a face declares its palette
     slot through its UV, so merging them would merge their colours as well as their
     normals. Only the normal is shared.
+
+    ⚠️⚠️ THE FACE PANEL IS HELD OUT OF THIS ENTIRELY, IN BOTH DIRECTIONS, AND INCLUDING IT
+    IS WHAT ATE THE FACE. 🧑 *"zach in char select is buggy, his face specifically is weird
+    af"*, with the eyes reduced to diagonal slashes and the smile growing a tooth.
+
+    The skull is emitted WITHOUT its front face so the panel can BE that face, which means
+    its hull is open there and the only vertices on the front plane belong to the sides,
+    the top and the bottom. Averaging those with the panel's own +Z pulls them FORWARD, so
+    the outline pass — an inverted hull that pushes along exactly these normals — grows a
+    black frame that leans in OVER the front plane instead of standing off the sides of the
+    head. Its inner edge follows whatever the averaging produced, which is where the
+    diagonal slashes come from, and it scales with the outline width: at the doubled width
+    `ModelPreview` was passing it covered most of the face, and at the correct width it
+    still cuts across the eyes.
+
+    Held out, the skull's border vertices average only among the skull's own side, top and
+    bottom faces, all of which point AWAY from the front plane, so the frame pushes
+    outward as a silhouette border should. The panel keeps its flat +Z, which is what it
+    wants anyway: it is one plane, there is nothing for it to be smoothed against, and its
+    triangles face the viewer so the outline pass culls them outright.
+
+    ⚠️ IT IS EXCLUDED AS A CONTRIBUTOR *AND* AS A CONSUMER. Doing only the second leaves
+    the panel's +Z in the buckets still tilting every skull vertex it shares a corner with,
+    which is the half that actually draws the frame.
     """
+    skip = set(panel_indices or ())
     buckets = {}
 
     for i, p in enumerate(pos):
+        if i in skip:
+            continue
+
         key = (round(p[0], 5), round(p[1], 5), round(p[2], 5))
         acc = buckets.setdefault(key, [0.0, 0.0, 0.0])
 
@@ -647,6 +748,10 @@ def smooth_normals(pos, nrm):
     out = []
 
     for i, p in enumerate(pos):
+        if i in skip:
+            out.append(nrm[i])
+            continue
+
         key = (round(p[0], 5), round(p[1], 5), round(p[2], 5))
         n = buckets[key]
         length = (n[0] * n[0] + n[1] * n[1] + n[2] * n[2]) ** 0.5
