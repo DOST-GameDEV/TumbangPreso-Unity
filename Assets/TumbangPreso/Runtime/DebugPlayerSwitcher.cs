@@ -66,13 +66,32 @@ namespace TumbangPreso
 
         private UI.DebugBar _bar;
 
+        /// <summary>
+        /// ⚠️⚠️ IT NO LONGER SELF-DESTRUCTS IN A RELEASE BUILD, AND THAT IS A DELIBERATE
+        /// DIVERGENCE FROM THE .gd ON HUMAN INSTRUCTION. 🧑 on this build: *"some controls didnt
+        /// get ported, tab cant let me switch chara in singleplayer, (not supposed to exist in
+        /// multiplayer btw)"*.
+        ///
+        /// `debug_player_switcher.gd::_ready` is `if not OS.is_debug_build(): queue_free()`, and
+        /// this file copied that as `!Debug.isDebugBuild &amp;&amp; !Application.isEditor`. The copy is
+        /// faithful and it is why Tab did nothing in the .exe on the Desktop: a Unity player
+        /// built without "Development Build" reports `isDebugBuild` false, so the component
+        /// deleted itself before it ever read a key. In Godot the same rule is invisible in
+        /// practice because every editor run IS a debug build, which is where the feature was
+        /// being used and where the expectation that it ships came from.
+        ///
+        /// The gate is now the one he actually asked for: SINGLE PLAYER ONLY, which
+        /// <see cref="NetAuthority.IsNetworked"/> already answers in `Update`, and which is the
+        /// same condition the .gd's own `_is_active()` applies for a different reason. Seizing a
+        /// seat locally would desync every peer's idea of who drives what, so the networked
+        /// refusal is a rule, not a preference.
+        ///
+        /// ⚠️ THE §0.3 REMOVAL CONTRACT STILL HOLDS. This file is still `Debug`-prefixed, still
+        /// discovers units by walking the scene, and no gameplay script names it. What changed
+        /// is when it is alive, not what may depend on it.
+        /// </summary>
         private void Awake()
         {
-            if (!Debug.isDebugBuild && !Application.isEditor)
-            {
-                Destroy(gameObject);
-                return;
-            }
 
             // Debug registers with debug; no gameplay script names either one.
             var barGo = new GameObject("DebugBar");
@@ -120,9 +139,12 @@ namespace TumbangPreso
         /// </summary>
         private void ApplySlots()
         {
+            CharacterMotor claimed = null;
+
             foreach (var unit in FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude))
             {
                 bool driven = unit.PlayerSlot == DrivenSlot;
+                if (driven) claimed = unit;
 
                 unit.Intent.Parked = !driven;
 
@@ -131,6 +153,44 @@ namespace TumbangPreso
 
                 var reader = unit.GetComponent<PlayerInputReader>();
                 if (reader != null) reader.enabled = driven;
+
+                // ⚠️⚠️ THE NAME FOLLOWS THE BODY YOU ARE IN, AND THE PORT DROPPED THIS ENTIRELY.
+                // 🧑 on the Godot build, quoted in `debug_player_switcher.gd::_apply_slots`:
+                // *"i want the character im playing currently to say my name and for the bot to
+                // get their supposed name if i leave their body"*. `IsBot` is what
+                // `CharacterMotor.DisplayName()` branches on, and nothing rewrote it here — so
+                // Tabbing into LOLA PACING left her still labelled LOLA PACING while a human
+                // drove her, and the seat just vacated went on wearing the player's own name.
+                //
+                // ⚠️ THE NAME IS WRITTEN, NOT ONLY THE FLAG. A bot seat has never been given one
+                // (`BuildSeat` hands `PlayerName` to the human seat alone), so clearing `IsBot`
+                // by itself would fall through to the bare seat label "P3".
+                //
+                // ⚠️ AND IT IS LEFT IN PLACE ON THE WAY OUT rather than cleared: `IsBot` stops it
+                // being read, and the next Tab back finds it already correct.
+                unit.IsBot = !driven;
+
+                if (driven && string.IsNullOrEmpty(unit.PlayerName))
+                    unit.PlayerName = Settings.SettingsStore.Current.PlayerName;
+            }
+
+            // ⚠️⚠️ THE CAMERA GOES WITH THE HANDOVER, AND WITHOUT THIS TAB WAS INVISIBLE.
+            // `_apply_slots` in the .gd picks which rig is active as part of the same switch
+            // (§3.5.3). Here the rig kept following the seat it was bound to at match start, so
+            // a working Tab still left the player watching their old body while driving a
+            // different one somewhere off screen — indistinguishable from Tab doing nothing,
+            // which is how a fixed keybind would still have been reported as broken.
+            //
+            // ⚠️ THROUGH `Follow`, THE RIG'S ORDINARY PUBLIC API, AND THE MODE IS NOT TOUCHED.
+            // FPP/TPP is derived from the subject (§3a) and stays that way; the switcher chooses
+            // WHO is looked through, never HOW.
+            if (claimed != null)
+            {
+                var rig = UnityEngine.Camera.main != null
+                    ? UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>()
+                    : null;
+
+                if (rig != null) rig.Follow(claimed);
             }
         }
 

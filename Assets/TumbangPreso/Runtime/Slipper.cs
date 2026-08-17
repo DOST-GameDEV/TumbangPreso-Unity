@@ -301,10 +301,7 @@ namespace TumbangPreso
                 foreach (var p in round.Players)
                 {
                     if (p == null || p.PlayerSlot == _throwerSlot) continue;
-
-                    float d = Vector3.Distance(p.transform.position, transform.position);
-                    if (d > Balance.SlipperHitRadius + p.GetComponent<CharacterController>().radius)
-                        continue;
+                    if (!HitsBody(p)) continue;
 
                     HostBlockedBy(p);
                     return;
@@ -317,6 +314,55 @@ namespace TumbangPreso
             if (transform.position.y <= GroundY(transform.position) + Balance.SlipperRestHeight
                 || _flightTime >= Balance.MaxFlightTime)
                 Land();
+        }
+
+        /// <summary>
+        /// Does the slipper's current position sit inside this body's capsule?
+        ///
+        /// ⚠️⚠️ A CAPSULE, NOT A SPHERE, AND THE PORT ASKED FOR A SPHERE AROUND THE FEET. 🧑 on
+        /// this build: *"the players dont block the slipper thats thrown, theyre supposed to"*.
+        /// The old test was
+        ///
+        ///     Vector3.Distance(p.transform.position, transform.position) &gt; HitRadius + radius
+        ///
+        /// and `p.transform.position` on these seats is the SOLE OF THE FOOT — `BuildSeat` gives
+        /// the controller `center = (0, 0.8, 0)` precisely because the origin is at the feet. So
+        /// the test asked whether the slipper was within 0.58 m OF THE GROUND AT THEIR TOES. A
+        /// throw travels at chest height: measured against a 1.6 m seat, a slipper passing dead
+        /// centre through the torso is about 1.2 m from that origin, more than double the
+        /// window. The block could only ever fire on a slipper already rolling along the floor,
+        /// which is to say never during a throw. The taya's entire passive verb was unreachable,
+        /// and so was the friendly fire that keeps three attackers honest around one box.
+        ///
+        /// `slipper.gd::_first_body_hit` splits it in two on purpose, and its own comment says
+        /// why: *"Capsule, not sphere: a slipper passing over a crouched head and one passing
+        /// through a chest are different events and a sphere conflates them."* Flat distance
+        /// decides whether the throw is on the body's LINE; the height band decides whether it
+        /// is at a height the body occupies.
+        ///
+        /// ⚠️ THE BAND IS BUILT FROM THE CONTROLLER'S OWN CENTRE, NOT FROM THE TRANSFORM. The
+        /// .gd's `dy` is measured against a CENTRED body, so it can write ±height/2 directly.
+        /// Copying that expression literally against a feet-origin transform reintroduces the
+        /// same off-by-a-body error one layer down, and it would look like a faithful port.
+        /// </summary>
+        private bool HitsBody(CharacterMotor who)
+        {
+            var cc = who.GetComponent<CharacterController>();
+
+            // ⚠️ GUARDED. The old line dereferenced this straight off a `GetComponent` and a
+            // seat mid-teardown at a round boundary is a null here, not a bug worth throwing on.
+            float radius = cc != null ? cc.radius : 0.4f;
+            float height = cc != null ? cc.height : 1.6f;
+
+            Vector3 centre = who.transform.position + (cc != null ? cc.center : new Vector3(0.0f, height * 0.5f, 0.0f));
+
+            Vector3 flat = new Vector3(transform.position.x - centre.x, 0.0f,
+                                       transform.position.z - centre.z);
+
+            if (flat.magnitude > Balance.SlipperHitRadius + radius) return false;
+
+            float dy = transform.position.y - centre.y;
+            return dy >= -height * 0.5f && dy <= height * 0.5f;
         }
 
         /// <summary>

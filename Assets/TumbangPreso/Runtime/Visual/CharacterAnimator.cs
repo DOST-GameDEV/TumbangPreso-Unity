@@ -274,10 +274,34 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// ⚠️ THE ORDER OF THESE BRANCHES IS THE PRIORITY, and it is not arbitrary. Stunned
-        /// beats everything, because a stunned player must visibly be stunned no matter what
-        /// they are holding or pressing: that readout is what the other three players read to
-        /// decide whether to commit.
+        /// ⚠️ THE ORDER OF THESE BRANCHES IS THE PRIORITY, and it is not arbitrary.
+        ///
+        /// ⚠️⚠️ A STUN DOES **NOT** PLAY `die`, AND THIS FILE USED TO SAY IT DID. 🧑 on this
+        /// build: *"idk why but the bots randomly go to the ground and start flipping around"*.
+        /// The line was `if (_motor.IsStunned) return Die;` with a header arguing that stunned
+        /// should beat everything — but `die` is the knockdown clip, so every ordinary shove
+        /// stun and every 5 s tag penalty dropped the body flat on the road. It happens to bots
+        /// most because bots get tagged most, which is why it read as a bot bug.
+        ///
+        /// The *"flipping around"* was the other half, and the two compounded: nothing stopped a
+        /// stunned unit steering, so `CharacterMotor.Steer` kept snapping the body's yaw to each
+        /// new AI heading while it lay on the floor. Both are fixed; see that file's own note.
+        ///
+        /// `character_visual.gd:1806` is the reference and it is precise about the distinction:
+        ///
+        ///     if _character.state == CharacterBase.State.DOWNED:
+        ///         wanted = "die"
+        ///
+        /// DOWNED, not STAGGERED. They are separate states there, `go_downed()` has no callers
+        /// anywhere in the Godot tree, and an ordinary stun is STAGGERED — which falls straight
+        /// through this chain to its normal locomotion pose. What actually reads a stun in the
+        /// original is not a clip at all: it is § THE STUN FROST, a material effect over the
+        /// whole body (`character_visual.gd:1879`). The port has the SCREEN half of that in
+        /// `Hud.UpdateFrost` and the body half is the honest gap, tracked rather than papered
+        /// over with a clip that means something else.
+        ///
+        /// `Die` is kept below: the `dead` EMOTE resolves to it, which is the one place the
+        /// knockdown pose is played on purpose.
         /// </summary>
         private string Choose()
         {
@@ -286,8 +310,6 @@ namespace TumbangPreso.Visual
                 string emoteClip = ResolveChain(EmoteClips, _emote.Current);
                 if (emoteClip != null) return emoteClip;
             }
-
-            if (_motor.IsStunned) return Die;
 
             if (_carrier != null && _carrier.ChannelRatio > 0.0f) return Interact;
 

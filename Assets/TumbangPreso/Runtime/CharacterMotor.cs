@@ -18,6 +18,17 @@ namespace TumbangPreso
     /// works the same way, which is why this is the closest available mapping rather than
     /// a rewrite around Rigidbody forces.
     /// </summary>
+    /// <remarks>
+    /// ⚠️ -100 SO THE CAPSULE HAS ALREADY MOVED WHEN ANYTHING ELSE RUNS ITS FixedUpdate. The
+    /// carry in <see cref="Carrier.FixedUpdate"/> is the reader that needs it: a held tsinelas
+    /// placed on the hand BEFORE the body moves is a step of walking behind it for the rest of
+    /// the frame. See the execution-order note on `Carrier` for the full ordering.
+    ///
+    /// ⚠️ THE INTENT SNAPSHOT IS UNAFFECTED. `CommitFrame` still runs at the end of this step
+    /// and every consumer of a press EDGE runs in Update, which is a later phase entirely — so
+    /// moving this earlier within FixedUpdate cannot shorten the window those readers see.
+    /// </remarks>
+    [DefaultExecutionOrder(-100)]
     [RequireComponent(typeof(CharacterController))]
     public sealed class CharacterMotor : MonoBehaviour
     {
@@ -288,12 +299,36 @@ namespace TumbangPreso
 
             Stamina.StepFatigue(dt);
 
-            Vector2 axis = Intent.MoveAxis;
+            // ⚠️⚠️ A STUNNED UNIT DOES NOT STEER, AND ITS ABSENCE WAS THE REPORTED
+            // *"i can still move while stunned"*. `character_base.gd:932` is explicit:
+            //
+            //     if state != State.NORMAL:
+            //         velocity.x = move_toward(velocity.x, 0, FRICTION * delta)
+            //         velocity.z = move_toward(velocity.z, 0, FRICTION * delta)
+            //         _move_and_confine()
+            //         return
+            //
+            // and this file had no equivalent gate at all, so `Intent.MoveAxis` was read and
+            // `_velocity` written on every frame of a stun. A 5 s tag penalty that the victim
+            // can simply walk out of is not a penalty, and it is the half of the stun the HUD
+            // was already counting down for them.
+            //
+            // ⚠️ THE DECAY IS `Friction`, NOT AN INSTANT ZERO. The walk velocity a shove
+            // interrupted has to bleed off at the same rate every other impulse in the game
+            // does, or a stunned unit stops dead in the air and the knockback reads as a wall.
+            //
+            // ⚠️ AND GRAVITY, THE EXTERNAL IMPULSE AND THE CONFINEMENT ALL STILL RUN BELOW.
+            // Being stunned stops you ACTING; it does not exempt you from the world. A shove
+            // that could not push a stunned body is a shove that cannot combo into a tag,
+            // which is the interaction `IsTaggable`'s own header exists to protect.
+            bool canSteer = CanAct();
+
+            Vector2 axis = canSteer ? Intent.MoveAxis : Vector2.zero;
             bool moving = axis.sqrMagnitude > 0.0001f;
 
             // The sprint multiplier. Fatigue is NOT in this value: it rides the speed-zone
             // stack so it composes with a hazard zone rather than one silently winning.
-            float sprint = Stamina.Step(dt, moving, Intent.Pressed(Verb.Sprint));
+            float sprint = Stamina.Step(dt, moving, canSteer && Intent.Pressed(Verb.Sprint));
 
             float speed = Balance.Speed
                           * Stamina.RoleSpeedScale(_isDefender)
@@ -301,10 +336,18 @@ namespace TumbangPreso
                           * sprint
                           * Stamina.SpeedZones.Value;
 
-            Vector3 wish = Steer(axis);
+            if (canSteer)
+            {
+                Vector3 wish = Steer(axis);
 
-            _velocity.x = wish.x * speed;
-            _velocity.z = wish.z * speed;
+                _velocity.x = wish.x * speed;
+                _velocity.z = wish.z * speed;
+            }
+            else
+            {
+                _velocity.x = Mathf.MoveTowards(_velocity.x, 0.0f, Balance.Friction * dt);
+                _velocity.z = Mathf.MoveTowards(_velocity.z, 0.0f, Balance.Friction * dt);
+            }
 
             // ⚠️ EXTERNAL IMPULSES DECAY AGAINST Friction, WHICH IS WHAT MAKES v²/60 TRUE.
             // Every published knockback distance in the game is that solve, so this

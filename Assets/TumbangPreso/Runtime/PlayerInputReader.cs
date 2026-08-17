@@ -110,25 +110,57 @@ namespace TumbangPreso
         }
 
         /// <summary>
-        /// Where this player is aiming, as a world point on the ground plane.
+        /// Where this player is aiming, in world space.
         ///
         /// ⚠️ THE THROW LEAVES FROM THE SIGHT LINE, NOT THE HAND, so this point is what the
         /// trajectory is solved against. Measured in the original: launching from the hand
         /// instead sagged the flight 0.38 to 0.43 m below the line the player was aiming
         /// along and peaked within 0.2 m of them, which drops the slipper out of the bottom
         /// of the screen the instant it is released.
+        ///
+        /// ⚠️⚠️ IT ASKS THE RIG, AND COMPUTING ITS OWN ANSWER HERE WAS *"throw also randomly
+        /// breaks"* AND MOST OF *"THIS charge outline is so ugly, it doesnt behave naturally"*.
+        /// This method used to intersect the mouse ray with a HORIZONTAL PLANE AT THE PLAYER'S
+        /// OWN FEET, which is the TPP form — `CameraRig.AimPoint` uses exactly that expression,
+        /// but only in its TPP branch, and this game is FPP for every Person (§3a).
+        ///
+        /// Against a plane you are standing ON, a sight line at or above the horizon is
+        /// PARALLEL TO IT OR POINTING AWAY. So across one small movement of the mouse the aim
+        /// point ran out to hundreds of metres, then failed the intersection entirely and
+        /// snapped back to a hard-coded 10 m in front. `Slipper.SolveArc` is solved against that
+        /// distance: at 400 m the discriminant goes negative and it bails to a flat throw along
+        /// the line, at 10 m it produces a sane arc — so the same key, held the same way, threw
+        /// completely differently depending on whether the crosshair was a few pixels above or
+        /// below the horizon. The preview reads the same function, which is why the outline
+        /// jumped about with it.
+        ///
+        /// The rig already branches correctly and its FPP half CASTS along the sight line and
+        /// falls back to a fixed `AimRayLength` down that same line, so the answer degrades
+        /// along the direction the player is actually pointing instead of collapsing onto the
+        /// floor. Asking it here keeps ONE implementation: `Carrier.AimPoint` already prefers
+        /// `Intent.AimPoint` when it is set, and since this class sets it every frame, the rig's
+        /// version was unreachable for a human. Two answers to one question, and the wrong one
+        /// won every time.
         /// </summary>
         private Vector3 ReadAimPoint()
         {
-            if (_aimCamera == null || Mouse.current == null)
-                return transform.position + transform.forward * 10.0f;
+            // ⚠️ RE-RESOLVED WHILE IT IS NULL, NOT ONCE IN Awake, FOR THE REASON
+            // `CharacterMotor.ResolveRig` GIVES. `MatchInstaller` adds this component at
+            // BuildSeat and does not build the camera until sixty lines later, and
+            // `AddComponent` runs `Awake` synchronously — so `Camera.main` is genuinely null at
+            // the moment this seat wakes up. Caching that would leave the human aiming down the
+            // fallback line for the whole match.
+            if (_aimCamera == null) _aimCamera = Camera.main;
 
-            Ray ray = _aimCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
+            var rig = _aimCamera != null
+                ? _aimCamera.GetComponent<CameraSystem.CameraRig>()
+                : null;
 
-            var ground = new Plane(Vector3.up, new Vector3(0.0f, transform.position.y, 0.0f));
-            if (ground.Raycast(ray, out float enter)) return ray.GetPoint(enter);
+            if (rig != null && rig.IsFollowing(_motor)) return rig.AimPoint();
 
-            return transform.position + transform.forward * 10.0f;
+            // No rig on this seat yet. `MatchInstaller` builds the rig after the seats, so this
+            // is the ordinary answer for the first frame or two rather than an error.
+            return transform.position + transform.forward * CameraSystem.CameraRig.AimRayLength;
         }
 
         private void OnDisable()

@@ -13,6 +13,12 @@ namespace TumbangPreso
     /// ⚠️ THE DEFENDER CANNOT SHOVE AND CANNOT BE SHOVED. They have the tag; giving them both
     /// would make the box unenterable, which deletes the retrieval the whole game is about.
     /// </summary>
+    /// <remarks>
+    /// ⚠️ +50 SO THE SHOVE READS `Carrier.IsBusy` AFTER THE PICKUP HAS HAD ITS SAY. See the
+    /// execution-order note on <see cref="Carrier"/> for the whole three-component ordering and
+    /// what each half of it prevents.
+    /// </remarks>
+    [DefaultExecutionOrder(50)]
     [RequireComponent(typeof(CharacterMotor))]
     public sealed class CombatVerbs : MonoBehaviour
     {
@@ -128,8 +134,20 @@ namespace TumbangPreso
         private void StepShove()
         {
             if (_shoveCooldown > 0.0f) return;
+
+            // ⚠️ `IsBusy` NOW ALSO MEANS "A GRAB ALREADY SPENT THIS PRESS". See its own note on
+            // `Carrier`: a pickup and a shove are the same key, and without that word every
+            // successful pickup also fired a shove.
             if (_carrier != null && _carrier.IsBusy) return;
             if (!_motor.Intent.JustPressed(Verb.Grab)) return;
+
+            // ⚠️⚠️ FATIGUE REFUSES THE SHOVE OUTRIGHT, AND THAT CHECK WAS MISSING.
+            // `character_base.gd::_step_shove` is `if _stamina < SHOVE_STAMINA_COST or
+            // _fatigue_left > 0.0: return` — two conditions, and only the first was ported.
+            // Fatigue is the lockout you earn by emptying the bar, so a shove that still fired
+            // during it let a player spend the one resource the lockout exists to withhold, and
+            // did it at the moment they were meant to be recovering.
+            if (_motor.Stamina.IsFatigued) return;
 
             // ⚠️ THE REAL PRICE IS THE SPRINT, NOT THE POINTS. That half-bar is the same bar
             // that gets you back out of the box, so a shove is paid for in escape distance.

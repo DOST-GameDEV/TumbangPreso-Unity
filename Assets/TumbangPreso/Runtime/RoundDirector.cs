@@ -275,9 +275,33 @@ namespace TumbangPreso
             victim.Teleport(SafeZonePointFor(victim));
         }
 
+        /// <summary>
+        /// Where a tagged attacker is sent: THEIR OWN SPAWN MARK.
+        ///
+        /// ⚠️⚠️ THIS COMPUTED A RING POINT AND THE RING POINT IS INSIDE THE SCENERY. 🧑 on this
+        /// build: *"i also get teleported in weird places (inside house), everyones supposed to
+        /// be teleported at the spawn"*. The old body took the victim's bearing from the origin
+        /// and pushed them out to `Confinement.AttackerSpawnRing()` along it — a number derived
+        /// from the box geometry, which knows nothing about what the map has BUILT at that
+        /// bearing. Both arenas are dressed streets: at most bearings the ring lands in a house,
+        /// a sari-sari stall or a parked jeep, and it kept the victim's CURRENT y, so it did not
+        /// even land on the floor it was aiming at.
+        ///
+        /// `character_base.gd:1509` hands `spawn_position` to the penalty and nothing else, and
+        /// that mark was placed by the map author and floor-probed at seating time
+        /// (`MatchHost.SeatOnFloor`), so it is known-good ground by construction. There is no
+        /// geometry query to get right here, which is the point: the safe spot is not computed,
+        /// it is remembered.
+        ///
+        /// ⚠️ THE FALLBACK IS THE OLD RING, NOT THE ORIGIN. A seat that somehow never went
+        /// through `SeatOnFloor` has a zero mark, and zero is the lata's own mark — teleporting
+        /// a tagged attacker on top of the can is worse than the ring ever was.
+        /// </summary>
         private static Vector3 SafeZonePointFor(CharacterMotor victim)
         {
-            // Straight out along whichever axis they are furthest along, onto the spawn ring.
+            Vector3 spawn = victim.SpawnPosition;
+            if (spawn.sqrMagnitude > 0.01f) return spawn;
+
             Vector3 p = victim.transform.position;
             float ring = Confinement.AttackerSpawnRing();
 

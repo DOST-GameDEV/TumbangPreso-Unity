@@ -22,6 +22,30 @@ namespace TumbangPreso
     /// never fire a lunge out of it. That is the one interaction between the two that a player
     /// would otherwise hit constantly, because both are E held as the taya.
     /// </summary>
+    /// <remarks>
+    /// ⚠️⚠️ THE EXECUTION ORDER IS LOAD-BEARING, NOT TIDINESS, AND IT SERVES TWO SEPARATE
+    /// GUARANTEES IN TWO DIFFERENT PHASES. Unity's order between two components is otherwise
+    /// UNSPECIFIED, so both would work or not depending on the order Unity happened to build
+    /// the seat in — the worst kind of bug, because it looks fixed on the machine it was
+    /// written on. The three orders in play are `CharacterMotor` (-100), this (0) and
+    /// <see cref="CombatVerbs"/> (+50):
+    ///
+    ///  * **Update** — this must run BEFORE the shove. `IsBusy` is how a connecting pickup tells
+    ///    `CombatVerbs` that the frame's E press is already spent, and a flag set after the
+    ///    reader has read it is no flag at all. In the .gd there is no ordering question:
+    ///    `character_base.gd:913` calls `_carrier.input_step(delta)` and then `_step_shove(delta)`
+    ///    in one function. This is what buys the port the same guarantee.
+    ///
+    ///  * **FixedUpdate** — this must run AFTER the motor has moved. See `FixedUpdate` below;
+    ///    a carry that ran first would leave the tsinelas one step of walking behind the hand.
+    ///
+    /// ⚠️ IT IS NOT NEGATIVE ANY MORE, AND THAT MATTERS. An earlier attempt put this at -50 for
+    /// the Update guarantee alone, which bought it at the cost of the FixedUpdate one: the carry
+    /// then ran BEFORE the move every step. Measured, that was still an 0.085 m drift. The
+    /// guarantee wanted is an ORDER BETWEEN THREE COMPONENTS, so it is spelled out on all three
+    /// rather than pushed onto one.
+    /// </remarks>
+    [DefaultExecutionOrder(0)]
     [RequireComponent(typeof(CharacterMotor))]
     public sealed class Carrier : MonoBehaviour
     {
@@ -127,7 +151,35 @@ namespace TumbangPreso
         public float ThrowLockLeft => _throwLockLeft;
 
         public bool ThrowLocked => _throwLockLeft > 0.0f;
-        public bool IsBusy => _channel > 0.0f || _charging;
+
+        /// <summary>
+        /// True while this unit is mid-commitment, so <see cref="CombatVerbs"/> knows an E press
+        /// was already spent on something else.
+        ///
+        /// ⚠️⚠️ `_grabConsumedThisFrame` IS THE THIRD CASE AND ITS ABSENCE WAS THE REPORTED
+        /// *"SHOVE GETS USED EVEN WHEN I HAVE SLIPPER"*. `carrier.gd::is_busy()` is
+        /// `_is_charging or _channelling or _grab_consumed_this_frame` and only the first two
+        /// were ported. E is contextual: a tap with a tsinelas at your feet is a pickup, and a
+        /// tap with nothing grabbable is a shove. In the .gd those are two branches of ONE
+        /// function, `input_step()` then `_step_shove()`, so the pickup can tell the shove the
+        /// press is spent. Here they are two components with two `Update`s, and nothing carried
+        /// that word between them: every successful pickup ALSO fired a shove on the same press,
+        /// spending 25 stamina and putting SHOVE CD on screen at the exact moment the player had
+        /// just picked a slipper up. That is why the cooldown appeared while carrying, and why
+        /// the shove then seemed never to be available when it was actually wanted.
+        ///
+        /// See the execution-order attribute on this class for what makes the ordering real
+        /// rather than incidental.
+        /// </summary>
+        public bool IsBusy => _channel > 0.0f || _charging || _grabConsumedThisFrame;
+
+        /// <summary>
+        /// ⚠️ A ONE-FRAME FLAG, NOT A FOURTH PERSISTENT STATE. A grab has nothing to stay busy
+        /// WITH once it has resolved, so it only says "already spent" for the remainder of the
+        /// frame it fired on. Cleared at the top of every step, exactly as the .gd clears it at
+        /// the top of `input_step()`, so a later frame's press is never shadowed by an old one.
+        /// </summary>
+        private bool _grabConsumedThisFrame;
 
         private void Awake() => _motor = GetComponent<CharacterMotor>();
 
@@ -203,6 +255,10 @@ namespace TumbangPreso
         private void Update()
         {
             float dt = Time.deltaTime;
+
+            // ⚠️ CLEARED HERE, ONCE, BEFORE ANY BRANCH BELOW CAN SET IT. See _grabConsumedThisFrame.
+            _grabConsumedThisFrame = false;
+
             if (_throwLockLeft > 0.0f) _throwLockLeft = Mathf.Max(0.0f, _throwLockLeft - dt);
 
             // The observed wind-up runs on every peer, including the ones that are not driving
@@ -238,7 +294,33 @@ namespace TumbangPreso
         /// ⚠️ AND IT IS NOT GATED ON CanAct. A stunned carrier still holds their tsinelas, and
         /// returning early above used to leave it frozen in the air where the stun started.
         /// </summary>
-        private void LateUpdate()
+        private void LateUpdate() => RideAnchor();
+
+        /// <summary>
+        /// ⚠️⚠️ THE CARRY ALSO RUNS AFTER THE PHYSICS STEP, AND WITHOUT THIS IT LAGGED THE BODY
+        /// BY A WHOLE STEP OF WALKING. 🧑 on this build: *"slippers are floating from hand of
+        /// everyone"*, and `CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor`
+        /// was already failing on the shipped commit — measured drift 0.98 m against a 0.05 m
+        /// bound, so this is the reported bug with a number on it rather than a guess.
+        ///
+        /// LateUpdate alone is necessary but NOT sufficient, and the two halves fix different
+        /// frames. LateUpdate is what makes the slipper follow the ARM: the Animator is
+        /// evaluated between Update and LateUpdate, so a bone read any earlier is the previous
+        /// frame's pose (see the note on RideAnchor). This is what makes it follow the BODY:
+        /// `CharacterMotor` moves the capsule in FixedUpdate, and every FixedUpdate that lands
+        /// after the last LateUpdate moves the hand while the slipper stays where it was put.
+        /// At attacker walk speed one 0.02 s step is ~0.09 m, which is exactly the residue left
+        /// once the LateUpdate half was working. It shows worst during the sprint out of the box,
+        /// which is when the tsinelas is being looked at hardest.
+        ///
+        /// ⚠️ THE ORDER ATTRIBUTES ON THIS CLASS AND ON `CharacterMotor` ARE WHAT MAKE IT
+        /// "AFTER". Same-frame, same-phase order between two components is otherwise unspecified
+        /// in Unity, and a carry that ran before the move would reintroduce the identical lag
+        /// while looking correct in the source.
+        /// </summary>
+        private void FixedUpdate() => RideAnchor();
+
+        private void RideAnchor()
         {
             if (Held == null) return;
 
@@ -277,8 +359,16 @@ namespace TumbangPreso
 
             // First refusal: a tap with something grabbable at your feet is a pickup, and
             // nothing else gets to see that press.
+            //
+            // ⚠️ THE FLAG IS SET AFTER THE PICKUP IS ALREADY COMMITTED, NOT AS A GATE ABOVE.
+            // `carrier.gd::_step_grab` is emphatic about the ordering for the same reason: a
+            // grab that did NOT connect must still fall through to the shove, so only a
+            // CONNECTING grab may mark the press spent.
             if (intent.JustPressed(Verb.Grab) && Held == null && TryPickup())
+            {
+                _grabConsumedThisFrame = true;
                 return;
+            }
 
             if (Held == null)
             {

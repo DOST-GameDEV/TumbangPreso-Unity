@@ -59,7 +59,23 @@ namespace TumbangPreso
             float y = hit.point.y + SpawnFloorClearance;
             if (cc != null) y += Mathf.Max(0.0f, cc.center.y - height / 2.0f);
 
-            character.Teleport(new Vector3(p.x, y, p.z));
+            var seated = new Vector3(p.x, y, p.z);
+
+            // ⚠️⚠️ THE SPAWN IS RECORDED HERE, AND NOTHING IN A REAL MATCH RECORDED IT BEFORE.
+            // `CharacterMotor.SpawnPosition` had exactly one writer in the whole port,
+            // `SliceRunner` — a test harness. Every seat in an actual match therefore carried
+            // the default Vector3.zero, which is not "unset", it is the middle of the arena
+            // where the lata stands (`InputIntent.HasAimPoint` records the same trap for the
+            // aim point). That made both readers wrong: the kill plane returned a fallen unit
+            // to the can's mark, and the tag penalty could not use it at all, which is why
+            // `RoundDirector` grew a ring-point of its own to work around it.
+            //
+            // `character_base.gd:831` writes `spawn_position = global_position` at spawn for
+            // this reason, and this is the moment the port has the same answer: after the floor
+            // probe, so the mark is the seated position rather than the authored marker's Y.
+            character.SpawnPosition = seated;
+
+            character.Teleport(seated);
         }
 
         /// <summary>
