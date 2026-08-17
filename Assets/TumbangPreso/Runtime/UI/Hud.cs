@@ -349,15 +349,6 @@ namespace TumbangPreso.UI
                 ShowToast($"TAG  ·  {SeatName(victimSlot)}", 1.4f);
         }
 
-        /// <summary>The display name for a seat, or the bare slot label when the unit is not in
-        /// hand. `hud.gd::seat_name` does the same, and for the same reason: a toast must never
-        /// print an empty string where a name should be.</summary>
-        private static string SeatName(int slot)
-        {
-            var who = GameServices.Round != null ? GameServices.Round.PlayerAt(slot) : null;
-            return who != null ? who.DisplayName() : $"P{slot + 1}";
-        }
-
         /// <summary>
         /// ⚠️ ONLY THE LOCAL PLAYER'S OWN AWARDS POP A FLOATER, AND THE PASSIVE TICK NEVER DOES.
         /// Passive defence fires every single second of every round; toasting it would be a
