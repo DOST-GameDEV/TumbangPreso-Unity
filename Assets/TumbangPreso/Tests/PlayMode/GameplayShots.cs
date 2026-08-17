@@ -236,6 +236,7 @@ namespace TumbangPreso.PlayTests
             cam.transform.position = centre + new Vector3(0.0f, 2.6f, -back);
             cam.transform.LookAt(centre + new Vector3(0.0f, 0.9f, 0.0f));
 
+            Grade(cam);
             yield return Render(cam, name, flipCanvases: false);
 
             Object.DestroyImmediate(go);
@@ -381,14 +382,43 @@ namespace TumbangPreso.PlayTests
             cam.transform.position = at + who.transform.forward * 3.4f + Vector3.up * 0.2f;
             cam.transform.LookAt(at);
 
+            Grade(cam);
             yield return Render(cam, name, flipCanvases: false);
 
             Object.DestroyImmediate(go);
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE SHOT CAMERA GRADES, OR THE SHOT IS NOT OF THIS GAME. A camera created here by
+        /// hand has no <see cref="TumbangPreso.Visual.ColourGrade"/>, so the witness and portrait
+        /// frames were being rendered with no tonemap and no BCS while every camera a PLAYER
+        /// looks through has both. Every "is the game washed out" judgement made from these files
+        /// was therefore made against a picture the game never draws — including the ones that
+        /// concluded the ambient needed darkening.
+        /// </summary>
+        private static void Grade(Camera cam)
+        {
+            var grade = cam.GetComponent<TumbangPreso.Visual.ColourGrade>();
+            if (grade == null) grade = cam.gameObject.AddComponent<TumbangPreso.Visual.ColourGrade>();
+
+            grade.AdoptFromScene();
+        }
+
         private static IEnumerator Render(Camera cam, string name, bool flipCanvases)
         {
-            var rt = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32);
+            // ⚠️⚠️ AN HDR TARGET, AND THE LDR ONE MADE THESE SHOTS LIE ABOUT THE ONE THING THEY
+            // WERE BEING USED TO JUDGE. `ColourGrade` runs an ACES roll-off in `OnRenderImage`,
+            // which receives the camera's TARGET — and assigning an ARGB32 target overrides
+            // `Camera.allowHDR` outright, so every channel was clamped to 1.0 as the surface
+            // shader wrote it and the curve was handed an already-flat frame. Eskinita's ambient
+            // alone is (1.02, 0.96, 0.86) before a single light, so what these files showed was a
+            // white sky over a pale street: not the build's look, the harness's.
+            bool hdr = cam.allowHDR;
+            var format = hdr ? RenderTextureFormat.DefaultHDR : RenderTextureFormat.ARGB32;
+
+            var rt = new RenderTexture(Width, Height, 24, format,
+                hdr ? RenderTextureReadWrite.Linear : RenderTextureReadWrite.Default);
+
             var prev = cam.targetTexture;
 
             cam.targetTexture = rt;
@@ -414,7 +444,30 @@ namespace TumbangPreso.PlayTests
             Canvas.ForceUpdateCanvases();
             cam.Render();
 
-            RenderTexture.active = rt;
+            // ⚠️⚠️ THE HDR TARGET IS RESOLVED THROUGH AN sRGB ONE BEFORE IT IS READ, AND SKIPPING
+            // THAT MAKES EVERY SHOT ROUGHLY A STOP AND A HALF TOO DARK. An HDR target is LINEAR;
+            // a PNG is sRGB. `ReadPixels` is a raw copy and applies no transfer function at all,
+            // so reading the float target straight into an RGB24 texture writes linear values
+            // into a file that will be displayed as if they were sRGB — mid-grey 0.5 lands at
+            // 0.21 and the street reads as asphalt at night.
+            //
+            // The engine does this conversion for free when a camera renders to the BACK BUFFER,
+            // which is why the game itself was always correct and only these files were not. A
+            // Blit into an sRGB target is the same conversion, done explicitly.
+            //
+            // ⚠️ AND IT IS A SEPARATE FAULT FROM THE CLAMPING ABOVE. They cancel each other
+            // roughly out, which is exactly why neither was noticed: fixing only the LDR target
+            // gives a dark frame, fixing only this one gives a blown frame, and the pair of them
+            // gave a frame that was wrong in a way that looked like a lighting problem.
+            var resolved = hdr
+                ? RenderTexture.GetTemporary(Width, Height, 0, RenderTextureFormat.ARGB32,
+                                             RenderTextureReadWrite.sRGB)
+                : null;
+
+            if (resolved != null) Graphics.Blit(rt, resolved);
+
+            RenderTexture.active = resolved != null ? resolved : rt;
+
             var tex = new Texture2D(Width, Height, TextureFormat.RGB24, false);
             tex.ReadPixels(new Rect(0, 0, Width, Height), 0, 0);
             tex.Apply();
@@ -425,6 +478,9 @@ namespace TumbangPreso.PlayTests
             File.WriteAllBytes($"{OutDir}/{name}.png", tex.EncodeToPNG());
 
             Object.DestroyImmediate(tex);
+
+            if (resolved != null) RenderTexture.ReleaseTemporary(resolved);
+
             rt.Release();
             Object.DestroyImmediate(rt);
 
