@@ -412,7 +412,14 @@ namespace TumbangPreso.UI
             // none, so they would draw nothing and read as a broken HUD rather than a
             // deliberate one. The timer and the scoreboard stay: those are facts about the
             // MATCH, and they are exactly what somebody watching wants.
-            _lataCard.gameObject.SetActive(false);
+            //
+            // ⚠️⚠️ THE LATA CARD IS A MATCH FACT AND USED TO BE HIDDEN HERE, WHICH IS WRONG
+            // AGAINST THE REFERENCE. `hud.gd` keeps it up for a watcher and the Godot spectator
+            // screenshots show `LATA · UPRIGHT` in the corner throughout. Whether the can is
+            // standing is the single thing that explains what all four players are doing at any
+            // moment — no throw is legal while it is down — so it is the LAST readout to take
+            // away from somebody whose whole job is watching. It describes the arena, not a
+            // character, which is the line this method is drawn along.
             _crosshair.enabled = false;
             _vulnerable.enabled = false;
             _readyPrompt.enabled = false;
@@ -427,6 +434,71 @@ namespace TumbangPreso.UI
             if (_stackLeft != null) _stackLeft.gameObject.SetActive(false);
             if (_stackRight != null) _stackRight.gameObject.SetActive(false);
             if (_indicators != null) _indicators.gameObject.SetActive(false);
+
+            BuildSpectatorReadout();
+        }
+
+        private Text _spectatorLegend;
+        private Text _spectatorStatus;
+        private CameraSystem.SpectatorCamera _spectatorCamera;
+        private string _spectatorStatusShown = "￿";
+
+        /// <summary>
+        /// The two lines along the bottom of a spectator's screen.
+        ///
+        /// ⚠️⚠️ BOTH STRINGS WERE WRITTEN AND NEITHER WAS EVER DRAWN.
+        /// <see cref="CameraSystem.SpectatorCamera.ControlsText"/> and
+        /// <see cref="CameraSystem.SpectatorCamera.StatusText"/> had no caller anywhere in the
+        /// project, so a spectator got a camera with eight controls on it and no way to learn
+        /// any of them, and no feedback at all from the two numbers the wheel changes. The
+        /// camera's own header says the legend is "built by the match installer rather than
+        /// here so the spectator stays a camera and nothing else" — it is built here instead,
+        /// which honours the same rule and puts it on the surface that already owns text.
+        ///
+        /// ⚠️ THE STATUS LINE IS THE ONE THAT MATTERS. The wheel means fly speed in free flight
+        /// and follow distance while following, so "am I at 3 m/s or 40" was answered by flying
+        /// and finding out, twice.
+        ///
+        /// ⚠️ AND IT GOES UNDER THE READY PROMPT'S BAND, not over it. That band is empty for a
+        /// watcher, but a clean feed is the point of this mode and two overlapping lines is not.
+        /// </summary>
+        private void BuildSpectatorReadout()
+        {
+            if (_spectatorLegend != null) return;
+
+            _spectatorStatus = HudLabel(_root, "SpectatorStatus", 22, UiTheme.Cream,
+                                        TextAnchor.MiddleCenter);
+            Place(_spectatorStatus.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 88),
+                  new Vector2(900, 32));
+
+            _spectatorLegend = HudLabel(_root, "SpectatorLegend", 18, UiTheme.Cream,
+                                        TextAnchor.MiddleCenter);
+            Place(_spectatorLegend.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 56),
+                  new Vector2(1600, 28));
+
+            _spectatorLegend.text = CameraSystem.SpectatorCamera.ControlsText();
+        }
+
+        /// <summary>
+        /// ⚠️ THE CAMERA IS FOUND LAZILY. `MatchInstaller` creates the spectator and the HUD in
+        /// the same Start, in an order this component must not depend on, and a watcher can also
+        /// be created later by <see cref="MatchHost.EnterSpectatorMode"/>.
+        /// </summary>
+        private void UpdateSpectatorReadout()
+        {
+            if (_spectatorStatus == null) return;
+
+            if (_spectatorCamera == null)
+                _spectatorCamera = FindFirstObjectByType<CameraSystem.SpectatorCamera>();
+
+            string text = _spectatorCamera != null ? _spectatorCamera.StatusText() : "";
+
+            // Same rule the clock follows: assigning Text.text reshapes the mesh whether or not
+            // the characters changed, and this one is polled every frame.
+            if (text == _spectatorStatusShown) return;
+
+            _spectatorStatusShown = text;
+            _spectatorStatus.text = text;
         }
 
         public bool IsCleanFeed => _cleanFeed;
@@ -466,13 +538,34 @@ namespace TumbangPreso.UI
             // does because this is a component callback and not a UI event.
             if (_spectating && Input.GetKeyDown(KeyCode.H)) SetCleanFeed(!_cleanFeed);
 
-            if (_local == null || GameServices.Match == null || GameServices.Round == null) return;
-            if (_spectating) return;
+            if (GameServices.Match == null || GameServices.Round == null) return;
 
             float dt = Time.unscaledDeltaTime;
 
             // See TrySubscribeRound: the director may not exist yet on the frame this HUD wakes.
             TrySubscribeRound();
+
+            // ⚠️⚠️ A SPECTATOR'S CLOCK AND SCOREBOARD USED TO BE FROZEN, WHICH IS THE OPPOSITE OF
+            // WHAT THIS MODE IS FOR. `EnterSpectatorMode` deliberately KEEPS the timer, the
+            // round line, the scoreboard and the lata card, and says why: they are facts about
+            // the MATCH and they are exactly what somebody watching wants. Then `Update`
+            // returned on the line below before drawing a single one of them, so all four were
+            // stuck on whatever they read at install: 00:00, ROUND 1 / 4, four zeroes.
+            //
+            // Everything past this block reads `_local` — the watcher has no character, so those
+            // rows genuinely have nothing to say and are the ones that stay off.
+            if (_spectating)
+            {
+                UpdateTimer(dt);
+                UpdateScores();
+                UpdateLataCard();
+                UpdateToast(dt);
+                UpdateCountdown(dt);
+                UpdateSpectatorReadout();
+                return;
+            }
+
+            if (_local == null) return;
 
             UpdateTimer(dt);
             UpdateScores();

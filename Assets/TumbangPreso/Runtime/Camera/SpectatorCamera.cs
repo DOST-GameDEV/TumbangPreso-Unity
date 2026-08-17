@@ -187,6 +187,31 @@ namespace TumbangPreso.CameraSystem
             _camera.fieldOfView = SpectatorFov;
             _camera.farClipPlane = SpectatorFar;
 
+            // ⚠️⚠️ THE MAP'S GRADE AND ITS TONEMAP, WHICH THIS CAMERA HAD NEITHER OF, AND THAT
+            // IS "the characters are all light as frick, same with map and game overall".
+            //
+            // `TumbangPreso/Toon` is a surface shader, so Unity's forward path ADDS
+            // `RenderSettings.ambientLight` after the lit pass. Eskinita's ambient is
+            // (0.62, 0.58, 0.52) x 1.65 = (1.02, 0.96, 0.86) — over 1.0 on the red channel
+            // before a single light is counted — because the Godot Environment it was measured
+            // from tonemaps the composited frame and rolls that back down. Unity's built-in
+            // pipeline has no tonemapper at all, so without a pass on the camera the whole
+            // frame CLIPS: skin and shirt both land on white, the street goes pale, and the
+            // ink outline is the only thing still reading as itself.
+            //
+            // `CameraRig` has carried `ColourGrade` since the grade was converted. This camera
+            // is a fourth rig with its own object (§3a) and was simply never given one, so the
+            // fault was invisible to anybody playing in first person and total for anybody
+            // spectating — which is every screenshot and every recording, because spectator is
+            // the cinematics camera (see BaseSpeed's note).
+            //
+            // ⚠️ ADOPTED IN Start, NOT HERE, for the reason CameraRig.Awake gives: the arena's
+            // own objects are not guaranteed to exist during this component's Awake, and a
+            // grade that finds no MapGrade quietly resolves to an identity blit that looks
+            // exactly like the feature was never added.
+            _grade = GetComponent<Visual.ColourGrade>();
+            if (_grade == null) _grade = gameObject.AddComponent<Visual.ColourGrade>();
+
             BindActions();
 
             // Start above and behind the base circle, looking at it. The circle is at the
@@ -230,10 +255,28 @@ namespace TumbangPreso.CameraSystem
             map.Enable();
         }
 
+        private Visual.ColourGrade _grade;
+
+        private void Start()
+        {
+            if (_grade != null) _grade.AdoptFromScene();
+        }
+
         private void OnEnable() { if (_camera != null) _camera.enabled = true; }
 
         private void Update()
         {
+            // ⚠️⚠️ NOT WHILE AN OVERLAY IS UP. The pause card releases the cursor so its buttons
+            // can be clicked, and `Time.timeScale = 0` does not stop an Update — so without this
+            // the wheel still retuned the fly speed, Tab still cycled the follow target, and
+            // every mouse move meant to reach a button also swung the view behind the menu. The
+            // player then resumes pointing somewhere they never aimed.
+            //
+            // ⚠️ ReclaimView IS SKIPPED WITH THE REST, WHICH IS CORRECT RATHER THAN LAZY: the
+            // rigs it defends against are all disabled while the match is stopped, and a camera
+            // that keeps raising its own depth against a paused frame is doing nothing.
+            if (UI.Panel.AnyOpen) return;
+
             // ⚠️⚠️ IT RE-CLAIMS THE VIEW EVERY FRAME, AND WITHOUT THIS THE WHOLE MODE IS A LIE.
             //
             // Found in Godot by rendering a spectated match and LOOKING at the frame: every
