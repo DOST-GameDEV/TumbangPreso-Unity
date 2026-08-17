@@ -66,6 +66,40 @@ namespace TumbangPreso.Visual
                 grade.Exposure, grade.White);
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE CAMERA HAS TO BE HDR OR THE TONEMAP BELOW IS DECORATION, AND THIS IS THE
+        /// MISSING HALF OF EVERY "the game is washed out" PASS THIS PROJECT HAS DONE.
+        ///
+        /// The reasoning that moved the ACES curve out of `Toon.shader` and onto this camera was
+        /// right, and `TscnImporter` states the conclusion it licensed: *"an ambient over 1 rolls
+        /// off instead of clipping, so the compensation is no longer needed"*. That is only true
+        /// of a floating-point frame. `OnRenderImage` receives the camera's target, and on an LDR
+        /// target every channel was CLAMPED TO 1.0 when the surface shader wrote it — so the
+        /// sky, Eskinita's (1.02, 0.96, 0.86) ambient and every lit face arrive here already flat
+        /// white, and a roll-off curve applied to a flat white image returns a flat white image.
+        ///
+        /// Measured on `Logs/shots-play/*.png` from this build: the sky is 255,255,255 across the
+        /// whole upper frame and the street and the cast sit within a few percent of each other,
+        /// against a Godot reference of the same geometry that is warm and separated. 🧑, three
+        /// times now: *"the characters are all light as frick, same with map and game overall
+        /// ... this is a reoccuring problem"*.
+        ///
+        /// ⚠️ SO THE FIX IS NOT MORE GRADING AND NOT LESS AMBIENT. An earlier pass darkened the
+        /// ambient to hide this and was correctly reverted; darkening the input to a broken
+        /// roll-off buys back the highlights by throwing away the midtones. The ambient is the
+        /// number Godot actually uses. What was missing is somewhere for it to go.
+        ///
+        /// ⚠️ SET HERE RATHER THAN AT EACH CAMERA, because "grades" and "needs headroom to grade"
+        /// are one requirement, and there are five cameras in this game that mount this component
+        /// (the match rig, the spectator, the character portrait, the map preview and the editor
+        /// benches). A sixth added later gets it for free instead of being the one that forgets.
+        /// </summary>
+        private void Awake()
+        {
+            var camera = GetComponent<Camera>();
+            if (camera != null) camera.allowHDR = true;
+        }
+
         private bool IsIdentity =>
             Mathf.Approximately(_brightness, 1.0f)
             && Mathf.Approximately(_contrast, 1.0f)
