@@ -213,6 +213,42 @@ every attempt to reason through both flipped the answer again. `CheckDyedSide`
 compares the mean X of the dyed vertices against the bone NAMED `arm-left`, which is
 the character's left arm by definition in whatever space Unity settles on.
 
+### 5.7 The skull kept the wall the face replaces
+
+The one that survived longest, because it looked like an art problem and was a table
+lookup. `SKIPPABLE` resolves its face names **after** the `FRONT_IS_MINUS_Z` flip, and
+that flip negates and swaps each box's z bounds, so the authored front wall comes out as
+the box's *upper* z. "front" is `FACES` entry 1 under the flip; the table said 0. The
+skull lost its back and kept its front, which put a full skin-coloured quad in exactly
+the plane `FACE_PIXELS` draws into.
+
+Two opaque surfaces in one plane is z-fighting, and z-fighting is resolved per fragment
+by depth precision rather than by anything stable. **Head on, it landed mostly on the
+panel.** That is why the turnaround looked correct, why `PersonSwapProbe` passed, and why
+it only showed on the character screen, which views from three-quarters: there, each eye
+and the smile tore into triangular shards. *"zach in char select is buggy, his face
+specifically is weird af."*
+
+⚠️ Note that `left`/`right` in that table were already swapped and `front`/`back` were
+not. It looks like it has been through this correction once before, on the axis somebody
+happened to check.
+
+⚠️ **A turnaround is four angles and the game is not.** Two of the six mistakes above and
+this one were invisible from the front. If a feature lives on one plane, look at it from
+off-axis before believing it.
+
+### 5.8 The portrait wore a border 2.38x too thick
+
+`ModelPreview` multiplied `PersonOutlineWidth` by `PreviewScale`. That constant is
+already a *world* width and already carries the 2.38 — `CharacterVisual` warns against
+exactly this multiply at its own call site — so the character screen drew a 45 mm ink
+border against 19 mm everywhere else.
+
+It reads as a face bug rather than an outline one, because the face is where a fat
+inverted hull shows first. Worth knowing which of the two you are looking at: **turn the
+outline off before blaming the model.** Passing `0.0f` to `ToonSkin.Apply` for one run is
+what separated this from 5.7, which was still there underneath it.
+
 ---
 
 ## 6 · Rules of thumb

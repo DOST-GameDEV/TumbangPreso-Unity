@@ -158,6 +158,28 @@ Honest list, so nobody re-derives it.
 - **The face is simpler.** Two eyes and a mouth on a 12x8 grid, no brows. Brows sat
   close enough to the eyes to merge into one dark bar at play distance.
 
+## 7a · Found after the first handover
+
+Three faults that shipped in the build above and were only visible in a picture, which
+is the section 5 point made again. All three are written up in
+[`Voxel_Person_Guide.md`](Voxel_Person_Guide.md) §5.7 and §5.8.
+
+- **The skull kept its front wall**, z-fighting with the face grid. Stable head on,
+  shards at three-quarters, which is the angle the character screen uses. `SKIPPABLE`
+  resolves after the `FRONT_IS_MINUS_Z` flip and had `front` and `back` the wrong way
+  round.
+- **`ModelPreview` doubled the outline width**, so the portrait wore 45 mm of ink
+  against 19 mm in play.
+- **The dye was one solid mass** and read as a red cap with a straight edge down the
+  middle of the head. It is a swept forelock now: fringe, crown band, side stripe,
+  nape patch, each one thin on the axis it is viewed along. The header in
+  `build_person_voxel.py` had already recorded this failure twice from the other
+  direction; making the mass bigger reaches it just as well as putting it in the
+  wrong place.
+
+Also in the same pass: the smile's raised corners touched the bar only at a corner,
+which is not a contact at eight rows, so it rendered as a bar with two specks over it.
+
 ## 8 · Left for the next pass
 
 - Eleven CC0 rigs still to replace. `Port_Plan.md` §8.3 has the order.
