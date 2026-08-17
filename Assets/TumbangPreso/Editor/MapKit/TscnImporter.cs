@@ -609,17 +609,73 @@ namespace TumbangPreso.EditorTools.MapKit
 
             bool fog = env.Props.TryGetValue("fog_enabled", out var f) && f.Trim() == "true";
 
+            // ⚠️⚠️ `fog_density` IS THE DEPTH FOG'S MAXIMUM STRENGTH AND IGNORING IT WASHED THE
+            // WHOLE GAME OUT. 🧑, against a side-by-side: *"it doesnt look like the right color
+            // bruhh"*, *"its also not as saturated as original"*. Both arenas set
+            //
+            //     fog_enabled = true
+            //     fog_mode = 1          # FOG_MODE_DEPTH
+            //     fog_density = 0.0
+            //
+            // and in Godot 4 the depth branch is `pow(fog_z, fog_depth_curve) * fog_density`, so
+            // a density of ZERO means the depth fog contributes NOTHING. `fog_enabled` is on, the
+            // block is fully authored, and it still draws no haze — which is why the original's
+            // street stays saturated all the way to the far end.
+            //
+            // This read `fog_enabled` alone and handed Unity a linear fog running to FULL
+            // strength by 58 m. Unity's built-in linear fog has no density term: it reaches 100%
+            // fog colour at `fogEndDistance`, full stop. So the port was painting a warm haze
+            // over everything past the middle of the arena that the original does not draw at
+            // all, and it flattened the palette exactly where the game is looked at most.
+            //
+            // ⚠️ THE MAPPING IS EXACT AT THE ENDPOINT RATHER THAN A SWITCH. Unity's linear fog
+            // amount is `(z - start) / (end - start)`, so to make it equal `density` at the
+            // authored `fog_depth_end` the end distance has to be pushed out to
+            //
+            //     E = start + (depth_end - start) / density
+            //
+            // Density 1 leaves it exactly as authored, density 0 sends it to infinity, which is
+            // the same thing as off and is handled as off so nothing downstream has to reason
+            // about an infinite distance. Any future map that dials in a real density therefore
+            // gets the right amount of haze at the right distance without this needing revisiting.
+            //
+            // ⚠️ `fog_depth_curve` HAS NO COUNTERPART AND IS NOT WORTH ONE. Unity's linear fog is
+            // linear by definition and both maps author 1.1, which over this range is within a
+            // couple of per cent of a straight line. A custom fog shader to buy that back would
+            // be a lot of surface area for a difference nobody can see.
+            float fogDensity = SubProp(env, "fog_density", 1.0f);
+
+            // ⚠️ ONLY THE DEPTH MODE IS SCALED THIS WAY. `fog_mode = 0` is EXPONENTIAL, where
+            // `fog_density` is the exponent's coefficient rather than a ceiling, and zero there
+            // also means no fog. Both arenas are mode 1 today; the guard keeps a future
+            // exponential map from being silently reinterpreted.
+            bool depthMode = (int)SubProp(env, "fog_mode", 1.0f) == 1;
+
+            if (fog && depthMode && fogDensity <= 0.0001f) fog = false;
+
             RenderSettings.fog = fog;
 
             if (fog)
             {
                 RenderSettings.fogMode = FogMode.Linear;
-                RenderSettings.fogColor = ParseColor(
+
+                // ⚠️ `fog_light_energy` SCALES THE FOG COLOUR, and it was being dropped too.
+                // Eskinita runs 0.95, so its haze is authored slightly dimmer than its own tint.
+                float fogEnergy = SubProp(env, "fog_light_energy", 1.0f);
+
+                Color fogTint = ParseColor(
                     env.Props.TryGetValue("fog_light_color", out var fc) ? fc : null,
                     new Color(0.92f, 0.78f, 0.60f));
 
-                RenderSettings.fogStartDistance = SubProp(env, "fog_depth_begin", 14.0f);
-                RenderSettings.fogEndDistance = SubProp(env, "fog_depth_end", 58.0f);
+                RenderSettings.fogColor = fogTint * fogEnergy;
+
+                float begin = SubProp(env, "fog_depth_begin", 14.0f);
+                float end = SubProp(env, "fog_depth_end", 58.0f);
+
+                RenderSettings.fogStartDistance = begin;
+                RenderSettings.fogEndDistance = depthMode && fogDensity < 1.0f
+                    ? begin + (end - begin) / Mathf.Max(fogDensity, 0.0001f)
+                    : end;
             }
 
             ApplySky(env, subs, ext, report);
@@ -728,7 +784,21 @@ namespace TumbangPreso.EditorTools.MapKit
             // what Godot's own `fog_sky_affect` is too.
             float skyAffect = Mathf.Clamp01(SubProp(env, "fog_sky_affect", 0.0f));
 
-            bool fogOn = env.Props.TryGetValue("fog_enabled", out var fe) && fe.Trim() == "true";
+            // ⚠️⚠️ IT ASKS THE SAME EFFECTIVE-FOG QUESTION `ApplyEnvironment` DOES, NOT JUST
+            // `fog_enabled`. `fog_sky_affect` is a fraction OF the fog amount in Godot, so a
+            // depth fog whose density is zero tints the sky by zero however high this is set.
+            // Both arenas author `fog_sky_affect = 0.22` with `fog_density = 0.0`, so reading the
+            // flag alone pulled 22% of a warm haze across a sky the original leaves clear — the
+            // same washout as the geometry fog, on the largest surface in the frame.
+            //
+            // ⚠️ THE TWO CHECKS MUST STAY IN STEP. They are deliberately the same expression
+            // rather than a shared flag because this method is called from `ApplyEnvironment`
+            // with only the sub-resource in hand; if a third reader appears, hoist it then.
+            bool fogEnabled = env.Props.TryGetValue("fog_enabled", out var fe) && fe.Trim() == "true";
+            bool fogDepthMode = (int)SubProp(env, "fog_mode", 1.0f) == 1;
+            float fogDensity = SubProp(env, "fog_density", 1.0f);
+
+            bool fogOn = fogEnabled && !(fogDepthMode && fogDensity <= 0.0001f);
 
             var fogTint = ParseColor(env.Props.TryGetValue("fog_light_color", out var flc)
                                      ? flc : null, new Color(0.92f, 0.78f, 0.60f));
