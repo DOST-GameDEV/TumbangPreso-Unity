@@ -264,10 +264,28 @@ Shader "TumbangPreso/Toon"
                 int col = (int)cell.x;
                 int row = (int)cell.y;
 
-                // Rows 0-7 fall through to the atlas, so the shader degrades to stock Kenney
+                // ⚠️⚠️ THE ROW TEST IS INVERTED AGAINST THE .glb's OWN ROWS, BECAUSE glTFast
+                // FLIPS V ON IMPORT, AND WITHOUT THIS THE WHOLE PALETTE SYSTEM WAS DEAD IN THIS
+                // PORT. glTF puts the UV origin at the TOP left and Unity puts it at the bottom,
+                // so a cell authored in atlas row 8 of the file arrives in row 7 of the Unity
+                // mesh: raw row r becomes 15 - r. Both person rigs' UV sets are authored in raw
+                // rows 8 to 15, which is what the slot table above was measured from and what
+                // Godot reads directly, and every one of them lands in Unity rows 0 to 7.
+                //
+                // So `row >= 8` was never true for any character, the branch never ran, and all
+                // twelve people rendered in Kenney's factory colours with `_UsePalette` set to 1
+                // and sixteen perfectly good colours uploaded to the GPU. Nothing logs, because
+                // falling through to the atlas is the DELIBERATE degrade path below, and the
+                // symptom is only visible if you already know what the cast is supposed to look
+                // like. Measured with `PersonSwapProbe`, which reports the row band of any rig.
+                //
+                // ⚠️ THE COLUMN IS NOT FLIPPED. glTFast flips V only, so the pairing of an even
+                // swatch column with its odd ramp column survives, and `col / 2` is unchanged.
+                //
+                // Rows 8-15 still fall through to the atlas, so the shader degrades to stock
                 // colours rather than to black if it is ever pointed at a model that samples
                 // them.
-                if (row >= 8) base = _Palette[(col / 2) + (row >= 12 ? 8 : 0)].rgb;
+                if (row <= 7) base = _Palette[(col / 2) + (row <= 3 ? 8 : 0)].rgb;
             }
 
             base *= _Color.rgb;
