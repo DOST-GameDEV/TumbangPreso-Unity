@@ -433,6 +433,13 @@ namespace TumbangPreso
             blocker.GetComponentInChildren<Visual.CharacterVisual>()?.FlashHit();
             Visual.ImpactBurst.SpawnAt(blocker.transform.position);
 
+            // ⚠️⚠️ AND IT MAKES A SOUND, WHICH IT DID NOT. `slipper.gd:1170` plays `hit_body` on
+            // exactly this path. This function's own header says a verb with no feedback is a
+            // verb the player cannot tell they performed, and it then gave the block a flash and
+            // a burst and left it silent — so the one thing a taya can do without pressing
+            // anything was the one thing they could not hear.
+            GameServices.Audio?.PlayAt("hit_body", transform.position);
+
             float speed = Combat.BlockKnockbackSpeed(_skinIndex, blocker.CharacterIndex);
             Vector3 along = _velocity;
             along.y = 0.0f;

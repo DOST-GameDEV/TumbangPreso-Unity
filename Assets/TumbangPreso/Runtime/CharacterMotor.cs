@@ -330,6 +330,25 @@ namespace TumbangPreso
             // stack so it composes with a hazard zone rather than one silently winning.
             float sprint = Stamina.Step(dt, moving, canSteer && Intent.Pressed(Verb.Sprint));
 
+            // ⚠️⚠️ THE FATIGUE CUE, WHICH SHIPPED REGISTERED AND WAS NEVER FIRED ONCE.
+            // `character_base.gd::_enter_fatigue` plays it on the frame the bar bottoms out, and
+            // that moment is worth a sound for the same reason the HUD row exists: emptying the
+            // bar costs a 0.75 speed lockout the player did not choose and cannot see coming.
+            //
+            // ⚠️ THE EDGE IS DETECTED HERE BECAUSE `Stamina` CANNOT MAKE A SOUND. It lives in the
+            // engine-free core package (rule 3), so it has no way to reach the audio director and
+            // must not acquire one. The motor is the nearest thing that has both the state and a
+            // UnityEngine reference, which is exactly the split the package boundary is for.
+            //
+            // ⚠️ AN EDGE, NOT A STATE. Fatigue lasts seconds; playing on the state would retrigger
+            // every frame, which is the buzzsaw case `AudioCues.HeadroomDb` exists to keep out.
+            bool fatigued = Stamina.IsFatigued;
+
+            if (fatigued && !_wasFatigued)
+                GameServices.Audio?.PlayAt("stamina_empty", transform.position);
+
+            _wasFatigued = fatigued;
+
             float speed = Balance.Speed
                           * Stamina.RoleSpeedScale(_isDefender)
                           * Roster.PersonSpeedScale(_characterIndex)
@@ -449,6 +468,9 @@ namespace TumbangPreso
         private const float PerchShedSpeed = 2.5f;
         private bool _perchedThisStep;
         private Vector3 _perchContact;
+
+        /// <summary>Last frame's fatigue state, so the cue fires on the edge. See FixedUpdate.</summary>
+        private bool _wasFatigued;
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {

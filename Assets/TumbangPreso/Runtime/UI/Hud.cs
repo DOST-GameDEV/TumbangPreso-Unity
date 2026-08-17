@@ -367,6 +367,19 @@ namespace TumbangPreso.UI
         private void OnScored(int slot, ScoreEvent e)
         {
             if (e == ScoreEvent.DefenseTick) return;
+
+            // ⚠️⚠️ THE AWARD STING, WHICH SHIPPED AS A LIVE CUE WITH NO CALLER ANYWHERE. It is
+            // `audio_manager.gd::_on_score_changed_audio`, and the DefenseTick guard above is
+            // the same one it opens with — for the same reason, spelled out there: defence
+            // fires every single second of every round, so a sound on it would be a buzzsaw and
+            // would duck the music once a second on top.
+            //
+            // ⚠️ IT IS ABOVE THE `_local` CHECK ON PURPOSE. The TOAST is only for the local
+            // player's own award, because a floater about somebody else's points is noise on
+            // your screen. The SOUND is the match reacting, and the original plays it off
+            // `score_changed` without asking whose slot it was.
+            GameServices.Audio?.PlayAt("score_award", Vector3.zero);
+
             if (_local == null || _local.PlayerSlot != slot) return;
 
             ShowToast($"+{MatchRules.PointsFor(e)}  {LabelOf(e)}", 1.2f);

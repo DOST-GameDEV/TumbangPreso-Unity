@@ -177,7 +177,19 @@ namespace TumbangPreso
             // ⚠️ ONE PLACE, BOTH DIRECTIONS. The can going over and the can going back up are
             // the same state change read two ways, and the .gd picks the cue off the same
             // boolean rather than from two call sites that can drift apart.
-            GameServices.Audio?.PlayAt(value ? "reset_channel_start" : "can_knockdown",
+            //
+            // ⚠️⚠️ THE UPRIGHT BRANCH IS `reset_complete`, AND IT WAS PLAYING `reset_channel_start`.
+            // `lata.gd:276` is
+            //
+            //     AudioManager.play_at("can_knockdown" if not now_upright else "reset_complete", ...)
+            //
+            // and this is the moment the channel FINISHES, not the moment it begins: the taya has
+            // already held E for the full duration and the can is standing again. The port
+            // announced the end of the channel with its opening sound, so the payoff for the
+            // taya's longest commitment in the game was the cue that means "starting". It is also
+            // why `reset_complete` and `reset_channel_complete` both shipped as live cues with
+            // zero call sites anywhere in the port.
+            GameServices.Audio?.PlayAt(value ? "reset_complete" : "can_knockdown",
                                        transform.position);
 
             if (value) GameServices.Voice?.OnLataRestored();

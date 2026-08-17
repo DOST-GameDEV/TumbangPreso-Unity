@@ -86,6 +86,19 @@ namespace TumbangPreso.UI
             _swapPanel.alpha = 0.0f;
             _standingsPanel.alpha = 0.0f;
 
+            // ⚠️⚠️ THE CARD HAS A STING AND NOTHING WAS PLAYING IT. 🧑 on this build, about the
+            // round-end screen: *"theres also music for it and animation"*. The animation was
+            // ported (see RunTimeline); the sound was not. `round_end` ships as a live cue with
+            // a mix level and had ZERO call sites in the whole port, which is precisely the
+            // failure `AudioDirector`'s header is written around: a registered cue nobody fires.
+            // `hud.gd::_on_round_intermission_audio` is the one caller in the original.
+            //
+            // ⚠️ AND IT IS `round_end`, NOT A WIN/LOSE PAIR. The .gd is explicit about why:
+            // there is no per-round winner. A round ends, the scores persist, the taya rotates,
+            // so playing `round_win`/`round_lose` here would tell every player they had won or
+            // lost something that did not happen. Those two cues stay uncalled ON PURPOSE.
+            GameServices.Audio?.PlayAt("round_end", Vector3.zero);
+
             StopAllCoroutines();
             StartCoroutine(RunTimeline(nextRound));
         }
