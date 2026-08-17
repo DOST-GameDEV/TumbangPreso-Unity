@@ -120,7 +120,20 @@ namespace TumbangPreso.EditorTools
                 int row = i / Columns;
 
                 PlaceCell(paths[i], col, row);
-                index.AppendLine($"r{row + 1}c{col + 1}  {paths[i]}");
+
+                // ⚠️ THE INDEX SAYS WHETHER A CELL GOT ITS PALETTE, because the two failure
+                // modes look nothing alike and both look plausible: a palette cell is one FLAT
+                // colour in two bands, and a cell without one keeps Kenney's baked gradient. A
+                // reader comparing a new model against the cast cannot tell which of those they
+                // are looking at, and "why is mine flat and theirs soft" is the wrong question
+                // to be left with.
+                var shot = _charactersOnly ? PaletteFor(paths[i]) : null;
+
+                index.AppendLine($"r{row + 1}c{col + 1}  {paths[i]}"
+                                 + (_charactersOnly
+                                    ? shot == null ? "   [no palette, stock atlas colours]"
+                                                   : "   [palette]"
+                                    : string.Empty));
             }
 
             // ⚠️ A QUARTER-CELL OF EXTRA HEIGHT, BECAUSE THE CAPTION HANGS BELOW ITS CELL. The

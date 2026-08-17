@@ -99,23 +99,30 @@ PARENT = {"leg-left": "root", "leg-right": "root", "torso": "root",
 # to move and what it costs.
 #
 # Base rig, and the proportions it produces:   new:
-#   hips     0.176   legs 24% of height        0.240   legs 33%
-#   shoulder 0.288                             0.452
-#   neck     0.343   torso 23%, head 53%       0.505   torso 37%, head 30%
+#   hips     0.176   legs 24% of height        0.232   legs 32%
+#   shoulder 0.288                             0.400
+#   neck     0.343   torso 23%, head 53%       0.445   torso 30%, head 38%
 #
-# ⚠️ THE TARGET IS THE REFERENCE ART, WHICH IS ROUGHLY MINECRAFT PROPORTIONED at
-# 37 / 37 / 25. This lands at 33 / 37 / 30 rather than matching it outright, and the
-# remaining 5% of head is deliberate: the legs are the one measurement that costs
-# animation quality to change, so they are grown by 36% and no further.
+# ⚠️⚠️ 38% OF HEIGHT FOR THE HEAD IS DELIBERATE AND WAS ARRIVED AT BY OVERSHOOTING
+# FIRST. A pass at 30% put the head between this cast and a realistic one and landed
+# as neither: 🧑 seeing it on the sheet, *"WTF IS THAT HEAD"*. The problem was not the
+# number on its own, it was that the HAIR is most of this character's silhouette and a
+# small head leaves it nowhere to go, so the mop flattened into a cap and the whole
+# read went with it.
+#
+# The reference art carries a head and hair mass of roughly a third of the figure, and
+# the eleven characters standing next to this one carry 53%. 38% sits inside both, and
+# the height it buys back over 30% goes almost entirely into hair volume rather than
+# into a bigger face.
 # ---------------------------------------------------------------------------
 SKELETON = {
     "root":      (0.0,      0.0,   0.0),
-    "leg-left":  (0.08357,  0.240, -0.02875),
-    "leg-right": (-0.08357, 0.240, -0.02875),
-    "torso":     (0.0,      0.240, -0.02875),
-    "arm-left":  (0.0999,   0.452, -0.01725),
-    "arm-right": (-0.0999,  0.452, -0.01725),
-    "head":      (0.0,      0.505, -0.00236),
+    "leg-left":  (0.08357,  0.232, -0.02875),
+    "leg-right": (-0.08357, 0.232, -0.02875),
+    "torso":     (0.0,      0.232, -0.02875),
+    "arm-left":  (0.0999,   0.400, -0.01725),
+    "arm-right": (-0.0999,  0.400, -0.01725),
+    "head":      (0.0,      0.445, -0.00236),
 }
 
 
@@ -173,16 +180,40 @@ INK, WHITE, SKIN, SKIN_DARK, SKIN_LIT = 8, 12, 13, 14, 15
 #
 # Slots 9, 10 and 11 keep the stock Kenney values. Nothing here samples them, and
 # leaving them stocked means the shader has something sane to read if a future box does.
+# ⚠️⚠️ NOTHING IS PURE BLACK AND NOTHING IS FULLY SATURATED, AND BOTH ARE ABOUT THE TOON
+# PASS RATHER THAN ABOUT TASTE. 🧑 seeing the first palette beside the rest of the cast:
+# *"GIVE it the same toon vibe as well as my other shi"*.
+#
+# `Toon.shader` shades in TWO FLAT BANDS: a lit value and a shadow value lerped toward it.
+# A near-black base has nowhere to go, so both bands land on the same colour and every
+# face of every box renders identically, which is what made the first pass read as flat
+# pixel art next to eleven characters that read as toon. The blacks here are lifted to
+# around 17% luminance, which is dark enough to be black beside the skin and light enough
+# that the shadow band is visible on it.
+#
+# ⚠️ THE HAIR IS THE ONE VALUE THAT GOES BACK DOWN NEAR BLACK. Lifting every dark slot
+# to 17% luminance is right for CLOTH, which is a big surface the shadow band has to be
+# visible on, and wrong for the hair, which reads as a charcoal wig at that value against
+# a reference whose mop is flatly black. It sits at 8% instead: dark enough to read black
+# beside the skin, and still not zero, so the band has somewhere to go.
+#
+# ⚠️ THE SATURATION IS NOT PULLED DOWN TO MATCH THE RAW `.tres` VALUES, AND A PASS THAT
+# DID SO WAS WRONG. Reading the generated palettes as the finished look ignores the grade
+# on top of them: 🧑, on seeing the muted version, *"thats not how my characters look in
+# the godot game btw theyre a bit orange and saturated"*. `ColourGrade` runs an ACES curve
+# with a warm tint over the composited frame, so what is authored at a mid-tone arrives
+# warmer and more saturated than the hex suggests, and authoring for the hex bakes the
+# grade in twice from the wrong end. These are the reference's own colours.
 PALETTE = {
     JACKET:      "7a34c4",   # the open jacket, and the pendant that matches it
-    CLOTH:       "1a1a20",   # shirt, pants, belt
-    CLIP:        "e8306b",   # the bow
+    CLOTH:       "2b2b34",   # shirt, pants, belt
+    CLIP:        "e02a56",   # the bow, crimson rather than hot pink, off the render
     GOLD:        "f2c230",   # belt buckle
     SHOE:        "a63fd9",   # sneaker uppers
-    CHAIN:       "b8bcc4",   # necklace and hip chain
-    HAIR:        "141018",
+    CHAIN:       "9aa0ac",   # necklace and hip chain
+    HAIR:        "191520",   # ⚠️ BLACK, not charcoal. See the note below.
     JACKET_DARK: "4e1e80",   # collar and cuffs, the jacket's own shadow
-    INK:         "1b1b20",   # ⚠️ THE FACE. Must stay dark, see the module docstring.
+    INK:         "1f1c24",   # ⚠️ THE FACE. Must stay dark, see the module docstring.
     9:           "868ba1",
     10:          "4f5260",
     11:          "a0a8c9",
@@ -221,14 +252,30 @@ LEG_LEFT = [
     ("shoe-upper-left",  "leg-left", (0.014, 0.024, -0.126), (0.152, 0.056, 0.076), CLOTH),
     ("shoe-collar-left", "leg-left", (0.010, 0.056, -0.100), (0.156, 0.076, 0.080), SHOE),
     ("shoe-toe-left",    "leg-left", (0.010, 0.024, -0.132), (0.156, 0.042, -0.100), WHITE),
-    ("pant-left",        "leg-left", (0.018, 0.068, -0.072), (0.150, 0.240, 0.072), CLOTH),
+    ("shoe-swoosh-left", "leg-left", (0.150, 0.028, -0.096), (0.162, 0.052, -0.020), SHOE),
+    ("lace-upper-left",  "leg-left", (0.030, 0.040, -0.106), (0.136, 0.048, -0.094), WHITE),
+    ("lace-lower-left",  "leg-left", (0.030, 0.026, -0.112), (0.136, 0.034, -0.100), WHITE),
+    ("pant-left",        "leg-left", (0.018, 0.068, -0.072), (0.150, 0.232, 0.072), CLOTH),
+    ("pant-cuff-left",   "leg-left", (0.014, 0.068, -0.078), (0.154, 0.086, 0.078), CLOTH),
+    ("knee-left",        "leg-left", (0.026, 0.128, -0.080), (0.142, 0.164, -0.070), CLOTH),
 
     # The hip chain hangs off the belt and down the outside of the thigh, so it rides
     # the LEG bone rather than the torso: on the torso it would swing with the body
     # while the leg it lies against walked out from under it.
-    ("chain-hip-left",   "leg-left", (0.148, 0.130, -0.052), (0.168, 0.240, 0.034), CHAIN),
-    ("chain-drop-left",  "leg-left", (0.144, 0.086, -0.058), (0.164, 0.136, -0.012), CHAIN),
-    ("chain-front-left", "leg-left", (0.040, 0.146, -0.084), (0.150, 0.174, -0.070), CHAIN),
+    # ⚠️ LINKS WITH GAPS, NOT A BAR. A solid strip of silver down the thigh is a stripe,
+    # and the render's chain is only legible because you can see daylight through it. At
+    # this scale a gap of one link's width is the whole effect.
+    ("chain-link-a-left", "leg-left", (0.150, 0.210, -0.044), (0.168, 0.228, 0.000), CHAIN),
+    ("chain-link-b-left", "leg-left", (0.150, 0.180, -0.034), (0.168, 0.198, 0.012), CHAIN),
+    ("chain-link-c-left", "leg-left", (0.148, 0.150, -0.028), (0.166, 0.168, 0.018), CHAIN),
+    ("chain-link-d-left", "leg-left", (0.146, 0.120, -0.038), (0.164, 0.138, 0.006), CHAIN),
+    ("chain-link-e-left", "leg-left", (0.144, 0.090, -0.050), (0.162, 0.108, -0.008), CHAIN),
+
+    # The front drape, which is what makes it read as hanging off the belt rather than
+    # painted down the seam.
+    ("chain-drape-a-left", "leg-left", (0.116, 0.170, -0.084), (0.148, 0.188, -0.066), CHAIN),
+    ("chain-drape-b-left", "leg-left", (0.082, 0.152, -0.086), (0.114, 0.170, -0.068), CHAIN),
+    ("chain-drape-c-left", "leg-left", (0.048, 0.160, -0.084), (0.080, 0.178, -0.066), CHAIN),
 ]
 
 # Waist at 0.240, shoulders at 0.452, neck at 0.505.
@@ -245,22 +292,39 @@ TORSO = [
     # the read in the reference and the opposite of the first pass. With narrow lapels
     # the character was a black torso with purple piping, which at arena distance is a
     # black torso.
-    ("shirt",         "torso", (-0.100, 0.240, -0.082), (0.100, 0.500, 0.078), CLOTH),
-    ("jacket-left",   "torso", (0.048, 0.240, -0.100), (0.138, 0.500, 0.092), JACKET),
-    ("jacket-right",  "torso", (-0.138, 0.240, -0.100), (-0.048, 0.500, 0.092), JACKET),
-    ("jacket-back",   "torso", (-0.138, 0.240, 0.076), (0.138, 0.500, 0.092), JACKET),
-    ("jacket-collar", "torso", (-0.142, 0.474, -0.106), (0.142, 0.500, 0.098), JACKET_DARK),
-    ("lapel-left",    "torso", (0.032, 0.420, -0.108), (0.056, 0.500, -0.088), JACKET_DARK),
-    ("lapel-right",   "torso", (-0.056, 0.420, -0.108), (-0.032, 0.500, -0.088), JACKET_DARK),
+    ("shirt",         "torso", (-0.100, 0.232, -0.082), (0.100, 0.445, 0.078), CLOTH),
+    ("jacket-left",   "torso", (0.048, 0.232, -0.100), (0.138, 0.445, 0.092), JACKET),
+    ("jacket-right",  "torso", (-0.138, 0.232, -0.100), (-0.048, 0.445, 0.092), JACKET),
+    ("jacket-back",   "torso", (-0.138, 0.232, 0.076), (0.138, 0.445, 0.092), JACKET),
+    ("jacket-collar", "torso", (-0.142, 0.420, -0.106), (0.142, 0.445, 0.098), JACKET_DARK),
+    ("lapel-left",    "torso", (0.032, 0.372, -0.108), (0.056, 0.445, -0.088), JACKET_DARK),
+    ("lapel-right",   "torso", (-0.056, 0.372, -0.108), (-0.032, 0.445, -0.088), JACKET_DARK),
 
-    ("belt",          "torso", (-0.106, 0.240, -0.092), (0.106, 0.268, 0.086), CLOTH),
-    ("buckle",        "torso", (-0.036, 0.236, -0.108), (0.036, 0.272, -0.090), GOLD),
+    ("belt",          "torso", (-0.106, 0.232, -0.092), (0.106, 0.262, 0.086), CLOTH),
+    # ⚠️ THE BUCKLE IS A RING, NOT A SLAB. The render draws a square gold frame with the
+    # belt showing through the middle, and a solid gold rectangle at this size reads as a
+    # sticker. The centre is a CLOTH box standing proud of the gold, which is cheaper
+    # than four bars and gives the hole its own outline.
+    ("buckle",        "torso", (-0.038, 0.226, -0.108), (0.038, 0.268, -0.090), GOLD),
+    ("buckle-hole",   "torso", (-0.022, 0.236, -0.114), (0.022, 0.258, -0.098), CLOTH),
 
     # The necklace: two strands to the collarbone and a cross hanging off them.
-    ("chain-left",    "torso", (0.024, 0.436, -0.098), (0.040, 0.478, -0.080), CHAIN),
-    ("chain-right",   "torso", (-0.040, 0.436, -0.098), (-0.024, 0.478, -0.080), CHAIN),
-    ("cross-stem",    "torso", (-0.012, 0.392, -0.102), (0.012, 0.440, -0.080), JACKET),
-    ("cross-arm",     "torso", (-0.030, 0.416, -0.102), (0.030, 0.430, -0.080), JACKET),
+    ("chain-left",    "torso", (0.024, 0.386, -0.098), (0.040, 0.428, -0.080), CHAIN),
+    ("chain-right",   "torso", (-0.040, 0.386, -0.098), (-0.024, 0.428, -0.080), CHAIN),
+    ("cross-stem",    "torso", (-0.012, 0.342, -0.102), (0.012, 0.390, -0.080), JACKET),
+    ("cross-arm",     "torso", (-0.030, 0.366, -0.102), (0.030, 0.380, -0.080), JACKET),
+
+    # ⚠️ THE DETAIL PASS. 🧑 on the build before this one: *"i liek what u made actually,
+    # it looks cuter, i just want u to fix the details bcz it isnt very detailed"*. These
+    # are all RAISED, unlike the face, because that is the rule everywhere except a face:
+    # a pocket flush with a jacket is a colour change that the palette flattens away,
+    # and a pocket standing 12 mm off it gets its own ink outline for free.
+    ("pocket-left",   "torso", (0.062, 0.268, -0.112), (0.126, 0.316, -0.094), JACKET_DARK),
+    ("pocket-right",  "torso", (-0.126, 0.268, -0.112), (-0.062, 0.316, -0.094), JACKET_DARK),
+    ("hem-left",      "torso", (0.048, 0.232, -0.106), (0.142, 0.252, 0.096), JACKET_DARK),
+    ("hem-right",     "torso", (-0.142, 0.232, -0.106), (-0.048, 0.252, 0.096), JACKET_DARK),
+    ("collar-stud",   "torso", (0.030, 0.424, -0.116), (0.052, 0.440, -0.098), GOLD),
+    ("zip-pull",      "torso", (-0.008, 0.300, -0.096), (0.008, 0.330, -0.084), CHAIN),
 ]
 
 # ⚠️ THE ARM BOXES ARE CENTRED ON THE SHOULDER'S OWN Y (0.452) BECAUSE THE BIND POSE
@@ -272,10 +336,10 @@ ARM_LEFT = [
     # wrist with a small hand on the end, which is the BASE rig's silhouette and not
     # this character's: the reference stops the sleeve near the elbow and the forearm
     # and hand are one long bare block, roughly 45 percent sleeve to 55 percent skin.
-    ("sleeve-left", "arm-left", (0.0999, 0.390, -0.064), (0.226, 0.514, 0.082), JACKET),
+    ("sleeve-left", "arm-left", (0.0999, 0.338, -0.064), (0.226, 0.462, 0.082), JACKET),
     # A raised band, not a colour change on the sleeve. Same rule as the buckle: it
     # needs an edge or the outline pass has nothing to draw.
-    ("cuff-left",   "arm-left", (0.226, 0.384, -0.074), (0.248, 0.520, 0.092), JACKET_DARK),
+    ("cuff-left",   "arm-left", (0.226, 0.332, -0.074), (0.248, 0.468, 0.092), JACKET_DARK),
 
     # ⚠️⚠️ THE HAND'S HEIGHT IS NOT A STYLING CHOICE, IT IS WHERE THE TSINELAS SITS.
     # `CharacterVisual.BuildHandAnchor` puts a carried shoe at the palm centre plus
@@ -286,11 +350,16 @@ ARM_LEFT = [
     # failure the Godot side reported as *"its almost on the arm, js phasing a bit thru
     # it"*.
     #
-    #   shoulder Y 0.452, so 0.452 - 0.0617 = 0.3903 to 0.452 + 0.0617 = 0.5137.
+    #   shoulder Y 0.400, so 0.400 - 0.0617 = 0.3383 to 0.400 + 0.0617 = 0.4617.
     #
     # `PersonSwapProbe` re-derives this from the built mesh and fails on it, so the
     # arithmetic is checked rather than trusted.
-    ("hand-left",   "arm-left", (0.248, 0.3903, -0.062), (0.3836, 0.5137, 0.080), SKIN_LIT),
+    ("hand-left",   "arm-left", (0.248, 0.3383, -0.062), (0.3836, 0.4617, 0.080), SKIN_LIT),
+
+    # A band on the wrist and a stripe down the sleeve. Both raised, both on the arm's
+    # OUTER faces, so they read from the side where the jacket front never does.
+    ("wristband-left", "arm-left", (0.256, 0.3320, -0.070), (0.284, 0.4680, 0.088), CLIP),
+    ("sleeve-stripe-left", "arm-left", (0.120, 0.4620, -0.052), (0.222, 0.4700, 0.070), JACKET_DARK),
 ]
 
 # Neck at 0.505, and the rig may not exceed 0.7234.
@@ -304,51 +373,112 @@ HEAD = [
     # This matters more here than on the base rig, because a Kenney head is a smooth
     # ovoid and this one is a box: a box's front face is the only surface the eyes can
     # live on, so anything overhanging it costs the whole expression.
-    ("neck",      "head", (-0.046, 0.505, -0.040), (0.046, 0.536, 0.040), SKIN),
-    ("skull",     "head", (-0.106, 0.528, -0.106), (0.106, 0.674, 0.092), SKIN),
-    ("ear-left",  "head", (0.106, 0.578, -0.036), (0.124, 0.618, 0.018), SKIN),
-    ("ear-right", "head", (-0.124, 0.578, -0.036), (-0.106, 0.618, 0.018), SKIN),
+    ("neck",      "head", (-0.050, 0.445, -0.044), (0.050, 0.482, 0.044), SKIN),
+    ("skull",     "head", (-0.122, 0.470, -0.122), (0.122, 0.638, 0.104), SKIN),
+    ("ear-left",  "head", (0.122, 0.528, -0.036), (0.142, 0.574, 0.020), SKIN),
+    ("ear-right", "head", (-0.142, 0.528, -0.036), (-0.122, 0.574, 0.020), SKIN),
 
-    # ⚠️ BIG AND FEW. Rendered in play a head is roughly 90 px tall, so an eye 20 mm
-    # wide on a 210 mm head is two pixels and reads as dirt. These are each about a
-    # fifth of the face and there are only three of them.
-    ("eye-left",     "head", (0.026, 0.596, -0.118), (0.062, 0.626, -0.100), INK),
-    ("eye-right",    "head", (-0.062, 0.596, -0.118), (-0.026, 0.626, -0.100), INK),
-    ("brow-left",    "head", (0.022, 0.634, -0.118), (0.066, 0.648, -0.100), INK),
-    ("brow-right",   "head", (-0.066, 0.634, -0.118), (-0.022, 0.648, -0.100), INK),
-    ("mouth",        "head", (-0.024, 0.552, -0.118), (0.024, 0.564, -0.100), INK),
-    ("smile-left",   "head", (0.024, 0.564, -0.118), (0.038, 0.578, -0.100), INK),
-    ("smile-right",  "head", (-0.038, 0.564, -0.118), (-0.024, 0.578, -0.100), INK),
+    # ⚠️⚠️ THE FACE IS DRAWN ON THE FACE, NOT BUILT OUT FROM IT. 🧑 on the version that
+    # stood these 14 mm proud: *"the eyes and mouth look creepy"*, *"maybe js draw it on
+    # the face like the orig mdoel"*, and he is right about the cause as well as the
+    # symptom. Every OTHER detail on this character is a raised box on purpose, because
+    # depth is what stops a voxel model reading as a painted texture, but a face is the
+    # one place that rule inverts: eyes and a mouth standing off the head are goggles and
+    # a beak, and the three-quarter angle the game shows a character from is exactly the
+    # angle that gives them away.
+    #
+    # The Kenney rigs draw their faces as part of the head SURFACE, sampling slot 8, and
+    # that is what these are now: plates 1.4 mm proud of the skull's front plane at
+    # -0.122, deep enough that nothing z-fights and shallow enough that they have no
+    # profile of their own. The `ToonSkin` outline hull still expands them, which is what
+    # gives each feature the soft dark border the original has.
+    #
+    # ⚠️ AND NO EYEBROWS. A 20 mm feature is two pixels at play distance, and brows sat
+    # close enough to the eyes that the two merged into one dark bar.
+    ("eye-left",     "head", (0.032, 0.552, -0.1234), (0.070, 0.586, -0.1206), INK),
+    ("eye-right",    "head", (-0.070, 0.552, -0.1234), (-0.032, 0.586, -0.1206), INK),
+    ("mouth",        "head", (-0.030, 0.502, -0.1234), (0.030, 0.516, -0.1206), INK),
+    ("smile-left",   "head", (0.030, 0.516, -0.1234), (0.046, 0.532, -0.1206), INK),
+    ("smile-right",  "head", (-0.046, 0.516, -0.1234), (-0.030, 0.532, -0.1206), INK),
 
-    # The hair is a CAP. It sits on the skull and comes down the back, and the only
-    # thing it puts in front of the face is a fringe that stops above the brows. The
-    # volume that makes it read as a mop goes UPWARD, into the space between the top of
-    # the skull and the 0.7234 the rig is allowed to occupy, which is height this
-    # character has going spare and the face does not.
-    ("hair-fringe",  "head", (-0.108, 0.652, -0.116), (0.108, 0.680, -0.096), HAIR),
-    ("hair-top",     "head", (-0.110, 0.670, -0.114), (0.110, 0.702, 0.098), HAIR),
-    ("hair-crown",   "head", (-0.094, 0.700, -0.098), (0.094, 0.7184, 0.086), HAIR),
-    ("hair-peak",    "head", (-0.062, 0.714, -0.070), (0.062, 0.7234, 0.060), HAIR),
-    ("hair-curl-a",  "head", (-0.112, 0.696, -0.064), (-0.068, 0.7234, 0.010), HAIR),
-    ("hair-curl-b",  "head", (0.072, 0.694, 0.000), (0.116, 0.7184, 0.074), HAIR),
-    ("hair-curl-c",  "head", (-0.038, 0.708, 0.056), (0.022, 0.7234, 0.100), HAIR),
+    # ⚠️⚠️ THE HAIR IS THE SILHOUETTE AND IT HAS TO BE BIGGER THAN THE SKULL. Two passes
+    # got this wrong in opposite directions. The first wrapped it round the front and
+    # swallowed the face; the second corrected that by making it a thin cap, which is
+    # what 🧑 reacted to on the sheet: *"WTF IS THAT HEAD"*, with the body called good in
+    # the same breath. The reference is a curly mop with a mass of its own, wider than
+    # the head it sits on and irregular along the top, and neither a cap nor a helmet
+    # reads as one.
+    #
+    # So it is built as a MASS: a slab wider than the skull, a back that comes down to
+    # the nape, and four asymmetric lumps on top. The lumps are what make it read as
+    # curls rather than as a block, and they are asymmetric on purpose, because a
+    # symmetrical outline reads as a hat.
+    ("hair-fringe",  "head", (-0.136, 0.602, -0.148), (0.136, 0.650, -0.104), HAIR),
+    ("hair-top",     "head", (-0.158, 0.624, -0.146), (0.158, 0.690, 0.140), HAIR),
+
+    # ⚠️⚠️ THE CROWN STOPS SHORT OF 0.7234 SO THE BOW CAN BE THE TALLEST THING ON THE
+    # MODEL. With the mop filling the whole height allowance the bow had nowhere to sit
+    # but INSIDE it, and the turnaround showed it as a pink pixel on one side of a black
+    # slab. In the reference the bow rides on top of the hair and breaks its outline,
+    # which is the only reason it reads at all from across an arena.
+    #
+    # ⚠️ AND THE FOUR LUMPS END AT FOUR DIFFERENT HEIGHTS ON PURPOSE. A mop whose top
+    # edge is one flat line is a helmet; the irregularity is the curl.
+    ("hair-peak",    "head", (-0.120, 0.686, -0.104), (0.120, 0.708, 0.116), HAIR),
+    ("hair-curl-a",  "head", (0.104, 0.652, -0.076), (0.170, 0.702, 0.084), HAIR),
+    ("hair-curl-b",  "head", (-0.170, 0.652, -0.076), (-0.104, 0.712, 0.084), HAIR),
+    ("hair-curl-c",  "head", (-0.070, 0.694, 0.078), (0.050, 0.716, 0.164), HAIR),
+    ("hair-curl-d",  "head", (-0.132, 0.684, -0.132), (-0.030, 0.706, -0.034), HAIR),
 
     # ⚠️ THE SIDES STOP BEHIND THE CHEEK. Sideburns reaching the front plane are what
-    # swallowed the face in the earlier build. They are also thin: the ears sit at 0.106
-    # to 0.124 and the hair has to clear them.
-    ("hair-side-left",  "head", (0.106, 0.618, -0.084), (0.126, 0.680, 0.098), HAIR),
-    ("hair-side-right", "head", (-0.126, 0.618, -0.084), (-0.106, 0.680, 0.098), HAIR),
-    ("hair-back",    "head", (-0.110, 0.556, 0.092), (0.110, 0.702, 0.124), HAIR),
-    ("hair-nape",    "head", (-0.082, 0.528, 0.070), (0.082, 0.562, 0.116), HAIR),
+    # swallowed the face two passes ago. They also have to clear the ears, which sit at
+    # 0.122 to 0.142.
+    ("hair-side-left",  "head", (0.122, 0.566, -0.104), (0.164, 0.652, 0.146), HAIR),
+    ("hair-side-right", "head", (-0.164, 0.566, -0.104), (-0.122, 0.652, 0.146), HAIR),
+    ("hair-back",    "head", (-0.150, 0.482, 0.100), (0.150, 0.698, 0.176), HAIR),
+    ("hair-nape",    "head", (-0.108, 0.464, 0.066), (0.108, 0.508, 0.160), HAIR),
 
-    # The clip, on the character's RIGHT, which is -X here. It is deliberately the
-    # biggest single non-hair shape on the head: it is the one silhouette cue that tells
-    # this character apart from the rest of the cast at arena distance, where neither
-    # the face nor the jacket detail survives.
-    ("clip-band",       "head", (-0.130, 0.662, -0.074), (-0.106, 0.706, 0.022), CLIP),
-    ("clip-lobe-upper", "head", (-0.172, 0.694, -0.054), (-0.108, 0.7234, 0.016), CLIP),
-    ("clip-lobe-lower", "head", (-0.162, 0.640, -0.062), (-0.108, 0.684, 0.008), CLIP),
-    ("clip-knot",       "head", (-0.140, 0.680, -0.034), (-0.104, 0.708, 0.002), CLIP),
+    # ⚠️⚠️ THE CRIMSON IS DYED HAIR, NOT AN ACCESSORY, AND THREE PASSES BUILT IT AS A BOW
+    # BEFORE 🧑 SAID SO OUTRIGHT: *"by hair color i want u to put the pink or other colros
+    # in it"*. It reads as a bow in a small render because it is one solid mass on one
+    # side, but in the turnaround it runs through the mop: forward over the fringe, over
+    # the crown, and out the back. So these are HAIR BOXES that happen to be a different
+    # slot, interleaved with the black ones and sharing their silhouette, rather than a
+    # separate object sitting on top.
+    #
+    # ⚠️⚠️ THE SIDE IS ASSERTED AGAINST A BONE, NOT READ OFF A SCREENSHOT, AND IT WAS
+    # GUESSED WRONG THREE TIMES BEFORE IT WAS MEASURED. Two transforms sit between this
+    # table and the pixels, glTFast's X negation and `PersonModelYaw`, and every attempt
+    # to reason through both from a 300 px render flipped the answer again.
+    # `PersonSwapProbe.CheckDyedSide` compares the mean X of the dyed vertices against the
+    # X of the bone NAMED `arm-left`, which is the character's left arm by definition in
+    # whatever space Unity settles on. The reference puts the dye on the viewer's right of
+    # a figure facing the camera, which is that figure's LEFT. +X here is that side, and
+    # the probe fails the build if it stops being.
+    #
+    # It is the loudest thing on the model on purpose. At arena distance neither the face
+    # nor the jacket detail survives, and this is the one cue that tells this character
+    # apart from the rest of the cast.
+    # ⚠️⚠️ EVERY STREAK BOX BREAKS THE SURFACE OF THE BLACK MASS IT SITS IN. The first
+    # version of these was authored INSIDE the mop's own bounds and almost none of it was
+    # visible: hair is opaque, so a coloured box buried in it is a coloured box nobody
+    # will ever see, and all that showed was the sliver poking out of the top. Each of
+    # these now extends a few millimetres past the black box it shares space with, on the
+    # face it is meant to be seen from. The black hair's extremes, for reference:
+    # front -0.148, sides +/-0.164, back +0.176, top 0.712.
+    # ⚠️ IT IS ABOUT A THIRD OF THE MOP, NOT A HIGHLIGHT. Sized down it read as a band
+    # along the top edge and nothing else, because the only part of it above the black
+    # was the last centimetre. In the reference the dye owns one whole side of the hair
+    # from the fringe up over the crown and out the back, and that is what these are.
+    ("streak-front", "head", (0.010, 0.616, -0.164), (0.160, 0.712, -0.070), CLIP),
+    ("streak-crown", "head", (0.006, 0.684, -0.100), (0.152, 0.7234, 0.070), CLIP),
+    ("streak-side",  "head", (0.120, 0.620, -0.090), (0.186, 0.716, 0.090), CLIP),
+    ("streak-back",  "head", (0.000, 0.672, 0.040), (0.132, 0.722, 0.192), CLIP),
+
+    # ⚠️ ONE TUFT ON THE OTHER SIDE, AND ONLY ONE. The dye is meant to read as a streak
+    # through the hair rather than as a hat, and a single small piece on the opposite
+    # side is what stops the whole mass looking like it was painted in two halves.
+    ("streak-tuft",  "head", (-0.112, 0.690, -0.050), (-0.052, 0.7234, 0.046), CLIP),
 ]
 
 BODY_BOXES = (LEG_LEFT + mirrored(LEG_LEFT, "leg-left", "leg-right")
@@ -408,7 +538,52 @@ def build_mesh(boxes):
 
             idx += [first, first + 1, first + 2, first, first + 2, first + 3]
 
-    return pos, nrm, uv, joints, weights, idx
+    return pos, smooth_normals(pos, nrm), uv, joints, weights, idx
+
+
+def smooth_normals(pos, nrm):
+    """Averages the face normals meeting at each position, in place of the flat ones.
+
+    ⚠️⚠️ THIS IS WHAT MAKES THE MODEL LOOK LIKE THE REST OF THE CAST, AND THE REASON IS
+    THE OUTLINE RATHER THAN THE SHADING. `Toon.shader`'s outline is an INVERTED HULL: it
+    pushes every vertex along its normal and draws the back faces. With one hard normal
+    per face, the eight vertices at a box corner push in six different directions, the
+    hull tears open at every edge, and what should be a thick continuous border comes out
+    as a thin broken one. Kenney's rigs ship smoothed normals, which is why theirs closes
+    and the first build of this one did not.
+    🧑: *"GIVE it the same toon vibe as well as my other shi"*.
+
+    ⚠️ AND IT COSTS NOTHING THAT MATTERS. The voxel read comes from the SILHOUETTE and
+    from each face being one flat palette colour, neither of which normals touch. What
+    changes is that the two lighting bands now fall across a box instead of stopping at
+    its edges, which is the soft gradient every other character already has, and which
+    the reference art has too.
+
+    ⚠️ THE VERTICES ARE STILL SPLIT PER FACE. They have to be: a face declares its palette
+    slot through its UV, so merging them would merge their colours as well as their
+    normals. Only the normal is shared.
+    """
+    buckets = {}
+
+    for i, p in enumerate(pos):
+        key = (round(p[0], 5), round(p[1], 5), round(p[2], 5))
+        acc = buckets.setdefault(key, [0.0, 0.0, 0.0])
+
+        for a in range(3):
+            acc[a] += nrm[i][a]
+
+    out = []
+
+    for i, p in enumerate(pos):
+        key = (round(p[0], 5), round(p[1], 5), round(p[2], 5))
+        n = buckets[key]
+        length = (n[0] * n[0] + n[1] * n[1] + n[2] * n[2]) ** 0.5
+
+        # A vertex whose neighbours cancel out exactly, which happens where two boxes meet
+        # face to face, keeps its own normal rather than becoming a zero vector.
+        out.append(tuple(n[a] / length for a in range(3)) if length > 1e-6 else nrm[i])
+
+    return out
 
 
 # ---------------------------------------------------------------------------

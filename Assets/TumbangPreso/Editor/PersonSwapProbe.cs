@@ -82,6 +82,7 @@ namespace TumbangPreso.EditorTools
             ok &= CheckRoster(report);
             ok &= CheckAnimationBinds(report);
             ok &= Shoot(report);
+            ok &= ShootTurnaround(report);
 
             report.AppendLine();
             report.AppendLine(ok ? "RESULT: PASS" : "RESULT: FAIL");
@@ -197,6 +198,7 @@ namespace TumbangPreso.EditorTools
             ok &= CheckPaletteRows(report, skinned);
             ok &= CheckHandAnchor(report, skinned);
             ok &= CheckFacing(report, skinned);
+            ok &= CheckDyedSide(report, instance, skinned);
 
             Object.DestroyImmediate(instance);
             return ok;
@@ -237,6 +239,88 @@ namespace TumbangPreso.EditorTools
             report.AppendLine("FAIL: the new rig faces the opposite way to the one it replaces. "
                               + "PersonModelYaw is one constant for the whole cast, so this "
                               + "character would walk, aim and throw backwards.");
+            return false;
+        }
+
+        /// <summary>
+        /// Which side of the head the dyed hair is on, answered against a BONE.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE THE SIDE WAS GUESSED WRONG THREE TIMES FROM SCREENSHOTS.
+        /// Two transforms sit between the box table and the pixels, glTFast's X negation and
+        /// `PersonModelYaw`, and squinting at a 300 px render to decide whether the crimson is
+        /// on the viewer's left is not a measurement, it is a coin toss that feels like one.
+        ///
+        /// The bone named `arm-left` IS the character's left arm, by definition and in whatever
+        /// space Unity ends up using, so "the dye is on the character's left" is exactly "the
+        /// crimson vertices and that bone share a sign in X". The reference art puts it on the
+        /// viewer's right of a figure facing the camera, which is that figure's left.
+        /// </summary>
+        private static bool CheckDyedSide(StringBuilder report, GameObject instance,
+                                          SkinnedMeshRenderer[] skinned)
+        {
+            report.AppendLine();
+            report.AppendLine("-- dyed hair side");
+
+            Transform arm = null;
+
+            foreach (var t in instance.GetComponentsInChildren<Transform>(true))
+                if (t.name == "arm-left") arm = t;
+
+            if (arm == null)
+            {
+                report.AppendLine("FAIL: no arm-left bone to measure against.");
+                return false;
+            }
+
+            float armX = instance.transform.InverseTransformPoint(arm.position).x;
+
+            // Slot 2 is the dye. Resolved the same way the shader resolves it, on the head.
+            Mesh head = null;
+
+            foreach (var s in skinned)
+                if (s != null && s.sharedMesh != null &&
+                    (head == null || s.sharedMesh.bounds.max.y > head.bounds.max.y))
+                    head = s.sharedMesh;
+
+            if (head == null) return false;
+
+            var uv = head.uv;
+            var vertices = head.vertices;
+
+            float sum = 0.0f;
+            int n = 0;
+
+            for (int i = 0; i < vertices.Length && i < uv.Length; i++)
+            {
+                int col = Mathf.Clamp(Mathf.FloorToInt(uv[i].x * 16.0f), 0, 15);
+                int row = Mathf.Clamp(Mathf.FloorToInt(uv[i].y * 16.0f), 0, 15);
+
+                if (row > 7) continue;
+                if ((col / 2) + (row <= 3 ? 8 : 0) != 2) continue;
+
+                sum += vertices[i].x;
+                n++;
+            }
+
+            if (n == 0)
+            {
+                report.AppendLine("FAIL: no slot-2 vertices. The hair carries no dye at all.");
+                return false;
+            }
+
+            float dyeX = sum / n;
+            report.AppendLine($"dye mean x {dyeX:F4}, arm-left at x {armX:F4}, "
+                              + $"{n} dyed vertices");
+
+            if (Mathf.Sign(dyeX) == Mathf.Sign(armX))
+            {
+                report.AppendLine("the dye is on the character's LEFT, which is the viewer's "
+                                  + "right. Matches the reference.");
+                return true;
+            }
+
+            report.AppendLine("FAIL: the dye is on the character's RIGHT. The reference puts it "
+                              + "on their left. Negate the X of the streak boxes.");
             return false;
         }
 
@@ -768,6 +852,82 @@ namespace TumbangPreso.EditorTools
             return ok;
         }
 
+        /// <summary>
+        /// The same four angles the reference art was rendered from, in the bind pose.
+        ///
+        /// ⚠️⚠️ THE POSE SHEET CANNOT ANSWER "DOES IT LOOK LIKE THE REFERENCE" AND THIS CAN.
+        /// Every cell of the other sheet is the same three-quarter angle, so a back that is
+        /// missing its hair mass, a bow that is on the wrong side, or a silhouette that only
+        /// works from one direction all survive it. The reference is a turnaround, so the check
+        /// against it has to be one too, at matching angles, or the comparison is being done
+        /// from memory.
+        ///
+        /// ⚠️ AND IT IS THE BIND POSE ON PURPOSE. A clip moves the limbs between angles and
+        /// makes two cells disagree for reasons that have nothing to do with the model.
+        /// </summary>
+        private static bool ShootTurnaround(StringBuilder report)
+        {
+            report.AppendLine();
+            report.AppendLine("-- turnaround");
+
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+            BuildLight();
+
+            var palette = PaletteFor(RosterId);
+            var angles = new[] { ("front", 0.0f), ("three-quarter", 40.0f),
+                                 ("side", 90.0f), ("back", 180.0f) };
+
+            for (int i = 0; i < angles.Length; i++)
+                PlaceTurn(angles[i].Item1, angles[i].Item2, palette, i);
+
+            var camera = BuildCamera(angles.Length, 1);
+            bool ok = CaptureTo(camera, angles.Length * CellPixels, CellPixels, TurnPath);
+
+            report.AppendLine(ok ? $"wrote {TurnPath}" : "FAIL: turnaround wrote nothing.");
+
+            EditorSceneManager.CloseScene(scene, true);
+            return ok;
+        }
+
+        private static void PlaceTurn(string label, float yaw, Color[] palette, int col)
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(NewModel);
+            if (prefab == null) return;
+
+            var pivot = new GameObject($"turn-{col}");
+            pivot.transform.position = new Vector3(col, 0.0f, 0.0f);
+
+            var model = Object.Instantiate(prefab, pivot.transform);
+
+            // ⚠️ THE 180 IS `CharacterVisual.PersonModelYaw` AND THE REST IS THE TURN. Shooting
+            // the raw import photographs the back of the head and calls it the front.
+            model.transform.localRotation =
+                Quaternion.Euler(0.0f, CharacterVisual.PersonModelYaw + yaw, 0.0f);
+
+            ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth, palette);
+
+            var renderers = model.GetComponentsInChildren<Renderer>();
+            if (renderers.Length == 0) return;
+
+            var bounds = renderers[0].bounds;
+            foreach (var r in renderers) bounds.Encapsulate(r.bounds);
+
+            float extent = Mathf.Max(bounds.extents.x, Mathf.Max(bounds.extents.y, bounds.extents.z));
+            if (extent < 0.0001f) return;
+
+            model.transform.localScale = Vector3.one * (0.76f / (extent * 2.0f));
+
+            bounds = model.GetComponentsInChildren<Renderer>()[0].bounds;
+            foreach (var r in model.GetComponentsInChildren<Renderer>()) bounds.Encapsulate(r.bounds);
+
+            model.transform.position += pivot.transform.position - bounds.center;
+
+            Caption(pivot.transform, label);
+        }
+
+        private const string TurnPath = "Logs/person-swap-turnaround.png";
+
         private static Color[] PaletteFor(string id)
         {
             var book = AssetDatabase.LoadAssetAtPath<RosterBook>(
@@ -923,6 +1083,9 @@ namespace TumbangPreso.EditorTools
         }
 
         private static bool Capture(Camera camera, int width, int height)
+            => CaptureTo(camera, width, height, ShotPath);
+
+        private static bool CaptureTo(Camera camera, int width, int height, string path)
         {
             var rt = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32)
             {
@@ -942,13 +1105,13 @@ namespace TumbangPreso.EditorTools
             camera.targetTexture = null;
 
             Directory.CreateDirectory("Logs");
-            File.WriteAllBytes(ShotPath, shot.EncodeToPNG());
+            File.WriteAllBytes(path, shot.EncodeToPNG());
 
             Object.DestroyImmediate(shot);
             rt.Release();
             Object.DestroyImmediate(rt);
 
-            return File.Exists(ShotPath) && new FileInfo(ShotPath).Length > 0;
+            return File.Exists(path) && new FileInfo(path).Length > 0;
         }
     }
 }
