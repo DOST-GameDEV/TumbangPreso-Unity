@@ -39,7 +39,8 @@ namespace TumbangPreso.EditorTools
         /// look right.
         /// </summary>
         /// <remarks>
-        /// ⚠️⚠️ `ate_girlie` IS THE FIRST ROW OF THE ART REPLACEMENT AND THE ONLY ONE SO FAR.
+        /// ⚠️⚠️ `zack` IS THE FIRST ROW OF THE ART REPLACEMENT AND THE ONLY ONE SO FAR. He takes
+        /// ATE GIRLIE's index rather than being appended, so no seat moved; see `Roster.cs`.
         /// `docs/Port_Plan.md` section 8.3 says replace one at a time and keep the old mesh until
         /// the new one is measured, so `character-female-b.glb` is still in the repo and still
         /// imports; nothing points at it. Repointing an EXISTING id is what keeps this safe:
@@ -57,7 +58,7 @@ namespace TumbangPreso.EditorTools
             { "totoy",       "characters/persons/character-male-a.glb" },
             { "inday",       "characters/persons/character-female-a.glb" },
             { "kuya_boy",    "characters/persons/character-male-b.glb" },
-            { "ate_girlie",  "characters/persons/team-ate-girlie.glb" },
+            { "zack",        "characters/persons/team-zack.glb" },
             { "tikboy",      "characters/persons/character-male-c.glb" },
             { "bebang",      "characters/persons/character-female-c.glb" },
             { "jun_jun",     "characters/persons/character-male-d.glb" },
@@ -91,7 +92,7 @@ namespace TumbangPreso.EditorTools
             // out the model's UVs, because a slot number in the mesh and a colour in the palette
             // are two halves of one decision: separate them and a renumbered slot silently
             // repaints a limb with nothing failing.
-            { "ate_girlie",  "person_team-ate-girlie.tres" },
+            { "zack",        "person_team-zack.tres" },
             { "tikboy",      "person_tikboy.tres" },
             { "bebang",      "person_bebang.tres" },
             { "jun_jun",     "person_jun-jun.tres" },

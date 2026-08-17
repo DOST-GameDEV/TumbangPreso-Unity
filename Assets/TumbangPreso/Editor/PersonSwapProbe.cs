@@ -44,10 +44,10 @@ namespace TumbangPreso.EditorTools
     {
         /// <summary>The rig under test, and the one it replaces. ⚠️ BOTH, because "the new one
         /// is 0.7234 tall" means nothing without the number it has to match.</summary>
-        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-ate-girlie.glb";
+        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-zack.glb";
         private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-female-b.glb";
 
-        private const string RosterId = "ate_girlie";
+        private const string RosterId = "zack";
         private const string ReportPath = "Logs/person-swap-probe.txt";
         private const string ShotPath = "Logs/person-swap-probe.png";
 
@@ -58,7 +58,26 @@ namespace TumbangPreso.EditorTools
         /// </summary>
         private static readonly string[] Poses =
         {
-            "static", "idle", "walk", "sprint", "holding-right-shoot", "attack-kick-right", "die",
+            "static", "idle", "walk", "sprint", "holding-right-shoot", "attack-kick-right",
+            "die", "emote-yes", "emote-no", "crouch", "sit", "pick-up",
+        };
+
+        /// <summary>
+        /// Every emote the wheel can fire, and the clip chain `CharacterAnimator` resolves it
+        /// through. ⚠️ TRANSCRIBED FROM THAT FILE'S OWN TABLES, because they are the contract:
+        /// a chain resolves to the FIRST clip the rig actually has, and returns null rather than
+        /// guessing when it has none of them. A rig missing every clip in a chain does not
+        /// error, it just never plays that emote.
+        /// </summary>
+        private static readonly (string Emote, string[] Chain)[] EmoteChains =
+        {
+            ("yes", new[] { "emote-yes", "interact-right" }),
+            ("no", new[] { "emote-no", "interact-left" }),
+            ("sit", new[] { "sit", "crouch" }),
+            ("crouch", new[] { "crouch", "sit" }),
+            ("dead", new[] { "die", "crouch" }),
+            ("tpose", new[] { "static", "idle" }),
+            ("bow", new[] { "pick-up", "interact-right" }),
         };
 
         private const int CellPixels = 300;
@@ -81,6 +100,7 @@ namespace TumbangPreso.EditorTools
             ok &= CheckAsset(report);
             ok &= CheckRoster(report);
             ok &= CheckAnimationBinds(report);
+            ok &= CheckEmotes(report);
             ok &= Shoot(report);
             ok &= ShootTurnaround(report);
 
@@ -815,6 +835,85 @@ namespace TumbangPreso.EditorTools
         }
 
         // -------------------------------------------------------------------
+
+        /// <summary>
+        /// Every emote on the wheel resolves to a clip this rig has, and that clip moves it.
+        ///
+        /// ⚠️⚠️ THE EMOTE WHEEL IS THE PART OF THE ANIMATION LAYER MOST LIKELY TO BREAK QUIETLY
+        /// ON A SWAP, because it is the only one that resolves through a FALLBACK CHAIN. A
+        /// missing locomotion clip is obvious the first time somebody walks; a missing `emote-no`
+        /// silently drops to `interact-left`, and a rig with neither plays nothing at all and
+        /// logs nothing, so the wheel opens, the pick registers, the emote replicates to every
+        /// peer, and the body does not move. 🧑 asked directly: *"like can it do the emotes"*.
+        ///
+        /// ⚠️ AND THE CLIP HAS TO MOVE THE RIG, not merely exist. Same distinction
+        /// `CheckAnimationBinds` makes and for the same reason: a clip addresses transforms by
+        /// path, so one that no longer matches the hierarchy is valid, present, and inert.
+        /// </summary>
+        private static bool CheckEmotes(StringBuilder report)
+        {
+            report.AppendLine();
+            report.AppendLine("-- emotes");
+
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(NewModel);
+            if (prefab == null) return false;
+
+            var instance = Object.Instantiate(prefab);
+
+            var clips = AssetDatabase.LoadAllAssetsAtPath(NewModel)
+                                     .OfType<AnimationClip>()
+                                     .Where(c => !c.name.StartsWith("__preview"))
+                                     .ToDictionary(c => c.name, c => c);
+
+            var bones = instance.GetComponentsInChildren<Transform>(true)
+                                .Where(t => t.name is "root" or "torso" or "head"
+                                            or "arm-left" or "arm-right"
+                                            or "leg-left" or "leg-right")
+                                .ToList();
+
+            var rest = bones.Select(b => b.localRotation).ToList();
+            bool ok = true;
+
+            foreach (var (emote, chain) in EmoteChains)
+            {
+                string resolved = chain.FirstOrDefault(clips.ContainsKey);
+
+                if (resolved == null)
+                {
+                    report.AppendLine($"FAIL: '{emote}' resolves to nothing. Chain was "
+                                      + string.Join(", ", chain));
+                    ok = false;
+                    continue;
+                }
+
+                var clip = clips[resolved];
+                float most = 0.0f;
+
+                foreach (float t in new[] { clip.length * 0.34f, clip.length * 0.67f })
+                {
+                    clip.SampleAnimation(instance, t);
+
+                    for (int i = 0; i < bones.Count; i++)
+                        most = Mathf.Max(most, Quaternion.Angle(rest[i], bones[i].localRotation));
+                }
+
+                // ⚠️ `tpose` RESOLVES TO `static`, WHICH IS THE BIND POSE AND IS SUPPOSED TO BE
+                // STILL. That is the whole joke the emote is making, so it is the one exemption.
+                bool still = most <= 1.0f;
+
+                report.AppendLine($"   {emote,-7} -> {resolved,-16} {clip.length:F2}s  "
+                                  + $"max bone delta {most:F1} deg"
+                                  + (resolved != chain[0] ? "   (fallback)" : string.Empty));
+
+                if (!still || emote == "tpose") continue;
+
+                report.AppendLine($"FAIL: '{emote}' plays {resolved}, which moves nothing.");
+                ok = false;
+            }
+
+            Object.DestroyImmediate(instance);
+            return ok;
+        }
 
         /// <summary>
         /// The picture: the new rig in each pose, wearing its real palette, over the old rig in

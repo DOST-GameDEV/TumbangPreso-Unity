@@ -83,8 +83,8 @@ BASE = "Assets/TumbangPreso/Art/characters/persons/character-female-b.glb"
 # breaks that silently, and the symptom is a character rendered in flat white with no
 # error, because a missing texture is not an import failure. The `team-` prefix is
 # what marks it as ours; `character-*` are the CC0 ones.
-OUT = "Assets/TumbangPreso/Art/characters/persons/team-ate-girlie.glb"
-PALETTE_OUT = "MapSource/materials_persons/person_team-ate-girlie.tres"
+OUT = "Assets/TumbangPreso/Art/characters/persons/team-zack.glb"
+PALETTE_OUT = "MapSource/materials_persons/person_team-zack.tres"
 
 # Joint order is identical on both skins of every rig in this set, verified by
 # tools/glb_dump.py. Named here so a box declares a BONE rather than an index.
@@ -374,32 +374,13 @@ HEAD = [
     # ovoid and this one is a box: a box's front face is the only surface the eyes can
     # live on, so anything overhanging it costs the whole expression.
     ("neck",      "head", (-0.050, 0.445, -0.044), (0.050, 0.482, 0.044), SKIN),
-    ("skull",     "head", (-0.122, 0.470, -0.122), (0.122, 0.638, 0.104), SKIN),
+    # ⚠️ NO FRONT FACE. `FACE_PIXELS` below replaces it with a grid, so the features are
+    # part of the head's own surface rather than objects sitting on it.
+    ("skull",     "head", (-0.122, 0.470, -0.122), (0.122, 0.638, 0.104), SKIN, "front"),
     ("ear-left",  "head", (0.122, 0.528, -0.036), (0.142, 0.574, 0.020), SKIN),
     ("ear-right", "head", (-0.142, 0.528, -0.036), (-0.122, 0.574, 0.020), SKIN),
 
-    # ⚠️⚠️ THE FACE IS DRAWN ON THE FACE, NOT BUILT OUT FROM IT. 🧑 on the version that
-    # stood these 14 mm proud: *"the eyes and mouth look creepy"*, *"maybe js draw it on
-    # the face like the orig mdoel"*, and he is right about the cause as well as the
-    # symptom. Every OTHER detail on this character is a raised box on purpose, because
-    # depth is what stops a voxel model reading as a painted texture, but a face is the
-    # one place that rule inverts: eyes and a mouth standing off the head are goggles and
-    # a beak, and the three-quarter angle the game shows a character from is exactly the
-    # angle that gives them away.
-    #
-    # The Kenney rigs draw their faces as part of the head SURFACE, sampling slot 8, and
-    # that is what these are now: plates 1.4 mm proud of the skull's front plane at
-    # -0.122, deep enough that nothing z-fights and shallow enough that they have no
-    # profile of their own. The `ToonSkin` outline hull still expands them, which is what
-    # gives each feature the soft dark border the original has.
-    #
-    # ⚠️ AND NO EYEBROWS. A 20 mm feature is two pixels at play distance, and brows sat
-    # close enough to the eyes that the two merged into one dark bar.
-    ("eye-left",     "head", (0.032, 0.552, -0.1234), (0.070, 0.586, -0.1206), INK),
-    ("eye-right",    "head", (-0.070, 0.552, -0.1234), (-0.032, 0.586, -0.1206), INK),
-    ("mouth",        "head", (-0.030, 0.502, -0.1234), (0.030, 0.516, -0.1206), INK),
-    ("smile-left",   "head", (0.030, 0.516, -0.1234), (0.046, 0.532, -0.1206), INK),
-    ("smile-right",  "head", (-0.046, 0.516, -0.1234), (-0.030, 0.532, -0.1206), INK),
+
 
     # ⚠️⚠️ THE HAIR IS THE SILHOUETTE AND IT HAS TO BE BIGGER THAN THE SKULL. Two passes
     # got this wrong in opposite directions. The first wrapped it round the front and
@@ -481,6 +462,46 @@ HEAD = [
     ("streak-tuft",  "head", (-0.112, 0.690, -0.050), (-0.052, 0.7234, 0.046), CLIP),
 ]
 
+# ---------------------------------------------------------------------------
+# THE FACE, AS PIXELS ON THE SKULL'S OWN FRONT SURFACE.
+#
+# ⚠️⚠️ IT IS A GRID REPLACING THE SKULL'S FRONT FACE, NOT FEATURES SITTING ON IT, AND
+# THAT IS THE THIRD ATTEMPT AT THIS. Boxes standing 14 mm proud read as goggles and a
+# beak. Flattening them to 1.4 mm fixed the front and not the sides: 🧑, on the
+# turnaround, *"the side eyes look hella creepy"*. The cause is the OUTLINE. `ToonSkin`'s
+# ink pass is an inverted hull that pushes every vertex ~8 mm along its normal, so a 3 mm
+# plate becomes a dark shell 8 mm bigger than the eye in EVERY direction, including
+# sideways and forward. Head on that is a soft border and looks right; from the side it
+# is a black smear hanging off the cheek, attached to nothing.
+#
+# A feature that is PART of the head's surface has no hull of its own. The skull is
+# emitted without its front face and these quads are that face, sharing its plane
+# exactly, so the ink pass sees one closed head and draws one silhouette. This is also
+# literally what 🧑 asked for and what the Kenney rigs do: *"maybe js draw it on the face
+# like the orig mdoel"*.
+#
+# ⚠️ NO Z-FIGHTING, BECAUSE THERE IS NOTHING TO FIGHT WITH. Coplanar geometry flickers
+# when two surfaces occupy one plane; here the original surface is gone.
+#
+# ⚠️ AND NO EYEBROWS. A 20 mm feature is about two pixels at play distance, and brows sat
+# close enough to the eyes that the two merged into one dark bar.
+#
+# The grid covers the skull's front rectangle, rows written TOP DOWN. The top two rows
+# are behind the fringe and are drawn anyway, because the fringe is geometry and not a
+# promise. `.` is skin, `X` is slot 8.
+FACE_PIXELS = ("face", "head", (-0.122, 0.470), (0.122, 0.638), -0.122, [
+    "............",
+    "............",
+    "..XX....XX..",
+    "..XX....XX..",
+    "............",
+    "...X....X...",
+    "....XXXX....",
+    "............",
+])
+
+PANELS = [FACE_PIXELS]
+
 BODY_BOXES = (LEG_LEFT + mirrored(LEG_LEFT, "leg-left", "leg-right")
               + TORSO
               + ARM_LEFT + mirrored(ARM_LEFT, "arm-left", "arm-right"))
@@ -509,11 +530,18 @@ FACES = [
 ]
 
 
-def build_mesh(boxes):
-    """Boxes to flat glTF attribute arrays."""
+# Which entry of FACES a name refers to, for boxes that leave one out.
+SKIPPABLE = {"front": 0, "back": 1, "left": 3, "right": 2, "top": 4, "bottom": 5}
+
+
+def build_mesh(boxes, panels=()):
+    """Boxes and pixel panels to flat glTF attribute arrays."""
     pos, nrm, uv, joints, weights, idx = [], [], [], [], [], []
 
-    for name, bone, lo, hi, slot in boxes:
+    for entry in boxes:
+        name, bone, lo, hi, slot = entry[:5]
+        skip = SKIPPABLE[entry[5]] if len(entry) > 5 else -1
+
         if FRONT_IS_MINUS_Z:
             lo, hi = (lo[0], lo[1], -hi[2]), (hi[0], hi[1], -lo[2])
 
@@ -524,7 +552,10 @@ def build_mesh(boxes):
         j = BONE[bone]
         u, v = cell_uv(slot)
 
-        for normal, corners in FACES:
+        for face, (normal, corners) in enumerate(FACES):
+            if face == skip:
+                continue
+
             first = len(pos)
 
             for cx, cy, cz in corners:
@@ -537,6 +568,47 @@ def build_mesh(boxes):
                 weights.append((1.0, 0.0, 0.0, 0.0))
 
             idx += [first, first + 1, first + 2, first, first + 2, first + 3]
+
+    for name, bone, low, high, plane, rows in panels:
+        j = BONE[bone]
+
+        cols = len(rows[0])
+        cell_x = (high[0] - low[0]) / cols
+        cell_y = (high[1] - low[1]) / len(rows)
+        z = -plane if FRONT_IS_MINUS_Z else plane
+        normal = (0.0, 0.0, 1.0) if FRONT_IS_MINUS_Z else (0.0, 0.0, -1.0)
+
+        for r, row in enumerate(rows):
+            if len(row) != cols:
+                raise SystemExit(f"panel '{name}' row {r} is {len(row)} wide, not {cols}")
+
+            for c, mark in enumerate(row):
+                slot = INK if mark == "X" else SKIN
+                u, v = cell_uv(slot)
+
+                # Rows read top down, so row 0 is the TOP of the rectangle.
+                x0 = low[0] + cell_x * c
+                y0 = high[1] - cell_y * (r + 1)
+
+                quad = [(x0, y0), (x0, y0 + cell_y),
+                        (x0 + cell_x, y0 + cell_y), (x0 + cell_x, y0)]
+
+                # ⚠️ WOUND TO FACE THE SAME WAY THE BOX FACE IT REPLACES DID. Reversed, it
+                # is back-face culled and the head has a hole where the face should be,
+                # which reads as the model failing to import rather than as a winding bug.
+                if FRONT_IS_MINUS_Z:
+                    quad = list(reversed(quad))
+
+                first = len(pos)
+
+                for x, y in quad:
+                    pos.append((x, y, z))
+                    nrm.append(normal)
+                    uv.append((u, v))
+                    joints.append((j, 0, 0, 0))
+                    weights.append((1.0, 0.0, 0.0, 0.0))
+
+                idx += [first, first + 1, first + 2, first, first + 2, first + 3]
 
     return pos, smooth_normals(pos, nrm), uv, joints, weights, idx
 
@@ -715,7 +787,7 @@ def main():
     bind_matrices(gltf)
 
     body = build_mesh(BODY_BOXES)
-    head = build_mesh(HEAD_BOXES)
+    head = build_mesh(HEAD_BOXES, PANELS)
 
     # ⚠️ EVERY RETAINED ACCESSOR IS REPACKED INTO A FRESH BUFFER rather than the old one
     # being patched. The base carries one bufferView per accessor, so a rebuild is a
@@ -863,7 +935,8 @@ def verify(body, head):
     # ⚠️ EVERY BOX MUST BE INSIDE ITS OWN BONE'S REACH, or the limb tears when the clip
     # rotates it. A box hung off the wrong bone is the single easiest mistake to make in
     # a table this long and it is invisible until something moves.
-    for name, bone, box_lo, box_hi, slot in BODY_BOXES + HEAD_BOXES:
+    for entry in BODY_BOXES + HEAD_BOXES:
+        name, bone, box_lo, box_hi, slot = entry[:5]
         origin = SKELETON[bone][1]
         reach = max(abs(box_lo[1] - origin), abs(box_hi[1] - origin))
 

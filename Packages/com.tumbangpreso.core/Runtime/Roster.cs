@@ -95,7 +95,27 @@ namespace TumbangPreso.Core
             new RosterEntry("totoy",       "TOTOY",           5,    2,    3),
             new RosterEntry("inday",       "INDAY",           3,    4,    4),
             new RosterEntry("kuya_boy",    "KUYA BOY",        3,    5,    3),
-            new RosterEntry("ate_girlie",  "ATE GIRLIE",      4,    3,    3),
+            // ⚠️⚠️ ZACK REPLACES ATE GIRLIE IN PLACE, AT THE SAME INDEX, AND THAT IS THE ONLY
+            // SAFE WAY TO RETIRE A CHARACTER. 🧑 2026-08-17: *"remove ate girlie na"*, *"we r
+            // gonna replacing characters anyways"*. Deleting the row would shift TIKBOY and
+            // everyone after him up by one, and `character_index` crosses the wire as a bare
+            // int, so two peers on different builds would render different people in the same
+            // seat with nothing to warn either of them. Overwriting a row keeps every index
+            // exactly where it was.
+            //
+            // ⚠️ WHAT THIS DOES COST is a saved pick: anything on disk holding the id
+            // `ate_girlie` no longer resolves and falls back. That is acceptable here and only
+            // here, because the Godot build is still the shipping one and this port has no
+            // players with saved rosters yet. It will not be acceptable later.
+            //
+            // ⚠️ AND IT IS NOW DRIFT FROM THE GODOT ROSTER, deliberately. `character_roster.gd`
+            // still carries ATE GIRLIE at this index. This is the first entry where the two
+            // builds disagree by design rather than by accident, because the replacement cast
+            // is being authored here. Do not "fix" it by porting the name back.
+            //
+            // Traits are unchanged from the row he replaces. The art changed; the balance did
+            // not, and moving both at once is how you lose track of which one moved a number.
+            new RosterEntry("zack",        "ZACK",            4,    3,    3),
             new RosterEntry("tikboy",      "TIKBOY",          4,    4,    2),
             new RosterEntry("bebang",      "BEBANG",          2,    5,    5),
             new RosterEntry("jun_jun",     "JUN-JUN",         5,    1,    2),

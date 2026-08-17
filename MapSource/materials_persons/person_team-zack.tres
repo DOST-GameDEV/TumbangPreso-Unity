@@ -5,7 +5,7 @@
 [ext_resource type="Material" path="res://assets/characters/persons/materials/person_outline.tres" id="3"]
 
 [resource]
-resource_name = "person_team-ate-girlie"
+resource_name = "person_team-zack"
 shader = ExtResource("1")
 shader_parameter/source_map = ExtResource("2")
 shader_parameter/albedo_color = Color(1, 1, 1, 0)

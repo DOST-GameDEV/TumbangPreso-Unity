@@ -267,7 +267,10 @@ namespace TumbangPreso.UI
                 case "totoy": return "Raised barefoot in the eskinita. Nobody in this town has caught him twice.";
                 case "inday": return "Minds the corner stall and is afraid of absolutely nothing that walks past it.";
                 case "kuya_boy": return "Eldest of seven. He has been the taya since before he could count, and both the arm and the footwork know it.";
-                case "ate_girlie": return "Queen of patintero, slumming it at tumbang preso. The footwork came with her.";
+                // ⚠️ THE SENTENCE PAYS OUT THE METERS, which is this table's one rule. Speed 4
+                // is the loudest of his three, so the line claims quickness and nothing else:
+                // no strength boast on a 3, and no toughness boast on a 3.
+                case "zack": return "Got the streak the day the transformer on their corner blew, and kept it. First to the can, every time.";
                 case "tikboy": return "Always down to one tsinelas. Half the footwear, twice the throwing arm.";
                 case "bebang": return "Hits like a jeepney door closing, and moves about as easily. Do not tease her about it, and do not stand in front of her.";
                 case "jun_jun": return "The bunso of the street. Small, slippery, and impossible to corner. Also impossible to keep upright.";

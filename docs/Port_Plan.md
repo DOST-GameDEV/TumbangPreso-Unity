@@ -425,7 +425,7 @@ which of eight changes moved a number.
 
 ### 8.4 What the first person replacement learned
 
-`ate_girlie` is the first row of §8.3 item 3 to land, as `team-ate-girlie.glb`, built by
+`zack` is the first row of §8.3 item 3 to land, as `team-zack.glb`, built by
 `tools/build_person_voxel.py` from the CC0 `character-female-b.glb`. The old mesh is still in
 the repo and still imports; nothing points at it. Four things came out of it that the other
 eleven should not have to rediscover.

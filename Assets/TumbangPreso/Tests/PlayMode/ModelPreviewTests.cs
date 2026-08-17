@@ -294,8 +294,8 @@ namespace TumbangPreso.PlayTests
 
         /// <summary>The roster id whose art has been replaced, and the mesh it must now be
         /// wearing. See `docs/Port_Plan.md` section 8.4.</summary>
-        private const string ReplacedId = "ate_girlie";
-        private const string ReplacedMesh = "team-ate-girlie";
+        private const string ReplacedId = "zack";
+        private const string ReplacedMesh = "team-zack";
 
         /// <summary>The bone furthest down the rig, so the sample is a limb rather than the
         /// root the clip may deliberately leave still.</summary>
