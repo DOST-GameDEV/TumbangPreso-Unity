@@ -384,10 +384,36 @@ HEAD = [
     # This matters more here than on the base rig, because a Kenney head is a smooth
     # ovoid and this one is a box: a box's front face is the only surface the eyes can
     # live on, so anything overhanging it costs the whole expression.
-    ("neck",      "head", (-0.050, 0.445, -0.044), (0.050, 0.482, 0.044), SKIN),
-    # ⚠️ NO FRONT FACE. `FACE_PIXELS` below replaces it with a grid, so the features are
-    # part of the head's own surface rather than objects sitting on it.
-    ("skull",     "head", (-0.122, 0.470, -0.122), (0.122, 0.638, 0.104), SKIN, "front"),
+    # ⚠️⚠️ THE NECK IS SHORT AND WIDE, AND THE THIN VERSION WAS VISIBLE. 🧑 2026-08-18, on
+    # the family pass: *"look his neck"*. The first family pass held the neck out of the
+    # head's XZ growth on the grounds that a Kenney character has essentially no neck —
+    # true, but the conclusion was backwards. Holding it at its authored half-width while
+    # the skull grew by 1.37 left a 50 mm post carrying a 335 mm head, and the band of it
+    # between the jacket collar and the jaw was 34 mm of bare stalk. The cast does not have
+    # a NARROW neck, it has NO neck: the head sits straight on the shoulders.
+    #
+    # So it grows with the head like everything else up here, and the skull below now comes
+    # down to meet the collar, which is what actually hides it.
+    ("neck",      "head", (-0.062, 0.445, -0.052), (0.062, 0.478, 0.052), SKIN),
+
+    # ⚠️⚠️ IT REACHES DOWN TO THE COLLAR, AND IT KEEPS ITS FRONT WALL. Two changes, both
+    # from the same report.
+    #
+    # The lower bound was 0.470, which remaps to 0.377 against a torso that stops at 0.343:
+    # a 34 mm gap with only the neck in it. 0.450 remaps to 0.350 and the jaw sits on the
+    # jacket, which is how every other person in this cast is put together.
+    #
+    # ⚠️ AND THE `"front"` SKIP IS GONE, WHICH IS THE WHOLE OF *"his shharpness of face and
+    # features, the other models are rounded"*. `bevel_for` refuses to chamfer any box that
+    # drops a face — an octagonal hole cannot hold a rectangular panel — so the skull was
+    # the ONE box on this character that stayed a perfect cube while everything around it
+    # got its corners cut. The largest, most-looked-at mass on the model was the only hard
+    # one, which is exactly the read he is describing.
+    #
+    # `FACE_PIXELS` no longer needs the hole: it draws only its INK cells, a hair in front
+    # of the skull's own surface (see `PANEL_PROUD`), so there is nothing to z-fight with
+    # and nothing to fill.
+    ("skull",     "head", (-0.122, 0.450, -0.122), (0.122, 0.638, 0.104), SKIN),
     ("ear-left",  "head", (0.122, 0.528, -0.036), (0.142, 0.574, 0.020), SKIN),
     ("ear-right", "head", (-0.142, 0.528, -0.036), (-0.122, 0.574, 0.020), SKIN),
 
@@ -542,27 +568,88 @@ HEAD = [
 #
 # ⚠️ THE EYES ARE UNCHANGED. Two cells square, four apart, is the Kenney read and it is
 # the one part of this face the turnaround got right.
-# ⚠️⚠️ THE EYES ARE 3x3, NOT 2x2, AND THAT IS THE FACE HALF OF THE FAMILY PASS. 🧑
-# 2026-08-18: *"make it so that zack looks more like the current characters ... especially
-# his face"*. Every Kenney mini wears two TALL dark ovals set wide, and they are large: on
-# the cast sheet an eye is about a fifth of the face's width. A 2x2 cell on a twelve-wide
-# grid is half that, and at arena distance it stops being an eye and becomes a speck —
-# which is most of why this character read as belonging to a different game even once his
-# palette was right. The smile keeps its upturned corners; it was never the problem.
-FACE_PIXELS = ("face", "head", (-0.122, 0.470), (0.122, 0.638), -0.122, [
-    "................",
-    "................",
-    "...XX......XX...",
-    "..XXXX....XXXX..",
-    "..XXXX....XXXX..",
-    "..XXXX....XXXX..",
-    "...XX......XX...",
-    "................",
-    "................",
-    "....X......X....",
-    ".....XXXXXX.....",
-    "................",
-])
+# ---------------------------------------------------------------------------
+# § THE FACE, RASTERISED.
+#
+# ⚠️⚠️ IT IS DRAWN BY EQUATION, NOT TYPED AS ASCII, AND THE TYPED VERSION IS WHY IT
+# LOOKED WRONG. 🧑 2026-08-18, holding it against the cast: *"the face look weird"*,
+# *"the face is not as smooth and sharp"*. Every other person in this game wears eyes
+# painted into a 512x512 atlas — smooth curves with antialiased edges — and this one wore
+# a hand-typed 16x12 grid, so its eyes were six-pixel blocks with visible stair steps and
+# its smile was two straight runs. At the size a head is actually looked at, that reads as
+# a different rendering technique on the same shelf, which is exactly what he is seeing.
+#
+# A grid fine enough to hide the steps is not typeable by hand, and a hand-typed grid is
+# also unmaintainable: moving an eye 2 mm means retyping 24 lines. So the shapes are
+# rasterised — two ellipses and an arc — at a resolution where the cell is smaller than
+# the eye can resolve.
+#
+# ⚠️ ONLY THE INK CELLS COST ANYTHING. `build_mesh` skips every non-ink cell now (see its
+# own note), so a 32x24 grid is not 768 quads, it is the ~180 that are actually features.
+# Raising the resolution is close to free; raising it was the fix.
+# ⚠️⚠️ THE GRID IS FINE AND THE FEATURES ARE SMALL, AND THE FIRST RASTERISED PASS GOT THE
+# SECOND HALF WRONG. 🧑 2026-08-18: *"the face looks hella creepy its still tooo sharp and
+# blocky"*, *"look at the otehres eyes, they look cute and soft"*.
+#
+# Measured off `Logs/cast-sheet.png` rather than judged: on a Kenney head roughly 120 px
+# across, an eye is about 18 px wide and 14 px tall — 15% of the face's width and 14% of
+# its height — and the two centres sit about 42% of the width apart. The first pass drew
+# them 22% wide and FORTY per cent tall. Two big tall black ovals on a chibi face is not a
+# stylistic miss, it is an unsettling one, and "creepy" is the correct word for it.
+#
+# ⚠️ EVERY NUMBER BELOW IS A FRACTION OF THE FACE, not a cell count. Cell counts have to be
+# re-derived by hand the moment the grid resolution changes, and the resolution changes
+# whenever the steps become visible again.
+FACE_COLS, FACE_ROWS = 64, 48
+
+EYE_HALF_W = 0.075          # 15% of the face wide
+EYE_HALF_H = 0.070          # 14% of the face tall
+EYE_SPLIT = 0.21            # each centre this far from the midline: 42% apart
+EYE_Y = 0.42                # down from the top of the panel
+
+MOUTH_CX, MOUTH_CY = 0.5, 0.40
+MOUTH_R = 0.30
+MOUTH_W = 0.030
+MOUTH_TOP = 0.62            # nothing above this, so the ring becomes a mouth
+
+
+def _face_rows():
+    """Two eyes and a smile, rasterised into the panel grid."""
+    grid = [["."] * FACE_COLS for _ in range(FACE_ROWS)]
+
+    def ellipse(cx, cy, rx, ry):
+        for r in range(FACE_ROWS):
+            for c in range(FACE_COLS):
+                dx = ((c + 0.5) / FACE_COLS - cx) / rx
+                dy = ((r + 0.5) / FACE_ROWS - cy) / ry
+
+                if dx * dx + dy * dy <= 1.0:
+                    grid[r][c] = "X"
+
+    # ⚠️ SLIGHTLY WIDER THAN TALL, WHICH IS WHAT READS AS SOFT. Taller-than-wide is a
+    # stare; the cast's eyes are close to round with the width just winning.
+    ellipse(0.5 - EYE_SPLIT, EYE_Y, EYE_HALF_W, EYE_HALF_H)
+    ellipse(0.5 + EYE_SPLIT, EYE_Y, EYE_HALF_W, EYE_HALF_H)
+
+    # ⚠️ THE SMILE IS AN ARC OF A CIRCLE CENTRED BETWEEN THE EYES, not two straight runs
+    # meeting at a corner. Only the part below `MOUTH_TOP` is kept, which is what makes it
+    # a mouth rather than a ring around the whole face.
+    for r in range(FACE_ROWS):
+        for c in range(FACE_COLS):
+            y = (r + 0.5) / FACE_ROWS
+            if y <= MOUTH_TOP:
+                continue
+
+            dx = (c + 0.5) / FACE_COLS - MOUTH_CX
+            dy = y - MOUTH_CY
+
+            if abs(math.sqrt(dx * dx + dy * dy) - MOUTH_R) <= MOUTH_W:
+                grid[r][c] = "X"
+
+    return ["".join(row) for row in grid]
+
+
+FACE_PIXELS = ("face", "head", (-0.122, 0.470), (0.122, 0.638), -0.122, _face_rows())
 
 PANELS = [FACE_PIXELS]
 
@@ -623,7 +710,7 @@ def _remap_y(y):
     return NOW_NECK + t * (NOW_TOP - NOW_NECK)
 
 
-def _family(boxes, head, neck_names=("neck",)):
+def _family(boxes, head):
     """The remap, applied to one table.
 
     ⚠️ AN ARM IS TRANSLATED, NEVER SQUASHED. The arm boxes run along X and their Y extent
@@ -637,8 +724,8 @@ def _family(boxes, head, neck_names=("neck",)):
     shoulder and leaves the half-height alone, so the identity still holds and
     `PersonSwapProbe` still passes on it.
 
-    ⚠️ THE NECK IS EXCLUDED FROM THE HEAD'S XZ GROWTH. Widening it by 1.37 gives a column
-    thicker than the jaw above it, and the cast has essentially no neck at all.
+    ⚠️ THE NECK IS NOT EXCLUDED ANY MORE. Holding it at its authored width while the skull
+    grew 1.37x is what produced the stalk 🧑 pointed at; see the neck box's own note.
     """
     out = []
 
@@ -653,7 +740,7 @@ def _family(boxes, head, neck_names=("neck",)):
             out.append((name, bone, lo, hi, slot) + rest)
             continue
 
-        grow = HEAD_GROWTH if (head and name not in neck_names) else 1.0
+        grow = HEAD_GROWTH if head else 1.0
 
         lo = (lo[0] * grow, _remap_y(lo[1]), lo[2] * grow)
         hi = (hi[0] * grow, _remap_y(hi[1]), hi[2] * grow)
@@ -689,6 +776,11 @@ HEAD_BOXES = HEAD
 # winding below stays outward. Mirroring without the swap turns every normal inside out
 # and the character renders as a hole.
 FRONT_IS_MINUS_Z = True
+
+# How far a pixel panel stands off the surface it is drawn on, in model space. Under a
+# millimetre once `CharacterVisual.PersonScale` has multiplied it by 2.38. See the panel
+# loop in `build_mesh`.
+PANEL_PROUD = 0.0006
 
 # Unit cube corners per face, and the face normal. Every box face is flat and gets its
 # own four vertices, which is what makes the shading read as voxel facets rather than
@@ -773,7 +865,15 @@ if FRONT_IS_MINUS_Z:
 # extent, capped so the large masses do not turn into gems. The cap is what keeps the
 # skull a head.
 BEVEL_FRACTION = 0.34
-BEVEL_MAX = 0.030
+
+# ⚠️⚠️ THE CAP IS WHAT THE BIG MASSES HIT, AND 0.030 LEFT THE JAW A CORNER. 🧑 2026-08-18,
+# after the first chamfer pass: *"the face itself as well is too sharp, look chin and
+# stuff"*. Only the largest boxes reach the cap at all — the skull, the hair crown, the
+# jacket — and those are exactly the ones whose silhouette is the character. At 0.030 the
+# skull was cut by 18% of its smallest half extent, which rounds a chain link nicely and
+# barely touches a head 335 mm across. At 0.045 it is fraction-limited like everything
+# else and the chin actually turns.
+BEVEL_MAX = 0.045
 
 
 def bevel_for(lo, hi):
@@ -956,7 +1056,13 @@ def build_mesh(boxes, panels=()):
         cols = len(rows[0])
         cell_x = (high[0] - low[0]) / cols
         cell_y = (high[1] - low[1]) / len(rows)
-        z = -plane if FRONT_IS_MINUS_Z else plane
+
+        # ⚠️ A HAIR IN FRONT OF THE SKULL, NOT IN ITS PLANE. The skull keeps its front wall
+        # now (see its own note), so the features sit ON the face instead of filling a hole
+        # in it. PANEL_PROUD is under a millimetre before the 2.38 person scale, which is
+        # far too little to read as a raised object and far more than the depth buffer needs
+        # to keep the two apart.
+        z = (-plane + PANEL_PROUD) if FRONT_IS_MINUS_Z else (plane - PANEL_PROUD)
         normal = (0.0, 0.0, 1.0) if FRONT_IS_MINUS_Z else (0.0, 0.0, -1.0)
 
         for r, row in enumerate(rows):
@@ -964,8 +1070,16 @@ def build_mesh(boxes, panels=()):
                 raise SystemExit(f"panel '{name}' row {r} is {len(row)} wide, not {cols}")
 
             for c, mark in enumerate(row):
-                slot = INK if mark == "X" else SKIN
-                u, v = cell_uv(slot)
+                # ⚠️⚠️ ONLY THE INK CELLS ARE DRAWN NOW. Every other cell used to emit a
+                # SKIN quad, which was necessary while this grid was FILLING a hole in the
+                # skull — the hole had to be covered edge to edge or the head had a window
+                # in it. The skull keeps its front wall since the chamfer pass, so a skin
+                # cell here is skin drawn on skin: 90% of this panel was overdraw, and on a
+                # chamfered skull its rectangular corners would have hung off the octagon.
+                if mark != "X":
+                    continue
+
+                u, v = cell_uv(INK)
 
                 # Rows read top down, so row 0 is the TOP of the rectangle.
                 x0 = low[0] + cell_x * c

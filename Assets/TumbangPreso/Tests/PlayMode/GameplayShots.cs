@@ -93,6 +93,23 @@ namespace TumbangPreso.PlayTests
             if (runner != null) runner.Begin();
             else round.BeginRound();
 
+            // ⚠️⚠️ AND IT HAS TO BE TAKEN DOWN AGAIN AT THE END OF THIS TEST. `Begin` subscribes
+            // the runner to the `DontDestroyOnLoad` directors, and a PlayMode batch does not
+            // unload this scene before the next test builds its world in place — so the runner
+            // outlives the shot, hears the NEXT test's `RoundStarted`, and runs `ResetWorld`,
+            // which teleports every seat back to its spawn mark.
+            //
+            // Measured: `MatchRunTests.AnAttackerMovesFreelyThroughTheChalk` failed at z 8.909,
+            // which is `Confinement.AttackerSpawnRing()` to three decimals — the attacker had
+            // not been stopped by anything, it had been picked up and put back. It passes alone
+            // and fails in the batch, which is the signature of exactly this. Same leak class as
+            // the one `SliceRunner.Subscribe` documents; this end is the harness's.
+            //
+            // ⚠️ IT IS DESTROYED AT THE BOTTOM OF THIS METHOD RATHER THAN IN A `finally`,
+            // because a coroutine may not yield inside a try/catch and this body is nothing but
+            // yields. An assertion failure here leaks it again, which is acceptable: the run has
+            // already failed and the next thing anybody does is read the log.
+
             yield return new WaitForSecondsRealtime(3.0f);
 
             yield return Eyes("round-eyes");
@@ -160,6 +177,23 @@ namespace TumbangPreso.PlayTests
                 }
 
                 if (brain != null) brain.enabled = true;
+            }
+
+            // ---- THE EMOTE WHEEL ---------------------------------------------------------
+            // ⚠️ NOTHING HAS EVER PHOTOGRAPHED IT EITHER, WHICH IS HOW IT STAYED THE ONE SCREEN
+            // IN THE MATCH BUILT OUT OF THE WRONG COLOURS. 🧑 2026-08-18, with his own capture:
+            // *"the emote wheeel looks ugly tho"*. It is only reachable by HOLDING a key, so no
+            // capture pass had ever had it open.
+            var wheel = Object.FindFirstObjectByType<UI.EmoteWheel>();
+
+            if (wheel != null)
+            {
+                wheel.Open();
+
+                yield return null;
+                yield return Eyes("emote-wheel");
+
+                wheel.Close(play: false);
             }
 
             // ---- THE TAYA'S OWN SCREEN --------------------------------------------------
@@ -290,6 +324,8 @@ namespace TumbangPreso.PlayTests
                 board.gameObject.SetActive(false);
             }
 
+            // § THE TEARDOWN. See the note where `Begin` is called.
+            if (runner != null) Object.DestroyImmediate(runner);
         }
 
         /// <summary>The player's own camera, HUD and all.</summary>

@@ -86,6 +86,7 @@ complaining, not so you can check them by hand.
 | Face on the same side as the base rig | `PersonModelYaw` is one constant too. The wrong way round and the character walks, aims and throws backwards |
 | UVs in Unity atlas rows 0 to 7 | The shader falls through to the raw atlas and the character wears stock Kenney colours while every name and meter around it stays right |
 | Slot 8 stays dark | It draws the eyes and the mouth. A light slot 8 does not give a light-haired character, it gives one with no face |
+| Proportions 24 / 23 / 53 | Not probe-checked, and it is the one that got through. Nothing fails; the character simply is not one of the cast. Read the printed line from the build |
 | Every emote chain resolves | The wheel opens, the pick registers, the emote replicates to every peer, and the body does not move |
 
 ### The bits that are free
@@ -107,11 +108,19 @@ complaining, not so you can check them by hand.
 
 Stated on the build that landed, so start here rather than rediscovering it.
 
-- **Chibi proportions.** 32 / 29 / 38 legs, torso, head. *"i liek what u made
-  actually, it looks cuter"*.
+- **THE CAST'S OWN PROPORTIONS: 24 / 23 / 53 legs, torso, head.** ⚠️⚠️ THIS BULLET
+  USED TO SAY 32 / 29 / 38 AND IT WAS WRONG, on the strength of *"i liek what u made
+  actually, it looks cuter"* said about a character nobody had yet seen standing next
+  to the other eleven. The moment one did: *"he doesnt feel like he's part of the
+  family"*, *"he looks liek he's from a diff game"*. A 38% head in a line-up of 53%
+  heads is not a variation, it is a different toy. **Build to the base rig's numbers.**
 - **Stubby legs.** *"its okay to have stubby legs its part of the personality."*
-  Do not "fix" them toward realism.
-- **The boxy read.** *"the boxy and everything looks good."*
+  Do not "fix" them toward realism. This one survived the reproportion — 24% is
+  stubbier still.
+- **Chamfered, not boxy.** ⚠️ THIS BULLET USED TO SAY *"the boxy and everything looks
+  good"* AND THAT ALSO DID NOT SURVIVE CONTACT WITH THE CAST: *"can we make zack a
+  little less blocky and more like the original models? he's giving minecraft now"*.
+  Every Kenney mini has no 90-degree edge anywhere in its silhouette. See §5.9.
 - **Raised detail everywhere except the face.** Pockets, hem, buckle, laces,
   wristbands, chain links. *"i just want u to fix the details bcz it isnt very
   detailed."*
@@ -215,6 +224,12 @@ the character's left arm by definition in whatever space Unity settles on.
 
 ### 5.7 The skull kept the wall the face replaces
 
+> ⚠️ **THE MECHANISM THIS DESCRIBES IS GONE.** The skull no longer skips a face at all
+> — see §5.10 — so `SKIPPABLE` has no user on this character. It is kept because the
+> LESSON is the one that generalises: a fault on a single plane can be invisible from
+> the front and shredded from three-quarters, and the assertions cannot see either.
+
+
 The one that survived longest, because it looked like an art problem and was a table
 lookup. `SKIPPABLE` resolves its face names **after** the `FRONT_IS_MINUS_Z` flip, and
 that flip negates and swaps each box's z bounds, so the authored front wall comes out as
@@ -236,6 +251,93 @@ happened to check.
 ⚠️ **A turnaround is four angles and the game is not.** Two of the six mistakes above and
 this one were invisible from the front. If a feature lives on one plane, look at it from
 off-axis before believing it.
+
+### 5.9 Every edge was a right angle, and that is the Minecraft read
+
+*"can we make zack a little less blocky and more like the original models? he's giving
+minecraft now haha"*.
+
+Correct, and not fixable with colour. This character is built from axis-aligned cuboids,
+so every edge in its outline was a hard 90; a Kenney mini has no such edge anywhere.
+`bevel_for` now chamfers every box by a fraction of its own smallest half extent, capped,
+so a chain link gets a small cut and the torso gets the cap.
+
+Two things make it worth so little geometry:
+
+- **It compounds with `smooth_normals`.** On a plain cuboid three faces meet at 90 and
+  the averaged corner normal shades as a hard crease. A chamfer inserts two intermediate
+  facets, so the same averaging produces a real gradient round the edge.
+- **It closes the outline.** The ink border is an inverted hull pushed along the normal;
+  a smoother normal field is a hull that closes instead of tearing at every corner.
+
+⚠️ **A chamfered box is 26 faces, not 6** — 6 octagons, 12 edge quads, 8 corner triangles
+— and the winding is SORTED rather than tabulated. A hand-written table for 26 faces in
+three different kinds is 26 chances to draw one polygon inside out, which renders as a
+hole in the model and not as an error.
+
+### 5.10 The face filled a hole, and the hole is why the head was sharp
+
+*"look his neck and his shharpness of face and features, the other models are rounded"*.
+
+Both halves of that had one cause each and they were adjacent.
+
+**Sharpness.** `bevel_for` refuses to chamfer any box that drops a face, because an
+octagonal hole cannot hold a rectangular panel. The skull was the only box on the
+character that dropped one — so after §5.9 it was the ONLY box left with hard corners,
+and it is the largest and most looked-at mass on the model. The chamfer pass made the
+head *relatively* sharper than it had been.
+
+The fix removes the reason for the hole. The skull keeps its front wall, `FACE_PIXELS`
+draws **only its ink cells** a fraction of a millimetre proud of that wall
+(`PANEL_PROUD`), and there is nothing to z-fight with and nothing to fill. As a bonus the
+panel got 10x cheaper: every non-ink cell used to be a skin quad drawn on skin.
+
+⚠️ **THE FEATURES ARE RASTERISED, NOT TYPED.** A hand-written ASCII grid cannot be fine
+enough to hide its own stair steps, and every other person in this game wears eyes painted
+into a 512x512 atlas — smooth curves, antialiased. A typed 16x12 grid gave six-pixel
+blocks and a smile made of two straight runs: *"the face look weird"*, *"the face is not
+as smooth and sharp"*. `_face_rows()` draws two ellipses and an ARC of a circle into a
+32x24 grid instead. Only ink cells cost geometry, so the resolution is nearly free.
+
+⚠️ **The eyes are taller than wide and set far apart, and the mouth is an arc.** Two
+straight runs meeting at a corner is not a smile; the cast's curve opens from a centre
+that sits between the eyes.
+
+⚠️ **`BEVEL_MAX` is what the head hits.** Only the largest boxes reach the cap, and those
+are the ones whose silhouette IS the character. At 0.030 the skull was cut by 18% of its
+smallest half extent — enough to round a chain link, invisible on a head 335 mm across —
+and the jaw still read as a corner: *"the face itself as well is too sharp, look chin and
+stuff"*. 0.045 leaves it fraction-limited like everything else.
+
+**Neck.** The first family pass held the neck out of the head's XZ growth, reasoning that
+the cast has essentially no neck. True, and the conclusion was backwards: holding it at
+its authored half-width while the skull grew 1.37x left a 50 mm post carrying a 335 mm
+head. The cast does not have a NARROW neck, it has NO neck — the head sits straight on
+the shoulders. The neck grows with the head now and the skull reaches down to the collar,
+which is what actually hides it.
+
+### 5.11 The proportions were signed off before anyone saw the line-up
+
+The big one, and the reason §4's first bullet is now a correction rather than a
+preference. See §4. The mechanism is worth repeating here because it is reusable:
+
+**The tables are remapped, not rewritten.** Every box carries a measurement and a reason.
+Re-authoring 86 of them by hand against new joint heights loses all of it and is wrong in
+ways only a turnaround catches. `_family` is a three-segment piecewise remap of Y — legs,
+torso, head, each onto its band — plus a uniform XZ growth for the head. Each REGION
+moves onto its family value and every relationship inside a region survives untouched.
+
+⚠️ **An arm is TRANSLATED, never squashed.** Its Y extent is thickness, not length, so
+putting it through the torso's scale gives the character thinner arms than the cast it is
+joining. Move it to the new shoulder and leave every dimension alone; the hand's height
+against `HandTopLift` then survives by construction, because the box is authored as
+shoulder ± that constant and a pure translation preserves the identity.
+
+⚠️ **`verify()` has to check the REMAPPED tables against the REMAPPED skeleton.**
+Comparing the authored table to the new joint heights measures a distance that exists in
+neither the file nor the model. It fired on `hair-fringe` for a box that had not moved
+relative to its own bone at all. Its reach bound is per bone too, because a crown box is
+legitimately 0.38 from the head joint once the head is 53% of the figure.
 
 ### 5.8 The portrait wore a border 2.38x too thick
 

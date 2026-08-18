@@ -41,6 +41,11 @@ namespace TumbangPreso.UI
         /// <summary>`emote_wheel.gd::SLICE_GAP` is 0.012 rad, which is this in degrees. Shared
         /// between neighbouring wedges rather than taken off one side. See Build.</summary>
         public const float SliceGapDegrees = 1.375f;
+
+        /// <summary>How far the amber rim stands proud of the outer wedge. Two pixels reads as
+        /// an artefact at 540 across; this is the same weight `GodotTheme.WoodBorderWidth` gives
+        /// every other card in the HUD.</summary>
+        public const float RimWidth = 5.0f;
         public const float LabelRadiusFraction = 0.62f;
         public const int LabelFontSize = 20;
         public const int CentreFontSize = 26;
@@ -172,17 +177,33 @@ namespace TumbangPreso.UI
             {
                 bool selected = i == _selection;
 
-                // ⚠️ THE RESTING WEDGE IS TRANSLUCENT INK, NOT OPAQUE WOOD. This wheel opens
-                // over a live match and the player is still steering; a solid brown disc across
-                // the middle of the screen hides the thing they are about to emote at. Ink at
-                // 0.62 reads as a scrim, matches the panel language everywhere else in the game,
-                // and leaves the amber highlight as the only saturated thing on screen, which is
-                // what makes the selection obvious at a glance.
-                _slices[i].color = selected
-                    ? UiTheme.Highlight
-                    : new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.62f);
+                // ⚠️⚠️ THE WEDGE IS WOOD, NOT INK, AND INK IS WHY THIS SCREEN DID NOT LOOK LIKE
+                // THE REST OF THE GAME. 🧑 2026-08-18, with a screenshot of it open over a
+                // match: *"the emote wheeel looks ugly tho"*, *"u could make it better"*.
+                //
+                // Every other surface a player sees in a round — the scoreboard, the timer, the
+                // YOU card, the lata card, the intermission card — is `WOOD_DEEP` behind an
+                // `AMBER` or `WOOD_EDGE` border with `CREAM` lettering. This wheel was the only
+                // one built out of `INK` at 0.62 with a flat `HIGHLIGHT` selection, so it read
+                // as a grey-blue disc from a different game dropped over a warm street. The old
+                // note argued the ink was a scrim that kept the match visible, which is a real
+                // requirement — so the wood is translucent and does the same job in the game's
+                // own colour instead of borrowing one.
+                //
+                // ⚠️ THE SELECTED WEDGE IS `WOOD_MID`, THE MENU'S OWN HOVER FACE, WITH AMBER
+                // LETTERING. That pairing is stated in `ui_theme.gd`: *"WOOD_MID — the lit face,
+                // on hover"* and *"AMBER — headings, values, hover lettering"*. A flat yellow
+                // fill was louder than the rule and still said less, because it threw away the
+                // wood the rest of the card is made of.
+                // ⚠️ NEARLY OPAQUE, AND THE TRANSLUCENT VERSION DID NOT SURVIVE BEING LOOKED
+                // AT. The old note argued for a scrim so the match stays visible under the
+                // wheel; at 0.88 over a lit street the wood washed out to a grey-brown haze and
+                // the card stopped reading as a card at all — which is the complaint, not a fix
+                // for it. Every other panel in this HUD is opaque wood, and this one is on
+                // screen for under a second while the player is holding a key and not aiming.
+                _slices[i].color = selected ? UiTheme.WoodMid : UiTheme.WoodDeep;
 
-                _labels[i].color = selected ? UiTheme.Ink : UiTheme.Cream;
+                _labels[i].color = selected ? UiTheme.Amber : UiTheme.Cream;
                 _labels[i].fontStyle = selected ? FontStyle.Bold : FontStyle.Normal;
             }
 
@@ -212,21 +233,46 @@ namespace TumbangPreso.UI
         /// </summary>
         private static Sprite _ringSprite;
         private static Sprite _discSprite;
+        private static Sprite _rimSprite;
 
-        private static Sprite Ring(bool solid)
+        /// <summary>
+        /// ⚠️⚠️ THE RIM HAS TO BE AN ANNULUS AND A DISC MADE THE WHOLE WHEEL GOLD. The first
+        /// version of the border was `Ring(solid: true)` — a filled amber circle sitting BEHIND
+        /// seven wedges that are deliberately translucent so the match stays visible through
+        /// them. Amber at full strength read straight through 0.88 of wood and every slice came
+        /// out the colour of the border. The card was the right idea and the shape was wrong.
+        ///
+        /// So `kind` picks the geometry: a disc for the hub, the hub-sized annulus for a wedge,
+        /// and a thin outer band for the rim.
+        /// </summary>
+        private enum RingKind { Disc, Wedge, Rim }
+
+        private static Sprite Ring(bool solid) => Ring(solid ? RingKind.Disc : RingKind.Wedge);
+
+        private static Sprite Ring(RingKind kind)
         {
-            if (solid && _discSprite != null) return _discSprite;
-            if (!solid && _ringSprite != null) return _ringSprite;
+            if (kind == RingKind.Disc && _discSprite != null) return _discSprite;
+            if (kind == RingKind.Wedge && _ringSprite != null) return _ringSprite;
+            if (kind == RingKind.Rim && _rimSprite != null) return _rimSprite;
+
+            bool solid = kind == RingKind.Disc;
 
             const int size = 256;
             const float edge = 1.25f;
 
             float outer = size * 0.5f - 1.0f;
-            float inner = solid ? 0.0f : outer * (RadiusInner / RadiusOuter);
+
+            // The rim's hole is everything inside the wedges, so only the band between
+            // `RadiusOuter` and `RadiusOuter + RimWidth` is painted.
+            float inner = kind == RingKind.Disc ? 0.0f
+                        : kind == RingKind.Rim
+                            ? outer * (RadiusOuter / (RadiusOuter + RimWidth))
+                            : outer * (RadiusInner / RadiusOuter);
 
             var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
             {
-                name = solid ? "WheelDisc" : "WheelRing",
+                name = kind == RingKind.Disc ? "WheelDisc"
+                     : kind == RingKind.Rim ? "WheelRim" : "WheelRing",
                 wrapMode = TextureWrapMode.Clamp,
                 filterMode = FilterMode.Bilinear,
             };
@@ -259,10 +305,22 @@ namespace TumbangPreso.UI
                                        new Vector2(0.5f, 0.5f), 100.0f, 0,
                                        SpriteMeshType.FullRect);
 
-            if (solid) _discSprite = sprite;
+            if (kind == RingKind.Disc) _discSprite = sprite;
+            else if (kind == RingKind.Rim) _rimSprite = sprite;
             else _ringSprite = sprite;
 
             return sprite;
+        }
+
+        /// <summary>The ink border every label on this wheel wears. See where it is applied.</summary>
+        private static void Ink(Text label)
+        {
+            if (label == null) return;
+
+            var outline = label.gameObject.AddComponent<Outline>();
+            outline.effectColor = UiTheme.Ink;
+            outline.effectDistance = new Vector2(2.0f, -2.0f);
+            outline.useGraphicAlpha = false;
         }
 
         private void Build()
@@ -275,6 +333,26 @@ namespace TumbangPreso.UI
             _root.SetParent(_canvas.transform, false);
             MenuKit.Place(_root, new Vector2(0.5f, 0.5f), Vector2.zero,
                 new Vector2(RadiusOuter * 2.0f, RadiusOuter * 2.0f));
+
+            // ⚠️⚠️ THE AMBER RIM, WHICH IS WHAT MAKES IT ONE OF THIS GAME'S CARDS. Every wood
+            // panel in the match HUD is a fill inside a border, and the scoreboard's is amber
+            // specifically — `hud.gd::_build_scoreboard` re-skins it that way and its own note
+            // records the report that forced it: *"ugly ui btw, not even same theme what is that
+            // white box"*. The wheel had no border at all, so it was a floating disc rather than
+            // a card, which is most of *"the emote wheeel looks ugly"*.
+            //
+            // ⚠️ IT IS DRAWN FIRST AND SLIGHTLY LARGER, so the wedges sit inside it and it reads
+            // as a rim rather than as an eighth slice.
+            var rimGo = new GameObject("Rim", typeof(RectTransform), typeof(Image));
+            rimGo.transform.SetParent(_root, false);
+
+            var rim = rimGo.GetComponent<Image>();
+            rim.sprite = Ring(RingKind.Rim);
+            rim.color = UiTheme.Amber;
+            rim.raycastTarget = false;
+
+            MenuKit.Place(rim.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
+                new Vector2((RadiusOuter + RimWidth) * 2.0f, (RadiusOuter + RimWidth) * 2.0f));
 
             int count = Emotes.Count;
             _slices = new Image[count];
@@ -339,14 +417,29 @@ namespace TumbangPreso.UI
 
             var hub = hubGo.GetComponent<Image>();
             hub.sprite = Ring(solid: true);
-            hub.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.92f);
+
+            // ⚠️ `WOOD_DARK` IS THE INSET FACE, and that is exactly what a hub is. The theme
+            // names it *"pressed, and inset display slots"*; the timer card in the HUD is built
+            // from the same token, so the middle of the wheel and the middle of the clock are
+            // the same colour rather than two different dark blues.
+            hub.color = UiTheme.WoodDark;
             hub.raycastTarget = false;
 
             MenuKit.Place(hub.rectTransform, new Vector2(0.5f, 0.5f),
                 Vector2.zero, new Vector2(RadiusInner * 2.0f, RadiusInner * 2.0f));
 
-            _centreLabel = MenuKit.Label(_root, "", CentreFontSize, UiTheme.Cream,
+            // ⚠️ AMBER, because it is a VALUE — the thing currently chosen — and the theme
+            // reserves amber for headings and values. Cream is body text and read as a caption.
+            _centreLabel = MenuKit.Label(_root, "", CentreFontSize, UiTheme.Amber,
                 new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(220, 60));
+
+            // ⚠️⚠️ EVERY WORD ON THIS WHEEL GETS AN INK OUTLINE. It is drawn over a LIT STREET,
+            // not over an opaque screen, and `RoleSwapCard`'s header states the rule this
+            // follows: *"the card dims the 3D scene behind it rather than covering it, so every
+            // line of loose text has to survive being drawn over a lit street"*. Cream on a
+            // translucent wedge over a pale road is the one combination that disappears.
+            Ink(_centreLabel);
+            foreach (var label in _labels) Ink(label);
         }
     }
 }
