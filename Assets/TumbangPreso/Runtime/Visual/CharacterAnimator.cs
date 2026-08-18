@@ -68,8 +68,15 @@ namespace TumbangPreso.Visual
             // is the honest placeholder rather than a promise the animation does not keep.
             { "crouch", new[] { "crouch", "sit" } },
 
-            // The taunt. `die` is the knockdown clip played on purpose.
-            { "dead", new[] { Die, "crouch" } },
+            // ⚠️ § THE DANCE REPLACED PLAY DEAD on 2026-08-06, on a direct request. The old
+            // `dead` entry played the knockdown clip as a taunt; it is gone from the wheel, so
+            // an id arriving from an older peer resolves to nothing and falls through to the
+            // locomotion pose rather than animating something the sender did not choose.
+            //
+            // `DanceClip.ClipName` is BUILT at bind time rather than shipped, because this rig
+            // has no dance clip and nothing retargetable exists for a seven-bone skeleton. See
+            // that file. The second entry is the fallback for a model with no rig to build on.
+            { "dance", new[] { DanceClip.ClipName, Idle } },
 
             // `static` is the rig's unanimated bind pose — arms out, feet together — which is
             // exactly the T-pose the joke is about.
@@ -97,7 +104,12 @@ namespace TumbangPreso.Visual
             { "no", true },
             { "sit", false },      // sitting down ends sitting; standing up every 2s is not sitting
             { "crouch", false },
-            { "dead", false },
+
+            // ⚠️ THE DANCE LOOPS, and it is built to. Its first and last keys are the same pose
+            // (see DanceClip's note on the seam), so a replay is continuous rather than a snap
+            // back to the downbeat. A groove that played once and froze would read as the
+            // animation having broken.
+            { "dance", true },
             { "tpose", false },
             { "bow", true },
         };
@@ -224,21 +236,47 @@ namespace TumbangPreso.Visual
                 }
             }
 
-            if (_clips.Count > 0) return;
-
-#if UNITY_EDITOR
-            // A last resort for a model dropped straight into a scene by hand, which is how a
-            // probe or a test fixture usually builds one.
-            string path = UnityEditor.AssetDatabase.GetAssetPath(
-                UnityEditor.PrefabUtility.GetCorrespondingObjectFromOriginalSource(model) ?? (Object)model);
-
-            if (!string.IsNullOrEmpty(path))
+            if (_clips.Count == 0)
             {
-                foreach (var o in UnityEditor.AssetDatabase.LoadAllAssetsAtPath(path))
-                    if (o is AnimationClip c && !c.name.StartsWith("__preview"))
-                        _clips[c.name] = c;
-            }
+#if UNITY_EDITOR
+                // A last resort for a model dropped straight into a scene by hand, which is how
+                // a probe or a test fixture usually builds one.
+                string path = UnityEditor.AssetDatabase.GetAssetPath(
+                    UnityEditor.PrefabUtility.GetCorrespondingObjectFromOriginalSource(model) ?? (Object)model);
+
+                if (!string.IsNullOrEmpty(path))
+                {
+                    foreach (var o in UnityEditor.AssetDatabase.LoadAllAssetsAtPath(path))
+                        if (o is AnimationClip c && !c.name.StartsWith("__preview"))
+                            _clips[c.name] = c;
+                }
 #endif
+            }
+
+            // ⚠️ LAST, AFTER BOTH IMPORT ROUTES HAVE HAD THEIR SAY. The count test above asks
+            // "did this rig ship any animation at all", and a clip we generated ourselves would
+            // answer yes for a model that imported nothing, silently skipping the fallback
+            // exactly where it is needed.
+            BuildGeneratedClips();
+        }
+
+        /// <summary>
+        /// Clips this project builds rather than imports. Today that is § THE DANCE, which
+        /// exists because a seven-bone rig has nothing retargetable to borrow.
+        ///
+        /// ⚠️ BUILT PER CHARACTER, NOT ONCE AND SHARED, because the curve paths contain the
+        /// instanced model's own node names and the twelve rigs do not agree on them. It is a
+        /// few kilobytes of curve per body.
+        ///
+        /// ⚠️ AND IT IS CALLED LAST, so it cannot satisfy the "did this rig ship any animation"
+        /// test that gates the editor's last-resort clip lookup. See the call site.
+        /// </summary>
+        private void BuildGeneratedClips()
+        {
+            if (_animator == null) return;
+
+            var dance = DanceClip.Build(_animator.transform);
+            if (dance != null) _clips[DanceClip.ClipName] = dance;
         }
 
         private void OnDestroy()

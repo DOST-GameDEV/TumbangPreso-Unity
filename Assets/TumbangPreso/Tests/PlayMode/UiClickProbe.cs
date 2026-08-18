@@ -135,6 +135,54 @@ namespace TumbangPreso.PlayTests
             Assert.IsEmpty(blocked, "buttons a player cannot click:\n" + string.Join("\n", blocked));
         }
 
+        /// <summary>
+        /// Scrolls <paramref name="target"/> into its ScrollRect's viewport, if it is in one.
+        ///
+        /// ⚠️ IT MOVES THE CONTENT, NOT THE TARGET. The control keeps its place in the layout;
+        /// what changes is which part of the content the viewport is showing, which is exactly
+        /// what a player's wheel does.
+        ///
+        /// ⚠️ AND IT SETTLES THE LAYOUT SYNCHRONOUSLY. `Probe` is not a coroutine and cannot
+        /// yield a frame, so the canvas is forced to rebuild here; without that the positions
+        /// read back a frame stale and the control is judged where it used to be.
+        /// </summary>
+        private static void ScrollIntoView(RectTransform target)
+        {
+            var scroll = target.GetComponentInParent<ScrollRect>();
+            if (scroll == null || scroll.content == null || scroll.viewport == null) return;
+            if (!target.IsChildOf(scroll.content)) return;
+
+            Canvas.ForceUpdateCanvases();
+
+            var content = scroll.content;
+            var viewport = scroll.viewport;
+
+            // How far the content has to move, in its own space, to put the target's centre on
+            // the viewport's centre.
+            Vector3 targetCentre = target.TransformPoint(target.rect.center);
+            Vector3 viewCentre = viewport.TransformPoint(viewport.rect.center);
+
+            Vector3 deltaWorld = viewCentre - targetCentre;
+            Vector2 local = content.parent.InverseTransformVector(deltaWorld);
+
+            var pos = content.anchoredPosition;
+            if (scroll.vertical) pos.y += local.y;
+            if (scroll.horizontal) pos.x += local.x;
+
+            // ⚠️ CLAMPED TO THE RANGE THE SCROLLBAR ACTUALLY HAS. Content shorter than the
+            // viewport cannot scroll at all, and pushing it anyway would drag a perfectly
+            // visible control OUT of view and invent a failure.
+            float slackY = Mathf.Max(0.0f, content.rect.height - viewport.rect.height);
+            float slackX = Mathf.Max(0.0f, content.rect.width - viewport.rect.width);
+
+            pos.y = Mathf.Clamp(pos.y, 0.0f, slackY);
+            pos.x = Mathf.Clamp(pos.x, -slackX, 0.0f);
+
+            content.anchoredPosition = pos;
+
+            Canvas.ForceUpdateCanvases();
+        }
+
         private static void Probe(string screen, StringBuilder report, List<string> blocked,
                                   Transform only = null)
         {
@@ -153,6 +201,25 @@ namespace TumbangPreso.PlayTests
                 var rect = button.transform as RectTransform;
                 if (rect == null) continue;
                 if (only != null && !rect.IsChildOf(only)) continue;
+
+                // ⚠️⚠️ A CONTROL INSIDE A SCROLL PANEL IS BROUGHT INTO VIEW FIRST, AND WITHOUT
+                // THIS THE PROBE CANNOT SEE PAST THE FOLD. The Settings card is taller than any
+                // viewport by design: eleven rebind rows, then MOUSE, then DISPLAY, then AUDIO.
+                // Everything below the fold is clipped by the viewport's mask, and a clipped
+                // graphic takes no raycast, so it lands in the NOTHING HIT branch below and is
+                // reported as a button a player cannot click. It is nothing of the kind: the
+                // player scrolls to it, which is what the panel's ScrollRect is for.
+                //
+                // The blind spot went unnoticed because until now every Button on that screen
+                // lived in `BindingsList`, the second child of the content and comfortably above
+                // the fold. The DISPLAY section's only controls were Toggles, which this probe
+                // does not enumerate. The first Button added down there failed instantly.
+                //
+                // ⚠️ SCROLLED, THEN JUDGED ON THE SAME TERMS AS ANYTHING ELSE. This does not
+                // excuse the control: after scrolling it must still take the raycast and still
+                // be the topmost hit. A button genuinely covered by a graphic inside the scroll
+                // panel fails exactly as it did before, which is the case the probe exists for.
+                ScrollIntoView(rect);
 
                 // The centre of the control, in screen space. An overlay canvas needs a null
                 // camera here; anything else needs its own.

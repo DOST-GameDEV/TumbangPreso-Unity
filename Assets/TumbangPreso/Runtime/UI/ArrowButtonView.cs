@@ -44,6 +44,10 @@ namespace TumbangPreso.UI
         private RectTransform _rt;
         private CanvasGroup _group;
         private Image _lit;
+        private Image _rim;
+        private Material _rimMaterial;
+
+        private static readonly int RimAlphaId = Shader.PropertyToID("_RimAlpha");
         private Vector2 _offMin, _offMax;
         private bool _captured;
 
@@ -199,12 +203,21 @@ namespace TumbangPreso.UI
 
             transform.localScale = new Vector3(_scale, _scale, 1.0f);
 
-            if (_lit != null)
+            if (_lit != null || _rimMaterial != null)
             {
-                float lit = Mathf.InverseLerp(1.0f, HoverScale, _scale);
-                var c = _lit.color;
-                c.a = Mathf.Clamp01(lit) * HoverBrightness;
-                _lit.color = c;
+                float lit = Mathf.Clamp01(Mathf.InverseLerp(1.0f, HoverScale, _scale));
+
+                if (_lit != null)
+                {
+                    var c = _lit.color;
+                    c.a = lit * HoverBrightness;
+                    _lit.color = c;
+                }
+
+                // ⚠️ THE RIM RIDES THE SAME FACTOR AS THE WASH, so the stroke and the lift
+                // arrive together. Godot drives both from one shader on one node; here they are
+                // two overlays and this is the only thing keeping them in step.
+                if (_rimMaterial != null) _rimMaterial.SetFloat(RimAlphaId, lit);
             }
 
             if (k >= 1.0f) _tweenLength = -1.0f;
@@ -258,6 +271,56 @@ namespace TumbangPreso.UI
             rt.anchorMax = Vector2.one;
             rt.offsetMin = Vector2.zero;
             rt.offsetMax = Vector2.zero;
+
+            EnsureRim(source);
+        }
+
+        /// <summary>
+        /// The hover rim: an inner stroke traced around the pennant's own silhouette, from
+        /// `button_outline.gdshader`.
+        ///
+        /// ⚠️ A SECOND OVERLAY RATHER THAN A MATERIAL ON THE ARTWORK. Replacing the artwork
+        /// Image's material would put the pennant itself behind a shader that has to compile;
+        /// as an overlay, a shader that fails to load costs the rim and nothing else. See the
+        /// shader's own note.
+        ///
+        /// ⚠️ ONE MATERIAL INSTANCE PER BUTTON, NOT THE SHARED ONE. A CanvasRenderer ignores
+        /// MaterialPropertyBlock, so per-button rim alpha has nowhere to live except a material
+        /// of its own. Four pennants is four tiny materials, built only for buttons that are
+        /// actually hovered.
+        /// </summary>
+        private void EnsureRim(Image source)
+        {
+            if (_rim != null || source == null || source.sprite == null) return;
+
+            var shader = Shader.Find("TumbangPreso/ButtonOutline");
+            if (shader == null) return;
+
+            var go = new GameObject("Rim");
+            go.transform.SetParent(source.transform, false);
+
+            _rim = go.AddComponent<Image>();
+            _rim.sprite = source.sprite;
+            _rim.type = source.type;
+            _rim.preserveAspect = source.preserveAspect;
+            _rim.raycastTarget = false;
+
+            _rimMaterial = new Material(shader) { name = "ArrowButtonRim" };
+            _rimMaterial.SetFloat(RimAlphaId, 0.0f);
+            _rim.material = _rimMaterial;
+
+            var rt = _rim.rectTransform;
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+        }
+
+        /// <summary>⚠️ THE MATERIAL IS OURS, so it has to be destroyed with the button. A
+        /// `new Material` is a leak in the editor and in a build alike.</summary>
+        private void OnDestroy()
+        {
+            if (_rimMaterial != null) Destroy(_rimMaterial);
         }
 
         public void OnPointerEnter(PointerEventData e)

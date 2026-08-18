@@ -41,6 +41,28 @@ namespace TumbangPreso
         public int OwnerSlot { get => _ownerSlot; set => _ownerSlot = value; }
 
         public SlipperState State { get; private set; } = SlipperState.Loose;
+
+        /// <summary>
+        /// The one writer of <see cref="State"/>.
+        ///
+        /// ⚠️⚠️ § THE LANDED HIGHLIGHT IS CLEARED BY LEAVING Loose, AND IT HAS TO BE DRIVEN
+        /// FROM HERE. The rim answers "where did the one you just threw end up", so it has to
+        /// go out the moment that stops being a live question. The obvious places to clear it
+        /// are the grab and the throw, and those are two of the SEVERAL paths that move a
+        /// slipper out of Loose rather than all of them: the round-start force-equip is a
+        /// third. Hung off the state itself it cannot be stranded lit on a slipper somebody is
+        /// already holding, whatever route put it in their hand.
+        ///
+        /// Turning it back ON is deliberately not symmetric and does not live here: only
+        /// <see cref="Land"/> knows whether an arrival at Loose ended a flight or was a
+        /// teleport home.
+        /// </summary>
+        private void SetState(SlipperState next)
+        {
+            State = next;
+            if (next != SlipperState.Loose) SetLandedHighlight(false);
+        }
+
         public CharacterMotor Holder { get; private set; }
 
         private Vector3 _velocity;
@@ -82,26 +104,128 @@ namespace TumbangPreso
         {
             if (_glowOn == mine) return;
             _glowOn = mine;
+            RefreshHighlight();
+        }
+
+        /// <summary>
+        /// § THE LANDED HIGHLIGHT. See <see cref="Balance.LandedRimStrength"/> for what it is
+        /// and why it is not the owner glow.
+        ///
+        /// ⚠️ TURNING IT ON IS NOT SYMMETRIC WITH TURNING IT OFF, and only this call site can
+        /// do it: only <see cref="Land"/> knows whether an arrival at Loose ended a flight or
+        /// was a teleport. Clearing it is driven from the STATE instead, in
+        /// <see cref="SetState"/>, so it cannot be stranded lit on a slipper somebody is
+        /// already holding whatever route put it in their hand.
+        /// </summary>
+        private void SetLandedHighlight(bool on)
+        {
+            if (_landedHighlightOn == on) return;
+            _landedHighlightOn = on;
+            RefreshHighlight();
+        }
+
+        /// <summary>
+        /// Whichever of the two rims wins right now, written to every renderer on this slipper.
+        /// Called whenever any input to that decision moves: the landed flag, the owner flag,
+        /// or the player's colour pick.
+        ///
+        /// ⚠️⚠️ THE LANDED HIGHLIGHT WINS, AND THE TIE IS NOT ARBITRARY. Your own slipper coming
+        /// to rest after a throw is the single most likely moment you have actually lost track
+        /// of it, which is precisely when the owner glow's "this one is yours" has the least to
+        /// add: you already know it is yours, you threw it. The glow resumes on its own the
+        /// moment the highlight clears, because both are recomputed from here.
+        ///
+        /// ⚠️⚠️ THROUGH A MaterialPropertyBlock, NEVER BY WRITING THE MATERIAL. `ToonSkin`
+        /// CACHES its materials and hands the same instance to every slipper wearing that skin,
+        /// so setting a colour on the material would light all four at once. A property block
+        /// is per-renderer, which is the granularity this feature needs. The Godot original hit
+        /// the same wall from the other side and had to duplicate the resource by hand.
+        ///
+        /// ⚠️ THE SETTING IS READ HERE RATHER THAN CACHED, so Off is honoured by every repaint
+        /// including ones triggered by something else entirely, and there is no second copy of
+        /// the player's choice to fall out of date.
+        ///
+        /// ⚠️ AND IT TINTS THE OUTLINE PASS, NOT ONLY THE RIM. This is the half that makes the
+        /// feature look like the thing that was asked for: the reference is Valorant's enemy
+        /// outline, where the silhouette is traced in the chosen colour and the body underneath
+        /// keeps its own. Godot could not do this cheaply because a tsinelas there wears a
+        /// StandardMaterial3D with no rim uniform at all, so it had to chain an inverted hull by
+        /// hand and cut the emission right down to stop the slipper being repainted solid.
+        /// `TumbangPreso/Toon` already carries BOTH the rim term and the inverted-hull outline
+        /// pass, and `MatchInstaller.BuildSlipper` already puts it on every tsinelas, so here
+        /// the correct version is the cheap one. Do not reintroduce the emission workaround.
+        /// </summary>
+        private void RefreshHighlight()
+        {
+            bool landed = _landedHighlightOn
+                          && Settings.SlipperHighlights.Enabled(
+                                 Settings.SettingsStore.Current.SlipperHighlight);
+
+            float rim;
+            Color rimColour;
+            Color outline;
+
+            if (landed)
+            {
+                rim = Balance.LandedRimStrength;
+                rimColour = Settings.SlipperHighlights.ColourOf(
+                                Settings.SettingsStore.Current.SlipperHighlight);
+                outline = rimColour;
+            }
+            else if (_glowOn)
+            {
+                rim = Balance.OwnerRimStrength;
+                rimColour = OwnerRimColour;
+                outline = Visual.ToonSkin.Ink;
+            }
+            else
+            {
+                rim = 0.0f;
+                rimColour = OwnerRimColour;
+                outline = Visual.ToonSkin.Ink;
+            }
 
             foreach (var r in GetComponentsInChildren<Renderer>())
             {
                 var block = new MaterialPropertyBlock();
                 r.GetPropertyBlock(block);
 
-                float rim = mine ? Balance.OwnerRimStrength : 0.0f;
-                block.SetFloat("_RimStrength", rim);
-
-                // Most built-in shaders have no rim term, so also lift the emission — which
-                // every standard shader does honour — or the glow is invisible on the
-                // placeholder materials and reads as "the feature was never built".
-                block.SetColor("_EmissionColor",
-                    mine ? UI.UiTheme.Highlight * Balance.OwnerRimStrength : Color.black);
+                block.SetFloat(RimStrengthId, rim);
+                block.SetColor(RimColorId, rimColour);
+                block.SetColor(OutlineColorId, outline);
 
                 r.SetPropertyBlock(block);
             }
         }
 
+        /// <summary>
+        /// `slipper.gd::OWNER_RIM_COLOR`. Gold, and deliberately NOT the UI theme's highlight:
+        /// it has to be a colour no entry in the landed palette can be confused with.
+        /// </summary>
+        private static readonly Color OwnerRimColour = new Color(1.0f, 0.86f, 0.35f, 1.0f);
+
+        private static readonly int RimStrengthId = Shader.PropertyToID("_RimStrength");
+        private static readonly int RimColorId = Shader.PropertyToID("_RimColor");
+        private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
+
         private bool _glowOn;
+        private bool _landedHighlightOn;
+
+        /// <summary>
+        /// ⚠️ THE LIVE REPAINT, and it is why the setting has an event at all. The settings
+        /// panel is reachable from the in-match pause menu, so a colour change has to reach
+        /// slippers that are already lying on the ground.
+        /// </summary>
+        private void OnEnable() => Settings.SettingsStore.SlipperHighlightChanged += RefreshHighlight;
+
+        /// <summary>
+        /// ⚠️ A SLIPPER IS DESTROYED AT EVERY ROUND RESET and the event is static, so failing to
+        /// detach here would keep every slipper the match ever built alive and write materials
+        /// onto destroyed objects. Godot hit exactly this: five
+        /// "Parameter 'material' is null" errors, one per surface, from a slipper freed a moment
+        /// earlier while an autoload signal was still connected to it.
+        /// </summary>
+        private void OnDisable() => Settings.SettingsStore.SlipperHighlightChanged -= RefreshHighlight;
 
         /// <summary>
         /// ⚠️ THE PREVIEW MUST CALL THIS SAME FUNCTION. The dotted aim arc and the real
@@ -232,7 +356,7 @@ namespace TumbangPreso
         {
             if (!CanBeGrabbedBy(who)) return false;
 
-            State = SlipperState.Held;
+            SetState(SlipperState.Held);
             Holder = who;
             who.HoldingSlipper = true;
             _velocity = Vector3.zero;
@@ -267,7 +391,7 @@ namespace TumbangPreso
         {
             if (who == null || who.IsDefender) return false;
 
-            State = SlipperState.Held;
+            SetState(SlipperState.Held);
             Holder = who;
             who.HoldingSlipper = true;
             _velocity = Vector3.zero;
@@ -278,7 +402,7 @@ namespace TumbangPreso
 
         public void HostThrow(CharacterMotor thrower, Vector3 origin, Vector3 velocity)
         {
-            State = SlipperState.InFlight;
+            SetState(SlipperState.InFlight);
             _throwerSlot = thrower != null ? thrower.PlayerSlot : -1;
 
             if (thrower != null) thrower.HoldingSlipper = false;
@@ -315,7 +439,7 @@ namespace TumbangPreso
             // clears the arena falls forever and the round quietly loses a piece of its
             // ammunition — the attacker who owns it has nothing to fetch and simply stops
             // playing. Return it to its mark instead.
-            if (transform.position.y < Balance.VoidY) { Land(); return; }
+            if (transform.position.y < Balance.VoidY) { Land(fromFlight: false); return; }
 
             var round = GameServices.Round;
 
@@ -346,9 +470,16 @@ namespace TumbangPreso
             // ⚠️ AGAINST THE GROUND UNDER IT, NOT AGAINST WORLD ZERO. See GroundY: a flight that
             // ends at an absolute height either stops in mid-air over a raised slab or carries on
             // through a lowered one, and both were reachable on the shipped maps.
-            if (transform.position.y <= GroundY(transform.position) + Balance.SlipperRestHeight
-                || _flightTime >= Balance.MaxFlightTime)
-                Land();
+            // ⚠️ THE TWO ENDINGS ARE SPLIT, AND THEY WERE ONE CONDITION. Touching the ground is
+            // a flight ENDING where the player can see it; running out of flight time is the
+            // simulation giving up on a slipper that never arrived. Only the first is a landing
+            // the thud and § THE LANDED HIGHLIGHT should fire for, which is exactly the
+            // distinction the Godot original draws by grouping the timeout with the void
+            // recovery instead.
+            if (transform.position.y <= GroundY(transform.position) + Balance.SlipperRestHeight)
+                Land(fromFlight: true);
+            else if (_flightTime >= Balance.MaxFlightTime)
+                Land(fromFlight: false);
         }
 
         /// <summary>
@@ -539,9 +670,20 @@ namespace TumbangPreso
             return float.IsNegativeInfinity(best) ? 0.0f : best;
         }
 
-        private void Land()
+        /// <param name="fromFlight">
+        /// ⚠️⚠️ TRUE ONLY WHERE A FLIGHT ACTUALLY ENDED ON THE GROUND, and it carries two
+        /// consequences rather than one: the landing thud, and § THE LANDED HIGHLIGHT. Both
+        /// want it true in exactly the same single place.
+        ///
+        /// It is a parameter rather than a line inside this function because the same function
+        /// is reached by the void recovery and by the flight timing out, and those are
+        /// teleports home rather than landings. Godot's note names the symptom from the audio
+        /// side: putting the sound in unconditionally played a triple thud at the start of
+        /// every round, when three slippers are returned to their marks on one frame.
+        /// </param>
+        private void Land(bool fromFlight)
         {
-            State = SlipperState.Loose;
+            SetState(SlipperState.Loose);
             _velocity = Vector3.zero;
 
             // ⚠️ THE TUMBLE IS CLEARED ON LANDING. `_apply_landed` sets `rotation = Vector3.ZERO`
@@ -569,7 +711,15 @@ namespace TumbangPreso
             // hit the can played another, but a throw that simply MISSED, 38 of 71 flights in
             // the baseline, landed in silence. The most common outcome was the one the game
             // said nothing about.
-            GameServices.Audio?.PlayAt("slipper_land", transform.position);
+            //
+            // ⚠️ GATED ON `fromFlight` NOW. It used to fire on every route into this function,
+            // including the round reset that teleports three slippers home on the same frame.
+            if (fromFlight) GameServices.Audio?.PlayAt("slipper_land", transform.position);
+
+            // § THE LANDED HIGHLIGHT. Written AFTER the state above, never before: SetState
+            // clears the flag on any move out of Loose, so setting it first would be undone by
+            // the very transition that brought us here.
+            SetLandedHighlight(fromFlight);
         }
     }
 }

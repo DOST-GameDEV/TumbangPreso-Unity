@@ -779,6 +779,58 @@ is wrong and must not be acted on.** `camera_rig.gd` has FOUR third-person cases
 The real earlier mistake was narrower: an *overhead follow* camera was built that
 matched none of these. Fix that framing, do not delete TPP.
 
+## 2026-08-18: the player-facing parity pass, and the stale baseline it found
+
+Audited file by file against Godot `main` @ `e353a54` (2026-08-07) rather than from this
+ledger, and the first finding was about the ledger itself.
+
+### ⚠️⚠️ THE SCOPE LINE AT THE TOP WAS MEASURED AGAINST AN OLDER TREE
+
+It records 31,314 lines across 45 scripts. Godot `main` is **32,215 across 46**, and the
+901-line difference is not spread evenly: it is concentrated in exactly the five files
+that took the last feature wave, between 2026-08-01 and 2026-08-07.
+
+| file | ledger | main | delta |
+|---|---|---|---|
+| `character_visual.gd` | 2182 | 2494 | +312 |
+| `slipper.gd` | 1630 | 1881 | +251 |
+| `settings_manager.gd` | 703 | 810 | +107 |
+| `settings_panel.gd` | 429 | 508 | +79 |
+| `hud.gd` | 1587 | 1661 | +74 |
+
+Every gap this pass converted lives in those five files, which is why none of them
+appeared as a row here. **Re-measure the baseline before trusting a MISSING/PARTIAL
+column again**, and note that neither of the other two Godot clones on the Mac is safe to
+diff against: `DOST-PRESENTATION` has its comments stripped, and the copy under
+`Documents/GitHub` predates `slipper.gd` existing at all.
+
+### Converted this pass
+
+1. **§ THE LANDED HIGHLIGHT.** A thrown tsinelas that comes to rest is outlined in a
+   colour the player picks, for the whole time it lies loose, on every peer. Plus its
+   five-row Settings picker and the live repaint that makes the control honest from the
+   in-match pause menu.
+2. **The owner glow was ported from the approach Godot REJECTED**, and is fixed here. It
+   wrote `_EmissionColor`, which `TumbangPreso/Toon` does not have, and never wrote
+   `_RimColor` at all, so it lit in the shader's default peach rather than the gold
+   `OWNER_RIM_COLOR`. See `Slipper.RefreshHighlight`.
+3. **DANCE replaced PLAY DEAD**, wheel entry and clip both. The clip is GENERATED at bind
+   time (`DanceClip.cs`) because the rig has seven bones and nothing retargetable exists
+   for it, which is the same conclusion Godot reached.
+4. **The pennant buttons' inner-stroke hover rim** (`button_outline.gdshader`).
+5. **The result card's turned-up corner** (`card_fold.gdshader`).
+
+### ⚠️ AND ONE REPORTED GAP THAT IS NOT ONE. DO NOT "FIX" IT.
+
+`character_visual.gd::_refresh_downed_tilt` (78° over 0.28 s) looks unported, and
+`CharacterVisual.cs` even carries a comment saying the downed tilt is somebody else's to
+write. **Both are correct and nothing is missing.** That function early-outs unless
+`_character.is_can`, i.e. unless the unit IS a playable can, and §12 deleted playable
+props. It is vestigial in the same way the carry-follow camera above is. The REAL topple
+is `lata.gd::DOWNED_TILT_DEG = 88.0`, which `Lata.cs` already ports through
+`Balance.DownedTiltDeg`. The two angles differ because they are two different features,
+not because one drifted.
+
 ## Autoload singletons (9)
 
 Godot autoloads are always-on globals. Unity has no equivalent; these become
@@ -793,7 +845,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `lan_beacon.gd` | 323 | `LanBeacon.cs` (238) | PARTIAL |
 | `server_query.gd` | 536 | `ServerQuery.cs` (215) | PARTIAL — browse and expiry; join codes pending |
 | `game_launch.gd` | 301 | `GameLaunch.cs` (108) | CONVERTED — map registry, pending action, seating |
-| `settings_manager.gd` | 703 | `GameSettings` + `Rebinding` (400) | CONVERTED — sliders, rebinding, applied on load |
+| `settings_manager.gd` | 810 | `GameSettings` + `Rebinding` + `SlipperHighlights` (470) | CONVERTED. Sliders, rebinding, applied on load, **§ the landed-highlight palette and its change signal** |
 | `debug_player_switcher.gd` | 420 | `DebugPlayerSwitcher.cs` (115) | PARTIAL — seat drive, cycle, readout |
 
 ## Characters and objects
@@ -804,7 +856,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `character_visual.gd` | 2182 | `CharacterVisual` + `CharacterAnimator` + `ImpactBurst` + `ToonSkin` (900) | CONVERTED — clips, flash, burst, toon pass, ink outline, palette remap, measured hand attachment, remote smoothing, **§ the stun frost's body half** |
 | `carrier.gd` | 536 | `Carrier.cs` (350) | CONVERTED 2026-08-16 — the 2.5 s wind-up on `Pressed` not `JustPressed`, its sound, the OBSERVED charge every peer can see, the aim cast from the camera, the sight-line throw origin, and the arc |
 | `character_nameplate.gd` | 165 | `CharacterNameplate.cs` (155) | CONVERTED — ring, tag, role colour, distance fade |
-| `slipper.gd` | 1630 | `Slipper.cs` (280) | PARTIAL — flight, bounce, spin, void recovery; hand attach and net sync pending |
+| `slipper.gd` | 1881 | `Slipper.cs` (400) | PARTIAL. Flight, bounce, spin, void recovery, **§ the landed highlight and the owner glow, both on the real rim and outline**; hand attach and net sync pending |
 | `lata.gd` | 534 | `Lata.cs` (175) | PARTIAL — topple, roll, hit window; skins and net sync pending |
 
 ## Systems
@@ -885,13 +937,13 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 | `ui_theme.gd` | 551 | `UiTheme` + `GodotTheme` + `StyleBoxBaker` (520) | CONVERTED — variations, StyleBox geometry and the baked nine-slices |
 | `tutorial.gd` | 462 | `TutorialContent` + `ConvertedTutorialPanel` (350) | CONVERTED 2026-08-16 — all 8 pages, plus page 1's premise strip with the four real models in live 3D |
 | `you_card.gd` | 430 | `YouCard.cs` (380) | CONVERTED 2026-08-16 — wood face with the role border, the STAMINA bar it was missing entirely, the FATIGUED read, the ready flash, the meters gated on ACTIVITY as well as role, the taya's LUNGE meter, and the .tscn's own 132/32/34/26/160/10/6 geometry |
-| `settings_panel.gd` | 429 | `SettingsPanel` + `Rebinding.cs` (330) | CONVERTED — rebinding, conflicts, reset |
-| `emote_wheel.gd` | 422 | `EmoteWheel.cs` (215) + `Emotes.cs` | CONVERTED — hold, steer, release |
+| `settings_panel.gd` | 508 | `SettingsPanel` + `Rebinding.cs` (410) | CONVERTED. Rebinding, conflicts, reset, **the landed-tsinelas colour row** |
+| `emote_wheel.gd` | 425 | `EmoteWheel.cs` (215) + `Emotes.cs` | CONVERTED. Hold, steer, release, **DANCE in place of PLAY DEAD** |
 | `character_select.gd` | 341 | `CharacterSelectScreen` (200) | CONVERTED — tabs, chalk pips, live 3D |
-| `match_result.gd` | 339 | `MatchResult.cs` (215) | PARTIAL — board and single-player rematch; peer vote pending netcode |
+| `match_result.gd` | 339 | `MatchResult.cs` (310) | PARTIAL. Board, single-player rematch, **the card's turned-up corner**; peer vote pending netcode |
 | `credits_panel.gd` | 292 | `CreditsContent.cs` + `CreditsPanel` (250) | CONVERTED — CC-BY strings verbatim |
 | `role_swap_card.gd` | 274 | `RoleSwapCard.cs` (250) | CONVERTED — intermission timeline, swap, standings |
-| `arrow_button.gd` | 262 | `ArrowButtonView.cs` (250) | CONVERTED — unfurl, hover, press, both cues |
+| `arrow_button.gd` | 262 | `ArrowButtonView.cs` (320) | CONVERTED. Unfurl, hover, press, both cues, **the inner-stroke hover rim** |
 | `offscreen_indicators.gd` | 211 | `OffscreenIndicators.cs` (175) | CONVERTED — edge arrows, wired into the HUD |
 | `map_preview.gd` | 165 | `MapPreviewSurface.cs` (330) | CONVERTED 2026-08-16 — the registry's yaw/distance/height, the spawn-point pivot, the 7°/26 s sway, the parked-not-unloaded cache with its lights killed, and the silencing |
 | `splash_screen.gd` | 107 | `SplashScreen.cs` (154) | CONVERTED |

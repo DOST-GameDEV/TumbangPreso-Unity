@@ -75,7 +75,11 @@ namespace TumbangPreso.EditorTools
             ("no", new[] { "emote-no", "interact-left" }),
             ("sit", new[] { "sit", "crouch" }),
             ("crouch", new[] { "crouch", "sit" }),
-            ("dead", new[] { "die", "crouch" }),
+            // ⚠️ § THE DANCE IS GENERATED, NOT IMPORTED, so its chain names a clip no rig ships
+            // and this probe cannot resolve it by reading the asset. `idle` is the fallback the
+            // chain ends on, which is what a rig with no skeleton to build the dance for would
+            // land on too.
+            ("dance", new[] { "generated-dance", "idle" }),
             ("tpose", new[] { "static", "idle" }),
             ("bow", new[] { "pick-up", "interact-right" }),
         };

@@ -239,7 +239,100 @@ namespace TumbangPreso.UI
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
             fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
 
+            BuildFold(go.transform);
+
             return column;
+        }
+
+        /// <summary>
+        /// The turned-up corner, from `card_fold.gdshader` and the 16x16 node
+        /// `MatchResult.tscn` anchors it to.
+        ///
+        /// ⚠️ A GENERATED SPRITE RATHER THAN A SHADER, and that is the cheaper answer to the
+        /// same picture. Godot draws it in a fragment shader because a `ColorRect` has no other
+        /// way to be a triangle; Unity can just hand an Image a 16x16 texture with the triangle
+        /// already in it. No shader to compile, no material to own, and it cannot fail to load.
+        ///
+        /// ⚠️ IT IS PARENTED OUTSIDE THE LAYOUT'S FLOW. `Card` carries a VerticalLayoutGroup,
+        /// which positions every child it controls; an Image added as a plain child would be
+        /// laid out as a row of the card and push the buttons down by 16 px. Setting the
+        /// RectTransform's anchors AFTER parenting is not enough on its own, so it is also
+        /// excluded from the layout by having no LayoutElement and being ignored: see the
+        /// `ignoreLayout` flag below.
+        /// </summary>
+        private static void BuildFold(Transform card)
+        {
+            var go = new GameObject("Fold");
+            go.transform.SetParent(card, false);
+
+            var rt = go.AddComponent<RectTransform>();
+
+            // Bottom-right corner of the card, 16x16, exactly as the .tscn anchors it.
+            rt.anchorMin = new Vector2(1.0f, 0.0f);
+            rt.anchorMax = new Vector2(1.0f, 0.0f);
+            rt.pivot = new Vector2(1.0f, 0.0f);
+            rt.anchoredPosition = Vector2.zero;
+            rt.sizeDelta = new Vector2(FoldSize, FoldSize);
+
+            var ignore = go.AddComponent<LayoutElement>();
+            ignore.ignoreLayout = true;
+
+            var img = go.AddComponent<Image>();
+            img.raycastTarget = false;
+            img.sprite = FoldSprite();
+            img.color = Color.white;
+        }
+
+        private const int FoldSize = 16;
+        private static Sprite _fold;
+
+        /// <summary>
+        /// The triangle itself: opaque below the anti-diagonal, transparent above it, in the
+        /// same near-black navy the ink outline uses.
+        ///
+        /// ⚠️ CACHED, because every result screen builds a card and the texture is identical
+        /// on all of them.
+        /// </summary>
+        private static Sprite FoldSprite()
+        {
+            if (_fold != null) return _fold;
+
+            var tex = new Texture2D(FoldSize, FoldSize, TextureFormat.RGBA32, mipChain: false)
+            {
+                name = "CardFold",
+
+                // ⚠️ CLAMP, NOT REPEAT. A bilinear tap at the edge of a repeating texture wraps
+                // to the opposite side and draws a stray line of navy along the top of the fold.
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Bilinear,
+            };
+
+            var fill = new Color(0.016f, 0.031f, 0.220f, 1.0f);
+            var clear = new Color(0.016f, 0.031f, 0.220f, 0.0f);
+
+            for (int y = 0; y < FoldSize; y++)
+            {
+                for (int x = 0; x < FoldSize; x++)
+                {
+                    // ⚠️ THE ROW INDEX IS FLIPPED AGAINST THE SHADER'S UV. Godot's UV origin is
+                    // the TOP left and `SetPixel` counts from the BOTTOM, so the .gdshader's
+                    // "lower-right triangle" is `u + v > 1` there and `x > y` here. Getting
+                    // this backwards mirrors the fold onto the wrong corner, which looks
+                    // deliberate and is the kind of thing nobody reports.
+                    float u = (x + 0.5f) / FoldSize;
+                    float v = (y + 0.5f) / FoldSize;
+
+                    tex.SetPixel(x, y, u > v ? fill : clear);
+                }
+            }
+
+            tex.Apply();
+
+            _fold = Sprite.Create(tex, new Rect(0, 0, FoldSize, FoldSize),
+                                  new Vector2(0.5f, 0.5f), pixelsPerUnit: FoldSize);
+            _fold.name = "CardFold";
+
+            return _fold;
         }
 
         private static Text CardLabel(VerticalLayoutGroup card, string name, int size,

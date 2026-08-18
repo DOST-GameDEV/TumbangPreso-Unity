@@ -65,6 +65,22 @@ namespace TumbangPreso.Settings
 
         public bool Fullscreen = true;
 
+        /// <summary>
+        /// Which colour § THE LANDED HIGHLIGHT lights a rested tsinelas in, as an index into
+        /// <see cref="SlipperHighlights.All"/>. 0 is Off.
+        ///
+        /// ⚠️⚠️ THE COLOUR IS THE ONE PART OF THE FEATURE THAT IS LOCAL, AND IT IS NEVER
+        /// REPLICATED. Two peers running Red and Yellow light the same slippers in different
+        /// colours, which is correct: this is an accessibility choice about one player's
+        /// screen, not a fact about the match. A shared colour would be worse than no setting,
+        /// because it would let one player change what everybody else sees.
+        ///
+        /// ⚠️ STORED AS AN INT for the reason <see cref="AiDifficulty"/> records: the settings
+        /// file is read back by builds whose palette may have grown a row, and an int with a
+        /// clamp survives that.
+        /// </summary>
+        public int SlipperHighlight = SlipperHighlights.Default;
+
         // -------------------------------------------------------------------
         // MATCH
         // -------------------------------------------------------------------
@@ -142,6 +158,7 @@ namespace TumbangPreso.Settings
             MusicVolume = Mathf.Clamp01(MusicVolume);
             MouseSensitivity = Mathf.Clamp(MouseSensitivity, 0.1f, 5.0f);
             AiDifficulty = Mathf.Clamp(AiDifficulty, 0, 2);
+            SlipperHighlight = Mathf.Clamp(SlipperHighlight, 0, SlipperHighlights.All.Length - 1);
 
             if (string.IsNullOrEmpty(PlayerToken)) PlayerToken = MintToken();
         }
@@ -158,6 +175,31 @@ namespace TumbangPreso.Settings
     public static class SettingsStore
     {
         private static GameSettings _current;
+
+        /// <summary>
+        /// Raised when the player picks a different landed-highlight colour or switches it off,
+        /// so every tsinelas already lying on the arena repaints NOW rather than at its next
+        /// landing.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE THE SETTINGS PANEL IS REACHABLE FROM THE IN-MATCH PAUSE
+        /// MENU. Without it the control appears to do nothing: the player changes the colour,
+        /// closes the pause menu, and every slipper on the ground is still lit the old way
+        /// until somebody throws one. "Takes effect next round" reads as the control being
+        /// broken, which is the reachable-and-does-nothing failure the Godot board's own rule
+        /// forbids.
+        ///
+        /// ⚠️ SUBSCRIBERS MUST UNSUBSCRIBE. This is a static event and a Slipper is destroyed
+        /// at every round reset, so a slipper that subscribes and never detaches keeps its
+        /// whole object graph alive and is written to after it is gone.
+        /// </summary>
+        public static event Action SlipperHighlightChanged;
+
+        /// <summary>
+        /// Announce a highlight change. Called by whatever wrote the setting, rather than from
+        /// a property setter, because the field is public and serialised by
+        /// <see cref="JsonUtility"/>, which cannot see through a property.
+        /// </summary>
+        public static void RaiseSlipperHighlightChanged() => SlipperHighlightChanged?.Invoke();
 
         public static GameSettings Current
         {
@@ -236,6 +278,11 @@ namespace TumbangPreso.Settings
             _current = snapshot;
             _current.Validate();
             _current.Apply();
+
+            // ⚠️ THE DISCARD HAS TO REPAINT TOO. Cycling the highlight colour and then pressing
+            // BACK restores the field, and without this the arena keeps showing the colour the
+            // player just rejected until something else triggers a repaint.
+            RaiseSlipperHighlightChanged();
         }
     }
 }

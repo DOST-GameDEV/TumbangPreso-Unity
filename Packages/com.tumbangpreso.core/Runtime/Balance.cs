@@ -286,6 +286,28 @@ namespace TumbangPreso.Core
         /// </summary>
         public const float OwnerRimStrength = 0.85f;
 
+        /// <summary>
+        /// The rim strength on a tsinelas that has just been thrown and come to rest.
+        ///
+        /// ⚠️⚠️ § THE LANDED HIGHLIGHT ANSWERS A DIFFERENT QUESTION FROM THE OWNER GLOW, which
+        /// is why it is tracked separately despite sharing a lever and a strength. The owner
+        /// glow is "which slipper is MINE": per-peer, a different slipper on every machine,
+        /// never sent. This is "where did the one that was just thrown END UP": the same answer
+        /// on all four machines, because it falls out of the slipper's state plus the one bit
+        /// that says the arrival at rest ended a flight rather than a teleport.
+        ///
+        /// ⚠️ IT STAYS ON FOR THE WHOLE LOOSE REST, NOT FOR A TIMED FLASH. A throw that missed
+        /// is exactly the moment its owner has lost track of the thing, and a cue that expired
+        /// after two seconds would be gone by the time they finished looking for it. It goes
+        /// out when the slipper leaves Loose, which is to say when somebody has it: when the
+        /// question is answered, rather than when a timer says it should be.
+        ///
+        /// ⚠️ AND IT LIGHTS EVERY LANDED SLIPPER, NOT ONLY YOUR OWN. Anybody may pick up
+        /// anybody's tsinelas, so "one is lying loose over there" is information for all three
+        /// attackers and for the taya. The owner glow is still what says which one is yours.
+        /// </summary>
+        public const float LandedRimStrength = 0.85f;
+
         /// <summary>Metres per second below which a downed can stops rolling. A can lying
         /// still must lie still rather than creep.</summary>
         public const float DownedRollSettle = 0.35f;

@@ -31,7 +31,11 @@ namespace TumbangPreso.Social
             new EmoteDef("no",     "NOPE",    "NOPE"),
             new EmoteDef("sit",    "SIT",     "SIT DOWN"),
             new EmoteDef("crouch", "VICTORY", "VICTORY POSE"),
-            new EmoteDef("dead",   "DEAD",    "PLAY DEAD"),
+            // ⚠️ REPLACED PLAY DEAD 2026-08-06. 🧑: *"lets remove the play dead emote and
+            // replace it with a dance emote instead"*. One short word in the wedge and one in
+            // the hole, so this is the one entry that could never cause the label overflow the
+            // wheel's geometry was resized for.
+            new EmoteDef("dance",  "DANCE",   "DANCE"),
             new EmoteDef("tpose",  "T-POSE",  "T-POSE"),
             new EmoteDef("bow",    "BOW",     "BOW"),
         };
