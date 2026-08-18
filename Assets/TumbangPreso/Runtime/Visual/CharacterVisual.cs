@@ -81,23 +81,32 @@ namespace TumbangPreso.Visual
         public const float PersonScale = 2.38f;
 
         /// <summary>
-        /// ⚠️⚠️ THE PERSON RIG WEARS ITS FACE ON -Z AND UNITY'S FORWARD IS +Z. THIS IS THE FIX,
-        /// AND `character_visual.gd:212` HAS CARRIED THE SAME CONSTANT SINCE THE ORIGINAL BUILT
-        /// IT. The port shipped without it, so every character in every match rendered with its
-        /// back to whatever it was walking towards, aiming at, or throwing at.
+        /// ⚠️⚠️ RE-MEASURED 2026-08-18 AND IT IS 0, NOT 180. `character_visual.gd:54` carries
+        /// `PERSON_MODEL_YAW_DEG = 180.0`, and this constant was transcribed from it on the
+        /// assumption that the same number holds across engines. It does not: Godot's glTF
+        /// importer and glTFast (what this project uses) do not perform the same axis
+        /// conversion on import, so "the rig wears its face on -Z" being true of the source file
+        /// does not mean it is still true of the GameObject glTFast hands back in Unity.
         ///
-        /// The .gd's own header records what that costs to diagnose: *"reported across more than
-        /// ten sessions as the attacker spawns facing backward and the AI moves and attacks in
-        /// reverse"*, with every previous attempt going looking in the yaw maths — the spawn
-        /// yaw, the marker rotations, the look-at. All of those are correct here too, which is
-        /// exactly why re-deriving them proves nothing. The fault is one layer lower: the mesh.
+        /// Reported as *"cans are floating [and] when you emote, the character turns around
+        /// instead of the original view they are facing towards"*. The cans were a separate,
+        /// unrelated bug (see CharacterNameplate.Build); the emote camera turned out to be
+        /// working exactly as designed; it opens BEHIND the body on purpose. A screenshot of
+        /// that real, in-game camera showed the FACE where the back of the head belonged, which
+        /// only happens if the model is mounted backward on the seat.
         ///
-        /// ⚠️ MEASURED, NOT INFERRED. `ModelFacingProbe` pins a seat to yaw 0 and photographs it
-        /// from both sides, which is the Unity transcription of `tools/model_facing_probe.tscn`:
-        ///     camera at +Z (Unity's "in front") -> the back of the head
-        ///     camera at -Z (Unity's "behind")   -> the face
-        /// Both PNGs are unambiguous, and the same pair is the check to repeat if this is ever
-        /// questioned. Do not set this to 0 to "test" a yaw change: measure instead.
+        /// ⚠️ MEASURED, NOT INFERRED, AND THE OLD MEASUREMENT WAS CONFOUNDED. `ModelFacingProbe`
+        /// pins a seat to yaw 0 and photographs it from both sides. Its first version picked
+        /// "the first visible bot" and never disabled that bot's AI, so `Steer()` (which
+        /// re-derives the body's rotation from the AI's own move axis every physics step) could
+        /// silently undo the yaw-0 pin in the few frames between setting it and taking the
+        /// photo. Repeating the same two shots against a single AI-disabled seat, held still,
+        /// gives the opposite reading from the one recorded here before:
+        ///     camera at +Z (this rig's own forward) -> the FACE
+        ///     camera at -Z (this rig's own back)     -> the back of the head
+        /// which is what "the model faces the way the body walks" actually requires. Do not
+        /// restore 180 without repeating this measurement with the AI disabled; that is almost
+        /// certainly how it was wrong the first time.
         ///
         /// ⚠️ IT IS APPLIED TO THE MODEL, NEVER TO THE SEAT. Rotating the seat would fix the
         /// render and break everything derived from the body basis at once: the melee reach is
@@ -108,7 +117,7 @@ namespace TumbangPreso.Visual
         /// correct side with it. The first-person arms hang off the camera rather than the
         /// skeleton and are untouched.
         /// </summary>
-        public const float PersonModelYaw = 180.0f;
+        public const float PersonModelYaw = 0.0f;
 
         [SerializeField] private Transform _modelRoot;
         [SerializeField] private float _flashTime = 0.12f;

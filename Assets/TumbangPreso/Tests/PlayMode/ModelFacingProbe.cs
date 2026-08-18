@@ -52,6 +52,11 @@ namespace TumbangPreso.PlayTests
 
             Assert.IsNotNull(who, "no visible seat to photograph");
 
+            // The AI would re-steer the body (Steer() re-derives rotation from the move axis)
+            // within the next few frames, undoing the pin below before the shot is taken.
+            var ai = who.GetComponent<AIController>();
+            if (ai != null) ai.enabled = false;
+
             // Pinned to yaw 0, so "+Z" in the file name means the world axis and nothing else.
             who.transform.rotation = Quaternion.identity;
 
@@ -62,16 +67,27 @@ namespace TumbangPreso.PlayTests
             yield return Shot(at + new Vector3(0.0f, 0.0f, 3.2f), at, "from-plus-z");
             yield return Shot(at + new Vector3(0.0f, 0.0f, -3.2f), at, "from-minus-z");
 
-            // ⚠️ THE PICTURES ARE THE MEASUREMENT; THIS IS THE GUARD THAT KEEPS THE ANSWER.
-            // The two shots above establish that the rig's face is on -Z, so the correction is
-            // half a turn and the model must end up pointing OPPOSITE the seat it hangs under.
-            // Asserting the relationship rather than the constant means a future rig with its
-            // face on the other axis fails here instead of shipping backwards again.
+            // ⚠️⚠️ THE PICTURES ARE THE MEASUREMENT, RETAKEN 2026-08-18. `PersonModelYaw = 180`
+            // was reported as "cans are floating [and] when you emote, the character turns
+            // around instead of the original view", and the emote camera opens BEHIND the body
+            // by design (see CameraRig.BeginEmoteView). A screenshot of that real camera showed
+            // the FACE, not the back of the head — the model was mounted backward.
+            //
+            // Retaking this exact photograph pair against a single pinned, AI-disabled seat
+            // (the earlier version of this probe picked "the first visible bot", whose AI could
+            // re-steer it, i.e. rotate the body, in the frames between the pin and the shot,
+            // which is why this had been misread as -Z once before) showed the OPPOSITE of what
+            // the old comment here recorded: from-plus-z is the FACE and from-minus-z is the
+            // BACK. So `Model.transform.forward` (the object's own +Z after whatever correction
+            // is applied) must be ALIGNED with the body's forward, not opposite it, and
+            // `PersonModelYaw` is 0, not 180. Asserting the relationship rather than the
+            // constant means a future rig with its face on the other axis fails here instead of
+            // shipping backwards again.
             var visual = who.GetComponentInChildren<Visual.CharacterVisual>();
             Assert.IsNotNull(visual, "the seat has no CharacterVisual");
             Assert.IsNotNull(visual.Model, "the seat has no instanced model");
 
-            Assert.Less(Vector3.Dot(visual.Model.transform.forward, who.transform.forward), -0.9f,
+            Assert.Greater(Vector3.Dot(visual.Model.transform.forward, who.transform.forward), 0.9f,
                 "The model is not turned to face the way the body walks. " +
                 $"CharacterVisual.PersonModelYaw is {Visual.CharacterVisual.PersonModelYaw}; " +
                 "see Logs/shots-facing for which way this rig's face actually points.");
