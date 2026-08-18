@@ -6,8 +6,6 @@ Context and rules for this repository. Read this before touching anything.
 
 ## 1 · Commits
 
-**Author every commit as `M4tyu633 <matthewtlabrador@gmail.com>`.**
-
 ⚠️ **NEVER add a `Co-Authored-By: Claude` trailer, or any co-author trailer at all.** This is
 sole-authored work and it is entered in a competition. The same rule holds on the Godot
 repo, where it is stated in ten places. Do not add one "just this once" and do not add one
