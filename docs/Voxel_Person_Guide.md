@@ -128,7 +128,7 @@ Stated on the build that landed, so start here rather than rediscovering it.
 
 ---
 
-## 5 · Six mistakes, in the order they were made
+## 5 · Nine mistakes, in the order they were made
 
 Every one of these passed the assertions it was checked against at the time.
 
@@ -339,6 +339,158 @@ neither the file nor the model. It fired on `hair-fringe` for a box that had not
 relative to its own bone at all. Its reach bound is per bone too, because a crown box is
 legitimately 0.38 from the head joint once the head is 53% of the figure.
 
+### 5.12 One selection bug took the jaw, and the wrong thing got blamed for it
+
+*"the jaw is gone and the face is so buggy now, i just asked it to change the face to make
+it a bit edgy or nonchhalant then it broke"*.
+
+The expression change moved the donor's own mouth triangles in Y, which is right. It picked
+them with a **height test and nothing else**, run over every triangle in `head-mesh`, which
+is not: everything below y 0.45 is the jaw, the chin, both earlobes and the collar. That is
+70 triangles and 129 of the head's 375 vertices where the mouth is 8 and 10. All of it was
+crushed to 22% of its distance from the mouth's centre and then tilted by its own x, so at
+the ear's 227 mm one side of the head lifted 23 mm and the other dropped 23 mm.
+
+**The selection is by SLOT first and height second.** Slot 8 is the ink, which on a head is
+the eyes and the mouth and nothing else. That narrows 221 triangles to 20 before the height
+test splits those into the two features, and it is the only test here that knows what a
+mouth *is*: a height alone cannot, because the jaw is at the same height.
+
+⚠️ **And it cost a build somewhere else entirely.** The jaw went missing in the same hour
+that `character-male-d`'s slot 13 was first dropped, so the drop was blamed, reverted, and
+written up as *"dropping one took the jaw and half the ears with it"*. Measured instead of
+remembered: slot 15 alone spans y 0.3432 to 0.6613 at |x| 0.2268, so it carries the jaw AND
+both ears on its own. The note was wrong, and re-adding slot 13 is what left the hair with
+nowhere to sit for another build. **When two changes land in the same hour and one thing
+breaks, measure which one did it.**
+
+⚠️ **The build refuses to write now if the selection has widened**, and the guard is worth
+copying rather than the fix. `_verify_expression` diffs the vertex array across the edit and
+stops on any vertex that moved without being picked, on any moved vertex outside slot 8, and
+on any change at all to the skull's bounds. An expression bug does not throw, does not fail
+an assert and does not corrupt the file: it produces a valid mesh that is wrong, and the only
+thing that catches it otherwise is a human looking at a render.
+
+### 5.13 There is no such thing as a thin line on this character
+
+*"change the expression just a bit to edgy or nonchalant"*, then twice: *"bro look at ur
+render u broke the face hahah"* and *"the facial expression doesnt look nonchalant or smug or
+edgy anymore too"*.
+
+`ToonSkin.PersonOutlineWidth` is `0.008 * 2.38`, and the 2.38 is `PersonScale`. In the model
+space the generator authors in, the inverted hull stands **8 mm off every ink polygon**, 16 mm
+across a gap. So flattening the donated smile to a 7 mm stroke drew a 16 mm halo around a 7 mm
+shape: the halo closed the curve back up and rendered the original smile with its middle
+filled in. Two passes were spent making the line thinner, which is the direction that makes
+this worse.
+
+Separating the bow from the stroke by least squares and scaling only the bow was the third
+attempt and it did not work either: *"look at the mouth he is smiling ts aint edgy"*. The
+donated mouth is a **filled bowl**, an open grin with its interior inked, and no affine bend of
+a filled bowl is a smirk. Flattening thins the stroke until the shape stops existing; tilting
+swings the bowl without opening it, and it inflates the shape's own height twice over. The last
+bend measured **51.9 mm tall against an eye of 27.1 mm**. A mouth twice the size of an eye
+reads as a grin whatever its curve is doing.
+
+**The mouth is drawn, and the thing that makes that safe is that the face is FLAT.** Every ink
+vertex on this donor sits at z 0.1596 exactly, eyes and mouth alike: it is an inset plate, not
+a patch of a curved ovoid. The note that started three passes of bending said otherwise, and it
+was true of BOXES, which have depth and corners; it says nothing about a polygon lying in that
+plane. So `_mouth_polygon` authors a tapered stroke on that plate, `PANEL_PROUD` keeps it off
+the skin, the donor's eight mouth triangles are deleted outright, and `_compact` drops the
+vertices nothing references any more so the file can still be measured.
+
+⚠️ **Delete-and-draw, not move**, which is why `_verify_expression` runs before the mouth is
+touched: the guard exists to catch a MOVE that reached too far, and the mouth is no longer a
+move.
+
+⚠️ **The eyes carry more of the expression than the mouth does.** The donated eyes are tall
+rounded pupils set wide apart, which is the open, friendly read the whole CC0 cast shares, and
+no mouth under it says nonchalant on its own. Half lidding them does, and it is the cheapest
+expression change on a face this size: the outline swallows anything subtle in the mouth, but
+an eye at 55% of its height is 55% of its height at 90 px too.
+
+⚠️ **Each eye is squashed toward its OWN centre, and the two are split by sign of x.** The rig
+is symmetric, so the two clusters interleave exactly in y; a positional split puts half of each
+eye in the other one's group.
+
+⚠️ **`tools/face_mouth_sheet.py --sweep` draws these candidates WITH the halo**, at the
+turnaround's size and at the 90 px a head occupies in play. Anything that only reads in the
+first of those does not exist in the game, and both earlier attempts were in that category.
+
+### 5.14 The rig was bald because his hair was painted on as skin
+
+*"yea hair doesnt loom good still"*, *"pls imrpove"*, then on the tidy donated cap that
+followed: *"that hair looks ugly hjaahah"*, *"not as good as old hair"*, *"maybe redo the
+entire hair"*.
+
+Four passes of hand-built mop, and the reason none of them worked was underneath them. Every
+rig in this set is built from two shells:
+
+|  |  |
+|---|---|
+| the skull, on all twelve | y 0.3432 to 0.6613, \|x\| 0.2268 (the ears) |
+| the hair, where there is any | y 0.3932 to 0.6713 and up, \|x\| 0.1700 |
+
+`character-male-d` was chosen as the skull donor *because he is bare-headed*, and that reading
+was exactly backwards. He is not missing the second shell, he **wears it in skin**: his slot 13
+runs y 0.3932 to 0.7218, which is the hair volume, painted as a bald pate. So the mop was being
+built on top of a skull that already filled the space the mop needed, with the rig ceiling 8 mm
+above it. What came out was a 20 mm cap floating over a forehead, and no amount of moving those
+boxes was going to fix it.
+
+Dropping slot 13 is half the fix and it is the half that was blocking everything else.
+`_donor_part` takes a rig, a set of slots and an optional repaint, so a skull can come off one
+rig and a hair shell off another at 1:1, because they are the same shell to four decimal places.
+
+⚠️⚠️ **The donated hair shell then shipped, and it came back with a name on the fault:**
+*"the hairs sucks shiiit why does it have bangs"*. Every hair shell in this set is a **scalloped
+fringe across the brow**, because that is the haircut those characters have, and a box laid over
+the scallops only replaces them with a straight cut. This character's reference has no fringe at
+all. So the mop is boxes again and the donation stops at the skull.
+
+⚠️ **That is not a reason to keep hair out of `_donor_part`.** The next character who wants a
+fringe should take one: the mechanism is right, this character's haircut is just not in the set.
+
+⚠️⚠️ **And boxes are only right if they are VOLUME ON TOP OVER TRIMMED SIDES.** Growing the mass
+outward all round gives *"pic 2 makes it look like an afro which it isnt"*. In the reference the
+sides sit close to the skull and everything the silhouette does happens above the temple: 26 mm
+of clearance, not 46, four lumps and all of them on the crown. Lumps scattered down the sides
+read as damage rather than as texture, which is what *"make it look cleaner"* was about.
+
+⚠️ **The crimson has to reach the side faces.** With the lock only on the crown and the front,
+the side view was the one angle with no crimson in it, and that is the angle a player gets most
+of somebody running past them.
+
+### 5.15 `PersonScale` is one constant, and that is not a height constraint
+
+The generator's `verify()` and `PersonSwapProbe.CheckHeight` both refused any authored height
+more than a few millimetres off `character-female-b`'s 0.7234, reasoning that `PersonScale` is
+a single 2.38 for the whole cast so a taller rig "walks the arena at the wrong size".
+
+The constant is real. The conclusion from it was not. Measured across the twelve CC0 rigs the
+port ships:
+
+| | | | |
+|---|---|---|---|
+| male-b 0.6613 | male-a 0.6713 | male-e 0.6760 | female-e 0.7165 |
+| female-f 0.6713 | male-f 0.6713 | male-d 0.7218 | female-b 0.7234 |
+| female-a 0.7755 | female-c 0.7755 | female-d 0.7755 | male-c 0.7928 |
+
+They span 132 mm, a fifth of the shortest, and every one of them takes the same 2.38.
+`CharacterVisual.AlignToCapsuleFloor` re-measures the *scaled* bounds and drops the feet onto
+the capsule floor, so a taller rig stands taller with its feet in the right place. 0.7234 was
+one member of that range.
+
+⚠️ **The difference between the two ends of that range is hair.** A bald rig is 0.66 and a rig
+with a mop is 0.78. Pinning to the base rig while the donated skull already reached 0.7218 left
+under 2 mm for hair, which is §5.14 with a number on it. Both checks bound the cast's range now,
+widened by 5 mm at each end, and both carry the table.
+
+⚠️ **A transcribed constant is a measurement of one thing presented as a law.** Two of the three
+faults above are the same mistake: 0.7234 was female-b's height, and "slot 13 is his hair" was
+one session's guess. Both were written down as facts and cost a build each.
+
 ### 5.8 The portrait wore a border 2.38x too thick
 
 `ModelPreview` multiplied `PersonOutlineWidth` by `PreviewScale`. That constant is
@@ -383,6 +535,12 @@ what separated this from 5.7, which was still there underneath it.
 | `tools/glb_bone_bounds.py` | bind positions and per-bone vertex bounds |
 | `tools/glb_face_side.py` | which way a rig faces, off its own eyes |
 | `tools/glb_anim_channels.py` | which bones the clips key, so you know what is free to move |
+| `tools/preview_person.py` | a z-buffered turnaround of a built .glb in a second, without Unity |
+| `tools/face_mouth_sheet.py` | the face's ink triangles WITH the outline, at play size. See 5.13 |
+
+⚠️ `preview_person.py` is a **drafting** tool and the three things it does not model are the
+three that have bitten this file: the ink outline, `ColourGrade`'s ACES curve, and the clips.
+Shape it there, then run `PersonSwapProbe`.
 
 ---
 

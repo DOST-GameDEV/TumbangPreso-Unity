@@ -347,10 +347,28 @@ ARM_LEFT = [
     # wrist with a small hand on the end, which is the BASE rig's silhouette and not
     # this character's: the reference stops the sleeve near the elbow and the forearm
     # and hand are one long bare block, roughly 45 percent sleeve to 55 percent skin.
-    ("sleeve-left", "arm-left", (0.0999, 0.338, -0.064), (0.226, 0.462, 0.082), JACKET),
+    #
+    # ⚠️⚠️ AND THE ARM TAPERS NOW, WHICH IS THE WHOLE OF *"fat ass arms"*. 🧑 2026-08-18.
+    # The complaint sounds like a thickness one and the measurement says it is not: this
+    # arm was 132 mm at the shoulder against the cast's 161, so it was the LEANER of the
+    # two everywhere it was compared. What it did not do is get thinner. Cross-sections
+    # along x, this arm against `character-female-b` and `character-male-a`, which are
+    # the same arm:
+    #
+    #            shoulder      mid        wrist      fingertip
+    #     cast   161 x 150   161 x 150   111 x  9    111 x 20
+    #     was    132 x 146   138 x 166   136 x 158   123 x 142
+    #
+    # A Kenney arm sheds two thirds of its section at the wrist and ends in a small flat
+    # paddle. This one carried a 142 mm block all the way to the fingertip, so it read as
+    # one solid slab from shoulder to hand however lean the numbers were. The sleeve grows
+    # toward the cast and the hand loses its depth, which is the taper rather than a
+    # uniform slimming: slimming it further would have made it worse.
+    ("sleeve-left", "arm-left", (0.0999, 0.330, -0.066), (0.226, 0.470, 0.084), JACKET),
     # A raised band, not a colour change on the sleeve. Same rule as the buckle: it
-    # needs an edge or the outline pass has nothing to draw.
-    ("cuff-left",   "arm-left", (0.226, 0.332, -0.074), (0.248, 0.468, 0.092), JACKET_DARK),
+    # needs an edge or the outline pass has nothing to draw. 6 mm proud of the sleeve
+    # on every face.
+    ("cuff-left",   "arm-left", (0.226, 0.324, -0.072), (0.248, 0.476, 0.090), JACKET_DARK),
 
     # ⚠️⚠️ THE HAND'S HEIGHT IS NOT A STYLING CHOICE, IT IS WHERE THE TSINELAS SITS.
     # `CharacterVisual.BuildHandAnchor` puts a carried shoe at the palm centre plus
@@ -365,69 +383,133 @@ ARM_LEFT = [
     #
     # `PersonSwapProbe` re-derives this from the built mesh and fails on it, so the
     # arithmetic is checked rather than trusted.
-    ("hand-left",   "arm-left", (0.248, 0.3383, -0.062), (0.3836, 0.4617, 0.080), SKIN_LIT),
+    #
+    # ⚠️⚠️ SO THE TAPER IS IN Z ONLY, AND THE Z STAYS CENTRED ON +0.009. The anchor averages
+    # the far eighth of everything weighted to this bone, which in that range is this box
+    # alone, so its CENTRE is the palm and its extent is not. Y is spoken for by the lift
+    # above and cannot move; z is free as long as the centre does not, and shrinking it
+    # from 142 mm to 58 mm around that same centre is what turns the slab into a hand while
+    # leaving the anchor where the probe measured it at 0.0 mm.
+    ("hand-left",   "arm-left", (0.248, 0.3383, -0.020), (0.3836, 0.4617, 0.038), SKIN_LIT),
 
     # A band on the wrist and a stripe down the sleeve. Both raised, both on the arm's
     # OUTER faces, so they read from the side where the jacket front never does.
-    ("wristband-left", "arm-left", (0.256, 0.3320, -0.070), (0.284, 0.4680, 0.088), CLIP),
-    ("sleeve-stripe-left", "arm-left", (0.120, 0.4620, -0.052), (0.222, 0.4700, 0.070), JACKET_DARK),
+    #
+    # ⚠️ THE BAND FOLLOWS THE HAND, NOT THE SLEEVE. It was 158 mm deep around what is now a
+    # 58 mm wrist, which is a hoop standing in mid air on both sides of the arm. 6 mm proud
+    # of the hand, the same margin the cuff keeps against the sleeve.
+    ("wristband-left", "arm-left", (0.256, 0.3323, -0.026), (0.284, 0.4677, 0.044), CLIP),
+    ("sleeve-stripe-left", "arm-left", (0.120, 0.4660, -0.052), (0.222, 0.4740, 0.070), JACKET_DARK),
 ]
 
-# ⚠️⚠️ THE SKULL IS NOT AUTHORED ANY MORE, IT IS LIFTED OFF A CC0 RIG. 🧑 2026-08-18, after
-# four passes of hand-building it: *"cant u js copy someone's face and change it a bit to
-# match our model?"*, *"pls copy face shape too bcz the one we're manually doing sucks"*,
-# *"js edit the hair or smth idk"*.
+# ⚠️⚠️ THE SKULL IS NOT AUTHORED ANY MORE, AND NEITHER IS THE HAIR. 🧑 2026-08-18, after
+# four passes of hand-building the head: *"cant u js copy someone's face and change it a bit
+# to match our model?"*, *"pls copy face shape too bcz the one we're manually doing sucks"*,
+# *"js edit the hair or smth idk"*. Then, on the first build that donated only the skull:
+# *"yea hair doesnt loom good still"*, *"pls imrpove"*.
 #
-# He is right, and the reason is structural rather than a lack of care. A Kenney head is a
-# smooth low-poly ovoid with real ears and a face drawn as its own geometry; every attempt
-# to reproduce that out of chamfered cuboids and a pixel grid got closer and stayed
-# obviously hand-made, because they are different construction methods and only one of them
-# is what the other eleven characters ARE. `Art_Direction.md` §4 already states the rule —
-# **a character is a rig plus a palette, never a new model** — and this applies it to the
-# head instead of arguing with it.
+# He is right both times, and the reason is structural rather than a lack of care. A Kenney
+# head is a smooth low-poly ovoid with real ears and a face drawn as its own geometry, and
+# its hair is a second shell moulded to that ovoid; every attempt to reproduce either out of
+# chamfered cuboids got closer and stayed obviously hand-made, because they are different
+# construction methods and only one of them is what the other eleven characters ARE.
+# `Art_Direction.md` §4 already states the rule: **a character is a rig plus a palette,
+# never a new model**.
 #
-# So `HEAD` is now the HAIR and the jewellery only. The skull, the ears and the face come
-# from `_donor_head()`.
+# ⚠️⚠️ AND THE SECOND DONATION IS WHAT MADE ROOM FOR THE FIRST ONE'S HAIR. Every rig in this
+# set is built the same way, which `_donor_part` made visible once it could be asked by
+# slot:
+#
+#     the skull, on all twelve   y 0.3432 .. 0.6613   |x| 0.2268 (the ears)   one shell
+#     the hair, where there is   y 0.3932 .. 0.6713+  |x| 0.1700              a second
+#
+# `character-male-d` was chosen as the donor BECAUSE he is bare-headed, and that reading was
+# exactly backwards. He is not missing the second shell, he WEARS it in skin: his slot 13
+# runs y 0.3932 to 0.7218, which is the hair volume, painted as a bald pate. So the hand-
+# built mop had to sit on top of a skull that already filled the space the mop needed, the
+# rig ceiling is 8 mm above it, and what came out was a cap 20 mm thick floating on a
+# forehead. No amount of moving those boxes was going to fix that.
+#
+# Dropping slot 13 and donating a real hair shell in its place is the whole fix. The mop is
+# `character-male-a`'s slot 8, which is 153 vertices of pure hair moulded to the same ovoid,
+# and it drops in at 1:1 for the same reason the skull did.
+#
+# ⚠️ DROPPING SLOT 13 IS SAFE AND THE NOTE THAT SAID OTHERWISE WAS WRONG. It read *"an
+# earlier attempt dropped 13 on the theory it was the donor's hair; dropping one took the
+# jaw and half the ears with it"*. Measured rather than remembered: slot 15 alone spans
+# y 0.3432 to 0.6613 at |x| 0.2268, so it carries the jaw AND both ears on its own. That
+# session dropped 13, saw a broken jaw, and blamed the drop. The jaw was being eaten by the
+# mouth bend at the same time (see `_donor_head`), and the two were never separated.
+#
+# So `HEAD` is now the crimson and the jewellery ONLY: four plates and an earring, each
+# measured onto a surface this file no longer authors.
 HEAD = [
     # -----------------------------------------------------------------------------------
-    # § THE MOP, AUTHORED AGAINST THE DONATED SKULL.
+    # § THE MOP, AUTHORED AGAINST THE REFERENCE ART AND NOT AGAINST ANOTHER RIG.
     #
-    # ⚠️⚠️ EVERY NUMBER HERE IS IN THE DONOR'S OWN SPACE (`DONOR_SPACE`), NOT THE TABLE'S.
-    # The hair used to be authored against a hand-built skull and then grown 1.37x by the
-    # family remap; against a donated head that lands near it and not on it, which is what
-    # produced *"his ears look broken"* and skin showing through the crown. Measured off
-    # the donated head, by y band:
+    # ⚠️⚠️ THE HAIR IS THE ONE PART OF THIS CHARACTER THAT IS NOT A DONATION, AND THAT IS
+    # DELIBERATE NOW RATHER THAN LEFTOVER. The skull, ears and face come off a CC0 rig
+    # because a Kenney head is a smooth ovoid this file cannot build. The hair went the same
+    # way for one build and came back: 🧑 *"that hair looks ugly hjaahah"*, then the specific
+    # fault, *"the hairs sucks shiiit why does it have bangs"*. Every donated hair shell in
+    # this set is a SCALLOPED FRINGE across the brow, because that is the haircut those
+    # characters have, and a box laid over the scallops only replaces them with a straight
+    # cut. This character's reference has no fringe.
     #
-    #     y 0.50-0.56   x +/-0.210                        (the ears)
-    #     y 0.56-0.67   x +/-0.170   z -0.172 .. +0.168   (the cranium)
-    #     y 0.67-0.73   x +/-0.130                        (the crown)
+    # ⚠️⚠️ IT IS VOLUME ON TOP OVER TRIMMED SIDES, NOT A BALL. The pass before this one grew
+    # the whole mass outward at once and 🧑 named it: *"pic 2 makes it look like an afro which
+    # it isnt"*, *"maybe trim sides or smth and make it look cleaner"*. In the reference the
+    # sides sit close to the skull, barely past it, and everything the silhouette does
+    # happens above the temple. So the sides clear the skull by 26 mm where they used to
+    # clear it by 46, the two lumps that bulged at hip height on the head are gone, and the
+    # four that are left are all on the crown.
     #
-    # The cap clears 0.170 by 8 mm, the crown clears 0.130, and nothing reaches z +0.168,
-    # which is the face.
-    ("hair-cap",     "head", (-0.178, 0.596, -0.184), (0.178, 0.700, 0.120), HAIR),
-    # ⚠️ THE CROWN STOPS AT THE RIG CEILING. 0.7234 is `PersonScale`'s whole basis and
-    # `verify()` refuses the build over it, which is how this was caught at 0.7380.
-    ("hair-crown",   "head", (-0.142, 0.688, -0.146), (0.142, 0.7215, 0.118), HAIR),
-    ("hair-back",    "head", (-0.172, 0.470, -0.206), (0.172, 0.700, -0.150), HAIR),
-    ("hair-nape",    "head", (-0.120, 0.446, -0.196), (0.120, 0.500, -0.140), HAIR),
-    ("hair-fringe",  "head", (-0.150, 0.628, 0.118), (0.150, 0.690, 0.176), HAIR),
+    # ⚠️ FOUR LUMPS, NOT EIGHT, AND ALL OF THEM ON TOP. *"make it look cleaner"*: lumps
+    # scattered over the whole mass read as damage rather than as texture. On the crown they
+    # read as the messy top the reference has, and the chamfer rounds each one.
+    #
+    # ⚠️⚠️ EVERY NUMBER IS IN THE DONATED HEAD'S OWN SPACE (`DONOR_SPACE`). The skull is
+    # y 0.3432 to 0.6613 at |x| 0.170, z -0.1624 to 0.1576, and the EARS reach 0.2268 at
+    # y 0.392 to 0.484.
+    #
+    # ⚠️ NOTHING COMES BELOW y 0.500, WHICH CLEARS THE TOP OF THE EAR BY 16 MM. Hair over the
+    # ears buried them for three builds and the earring hangs off one of them.
+    ("hair-core",    "head", (-0.184, 0.585, -0.198), (0.184, 0.714, 0.188), HAIR),
+    ("hair-back",    "head", (-0.180, 0.480, -0.234), (0.180, 0.700, -0.170), HAIR),
+    ("hair-front",   "head", (-0.176, 0.560, 0.132), (0.176, 0.700, 0.202), HAIR),
+    ("hair-side-left",  "head", (0.168, 0.500, -0.186), (0.196, 0.668, 0.140), HAIR),
+    ("hair-side-right", "head", (-0.196, 0.500, -0.186), (-0.168, 0.668, 0.140), HAIR),
 
-    # ⚠️ THE SIDES STOP BEHIND THE EAR. The ears reach x 0.210 at y 0.50-0.56, and hair that
-    # comes forward over them is what buried them for three builds.
-    ("hair-side-left",  "head", (0.150, 0.560, -0.150), (0.184, 0.660, 0.020), HAIR),
-    ("hair-side-right", "head", (-0.184, 0.560, -0.150), (-0.150, 0.660, 0.020), HAIR),
+    ("hair-curl-a",  "head", (-0.150, 0.704, -0.130), (-0.036, 0.754, 0.020), HAIR),
+    ("hair-curl-b",  "head", (0.020, 0.708, -0.060), (0.128, 0.758, 0.070), HAIR),
+    ("hair-curl-c",  "head", (-0.184, 0.694, 0.050), (-0.086, 0.742, 0.168), HAIR),
+    ("hair-curl-d",  "head", (-0.066, 0.698, -0.226), (0.058, 0.746, -0.140), HAIR),
 
-    # § THE CRIMSON, still a swept forelock rather than a bow: it takes the fringe on one
-    # side, crosses the crown as a band, and runs out the back. Each piece is a PLATE on the
-    # surface it is seen from, so black hair still shows above, below and between them.
-    ("dye-fringe",   "head", (0.020, 0.632, 0.148), (0.150, 0.688, 0.178), CLIP),
-    ("dye-crown",    "head", (0.010, 0.698, -0.120), (0.128, 0.7230, 0.110), CLIP),
-    ("dye-side",     "head", (0.152, 0.596, -0.120), (0.186, 0.664, 0.010), CLIP),
-    ("dye-back",     "head", (0.000, 0.560, -0.212), (0.120, 0.660, -0.196), CLIP),
+    # § THE CRIMSON FORELOCK.
+    #
+    # ⚠️⚠️ IT IS A MASS, NOT A STRIPE, AND EVERY EARLY PASS UNDERSOLD IT. The reference puts a
+    # single big swept lock over roughly the top-front third of the hair: it starts low at the
+    # front on one side, rises over the crown and runs out toward the back. Drawn as thin
+    # plates it read as a headband, and drawn small it vanished on the cast sheet.
+    ("dye-fore-a",   "head", (-0.030, 0.626, 0.098), (0.186, 0.750, 0.226), CLIP),
+    ("dye-fore-b",   "head", (0.030, 0.694, -0.050), (0.190, 0.766, 0.104), CLIP),
+    ("dye-fore-c",   "head", (0.086, 0.678, -0.170), (0.192, 0.744, -0.040), CLIP),
+    ("dye-lick",     "head", (-0.086, 0.592, 0.162), (0.036, 0.660, 0.232), CLIP),
+
+    # ⚠️ AND IT REACHES THE SIDES. 🧑: *"u should give the sides somme color too"*. With the
+    # lock only on the crown and the front, the side view was the one angle with no crimson in
+    # it at all, which is the angle a player sees most of somebody running past them. These
+    # two sit on the side faces at 0.196, the trimmed width above, so they are plates on the
+    # hair rather than a second bulge.
+    #
+    # ⚠️ THE +X ONE IS THE BIGGER, and that is the same asymmetry the lock has: the character
+    # keeps one loud side. Matching them exactly would read as a hairband again.
+    ("dye-side-left",  "head", (0.188, 0.596, -0.070), (0.208, 0.684, 0.128), CLIP),
+    ("dye-side-right", "head", (-0.208, 0.618, 0.010), (-0.188, 0.676, 0.126), CLIP),
 
     # ⚠️⚠️ ONE EAR ONLY, MEASURED OFF THE DONOR'S ACTUAL EAR. 🧑: *"add earrings to one ear"*,
     # then *"the earring is floating haha ... look the side"*. The first pass hung it off the
-    # ear's lowest BOUND — but a bbox is not the mesh, and the lobe tapers, so at that z the
+    # ear's lowest BOUND, but a bbox is not the mesh and the lobe tapers, so at that z the
     # ear had already ended. It overlaps the ear body now and the drop overlaps the hoop.
     #
     # ⚠️ GOLD, NOT CHAIN. The buckle and the collar stud are already gold; a third metal on
@@ -436,11 +518,12 @@ HEAD = [
     ("earring-drop", "head", (0.204, 0.448, -0.078), (0.220, 0.474, -0.060), GOLD),
 ]
 
-# Boxes authored in the donated head's own space. See `_family` and the mop block above.
+# Boxes authored in the donated head's own space. See `_family` and the block above.
 DONOR_SPACE = (
-    "hair-cap", "hair-crown", "hair-back", "hair-nape", "hair-fringe",
-    "hair-side-left", "hair-side-right",
-    "dye-fringe", "dye-crown", "dye-side", "dye-back",
+    "hair-core", "hair-back", "hair-front", "hair-side-left", "hair-side-right",
+    "hair-curl-a", "hair-curl-b", "hair-curl-c", "hair-curl-d",
+    "dye-fore-a", "dye-fore-b", "dye-fore-c", "dye-lick",
+    "dye-side-left", "dye-side-right",
     "earring-hoop", "earring-drop",
 )
 
@@ -470,6 +553,10 @@ WAS_HIPS, WAS_SHOULDER, WAS_NECK, WAS_TOP = 0.232, 0.400, 0.445, 0.722
 NOW_HIPS, NOW_SHOULDER, NOW_NECK, NOW_TOP = 0.176, 0.288, 0.343, 0.7234
 
 HEAD_GROWTH = (NOW_TOP - NOW_NECK) / (WAS_TOP - WAS_NECK)
+
+# ⚠️ MEASURED OFF THE TWELVE SHIPPED RIGS, not chosen. See the height check in `verify()`
+# for the full table and for why a single number was the wrong bound.
+CAST_MIN_HEIGHT, CAST_MAX_HEIGHT = 0.6613, 0.7928
 
 
 def _remap_y(y):
@@ -536,49 +623,192 @@ BODY_BOXES = (LEG_LEFT + mirrored(LEG_LEFT, "leg-left", "leg-right")
 HEAD_BOXES = HEAD
 
 # ---------------------------------------------------------------------------
-# § THE DONOR SKULL. See the note above `HEAD`.
+# § THE DONATED HEAD. See the note above `HEAD`.
 #
 # ⚠️ IT DROPS IN AT 1:1 WITH NO TRANSFORM, and that is not luck. The donor's head spans
-# y 0.343 to 0.722, which is exactly `NOW_NECK` to `NOW_TOP` — the family pass put this
+# y 0.343 to 0.722, which is exactly `NOW_NECK` to `NOW_TOP`: the family pass put this
 # character on the base rig's own joint heights, so the donor's head already fits the
 # skeleton it is being attached to. Move the proportions off the base rig again and this
 # stops being free.
 #
-# ⚠️⚠️ EVERY SLOT IS KEPT, AND DROPPING ONE TOOK HIS JAW OFF. 🧑 2026-08-18: *"his lower jaw
-# is compeltley gone haha"*, *"his ears look broken too"*. An earlier pass kept 8 and 15 on
-# the theory that the third slot was the donor's hair. It is not: in this palette 13 is
-# `SKIN` and 15 is `SKIN_LIT`, so 13 and 15 are the same head in two tones and 8 is the
-# face. `character-male-d` is the donor precisely BECAUSE he is bare-headed — there is no
-# hair on that mesh to drop.
+# ⚠️⚠️ AND BOTH DONORS SHARE THAT SPACE EXACTLY, which is what lets a skull come off one rig
+# and a mop off another. Measured, not assumed: `character-male-d` slot 15 and
+# `character-male-a` slot 14 are the same shell to four decimal places, y 0.3432 to 0.6613
+# at |x| 0.2268 and z -0.1624 to 0.1576. Every rig in the set is that shell plus its own
+# second one. Check it with `tools/glb_mesh_dump.py` before adding a third donor.
+DONOR_SKULL = "Assets/TumbangPreso/Art/characters/persons/character-male-d.glb"
+
+# ⚠️⚠️ SLOT 13 OF THE SKULL DONOR IS DROPPED ON PURPOSE. It is his bald pate: y 0.3932 to
+# 0.7218, which is the HAIR volume worn in skin. Keeping it is what left the mop nowhere to
+# go. See the block above `HEAD`, including why the note claiming this took his jaw was
+# wrong.
+SKULL_SLOTS = {15: None, 8: None}
+
+# ⚠️⚠️ THERE IS NO DONATED MOP, AND THE ONE THAT WAS HERE IS WHY. `character-male-a`'s
+# slot 8 dropped in at 1:1 and gave a hairline that follows the skull, which no box can do.
+# It also brought his HAIRCUT, and his haircut is a scalloped fringe across the brow:
+# 🧑 *"the hairs sucks shiiit why does it have bangs"*. Every hair shell in this set has one,
+# because they all belong to characters who wear one, and a box laid over the scallops only
+# replaces them with a straight cut. This character's reference has no fringe at all.
 #
-# The slot dump should have settled it and was read as a guess: 129 verts spanning y 0.393
-# to 0.722 is not a hairstyle, it is a head, and the jaw is the first thing to go.
-DONOR = "Assets/TumbangPreso/Art/characters/persons/character-male-d.glb"
+# So `_donor_part` is still the mechanism and still takes a repaint, and the next character
+# who DOES want a fringe should use it. This one draws its hair in `HEAD`.
 
 # ⚠️⚠️ THE MOUTH IS BENT, NOT REPLACED, AND REPLACING IT BROKE THE FACE. 🧑: *"change the
 # expression just a bit to edgy or nonchalant? the :)"*, then *"bro look at ur render u
 # broke the face hahah"*. A donated head is a rounded ovoid: z 0.1596 is its frontmost point
 # at the CENTRE only, and the surface curves away toward the cheeks. Two axis-aligned boxes
 # laid across that plane punched out through both cheeks and showed their own side faces as
-# dark tabs at three-quarters — the exact angle the character screen uses.
+# dark tabs at three-quarters, the exact angle the character screen uses.
 #
 # The donor's own mouth triangles already lie ON that curved surface. Moving their vertices
 # in Y alone keeps them there whatever the surface does in Z, which no box can do.
 #
+# ⚠️⚠️ AND THEN THE BEND TOOK THE WHOLE LOWER HEAD WITH IT. 🧑 2026-08-18, on the turnaround
+# that followed: *"the jaw is gone and the face is so buggy now"*. The selection below was
+# a HEIGHT TEST AND NOTHING ELSE, run over every triangle in `head-mesh`, so it caught 70
+# triangles and 129 of the head's 375 vertices when the mouth is 8 and 10. Everything below
+# y 0.45 is the jaw, the chin, the lobes of both ears and the collar of the neck, and all of
+# it got crushed to 0.22 of its distance from the mouth's centre and then tilted by its own
+# x. At the ear that is 227 mm of x against a tilt of 0.10, so one side of the head lifted
+# 23 mm and the other dropped 23 mm: the jaw collapsed into a flat band and the ears sheared
+# into wedges.
+#
+# ⚠️ IT ALSO COST A BUILD IN THE WRONG PLACE. The jaw went missing in the same hour slot 13
+# was first dropped, so the drop was blamed and reverted, and the pate came back with it.
+# The mop had nowhere to sit for one more build because of a bad attribution.
+#
+# THE SELECTION IS BY SLOT FIRST AND HEIGHT SECOND. Slot 8 is the ink, which on a head is
+# the eyes and the mouth and nothing else, so `_slot_at` narrows 221 triangles to 20 before
+# the height test splits those 20 into the two features. That is the same measurement
+# `tools/glb_face_side.py` makes to answer which way a rig faces, and it is the only test
+# here that knows what a mouth IS. A height alone cannot: the jaw is at the same height.
+#
+# ⚠️ THE COUNT IS ASSERTED BELOW so this cannot quietly widen again. A selection that grows
+# does not fail, it deforms, and the failure is a screenshot away rather than a stack trace.
+#
 # The split is measured: on this rig the twelve eye triangles sit at centroid y 0.4714 to
 # 0.5066 and the eight mouth triangles at 0.4058 to 0.4295, with nothing in between.
 DONOR_MOUTH_Y = 0.45
-
-# `FLATTEN` crushes the smile's curve toward a line and `TILT` lifts the +x end, which is
-# what turns a level bar (sullen) into a smirk. `PIVOT` is the mouth's own centre.
-MOUTH_PIVOT = 0.4183
-MOUTH_FLATTEN = 0.22
-MOUTH_TILT = 0.10
+DONOR_MOUTH_TRIS = 8
+DONOR_MOUTH_VERTS = 10
+DONOR_EYE_TRIS = 12
+DONOR_EYE_VERTS = 16
 
 
-def _donor_head():
-    """The donor's skull, ears and face as (positions, normals, uvs, triangles)."""
-    gltf, buffer = read_glb(DONOR)
+# ⚠️⚠️ THE MOUTH IS DRAWN, NOT BENT, AND THREE PASSES OF BENDING IT IS WHY. 🧑, each time:
+# *"bro look at ur render u broke the face hahah"*, *"the facial expression doesnt look
+# nonchalant or smug or edgy anymore too"*, *"look at the mouth he is smiling ts aint edgy"*.
+#
+# The donated mouth is a FILLED BOWL, an open grin with its interior inked, and no affine
+# bend of a filled bowl is a smirk. Flattening it thins the stroke until the shape vanishes;
+# tilting it swings the bowl without opening it. The last attempt measured 51.9 mm tall
+# against an eye of 27.1 mm, because tilt over a 90 mm mouth adds its own lift to the height
+# twice over. A mouth twice the size of an eye reads as a grin whatever its curve is doing.
+#
+# ⚠️⚠️ AND THE FACE IS FLAT, WHICH THE NOTE THAT STARTED ALL THIS SAID IT WAS NOT. Every ink
+# vertex on this donor sits at z 0.1596 exactly, eyes and mouth alike: it is an inset PLATE,
+# not a patch of a curved ovoid. The claim that "two axis-aligned boxes punched out through
+# both cheeks" was true of BOXES, which have depth and corners; it says nothing about a
+# polygon lying in that plane. So the mouth can be authored outright, the same way
+# `FACE_PIXELS` was drawn before the head was donated, and `PANEL_PROUD` keeps it off the
+# skin by the same fraction of a millimetre.
+#
+# The shape is a tapered stroke: thin at the character's RIGHT, thickening as it rises to the
+# left, with a short flick up at the end. That is a smirk, and it is 24 mm tall, which is
+# just under an eye.
+MOUTH_Z = 0.1596
+MOUTH_HALF = 0.042
+MOUTH_BASE = 0.4135
+
+# The centreline's rise across the whole mouth, and the stroke's weight at each end. The
+# taper is what makes it read as one-sided: an even stroke at an angle is a straight line
+# drawn crooked, and a stroke that grows into the lift is a lip curling.
+MOUTH_RISE = 0.013
+MOUTH_THIN = 0.0032
+MOUTH_THICK = 0.0092
+
+# The flick. It applies over the last `MOUTH_HOOK_FROM` of the +x end and is what stops the
+# stroke reading as a frown drawn upward.
+MOUTH_HOOK_FROM = 0.55
+MOUTH_HOOK = 0.006
+
+# How many samples along it. The chamfer does not touch this (it is not a box) and the
+# outline traces the polygon, so the only thing resolution buys is a smooth taper.
+MOUTH_STEPS = 14
+
+
+def _mouth_polygon():
+    """This character's own mouth, as a closed polygon on the face plate.
+
+    ⚠️ RETURNED IN FILE SPACE, NOT TABLE SPACE. The donated head is not put through
+    `build_mesh`'s `FRONT_IS_MINUS_Z` flip, so +z is the face and these are used as written.
+    """
+    upper, lower = [], []
+
+    for k in range(MOUTH_STEPS + 1):
+        t = k / MOUTH_STEPS
+        x = -MOUTH_HALF + t * (2.0 * MOUTH_HALF)
+
+        centre = MOUTH_BASE + (t - 0.5) * MOUTH_RISE
+        half = 0.5 * (MOUTH_THIN + t * (MOUTH_THICK - MOUTH_THIN))
+
+        if t > MOUTH_HOOK_FROM:
+            u = (t - MOUTH_HOOK_FROM) / (1.0 - MOUTH_HOOK_FROM)
+            centre += MOUTH_HOOK * u * u
+
+        upper.append((x, centre + half))
+        lower.append((x, centre - half))
+
+    return upper + list(reversed(lower))
+
+
+# ⚠️⚠️ AND THE EYES CARRY MORE OF THE EXPRESSION THAN THE MOUTH DOES. 🧑 after two passes
+# that only touched the mouth: *"the facial expression doesnt look nonchalant or smug or
+# edgy anymore too"*. The donated eyes are tall rounded pupils set wide apart, which is the
+# open, friendly read the whole CC0 cast shares, and no mouth under it is going to say
+# nonchalant on its own. Half lidding them does, and it is the single cheapest expression
+# change on a face this size: the outline swallows anything subtle in the mouth, but an eye
+# that is 55% of its height is 55% of its height at 90 px as well.
+#
+# `EYE_SQUASH` scales each eye toward its OWN centre rather than toward a shared line,
+# because the two are not at the same height on this rig and squashing both toward one
+# would leave the character walleyed. `EYE_DROP` then lowers both, which is the difference
+# between narrowed (annoyed) and lidded (bored): the lid comes down from the brow, so the
+# ink has to move down with it or it reads as a squint.
+EYE_SQUASH = 0.55
+EYE_DROP = 0.008
+
+
+def _slot_at(u, v):
+    """Which palette slot an atlas UV samples, by the shader's own formula.
+
+    ⚠️ IT IS THE INVERSE OF `cell_uv` AND IT IS NEEDED FOR THE DONORS ONLY. Our own boxes
+    declare a slot and get a UV; a donated mesh arrives with UVs already baked and has to
+    be asked. Rows under 8 are the atlas's non-palette half and belong to no slot.
+    """
+    col = min(int(u * 16.0), 15)
+    row = min(int(v * 16.0), 15)
+
+    if row < 8:
+        return None
+
+    return (col // 2) + (8 if row >= 12 else 0)
+
+
+def _donor_part(path, slots):
+    """One rig's `head-mesh`, filtered to `slots` and repainted where a slot maps to one.
+
+    `slots` is {source slot: destination slot or None}. A destination rewrites the UV to
+    that palette cell, which is how a donated hair shell becomes THIS character's hair
+    colour without touching the atlas.
+
+    ⚠️ A TRIANGLE IS KEPT ON ITS FIRST VERTEX'S SLOT, AND THE VERTICES ARE REINDEXED. The
+    atlas cell is per vertex, so a mesh split by slot would otherwise carry indices into an
+    array it no longer has, which glTF validates as an out-of-range accessor and Unity
+    imports as an empty mesh with no error text worth reading.
+    """
+    gltf, buffer = read_glb(path)
 
     for node in gltf["nodes"]:
         if node.get("name") != "head-mesh":
@@ -586,32 +816,199 @@ def _donor_head():
 
         prim = gltf["meshes"][node["mesh"]]["primitives"][0]
 
-        pos = [tuple(p) for p in read_accessor(gltf, buffer, prim["attributes"]["POSITION"])]
-        nrm = read_accessor(gltf, buffer, prim["attributes"]["NORMAL"])
-        uv = read_accessor(gltf, buffer, prim["attributes"]["TEXCOORD_0"])
+        src_pos = [tuple(p) for p in read_accessor(gltf, buffer, prim["attributes"]["POSITION"])]
+        src_nrm = [tuple(n) for n in read_accessor(gltf, buffer, prim["attributes"]["NORMAL"])]
+        src_uv = [tuple(t) for t in read_accessor(gltf, buffer, prim["attributes"]["TEXCOORD_0"])]
 
         raw = read_accessor(gltf, buffer, prim["indices"])
         idx = [v[0] for v in raw] if isinstance(raw[0], tuple) else list(raw)
 
-        tris = []
-        mouth = set()
+        pos, nrm, uv, tris = [], [], [], []
+        remap = {}
 
         for t in range(0, len(idx), 3):
-            a, b, c = idx[t], idx[t + 1], idx[t + 2]
-            tris.append((a, b, c))
+            tri = (idx[t], idx[t + 1], idx[t + 2])
+            slot = _slot_at(*src_uv[tri[0]])
 
-            if (pos[a][1] + pos[b][1] + pos[c][1]) / 3.0 < DONOR_MOUTH_Y:
-                mouth.update((a, b, c))
+            if slot not in slots:
+                continue
 
-        for i in mouth:
-            x, y, z = pos[i]
-            pos[i] = (x,
-                      MOUTH_PIVOT + (y - MOUTH_PIVOT) * MOUTH_FLATTEN + x * MOUTH_TILT,
-                      z)
+            paint = slots[slot]
+
+            for i in tri:
+                if i not in remap:
+                    remap[i] = len(pos)
+                    pos.append(src_pos[i])
+                    nrm.append(src_nrm[i])
+                    uv.append(cell_uv(paint) if paint is not None else src_uv[i])
+
+            tris.append(tuple(remap[i] for i in tri))
+
+        if not tris:
+            raise SystemExit(f"{path} has no triangles in slots {sorted(slots)}")
 
         return pos, nrm, uv, tris
 
-    raise SystemExit(f"{DONOR} has no head-mesh")
+    raise SystemExit(f"{path} has no head-mesh")
+
+
+
+# ⚠️⚠️ THE FACE HAS BROKEN TWICE, BOTH TIMES ON AN EXPRESSION CHANGE, AND THIS IS THE GUARD
+# THAT MAKES IT AN ERROR INSTEAD OF A SCREENSHOT. 🧑 2026-08-18: *"last time the face broke
+# when we changde expression pls try to make srue it doesnt happen again"*.
+#
+# The shape of both failures was the same. An expression edit selects some vertices and
+# moves them, the selection is wider than intended, and NOTHING FAILS: the mesh is still
+# valid, the build still writes, the probe still passes its four asserts, and the damage
+# only exists in a render nobody has looked at yet. The first one took the jaw and both
+# ears; the second reached the cheeks.
+#
+# So the selection is checked against the geometry rather than trusted:
+#
+#   * the counts are exact. Eight mouth triangles over ten vertices, twelve eye triangles
+#     over sixteen, measured off this donor. A selection that has widened by even one
+#     triangle stops the build.
+#   * NOTHING outside slot 8 may move, at all. That is the whole class the jaw fell into:
+#     slot 15 is the skull, the jaw, the chin and both ears, and no expression has any
+#     business touching a vertex of it.
+#   * the skull's bounds must be identical before and after, which catches a move of zero
+#     length in the count but non-zero in the mesh.
+#
+# ⚠️ IT COMPARES A COPY TAKEN BEFORE THE EDIT, not the file on disk. Re-reading the donor
+# would pass trivially if the edit were applied twice.
+def _verify_expression(before, after, uv, moved):
+    """Refuses the build unless the expression moved exactly what it was allowed to."""
+    changed = {i for i in range(len(before)) if before[i] != after[i]}
+
+    if changed != moved:
+        raise SystemExit(
+            f"\nEXPRESSION SELECTION VIOLATION - nothing written.\n"
+            f"  {len(changed)} vertices moved, {len(moved)} were selected to move.\n"
+            f"  Strays: {sorted(changed - moved)[:12]}\n"
+            f"  An expression edit that moves anything it did not pick is how the jaw and\n"
+            f"  both ears were lost, and it fails silently every time.")
+
+    stray = {i for i in changed if _slot_at(*uv[i]) != INK}
+
+    if stray:
+        raise SystemExit(
+            f"\nEXPRESSION SELECTION VIOLATION - nothing written.\n"
+            f"  {len(stray)} moved vertices are not in slot {INK} (the ink).\n"
+            f"  Slot 15 is the skull, the jaw, the chin and both ears. No expression\n"
+            f"  touches it. See the note above `_donor_head`.")
+
+    keep = [i for i in range(len(before)) if _slot_at(*uv[i]) != INK]
+
+    for axis in range(3):
+        was = (min(before[i][axis] for i in keep), max(before[i][axis] for i in keep))
+        now = (min(after[i][axis] for i in keep), max(after[i][axis] for i in keep))
+
+        if was != now:
+            raise SystemExit(
+                f"\nEXPRESSION SELECTION VIOLATION - nothing written.\n"
+                f"  the skull's axis {axis} bounds moved from {was} to {now}.\n"
+                f"  Nothing but the ink may change shape when the expression does.")
+
+
+def _donor_head():
+    """The skull with its face bent, plus the donated mop, as one mesh."""
+    pos, nrm, uv, tris = _donor_part(DONOR_SKULL, SKULL_SLOTS)
+
+    mouth, eyes, mouth_tris = set(), set(), set()
+    bent = 0
+
+    for a, b, c in tris:
+        # ⚠️ SLOT FIRST. A triangle of jaw and a triangle of mouth sit at the same height
+        # and differ only in which atlas cell they sample. See the block above for what
+        # dropping this test did to the head.
+        if _slot_at(*uv[a]) != INK:
+            continue
+
+        if (pos[a][1] + pos[b][1] + pos[c][1]) / 3.0 < DONOR_MOUTH_Y:
+            mouth.update((a, b, c))
+            mouth_tris.add((a, b, c))
+            bent += 1
+        else:
+            eyes.add((a, b, c))
+
+    eye_verts = {i for tri in eyes for i in tri}
+
+    if len(eyes) != DONOR_EYE_TRIS or len(eye_verts) != DONOR_EYE_VERTS:
+        raise SystemExit(
+            f"\nEYE SELECTION VIOLATION - nothing written.\n"
+            f"  matched {len(eyes)} triangles over {len(eye_verts)} vertices, expected "
+            f"{DONOR_EYE_TRIS} over {DONOR_EYE_VERTS}.")
+
+    if bent != DONOR_MOUTH_TRIS or len(mouth) != DONOR_MOUTH_VERTS:
+        raise SystemExit(
+            f"\nMOUTH SELECTION VIOLATION - nothing written.\n"
+            f"  matched {bent} triangles over {len(mouth)} vertices, expected "
+            f"{DONOR_MOUTH_TRIS} over {DONOR_MOUTH_VERTS}.\n"
+            f"  The bend moves whatever this picks and reports nothing, so a selection\n"
+            f"  that has grown comes back as a deformed head rather than as an error.\n"
+            f"  It reached the jaw and both ears once already.")
+
+    before = list(pos)
+
+    # ⚠️ EACH EYE IS SQUASHED TOWARD ITS OWN CENTRE, so the two are found first. They are
+    # separated by SIGN OF X and not by a gap in a sorted list: the rig is symmetric, so the
+    # two clusters interleave exactly in y and a positional split would put half of each eye
+    # in the other one's group.
+    for side in (1.0, -1.0):
+        lid = {i for tri in eyes for i in tri if pos[i][0] * side > 0.0}
+
+        if not lid:
+            continue
+
+        centre = sum(pos[i][1] for i in lid) / len(lid)
+
+        for i in lid:
+            x, y, z = pos[i]
+            pos[i] = (x, centre + (y - centre) * EYE_SQUASH - EYE_DROP, z)
+
+    # ⚠️ ONLY THE EYES MOVED, so the guard runs before the mouth is touched at all. What
+    # happens to the mouth below is a DELETE and a DRAW, not a move, and the guard exists to
+    # catch a move that reached further than it was supposed to.
+    _verify_expression(before, pos, uv, eye_verts)
+
+    # ⚠️⚠️ THE DONATED MOUTH IS DROPPED WHOLE, and its vertices are compacted away at the end
+    # of this function rather than here. Renumbering mid-flight would invalidate `eye_verts`,
+    # `mouth` and every triangle after them; leaving them orphaned makes every later
+    # measurement lie, and the first thing that happened was a mouth measuring 36 mm because
+    # the tool was still counting the ten vertices of the one that had been deleted.
+    tris = [t for t in tris if t not in mouth_tris]
+
+    first = len(pos)
+    plate = MOUTH_Z + PANEL_PROUD
+
+    for x, y in _mouth_polygon():
+        pos.append((x, y, plate))
+        nrm.append((0.0, 0.0, 1.0))
+        uv.append(cell_uv(INK))
+
+    # A fan. The polygon is a strip between two curves that never cross, so it is convex
+    # enough for one: every diagonal from the first vertex stays inside it.
+    for k in range(1, len(pos) - first - 1):
+        tris.append((first, first + k, first + k + 1))
+
+    return _compact(pos, nrm, uv, tris)
+
+
+def _compact(pos, nrm, uv, tris):
+    """Drops vertices nothing references any more, and reindexes what is left.
+
+    ⚠️ IT IS NOT AN OPTIMISATION, IT IS SO THE FILE CAN BE MEASURED. An orphaned vertex
+    still sits in the POSITION accessor, so `glb_mesh_dump.py`, `glb_face_side.py` and
+    every bounds check in `verify()` keep reading geometry that is not drawn. The deleted
+    mouth is exactly the shape whose absence is being checked.
+    """
+    used = sorted({i for t in tris for i in t})
+    remap = {i: k for k, i in enumerate(used)}
+
+    return ([pos[i] for i in used], [nrm[i] for i in used], [uv[i] for i in used],
+            [tuple(remap[i] for i in t) for t in tris])
+
+    return pos, nrm, uv, tris
 
 # ---------------------------------------------------------------------------
 # Geometry.
@@ -1333,13 +1730,40 @@ def verify(body, head):
     print(f"height={height:.4f}  legs {legs / height:.0%}  "
           f"torso {(neck - legs) / height:.0%}  head {(height - neck) / height:.0%}")
 
-    # See the module docstring: PersonScale is one constant for the whole cast.
-    if abs(height - 0.7234) > 0.002:
+    # ⚠️⚠️ THE CEILING IS THE CAST'S RANGE, NOT THE BASE RIG'S ONE NUMBER, AND THAT
+    # CORRECTION IS WHAT LET THIS CHARACTER HAVE HAIR. This check read
+    # `abs(height - 0.7234) > 0.002` and refused anything else, on the reasoning that
+    # `CharacterVisual.PersonScale` is a single constant of 2.38 for all twelve so a
+    # replacement authored taller "walks the arena at the wrong size".
+    #
+    # The constant is real and the conclusion from it was not. Measured across the twelve
+    # CC0 rigs the port actually ships, model AABB height:
+    #
+    #     male-b   0.6613     male-a  0.6713     male-e   0.6760     female-e 0.7165
+    #     female-f 0.6713     male-f  0.6713     male-d   0.7218     female-b 0.7234
+    #     female-a 0.7755     female-c 0.7755    female-d 0.7755     male-c   0.7928
+    #
+    # They span 132 mm, a fifth of the shortest, and they all take the same 2.38.
+    # `CharacterVisual.AlignToCapsuleFloor` re-measures the SCALED bounds and drops the feet
+    # onto the capsule floor, so a taller rig stands taller with its feet in the right place
+    # rather than sinking or floating. 0.7234 was one member of that range and pinning to it
+    # was a transcription of the base rig rather than a family constraint.
+    #
+    # ⚠️ WHY IT MATTERED. The whole difference between those two ends is HAIR. A bald rig is
+    # 0.66 and a rig with a mop is 0.78. Holding this character at the base's 0.7234 while
+    # its donated skull already reached 0.7218 left 1.6 mm for hair, which is how four
+    # sessions of hand-built cap ended up as a slab floating over a forehead. See the note
+    # above `HEAD`.
+    #
+    # The bound is still a bound: outside the cast's own range this is a mistake, not a
+    # style. It is widened by 5 mm at each end so a rig at either extreme can be matched.
+    if not (CAST_MIN_HEIGHT - 0.005 <= height <= CAST_MAX_HEIGHT + 0.005):
         raise SystemExit(
             f"\nHEIGHT CONSTRAINT VIOLATION - nothing written.\n"
-            f"  authored height {height:.4f}, base rig is 0.7234.\n"
+            f"  authored height {height:.4f}, the twelve CC0 rigs span "
+            f"{CAST_MIN_HEIGHT:.4f} to {CAST_MAX_HEIGHT:.4f}.\n"
             f"  CharacterVisual.PersonScale multiplies every Person by 2.38, so a rig\n"
-            f"  authored to a different height walks the arena at the wrong size.")
+            f"  authored outside that range walks the arena at the wrong size.")
 
     if abs(lo[1]) > 0.001:
         raise SystemExit(f"feet are at y={lo[1]:.4f}, not 0. The floor align measures "
@@ -1359,7 +1783,13 @@ def verify(body, head):
     # is legitimately 0.38 from the head joint on a rig built to these proportions, which
     # a flat 0.30 calls a mistake. The head's bound is its own height plus a margin; every
     # other bone keeps the original number.
-    head_reach = (NOW_TOP - NOW_NECK) * 1.15
+    # ⚠️ THE HEAD'S BOUND COMES OFF THE CAST'S TALLEST RIG, NOT OFF `NOW_TOP`. Same
+    # correction as the height check above and for the same reason: `NOW_TOP` is the base
+    # rig's own total, and a mop is legitimately taller than the base rig is. `character-
+    # male-c` reaches 0.7928 with the head joint at 0.343, so 0.450 is a real box on a real
+    # character, and this fired on `hair-curl-b` at 0.439 for a crown lump that is exactly
+    # where the reference art puts it. 5% of margin over the tallest thing the cast ships.
+    head_reach = (CAST_MAX_HEIGHT - NOW_NECK) * 1.05
 
     for entry in (_family(BODY_BOXES, head=False)
                   + _family(HEAD_BOXES, head=True, as_authored=DONOR_SPACE)):

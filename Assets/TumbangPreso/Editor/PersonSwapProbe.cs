@@ -24,8 +24,9 @@ namespace TumbangPreso.EditorTools
     ///                                    hand anchor and the third-person wind-up. A miss is one
     ///                                    warning during a match, and a carried tsinelas that
     ///                                    hangs in the air.
-    ///   * a different authored height    `PersonScale` is one constant for the whole cast, so
-    ///                                    the character is simply the wrong size.
+    ///   * a height outside the cast's   `PersonScale` is one constant for the whole cast.
+    ///                                    The twelve rigs span 0.6613 to 0.7928 and all take
+    ///                                    it, so the bound is that range, not the base rig.
     ///   * UVs outside the palette rows   `Toon.shader` falls through to the raw atlas, and the
     ///                                    character wears stock Kenney colours while every meter
     ///                                    and every name around it stays correct.
@@ -43,7 +44,7 @@ namespace TumbangPreso.EditorTools
     public static class PersonSwapProbe
     {
         /// <summary>The rig under test, and the one it replaces. ⚠️ BOTH, because "the new one
-        /// is 0.7234 tall" means nothing without the number it has to match.</summary>
+        /// is 0.6790 tall" means nothing without the range it has to sit inside.</summary>
         private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-zack.glb";
         private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-female-b.glb";
 
@@ -568,10 +569,29 @@ namespace TumbangPreso.EditorTools
         }
 
         /// <summary>
-        /// ⚠️ THE HEIGHT IS A CONTRACT WITH `CharacterVisual.PersonScale`, which is 2.38 for the
-        /// whole cast and was measured off the base rig's AABB. A replacement that is 10% taller
-        /// does not get its own constant, it gets that one.
+        /// ⚠️⚠️ THE BOUND IS THE CAST'S RANGE, NOT THE BASE RIG'S ONE NUMBER. This compared the
+        /// replacement to `OldModel` and failed at more than 5 mm, on the reasoning that
+        /// `CharacterVisual.PersonScale` is a single 2.38 for all twelve so a taller rig "is
+        /// simply the wrong size".
+        ///
+        /// The constant is real and the conclusion from it was not. Measured across the twelve
+        /// CC0 rigs the port ships, model AABB height runs 0.6613 (male-b) to 0.7928 (male-c),
+        /// a spread of 132 mm, and every one of them takes the same 2.38.
+        /// `CharacterVisual.AlignToCapsuleFloor` re-measures the SCALED bounds and drops the feet
+        /// onto the capsule floor, so a taller rig stands taller with its feet in the right place.
+        /// 0.7234 was one member of that range.
+        ///
+        /// ⚠️ WHAT IT COST. The difference between the two ends of that range is HAIR: a bald rig
+        /// is 0.66 and a rig with a mop is 0.78. Holding this character at the base rig's 0.7234
+        /// while its donated skull already reached 0.7218 left under 2 mm for hair, and four
+        /// passes of hand-built cap went into the gap that was not there. 🧑 on the last of them:
+        /// *"yea hair doesnt loom good still"*. `build_person_voxel.py` carries the same table
+        /// and the same correction beside its own copy of this check.
         /// </summary>
+        private const float CastMinHeight = 0.6613f;
+
+        private const float CastMaxHeight = 0.7928f;
+
         private static bool CheckHeight(StringBuilder report, GameObject instance)
         {
             var old = AssetDatabase.LoadAssetAtPath<GameObject>(OldModel);
@@ -584,13 +604,19 @@ namespace TumbangPreso.EditorTools
 
             Object.DestroyImmediate(oldInstance);
 
-            report.AppendLine($"authored height: {newHeight:F4} (base {oldHeight:F4}), "
+            report.AppendLine($"authored height: {newHeight:F4} (base {oldHeight:F4}, cast "
+                              + $"{CastMinHeight:F4} to {CastMaxHeight:F4}), "
                               + $"scaled by {CharacterVisual.PersonScale} -> "
                               + $"{newHeight * CharacterVisual.PersonScale:F3}");
 
-            if (Mathf.Abs(newHeight - oldHeight) <= 0.005f) return true;
+            // Widened by 5 mm at each end so a rig at either extreme can be matched exactly.
+            if (newHeight >= CastMinHeight - 0.005f && newHeight <= CastMaxHeight + 0.005f)
+            {
+                return true;
+            }
 
-            report.AppendLine("FAIL: authored height differs from the base rig by more than 5 mm.");
+            report.AppendLine("FAIL: authored height is outside the range the twelve CC0 rigs "
+                              + "span, so PersonScale's one constant cannot serve it.");
             return false;
         }
 
