@@ -445,69 +445,72 @@ ARM_LEFT = [
 # measured onto a surface this file no longer authors.
 HEAD = [
     # -----------------------------------------------------------------------------------
-    # § THE MOP, WHICH IS A DONATED SHELL PLUS THIS CHARACTER'S OWN VOLUME ON TOP OF IT.
+    # § THE MOP, AUTHORED AGAINST THE REFERENCE ART AND NOT AGAINST ANOTHER RIG.
     #
-    # ⚠️⚠️ NEITHER HALF WORKS ALONE, AND BOTH WERE TRIED. 🧑 on the all-hand-built version:
-    # *"can we make zack a little less blocky and more like the original models? he's giving
-    # minecraft now haha"*. Then on the all-donated one: *"that hair looks ugly hjaahah"*,
-    # *"not as good as old hair"*, *"maybe redo the entire hair"*.
+    # ⚠️⚠️ THE HAIR IS THE ONE PART OF THIS CHARACTER THAT IS NOT A DONATION, AND THAT IS
+    # DELIBERATE NOW RATHER THAN LEFTOVER. The skull, ears and face come off a CC0 rig
+    # because a Kenney head is a smooth ovoid this file cannot build. The hair went the same
+    # way for one build and came back: 🧑 *"that hair looks ugly hjaahah"*, then the specific
+    # fault, *"the hairs sucks shiiit why does it have bangs"*. Every donated hair shell in
+    # this set is a SCALLOPED FRINGE across the brow, because that is the haircut those
+    # characters have, and a box laid over the scallops only replaces them with a straight
+    # cut. This character's reference has no fringe.
     #
-    # He is describing the same trade from both ends. `character-male-a`'s shell is moulded
-    # to the skull, so it gives a hairline that follows the face and a surface that shades
-    # like the rest of the cast, and neither of those can be built out of cuboids. What it
-    # cannot give is a SILHOUETTE: it hugs the skull at |x| 0.170 and tops out 10 mm above
-    # it, which is a tidy bowl cut on a character whose whole read at arena distance is a
-    # heavy black mass with a crimson streak through it.
+    # ⚠️⚠️ IT IS VOLUME ON TOP OVER TRIMMED SIDES, NOT A BALL. The pass before this one grew
+    # the whole mass outward at once and 🧑 named it: *"pic 2 makes it look like an afro which
+    # it isnt"*, *"maybe trim sides or smth and make it look cleaner"*. In the reference the
+    # sides sit close to the skull, barely past it, and everything the silhouette does
+    # happens above the temple. So the sides clear the skull by 26 mm where they used to
+    # clear it by 46, the two lumps that bulged at hip height on the head are gone, and the
+    # four that are left are all on the crown.
     #
-    # So the shell stays as the layer that meets the face, and the volume that made the old
-    # version his goes back on over it. The old table is where these came from, converted
-    # off its own remapped values rather than re-guessed: the mop overhung that skull by
-    # about 30% each side and reached 0.704, and this reaches 0.716 over a skull of the same
-    # width.
+    # ⚠️ FOUR LUMPS, NOT EIGHT, AND ALL OF THEM ON TOP. *"make it look cleaner"*: lumps
+    # scattered over the whole mass read as damage rather than as texture. On the crown they
+    # read as the messy top the reference has, and the chamfer rounds each one.
     #
-    # ⚠️⚠️ EVERY NUMBER HERE IS IN THE DONATED HEAD'S OWN SPACE (`DONOR_SPACE`), NOT THE
-    # TABLE'S. The shell is |x| 0.170, y 0.3932 to 0.6713, z -0.1724 to 0.1676, and the
-    # skull under it is the same width with the EARS reaching 0.2268 at y 0.392 to 0.484.
+    # ⚠️⚠️ EVERY NUMBER IS IN THE DONATED HEAD'S OWN SPACE (`DONOR_SPACE`). The skull is
+    # y 0.3432 to 0.6613 at |x| 0.170, z -0.1624 to 0.1576, and the EARS reach 0.2268 at
+    # y 0.392 to 0.484.
     #
-    # ⚠️ NOTHING COMES BELOW y 0.505, WHICH IS 21 MM ABOVE THE TOP OF THE EAR. Hair over the
-    # ears is what buried them for three builds, and the earring hangs off one of them.
-    ("hair-mass",    "head", (-0.212, 0.575, -0.200), (0.212, 0.690, 0.192), HAIR),
-    ("hair-peak",    "head", (-0.165, 0.680, -0.150), (0.165, 0.716, 0.155), HAIR),
-    ("hair-back",    "head", (-0.200, 0.440, -0.248), (0.200, 0.686, -0.190), HAIR),
-    ("hair-fringe",  "head", (-0.190, 0.585, 0.150), (0.190, 0.680, 0.205), HAIR),
-    ("hair-side-left",  "head", (0.170, 0.505, -0.190), (0.212, 0.630, 0.150), HAIR),
-    ("hair-side-right", "head", (-0.212, 0.505, -0.190), (-0.170, 0.630, 0.150), HAIR),
+    # ⚠️ NOTHING COMES BELOW y 0.500, WHICH CLEARS THE TOP OF THE EAR BY 16 MM. Hair over the
+    # ears buried them for three builds and the earring hangs off one of them.
+    ("hair-core",    "head", (-0.184, 0.585, -0.198), (0.184, 0.714, 0.188), HAIR),
+    ("hair-back",    "head", (-0.180, 0.480, -0.234), (0.180, 0.700, -0.170), HAIR),
+    ("hair-front",   "head", (-0.176, 0.560, 0.132), (0.176, 0.700, 0.202), HAIR),
+    ("hair-side-left",  "head", (0.168, 0.500, -0.186), (0.196, 0.668, 0.140), HAIR),
+    ("hair-side-right", "head", (-0.196, 0.500, -0.186), (-0.168, 0.668, 0.140), HAIR),
 
-    # ⚠️ THE TWO TUFTS ARE THE ONLY THING BREAKING THE OUTLINE, and the old version had four
-    # of them for the same reason. Without something standing off it, a mop this size is a
-    # box: the chamfer rounds its corners but the top edge still runs straight across, and
-    # straight across is what reads as a helmet.
-    ("hair-tuft-left",  "head", (0.046, 0.706, -0.070), (0.140, 0.744, 0.060), HAIR),
-    ("hair-tuft-right", "head", (-0.128, 0.702, 0.020), (-0.040, 0.736, 0.130), HAIR),
+    ("hair-curl-a",  "head", (-0.150, 0.704, -0.130), (-0.036, 0.754, 0.020), HAIR),
+    ("hair-curl-b",  "head", (0.020, 0.708, -0.060), (0.128, 0.758, 0.070), HAIR),
+    ("hair-curl-c",  "head", (-0.184, 0.694, 0.050), (-0.086, 0.742, 0.168), HAIR),
+    ("hair-curl-d",  "head", (-0.066, 0.698, -0.226), (0.058, 0.746, -0.140), HAIR),
 
-    # § THE CRIMSON, a swept forelock rather than a bow: it takes the fringe on one side,
-    # crosses the crown as a band, and runs out the back. Each piece is a PLATE on the
-    # surface it is seen from, so black hair still shows above, below and between them.
+    # § THE CRIMSON FORELOCK.
     #
-    # ⚠️ EACH STRADDLES ITS SURFACE, half in and half out, and is at least 16 mm thick.
-    # `ToonSkin` pushes the ink outline 8 mm off every face in this space, so a plate
-    # thinner than that is a shape entirely inside its own border and renders as a dark
-    # smear with a hint of red in it. An earlier pass also hung one 20 mm in front of a
-    # surface that had already fallen away, which read as a rectangle stuck onto the head.
+    # ⚠️⚠️ IT IS A MASS, NOT A STRIPE, AND EVERY EARLY PASS UNDERSOLD IT. The reference puts a
+    # single big swept lock over roughly the top-front third of the hair: it starts low at the
+    # front on one side, rises over the crown and runs out toward the back. Drawn as thin
+    # plates it read as a headband, and drawn small it vanished on the cast sheet.
+    ("dye-fore-a",   "head", (-0.030, 0.626, 0.098), (0.186, 0.750, 0.226), CLIP),
+    ("dye-fore-b",   "head", (0.030, 0.694, -0.050), (0.190, 0.766, 0.104), CLIP),
+    ("dye-fore-c",   "head", (0.086, 0.678, -0.170), (0.192, 0.744, -0.040), CLIP),
+    ("dye-lick",     "head", (-0.086, 0.592, 0.162), (0.036, 0.660, 0.232), CLIP),
+
+    # ⚠️ AND IT REACHES THE SIDES. 🧑: *"u should give the sides somme color too"*. With the
+    # lock only on the crown and the front, the side view was the one angle with no crimson in
+    # it at all, which is the angle a player sees most of somebody running past them. These
+    # two sit on the side faces at 0.196, the trimmed width above, so they are plates on the
+    # hair rather than a second bulge.
     #
-    # ⚠️ THE FRONT PLATE STOPS SHORT OF THE CENTRE ON PURPOSE. Run full width it stops being
-    # a streak in the hair and becomes a headband, which is a different character.
-    ("dye-fringe",   "head", (0.020, 0.606, 0.188), (0.190, 0.658, 0.214), CLIP),
-    ("dye-crown",    "head", (-0.060, 0.702, -0.130), (0.150, 0.726, 0.140), CLIP),
-    ("dye-side",     "head", (0.204, 0.556, -0.160), (0.226, 0.634, 0.090), CLIP),
-    ("dye-back",     "head", (0.030, 0.530, -0.258), (0.120, 0.650, -0.236), CLIP),
+    # ⚠️ THE +X ONE IS THE BIGGER, and that is the same asymmetry the lock has: the character
+    # keeps one loud side. Matching them exactly would read as a hairband again.
+    ("dye-side-left",  "head", (0.188, 0.596, -0.070), (0.208, 0.684, 0.128), CLIP),
+    ("dye-side-right", "head", (-0.208, 0.618, 0.010), (-0.188, 0.676, 0.126), CLIP),
 
     # ⚠️⚠️ ONE EAR ONLY, MEASURED OFF THE DONOR'S ACTUAL EAR. 🧑: *"add earrings to one ear"*,
     # then *"the earring is floating haha ... look the side"*. The first pass hung it off the
     # ear's lowest BOUND, but a bbox is not the mesh and the lobe tapers, so at that z the
     # ear had already ended. It overlaps the ear body now and the drop overlaps the hoop.
-    #
-    # ⚠️ THE EAR IS IN SLOT 15, WHICH IS KEPT, so these two survived the mop swap untouched.
     #
     # ⚠️ GOLD, NOT CHAIN. The buckle and the collar stud are already gold; a third metal on
     # one character is a palette slot spent on something nobody can see at this size.
@@ -517,9 +520,10 @@ HEAD = [
 
 # Boxes authored in the donated head's own space. See `_family` and the block above.
 DONOR_SPACE = (
-    "hair-mass", "hair-peak", "hair-back", "hair-fringe",
-    "hair-side-left", "hair-side-right", "hair-tuft-left", "hair-tuft-right",
-    "dye-fringe", "dye-crown", "dye-side", "dye-back",
+    "hair-core", "hair-back", "hair-front", "hair-side-left", "hair-side-right",
+    "hair-curl-a", "hair-curl-b", "hair-curl-c", "hair-curl-d",
+    "dye-fore-a", "dye-fore-b", "dye-fore-c", "dye-lick",
+    "dye-side-left", "dye-side-right",
     "earring-hoop", "earring-drop",
 )
 
@@ -633,7 +637,6 @@ HEAD_BOXES = HEAD
 # at |x| 0.2268 and z -0.1624 to 0.1576. Every rig in the set is that shell plus its own
 # second one. Check it with `tools/glb_mesh_dump.py` before adding a third donor.
 DONOR_SKULL = "Assets/TumbangPreso/Art/characters/persons/character-male-d.glb"
-DONOR_MOP = "Assets/TumbangPreso/Art/characters/persons/character-male-a.glb"
 
 # ⚠️⚠️ SLOT 13 OF THE SKULL DONOR IS DROPPED ON PURPOSE. It is his bald pate: y 0.3932 to
 # 0.7218, which is the HAIR volume worn in skin. Keeping it is what left the mop nowhere to
@@ -641,11 +644,15 @@ DONOR_MOP = "Assets/TumbangPreso/Art/characters/persons/character-male-a.glb"
 # wrong.
 SKULL_SLOTS = {15: None, 8: None}
 
-# ⚠️ THE MOP IS REPAINTED, NOT RE-UVed BY HAND. It arrives on `character-male-a`'s slot 8,
-# which is his hair; this character's slot 8 is the INK that draws the eyes and the mouth,
-# and leaving it there would paint the whole mop with the face colour and put a second
-# claim on the one slot the guide says must stay dark. `HAIR` is slot 6.
-MOP_SLOTS = {8: HAIR}
+# ⚠️⚠️ THERE IS NO DONATED MOP, AND THE ONE THAT WAS HERE IS WHY. `character-male-a`'s
+# slot 8 dropped in at 1:1 and gave a hairline that follows the skull, which no box can do.
+# It also brought his HAIRCUT, and his haircut is a scalloped fringe across the brow:
+# 🧑 *"the hairs sucks shiiit why does it have bangs"*. Every hair shell in this set has one,
+# because they all belong to characters who wear one, and a box laid over the scallops only
+# replaces them with a straight cut. This character's reference has no fringe at all.
+#
+# So `_donor_part` is still the mechanism and still takes a repaint, and the next character
+# who DOES want a fringe should use it. This one draws its hair in `HEAD`.
 
 # ⚠️⚠️ THE MOUTH IS BENT, NOT REPLACED, AND REPLACING IT BROKE THE FACE. 🧑: *"change the
 # expression just a bit to edgy or nonchalant? the :)"*, then *"bro look at ur render u
@@ -688,37 +695,73 @@ DONOR_MOUTH_VERTS = 10
 DONOR_EYE_TRIS = 12
 DONOR_EYE_VERTS = 16
 
-# ⚠️⚠️ AND THE FIRST TWO BENDS BOTH SCALED THE MOUTH TOWARD A PIVOT, WHICH CANNOT WORK.
-# 🧑 on the build that did: the mouth came back as a *":)"* again. `ToonSkin` draws the ink
-# outline as an inverted hull `0.008 * 2.38` wide, and the 2.38 is `PersonScale`, so in the
-# space this file authors in the hull stands **8 mm** off every ink polygon, 16 mm across
-# the gap. Flattening the smile to 7 mm of stroke put a 16 mm halo around a 7 mm shape: the
-# halo closed the curve back up and drew the original smile with its middle filled in. A
-# thin line does not exist on this character and no amount of flattening creates one.
+
+# ⚠️⚠️ THE MOUTH IS DRAWN, NOT BENT, AND THREE PASSES OF BENDING IT IS WHY. 🧑, each time:
+# *"bro look at ur render u broke the face hahah"*, *"the facial expression doesnt look
+# nonchalant or smug or edgy anymore too"*, *"look at the mouth he is smiling ts aint edgy"*.
 #
-# THE BOW AND THE STROKE ARE SEPARATED AND ONLY THE BOW IS TOUCHED. Least squares over the
-# ten mouth vertices splits the shape into a centreline `y = A + B x^2` and each vertex's
-# offset from it: B is 3.98, which puts the corners 8.1 mm above the centre and IS the
-# smile, while the offsets are 31 mm of stroke weight and are what the outline needs to have
-# something to sit on. `MOUTH_CURVE` scales the bow alone. At 1.0 it is the donated smile,
-# at 0.0 a level bar, and negative turns it down.
+# The donated mouth is a FILLED BOWL, an open grin with its interior inked, and no affine
+# bend of a filled bowl is a smirk. Flattening it thins the stroke until the shape vanishes;
+# tilting it swings the bowl without opening it. The last attempt measured 51.9 mm tall
+# against an eye of 27.1 mm, because tilt over a 90 mm mouth adds its own lift to the height
+# twice over. A mouth twice the size of an eye reads as a grin whatever its curve is doing.
 #
-# ⚠️ -0.35 IS UNIMPRESSED, NOT SULLEN, and the tilt is what keeps it from reading as a
-# frown: the bow comes down 3 mm while one corner lifts 15 mm, so the mouth is a single
-# diagonal stroke rather than a symmetrical curve of any kind. That is the whole difference
-# between nonchalant and unhappy at this resolution.
+# ⚠️⚠️ AND THE FACE IS FLAT, WHICH THE NOTE THAT STARTED ALL THIS SAID IT WAS NOT. Every ink
+# vertex on this donor sits at z 0.1596 exactly, eyes and mouth alike: it is an inset PLATE,
+# not a patch of a curved ovoid. The claim that "two axis-aligned boxes punched out through
+# both cheeks" was true of BOXES, which have depth and corners; it says nothing about a
+# polygon lying in that plane. So the mouth can be authored outright, the same way
+# `FACE_PIXELS` was drawn before the head was donated, and `PANEL_PROUD` keeps it off the
+# skin by the same fraction of a millimetre.
 #
-# ⚠️ +X IS THE CHARACTER'S LEFT, so the lifted corner is the same side as the crimson
-# forelock and the earring. One character reading asymmetric on one side is a silhouette
-# cue; asymmetric on both sides at once is just crooked.
-#
-# ⚠️⚠️ CHOSEN OFF `tools/face_mouth_sheet.py --sweep`, NOT BY EYE ON THE NUMBERS. That tool
-# rasterises these same triangles WITH the 8 mm halo, at the turnaround's size and at the
-# 90 px a head actually occupies in play. Anything that only reads in the first of those
-# does not exist in the game, and both of the earlier attempts were in that category.
-MOUTH_CURVE = -0.35
-MOUTH_STROKE = 0.62
-MOUTH_TILT = 0.48
+# The shape is a tapered stroke: thin at the character's RIGHT, thickening as it rises to the
+# left, with a short flick up at the end. That is a smirk, and it is 24 mm tall, which is
+# just under an eye.
+MOUTH_Z = 0.1596
+MOUTH_HALF = 0.042
+MOUTH_BASE = 0.4135
+
+# The centreline's rise across the whole mouth, and the stroke's weight at each end. The
+# taper is what makes it read as one-sided: an even stroke at an angle is a straight line
+# drawn crooked, and a stroke that grows into the lift is a lip curling.
+MOUTH_RISE = 0.013
+MOUTH_THIN = 0.0032
+MOUTH_THICK = 0.0092
+
+# The flick. It applies over the last `MOUTH_HOOK_FROM` of the +x end and is what stops the
+# stroke reading as a frown drawn upward.
+MOUTH_HOOK_FROM = 0.55
+MOUTH_HOOK = 0.006
+
+# How many samples along it. The chamfer does not touch this (it is not a box) and the
+# outline traces the polygon, so the only thing resolution buys is a smooth taper.
+MOUTH_STEPS = 14
+
+
+def _mouth_polygon():
+    """This character's own mouth, as a closed polygon on the face plate.
+
+    ⚠️ RETURNED IN FILE SPACE, NOT TABLE SPACE. The donated head is not put through
+    `build_mesh`'s `FRONT_IS_MINUS_Z` flip, so +z is the face and these are used as written.
+    """
+    upper, lower = [], []
+
+    for k in range(MOUTH_STEPS + 1):
+        t = k / MOUTH_STEPS
+        x = -MOUTH_HALF + t * (2.0 * MOUTH_HALF)
+
+        centre = MOUTH_BASE + (t - 0.5) * MOUTH_RISE
+        half = 0.5 * (MOUTH_THIN + t * (MOUTH_THICK - MOUTH_THIN))
+
+        if t > MOUTH_HOOK_FROM:
+            u = (t - MOUTH_HOOK_FROM) / (1.0 - MOUTH_HOOK_FROM)
+            centre += MOUTH_HOOK * u * u
+
+        upper.append((x, centre + half))
+        lower.append((x, centre - half))
+
+    return upper + list(reversed(lower))
+
 
 # ⚠️⚠️ AND THE EYES CARRY MORE OF THE EXPRESSION THAN THE MOUTH DOES. 🧑 after two passes
 # that only touched the mouth: *"the facial expression doesnt look nonchalant or smug or
@@ -735,24 +778,6 @@ MOUTH_TILT = 0.48
 # ink has to move down with it or it reads as a squint.
 EYE_SQUASH = 0.55
 EYE_DROP = 0.008
-
-
-def _smile_curve(pos, mouth):
-    """The donated smile's own centreline `y = A + B x^2`, by least squares.
-
-    ⚠️ IT IS FITTED RATHER THAN WRITTEN DOWN because it belongs to the donor and not to us.
-    Point `DONOR_SKULL` at a different rig and this re-measures; a transcribed constant
-    would silently bend the new rig's mouth around the old one's centre.
-    """
-    n = len(mouth)
-    sx2 = sum(pos[i][0] ** 2 for i in mouth)
-    sx4 = sum(pos[i][0] ** 4 for i in mouth)
-    sy = sum(pos[i][1] for i in mouth)
-    sx2y = sum(pos[i][0] ** 2 * pos[i][1] for i in mouth)
-
-    det = n * sx4 - sx2 * sx2
-
-    return (sy * sx4 - sx2 * sx2y) / det, (n * sx2y - sx2 * sy) / det
 
 
 def _slot_at(u, v):
@@ -889,7 +914,7 @@ def _donor_head():
     """The skull with its face bent, plus the donated mop, as one mesh."""
     pos, nrm, uv, tris = _donor_part(DONOR_SKULL, SKULL_SLOTS)
 
-    mouth, eyes = set(), set()
+    mouth, eyes, mouth_tris = set(), set(), set()
     bent = 0
 
     for a, b, c in tris:
@@ -901,6 +926,7 @@ def _donor_head():
 
         if (pos[a][1] + pos[b][1] + pos[c][1]) / 3.0 < DONOR_MOUTH_Y:
             mouth.update((a, b, c))
+            mouth_tris.add((a, b, c))
             bent += 1
         else:
             eyes.add((a, b, c))
@@ -940,26 +966,47 @@ def _donor_head():
             x, y, z = pos[i]
             pos[i] = (x, centre + (y - centre) * EYE_SQUASH - EYE_DROP, z)
 
-    a, b = _smile_curve(pos, mouth)
+    # ⚠️ ONLY THE EYES MOVED, so the guard runs before the mouth is touched at all. What
+    # happens to the mouth below is a DELETE and a DRAW, not a move, and the guard exists to
+    # catch a move that reached further than it was supposed to.
+    _verify_expression(before, pos, uv, eye_verts)
 
-    for i in mouth:
-        x, y, z = pos[i]
+    # ⚠️⚠️ THE DONATED MOUTH IS DROPPED WHOLE, and its vertices are compacted away at the end
+    # of this function rather than here. Renumbering mid-flight would invalidate `eye_verts`,
+    # `mouth` and every triangle after them; leaving them orphaned makes every later
+    # measurement lie, and the first thing that happened was a mouth measuring 36 mm because
+    # the tool was still counting the ten vertices of the one that had been deleted.
+    tris = [t for t in tris if t not in mouth_tris]
 
-        # The centreline at this x, then: the bow scaled, the stroke offset kept whole,
-        # and the tilt. See MOUTH_CURVE for why the three are separate.
-        line = a + b * x * x
+    first = len(pos)
+    plate = MOUTH_Z + PANEL_PROUD
 
-        pos[i] = (x, a + (line - a) * MOUTH_CURVE + (y - line) * MOUTH_STROKE + x * MOUTH_TILT, z)
+    for x, y in _mouth_polygon():
+        pos.append((x, y, plate))
+        nrm.append((0.0, 0.0, 1.0))
+        uv.append(cell_uv(INK))
 
-    _verify_expression(before, pos, uv, mouth | eye_verts)
+    # A fan. The polygon is a strip between two curves that never cross, so it is convex
+    # enough for one: every diagonal from the first vertex stays inside it.
+    for k in range(1, len(pos) - first - 1):
+        tris.append((first, first + k, first + k + 1))
 
-    mop_pos, mop_nrm, mop_uv, mop_tris = _donor_part(DONOR_MOP, MOP_SLOTS)
-    base = len(pos)
+    return _compact(pos, nrm, uv, tris)
 
-    pos += mop_pos
-    nrm += mop_nrm
-    uv += mop_uv
-    tris += [(a + base, b + base, c + base) for a, b, c in mop_tris]
+
+def _compact(pos, nrm, uv, tris):
+    """Drops vertices nothing references any more, and reindexes what is left.
+
+    ⚠️ IT IS NOT AN OPTIMISATION, IT IS SO THE FILE CAN BE MEASURED. An orphaned vertex
+    still sits in the POSITION accessor, so `glb_mesh_dump.py`, `glb_face_side.py` and
+    every bounds check in `verify()` keep reading geometry that is not drawn. The deleted
+    mouth is exactly the shape whose absence is being checked.
+    """
+    used = sorted({i for t in tris for i in t})
+    remap = {i: k for k, i in enumerate(used)}
+
+    return ([pos[i] for i in used], [nrm[i] for i in used], [uv[i] for i in used],
+            [tuple(remap[i] for i in t) for t in tris])
 
     return pos, nrm, uv, tris
 
@@ -1736,7 +1783,13 @@ def verify(body, head):
     # is legitimately 0.38 from the head joint on a rig built to these proportions, which
     # a flat 0.30 calls a mistake. The head's bound is its own height plus a margin; every
     # other bone keeps the original number.
-    head_reach = (NOW_TOP - NOW_NECK) * 1.15
+    # ⚠️ THE HEAD'S BOUND COMES OFF THE CAST'S TALLEST RIG, NOT OFF `NOW_TOP`. Same
+    # correction as the height check above and for the same reason: `NOW_TOP` is the base
+    # rig's own total, and a mop is legitimately taller than the base rig is. `character-
+    # male-c` reaches 0.7928 with the head joint at 0.343, so 0.450 is a real box on a real
+    # character, and this fired on `hair-curl-b` at 0.439 for a crown lump that is exactly
+    # where the reference art puts it. 5% of margin over the tallest thing the cast ships.
+    head_reach = (CAST_MAX_HEIGHT - NOW_NECK) * 1.05
 
     for entry in (_family(BODY_BOXES, head=False)
                   + _family(HEAD_BOXES, head=True, as_authored=DONOR_SPACE)):

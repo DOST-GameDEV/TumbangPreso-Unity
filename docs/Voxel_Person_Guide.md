@@ -384,12 +384,25 @@ shape: the halo closed the curve back up and rendered the original smile with it
 filled in. Two passes were spent making the line thinner, which is the direction that makes
 this worse.
 
-**The bow and the stroke are separated, and only the bow is touched.** Least squares over the
-ten mouth vertices splits the shape into a centreline `y = A + B x²` and each vertex's offset
-from it. B is 3.98, which puts the corners 8.1 mm above the centre and *is* the smile; the
-offsets are 31 mm of stroke weight and are what the outline needs something to sit on.
-`MOUTH_CURVE` scales the bow alone: 1.0 is the donated smile, 0.0 a level bar, negative turns
-it down.
+Separating the bow from the stroke by least squares and scaling only the bow was the third
+attempt and it did not work either: *"look at the mouth he is smiling ts aint edgy"*. The
+donated mouth is a **filled bowl**, an open grin with its interior inked, and no affine bend of
+a filled bowl is a smirk. Flattening thins the stroke until the shape stops existing; tilting
+swings the bowl without opening it, and it inflates the shape's own height twice over. The last
+bend measured **51.9 mm tall against an eye of 27.1 mm**. A mouth twice the size of an eye
+reads as a grin whatever its curve is doing.
+
+**The mouth is drawn, and the thing that makes that safe is that the face is FLAT.** Every ink
+vertex on this donor sits at z 0.1596 exactly, eyes and mouth alike: it is an inset plate, not
+a patch of a curved ovoid. The note that started three passes of bending said otherwise, and it
+was true of BOXES, which have depth and corners; it says nothing about a polygon lying in that
+plane. So `_mouth_polygon` authors a tapered stroke on that plate, `PANEL_PROUD` keeps it off
+the skin, the donor's eight mouth triangles are deleted outright, and `_compact` drops the
+vertices nothing references any more so the file can still be measured.
+
+⚠️ **Delete-and-draw, not move**, which is why `_verify_expression` runs before the mouth is
+touched: the guard exists to catch a MOVE that reached too far, and the mouth is no longer a
+move.
 
 ⚠️ **The eyes carry more of the expression than the mouth does.** The donated eyes are tall
 rounded pupils set wide apart, which is the open, friendly read the whole CC0 cast shares, and
@@ -426,16 +439,28 @@ built on top of a skull that already filled the space the mop needed, with the r
 above it. What came out was a 20 mm cap floating over a forehead, and no amount of moving those
 boxes was going to fix it.
 
-Dropping slot 13 and donating a real hair shell in its place is the fix. `_donor_part` takes a
-rig, a set of slots and an optional repaint, so the skull comes off one rig and the mop off
-another, at 1:1, because they are the same shell to four decimal places.
+Dropping slot 13 is half the fix and it is the half that was blocking everything else.
+`_donor_part` takes a rig, a set of slots and an optional repaint, so a skull can come off one
+rig and a hair shell off another at 1:1, because they are the same shell to four decimal places.
 
-⚠️ **But a donated mop alone is a bowl cut, and that is the other half.** The shell hugs the
-skull at |x| 0.170 and tops out 10 mm above it, which cannot give a silhouette. This character's
-whole read at arena distance is a heavy black mass with a crimson streak. So the shell stays as
-the layer that meets the face, where it gives a hairline following the skull and a surface that
-shades like the cast, and the volume that made the old version his goes back on over it as
-boxes. **Neither half works alone and both were shipped alone first.**
+⚠️⚠️ **The donated hair shell then shipped, and it came back with a name on the fault:**
+*"the hairs sucks shiiit why does it have bangs"*. Every hair shell in this set is a **scalloped
+fringe across the brow**, because that is the haircut those characters have, and a box laid over
+the scallops only replaces them with a straight cut. This character's reference has no fringe at
+all. So the mop is boxes again and the donation stops at the skull.
+
+⚠️ **That is not a reason to keep hair out of `_donor_part`.** The next character who wants a
+fringe should take one: the mechanism is right, this character's haircut is just not in the set.
+
+⚠️⚠️ **And boxes are only right if they are VOLUME ON TOP OVER TRIMMED SIDES.** Growing the mass
+outward all round gives *"pic 2 makes it look like an afro which it isnt"*. In the reference the
+sides sit close to the skull and everything the silhouette does happens above the temple: 26 mm
+of clearance, not 46, four lumps and all of them on the crown. Lumps scattered down the sides
+read as damage rather than as texture, which is what *"make it look cleaner"* was about.
+
+⚠️ **The crimson has to reach the side faces.** With the lock only on the crown and the front,
+the side view was the one angle with no crimson in it, and that is the angle a player gets most
+of somebody running past them.
 
 ### 5.15 `PersonScale` is one constant, and that is not a height constraint
 
