@@ -195,9 +195,24 @@ namespace TumbangPreso.PlayTests
                 return;
             }
 
-            foreach (var button in Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude,
-                                                                    FindObjectsSortMode.None))
+            foreach (var button in Object.FindObjectsByType<Selectable>(FindObjectsInactive.Exclude,
+                                                                        FindObjectsSortMode.None))
             {
+                // ⚠️⚠️ BUTTONS AND DROPDOWNS, AND THIS USED TO BE BUTTONS ALONE. The settings
+                // panel's colour picker started as a Button, was caught by this probe when it
+                // landed below the fold, and was then rebuilt as a Dropdown to show its
+                // swatches. That rebuild would have silently dropped it out of this test: a
+                // control that is unreachable is unreachable whatever class it is, and the one
+                // control with a history of being unreachable would have been the one no longer
+                // checked.
+                //
+                // ⚠️ IT IS A DENYLIST OF TWO RATHER THAN EVERY Selectable ON PURPOSE. Toggles,
+                // sliders and input fields are also Selectables, and several of them sit below
+                // the fold on this same screen; sweeping them all in is a bigger claim than this
+                // probe has ever made and would fail on controls nobody has reported. Widen it
+                // deliberately, not by accident.
+                if (!(button is Button) && !(button is Dropdown)) continue;
+
                 var rect = button.transform as RectTransform;
                 if (rect == null) continue;
                 if (only != null && !rect.IsChildOf(only)) continue;

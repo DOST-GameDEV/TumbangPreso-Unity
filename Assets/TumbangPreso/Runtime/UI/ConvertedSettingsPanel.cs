@@ -141,7 +141,7 @@ namespace TumbangPreso.UI
 
         // --- The landed-highlight colour ---------------------------------------------
 
-        private Button _highlightButton;
+        private Dropdown _highlight;
 
         /// <summary>
         /// § THE LANDED HIGHLIGHT's colour picker, from `settings_panel.gd`.
@@ -152,10 +152,12 @@ namespace TumbangPreso.UI
         /// next time somebody reimports the maps. Everything on this screen that the importer
         /// does not own is built here, which is the same reason the rebind rows are.
         ///
-        /// ⚠️ IT CYCLES RATHER THAN OPENING A LIST. There are five entries and the panel has no
-        /// popup layer of its own (see the class note on why BACK confirms in place instead of
-        /// opening a dialog), so a button that advances and shows its current value needs no
-        /// layer that does not exist.
+        /// ⚠️⚠️ IT IS A LIST WITH SWATCHES, NOT A CYCLING BUTTON, AND THAT WAS A CORRECTION.
+        /// The first version advanced through the palette on click and printed the colour's
+        /// NAME. It worked and it was the wrong control: the player is picking a COLOUR, and a
+        /// button reading "Purple" in ink on wood shows them everything except the purple. The
+        /// Godot panel puts every option on screen at once with the colour beside it, so the
+        /// choice is made by eye. See `SwatchDropdown`.
         /// </summary>
         private void BuildSlipperHighlightRow()
         {
@@ -179,42 +181,51 @@ namespace TumbangPreso.UI
             row.spacing = 0.0f;
 
             var label = MenuKit.Styled(rowGo.transform, "MenuBody",
-                                       "Landed tsinelas", TextAnchor.MiddleLeft);
+                                       "Slipper Highlight", TextAnchor.MiddleLeft);
             label.raycastTarget = false;
 
             var labelElement = label.gameObject.AddComponent<LayoutElement>();
             labelElement.preferredWidth = ActionLabelWidth;
-            labelElement.minHeight = BindingControlSize.y;
+            labelElement.minHeight = HighlightControlSize.y;
 
-            _highlightButton = MenuKit.WoodButton(rowGo.transform,
-                SlipperHighlights.LabelOf(SettingsStore.Current.SlipperHighlight),
-                Vector2.zero, Vector2.zero, BindingControlSize, CycleSlipperHighlight, "Button");
+            var options = new System.Collections.Generic.List<SwatchDropdown.Option>();
 
-            var buttonElement = _highlightButton.gameObject.AddComponent<LayoutElement>();
-            buttonElement.preferredWidth = BindingControlSize.x;
-            buttonElement.preferredHeight = BindingControlSize.y;
-            buttonElement.flexibleWidth = 1.0f;
+            foreach (var entry in SlipperHighlights.All)
+            {
+                // ⚠️ "Off" PASSES A NULL SWATCH rather than its stored colour. Row 0 holds black
+                // as a placeholder because the palette is an array and every row needs a value;
+                // drawing it would put a black chip beside "Off" that reads like a sixth colour.
+                bool hasColour = entry.Label != "Off";
+                options.Add(new SwatchDropdown.Option(
+                    entry.Label, hasColour ? entry.Colour : (Color?)null));
+            }
+
+            _highlight = SwatchDropdown.Build(rowGo.transform, options,
+                                              SettingsStore.Current.SlipperHighlight,
+                                              HighlightControlSize, PickSlipperHighlight);
+
+            var element = _highlight.gameObject.AddComponent<LayoutElement>();
+            element.preferredWidth = HighlightControlSize.x;
+            element.preferredHeight = HighlightControlSize.y;
+            element.flexibleWidth = 1.0f;
         }
+
+        /// <summary>⚠️ WIDER THAN A KEYCAP. This row carries a swatch, a label and a chevron
+        /// rather than one short key name, and at the rebind rows' 170 the colour names
+        /// collided with the arrow.</summary>
+        private static readonly Vector2 HighlightControlSize = new Vector2(300.0f, 46.0f);
 
         /// <summary>
         /// ⚠️ IT ANNOUNCES THE CHANGE, and that is the half that makes the control feel real.
         /// This panel is reachable from the in-match pause menu, so every tsinelas already
-        /// lying on the arena repaints on this press rather than at its next landing.
+        /// lying on the arena repaints on this pick rather than at its next landing.
         /// </summary>
-        private void CycleSlipperHighlight()
+        private void PickSlipperHighlight(int index)
         {
-            int next = SettingsStore.Current.SlipperHighlight + 1;
-            if (next >= SlipperHighlights.All.Length) next = 0;
+            SettingsStore.Current.SlipperHighlight =
+                Mathf.Clamp(index, 0, SlipperHighlights.All.Length - 1);
 
-            SettingsStore.Current.SlipperHighlight = next;
             SettingsStore.RaiseSlipperHighlightChanged();
-
-            if (_highlightButton != null)
-            {
-                var text = _highlightButton.GetComponentInChildren<Text>();
-                if (text != null) text.text = SlipperHighlights.LabelOf(next);
-            }
-
             RefreshApplyState();
         }
 
@@ -485,16 +496,16 @@ namespace TumbangPreso.UI
 
             if (_actions != null) Rebinding.Load(_actions);
 
-            // ⚠️ THE CYCLER'S FACE IS PART OF THE STATE BEING REVERTED. `Restore` puts the value
-            // back and repaints the arena, but the button still reads whatever the player
-            // cycled it to, and a control showing Red beside slippers lit Blue is the setting
-            // looking broken.
-            if (_highlightButton != null)
-            {
-                var text = _highlightButton.GetComponentInChildren<Text>();
-                if (text != null)
-                    text.text = SlipperHighlights.LabelOf(SettingsStore.Current.SlipperHighlight);
-            }
+            // ⚠️ THE PICKER'S FACE IS PART OF THE STATE BEING REVERTED. `Restore` puts the value
+            // back and repaints the arena, but the control still shows whatever the player
+            // chose, and a swatch reading Red beside slippers lit Blue is the setting looking
+            // broken.
+            //
+            // ⚠️ SetValueWithoutNotify, NOT `value`. Assigning `value` fires onValueChanged,
+            // which would write the reverted index straight back into the settings as a fresh
+            // edit and re-dirty the panel we are in the middle of cleaning up.
+            if (_highlight != null)
+                _highlight.SetValueWithoutNotify(SettingsStore.Current.SlipperHighlight);
 
             _backArmed = false;
             SetButtonLabel(_back, "◀  BACK");
