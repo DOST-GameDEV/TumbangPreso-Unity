@@ -73,7 +73,20 @@ namespace TumbangPreso.Visual
             // the street rather than as geometry catching the scene light.
             var ringGo = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             ringGo.name = "NameplateRing";
-            Destroy(ringGo.GetComponent<Collider>());   // a marker must never be collidable
+
+            // ⚠️⚠️ DISABLED BEFORE IT IS DESTROYED, NOT JUST DESTROYED. `Destroy()` on a
+            // component is deferred to the end of the frame, so an UNSCALED marker (the
+            // primitive's default 2 m tall cylinder, before ApplySizing shrinks it to a floor
+            // disc in Start) is still solid physics geometry for every raycast that runs
+            // between here and then. `Lata.SnapHomeToGround` is one of them: on the very first
+            // frame all four seats are still at their pre-teleport default position, stacked
+            // with the lata at the origin, and its downward ray picked the tallest of these
+            // still-live rings at y=1 over the actual road at y=0.1. Reported as *"cans are
+            // floating"*. Disabling first removes it from physics immediately; `Destroy` still
+            // runs after to clean up the component.
+            var ringCollider = ringGo.GetComponent<Collider>();
+            ringCollider.enabled = false;
+            Destroy(ringCollider);
 
             _ring = ringGo.transform;
             _ring.SetParent(transform, false);
