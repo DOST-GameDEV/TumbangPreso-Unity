@@ -352,6 +352,8 @@ namespace TumbangPreso.CameraSystem
 
             if (active) ApplyFppSelfHide();
             else RestoreSelfHide();
+
+            ApplyCarriedSelfHide();
         }
 
         public void SetAimSource(AimSource source) => _aimSource = source;
@@ -363,6 +365,7 @@ namespace TumbangPreso.CameraSystem
             if (_character == null || !_active) return;
 
             ApplyLens();
+            ApplyCarriedSelfHide();
 
             if (_emoteView) { StepEmoteLook(); ApplyEmoteView(); return; }
 
@@ -551,6 +554,70 @@ namespace TumbangPreso.CameraSystem
         }
 
         private readonly List<ShadowCastingMode> _selfShadowModes = new List<ShadowCastingMode>();
+
+        /// <summary>
+        /// ⚠️⚠️ THE WORLD SLIPPER RIDES THE HAND BY COPYING A TRANSFORM EVERY FRAME
+        /// (`Carrier.RideAnchor`), AND IT IS NEVER REPARENTED ONTO THE CHARACTER. So
+        /// `ApplyFppSelfHide` above — which only reaches renderers under `_character`'s own
+        /// hierarchy — never sees it, and it kept rendering in first person at wherever the
+        /// (now shadows-only) hand anchor put it, at the same time the viewmodel's own
+        /// dedicated `HeldSlipper` rendered mounted to the camera. Two slippers, and only one
+        /// of them was ever hidden. Screenshot: *"look at the tsinelas"*.
+        ///
+        /// `camera_rig.gd::_apply_carried_self_hide` is the original's answer to exactly this,
+        /// called from `_apply_fpp_self_hide` and every viewmodel-carry step. This is that
+        /// function. It is asked every `LateUpdate`, not on a pick-up event, for the same
+        /// reason the arms poll `Carrier.Held` in `ApplyFpp`: what a seat carries changes
+        /// mid-round and a one-shot version only catches it on the next mode change.
+        ///
+        /// ⚠️ NOT GATED ON `_mode == Fpp` ALONE. Unlike the .gd, `BeginEmoteView` here does not
+        /// reassign `_mode` to Tpp (see its own note on why the body is unhidden a different
+        /// way), so `_mode` reads Fpp for the whole swing. `!_emoteView` is what actually turns
+        /// this off during an emote, matching the body's own self-hide being restored there.
+        /// </summary>
+        private void ApplyCarriedSelfHide()
+        {
+            Slipper held = null;
+
+            if (_active && _mode == CameraMode.Fpp && !_emoteView && _character != null)
+            {
+                var carrier = _character.GetComponent<Carrier>();
+                held = carrier != null ? carrier.Held : null;
+            }
+
+            if (held == _hiddenCarriedSlipper) return;
+
+            for (int i = 0; i < _hiddenCarriedRenderers.Count; i++)
+            {
+                var r = _hiddenCarriedRenderers[i];
+                if (r == null) continue;
+
+                r.shadowCastingMode = i < _carriedShadowModes.Count
+                    ? _carriedShadowModes[i]
+                    : ShadowCastingMode.On;
+            }
+
+            _hiddenCarriedRenderers.Clear();
+            _carriedShadowModes.Clear();
+
+            if (held != null)
+            {
+                foreach (var r in held.GetComponentsInChildren<Renderer>(true))
+                {
+                    if (r == null) continue;
+
+                    _carriedShadowModes.Add(r.shadowCastingMode);
+                    r.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
+                    _hiddenCarriedRenderers.Add(r);
+                }
+            }
+
+            _hiddenCarriedSlipper = held;
+        }
+
+        private Slipper _hiddenCarriedSlipper;
+        private readonly List<Renderer> _hiddenCarriedRenderers = new List<Renderer>();
+        private readonly List<ShadowCastingMode> _carriedShadowModes = new List<ShadowCastingMode>();
 
         // -------------------------------------------------------------------
 
