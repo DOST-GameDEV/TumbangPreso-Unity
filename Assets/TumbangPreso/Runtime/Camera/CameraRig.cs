@@ -235,11 +235,20 @@ namespace TumbangPreso.CameraSystem
 
         /// <summary>
         /// Attach to a body. ⚠️ A PERSON IS ALWAYS FPP.
+        ///
+        /// ⚠️⚠️ AND `_emoteView` IS CLEARED HERE TOO. Nothing about swapping which body this rig
+        /// follows — a spectator cycle, a seat reassignment — routes through `EndEmoteView`, so
+        /// a rig mid-swing when `Follow` is called would otherwise carry `_emoteView = true`
+        /// onto whichever character it picks up next with nothing left that will ever set it
+        /// back to false: `ApplyFpp`/`ApplyTpp` never run while it is true, so the mode never
+        /// settles and the player is stuck orbiting a stranger. A player stuck in third person
+        /// with no way back is worse than any visual glitch this could instead have been.
         /// </summary>
         public void Follow(CharacterMotor character, bool makeActive = true)
         {
             UnsubscribeEmotes();
 
+            _emoteView = false;
             _character = character;
             _mode = CameraMode.Fpp;
 
@@ -763,14 +772,33 @@ namespace TumbangPreso.CameraSystem
                                          EmotePitchMinDeg, EmotePitchMaxDeg);
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE SAME BOOM TPP ALREADY USES, NOT A SEPARATE ONE. `camera_rig.gd`'s emote
+        /// branch writes `tpp_arm`'s transform directly and lets the SAME `SpringArm3D` — mount
+        /// height, spring length, wall collision, all of it — do the rest; it is not a second,
+        /// shorter arm invented for the occasion. The port's first version was exactly that: a
+        /// hand-picked 2.6 m at a flat 1.0 m up, which put the shot at shoulder height on a
+        /// child-sized rig and roughly half the real TPP distance. Mirroring `ApplyTpp` here
+        /// means "how far behind and how high" is one number this file already has to get right
+        /// for ordinary third person, not a second one to keep in sync with it by hand.
+        /// </summary>
         private void ApplyEmoteView()
         {
             _emotePitchDeg = Mathf.Clamp(_emotePitchDeg, EmotePitchMinDeg, EmotePitchMaxDeg);
 
-            Vector3 focus = _character.transform.position + Vector3.up * 1.0f;
+            Vector3 mount = _character.transform.position + Vector3.up * TppMountHeight;
             var rot = Quaternion.Euler(_emotePitchDeg, _emoteYawDeg, 0.0f);
+            Vector3 wanted = mount - (rot * Vector3.forward) * _tppSpringLength;
 
-            transform.SetPositionAndRotation(focus - (rot * Vector3.forward) * 2.6f, rot);
+            float length = _tppSpringLength;
+            if (Physics.SphereCast(mount, 0.2f, (wanted - mount).normalized, out var hit,
+                                   _tppSpringLength, ~0, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.collider.GetComponentInParent<CharacterMotor>() != _character)
+                    length = Mathf.Max(TppMinSpringLength, hit.distance - TppArmMargin);
+            }
+
+            transform.SetPositionAndRotation(mount - (rot * Vector3.forward) * length, rot);
         }
 
         // -------------------------------------------------------------------

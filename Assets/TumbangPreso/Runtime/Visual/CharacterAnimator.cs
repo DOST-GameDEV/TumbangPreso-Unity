@@ -309,7 +309,62 @@ namespace TumbangPreso.Visual
 
             Play(Choose(), loop);
             Blend();
+
+            StepEmoteFinished(emoting);
         }
+
+        /// <summary>
+        /// ⚠️⚠️ DORMANT BY DESIGN. `character_visual.gd::_on_animation_finished` does nothing
+        /// when a non-looping clip reaches its end — no restart, no signal, no stop — so
+        /// "sit"/"crouch"/"tpose" hold their pose exactly as long as the looping gestures do,
+        /// until something else calls `stop_emote()`. §3aa of this repo's own rules records the
+        /// same thing from the other direction: *"the emotes only end when a user does smth to
+        /// interrupt it... it doesnt end on its own"*.
+        ///
+        /// This exists so a genuinely one-shot gesture has somewhere to plug in later without
+        /// inventing a second restore path (see `EmotePlayer.Update`, which routes it through
+        /// the same `Stop()` every other interruption uses). `EmoteEndsOnClipFinish` is empty on
+        /// purpose: none of the seven current emotes opt in, and adding one is a one-line change
+        /// here rather than a new code path.
+        /// </summary>
+        private static readonly System.Collections.Generic.HashSet<string> EmoteEndsOnClipFinish =
+            new System.Collections.Generic.HashSet<string>();
+
+        private string _emoteClipPlaying;
+        private float _emoteClipStartTime;
+
+        /// <summary>True for exactly one frame's worth of polling once an opted-in emote's clip
+        /// has played past its own length. <see cref="EmotePlayer"/> reads this and calls
+        /// `Stop()`, which clears `Current` and this goes back to false with it.</summary>
+        public bool EmoteClipFinished { get; private set; }
+
+        private void StepEmoteFinished(bool emoting)
+        {
+            EmoteClipFinished = false;
+
+            if (!emoting || _emote.Current == null || !EmoteEndsOnClipFinish.Contains(_emote.Current))
+            {
+                _emoteClipPlaying = null;
+                return;
+            }
+
+            string clipName = ResolveChain(EmoteClips, _emote.Current);
+            if (clipName == null || !_clips.TryGetValue(clipName, out var clip)) return;
+
+            if (_emoteClipPlaying != clipName)
+            {
+                _emoteClipPlaying = clipName;
+                _emoteClipStartTime = Time.time;
+                return;
+            }
+
+            EmoteClipFinished = Time.time - _emoteClipStartTime >= clip.length;
+        }
+
+        /// <summary>Can this rig actually play emote <paramref name="id"/>? False for an unknown
+        /// id or a model with no clip any of its candidates resolve to — see the note on
+        /// <see cref="EmotePlayer.Play"/> for why this gates the camera swing.</summary>
+        public bool HasEmoteClip(string id) => ResolveChain(EmoteClips, id) != null;
 
         /// <summary>
         /// ⚠️ THE ORDER OF THESE BRANCHES IS THE PRIORITY, and it is not arbitrary.
