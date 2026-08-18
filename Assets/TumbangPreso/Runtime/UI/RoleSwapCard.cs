@@ -221,7 +221,14 @@ namespace TumbangPreso.UI
         private void Build()
         {
             var canvasGo = new GameObject("RoleSwapCanvas");
-            canvasGo.transform.SetParent(transform, false);
+
+            // ⚠️ UNDER THE HUD, SO THE CLEAN FEED TAKES IT WITH THEM. See `Hud.CleanFeedRoot`:
+            // this card is a child of `HUD.tscn` in the Godot build for exactly this reason, and
+            // a nested Canvas keeps its own sortingOrder while inheriting the parent's active
+            // state. Falls back to this component's own transform when there is no HUD, which is
+            // the headless-probe case.
+            var hud = UnityEngine.Object.FindFirstObjectByType<Hud>();
+            canvasGo.transform.SetParent(hud != null ? hud.CleanFeedRoot : transform, false);
 
             _canvas = canvasGo.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;

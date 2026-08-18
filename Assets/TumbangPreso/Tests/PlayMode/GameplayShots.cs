@@ -26,6 +26,37 @@ namespace TumbangPreso.PlayTests
         private const int Width = 1920;
         private const int Height = 1080;
 
+        /// <summary>Unity's built-in UI layer. The shot's UI camera is culled to this and to
+        /// nothing else. See the note where it is built.</summary>
+        private const int UiLayer = 5;
+
+        /// <summary>
+        /// Moves a canvas and everything under it onto <paramref name="layer"/>, remembering
+        /// what each transform had so <see cref="RestoreLayers"/> can put it back.
+        ///
+        /// ⚠️ THE WHOLE SUBTREE, NOT THE ROOT. Unity culls per RENDERER, and a canvas whose root
+        /// moved while its children did not renders as an empty rectangle.
+        /// </summary>
+        private static void SetLayer(Transform t,
+            int layer, System.Collections.Generic.Dictionary<Transform, int> saved)
+        {
+            if (t == null) return;
+
+            if (!saved.ContainsKey(t)) saved[t] = t.gameObject.layer;
+            t.gameObject.layer = layer;
+
+            foreach (Transform child in t) SetLayer(child, layer, saved);
+        }
+
+        private static void RestoreLayers(
+            System.Collections.Generic.Dictionary<Transform, int> saved)
+        {
+            foreach (var pair in saved)
+                if (pair.Key != null) pair.Key.gameObject.layer = pair.Value;
+
+            saved.Clear();
+        }
+
         [UnityTest]
         public IEnumerator ALiveRoundIsPhotographed()
         {
@@ -47,7 +78,20 @@ namespace TumbangPreso.PlayTests
             // first-person arms can be compared against each other at rest.
             yield return Eyes("ready-eyes");
 
-            round.BeginRound();
+            // ⚠️⚠️ THROUGH `SliceRunner.Begin`, NOT `RoundDirector.BeginRound`. This called the
+            // director straight and that is why no capture in this suite has ever shown an
+            // attacker holding anything: `BeginRound` only flips the round flags, while
+            // everything that PLACES the world — the marks, the facing, the can, and the
+            // round-start slipper equip — hangs off `MatchDirector.RoundStarted`, which only
+            // the runner raises. Every shot of "the arms" was therefore a shot of an attacker
+            // who had been given no tsinelas, and the empty hand read as a viewmodel bug.
+            //
+            // It is also the path a player takes (the ready gate calls exactly this), so the
+            // shot is of the game rather than of the probe.
+            var runner = Object.FindFirstObjectByType<SliceRunner>();
+
+            if (runner != null) runner.Begin();
+            else round.BeginRound();
 
             yield return new WaitForSecondsRealtime(3.0f);
 
@@ -61,6 +105,62 @@ namespace TumbangPreso.PlayTests
 
             yield return Eyes("round-eyes-late");
             yield return Witness("round-witness-late");
+
+            // ---- THE EMOTE SWING ---------------------------------------------------------
+            // ⚠️⚠️ NOTHING HAS EVER PHOTOGRAPHED AN EMOTE, WHICH IS HOW *"doing emote doesnt
+            // show myself in tpp, i think my body is hidden"* SURVIVED. The swing is the only
+            // state in the game where the local player's own body is supposed to be VISIBLE, and
+            // the first-person self-hide had no reason to be re-run at the boundary. A shot from
+            // the player's own camera is the whole test: if the body is there, the fix landed,
+            // and if the street is empty the bug is still live. He asked for this frame by name.
+            //
+            // ⚠️ IT GOES THROUGH `EmotePlayer.Play`, WHICH IS WHAT THE RIG SUBSCRIBES TO. Poking
+            // `BeginEmoteView` on the rig would photograph the camera move and prove nothing
+            // about the path a player takes to it.
+            var driven = Object.FindFirstObjectByType<TumbangPreso.CameraSystem.CameraRig>()
+                               ?.Following;
+
+            if (driven != null)
+            {
+                // An emote refuses while something is in hand (`EmotePlayer.CanEmote`), which by
+                // now is every attacker: they start the round holding their own tsinelas.
+                var carry = driven.GetComponent<Carrier>();
+                if (carry != null && carry.Held != null) carry.HostThrowAt(
+                    driven.transform.position,
+                    driven.transform.position + driven.transform.forward * 6.0f, 0.2f);
+
+                // ⚠️⚠️ THE BRAIN HAS TO LET GO FIRST, THE SAME WAY THE CHARGE SHOT BELOW NEEDS IT
+                // TO. `EmotePlayer.Update` aborts on ANY movement — that is §3aa, an emote ends
+                // only by interruption — and `AIController.Act` writes a move axis every frame.
+                // The first version of this shot photographed an emote that had been cancelled on
+                // the frame after it started, which looks identical to an emote that never fired.
+                var brain = driven.GetComponent<AIController>();
+                if (brain != null) brain.enabled = false;
+
+                driven.Intent.Clear();
+                driven.Intent.CommitFrame();
+
+                var emotes = driven.GetComponent<Social.EmotePlayer>();
+
+                if (emotes != null)
+                {
+                    emotes.Play("crouch");
+
+                    yield return new WaitForSecondsRealtime(1.2f);
+                    yield return Eyes("emote-eyes");
+                    yield return Portrait(driven, "emote-body");
+
+                    emotes.Stop();
+
+                    // And back. A rig stuck in the emote view would silently ruin every shot
+                    // after this one, which is exactly the failure mode CLAUDE.md §3aa warns
+                    // about for a second restore path.
+                    yield return new WaitForSecondsRealtime(0.5f);
+                    yield return Eyes("emote-ended-eyes");
+                }
+
+                if (brain != null) brain.enabled = true;
+            }
 
             // ---- THE TAYA'S OWN SCREEN --------------------------------------------------
             CharacterMotor taya = null;
@@ -423,16 +523,84 @@ namespace TumbangPreso.PlayTests
 
             cam.targetTexture = rt;
 
+            // ⚠️⚠️ THE UI'S TARGET IS CREATED HERE, BEFORE THE LAYOUT FRAMES, AND CREATING IT
+            // LATER IS WHY THE TEXT CAME OUT SOFT. 🧑 2026-08-18: *"why do ur fonts look blurry
+            // in ur pics?"*. A ScreenSpaceCamera canvas sizes itself to its camera's VIEWPORT,
+            // and a camera with no target texture has the viewport of the batch-mode window —
+            // which is nothing like 1920x1080. So the CanvasScaler laid the HUD out small, the
+            // font atlas was rasterised at that small size, and the whole thing was then scaled
+            // up into the shot. The glyphs were never blurry in the game; they were photographed
+            // at the wrong resolution and enlarged.
+            var resolved = RenderTexture.GetTemporary(Width, Height, 0,
+                RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+
+            // ⚠️⚠️ THE UI GETS ITS OWN CAMERA, AND HANGING IT OFF THE SCENE CAMERA MADE EVERY UI
+            // SHOT IN THIS PROJECT A LIE. 🧑 2026-08-18, comparing these files to the Godot
+            // capture: *"look at the huds and ui of everything u js sent. It looks so diff"*. He
+            // is right that they differ and the difference is in the harness.
+            //
+            // A ScreenSpaceOverlay canvas is composited by the engine AFTER post-processing, so
+            // in the running game the HUD is never touched by `ColourGrade`. Re-pointing it at
+            // the scene camera to get it into a RenderTexture put it INSIDE the graded frame
+            // instead, where the ACES roll-off and then Eskinita's contrast 1.03 run over it.
+            // Contrast pivots on 0.5 and `saturate()` clips, so anything dark enough is pushed
+            // below zero and comes out PURE BLACK:
+            //
+            //     WOOD_DEEP #31190b  ->  linear 0.0307  ->  tonemap 0.0082  ->  contrast -0.007
+            //
+            // Measured on the last pass: Godot's scoreboard fill (49, 25, 11), this file's
+            // (0, 0, 0). The panels were never black. The photograph was.
+            //
+            // So the scene renders through the grade, and the UI renders through a SECOND camera
+            // with no grade on it, into the resolved sRGB target — which is the same order and
+            // the same colour space the engine composites an overlay canvas in.
+            var uiCanvases = new System.Collections.Generic.List<Canvas>();
+            var layers = new System.Collections.Generic.Dictionary<Transform, int>();
+
             if (flipCanvases)
             {
                 foreach (var c in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Exclude,
                                                                   FindObjectsSortMode.None))
                 {
                     if (c.renderMode != RenderMode.ScreenSpaceOverlay) continue;
+                    uiCanvases.Add(c);
+                }
+            }
 
+            Camera uiCam = null;
+
+            if (uiCanvases.Count > 0)
+            {
+                var uiGo = new GameObject("~ShotUiCamera");
+                uiCam = uiGo.AddComponent<Camera>();
+
+                // ⚠️ NOTHING IS CLEARED. This camera draws ON TOP of the frame the scene camera
+                // has already resolved into the target; clearing would throw the game away and
+                // photograph the HUD on a blank field.
+                uiCam.clearFlags = CameraClearFlags.Nothing;
+
+                // ⚠️⚠️ THE CANVASES ARE MOVED ONTO THE UI LAYER FOR THE SHOT, AND A CULLING MASK
+                // TAKEN FROM THEIR OWN LAYERS IS NOT ENOUGH. Several of this project's canvases
+                // are built in code on the DEFAULT layer, so a mask that includes it hands this
+                // orthographic camera the whole arena as well and it redraws slabs of street
+                // across the middle of the frame. Moving them to layer 5 for the duration is the
+                // only version that renders the UI and nothing but the UI.
+                foreach (var c in uiCanvases) SetLayer(c.transform, UiLayer, layers);
+
+                uiCam.cullingMask = 1 << UiLayer;
+
+                // Before the layout frames below, so the canvas scaler sizes to the SHOT.
+                uiCam.targetTexture = resolved;
+                uiCam.orthographic = true;
+                uiCam.nearClipPlane = 0.01f;
+                uiCam.farClipPlane = 10.0f;
+                uiCam.depth = 100.0f;
+
+                foreach (var c in uiCanvases)
+                {
                     c.renderMode = RenderMode.ScreenSpaceCamera;
-                    c.worldCamera = cam;
-                    c.planeDistance = cam.nearClipPlane + 0.01f;
+                    c.worldCamera = uiCam;
+                    c.planeDistance = 1.0f;
                 }
             }
 
@@ -459,14 +627,19 @@ namespace TumbangPreso.PlayTests
             // roughly out, which is exactly why neither was noticed: fixing only the LDR target
             // gives a dark frame, fixing only this one gives a blown frame, and the pair of them
             // gave a frame that was wrong in a way that looked like a lighting problem.
-            var resolved = hdr
-                ? RenderTexture.GetTemporary(Width, Height, 0, RenderTextureFormat.ARGB32,
-                                             RenderTextureReadWrite.sRGB)
-                : null;
+            // The scene lands in the sRGB target whether it was rendered HDR or not, so the UI
+            // below always composites into the same gamma buffer the engine would use.
+            Graphics.Blit(rt, resolved);
 
-            if (resolved != null) Graphics.Blit(rt, resolved);
+            // § THE UI, ON TOP, UNGRADED. See the note where uiCam is built.
+            if (uiCam != null)
+            {
+                Canvas.ForceUpdateCanvases();
+                uiCam.Render();
+                uiCam.targetTexture = null;
+            }
 
-            RenderTexture.active = resolved != null ? resolved : rt;
+            RenderTexture.active = resolved;
 
             var tex = new Texture2D(Width, Height, TextureFormat.RGB24, false);
             tex.ReadPixels(new Rect(0, 0, Width, Height), 0, 0);
@@ -474,6 +647,20 @@ namespace TumbangPreso.PlayTests
 
             RenderTexture.active = null;
             cam.targetTexture = prev;
+
+            // ⚠️ THE CANVASES GO BACK TO OVERLAY. Leaving them pointed at a destroyed camera
+            // blanks the HUD for every shot after this one, and the game itself if the probe is
+            // ever run against a live session.
+            foreach (var c in uiCanvases)
+            {
+                if (c == null) continue;
+                c.renderMode = RenderMode.ScreenSpaceOverlay;
+                c.worldCamera = null;
+            }
+
+            RestoreLayers(layers);
+
+            if (uiCam != null) Object.DestroyImmediate(uiCam.gameObject);
 
             File.WriteAllBytes($"{OutDir}/{name}.png", tex.EncodeToPNG());
 

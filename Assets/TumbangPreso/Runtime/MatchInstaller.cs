@@ -41,6 +41,43 @@ namespace TumbangPreso
         private bool _spectating;
 
         /// <summary>
+        /// § THE HANDLERS THIS INSTALLER PUTS ON THE `DontDestroyOnLoad` DIRECTORS.
+        ///
+        /// ⚠️⚠️ THEY HAVE TO BE HELD SO THEY CAN BE TAKEN OFF AGAIN, AND THE FAULT THAT MAKES
+        /// THIS NOT OPTIONAL IS IN `SliceRunner.Subscribe`'s note WITH A LOG EXCERPT. The
+        /// directors outlive every scene change; these three lambdas captured this scene's HUD
+        /// and this scene's local seat, and a lambda anonymous enough to subscribe is anonymous
+        /// enough that nothing could ever unsubscribe it. On the second match of a session the
+        /// first match's copy fires FIRST, touches a destroyed MonoBehaviour and throws, and a
+        /// C# event stops dead at the first exception — so every subscriber added after it,
+        /// including the live one, is simply never called.
+        ///
+        /// That is the whole of *"WHY TF is it just stuck here when round ends"*: one dead
+        /// delegate at the head of a list. Tagging would have been the next thing to go, for the
+        /// same reason on the same event, because `Tagged` carries a handler of exactly this
+        /// shape.
+        /// </summary>
+        private System.Action<int, int> _tagged;
+        private System.Action<int, int> _roundVoice;
+        private System.Action<int> _wonVoice;
+
+        private void OnDestroy()
+        {
+            if (GameServices.Round != null && _tagged != null)
+                GameServices.Round.Tagged -= _tagged;
+
+            if (GameServices.Match != null)
+            {
+                if (_roundVoice != null) GameServices.Match.RoundStarted -= _roundVoice;
+                if (_wonVoice != null) GameServices.Match.MatchEnded -= _wonVoice;
+            }
+
+            _tagged = null;
+            _roundVoice = null;
+            _wonVoice = null;
+        }
+
+        /// <summary>
         /// ⚠️ SET BEFORE LOADING AN ARENA FOR A PREVIEW. The setup screen renders the chosen map
         /// live behind its panels, and a map scene brings its whole match with it: four
         /// characters, a can, the slippers and the directors, all spawned by this component the
@@ -509,13 +546,19 @@ namespace TumbangPreso
 
             if (GameServices.Round != null)
             {
-                GameServices.Round.Tagged += (taya, victim) =>
+                _tagged = (taya, victim) =>
                 {
+                    // ⚠️ THE HUD IS RE-CHECKED, NOT TRUSTED. See OnDestroy: this handler is on a
+                    // `DontDestroyOnLoad` director and the object it captured belongs to a scene.
+                    if (hud == null || local == null) return;
+
                     if (local.PlayerSlot == victim)
                         hud.ShowToast("TAGGED  ·  BACK TO THE SAFE ZONE", 2.0f);
                     else if (local.PlayerSlot == taya)
                         hud.ShowToast($"TAG  ·  {NameForSlot(victim)}", 1.4f);
                 };
+
+                GameServices.Round.Tagged += _tagged;
             }
 
             // The match-end board. Present from the start and listening; it shows itself when
@@ -534,11 +577,11 @@ namespace TumbangPreso
             // A spectator flies with the mouse too, so this covers both.
             UI.CursorMode.Capture();
 
-            GameServices.Match.RoundStarted += (round, _) =>
-                    GameServices.Voice?.OnRoundStarted(round);
+            _roundVoice = (round, _) => GameServices.Voice?.OnRoundStarted(round);
+                _wonVoice = slot => GameServices.Voice?.OnMatchWon(slot);
 
-                GameServices.Match.MatchEnded += slot =>
-                    GameServices.Voice?.OnMatchWon(slot);
+                GameServices.Match.RoundStarted += _roundVoice;
+                GameServices.Match.MatchEnded += _wonVoice;
             }
 
             // The intermission card, on the same terms: it listens for the round boundary.

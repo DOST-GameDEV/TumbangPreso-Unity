@@ -70,6 +70,7 @@ new OUT path, and call `build(...)`. Everything below the tables is character
 agnostic. `Assets/TumbangPreso/Editor/PersonSwapProbe.cs` is the check that says
 whether the result actually works, and it is worth pointing at the new file first.
 """
+import math
 import json
 import os
 import struct
@@ -602,6 +603,180 @@ if FRONT_IS_MINUS_Z:
     SKIPPABLE["front"], SKIPPABLE["back"] = _FACE_NAMES["back"], _FACE_NAMES["front"]
 
 
+# ---------------------------------------------------------------------------
+# § THE CHAMFER.
+#
+# ⚠️⚠️ 🧑 2026-08-18, looking at the finished model: *"can we make zack a little less
+# blocky and more like the original models? he's giving minecraft now haha"*. He is
+# describing a real difference and not a tuning one. Every other person in this cast is
+# a Kenney mini, and a Kenney mini has NO 90-degree silhouette edge on it: the head is
+# an ovoid, the limbs are capsules with rounded ends, and the shading rolls round every
+# corner instead of stopping dead at it. This character was built from axis-aligned
+# cuboids, so every edge in its outline is a right angle, and a stack of right-angled
+# cuboids in a palette is the Minecraft read whatever colours you put on it.
+#
+# The fix is to CUT THE EDGES, not to round the forms. A chamfered cuboid keeps the
+# voxel language — flat facets, one palette slot per box, the same table above unchanged
+# — while removing exactly the thing that reads as Minecraft, which is the hard 90.
+#
+# ⚠️ AND IT COMPOUNDS WITH `smooth_normals`, WHICH IS WHY IT IS WORTH SO LITTLE
+# GEOMETRY. That function averages the facet normals meeting at a position. On a plain
+# cuboid three faces meet at 90 degrees and the average is a corner normal that shades as
+# a hard crease; with a chamfer there are now two intermediate facets between them, so
+# the same averaging produces a genuine gradient round the edge. The character shades
+# like the rest of the cast because it now has somewhere to shade.
+#
+# ⚠️ IT ALSO FIXES THE OUTLINE FOR FREE, for the reason `smooth_normals` documents at
+# length: the inverted hull pushes along the normal, and a smoother normal field round
+# an edge is a hull that closes rather than tearing.
+#
+# ⚠️⚠️ A BOX THAT SKIPS A FACE IS LEFT SQUARE, AND THAT IS DELIBERATE. The skull drops
+# its front wall so `FACE_PIXELS` can draw into that exact plane, and the panel is a full
+# rectangle. Chamfering the skull would shrink the hole to an octagon and leave the
+# corners of the face panel hanging in space outside it — the same class of fault as the
+# z-fighting `SKIPPABLE` was written to fix, arrived at from the other side. Four boxes
+# carry a skip; they keep their corners and nobody can see them, because the only skipped
+# face on the model is the one the face is drawn on.
+#
+# ⚠️ THE SIZE IS PROPORTIONAL, WITH A CEILING. A flat 20 mm cut is most of a chain link
+# and nothing at all on the torso, so it is a fraction of the box's own smallest half
+# extent, capped so the large masses do not turn into gems. The cap is what keeps the
+# skull a head.
+BEVEL_FRACTION = 0.34
+BEVEL_MAX = 0.030
+
+
+def bevel_for(lo, hi):
+    """How far to cut this box's edges, or 0 to leave it square."""
+    smallest = min((hi[i] - lo[i]) * 0.5 for i in range(3))
+
+    # Below this a box is a detail plate a couple of millimetres thick, and a chamfer on
+    # it is smaller than the ink outline that will be drawn round it: pure cost.
+    if smallest < 0.004:
+        return 0.0
+
+    return min(BEVEL_MAX, smallest * BEVEL_FRACTION)
+
+
+def _ring(points, normal):
+    """The points of one planar face, ordered around `normal` so the winding is outward.
+
+    ⚠️ SORTED RATHER THAN TABULATED. A chamfered cuboid has 26 faces and three different
+    face kinds, and a hand-written winding table for that is 26 chances to draw one
+    polygon inside out — which renders as a hole in the model, not as an error. Sorting
+    by angle in the face's own plane and then orienting against the outward normal is
+    correct by construction for all three kinds at once.
+    """
+    cx = sum(p[0] for p in points) / len(points)
+    cy = sum(p[1] for p in points) / len(points)
+    cz = sum(p[2] for p in points) / len(points)
+
+    # Any two axes perpendicular to the normal will do; pick the world axis least
+    # aligned with it so the cross product is well conditioned.
+    least = min(range(3), key=lambda i: abs(normal[i]))
+    helper = [0.0, 0.0, 0.0]
+    helper[least] = 1.0
+
+    u = _cross(helper, normal)
+    u = _unit(u)
+    v = _unit(_cross(normal, u))
+
+    def angle(p):
+        d = (p[0] - cx, p[1] - cy, p[2] - cz)
+        return math.atan2(_dot(d, v), _dot(d, u))
+
+    ordered = sorted(points, key=angle)
+
+    # Counter-clockwise about `normal` is what Unity and glTF call front-facing, and the
+    # sort above produces exactly that for a right-handed (u, v, normal) frame.
+    return ordered
+
+
+def _cross(a, b):
+    return (a[1] * b[2] - a[2] * b[1],
+            a[2] * b[0] - a[0] * b[2],
+            a[0] * b[1] - a[1] * b[0])
+
+
+def _dot(a, b):
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
+
+
+def _unit(a):
+    length = math.sqrt(_dot(a, a)) or 1.0
+    return (a[0] / length, a[1] / length, a[2] / length)
+
+
+def box_polygons(lo, hi, skip, bevel):
+    """The faces of one box: six quads square, or twenty-six chamfered.
+
+    Yields (normal, [points]) with the points already wound outward.
+    """
+    if bevel <= 0.0:
+        for face, (normal, corners) in enumerate(FACES):
+            if face == skip:
+                continue
+
+            yield (tuple(float(c) for c in normal),
+                   [(lo[0] + (hi[0] - lo[0]) * cx,
+                     lo[1] + (hi[1] - lo[1]) * cy,
+                     lo[2] + (hi[2] - lo[2]) * cz) for cx, cy, cz in corners])
+        return
+
+    centre = [(lo[i] + hi[i]) * 0.5 for i in range(3)]
+    half = [(hi[i] - lo[i]) * 0.5 for i in range(3)]
+
+    signs = [(sx, sy, sz) for sx in (-1, 1) for sy in (-1, 1) for sz in (-1, 1)]
+
+    # Three vertices per original corner, each pulled in along one axis. This is the
+    # standard chamfered cuboid: 24 vertices, 6 octagons, 12 edge quads, 8 corner tris.
+    vertex = {}
+    for s in signs:
+        for axis in range(3):
+            p = [centre[i] + s[i] * half[i] for i in range(3)]
+            p[axis] = centre[axis] + s[axis] * (half[axis] - bevel)
+            vertex[(s, axis)] = tuple(p)
+
+    # The six original faces, now octagons.
+    for axis in range(3):
+        for sgn in (-1, 1):
+            normal = [0.0, 0.0, 0.0]
+            normal[axis] = float(sgn)
+
+            points = [vertex[(s, other)]
+                      for s in signs if s[axis] == sgn
+                      for other in range(3) if other != axis]
+
+            yield (tuple(normal), _ring(points, tuple(normal)))
+
+    # The twelve edge chamfers, one per pair of faces.
+    for a in range(3):
+        for b in range(a + 1, 3):
+            third = 3 - a - b
+
+            for sa in (-1, 1):
+                for sb in (-1, 1):
+                    normal = [0.0, 0.0, 0.0]
+                    normal[a] = float(sa)
+                    normal[b] = float(sb)
+                    normal = _unit(tuple(normal))
+
+                    points = []
+                    for sc in (-1, 1):
+                        s = [0, 0, 0]
+                        s[a], s[b], s[third] = sa, sb, sc
+                        s = tuple(s)
+                        points.append(vertex[(s, a)])
+                        points.append(vertex[(s, b)])
+
+                    yield (normal, _ring(points, normal))
+
+    # The eight corner triangles.
+    for s in signs:
+        normal = _unit((float(s[0]), float(s[1]), float(s[2])))
+        yield (normal, _ring([vertex[(s, 0)], vertex[(s, 1)], vertex[(s, 2)]], normal))
+
+
 def build_mesh(boxes, panels=()):
     """Boxes and pixel panels to flat glTF attribute arrays."""
     pos, nrm, uv, joints, weights, idx = [], [], [], [], [], []
@@ -624,22 +799,26 @@ def build_mesh(boxes, panels=()):
         j = BONE[bone]
         u, v = cell_uv(slot)
 
-        for face, (normal, corners) in enumerate(FACES):
-            if face == skip:
-                continue
+        # ⚠️ A BOX THAT DROPS A FACE STAYS SQUARE. See the chamfer block: the face panel
+        # is a full rectangle drawn into the plane of the wall this removes, and an
+        # octagonal hole leaves its corners outside the model.
+        bevel = 0.0 if skip >= 0 else bevel_for(lo, hi)
 
+        for normal, points in box_polygons(lo, hi, skip, bevel):
             first = len(pos)
 
-            for cx, cy, cz in corners:
-                pos.append((lo[0] + (hi[0] - lo[0]) * cx,
-                            lo[1] + (hi[1] - lo[1]) * cy,
-                            lo[2] + (hi[2] - lo[2]) * cz))
-                nrm.append(tuple(float(c) for c in normal))
+            for p in points:
+                pos.append(p)
+                nrm.append(normal)
                 uv.append((u, v))
                 joints.append((j, 0, 0, 0))
                 weights.append((1.0, 0.0, 0.0, 0.0))
 
-            idx += [first, first + 1, first + 2, first, first + 2, first + 3]
+            # ⚠️ A FAN, BECAUSE THE FACES ARE NO LONGER ALL QUADS. Every polygon here is
+            # planar and convex — an octagon, a rectangle or a triangle — so a fan from
+            # its first vertex is exact rather than an approximation.
+            for k in range(1, len(points) - 1):
+                idx += [first, first + k, first + k + 1]
 
     for name, bone, low, high, plane, rows in panels:
         j = BONE[bone]

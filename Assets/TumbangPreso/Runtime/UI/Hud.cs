@@ -503,6 +503,26 @@ namespace TumbangPreso.UI
 
         public bool IsCleanFeed => _cleanFeed;
 
+        /// <summary>
+        /// § WHAT THE CLEAN FEED HIDES. Anything parented here disappears with H.
+        ///
+        /// ⚠️⚠️ THE INTERMISSION CARD AND THE RESULT BOARD BELONG UNDER IT AND WERE SIBLINGS OF
+        /// IT INSTEAD. `RoleSwapCard.tscn`'s own header records the reason in the Godot build:
+        /// *"IT LIVES INSIDE `HUD.tscn` AND THAT IS WHAT MAKES THE CLEAN FEED COVER IT"*, added
+        /// for 🧑 *"again make sure spectator wont see this shit if they click h (turn off
+        /// huds)"*. Here both were separate GameObjects with their own canvases created by
+        /// `MatchInstaller`, so `SetCleanFeed` hid the HUD and left the round-end card and the
+        /// win board sitting over a cinematic feed — the exact thing the key exists to prevent,
+        /// on the two screens a spectator is most likely to be filming.
+        ///
+        /// ⚠️ IT IS PARENTING, NOT A SECOND HIDE CALL, AND THAT DISTINCTION IS THE .gd's OWN.
+        /// Both cards show THEMSELVES later and unconditionally, off an event: `SetActive(true)`
+        /// from an intermission would punch straight through a flag this class had set on them.
+        /// A hidden PARENT cannot be punched through, which is why Godot solved it in the scene
+        /// tree rather than in the toggle.
+        /// </summary>
+        public Transform CleanFeedRoot => _canvas != null ? _canvas.transform : transform;
+
         private bool _spectating;
         private bool _cleanFeed;
 

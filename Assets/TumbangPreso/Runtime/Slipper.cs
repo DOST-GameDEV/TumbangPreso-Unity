@@ -241,6 +241,41 @@ namespace TumbangPreso
             return true;
         }
 
+        /// <summary>
+        /// § THE ROUND-START EQUIP. `slipper.gd::host_force_equip`.
+        ///
+        /// ⚠️⚠️ IT BYPASSES <see cref="CanBeGrabbedBy"/> ON PURPOSE AND THAT IS THE POINT OF IT.
+        /// This is not a pickup: nobody walked over to it and nobody pressed anything. It is the
+        /// game handing an attacker their own tsinelas at the whistle, and every clause in the
+        /// grab gate is about a CONTESTED pickup mid-round. The pickup RADIUS in particular
+        /// cannot be satisfied here — the owner was teleported to their mark on the same frame,
+        /// and a distance measured against an interpolated transform misses by enough to leave
+        /// one attacker of three empty-handed at random. Godot measured exactly that and its
+        /// note names the count: *"one of three slippers left LOOSE at its own player's feet"*.
+        ///
+        /// ⚠️ IT STILL REFUSES THE TAYA. That is a RULE, not a precondition: the defender has
+        /// the tag, never the ammunition, and it is the one clause of the gate that has to
+        /// survive.
+        ///
+        /// ⚠️ AND IT DOES NOT PLAY THE PICKUP SOUND OR THE GRAB CLIP. `NotifyHolding` fires
+        /// both, which is right for a pickup and wrong for three seats being armed on the same
+        /// frame of a countdown: it stacked three "pickup" cues on one frame and started a
+        /// reach-down animation nobody performed. The relationship is written the same way it
+        /// is in <see cref="HostGrab"/>, through the carrier, and only the feedback is skipped.
+        /// </summary>
+        public bool HostForceEquip(CharacterMotor who)
+        {
+            if (who == null || who.IsDefender) return false;
+
+            State = SlipperState.Held;
+            Holder = who;
+            who.HoldingSlipper = true;
+            _velocity = Vector3.zero;
+
+            who.GetComponent<Carrier>()?.NotifyEquipped(this);
+            return true;
+        }
+
         public void HostThrow(CharacterMotor thrower, Vector3 origin, Vector3 velocity)
         {
             State = SlipperState.InFlight;

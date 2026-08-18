@@ -372,7 +372,21 @@ namespace TumbangPreso.CameraSystem
 
             var slipperGo = new GameObject("HeldSlipper");
             _heldSlipper = slipperGo.transform;
-            _heldSlipper.SetParent(_rightPivot, false);
+
+            // ⚠️⚠️ UNDER `RightPivot/Arm`, NOT UNDER `RightPivot`, AND THE .tscn IS EXPLICIT:
+            // `[node name="HeldSlipper" parent="RightPivot/Arm"]`. This hung it off the PIVOT,
+            // which carries the carry pose and the idle sway — but NOT the throw, the grab or
+            // the wind-up, all three of which `StepAction` writes onto `Arm`. So the arm cocked
+            // back for a 2.5 s charge and the tsinelas stayed exactly where it was, hanging in
+            // the air beside a hand that had left it: 🧑 2026-08-18, of his own first-person
+            // frame, *"still floating, the slippers"*, and 🧑 earlier, *"my arms float during
+            // windup"*. One parenting mistake, and it shows worst during the single clip a
+            // player looks hardest at.
+            //
+            // It is the same fault `Carrier.RideAnchor` had to move to LateUpdate for, in the
+            // other view: the thing being carried has to be driven by the transform that is
+            // actually animated, not by its parent.
+            _heldSlipper.SetParent(_rightArm, false);
 
             // ⚠️ Y IN GODOT IS STILL Y HERE; ONLY Z FLIPS. The held offset is purely vertical,
             // so it carries across untouched — but say so, because a reader checking the other

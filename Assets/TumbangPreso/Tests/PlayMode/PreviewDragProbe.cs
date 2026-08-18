@@ -26,6 +26,25 @@ namespace TumbangPreso.PlayTests
     /// </summary>
     public class PreviewDragProbe
     {
+        /// <summary>
+        /// How far the synthetic pointer travels, in pixels.
+        ///
+        /// ⚠️⚠️ IT WAS 40 AND THAT PUT THE ASSERTION ON A KNIFE EDGE. At 40 px the vertical drag
+        /// moves the near face 0.0100 of a viewport against a required 0.0100, so the test
+        /// decided on the last decimal place: a legitimate mesh change on the previewed
+        /// character (the chamfer pass on `team-zack`, which pulls its near face in by up to
+        /// 30 mm in model space) flipped it from just-passing to just-failing at 0.392978
+        /// against 0.393014. That is a 0.009% miss reported as a broken drag.
+        ///
+        /// ⚠️ THE FIX IS A BIGGER DRAG, NOT A SMALLER MARGIN. This probe's own header says what
+        /// it is for — *"it must have moved the same way the pointer did"* — so it is a test of
+        /// DIRECTION, and loosening the epsilon toward zero would let an actually-stuck drag
+        /// pass. A longer pointer travel keeps the margin meaningful and puts the measurement
+        /// well clear of any one model's bounds. 120 px still lands inside the pitch clamp
+        /// (`OrbitSensitivity` 0.4 gives 48 degrees against a range of roughly 71).
+        /// </summary>
+        private const float DragPixels = 120.0f;
+
         [UnityTest]
         public IEnumerator DraggingTheSubjectMovesItWithThePointer()
         {
@@ -55,12 +74,12 @@ namespace TumbangPreso.PlayTests
             Vector3 mark = NearSurfacePoint(cam, preview);
             Vector3 before = cam.WorldToViewportPoint(mark);
 
-            input.OnDrag(Drag(new Vector2(40.0f, 0.0f)));
+            input.OnDrag(Drag(new Vector2(DragPixels, 0.0f)));
             yield return null;
 
             Vector3 after = cam.WorldToViewportPoint(mark);
 
-            Debug.Log($"[Drag] right 40px: viewport x {before.x:F3} -> {after.x:F3}");
+            Debug.Log($"[Drag] right {DragPixels}px: viewport x {before.x:F3} -> {after.x:F3}");
 
             Assert.Greater(after.x, before.x + 0.01f,
                 "Dragging RIGHT moved the near face of the subject LEFT. The drag is a grab: " +
@@ -74,12 +93,12 @@ namespace TumbangPreso.PlayTests
             before = cam.WorldToViewportPoint(mark);
 
             // ⚠️ `PointerEventData.delta` COUNTS UP AS POSITIVE, so this is a drag UPWARDS.
-            input.OnDrag(Drag(new Vector2(0.0f, 40.0f)));
+            input.OnDrag(Drag(new Vector2(0.0f, DragPixels)));
             yield return null;
 
             after = cam.WorldToViewportPoint(mark);
 
-            Debug.Log($"[Drag] up 40px: viewport y {before.y:F3} -> {after.y:F3}");
+            Debug.Log($"[Drag] up {DragPixels}px: viewport y {before.y:F3} -> {after.y:F3}");
 
             Assert.Greater(after.y, before.y + 0.01f,
                 "Dragging UP moved the near face of the subject DOWN.");

@@ -607,6 +607,19 @@ namespace TumbangPreso.CameraSystem
         /// ⚠️ AN EMOTE SWITCHES TO A THIRD-PERSON LOOK, because the whole point of an emote is
         /// that YOU can see it too. In first person a player performing one sees nothing at all
         /// and reasonably concludes it did not fire.
+        ///
+        /// ⚠️⚠️ AND THE BODY HAS TO BE GIVEN BACK, WHICH IS THE HALF THAT WAS MISSING. 🧑
+        /// 2026-08-18: *"doing emote doesnt show myself in tpp, i think my body is hidden"*. He
+        /// is exactly right. <see cref="ApplyFppSelfHide"/> puts every renderer on this unit into
+        /// SHADOWS_ONLY, and it only re-runs on `Follow` and `SetActive` — neither of which the
+        /// emote swing touches, because the swing deliberately leaves `_mode` alone so
+        /// `EndEmoteView` can restore it. So the camera dutifully orbited to a third-person
+        /// framing of an invisible person, and the ONE feature whose entire purpose is "you can
+        /// see yourself do it" showed an empty street with a shadow on it.
+        ///
+        /// This is the same shape as the emote-wheel-seat bug: a state that is correct for FPP
+        /// leaking into a view that is no longer FPP. The self-hide is a property of what the
+        /// camera is LOOKING AT, so it is toggled by the same two functions that decide that.
         /// </summary>
         public void BeginEmoteView()
         {
@@ -618,6 +631,9 @@ namespace TumbangPreso.CameraSystem
             _emotePitchDeg = -10.0f;
 
             if (_viewmodel != null) _viewmodel.gameObject.SetActive(false);
+
+            // The whole reason to swing out here. See this function's own note.
+            RestoreSelfHide();
         }
 
         public void EndEmoteView()
@@ -629,6 +645,11 @@ namespace TumbangPreso.CameraSystem
 
             if (_viewmodel != null)
                 _viewmodel.gameObject.SetActive(_active && _mode == CameraMode.Fpp);
+
+            // ⚠️ AND HIDE IT AGAIN ON THE WAY BACK, or the emote leaves the player looking at
+            // their own shoulders and a second set of arms for the rest of the round. The guard
+            // inside ApplyFppSelfHide makes this a no-op if the rig came back to TPP.
+            ApplyFppSelfHide();
         }
 
         public bool IsEmoteView => _emoteView;

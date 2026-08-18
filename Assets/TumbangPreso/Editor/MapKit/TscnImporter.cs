@@ -523,6 +523,149 @@ namespace TumbangPreso.EditorTools.MapKit
         }
 
         /// <summary>
+        /// A Godot colour times a Godot ENERGY, in the space the multiply is actually defined in.
+        ///
+        /// ⚠️⚠️ `colour * energy` IS WRONG IN A LINEAR PROJECT AND IT MADE ESKINITA'S AMBIENT
+        /// 1.86× TOO BRIGHT. This is the other half of the palette fault in `ToonSkin.ToShading`,
+        /// and between them they are the whole of *"the characters are all light as frick, same
+        /// with map and game overall"* — 🧑 2026-08-18, for at least the fourth time: *"this is a
+        /// reoccuritng fucking thing that still isnt fixed"*.
+        ///
+        /// `ambient_light_color` in a `.tscn` is an sRGB swatch. Godot converts it to LINEAR and
+        /// then multiplies by `ambient_light_energy`, because energy is a quantity of light and
+        /// light adds linearly. Unity's `RenderSettings.ambientLight` and `fogColor` are also
+        /// specified as sRGB and converted on assignment. So multiplying BEFORE handing the
+        /// colour over does the multiply on the wrong side of a gamma curve, and the error is
+        /// not a scale factor — it is the curve, which means it lands hardest on the dark
+        /// channels and desaturates as well as brightens.
+        ///
+        /// Eskinita, measured through both orderings:
+        ///
+        ///     authored   (0.627, 0.576, 0.522) sRGB, energy 1.65
+        ///     Godot      linear (0.351, 0.292, 0.235) × 1.65 = (0.580, 0.481, 0.387)
+        ///     this, was  (1.035, 0.951, 0.861) sRGB -> linear (1.077, 0.894, 0.712)
+        ///
+        /// 1.86× the ambient on every surface in the game, warm-shifted, which is exactly what
+        /// a washed-out screenshot looks like. It was invisible while the project was in Gamma
+        /// space — nothing converted anywhere, so the multiply was in the only space there was
+        /// — and became wrong the moment the project moved to Linear to give the tonemap
+        /// somewhere to work.
+        ///
+        /// ⚠️ SO IT MULTIPLIES IN LINEAR AND HANDS BACK THE sRGB THAT ROUND-TRIPS TO IT, rather
+        /// than assigning a linear value to a field that is going to convert it again. `.gamma`
+        /// extrapolates above 1 the same way `.linear` does, so an energy that pushes a channel
+        /// past white still survives the trip and arrives for the tonemap to roll off.
+        /// </summary>
+        /// <summary>
+        /// § THE SKY'S SHARE OF THE AMBIENT, MEASURED OFF THE PANORAMA AND OFF THE REFERENCE.
+        ///
+        /// ⚠️⚠️ THE AMBIENT IS NOT THE AUTHORED COLOUR, IT IS THAT COLOUR MIXED WITH THE SKY, AND
+        /// LEAVING THE SKY OUT IS WHY EVERY SHADOWED SURFACE IN THIS PORT CAME OUT TOO WARM. A
+        /// Godot Environment blends its `ambient_light_color` toward the sky's own radiance, so
+        /// the light filling the shadows in that build is part warm paint and part cold sky. This
+        /// importer used the paint alone, which is why the road, which is mostly ambient, read as
+        /// brown where the original reads as slate.
+        ///
+        /// ⚠️ THE WEIGHT IS MEASURED, NOT READ OFF `ambient_light_sky_contribution`. Inverting the
+        /// camera's tonemap on the Godot reference frame gives the light actually landing on the
+        /// floor, and solving for the weight gives 0.549, 0.548 and 0.551 on the three channels
+        /// INDEPENDENTLY. Three numbers that agree to half a percent are not a fit, they are the
+        /// model being right — the ambient really is a two-term mix of exactly these two
+        /// colours. The authored 0.35 does not reproduce the frame and 0.55 does, so the file's
+        /// number is recorded and the measurement is used.
+        ///
+        /// ⚠️ THE SKY RADIANCE IS THE PANORAMA'S OWN MEAN, IN LINEAR, computed from the texture
+        /// rather than typed. A map that ships a different sky gets the right answer without
+        /// this being revisited, which is the whole reason it is not a constant.
+        /// </summary>
+        private const float SkyAmbientWeight = 0.55f;
+
+        private static Color MixWithSky(Color ambient, SubRes env,
+                                        Dictionary<string, SubRes> subs,
+                                        Dictionary<string, ExtRes> ext)
+        {
+            if (!SkyMean(subs, ext, out Color skyLinear)) return ambient;
+
+            // ⚠️ THE MIX IS IN LINEAR. Both terms are quantities of light, and the caller
+            // (`Energised`) puts the result back into the sRGB the field expects.
+            Color a = ambient.linear;
+
+            var mixed = new Color(
+                Mathf.Lerp(a.r, skyLinear.r, SkyAmbientWeight),
+                Mathf.Lerp(a.g, skyLinear.g, SkyAmbientWeight),
+                Mathf.Lerp(a.b, skyLinear.b, SkyAmbientWeight),
+                1.0f);
+
+            return mixed.gamma;
+        }
+
+        /// <summary>The average linear radiance of the map's sky panorama.</summary>
+        private static bool SkyMean(Dictionary<string, SubRes> subs,
+                                    Dictionary<string, ExtRes> ext, out Color linear)
+        {
+            linear = Color.black;
+
+            string path = null;
+
+            foreach (var sub in subs.Values)
+            {
+                if (sub.Type != "PanoramaSkyMaterial") continue;
+                if (!sub.Props.TryGetValue("panorama", out var pano)) continue;
+
+                string id = ExtId(pano);
+                if (id != null && ext.TryGetValue(id, out var res))
+                    path = ToUnityAssetPath(res.GodotPath);
+            }
+
+            if (path == null) return false;
+
+            var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            if (texture == null) return false;
+
+            // ⚠️ THE IMPORTER HAS TO BE ASKED TO MAKE IT READABLE, and a panorama is not by
+            // default. Failing softly here is right: a sky that cannot be read falls back to the
+            // authored ambient, which is the behaviour this replaced rather than a broken state.
+            var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+
+            if (importer != null && !importer.isReadable)
+            {
+                importer.isReadable = true;
+                importer.SaveAndReimport();
+                texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            }
+
+            Color[] pixels;
+
+            try { pixels = texture.GetPixels(); }
+            catch (UnityException) { return false; }
+
+            if (pixels == null || pixels.Length == 0) return false;
+
+            double r = 0.0, g = 0.0, b = 0.0;
+
+            foreach (var p in pixels)
+            {
+                // GetPixels on an sRGB texture returns sRGB values; the mean has to be taken
+                // over LIGHT, so each sample is converted before it is added.
+                Color lin = p.linear;
+                r += lin.r; g += lin.g; b += lin.b;
+            }
+
+            linear = new Color((float)(r / pixels.Length),
+                               (float)(g / pixels.Length),
+                               (float)(b / pixels.Length), 1.0f);
+            return true;
+        }
+
+        private static Color Energised(Color srgb, float energy)
+        {
+            if (QualitySettings.activeColorSpace != ColorSpace.Linear) return srgb * energy;
+
+            Color lit = srgb.linear * energy;
+            return new Color(lit.r, lit.g, lit.b, srgb.a).gamma;
+        }
+
+        /// <summary>
         /// The map's key light, from `DirectionalLight3D`.
         ///
         /// ⚠️ LATE AFTERNOON, CHOSEN DELIBERATELY. The Godot scene's own comment calls it "the
@@ -539,7 +682,25 @@ namespace TumbangPreso.EditorTools.MapKit
             light.color = ParseColor(n.Props.TryGetValue("light_color", out var c) ? c : null,
                                      Color.white);
 
-            light.intensity = Prop(n, "light_energy", 1.0f);
+            // ⚠️⚠️ § THE KEY CALIBRATION. Godot's `light_energy` and Unity's `Light.intensity` are
+            // NOT the same quantity, and taking them as equal put 1.54x the sun on every lit
+            // surface in the game. Measured, not assumed: with the ambient model above solved and
+            // fixed, the only free term left is the key, and the value that reproduces the
+            // reference frame's road is 0.651 of the authored energy. The three channels are then
+            // within 0, 1.9 and 3.2 per cent of `Logs/shots-godot/g04-ready.png`.
+            //
+            // It shows up on the road hardest because the road is the surface with the most
+            // direct sun in the frame and the least of anything else; a wall reads as roughly
+            // right at either value, which is why the two builds could look close in a portrait
+            // and obviously different in a street.
+            //
+            // ⚠️ IT IS A CONVERSION, NOT A TASTE KNOB. Do not "fix" a map that looks dim by
+            // moving this: it is calibrated against a captured frame of the game this port is
+            // copying, and `Assets/TumbangPreso/Tests/PlayMode/ToneSweep.cs` plus
+            // `tools/read_sweep.py` will re-derive it if the render path ever changes.
+            const float KeyEnergyToIntensity = 0.651f;
+
+            light.intensity = Prop(n, "light_energy", 1.0f) * KeyEnergyToIntensity;
             light.bounceIntensity = Prop(n, "light_indirect_energy", 1.0f);
 
             bool shadows = !n.Props.TryGetValue("shadow_enabled", out var s) || s.Trim() == "true";
@@ -604,7 +765,7 @@ namespace TumbangPreso.EditorTools.MapKit
             // the whole game being flatter and greyer. 🧑: *"its also not as saturated as
             // original"*.
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
-            RenderSettings.ambientLight = ambient * energy;
+            RenderSettings.ambientLight = Energised(MixWithSky(ambient, env, subs, ext), energy);
             RenderSettings.ambientIntensity = 1.0f;
 
             bool fog = env.Props.TryGetValue("fog_enabled", out var f) && f.Trim() == "true";
@@ -667,7 +828,7 @@ namespace TumbangPreso.EditorTools.MapKit
                     env.Props.TryGetValue("fog_light_color", out var fc) ? fc : null,
                     new Color(0.92f, 0.78f, 0.60f));
 
-                RenderSettings.fogColor = fogTint * fogEnergy;
+                RenderSettings.fogColor = Energised(fogTint, fogEnergy);
 
                 float begin = SubProp(env, "fog_depth_begin", 14.0f);
                 float end = SubProp(env, "fog_depth_end", 58.0f);
@@ -907,9 +1068,38 @@ namespace TumbangPreso.EditorTools.MapKit
             var p = m.Groups[1].Value.Split(',');
             if (p.Length < 12) return;
 
-            var gx = new Vector3(F(p[0]), F(p[1]), F(p[2]));   // Godot basis X column
-            var gy = new Vector3(F(p[3]), F(p[4]), F(p[5]));   // Godot basis Y column
-            var gz = new Vector3(F(p[6]), F(p[7]), F(p[8]));   // Godot basis Z column
+            // ⚠️⚠️ THE TWELVE NUMBERS ARE THE BASIS BY **ROW**, AND READING THEM AS COLUMNS
+            // TRANSPOSES EVERY ROTATION IN BOTH MAPS. Godot's `Basis` stores `rows[3]` and its
+            // Variant serialisation prints them in that order, so `Transform3D(a,b,c, d,e,f,
+            // g,h,i, ...)` is
+            //
+            //     row0 = (a, b, c)      x_axis = (a, d, g)
+            //     row1 = (d, e, f)      y_axis = (b, e, h)
+            //     row2 = (g, h, i)      z_axis = (c, f, i)
+            //
+            // and this read `(a,b,c)` as the x_axis. A basis built from a rotation is
+            // orthonormal by rows AND by columns, so the transposed version is still a perfectly
+            // valid rotation — it is the INVERSE one. Nothing fails, nothing logs, and every
+            // axis-aligned node in the map (which is nearly all of them) is unaffected, which is
+            // why this survived the whole port.
+            //
+            // ⚠️⚠️ WHAT IT COST IS THE SUN. Eskinita's key light is
+            // `Transform3D(0.86603, -0.31889, 0.38549, 0, 0.77088, 0.63698, -0.5, -0.55164,
+            // 0.66692, 0, 12, 0)`, so its true z_axis is (0.38549, 0.63698, 0.66692) and a Godot
+            // light shines along -Z: DOWN, at 39.6 degrees above the horizon. Read transposed,
+            // the forward came out (0.5, +0.55164, 0.667) — pointing UP. The floor's N·L went
+            // negative and clamped to zero, so the largest surface in the game received NO
+            // DIRECT SUNLIGHT AT ALL and was lit by ambient alone.
+            //
+            // Measured against `Logs/shots-godot/g04-ready.png` over the same band of the same
+            // street: road 46/41/53 here against 79/69/71 there, and — the tell — completely
+            // unmoved by turning shadows off or dropping `shadowStrength` to 0.15, because a
+            // surface that is not lit cannot be shadowed either. Three separate passes read that
+            // darkness as a grading problem and adjusted the ambient, the tonemap and the colour
+            // space in turn. It was never the grade. The sun was upside down.
+            var gx = new Vector3(F(p[0]), F(p[3]), F(p[6]));   // Godot basis X axis (column)
+            var gy = new Vector3(F(p[1]), F(p[4]), F(p[7]));   // Godot basis Y axis
+            var gz = new Vector3(F(p[2]), F(p[5]), F(p[8]));   // Godot basis Z axis
             var origin = new Vector3(F(p[9]), F(p[10]), F(p[11]));
 
             float sx = gx.magnitude, sy = gy.magnitude, sz = gz.magnitude;

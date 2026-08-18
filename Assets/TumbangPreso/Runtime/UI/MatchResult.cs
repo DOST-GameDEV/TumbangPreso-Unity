@@ -156,7 +156,11 @@ namespace TumbangPreso.UI
         private void Build()
         {
             var canvasGo = new GameObject("ResultCanvas");
-            canvasGo.transform.SetParent(transform, false);
+
+            // ⚠️ UNDER THE HUD, SO THE CLEAN FEED TAKES IT WITH THEM. Same parenting and the
+            // same reason as `RoleSwapCard.Build`: see `Hud.CleanFeedRoot`.
+            var hud = UnityEngine.Object.FindFirstObjectByType<Hud>();
+            canvasGo.transform.SetParent(hud != null ? hud.CleanFeedRoot : transform, false);
 
             _canvas = canvasGo.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;

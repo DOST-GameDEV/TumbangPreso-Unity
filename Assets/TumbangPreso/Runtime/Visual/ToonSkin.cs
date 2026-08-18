@@ -138,6 +138,45 @@ namespace TumbangPreso.Visual
             renderer.sharedMaterials = dressed;
         }
 
+        /// <summary>
+        /// § THE PALETTE'S COLOUR SPACE, AND THE ONE CONVERSION UNITY DOES NOT DO FOR YOU.
+        ///
+        /// ⚠️⚠️ THIS IS WHY THE CAST RENDERED PALE AND WASHED OUT AFTER THE PROJECT WENT LINEAR,
+        /// AND IT IS THE FOURTH TIME "everything is too light" HAS BEEN REPORTED. 🧑 2026-08-18,
+        /// holding the Unity character preview beside the Godot one: *"it looks way better on
+        /// godot, why?"*, and *"this is a reoccuritng fucking thing that still isnt fixed"*.
+        ///
+        /// The measurement is in the source of both shaders. `person_palette.gdshader:88` reads
+        ///
+        ///     uniform vec4 palette[16] : source_color;
+        ///
+        /// and `source_color` is Godot telling the engine *these numbers are sRGB, convert them
+        /// to linear before the shader sees them*. The sixteen values in every `person_*.tres`
+        /// are therefore SWATCHES, not shading values. Unity converts exactly the same way for
+        /// anything declared `Color` in a Properties block and set through `SetColor` — which is
+        /// how `_Color`, `_OutlineColor` and every tint in `EnvColourPass` get it for free — but
+        /// `_Palette` is an ARRAY, so it goes up through `SetVectorArray`, and that path applies
+        /// NO conversion at all. Sixteen sRGB numbers were being shaded as though they were
+        /// already linear.
+        ///
+        /// The error is not subtle and it is one-directional: sRGB 0.31 is linear 0.08, so every
+        /// mid-tone on a character arrived roughly FOUR TIMES too bright, and because the lift is
+        /// larger for dark channels than light ones it desaturates as well as brightens. A shirt
+        /// authored (0.81, 0.33, 0.31) rendered as (0.92, 0.60, 0.58) — a pale dusty pink where
+        /// the art is a strong brick red. That is pic 6 against pic 7 exactly.
+        ///
+        /// ⚠️ IT WAS NOT A BUG IN GAMMA SPACE, WHICH IS WHY IT ARRIVED WITH THE FIX FOR SOMETHING
+        /// ELSE. In a Gamma project nothing converts anywhere and raw sRGB is the right answer;
+        /// moving to Linear to give the tonemap somewhere to work made this path wrong on the
+        /// same commit. Both changes are correct and they had to land together.
+        ///
+        /// ⚠️ SO IT IS ASKED, NOT ASSUMED. `QualitySettings.activeColorSpace` is the same
+        /// question Unity itself asks before converting a `Color` property, so this stays right
+        /// if the project's space is ever changed again.
+        /// </summary>
+        private static Vector4 ToShading(Color c) =>
+            QualitySettings.activeColorSpace == ColorSpace.Linear ? (Vector4)c.linear : (Vector4)c;
+
         private static int PaletteKey(Color[] palette)
         {
             if (palette == null || palette.Length == 0) return 0;
@@ -198,7 +237,7 @@ namespace TumbangPreso.Visual
             if (palette != null && palette.Length == 16)
             {
                 var slots = new Vector4[16];
-                for (int i = 0; i < 16; i++) slots[i] = palette[i];
+                for (int i = 0; i < 16; i++) slots[i] = ToShading(palette[i]);
 
                 material.SetVectorArray(PaletteId, slots);
                 material.SetFloat(UsePaletteId, 1.0f);

@@ -252,6 +252,28 @@ namespace TumbangPreso
             _throwLockLeft = what.ThrowLock;
         }
 
+        /// <summary>
+        /// The round-start hand-over. Same relationship as <see cref="NotifyHolding"/>, none of
+        /// the pickup's feedback.
+        ///
+        /// ⚠️ NO THROW LOCK EITHER. The lock covers the beat between walking onto a loose
+        /// tsinelas and being able to throw it; a slipper you were HANDED at the whistle has no
+        /// such beat, and charging one on the first frame of a round is the opening the game is
+        /// tuned around.
+        /// </summary>
+        public void NotifyEquipped(Slipper what)
+        {
+            if (Held == what && what != null) return;
+
+            Held = what;
+            _motor.HoldingSlipper = what != null;
+            _throwLockLeft = 0.0f;
+
+            // Put it in the hand THIS frame rather than on the next LateUpdate, so the first
+            // thing a player sees of the round is not their tsinelas flying in from the mark.
+            RideAnchor();
+        }
+
         private void Update()
         {
             float dt = Time.deltaTime;

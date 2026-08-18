@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TumbangPreso.Core;
 using UnityEngine;
 
@@ -52,9 +53,7 @@ namespace TumbangPreso
             foreach (var s in Seats)
                 if (s != null) GameServices.Round.Register(s);
 
-            GameServices.Match.RoundStarted += OnRoundStarted;
-            GameServices.Match.IntermissionStarted += OnIntermission;
-            GameServices.Match.MatchEnded += OnMatchEnded;
+            Subscribe();
 
             if (TimeScale > 1.0f) Time.timeScale = TimeScale;
 
@@ -62,12 +61,132 @@ namespace TumbangPreso
             GameServices.Match.StartMatch();
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE SUBSCRIPTION HAS TO BE UNDONE, AND NOT DOING IT IS WHAT FROZE EVERY SECOND
+        /// MATCH AT 00:00. 🧑 2026-08-18, with a screenshot of the clock stopped and the body
+        /// unable to move: *"WHY TF is it just stuck here when round ends, before it used to go
+        /// to an end screen"*.
+        ///
+        /// `MatchDirector` is `DontDestroyOnLoad` and this component is not: it dies with the
+        /// arena scene, and its three delegates stayed on the director's events pointing at a
+        /// DESTROYED MonoBehaviour. His own `Player.log` has the whole thing:
+        ///
+        ///     [Slice] round 1 begins, taya is seat 0      <- the corpse from the first match
+        ///     [Slice] round 1 begins, taya is seat 0      <- the live runner
+        ///     ArgumentNullException: Value cannot be null. Parameter name: self
+        ///       at UnityEngine.MonoBehaviour.InvokeDelayed (...)
+        ///       at TumbangPreso.SliceRunner.OnIntermission (...)
+        ///       at TumbangPreso.MatchDirector.BeginIntermission ()
+        ///
+        /// A C# event invokes its list IN ORDER and does not catch, so the dead runner's
+        /// `Invoke` threw and every subscriber after it — including the LIVE runner, the one
+        /// that schedules `Advance` — was never reached. The round therefore ended, froze the
+        /// cast (`EndRound` clears `RoundActive`, which is `CanAct`), and nothing ever started
+        /// the next one. The first match of a session is unaffected, which is why it survived
+        /// every headless probe: nothing had died yet.
+        ///
+        /// ⚠️ AND IT IS IDEMPOTENT. `Begin` is reachable more than once — the ready gate raises
+        /// `RoundShouldBegin`, and a probe may call it directly — so subscribing without
+        /// removing first is how ONE live runner ends up running a round twice.
+        /// </summary>
+        private void Subscribe()
+        {
+            Unsubscribe();
+
+            GameServices.Match.RoundStarted += OnRoundStarted;
+            GameServices.Match.IntermissionStarted += OnIntermission;
+            GameServices.Match.MatchEnded += OnMatchEnded;
+        }
+
+        private void Unsubscribe()
+        {
+            if (GameServices.Match == null) return;
+
+            GameServices.Match.RoundStarted -= OnRoundStarted;
+            GameServices.Match.IntermissionStarted -= OnIntermission;
+            GameServices.Match.MatchEnded -= OnMatchEnded;
+        }
+
+        /// <summary>⚠️ OnDestroy, NOT OnDisable. Leaving the match destroys the scene without
+        /// disabling anything first, which is exactly the path that leaked.</summary>
+        private void OnDestroy()
+        {
+            Unsubscribe();
+
+            // A pending Advance from an intermission that was interrupted by leaving the match
+            // would fire into a dead runner on the next scene. Cancel it with the object.
+            CancelInvoke();
+        }
+
         private void OnRoundStarted(int roundNumber, int defenderSlot)
         {
             ResetWorld(defenderSlot);
             GameServices.Round.BeginRound();
 
+            // ⚠️ AFTER BeginRound, AND THE ORDER IS THE WHOLE REASON THE EQUIP WORKS.
+            // `main.gd::_equip_owned_slippers` returns early on `not RoundManager.round_active`,
+            // and `Slipper.CanBeGrabbedBy` asks `CanAct()`, which is `RoundActive && NORMAL`.
+            // Handing the tsinelas over inside `ResetWorld` is the version Godot measured and
+            // reverted: *"0 throws, 0 knockdowns, three bots stuck in FETCH for a whole match"*.
+            EquipOwnedSlippers(defenderSlot);
+
             Debug.Log($"[Slice] round {roundNumber} begins, taya is seat {defenderSlot}");
+        }
+
+        /// <summary>
+        /// § EVERY ATTACKER STARTS THE ROUND HOLDING THEIR OWN TSINELAS.
+        ///
+        /// ⚠️⚠️ THE PORT NEVER CARRIED THIS AND IT IS TWO REPORTED BUGS AT ONCE. 🧑 2026-08-18:
+        /// *"supposed to spawn in with slippers when it starts and ur an attacker"* and, of the
+        /// tsinelas lying on the road in front of him, *"why is there a slipper here that i have
+        /// to pick up"*. They are the same fault seen from both ends: `ResetWorld` parked each
+        /// slipper on the ground at its owner's feet and stopped there, so round one opened with
+        /// every attacker empty-handed and a retrieval run in front of their first throw.
+        ///
+        /// It is also most of the third one, *"i still genuinely cant throw shit"*: `CanThrow`
+        /// requires `HoldingSlipper`, so with nothing in hand the charge branch in
+        /// `Carrier.StepAttacker` returns before it ever starts, and the same press falls
+        /// through to the shove. The controls were not fighting each other. There was simply
+        /// never any ammunition.
+        ///
+        /// `main.gd::_reset_slippers` + `_equip_owned_slippers`, both halves:
+        ///
+        ///  * OWNERSHIP IS ASSIGNED EXPLICITLY, in SEAT ORDER, skipping the taya. The .gd's note
+        ///    is that it must not ride on the grab succeeding, because a grab can silently
+        ///    refuse and leave a slipper LOOSE with `owner_slot = -1` — which the foot arrow and
+        ///    the owner glow then point nowhere for.
+        ///  * THE HAND-OVER IS `host_force_equip`, NOT `host_grab`. A grab re-checks the pickup
+        ///    RADIUS and `CanAct`, and one frame of interpolation on a seat that has just been
+        ///    teleported is enough to miss it.
+        ///
+        /// ⚠️ THE TAYA GETS NOTHING. They have never been able to throw and the rules now say so.
+        /// </summary>
+        private void EquipOwnedSlippers(int defenderSlot)
+        {
+            if (!NetAuthority.ShouldResolve()) return;
+
+            var attackers = new List<int>();
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+                if (slot != defenderSlot) attackers.Add(slot);
+
+            for (int index = 0; index < Slippers.Length; index++)
+            {
+                var slipper = Slippers[index];
+                if (slipper == null) continue;
+
+                // A slipper with no attacker to own it is DISOWNED rather than left holding last
+                // round's slot: a stale owner is worse than none, because every gate that reads
+                // the field would then refuse everybody.
+                slipper.OwnerSlot = index < attackers.Count ? attackers[index] : -1;
+
+                if (slipper.OwnerSlot < 0) continue;
+
+                var owner = GameServices.Round.PlayerAt(slipper.OwnerSlot);
+                if (owner == null || owner.IsDefender) continue;
+
+                slipper.transform.position = owner.transform.position;
+                slipper.HostForceEquip(owner);
+            }
         }
 
         private void OnIntermission(int nextRound, int nextDefenderSlot) =>

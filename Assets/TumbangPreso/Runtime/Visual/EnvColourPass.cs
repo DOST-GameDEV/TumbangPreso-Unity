@@ -354,6 +354,45 @@ namespace TumbangPreso.Visual
         /// `mat.albedo_color = base_mat.albedo_color * tint`. Overwriting it flattens two
         /// differently-authored props to the same colour.
         /// </summary>
+        /// <summary>
+        /// § THE TINT MULTIPLY, IN THE SPACE THE MULTIPLY IS DEFINED IN.
+        ///
+        /// ⚠️⚠️ `GetColor(p) * tint` PASSED THE PRODUCT THROUGH THE sRGB CURVE A SECOND TIME AND
+        /// MADE THE ROAD 2.6× TOO DARK. Measured against the Godot reference frame this repo
+        /// ships, `Logs/shots-godot/g04-ready.png`, over the same band of the same street from
+        /// the same camera:
+        ///
+        ///     Godot road   R 79.2  G 68.8  B 70.8
+        ///     this, was    R 43.7  G 29.3  B 26.5
+        ///
+        /// Too dark AND too red, and the second symptom is what identifies the fault rather than
+        /// merely measuring it. `Material.GetColor` hands back the LINEAR value in a linear
+        /// project and `Material.SetColor` converts gamma to linear on the way in, so this read
+        /// linear, scaled it, and then had it converted AGAIN. The curve is steeper the darker
+        /// the channel, so `RoadTint`'s (0.66, 0.62, 0.55) came out as ratios of (0.60, 0.55,
+        /// 0.48): blue is knocked down hardest, and a neutral grey asphalt turns into a warm
+        /// brown-black. The red cast was the tell.
+        ///
+        /// ⚠️ A TINT IS A RATIO, NOT A COLOUR, WHICH IS WHY IT DOES NOT GET CONVERTED. Godot
+        /// computes `mat.albedo_color = base * tint` on two sRGB Colors and converts the PRODUCT
+        /// once, at upload, because `albedo_color` is a `source_color` uniform. So the multiply
+        /// happens in sRGB and exactly one conversion follows it. This does the same thing:
+        /// undo `GetColor`'s linearity, multiply, and let `SetColor` perform the one conversion
+        /// Godot performs.
+        ///
+        /// ⚠️ AND IT WAS INVISIBLE IN GAMMA SPACE, like the palette in `ToonSkin.ToShading` and
+        /// the ambient in `TscnImporter.Energised`. All three are the same fault: a number that
+        /// only has one meaning while nothing converts anywhere. They had to be found together
+        /// and they had to be fixed together.
+        /// </summary>
+        private static Color Tinted(Color stored, Color tint)
+        {
+            if (QualitySettings.activeColorSpace != ColorSpace.Linear) return stored * tint;
+
+            Color srgb = stored.gamma;
+            return new Color(srgb.r * tint.r, srgb.g * tint.g, srgb.b * tint.b, stored.a);
+        }
+
         private static bool Paint(Renderer renderer, Color tint, string roof)
         {
             var source = renderer.sharedMaterial;
@@ -374,7 +413,7 @@ namespace TumbangPreso.Visual
                 {
                     if (!material.HasProperty(property)) continue;
 
-                    material.SetColor(property, material.GetColor(property) * tint);
+                    material.SetColor(property, Tinted(material.GetColor(property), tint));
                     set = true;
                 }
 
