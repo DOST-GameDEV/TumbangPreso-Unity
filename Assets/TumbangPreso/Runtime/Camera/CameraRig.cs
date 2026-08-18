@@ -364,7 +364,7 @@ namespace TumbangPreso.CameraSystem
 
             ApplyLens();
 
-            if (_emoteView) { ApplyEmoteView(); return; }
+            if (_emoteView) { StepEmoteLook(); ApplyEmoteView(); return; }
 
             StepLook();
 
@@ -627,8 +627,14 @@ namespace TumbangPreso.CameraSystem
 
             _emoteView = true;
             _modeBeforeEmote = _mode;
-            _emoteYawDeg = BodyYawDeg() + 180.0f;
-            _emotePitchDeg = -10.0f;
+
+            // ⚠️ SEEDED FROM THE BODY'S OWN FACING AND THE TPP PITCH, NO `+ 180`. That is what
+            // `camera_rig.gd::begin_emote_view` does, and its note says why: the camera opens
+            // BEHIND the character it is about to orbit rather than snapping to world north. The
+            // extra half turn here opened it in front of the face instead, which is a different
+            // shot from the one the original gives.
+            _emoteYawDeg = BodyYawDeg();
+            _emotePitchDeg = _tppPitchDeg;
 
             if (_viewmodel != null) _viewmodel.gameObject.SetActive(false);
 
@@ -653,6 +659,42 @@ namespace TumbangPreso.CameraSystem
         }
 
         public bool IsEmoteView => _emoteView;
+
+        /// <summary>
+        /// § THE ORBIT. `camera_rig.gd`'s emote branch of `_unhandled_input`.
+        ///
+        /// ⚠️⚠️ AN EMOTE ORBITS, IT DOES NOT STEER, AND THE PORT COULD DO NEITHER. 🧑 2026-08-04
+        /// on the Godot build: *"make srue i can move camera around while im emoting but its
+        /// anchored to my body"*, and 🧑 2026-08-18 on this one: *"im supposed to be able to
+        /// rotate my camera btw when i emote"*. `LateUpdate` returned before `StepLook` for the
+        /// whole duration, so the emote view was frozen on whatever bearing it opened at: the
+        /// mouse did nothing at all until the emote ended.
+        ///
+        /// ⚠️ IT WRITES THIS RIG'S OWN YAW AND PITCH AND NEVER TOUCHES THE BODY, which is the
+        /// half that makes it an orbit. Every other frame in this class turns `_character` with
+        /// the mouse; doing that here would spin the dancing body on the spot for all three
+        /// other players while its owner merely looked around.
+        ///
+        /// ⚠️ AND THE WHEEL STILL OWNS THE MOUSE WHILE IT IS OPEN, the same check `StepLook`
+        /// makes. B opens the wheel, and a player picking a slice must not also swing the camera.
+        /// </summary>
+        private void StepEmoteLook()
+        {
+            if (_aimSource != AimSource.Mouse) return;
+            if (_character.Intent.Parked) return;
+            if (UI.EmoteWheel.AnyOpen) return;
+
+            var s = Settings.SettingsStore.Current;
+            float sens = BaseSensitivity * s.MouseSensitivity;
+
+            float dx = Input.GetAxisRaw("Mouse X") * sens;
+            float dy = Input.GetAxisRaw("Mouse Y") * sens;
+            if (s.InvertY) dy = -dy;
+
+            _emoteYawDeg += dx * 10.0f;
+            _emotePitchDeg = Mathf.Clamp(_emotePitchDeg - dy * 10.0f,
+                                         EmotePitchMinDeg, EmotePitchMaxDeg);
+        }
 
         private void ApplyEmoteView()
         {

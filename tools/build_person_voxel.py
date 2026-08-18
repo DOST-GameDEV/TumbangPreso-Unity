@@ -116,14 +116,24 @@ PARENT = {"leg-left": "root", "leg-right": "root", "torso": "root",
 # the height it buys back over 30% goes almost entirely into hair volume rather than
 # into a bigger face.
 # ---------------------------------------------------------------------------
+# ⚠️⚠️ THESE ARE THE BASE RIG'S OWN JOINT HEIGHTS AGAIN, AND GOING BACK TO THEM IS THE
+# FAMILY PASS. See `_family` further down for the whole reasoning; the short version is
+# that the numbers in the table above this block were always the target — legs 24%, torso
+# 23%, head 53% — and this character had drifted to 32/30/38, which reads as a taller,
+# thinner, smaller-headed person standing next to eleven who are not.
+#
+# ⚠️ THE BOX TABLES ARE AUTHORED AGAINST THE OLD HEIGHTS AND ARE REMAPPED AT BUILD TIME
+# rather than rewritten. `WAS_HIPS`/`WAS_SHOULDER`/`WAS_NECK`/`WAS_TOP` below record what
+# they are authored against; changing one of these without the other is how the boxes and
+# the bones stop agreeing, and the symptom is a limb that animates from the wrong pivot.
 SKELETON = {
     "root":      (0.0,      0.0,   0.0),
-    "leg-left":  (0.08357,  0.232, -0.02875),
-    "leg-right": (-0.08357, 0.232, -0.02875),
-    "torso":     (0.0,      0.232, -0.02875),
-    "arm-left":  (0.0999,   0.400, -0.01725),
-    "arm-right": (-0.0999,  0.400, -0.01725),
-    "head":      (0.0,      0.445, -0.00236),
+    "leg-left":  (0.08357,  0.176, -0.02875),
+    "leg-right": (-0.08357, 0.176, -0.02875),
+    "torso":     (0.0,      0.176, -0.02875),
+    "arm-left":  (0.0999,   0.288, -0.01725),
+    "arm-right": (-0.0999,  0.288, -0.01725),
+    "head":      (0.0,      0.343, -0.00236),
 }
 
 
@@ -532,18 +542,138 @@ HEAD = [
 #
 # ⚠️ THE EYES ARE UNCHANGED. Two cells square, four apart, is the Kenney read and it is
 # the one part of this face the turnaround got right.
+# ⚠️⚠️ THE EYES ARE 3x3, NOT 2x2, AND THAT IS THE FACE HALF OF THE FAMILY PASS. 🧑
+# 2026-08-18: *"make it so that zack looks more like the current characters ... especially
+# his face"*. Every Kenney mini wears two TALL dark ovals set wide, and they are large: on
+# the cast sheet an eye is about a fifth of the face's width. A 2x2 cell on a twelve-wide
+# grid is half that, and at arena distance it stops being an eye and becomes a speck —
+# which is most of why this character read as belonging to a different game even once his
+# palette was right. The smile keeps its upturned corners; it was never the problem.
 FACE_PIXELS = ("face", "head", (-0.122, 0.470), (0.122, 0.638), -0.122, [
-    "............",
-    "............",
-    "..XX....XX..",
-    "..XX....XX..",
-    "............",
-    "...X....X...",
-    "...XXXXXX...",
-    "............",
+    "................",
+    "................",
+    "...XX......XX...",
+    "..XXXX....XXXX..",
+    "..XXXX....XXXX..",
+    "..XXXX....XXXX..",
+    "...XX......XX...",
+    "................",
+    "................",
+    "....X......X....",
+    ".....XXXXXX.....",
+    "................",
 ])
 
 PANELS = [FACE_PIXELS]
+
+
+# ---------------------------------------------------------------------------
+# § THE FAMILY PASS.
+#
+# ⚠️⚠️ 🧑 2026-08-18, with the cast sheet in front of him: *"make it so that zack looks
+# more like the current characters"*, *"he doesnt feel like he's part of the family"*,
+# *"especially his face"*, *"he looks liek he's from a diff game"*. The chamfer answered
+# "less blocky" and did not answer this, because this is not about edges. It is about
+# PROPORTION, and the numbers were already written down at the top of this file:
+#
+#     base rig (the eleven he stands next to)   legs 24%   torso 23%   head 53%
+#     this character, before                    legs 32%   torso 30%   head 38%
+#
+# A 38% head on a cast of 53% heads is not a stylistic variation, it is a different toy.
+# Standing in a line-up he reads as taller, thinner and smaller-headed than everyone
+# around him, and no amount of palette or outline work fixes that.
+#
+# ⚠️ THE 38% WAS ARRIVED AT HONESTLY AND IS STILL BEING OVERTURNED. Its note records a
+# pass at 30% that 🧑 rejected — *"WTF IS THAT HEAD"* — and reads that as "the head must
+# not shrink". The real fault there was the HAIR: at 30% the mop had nowhere to go and
+# flattened into a cap, and the fix chosen was to give the head back height. Going the
+# OTHER way does not have that problem, because a bigger head gives the same mop MORE
+# room, not less. This moves toward the cast rather than away from it.
+#
+# ⚠️ THE TABLES ARE NOT REWRITTEN, THEY ARE REMAPPED, and that is deliberate. Every box
+# above carries a measurement and a reason — the sole's thickness, the chain's link gap,
+# the swept forelock, the hand's height against `HandTopLift`. Re-authoring 86 boxes by
+# hand against new joint heights would lose all of it and be wrong in ways only a
+# turnaround would catch. A piecewise remap moves each REGION onto its family value and
+# leaves every relationship inside that region exactly as it was measured.
+# ---------------------------------------------------------------------------
+
+# Source joint heights, as the tables above are authored.
+WAS_HIPS, WAS_SHOULDER, WAS_NECK, WAS_TOP = 0.232, 0.400, 0.445, 0.722
+
+# The base rig's own, from the header's table. These ARE the family proportions.
+NOW_HIPS, NOW_SHOULDER, NOW_NECK, NOW_TOP = 0.176, 0.288, 0.343, 0.7234
+
+# ⚠️ THE HEAD GROWS IN ALL THREE AXES, NOT JUST UP. Stretching only Y gives a tall narrow
+# skull, which reads as a different kind of wrong rather than as a Kenney head. The XZ
+# growth is the same ratio the head's height takes, so the skull stays a cube-ish mass and
+# the mop and the ears scale with it.
+HEAD_GROWTH = (NOW_TOP - NOW_NECK) / (WAS_TOP - WAS_NECK)
+
+
+def _remap_y(y):
+    """Legs, torso and head each onto their family band."""
+    if y <= WAS_HIPS:
+        return y / WAS_HIPS * NOW_HIPS
+    if y <= WAS_NECK:
+        t = (y - WAS_HIPS) / (WAS_NECK - WAS_HIPS)
+        return NOW_HIPS + t * (NOW_NECK - NOW_HIPS)
+
+    t = (y - WAS_NECK) / (WAS_TOP - WAS_NECK)
+    return NOW_NECK + t * (NOW_TOP - NOW_NECK)
+
+
+def _family(boxes, head, neck_names=("neck",)):
+    """The remap, applied to one table.
+
+    ⚠️ AN ARM IS TRANSLATED, NEVER SQUASHED. The arm boxes run along X and their Y extent
+    is THICKNESS, not length, so putting them through the torso's 0.78 would give this
+    character noticeably thinner arms than the cast he is joining — the opposite of the
+    ask. They are moved down to the new shoulder instead and keep every dimension.
+
+    ⚠️ AND THE HAND'S HEIGHT SURVIVES IT BY CONSTRUCTION. `CharacterVisual.BuildHandAnchor`
+    puts a carried tsinelas at the palm centre plus `HandTopLift`, and the hand box is
+    authored as shoulder ± that constant. A pure translation moves the centre to the new
+    shoulder and leaves the half-height alone, so the identity still holds and
+    `PersonSwapProbe` still passes on it.
+
+    ⚠️ THE NECK IS EXCLUDED FROM THE HEAD'S XZ GROWTH. Widening it by 1.37 gives a column
+    thicker than the jaw above it, and the cast has essentially no neck at all.
+    """
+    out = []
+
+    for entry in boxes:
+        name, bone, lo, hi, slot = entry[:5]
+        rest = entry[5:]
+
+        if bone in ("arm-left", "arm-right"):
+            shift = NOW_SHOULDER - WAS_SHOULDER
+            lo = (lo[0], lo[1] + shift, lo[2])
+            hi = (hi[0], hi[1] + shift, hi[2])
+            out.append((name, bone, lo, hi, slot) + rest)
+            continue
+
+        grow = HEAD_GROWTH if (head and name not in neck_names) else 1.0
+
+        lo = (lo[0] * grow, _remap_y(lo[1]), lo[2] * grow)
+        hi = (hi[0] * grow, _remap_y(hi[1]), hi[2] * grow)
+
+        out.append((name, bone, lo, hi, slot) + rest)
+
+    return out
+
+
+def _family_panels(panels):
+    """The face grid takes the head's transform, or it lands behind the new skull."""
+    out = []
+
+    for name, bone, low, high, plane, rows in panels:
+        out.append((name, bone,
+                    (low[0] * HEAD_GROWTH, _remap_y(low[1])),
+                    (high[0] * HEAD_GROWTH, _remap_y(high[1])),
+                    plane * HEAD_GROWTH, rows))
+
+    return out
 
 BODY_BOXES = (LEG_LEFT + mirrored(LEG_LEFT, "leg-left", "leg-right")
               + TORSO
@@ -1070,8 +1200,11 @@ def main():
     deltas = retarget(gltf, buffer)
     bind_matrices(gltf)
 
-    body = build_mesh(BODY_BOXES)
-    head = build_mesh(HEAD_BOXES, PANELS)
+    # § THE FAMILY PASS, applied to the authored tables on the way into the mesh. See
+    # `_family`: the tables stay as measured and the REGIONS move onto the base rig's own
+    # proportions, so this character stands in the line-up as one of the cast.
+    body = build_mesh(_family(BODY_BOXES, head=False))
+    head = build_mesh(_family(HEAD_BOXES, head=True), _family_panels(PANELS))
 
     # ⚠️ EVERY RETAINED ACCESSOR IS REPACKED INTO A FRESH BUFFER rather than the old one
     # being patched. The base carries one bufferView per accessor, so a rebuild is a
@@ -1219,12 +1352,25 @@ def verify(body, head):
     # ⚠️ EVERY BOX MUST BE INSIDE ITS OWN BONE'S REACH, or the limb tears when the clip
     # rotates it. A box hung off the wrong bone is the single easiest mistake to make in
     # a table this long and it is invisible until something moves.
-    for entry in BODY_BOXES + HEAD_BOXES:
+    #
+    # ⚠️⚠️ IT CHECKS THE REMAPPED TABLES AGAINST THE REMAPPED SKELETON, NOT THE AUTHORED
+    # ONES. `_family` moves the boxes and `SKELETON` moves the bones, so comparing the
+    # authored table to the new joint heights measures a distance that exists in neither
+    # the file nor the model — it fired on `hair-fringe` the first time this ran, for a
+    # box that had not moved relative to its own bone at all.
+    #
+    # ⚠️ AND THE BOUND IS PER BONE, because the head is now 53% of the figure. A crown box
+    # is legitimately 0.38 from the head joint on a rig built to these proportions, which
+    # a flat 0.30 calls a mistake. The head's bound is its own height plus a margin; every
+    # other bone keeps the original number.
+    head_reach = (NOW_TOP - NOW_NECK) * 1.15
+
+    for entry in _family(BODY_BOXES, head=False) + _family(HEAD_BOXES, head=True):
         name, bone, box_lo, box_hi, slot = entry[:5]
         origin = SKELETON[bone][1]
         reach = max(abs(box_lo[1] - origin), abs(box_hi[1] - origin))
 
-        if reach > 0.30:
+        if reach > (head_reach if bone == "head" else 0.30):
             raise SystemExit(f"box '{name}' is {reach:.3f} from the {bone} bone. "
                              "It is almost certainly on the wrong bone.")
 
