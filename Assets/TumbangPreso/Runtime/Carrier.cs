@@ -357,8 +357,27 @@ namespace TumbangPreso
                 // the last lift comes off the drawn bounds rather than from a constant. A clog
                 // and a flip-flop cannot share one number, which `slipper.gd::_attach_to_hand()`
                 // records.
+                //
+                // ⚠️⚠️ NO `* hand.lossyScale.y` HERE, AND THAT EXTRA FACTOR WAS THE FLOAT. 🧑
+                // 2026-08-18: *"tsinelas floats right above the characters hands"*. `RestHeight`
+                // is `Renderer.bounds.extents.y`, a WORLD-space length read off the slipper's own
+                // (unscaled) transform — the same value `GroundY(p) + RestHeight` uses directly,
+                // with no scale factor, to rest a loose slipper on the ground. `hand.up` is
+                // already a world-space unit vector. Multiplying the lift by `hand.lossyScale.y`
+                // (the character's `PersonScale`, 2.38, inherited by every descendant of the model
+                // root) scaled an already-correct world length a second time. Measured before this
+                // fix: RestHeight 0.0714 m, hand.lossyScale.y 2.3800, held slipper sitting 0.1639 m
+                // from the anchor against the 0.0714 m the un-scaled lift should have put it at —
+                // the shoe floating roughly 9 cm above the hand it was meant to rest on.
+                //
+                // ⚠️ GODOT NEVER HAD THIS, AND THE REASON IS INSTRUCTIVE. `slipper.gd`
+                // re-parents the shoe onto the bone attachment, so it inherits the same 2.38x
+                // every other rig child does — and its own `_attach_to_hand()` divides that scale
+                // back OUT before applying any offset. `RideAnchor` does not reparent, it copies a
+                // position every frame instead (see this function's own note above), so there was
+                // never an inherited scale here to undo, and multiplying one in was pure invention.
                 Held.transform.SetPositionAndRotation(
-                    hand.position + hand.up * (Held.RestHeight * hand.lossyScale.y),
+                    hand.position + hand.up * Held.RestHeight,
                     hand.rotation * Slipper.CarryRotation);
 
                 return;

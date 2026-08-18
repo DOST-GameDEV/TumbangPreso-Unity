@@ -153,7 +153,11 @@ namespace TumbangPreso.PlayTests
 
                 // The carry lifts the slipper off the anchor by its own rest height, so the
                 // distance is never zero. It must never GROW, which is what coming off looks like.
-                float lift = slipper.RestHeight * anchor.lossyScale.y;
+                //
+                // ⚠️ NO `* anchor.lossyScale.y` — see AHeldSlipperSitsOnTheHandNotFloatingAboveIt.
+                // `RideAnchor` no longer scales the lift a second time, and this had to match or
+                // it would silently keep grading the fixed code against the bug's own formula.
+                float lift = slipper.RestHeight;
                 float slack = Vector3.Distance(slipper.transform.position, anchor.position) - lift;
 
                 worst = Mathf.Max(worst, Mathf.Abs(slack));
@@ -342,6 +346,95 @@ namespace TumbangPreso.PlayTests
 
             Assert.Less((root.localPosition - rest).magnitude, 0.0001f,
                 "Turning smoothing off left the mesh offset from its body.");
+        }
+
+        /// <summary>
+        /// § THE SHOE FLOATS RIGHT ABOVE THE HAND, NOT IN IT. 🧑 2026-08-18: *"there is still a
+        /// bug where tsinelas floats right above the characters hands"*.
+        ///
+        /// ⚠️⚠️ `Carrier.RideAnchor()` MULTIPLIED AN ALREADY-WORLD-SPACE LENGTH BY THE HAND'S
+        /// SCALE A SECOND TIME. `Slipper.RestHeight` is `Renderer.bounds.extents.y`, a WORLD
+        /// AABB read off the slipper's own (unscaled) transform — the same value
+        /// `GroundY(p) + RestHeight` uses directly, with no scale factor, to rest a loose
+        /// slipper on the ground. `RideAnchor` then wrote
+        /// `hand.up * (RestHeight * hand.lossyScale.y)`, where `hand` is a descendant of the
+        /// character's model root and inherits `CharacterVisual.PersonScale` (2.38) from
+        /// `_instance.transform.localScale`. `hand.up` is already a world-space unit vector, so
+        /// no scale conversion was needed at all — the multiply just inflated a correct
+        /// world-space lift by 2.38x.
+        ///
+        /// Measured live off a throwaway probe before this fix: `RestHeight` 0.0714 m,
+        /// `hand.lossyScale.y` 2.3800, and the held slipper sitting 0.1639 m from the anchor —
+        /// against the 0.0714 m the un-scaled lift alone should have put it at. That is the
+        /// shoe floating roughly 9 cm above the hand, which is exactly "right above" rather
+        /// than "in" it.
+        ///
+        /// ⚠️ GODOT NEVER HAD THIS BUG, AND FOR A REVEALING REASON: `slipper.gd::_attach_to_hand()`
+        /// re-parents the shoe onto the bone attachment, so it inherits the SAME 2.38x every
+        /// other child of the rig does — and its own comment (`UNDO THE RIG'S SCALE OR THE
+        /// SLIPPER COMES OUT 2.38x`) divides that scale back OUT before applying any offset.
+        /// Unity's port does not reparent — `RideAnchor` copies a position every frame instead
+        /// (see that function's own note on why) — so there was never an inherited scale to
+        /// undo, and multiplying one in was pure invention.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator AHeldSlipperSitsOnTheHandNotFloatingAboveIt()
+        {
+            var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
+            while (load != null && !load.isDone) yield return null;
+
+            for (int i = 0; i < 20; i++) yield return null;
+
+            CharacterMotor carrier = null;
+
+            foreach (var m in Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None))
+            {
+                if (!m.IsPerson || m.IsDefender) continue;
+                if (m.GetComponent<CharacterVisual>()?.HandAnchor == null) continue;
+                carrier = m;
+                break;
+            }
+
+            Assert.IsNotNull(carrier, "no attacker seat with a hand anchor to carry anything");
+
+            Slipper slipper = null;
+
+            foreach (var s in Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
+            {
+                if (s.State != SlipperState.Loose) continue;
+                slipper = s;
+                break;
+            }
+
+            Assert.IsNotNull(slipper, "no loose slipper in the arena");
+
+            var stand = carrier.transform.position;
+            slipper.transform.position = new Vector3(stand.x, slipper.transform.position.y, stand.z);
+
+            carrier.RoundActive = true;
+
+            for (int i = 0; i < 3; i++) yield return new WaitForFixedUpdate();
+
+            Assert.IsTrue(slipper.HostGrab(carrier), "the harness failed to put a slipper in hand");
+
+            var visual = carrier.GetComponent<CharacterVisual>();
+
+            for (int i = 0; i < 3; i++) yield return null;
+
+            var anchor = visual.HandAnchor;
+            Assert.IsNotNull(anchor);
+
+            float dist = Vector3.Distance(slipper.transform.position, anchor.position);
+
+            // The correct lift is RestHeight alone, no scale factor — see this test's own
+            // header. A tolerance of 0.03 m allows for the anchor's own small offsets (arm
+            // pose, HandTopLift) without allowing the 2.38x scale bug back in: that bug put the
+            // slipper 0.164 m out against a correct 0.071 m, a gap 20x this tolerance.
+            Assert.Less(dist, slipper.RestHeight + 0.03f,
+                $"a held slipper sits {dist:0.000} m from the hand anchor, whose own lift is " +
+                $"only {slipper.RestHeight:0.000} m. That gap is the shoe floating above the " +
+                "hand rather than resting on it — see whether RideAnchor is scaling the lift " +
+                "by the character's PersonScale a second time.");
         }
     }
 }
