@@ -265,7 +265,8 @@ namespace TumbangPreso.UI
                 case "berto": return "The original defender. Immovable, unhurriable, and still standing exactly where you left him.";
                 case "maring": return "Quick hands, quicker mouth. She has talked her way out of more tags than she has dodged.";
                 case "totoy": return "Raised barefoot in the eskinita. Nobody in this town has caught him twice.";
-                case "inday": return "Minds the corner stall and is afraid of absolutely nothing that walks past it.";
+                case "inday":
+                case "cheska": return "Ice-cold baker from the corner kanto. Heavy throw, rock-solid stance, and never melts under pressure.";
                 case "kuya_boy": return "Eldest of seven. He has been the taya since before he could count, and both the arm and the footwork know it.";
                 // ⚠️ THE SENTENCE PAYS OUT THE METERS, which is this table's one rule. Speed 4
                 // is the loudest of his three, so the line claims quickness and nothing else:
