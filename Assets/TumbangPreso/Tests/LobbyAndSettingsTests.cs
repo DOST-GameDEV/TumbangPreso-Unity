@@ -316,5 +316,73 @@ namespace TumbangPreso.Tests
             Assert.AreEqual("test-override-token", NetIdentity.Token);
             NetIdentity.ResetForTesting();
         }
+
+        // -------------------------------------------------------------------
+        // LAN BEACON AND DISCOVERY (N2)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void SubnetBroadcastCalculatesCorrectAddress()
+        {
+            var ip1 = System.Net.IPAddress.Parse("192.168.1.50");
+            var mask1 = System.Net.IPAddress.Parse("255.255.255.0");
+            var bcast1 = LanBeacon.CalculateSubnetBroadcast(ip1, mask1);
+            Assert.AreEqual("192.168.1.255", bcast1.ToString());
+
+            var ip2 = System.Net.IPAddress.Parse("10.0.4.12");
+            var mask2 = System.Net.IPAddress.Parse("255.255.0.0");
+            var bcast2 = LanBeacon.CalculateSubnetBroadcast(ip2, mask2);
+            Assert.AreEqual("10.0.255.255", bcast2.ToString());
+        }
+
+        [Test]
+        public void LanBeaconBuildsAndParsesPayloadFaithfully()
+        {
+            string payload = LanBeacon.BuildPayload(8910, 2, 4, false, "K7X9", "BongBong Host");
+            bool ok = LanBeacon.TryParsePayload(payload, "192.168.1.100", out var entry);
+
+            Assert.IsTrue(ok);
+            Assert.AreEqual("192.168.1.100", entry.Address);
+            Assert.AreEqual(8910, entry.Port);
+            Assert.AreEqual(2, entry.Players);
+            Assert.AreEqual(4, entry.MaxPlayers);
+            Assert.IsFalse(entry.InProgress);
+            Assert.AreEqual("K7X9", entry.JoinCode);
+            Assert.AreEqual("BongBong Host", entry.HostName);
+            Assert.IsTrue(entry.IsJoinable);
+        }
+
+        [Test]
+        public void LanBeaconRejectsMalformedPayloads()
+        {
+            Assert.IsFalse(LanBeacon.TryParsePayload(null, "127.0.0.1", out _));
+            Assert.IsFalse(LanBeacon.TryParsePayload("", "127.0.0.1", out _));
+            Assert.IsFalse(LanBeacon.TryParsePayload("wrong-magic|8910|1|4|0|K7X9|Host", "127.0.0.1", out _));
+            Assert.IsFalse(LanBeacon.TryParsePayload("tumbang-preso-lan|invalid_port|1|4|0|K7X9|Host", "127.0.0.1", out _));
+        }
+
+        [Test]
+        public void LanEntrySortOrderPutsJoinableFirstThenFillThenName()
+        {
+            var e1 = new LanEntry { HostName = "Alpha", Players = 1, MaxPlayers = 4, InProgress = true }; // in progress
+            var e2 = new LanEntry { HostName = "Beta", Players = 3, MaxPlayers = 4, InProgress = false };  // joinable, 3 players
+            var e3 = new LanEntry { HostName = "Charlie", Players = 1, MaxPlayers = 4, InProgress = false }; // joinable, 1 player
+            var e4 = new LanEntry { HostName = "Delta", Players = 4, MaxPlayers = 4, InProgress = false }; // full
+
+            var list = new List<LanEntry> { e1, e2, e3, e4 };
+            list.Sort((a, b) =>
+            {
+                if (a.IsJoinable != b.IsJoinable)
+                    return b.IsJoinable.CompareTo(a.IsJoinable);
+                if (a.Players != b.Players)
+                    return b.Players.CompareTo(a.Players);
+                return string.Compare(a.HostName, b.HostName, StringComparison.OrdinalIgnoreCase);
+            });
+
+            Assert.AreEqual("Beta", list[0].HostName, "most filled joinable lobby should be first");
+            Assert.AreEqual("Charlie", list[1].HostName, "less filled joinable lobby should be second");
+            Assert.AreEqual(4, list[2].Players, "full lobby should come after joinable");
+            Assert.IsTrue(list[3].InProgress, "in progress lobby should come last");
+        }
     }
 }

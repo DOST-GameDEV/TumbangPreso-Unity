@@ -878,8 +878,8 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `audio_manager.gd` | 1125 | `AudioDirector` + `AudioCues` + `MusicDirector` (382) | PARTIAL |
 | `round_manager.gd` | 476 | `RoundDirector.cs` (219) | PARTIAL |
 | `match_manager.gd` | 217 | `MatchDirector.cs` (97) | PARTIAL |
-| `network_manager.gd` | 1413 | `NetSession` + `LobbySession` + `MatchRpc` + `NetAuthority` + `NetBootstrap` + `NetIdentity` (1407) | PARTIAL: N0-N1 complete (NGO+UGS locked, NetIdentity profile/token isolation wired); N2 LAN broadcast pending |
-| `lan_beacon.gd` | 323 | `LanBeacon.cs` (238) | PARTIAL: broadcast/listen/parse done; multi-interface subnet broadcast pending (N2) |
+| `network_manager.gd` | 1413 | `NetSession` + `LobbySession` + `MatchRpc` + `NetAuthority` + `NetBootstrap` + `NetIdentity` (1407) | PARTIAL: N0-N2 complete (NGO+UGS locked, NetIdentity profile/token isolation wired, LanBeacon converted); N3 Relay pending |
+| `lan_beacon.gd` | 323 | `LanBeacon.cs` (270) | CONVERTED (N2): multi-interface subnet broadcast via NetworkInterface, signature change events, and joinable/fill sorting |
 | `server_query.gd` | 536 | `ServerQuery.cs` (215) | PARTIAL: legacy VPS pool query transitioning to UGS Lobby; LAN-first code resolution preserved |
 | `game_launch.gd` | 301 | `GameLaunch.cs` (108) | CONVERTED: map registry, pending action, seating |
 | `settings_manager.gd` | 810 | `GameSettings` + `Rebinding` + `SlipperHighlights` (470) | CONVERTED. Sliders, rebinding, applied on load, **§ the landed-highlight palette and its change signal** |
