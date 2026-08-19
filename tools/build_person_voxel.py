@@ -76,16 +76,10 @@ import os
 import struct
 import sys
 
-BASE = "Assets/TumbangPreso/Art/characters/persons/character-female-b.glb"
+BASE = "Assets/TumbangPreso/Art/characters/persons/character-female-a.glb"
 
-# ⚠️ IT SITS BESIDE THE CC0 RIGS RATHER THAN IN A `team/` SUBFOLDER, and the reason
-# is one line of the file: the material points at `Textures/colormap.png` as a
-# RELATIVE uri, which glTFast resolves against the .glb's own directory. A subfolder
-# breaks that silently, and the symptom is a character rendered in flat white with no
-# error, because a missing texture is not an import failure. The `team-` prefix is
-# what marks it as ours; `character-*` are the CC0 ones.
-OUT = "Assets/TumbangPreso/Art/characters/persons/team-zack.glb"
-PALETTE_OUT = "MapSource/materials_persons/person_team-zack.tres"
+OUT = "Assets/TumbangPreso/Art/characters/persons/team-inday.glb"
+PALETTE_OUT = "MapSource/materials_persons/person_team-inday.tres"
 
 # Joint order is identical on both skins of every rig in this set, verified by
 # tools/glb_dump.py. Named here so a box declares a BONE rather than an index.
@@ -179,73 +173,33 @@ def cell_uv(slot):
 #   8 face and ink     12 white           13/14/15 skin ramp
 # ---------------------------------------------------------------------------
 
-JACKET, CLOTH, CLIP, GOLD = 0, 1, 2, 3
-SHOE, CHAIN, HAIR, JACKET_DARK = 4, 5, 6, 7
+OVERALLS, OVERALLS_DARK, CYAN_TRIM, BUTTONS = 0, 1, 2, 3
+SHOE_CYAN, COLLAR_TRIM, HAIR, SHADOW_CYAN = 4, 5, 6, 7
 INK, WHITE, SKIN, SKIN_DARK, SKIN_LIT = 8, 12, 13, 14, 15
 
-# ⚠️⚠️ THE PALETTE IS AUTHORED IN THIS FILE, BESIDE THE UVs, AND SPLITTING THE TWO IS
-# THE ONE CHANGE THAT WOULD BREAK THIS CHARACTER SILENTLY. A box says "I am slot 0" by
-# where its UV lands; the palette says what slot 0 IS. Keep them in two files and a
-# slot renumbered on one side repaints a limb on the other, with nothing to fail: the
-# model still imports, still animates, and simply wears the wrong colours.
-#
-# Slots 9, 10 and 11 keep the stock Kenney values. Nothing here samples them, and
-# leaving them stocked means the shader has something sane to read if a future box does.
-# ⚠️⚠️ NOTHING IS PURE BLACK AND NOTHING IS FULLY SATURATED, AND BOTH ARE ABOUT THE TOON
-# PASS RATHER THAN ABOUT TASTE. 🧑 seeing the first palette beside the rest of the cast:
-# *"GIVE it the same toon vibe as well as my other shi"*.
-#
-# `Toon.shader` shades in TWO FLAT BANDS: a lit value and a shadow value lerped toward it.
-# A near-black base has nowhere to go, so both bands land on the same colour and every
-# face of every box renders identically, which is what made the first pass read as flat
-# pixel art next to eleven characters that read as toon. The blacks here are lifted to
-# around 17% luminance, which is dark enough to be black beside the skin and light enough
-# that the shadow band is visible on it.
-#
-# ⚠️ THE HAIR IS THE ONE VALUE THAT GOES BACK DOWN NEAR BLACK. Lifting every dark slot
-# to 17% luminance is right for CLOTH, which is a big surface the shadow band has to be
-# visible on, and wrong for the hair, which reads as a charcoal wig at that value against
-# a reference whose mop is flatly black. It sits at 8% instead: dark enough to read black
-# beside the skin, and still not zero, so the band has somewhere to go.
-#
-# ⚠️ THE SATURATION IS NOT PULLED DOWN TO MATCH THE RAW `.tres` VALUES, AND A PASS THAT
-# DID SO WAS WRONG. Reading the generated palettes as the finished look ignores the grade
-# on top of them: 🧑, on seeing the muted version, *"thats not how my characters look in
-# the godot game btw theyre a bit orange and saturated"*. `ColourGrade` runs an ACES curve
-# with a warm tint over the composited frame, so what is authored at a mid-tone arrives
-# warmer and more saturated than the hex suggests, and authoring for the hex bakes the
-# grade in twice from the wrong end. These are the reference's own colours.
 PALETTE = {
-    JACKET:      "7a34c4",   # the open jacket, and the pendant that matches it
-    CLOTH:       "2b2b34",   # shirt, pants, belt
-    CLIP:        "e02a56",   # the bow, crimson rather than hot pink, off the render
-    GOLD:        "f2c230",   # belt buckle
-    SHOE:        "a63fd9",   # sneaker uppers
-    CHAIN:       "9aa0ac",   # necklace and hip chain
-    HAIR:        "191520",   # ⚠️ BLACK, not charcoal. See the note below.
-    JACKET_DARK: "4e1e80",   # collar and cuffs, the jacket's own shadow
-    INK:         "1f1c24",   # ⚠️ THE FACE. Must stay dark, see the module docstring.
-    9:           "868ba1",
-    10:          "4f5260",
-    11:          "a0a8c9",
-    WHITE:       "ffffff",   # sneaker soles
-    SKIN:        "e08a3c",
-    SKIN_DARK:   "a85a22",
-    SKIN_LIT:    "f0a85a",   # forearms and hands
+    OVERALLS:      "52cad6",   # Pastel cyan / sky blue overalls, pocket, skirt, straps
+    OVERALLS_DARK: "3aa8b8",   # Deeper cyan for skirt hem trim and strap borders
+    CYAN_TRIM:     "4ec3d6",   # Pastel blue hairpin/streak and cap ribbon
+    BUTTONS:       "ffffff",   # White button rivets on overalls straps
+    SHOE_CYAN:     "52cad6",   # Sneaker upper cyan
+    COLLAR_TRIM:   "3eaab8",   # Collar lapels and sleeve cuffs trim
+    HAIR:          "181520",   # Jet black hair (8% luminance for soft toon shader)
+    SHADOW_CYAN:   "3694a4",   # Overalls shadow band
+    INK:           "1f1c24",   # Face ink (eyes & smile)
+    9:             "868ba1",   # Stock Kenney spare
+    10:            "4f5260",   # Stock Kenney spare
+    11:            "a0a8c9",   # Stock Kenney spare
+    WHITE:         "f6f8fb",   # Baker/chef cap, undershirt, sneaker soles, socks
+    SKIN:          "e08a3c",   # Warm tan skin tone
+    SKIN_DARK:     "a85a22",   # Darker skin tone
+    SKIN_LIT:      "f0a85a",   # Lit skin tone (arms, legs, hands)
 }
 
-# The Godot generator aborts its build on this and so does this one. Slot 8 draws the
-# eyes, brows and mouth, and a light slot 8 does not give a light-haired character, it
-# gives one with no face.
 MAX_FACE_LUMINANCE = 0.30
 
 
 def mirrored(boxes, bone_from, bone_to):
-    """The same parts on the other side, with X negated and the bone renamed.
-
-    ⚠️ A MIRROR RATHER THAN A SECOND TABLE. Two hand-authored halves drift, and a limb
-    2 mm wider on one side reads as a bug in the rig rather than as a typo in a list.
-    """
     out = []
     for name, bone, lo, hi, slot in boxes:
         assert bone == bone_from, f"{name} is on {bone}, not {bone_from}"
@@ -256,124 +210,105 @@ def mirrored(boxes, bone_from, bone_to):
 
 # Hips at 0.240, so the leg owns everything below it.
 LEG_LEFT = [
-    # ⚠️ THE SOLE IS THE THICKEST BAND ON THE SHOE, and it is white against a black
-    # upper because that contrast is the only part of the footwear that survives being
-    # seen from across the box.
+    # White sneaker sole
     ("shoe-sole-left",   "leg-left", (0.006, 0.000, -0.134), (0.158, 0.024, 0.082), WHITE),
-    ("shoe-upper-left",  "leg-left", (0.014, 0.024, -0.126), (0.152, 0.056, 0.076), CLOTH),
-    ("shoe-collar-left", "leg-left", (0.010, 0.056, -0.100), (0.156, 0.076, 0.080), SHOE),
-    ("shoe-toe-left",    "leg-left", (0.010, 0.024, -0.132), (0.156, 0.042, -0.100), WHITE),
-    ("shoe-swoosh-left", "leg-left", (0.150, 0.028, -0.096), (0.162, 0.052, -0.020), SHOE),
-    ("lace-upper-left",  "leg-left", (0.030, 0.040, -0.106), (0.136, 0.048, -0.094), WHITE),
-    ("lace-lower-left",  "leg-left", (0.030, 0.026, -0.112), (0.136, 0.034, -0.100), WHITE),
-    ("pant-left",        "leg-left", (0.018, 0.068, -0.072), (0.150, 0.232, 0.072), CLOTH),
-    ("pant-cuff-left",   "leg-left", (0.014, 0.068, -0.078), (0.154, 0.086, 0.078), CLOTH),
-    ("knee-left",        "leg-left", (0.026, 0.128, -0.080), (0.142, 0.164, -0.070), CLOTH),
-
-    # The hip chain hangs off the belt and down the outside of the left thigh
-    ("chain-link-a-left", "leg-left", (0.150, 0.210, -0.044), (0.168, 0.228, 0.000), CHAIN),
-    ("chain-link-b-left", "leg-left", (0.150, 0.180, -0.034), (0.168, 0.198, 0.012), CHAIN),
-    ("chain-link-c-left", "leg-left", (0.148, 0.150, -0.028), (0.166, 0.168, 0.018), CHAIN),
-    ("chain-link-d-left", "leg-left", (0.146, 0.120, -0.038), (0.164, 0.138, 0.006), CHAIN),
-    ("chain-link-e-left", "leg-left", (0.144, 0.090, -0.050), (0.162, 0.108, -0.008), CHAIN),
-
-    # The front drape on the left hip
-    ("chain-drape-a-left", "leg-left", (0.116, 0.170, -0.084), (0.148, 0.188, -0.066), CHAIN),
-    ("chain-drape-b-left", "leg-left", (0.082, 0.152, -0.086), (0.114, 0.170, -0.068), CHAIN),
-    ("chain-drape-c-left", "leg-left", (0.048, 0.160, -0.084), (0.080, 0.178, -0.066), CHAIN),
+    # Cyan sneaker upper
+    ("shoe-upper-left",  "leg-left", (0.014, 0.024, -0.126), (0.152, 0.056, 0.076), SHOE_CYAN),
+    # White toe cap
+    ("shoe-toe-left",    "leg-left", (0.012, 0.024, -0.132), (0.154, 0.044, -0.100), WHITE),
+    # White sneaker collar
+    ("shoe-collar-left", "leg-left", (0.012, 0.056, -0.096), (0.154, 0.068, 0.078), WHITE),
+    # White socks
+    ("sock-left",        "leg-left", (0.016, 0.068, -0.076), (0.150, 0.096, 0.074), WHITE),
+    # Clean tan legs
+    ("leg-skin-left",    "leg-left", (0.018, 0.096, -0.070), (0.148, 0.232, 0.070), SKIN_LIT),
 ]
 
-LEG_RIGHT = [
-    ("shoe-sole-right",   "leg-right", (-0.158, 0.000, -0.134), (-0.006, 0.024, 0.082), WHITE),
-    ("shoe-upper-right",  "leg-right", (-0.152, 0.024, -0.126), (-0.014, 0.056, 0.076), CLOTH),
-    ("shoe-collar-right", "leg-right", (-0.156, 0.056, -0.100), (-0.010, 0.076, 0.080), SHOE),
-    ("shoe-toe-right",    "leg-right", (-0.156, 0.024, -0.132), (-0.010, 0.042, -0.100), WHITE),
-    ("shoe-swoosh-right", "leg-right", (-0.162, 0.028, -0.096), (-0.150, 0.052, -0.020), SHOE),
-    ("lace-upper-right",  "leg-right", (-0.136, 0.040, -0.106), (-0.030, 0.048, -0.094), WHITE),
-    ("lace-lower-right",  "leg-right", (-0.136, 0.026, -0.112), (-0.030, 0.034, -0.100), WHITE),
-    ("pant-right",        "leg-right", (-0.150, 0.068, -0.072), (-0.018, 0.232, 0.072), CLOTH),
-    ("pant-cuff-right",   "leg-right", (-0.154, 0.068, -0.078), (-0.014, 0.086, 0.078), CLOTH),
-    ("knee-right",        "leg-right", (-0.142, 0.128, -0.080), (-0.026, 0.164, -0.070), CLOTH),
-]
+LEG_RIGHT = mirrored(LEG_LEFT, "leg-left", "leg-right")
 
-# Waist at 0.240, shoulders at 0.452, neck at 0.505.
+# Waist at 0.240, shoulders at 0.400, neck at 0.445.
 TORSO = [
-    ("shirt",              "torso", (-0.100, 0.232, -0.082), (0.100, 0.445, 0.078), CLOTH),
-    ("jacket-left",        "torso", (0.048, 0.232, -0.100), (0.138, 0.445, 0.092), JACKET),
-    ("jacket-right",       "torso", (-0.138, 0.232, -0.100), (-0.048, 0.445, 0.092), JACKET),
-    ("jacket-back",        "torso", (-0.138, 0.232, 0.076), (0.138, 0.445, 0.092), JACKET),
-    ("jacket-collar",      "torso", (-0.142, 0.420, -0.106), (0.142, 0.445, 0.098), JACKET_DARK),
-    ("jacket-back-collar", "torso", (-0.140, 0.420, 0.082), (0.140, 0.445, 0.098), JACKET_DARK),
-    ("lapel-left",         "torso", (0.032, 0.372, -0.108), (0.056, 0.445, -0.088), JACKET_DARK),
-    ("lapel-right",        "torso", (-0.056, 0.372, -0.108), (-0.032, 0.445, -0.088), JACKET_DARK),
-
-    ("belt",               "torso", (-0.106, 0.232, -0.092), (0.106, 0.262, 0.086), CLOTH),
-    ("buckle",             "torso", (-0.038, 0.226, -0.108), (0.038, 0.268, -0.090), GOLD),
-    ("buckle-hole",        "torso", (-0.022, 0.236, -0.114), (0.022, 0.258, -0.098), CLOTH),
-
-    # The necklace: two strands to the collarbone and a cross hanging off them.
-    ("chain-left",         "torso", (0.024, 0.386, -0.098), (0.040, 0.428, -0.080), CHAIN),
-    ("chain-right",        "torso", (-0.040, 0.386, -0.098), (-0.024, 0.428, -0.080), CHAIN),
-    ("cross-stem",         "torso", (-0.012, 0.342, -0.102), (0.012, 0.390, -0.080), JACKET),
-    ("cross-arm",          "torso", (-0.030, 0.366, -0.102), (0.030, 0.380, -0.080), JACKET),
-
-    ("pocket-left",        "torso", (0.062, 0.268, -0.112), (0.126, 0.316, -0.094), JACKET_DARK),
-    ("pocket-right",       "torso", (-0.126, 0.268, -0.112), (-0.062, 0.316, -0.094), JACKET_DARK),
-    ("hem-left",           "torso", (0.048, 0.232, -0.106), (0.142, 0.252, 0.096), JACKET_DARK),
-    ("hem-right",          "torso", (-0.142, 0.232, -0.106), (-0.048, 0.252, 0.096), JACKET_DARK),
-    ("collar-stud",        "torso", (0.030, 0.424, -0.116), (0.052, 0.440, -0.098), GOLD),
-    ("zip-pull",           "torso", (-0.008, 0.300, -0.096), (0.008, 0.330, -0.084), CHAIN),
+    # White undershirt core
+    ("shirt-core",          "torso", (-0.100, 0.232, -0.082), (0.100, 0.445, 0.078), WHITE),
+    
+    # Overalls / apron skirt base (pastel cyan)
+    ("overalls-skirt",      "torso", (-0.118, 0.220, -0.096), (0.118, 0.330, 0.092), OVERALLS),
+    # Skirt hem band (darker cyan trim)
+    ("overalls-hem",        "torso", (-0.124, 0.214, -0.100), (0.124, 0.238, 0.096), OVERALLS_DARK),
+    # Overalls bib (front center)
+    ("overalls-bib",        "torso", (-0.088, 0.310, -0.104), (0.088, 0.380, -0.080), OVERALLS),
+    # Kangaroo front pocket (proud with rounded bevel)
+    ("overalls-pocket",     "torso", (-0.065, 0.252, -0.114), (0.065, 0.320, -0.098), OVERALLS),
+    
+    # Shoulder straps (running up over shoulders to back)
+    ("strap-left",          "torso", (0.050, 0.330, -0.106), (0.086, 0.445, 0.088), OVERALLS),
+    ("strap-right",         "torso", (-0.086, 0.330, -0.106), (-0.050, 0.445, 0.088), OVERALLS),
+    
+    # Button rivets at top of bib / strap connection
+    ("button-left",         "torso", (0.056, 0.345, -0.118), (0.080, 0.368, -0.102), BUTTONS),
+    ("button-right",        "torso", (-0.080, 0.345, -0.118), (-0.056, 0.368, -0.102), BUTTONS),
+    
+    # Neck skin (V-neck opening)
+    ("neck-skin",           "torso", (-0.034, 0.385, -0.088), (0.034, 0.445, -0.076), SKIN_LIT),
+    # Cyan collar wings/lapels
+    ("collar-left",         "torso", (0.022, 0.395, -0.108), (0.064, 0.445, -0.082), COLLAR_TRIM),
+    ("collar-right",        "torso", (-0.064, 0.395, -0.108), (-0.022, 0.445, -0.082), COLLAR_TRIM),
+    # White shirt back collar
+    ("collar-back",         "torso", (-0.095, 0.425, 0.080), (0.095, 0.445, 0.094), WHITE),
 ]
 
-# ⚠️ THE ARM BOXES ARE CENTRED ON THE SHOULDER'S OWN Y (0.452) BECAUSE THE BIND POSE
-# IS A T-POSE: the limb runs along X, not down. Its vertical extent is thickness.
 ARM_LEFT = [
-    ("sleeve-left",        "arm-left", (0.0999, 0.330, -0.066), (0.226, 0.470, 0.084), JACKET),
-    ("cuff-left",          "arm-left", (0.226, 0.324, -0.072), (0.248, 0.476, 0.090), JACKET_DARK),
-    ("hand-left",          "arm-left", (0.248, 0.3383, -0.020), (0.3836, 0.4617, 0.038), SKIN_LIT),
-    ("wristband-left",     "arm-left", (0.256, 0.3323, -0.026), (0.284, 0.4677, 0.044), CLIP),
-    ("sleeve-stripe-left", "arm-left", (0.120, 0.4660, -0.052), (0.222, 0.4740, 0.070), JACKET_DARK),
+    # White short sleeve
+    ("sleeve-left",         "arm-left", (0.0999, 0.330, -0.066), (0.210, 0.470, 0.084), WHITE),
+    # Cyan sleeve cuff
+    ("sleeve-cuff-left",    "arm-left", (0.210, 0.324, -0.072), (0.232, 0.476, 0.090), COLLAR_TRIM),
+    # Bare tan forearm & hand
+    ("hand-left",           "arm-left", (0.232, 0.3383, -0.020), (0.3836, 0.4617, 0.038), SKIN_LIT),
 ]
 
 HEAD = [
-    ("hair-core",       "head", (-0.184, 0.585, -0.198), (0.184, 0.714, 0.188), HAIR),
-    ("hair-back",       "head", (-0.180, 0.480, -0.234), (0.180, 0.700, -0.170), HAIR),
-    ("hair-front",      "head", (-0.176, 0.560, 0.132), (0.176, 0.700, 0.202), HAIR),
-    ("hair-side-left",  "head", (0.168, 0.500, -0.186), (0.196, 0.668, 0.140), HAIR),
-    ("hair-side-right", "head", (-0.196, 0.500, -0.186), (-0.168, 0.668, 0.140), HAIR),
-
-    # Subtle sideburns framing the jawline in front of ears
-    ("sideburn-left",   "head", (0.164, 0.420, -0.040), (0.182, 0.500, 0.025), HAIR),
-    ("sideburn-right",  "head", (-0.182, 0.420, -0.040), (-0.164, 0.500, 0.025), HAIR),
-
-    ("hair-curl-a",     "head", (-0.150, 0.704, -0.130), (-0.036, 0.754, 0.020), HAIR),
-    ("hair-curl-b",     "head", (0.020, 0.708, -0.060), (0.128, 0.758, 0.070), HAIR),
-    ("hair-curl-c",     "head", (-0.184, 0.694, 0.050), (-0.086, 0.742, 0.168), HAIR),
-    ("hair-curl-d",     "head", (-0.066, 0.698, -0.226), (0.058, 0.746, -0.140), HAIR),
-
-    # § THE CRIMSON FORELOCK
-    ("dye-fore-a",      "head", (-0.030, 0.626, 0.098), (0.186, 0.750, 0.226), CLIP),
-    ("dye-fore-b",      "head", (0.030, 0.694, -0.050), (0.190, 0.766, 0.104), CLIP),
-    ("dye-fore-c",      "head", (0.086, 0.678, -0.170), (0.192, 0.744, -0.040), CLIP),
-    ("dye-lick",        "head", (-0.086, 0.592, 0.162), (0.036, 0.660, 0.232), CLIP),
-
-    # Integrated side sweep on the dyed side (+X, character's left)
-    ("dye-side-left",   "head", (0.176, 0.600, -0.050), (0.198, 0.690, 0.130), CLIP),
-
-    # Subtle nonchalant gold huggie earring piercing through the center of the left earlobe
-    ("earring-hoop",    "head", (0.190, 0.385, -0.045), (0.214, 0.420, 0.005), GOLD),
-    ("earring-drop",    "head", (0.197, 0.355, -0.030), (0.207, 0.385, -0.010), GOLD),
+    # Hair core covering back and sides of skull
+    ("hair-core",           "head", (-0.180, 0.480, -0.215), (0.180, 0.700, -0.040), HAIR),
+    # Hair crown under the baker cap
+    ("hair-crown",          "head", (-0.176, 0.650, -0.170), (0.176, 0.705, 0.140), HAIR),
+    
+    # Long straight black hair down the back (drapes past shoulders to waist level!)
+    ("hair-back-upper",     "head", (-0.176, 0.280, -0.225), (0.176, 0.490, -0.135), HAIR),
+    ("hair-back-lower",     "head", (-0.172, 0.170, -0.220), (0.172, 0.290, -0.140), HAIR),
+    ("hair-back-hem",       "head", (-0.174, 0.155, -0.222), (0.174, 0.180, -0.138), HAIR),
+    
+    # Front bangs framing brow
+    ("hair-bangs-brow",     "head", (-0.165, 0.635, 0.135), (0.165, 0.690, 0.185), HAIR),
+    ("hair-bangs-left",     "head", (0.025, 0.540, 0.135), (0.168, 0.645, 0.185), HAIR),
+    ("hair-bangs-right",    "head", (-0.168, 0.530, 0.135), (-0.015, 0.645, 0.185), HAIR),
+    
+    # Side hair framing cheeks in front of ears
+    ("hair-side-left",      "head", (0.162, 0.420, -0.060), (0.188, 0.560, 0.125), HAIR),
+    ("hair-side-right",     "head", (-0.188, 0.420, -0.060), (-0.162, 0.560, 0.125), HAIR),
+    ("hair-side-upper-left","head", (0.168, 0.540, -0.170), (0.192, 0.670, 0.130), HAIR),
+    ("hair-side-upper-right","head",(-0.192, 0.540, -0.170), (-0.168, 0.670, 0.130), HAIR),
+    
+    # Cyan hair clip / streak on character's RIGHT bangs (-X, viewer's left in front view)
+    ("hair-clip-top",       "head", (-0.162, 0.635, 0.180), (-0.095, 0.675, 0.198), CYAN_TRIM),
+    ("hair-clip-drop",      "head", (-0.165, 0.575, 0.180), (-0.115, 0.640, 0.198), CYAN_TRIM),
+    ("hair-clip-side",      "head", (-0.188, 0.610, 0.080), (-0.160, 0.665, 0.170), CYAN_TRIM),
+    
+    # Baker / Chef Cap (Tiered white cap with cyan ribbon & knot)
+    # Tier 1 (Base / Brim)
+    ("cap-tier1-base",      "head", (-0.155, 0.690, -0.155), (0.155, 0.725, 0.155), WHITE),
+    # Tier 1 Cyan Ribbon Trim
+    ("cap-tier1-ribbon",    "head", (-0.160, 0.698, -0.160), (0.160, 0.716, 0.160), CYAN_TRIM),
+    # Tier 2 (Mid tier)
+    ("cap-tier2-mid",       "head", (-0.125, 0.725, -0.125), (0.125, 0.755, 0.125), WHITE),
+    # Tier 2 Cyan Ribbon Knot / Bow (front)
+    ("cap-tier2-knot",      "head", (-0.035, 0.730, 0.120), (0.035, 0.750, 0.136), CYAN_TRIM),
+    # Tier 3 (Top Puff Crown)
+    ("cap-tier3-top",       "head", (-0.075, 0.755, -0.075), (0.075, 0.780, 0.075), WHITE),
+    # Tier 3 Cyan Top Ribbon
+    ("cap-tier3-ribbon",    "head", (-0.080, 0.756, -0.080), (0.080, 0.768, 0.080), CYAN_TRIM),
 ]
 
-# Boxes authored in the donated head's own space. See `_family` and the block above.
-DONOR_SPACE = (
-    "hair-core", "hair-back", "hair-front", "hair-side-left", "hair-side-right",
-    "sideburn-left", "sideburn-right",
-    "hair-curl-a", "hair-curl-b", "hair-curl-c", "hair-curl-d",
-    "dye-fore-a", "dye-fore-b", "dye-fore-c", "dye-lick",
-    "dye-side-left",
-    "earring-hoop", "earring-drop",
-)
+DONOR_SPACE = tuple(entry[0] for entry in HEAD)
 
 # ---------------------------------------------------------------------------
 # § THE FAMILY PASS.
@@ -758,87 +693,12 @@ def _verify_expression(before, after, uv, moved):
                 f"  Nothing but the ink may change shape when the expression does.")
 
 
+SKULL_SLOTS = {15: SKIN, 8: INK}
+
+
 def _donor_head():
-    """The skull with its face bent, plus the donated mop, as one mesh."""
+    """The skull with standard toon eyes and open smile."""
     pos, nrm, uv, tris = _donor_part(DONOR_SKULL, SKULL_SLOTS)
-
-    mouth, eyes, mouth_tris = set(), set(), set()
-    bent = 0
-
-    for a, b, c in tris:
-        # ⚠️ SLOT FIRST. A triangle of jaw and a triangle of mouth sit at the same height
-        # and differ only in which atlas cell they sample. See the block above for what
-        # dropping this test did to the head.
-        if _slot_at(*uv[a]) != INK:
-            continue
-
-        if (pos[a][1] + pos[b][1] + pos[c][1]) / 3.0 < DONOR_MOUTH_Y:
-            mouth.update((a, b, c))
-            mouth_tris.add((a, b, c))
-            bent += 1
-        else:
-            eyes.add((a, b, c))
-
-    eye_verts = {i for tri in eyes for i in tri}
-
-    if len(eyes) != DONOR_EYE_TRIS or len(eye_verts) != DONOR_EYE_VERTS:
-        raise SystemExit(
-            f"\nEYE SELECTION VIOLATION - nothing written.\n"
-            f"  matched {len(eyes)} triangles over {len(eye_verts)} vertices, expected "
-            f"{DONOR_EYE_TRIS} over {DONOR_EYE_VERTS}.")
-
-    if bent != DONOR_MOUTH_TRIS or len(mouth) != DONOR_MOUTH_VERTS:
-        raise SystemExit(
-            f"\nMOUTH SELECTION VIOLATION - nothing written.\n"
-            f"  matched {bent} triangles over {len(mouth)} vertices, expected "
-            f"{DONOR_MOUTH_TRIS} over {DONOR_MOUTH_VERTS}.\n"
-            f"  The bend moves whatever this picks and reports nothing, so a selection\n"
-            f"  that has grown comes back as a deformed head rather than as an error.\n"
-            f"  It reached the jaw and both ears once already.")
-
-    before = list(pos)
-
-    # ⚠️ EACH EYE IS SQUASHED TOWARD ITS OWN CENTRE, so the two are found first. They are
-    # separated by SIGN OF X and not by a gap in a sorted list: the rig is symmetric, so the
-    # two clusters interleave exactly in y and a positional split would put half of each eye
-    # in the other one's group.
-    for side in (1.0, -1.0):
-        lid = {i for tri in eyes for i in tri if pos[i][0] * side > 0.0}
-
-        if not lid:
-            continue
-
-        centre = sum(pos[i][1] for i in lid) / len(lid)
-
-        for i in lid:
-            x, y, z = pos[i]
-            pos[i] = (x, centre + (y - centre) * EYE_SQUASH - EYE_DROP, z)
-
-    # ⚠️ ONLY THE EYES MOVED, so the guard runs before the mouth is touched at all. What
-    # happens to the mouth below is a DELETE and a DRAW, not a move, and the guard exists to
-    # catch a move that reached further than it was supposed to.
-    _verify_expression(before, pos, uv, eye_verts)
-
-    # ⚠️⚠️ THE DONATED MOUTH IS DROPPED WHOLE, and its vertices are compacted away at the end
-    # of this function rather than here. Renumbering mid-flight would invalidate `eye_verts`,
-    # `mouth` and every triangle after them; leaving them orphaned makes every later
-    # measurement lie, and the first thing that happened was a mouth measuring 36 mm because
-    # the tool was still counting the ten vertices of the one that had been deleted.
-    tris = [t for t in tris if t not in mouth_tris]
-
-    first = len(pos)
-    plate = MOUTH_Z + PANEL_PROUD
-
-    for x, y in _mouth_polygon():
-        pos.append((x, y, plate))
-        nrm.append((0.0, 0.0, 1.0))
-        uv.append(cell_uv(INK))
-
-    # A fan. The polygon is a strip between two curves that never cross, so it is convex
-    # enough for one: every diagonal from the first vertex stays inside it.
-    for k in range(1, len(pos) - first - 1):
-        tris.append((first, first + k, first + k + 1))
-
     return _compact(pos, nrm, uv, tris)
 
 

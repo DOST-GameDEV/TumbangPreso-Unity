@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Video;
+using TumbangPreso.Core;
 
 namespace TumbangPreso.UI
 {
