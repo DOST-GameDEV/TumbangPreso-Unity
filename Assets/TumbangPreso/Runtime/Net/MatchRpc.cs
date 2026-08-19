@@ -194,7 +194,11 @@ namespace TumbangPreso.Net
         /// client that only learns about the round when it begins gets no 3 · 2 · 1 at all.
         /// </summary>
         [ClientRpc]
-        public void BeginCountdownClientRpc() { }
+        public void BeginCountdownClientRpc()
+        {
+            var gate = FindFirstObjectByType<ReadyGate>();
+            gate?.StartLocalCountdown();
+        }
 
         // -------------------------------------------------------------------
         // LOBBY SETUP SYNCHRONIZATION (N5)

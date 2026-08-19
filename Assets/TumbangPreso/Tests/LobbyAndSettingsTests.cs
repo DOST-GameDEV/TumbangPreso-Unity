@@ -491,5 +491,42 @@ namespace TumbangPreso.Tests
             Assert.IsFalse(human.Spectator);
             Assert.AreEqual(2, lobby.LeaderPeerId, "First human peer should be leader");
         }
+
+        // -------------------------------------------------------------------
+        // READY GATE AND PEER QUORUM (N7)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void PlayingPeerCountExcludesSpectatorsAndDedicatedServer()
+        {
+            var lobby = new LobbySession { IsDedicated = true };
+            lobby.OpenLobby(new System.Random(42));
+
+            // Dedicated referee (peer 1) does not count towards ready quorum
+            lobby.Admit(1, "ref-token", "Referee");
+            Assert.AreEqual(1, lobby.PlayingPeerCount(1), "Floored at 1 when no human players are seated");
+
+            // Human player 1 (host)
+            lobby.Admit(2, "p1-token", "Host Player");
+            Assert.AreEqual(1, lobby.PlayingPeerCount(2));
+
+            // Human player 2 (guest)
+            lobby.Admit(3, "p2-token", "Guest Player");
+            Assert.AreEqual(2, lobby.PlayingPeerCount(2));
+
+            // Spectator (peer 4)
+            var spec = lobby.Admit(4, "spec-token", "Spectator");
+            spec.Spectator = true;
+            spec.Seat = -1;
+            Assert.AreEqual(2, lobby.PlayingPeerCount(2), "Spectators must not be counted in ready quorum");
+        }
+
+        [Test]
+        public void PlayingPeerCountFloorsAtOneForSoloHost()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(42));
+            Assert.AreEqual(1, lobby.PlayingPeerCount(0), "Empty lobby must floor at 1 so gate does not auto-satisfy");
+        }
     }
 }
