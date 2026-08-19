@@ -636,5 +636,92 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(10, lobby.LeaderPeerId, "First human must be appointed leader");
             Assert.AreEqual(1, lobby.SeatedPeerCount());
         }
+
+        // -------------------------------------------------------------------
+        // MULTI-RECONNECT AND ARRIVAL MATRIX (N13)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void ThreeConsecutiveAltF4ReconnectCyclesPreserveSameSeatAndCharacter()
+        {
+            var lobby = NewLobby();
+            lobby.StartMatch();
+
+            // Four peers seated
+            var p1 = lobby.Admit(101, "token-alice", "Alice");
+            var p2 = lobby.Admit(102, "token-bob", "Bob");
+            var p3 = lobby.Admit(103, "token-carol", "Carol");
+            var p4 = lobby.Admit(104, "token-dave", "Dave");
+
+            lobby.SetPicks(102, 2, 1, 3); // Bob's picks
+
+            Assert.AreEqual(0, p1.Seat);
+            Assert.AreEqual(1, p2.Seat);
+            Assert.AreEqual(2, p3.Seat);
+            Assert.AreEqual(3, p4.Seat);
+
+            // Three consecutive drop and reconnect cycles for Bob (seat 1)
+            for (int cycle = 1; cycle <= 3; cycle++)
+            {
+                int oldPeerId = 102 + (cycle - 1) * 10;
+                int newPeerId = 102 + cycle * 10;
+
+                // Bob drops (simulated alt-F4)
+                lobby.Depart(oldPeerId);
+                Assert.IsTrue(lobby.IsSeatOccupied(1), $"Cycle {cycle}: seat 1 must remain held for Bob");
+                Assert.AreEqual(MidMatchRuling.Reclaim, lobby.RuleOnArrival("token-bob"));
+
+                // A stranger tries to take the seat while Bob is gone
+                var stranger = lobby.Admit(900 + cycle, $"stranger-{cycle}", "Interloper");
+                Assert.AreNotEqual(1, stranger.Seat, $"Cycle {cycle}: stranger must not get Bob's held seat");
+                Assert.IsTrue(stranger.Spectator, $"Cycle {cycle}: stranger must spectate because match is full");
+
+                // Bob rejoins with new peerId but identical token
+                var bobReconnected = lobby.Admit(newPeerId, "token-bob", "Bob");
+                Assert.AreEqual(1, bobReconnected.Seat, $"Cycle {cycle}: Bob must be restored to seat 1");
+                Assert.IsFalse(bobReconnected.Spectator, $"Cycle {cycle}: Bob must not be marked spectator");
+            }
+        }
+
+        [Test]
+        public void MidMatchArrivalRulingsExhaustiveBranchMatrix()
+        {
+            var lobby = NewLobby();
+
+            // Null or empty token is always refused
+            Assert.AreEqual(MidMatchRuling.Refuse, lobby.RuleOnArrival(null));
+            Assert.AreEqual(MidMatchRuling.Refuse, lobby.RuleOnArrival(""));
+
+            // 1. Seat: Free seats available before match start
+            Assert.AreEqual(MidMatchRuling.Seat, lobby.RuleOnArrival("player1"));
+            lobby.Admit(1, "player1", "P1");
+
+            Assert.AreEqual(MidMatchRuling.Seat, lobby.RuleOnArrival("player2"));
+            lobby.Admit(2, "player2", "P2");
+
+            lobby.StartMatch();
+
+            // 2. Seat: Free seats available mid match
+            Assert.AreEqual(MidMatchRuling.Seat, lobby.RuleOnArrival("player3"));
+            lobby.Admit(3, "player3", "P3");
+
+            Assert.AreEqual(MidMatchRuling.Seat, lobby.RuleOnArrival("player4"));
+            lobby.Admit(4, "player4", "P4");
+
+            // 3. Spectate: Match full while in progress
+            Assert.AreEqual(MidMatchRuling.Spectate, lobby.RuleOnArrival("player5"));
+            var spec = lobby.Admit(5, "player5", "P5");
+            Assert.IsTrue(spec.Spectator);
+            Assert.AreEqual(-1, spec.Seat);
+
+            // 4. Reclaim: Player drops mid match
+            lobby.Depart(2); // P2 (seat 1) drops
+            Assert.AreEqual(MidMatchRuling.Reclaim, lobby.RuleOnArrival("player2"));
+
+            // End match releases held seats and resets
+            lobby.EndMatch();
+            Assert.AreEqual(MidMatchRuling.Seat, lobby.RuleOnArrival("player2"),
+                "Ended match converts reclaim into normal seating");
+        }
     }
 }
