@@ -192,9 +192,9 @@ PALETTE = {
     WOOD_GOLD:     "e4a032",   # Warm bakery spatula wooden handle peeking from pocket
     FROST_ACCENT:  "a8f0fa",   # Shimmering pale frost highlight / crystal sparkle
     WHITE:         "f4faff",   # Crisp snow white with subtle cool undertone (toque, shirt, socks)
-    SKIN:          "fff5ed",   # Radiant fair porcelain human skin tone (visibly light, no tan)
-    SKIN_DARK:     "e8d2c4",   # Soft clean pale rosy shadow tone (clean and bright)
-    SKIN_LIT:      "ffffff",   # Pure radiant white lit skin tone (face, arms, legs)
+    SKIN:          "f5caa6",   # Natural fair human skin midtone (warm, healthy, clearly human)
+    SKIN_DARK:     "cf9a7e",   # Soft natural fair human shadow tone
+    SKIN_LIT:      "ffe8d6",   # Radiant fair human lit skin tone (face, arms, legs)
 }
 
 MAX_FACE_LUMINANCE = 0.30
@@ -379,6 +379,12 @@ HEAD = [
     # Tier 3 (Lower Drape)
     ("hair-back-tier3",     "head", (-0.170, 0.165, -0.214), (0.170, 0.238, -0.140), HAIR),
     
+    # ❄️ Vertical Frost Icicle Streaks down Back Hair Tiers
+    ("hair-back-frost-streak-l", "head", (0.080, 0.240, -0.220), (0.105, 0.420, -0.214), CYAN_TRIM),
+    ("hair-back-frost-streak-r", "head", (-0.105, 0.240, -0.220), (-0.080, 0.420, -0.214), CYAN_TRIM),
+    ("hair-back-frost-mid-l",    "head", (0.030, 0.190, -0.218), (0.050, 0.320, -0.212), FROST_ACCENT),
+    ("hair-back-frost-mid-r",    "head", (-0.050, 0.190, -0.218), (-0.030, 0.320, -0.212), FROST_ACCENT),
+    
     # ❄️ Sleek Geometric Frost Snowflake Hair Barrette on Upper Tier
     ("hair-back-barrette-bar",   "head", (-0.075, 0.465, -0.224), (0.075, 0.485, -0.214), SILVER),
     ("hair-back-barrette-wing-l","head", (0.040, 0.460, -0.226), (0.085, 0.490, -0.216), CYAN_TRIM),
@@ -396,17 +402,22 @@ HEAD = [
     ("hair-back-rail-left",     "head", (0.158, 0.170, -0.220), (0.180, 0.600, -0.160), HAIR),
     ("hair-back-rail-right",    "head", (-0.180, 0.170, -0.220), (-0.158, 0.600, -0.160), HAIR),
     
-    # 💇 SIDE HAIR WRAP (Contouring neatly around ears with clean locks)
-    ("hair-side-front-left",    "head", (0.165, 0.420, 0.025), (0.188, 0.560, 0.130), HAIR),
-    ("hair-side-front-right",   "head", (-0.188, 0.420, 0.025), (-0.165, 0.560, 0.130), HAIR),
-    ("hair-side-back-left",     "head", (0.165, 0.420, -0.155), (0.188, 0.560, -0.015), HAIR),
-    ("hair-side-back-right",    "head", (-0.188, 0.420, -0.155), (-0.165, 0.560, -0.015), HAIR),
-    ("hair-side-upper-left",    "head", (0.168, 0.540, -0.170), (0.192, 0.670, 0.130), HAIR),
-    ("hair-side-upper-right",   "head", (-0.192, 0.540, -0.170), (-0.168, 0.670, 0.130), HAIR),
-    
+    # 💇 SEAMLESS SIDE HAIR & EAR CONTOURING (Full coverage above & behind ear with graceful framing locks)
+    # Upper side hair dome completely covering above ears (y=0.490 to 0.670)
+    ("hair-side-cap-left",      "head", (0.165, 0.490, -0.160), (0.190, 0.670, 0.120), HAIR),
+    ("hair-side-cap-right",     "head", (-0.190, 0.490, -0.160), (-0.165, 0.670, 0.120), HAIR),
+    # Behind ear coverage
+    ("hair-side-post-ear-l",    "head", (0.165, 0.410, -0.155), (0.188, 0.500, -0.010), HAIR),
+    ("hair-side-post-ear-r",    "head", (-0.188, 0.410, -0.155), (-0.165, 0.500, -0.010), HAIR),
+    # Front-of-ear sideburn locks
+    ("hair-side-ante-ear-l",    "head", (0.165, 0.410, 0.015), (0.188, 0.500, 0.115), HAIR),
+    ("hair-side-ante-ear-r",    "head", (-0.188, 0.410, 0.015), (-0.165, 0.500, 0.115), HAIR),
     # Stepped side jawline framing locks
-    ("hair-side-lock-left",     "head", (0.170, 0.360, -0.010), (0.190, 0.430, 0.060), HAIR),
-    ("hair-side-lock-right",    "head", (-0.190, 0.360, -0.010), (-0.170, 0.430, 0.060), HAIR),
+    ("hair-side-lock-left",     "head", (0.168, 0.350, 0.000), (0.188, 0.420, 0.080), HAIR),
+    ("hair-side-lock-right",    "head", (-0.188, 0.350, 0.000), (-0.168, 0.420, 0.080), HAIR),
+    # ❄️ Side Frost Dyed Highlights on Temple Locks
+    ("hair-side-frost-lock-l",  "head", (0.170, 0.355, 0.010), (0.190, 0.410, 0.050), CYAN_TRIM),
+    ("hair-side-frost-lock-r",  "head", (-0.190, 0.355, 0.010), (-0.170, 0.410, 0.050), CYAN_TRIM),
     
     # Front bangs framing brow with clean arched forehead opening
     ("hair-bangs-brow",         "head", (-0.165, 0.640, 0.135), (0.165, 0.685, 0.185), HAIR),
@@ -422,6 +433,10 @@ HEAD = [
     ("earring-stud",            "head", (-0.215, 0.485, -0.015), (-0.200, 0.508, 0.005), SILVER),
     ("earring-frost-drop",      "head", (-0.218, 0.435, -0.018), (-0.198, 0.485, 0.008), CYAN_TRIM),
     ("earring-frost-sparkle",   "head", (-0.219, 0.442, -0.012), (-0.204, 0.465, 0.004), FROST_ACCENT),
+    
+    # 💎 Frost Stud Earring on Left Ear (+X)
+    ("earring-stud-left",       "head", (0.200, 0.485, -0.015), (0.215, 0.508, 0.005), SILVER),
+    ("earring-gem-left",        "head", (0.202, 0.488, -0.010), (0.218, 0.505, 0.002), FROST_ACCENT),
     
     # 👨‍🍳 Jaunty Baker / Ice Queen Toque Hat (Beloved 3-Tier Design)
     # Tier 1 (Fitted Brim Band)
