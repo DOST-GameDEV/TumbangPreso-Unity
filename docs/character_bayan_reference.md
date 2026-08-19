@@ -1,4 +1,4 @@
-# Bayan (Earth Warrior) — Character Specification & Handoff Reference
+# Bayan (Earth Warrior) — Character Specification & Autonomous Iteration Guide
 
 ## 1. Overview & Inspiration
 - **Character Name**: Bayan (Earth / Rock Warrior)
@@ -49,35 +49,35 @@
 
 ---
 
-## 3. Pipeline & Tooling Commands
+## 3. Mandatory Autonomous Iteration Loop
 
-### Generate Model & Palette
-```powershell
-python tools/build_bayan_voxel.py
-```
-- Outputs:
-  - `Assets/TumbangPreso/Art/characters/persons/team-bayan.glb`
-  - `MapSource/materials_persons/person_team-bayan.tres`
+Incoming agents working on this character MUST follow this iterative feedback loop:
 
-### Ingest & Bake into RosterBook
-```powershell
-$p = Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe" -ArgumentList "-batchmode -quit -projectPath . -executeMethod TumbangPreso.EditorTools.RosterBookBuilder.Build -logFile Logs/roster-build.log" -Wait -PassThru ; $p.ExitCode
-```
-
-### Render Turnaround Probe & Inspect
-```powershell
-$p = Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe" -ArgumentList "-batchmode -quit -projectPath . -executeMethod TumbangPreso.EditorTools.PersonSwapProbe.Run -logFile Logs/probe-run.log" -Wait -PassThru ; $p.ExitCode
-Copy-Item -Path "Logs/person-swap-turnaround.png" -Destination "C:\Users\matth\.gemini\antigravity\brain\f417c176-4c46-4fa7-aec0-a7adb0ac171e\bayan_turnaround_latest.png" -Force
+```mermaid
+graph TD
+    A[Edit tools/build_bayan_voxel.py] --> B[Run python tools/build_bayan_voxel.py]
+    B --> C[Bake with RosterBookBuilder.Build]
+    C --> D[Render Turnaround Probe PersonSwapProbe.Run]
+    D --> E[Inspect Render via view_file]
+    E --> F{Matches Anime Reference?}
+    F -- No --> A
+    F -- Yes --> G[Run Tests & Build Windows]
 ```
 
-### Run Test Suite & Build Windows Executable
-```powershell
-# 1. .NET Core tests
-dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj
-
-# 2. Unity EditMode tests
-$p = Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe" -ArgumentList "-batchmode -quit -runTests -testPlatform EditMode -projectPath . -testResults Logs/editmode-results.xml -logFile Logs/editmode.log" -Wait -PassThru ; $p.ExitCode
-
-# 3. Build Windows standalone
-$p = Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe" -ArgumentList "-batchmode -quit -projectPath . -executeMethod TumbangPreso.EditorTools.GameBuilder.BuildWindows -logFile Logs/build-windows.log" -Wait -PassThru ; $p.ExitCode
-```
+1. **Modify Geometry/Features**: Edit `tools/build_bayan_voxel.py`.
+2. **Re-build & Ingest**:
+   ```powershell
+   python tools/build_bayan_voxel.py
+   $p = Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe" -ArgumentList "-batchmode -quit -projectPath . -executeMethod TumbangPreso.EditorTools.RosterBookBuilder.Build -logFile Logs/roster-build.log" -Wait -PassThru ; $p.ExitCode
+   ```
+3. **Render Turnaround & Inspect**:
+   ```powershell
+   $p = Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe" -ArgumentList "-batchmode -quit -projectPath . -executeMethod TumbangPreso.EditorTools.PersonSwapProbe.Run -logFile Logs/probe-run.log" -Wait -PassThru ; $p.ExitCode
+   Copy-Item -Path "Logs/person-swap-turnaround.png" -Destination "C:\Users\matth\.gemini\antigravity\brain\f417c176-4c46-4fa7-aec0-a7adb0ac171e\bayan_turnaround_latest.png" -Force
+   ```
+   - **Always call `view_file`** on the copied image to self-critique the 4-angle turnaround against the Kawaki reference art!
+4. **Iterate autonomously** until all features look cohesive, aggressive, and high quality.
+5. **Run Full Verification**:
+   - `dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj`
+   - Unity EditMode tests
+   - Build Windows standalone executable (`GameBuilder.BuildWindows`)
