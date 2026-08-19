@@ -216,6 +216,16 @@ namespace TumbangPreso.Net
                     _beacon.Players = 1;
                     _beacon.InProgress = false;
                     _beacon.StartAdvertising();
+
+                    if (Query != null)
+                    {
+                        _ = Query.CreateHostedLobbyAsync(
+                            Settings.SettingsStore.Current.PlayerName,
+                            Lobby.JoinCode,
+                            relayCode,
+                            Lobby.SeatedPeerCount(),
+                            Lobby.PeerCount);
+                    }
                 }
 
                 return ok;
@@ -272,6 +282,7 @@ namespace TumbangPreso.Net
         public void Stop()
         {
             _beacon.StopAll();
+            if (Query != null) _ = Query.DeleteHostedLobbyAsync();
 
             if (_nm != null && _nm.IsListening) _nm.Shutdown();
 
@@ -319,6 +330,10 @@ namespace TumbangPreso.Net
             var record = Lobby.Admit((int)clientId, token, s.PlayerName);
 
             _beacon.Players = Lobby.PeerCount;
+            if (Query != null && IsRelay)
+            {
+                _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(), Lobby.PeerCount, Lobby.MatchInProgress);
+            }
             SetStatus($"{Lobby.PeerCount} connected, seat {record.Seat}");
         }
 
@@ -330,6 +345,10 @@ namespace TumbangPreso.Net
                 // back rather than finding a stranger in it holding their score.
                 Lobby.Depart((int)clientId);
                 _beacon.Players = Lobby.PeerCount;
+                if (Query != null && IsRelay)
+                {
+                    _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(), Lobby.PeerCount, Lobby.MatchInProgress);
+                }
                 SetStatus($"{Lobby.PeerCount} connected");
                 return;
             }

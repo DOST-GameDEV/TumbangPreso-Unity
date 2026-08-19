@@ -397,5 +397,41 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(12, LobbySession.MaxConnections);
             Assert.AreEqual(4, LobbySession.MaxPlayers);
         }
+
+        // -------------------------------------------------------------------
+        // ONLINE DISCOVERY AND SEATED/OCCUPIED COUNTS (N4)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void ServerQueryEntryDistinguishesSeatedAndOccupiedCounts()
+        {
+            var entry = new ServerQuery.Entry
+            {
+                Id = "test-lobby-1",
+                Name = "Spectator Host",
+                JoinCode = "K7X9",
+                RelayCode = "ABCDEF",
+                Seated = 0,
+                Occupied = 1,
+                Capacity = 4,
+                InProgress = false
+            };
+
+            // Seated count is displayed to players as 0
+            Assert.AreEqual(0, entry.Players);
+            Assert.AreEqual(0, entry.Seated);
+
+            // Occupied count is 1 (free to join as a player, but not an empty room)
+            Assert.AreEqual(1, entry.Occupied);
+            Assert.IsTrue(entry.IsJoinable);
+
+            // If match is marked in progress or occupied reaches capacity, it is not joinable
+            entry.InProgress = true;
+            Assert.IsFalse(entry.IsJoinable);
+
+            entry.InProgress = false;
+            entry.Occupied = 4;
+            Assert.IsFalse(entry.IsJoinable);
+        }
     }
 }
