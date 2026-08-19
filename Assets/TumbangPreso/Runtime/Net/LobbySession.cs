@@ -55,6 +55,13 @@ namespace TumbangPreso.Net
         public const int MaxPlayers = 4;
 
         /// <summary>
+        /// ⚠️ MaxConnections (12) is deliberately larger than MaxPlayers (4). Four seats is a
+        /// design rule, twelve connections is a capacity ceiling, and the gap is what lets
+        /// spectators attend a full match. Relay allocations use this count.
+        /// </summary>
+        public const int MaxConnections = 12;
+
+        /// <summary>
         /// ⚠️ THE ALPHABET EXCLUDES EVERY CONFUSABLE CHARACTER. No 0/O, no 1/I/L. A join code
         /// gets read aloud across a room or typed off somebody's screen, and "was that an oh or
         /// a zero" is a support problem you only get to solve once per tournament.

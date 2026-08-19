@@ -27,9 +27,10 @@ namespace TumbangPreso.UI
 
             SetText("BannerLabel", "MULTIPLAYER");
 
-            OnClick("HostOnlineButton", () =>
+            OnClick("HostOnlineButton", async () =>
             {
-                if (_net.StartHost()) SceneFlow.Go(SceneFlow.MatchSetup);
+                bool ok = await _net.StartRelayHost();
+                if (ok) SceneFlow.Go(SceneFlow.MatchSetup);
             });
 
             OnClick("HostButton", () =>
@@ -57,13 +58,22 @@ namespace TumbangPreso.UI
             if (string.IsNullOrWhiteSpace(_address.text)) _address.text = "127.0.0.1";
         }
 
-        private void Join()
+        private async void Join()
         {
             string addr = _address == null || string.IsNullOrWhiteSpace(_address.text)
                 ? "127.0.0.1"
                 : _address.text.Trim();
 
-            _net.StartClient(addr);
+            // If it contains dots, colons, or is localhost/standard IP, use direct transport.
+            // Otherwise, treat as a Relay join code.
+            if (addr.Contains(".") || addr.Contains(":") || addr.Equals("localhost", System.StringComparison.OrdinalIgnoreCase))
+            {
+                _net.StartClient(addr);
+            }
+            else
+            {
+                await _net.StartRelayClient(addr);
+            }
         }
     }
 }

@@ -1,6 +1,10 @@
 using System;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using Unity.Networking.Transport.Relay;
+using Unity.Services.Relay;
+using Unity.Services.Relay.Models;
 using UnityEngine;
 
 namespace TumbangPreso.Net
@@ -44,6 +48,8 @@ namespace TumbangPreso.Net
         public bool IsSeatlessReferee => _nm != null && _nm.IsServer && !_nm.IsClient;
 
         public string Status { get; private set; } = "offline";
+        public string RelayJoinCode { get; private set; }
+        public bool IsRelay { get; private set; }
 
         private void Awake()
         {
@@ -123,6 +129,8 @@ namespace TumbangPreso.Net
         public bool StartHost(int port = DefaultPort, bool dedicated = false)
         {
             Configure("0.0.0.0", port);
+            IsRelay = false;
+            RelayJoinCode = null;
 
             Lobby.IsDedicated = dedicated;
             Lobby.OpenLobby(new System.Random(Environment.TickCount));
@@ -151,10 +159,114 @@ namespace TumbangPreso.Net
         public bool StartClient(string address, int port = DefaultPort)
         {
             Configure(address, port);
+            IsRelay = false;
+            RelayJoinCode = null;
 
             bool ok = _nm.StartClient();
             SetStatus(ok ? $"connecting to {address}:{port}" : "failed to connect");
             return ok;
+        }
+
+        /// <summary>
+        /// Allocates a Relay session and starts hosting through Unity Transport.
+        ///
+        /// ⚠️ CAPACITY IS MaxConnections (12), NOT MaxPlayers (4). Four seats is a rules
+        /// constraint, twelve connections is a capacity ceiling so spectators can join a full game.
+        ///
+        /// ⚠️ JOIN CODE PRESERVATION. The game's 4-character confusable-free join code is
+        /// generated in LobbySession as usual; the UGS Relay join code is an internal transport
+        /// handle mapped behind this session.
+        /// </summary>
+        public async Task<bool> StartRelayHost(int maxConnections = LobbySession.MaxConnections)
+        {
+            SetStatus("signing in to online services...");
+            bool authOk = await NetIdentity.EnsureSignedInAsync();
+            if (!authOk)
+            {
+                SetStatus("online authentication failed");
+                return false;
+            }
+
+            SetStatus("allocating relay server...");
+            try
+            {
+                Allocation allocation = await RelayService.Instance.CreateAllocationAsync(maxConnections);
+                string relayCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+                RelayJoinCode = relayCode;
+                IsRelay = true;
+
+                var relayServerData = new RelayServerData(allocation, "dtls");
+                _utp.SetRelayServerData(relayServerData);
+
+                Lobby.IsDedicated = false;
+                Lobby.OpenLobby(new System.Random(Environment.TickCount));
+
+                bool ok = _nm.StartHost();
+                SetStatus(ok
+                    ? $"relay hosting active, code {Lobby.JoinCode} (relay {relayCode})"
+                    : "failed to start relay host");
+
+                if (ok)
+                {
+                    LocalSlot = 0;
+                    _beacon.HostName = Settings.SettingsStore.Current.PlayerName;
+                    _beacon.JoinCode = Lobby.JoinCode;
+                    _beacon.Port = DefaultPort;
+                    _beacon.MaxPlayers = LobbySession.MaxPlayers;
+                    _beacon.Players = 1;
+                    _beacon.InProgress = false;
+                    _beacon.StartAdvertising();
+                }
+
+                return ok;
+            }
+            catch (Exception e)
+            {
+                SetStatus($"relay allocation failed: {e.Message}");
+                Debug.LogWarning($"[Net] Relay allocation exception: {e}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Connects to a host through a UGS Relay join code.
+        /// </summary>
+        public async Task<bool> StartRelayClient(string relayJoinCode)
+        {
+            if (string.IsNullOrWhiteSpace(relayJoinCode))
+            {
+                SetStatus("invalid relay join code");
+                return false;
+            }
+
+            SetStatus("signing in to online services...");
+            bool authOk = await NetIdentity.EnsureSignedInAsync();
+            if (!authOk)
+            {
+                SetStatus("online authentication failed");
+                return false;
+            }
+
+            SetStatus($"joining relay allocation {relayJoinCode}...");
+            try
+            {
+                JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(relayJoinCode.Trim());
+                var relayServerData = new RelayServerData(joinAllocation, "dtls");
+                _utp.SetRelayServerData(relayServerData);
+
+                IsRelay = true;
+                RelayJoinCode = relayJoinCode.Trim();
+
+                bool ok = _nm.StartClient();
+                SetStatus(ok ? "connecting to relay host..." : "failed to start relay client");
+                return ok;
+            }
+            catch (Exception e)
+            {
+                SetStatus($"relay connection failed: {e.Message}");
+                Debug.LogWarning($"[Net] Relay join exception: {e}");
+                return false;
+            }
         }
 
         public void Stop()
@@ -165,6 +277,8 @@ namespace TumbangPreso.Net
 
             Lobby.EndMatch();
             LocalSlot = 0;
+            IsRelay = false;
+            RelayJoinCode = null;
             SetStatus("offline");
         }
 

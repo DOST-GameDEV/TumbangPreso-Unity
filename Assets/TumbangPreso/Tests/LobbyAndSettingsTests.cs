@@ -384,5 +384,18 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(4, list[2].Players, "full lobby should come after joinable");
             Assert.IsTrue(list[3].InProgress, "in progress lobby should come last");
         }
+
+        // -------------------------------------------------------------------
+        // RELAY AND TRANSPORT CAPACITY (N3)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void MaxConnectionsExceedsMaxPlayersToAccommodateSpectators()
+        {
+            Assert.Greater(LobbySession.MaxConnections, LobbySession.MaxPlayers,
+                "Relay connection ceiling must exceed player seat count to allow spectators");
+            Assert.AreEqual(12, LobbySession.MaxConnections);
+            Assert.AreEqual(4, LobbySession.MaxPlayers);
+        }
     }
 }
