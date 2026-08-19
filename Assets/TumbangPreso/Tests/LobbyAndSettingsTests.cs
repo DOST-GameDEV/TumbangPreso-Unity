@@ -528,5 +528,27 @@ namespace TumbangPreso.Tests
             lobby.OpenLobby(new System.Random(42));
             Assert.AreEqual(1, lobby.PlayingPeerCount(0), "Empty lobby must floor at 1 so gate does not auto-satisfy");
         }
+
+        // -------------------------------------------------------------------
+        // REPLICATION AND LATE JOIN (N8)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void ScoreboardSetAndSetAllSynchronizeFullTable()
+        {
+            var board = new Core.Scoreboard();
+            board.Set(0, 150);
+            board.Set(1, 300);
+            Assert.AreEqual(150, board[0]);
+            Assert.AreEqual(300, board[1]);
+            Assert.AreEqual(0, board[2]);
+
+            board.SetAll(new int[] { 100, 200, 400, 50 });
+            Assert.AreEqual(100, board[0]);
+            Assert.AreEqual(200, board[1]);
+            Assert.AreEqual(400, board[2]);
+            Assert.AreEqual(50, board[3]);
+            Assert.AreEqual(750, board.Total);
+        }
     }
 }

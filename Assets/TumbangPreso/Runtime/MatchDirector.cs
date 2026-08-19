@@ -69,6 +69,13 @@ namespace TumbangPreso
             Scored?.Invoke(slot, e);
         }
 
+        public void ApplySnapshot(int[] scores, int roundNumber, bool inProgress)
+        {
+            _scores.SetAll(scores);
+            RoundNumber = roundNumber;
+            MatchInProgress = inProgress;
+        }
+
         public void StartMatch()
         {
             _scores.Reset();

@@ -337,6 +337,77 @@ namespace TumbangPreso.Net
         }
 
         // -------------------------------------------------------------------
+        // PROP AND WORLD STATE REPLICATION (N8)
+        // -------------------------------------------------------------------
+
+        [ClientRpc]
+        public void SyncLataClientRpc(Vector3 pos, Quaternion rot, bool isUpright, int skinIndex)
+        {
+            var lata = GameServices.Round?.Lata;
+            if (lata == null) return;
+
+            lata.transform.position = pos;
+            lata.transform.rotation = rot;
+            lata.SkinIndex = skinIndex;
+        }
+
+        [ClientRpc]
+        public void SyncSlipperClientRpc(int ownerSlot, int holderSlot, Vector3 pos, Quaternion rot, int state)
+        {
+            var s = FindSlipper(ownerSlot);
+            if (s == null) return;
+
+            if (state == (int)SlipperState.Held && holderSlot >= 0)
+            {
+                var holder = Unit(holderSlot);
+                var carrier = holder != null ? holder.GetComponent<Carrier>() : null;
+                carrier?.NotifyHolding(s);
+            }
+            else
+            {
+                s.transform.SetPositionAndRotation(pos, rot);
+            }
+        }
+
+        [ClientRpc]
+        public void SyncWorldSnapshotClientRpc(int roundNumber, int defenderSlot, float timeLeft, int[] scores, bool inProgress)
+        {
+            GameServices.Match?.ApplySnapshot(scores, roundNumber, inProgress);
+        }
+
+        public void BroadcastWorldSnapshot()
+        {
+            if (!NetAuthority.IsHost) return;
+
+            BroadcastPicks();
+
+            var match = GameServices.Match;
+            var round = GameServices.Round;
+            if (match == null) return;
+
+            var scores = new int[Core.Balance.PlayerCount];
+            for (int i = 0; i < scores.Length; i++) scores[i] = match.ScoreFor(i);
+
+            SyncWorldSnapshotClientRpc(match.RoundNumber, match.DefenderSlot, round != null ? round.TimeLeft : Core.Balance.RoundTime, scores, match.MatchInProgress);
+
+            if (round?.Lata != null)
+            {
+                var l = round.Lata;
+                SyncLataClientRpc(l.transform.position, l.transform.rotation, l.IsUpright, l.SkinIndex);
+            }
+
+            for (int slot = 0; slot < Core.Balance.PlayerCount; slot++)
+            {
+                var s = FindSlipper(slot);
+                if (s != null)
+                {
+                    int holderSlot = s.Holder != null ? s.Holder.PlayerSlot : -1;
+                    SyncSlipperClientRpc(s.OwnerSlot, holderSlot, s.transform.position, s.transform.rotation, (int)s.State);
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------
         // LATE JOIN
         // -------------------------------------------------------------------
 
@@ -353,7 +424,7 @@ namespace TumbangPreso.Net
             if (!_spawned.Add(peerId)) return;
 
             // The joiner needs the whole world state, not just its own seat.
-            BroadcastPicks();
+            BroadcastWorldSnapshot();
         }
 
         public void HostPeerLeft(int peerId)
