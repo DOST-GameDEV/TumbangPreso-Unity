@@ -192,9 +192,9 @@ PALETTE = {
     WOOD_GOLD:     "e4a032",   # Warm bakery spatula wooden handle peeking from pocket
     FROST_ACCENT:  "a8f0fa",   # Shimmering pale frost highlight / crystal sparkle
     WHITE:         "f4faff",   # Crisp snow white with subtle cool undertone (toque, shirt, socks)
-    SKIN:          "f5caa6",   # Natural fair human skin midtone (warm, healthy, clearly human)
-    SKIN_DARK:     "cf9a7e",   # Soft natural fair human shadow tone
-    SKIN_LIT:      "ffe8d6",   # Radiant fair human lit skin tone (face, arms, legs)
+    SKIN:          "d88c48",   # Warm golden bronze / brown skin midtone
+    SKIN_DARK:     "a45c26",   # Deep warm brown shadow tone
+    SKIN_LIT:      "f4a868",   # Radiant golden brown lit skin tone (face, arms, legs)
 }
 
 MAX_FACE_LUMINANCE = 0.30
@@ -377,20 +377,13 @@ HEAD = [
     # Tier 2 (Middle Layer with subtle inset step)
     ("hair-back-tier2",     "head", (-0.174, 0.230, -0.216), (0.174, 0.348, -0.138), HAIR),
     # Tier 3 (Lower Drape)
-    ("hair-back-tier3",     "head", (-0.170, 0.165, -0.214), (0.170, 0.238, -0.140), HAIR),
-    
-    # ❄️ Vertical Frost Icicle Streaks down Back Hair Tiers
-    ("hair-back-frost-streak-l", "head", (0.080, 0.240, -0.220), (0.105, 0.420, -0.214), CYAN_TRIM),
-    ("hair-back-frost-streak-r", "head", (-0.105, 0.240, -0.220), (-0.080, 0.420, -0.214), CYAN_TRIM),
-    ("hair-back-frost-mid-l",    "head", (0.030, 0.190, -0.218), (0.050, 0.320, -0.212), FROST_ACCENT),
-    ("hair-back-frost-mid-r",    "head", (-0.050, 0.190, -0.218), (-0.030, 0.320, -0.212), FROST_ACCENT),
-    
-    # ❄️ Sleek Geometric Frost Snowflake Hair Barrette on Upper Tier
-    ("hair-back-barrette-bar",   "head", (-0.075, 0.465, -0.224), (0.075, 0.485, -0.214), SILVER),
-    ("hair-back-barrette-wing-l","head", (0.040, 0.460, -0.226), (0.085, 0.490, -0.216), CYAN_TRIM),
-    ("hair-back-barrette-wing-r","head", (-0.085, 0.460, -0.226), (-0.040, 0.490, -0.216), CYAN_TRIM),
-    ("hair-back-barrette-gem",   "head", (-0.020, 0.455, -0.228), (0.020, 0.495, -0.216), CYAN_TRIM),
-    ("hair-back-barrette-star",  "head", (-0.010, 0.465, -0.231), (0.010, 0.485, -0.218), FROST_ACCENT),
+    # 🎀 Iteration 2 Back: Frosted Star Clasp & Twin Fluttering Ribbon Tails with Frosted Tips
+    ("hair-back-star-clasp",    "head", (-0.030, 0.455, -0.228), (0.030, 0.495, -0.214), FROST_ACCENT),
+    ("hair-back-star-gem",      "head", (-0.015, 0.462, -0.232), (0.015, 0.488, -0.216), WHITE),
+    ("hair-back-ribbon-tail-l", "head", (0.020, 0.360, -0.225), (0.065, 0.460, -0.215), CYAN_TRIM),
+    ("hair-back-ribbon-tail-r", "head", (-0.065, 0.360, -0.225), (-0.020, 0.460, -0.215), CYAN_TRIM),
+    ("hair-back-ribbon-tip-l",  "head", (0.035, 0.340, -0.225), (0.075, 0.365, -0.215), FROST_ACCENT),
+    ("hair-back-ribbon-tip-r",  "head", (-0.075, 0.340, -0.225), (-0.035, 0.365, -0.215), FROST_ACCENT),
     
     # 📐 Raised horizontal weight band & clean frosted bottom hem rim
     ("hair-back-weight-band",   "head", (-0.176, 0.155, -0.224), (0.176, 0.215, -0.145), HAIR),
@@ -419,15 +412,13 @@ HEAD = [
     ("hair-side-frost-lock-l",  "head", (0.170, 0.355, 0.010), (0.190, 0.410, 0.050), CYAN_TRIM),
     ("hair-side-frost-lock-r",  "head", (-0.190, 0.355, 0.010), (-0.170, 0.410, 0.050), CYAN_TRIM),
     
-    # Front bangs framing brow with clean arched forehead opening
-    ("hair-bangs-brow",         "head", (-0.165, 0.640, 0.135), (0.165, 0.685, 0.185), HAIR),
-    ("hair-bangs-left",         "head", (0.035, 0.550, 0.135), (0.172, 0.655, 0.185), HAIR),
-    ("hair-bangs-right",        "head", (-0.172, 0.540, 0.135), (-0.025, 0.655, 0.185), HAIR),
+    # 💇 SEAMLESS SOLID FULL BANGS (No center split / gap! Clean straight full fringe across forehead)
+    ("hair-bangs-full",         "head", (-0.174, 0.540, 0.135), (0.174, 0.685, 0.185), HAIR),
     
     # ⚡ PERSONALITY DETAIL: Bold Sweeping Icy-Frost Dyed Streak through Right Bangs (-X)
-    ("hair-frost-streak-main",  "head", (-0.162, 0.550, 0.182), (-0.055, 0.645, 0.198), CYAN_TRIM),
-    ("hair-frost-streak-tip",   "head", (-0.075, 0.560, 0.182), (-0.018, 0.615, 0.196), CYAN_TRIM),
-    ("hair-frost-streak-shine", "head", (-0.145, 0.585, 0.192), (-0.090, 0.635, 0.200), FROST_ACCENT),
+    ("hair-frost-streak-main",  "head", (-0.165, 0.540, 0.182), (-0.035, 0.645, 0.198), CYAN_TRIM),
+    ("hair-frost-streak-tip",   "head", (-0.055, 0.540, 0.182), (-0.005, 0.595, 0.196), CYAN_TRIM),
+    ("hair-frost-streak-shine", "head", (-0.145, 0.575, 0.192), (-0.080, 0.635, 0.200), FROST_ACCENT),
     
     # 💎 ICONIC PERSONALITY DETAIL: Dangling Frost Crystal Earring on Right Ear (-X, viewer's left)
     ("earring-stud",            "head", (-0.215, 0.485, -0.015), (-0.200, 0.508, 0.005), SILVER),
