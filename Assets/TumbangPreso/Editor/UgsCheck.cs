@@ -33,7 +33,7 @@ namespace TumbangPreso.EditorTools
     ///   Unity.exe -batchmode -nographics -projectPath . \
     ///             -executeMethod TumbangPreso.EditorTools.UgsCheck.Run -logFile -
     ///
-    /// Or from an open editor: Tools > Tumbang Preso > Check UGS Wiring.
+    /// Or from an open editor: Tumbang Preso > Check UGS Wiring.
     /// </summary>
     public static class UgsCheck
     {
@@ -53,7 +53,7 @@ namespace TumbangPreso.EditorTools
         private static readonly StringBuilder Report = new StringBuilder();
         private static int _failures;
 
-        [MenuItem("Tools/Tumbang Preso/Check UGS Wiring")]
+        [MenuItem("Tumbang Preso/Check UGS Wiring")]
         public static void RunFromMenu() => Start(false);
 
         public static void Run() => Start(true);
@@ -120,7 +120,7 @@ namespace TumbangPreso.EditorTools
             else if (Application.isBatchMode)
             {
                 Report.AppendLine("?    : step 1, sign-in not observable in batchmode (no Hub session token).");
-                Report.AppendLine("       Run Tools > Tumbang Preso > Check UGS Wiring from an open editor to see it,");
+                Report.AppendLine("       Run Tumbang Preso > Check UGS Wiring from an open editor to see it,");
                 Report.AppendLine("       or read it off step 3 below, which cannot pass while signed out.");
             }
             else

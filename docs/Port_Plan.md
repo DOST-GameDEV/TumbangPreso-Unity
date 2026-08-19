@@ -268,7 +268,7 @@ Unity -batchmode -nographics -projectPath . -executeMethod TumbangPreso.EditorTo
 
 `Assets/TumbangPreso/Editor/UgsCheck.cs` signs in anonymously, allocates a Relay server, creates
 and deletes a Lobby, and writes `Logs/ugs-check.txt` naming the dashboard toggle behind every
-failure. It is also on the menu at `Tools > Tumbang Preso > Check UGS Wiring`. **It takes no
+failure. It is also on the menu at `Tumbang Preso > Check UGS Wiring`. **It takes no
 `-quit`:** the service calls are async, so the check exits the editor itself once they return.
 
 ⚠️ **MULTIPLAY IS NOT MERELY UNCONFIGURED, IT IS UNINSTALLABLE HERE.** Every published version
