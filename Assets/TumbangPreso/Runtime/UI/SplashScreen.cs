@@ -1,4 +1,5 @@
 using System.Collections;
+using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
