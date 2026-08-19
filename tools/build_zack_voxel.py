@@ -308,11 +308,10 @@ TORSO = [
     ("pocket-left",        "torso", (0.062, 0.268, -0.112), (0.126, 0.316, -0.094), JACKET_DARK),
     ("pocket-right",       "torso", (-0.126, 0.268, -0.112), (-0.062, 0.316, -0.094), JACKET_DARK),
     
-    # ⚡ Electric Lightning Bolt Insignia on Back of Jacket
-    ("jacket-lightning-top", "torso", (-0.020, 0.370, 0.092), (0.050, 0.425, 0.100), MAGENTA_CREST),
-    ("jacket-lightning-mid", "torso", (-0.060, 0.320, 0.092), (0.030, 0.375, 0.100), GOLD),
-    ("jacket-lightning-bot", "torso", (-0.025, 0.250, 0.092), (0.015, 0.325, 0.100), MAGENTA_CREST),
-    ("jacket-lightning-spark","torso", (0.035, 0.310, 0.092), (0.065, 0.345, 0.098), GOLD),
+    # ⚡ Crisp Stylized Gold Lightning Bolt Emblem on Back of Jacket
+    ("jacket-lightning-top", "torso", (-0.015, 0.365, 0.092), (0.045, 0.415, 0.098), GOLD),
+    ("jacket-lightning-mid", "torso", (-0.045, 0.320, 0.092), (0.025, 0.370, 0.098), GOLD),
+    ("jacket-lightning-bot", "torso", (-0.015, 0.255, 0.092), (0.015, 0.325, 0.098), GOLD),
     
     # Black Belt with Gold Rectangular Buckle & Wallet Chain Origin
     ("belt-band",          "torso", (-0.108, 0.232, -0.092), (0.108, 0.264, 0.088), CLOTH),
@@ -343,75 +342,59 @@ ARM_RIGHT = [
 ]
 
 HEAD = [
-    # 🖤 SLIM INTERNAL SKULL CORE & TAPERED NAPE (Midnight Black #14121a)
-    # Compact inner core so spikes have deep cutouts between them
-    ("hair-core-inner",     "head", (-0.165, 0.520, -0.160), (0.165, 0.650, 0.130), HAIR),
-    ("hair-nape-taper",     "head", (-0.145, 0.400, -0.180), (0.145, 0.510, -0.125), HAIR),
+    # 🖤 COHESIVE SOLID SKULL BASE & CLEAN NAPE (Dark Midnight Black #14121a)
+    ("hair-cap-base",       "head", (-0.180, 0.500, -0.180), (0.180, 0.670, 0.145), HAIR),
+    ("hair-nape",           "head", (-0.155, 0.400, -0.185), (0.155, 0.510, -0.130), HAIR),
     
-    # 🖤 JAGGED STEPPED BANGS ACROSS BROW (Low hairline with sharp tooth steps)
-    ("hair-brow-root",      "head", (-0.155, 0.550, 0.115), (-0.020, 0.630, 0.165), HAIR),
-    ("hair-brow-spike-1",   "head", (-0.150, 0.505, 0.135), (-0.090, 0.565, 0.185), HAIR),  # Left jagged tooth
-    ("hair-brow-spike-2",   "head", (-0.080, 0.520, 0.135), (-0.020, 0.580, 0.180), HAIR),  # Mid jagged tooth
+    # 🖤 CLEAN LOW HAIRLINE & BROW FRAMING (Right over eyebrows, no bald gaps)
+    ("hair-brow-left",      "head", (-0.165, 0.525, 0.120), (-0.020, 0.610, 0.170), HAIR),
+    ("hair-brow-accent",    "head", (-0.145, 0.505, 0.135), (-0.085, 0.555, 0.180), HAIR),
     
-    # 🖤 AGGRESSIVE PROTRUDING BLACK SIDE SPIKES (Character's Right / -X)
-    # Sharp Upper Spike (Pointing up-left)
-    ("spike-r-top-stalk",   "head", (-0.185, 0.640, -0.040), (-0.110, 0.720, 0.070), HAIR),
-    ("spike-r-top-tip",     "head", (-0.215, 0.700, -0.030), (-0.135, 0.785, 0.060), HAIR),
-    
-    # Sharp Mid Spike (Thrusting far OUT to the left, deep gap above and below)
-    ("spike-r-mid-stalk",   "head", (-0.220, 0.560, -0.050), (-0.145, 0.635, 0.080), HAIR),
-    ("spike-r-mid-tip",     "head", (-0.260, 0.580, -0.035), (-0.190, 0.635, 0.065), HAIR),
-    
-    # Sharp Lower Spike (Pointing down-left above ear)
-    ("spike-r-low-stalk",   "head", (-0.200, 0.465, -0.045), (-0.145, 0.535, 0.060), HAIR),
-    ("spike-r-low-tip",     "head", (-0.245, 0.475, -0.035), (-0.185, 0.525, 0.050), HAIR),
+    # 🖤 DIAGONAL OUTWARD-FANNING BLACK SPIKES (Character's Right / -X)
+    # Tier 1 (Low above ear, flared out):
+    ("spike-r-low",         "head", (-0.220, 0.470, -0.050), (-0.165, 0.540, 0.055), HAIR),
+    # Tier 2 (Mid temple, flared out):
+    ("spike-r-mid",         "head", (-0.235, 0.535, -0.045), (-0.165, 0.615, 0.075), HAIR),
+    # Tier 3 (Upper diagonal spike fanning up-left):
+    ("spike-r-upper-base",  "head", (-0.215, 0.605, -0.040), (-0.150, 0.680, 0.075), HAIR),
+    ("spike-r-upper-tip",   "head", (-0.230, 0.665, -0.030), (-0.160, 0.735, 0.060), HAIR),
     
     # Pink temple accent notch
     ("dye-temple-accent",   "head", (-0.165, 0.535, 0.135), (-0.130, 0.565, 0.175), MAGENTA_CREST),
     
-    # 💗 MULTI-TIER SHARP NEON MAGENTA SPIKES & JAGGED FRINGE (#ff2a8d)
-    # Main High Center Spike (Tall apex spike thrusting UP)
-    ("pink-spike-top-base", "head", (-0.060, 0.660, -0.010), (0.045, 0.735, 0.115), MAGENTA_CREST),
-    ("pink-spike-top-mid",  "head", (-0.045, 0.720, 0.000), (0.035, 0.770, 0.105), MAGENTA_CREST),
-    ("pink-spike-top-tip",  "head", (-0.030, 0.760, 0.010), (0.020, 0.792, 0.090), MAGENTA_CREST),
+    # 💗 COHESIVE VIBRANT NEON MAGENTA SPIKY QUIFF & FRINGE (#ff2a8d)
+    # Pink Crown Base:
+    ("pink-crown-base",     "head", (-0.035, 0.600, -0.010), (0.165, 0.685, 0.155), MAGENTA_CREST),
     
-    # Secondary Pink Spike (Top-Right, angled up-right)
-    ("pink-spike-r-stalk",  "head", (0.035, 0.660, -0.035), (0.135, 0.730, 0.085), MAGENTA_CREST),
-    ("pink-spike-r-tip",    "head", (0.075, 0.715, -0.020), (0.160, 0.775, 0.070), MAGENTA_CREST),
+    # High Center-Top Apex Spike (The main apex crest):
+    ("pink-apex-base",      "head", (-0.045, 0.670, 0.010), (0.055, 0.740, 0.125), MAGENTA_CREST),
+    ("pink-apex-tip",       "head", (-0.030, 0.730, 0.020), (0.040, 0.785, 0.115), MAGENTA_CREST),
     
-    # Forward Pink Brow Spikes (Jagged, tooth-shaped fringe over right brow, low hairline!)
-    ("pink-fringe-root",    "head", (-0.015, 0.580, 0.120), (0.150, 0.660, 0.185), MAGENTA_CREST),
-    ("pink-fringe-tooth-1", "head", (0.015, 0.515, 0.135), (0.075, 0.585, 0.195), MAGENTA_CREST),  # Center-right tooth
-    ("pink-fringe-tooth-2", "head", (0.080, 0.505, 0.140), (0.155, 0.575, 0.200), MAGENTA_CREST),  # Outer-right tooth
+    # Secondary Top-Right Spike (Flaring up-right):
+    ("pink-crest-r-base",   "head", (0.045, 0.655, -0.025), (0.140, 0.730, 0.085), MAGENTA_CREST),
+    ("pink-crest-r-tip",    "head", (0.080, 0.710, -0.015), (0.155, 0.760, 0.070), MAGENTA_CREST),
     
-    # 🖤 AGGRESSIVE PROTRUDING BLACK SIDE SPIKES (Character's Left / +X)
-    # Sharp Upper-Right Spike (Behind pink)
-    ("spike-l-top-stalk",   "head", (0.100, 0.650, -0.080), (0.175, 0.730, 0.030), HAIR),
-    ("spike-l-top-tip",     "head", (0.130, 0.710, -0.070), (0.195, 0.775, 0.020), HAIR),
+    # Stepped Forward Fringe Bangs (Framing right brow, resting cleanly above eyebrow):
+    ("pink-fringe-root",    "head", (-0.010, 0.565, 0.125), (0.155, 0.650, 0.190), MAGENTA_CREST),
+    ("pink-fringe-step",    "head", (0.035, 0.515, 0.140), (0.145, 0.585, 0.200), MAGENTA_CREST),
     
-    # Sharp Mid-Right Spike (Thrusting far OUT to the right)
-    ("spike-l-mid-stalk",   "head", (0.145, 0.560, -0.060), (0.220, 0.635, 0.070), HAIR),
-    ("spike-l-mid-tip",     "head", (0.190, 0.580, -0.045), (0.260, 0.635, 0.055), HAIR),
+    # 🖤 DIAGONAL OUTWARD-FANNING BLACK SPIKES (Character's Left / +X)
+    # Upper-Right Spike (behind pink, flaring up-right):
+    ("spike-l-upper-base",  "head", (0.125, 0.615, -0.065), (0.195, 0.690, 0.045), HAIR),
+    ("spike-l-upper-tip",   "head", (0.155, 0.675, -0.055), (0.215, 0.735, 0.030), HAIR),
+    # Mid-Right Side Tuft (flaring out-right):
+    ("spike-l-mid",         "head", (0.165, 0.535, -0.050), (0.230, 0.615, 0.070), HAIR),
+    # Low-Right Side Tuft (flaring out-right):
+    ("spike-l-low",         "head", (0.160, 0.470, -0.050), (0.215, 0.540, 0.050), HAIR),
     
-    # Sharp Lower-Right Spike (Pointing down-right above ear)
-    ("spike-l-low-stalk",   "head", (0.145, 0.465, -0.055), (0.200, 0.535, 0.050), HAIR),
-    ("spike-l-low-tip",     "head", (0.185, 0.475, -0.045), (0.245, 0.525, 0.040), HAIR),
+    # 🖤 STEPPED REAR CROWN SPIKES
+    ("spike-back-top",      "head", (-0.070, 0.630, -0.215), (0.070, 0.715, -0.145), HAIR),
+    ("spike-back-l",        "head", (0.070, 0.540, -0.210), (0.160, 0.620, -0.145), HAIR),
+    ("spike-back-r",        "head", (-0.160, 0.540, -0.210), (-0.070, 0.620, -0.145), HAIR),
     
-    # 🖤 JAGGED REAR SPIKES (Dynamic spiky silhouette from rear & 3/4)
-    ("spike-back-top-stalk","head", (-0.065, 0.640, -0.205), (0.065, 0.720, -0.135), HAIR),
-    ("spike-back-top-tip",  "head", (-0.045, 0.690, -0.245), (0.045, 0.760, -0.180), HAIR),
-    
-    ("spike-back-l-stalk",  "head", (0.065, 0.550, -0.200), (0.155, 0.635, -0.135), HAIR),
-    ("spike-back-l-tip",    "head", (0.095, 0.580, -0.240), (0.170, 0.645, -0.175), HAIR),
-    
-    ("spike-back-r-stalk",  "head", (-0.155, 0.550, -0.200), (-0.065, 0.635, -0.135), HAIR),
-    ("spike-back-r-tip",    "head", (-0.170, 0.580, -0.240), (-0.095, 0.645, -0.175), HAIR),
-    
-    # ⚡ Electric Lightning Streaks on Back of Hair
-    ("lightning-hair-zig",  "head", (-0.035, 0.580, -0.215), (0.045, 0.635, -0.185), MAGENTA_CREST),
-    ("lightning-hair-zag",  "head", (-0.065, 0.515, -0.210), (0.015, 0.580, -0.180), MAGENTA_CREST),
-    ("lightning-hair-bot",  "head", (-0.020, 0.440, -0.200), (0.035, 0.520, -0.170), MAGENTA_CREST),
-    ("lightning-hair-branch","head", (0.035, 0.535, -0.205), (0.085, 0.585, -0.180), GOLD),
+    # ⚡ Stylized Shaved Lightning Slash on Nape
+    ("lightning-nape-zig",  "head", (-0.025, 0.470, -0.190), (0.035, 0.510, -0.170), MAGENTA_CREST),
+    ("lightning-nape-zag",  "head", (-0.040, 0.430, -0.188), (0.015, 0.475, -0.170), MAGENTA_CREST),
     
     # 💛 Earring & Sideburns
     ("sideburn-left",       "head", (0.160, 0.395, -0.005), (0.180, 0.475, 0.045), HAIR),
