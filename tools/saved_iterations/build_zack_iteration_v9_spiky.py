@@ -187,13 +187,13 @@ WHITE, SKIN, SKIN_DARK, SKIN_LIT = 12, 13, 14, 15
 PALETTE = {
     JACKET:        "6a2cc9",   # Vibrant cyber purple open jacket/blazer
     CLOTH:         "14121a",   # Deep midnight black cloth (undershirt, cargo pants)
-    MAGENTA_CREST: "a832ff",   # Vibrant electric cyber purple / neon violet hair quiff
+    MAGENTA_CREST: "ff2a8d",   # Vibrant neon magenta / hot pink hair crest & quiff tufts
     GOLD:          "f5a820",   # Gold rectangular belt buckle, earring, lapel pin
     SHOE:          "6a2cc9",   # Purple skate sneakers
     CHAIN:         "d4e2ec",   # Silver wallet chain, necklace chain, hardware
     HAIR:          "14121a",   # Dark midnight black hair undercut / fade
     JACKET_DARK:   "45188a",   # Rich deep purple jacket collar/lapels lining & shadows
-    INK:           "221430",   # Dark purple-black face ink (eyes, brows, mouth)
+    INK:           "1f1c24",   # Face ink (eyes, brows, mouth)
     CARGO_BUCKLE:  "525460",   # Utility strap buckles & cargo hardware
     CRYSTAL:       "b870ff",   # Layered glowing crystal pendant
     CRYSTAL_LIT:   "e2b8ff",   # Crystal highlight sparkle
@@ -323,7 +323,7 @@ ARM_LEFT = [
     ("sleeve-stripe-left", "arm-left", (0.120, 0.4660, -0.052), (0.222, 0.4740, 0.070), JACKET_DARK),
     # Forearm & Hand in uniform warm skin tone
     ("hand-left",          "arm-left", (0.248, 0.3383, -0.020), (0.3836, 0.4617, 0.038), SKIN_LIT),
-    # Cyber purple wristband on left wrist
+    # Cyber magenta wristband on left wrist
     ("wristband-left",     "arm-left", (0.256, 0.332, -0.026), (0.284, 0.468, 0.044), MAGENTA_CREST),
 ]
 
@@ -337,61 +337,83 @@ ARM_RIGHT = [
 ]
 
 HEAD = [
-    # 🖤 100% FULL ENCAPSULATION SOLID SKULL BASE (Midnight Black #14121a - ZERO BALD SPOTS)
-    # Complete solid block covering every millimeter of donor head above y=0.500 (reaches y=0.670, z=±0.180, x=±0.178)
-    ("hair-skull-solid",    "head", (-0.178, 0.500, -0.180), (0.178, 0.670, 0.170), HAIR),
+    # 🖤 COMPLETE SOLID SKULL CORE & TEMPLE COVERAGE (Midnight Black #14121a - ZERO BALD SPOTS)
+    ("hair-core-cap",       "head", (-0.170, 0.520, -0.180), (0.170, 0.665, 0.145), HAIR),
+    ("hair-skull-front",    "head", (-0.165, 0.520, 0.080), (0.165, 0.665, 0.165), HAIR),
+    ("hair-temple-l",       "head", (0.140, 0.520, 0.040), (0.185, 0.650, 0.160), HAIR),
+    ("hair-temple-r",       "head", (-0.185, 0.520, 0.040), (-0.140, 0.650, 0.160), HAIR),
+    ("hair-nape",           "head", (-0.145, 0.400, -0.175), (0.145, 0.520, -0.125), HAIR),
     
-    # Lower nape & side undercut (Overlaps y=0.360 -> 0.520 down to collar, zero gaps)
-    ("hair-nape-base",      "head", (-0.170, 0.360, -0.180), (0.170, 0.520, -0.040), HAIR),
-    ("hair-side-under-l",   "head", (0.150, 0.400, -0.170), (0.180, 0.520, 0.080), HAIR),
-    ("hair-side-under-r",   "head", (-0.180, 0.400, -0.170), (-0.150, 0.520, 0.080), HAIR),
+    # 🖤 LOW GEOMETRIC ANIME HAIRLINE (Framing brow directly above eyebrows, y ≈ 0.510 - 0.535)
+    ("hairline-brow-r",     "head", (-0.160, 0.520, 0.120), (-0.020, 0.575, 0.170), HAIR),
+    ("hairline-brow-l",     "head", (0.020, 0.520, 0.120), (0.160, 0.575, 0.170), HAIR),
+    ("hairline-center-v",   "head", (-0.045, 0.510, 0.125), (0.015, 0.555, 0.170), HAIR),
+    ("dye-temple-accent",   "head", (-0.155, 0.535, 0.130), (-0.120, 0.565, 0.172), MAGENTA_CREST),
     
-    # Clean hairline widow's peak notch framing brow
-    ("hairline-brow-peak",  "head", (-0.040, 0.490, 0.125), (0.015, 0.535, 0.172), HAIR),
+    # Tapered nape & close-fitting side fade undercut
+    ("undercut-nape-low",   "head", (-0.145, 0.390, -0.185), (0.145, 0.480, -0.140), HAIR),
+    ("undercut-nape-mid",   "head", (-0.160, 0.480, -0.195), (0.160, 0.570, -0.135), HAIR),
+    ("undercut-side-l-low", "head", (0.160, 0.450, -0.125), (0.185, 0.530, 0.080), HAIR),
+    ("undercut-side-r-low", "head", (-0.185, 0.450, -0.125), (-0.160, 0.530, 0.080), HAIR),
+    ("undercut-side-l-mid", "head", (0.165, 0.530, -0.140), (0.190, 0.615, 0.100), HAIR),
+    ("undercut-side-r-mid", "head", (-0.190, 0.530, -0.140), (-0.165, 0.615, 0.100), HAIR),
     
-    # 🖤 SPIKY BLACK HAIR CLUSTERS (Character's Right / -X)
-    # Natural Stepped Anime Side Clumps (Rising diagonally to crown)
-    ("spike-r-low",         "head", (-0.200, 0.470, -0.040), (-0.155, 0.540, 0.050), HAIR),
-    ("spike-r-mid",         "head", (-0.205, 0.550, -0.020), (-0.155, 0.630, 0.080), HAIR),
-    ("spike-r-upper",       "head", (-0.185, 0.630, -0.030), (-0.140, 0.710, 0.070), HAIR),
-    ("spike-r-top",         "head", (-0.145, 0.660, -0.040), (-0.080, 0.745, 0.060), HAIR),
+    # Crisp sideburn points framing jaw in front of ears
+    ("sideburn-left",       "head", (0.164, 0.405, 0.000), (0.182, 0.485, 0.048), HAIR),
+    ("sideburn-right",      "head", (-0.182, 0.405, 0.000), (-0.164, 0.485, 0.048), HAIR),
     
-    # Front-Right Hairline Fringe Tufts
-    ("fringe-r-forehead",   "head", (-0.140, 0.560, 0.120), (-0.050, 0.630, 0.175), HAIR),
-    ("fringe-r-point",      "head", (-0.145, 0.500, 0.125), (-0.085, 0.565, 0.172), HAIR),
+    # 💗 HIGH-VOLUME NEON MAGENTA LIGHTNING CREST SPIKES (#ff2a8d) - CONTINUOUS RIDGE
+    # 1. Forward Lightning Fin (Sweeps UP and FORWARD over the brow, starting at y=0.580, NO droop):
+    ("pink-fin-fwd-root",   "head", (-0.040, 0.580, 0.080), (0.080, 0.675, 0.170), MAGENTA_CREST),
+    ("pink-fin-fwd-mid",    "head", (-0.020, 0.635, 0.110), (0.090, 0.720, 0.195), MAGENTA_CREST),
+    ("pink-fin-fwd-tip",    "head", (0.000, 0.685, 0.135), (0.080, 0.755, 0.210), MAGENTA_CREST),
     
-    # 💜 VIBRANT ELECTRIC CYBER PURPLE / NEON VIOLET SPIKY QUIFF (#a832ff)
-    # Top-Center High Spike (Rising upward & slightly right)
-    ("purple-spike-top-base", "head", (-0.050, 0.640, 0.000), (0.050, 0.720, 0.120), MAGENTA_CREST),
-    ("purple-spike-top-peak", "head", (-0.035, 0.710, 0.010), (0.040, 0.790, 0.110), MAGENTA_CREST),
+    # 2. Main Apex Lightning Crest (Tallest central apex spike reaching y=0.790):
+    ("pink-apex-root",      "head", (-0.065, 0.630, -0.050), (0.065, 0.715, 0.100), MAGENTA_CREST),
+    ("pink-apex-mid",       "head", (-0.050, 0.690, -0.040), (0.045, 0.760, 0.090), MAGENTA_CREST),
+    ("pink-apex-tip",       "head", (-0.035, 0.740, -0.025), (0.030, 0.790, 0.075), MAGENTA_CREST),
     
-    # Top-Right Accent Spike
-    ("purple-spike-r-top",    "head", (0.030, 0.650, -0.020), (0.115, 0.740, 0.080), MAGENTA_CREST),
+    # 3. Flared Top-Right Lightning Spike (Angled UP and RIGHT +X, +Y):
+    ("pink-spike-r-root",   "head", (0.030, 0.630, -0.040), (0.130, 0.710, 0.080), MAGENTA_CREST),
+    ("pink-spike-r-mid",    "head", (0.065, 0.680, -0.030), (0.150, 0.755, 0.070), MAGENTA_CREST),
+    ("pink-spike-r-tip",    "head", (0.100, 0.720, -0.020), (0.165, 0.780, 0.060), MAGENTA_CREST),
     
-    # Chunky Forward Purple Fringe (Cascading stepped quiff over left brow)
-    ("purple-fringe-root",    "head", (-0.020, 0.600, 0.110), (0.090, 0.685, 0.178), MAGENTA_CREST),
-    ("purple-fringe-main",    "head", (0.015, 0.570, 0.140), (0.130, 0.670, 0.215), MAGENTA_CREST),
-    ("purple-fringe-stepped", "head", (0.040, 0.530, 0.150), (0.135, 0.615, 0.218), MAGENTA_CREST),
-    ("purple-fringe-tip",     "head", (0.065, 0.500, 0.155), (0.120, 0.560, 0.205), MAGENTA_CREST),
+    # 4. Rear Crest Lightning Ridge:
+    ("pink-crest-back-root","head", (-0.075, 0.625, -0.175), (0.075, 0.705, -0.045), MAGENTA_CREST),
+    ("pink-crest-back-mid", "head", (-0.055, 0.675, -0.165), (0.055, 0.745, -0.040), MAGENTA_CREST),
+    ("pink-crest-back-tip", "head", (-0.040, 0.715, -0.155), (0.040, 0.770, -0.050), MAGENTA_CREST),
     
-    # Soft bevel transition into crown
-    ("purple-crown-bridge",   "head", (-0.040, 0.635, -0.050), (0.040, 0.690, 0.010), MAGENTA_CREST),
+    # 🖤 CHUNKY STEPPED BLACK LIGHTNING SIDE SPIKES (Character's Right / -X)
+    # Upper spike fanning up-left (-X, +Y):
+    ("spike-r-high-root",   "head", (-0.175, 0.620, -0.050), (-0.110, 0.705, 0.060), HAIR),
+    ("spike-r-high-mid",    "head", (-0.210, 0.665, -0.040), (-0.140, 0.740, 0.050), HAIR),
+    ("spike-r-high-tip",    "head", (-0.235, 0.700, -0.030), (-0.170, 0.765, 0.040), HAIR),
+    # Mid-lower spike thrusting out-left:
+    ("spike-r-mid-root",    "head", (-0.185, 0.540, -0.055), (-0.130, 0.625, 0.065), HAIR),
+    ("spike-r-mid-tip",     "head", (-0.240, 0.560, -0.045), (-0.175, 0.615, 0.055), HAIR),
+    # Lower ear tuft:
+    ("spike-r-low-root",    "head", (-0.180, 0.460, -0.045), (-0.130, 0.525, 0.045), HAIR),
+    ("spike-r-low-tip",     "head", (-0.220, 0.470, -0.035), (-0.165, 0.515, 0.035), HAIR),
     
-    # 🖤 SPIKY BLACK HAIR CLUSTERS (Character's Left / +X & Back)
-    # Left-side black spikes framing behind the purple lock
-    ("spike-l-top-back",    "head", (0.090, 0.640, -0.070), (0.155, 0.725, 0.020), HAIR),
-    ("spike-l-upper",       "head", (0.140, 0.610, -0.030), (0.190, 0.690, 0.070), HAIR),
-    ("spike-l-mid",         "head", (0.155, 0.540, -0.040), (0.205, 0.620, 0.060), HAIR),
-    ("spike-l-low",         "head", (0.150, 0.460, -0.050), (0.195, 0.530, 0.040), HAIR),
+    # 🖤 CHUNKY STEPPED BLACK LIGHTNING SIDE SPIKES (Character's Left / +X)
+    # Upper spike fanning up-right (+X, +Y):
+    ("spike-l-high-root",   "head", (0.110, 0.620, -0.070), (0.175, 0.705, 0.040), HAIR),
+    ("spike-l-high-mid",    "head", (0.140, 0.665, -0.060), (0.210, 0.740, 0.030), HAIR),
+    ("spike-l-high-tip",    "head", (0.170, 0.700, -0.050), (0.235, 0.765, 0.020), HAIR),
+    # Mid-lower spike thrusting out-right:
+    ("spike-l-mid-root",    "head", (0.130, 0.540, -0.055), (0.185, 0.625, 0.065), HAIR),
+    ("spike-l-mid-tip",     "head", (0.175, 0.560, -0.045), (0.240, 0.615, 0.055), HAIR),
+    # Lower ear tuft:
+    ("spike-l-low-root",    "head", (0.130, 0.460, -0.045), (0.180, 0.525, 0.045), HAIR),
+    ("spike-l-low-tip",     "head", (0.165, 0.470, -0.035), (0.220, 0.515, 0.035), HAIR),
     
-    # 🖤 JAGGED 3D REAR ANIME SPIKES (From Pic 3, reaching z=-0.195)
-    ("spike-back-top",      "head", (-0.060, 0.630, -0.195), (0.060, 0.720, -0.130), HAIR),
-    ("spike-back-l",        "head", (0.060, 0.550, -0.200), (0.140, 0.635, -0.135), HAIR),
-    ("spike-back-r",        "head", (-0.140, 0.550, -0.200), (-0.060, 0.635, -0.135), HAIR),
+    # 🖤 REAR TRANSITION SPIKES
+    ("spike-back-top-root", "head", (-0.070, 0.615, -0.195), (0.070, 0.700, -0.125), HAIR),
+    ("spike-back-top-tip",  "head", (-0.045, 0.660, -0.235), (0.045, 0.735, -0.170), HAIR),
+    ("spike-back-l-tip",    "head", (0.080, 0.560, -0.225), (0.155, 0.630, -0.160), HAIR),
+    ("spike-back-r-tip",    "head", (-0.155, 0.560, -0.225), (-0.080, 0.630, -0.160), HAIR),
     
     # 💛 Earring & Sideburns
-    ("sideburn-left",       "head", (0.160, 0.405, -0.005), (0.180, 0.485, 0.045), HAIR),
-    ("sideburn-right",      "head", (-0.180, 0.405, -0.005), (-0.160, 0.485, 0.045), HAIR),
     ("earring-gold-hoop",   "head", (0.188, 0.380, -0.035), (0.216, 0.420, 0.015), GOLD),
     ("earring-gold-drop",   "head", (0.198, 0.355, -0.025), (0.208, 0.380, -0.005), GOLD),
 ]
