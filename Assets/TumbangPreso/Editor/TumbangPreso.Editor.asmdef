@@ -3,7 +3,10 @@
     "rootNamespace": "TumbangPreso.EditorTools",
     "references": [
         "TumbangPreso.Core",
-        "TumbangPreso.Runtime"
+        "TumbangPreso.Runtime",
+        "Unity.Services.Core",
+        "Unity.Services.Authentication",
+        "Unity.Services.Multiplayer"
     ],
     "includePlatforms": [
         "Editor"

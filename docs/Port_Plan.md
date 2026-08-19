@@ -229,6 +229,57 @@ attributes across all gameplay verbs.
   remain strictly inside the transport-agnostic `LobbySession` and NGO RPCs, never delegated
   to async cloud service calls.
 
+**⚠️⚠️ THE UGS SETUP THAT NO SCRIPT CAN DO, AND THAT WAS SILENTLY SKIPPED.** Five steps live in
+the Unity account rather than in this repository, behind a password. N0 step 4 asked for them,
+none of them past the first were done, and the repository did not notice for a week. Recorded
+here because that is the only place a skipped account step can be recorded at all.
+
+| # | Step | Where | State, measured 2026-08-19 |
+|---|------|-------|-----------------------------|
+| 1 | Sign in to a Unity account | Editor top right, or Unity Hub | **DONE.** The licensing client holds a live access token and resolves one entitlement. |
+| 2 | Link a UGS project | `Project Settings > Services` | **NOT DONE.** `cloudProjectId`, `organizationId` and `projectName` are all blank in `ProjectSettings.asset`. |
+| 3 | Enable Anonymous sign-in | Dashboard > Authentication | Unknown until 2 is done. **Off by default and the single most likely thing to be missed.** |
+| 3 | Enable Relay and Lobby | Dashboard | Unknown until 2 is done. |
+| 4 | Enable Multiplay Hosting, add billing | Dashboard | Not done, and see below: the client SDK cannot be installed on this editor anyway. |
+| 5 | Restart the editor, confirm `cloudProjectId` | `ProjectSettings.asset` | Pending 2. |
+
+⚠️ **THE `Access token is unavailable` LINE IN AN OLD HANDOFF WAS A DIFFERENT PROBLEM AND IS
+GONE.** It does not appear anywhere in the current `Logs/Editor.log` or in the licensing client
+log. The live failure is one line and it names itself:
+
+```
+[NetIdentity] Online sign-in unavailable, using local token:
+Some services couldn't be initialized.
+```
+
+That is step 2 missing, not step 1.
+
+⚠️ **WHY A WEEK PASSED WITHOUT ANYONE NOTICING, WHICH IS THE PART WORTH REMEMBERING.** The
+fallback is correct and deliberate: `NetIdentity.EnsureSignedInAsync` catches the failure and
+mints a local token so a LAN match in a venue with no internet still works, and `ServerQuery`
+logs a warning and returns an empty list. An unconfigured cloud project therefore looks exactly
+like a hall with no Wi-Fi. **Do not make either of them throw to make this louder.** The check
+below is the answer instead, because it asks the services directly rather than inferring from a
+symptom.
+
+```bash
+Unity -batchmode -nographics -projectPath . -executeMethod TumbangPreso.EditorTools.UgsCheck.Run -logFile -
+```
+
+`Assets/TumbangPreso/Editor/UgsCheck.cs` signs in anonymously, allocates a Relay server, creates
+and deletes a Lobby, and writes `Logs/ugs-check.txt` naming the dashboard toggle behind every
+failure. It is also on the menu at `Tools > Tumbang Preso > Check UGS Wiring`. **It takes no
+`-quit`:** the service calls are async, so the check exits the editor itself once they return.
+
+⚠️ **MULTIPLAY IS NOT MERELY UNCONFIGURED, IT IS UNINSTALLABLE HERE.** Every published version
+of `com.unity.services.multiplay`, 1.1.1 through 1.3.1, fails to compile on Unity 6000.5, so the
+fleet registration and SQP heartbeat in `NetSession.StartMultiplayServerAsync` are gated behind
+`MULTIPLAY_SDK`, which is defined nowhere. A dedicated server still hosts and still serves
+clients; it just does not report itself to a fleet. Enabling Multiplay Hosting in the dashboard
+and adding billing is still needed before fleet allocation works, but it is not sufficient on
+its own, and **the Phase 5 exit criterion below cannot be met until one of the two routes back
+in that method lands.**
+
 Scope: the request/resolve/broadcast triplet, reconnection tokens, lobby leader election,
 join codes, spectators, mid-match arrival rulings, late-joiner state sync, UGS Relay/Lobby, and
 the Linux dedicated server build with Multiplay.
