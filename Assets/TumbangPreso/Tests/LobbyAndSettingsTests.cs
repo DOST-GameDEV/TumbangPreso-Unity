@@ -458,5 +458,38 @@ namespace TumbangPreso.Tests
             Assert.IsTrue(lobby.IsSeatOccupied(1));
             Assert.IsFalse(lobby.IsSeatOccupied(2));
         }
+
+        // -------------------------------------------------------------------
+        // SPAWNING, SEATING, AND WRITE PERMISSIONS (N6)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void RoundOneDefenderIsSeatZeroByConstruction()
+        {
+            Assert.AreEqual(0, MatchRules.DefenderSlotFor(1), "Round 1 defender must be seat 0 by rule");
+            Assert.AreEqual(1, MatchRules.DefenderSlotFor(2));
+            Assert.AreEqual(2, MatchRules.DefenderSlotFor(3));
+            Assert.AreEqual(3, MatchRules.DefenderSlotFor(4));
+        }
+
+        [Test]
+        public void DedicatedRefereePeerHoldsNoSeatAndNeverLeads()
+        {
+            var lobby = new LobbySession { IsDedicated = true };
+            lobby.OpenLobby(new System.Random(42));
+
+            // Peer 1 is the dedicated referee
+            var refPeer = lobby.Admit(1, "token-dedicated-ref", "Referee");
+            Assert.AreEqual(-1, refPeer.Seat, "Dedicated server must not hold a physical seat");
+            Assert.IsTrue(refPeer.Spectator);
+            Assert.IsTrue(lobby.IsSeatlessReferee(1));
+            Assert.AreNotEqual(1, lobby.LeaderPeerId, "Dedicated server referee must never be leader");
+
+            // Human player joins
+            var human = lobby.Admit(2, "token-human-host", "Human Host");
+            Assert.AreEqual(0, human.Seat);
+            Assert.IsFalse(human.Spectator);
+            Assert.AreEqual(2, lobby.LeaderPeerId, "First human peer should be leader");
+        }
     }
 }
