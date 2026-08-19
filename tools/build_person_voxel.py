@@ -192,9 +192,9 @@ PALETTE = {
     WOOD_GOLD:     "e4a032",   # Warm bakery spatula wooden handle peeking from pocket
     FROST_ACCENT:  "a8f0fa",   # Shimmering pale frost highlight / crystal sparkle
     WHITE:         "f4faff",   # Crisp snow white with subtle cool undertone (toque, shirt, socks)
-    SKIN:          "e08a3c",   # Warm tan skin tone
-    SKIN_DARK:     "a85a22",   # Darker skin tone
-    SKIN_LIT:      "f0a85a",   # Lit skin tone (arms, legs, hands)
+    SKIN:          "f0c8b0",   # Soft porcelain fair skin tone with cool undertone
+    SKIN_DARK:     "cc9880",   # Gentle cool skin shadow tone
+    SKIN_LIT:      "ffe6d6",   # Bright pale porcelain lit skin tone (face, legs, arms)
 }
 
 MAX_FACE_LUMINANCE = 0.30
@@ -234,11 +234,11 @@ LEG_LEFT = [
     ("sock-stripe1-left","leg-left", (0.014, 0.128, -0.078), (0.152, 0.140, 0.076), CYAN_TRIM),
     ("sock-stripe2-left","leg-left", (0.014, 0.146, -0.078), (0.152, 0.158, 0.076), CYAN_TRIM),
     
-    # Clean tan leg above high sock
+    # Clean fair porcelain leg above high sock
     ("leg-skin-left",    "leg-left", (0.018, 0.165, -0.070), (0.148, 0.232, 0.070), SKIN_LIT),
 ]
 
-# 🌟 Right leg wears a folded ankle sock showing sun-kissed tan leg!
+# 🌟 Right leg wears a folded ankle sock showing fair porcelain skin!
 LEG_RIGHT = [
     # White sneaker sole
     ("shoe-sole-right",   "leg-right", (-0.158, 0.000, -0.134), (-0.006, 0.024, 0.082), WHITE),
@@ -261,7 +261,7 @@ LEG_RIGHT = [
     # Folded cyan cuff rim on ankle sock
     ("sock-rim-right",    "leg-right", (-0.152, 0.086, -0.078), (-0.014, 0.098, 0.076), CYAN_TRIM),
     
-    # Long bare tan leg
+    # Fair porcelain leg
     ("leg-skin-right",    "leg-right", (-0.148, 0.098, -0.070), (-0.018, 0.232, 0.070), SKIN_LIT),
 ]
 
@@ -288,8 +288,6 @@ TORSO = [
     ("overalls-back-cross-right", "torso", (-0.080, 0.320, 0.084), (-0.045, 0.445, 0.096), OVERALLS),
     ("overalls-back-buckle-l",    "torso", (0.048, 0.320, 0.092), (0.076, 0.342, 0.102), SILVER),
     ("overalls-back-buckle-r",    "torso", (-0.076, 0.320, 0.092), (-0.048, 0.342, 0.102), SILVER),
-    ("overalls-back-frost-patch", "torso", (-0.035, 0.240, 0.094), (0.035, 0.285, 0.104), CYAN_TRIM),
-    ("overalls-back-snowflake",   "torso", (-0.020, 0.250, 0.098), (0.020, 0.275, 0.108), FROST_ACCENT),
     
     # Side button rivets on hip tabs
     ("side-rivet-left",     "torso", (0.122, 0.336, -0.012), (0.127, 0.354, 0.012), BUTTONS),
@@ -298,12 +296,6 @@ TORSO = [
     # Side seam trim strips
     ("skirt-seam-left",     "torso", (0.118, 0.235, -0.090), (0.126, 0.328, 0.086), OVERALLS_DARK),
     ("skirt-seam-right",    "torso", (-0.126, 0.235, -0.090), (-0.118, 0.328, 0.086), OVERALLS_DARK),
-    
-    # Side waist ribbon ties (accentuating waist profile from side/back)
-    ("waist-tie-knot-left", "torso", (0.118, 0.270, 0.020), (0.132, 0.295, 0.050), CYAN_TRIM),
-    ("waist-tie-tail-left", "torso", (0.120, 0.230, 0.030), (0.130, 0.272, 0.055), CYAN_TRIM),
-    ("waist-tie-knot-right","torso", (-0.132, 0.270, 0.020), (-0.118, 0.295, 0.050), CYAN_TRIM),
-    ("waist-tie-tail-right","torso", (-0.130, 0.230, 0.030), (-0.120, 0.272, 0.055), CYAN_TRIM),
     
     # Overalls bib (front center)
     ("overalls-bib",        "torso", (-0.088, 0.310, -0.104), (0.088, 0.382, -0.080), OVERALLS),
@@ -316,12 +308,6 @@ TORSO = [
     # 🍳 STORYTELLING DETAIL: Tucked Baker Spatula / Scoop Handle peeking from pocket (+X side)
     ("spatula-handle",      "torso", (0.032, 0.310, -0.112), (0.052, 0.362, -0.100), WOOD_GOLD),
     ("spatula-metal-neck",  "torso", (0.035, 0.358, -0.110), (0.049, 0.374, -0.102), SILVER),
-    
-    # ❄️ Frost Baker Tool: Mini Frosted Rolling Pin / Ice Wand clipped to Left Hip (+X)
-    ("rolling-pin-clip",       "torso", (0.120, 0.280, -0.040), (0.132, 0.305, -0.010), SILVER),
-    ("rolling-pin-handle-top", "torso", (0.122, 0.300, -0.035), (0.134, 0.355, -0.015), WOOD_GOLD),
-    ("rolling-pin-barrel",     "torso", (0.120, 0.235, -0.042), (0.136, 0.300, -0.008), FROST_ACCENT),
-    ("rolling-pin-frost-ring", "torso", (0.118, 0.260, -0.044), (0.138, 0.275, -0.006), CYAN_TRIM),
     
     # ❄️ PERSONALITY DETAIL: Side Frost Carabiner Keychain & Snowflake Tag on Right Hip (-X)
     ("keychain-ring",       "torso", (-0.128, 0.308, -0.050), (-0.114, 0.328, -0.015), SILVER),
@@ -358,17 +344,17 @@ ARM_LEFT = [
     # Icy-Cyan Sports Wristband with White Stripe on Left Wrist
     ("wristband-left",      "arm-left", (0.250, 0.334, -0.024), (0.285, 0.466, 0.042), CYAN_TRIM),
     ("wristband-stripe",    "arm-left", (0.262, 0.332, -0.026), (0.274, 0.468, 0.044), WHITE),
-    # Bare tan forearm & hand
+    # Fair porcelain forearm & hand
     ("hand-left",           "arm-left", (0.234, 0.3383, -0.020), (0.3836, 0.4617, 0.038), SKIN_LIT),
 ]
 
-# Right arm has clean bare skin
+# Right arm has clean fair porcelain skin
 ARM_RIGHT = [
     # White short sleeve
     ("sleeve-right",        "arm-right", (-0.208, 0.330, -0.066), (-0.0999, 0.470, 0.084), WHITE),
     # Stepped frosty cyan sleeve cuff
     ("sleeve-cuff-right",   "arm-right", (-0.234, 0.322, -0.074), (-0.208, 0.478, 0.092), COLLAR_TRIM),
-    # Bare tan forearm & hand
+    # Fair porcelain forearm & hand
     ("hand-right",          "arm-right", (-0.3836, 0.3383, -0.020), (-0.234, 0.4617, 0.038), SKIN_LIT),
 ]
 
@@ -378,35 +364,25 @@ HEAD = [
     # Hair crown under the baker cap
     ("hair-crown",          "head", (-0.176, 0.650, -0.170), (0.176, 0.705, 0.140), HAIR),
     
-    # 💇 BACK HAIR DRAPES & STRUCTURED LAYERS (Matching concept back view with frosty details)
-    # Main upper and lower curtain
-    ("hair-back-upper",     "head", (-0.176, 0.290, -0.218), (0.176, 0.490, -0.135), HAIR),
-    ("hair-back-lower",     "head", (-0.172, 0.175, -0.215), (0.172, 0.295, -0.140), HAIR),
+    # 💇 BACK HAIR DRAPES & STRUCTURED TIERS (Smooth, elegant layered cascade)
+    # Tier 1 (Upper Mantle)
+    ("hair-back-tier1",     "head", (-0.176, 0.340, -0.218), (0.176, 0.490, -0.135), HAIR),
+    # Tier 2 (Middle Layer with subtle inset step)
+    ("hair-back-tier2",     "head", (-0.174, 0.230, -0.216), (0.174, 0.348, -0.138), HAIR),
+    # Tier 3 (Lower Drape)
+    ("hair-back-tier3",     "head", (-0.170, 0.165, -0.214), (0.170, 0.238, -0.140), HAIR),
     
-    # ❄️ Back Hair Cascading Frost Streaks & Shimmer Highlights
-    ("hair-back-streak-center", "head", (-0.024, 0.200, -0.228), (0.024, 0.460, -0.216), CYAN_TRIM),
-    ("hair-back-streak-core",   "head", (-0.012, 0.220, -0.231), (0.012, 0.430, -0.223), FROST_ACCENT),
-    ("hair-back-streak-left",   "head", (0.060, 0.240, -0.226), (0.098, 0.420, -0.216), CYAN_TRIM),
-    ("hair-back-streak-core-l", "head", (0.070, 0.260, -0.229), (0.088, 0.390, -0.222), FROST_ACCENT),
-    ("hair-back-streak-right",  "head", (-0.098, 0.240, -0.226), (-0.060, 0.420, -0.216), CYAN_TRIM),
-    ("hair-back-streak-core-r", "head", (-0.088, 0.260, -0.229), (-0.070, 0.390, -0.222), FROST_ACCENT),
-    
-    # ❄️ Geometric Snowflake Hair Barrette / Clasp at Upper Back
-    ("hair-back-clasp-bar",     "head", (-0.060, 0.485, -0.228), (0.060, 0.510, -0.214), SILVER),
-    ("hair-back-clasp-gem",     "head", (-0.024, 0.478, -0.232), (0.024, 0.518, -0.220), CYAN_TRIM),
-    ("hair-back-clasp-star",    "head", (-0.012, 0.488, -0.235), (0.012, 0.508, -0.226), WHITE),
-    
-    # 📐 Raised horizontal weight band & Frosted Bottom Hem Trim
-    ("hair-back-weight-band",   "head", (-0.178, 0.155, -0.226), (0.178, 0.230, -0.145), HAIR),
-    ("hair-back-hem-rim",       "head", (-0.174, 0.148, -0.220), (0.174, 0.165, -0.148), HAIR),
-    ("hair-back-frost-hem",     "head", (-0.174, 0.148, -0.228), (0.174, 0.176, -0.218), CYAN_TRIM),
-    ("hair-back-frost-sparkle", "head", (-0.140, 0.152, -0.230), (0.140, 0.168, -0.222), FROST_ACCENT),
+    # 📐 Raised horizontal weight band & clean frosted bottom hem rim
+    ("hair-back-weight-band",   "head", (-0.176, 0.155, -0.224), (0.176, 0.215, -0.145), HAIR),
+    ("hair-back-hem-rim",       "head", (-0.172, 0.148, -0.218), (0.172, 0.165, -0.148), HAIR),
+    ("hair-back-frost-hem",     "head", (-0.172, 0.148, -0.224), (0.172, 0.165, -0.216), CYAN_TRIM),
+    ("hair-back-frost-sparkle", "head", (-0.140, 0.150, -0.226), (0.140, 0.162, -0.220), FROST_ACCENT),
     
     # 📐 Side framing rails (beveled stepped outer edges giving clean boxy toon silhouette)
-    ("hair-back-rail-left",     "head", (0.158, 0.170, -0.222), (0.180, 0.600, -0.160), HAIR),
-    ("hair-back-rail-right",    "head", (-0.180, 0.170, -0.222), (-0.158, 0.600, -0.160), HAIR),
+    ("hair-back-rail-left",     "head", (0.158, 0.170, -0.220), (0.180, 0.600, -0.160), HAIR),
+    ("hair-back-rail-right",    "head", (-0.180, 0.170, -0.220), (-0.158, 0.600, -0.160), HAIR),
     
-    # 💇 SIDE HAIR WRAP & FROST HIGHLIGHTS (Contouring neatly around ears with side locks)
+    # 💇 SIDE HAIR WRAP (Contouring neatly around ears with clean locks)
     ("hair-side-front-left",    "head", (0.165, 0.420, 0.025), (0.188, 0.560, 0.130), HAIR),
     ("hair-side-front-right",   "head", (-0.188, 0.420, 0.025), (-0.165, 0.560, 0.130), HAIR),
     ("hair-side-back-left",     "head", (0.165, 0.420, -0.155), (0.188, 0.560, -0.015), HAIR),
@@ -414,17 +390,9 @@ HEAD = [
     ("hair-side-upper-left",    "head", (0.168, 0.540, -0.170), (0.192, 0.670, 0.130), HAIR),
     ("hair-side-upper-right",   "head", (-0.192, 0.540, -0.170), (-0.168, 0.670, 0.130), HAIR),
     
-    # ❄️ Side Hair Frost Highlights & Sculpted Jaw Locks
-    ("hair-side-streak-left",      "head", (0.172, 0.440, 0.020), (0.192, 0.540, 0.085), CYAN_TRIM),
-    ("hair-side-streak-core-left", "head", (0.180, 0.460, 0.035), (0.195, 0.520, 0.070), FROST_ACCENT),
-    ("hair-side-streak-right",     "head", (-0.192, 0.440, -0.115), (-0.172, 0.540, -0.055), CYAN_TRIM),
-    ("hair-side-streak-core-right","head", (-0.195, 0.460, -0.100), (-0.180, 0.520, -0.070), FROST_ACCENT),
-    
     # Stepped side jawline framing locks
     ("hair-side-lock-left",     "head", (0.170, 0.360, -0.010), (0.190, 0.430, 0.060), HAIR),
-    ("hair-side-lock-frost-l",  "head", (0.172, 0.365, 0.005), (0.192, 0.400, 0.045), CYAN_TRIM),
     ("hair-side-lock-right",    "head", (-0.190, 0.360, -0.010), (-0.170, 0.430, 0.060), HAIR),
-    ("hair-side-lock-frost-r",  "head", (-0.192, 0.365, 0.005), (-0.172, 0.400, 0.045), CYAN_TRIM),
     
     # Front bangs framing brow with clean arched forehead opening
     ("hair-bangs-brow",         "head", (-0.165, 0.640, 0.135), (0.165, 0.685, 0.185), HAIR),
@@ -435,23 +403,12 @@ HEAD = [
     ("hair-frost-streak",       "head", (-0.160, 0.555, 0.182), (-0.075, 0.640, 0.198), CYAN_TRIM),
     ("hair-frost-tip",          "head", (-0.085, 0.570, 0.182), (-0.030, 0.620, 0.196), CYAN_TRIM),
     
-    # ❄️ Frost Snowflake Barrette Clip on Right Bangs (-X)
-    ("hair-clip-top",           "head", (-0.165, 0.630, 0.190), (-0.085, 0.665, 0.204), WHITE),
-    ("hair-clip-drop",          "head", (-0.168, 0.585, 0.190), (-0.130, 0.640, 0.204), WHITE),
-    ("hair-clip-frost-gem",     "head", (-0.155, 0.615, 0.198), (-0.135, 0.645, 0.210), CYAN_TRIM),
-    ("hair-clip-side-wrap",     "head", (-0.190, 0.610, 0.070), (-0.160, 0.665, 0.165), CYAN_TRIM),
-    
     # 💎 ICONIC PERSONALITY DETAIL: Dangling Frost Crystal Earring on Right Ear (-X, viewer's left)
     ("earring-stud",            "head", (-0.215, 0.485, -0.015), (-0.200, 0.508, 0.005), SILVER),
     ("earring-frost-drop",      "head", (-0.218, 0.435, -0.018), (-0.198, 0.485, 0.008), CYAN_TRIM),
     ("earring-frost-sparkle",   "head", (-0.219, 0.442, -0.012), (-0.204, 0.465, 0.004), FROST_ACCENT),
     
-    # 💎 Left Ear Ice Crystal Stud & Frost Cuff (+X, viewer's right)
-    ("earring-stud-left",          "head", (0.200, 0.485, -0.015), (0.215, 0.508, 0.005), SILVER),
-    ("earring-frost-cuff-left",    "head", (0.198, 0.465, -0.018), (0.218, 0.488, 0.008), CYAN_TRIM),
-    ("earring-frost-sparkle-left", "head", (0.204, 0.470, -0.012), (0.219, 0.485, 0.004), FROST_ACCENT),
-    
-    # 👨‍🍳 Jaunty Baker / Ice Queen Toque Hat
+    # 👨‍🍳 Jaunty Baker / Ice Queen Toque Hat (Beloved 3-Tier Design)
     # Tier 1 (Fitted Brim Band)
     ("cap-brim-base",           "head", (-0.155, 0.680, -0.155), (0.155, 0.712, 0.155), WHITE),
     # Tier 1 Frost Ribbon Band
@@ -489,7 +446,7 @@ HEAD = [
     ("cap-toque-top",           "head", (-0.140, 0.748, -0.140), (0.140, 0.772, 0.140), WHITE),
     ("cap-frost-stripe-x",      "head", (-0.142, 0.752, -0.030), (0.142, 0.764, 0.030), CYAN_TRIM),
     ("cap-frost-stripe-z",      "head", (-0.030, 0.752, -0.142), (0.030, 0.764, 0.142), CYAN_TRIM),
-    ("cap-toque-dome",          "head", (-0.060, 0.772, -0.060), (0.060, 0.785, 0.060), WHITE),
+    ("cap-toque-dome",      "head", (-0.060, 0.772, -0.060), (0.060, 0.785, 0.060), WHITE),
 ]
 
 DONOR_SPACE = tuple(entry[0] for entry in HEAD)
@@ -881,9 +838,42 @@ SKULL_SLOTS = {15: SKIN, 8: INK}
 
 
 def _donor_head():
-    """The skull with standard toon eyes and open smile."""
+    """The skull with an icy excited, cheerful energetic expression."""
     pos, nrm, uv, tris = _donor_part(DONOR_SKULL, SKULL_SLOTS)
-    return _compact(pos, nrm, uv, tris)
+    pos_before = list(pos)
+    
+    moved = set()
+    new_pos = list(pos)
+    
+    for i in range(len(pos)):
+        if _slot_at(*uv[i]) != INK:
+            continue
+        
+        x, y, z = pos[i]
+        
+        # Mouth vertices (y < 0.45)
+        if y < 0.45:
+            # Icy excited open beaming smile: lift corners and curve bottom
+            dist = min(abs(x) / 0.045, 1.0)
+            lift = 0.009 * (dist ** 1.4)
+            drop = -0.004 * (1.0 - dist) if y < 0.415 else 0.0
+            
+            new_y = y + lift + drop
+            new_pos[i] = (x, new_y, z)
+            moved.add(i)
+            
+        # Eye vertices (y >= 0.45)
+        else:
+            # Wide, bright, energetic excited eyes
+            cx = 0.07209 if x > 0 else -0.07209
+            cy = 0.4867
+            dy = y - cy
+            new_y = cy + dy * 1.12 + 0.002
+            new_pos[i] = (x, new_y, z)
+            moved.add(i)
+            
+    _verify_expression(pos_before, new_pos, uv, moved)
+    return _compact(new_pos, nrm, uv, tris)
 
 
 def _compact(pos, nrm, uv, tris):
