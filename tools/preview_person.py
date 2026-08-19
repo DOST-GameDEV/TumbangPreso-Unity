@@ -45,11 +45,12 @@ BAND = 0.42
 SHADOW = 0.62
 
 
-def palette():
+def palette(path):
     sys.path.insert(0, ".")
     import importlib.util
 
-    spec = importlib.util.spec_from_file_location("bpv", "tools/build_person_voxel.py")
+    script = "tools/build_zack_voxel.py" if "zack" in path.lower() else "tools/build_person_voxel.py"
+    spec = importlib.util.spec_from_file_location("bpv", script)
     bpv = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(bpv)
 
@@ -159,7 +160,7 @@ def main():
     path = next((a for a in sys.argv[1:] if not a.startswith("--")), DEFAULT)
     head_only = "--head" in sys.argv
 
-    pal, bpv = palette()
+    pal, bpv = palette(path)
     tris = load(path)
 
     lo, hi = (0.33, 0.79) if head_only else (-0.02, 0.79)
