@@ -279,5 +279,42 @@ namespace TumbangPreso.Tests
             Assert.IsFalse(Emotes.IsKnown("not_an_emote"));
             Assert.IsFalse(Emotes.IsKnown(null));
         }
+
+        // -------------------------------------------------------------------
+        // IDENTITY AND PROFILES (N1)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void NetIdentityReturnsValidOfflineToken()
+        {
+            NetIdentity.ResetForTesting();
+            string token = NetIdentity.Token;
+            Assert.IsNotEmpty(token, "offline token must be non-empty");
+            Assert.AreEqual(NetIdentity.DefaultProfile, NetIdentity.Profile);
+        }
+
+        [Test]
+        public void DifferentProfilesProduceDistinctLocalTokens()
+        {
+            NetIdentity.ResetForTesting();
+            NetIdentity.SetProfile("peer1");
+            string token1 = NetIdentity.LocalToken;
+
+            NetIdentity.SetProfile("peer2");
+            string token2 = NetIdentity.LocalToken;
+
+            Assert.AreNotEqual(token1, token2, "different profiles on one machine must yield different tokens");
+            Assert.IsTrue(token1.EndsWith("_peer1"));
+            Assert.IsTrue(token2.EndsWith("_peer2"));
+            NetIdentity.ResetForTesting();
+        }
+
+        [Test]
+        public void NetIdentityOverrideForTestingTakesPrecedence()
+        {
+            NetIdentity.OverrideForTesting("test-override-token");
+            Assert.AreEqual("test-override-token", NetIdentity.Token);
+            NetIdentity.ResetForTesting();
+        }
     }
 }

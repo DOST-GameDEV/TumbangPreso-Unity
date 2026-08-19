@@ -36,6 +36,7 @@ namespace TumbangPreso.Net
         public const string DedicatedSwitch = "-tp-dedicated";
         public const string JoinSwitch = "-tp-join";
         public const string MapSwitch = "-tp-map";
+        public const string ProfileSwitch = "-tp-profile";
 
         /// <summary>True when the command line asked for a session, so the menus are skipped.</summary>
         public static bool Requested { get; private set; }
@@ -49,6 +50,12 @@ namespace TumbangPreso.Net
             catch { return; }
 
             if (args == null || args.Length < 2) return;
+
+            string profile = Value(args, ProfileSwitch) ?? Value(args, "-profile");
+            if (!string.IsNullOrEmpty(profile))
+            {
+                NetIdentity.SetProfile(profile);
+            }
 
             string map = Value(args, MapSwitch) ?? UI.SceneFlow.Eskinita;
 

@@ -199,7 +199,10 @@ namespace TumbangPreso.Net
             // where it sits is not up to it. See LobbySession.RuleOnArrival for why the branch
             // order matters: a returning player outranks a newcomer for their own seat.
             var s = Settings.SettingsStore.Current;
-            var record = Lobby.Admit((int)clientId, s.PlayerToken + clientId, s.PlayerName);
+            string token = clientId == _nm.LocalClientId
+                ? NetIdentity.Token
+                : $"{NetIdentity.LocalToken}_peer_{clientId}";
+            var record = Lobby.Admit((int)clientId, token, s.PlayerName);
 
             _beacon.Players = Lobby.PeerCount;
             SetStatus($"{Lobby.PeerCount} connected, seat {record.Seat}");
