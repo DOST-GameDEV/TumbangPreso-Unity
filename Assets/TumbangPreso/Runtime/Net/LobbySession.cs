@@ -144,21 +144,34 @@ namespace TumbangPreso.Net
                 Name = Settings.GameSettings.SanitiseName(name),
             };
 
-            var ruling = RuleOnArrival(record.Token);
-            switch (ruling)
+            // ⚠ THE DEDICATED SERVER'S OWN PEER IS RULED ON BEFORE ARRIVAL RULES APPLY, because
+            // it is not arriving to play. IsSeatlessReferee was already honoured by leader
+            // election and by both peer counts, but not here, so on a dedicated host the server
+            // process took seat 0 and the first real player was handed seat 1. A four player
+            // match then had three human seats and a referee holding the fourth.
+            if (IsSeatlessReferee(peerId))
             {
-                case MidMatchRuling.Reclaim:
-                    record.Seat = ReclaimSeatFor(record.Token);
-                    break;
+                record.Seat = -1;
+                record.Spectator = true;
+            }
+            else
+            {
+                var ruling = RuleOnArrival(record.Token);
+                switch (ruling)
+                {
+                    case MidMatchRuling.Reclaim:
+                        record.Seat = ReclaimSeatFor(record.Token);
+                        break;
 
-                case MidMatchRuling.Seat:
-                    record.Seat = FirstFreeSeat();
-                    break;
+                    case MidMatchRuling.Seat:
+                        record.Seat = FirstFreeSeat();
+                        break;
 
-                default:
-                    record.Seat = -1;
-                    record.Spectator = true;
-                    break;
+                    default:
+                        record.Seat = -1;
+                        record.Spectator = true;
+                        break;
+                }
             }
 
             _peers[peerId] = record;
@@ -335,6 +348,22 @@ namespace TumbangPreso.Net
 
         private static int Validate(int index, int count) =>
             (index < 0 || index >= count) ? -1 : index;
+
+        /// <summary>
+        /// Marks the match as running. The counterpart of EndMatch, and the switch every
+        /// mid-match rule reads: Depart only holds a seat while this is true, and RuleOnArrival
+        /// only answers Spectate rather than Refuse while this is true.
+        /// </summary>
+        /// ⚠ Held seats are cleared here, not just in EndMatch. A held seat means "somebody in
+        /// THIS match left it", which is what RuleOnArrival branch 1 promises, so carrying one
+        /// across a match boundary would hand a fresh match's seat to whoever held it in the
+        /// last one. _seenThisMatch is deliberately NOT cleared: peers admitted during the
+        /// lobby phase, before the match starts, were legitimately seen in it.
+        public void StartMatch()
+        {
+            MatchInProgress = true;
+            _heldSeats.Clear();
+        }
 
         public void EndMatch()
         {

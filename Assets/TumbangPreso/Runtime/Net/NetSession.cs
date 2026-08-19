@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
+#if MULTIPLAY_SDK
 using Unity.Services.Multiplay;
+#endif
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
@@ -41,7 +43,9 @@ namespace TumbangPreso.Net
         private NetworkManager _nm;
         private UnityTransport _utp;
         private LanBeacon _beacon;
+#if MULTIPLAY_SDK
         private IServerQueryHandler _serverQueryHandler;
+#endif
 
         // INetProvider
         public bool IsHost => _nm == null || !_nm.IsListening || _nm.IsServer;
@@ -171,6 +175,7 @@ namespace TumbangPreso.Net
 
         private void Update()
         {
+#if MULTIPLAY_SDK
             if (_serverQueryHandler != null)
             {
                 _serverQueryHandler.CurrentPlayers = (ushort)Lobby.SeatedPeerCount();
@@ -178,10 +183,38 @@ namespace TumbangPreso.Net
                 _serverQueryHandler.Map = UI.SceneFlow.SelectedMap;
                 _serverQueryHandler.UpdateServerCheck();
             }
+#endif
         }
 
+        /// <summary>
+        /// Registers this process with the Multiplay fleet and starts answering SQP queries.
+        /// </summary>
+        // ⚠ The body is gated on MULTIPLAY_SDK, which is currently defined nowhere, because
+        // com.unity.services.multiplay cannot be installed on Unity 6000.5 at all. Every
+        // published version of it, 1.1.1 through 1.3.1, ships
+        // Editor/Authoring/Assets/CreateMultiplayConfigMenu.cs, which calls EndNameEditAction.
+        // Unity 6000.5 marks that obsolete as an ERROR rather than a warning, so the package's
+        // authoring assembly fails to build and takes the whole project's compile down with it.
+        // The package was therefore removed from the manifest.
+        //
+        // ⚠ The code is kept rather than deleted because the fleet path is real shipped
+        // behaviour, not dead code. Two ways back, whichever lands first: Unity publishes a
+        // multiplay build that compiles on 6.5, in which case re-add the package and define
+        // MULTIPLAY_SDK and nothing else changes; or this is re-ported onto the session API in
+        // com.unity.services.multiplayer 2.x, which is Unity's stated replacement but exposes
+        // MultiplayerServerService.CreateSessionAsync instead of a ServerQueryHandler, so the
+        // SQP heartbeat in Update becomes the service's job rather than ours. That port needs a
+        // real fleet to verify, so it is deliberately not guessed at here.
         public async Task StartMultiplayServerAsync(int port, string serverName = "Tumbang Preso Dedicated", string map = "Eskinita")
         {
+#if !MULTIPLAY_SDK
+            Debug.LogWarning(
+                "[Net] Multiplay fleet registration skipped: com.unity.services.multiplay is not " +
+                "installed because it does not compile on Unity 6000.5. Dedicated hosting still " +
+                "serves clients, it just does not report itself to the fleet.");
+            SetStatus($"dedicated server on port {port} (fleet registration unavailable)");
+            await Task.CompletedTask;
+#else
             try
             {
                 await Unity.Services.Core.UnityServices.InitializeAsync();
@@ -203,6 +236,7 @@ namespace TumbangPreso.Net
             {
                 Debug.LogWarning($"[Net] Multiplay initialization skipped/failed: {e.Message}");
             }
+#endif
         }
 
         public bool StartClient(string address, int port = DefaultPort)
@@ -244,7 +278,11 @@ namespace TumbangPreso.Net
                 RelayJoinCode = relayCode;
                 IsRelay = true;
 
-                var relayServerData = new RelayServerData(allocation, "dtls");
+                // ⚠ Was new RelayServerData(allocation, "dtls"). That constructor belonged to
+                // com.unity.transport 1.x and exists in none of the packages this project resolves
+                // today. The conversion now lives in Unity.Services.Relay.Models.AllocationUtils,
+                // shipped by com.unity.services.multiplayer, as an extension method.
+                var relayServerData = allocation.ToRelayServerData("dtls");
                 _utp.SetRelayServerData(relayServerData);
 
                 Lobby.IsDedicated = false;
@@ -310,7 +348,7 @@ namespace TumbangPreso.Net
             try
             {
                 JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(relayJoinCode.Trim());
-                var relayServerData = new RelayServerData(joinAllocation, "dtls");
+                var relayServerData = joinAllocation.ToRelayServerData("dtls");
                 _utp.SetRelayServerData(relayServerData);
 
                 IsRelay = true;

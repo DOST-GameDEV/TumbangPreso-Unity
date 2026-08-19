@@ -429,7 +429,7 @@ namespace TumbangPreso
             {
                 go.AddComponent<PlayerInputReader>();
             }
-            else if (!isHumanPlayer && (!isNetworked || Net.NetAuthority.IsHost))
+            else if (!isHumanPlayer && (!isNetworked || NetAuthority.IsHost))
             {
                 // Unoccupied seats run AI on the host only
                 go.AddComponent<AIController>();

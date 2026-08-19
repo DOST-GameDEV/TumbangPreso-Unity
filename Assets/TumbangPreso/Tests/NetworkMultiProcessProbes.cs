@@ -19,7 +19,7 @@ namespace TumbangPreso.Tests
         [TearDown]
         public void TearDown()
         {
-            NetIdentity.ResetProfileForTests();
+            NetIdentity.ResetForTesting();
         }
 
         // -------------------------------------------------------------------
@@ -32,7 +32,7 @@ namespace TumbangPreso.Tests
             // Process 1 (Host profile)
             NetIdentity.SetProfile("host_instance_alpha");
             string hostToken = NetIdentity.LocalToken;
-            string hostPlayerId = NetIdentity.PlayerId;
+            string hostPlayerId = NetIdentity.Token;
 
             Assert.IsFalse(string.IsNullOrEmpty(hostToken));
             Assert.IsFalse(string.IsNullOrEmpty(hostPlayerId));
@@ -40,7 +40,7 @@ namespace TumbangPreso.Tests
             // Process 2 (Client profile on same machine)
             NetIdentity.SetProfile("client_instance_beta");
             string clientToken = NetIdentity.LocalToken;
-            string clientPlayerId = NetIdentity.PlayerId;
+            string clientPlayerId = NetIdentity.Token;
 
             Assert.IsFalse(string.IsNullOrEmpty(clientToken));
             Assert.IsFalse(string.IsNullOrEmpty(clientPlayerId));
