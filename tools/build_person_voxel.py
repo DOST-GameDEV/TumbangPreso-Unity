@@ -192,9 +192,9 @@ PALETTE = {
     WOOD_GOLD:     "e4a032",   # Warm bakery spatula wooden handle peeking from pocket
     FROST_ACCENT:  "a8f0fa",   # Shimmering pale frost highlight / crystal sparkle
     WHITE:         "f4faff",   # Crisp snow white with subtle cool undertone (toque, shirt, socks)
-    SKIN:          "f4caa6",   # Natural fair human skin midtone
-    SKIN_DARK:     "c89270",   # Soft warm fair skin shadow tone
-    SKIN_LIT:      "ffe4cc",   # Bright natural fair human lit skin tone (face, arms, legs)
+    SKIN:          "fff5ed",   # Radiant fair porcelain human skin tone (visibly light, no tan)
+    SKIN_DARK:     "e8d2c4",   # Soft clean pale rosy shadow tone (clean and bright)
+    SKIN_LIT:      "ffffff",   # Pure radiant white lit skin tone (face, arms, legs)
 }
 
 MAX_FACE_LUMINANCE = 0.30
@@ -234,11 +234,11 @@ LEG_LEFT = [
     ("sock-stripe1-left","leg-left", (0.014, 0.128, -0.078), (0.152, 0.140, 0.076), CYAN_TRIM),
     ("sock-stripe2-left","leg-left", (0.014, 0.146, -0.078), (0.152, 0.158, 0.076), CYAN_TRIM),
     
-    # Pure icy snow-white leg above high sock
+    # Fair human skin leg above high sock
     ("leg-skin-left",    "leg-left", (0.018, 0.165, -0.070), (0.148, 0.232, 0.070), SKIN_LIT),
 ]
 
-# 🌟 Right leg wears a folded ankle sock showing snow-white leg!
+# 🌟 Right leg wears a folded ankle sock showing fair skin!
 LEG_RIGHT = [
     # White sneaker sole
     ("shoe-sole-right",   "leg-right", (-0.158, 0.000, -0.134), (-0.006, 0.024, 0.082), WHITE),
@@ -261,7 +261,7 @@ LEG_RIGHT = [
     # Folded cyan cuff rim on ankle sock
     ("sock-rim-right",    "leg-right", (-0.152, 0.086, -0.078), (-0.014, 0.098, 0.076), CYAN_TRIM),
     
-    # Pure icy snow-white leg
+    # Fair human skin leg
     ("leg-skin-right",    "leg-right", (-0.148, 0.098, -0.070), (-0.018, 0.232, 0.070), SKIN_LIT),
 ]
 
@@ -305,6 +305,10 @@ TORSO = [
     ("pocket-lip-trim",     "torso", (-0.070, 0.312, -0.116), (0.070, 0.324, -0.096), OVERALLS_DARK),
     ("pocket-accent",       "torso", (-0.008, 0.260, -0.118), (0.008, 0.310, -0.108), OVERALLS_DARK),
     
+    # ❄️ Embroidered Front Frost Snowflake Icon on Kangaroo Pocket
+    ("pocket-frost-star",   "torso", (-0.024, 0.268, -0.118), (0.024, 0.298, -0.108), CYAN_TRIM),
+    ("pocket-frost-core",   "torso", (-0.012, 0.274, -0.120), (0.012, 0.292, -0.106), FROST_ACCENT),
+    
     # 🍳 STORYTELLING DETAIL: Tucked Baker Spatula / Scoop Handle peeking from pocket (+X side)
     ("spatula-handle",      "torso", (0.032, 0.310, -0.112), (0.052, 0.362, -0.100), WOOD_GOLD),
     ("spatula-metal-neck",  "torso", (0.035, 0.358, -0.110), (0.049, 0.374, -0.102), SILVER),
@@ -329,8 +333,11 @@ TORSO = [
     # Crisp triangular frosty cyan collar wings/lapels
     ("collar-left",         "torso", (0.018, 0.390, -0.108), (0.065, 0.445, -0.082), COLLAR_TRIM),
     ("collar-right",        "torso", (-0.065, 0.390, -0.108), (-0.018, 0.445, -0.082), COLLAR_TRIM),
-    # Center neckline mini ribbon bow
-    ("collar-ribbon-knot",  "torso", (-0.018, 0.394, -0.112), (0.018, 0.412, -0.096), CYAN_TRIM),
+    # Center neckline cute cyan bowtie knot & loops
+    ("collar-ribbon-knot",  "torso", (-0.015, 0.395, -0.114), (0.015, 0.415, -0.096), CYAN_TRIM),
+    ("collar-ribbon-loop-l","torso", (0.012, 0.398, -0.112), (0.038, 0.418, -0.098), CYAN_TRIM),
+    ("collar-ribbon-loop-r","torso", (-0.038, 0.398, -0.112), (-0.012, 0.418, -0.098), CYAN_TRIM),
+    ("collar-ribbon-gem",   "torso", (-0.008, 0.400, -0.116), (0.008, 0.412, -0.098), FROST_ACCENT),
     # White shirt back collar
     ("collar-back",         "torso", (-0.095, 0.425, 0.080), (0.095, 0.445, 0.094), WHITE),
 ]
@@ -344,17 +351,17 @@ ARM_LEFT = [
     # Icy-Cyan Sports Wristband with White Stripe on Left Wrist
     ("wristband-left",      "arm-left", (0.250, 0.334, -0.024), (0.285, 0.466, 0.042), CYAN_TRIM),
     ("wristband-stripe",    "arm-left", (0.262, 0.332, -0.026), (0.274, 0.468, 0.044), WHITE),
-    # Snow-white forearm & hand
+    # Fair human skin forearm & hand
     ("hand-left",           "arm-left", (0.234, 0.3383, -0.020), (0.3836, 0.4617, 0.038), SKIN_LIT),
 ]
 
-# Right arm has clean snow-white skin
+# Right arm has clean fair human skin
 ARM_RIGHT = [
     # White short sleeve
     ("sleeve-right",        "arm-right", (-0.208, 0.330, -0.066), (-0.0999, 0.470, 0.084), WHITE),
     # Stepped frosty cyan sleeve cuff
     ("sleeve-cuff-right",   "arm-right", (-0.234, 0.322, -0.074), (-0.208, 0.478, 0.092), COLLAR_TRIM),
-    # Snow-white forearm & hand
+    # Fair human skin forearm & hand
     ("hand-right",          "arm-right", (-0.3836, 0.3383, -0.020), (-0.234, 0.4617, 0.038), SKIN_LIT),
 ]
 
@@ -372,10 +379,12 @@ HEAD = [
     # Tier 3 (Lower Drape)
     ("hair-back-tier3",     "head", (-0.170, 0.165, -0.214), (0.170, 0.238, -0.140), HAIR),
     
-    # ❄️ Sleek Geometric Frost Hair Clasp Band on Upper Tier
-    ("hair-back-clasp-bar",     "head", (-0.055, 0.465, -0.224), (0.055, 0.485, -0.214), CYAN_TRIM),
-    ("hair-back-clasp-gem",     "head", (-0.016, 0.460, -0.228), (0.016, 0.490, -0.216), FROST_ACCENT),
-    ("hair-back-clasp-star",    "head", (-0.008, 0.468, -0.230), (0.008, 0.482, -0.220), WHITE),
+    # ❄️ Sleek Geometric Frost Snowflake Hair Barrette on Upper Tier
+    ("hair-back-barrette-bar",   "head", (-0.075, 0.465, -0.224), (0.075, 0.485, -0.214), SILVER),
+    ("hair-back-barrette-wing-l","head", (0.040, 0.460, -0.226), (0.085, 0.490, -0.216), CYAN_TRIM),
+    ("hair-back-barrette-wing-r","head", (-0.085, 0.460, -0.226), (-0.040, 0.490, -0.216), CYAN_TRIM),
+    ("hair-back-barrette-gem",   "head", (-0.020, 0.455, -0.228), (0.020, 0.495, -0.216), CYAN_TRIM),
+    ("hair-back-barrette-star",  "head", (-0.010, 0.465, -0.231), (0.010, 0.485, -0.218), FROST_ACCENT),
     
     # 📐 Raised horizontal weight band & clean frosted bottom hem rim
     ("hair-back-weight-band",   "head", (-0.176, 0.155, -0.224), (0.176, 0.215, -0.145), HAIR),
@@ -404,9 +413,10 @@ HEAD = [
     ("hair-bangs-left",         "head", (0.035, 0.550, 0.135), (0.172, 0.655, 0.185), HAIR),
     ("hair-bangs-right",        "head", (-0.172, 0.540, 0.135), (-0.025, 0.655, 0.185), HAIR),
     
-    # ⚡ PERSONALITY DETAIL: Bold Icy-Frost Dyed Streak through Right Bangs (-X)
-    ("hair-frost-streak",       "head", (-0.160, 0.555, 0.182), (-0.075, 0.640, 0.198), CYAN_TRIM),
-    ("hair-frost-tip",          "head", (-0.085, 0.570, 0.182), (-0.030, 0.620, 0.196), CYAN_TRIM),
+    # ⚡ PERSONALITY DETAIL: Bold Sweeping Icy-Frost Dyed Streak through Right Bangs (-X)
+    ("hair-frost-streak-main",  "head", (-0.162, 0.550, 0.182), (-0.055, 0.645, 0.198), CYAN_TRIM),
+    ("hair-frost-streak-tip",   "head", (-0.075, 0.560, 0.182), (-0.018, 0.615, 0.196), CYAN_TRIM),
+    ("hair-frost-streak-shine", "head", (-0.145, 0.585, 0.192), (-0.090, 0.635, 0.200), FROST_ACCENT),
     
     # 💎 ICONIC PERSONALITY DETAIL: Dangling Frost Crystal Earring on Right Ear (-X, viewer's left)
     ("earring-stud",            "head", (-0.215, 0.485, -0.015), (-0.200, 0.508, 0.005), SILVER),
@@ -434,6 +444,7 @@ HEAD = [
     ("cap-back-bow-tail-l",     "head", (0.008, 0.655, -0.168), (0.028, 0.690, -0.158), CYAN_TRIM),
     ("cap-back-bow-tail-r",     "head", (-0.028, 0.655, -0.168), (-0.008, 0.690, -0.158), CYAN_TRIM),
     ("cap-back-frost-crystal",  "head", (-0.010, 0.692, -0.172), (0.010, 0.702, -0.164), FROST_ACCENT),
+
     
     # Tier 2 (Bulging / Flared Mushroom Puff Crown with 360-degree corner lobes)
     ("cap-toque-puff",          "head", (-0.170, 0.712, -0.170), (0.170, 0.748, 0.170), WHITE),
