@@ -831,6 +831,40 @@ is `lata.gd::DOWNED_TILT_DEG = 88.0`, which `Lata.cs` already ports through
 `Balance.DownedTiltDeg`. The two angles differ because they are two different features,
 not because one drifted.
 
+## 2026-08-19: the networking layer audit (N0)
+
+Reconciled the networking architecture against Netcode for GameObjects 2.13.1, Unity Transport
+6.5.0, and Unity Gaming Services (Multiplay Hosting, Lobby, Relay, Authentication). The existing
+C# networking layer (~1,690 lines) is confirmed functional and structured into clean, tested
+components rather than greenfield:
+
+1. **`LobbySession.cs` (337 lines):** Transport-agnostic lobby state. Manages seats, stable
+   identity tokens, leader election, and confusable-free 4-character join codes (excluding 0/O,
+   1/I/L). Implements the four mid-match arrival rulings (Seat, Reclaim, Spectate, Refuse) in
+   strict priority order. Vacated seats are held for disconnected tokens rather than freed.
+   Dedicated server peer 1 is enforced as a referee that never leads. Human peer count
+   (`PlayingPeerCount`) governs ready gates without counting bot placeholders.
+2. **`NetSession.cs` (230 lines):** NGO 2.13.1 and UnityTransport adapter implementing
+   `INetProvider`. Manages listening lifecycle, connection events, status broadcasting, and 30s
+   disconnect timeout. Scene management is deliberately disabled (`EnableSceneManagement = false`)
+   to prevent races with `SceneFlow`. Automatically restores `SoloProvider` on disconnect.
+3. **`MatchRpc.cs` (300 lines):** Explicit `NetworkBehaviour` RPC layer using `[ServerRpc]` and
+   `[ClientRpc]`. Implements the request, resolve, and broadcast triplet for tag verbs (punch,
+   lunge, shove), separate wind-up visual charge broadcasts, grab eligibility, throw execution,
+   can reset, emote synchronization, ready declarations, full picks table replication
+   (`SyncPicksClientRpc`), and late-join hooks.
+4. **`LanBeacon.cs` (238 lines):** Standalone UDP broadcast discovery on port 8911 using the
+   `tumbang-preso-lan` magic string to match Godot wire compatibility. 4-second timeout tolerates
+   intermittent packet loss.
+5. **`ServerQuery.cs` (234 lines):** Transitioning from legacy VPS pool unicast to UGS Lobby query
+   while preserving LAN-first join code resolution.
+6. **`NetBootstrap.cs` + `NetBootstrapRunner.cs` (176 lines):** CLI startup switches (`-tp-host`,
+   `-tp-dedicated`, `-tp-join`, `-tp-map`) for automated multi-process testing and headless Linux
+   dedicated server startup before scene load.
+7. **`NetAuthority.cs` (104 lines):** Core gameplay seam providing `ShouldResolve()` and
+   `ShouldRequest()` guards across combat, scoring, and cans. Ensures clients submit intent only
+   while the host resolves outcomes and writes scores.
+
 ## Autoload singletons (9)
 
 Godot autoloads are always-on globals. Unity has no equivalent; these become
@@ -841,12 +875,12 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `audio_manager.gd` | 1125 | `AudioDirector` + `AudioCues` + `MusicDirector` (382) | PARTIAL |
 | `round_manager.gd` | 476 | `RoundDirector.cs` (219) | PARTIAL |
 | `match_manager.gd` | 217 | `MatchDirector.cs` (97) | PARTIAL |
-| `network_manager.gd` | 1413 | `NetSession` + `LobbySession` + `MatchRpc` (800) | PARTIAL — verbs, emotes, ready gate, picks, late join; host migration pending |
-| `lan_beacon.gd` | 323 | `LanBeacon.cs` (238) | PARTIAL |
-| `server_query.gd` | 536 | `ServerQuery.cs` (215) | PARTIAL — browse and expiry; join codes pending |
-| `game_launch.gd` | 301 | `GameLaunch.cs` (108) | CONVERTED — map registry, pending action, seating |
+| `network_manager.gd` | 1413 | `NetSession` + `LobbySession` + `MatchRpc` + `NetAuthority` + `NetBootstrap` (1247) | PARTIAL: NGO + UGS stack locked; verbs, emotes, ready gate, picks, late join in place; UGS Relay/Multiplay wiring pending |
+| `lan_beacon.gd` | 323 | `LanBeacon.cs` (238) | PARTIAL: broadcast/listen/parse done; multi-interface subnet broadcast pending (N2) |
+| `server_query.gd` | 536 | `ServerQuery.cs` (215) | PARTIAL: legacy VPS pool query transitioning to UGS Lobby; LAN-first code resolution preserved |
+| `game_launch.gd` | 301 | `GameLaunch.cs` (108) | CONVERTED: map registry, pending action, seating |
 | `settings_manager.gd` | 810 | `GameSettings` + `Rebinding` + `SlipperHighlights` (470) | CONVERTED. Sliders, rebinding, applied on load, **§ the landed-highlight palette and its change signal** |
-| `debug_player_switcher.gd` | 420 | `DebugPlayerSwitcher.cs` (115) | PARTIAL — seat drive, cycle, readout |
+| `debug_player_switcher.gd` | 420 | `DebugPlayerSwitcher.cs` (115) | PARTIAL: seat drive, cycle, readout |
 
 ## Characters and objects
 
