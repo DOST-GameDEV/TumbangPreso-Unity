@@ -50,6 +50,79 @@ namespace TumbangPreso.Tests
             Assert.AreNotEqual(hostPlayerId, clientPlayerId, "PlayerId collision detected between concurrent local profiles");
         }
 
+        /// <summary>
+        /// ⚠️ THE 21 SIGN-INS. Sign-in used to re-run the whole initialise-and-sign-in path on
+        /// every caller, so a session that could not reach UGS paid for
+        /// UnityServices.InitializeAsync and logged an identical warning once per host, join and
+        /// query. The attempt is now the cache, and identity of the Task is what proves it:
+        /// a second caller must receive the FIRST attempt, not a second one beside it.
+        /// </summary>
+        [Test]
+        public void SignInIsAttemptedOncePerSessionRatherThanOncePerCaller()
+        {
+            NetIdentity.ResetForTesting();
+            Assert.AreEqual(OnlineState.Unknown, NetIdentity.State,
+                "State must start Unknown, before anything has been attempted");
+
+            _ = NetIdentity.EnsureSignedInAsync();
+            _ = NetIdentity.EnsureSignedInAsync();
+            _ = NetIdentity.EnsureSignedInAsync();
+
+            Assert.AreEqual(1, NetIdentity.SignInAttempts,
+                "Three callers must share one attempt, not start one each");
+        }
+
+        /// <summary>
+        /// ⚠️ A CACHED ATTEMPT BELONGS TO THE PROFILE THAT MADE IT. Two instances on one machine
+        /// are separated by profile, so reusing the first profile's session for the second is
+        /// the identity collision that profiles exist to prevent.
+        /// </summary>
+        [Test]
+        public void SwitchingProfileDiscardsThePreviousProfilesAttempt()
+        {
+            NetIdentity.ResetForTesting();
+
+            NetIdentity.SetProfile("host_instance_alpha");
+            _ = NetIdentity.EnsureSignedInAsync();
+            _ = NetIdentity.EnsureSignedInAsync();
+            Assert.AreEqual(1, NetIdentity.SignInAttempts, "One attempt for the first profile");
+
+            NetIdentity.SetProfile("client_instance_beta");
+            _ = NetIdentity.EnsureSignedInAsync();
+
+            Assert.AreEqual(2, NetIdentity.SignInAttempts,
+                "Second profile reused the first profile's sign-in attempt");
+        }
+
+        /// <summary>
+        /// ⚠️ THE THREE STATES MUST BE TELLABLE APART. Whatever this machine settles on, the
+        /// state and its one sentence have to agree, because the sentence is what a player and
+        /// a log reader both see.
+        /// </summary>
+        [Test]
+        public void SettledOnlineStateAlwaysCarriesItsOwnSentence()
+        {
+            NetIdentity.ResetForTesting();
+            Assert.IsEmpty(NetIdentity.StateReason, "Unknown state must not claim a reason");
+            Assert.IsFalse(NetIdentity.IsOnline,
+                "IsOnline must be false until an attempt has actually settled SignedIn");
+
+            // ⚠️ A LINKED PROJECT MUST NEVER SETTLE ON NotLinked. This is the misreading the
+            // first version of the split shipped: an editor that refuses to start services
+            // outside Play Mode was being reported as a build with no UGS project attached.
+            _ = NetIdentity.EnsureSignedInAsync();
+
+            Assert.AreNotEqual(OnlineState.Unknown, NetIdentity.State,
+                "An attempt must settle the state");
+            Assert.IsNotEmpty(NetIdentity.StateReason, "A settled state must carry its sentence");
+
+            if (!string.IsNullOrEmpty(Application.cloudProjectId))
+            {
+                Assert.AreNotEqual(OnlineState.NotLinked, NetIdentity.State,
+                    "This project has a cloudProjectId, so NotLinked is the wrong answer");
+            }
+        }
+
         // -------------------------------------------------------------------
         // 2. DEDICATED REFEREE & TOPOLOGY PROBES (N6, N10, N11)
         // -------------------------------------------------------------------

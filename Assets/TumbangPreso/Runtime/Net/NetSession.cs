@@ -263,10 +263,15 @@ namespace TumbangPreso.Net
         public async Task<bool> StartRelayHost(int maxConnections = LobbySession.MaxConnections)
         {
             SetStatus("signing in to online services...");
+
+            // ⚠ NO FALLBACK HERE, DELIBERATELY. Relay needs a real signed-in session, so there
+            // is nothing to degrade to: the local token works for LAN and cannot allocate a
+            // relay. The status now carries which of the three situations stopped it rather
+            // than the single "authentication failed" that covered all of them.
             bool authOk = await NetIdentity.EnsureSignedInAsync();
             if (!authOk)
             {
-                SetStatus("online authentication failed");
+                SetStatus($"cannot go online: {NetIdentity.StateReason}");
                 return false;
             }
 
@@ -320,7 +325,7 @@ namespace TumbangPreso.Net
             catch (Exception e)
             {
                 SetStatus($"relay allocation failed: {e.Message}");
-                Debug.LogWarning($"[Net] Relay allocation exception: {e}");
+                NetIdentity.ReportServiceCallFailed("Relay allocation", e);
                 return false;
             }
         }
@@ -337,10 +342,15 @@ namespace TumbangPreso.Net
             }
 
             SetStatus("signing in to online services...");
+
+            // ⚠ NO FALLBACK HERE, DELIBERATELY. Relay needs a real signed-in session, so there
+            // is nothing to degrade to: the local token works for LAN and cannot allocate a
+            // relay. The status now carries which of the three situations stopped it rather
+            // than the single "authentication failed" that covered all of them.
             bool authOk = await NetIdentity.EnsureSignedInAsync();
             if (!authOk)
             {
-                SetStatus("online authentication failed");
+                SetStatus($"cannot go online: {NetIdentity.StateReason}");
                 return false;
             }
 
@@ -361,7 +371,7 @@ namespace TumbangPreso.Net
             catch (Exception e)
             {
                 SetStatus($"relay connection failed: {e.Message}");
-                Debug.LogWarning($"[Net] Relay join exception: {e}");
+                NetIdentity.ReportServiceCallFailed("Relay join", e);
                 return false;
             }
         }

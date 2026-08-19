@@ -139,6 +139,9 @@ namespace TumbangPreso.Net
 
             try
             {
+                // ⚠ SILENT ON PURPOSE. The reason online is unavailable was logged once, at
+                // boot, by NetIdentity itself. This call awaits that same settled attempt, so
+                // logging here again is what turned one situation into 21 identical warnings.
                 bool authOk = await NetIdentity.EnsureSignedInAsync();
                 if (!authOk) return;
 
@@ -208,7 +211,7 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[Query] Online lobby query exception: {e.Message}");
+                NetIdentity.ReportServiceCallFailed("Lobby query", e);
             }
             finally
             {
@@ -302,7 +305,7 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[Query] UGS join code lookup error: {e.Message}");
+                NetIdentity.ReportServiceCallFailed("Lobby join-code lookup", e);
             }
 
             return null;
@@ -342,7 +345,7 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[Query] Could not create UGS Lobby: {e.Message}");
+                NetIdentity.ReportServiceCallFailed("Lobby creation", e);
                 return null;
             }
         }
@@ -370,7 +373,7 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[Query] Update UGS Lobby warning: {e.Message}");
+                NetIdentity.ReportServiceCallFailed("Lobby update", e);
             }
         }
 
@@ -384,7 +387,7 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[Query] Heartbeat ping failed: {e.Message}");
+                NetIdentity.ReportServiceCallFailed("Lobby heartbeat", e);
             }
         }
 
@@ -405,7 +408,7 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[Query] Delete UGS Lobby warning: {e.Message}");
+                NetIdentity.ReportServiceCallFailed("Lobby deletion", e);
             }
         }
 
