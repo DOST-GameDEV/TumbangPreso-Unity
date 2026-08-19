@@ -1015,8 +1015,8 @@ namespace TumbangPreso.EditorTools
             BuildLight();
 
             var palette = PaletteFor(RosterId);
-            var angles = new[] { ("front", 0.0f), ("three-quarter", 40.0f),
-                                 ("side", 90.0f), ("back", 180.0f) };
+            var angles = new[] { ("front", 180.0f), ("three-quarter", 220.0f),
+                                 ("side", 270.0f), ("back", 0.0f) };
 
             for (int i = 0; i < angles.Length; i++)
                 PlaceTurn(angles[i].Item1, angles[i].Item2, palette, i);
