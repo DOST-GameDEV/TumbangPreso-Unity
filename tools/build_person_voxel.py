@@ -822,7 +822,6 @@ def _donor_part(path, slots):
     raise SystemExit(f"{path} has no head-mesh")
 
 
-
 # ⚠️⚠️ THE FACE HAS BROKEN TWICE, BOTH TIMES ON AN EXPRESSION CHANGE, AND THIS IS THE GUARD
 # THAT MAKES IT AN ERROR INSTEAD OF A SCREENSHOT. 🧑 2026-08-18: *"last time the face broke
 # when we changde expression pls try to make srue it doesnt happen again"*.
@@ -880,46 +879,93 @@ def _verify_expression(before, after, uv, moved):
                 f"  Nothing but the ink may change shape when the expression does.")
 
 
+# ---------------------------------------------------------------------------
+# § EXPRESSION: Wide Happy Cat (:3)
+# ---------------------------------------------------------------------------
+MOUTH_Z = 0.1596
+
+
+def _mouth_ribbon():
+    half_w = 0.046
+    base_y = 0.418
+    lobe_depth = 0.018
+    th = 0.0060
+    steps = 32
+    upper, lower = [], []
+    for k in range(steps + 1):
+        t = k / steps
+        x = -half_w + t * (2.0 * half_w)
+        u = x / half_w
+        val = math.cos(u * math.pi * 2.0)
+        dip = lobe_depth * 0.5 * (1.0 - val)
+        lift = 0.006 * (u**2)
+        y_c = base_y - dip + lift
+        upper.append((x, y_c + th * 0.5))
+        lower.append((x, y_c - th * 0.5))
+    return upper, lower
+
+
+EYE_SCALE = 1.08
+
+
 SKULL_SLOTS = {15: SKIN, 8: INK}
 
 
 def _donor_head():
-    """The skull with an icy excited, cheerful energetic expression."""
     pos, nrm, uv, tris = _donor_part(DONOR_SKULL, SKULL_SLOTS)
-    pos_before = list(pos)
-    
-    moved = set()
-    new_pos = list(pos)
-    
-    for i in range(len(pos)):
-        if _slot_at(*uv[i]) != INK:
+    mouth, eyes, mouth_tris = set(), set(), set()
+    for a, b, c in tris:
+        if _slot_at(*uv[a]) != INK:
             continue
-        
-        x, y, z = pos[i]
-        
-        # Mouth vertices (y < 0.45)
-        if y < 0.45:
-            # Icy excited open beaming smile: lift corners and curve bottom
-            dist = min(abs(x) / 0.045, 1.0)
-            lift = 0.009 * (dist ** 1.4)
-            drop = -0.004 * (1.0 - dist) if y < 0.415 else 0.0
-            
-            new_y = y + lift + drop
-            new_pos[i] = (x, new_y, z)
-            moved.add(i)
-            
-        # Eye vertices (y >= 0.45)
+        if (pos[a][1] + pos[b][1] + pos[c][1]) / 3.0 < 0.45:
+            mouth.update((a, b, c))
+            mouth_tris.add((a, b, c))
         else:
-            # Wide, bright, energetic excited eyes
-            cx = 0.07209 if x > 0 else -0.07209
-            cy = 0.4867
-            dy = y - cy
-            new_y = cy + dy * 1.12 + 0.002
-            new_pos[i] = (x, new_y, z)
-            moved.add(i)
-            
-    _verify_expression(pos_before, new_pos, uv, moved)
-    return _compact(new_pos, nrm, uv, tris)
+            eyes.add((a, b, c))
+
+    eye_verts = {i for tri in eyes for i in tri}
+    before = list(pos)
+
+    for side in (1.0, -1.0):
+        lid = {i for tri in eyes for i in tri if pos[i][0] * side > 0.0}
+        if not lid:
+            continue
+        centre_y = sum(pos[i][1] for i in lid) / len(lid)
+        for i in lid:
+            x, y, z = pos[i]
+            pos[i] = (x, centre_y + (y - centre_y) * EYE_SCALE, z)
+
+    _verify_expression(before, pos, uv, eye_verts)
+
+    tris = [t for t in tris if t not in mouth_tris]
+    plate = MOUTH_Z + PANEL_PROUD
+
+    upper, lower = _mouth_ribbon()
+    steps = len(upper) - 1
+
+    # Add vertices for ribbon: upper[0..steps] then lower[0..steps]
+    u_base = len(pos)
+    for x, y in upper:
+        pos.append((x, y, plate))
+        nrm.append((0.0, 0.0, 1.0))
+        uv.append(cell_uv(INK))
+
+    l_base = len(pos)
+    for x, y in lower:
+        pos.append((x, y, plate))
+        nrm.append((0.0, 0.0, 1.0))
+        uv.append(cell_uv(INK))
+
+    # Clean quad-strip triangulation (Counter-Clockwise facing +Z)
+    for k in range(steps):
+        u0 = u_base + k
+        u1 = u_base + k + 1
+        l0 = l_base + k
+        l1 = l_base + k + 1
+        tris.append((u0, l0, u1))
+        tris.append((u1, l0, l1))
+
+    return _compact(pos, nrm, uv, tris)
 
 
 def _compact(pos, nrm, uv, tris):

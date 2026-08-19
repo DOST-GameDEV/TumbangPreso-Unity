@@ -198,9 +198,9 @@ PALETTE = {
     CRYSTAL:       "b870ff",   # Layered glowing crystal pendant
     CRYSTAL_LIT:   "e2b8ff",   # Crystal highlight sparkle
     WHITE:         "ffffff",   # Crisp snow white sneaker soles, toe cap, laces
-    SKIN:          "e8964c",   # Warm golden peach midtone skin
-    SKIN_DARK:     "c87634",   # Luminous warm peach shadow
-    SKIN_LIT:      "e8964c",   # 100% matched with SKIN for uniform skin tone
+    SKIN:          "a8602c",   # Warm caramel tan midtone skin (Option 2)
+    SKIN_DARK:     "82451b",   # Rich warm caramel shadow
+    SKIN_LIT:      "a8602c",   # 100% matched with SKIN for uniform skin tone
 }
 
 MAX_FACE_LUMINANCE = 0.30
