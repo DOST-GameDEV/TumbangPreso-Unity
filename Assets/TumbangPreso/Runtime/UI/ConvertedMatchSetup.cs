@@ -276,7 +276,11 @@ namespace TumbangPreso.UI
 
             // ⚠️ THE PREVIEW FOLLOWS THE SELECTOR. Picking a map that changes only a word is the
             // single loudest "this screen is a mock-up" signal the front end can send.
-            if (_preview != null) _preview.Show(SceneFlow.SelectedMap);
+            if (_preview != null)
+            {
+                _preview.Show(SceneFlow.SelectedMap);
+                _preview.ReapplyEnvironment();
+            }
 
             var s = Settings.SettingsStore.Current;
             s.AiDifficulty = _difficulty;

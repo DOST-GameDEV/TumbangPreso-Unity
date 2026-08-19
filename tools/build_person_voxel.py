@@ -270,260 +270,108 @@ LEG_LEFT = [
     ("pant-cuff-left",   "leg-left", (0.014, 0.068, -0.078), (0.154, 0.086, 0.078), CLOTH),
     ("knee-left",        "leg-left", (0.026, 0.128, -0.080), (0.142, 0.164, -0.070), CLOTH),
 
-    # The hip chain hangs off the belt and down the outside of the thigh, so it rides
-    # the LEG bone rather than the torso: on the torso it would swing with the body
-    # while the leg it lies against walked out from under it.
-    # ⚠️ LINKS WITH GAPS, NOT A BAR. A solid strip of silver down the thigh is a stripe,
-    # and the render's chain is only legible because you can see daylight through it. At
-    # this scale a gap of one link's width is the whole effect.
+    # The hip chain hangs off the belt and down the outside of the left thigh
     ("chain-link-a-left", "leg-left", (0.150, 0.210, -0.044), (0.168, 0.228, 0.000), CHAIN),
     ("chain-link-b-left", "leg-left", (0.150, 0.180, -0.034), (0.168, 0.198, 0.012), CHAIN),
     ("chain-link-c-left", "leg-left", (0.148, 0.150, -0.028), (0.166, 0.168, 0.018), CHAIN),
     ("chain-link-d-left", "leg-left", (0.146, 0.120, -0.038), (0.164, 0.138, 0.006), CHAIN),
     ("chain-link-e-left", "leg-left", (0.144, 0.090, -0.050), (0.162, 0.108, -0.008), CHAIN),
 
-    # The front drape, which is what makes it read as hanging off the belt rather than
-    # painted down the seam.
+    # The front drape on the left hip
     ("chain-drape-a-left", "leg-left", (0.116, 0.170, -0.084), (0.148, 0.188, -0.066), CHAIN),
     ("chain-drape-b-left", "leg-left", (0.082, 0.152, -0.086), (0.114, 0.170, -0.068), CHAIN),
     ("chain-drape-c-left", "leg-left", (0.048, 0.160, -0.084), (0.080, 0.178, -0.066), CHAIN),
 ]
 
+LEG_RIGHT = [
+    ("shoe-sole-right",   "leg-right", (-0.158, 0.000, -0.134), (-0.006, 0.024, 0.082), WHITE),
+    ("shoe-upper-right",  "leg-right", (-0.152, 0.024, -0.126), (-0.014, 0.056, 0.076), CLOTH),
+    ("shoe-collar-right", "leg-right", (-0.156, 0.056, -0.100), (-0.010, 0.076, 0.080), SHOE),
+    ("shoe-toe-right",    "leg-right", (-0.156, 0.024, -0.132), (-0.010, 0.042, -0.100), WHITE),
+    ("shoe-swoosh-right", "leg-right", (-0.162, 0.028, -0.096), (-0.150, 0.052, -0.020), SHOE),
+    ("lace-upper-right",  "leg-right", (-0.136, 0.040, -0.106), (-0.030, 0.048, -0.094), WHITE),
+    ("lace-lower-right",  "leg-right", (-0.136, 0.026, -0.112), (-0.030, 0.034, -0.100), WHITE),
+    ("pant-right",        "leg-right", (-0.150, 0.068, -0.072), (-0.018, 0.232, 0.072), CLOTH),
+    ("pant-cuff-right",   "leg-right", (-0.154, 0.068, -0.078), (-0.014, 0.086, 0.078), CLOTH),
+    ("knee-right",        "leg-right", (-0.142, 0.128, -0.080), (-0.026, 0.164, -0.070), CLOTH),
+]
+
 # Waist at 0.240, shoulders at 0.452, neck at 0.505.
 TORSO = [
-    # ⚠️⚠️ EVERY DETAIL STANDS PROUD OF WHAT IT SITS ON, BY AT LEAST 12 mm BEFORE THE
-    # 2.38 SCALE, and that is the difference between this reading as a voxel character
-    # and reading as a printed texture. 🧑 on the first pass: *"make sure u dnt just
-    # paste the texture"*. Depth is what a flat map cannot fake, and the inverted-hull
-    # ink outline in `ToonSkin` draws a border around each step, so a detail that pops
-    # gets its own outline for free. A buckle flush with the belt gets neither, and at
-    # arena distance it stops existing.
-    #
-    # ⚠️ THE JACKET IS WIDE AND THE SHIRT IS A NARROW STRIP DOWN THE MIDDLE, which is
-    # the read in the reference and the opposite of the first pass. With narrow lapels
-    # the character was a black torso with purple piping, which at arena distance is a
-    # black torso.
-    ("shirt",         "torso", (-0.100, 0.232, -0.082), (0.100, 0.445, 0.078), CLOTH),
-    ("jacket-left",   "torso", (0.048, 0.232, -0.100), (0.138, 0.445, 0.092), JACKET),
-    ("jacket-right",  "torso", (-0.138, 0.232, -0.100), (-0.048, 0.445, 0.092), JACKET),
-    ("jacket-back",   "torso", (-0.138, 0.232, 0.076), (0.138, 0.445, 0.092), JACKET),
-    ("jacket-collar", "torso", (-0.142, 0.420, -0.106), (0.142, 0.445, 0.098), JACKET_DARK),
-    ("lapel-left",    "torso", (0.032, 0.372, -0.108), (0.056, 0.445, -0.088), JACKET_DARK),
-    ("lapel-right",   "torso", (-0.056, 0.372, -0.108), (-0.032, 0.445, -0.088), JACKET_DARK),
+    ("shirt",              "torso", (-0.100, 0.232, -0.082), (0.100, 0.445, 0.078), CLOTH),
+    ("jacket-left",        "torso", (0.048, 0.232, -0.100), (0.138, 0.445, 0.092), JACKET),
+    ("jacket-right",       "torso", (-0.138, 0.232, -0.100), (-0.048, 0.445, 0.092), JACKET),
+    ("jacket-back",        "torso", (-0.138, 0.232, 0.076), (0.138, 0.445, 0.092), JACKET),
+    ("jacket-collar",      "torso", (-0.142, 0.420, -0.106), (0.142, 0.445, 0.098), JACKET_DARK),
+    ("jacket-back-collar", "torso", (-0.140, 0.420, 0.082), (0.140, 0.445, 0.098), JACKET_DARK),
+    ("lapel-left",         "torso", (0.032, 0.372, -0.108), (0.056, 0.445, -0.088), JACKET_DARK),
+    ("lapel-right",        "torso", (-0.056, 0.372, -0.108), (-0.032, 0.445, -0.088), JACKET_DARK),
 
-    ("belt",          "torso", (-0.106, 0.232, -0.092), (0.106, 0.262, 0.086), CLOTH),
-    # ⚠️ THE BUCKLE IS A RING, NOT A SLAB. The render draws a square gold frame with the
-    # belt showing through the middle, and a solid gold rectangle at this size reads as a
-    # sticker. The centre is a CLOTH box standing proud of the gold, which is cheaper
-    # than four bars and gives the hole its own outline.
-    ("buckle",        "torso", (-0.038, 0.226, -0.108), (0.038, 0.268, -0.090), GOLD),
-    ("buckle-hole",   "torso", (-0.022, 0.236, -0.114), (0.022, 0.258, -0.098), CLOTH),
+    ("belt",               "torso", (-0.106, 0.232, -0.092), (0.106, 0.262, 0.086), CLOTH),
+    ("buckle",             "torso", (-0.038, 0.226, -0.108), (0.038, 0.268, -0.090), GOLD),
+    ("buckle-hole",        "torso", (-0.022, 0.236, -0.114), (0.022, 0.258, -0.098), CLOTH),
 
     # The necklace: two strands to the collarbone and a cross hanging off them.
-    ("chain-left",    "torso", (0.024, 0.386, -0.098), (0.040, 0.428, -0.080), CHAIN),
-    ("chain-right",   "torso", (-0.040, 0.386, -0.098), (-0.024, 0.428, -0.080), CHAIN),
-    ("cross-stem",    "torso", (-0.012, 0.342, -0.102), (0.012, 0.390, -0.080), JACKET),
-    ("cross-arm",     "torso", (-0.030, 0.366, -0.102), (0.030, 0.380, -0.080), JACKET),
+    ("chain-left",         "torso", (0.024, 0.386, -0.098), (0.040, 0.428, -0.080), CHAIN),
+    ("chain-right",        "torso", (-0.040, 0.386, -0.098), (-0.024, 0.428, -0.080), CHAIN),
+    ("cross-stem",         "torso", (-0.012, 0.342, -0.102), (0.012, 0.390, -0.080), JACKET),
+    ("cross-arm",          "torso", (-0.030, 0.366, -0.102), (0.030, 0.380, -0.080), JACKET),
 
-    # ⚠️ THE DETAIL PASS. 🧑 on the build before this one: *"i liek what u made actually,
-    # it looks cuter, i just want u to fix the details bcz it isnt very detailed"*. These
-    # are all RAISED, unlike the face, because that is the rule everywhere except a face:
-    # a pocket flush with a jacket is a colour change that the palette flattens away,
-    # and a pocket standing 12 mm off it gets its own ink outline for free.
-    ("pocket-left",   "torso", (0.062, 0.268, -0.112), (0.126, 0.316, -0.094), JACKET_DARK),
-    ("pocket-right",  "torso", (-0.126, 0.268, -0.112), (-0.062, 0.316, -0.094), JACKET_DARK),
-    ("hem-left",      "torso", (0.048, 0.232, -0.106), (0.142, 0.252, 0.096), JACKET_DARK),
-    ("hem-right",     "torso", (-0.142, 0.232, -0.106), (-0.048, 0.252, 0.096), JACKET_DARK),
-    ("collar-stud",   "torso", (0.030, 0.424, -0.116), (0.052, 0.440, -0.098), GOLD),
-    ("zip-pull",      "torso", (-0.008, 0.300, -0.096), (0.008, 0.330, -0.084), CHAIN),
+    ("pocket-left",        "torso", (0.062, 0.268, -0.112), (0.126, 0.316, -0.094), JACKET_DARK),
+    ("pocket-right",       "torso", (-0.126, 0.268, -0.112), (-0.062, 0.316, -0.094), JACKET_DARK),
+    ("hem-left",           "torso", (0.048, 0.232, -0.106), (0.142, 0.252, 0.096), JACKET_DARK),
+    ("hem-right",          "torso", (-0.142, 0.232, -0.106), (-0.048, 0.252, 0.096), JACKET_DARK),
+    ("collar-stud",        "torso", (0.030, 0.424, -0.116), (0.052, 0.440, -0.098), GOLD),
+    ("zip-pull",           "torso", (-0.008, 0.300, -0.096), (0.008, 0.330, -0.084), CHAIN),
 ]
 
 # ⚠️ THE ARM BOXES ARE CENTRED ON THE SHOULDER'S OWN Y (0.452) BECAUSE THE BIND POSE
 # IS A T-POSE: the limb runs along X, not down. Its vertical extent is thickness.
 ARM_LEFT = [
-    # ⚠️⚠️ THE SLEEVE IS SHORT AND THE BARE ARM IS THE LONGER HALF. 🧑 comparing the
-    # first build to the reference: *"purple dude doesnt have sleeves"* and *"whyd u
-    # use osmoene with fat ass sleeves"*. That version ran the jacket almost to the
-    # wrist with a small hand on the end, which is the BASE rig's silhouette and not
-    # this character's: the reference stops the sleeve near the elbow and the forearm
-    # and hand are one long bare block, roughly 45 percent sleeve to 55 percent skin.
-    #
-    # ⚠️⚠️ AND THE ARM TAPERS NOW, WHICH IS THE WHOLE OF *"fat ass arms"*. 🧑 2026-08-18.
-    # The complaint sounds like a thickness one and the measurement says it is not: this
-    # arm was 132 mm at the shoulder against the cast's 161, so it was the LEANER of the
-    # two everywhere it was compared. What it did not do is get thinner. Cross-sections
-    # along x, this arm against `character-female-b` and `character-male-a`, which are
-    # the same arm:
-    #
-    #            shoulder      mid        wrist      fingertip
-    #     cast   161 x 150   161 x 150   111 x  9    111 x 20
-    #     was    132 x 146   138 x 166   136 x 158   123 x 142
-    #
-    # A Kenney arm sheds two thirds of its section at the wrist and ends in a small flat
-    # paddle. This one carried a 142 mm block all the way to the fingertip, so it read as
-    # one solid slab from shoulder to hand however lean the numbers were. The sleeve grows
-    # toward the cast and the hand loses its depth, which is the taper rather than a
-    # uniform slimming: slimming it further would have made it worse.
-    ("sleeve-left", "arm-left", (0.0999, 0.330, -0.066), (0.226, 0.470, 0.084), JACKET),
-    # A raised band, not a colour change on the sleeve. Same rule as the buckle: it
-    # needs an edge or the outline pass has nothing to draw. 6 mm proud of the sleeve
-    # on every face.
-    ("cuff-left",   "arm-left", (0.226, 0.324, -0.072), (0.248, 0.476, 0.090), JACKET_DARK),
-
-    # ⚠️⚠️ THE HAND'S HEIGHT IS NOT A STYLING CHOICE, IT IS WHERE THE TSINELAS SITS.
-    # `CharacterVisual.BuildHandAnchor` puts a carried shoe at the palm centre plus
-    # `HandTopLift`, which is 0.0617 measured against the Kenney hand, and that one
-    # constant serves all twelve people. The palm centre lands on this box's centre, so
-    # the box's TOP has to sit 0.0617 above that centre or the shoe is buried in the
-    # hand. An earlier build made a chunkier mitt and buried it by 11 mm, which is the
-    # failure the Godot side reported as *"its almost on the arm, js phasing a bit thru
-    # it"*.
-    #
-    #   shoulder Y 0.400, so 0.400 - 0.0617 = 0.3383 to 0.400 + 0.0617 = 0.4617.
-    #
-    # `PersonSwapProbe` re-derives this from the built mesh and fails on it, so the
-    # arithmetic is checked rather than trusted.
-    #
-    # ⚠️⚠️ SO THE TAPER IS IN Z ONLY, AND THE Z STAYS CENTRED ON +0.009. The anchor averages
-    # the far eighth of everything weighted to this bone, which in that range is this box
-    # alone, so its CENTRE is the palm and its extent is not. Y is spoken for by the lift
-    # above and cannot move; z is free as long as the centre does not, and shrinking it
-    # from 142 mm to 58 mm around that same centre is what turns the slab into a hand while
-    # leaving the anchor where the probe measured it at 0.0 mm.
-    ("hand-left",   "arm-left", (0.248, 0.3383, -0.020), (0.3836, 0.4617, 0.038), SKIN_LIT),
-
-    # A band on the wrist and a stripe down the sleeve. Both raised, both on the arm's
-    # OUTER faces, so they read from the side where the jacket front never does.
-    #
-    # ⚠️ THE BAND FOLLOWS THE HAND, NOT THE SLEEVE. It was 158 mm deep around what is now a
-    # 58 mm wrist, which is a hoop standing in mid air on both sides of the arm. 6 mm proud
-    # of the hand, the same margin the cuff keeps against the sleeve.
-    ("wristband-left", "arm-left", (0.256, 0.3323, -0.026), (0.284, 0.4677, 0.044), CLIP),
+    ("sleeve-left",        "arm-left", (0.0999, 0.330, -0.066), (0.226, 0.470, 0.084), JACKET),
+    ("cuff-left",          "arm-left", (0.226, 0.324, -0.072), (0.248, 0.476, 0.090), JACKET_DARK),
+    ("hand-left",          "arm-left", (0.248, 0.3383, -0.020), (0.3836, 0.4617, 0.038), SKIN_LIT),
+    ("wristband-left",     "arm-left", (0.256, 0.3323, -0.026), (0.284, 0.4677, 0.044), CLIP),
     ("sleeve-stripe-left", "arm-left", (0.120, 0.4660, -0.052), (0.222, 0.4740, 0.070), JACKET_DARK),
 ]
 
-# ⚠️⚠️ THE SKULL IS NOT AUTHORED ANY MORE, AND NEITHER IS THE HAIR. 🧑 2026-08-18, after
-# four passes of hand-building the head: *"cant u js copy someone's face and change it a bit
-# to match our model?"*, *"pls copy face shape too bcz the one we're manually doing sucks"*,
-# *"js edit the hair or smth idk"*. Then, on the first build that donated only the skull:
-# *"yea hair doesnt loom good still"*, *"pls imrpove"*.
-#
-# He is right both times, and the reason is structural rather than a lack of care. A Kenney
-# head is a smooth low-poly ovoid with real ears and a face drawn as its own geometry, and
-# its hair is a second shell moulded to that ovoid; every attempt to reproduce either out of
-# chamfered cuboids got closer and stayed obviously hand-made, because they are different
-# construction methods and only one of them is what the other eleven characters ARE.
-# `Art_Direction.md` §4 already states the rule: **a character is a rig plus a palette,
-# never a new model**.
-#
-# ⚠️⚠️ AND THE SECOND DONATION IS WHAT MADE ROOM FOR THE FIRST ONE'S HAIR. Every rig in this
-# set is built the same way, which `_donor_part` made visible once it could be asked by
-# slot:
-#
-#     the skull, on all twelve   y 0.3432 .. 0.6613   |x| 0.2268 (the ears)   one shell
-#     the hair, where there is   y 0.3932 .. 0.6713+  |x| 0.1700              a second
-#
-# `character-male-d` was chosen as the donor BECAUSE he is bare-headed, and that reading was
-# exactly backwards. He is not missing the second shell, he WEARS it in skin: his slot 13
-# runs y 0.3932 to 0.7218, which is the hair volume, painted as a bald pate. So the hand-
-# built mop had to sit on top of a skull that already filled the space the mop needed, the
-# rig ceiling is 8 mm above it, and what came out was a cap 20 mm thick floating on a
-# forehead. No amount of moving those boxes was going to fix that.
-#
-# Dropping slot 13 and donating a real hair shell in its place is the whole fix. The mop is
-# `character-male-a`'s slot 8, which is 153 vertices of pure hair moulded to the same ovoid,
-# and it drops in at 1:1 for the same reason the skull did.
-#
-# ⚠️ DROPPING SLOT 13 IS SAFE AND THE NOTE THAT SAID OTHERWISE WAS WRONG. It read *"an
-# earlier attempt dropped 13 on the theory it was the donor's hair; dropping one took the
-# jaw and half the ears with it"*. Measured rather than remembered: slot 15 alone spans
-# y 0.3432 to 0.6613 at |x| 0.2268, so it carries the jaw AND both ears on its own. That
-# session dropped 13, saw a broken jaw, and blamed the drop. The jaw was being eaten by the
-# mouth bend at the same time (see `_donor_head`), and the two were never separated.
-#
-# So `HEAD` is now the crimson and the jewellery ONLY: four plates and an earring, each
-# measured onto a surface this file no longer authors.
 HEAD = [
-    # -----------------------------------------------------------------------------------
-    # § THE MOP, AUTHORED AGAINST THE REFERENCE ART AND NOT AGAINST ANOTHER RIG.
-    #
-    # ⚠️⚠️ THE HAIR IS THE ONE PART OF THIS CHARACTER THAT IS NOT A DONATION, AND THAT IS
-    # DELIBERATE NOW RATHER THAN LEFTOVER. The skull, ears and face come off a CC0 rig
-    # because a Kenney head is a smooth ovoid this file cannot build. The hair went the same
-    # way for one build and came back: 🧑 *"that hair looks ugly hjaahah"*, then the specific
-    # fault, *"the hairs sucks shiiit why does it have bangs"*. Every donated hair shell in
-    # this set is a SCALLOPED FRINGE across the brow, because that is the haircut those
-    # characters have, and a box laid over the scallops only replaces them with a straight
-    # cut. This character's reference has no fringe.
-    #
-    # ⚠️⚠️ IT IS VOLUME ON TOP OVER TRIMMED SIDES, NOT A BALL. The pass before this one grew
-    # the whole mass outward at once and 🧑 named it: *"pic 2 makes it look like an afro which
-    # it isnt"*, *"maybe trim sides or smth and make it look cleaner"*. In the reference the
-    # sides sit close to the skull, barely past it, and everything the silhouette does
-    # happens above the temple. So the sides clear the skull by 26 mm where they used to
-    # clear it by 46, the two lumps that bulged at hip height on the head are gone, and the
-    # four that are left are all on the crown.
-    #
-    # ⚠️ FOUR LUMPS, NOT EIGHT, AND ALL OF THEM ON TOP. *"make it look cleaner"*: lumps
-    # scattered over the whole mass read as damage rather than as texture. On the crown they
-    # read as the messy top the reference has, and the chamfer rounds each one.
-    #
-    # ⚠️⚠️ EVERY NUMBER IS IN THE DONATED HEAD'S OWN SPACE (`DONOR_SPACE`). The skull is
-    # y 0.3432 to 0.6613 at |x| 0.170, z -0.1624 to 0.1576, and the EARS reach 0.2268 at
-    # y 0.392 to 0.484.
-    #
-    # ⚠️ NOTHING COMES BELOW y 0.500, WHICH CLEARS THE TOP OF THE EAR BY 16 MM. Hair over the
-    # ears buried them for three builds and the earring hangs off one of them.
-    ("hair-core",    "head", (-0.184, 0.585, -0.198), (0.184, 0.714, 0.188), HAIR),
-    ("hair-back",    "head", (-0.180, 0.480, -0.234), (0.180, 0.700, -0.170), HAIR),
-    ("hair-front",   "head", (-0.176, 0.560, 0.132), (0.176, 0.700, 0.202), HAIR),
+    ("hair-core",       "head", (-0.184, 0.585, -0.198), (0.184, 0.714, 0.188), HAIR),
+    ("hair-back",       "head", (-0.180, 0.480, -0.234), (0.180, 0.700, -0.170), HAIR),
+    ("hair-front",      "head", (-0.176, 0.560, 0.132), (0.176, 0.700, 0.202), HAIR),
     ("hair-side-left",  "head", (0.168, 0.500, -0.186), (0.196, 0.668, 0.140), HAIR),
     ("hair-side-right", "head", (-0.196, 0.500, -0.186), (-0.168, 0.668, 0.140), HAIR),
 
-    ("hair-curl-a",  "head", (-0.150, 0.704, -0.130), (-0.036, 0.754, 0.020), HAIR),
-    ("hair-curl-b",  "head", (0.020, 0.708, -0.060), (0.128, 0.758, 0.070), HAIR),
-    ("hair-curl-c",  "head", (-0.184, 0.694, 0.050), (-0.086, 0.742, 0.168), HAIR),
-    ("hair-curl-d",  "head", (-0.066, 0.698, -0.226), (0.058, 0.746, -0.140), HAIR),
+    # Subtle sideburns framing the jawline in front of ears
+    ("sideburn-left",   "head", (0.164, 0.420, -0.040), (0.182, 0.500, 0.025), HAIR),
+    ("sideburn-right",  "head", (-0.182, 0.420, -0.040), (-0.164, 0.500, 0.025), HAIR),
 
-    # § THE CRIMSON FORELOCK.
-    #
-    # ⚠️⚠️ IT IS A MASS, NOT A STRIPE, AND EVERY EARLY PASS UNDERSOLD IT. The reference puts a
-    # single big swept lock over roughly the top-front third of the hair: it starts low at the
-    # front on one side, rises over the crown and runs out toward the back. Drawn as thin
-    # plates it read as a headband, and drawn small it vanished on the cast sheet.
-    ("dye-fore-a",   "head", (-0.030, 0.626, 0.098), (0.186, 0.750, 0.226), CLIP),
-    ("dye-fore-b",   "head", (0.030, 0.694, -0.050), (0.190, 0.766, 0.104), CLIP),
-    ("dye-fore-c",   "head", (0.086, 0.678, -0.170), (0.192, 0.744, -0.040), CLIP),
-    ("dye-lick",     "head", (-0.086, 0.592, 0.162), (0.036, 0.660, 0.232), CLIP),
+    ("hair-curl-a",     "head", (-0.150, 0.704, -0.130), (-0.036, 0.754, 0.020), HAIR),
+    ("hair-curl-b",     "head", (0.020, 0.708, -0.060), (0.128, 0.758, 0.070), HAIR),
+    ("hair-curl-c",     "head", (-0.184, 0.694, 0.050), (-0.086, 0.742, 0.168), HAIR),
+    ("hair-curl-d",     "head", (-0.066, 0.698, -0.226), (0.058, 0.746, -0.140), HAIR),
 
-    # ⚠️ AND IT REACHES THE SIDES. 🧑: *"u should give the sides somme color too"*. With the
-    # lock only on the crown and the front, the side view was the one angle with no crimson in
-    # it at all, which is the angle a player sees most of somebody running past them. These
-    # two sit on the side faces at 0.196, the trimmed width above, so they are plates on the
-    # hair rather than a second bulge.
-    #
-    # ⚠️ THE +X ONE IS THE BIGGER, and that is the same asymmetry the lock has: the character
-    # keeps one loud side. Matching them exactly would read as a hairband again.
-    ("dye-side-left",  "head", (0.188, 0.596, -0.070), (0.208, 0.684, 0.128), CLIP),
-    ("dye-side-right", "head", (-0.208, 0.618, 0.010), (-0.188, 0.676, 0.126), CLIP),
+    # § THE CRIMSON FORELOCK
+    ("dye-fore-a",      "head", (-0.030, 0.626, 0.098), (0.186, 0.750, 0.226), CLIP),
+    ("dye-fore-b",      "head", (0.030, 0.694, -0.050), (0.190, 0.766, 0.104), CLIP),
+    ("dye-fore-c",      "head", (0.086, 0.678, -0.170), (0.192, 0.744, -0.040), CLIP),
+    ("dye-lick",        "head", (-0.086, 0.592, 0.162), (0.036, 0.660, 0.232), CLIP),
 
-    # ⚠️⚠️ ONE EAR ONLY, MEASURED OFF THE DONOR'S ACTUAL EAR. 🧑: *"add earrings to one ear"*,
-    # then *"the earring is floating haha ... look the side"*. The first pass hung it off the
-    # ear's lowest BOUND, but a bbox is not the mesh and the lobe tapers, so at that z the
-    # ear had already ended. It overlaps the ear body now and the drop overlaps the hoop.
-    #
-    # ⚠️ GOLD, NOT CHAIN. The buckle and the collar stud are already gold; a third metal on
-    # one character is a palette slot spent on something nobody can see at this size.
-    ("earring-hoop", "head", (0.198, 0.470, -0.084), (0.226, 0.496, -0.054), GOLD),
-    ("earring-drop", "head", (0.204, 0.448, -0.078), (0.220, 0.474, -0.060), GOLD),
+    # Integrated side sweep on the dyed side (+X, character's left)
+    ("dye-side-left",   "head", (0.176, 0.600, -0.050), (0.198, 0.690, 0.130), CLIP),
+
+    # Subtle nonchalant gold huggie earring piercing through the center of the left earlobe
+    ("earring-hoop",    "head", (0.190, 0.385, -0.045), (0.214, 0.420, 0.005), GOLD),
+    ("earring-drop",    "head", (0.197, 0.355, -0.030), (0.207, 0.385, -0.010), GOLD),
 ]
 
 # Boxes authored in the donated head's own space. See `_family` and the block above.
 DONOR_SPACE = (
     "hair-core", "hair-back", "hair-front", "hair-side-left", "hair-side-right",
+    "sideburn-left", "sideburn-right",
     "hair-curl-a", "hair-curl-b", "hair-curl-c", "hair-curl-d",
     "dye-fore-a", "dye-fore-b", "dye-fore-c", "dye-lick",
-    "dye-side-left", "dye-side-right",
+    "dye-side-left",
     "earring-hoop", "earring-drop",
 )
 
@@ -617,7 +465,7 @@ def _family(boxes, head, as_authored=()):
     return out
 
 
-BODY_BOXES = (LEG_LEFT + mirrored(LEG_LEFT, "leg-left", "leg-right")
+BODY_BOXES = (LEG_LEFT + LEG_RIGHT
               + TORSO
               + ARM_LEFT + mirrored(ARM_LEFT, "arm-left", "arm-right"))
 HEAD_BOXES = HEAD

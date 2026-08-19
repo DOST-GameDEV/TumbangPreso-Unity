@@ -367,6 +367,12 @@ namespace TumbangPreso.UI
         private readonly System.Collections.Generic.Dictionary<string, MapEnvironment> _envs =
             new System.Collections.Generic.Dictionary<string, MapEnvironment>();
 
+        public void ReapplyEnvironment()
+        {
+            if (!string.IsNullOrEmpty(_showing))
+                ApplyMapEnvironment(_showing);
+        }
+
         private void ApplyMapEnvironment(string map)
         {
             if (!_envs.TryGetValue(map, out var env))

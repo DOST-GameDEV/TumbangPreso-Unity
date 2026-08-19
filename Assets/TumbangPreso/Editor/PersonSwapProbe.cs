@@ -76,11 +76,7 @@ namespace TumbangPreso.EditorTools
             ("no", new[] { "emote-no", "interact-left" }),
             ("sit", new[] { "sit", "crouch" }),
             ("crouch", new[] { "crouch", "sit" }),
-            // ⚠️ § THE DANCE IS GENERATED, NOT IMPORTED, so its chain names a clip no rig ships
-            // and this probe cannot resolve it by reading the asset. `idle` is the fallback the
-            // chain ends on, which is what a rig with no skeleton to build the dance for would
-            // land on too.
-            ("dance", new[] { "generated-dance", "idle" }),
+            ("dead", new[] { "die", "crouch" }),
             ("tpose", new[] { "static", "idle" }),
             ("bow", new[] { "pick-up", "interact-right" }),
         };
@@ -101,6 +97,8 @@ namespace TumbangPreso.EditorTools
             report.AppendLine();
 
             bool ok = true;
+            AssetDatabase.ImportAsset(NewModel, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
 
             ok &= CheckAsset(report);
             ok &= CheckRoster(report);

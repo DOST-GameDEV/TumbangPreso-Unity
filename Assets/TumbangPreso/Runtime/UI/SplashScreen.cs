@@ -120,16 +120,37 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// ⚠️ THE MENU IS LOADED BUT NOT ACTIVATED. `allowSceneActivation = false` holds it at
-        /// 90% until the animation is over, so the whole load happens behind the sting instead
-        /// of after it.
+        /// ⚠️ THE MENU AND ASSETS ARE PRELOADED. `allowSceneActivation = false` holds the menu at
+        /// 90% until the animation is over, and shaders/roster assets are pre-warmed so clicking
+        /// Single Player or Character Select is instant with zero stutter.
         /// </summary>
         private void BeginPreload()
         {
-            if (!Application.CanStreamedLevelBeLoaded(SceneFlow.MainMenu)) return;
+            if (Application.CanStreamedLevelBeLoaded(SceneFlow.MainMenu))
+            {
+                _menu = SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
+                if (_menu != null) _menu.allowSceneActivation = false;
+            }
 
-            _menu = SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
-            if (_menu != null) _menu.allowSceneActivation = false;
+            StartCoroutine(PreloadGameAssets());
+        }
+
+        private IEnumerator PreloadGameAssets()
+        {
+            // 1. Warm up shaders across all materials
+            Shader.WarmupAllShaders();
+            yield return null;
+
+            // 2. Pre-load RosterBook (models, rigs, materials)
+            _ = RosterBook.Load();
+            yield return null;
+
+            // 3. Pre-load Settings & Roster tables
+            _ = Settings.SettingsStore.Current;
+            _ = Roster.People;
+            _ = Roster.Cans;
+            _ = Roster.Slippers;
+            yield return null;
         }
 
         private static bool AnyInput() =>

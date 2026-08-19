@@ -825,16 +825,27 @@ namespace TumbangPreso.UI
             foreach (Transform child in go.transform) SetLayerRecursively(child.gameObject, layer);
         }
 
+        private void OnDisable()
+        {
+            RestoreAmbient();
+        }
+
         private void OnDestroy()
         {
             if (_texture != null) _texture.Release();
             if (_pivot != null) Destroy(_pivot.gameObject);
 
+            RestoreAmbient();
+        }
+
+        private void RestoreAmbient()
+        {
             if (!_ambientSaved) return;
 
             RenderSettings.ambientMode = _savedAmbientMode;
             RenderSettings.ambientLight = _savedAmbient;
             RenderSettings.ambientIntensity = _savedAmbientIntensity;
+            _ambientSaved = false;
         }
     }
 }
