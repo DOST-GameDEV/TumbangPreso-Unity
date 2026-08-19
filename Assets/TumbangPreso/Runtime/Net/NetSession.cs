@@ -334,6 +334,7 @@ namespace TumbangPreso.Net
             {
                 _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(), Lobby.PeerCount, Lobby.MatchInProgress);
             }
+            MatchRpc.Instance?.HostLateJoin((int)clientId);
             SetStatus($"{Lobby.PeerCount} connected, seat {record.Seat}");
         }
 
@@ -343,7 +344,7 @@ namespace TumbangPreso.Net
             {
                 // ⚠️ THE SEAT IS HELD, NOT FREED, so a reconnecting player gets their own chair
                 // back rather than finding a stranger in it holding their score.
-                Lobby.Depart((int)clientId);
+                MatchRpc.Instance?.HostPeerLeft((int)clientId);
                 _beacon.Players = Lobby.PeerCount;
                 if (Query != null && IsRelay)
                 {

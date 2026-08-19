@@ -408,11 +408,11 @@ namespace TumbangPreso.Net
         }
 
         // -------------------------------------------------------------------
-        // LATE JOIN
+        // LATE JOIN AND DISCONNECT (N9)
         // -------------------------------------------------------------------
 
         /// <summary>
-        /// A peer that arrives mid-match.
+        /// A peer that arrives mid-match or reconnects to reclaim a seat.
         ///
         /// ⚠️ IT IS SPAWNED ONCE AND ONLY ONCE. The original guards on a spawned-peer set
         /// because the connect and the identify both fire, and a peer spawned twice is two
@@ -423,6 +423,22 @@ namespace TumbangPreso.Net
             if (!NetAuthority.IsHost) return;
             if (!_spawned.Add(peerId)) return;
 
+            var lobby = NetSession.Instance?.Lobby;
+            var peerRecord = lobby?.PeerInSeat(peerId);
+            if (peerRecord != null && peerRecord.Seat >= 0)
+            {
+                var unit = Unit(peerRecord.Seat);
+                if (unit != null)
+                {
+                    // Reclaiming seat: remove AI controller if it was active
+                    var ai = unit.GetComponent<AIController>();
+                    if (ai != null) Destroy(ai);
+
+                    unit.IsBot = false;
+                    unit.PlayerName = peerRecord.Name;
+                }
+            }
+
             // The joiner needs the whole world state, not just its own seat.
             BroadcastWorldSnapshot();
         }
@@ -432,7 +448,32 @@ namespace TumbangPreso.Net
             if (!NetAuthority.IsHost) return;
 
             _spawned.Remove(peerId);
+
+            var lobby = NetSession.Instance?.Lobby;
+            if (lobby != null)
+            {
+                var peer = lobby.PeerInSeat(peerId);
+                int seat = peer != null ? peer.Seat : -1;
+
+                lobby.Depart(peerId);
+
+                // AI takeover on the disconnected peer's seat so match continues smoothly
+                if (seat >= 0)
+                {
+                    var unit = Unit(seat);
+                    if (unit != null)
+                    {
+                        unit.IsBot = true;
+                        if (unit.GetComponent<AIController>() == null)
+                        {
+                            unit.gameObject.AddComponent<AIController>();
+                        }
+                    }
+                }
+            }
+
             FindFirstObjectByType<ReadyGate>()?.OnPeerLeft(peerId);
+            BroadcastWorldSnapshot();
         }
 
         private readonly System.Collections.Generic.HashSet<int> _spawned =

@@ -550,5 +550,63 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(50, board[3]);
             Assert.AreEqual(750, board.Total);
         }
+
+        // -------------------------------------------------------------------
+        // DISCONNECT, SEAT RECLAIM, AND ARRIVAL RULINGS (N9)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void DisconnectMidMatchHoldsSeatForTokenAndAllowsReclaim()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(42));
+            lobby.StartMatch(); // MatchInProgress = true
+
+            var p1 = lobby.Admit(1, "token-p1", "Player 1");
+            var p2 = lobby.Admit(2, "token-p2", "Player 2");
+            Assert.AreEqual(0, p1.Seat);
+            Assert.AreEqual(1, p2.Seat);
+
+            // Player 2 disconnects mid-match
+            lobby.Depart(2);
+
+            // Seat 1 should still be considered occupied (held for reconnect)
+            Assert.IsTrue(lobby.IsSeatOccupied(1), "Disconnected seat must remain held during match");
+            Assert.AreEqual(MidMatchRuling.Reclaim, lobby.RuleOnArrival("token-p2"), "Original token must get Reclaim ruling");
+
+            // A new player arrives mid-match
+            var p3 = lobby.Admit(3, "token-p3", "Player 3");
+            Assert.AreEqual(2, p3.Seat, "Newcomer should receive first unheld free seat, not the held seat");
+
+            // Player 2 reconnects
+            var p2Reconnected = lobby.Admit(4, "token-p2", "Player 2");
+            Assert.AreEqual(1, p2Reconnected.Seat, "Reconnecting player must reclaim their original seat");
+        }
+
+        [Test]
+        public void ArrivalRulingOrdersReclaimBeforeFreeSeatAndSpectate()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(42));
+            lobby.StartMatch();
+
+            // Fill all 4 seats
+            lobby.Admit(1, "t1", "P1");
+            lobby.Admit(2, "t2", "P2");
+            lobby.Admit(3, "t3", "P3");
+            lobby.Admit(4, "t4", "P4");
+
+            // 5th player arrives while match is full
+            Assert.AreEqual(MidMatchRuling.Spectate, lobby.RuleOnArrival("t5"));
+            var spec = lobby.Admit(5, "t5", "P5");
+            Assert.IsTrue(spec.Spectator);
+            Assert.AreEqual(-1, spec.Seat);
+
+            // One player disconnects
+            lobby.Depart(3); // frees/holds seat 2 for t3
+
+            // Newcomer gets seat 2 if admitted before t3 returns
+            Assert.AreEqual(MidMatchRuling.Reclaim, lobby.RuleOnArrival("t3"));
+        }
     }
 }

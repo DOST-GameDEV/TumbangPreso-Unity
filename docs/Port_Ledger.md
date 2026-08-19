@@ -878,7 +878,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `audio_manager.gd` | 1125 | `AudioDirector` + `AudioCues` + `MusicDirector` (382) | PARTIAL |
 | `round_manager.gd` | 476 | `RoundDirector.cs` (219) | PARTIAL |
 | `match_manager.gd` | 217 | `MatchDirector.cs` (97) | PARTIAL |
-| `network_manager.gd` | 1413 | `NetSession` + `LobbySession` + `MatchRpc` + `NetAuthority` + `NetBootstrap` + `NetIdentity` (1500) | PARTIAL: N0-N8 complete (NGO+UGS locked, NetIdentity wired, LanBeacon converted, Relay host/client + UGS Lobby integrated, Lobby UI converted, spawning/seating/write permissions wired, Ready gate networked, prop/match replication & late-join sync wired); N9 Disconnect and seat reclaim pending |
+| `network_manager.gd` | 1413 | `NetSession` + `LobbySession` + `MatchRpc` + `NetAuthority` + `NetBootstrap` + `NetIdentity` (1500) | PARTIAL: N0-N9 complete (NGO+UGS locked, NetIdentity wired, LanBeacon converted, Relay host/client + UGS Lobby integrated, Lobby UI converted, spawning/seating/write permissions wired, Ready gate networked, prop/match replication & late-join sync wired, disconnect/AI takeover/seat reclaim wired); N10 Dedicated server pending |
 | `lan_beacon.gd` | 323 | `LanBeacon.cs` (270) | CONVERTED (N2): multi-interface subnet broadcast via NetworkInterface, signature change events, and joinable/fill sorting |
 | `server_query.gd` | 536 | `ServerQuery.cs` (340) | CONVERTED (N4): legacy VPS pool retired, UGS Lobby discovery with LAN-first code resolution, distinct seated/occupied counts |
 | `game_launch.gd` | 301 | `GameLaunch.cs` (108) | CONVERTED: map registry, pending action, seating |
