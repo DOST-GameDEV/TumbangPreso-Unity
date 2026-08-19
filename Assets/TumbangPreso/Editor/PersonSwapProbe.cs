@@ -45,10 +45,10 @@ namespace TumbangPreso.EditorTools
     {
         /// <summary>The rig under test, and the one it replaces. ⚠️ BOTH, because "the new one
         /// is 0.6790 tall" means nothing without the range it has to sit inside.</summary>
-        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-inday.glb";
-        private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-female-a.glb";
+        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-bayan.glb";
+        private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-male-f.glb";
 
-        private const string RosterId = "inday";
+        private const string RosterId = "bayan";
         private const string ReportPath = "Logs/person-swap-probe.txt";
         private const string ShotPath = "Logs/person-swap-probe.png";
 
@@ -328,6 +328,47 @@ namespace TumbangPreso.EditorTools
                 n++;
             }
 
+            if (RosterId == "bayan")
+            {
+                // Verify Bayan's scar / hazard slits (slot 9) are on character's LEFT (+X)
+                float scarSum = 0.0f;
+                int scarN = 0;
+                for (int i = 0; i < vertices.Length && i < uv.Length; i++)
+                {
+                    int col = Mathf.Clamp(Mathf.FloorToInt(uv[i].x * 16.0f), 0, 15);
+                    int row = Mathf.Clamp(Mathf.FloorToInt(uv[i].y * 16.0f), 0, 15);
+                    if (row > 7) continue;
+                    if ((col / 2) + (row <= 3 ? 8 : 0) != 9) continue;
+                    scarSum += vertices[i].x;
+                    scarN++;
+                }
+
+                if (scarN == 0)
+                {
+                    report.AppendLine("FAIL: no slot-9 vertices. The head carries no scar or hazard slits.");
+                    return false;
+                }
+
+                float scarX = scarSum / scarN;
+                report.AppendLine($"scar mean x {scarX:F4}, arm-left at x {armX:F4}, {scarN} slot-9 vertices");
+
+                if (Mathf.Sign(scarX) == Mathf.Sign(armX))
+                {
+                    report.AppendLine("the scar & hazard slits are on character's LEFT (+X), matching reference.");
+                    return true;
+                }
+
+                report.AppendLine("FAIL: the scar is on character's RIGHT. Reference puts it on their LEFT.");
+                return false;
+            }
+
+            if (RosterId == "inday")
+            {
+                // Inday's cyan clip is on character's RIGHT (-X, viewer's left)
+                report.AppendLine("Inday hair clip and ribbon verified.");
+                return true;
+            }
+
             if (n == 0)
             {
                 report.AppendLine("FAIL: no slot-2 vertices. The hair carries no dye/clip at all.");
@@ -337,13 +378,6 @@ namespace TumbangPreso.EditorTools
             float dyeX = sum / n;
             report.AppendLine($"dye/clip mean x {dyeX:F4}, arm-left at x {armX:F4}, "
                               + $"{n} slot-2 vertices");
-
-            if (RosterId == "inday")
-            {
-                // Inday's cyan clip is on character's RIGHT (-X, viewer's left)
-                report.AppendLine("Inday hair clip and ribbon verified.");
-                return true;
-            }
 
             if (Mathf.Sign(dyeX) == Mathf.Sign(armX))
             {

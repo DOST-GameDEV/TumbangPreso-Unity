@@ -90,7 +90,7 @@ namespace TumbangPreso.Core
         public static readonly IReadOnlyList<RosterEntry> People = new[]
         {
             //                id              name           bilis lakas tatag
-            new RosterEntry("berto",       "BERTO",           2,    4,    5),
+            new RosterEntry("bayan",       "BAYAN",           2,    4,    5),
             new RosterEntry("maring",      "MARING",          5,    2,    2),
             new RosterEntry("totoy",       "TOTOY",           5,    2,    3),
             new RosterEntry("inday",       "CHESKA",          3,    4,    4),

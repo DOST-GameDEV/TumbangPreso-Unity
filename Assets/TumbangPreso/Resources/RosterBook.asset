@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: RosterBook
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterBook
   People:
-  - {fileID: 11400000, guid: 6349c26e4e30254479f3936e8d9c58b6, type: 2}
+  - {fileID: 11400000, guid: dfb49238ea8e45b41969e68d3c15d03e, type: 2}
   - {fileID: 11400000, guid: 1650f242fe61f704f9113d66df2cee82, type: 2}
   - {fileID: 11400000, guid: cd0266a3c5a0ee544b799bc85c68bf5d, type: 2}
   - {fileID: 11400000, guid: 9d33113825fe9d54b85af9407d0fc4d2, type: 2}

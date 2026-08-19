@@ -298,6 +298,7 @@ namespace TumbangPreso.PlayTests
         {
             ("zack", "team-zack"),
             ("inday", "team-inday"),
+            ("bayan", "team-bayan"),
         };
 
         /// <summary>The bone furthest down the rig, so the sample is a limb rather than the

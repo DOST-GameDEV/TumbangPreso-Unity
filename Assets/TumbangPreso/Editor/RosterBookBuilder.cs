@@ -53,7 +53,7 @@ namespace TumbangPreso.EditorTools
         /// </remarks>
         private static readonly Dictionary<string, string> PersonModels = new Dictionary<string, string>
         {
-            { "berto",       "characters/persons/character-male-f.glb" },
+            { "bayan",       "characters/persons/team-bayan.glb" },
             { "maring",      "characters/persons/character-female-f.glb" },
             { "totoy",       "characters/persons/character-male-a.glb" },
             { "inday",       "characters/persons/team-inday.glb" },
@@ -71,7 +71,7 @@ namespace TumbangPreso.EditorTools
         /// ⚠️⚠️ A CHARACTER IS A RIG PLUS A PALETTE, AND THE PALETTE IS HALF OF WHO THEY ARE.
         /// Twelve people share twelve CC0 rigs and differ only by which sixteen colours their
         /// shared atlas is remapped to. Without them the whole cast renders in Kenney's factory
-        /// colours: `berto` and `totoy` are the same man in the same clothes, and the select
+        /// colours: `bayan` and `totoy` are the same man in the same clothes, and the select
         /// screen still shows the right name and the right meters over the top of it.
         ///
         /// ⚠️ THE ORDER OF THIS TABLE DOES NOT MATTER AND THE IDS DO. Matched by id exactly as
@@ -80,7 +80,7 @@ namespace TumbangPreso.EditorTools
         /// </summary>
         private static readonly Dictionary<string, string> PersonPalettes = new Dictionary<string, string>
         {
-            { "berto",       "person_a.tres" },
+            { "bayan",       "person_team-bayan.tres" },
             { "maring",      "person_b.tres" },
             { "totoy",       "person_totoy.tres" },
             { "inday",       "person_team-inday.tres" },
