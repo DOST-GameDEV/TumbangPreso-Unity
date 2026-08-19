@@ -197,6 +197,72 @@ namespace TumbangPreso.Net
         public void BeginCountdownClientRpc() { }
 
         // -------------------------------------------------------------------
+        // LOBBY SETUP SYNCHRONIZATION (N5)
+        // -------------------------------------------------------------------
+
+        public static event System.Action<int> OnMapChanged;
+        public static event System.Action<int> OnDifficultyChanged;
+        public static event System.Action<int[]> OnLobbyPicksSynced;
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SelectMapServerRpc(int mapIndex)
+        {
+            if (!NetAuthority.IsHost) return;
+            SyncMapClientRpc(mapIndex);
+        }
+
+        [ClientRpc]
+        private void SyncMapClientRpc(int mapIndex) => OnMapChanged?.Invoke(mapIndex);
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SelectDifficultyServerRpc(int difficulty)
+        {
+            if (!NetAuthority.IsHost) return;
+            SyncDifficultyClientRpc(difficulty);
+        }
+
+        [ClientRpc]
+        private void SyncDifficultyClientRpc(int difficulty) => OnDifficultyChanged?.Invoke(difficulty);
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SelectLobbyPickServerRpc(int peerId, int character, int can, int slipper)
+        {
+            if (!NetAuthority.IsHost) return;
+            var lobby = NetSession.Instance?.Lobby;
+            if (lobby != null)
+            {
+                lobby.SetPicks(peerId, character, can, slipper);
+                BroadcastLobbyPicks();
+            }
+        }
+
+        public void BroadcastLobbyPicks()
+        {
+            if (!NetAuthority.IsHost) return;
+            var lobby = NetSession.Instance?.Lobby;
+            if (lobby == null) return;
+
+            var table = new int[Core.Balance.PlayerCount * 4];
+            for (int i = 0; i < table.Length; i++) table[i] = -1;
+
+            foreach (var peer in lobby.Peers)
+            {
+                if (peer.Seat >= 0 && peer.Seat < Core.Balance.PlayerCount)
+                {
+                    table[peer.Seat * 4] = peer.Seat;
+                    table[peer.Seat * 4 + 1] = peer.CharacterPick;
+                    table[peer.Seat * 4 + 2] = peer.CanPick;
+                    table[peer.Seat * 4 + 3] = peer.SlipperPick;
+                }
+            }
+
+            SyncLobbyPicksClientRpc(table);
+        }
+
+        [ClientRpc]
+        private void SyncLobbyPicksClientRpc(int[] table) => OnLobbyPicksSynced?.Invoke(table);
+
+        // -------------------------------------------------------------------
         // PICKS
         //
         // ⚠️⚠️ THE WHOLE TABLE IS SENT, NOT A DELTA, AND THAT IS WHAT MAKES LATE JOIN WORK.
@@ -205,7 +271,7 @@ namespace TumbangPreso.Net
         // message instead of needing a replay of the session's history.
         // -------------------------------------------------------------------
 
-        /// <summary>slot, character, can, slipper — flattened, four ints per seat.</summary>
+        /// <summary>slot, character, can, slipper: flattened, four ints per seat.</summary>
         [ClientRpc]
         public void SyncPicksClientRpc(int[] table)
         {

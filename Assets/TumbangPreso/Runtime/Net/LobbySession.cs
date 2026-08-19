@@ -231,6 +231,8 @@ namespace TumbangPreso.Net
             return null;
         }
 
+        public bool IsSeatOccupied(int seat) => PeerInSeat(seat) != null || _heldSeats.ContainsKey(seat);
+
         // -------------------------------------------------------------------
 
         /// <summary>

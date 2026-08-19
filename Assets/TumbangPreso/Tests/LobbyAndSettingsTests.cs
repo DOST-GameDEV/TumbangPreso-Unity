@@ -433,5 +433,30 @@ namespace TumbangPreso.Tests
             entry.Occupied = 4;
             Assert.IsFalse(entry.IsJoinable);
         }
+
+        // -------------------------------------------------------------------
+        // LOBBY UI AND SEAT OCCUPATION (N5)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void LobbySessionCorrectlyIdentifiesOccupiedSeats()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(42));
+
+            Assert.IsFalse(lobby.IsSeatOccupied(0));
+            Assert.IsFalse(lobby.IsSeatOccupied(1));
+
+            var p1 = lobby.Admit(10, "token-p1", "Player One");
+            Assert.AreEqual(0, p1.Seat);
+            Assert.IsTrue(lobby.IsSeatOccupied(0));
+            Assert.IsFalse(lobby.IsSeatOccupied(1));
+
+            var p2 = lobby.Admit(20, "token-p2", "Player Two");
+            Assert.AreEqual(1, p2.Seat);
+            Assert.IsTrue(lobby.IsSeatOccupied(0));
+            Assert.IsTrue(lobby.IsSeatOccupied(1));
+            Assert.IsFalse(lobby.IsSeatOccupied(2));
+        }
     }
 }

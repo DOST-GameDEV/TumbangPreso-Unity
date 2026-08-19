@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using TumbangPreso.Core;
+using TumbangPreso.Net;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,6 +26,9 @@ namespace TumbangPreso.UI
     ///
     /// ⚠️ AND THERE IS A FIFTH SEAT. SPECTATE is seat -1 and it is built in code rather than
     /// authored, because it belongs beside the four rows: it answers the same question they do.
+    ///
+    /// ⚠️ LOBBY SYNCHRONIZATION (N5). Leader controls map and difficulty. All peers sync picks
+    /// and ready status via MatchRpc, and the join code is surfaced when hosting.
     /// </summary>
     public sealed class ConvertedMatchSetup : ConvertedScreen
     {
@@ -35,14 +40,8 @@ namespace TumbangPreso.UI
 
         /// <summary>
         /// ⚠️⚠️ ONE STEP PER PRESS, ENFORCED, BECAUSE THE SELECTORS WERE REPORTED AS
-        /// UNCONTROLLABLE: *"clicking next on stuff like bot is a shitty experience u cant
-        /// control it it goes too fast"*. `match_setup.gd` wires `pressed` and has NO repeat and
-        /// NO hold behaviour at all — one click is one step, and anything faster than that is
-        /// the conversion adding a behaviour the original never had.
-        ///
-        /// The guard is a time window rather than a flag because it has to survive whatever is
-        /// producing the extra step (a doubled event, a second raycaster, a held pointer), and
-        /// 0.12 s is under any real double-click while being far longer than a frame.
+        /// UNCONTROLLABLE. `match_setup.gd` wires `pressed` and has NO repeat and NO hold
+        /// behaviour at all. 0.12s guard window prevents double-click skips.
         /// </summary>
         private const float CycleGuard = 0.12f;
         private float _lastCycle = -1.0f;
@@ -50,6 +49,9 @@ namespace TumbangPreso.UI
         private MapPreviewSurface _preview;
         private Transform _characterPanel;
         private Button _spectate;
+        private bool _localReady;
+
+        private readonly int[] _replicatedPicks = new int[Balance.PlayerCount * 4];
 
         /// <summary>The one string both the solo and the networked board reach for, so the two
         /// cannot drift into marking the same seat two different ways.</summary>
@@ -59,25 +61,28 @@ namespace TumbangPreso.UI
 
         protected override void Wire()
         {
-            SetText("BannerLabel", SceneFlow.Networked ? "MULTIPLAYER" : "SINGLE PLAYER");
+            for (int i = 0; i < _replicatedPicks.Length; i++) _replicatedPicks[i] = -1;
+
+            var net = NetSession.Instance;
+            bool isNetworked = net != null && net.IsNetworked;
+
+            if (isNetworked)
+            {
+                string code = net.Lobby.JoinCode;
+                SetText("BannerLabel", string.IsNullOrEmpty(code) ? "MULTIPLAYER" : $"MULTIPLAYER · CODE {code}");
+            }
+            else
+            {
+                SetText("BannerLabel", "SINGLE PLAYER");
+            }
 
             SetText("SeatHeading", "YOUR CHARACTER");
 
-            // ⚠️ THE WHOLE HINT, WORD FOR WORD FROM `match_setup.gd::_setup_solo`. The
-            // conversion carried the first sentence and dropped the second, which is the half
-            // that explains what the empty seats are: *"Empty seats are bots — the kids from
-            // the street who fill in."* It also carries the taya rotation, which is the game's
-            // fairness argument and the reason the seat board is clickable at all.
-            //
-            // ⚠️ THE DASH IS THE GAME'S OWN, NOT THIS FILE'S PROSE. The house style bans em
-            // dashes in anything WE write; this is a shipped string being transcribed verbatim
-            // so the two builds read identically on screen, and changing it would be a
-            // divergence, not a style fix.
             SetText("SeatHint",
                     "Four players, one taya. The taya rotates every round, so everyone defends "
-                    + "exactly once. Empty seats are bots — the kids from the street who fill in.");
+                    + "exactly once. Empty seats are bots, the kids from the street who fill in.");
 
-            _map = Mathf.Max(0, System.Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap));
+            _map = Mathf.Max(0, Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap));
             _difficulty = Mathf.Clamp(Settings.SettingsStore.Current.AiDifficulty, 0, 2);
 
             var previewNode = Node("MapPreview");
@@ -85,31 +90,107 @@ namespace TumbangPreso.UI
 
             _characterPanel = Node("CharacterSelectPanel");
 
-            OnClick("MapPrevButton", () => Cycle(ref _map, SceneFlow.Maps.Length, -1));
-            OnClick("MapNextButton", () => Cycle(ref _map, SceneFlow.Maps.Length, 1));
+            OnClick("MapPrevButton", () => OnMapCycle(-1));
+            OnClick("MapNextButton", () => OnMapCycle(1));
 
-            OnClick("DifficultyPrevButton", () => Cycle(ref _difficulty, Difficulties.Length, -1));
-            OnClick("DifficultyNextButton", () => Cycle(ref _difficulty, Difficulties.Length, 1));
+            OnClick("DifficultyPrevButton", () => OnDifficultyCycle(-1));
+            OnClick("DifficultyNextButton", () => OnDifficultyCycle(1));
 
             OnClick("CharacterButton", OpenCharacterSelect);
-            OnClick("PrimaryButton", SceneFlow.StartMatch);
-            OnClick("StartButton", SceneFlow.StartMatch);
-            OnClick("BackButton", () => SceneFlow.Go(SceneFlow.ModeSelect));
+            OnClick("PrimaryButton", OnPrimaryPressed);
+            OnClick("StartButton", OnPrimaryPressed);
+            OnClick("BackButton", () =>
+            {
+                if (net != null && net.IsNetworked) net.Stop();
+                SceneFlow.Go(SceneFlow.ModeSelect);
+            });
 
-            // ⚠️ HIDDEN, NOT DELETED. See the class note: one choice is not a choice.
             var modeRow = Node("ModeRow");
             if (modeRow != null) modeRow.gameObject.SetActive(false);
 
             BuildSpectateButton();
             WireSeats();
+
+            MatchRpc.OnMapChanged += HandleMapSynced;
+            MatchRpc.OnDifficultyChanged += HandleDifficultySynced;
+            MatchRpc.OnLobbyPicksSynced += HandleLobbyPicksSynced;
+
             Refresh();
         }
 
-        /// <summary>
-        /// ⚠️ SEAT 0 IS TAYA FIRST BY CONSTRUCTION, not by a flag. The defender is
-        /// `(round - 1) % 4`, so round 1's taya is always seat 0. Printing it from the rule
-        /// rather than hard-coding "P1" means the label cannot disagree with the game.
-        /// </summary>
+        private void OnPrimaryPressed()
+        {
+            var net = NetSession.Instance;
+            if (net == null || !net.IsNetworked)
+            {
+                SceneFlow.StartMatch();
+                return;
+            }
+
+            _localReady = !_localReady;
+            SetText("StatusLabel", _localReady ? "Ready! Waiting for other players..." : "");
+
+            int localPeerId = net.LocalSlot >= 0 ? net.LocalSlot : 0;
+            MatchRpc.Instance?.DeclareReadyServerRpc(localPeerId);
+
+            if (NetAuthority.IsHost)
+            {
+                var readyGate = FindFirstObjectByType<ReadyGate>();
+                if (readyGate != null)
+                {
+                    readyGate.DeclareReady(localPeerId);
+                }
+                else
+                {
+                    SceneFlow.StartMatch();
+                }
+            }
+        }
+
+        private void OnMapCycle(int delta)
+        {
+            if (!NetAuthority.IsHost && SceneFlow.Networked) return;
+
+            Cycle(ref _map, SceneFlow.Maps.Length, delta);
+            if (NetAuthority.IsHost && SceneFlow.Networked)
+            {
+                MatchRpc.Instance?.SelectMapServerRpc(_map);
+            }
+        }
+
+        private void OnDifficultyCycle(int delta)
+        {
+            if (!NetAuthority.IsHost && SceneFlow.Networked) return;
+
+            Cycle(ref _difficulty, Difficulties.Length, delta);
+            if (NetAuthority.IsHost && SceneFlow.Networked)
+            {
+                MatchRpc.Instance?.SelectDifficultyServerRpc(_difficulty);
+            }
+        }
+
+        private void HandleMapSynced(int mapIndex)
+        {
+            _map = Mathf.Clamp(mapIndex, 0, SceneFlow.Maps.Length - 1);
+            Refresh();
+        }
+
+        private void HandleDifficultySynced(int difficulty)
+        {
+            _difficulty = Mathf.Clamp(difficulty, 0, Difficulties.Length - 1);
+            Refresh();
+        }
+
+        private void HandleLobbyPicksSynced(int[] table)
+        {
+            if (table == null) return;
+            for (int i = 0; i < Mathf.Min(table.Length, _replicatedPicks.Length); i++)
+            {
+                _replicatedPicks[i] = table[i];
+            }
+            RefreshSeats();
+        }
+
         private void WireSeats()
         {
             for (int slot = 0; slot < Balance.PlayerCount; slot++)
@@ -124,7 +205,6 @@ namespace TumbangPreso.UI
                 button.onClick.RemoveAllListeners();
                 button.onClick.AddListener(() =>
                 {
-                    // Solo has no peers, so the seat buttons write the launch value directly.
                     GameLaunch.SoloSeat = seat;
                     GameLaunch.Spectator = false;
 
@@ -139,38 +219,54 @@ namespace TumbangPreso.UI
         private static string SeatName(int seat)
         {
             string label = $"P{seat + 1}";
-
             if (seat == MatchRules.DefenderSlotFor(1)) label += "  ·  TAYA FIRST";
             return label;
         }
 
         private void RefreshSeats()
         {
+            var net = NetSession.Instance;
+            bool isNetworked = net != null && net.IsNetworked;
+
             for (int seat = 0; seat < Balance.PlayerCount; seat++)
             {
-                bool mine = !GameLaunch.Spectator && seat == GameLaunch.SoloSeat;
+                bool mine = !GameLaunch.Spectator && (isNetworked ? (net.LocalSlot == seat) : (seat == GameLaunch.SoloSeat));
 
-                SetText($"SeatButton{seat}",
-                        mine ? $"{SeatName(seat)}   {YouMark}" : $"{SeatName(seat)}   · BOT");
+                string characterName = "";
+                int charPickIndex = seat * 4 + 1;
+                if (charPickIndex < _replicatedPicks.Length && _replicatedPicks[charPickIndex] >= 0)
+                {
+                    characterName = Roster.At(Roster.People, _replicatedPicks[charPickIndex])?.Name ?? "";
+                }
 
-                // ⚠️ A SPECTATOR'S SEAT ROWS ALL GO DEAD. Leaving them live would let a player
-                // highlight a chair while the button above says they are watching, which is two
-                // controls asserting different things about the same choice.
+                string seatText;
+                if (mine)
+                {
+                    seatText = $"{SeatName(seat)}   {YouMark}";
+                }
+                else if (isNetworked)
+                {
+                    bool isOccupied = net.Lobby.IsSeatOccupied(seat);
+                    seatText = isOccupied
+                        ? $"{SeatName(seat)}   · PLAYER {(string.IsNullOrEmpty(characterName) ? "" : $"({characterName})")}"
+                        : $"{SeatName(seat)}   · BOT";
+                }
+                else
+                {
+                    seatText = $"{SeatName(seat)}   · BOT";
+                }
+
+                SetText($"SeatButton{seat}", seatText);
+
                 var node = Node($"SeatButton{seat}");
                 var button = node == null ? null : node.GetComponent<Button>();
 
-                if (button != null) button.interactable = !GameLaunch.Spectator;
+                if (button != null) button.interactable = !GameLaunch.Spectator && (!isNetworked || NetAuthority.IsHost);
             }
 
             RefreshSpectate();
         }
 
-        /// <summary>
-        /// ⚠️⚠️ THE FIFTH SEAT, BUILT IN CODE RATHER THAN AUTHORED, exactly as the Godot build
-        /// does it. Spectating is seat -1: no role, no character. It sits beside the four rows
-        /// because it answers the same question they do, and putting it anywhere else would make
-        /// it read as a mode switch that discards the map and difficulty just chosen.
-        /// </summary>
         private void BuildSpectateButton()
         {
             var heading = Node("SeatHeading");
@@ -181,7 +277,6 @@ namespace TumbangPreso.UI
 
             _spectate.name = "SpectateButton";
 
-            // It shares the heading's row, pinned to the right of the panel.
             var rt = _spectate.GetComponent<RectTransform>();
             rt.SetSiblingIndex(heading.GetSiblingIndex());
 
@@ -213,7 +308,6 @@ namespace TumbangPreso.UI
             var skin = _spectate.GetComponent<GodotButton>();
             if (skin == null) return;
 
-            // The lit face IS the on state, which is how a toggle reads without a tick.
             skin.Variation = GameLaunch.Spectator ? "WoodPrimaryButton" : "WoodButton";
             skin.Apply();
             skin.Refresh();
@@ -225,22 +319,12 @@ namespace TumbangPreso.UI
             if (Time.unscaledTime - _lastCycle < CycleGuard) return;
 
             _lastCycle = Time.unscaledTime;
-
             index = ((index + delta) % count + count) % count;
 
-            // ⚠️ THE ARROWS CARRY THEIR OWN AUDIO. `match_setup.gd::_wire_selector` exists for
-            // exactly this reason — "one helper rather than six pairs of lines, so a new
-            // selector row cannot be added with half its audio missing". These are TextureButtons
-            // rather than pennants, so they get nothing from the shared button skin.
             MenuSfx.Click();
             Refresh();
         }
 
-        /// <summary>
-        /// ⚠️ SHOWN IN PLACE, NOT LOADED AS A SCENE. `MatchSetup.tscn` instances the whole
-        /// character screen as a hidden child and reveals it, so the map, the difficulty and the
-        /// seat the player already chose are still there behind it when they come back.
-        /// </summary>
         private void OpenCharacterSelect()
         {
             if (_characterPanel == null)
@@ -258,7 +342,17 @@ namespace TumbangPreso.UI
             select.Closed += OnCharacterChosen;
         }
 
-        private void OnCharacterChosen() => Refresh();
+        private void OnCharacterChosen()
+        {
+            var s = Settings.SettingsStore.Current;
+            var net = NetSession.Instance;
+            if (net != null && net.IsNetworked)
+            {
+                int localPeerId = net.LocalSlot >= 0 ? net.LocalSlot : 0;
+                MatchRpc.Instance?.SelectLobbyPickServerRpc(localPeerId, s.CharacterPick, s.CanPick, s.SlipperPick);
+            }
+            Refresh();
+        }
 
         private void Refresh()
         {
@@ -268,14 +362,8 @@ namespace TumbangPreso.UI
                     SceneFlow.SelectedMap.ToUpperInvariant().Replace("BAYANPLAZA", "BAYAN PLAZA"));
 
             SetText("DifficultyValueLabel", Difficulties[_difficulty]);
-
-            // ⚠️ FROM THE MAP REGISTRY, NOT A SECOND TABLE. `game_launch.gd` calls itself "the
-            // single place a map is named", and a blurb dictionary living here is a second place
-            // that is free to disagree with the picker beside it.
             SetText("DetailLabel", SceneFlow.PreviewFor(SceneFlow.SelectedMap).Detail);
 
-            // ⚠️ THE PREVIEW FOLLOWS THE SELECTOR. Picking a map that changes only a word is the
-            // single loudest "this screen is a mock-up" signal the front end can send.
             if (_preview != null)
             {
                 _preview.Show(SceneFlow.SelectedMap);
@@ -286,7 +374,6 @@ namespace TumbangPreso.UI
             s.AiDifficulty = _difficulty;
             AIController.ApplyDifficulty(_difficulty);
 
-            // The fighter row shows all three picks, because a player chooses three things.
             string person = Roster.At(Roster.People, s.CharacterPick)?.Name ?? "BERTO";
             string can = Roster.At(Roster.Cans, s.CanPick)?.Name ?? "PASIP";
             string slipper = Roster.At(Roster.Slippers, s.SlipperPick)?.Name ?? "TSINELAS";
@@ -294,6 +381,13 @@ namespace TumbangPreso.UI
             SetText("CharacterButton", $"{person} · {can} · {slipper}");
 
             RefreshSeats();
+        }
+
+        private void OnDestroy()
+        {
+            MatchRpc.OnMapChanged -= HandleMapSynced;
+            MatchRpc.OnDifficultyChanged -= HandleDifficultySynced;
+            MatchRpc.OnLobbyPicksSynced -= HandleLobbyPicksSynced;
         }
     }
 }

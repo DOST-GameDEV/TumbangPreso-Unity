@@ -967,9 +967,9 @@ a separate job, tracked here. A converted layout with no script bound is PARTIAL
 
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
-| `match_setup.gd` | 2015 | `ConvertedMatchSetup.cs` (440) | PARTIAL — rows, seats, spectate, live map preview; netcode lobby half pending |
+| `match_setup.gd` | 2015 | `ConvertedMatchSetup.cs` (450) | CONVERTED (N5): rows, seats, spectate, live map preview, leader map/difficulty sync, picks sync, and ready gate |
 | `hud.gd` | 1587 | `Hud.cs` (900) | CONVERTED 2026-08-16 — wood skin, recessed clock with its urgency colour and pulse, ranked four-row board with the TAYA badge, lata card and its per-role hint, toasts off all five events, ready prompt AND role objective, split status stacks, held danger vignette, VULNERABLE line, role-coloured crosshair, clean feed, spectator strip, version stamp, **§ the stun frost's screen half**, and a clock card that is 97 tall like the original's |
-| `multiplayer_setup.gd` | 1015 | `LobbySession.cs` (287) | PARTIAL |
+| `multiplayer_setup.gd` | 1015 | `ConvertedMultiplayerSetup.cs` (120) | CONVERTED (N5): host LAN/online via Relay, join address edit, LAN and UGS Lobby code resolution, and live status |
 | `character_preview.gd` | 623 | `ModelPreview.cs` (470) + `ModelPreviewInput.cs` | CONVERTED — aspect-correct target, three-term framing, pitch lerp, h_offset, idle clip, drag/zoom/reset, tile framing |
 | `ui_theme.gd` | 551 | `UiTheme` + `GodotTheme` + `StyleBoxBaker` (520) | CONVERTED — variations, StyleBox geometry and the baked nine-slices |
 | `tutorial.gd` | 462 | `TutorialContent` + `ConvertedTutorialPanel` (350) | CONVERTED 2026-08-16 — all 8 pages, plus page 1's premise strip with the four real models in live 3D |
