@@ -608,5 +608,33 @@ namespace TumbangPreso.Tests
             // Newcomer gets seat 2 if admitted before t3 returns
             Assert.AreEqual(MidMatchRuling.Reclaim, lobby.RuleOnArrival("t3"));
         }
+
+        // -------------------------------------------------------------------
+        // DEDICATED SERVER AND MULTIPLAY HOSTING (N10)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void DedicatedServerInitializesSeatlessAndLocksLeader()
+        {
+            var lobby = new LobbySession { IsDedicated = true };
+            lobby.OpenLobby(new System.Random(1337));
+
+            Assert.IsTrue(lobby.IsDedicated);
+            Assert.AreEqual(0, lobby.LeaderPeerId);
+
+            // Server referee joins as peer 1
+            var refPeer = lobby.Admit(1, "server-token", "DedicatedServer");
+            Assert.AreEqual(-1, refPeer.Seat);
+            Assert.IsTrue(refPeer.Spectator);
+            Assert.AreEqual(0, lobby.LeaderPeerId, "Dedicated referee must never be leader");
+            Assert.AreEqual(0, lobby.SeatedPeerCount());
+
+            // First human player joins
+            var p1 = lobby.Admit(10, "human-token-1", "First Human");
+            Assert.AreEqual(0, p1.Seat);
+            Assert.IsFalse(p1.Spectator);
+            Assert.AreEqual(10, lobby.LeaderPeerId, "First human must be appointed leader");
+            Assert.AreEqual(1, lobby.SeatedPeerCount());
+        }
     }
 }

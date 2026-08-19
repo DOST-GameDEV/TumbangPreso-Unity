@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
+using Unity.Services.Multiplay;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
@@ -40,6 +41,7 @@ namespace TumbangPreso.Net
         private NetworkManager _nm;
         private UnityTransport _utp;
         private LanBeacon _beacon;
+        private IServerQueryHandler _serverQueryHandler;
 
         // INetProvider
         public bool IsHost => _nm == null || !_nm.IsListening || _nm.IsServer;
@@ -135,6 +137,12 @@ namespace TumbangPreso.Net
             Lobby.IsDedicated = dedicated;
             Lobby.OpenLobby(new System.Random(Environment.TickCount));
 
+            if (dedicated)
+            {
+                Application.targetFrameRate = 60;
+                QualitySettings.vSyncCount = 0;
+            }
+
             bool ok = dedicated ? _nm.StartServer() : _nm.StartHost();
             SetStatus(ok
                 ? $"hosting on {port}, join code {Lobby.JoinCode}"
@@ -151,9 +159,50 @@ namespace TumbangPreso.Net
                 _beacon.Players = 1;
                 _beacon.InProgress = false;
                 _beacon.StartAdvertising();
+
+                if (dedicated)
+                {
+                    _ = StartMultiplayServerAsync(port);
+                }
             }
 
             return ok;
+        }
+
+        private void Update()
+        {
+            if (_serverQueryHandler != null)
+            {
+                _serverQueryHandler.CurrentPlayers = (ushort)Lobby.SeatedPeerCount();
+                _serverQueryHandler.MaxPlayers = (ushort)LobbySession.MaxPlayers;
+                _serverQueryHandler.Map = UI.SceneFlow.SelectedMap;
+                _serverQueryHandler.UpdateServerCheck();
+            }
+        }
+
+        public async Task StartMultiplayServerAsync(int port, string serverName = "Tumbang Preso Dedicated", string map = "Eskinita")
+        {
+            try
+            {
+                await Unity.Services.Core.UnityServices.InitializeAsync();
+                var serverConfig = MultiplayService.Instance.ServerConfig;
+                ushort serverPort = serverConfig != null && serverConfig.Port != 0 ? serverConfig.Port : (ushort)port;
+                ushort queryPort = serverConfig != null && serverConfig.QueryPort != 0 ? serverConfig.QueryPort : (ushort)(port + 1);
+
+                _serverQueryHandler = await MultiplayService.Instance.StartServerQueryHandlerAsync(
+                    (ushort)LobbySession.MaxPlayers,
+                    serverName,
+                    "TumbangPreso",
+                    Application.version,
+                    map);
+
+                await MultiplayService.Instance.ReadyServerForPlayersAsync();
+                SetStatus($"multiplay server ready on port {serverPort} (query {queryPort})");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Net] Multiplay initialization skipped/failed: {e.Message}");
+            }
         }
 
         public bool StartClient(string address, int port = DefaultPort)
