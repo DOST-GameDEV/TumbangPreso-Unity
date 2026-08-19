@@ -216,8 +216,10 @@ LEG_LEFT = [
     ("shoe-sole-left",   "leg-left", (0.006, 0.000, -0.134), (0.158, 0.024, 0.082), WHITE),
     # Frosty cyan sneaker upper
     ("shoe-upper-left",  "leg-left", (0.014, 0.024, -0.126), (0.152, 0.056, 0.076), SHOE_CYAN),
-    # White toe cap
+    # White toe cap (front profile)
     ("shoe-toe-left",    "leg-left", (0.012, 0.024, -0.132), (0.154, 0.044, -0.100), WHITE),
+    # White heel counter (side & back profile)
+    ("shoe-heel-left",   "leg-left", (0.012, 0.024, 0.052), (0.154, 0.056, 0.080), WHITE),
     # White laces
     ("shoe-lace-left",   "leg-left", (0.030, 0.038, -0.108), (0.136, 0.050, -0.092), WHITE),
     # White sneaker collar
@@ -239,8 +241,10 @@ LEG_RIGHT = [
     ("shoe-sole-right",   "leg-right", (-0.158, 0.000, -0.134), (-0.006, 0.024, 0.082), WHITE),
     # Frosty cyan sneaker upper
     ("shoe-upper-right",  "leg-right", (-0.152, 0.024, -0.126), (-0.014, 0.056, 0.076), SHOE_CYAN),
-    # White toe cap
+    # White toe cap (front profile)
     ("shoe-toe-right",    "leg-right", (-0.154, 0.024, -0.132), (-0.012, 0.044, -0.100), WHITE),
+    # White heel counter (side & back profile)
+    ("shoe-heel-right",   "leg-right", (-0.154, 0.024, 0.052), (-0.012, 0.056, 0.080), WHITE),
     # White laces
     ("shoe-lace-right",   "leg-right", (-0.136, 0.038, -0.108), (-0.030, 0.050, -0.092), WHITE),
     # White sneaker collar
@@ -266,9 +270,22 @@ TORSO = [
     ("overalls-hem",        "torso", (-0.128, 0.212, -0.102), (0.128, 0.238, 0.098), OVERALLS_DARK),
     # Skirt accent stripe (bright ice cyan)
     ("skirt-stripe",        "torso", (-0.129, 0.230, -0.103), (0.129, 0.236, 0.099), CYAN_TRIM),
+    
+    # 🎽 FULL SIDE OVERALLS WRAP: Seamless cyan torso sides up to mid-chest (y=0.362)
+    ("overalls-side-left",  "torso", (0.105, 0.320, -0.088), (0.124, 0.362, 0.082), OVERALLS),
+    ("overalls-side-right", "torso", (-0.124, 0.320, -0.088), (-0.105, 0.362, 0.082), OVERALLS),
+    
+    # 👗 BACK OVERALLS RISE & STRAP CROSS TAB (visible when bending or moving)
+    ("overalls-back-rise",  "torso", (-0.090, 0.320, 0.070), (0.090, 0.370, 0.092), OVERALLS),
+    ("overalls-back-tab",   "torso", (-0.060, 0.345, 0.086), (0.060, 0.368, 0.098), OVERALLS_DARK),
+    
+    # Side button rivets on hip tabs
+    ("side-rivet-left",     "torso", (0.122, 0.336, -0.012), (0.127, 0.354, 0.012), BUTTONS),
+    ("side-rivet-right",    "torso", (-0.127, 0.336, -0.012), (-0.122, 0.354, 0.012), BUTTONS),
+    
     # Side seam trim strips
-    ("skirt-seam-left",     "torso", (0.118, 0.235, -0.090), (0.126, 0.325, 0.086), OVERALLS_DARK),
-    ("skirt-seam-right",    "torso", (-0.126, 0.235, -0.090), (-0.118, 0.325, 0.086), OVERALLS_DARK),
+    ("skirt-seam-left",     "torso", (0.118, 0.235, -0.090), (0.126, 0.328, 0.086), OVERALLS_DARK),
+    ("skirt-seam-right",    "torso", (-0.126, 0.235, -0.090), (-0.118, 0.328, 0.086), OVERALLS_DARK),
     
     # Overalls bib (front center)
     ("overalls-bib",        "torso", (-0.088, 0.310, -0.104), (0.088, 0.382, -0.080), OVERALLS),
@@ -283,9 +300,9 @@ TORSO = [
     ("spatula-metal-neck",  "torso", (0.035, 0.358, -0.110), (0.049, 0.374, -0.102), SILVER),
     
     # ❄️ PERSONALITY DETAIL: Side Frost Carabiner Keychain & Snowflake Tag on Right Hip (-X)
-    ("keychain-ring",       "torso", (-0.126, 0.308, -0.050), (-0.114, 0.328, -0.015), SILVER),
-    ("keychain-charm-tag",  "torso", (-0.128, 0.265, -0.045), (-0.112, 0.308, -0.020), CYAN_TRIM),
-    ("keychain-charm-star", "torso", (-0.130, 0.278, -0.038), (-0.110, 0.296, -0.026), WHITE),
+    ("keychain-ring",       "torso", (-0.128, 0.308, -0.050), (-0.114, 0.328, -0.015), SILVER),
+    ("keychain-charm-tag",  "torso", (-0.130, 0.265, -0.045), (-0.112, 0.308, -0.020), CYAN_TRIM),
+    ("keychain-charm-star", "torso", (-0.132, 0.278, -0.038), (-0.110, 0.296, -0.026), WHITE),
     
     # Shoulder straps (running up over shoulders to back)
     ("strap-left",          "torso", (0.050, 0.330, -0.106), (0.086, 0.445, 0.088), OVERALLS),
@@ -337,10 +354,26 @@ HEAD = [
     # Hair crown under the baker cap
     ("hair-crown",          "head", (-0.176, 0.650, -0.170), (0.176, 0.705, 0.140), HAIR),
     
-    # Long straight black hair down the back (drapes past shoulders to waist level!)
-    ("hair-back-upper",     "head", (-0.176, 0.290, -0.220), (0.176, 0.490, -0.135), HAIR),
+    # 💇 BACK HAIR DRAPES & STRUCTURED LAYERS (Matching concept back view exactly)
+    # Main upper and lower curtain
+    ("hair-back-upper",     "head", (-0.176, 0.290, -0.218), (0.176, 0.490, -0.135), HAIR),
     ("hair-back-lower",     "head", (-0.172, 0.175, -0.215), (0.172, 0.295, -0.140), HAIR),
-    ("hair-back-hem",       "head", (-0.174, 0.155, -0.218), (0.174, 0.180, -0.138), HAIR),
+    
+    # 📐 Raised horizontal weight band / bottom hem fold (from reference back view!)
+    ("hair-back-weight-band","head",(-0.178, 0.155, -0.226), (0.178, 0.230, -0.145), HAIR),
+    ("hair-back-hem-rim",   "head", (-0.174, 0.148, -0.220), (0.174, 0.165, -0.148), HAIR),
+    
+    # 📐 Side framing rails (beveled stepped outer edges giving clean boxy toon silhouette)
+    ("hair-back-rail-left", "head", (0.158, 0.170, -0.222), (0.180, 0.600, -0.160), HAIR),
+    ("hair-back-rail-right","head", (-0.180, 0.170, -0.222), (-0.158, 0.600, -0.160), HAIR),
+    
+    # 💇 SIDE HAIR WRAP (Contouring neatly in front and behind the ears)
+    ("hair-side-front-left", "head", (0.165, 0.420, 0.025), (0.188, 0.560, 0.130), HAIR),
+    ("hair-side-front-right","head", (-0.188, 0.420, 0.025), (-0.165, 0.560, 0.130), HAIR),
+    ("hair-side-back-left",  "head", (0.165, 0.420, -0.155), (0.188, 0.560, -0.015), HAIR),
+    ("hair-side-back-right", "head", (-0.188, 0.420, -0.155), (-0.165, 0.560, -0.015), HAIR),
+    ("hair-side-upper-left", "head", (0.168, 0.540, -0.170), (0.192, 0.670, 0.130), HAIR),
+    ("hair-side-upper-right","head", (-0.192, 0.540, -0.170), (-0.168, 0.670, 0.130), HAIR),
     
     # Front bangs framing brow with clean arched forehead opening
     ("hair-bangs-brow",     "head", (-0.165, 0.640, 0.135), (0.165, 0.685, 0.185), HAIR),
@@ -355,18 +388,12 @@ HEAD = [
     ("hair-clip-top",       "head", (-0.165, 0.630, 0.190), (-0.085, 0.665, 0.204), WHITE),
     ("hair-clip-drop",      "head", (-0.168, 0.585, 0.190), (-0.130, 0.640, 0.204), WHITE),
     ("hair-clip-frost-gem", "head", (-0.155, 0.615, 0.198), (-0.135, 0.645, 0.210), CYAN_TRIM),
+    ("hair-clip-side-wrap", "head", (-0.190, 0.610, 0.070), (-0.160, 0.665, 0.165), CYAN_TRIM),
     
     # 💎 ICONIC PERSONALITY DETAIL: Dangling Frost Crystal Earring on Right Ear (-X, viewer's left)
-    # (Matches/parallels Zack's gold earring on his left ear!)
     ("earring-stud",        "head", (-0.215, 0.485, -0.015), (-0.200, 0.508, 0.005), SILVER),
     ("earring-frost-drop",  "head", (-0.218, 0.435, -0.018), (-0.198, 0.485, 0.008), CYAN_TRIM),
     ("earring-frost-sparkle","head",(-0.219, 0.442, -0.012), (-0.204, 0.465, 0.004), FROST_ACCENT),
-    
-    # Long side strands framing cheeks in front of ears
-    ("hair-side-left",      "head", (0.165, 0.420, -0.030), (0.188, 0.560, 0.120), HAIR),
-    ("hair-side-right",     "head", (-0.188, 0.420, -0.030), (-0.165, 0.560, 0.120), HAIR),
-    ("hair-side-upper-left","head", (0.168, 0.540, -0.170), (0.192, 0.670, 0.130), HAIR),
-    ("hair-side-upper-right","head",(-0.192, 0.540, -0.170), (-0.168, 0.670, 0.130), HAIR),
     
     # 👨‍🍳 Jaunty Baker / Ice Queen Toque Hat
     # Tier 1 (Fitted Brim Band)
@@ -382,12 +409,17 @@ HEAD = [
     ("cap-bow-tail-right",  "head", (-0.125, 0.662, 0.135), (-0.105, 0.692, 0.155), CYAN_TRIM),
     ("cap-bow-snow-star",   "head", (-0.133, 0.698, 0.155), (-0.120, 0.710, 0.168), WHITE),
     
-    # Tier 2 (Bulging / Flared Mushroom Puff Crown)
+    # Tier 2 (Bulging / Flared Mushroom Puff Crown with 360-degree corner lobes)
     ("cap-toque-puff",      "head", (-0.170, 0.712, -0.170), (0.170, 0.748, 0.170), WHITE),
     ("cap-toque-left-lobe", "head", (0.155, 0.718, -0.140), (0.180, 0.742, 0.140), WHITE),
     ("cap-toque-right-lobe","head", (-0.180, 0.718, -0.140), (-0.155, 0.742, 0.140), WHITE),
     ("cap-toque-front-lobe","head", (-0.140, 0.718, 0.155), (0.140, 0.742, 0.180), WHITE),
     ("cap-toque-back-lobe", "head", (-0.140, 0.718, -0.180), (0.140, 0.742, -0.155), WHITE),
+    # Corner puff chamfers for smooth circular silhouette from 3/4 and side
+    ("cap-puff-corner-fl",  "head", (0.130, 0.718, 0.130), (0.168, 0.742, 0.168), WHITE),
+    ("cap-puff-corner-fr",  "head", (-0.168, 0.718, 0.130), (-0.130, 0.742, 0.168), WHITE),
+    ("cap-puff-corner-bl",  "head", (0.130, 0.718, -0.168), (0.168, 0.742, -0.130), WHITE),
+    ("cap-puff-corner-br",  "head", (-0.168, 0.718, -0.168), (-0.130, 0.742, -0.130), WHITE),
     
     # Tier 3 (Top Crown & Frost Ribbons)
     ("cap-toque-top",       "head", (-0.140, 0.748, -0.140), (0.140, 0.772, 0.140), WHITE),
