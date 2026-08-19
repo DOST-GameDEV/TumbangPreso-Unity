@@ -192,9 +192,9 @@ PALETTE = {
     WOOD_GOLD:     "e4a032",   # Warm bakery spatula wooden handle peeking from pocket
     FROST_ACCENT:  "a8f0fa",   # Shimmering pale frost highlight / crystal sparkle
     WHITE:         "f4faff",   # Crisp snow white with subtle cool undertone (toque, shirt, socks)
-    SKIN:          "d88c48",   # Warm golden bronze / brown skin midtone
-    SKIN_DARK:     "a45c26",   # Deep warm brown shadow tone
-    SKIN_LIT:      "f4a868",   # Radiant golden brown lit skin tone (face, arms, legs)
+    SKIN:          "f5b894",   # Option 2: Natural Fair Peach midtone (face & body)
+    SKIN_DARK:     "db9874",   # Luminous warm peach shadow tone
+    SKIN_LIT:      "f5b894",   # 100% matched with SKIN midtone for uniform face/body skin
 }
 
 MAX_FACE_LUMINANCE = 0.30
@@ -256,77 +256,64 @@ LEG_RIGHT = [
     # White sneaker collar
     ("shoe-collar-right", "leg-right", (-0.154, 0.056, -0.096), (-0.012, 0.070, 0.078), WHITE),
     
-    # Low folded ankle sock
-    ("sock-ankle-right",  "leg-right", (-0.150, 0.070, -0.076), (-0.016, 0.096, 0.074), WHITE),
-    # Folded cyan cuff rim on ankle sock
-    ("sock-rim-right",    "leg-right", (-0.152, 0.086, -0.078), (-0.014, 0.098, 0.076), CYAN_TRIM),
+    # Folded short ankle sock (white)
+    ("sock-ankle-right",  "leg-right", (-0.150, 0.070, -0.076), (-0.016, 0.098, 0.074), WHITE),
+    ("sock-cuff-right",   "leg-right", (-0.152, 0.092, -0.078), (-0.014, 0.108, 0.076), CYAN_TRIM),
     
     # Fair human skin leg
-    ("leg-skin-right",    "leg-right", (-0.148, 0.098, -0.070), (-0.018, 0.232, 0.070), SKIN_LIT),
+    ("leg-skin-right",    "leg-right", (-0.148, 0.108, -0.070), (-0.018, 0.232, 0.070), SKIN_LIT),
 ]
 
-# Waist at 0.240, shoulders at 0.400, neck at 0.445.
+# Torso owns everything between 0.240 and 0.440
 TORSO = [
-    # White undershirt core
-    ("shirt-core",          "torso", (-0.100, 0.232, -0.082), (0.100, 0.445, 0.078), WHITE),
+    # White rolled undershirt base (visible at neck and lower waist/sides)
+    ("shirt-body",          "torso", (-0.118, 0.235, -0.092), (0.118, 0.445, 0.092), WHITE),
     
-    # Overalls / apron skirt base (flared slightly for structured silhouette)
-    ("overalls-skirt",      "torso", (-0.122, 0.220, -0.098), (0.122, 0.330, 0.094), OVERALLS),
-    # Flared skirt hem band (darker glacier cyan trim)
-    ("overalls-hem",        "torso", (-0.128, 0.212, -0.102), (0.128, 0.238, 0.098), OVERALLS_DARK),
-    # Skirt accent stripe (bright ice cyan)
-    ("skirt-stripe",        "torso", (-0.129, 0.230, -0.103), (0.129, 0.236, 0.099), CYAN_TRIM),
+    # 👗 OVERALLS SHORTS / HIPS (Clean high-waisted shorts with frosty cyan trim)
+    # Shorts lower waist / groin
+    ("shorts-base",         "torso", (-0.125, 0.232, -0.096), (0.125, 0.320, 0.096), OVERALLS),
+    ("shorts-hem-cuff",     "torso", (-0.128, 0.230, -0.098), (0.128, 0.248, 0.098), OVERALLS_DARK),
+    # Left shorts leg cuff
+    ("shorts-cuff-left",    "torso", (0.010, 0.230, -0.098), (0.128, 0.248, 0.098), CYAN_TRIM),
+    # Right shorts leg cuff
+    ("shorts-cuff-right",   "torso", (-0.128, 0.230, -0.098), (-0.010, 0.248, 0.098), CYAN_TRIM),
     
-    # 🎽 FULL SIDE OVERALLS WRAP: Seamless cyan torso sides up to mid-chest (y=0.362)
-    ("overalls-side-left",  "torso", (0.105, 0.320, -0.088), (0.124, 0.362, 0.082), OVERALLS),
-    ("overalls-side-right", "torso", (-0.124, 0.320, -0.088), (-0.105, 0.362, 0.082), OVERALLS),
+    # 🎽 OVERALLS BIB & POCKET (Center chest bib in Team Cyan)
+    ("bib-front",           "torso", (-0.105, 0.315, -0.104), (0.105, 0.415, -0.078), OVERALLS),
+    # Stepped upper bib hem
+    ("bib-top-hem",         "torso", (-0.095, 0.410, -0.106), (0.095, 0.420, -0.082), OVERALLS_DARK),
     
-    # 👗 BACK OVERALLS RISE & STRAP CROSS TAB (visible when bending or moving)
-    ("overalls-back-rise",        "torso", (-0.090, 0.320, 0.070), (0.090, 0.370, 0.092), OVERALLS),
-    ("overalls-back-tab",         "torso", (-0.060, 0.345, 0.086), (0.060, 0.368, 0.098), OVERALLS_DARK),
-    ("overalls-back-cross-left",  "torso", (0.045, 0.320, 0.084), (0.080, 0.445, 0.096), OVERALLS),
-    ("overalls-back-cross-right", "torso", (-0.080, 0.320, 0.084), (-0.045, 0.445, 0.096), OVERALLS),
-    ("overalls-back-buckle-l",    "torso", (0.048, 0.320, 0.092), (0.076, 0.342, 0.102), SILVER),
-    ("overalls-back-buckle-r",    "torso", (-0.076, 0.320, 0.092), (-0.048, 0.342, 0.102), SILVER),
+    # 🦘 ICONIC KANGAROO BIB POCKET (Front & center with spatula peeking!)
+    ("bib-pocket-main",     "torso", (-0.075, 0.325, -0.112), (0.075, 0.380, -0.098), OVERALLS_DARK),
+    ("bib-pocket-rim",      "torso", (-0.078, 0.375, -0.114), (0.078, 0.385, -0.096), CYAN_TRIM),
+    # ❄️ Embroidered Team Snowflake Icon on Bib Pocket Center
+    ("bib-pocket-frost-icon","torso",(-0.020, 0.342, -0.116), (0.020, 0.362, -0.110), FROST_ACCENT),
+    ("bib-pocket-icon-dot",  "torso",(-0.008, 0.348, -0.118), (0.008, 0.356, -0.112), WHITE),
     
-    # Side button rivets on hip tabs
-    ("side-rivet-left",     "torso", (0.122, 0.336, -0.012), (0.127, 0.354, 0.012), BUTTONS),
-    ("side-rivet-right",    "torso", (-0.127, 0.336, -0.012), (-0.122, 0.354, 0.012), BUTTONS),
+    # 🍳 TUCKED BAKERY SPATULA HANDLE peeking from right side of bib pocket (-X)
+    ("spatula-handle-wood", "torso", (-0.065, 0.365, -0.114), (-0.045, 0.428, -0.100), WOOD_GOLD),
+    ("spatula-metal-neck",  "torso", (-0.062, 0.385, -0.116), (-0.048, 0.395, -0.098), SILVER),
+    ("spatula-hole",        "torso", (-0.058, 0.418, -0.116), (-0.052, 0.424, -0.098), WHITE),
     
-    # Side seam trim strips
-    ("skirt-seam-left",     "torso", (0.118, 0.235, -0.090), (0.126, 0.328, 0.086), OVERALLS_DARK),
-    ("skirt-seam-right",    "torso", (-0.126, 0.235, -0.090), (-0.118, 0.328, 0.086), OVERALLS_DARK),
+    # 📏 SUSPENDER STRAPS (Front straps running over shoulders to back)
+    # Left suspender front
+    ("strap-front-left",    "torso", (0.062, 0.380, -0.106), (0.095, 0.448, -0.086), OVERALLS),
+    ("strap-buckle-left",   "torso", (0.058, 0.395, -0.112), (0.098, 0.415, -0.094), SILVER),
+    ("strap-buckle-pin-l",  "torso", (0.072, 0.400, -0.114), (0.084, 0.410, -0.100), FROST_ACCENT),
+    # Right suspender front
+    ("strap-front-right",   "torso", (-0.095, 0.380, -0.106), (-0.062, 0.448, -0.086), OVERALLS),
+    ("strap-buckle-right",  "torso", (-0.098, 0.395, -0.112), (-0.058, 0.415, -0.094), SILVER),
+    ("strap-buckle-pin-r",  "torso", (-0.084, 0.400, -0.114), (-0.072, 0.410, -0.100), FROST_ACCENT),
     
-    # Overalls bib (front center)
-    ("overalls-bib",        "torso", (-0.088, 0.310, -0.104), (0.088, 0.382, -0.080), OVERALLS),
+    # Suspender shoulder arches
+    ("strap-shoulder-left", "torso", (0.062, 0.440, -0.088), (0.095, 0.450, 0.088), OVERALLS),
+    ("strap-shoulder-right","torso", (-0.095, 0.440, -0.088), (-0.062, 0.450, 0.088), OVERALLS),
     
-    # Kangaroo front pouch pocket with 3D depth & darker lip trim
-    ("overalls-pocket",     "torso", (-0.068, 0.248, -0.114), (0.068, 0.316, -0.098), OVERALLS),
-    ("pocket-lip-trim",     "torso", (-0.070, 0.312, -0.116), (0.070, 0.324, -0.096), OVERALLS_DARK),
-    ("pocket-accent",       "torso", (-0.008, 0.260, -0.118), (0.008, 0.310, -0.108), OVERALLS_DARK),
-    
-    # ❄️ Embroidered Front Frost Snowflake Icon on Kangaroo Pocket
-    ("pocket-frost-star",   "torso", (-0.024, 0.268, -0.118), (0.024, 0.298, -0.108), CYAN_TRIM),
-    ("pocket-frost-core",   "torso", (-0.012, 0.274, -0.120), (0.012, 0.292, -0.106), FROST_ACCENT),
-    
-    # 🍳 STORYTELLING DETAIL: Tucked Baker Spatula / Scoop Handle peeking from pocket (+X side)
-    ("spatula-handle",      "torso", (0.032, 0.310, -0.112), (0.052, 0.362, -0.100), WOOD_GOLD),
-    ("spatula-metal-neck",  "torso", (0.035, 0.358, -0.110), (0.049, 0.374, -0.102), SILVER),
-    
-    # ❄️ PERSONALITY DETAIL: Side Frost Carabiner Keychain & Snowflake Tag on Right Hip (-X)
-    ("keychain-ring",       "torso", (-0.128, 0.308, -0.050), (-0.114, 0.328, -0.015), SILVER),
-    ("keychain-charm-tag",  "torso", (-0.130, 0.265, -0.045), (-0.112, 0.308, -0.020), CYAN_TRIM),
-    ("keychain-charm-star", "torso", (-0.132, 0.278, -0.038), (-0.110, 0.296, -0.026), WHITE),
-    
-    # Shoulder straps (running up over shoulders to back)
-    ("strap-left",          "torso", (0.050, 0.330, -0.106), (0.086, 0.445, 0.088), OVERALLS),
-    ("strap-right",         "torso", (-0.086, 0.330, -0.106), (-0.050, 0.445, 0.088), OVERALLS),
-    
-    # Silver Clasp Buckles & White Button Rivets
-    ("clasp-left",          "torso", (0.052, 0.340, -0.116), (0.084, 0.370, -0.104), SILVER),
-    ("button-left",         "torso", (0.058, 0.346, -0.120), (0.078, 0.364, -0.108), BUTTONS),
-    ("clasp-right",         "torso", (-0.084, 0.340, -0.116), (-0.052, 0.370, -0.104), SILVER),
-    ("button-right",        "torso", (-0.078, 0.346, -0.120), (-0.058, 0.364, -0.108), BUTTONS),
+    # 🔙 BACK SUSPENDERS: Classic Crossed X-Back Straps
+    ("strap-back-left",     "torso", (0.062, 0.315, 0.080), (0.095, 0.445, 0.098), OVERALLS),
+    ("strap-back-right",    "torso", (-0.095, 0.315, 0.080), (-0.062, 0.445, 0.098), OVERALLS),
+    ("strap-cross-brace",   "torso", (-0.085, 0.360, 0.086), (0.085, 0.385, 0.100), OVERALLS_DARK),
+    ("strap-cross-gem",     "torso", (-0.015, 0.366, 0.092), (0.015, 0.378, 0.104), FROST_ACCENT),
     
     # Neck skin (V-neck opening)
     ("neck-skin",           "torso", (-0.030, 0.380, -0.088), (0.030, 0.445, -0.076), SKIN_LIT),
@@ -368,22 +355,19 @@ ARM_RIGHT = [
 HEAD = [
     # Hair core covering back and sides of skull
     ("hair-core",           "head", (-0.180, 0.480, -0.215), (0.180, 0.700, -0.040), HAIR),
-    # Hair crown under the baker cap
     ("hair-crown",          "head", (-0.176, 0.650, -0.170), (0.176, 0.705, 0.140), HAIR),
     
     # 💇 BACK HAIR DRAPES & STRUCTURED TIERS (Smooth, elegant layered cascade)
-    # Tier 1 (Upper Mantle)
     ("hair-back-tier1",     "head", (-0.176, 0.340, -0.218), (0.176, 0.490, -0.135), HAIR),
-    # Tier 2 (Middle Layer with subtle inset step)
     ("hair-back-tier2",     "head", (-0.174, 0.230, -0.216), (0.174, 0.348, -0.138), HAIR),
-    # Tier 3 (Lower Drape)
-    # 🎀 Iteration 2 Back: Frosted Star Clasp & Twin Fluttering Ribbon Tails with Frosted Tips
-    ("hair-back-star-clasp",    "head", (-0.030, 0.455, -0.228), (0.030, 0.495, -0.214), FROST_ACCENT),
-    ("hair-back-star-gem",      "head", (-0.015, 0.462, -0.232), (0.015, 0.488, -0.216), WHITE),
-    ("hair-back-ribbon-tail-l", "head", (0.020, 0.360, -0.225), (0.065, 0.460, -0.215), CYAN_TRIM),
-    ("hair-back-ribbon-tail-r", "head", (-0.065, 0.360, -0.225), (-0.020, 0.460, -0.215), CYAN_TRIM),
-    ("hair-back-ribbon-tip-l",  "head", (0.035, 0.340, -0.225), (0.075, 0.365, -0.215), FROST_ACCENT),
-    ("hair-back-ribbon-tip-r",  "head", (-0.075, 0.340, -0.225), (-0.035, 0.365, -0.215), FROST_ACCENT),
+    
+    # 🎀 Frosted Star Clasp & Twin Fluttering Ribbon Tails (Positioned below Ushanka fur hem)
+    ("hair-back-star-clasp",    "head", (-0.030, 0.335, -0.228), (0.030, 0.375, -0.214), FROST_ACCENT),
+    ("hair-back-star-gem",      "head", (-0.015, 0.342, -0.232), (0.015, 0.368, -0.216), WHITE),
+    ("hair-back-ribbon-tail-l", "head", (0.020, 0.230, -0.225), (0.065, 0.340, -0.215), CYAN_TRIM),
+    ("hair-back-ribbon-tail-r", "head", (-0.065, 0.230, -0.225), (-0.020, 0.340, -0.215), CYAN_TRIM),
+    ("hair-back-ribbon-tip-l",  "head", (0.035, 0.200, -0.225), (0.075, 0.235, -0.215), FROST_ACCENT),
+    ("hair-back-ribbon-tip-r",  "head", (-0.075, 0.200, -0.225), (-0.035, 0.235, -0.215), FROST_ACCENT),
     
     # 📐 Raised horizontal weight band & clean frosted bottom hem rim
     ("hair-back-weight-band",   "head", (-0.176, 0.155, -0.224), (0.176, 0.215, -0.145), HAIR),
@@ -391,84 +375,124 @@ HEAD = [
     ("hair-back-frost-hem",     "head", (-0.172, 0.148, -0.224), (0.172, 0.165, -0.216), CYAN_TRIM),
     ("hair-back-frost-sparkle", "head", (-0.140, 0.150, -0.226), (0.140, 0.162, -0.220), FROST_ACCENT),
     
-    # 📐 Side framing rails (beveled stepped outer edges giving clean boxy toon silhouette)
+    # 📐 Side framing rails
     ("hair-back-rail-left",     "head", (0.158, 0.170, -0.220), (0.180, 0.600, -0.160), HAIR),
     ("hair-back-rail-right",    "head", (-0.180, 0.170, -0.220), (-0.158, 0.600, -0.160), HAIR),
     
-    # 💇 SEAMLESS SIDE HAIR & EAR CONTOURING (Full coverage above & behind ear with graceful framing locks)
-    # Upper side hair dome completely covering above ears (y=0.490 to 0.670)
+    # 💇 SEAMLESS SIDE HAIR & LOCKS
     ("hair-side-cap-left",      "head", (0.165, 0.490, -0.160), (0.190, 0.670, 0.120), HAIR),
     ("hair-side-cap-right",     "head", (-0.190, 0.490, -0.160), (-0.165, 0.670, 0.120), HAIR),
-    # Behind ear coverage
-    ("hair-side-post-ear-l",    "head", (0.165, 0.410, -0.155), (0.188, 0.500, -0.010), HAIR),
-    ("hair-side-post-ear-r",    "head", (-0.188, 0.410, -0.155), (-0.165, 0.500, -0.010), HAIR),
-    # Front-of-ear sideburn locks
-    ("hair-side-ante-ear-l",    "head", (0.165, 0.410, 0.015), (0.188, 0.500, 0.115), HAIR),
-    ("hair-side-ante-ear-r",    "head", (-0.188, 0.410, 0.015), (-0.165, 0.500, 0.115), HAIR),
-    # Stepped side jawline framing locks
     ("hair-side-lock-left",     "head", (0.168, 0.350, 0.000), (0.188, 0.420, 0.080), HAIR),
     ("hair-side-lock-right",    "head", (-0.188, 0.350, 0.000), (-0.168, 0.420, 0.080), HAIR),
-    # ❄️ Side Frost Dyed Highlights on Temple Locks
     ("hair-side-frost-lock-l",  "head", (0.170, 0.355, 0.010), (0.190, 0.410, 0.050), CYAN_TRIM),
     ("hair-side-frost-lock-r",  "head", (-0.190, 0.355, 0.010), (-0.170, 0.410, 0.050), CYAN_TRIM),
     
-    # 💇 SEAMLESS SOLID FULL BANGS (No center split / gap! Clean straight full fringe across forehead)
-    ("hair-bangs-full",         "head", (-0.174, 0.540, 0.135), (0.174, 0.685, 0.185), HAIR),
-    
-    # ⚡ PERSONALITY DETAIL: Bold Sweeping Icy-Frost Dyed Streak through Right Bangs (-X)
-    ("hair-frost-streak-main",  "head", (-0.165, 0.540, 0.182), (-0.035, 0.645, 0.198), CYAN_TRIM),
-    ("hair-frost-streak-tip",   "head", (-0.055, 0.540, 0.182), (-0.005, 0.595, 0.196), CYAN_TRIM),
-    ("hair-frost-streak-shine", "head", (-0.145, 0.575, 0.192), (-0.080, 0.635, 0.200), FROST_ACCENT),
-    
-    # 💎 ICONIC PERSONALITY DETAIL: Dangling Frost Crystal Earring on Right Ear (-X, viewer's left)
-    ("earring-stud",            "head", (-0.215, 0.485, -0.015), (-0.200, 0.508, 0.005), SILVER),
-    ("earring-frost-drop",      "head", (-0.218, 0.435, -0.018), (-0.198, 0.485, 0.008), CYAN_TRIM),
-    ("earring-frost-sparkle",   "head", (-0.219, 0.442, -0.012), (-0.204, 0.465, 0.004), FROST_ACCENT),
-    
-    # 💎 Frost Stud Earring on Left Ear (+X)
-    ("earring-stud-left",       "head", (0.200, 0.485, -0.015), (0.215, 0.508, 0.005), SILVER),
-    ("earring-gem-left",        "head", (0.202, 0.488, -0.010), (0.218, 0.505, 0.002), FROST_ACCENT),
-    
-    # 👨‍🍳 Jaunty Baker / Ice Queen Toque Hat (Beloved 3-Tier Design)
-    # Tier 1 (Fitted Brim Band)
-    ("cap-brim-base",           "head", (-0.155, 0.680, -0.155), (0.155, 0.712, 0.155), WHITE),
-    # Tier 1 Frost Ribbon Band
-    ("cap-brim-ribbon",         "head", (-0.160, 0.688, -0.160), (0.160, 0.704, 0.160), CYAN_TRIM),
-    
-    # 🎀 Cute Side-Tied Ribbon Bow with Fluttering Tails on Right Side (-X)
-    ("cap-bow-knot",            "head", (-0.145, 0.690, 0.125), (-0.110, 0.715, 0.165), CYAN_TRIM),
-    ("cap-bow-loop-left",       "head", (-0.172, 0.696, 0.120), (-0.140, 0.720, 0.155), CYAN_TRIM),
-    ("cap-bow-loop-right",      "head", (-0.115, 0.696, 0.120), (-0.085, 0.720, 0.155), CYAN_TRIM),
-    ("cap-bow-tail-left",       "head", (-0.155, 0.655, 0.135), (-0.135, 0.692, 0.155), CYAN_TRIM),
-    ("cap-bow-tail-right",      "head", (-0.125, 0.662, 0.135), (-0.105, 0.692, 0.155), CYAN_TRIM),
-    ("cap-bow-snow-star",       "head", (-0.133, 0.698, 0.155), (-0.120, 0.710, 0.168), WHITE),
-    
-    # 🎀 Back Hat Ribbon Bow & Frost Crystal on Toque Band (-Z)
-    ("cap-back-bow-knot",       "head", (-0.022, 0.686, -0.170), (0.022, 0.708, -0.155), CYAN_TRIM),
-    ("cap-back-bow-loop-l",     "head", (0.018, 0.690, -0.168), (0.055, 0.706, -0.156), CYAN_TRIM),
-    ("cap-back-bow-loop-r",     "head", (-0.055, 0.690, -0.168), (-0.018, 0.706, -0.156), CYAN_TRIM),
-    ("cap-back-bow-tail-l",     "head", (0.008, 0.655, -0.168), (0.028, 0.690, -0.158), CYAN_TRIM),
-    ("cap-back-bow-tail-r",     "head", (-0.028, 0.655, -0.168), (-0.008, 0.690, -0.158), CYAN_TRIM),
-    ("cap-back-frost-crystal",  "head", (-0.010, 0.692, -0.172), (0.010, 0.702, -0.164), FROST_ACCENT),
+    # 💇 100% PURE CLEAN BLACK SCULPTED 3D BANGS
+    ("hair-brow-base",          "head", (-0.176, 0.585, 0.130), (0.176, 0.675, 0.172), HAIR),
+    ("hair-fringe-center",      "head", (-0.045, 0.555, 0.158), (0.045, 0.620, 0.188), HAIR),
+    ("hair-fringe-mid-l",       "head", (0.040, 0.540, 0.156), (0.115, 0.625, 0.185), HAIR),
+    ("hair-fringe-mid-r",       "head", (-0.115, 0.540, 0.156), (-0.040, 0.625, 0.185), HAIR),
+    ("hair-fringe-outer-l",     "head", (0.110, 0.505, 0.150), (0.174, 0.620, 0.180), HAIR),
+    ("hair-fringe-outer-r",     "head", (-0.174, 0.505, 0.150), (-0.110, 0.620, 0.180), HAIR),
+    ("hair-vol-lock-c",         "head", (-0.035, 0.565, 0.182), (0.035, 0.635, 0.198), HAIR),
+    ("hair-vol-lock-l",         "head", (0.045, 0.550, 0.180), (0.105, 0.630, 0.195), HAIR),
+    ("hair-vol-lock-r",         "head", (-0.105, 0.550, 0.180), (-0.045, 0.630, 0.195), HAIR),
+    ("hair-vol-lock-r2",        "head", (-0.110, 0.555, 0.182), (-0.040, 0.628, 0.196), HAIR),
+    ("hair-vol-lock-l2",        "head", (0.040, 0.555, 0.182), (0.110, 0.628, 0.196), HAIR),
 
-    
-    # Tier 2 (Bulging / Flared Mushroom Puff Crown with 360-degree corner lobes)
-    ("cap-toque-puff",          "head", (-0.170, 0.712, -0.170), (0.170, 0.748, 0.170), WHITE),
-    ("cap-toque-left-lobe",     "head", (0.155, 0.718, -0.140), (0.180, 0.742, 0.140), WHITE),
-    ("cap-toque-right-lobe",    "head", (-0.180, 0.718, -0.140), (-0.155, 0.742, 0.140), WHITE),
-    ("cap-toque-front-lobe",    "head", (-0.140, 0.718, 0.155), (0.140, 0.742, 0.180), WHITE),
-    ("cap-toque-back-lobe",     "head", (-0.140, 0.718, -0.180), (0.140, 0.742, -0.155), WHITE),
-    # Corner puff chamfers for smooth circular silhouette from 3/4 and side
-    ("cap-puff-corner-fl",      "head", (0.130, 0.718, 0.130), (0.168, 0.742, 0.168), WHITE),
-    ("cap-puff-corner-fr",      "head", (-0.168, 0.718, 0.130), (-0.130, 0.742, 0.168), WHITE),
-    ("cap-puff-corner-bl",      "head", (0.130, 0.718, -0.168), (0.168, 0.742, -0.130), WHITE),
-    ("cap-puff-corner-br",      "head", (-0.168, 0.718, -0.168), (-0.130, 0.742, -0.130), WHITE),
-    
-    # Tier 3 (Top Crown & Frost Ribbons)
-    ("cap-toque-top",           "head", (-0.140, 0.748, -0.140), (0.140, 0.772, 0.140), WHITE),
-    ("cap-frost-stripe-x",      "head", (-0.142, 0.752, -0.030), (0.142, 0.764, 0.030), CYAN_TRIM),
-    ("cap-frost-stripe-z",      "head", (-0.030, 0.752, -0.142), (0.030, 0.764, 0.142), CYAN_TRIM),
-    ("cap-toque-dome",          "head", (-0.060, 0.772, -0.060), (0.060, 0.785, 0.060), WHITE),
+    # 🥽 PRO HIGH-TECH SKI GOGGLES (Curved conformal wrap around forehead & crown)
+    ("goggle-strap-b",      "head", (-0.180, 0.638, -0.234), (0.180, 0.672, -0.200), OVERALLS_DARK),
+    ("goggle-strap-l",      "head", (0.176, 0.638, -0.214), (0.208, 0.672, 0.140), OVERALLS_DARK),
+    ("goggle-strap-r",      "head", (-0.208, 0.638, -0.214), (-0.176, 0.672, 0.140), OVERALLS_DARK),
+    ("goggle-strap-trim-l", "head", (0.180, 0.648, -0.120), (0.210, 0.662, 0.120), CYAN_TRIM),
+    ("goggle-strap-trim-r", "head", (-0.210, 0.648, -0.120), (-0.180, 0.662, 0.120), CYAN_TRIM),
+    ("goggle-hinge-l",      "head", (0.168, 0.628, 0.140), (0.202, 0.688, 0.195), SILVER),
+    ("goggle-hinge-r",      "head", (-0.202, 0.628, 0.140), (-0.168, 0.688, 0.195), SILVER),
+    ("goggle-frame-l",      "head", (0.015, 0.625, 0.195), (0.165, 0.700, 0.240), SILVER),
+    ("goggle-frame-r",      "head", (-0.165, 0.625, 0.195), (-0.015, 0.700, 0.240), SILVER),
+    ("goggle-frame-wrap-l", "head", (0.142, 0.628, 0.148), (0.190, 0.694, 0.210), SILVER),
+    ("goggle-frame-wrap-r", "head", (-0.190, 0.628, 0.148), (-0.142, 0.694, 0.210), SILVER),
+    ("goggle-bridge-top",   "head", (-0.020, 0.660, 0.200), (0.020, 0.694, 0.235), SILVER),
+    ("goggle-bridge-arch",  "head", (-0.015, 0.638, 0.202), (0.015, 0.662, 0.230), SILVER),
+    ("goggle-bridge-rivet", "head", (-0.010, 0.670, 0.232), (0.010, 0.686, 0.240), WHITE),
+    ("goggle-lens-l",       "head", (0.026, 0.635, 0.210), (0.152, 0.690, 0.246), CYAN_TRIM),
+    ("goggle-lens-r",       "head", (-0.152, 0.635, 0.210), (-0.026, 0.690, 0.246), CYAN_TRIM),
+    ("goggle-lens-wrap-l",  "head", (0.142, 0.638, 0.158), (0.180, 0.686, 0.215), CYAN_TRIM),
+    ("goggle-lens-wrap-r",  "head", (-0.180, 0.638, 0.158), (-0.142, 0.686, 0.215), CYAN_TRIM),
+    ("goggle-depth-l",      "head", (0.032, 0.660, 0.225), (0.145, 0.686, 0.248), FROST_ACCENT),
+    ("goggle-depth-r",      "head", (-0.145, 0.660, 0.225), (-0.032, 0.686, 0.248), FROST_ACCENT),
+    ("goggle-glint-l",      "head", (0.045, 0.668, 0.232), (0.090, 0.684, 0.250), WHITE),
+    ("goggle-glint-r",      "head", (-0.138, 0.668, 0.232), (-0.092, 0.684, 0.250), WHITE),
+
+    # 🧢 ORGANIC VOLUMETRIC EXPEDITION USHANKA
+    # Crown & Quilted Puffy Dome
+    ("ush-crown-core",      "head", (-0.180, 0.630, -0.205), (0.180, 0.730, 0.155), OVERALLS),
+    ("ush-crown-side-l",    "head", (0.170, 0.635, -0.180), (0.206, 0.725, 0.130), OVERALLS),
+    ("ush-crown-side-r",    "head", (-0.206, 0.635, -0.180), (-0.170, 0.725, 0.130), OVERALLS),
+    ("ush-crown-front",     "head", (-0.165, 0.635, 0.140), (0.165, 0.725, 0.182), OVERALLS),
+    ("ush-crown-back",      "head", (-0.165, 0.635, -0.226), (0.165, 0.725, -0.188), OVERALLS),
+    ("ush-crown-fl",        "head", (0.130, 0.635, 0.110), (0.192, 0.725, 0.168), OVERALLS),
+    ("ush-crown-fr",        "head", (-0.192, 0.635, 0.110), (-0.130, 0.725, 0.168), OVERALLS),
+    ("ush-crown-bl",        "head", (0.130, 0.635, -0.216), (0.192, 0.725, -0.148), OVERALLS),
+    ("ush-crown-br",        "head", (-0.192, 0.635, -0.216), (-0.130, 0.725, -0.148), OVERALLS),
+    ("ush-dome-top",        "head", (-0.155, 0.725, -0.175), (0.155, 0.768, 0.130), OVERALLS),
+    ("ush-dome-top-l",      "head", (0.140, 0.725, -0.145), (0.175, 0.760, 0.105), OVERALLS),
+    ("ush-dome-top-r",      "head", (-0.175, 0.725, -0.145), (-0.140, 0.760, 0.105), OVERALLS),
+    ("ush-dome-top-f",      "head", (-0.130, 0.725, 0.110), (0.130, 0.760, 0.152), OVERALLS),
+    ("ush-dome-top-b",      "head", (-0.130, 0.725, -0.198), (0.130, 0.760, -0.155), OVERALLS),
+    ("ush-seam-x",          "head", (-0.158, 0.730, -0.015), (0.158, 0.762, 0.015), OVERALLS_DARK),
+    ("ush-seam-z",          "head", (-0.015, 0.730, -0.178), (0.015, 0.762, 0.135), OVERALLS_DARK),
+    ("ush-pompom-base",     "head", (-0.058, 0.758, -0.058), (0.058, 0.785, 0.058), WHITE),
+    ("ush-pompom-top",      "head", (-0.036, 0.782, -0.036), (0.036, 0.792, 0.036), WHITE),
+    ("ush-pompom-star",     "head", (-0.016, 0.776, -0.016), (0.016, 0.788, 0.016), CYAN_TRIM),
+
+    # Curved Plush Fur Visor Brim
+    ("ush-visor-backing",   "head", (-0.170, 0.610, 0.155), (0.170, 0.690, 0.205), OVERALLS_DARK),
+    ("ush-visor-center",    "head", (-0.142, 0.610, 0.175), (0.142, 0.702, 0.238), WHITE),
+    ("ush-visor-bevel-l",   "head", (0.120, 0.610, 0.150), (0.185, 0.696, 0.222), WHITE),
+    ("ush-visor-bevel-r",   "head", (-0.185, 0.610, 0.150), (-0.120, 0.696, 0.222), WHITE),
+    ("ush-visor-lip",       "head", (-0.148, 0.665, 0.195), (0.148, 0.708, 0.244), WHITE),
+    ("ush-visor-star",      "head", (-0.028, 0.648, 0.230), (0.028, 0.682, 0.246), CYAN_TRIM),
+    ("ush-visor-star-core", "head", (-0.014, 0.655, 0.238), (0.014, 0.675, 0.248), FROST_ACCENT),
+
+    # Sculpted 360-Connected Earflaps
+    ("ush-flap-root-l",     "head", (0.170, 0.540, -0.150), (0.222, 0.650, 0.110), OVERALLS),
+    ("ush-flap-root-r",     "head", (-0.222, 0.540, -0.150), (-0.170, 0.650, 0.110), OVERALLS),
+    ("ush-flap-bell-l",     "head", (0.175, 0.415, -0.150), (0.236, 0.565, 0.105), OVERALLS),
+    ("ush-flap-cushion-l",  "head", (0.220, 0.430, -0.130), (0.240, 0.550, 0.085), OVERALLS_DARK),
+    ("ush-flap-star-l",     "head", (0.234, 0.470, -0.035), (0.242, 0.510, 0.015), CYAN_TRIM),
+    ("ush-flap-gem-l",      "head", (0.238, 0.482, -0.020), (0.244, 0.498, -0.000), FROST_ACCENT),
+    ("ush-flap-bell-r",     "head", (-0.236, 0.415, -0.150), (-0.175, 0.565, 0.105), OVERALLS),
+    ("ush-flap-cushion-r",  "head", (-0.240, 0.430, -0.130), (-0.220, 0.550, 0.085), OVERALLS_DARK),
+    ("ush-flap-star-r",     "head", (-0.242, 0.470, -0.035), (-0.234, 0.510, 0.015), CYAN_TRIM),
+    ("ush-flap-gem-r",      "head", (-0.244, 0.482, -0.020), (-0.238, 0.498, -0.000), FROST_ACCENT),
+    ("ush-flap-wedge-l",    "head", (0.145, 0.415, -0.216), (0.212, 0.640, -0.140), OVERALLS),
+    ("ush-flap-wedge-r",    "head", (-0.212, 0.415, -0.216), (-0.145, 0.640, -0.140), OVERALLS),
+    ("ush-flap-jaw-l",      "head", (0.170, 0.325, -0.130), (0.222, 0.440, 0.080), OVERALLS),
+    ("ush-flap-jaw-r",      "head", (-0.222, 0.325, -0.130), (-0.170, 0.440, 0.080), OVERALLS),
+    ("ush-flap-fur-l",      "head", (0.165, 0.315, -0.140), (0.232, 0.390, 0.090), WHITE),
+    ("ush-flap-inner-fur-l","head", (0.162, 0.335, 0.025), (0.202, 0.485, 0.095), WHITE),
+    ("ush-flap-fur-r",      "head", (-0.232, 0.315, -0.140), (-0.165, 0.390, 0.090), WHITE),
+    ("ush-flap-inner-fur-r","head", (-0.202, 0.335, 0.025), (-0.162, 0.485, 0.095), WHITE),
+    ("ush-cord-l",          "head", (0.192, 0.255, -0.025), (0.212, 0.330, 0.005), CYAN_TRIM),
+    ("ush-cord-r",          "head", (-0.212, 0.255, -0.025), (-0.192, 0.330, 0.005), CYAN_TRIM),
+    ("ush-cord-pompom-l",   "head", (0.182, 0.215, -0.038), (0.222, 0.260, 0.018), WHITE),
+    ("ush-cord-pompom-r",   "head", (-0.222, 0.215, -0.038), (-0.182, 0.260, 0.018), WHITE),
+
+    # Multi-Layered Padded Nape Mantle
+    ("ush-back-upper-c",    "head", (-0.170, 0.490, -0.234), (0.170, 0.650, -0.155), OVERALLS),
+    ("ush-back-upper-pad",  "head", (-0.150, 0.505, -0.238), (0.150, 0.630, -0.170), OVERALLS),
+    ("ush-back-upper-l",    "head", (0.128, 0.490, -0.228), (0.192, 0.650, -0.155), OVERALLS),
+    ("ush-back-upper-r",    "head", (-0.192, 0.490, -0.228), (-0.128, 0.650, -0.155), OVERALLS),
+    ("ush-back-quilt-seam", "head", (-0.165, 0.490, -0.236), (0.165, 0.505, -0.160), OVERALLS_DARK),
+    ("ush-back-lower-c",    "head", (-0.165, 0.375, -0.230), (0.165, 0.495, -0.165), OVERALLS),
+    ("ush-back-lower-l",    "head", (0.125, 0.375, -0.224), (0.185, 0.495, -0.165), OVERALLS),
+    ("ush-back-lower-r",    "head", (-0.185, 0.375, -0.224), (-0.125, 0.495, -0.165), OVERALLS),
+    ("ush-back-fur-main",   "head", (-0.168, 0.365, -0.238), (0.168, 0.412, -0.170), WHITE),
+    ("ush-back-fur-lip",    "head", (-0.155, 0.360, -0.240), (0.155, 0.395, -0.190), WHITE),
+    ("ush-back-fur-conn-l", "head", (0.135, 0.350, -0.230), (0.204, 0.405, -0.135), WHITE),
+    ("ush-back-fur-conn-r", "head", (-0.204, 0.350, -0.230), (-0.135, 0.405, -0.135), WHITE),
+    ("ush-back-strap",      "head", (-0.015, 0.410, -0.234), (0.015, 0.645, -0.224), OVERALLS_DARK),
 ]
 
 DONOR_SPACE = tuple(entry[0] for entry in HEAD)
