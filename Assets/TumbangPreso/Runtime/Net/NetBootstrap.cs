@@ -36,6 +36,7 @@ namespace TumbangPreso.Net
         public const string DedicatedSwitch = "-tp-dedicated";
         public const string JoinSwitch = "-tp-join";
         public const string MapSwitch = "-tp-map";
+        public const string ProfileSwitch = "-tp-profile";
 
         /// <summary>True when the command line asked for a session, so the menus are skipped.</summary>
         public static bool Requested { get; private set; }
@@ -50,15 +51,29 @@ namespace TumbangPreso.Net
 
             if (args == null || args.Length < 2) return;
 
+            string profile = Value(args, ProfileSwitch) ?? Value(args, "-profile");
+            if (!string.IsNullOrEmpty(profile))
+            {
+                NetIdentity.SetProfile(profile);
+            }
+
             string map = Value(args, MapSwitch) ?? UI.SceneFlow.Eskinita;
 
-            if (Has(args, HostSwitch) || Has(args, DedicatedSwitch))
+            bool isDedicated = Has(args, DedicatedSwitch) || Has(args, "-dedicated") || Has(args, "--dedicated") || Application.isBatchMode;
+            bool isHost = Has(args, HostSwitch) || Has(args, "-host") || Has(args, "--host") || isDedicated;
+
+            if (isHost)
             {
-                bool dedicated = Has(args, DedicatedSwitch);
-                int port = Port(args, dedicated ? DedicatedSwitch : HostSwitch);
+                int port = Port(args, isDedicated ? DedicatedSwitch : HostSwitch);
 
                 Requested = true;
                 Application.runInBackground = true;
+
+                if (isDedicated)
+                {
+                    Application.targetFrameRate = 60;
+                    QualitySettings.vSyncCount = 0;
+                }
 
                 // ⚠️ ONE FRAME LATER, NOT NOW. `NetSession.Ensure` builds a GameObject, and
                 // BeforeSceneLoad runs before there is a scene to build it into: the object is
@@ -66,9 +81,9 @@ namespace TumbangPreso.Net
                 Defer(() =>
                 {
                     var net = NetSession.Ensure();
-                    bool ok = net.StartHost(port, dedicated);
+                    bool ok = net.StartHost(port, isDedicated);
 
-                    Debug.Log($"[NetBoot] host requested on {port} dedicated={dedicated}: " +
+                    Debug.Log($"[NetBoot] host requested on {port} dedicated={isDedicated}: " +
                               (ok ? "listening" : "FAILED"));
 
                     if (ok) UI.SceneFlow.Go(map);

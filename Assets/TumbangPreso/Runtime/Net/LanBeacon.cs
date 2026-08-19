@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
@@ -18,41 +19,43 @@ namespace TumbangPreso.Net
         public int MaxPlayers;
         public bool InProgress;
         public float LastSeen;
+
+        public bool IsJoinable => !InProgress && Players < MaxPlayers;
     }
 
     /// <summary>
-    /// Local network host discovery, over plain UDP broadcast.
+    /// Local network host discovery over UDP broadcast with multi-interface routing.
     ///
-    /// ⚠️⚠️ DELIBERATELY TRANSPORT AGNOSTIC. The netcode stack is not decided (see
-    /// docs/Port_Plan.md phase 5), and discovery does not need it: a broadcast that advertises
-    /// "there is a host at this address and port" works the same whether the game session is
-    /// carried by Mirror or by Netcode for GameObjects. Binding discovery to a transport would
-    /// mean rewriting it when the decision lands, for no benefit.
+    /// ⚠️⚠️ MULTI-INTERFACE BROADCAST IS CRITICAL. Broadcasting solely to 255.255.255.255
+    /// sends packets through whichever adapter the OS routing table prioritises (frequently a
+    /// virtual adapter such as Radmin, Hamachi, or WSL). That caused beacons on the Godot dev
+    /// machine to be delivered into an empty virtual network while local LAN peers heard nothing.
+    /// Enumerating all active IPv4 interfaces and computing subnet-directed broadcasts
+    /// ensures packets reach the physical Ethernet and Wi-Fi segments.
     ///
-    /// ⚠️ THE PORT AND THE MAGIC STRING ARE CARRIED OVER EXACTLY. Anything else and a Unity
-    /// build cannot see a Godot build on the same LAN during the transition, which is exactly
-    /// when you want to compare them side by side.
+    /// ⚠️ .NET EXPOSES THE REAL PREFIX via NetworkInterface.GetIPProperties(), which improves on
+    /// Godot's hard-coded /24 assumption.
     ///
-    /// ⚠️ AND THE HOST BROADCASTS RATHER THAN CLIENTS SCANNING. Scanning a subnet means probing
-    /// 254 addresses and looks like a port scan to any network anybody cares about, including a
-    /// competition venue's.
+    /// ⚠️ FOUR SECONDS IS FOUR MISSED BEACONS, NOT AN ARBITRARY TIMEOUT. UDP broadcast is lossy
+    /// and a single dropped packet is normal. A shorter window makes healthy hosts flicker in
+    /// and out of the browser.
+    ///
+    /// ⚠️ EMITS Changed ON REAL STATE CHANGES ONLY, ignoring per-frame LastSeen updates, so
+    /// UI lists do not rebuild under an active cursor.
     /// </summary>
     public sealed class LanBeacon : MonoBehaviour
     {
         public const int DiscoveryPort = 8911;
         public const string Magic = "tumbang-preso-lan";
         public const float BeaconInterval = 1.0f;
-
-        /// <summary>
-        /// ⚠️ FOUR SECONDS IS FOUR MISSED BEACONS, NOT AN ARBITRARY TIMEOUT. UDP broadcast is
-        /// lossy and a single dropped packet is normal, so a shorter window makes healthy hosts
-        /// flicker in and out of the browser, which reads as an unstable game.
-        /// </summary>
         public const float EntryTimeout = 4.0f;
+
+        public event Action EntriesChanged;
 
         private UdpClient _listener;
         private UdpClient _sender;
         private readonly Dictionary<string, LanEntry> _seen = new Dictionary<string, LanEntry>();
+        private string _lastSignature = "";
         private float _nextBeacon;
 
         public bool Advertising { get; private set; }
@@ -67,6 +70,32 @@ namespace TumbangPreso.Net
         public bool InProgress;
 
         public IEnumerable<LanEntry> Entries => _seen.Values;
+
+        /// <summary>
+        /// Entries sorted: joinable first (not in progress and not full), then by fill descending,
+        /// then alphabetically by name.
+        /// </summary>
+        public List<LanEntry> SortedEntries
+        {
+            get
+            {
+                lock (_seen)
+                {
+                    var list = new List<LanEntry>(_seen.Values);
+                    list.Sort((a, b) =>
+                    {
+                        if (a.IsJoinable != b.IsJoinable)
+                            return b.IsJoinable.CompareTo(a.IsJoinable);
+
+                        if (a.Players != b.Players)
+                            return b.Players.CompareTo(a.Players);
+
+                        return string.Compare(a.HostName, b.HostName, StringComparison.OrdinalIgnoreCase);
+                    });
+                    return list;
+                }
+            }
+        }
 
         public void StartAdvertising()
         {
@@ -98,9 +127,6 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
-                // ⚠️ NOT FATAL, AND THIS HAPPENS FOR ORDINARY REASONS: another copy of the game
-                // already listening, or a firewall. The browser should show nothing rather than
-                // the game refusing to open a menu.
                 Debug.LogWarning($"[Lan] could not listen on {DiscoveryPort}: {e.Message}");
             }
         }
@@ -115,6 +141,15 @@ namespace TumbangPreso.Net
 
             _sender = null;
             _listener = null;
+
+            lock (_seen)
+            {
+                if (_seen.Count > 0)
+                {
+                    _seen.Clear();
+                    RaiseIfChanged();
+                }
+            }
         }
 
         private void OnDisable() => StopAll();
@@ -131,33 +166,104 @@ namespace TumbangPreso.Net
             Expire();
         }
 
+        /// <summary>
+        /// Constructs wire payload string: magic|port|players|max|inProgress|joinCode|hostName.
+        /// ⚠️ THE NAME GOES LAST because it is the only free-form field.
+        /// </summary>
+        public static string BuildPayload(int port, int players, int maxPlayers, bool inProgress, string joinCode, string hostName)
+        {
+            return string.Join("|",
+                Magic,
+                port.ToString(),
+                players.ToString(),
+                maxPlayers.ToString(),
+                inProgress ? "1" : "0",
+                joinCode ?? "",
+                hostName ?? "");
+        }
+
         private void Broadcast()
         {
             if (_sender == null) return;
 
-            // magic|port|players|max|inProgress|joinCode|hostName
-            // ⚠️ THE NAME GOES LAST because it is the only field that can contain anything,
-            // and putting it last means a name with a separator in it cannot corrupt the
-            // fields before it.
-            string payload = string.Join("|",
-                Magic,
-                Port.ToString(),
-                Players.ToString(),
-                MaxPlayers.ToString(),
-                InProgress ? "1" : "0",
-                JoinCode ?? "",
-                HostName ?? "");
+            string payload = BuildPayload(Port, Players, MaxPlayers, InProgress, JoinCode, HostName);
+            byte[] bytes = Encoding.UTF8.GetBytes(payload);
+
+            var endpoints = GetBroadcastEndpoints();
+            foreach (var ep in endpoints)
+            {
+                try
+                {
+                    _sender.Send(bytes, bytes.Length, ep);
+                }
+                catch
+                {
+                    // Ignore transient send failures on individual inactive or restricted interfaces.
+                }
+            }
+        }
+
+        /// <summary>
+        /// Collects limited broadcast (255.255.255.255) plus directed subnet broadcast for each
+        /// active IPv4 network interface.
+        /// </summary>
+        public static List<IPEndPoint> GetBroadcastEndpoints()
+        {
+            var endpoints = new List<IPEndPoint>
+            {
+                new IPEndPoint(IPAddress.Broadcast, DiscoveryPort)
+            };
 
             try
             {
-                byte[] bytes = Encoding.UTF8.GetBytes(payload);
-                _sender.Send(bytes, bytes.Length,
-                             new IPEndPoint(IPAddress.Broadcast, DiscoveryPort));
+                var seenAddresses = new HashSet<IPAddress>();
+                seenAddresses.Add(IPAddress.Broadcast);
+
+                foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
+                {
+                    if (ni.OperationalStatus != OperationalStatus.Up) continue;
+                    if (ni.NetworkInterfaceType == NetworkInterfaceType.Loopback) continue;
+
+                    var ipProps = ni.GetIPProperties();
+                    foreach (var u in ipProps.UnicastAddresses)
+                    {
+                        if (u.Address.AddressFamily != AddressFamily.InterNetwork) continue;
+                        if (IPAddress.IsLoopback(u.Address)) continue;
+
+                        if (u.IPv4Mask != null && !u.IPv4Mask.Equals(IPAddress.Any))
+                        {
+                            var bcast = CalculateSubnetBroadcast(u.Address, u.IPv4Mask);
+                            if (seenAddresses.Add(bcast))
+                            {
+                                endpoints.Add(new IPEndPoint(bcast, DiscoveryPort));
+                            }
+                        }
+                    }
+                }
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[Lan] broadcast failed: {e.Message}");
+                Debug.LogWarning($"[Lan] Interface enumeration warning: {e.Message}");
             }
+
+            return endpoints;
+        }
+
+        /// <summary>Calculates the directed broadcast address for a given IP and subnet mask.</summary>
+        public static IPAddress CalculateSubnetBroadcast(IPAddress ip, IPAddress mask)
+        {
+            byte[] ipBytes = ip.GetAddressBytes();
+            byte[] maskBytes = mask.GetAddressBytes();
+
+            if (ipBytes.Length != maskBytes.Length) return IPAddress.Broadcast;
+
+            byte[] broadcastBytes = new byte[ipBytes.Length];
+            for (int i = 0; i < ipBytes.Length; i++)
+            {
+                broadcastBytes[i] = (byte)(ipBytes[i] | (maskBytes[i] ^ 255));
+            }
+
+            return new IPAddress(broadcastBytes);
         }
 
         private void OnReceive(IAsyncResult ar)
@@ -169,13 +275,21 @@ namespace TumbangPreso.Net
                 var from = new IPEndPoint(IPAddress.Any, 0);
                 byte[] data = _listener.EndReceive(ar, ref from);
 
-                Parse(Encoding.UTF8.GetString(data), from.Address.ToString());
+                if (TryParsePayload(Encoding.UTF8.GetString(data), from.Address.ToString(), out var entry))
+                {
+                    string key = $"{entry.Address}:{entry.Port}";
+                    lock (_seen)
+                    {
+                        _seen[key] = entry;
+                    }
+                    RaiseIfChanged();
+                }
 
                 if (Listening) _listener.BeginReceive(OnReceive, null);
             }
             catch (ObjectDisposedException)
             {
-                // Socket closed while a receive was pending. Ordinary shutdown.
+                // Socket closed during shutdown.
             }
             catch (Exception e)
             {
@@ -184,18 +298,17 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>
-        /// ⚠️ EVERY FIELD IS VALIDATED BECAUSE THIS IS UNAUTHENTICATED NETWORK INPUT. Anything
-        /// on the LAN can send a packet to this port. Nothing here may throw on a malformed
-        /// payload, and nothing may be trusted into a UI without a length bound.
+        /// Validates unauthenticated network payload safely without throwing.
         /// </summary>
-        private void Parse(string payload, string address)
+        public static bool TryParsePayload(string payload, string remoteAddress, out LanEntry entry)
         {
-            if (string.IsNullOrEmpty(payload)) return;
+            entry = default;
+            if (string.IsNullOrEmpty(payload)) return false;
 
             string[] parts = payload.Split('|');
-            if (parts.Length < 7 || parts[0] != Magic) return;
+            if (parts.Length < 7 || parts[0] != Magic) return false;
 
-            if (!int.TryParse(parts[1], out int port)) return;
+            if (!int.TryParse(parts[1], out int port) || port <= 0) return false;
             if (!int.TryParse(parts[2], out int players)) players = 0;
             if (!int.TryParse(parts[3], out int max)) max = 4;
 
@@ -203,22 +316,19 @@ namespace TumbangPreso.Net
             if (name.Length > Core.Balance.PlayerNameMax)
                 name = name.Substring(0, Core.Balance.PlayerNameMax);
 
-            string key = $"{address}:{port}";
-
-            lock (_seen)
+            entry = new LanEntry
             {
-                _seen[key] = new LanEntry
-                {
-                    Address = address,
-                    Port = port,
-                    HostName = name,
-                    JoinCode = parts[5],
-                    Players = Mathf.Clamp(players, 0, 64),
-                    MaxPlayers = Mathf.Clamp(max, 1, 64),
-                    InProgress = parts[4] == "1",
-                    LastSeen = Time.unscaledTime,
-                };
-            }
+                Address = remoteAddress,
+                Port = port,
+                HostName = Settings.GameSettings.SanitiseName(name),
+                JoinCode = parts[5],
+                Players = Mathf.Clamp(players, 0, 64),
+                MaxPlayers = Mathf.Clamp(max, 1, 64),
+                InProgress = parts[4] == "1",
+                LastSeen = Time.unscaledTime,
+            };
+
+            return true;
         }
 
         private void Expire()
@@ -229,10 +339,36 @@ namespace TumbangPreso.Net
 
                 var dead = new List<string>();
                 foreach (var kv in _seen)
-                    if (Time.unscaledTime - kv.Value.LastSeen > EntryTimeout) dead.Add(kv.Key);
+                {
+                    if (Time.unscaledTime - kv.Value.LastSeen > EntryTimeout)
+                        dead.Add(kv.Key);
+                }
 
-                foreach (var k in dead) _seen.Remove(k);
+                if (dead.Count > 0)
+                {
+                    foreach (var k in dead) _seen.Remove(k);
+                    RaiseIfChanged();
+                }
             }
+        }
+
+        private void RaiseIfChanged()
+        {
+            string signature = ComputeSignature();
+            if (signature == _lastSignature) return;
+
+            _lastSignature = signature;
+            EntriesChanged?.Invoke();
+        }
+
+        private string ComputeSignature()
+        {
+            var sb = new StringBuilder();
+            foreach (var e in SortedEntries)
+            {
+                sb.Append($"{e.Address}:{e.Port}:{e.HostName}:{e.JoinCode}:{e.Players}/{e.MaxPlayers}:{e.InProgress};");
+            }
+            return sb.ToString();
         }
     }
 }

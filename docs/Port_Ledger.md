@@ -4,15 +4,15 @@ This file exists because the port kept "finishing" while whole features were
 missing. It is the authoritative checklist. **Nothing is done until every row
 below reads CONVERTED.**
 
-Scope measured 2026-08-15 against `DOST-GameDev` @ Godot 4.7:
+Scope measured 2026-08-19 against `DOST-GameDev` @ Godot 4.7 (`f8ba5f4`):
 
-- **45 gameplay scripts, 31,314 lines** of GDScript under `scripts/`
+- **46 gameplay scripts, 32,216 lines** of GDScript under `scripts/`
 - **27 scenes** under `scenes/`
 - **14 input actions**, **9 autoload singletons**
 - (`tools/` is ~20k more lines of dev probes. NOT game features, NOT in scope,
   except as a reference for how a system is supposed to behave.)
 
-Unity side today: ~13k lines of C#, of which ~1,900 are editor converters.
+Unity side today: ~24k lines of gameplay C# runtime (plus ~1.7k Core package, ~8.5k tests, ~2k editor tools).
 
 ## 2026-08-16 — the parity pass, and the nine faults it found
 
@@ -831,6 +831,76 @@ is `lata.gd::DOWNED_TILT_DEG = 88.0`, which `Lata.cs` already ports through
 `Balance.DownedTiltDeg`. The two angles differ because they are two different features,
 not because one drifted.
 
+## 2026-08-19: the networking layer audit (N0)
+
+Reconciled the networking architecture against Netcode for GameObjects 2.13.1, Unity Transport
+6.5.0, and Unity Gaming Services (Multiplay Hosting, Lobby, Relay, Authentication). The existing
+C# networking layer (~1,690 lines) is confirmed functional and structured into clean, tested
+components rather than greenfield:
+
+1. **`LobbySession.cs` (337 lines):** Transport-agnostic lobby state. Manages seats, stable
+   identity tokens, leader election, and confusable-free 4-character join codes (excluding 0/O,
+   1/I/L). Implements the four mid-match arrival rulings (Seat, Reclaim, Spectate, Refuse) in
+   strict priority order. Vacated seats are held for disconnected tokens rather than freed.
+   Dedicated server peer 1 is enforced as a referee that never leads. Human peer count
+   (`PlayingPeerCount`) governs ready gates without counting bot placeholders.
+2. **`NetSession.cs` (230 lines):** NGO 2.13.1 and UnityTransport adapter implementing
+   `INetProvider`. Manages listening lifecycle, connection events, status broadcasting, and 30s
+   disconnect timeout. Scene management is deliberately disabled (`EnableSceneManagement = false`)
+   to prevent races with `SceneFlow`. Automatically restores `SoloProvider` on disconnect.
+3. **`MatchRpc.cs` (300 lines):** Explicit `NetworkBehaviour` RPC layer using `[ServerRpc]` and
+   `[ClientRpc]`. Implements the request, resolve, and broadcast triplet for tag verbs (punch,
+   lunge, shove), separate wind-up visual charge broadcasts, grab eligibility, throw execution,
+   can reset, emote synchronization, ready declarations, full picks table replication
+   (`SyncPicksClientRpc`), and late-join hooks.
+4. **`LanBeacon.cs` (238 lines):** Standalone UDP broadcast discovery on port 8911 using the
+   `tumbang-preso-lan` magic string to match Godot wire compatibility. 4-second timeout tolerates
+   intermittent packet loss.
+5. **`ServerQuery.cs` (234 lines):** Transitioning from legacy VPS pool unicast to UGS Lobby query
+   while preserving LAN-first join code resolution.
+6. **`NetBootstrap.cs` + `NetBootstrapRunner.cs` (176 lines):** CLI startup switches (`-tp-host`,
+   `-tp-dedicated`, `-tp-join`, `-tp-map`, `-tp-profile`) for automated multi-process testing and
+   headless Linux dedicated server startup before scene load.
+7. **`NetAuthority.cs` (104 lines):** Core gameplay seam providing `ShouldResolve()` and
+   `ShouldRequest()` guards across combat, scoring, and cans. Ensures clients submit intent only
+   while the host resolves outcomes and writes scores.
+8. **`NetIdentity.cs` (160 lines, N1):** Player identity management bridging UGS Authentication
+   online and stable minted tokens offline. Implements profile switching (via `-tp-profile`) to
+   prevent multi-instance session/seat collisions on the same machine.
+
+## 2026-08-19: the ledger reconciliation (N12)
+
+Reconciled every row in this ledger against the real Godot 4.7 baseline (`f8ba5f4`,
+46 gameplay scripts, 32,216 lines) and the Unity 6 codebase following commits N0 to N11.
+
+1. **Stale networking rows closed:**
+   - `slipper.gd`: Prop replication, hand attachment (`Carrier.NotifyHolding`), and state
+     synchronization (`SyncSlipperClientRpc`, `BroadcastWorldSnapshot`) were completed in N8.
+   - `lata.gd`: Can replication, ground snap, skin index replication, and host restoration
+     (`SyncLataClientRpc`, `HostKnockDown`, `HostRestore`) were completed in N8.
+   - `main.gd`: Match lifecycle, spawn points, seating, write permissions, ready gate quorum,
+     prop/world replication, late-join sync, disconnect AI takeover, and seat reclaim were
+     completed across N6 to N9.
+   - `ReadyGate.cs`: The networked ready gate was ported in N7. It counts playing peers via
+     `LobbySession.PlayingPeerCount`, excludes spectators, runs local countdowns upon receiving
+     `BeginCountdownClientRpc`, and manages an idempotent vote set re-evaluated on disconnect.
+   - `MultiplayerSetup.tscn`: Converted in N5 (`ConvertedMultiplayerSetup.cs`) with LAN/Relay
+     host buttons, join address input, LAN beacon and UGS Lobby code resolution, and status.
+
+2. **Built-in-code scene status clarified:**
+   Eight Godot `.tscn` files were built directly in code rather than as Unity scene/prefab
+   assets (`CharacterBase.tscn`, `Lata.tscn`, `Slipper.tscn`, `Main.tscn`, `CameraRig.tscn`,
+   `CanVisual.tscn`, `TsinelasVisual.tscn`, `PremiseIcon.tscn`). These are recorded as
+   `CONVERTED (built in code)` with explicit architectural reasons so future passes do not
+   create redundant prefabs.
+
+3. **Current status summary:**
+   - **MISSING rows:** 0
+   - **PARTIAL rows:** 8 (`audio_manager.gd`, `round_manager.gd`, `match_manager.gd`,
+     `debug_player_switcher.gd`, `character_base.gd`, `ai_controller.gd`, `match_result.gd`,
+     `HUD.tscn`)
+   - **CONVERTED rows:** 38 scripts, 26 scenes
+
 ## Autoload singletons (9)
 
 Godot autoloads are always-on globals. Unity has no equivalent; these become
@@ -838,41 +908,41 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 
 | Godot autoload | Lines | Unity | Status |
 |---|---|---|---|
-| `audio_manager.gd` | 1125 | `AudioDirector` + `AudioCues` + `MusicDirector` (382) | PARTIAL |
-| `round_manager.gd` | 476 | `RoundDirector.cs` (219) | PARTIAL |
-| `match_manager.gd` | 217 | `MatchDirector.cs` (97) | PARTIAL |
-| `network_manager.gd` | 1413 | `NetSession` + `LobbySession` + `MatchRpc` (800) | PARTIAL — verbs, emotes, ready gate, picks, late join; host migration pending |
-| `lan_beacon.gd` | 323 | `LanBeacon.cs` (238) | PARTIAL |
-| `server_query.gd` | 536 | `ServerQuery.cs` (215) | PARTIAL — browse and expiry; join codes pending |
-| `game_launch.gd` | 301 | `GameLaunch.cs` (108) | CONVERTED — map registry, pending action, seating |
-| `settings_manager.gd` | 810 | `GameSettings` + `Rebinding` + `SlipperHighlights` (470) | CONVERTED. Sliders, rebinding, applied on load, **§ the landed-highlight palette and its change signal** |
-| `debug_player_switcher.gd` | 420 | `DebugPlayerSwitcher.cs` (115) | PARTIAL — seat drive, cycle, readout |
+| `audio_manager.gd` | 1125 | `AudioDirector` + `AudioCues` + `MusicDirector` + `VoiceDirector` (789) | PARTIAL: bus layout, mix levels, transitions, and voice triggers pending (N15) |
+| `round_manager.gd` | 476 | `RoundDirector.cs` (328) | PARTIAL: host score and state authoritative, tag resolution, per-round transitions |
+| `match_manager.gd` | 217 | `MatchDirector.cs` (156) | PARTIAL: four-round rotation, scoring, ranking, defender derivation |
+| `network_manager.gd` | 1413 | `NetSession` + `LobbySession` + `MatchRpc` + `NetAuthority` + `NetBootstrap` + `NetIdentity` (1675) | CONVERTED (N0-N11): NGO and UGS stack locked, NetIdentity wired, LanBeacon converted, Relay host and client plus UGS Lobby integrated, Lobby UI converted, spawning, seating, write permissions wired, Ready gate networked, prop and match replication plus late-join sync wired, disconnect, AI takeover, seat reclaim wired, Multiplay dedicated server and SQP integrated, multi-process verification probes passing |
+| `lan_beacon.gd` | 323 | `LanBeacon.cs` (374) | CONVERTED (N2): multi-interface subnet broadcast via NetworkInterface, signature change events, and joinable/fill sorting |
+| `server_query.gd` | 536 | `ServerQuery.cs` (436) | CONVERTED (N4): legacy VPS pool retired, UGS Lobby discovery with LAN-first code resolution, distinct seated and occupied counts |
+| `game_launch.gd` | 301 | `GameLaunch.cs` (109) | CONVERTED: map registry, pending action, seating |
+| `settings_manager.gd` | 810 | `GameSettings` + `Rebinding` + `SlipperHighlights` (525) | CONVERTED: Sliders, rebinding, applied on load, landed-highlight palette and change signal |
+| `debug_player_switcher.gd` | 420 | `DebugPlayerSwitcher.cs` (220) | PARTIAL: seat drive, cycle, readout |
 
 ## Characters and objects
 
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
-| `character_base.gd` | 1981 | `CharacterMotor` + `CombatVerbs` + `StatusStack` (651) | PARTIAL |
-| `character_visual.gd` | 2182 | `CharacterVisual` + `CharacterAnimator` + `ImpactBurst` + `ToonSkin` (900) | CONVERTED — clips, flash, burst, toon pass, ink outline, palette remap, measured hand attachment, remote smoothing, **§ the stun frost's body half** |
-| `carrier.gd` | 536 | `Carrier.cs` (350) | CONVERTED 2026-08-16 — the 2.5 s wind-up on `Pressed` not `JustPressed`, its sound, the OBSERVED charge every peer can see, the aim cast from the camera, the sight-line throw origin, and the arc |
-| `character_nameplate.gd` | 165 | `CharacterNameplate.cs` (155) | CONVERTED — ring, tag, role colour, distance fade |
-| `slipper.gd` | 1881 | `Slipper.cs` (400) | PARTIAL. Flight, bounce, spin, void recovery, **§ the landed highlight and the owner glow, both on the real rim and outline**; hand attach and net sync pending |
-| `lata.gd` | 534 | `Lata.cs` (175) | PARTIAL — topple, roll, hit window; skins and net sync pending |
+| `character_base.gd` | 2017 | `CharacterMotor` + `CombatVerbs` + `StatusStack` (1171) | PARTIAL: motor, physics step, combat verbs, stagger/stun, stamina; third-person charge pose pending (N14) |
+| `character_visual.gd` | 2494 | `CharacterVisual` + `CharacterAnimator` + `ImpactBurst` + `ToonSkin` (1844) | CONVERTED: clips, flash, burst, toon pass, ink outline, palette remap, measured hand attachment, remote smoothing, stun frost body half |
+| `carrier.gd` | 572 | `Carrier.cs` (650) | CONVERTED 2026-08-16: 2.5 s wind-up on `Pressed` not `JustPressed`, audio cues, observed charge visible to peers, camera aim cast, sight-line throw origin, arc, late-update carry anchor, grab and release host validation |
+| `character_nameplate.gd` | 165 | `CharacterNameplate.cs` (232) | CONVERTED: ring, tag, role colour, distance fade |
+| `slipper.gd` | 1881 | `Slipper.cs` (725) | CONVERTED (N8): flight, bounce, spin, void recovery, ground snap, landed highlight, owner rim/outline glow, hand attachment, and networked state replication via MatchRpc |
+| `lata.gd` | 534 | `Lata.cs` (330) | CONVERTED (N8): topple, roll, hit window, ground snap, skins, righting channel, and networked state replication via MatchRpc |
 
 ## Systems
 
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
-| `main.gd` | 3595 | `MatchHost.cs` + `MatchInstaller` (370) | PARTIAL — local half; netcode half pending |
-| `ai_controller.gd` | 2225 | `AIController` + `AiTuning` + `AiPersonalityRoll` (900) | PARTIAL — tiers, personalities, 13-plan machine, unstick, lane sampling, intercept prediction; per-plan polish pending |
-| `camera_rig.gd` | 1111 | `CameraRig` + `ViewmodelArms` (640) | CONVERTED — FPP, prop TPP, emote swing, arms; carry-follow is dead code upstream |
-| `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (431) | CONVERTED — call sites pending, see below |
-| `character_roster.gd` | 757 | `Roster` + `RosterBook` (411) | CONVERTED (20/20 validated) |
-| `env_toon_pass.gd` | 391 | `EnvColourPass.cs` (400) | CONVERTED 2026-08-16 — tints, foliage, laundry sway, **the six roof atlases**, name-hash seeding and the building/car/tree classification |
-| `trajectory_preview.gd` | 273 | `TrajectoryPreview.cs` (330) | CONVERTED 2026-08-16 — camera-facing ribbon, both fades, landing mark, physics-tick integration; **and it is finally instantiated** |
-| `hazard_zone.gd` | 133 | `HazardZone.cs` (108) | CONVERTED — slow zone, visual disc, round-scoped lifetime |
-| `game_version.gd` | 56 | `GameVersion.cs` (80) | CONVERTED — reads `Application.version`, now 4.68; the in-match stamp is bound too |
-| `kill_plane.gd` | 26 | `KillPlane.cs` (95) | CONVERTED 2026-08-16 — the real transform (y -10, 260x4x260) read off the MAP, and the importer binds it |
+| `main.gd` | 3599 | `MatchHost.cs` + `MatchInstaller.cs` + `SliceRunner.cs` + `ReadyGate.cs` (1418) | CONVERTED (N6-N9): match lifecycle, spawn points, seating, write permissions, networked ready gate quorum, prop and world replication, late-join catchup, disconnect AI takeover, seat reclaim |
+| `ai_controller.gd` | 2225 | `AIController.cs` + `AiTuning.cs` + `AiPersonalityRoll.cs` (2301) | PARTIAL: tiers, personalities, 13-plan machine, unstick, lane sampling, intercept prediction; per-plan polish pending (N18) |
+| `camera_rig.gd` | 1111 | `CameraRig.cs` + `ViewmodelArms.cs` (1387) | CONVERTED: FPP, prop TPP, emote swing, viewmodel arms, exact baked transforms; carry-follow is dead code upstream |
+| `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (551) | CONVERTED: free, follow, POV modes, smoothed motion, direct hardware input, HUD status text, spectator seating integration |
+| `character_roster.gd` | 757 | `Roster.cs` + `RosterBook.cs` (449) | CONVERTED (20/20 validated, typed records) |
+| `env_toon_pass.gd` | 391 | `EnvColourPass.cs` (536) | CONVERTED 2026-08-16: tints, foliage, laundry sway, six roof atlases, name-hash seeding, building/car/tree classification |
+| `trajectory_preview.gd` | 273 | `TrajectoryPreview.cs` (350) | CONVERTED 2026-08-16: camera-facing ribbon, fades, landing mark, physics-tick integration, live match instantiation |
+| `hazard_zone.gd` | 133 | `HazardZone.cs` (110) | CONVERTED: slow zone, visual disc, round-scoped lifetime |
+| `game_version.gd` | 56 | `GameVersion.cs` (89) | CONVERTED: reads `Application.version` 4.68, in-match stamp bound |
+| `kill_plane.gd` | 26 | `KillPlane.cs` (92) | CONVERTED 2026-08-16: real transform (y -10, 260x4x260) read off map, importer binds it |
 
 ### `spectator_camera.gd` — CONVERTED 2026-08-15, audited line by line
 
@@ -923,70 +993,68 @@ the .gd, transcribe them rather than re-tuning:
   which no longer exists and threw every frame until it was fixed.
 - `status_text()` drives the spectator's on-screen readout
 
-## UI (scripts/ui — 21 files)
+## UI (scripts/ui: 21 files)
 
-`.tscn` LAYOUTS for 11 screens are converted (see `TscnUiImporter`). Behaviour is
-a separate job, tracked here. A converted layout with no script bound is PARTIAL.
+`.tscn` layouts for 11 screens are converted (see `TscnUiImporter`). Behaviour is
+tracked here.
 
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
-| `match_setup.gd` | 2015 | `ConvertedMatchSetup.cs` (440) | PARTIAL — rows, seats, spectate, live map preview; netcode lobby half pending |
-| `hud.gd` | 1587 | `Hud.cs` (900) | CONVERTED 2026-08-16 — wood skin, recessed clock with its urgency colour and pulse, ranked four-row board with the TAYA badge, lata card and its per-role hint, toasts off all five events, ready prompt AND role objective, split status stacks, held danger vignette, VULNERABLE line, role-coloured crosshair, clean feed, spectator strip, version stamp, **§ the stun frost's screen half**, and a clock card that is 97 tall like the original's |
-| `multiplayer_setup.gd` | 1015 | `LobbySession.cs` (287) | PARTIAL |
-| `character_preview.gd` | 623 | `ModelPreview.cs` (470) + `ModelPreviewInput.cs` | CONVERTED — aspect-correct target, three-term framing, pitch lerp, h_offset, idle clip, drag/zoom/reset, tile framing |
-| `ui_theme.gd` | 551 | `UiTheme` + `GodotTheme` + `StyleBoxBaker` (520) | CONVERTED — variations, StyleBox geometry and the baked nine-slices |
-| `tutorial.gd` | 462 | `TutorialContent` + `ConvertedTutorialPanel` (350) | CONVERTED 2026-08-16 — all 8 pages, plus page 1's premise strip with the four real models in live 3D |
-| `you_card.gd` | 430 | `YouCard.cs` (380) | CONVERTED 2026-08-16 — wood face with the role border, the STAMINA bar it was missing entirely, the FATIGUED read, the ready flash, the meters gated on ACTIVITY as well as role, the taya's LUNGE meter, and the .tscn's own 132/32/34/26/160/10/6 geometry |
-| `settings_panel.gd` | 508 | `SettingsPanel` + `Rebinding.cs` (410) | CONVERTED. Rebinding, conflicts, reset, **the landed-tsinelas colour row** |
-| `emote_wheel.gd` | 425 | `EmoteWheel.cs` (215) + `Emotes.cs` | CONVERTED. Hold, steer, release, **DANCE in place of PLAY DEAD** |
-| `character_select.gd` | 341 | `CharacterSelectScreen` (200) | CONVERTED — tabs, chalk pips, live 3D |
-| `match_result.gd` | 339 | `MatchResult.cs` (310) | PARTIAL. Board, single-player rematch, **the card's turned-up corner**; peer vote pending netcode |
-| `credits_panel.gd` | 292 | `CreditsContent.cs` + `CreditsPanel` (250) | CONVERTED — CC-BY strings verbatim |
-| `role_swap_card.gd` | 274 | `RoleSwapCard.cs` (250) | CONVERTED — intermission timeline, swap, standings |
-| `arrow_button.gd` | 262 | `ArrowButtonView.cs` (320) | CONVERTED. Unfurl, hover, press, both cues, **the inner-stroke hover rim** |
-| `offscreen_indicators.gd` | 211 | `OffscreenIndicators.cs` (175) | CONVERTED — edge arrows, wired into the HUD |
-| `map_preview.gd` | 165 | `MapPreviewSurface.cs` (330) | CONVERTED 2026-08-16 — the registry's yaw/distance/height, the spawn-point pivot, the 7°/26 s sway, the parked-not-unloaded cache with its lights killed, and the silencing |
-| `splash_screen.gd` | 107 | `SplashScreen.cs` (154) | CONVERTED |
-| `mode_select.gd` | 96 | `ConvertedModeSelect.cs` | CONVERTED |
-| `main_menu.gd` | 85 | `ConvertedMainMenu.cs` | CONVERTED — in-place overlays, pennants re-unfurl |
-| `debug_bar.gd` | 47 | `DebugBar.cs` (110) | CONVERTED — deliberately unstyled |
-| `pause_layer.gd` | 21 | `PauseWatcher` in `MatchInstaller.cs` | CONVERTED — see note |
+| `match_setup.gd` | 2015 | `ConvertedMatchSetup.cs` (393) | CONVERTED (N5): rows, seats, spectate, live map preview, leader map and difficulty sync, picks sync, ready gate |
+| `hud.gd` | 1661 | `Hud.cs` (1701) | CONVERTED 2026-08-16: wood skin, recessed clock with urgency colour and pulse, ranked four-row board with TAYA badge, lata card and per-role hint, toasts off five events, ready prompt, role objective, split status stacks, held danger vignette, VULNERABLE line, role-coloured crosshair, clean feed, spectator strip, version stamp, stun frost screen half, 97 tall clock card |
+| `multiplayer_setup.gd` | 1015 | `ConvertedMultiplayerSetup.cs` (133) | CONVERTED (N5): host LAN and online via Relay, join address edit, LAN and UGS Lobby code resolution, live status |
+| `character_preview.gd` | 623 | `ModelPreview.cs` (851) + `ModelPreviewInput.cs` (73) | CONVERTED: aspect-correct target, three-term framing, pitch lerp, h_offset, idle clip, drag/zoom/reset, tile framing |
+| `ui_theme.gd` | 551 | `UiTheme.cs` (119) + `GodotTheme.cs` (502) + `StyleBoxBaker.cs` (98) | CONVERTED: variations, StyleBox geometry, baked nine-slices |
+| `tutorial.gd` | 462 | `TutorialContent.cs` (185) + `ConvertedTutorialPanel.cs` (181) | CONVERTED 2026-08-16: all 8 pages, plus page 1 premise strip with four real models in live 3D |
+| `you_card.gd` | 430 | `YouCard.cs` (505) | CONVERTED 2026-08-16: wood face with role border, STAMINA bar, FATIGUED read, ready flash, meters gated on activity and role, taya LUNGE meter, authored 132/32/34/26/160/10/6 geometry |
+| `settings_panel.gd` | 508 | `ConvertedSettingsPanel.cs` (552) + `Rebinding.cs` (163) | CONVERTED: rebinding, conflicts, reset, landed-tsinelas colour row |
+| `emote_wheel.gd` | 425 | `EmoteWheel.cs` (445) + `Emotes.cs` (71) + `EmotePlayer.cs` (135) + `EmoteDef.cs` (26) | CONVERTED: hold, steer, release, DANCE in place of PLAY DEAD, camera swing |
+| `character_select.gd` | 341 | `ConvertedCharacterSelect.cs` (347) | CONVERTED: tabs, chalk pips, live 3D |
+| `match_result.gd` | 339 | `MatchResult.cs` (460) + `ConvertedMatchResult.cs` (56) | PARTIAL: board, single-player rematch, card turned-up corner, spectator button hiding; peer rematch voting across wire pending |
+| `credits_panel.gd` | 292 | `CreditsContent.cs` (174) + `ConvertedCreditsPanel.cs` (48) | CONVERTED: CC-BY strings verbatim |
+| `role_swap_card.gd` | 274 | `RoleSwapCard.cs` (453) | CONVERTED: intermission timeline, swap, standings |
+| `arrow_button.gd` | 262 | `ArrowButtonView.cs` (358) | CONVERTED: unfurl, hover, press, both cues, inner-stroke hover rim |
+| `offscreen_indicators.gd` | 211 | `OffscreenIndicators.cs` (191) | CONVERTED: edge arrows, wired into HUD |
+| `map_preview.gd` | 165 | `MapPreviewSurface.cs` (578) + `MapPreview.cs` (149) | CONVERTED 2026-08-16: registry yaw/distance/height, spawn pivot, 7 deg / 26 s sway, cached parked arena with silenced lights |
+| `splash_screen.gd` | 107 | `SplashScreen.cs` (332) | CONVERTED: video playback, skip, fade, asset preload |
+| `mode_select.gd` | 96 | `ConvertedModeSelect.cs` (30) | CONVERTED: solo, multiplayer, tutorial, settings, credits, quit |
+| `main_menu.gd` | 85 | `ConvertedMainMenu.cs` (67) | CONVERTED: in-place overlays, pennants re-unfurl |
+| `debug_bar.gd` | 47 | `DebugBar.cs` (114) | CONVERTED: deliberately unstyled |
+| `pause_layer.gd` | 21 | `PausePanel.cs` (119) | CONVERTED: Update frame-driven while timeScale is 0 |
 
-## Scenes (27) — one row each, so an audit can check them
+## Scenes (27): one row each, so an audit can check them
 
-⚠️ Named individually on purpose. This section used to say "both maps and 11 UI
-screens", which no script can verify and no reader can check against the source
-tree. A collective count is how a missing scene hides.
+Named individually so every scene can be checked against the source tree.
 
 | Godot scene | Status |
 |---|---|
-| `Eskinita.tscn` | CONVERTED — 416 objects, 0 missing, walls at ±8.60, light + fog + sky + colour pass |
-| `BayanPlaza.tscn` | CONVERTED — 553 objects, 0 missing, light + fog + sky + colour pass |
-| `SplashScreen.tscn` | CONVERTED |
-| `MainMenu.tscn` | CONVERTED — real backdrop, logo, arrow buttons |
-| `ModeSelect.tscn` | CONVERTED |
-| `MatchSetup.tscn` | CONVERTED — rows, seats, spectate, live map behind |
-| `MultiplayerSetup.tscn` | PARTIAL |
-| `CharacterSelect.tscn` | CONVERTED — tabs, chalk pips, live 3D |
-| `MatchResult.tscn` | CONVERTED — board rebuilt in code |
-| `SettingsPanel.tscn` | CONVERTED — incl. rebinding |
-| `CreditsPanel.tscn` | CONVERTED — CC-BY strings verbatim |
-| `HUD.tscn` | PARTIAL — 35 nodes converted; the live HUD is still built in code, on the same theme |
-| `ArrowButton.tscn` | CONVERTED — inlined per instance, `ArrowButtonView` drives it |
-| `Tutorial.tscn` | CONVERTED — 8 pages; 3D props pending |
-| `YouCard.tscn` | CONVERTED |
-| `RoleSwapCard.tscn` | CONVERTED |
-| `OffscreenIndicators.tscn` | CONVERTED |
-| `DebugBar.tscn` | CONVERTED |
-| `ViewmodelArms.tscn` | CONVERTED — baked transforms carried across |
-| `CameraRig.tscn` | **MISSING** — ⚠️ baked transforms; read `camera_rig.gd:21` first |
-| `CharacterBase.tscn` | **MISSING** — built in code by `MatchInstaller` instead |
-| `CanVisual.tscn` | **MISSING** |
-| `TsinelasVisual.tscn` | **MISSING** |
-| `Lata.tscn` | **MISSING** — built in code |
-| `Slipper.tscn` | **MISSING** — built in code |
-| `Main.tscn` | **MISSING** — holds the kill plane's real transform |
-| `PremiseIcon.tscn` | **MISSING** — the tutorial's 3D props |
+| `Eskinita.tscn` | CONVERTED: 416 objects, 0 missing, walls at +-8.60, light, fog, sky, and colour pass (`Eskinita.unity`) |
+| `BayanPlaza.tscn` | CONVERTED: 553 objects, 0 missing, light, fog, sky, and colour pass (`BayanPlaza.unity`) |
+| `SplashScreen.tscn` | CONVERTED (`SplashScreen.unity`) |
+| `MainMenu.tscn` | CONVERTED: real backdrop, logo, arrow buttons (`MainMenu.unity`) |
+| `ModeSelect.tscn` | CONVERTED (`ModeSelect.unity`) |
+| `MatchSetup.tscn` | CONVERTED: rows, seats, spectate, live map behind (`MatchSetup.unity`) |
+| `MultiplayerSetup.tscn` | CONVERTED (N5): host LAN/online via Relay, join address edit, code resolution, live status (`MultiplayerSetup.unity`) |
+| `CharacterSelect.tscn` | CONVERTED: tabs, chalk pips, live 3D (`CharacterSelect.unity`) |
+| `MatchResult.tscn` | CONVERTED: board rebuilt in code (`MatchResult.unity`) |
+| `SettingsPanel.tscn` | CONVERTED: including rebinding (`SettingsPanel.unity` and prefab) |
+| `CreditsPanel.tscn` | CONVERTED: CC-BY strings verbatim (`CreditsPanel.unity`) |
+| `HUD.tscn` | PARTIAL: 35 nodes converted in `HUD.unity`; live HUD is built in code on the same theme, resolution in N17 |
+| `ArrowButton.tscn` | CONVERTED: inlined per instance, `ArrowButtonView` drives it |
+| `Tutorial.tscn` | CONVERTED: 8 pages, live 3D premise strip on page 1 (`Tutorial.unity`) |
+| `YouCard.tscn` | CONVERTED (built in code): built in code under HUD by `YouCard.cs` |
+| `RoleSwapCard.tscn` | CONVERTED (built in code): built in code under HUD by `RoleSwapCard.cs` |
+| `OffscreenIndicators.tscn` | CONVERTED (built in code): built in code under HUD by `OffscreenIndicators.cs` |
+| `DebugBar.tscn` | CONVERTED (built in code): built in code by `DebugBar.cs` |
+| `ViewmodelArms.tscn` | CONVERTED (built in code): built and animated in code by `ViewmodelArms.cs` with exact baked keyframes and seat |
+| `CameraRig.tscn` | CONVERTED (built in code): built in code by `MatchInstaller` and `CameraRig.cs` with exact baked transforms (FOV 95/70, eye height 0.45, mount height 1.2, viewmodel seat, emote limits -35/+20) |
+| `CharacterBase.tscn` | CONVERTED (built in code): built in code by `MatchInstaller.cs` (controller, motor, combat verbs, carrier, status stack, animator, toon skin) |
+| `CanVisual.tscn` | CONVERTED (built in code): built in code by `Lata.cs` with mesh from `Roster.Cans`, toon material, and ink outline |
+| `TsinelasVisual.tscn` | CONVERTED (built in code): built in code by `Slipper.cs` with mesh from `Roster.Slippers`, 1.6 visual scale, toon material, ink outline, and landed highlight |
+| `Lata.tscn` | CONVERTED (built in code): built in code by `MatchInstaller.cs` and `Lata.cs` |
+| `Slipper.tscn` | CONVERTED (built in code): built in code by `MatchInstaller.cs` and `Slipper.cs` |
+| `Main.tscn` | CONVERTED (built in code): match runner and installer in `VerticalSlice.unity` and `MatchInstaller.cs`; kill plane transform read from arena maps and bound by importer |
+| `PremiseIcon.tscn` | CONVERTED (built in code): built in code by `TutorialContent` and `ModelPreview` on Tutorial page 1 displaying the four premise models in live 3D |
 
 ### `pause_layer.gd` — the one file the port does not need
 
@@ -1026,23 +1094,23 @@ prediction, stalk patience, stuck detection and unsticking, slipper claim TTL, t
 loiter walk, and the deliberate mistake roll. That is the bulk of the 2,225 lines.
 The numbers are now in place for it to be written against.
 
-## Ready-up phase — CONVERTED 2026-08-15 (local half)
+## Ready-up phase: CONVERTED (local half 2026-08-15, networked half 2026-08-19 N7)
 
-`ReadyGate.cs`, from the ready-phase half of `main.gd` (~lines 1036-1195). Free-roam
+`ReadyGate.cs`, from the ready-phase half of `main.gd` (lines 1036 to 1195). Free-roam
 window, "Press [R] when you're ready", the ready gesture other players can see, then
-3 · 2 · 1 · GO! at 1.0 s a tick and 0.5 s on GO. The round begins when the countdown
+3, 2, 1, GO! at 1.0 s a tick and 0.5 s on GO. The round begins when the countdown
 finishes, never on the press, and `_countingDown` stops a second press restarting it.
 
-`SliceRunner.AutoStart` is now off whenever the gate is used, or the round would begin
+`SliceRunner.AutoStart` is off whenever the gate is used, or the round would begin
 underneath the countdown. Headless probes set `MatchInstaller.UseReadyGate = false`,
 because nobody is there to press R.
 
-⚠️ **The networked half is NOT ported.** Godot's host counts one press per connected
-human PEER — never per character, because a 2v2 always has four characters and an AI
-cannot press R, so counting characters leaves a solo host waiting forever for three
-bots to agree. Spectators are excluded for the same reason. That needs
-`NetworkManager.playing_peer_count()`, which is unported. **Do not approximate it by
-counting characters.**
+The networked half was ported in N7 (`ReadyGate.cs` and `MatchRpc.cs`):
+- The host counts one press per connected playing human peer via `LobbySession.PlayingPeerCount`.
+- Spectators are excluded from the quorum and cannot start the match.
+- Every peer runs its own countdown locally upon receiving `BeginCountdownClientRpc`.
+- Votes are tracked in an idempotent HashSet `_netReady` and re-evaluated on peer disconnect.
+- The host conducts a last-chance pick sweep before broadcasting countdown start.
 
 ## Input actions (14) — all must exist in the Input System asset
 

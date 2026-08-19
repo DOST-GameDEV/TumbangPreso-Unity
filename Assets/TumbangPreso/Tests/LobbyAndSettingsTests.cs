@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using TumbangPreso.Core;
 using TumbangPreso.Net;
@@ -278,6 +279,450 @@ namespace TumbangPreso.Tests
 
             Assert.IsFalse(Emotes.IsKnown("not_an_emote"));
             Assert.IsFalse(Emotes.IsKnown(null));
+        }
+
+        // -------------------------------------------------------------------
+        // IDENTITY AND PROFILES (N1)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void NetIdentityReturnsValidOfflineToken()
+        {
+            NetIdentity.ResetForTesting();
+            string token = NetIdentity.Token;
+            Assert.IsNotEmpty(token, "offline token must be non-empty");
+            Assert.AreEqual(NetIdentity.DefaultProfile, NetIdentity.Profile);
+        }
+
+        [Test]
+        public void DifferentProfilesProduceDistinctLocalTokens()
+        {
+            NetIdentity.ResetForTesting();
+            NetIdentity.SetProfile("peer1");
+            string token1 = NetIdentity.LocalToken;
+
+            NetIdentity.SetProfile("peer2");
+            string token2 = NetIdentity.LocalToken;
+
+            Assert.AreNotEqual(token1, token2, "different profiles on one machine must yield different tokens");
+            Assert.IsTrue(token1.EndsWith("_peer1"));
+            Assert.IsTrue(token2.EndsWith("_peer2"));
+            NetIdentity.ResetForTesting();
+        }
+
+        [Test]
+        public void NetIdentityOverrideForTestingTakesPrecedence()
+        {
+            NetIdentity.OverrideForTesting("test-override-token");
+            Assert.AreEqual("test-override-token", NetIdentity.Token);
+            NetIdentity.ResetForTesting();
+        }
+
+        // -------------------------------------------------------------------
+        // LAN BEACON AND DISCOVERY (N2)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void SubnetBroadcastCalculatesCorrectAddress()
+        {
+            var ip1 = System.Net.IPAddress.Parse("192.168.1.50");
+            var mask1 = System.Net.IPAddress.Parse("255.255.255.0");
+            var bcast1 = LanBeacon.CalculateSubnetBroadcast(ip1, mask1);
+            Assert.AreEqual("192.168.1.255", bcast1.ToString());
+
+            var ip2 = System.Net.IPAddress.Parse("10.0.4.12");
+            var mask2 = System.Net.IPAddress.Parse("255.255.0.0");
+            var bcast2 = LanBeacon.CalculateSubnetBroadcast(ip2, mask2);
+            Assert.AreEqual("10.0.255.255", bcast2.ToString());
+        }
+
+        [Test]
+        public void LanBeaconBuildsAndParsesPayloadFaithfully()
+        {
+            string payload = LanBeacon.BuildPayload(8910, 2, 4, false, "K7X9", "BongBong Host");
+            bool ok = LanBeacon.TryParsePayload(payload, "192.168.1.100", out var entry);
+
+            Assert.IsTrue(ok);
+            Assert.AreEqual("192.168.1.100", entry.Address);
+            Assert.AreEqual(8910, entry.Port);
+            Assert.AreEqual(2, entry.Players);
+            Assert.AreEqual(4, entry.MaxPlayers);
+            Assert.IsFalse(entry.InProgress);
+            Assert.AreEqual("K7X9", entry.JoinCode);
+            Assert.AreEqual("BongBong Host", entry.HostName);
+            Assert.IsTrue(entry.IsJoinable);
+        }
+
+        [Test]
+        public void LanBeaconRejectsMalformedPayloads()
+        {
+            Assert.IsFalse(LanBeacon.TryParsePayload(null, "127.0.0.1", out _));
+            Assert.IsFalse(LanBeacon.TryParsePayload("", "127.0.0.1", out _));
+            Assert.IsFalse(LanBeacon.TryParsePayload("wrong-magic|8910|1|4|0|K7X9|Host", "127.0.0.1", out _));
+            Assert.IsFalse(LanBeacon.TryParsePayload("tumbang-preso-lan|invalid_port|1|4|0|K7X9|Host", "127.0.0.1", out _));
+        }
+
+        [Test]
+        public void LanEntrySortOrderPutsJoinableFirstThenFillThenName()
+        {
+            var e1 = new LanEntry { HostName = "Alpha", Players = 1, MaxPlayers = 4, InProgress = true }; // in progress
+            var e2 = new LanEntry { HostName = "Beta", Players = 3, MaxPlayers = 4, InProgress = false };  // joinable, 3 players
+            var e3 = new LanEntry { HostName = "Charlie", Players = 1, MaxPlayers = 4, InProgress = false }; // joinable, 1 player
+            var e4 = new LanEntry { HostName = "Delta", Players = 4, MaxPlayers = 4, InProgress = false }; // full
+
+            var list = new List<LanEntry> { e1, e2, e3, e4 };
+            list.Sort((a, b) =>
+            {
+                if (a.IsJoinable != b.IsJoinable)
+                    return b.IsJoinable.CompareTo(a.IsJoinable);
+                if (a.Players != b.Players)
+                    return b.Players.CompareTo(a.Players);
+                return string.Compare(a.HostName, b.HostName, StringComparison.OrdinalIgnoreCase);
+            });
+
+            Assert.AreEqual("Beta", list[0].HostName, "most filled joinable lobby should be first");
+            Assert.AreEqual("Charlie", list[1].HostName, "less filled joinable lobby should be second");
+            Assert.AreEqual(4, list[2].Players, "full lobby should come after joinable");
+            Assert.IsTrue(list[3].InProgress, "in progress lobby should come last");
+        }
+
+        // -------------------------------------------------------------------
+        // RELAY AND TRANSPORT CAPACITY (N3)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void MaxConnectionsExceedsMaxPlayersToAccommodateSpectators()
+        {
+            Assert.Greater(LobbySession.MaxConnections, LobbySession.MaxPlayers,
+                "Relay connection ceiling must exceed player seat count to allow spectators");
+            Assert.AreEqual(12, LobbySession.MaxConnections);
+            Assert.AreEqual(4, LobbySession.MaxPlayers);
+        }
+
+        // -------------------------------------------------------------------
+        // ONLINE DISCOVERY AND SEATED/OCCUPIED COUNTS (N4)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void ServerQueryEntryDistinguishesSeatedAndOccupiedCounts()
+        {
+            var entry = new ServerQuery.Entry
+            {
+                Id = "test-lobby-1",
+                Name = "Spectator Host",
+                JoinCode = "K7X9",
+                RelayCode = "ABCDEF",
+                Seated = 0,
+                Occupied = 1,
+                Capacity = 4,
+                InProgress = false
+            };
+
+            // Seated count is displayed to players as 0
+            Assert.AreEqual(0, entry.Players);
+            Assert.AreEqual(0, entry.Seated);
+
+            // Occupied count is 1 (free to join as a player, but not an empty room)
+            Assert.AreEqual(1, entry.Occupied);
+            Assert.IsTrue(entry.IsJoinable);
+
+            // If match is marked in progress or occupied reaches capacity, it is not joinable
+            entry.InProgress = true;
+            Assert.IsFalse(entry.IsJoinable);
+
+            entry.InProgress = false;
+            entry.Occupied = 4;
+            Assert.IsFalse(entry.IsJoinable);
+        }
+
+        // -------------------------------------------------------------------
+        // LOBBY UI AND SEAT OCCUPATION (N5)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void LobbySessionCorrectlyIdentifiesOccupiedSeats()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(42));
+
+            Assert.IsFalse(lobby.IsSeatOccupied(0));
+            Assert.IsFalse(lobby.IsSeatOccupied(1));
+
+            var p1 = lobby.Admit(10, "token-p1", "Player One");
+            Assert.AreEqual(0, p1.Seat);
+            Assert.IsTrue(lobby.IsSeatOccupied(0));
+            Assert.IsFalse(lobby.IsSeatOccupied(1));
+
+            var p2 = lobby.Admit(20, "token-p2", "Player Two");
+            Assert.AreEqual(1, p2.Seat);
+            Assert.IsTrue(lobby.IsSeatOccupied(0));
+            Assert.IsTrue(lobby.IsSeatOccupied(1));
+            Assert.IsFalse(lobby.IsSeatOccupied(2));
+        }
+
+        // -------------------------------------------------------------------
+        // SPAWNING, SEATING, AND WRITE PERMISSIONS (N6)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void RoundOneDefenderIsSeatZeroByConstruction()
+        {
+            Assert.AreEqual(0, MatchRules.DefenderSlotFor(1), "Round 1 defender must be seat 0 by rule");
+            Assert.AreEqual(1, MatchRules.DefenderSlotFor(2));
+            Assert.AreEqual(2, MatchRules.DefenderSlotFor(3));
+            Assert.AreEqual(3, MatchRules.DefenderSlotFor(4));
+        }
+
+        [Test]
+        public void DedicatedRefereePeerHoldsNoSeatAndNeverLeads()
+        {
+            var lobby = new LobbySession { IsDedicated = true };
+            lobby.OpenLobby(new System.Random(42));
+
+            // Peer 1 is the dedicated referee
+            var refPeer = lobby.Admit(1, "token-dedicated-ref", "Referee");
+            Assert.AreEqual(-1, refPeer.Seat, "Dedicated server must not hold a physical seat");
+            Assert.IsTrue(refPeer.Spectator);
+            Assert.IsTrue(lobby.IsSeatlessReferee(1));
+            Assert.AreNotEqual(1, lobby.LeaderPeerId, "Dedicated server referee must never be leader");
+
+            // Human player joins
+            var human = lobby.Admit(2, "token-human-host", "Human Host");
+            Assert.AreEqual(0, human.Seat);
+            Assert.IsFalse(human.Spectator);
+            Assert.AreEqual(2, lobby.LeaderPeerId, "First human peer should be leader");
+        }
+
+        // -------------------------------------------------------------------
+        // READY GATE AND PEER QUORUM (N7)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void PlayingPeerCountExcludesSpectatorsAndDedicatedServer()
+        {
+            var lobby = new LobbySession { IsDedicated = true };
+            lobby.OpenLobby(new System.Random(42));
+
+            // Dedicated referee (peer 1) does not count towards ready quorum
+            lobby.Admit(1, "ref-token", "Referee");
+            Assert.AreEqual(1, lobby.PlayingPeerCount(1), "Floored at 1 when no human players are seated");
+
+            // Human player 1 (host)
+            lobby.Admit(2, "p1-token", "Host Player");
+            Assert.AreEqual(1, lobby.PlayingPeerCount(2));
+
+            // Human player 2 (guest)
+            lobby.Admit(3, "p2-token", "Guest Player");
+            Assert.AreEqual(2, lobby.PlayingPeerCount(2));
+
+            // Spectator (peer 4)
+            var spec = lobby.Admit(4, "spec-token", "Spectator");
+            spec.Spectator = true;
+            spec.Seat = -1;
+            Assert.AreEqual(2, lobby.PlayingPeerCount(2), "Spectators must not be counted in ready quorum");
+        }
+
+        [Test]
+        public void PlayingPeerCountFloorsAtOneForSoloHost()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(42));
+            Assert.AreEqual(1, lobby.PlayingPeerCount(0), "Empty lobby must floor at 1 so gate does not auto-satisfy");
+        }
+
+        // -------------------------------------------------------------------
+        // REPLICATION AND LATE JOIN (N8)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void ScoreboardSetAndSetAllSynchronizeFullTable()
+        {
+            var board = new Core.Scoreboard();
+            board.Set(0, 150);
+            board.Set(1, 300);
+            Assert.AreEqual(150, board[0]);
+            Assert.AreEqual(300, board[1]);
+            Assert.AreEqual(0, board[2]);
+
+            board.SetAll(new int[] { 100, 200, 400, 50 });
+            Assert.AreEqual(100, board[0]);
+            Assert.AreEqual(200, board[1]);
+            Assert.AreEqual(400, board[2]);
+            Assert.AreEqual(50, board[3]);
+            Assert.AreEqual(750, board.Total);
+        }
+
+        // -------------------------------------------------------------------
+        // DISCONNECT, SEAT RECLAIM, AND ARRIVAL RULINGS (N9)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void DisconnectMidMatchHoldsSeatForTokenAndAllowsReclaim()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(42));
+            lobby.StartMatch(); // MatchInProgress = true
+
+            var p1 = lobby.Admit(1, "token-p1", "Player 1");
+            var p2 = lobby.Admit(2, "token-p2", "Player 2");
+            Assert.AreEqual(0, p1.Seat);
+            Assert.AreEqual(1, p2.Seat);
+
+            // Player 2 disconnects mid-match
+            lobby.Depart(2);
+
+            // Seat 1 should still be considered occupied (held for reconnect)
+            Assert.IsTrue(lobby.IsSeatOccupied(1), "Disconnected seat must remain held during match");
+            Assert.AreEqual(MidMatchRuling.Reclaim, lobby.RuleOnArrival("token-p2"), "Original token must get Reclaim ruling");
+
+            // A new player arrives mid-match
+            var p3 = lobby.Admit(3, "token-p3", "Player 3");
+            Assert.AreEqual(2, p3.Seat, "Newcomer should receive first unheld free seat, not the held seat");
+
+            // Player 2 reconnects
+            var p2Reconnected = lobby.Admit(4, "token-p2", "Player 2");
+            Assert.AreEqual(1, p2Reconnected.Seat, "Reconnecting player must reclaim their original seat");
+        }
+
+        [Test]
+        public void ArrivalRulingOrdersReclaimBeforeFreeSeatAndSpectate()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(42));
+            lobby.StartMatch();
+
+            // Fill all 4 seats
+            lobby.Admit(1, "t1", "P1");
+            lobby.Admit(2, "t2", "P2");
+            lobby.Admit(3, "t3", "P3");
+            lobby.Admit(4, "t4", "P4");
+
+            // 5th player arrives while match is full
+            Assert.AreEqual(MidMatchRuling.Spectate, lobby.RuleOnArrival("t5"));
+            var spec = lobby.Admit(5, "t5", "P5");
+            Assert.IsTrue(spec.Spectator);
+            Assert.AreEqual(-1, spec.Seat);
+
+            // One player disconnects
+            lobby.Depart(3); // frees/holds seat 2 for t3
+
+            // Newcomer gets seat 2 if admitted before t3 returns
+            Assert.AreEqual(MidMatchRuling.Reclaim, lobby.RuleOnArrival("t3"));
+        }
+
+        // -------------------------------------------------------------------
+        // DEDICATED SERVER AND MULTIPLAY HOSTING (N10)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void DedicatedServerInitializesSeatlessAndLocksLeader()
+        {
+            var lobby = new LobbySession { IsDedicated = true };
+            lobby.OpenLobby(new System.Random(1337));
+
+            Assert.IsTrue(lobby.IsDedicated);
+            Assert.AreEqual(0, lobby.LeaderPeerId);
+
+            // Server referee joins as peer 1
+            var refPeer = lobby.Admit(1, "server-token", "DedicatedServer");
+            Assert.AreEqual(-1, refPeer.Seat);
+            Assert.IsTrue(refPeer.Spectator);
+            Assert.AreEqual(0, lobby.LeaderPeerId, "Dedicated referee must never be leader");
+            Assert.AreEqual(0, lobby.SeatedPeerCount());
+
+            // First human player joins
+            var p1 = lobby.Admit(10, "human-token-1", "First Human");
+            Assert.AreEqual(0, p1.Seat);
+            Assert.IsFalse(p1.Spectator);
+            Assert.AreEqual(10, lobby.LeaderPeerId, "First human must be appointed leader");
+            Assert.AreEqual(1, lobby.SeatedPeerCount());
+        }
+
+        // -------------------------------------------------------------------
+        // MULTI-RECONNECT AND ARRIVAL MATRIX (N13)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void ThreeConsecutiveAltF4ReconnectCyclesPreserveSameSeatAndCharacter()
+        {
+            var lobby = NewLobby();
+            lobby.StartMatch();
+
+            // Four peers seated
+            var p1 = lobby.Admit(101, "token-alice", "Alice");
+            var p2 = lobby.Admit(102, "token-bob", "Bob");
+            var p3 = lobby.Admit(103, "token-carol", "Carol");
+            var p4 = lobby.Admit(104, "token-dave", "Dave");
+
+            lobby.SetPicks(102, 2, 1, 3); // Bob's picks
+
+            Assert.AreEqual(0, p1.Seat);
+            Assert.AreEqual(1, p2.Seat);
+            Assert.AreEqual(2, p3.Seat);
+            Assert.AreEqual(3, p4.Seat);
+
+            // Three consecutive drop and reconnect cycles for Bob (seat 1)
+            for (int cycle = 1; cycle <= 3; cycle++)
+            {
+                int oldPeerId = 102 + (cycle - 1) * 10;
+                int newPeerId = 102 + cycle * 10;
+
+                // Bob drops (simulated alt-F4)
+                lobby.Depart(oldPeerId);
+                Assert.IsTrue(lobby.IsSeatOccupied(1), $"Cycle {cycle}: seat 1 must remain held for Bob");
+                Assert.AreEqual(MidMatchRuling.Reclaim, lobby.RuleOnArrival("token-bob"));
+
+                // A stranger tries to take the seat while Bob is gone
+                var stranger = lobby.Admit(900 + cycle, $"stranger-{cycle}", "Interloper");
+                Assert.AreNotEqual(1, stranger.Seat, $"Cycle {cycle}: stranger must not get Bob's held seat");
+                Assert.IsTrue(stranger.Spectator, $"Cycle {cycle}: stranger must spectate because match is full");
+
+                // Bob rejoins with new peerId but identical token
+                var bobReconnected = lobby.Admit(newPeerId, "token-bob", "Bob");
+                Assert.AreEqual(1, bobReconnected.Seat, $"Cycle {cycle}: Bob must be restored to seat 1");
+                Assert.IsFalse(bobReconnected.Spectator, $"Cycle {cycle}: Bob must not be marked spectator");
+            }
+        }
+
+        [Test]
+        public void MidMatchArrivalRulingsExhaustiveBranchMatrix()
+        {
+            var lobby = NewLobby();
+
+            // Null or empty token is always refused
+            Assert.AreEqual(MidMatchRuling.Refuse, lobby.RuleOnArrival(null));
+            Assert.AreEqual(MidMatchRuling.Refuse, lobby.RuleOnArrival(""));
+
+            // 1. Seat: Free seats available before match start
+            Assert.AreEqual(MidMatchRuling.Seat, lobby.RuleOnArrival("player1"));
+            lobby.Admit(1, "player1", "P1");
+
+            Assert.AreEqual(MidMatchRuling.Seat, lobby.RuleOnArrival("player2"));
+            lobby.Admit(2, "player2", "P2");
+
+            lobby.StartMatch();
+
+            // 2. Seat: Free seats available mid match
+            Assert.AreEqual(MidMatchRuling.Seat, lobby.RuleOnArrival("player3"));
+            lobby.Admit(3, "player3", "P3");
+
+            Assert.AreEqual(MidMatchRuling.Seat, lobby.RuleOnArrival("player4"));
+            lobby.Admit(4, "player4", "P4");
+
+            // 3. Spectate: Match full while in progress
+            Assert.AreEqual(MidMatchRuling.Spectate, lobby.RuleOnArrival("player5"));
+            var spec = lobby.Admit(5, "player5", "P5");
+            Assert.IsTrue(spec.Spectator);
+            Assert.AreEqual(-1, spec.Seat);
+
+            // 4. Reclaim: Player drops mid match
+            lobby.Depart(2); // P2 (seat 1) drops
+            Assert.AreEqual(MidMatchRuling.Reclaim, lobby.RuleOnArrival("player2"));
+
+            // End match releases held seats and resets
+            lobby.EndMatch();
+            Assert.AreEqual(MidMatchRuling.Seat, lobby.RuleOnArrival("player2"),
+                "Ended match converts reclaim into normal seating");
         }
     }
 }

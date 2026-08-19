@@ -80,6 +80,19 @@ namespace TumbangPreso.Core
             _scores[slot] += MatchRules.PointsFor(e);
         }
 
+        public void Set(int slot, int score)
+        {
+            if (slot < 0 || slot >= _scores.Length) return;
+            _scores[slot] = score;
+        }
+
+        public void SetAll(int[] scores)
+        {
+            if (scores == null) return;
+            for (int i = 0; i < _scores.Length && i < scores.Length; i++)
+                _scores[i] = scores[i];
+        }
+
         public void Reset()
         {
             for (int i = 0; i < _scores.Length; i++) _scores[i] = 0;

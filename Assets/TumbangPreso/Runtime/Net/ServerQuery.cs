@@ -1,92 +1,87 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
+using Unity.Services.Core;
+using Unity.Services.Lobbies;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
 namespace TumbangPreso.Net
 {
+    /// <summary>Result of resolving a 4-character join code across LAN and online.</summary>
+    public struct ResolvedMatch
+    {
+        public bool Found;
+        public bool IsLan;
+        public string Address;
+        public int Port;
+        public string RelayCode;
+        public string JoinCode;
+        public string HostName;
+        public int Seated;
+        public int Occupied;
+        public int MaxPlayers;
+        public bool InProgress;
+
+        public bool IsJoinable => !InProgress && Occupied < MaxPlayers;
+    }
+
     /// <summary>
-    /// ONLINE LOBBY LIST AND JOIN CODES, converted from `scripts/systems/server_query.gd`.
+    /// Online lobby discovery and unified LAN/online join code resolution.
     ///
-    /// Players need two things the LAN browser cannot give them: a list of what is running on
-    /// the online pool, and a short code they can read down a phone to a friend.
+    /// ⚠️ RETIREMENT OF THE FIXED VPS POOL (2026-08-19). The original Godot implementation
+    /// queried a fixed pool of dedicated server processes on a Singapore VPS (139.180.212.110
+    /// across ports 8910-8917 with a +10 status port offset). That fixed pool is retired in
+    /// favor of UGS Lobby discovery and Multiplay on-demand fleet allocation. The legacy UDP
+    /// unicast query loop, status port offset, and pool address constants are removed.
     ///
-    /// Online play is a FIXED POOL of dedicated processes on one VM — several copies of the
-    /// game, each bound to its own port, each refereeing exactly one match. This is how a
-    /// client finds out what those processes are doing.
+    /// ⚠️ LAN-FIRST JOIN CODE RESOLUTION SURVIVES. A join code is an opaque handle for 'the
+    /// match my friend is in', and the player does not know whether it is hosted on the LAN or
+    /// online. Resolution searches LanBeacon first, then queries UGS Lobby data.
     ///
-    /// ⚠️ PLAIN UDP UNICAST, BESIDE THE TRANSPORT AND NEVER ON TOP OF IT. A build that cannot
-    /// reach the status ports still plays exactly as before by typing an address, which is
-    /// how this game worked first. Do not fold this into the netcode transport.
+    /// ⚠️ CODE RESOLUTION GUARDS. A code box resolving on the first keystroke finds nothing
+    /// and must not report failure until the full 4-character code is typed.
+    ///
+    /// ⚠️ TWO COUNTS ARE KEPT DISTINCT:
+    /// - Seated count: spectators excluded. How full the match is (shown in UI).
+    /// - Occupied count: all humans attached. Whether the session is free to claim.
+    /// A lobby holding only a spectator shows 0/4 seated while correctly reporting 1 occupied.
     /// </summary>
     public sealed class ServerQuery : MonoBehaviour
     {
-        /// <summary>Marks a packet as ours before anything else is parsed. A stray datagram
-        /// on a UDP port is not an error worth logging, it is simply not for us.</summary>
-        public const string Magic = "tumbang-preso-query";
+        /// <summary>Interval between background online lobby queries to respect UGS rate limits.</summary>
+        public const float QueryInterval = 4.0f;
 
-        /// <summary>
-        /// Bumped when the SHAPE of these packets changes. Both ends check it: a client that
-        /// cannot read a reply must ignore it rather than draw half a row.
-        ///
-        /// A pool is deployed together from one build, so the game version is constant across
-        /// every server a client can reach here and a field for it would only be a field to
-        /// get wrong.
-        /// </summary>
-        public const int ProtocolVersion = 1;
+        /// <summary>Interval for UGS lobby heartbeats (service expires lobbies after 30s without ping).</summary>
+        public const float HeartbeatInterval = 15.0f;
 
-        /// <summary>
-        /// ⚠️⚠️ WIDEN THIS BEFORE WIDENING THE POOL. A status port is its game port plus this
-        /// offset, so with an offset of 10 the eleventh server's game port collides with the
-        /// first server's STATUS port and would silently answer for it.
-        /// </summary>
-        public const int StatusPortOffset = 10;
-
-        /// <summary>The pool's address from outside — a VPS in Singapore.
-        /// Empty is a valid, honest state: a build with nowhere to point sends nothing and
-        /// says so on screen rather than sitting on "searching…" forever.</summary>
-        public const string PoolAddress = "139.180.212.110";
-
-        /// <summary>Inclusive. One process per port, one match per process. This range must
-        /// stay within <see cref="StatusPortOffset"/> of its start.</summary>
-        public const int PoolPortFirst = 8910;
-        public const int PoolPortLast = 8917;
-
-        /// <summary>Fast enough that a lobby filling up is visible about as quickly as a
-        /// player can read the screen, slow enough that a handful of tiny datagrams a second
-        /// are invisible next to the game's own traffic.</summary>
-        public const float QueryInterval = 1.0f;
-
-        /// <summary>
-        /// ⚠️ FOUR QUERIES, NOT ONE. A server that has gone down must lose its row, but a
-        /// single dropped datagram is ordinary on UDP and must not blink a row out from under
-        /// a cursor that is about to click it.
-        /// </summary>
-        public const float EntryTimeout = 4.0f;
-
-        /// <summary>Raised when the visible list actually CHANGES, not once per reply — a
-        /// list that rebuilds every second cannot be clicked.</summary>
+        /// <summary>Raised when the visible online server list changes.</summary>
         public event Action ServersChanged;
 
         public sealed class Entry
         {
-            public string Address;
-            public int Port;
+            public string Id;
             public string Name;
-            public int Players;
+            public string JoinCode;
+            public string RelayCode;
+            public int Seated;
+            public int Occupied;
             public int Capacity;
             public bool InProgress;
             public float LastSeen;
+
+            public int Players => Seated;
+            public bool IsJoinable => !InProgress && Occupied < Capacity;
         }
 
         private readonly Dictionary<string, Entry> _seen = new Dictionary<string, Entry>();
         private string _lastSignature = "";
-
-        private UdpClient _client;
         private bool _browsing;
         private float _sinceQuery;
+        private float _sinceHeartbeat;
+        private string _activeHostLobbyId;
+        private bool _queryInFlight;
 
         public IEnumerable<Entry> Servers => _seen.Values;
 
@@ -94,133 +89,336 @@ namespace TumbangPreso.Net
         {
             if (_browsing) return;
 
-            try
-            {
-                _client = new UdpClient(0) { EnableBroadcast = false };
-                _client.Client.ReceiveTimeout = 1;
-                _browsing = true;
-                _sinceQuery = QueryInterval;   // ask immediately
-            }
-            catch (SocketException e)
-            {
-                Debug.Log($"[Query] cannot open a client socket: {e.Message}. " +
-                          "Typing an address still works.");
-            }
+            _browsing = true;
+            _sinceQuery = QueryInterval; // Query immediately
         }
 
         public void StopBrowsing()
         {
             _browsing = false;
-            _client?.Close();
-            _client = null;
-            _seen.Clear();
+            lock (_seen)
+            {
+                if (_seen.Count > 0)
+                {
+                    _seen.Clear();
+                    RaiseIfChanged();
+                }
+            }
         }
 
         private void Update()
         {
-            if (!_browsing || _client == null) return;
-
-            _sinceQuery += Time.unscaledDeltaTime;
-            if (_sinceQuery >= QueryInterval)
+            if (_browsing)
             {
-                _sinceQuery = 0.0f;
-                SendQueries();
-            }
-
-            Receive();
-            ExpireStale();
-        }
-
-        private void SendQueries()
-        {
-            if (string.IsNullOrEmpty(PoolAddress)) return;
-
-            byte[] packet = Encoding.UTF8.GetBytes($"{Magic}|{ProtocolVersion}|query");
-
-            for (int port = PoolPortFirst; port <= PoolPortLast; port++)
-            {
-                try
+                _sinceQuery += Time.unscaledDeltaTime;
+                if (_sinceQuery >= QueryInterval && !_queryInFlight)
                 {
-                    _client.Send(packet, packet.Length, PoolAddress, port + StatusPortOffset);
-                }
-                catch (SocketException)
-                {
-                    // A pool member being unreachable is the normal case for an empty pool,
-                    // not an error worth a line in the log every second.
+                    _sinceQuery = 0.0f;
+                    _ = RefreshOnlineLobbiesAsync();
                 }
             }
-        }
 
-        private void Receive()
-        {
-            while (_client.Available > 0)
+            if (!string.IsNullOrEmpty(_activeHostLobbyId))
             {
-                IPEndPoint from = null;
-
-                try
+                _sinceHeartbeat += Time.unscaledDeltaTime;
+                if (_sinceHeartbeat >= HeartbeatInterval)
                 {
-                    byte[] data = _client.Receive(ref from);
-                    Parse(Encoding.UTF8.GetString(data), from);
+                    _sinceHeartbeat = 0.0f;
+                    _ = SendHeartbeatAsync();
                 }
-                catch (SocketException) { return; }
             }
         }
 
         /// <summary>
-        /// `magic|version|name|players|capacity|inProgress`.
-        ///
-        /// ⚠️ A MALFORMED REPLY IS DROPPED SILENTLY. This is a public UDP port; anything at
-        /// all can arrive on it, and a parse failure is not a fault worth reporting.
+        /// Queries public UGS Lobbies and updates the visible list.
         /// </summary>
-        private void Parse(string text, IPEndPoint from)
+        public async Task RefreshOnlineLobbiesAsync()
         {
-            string[] parts = text.Split('|');
-            if (parts.Length < 6) return;
-            if (parts[0] != Magic) return;
-            if (!int.TryParse(parts[1], out int version) || version != ProtocolVersion) return;
+            if (_queryInFlight) return;
+            _queryInFlight = true;
 
-            int gamePort = from.Port - StatusPortOffset;
-            string key = $"{from.Address}:{gamePort}";
-
-            if (!_seen.TryGetValue(key, out var entry))
+            try
             {
-                entry = new Entry { Address = from.Address.ToString(), Port = gamePort };
-                _seen[key] = entry;
+                bool authOk = await NetIdentity.EnsureSignedInAsync();
+                if (!authOk) return;
+
+                var options = new QueryLobbiesOptions
+                {
+                    Count = 25,
+                    Filters = new List<QueryFilter>
+                    {
+                        new QueryFilter(QueryFilter.FieldOptions.AvailableSlots, "0", QueryFilter.OpOptions.GT)
+                    }
+                };
+
+                QueryResponse response = await LobbyService.Instance.QueryLobbiesAsync(options);
+                var freshIds = new HashSet<string>();
+
+                if (response?.Results != null)
+                {
+                    lock (_seen)
+                    {
+                        foreach (var lobby in response.Results)
+                        {
+                            if (lobby == null || string.IsNullOrEmpty(lobby.Id)) continue;
+                            freshIds.Add(lobby.Id);
+
+                            string joinCode = "";
+                            string relayCode = "";
+                            int seated = lobby.Players?.Count ?? 0;
+                            int occupied = seated;
+                            bool inProgress = false;
+
+                            if (lobby.Data != null)
+                            {
+                                if (lobby.Data.TryGetValue("JoinCode", out var jc)) joinCode = jc.Value;
+                                if (lobby.Data.TryGetValue("RelayCode", out var rc)) relayCode = rc.Value;
+                                if (lobby.Data.TryGetValue("Seated", out var s) && int.TryParse(s.Value, out int sVal)) seated = sVal;
+                                if (lobby.Data.TryGetValue("Occupied", out var o) && int.TryParse(o.Value, out int oVal)) occupied = oVal;
+                                if (lobby.Data.TryGetValue("InProgress", out var ip)) inProgress = ip.Value == "1";
+                            }
+
+                            if (!_seen.TryGetValue(lobby.Id, out var entry))
+                            {
+                                entry = new Entry { Id = lobby.Id };
+                                _seen[lobby.Id] = entry;
+                            }
+
+                            entry.Name = lobby.Name;
+                            entry.JoinCode = joinCode;
+                            entry.RelayCode = relayCode;
+                            entry.Seated = seated;
+                            entry.Occupied = occupied;
+                            entry.Capacity = lobby.MaxPlayers;
+                            entry.InProgress = inProgress;
+                            entry.LastSeen = Time.unscaledTime;
+                        }
+
+                        // Remove lobbies no longer present in query
+                        var dead = new List<string>();
+                        foreach (var key in _seen.Keys)
+                        {
+                            if (!freshIds.Contains(key)) dead.Add(key);
+                        }
+                        foreach (var k in dead) _seen.Remove(k);
+                    }
+
+                    RaiseIfChanged();
+                }
             }
-
-            entry.Name = parts[2];
-            int.TryParse(parts[3], out entry.Players);
-            int.TryParse(parts[4], out entry.Capacity);
-            entry.InProgress = parts[5] == "1";
-            entry.LastSeen = Time.unscaledTime;
-
-            RaiseIfChanged();
-        }
-
-        private void ExpireStale()
-        {
-            var dead = new List<string>();
-
-            foreach (var pair in _seen)
-                if (Time.unscaledTime - pair.Value.LastSeen > EntryTimeout) dead.Add(pair.Key);
-
-            if (dead.Count == 0) return;
-
-            foreach (string key in dead) _seen.Remove(key);
-            RaiseIfChanged();
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Query] Online lobby query exception: {e.Message}");
+            }
+            finally
+            {
+                _queryInFlight = false;
+            }
         }
 
         /// <summary>
-        /// ⚠️ IT FIRES ON A CHANGE, NOT ON EVERY REPLY. Eight servers answering once a second
-        /// is eight events a second, and a list that rebuilds under the cursor cannot be
-        /// clicked. The signature is what the player can actually SEE.
+        /// Unified join code resolution: checks LAN beacon first, then queries UGS Lobby data.
+        /// Requires a complete 4-character code before executing to avoid premature failure reports.
         /// </summary>
+        public async Task<ResolvedMatch?> ResolveCodeAsync(string rawCode)
+        {
+            if (string.IsNullOrWhiteSpace(rawCode)) return null;
+
+            string code = rawCode.Trim().ToUpperInvariant();
+            if (code.Length < LobbySession.JoinCodeLength) return null;
+
+            // 1. Check LAN beacon first
+            var beacon = GetComponent<LanBeacon>() ?? FindFirstObjectByType<LanBeacon>();
+            if (beacon != null)
+            {
+                foreach (var entry in beacon.Entries)
+                {
+                    if (string.Equals(entry.JoinCode, code, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return new ResolvedMatch
+                        {
+                            Found = true,
+                            IsLan = true,
+                            Address = entry.Address,
+                            Port = entry.Port,
+                            JoinCode = entry.JoinCode,
+                            HostName = entry.HostName,
+                            Seated = entry.Players,
+                            Occupied = entry.Players,
+                            MaxPlayers = entry.MaxPlayers,
+                            InProgress = entry.InProgress
+                        };
+                    }
+                }
+            }
+
+            // 2. Query UGS Lobby by custom join code in indexed data (S1)
+            try
+            {
+                bool authOk = await NetIdentity.EnsureSignedInAsync();
+                if (!authOk) return null;
+
+                var options = new QueryLobbiesOptions
+                {
+                    Count = 1,
+                    Filters = new List<QueryFilter>
+                    {
+                        new QueryFilter(QueryFilter.FieldOptions.S1, code, QueryFilter.OpOptions.EQ)
+                    }
+                };
+
+                QueryResponse response = await LobbyService.Instance.QueryLobbiesAsync(options);
+                if (response?.Results != null && response.Results.Count > 0)
+                {
+                    var lobby = response.Results[0];
+                    string relayCode = "";
+                    string hostName = lobby.Name;
+                    int seated = lobby.Players?.Count ?? 0;
+                    int occupied = seated;
+                    bool inProgress = false;
+
+                    if (lobby.Data != null)
+                    {
+                        if (lobby.Data.TryGetValue("RelayCode", out var rc)) relayCode = rc.Value;
+                        if (lobby.Data.TryGetValue("HostName", out var hn)) hostName = hn.Value;
+                        if (lobby.Data.TryGetValue("Seated", out var s) && int.TryParse(s.Value, out int sVal)) seated = sVal;
+                        if (lobby.Data.TryGetValue("Occupied", out var o) && int.TryParse(o.Value, out int oVal)) occupied = oVal;
+                        if (lobby.Data.TryGetValue("InProgress", out var ip)) inProgress = ip.Value == "1";
+                    }
+
+                    return new ResolvedMatch
+                    {
+                        Found = true,
+                        IsLan = false,
+                        RelayCode = relayCode,
+                        JoinCode = code,
+                        HostName = hostName,
+                        Seated = seated,
+                        Occupied = occupied,
+                        MaxPlayers = lobby.MaxPlayers,
+                        InProgress = inProgress
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Query] UGS join code lookup error: {e.Message}");
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Registers a new UGS Lobby when hosting online via Relay.
+        /// </summary>
+        public async Task<string> CreateHostedLobbyAsync(string hostName, string joinCode, string relayCode, int seated, int occupied)
+        {
+            try
+            {
+                bool authOk = await NetIdentity.EnsureSignedInAsync();
+                if (!authOk) return null;
+
+                string lobbyName = string.IsNullOrWhiteSpace(hostName) ? "Tumbang Preso Lobby" : hostName.Trim();
+
+                var options = new CreateLobbyOptions
+                {
+                    IsPrivate = false,
+                    Data = new Dictionary<string, DataObject>
+                    {
+                        { "JoinCode", new DataObject(DataObject.VisibilityOptions.Public, joinCode, DataObject.IndexOptions.S1) },
+                        { "RelayCode", new DataObject(DataObject.VisibilityOptions.Public, relayCode ?? "") },
+                        { "HostName", new DataObject(DataObject.VisibilityOptions.Public, lobbyName) },
+                        { "Seated", new DataObject(DataObject.VisibilityOptions.Public, seated.ToString(), DataObject.IndexOptions.N1) },
+                        { "Occupied", new DataObject(DataObject.VisibilityOptions.Public, occupied.ToString(), DataObject.IndexOptions.N2) },
+                        { "InProgress", new DataObject(DataObject.VisibilityOptions.Public, "0", DataObject.IndexOptions.S2) }
+                    }
+                };
+
+                Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, LobbySession.MaxPlayers, options);
+                _activeHostLobbyId = lobby.Id;
+                _sinceHeartbeat = 0.0f;
+                Debug.Log($"[Query] Created UGS Lobby {lobby.Id} with JoinCode {joinCode}");
+                return lobby.Id;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Query] Could not create UGS Lobby: {e.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Updates dynamic match counts and progress state in UGS Lobby data.
+        /// </summary>
+        public async Task UpdateHostedLobbyAsync(int seated, int occupied, bool inProgress)
+        {
+            if (string.IsNullOrEmpty(_activeHostLobbyId)) return;
+
+            try
+            {
+                var options = new UpdateLobbyOptions
+                {
+                    Data = new Dictionary<string, DataObject>
+                    {
+                        { "Seated", new DataObject(DataObject.VisibilityOptions.Public, seated.ToString(), DataObject.IndexOptions.N1) },
+                        { "Occupied", new DataObject(DataObject.VisibilityOptions.Public, occupied.ToString(), DataObject.IndexOptions.N2) },
+                        { "InProgress", new DataObject(DataObject.VisibilityOptions.Public, inProgress ? "1" : "0", DataObject.IndexOptions.S2) }
+                    }
+                };
+
+                await LobbyService.Instance.UpdateLobbyAsync(_activeHostLobbyId, options);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Query] Update UGS Lobby warning: {e.Message}");
+            }
+        }
+
+        private async Task SendHeartbeatAsync()
+        {
+            if (string.IsNullOrEmpty(_activeHostLobbyId)) return;
+
+            try
+            {
+                await LobbyService.Instance.SendHeartbeatPingAsync(_activeHostLobbyId);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Query] Heartbeat ping failed: {e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Deletes the UGS Lobby on session termination so dead lobbies do not linger in browsers.
+        /// </summary>
+        public async Task DeleteHostedLobbyAsync()
+        {
+            if (string.IsNullOrEmpty(_activeHostLobbyId)) return;
+
+            string id = _activeHostLobbyId;
+            _activeHostLobbyId = null;
+
+            try
+            {
+                await LobbyService.Instance.DeleteLobbyAsync(id);
+                Debug.Log($"[Query] Deleted UGS Lobby {id}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Query] Delete UGS Lobby warning: {e.Message}");
+            }
+        }
+
         private void RaiseIfChanged()
         {
             var sb = new StringBuilder();
-
-            foreach (var e in _seen.Values)
-                sb.Append($"{e.Address}:{e.Port}:{e.Players}/{e.Capacity}:{e.InProgress};");
+            lock (_seen)
+            {
+                foreach (var e in _seen.Values)
+                {
+                    sb.Append($"{e.Id}:{e.Name}:{e.JoinCode}:{e.Seated}/{e.Occupied}/{e.Capacity}:{e.InProgress};");
+                }
+            }
 
             string signature = sb.ToString();
             if (signature == _lastSignature) return;
@@ -229,6 +427,10 @@ namespace TumbangPreso.Net
             ServersChanged?.Invoke();
         }
 
-        private void OnDestroy() => StopBrowsing();
+        private void OnDestroy()
+        {
+            StopBrowsing();
+            _ = DeleteHostedLobbyAsync();
+        }
     }
 }

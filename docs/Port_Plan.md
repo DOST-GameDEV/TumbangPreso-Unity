@@ -10,7 +10,7 @@
 | 2 · Skeleton + pipeline | **done.** URP, Input System 1.20, glTFast, asmdefs, 280 art files imported |
 | 3 · Vertical slice | **code complete, NOT verified.** Needs a scene with prefabs wired, then the feel measurement below |
 | 4 · Full offline match | code present (`MatchBootstrap`, `AIController`), unrun |
-| 5 · Netcode | seam only (`NetAuthority`). No transport yet |
+| 5 · Netcode | NGO 2.13.1 + UGS (Multiplay, Lobby, Relay, Auth). Seam and core net classes present. |
 | 6 · Presentation | audio cue table done and validated both ways; `StatusStack` done. **21 UI screens, character visuals, camera and emotes outstanding** |
 | 7 · Probes | structural checks only. The distributions are not measured yet |
 
@@ -204,19 +204,38 @@ tag verb was dead for three of the four players in every networked match.**
 Mirror and NGO would be a worse version of both, and the original's netcode virtue is that its
 RPCs are explicit and hand-written. Those get written natively, once, against the chosen stack.
 
-**Recommended stack: Mirror.** The existing code hand-writes every RPC and resolves
-authority explicitly, which maps directly onto `[Command]` → server method → `[ClientRpc]`.
-Mirror's dedicated-server story is also the closest to what already runs on the VPS.
-**Netcode for GameObjects** is the official alternative and maps nearly as well
-(`[Rpc(SendTo.Server)]` → `[Rpc(SendTo.Everyone)]`); it is better documented and worse at
-getting out of your way. **This decision does not block Phases 1 to 4 and should be revisited
-when Phase 5 actually starts.**
+**Chosen stack: Netcode for GameObjects (NGO) 2.13.1 + Unity Transport (UTP) 6.5.0.** Decided
+2026-08-19. Earlier drafts recommended Mirror because Mirror's `[Command]` and `[ClientRpc]`
+attributes and standalone server model mirrored the Godot VPS architecture closely. NGO was
+selected instead because it ships native first-party Unity 6 integration, aligns with Unity
+Gaming Services (UGS), and pairs directly with Unity Transport without third-party transport
+shims. `MatchRpc` uses explicit `[ServerRpc(RequireOwnership = false)]` and `[ClientRpc]`
+attributes across all gameplay verbs.
+
+**Unity Gaming Services (UGS) integration:**
+- **Dedicated hosting (Multiplay Hosting):** Replaces the Singapore VPS, `spawner.py`, systemd
+  units, `deploy.sh`, `POOL_ADDRESS`, and the 8910-8917 port range. Fleet allocation spins up
+  dedicated server instances on demand. Scaling ensures servers exist when players need them
+  and prevents the memory exhaustion that crashed the 946 MB VPS twice during peak play.
+- **Online discovery (UGS Lobby):** Replaces the raw UDP pool browse in `ServerQuery`. Live
+  lobbies publish custom data using the game's 4-character confusable-free join codes.
+  `ServerQuery` retains its LAN-first code resolution order (checking `LanBeacon` before UGS
+  Lobbies).
+- **NAT traversal (Relay):** Retained as a fallback for peer-hosted online matches without
+  requiring port forwarding or VPNs.
+- **Player identity (UGS Authentication):** Maps authenticated `PlayerId` to the existing stable
+  player token, with automatic fallback to local minted tokens for offline LAN play.
+- **Lobby rules invariant:** Seating, reconnection, seat reclamation, picks, and ready counts
+  remain strictly inside the transport-agnostic `LobbySession` and NGO RPCs, never delegated
+  to async cloud service calls.
 
 Scope: the request/resolve/broadcast triplet, reconnection tokens, lobby leader election,
-join codes, spectators, mid-match arrival rulings, late-joiner state sync, and the dedicated
-Linux server build.
+join codes, spectators, mid-match arrival rulings, late-joiner state sync, UGS Relay/Lobby, and
+the Linux dedicated server build with Multiplay.
 
-**Exit:** 4 real peers on the Singapore VPS, and a reconnect that restores the player's seat.
+**Exit:** 4 real peers on an allocated Multiplay server (and via Relay peer host), and a
+reconnect that restores the player's seat. (Updated from the original Singapore VPS exit
+criterion, which was retired when hosting moved to Multiplay fleet allocation).
 
 ---
 
@@ -364,10 +383,11 @@ IMPACT ratio 1.14 / 0.86. Both reproduce against Jun-Jun.
   work stays in Blender either way.
 - **Rules layer in engine-free C#.** Non-negotiable; it is the whole verification strategy.
 - **Phase 3 before any netcode.** Feel is the risk that compounds.
+- **Netcode stack: Netcode for GameObjects 2.13.1 + UTP 6.5.0 + UGS.** Settled 2026-08-19.
+  Multiplay replaces VPS hosting, UGS Lobby replaces pool query, Relay handles peer-to-peer NAT.
 
 ### 7.3 Open
 
-- Netcode stack, Mirror vs NGO. Deferred to Phase 5 and blocks nothing before it.
 - GLB via glTFast vs FBX re-export. Decide in Phase 2 by testing one rigged character.
 - Whether the Python map builders (`build_eskinita.py`, `mapkit`) keep generating geometry
   or are replaced by authored Unity scenes. They currently derive the chalk from

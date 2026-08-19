@@ -32,10 +32,20 @@ namespace TumbangPreso
         /// ⚠️ AND -1 IS SPECTATING, which is a real fifth option rather than an error case. No
         /// seat is human, and the camera is the free one.
         /// </summary>
-        public int HumanSeat =>
-            _allBots || GameLaunch.Spectator
-                ? -1
-                : Mathf.Clamp(GameLaunch.SoloSeat, 0, Balance.PlayerCount - 1);
+        public int HumanSeat
+        {
+            get
+            {
+                if (_allBots || GameLaunch.Spectator) return -1;
+                var net = Net.NetSession.Instance;
+                if (net != null && net.IsNetworked)
+                {
+                    if (net.IsSeatlessReferee) return -1;
+                    return net.LocalSlot;
+                }
+                return Mathf.Clamp(GameLaunch.SoloSeat, 0, Balance.PlayerCount - 1);
+            }
+        }
 
         private RosterBook _book;
         private bool _spectating;
@@ -258,9 +268,16 @@ namespace TumbangPreso
         {
             var go = new GameObject($"Slipper{slot}");
 
-            // The player's own seat wears their pick; the bots get one each so the four are
-            // visibly different, which is what the owner arrow and glow read against.
-            int pick = slot == HumanSeat ? Settings.SettingsStore.Current.SlipperPick : slot;
+            var net = Net.NetSession.Instance;
+            bool isNetworked = net != null && net.IsNetworked;
+            int humanSeat = HumanSeat;
+            bool isLocalHuman = slot == humanSeat;
+            var peerRecord = isNetworked ? net.Lobby.PeerInSeat(slot) : null;
+
+            int pick = isLocalHuman
+                ? Settings.SettingsStore.Current.SlipperPick
+                : (peerRecord != null && peerRecord.SlipperPick >= 0 ? peerRecord.SlipperPick : slot);
+
             var art = _book != null ? _book.SlipperArt(pick) : null;
 
             if (art != null && art.Model != null)
@@ -270,7 +287,7 @@ namespace TumbangPreso
                 StripColliders(model);
 
                 // The other hero prop. Same reasoning as the lata, and the owner glow below
-                // drives `_RimStrength`, which this shader is the one that actually carries.
+                // drives _RimStrength, which this shader is the one that actually carries.
                 Visual.ToonSkin.Apply(model, Visual.ToonSkin.PropOutlineWidth);
             }
             else
@@ -288,7 +305,7 @@ namespace TumbangPreso
 
             // The local player's slipper is the one that glows, and the local player is whichever
             // seat they chose. Per-peer by construction: nothing about this crosses the wire.
-            s.SetOwnerGlow(slot == HumanSeat);
+            s.SetOwnerGlow(isLocalHuman);
 
             return s;
         }
@@ -333,34 +350,39 @@ namespace TumbangPreso
             visualRoot.transform.SetParent(go.transform);
             visualRoot.transform.localPosition = Vector3.zero;
 
-            // ⚠️⚠️ THERE IS NO FIXED "Hand" NODE ANY MORE, AND ITS REMOVAL IS THE FIX. A carry
-            // point at a constant body-space offset is the exact thing `character_visual.gd`
-            // records as tried and reverted: 🧑 *"it doesnt stick to their arm anymore when
-            // theyre walking"*. A short lever off the body barely swings while the arm swings a
-            // lot, so the hand walks away from the shoe. `CharacterVisual` measures the real
-            // hand off the skin and parks an anchor ON the arm bone instead, and leaving a
-            // plausible-looking empty here would invite somebody to wire it back up.
-
             var motor = go.AddComponent<CharacterMotor>();
             motor.PlayerSlot = slot;
 
-            // ⚠️⚠️ ONLY THE HUMAN SEAT IS A HUMAN, AND EVERY OTHER ROW HAS TO SAY SO. `IsBot`
-            // is what `DisplayName()` branches on: a bot wears its CHARACTER's name (MARING,
-            // LOLA PACING) and a human wears the name they typed in Settings. Left false on
-            // every seat, all four rows printed "P1".."P4" — which is 🧑's *"make sure the bot
-            // names show up everywhere they have to / Not p1 p2 p3 p4"* exactly.
-            motor.IsBot = slot != HumanSeat;
+            var net = Net.NetSession.Instance;
+            bool isNetworked = net != null && net.IsNetworked;
+            int humanSeat = HumanSeat;
+            bool isLocalHuman = slot == humanSeat;
 
-            if (slot == HumanSeat) motor.PlayerName = Settings.SettingsStore.Current.PlayerName;
+            var peerRecord = isNetworked ? net.Lobby.PeerInSeat(slot) : null;
+            bool isHumanPlayer = isLocalHuman || (peerRecord != null && !peerRecord.Spectator);
 
-            // ⚠️⚠️ THE PLAYER'S SEAT WEARS THE PLAYER'S OWN PICK, AND THAT IS NOT SEAT 0.
-            // `GameLaunch.SoloSeat` defaults to P2 and the setup screen exists to change it, so
-            // hard-coding seat 0 gave the player's chosen fighter to a bot and handed the player
-            // whatever the roster's second entry happened to be. -1 is legal and resolves to
-            // neutral, which is what a peer on an older build gets.
-            motor.CharacterIndex = slot == HumanSeat
-                ? Settings.SettingsStore.Current.CharacterPick
-                : AiCharacterIndex(slot);
+            // ⚠️ ONLY HUMAN PEERS ARE HUMANS; UNOCCUPIED SLOTS ARE BOTS.
+            motor.IsBot = !isHumanPlayer;
+
+            if (isLocalHuman)
+            {
+                motor.PlayerName = Settings.SettingsStore.Current.PlayerName;
+                motor.CharacterIndex = Settings.SettingsStore.Current.CharacterPick >= 0
+                    ? Settings.SettingsStore.Current.CharacterPick
+                    : AiCharacterIndex(slot);
+            }
+            else if (peerRecord != null)
+            {
+                motor.PlayerName = peerRecord.Name;
+                motor.CharacterIndex = peerRecord.CharacterPick >= 0
+                    ? peerRecord.CharacterPick
+                    : AiCharacterIndex(slot);
+            }
+            else
+            {
+                motor.PlayerName = "";
+                motor.CharacterIndex = AiCharacterIndex(slot);
+            }
 
             go.AddComponent<Carrier>();
             go.AddComponent<CombatVerbs>();
@@ -403,16 +425,17 @@ namespace TumbangPreso
                 Destroy(caps.GetComponent<Collider>());
             }
 
-            bool human = slot == HumanSeat;
-            if (human) go.AddComponent<PlayerInputReader>();
-            else go.AddComponent<AIController>();
+            if (isLocalHuman)
+            {
+                go.AddComponent<PlayerInputReader>();
+            }
+            else if (!isHumanPlayer && (!isNetworked || NetAuthority.IsHost))
+            {
+                // Unoccupied seats run AI on the host only
+                go.AddComponent<AIController>();
+            }
 
-            // ⚠️⚠️ THE AIM ARC WAS BUILT AND NEVER CREATED. `TrajectoryPreview` is a full port
-            // of `trajectory_preview.gd` and no code path in the project ever instantiated one,
-            // so the dotted line showing where a charged throw will land — a feature the Godot
-            // build has had since 2026-07-30 — was simply absent from every build. It gates
-            // itself on being the local first-person view, so attaching it to every seat costs
-            // nothing and survives the camera moving to another seat.
+            // ⚠️ THE AIM ARC IS ATTACHED TO THE MOTOR
             TrajectoryPreview.AttachTo(motor);
 
             return motor;

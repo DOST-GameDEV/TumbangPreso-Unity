@@ -127,6 +127,20 @@ namespace TumbangPreso
             if (_countingDown) return;
 
             AwaitingNetReady = false;
+
+            // Last-chance pick sweep before match starts: broadcast full table to late joiners and peers
+            Net.MatchRpc.Instance?.BroadcastPicks();
+            Net.MatchRpc.Instance?.BeginCountdownClientRpc();
+
+            StartCoroutine(RunReadyCountdown());
+        }
+
+        /// <summary>Starts the 3, 2, 1, GO countdown locally on clients.</summary>
+        public void StartLocalCountdown()
+        {
+            if (_countingDown) return;
+            _awaitingLocalReady = false;
+            AwaitingNetReady = false;
             StartCoroutine(RunReadyCountdown());
         }
 
@@ -162,8 +176,15 @@ namespace TumbangPreso
 
             // Networked: the press is a VOTE, and the countdown waits for everyone. Solo: the
             // press IS the start.
-            if (NetAuthority.IsNetworked) DeclareReady(NetAuthority.LocalSlot);
-            else StartCoroutine(RunReadyCountdown());
+            if (NetAuthority.IsNetworked)
+            {
+                if (NetAuthority.IsHost) DeclareReady(NetAuthority.LocalSlot);
+                else Net.MatchRpc.Instance?.DeclareReadyServerRpc(NetAuthority.LocalSlot);
+            }
+            else
+            {
+                StartCoroutine(RunReadyCountdown());
+            }
         }
 
         /// <summary>

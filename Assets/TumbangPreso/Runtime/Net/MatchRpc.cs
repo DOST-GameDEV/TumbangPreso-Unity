@@ -194,7 +194,77 @@ namespace TumbangPreso.Net
         /// client that only learns about the round when it begins gets no 3 · 2 · 1 at all.
         /// </summary>
         [ClientRpc]
-        public void BeginCountdownClientRpc() { }
+        public void BeginCountdownClientRpc()
+        {
+            var gate = FindFirstObjectByType<ReadyGate>();
+            gate?.StartLocalCountdown();
+        }
+
+        // -------------------------------------------------------------------
+        // LOBBY SETUP SYNCHRONIZATION (N5)
+        // -------------------------------------------------------------------
+
+        public static event System.Action<int> OnMapChanged;
+        public static event System.Action<int> OnDifficultyChanged;
+        public static event System.Action<int[]> OnLobbyPicksSynced;
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SelectMapServerRpc(int mapIndex)
+        {
+            if (!NetAuthority.IsHost) return;
+            SyncMapClientRpc(mapIndex);
+        }
+
+        [ClientRpc]
+        private void SyncMapClientRpc(int mapIndex) => OnMapChanged?.Invoke(mapIndex);
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SelectDifficultyServerRpc(int difficulty)
+        {
+            if (!NetAuthority.IsHost) return;
+            SyncDifficultyClientRpc(difficulty);
+        }
+
+        [ClientRpc]
+        private void SyncDifficultyClientRpc(int difficulty) => OnDifficultyChanged?.Invoke(difficulty);
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SelectLobbyPickServerRpc(int peerId, int character, int can, int slipper)
+        {
+            if (!NetAuthority.IsHost) return;
+            var lobby = NetSession.Instance?.Lobby;
+            if (lobby != null)
+            {
+                lobby.SetPicks(peerId, character, can, slipper);
+                BroadcastLobbyPicks();
+            }
+        }
+
+        public void BroadcastLobbyPicks()
+        {
+            if (!NetAuthority.IsHost) return;
+            var lobby = NetSession.Instance?.Lobby;
+            if (lobby == null) return;
+
+            var table = new int[Core.Balance.PlayerCount * 4];
+            for (int i = 0; i < table.Length; i++) table[i] = -1;
+
+            foreach (var peer in lobby.Peers)
+            {
+                if (peer.Seat >= 0 && peer.Seat < Core.Balance.PlayerCount)
+                {
+                    table[peer.Seat * 4] = peer.Seat;
+                    table[peer.Seat * 4 + 1] = peer.CharacterPick;
+                    table[peer.Seat * 4 + 2] = peer.CanPick;
+                    table[peer.Seat * 4 + 3] = peer.SlipperPick;
+                }
+            }
+
+            SyncLobbyPicksClientRpc(table);
+        }
+
+        [ClientRpc]
+        private void SyncLobbyPicksClientRpc(int[] table) => OnLobbyPicksSynced?.Invoke(table);
 
         // -------------------------------------------------------------------
         // PICKS
@@ -205,7 +275,7 @@ namespace TumbangPreso.Net
         // message instead of needing a replay of the session's history.
         // -------------------------------------------------------------------
 
-        /// <summary>slot, character, can, slipper — flattened, four ints per seat.</summary>
+        /// <summary>slot, character, can, slipper: flattened, four ints per seat.</summary>
         [ClientRpc]
         public void SyncPicksClientRpc(int[] table)
         {
@@ -267,11 +337,82 @@ namespace TumbangPreso.Net
         }
 
         // -------------------------------------------------------------------
-        // LATE JOIN
+        // PROP AND WORLD STATE REPLICATION (N8)
+        // -------------------------------------------------------------------
+
+        [ClientRpc]
+        public void SyncLataClientRpc(Vector3 pos, Quaternion rot, bool isUpright, int skinIndex)
+        {
+            var lata = GameServices.Round?.Lata;
+            if (lata == null) return;
+
+            lata.transform.position = pos;
+            lata.transform.rotation = rot;
+            lata.SkinIndex = skinIndex;
+        }
+
+        [ClientRpc]
+        public void SyncSlipperClientRpc(int ownerSlot, int holderSlot, Vector3 pos, Quaternion rot, int state)
+        {
+            var s = FindSlipper(ownerSlot);
+            if (s == null) return;
+
+            if (state == (int)SlipperState.Held && holderSlot >= 0)
+            {
+                var holder = Unit(holderSlot);
+                var carrier = holder != null ? holder.GetComponent<Carrier>() : null;
+                carrier?.NotifyHolding(s);
+            }
+            else
+            {
+                s.transform.SetPositionAndRotation(pos, rot);
+            }
+        }
+
+        [ClientRpc]
+        public void SyncWorldSnapshotClientRpc(int roundNumber, int defenderSlot, float timeLeft, int[] scores, bool inProgress)
+        {
+            GameServices.Match?.ApplySnapshot(scores, roundNumber, inProgress);
+        }
+
+        public void BroadcastWorldSnapshot()
+        {
+            if (!NetAuthority.IsHost) return;
+
+            BroadcastPicks();
+
+            var match = GameServices.Match;
+            var round = GameServices.Round;
+            if (match == null) return;
+
+            var scores = new int[Core.Balance.PlayerCount];
+            for (int i = 0; i < scores.Length; i++) scores[i] = match.ScoreFor(i);
+
+            SyncWorldSnapshotClientRpc(match.RoundNumber, match.DefenderSlot, round != null ? round.TimeLeft : Core.Balance.RoundTime, scores, match.MatchInProgress);
+
+            if (round?.Lata != null)
+            {
+                var l = round.Lata;
+                SyncLataClientRpc(l.transform.position, l.transform.rotation, l.IsUpright, l.SkinIndex);
+            }
+
+            for (int slot = 0; slot < Core.Balance.PlayerCount; slot++)
+            {
+                var s = FindSlipper(slot);
+                if (s != null)
+                {
+                    int holderSlot = s.Holder != null ? s.Holder.PlayerSlot : -1;
+                    SyncSlipperClientRpc(s.OwnerSlot, holderSlot, s.transform.position, s.transform.rotation, (int)s.State);
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // LATE JOIN AND DISCONNECT (N9)
         // -------------------------------------------------------------------
 
         /// <summary>
-        /// A peer that arrives mid-match.
+        /// A peer that arrives mid-match or reconnects to reclaim a seat.
         ///
         /// ⚠️ IT IS SPAWNED ONCE AND ONLY ONCE. The original guards on a spawned-peer set
         /// because the connect and the identify both fire, and a peer spawned twice is two
@@ -282,8 +423,24 @@ namespace TumbangPreso.Net
             if (!NetAuthority.IsHost) return;
             if (!_spawned.Add(peerId)) return;
 
+            var lobby = NetSession.Instance?.Lobby;
+            var peerRecord = lobby?.PeerInSeat(peerId);
+            if (peerRecord != null && peerRecord.Seat >= 0)
+            {
+                var unit = Unit(peerRecord.Seat);
+                if (unit != null)
+                {
+                    // Reclaiming seat: remove AI controller if it was active
+                    var ai = unit.GetComponent<AIController>();
+                    if (ai != null) Destroy(ai);
+
+                    unit.IsBot = false;
+                    unit.PlayerName = peerRecord.Name;
+                }
+            }
+
             // The joiner needs the whole world state, not just its own seat.
-            BroadcastPicks();
+            BroadcastWorldSnapshot();
         }
 
         public void HostPeerLeft(int peerId)
@@ -291,7 +448,32 @@ namespace TumbangPreso.Net
             if (!NetAuthority.IsHost) return;
 
             _spawned.Remove(peerId);
+
+            var lobby = NetSession.Instance?.Lobby;
+            if (lobby != null)
+            {
+                var peer = lobby.PeerInSeat(peerId);
+                int seat = peer != null ? peer.Seat : -1;
+
+                lobby.Depart(peerId);
+
+                // AI takeover on the disconnected peer's seat so match continues smoothly
+                if (seat >= 0)
+                {
+                    var unit = Unit(seat);
+                    if (unit != null)
+                    {
+                        unit.IsBot = true;
+                        if (unit.GetComponent<AIController>() == null)
+                        {
+                            unit.gameObject.AddComponent<AIController>();
+                        }
+                    }
+                }
+            }
+
             FindFirstObjectByType<ReadyGate>()?.OnPeerLeft(peerId);
+            BroadcastWorldSnapshot();
         }
 
         private readonly System.Collections.Generic.HashSet<int> _spawned =
