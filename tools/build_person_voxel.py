@@ -192,9 +192,9 @@ PALETTE = {
     WOOD_GOLD:     "e4a032",   # Warm bakery spatula wooden handle peeking from pocket
     FROST_ACCENT:  "a8f0fa",   # Shimmering pale frost highlight / crystal sparkle
     WHITE:         "f4faff",   # Crisp snow white with subtle cool undertone (toque, shirt, socks)
-    SKIN:          "f0c8b0",   # Soft porcelain fair skin tone with cool undertone
-    SKIN_DARK:     "cc9880",   # Gentle cool skin shadow tone
-    SKIN_LIT:      "ffe6d6",   # Bright pale porcelain lit skin tone (face, legs, arms)
+    SKIN:          "f4caa6",   # Natural fair human skin midtone
+    SKIN_DARK:     "c89270",   # Soft warm fair skin shadow tone
+    SKIN_LIT:      "ffe4cc",   # Bright natural fair human lit skin tone (face, arms, legs)
 }
 
 MAX_FACE_LUMINANCE = 0.30
@@ -234,11 +234,11 @@ LEG_LEFT = [
     ("sock-stripe1-left","leg-left", (0.014, 0.128, -0.078), (0.152, 0.140, 0.076), CYAN_TRIM),
     ("sock-stripe2-left","leg-left", (0.014, 0.146, -0.078), (0.152, 0.158, 0.076), CYAN_TRIM),
     
-    # Clean fair porcelain leg above high sock
+    # Pure icy snow-white leg above high sock
     ("leg-skin-left",    "leg-left", (0.018, 0.165, -0.070), (0.148, 0.232, 0.070), SKIN_LIT),
 ]
 
-# 🌟 Right leg wears a folded ankle sock showing fair porcelain skin!
+# 🌟 Right leg wears a folded ankle sock showing snow-white leg!
 LEG_RIGHT = [
     # White sneaker sole
     ("shoe-sole-right",   "leg-right", (-0.158, 0.000, -0.134), (-0.006, 0.024, 0.082), WHITE),
@@ -261,7 +261,7 @@ LEG_RIGHT = [
     # Folded cyan cuff rim on ankle sock
     ("sock-rim-right",    "leg-right", (-0.152, 0.086, -0.078), (-0.014, 0.098, 0.076), CYAN_TRIM),
     
-    # Fair porcelain leg
+    # Pure icy snow-white leg
     ("leg-skin-right",    "leg-right", (-0.148, 0.098, -0.070), (-0.018, 0.232, 0.070), SKIN_LIT),
 ]
 
@@ -344,17 +344,17 @@ ARM_LEFT = [
     # Icy-Cyan Sports Wristband with White Stripe on Left Wrist
     ("wristband-left",      "arm-left", (0.250, 0.334, -0.024), (0.285, 0.466, 0.042), CYAN_TRIM),
     ("wristband-stripe",    "arm-left", (0.262, 0.332, -0.026), (0.274, 0.468, 0.044), WHITE),
-    # Fair porcelain forearm & hand
+    # Snow-white forearm & hand
     ("hand-left",           "arm-left", (0.234, 0.3383, -0.020), (0.3836, 0.4617, 0.038), SKIN_LIT),
 ]
 
-# Right arm has clean fair porcelain skin
+# Right arm has clean snow-white skin
 ARM_RIGHT = [
     # White short sleeve
     ("sleeve-right",        "arm-right", (-0.208, 0.330, -0.066), (-0.0999, 0.470, 0.084), WHITE),
     # Stepped frosty cyan sleeve cuff
     ("sleeve-cuff-right",   "arm-right", (-0.234, 0.322, -0.074), (-0.208, 0.478, 0.092), COLLAR_TRIM),
-    # Fair porcelain forearm & hand
+    # Snow-white forearm & hand
     ("hand-right",          "arm-right", (-0.3836, 0.3383, -0.020), (-0.234, 0.4617, 0.038), SKIN_LIT),
 ]
 
@@ -371,6 +371,11 @@ HEAD = [
     ("hair-back-tier2",     "head", (-0.174, 0.230, -0.216), (0.174, 0.348, -0.138), HAIR),
     # Tier 3 (Lower Drape)
     ("hair-back-tier3",     "head", (-0.170, 0.165, -0.214), (0.170, 0.238, -0.140), HAIR),
+    
+    # ❄️ Sleek Geometric Frost Hair Clasp Band on Upper Tier
+    ("hair-back-clasp-bar",     "head", (-0.055, 0.465, -0.224), (0.055, 0.485, -0.214), CYAN_TRIM),
+    ("hair-back-clasp-gem",     "head", (-0.016, 0.460, -0.228), (0.016, 0.490, -0.216), FROST_ACCENT),
+    ("hair-back-clasp-star",    "head", (-0.008, 0.468, -0.230), (0.008, 0.482, -0.220), WHITE),
     
     # 📐 Raised horizontal weight band & clean frosted bottom hem rim
     ("hair-back-weight-band",   "head", (-0.176, 0.155, -0.224), (0.176, 0.215, -0.145), HAIR),
@@ -446,7 +451,7 @@ HEAD = [
     ("cap-toque-top",           "head", (-0.140, 0.748, -0.140), (0.140, 0.772, 0.140), WHITE),
     ("cap-frost-stripe-x",      "head", (-0.142, 0.752, -0.030), (0.142, 0.764, 0.030), CYAN_TRIM),
     ("cap-frost-stripe-z",      "head", (-0.030, 0.752, -0.142), (0.030, 0.764, 0.142), CYAN_TRIM),
-    ("cap-toque-dome",      "head", (-0.060, 0.772, -0.060), (0.060, 0.785, 0.060), WHITE),
+    ("cap-toque-dome",          "head", (-0.060, 0.772, -0.060), (0.060, 0.785, 0.060), WHITE),
 ]
 
 DONOR_SPACE = tuple(entry[0] for entry in HEAD)
