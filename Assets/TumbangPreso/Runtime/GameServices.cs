@@ -76,7 +76,25 @@ namespace TumbangPreso
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void Bootstrap()
+        private static void Bootstrap() => Ensure();
+
+        /// <summary>
+        /// Builds the services root if it does not exist yet. Idempotent, and public for
+        /// exactly one reason: see the ⚠️ below.
+        /// </summary>
+        /// ⚠️ CALLABLE EARLY, BECAUSE BootSting NEEDS THIS TO EXIST BEFORE BeforeSceneLoad DOES.
+        /// The boot sting plays at BeforeSplashScreen, which runs before this class's own
+        /// BeforeSceneLoad hook, so BootSting used to build its own throwaway AudioListener to
+        /// have something to be heard by. That listener and AudioDirector's later one were BOTH
+        /// on HideAndDontSave objects, and FindObjectsByType silently excludes those (see the
+        /// ⚠️ on AudioDirector.Awake for the measurement), so the two listeners could never see
+        /// each other and neither was ever disabled: two enabled AudioListeners persisted for the
+        /// entire process, and Unity's own duplicate-listener warning printed every frame. Rather
+        /// than race two independent RuntimeInitializeOnLoadMethod hooks (undefined relative
+        /// order between two hooks of the SAME load type; see NetIdentity.SignInAtBoot for the
+        /// same hazard), BootSting now calls this directly, forcing the one true owner to exist
+        /// before it needs one, deterministically rather than by hoping for a lucky order.
+        public static void Ensure()
         {
             if (_root != null) return;
 
