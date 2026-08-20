@@ -25,8 +25,8 @@ PARENT = {"leg-left": "root", "leg-right": "root", "torso": "root",
 # ---------------------------------------------------------------------------
 # HEAVYWEIGHT BRAWLER SKELETON: TALL ATHLETIC STATURE + FULL LEG LENGTH (ITER 51)
 # ---------------------------------------------------------------------------
-WAS_HIPS, WAS_SHOULDER, WAS_NECK, WAS_TOP = 0.245, 0.430, 0.473, 0.8350
-NOW_HIPS, NOW_SHOULDER, NOW_NECK, NOW_TOP = 0.245, 0.430, 0.473, 0.8350
+WAS_HIPS, WAS_SHOULDER, WAS_NECK, WAS_TOP = 0.245, 0.430, 0.473, 0.8480
+NOW_HIPS, NOW_SHOULDER, NOW_NECK, NOW_TOP = 0.245, 0.430, 0.473, 0.8480
 
 HEAD_SHIFT_Y = NOW_NECK - 0.343  # 0.130m vertical lift for donor skull and head features
 HEAD_GROWTH = 1.0
@@ -359,14 +359,15 @@ HEAD = [
 
     # --- B. 3-TONE FLAME FIN RISING AT THE VERY TIP OF HIS HEAD (Z in [-0.140, +0.065]) ---
     # Crimson Red Flame Base
-    ("hawk-flame-top-red",     "head", (-0.050, 0.765, -0.140), (0.050, 0.818, 0.050), FLAME_RED),
+    ("hawk-flame-top-red",     "head", (-0.050, 0.765, -0.140), (0.050, 0.822, 0.050), FLAME_RED),
     # Solar Orange Mid-Flame
-    ("hawk-flame-top-orange",  "head", (-0.036, 0.782, -0.125), (0.036, 0.825, 0.030), FLAME_ORANGE),
-    # Radiant Solar Yellow Pinnacle Crest (Apex reaching 0.835m)
-    ("hawk-flame-yellow-crest","head", (-0.022, 0.795, -0.110), (0.022, 0.835, 0.015), FLAME_YELLOW),
-    ("hawk-flame-needle-fwd",  "head", (-0.012, 0.805, -0.120), (0.012, 0.835, -0.050), FLAME_YELLOW),
-    ("hawk-flame-needle-mid",  "head", (-0.012, 0.808, -0.050), (0.012, 0.835, 0.015), FLAME_YELLOW),
-    ("hawk-flame-needle-aft",  "head", (-0.012, 0.805, 0.015), (0.012, 0.835, 0.065), FLAME_YELLOW),
+    ("hawk-flame-top-orange",  "head", (-0.036, 0.782, -0.125), (0.036, 0.834, 0.030), FLAME_ORANGE),
+    # Radiant Solar Yellow Pinnacle Crest (Apex raised up to 0.848m)
+    ("hawk-flame-yellow-crest","head", (-0.022, 0.795, -0.110), (0.022, 0.848, 0.015), FLAME_YELLOW),
+    ("hawk-flame-needle-fwd",  "head", (-0.014, 0.805, -0.120), (0.014, 0.848, -0.045), FLAME_YELLOW),
+    ("hawk-flame-needle-mid",  "head", (-0.014, 0.808, -0.045), (0.014, 0.848, 0.015), FLAME_YELLOW),
+    ("hawk-flame-needle-aft",  "head", (-0.014, 0.805, 0.015), (0.014, 0.845, 0.065), FLAME_YELLOW),
+    ("hawk-flame-needle-peak", "head", (-0.010, 0.820, -0.080), (0.010, 0.848, -0.010), FLAME_YELLOW),
 
     # --- C. REAR SPIKY ACCENTS (Visible in Back & 3/4 views) ---
     ("hawk-rear-spike-tooth",  "head", (-0.020, 0.670, 0.070), (0.020, 0.790, 0.176), HAIR_BLACK),
