@@ -888,8 +888,8 @@ MOUTH_Z = 0.1596
 def _mouth_ribbon():
     half_w = 0.046
     base_y = 0.418
-    lobe_depth = 0.018
-    th = 0.0060
+    lobe_depth = 0.0215
+    th = 0.0135
     steps = 32
     upper, lower = [], []
     for k in range(steps + 1):
@@ -898,7 +898,7 @@ def _mouth_ribbon():
         u = x / half_w
         val = math.cos(u * math.pi * 2.0)
         dip = lobe_depth * 0.5 * (1.0 - val)
-        lift = 0.006 * (u**2)
+        lift = 0.0075 * (u**2)
         y_c = base_y - dip + lift
         upper.append((x, y_c + th * 0.5))
         lower.append((x, y_c - th * 0.5))
