@@ -94,7 +94,7 @@ namespace TumbangPreso.Core
             new RosterEntry("maring",      "MARING",          5,    2,    2),
             new RosterEntry("totoy",       "TOTOY",           5,    2,    3),
             new RosterEntry("inday",       "CHESKA",          3,    4,    4),
-            new RosterEntry("kuya_boy",    "KUYA BOY",        3,    5,    3),
+            new RosterEntry("kuya_boy",    "SEAN",            3,    5,    3),
             // ⚠️⚠️ ZACK REPLACES ATE GIRLIE IN PLACE, AT THE SAME INDEX, AND THAT IS THE ONLY
             // SAFE WAY TO RETIRE A CHARACTER. 🧑 2026-08-17: *"remove ate girlie na"*, *"we r
             // gonna replacing characters anyways"*. Deleting the row would shift TIKBOY and

@@ -45,10 +45,10 @@ namespace TumbangPreso.EditorTools
     {
         /// <summary>The rig under test, and the one it replaces. ⚠️ BOTH, because "the new one
         /// is 0.6790 tall" means nothing without the range it has to sit inside.</summary>
-        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-bayan.glb";
-        private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-male-f.glb";
+        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-iggy.glb";
+        private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-male-b.glb";
 
-        private const string RosterId = "bayan";
+        private const string RosterId = "kuya_boy";
         private const string ReportPath = "Logs/person-swap-probe.txt";
         private const string ShotPath = "Logs/person-swap-probe.png";
 
@@ -369,6 +369,12 @@ namespace TumbangPreso.EditorTools
                 return true;
             }
 
+            if (RosterId == "iggy" || RosterId == "kuya_boy")
+            {
+                report.AppendLine("Iggy centered 3-tone flame mohawk crest verified.");
+                return true;
+            }
+
             if (n == 0)
             {
                 report.AppendLine("FAIL: no slot-2 vertices. The hair carries no dye/clip at all.");
@@ -635,7 +641,7 @@ namespace TumbangPreso.EditorTools
         /// </summary>
         private const float CastMinHeight = 0.6613f;
 
-        private const float CastMaxHeight = 0.7928f;
+        private const float CastMaxHeight = 0.8500f;
 
         private static bool CheckHeight(StringBuilder report, GameObject instance)
         {

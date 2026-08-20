@@ -36,22 +36,23 @@ Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Uni
 
 ---
 
-### Step 3: Render Turnarounds & Animation Verification Sheets
+### Step 3: Render Turnarounds & Cast Lineup (`PersonSwapProbe`)
 
-#### A. Single Character Turnaround & 32 Animation Suite (`PersonSwapProbe`)
-Use this to render the active master character across all 4 angles (`Front`, `3/4 View`, `Side`, `Back`) and verify all 32 animations:
+The canonical rendering norm in this repository produces **two standard visual outputs**:
+1. **4-Angle Turnaround** (`Logs/person-swap-turnaround.png`): Front, 3/4, Side, and Back views of the character.
+2. **Cast Lineup** (`Logs/cast_lineup.png`): Side-by-side roster lineup showing the character relative to the rest of the cast.
+
+> [!IMPORTANT]
+> **NO ORBIT RENDERS**: Orbit angle probes (`InGameAngleProbe` / `8angle_orbit`) are deprecated and removed. All model inspections and review audits must use the **4-angle turnaround** and/or **cast lineup** only.
+
+Execute the canonical probe pipeline in Unity batchmode:
 ```powershell
 Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe" -ArgumentList "-batchmode -quit -projectPath . -executeMethod TumbangPreso.EditorTools.PersonSwapProbe.Run -logFile Logs/swap.log" -Wait
 ```
 *Outputs Generated in `Logs/`:*
 - `Logs/person-swap-turnaround.png` (4-angle full body turnaround)
+- `Logs/cast_lineup.png` (full cast comparative lineup)
 - `Logs/person-swap-probe.png` (32 animation clips test sheet)
-
-#### B. Side-by-Side Comparison Lineups (`IterationTurnaroundProbe`)
-Use this when presenting multiple design variants (hair volume, hats, skin tones) side-by-side:
-```powershell
-Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe" -ArgumentList "-batchmode -quit -projectPath . -executeMethod TumbangPreso.EditorTools.IterationTurnaroundProbe.Run -logFile Logs/iterations.log" -Wait
-```
 
 ---
 

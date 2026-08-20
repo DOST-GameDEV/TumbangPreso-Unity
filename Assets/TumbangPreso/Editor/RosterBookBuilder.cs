@@ -57,7 +57,8 @@ namespace TumbangPreso.EditorTools
             { "maring",      "characters/persons/character-female-f.glb" },
             { "totoy",       "characters/persons/character-male-a.glb" },
             { "inday",       "characters/persons/team-inday.glb" },
-            { "kuya_boy",    "characters/persons/character-male-b.glb" },
+            { "kuya_boy",    "characters/persons/team-iggy.glb" },
+            { "iggy",        "characters/persons/team-iggy.glb" },
             { "zack",        "characters/persons/team-zack.glb" },
             { "tikboy",      "characters/persons/character-male-c.glb" },
             { "bebang",      "characters/persons/character-female-c.glb" },
@@ -84,7 +85,8 @@ namespace TumbangPreso.EditorTools
             { "maring",      "person_b.tres" },
             { "totoy",       "person_totoy.tres" },
             { "inday",       "person_team-inday.tres" },
-            { "kuya_boy",    "person_kuya-boy.tres" },
+            { "kuya_boy",    "person_team-iggy.tres" },
+            { "iggy",        "person_team-iggy.tres" },
             // ⚠️ THE ONE PALETTE IN THIS TABLE THAT IS NOT A COPY OF A GODOT FILE. The other
             // eleven are carried over from `generate_person_palettes.py` in the Godot repo and
             // must not be hand-edited there or here. This one is emitted by
