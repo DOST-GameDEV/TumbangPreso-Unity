@@ -269,7 +269,9 @@ namespace TumbangPreso.UI
                 case "totoy": return "Raised barefoot in the eskinita. Nobody in this town has caught him twice.";
                 case "inday":
                 case "cheska": return "Ice-cold bakery prodigy with an unstoppable arm. Armed with heavy throws, a cheeky cat smirk, and a stance that never melts under pressure.";
-                case "kuya_boy": return "Eldest of seven. He has been the taya since before he could count, and both the arm and the footwork know it.";
+                case "kuya_boy":
+                case "sean":
+                case "iggy": return "Heavyweight champion of the barangay courts. Armed with blistering fists, maximum throwing power, and a fiery mohawk that blazes whenever the match heats up.";
                 // ⚠️ THE SENTENCE PAYS OUT THE METERS, which is this table's one rule. Speed 4
                 // is the loudest of his three, so the line claims quickness and nothing else:
                 // no strength boast on a 3, and no toughness boast on a 3.
@@ -337,14 +339,6 @@ namespace TumbangPreso.UI
             }
 
             SceneFlow.Go(SceneFlow.MatchSetup);
-        }
-
-        private void Update()
-        {
-            if (!Input.GetKeyDown(KeyCode.Escape)) return;
-
-            MenuSfx.Back();
-            Dismiss();
         }
     }
 }
