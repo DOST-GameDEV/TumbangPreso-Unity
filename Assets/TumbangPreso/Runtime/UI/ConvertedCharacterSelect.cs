@@ -263,8 +263,8 @@ namespace TumbangPreso.UI
             switch (id)
             {
                 case "bayan":
-                case "bayani":
-                case "berto": return "Bedrock-solid with an unshakeable stance. Heavy steps, seismic throws, and zero retreat.";
+                case "dante":
+                case "berto": return "Built like a concrete wall. Slow to chase, but once he plants his feet and winds up a throw, the whole street clears out.";
                 case "maring": return "Quick hands, quicker mouth. She has talked her way out of more tags than she has dodged.";
                 case "totoy": return "Raised barefoot in the eskinita. Nobody in this town has caught him twice.";
                 case "inday":

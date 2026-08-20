@@ -277,30 +277,33 @@ HEAD = [
     ("undercut-side-front",   "head", (0.145, 0.430, 0.080), (0.182, 0.620, 0.145), LEATHER_BROWN),
     ("undercut-sideburn",     "head", (0.160, 0.400, -0.010), (0.188, 0.500, 0.080), LEATHER_BROWN),
     
-    # 🪨 SLEEK ORGANIC OTSUTSUKI HORN (+X temple, dynamic lateral-flare parabolic crescent arc)
-    # 1. Brow / Supraorbital Root (Emerges directly above left eyebrow & temple plate)
-    ("horn-root-brow",        "head", (0.125, 0.515, 0.080), (0.172, 0.575, 0.155), SKIN),
-    ("horn-root-temple",      "head", (0.138, 0.540, 0.050), (0.185, 0.605, 0.135), SKIN),
+    # 🪨 SLEEK ORGANIC OTSUTSUKI HORN (+X temple, natural heavy-carapace parabolic crescent arc)
+    # 1. Broad Supraorbital Temple Root (Emerges naturally from skull above left eye)
+    ("horn-root-brow",        "head", (0.138, 0.515, 0.070), (0.198, 0.585, 0.155), SKIN),
+    ("horn-root-temple",      "head", (0.145, 0.545, 0.040), (0.204, 0.615, 0.135), SKIN),
     
-    # 2. Dynamic Lateral Flare & Parabolic Crescent Tiers (Curving outward +X then hooking inward -X)
-    ("horn-tier-1",           "head", (0.148, 0.575, 0.025), (0.196, 0.640, 0.115), SKIN),
-    ("horn-tier-2",           "head", (0.158, 0.625, -0.010), (0.206, 0.690, 0.080), SKIN),
-    ("horn-tier-3",           "head", (0.152, 0.675, -0.050), (0.200, 0.742, 0.035), SKIN),
-    ("horn-tier-4",           "head", (0.142, 0.705, -0.095), (0.188, 0.760, -0.010), SKIN),
-    ("horn-tier-5",           "head", (0.134, 0.695, -0.140), (0.174, 0.745, -0.055), SKIN),
-    ("horn-tier-6",           "head", (0.128, 0.665, -0.180), (0.162, 0.715, -0.095), SKIN),
+    # 2. Heavy Stepped Biological Carapace Tiers (Fatter natural volume curving +X then hooking -X)
+    ("horn-tier-1",           "head", (0.148, 0.575, 0.015), (0.208, 0.650, 0.125), SKIN),
+    ("horn-tier-2",           "head", (0.156, 0.630, -0.025), (0.214, 0.700, 0.085), SKIN),
+    ("horn-tier-3",           "head", (0.150, 0.680, -0.070), (0.206, 0.750, 0.040), SKIN),
+    ("horn-tier-4",           "head", (0.142, 0.705, -0.118), (0.194, 0.762, -0.005), SKIN),
+    ("horn-tier-5",           "head", (0.136, 0.690, -0.162), (0.182, 0.745, -0.050), SKIN),
+    ("horn-tier-6",           "head", (0.130, 0.660, -0.198), (0.168, 0.715, -0.095), SKIN),
     
-    # 3. Sharp Chisel Tip (Hooking downward/backward along skull contour)
-    ("horn-tip",              "head", (0.122, 0.630, -0.215), (0.152, 0.675, -0.140), SKIN),
+    # 3. Sharp Chisel Tip (Hooking downward/backward along occipital contour)
+    ("horn-tip",              "head", (0.124, 0.625, -0.222), (0.156, 0.675, -0.145), SKIN),
     
-    # ⚡ 3 RAZOR-THIN ETCHED CRIMSON KARMA CARAPACE RINGS (Clean engraved grooves, NO fat blotches!)
-    ("karma-ring-rise",       "head", (0.165, 0.645, 0.010), (0.208, 0.660, 0.045), SCAR_RED),
-    ("karma-ring-crown",      "head", (0.148, 0.725, -0.065), (0.192, 0.740, -0.030), SCAR_RED),
-    ("karma-ring-hook",       "head", (0.136, 0.685, -0.145), (0.176, 0.700, -0.110), SCAR_RED),
+    # ⚡ 6 RAZOR-THIN CRIMSON KARMA LINE RINGS (Only crisp thin lines, ZERO fat blobs!)
+    ("karma-line-1",          "head", (0.170, 0.638, 0.020), (0.216, 0.648, 0.040), SCAR_RED),
+    ("karma-line-2",          "head", (0.165, 0.690, -0.020), (0.210, 0.700, 0.000), SCAR_RED),
+    ("karma-line-3",          "head", (0.155, 0.748, -0.065), (0.198, 0.758, -0.045), SCAR_RED),
+    ("karma-line-4",          "head", (0.148, 0.730, -0.110), (0.188, 0.740, -0.090), SCAR_RED),
+    ("karma-line-5",          "head", (0.142, 0.695, -0.155), (0.176, 0.705, -0.135), SCAR_RED),
+    ("karma-line-6",          "head", (0.136, 0.655, -0.190), (0.162, 0.665, -0.170), SCAR_RED),
     
-    # ⚡ DUAL SLEEK TEMPLE KARMA STREAM LINES (Connecting facial scar to horn root)
-    ("karma-stream-line-top", "head", (0.135, 0.605, 0.075), (0.185, 0.620, 0.160), SCAR_RED),
-    ("karma-stream-line-bot", "head", (0.135, 0.538, 0.085), (0.182, 0.552, 0.160), SCAR_RED),
+    # ⚡ DUAL SLEEK TEMPLE KARMA STREAM LINES (Crisp parallel lines connecting facial scar into horn root)
+    ("karma-stream-line-top", "head", (0.145, 0.606, 0.065), (0.185, 0.618, 0.160), SCAR_RED),
+    ("karma-stream-line-bot", "head", (0.145, 0.540, 0.075), (0.182, 0.552, 0.160), SCAR_RED),
     
     # 💇 DYNAMIC ANIME SPIKES (Front, top, back)
     ("spike-front-c1",        "head", (-0.050, 0.670, 0.115), (0.040, 0.765, 0.192), HAIR),
