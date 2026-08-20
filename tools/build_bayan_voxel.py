@@ -293,17 +293,17 @@ HEAD = [
     # 3. Sharp Chisel Tip (Hooking downward/backward along occipital contour)
     ("horn-tip",              "head", (0.124, 0.625, -0.222), (0.156, 0.675, -0.145), SKIN),
     
-    # ⚡ 6 RAZOR-THIN CRIMSON KARMA LINE RINGS (Only crisp thin lines, ZERO fat blobs!)
-    ("karma-line-1",          "head", (0.170, 0.638, 0.020), (0.216, 0.648, 0.040), SCAR_RED),
-    ("karma-line-2",          "head", (0.165, 0.690, -0.020), (0.210, 0.700, 0.000), SCAR_RED),
-    ("karma-line-3",          "head", (0.155, 0.748, -0.065), (0.198, 0.758, -0.045), SCAR_RED),
-    ("karma-line-4",          "head", (0.148, 0.730, -0.110), (0.188, 0.740, -0.090), SCAR_RED),
-    ("karma-line-5",          "head", (0.142, 0.695, -0.155), (0.176, 0.705, -0.135), SCAR_RED),
-    ("karma-line-6",          "head", (0.136, 0.655, -0.190), (0.162, 0.665, -0.170), SCAR_RED),
+    # ⚡ 6 ULTRA-THIN CRIMSON KARMA LINE RINGS (Height = 0.008, proud on +X, +Z, -Z, visible from ALL angles, ZERO blobs!)
+    ("karma-line-1",          "head", (0.150, 0.608, 0.010), (0.211, 0.616, 0.128), SCAR_RED),
+    ("karma-line-2",          "head", (0.158, 0.660, -0.028), (0.217, 0.668, 0.088), SCAR_RED),
+    ("karma-line-3",          "head", (0.152, 0.710, -0.073), (0.209, 0.718, 0.043), SCAR_RED),
+    ("karma-line-4",          "head", (0.144, 0.748, -0.121), (0.197, 0.756, -0.002), SCAR_RED),
+    ("karma-line-5",          "head", (0.138, 0.722, -0.165), (0.185, 0.730, -0.047), SCAR_RED),
+    ("karma-line-6",          "head", (0.132, 0.680, -0.201), (0.171, 0.688, -0.092), SCAR_RED),
     
     # ⚡ DUAL SLEEK TEMPLE KARMA STREAM LINES (Crisp parallel lines connecting facial scar into horn root)
-    ("karma-stream-line-top", "head", (0.145, 0.606, 0.065), (0.185, 0.618, 0.160), SCAR_RED),
-    ("karma-stream-line-bot", "head", (0.145, 0.540, 0.075), (0.182, 0.552, 0.160), SCAR_RED),
+    ("karma-stream-line-top", "head", (0.145, 0.606, 0.065), (0.186, 0.614, 0.162), SCAR_RED),
+    ("karma-stream-line-bot", "head", (0.145, 0.540, 0.075), (0.184, 0.548, 0.162), SCAR_RED),
     
     # 💇 DYNAMIC ANIME SPIKES (Front, top, back)
     ("spike-front-c1",        "head", (-0.050, 0.670, 0.115), (0.040, 0.765, 0.192), HAIR),
