@@ -208,33 +208,6 @@ ARM_LEFT = [
     ("arm-upper-l",           "arm-left", (0.170, 0.345, -0.055), (0.245, 0.465, 0.055), SKIN),
     ("arm-forearm-l",         "arm-left", (0.235, 0.342, -0.055), (0.310, 0.460, 0.055), SKIN),
     ("hand-left",             "arm-left", (0.300, 0.340, -0.050), (0.3836, 0.458, 0.050), SKIN),
-
-    # 🌿 FRONT MARKINGS (+X, Demonic Arm Front Face Z = -0.0560 to -0.0540)
-    # Upper bicep dark shadow undercut
-    ("rune-bicep-dk-f-l",     "arm-left", (0.145, 0.355, -0.0560), (0.176, 0.395, -0.0540), ROBE_DARK),
-    # Vertical Gold Line at mid-bicep (as seen in media_1787207924670.png)
-    ("rune-bicep-gold-f-l",   "arm-left", (0.174, 0.355, -0.0560), (0.188, 0.455, -0.0540), GOLD_TRIM),
-    # Top Green Square Plate on upper forearm
-    ("rune-forearm-upper-f-l","arm-left", (0.188, 0.415, -0.0560), (0.240, 0.462, -0.0540), ROBE_GREEN),
-    # Lower Horizontal Green Carapace Band along bottom of forearm
-    ("rune-forearm-lower-f-l","arm-left", (0.174, 0.310, -0.0560), (0.310, 0.378, -0.0540), ROBE_GREEN),
-    ("rune-forearm-lower-dk-l","arm-left",(0.174, 0.336, -0.0560), (0.310, 0.348, -0.0540), ROBE_DARK),
-    # Small Warm Amber / Jade Energy Spark Dot in mid-forearm skin channel
-    ("rune-spark-dot-f-l",    "arm-left", (0.262, 0.392, -0.0560), (0.276, 0.406, -0.0540), JADE_LIT),
-
-    # 🌿 BACK MARKINGS (+X, Demonic Arm Back Face Z = 0.0540 to 0.0560, Full Branching Tree/Circuit)
-    # Top Horizontal Line on Upper Tricep
-    ("rune-tricep-top-b-l",   "arm-left", (0.130, 0.420, 0.0540), (0.235, 0.460, 0.0560), ROBE_GREEN),
-    ("rune-tricep-top-dk-l",  "arm-left", (0.130, 0.410, 0.0540), (0.235, 0.422, 0.0560), ROBE_DARK),
-    # Vertical Branch going DOWN from Top Line into Mid-Arm
-    ("rune-tricep-vert-dn-b-l","arm-left",(0.175, 0.365, 0.0540), (0.195, 0.435, 0.0560), ROBE_GREEN),
-    # Inner Vertical Seam Branch
-    ("rune-deltoid-in-vert-b-l","arm-left",(0.130, 0.355, 0.0540), (0.150, 0.435, 0.0560), ROBE_GREEN),
-    # Horizontal Mid-Forearm Bar
-    ("rune-forearm-mid-b-l",  "arm-left", (0.175, 0.365, 0.0540), (0.295, 0.395, 0.0560), ROBE_GREEN),
-    ("rune-forearm-mid-dk-l", "arm-left", (0.175, 0.352, 0.0540), (0.295, 0.365, 0.0560), ROBE_DARK),
-    # Outer Vertical Branch with Upward Hook at Outer Forearm
-    ("rune-forearm-out-hk-b-l","arm-left",(0.275, 0.385, 0.0540), (0.298, 0.445, 0.0560), ROBE_GREEN),
 ]
 
 ARM_RIGHT = [
@@ -250,27 +223,64 @@ ARM_RIGHT = [
     ("arm-upper-r",           "arm-right", (-0.245, 0.345, -0.055), (-0.170, 0.465, 0.055), SKIN),
     ("arm-forearm-r",         "arm-right", (-0.310, 0.342, -0.055), (-0.235, 0.460, 0.055), SKIN),
     ("hand-right",            "arm-right", (-0.3836, 0.340, -0.050), (-0.300, 0.458, 0.050), SKIN),
-
-    # 🌿 FRONT MARKINGS ON BARE FOREARM (-X, Front Face Z = -0.0560 to -0.0540)
-    # Lower Forearm Horizontal Green Vine + Dark Undercut
-    ("rune-forearm-vine-f-r", "arm-right", (-0.310, 0.345, -0.0560), (-0.248, 0.375, -0.0540), ROBE_GREEN),
-    ("rune-vine-shadow-f-r",  "arm-right", (-0.310, 0.336, -0.0560), (-0.248, 0.348, -0.0540), ROBE_DARK),
-    # Upward Hook at Mid-Forearm
-    ("rune-forearm-hook-f-r", "arm-right", (-0.282, 0.370, -0.0560), (-0.265, 0.420, -0.0540), ROBE_GREEN),
-    # Top Wrist Green Accent
-    ("rune-wrist-top-f-r",    "arm-right", (-0.310, 0.418, -0.0560), (-0.292, 0.448, -0.0540), ROBE_GREEN),
-
-    # 🌿 BACK MARKINGS ON BARE FOREARM (-X, Back Face Z = 0.0540 to 0.0560, Smooth U-Loop Vine)
-    # Top Vine emerging from Cuff curving along top edge
-    ("rune-forearm-top-b-r",  "arm-right", (-0.285, 0.410, 0.0540), (-0.248, 0.455, 0.0560), ROBE_GREEN),
-    # Descending Loop Branch curving down
-    ("rune-forearm-loop-dn-b-r","arm-right",(-0.285, 0.355, 0.0540), (-0.265, 0.425, 0.0560), ROBE_GREEN),
-    # Bottom Curve of the U-Loop + Shadow
-    ("rune-forearm-loop-bot-b-r","arm-right",(-0.310, 0.345, 0.0540), (-0.265, 0.375, 0.0560), ROBE_GREEN),
-    ("rune-vine-shadow-bot-b-r","arm-right",(-0.310, 0.336, 0.0540), (-0.265, 0.348, 0.0560), ROBE_DARK),
-    # Upward Outer Hook of the U-Loop
-    ("rune-forearm-loop-up-b-r","arm-right",(-0.310, 0.365, 0.0540), (-0.290, 0.440, 0.0560), ROBE_GREEN),
 ]
+
+# ---------------------------------------------------------------------------
+# BODY PLANAR PANELS (2D SLEEK SURFACE DRAWINGS / MARKINGS ON SKIN)
+# Flat, flush decal quads with zero 3D protrusion and zero outline artifacts.
+# ---------------------------------------------------------------------------
+ARM_LEFT_PANELS = [
+    # 🌿 FRONT MARKINGS (+X, Demonic Arm Front Face Z = -0.055)
+    # Upper bicep dark shadow undercut
+    ("rune-bicep-dk-f-l",     "arm-left", "front", (0.145, 0.355), (0.174, 0.395), -0.055, ROBE_DARK, 1),
+    # Vertical Gold Line at mid-bicep (as seen in media_1787207924670.png)
+    ("rune-bicep-gold-f-l",   "arm-left", "front", (0.174, 0.355), (0.188, 0.455), -0.055, GOLD_TRIM, 1),
+    # Top Green Square Plate on upper forearm
+    ("rune-forearm-upper-f-l","arm-left", "front", (0.188, 0.415), (0.240, 0.460), -0.055, ROBE_GREEN, 1),
+    # Lower Horizontal Green Carapace Band along bottom of forearm
+    ("rune-forearm-lower-f-l","arm-left", "front", (0.174, 0.342), (0.310, 0.378), -0.055, ROBE_GREEN, 1),
+    ("rune-forearm-lower-dk-l","arm-left","front", (0.174, 0.336), (0.310, 0.346), -0.055, ROBE_DARK, 1),
+    # Small Warm Amber / Jade Energy Spark Dot in mid-forearm skin channel
+    ("rune-spark-dot-f-l",    "arm-left", "front", (0.260, 0.390), (0.276, 0.406), -0.055, JADE_LIT, 2),
+
+    # 🌿 BACK MARKINGS (+X, Demonic Arm Back Face Z = 0.055, Full Branching Tree/Circuit)
+    # Top Horizontal Line on Upper Tricep
+    ("rune-tricep-top-b-l",   "arm-left", "back",  (0.130, 0.420), (0.235, 0.460), 0.055, ROBE_GREEN, 1),
+    ("rune-tricep-top-dk-l",  "arm-left", "back",  (0.130, 0.410), (0.235, 0.422), 0.055, ROBE_DARK, 1),
+    # Vertical Branch going DOWN from Top Line into Mid-Arm
+    ("rune-tricep-vert-dn-b-l","arm-left","back",  (0.175, 0.365), (0.195, 0.435), 0.055, ROBE_GREEN, 1),
+    # Inner Vertical Seam Branch
+    ("rune-deltoid-in-vert-b-l","arm-left","back", (0.130, 0.355), (0.150, 0.435), 0.055, ROBE_GREEN, 1),
+    # Horizontal Mid-Forearm Bar
+    ("rune-forearm-mid-b-l",  "arm-left", "back",  (0.175, 0.365), (0.295, 0.395), 0.055, ROBE_GREEN, 1),
+    ("rune-forearm-mid-dk-l", "arm-left", "back",  (0.175, 0.352), (0.295, 0.365), 0.055, ROBE_DARK, 1),
+    # Outer Vertical Branch with Upward Hook at Outer Forearm
+    ("rune-forearm-out-hk-b-l","arm-left","back",  (0.275, 0.385), (0.298, 0.445), 0.055, ROBE_GREEN, 1),
+]
+
+ARM_RIGHT_PANELS = [
+    # 🌿 FRONT MARKINGS ON BARE FOREARM (-X, Front Face Z = -0.055)
+    # Lower Forearm Horizontal Green Vine + Dark Undercut
+    ("rune-forearm-vine-f-r", "arm-right", "front", (-0.310, 0.345), (-0.248, 0.375), -0.055, ROBE_GREEN, 1),
+    ("rune-vine-shadow-f-r",  "arm-right", "front", (-0.310, 0.336), (-0.248, 0.348), -0.055, ROBE_DARK, 1),
+    # Upward Hook at Mid-Forearm
+    ("rune-forearm-hook-f-r", "arm-right", "front", (-0.282, 0.370), (-0.265, 0.420), -0.055, ROBE_GREEN, 1),
+    # Top Wrist Green Accent
+    ("rune-wrist-top-f-r",    "arm-right", "front", (-0.310, 0.418), (-0.292, 0.448), -0.055, ROBE_GREEN, 1),
+
+    # 🌿 BACK MARKINGS ON BARE FOREARM (-X, Back Face Z = 0.055, Smooth U-Loop Vine)
+    # Top Vine emerging from Cuff curving along top edge
+    ("rune-forearm-top-b-r",  "arm-right", "back",  (-0.285, 0.410), (-0.248, 0.455), 0.055, ROBE_GREEN, 1),
+    # Descending Loop Branch curving down
+    ("rune-forearm-loop-dn-b-r","arm-right","back", (-0.285, 0.355), (-0.265, 0.425), 0.055, ROBE_GREEN, 1),
+    # Bottom Curve of the U-Loop + Shadow
+    ("rune-forearm-loop-bot-b-r","arm-right","back",(-0.310, 0.345), (-0.265, 0.375), 0.055, ROBE_GREEN, 1),
+    ("rune-vine-shadow-bot-b-r","arm-right","back", (-0.310, 0.336), (-0.265, 0.348), 0.055, ROBE_DARK, 1),
+    # Upward Outer Hook of the U-Loop
+    ("rune-forearm-loop-up-b-r","arm-right","back", (-0.310, 0.365), (-0.290, 0.440), 0.055, ROBE_GREEN, 1),
+]
+
+BODY_PANELS = ARM_LEFT_PANELS + ARM_RIGHT_PANELS
 
 
 # ---------------------------------------------------------------------------
@@ -416,6 +426,21 @@ def _family(boxes, head, as_authored=()):
 
         out.append((name, bone, lo, hi, slot) + rest)
 
+    return out
+
+
+def _family_panels(panels):
+    out = []
+    for entry in panels:
+        name, bone, face, (min_x, min_y), (max_x, max_y), z_plane, slot, layer = entry
+        if bone in ("arm-left", "arm-right"):
+            shift = NOW_SHOULDER - WAS_SHOULDER
+            min_y += shift
+            max_y += shift
+        else:
+            min_y = _remap_y(min_y)
+            max_y = _remap_y(max_y)
+        out.append((name, bone, face, (min_x, min_y), (max_x, max_y), z_plane, slot, layer))
     return out
 
 
@@ -810,6 +835,45 @@ def build_mesh(boxes, panels=(), donor=None):
             for k in range(1, len(points) - 1):
                 idx += [first, first + k, first + k + 1]
 
+    for entry in panels:
+        name, bone, face, (min_x, min_y), (max_x, max_y), z_plane, slot, layer = entry
+        j = BONE[bone]
+        u, v = cell_uv(slot)
+        offset = layer * PANEL_PROUD
+
+        if face == "front":
+            z = -z_plane + offset
+            normal = (0.0, 0.0, 1.0)
+            p_bl = (min_x, min_y, z)
+            p_br = (max_x, min_y, z)
+            p_tr = (max_x, max_y, z)
+            p_tl = (min_x, max_y, z)
+            first = len(pos)
+            for p in (p_bl, p_br, p_tr, p_tl):
+                panel_indices.append(len(pos))
+                pos.append(p)
+                nrm.append(normal)
+                uv.append((u, v))
+                joints.append((j, 0, 0, 0))
+                weights.append((1.0, 0.0, 0.0, 0.0))
+            idx += [first, first + 1, first + 2, first, first + 2, first + 3]
+        elif face == "back":
+            z = -z_plane - offset
+            normal = (0.0, 0.0, -1.0)
+            p_bl = (max_x, min_y, z)
+            p_br = (min_x, min_y, z)
+            p_tr = (min_x, max_y, z)
+            p_tl = (max_x, max_y, z)
+            first = len(pos)
+            for p in (p_bl, p_br, p_tr, p_tl):
+                panel_indices.append(len(pos))
+                pos.append(p)
+                nrm.append(normal)
+                uv.append((u, v))
+                joints.append((j, 0, 0, 0))
+                weights.append((1.0, 0.0, 0.0, 0.0))
+            idx += [first, first + 1, first + 2, first, first + 2, first + 3]
+
     if donor is not None:
         dpos, dnrm, duv, dtris = donor
         j = BONE["head"]
@@ -957,7 +1021,7 @@ def main():
     deltas = retarget(gltf, buffer)
     bind_matrices(gltf)
 
-    body = build_mesh(_family(BODY_BOXES, head=False))
+    body = build_mesh(_family(BODY_BOXES, head=False), panels=_family_panels(BODY_PANELS))
     head = build_mesh(_family(HEAD_BOXES, head=True, as_authored=DONOR_SPACE),
                       donor=_donor_head())
 
