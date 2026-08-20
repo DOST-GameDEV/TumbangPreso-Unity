@@ -293,13 +293,12 @@ HEAD = [
     # 3. Sharp Chisel Tip (Hooking downward/backward along occipital contour)
     ("horn-tip",              "head", (0.124, 0.625, -0.222), (0.156, 0.675, -0.145), SKIN),
     
-    # ⚡ 6 ULTRA-THIN CRIMSON KARMA LINE RINGS (Height = 0.008, proud on +X, +Z, -Z, visible from ALL angles, ZERO blobs!)
-    ("karma-line-1",          "head", (0.150, 0.608, 0.010), (0.211, 0.616, 0.128), SCAR_RED),
-    ("karma-line-2",          "head", (0.158, 0.660, -0.028), (0.217, 0.668, 0.088), SCAR_RED),
-    ("karma-line-3",          "head", (0.152, 0.710, -0.073), (0.209, 0.718, 0.043), SCAR_RED),
-    ("karma-line-4",          "head", (0.144, 0.748, -0.121), (0.197, 0.756, -0.002), SCAR_RED),
-    ("karma-line-5",          "head", (0.138, 0.722, -0.165), (0.185, 0.730, -0.047), SCAR_RED),
-    ("karma-line-6",          "head", (0.132, 0.680, -0.201), (0.171, 0.688, -0.092), SCAR_RED),
+    # ⚡ 5 HARMONIC CRIMSON KARMA CARAPACE RING INSETS (Etched precisely into biological tier steps, visible 360°, ZERO blobs)
+    ("karma-ring-1",          "head", (0.150, 0.622, 0.010), (0.216, 0.630, 0.115), SCAR_RED),
+    ("karma-ring-2",          "head", (0.154, 0.672, -0.035), (0.216, 0.680, 0.075), SCAR_RED),
+    ("karma-ring-3",          "head", (0.148, 0.735, -0.080), (0.208, 0.743, 0.025), SCAR_RED),
+    ("karma-ring-4",          "head", (0.140, 0.725, -0.130), (0.196, 0.733, -0.030), SCAR_RED),
+    ("karma-ring-5",          "head", (0.134, 0.680, -0.175), (0.184, 0.688, -0.075), SCAR_RED),
     
     # ⚡ DUAL SLEEK TEMPLE KARMA STREAM LINES (Crisp parallel lines connecting facial scar into horn root)
     ("karma-stream-line-top", "head", (0.145, 0.606, 0.065), (0.186, 0.614, 0.162), SCAR_RED),
