@@ -281,11 +281,14 @@ HEAD = [
     # 1. Broad Supraorbital Temple Root (Emerges naturally from skull tissue above left eye)
     ("horn-root-collar",      "head", (0.142, 0.495, 0.055), (0.192, 0.535, 0.145), LEATHER_BROWN),
     ("horn-root-brow",        "head", (0.138, 0.515, 0.070), (0.198, 0.585, 0.155), SKIN),
+    ("horn-root-brow-plate",  "head", (0.150, 0.530, 0.110), (0.202, 0.585, 0.160), SKIN),
     ("horn-root-temple",      "head", (0.145, 0.545, 0.040), (0.204, 0.615, 0.135), SKIN),
     
     # 2. Heavy Stepped Biological Carapace Tiers (Fatter natural volume curving +X then hooking -X)
     ("horn-tier-1",           "head", (0.148, 0.575, 0.015), (0.208, 0.650, 0.125), SKIN),
+    ("horn-tier-1-shadow",    "head", (0.152, 0.625, 0.010), (0.204, 0.635, 0.035), LEATHER_BROWN),
     ("horn-tier-2",           "head", (0.156, 0.630, -0.025), (0.214, 0.700, 0.085), SKIN),
+    ("horn-tier-2-shadow",    "head", (0.154, 0.675, -0.030), (0.208, 0.685, -0.010), LEATHER_BROWN),
     ("horn-tier-3",           "head", (0.150, 0.680, -0.070), (0.206, 0.750, 0.040), SKIN),
     ("horn-tier-4",           "head", (0.142, 0.705, -0.118), (0.194, 0.762, -0.005), SKIN),
     ("horn-tier-5",           "head", (0.136, 0.690, -0.162), (0.182, 0.745, -0.050), SKIN),
@@ -295,19 +298,31 @@ HEAD = [
     ("horn-tip",              "head", (0.124, 0.625, -0.222), (0.156, 0.675, -0.145), SKIN),
     ("horn-tip-ember",        "head", (0.128, 0.622, -0.224), (0.152, 0.636, -0.195), SCAR_RED),
     
-    # ⚡ 6 TRUE PERPENDICULAR-CUT CRIMSON KARMA COLLAR RINGS (Matching face scar thickness 0.024 & seamless connection!)
+    # ⚡ 7 TRUE PERPENDICULAR-CUT CRIMSON KARMA COLLAR RINGS (Matching face scar thickness 0.024 & dual-feed connection!)
+    # Root Collar Ring 0 (Receives lower temple stream at y=0.540..0.564)
+    ("karma-ring-0",          "head", (0.142, 0.540, 0.035), (0.206, 0.564, 0.142), SCAR_RED),
     # Base/Rise Collars (Horizontal cut matching face scar thickness & flowing directly from temple bridge)
     ("karma-ring-1",          "head", (0.148, 0.605, 0.005), (0.212, 0.629, 0.135), SCAR_RED),
-    ("karma-ring-2",          "head", (0.156, 0.650, -0.028), (0.218, 0.674, 0.088), SCAR_RED),
-    ("karma-ring-3",          "head", (0.150, 0.696, -0.072), (0.210, 0.720, 0.040), SCAR_RED),
+    ("karma-ring-2",          "head", (0.156, 0.650, -0.030), (0.218, 0.674, 0.090), SCAR_RED),
+    ("karma-ring-3",          "head", (0.150, 0.696, -0.075), (0.212, 0.720, 0.045), SCAR_RED),
     
     # Crown & Hook Collars (Vertical Z-cut perpendicular to horizontal/descending horn curve)
     ("karma-ring-4",          "head", (0.142, 0.705, -0.090), (0.198, 0.765, -0.066), SCAR_RED),
     ("karma-ring-5",          "head", (0.136, 0.685, -0.150), (0.186, 0.745, -0.126), SCAR_RED),
     ("karma-ring-6",          "head", (0.130, 0.650, -0.194), (0.172, 0.705, -0.170), SCAR_RED),
     
-    # ⚡ DORSAL CREST KARMA SPINE (Sleek outer-ridge stream connecting the collars into a cohesive circuit)
-    ("karma-dorsal-crown",    "head", (0.186, 0.752, -0.110), (0.200, 0.764, -0.030), SCAR_RED),
+    # ⚡ CONTINUOUS DORSAL CREST KARMA SPINAL CONDUIT (Full unbroken crest circuit from root to tip!)
+    ("karma-dorsal-base",     "head", (0.196, 0.540, 0.040), (0.208, 0.630, 0.125), SCAR_RED),
+    ("karma-dorsal-rise",     "head", (0.204, 0.620, -0.035), (0.218, 0.750, 0.085), SCAR_RED),
+    ("karma-dorsal-crown",    "head", (0.184, 0.748, -0.120), (0.208, 0.765, 0.005), SCAR_RED),
+    ("karma-dorsal-hook",     "head", (0.158, 0.680, -0.220), (0.188, 0.750, -0.090), SCAR_RED),
+    
+    # ⚡ FRONT-FACING KARMA ASCENSION STREAK (Climbing front contour visible in Front View!)
+    ("karma-front-ascend",    "head", (0.176, 0.625, 0.080), (0.204, 0.695, 0.128), SCAR_RED),
+    
+    # 💎 DUAL OTSUTSUKI GOLD KARMA RESONANCE NODES (Gleaming gold spark at Crown Peak & Root Temporal Gate)
+    ("karma-horn-gold-crown", "head", (0.188, 0.754, -0.070), (0.206, 0.766, -0.040), GOLD_TRIM),
+    ("karma-root-gold-node",  "head", (0.182, 0.610, 0.090), (0.194, 0.624, 0.115), GOLD_TRIM),
     
     # ⚡ DUAL SLEEK TEMPLE KARMA STREAM LINES (Matching thickness 0.024, connects directly into face quad at x=0.180)
     ("karma-stream-line-top", "head", (0.145, 0.605, 0.060), (0.188, 0.629, 0.170), SCAR_RED),
