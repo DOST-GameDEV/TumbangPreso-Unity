@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TumbangPreso.Core;
 using TumbangPreso.Net;
@@ -10,39 +11,18 @@ namespace TumbangPreso.UI
     /// <summary>
     /// Ported from `match_setup.gd` (2,015 lines).
     ///
-    /// ⚠️ THERE ARE FOUR SELECTORS HERE, NOT ONE. Map, MODE, difficulty and fighter. An earlier
-    /// rebuild of this screen had only a map picker, which quietly dropped the mode and the bot
-    /// difficulty out of the game entirely.
-    ///
-    /// ⚠️ AND THE MODE ROW IS HIDDEN, DELIBERATELY. `match_setup.gd:289` sets
-    /// `mode_row.visible = false`: the two-entry picker lost its second entry and a selector
-    /// with one choice is a control that teaches the player it does nothing. The row stays in
-    /// the scene because the mode is a real axis that may come back; it is just not offered.
-    ///
-    /// ⚠️⚠️ THE SEAT LIST IS PART OF SETUP AND IT IS CLICKABLE, IN SINGLE PLAYER TOO. Four seat
-    /// rows show who is taya first and which seats are bots, and pressing one MOVES you, because
-    /// the taya rotation is the game's fairness argument and the player is entitled to choose
-    /// where they sit in it before committing. The conversion drew them as dead labels.
-    ///
-    /// ⚠️ AND THERE IS A FIFTH SEAT. SPECTATE is seat -1 and it is built in code rather than
-    /// authored, because it belongs beside the four rows: it answers the same question they do.
-    ///
-    /// ⚠️ LOBBY SYNCHRONIZATION (N5). Leader controls map and difficulty. All peers sync picks
-    /// and ready status via MatchRpc, and the join code is surfaced when hosting.
+    /// There are four selectors: Map, Mode, difficulty, and fighter.
+    /// Mode row is hidden by default to match Godot match_setup.gd.
+    /// In multiplayer, the screen acts as the Lobby, showing join code, host address,
+    /// and ready status controls.
     /// </summary>
     public sealed class ConvertedMatchSetup : ConvertedScreen
     {
         private int _map;
         private int _difficulty = 1;
 
-        /// <summary>`match_setup.gd::_unhandled_input` backs out to the mode screen on Escape.</summary>
         protected override string CancelTarget => SceneFlow.ModeSelect;
 
-        /// <summary>
-        /// ⚠️⚠️ ONE STEP PER PRESS, ENFORCED, BECAUSE THE SELECTORS WERE REPORTED AS
-        /// UNCONTROLLABLE. `match_setup.gd` wires `pressed` and has NO repeat and NO hold
-        /// behaviour at all. 0.12s guard window prevents double-click skips.
-        /// </summary>
         private const float CycleGuard = 0.12f;
         private float _lastCycle = -1.0f;
 
@@ -51,31 +31,40 @@ namespace TumbangPreso.UI
         private Button _spectate;
         private bool _localReady;
 
+        private GameObject _addressRow;
+        private Text _addressText;
+        private Button _addressCopyBtn;
+        private Text _addressCopyBtnText;
+
+        private GameObject _codeRow;
+        private Text _codeText;
+        private Button _codeCopyBtn;
+        private Text _codeCopyBtnText;
+
         private readonly int[] _replicatedPicks = new int[Balance.PlayerCount * 4];
 
-        /// <summary>The one string both the solo and the networked board reach for, so the two
-        /// cannot drift into marking the same seat two different ways.</summary>
         private const string YouMark = "◀ YOU";
 
         private static readonly string[] Difficulties = { "EASY", "NORMAL", "HARD" };
+
+        private static readonly string[] DifficultyDetails =
+        {
+            "EASY Slower reactions and looser angles. Good for learning the throw arc.",
+            "NORMAL The default, and the tier every balance number in this project was measured at. Reads your bearing, leads the lata, and blocks about 38% of what you throw.",
+            "HARD Snappier reads and tighter defense. Will punish greedy slipper retrievals."
+        };
 
         protected override void Wire()
         {
             for (int i = 0; i < _replicatedPicks.Length; i++) _replicatedPicks[i] = -1;
 
             var net = NetSession.Instance;
-            UpdateBanner();
+            bool isNetworked = net != null && net.IsNetworked;
 
             if (net != null)
             {
                 net.Lobby.JoinCodeChanged += HandleJoinCodeChanged;
             }
-
-            SetText("SeatHeading", "YOUR CHARACTER");
-
-            SetText("SeatHint",
-                    "Four players, one taya. The taya rotates every round, so everyone defends "
-                    + "exactly once. Empty seats are bots, the kids from the street who fill in.");
 
             _map = Mathf.Max(0, Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap));
             _difficulty = Mathf.Clamp(Settings.SettingsStore.Current.AiDifficulty, 0, 2);
@@ -93,7 +82,7 @@ namespace TumbangPreso.UI
 
             OnClick("CharacterButton", OpenCharacterSelect);
             OnClick("PrimaryButton", OnPrimaryPressed);
-            OnClick("StartButton", OnPrimaryPressed);
+            OnClick("StartButton", OnStartPressed);
             OnClick("BackButton", () =>
             {
                 if (net != null && net.IsNetworked) net.Stop();
@@ -104,6 +93,7 @@ namespace TumbangPreso.UI
             if (modeRow != null) modeRow.gameObject.SetActive(false);
 
             BuildSpectateButton();
+            BuildNetworkRows();
             WireSeats();
 
             MatchRpc.OnMapChanged += HandleMapSynced;
@@ -112,6 +102,145 @@ namespace TumbangPreso.UI
             MatchRpc.OnMatchStarted += HandleMatchStarted;
 
             Refresh();
+        }
+
+        private void BuildNetworkRows()
+        {
+            var heading = Node("SeatHeading");
+            if (heading == null || heading.parent == null) return;
+
+            Transform rowsContainer = heading.parent;
+            int insertIndex = heading.GetSiblingIndex() + 1;
+
+            // 1. Address Row
+            _addressRow = new GameObject("AddressRow");
+            _addressRow.transform.SetParent(rowsContainer, false);
+            _addressRow.transform.SetSiblingIndex(insertIndex++);
+
+            var addrLayout = _addressRow.AddComponent<HorizontalLayoutGroup>();
+            addrLayout.spacing = 10;
+            addrLayout.childControlWidth = true;
+            addrLayout.childControlHeight = true;
+            addrLayout.childForceExpandWidth = false;
+            addrLayout.childForceExpandHeight = true;
+
+            var addrElement = _addressRow.AddComponent<LayoutElement>();
+            addrElement.minHeight = 44;
+            addrElement.preferredHeight = 44;
+            addrElement.flexibleWidth = 1;
+
+            // Address display box
+            var addrBox = new GameObject("AddressBox");
+            addrBox.transform.SetParent(_addressRow.transform, false);
+            var addrBoxImg = addrBox.AddComponent<Image>();
+            addrBoxImg.color = UiTheme.WoodDeep;
+            var addrBoxPanel = addrBox.AddComponent<GodotPanel>();
+            addrBoxPanel.Variation = "WoodDeep";
+            var addrBoxElement = addrBox.AddComponent<LayoutElement>();
+            addrBoxElement.flexibleWidth = 1;
+            addrBoxElement.minHeight = 44;
+
+            _addressText = MenuKit.Label(addrBox.transform, "", 22, UiTheme.Cream,
+                                         new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero,
+                                         TextAnchor.MiddleCenter);
+            MenuKit.Stretch(_addressText.rectTransform, 8);
+
+            _addressCopyBtn = MenuKit.WoodButton(_addressRow.transform, "COPY", Vector2.zero, Vector2.zero,
+                                                 new Vector2(96, 40), OnAddressCopyPressed);
+            var addrCopyElement = _addressCopyBtn.gameObject.AddComponent<LayoutElement>();
+            addrCopyElement.preferredWidth = 96;
+            addrCopyElement.preferredHeight = 40;
+            _addressCopyBtnText = _addressCopyBtn.GetComponentInChildren<Text>();
+
+            // 2. Code Row
+            _codeRow = new GameObject("CodeRow");
+            _codeRow.transform.SetParent(rowsContainer, false);
+            _codeRow.transform.SetSiblingIndex(insertIndex++);
+
+            var codeLayout = _codeRow.AddComponent<HorizontalLayoutGroup>();
+            codeLayout.spacing = 10;
+            codeLayout.childControlWidth = true;
+            codeLayout.childControlHeight = true;
+            codeLayout.childForceExpandWidth = false;
+            codeLayout.childForceExpandHeight = true;
+
+            var codeElement = _codeRow.AddComponent<LayoutElement>();
+            codeElement.minHeight = 44;
+            codeElement.preferredHeight = 44;
+            codeElement.flexibleWidth = 1;
+
+            // Code caption
+            var codeCaption = new GameObject("CodeCaption");
+            codeCaption.transform.SetParent(_codeRow.transform, false);
+            var codeCaptionElement = codeCaption.AddComponent<LayoutElement>();
+            codeCaptionElement.preferredWidth = 72;
+            codeCaptionElement.minHeight = 44;
+            var captionText = MenuKit.Label(codeCaption.transform, "CODE", 26, UiTheme.Amber,
+                                            new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero,
+                                            TextAnchor.MiddleCenter);
+            MenuKit.Stretch(captionText.rectTransform, 0);
+
+            // Code display box
+            var codeBox = new GameObject("CodeBox");
+            codeBox.transform.SetParent(_codeRow.transform, false);
+            var codeBoxImg = codeBox.AddComponent<Image>();
+            codeBoxImg.color = UiTheme.WoodDeep;
+            var codeBoxPanel = codeBox.AddComponent<GodotPanel>();
+            codeBoxPanel.Variation = "WoodDeep";
+            var codeBoxElement = codeBox.AddComponent<LayoutElement>();
+            codeBoxElement.flexibleWidth = 1;
+            codeBoxElement.minHeight = 44;
+
+            _codeText = MenuKit.Label(codeBox.transform, "", 26, UiTheme.Cream,
+                                      new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleCenter);
+            MenuKit.Stretch(_codeText.rectTransform, 8);
+
+            _codeCopyBtn = MenuKit.WoodButton(_codeRow.transform, "COPY", Vector2.zero, Vector2.zero,
+                                              new Vector2(96, 40), OnCodeCopyPressed);
+            var codeCopyElement = _codeCopyBtn.gameObject.AddComponent<LayoutElement>();
+            codeCopyElement.preferredWidth = 96;
+            codeCopyElement.preferredHeight = 40;
+            _codeCopyBtnText = _codeCopyBtn.GetComponentInChildren<Text>();
+        }
+
+        private void OnAddressCopyPressed()
+        {
+            if (_addressText == null || string.IsNullOrEmpty(_addressText.text)) return;
+            GUIUtility.systemCopyBuffer = _addressText.text;
+            MenuSfx.Click();
+            StartCoroutine(FlashButtonText(_addressCopyBtnText, "COPIED", "COPY"));
+        }
+
+        private void OnCodeCopyPressed()
+        {
+            if (_codeText == null || string.IsNullOrEmpty(_codeText.text)) return;
+            GUIUtility.systemCopyBuffer = _codeText.text;
+            MenuSfx.Click();
+            StartCoroutine(FlashButtonText(_codeCopyBtnText, "COPIED", "COPY"));
+            SetStatus("Join code copied. Send it to whoever you want in the game.");
+        }
+
+        private IEnumerator FlashButtonText(Text targetText, string flashMessage, string originalText)
+        {
+            if (targetText == null) yield break;
+            targetText.text = flashMessage;
+            yield return new WaitForSecondsRealtime(1.2f);
+            if (targetText != null) targetText.text = originalText;
+        }
+
+        private void SetStatus(string message)
+        {
+            var label = Node("StatusLabel");
+            if (label != null)
+            {
+                var text = label.GetComponent<Text>();
+                if (text != null)
+                {
+                    text.color = UiTheme.Impact;
+                    text.text = message;
+                }
+            }
         }
 
         private void HandleMatchStarted()
@@ -128,17 +257,35 @@ namespace TumbangPreso.UI
                 return;
             }
 
-            _localReady = !_localReady;
-            SetText("StatusLabel", _localReady ? "Ready! Waiting for other players..." : "");
+            if (GameLaunch.Spectator) return;
 
+            _localReady = !_localReady;
             int localPeerId = net.LocalSlot >= 0 ? net.LocalSlot : 0;
             MatchRpc.Instance?.DeclareReadyServerRpc(localPeerId);
 
-            if (NetAuthority.IsHost)
+            if (_localReady)
+            {
+                SetStatus("Ready! Waiting for other players...");
+            }
+            else
+            {
+                SetStatus(NetAuthority.IsHost
+                    ? "You are now the lobby leader - you pick the map, the mode, and when to start."
+                    : "");
+            }
+
+            Refresh();
+        }
+
+        private void OnStartPressed()
+        {
+            var net = NetSession.Instance;
+            if (net != null && net.IsNetworked && NetAuthority.IsHost)
             {
                 var readyGate = FindFirstObjectByType<ReadyGate>();
                 if (readyGate != null)
                 {
+                    int localPeerId = net.LocalSlot >= 0 ? net.LocalSlot : 0;
                     readyGate.DeclareReady(localPeerId);
                 }
                 else
@@ -244,11 +391,14 @@ namespace TumbangPreso.UI
                 string seatText;
                 if (mine)
                 {
-                    seatText = $"{SeatName(seat)}   {YouMark}";
+                    seatText = isNetworked && _localReady
+                        ? $"{SeatName(seat)}   {YouMark}   ···"
+                        : $"{SeatName(seat)}   {YouMark}";
                 }
                 else if (isNetworked)
                 {
-                    bool isOccupied = net.Lobby.IsSeatOccupied(seat);
+                    bool isOccupied = (net != null && net.Lobby.IsSeatOccupied(seat)) ||
+                                      (_replicatedPicks.Length > seat * 4 && _replicatedPicks[seat * 4] >= 0);
                     seatText = isOccupied
                         ? $"{SeatName(seat)}   · PLAYER {(string.IsNullOrEmpty(characterName) ? "" : $"({characterName})")}"
                         : $"{SeatName(seat)}   · BOT";
@@ -301,6 +451,7 @@ namespace TumbangPreso.UI
         {
             GameLaunch.Spectator = !GameLaunch.Spectator;
             RefreshSeats();
+            Refresh();
         }
 
         private void RefreshSpectate()
@@ -308,11 +459,18 @@ namespace TumbangPreso.UI
             if (_spectate == null) return;
 
             var skin = _spectate.GetComponent<GodotButton>();
-            if (skin == null) return;
+            if (skin != null)
+            {
+                skin.Variation = GameLaunch.Spectator ? "WoodPrimaryButton" : "WoodButton";
+                skin.Apply();
+                skin.Refresh();
+            }
 
-            skin.Variation = GameLaunch.Spectator ? "WoodPrimaryButton" : "WoodButton";
-            skin.Apply();
-            skin.Refresh();
+            var label = _spectate.GetComponentInChildren<Text>();
+            if (label != null)
+            {
+                label.text = GameLaunch.Spectator ? "SPECTATING" : "SPECTATE";
+            }
         }
 
         private void Cycle(ref int index, int count, int delta)
@@ -358,13 +516,18 @@ namespace TumbangPreso.UI
 
         private void Refresh()
         {
+            var net = NetSession.Instance;
+            bool isNetworked = net != null && net.IsNetworked;
+
             SceneFlow.SelectedMap = SceneFlow.Maps[Mathf.Clamp(_map, 0, SceneFlow.Maps.Length - 1)];
+
+            SetText("BannerLabel", isNetworked ? "LOBBY" : "SINGLE PLAYER");
 
             SetText("MapValueLabel",
                     SceneFlow.SelectedMap.ToUpperInvariant().Replace("BAYANPLAZA", "BAYAN PLAZA"));
 
             SetText("DifficultyValueLabel", Difficulties[_difficulty]);
-            SetText("DetailLabel", SceneFlow.PreviewFor(SceneFlow.SelectedMap).Detail);
+            SetText("DetailLabel", DifficultyDetails[_difficulty]);
 
             if (_preview != null)
             {
@@ -382,28 +545,88 @@ namespace TumbangPreso.UI
 
             SetText("CharacterButton", $"{person} · {can} · {slipper}");
 
-            RefreshSeats();
-        }
-
-        private void UpdateBanner()
-        {
-            var net = NetSession.Instance;
-            bool isNetworked = net != null && net.IsNetworked;
-
+            // Heading & hints
             if (isNetworked)
             {
-                string code = net.Lobby.JoinCode;
-                SetText("BannerLabel", string.IsNullOrEmpty(code) ? "MULTIPLAYER" : $"MULTIPLAYER · CODE {code}");
+                SetText("SeatHeading", NetAuthority.IsHost ? "LOBBY  ·  YOU ARE HOSTING" : "LOBBY  ·  CONNECTED");
+                SetText("SeatHint",
+                        "You pick the map and the mode for everyone. Click a free seat to move. "
+                        + "Empty seats are played by bots. Read the code above out to the others.");
+
+                // Network rows
+                if (_addressRow != null)
+                {
+                    _addressRow.SetActive(true);
+                    string hostAddr = "127.0.0.1:8910";
+                    if (net != null)
+                    {
+                        var ips = System.Net.Dns.GetHostAddresses(System.Net.Dns.GetHostName());
+                        foreach (var ip in ips)
+                        {
+                            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork && !System.Net.IPAddress.IsLoopback(ip))
+                            {
+                                hostAddr = $"{ip}:8910";
+                                break;
+                            }
+                        }
+                    }
+                    if (_addressText != null) _addressText.text = hostAddr;
+                }
+
+                if (_codeRow != null)
+                {
+                    string code = net?.Lobby?.JoinCode ?? "";
+                    _codeRow.SetActive(!string.IsNullOrEmpty(code));
+                    if (_codeText != null) _codeText.text = code;
+                }
+
+                // Primary & Start button controls
+                var primNode = Node("PrimaryButton");
+                if (primNode != null)
+                {
+                    SetText("PrimaryButton", GameLaunch.Spectator ? "SPECTATING" : "READY");
+                    var btn = primNode.GetComponent<Button>();
+                    if (btn != null) btn.interactable = !GameLaunch.Spectator;
+                }
+
+                var startNode = Node("StartButton");
+                if (startNode != null)
+                {
+                    startNode.gameObject.SetActive(NetAuthority.IsHost);
+                }
             }
             else
             {
-                SetText("BannerLabel", "SINGLE PLAYER");
+                SetText("SeatHeading", "YOUR CHARACTER");
+                SetText("SeatHint",
+                        "Four players, one taya. The taya rotates every round, so everyone defends "
+                        + "exactly once. Empty seats are bots, the kids from the street who fill in.");
+
+                if (_addressRow != null) _addressRow.SetActive(false);
+                if (_codeRow != null) _codeRow.SetActive(false);
+
+                var primNode = Node("PrimaryButton");
+                if (primNode != null)
+                {
+                    SetText("PrimaryButton", "START MATCH");
+                    var btn = primNode.GetComponent<Button>();
+                    if (btn != null) btn.interactable = true;
+                }
+
+                var startNode = Node("StartButton");
+                if (startNode != null) startNode.gameObject.SetActive(false);
             }
+
+            RefreshSeats();
         }
 
         private void HandleJoinCodeChanged(string code)
         {
-            UpdateBanner();
+            if (_codeRow != null)
+            {
+                _codeRow.SetActive(!string.IsNullOrEmpty(code));
+                if (_codeText != null) _codeText.text = code;
+            }
         }
 
         private void OnDestroy()
@@ -421,3 +644,4 @@ namespace TumbangPreso.UI
         }
     }
 }
+

@@ -38,6 +38,9 @@ namespace TumbangPreso.Net
         /// <summary>The online pool browser. Idle until a screen calls StartBrowsing.</summary>
         public ServerQuery Query { get; private set; }
 
+        /// <summary>The local network beacon for LAN game discovery.</summary>
+        public LanBeacon Beacon => _beacon;
+
         public event Action<string> StatusChanged;
 
         private NetworkManager _nm;
