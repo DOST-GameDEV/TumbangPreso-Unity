@@ -295,17 +295,23 @@ HEAD = [
     ("horn-tip",              "head", (0.124, 0.625, -0.222), (0.156, 0.675, -0.145), SKIN),
     ("horn-tip-ember",        "head", (0.128, 0.622, -0.224), (0.152, 0.636, -0.195), SCAR_RED),
     
-    # ⚡ 6 BOLD SLEEK CRIMSON KARMA LINE RINGS (Height = 0.012, bold & crisp from ALL 4 camera angles, ZERO blobs!)
-    ("karma-line-1",          "head", (0.150, 0.604, 0.010), (0.211, 0.616, 0.130), SCAR_RED),
-    ("karma-line-2",          "head", (0.158, 0.654, -0.028), (0.217, 0.666, 0.090), SCAR_RED),
-    ("karma-line-3",          "head", (0.152, 0.704, -0.073), (0.210, 0.716, 0.045), SCAR_RED),
-    ("karma-line-4",          "head", (0.144, 0.744, -0.121), (0.198, 0.756, 0.000), SCAR_RED),
-    ("karma-line-5",          "head", (0.138, 0.718, -0.165), (0.186, 0.730, -0.045), SCAR_RED),
-    ("karma-line-6",          "head", (0.132, 0.674, -0.201), (0.172, 0.686, -0.090), SCAR_RED),
+    # ⚡ 6 TRUE PERPENDICULAR-CUT CRIMSON KARMA COLLAR RINGS (Matching face scar thickness 0.024 & seamless connection!)
+    # Base/Rise Collars (Horizontal cut matching face scar thickness & flowing directly from temple bridge)
+    ("karma-ring-1",          "head", (0.148, 0.605, 0.005), (0.212, 0.629, 0.135), SCAR_RED),
+    ("karma-ring-2",          "head", (0.156, 0.650, -0.028), (0.218, 0.674, 0.088), SCAR_RED),
+    ("karma-ring-3",          "head", (0.150, 0.696, -0.072), (0.210, 0.720, 0.040), SCAR_RED),
     
-    # ⚡ DUAL SLEEK TEMPLE KARMA STREAM LINES (Crisp parallel lines connecting facial scar into horn root)
-    ("karma-stream-line-top", "head", (0.145, 0.604, 0.065), (0.186, 0.616, 0.162), SCAR_RED),
-    ("karma-stream-line-bot", "head", (0.145, 0.538, 0.075), (0.184, 0.550, 0.162), SCAR_RED),
+    # Crown & Hook Collars (Vertical Z-cut perpendicular to horizontal/descending horn curve)
+    ("karma-ring-4",          "head", (0.142, 0.705, -0.090), (0.198, 0.765, -0.066), SCAR_RED),
+    ("karma-ring-5",          "head", (0.136, 0.685, -0.150), (0.186, 0.745, -0.126), SCAR_RED),
+    ("karma-ring-6",          "head", (0.130, 0.650, -0.194), (0.172, 0.705, -0.170), SCAR_RED),
+    
+    # ⚡ DORSAL CREST KARMA SPINE (Sleek outer-ridge stream connecting the collars into a cohesive circuit)
+    ("karma-dorsal-crown",    "head", (0.186, 0.752, -0.110), (0.200, 0.764, -0.030), SCAR_RED),
+    
+    # ⚡ DUAL SLEEK TEMPLE KARMA STREAM LINES (Matching thickness 0.024, connects directly into face quad at x=0.180)
+    ("karma-stream-line-top", "head", (0.145, 0.605, 0.060), (0.188, 0.629, 0.170), SCAR_RED),
+    ("karma-stream-line-bot", "head", (0.145, 0.540, 0.070), (0.188, 0.564, 0.170), SCAR_RED),
     
     # 💇 DYNAMIC ANIME SPIKES (Front, top, back)
     ("spike-front-c1",        "head", (-0.050, 0.670, 0.115), (0.040, 0.765, 0.192), HAIR),
@@ -555,11 +561,11 @@ def _donor_head():
              SCAR_RED, PANEL_PROUD * 2.2)
 
     # ⚡ DUAL SLEEK TEMPLE SURGE LINES (Connecting facial ribbon directly into temple stream lines)
-    # Upper Stream Line (Connecting high forehead ribbon at y=0.605 to side stream at y=0.615)
-    add_quad([(0.040, 0.600), (0.040, 0.615), (0.180, 0.625), (0.180, 0.610)],
+    # Upper Stream Line (Connecting high forehead ribbon at y=0.605 to side stream at y=0.605..0.629)
+    add_quad([(0.040, 0.605), (0.040, 0.629), (0.180, 0.629), (0.180, 0.605)],
              SCAR_RED, PANEL_PROUD * 2.2)
-    # Lower Stream Line (Connecting mid-face ribbon at y=0.540 to side stream at y=0.546)
-    add_quad([(0.048, 0.535), (0.048, 0.549), (0.180, 0.558), (0.180, 0.544)],
+    # Lower Stream Line (Connecting mid-face ribbon at y=0.540 to side stream at y=0.540..0.564)
+    add_quad([(0.048, 0.540), (0.048, 0.564), (0.180, 0.564), (0.180, 0.540)],
              SCAR_RED, PANEL_PROUD * 2.2)
 
     # 4. 👁️ EXACT MATCHING ANIME EYE SHAPE & DESIGN (EMERALD / GOLD HETEROCHROMIA)
