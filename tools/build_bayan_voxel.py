@@ -278,7 +278,8 @@ HEAD = [
     ("undercut-sideburn",     "head", (0.160, 0.400, -0.010), (0.188, 0.500, 0.080), LEATHER_BROWN),
     
     # 🪨 SLEEK ORGANIC OTSUTSUKI HORN (+X temple, natural heavy-carapace parabolic crescent arc)
-    # 1. Broad Supraorbital Temple Root (Emerges naturally from skull above left eye)
+    # 1. Broad Supraorbital Temple Root (Emerges naturally from skull tissue above left eye)
+    ("horn-root-collar",      "head", (0.142, 0.495, 0.055), (0.192, 0.535, 0.145), LEATHER_BROWN),
     ("horn-root-brow",        "head", (0.138, 0.515, 0.070), (0.198, 0.585, 0.155), SKIN),
     ("horn-root-temple",      "head", (0.145, 0.545, 0.040), (0.204, 0.615, 0.135), SKIN),
     
@@ -290,8 +291,9 @@ HEAD = [
     ("horn-tier-5",           "head", (0.136, 0.690, -0.162), (0.182, 0.745, -0.050), SKIN),
     ("horn-tier-6",           "head", (0.130, 0.660, -0.198), (0.168, 0.715, -0.095), SKIN),
     
-    # 3. Sharp Chisel Tip (Hooking downward/backward along occipital contour)
+    # 3. Sharp Chisel Tip (Hooking downward/backward along occipital contour with Karma ember point)
     ("horn-tip",              "head", (0.124, 0.625, -0.222), (0.156, 0.675, -0.145), SKIN),
+    ("horn-tip-ember",        "head", (0.128, 0.622, -0.224), (0.152, 0.636, -0.195), SCAR_RED),
     
     # ⚡ 6 BOLD SLEEK CRIMSON KARMA LINE RINGS (Height = 0.012, bold & crisp from ALL 4 camera angles, ZERO blobs!)
     ("karma-line-1",          "head", (0.150, 0.604, 0.010), (0.211, 0.616, 0.130), SCAR_RED),
