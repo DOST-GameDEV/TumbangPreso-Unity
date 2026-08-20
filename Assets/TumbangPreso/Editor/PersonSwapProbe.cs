@@ -106,6 +106,7 @@ namespace TumbangPreso.EditorTools
             ok &= CheckEmotes(report);
             ok &= Shoot(report);
             ok &= ShootTurnaround(report);
+            ok &= ShootLineup(report);
 
             report.AppendLine();
             report.AppendLine(ok ? "RESULT: PASS" : "RESULT: FAIL");
@@ -1107,6 +1108,64 @@ namespace TumbangPreso.EditorTools
         }
 
         private const string TurnPath = "Logs/person-swap-turnaround.png";
+        private const string LineupPath = "Logs/cast_lineup.png";
+
+        private static bool ShootLineup(StringBuilder report)
+        {
+            report.AppendLine();
+            report.AppendLine("-- lineup");
+
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            BuildLight();
+
+            var members = new (string ModelPath, string RosterId)[]
+            {
+                ("Assets/TumbangPreso/Art/characters/persons/character-male-f.glb", "lolo"),
+                ("Assets/TumbangPreso/Art/characters/persons/team-inday.glb", "inday"),
+                ("Assets/TumbangPreso/Art/characters/persons/team-zack.glb", "zack"),
+                ("Assets/TumbangPreso/Art/characters/persons/team-bayan.glb", "bayan"),
+                (NewModel, RosterId),
+            };
+
+            for (int i = 0; i < members.Length; i++)
+            {
+                var pal = PaletteFor(members[i].RosterId);
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(members[i].ModelPath);
+                if (prefab == null) continue;
+
+                var pivot = new GameObject($"lineup-{i}");
+                pivot.transform.position = new Vector3(i, 0.0f, 0.0f);
+
+                var model = Object.Instantiate(prefab, pivot.transform);
+                model.transform.localRotation = Quaternion.Euler(0.0f, CharacterVisual.PersonModelYaw + 180.0f, 0.0f);
+
+                ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth, pal);
+
+                var renderers = model.GetComponentsInChildren<Renderer>();
+                if (renderers.Length == 0) continue;
+
+                var bounds = renderers[0].bounds;
+                foreach (var r in renderers) bounds.Encapsulate(r.bounds);
+
+                float extent = Mathf.Max(bounds.extents.x, Mathf.Max(bounds.extents.y, bounds.extents.z));
+                if (extent < 0.0001f) continue;
+
+                model.transform.localScale = Vector3.one * (0.76f / (extent * 2.0f));
+
+                bounds = model.GetComponentsInChildren<Renderer>()[0].bounds;
+                foreach (var r in model.GetComponentsInChildren<Renderer>()) bounds.Encapsulate(r.bounds);
+
+                model.transform.position += pivot.transform.position - bounds.center;
+            }
+
+            var camera = BuildCamera(members.Length, 1);
+            bool ok = CaptureTo(camera, members.Length * CellPixels, CellPixels, LineupPath);
+
+            report.AppendLine(ok ? $"wrote {LineupPath}" : "FAIL: lineup wrote nothing.");
+
+            EditorSceneManager.CloseScene(scene, true);
+            return ok;
+        }
 
         private static Color[] PaletteFor(string id)
         {

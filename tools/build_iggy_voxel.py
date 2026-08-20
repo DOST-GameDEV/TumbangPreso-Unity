@@ -527,10 +527,10 @@ def _compact(pos, nrm, uv, tris):
 
 
 def _donor_head():
-    """Builds the donor skull with stylized Dante-tier anime fire brawler eyes, amber irises, and confident grin."""
+    """Builds the donor skull with fierce slanted brawler eyes and cocky smirk (pure INK cast standard)."""
     pos, nrm, uv, tris = _donor_part(DONOR_SKULL, SKULL_SLOTS)
 
-    # Strip donor mouth and eyes (all slot 8 triangles)
+    # Strip donor mouth and eyes
     tris = [t for t in tris if not (_slot_at(*uv[t[0]]) == INK)]
 
     def add_quad(points_bl_tl_tr_br, slot, z_offset):
@@ -547,131 +547,45 @@ def _donor_head():
         tris.append((first_idx, first_idx + 3, first_idx + 2))
         tris.append((first_idx, first_idx + 2, first_idx + 1))
 
-    # 1. ⚔️ COCKY FIERCE ASYMMETRICAL ANIME BRAWLER SMIRK
-    # Deep Dark Mouth Cavity / Main Smirk Line (Angling up toward +X)
-    add_quad([(-0.038, 0.395), (-0.038, 0.406), (0.044, 0.418), (0.044, 0.405)],
+    # 1. ⚔️ CONFIDENT COCKY BRAWLER SMIRK (Raised to balance jaw proportion)
+    # Main smirk stroke angling up to +X
+    add_quad([(-0.042, 0.426), (-0.042, 0.436), (0.040, 0.444), (0.040, 0.434)],
              INK, PANEL_PROUD * 2.2)
-    # Cocky Upturned Right Corner Hook (+X, Viewer's Right)
-    add_quad([(0.038, 0.405), (0.038, 0.432), (0.052, 0.438), (0.052, 0.415)],
+    # Cocky Upturned Hook at Corner (+X, Viewer's Right)
+    add_quad([(0.036, 0.434), (0.036, 0.458), (0.048, 0.462), (0.048, 0.440)],
              INK, PANEL_PROUD * 2.2)
-    # Sharp Corner Crease Tick
-    add_quad([(0.048, 0.428), (0.048, 0.442), (0.056, 0.445), (0.056, 0.432)],
-             INK, PANEL_PROUD * 2.4)
-    # Left Corner Firm Down-tick (-X, Stoic balance)
-    add_quad([(-0.046, 0.390), (-0.046, 0.404), (-0.036, 0.406), (-0.036, 0.395)],
+    # Left Corner Firm Down-tick (-X anchor)
+    add_quad([(-0.048, 0.420), (-0.048, 0.430), (-0.040, 0.436), (-0.040, 0.426)],
              INK, PANEL_PROUD * 2.2)
-    
-    # 🦷 Sharp White Teeth / Fang Flash Glint inside Smirk Aperture
-    add_quad([(0.008, 0.406), (0.008, 0.420), (0.042, 0.428), (0.042, 0.412)],
-             WHITE, PANEL_PROUD * 2.6)
-    
-    # Strong Underlip Shadow Cleft & Chin Groove
-    add_quad([(-0.012, 0.380), (-0.012, 0.390), (0.012, 0.390), (0.012, 0.380)],
-             SKIN_SHADOW, PANEL_PROUD * 1.8)
-    add_quad([(-0.006, 0.370), (-0.006, 0.378), (0.006, 0.378), (0.006, 0.370)],
-             SKIN_SHADOW, PANEL_PROUD * 1.5)
 
-    # 2. 👁️ FIERCE PREDATOR ANIME EYES WITH RADIANT FIERY FLAME AURA
-    # --- RIGHT EYE (-X, Viewer's Left) ---
-    # White Sclera Aperture (Sharp falcon slant)
-    add_quad([(-0.116, 0.458), (-0.116, 0.498), (-0.032, 0.490), (-0.032, 0.455)],
-             WHITE, PANEL_PROUD * 2.8)
-    # Fiery Red Outer Iris Rim / Aura Base
-    add_quad([(-0.096, 0.458), (-0.096, 0.496), (-0.048, 0.490), (-0.048, 0.456)],
-             FLAME_RED, PANEL_PROUD * 3.1)
-    # Radiant Solar Orange Mid-Iris
-    add_quad([(-0.092, 0.460), (-0.092, 0.492), (-0.052, 0.487), (-0.052, 0.458)],
-             FLAME_ORANGE, PANEL_PROUD * 3.3)
-    # Solar Yellow Blazing Core Iris
-    add_quad([(-0.086, 0.462), (-0.086, 0.488), (-0.058, 0.484), (-0.058, 0.462)],
-             FLAME_YELLOW, PANEL_PROUD * 3.5)
-    # Intense Slit/Diamond Pupil
-    add_quad([(-0.076, 0.464), (-0.076, 0.485), (-0.066, 0.483), (-0.066, 0.464)],
-             INK, PANEL_PROUD * 3.8)
-    # Double Anime Specular Glint (Top-left glint + bottom-right fiery spark)
-    add_quad([(-0.082, 0.478), (-0.082, 0.487), (-0.072, 0.485), (-0.072, 0.478)],
-             WHITE, PANEL_PROUD * 4.4)
-    add_quad([(-0.062, 0.463), (-0.062, 0.470), (-0.056, 0.470), (-0.056, 0.463)],
-             WHITE, PANEL_PROUD * 4.4)
-    # Thick Sharp Slanted Upper Lash Wing & Eyelid Crease
-    add_quad([(-0.120, 0.490), (-0.120, 0.508), (-0.030, 0.495), (-0.030, 0.478)],
-             INK, PANEL_PROUD * 4.0)
-    # Lower Lash Sharp Underline
-    add_quad([(-0.116, 0.456), (-0.116, 0.464), (-0.032, 0.458), (-0.032, 0.452)],
-             INK, PANEL_PROUD * 4.0)
-    # 🔥 Radiating Solar Wing / Fire Aura Streak off Outer Corner
-    add_quad([(-0.142, 0.488), (-0.142, 0.500), (-0.118, 0.504), (-0.118, 0.492)],
-             FLAME_ORANGE, PANEL_PROUD * 3.0)
-    add_quad([(-0.134, 0.482), (-0.134, 0.490), (-0.116, 0.492), (-0.116, 0.484)],
-             FLAME_RED, PANEL_PROUD * 2.9)
-    # Fierce Under-Eye Shadow Crease
-    add_quad([(-0.108, 0.448), (-0.108, 0.454), (-0.040, 0.448), (-0.040, 0.442)],
-             SKIN_SHADOW, PANEL_PROUD * 2.2)
+    # 2. 😠 RAISED FIERCE SLANTED-TOP BRAWLER EYES (Eliminating huge forehead gap)
+    # --- RIGHT EYE (-X, Viewer's Left: Slanted top, rounded bottom & outer) ---
+    # Center Body
+    add_quad([(-0.096, 0.478), (-0.104, 0.510), (-0.044, 0.502), (-0.048, 0.478)],
+             INK, PANEL_PROUD * 2.6)
+    # Upper Slanted Brow Flap (Sharp aggressive inward slant \)
+    add_quad([(-0.104, 0.510), (-0.098, 0.532), (-0.040, 0.512), (-0.044, 0.502)],
+             INK, PANEL_PROUD * 2.6)
+    # Outer Rounded Lateral Curve
+    add_quad([(-0.112, 0.492), (-0.112, 0.518), (-0.104, 0.518), (-0.104, 0.492)],
+             INK, PANEL_PROUD * 2.6)
+    # Bottom Rounded Chin-Facing Curve
+    add_quad([(-0.088, 0.472), (-0.088, 0.478), (-0.056, 0.478), (-0.056, 0.472)],
+             INK, PANEL_PROUD * 2.6)
 
-    # --- LEFT EYE (+X, Viewer's Right) ---
-    # White Sclera Aperture (Sharp falcon slant)
-    add_quad([(0.032, 0.455), (0.032, 0.490), (0.116, 0.498), (0.116, 0.458)],
-             WHITE, PANEL_PROUD * 2.8)
-    # Fiery Red Outer Iris Rim / Aura Base
-    add_quad([(0.048, 0.456), (0.048, 0.490), (0.096, 0.496), (0.096, 0.458)],
-             FLAME_RED, PANEL_PROUD * 3.1)
-    # Radiant Solar Orange Mid-Iris
-    add_quad([(0.052, 0.458), (0.052, 0.487), (0.092, 0.492), (0.092, 0.460)],
-             FLAME_ORANGE, PANEL_PROUD * 3.3)
-    # Solar Yellow Blazing Core Iris
-    add_quad([(0.058, 0.462), (0.058, 0.484), (0.086, 0.488), (0.086, 0.462)],
-             FLAME_YELLOW, PANEL_PROUD * 3.5)
-    # Intense Slit/Diamond Pupil
-    add_quad([(0.066, 0.464), (0.066, 0.483), (0.076, 0.485), (0.076, 0.464)],
-             INK, PANEL_PROUD * 3.8)
-    # Double Anime Specular Glint (Top-left glint + bottom-right fiery spark)
-    add_quad([(0.060, 0.478), (0.060, 0.485), (0.070, 0.487), (0.070, 0.478)],
-             WHITE, PANEL_PROUD * 4.4)
-    add_quad([(0.078, 0.463), (0.078, 0.470), (0.084, 0.470), (0.084, 0.463)],
-             WHITE, PANEL_PROUD * 4.4)
-    # Thick Sharp Slanted Upper Lash Wing & Eyelid Crease
-    add_quad([(0.030, 0.478), (0.030, 0.495), (0.120, 0.508), (0.120, 0.490)],
-             INK, PANEL_PROUD * 4.0)
-    # Lower Lash Sharp Underline
-    add_quad([(0.032, 0.452), (0.032, 0.458), (0.116, 0.464), (0.116, 0.456)],
-             INK, PANEL_PROUD * 4.0)
-    # 🔥 Radiating Solar Wing / Fire Aura Streak off Outer Corner
-    add_quad([(0.118, 0.492), (0.118, 0.504), (0.142, 0.500), (0.142, 0.488)],
-             FLAME_ORANGE, PANEL_PROUD * 3.0)
-    add_quad([(0.116, 0.484), (0.116, 0.492), (0.134, 0.490), (0.134, 0.482)],
-             FLAME_RED, PANEL_PROUD * 2.9)
-    # Fierce Under-Eye Shadow Crease
-    add_quad([(0.040, 0.442), (0.040, 0.448), (0.108, 0.454), (0.108, 0.448)],
-             SKIN_SHADOW, PANEL_PROUD * 2.2)
-
-    # 3. 😠 AGGRESSIVE SLANTED BRAWLER EYEBROWS & GLABELLA BROW FURROW
-    # Right Eyebrow (-X, Viewer's Left: Slanted aggressively inward)
-    add_quad([(-0.122, 0.518), (-0.122, 0.540), (-0.030, 0.518), (-0.030, 0.494)],
-             INK, PANEL_PROUD * 3.8)
-    # Upper brow notch / sharp arch peak
-    add_quad([(-0.095, 0.536), (-0.095, 0.548), (-0.055, 0.538), (-0.055, 0.526)],
-             INK, PANEL_PROUD * 3.9)
-    # Brow highlight ridge
-    add_quad([(-0.118, 0.538), (-0.118, 0.546), (-0.036, 0.524), (-0.036, 0.516)],
-             SKIN_HIGHLIGHT, PANEL_PROUD * 3.6)
-    
-    # Left Eyebrow (+X, Viewer's Right: Slanted aggressively inward with cocky raise)
-    add_quad([(0.030, 0.494), (0.030, 0.518), (0.122, 0.544), (0.122, 0.522)],
-             INK, PANEL_PROUD * 3.8)
-    # Upper brow notch / sharp arch peak (cocky prideful lift)
-    add_quad([(0.055, 0.526), (0.055, 0.538), (0.095, 0.552), (0.095, 0.540)],
-             INK, PANEL_PROUD * 3.9)
-    # Brow highlight ridge
-    add_quad([(0.036, 0.516), (0.036, 0.524), (0.118, 0.550), (0.118, 0.542)],
-             SKIN_HIGHLIGHT, PANEL_PROUD * 3.6)
-    
-    # Intense Glabella Brow Furrow / Center Battle Creases
-    add_quad([(-0.012, 0.492), (-0.012, 0.524), (-0.004, 0.524), (-0.004, 0.492)],
-             SKIN_SHADOW, PANEL_PROUD * 2.6)
-    add_quad([(0.004, 0.492), (0.004, 0.524), (0.012, 0.524), (0.012, 0.492)],
-             SKIN_SHADOW, PANEL_PROUD * 2.6)
-    add_quad([(-0.008, 0.505), (-0.008, 0.518), (0.008, 0.518), (0.008, 0.505)],
-             INK, PANEL_PROUD * 2.8)
+    # --- LEFT EYE (+X, Viewer's Right: Slanted top, rounded bottom & outer) ---
+    # Center Body
+    add_quad([(0.048, 0.478), (0.044, 0.502), (0.104, 0.510), (0.096, 0.478)],
+             INK, PANEL_PROUD * 2.6)
+    # Upper Slanted Brow Flap (Sharp aggressive inward slant /)
+    add_quad([(0.044, 0.502), (0.040, 0.512), (0.098, 0.532), (0.104, 0.510)],
+             INK, PANEL_PROUD * 2.6)
+    # Outer Rounded Lateral Curve
+    add_quad([(0.104, 0.492), (0.104, 0.518), (0.112, 0.518), (0.112, 0.492)],
+             INK, PANEL_PROUD * 2.6)
+    # Bottom Rounded Chin-Facing Curve
+    add_quad([(0.056, 0.472), (0.056, 0.478), (0.088, 0.478), (0.088, 0.472)],
+             INK, PANEL_PROUD * 2.6)
 
     return _compact(pos, nrm, uv, tris)
 
