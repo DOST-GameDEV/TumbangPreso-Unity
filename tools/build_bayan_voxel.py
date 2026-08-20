@@ -307,45 +307,45 @@ HEAD = [
     ("undercut-side-front",   "head", (0.145, 0.430, 0.080), (0.182, 0.620, 0.145), LEATHER_BROWN),
     ("undercut-sideburn",     "head", (0.160, 0.400, -0.010), (0.188, 0.500, 0.080), LEATHER_BROWN),
     
-    # 🪨 OBSIDIAN ASCENDING SWEPT-BACK CARAPACE HORN (Matching media_1787202252967.png)
-    # Tier 0: Temple Socket & Cranium Base (Emerges forward on temple)
-    ("horn-seg0-socket",      "head", (0.125, 0.535, 0.065), (0.188, 0.605, 0.150), HAIR),
-    ("horn-seg0-body",        "head", (0.130, 0.545, 0.060), (0.194, 0.615, 0.145), HORN_MAIN),
-    ("horn-seg0-top",         "head", (0.135, 0.585, 0.065), (0.192, 0.620, 0.140), HORN_LIGHT),
-    ("horn-seg0-groove",      "head", (0.125, 0.535, 0.055), (0.185, 0.555, 0.135), INK),
+    # 🪨 OBSIDIAN ASCENDING SWEPT-BACK CARAPACE HORN (Iteration B: Higher, Further Back, Sleek Swept-Back)
+    # Tier 0: Cranium Socket (Higher on skull, seamlessly embedded into hair)
+    ("horn-seg0-socket",      "head", (0.130, 0.570, 0.010), (0.185, 0.640, 0.085), HAIR),
+    ("horn-seg0-body",        "head", (0.135, 0.580, 0.005), (0.190, 0.650, 0.080), HORN_MAIN),
+    ("horn-seg0-top",         "head", (0.140, 0.615, 0.010), (0.188, 0.655, 0.075), HORN_LIGHT),
+    ("horn-seg0-groove",      "head", (0.130, 0.570, 0.000), (0.182, 0.590, 0.070), HAIR),
 
-    # Tier 1: Lower Ascending Shingle
-    ("horn-seg1-body",        "head", (0.145, 0.580, 0.030), (0.210, 0.648, 0.120), HORN_MAIN),
-    ("horn-seg1-top",         "head", (0.150, 0.622, 0.035), (0.208, 0.652, 0.115), HORN_LIGHT),
-    ("horn-seg1-groove",      "head", (0.140, 0.575, 0.025), (0.200, 0.592, 0.110), HAIR),
+    # Tier 1: Lower Carapace Shingle (Swept back)
+    ("horn-seg1-body",        "head", (0.150, 0.615, -0.035), (0.208, 0.680, 0.045), HORN_MAIN),
+    ("horn-seg1-top",         "head", (0.155, 0.650, -0.030), (0.205, 0.685, 0.040), HORN_LIGHT),
+    ("horn-seg1-groove",      "head", (0.145, 0.610, -0.040), (0.198, 0.628, 0.035), HAIR),
 
-    # Tier 2: Mid-Ascent Carapace Tier
-    ("horn-seg2-body",        "head", (0.168, 0.620, 0.000), (0.234, 0.688, 0.085), HORN_MAIN),
-    ("horn-seg2-top",         "head", (0.172, 0.662, 0.005), (0.230, 0.692, 0.080), HORN_LIGHT),
-    ("horn-seg2-groove",      "head", (0.162, 0.615, -0.005), (0.222, 0.632, 0.076), HAIR),
+    # Tier 2: Mid-Ascent Carapace Shingle
+    ("horn-seg2-body",        "head", (0.175, 0.655, -0.075), (0.230, 0.715, -0.005), HORN_MAIN),
+    ("horn-seg2-top",         "head", (0.180, 0.690, -0.070), (0.226, 0.720, -0.010), HORN_LIGHT),
+    ("horn-seg2-groove",      "head", (0.170, 0.650, -0.080), (0.218, 0.668, -0.015), HAIR),
 
     # Tier 3: Central Spire Tier
-    ("horn-seg3-body",        "head", (0.190, 0.660, -0.040), (0.254, 0.725, 0.045), HORN_MAIN),
-    ("horn-seg3-top",         "head", (0.195, 0.700, -0.035), (0.250, 0.728, 0.040), HORN_LIGHT),
-    ("horn-seg3-groove",      "head", (0.185, 0.655, -0.045), (0.242, 0.670, 0.036), HAIR),
+    ("horn-seg3-body",        "head", (0.198, 0.690, -0.115), (0.250, 0.745, -0.045), HORN_MAIN),
+    ("horn-seg3-top",         "head", (0.202, 0.725, -0.110), (0.246, 0.748, -0.050), HORN_LIGHT),
+    ("horn-seg3-groove",      "head", (0.192, 0.685, -0.120), (0.238, 0.702, -0.055), HAIR),
 
     # Tier 4: Upper Ascending Spire Tier
-    ("horn-seg4-body",        "head", (0.212, 0.698, -0.085), (0.272, 0.755, -0.005), HORN_MAIN),
-    ("horn-seg4-top",         "head", (0.216, 0.732, -0.080), (0.268, 0.758, -0.010), HORN_LIGHT),
-    ("horn-seg4-groove",      "head", (0.208, 0.692, -0.090), (0.260, 0.708, -0.012), HAIR),
+    ("horn-seg4-body",        "head", (0.218, 0.720, -0.155), (0.268, 0.768, -0.085), HORN_MAIN),
+    ("horn-seg4-top",         "head", (0.222, 0.750, -0.150), (0.264, 0.772, -0.090), HORN_LIGHT),
+    ("horn-seg4-groove",      "head", (0.212, 0.715, -0.160), (0.256, 0.730, -0.095), HAIR),
 
-    # Tier 5: Sub-Apex Carapace Plate
-    ("horn-seg5-body",        "head", (0.232, 0.732, -0.130), (0.285, 0.780, -0.055), HORN_MAIN),
-    ("horn-seg5-top",         "head", (0.236, 0.760, -0.125), (0.282, 0.784, -0.060), HORN_LIGHT),
-    ("horn-seg5-groove",      "head", (0.228, 0.728, -0.135), (0.275, 0.742, -0.062), HAIR),
+    # Tier 5: Sub-Apex Carapace Plate (Tapering)
+    ("horn-seg5-body",        "head", (0.238, 0.748, -0.190), (0.282, 0.785, -0.125), HORN_MAIN),
+    ("horn-seg5-top",         "head", (0.242, 0.770, -0.185), (0.278, 0.788, -0.130), HORN_LIGHT),
+    ("horn-seg5-groove",      "head", (0.232, 0.742, -0.195), (0.272, 0.758, -0.135), HAIR),
 
-    # Tier 6: Sharp Chisel Spire Tip
-    ("horn-seg6-body",        "head", (0.250, 0.760, -0.175), (0.294, 0.788, -0.105), HORN_MAIN),
-    ("horn-seg6-top",         "head", (0.254, 0.778, -0.170), (0.290, 0.788, -0.110), HORN_LIGHT),
+    # Tier 6: Slender Chisel Spire
+    ("horn-seg6-body",        "head", (0.255, 0.768, -0.220), (0.292, 0.788, -0.160), HORN_MAIN),
+    ("horn-seg6-top",         "head", (0.258, 0.780, -0.215), (0.288, 0.788, -0.165), HORN_LIGHT),
 
-    # Tier 7: Chisel Needle Point Apex
-    ("horn-seg7-needle",      "head", (0.265, 0.772, -0.200), (0.298, 0.788, -0.145), HORN_MAIN),
-    ("horn-seg7-facet",       "head", (0.268, 0.780, -0.198), (0.295, 0.788, -0.150), HORN_LIGHT),
+    # Tier 7: Needle Point Apex
+    ("horn-seg7-needle",      "head", (0.268, 0.778, -0.235), (0.296, 0.788, -0.195), HORN_MAIN),
+    ("horn-seg7-facet",       "head", (0.272, 0.782, -0.232), (0.294, 0.788, -0.200), HORN_LIGHT),
     
     # 💇 DYNAMIC ANIME SPIKES (Front, top, back)
     ("spike-front-c1",        "head", (-0.050, 0.670, 0.115), (0.040, 0.765, 0.192), HAIR),
