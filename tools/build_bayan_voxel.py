@@ -196,11 +196,12 @@ TORSO = [
 ]
 
 
-# ---------------------------------------------------------------------------
-# ARMS: ASYMMETRICAL WARRIOR ARMS (LEFT = DEMONIC VESSEL PLATES, RIGHT = SHORT SLEEVE + ORGANIC VINES)
-# ---------------------------------------------------------------------------
 ARM_LEFT = [
-    # 💪 BARE MUSCULAR BRONZE SKIN ARM (+X, Completely Sleeveless)
+    # Gold Shoulder Sleeve Hem / Cuff (+X)
+    ("sleeve-cuff-l",         "arm-left", (0.0999, 0.345, -0.072), (0.145, 0.475, 0.078), GOLD_TRIM),
+    ("sleeve-cuff-inner-l",   "arm-left", (0.102, 0.348, -0.068), (0.142, 0.472, 0.074), ROBE_DARK),
+
+    # 💪 BARE MUSCULAR BRONZE SKIN ARM (+X)
     ("arm-shoulder-l",        "arm-left", (0.0999, 0.350, -0.065), (0.185, 0.468, 0.070), SKIN),
     ("arm-upper-l",           "arm-left", (0.170, 0.345, -0.060), (0.245, 0.465, 0.065), SKIN),
     ("arm-forearm-l",         "arm-left", (0.235, 0.342, -0.055), (0.310, 0.460, 0.060), SKIN),
@@ -209,21 +210,21 @@ ARM_LEFT = [
     # 🌿 LEFT ARM: DENSE OTSUTSUKI EARTH CARAPACE PLATES & RUNES (+X)
     # Deltoid / Bicep Front Markings
     ("rune-deltoid-top-l",    "arm-left", (0.135, 0.458, -0.045), (0.185, 0.474, 0.045), ROBE_GREEN),
-    ("rune-bicep-top-f-l",    "arm-left", (0.135, 0.415, -0.066), (0.175, 0.465, -0.048), ROBE_GREEN),
-    ("rune-bicep-f-dark",     "arm-left", (0.140, 0.360, -0.066), (0.180, 0.415, -0.050), ROBE_DARK),
-    ("rune-bicep-f-band",     "arm-left", (0.170, 0.342, -0.064), (0.215, 0.380, -0.048), ROBE_GREEN),
+    ("rune-bicep-top-f-l",    "arm-left", (0.145, 0.415, -0.066), (0.178, 0.465, -0.048), ROBE_GREEN),
+    ("rune-bicep-f-dark",     "arm-left", (0.150, 0.360, -0.066), (0.190, 0.415, -0.050), ROBE_DARK),
+    ("rune-bicep-f-band",     "arm-left", (0.175, 0.342, -0.064), (0.215, 0.380, -0.048), ROBE_GREEN),
 
     # Forearm Front: Lower Chunky Solid Green Band (reaches into wrist)
-    ("rune-forearm-lower-f-l","arm-left", (0.200, 0.340, -0.062), (0.340, 0.395, -0.042), ROBE_GREEN),
-    ("rune-forearm-lower-dk-l","arm-left",(0.205, 0.336, -0.060), (0.335, 0.355, -0.044), ROBE_DARK),
+    ("rune-forearm-lower-f-l","arm-left", (0.200, 0.340, -0.062), (0.338, 0.395, -0.042), ROBE_GREEN),
+    ("rune-forearm-lower-dk-l","arm-left",(0.205, 0.336, -0.060), (0.332, 0.355, -0.044), ROBE_DARK),
     
     # Forearm Front: Upper Chunky Green Carapace Plate
     ("rune-forearm-upper-f-l","arm-left", (0.228, 0.410, -0.062), (0.282, 0.465, -0.042), ROBE_GREEN),
     ("rune-forearm-top-crest-l","arm-left",(0.228, 0.455, -0.035), (0.282, 0.470, 0.035), ROBE_GREEN),
     
-    # Hand Outer Green Plate
-    ("rune-hand-plate-f-l",   "arm-left", (0.340, 0.355, -0.050), (0.380, 0.405, -0.030), ROBE_GREEN),
-    
+    # Outer Hand / Knuckle Green Plate
+    ("rune-hand-plate-f-l",   "arm-left", (0.335, 0.355, -0.050), (0.380, 0.410, -0.030), ROBE_GREEN),
+
     # Central Skin Channel Highlight Dot
     ("rune-forearm-node-dot-l","arm-left",(0.280, 0.398, -0.064), (0.296, 0.414, -0.042), WHITE),
 
@@ -240,31 +241,30 @@ ARM_LEFT = [
 ]
 
 ARM_RIGHT = [
-    # 🥋 DARK BROWN UNDERSHIRT SHORT SLEEVE (-X, Shoulder/Upper Bicep only)
-    ("sleeve-right",          "arm-right", (-0.145, 0.342, -0.065), (-0.0999, 0.470, 0.070), LEATHER_BROWN),
-    ("sleeve-shadow-r",       "arm-right", (-0.142, 0.340, -0.063), (-0.102, 0.365, 0.068), ROBE_DARK),
-    
-    # 🪙 GOLD SLEEVE CUFF BAND (-X) (Shoulder sleeve cuff matching reference)
-    ("sleeve-cuff-r",         "arm-right", (-0.168, 0.336, -0.070), (-0.142, 0.474, 0.075), GOLD_TRIM),
-    ("sleeve-cuff-inner-r",   "arm-right", (-0.165, 0.340, -0.066), (-0.145, 0.470, 0.071), ROBE_DARK),
+    # Gold Shoulder Sleeve Hem / Cuff (-X)
+    ("sleeve-cuff-r",         "arm-right", (-0.145, 0.345, -0.072), (-0.0999, 0.475, 0.078), GOLD_TRIM),
+    ("sleeve-cuff-inner-r",   "arm-right", (-0.142, 0.348, -0.068), (-0.102, 0.472, 0.074), ROBE_DARK),
 
-    # 💪 BARE BRONZE SKIN ARM FROM CUFF TO HAND (-X)
-    ("arm-upper-r",           "arm-right", (-0.245, 0.345, -0.060), (-0.160, 0.465, 0.065), SKIN),
+    # 💪 BARE MUSCULAR BRONZE SKIN ARM (-X)
+    ("arm-shoulder-r",        "arm-right", (-0.185, 0.350, -0.065), (-0.0999, 0.468, 0.070), SKIN),
+    ("arm-upper-r",           "arm-right", (-0.245, 0.345, -0.060), (-0.170, 0.465, 0.065), SKIN),
     ("arm-forearm-r",         "arm-right", (-0.310, 0.342, -0.055), (-0.235, 0.460, 0.060), SKIN),
     ("hand-right",            "arm-right", (-0.3836, 0.340, -0.045), (-0.300, 0.458, 0.050), SKIN),
 
-    # 🌿 RIGHT ARM: ORGANIC EARTH VINES & RUNES ON BARE FOREARM (-X)
-    # Front Wavy Vine: Stem near cuff + lower horizontal vine + upward hook
-    ("rune-deltoid-stem-f-r", "arm-right", (-0.190, 0.360, -0.062), (-0.165, 0.420, -0.046), ROBE_GREEN),
-    ("rune-forearm-vine-f-r", "arm-right", (-0.310, 0.355, -0.062), (-0.180, 0.395, -0.046), ROBE_GREEN),
-    ("rune-forearm-hook-f-r", "arm-right", (-0.275, 0.390, -0.062), (-0.250, 0.430, -0.046), ROBE_GREEN),
-    ("rune-vine-shadow-f-r",  "arm-right", (-0.305, 0.350, -0.060), (-0.185, 0.370, -0.048), ROBE_DARK),
+    # 🌿 RIGHT ARM: ORGANIC BRANCHING EARTH VINES (-X)
+    # Front: Vertical stem from cuff turning into horizontal wavy vine with end hook
+    ("rune-deltoid-stem-f-r", "arm-right", (-0.172, 0.410, -0.066), (-0.145, 0.460, -0.048), ROBE_GREEN),
+    ("rune-forearm-vine-f-r", "arm-right", (-0.310, 0.355, -0.066), (-0.145, 0.395, -0.048), ROBE_GREEN),
+    ("rune-forearm-hook-f-r", "arm-right", (-0.285, 0.390, -0.066), (-0.255, 0.430, -0.048), ROBE_GREEN),
+    ("rune-vine-shadow-f-r",  "arm-right", (-0.305, 0.350, -0.064), (-0.150, 0.370, -0.050), ROBE_DARK),
+    ("rune-deltoid-top-r",    "arm-right", (-0.172, 0.460, -0.035), (-0.145, 0.472, 0.035), ROBE_GREEN),
     ("rune-wrist-dot-f-r",    "arm-right", (-0.345, 0.355, -0.052), (-0.320, 0.385, -0.038), ROBE_GREEN),
 
-    # Back Creeping Root & Node Accent
-    ("rune-deltoid-stem-b-r", "arm-right", (-0.190, 0.360, 0.046), (-0.165, 0.420, 0.064), ROBE_GREEN),
-    ("rune-forearm-root-b-r", "arm-right", (-0.290, 0.360, 0.046), (-0.180, 0.395, 0.064), ROBE_GREEN),
-    ("rune-forearm-hook-b-r", "arm-right", (-0.270, 0.395, 0.046), (-0.245, 0.430, 0.064), ROBE_GREEN),
+    # Back: Vertical stem from cuff turning horizontal with upward hook
+    ("rune-deltoid-stem-b-r", "arm-right", (-0.172, 0.395, 0.048), (-0.145, 0.460, 0.068), ROBE_GREEN),
+    ("rune-tricep-vine-b-r",  "arm-right", (-0.280, 0.360, 0.048), (-0.145, 0.395, 0.068), ROBE_GREEN),
+    ("rune-tricep-hook-b-r",  "arm-right", (-0.260, 0.390, 0.048), (-0.235, 0.430, 0.068), ROBE_GREEN),
+    ("rune-tricep-shadow-b-r","arm-right", (-0.275, 0.355, 0.046), (-0.150, 0.372, 0.064), ROBE_DARK),
     ("rune-forearm-node-b-r", "arm-right", (-0.255, 0.375, 0.048), (-0.240, 0.395, 0.066), GOLD_TRIM),
     ("rune-backhand-dot-r",   "arm-right", (-0.355, 0.380, 0.025), (-0.330, 0.415, 0.048), ROBE_GREEN),
 ]
