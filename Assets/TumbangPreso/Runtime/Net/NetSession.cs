@@ -189,22 +189,33 @@ namespace TumbangPreso.Net
         /// <summary>
         /// Registers this process with the Multiplay fleet and starts answering SQP queries.
         /// </summary>
-        // ⚠ The body is gated on MULTIPLAY_SDK, which is currently defined nowhere, because
-        // com.unity.services.multiplay cannot be installed on Unity 6000.5 at all. Every
-        // published version of it, 1.1.1 through 1.3.1, ships
+        // ⚠⚠ DEFERRED, 2026-08-20, NOT IN PROGRESS. This superseded the E.2 decision
+        // (`Unity_UGS_Networking_Prompts.md`, 2026-08-19) that chose Multiplay Hosting over the
+        // Singapore VPS: com.unity.services.multiplay cannot be installed on Unity 6000.5 at all.
+        // Every published version of it, 1.1.1 through 1.3.1, ships
         // Editor/Authoring/Assets/CreateMultiplayConfigMenu.cs, which calls EndNameEditAction.
         // Unity 6000.5 marks that obsolete as an ERROR rather than a warning, so the package's
         // authoring assembly fails to build and takes the whole project's compile down with it.
         // The package was therefore removed from the manifest.
         //
-        // ⚠ The code is kept rather than deleted because the fleet path is real shipped
-        // behaviour, not dead code. Two ways back, whichever lands first: Unity publishes a
+        // ⚠ Checked, not assumed, that the consolidated package does not rescue this.
+        // com.unity.services.multiplayer@2.3.0 does ship a Server/ assembly, but its contents are
+        // Sessions and Matchmaker server support (MultiplayerServerService,
+        // MatchmakerServerExtensions). There is no ServerQueryHandler, no allocation callback
+        // surface, and no server.json reader. SQP and fleet allocation both still need the
+        // blocked package.
+        //
+        // ⚠ RELAY PEER HOSTING IS NOW THE PRIMARY ONLINE PATH, not a fallback behind this. See
+        // NetSession.StartHost's Relay branch and Port_Plan.md Phase 5. The body below is gated
+        // on MULTIPLAY_SDK, defined nowhere, kept rather than deleted because the fleet path is
+        // real shipped behaviour. Two ways back, whichever lands first: Unity publishes a
         // multiplay build that compiles on 6.5, in which case re-add the package and define
-        // MULTIPLAY_SDK and nothing else changes; or this is re-ported onto the session API in
-        // com.unity.services.multiplayer 2.x, which is Unity's stated replacement but exposes
-        // MultiplayerServerService.CreateSessionAsync instead of a ServerQueryHandler, so the
-        // SQP heartbeat in Update becomes the service's job rather than ours. That port needs a
-        // real fleet to verify, so it is deliberately not guessed at here.
+        // MULTIPLAY_SDK and nothing else changes; or this is re-ported onto
+        // MultiplayerServerService.CreateSessionAsync, which is Unity's actual replacement API but
+        // exposes sessions rather than a ServerQueryHandler, so the SQP heartbeat in Update
+        // becomes the service's job rather than ours. That port needs a real fleet to verify, so
+        // it is deliberately not guessed at here. The dedicated Linux server build is unaffected
+        // either way: it still serves clients today, it just does not register with a fleet.
         public async Task StartMultiplayServerAsync(int port, string serverName = "Tumbang Preso Dedicated", string map = "Eskinita")
         {
 #if !MULTIPLAY_SDK

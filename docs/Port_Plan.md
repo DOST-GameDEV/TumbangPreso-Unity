@@ -213,16 +213,33 @@ shims. `MatchRpc` uses explicit `[ServerRpc(RequireOwnership = false)]` and `[Cl
 attributes across all gameplay verbs.
 
 **Unity Gaming Services (UGS) integration:**
-- **Dedicated hosting (Multiplay Hosting):** Replaces the Singapore VPS, `spawner.py`, systemd
-  units, `deploy.sh`, `POOL_ADDRESS`, and the 8910-8917 port range. Fleet allocation spins up
-  dedicated server instances on demand. Scaling ensures servers exist when players need them
-  and prevents the memory exhaustion that crashed the 946 MB VPS twice during peak play.
+- ~~**Dedicated hosting (Multiplay Hosting):** Replaces the Singapore VPS, `spawner.py`,
+  systemd units, `deploy.sh`, `POOL_ADDRESS`, and the 8910-8917 port range. Fleet allocation
+  spins up dedicated server instances on demand.~~ — ⚠️ **DEFERRED 2026-08-20, SUPERSEDING E.2**
+  (`Unity_UGS_Networking_Prompts.md`). `com.unity.services.multiplay` cannot be installed on
+  Unity 6000.5 at all: every published version, 1.1.1 through 1.3.1, ships
+  `Editor/Authoring/Assets/CreateMultiplayConfigMenu.cs`, which calls `EndNameEditAction`, and
+  6000.5 marks that obsolete as a compile ERROR rather than a warning. The consolidated
+  `com.unity.services.multiplayer@2.3.0` does not rescue this either, checked rather than
+  assumed: its `Server/` assembly is Sessions and Matchmaker server support
+  (`MultiplayerServerService`, `MatchmakerServerExtensions`), and carries no
+  `ServerQueryHandler`, no allocation callback surface, and no `server.json` reader. SQP and
+  fleet allocation both still require the blocked package. Waiting on an SDK release is not a
+  plan on a competition timeline, so **Relay peer hosting is now the primary online path** and
+  Multiplay is deferred, not cancelled: the code is gated behind `MULTIPLAY_SDK`
+  (`NetSession.StartMultiplayServerAsync`) rather than deleted, and comes back the moment either
+  Unity ships a compiling `multiplay` build, or the fleet path is re-ported onto
+  `MultiplayerServerService.CreateSessionAsync` against a real fleet to verify it. The dedicated
+  Linux server build is unaffected: it still serves clients today, it just does not register
+  itself with a fleet, which is exactly the capability the Singapore VPS option would need back
+  if that is chosen instead.
 - **Online discovery (UGS Lobby):** Replaces the raw UDP pool browse in `ServerQuery`. Live
   lobbies publish custom data using the game's 4-character confusable-free join codes.
   `ServerQuery` retains its LAN-first code resolution order (checking `LanBeacon` before UGS
   Lobbies).
-- **NAT traversal (Relay):** Retained as a fallback for peer-hosted online matches without
-  requiring port forwarding or VPNs.
+- **NAT traversal (Relay):** ~~Retained as a fallback for peer-hosted online matches~~ — ⚠️ **NOW
+  THE PRIMARY ONLINE PATH, 2026-08-20**, per the Multiplay deferral above, not merely a fallback
+  behind fleet hosting. Still avoids requiring port forwarding or VPNs either way.
 - **Player identity (UGS Authentication):** Maps authenticated `PlayerId` to the existing stable
   player token, with automatic fallback to local minted tokens for offline LAN play.
 - **Lobby rules invariant:** Seating, reconnection, seat reclamation, picks, and ready counts
@@ -231,11 +248,13 @@ attributes across all gameplay verbs.
 
 Scope: the request/resolve/broadcast triplet, reconnection tokens, lobby leader election,
 join codes, spectators, mid-match arrival rulings, late-joiner state sync, UGS Relay/Lobby, and
-the Linux dedicated server build with Multiplay.
+the Linux dedicated server build (Multiplay fleet registration deferred, see above).
 
-**Exit:** 4 real peers on an allocated Multiplay server (and via Relay peer host), and a
+**Exit:** ~~4 real peers on an allocated Multiplay server (and via Relay peer host), and a
 reconnect that restores the player's seat. (Updated from the original Singapore VPS exit
-criterion, which was retired when hosting moved to Multiplay fleet allocation).
+criterion, which was retired when hosting moved to Multiplay fleet allocation).~~ — ⚠️ **REVISED
+2026-08-20.** 4 real peers on a Relay-hosted peer session (Multiplay fleet hosting deferred, see
+above), and a reconnect that restores the player's seat.
 
 ---
 
