@@ -14,6 +14,7 @@ BASE = "Assets/TumbangPreso/Art/characters/persons/character-male-f.glb"
 
 OUT = "Assets/TumbangPreso/Art/characters/persons/team-bayan.glb"
 PALETTE_OUT = "MapSource/materials_persons/person_team-bayan.tres"
+ROSTER_OUT = "Assets/TumbangPreso/Resources/Roster/person_bayan.asset"
 
 BONE = {"root": 0, "leg-left": 1, "leg-right": 2, "torso": 3,
         "arm-left": 4, "arm-right": 5, "head": 6}
@@ -42,40 +43,40 @@ def cell_uv(slot):
 # ---------------------------------------------------------------------------
 # 16-COLOR PALETTE DEFINITION
 # ---------------------------------------------------------------------------
-ROBE_GREEN    = 0   # Primary forest green robe and cape (#3d6335)
-ROBE_DARK     = 1   # Deep olive/forest shadow & undershirt (#243e1f)
-GOLD_TRIM     = 2   # Radiant gold collar trim, cape rune, wrist cuffs (#dfb248)
-LEATHER_BROWN = 3   # Dark brown leather belt, pants, sleeves, hair fade (#482f1d)
-BOOT_GREEN    = 4   # Boot upper green (#3d6335)
-JADE_GEM      = 5   # Emerald/jade buckle core (#38b848)
-HAIR          = 6   # Dark charcoal black spiky hair (#1a181e)
-JADE_LIT      = 7   # Jade gemstone highlight (#68e878)
-INK           = 8   # Face ink (lash lines, mouth, brows) (#1a1420)
-SCAR_RED      = 9   # Deep crimson Karma marks & horn ridge bands (#8e2b1d)
+ROBE_GREEN    = 0   # Primary forest green robe, cape, boot uppers (#3d6335)
+ROBE_DARK     = 1   # Deep olive/forest shadow & rune dark outline (#243e1f)
+GOLD_TRIM     = 2   # Radiant gold collar trim, cape rune, wrist cuffs, frog knots (#dfb248)
+LEATHER_BROWN = 3   # Dark brown leather belt, pants, right sleeve, hair fade (#482f1d)
+HORN_LIGHT    = 4   # Slate Charcoal light plane for obsidian horn plates (#3e424e)
+JADE_GEM      = 5   # Emerald/jade buckle core, chest frog gem, main Earth runes (#38b848)
+HAIR          = 6   # Dark charcoal black spiky hair & deep obsidian shadow (#1a181e)
+JADE_LIT      = 7   # Jade gemstone highlight & rune glow sparks (#68e878)
+INK           = 8   # Face ink (lash lines, mouth, brows, left demonic sclera) (#1a1420)
+HORN_MAIN     = 9   # Dark Slate core obsidian horn body (#272a33)
 EYE_GOLD      = 10  # Radiant glowing golden amber left eye (#ffd700)
 SILVER        = 11  # Earring studs and metal belt rivets (#d4e2ec)
-WHITE         = 12  # Crisp boot soles, eye sclera & glints (#f4faff)
-SKIN          = 13  # Bronze warrior tan skin & horn stone body (#a8602c)
-EYE_EMERALD   = 14  # Rich dark natural forest green right eye iris (#1e5c32)
-SKIN_LIT      = 15  # Uniform skin tone for face/body (#a8602c)
+WHITE         = 12  # Crisp boot soles, right eye sclera & glints (#f4faff)
+SKIN          = 13  # Bronze warrior tan skin (#a8602c)
+HORN_PURPLE   = 14  # Dark purple sheen & edge accent on obsidian horn (#3e2844)
+EYE_EMERALD   = 15  # Rich dark natural forest green right eye iris (#1e5c32)
 
 PALETTE = {
-    ROBE_GREEN:    "3d6335",   # Forest green robe and cape
-    ROBE_DARK:     "243e1f",   # Deep olive/forest shadow & undershirt
-    GOLD_TRIM:     "dfb248",   # Radiant gold trims, sashes, rune, cuffs
+    ROBE_GREEN:    "3d6335",   # Forest green robe, cape, boot uppers
+    ROBE_DARK:     "243e1f",   # Deep olive/forest shadow & rune outline
+    GOLD_TRIM:     "dfb248",   # Radiant gold trims, sashes, rune, cuffs, frog knots
     LEATHER_BROWN: "482f1d",   # Warm dark brown leather & shaved undercut fade
-    BOOT_GREEN:    "3d6335",   # Forest green boot upper
-    JADE_GEM:      "38b848",   # Radiant emerald / jade belt gem
-    HAIR:          "1a181e",   # Dark charcoal spiky hair & undercut
-    JADE_LIT:      "68e878",   # Jade highlight sparkle
-    INK:           "1a1420",   # Dark ink (lash lines, mouth, brows)
-    SCAR_RED:      "8e2b1d",   # Deep crimson Karma marks & horn bands
+    HORN_LIGHT:    "3e424e",   # Slate Charcoal light plane on obsidian horn
+    JADE_GEM:      "38b848",   # Radiant emerald / jade belt gem & Earth runes
+    HAIR:          "1a181e",   # Dark charcoal spiky hair & horn shadow crevices
+    JADE_LIT:      "68e878",   # Jade highlight sparkle & rune glow
+    INK:           "1a1420",   # Dark ink (lash lines, mouth, brows, left sclera)
+    HORN_MAIN:     "272a33",   # Dark Slate obsidian horn main body
     EYE_GOLD:      "ffd700",   # Radiant glowing gold left eye
-    SILVER:        "d4e2ec",   # Silver earrings & hardware
+    SILVER:        "d4e2ec",   # Silver earrings & eyebrow piercing
     WHITE:         "f4faff",   # Boot sole tread, eye white & glints
-    SKIN:          "a8602c",   # Warm bronze warrior caramel tan & stone horn
+    SKIN:          "a8602c",   # Warm bronze warrior caramel tan skin
+    HORN_PURPLE:   "3e2844",   # Dark purple sheen & edge accent
     EYE_EMERALD:   "1e5c32",   # Rich dark natural forest green right eye iris
-    SKIN_LIT:      "a8602c",   # Uniform skin midtone for face/body
 }
 
 MAX_FACE_LUMINANCE = 0.30
@@ -86,7 +87,7 @@ MAX_FACE_LUMINANCE = 0.30
 # ---------------------------------------------------------------------------
 LEG_LEFT = [
     ("boot-sole-left",      "leg-left", (0.006, 0.000, -0.134), (0.158, 0.024, 0.082), WHITE),
-    ("boot-upper-left",     "leg-left", (0.014, 0.024, -0.126), (0.152, 0.068, 0.076), BOOT_GREEN),
+    ("boot-upper-left",     "leg-left", (0.014, 0.024, -0.126), (0.152, 0.068, 0.076), ROBE_GREEN),
     ("boot-toe-left",       "leg-left", (0.012, 0.024, -0.132), (0.154, 0.042, -0.100), WHITE),
     ("boot-heel-left",      "leg-left", (0.012, 0.024, 0.050), (0.154, 0.056, 0.080), WHITE),
     ("boot-strap-left",     "leg-left", (0.010, 0.068, -0.080), (0.156, 0.086, 0.078), GOLD_TRIM),
@@ -99,7 +100,7 @@ LEG_LEFT = [
 
 LEG_RIGHT = [
     ("boot-sole-right",      "leg-right", (-0.158, 0.000, -0.134), (-0.006, 0.024, 0.082), WHITE),
-    ("boot-upper-right",     "leg-right", (-0.152, 0.024, -0.126), (-0.014, 0.068, 0.076), BOOT_GREEN),
+    ("boot-upper-right",     "leg-right", (-0.152, 0.024, -0.126), (-0.014, 0.068, 0.076), ROBE_GREEN),
     ("boot-toe-right",       "leg-right", (-0.154, 0.024, -0.132), (-0.012, 0.042, -0.100), WHITE),
     ("boot-heel-right",      "leg-right", (-0.154, 0.024, 0.050), (-0.012, 0.056, 0.080), WHITE),
     ("boot-strap-right",     "leg-right", (-0.156, 0.068, -0.080), (-0.010, 0.086, 0.078), GOLD_TRIM),
@@ -118,10 +119,11 @@ TORSO = [
     ("robe-body",             "torso", (-0.124, 0.232, -0.092), (0.124, 0.445, 0.092), ROBE_GREEN),
     
     # 🥋 LAYERED WARRIOR CHEST, ROBE LAPELS & GOLD FROG FASTENERS
-    # Exposed upper chest skin & Karma lightning trail
-    ("neck-chest-skin",       "torso", (-0.035, 0.380, -0.095), (0.035, 0.445, -0.080), SKIN_LIT),
-    ("karma-neck-slash",      "torso", (0.008, 0.380, -0.098), (0.028, 0.445, -0.082), SCAR_RED),
-    ("karma-chest-branch",    "torso", (0.020, 0.395, -0.098), (0.055, 0.425, -0.084), SCAR_RED),
+    # Exposed upper chest skin & Green Earth Rune trail
+    ("neck-chest-skin",       "torso", (-0.035, 0.380, -0.095), (0.035, 0.445, -0.080), SKIN),
+    ("rune-neck-slash",       "torso", (0.008, 0.380, -0.098), (0.028, 0.445, -0.082), JADE_GEM),
+    ("rune-neck-shadow",      "torso", (0.006, 0.380, -0.097), (0.012, 0.445, -0.083), ROBE_DARK),
+    ("rune-chest-branch",     "torso", (0.020, 0.395, -0.098), (0.055, 0.425, -0.084), JADE_GEM),
     
     # Left Lapel (Green fabric with gold border piping)
     ("lapel-body-l",          "torso", (0.020, 0.340, -0.102), (0.085, 0.445, -0.086), ROBE_GREEN),
@@ -196,56 +198,59 @@ TORSO = [
 
 
 # ---------------------------------------------------------------------------
-# ARMS, SLEEVES & FULL 360° KAWAKI KARMA BARE ARM (+X)
+# ARMS, SLEEVES & FULL 360° JADE EARTH RUNE BARE ARM (+X)
 # ---------------------------------------------------------------------------
 ARM_LEFT = [
     # 💪 BARE MUSCULAR SKIN ARM (+X) - Smooth tapered muscular arm
-    ("arm-shoulder-l",        "arm-left", (0.0999, 0.355, -0.070), (0.185, 0.475, 0.080), SKIN_LIT),
-    ("arm-upper-l",           "arm-left", (0.170, 0.345, -0.060), (0.240, 0.465, 0.070), SKIN_LIT),
-    ("arm-forearm-l",         "arm-left", (0.230, 0.340, -0.050), (0.290, 0.460, 0.058), SKIN_LIT),
-    ("arm-wrist-l",           "arm-left", (0.275, 0.3383, -0.032), (0.315, 0.4617, 0.042), SKIN_LIT),
+    ("arm-shoulder-l",        "arm-left", (0.0999, 0.355, -0.070), (0.185, 0.475, 0.080), SKIN),
+    ("arm-upper-l",           "arm-left", (0.170, 0.345, -0.060), (0.240, 0.465, 0.070), SKIN),
+    ("arm-forearm-l",         "arm-left", (0.230, 0.340, -0.050), (0.290, 0.460, 0.058), SKIN),
+    ("arm-wrist-l",           "arm-left", (0.275, 0.3383, -0.032), (0.315, 0.4617, 0.042), SKIN),
     
-    # ⚡ SHOULDER / DELTOID KARMA SUN (Full 360° Wrap Proud of Skin)
-    ("karma-deltoid-top",     "arm-left", (0.115, 0.460, -0.045), (0.180, 0.485, 0.045), SCAR_RED),
-    ("karma-deltoid-disc",    "arm-left", (0.135, 0.390, -0.045), (0.188, 0.470, 0.045), SCAR_RED),
-    # Front Shoulder Sun Arc
-    ("karma-sun-front",       "arm-left", (0.125, 0.405, -0.078), (0.175, 0.455, -0.060), SCAR_RED),
-    # Back Sun (Proud of skin z: 0.080)
-    ("karma-shoulder-sun-b",  "arm-left", (0.120, 0.395, 0.068), (0.178, 0.465, 0.088), SCAR_RED),
-    ("karma-shoulder-core-b", "arm-left", (0.138, 0.418, 0.070), (0.160, 0.442, 0.090), GOLD_TRIM),
+    # 🌿 SHOULDER / DELTOID EARTH RUNE CREST (Full 360° Wrap Proud of Skin)
+    ("rune-deltoid-top",      "arm-left", (0.115, 0.460, -0.045), (0.180, 0.485, 0.045), JADE_GEM),
+    ("rune-deltoid-disc",     "arm-left", (0.135, 0.390, -0.045), (0.188, 0.470, 0.045), JADE_GEM),
+    ("rune-deltoid-shadow",   "arm-left", (0.130, 0.385, -0.048), (0.192, 0.475, 0.048), ROBE_DARK),
+    # Front Shoulder Rune Arc
+    ("rune-sun-front",        "arm-left", (0.125, 0.405, -0.078), (0.175, 0.455, -0.060), JADE_GEM),
+    # Back Shoulder Crest (Proud of skin z: 0.080)
+    ("rune-shoulder-sun-b",   "arm-left", (0.120, 0.395, 0.068), (0.178, 0.465, 0.088), JADE_GEM),
+    ("rune-shoulder-core-b",  "arm-left", (0.138, 0.418, 0.070), (0.160, 0.442, 0.090), GOLD_TRIM),
     
-    # ⚡ BICEP / TRICEP / OUTER ARM FLAME TENDRILS
-    # Front Bicep Flame Streams
-    ("karma-stream-f1",       "arm-left", (0.155, 0.355, -0.068), (0.215, 0.420, -0.052), SCAR_RED),
-    ("karma-stream-f2",       "arm-left", (0.180, 0.380, -0.068), (0.230, 0.435, -0.052), SCAR_RED),
+    # 🌿 BICEP / TRICEP / OUTER ARM EARTH RUNE TENDRILS
+    # Front Bicep Rune Streams
+    ("rune-stream-f1",        "arm-left", (0.155, 0.355, -0.068), (0.215, 0.420, -0.052), JADE_GEM),
+    ("rune-stream-f2",        "arm-left", (0.180, 0.380, -0.068), (0.230, 0.435, -0.052), JADE_GEM),
     # Outer Arm Connector
-    ("karma-stream-outer",    "arm-left", (0.175, 0.410, -0.030), (0.235, 0.460, 0.030), SCAR_RED),
+    ("rune-stream-outer",     "arm-left", (0.175, 0.410, -0.030), (0.235, 0.460, 0.030), JADE_GEM),
     # Back Tricep Streams (Proud of skin z: 0.070)
-    ("karma-flame-b1",        "arm-left", (0.155, 0.345, 0.058), (0.200, 0.410, 0.078), SCAR_RED),
-    ("karma-flame-b2",        "arm-left", (0.180, 0.360, 0.058), (0.225, 0.420, 0.078), SCAR_RED),
-    ("karma-flame-b3-elbow",  "arm-left", (0.205, 0.370, 0.058), (0.245, 0.435, 0.078), SCAR_RED),
+    ("rune-flame-b1",         "arm-left", (0.155, 0.345, 0.058), (0.200, 0.410, 0.078), JADE_GEM),
+    ("rune-flame-b2",         "arm-left", (0.180, 0.360, 0.058), (0.225, 0.420, 0.078), JADE_GEM),
+    ("rune-flame-b3-elbow",   "arm-left", (0.205, 0.370, 0.058), (0.245, 0.435, 0.078), ROBE_DARK),
     
-    # ⚡ FOREARM CONTINUOUS TAPERED CHEVRON SPEAR WITH EMBEDDED GOLD CORE GEM
+    # 🌿 FOREARM CONTINUOUS TAPERED CHEVRON SPEAR WITH EMBEDDED GOLD / JADE CORE GEM
     # Front Forearm Tapered Spear Sheath (Connected continuous arrow pointing to elbow)
-    ("karma-spear-outer-f",   "arm-left", (0.225, 0.345, -0.058), (0.285, 0.445, -0.042), SCAR_RED),
-    # 💎 UNIFIED SINGLE SOLID GOLDEN KARMA CORE GEM (One single solid piece, NOT split!)
-    ("karma-spear-gem-f",     "arm-left", (0.242, 0.370, -0.062), (0.268, 0.420, -0.040), GOLD_TRIM),
+    ("rune-spear-outer-f",    "arm-left", (0.225, 0.345, -0.058), (0.285, 0.445, -0.042), JADE_GEM),
+    ("rune-spear-shadow-f",   "arm-left", (0.222, 0.342, -0.056), (0.288, 0.448, -0.040), ROBE_DARK),
+    # 💎 UNIFIED GOLD / JADE CORE GEM
+    ("rune-spear-gem-f",      "arm-left", (0.242, 0.370, -0.062), (0.268, 0.420, -0.040), GOLD_TRIM),
+    ("rune-spear-spark-f",    "arm-left", (0.248, 0.385, -0.064), (0.262, 0.405, -0.038), JADE_LIT),
     
     # Back Forearm Spear (Proud of skin z: 0.058)
-    ("karma-forearm-spear-b", "arm-left", (0.225, 0.345, 0.048), (0.285, 0.445, 0.068), SCAR_RED),
-    ("karma-forearm-core-b",  "arm-left", (0.240, 0.370, 0.050), (0.270, 0.420, 0.070), GOLD_TRIM),
+    ("rune-forearm-spear-b",  "arm-left", (0.225, 0.345, 0.048), (0.285, 0.445, 0.068), JADE_GEM),
+    ("rune-forearm-core-b",   "arm-left", (0.240, 0.370, 0.050), (0.270, 0.420, 0.070), GOLD_TRIM),
     
     # Outer Forearm Ridge & Wrist Wrap Bands
-    ("karma-forearm-ridge",   "arm-left", (0.250, 0.360, -0.025), (0.294, 0.440, 0.025), SCAR_RED),
-    ("karma-wrist-band-top",  "arm-left", (0.282, 0.440, -0.056), (0.302, 0.462, -0.042), SCAR_RED),
-    ("karma-wrist-band-bot",  "arm-left", (0.282, 0.338, -0.056), (0.302, 0.360, -0.042), SCAR_RED),
+    ("rune-forearm-ridge",    "arm-left", (0.250, 0.360, -0.025), (0.294, 0.440, 0.025), JADE_GEM),
+    ("rune-wrist-band-top",   "arm-left", (0.282, 0.440, -0.056), (0.302, 0.462, -0.042), JADE_GEM),
+    ("rune-wrist-band-bot",   "arm-left", (0.282, 0.338, -0.056), (0.302, 0.360, -0.042), JADE_GEM),
     
-    # ⚡ HAND KARMA SEALS (Palm & Backhand Circular Seal with Knuckle Marks)
-    ("hand-left",             "arm-left", (0.295, 0.3383, -0.024), (0.3836, 0.4617, 0.036), SKIN_LIT),
-    ("karma-palm-seal",       "arm-left", (0.305, 0.370, -0.030), (0.345, 0.420, -0.018), SCAR_RED),
-    ("karma-backhand-seal",   "arm-left", (0.300, 0.360, 0.028), (0.350, 0.440, 0.044), SCAR_RED),
-    ("karma-backhand-gold",   "arm-left", (0.315, 0.385, 0.030), (0.335, 0.415, 0.046), GOLD_TRIM),
-    ("karma-knuckle-mark",    "arm-left", (0.355, 0.375, 0.018), (0.375, 0.425, 0.042), SCAR_RED),
+    # 🌿 HAND EARTH SEALS (Palm & Backhand Circular Seal with Knuckle Marks)
+    ("hand-left",             "arm-left", (0.295, 0.3383, -0.024), (0.3836, 0.4617, 0.036), SKIN),
+    ("rune-palm-seal",        "arm-left", (0.305, 0.370, -0.030), (0.345, 0.420, -0.018), JADE_GEM),
+    ("rune-backhand-seal",    "arm-left", (0.300, 0.360, 0.028), (0.350, 0.440, 0.044), JADE_GEM),
+    ("rune-backhand-gold",    "arm-left", (0.315, 0.385, 0.030), (0.335, 0.415, 0.046), GOLD_TRIM),
+    ("rune-knuckle-mark",     "arm-left", (0.355, 0.375, 0.018), (0.375, 0.425, 0.042), JADE_GEM),
 ]
 
 ARM_RIGHT = [
@@ -253,12 +258,13 @@ ARM_RIGHT = [
     ("sleeve-right",          "arm-right", (-0.245, 0.330, -0.068), (-0.0999, 0.470, 0.084), LEATHER_BROWN),
     ("sleeve-shoulder-r",     "arm-right", (-0.190, 0.360, -0.075), (-0.0999, 0.482, 0.090), LEATHER_BROWN),
     ("wrist-cuff-right",      "arm-right", (-0.278, 0.322, -0.074), (-0.240, 0.478, 0.090), GOLD_TRIM),
-    ("hand-right",            "arm-right", (-0.3836, 0.3383, -0.020), (-0.275, 0.4617, 0.038), SKIN_LIT),
+    ("hand-right",            "arm-right", (-0.3836, 0.3383, -0.020), (-0.275, 0.4617, 0.038), SKIN),
 ]
 
 
 # ---------------------------------------------------------------------------
-# HEAD, FAUXHAWK QUIFF, SHAVED FADE & KAWAKI OTSUTSUKI HORN (+X)
+# HEAD, SPIKY HAIR, UNDERCUT FADE & OBSIDIAN SWEPT-BACK HORN (+X)
+# ---------------------------------------------------------------------------
 HEAD = [
     # 💇 FULL SPIKY BLACK ANIME HAIR CROWN & FULL BACK SKULL (Full 360° skull dome & solid nape drape!)
     ("hair-crown-main",       "head", (-0.165, 0.620, -0.215), (0.150, 0.745, 0.130), HAIR),
@@ -277,56 +283,45 @@ HEAD = [
     ("undercut-side-front",   "head", (0.145, 0.430, 0.080), (0.182, 0.620, 0.145), LEATHER_BROWN),
     ("undercut-sideburn",     "head", (0.160, 0.400, -0.010), (0.188, 0.500, 0.080), LEATHER_BROWN),
     
-    # 🪨 SLEEK ORGANIC OTSUTSUKI HORN (+X temple, natural heavy-carapace parabolic crescent arc)
-    # 1. Broad Supraorbital Temple Root (Emerges naturally from skull tissue above left eye)
-    ("horn-root-collar",      "head", (0.142, 0.495, 0.055), (0.192, 0.535, 0.145), LEATHER_BROWN),
-    ("horn-root-brow",        "head", (0.138, 0.515, 0.070), (0.198, 0.585, 0.155), SKIN),
-    ("horn-root-brow-plate",  "head", (0.150, 0.530, 0.110), (0.202, 0.585, 0.160), SKIN),
-    ("horn-root-temple",      "head", (0.145, 0.545, 0.040), (0.204, 0.615, 0.135), SKIN),
+    # 🪨 OBSIDIAN SEGMENTED SWEPT-BACK HORN — ITERATION B (+X parietal cranium)
+    # 1. Base Socket & Interlocking Root (Embedded high & back into parietal cranium/hair)
+    ("horn-socket-hair",      "head", (0.120, 0.560, 0.010), (0.175, 0.620, 0.090), HAIR),
+    ("horn-socket-base",      "head", (0.130, 0.575, 0.005), (0.185, 0.635, 0.080), HORN_MAIN),
+    ("horn-socket-shadow",    "head", (0.128, 0.570, 0.015), (0.180, 0.590, 0.075), INK),
     
-    # 2. Heavy Stepped Biological Carapace Tiers (Fatter natural volume curving +X then hooking -X)
-    ("horn-tier-1",           "head", (0.148, 0.575, 0.015), (0.208, 0.650, 0.125), SKIN),
-    ("horn-tier-1-shadow",    "head", (0.152, 0.625, 0.010), (0.204, 0.635, 0.035), LEATHER_BROWN),
-    ("horn-tier-2",           "head", (0.156, 0.630, -0.025), (0.214, 0.700, 0.085), SKIN),
-    ("horn-tier-2-shadow",    "head", (0.154, 0.675, -0.030), (0.208, 0.685, -0.010), LEATHER_BROWN),
-    ("horn-tier-3",           "head", (0.150, 0.680, -0.070), (0.206, 0.750, 0.040), SKIN),
-    ("horn-tier-4",           "head", (0.142, 0.705, -0.118), (0.194, 0.762, -0.005), SKIN),
-    ("horn-tier-5",           "head", (0.136, 0.690, -0.162), (0.182, 0.745, -0.050), SKIN),
-    ("horn-tier-6",           "head", (0.130, 0.660, -0.198), (0.168, 0.715, -0.095), SKIN),
+    # 2. Segment 1 (Ascending Base & Lower Parietal Swept Arc)
+    ("horn-seg1-body",        "head", (0.135, 0.615, -0.025), (0.192, 0.675, 0.065), HORN_MAIN),
+    ("horn-seg1-top",         "head", (0.138, 0.650, -0.010), (0.188, 0.678, 0.060), HORN_LIGHT),
+    ("horn-seg1-crest",       "head", (0.185, 0.635, -0.015), (0.194, 0.676, 0.050), HORN_PURPLE),
+    ("horn-seg1-shadow",      "head", (0.132, 0.612, -0.020), (0.182, 0.624, 0.035), HAIR),
     
-    # 3. Sharp Chisel Tip (Hooking downward/backward along occipital contour with Karma ember point)
-    ("horn-tip",              "head", (0.124, 0.625, -0.222), (0.156, 0.675, -0.145), SKIN),
-    ("horn-tip-ember",        "head", (0.128, 0.622, -0.224), (0.152, 0.636, -0.195), SCAR_RED),
+    # 3. Segment 2 (Mid-Parietal Arc)
+    ("horn-seg2-body",        "head", (0.140, 0.660, -0.075), (0.196, 0.725, 0.015), HORN_MAIN),
+    ("horn-seg2-top",         "head", (0.144, 0.700, -0.060), (0.192, 0.728, 0.010), HORN_LIGHT),
+    ("horn-seg2-crest",       "head", (0.188, 0.680, -0.065), (0.198, 0.726, 0.005), HORN_PURPLE),
+    ("horn-seg2-shadow",      "head", (0.138, 0.658, -0.070), (0.186, 0.668, -0.015), HAIR),
     
-    # ⚡ 7 TRUE PERPENDICULAR-CUT CRIMSON KARMA COLLAR RINGS (Matching face scar thickness 0.024 & dual-feed connection!)
-    # Root Collar Ring 0 (Receives lower temple stream at y=0.540..0.564)
-    ("karma-ring-0",          "head", (0.142, 0.540, 0.035), (0.206, 0.564, 0.142), SCAR_RED),
-    # Base/Rise Collars (Horizontal cut matching face scar thickness & flowing directly from temple bridge)
-    ("karma-ring-1",          "head", (0.148, 0.605, 0.005), (0.212, 0.629, 0.135), SCAR_RED),
-    ("karma-ring-2",          "head", (0.156, 0.650, -0.030), (0.218, 0.674, 0.090), SCAR_RED),
-    ("karma-ring-3",          "head", (0.150, 0.696, -0.075), (0.212, 0.720, 0.045), SCAR_RED),
+    # 4. Segment 3 (Crown Peak — Sweeping Gracefully Backward)
+    ("horn-seg3-body",        "head", (0.136, 0.700, -0.135), (0.192, 0.772, -0.040), HORN_MAIN),
+    ("horn-seg3-top",         "head", (0.140, 0.748, -0.125), (0.188, 0.776, -0.045), HORN_LIGHT),
+    ("horn-seg3-crest",       "head", (0.184, 0.720, -0.125), (0.194, 0.774, -0.045), HORN_PURPLE),
+    ("horn-seg3-shadow",      "head", (0.134, 0.698, -0.130), (0.182, 0.708, -0.075), HAIR),
     
-    # Crown & Hook Collars (Vertical Z-cut perpendicular to horizontal/descending horn curve)
-    ("karma-ring-4",          "head", (0.142, 0.705, -0.090), (0.198, 0.765, -0.066), SCAR_RED),
-    ("karma-ring-5",          "head", (0.136, 0.685, -0.150), (0.186, 0.745, -0.126), SCAR_RED),
-    ("karma-ring-6",          "head", (0.130, 0.650, -0.194), (0.172, 0.705, -0.170), SCAR_RED),
+    # 5. Segment 4 (Occipital Descending Swept Curve)
+    ("horn-seg4-body",        "head", (0.128, 0.660, -0.185), (0.180, 0.730, -0.100), HORN_MAIN),
+    ("horn-seg4-top",         "head", (0.132, 0.705, -0.180), (0.176, 0.734, -0.105), HORN_LIGHT),
+    ("horn-seg4-crest",       "head", (0.172, 0.680, -0.178), (0.182, 0.732, -0.105), HORN_PURPLE),
+    ("horn-seg4-shadow",      "head", (0.126, 0.658, -0.180), (0.170, 0.668, -0.135), HAIR),
     
-    # ⚡ CONTINUOUS DORSAL CREST KARMA SPINAL CONDUIT (Full unbroken crest circuit from root to tip!)
-    ("karma-dorsal-base",     "head", (0.196, 0.540, 0.040), (0.208, 0.630, 0.125), SCAR_RED),
-    ("karma-dorsal-rise",     "head", (0.204, 0.620, -0.035), (0.218, 0.750, 0.085), SCAR_RED),
-    ("karma-dorsal-crown",    "head", (0.184, 0.748, -0.120), (0.208, 0.765, 0.005), SCAR_RED),
-    ("karma-dorsal-hook",     "head", (0.158, 0.680, -0.220), (0.188, 0.750, -0.090), SCAR_RED),
+    # 6. Segment 5 (Tapered Neck)
+    ("horn-seg5-body",        "head", (0.120, 0.630, -0.218), (0.165, 0.685, -0.150), HORN_MAIN),
+    ("horn-seg5-top",         "head", (0.124, 0.665, -0.214), (0.160, 0.688, -0.155), HORN_LIGHT),
+    ("horn-seg5-crest",       "head", (0.158, 0.650, -0.214), (0.166, 0.686, -0.155), HORN_PURPLE),
     
-    # ⚡ FRONT-FACING KARMA ASCENSION STREAK (Climbing front contour visible in Front View!)
-    ("karma-front-ascend",    "head", (0.176, 0.625, 0.080), (0.204, 0.695, 0.128), SCAR_RED),
-    
-    # 💎 DUAL OTSUTSUKI GOLD KARMA RESONANCE NODES (Gleaming gold spark at Crown Peak & Root Temporal Gate)
-    ("karma-horn-gold-crown", "head", (0.188, 0.754, -0.070), (0.206, 0.766, -0.040), GOLD_TRIM),
-    ("karma-root-gold-node",  "head", (0.182, 0.610, 0.090), (0.194, 0.624, 0.115), GOLD_TRIM),
-    
-    # ⚡ DUAL SLEEK TEMPLE KARMA STREAM LINES (Matching thickness 0.024, connects directly into face quad at x=0.180)
-    ("karma-stream-line-top", "head", (0.145, 0.605, 0.060), (0.188, 0.629, 0.170), SCAR_RED),
-    ("karma-stream-line-bot", "head", (0.145, 0.540, 0.070), (0.188, 0.564, 0.170), SCAR_RED),
+    # 7. Sharp Chisel Tip (Pointing Backward/Down along Occipital Contour)
+    ("horn-tip-body",         "head", (0.116, 0.620, -0.224), (0.148, 0.655, -0.190), HORN_MAIN),
+    ("horn-tip-facet",        "head", (0.120, 0.640, -0.224), (0.144, 0.658, -0.200), HORN_LIGHT),
+    ("horn-tip-edge",         "head", (0.116, 0.618, -0.224), (0.132, 0.635, -0.208), HORN_PURPLE),
     
     # 💇 DYNAMIC ANIME SPIKES (Front, top, back)
     ("spike-front-c1",        "head", (-0.050, 0.670, 0.115), (0.040, 0.765, 0.192), HAIR),
@@ -422,7 +417,7 @@ HEAD_BOXES = HEAD
 # § THE DONATED HEAD, SCAR & HETEROCHROMIA EYES
 # ---------------------------------------------------------------------------
 DONOR_SKULL = "Assets/TumbangPreso/Art/characters/persons/character-male-d.glb"
-SKULL_SLOTS = {15: SKIN_LIT, 8: None}
+SKULL_SLOTS = {15: SKIN, 8: None}
 
 DONOR_MOUTH_Y = 0.45
 DONOR_MOUTH_TRIS = 8
@@ -515,7 +510,7 @@ def _donor_part(path, slots):
 
 
 def _donor_head():
-    """Builds the donor skull with Kawaki Karma slash pattern, sleek anime heterochromia eyes, and smirk mouth."""
+    """Builds the donor skull with Jade Earth Rune facial incision, heterochromia eyes, and smirk mouth."""
     pos, nrm, uv, tris = _donor_part(DONOR_SKULL, SKULL_SLOTS)
 
     # 1. Strip donor mouth and eyes (all slot 8 triangles) so our authored features take full crisp ownership!
@@ -550,7 +545,7 @@ def _donor_head():
     add_quad([(-0.009, 0.390), (-0.009, 0.397), (0.009, 0.397), (0.009, 0.390)],
              INK, PANEL_PROUD * 1.6)
 
-    # 3. ⚔️ KAWAKI KARMA FACIAL SLASH & UNDERCUT TEMPLE (media_1787164289261.png)
+    # 3. ⚔️ JADE EARTH RUNE FACIAL SCAR & UNDERCUT TEMPLE (media_1787201264725.png)
     # Natural Stepped Buzzcut Undercut Hairline on Temple (+X)
     add_quad([(0.065, 0.605), (0.065, 0.665), (0.170, 0.665), (0.170, 0.605)],
              LEATHER_BROWN, PANEL_PROUD * 1.5)
@@ -561,27 +556,39 @@ def _donor_head():
     add_quad([(0.150, 0.405), (0.150, 0.450), (0.170, 0.450), (0.170, 0.405)],
              LEATHER_BROWN, PANEL_PROUD * 1.5)
 
-    # Main Flowing Karma Facial Ribbon (Continuous S-curve from high forehead to chin)
+    # Main Flowing Jade Earth Facial Rune Ribbon (Continuous S-curve from high forehead to chin)
     add_quad([(0.032, 0.585), (0.032, 0.655), (0.056, 0.655), (0.056, 0.585)],
-             SCAR_RED, PANEL_PROUD * 2.2)
+             JADE_GEM, PANEL_PROUD * 2.2)
     add_quad([(0.036, 0.525), (0.036, 0.585), (0.062, 0.585), (0.062, 0.525)],
-             SCAR_RED, PANEL_PROUD * 2.2)
+             JADE_GEM, PANEL_PROUD * 2.2)
     add_quad([(0.048, 0.485), (0.048, 0.525), (0.074, 0.525), (0.074, 0.485)],
-             SCAR_RED, PANEL_PROUD * 2.2)
+             JADE_GEM, PANEL_PROUD * 2.2)
     add_quad([(0.078, 0.445), (0.078, 0.488), (0.106, 0.488), (0.100, 0.445)],
-             SCAR_RED, PANEL_PROUD * 2.2)
+             JADE_GEM, PANEL_PROUD * 2.2)
     add_quad([(0.066, 0.385), (0.078, 0.448), (0.102, 0.448), (0.088, 0.385)],
-             SCAR_RED, PANEL_PROUD * 2.2)
+             JADE_GEM, PANEL_PROUD * 2.2)
     add_quad([(0.048, 0.335), (0.066, 0.390), (0.088, 0.390), (0.068, 0.335)],
-             SCAR_RED, PANEL_PROUD * 2.2)
+             JADE_GEM, PANEL_PROUD * 2.2)
 
-    # ⚡ DUAL SLEEK TEMPLE SURGE LINES (Connecting facial ribbon directly into temple stream lines)
-    # Upper Stream Line (Connecting high forehead ribbon at y=0.605 to side stream at y=0.605..0.629)
-    add_quad([(0.040, 0.605), (0.040, 0.629), (0.180, 0.629), (0.180, 0.605)],
-             SCAR_RED, PANEL_PROUD * 2.2)
-    # Lower Stream Line (Connecting mid-face ribbon at y=0.540 to side stream at y=0.540..0.564)
-    add_quad([(0.048, 0.540), (0.048, 0.564), (0.180, 0.564), (0.180, 0.540)],
-             SCAR_RED, PANEL_PROUD * 2.2)
+    # Rune Dark Outline / Depth Shadow
+    add_quad([(0.028, 0.585), (0.028, 0.655), (0.032, 0.655), (0.032, 0.585)],
+             ROBE_DARK, PANEL_PROUD * 2.1)
+    add_quad([(0.032, 0.525), (0.032, 0.585), (0.036, 0.585), (0.036, 0.525)],
+             ROBE_DARK, PANEL_PROUD * 2.1)
+    add_quad([(0.044, 0.485), (0.044, 0.525), (0.048, 0.525), (0.048, 0.485)],
+             ROBE_DARK, PANEL_PROUD * 2.1)
+
+    # ⚡ DUAL SLEEK TEMPLE SURGE LINES (Connecting facial ribbon cleanly to temple undercut)
+    # Upper Stream Line (Connecting high forehead ribbon at y=0.612..0.628)
+    add_quad([(0.050, 0.612), (0.050, 0.628), (0.135, 0.628), (0.135, 0.612)],
+             JADE_GEM, PANEL_PROUD * 2.2)
+    add_quad([(0.050, 0.608), (0.050, 0.612), (0.135, 0.612), (0.135, 0.608)],
+             ROBE_DARK, PANEL_PROUD * 2.1)
+    # Lower Stream Line (Connecting mid-face ribbon at y=0.546..0.562)
+    add_quad([(0.058, 0.546), (0.058, 0.562), (0.140, 0.562), (0.140, 0.546)],
+             JADE_GEM, PANEL_PROUD * 2.2)
+    add_quad([(0.058, 0.542), (0.058, 0.546), (0.140, 0.546), (0.140, 0.542)],
+             ROBE_DARK, PANEL_PROUD * 2.1)
 
     # 4. 👁️ EXACT MATCHING ANIME EYE SHAPE & DESIGN (EMERALD / GOLD HETEROCHROMIA)
     # --- RIGHT EYE (-X, Viewer's Left): NORMAL SLEEK EMERALD GREEN ANIME EYE (WHITE SCLERA) ---
@@ -605,9 +612,9 @@ def _donor_head():
              INK, PANEL_PROUD * 4.0)
 
     # --- LEFT EYE (+X, Viewer's Right): DEMONIC BLACK SCLERA WITH GLOWING GOLDEN IRIS ---
-    # Crimson Karma Eye Frame Bed (Surrounding the black eye)
+    # Jade Earth Rune Eye Frame Bed
     add_quad([(0.030, 0.456), (0.030, 0.498), (0.118, 0.504), (0.118, 0.456)],
-             SCAR_RED, PANEL_PROUD * 2.3)
+             ROBE_DARK, PANEL_PROUD * 2.3)
     # Pitch-Black Sclera & Eye Body (COMPLETELY BLACK, ZERO WHITE!)
     add_quad([(0.034, 0.460), (0.034, 0.496), (0.114, 0.502), (0.114, 0.460)],
              INK, PANEL_PROUD * 2.8)
@@ -1054,6 +1061,28 @@ def main():
     verify(body, head)
     write_glb(OUT, gltf, blob)
     write_palette(PALETTE_OUT)
+    write_unity_asset(ROSTER_OUT)
+
+
+def write_unity_asset(path):
+    if not os.path.exists(path):
+        return
+    with open(path, "r", encoding="utf-8") as handle:
+        content = handle.read()
+
+    pal_lines = ["  Palette:"]
+    for slot in range(16):
+        r, g, b = rgb(PALETTE[slot])
+        pal_lines.append(f"  - {{r: {r:.6f}, g: {g:.6f}, b: {b:.6f}, a: 1}}")
+
+    import re
+    new_pal_block = "\n".join(pal_lines)
+    content = re.sub(r"  Palette:\n(  - \{r: [^\n]+\n)+", new_pal_block + "\n", content)
+
+    with open(path, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(content)
+
+    print(f"wrote {path}")
 
 
 def verify(body, head):
