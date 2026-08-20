@@ -114,8 +114,14 @@ namespace TumbangPreso.UI
             MatchRpc.OnMapChanged += HandleMapSynced;
             MatchRpc.OnDifficultyChanged += HandleDifficultySynced;
             MatchRpc.OnLobbyPicksSynced += HandleLobbyPicksSynced;
+            MatchRpc.OnMatchStarted += HandleMatchStarted;
 
             Refresh();
+        }
+
+        private void HandleMatchStarted()
+        {
+            SceneFlow.StartMatch();
         }
 
         private void OnPrimaryPressed()
@@ -142,6 +148,7 @@ namespace TumbangPreso.UI
                 }
                 else
                 {
+                    MatchRpc.Instance?.HostStartMatch();
                     SceneFlow.StartMatch();
                 }
             }
@@ -388,6 +395,7 @@ namespace TumbangPreso.UI
             MatchRpc.OnMapChanged -= HandleMapSynced;
             MatchRpc.OnDifficultyChanged -= HandleDifficultySynced;
             MatchRpc.OnLobbyPicksSynced -= HandleLobbyPicksSynced;
+            MatchRpc.OnMatchStarted -= HandleMatchStarted;
         }
     }
 }

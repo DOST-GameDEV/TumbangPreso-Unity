@@ -81,6 +81,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReqReset", OnReqResetMsg);
             cm.RegisterNamedMessageHandler("ReqEmote", OnReqEmoteMsg);
             cm.RegisterNamedMessageHandler("PlayEmote", OnPlayEmoteMsg);
+            cm.RegisterNamedMessageHandler("StartMatch", OnStartMatchMsg);
         }
 
         private static CharacterMotor Unit(int slot)
@@ -172,8 +173,15 @@ namespace TumbangPreso.Net
 
             NetSession.Instance?.SetLocalSeating(seat, spectator);
 
-            var installer = FindFirstObjectByType<MatchInstaller>();
-            installer?.RebindLocalSeat(seat, spectator);
+            if (inProgress && UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != UI.SceneFlow.SelectedMap)
+            {
+                UI.SceneFlow.StartMatch();
+            }
+            else
+            {
+                var installer = FindFirstObjectByType<MatchInstaller>();
+                installer?.RebindLocalSeat(seat, spectator);
+            }
         }
 
         // -------------------------------------------------------------------
@@ -603,6 +611,24 @@ namespace TumbangPreso.Net
         public static event Action<int> OnMapChanged;
         public static event Action<int> OnDifficultyChanged;
         public static event Action<int[]> OnLobbyPicksSynced;
+        public static event Action OnMatchStarted;
+
+        public void HostStartMatch()
+        {
+            if (!NetAuthority.IsHost) return;
+            if (_nm != null && _nm.CustomMessagingManager != null)
+            {
+                using var writer = new FastBufferWriter(16, Allocator.Temp);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("StartMatch", writer);
+            }
+            OnMatchStarted?.Invoke();
+        }
+
+        private void OnStartMatchMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            OnMatchStarted?.Invoke();
+            UI.SceneFlow.StartMatch();
+        }
 
         public void SelectMapServerRpc(int mapIndex)
         {

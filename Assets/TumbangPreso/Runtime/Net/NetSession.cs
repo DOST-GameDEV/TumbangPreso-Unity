@@ -138,6 +138,8 @@ namespace TumbangPreso.Net
 
         public bool StartHost(int port = DefaultPort, bool dedicated = false)
         {
+            if (_nm != null && _nm.IsListening) Stop();
+
             Configure("0.0.0.0", port);
             IsRelay = false;
             RelayJoinCode = null;
@@ -262,6 +264,8 @@ namespace TumbangPreso.Net
 
         public bool StartClient(string address, int port = DefaultPort)
         {
+            if (_nm != null && _nm.IsListening) Stop();
+
             Configure(address, port);
             IsRelay = false;
             RelayJoinCode = null;
@@ -283,6 +287,8 @@ namespace TumbangPreso.Net
         /// </summary>
         public async Task<bool> StartRelayHost(int maxConnections = LobbySession.MaxConnections)
         {
+            if (_nm != null && _nm.IsListening) Stop();
+
             SetStatus("signing in to online services...");
 
             // ⚠ NO FALLBACK HERE, DELIBERATELY. Relay needs a real signed-in session, so there
@@ -362,6 +368,8 @@ namespace TumbangPreso.Net
         /// </summary>
         public async Task<bool> StartRelayClient(string relayJoinCode)
         {
+            if (_nm != null && _nm.IsListening) Stop();
+
             if (string.IsNullOrWhiteSpace(relayJoinCode))
             {
                 SetStatus("invalid relay join code");
