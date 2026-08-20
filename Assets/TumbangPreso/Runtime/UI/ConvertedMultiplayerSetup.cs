@@ -141,46 +141,59 @@ namespace TumbangPreso.UI
             _lanBox.transform.SetParent(parent, false);
 
             var img = _lanBox.AddComponent<Image>();
-            img.color = UiTheme.WoodDeep;
-            var panel = _lanBox.AddComponent<GodotPanel>();
-            panel.Variation = "WoodDeep";
+            img.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
+            img.type = Image.Type.Sliced;
+            img.color = Color.white;
 
             var rt = _lanBox.GetComponent<RectTransform>();
-            MenuKit.Place(rt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(900, 560));
+            MenuKit.Place(rt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(880, 500));
 
             var col = new GameObject("Column");
             col.transform.SetParent(_lanBox.transform, false);
             var colLayout = col.AddComponent<VerticalLayoutGroup>();
-            colLayout.spacing = 10;
-            colLayout.padding = new RectOffset(28, 28, 24, 24);
+            colLayout.spacing = 14;
+            colLayout.padding = new RectOffset(24, 24, 24, 24);
             colLayout.childControlWidth = true;
             colLayout.childControlHeight = false;
             colLayout.childForceExpandWidth = true;
             colLayout.childForceExpandHeight = false;
             MenuKit.Stretch(col.GetComponent<RectTransform>(), 0);
 
-            _lanBoxTitle = MenuKit.Label(col.transform, "GAMES ON YOUR NETWORK", 30, UiTheme.Amber,
-                                         Vector2.zero, Vector2.zero, new Vector2(0, 38), TextAnchor.MiddleLeft);
-            _lanBoxHint = MenuKit.Label(col.transform, "Click one to fill in its address, then press JOIN.", 18, UiTheme.CreamMuted,
-                                        Vector2.zero, Vector2.zero, new Vector2(0, 48), TextAnchor.MiddleLeft);
+            _lanBoxTitle = MenuKit.Label(col.transform, "NO GAMES FOUND YET", 28, UiTheme.Amber,
+                                         Vector2.zero, Vector2.zero, new Vector2(0, 36), TextAnchor.MiddleLeft);
+            _lanBoxHint = MenuKit.Label(col.transform,
+                                        "This finds games on your own network. If the host you want is missing - or is on Hamachi - type their address into the field above instead. Windows Firewall blocking the game is the usual reason a LAN game does not show up.",
+                                        17, UiTheme.CreamMuted,
+                                        Vector2.zero, Vector2.zero, new Vector2(0, 68), TextAnchor.MiddleLeft);
+            _lanBoxHint.horizontalOverflow = HorizontalWrapMode.Wrap;
 
             for (int i = 0; i < 4; i++)
             {
                 int index = i;
                 var rowBtn = MenuKit.WoodButton(col.transform, "", Vector2.zero, Vector2.zero,
-                                                new Vector2(0, 60), () => OnLanRowClicked(index));
+                                                new Vector2(0, 54), () => OnLanRowClicked(index));
                 rowBtn.gameObject.SetActive(false);
                 var rowElement = rowBtn.gameObject.AddComponent<LayoutElement>();
-                rowElement.preferredHeight = 60;
-                rowElement.minHeight = 60;
+                rowElement.preferredHeight = 54;
+                rowElement.minHeight = 54;
+
+                var rowTxt = rowBtn.GetComponentInChildren<Text>();
+                if (rowTxt != null)
+                {
+                    rowTxt.fontSize = 18;
+                    rowTxt.alignment = TextAnchor.MiddleLeft;
+                    rowTxt.rectTransform.offsetMin = new Vector2(16, 0);
+                    rowTxt.rectTransform.offsetMax = new Vector2(-16, 0);
+                }
+
                 _lanRows.Add(rowBtn);
             }
 
             var closeBtn = MenuKit.WoodButton(col.transform, "CLOSE", Vector2.zero, Vector2.zero,
-                                              new Vector2(0, 52), () => _lanBox.SetActive(false));
+                                              new Vector2(0, 54), () => _lanBox.SetActive(false));
             var closeElement = closeBtn.gameObject.AddComponent<LayoutElement>();
-            closeElement.preferredHeight = 52;
-            closeElement.minHeight = 52;
+            closeElement.preferredHeight = 54;
+            closeElement.minHeight = 54;
 
             _lanBox.SetActive(false);
         }
@@ -191,46 +204,59 @@ namespace TumbangPreso.UI
             _onlineBox.transform.SetParent(parent, false);
 
             var img = _onlineBox.AddComponent<Image>();
-            img.color = UiTheme.WoodDeep;
-            var panel = _onlineBox.AddComponent<GodotPanel>();
-            panel.Variation = "WoodDeep";
+            img.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
+            img.type = Image.Type.Sliced;
+            img.color = Color.white;
 
             var rt = _onlineBox.GetComponent<RectTransform>();
-            MenuKit.Place(rt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(900, 560));
+            MenuKit.Place(rt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(880, 500));
 
             var col = new GameObject("Column");
             col.transform.SetParent(_onlineBox.transform, false);
             var colLayout = col.AddComponent<VerticalLayoutGroup>();
-            colLayout.spacing = 10;
-            colLayout.padding = new RectOffset(28, 28, 24, 24);
+            colLayout.spacing = 14;
+            colLayout.padding = new RectOffset(24, 24, 24, 24);
             colLayout.childControlWidth = true;
             colLayout.childControlHeight = false;
             colLayout.childForceExpandWidth = true;
             colLayout.childForceExpandHeight = false;
             MenuKit.Stretch(col.GetComponent<RectTransform>(), 0);
 
-            _onlineBoxTitle = MenuKit.Label(col.transform, "ONLINE SERVERS", 30, UiTheme.Amber,
-                                           Vector2.zero, Vector2.zero, new Vector2(0, 38), TextAnchor.MiddleLeft);
-            _onlineBoxHint = MenuKit.Label(col.transform, "Click one to fill in its address, then press JOIN. Once in a lobby, friends can type your 4-character code.", 18, UiTheme.CreamMuted,
-                                          Vector2.zero, Vector2.zero, new Vector2(0, 48), TextAnchor.MiddleLeft);
+            _onlineBoxTitle = MenuKit.Label(col.transform, "NO ONLINE SERVERS ANSWERED", 28, UiTheme.Amber,
+                                           Vector2.zero, Vector2.zero, new Vector2(0, 36), TextAnchor.MiddleLeft);
+            _onlineBoxHint = MenuKit.Label(col.transform,
+                                          "Nothing in the online pool replied. It may be down, or your network may be blocking it. HOST GAME (LAN) and typing a host's address both still work - this screen keeps asking in the background.",
+                                          17, UiTheme.CreamMuted,
+                                          Vector2.zero, Vector2.zero, new Vector2(0, 68), TextAnchor.MiddleLeft);
+            _onlineBoxHint.horizontalOverflow = HorizontalWrapMode.Wrap;
 
             for (int i = 0; i < 4; i++)
             {
                 int index = i;
                 var rowBtn = MenuKit.WoodButton(col.transform, "", Vector2.zero, Vector2.zero,
-                                                new Vector2(0, 60), () => OnOnlineRowClicked(index));
+                                                new Vector2(0, 54), () => OnOnlineRowClicked(index));
                 rowBtn.gameObject.SetActive(false);
                 var rowElement = rowBtn.gameObject.AddComponent<LayoutElement>();
-                rowElement.preferredHeight = 60;
-                rowElement.minHeight = 60;
+                rowElement.preferredHeight = 54;
+                rowElement.minHeight = 54;
+
+                var rowTxt = rowBtn.GetComponentInChildren<Text>();
+                if (rowTxt != null)
+                {
+                    rowTxt.fontSize = 18;
+                    rowTxt.alignment = TextAnchor.MiddleLeft;
+                    rowTxt.rectTransform.offsetMin = new Vector2(16, 0);
+                    rowTxt.rectTransform.offsetMax = new Vector2(-16, 0);
+                }
+
                 _onlineRows.Add(rowBtn);
             }
 
             var closeBtn = MenuKit.WoodButton(col.transform, "CLOSE", Vector2.zero, Vector2.zero,
-                                              new Vector2(0, 52), () => _onlineBox.SetActive(false));
+                                              new Vector2(0, 54), () => _onlineBox.SetActive(false));
             var closeElement = closeBtn.gameObject.AddComponent<LayoutElement>();
-            closeElement.preferredHeight = 52;
-            closeElement.minHeight = 52;
+            closeElement.preferredHeight = 54;
+            closeElement.minHeight = 54;
 
             _onlineBox.SetActive(false);
         }
@@ -279,7 +305,7 @@ namespace TumbangPreso.UI
             {
                 _lanBoxHint.text = entries.Count > 0
                     ? "Click one to fill in its address, then press JOIN."
-                    : "This finds games on your local network. Make sure both devices are on the same Wi-Fi or LAN.";
+                    : "This finds games on your own network. If the host you want is missing - or is on Hamachi - type their address into the field above instead. Windows Firewall blocking the game is the usual reason a LAN game does not show up.";
             }
 
             _lanAddresses.Clear();
@@ -323,13 +349,13 @@ namespace TumbangPreso.UI
 
             if (_onlineBoxTitle != null)
             {
-                _onlineBoxTitle.text = servers.Count > 0 ? "ONLINE SERVERS" : "NO ONLINE SERVERS FOUND";
+                _onlineBoxTitle.text = servers.Count > 0 ? "ONLINE SERVERS" : "NO ONLINE SERVERS ANSWERED";
             }
             if (_onlineBoxHint != null)
             {
                 _onlineBoxHint.text = servers.Count > 0
-                    ? "Click one to fill in its join code, then press JOIN."
-                    : "No active online lobbies replied. You can host one with HOST ONLINE or connect directly via code or LAN.";
+                    ? "Click one to fill in its address, then press JOIN. Once you are in a lobby it shows a four-character code: read that out and a friend can type it here instead of an address to land in the same game."
+                    : "Nothing in the online pool replied. It may be down, or your network may be blocking it. HOST GAME (LAN) and typing a host's address both still work - this screen keeps asking in the background.";
             }
 
             _onlineCodesOrAddrs.Clear();
@@ -345,7 +371,8 @@ namespace TumbangPreso.UI
                     if (rowTxt != null)
                     {
                         string status = entry.InProgress ? "IN A MATCH" : "IN THE LOBBY";
-                        rowTxt.text = $"{entry.Name}   ·   {entry.Players}/{entry.Capacity}   ·   {status}\nCODE: {code}";
+                        string mapName = !string.IsNullOrEmpty(entry.Name) ? entry.Name.ToUpperInvariant() : "ESKINITA";
+                        rowTxt.text = $"SERVER {i + 1}   ·   {entry.Players}/{entry.Capacity}   ·   {mapName}   ·   {status}";
                         rowTxt.alignment = TextAnchor.MiddleLeft;
                     }
                     _onlineRows[i].gameObject.SetActive(true);

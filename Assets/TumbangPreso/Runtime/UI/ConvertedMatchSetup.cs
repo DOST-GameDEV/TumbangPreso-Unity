@@ -101,6 +101,11 @@ namespace TumbangPreso.UI
             MatchRpc.OnLobbyPicksSynced += HandleLobbyPicksSynced;
             MatchRpc.OnMatchStarted += HandleMatchStarted;
 
+            if (isNetworked && NetAuthority.IsHost)
+            {
+                SetStatus("You are now the lobby leader - you pick the map, the mode, and when to start.");
+            }
+
             Refresh();
         }
 
@@ -133,17 +138,20 @@ namespace TumbangPreso.UI
             var addrBox = new GameObject("AddressBox");
             addrBox.transform.SetParent(_addressRow.transform, false);
             var addrBoxImg = addrBox.AddComponent<Image>();
-            addrBoxImg.color = UiTheme.WoodDeep;
-            var addrBoxPanel = addrBox.AddComponent<GodotPanel>();
-            addrBoxPanel.Variation = "WoodDeep";
+            addrBoxImg.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
+            addrBoxImg.type = Image.Type.Sliced;
+            addrBoxImg.color = Color.white;
             var addrBoxElement = addrBox.AddComponent<LayoutElement>();
             addrBoxElement.flexibleWidth = 1;
             addrBoxElement.minHeight = 44;
 
             _addressText = MenuKit.Label(addrBox.transform, "", 22, UiTheme.Cream,
                                          new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero,
-                                         TextAnchor.MiddleCenter);
-            MenuKit.Stretch(_addressText.rectTransform, 8);
+                                         TextAnchor.MiddleLeft);
+            _addressText.rectTransform.anchorMin = Vector2.zero;
+            _addressText.rectTransform.anchorMax = Vector2.one;
+            _addressText.rectTransform.offsetMin = new Vector2(16, 0);
+            _addressText.rectTransform.offsetMax = new Vector2(-16, 0);
 
             _addressCopyBtn = MenuKit.WoodButton(_addressRow.transform, "COPY", Vector2.zero, Vector2.zero,
                                                  new Vector2(96, 40), OnAddressCopyPressed);
@@ -175,7 +183,7 @@ namespace TumbangPreso.UI
             var codeCaptionElement = codeCaption.AddComponent<LayoutElement>();
             codeCaptionElement.preferredWidth = 72;
             codeCaptionElement.minHeight = 44;
-            var captionText = MenuKit.Label(codeCaption.transform, "CODE", 26, UiTheme.Amber,
+            var captionText = MenuKit.Label(codeCaption.transform, "CODE", 24, UiTheme.Amber,
                                             new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero,
                                             TextAnchor.MiddleCenter);
             MenuKit.Stretch(captionText.rectTransform, 0);
@@ -184,17 +192,20 @@ namespace TumbangPreso.UI
             var codeBox = new GameObject("CodeBox");
             codeBox.transform.SetParent(_codeRow.transform, false);
             var codeBoxImg = codeBox.AddComponent<Image>();
-            codeBoxImg.color = UiTheme.WoodDeep;
-            var codeBoxPanel = codeBox.AddComponent<GodotPanel>();
-            codeBoxPanel.Variation = "WoodDeep";
+            codeBoxImg.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
+            codeBoxImg.type = Image.Type.Sliced;
+            codeBoxImg.color = Color.white;
             var codeBoxElement = codeBox.AddComponent<LayoutElement>();
             codeBoxElement.flexibleWidth = 1;
             codeBoxElement.minHeight = 44;
 
-            _codeText = MenuKit.Label(codeBox.transform, "", 26, UiTheme.Cream,
+            _codeText = MenuKit.Label(codeBox.transform, "", 24, UiTheme.Cream,
                                       new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero,
-                                      TextAnchor.MiddleCenter);
-            MenuKit.Stretch(_codeText.rectTransform, 8);
+                                      TextAnchor.MiddleLeft);
+            _codeText.rectTransform.anchorMin = Vector2.zero;
+            _codeText.rectTransform.anchorMax = Vector2.one;
+            _codeText.rectTransform.offsetMin = new Vector2(16, 0);
+            _codeText.rectTransform.offsetMax = new Vector2(-16, 0);
 
             _codeCopyBtn = MenuKit.WoodButton(_codeRow.transform, "COPY", Vector2.zero, Vector2.zero,
                                               new Vector2(96, 40), OnCodeCopyPressed);
@@ -422,29 +433,42 @@ namespace TumbangPreso.UI
         private void BuildSpectateButton()
         {
             var heading = Node("SeatHeading");
-            if (heading == null) return;
+            if (heading == null || heading.parent == null) return;
 
-            _spectate = MenuKit.WoodButton(heading.parent, "SPECTATE", Vector2.zero, Vector2.zero,
-                                           new Vector2(176.0f, 46.0f), ToggleSpectate);
+            Transform rows = heading.parent;
+            int headingIndex = heading.GetSiblingIndex();
 
+            var headerRow = new GameObject("HeaderRow");
+            headerRow.transform.SetParent(rows, false);
+            headerRow.transform.SetSiblingIndex(headingIndex);
+
+            var hLayout = headerRow.AddComponent<HorizontalLayoutGroup>();
+            hLayout.spacing = 16;
+            hLayout.childControlWidth = true;
+            hLayout.childControlHeight = true;
+            hLayout.childForceExpandWidth = false;
+            hLayout.childForceExpandHeight = true;
+
+            var hElement = headerRow.AddComponent<LayoutElement>();
+            hElement.minHeight = 46;
+            hElement.preferredHeight = 46;
+            hElement.flexibleWidth = 1;
+
+            heading.SetParent(headerRow.transform, false);
+            var headElement = heading.GetComponent<LayoutElement>();
+            if (headElement == null) headElement = heading.gameObject.AddComponent<LayoutElement>();
+            headElement.flexibleWidth = 1;
+            headElement.minHeight = 46;
+
+            _spectate = MenuKit.WoodButton(headerRow.transform, "SPECTATE", Vector2.zero, Vector2.zero,
+                                           new Vector2(176.0f, 44.0f), ToggleSpectate);
             _spectate.name = "SpectateButton";
-
-            var rt = _spectate.GetComponent<RectTransform>();
-            rt.SetSiblingIndex(heading.GetSiblingIndex());
-
-            var element = _spectate.gameObject.AddComponent<LayoutElement>();
-            element.preferredWidth = 176.0f;
-            element.preferredHeight = 46.0f;
-            element.ignoreLayout = true;
-
-            rt.anchorMin = new Vector2(1.0f, 1.0f);
-            rt.anchorMax = new Vector2(1.0f, 1.0f);
-            rt.pivot = new Vector2(1.0f, 1.0f);
-            rt.anchoredPosition = new Vector2(-24.0f, -18.0f);
-            rt.sizeDelta = new Vector2(176.0f, 46.0f);
+            var specElement = _spectate.gameObject.AddComponent<LayoutElement>();
+            specElement.preferredWidth = 176.0f;
+            specElement.preferredHeight = 44.0f;
 
             var label = _spectate.GetComponentInChildren<Text>();
-            if (label != null) label.fontSize = 19;
+            if (label != null) label.fontSize = 20;
         }
 
         private void ToggleSpectate()
@@ -521,13 +545,15 @@ namespace TumbangPreso.UI
 
             SceneFlow.SelectedMap = SceneFlow.Maps[Mathf.Clamp(_map, 0, SceneFlow.Maps.Length - 1)];
 
+            string mapName = SceneFlow.SelectedMap.ToUpperInvariant().Replace("BAYANPLAZA", "BAYAN PLAZA");
+            string tagline = SceneFlow.SelectedMap.ToLowerInvariant().Contains("plaza")
+                ? "Barangay plaza. Church, basketball ring, acacia."
+                : "Urban side street. Sari-sari, sampay, kanal.";
+
             SetText("BannerLabel", isNetworked ? "LOBBY" : "SINGLE PLAYER");
-
-            SetText("MapValueLabel",
-                    SceneFlow.SelectedMap.ToUpperInvariant().Replace("BAYANPLAZA", "BAYAN PLAZA"));
-
+            SetText("MapValueLabel", mapName);
             SetText("DifficultyValueLabel", Difficulties[_difficulty]);
-            SetText("DetailLabel", DifficultyDetails[_difficulty]);
+            SetText("DetailLabel", $"{mapName}   {tagline}");
 
             if (_preview != null)
             {
@@ -543,7 +569,7 @@ namespace TumbangPreso.UI
             string can = Roster.At(Roster.Cans, s.CanPick)?.Name ?? "PASIP";
             string slipper = Roster.At(Roster.Slippers, s.SlipperPick)?.Name ?? "TSINELAS";
 
-            SetText("CharacterButton", $"{person} · {can} · {slipper}");
+            SetText("CharacterButton", $"{person} · {can} · {slipper}  ▸");
 
             // Heading & hints
             if (isNetworked)

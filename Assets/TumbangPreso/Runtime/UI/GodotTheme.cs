@@ -227,6 +227,7 @@ namespace TumbangPreso.UI
             switch (variation)
             {
                 case "WoodPanel":
+                case "WoodDeep":
                     style = new PanelStyle
                     {
                         Fill = UiTheme.WoodDeep,
@@ -239,6 +240,7 @@ namespace TumbangPreso.UI
                 // The inset display slot: reads as carved into the panel rather than sitting on
                 // it, so it takes the pressed fill and drops the shadow.
                 case "WoodSlot":
+                case "WoodDark":
                     style = new PanelStyle
                     {
                         Fill = UiTheme.WoodDark,
