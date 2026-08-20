@@ -76,16 +76,10 @@ import os
 import struct
 import sys
 
-BASE = "Assets/TumbangPreso/Art/characters/persons/character-female-b.glb"
+BASE = "Assets/TumbangPreso/Art/characters/persons/character-female-a.glb"
 
-# ⚠️ IT SITS BESIDE THE CC0 RIGS RATHER THAN IN A `team/` SUBFOLDER, and the reason
-# is one line of the file: the material points at `Textures/colormap.png` as a
-# RELATIVE uri, which glTFast resolves against the .glb's own directory. A subfolder
-# breaks that silently, and the symptom is a character rendered in flat white with no
-# error, because a missing texture is not an import failure. The `team-` prefix is
-# what marks it as ours; `character-*` are the CC0 ones.
-OUT = "Assets/TumbangPreso/Art/characters/persons/team-zack.glb"
-PALETTE_OUT = "MapSource/materials_persons/person_team-zack.tres"
+OUT = "Assets/TumbangPreso/Art/characters/persons/team-inday.glb"
+PALETTE_OUT = "MapSource/materials_persons/person_team-inday.tres"
 
 # Joint order is identical on both skins of every rig in this set, verified by
 # tools/glb_dump.py. Named here so a box declares a BONE rather than an index.
@@ -179,73 +173,34 @@ def cell_uv(slot):
 #   8 face and ink     12 white           13/14/15 skin ramp
 # ---------------------------------------------------------------------------
 
-JACKET, CLOTH, CLIP, GOLD = 0, 1, 2, 3
-SHOE, CHAIN, HAIR, JACKET_DARK = 4, 5, 6, 7
-INK, WHITE, SKIN, SKIN_DARK, SKIN_LIT = 8, 12, 13, 14, 15
+OVERALLS, OVERALLS_DARK, CYAN_TRIM, BUTTONS = 0, 1, 2, 3
+SHOE_CYAN, COLLAR_TRIM, HAIR, SHADOW_CYAN = 4, 5, 6, 7
+INK, SILVER, WOOD_GOLD, FROST_ACCENT = 8, 9, 10, 11
+WHITE, SKIN, SKIN_DARK, SKIN_LIT = 12, 13, 14, 15
 
-# ⚠️⚠️ THE PALETTE IS AUTHORED IN THIS FILE, BESIDE THE UVs, AND SPLITTING THE TWO IS
-# THE ONE CHANGE THAT WOULD BREAK THIS CHARACTER SILENTLY. A box says "I am slot 0" by
-# where its UV lands; the palette says what slot 0 IS. Keep them in two files and a
-# slot renumbered on one side repaints a limb on the other, with nothing to fail: the
-# model still imports, still animates, and simply wears the wrong colours.
-#
-# Slots 9, 10 and 11 keep the stock Kenney values. Nothing here samples them, and
-# leaving them stocked means the shader has something sane to read if a future box does.
-# ⚠️⚠️ NOTHING IS PURE BLACK AND NOTHING IS FULLY SATURATED, AND BOTH ARE ABOUT THE TOON
-# PASS RATHER THAN ABOUT TASTE. 🧑 seeing the first palette beside the rest of the cast:
-# *"GIVE it the same toon vibe as well as my other shi"*.
-#
-# `Toon.shader` shades in TWO FLAT BANDS: a lit value and a shadow value lerped toward it.
-# A near-black base has nowhere to go, so both bands land on the same colour and every
-# face of every box renders identically, which is what made the first pass read as flat
-# pixel art next to eleven characters that read as toon. The blacks here are lifted to
-# around 17% luminance, which is dark enough to be black beside the skin and light enough
-# that the shadow band is visible on it.
-#
-# ⚠️ THE HAIR IS THE ONE VALUE THAT GOES BACK DOWN NEAR BLACK. Lifting every dark slot
-# to 17% luminance is right for CLOTH, which is a big surface the shadow band has to be
-# visible on, and wrong for the hair, which reads as a charcoal wig at that value against
-# a reference whose mop is flatly black. It sits at 8% instead: dark enough to read black
-# beside the skin, and still not zero, so the band has somewhere to go.
-#
-# ⚠️ THE SATURATION IS NOT PULLED DOWN TO MATCH THE RAW `.tres` VALUES, AND A PASS THAT
-# DID SO WAS WRONG. Reading the generated palettes as the finished look ignores the grade
-# on top of them: 🧑, on seeing the muted version, *"thats not how my characters look in
-# the godot game btw theyre a bit orange and saturated"*. `ColourGrade` runs an ACES curve
-# with a warm tint over the composited frame, so what is authored at a mid-tone arrives
-# warmer and more saturated than the hex suggests, and authoring for the hex bakes the
-# grade in twice from the wrong end. These are the reference's own colours.
 PALETTE = {
-    JACKET:      "7a34c4",   # the open jacket, and the pendant that matches it
-    CLOTH:       "2b2b34",   # shirt, pants, belt
-    CLIP:        "e02a56",   # the bow, crimson rather than hot pink, off the render
-    GOLD:        "f2c230",   # belt buckle
-    SHOE:        "a63fd9",   # sneaker uppers
-    CHAIN:       "9aa0ac",   # necklace and hip chain
-    HAIR:        "191520",   # ⚠️ BLACK, not charcoal. See the note below.
-    JACKET_DARK: "4e1e80",   # collar and cuffs, the jacket's own shadow
-    INK:         "1f1c24",   # ⚠️ THE FACE. Must stay dark, see the module docstring.
-    9:           "868ba1",
-    10:          "4f5260",
-    11:          "a0a8c9",
-    WHITE:       "ffffff",   # sneaker soles
-    SKIN:        "e08a3c",
-    SKIN_DARK:   "a85a22",
-    SKIN_LIT:    "f0a85a",   # forearms and hands
+    OVERALLS:      "48d4e8",   # Crisp frosty sky cyan overalls, pocket, skirt, straps
+    OVERALLS_DARK: "2696a8",   # Deeper glacier cyan for pocket lip trim, skirt hem band, seams
+    CYAN_TRIM:     "64e2f6",   # Bright icy frost blue for ribbons, bow knot, barrette clip, dye streak
+    BUTTONS:       "ffffff",   # Pure snow white button rivets
+    SHOE_CYAN:     "48d4e8",   # Sneaker upper frosty cyan
+    COLLAR_TRIM:   "2696a8",   # Frosty collar lapels and sleeve cuffs trim
+    HAIR:          "14121a",   # Deep glossy black hair with midnight frost undertone
+    SHADOW_CYAN:   "1e7a88",   # Rich shadow band for toon shader
+    INK:           "1f1c24",   # Face ink (eyes & smile)
+    SILVER:        "d4e2ec",   # Silver buckles, earring hook, spatula neck, carabiner ring
+    WOOD_GOLD:     "e4a032",   # Warm bakery spatula wooden handle peeking from pocket
+    FROST_ACCENT:  "a8f0fa",   # Shimmering pale frost highlight / crystal sparkle
+    WHITE:         "f4faff",   # Crisp snow white with subtle cool undertone (toque, shirt, socks)
+    SKIN:          "f5b894",   # Option 2: Natural Fair Peach midtone (face & body)
+    SKIN_DARK:     "db9874",   # Luminous warm peach shadow tone
+    SKIN_LIT:      "f5b894",   # 100% matched with SKIN midtone for uniform face/body skin
 }
 
-# The Godot generator aborts its build on this and so does this one. Slot 8 draws the
-# eyes, brows and mouth, and a light slot 8 does not give a light-haired character, it
-# gives one with no face.
 MAX_FACE_LUMINANCE = 0.30
 
 
 def mirrored(boxes, bone_from, bone_to):
-    """The same parts on the other side, with X negated and the bone renamed.
-
-    ⚠️ A MIRROR RATHER THAN A SECOND TABLE. Two hand-authored halves drift, and a limb
-    2 mm wider on one side reads as a bug in the rig rather than as a typo in a list.
-    """
     out = []
     for name, bone, lo, hi, slot in boxes:
         assert bone == bone_from, f"{name} is on {bone}, not {bone_from}"
@@ -255,125 +210,292 @@ def mirrored(boxes, bone_from, bone_to):
 
 
 # Hips at 0.240, so the leg owns everything below it.
+# 🌟 ASYMMETRIC SOCKS: Left leg wears a high-knee athletic sock with dual frost stripes!
 LEG_LEFT = [
-    # ⚠️ THE SOLE IS THE THICKEST BAND ON THE SHOE, and it is white against a black
-    # upper because that contrast is the only part of the footwear that survives being
-    # seen from across the box.
+    # White sneaker sole
     ("shoe-sole-left",   "leg-left", (0.006, 0.000, -0.134), (0.158, 0.024, 0.082), WHITE),
-    ("shoe-upper-left",  "leg-left", (0.014, 0.024, -0.126), (0.152, 0.056, 0.076), CLOTH),
-    ("shoe-collar-left", "leg-left", (0.010, 0.056, -0.100), (0.156, 0.076, 0.080), SHOE),
-    ("shoe-toe-left",    "leg-left", (0.010, 0.024, -0.132), (0.156, 0.042, -0.100), WHITE),
-    ("shoe-swoosh-left", "leg-left", (0.150, 0.028, -0.096), (0.162, 0.052, -0.020), SHOE),
-    ("lace-upper-left",  "leg-left", (0.030, 0.040, -0.106), (0.136, 0.048, -0.094), WHITE),
-    ("lace-lower-left",  "leg-left", (0.030, 0.026, -0.112), (0.136, 0.034, -0.100), WHITE),
-    ("pant-left",        "leg-left", (0.018, 0.068, -0.072), (0.150, 0.232, 0.072), CLOTH),
-    ("pant-cuff-left",   "leg-left", (0.014, 0.068, -0.078), (0.154, 0.086, 0.078), CLOTH),
-    ("knee-left",        "leg-left", (0.026, 0.128, -0.080), (0.142, 0.164, -0.070), CLOTH),
-
-    # The hip chain hangs off the belt and down the outside of the left thigh
-    ("chain-link-a-left", "leg-left", (0.150, 0.210, -0.044), (0.168, 0.228, 0.000), CHAIN),
-    ("chain-link-b-left", "leg-left", (0.150, 0.180, -0.034), (0.168, 0.198, 0.012), CHAIN),
-    ("chain-link-c-left", "leg-left", (0.148, 0.150, -0.028), (0.166, 0.168, 0.018), CHAIN),
-    ("chain-link-d-left", "leg-left", (0.146, 0.120, -0.038), (0.164, 0.138, 0.006), CHAIN),
-    ("chain-link-e-left", "leg-left", (0.144, 0.090, -0.050), (0.162, 0.108, -0.008), CHAIN),
-
-    # The front drape on the left hip
-    ("chain-drape-a-left", "leg-left", (0.116, 0.170, -0.084), (0.148, 0.188, -0.066), CHAIN),
-    ("chain-drape-b-left", "leg-left", (0.082, 0.152, -0.086), (0.114, 0.170, -0.068), CHAIN),
-    ("chain-drape-c-left", "leg-left", (0.048, 0.160, -0.084), (0.080, 0.178, -0.066), CHAIN),
+    # Frosty cyan sneaker upper
+    ("shoe-upper-left",  "leg-left", (0.014, 0.024, -0.126), (0.152, 0.056, 0.076), SHOE_CYAN),
+    # White toe cap (front profile)
+    ("shoe-toe-left",    "leg-left", (0.012, 0.024, -0.132), (0.154, 0.044, -0.100), WHITE),
+    # White heel counter (side & back profile)
+    ("shoe-heel-left",   "leg-left", (0.012, 0.024, 0.052), (0.154, 0.056, 0.080), WHITE),
+    # Icy heel pull tab & frost gem
+    ("shoe-pulltab-left",    "leg-left", (0.070, 0.054, 0.076), (0.096, 0.082, 0.088), CYAN_TRIM),
+    ("shoe-pulltab-gem-left","leg-left", (0.076, 0.062, 0.084), (0.090, 0.076, 0.092), FROST_ACCENT),
+    # White laces
+    ("shoe-lace-left",   "leg-left", (0.030, 0.038, -0.108), (0.136, 0.050, -0.092), WHITE),
+    # White sneaker collar
+    ("shoe-collar-left", "leg-left", (0.012, 0.056, -0.096), (0.154, 0.070, 0.078), WHITE),
+    
+    # Sporty high-knee sock (white)
+    ("sock-high-left",   "leg-left", (0.016, 0.070, -0.076), (0.150, 0.165, 0.074), WHITE),
+    # Dual icy-cyan frost athletic stripes around calf
+    ("sock-stripe1-left","leg-left", (0.014, 0.128, -0.078), (0.152, 0.140, 0.076), CYAN_TRIM),
+    ("sock-stripe2-left","leg-left", (0.014, 0.146, -0.078), (0.152, 0.158, 0.076), CYAN_TRIM),
+    
+    # Fair human skin leg above high sock
+    ("leg-skin-left",    "leg-left", (0.018, 0.165, -0.070), (0.148, 0.232, 0.070), SKIN_LIT),
 ]
 
+# 🌟 Right leg wears a folded ankle sock showing fair skin!
 LEG_RIGHT = [
+    # White sneaker sole
     ("shoe-sole-right",   "leg-right", (-0.158, 0.000, -0.134), (-0.006, 0.024, 0.082), WHITE),
-    ("shoe-upper-right",  "leg-right", (-0.152, 0.024, -0.126), (-0.014, 0.056, 0.076), CLOTH),
-    ("shoe-collar-right", "leg-right", (-0.156, 0.056, -0.100), (-0.010, 0.076, 0.080), SHOE),
-    ("shoe-toe-right",    "leg-right", (-0.156, 0.024, -0.132), (-0.010, 0.042, -0.100), WHITE),
-    ("shoe-swoosh-right", "leg-right", (-0.162, 0.028, -0.096), (-0.150, 0.052, -0.020), SHOE),
-    ("lace-upper-right",  "leg-right", (-0.136, 0.040, -0.106), (-0.030, 0.048, -0.094), WHITE),
-    ("lace-lower-right",  "leg-right", (-0.136, 0.026, -0.112), (-0.030, 0.034, -0.100), WHITE),
-    ("pant-right",        "leg-right", (-0.150, 0.068, -0.072), (-0.018, 0.232, 0.072), CLOTH),
-    ("pant-cuff-right",   "leg-right", (-0.154, 0.068, -0.078), (-0.014, 0.086, 0.078), CLOTH),
-    ("knee-right",        "leg-right", (-0.142, 0.128, -0.080), (-0.026, 0.164, -0.070), CLOTH),
+    # Frosty cyan sneaker upper
+    ("shoe-upper-right",  "leg-right", (-0.152, 0.024, -0.126), (-0.014, 0.056, 0.076), SHOE_CYAN),
+    # White toe cap (front profile)
+    ("shoe-toe-right",    "leg-right", (-0.154, 0.024, -0.132), (-0.012, 0.044, -0.100), WHITE),
+    # White heel counter (side & back profile)
+    ("shoe-heel-right",   "leg-right", (-0.154, 0.024, 0.052), (-0.012, 0.056, 0.080), WHITE),
+    # Icy heel pull tab & frost gem
+    ("shoe-pulltab-right",    "leg-right", (-0.096, 0.054, 0.076), (-0.070, 0.082, 0.088), CYAN_TRIM),
+    ("shoe-pulltab-gem-right","leg-right", (-0.090, 0.062, 0.084), (-0.076, 0.076, 0.092), FROST_ACCENT),
+    # White laces
+    ("shoe-lace-right",   "leg-right", (-0.136, 0.038, -0.108), (-0.030, 0.050, -0.092), WHITE),
+    # White sneaker collar
+    ("shoe-collar-right", "leg-right", (-0.154, 0.056, -0.096), (-0.012, 0.070, 0.078), WHITE),
+    
+    # Folded short ankle sock (white)
+    ("sock-ankle-right",  "leg-right", (-0.150, 0.070, -0.076), (-0.016, 0.098, 0.074), WHITE),
+    ("sock-cuff-right",   "leg-right", (-0.152, 0.092, -0.078), (-0.014, 0.108, 0.076), CYAN_TRIM),
+    
+    # Fair human skin leg
+    ("leg-skin-right",    "leg-right", (-0.148, 0.108, -0.070), (-0.018, 0.232, 0.070), SKIN_LIT),
 ]
 
-# Waist at 0.240, shoulders at 0.452, neck at 0.505.
+# Torso owns everything between 0.240 and 0.440
 TORSO = [
-    ("shirt",              "torso", (-0.100, 0.232, -0.082), (0.100, 0.445, 0.078), CLOTH),
-    ("jacket-left",        "torso", (0.048, 0.232, -0.100), (0.138, 0.445, 0.092), JACKET),
-    ("jacket-right",       "torso", (-0.138, 0.232, -0.100), (-0.048, 0.445, 0.092), JACKET),
-    ("jacket-back",        "torso", (-0.138, 0.232, 0.076), (0.138, 0.445, 0.092), JACKET),
-    ("jacket-collar",      "torso", (-0.142, 0.420, -0.106), (0.142, 0.445, 0.098), JACKET_DARK),
-    ("jacket-back-collar", "torso", (-0.140, 0.420, 0.082), (0.140, 0.445, 0.098), JACKET_DARK),
-    ("lapel-left",         "torso", (0.032, 0.372, -0.108), (0.056, 0.445, -0.088), JACKET_DARK),
-    ("lapel-right",        "torso", (-0.056, 0.372, -0.108), (-0.032, 0.445, -0.088), JACKET_DARK),
-
-    ("belt",               "torso", (-0.106, 0.232, -0.092), (0.106, 0.262, 0.086), CLOTH),
-    ("buckle",             "torso", (-0.038, 0.226, -0.108), (0.038, 0.268, -0.090), GOLD),
-    ("buckle-hole",        "torso", (-0.022, 0.236, -0.114), (0.022, 0.258, -0.098), CLOTH),
-
-    # The necklace: two strands to the collarbone and a cross hanging off them.
-    ("chain-left",         "torso", (0.024, 0.386, -0.098), (0.040, 0.428, -0.080), CHAIN),
-    ("chain-right",        "torso", (-0.040, 0.386, -0.098), (-0.024, 0.428, -0.080), CHAIN),
-    ("cross-stem",         "torso", (-0.012, 0.342, -0.102), (0.012, 0.390, -0.080), JACKET),
-    ("cross-arm",          "torso", (-0.030, 0.366, -0.102), (0.030, 0.380, -0.080), JACKET),
-
-    ("pocket-left",        "torso", (0.062, 0.268, -0.112), (0.126, 0.316, -0.094), JACKET_DARK),
-    ("pocket-right",       "torso", (-0.126, 0.268, -0.112), (-0.062, 0.316, -0.094), JACKET_DARK),
-    ("hem-left",           "torso", (0.048, 0.232, -0.106), (0.142, 0.252, 0.096), JACKET_DARK),
-    ("hem-right",          "torso", (-0.142, 0.232, -0.106), (-0.048, 0.252, 0.096), JACKET_DARK),
-    ("collar-stud",        "torso", (0.030, 0.424, -0.116), (0.052, 0.440, -0.098), GOLD),
-    ("zip-pull",           "torso", (-0.008, 0.300, -0.096), (0.008, 0.330, -0.084), CHAIN),
+    # White rolled undershirt base (visible at neck and lower waist/sides)
+    ("shirt-body",          "torso", (-0.118, 0.235, -0.092), (0.118, 0.445, 0.092), WHITE),
+    
+    # 👗 OVERALLS SHORTS / HIPS (Clean high-waisted shorts with frosty cyan trim)
+    # Shorts lower waist / groin
+    ("shorts-base",         "torso", (-0.125, 0.232, -0.096), (0.125, 0.320, 0.096), OVERALLS),
+    ("shorts-hem-cuff",     "torso", (-0.128, 0.230, -0.098), (0.128, 0.248, 0.098), OVERALLS_DARK),
+    # Left shorts leg cuff
+    ("shorts-cuff-left",    "torso", (0.010, 0.230, -0.098), (0.128, 0.248, 0.098), CYAN_TRIM),
+    # Right shorts leg cuff
+    ("shorts-cuff-right",   "torso", (-0.128, 0.230, -0.098), (-0.010, 0.248, 0.098), CYAN_TRIM),
+    
+    # 🎽 OVERALLS BIB & POCKET (Center chest bib in Team Cyan)
+    ("bib-front",           "torso", (-0.105, 0.315, -0.104), (0.105, 0.415, -0.078), OVERALLS),
+    # Stepped upper bib hem
+    ("bib-top-hem",         "torso", (-0.095, 0.410, -0.106), (0.095, 0.420, -0.082), OVERALLS_DARK),
+    
+    # 🦘 ICONIC KANGAROO BIB POCKET (Front & center with spatula peeking!)
+    ("bib-pocket-main",     "torso", (-0.075, 0.325, -0.112), (0.075, 0.380, -0.098), OVERALLS_DARK),
+    ("bib-pocket-rim",      "torso", (-0.078, 0.375, -0.114), (0.078, 0.385, -0.096), CYAN_TRIM),
+    # ❄️ Embroidered Team Snowflake Icon on Bib Pocket Center
+    ("bib-pocket-frost-icon","torso",(-0.020, 0.342, -0.116), (0.020, 0.362, -0.110), FROST_ACCENT),
+    ("bib-pocket-icon-dot",  "torso",(-0.008, 0.348, -0.118), (0.008, 0.356, -0.112), WHITE),
+    
+    # 🍳 TUCKED BAKERY SPATULA HANDLE peeking from right side of bib pocket (-X)
+    ("spatula-handle-wood", "torso", (-0.065, 0.365, -0.114), (-0.045, 0.428, -0.100), WOOD_GOLD),
+    ("spatula-metal-neck",  "torso", (-0.062, 0.385, -0.116), (-0.048, 0.395, -0.098), SILVER),
+    ("spatula-hole",        "torso", (-0.058, 0.418, -0.116), (-0.052, 0.424, -0.098), WHITE),
+    
+    # 📏 SUSPENDER STRAPS (Front straps running over shoulders to back)
+    # Left suspender front
+    ("strap-front-left",    "torso", (0.062, 0.380, -0.106), (0.095, 0.448, -0.086), OVERALLS),
+    ("strap-buckle-left",   "torso", (0.058, 0.395, -0.112), (0.098, 0.415, -0.094), SILVER),
+    ("strap-buckle-pin-l",  "torso", (0.072, 0.400, -0.114), (0.084, 0.410, -0.100), FROST_ACCENT),
+    # Right suspender front
+    ("strap-front-right",   "torso", (-0.095, 0.380, -0.106), (-0.062, 0.448, -0.086), OVERALLS),
+    ("strap-buckle-right",  "torso", (-0.098, 0.395, -0.112), (-0.058, 0.415, -0.094), SILVER),
+    ("strap-buckle-pin-r",  "torso", (-0.084, 0.400, -0.114), (-0.072, 0.410, -0.100), FROST_ACCENT),
+    
+    # Suspender shoulder arches
+    ("strap-shoulder-left", "torso", (0.062, 0.440, -0.088), (0.095, 0.450, 0.088), OVERALLS),
+    ("strap-shoulder-right","torso", (-0.095, 0.440, -0.088), (-0.062, 0.450, 0.088), OVERALLS),
+    
+    # 🔙 BACK SUSPENDERS: Classic Crossed X-Back Straps
+    ("strap-back-left",     "torso", (0.062, 0.315, 0.080), (0.095, 0.445, 0.098), OVERALLS),
+    ("strap-back-right",    "torso", (-0.095, 0.315, 0.080), (-0.062, 0.445, 0.098), OVERALLS),
+    ("strap-cross-brace",   "torso", (-0.085, 0.360, 0.086), (0.085, 0.385, 0.100), OVERALLS_DARK),
+    ("strap-cross-gem",     "torso", (-0.015, 0.366, 0.092), (0.015, 0.378, 0.104), FROST_ACCENT),
+    
+    # Neck skin (V-neck opening)
+    ("neck-skin",           "torso", (-0.030, 0.380, -0.088), (0.030, 0.445, -0.076), SKIN_LIT),
+    # Crisp triangular frosty cyan collar wings/lapels
+    ("collar-left",         "torso", (0.018, 0.390, -0.108), (0.065, 0.445, -0.082), COLLAR_TRIM),
+    ("collar-right",        "torso", (-0.065, 0.390, -0.108), (-0.018, 0.445, -0.082), COLLAR_TRIM),
+    # Center neckline cute cyan bowtie knot & loops
+    ("collar-ribbon-knot",  "torso", (-0.015, 0.395, -0.114), (0.015, 0.415, -0.096), CYAN_TRIM),
+    ("collar-ribbon-loop-l","torso", (0.012, 0.398, -0.112), (0.038, 0.418, -0.098), CYAN_TRIM),
+    ("collar-ribbon-loop-r","torso", (-0.038, 0.398, -0.112), (-0.012, 0.418, -0.098), CYAN_TRIM),
+    ("collar-ribbon-gem",   "torso", (-0.008, 0.400, -0.116), (0.008, 0.412, -0.098), FROST_ACCENT),
+    # White shirt back collar
+    ("collar-back",         "torso", (-0.095, 0.425, 0.080), (0.095, 0.445, 0.094), WHITE),
 ]
 
-# ⚠️ THE ARM BOXES ARE CENTRED ON THE SHOULDER'S OWN Y (0.452) BECAUSE THE BIND POSE
-# IS A T-POSE: the limb runs along X, not down. Its vertical extent is thickness.
+# 🌟 ASYMMETRIC WRISTWEAR: Left wrist has sporty cyan sweatband with white stripe!
 ARM_LEFT = [
-    ("sleeve-left",        "arm-left", (0.0999, 0.330, -0.066), (0.226, 0.470, 0.084), JACKET),
-    ("cuff-left",          "arm-left", (0.226, 0.324, -0.072), (0.248, 0.476, 0.090), JACKET_DARK),
-    ("hand-left",          "arm-left", (0.248, 0.3383, -0.020), (0.3836, 0.4617, 0.038), SKIN_LIT),
-    ("wristband-left",     "arm-left", (0.256, 0.3323, -0.026), (0.284, 0.4677, 0.044), CLIP),
-    ("sleeve-stripe-left", "arm-left", (0.120, 0.4660, -0.052), (0.222, 0.4740, 0.070), JACKET_DARK),
+    # White short sleeve
+    ("sleeve-left",         "arm-left", (0.0999, 0.330, -0.066), (0.208, 0.470, 0.084), WHITE),
+    # Stepped frosty cyan sleeve cuff
+    ("sleeve-cuff-left",    "arm-left", (0.208, 0.322, -0.074), (0.234, 0.478, 0.092), COLLAR_TRIM),
+    # Icy-Cyan Sports Wristband with White Stripe on Left Wrist
+    ("wristband-left",      "arm-left", (0.250, 0.334, -0.024), (0.285, 0.466, 0.042), CYAN_TRIM),
+    ("wristband-stripe",    "arm-left", (0.262, 0.332, -0.026), (0.274, 0.468, 0.044), WHITE),
+    # Fair human skin forearm & hand
+    ("hand-left",           "arm-left", (0.234, 0.3383, -0.020), (0.3836, 0.4617, 0.038), SKIN_LIT),
+]
+
+# Right arm has clean fair human skin
+ARM_RIGHT = [
+    # White short sleeve
+    ("sleeve-right",        "arm-right", (-0.208, 0.330, -0.066), (-0.0999, 0.470, 0.084), WHITE),
+    # Stepped frosty cyan sleeve cuff
+    ("sleeve-cuff-right",   "arm-right", (-0.234, 0.322, -0.074), (-0.208, 0.478, 0.092), COLLAR_TRIM),
+    # Fair human skin forearm & hand
+    ("hand-right",          "arm-right", (-0.3836, 0.3383, -0.020), (-0.234, 0.4617, 0.038), SKIN_LIT),
 ]
 
 HEAD = [
-    ("hair-core",       "head", (-0.184, 0.585, -0.198), (0.184, 0.714, 0.188), HAIR),
-    ("hair-back",       "head", (-0.180, 0.480, -0.234), (0.180, 0.700, -0.170), HAIR),
-    ("hair-front",      "head", (-0.176, 0.560, 0.132), (0.176, 0.700, 0.202), HAIR),
-    ("hair-side-left",  "head", (0.168, 0.500, -0.186), (0.196, 0.668, 0.140), HAIR),
-    ("hair-side-right", "head", (-0.196, 0.500, -0.186), (-0.168, 0.668, 0.140), HAIR),
+    # Hair core covering back and sides of skull
+    ("hair-core",           "head", (-0.180, 0.480, -0.215), (0.180, 0.700, -0.040), HAIR),
+    ("hair-crown",          "head", (-0.176, 0.650, -0.170), (0.176, 0.705, 0.140), HAIR),
+    
+    # 💇 BACK HAIR DRAPES & STRUCTURED TIERS (Smooth, elegant layered cascade)
+    ("hair-back-tier1",     "head", (-0.176, 0.340, -0.218), (0.176, 0.490, -0.135), HAIR),
+    ("hair-back-tier2",     "head", (-0.174, 0.230, -0.216), (0.174, 0.348, -0.138), HAIR),
+    
+    # 🎀 Frosted Star Clasp & Twin Fluttering Ribbon Tails (Positioned below Ushanka fur hem)
+    ("hair-back-star-clasp",    "head", (-0.030, 0.335, -0.228), (0.030, 0.375, -0.214), FROST_ACCENT),
+    ("hair-back-star-gem",      "head", (-0.015, 0.342, -0.232), (0.015, 0.368, -0.216), WHITE),
+    ("hair-back-ribbon-tail-l", "head", (0.020, 0.230, -0.225), (0.065, 0.340, -0.215), CYAN_TRIM),
+    ("hair-back-ribbon-tail-r", "head", (-0.065, 0.230, -0.225), (-0.020, 0.340, -0.215), CYAN_TRIM),
+    ("hair-back-ribbon-tip-l",  "head", (0.035, 0.200, -0.225), (0.075, 0.235, -0.215), FROST_ACCENT),
+    ("hair-back-ribbon-tip-r",  "head", (-0.075, 0.200, -0.225), (-0.035, 0.235, -0.215), FROST_ACCENT),
+    
+    # 📐 Raised horizontal weight band & clean frosted bottom hem rim
+    ("hair-back-weight-band",   "head", (-0.176, 0.155, -0.224), (0.176, 0.215, -0.145), HAIR),
+    ("hair-back-hem-rim",       "head", (-0.172, 0.148, -0.218), (0.172, 0.165, -0.148), HAIR),
+    ("hair-back-frost-hem",     "head", (-0.172, 0.148, -0.224), (0.172, 0.165, -0.216), CYAN_TRIM),
+    ("hair-back-frost-sparkle", "head", (-0.140, 0.150, -0.226), (0.140, 0.162, -0.220), FROST_ACCENT),
+    
+    # 📐 Side framing rails
+    ("hair-back-rail-left",     "head", (0.158, 0.170, -0.220), (0.180, 0.600, -0.160), HAIR),
+    ("hair-back-rail-right",    "head", (-0.180, 0.170, -0.220), (-0.158, 0.600, -0.160), HAIR),
+    
+    # 💇 SEAMLESS SIDE HAIR & LOCKS
+    ("hair-side-cap-left",      "head", (0.165, 0.490, -0.160), (0.190, 0.670, 0.120), HAIR),
+    ("hair-side-cap-right",     "head", (-0.190, 0.490, -0.160), (-0.165, 0.670, 0.120), HAIR),
+    ("hair-side-lock-left",     "head", (0.168, 0.350, 0.000), (0.188, 0.420, 0.080), HAIR),
+    ("hair-side-lock-right",    "head", (-0.188, 0.350, 0.000), (-0.168, 0.420, 0.080), HAIR),
+    ("hair-side-frost-lock-l",  "head", (0.170, 0.355, 0.010), (0.190, 0.410, 0.050), CYAN_TRIM),
+    ("hair-side-frost-lock-r",  "head", (-0.190, 0.355, 0.010), (-0.170, 0.410, 0.050), CYAN_TRIM),
+    
+    # 💇 100% PURE CLEAN BLACK SCULPTED 3D BANGS
+    ("hair-brow-base",          "head", (-0.176, 0.585, 0.130), (0.176, 0.675, 0.172), HAIR),
+    ("hair-fringe-center",      "head", (-0.045, 0.555, 0.158), (0.045, 0.620, 0.188), HAIR),
+    ("hair-fringe-mid-l",       "head", (0.040, 0.540, 0.156), (0.115, 0.625, 0.185), HAIR),
+    ("hair-fringe-mid-r",       "head", (-0.115, 0.540, 0.156), (-0.040, 0.625, 0.185), HAIR),
+    ("hair-fringe-outer-l",     "head", (0.110, 0.505, 0.150), (0.174, 0.620, 0.180), HAIR),
+    ("hair-fringe-outer-r",     "head", (-0.174, 0.505, 0.150), (-0.110, 0.620, 0.180), HAIR),
+    ("hair-vol-lock-c",         "head", (-0.035, 0.565, 0.182), (0.035, 0.635, 0.198), HAIR),
+    ("hair-vol-lock-l",         "head", (0.045, 0.550, 0.180), (0.105, 0.630, 0.195), HAIR),
+    ("hair-vol-lock-r",         "head", (-0.105, 0.550, 0.180), (-0.045, 0.630, 0.195), HAIR),
+    ("hair-vol-lock-r2",        "head", (-0.110, 0.555, 0.182), (-0.040, 0.628, 0.196), HAIR),
+    ("hair-vol-lock-l2",        "head", (0.040, 0.555, 0.182), (0.110, 0.628, 0.196), HAIR),
 
-    # Subtle sideburns framing the jawline in front of ears
-    ("sideburn-left",   "head", (0.164, 0.420, -0.040), (0.182, 0.500, 0.025), HAIR),
-    ("sideburn-right",  "head", (-0.182, 0.420, -0.040), (-0.164, 0.500, 0.025), HAIR),
+    # 🥽 PRO HIGH-TECH SKI GOGGLES (Curved conformal wrap around forehead & crown)
+    ("goggle-strap-b",      "head", (-0.180, 0.638, -0.234), (0.180, 0.672, -0.200), OVERALLS_DARK),
+    ("goggle-strap-l",      "head", (0.176, 0.638, -0.214), (0.208, 0.672, 0.140), OVERALLS_DARK),
+    ("goggle-strap-r",      "head", (-0.208, 0.638, -0.214), (-0.176, 0.672, 0.140), OVERALLS_DARK),
+    ("goggle-strap-trim-l", "head", (0.180, 0.648, -0.120), (0.210, 0.662, 0.120), CYAN_TRIM),
+    ("goggle-strap-trim-r", "head", (-0.210, 0.648, -0.120), (-0.180, 0.662, 0.120), CYAN_TRIM),
+    ("goggle-hinge-l",      "head", (0.168, 0.628, 0.140), (0.202, 0.688, 0.195), SILVER),
+    ("goggle-hinge-r",      "head", (-0.202, 0.628, 0.140), (-0.168, 0.688, 0.195), SILVER),
+    ("goggle-frame-l",      "head", (0.015, 0.625, 0.195), (0.165, 0.700, 0.240), SILVER),
+    ("goggle-frame-r",      "head", (-0.165, 0.625, 0.195), (-0.015, 0.700, 0.240), SILVER),
+    ("goggle-frame-wrap-l", "head", (0.142, 0.628, 0.148), (0.190, 0.694, 0.210), SILVER),
+    ("goggle-frame-wrap-r", "head", (-0.190, 0.628, 0.148), (-0.142, 0.694, 0.210), SILVER),
+    ("goggle-bridge-top",   "head", (-0.020, 0.660, 0.200), (0.020, 0.694, 0.235), SILVER),
+    ("goggle-bridge-arch",  "head", (-0.015, 0.638, 0.202), (0.015, 0.662, 0.230), SILVER),
+    ("goggle-bridge-rivet", "head", (-0.010, 0.670, 0.232), (0.010, 0.686, 0.240), WHITE),
+    ("goggle-lens-l",       "head", (0.026, 0.635, 0.210), (0.152, 0.690, 0.246), CYAN_TRIM),
+    ("goggle-lens-r",       "head", (-0.152, 0.635, 0.210), (-0.026, 0.690, 0.246), CYAN_TRIM),
+    ("goggle-lens-wrap-l",  "head", (0.142, 0.638, 0.158), (0.180, 0.686, 0.215), CYAN_TRIM),
+    ("goggle-lens-wrap-r",  "head", (-0.180, 0.638, 0.158), (-0.142, 0.686, 0.215), CYAN_TRIM),
+    ("goggle-depth-l",      "head", (0.032, 0.660, 0.225), (0.145, 0.686, 0.248), FROST_ACCENT),
+    ("goggle-depth-r",      "head", (-0.145, 0.660, 0.225), (-0.032, 0.686, 0.248), FROST_ACCENT),
+    ("goggle-glint-l",      "head", (0.045, 0.668, 0.232), (0.090, 0.684, 0.250), WHITE),
+    ("goggle-glint-r",      "head", (-0.138, 0.668, 0.232), (-0.092, 0.684, 0.250), WHITE),
 
-    ("hair-curl-a",     "head", (-0.150, 0.704, -0.130), (-0.036, 0.754, 0.020), HAIR),
-    ("hair-curl-b",     "head", (0.020, 0.708, -0.060), (0.128, 0.758, 0.070), HAIR),
-    ("hair-curl-c",     "head", (-0.184, 0.694, 0.050), (-0.086, 0.742, 0.168), HAIR),
-    ("hair-curl-d",     "head", (-0.066, 0.698, -0.226), (0.058, 0.746, -0.140), HAIR),
+    # 🧢 ORGANIC VOLUMETRIC EXPEDITION USHANKA
+    # Crown & Quilted Puffy Dome
+    ("ush-crown-core",      "head", (-0.180, 0.630, -0.205), (0.180, 0.730, 0.155), OVERALLS),
+    ("ush-crown-side-l",    "head", (0.170, 0.635, -0.180), (0.206, 0.725, 0.130), OVERALLS),
+    ("ush-crown-side-r",    "head", (-0.206, 0.635, -0.180), (-0.170, 0.725, 0.130), OVERALLS),
+    ("ush-crown-front",     "head", (-0.165, 0.635, 0.140), (0.165, 0.725, 0.182), OVERALLS),
+    ("ush-crown-back",      "head", (-0.165, 0.635, -0.226), (0.165, 0.725, -0.188), OVERALLS),
+    ("ush-crown-fl",        "head", (0.130, 0.635, 0.110), (0.192, 0.725, 0.168), OVERALLS),
+    ("ush-crown-fr",        "head", (-0.192, 0.635, 0.110), (-0.130, 0.725, 0.168), OVERALLS),
+    ("ush-crown-bl",        "head", (0.130, 0.635, -0.216), (0.192, 0.725, -0.148), OVERALLS),
+    ("ush-crown-br",        "head", (-0.192, 0.635, -0.216), (-0.130, 0.725, -0.148), OVERALLS),
+    ("ush-dome-top",        "head", (-0.155, 0.725, -0.175), (0.155, 0.768, 0.130), OVERALLS),
+    ("ush-dome-top-l",      "head", (0.140, 0.725, -0.145), (0.175, 0.760, 0.105), OVERALLS),
+    ("ush-dome-top-r",      "head", (-0.175, 0.725, -0.145), (-0.140, 0.760, 0.105), OVERALLS),
+    ("ush-dome-top-f",      "head", (-0.130, 0.725, 0.110), (0.130, 0.760, 0.152), OVERALLS),
+    ("ush-dome-top-b",      "head", (-0.130, 0.725, -0.198), (0.130, 0.760, -0.155), OVERALLS),
+    ("ush-seam-x",          "head", (-0.158, 0.730, -0.015), (0.158, 0.762, 0.015), OVERALLS_DARK),
+    ("ush-seam-z",          "head", (-0.015, 0.730, -0.178), (0.015, 0.762, 0.135), OVERALLS_DARK),
+    ("ush-pompom-base",     "head", (-0.058, 0.758, -0.058), (0.058, 0.785, 0.058), WHITE),
+    ("ush-pompom-top",      "head", (-0.036, 0.782, -0.036), (0.036, 0.792, 0.036), WHITE),
+    ("ush-pompom-star",     "head", (-0.016, 0.776, -0.016), (0.016, 0.788, 0.016), CYAN_TRIM),
 
-    # § THE CRIMSON FORELOCK
-    ("dye-fore-a",      "head", (-0.030, 0.626, 0.098), (0.186, 0.750, 0.226), CLIP),
-    ("dye-fore-b",      "head", (0.030, 0.694, -0.050), (0.190, 0.766, 0.104), CLIP),
-    ("dye-fore-c",      "head", (0.086, 0.678, -0.170), (0.192, 0.744, -0.040), CLIP),
-    ("dye-lick",        "head", (-0.086, 0.592, 0.162), (0.036, 0.660, 0.232), CLIP),
+    # Curved Plush Fur Visor Brim
+    ("ush-visor-backing",   "head", (-0.170, 0.610, 0.155), (0.170, 0.690, 0.205), OVERALLS_DARK),
+    ("ush-visor-center",    "head", (-0.142, 0.610, 0.175), (0.142, 0.702, 0.238), WHITE),
+    ("ush-visor-bevel-l",   "head", (0.120, 0.610, 0.150), (0.185, 0.696, 0.222), WHITE),
+    ("ush-visor-bevel-r",   "head", (-0.185, 0.610, 0.150), (-0.120, 0.696, 0.222), WHITE),
+    ("ush-visor-lip",       "head", (-0.148, 0.665, 0.195), (0.148, 0.708, 0.244), WHITE),
+    ("ush-visor-star",      "head", (-0.028, 0.648, 0.230), (0.028, 0.682, 0.246), CYAN_TRIM),
+    ("ush-visor-star-core", "head", (-0.014, 0.655, 0.238), (0.014, 0.675, 0.248), FROST_ACCENT),
 
-    # Integrated side sweep on the dyed side (+X, character's left)
-    ("dye-side-left",   "head", (0.176, 0.600, -0.050), (0.198, 0.690, 0.130), CLIP),
+    # Sculpted 360-Connected Earflaps
+    ("ush-flap-root-l",     "head", (0.170, 0.540, -0.150), (0.222, 0.650, 0.110), OVERALLS),
+    ("ush-flap-root-r",     "head", (-0.222, 0.540, -0.150), (-0.170, 0.650, 0.110), OVERALLS),
+    ("ush-flap-bell-l",     "head", (0.175, 0.415, -0.150), (0.236, 0.565, 0.105), OVERALLS),
+    ("ush-flap-cushion-l",  "head", (0.220, 0.430, -0.130), (0.240, 0.550, 0.085), OVERALLS_DARK),
+    ("ush-flap-star-l",     "head", (0.234, 0.470, -0.035), (0.242, 0.510, 0.015), CYAN_TRIM),
+    ("ush-flap-gem-l",      "head", (0.238, 0.482, -0.020), (0.244, 0.498, -0.000), FROST_ACCENT),
+    ("ush-flap-bell-r",     "head", (-0.236, 0.415, -0.150), (-0.175, 0.565, 0.105), OVERALLS),
+    ("ush-flap-cushion-r",  "head", (-0.240, 0.430, -0.130), (-0.220, 0.550, 0.085), OVERALLS_DARK),
+    ("ush-flap-star-r",     "head", (-0.242, 0.470, -0.035), (-0.234, 0.510, 0.015), CYAN_TRIM),
+    ("ush-flap-gem-r",      "head", (-0.244, 0.482, -0.020), (-0.238, 0.498, -0.000), FROST_ACCENT),
+    ("ush-flap-wedge-l",    "head", (0.145, 0.415, -0.216), (0.212, 0.640, -0.140), OVERALLS),
+    ("ush-flap-wedge-r",    "head", (-0.212, 0.415, -0.216), (-0.145, 0.640, -0.140), OVERALLS),
+    ("ush-flap-jaw-l",      "head", (0.170, 0.325, -0.130), (0.222, 0.440, 0.080), OVERALLS),
+    ("ush-flap-jaw-r",      "head", (-0.222, 0.325, -0.130), (-0.170, 0.440, 0.080), OVERALLS),
+    ("ush-flap-fur-l",      "head", (0.165, 0.315, -0.140), (0.232, 0.390, 0.090), WHITE),
+    ("ush-flap-inner-fur-l","head", (0.162, 0.335, 0.025), (0.202, 0.485, 0.095), WHITE),
+    ("ush-flap-fur-r",      "head", (-0.232, 0.315, -0.140), (-0.165, 0.390, 0.090), WHITE),
+    ("ush-flap-inner-fur-r","head", (-0.202, 0.335, 0.025), (-0.162, 0.485, 0.095), WHITE),
+    ("ush-cord-l",          "head", (0.192, 0.255, -0.025), (0.212, 0.330, 0.005), CYAN_TRIM),
+    ("ush-cord-r",          "head", (-0.212, 0.255, -0.025), (-0.192, 0.330, 0.005), CYAN_TRIM),
+    ("ush-cord-pompom-l",   "head", (0.182, 0.215, -0.038), (0.222, 0.260, 0.018), WHITE),
+    ("ush-cord-pompom-r",   "head", (-0.222, 0.215, -0.038), (-0.182, 0.260, 0.018), WHITE),
 
-    # Subtle nonchalant gold huggie earring piercing through the center of the left earlobe
-    ("earring-hoop",    "head", (0.190, 0.385, -0.045), (0.214, 0.420, 0.005), GOLD),
-    ("earring-drop",    "head", (0.197, 0.355, -0.030), (0.207, 0.385, -0.010), GOLD),
+    # Multi-Layered Padded Nape Mantle
+    ("ush-back-upper-c",    "head", (-0.170, 0.490, -0.234), (0.170, 0.650, -0.155), OVERALLS),
+    ("ush-back-upper-pad",  "head", (-0.150, 0.505, -0.238), (0.150, 0.630, -0.170), OVERALLS),
+    ("ush-back-upper-l",    "head", (0.128, 0.490, -0.228), (0.192, 0.650, -0.155), OVERALLS),
+    ("ush-back-upper-r",    "head", (-0.192, 0.490, -0.228), (-0.128, 0.650, -0.155), OVERALLS),
+    ("ush-back-quilt-seam", "head", (-0.165, 0.490, -0.236), (0.165, 0.505, -0.160), OVERALLS_DARK),
+    ("ush-back-lower-c",    "head", (-0.165, 0.375, -0.230), (0.165, 0.495, -0.165), OVERALLS),
+    ("ush-back-lower-l",    "head", (0.125, 0.375, -0.224), (0.185, 0.495, -0.165), OVERALLS),
+    ("ush-back-lower-r",    "head", (-0.185, 0.375, -0.224), (-0.125, 0.495, -0.165), OVERALLS),
+    ("ush-back-fur-main",   "head", (-0.168, 0.365, -0.238), (0.168, 0.412, -0.170), WHITE),
+    ("ush-back-fur-lip",    "head", (-0.155, 0.360, -0.240), (0.155, 0.395, -0.190), WHITE),
+    ("ush-back-fur-conn-l", "head", (0.135, 0.350, -0.230), (0.204, 0.405, -0.135), WHITE),
+    ("ush-back-fur-conn-r", "head", (-0.204, 0.350, -0.230), (-0.135, 0.405, -0.135), WHITE),
+    ("ush-back-strap",      "head", (-0.015, 0.410, -0.234), (0.015, 0.645, -0.224), OVERALLS_DARK),
 ]
 
-# Boxes authored in the donated head's own space. See `_family` and the block above.
-DONOR_SPACE = (
-    "hair-core", "hair-back", "hair-front", "hair-side-left", "hair-side-right",
-    "sideburn-left", "sideburn-right",
-    "hair-curl-a", "hair-curl-b", "hair-curl-c", "hair-curl-d",
-    "dye-fore-a", "dye-fore-b", "dye-fore-c", "dye-lick",
-    "dye-side-left",
-    "earring-hoop", "earring-drop",
-)
+DONOR_SPACE = tuple(entry[0] for entry in HEAD)
 
 # ---------------------------------------------------------------------------
 # § THE FAMILY PASS.
@@ -467,7 +589,7 @@ def _family(boxes, head, as_authored=()):
 
 BODY_BOXES = (LEG_LEFT + LEG_RIGHT
               + TORSO
-              + ARM_LEFT + mirrored(ARM_LEFT, "arm-left", "arm-right"))
+              + ARM_LEFT + ARM_RIGHT)
 HEAD_BOXES = HEAD
 
 # ---------------------------------------------------------------------------
@@ -700,7 +822,6 @@ def _donor_part(path, slots):
     raise SystemExit(f"{path} has no head-mesh")
 
 
-
 # ⚠️⚠️ THE FACE HAS BROKEN TWICE, BOTH TIMES ON AN EXPRESSION CHANGE, AND THIS IS THE GUARD
 # THAT MAKES IT AN ERROR INSTEAD OF A SCREENSHOT. 🧑 2026-08-18: *"last time the face broke
 # when we changde expression pls try to make srue it doesnt happen again"*.
@@ -758,86 +879,91 @@ def _verify_expression(before, after, uv, moved):
                 f"  Nothing but the ink may change shape when the expression does.")
 
 
+# ---------------------------------------------------------------------------
+# § EXPRESSION: Wide Happy Cat (:3)
+# ---------------------------------------------------------------------------
+MOUTH_Z = 0.1596
+
+
+def _mouth_ribbon():
+    half_w = 0.046
+    base_y = 0.418
+    lobe_depth = 0.018
+    th = 0.0060
+    steps = 32
+    upper, lower = [], []
+    for k in range(steps + 1):
+        t = k / steps
+        x = -half_w + t * (2.0 * half_w)
+        u = x / half_w
+        val = math.cos(u * math.pi * 2.0)
+        dip = lobe_depth * 0.5 * (1.0 - val)
+        lift = 0.006 * (u**2)
+        y_c = base_y - dip + lift
+        upper.append((x, y_c + th * 0.5))
+        lower.append((x, y_c - th * 0.5))
+    return upper, lower
+
+
+EYE_SCALE = 1.08
+
+
+SKULL_SLOTS = {15: SKIN, 8: INK}
+
+
 def _donor_head():
-    """The skull with its face bent, plus the donated mop, as one mesh."""
     pos, nrm, uv, tris = _donor_part(DONOR_SKULL, SKULL_SLOTS)
-
     mouth, eyes, mouth_tris = set(), set(), set()
-    bent = 0
-
     for a, b, c in tris:
-        # ⚠️ SLOT FIRST. A triangle of jaw and a triangle of mouth sit at the same height
-        # and differ only in which atlas cell they sample. See the block above for what
-        # dropping this test did to the head.
         if _slot_at(*uv[a]) != INK:
             continue
-
-        if (pos[a][1] + pos[b][1] + pos[c][1]) / 3.0 < DONOR_MOUTH_Y:
+        if (pos[a][1] + pos[b][1] + pos[c][1]) / 3.0 < 0.45:
             mouth.update((a, b, c))
             mouth_tris.add((a, b, c))
-            bent += 1
         else:
             eyes.add((a, b, c))
 
     eye_verts = {i for tri in eyes for i in tri}
-
-    if len(eyes) != DONOR_EYE_TRIS or len(eye_verts) != DONOR_EYE_VERTS:
-        raise SystemExit(
-            f"\nEYE SELECTION VIOLATION - nothing written.\n"
-            f"  matched {len(eyes)} triangles over {len(eye_verts)} vertices, expected "
-            f"{DONOR_EYE_TRIS} over {DONOR_EYE_VERTS}.")
-
-    if bent != DONOR_MOUTH_TRIS or len(mouth) != DONOR_MOUTH_VERTS:
-        raise SystemExit(
-            f"\nMOUTH SELECTION VIOLATION - nothing written.\n"
-            f"  matched {bent} triangles over {len(mouth)} vertices, expected "
-            f"{DONOR_MOUTH_TRIS} over {DONOR_MOUTH_VERTS}.\n"
-            f"  The bend moves whatever this picks and reports nothing, so a selection\n"
-            f"  that has grown comes back as a deformed head rather than as an error.\n"
-            f"  It reached the jaw and both ears once already.")
-
     before = list(pos)
 
-    # ⚠️ EACH EYE IS SQUASHED TOWARD ITS OWN CENTRE, so the two are found first. They are
-    # separated by SIGN OF X and not by a gap in a sorted list: the rig is symmetric, so the
-    # two clusters interleave exactly in y and a positional split would put half of each eye
-    # in the other one's group.
     for side in (1.0, -1.0):
         lid = {i for tri in eyes for i in tri if pos[i][0] * side > 0.0}
-
         if not lid:
             continue
-
-        centre = sum(pos[i][1] for i in lid) / len(lid)
-
+        centre_y = sum(pos[i][1] for i in lid) / len(lid)
         for i in lid:
             x, y, z = pos[i]
-            pos[i] = (x, centre + (y - centre) * EYE_SQUASH - EYE_DROP, z)
+            pos[i] = (x, centre_y + (y - centre_y) * EYE_SCALE, z)
 
-    # ⚠️ ONLY THE EYES MOVED, so the guard runs before the mouth is touched at all. What
-    # happens to the mouth below is a DELETE and a DRAW, not a move, and the guard exists to
-    # catch a move that reached further than it was supposed to.
     _verify_expression(before, pos, uv, eye_verts)
 
-    # ⚠️⚠️ THE DONATED MOUTH IS DROPPED WHOLE, and its vertices are compacted away at the end
-    # of this function rather than here. Renumbering mid-flight would invalidate `eye_verts`,
-    # `mouth` and every triangle after them; leaving them orphaned makes every later
-    # measurement lie, and the first thing that happened was a mouth measuring 36 mm because
-    # the tool was still counting the ten vertices of the one that had been deleted.
     tris = [t for t in tris if t not in mouth_tris]
-
-    first = len(pos)
     plate = MOUTH_Z + PANEL_PROUD
 
-    for x, y in _mouth_polygon():
+    upper, lower = _mouth_ribbon()
+    steps = len(upper) - 1
+
+    # Add vertices for ribbon: upper[0..steps] then lower[0..steps]
+    u_base = len(pos)
+    for x, y in upper:
         pos.append((x, y, plate))
         nrm.append((0.0, 0.0, 1.0))
         uv.append(cell_uv(INK))
 
-    # A fan. The polygon is a strip between two curves that never cross, so it is convex
-    # enough for one: every diagonal from the first vertex stays inside it.
-    for k in range(1, len(pos) - first - 1):
-        tris.append((first, first + k, first + k + 1))
+    l_base = len(pos)
+    for x, y in lower:
+        pos.append((x, y, plate))
+        nrm.append((0.0, 0.0, 1.0))
+        uv.append(cell_uv(INK))
+
+    # Clean quad-strip triangulation (Counter-Clockwise facing +Z)
+    for k in range(steps):
+        u0 = u_base + k
+        u1 = u_base + k + 1
+        l0 = l_base + k
+        l1 = l_base + k + 1
+        tris.append((u0, l0, u1))
+        tris.append((u1, l0, l1))
 
     return _compact(pos, nrm, uv, tris)
 

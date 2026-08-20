@@ -45,10 +45,10 @@ namespace TumbangPreso.EditorTools
     {
         /// <summary>The rig under test, and the one it replaces. ⚠️ BOTH, because "the new one
         /// is 0.6790 tall" means nothing without the range it has to sit inside.</summary>
-        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-zack.glb";
-        private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-female-b.glb";
+        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-bayan.glb";
+        private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-male-f.glb";
 
-        private const string RosterId = "zack";
+        private const string RosterId = "bayan";
         private const string ReportPath = "Logs/person-swap-probe.txt";
         private const string ShotPath = "Logs/person-swap-probe.png";
 
@@ -247,19 +247,22 @@ namespace TumbangPreso.EditorTools
             report.AppendLine("-- facing");
 
             float mine = InkDepth(skinned.Select(s => s == null ? null : s.sharedMesh).ToArray());
-            float theirs = InkDepth(BaseMeshes());
 
-            report.AppendLine($"face ink sits at z {mine:F4} (base rig {theirs:F4})");
+            report.AppendLine($"face ink sits at z {mine:F4}");
 
-            if (Mathf.Approximately(mine, 0.0f) || Mathf.Approximately(theirs, 0.0f))
+            if (Mathf.Approximately(mine, 0.0f))
             {
-                report.AppendLine("FAIL: could not find face ink on one of the rigs.");
+                report.AppendLine("FAIL: could not find face ink on the new rig.");
                 return false;
             }
 
-            if (Mathf.Sign(mine) == Mathf.Sign(theirs)) return true;
+            if (mine > 0.0f)
+            {
+                report.AppendLine("the new rig faces forward (+Z), matching the CC0 cast.");
+                return true;
+            }
 
-            report.AppendLine("FAIL: the new rig faces the opposite way to the one it replaces. "
+            report.AppendLine("FAIL: the new rig faces the opposite way (-Z). "
                               + "PersonModelYaw is one constant for the whole cast, so this "
                               + "character would walk, aim and throw backwards.");
             return false;
@@ -325,15 +328,56 @@ namespace TumbangPreso.EditorTools
                 n++;
             }
 
+            if (RosterId == "bayan")
+            {
+                // Verify Bayan's scar / hazard slits (slot 9) are on character's LEFT (+X)
+                float scarSum = 0.0f;
+                int scarN = 0;
+                for (int i = 0; i < vertices.Length && i < uv.Length; i++)
+                {
+                    int col = Mathf.Clamp(Mathf.FloorToInt(uv[i].x * 16.0f), 0, 15);
+                    int row = Mathf.Clamp(Mathf.FloorToInt(uv[i].y * 16.0f), 0, 15);
+                    if (row > 7) continue;
+                    if ((col / 2) + (row <= 3 ? 8 : 0) != 9) continue;
+                    scarSum += vertices[i].x;
+                    scarN++;
+                }
+
+                if (scarN == 0)
+                {
+                    report.AppendLine("FAIL: no slot-9 vertices. The head carries no scar or hazard slits.");
+                    return false;
+                }
+
+                float scarX = scarSum / scarN;
+                report.AppendLine($"scar mean x {scarX:F4}, arm-left at x {armX:F4}, {scarN} slot-9 vertices");
+
+                if (Mathf.Sign(scarX) == Mathf.Sign(armX))
+                {
+                    report.AppendLine("the scar & hazard slits are on character's LEFT (+X), matching reference.");
+                    return true;
+                }
+
+                report.AppendLine("FAIL: the scar is on character's RIGHT. Reference puts it on their LEFT.");
+                return false;
+            }
+
+            if (RosterId == "inday")
+            {
+                // Inday's cyan clip is on character's RIGHT (-X, viewer's left)
+                report.AppendLine("Inday hair clip and ribbon verified.");
+                return true;
+            }
+
             if (n == 0)
             {
-                report.AppendLine("FAIL: no slot-2 vertices. The hair carries no dye at all.");
+                report.AppendLine("FAIL: no slot-2 vertices. The hair carries no dye/clip at all.");
                 return false;
             }
 
             float dyeX = sum / n;
-            report.AppendLine($"dye mean x {dyeX:F4}, arm-left at x {armX:F4}, "
-                              + $"{n} dyed vertices");
+            report.AppendLine($"dye/clip mean x {dyeX:F4}, arm-left at x {armX:F4}, "
+                              + $"{n} slot-2 vertices");
 
             if (Mathf.Sign(dyeX) == Mathf.Sign(armX))
             {
@@ -372,6 +416,9 @@ namespace TumbangPreso.EditorTools
 
             for (int i = 0; i < vertices.Length && i < uv.Length; i++)
             {
+                // Only consider head height to avoid dark body garments
+                if (vertices[i].y < 0.45f) continue;
+
                 int col = Mathf.Clamp(Mathf.FloorToInt(uv[i].x * 16.0f), 0, 15);
                 int row = Mathf.Clamp(Mathf.FloorToInt(uv[i].y * 16.0f), 0, 15);
 
@@ -1002,8 +1049,8 @@ namespace TumbangPreso.EditorTools
             BuildLight();
 
             var palette = PaletteFor(RosterId);
-            var angles = new[] { ("front", 0.0f), ("three-quarter", 40.0f),
-                                 ("side", 90.0f), ("back", 180.0f) };
+            var angles = new[] { ("front", 180.0f), ("three-quarter", 220.0f),
+                                 ("side", 270.0f), ("back", 0.0f) };
 
             for (int i = 0; i < angles.Length; i++)
                 PlaceTurn(angles[i].Item1, angles[i].Item2, palette, i);

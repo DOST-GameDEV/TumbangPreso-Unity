@@ -227,75 +227,79 @@ namespace TumbangPreso.PlayTests
             var book = RosterBook.Load();
             Assert.IsNotNull(book, "No RosterBook. Run RosterBookBuilder.Build.");
 
-            // ⚠️ BY ID THROUGH `IndexIn`, NEVER A LITERAL INDEX. The index is a wire format and
-            // the list is append-only precisely because a number written into a caller silently
-            // becomes a different character the next time somebody inserts a row.
-            int index = Core.Roster.IndexIn(Core.Roster.People, ReplacedId);
-            Assert.GreaterOrEqual(index, 0, $"No roster entry '{ReplacedId}'.");
-
-            var art = book.PersonArt(index);
-            Assert.IsNotNull(art, $"The roster book has no art for '{ReplacedId}'.");
-
-            Assert.IsNotNull(art.Model, $"'{ReplacedId}' has no model.");
-            Assert.AreEqual(ReplacedMesh, art.Model.name,
-                "The select screen would show the retired CC0 rig for this pick.");
-
-            Assert.IsNotNull(art.Palette);
-            Assert.AreEqual(16, art.Palette.Length,
-                "A short palette reads past its end for whichever slot is missing.");
-
-            preview.Show(art.Model, art.Clips, art.Palette);
-
-            for (int i = 0; i < 20; i++) yield return null;
-
-            Assert.IsNotNull(preview.Subject, "Nothing was instanced to look at.");
-
-            var skinned = preview.Subject.GetComponentInChildren<SkinnedMeshRenderer>();
-            Assert.IsNotNull(skinned, "The previewed model has no skinned mesh.");
-
-            // The two bones the game hunts by name, checked HERE as well as in the probe because
-            // this is the path that runs in a build.
-            foreach (string wanted in new[] { "arm-right", "head" })
+            foreach (var (replacedId, replacedMesh) in ReplacedCharacters)
             {
-                bool found = false;
-                foreach (var b in skinned.bones) found |= b != null && b.name == wanted;
+                int index = Core.Roster.IndexIn(Core.Roster.People, replacedId);
+                Assert.GreaterOrEqual(index, 0, $"No roster entry '{replacedId}'.");
 
-                Assert.IsTrue(found, $"The previewed rig has no '{wanted}' bone.");
-            }
+                var art = book.PersonArt(index);
+                Assert.IsNotNull(art, $"The roster book has no art for '{replacedId}'.");
 
-            var bone = DeepestBone(skinned);
-            Assert.IsNotNull(bone);
+                Assert.IsNotNull(art.Model, $"'{replacedId}' has no model.");
+                Assert.AreEqual(replacedMesh, art.Model.name,
+                    $"The select screen would show the retired CC0 rig for {replacedId}.");
 
-            Quaternion pose = bone.localRotation;
+                Assert.IsNotNull(art.Palette);
+                Assert.AreEqual(16, art.Palette.Length,
+                    "A short palette reads past its end for whichever slot is missing.");
 
-            for (int i = 0; i < 30; i++) yield return null;
+                preview.Show(art.Model, art.Clips, art.Palette);
 
-            Assert.Greater(Quaternion.Angle(pose, bone.localRotation), 0.01f,
-                $"'{bone.name}' has not moved in 30 frames, so the select screen is showing " +
-                "this character's bind pose.");
+                for (int i = 0; i < 20; i++) yield return null;
 
-            bool palettedAny = false;
+                Assert.IsNotNull(preview.Subject, "Nothing was instanced to look at.");
 
-            foreach (var r in preview.Subject.GetComponentsInChildren<Renderer>())
-            {
-                foreach (var material in r.sharedMaterials)
+                var skinned = preview.Subject.GetComponentInChildren<SkinnedMeshRenderer>();
+                Assert.IsNotNull(skinned, "The previewed model has no skinned mesh.");
+
+                // The two bones the game hunts by name, checked HERE as well as in the probe because
+                // this is the path that runs in a build.
+                foreach (string wanted in new[] { "arm-right", "head" })
                 {
-                    if (material == null || !material.HasProperty("_UsePalette")) continue;
-                    palettedAny |= material.GetFloat("_UsePalette") > 0.5f;
+                    bool found = false;
+                    foreach (var b in skinned.bones) found |= b != null && b.name == wanted;
+
+                    Assert.IsTrue(found, $"The previewed rig has no '{wanted}' bone.");
                 }
+
+                var bone = DeepestBone(skinned);
+                Assert.IsNotNull(bone);
+
+                Quaternion pose = bone.localRotation;
+
+                for (int i = 0; i < 30; i++) yield return null;
+
+                Assert.Greater(Quaternion.Angle(pose, bone.localRotation), 0.01f,
+                    $"'{bone.name}' has not moved in 30 frames, so the select screen is showing " +
+                    "this character's bind pose.");
+
+                bool palettedAny = false;
+
+                foreach (var r in preview.Subject.GetComponentsInChildren<Renderer>())
+                {
+                    foreach (var material in r.sharedMaterials)
+                    {
+                        if (material == null || !material.HasProperty("_UsePalette")) continue;
+                        palettedAny |= material.GetFloat("_UsePalette") > 0.5f;
+                    }
+                }
+
+                Assert.IsTrue(palettedAny,
+                    "No material on the preview has the palette switched on, so this character is " +
+                    "wearing the atlas's stock colours on the screen the player picks from.");
+
+                Capture($"character-replaced-{replacedId}");
             }
-
-            Assert.IsTrue(palettedAny,
-                "No material on the preview has the palette switched on, so this character is " +
-                "wearing the atlas's stock colours on the screen the player picks from.");
-
-            Capture("character-replaced");
         }
 
-        /// <summary>The roster id whose art has been replaced, and the mesh it must now be
+        /// <summary>The roster ids whose art has been replaced, and the meshes they must now be
         /// wearing. See `docs/Port_Plan.md` section 8.4.</summary>
-        private const string ReplacedId = "zack";
-        private const string ReplacedMesh = "team-zack";
+        private static readonly (string Id, string Mesh)[] ReplacedCharacters = new[]
+        {
+            ("zack", "team-zack"),
+            ("inday", "team-inday"),
+            ("bayan", "team-bayan"),
+        };
 
         /// <summary>The bone furthest down the rig, so the sample is a limb rather than the
         /// root the clip may deliberately leave still.</summary>
