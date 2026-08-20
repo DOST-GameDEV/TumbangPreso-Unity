@@ -47,7 +47,7 @@ ROBE_GREEN    = 0   # Primary forest green robe, cape, boot uppers (#3d6335)
 ROBE_DARK     = 1   # Deep olive/forest shadow & rune dark outline (#243e1f)
 GOLD_TRIM     = 2   # Radiant gold collar trim, cape rune, wrist cuffs, frog knots (#dfb248)
 LEATHER_BROWN = 3   # Dark brown leather belt, pants, right sleeve, hair fade (#482f1d)
-HORN_LIGHT    = 4   # Slate Charcoal light plane for obsidian horn plates (#3e424e)
+HORN_LIGHT    = 4   # Slate Charcoal light plane for obsidian horn plates (#4d5464)
 JADE_GEM      = 5   # Emerald/jade buckle core, chest frog gem, main Earth runes (#38b848)
 HAIR          = 6   # Dark charcoal black spiky hair & deep obsidian shadow (#1a181e)
 JADE_LIT      = 7   # Jade gemstone highlight & rune glow sparks (#68e878)
@@ -65,7 +65,7 @@ PALETTE = {
     ROBE_DARK:     "243e1f",   # Deep olive/forest shadow & rune outline
     GOLD_TRIM:     "dfb248",   # Radiant gold trims, sashes, rune, cuffs, frog knots
     LEATHER_BROWN: "482f1d",   # Warm dark brown leather & shaved undercut fade
-    HORN_LIGHT:    "3e424e",   # Slate Charcoal light plane on obsidian horn
+    HORN_LIGHT:    "4d5464",   # Slate Charcoal light plane on obsidian horn
     JADE_GEM:      "38b848",   # Radiant emerald / jade belt gem & Earth runes
     HAIR:          "1a181e",   # Dark charcoal spiky hair & horn shadow crevices
     JADE_LIT:      "68e878",   # Jade highlight sparkle & rune glow
@@ -283,45 +283,51 @@ HEAD = [
     ("undercut-side-front",   "head", (0.145, 0.430, 0.080), (0.182, 0.620, 0.145), LEATHER_BROWN),
     ("undercut-sideburn",     "head", (0.160, 0.400, -0.010), (0.188, 0.500, 0.080), LEATHER_BROWN),
     
-    # 🪨 OBSIDIAN SEGMENTED SWEPT-BACK HORN — ITERATION B (+X parietal cranium)
-    # 1. Base Socket & Interlocking Root (Embedded high & back into parietal cranium/hair)
-    ("horn-socket-hair",      "head", (0.120, 0.560, 0.010), (0.175, 0.620, 0.090), HAIR),
-    ("horn-socket-base",      "head", (0.130, 0.575, 0.005), (0.185, 0.635, 0.080), HORN_MAIN),
-    ("horn-socket-shadow",    "head", (0.128, 0.570, 0.015), (0.180, 0.590, 0.075), INK),
-    
-    # 2. Segment 1 (Ascending Base & Lower Parietal Swept Arc)
-    ("horn-seg1-body",        "head", (0.135, 0.615, -0.025), (0.192, 0.675, 0.065), HORN_MAIN),
-    ("horn-seg1-top",         "head", (0.138, 0.650, -0.010), (0.188, 0.678, 0.060), HORN_LIGHT),
-    ("horn-seg1-crest",       "head", (0.185, 0.635, -0.015), (0.194, 0.676, 0.050), HORN_PURPLE),
-    ("horn-seg1-shadow",      "head", (0.132, 0.612, -0.020), (0.182, 0.624, 0.035), HAIR),
-    
-    # 3. Segment 2 (Mid-Parietal Arc)
-    ("horn-seg2-body",        "head", (0.140, 0.660, -0.075), (0.196, 0.725, 0.015), HORN_MAIN),
-    ("horn-seg2-top",         "head", (0.144, 0.700, -0.060), (0.192, 0.728, 0.010), HORN_LIGHT),
-    ("horn-seg2-crest",       "head", (0.188, 0.680, -0.065), (0.198, 0.726, 0.005), HORN_PURPLE),
-    ("horn-seg2-shadow",      "head", (0.138, 0.658, -0.070), (0.186, 0.668, -0.015), HAIR),
-    
-    # 4. Segment 3 (Crown Peak — Sweeping Gracefully Backward)
-    ("horn-seg3-body",        "head", (0.136, 0.700, -0.135), (0.192, 0.772, -0.040), HORN_MAIN),
-    ("horn-seg3-top",         "head", (0.140, 0.748, -0.125), (0.188, 0.776, -0.045), HORN_LIGHT),
-    ("horn-seg3-crest",       "head", (0.184, 0.720, -0.125), (0.194, 0.774, -0.045), HORN_PURPLE),
-    ("horn-seg3-shadow",      "head", (0.134, 0.698, -0.130), (0.182, 0.708, -0.075), HAIR),
-    
-    # 5. Segment 4 (Occipital Descending Swept Curve)
-    ("horn-seg4-body",        "head", (0.128, 0.660, -0.185), (0.180, 0.730, -0.100), HORN_MAIN),
-    ("horn-seg4-top",         "head", (0.132, 0.705, -0.180), (0.176, 0.734, -0.105), HORN_LIGHT),
-    ("horn-seg4-crest",       "head", (0.172, 0.680, -0.178), (0.182, 0.732, -0.105), HORN_PURPLE),
-    ("horn-seg4-shadow",      "head", (0.126, 0.658, -0.180), (0.170, 0.668, -0.135), HAIR),
-    
-    # 6. Segment 5 (Tapered Neck)
-    ("horn-seg5-body",        "head", (0.120, 0.630, -0.218), (0.165, 0.685, -0.150), HORN_MAIN),
-    ("horn-seg5-top",         "head", (0.124, 0.665, -0.214), (0.160, 0.688, -0.155), HORN_LIGHT),
-    ("horn-seg5-crest",       "head", (0.158, 0.650, -0.214), (0.166, 0.686, -0.155), HORN_PURPLE),
-    
-    # 7. Sharp Chisel Tip (Pointing Backward/Down along Occipital Contour)
-    ("horn-tip-body",         "head", (0.116, 0.620, -0.224), (0.148, 0.655, -0.190), HORN_MAIN),
-    ("horn-tip-facet",        "head", (0.120, 0.640, -0.224), (0.144, 0.658, -0.200), HORN_LIGHT),
-    ("horn-tip-edge",         "head", (0.116, 0.618, -0.224), (0.132, 0.635, -0.208), HORN_PURPLE),
+    # 🪨 OBSIDIAN ASCENDING SWEPT-BACK CARAPACE HORN (Matching media_1787202252967.png)
+    # Tier 0: Temple Socket & Cranium Base (Emerges forward on temple)
+    ("horn-seg0-socket",      "head", (0.125, 0.535, 0.065), (0.188, 0.605, 0.150), HAIR),
+    ("horn-seg0-body",        "head", (0.130, 0.545, 0.060), (0.194, 0.615, 0.145), HORN_MAIN),
+    ("horn-seg0-top",         "head", (0.135, 0.585, 0.065), (0.192, 0.620, 0.140), HORN_LIGHT),
+    ("horn-seg0-groove",      "head", (0.125, 0.535, 0.055), (0.185, 0.555, 0.135), INK),
+
+    # Tier 1: Lower Ascending Shingle
+    ("horn-seg1-body",        "head", (0.145, 0.580, 0.030), (0.210, 0.648, 0.120), HORN_MAIN),
+    ("horn-seg1-top",         "head", (0.150, 0.622, 0.035), (0.208, 0.652, 0.115), HORN_LIGHT),
+    ("horn-seg1-crest",       "head", (0.200, 0.595, 0.035), (0.214, 0.648, 0.110), HORN_PURPLE),
+    ("horn-seg1-groove",      "head", (0.140, 0.575, 0.025), (0.200, 0.592, 0.110), HAIR),
+
+    # Tier 2: Mid-Ascent Carapace Tier
+    ("horn-seg2-body",        "head", (0.168, 0.620, 0.000), (0.234, 0.688, 0.085), HORN_MAIN),
+    ("horn-seg2-top",         "head", (0.172, 0.662, 0.005), (0.230, 0.692, 0.080), HORN_LIGHT),
+    ("horn-seg2-crest",       "head", (0.224, 0.635, 0.005), (0.238, 0.688, 0.076), HORN_PURPLE),
+    ("horn-seg2-groove",      "head", (0.162, 0.615, -0.005), (0.222, 0.632, 0.076), HAIR),
+
+    # Tier 3: Central Spire Tier
+    ("horn-seg3-body",        "head", (0.190, 0.660, -0.040), (0.254, 0.725, 0.045), HORN_MAIN),
+    ("horn-seg3-top",         "head", (0.195, 0.700, -0.035), (0.250, 0.728, 0.040), HORN_LIGHT),
+    ("horn-seg3-crest",       "head", (0.244, 0.675, -0.036), (0.258, 0.726, 0.036), HORN_PURPLE),
+    ("horn-seg3-groove",      "head", (0.185, 0.655, -0.045), (0.242, 0.670, 0.036), HAIR),
+
+    # Tier 4: Upper Ascending Spire Tier
+    ("horn-seg4-body",        "head", (0.212, 0.698, -0.085), (0.272, 0.755, -0.005), HORN_MAIN),
+    ("horn-seg4-top",         "head", (0.216, 0.732, -0.080), (0.268, 0.758, -0.010), HORN_LIGHT),
+    ("horn-seg4-crest",       "head", (0.262, 0.712, -0.082), (0.275, 0.756, -0.012), HORN_PURPLE),
+    ("horn-seg4-groove",      "head", (0.208, 0.692, -0.090), (0.260, 0.708, -0.012), HAIR),
+
+    # Tier 5: Sub-Apex Carapace Plate
+    ("horn-seg5-body",        "head", (0.232, 0.732, -0.130), (0.285, 0.780, -0.055), HORN_MAIN),
+    ("horn-seg5-top",         "head", (0.236, 0.760, -0.125), (0.282, 0.784, -0.060), HORN_LIGHT),
+    ("horn-seg5-crest",       "head", (0.275, 0.745, -0.126), (0.288, 0.782, -0.062), HORN_PURPLE),
+    ("horn-seg5-groove",      "head", (0.228, 0.728, -0.135), (0.275, 0.742, -0.062), HAIR),
+
+    # Tier 6: Sharp Chisel Spire Tip
+    ("horn-seg6-body",        "head", (0.250, 0.760, -0.175), (0.294, 0.788, -0.105), HORN_MAIN),
+    ("horn-seg6-top",         "head", (0.254, 0.778, -0.170), (0.290, 0.788, -0.110), HORN_LIGHT),
+    ("horn-seg6-crest",       "head", (0.284, 0.768, -0.172), (0.296, 0.788, -0.112), HORN_PURPLE),
+
+    # Tier 7: Chisel Needle Point Apex
+    ("horn-seg7-needle",      "head", (0.265, 0.772, -0.200), (0.298, 0.788, -0.145), HORN_MAIN),
+    ("horn-seg7-facet",       "head", (0.268, 0.780, -0.198), (0.295, 0.788, -0.150), HORN_LIGHT),
     
     # 💇 DYNAMIC ANIME SPIKES (Front, top, back)
     ("spike-front-c1",        "head", (-0.050, 0.670, 0.115), (0.040, 0.765, 0.192), HAIR),
@@ -545,7 +551,7 @@ def _donor_head():
     add_quad([(-0.009, 0.390), (-0.009, 0.397), (0.009, 0.397), (0.009, 0.390)],
              INK, PANEL_PROUD * 1.6)
 
-    # 3. ⚔️ JADE EARTH RUNE FACIAL SCAR & UNDERCUT TEMPLE (media_1787201264725.png)
+    # 3. ⚔️ WARRIOR FACIAL SCAR & UNDERCUT TEMPLE (media_1787202252967.png)
     # Natural Stepped Buzzcut Undercut Hairline on Temple (+X)
     add_quad([(0.065, 0.605), (0.065, 0.665), (0.170, 0.665), (0.170, 0.605)],
              LEATHER_BROWN, PANEL_PROUD * 1.5)
@@ -556,39 +562,27 @@ def _donor_head():
     add_quad([(0.150, 0.405), (0.150, 0.450), (0.170, 0.450), (0.170, 0.405)],
              LEATHER_BROWN, PANEL_PROUD * 1.5)
 
-    # Main Flowing Jade Earth Facial Rune Ribbon (Continuous S-curve from high forehead to chin)
-    add_quad([(0.032, 0.585), (0.032, 0.655), (0.056, 0.655), (0.056, 0.585)],
-             JADE_GEM, PANEL_PROUD * 2.2)
-    add_quad([(0.036, 0.525), (0.036, 0.585), (0.062, 0.585), (0.062, 0.525)],
-             JADE_GEM, PANEL_PROUD * 2.2)
-    add_quad([(0.048, 0.485), (0.048, 0.525), (0.074, 0.525), (0.074, 0.485)],
-             JADE_GEM, PANEL_PROUD * 2.2)
-    add_quad([(0.078, 0.445), (0.078, 0.488), (0.106, 0.488), (0.100, 0.445)],
-             JADE_GEM, PANEL_PROUD * 2.2)
-    add_quad([(0.066, 0.385), (0.078, 0.448), (0.102, 0.448), (0.088, 0.385)],
-             JADE_GEM, PANEL_PROUD * 2.2)
-    add_quad([(0.048, 0.335), (0.066, 0.390), (0.088, 0.390), (0.068, 0.335)],
-             JADE_GEM, PANEL_PROUD * 2.2)
+    # Subtle Flowing Warrior Face Scar (Continuous diagonal incision slicing through left eye)
+    add_quad([(0.038, 0.585), (0.038, 0.655), (0.050, 0.655), (0.050, 0.585)],
+             LEATHER_BROWN, PANEL_PROUD * 2.2)
+    add_quad([(0.042, 0.525), (0.042, 0.585), (0.054, 0.585), (0.054, 0.525)],
+             LEATHER_BROWN, PANEL_PROUD * 2.2)
+    add_quad([(0.052, 0.485), (0.052, 0.525), (0.066, 0.525), (0.066, 0.485)],
+             LEATHER_BROWN, PANEL_PROUD * 2.2)
+    add_quad([(0.078, 0.445), (0.078, 0.488), (0.096, 0.488), (0.092, 0.445)],
+             LEATHER_BROWN, PANEL_PROUD * 2.2)
+    add_quad([(0.068, 0.385), (0.078, 0.448), (0.092, 0.448), (0.082, 0.385)],
+             LEATHER_BROWN, PANEL_PROUD * 2.2)
+    add_quad([(0.052, 0.335), (0.068, 0.390), (0.082, 0.390), (0.064, 0.335)],
+             LEATHER_BROWN, PANEL_PROUD * 2.2)
 
-    # Rune Dark Outline / Depth Shadow
-    add_quad([(0.028, 0.585), (0.028, 0.655), (0.032, 0.655), (0.032, 0.585)],
-             ROBE_DARK, PANEL_PROUD * 2.1)
-    add_quad([(0.032, 0.525), (0.032, 0.585), (0.036, 0.585), (0.036, 0.525)],
-             ROBE_DARK, PANEL_PROUD * 2.1)
-    add_quad([(0.044, 0.485), (0.044, 0.525), (0.048, 0.525), (0.048, 0.485)],
-             ROBE_DARK, PANEL_PROUD * 2.1)
-
-    # ⚡ DUAL SLEEK TEMPLE SURGE LINES (Connecting facial ribbon cleanly to temple undercut)
-    # Upper Stream Line (Connecting high forehead ribbon at y=0.612..0.628)
-    add_quad([(0.050, 0.612), (0.050, 0.628), (0.135, 0.628), (0.135, 0.612)],
-             JADE_GEM, PANEL_PROUD * 2.2)
-    add_quad([(0.050, 0.608), (0.050, 0.612), (0.135, 0.612), (0.135, 0.608)],
-             ROBE_DARK, PANEL_PROUD * 2.1)
-    # Lower Stream Line (Connecting mid-face ribbon at y=0.546..0.562)
-    add_quad([(0.058, 0.546), (0.058, 0.562), (0.140, 0.562), (0.140, 0.546)],
-             JADE_GEM, PANEL_PROUD * 2.2)
-    add_quad([(0.058, 0.542), (0.058, 0.546), (0.140, 0.546), (0.140, 0.542)],
-             ROBE_DARK, PANEL_PROUD * 2.1)
+    # Scar Depth Crevice / Shadow
+    add_quad([(0.036, 0.585), (0.036, 0.655), (0.038, 0.655), (0.038, 0.585)],
+             INK, PANEL_PROUD * 2.1)
+    add_quad([(0.040, 0.525), (0.040, 0.585), (0.042, 0.585), (0.042, 0.525)],
+             INK, PANEL_PROUD * 2.1)
+    add_quad([(0.050, 0.485), (0.050, 0.525), (0.052, 0.525), (0.052, 0.485)],
+             INK, PANEL_PROUD * 2.1)
 
     # 4. 👁️ EXACT MATCHING ANIME EYE SHAPE & DESIGN (EMERALD / GOLD HETEROCHROMIA)
     # --- RIGHT EYE (-X, Viewer's Left): NORMAL SLEEK EMERALD GREEN ANIME EYE (WHITE SCLERA) ---
