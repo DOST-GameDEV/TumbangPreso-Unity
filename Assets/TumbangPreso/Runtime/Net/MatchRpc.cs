@@ -1,146 +1,92 @@
+using System;
+using System.Collections.Generic;
+using TumbangPreso.Core;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace TumbangPreso.Net
 {
     /// <summary>
-    /// The gameplay RPCs, converted from the `@rpc` surface spread across `carrier.gd`,
-    /// `character_base.gd` and `main.gd`.
+    /// The gameplay RPC and message transport, converted from the @rpc surface spread across
+    /// carrier.gd, character_base.gd and main.gd.
     ///
-    /// ⚠️⚠️ EVERY VERB IS A REQUEST TO THE HOST, NEVER A LOCAL RESOLUTION. A client that
+    /// ⚠️ EVERY VERB IS A REQUEST TO THE HOST, NEVER A LOCAL RESOLUTION. A client that
     /// resolved its own tag would be authoritative over somebody else's stun. The pattern is
     /// always the same: the client asks, the host decides using the same rule the solo game
-    /// uses, and the host broadcasts what happened. That is why `NetAuthority.ShouldResolve`
+    /// uses, and the host broadcasts what happened. That is why NetAuthority.ShouldResolve
     /// exists and why nothing here calls a gameplay method directly.
     ///
     /// ⚠️ POSITION AND FACING TRAVEL WITH THE REQUEST. The host must judge the verb against
-    /// where the client BELIEVED it was standing, not where the host currently thinks it is —
+    /// where the client believed it was standing, not where the host currently thinks it is,
     /// otherwise every lunge is judged a frame or two late and misses on a lagged connection
     /// while looking like a direct hit on the client's screen.
     ///
     /// ⚠️ AND THE VISUAL HALF IS SEPARATE FROM THE RESOLUTION HALF. A charge-up read
-    /// broadcasts on its own (`*ChargeVisual`) because the other players need to SEE a wind-up
+    /// broadcasts on its own because the other players need to see a wind-up
     /// before it resolves; folding it into the result would show the tell and the tag on the
     /// same frame, which removes the only warning the game gives.
     /// </summary>
-    public sealed class MatchRpc : NetworkBehaviour
+    public sealed class MatchRpc : MonoBehaviour
     {
         public static MatchRpc Instance { get; private set; }
 
-        public override void OnNetworkSpawn()
+        private NetworkManager _nm;
+
+        private void Awake()
         {
             Instance = this;
-            base.OnNetworkSpawn();
         }
 
-        public override void OnNetworkDespawn()
+        private void OnDestroy()
         {
             if (Instance == this) Instance = null;
-            base.OnNetworkDespawn();
+        }
+
+        public void Initialize(NetworkManager nm)
+        {
+            _nm = nm;
+            RegisterHandlers();
+        }
+
+        private void RegisterHandlers()
+        {
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+
+            var cm = _nm.CustomMessagingManager;
+
+            cm.RegisterNamedMessageHandler("Identify", OnIdentifyMsg);
+            cm.RegisterNamedMessageHandler("Seating", OnSeatingMsg);
+            cm.RegisterNamedMessageHandler("DeclareReady", OnDeclareReadyMsg);
+            cm.RegisterNamedMessageHandler("BeginCountdown", OnBeginCountdownMsg);
+            cm.RegisterNamedMessageHandler("SyncMap", OnSyncMapMsg);
+            cm.RegisterNamedMessageHandler("SelectMap", OnSelectMapMsg);
+            cm.RegisterNamedMessageHandler("SyncDiff", OnSyncDiffMsg);
+            cm.RegisterNamedMessageHandler("SelectDiff", OnSelectDiffMsg);
+            cm.RegisterNamedMessageHandler("SyncLobbyPicks", OnSyncLobbyPicksMsg);
+            cm.RegisterNamedMessageHandler("SelectLobbyPick", OnSelectLobbyPickMsg);
+            cm.RegisterNamedMessageHandler("SyncPicks", OnSyncPicksMsg);
+            cm.RegisterNamedMessageHandler("SyncWorld", OnSyncWorldMsg);
+            cm.RegisterNamedMessageHandler("SyncLata", OnSyncLataMsg);
+            cm.RegisterNamedMessageHandler("SyncSlipper", OnSyncSlipperMsg);
+            cm.RegisterNamedMessageHandler("SubmitMove", OnSubmitMoveMsg);
+            cm.RegisterNamedMessageHandler("SyncUnit", OnSyncUnitMsg);
+            cm.RegisterNamedMessageHandler("ReqPunch", OnReqPunchMsg);
+            cm.RegisterNamedMessageHandler("ReqLunge", OnReqLungeMsg);
+            cm.RegisterNamedMessageHandler("ReqShove", OnReqShoveMsg);
+            cm.RegisterNamedMessageHandler("LungeCharge", OnLungeChargeMsg);
+            cm.RegisterNamedMessageHandler("ShoveCharge", OnShoveChargeMsg);
+            cm.RegisterNamedMessageHandler("ReqGrab", OnReqGrabMsg);
+            cm.RegisterNamedMessageHandler("ReqThrow", OnReqThrowMsg);
+            cm.RegisterNamedMessageHandler("ReqReset", OnReqResetMsg);
+            cm.RegisterNamedMessageHandler("ReqEmote", OnReqEmoteMsg);
+            cm.RegisterNamedMessageHandler("PlayEmote", OnPlayEmoteMsg);
         }
 
         private static CharacterMotor Unit(int slot)
         {
             var round = GameServices.Round;
             return round != null ? round.PlayerAt(slot) : null;
-        }
-
-        // -------------------------------------------------------------------
-        // THE TAYA'S TWO TAG VERBS
-        // -------------------------------------------------------------------
-
-        [ServerRpc(RequireOwnership = false)]
-        public void RequestPunchServerRpc(int slot, Vector3 from, Vector3 facing)
-        {
-            var who = Unit(slot);
-            if (who == null || !who.IsDefender) return;
-
-            var verbs = who.GetComponent<CombatVerbs>();
-            verbs?.HostResolvePunch(from, facing);
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        public void RequestLungeServerRpc(int slot, Vector3 from, Vector3 facing, float power)
-        {
-            var who = Unit(slot);
-            if (who == null || !who.IsDefender) return;
-
-            var verbs = who.GetComponent<CombatVerbs>();
-            verbs?.HostResolveLunge(from, facing, power);
-        }
-
-        /// <summary>An attacker shoving a rival. Attackers only — the taya has the tag verbs.</summary>
-        [ServerRpc(RequireOwnership = false)]
-        public void RequestShoveServerRpc(int slot, Vector3 from, Vector3 facing)
-        {
-            var who = Unit(slot);
-            if (who == null || who.IsDefender) return;
-
-            var verbs = who.GetComponent<CombatVerbs>();
-            verbs?.HostResolveShove(from, facing);
-        }
-
-        // -------------------------------------------------------------------
-        // WIND-UP READS — broadcast on their own, see the class note.
-        // -------------------------------------------------------------------
-
-        [ServerRpc(RequireOwnership = false)]
-        public void LungeChargeServerRpc(int slot, bool active)
-            => LungeChargeClientRpc(slot, active);
-
-        [ClientRpc]
-        private void LungeChargeClientRpc(int slot, bool active)
-            => Unit(slot)?.GetComponentInChildren<Visual.CharacterAnimator>()
-                ?.PlayAction(active ? "lunge" : null);
-
-        [ServerRpc(RequireOwnership = false)]
-        public void ShoveChargeServerRpc(int slot, bool active)
-            => ShoveChargeClientRpc(slot, active);
-
-        [ClientRpc]
-        private void ShoveChargeClientRpc(int slot, bool active)
-            => Unit(slot)?.GetComponentInChildren<Visual.CharacterAnimator>()
-                ?.PlayAction(active ? "shove" : null);
-
-        // -------------------------------------------------------------------
-        // THE SLIPPER
-        // -------------------------------------------------------------------
-
-        [ServerRpc(RequireOwnership = false)]
-        public void RequestGrabServerRpc(int slot, int slipperOwnerSlot)
-        {
-            var who = Unit(slot);
-            var slipper = FindSlipper(slipperOwnerSlot);
-            if (who == null || slipper == null) return;
-
-            // ⚠️ THE HOST RE-CHECKS ELIGIBILITY. A client asking for a slipper it cannot
-            // legally take is not an error — it is a client one frame behind — and the answer
-            // is to refuse quietly, not to trust the request.
-            if (!slipper.CanBeGrabbedBy(who)) return;
-
-            who.GetComponent<Carrier>()?.HostPickUp(slipper);
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        public void RequestThrowServerRpc(int slot, Vector3 origin, Vector3 aimPoint, float charge)
-        {
-            var who = Unit(slot);
-            var carrier = who != null ? who.GetComponent<Carrier>() : null;
-            if (carrier == null || carrier.Held == null) return;
-
-            if (GameServices.Round == null || !GameServices.Round.CanThrow(who)) return;
-
-            carrier.HostThrowAt(origin, aimPoint, charge);
-        }
-
-        /// <summary>The taya's righting channel completing.</summary>
-        [ServerRpc(RequireOwnership = false)]
-        public void RequestResetServerRpc(int slot)
-        {
-            var who = Unit(slot);
-            if (who == null || !who.IsDefender) return;
-
-            GameServices.Round?.Lata?.HostRestore();
         }
 
         private static Slipper FindSlipper(int ownerSlot)
@@ -152,90 +98,624 @@ namespace TumbangPreso.Net
         }
 
         // -------------------------------------------------------------------
-        // EMOTES
-        //
-        // ⚠️ THE EMOTE REPLICATES; THE CAMERA SWING DOES NOT. Every peer plays the clip, and
-        // only the emoting player's own rig changes view. See CameraRig's note.
+        // IDENTITY AND SEATING
         // -------------------------------------------------------------------
 
-        [ServerRpc(RequireOwnership = false)]
-        public void RequestEmoteServerRpc(int slot, string id)
+        public void IdentifyServerRpc(string token, string name, int charPick, int canPick, int slipperPick)
         {
-            var who = Unit(slot);
-            var player = who != null ? who.GetComponent<Social.EmotePlayer>() : null;
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
 
-            // Validated host-side, so a peer cannot show everyone an emote the host refused.
-            if (player == null || !player.CanEmote()) return;
+            if (NetAuthority.IsHost)
+            {
+                HandleIdentify(0, token, name, charPick, canPick, slipperPick);
+                return;
+            }
 
-            PlayEmoteClientRpc(slot, id);
+            using var writer = new FastBufferWriter(256, Allocator.Temp);
+            writer.WriteValueSafe(token ?? "");
+            writer.WriteValueSafe(name ?? "");
+            writer.WriteValueSafe(charPick);
+            writer.WriteValueSafe(canPick);
+            writer.WriteValueSafe(slipperPick);
+            _nm.CustomMessagingManager.SendNamedMessage("Identify", NetworkManager.ServerClientId, writer);
         }
 
-        [ClientRpc]
-        private void PlayEmoteClientRpc(int slot, string id)
-            => Unit(slot)?.GetComponent<Social.EmotePlayer>()?.Play(id);
+        private void OnIdentifyMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
 
-        [ServerRpc(RequireOwnership = false)]
-        public void StopEmoteServerRpc(int slot) => StopEmoteClientRpc(slot);
+            reader.ReadValueSafe(out string token);
+            reader.ReadValueSafe(out string name);
+            reader.ReadValueSafe(out int charPick);
+            reader.ReadValueSafe(out int canPick);
+            reader.ReadValueSafe(out int slipperPick);
 
-        [ClientRpc]
-        private void StopEmoteClientRpc(int slot)
-            => Unit(slot)?.GetComponent<Social.EmotePlayer>()?.Stop();
+            HandleIdentify(senderClientId, token, name, charPick, canPick, slipperPick);
+        }
+
+        private void HandleIdentify(ulong senderClientId, string token, string name, int charPick, int canPick, int slipperPick)
+        {
+            int peerId = (int)senderClientId;
+            var lobby = NetSession.Instance?.Lobby;
+            if (lobby == null) return;
+
+            var record = lobby.Admit(peerId, token, name);
+            if (charPick >= 0)
+            {
+                lobby.SetPicks(peerId, charPick, canPick, slipperPick);
+            }
+
+            if (senderClientId != _nm.LocalClientId)
+            {
+                using var writer = new FastBufferWriter(64, Allocator.Temp);
+                writer.WriteValueSafe(record.Seat);
+                writer.WriteValueSafe(record.Spectator);
+                writer.WriteValueSafe(lobby.LeaderPeerId);
+                writer.WriteValueSafe(lobby.MatchInProgress);
+                _nm.CustomMessagingManager.SendNamedMessage("Seating", senderClientId, writer);
+            }
+
+            NetSession.Instance?.SetStatus($"{lobby.PeerCount} connected, seat {record.Seat}");
+
+            HostLateJoin(peerId);
+            BroadcastLobbyPicks();
+            BroadcastPicks();
+            BroadcastWorldSnapshot();
+        }
+
+        private void OnSeatingMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int seat);
+            reader.ReadValueSafe(out bool spectator);
+            reader.ReadValueSafe(out int leaderId);
+            reader.ReadValueSafe(out bool inProgress);
+
+            NetSession.Instance?.SetLocalSeating(seat, spectator);
+
+            var installer = FindFirstObjectByType<MatchInstaller>();
+            installer?.RebindLocalSeat(seat, spectator);
+        }
 
         // -------------------------------------------------------------------
         // THE READY GATE
         // -------------------------------------------------------------------
 
-        [ServerRpc(RequireOwnership = false)]
         public void DeclareReadyServerRpc(int peerId)
-            => FindFirstObjectByType<ReadyGate>()?.DeclareReady(peerId);
+        {
+            if (NetAuthority.IsHost)
+            {
+                FindFirstObjectByType<ReadyGate>()?.DeclareReady(peerId);
+                return;
+            }
 
-        /// <summary>
-        /// ⚠️ EVERY PEER RUNS ITS OWN COUNTDOWN rather than being told when it finished. A
-        /// client that only learns about the round when it begins gets no 3 · 2 · 1 at all.
-        /// </summary>
-        [ClientRpc]
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(peerId);
+            _nm.CustomMessagingManager.SendNamedMessage("DeclareReady", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnDeclareReadyMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            FindFirstObjectByType<ReadyGate>()?.DeclareReady((int)senderClientId);
+        }
+
         public void BeginCountdownClientRpc()
         {
-            var gate = FindFirstObjectByType<ReadyGate>();
-            gate?.StartLocalCountdown();
+            if (!NetAuthority.IsHost) return;
+
+            if (_nm != null && _nm.CustomMessagingManager != null)
+            {
+                using var writer = new FastBufferWriter(16, Allocator.Temp);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("BeginCountdown", writer);
+            }
+        }
+
+        private void OnBeginCountdownMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            FindFirstObjectByType<ReadyGate>()?.StartLocalCountdown();
+        }
+
+        // -------------------------------------------------------------------
+        // MOVEMENT AND POSITION SYNCHRONIZATION
+        // -------------------------------------------------------------------
+
+        public void SubmitMoveServerRpc(int slot, Vector3 pos, float yaw, Vector3 velocity)
+        {
+            if (NetAuthority.IsHost)
+            {
+                ApplyUnitMove(slot, pos, yaw, velocity);
+                SyncUnitTransformClientRpc(slot, pos, yaw, velocity);
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(pos);
+            writer.WriteValueSafe(yaw);
+            writer.WriteValueSafe(velocity);
+            _nm.CustomMessagingManager.SendNamedMessage("SubmitMove", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnSubmitMoveMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out Vector3 pos);
+            reader.ReadValueSafe(out float yaw);
+            reader.ReadValueSafe(out Vector3 velocity);
+
+            ApplyUnitMove(slot, pos, yaw, velocity);
+            SyncUnitTransformClientRpc(slot, pos, yaw, velocity);
+        }
+
+        private static void ApplyUnitMove(int slot, Vector3 pos, float yaw, Vector3 velocity)
+        {
+            var unit = Unit(slot);
+            if (unit == null) return;
+
+            var cc = unit.GetComponent<CharacterController>();
+            if (cc != null && cc.enabled)
+            {
+                cc.enabled = false;
+                unit.transform.position = pos;
+                unit.transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+                cc.enabled = true;
+            }
+            else
+            {
+                unit.transform.position = pos;
+                unit.transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+            }
+        }
+
+        public void SyncUnitTransformClientRpc(int slot, Vector3 pos, float yaw, Vector3 velocity)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(pos);
+            writer.WriteValueSafe(yaw);
+            writer.WriteValueSafe(velocity);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer);
+        }
+
+        private void OnSyncUnitMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out Vector3 pos);
+            reader.ReadValueSafe(out float yaw);
+            reader.ReadValueSafe(out Vector3 velocity);
+
+            if (slot == NetAuthority.LocalSlot) return;
+
+            ApplyUnitMove(slot, pos, yaw, velocity);
+        }
+
+        // -------------------------------------------------------------------
+        // COMBAT VERBS
+        // -------------------------------------------------------------------
+
+        public void RequestPunchServerRpc(int slot, Vector3 from, Vector3 facing)
+        {
+            if (NetAuthority.IsHost)
+            {
+                var who = Unit(slot);
+                if (who != null && who.IsDefender)
+                {
+                    who.GetComponent<CombatVerbs>()?.HostResolvePunch(from, facing);
+                }
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(from);
+            writer.WriteValueSafe(facing);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqPunch", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqPunchMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out Vector3 from);
+            reader.ReadValueSafe(out Vector3 facing);
+
+            var who = Unit(slot);
+            if (who != null && who.IsDefender)
+            {
+                who.GetComponent<CombatVerbs>()?.HostResolvePunch(from, facing);
+            }
+        }
+
+        public void RequestLungeServerRpc(int slot, Vector3 from, Vector3 facing, float power)
+        {
+            if (NetAuthority.IsHost)
+            {
+                var who = Unit(slot);
+                if (who != null && who.IsDefender)
+                {
+                    who.GetComponent<CombatVerbs>()?.HostResolveLunge(from, facing, power);
+                }
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(from);
+            writer.WriteValueSafe(facing);
+            writer.WriteValueSafe(power);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqLunge", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqLungeMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out Vector3 from);
+            reader.ReadValueSafe(out Vector3 facing);
+            reader.ReadValueSafe(out float power);
+
+            var who = Unit(slot);
+            if (who != null && who.IsDefender)
+            {
+                who.GetComponent<CombatVerbs>()?.HostResolveLunge(from, facing, power);
+            }
+        }
+
+        public void RequestShoveServerRpc(int slot, Vector3 from, Vector3 facing)
+        {
+            if (NetAuthority.IsHost)
+            {
+                var who = Unit(slot);
+                if (who != null && !who.IsDefender)
+                {
+                    who.GetComponent<CombatVerbs>()?.HostResolveShove(from, facing);
+                }
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(from);
+            writer.WriteValueSafe(facing);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqShove", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqShoveMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out Vector3 from);
+            reader.ReadValueSafe(out Vector3 facing);
+
+            var who = Unit(slot);
+            if (who != null && !who.IsDefender)
+            {
+                who.GetComponent<CombatVerbs>()?.HostResolveShove(from, facing);
+            }
+        }
+
+        public void LungeChargeServerRpc(int slot, bool active)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (_nm != null && _nm.CustomMessagingManager != null)
+            {
+                using var writer = new FastBufferWriter(16, Allocator.Temp);
+                writer.WriteValueSafe(slot);
+                writer.WriteValueSafe(active);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("LungeCharge", writer);
+            }
+        }
+
+        private void OnLungeChargeMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out bool active);
+            Unit(slot)?.GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction(active ? "lunge" : null);
+        }
+
+        public void ShoveChargeServerRpc(int slot, bool active)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (_nm != null && _nm.CustomMessagingManager != null)
+            {
+                using var writer = new FastBufferWriter(16, Allocator.Temp);
+                writer.WriteValueSafe(slot);
+                writer.WriteValueSafe(active);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("ShoveCharge", writer);
+            }
+        }
+
+        private void OnShoveChargeMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out bool active);
+            Unit(slot)?.GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction(active ? "shove" : null);
+        }
+
+        public void RequestGrabServerRpc(int slot, int slipperOwnerSlot)
+        {
+            if (NetAuthority.IsHost)
+            {
+                var who = Unit(slot);
+                var slipper = FindSlipper(slipperOwnerSlot);
+                if (who != null && slipper != null && slipper.CanBeGrabbedBy(who))
+                {
+                    who.GetComponent<Carrier>()?.HostPickUp(slipper);
+                }
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(slipperOwnerSlot);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqGrab", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqGrabMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out int slipperOwnerSlot);
+
+            var who = Unit(slot);
+            var slipper = FindSlipper(slipperOwnerSlot);
+            if (who != null && slipper != null && slipper.CanBeGrabbedBy(who))
+            {
+                who.GetComponent<Carrier>()?.HostPickUp(slipper);
+            }
+        }
+
+        public void RequestThrowServerRpc(int slot, Vector3 origin, Vector3 aimPoint, float charge)
+        {
+            if (NetAuthority.IsHost)
+            {
+                var who = Unit(slot);
+                var carrier = who != null ? who.GetComponent<Carrier>() : null;
+                if (carrier != null && carrier.Held != null && GameServices.Round != null && GameServices.Round.CanThrow(who))
+                {
+                    carrier.HostThrowAt(origin, aimPoint, charge);
+                }
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(origin);
+            writer.WriteValueSafe(aimPoint);
+            writer.WriteValueSafe(charge);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqThrow", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqThrowMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out Vector3 origin);
+            reader.ReadValueSafe(out Vector3 aimPoint);
+            reader.ReadValueSafe(out float charge);
+
+            var who = Unit(slot);
+            var carrier = who != null ? who.GetComponent<Carrier>() : null;
+            if (carrier != null && carrier.Held != null && GameServices.Round != null && GameServices.Round.CanThrow(who))
+            {
+                carrier.HostThrowAt(origin, aimPoint, charge);
+            }
+        }
+
+        public void RequestResetServerRpc(int slot)
+        {
+            if (NetAuthority.IsHost)
+            {
+                var who = Unit(slot);
+                if (who != null && who.IsDefender)
+                {
+                    GameServices.Round?.Lata?.HostRestore();
+                }
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqReset", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqResetMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int slot);
+            var who = Unit(slot);
+            if (who != null && who.IsDefender)
+            {
+                GameServices.Round?.Lata?.HostRestore();
+            }
+        }
+
+        public void RequestEmoteServerRpc(int slot, string id)
+        {
+            if (NetAuthority.IsHost)
+            {
+                var who = Unit(slot);
+                var player = who != null ? who.GetComponent<Social.EmotePlayer>() : null;
+                if (player != null && player.CanEmote())
+                {
+                    PlayEmoteClientRpc(slot, id);
+                }
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(id ?? "");
+            _nm.CustomMessagingManager.SendNamedMessage("ReqEmote", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqEmoteMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out string id);
+
+            var who = Unit(slot);
+            var player = who != null ? who.GetComponent<Social.EmotePlayer>() : null;
+            if (player != null && player.CanEmote())
+            {
+                PlayEmoteClientRpc(slot, id);
+            }
+        }
+
+        private void PlayEmoteClientRpc(int slot, string id)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (_nm != null && _nm.CustomMessagingManager != null)
+            {
+                using var writer = new FastBufferWriter(64, Allocator.Temp);
+                writer.WriteValueSafe(slot);
+                writer.WriteValueSafe(id ?? "");
+                _nm.CustomMessagingManager.SendNamedMessageToAll("PlayEmote", writer);
+            }
+        }
+
+        private void OnPlayEmoteMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out string id);
+            Unit(slot)?.GetComponent<Social.EmotePlayer>()?.Play(id);
         }
 
         // -------------------------------------------------------------------
         // LOBBY SETUP SYNCHRONIZATION (N5)
         // -------------------------------------------------------------------
 
-        public static event System.Action<int> OnMapChanged;
-        public static event System.Action<int> OnDifficultyChanged;
-        public static event System.Action<int[]> OnLobbyPicksSynced;
+        public static event Action<int> OnMapChanged;
+        public static event Action<int> OnDifficultyChanged;
+        public static event Action<int[]> OnLobbyPicksSynced;
 
-        [ServerRpc(RequireOwnership = false)]
         public void SelectMapServerRpc(int mapIndex)
         {
+            if (NetAuthority.IsHost)
+            {
+                SyncMapClientRpc(mapIndex);
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(mapIndex);
+            _nm.CustomMessagingManager.SendNamedMessage("SelectMap", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnSelectMapMsg(ulong senderClientId, FastBufferReader reader)
+        {
             if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int mapIndex);
             SyncMapClientRpc(mapIndex);
         }
 
-        [ClientRpc]
-        private void SyncMapClientRpc(int mapIndex) => OnMapChanged?.Invoke(mapIndex);
-
-        [ServerRpc(RequireOwnership = false)]
-        public void SelectDifficultyServerRpc(int difficulty)
+        private void SyncMapClientRpc(int mapIndex)
         {
             if (!NetAuthority.IsHost) return;
-            SyncDifficultyClientRpc(difficulty);
+            if (_nm != null && _nm.CustomMessagingManager != null)
+            {
+                using var writer = new FastBufferWriter(16, Allocator.Temp);
+                writer.WriteValueSafe(mapIndex);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("SyncMap", writer);
+            }
+            OnMapChanged?.Invoke(mapIndex);
         }
 
-        [ClientRpc]
-        private void SyncDifficultyClientRpc(int difficulty) => OnDifficultyChanged?.Invoke(difficulty);
+        private void OnSyncMapMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int mapIndex);
+            OnMapChanged?.Invoke(mapIndex);
+        }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void SelectLobbyPickServerRpc(int peerId, int character, int can, int slipper)
+        public void SelectDifficultyServerRpc(int difficulty)
+        {
+            if (NetAuthority.IsHost)
+            {
+                SyncDifficultyClientRpc(difficulty);
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(difficulty);
+            _nm.CustomMessagingManager.SendNamedMessage("SelectDiff", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnSelectDiffMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int diff);
+            SyncDifficultyClientRpc(diff);
+        }
+
+        private void SyncDifficultyClientRpc(int difficulty)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (_nm != null && _nm.CustomMessagingManager != null)
+            {
+                using var writer = new FastBufferWriter(16, Allocator.Temp);
+                writer.WriteValueSafe(difficulty);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("SyncDiff", writer);
+            }
+            OnDifficultyChanged?.Invoke(difficulty);
+        }
+
+        private void OnSyncDiffMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int diff);
+            OnDifficultyChanged?.Invoke(diff);
+        }
+
+        public void SelectLobbyPickServerRpc(int peerId, int character, int can, int slipper)
+        {
+            if (NetAuthority.IsHost)
+            {
+                var lobby = NetSession.Instance?.Lobby;
+                if (lobby != null)
+                {
+                    lobby.SetPicks(peerId, character, can, slipper);
+                    BroadcastLobbyPicks();
+                }
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(32, Allocator.Temp);
+            writer.WriteValueSafe(peerId);
+            writer.WriteValueSafe(character);
+            writer.WriteValueSafe(can);
+            writer.WriteValueSafe(slipper);
+            _nm.CustomMessagingManager.SendNamedMessage("SelectLobbyPick", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnSelectLobbyPickMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int peerId);
+            reader.ReadValueSafe(out int character);
+            reader.ReadValueSafe(out int can);
+            reader.ReadValueSafe(out int slipper);
+
             var lobby = NetSession.Instance?.Lobby;
             if (lobby != null)
             {
-                lobby.SetPicks(peerId, character, can, slipper);
+                lobby.SetPicks((int)senderClientId, character, can, slipper);
                 BroadcastLobbyPicks();
             }
         }
@@ -246,12 +726,12 @@ namespace TumbangPreso.Net
             var lobby = NetSession.Instance?.Lobby;
             if (lobby == null) return;
 
-            var table = new int[Core.Balance.PlayerCount * 4];
+            var table = new int[Balance.PlayerCount * 4];
             for (int i = 0; i < table.Length; i++) table[i] = -1;
 
             foreach (var peer in lobby.Peers)
             {
-                if (peer.Seat >= 0 && peer.Seat < Core.Balance.PlayerCount)
+                if (peer.Seat >= 0 && peer.Seat < Balance.PlayerCount)
                 {
                     table[peer.Seat * 4] = peer.Seat;
                     table[peer.Seat * 4 + 1] = peer.CharacterPick;
@@ -260,42 +740,59 @@ namespace TumbangPreso.Net
                 }
             }
 
-            SyncLobbyPicksClientRpc(table);
+            if (_nm != null && _nm.CustomMessagingManager != null)
+            {
+                using var writer = new FastBufferWriter(128, Allocator.Temp);
+                writer.WriteValueSafe(table);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("SyncLobbyPicks", writer);
+            }
+
+            OnLobbyPicksSynced?.Invoke(table);
         }
 
-        [ClientRpc]
-        private void SyncLobbyPicksClientRpc(int[] table) => OnLobbyPicksSynced?.Invoke(table);
+        private void OnSyncLobbyPicksMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int[] table);
+            OnLobbyPicksSynced?.Invoke(table);
+        }
 
         // -------------------------------------------------------------------
-        // PICKS
-        //
-        // ⚠️⚠️ THE WHOLE TABLE IS SENT, NOT A DELTA, AND THAT IS WHAT MAKES LATE JOIN WORK.
-        // A peer arriving mid-match missed every individual pick message that ever went out;
-        // broadcasting the full table on any change means a late joiner is correct after one
-        // message instead of needing a replay of the session's history.
+        // PICKS SYNCHRONIZATION
         // -------------------------------------------------------------------
 
-        /// <summary>slot, character, can, slipper: flattened, four ints per seat.</summary>
-        [ClientRpc]
         public void SyncPicksClientRpc(int[] table)
         {
             if (table == null) return;
 
+            var book = RosterBook.Load();
+
             for (int i = 0; i + 3 < table.Length; i += 4)
             {
-                var who = Unit(table[i]);
+                int slot = table[i];
+                int charIndex = table[i + 1];
+
+                var who = Unit(slot);
                 if (who == null) continue;
 
-                who.CharacterIndex = table[i + 1];
+                if (charIndex >= 0 && who.CharacterIndex != charIndex)
+                {
+                    who.CharacterIndex = charIndex;
+                    var person = book != null ? book.PersonArt(charIndex) : null;
+                    if (person != null)
+                    {
+                        var vis = who.GetComponent<Visual.CharacterVisual>();
+                        vis?.ApplyModel(person.Model, person.Tint, person.Clips, person.Palette);
+                    }
+                    if (charIndex < Roster.People.Count)
+                    {
+                        who.PlayerName = Roster.People[charIndex].Name;
+                    }
+                }
 
-                // ⚠️ THE CAN AND SLIPPER PICKS BELONG TO THE PROPS, NOT THE PERSON. A seat's
-                // can skin is worn by the lata on the round that seat defends, and its
-                // slipper skin by that seat's own tsinelas.
-                ApplySlipperSkin(table[i], table[i + 3]);
+                ApplySlipperSkin(slot, table[i + 3]);
             }
         }
 
-        /// <summary>Called host-side whenever anything about the picks changes.</summary>
         public void BroadcastPicks()
         {
             if (!NetAuthority.IsHost) return;
@@ -303,9 +800,9 @@ namespace TumbangPreso.Net
             var round = GameServices.Round;
             if (round == null) return;
 
-            var table = new int[Core.Balance.PlayerCount * 4];
+            var table = new int[Balance.PlayerCount * 4];
 
-            for (int slot = 0; slot < Core.Balance.PlayerCount; slot++)
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
             {
                 var who = round.PlayerAt(slot);
 
@@ -315,6 +812,19 @@ namespace TumbangPreso.Net
                 table[slot * 4 + 3] = SkinOfSlipperFor(slot);
             }
 
+            if (_nm != null && _nm.CustomMessagingManager != null)
+            {
+                using var writer = new FastBufferWriter(128, Allocator.Temp);
+                writer.WriteValueSafe(table);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("SyncPicks", writer);
+            }
+
+            SyncPicksClientRpc(table);
+        }
+
+        private void OnSyncPicksMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int[] table);
             SyncPicksClientRpc(table);
         }
 
@@ -337,10 +847,9 @@ namespace TumbangPreso.Net
         }
 
         // -------------------------------------------------------------------
-        // PROP AND WORLD STATE REPLICATION (N8)
+        // PROP AND WORLD STATE REPLICATION
         // -------------------------------------------------------------------
 
-        [ClientRpc]
         public void SyncLataClientRpc(Vector3 pos, Quaternion rot, bool isUpright, int skinIndex)
         {
             var lata = GameServices.Round?.Lata;
@@ -351,7 +860,6 @@ namespace TumbangPreso.Net
             lata.SkinIndex = skinIndex;
         }
 
-        [ClientRpc]
         public void SyncSlipperClientRpc(int ownerSlot, int holderSlot, Vector3 pos, Quaternion rot, int state)
         {
             var s = FindSlipper(ownerSlot);
@@ -369,7 +877,6 @@ namespace TumbangPreso.Net
             }
         }
 
-        [ClientRpc]
         public void SyncWorldSnapshotClientRpc(int roundNumber, int defenderSlot, float timeLeft, int[] scores, bool inProgress)
         {
             GameServices.Match?.ApplySnapshot(scores, roundNumber, inProgress);
@@ -385,39 +892,102 @@ namespace TumbangPreso.Net
             var round = GameServices.Round;
             if (match == null) return;
 
-            var scores = new int[Core.Balance.PlayerCount];
+            var scores = new int[Balance.PlayerCount];
             for (int i = 0; i < scores.Length; i++) scores[i] = match.ScoreFor(i);
 
-            SyncWorldSnapshotClientRpc(match.RoundNumber, match.DefenderSlot, round != null ? round.TimeLeft : Core.Balance.RoundTime, scores, match.MatchInProgress);
+            SyncWorldSnapshotClientRpc(match.RoundNumber, match.DefenderSlot, round != null ? round.TimeLeft : Balance.RoundTime, scores, match.MatchInProgress);
+
+            if (_nm != null && _nm.CustomMessagingManager != null)
+            {
+                using var writer = new FastBufferWriter(256, Allocator.Temp);
+                writer.WriteValueSafe(match.RoundNumber);
+                writer.WriteValueSafe(match.DefenderSlot);
+                writer.WriteValueSafe(round != null ? round.TimeLeft : Balance.RoundTime);
+                writer.WriteValueSafe(scores);
+                writer.WriteValueSafe(match.MatchInProgress);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("SyncWorld", writer);
+            }
 
             if (round?.Lata != null)
             {
                 var l = round.Lata;
                 SyncLataClientRpc(l.transform.position, l.transform.rotation, l.IsUpright, l.SkinIndex);
+
+                if (_nm != null && _nm.CustomMessagingManager != null)
+                {
+                    using var writer = new FastBufferWriter(64, Allocator.Temp);
+                    writer.WriteValueSafe(l.transform.position);
+                    writer.WriteValueSafe(l.transform.rotation);
+                    writer.WriteValueSafe(l.IsUpright);
+                    writer.WriteValueSafe(l.SkinIndex);
+                    _nm.CustomMessagingManager.SendNamedMessageToAll("SyncLata", writer);
+                }
             }
 
-            for (int slot = 0; slot < Core.Balance.PlayerCount; slot++)
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
             {
                 var s = FindSlipper(slot);
                 if (s != null)
                 {
                     int holderSlot = s.Holder != null ? s.Holder.PlayerSlot : -1;
                     SyncSlipperClientRpc(s.OwnerSlot, holderSlot, s.transform.position, s.transform.rotation, (int)s.State);
+
+                    if (_nm != null && _nm.CustomMessagingManager != null)
+                    {
+                        using var writer = new FastBufferWriter(64, Allocator.Temp);
+                        writer.WriteValueSafe(s.OwnerSlot);
+                        writer.WriteValueSafe(holderSlot);
+                        writer.WriteValueSafe(s.transform.position);
+                        writer.WriteValueSafe(s.transform.rotation);
+                        writer.WriteValueSafe((int)s.State);
+                        _nm.CustomMessagingManager.SendNamedMessageToAll("SyncSlipper", writer);
+                    }
+                }
+
+                var unit = Unit(slot);
+                if (unit != null)
+                {
+                    SyncUnitTransformClientRpc(slot, unit.transform.position, unit.transform.eulerAngles.y, unit.Velocity);
                 }
             }
         }
 
+        private void OnSyncWorldMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int roundNumber);
+            reader.ReadValueSafe(out int defenderSlot);
+            reader.ReadValueSafe(out float timeLeft);
+            reader.ReadValueSafe(out int[] scores);
+            reader.ReadValueSafe(out bool inProgress);
+
+            SyncWorldSnapshotClientRpc(roundNumber, defenderSlot, timeLeft, scores, inProgress);
+        }
+
+        private void OnSyncLataMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out Vector3 pos);
+            reader.ReadValueSafe(out Quaternion rot);
+            reader.ReadValueSafe(out bool isUpright);
+            reader.ReadValueSafe(out int skinIndex);
+
+            SyncLataClientRpc(pos, rot, isUpright, skinIndex);
+        }
+
+        private void OnSyncSlipperMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int ownerSlot);
+            reader.ReadValueSafe(out int holderSlot);
+            reader.ReadValueSafe(out Vector3 pos);
+            reader.ReadValueSafe(out Quaternion rot);
+            reader.ReadValueSafe(out int state);
+
+            SyncSlipperClientRpc(ownerSlot, holderSlot, pos, rot, state);
+        }
+
         // -------------------------------------------------------------------
-        // LATE JOIN AND DISCONNECT (N9)
+        // LATE JOIN AND DISCONNECT
         // -------------------------------------------------------------------
 
-        /// <summary>
-        /// A peer that arrives mid-match or reconnects to reclaim a seat.
-        ///
-        /// ⚠️ IT IS SPAWNED ONCE AND ONLY ONCE. The original guards on a spawned-peer set
-        /// because the connect and the identify both fire, and a peer spawned twice is two
-        /// bodies answering one set of keys.
-        /// </summary>
         public void HostLateJoin(int peerId)
         {
             if (!NetAuthority.IsHost) return;
@@ -430,7 +1000,6 @@ namespace TumbangPreso.Net
                 var unit = Unit(peerRecord.Seat);
                 if (unit != null)
                 {
-                    // Reclaiming seat: remove AI controller if it was active
                     var ai = unit.GetComponent<AIController>();
                     if (ai != null) Destroy(ai);
 
@@ -439,7 +1008,6 @@ namespace TumbangPreso.Net
                 }
             }
 
-            // The joiner needs the whole world state, not just its own seat.
             BroadcastWorldSnapshot();
         }
 
@@ -457,7 +1025,6 @@ namespace TumbangPreso.Net
 
                 lobby.Depart(peerId);
 
-                // AI takeover on the disconnected peer's seat so match continues smoothly
                 if (seat >= 0)
                 {
                     var unit = Unit(seat);
@@ -476,7 +1043,7 @@ namespace TumbangPreso.Net
             BroadcastWorldSnapshot();
         }
 
-        private readonly System.Collections.Generic.HashSet<int> _spawned =
-            new System.Collections.Generic.HashSet<int>();
+        private readonly HashSet<int> _spawned = new HashSet<int>();
     }
 }
+

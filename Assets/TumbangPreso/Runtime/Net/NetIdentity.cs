@@ -182,6 +182,15 @@ namespace TumbangPreso.Net
         {
             SignInAttempts++;
 
+            // ⚠️ IN BATCH MODE, UGS network sign-in is bypassed. Headless test runs and probes
+            // run without a display or interactive session and operate on offline tokens.
+            if (Application.isBatchMode)
+            {
+                Settle(OnlineState.Unreachable,
+                    "UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.");
+                return false;
+            }
+
             // ⚠ ASKED BEFORE ANYTHING IS ATTEMPTED, because an unlinked build is not a failure
             // to reach UGS. It is a build that was never told which UGS project it belongs to,
             // and no amount of network will fix it. This reads the same value UGS itself tests:

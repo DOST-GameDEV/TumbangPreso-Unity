@@ -71,6 +71,10 @@ namespace TumbangPreso.Net
             _nm = GetComponent<NetworkManager>();
             if (_nm == null) _nm = gameObject.AddComponent<NetworkManager>();
 
+            var rpc = GetComponent<MatchRpc>();
+            if (rpc == null) rpc = gameObject.AddComponent<MatchRpc>();
+            rpc.Initialize(_nm);
+
             _utp = GetComponent<UnityTransport>();
             if (_utp == null) _utp = gameObject.AddComponent<UnityTransport>();
 
@@ -87,7 +91,7 @@ namespace TumbangPreso.Net
             if (_beacon == null) _beacon = gameObject.AddComponent<LanBeacon>();
 
             // ⚠️ THE ONLINE BROWSER SITS BESIDE THE LAN BEACON, NOT INSIDE IT. They answer
-            // different questions — "what is on this network" and "what is on the pool" — and
+            // different questions: "what is on this network" and "what is on the pool", and
             // a build that cannot reach the pool must still find a game on the LAN.
             Query = GetComponent<ServerQuery>();
             if (Query == null) Query = gameObject.AddComponent<ServerQuery>();
@@ -154,6 +158,12 @@ namespace TumbangPreso.Net
 
             if (ok)
             {
+                var netObj = GetComponent<NetworkObject>();
+                if (netObj != null && !netObj.IsSpawned)
+                {
+                    netObj.Spawn();
+                }
+
                 LocalSlot = dedicated ? -1 : 0;
 
                 _beacon.HostName = Settings.SettingsStore.Current.PlayerName;
@@ -311,6 +321,12 @@ namespace TumbangPreso.Net
 
                 if (ok)
                 {
+                    var netObj = GetComponent<NetworkObject>();
+                    if (netObj != null && !netObj.IsSpawned)
+                    {
+                        netObj.Spawn();
+                    }
+
                     LocalSlot = 0;
                     _beacon.HostName = Settings.SettingsStore.Current.PlayerName;
                     _beacon.JoinCode = Lobby.JoinCode;
@@ -418,32 +434,51 @@ namespace TumbangPreso.Net
             _utp.MaxConnectAttempts = 12;
         }
 
+        public void SetLocalSeating(int seat, bool spectator)
+        {
+            LocalSlot = seat;
+            GameLaunch.Spectator = spectator;
+            SetStatus($"seated in slot {seat} (spectator={spectator})");
+        }
+
+        public void SetStatusForHost()
+        {
+            SetStatus($"{Lobby.PeerCount} connected");
+        }
+
         // -------------------------------------------------------------------
 
         private void OnClientConnected(ulong clientId)
         {
             if (!IsHost)
             {
-                if (clientId == _nm.LocalClientId) SetStatus("connected");
+                if (clientId == _nm.LocalClientId)
+                {
+                    MatchRpc.Instance?.Initialize(_nm);
+                    SetStatus("connected");
+                    var s = Settings.SettingsStore.Current;
+                    MatchRpc.Instance?.IdentifyServerRpc(NetIdentity.Token, s.PlayerName, s.CharacterPick, s.CanPick, s.SlipperPick);
+                }
                 return;
             }
 
-            // ⚠️ THE HOST SEATS THEM, AND THE HOST DECIDES. A client sends its token and name;
-            // where it sits is not up to it. See LobbySession.RuleOnArrival for why the branch
-            // order matters: a returning player outranks a newcomer for their own seat.
-            var s = Settings.SettingsStore.Current;
-            string token = clientId == _nm.LocalClientId
-                ? NetIdentity.Token
-                : $"{NetIdentity.LocalToken}_peer_{clientId}";
-            var record = Lobby.Admit((int)clientId, token, s.PlayerName);
+            MatchRpc.Instance?.Initialize(_nm);
+
+            // ⚠️ THE HOST SEATS THEM, AND THE HOST DECIDES.
+            if (clientId == _nm.LocalClientId)
+            {
+                var s = Settings.SettingsStore.Current;
+                var record = Lobby.Admit((int)clientId, NetIdentity.Token, s.PlayerName);
+                Lobby.SetPicks((int)clientId, s.CharacterPick, s.CanPick, s.SlipperPick);
+                LocalSlot = record.Seat;
+                SetStatus($"{Lobby.PeerCount} connected, seat {record.Seat}");
+            }
 
             _beacon.Players = Lobby.PeerCount;
             if (Query != null && IsRelay)
             {
                 _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(), Lobby.PeerCount, Lobby.MatchInProgress);
             }
-            MatchRpc.Instance?.HostLateJoin((int)clientId);
-            SetStatus($"{Lobby.PeerCount} connected, seat {record.Seat}");
         }
 
         private void OnClientDisconnected(ulong clientId)
@@ -452,6 +487,7 @@ namespace TumbangPreso.Net
             {
                 // ⚠️ THE SEAT IS HELD, NOT FREED, so a reconnecting player gets their own chair
                 // back rather than finding a stranger in it holding their score.
+                Lobby.Depart((int)clientId);
                 MatchRpc.Instance?.HostPeerLeft((int)clientId);
                 _beacon.Players = Lobby.PeerCount;
                 if (Query != null && IsRelay)
@@ -465,7 +501,7 @@ namespace TumbangPreso.Net
             SetStatus("disconnected");
         }
 
-        private void SetStatus(string s)
+        public void SetStatus(string s)
         {
             Status = s;
             StatusChanged?.Invoke(s);

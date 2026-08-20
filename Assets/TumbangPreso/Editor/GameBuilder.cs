@@ -28,11 +28,20 @@ namespace TumbangPreso.EditorTools
     public static class GameBuilder
     {
         [MenuItem("Tumbang Preso/Build Windows Player")]
-        public static void BuildFromMenu() => Execute(DefaultOutput());
+        public static void BuildFromMenu() => Execute(DefaultOutput(), BuildTarget.StandaloneWindows64);
+
+        [MenuItem("Tumbang Preso/Build macOS Player")]
+        public static void BuildMacFromMenu() => Execute(DefaultMacOutput(), BuildTarget.StandaloneOSX);
 
         public static void BuildWindows()
         {
-            bool ok = Execute(DefaultOutput());
+            bool ok = Execute(DefaultOutput(), BuildTarget.StandaloneWindows64);
+            EditorApplication.Exit(ok ? 0 : 1);
+        }
+
+        public static void BuildMac()
+        {
+            bool ok = Execute(DefaultMacOutput(), BuildTarget.StandaloneOSX);
             EditorApplication.Exit(ok ? 0 : 1);
         }
 
@@ -40,6 +49,11 @@ namespace TumbangPreso.EditorTools
         {
             string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             return Path.Combine(desktop, "TumbangPreso-Unity", "TumbangPreso.exe");
+        }
+
+        public static string DefaultMacOutput()
+        {
+            return Path.Combine(Directory.GetCurrentDirectory(), "Builds", "macOS", "TumbangPreso.app");
         }
 
         /// <summary>
@@ -164,8 +178,8 @@ namespace TumbangPreso.EditorTools
 
         /// <summary>
         /// ⚠️⚠️ A SHADER ONLY `Shader.Find` REFERENCES IS STRIPPED FROM THE BUILD. Every material
-        /// this game builds at runtime — the arms, the tsinelas in the viewmodel hand, the aim
-        /// arc, the impact burst, the map's sky — is created from a shader looked up by NAME,
+        /// this game builds at runtime (the arms, the tsinelas in the viewmodel hand, the aim
+        /// arc, the impact burst, the map's sky) is created from a shader looked up by NAME,
         /// and nothing in any scene or Resources folder points at those shaders. The build
         /// therefore drops them, `Shader.Find` returns null in the player only, and the objects
         /// render as the error material. It is the same class of bug as the stripped animation
@@ -207,7 +221,7 @@ namespace TumbangPreso.EditorTools
                 // ⚠️ THE DANGER VIGNETTE, AND ITS MISS PATH IS A REGRESSION RATHER THAN AN
                 // ABSENCE. `Hud.BuildDangerFlash` warns and falls back to a flat `Image` when
                 // the lookup fails, which is exactly the uniform full-screen red the vignette
-                // was added to replace — so a build that strips this ships the bug back while
+                // was added to replace: so a build that strips this ships the bug back while
                 // the editor stays fixed.
                 "TumbangPreso/DownedVignette",
             };
@@ -250,7 +264,7 @@ namespace TumbangPreso.EditorTools
             Debug.Log($"[Build] added {added} runtime shaders to the always-included list.");
         }
 
-        private static bool Execute(string outputPath)
+        private static bool Execute(string outputPath, BuildTarget target = BuildTarget.StandaloneWindows64)
         {
             var scenes = EditorBuildSettings.scenes
                 .Where(s => s.enabled)
@@ -265,7 +279,7 @@ namespace TumbangPreso.EditorTools
 
             // ⚠️ THE NAME COMES FROM SceneFlow, NOT A LITERAL. This guard hard-coded
             // "Splash.unity" while the scene has always been "SplashScreen.unity", so it
-            // rejected a correctly-ordered build every time — a guard that only ever fires on
+            // rejected a correctly-ordered build every time. A guard that only ever fires on
             // valid input is worse than no guard, because it trains you to bypass it.
             if (!scenes[0].EndsWith($"/{TumbangPreso.UI.SceneFlow.Splash}.unity"))
             {
@@ -308,7 +322,7 @@ namespace TumbangPreso.EditorTools
             {
                 scenes = scenes,
                 locationPathName = outputPath,
-                target = BuildTarget.StandaloneWindows64,
+                target = target,
                 options = BuildOptions.None,
             };
 

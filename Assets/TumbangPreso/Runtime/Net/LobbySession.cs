@@ -156,21 +156,47 @@ namespace TumbangPreso.Net
             }
             else
             {
-                var ruling = RuleOnArrival(record.Token);
-                switch (ruling)
+                // If this token was already admitted under a previous peerId (e.g. fast reconnect before socket timeout):
+                PeerRecord previous = null;
+                if (!string.IsNullOrEmpty(record.Token))
                 {
-                    case MidMatchRuling.Reclaim:
-                        record.Seat = ReclaimSeatFor(record.Token);
-                        break;
+                    foreach (var p in _peers.Values)
+                    {
+                        if (p.PeerId != peerId && p.Token == record.Token)
+                        {
+                            previous = p;
+                            break;
+                        }
+                    }
+                }
 
-                    case MidMatchRuling.Seat:
-                        record.Seat = FirstFreeSeat();
-                        break;
+                if (previous != null)
+                {
+                    record.Seat = previous.Seat;
+                    record.Spectator = previous.Spectator;
+                    record.CharacterPick = previous.CharacterPick;
+                    record.CanPick = previous.CanPick;
+                    record.SlipperPick = previous.SlipperPick;
+                    _peers.Remove(previous.PeerId);
+                }
+                else
+                {
+                    var ruling = RuleOnArrival(record.Token);
+                    switch (ruling)
+                    {
+                        case MidMatchRuling.Reclaim:
+                            record.Seat = ReclaimSeatFor(record.Token);
+                            break;
 
-                    default:
-                        record.Seat = -1;
-                        record.Spectator = true;
-                        break;
+                        case MidMatchRuling.Seat:
+                            record.Seat = FirstFreeSeat();
+                            break;
+
+                        default:
+                            record.Seat = -1;
+                            record.Spectator = true;
+                            break;
+                    }
                 }
             }
 
