@@ -57,7 +57,7 @@ EYE_GOLD      = 10  # Radiant glowing golden amber left eye (#ffd700)
 SILVER        = 11  # Earring studs and metal belt rivets (#d4e2ec)
 WHITE         = 12  # Crisp boot soles, right eye sclera & glints (#f4faff)
 SKIN          = 13  # Bronze warrior tan skin (#a8602c)
-HORN_PURPLE   = 14  # Muted violet sheen & edge accent on obsidian horn (#4e3458)
+HORN_PURPLE   = 14  # Dark purple sheen & edge accent on obsidian horn (#3e2844)
 EYE_EMERALD   = 15  # Rich dark natural forest green right eye iris (#1e5c32)
 
 PALETTE = {
@@ -75,10 +75,9 @@ PALETTE = {
     SILVER:        "d4e2ec",   # Silver earrings & eyebrow piercing
     WHITE:         "f4faff",   # Boot sole tread, eye white & glints
     SKIN:          "a8602c",   # Warm bronze warrior caramel tan skin
-    HORN_PURPLE:   "4e3458",   # Muted violet edge accent
+    HORN_PURPLE:   "3e2844",   # Dark purple sheen & edge accent
     EYE_EMERALD:   "1e5c32",   # Rich dark natural forest green right eye iris
 }
-
 
 MAX_FACE_LUMINANCE = 0.30
 
@@ -753,7 +752,21 @@ def _donor_head():
 
 
 def _add_horn_geometry(pos, nrm, uv, tris):
-    """Generates chunky, low-poly, stepped carapace Otsutsuki horn matching 4-tone reference sheet (media_1787216732286.jpg Iteration B)."""
+    """Generates continuous faceted swept-back Otsutsuki horn matching 4-tone reference sheet."""
+    # Stations along the swept spine curve from side temple base to sharp swept tip
+    # Coordinate frame: +X=Left, +Y=Up, +Z=Front, -Z=Back
+    stations = [
+        # (t, cx, cy, cz, w, h)
+        (0.00, 0.155, 0.540,  0.050, 0.040, 0.042),
+        (0.20, 0.175, 0.575,  0.005, 0.036, 0.038),
+        (0.40, 0.196, 0.615, -0.045, 0.031, 0.033),
+        (0.60, 0.218, 0.655, -0.098, 0.025, 0.026),
+        (0.80, 0.238, 0.698, -0.152, 0.018, 0.019),
+        (0.92, 0.248, 0.728, -0.188, 0.011, 0.012),
+        (0.98, 0.254, 0.744, -0.210, 0.006, 0.006),
+    ]
+    apex_tip = (0.258, 0.755, -0.225)
+
     def cross(a, b):
         return (a[1] * b[2] - a[2] * b[1],
                 a[2] * b[0] - a[0] * b[2],
@@ -788,34 +801,27 @@ def _add_horn_geometry(pos, nrm, uv, tris):
             uv.append(cell_uv(slot))
         tris.append((first, first + 1, first + 2))
 
-    def make_ring(cx, cy, cz, w, h):
-        """Generates the 5 faceted vertices of a cross section."""
+    # Build 5-vertex rings for each station
+    rings = []
+    for t, cx, cy, cz, w, h in stations:
         # 1. Top crest (Light plane)
-        v_top = (cx - w * 0.18, cy + h * 1.05, cz - h * 0.14)
+        v_top = (cx - 0.003, cy + h * 1.05, cz - 0.006)
         # 2. Outer-upper accent crease (Violet accent)
-        v_accent = (cx + w * 0.78, cy + h * 0.65, cz - h * 0.04)
+        v_accent = (cx + w * 0.82, cy + h * 0.35, cz - 0.002)
         # 3. Outer lateral flank (Main charcoal plane)
-        v_outer = (cx + w * 1.12, cy - h * 0.25, cz + h * 0.05)
+        v_outer = (cx + w * 0.95, cy - h * 0.38, cz + 0.002)
         # 4. Bottom keel (Underside shadow)
-        v_bottom = (cx + w * 0.15, cy - h * 0.95, cz + h * 0.14)
+        v_bottom = (cx + 0.002, cy - h * 0.92, cz + 0.005)
         # 5. Inner cranium-facing edge (Medial shadow)
-        v_inner = (cx - w * 0.90, cy - h * 0.20, cz)
-        return (v_top, v_accent, v_outer, v_bottom, v_inner)
+        v_inner = (cx - w * 0.80, cy - h * 0.10, cz)
+        rings.append((v_top, v_accent, v_outer, v_bottom, v_inner))
 
-    def build_carapace_segment(start_params, end_params, is_base=False, is_tip=False, apex=None):
-        """Builds a stepped carapace segment with 4-plane palette shading."""
-        cx0, cy0, cz0, w0, h0 = start_params
-        cx1, cy1, cz1, w1, h1 = end_params
-
-        r0 = make_ring(cx0, cy0, cz0, w0, h0)
-        r1 = make_ring(cx1, cy1, cz1, w1, h1)
+    # Connect adjacent rings with 5 faceted quad strips
+    for i in range(len(rings) - 1):
+        r0 = rings[i]
+        r1 = rings[i + 1]
         top0, acc0, out0, bot0, inn0 = r0
         top1, acc1, out1, bot1, inn1 = r1
-
-        # Front lip step accent if not base
-        if not is_base:
-            add_flat_quad(inn0, bot0, out0, acc0, HAIR)
-            add_flat_tri(inn0, acc0, top0, HORN_PURPLE)
 
         # 1. Top Light Plane (HORN_LIGHT)
         add_flat_quad(inn0, inn1, top1, top0, HORN_LIGHT)
@@ -828,50 +834,19 @@ def _add_horn_geometry(pos, nrm, uv, tris):
         # 5. Inner Cranium Medial-Shadow (HAIR)
         add_flat_quad(bot0, bot1, inn1, inn0, HAIR)
 
-        # Base socket cap for root
-        if is_base:
-            add_flat_tri(top0, inn0, bot0, HAIR)
-            add_flat_tri(top0, bot0, out0, HAIR)
-            add_flat_tri(top0, out0, acc0, HAIR)
+    # Apex tip triangles
+    top_last, acc_last, out_last, bot_last, inn_last = rings[-1]
+    add_flat_tri(inn_last, apex_tip, top_last, HORN_LIGHT)
+    add_flat_tri(top_last, apex_tip, acc_last, HORN_PURPLE)
+    add_flat_tri(acc_last, apex_tip, out_last, HORN_MAIN)
+    add_flat_tri(out_last, apex_tip, bot_last, HAIR)
+    add_flat_tri(bot_last, apex_tip, inn_last, HAIR)
 
-        # Apex tip triangles for final tier
-        if is_tip and apex is not None:
-            add_flat_tri(inn1, apex, top1, HORN_LIGHT)
-            add_flat_tri(top1, apex, acc1, HORN_PURPLE)
-            add_flat_tri(acc1, apex, out1, HORN_MAIN)
-            add_flat_tri(out1, apex, bot1, HAIR)
-            add_flat_tri(bot1, apex, inn1, HAIR)
-
-    # 4 Stepped Chitin Carapace Tiers (Cranial crescent wrap-around, raised height & defined back view)
-    # Tier 0: Cranium Anchor Socket (Temple)
-    build_carapace_segment(
-        (0.165, 0.535,  0.085, 0.072, 0.074),
-        (0.215, 0.575,  0.020, 0.065, 0.067),
-        is_base=True
-    )
-    # Tier 1: Lower Flank (Outward Flare)
-    build_carapace_segment(
-        (0.220, 0.578,  0.026, 0.067, 0.069),
-        (0.265, 0.630, -0.055, 0.054, 0.056)
-    )
-    # Tier 2: Mid-Rear Flank (Maximum Lateral Sweep)
-    build_carapace_segment(
-        (0.268, 0.633, -0.050, 0.056, 0.058),
-        (0.278, 0.690, -0.135, 0.040, 0.042)
-    )
-    # Tier 3: Upper Inward-Sweeping Spire & Chisel Tip
-    build_carapace_segment(
-        (0.276, 0.693, -0.130, 0.042, 0.044),
-        (0.262, 0.745, -0.210, 0.022, 0.023),
-        is_tip=True,
-        apex=(0.248, 0.765, -0.250)
-    )
-
-
-
-
-
-
+    # Base socket collar cap embedding into skull at station 0
+    top0, acc0, out0, bot0, inn0 = rings[0]
+    add_flat_tri(top0, inn0, bot0, HAIR)
+    add_flat_tri(top0, bot0, out0, HAIR)
+    add_flat_tri(top0, out0, acc0, HAIR)
 
 
 

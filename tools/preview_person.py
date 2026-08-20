@@ -49,7 +49,12 @@ def palette(path):
     sys.path.insert(0, ".")
     import importlib.util
 
-    script = "tools/build_zack_voxel.py" if "zack" in path.lower() else "tools/build_person_voxel.py"
+    if "bayan" in path.lower():
+        script = "tools/build_bayan_voxel.py"
+    elif "zack" in path.lower():
+        script = "tools/build_zack_voxel.py"
+    else:
+        script = "tools/build_person_voxel.py"
     spec = importlib.util.spec_from_file_location("bpv", script)
     bpv = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(bpv)
@@ -84,18 +89,25 @@ def load(path):
     return tris
 
 
-def render(tris, pal, slot_at, yaw, label, lo, hi, half, W, H):
+def render(tris, pal, slot_at, yaw, pitch, label, lo, hi, half, W, H):
     """One orthographic view, z-buffered."""
     colour = np.zeros((H, W, 3), dtype=np.uint8)
     colour[:] = BG
     depth = np.full((H, W), 1e9)
 
     cy, sy = math.cos(yaw), math.sin(yaw)
+    cp, sp = math.cos(pitch), math.sin(pitch)
     ln = math.sqrt(sum(v * v for v in LIGHT))
     light = tuple(v / ln for v in LIGHT)
 
     def rot(p):
-        return (p[0] * cy + p[2] * sy, p[1], -p[0] * sy + p[2] * cy)
+        x1 = p[0] * cy + p[2] * sy
+        y1 = p[1]
+        z1 = -p[0] * sy + p[2] * cy
+        x2 = x1
+        y2 = y1 * cp - z1 * sp
+        z2 = y1 * sp + z1 * cp
+        return (x2, y2, z2)
 
     ys, xs = np.mgrid[0:H, 0:W]
 
@@ -167,13 +179,17 @@ def main():
     half = 0.28 if head_only else 0.42
     W, H = 300, 420
 
-    views = [(0.0, "front"), (math.radians(35), "three-quarter"),
-             (math.radians(90), "side"), (math.radians(180), "back"),
-             (math.radians(-90), "other side")]
+    views = [
+        (0.0, 0.0, "front", lo, hi),
+        (math.radians(-35), 0.0, "three-quarter", lo, hi),
+        (math.radians(-90), 0.0, "side", lo, hi),
+        (math.radians(180), 0.0, "back", lo, hi),
+        (0.0, math.radians(90), "top-down", -0.28, 0.28),
+    ]
 
     sheet = Image.new("RGB", (W * len(views), H), BG)
-    for n, (yaw, label) in enumerate(views):
-        sheet.paste(render(tris, pal, bpv._slot_at, yaw, label, lo, hi, half, W, H), (W * n, 0))
+    for n, (yaw, pitch, label, vlo, vhi) in enumerate(views):
+        sheet.paste(render(tris, pal, bpv._slot_at, yaw, pitch, label, vlo, vhi, half, W, H), (W * n, 0))
 
     sheet.save(OUT)
     print("wrote", OUT)

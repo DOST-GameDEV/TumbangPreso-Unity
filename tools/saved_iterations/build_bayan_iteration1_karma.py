@@ -57,7 +57,7 @@ EYE_GOLD      = 10  # Radiant glowing golden amber left eye (#ffd700)
 SILVER        = 11  # Earring studs and metal belt rivets (#d4e2ec)
 WHITE         = 12  # Crisp boot soles, right eye sclera & glints (#f4faff)
 SKIN          = 13  # Bronze warrior tan skin (#a8602c)
-HORN_PURPLE   = 14  # Muted violet sheen & edge accent on obsidian horn (#4e3458)
+HORN_PURPLE   = 14  # Dark purple sheen & edge accent on obsidian horn (#3e2844)
 EYE_EMERALD   = 15  # Rich dark natural forest green right eye iris (#1e5c32)
 
 PALETTE = {
@@ -75,10 +75,9 @@ PALETTE = {
     SILVER:        "d4e2ec",   # Silver earrings & eyebrow piercing
     WHITE:         "f4faff",   # Boot sole tread, eye white & glints
     SKIN:          "a8602c",   # Warm bronze warrior caramel tan skin
-    HORN_PURPLE:   "4e3458",   # Muted violet edge accent
+    HORN_PURPLE:   "3e2844",   # Dark purple sheen & edge accent
     EYE_EMERALD:   "1e5c32",   # Rich dark natural forest green right eye iris
 }
-
 
 MAX_FACE_LUMINANCE = 0.30
 
@@ -228,25 +227,33 @@ ARM_DECALS = [
     # =========================================================================
     # A. Bicep Crease Shadow Notch & Crevice
     ("f-dem-bicep-shadow", "arm-left", "front", LEATHER_BROWN,
-     [(0.100, 0.340), (0.138, 0.340), (0.136, 0.410), (0.100, 0.440)], 1),
+     [(0.100, 0.340), (0.150, 0.340), (0.148, 0.410), (0.100, 0.440)], 1),
     ("f-dem-bicep-crevice", "arm-left", "front", ROBE_DARK,
-     [(0.100, 0.340), (0.124, 0.340), (0.120, 0.390), (0.100, 0.420)], 2),
+     [(0.100, 0.340), (0.134, 0.340), (0.130, 0.390), (0.100, 0.420)], 2),
 
     # B. Lower Carapace Dark Shadow Underline
     ("f-dem-carapace-shadow", "arm-left", "front", ROBE_DARK,
-     [(0.135, 0.340), (0.308, 0.340), (0.308, 0.355), (0.135, 0.355)], 1),
+     [(0.125, 0.340), (0.310, 0.340), (0.310, 0.358), (0.125, 0.358)], 1),
 
-    # C. Chevron 1: Upper/Inner 45° Angular Chevron Conduit
-    ("f-dem-chev1-diag", "arm-left", "front", ROBE_GREEN,
-     [(0.155, 0.460), (0.185, 0.460), (0.245, 0.400), (0.215, 0.400)], 2),
-    ("f-dem-chev1-leg", "arm-left", "front", ROBE_GREEN,
-     [(0.215, 0.355), (0.245, 0.355), (0.245, 0.400), (0.215, 0.400)], 2),
+    # C. Lower Carapace Green Plate (Horizontal bar across lower forearm to side edge)
+    ("f-dem-carapace-band", "arm-left", "front", ROBE_GREEN,
+     [(0.135, 0.358), (0.310, 0.358), (0.310, 0.392), (0.135, 0.392)], 2),
 
-    # D. Chevron 2: Outer/Forearm 45° Angular Chevron Conduit
-    ("f-dem-chev2-diag", "arm-left", "front", ROBE_GREEN,
-     [(0.220, 0.460), (0.250, 0.460), (0.308, 0.402), (0.278, 0.402)], 2),
-    ("f-dem-chev2-leg", "arm-left", "front", ROBE_GREEN,
-     [(0.278, 0.355), (0.308, 0.355), (0.308, 0.402), (0.278, 0.402)], 2),
+    # D. Vertical Gold Line (Crisp accent line from shoulder down to lower plate)
+    ("f-dem-gold-line", "arm-left", "front", GOLD_TRIM,
+     [(0.148, 0.370), (0.158, 0.370), (0.158, 0.460), (0.148, 0.460)], 3),
+
+    # E. Inner Vertical Green Conduit Stem (Adjacent to gold line)
+    ("f-dem-inner-stem", "arm-left", "front", ROBE_GREEN,
+     [(0.158, 0.392), (0.175, 0.392), (0.175, 0.460), (0.158, 0.460)], 2),
+
+    # F. Karma Diagonal 45° Conduit Band (Exact seam matching top face X in [0.175, 0.215])
+    ("f-dem-diag-band", "arm-left", "front", ROBE_GREEN,
+     [(0.175, 0.460), (0.215, 0.460), (0.285, 0.392), (0.245, 0.392)], 2),
+
+    # G. Outer Wrist Vertical Conduit Spur (Connecting to side face X in [0.275, 0.310])
+    ("f-dem-outer-spur", "arm-left", "front", ROBE_GREEN,
+     [(0.275, 0.392), (0.310, 0.392), (0.310, 0.460), (0.275, 0.460)], 2),
 
     # =========================================================================
     # 2. OUTER SIDE DEMONIC ARM (+X, Arm-Left, Outer Side Face X = 0.310)
@@ -254,23 +261,23 @@ ARM_DECALS = [
     # =========================================================================
     # A. Lower Base Shadow
     ("s-dem-shadow", "arm-left", "left", ROBE_DARK,
-     [(-0.050, 0.340), (0.045, 0.340), (0.045, 0.355), (-0.050, 0.355)], 1),
+     [(-0.055, 0.340), (0.055, 0.340), (0.055, 0.355), (-0.055, 0.355)], 1),
 
-    # B. Lower Horizontal Base Connector
+    # B. Bottom Horizontal Conduit / Base Plate (Connects front to back)
     ("s-dem-bottom-plate", "arm-left", "left", ROBE_GREEN,
-     [(-0.050, 0.355), (0.040, 0.355), (0.040, 0.375), (-0.050, 0.375)], 2),
+     [(-0.055, 0.355), (0.055, 0.355), (0.055, 0.388), (-0.055, 0.388)], 2),
 
-    # C. Front Vertical Conduit
-    ("s-dem-front-vert", "arm-left", "left", ROBE_GREEN,
-     [(-0.050, 0.375), (-0.025, 0.375), (-0.025, 0.435), (-0.050, 0.435)], 2),
+    # C. Front Vertical Conduit Channel (Connects to front wrist spur)
+    ("s-dem-front-conduit", "arm-left", "left", ROBE_GREEN,
+     [(-0.055, 0.388), (-0.018, 0.388), (-0.018, 0.460), (-0.055, 0.460)], 2),
 
-    # D. 45° Diagonal Conduit Bridge (Otsutsuki Karma arch)
-    ("s-dem-diag-bridge", "arm-left", "left", ROBE_GREEN,
-     [(-0.025, 0.415), (-0.005, 0.415), (0.035, 0.445), (0.015, 0.445)], 2),
+    # D. Back Vertical Conduit Channel (Connects to back wrist spur)
+    ("s-dem-back-conduit", "arm-left", "left", ROBE_GREEN,
+     [(0.018, 0.400), (0.055, 0.400), (0.055, 0.460), (0.018, 0.460)], 2),
 
-    # E. Back Vertical Conduit
-    ("s-dem-back-vert", "arm-left", "left", ROBE_GREEN,
-     [(0.015, 0.375), (0.040, 0.375), (0.040, 0.445), (0.015, 0.445)], 2),
+    # E. Diagonal Karma Circuit Conduit Bridge (45° bridge creating Otsutsuki arch)
+    ("s-dem-diag-conduit", "arm-left", "left", ROBE_GREEN,
+     [(-0.018, 0.388), (0.015, 0.388), (0.055, 0.435), (0.018, 0.435)], 2),
 
     # =========================================================================
     # 3. BACK DEMONIC ARM (+X, Arm-Left, Back Face Z = 0.055 -> Mesh -Z)
@@ -278,68 +285,77 @@ ARM_DECALS = [
     # =========================================================================
     # A. Shadow Accents Under Circuit Bars
     ("b-dem-shadow", "arm-left", "back", ROBE_DARK,
-     [(0.115, 0.340), (0.308, 0.340), (0.308, 0.355), (0.115, 0.355)], 1),
+     [(0.115, 0.340), (0.310, 0.340), (0.310, 0.358), (0.115, 0.358)], 1),
 
-    # B. Chevron 1: Upper/Inner 45° Angular Chevron Conduit
-    ("b-dem-chev1-diag", "arm-left", "back", ROBE_GREEN,
-     [(0.155, 0.460), (0.185, 0.460), (0.245, 0.400), (0.215, 0.400)], 2),
-    ("b-dem-chev1-leg", "arm-left", "back", ROBE_GREEN,
-     [(0.215, 0.355), (0.245, 0.355), (0.245, 0.400), (0.215, 0.400)], 2),
+    # B. Outer Wrist Core & Connector Band (Connects to side face)
+    ("b-dem-wrist-core", "arm-left", "back", ROBE_GREEN,
+     [(0.235, 0.358), (0.310, 0.358), (0.310, 0.395), (0.235, 0.395)], 2),
 
-    # C. Chevron 2: Outer/Forearm 45° Angular Chevron Conduit
-    ("b-dem-chev2-diag", "arm-left", "back", ROBE_GREEN,
-     [(0.220, 0.460), (0.250, 0.460), (0.308, 0.402), (0.278, 0.402)], 2),
-    ("b-dem-chev2-leg", "arm-left", "back", ROBE_GREEN,
-     [(0.278, 0.355), (0.308, 0.355), (0.308, 0.402), (0.278, 0.402)], 2),
+    # C. Outer Vertical Spur / Channel (Connects to side face and top face)
+    ("b-dem-wrist-top", "arm-left", "back", ROBE_GREEN,
+     [(0.270, 0.395), (0.310, 0.395), (0.310, 0.460), (0.270, 0.460)], 2),
+
+    # D. Lower-Middle Horizontal Connector Bar
+    ("b-dem-mid-bridge", "arm-left", "back", ROBE_GREEN,
+     [(0.135, 0.368), (0.270, 0.368), (0.270, 0.398), (0.135, 0.398)], 2),
+
+    # E. Inner Torso Seam Ascending Spur & Vertical Branch
+    ("b-dem-inner-spur", "arm-left", "back", ROBE_GREEN,
+     [(0.115, 0.350), (0.145, 0.350), (0.145, 0.445), (0.115, 0.445)], 2),
+
+    # F. Top Center Carapace Plate (Seam matching top face X in [0.165, 0.215])
+    ("b-dem-top-plate", "arm-left", "back", ROBE_GREEN,
+     [(0.165, 0.415), (0.215, 0.415), (0.215, 0.460), (0.165, 0.460)], 2),
 
     # =========================================================================
     # 4. TOP DEMONIC ARM (+X, Arm-Left, Top Face Y = 0.460 -> Mesh Y = 0.348)
     # Authored bounds: X in [0.0999, 0.310], Z in [-0.055, 0.055]
     # =========================================================================
-    # A. Band 1 Top Crest Wrap
-    ("top-dem-band1-wrap", "arm-left", "top", ROBE_GREEN,
-     [(0.155, -0.050), (0.185, -0.050), (0.185, 0.050), (0.155, 0.050)], 2),
+    # A. Gold Accent Strip Along Inner Conduit
+    ("top-dem-gold", "arm-left", "top", GOLD_TRIM,
+     [(0.148, -0.055), (0.158, -0.055), (0.158, 0.055), (0.148, 0.055)], 3),
 
-    # B. Band 2 Top Crest Wrap
-    ("top-dem-band2-wrap", "arm-left", "top", ROBE_GREEN,
-     [(0.220, -0.050), (0.250, -0.050), (0.250, 0.050), (0.220, 0.050)], 2),
+    # B. Diagonal Karma Wrap Band (Front 45° band to Back Top plate)
+    ("top-dem-diag-wrap", "arm-left", "top", ROBE_GREEN,
+     [(0.175, -0.055), (0.215, -0.055), (0.215, 0.055), (0.165, 0.055)], 2),
 
-    # C. Outer Crest Wrap
+    # C. Outer Side Crest Wrap (Connecting Front, Side, and Back)
     ("top-dem-side-wrap", "arm-left", "top", ROBE_GREEN,
-     [(0.285, -0.050), (0.308, -0.050), (0.308, 0.050), (0.285, 0.050)], 2),
+     [(0.275, -0.055), (0.310, -0.055), (0.310, 0.055), (0.270, 0.055)], 2),
 
     # =========================================================================
     # 5. BOTTOM DEMONIC ARM (+X, Arm-Left, Bottom Face Y = 0.340 -> Mesh Y = 0.228)
     # Authored bounds: X in [0.0999, 0.310], Z in [-0.055, 0.055]
     # =========================================================================
     ("bot-dem-plate", "arm-left", "bottom", ROBE_GREEN,
-     [(0.215, -0.050), (0.308, -0.050), (0.308, 0.050), (0.215, 0.050)], 2),
+     [(0.240, -0.055), (0.310, -0.055), (0.310, 0.055), (0.240, 0.055)], 2),
 
     # =========================================================================
     # 6. FRONT NATURAL ARM (-X, Arm-Right, Front Face Z = -0.055 -> Mesh +Z)
     # Authored bounds: X in [-0.310, -0.0999], Forearm X in [-0.310, -0.235]
-    # NOTE: Dark brown short sleeve [-0.205, -0.0999] & Gold cuff [-0.235, -0.205] PRESERVED!
     # =========================================================================
     # A. Forearm Bottom Shadow Underline
     ("f-nat-bottom-shadow", "arm-right", "front", ROBE_DARK,
-     [(-0.308, 0.340), (-0.235, 0.340), (-0.235, 0.355), (-0.308, 0.355)], 1),
+     [(-0.310, 0.340), (-0.235, 0.340), (-0.235, 0.358), (-0.310, 0.358)], 1),
 
-    # B. Continuous Flowing Vine
+    # B. Continuous Flowing Vine (Stepped organic coverage matching concept art)
     ("f-nat-top-emerge", "arm-right", "front", ROBE_GREEN,
-     [(-0.255, 0.420), (-0.235, 0.420), (-0.235, 0.455), (-0.255, 0.455)], 2),
+     [(-0.255, 0.420), (-0.235, 0.420), (-0.235, 0.460), (-0.255, 0.460)], 2),
+    ("f-nat-top-spur", "arm-right", "front", ROBE_GREEN,
+     [(-0.275, 0.425), (-0.255, 0.425), (-0.255, 0.450), (-0.275, 0.450)], 2),
     ("f-nat-diag-sweep", "arm-right", "front", ROBE_GREEN,
-     [(-0.275, 0.380), (-0.250, 0.380), (-0.235, 0.425), (-0.255, 0.425)], 2),
+     [(-0.280, 0.380), (-0.245, 0.380), (-0.235, 0.430), (-0.255, 0.430)], 2),
     ("f-nat-bottom-band", "arm-right", "front", ROBE_GREEN,
-     [(-0.295, 0.355), (-0.235, 0.355), (-0.235, 0.380), (-0.295, 0.380)], 2),
+     [(-0.300, 0.358), (-0.235, 0.358), (-0.235, 0.385), (-0.300, 0.385)], 2),
     ("f-nat-wrist-hook", "arm-right", "front", ROBE_GREEN,
-     [(-0.308, 0.370), (-0.280, 0.370), (-0.280, 0.420), (-0.308, 0.420)], 2),
+     [(-0.310, 0.370), (-0.275, 0.370), (-0.275, 0.425), (-0.310, 0.425)], 2),
 
     # =========================================================================
     # 7. OUTER SIDE NATURAL ARM (-X, Arm-Right, Outer Side Face X = -0.310)
     # Authored bounds: Z in [-0.055, 0.055], Y in [0.340, 0.460]
     # =========================================================================
     ("s-nat-wrist-wrap", "arm-right", "right", ROBE_GREEN,
-     [(-0.050, 0.370), (0.050, 0.370), (0.050, 0.400), (-0.050, 0.400)], 2),
+     [(-0.055, 0.370), (0.055, 0.370), (0.055, 0.410), (-0.055, 0.410)], 2),
 
     # =========================================================================
     # 8. BACK NATURAL ARM (-X, Arm-Right, Back Face Z = 0.055 -> Mesh -Z)
@@ -347,24 +363,24 @@ ARM_DECALS = [
     # =========================================================================
     # A. Forearm Bottom Shadow Underline
     ("b-nat-bottom-shadow", "arm-right", "back", ROBE_DARK,
-     [(-0.308, 0.340), (-0.235, 0.340), (-0.235, 0.355), (-0.308, 0.355)], 1),
+     [(-0.310, 0.340), (-0.235, 0.340), (-0.235, 0.358), (-0.310, 0.358)], 1),
 
     # B. U-Shaped Serpentine Loop
     ("b-nat-top-entry", "arm-right", "back", ROBE_GREEN,
-     [(-0.255, 0.420), (-0.235, 0.420), (-0.235, 0.455), (-0.255, 0.455)], 2),
+     [(-0.255, 0.420), (-0.235, 0.420), (-0.235, 0.460), (-0.255, 0.460)], 2),
     ("b-nat-desc-runner", "arm-right", "back", ROBE_GREEN,
      [(-0.255, 0.375), (-0.236, 0.375), (-0.236, 0.425), (-0.255, 0.425)], 2),
     ("b-nat-bottom-bar", "arm-right", "back", ROBE_GREEN,
-     [(-0.295, 0.355), (-0.236, 0.355), (-0.236, 0.380), (-0.295, 0.380)], 2),
+     [(-0.300, 0.358), (-0.236, 0.358), (-0.236, 0.388), (-0.300, 0.388)], 2),
     ("b-nat-wrist-hook", "arm-right", "back", ROBE_GREEN,
-     [(-0.308, 0.370), (-0.280, 0.370), (-0.280, 0.420), (-0.308, 0.420)], 2),
+     [(-0.310, 0.375), (-0.270, 0.375), (-0.270, 0.425), (-0.310, 0.425)], 2),
 
     # =========================================================================
     # 9. TOP NATURAL ARM (-X, Arm-Right, Top Face Y = 0.460 -> Mesh Y = 0.348)
     # Authored bounds: Forearm X in [-0.310, -0.235], Z in [-0.055, 0.055]
     # =========================================================================
     ("top-nat-vine", "arm-right", "top", ROBE_GREEN,
-     [(-0.255, -0.050), (-0.235, -0.050), (-0.235, 0.050), (-0.255, 0.050)], 2),
+     [(-0.255, -0.055), (-0.235, -0.055), (-0.235, 0.055), (-0.255, 0.055)], 2),
 ]
 
 BODY_PANELS = []
@@ -390,7 +406,46 @@ HEAD = [
     ("undercut-side-main",    "head", (0.145, 0.410, -0.080), (0.184, 0.630, 0.090), LEATHER_BROWN),
     ("undercut-side-front",   "head", (0.145, 0.430, 0.080), (0.182, 0.620, 0.145), LEATHER_BROWN),
     ("undercut-sideburn",     "head", (0.160, 0.400, -0.010), (0.188, 0.500, 0.080), LEATHER_BROWN),
+    
+    # 🪨 OBSIDIAN ASCENDING SWEPT-BACK CARAPACE HORN (Iteration B: Higher, Further Back, Sleek Swept-Back)
+    # Tier 0: Cranium Socket (Higher on skull, seamlessly embedded into hair)
+    ("horn-seg0-socket",      "head", (0.130, 0.570, 0.010), (0.185, 0.640, 0.085), HAIR),
+    ("horn-seg0-body",        "head", (0.135, 0.580, 0.005), (0.190, 0.650, 0.080), HORN_MAIN),
+    ("horn-seg0-top",         "head", (0.140, 0.615, 0.010), (0.188, 0.655, 0.075), HORN_LIGHT),
+    ("horn-seg0-groove",      "head", (0.130, 0.570, 0.000), (0.182, 0.590, 0.070), HAIR),
 
+    # Tier 1: Lower Carapace Shingle (Swept back)
+    ("horn-seg1-body",        "head", (0.150, 0.615, -0.035), (0.208, 0.680, 0.045), HORN_MAIN),
+    ("horn-seg1-top",         "head", (0.155, 0.650, -0.030), (0.205, 0.685, 0.040), HORN_LIGHT),
+    ("horn-seg1-groove",      "head", (0.145, 0.610, -0.040), (0.198, 0.628, 0.035), HAIR),
+
+    # Tier 2: Mid-Ascent Carapace Shingle
+    ("horn-seg2-body",        "head", (0.175, 0.655, -0.075), (0.230, 0.715, -0.005), HORN_MAIN),
+    ("horn-seg2-top",         "head", (0.180, 0.690, -0.070), (0.226, 0.720, -0.010), HORN_LIGHT),
+    ("horn-seg2-groove",      "head", (0.170, 0.650, -0.080), (0.218, 0.668, -0.015), HAIR),
+
+    # Tier 3: Central Spire Tier
+    ("horn-seg3-body",        "head", (0.198, 0.690, -0.115), (0.250, 0.745, -0.045), HORN_MAIN),
+    ("horn-seg3-top",         "head", (0.202, 0.725, -0.110), (0.246, 0.748, -0.050), HORN_LIGHT),
+    ("horn-seg3-groove",      "head", (0.192, 0.685, -0.120), (0.238, 0.702, -0.055), HAIR),
+
+    # Tier 4: Upper Ascending Spire Tier
+    ("horn-seg4-body",        "head", (0.218, 0.720, -0.155), (0.268, 0.768, -0.085), HORN_MAIN),
+    ("horn-seg4-top",         "head", (0.222, 0.750, -0.150), (0.264, 0.772, -0.090), HORN_LIGHT),
+    ("horn-seg4-groove",      "head", (0.212, 0.715, -0.160), (0.256, 0.730, -0.095), HAIR),
+
+    # Tier 5: Sub-Apex Carapace Plate (Tapering)
+    ("horn-seg5-body",        "head", (0.238, 0.748, -0.190), (0.282, 0.785, -0.125), HORN_MAIN),
+    ("horn-seg5-top",         "head", (0.242, 0.770, -0.185), (0.278, 0.788, -0.130), HORN_LIGHT),
+    ("horn-seg5-groove",      "head", (0.232, 0.742, -0.195), (0.272, 0.758, -0.135), HAIR),
+
+    # Tier 6: Slender Chisel Spire
+    ("horn-seg6-body",        "head", (0.255, 0.768, -0.220), (0.292, 0.788, -0.160), HORN_MAIN),
+    ("horn-seg6-top",         "head", (0.258, 0.780, -0.215), (0.288, 0.788, -0.165), HORN_LIGHT),
+
+    # Tier 7: Needle Point Apex
+    ("horn-seg7-needle",      "head", (0.268, 0.778, -0.235), (0.296, 0.788, -0.195), HORN_MAIN),
+    ("horn-seg7-facet",       "head", (0.272, 0.782, -0.232), (0.294, 0.788, -0.200), HORN_LIGHT),
     
     # 💇 DYNAMIC ANIME SPIKES (Front, top, back)
     ("spike-front-c1",        "head", (-0.050, 0.670, 0.115), (0.040, 0.765, 0.192), HAIR),
@@ -746,133 +801,7 @@ def _donor_head():
     add_quad([(0.072, 0.508), (0.072, 0.526), (0.114, 0.532), (0.114, 0.514)],
              INK, PANEL_PROUD * 3.4)
 
-    # 6. 🪨 CHUNKY LOW-POLY SWEPT-BACK OTSUTSUKI HORN (media_1787216732286.jpg Iteration B)
-    _add_horn_geometry(pos, nrm, uv, tris)
-
     return _compact(pos, nrm, uv, tris)
-
-
-def _add_horn_geometry(pos, nrm, uv, tris):
-    """Generates chunky, low-poly, stepped carapace Otsutsuki horn matching 4-tone reference sheet (media_1787216732286.jpg Iteration B)."""
-    def cross(a, b):
-        return (a[1] * b[2] - a[2] * b[1],
-                a[2] * b[0] - a[0] * b[2],
-                a[0] * b[1] - a[1] * b[0])
-
-    def unit(a):
-        length = math.sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]) or 1.0
-        return (a[0] / length, a[1] / length, a[2] / length)
-
-    def add_flat_quad(p0, p1, p2, p3, slot):
-        """Adds a flat quad (p0, p1, p2, p3) in CCW winding with computed normal."""
-        v1 = (p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2])
-        v2 = (p2[0] - p0[0], p2[1] - p0[1], p2[2] - p0[2])
-        normal = unit(cross(v1, v2))
-        first = len(pos)
-        for p in (p0, p1, p2, p3):
-            pos.append(p)
-            nrm.append(normal)
-            uv.append(cell_uv(slot))
-        tris.append((first, first + 1, first + 2))
-        tris.append((first, first + 2, first + 3))
-
-    def add_flat_tri(p0, p1, p2, slot):
-        """Adds a flat triangle (p0, p1, p2) in CCW winding with computed normal."""
-        v1 = (p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2])
-        v2 = (p2[0] - p0[0], p2[1] - p0[1], p2[2] - p0[2])
-        normal = unit(cross(v1, v2))
-        first = len(pos)
-        for p in (p0, p1, p2):
-            pos.append(p)
-            nrm.append(normal)
-            uv.append(cell_uv(slot))
-        tris.append((first, first + 1, first + 2))
-
-    def make_ring(cx, cy, cz, w, h):
-        """Generates the 5 faceted vertices of a cross section."""
-        # 1. Top crest (Light plane)
-        v_top = (cx - w * 0.18, cy + h * 1.05, cz - h * 0.14)
-        # 2. Outer-upper accent crease (Violet accent)
-        v_accent = (cx + w * 0.78, cy + h * 0.65, cz - h * 0.04)
-        # 3. Outer lateral flank (Main charcoal plane)
-        v_outer = (cx + w * 1.12, cy - h * 0.25, cz + h * 0.05)
-        # 4. Bottom keel (Underside shadow)
-        v_bottom = (cx + w * 0.15, cy - h * 0.95, cz + h * 0.14)
-        # 5. Inner cranium-facing edge (Medial shadow)
-        v_inner = (cx - w * 0.90, cy - h * 0.20, cz)
-        return (v_top, v_accent, v_outer, v_bottom, v_inner)
-
-    def build_carapace_segment(start_params, end_params, is_base=False, is_tip=False, apex=None):
-        """Builds a stepped carapace segment with 4-plane palette shading."""
-        cx0, cy0, cz0, w0, h0 = start_params
-        cx1, cy1, cz1, w1, h1 = end_params
-
-        r0 = make_ring(cx0, cy0, cz0, w0, h0)
-        r1 = make_ring(cx1, cy1, cz1, w1, h1)
-        top0, acc0, out0, bot0, inn0 = r0
-        top1, acc1, out1, bot1, inn1 = r1
-
-        # Front lip step accent if not base
-        if not is_base:
-            add_flat_quad(inn0, bot0, out0, acc0, HAIR)
-            add_flat_tri(inn0, acc0, top0, HORN_PURPLE)
-
-        # 1. Top Light Plane (HORN_LIGHT)
-        add_flat_quad(inn0, inn1, top1, top0, HORN_LIGHT)
-        # 2. Violet Accent Bevel Crease (HORN_PURPLE)
-        add_flat_quad(top0, top1, acc1, acc0, HORN_PURPLE)
-        # 3. Main Charcoal Lateral Flank (HORN_MAIN)
-        add_flat_quad(acc0, acc1, out1, out0, HORN_MAIN)
-        # 4. Bottom Keel Under-Shadow (HAIR)
-        add_flat_quad(out0, out1, bot1, bot0, HAIR)
-        # 5. Inner Cranium Medial-Shadow (HAIR)
-        add_flat_quad(bot0, bot1, inn1, inn0, HAIR)
-
-        # Base socket cap for root
-        if is_base:
-            add_flat_tri(top0, inn0, bot0, HAIR)
-            add_flat_tri(top0, bot0, out0, HAIR)
-            add_flat_tri(top0, out0, acc0, HAIR)
-
-        # Apex tip triangles for final tier
-        if is_tip and apex is not None:
-            add_flat_tri(inn1, apex, top1, HORN_LIGHT)
-            add_flat_tri(top1, apex, acc1, HORN_PURPLE)
-            add_flat_tri(acc1, apex, out1, HORN_MAIN)
-            add_flat_tri(out1, apex, bot1, HAIR)
-            add_flat_tri(bot1, apex, inn1, HAIR)
-
-    # 4 Stepped Chitin Carapace Tiers (Cranial crescent wrap-around, raised height & defined back view)
-    # Tier 0: Cranium Anchor Socket (Temple)
-    build_carapace_segment(
-        (0.165, 0.535,  0.085, 0.072, 0.074),
-        (0.215, 0.575,  0.020, 0.065, 0.067),
-        is_base=True
-    )
-    # Tier 1: Lower Flank (Outward Flare)
-    build_carapace_segment(
-        (0.220, 0.578,  0.026, 0.067, 0.069),
-        (0.265, 0.630, -0.055, 0.054, 0.056)
-    )
-    # Tier 2: Mid-Rear Flank (Maximum Lateral Sweep)
-    build_carapace_segment(
-        (0.268, 0.633, -0.050, 0.056, 0.058),
-        (0.278, 0.690, -0.135, 0.040, 0.042)
-    )
-    # Tier 3: Upper Inward-Sweeping Spire & Chisel Tip
-    build_carapace_segment(
-        (0.276, 0.693, -0.130, 0.042, 0.044),
-        (0.262, 0.745, -0.210, 0.022, 0.023),
-        is_tip=True,
-        apex=(0.248, 0.765, -0.250)
-    )
-
-
-
-
-
-
-
 
 
 def _compact(pos, nrm, uv, tris):

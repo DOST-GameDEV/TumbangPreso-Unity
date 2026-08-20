@@ -753,7 +753,7 @@ def _donor_head():
 
 
 def _add_horn_geometry(pos, nrm, uv, tris):
-    """Generates chunky, low-poly, stepped carapace Otsutsuki horn matching 4-tone reference sheet (media_1787216732286.jpg Iteration B)."""
+    """Generates chunky, low-poly, 6-faceted stepped carapace Otsutsuki horn matching 4-tone reference sheet (media_1787216732286.jpg Iteration B) across all angles."""
     def cross(a, b):
         return (a[1] * b[2] - a[2] * b[1],
                 a[2] * b[0] - a[0] * b[2],
@@ -789,83 +789,92 @@ def _add_horn_geometry(pos, nrm, uv, tris):
         tris.append((first, first + 1, first + 2))
 
     def make_ring(cx, cy, cz, w, h):
-        """Generates the 5 faceted vertices of a cross section."""
-        # 1. Top crest (Light plane)
-        v_top = (cx - w * 0.18, cy + h * 1.05, cz - h * 0.14)
-        # 2. Outer-upper accent crease (Violet accent)
-        v_accent = (cx + w * 0.78, cy + h * 0.65, cz - h * 0.04)
-        # 3. Outer lateral flank (Main charcoal plane)
-        v_outer = (cx + w * 1.12, cy - h * 0.25, cz + h * 0.05)
-        # 4. Bottom keel (Underside shadow)
-        v_bottom = (cx + w * 0.15, cy - h * 0.95, cz + h * 0.14)
-        # 5. Inner cranium-facing edge (Medial shadow)
-        v_inner = (cx - w * 0.90, cy - h * 0.20, cz)
-        return (v_top, v_accent, v_outer, v_bottom, v_inner)
+        """Generates 6 faceted vertices providing crisp stepped shingle definition across front, side, and back."""
+        # 1. Top crest (Light plane top-outer edge, visible from side, top, and front)
+        v_top = (cx - w * 0.15, cy + h * 1.05, cz - h * 0.12)
+        # 2. Outer-upper accent crease (Violet accent crest)
+        v_accent = (cx + w * 0.72, cy + h * 0.68, cz - h * 0.04)
+        # 3. Mid-lateral ridge apex (Main charcoal flank)
+        v_outer = (cx + w * 1.10, cy - h * 0.12, cz + h * 0.05)
+        # 4. Lower-lateral bevel (Shadow transition)
+        v_bot_out = (cx + w * 0.65, cy - h * 0.70, cz + h * 0.10)
+        # 5. Bottom keel (Underside shadow)
+        v_bottom = (cx + w * 0.10, cy - h * 0.95, cz + h * 0.14)
+        # 6. Medial/inner flank (Visible from back view)
+        v_inner = (cx - w * 0.85, cy - h * 0.10, cz)
+        return (v_top, v_accent, v_outer, v_bot_out, v_bottom, v_inner)
 
     def build_carapace_segment(start_params, end_params, is_base=False, is_tip=False, apex=None):
-        """Builds a stepped carapace segment with 4-plane palette shading."""
+        """Builds an overlapping stepped carapace shingle segment with 6-faceted planar shading."""
         cx0, cy0, cz0, w0, h0 = start_params
         cx1, cy1, cz1, w1, h1 = end_params
 
         r0 = make_ring(cx0, cy0, cz0, w0, h0)
         r1 = make_ring(cx1, cy1, cz1, w1, h1)
-        top0, acc0, out0, bot0, inn0 = r0
-        top1, acc1, out1, bot1, inn1 = r1
+        top0, acc0, out0, botout0, bot0, inn0 = r0
+        top1, acc1, out1, botout1, bot1, inn1 = r1
 
-        # Front lip step accent if not base
+        # Front step overhang lip (Violet accent rim on step face, visible in side and front profiles)
         if not is_base:
-            add_flat_quad(inn0, bot0, out0, acc0, HAIR)
-            add_flat_tri(inn0, acc0, top0, HORN_PURPLE)
+            add_flat_quad(inn0, bot0, botout0, out0, HAIR)
+            add_flat_quad(inn0, out0, acc0, top0, HORN_PURPLE)
 
-        # 1. Top Light Plane (HORN_LIGHT)
+        # 1. Top-Outer Light Plane (HORN_LIGHT) - catches light from front, side, and top
+        add_flat_quad(top0, top1, acc1, acc0, HORN_LIGHT)
+        # 2. Violet Accent Bevel Crease (HORN_PURPLE) - crisp highlight ridge
+        add_flat_quad(acc0, acc1, out1, out0, HORN_PURPLE)
+        # 3. Mid-Lateral Main Flank (HORN_MAIN) - charcoal plate body
+        add_flat_quad(out0, out1, botout1, botout0, HORN_MAIN)
+        # 4. Lower-Lateral Shadow Keel (HAIR) - underside shadow
+        add_flat_quad(botout0, botout1, bot1, bot0, HAIR)
+        # 5. Medial-Inner Flank (HORN_MAIN) - solid charcoal body visible from BACK
+        add_flat_quad(bot0, bot1, inn1, inn0, HORN_MAIN)
+        # 6. Top-Inner Light Plane (HORN_LIGHT) - light crest visible from BACK
         add_flat_quad(inn0, inn1, top1, top0, HORN_LIGHT)
-        # 2. Violet Accent Bevel Crease (HORN_PURPLE)
-        add_flat_quad(top0, top1, acc1, acc0, HORN_PURPLE)
-        # 3. Main Charcoal Lateral Flank (HORN_MAIN)
-        add_flat_quad(acc0, acc1, out1, out0, HORN_MAIN)
-        # 4. Bottom Keel Under-Shadow (HAIR)
-        add_flat_quad(out0, out1, bot1, bot0, HAIR)
-        # 5. Inner Cranium Medial-Shadow (HAIR)
-        add_flat_quad(bot0, bot1, inn1, inn0, HAIR)
 
         # Base socket cap for root
         if is_base:
             add_flat_tri(top0, inn0, bot0, HAIR)
-            add_flat_tri(top0, bot0, out0, HAIR)
+            add_flat_tri(top0, bot0, botout0, HAIR)
+            add_flat_tri(top0, botout0, out0, HAIR)
             add_flat_tri(top0, out0, acc0, HAIR)
 
         # Apex tip triangles for final tier
         if is_tip and apex is not None:
+            add_flat_tri(top1, apex, acc1, HORN_LIGHT)
+            add_flat_tri(acc1, apex, out1, HORN_PURPLE)
+            add_flat_tri(out1, apex, botout1, HORN_MAIN)
+            add_flat_tri(botout1, apex, bot1, HAIR)
+            add_flat_tri(bot1, apex, inn1, HORN_MAIN)
             add_flat_tri(inn1, apex, top1, HORN_LIGHT)
-            add_flat_tri(top1, apex, acc1, HORN_PURPLE)
-            add_flat_tri(acc1, apex, out1, HORN_MAIN)
-            add_flat_tri(out1, apex, bot1, HAIR)
-            add_flat_tri(bot1, apex, inn1, HAIR)
 
-    # 4 Stepped Chitin Carapace Tiers (Cranial crescent wrap-around, raised height & defined back view)
-    # Tier 0: Cranium Anchor Socket (Temple)
+    # 4 Overlapping Stepped Chitin Carapace Shingles (True physical steps visible in SIDE view + sleek proportions)
+    # Tier 0: Cranium Anchor Socket (Temple root, sleek sturdy foundation)
     build_carapace_segment(
-        (0.165, 0.535,  0.085, 0.072, 0.074),
-        (0.215, 0.575,  0.020, 0.065, 0.067),
+        (0.165, 0.535,  0.082, 0.068, 0.070),
+        (0.215, 0.570,  0.012, 0.058, 0.060),
         is_base=True
     )
-    # Tier 1: Lower Flank (Outward Flare)
+    # Tier 1: Lower Carapace Shingle (Overlaps Tier 0 with proud step lip at Z=0.024)
     build_carapace_segment(
-        (0.220, 0.578,  0.026, 0.067, 0.069),
-        (0.265, 0.630, -0.055, 0.054, 0.056)
+        (0.222, 0.575,  0.024, 0.066, 0.068),
+        (0.264, 0.628, -0.050, 0.048, 0.050)
     )
-    # Tier 2: Mid-Rear Flank (Maximum Lateral Sweep)
+    # Tier 2: Mid Carapace Shingle (Overlaps Tier 1 with proud step lip at Z=-0.038)
     build_carapace_segment(
-        (0.268, 0.633, -0.050, 0.056, 0.058),
-        (0.278, 0.690, -0.135, 0.040, 0.042)
+        (0.268, 0.633, -0.038, 0.054, 0.056),
+        (0.278, 0.686, -0.130, 0.034, 0.036)
     )
-    # Tier 3: Upper Inward-Sweeping Spire & Chisel Tip
+    # Tier 3: Upper Carapace Spire (Overlaps Tier 2 with proud step lip at Z=-0.118, tapers to sharp apex)
     build_carapace_segment(
-        (0.276, 0.693, -0.130, 0.042, 0.044),
-        (0.262, 0.745, -0.210, 0.022, 0.023),
+        (0.276, 0.690, -0.118, 0.038, 0.040),
+        (0.260, 0.742, -0.205, 0.018, 0.020),
         is_tip=True,
-        apex=(0.248, 0.765, -0.250)
+        apex=(0.245, 0.760, -0.240)
     )
+
+
+
 
 
 

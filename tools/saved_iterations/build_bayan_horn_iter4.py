@@ -812,10 +812,10 @@ def _add_horn_geometry(pos, nrm, uv, tris):
         top0, acc0, out0, bot0, inn0 = r0
         top1, acc1, out1, bot1, inn1 = r1
 
-        # Front lip step accent if not base
+        # Front lip bevel cap if not base
         if not is_base:
-            add_flat_quad(inn0, bot0, out0, acc0, HAIR)
-            add_flat_tri(inn0, acc0, top0, HORN_PURPLE)
+            add_flat_quad(inn0, bot0, out0, acc0, HORN_MAIN)
+            add_flat_tri(inn0, acc0, top0, HORN_LIGHT)
 
         # 1. Top Light Plane (HORN_LIGHT)
         add_flat_quad(inn0, inn1, top1, top0, HORN_LIGHT)
@@ -842,33 +842,30 @@ def _add_horn_geometry(pos, nrm, uv, tris):
             add_flat_tri(out1, apex, bot1, HAIR)
             add_flat_tri(bot1, apex, inn1, HAIR)
 
-    # 4 Stepped Chitin Carapace Tiers (Cranial crescent wrap-around, raised height & defined back view)
-    # Tier 0: Cranium Anchor Socket (Temple)
+    # 4 Stepped Chitin Carapace Tiers (Roots at temple, aggressive backward sweep)
+    # Tier 0: Cranium Anchor Socket
     build_carapace_segment(
-        (0.165, 0.535,  0.085, 0.072, 0.074),
-        (0.215, 0.575,  0.020, 0.065, 0.067),
+        (0.165, 0.505,  0.095, 0.072, 0.074),
+        (0.198, 0.540,  0.030, 0.064, 0.066),
         is_base=True
     )
-    # Tier 1: Lower Flank (Outward Flare)
+    # Tier 1: Lower Carapace Shingle
     build_carapace_segment(
-        (0.220, 0.578,  0.026, 0.067, 0.069),
-        (0.265, 0.630, -0.055, 0.054, 0.056)
+        (0.202, 0.542,  0.038, 0.065, 0.067),
+        (0.236, 0.585, -0.045, 0.052, 0.054)
     )
-    # Tier 2: Mid-Rear Flank (Maximum Lateral Sweep)
+    # Tier 2: Mid Carapace Shingle
     build_carapace_segment(
-        (0.268, 0.633, -0.050, 0.056, 0.058),
-        (0.278, 0.690, -0.135, 0.040, 0.042)
+        (0.240, 0.588, -0.038, 0.053, 0.055),
+        (0.266, 0.635, -0.125, 0.038, 0.040)
     )
-    # Tier 3: Upper Inward-Sweeping Spire & Chisel Tip
+    # Tier 3: Upper Spire & Chisel Tip
     build_carapace_segment(
-        (0.276, 0.693, -0.130, 0.042, 0.044),
-        (0.262, 0.745, -0.210, 0.022, 0.023),
+        (0.268, 0.638, -0.118, 0.039, 0.041),
+        (0.282, 0.680, -0.195, 0.020, 0.021),
         is_tip=True,
-        apex=(0.248, 0.765, -0.250)
+        apex=(0.286, 0.700, -0.240)
     )
-
-
-
 
 
 

@@ -842,32 +842,30 @@ def _add_horn_geometry(pos, nrm, uv, tris):
             add_flat_tri(out1, apex, bot1, HAIR)
             add_flat_tri(bot1, apex, inn1, HAIR)
 
-    # 4 Stepped Chitin Carapace Tiers (Cranial crescent wrap-around, raised height & defined back view)
-    # Tier 0: Cranium Anchor Socket (Temple)
+    # 4 Stepped Chitin Carapace Tiers (Roots at temple, aggressive backward sweep)
+    # Tier 0: Cranium Anchor Socket
     build_carapace_segment(
-        (0.165, 0.535,  0.085, 0.072, 0.074),
-        (0.215, 0.575,  0.020, 0.065, 0.067),
+        (0.165, 0.505,  0.095, 0.070, 0.072),
+        (0.198, 0.540,  0.030, 0.062, 0.064),
         is_base=True
     )
-    # Tier 1: Lower Flank (Outward Flare)
+    # Tier 1: Lower Carapace Shingle
     build_carapace_segment(
-        (0.220, 0.578,  0.026, 0.067, 0.069),
-        (0.265, 0.630, -0.055, 0.054, 0.056)
+        (0.200, 0.542,  0.036, 0.064, 0.066),
+        (0.235, 0.585, -0.045, 0.050, 0.052)
     )
-    # Tier 2: Mid-Rear Flank (Maximum Lateral Sweep)
+    # Tier 2: Mid Carapace Shingle
     build_carapace_segment(
-        (0.268, 0.633, -0.050, 0.056, 0.058),
-        (0.278, 0.690, -0.135, 0.040, 0.042)
+        (0.238, 0.588, -0.040, 0.052, 0.054),
+        (0.265, 0.635, -0.125, 0.036, 0.038)
     )
-    # Tier 3: Upper Inward-Sweeping Spire & Chisel Tip
+    # Tier 3: Upper Spire & Chisel Tip
     build_carapace_segment(
-        (0.276, 0.693, -0.130, 0.042, 0.044),
-        (0.262, 0.745, -0.210, 0.022, 0.023),
+        (0.267, 0.638, -0.120, 0.038, 0.040),
+        (0.282, 0.680, -0.195, 0.018, 0.019),
         is_tip=True,
-        apex=(0.248, 0.765, -0.250)
+        apex=(0.286, 0.700, -0.240)
     )
-
-
 
 
 
