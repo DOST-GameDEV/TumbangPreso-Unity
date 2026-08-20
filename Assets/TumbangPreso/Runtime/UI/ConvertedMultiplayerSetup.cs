@@ -171,7 +171,7 @@ namespace TumbangPreso.UI
             {
                 int index = i;
                 var rowBtn = MenuKit.WoodButton(col.transform, "", Vector2.zero, Vector2.zero,
-                                                new Vector2(0, 54), () => OnLanRowClicked(index));
+                                                new Vector2(832, 54), () => OnLanRowClicked(index));
                 rowBtn.gameObject.SetActive(false);
                 var rowElement = rowBtn.gameObject.AddComponent<LayoutElement>();
                 rowElement.preferredHeight = 54;
@@ -182,8 +182,12 @@ namespace TumbangPreso.UI
                 {
                     rowTxt.fontSize = 18;
                     rowTxt.alignment = TextAnchor.MiddleLeft;
-                    rowTxt.rectTransform.offsetMin = new Vector2(16, 0);
-                    rowTxt.rectTransform.offsetMax = new Vector2(-16, 0);
+                    rowTxt.horizontalOverflow = HorizontalWrapMode.Overflow;
+                    rowTxt.verticalOverflow = VerticalWrapMode.Overflow;
+                    rowTxt.rectTransform.anchorMin = Vector2.zero;
+                    rowTxt.rectTransform.anchorMax = Vector2.one;
+                    rowTxt.rectTransform.offsetMin = new Vector2(20, 0);
+                    rowTxt.rectTransform.offsetMax = new Vector2(-20, 0);
                 }
 
                 _lanRows.Add(rowBtn);
@@ -234,7 +238,7 @@ namespace TumbangPreso.UI
             {
                 int index = i;
                 var rowBtn = MenuKit.WoodButton(col.transform, "", Vector2.zero, Vector2.zero,
-                                                new Vector2(0, 54), () => OnOnlineRowClicked(index));
+                                                new Vector2(832, 54), () => OnOnlineRowClicked(index));
                 rowBtn.gameObject.SetActive(false);
                 var rowElement = rowBtn.gameObject.AddComponent<LayoutElement>();
                 rowElement.preferredHeight = 54;
@@ -245,8 +249,12 @@ namespace TumbangPreso.UI
                 {
                     rowTxt.fontSize = 18;
                     rowTxt.alignment = TextAnchor.MiddleLeft;
-                    rowTxt.rectTransform.offsetMin = new Vector2(16, 0);
-                    rowTxt.rectTransform.offsetMax = new Vector2(-16, 0);
+                    rowTxt.horizontalOverflow = HorizontalWrapMode.Overflow;
+                    rowTxt.verticalOverflow = VerticalWrapMode.Overflow;
+                    rowTxt.rectTransform.anchorMin = Vector2.zero;
+                    rowTxt.rectTransform.anchorMax = Vector2.one;
+                    rowTxt.rectTransform.offsetMin = new Vector2(20, 0);
+                    rowTxt.rectTransform.offsetMax = new Vector2(-20, 0);
                 }
 
                 _onlineRows.Add(rowBtn);
@@ -323,6 +331,12 @@ namespace TumbangPreso.UI
                         string status = entry.InProgress ? "IN A MATCH" : "IN THE LOBBY";
                         rowTxt.text = $"{entry.HostName}   ·   {entry.Players}/{entry.MaxPlayers}   ·   {status}\n{addr}";
                         rowTxt.alignment = TextAnchor.MiddleLeft;
+                        rowTxt.horizontalOverflow = HorizontalWrapMode.Overflow;
+                        rowTxt.verticalOverflow = VerticalWrapMode.Overflow;
+                        rowTxt.rectTransform.anchorMin = Vector2.zero;
+                        rowTxt.rectTransform.anchorMax = Vector2.one;
+                        rowTxt.rectTransform.offsetMin = new Vector2(20, 0);
+                        rowTxt.rectTransform.offsetMax = new Vector2(-20, 0);
                     }
                     _lanRows[i].gameObject.SetActive(true);
                 }
@@ -374,6 +388,12 @@ namespace TumbangPreso.UI
                         string mapName = !string.IsNullOrEmpty(entry.Name) ? entry.Name.ToUpperInvariant() : "ESKINITA";
                         rowTxt.text = $"SERVER {i + 1}   ·   {entry.Players}/{entry.Capacity}   ·   {mapName}   ·   {status}";
                         rowTxt.alignment = TextAnchor.MiddleLeft;
+                        rowTxt.horizontalOverflow = HorizontalWrapMode.Overflow;
+                        rowTxt.verticalOverflow = VerticalWrapMode.Overflow;
+                        rowTxt.rectTransform.anchorMin = Vector2.zero;
+                        rowTxt.rectTransform.anchorMax = Vector2.one;
+                        rowTxt.rectTransform.offsetMin = new Vector2(20, 0);
+                        rowTxt.rectTransform.offsetMax = new Vector2(-20, 0);
                     }
                     _onlineRows[i].gameObject.SetActive(true);
                 }
