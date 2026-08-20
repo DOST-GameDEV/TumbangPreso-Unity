@@ -198,6 +198,10 @@ TORSO = [
 # LEFT = DEMONIC VESSEL BARE ARM + SLEEK GEOMETRIC RUNES (+X)
 # RIGHT = DARK BROWN SHORT SLEEVE + GOLD CUFF + BARE FOREARM VINES (-X)
 # ---------------------------------------------------------------------------
+# ARMS: ASYMMETRICAL WARRIOR ARMS (SLEEK, FLUSH TEXTURE-EXACT GEOMETRY)
+# LEFT = DEMONIC VESSEL BARE ARM + SLEEK GEOMETRIC RUNES (+X)
+# RIGHT = DARK BROWN SHORT SLEEVE + GOLD CUFF + BARE FOREARM VINES (-X)
+# ---------------------------------------------------------------------------
 ARM_LEFT = [
     # 💪 BARE MUSCULAR BRONZE SKIN ARM (+X, Completely Sleeveless)
     ("arm-shoulder-l",        "arm-left", (0.0999, 0.350, -0.060), (0.185, 0.468, 0.060), SKIN),
@@ -205,37 +209,32 @@ ARM_LEFT = [
     ("arm-forearm-l",         "arm-left", (0.235, 0.342, -0.055), (0.310, 0.460, 0.055), SKIN),
     ("hand-left",             "arm-left", (0.300, 0.340, -0.050), (0.3836, 0.458, 0.050), SKIN),
 
-    # 🌿 FRONT MARKINGS (+X, Front Face Z = -0.0560 to -0.0540)
-    # Deltoid upper corner green marking & dark shadow
-    ("rune-deltoid-f-dk-l",   "arm-left", (0.125, 0.415, -0.0560), (0.165, 0.465, -0.0540), ROBE_DARK),
-    ("rune-deltoid-f-gr-l",   "arm-left", (0.135, 0.430, -0.0560), (0.175, 0.465, -0.0540), ROBE_GREEN),
-    ("rune-bicep-f-band-l",   "arm-left", (0.165, 0.345, -0.0560), (0.205, 0.375, -0.0540), ROBE_GREEN),
+    # 🌿 FRONT MARKINGS (+X, Demonic Arm Front Face Z = -0.0560 to -0.0540)
+    # Upper bicep dark shadow undercut
+    ("rune-bicep-dk-f-l",     "arm-left", (0.135, 0.370, -0.0560), (0.175, 0.435, -0.0540), ROBE_DARK),
+    # Vertical Gold Line at mid-bicep (as seen in media_1787207924670.png)
+    ("rune-bicep-gold-f-l",   "arm-left", (0.175, 0.365, -0.0560), (0.188, 0.450, -0.0540), GOLD_TRIM),
+    # Top Green Square Plate on upper forearm
+    ("rune-forearm-upper-f-l","arm-left", (0.190, 0.415, -0.0560), (0.240, 0.462, -0.0540), ROBE_GREEN),
+    # Lower Horizontal Green Carapace Band along bottom of forearm
+    ("rune-forearm-lower-f-l","arm-left", (0.170, 0.342, -0.0560), (0.310, 0.378, -0.0540), ROBE_GREEN),
+    ("rune-forearm-lower-dk-l","arm-left",(0.170, 0.336, -0.0560), (0.310, 0.346, -0.0540), ROBE_DARK),
+    # Small Warm Amber / Jade Energy Spark Dot in mid-forearm skin channel
+    ("rune-spark-dot-f-l",    "arm-left", (0.265, 0.396, -0.0560), (0.278, 0.408, -0.0540), JADE_LIT),
 
-    # Forearm Lower Solid Green Band (runs across bottom forearm)
-    ("rune-forearm-lower-f-l","arm-left", (0.200, 0.345, -0.0560), (0.310, 0.380, -0.0540), ROBE_GREEN),
-    ("rune-forearm-lower-dk-l","arm-left",(0.200, 0.338, -0.0560), (0.310, 0.348, -0.0540), ROBE_DARK),
-    
-    # Forearm Upper Chunky Green Plate
-    ("rune-forearm-upper-f-l","arm-left", (0.230, 0.420, -0.0560), (0.290, 0.465, -0.0540), ROBE_GREEN),
-    ("rune-forearm-top-crest-l","arm-left",(0.230, 0.458, -0.035), (0.290, 0.469, 0.035), ROBE_GREEN),
-
-    # Central Skin Channel Energy Spark
-    ("rune-forearm-node-dot-l","arm-left",(0.280, 0.395, -0.0560), (0.296, 0.415, -0.0540), WHITE),
-
-    # 🌿 BACK MARKINGS (+X, Back Face Z = 0.0540 to 0.0560, Sleek Geometric Network)
-    # Upper Tricep Horizontal Green Line + Dark Undercut
-    ("rune-tricep-upper-b-l", "arm-left", (0.140, 0.425, 0.0540), (0.220, 0.460, 0.0560), ROBE_GREEN),
-    ("rune-tricep-shadow-b-l","arm-left", (0.140, 0.412, 0.0540), (0.220, 0.428, 0.0560), ROBE_DARK),
-    
-    # Deltoid Vertical Line
-    ("rune-deltoid-vert-b-l", "arm-left", (0.140, 0.355, 0.0540), (0.160, 0.425, 0.0560), ROBE_GREEN),
-    
-    # Lower Forearm Horizontal Green Line + Dark Undercut
-    ("rune-forearm-lower-b-l","arm-left", (0.180, 0.350, 0.0540), (0.310, 0.385, 0.0560), ROBE_GREEN),
-    ("rune-forearm-dark-b-l", "arm-left", (0.180, 0.338, 0.0540), (0.310, 0.352, 0.0560), ROBE_DARK),
-    
-    # Outer Forearm Upward Hook Branch
-    ("rune-forearm-hook-b-l", "arm-left", (0.275, 0.380, 0.0540), (0.298, 0.435, 0.0560), ROBE_GREEN),
+    # 🌿 BACK MARKINGS (+X, Demonic Arm Back Face Z = 0.0540 to 0.0560, Full Branching Tree/Circuit)
+    # Top Horizontal Line on Upper Tricep
+    ("rune-tricep-top-b-l",   "arm-left", (0.140, 0.430, 0.0540), (0.235, 0.462, 0.0560), ROBE_GREEN),
+    ("rune-tricep-top-dk-l",  "arm-left", (0.140, 0.418, 0.0540), (0.235, 0.430, 0.0560), ROBE_DARK),
+    # Vertical Branch going DOWN from Top Line into Mid-Arm
+    ("rune-tricep-vert-dn-b-l","arm-left",(0.175, 0.375, 0.0540), (0.195, 0.430, 0.0560), ROBE_GREEN),
+    # Inner Vertical Seam Branch
+    ("rune-deltoid-in-vert-b-l","arm-left",(0.135, 0.355, 0.0540), (0.155, 0.430, 0.0560), ROBE_GREEN),
+    # Horizontal Mid-Forearm Bar
+    ("rune-forearm-mid-b-l",  "arm-left", (0.190, 0.365, 0.0540), (0.295, 0.395, 0.0560), ROBE_GREEN),
+    ("rune-forearm-mid-dk-l", "arm-left", (0.190, 0.352, 0.0540), (0.295, 0.365, 0.0560), ROBE_DARK),
+    # Outer Vertical Branch with Upward Hook at Outer Forearm
+    ("rune-forearm-out-hk-b-l","arm-left",(0.275, 0.390, 0.0540), (0.298, 0.445, 0.0560), ROBE_GREEN),
 ]
 
 ARM_RIGHT = [
@@ -255,23 +254,23 @@ ARM_RIGHT = [
 
     # 🌿 FRONT MARKINGS ON BARE FOREARM (-X, Front Face Z = -0.0605 to -0.0595)
     # Lower Forearm Horizontal Green Vine + Dark Undercut
-    ("rune-forearm-vine-f-r", "arm-right", (-0.310, 0.348, -0.0605), (-0.250, 0.375, -0.0595), ROBE_GREEN),
-    ("rune-vine-shadow-f-r",  "arm-right", (-0.310, 0.338, -0.0605), (-0.250, 0.350, -0.0595), ROBE_DARK),
+    ("rune-forearm-vine-f-r", "arm-right", (-0.310, 0.348, -0.0605), (-0.248, 0.375, -0.0595), ROBE_GREEN),
+    ("rune-vine-shadow-f-r",  "arm-right", (-0.310, 0.338, -0.0605), (-0.248, 0.350, -0.0595), ROBE_DARK),
     # Upward Hook at Mid-Forearm
-    ("rune-forearm-hook-f-r", "arm-right", (-0.290, 0.370, -0.0605), (-0.270, 0.425, -0.0595), ROBE_GREEN),
+    ("rune-forearm-hook-f-r", "arm-right", (-0.290, 0.370, -0.0605), (-0.270, 0.420, -0.0595), ROBE_GREEN),
     # Top Wrist Green Accent
     ("rune-wrist-top-f-r",    "arm-right", (-0.335, 0.415, -0.0555), (-0.300, 0.450, -0.0545), ROBE_GREEN),
 
-    # 🌿 BACK MARKINGS ON BARE FOREARM (-X, Back Face Z = 0.0595 to 0.0605, Sleek U-Loop Vine)
-    # Top Horizontal Vine emerging from Cuff
-    ("rune-forearm-top-b-r",  "arm-right", (-0.295, 0.420, 0.0595), (-0.248, 0.455, 0.0605), ROBE_GREEN),
-    # Descending Connector into Lower Forearm
-    ("rune-forearm-desc-b-r", "arm-right", (-0.275, 0.360, 0.0595), (-0.255, 0.425, 0.0605), ROBE_GREEN),
-    # Lower Horizontal Vine + Dark Undercut
-    ("rune-forearm-bot-b-r",  "arm-right", (-0.315, 0.350, 0.0595), (-0.255, 0.375, 0.0605), ROBE_GREEN),
-    ("rune-tricep-shadow-b-r","arm-right", (-0.315, 0.338, 0.0595), (-0.255, 0.352, 0.0605), ROBE_DARK),
-    # Upward Hook at Outer Wrist
-    ("rune-forearm-hook-b-r", "arm-right", (-0.315, 0.370, 0.0595), (-0.295, 0.425, 0.0605), ROBE_GREEN),
+    # 🌿 BACK MARKINGS ON BARE FOREARM (-X, Back Face Z = 0.0595 to 0.0605, Smooth U-Loop Vine)
+    # Top Vine emerging from Cuff curving along top edge
+    ("rune-forearm-top-b-r",  "arm-right", (-0.285, 0.418, 0.0595), (-0.248, 0.455, 0.0605), ROBE_GREEN),
+    # Descending Loop Branch curving down
+    ("rune-forearm-loop-dn-b-r","arm-right",(-0.285, 0.365, 0.0595), (-0.265, 0.422, 0.0605), ROBE_GREEN),
+    # Bottom Curve of the U-Loop + Shadow
+    ("rune-forearm-loop-bot-b-r","arm-right",(-0.315, 0.350, 0.0595), (-0.265, 0.375, 0.0605), ROBE_GREEN),
+    ("rune-vine-shadow-bot-b-r","arm-right",(-0.315, 0.338, 0.0595), (-0.265, 0.352, 0.0605), ROBE_DARK),
+    # Upward Outer Hook of the U-Loop
+    ("rune-forearm-loop-up-b-r","arm-right",(-0.315, 0.370, 0.0595), (-0.295, 0.435, 0.0605), ROBE_GREEN),
 ]
 
 
