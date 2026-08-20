@@ -116,7 +116,7 @@ LEG_RIGHT = [
 # TORSO, ROBE, BELT & CAPE
 # ---------------------------------------------------------------------------
 TORSO = [
-    ("robe-body",             "torso", (-0.124, 0.232, -0.092), (0.124, 0.445, 0.092), ROBE_GREEN),
+    ("robe-body",             "torso", (-0.124, 0.232, -0.092), (0.124, 0.445, 0.092), LEATHER_BROWN),
     
     # 🥋 LAYERED WARRIOR CHEST, ROBE LAPELS & GOLD FROG FASTENERS
     # Exposed upper chest skin & Green Earth Rune trail
@@ -152,11 +152,10 @@ TORSO = [
     ("coattail-edge-r",       "torso", (-0.030, 0.218, -0.106), (-0.010, 0.278, -0.090), GOLD_TRIM),
     ("coattail-outer-l",      "torso", (0.140, 0.218, -0.104), (0.152, 0.278, 0.104), GOLD_TRIM),
     ("coattail-outer-r",      "torso", (-0.152, 0.218, -0.104), (-0.140, 0.278, 0.104), GOLD_TRIM),
-    
-    # Leather Belt
-    ("belt-tier-lower",       "torso", (-0.134, 0.272, -0.104), (0.134, 0.304, 0.104), LEATHER_BROWN),
-    ("belt-tier-upper",       "torso", (-0.134, 0.306, -0.104), (0.134, 0.338, 0.104), LEATHER_BROWN),
-    ("belt-seam-middle",      "torso", (-0.136, 0.302, -0.106), (0.136, 0.308, 0.106), LEATHER_BROWN),
+       # 🥋 Gold Warrior Belt (Full gold waist sash matching media_1787202252967.png)
+    ("belt-tier-lower",       "torso", (-0.134, 0.272, -0.104), (0.134, 0.304, 0.104), GOLD_TRIM),
+    ("belt-tier-upper",       "torso", (-0.134, 0.306, -0.104), (0.134, 0.338, 0.104), GOLD_TRIM),
+    ("belt-seam-middle",      "torso", (-0.136, 0.302, -0.106), (0.136, 0.308, 0.106), ROBE_DARK),
     
     # Jade Medallion Buckle
     ("medallion-plate-gold",  "torso", (-0.048, 0.272, -0.118), (0.048, 0.338, -0.096), GOLD_TRIM),
@@ -164,8 +163,8 @@ TORSO = [
     ("medallion-rim-bot",     "torso", (-0.038, 0.266, -0.122), (0.038, 0.278, -0.096), GOLD_TRIM),
     ("medallion-rim-left",    "torso", (0.042, 0.280, -0.122), (0.054, 0.330, -0.096), GOLD_TRIM),
     ("medallion-rim-right",   "torso", (-0.054, 0.280, -0.122), (-0.042, 0.330, -0.096), GOLD_TRIM),
-    ("jade-gem-core",         "torso", (-0.030, 0.282, -0.124), (0.030, 0.328, -0.106), JADE_GEM),
-    ("jade-gem-lit",          "torso", (-0.015, 0.294, -0.128), (0.015, 0.316, -0.112), JADE_LIT),
+    ("jade-gem-core",         "torso", (-0.030, 0.282, -0.124), (0.030, 0.328, -0.106), ROBE_GREEN),
+    ("jade-gem-lit",          "torso", (-0.015, 0.294, -0.128), (0.015, 0.316, -0.112), JADE_GEM),
     
     # Standing Flared Collar
     ("collar-back",           "torso", (-0.128, 0.435, 0.082), (0.128, 0.500, 0.120), ROBE_GREEN),
@@ -198,67 +197,92 @@ TORSO = [
 
 
 # ---------------------------------------------------------------------------
-# ARMS, SLEEVES & FULL 360° JADE EARTH RUNE BARE ARM (+X)
+# ARMS: FULL BARE MUSCULAR BRONZE ARMS WITH GOLD PAULDRON CUFFS & 360° EARTH CAMO RUNES (BOTH ARMS!)
 # ---------------------------------------------------------------------------
 ARM_LEFT = [
-    # 💪 BARE MUSCULAR SKIN ARM (+X) - Smooth tapered muscular arm
+    # Gold Shoulder Sleeve Hem / Cuff (+X)
+    ("sleeve-cuff-l",         "arm-left", (0.0999, 0.345, -0.076), (0.145, 0.485, 0.086), GOLD_TRIM),
+    ("sleeve-cuff-inner-l",   "arm-left", (0.102, 0.348, -0.072), (0.142, 0.482, 0.082), ROBE_DARK),
+
+    # 💪 BARE MUSCULAR BRONZE SKIN ARM (+X)
     ("arm-shoulder-l",        "arm-left", (0.0999, 0.355, -0.070), (0.185, 0.475, 0.080), SKIN),
     ("arm-upper-l",           "arm-left", (0.170, 0.345, -0.060), (0.240, 0.465, 0.070), SKIN),
     ("arm-forearm-l",         "arm-left", (0.230, 0.340, -0.050), (0.290, 0.460, 0.058), SKIN),
     ("arm-wrist-l",           "arm-left", (0.275, 0.3383, -0.032), (0.315, 0.4617, 0.042), SKIN),
-    
-    # 🌿 SHOULDER / DELTOID EARTH RUNE CREST (Full 360° Wrap Proud of Skin)
-    ("rune-deltoid-top",      "arm-left", (0.115, 0.460, -0.045), (0.180, 0.485, 0.045), JADE_GEM),
-    ("rune-deltoid-disc",     "arm-left", (0.135, 0.390, -0.045), (0.188, 0.470, 0.045), JADE_GEM),
-    ("rune-deltoid-shadow",   "arm-left", (0.130, 0.385, -0.048), (0.192, 0.475, 0.048), ROBE_DARK),
-    # Front Shoulder Rune Arc
-    ("rune-sun-front",        "arm-left", (0.125, 0.405, -0.078), (0.175, 0.455, -0.060), JADE_GEM),
-    # Back Shoulder Crest (Proud of skin z: 0.080)
-    ("rune-shoulder-sun-b",   "arm-left", (0.120, 0.395, 0.068), (0.178, 0.465, 0.088), JADE_GEM),
-    ("rune-shoulder-core-b",  "arm-left", (0.138, 0.418, 0.070), (0.160, 0.442, 0.090), GOLD_TRIM),
-    
-    # 🌿 BICEP / TRICEP / OUTER ARM EARTH RUNE TENDRILS
-    # Front Bicep Rune Streams
-    ("rune-stream-f1",        "arm-left", (0.155, 0.355, -0.068), (0.215, 0.420, -0.052), JADE_GEM),
-    ("rune-stream-f2",        "arm-left", (0.180, 0.380, -0.068), (0.230, 0.435, -0.052), JADE_GEM),
-    # Outer Arm Connector
-    ("rune-stream-outer",     "arm-left", (0.175, 0.410, -0.030), (0.235, 0.460, 0.030), JADE_GEM),
-    # Back Tricep Streams (Proud of skin z: 0.070)
-    ("rune-flame-b1",         "arm-left", (0.155, 0.345, 0.058), (0.200, 0.410, 0.078), JADE_GEM),
-    ("rune-flame-b2",         "arm-left", (0.180, 0.360, 0.058), (0.225, 0.420, 0.078), JADE_GEM),
-    ("rune-flame-b3-elbow",   "arm-left", (0.205, 0.370, 0.058), (0.245, 0.435, 0.078), ROBE_DARK),
-    
-    # 🌿 FOREARM CONTINUOUS TAPERED CHEVRON SPEAR WITH EMBEDDED GOLD / JADE CORE GEM
-    # Front Forearm Tapered Spear Sheath (Connected continuous arrow pointing to elbow)
-    ("rune-spear-outer-f",    "arm-left", (0.225, 0.345, -0.058), (0.285, 0.445, -0.042), JADE_GEM),
-    ("rune-spear-shadow-f",   "arm-left", (0.222, 0.342, -0.056), (0.288, 0.448, -0.040), ROBE_DARK),
-    # 💎 UNIFIED GOLD / JADE CORE GEM
-    ("rune-spear-gem-f",      "arm-left", (0.242, 0.370, -0.062), (0.268, 0.420, -0.040), GOLD_TRIM),
-    ("rune-spear-spark-f",    "arm-left", (0.248, 0.385, -0.064), (0.262, 0.405, -0.038), JADE_LIT),
-    
-    # Back Forearm Spear (Proud of skin z: 0.058)
-    ("rune-forearm-spear-b",  "arm-left", (0.225, 0.345, 0.048), (0.285, 0.445, 0.068), JADE_GEM),
-    ("rune-forearm-core-b",   "arm-left", (0.240, 0.370, 0.050), (0.270, 0.420, 0.070), GOLD_TRIM),
-    
-    # Outer Forearm Ridge & Wrist Wrap Bands
-    ("rune-forearm-ridge",    "arm-left", (0.250, 0.360, -0.025), (0.294, 0.440, 0.025), JADE_GEM),
-    ("rune-wrist-band-top",   "arm-left", (0.282, 0.440, -0.056), (0.302, 0.462, -0.042), JADE_GEM),
-    ("rune-wrist-band-bot",   "arm-left", (0.282, 0.338, -0.056), (0.302, 0.360, -0.042), JADE_GEM),
-    
-    # 🌿 HAND EARTH SEALS (Palm & Backhand Circular Seal with Knuckle Marks)
     ("hand-left",             "arm-left", (0.295, 0.3383, -0.024), (0.3836, 0.4617, 0.036), SKIN),
-    ("rune-palm-seal",        "arm-left", (0.305, 0.370, -0.030), (0.345, 0.420, -0.018), JADE_GEM),
-    ("rune-backhand-seal",    "arm-left", (0.300, 0.360, 0.028), (0.350, 0.440, 0.044), JADE_GEM),
-    ("rune-backhand-gold",    "arm-left", (0.315, 0.385, 0.030), (0.335, 0.415, 0.046), GOLD_TRIM),
-    ("rune-knuckle-mark",     "arm-left", (0.355, 0.375, 0.018), (0.375, 0.425, 0.042), JADE_GEM),
+
+    # 🌿 360° GREEN EARTH / CAMO RUNES (+X ARM)
+    # Deltoid & Shoulder Markings
+    ("rune-deltoid-top-l",    "arm-left", (0.115, 0.460, -0.045), (0.180, 0.485, 0.045), ROBE_GREEN),
+    ("rune-deltoid-disc-l",   "arm-left", (0.135, 0.390, -0.045), (0.188, 0.470, 0.045), ROBE_GREEN),
+    ("rune-deltoid-shadow-l", "arm-left", (0.130, 0.385, -0.048), (0.192, 0.475, 0.048), ROBE_DARK),
+    ("rune-sun-front-l",      "arm-left", (0.125, 0.405, -0.078), (0.175, 0.455, -0.060), ROBE_GREEN),
+    ("rune-sun-back-l",       "arm-left", (0.120, 0.395, 0.068), (0.178, 0.465, 0.088), ROBE_GREEN),
+    ("rune-sun-core-l",       "arm-left", (0.138, 0.418, 0.070), (0.160, 0.442, 0.090), GOLD_TRIM),
+
+    # Bicep & Tricep Tendrils
+    ("rune-stream-f1-l",      "arm-left", (0.155, 0.355, -0.068), (0.215, 0.420, -0.052), ROBE_GREEN),
+    ("rune-stream-f2-l",      "arm-left", (0.180, 0.380, -0.068), (0.230, 0.435, -0.052), ROBE_GREEN),
+    ("rune-stream-outer-l",   "arm-left", (0.175, 0.410, -0.030), (0.235, 0.460, 0.030), ROBE_GREEN),
+    ("rune-flame-b1-l",       "arm-left", (0.155, 0.345, 0.058), (0.200, 0.410, 0.078), ROBE_GREEN),
+    ("rune-flame-b2-l",       "arm-left", (0.180, 0.360, 0.058), (0.225, 0.420, 0.078), ROBE_GREEN),
+    ("rune-flame-b3-l",       "arm-left", (0.205, 0.370, 0.058), (0.245, 0.435, 0.078), ROBE_DARK),
+
+    # Forearm Spear & Camo Chevron
+    ("rune-spear-outer-f-l",  "arm-left", (0.225, 0.345, -0.058), (0.285, 0.445, -0.042), ROBE_GREEN),
+    ("rune-spear-shadow-f-l", "arm-left", (0.222, 0.342, -0.056), (0.288, 0.448, -0.040), ROBE_DARK),
+    ("rune-spear-gem-f-l",    "arm-left", (0.242, 0.370, -0.062), (0.268, 0.420, -0.040), GOLD_TRIM),
+    ("rune-spear-spark-f-l",  "arm-left", (0.248, 0.385, -0.064), (0.262, 0.405, -0.038), JADE_LIT),
+    ("rune-forearm-spear-b-l","arm-left", (0.225, 0.345, 0.048), (0.285, 0.445, 0.068), ROBE_GREEN),
+    ("rune-forearm-core-b-l", "arm-left", (0.240, 0.370, 0.050), (0.270, 0.420, 0.070), GOLD_TRIM),
+    ("rune-forearm-ridge-l",  "arm-left", (0.250, 0.360, -0.025), (0.294, 0.440, 0.025), ROBE_GREEN),
+    ("rune-wrist-band-top-l", "arm-left", (0.282, 0.440, -0.056), (0.302, 0.462, -0.042), ROBE_GREEN),
+    ("rune-wrist-band-bot-l", "arm-left", (0.282, 0.338, -0.056), (0.302, 0.360, -0.042), ROBE_GREEN),
+    ("rune-backhand-seal-l",  "arm-left", (0.300, 0.360, 0.028), (0.350, 0.440, 0.044), ROBE_GREEN),
+    ("rune-backhand-gold-l",  "arm-left", (0.315, 0.385, 0.030), (0.335, 0.415, 0.046), GOLD_TRIM),
 ]
 
 ARM_RIGHT = [
-    # Clothed warrior arm (-X) with sleeve and gold wrist cuff
-    ("sleeve-right",          "arm-right", (-0.245, 0.330, -0.068), (-0.0999, 0.470, 0.084), LEATHER_BROWN),
-    ("sleeve-shoulder-r",     "arm-right", (-0.190, 0.360, -0.075), (-0.0999, 0.482, 0.090), LEATHER_BROWN),
-    ("wrist-cuff-right",      "arm-right", (-0.278, 0.322, -0.074), (-0.240, 0.478, 0.090), GOLD_TRIM),
-    ("hand-right",            "arm-right", (-0.3836, 0.3383, -0.020), (-0.275, 0.4617, 0.038), SKIN),
+    # Gold Shoulder Sleeve Hem / Cuff (-X)
+    ("sleeve-cuff-r",         "arm-right", (-0.145, 0.345, -0.076), (-0.0999, 0.485, 0.086), GOLD_TRIM),
+    ("sleeve-cuff-inner-r",   "arm-right", (-0.142, 0.348, -0.072), (-0.102, 0.482, 0.082), ROBE_DARK),
+
+    # 💪 BARE MUSCULAR BRONZE SKIN ARM (-X)
+    ("arm-shoulder-r",        "arm-right", (-0.185, 0.355, -0.070), (-0.0999, 0.475, 0.080), SKIN),
+    ("arm-upper-r",           "arm-right", (-0.240, 0.345, -0.060), (-0.170, 0.465, 0.070), SKIN),
+    ("arm-forearm-r",         "arm-right", (-0.290, 0.340, -0.050), (-0.230, 0.460, 0.058), SKIN),
+    ("arm-wrist-r",           "arm-right", (-0.315, 0.3383, -0.032), (-0.275, 0.4617, 0.042), SKIN),
+    ("hand-right",            "arm-right", (-0.3836, 0.3383, -0.024), (-0.295, 0.4617, 0.036), SKIN),
+
+    # 🌿 360° GREEN EARTH / CAMO RUNES (-X ARM)
+    # Deltoid & Shoulder Markings
+    ("rune-deltoid-top-r",    "arm-right", (-0.180, 0.460, -0.045), (-0.115, 0.485, 0.045), ROBE_GREEN),
+    ("rune-deltoid-disc-r",   "arm-right", (-0.188, 0.390, -0.045), (-0.135, 0.470, 0.045), ROBE_GREEN),
+    ("rune-deltoid-shadow-r", "arm-right", (-0.192, 0.385, -0.048), (-0.130, 0.475, 0.048), ROBE_DARK),
+    ("rune-sun-front-r",      "arm-right", (-0.175, 0.405, -0.078), (-0.125, 0.455, -0.060), ROBE_GREEN),
+    ("rune-sun-back-r",       "arm-right", (-0.178, 0.395, 0.068), (-0.120, 0.465, 0.088), ROBE_GREEN),
+    ("rune-sun-core-r",       "arm-right", (-0.160, 0.418, 0.070), (-0.138, 0.442, 0.090), GOLD_TRIM),
+
+    # Bicep & Tricep Tendrils
+    ("rune-stream-f1-r",      "arm-right", (-0.215, 0.355, -0.068), (-0.155, 0.420, -0.052), ROBE_GREEN),
+    ("rune-stream-f2-r",      "arm-right", (-0.230, 0.380, -0.068), (-0.180, 0.435, -0.052), ROBE_GREEN),
+    ("rune-stream-outer-r",   "arm-right", (-0.235, 0.410, -0.030), (-0.175, 0.460, 0.030), ROBE_GREEN),
+    ("rune-flame-b1-r",       "arm-right", (-0.200, 0.345, 0.058), (-0.155, 0.410, 0.078), ROBE_GREEN),
+    ("rune-flame-b2-r",       "arm-right", (-0.225, 0.360, 0.058), (-0.180, 0.420, 0.078), ROBE_GREEN),
+    ("rune-flame-b3-r",       "arm-right", (-0.245, 0.370, 0.058), (-0.205, 0.435, 0.078), ROBE_DARK),
+
+    # Forearm Spear & Camo Chevron
+    ("rune-spear-outer-f-r",  "arm-right", (-0.285, 0.345, -0.058), (-0.225, 0.445, -0.042), ROBE_GREEN),
+    ("rune-spear-shadow-f-r", "arm-right", (-0.288, 0.342, -0.056), (-0.222, 0.448, -0.040), ROBE_DARK),
+    ("rune-spear-gem-f-r",    "arm-right", (-0.268, 0.370, -0.062), (-0.242, 0.420, -0.040), GOLD_TRIM),
+    ("rune-spear-spark-f-r",  "arm-right", (-0.262, 0.385, -0.064), (-0.248, 0.405, -0.038), JADE_LIT),
+    ("rune-forearm-spear-b-r","arm-right", (-0.285, 0.345, 0.048), (-0.225, 0.445, 0.068), ROBE_GREEN),
+    ("rune-forearm-core-b-r", "arm-right", (-0.270, 0.370, 0.050), (-0.240, 0.420, 0.070), GOLD_TRIM),
+    ("rune-forearm-ridge-r",  "arm-right", (-0.294, 0.360, -0.025), (-0.250, 0.440, 0.025), ROBE_GREEN),
+    ("rune-wrist-band-top-r", "arm-right", (-0.302, 0.440, -0.056), (-0.282, 0.462, -0.042), ROBE_GREEN),
+    ("rune-wrist-band-bot-r", "arm-right", (-0.302, 0.338, -0.056), (-0.282, 0.360, -0.042), ROBE_GREEN),
+    ("rune-backhand-seal-r",  "arm-right", (-0.350, 0.360, 0.028), (-0.300, 0.440, 0.044), ROBE_GREEN),
+    ("rune-backhand-gold-r",  "arm-right", (-0.335, 0.385, 0.030), (-0.315, 0.415, 0.046), GOLD_TRIM),
 ]
 
 
@@ -293,37 +317,31 @@ HEAD = [
     # Tier 1: Lower Ascending Shingle
     ("horn-seg1-body",        "head", (0.145, 0.580, 0.030), (0.210, 0.648, 0.120), HORN_MAIN),
     ("horn-seg1-top",         "head", (0.150, 0.622, 0.035), (0.208, 0.652, 0.115), HORN_LIGHT),
-    ("horn-seg1-crest",       "head", (0.200, 0.595, 0.035), (0.214, 0.648, 0.110), HORN_PURPLE),
     ("horn-seg1-groove",      "head", (0.140, 0.575, 0.025), (0.200, 0.592, 0.110), HAIR),
 
     # Tier 2: Mid-Ascent Carapace Tier
     ("horn-seg2-body",        "head", (0.168, 0.620, 0.000), (0.234, 0.688, 0.085), HORN_MAIN),
     ("horn-seg2-top",         "head", (0.172, 0.662, 0.005), (0.230, 0.692, 0.080), HORN_LIGHT),
-    ("horn-seg2-crest",       "head", (0.224, 0.635, 0.005), (0.238, 0.688, 0.076), HORN_PURPLE),
     ("horn-seg2-groove",      "head", (0.162, 0.615, -0.005), (0.222, 0.632, 0.076), HAIR),
 
     # Tier 3: Central Spire Tier
     ("horn-seg3-body",        "head", (0.190, 0.660, -0.040), (0.254, 0.725, 0.045), HORN_MAIN),
     ("horn-seg3-top",         "head", (0.195, 0.700, -0.035), (0.250, 0.728, 0.040), HORN_LIGHT),
-    ("horn-seg3-crest",       "head", (0.244, 0.675, -0.036), (0.258, 0.726, 0.036), HORN_PURPLE),
     ("horn-seg3-groove",      "head", (0.185, 0.655, -0.045), (0.242, 0.670, 0.036), HAIR),
 
     # Tier 4: Upper Ascending Spire Tier
     ("horn-seg4-body",        "head", (0.212, 0.698, -0.085), (0.272, 0.755, -0.005), HORN_MAIN),
     ("horn-seg4-top",         "head", (0.216, 0.732, -0.080), (0.268, 0.758, -0.010), HORN_LIGHT),
-    ("horn-seg4-crest",       "head", (0.262, 0.712, -0.082), (0.275, 0.756, -0.012), HORN_PURPLE),
     ("horn-seg4-groove",      "head", (0.208, 0.692, -0.090), (0.260, 0.708, -0.012), HAIR),
 
     # Tier 5: Sub-Apex Carapace Plate
     ("horn-seg5-body",        "head", (0.232, 0.732, -0.130), (0.285, 0.780, -0.055), HORN_MAIN),
     ("horn-seg5-top",         "head", (0.236, 0.760, -0.125), (0.282, 0.784, -0.060), HORN_LIGHT),
-    ("horn-seg5-crest",       "head", (0.275, 0.745, -0.126), (0.288, 0.782, -0.062), HORN_PURPLE),
     ("horn-seg5-groove",      "head", (0.228, 0.728, -0.135), (0.275, 0.742, -0.062), HAIR),
 
     # Tier 6: Sharp Chisel Spire Tip
     ("horn-seg6-body",        "head", (0.250, 0.760, -0.175), (0.294, 0.788, -0.105), HORN_MAIN),
     ("horn-seg6-top",         "head", (0.254, 0.778, -0.170), (0.290, 0.788, -0.110), HORN_LIGHT),
-    ("horn-seg6-crest",       "head", (0.284, 0.768, -0.172), (0.296, 0.788, -0.112), HORN_PURPLE),
 
     # Tier 7: Chisel Needle Point Apex
     ("horn-seg7-needle",      "head", (0.265, 0.772, -0.200), (0.298, 0.788, -0.145), HORN_MAIN),
