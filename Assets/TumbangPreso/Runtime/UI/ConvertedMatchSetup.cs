@@ -92,8 +92,7 @@ namespace TumbangPreso.UI
             var modeRow = Node("ModeRow");
             if (modeRow != null) modeRow.gameObject.SetActive(false);
 
-            BuildSpectateButton();
-            BuildNetworkRows();
+            BuildRightPanelNetwork();
             WireSeats();
 
             MatchRpc.OnMapChanged += HandleMapSynced;
@@ -109,17 +108,59 @@ namespace TumbangPreso.UI
             Refresh();
         }
 
-        private void BuildNetworkRows()
+        private void BuildRightPanelNetwork()
         {
             var heading = Node("SeatHeading");
             if (heading == null || heading.parent == null) return;
 
-            Transform rowsContainer = heading.parent;
-            int insertIndex = heading.GetSiblingIndex() + 1;
+            Transform rows = heading.parent;
+            int headingIndex = heading.GetSiblingIndex();
 
-            // 1. Address Row
+            // 1. HeaderRow (holds SeatHeading on left, SpectateButton on right)
+            var headerRow = new GameObject("HeaderRow");
+            headerRow.transform.SetParent(rows, false);
+            headerRow.transform.SetSiblingIndex(headingIndex);
+
+            var hLayout = headerRow.AddComponent<HorizontalLayoutGroup>();
+            hLayout.spacing = 16;
+            hLayout.childControlWidth = true;
+            hLayout.childControlHeight = true;
+            hLayout.childForceExpandWidth = false;
+            hLayout.childForceExpandHeight = true;
+
+            var hElement = headerRow.AddComponent<LayoutElement>();
+            hElement.minHeight = 46;
+            hElement.preferredHeight = 46;
+            hElement.flexibleWidth = 1;
+
+            heading.SetParent(headerRow.transform, false);
+            var headElement = heading.GetComponent<LayoutElement>();
+            if (headElement == null) headElement = heading.gameObject.AddComponent<LayoutElement>();
+            headElement.flexibleWidth = 1;
+            headElement.minHeight = 46;
+
+            var headText = heading.GetComponent<Text>();
+            if (headText != null)
+            {
+                headText.horizontalOverflow = HorizontalWrapMode.Overflow;
+                headText.verticalOverflow = VerticalWrapMode.Overflow;
+            }
+
+            _spectate = MenuKit.WoodButton(headerRow.transform, "SPECTATE", Vector2.zero, Vector2.zero,
+                                           new Vector2(140.0f, 40.0f), ToggleSpectate);
+            _spectate.name = "SpectateButton";
+            var specElement = _spectate.gameObject.AddComponent<LayoutElement>();
+            specElement.preferredWidth = 140.0f;
+            specElement.preferredHeight = 40.0f;
+
+            var label = _spectate.GetComponentInChildren<Text>();
+            if (label != null) label.fontSize = 18;
+
+            int insertIndex = headerRow.transform.GetSiblingIndex() + 1;
+
+            // 2. Address Row (placed directly in rows container below headerRow)
             _addressRow = new GameObject("AddressRow");
-            _addressRow.transform.SetParent(rowsContainer, false);
+            _addressRow.transform.SetParent(rows, false);
             _addressRow.transform.SetSiblingIndex(insertIndex++);
 
             var addrLayout = _addressRow.AddComponent<HorizontalLayoutGroup>();
@@ -145,9 +186,11 @@ namespace TumbangPreso.UI
             addrBoxElement.flexibleWidth = 1;
             addrBoxElement.minHeight = 44;
 
-            _addressText = MenuKit.Label(addrBox.transform, "", 22, UiTheme.Cream,
-                                         new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero,
+            _addressText = MenuKit.Label(addrBox.transform, "", 20, UiTheme.Cream,
+                                         Vector2.zero, Vector2.zero, Vector2.zero,
                                          TextAnchor.MiddleLeft);
+            _addressText.horizontalOverflow = HorizontalWrapMode.Overflow;
+            _addressText.verticalOverflow = VerticalWrapMode.Overflow;
             _addressText.rectTransform.anchorMin = Vector2.zero;
             _addressText.rectTransform.anchorMax = Vector2.one;
             _addressText.rectTransform.offsetMin = new Vector2(16, 0);
@@ -160,9 +203,9 @@ namespace TumbangPreso.UI
             addrCopyElement.preferredHeight = 40;
             _addressCopyBtnText = _addressCopyBtn.GetComponentInChildren<Text>();
 
-            // 2. Code Row
+            // 3. Code Row (placed directly in rows container below addressRow)
             _codeRow = new GameObject("CodeRow");
-            _codeRow.transform.SetParent(rowsContainer, false);
+            _codeRow.transform.SetParent(rows, false);
             _codeRow.transform.SetSiblingIndex(insertIndex++);
 
             var codeLayout = _codeRow.AddComponent<HorizontalLayoutGroup>();
@@ -181,11 +224,12 @@ namespace TumbangPreso.UI
             var codeCaption = new GameObject("CodeCaption");
             codeCaption.transform.SetParent(_codeRow.transform, false);
             var codeCaptionElement = codeCaption.AddComponent<LayoutElement>();
-            codeCaptionElement.preferredWidth = 72;
+            codeCaptionElement.preferredWidth = 64;
             codeCaptionElement.minHeight = 44;
-            var captionText = MenuKit.Label(codeCaption.transform, "CODE", 24, UiTheme.Amber,
-                                            new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero,
+            var captionText = MenuKit.Label(codeCaption.transform, "CODE", 20, UiTheme.Amber,
+                                            Vector2.zero, Vector2.zero, Vector2.zero,
                                             TextAnchor.MiddleCenter);
+            captionText.horizontalOverflow = HorizontalWrapMode.Overflow;
             MenuKit.Stretch(captionText.rectTransform, 0);
 
             // Code display box
@@ -199,9 +243,11 @@ namespace TumbangPreso.UI
             codeBoxElement.flexibleWidth = 1;
             codeBoxElement.minHeight = 44;
 
-            _codeText = MenuKit.Label(codeBox.transform, "", 24, UiTheme.Cream,
-                                      new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero,
+            _codeText = MenuKit.Label(codeBox.transform, "", 20, UiTheme.Cream,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
                                       TextAnchor.MiddleLeft);
+            _codeText.horizontalOverflow = HorizontalWrapMode.Overflow;
+            _codeText.verticalOverflow = VerticalWrapMode.Overflow;
             _codeText.rectTransform.anchorMin = Vector2.zero;
             _codeText.rectTransform.anchorMax = Vector2.one;
             _codeText.rectTransform.offsetMin = new Vector2(16, 0);
@@ -428,47 +474,6 @@ namespace TumbangPreso.UI
             }
 
             RefreshSpectate();
-        }
-
-        private void BuildSpectateButton()
-        {
-            var heading = Node("SeatHeading");
-            if (heading == null || heading.parent == null) return;
-
-            Transform rows = heading.parent;
-            int headingIndex = heading.GetSiblingIndex();
-
-            var headerRow = new GameObject("HeaderRow");
-            headerRow.transform.SetParent(rows, false);
-            headerRow.transform.SetSiblingIndex(headingIndex);
-
-            var hLayout = headerRow.AddComponent<HorizontalLayoutGroup>();
-            hLayout.spacing = 16;
-            hLayout.childControlWidth = true;
-            hLayout.childControlHeight = true;
-            hLayout.childForceExpandWidth = false;
-            hLayout.childForceExpandHeight = true;
-
-            var hElement = headerRow.AddComponent<LayoutElement>();
-            hElement.minHeight = 46;
-            hElement.preferredHeight = 46;
-            hElement.flexibleWidth = 1;
-
-            heading.SetParent(headerRow.transform, false);
-            var headElement = heading.GetComponent<LayoutElement>();
-            if (headElement == null) headElement = heading.gameObject.AddComponent<LayoutElement>();
-            headElement.flexibleWidth = 1;
-            headElement.minHeight = 46;
-
-            _spectate = MenuKit.WoodButton(headerRow.transform, "SPECTATE", Vector2.zero, Vector2.zero,
-                                           new Vector2(176.0f, 44.0f), ToggleSpectate);
-            _spectate.name = "SpectateButton";
-            var specElement = _spectate.gameObject.AddComponent<LayoutElement>();
-            specElement.preferredWidth = 176.0f;
-            specElement.preferredHeight = 44.0f;
-
-            var label = _spectate.GetComponentInChildren<Text>();
-            if (label != null) label.fontSize = 20;
         }
 
         private void ToggleSpectate()
