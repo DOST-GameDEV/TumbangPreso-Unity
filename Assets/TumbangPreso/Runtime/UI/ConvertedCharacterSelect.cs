@@ -263,7 +263,8 @@ namespace TumbangPreso.UI
             switch (id)
             {
                 case "bayan":
-                case "berto": return "The immovable Earth Warrior. Solid as bedrock, wielding seismic power and an unbreakable stance.";
+                case "bayani":
+                case "berto": return "Bedrock-solid with an unshakeable stance. Heavy steps, seismic throws, and zero retreat.";
                 case "maring": return "Quick hands, quicker mouth. She has talked her way out of more tags than she has dodged.";
                 case "totoy": return "Raised barefoot in the eskinita. Nobody in this town has caught him twice.";
                 case "inday":

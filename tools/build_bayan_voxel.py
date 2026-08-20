@@ -56,7 +56,7 @@ EYE_GOLD      = 10  # Radiant glowing golden amber left eye (#ffd700)
 SILVER        = 11  # Earring studs and metal belt rivets (#d4e2ec)
 WHITE         = 12  # Crisp boot soles, eye sclera & glints (#f4faff)
 SKIN          = 13  # Bronze warrior tan skin & horn stone body (#a8602c)
-EYE_BLUE      = 14  # Ocean blue right eye iris (#3b8ec8)
+EYE_EMERALD   = 14  # Rich dark natural forest green right eye iris (#1e5c32)
 SKIN_LIT      = 15  # Uniform skin tone for face/body (#a8602c)
 
 PALETTE = {
@@ -74,7 +74,7 @@ PALETTE = {
     SILVER:        "d4e2ec",   # Silver earrings & hardware
     WHITE:         "f4faff",   # Boot sole tread, eye white & glints
     SKIN:          "a8602c",   # Warm bronze warrior caramel tan & stone horn
-    EYE_BLUE:      "3b8ec8",   # Ocean blue right eye iris
+    EYE_EMERALD:   "1e5c32",   # Rich dark natural forest green right eye iris
     SKIN_LIT:      "a8602c",   # Uniform skin midtone for face/body
 }
 
@@ -116,17 +116,30 @@ LEG_RIGHT = [
 # ---------------------------------------------------------------------------
 TORSO = [
     ("robe-body",             "torso", (-0.124, 0.232, -0.092), (0.124, 0.445, 0.092), ROBE_GREEN),
-    ("undershirt-chest",      "torso", (-0.070, 0.340, -0.096), (0.070, 0.395, -0.082), ROBE_DARK),
-    ("neck-chest-skin",       "torso", (-0.045, 0.370, -0.095), (0.045, 0.445, -0.080), SKIN_LIT),
-    ("karma-neck-slash",      "torso", (0.018, 0.370, -0.098), (0.048, 0.445, -0.082), SCAR_RED),
-    ("karma-neck-branch",     "torso", (0.042, 0.385, -0.098), (0.068, 0.425, -0.084), SCAR_RED),
     
-    # Crossed Gold Chest Sashes
-    ("sash-left-diag",        "torso", (0.010, 0.335, -0.104), (0.085, 0.445, -0.086), GOLD_TRIM),
-    ("sash-right-diag",       "torso", (-0.085, 0.335, -0.104), (-0.010, 0.445, -0.086), GOLD_TRIM),
-    ("sash-cross-center",     "torso", (-0.035, 0.340, -0.106), (0.035, 0.380, -0.088), GOLD_TRIM),
-    ("sash-collar-l",         "torso", (0.045, 0.420, -0.102), (0.095, 0.448, -0.080), GOLD_TRIM),
-    ("sash-collar-r",         "torso", (-0.095, 0.420, -0.102), (-0.045, 0.448, -0.080), GOLD_TRIM),
+    # 🥋 LAYERED WARRIOR CHEST, ROBE LAPELS & GOLD FROG FASTENERS
+    # Exposed upper chest skin & Karma lightning trail
+    ("neck-chest-skin",       "torso", (-0.035, 0.380, -0.095), (0.035, 0.445, -0.080), SKIN_LIT),
+    ("karma-neck-slash",      "torso", (0.008, 0.380, -0.098), (0.028, 0.445, -0.082), SCAR_RED),
+    ("karma-chest-branch",    "torso", (0.020, 0.395, -0.098), (0.055, 0.425, -0.084), SCAR_RED),
+    
+    # Left Lapel (Green fabric with gold border piping)
+    ("lapel-body-l",          "torso", (0.020, 0.340, -0.102), (0.085, 0.445, -0.086), ROBE_GREEN),
+    ("lapel-trim-outer-l",    "torso", (0.065, 0.340, -0.106), (0.085, 0.448, -0.084), GOLD_TRIM),
+    ("lapel-trim-inner-l",    "torso", (0.020, 0.340, -0.106), (0.034, 0.448, -0.084), GOLD_TRIM),
+    
+    # Right Lapel (Green fabric with gold border piping)
+    ("lapel-body-r",          "torso", (-0.085, 0.340, -0.102), (-0.020, 0.445, -0.086), ROBE_GREEN),
+    ("lapel-trim-outer-r",    "torso", (-0.085, 0.340, -0.106), (-0.065, 0.448, -0.084), GOLD_TRIM),
+    ("lapel-trim-inner-r",    "torso", (-0.034, 0.340, -0.106), (-0.020, 0.448, -0.084), GOLD_TRIM),
+    
+    # Martial Arts Chest Frog Knot & Medallion Fastener
+    ("chest-frog-upper-bar",  "torso", (-0.032, 0.395, -0.108), (0.032, 0.408, -0.092), GOLD_TRIM),
+    ("chest-frog-lower-bar",  "torso", (-0.028, 0.360, -0.108), (0.028, 0.373, -0.092), GOLD_TRIM),
+    ("chest-frog-center-knot","torso", (-0.012, 0.388, -0.112), (0.012, 0.415, -0.090), GOLD_TRIM),
+    ("chest-frog-emerald-gem","torso", (-0.008, 0.394, -0.114), (0.008, 0.410, -0.092), JADE_GEM),
+    ("chest-frog-knot-lower", "torso", (-0.010, 0.354, -0.112), (0.010, 0.378, -0.090), GOLD_TRIM),
+    ("chest-frog-emerald-low","torso", (-0.006, 0.359, -0.114), (0.006, 0.373, -0.092), JADE_GEM),
     
     # Flared Robe Coat-Tails
     ("coattail-l",            "torso", (0.015, 0.208, -0.102), (0.146, 0.278, 0.102), ROBE_GREEN),
@@ -186,37 +199,53 @@ TORSO = [
 # ARMS, SLEEVES & FULL 360° KAWAKI KARMA BARE ARM (+X)
 # ---------------------------------------------------------------------------
 ARM_LEFT = [
-    # 💪 BARE MUSCULAR SKIN ARM (+X) - Smooth tapered muscular arm (No stepped sleeve ledge!)
+    # 💪 BARE MUSCULAR SKIN ARM (+X) - Smooth tapered muscular arm
     ("arm-shoulder-l",        "arm-left", (0.0999, 0.355, -0.070), (0.185, 0.475, 0.080), SKIN_LIT),
     ("arm-upper-l",           "arm-left", (0.170, 0.345, -0.060), (0.240, 0.465, 0.070), SKIN_LIT),
     ("arm-forearm-l",         "arm-left", (0.230, 0.340, -0.050), (0.290, 0.460, 0.058), SKIN_LIT),
     ("arm-wrist-l",           "arm-left", (0.275, 0.3383, -0.032), (0.315, 0.4617, 0.042), SKIN_LIT),
     
-    # ⚡ FRONT KARMA TATTOOS (-Z) (media_1787164289261.png)
-    # Shoulder Deltoid Karma Sun Sphere
-    ("karma-shoulder-sun",    "arm-left", (0.120, 0.395, -0.074), (0.180, 0.470, -0.062), SCAR_RED),
-    # Karma Chevron Flames Streaming Down Bicep
-    ("karma-flame-1",         "arm-left", (0.160, 0.350, -0.064), (0.205, 0.415, -0.054), SCAR_RED),
-    ("karma-flame-2",         "arm-left", (0.185, 0.365, -0.064), (0.230, 0.425, -0.054), SCAR_RED),
-    # Forearm Karma Spear / Arrowhead (media_1787164331901.png)
-    ("karma-forearm-spear",   "arm-left", (0.225, 0.350, -0.054), (0.285, 0.445, -0.044), SCAR_RED),
-    ("karma-forearm-core",    "arm-left", (0.240, 0.370, -0.056), (0.270, 0.425, -0.046), GOLD_TRIM),
+    # ⚡ SHOULDER / DELTOID KARMA SUN (Full 360° Wrap Proud of Skin)
+    ("karma-deltoid-top",     "arm-left", (0.115, 0.460, -0.045), (0.180, 0.485, 0.045), SCAR_RED),
+    ("karma-deltoid-disc",    "arm-left", (0.135, 0.390, -0.045), (0.188, 0.470, 0.045), SCAR_RED),
+    # Front Shoulder Sun Arc
+    ("karma-sun-front",       "arm-left", (0.125, 0.405, -0.078), (0.175, 0.455, -0.060), SCAR_RED),
+    # Back Sun (Proud of skin z: 0.080)
+    ("karma-shoulder-sun-b",  "arm-left", (0.120, 0.395, 0.068), (0.178, 0.465, 0.088), SCAR_RED),
+    ("karma-shoulder-core-b", "arm-left", (0.138, 0.418, 0.070), (0.160, 0.442, 0.090), GOLD_TRIM),
     
-    # ⚡ BACK KARMA TATTOOS (+Z) (Full 360° wrapping coverage!)
-    ("karma-back-deltoid",    "arm-left", (0.120, 0.395, 0.062), (0.180, 0.470, 0.074), SCAR_RED),
-    ("karma-back-flame-1",    "arm-left", (0.160, 0.350, 0.054), (0.205, 0.415, 0.064), SCAR_RED),
-    ("karma-back-flame-2",    "arm-left", (0.185, 0.365, 0.054), (0.230, 0.425, 0.064), SCAR_RED),
-    ("karma-back-forearm",    "arm-left", (0.225, 0.350, 0.044), (0.285, 0.445, 0.054), SCAR_RED),
-    ("karma-back-core",       "arm-left", (0.240, 0.370, 0.046), (0.270, 0.425, 0.056), GOLD_TRIM),
+    # ⚡ BICEP / TRICEP / OUTER ARM FLAME TENDRILS
+    # Front Bicep Flame Streams
+    ("karma-stream-f1",       "arm-left", (0.155, 0.355, -0.068), (0.215, 0.420, -0.052), SCAR_RED),
+    ("karma-stream-f2",       "arm-left", (0.180, 0.380, -0.068), (0.230, 0.435, -0.052), SCAR_RED),
+    # Outer Arm Connector
+    ("karma-stream-outer",    "arm-left", (0.175, 0.410, -0.030), (0.235, 0.460, 0.030), SCAR_RED),
+    # Back Tricep Streams (Proud of skin z: 0.070)
+    ("karma-flame-b1",        "arm-left", (0.155, 0.345, 0.058), (0.200, 0.410, 0.078), SCAR_RED),
+    ("karma-flame-b2",        "arm-left", (0.180, 0.360, 0.058), (0.225, 0.420, 0.078), SCAR_RED),
+    ("karma-flame-b3-elbow",  "arm-left", (0.205, 0.370, 0.058), (0.245, 0.435, 0.078), SCAR_RED),
     
-    # ⚡ OUTER DELTOID & FOREARM CONNECTORS (+X)
-    ("karma-outer-deltoid",   "arm-left", (0.178, 0.415, -0.035), (0.188, 0.465, 0.035), SCAR_RED),
-    ("karma-outer-forearm",   "arm-left", (0.278, 0.365, -0.025), (0.288, 0.435, 0.025), SCAR_RED),
+    # ⚡ FOREARM CONTINUOUS TAPERED CHEVRON SPEAR WITH EMBEDDED GOLD CORE GEM
+    # Front Forearm Tapered Spear Sheath (Connected continuous arrow pointing to elbow)
+    ("karma-spear-outer-f",   "arm-left", (0.225, 0.345, -0.058), (0.285, 0.445, -0.042), SCAR_RED),
+    # 💎 UNIFIED SINGLE SOLID GOLDEN KARMA CORE GEM (One single solid piece, NOT split!)
+    ("karma-spear-gem-f",     "arm-left", (0.242, 0.370, -0.062), (0.268, 0.420, -0.040), GOLD_TRIM),
     
-    # Hand & Palm Karma Seal (Both palm and back of hand)
+    # Back Forearm Spear (Proud of skin z: 0.058)
+    ("karma-forearm-spear-b", "arm-left", (0.225, 0.345, 0.048), (0.285, 0.445, 0.068), SCAR_RED),
+    ("karma-forearm-core-b",  "arm-left", (0.240, 0.370, 0.050), (0.270, 0.420, 0.070), GOLD_TRIM),
+    
+    # Outer Forearm Ridge & Wrist Wrap Bands
+    ("karma-forearm-ridge",   "arm-left", (0.250, 0.360, -0.025), (0.294, 0.440, 0.025), SCAR_RED),
+    ("karma-wrist-band-top",  "arm-left", (0.282, 0.440, -0.056), (0.302, 0.462, -0.042), SCAR_RED),
+    ("karma-wrist-band-bot",  "arm-left", (0.282, 0.338, -0.056), (0.302, 0.360, -0.042), SCAR_RED),
+    
+    # ⚡ HAND KARMA SEALS (Palm & Backhand Circular Seal with Knuckle Marks)
     ("hand-left",             "arm-left", (0.295, 0.3383, -0.024), (0.3836, 0.4617, 0.036), SKIN_LIT),
-    ("karma-palm-mark",       "arm-left", (0.300, 0.365, -0.026), (0.345, 0.435, -0.020), SCAR_RED),
-    ("karma-backhand-mark",   "arm-left", (0.300, 0.365, 0.030), (0.345, 0.435, 0.038), SCAR_RED),
+    ("karma-palm-seal",       "arm-left", (0.305, 0.370, -0.030), (0.345, 0.420, -0.018), SCAR_RED),
+    ("karma-backhand-seal",   "arm-left", (0.300, 0.360, 0.028), (0.350, 0.440, 0.044), SCAR_RED),
+    ("karma-backhand-gold",   "arm-left", (0.315, 0.385, 0.030), (0.335, 0.415, 0.046), GOLD_TRIM),
+    ("karma-knuckle-mark",    "arm-left", (0.355, 0.375, 0.018), (0.375, 0.425, 0.042), SCAR_RED),
 ]
 
 ARM_RIGHT = [
@@ -224,76 +253,93 @@ ARM_RIGHT = [
     ("sleeve-right",          "arm-right", (-0.245, 0.330, -0.068), (-0.0999, 0.470, 0.084), LEATHER_BROWN),
     ("sleeve-shoulder-r",     "arm-right", (-0.190, 0.360, -0.075), (-0.0999, 0.482, 0.090), LEATHER_BROWN),
     ("wrist-cuff-right",      "arm-right", (-0.278, 0.322, -0.074), (-0.240, 0.478, 0.090), GOLD_TRIM),
-    ("wrist-cuff-band-r",     "arm-right", (-0.272, 0.316, -0.080), (-0.245, 0.484, 0.096), GOLD_TRIM),
     ("hand-right",            "arm-right", (-0.3836, 0.3383, -0.020), (-0.275, 0.4617, 0.038), SKIN_LIT),
 ]
 
 
 # ---------------------------------------------------------------------------
 # HEAD, FAUXHAWK QUIFF, SHAVED FADE & KAWAKI OTSUTSUKI HORN (+X)
-# ---------------------------------------------------------------------------
 HEAD = [
-    # 💇 DARK SPIKY HAIR SKULL COVERAGE & NAPE (Full natural skull cap)
-    ("hair-skull-main",       "head", (-0.176, 0.500, -0.190), (0.176, 0.690, 0.080), HAIR),
-    ("hair-nape-fade",        "head", (-0.170, 0.345, -0.195), (0.170, 0.520, -0.120), HAIR),
-    ("hair-back-crown",       "head", (-0.172, 0.510, -0.205), (0.172, 0.700, -0.110), HAIR),
+    # 💇 FULL SPIKY BLACK ANIME HAIR CROWN & FULL BACK SKULL (Full 360° skull dome & solid nape drape!)
+    ("hair-crown-main",       "head", (-0.165, 0.620, -0.215), (0.150, 0.745, 0.130), HAIR),
+    ("hair-crown-top",        "head", (-0.130, 0.720, -0.190), (0.110, 0.785, 0.100), HAIR),
+    ("hair-back-skull-upper", "head", (-0.175, 0.520, -0.215), (0.170, 0.640, -0.080), HAIR),
+    ("hair-back-skull-mid",   "head", (-0.170, 0.420, -0.210), (0.165, 0.530, -0.090), HAIR),
+    ("hair-back-nape-full",   "head", (-0.165, 0.320, -0.205), (0.160, 0.430, -0.100), HAIR),
     
-    # Right temple undercut (-X side has clean dark undercut)
-    ("hair-temple-right",     "head", (-0.195, 0.490, -0.140), (-0.165, 0.670, 0.090), HAIR),
-    ("hair-sideburn-right",   "head", (-0.190, 0.430, -0.020), (-0.165, 0.530, 0.070), HAIR),
+    # Right side full hair (-X has long thick hair)
+    ("hair-skull-right",      "head", (-0.180, 0.460, -0.180), (-0.145, 0.640, 0.080), HAIR),
+    ("hair-temple-right",     "head", (-0.195, 0.480, -0.120), (-0.155, 0.660, 0.090), HAIR),
+    ("hair-sideburn-right",   "head", (-0.190, 0.420, -0.020), (-0.155, 0.530, 0.070), HAIR),
     
-    # 💈 LEFT TEMPLE SHAVED UNDERCUT FADE (+X side dark brown shaved skull under horn)
-    ("hair-fade-side",        "head", (0.168, 0.430, -0.130), (0.192, 0.580, 0.050), LEATHER_BROWN),
-    ("hair-sideburn-left",    "head", (0.168, 0.430, -0.020), (0.192, 0.530, 0.070), HAIR),
+    # 💈 SHAVED BUZZCUT UNDERCUT SIDE PANEL (+X side around ear and temple ONLY!)
+    ("undercut-side-main",    "head", (0.145, 0.410, -0.080), (0.184, 0.630, 0.090), LEATHER_BROWN),
+    ("undercut-side-front",   "head", (0.145, 0.430, 0.080), (0.182, 0.620, 0.145), LEATHER_BROWN),
+    ("undercut-sideburn",     "head", (0.160, 0.400, -0.010), (0.188, 0.500, 0.080), LEATHER_BROWN),
     
-    # 🪨 KAWAKI OTSUTSUKI HORN (Dynamic backward-curving horn on temple behind face plane)
-    # Horn Base (emerges from left temple)
-    ("horn-base",             "head", (0.158, 0.530, -0.055), (0.198, 0.605, 0.045), SKIN),
-    # Tier 1 (rising & sweeping backward)
-    ("horn-tier-1",           "head", (0.154, 0.590, -0.095), (0.194, 0.665, 0.005), SKIN),
-    ("horn-band-1",           "head", (0.152, 0.610, -0.085), (0.198, 0.640, 0.000), SCAR_RED),
-    # Tier 2 (curving higher & back)
-    ("horn-tier-2",           "head", (0.148, 0.650, -0.135), (0.188, 0.725, -0.025), SKIN),
-    ("horn-band-2",           "head", (0.146, 0.670, -0.125), (0.192, 0.700, -0.035), SCAR_RED),
-    # Tier 3 (tapered backward tip)
-    ("horn-tip",              "head", (0.140, 0.705, -0.170), (0.180, 0.765, -0.065), SKIN),
-    ("horn-band-3",           "head", (0.138, 0.725, -0.160), (0.184, 0.748, -0.075), SCAR_RED),
+    # 🪨 SLEEK ORGANIC OTSUTSUKI HORN (+X temple, true backward-hooking crescent arc with 6 crimson bands)
+    # Biological Root Flare Anchor (Broad organic temple emergence above left eye)
+    ("horn-root-anchor",      "head", (0.158, 0.485, 0.055), (0.212, 0.550, 0.115), SKIN),
+    ("horn-root-base",        "head", (0.156, 0.515, 0.035), (0.216, 0.585, 0.098), SKIN),
+    ("horn-root-flare",       "head", (0.155, 0.555, 0.005), (0.216, 0.620, 0.078), SKIN),
+    ("karma-root-band-bot",   "head", (0.165, 0.538, 0.035), (0.218, 0.554, 0.090), SCAR_RED),
     
-    # 💇 CHARCOAL BLACK SPIKY ANIME HAIR QUIFF / FAUXHAWK (Full crown coverage)
-    # Ridge Core Main Volumes
-    ("hair-crest-main",       "head", (-0.140, 0.660, -0.150), (0.140, 0.745, 0.140), HAIR),
-    ("hair-crest-top",        "head", (-0.110, 0.725, -0.120), (0.110, 0.772, 0.110), HAIR),
+    # Segmented Biological Tiers & Precision Embedded Crimson Karma Bands (Parabolic Crescent Arc)
+    ("horn-tier-1",           "head", (0.153, 0.595, -0.022), (0.210, 0.665, 0.050), SKIN),
+    ("horn-band-1",           "head", (0.166, 0.612, 0.005), (0.218, 0.632, 0.040), SCAR_RED),
     
-    # Dynamic Front-Facing Anime Spikes (Slanted forward and up)
-    ("spike-front-c1",        "head", (-0.050, 0.670, 0.115), (0.050, 0.765, 0.192), HAIR),
-    ("spike-front-c2",        "head", (-0.035, 0.700, 0.130), (0.035, 0.778, 0.198), HAIR),
-    ("spike-front-l1",        "head", (0.040, 0.655, 0.100), (0.120, 0.750, 0.185), HAIR),
+    ("horn-tier-2",           "head", (0.150, 0.645, -0.055), (0.202, 0.712, 0.015), SKIN),
+    ("horn-band-2",           "head", (0.162, 0.662, -0.028), (0.209, 0.680, 0.002), SCAR_RED),
+    
+    ("horn-tier-3",           "head", (0.147, 0.685, -0.090), (0.194, 0.750, -0.018), SKIN),
+    ("horn-band-3",           "head", (0.158, 0.702, -0.062), (0.201, 0.720, -0.032), SCAR_RED),
+    
+    ("horn-tier-4",           "head", (0.144, 0.705, -0.128), (0.185, 0.762, -0.052), SKIN),
+    ("horn-band-4",           "head", (0.152, 0.722, -0.102), (0.191, 0.738, -0.070), SCAR_RED),
+    
+    ("horn-tier-5",           "head", (0.140, 0.695, -0.165), (0.176, 0.748, -0.088), SKIN),
+    ("horn-band-5",           "head", (0.146, 0.710, -0.140), (0.182, 0.726, -0.108), SCAR_RED),
+    
+    ("horn-tier-6",           "head", (0.137, 0.670, -0.198), (0.168, 0.722, -0.125), SKIN),
+    ("horn-band-6",           "head", (0.142, 0.682, -0.174), (0.173, 0.698, -0.142), SCAR_RED),
+    
+    # Sharp Chisel Tip (Hooking downward/backward along skull curve)
+    ("horn-tip",              "head", (0.134, 0.640, -0.218), (0.158, 0.692, -0.158), SKIN),
+    
+    # ⚡ DUAL SLEEK TEMPLE KARMA STREAM LINES (Continuous parallel streams connecting face to horn)
+    ("karma-stream-line-top", "head", (0.160, 0.605, 0.035), (0.190, 0.620, 0.160), SCAR_RED),
+    ("karma-stream-line-bot", "head", (0.162, 0.538, 0.045), (0.190, 0.552, 0.160), SCAR_RED),
+    
+    # 💇 DYNAMIC ANIME SPIKES (Front, top, back)
+    ("spike-front-c1",        "head", (-0.050, 0.670, 0.115), (0.040, 0.765, 0.192), HAIR),
+    ("spike-front-c2",        "head", (-0.035, 0.700, 0.130), (0.030, 0.778, 0.198), HAIR),
+    ("spike-front-l1",        "head", (0.010, 0.650, 0.100), (0.095, 0.740, 0.175), HAIR),
+    ("spike-front-l2",        "head", (0.040, 0.640, 0.080), (0.125, 0.755, 0.160), HAIR),
     ("spike-front-r1",        "head", (-0.120, 0.655, 0.100), (-0.040, 0.750, 0.185), HAIR),
     ("spike-front-r2",        "head", (-0.155, 0.630, 0.080), (-0.080, 0.725, 0.165), HAIR),
-    ("spike-front-l2",        "head", (0.080, 0.630, 0.080), (0.155, 0.725, 0.165), HAIR),
     
-    # Top Ridge Spikes (Aggressive silhouette tufts)
-    ("spike-top-crest1",      "head", (-0.045, 0.740, -0.060), (0.045, 0.785, 0.050), HAIR),
-    ("spike-top-crest2",      "head", (-0.040, 0.730, -0.130), (0.040, 0.775, -0.040), HAIR),
+    # Top Ridge Spikes
+    ("spike-top-crest1",      "head", (-0.045, 0.740, -0.060), (0.035, 0.785, 0.050), HAIR),
+    ("spike-top-crest2",      "head", (-0.040, 0.730, -0.130), (0.030, 0.775, -0.040), HAIR),
+    ("spike-top-l1",          "head", (0.035, 0.730, -0.060), (0.095, 0.778, 0.050), HAIR),
+    ("spike-top-l2-back",     "head", (0.030, 0.710, -0.210), (0.110, 0.765, -0.120), HAIR),
     ("spike-top-r1",          "head", (-0.105, 0.720, -0.050), (-0.035, 0.768, 0.060), HAIR),
     ("spike-top-r2",          "head", (-0.115, 0.700, -0.120), (-0.040, 0.758, -0.020), HAIR),
-    ("spike-top-l1",          "head", (0.035, 0.720, -0.050), (0.105, 0.768, 0.060), HAIR),
-    ("spike-top-l2",          "head", (0.040, 0.700, -0.120), (0.115, 0.758, -0.020), HAIR),
     
-    # Back Crown Spikes (Angled backward and up)
-    ("spike-back-crest",      "head", (-0.055, 0.660, -0.198), (0.055, 0.735, -0.130), HAIR),
-    ("spike-back-r1",         "head", (-0.120, 0.640, -0.190), (-0.045, 0.715, -0.125), HAIR),
-    ("spike-back-l1",         "head", (0.045, 0.640, -0.190), (0.120, 0.715, -0.125), HAIR),
-    ("spike-back-mid",        "head", (-0.050, 0.540, -0.208), (0.050, 0.650, -0.155), HAIR),
+    # Back Crown Spikes & Tufts
+    ("spike-back-crest",      "head", (-0.055, 0.660, -0.220), (0.045, 0.740, -0.140), HAIR),
+    ("spike-back-r1",         "head", (-0.135, 0.610, -0.215), (-0.045, 0.710, -0.135), HAIR),
+    ("spike-back-l1",         "head", (0.010, 0.610, -0.218), (0.105, 0.710, -0.135), HAIR),
+    ("spike-back-mid",        "head", (-0.070, 0.520, -0.212), (0.050, 0.630, -0.145), HAIR),
     
-    # Front Forehead Bang Tufts (Clean anime fringe framing brow)
-    ("fringe-center",         "head", (-0.035, 0.585, 0.145), (0.035, 0.665, 0.176), HAIR),
-    ("fringe-l1",             "head", (0.030, 0.575, 0.140), (0.085, 0.655, 0.172), HAIR),
+    # Front Forehead Bang Tufts
+    ("fringe-center",         "head", (-0.035, 0.585, 0.145), (0.040, 0.665, 0.176), HAIR),
+    ("fringe-l1",             "head", (0.015, 0.580, 0.135), (0.075, 0.655, 0.175), HAIR),
+    ("fringe-l2-circle",      "head", (0.045, 0.580, 0.125), (0.125, 0.675, 0.175), HAIR),
     ("fringe-r1",             "head", (-0.095, 0.575, 0.140), (-0.030, 0.655, 0.172), HAIR),
-    ("fringe-l2",             "head", (0.080, 0.570, 0.135), (0.135, 0.645, 0.165), HAIR),
     ("fringe-r2",             "head", (-0.150, 0.560, 0.130), (-0.090, 0.645, 0.165), HAIR),
     
-    # 💎 SILVER STUD EARRINGS ON BOTH EARLOBES (fitted cleanly to earlobes)
+    # 💎 SILVER STUD EARRINGS ON BOTH EARLOBES
     ("earring-stud-left",     "head", (0.174, 0.405, -0.015), (0.194, 0.428, 0.005), SILVER),
     ("earring-stud-right",    "head", (-0.194, 0.405, -0.015), (-0.174, 0.428, 0.005), SILVER),
 ]
@@ -486,79 +532,97 @@ def _donor_head():
     add_quad([(-0.009, 0.390), (-0.009, 0.397), (0.009, 0.397), (0.009, 0.390)],
              INK, PANEL_PROUD * 1.6)
 
-    # 3. ⚔️ KAWAKI KARMA FACIAL SLASH (media_1787164220119.png)
-    # Built as discrete convex quad segments curving from forehead across brow, eye, and cheek
-    # Segment 1: High Forehead Origin
-    add_quad([(0.030, 0.525), (0.030, 0.585), (0.056, 0.585), (0.056, 0.525)],
+    # 3. ⚔️ KAWAKI KARMA FACIAL SLASH & UNDERCUT TEMPLE (media_1787164289261.png)
+    # Natural Stepped Buzzcut Undercut Hairline on Temple (+X)
+    add_quad([(0.065, 0.605), (0.065, 0.665), (0.170, 0.665), (0.170, 0.605)],
+             LEATHER_BROWN, PANEL_PROUD * 1.5)
+    add_quad([(0.095, 0.535), (0.095, 0.605), (0.170, 0.605), (0.170, 0.535)],
+             LEATHER_BROWN, PANEL_PROUD * 1.5)
+    add_quad([(0.130, 0.450), (0.130, 0.535), (0.170, 0.535), (0.170, 0.450)],
+             LEATHER_BROWN, PANEL_PROUD * 1.5)
+    add_quad([(0.150, 0.405), (0.150, 0.450), (0.170, 0.450), (0.170, 0.405)],
+             LEATHER_BROWN, PANEL_PROUD * 1.5)
+
+    # Main Flowing Karma Facial Ribbon (Continuous S-curve from high forehead to chin)
+    add_quad([(0.032, 0.585), (0.032, 0.655), (0.056, 0.655), (0.056, 0.585)],
              SCAR_RED, PANEL_PROUD * 2.2)
-    # Segment 2: Brow Slice (Splits left eyebrow)
-    add_quad([(0.050, 0.490), (0.050, 0.530), (0.076, 0.530), (0.076, 0.490)],
+    add_quad([(0.036, 0.525), (0.036, 0.585), (0.062, 0.585), (0.062, 0.525)],
              SCAR_RED, PANEL_PROUD * 2.2)
-    # Segment 3: Outer Karma Eye Socket Frame
-    add_quad([(0.082, 0.445), (0.082, 0.495), (0.114, 0.495), (0.108, 0.445)],
+    add_quad([(0.048, 0.485), (0.048, 0.525), (0.074, 0.525), (0.074, 0.485)],
              SCAR_RED, PANEL_PROUD * 2.2)
-    # Segment 4: Cheekbone Curve
-    add_quad([(0.068, 0.385), (0.082, 0.450), (0.108, 0.450), (0.092, 0.385)],
+    add_quad([(0.078, 0.445), (0.078, 0.488), (0.106, 0.488), (0.100, 0.445)],
              SCAR_RED, PANEL_PROUD * 2.2)
-    # Segment 5: Lower Cheek to Jaw Taper
-    add_quad([(0.048, 0.335), (0.068, 0.390), (0.092, 0.390), (0.068, 0.335)],
+    add_quad([(0.066, 0.385), (0.078, 0.448), (0.102, 0.448), (0.088, 0.385)],
+             SCAR_RED, PANEL_PROUD * 2.2)
+    add_quad([(0.048, 0.335), (0.066, 0.390), (0.088, 0.390), (0.068, 0.335)],
              SCAR_RED, PANEL_PROUD * 2.2)
 
-    # 4. 👁️ KAWAKI ANIME HETEROCHROMIA EYES (media_1787164220119.png)
-    # --- RIGHT EYE (-X): DETERMINED HOODED ANIME BLUE EYE ---
-    # White Sclera (Slanted almond aperture)
-    add_quad([(-0.108, 0.466), (-0.108, 0.488), (-0.036, 0.478), (-0.036, 0.466)],
-             WHITE, PANEL_PROUD * 2.5)
-    # Ocean Blue Iris (Sleek, intense gaze)
-    add_quad([(-0.084, 0.466), (-0.084, 0.486), (-0.052, 0.482), (-0.052, 0.466)],
-             EYE_BLUE, PANEL_PROUD * 2.9)
-    # Dark Pupil Core
-    add_quad([(-0.072, 0.469), (-0.072, 0.483), (-0.060, 0.481), (-0.060, 0.469)],
-             INK, PANEL_PROUD * 3.3)
-    # Crisp Anime Glint Highlight
-    add_quad([(-0.078, 0.477), (-0.078, 0.484), (-0.068, 0.483), (-0.068, 0.477)],
-             WHITE, PANEL_PROUD * 3.8)
-    # Thick Sharp Slanted Upper Lash Wing (Angled down towards center)
-    add_quad([(-0.114, 0.488), (-0.114, 0.499), (-0.034, 0.488), (-0.034, 0.478)],
+    # ⚡ DUAL SLEEK TEMPLE SURGE LINES (Connecting facial ribbon directly into temple stream lines)
+    # Upper Stream Line (Connecting high forehead ribbon at y=0.605 to side stream at y=0.615)
+    add_quad([(0.040, 0.600), (0.040, 0.615), (0.180, 0.625), (0.180, 0.610)],
+             SCAR_RED, PANEL_PROUD * 2.2)
+    # Lower Stream Line (Connecting mid-face ribbon at y=0.540 to side stream at y=0.546)
+    add_quad([(0.048, 0.535), (0.048, 0.549), (0.180, 0.558), (0.180, 0.544)],
+             SCAR_RED, PANEL_PROUD * 2.2)
+
+    # 4. 👁️ EXACT MATCHING ANIME EYE SHAPE & DESIGN (EMERALD / GOLD HETEROCHROMIA)
+    # --- RIGHT EYE (-X, Viewer's Left): NORMAL SLEEK EMERALD GREEN ANIME EYE (WHITE SCLERA) ---
+    # White Sclera Aperture (Exact mirrored shape of left eye aperture)
+    add_quad([(-0.114, 0.460), (-0.114, 0.496), (-0.034, 0.502), (-0.034, 0.460)],
+             WHITE, PANEL_PROUD * 2.8)
+    # Radiant Emerald Green Iris (Fills the iris aperture)
+    add_quad([(-0.092, 0.464), (-0.092, 0.492), (-0.054, 0.488), (-0.054, 0.464)],
+             EYE_EMERALD, PANEL_PROUD * 3.2)
+    # Centered Deep Charcoal Pupil Core (Normal round/square anime pupil, NOT a slit!)
+    add_quad([(-0.078, 0.468), (-0.078, 0.486), (-0.064, 0.484), (-0.064, 0.468)],
              INK, PANEL_PROUD * 3.6)
-    # Lower Lash Outer Accent
-    add_quad([(-0.106, 0.464), (-0.106, 0.468), (-0.060, 0.466), (-0.060, 0.464)],
-             INK, PANEL_PROUD * 3.4)
+    # Crisp Bright Anime Glint Sparkle (Top-left glint highlight)
+    add_quad([(-0.082, 0.476), (-0.082, 0.484), (-0.072, 0.483), (-0.072, 0.476)],
+             WHITE, PANEL_PROUD * 4.2)
+    # Thick Sharp Slanted Upper Lash Wing (INK)
+    add_quad([(-0.116, 0.488), (-0.116, 0.504), (-0.032, 0.500), (-0.032, 0.484)],
+             INK, PANEL_PROUD * 4.0)
+    # Lower Lash Continuous Underline (INK)
+    add_quad([(-0.114, 0.460), (-0.114, 0.466), (-0.034, 0.466), (-0.034, 0.460)],
+             INK, PANEL_PROUD * 4.0)
 
-    # --- LEFT EYE (+X): RADIANT GLOWING GOLDEN KARMA EYE ---
-    # White Sclera
-    add_quad([(0.036, 0.466), (0.036, 0.478), (0.108, 0.488), (0.108, 0.466)],
-             WHITE, PANEL_PROUD * 2.5)
-    # Radiant Golden Iris (Glowing amber gold centered)
-    add_quad([(0.052, 0.466), (0.052, 0.482), (0.084, 0.486), (0.084, 0.466)],
-             EYE_GOLD, PANEL_PROUD * 2.9)
-    # Sharp Otsutsuki Vertical Pupil Slit
-    add_quad([(0.064, 0.467), (0.064, 0.484), (0.072, 0.485), (0.072, 0.467)],
-             INK, PANEL_PROUD * 3.3)
-    # Glowing Hot White Core
-    add_quad([(0.066, 0.475), (0.066, 0.481), (0.070, 0.481), (0.070, 0.475)],
-             WHITE, PANEL_PROUD * 3.9)
-    # Thick Sharp Slanted Upper Lash Wing
-    add_quad([(0.034, 0.478), (0.034, 0.488), (0.114, 0.499), (0.114, 0.488)],
-             INK, PANEL_PROUD * 3.6)
-    # Lower Lash Outer Accent
-    add_quad([(0.060, 0.464), (0.060, 0.466), (0.106, 0.468), (0.106, 0.464)],
-             INK, PANEL_PROUD * 3.4)
+    # --- LEFT EYE (+X, Viewer's Right): DEMONIC BLACK SCLERA WITH GLOWING GOLDEN IRIS ---
+    # Crimson Karma Eye Frame Bed (Surrounding the black eye)
+    add_quad([(0.030, 0.456), (0.030, 0.498), (0.118, 0.504), (0.118, 0.456)],
+             SCAR_RED, PANEL_PROUD * 2.3)
+    # Pitch-Black Sclera & Eye Body (COMPLETELY BLACK, ZERO WHITE!)
+    add_quad([(0.034, 0.460), (0.034, 0.496), (0.114, 0.502), (0.114, 0.460)],
+             INK, PANEL_PROUD * 2.8)
+    # Radiant Glowing Golden Iris in Center (EYE_GOLD)
+    add_quad([(0.054, 0.464), (0.054, 0.488), (0.092, 0.492), (0.092, 0.464)],
+             EYE_GOLD, PANEL_PROUD * 3.4)
+    # Sharp Otsutsuki Vertical Pupil Slit (INK)
+    add_quad([(0.068, 0.466), (0.068, 0.488), (0.076, 0.488), (0.076, 0.466)],
+             INK, PANEL_PROUD * 3.8)
+    # Radiant Glowing Core Flare (WHITE)
+    add_quad([(0.070, 0.473), (0.070, 0.483), (0.074, 0.483), (0.074, 0.473)],
+             WHITE, PANEL_PROUD * 4.2)
+    # Thick Sharp Slanted Upper Lash Wing (INK)
+    add_quad([(0.032, 0.484), (0.032, 0.500), (0.116, 0.504), (0.116, 0.488)],
+             INK, PANEL_PROUD * 4.0)
+    # Lower Lash Continuous Underline (INK)
+    add_quad([(0.034, 0.460), (0.034, 0.466), (0.114, 0.468), (0.114, 0.460)],
+             INK, PANEL_PROUD * 4.0)
 
-    # 5. 😠 FIERCE SLANTED ANIME EYEBROWS (Fierce Glare / Focused Frown)
-    # Right Eyebrow (slanted sharply down towards bridge of nose)
-    add_quad([(-0.112, 0.516), (-0.112, 0.528), (-0.036, 0.510), (-0.036, 0.498)],
+    # 5. 😠 EXACT MATCHING ARCHED ANIME EYEBROWS & PIERCING
+    # Right Eyebrow (Solid continuous arched anime eyebrow, thickness 0.018)
+    add_quad([(-0.114, 0.514), (-0.114, 0.532), (-0.036, 0.518), (-0.036, 0.498)],
              INK, PANEL_PROUD * 3.4)
-    # Brow Furrow Shadow Notch (Intense Glare)
-    add_quad([(-0.044, 0.505), (-0.044, 0.522), (-0.036, 0.522), (-0.036, 0.505)],
-             INK, PANEL_PROUD * 3.2)
+    # Silver Eyebrow Piercing Bar on Right Brow Outer Edge
+    add_quad([(-0.116, 0.520), (-0.116, 0.532), (-0.104, 0.532), (-0.104, 0.520)],
+             SILVER, PANEL_PROUD * 3.8)
 
-    # Left Eyebrow (Cleanly split by the Karma slash!)
-    # Inner piece (slanted down fiercely towards nose bridge)
-    add_quad([(0.036, 0.498), (0.036, 0.510), (0.050, 0.516), (0.050, 0.504)],
+    # Left Eyebrow (Exact matching arched anime eyebrow split by Karma slash)
+    # Inner piece
+    add_quad([(0.036, 0.498), (0.036, 0.516), (0.052, 0.518), (0.052, 0.500)],
              INK, PANEL_PROUD * 3.4)
-    # Outer piece (arched high on left temple)
-    add_quad([(0.076, 0.514), (0.076, 0.526), (0.114, 0.532), (0.114, 0.520)],
+    # Outer piece
+    add_quad([(0.072, 0.508), (0.072, 0.526), (0.114, 0.532), (0.114, 0.514)],
              INK, PANEL_PROUD * 3.4)
 
     return _compact(pos, nrm, uv, tris)
