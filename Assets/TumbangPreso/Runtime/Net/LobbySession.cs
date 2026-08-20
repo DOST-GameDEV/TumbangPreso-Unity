@@ -102,6 +102,14 @@ namespace TumbangPreso.Net
             _heldSeats.Clear();
         }
 
+        public void SetJoinCode(string code)
+        {
+            string sanitized = code ?? "";
+            if (JoinCode == sanitized) return;
+            JoinCode = sanitized;
+            JoinCodeChanged?.Invoke(JoinCode);
+        }
+
         public static string MintJoinCode(System.Random rng)
         {
             var sb = new StringBuilder(JoinCodeLength);
@@ -396,6 +404,7 @@ namespace TumbangPreso.Net
             MatchInProgress = false;
             _heldSeats.Clear();
             _seenThisMatch.Clear();
+            SetJoinCode("");
         }
     }
 }

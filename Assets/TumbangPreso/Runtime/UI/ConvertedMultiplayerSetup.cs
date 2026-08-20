@@ -102,12 +102,14 @@ namespace TumbangPreso.UI
                     if (match.IsLan)
                     {
                         SetText("StatusLabel", $"Joining LAN host {match.HostName} ({match.Address}:{match.Port})...");
+                        _net.Lobby.SetJoinCode(code);
                         bool ok = _net.StartClient(match.Address, match.Port);
                         if (ok) SceneFlow.Go(SceneFlow.MatchSetup);
                     }
                     else
                     {
                         SetText("StatusLabel", $"Joining online host {match.HostName} via Relay...");
+                        _net.Lobby.SetJoinCode(code);
                         bool ok = await _net.StartRelayClient(match.RelayCode);
                         if (ok) SceneFlow.Go(SceneFlow.MatchSetup);
                     }

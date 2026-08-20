@@ -148,11 +148,12 @@ namespace TumbangPreso.Net
 
             if (senderClientId != _nm.LocalClientId)
             {
-                using var writer = new FastBufferWriter(64, Allocator.Temp);
+                using var writer = new FastBufferWriter(128, Allocator.Temp);
                 writer.WriteValueSafe(record.Seat);
                 writer.WriteValueSafe(record.Spectator);
                 writer.WriteValueSafe(lobby.LeaderPeerId);
                 writer.WriteValueSafe(lobby.MatchInProgress);
+                writer.WriteValueSafe(lobby.JoinCode ?? "");
                 _nm.CustomMessagingManager.SendNamedMessage("Seating", senderClientId, writer);
             }
 
@@ -170,8 +171,21 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out bool spectator);
             reader.ReadValueSafe(out int leaderId);
             reader.ReadValueSafe(out bool inProgress);
+            string joinCode = "";
+            if (reader.Length > reader.Position)
+            {
+                reader.ReadValueSafe(out joinCode);
+            }
 
-            NetSession.Instance?.SetLocalSeating(seat, spectator);
+            var net = NetSession.Instance;
+            if (net != null)
+            {
+                if (!string.IsNullOrEmpty(joinCode))
+                {
+                    net.Lobby.SetJoinCode(joinCode);
+                }
+                net.SetLocalSeating(seat, spectator);
+            }
 
             if (inProgress && UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != UI.SceneFlow.SelectedMap)
             {

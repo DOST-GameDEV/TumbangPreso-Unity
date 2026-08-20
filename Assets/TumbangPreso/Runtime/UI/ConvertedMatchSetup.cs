@@ -64,16 +64,11 @@ namespace TumbangPreso.UI
             for (int i = 0; i < _replicatedPicks.Length; i++) _replicatedPicks[i] = -1;
 
             var net = NetSession.Instance;
-            bool isNetworked = net != null && net.IsNetworked;
+            UpdateBanner();
 
-            if (isNetworked)
+            if (net != null)
             {
-                string code = net.Lobby.JoinCode;
-                SetText("BannerLabel", string.IsNullOrEmpty(code) ? "MULTIPLAYER" : $"MULTIPLAYER · CODE {code}");
-            }
-            else
-            {
-                SetText("BannerLabel", "SINGLE PLAYER");
+                net.Lobby.JoinCodeChanged += HandleJoinCodeChanged;
             }
 
             SetText("SeatHeading", "YOUR CHARACTER");
@@ -390,8 +385,35 @@ namespace TumbangPreso.UI
             RefreshSeats();
         }
 
+        private void UpdateBanner()
+        {
+            var net = NetSession.Instance;
+            bool isNetworked = net != null && net.IsNetworked;
+
+            if (isNetworked)
+            {
+                string code = net.Lobby.JoinCode;
+                SetText("BannerLabel", string.IsNullOrEmpty(code) ? "MULTIPLAYER" : $"MULTIPLAYER · CODE {code}");
+            }
+            else
+            {
+                SetText("BannerLabel", "SINGLE PLAYER");
+            }
+        }
+
+        private void HandleJoinCodeChanged(string code)
+        {
+            UpdateBanner();
+        }
+
         private void OnDestroy()
         {
+            var net = NetSession.Instance;
+            if (net != null)
+            {
+                net.Lobby.JoinCodeChanged -= HandleJoinCodeChanged;
+            }
+
             MatchRpc.OnMapChanged -= HandleMapSynced;
             MatchRpc.OnDifficultyChanged -= HandleDifficultySynced;
             MatchRpc.OnLobbyPicksSynced -= HandleLobbyPicksSynced;
