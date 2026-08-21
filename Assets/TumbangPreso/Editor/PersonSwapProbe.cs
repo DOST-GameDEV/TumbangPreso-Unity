@@ -94,6 +94,7 @@ namespace TumbangPreso.EditorTools
         {
             var report = new StringBuilder();
             AssetDatabase.ImportAsset(NewModel, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+            AssetDatabase.ImportAsset("Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb", ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             bool ok = ShootTurnaround(report) && ShootLineup(report);
             return ok;
@@ -109,6 +110,7 @@ namespace TumbangPreso.EditorTools
 
             bool ok = true;
             AssetDatabase.ImportAsset(NewModel, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+            AssetDatabase.ImportAsset("Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb", ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
 
             ok &= CheckAsset(report);
@@ -1241,9 +1243,8 @@ namespace TumbangPreso.EditorTools
 
             var model = Object.Instantiate(prefab, pivot.transform);
 
-            // ⚠️ THE SAME 180 DEGREES `CharacterVisual` APPLIES, because the rig wears its face
-            // on -Z. Shooting the raw import photographs the back of every head.
-            model.transform.localRotation = Quaternion.Euler(0.0f, CharacterVisual.PersonModelYaw + 24.0f, 0.0f);
+            // Face toward camera in front-three-quarter view (180 + 24 = 204 degrees)
+            model.transform.localRotation = Quaternion.Euler(0.0f, 204.0f, 0.0f);
 
             ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth, palette);
 

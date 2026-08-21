@@ -134,90 +134,73 @@ LEG_RIGHT = [
 ]
 
 # ---------------------------------------------------------------------------
-# PUFFY OVERSIZED A-LINE BAGGY MIDNIGHT HOODIE TORSO & HIP TALISMAN
+# PUFFY OVERSIZED BAGGY MIDNIGHT HOODIE TORSO & HIP TALISMAN
 # ---------------------------------------------------------------------------
 TORSO = [
-    # 1. Main Continuous A-Line Torso Body (Clean flat front plane at z = 0.096)
-    ("hoodie-core-main",       "torso", (-0.120, 0.105, -0.096), (0.120, 0.285, 0.096), HOODIE_DARK),
-    ("hoodie-core-crease",     "torso", (-0.116, 0.100, -0.090), (0.116, 0.120, 0.090), HOODIE_SHADOW),
+    # Main Puffy Baggy Midnight Hoodie Core (Extra Baggy & Long)
+    ("hoodie-core",            "torso", (-0.180, 0.125, -0.145), (0.180, 0.285, 0.145), HOODIE_DARK),
+    ("hoodie-crease-bot",      "torso", (-0.175, 0.120, -0.138), (0.175, 0.140, 0.138), HOODIE_SHADOW),
 
-    # 2. Flared Lower Hem / Sweater-Dress Drape (Wide flared skirt hanging over thighs)
-    ("hoodie-skirt-hem",       "torso", (-0.142, 0.075, -0.112), (0.142, 0.120, 0.112), HOODIE_DARK),
-    ("hoodie-skirt-shadow",    "torso", (-0.138, 0.068, -0.108), (0.138, 0.082, 0.108), HOODIE_SHADOW),
-    ("hoodie-skirt-stripe",    "torso", (-0.145, 0.080, -0.115), (0.145, 0.102, 0.115), LAVENDER_GLOW),
+    # Flared Puffy Lower Skirt / Hem Band (Hangs down low)
+    ("hoodie-skirt-hem",       "torso", (-0.185, 0.110, -0.148), (0.185, 0.150, 0.148), HOODIE_DARK),
+    ("hoodie-skirt-stripe",    "torso", (-0.187, 0.118, -0.150), (0.187, 0.136, 0.150), LAVENDER_GLOW),
 
-    # 3. Puffy Rounded Cowl Collar Wrap & Front Pearl Drawstring (Above chest decal zone)
-    ("hoodie-collar-main",     "torso", (-0.115, 0.260, -0.105), (0.115, 0.298, 0.105), HOODIE_DARK),
-    ("hoodie-collar-front",    "torso", (-0.085, 0.265, 0.080),  (0.085, 0.295, 0.105), HOODIE_DARK),
-    ("hoodie-collar-shadow",   "torso", (-0.065, 0.268, 0.085),  (0.065, 0.288, 0.102), HOODIE_SHADOW),
-    ("hoodie-collar-pearl",    "torso", (-0.015, 0.265, 0.102),  (0.015, 0.295, 0.128), LAVENDER_GLOW),
-    ("hoodie-collar-glint",    "torso", (-0.007, 0.275, 0.112),  (0.007, 0.288, 0.132), LAVENDER_PALE),
-    ("hoodie-collar-base",     "torso", (-0.018, 0.258, 0.098),  (0.018, 0.268, 0.118), HOODIE_SHADOW),
-
-    # 4. 🏷️ HIP OFUDA PAPER TALISMAN (Front-Left Hip: +X, viewer's right - Prominently hanging)
-    ("ofuda-hip-clip",         "torso", (0.092, 0.088, 0.095),   (0.128, 0.120, 0.125), OFUDA_PURPLE),
-    ("ofuda-hip-paper",        "torso", (0.095, 0.012, 0.100),   (0.125, 0.095, 0.122), OFUDA_WHITE),
-    ("ofuda-hip-backing",      "torso", (0.092, 0.008, 0.096),   (0.128, 0.098, 0.120), HOODIE_SHADOW),
-    ("ofuda-hip-kanji-top",    "torso", (0.102, 0.072, 0.123),   (0.118, 0.086, 0.126), OFUDA_PURPLE),
-    ("ofuda-hip-kanji-eye",    "torso", (0.102, 0.048, 0.123),   (0.118, 0.068, 0.126), OFUDA_PURPLE),
-    ("ofuda-hip-kanji-min",    "torso", (0.102, 0.026, 0.123),   (0.118, 0.044, 0.126), OFUDA_PURPLE),
+    # Puffy Rounded Cowl/Hood Collar Wrap
+    ("hoodie-collar-main",     "torso", (-0.150, 0.255, -0.148), (0.150, 0.298, 0.148), HOODIE_DARK),
+    ("hoodie-collar-front",    "torso", (-0.125, 0.255, 0.115),  (0.125, 0.295, 0.152), HOODIE_DARK),
+    ("hoodie-collar-shadow",   "torso", (-0.100, 0.260, 0.122),  (0.100, 0.288, 0.148), HOODIE_SHADOW),
+    ("hoodie-collar-pearl",    "torso", (-0.015, 0.278, 0.144),  (0.015, 0.305, 0.162), LAVENDER_GLOW),
+    ("hoodie-collar-glint",    "torso", (-0.008, 0.286, 0.154),  (0.008, 0.298, 0.166), LAVENDER_PALE),
+    ("hoodie-collar-base",     "torso", (-0.020, 0.272, 0.140),  (0.020, 0.280, 0.156), HOODIE_SHADOW),
 ]
 
 # ---------------------------------------------------------------------------
-# GIANT PUFFY STEPPED FLARED BELL SLEEVES WITH CONCENTRIC FRAMES & HOLLOW CUFFS
+# GIANT PUFFY FLARED BELL SLEEVES WITH HOLLOW RECESSED CUFFS & PEEKING HANDS
 # ---------------------------------------------------------------------------
 ARM_LEFT = [
-    # 1. Slouchy Dropped-Shoulder Capelet (High shoulder zone)
-    ("sleeve-shoulder-l",      "arm-left", (0.060, 0.195, -0.080), (0.130, 0.285, 0.080), HOODIE_DARK),
+    # Upper Shoulder Hood Wrap
+    ("sleeve-shoulder-l",      "arm-left", (0.080, 0.335, -0.100), (0.175, 0.450, 0.100), HOODIE_DARK),
 
-    # 2. Mid-Sleeve Dropped Puffy Box (Stepped downward & outward)
-    ("sleeve-bell-mid-l",      "arm-left", (0.110, 0.145, -0.098), (0.180, 0.250, 0.098), HOODIE_DARK),
-    ("sleeve-bell-mid-shad-l", "arm-left", (0.115, 0.135, -0.092), (0.175, 0.158, 0.092), HOODIE_SHADOW),
+    # Giant Flared Oversized Bell Sleeve (Hanging way down past waist to y = 0.075 in world)
+    ("sleeve-bell-main-l",     "arm-left", (0.135, 0.225, -0.115), (0.295, 0.445, 0.115), HOODIE_DARK),
+    ("sleeve-bell-lower-l",    "arm-left", (0.140, 0.215, -0.110), (0.290, 0.255, 0.110), HOODIE_SHADOW),
 
-    # 3. Giant Flared Bell Sleeve Outer Body (Puffy flare, calibrated proportions)
-    ("sleeve-cuff-outer-l",    "arm-left", (0.160, 0.085, -0.108), (0.240, 0.220, 0.108), HOODIE_DARK),
-    ("sleeve-cuff-under-l",    "arm-left", (0.165, 0.075, -0.102), (0.236, 0.098, 0.102), HOODIE_SHADOW),
+    # Stepped Lavender Cuff Border Trim (Outer Concentric Ring)
+    ("sleeve-cuff-stripe-l",   "arm-left", (0.275, 0.220, -0.118), (0.305, 0.448, 0.118), LAVENDER_GLOW),
 
-    # 4. Stepped Concentric Lavender Cuff Border Frame (Outer Ring)
-    ("sleeve-cuff-stripe-l",   "arm-left", (0.220, 0.078, -0.112), (0.245, 0.226, 0.112), LAVENDER_GLOW),
+    # Concentric Stepped Outer Rim & Recessed Hollow Box Cavity at Sleeve Opening
+    ("sleeve-cuff-rim-l",      "arm-left", (0.295, 0.225, -0.114), (0.318, 0.445, 0.114), HOODIE_DARK),
+    ("sleeve-cuff-inner-rim-l","arm-left", (0.298, 0.245, -0.098), (0.320, 0.425, 0.098), LAVENDER_GLOW),
+    ("sleeve-cuff-recess-l",   "arm-left", (0.302, 0.265, -0.082), (0.324, 0.405, 0.082), HOODIE_SHADOW),
+    ("sleeve-hollow-cavity-l", "arm-left", (0.255, 0.255, -0.075), (0.315, 0.415, 0.075), HOODIE_SHADOW),
 
-    # 5. Concentric Stepped Outer Rim & Deep Hollow Box Tunnel Cavity
-    ("sleeve-cuff-rim-l",      "arm-left", (0.235, 0.082, -0.108), (0.252, 0.222, 0.108), HOODIE_DARK),
-    ("sleeve-cuff-inner-rim-l","arm-left", (0.238, 0.102, -0.095), (0.254, 0.202, 0.095), LAVENDER_GLOW),
-    ("sleeve-cuff-recess-l",   "arm-left", (0.242, 0.118, -0.080), (0.256, 0.186, 0.080), HOODIE_SHADOW),
-    ("sleeve-hollow-cavity-l", "arm-left", (0.170, 0.105, -0.075), (0.248, 0.200, 0.075), HOODIE_SHADOW),
-
-    # 6. Cute Tucked Hand (Peeking at the cuff edge - authentic reference look!)
-    ("hand-palm-left",         "arm-left", (0.240, 0.195, -0.032), (0.272, 0.255, 0.016), SKIN),
-    ("hand-fingers-left",      "arm-left", (0.268, 0.200, -0.028), (0.286, 0.250, 0.010), SKIN),
-    ("hand-fingers-tip-l",     "arm-left", (0.282, 0.205, -0.024), (0.292, 0.245, 0.006), SKIN_DARK),
+    # Cute Pale Porcelain Hand Peeking Outward Through Sleeve Opening
+    ("hand-palm-left",         "arm-left", (0.280, 0.338, -0.035), (0.345, 0.445, 0.035), SKIN),
+    ("hand-fingers-left",      "arm-left", (0.340, 0.345, -0.030), (0.370, 0.440, 0.030), SKIN),
+    ("hand-fingers-tip-l",     "arm-left", (0.360, 0.355, -0.025), (0.375, 0.435, 0.025), SKIN_DARK),
 ]
 
 ARM_RIGHT = [
-    # 1. Slouchy Dropped-Shoulder Capelet (High shoulder zone)
-    ("sleeve-shoulder-r",      "arm-right", (-0.130, 0.195, -0.080), (-0.060, 0.285, 0.080), HOODIE_DARK),
+    # Upper Shoulder Hood Wrap
+    ("sleeve-shoulder-r",      "arm-right", (-0.175, 0.335, -0.100), (-0.080, 0.450, 0.100), HOODIE_DARK),
 
-    # 2. Mid-Sleeve Dropped Puffy Box (Stepped downward & outward)
-    ("sleeve-bell-mid-r",      "arm-right", (-0.180, 0.145, -0.098), (-0.110, 0.250, 0.098), HOODIE_DARK),
-    ("sleeve-bell-mid-shad-r", "arm-right", (-0.175, 0.135, -0.092), (-0.115, 0.158, 0.092), HOODIE_SHADOW),
+    # Giant Flared Oversized Bell Sleeve (Hanging way down past waist to y = 0.075 in world)
+    ("sleeve-bell-main-r",     "arm-right", (-0.295, 0.225, -0.115), (-0.135, 0.445, 0.115), HOODIE_DARK),
+    ("sleeve-bell-lower-r",    "arm-right", (-0.290, 0.215, -0.110), (-0.140, 0.255, 0.110), HOODIE_SHADOW),
 
-    # 3. Giant Flared Bell Sleeve Outer Body (Puffy flare, calibrated proportions)
-    ("sleeve-cuff-outer-r",    "arm-right", (-0.240, 0.085, -0.108), (-0.160, 0.220, 0.108), HOODIE_DARK),
-    ("sleeve-cuff-under-r",    "arm-right", (-0.236, 0.075, -0.102), (-0.165, 0.098, 0.102), HOODIE_SHADOW),
+    # Stepped Lavender Cuff Border Trim (Outer Concentric Ring)
+    ("sleeve-cuff-stripe-r",   "arm-right", (-0.305, 0.220, -0.118), (-0.275, 0.448, 0.118), LAVENDER_GLOW),
 
-    # 4. Stepped Concentric Lavender Cuff Border Frame (Outer Ring)
-    ("sleeve-cuff-stripe-r",   "arm-right", (-0.245, 0.078, -0.112), (-0.220, 0.226, 0.112), LAVENDER_GLOW),
+    # Concentric Stepped Outer Rim & Recessed Hollow Box Cavity at Sleeve Opening
+    ("sleeve-cuff-rim-r",      "arm-right", (-0.318, 0.225, -0.114), (-0.295, 0.445, 0.114), HOODIE_DARK),
+    ("sleeve-cuff-inner-rim-r","arm-right", (-0.320, 0.245, -0.098), (-0.298, 0.425, 0.098), LAVENDER_GLOW),
+    ("sleeve-cuff-recess-r",   "arm-right", (-0.324, 0.265, -0.082), (-0.302, 0.405, 0.082), HOODIE_SHADOW),
+    ("sleeve-hollow-cavity-r", "arm-right", (-0.315, 0.255, -0.075), (-0.255, 0.415, 0.075), HOODIE_SHADOW),
 
-    # 5. Concentric Stepped Outer Rim & Deep Hollow Box Tunnel Cavity
-    ("sleeve-cuff-rim-r",      "arm-right", (-0.252, 0.082, -0.108), (-0.235, 0.222, 0.108), HOODIE_DARK),
-    ("sleeve-cuff-inner-rim-r","arm-right", (-0.254, 0.102, -0.095), (-0.238, 0.202, 0.095), LAVENDER_GLOW),
-    ("sleeve-cuff-recess-r",   "arm-right", (-0.256, 0.118, -0.080), (-0.242, 0.186, 0.080), HOODIE_SHADOW),
-    ("sleeve-hollow-cavity-r", "arm-right", (-0.248, 0.105, -0.075), (-0.170, 0.200, 0.075), HOODIE_SHADOW),
-
-    # 6. Cute Tucked Hand (Peeking at the cuff edge - authentic reference look!)
-    ("hand-palm-right",        "arm-right", (-0.272, 0.195, -0.032), (-0.240, 0.255, 0.016), SKIN),
-    ("hand-fingers-right",     "arm-right", (-0.286, 0.200, -0.028), (-0.268, 0.250, 0.010), SKIN),
-    ("hand-fingers-tip-r",     "arm-right", (-0.292, 0.205, -0.024), (-0.282, 0.245, 0.006), SKIN_DARK),
+    # Cute Pale Porcelain Hand Peeking Outward Through Sleeve Opening
+    ("hand-palm-right",        "arm-right", (-0.345, 0.338, -0.035), (-0.280, 0.445, 0.035), SKIN),
+    ("hand-fingers-right",     "arm-right", (-0.370, 0.345, -0.030), (-0.340, 0.440, 0.030), SKIN),
+    ("hand-fingers-tip-r",     "arm-right", (-0.375, 0.355, -0.025), (-0.360, 0.435, 0.025), SKIN_DARK),
 ]
 
 # ---------------------------------------------------------------------------
@@ -241,6 +224,8 @@ HEAD = [
     ("eye-lash-main-r",        "head", (-0.092, 0.328, 0.1130), (-0.028, 0.358, 0.1145), INK),
     ("eye-lash-lid-r",         "head", (-0.088, 0.332, 0.1130), (-0.034, 0.354, 0.1145), INK),
 
+    # (No mouth as requested - mouthless chibi expression is much cuter and matches reference!)
+
     # =========================================================================
     # 1. 💇 COMPACT HAIR CROWN DOME & SMOOTH SILHOUETTE
     # =========================================================================
@@ -258,12 +243,19 @@ HEAD = [
     ("hair-bangs-brow-bevel",  "head", (-0.130, 0.390, 0.122), (0.130, 0.555, 0.136), HAIR_HIGHLIGHT),
 
     # 4 Distinct Chunky Vertical Bangs Strands hanging directly over top of eyes:
+    # Strand 1 (Far Left +X): hangs down to y = 0.348
     ("hair-strand-outer-l",    "head", (0.066, 0.348, 0.118),  (0.130, 0.450, 0.136), HAIR_DARK),
     ("hair-strand-outer-l-top","head", (0.070, 0.354, 0.128),  (0.124, 0.445, 0.140), HAIR_HIGHLIGHT),
+
+    # Strand 2 (Center Left +X): hangs down to y = 0.358
     ("hair-strand-mid-l",      "head", (0.004, 0.358, 0.120),  (0.062, 0.450, 0.138), HAIR_DARK),
     ("hair-strand-mid-l-top",  "head", (0.008, 0.364, 0.130),  (0.058, 0.445, 0.142), HAIR_HIGHLIGHT),
+
+    # Strand 3 (Center Right -X): hangs down to y = 0.358
     ("hair-strand-mid-r",      "head", (-0.062, 0.358, 0.120), (-0.004, 0.450, 0.138), HAIR_DARK),
     ("hair-strand-mid-r-top",  "head", (-0.058, 0.364, 0.130), (-0.008, 0.445, 0.142), HAIR_HIGHLIGHT),
+
+    # Strand 4 (Far Right -X): hangs down to y = 0.348
     ("hair-strand-outer-r",    "head", (-0.130, 0.348, 0.118), (-0.066, 0.450, 0.136), HAIR_DARK),
     ("hair-strand-outer-r-top","head", (-0.124, 0.354, 0.128), (-0.070, 0.445, 0.140), HAIR_HIGHLIGHT),
 
@@ -273,17 +265,17 @@ HEAD = [
     ("hair-bangs-gap-r",       "head", (-0.066, 0.350, 0.116), (-0.062, 0.445, 0.136), HOODIE_SHADOW),
 
     # =========================================================================
-    # 3. 🎀 LONG STRAIGHT SIDE LOCKS (Framing Cheeks & Shoulders down to y = 0.200)
+    # 3. 🎀 STRAIGHT SIDE LOCKS (Framing Cheeks down to y = 0.270)
     # =========================================================================
     # Left Side Lock (+X, viewer's right)
-    ("hair-sidelock-main-l",   "head", (0.118, 0.200, -0.010), (0.146, 0.455, 0.122), HAIR_DARK),
-    ("hair-sidelock-front-l",  "head", (0.114, 0.200, 0.076),  (0.142, 0.440, 0.132), HAIR_DARK),
-    ("hair-sidelock-highlight-l","head",(0.120, 0.220, 0.090), (0.144, 0.425, 0.136), HAIR_HIGHLIGHT),
+    ("hair-sidelock-main-l",   "head", (0.118, 0.270, -0.010), (0.146, 0.455, 0.122), HAIR_DARK),
+    ("hair-sidelock-front-l",  "head", (0.114, 0.270, 0.076),  (0.142, 0.440, 0.132), HAIR_DARK),
+    ("hair-sidelock-highlight-l","head",(0.120, 0.285, 0.090), (0.144, 0.425, 0.136), HAIR_HIGHLIGHT),
 
     # Right Side Lock (-X, viewer's left)
-    ("hair-sidelock-main-r",   "head", (-0.146, 0.200, -0.010), (-0.118, 0.455, 0.122), HAIR_DARK),
-    ("hair-sidelock-front-r",  "head", (-0.142, 0.200, 0.076),  (-0.114, 0.440, 0.132), HAIR_DARK),
-    ("hair-sidelock-highlight-r","head",(-0.144, 0.220, 0.090), (-0.120, 0.425, 0.136), HAIR_HIGHLIGHT),
+    ("hair-sidelock-main-r",   "head", (-0.146, 0.270, -0.010), (-0.118, 0.455, 0.122), HAIR_DARK),
+    ("hair-sidelock-front-r",  "head", (-0.142, 0.270, 0.076),  (-0.114, 0.440, 0.132), HAIR_DARK),
+    ("hair-sidelock-highlight-r","head",(-0.144, 0.285, 0.090), (-0.120, 0.425, 0.136), HAIR_HIGHLIGHT),
 
     # =========================================================================
     # 4. 📜 SHORT NAPE BACK HAIR DRAPE (Stopping above Back All-Seeing Eye!)
@@ -357,40 +349,43 @@ BODY_DECALS = [
     # =========================================================================
     # 1. 🌙 FRONT CRESCENT MOON & EYE GLYPH (Centered on Upper Chest)
     # =========================================================================
-    # Smooth C-shaped Crescent Arc (Opening to the right (+X))
-    ("front-moon-arc",         "torso", "front", LAVENDER_GLOW,
-     [(-0.046, 0.205), (-0.038, 0.238), (-0.010, 0.252), (0.028, 0.250),
-      (0.038, 0.238), (0.010, 0.232), (-0.018, 0.205), (0.010, 0.178),
-      (0.038, 0.172), (0.028, 0.160), (-0.010, 0.158), (-0.038, 0.172)], 1),
+    ("front-moon-outer-top",   "torso", "front", LAVENDER_GLOW,
+     ((-0.038, 0.205), (0.038, 0.248)), 1),
+    ("front-moon-outer-mid",   "torso", "front", LAVENDER_GLOW,
+     ((-0.044, 0.180), (-0.014, 0.235)), 1),
+    ("front-moon-outer-bot",   "torso", "front", LAVENDER_GLOW,
+     ((-0.038, 0.168), (0.038, 0.210)), 1),
+    ("front-moon-inner-cutout","torso", "front", HOODIE_DARK,
+     ((-0.014, 0.178), (0.042, 0.238)), 2),
 
-    # Moon Center Eye Dot Glyph (Inside the open hollow of the crescent)
+    # Moon Center Eye Dot Glyph
     ("front-moon-eye-dot",     "torso", "front", GRAPHIC_ACCENT,
-     [(-0.002, 0.205), (0.010, 0.217), (0.022, 0.205), (0.010, 0.193)], 2),
+     ((0.002, 0.200), (0.020, 0.218)), 3),
     ("front-moon-eye-core",    "torso", "front", LAVENDER_PALE,
-     ((0.005, 0.200), (0.015, 0.210)), 3),
+     ((0.006, 0.204), (0.016, 0.214)), 4),
 
-    # Top Crown Dot on Crescent (Floating above top horn)
+    # Top Crown Dot on Crescent
     ("front-moon-top-dot",     "torso", "front", LAVENDER_GLOW,
-     ((0.028, 0.248), (0.040, 0.260)), 2),
+     ((0.026, 0.242), (0.038, 0.254)), 2),
 
     # =========================================================================
     # 2. ✖️ FRONT STITCH CROSSES (Flanking lower chest below moon)
     # =========================================================================
     # Left Stitch Cross (+X side, viewer's right)
-    ("front-stitch-l-bar1",    "torso", "front", LAVENDER_GLOW,
-     [(0.052, 0.142), (0.076, 0.166), (0.082, 0.160), (0.058, 0.136)], 1),
-    ("front-stitch-l-bar2",    "torso", "front", LAVENDER_GLOW,
-     [(0.052, 0.160), (0.076, 0.136), (0.082, 0.142), (0.058, 0.166)], 1),
+    ("front-stitch-l-diag1",   "torso", "front", LAVENDER_GLOW,
+     ((0.055, 0.145), (0.085, 0.175)), 1),
+    ("front-stitch-l-diag2",   "torso", "front", LAVENDER_GLOW,
+     ((0.055, 0.175), (0.085, 0.145)), 1),
     ("front-stitch-l-center",  "torso", "front", GRAPHIC_ACCENT,
-     ((0.063, 0.147), (0.071, 0.155)), 2),
+     ((0.065, 0.155), (0.075, 0.165)), 2),
 
     # Right Stitch Cross (-X side, viewer's left)
-    ("front-stitch-r-bar1",    "torso", "front", LAVENDER_GLOW,
-     [(-0.082, 0.142), (-0.058, 0.166), (-0.052, 0.160), (-0.076, 0.136)], 1),
-    ("front-stitch-r-bar2",    "torso", "front", LAVENDER_GLOW,
-     [(-0.082, 0.160), (-0.058, 0.136), (-0.052, 0.142), (-0.076, 0.166)], 1),
+    ("front-stitch-r-diag1",   "torso", "front", LAVENDER_GLOW,
+     ((-0.085, 0.145), (-0.055, 0.175)), 1),
+    ("front-stitch-r-diag2",   "torso", "front", LAVENDER_GLOW,
+     ((-0.085, 0.175), (-0.055, 0.145)), 1),
     ("front-stitch-r-center",  "torso", "front", GRAPHIC_ACCENT,
-     ((-0.071, 0.147), (-0.063, 0.155)), 2),
+     ((-0.075, 0.155), (-0.065, 0.165)), 2),
 
     # =========================================================================
     # 3. 👁️ BACK EMBLEM: ALL-SEEING EYE (Prominent on Back of Hoodie)
@@ -807,14 +802,13 @@ def build_mesh(boxes, panels=(), decals=(), donor=None):
             if signed_area_2d(pts_2d) < 0:
                 pts_2d.reverse()
             normal = (0.0, 0.0, 1.0)
-            z_plane = 0.1141 if bone == "head" else 0.098
+            z_plane = 0.1141 if bone == "head" else 0.146
             pts_3d = [(p[0], p[1], z_plane + offset) for p in pts_2d]
         elif face == "back":
             if signed_area_2d(pts_2d) > 0:
                 pts_2d.reverse()
             normal = (0.0, 0.0, -1.0)
-            z_plane = -0.1141 if bone == "head" else -0.098
-            pts_3d = [(p[0], p[1], z_plane - offset) for p in pts_2d]
+            pts_3d = [(p[0], p[1], -0.146 - offset) for p in pts_2d]
         elif face == "left":
             pts_3d = [(0.156 + offset, p[1], -p[0]) for p in pts_2d]
             if signed_area_2d(pts_2d) < 0:
