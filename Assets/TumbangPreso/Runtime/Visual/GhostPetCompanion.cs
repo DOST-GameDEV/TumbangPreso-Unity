@@ -184,6 +184,19 @@ namespace TumbangPreso.Visual
 
         private void UpdateFidgetAI(float dt, float speed, float time)
         {
+            var ownerEmotes = _target != null ? _target.GetComponentInParent<Social.EmotePlayer>() : null;
+            if (ownerEmotes != null && ownerEmotes.IsEmoting)
+            {
+                // Dance and bounce happily alongside the player during emotes
+                _fidgetExtraYaw = (_fidgetExtraYaw + dt * 280.0f) % 360.0f;
+                _fidgetExtraPitch = Mathf.Sin(time * 6.0f) * 8.0f;
+                _fidgetExtraRoll = Mathf.Cos(time * 6.0f) * 6.0f;
+                _fidgetOffset = new Vector3(0.0f, Mathf.Sin(time * 7.0f) * 0.10f, 0.0f);
+                float squash = 1.0f + Mathf.Sin(time * 7.0f) * 0.14f;
+                _fidgetScaleMul = new Vector3(1.0f / Mathf.Sqrt(squash), squash, 1.0f / Mathf.Sqrt(squash));
+                return;
+            }
+
             if (speed > 0.15f)
             {
                 // Active movement cancels idle fidgets smoothly
