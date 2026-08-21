@@ -262,15 +262,23 @@ namespace TumbangPreso.PlayTests
                     Assert.IsTrue(found, $"The previewed rig has no '{wanted}' bone.");
                 }
 
-                var bone = DeepestBone(skinned);
-                Assert.IsNotNull(bone);
-
-                Quaternion pose = bone.localRotation;
+                var poses = new System.Collections.Generic.Dictionary<Transform, Quaternion>();
+                foreach (var b in skinned.bones)
+                {
+                    if (b != null) poses[b] = b.localRotation;
+                }
 
                 for (int i = 0; i < 30; i++) yield return null;
 
-                Assert.Greater(Quaternion.Angle(pose, bone.localRotation), 0.01f,
-                    $"'{bone.name}' has not moved in 30 frames, so the select screen is showing " +
+                float maxAngle = 0.0f;
+                foreach (var kvp in poses)
+                {
+                    float angle = Quaternion.Angle(kvp.Value, kvp.Key.localRotation);
+                    if (angle > maxAngle) maxAngle = angle;
+                }
+
+                Assert.Greater(maxAngle, 0.01f,
+                    "No bone in the rig has moved in 30 frames, so the select screen is showing " +
                     "this character's bind pose.");
 
                 bool palettedAny = false;

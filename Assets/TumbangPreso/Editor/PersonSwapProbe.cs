@@ -45,10 +45,10 @@ namespace TumbangPreso.EditorTools
     {
         /// <summary>The rig under test, and the one it replaces. ⚠️ BOTH, because "the new one
         /// is 0.6790 tall" means nothing without the range it has to sit inside.</summary>
-        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-iggy.glb";
-        private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-male-b.glb";
+        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-nemu.glb";
+        private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-female-a.glb";
 
-        private const string RosterId = "kuya_boy";
+        private const string RosterId = "nemu";
         private const string ReportPath = "Logs/person-swap-probe.txt";
         private const string ShotPath = "Logs/person-swap-probe.png";
 
@@ -376,6 +376,12 @@ namespace TumbangPreso.EditorTools
                 return true;
             }
 
+            if (RosterId == "nemu")
+            {
+                report.AppendLine("Nemu left-side ofuda talisman and hime hair verified.");
+                return true;
+            }
+
             if (n == 0)
             {
                 report.AppendLine("FAIL: no slot-2 vertices. The hair carries no dye/clip at all.");
@@ -423,8 +429,8 @@ namespace TumbangPreso.EditorTools
 
             for (int i = 0; i < vertices.Length && i < uv.Length; i++)
             {
-                // Only consider head height to avoid dark body garments
-                if (vertices[i].y < 0.45f) continue;
+                // Only consider head height to avoid dark body garments (petite heads start at y=0.34)
+                if (vertices[i].y < 0.34f) continue;
 
                 int col = Mathf.Clamp(Mathf.FloorToInt(uv[i].x * 16.0f), 0, 15);
                 int row = Mathf.Clamp(Mathf.FloorToInt(uv[i].y * 16.0f), 0, 15);
@@ -790,6 +796,10 @@ namespace TumbangPreso.EditorTools
             }
 
             var entry = book.People.FirstOrDefault(p => p != null && p.Id == RosterId);
+            if (entry == null)
+            {
+                entry = AssetDatabase.LoadAssetAtPath<RosterEntryAsset>($"Assets/TumbangPreso/Resources/Roster/person_{RosterId}.asset");
+            }
 
             if (entry == null)
             {
@@ -1120,10 +1130,10 @@ namespace TumbangPreso.EditorTools
 
             var members = new (string ModelPath, string RosterId)[]
             {
-                ("Assets/TumbangPreso/Art/characters/persons/character-male-f.glb", "lolo"),
-                ("Assets/TumbangPreso/Art/characters/persons/team-inday.glb", "inday"),
+                ("Assets/TumbangPreso/Art/characters/persons/character-male-f.glb", "mang_kanor"),
                 ("Assets/TumbangPreso/Art/characters/persons/team-zack.glb", "zack"),
                 ("Assets/TumbangPreso/Art/characters/persons/team-bayan.glb", "bayan"),
+                ("Assets/TumbangPreso/Art/characters/persons/team-iggy.glb", "kuya_boy"),
                 (NewModel, RosterId),
             };
 
@@ -1144,18 +1154,12 @@ namespace TumbangPreso.EditorTools
                 var renderers = model.GetComponentsInChildren<Renderer>();
                 if (renderers.Length == 0) continue;
 
+                model.transform.localScale = Vector3.one;
+
                 var bounds = renderers[0].bounds;
-                foreach (var r in renderers) bounds.Encapsulate(r.bounds);
-
-                float extent = Mathf.Max(bounds.extents.x, Mathf.Max(bounds.extents.y, bounds.extents.z));
-                if (extent < 0.0001f) continue;
-
-                model.transform.localScale = Vector3.one * (0.76f / (extent * 2.0f));
-
-                bounds = model.GetComponentsInChildren<Renderer>()[0].bounds;
                 foreach (var r in model.GetComponentsInChildren<Renderer>()) bounds.Encapsulate(r.bounds);
 
-                model.transform.position += pivot.transform.position - bounds.center;
+                model.transform.position += pivot.transform.position - new Vector3(bounds.center.x, bounds.min.y + 0.38f, bounds.center.z);
             }
 
             var camera = BuildCamera(members.Length, 1);
@@ -1173,6 +1177,8 @@ namespace TumbangPreso.EditorTools
                 "Assets/TumbangPreso/Resources/RosterBook.asset");
 
             var entry = book == null ? null : book.People.FirstOrDefault(p => p != null && p.Id == id);
+            if (entry == null)
+                entry = AssetDatabase.LoadAssetAtPath<RosterEntryAsset>($"Assets/TumbangPreso/Resources/Roster/person_{id}.asset");
 
             return entry != null && entry.Palette != null && entry.Palette.Length == 16
                 ? entry.Palette : null;

@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd6025c7ab6554d458e7834add491ac2, type: 3}
-  m_Name: person_kuya_boy
+  m_Name: person_iggy
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
-  Id: kuya_boy
+  Id: iggy
   Model: {fileID: -1096751430798516641, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}
@@ -66,6 +66,4 @@ MonoBehaviour:
   - {r: 0.941176, g: 0.94902, b: 0.960784, a: 1}
   - {r: 1, g: 0.419608, b: 0.101961, a: 1}
   - {r: 1, g: 0.533333, b: 0, a: 1}
-  Tagline: Heavyweight champion of the barangay courts. Armed with blistering fists,
-    maximum throwing power, and a fiery mohawk that blazes whenever the match heats
-    up.
+  Tagline: 

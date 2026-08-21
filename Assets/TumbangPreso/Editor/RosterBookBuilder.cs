@@ -66,6 +66,7 @@ namespace TumbangPreso.EditorTools
             { "lola_pacing", "characters/persons/character-female-d.glb" },
             { "mang_kanor",  "characters/persons/character-male-e.glb" },
             { "aling_nena",  "characters/persons/character-female-e.glb" },
+            { "nemu",        "characters/persons/team-nemu.glb" },
         };
 
         /// <summary>
@@ -101,6 +102,7 @@ namespace TumbangPreso.EditorTools
             { "lola_pacing", "person_lola-pacing.tres" },
             { "mang_kanor",  "person_mang-kanor.tres" },
             { "aling_nena",  "person_aling-nena.tres" },
+            { "nemu",        "person_team-nemu.tres" },
         };
 
         private const string PaletteDir = "MapSource/materials_persons";
@@ -145,6 +147,14 @@ namespace TumbangPreso.EditorTools
             ok &= Fill(book.People, Roster.People, PersonModels, "person");
             ok &= Fill(book.Cans, Roster.Cans, CanModels, "can");
             ok &= Fill(book.Slippers, Roster.Slippers, SlipperModels, "slipper");
+
+            // Also build standalone entries like nemu so they have valid .asset files
+            foreach (var kvp in PersonModels)
+            {
+                bool inTruth = false;
+                foreach (var p in Roster.People) { if (p.Id == kvp.Key) { inTruth = true; break; } }
+                if (!inTruth) BuildSingleEntry(kvp.Key, PersonModels, "person", ref ok);
+            }
 
             EditorUtility.SetDirty(book);
             AssetDatabase.SaveAssets();
@@ -287,6 +297,61 @@ namespace TumbangPreso.EditorTools
                 into.Add(asset);
             }
 
+            return ok;
+        }
+
+        private static bool BuildSingleEntry(string id,
+                                             Dictionary<string, string> models,
+                                             string kind,
+                                             ref bool ok)
+        {
+            string assetPath = $"{EntryDir}/{kind}_{id}.asset";
+
+            var asset = AssetDatabase.LoadAssetAtPath<RosterEntryAsset>(assetPath);
+            if (asset == null)
+            {
+                asset = ScriptableObject.CreateInstance<RosterEntryAsset>();
+                AssetDatabase.CreateAsset(asset, assetPath);
+            }
+
+            asset.Id = id;
+            asset.Tint = Color.white;
+            asset.Palette = ReadPalette(id, ref ok);
+
+            if (models.TryGetValue(id, out var rel))
+            {
+                string full = $"{ArtRoot}/{rel}";
+                asset.Model = AssetDatabase.LoadAssetAtPath<GameObject>(full);
+
+                if (asset.Model == null)
+                {
+                    Debug.LogError($"[RosterBook] no model at {full} for '{id}'.");
+                    ok = false;
+                }
+
+                var clips = new System.Collections.Generic.List<AnimationClip>();
+                foreach (var sub in AssetDatabase.LoadAllAssetsAtPath(full))
+                {
+                    if (sub is AnimationClip clip && !clip.name.StartsWith("__preview"))
+                        clips.Add(clip);
+                }
+
+                asset.Clips = clips.ToArray();
+
+                if (clips.Count == 0 && kind == "person")
+                {
+                    Debug.LogError($"[RosterBook] '{id}' has a model with no clips. " +
+                                   "That character will not animate.");
+                    ok = false;
+                }
+            }
+            else
+            {
+                Debug.LogError($"[RosterBook] no model mapped for {kind} '{id}'.");
+                ok = false;
+            }
+
+            EditorUtility.SetDirty(asset);
             return ok;
         }
     }
