@@ -24,14 +24,14 @@ PARENT = {"leg-left": "root", "leg-right": "root", "torso": "root",
           "arm-left": "torso", "arm-right": "torso", "head": "torso"}
 
 # ---------------------------------------------------------------------------
-# PETITE CHIBI PROPORTIONS SKELETON (~0.6800m AUTHORED HEIGHT)
+# PETITE CHIBI PROPORTIONS SKELETON (~0.6050m AUTHORED HEIGHT)
 # ---------------------------------------------------------------------------
-WAS_HIPS, WAS_SHOULDER, WAS_NECK, WAS_TOP = 0.150, 0.240, 0.280, 0.6800
-NOW_HIPS, NOW_SHOULDER, NOW_NECK, NOW_TOP = 0.150, 0.240, 0.280, 0.6800
+WAS_HIPS, WAS_SHOULDER, WAS_NECK, WAS_TOP = 0.150, 0.240, 0.280, 0.6050
+NOW_HIPS, NOW_SHOULDER, NOW_NECK, NOW_TOP = 0.150, 0.240, 0.280, 0.6050
 
 HEAD_SHIFT_Y = NOW_NECK - 0.343  # -0.063m vertical shift for donor skull
 HEAD_GROWTH = 1.0
-CAST_MIN_HEIGHT, CAST_MAX_HEIGHT = 0.6613, 0.7928
+CAST_MIN_HEIGHT, CAST_MAX_HEIGHT = 0.5900, 0.7928
 
 SKELETON = {
     "root":      (0.0,      0.0,          0.0),
@@ -216,139 +216,141 @@ HEAD = [
     # =========================================================================
     # 0. 🌸 CUTE WIDE CHIBI PALE PORCELAIN FACE BASE
     # =========================================================================
-    ("face-core",              "head", (-0.130, 0.285, -0.095), (0.130, 0.460, 0.110), SKIN),
-    ("face-front-cheeks",      "head", (-0.125, 0.285, 0.095),  (0.125, 0.395, 0.116), SKIN),
-    ("face-chin-taper",        "head", (-0.105, 0.275, -0.075), (0.105, 0.295, 0.102), SKIN),
+    ("face-core",              "head", (-0.125, 0.285, -0.090), (0.125, 0.460, 0.105), SKIN),
+    ("face-front-cheeks",      "head", (-0.120, 0.285, 0.095),  (0.120, 0.395, 0.114), SKIN),
+    ("face-chin-taper",        "head", (-0.100, 0.275, -0.075), (0.100, 0.295, 0.100), SKIN),
 
     # =========================================================================
     # 0.1 😴 ICONIC BOLD SLEEPY SPIRIT EYES (-   -) & SOFT BLUSH (MOUTHLESS CUTE!)
     # =========================================================================
     # Left Eye (+X, viewer's right in front view) - Chunky bold sleepy horizontal bar
-    ("eye-lash-main-l",        "head", (0.032, 0.330, 0.115),  (0.096, 0.362, 0.124), INK),
-    ("eye-lash-lid-l",         "head", (0.038, 0.335, 0.115),  (0.090, 0.358, 0.125), INK),
-    ("cheek-blush-l",          "head", (0.035, 0.304, 0.115),  (0.095, 0.326, 0.120), SKIN_DARK),
+    ("eye-lash-main-l",        "head", (0.028, 0.328, 0.112),  (0.092, 0.358, 0.122), INK),
+    ("eye-lash-lid-l",         "head", (0.034, 0.332, 0.112),  (0.088, 0.354, 0.123), INK),
+    ("cheek-blush-l",          "head", (0.032, 0.300, 0.112),  (0.090, 0.324, 0.118), SKIN_DARK),
 
     # Right Eye (-X, viewer's left in front view) - Chunky bold sleepy horizontal bar
-    ("eye-lash-main-r",        "head", (-0.096, 0.330, 0.115), (-0.032, 0.362, 0.124), INK),
-    ("eye-lash-lid-r",         "head", (-0.090, 0.335, 0.115), (-0.038, 0.358, 0.125), INK),
-    ("cheek-blush-r",          "head", (-0.095, 0.304, 0.115), (-0.035, 0.326, 0.120), SKIN_DARK),
+    ("eye-lash-main-r",        "head", (-0.092, 0.328, 0.112), (-0.028, 0.358, 0.122), INK),
+    ("eye-lash-lid-r",         "head", (-0.088, 0.332, 0.112), (-0.034, 0.354, 0.123), INK),
+    ("cheek-blush-r",          "head", (-0.090, 0.300, 0.112), (-0.032, 0.324, 0.118), SKIN_DARK),
 
     # (No mouth as requested - mouthless chibi expression is much cuter and matches reference!)
 
     # =========================================================================
-    # 1. 💇 WIDE HAIR CROWN DOME & VOLUMETRIC TOP
+    # 1. 💇 COMPACT HAIR CROWN DOME & SMOOTH SILHOUETTE
     # =========================================================================
-    ("hair-crown-core",        "head", (-0.155, 0.410, -0.135), (0.155, 0.620, 0.125), HAIR_DARK),
-    ("hair-crown-top-apex",    "head", (-0.125, 0.605, -0.110), (0.125, 0.678, 0.100), HAIR_DARK),
-    ("hair-crown-sheen",       "head", (-0.130, 0.580, -0.050), (0.130, 0.640, 0.050), HAIR_HIGHLIGHT),
-    ("hair-crown-side-l",      "head", (0.138, 0.390, -0.120), (0.165, 0.610, 0.100), HAIR_DARK),
-    ("hair-crown-side-r",      "head", (-0.165, 0.390, -0.120), (-0.138, 0.610, 0.100), HAIR_DARK),
+    ("hair-crown-core",        "head", (-0.142, 0.400, -0.128), (0.142, 0.585, 0.116), HAIR_DARK),
+    ("hair-crown-top-apex",    "head", (-0.120, 0.570, -0.105), (0.120, 0.598, 0.095), HAIR_DARK),
+    ("hair-crown-sheen",       "head", (-0.115, 0.560, -0.040), (0.115, 0.595, 0.040), HAIR_HIGHLIGHT),
+    ("hair-crown-side-l",      "head", (0.124, 0.380, -0.112), (0.145, 0.575, 0.092), HAIR_DARK),
+    ("hair-crown-side-r",      "head", (-0.145, 0.380, -0.112), (-0.124, 0.575, 0.092), HAIR_DARK),
 
     # =========================================================================
     # 2. ✂️ STRAIGHT HIME-CUT BLUNT BANGS (LOW DOWN - ZERO FOREHEAD!)
     # =========================================================================
-    # Brow Base Block: Covers from dome (0.580) all the way down to 0.365
-    ("hair-bangs-brow-base",   "head", (-0.148, 0.365, 0.095), (0.148, 0.580, 0.138), HAIR_DARK),
-    ("hair-bangs-brow-bevel",  "head", (-0.142, 0.390, 0.130), (0.142, 0.560, 0.145), HAIR_HIGHLIGHT),
+    # Brow Base Block: Covers from dome (0.575) down to 0.365
+    ("hair-bangs-brow-base",   "head", (-0.136, 0.365, 0.095), (0.136, 0.575, 0.128), HAIR_DARK),
+    ("hair-bangs-brow-bevel",  "head", (-0.130, 0.390, 0.122), (0.130, 0.555, 0.136), HAIR_HIGHLIGHT),
 
-    # 4 Thick Vertical Bangs Strands hanging directly over top of eyes:
-    # Strand 1 (Far Left +X): hangs down to y = 0.352
-    ("hair-strand-outer-l",    "head", (0.070, 0.352, 0.120),  (0.138, 0.460, 0.142), HAIR_DARK),
-    ("hair-strand-outer-l-top","head", (0.076, 0.360, 0.134),  (0.132, 0.455, 0.148), HAIR_HIGHLIGHT),
+    # 4 Distinct Chunky Vertical Bangs Strands hanging directly over top of eyes:
+    # Strand 1 (Far Left +X): hangs down to y = 0.348
+    ("hair-strand-outer-l",    "head", (0.066, 0.348, 0.118),  (0.130, 0.450, 0.136), HAIR_DARK),
+    ("hair-strand-outer-l-top","head", (0.070, 0.354, 0.128),  (0.124, 0.445, 0.140), HAIR_HIGHLIGHT),
 
-    # Strand 2 (Center Left +X): hangs down to y = 0.364
-    ("hair-strand-mid-l",      "head", (0.005, 0.364, 0.122),  (0.074, 0.460, 0.144), HAIR_DARK),
-    ("hair-strand-mid-l-top",  "head", (0.010, 0.370, 0.136),  (0.068, 0.455, 0.150), HAIR_HIGHLIGHT),
+    # Strand 2 (Center Left +X): hangs down to y = 0.358
+    ("hair-strand-mid-l",      "head", (0.004, 0.358, 0.120),  (0.062, 0.450, 0.138), HAIR_DARK),
+    ("hair-strand-mid-l-top",  "head", (0.008, 0.364, 0.130),  (0.058, 0.445, 0.142), HAIR_HIGHLIGHT),
 
-    # Strand 3 (Center Right -X): hangs down to y = 0.364
-    ("hair-strand-mid-r",      "head", (-0.074, 0.364, 0.122), (-0.005, 0.460, 0.144), HAIR_DARK),
-    ("hair-strand-mid-r-top",  "head", (-0.068, 0.370, 0.136), (-0.010, 0.455, 0.150), HAIR_HIGHLIGHT),
+    # Strand 3 (Center Right -X): hangs down to y = 0.358
+    ("hair-strand-mid-r",      "head", (-0.062, 0.358, 0.120), (-0.004, 0.450, 0.138), HAIR_DARK),
+    ("hair-strand-mid-r-top",  "head", (-0.058, 0.364, 0.130), (-0.008, 0.445, 0.142), HAIR_HIGHLIGHT),
 
-    # Strand 4 (Far Right -X): hangs down to y = 0.352
-    ("hair-strand-outer-r",    "head", (-0.138, 0.352, 0.120), (-0.070, 0.460, 0.142), HAIR_DARK),
-    ("hair-strand-outer-r-top","head", (-0.132, 0.360, 0.134), (-0.076, 0.455, 0.148), HAIR_HIGHLIGHT),
+    # Strand 4 (Far Right -X): hangs down to y = 0.348
+    ("hair-strand-outer-r",    "head", (-0.130, 0.348, 0.118), (-0.066, 0.450, 0.136), HAIR_DARK),
+    ("hair-strand-outer-r-top","head", (-0.124, 0.354, 0.128), (-0.070, 0.445, 0.140), HAIR_HIGHLIGHT),
 
-    # Center Bang Notch Gap Divider:
-    ("hair-bangs-center-notch","head", (-0.005, 0.370, 0.116), (0.005, 0.450, 0.140), HOODIE_SHADOW),
+    # 3 Vertical Notch Gap Dividers separating the 4 chunky strands:
+    ("hair-bangs-gap-l",       "head", (0.062, 0.350, 0.116),  (0.066, 0.445, 0.136), HOODIE_SHADOW),
+    ("hair-bangs-gap-mid",     "head", (-0.004, 0.360, 0.116), (0.004, 0.445, 0.136), HOODIE_SHADOW),
+    ("hair-bangs-gap-r",       "head", (-0.066, 0.350, 0.116), (-0.062, 0.445, 0.136), HOODIE_SHADOW),
 
     # =========================================================================
     # 3. 🎀 STRAIGHT SIDE LOCKS (Framing Cheeks down to y = 0.270)
     # =========================================================================
     # Left Side Lock (+X, viewer's right)
-    ("hair-sidelock-main-l",   "head", (0.125, 0.270, -0.010), (0.160, 0.460, 0.130), HAIR_DARK),
-    ("hair-sidelock-front-l",  "head", (0.120, 0.270, 0.080),  (0.154, 0.445, 0.140), HAIR_DARK),
-    ("hair-sidelock-highlight-l","head",(0.128, 0.285, 0.095), (0.156, 0.430, 0.144), HAIR_HIGHLIGHT),
+    ("hair-sidelock-main-l",   "head", (0.118, 0.270, -0.010), (0.146, 0.455, 0.122), HAIR_DARK),
+    ("hair-sidelock-front-l",  "head", (0.114, 0.270, 0.076),  (0.142, 0.440, 0.132), HAIR_DARK),
+    ("hair-sidelock-highlight-l","head",(0.120, 0.285, 0.090), (0.144, 0.425, 0.136), HAIR_HIGHLIGHT),
 
     # Right Side Lock (-X, viewer's left)
-    ("hair-sidelock-main-r",   "head", (-0.160, 0.270, -0.010), (-0.125, 0.460, 0.130), HAIR_DARK),
-    ("hair-sidelock-front-r",  "head", (-0.154, 0.270, 0.080),  (-0.120, 0.445, 0.140), HAIR_DARK),
-    ("hair-sidelock-highlight-r","head",(-0.156, 0.285, 0.095), (-0.128, 0.430, 0.144), HAIR_HIGHLIGHT),
+    ("hair-sidelock-main-r",   "head", (-0.146, 0.270, -0.010), (-0.118, 0.455, 0.122), HAIR_DARK),
+    ("hair-sidelock-front-r",  "head", (-0.142, 0.270, 0.076),  (-0.114, 0.440, 0.132), HAIR_DARK),
+    ("hair-sidelock-highlight-r","head",(-0.144, 0.285, 0.090), (-0.120, 0.425, 0.136), HAIR_HIGHLIGHT),
 
     # =========================================================================
     # 4. 📜 SHORT NAPE BACK HAIR DRAPE (Stopping above Back All-Seeing Eye!)
     # =========================================================================
     # Tier 1 (Upper Nape)
-    ("hair-back-tier1-c",      "head", (-0.150, 0.390, -0.145), (0.150, 0.500, -0.085), HAIR_DARK),
-    ("hair-back-tier1-l",      "head", (0.100, 0.390, -0.140), (0.158, 0.500, -0.075), HAIR_DARK),
-    ("hair-back-tier1-r",      "head", (-0.158, 0.390, -0.140), (-0.100, 0.500, -0.075), HAIR_DARK),
+    ("hair-back-tier1-c",      "head", (-0.138, 0.380, -0.138), (0.138, 0.490, -0.085), HAIR_DARK),
+    ("hair-back-tier1-l",      "head", (0.092, 0.380, -0.134), (0.144, 0.490, -0.075), HAIR_DARK),
+    ("hair-back-tier1-r",      "head", (-0.144, 0.380, -0.134), (-0.092, 0.490, -0.075), HAIR_DARK),
 
-    # Tier 2 (Lower Nape - Stops at y = 0.310, well above eye emblem!)
-    ("hair-back-tier2-c",      "head", (-0.144, 0.310, -0.146), (0.144, 0.410, -0.090), HAIR_DARK),
-    ("hair-back-tier2-l",      "head", (0.095, 0.310, -0.142), (0.152, 0.410, -0.080), HAIR_DARK),
-    ("hair-back-tier2-r",      "head", (-0.152, 0.310, -0.142), (-0.095, 0.410, -0.080), HAIR_DARK),
+    # Tier 2 (Lower Nape - Stops at y = 0.315, well above eye emblem!)
+    ("hair-back-tier2-c",      "head", (-0.132, 0.315, -0.138), (0.132, 0.395, -0.090), HAIR_DARK),
+    ("hair-back-tier2-l",      "head", (0.088, 0.315, -0.134), (0.138, 0.395, -0.080), HAIR_DARK),
+    ("hair-back-tier2-r",      "head", (-0.138, 0.315, -0.134), (-0.088, 0.395, -0.080), HAIR_DARK),
 
     # Vertical Strand Notches / Seams across Back Hair
-    ("hair-back-seam-1",       "head", (-0.052, 0.310, -0.148), (-0.040, 0.490, -0.095), HAIR_HIGHLIGHT),
-    ("hair-back-seam-2",       "head", (0.040, 0.310, -0.148),  (0.052, 0.490, -0.095), HAIR_HIGHLIGHT),
-    ("hair-back-seam-mid",     "head", (-0.006, 0.310, -0.148), (0.006, 0.490, -0.095), HOODIE_SHADOW),
+    ("hair-back-seam-1",       "head", (-0.048, 0.315, -0.140), (-0.038, 0.475, -0.092), HAIR_HIGHLIGHT),
+    ("hair-back-seam-2",       "head", (0.038, 0.315, -0.140),  (0.048, 0.475, -0.092), HAIR_HIGHLIGHT),
+    ("hair-back-seam-mid",     "head", (-0.005, 0.315, -0.140), (0.005, 0.475, -0.092), HOODIE_SHADOW),
 
     # =========================================================================
     # 5. 🏷️ HEAD OFUDA PAPER TALISMAN CLIP (Left side of hair: +X)
     # =========================================================================
     # Purple Top Clip on Hair
-    ("ofuda-clip-main",        "head", (0.138, 0.490, 0.025),  (0.178, 0.545, 0.070), OFUDA_PURPLE),
-    ("ofuda-clip-top-bevel",   "head", (0.140, 0.540, 0.028),  (0.175, 0.552, 0.066), OFUDA_PURPLE),
-    ("ofuda-clip-eye-pupil",   "head", (0.173, 0.510, 0.038),  (0.179, 0.525, 0.055), INK),
-    ("ofuda-clip-pin",         "head", (0.141, 0.528, 0.040),  (0.178, 0.538, 0.050), SILVER),
+    ("ofuda-clip-main",        "head", (0.128, 0.470, 0.025),  (0.165, 0.525, 0.070), OFUDA_PURPLE),
+    ("ofuda-clip-top-bevel",   "head", (0.130, 0.520, 0.028),  (0.162, 0.532, 0.066), OFUDA_PURPLE),
+    ("ofuda-clip-eye-pupil",   "head", (0.160, 0.490, 0.038),  (0.166, 0.505, 0.055), INK),
+    ("ofuda-clip-pin",         "head", (0.130, 0.508, 0.040),  (0.165, 0.518, 0.050), SILVER),
 
     # Crisp Paper White Ofuda Tag
-    ("ofuda-paper-body",       "head", (0.141, 0.375, 0.026),  (0.181, 0.500, 0.068), OFUDA_WHITE),
-    ("ofuda-paper-backing",    "head", (0.137, 0.370, 0.024),  (0.177, 0.502, 0.070), HOODIE_SHADOW),
+    ("ofuda-paper-body",       "head", (0.130, 0.365, 0.026),  (0.168, 0.480, 0.068), OFUDA_WHITE),
+    ("ofuda-paper-backing",    "head", (0.126, 0.360, 0.024),  (0.164, 0.482, 0.070), HOODIE_SHADOW),
 
     # Kanji 「眠」 and Spirit Glyph on Ofuda Front Face
-    ("ofuda-kanji-stroke-top", "head", (0.178, 0.460, 0.035),  (0.182, 0.472, 0.058), OFUDA_PURPLE),
-    ("ofuda-kanji-stroke-eye", "head", (0.178, 0.420, 0.032),  (0.182, 0.455, 0.048), OFUDA_PURPLE),
-    ("ofuda-kanji-stroke-min", "head", (0.178, 0.415, 0.046),  (0.182, 0.455, 0.062), OFUDA_PURPLE),
-    ("ofuda-kanji-stroke-bot", "head", (0.178, 0.388, 0.034),  (0.182, 0.408, 0.060), OFUDA_PURPLE),
+    ("ofuda-kanji-stroke-top", "head", (0.165, 0.445, 0.035),  (0.169, 0.457, 0.058), OFUDA_PURPLE),
+    ("ofuda-kanji-stroke-eye", "head", (0.165, 0.408, 0.032),  (0.169, 0.440, 0.048), OFUDA_PURPLE),
+    ("ofuda-kanji-stroke-min", "head", (0.165, 0.403, 0.046),  (0.169, 0.440, 0.062), OFUDA_PURPLE),
+    ("ofuda-kanji-stroke-bot", "head", (0.165, 0.378, 0.034),  (0.169, 0.398, 0.060), OFUDA_PURPLE),
 
     # =========================================================================
     # 6. 🔮 FLOATING GHOST PET WISP COMPANION (Clean Cute Cube!)
     # =========================================================================
     # A. Floating Ghost Body Cube
-    ("ghost-body-cube",        "head", (0.185, 0.440, -0.010), (0.238, 0.495, 0.042), HOODIE_DARK),
-    ("ghost-body-core-bevel",  "head", (0.187, 0.442, -0.008), (0.236, 0.493, 0.040), HOODIE_DARK),
-    ("ghost-body-top-rim",     "head", (0.188, 0.493, -0.006), (0.235, 0.501, 0.038), HOODIE_SHADOW),
+    ("ghost-body-cube",        "head", (0.178, 0.425, -0.010), (0.228, 0.478, 0.040), HOODIE_DARK),
+    ("ghost-body-core-bevel",  "head", (0.180, 0.427, -0.008), (0.226, 0.476, 0.038), HOODIE_DARK),
+    ("ghost-body-top-rim",     "head", (0.181, 0.476, -0.006), (0.225, 0.484, 0.036), HOODIE_SHADOW),
 
     # B. Cute Glowing Lavender Ghost Face (Authored facing -Z -> GLB +Z)
-    ("ghost-eye-left",         "head", (0.216, 0.464, -0.013), (0.232, 0.478, -0.007), LAVENDER_GLOW),
-    ("ghost-eye-right",        "head", (0.191, 0.464, -0.013), (0.207, 0.478, -0.007), LAVENDER_GLOW),
-    ("ghost-eye-glint-l",      "head", (0.218, 0.468, -0.014), (0.230, 0.475, -0.008), LAVENDER_PALE),
-    ("ghost-eye-glint-r",      "head", (0.193, 0.468, -0.014), (0.205, 0.475, -0.008), LAVENDER_PALE),
-    ("ghost-mouth-dot",        "head", (0.208, 0.450, -0.012), (0.215, 0.457, -0.008), LAVENDER_GLOW),
+    ("ghost-eye-left",         "head", (0.207, 0.448, -0.013), (0.222, 0.462, -0.007), LAVENDER_GLOW),
+    ("ghost-eye-right",        "head", (0.184, 0.448, -0.013), (0.199, 0.462, -0.007), LAVENDER_GLOW),
+    ("ghost-eye-glint-l",      "head", (0.209, 0.452, -0.014), (0.220, 0.459, -0.008), LAVENDER_PALE),
+    ("ghost-eye-glint-r",      "head", (0.186, 0.452, -0.014), (0.197, 0.459, -0.008), LAVENDER_PALE),
+    ("ghost-mouth-dot",        "head", (0.200, 0.435, -0.012), (0.206, 0.442, -0.008), LAVENDER_GLOW),
 
     # C. Stepped Smoky Wispy Ghost Tail (Curving S-tail beneath the cube)
-    ("ghost-tail-tier1",       "head", (0.200, 0.418, -0.004), (0.228, 0.442, 0.034), LAVENDER_GLOW),
-    ("ghost-tail-tier2",       "head", (0.192, 0.398, 0.000),  (0.218, 0.420, 0.028), LAVENDER_GLOW),
-    ("ghost-tail-tier3",       "head", (0.196, 0.380, 0.005),  (0.218, 0.400, 0.024), LAVENDER_PALE),
-    ("ghost-tail-tip-wisp",    "head", (0.206, 0.368, 0.008),  (0.224, 0.385, 0.022), LAVENDER_PALE),
+    ("ghost-tail-tier1",       "head", (0.192, 0.404, -0.004), (0.219, 0.427, 0.032), LAVENDER_GLOW),
+    ("ghost-tail-tier2",       "head", (0.185, 0.385, 0.000),  (0.209, 0.406, 0.026), LAVENDER_GLOW),
+    ("ghost-tail-tier3",       "head", (0.188, 0.368, 0.005),  (0.209, 0.387, 0.022), LAVENDER_PALE),
+    ("ghost-tail-tip-wisp",    "head", (0.198, 0.356, 0.008),  (0.215, 0.372, 0.020), LAVENDER_PALE),
 
     # =========================================================================
     # 7. 👂 SQUARE TOON EARS TUCKED UNDER SIDE HAIR
     # =========================================================================
-    ("ear-left",               "head", (0.125, 0.315, -0.010), (0.148, 0.370, 0.025), SKIN),
-    ("ear-shadow-l",           "head", (0.127, 0.325, -0.002), (0.146, 0.360, 0.018), SKIN_DARK),
-    ("ear-right",              "head", (-0.148, 0.315, -0.010), (-0.125, 0.370, 0.025), SKIN),
-    ("ear-shadow-r",           "head", (-0.146, 0.325, -0.002), (-0.127, 0.360, 0.018), SKIN_DARK),
+    ("ear-left",               "head", (0.118, 0.315, -0.010), (0.140, 0.365, 0.025), SKIN),
+    ("ear-shadow-l",           "head", (0.120, 0.325, -0.002), (0.138, 0.355, 0.018), SKIN_DARK),
+    ("ear-right",              "head", (-0.140, 0.315, -0.010), (-0.118, 0.365, 0.025), SKIN),
+    ("ear-shadow-r",           "head", (-0.138, 0.325, -0.002), (-0.120, 0.355, 0.018), SKIN_DARK),
 ]
 
 DONOR_SPACE = tuple(entry[0] for entry in HEAD)
