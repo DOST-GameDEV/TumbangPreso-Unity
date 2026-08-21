@@ -26,6 +26,8 @@ namespace TumbangPreso
         public string Id;
 
         public GameObject Model;
+        [Tooltip("Optional companion pet model (e.g. floating ghost pet for Nemu).")]
+        public GameObject PetModel;
         public Material Material;
         public Color Tint = Color.white;
 

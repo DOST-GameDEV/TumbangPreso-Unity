@@ -81,12 +81,23 @@ namespace TumbangPreso.EditorTools
             ("bow", new[] { "pick-up", "interact-right" }),
         };
 
-        private const int CellPixels = 300;
+        private const int CellPixels = 400;
 
         [MenuItem("Tumbang Preso/Probe Person Swap")]
         public static void RunFromMenu() => Execute();
 
         public static void Run() => EditorApplication.Exit(Execute() ? 0 : 1);
+
+        public static void RunFast() => EditorApplication.Exit(ExecuteFast() ? 0 : 1);
+
+        private static bool ExecuteFast()
+        {
+            var report = new StringBuilder();
+            AssetDatabase.ImportAsset(NewModel, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            bool ok = ShootTurnaround(report) && ShootLineup(report);
+            return ok;
+        }
 
         private static bool Execute()
         {
@@ -1117,6 +1128,18 @@ namespace TumbangPreso.EditorTools
 
             model.transform.position += pivot.transform.position - bounds.center;
 
+            if (RosterId == "nemu")
+            {
+                var petPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb");
+                if (petPrefab != null)
+                {
+                    var pet = Object.Instantiate(petPrefab, model.transform);
+                    pet.transform.localPosition = new Vector3(-0.30f, 0.60f, 0.04f);
+                    pet.transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+                    ToonSkin.Apply(pet, ToonSkin.PersonOutlineWidth, palette);
+                }
+            }
+
             Caption(pivot.transform, label);
         }
 
@@ -1133,7 +1156,7 @@ namespace TumbangPreso.EditorTools
 
             var members = new (string ModelPath, string RosterId)[]
             {
-                ("Assets/TumbangPreso/Art/characters/persons/character-male-f.glb", "mang_kanor"),
+                ("Assets/TumbangPreso/Art/characters/persons/team-inday.glb", "inday"),
                 ("Assets/TumbangPreso/Art/characters/persons/team-zack.glb", "zack"),
                 ("Assets/TumbangPreso/Art/characters/persons/team-bayan.glb", "bayan"),
                 ("Assets/TumbangPreso/Art/characters/persons/team-iggy.glb", "kuya_boy"),
@@ -1153,6 +1176,27 @@ namespace TumbangPreso.EditorTools
                 model.transform.localRotation = Quaternion.Euler(0.0f, CharacterVisual.PersonModelYaw + 180.0f, 0.0f);
 
                 ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth, pal);
+
+                foreach (var sub in AssetDatabase.LoadAllAssetsAtPath(members[i].ModelPath))
+                {
+                    if (sub is AnimationClip clip && clip.name == "idle")
+                    {
+                        clip.SampleAnimation(model, 0.0f);
+                        break;
+                    }
+                }
+
+                if (members[i].RosterId == "nemu")
+                {
+                    var petPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb");
+                    if (petPrefab != null)
+                    {
+                        var pet = Object.Instantiate(petPrefab, model.transform);
+                        pet.transform.localPosition = new Vector3(-0.30f, 0.60f, 0.04f);
+                        pet.transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+                        ToonSkin.Apply(pet, ToonSkin.PersonOutlineWidth, pal);
+                    }
+                }
 
                 var renderers = model.GetComponentsInChildren<Renderer>();
                 if (renderers.Length == 0) continue;
@@ -1202,6 +1246,18 @@ namespace TumbangPreso.EditorTools
             model.transform.localRotation = Quaternion.Euler(0.0f, CharacterVisual.PersonModelYaw + 24.0f, 0.0f);
 
             ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth, palette);
+
+            if (path == NewModel && RosterId == "nemu")
+            {
+                var petPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb");
+                if (petPrefab != null)
+                {
+                    var pet = Object.Instantiate(petPrefab, model.transform);
+                    pet.transform.localPosition = new Vector3(-0.28f, 0.52f, 0.04f);
+                    pet.transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+                    ToonSkin.Apply(pet, ToonSkin.PersonOutlineWidth, palette);
+                }
+            }
 
             foreach (var sub in AssetDatabase.LoadAllAssetsAtPath(path))
             {
@@ -1337,7 +1393,7 @@ namespace TumbangPreso.EditorTools
         {
             var rt = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32)
             {
-                antiAliasing = 4,
+                antiAliasing = 8,
             };
 
             camera.targetTexture = rt;

@@ -67,9 +67,9 @@ OFUDA_WHITE    = 9   # Crisp paper white for head and hip ofuda tags (#f4faff)
 GRAPHIC_ACCENT = 10  # Moon eye center dot & stitch crosses (#c87af8)
 SILVER         = 11  # Small metal pins & tag rivets (#d0d8e8)
 WHITE          = 12  # Clean shoe sole rims (#f4faff)
-SKIN           = 13  # Fair, pale, porcelain-white spirit skin (#fae1d0)
-SKIN_DARK      = 14  # Soft rosy cheek blush & shading (#e8a89b)
-SKIN_LIT       = 15  # Uniform pale porcelain skin tone (#fae1d0)
+SKIN           = 13  # Warm golden peach / honey-tan skin (#e0af84)
+SKIN_DARK      = 14  # Warm soft honey blush (#d69974)
+SKIN_LIT       = 15  # Warm golden peach skin tone (#e0af84)
 
 PALETTE = {
     HOODIE_DARK:    "231c34",   # Deep midnight violet hoodie body & skirt
@@ -85,9 +85,9 @@ PALETTE = {
     GRAPHIC_ACCENT: "c87af8",   # Moon eye center dot & stitch crosses
     SILVER:         "d0d8e8",   # Small metal pins & tag rivets
     WHITE:          "f4faff",   # Clean shoe sole rims
-    SKIN:           "fae1d0",   # Fair, pale, porcelain-white spirit skin
-    SKIN_DARK:      "e8a89b",   # Soft rosy cheek blush & shading
-    SKIN_LIT:       "fae1d0",   # Uniform pale porcelain skin tone
+    SKIN:           "e0af84",   # Warm golden peach / honey-tan skin
+    SKIN_DARK:      "d69974",   # Warm soft honey blush
+    SKIN_LIT:       "e0af84",   # Warm golden peach skin tone
 }
 
 MAX_FACE_LUMINANCE = 0.30
@@ -152,12 +152,6 @@ TORSO = [
     ("hoodie-collar-pearl",    "torso", (-0.015, 0.278, 0.144),  (0.015, 0.305, 0.162), LAVENDER_GLOW),
     ("hoodie-collar-glint",    "torso", (-0.008, 0.286, 0.154),  (0.008, 0.298, 0.166), LAVENDER_PALE),
     ("hoodie-collar-base",     "torso", (-0.020, 0.272, 0.140),  (0.020, 0.280, 0.156), HOODIE_SHADOW),
-
-    # Left Hip Hanging Ofuda Paper Tag (+X side, viewer's right in front view)
-    ("hip-ofuda-tag-paper",    "torso", (0.175, 0.035, -0.025), (0.189, 0.130, 0.025), OFUDA_WHITE),
-    ("hip-ofuda-tag-clip",     "torso", (0.177, 0.120, -0.020), (0.191, 0.138, 0.020), OFUDA_PURPLE),
-    ("hip-ofuda-pin",          "torso", (0.179, 0.125, -0.008), (0.193, 0.134, 0.008), SILVER),
-    ("hip-ofuda-kanji-glyph",  "torso", (0.188, 0.050, -0.018), (0.191, 0.110, 0.018), OFUDA_PURPLE),
 ]
 
 # ---------------------------------------------------------------------------
@@ -216,22 +210,19 @@ HEAD = [
     # =========================================================================
     # 0. 🌸 CUTE WIDE CHIBI PALE PORCELAIN FACE BASE
     # =========================================================================
-    ("face-core",              "head", (-0.125, 0.285, -0.090), (0.125, 0.460, 0.105), SKIN),
-    ("face-front-cheeks",      "head", (-0.120, 0.285, 0.095),  (0.120, 0.395, 0.114), SKIN),
+    ("face-core",              "head", (-0.125, 0.285, -0.090), (0.125, 0.460, 0.114), SKIN),
     ("face-chin-taper",        "head", (-0.100, 0.275, -0.075), (0.100, 0.295, 0.100), SKIN),
 
     # =========================================================================
-    # 0.1 😴 ICONIC BOLD SLEEPY SPIRIT EYES (-   -) & SOFT BLUSH (MOUTHLESS CUTE!)
+    # 0.1 😴 ICONIC BOLD SLEEPY SPIRIT EYES (-   -) (CLEAN PORCELAIN, MOUTHLESS CUTE!)
     # =========================================================================
     # Left Eye (+X, viewer's right in front view) - Chunky bold sleepy horizontal bar
-    ("eye-lash-main-l",        "head", (0.028, 0.328, 0.112),  (0.092, 0.358, 0.122), INK),
-    ("eye-lash-lid-l",         "head", (0.034, 0.332, 0.112),  (0.088, 0.354, 0.123), INK),
-    ("cheek-blush-l",          "head", (0.032, 0.300, 0.112),  (0.090, 0.324, 0.118), SKIN_DARK),
+    ("eye-lash-main-l",        "head", (0.028, 0.328, 0.1130), (0.092, 0.358, 0.1145), INK),
+    ("eye-lash-lid-l",         "head", (0.034, 0.332, 0.1130), (0.088, 0.354, 0.1145), INK),
 
     # Right Eye (-X, viewer's left in front view) - Chunky bold sleepy horizontal bar
-    ("eye-lash-main-r",        "head", (-0.092, 0.328, 0.112), (-0.028, 0.358, 0.122), INK),
-    ("eye-lash-lid-r",         "head", (-0.088, 0.332, 0.112), (-0.034, 0.354, 0.123), INK),
-    ("cheek-blush-r",          "head", (-0.090, 0.300, 0.112), (-0.032, 0.324, 0.118), SKIN_DARK),
+    ("eye-lash-main-r",        "head", (-0.092, 0.328, 0.1130), (-0.028, 0.358, 0.1145), INK),
+    ("eye-lash-lid-r",         "head", (-0.088, 0.332, 0.1130), (-0.034, 0.354, 0.1145), INK),
 
     # (No mouth as requested - mouthless chibi expression is much cuter and matches reference!)
 
@@ -305,44 +296,26 @@ HEAD = [
     ("hair-back-seam-mid",     "head", (-0.005, 0.315, -0.140), (0.005, 0.475, -0.092), HOODIE_SHADOW),
 
     # =========================================================================
-    # 5. 🏷️ HEAD OFUDA PAPER TALISMAN CLIP (Left side of hair: +X)
+    # 5. 🏷️ HEAD OFUDA PAPER TALISMAN CLIP (Front Right Hair: -X, Opposite of Ghost Pet)
     # =========================================================================
-    # Purple Top Clip on Hair
-    ("ofuda-clip-main",        "head", (0.128, 0.470, 0.025),  (0.165, 0.525, 0.070), OFUDA_PURPLE),
-    ("ofuda-clip-top-bevel",   "head", (0.130, 0.520, 0.028),  (0.162, 0.532, 0.066), OFUDA_PURPLE),
-    ("ofuda-clip-eye-pupil",   "head", (0.160, 0.490, 0.038),  (0.166, 0.505, 0.055), INK),
-    ("ofuda-clip-pin",         "head", (0.130, 0.508, 0.040),  (0.165, 0.518, 0.050), SILVER),
+    # Purple Top Clip on Front Hair
+    ("ofuda-clip-main",        "head", (-0.124, 0.490, 0.130), (-0.072, 0.535, 0.144), OFUDA_PURPLE),
+    ("ofuda-clip-top-bevel",   "head", (-0.120, 0.530, 0.132), (-0.076, 0.542, 0.142), OFUDA_PURPLE),
+    ("ofuda-clip-pin",         "head", (-0.108, 0.518, 0.136), (-0.088, 0.528, 0.146), SILVER),
+    ("ofuda-clip-eye-pupil",   "head", (-0.106, 0.498, 0.140), (-0.090, 0.510, 0.146), INK),
 
-    # Crisp Paper White Ofuda Tag
-    ("ofuda-paper-body",       "head", (0.130, 0.365, 0.026),  (0.168, 0.480, 0.068), OFUDA_WHITE),
-    ("ofuda-paper-backing",    "head", (0.126, 0.360, 0.024),  (0.164, 0.482, 0.070), HOODIE_SHADOW),
+    # Crisp Paper White Ofuda Tag (Hanging on front bangs/face)
+    ("ofuda-paper-body",       "head", (-0.126, 0.350, 0.132), (-0.070, 0.495, 0.142), OFUDA_WHITE),
+    ("ofuda-paper-backing",    "head", (-0.130, 0.345, 0.128), (-0.066, 0.498, 0.136), HOODIE_SHADOW),
 
-    # Kanji 「眠」 and Spirit Glyph on Ofuda Front Face
-    ("ofuda-kanji-stroke-top", "head", (0.165, 0.445, 0.035),  (0.169, 0.457, 0.058), OFUDA_PURPLE),
-    ("ofuda-kanji-stroke-eye", "head", (0.165, 0.408, 0.032),  (0.169, 0.440, 0.048), OFUDA_PURPLE),
-    ("ofuda-kanji-stroke-min", "head", (0.165, 0.403, 0.046),  (0.169, 0.440, 0.062), OFUDA_PURPLE),
-    ("ofuda-kanji-stroke-bot", "head", (0.165, 0.378, 0.034),  (0.169, 0.398, 0.060), OFUDA_PURPLE),
+    # Kanji 「眠」 and Spirit Eye Glyph on Ofuda Front Face
+    ("ofuda-kanji-eye-dot",    "head", (-0.104, 0.468, 0.140), (-0.092, 0.482, 0.144), OFUDA_PURPLE),
+    ("ofuda-kanji-stroke-top", "head", (-0.118, 0.438, 0.140), (-0.078, 0.452, 0.144), OFUDA_PURPLE),
+    ("ofuda-kanji-stroke-eye", "head", (-0.118, 0.395, 0.140), (-0.102, 0.432, 0.144), OFUDA_PURPLE),
+    ("ofuda-kanji-stroke-min", "head", (-0.098, 0.390, 0.140), (-0.078, 0.432, 0.144), OFUDA_PURPLE),
+    ("ofuda-kanji-stroke-bot", "head", (-0.118, 0.365, 0.140), (-0.078, 0.388, 0.144), OFUDA_PURPLE),
 
-    # =========================================================================
-    # 6. 🔮 FLOATING GHOST PET WISP COMPANION (Clean Cute Cube!)
-    # =========================================================================
-    # A. Floating Ghost Body Cube
-    ("ghost-body-cube",        "head", (0.178, 0.425, -0.010), (0.228, 0.478, 0.040), HOODIE_DARK),
-    ("ghost-body-core-bevel",  "head", (0.180, 0.427, -0.008), (0.226, 0.476, 0.038), HOODIE_DARK),
-    ("ghost-body-top-rim",     "head", (0.181, 0.476, -0.006), (0.225, 0.484, 0.036), HOODIE_SHADOW),
-
-    # B. Cute Glowing Lavender Ghost Face (Authored facing -Z -> GLB +Z)
-    ("ghost-eye-left",         "head", (0.207, 0.448, -0.013), (0.222, 0.462, -0.007), LAVENDER_GLOW),
-    ("ghost-eye-right",        "head", (0.184, 0.448, -0.013), (0.199, 0.462, -0.007), LAVENDER_GLOW),
-    ("ghost-eye-glint-l",      "head", (0.209, 0.452, -0.014), (0.220, 0.459, -0.008), LAVENDER_PALE),
-    ("ghost-eye-glint-r",      "head", (0.186, 0.452, -0.014), (0.197, 0.459, -0.008), LAVENDER_PALE),
-    ("ghost-mouth-dot",        "head", (0.200, 0.435, -0.012), (0.206, 0.442, -0.008), LAVENDER_GLOW),
-
-    # C. Stepped Smoky Wispy Ghost Tail (Curving S-tail beneath the cube)
-    ("ghost-tail-tier1",       "head", (0.192, 0.404, -0.004), (0.219, 0.427, 0.032), LAVENDER_GLOW),
-    ("ghost-tail-tier2",       "head", (0.185, 0.385, 0.000),  (0.209, 0.406, 0.026), LAVENDER_GLOW),
-    ("ghost-tail-tier3",       "head", (0.188, 0.368, 0.005),  (0.209, 0.387, 0.022), LAVENDER_PALE),
-    ("ghost-tail-tip-wisp",    "head", (0.198, 0.356, 0.008),  (0.215, 0.372, 0.020), LAVENDER_PALE),
+    # (Companion pet is now an autonomous dynamic companion entity)
 
     # =========================================================================
     # 7. 👂 SQUARE TOON EARS TUCKED UNDER SIDE HAIR
@@ -354,6 +327,17 @@ HEAD = [
 ]
 
 DONOR_SPACE = tuple(entry[0] for entry in HEAD)
+
+# ---------------------------------------------------------------------------
+# HEAD DECALS (Soft Light Sakura Cheek Blush)
+# ---------------------------------------------------------------------------
+HEAD_DECALS = [
+    # Soft, light, sweet sakura pink cheek blush (2D planar decal - flush on face, 0 thickness!)
+    ("cheek-blush-l",          "head", "front", SKIN_DARK,
+     ((0.034, 0.298), (0.088, 0.320)), 1),
+    ("cheek-blush-r",          "head", "front", SKIN_DARK,
+     ((-0.088, 0.298), (-0.034, 0.320)), 1),
+]
 
 # ---------------------------------------------------------------------------
 # TORSO & SLEEVE DECALS (Front Moon & Eye, Stitches, Back All-Seeing Eye)
@@ -818,7 +802,8 @@ def build_mesh(boxes, panels=(), decals=(), donor=None):
             if signed_area_2d(pts_2d) < 0:
                 pts_2d.reverse()
             normal = (0.0, 0.0, 1.0)
-            pts_3d = [(p[0], p[1], 0.146 + offset) for p in pts_2d]
+            z_plane = 0.1141 if bone == "head" else 0.146
+            pts_3d = [(p[0], p[1], z_plane + offset) for p in pts_2d]
         elif face == "back":
             if signed_area_2d(pts_2d) > 0:
                 pts_2d.reverse()
@@ -1014,6 +999,7 @@ def main():
     body = build_mesh(_family(BODY_BOXES, head=False), panels=_family(BODY_PANELS, head=False),
                       decals=_family_decals(BODY_DECALS))
     head = build_mesh(_family(HEAD_BOXES, head=True, as_authored=DONOR_SPACE),
+                      decals=_family_decals(HEAD_DECALS),
                       donor=None)
 
     blob = bytearray()

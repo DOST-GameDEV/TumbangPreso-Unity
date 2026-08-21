@@ -249,7 +249,7 @@ namespace TumbangPreso.UI
             // ⚠️ AND THE CLIPS TRAVEL WITH THE MODEL, or the preview stands in a T-pose. They
             // are sub-assets of the `.glb` and this reference is what makes them ship.
             preview.Show(art == null ? null : art.Model, art == null ? null : art.Clips,
-                         art == null ? null : art.Palette);
+                         art == null ? null : art.Palette, art == null ? null : art.PetModel);
         }
 
         /// <summary>
@@ -262,6 +262,7 @@ namespace TumbangPreso.UI
         {
             switch (id)
             {
+                case "nemu": return "Sleepy spirit girl who drifts between dreams and the match. Accompanied by a floating ghost pet that watches her back while she floats past defenders.";
                 case "bayan":
                 case "dante":
                 case "berto": return "Built like a concrete wall. Slow to chase, but once he plants his feet and winds up a throw, the whole street clears out.";
