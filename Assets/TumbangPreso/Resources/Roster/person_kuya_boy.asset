@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: kuya_boy
   Model: {fileID: -1096751430798516641, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  PetModel: {fileID: 0}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}
   Clips:

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: aling_nena
   Model: {fileID: 8784896345531813263, guid: fd1a64d4d17b1b44db5250827bd09dd7, type: 3}
+  PetModel: {fileID: 0}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}
   Clips:
