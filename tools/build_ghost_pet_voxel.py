@@ -1,4 +1,4 @@
-﻿import json
+import json
 import os
 import struct
 
@@ -24,32 +24,32 @@ SKIN_DARK      = 14
 SKIN_LIT       = 15
 
 # Box tuples: (name, (min_x, min_y, min_z), (max_x, max_y, max_z), slot)
-# Authored facing -Z (matching character model rig convention)
+# Authored facing +Z (matching forward facing in Unity and character model)
 GHOST_BOXES = [
     # 1. Cute Chamfered Cube Body (Centered around (0,0,0))
     ("ghost-body-core",        (-0.038, -0.038, -0.038), (0.038, 0.038, 0.038), HOODIE_DARK),
     ("ghost-body-top-rim",     (-0.036, 0.036, -0.036),  (0.036, 0.044, 0.036), HOODIE_SHADOW),
     ("ghost-body-bot-bevel",   (-0.034, -0.042, -0.034), (0.034, -0.036, 0.034), HOODIE_SHADOW),
 
-    # 2. Ultra-Cute Glowing Face (Front -Z, so GLB faces forward)
-    # Left eye (-X in rig space = character's left / viewer's right in front view)
-    ("ghost-eye-l",            (-0.028, -0.005, -0.042), (-0.010, 0.014, -0.037), LAVENDER_GLOW),
-    ("ghost-eye-glint-l",      (-0.024, 0.000, -0.043),  (-0.014, 0.010, -0.038), LAVENDER_PALE),
-    # Right eye (+X in rig space = character's right / viewer's left in front view)
-    ("ghost-eye-r",            (0.010, -0.005, -0.042),   (0.028, 0.014, -0.037), LAVENDER_GLOW),
-    ("ghost-eye-glint-r",      (0.014, 0.000, -0.043),    (0.024, 0.010, -0.038), LAVENDER_PALE),
+    # 2. Ultra-Cute Glowing Face (Front +Z, so pet faces forward with character)
+    # Left eye (character's left side)
+    ("ghost-eye-l",            (-0.028, -0.005, 0.037),  (-0.010, 0.014, 0.042), LAVENDER_GLOW),
+    ("ghost-eye-glint-l",      (-0.024, 0.000, 0.038),   (-0.014, 0.010, 0.043), LAVENDER_PALE),
+    # Right eye (character's right side)
+    ("ghost-eye-r",            (0.010, -0.005, 0.037),   (0.028, 0.014, 0.042),  LAVENDER_GLOW),
+    ("ghost-eye-glint-r",      (0.014, 0.000, 0.038),    (0.024, 0.010, 0.043),  LAVENDER_PALE),
     # Cute mouth dot
-    ("ghost-mouth-dot",        (-0.004, -0.018, -0.042),  (0.004, -0.010, -0.037), LAVENDER_GLOW),
+    ("ghost-mouth-dot",        (-0.004, -0.018, 0.037),  (0.004, -0.010, 0.042), LAVENDER_GLOW),
     # Glowing cheek blush
-    ("ghost-blush-l",          (-0.026, -0.018, -0.041),  (-0.014, -0.008, -0.037), GRAPHIC_ACCENT),
-    ("ghost-blush-r",          (0.014, -0.018, -0.041),   (0.026, -0.008, -0.037), GRAPHIC_ACCENT),
+    ("ghost-blush-l",          (-0.026, -0.018, 0.037),  (-0.014, -0.008, 0.041), GRAPHIC_ACCENT),
+    ("ghost-blush-r",          (0.014, -0.018, 0.037),   (0.026, -0.008, 0.041),  GRAPHIC_ACCENT),
 
-    # 3. Stepped Smoky Wispy Ghost Tail (Curving S-tail beneath the cube -Y)
-    ("ghost-tail-tier1",       (-0.020, -0.062, -0.018), (0.018, -0.036, 0.022), LAVENDER_GLOW),
-    ("ghost-tail-tier2",       (-0.028, -0.088, -0.014), (0.008, -0.058, 0.018), LAVENDER_GLOW),
-    ("ghost-tail-tier3",       (-0.034, -0.110, -0.010), (-0.004, -0.082, 0.014), LAVENDER_PALE),
-    ("ghost-tail-tip-wisp",    (-0.038, -0.126, -0.006), (-0.016, -0.104, 0.010), LAVENDER_PALE),
-    ("ghost-tail-tip-glint",   (-0.036, -0.120, -0.002), (-0.024, -0.108, 0.008), OFUDA_WHITE),
+    # 3. Stepped Smoky Wispy Ghost Tail (Curving back towards -Z beneath the cube -Y)
+    ("ghost-tail-tier1",       (-0.020, -0.062, -0.022), (0.018, -0.036, 0.018), LAVENDER_GLOW),
+    ("ghost-tail-tier2",       (-0.028, -0.088, -0.018), (0.008, -0.058, 0.014), LAVENDER_GLOW),
+    ("ghost-tail-tier3",       (-0.034, -0.110, -0.014), (-0.004, -0.082, 0.010), LAVENDER_PALE),
+    ("ghost-tail-tip-wisp",    (-0.038, -0.126, -0.010), (-0.016, -0.104, 0.006), LAVENDER_PALE),
+    ("ghost-tail-tip-glint",   (-0.036, -0.120, -0.008), (-0.024, -0.108, 0.002), OFUDA_WHITE),
 ]
 
 
