@@ -168,57 +168,173 @@ namespace TumbangPreso.EditorTools
         private static void ShootVisualProof(GameObject prefab, string outPath)
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            var lightObj = new GameObject("Light");
-            var light = lightObj.AddComponent<Light>();
+            BuildLight();
+
+            var palette = PaletteFor("nemu");
+            int cols = 4;
+            int cellPixels = 400;
+
+            var scenarios = new[]
+            {
+                ("1. Resting Idle (0° Offset)", "idle", Vector3.zero, 0.0f, 0.0f),
+                ("2. Walk Stride (+1.4° Lag)", "walk", new Vector3(0, 0, 2.5f), 0.0f, 0.016f),
+                ("3. Sprint Momentum (+2.9° Lag)", "sprint", new Vector3(0, 0, 6.5f), 0.0f, 0.016f),
+                ("4. Turn Flare (+6.0° Outward)", "walk", Vector3.zero, 180.0f, 0.016f),
+            };
+
+            for (int i = 0; i < cols; i++)
+            {
+                var (captionText, pose, vel, turnRate, dt) = scenarios[i];
+                PlaceProofCell(prefab, palette, captionText, pose, vel, turnRate, dt, i);
+            }
+
+            var camera = BuildCamera(cols, 1);
+            CaptureTo(camera, cols * cellPixels, cellPixels, outPath);
+
+            EditorSceneManager.CloseScene(scene, true);
+        }
+
+        private static void PlaceProofCell(GameObject prefab, Color[] palette, string captionText, string pose,
+                                           Vector3 vel, float turnRate, float dt, int col)
+        {
+            var pivot = new GameObject($"cell-{col}");
+            pivot.transform.position = new Vector3(col, 0.0f, 0.0f);
+
+            var model = UnityEngine.Object.Instantiate(prefab, pivot.transform);
+            model.transform.localRotation = Quaternion.Euler(0.0f, 204.0f, 0.0f);
+
+            ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth, palette);
+
+            var petPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb");
+            if (petPrefab != null)
+            {
+                var pet = UnityEngine.Object.Instantiate(petPrefab, model.transform);
+                pet.transform.localPosition = new Vector3(-0.28f, 0.52f, 0.04f);
+                pet.transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+                ToonSkin.Apply(pet, ToonSkin.PersonOutlineWidth, palette);
+            }
+
+            // Sample animation pose
+            foreach (var sub in AssetDatabase.LoadAllAssetsAtPath(ModelPath))
+            {
+                if (sub is AnimationClip clip && clip.name == pose)
+                {
+                    clip.SampleAnimation(model, clip.length * 0.35f);
+                    break;
+                }
+            }
+
+            // Apply clothing physics step
+            var phys = model.AddComponent<BaggyClothingPhysics>();
+            phys.Bind(model.transform);
+            if (dt > 0.0001f)
+            {
+                for (int step = 0; step < 20; step++)
+                {
+                    pivot.transform.position += vel * dt;
+                    if (turnRate > 0.1f) pivot.transform.rotation *= Quaternion.Euler(0, turnRate * dt, 0);
+                    phys.Step(dt);
+                }
+            }
+
+            var renderers = model.GetComponentsInChildren<Renderer>();
+            if (renderers.Length > 0)
+            {
+                var bounds = renderers[0].bounds;
+                foreach (var r in renderers) bounds.Encapsulate(r.bounds);
+
+                float extent = Mathf.Max(bounds.extents.x, Mathf.Max(bounds.extents.y, bounds.extents.z));
+                if (extent > 0.0001f)
+                {
+                    model.transform.localScale = Vector3.one * (0.76f / (extent * 2.0f));
+
+                    bounds = model.GetComponentsInChildren<Renderer>()[0].bounds;
+                    foreach (var r in model.GetComponentsInChildren<Renderer>()) bounds.Encapsulate(r.bounds);
+
+                    model.transform.position += new Vector3(col, 0.0f, 0.0f) - bounds.center;
+                }
+            }
+
+            Caption(pivot.transform, captionText);
+        }
+
+        private static Color[] PaletteFor(string id)
+        {
+            var book = AssetDatabase.LoadAssetAtPath<RosterBook>("Assets/TumbangPreso/Resources/RosterBook.asset");
+            var entry = book != null ? book.People.Find(p => p != null && p.Id == id) : null;
+            if (entry == null)
+                entry = AssetDatabase.LoadAssetAtPath<RosterEntryAsset>($"Assets/TumbangPreso/Resources/Roster/person_{id}.asset");
+
+            return entry != null && entry.Palette != null && entry.Palette.Length == 16 ? entry.Palette : null;
+        }
+
+        private static void BuildLight()
+        {
+            var go = new GameObject("Key");
+            var light = go.AddComponent<Light>();
             light.type = LightType.Directional;
-            light.color = Color.white;
-            light.intensity = 1.2f;
-            lightObj.transform.rotation = Quaternion.Euler(25f, -35f, 0f);
+            light.intensity = 0.88f;
+            light.color = new Color(1.0f, 0.97f, 0.9f);
+            go.transform.rotation = Quaternion.Euler(38.0f, -40.0f, 0.0f);
 
-            var camObj = new GameObject("Cam");
-            var cam = camObj.AddComponent<Camera>();
-            cam.clearFlags = CameraClearFlags.SolidColor;
-            cam.backgroundColor = new Color(0.09f, 0.08f, 0.14f, 1.0f);
-            cam.transform.position = new Vector3(0.0f, 0.70f, -2.1f);
-            cam.transform.rotation = Quaternion.Euler(8.0f, 0.0f, 0.0f);
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+            RenderSettings.ambientLight = new Color(0.62f, 0.58f, 0.52f) * 0.85f;
+            RenderSettings.fog = false;
+        }
 
-            var rt = RenderTexture.GetTemporary(1200, 400, 24, RenderTextureFormat.ARGB32);
-            cam.targetTexture = rt;
+        private static Camera BuildCamera(int cols, int rows)
+        {
+            var go = new GameObject("Probe Camera");
+            var camera = go.AddComponent<Camera>();
+            camera.orthographic = true;
+            camera.orthographicSize = rows * 0.5f;
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = new Color(0.12f, 0.11f, 0.16f, 1.0f);
+            go.transform.position = new Vector3((cols - 1) * 0.5f, -(rows - 1) * 0.5f, -20.0f);
+            go.transform.rotation = Quaternion.identity;
+            camera.nearClipPlane = 0.1f;
+            camera.farClipPlane = 60.0f;
+            camera.gameObject.AddComponent<ColourGrade>().Set(1.0f, 1.03f, 1.18f, 0.92f, 1.9f);
+            return camera;
+        }
 
-            var inst = UnityEngine.Object.Instantiate(prefab);
-            inst.transform.position = Vector3.zero;
-            inst.transform.localScale = Vector3.one * 2.38f;
+        private static void Caption(Transform parent, string text)
+        {
+            var go = new GameObject("caption");
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = new Vector3(0.0f, -0.44f, -0.5f);
+            go.transform.localScale = Vector3.one * 0.011f;
 
-            var phys = inst.AddComponent<BaggyClothingPhysics>();
-            phys.Bind(inst.transform);
+            var mesh = go.AddComponent<TextMesh>();
+            mesh.text = text;
+            mesh.fontSize = 44;
+            mesh.anchor = TextAnchor.MiddleCenter;
+            mesh.alignment = TextAlignment.Center;
+            mesh.color = new Color(0.88f, 0.85f, 0.95f);
+        }
 
-            var tex = new Texture2D(1200, 400, TextureFormat.RGB24, false);
+        private static bool CaptureTo(Camera camera, int width, int height, string path)
+        {
+            var rt = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32) { antiAliasing = 8 };
+            camera.targetTexture = rt;
+            camera.Render();
 
-            // Frame 1: Resting Idle
             RenderTexture.active = rt;
-            cam.Render();
-            tex.ReadPixels(new Rect(0, 0, 400, 400), 0, 0);
-
-            // Frame 2: Sprint Forward Momentum
-            inst.transform.position += new Vector3(0, 0, 1.5f);
-            StepPhysics(phys, 0.016f);
-            cam.transform.position = new Vector3(0.0f, 0.70f, -2.1f + 1.5f);
-            cam.Render();
-            tex.ReadPixels(new Rect(0, 0, 400, 400), 400, 0);
-
-            // Frame 3: Turn Centrifugal Flare
-            inst.transform.rotation = Quaternion.Euler(0, 45f, 0);
-            StepPhysics(phys, 0.016f);
-            cam.Render();
-            tex.ReadPixels(new Rect(0, 0, 400, 400), 800, 0);
-
-            tex.Apply();
-            File.WriteAllBytes(outPath, tex.EncodeToPNG());
+            var shot = new Texture2D(width, height, TextureFormat.RGB24, false);
+            shot.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+            shot.Apply();
 
             RenderTexture.active = null;
-            cam.targetTexture = null;
-            RenderTexture.ReleaseTemporary(rt);
-            UnityEngine.Object.DestroyImmediate(tex);
+            camera.targetTexture = null;
+
+            Directory.CreateDirectory("Logs");
+            File.WriteAllBytes(path, shot.EncodeToPNG());
+
+            UnityEngine.Object.DestroyImmediate(shot);
+            rt.Release();
+            UnityEngine.Object.DestroyImmediate(rt);
+
+            return File.Exists(path) && new FileInfo(path).Length > 0;
         }
     }
 }
