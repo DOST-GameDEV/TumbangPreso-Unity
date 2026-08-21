@@ -514,7 +514,7 @@ namespace TumbangPreso.UI
                 _pet.transform.localScale = Vector3.one * PreviewScale;
                 SetLayerRecursively(_pet, PreviewLayer);
                 var companion = _pet.AddComponent<Visual.GhostPetCompanion>();
-                companion.Bind(_model.transform, new Vector3(-0.52f, 0.50f, -0.05f), PreviewScale);
+                companion.Bind(_model.transform, new Vector3(-0.30f, 0.60f, 0.04f), PreviewScale);
                 Visual.ToonSkin.Apply(_pet, Visual.ToonSkin.PersonOutlineWidth, palette);
             }
 

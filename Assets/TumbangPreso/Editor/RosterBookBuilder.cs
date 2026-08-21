@@ -105,6 +105,11 @@ namespace TumbangPreso.EditorTools
             { "nemu",        "person_team-nemu.tres" },
         };
 
+        private static readonly Dictionary<string, string> PersonPets = new Dictionary<string, string>
+        {
+            { "nemu", "characters/pets/pet-nemu-ghost.glb" },
+        };
+
         private const string PaletteDir = "MapSource/materials_persons";
 
         private static readonly Dictionary<string, string> CanModels = new Dictionary<string, string>
@@ -291,6 +296,16 @@ namespace TumbangPreso.EditorTools
                 {
                     Debug.LogError($"[RosterBook] no model mapped for {kind} '{entry.Id}'.");
                     ok = false;
+                }
+
+                if (PersonPets.TryGetValue(entry.Id, out var petRel))
+                {
+                    string petFull = $"{ArtRoot}/{petRel}";
+                    asset.PetModel = AssetDatabase.LoadAssetAtPath<GameObject>(petFull);
+                }
+                else
+                {
+                    asset.PetModel = null;
                 }
 
                 EditorUtility.SetDirty(asset);

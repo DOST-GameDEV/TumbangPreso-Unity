@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: nemu
   Model: {fileID: -4105045000134524844, guid: 7676dcd54c4ea354cb98cc98cae5ce52, type: 3}
-  PetModel: {fileID: -4105045000134524844, guid: 88a1b2c3d4e5f60718293a4b5c6d7e8f, type: 3}
+  PetModel: {fileID: -6657316119023788480, guid: 88a1b2c3d4e5f60718293a4b5c6d7e8f, type: 3}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}
   Clips:
