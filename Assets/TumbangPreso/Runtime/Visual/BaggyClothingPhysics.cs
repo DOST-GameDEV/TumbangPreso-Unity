@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace TumbangPreso.Visual
 {
@@ -43,6 +43,10 @@ namespace TumbangPreso.Visual
         private Vector3 _rightArmSwayAngle;
         private Vector3 _rightArmSwayVel;
 
+        public Vector3 LeftArmSwayAngle => _leftArmSwayAngle;
+        public Vector3 RightArmSwayAngle => _rightArmSwayAngle;
+        public float MaxAngleLimitDeg => _maxAngleLimitDeg;
+
         public void Bind(Transform modelRoot)
         {
             if (modelRoot == null) modelRoot = transform;
@@ -71,13 +75,17 @@ namespace TumbangPreso.Visual
 
         private void LateUpdate()
         {
+            Step(Time.deltaTime);
+        }
+
+        public void Step(float dt)
+        {
             if (!_initialized)
             {
                 Bind(transform);
                 return;
             }
 
-            float dt = Time.deltaTime;
             if (dt <= 0.0001f || dt > 0.1f)
             {
                 _lastWorldPos = transform.position;
