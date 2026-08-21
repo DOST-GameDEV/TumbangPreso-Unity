@@ -262,6 +262,13 @@ namespace TumbangPreso.Visual
             var anim = GetComponent<CharacterAnimator>();
             if (anim == null) anim = gameObject.AddComponent<CharacterAnimator>();
             if (_instance != null) anim.Bind(_instance, clips);
+
+            // Subtle procedural secondary cloth physics for baggy streetwear sleeves
+            if (_instance != null && (petModel != null || (prefab != null && prefab.name.ToLower().Contains("nemu"))))
+            {
+                var clothingPhysics = _instance.AddComponent<BaggyClothingPhysics>();
+                clothingPhysics.Bind(_instance.transform);
+            }
         }
 
         /// <summary>
