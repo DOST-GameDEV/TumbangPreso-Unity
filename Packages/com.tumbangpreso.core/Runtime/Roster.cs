@@ -75,12 +75,12 @@ namespace TumbangPreso.Core
         public static readonly IReadOnlyList<RosterEntry> ClassicPeople = new[]
         {
             //                id              name           bilis lakas tatag
-            new RosterEntry("bayan",       "BAYAN",           2,    4,    5),
+            new RosterEntry("bayan",       "BERTO",           2,    4,    5),
             new RosterEntry("maring",      "MARING",          5,    2,    2),
             new RosterEntry("totoy",       "TOTOY",           5,    2,    3),
             new RosterEntry("inday",       "INDAY",           3,    4,    4),
             new RosterEntry("kuya_boy",    "KUYA BOY",        3,    5,    3),
-            new RosterEntry("ate_girlie",  "ATE GIRLIE",      4,    3,    3),
+            new RosterEntry("ate_girlie",  "ATE GIRLIE",      5,    3,    3),
             new RosterEntry("tikboy",      "TIKBOY",          4,    4,    2),
             new RosterEntry("bebang",      "BEBANG",          2,    5,    5),
             new RosterEntry("jun_jun",     "JUN-JUN",         5,    1,    2),
@@ -107,12 +107,12 @@ namespace TumbangPreso.Core
         /// </summary>
         public static readonly IReadOnlyList<RosterEntry> AllPeople = new[]
         {
-            new RosterEntry("bayan",       "BAYAN",           2,    4,    5),
+            new RosterEntry("bayan",       "BERTO",           2,    4,    5),
             new RosterEntry("maring",      "MARING",          5,    2,    2),
             new RosterEntry("totoy",       "TOTOY",           5,    2,    3),
             new RosterEntry("inday",       "INDAY",           3,    4,    4),
             new RosterEntry("kuya_boy",    "KUYA BOY",        3,    5,    3),
-            new RosterEntry("ate_girlie",  "ATE GIRLIE",      4,    3,    3),
+            new RosterEntry("ate_girlie",  "ATE GIRLIE",      5,    3,    3),
             new RosterEntry("tikboy",      "TIKBOY",          4,    4,    2),
             new RosterEntry("bebang",      "BEBANG",          2,    5,    5),
             new RosterEntry("jun_jun",     "JUN-JUN",         5,    1,    2),

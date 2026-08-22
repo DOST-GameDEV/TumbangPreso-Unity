@@ -98,19 +98,19 @@ namespace TumbangPreso.UI
                 if (_tabButtons[i] != null) _tabButtons[i].interactable = i != _tab;
         }
 
+        private void OnEnable()
+        {
+            if (_tabButtons.Count > 0)
+            {
+                int n = Entries.Count;
+                _pick[_tab] = Mathf.Clamp(_pick[_tab], 0, Mathf.Max(0, n - 1));
+                Refresh();
+            }
+        }
+
         /// <summary>
-        /// The trait meters, as chalk marks.
-        ///
-        /// ⚠️⚠️ FIVE TALLY SLOTS, NOT A PROGRESS BAR, AND THAT IS THE GAME'S OWN LANGUAGE. The
-        /// whole match is played inside a chalk court: the base circle, the throwing line and
-        /// the confinement square are all drawn as chalk on asphalt. A bar scaled to a
-        /// percentage is the most generic UI object there is and it hides that the scale is 1..5;
-        /// five marks scratched on the ground is what a kid keeping score in the street does,
-        /// and a point stays a small countable thing.
-        ///
-        /// ⚠️ AND THE COLOUR IS `HIGHLIGHT`, the same yellow as the base-circle decal and the
-        /// timer's urgency state, so a full meter reads as the same system rather than a new
-        /// colour nobody has seen.
+        /// The trait meters, as chalk/wood gauge tally marks.
+        /// Matches the 8-segment gauges from the Godot original screen.
         /// </summary>
         private void RefreshTraits(RosterEntry entry)
         {
@@ -127,18 +127,19 @@ namespace TumbangPreso.UI
 
             // The camera controls are discoverable only if something says they exist. One line,
             // inside the panel, rebuilt with the meters so a roster change cannot orphan it.
-            var hint = MenuKit.Label(rows, "Drag to turn the view  ·  scroll to zoom  ·  " +
-                                     "right-click to reset", 15,
-                                     new Color(0.961f, 0.902f, 0.784f, 0.5f),
+            var hint = MenuKit.Label(rows, "Drag to turn the view · scroll to zoom · right-click to reset", 14,
+                                     new Color(0.961f, 0.902f, 0.784f, 0.65f),
                                      Vector2.zero, Vector2.zero, Vector2.zero,
                                      TextAnchor.MiddleLeft);
 
             hint.raycastTarget = false;
-            hint.gameObject.AddComponent<LayoutElement>().preferredHeight = 26.0f;
+            hint.gameObject.AddComponent<LayoutElement>().preferredHeight = 24.0f;
         }
 
-        private static readonly Color PipFilled = new Color(0.973f, 0.816f, 0.157f);
-        private static readonly Color PipEmpty = new Color(0.961f, 0.902f, 0.784f, 0.20f);
+        private static readonly Color PipFilled = new Color(0.98f, 0.78f, 0.12f, 1.0f);
+        private static readonly Color PipEmpty = new Color(0.35f, 0.24f, 0.18f, 0.55f);
+
+        private const int GaugeSegments = 8;
 
         private static void BuildTraitRow(Transform parent, string name, int points)
         {
@@ -152,16 +153,16 @@ namespace TumbangPreso.UI
             row.childForceExpandHeight = false;
             row.childForceExpandWidth = false;
             row.childAlignment = TextAnchor.MiddleLeft;
-            row.spacing = 14.0f;
+            row.spacing = 10.0f;
 
-            rowGo.AddComponent<LayoutElement>().preferredHeight = 30.0f;
+            rowGo.AddComponent<LayoutElement>().preferredHeight = 26.0f;
 
-            var label = MenuKit.Label(rowGo.transform, name, 21, PipFilled, Vector2.zero,
+            var label = MenuKit.Label(rowGo.transform, name, 19, PipFilled, Vector2.zero,
                                       Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
             label.raycastTarget = false;
 
             var labelElement = label.gameObject.AddComponent<LayoutElement>();
-            labelElement.preferredWidth = 126.0f;
+            labelElement.preferredWidth = 110.0f;
 
             var pipsGo = new GameObject("Pips");
             pipsGo.AddComponent<RectTransform>();
@@ -173,9 +174,9 @@ namespace TumbangPreso.UI
             pips.childForceExpandHeight = false;
             pips.childForceExpandWidth = false;
             pips.childAlignment = TextAnchor.MiddleLeft;
-            pips.spacing = 6.0f;
+            pips.spacing = 4.0f;
 
-            for (int i = 0; i < Roster.TraitMax; i++)
+            for (int i = 0; i < GaugeSegments; i++)
             {
                 var pipGo = new GameObject($"Pip{i}");
                 pipGo.AddComponent<RectTransform>();
@@ -186,7 +187,7 @@ namespace TumbangPreso.UI
                 pip.raycastTarget = false;
 
                 var element = pipGo.AddComponent<LayoutElement>();
-                element.preferredWidth = 42.0f;
+                element.preferredWidth = 28.0f;
                 element.preferredHeight = 12.0f;
             }
         }
@@ -203,7 +204,10 @@ namespace TumbangPreso.UI
 
         private void Refresh()
         {
-            var entry = Entries[Mathf.Clamp(_pick[_tab], 0, Entries.Count - 1)];
+            int n = Entries.Count;
+            if (n == 0) return;
+            _pick[_tab] = Mathf.Clamp(_pick[_tab], 0, n - 1);
+            var entry = Entries[_pick[_tab]];
 
             SetText("NameCaption", "NAME:");
             SetText("CharValueLabel", entry.Name);

@@ -143,13 +143,56 @@ namespace TumbangPreso.UI
             Shader.WarmupAllShaders();
             yield return null;
 
-            // 2. Pre-load RosterBook (models, rigs, materials)
-            _ = RosterBook.Load();
+            // 2. Pre-load RosterBook (models, rigs, materials, clips, pets)
+            var book = RosterBook.Load();
+            if (book != null)
+            {
+                if (book.People != null)
+                {
+                    foreach (var p in book.People)
+                    {
+                        if (p != null)
+                        {
+                            _ = p.Model;
+                            _ = p.Clips;
+                            _ = p.Palette;
+                            _ = p.PetModel;
+                        }
+                    }
+                }
+
+                if (book.Cans != null)
+                {
+                    foreach (var c in book.Cans)
+                    {
+                        if (c != null) _ = c.Model;
+                    }
+                }
+
+                if (book.Slippers != null)
+                {
+                    foreach (var s in book.Slippers)
+                    {
+                        if (s != null) _ = s.Model;
+                    }
+                }
+            }
             yield return null;
 
-            // 3. Pre-load Settings & Roster tables
+            // 3. Pre-load Audio clips and sound resources
+            try
+            {
+                var allAudio = Resources.LoadAll<AudioClip>("");
+                _ = allAudio;
+            }
+            catch (System.Exception) { }
+            yield return null;
+
+            // 4. Pre-load Settings & Roster tables
             _ = Settings.SettingsStore.Current;
             _ = Roster.People;
+            _ = Roster.ClassicPeople;
+            _ = Roster.HeroPeople;
             _ = Roster.Cans;
             _ = Roster.Slippers;
             yield return null;
