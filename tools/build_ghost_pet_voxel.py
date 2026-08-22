@@ -101,7 +101,10 @@ def build_mesh():
     all_idx = []
 
     for name, bmin, bmax, slot in GHOST_BOXES:
-        pos, nrm, uv, idx = build_box(bmin, bmax, slot)
+        # Convert -Z authored front to +Z GLB front matching Unity character forward convention
+        bmin_f = (bmin[0], bmin[1], -bmax[2])
+        bmax_f = (bmax[0], bmax[1], -bmin[2])
+        pos, nrm, uv, idx = build_box(bmin_f, bmax_f, slot)
         base = len(all_pos)
         all_pos.extend(pos)
         all_nrm.extend(nrm)
