@@ -53,19 +53,19 @@ namespace TumbangPreso.EditorTools
         /// </remarks>
         private static readonly Dictionary<string, string> PersonModels = new Dictionary<string, string>
         {
-            // Classic Roster (12 original Kenney characters)
-            { "bayan",       "characters/persons/character-male-a.glb" },
-            { "maring",      "characters/persons/character-female-a.glb" },
-            { "totoy",       "characters/persons/character-male-b.glb" },
-            { "inday",       "characters/persons/character-female-b.glb" },
-            { "kuya_boy",    "characters/persons/character-male-c.glb" },
-            { "ate_girlie",  "characters/persons/character-female-c.glb" },
-            { "tikboy",      "characters/persons/character-male-d.glb" },
-            { "bebang",      "characters/persons/character-female-d.glb" },
-            { "jun_jun",     "characters/persons/character-male-e.glb" },
-            { "lola_pacing", "characters/persons/character-female-e.glb" },
-            { "mang_kanor",  "characters/persons/character-male-f.glb" },
-            { "aling_nena",  "characters/persons/character-female-f.glb" },
+            // Classic Roster (Custom 3D Voxel Rigs)
+            { "bayan",       "characters/persons/team-bayan.glb" },
+            { "maring",      "characters/persons/team-cheska.glb" },
+            { "totoy",       "characters/persons/team-iggy.glb" },
+            { "inday",       "characters/persons/team-inday.glb" },
+            { "kuya_boy",    "characters/persons/team-sean.glb" },
+            { "ate_girlie",  "characters/persons/iteration-4.glb" },
+            { "tikboy",      "characters/persons/team-zack.glb" },
+            { "bebang",      "characters/persons/team-nemu.glb" },
+            { "jun_jun",     "characters/persons/team-iggy.glb" },
+            { "lola_pacing", "characters/persons/team-nemu.glb" },
+            { "mang_kanor",  "characters/persons/team-dante.glb" },
+            { "aling_nena",  "characters/persons/iteration-2.glb" },
 
             // Hero Strike Roster (5 action heroes)
             { "dante",       "characters/persons/team-dante.glb" },
