@@ -137,12 +137,53 @@ namespace TumbangPreso
         private Carrier _carrier;
         private float _repathTimer;
         private Vector3 _goal;
+        private float _emoteCooldown;
 
         private void Awake()
         {
             _motor = GetComponent<CharacterMotor>();
             _carrier = GetComponent<Carrier>();
             _self = new AiPersonalityRoll(_motor.PlayerSlot);
+        }
+
+        private void OnEnable()
+        {
+            var round = GameServices.Round;
+            if (round != null) round.Tagged += OnRoundTagged;
+        }
+
+        private void OnDisable()
+        {
+            var round = GameServices.Round;
+            if (round != null) round.Tagged -= OnRoundTagged;
+        }
+
+        private void OnRoundTagged(int defenderSlot, int attackerSlot)
+        {
+            if (_motor.PlayerSlot == defenderSlot)
+            {
+                // Defender scores tag celebration
+                string[] emotes = { "yes", "dance", "bow", "crouch" };
+                TryTriggerEmote(emotes[UnityEngine.Random.Range(0, emotes.Length)], 0.85f);
+            }
+            else if (_motor.PlayerSlot == attackerSlot)
+            {
+                // Attacker tagged
+                TryTriggerEmote("no", 0.55f);
+            }
+        }
+
+        public void TryTriggerEmote(string emoteKey, float chance = 1.0f)
+        {
+            if (_emoteCooldown > 0.0f) return;
+            if (UnityEngine.Random.value > chance) return;
+
+            var ep = GetComponent<Social.EmotePlayer>();
+            if (ep != null && ep.CanEmote())
+            {
+                ep.HostPlay(emoteKey);
+                _emoteCooldown = UnityEngine.Random.Range(3.5f, 7.0f);
+            }
         }
 
         private void Update()
@@ -156,6 +197,7 @@ namespace TumbangPreso
             }
 
             float dt = Time.deltaTime;
+            if (_emoteCooldown > 0.0f) _emoteCooldown -= dt;
 
             Observe(dt);
 
@@ -331,8 +373,8 @@ namespace TumbangPreso
         {
             if (Me.FetchCaution <= 0.0f || taya == null) return true;
 
-            // Waited long enough. Go anyway.
-            if (_stalkTime >= AiTuning.StalkPatienceBase + Me.FetchCaution) return true;
+            // Waited long enough or unretrieved stall timer running. Go anyway to avoid penalty and keep game moving!
+            if (_stalkTime >= 2.0f + Me.FetchCaution * 0.4f) return true;
 
             // The can is down: nobody can be tagged at all, so the run is free.
             var lata = GameServices.Round?.Lata;
@@ -887,6 +929,7 @@ namespace TumbangPreso
         private void ReleaseThrow(InputIntent intent)
         {
             Press(intent, Verb.SpecialAbility, false);   // the release IS the throw
+            intent.SpinInput = 0.0f;
             _windup = false;
             _goalValid = false;
             _commitLeft = 0.0f;
@@ -1006,29 +1049,25 @@ namespace TumbangPreso
 
             if (threat == null)
             {
-                Goto(intent, ClampToBox(lata.transform.position), AiTuning.ArriveSlop, false);
+                // Stand outside the can-camping penalty ring (at least 2.7m away)
+                Vector3 safeGuard = lata.transform.position + Vector3.forward * (Balance.TayaCampRadius + 0.6f);
+                Goto(intent, ClampToBox(safeGuard), AiTuning.ArriveSlop, false);
                 return;
             }
 
-            // Stand BETWEEN the lata and the threat, not on top of the lata: the body is the
-            // block, and a taya standing on its own can blocks nothing.
+            // Stand BETWEEN the lata and the threat, dynamically outside the camping penalty ring!
             Vector3 toward = At(threat) - lata.transform.position;
             toward.y = 0.0f;
 
-            if (toward.magnitude < 0.05f)
-            {
-                Goto(intent, ClampToBox(lata.transform.position), AiTuning.ArriveSlop, false);
-                return;
-            }
+            if (toward.magnitude < 0.05f) toward = Vector3.forward;
 
-            Vector3 post = lata.transform.position + toward.normalized * AiTuning.GuardRadius;
+            float guardRadius = Mathf.Max(AiTuning.GuardRadius, Balance.TayaCampRadius + 0.6f);
+            Vector3 post = lata.transform.position + toward.normalized * guardRadius;
 
             Goto(intent, ClampToBox(post), AiTuning.ArriveSlop,
                  Flat(transform.position, post) > AiTuning.SprintDistance);
 
-            // Same reason as the position plan: a taya whose threat is not moving has a post
-            // that is not moving, and a bot that has reached a stationary post never moves
-            // again.
+            // Keep moving and patrolling actively!
             if (_arrived) Loiter(intent);
         }
 
@@ -1468,8 +1507,14 @@ namespace TumbangPreso
                 else
                 {
                     _loiterDir = 0.0f;
-                    _loiterLeft = UnityEngine.Random.Range(AiTuning.LoiterRestMin,
-                                                           AiTuning.LoiterRestMax);
+                    _loiterLeft = UnityEngine.Random.Range(0.25f, 0.65f);
+
+                    // Occasional friendly emote during calm loitering
+                    if (UnityEngine.Random.value < 0.15f)
+                    {
+                        string[] emotes = { "yes", "dance", "tpose", "bow", "crouch" };
+                        TryTriggerEmote(emotes[UnityEngine.Random.Range(0, emotes.Length)], 0.9f);
+                    }
                 }
             }
 

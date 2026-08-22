@@ -49,6 +49,10 @@ namespace TumbangPreso
         private readonly List<CharacterMotor> _players = new List<CharacterMotor>();
         private float _throwCooldownLeft;
         private float _defenseTickAccum;
+        private float _tayaCampTimer;
+        private float _tayaCampTickAccum;
+        private readonly float[] _attackerIdleTimer = new float[Balance.PlayerCount];
+        private readonly float[] _attackerIdleTickAccum = new float[Balance.PlayerCount];
 
         /// <summary>Shove credit, for the Sabotage score. slot -> (shover, at time).</summary>
         private readonly Dictionary<int, (int by, float at)> _shoveCredit =
@@ -78,6 +82,10 @@ namespace TumbangPreso
             TimeLeft = Balance.RoundTime;
             _throwCooldownLeft = 0.0f;
             _defenseTickAccum = 0.0f;
+            _tayaCampTimer = 0.0f;
+            _tayaCampTickAccum = 0.0f;
+            System.Array.Clear(_attackerIdleTimer, 0, _attackerIdleTimer.Length);
+            System.Array.Clear(_attackerIdleTickAccum, 0, _attackerIdleTickAccum.Length);
             _shoveCredit.Clear();
 
             foreach (var p in _players) p.RoundActive = true;
@@ -93,24 +101,6 @@ namespace TumbangPreso
             foreach (var p in _players) p.RoundActive = false;
         }
 
-        /// <summary>
-        /// Put the director back to the state it boots in, for a match that has not begun. This
-        /// is `round_manager.gd::reset()`, which the port never carried across.
-        ///
-        /// ⚠️⚠️ **B-14 IN THE .gd**, and its note names the same symptom: *"nothing reset this
-        /// autoload between matches, so a second match resumed the first one's timer. Counterpart
-        /// to `MatchManager.reset()`."* Both halves were missing here.
-        ///
-        /// ⚠️⚠️ THE CLOCK IS PART OF IT, AND LEAVING IT OUT IS WHY A SECOND MATCH OPENED ON
-        /// **01:11**. This director is `DontDestroyOnLoad`, so `TimeLeft`'s field initialiser
-        /// only ever runs once per session: the second arena inherited whatever the first match
-        /// had counted down to and drew it over the free-roam window. The .gd cannot have this
-        /// problem — Godot rebuilds the autoload's state with the scene — and the field's own
-        /// note above already records what a wrong clock in this window reads as.
-        ///
-        /// ⚠️ THE ROSTER IS DROPPED FIRST, because the seats in it belong to the scene that has
-        /// just been unloaded and touching a destroyed MonoBehaviour throws.
-        /// </summary>
         public void ResetForNewMatch()
         {
             _players.Clear();
@@ -119,6 +109,10 @@ namespace TumbangPreso
             TimeLeft = Balance.RoundTime;
             _throwCooldownLeft = 0.0f;
             _defenseTickAccum = 0.0f;
+            _tayaCampTimer = 0.0f;
+            _tayaCampTickAccum = 0.0f;
+            System.Array.Clear(_attackerIdleTimer, 0, _attackerIdleTimer.Length);
+            System.Array.Clear(_attackerIdleTickAccum, 0, _attackerIdleTickAccum.Length);
             _shoveCredit.Clear();
             Lata = null;
         }
@@ -135,6 +129,7 @@ namespace TumbangPreso
                 _throwCooldownLeft = Mathf.Max(0.0f, _throwCooldownLeft - dt);
 
             StepPassiveDefence(dt);
+            StepTournamentPenalties(dt);
 
             if (TimeLeft <= 0.0f)
             {
@@ -164,6 +159,100 @@ namespace TumbangPreso
             {
                 _defenseTickAccum -= Balance.DefenseTickInterval;
                 GameServices.Match.AddScore(GameServices.Match.DefenderSlot, ScoreEvent.DefenseTick);
+            }
+        }
+
+        private void StepTournamentPenalties(float dt)
+        {
+            if (GameServices.Match == null) return;
+
+            // 1. TAYA CAN-CAMPING MONITOR
+            int defenderSlot = GameServices.Match.DefenderSlot;
+            var taya = PlayerAt(defenderSlot);
+
+            if (taya != null && Lata != null && Lata.IsUpright)
+            {
+                float distToCan = Vector3.Distance(new Vector3(taya.transform.position.x, 0, taya.transform.position.z),
+                                                   new Vector3(Lata.transform.position.x, 0, Lata.transform.position.z));
+
+                if (distToCan <= Balance.TayaCampRadius)
+                {
+                    _tayaCampTimer += dt;
+                    if (_tayaCampTimer >= Balance.TayaCampGracePeriod)
+                    {
+                        _tayaCampTickAccum += dt;
+                        if (_tayaCampTickAccum >= 1.0f)
+                        {
+                            _tayaCampTickAccum -= 1.0f;
+                            GameServices.Match.AddScore(defenderSlot, ScoreEvent.TayaCampPenalty);
+                            Visual.ComicPopup.Spawn(taya.transform.position + Vector3.up * 1.5f, "CAMPING! -5", UI.UiTheme.Defense, 1.0f);
+                            UI.Hud.Instance?.PopHitmarker(UI.UiTheme.Defense, "⚠️");
+                        }
+                    }
+                }
+                else
+                {
+                    _tayaCampTimer = Mathf.Max(0.0f, _tayaCampTimer - dt * 2.0f);
+                    _tayaCampTickAccum = 0.0f;
+                }
+            }
+            else
+            {
+                _tayaCampTimer = 0.0f;
+                _tayaCampTickAccum = 0.0f;
+            }
+
+            // 2. UNRETRIEVED SLIPPER IDLE MONITOR
+            var slippers = FindObjectsByType<Slipper>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            foreach (var p in _players)
+            {
+                if (p == null || p.IsDefender || p.HoldingSlipper)
+                {
+                    if (p != null && p.PlayerSlot >= 0 && p.PlayerSlot < _attackerIdleTimer.Length)
+                    {
+                        _attackerIdleTimer[p.PlayerSlot] = 0.0f;
+                        _attackerIdleTickAccum[p.PlayerSlot] = 0.0f;
+                    }
+                    continue;
+                }
+
+                int slot = p.PlayerSlot;
+                if (slot < 0 || slot >= _attackerIdleTimer.Length) continue;
+
+                // Check if this attacker's slipper is loose on the ground
+                bool hasLooseSlipper = false;
+                foreach (var s in slippers)
+                {
+                    if (s != null && s.OwnerSlot == slot && s.State == SlipperState.Loose)
+                    {
+                        hasLooseSlipper = true;
+                        break;
+                    }
+                }
+
+                // If attacker remains in safe zone while their slipper is on the ground
+                bool inSafeZone = Confinement.IsInsideSafeZone(p.transform.position.x, p.transform.position.z);
+
+                if (hasLooseSlipper && inSafeZone)
+                {
+                    _attackerIdleTimer[slot] += dt;
+                    if (_attackerIdleTimer[slot] >= Balance.SlipperUnretrievedGracePeriod)
+                    {
+                        _attackerIdleTickAccum[slot] += dt;
+                        if (_attackerIdleTickAccum[slot] >= 1.0f)
+                        {
+                            _attackerIdleTickAccum[slot] -= 1.0f;
+                            GameServices.Match.AddScore(slot, ScoreEvent.UnretrievedSlipperPenalty);
+                            Visual.ComicPopup.Spawn(p.transform.position + Vector3.up * 1.5f, "FETCH SLIPPER! -5", UI.UiTheme.Offense, 1.0f);
+                            UI.Hud.Instance?.PopHitmarker(UI.UiTheme.Offense, "⚠️");
+                        }
+                    }
+                }
+                else
+                {
+                    _attackerIdleTimer[slot] = Mathf.Max(0.0f, _attackerIdleTimer[slot] - dt * 2.0f);
+                    _attackerIdleTickAccum[slot] = 0.0f;
+                }
             }
         }
 

@@ -126,6 +126,9 @@ namespace TumbangPreso
         public float ChargeRatio => ThrowRules.ChargeRatio(_charge);
         public float ChannelRatio { get; private set; }
 
+        private float _pektusSpin;
+        public float CurrentPektusSpin => _charging ? _pektusSpin : 0.0f;
+
         /// <summary>True while this unit is winding a throw up. Read by the aim arc and by the
         /// YOU card's charge meter.</summary>
         public bool IsCharging => _charging;
@@ -447,6 +450,7 @@ namespace TumbangPreso
             if (intent.Pressed(Verb.SpecialAbility))
             {
                 _charge = Mathf.Min(_charge + dt, Balance.ChargeFullTime);
+                _pektusSpin = Mathf.Clamp(intent.SpinInput, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
 
                 // ⚠️ STEPPING OUT OF LEGALITY MID-CHARGE CANCELS IT RATHER THAN BANKING IT.
                 // Walking into the box while charging must not launch on release: the crosshair
@@ -457,9 +461,10 @@ namespace TumbangPreso
 
             // Released.
             float power = ChargeRatio;
+            float spin = _pektusSpin;
             CancelCharge();
 
-            if (canThrow) Release(power);
+            if (canThrow) Release(power, spin);
         }
 
         /// <summary>
@@ -473,6 +478,7 @@ namespace TumbangPreso
 
             _charging = false;
             _charge = 0.0f;
+            _pektusSpin = 0.0f;
             BroadcastCharge(false);
         }
 
@@ -580,7 +586,7 @@ namespace TumbangPreso
             return vel;
         }
 
-        private void Release(float power)
+        private void Release(float power, float spin = 0.0f)
         {
             if (Held == null) return;
 
@@ -608,11 +614,12 @@ namespace TumbangPreso
                 sean.IsIgnitionCannonActive = false;
             }
 
-            Held.HostThrow(_motor, origin, vel, affinity);
+            Held.HostThrow(_motor, origin, vel, affinity, spin);
 
             Held = null;
             _motor.HoldingSlipper = false;
             _charge = 0.0f;
+            _pektusSpin = 0.0f;
         }
 
         // -------------------------------------------------------------------

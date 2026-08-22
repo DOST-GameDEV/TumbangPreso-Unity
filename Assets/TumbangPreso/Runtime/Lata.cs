@@ -140,6 +140,17 @@ namespace TumbangPreso
             if (GameServices.Match != null && throwerSlot == GameServices.Match.DefenderSlot) return;
 
             GameServices.Match.AddScore(throwerSlot, ScoreEvent.LataKnocked);
+
+            var throwerMotor = GameServices.Round.PlayerAt(throwerSlot);
+            if (throwerMotor != null)
+            {
+                var ai = throwerMotor.GetComponent<AIController>();
+                if (ai != null)
+                {
+                    string[] celebEmotes = { "dance", "yes", "tpose", "crouch" };
+                    ai.TryTriggerEmote(celebEmotes[UnityEngine.Random.Range(0, celebEmotes.Length)], 0.9f);
+                }
+            }
         }
 
         /// <summary>

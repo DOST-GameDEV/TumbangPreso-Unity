@@ -74,6 +74,8 @@ namespace TumbangPreso
             map.Enable();
         }
 
+        private float _currentPektusSpin;
+
         private void Update()
         {
             if (_motor == null) return;
@@ -91,6 +93,31 @@ namespace TumbangPreso
             if (_skill2 != null) intent.Set(Verb.Skill2, _skill2.IsPressed());
             if (_ultimate != null) intent.Set(Verb.Ultimate, _ultimate.IsPressed());
 
+            // Pektus (Curve Spin) control: Independent of WASD movement!
+            // Controlled via Mouse Wheel Up/Down (or Left/Right arrow keys) while charging throw.
+            if (_special.IsPressed())
+            {
+                if (Mouse.current != null)
+                {
+                    float scrollY = Mouse.current.scroll.ReadValue().y;
+                    if (scrollY > 0.1f) _currentPektusSpin = Mathf.Clamp(_currentPektusSpin + 0.35f, -1.0f, 1.0f);
+                    else if (scrollY < -0.1f) _currentPektusSpin = Mathf.Clamp(_currentPektusSpin - 0.35f, -1.0f, 1.0f);
+                }
+
+                if (Keyboard.current != null)
+                {
+                    if (Keyboard.current.leftArrowKey.isPressed)
+                        _currentPektusSpin = Mathf.Clamp(_currentPektusSpin - Time.deltaTime * 2.5f, -1.0f, 1.0f);
+                    if (Keyboard.current.rightArrowKey.isPressed)
+                        _currentPektusSpin = Mathf.Clamp(_currentPektusSpin + Time.deltaTime * 2.5f, -1.0f, 1.0f);
+                }
+            }
+            else
+            {
+                _currentPektusSpin = 0.0f;
+            }
+
+            intent.SpinInput = _currentPektusSpin;
             intent.AimPoint = ReadAimPoint();
 
             // ⚠️⚠️ THE COMMIT DOES NOT HAPPEN HERE, AND DOING IT HERE IS WHY JUMP AND GRAB DID

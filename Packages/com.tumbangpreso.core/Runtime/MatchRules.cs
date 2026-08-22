@@ -24,6 +24,12 @@ namespace TumbangPreso.Core
 
         /// <summary>Per second the lata is upright. To the Defender.</summary>
         DefenseTick,
+
+        /// <summary>Penalty for Taya camping inside can ring without engaging.</summary>
+        TayaCampPenalty,
+
+        /// <summary>Penalty for Attacker failing to retrieve loose slipper.</summary>
+        UnretrievedSlipperPenalty,
     }
 
     /// <summary>
@@ -61,6 +67,8 @@ namespace TumbangPreso.Core
                 case ScoreEvent.Tag: return Balance.ScoreTag;
                 case ScoreEvent.Sabotage: return Balance.ScoreSabotage;
                 case ScoreEvent.DefenseTick: return Balance.ScoreDefensePerTick;
+                case ScoreEvent.TayaCampPenalty: return Balance.ScoreTayaCampPenalty;
+                case ScoreEvent.UnretrievedSlipperPenalty: return Balance.ScoreUnretrievedPenalty;
                 default: return 0;
             }
         }
@@ -87,7 +95,7 @@ namespace TumbangPreso.Core
         public void Add(int slot, ScoreEvent e)
         {
             if (slot < 0 || slot >= _scores.Length) return;
-            _scores[slot] += MatchRules.PointsFor(e);
+            _scores[slot] = System.Math.Max(0, _scores[slot] + MatchRules.PointsFor(e));
         }
 
         public void Set(int slot, int score)

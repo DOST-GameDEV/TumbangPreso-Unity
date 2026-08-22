@@ -629,6 +629,39 @@ namespace TumbangPreso.Core.Tests
                     $"{e.Name} is {e.Name.Length} chars and would be clipped on a card");
         }
 
+        [Fact]
+        public void TournamentPenalties_ValuesAreNegativeAndConsistent()
+        {
+            Assert.Equal(-5, Balance.ScoreTayaCampPenalty);
+            Assert.Equal(-5, Balance.ScoreUnretrievedPenalty);
+            Assert.Equal(-5, MatchRules.PointsFor(ScoreEvent.TayaCampPenalty));
+            Assert.Equal(-5, MatchRules.PointsFor(ScoreEvent.UnretrievedSlipperPenalty));
+            Assert.Equal(5.0f, Balance.TayaCampGracePeriod);
+            Assert.Equal(10.0f, Balance.SlipperUnretrievedGracePeriod);
+        }
+
+        [Fact]
+        public void Scoreboard_PenaltiesClampAtZero()
+        {
+            var board = new Scoreboard();
+            board.Add(0, ScoreEvent.TayaCampPenalty);
+            Assert.Equal(0, board[0]); // should clamp at zero, not go negative
+
+            board.Set(0, 10);
+            board.Add(0, ScoreEvent.TayaCampPenalty);
+            Assert.Equal(5, board[0]);
+
+            board.Add(0, ScoreEvent.UnretrievedSlipperPenalty);
+            Assert.Equal(0, board[0]);
+        }
+
+        [Fact]
+        public void Pektus_CurveConstantsAreValid()
+        {
+            Assert.True(Balance.PektusCurveStrength > 0.0f);
+            Assert.True(Balance.MaxPektusSpin >= 1.0f);
+        }
+
         // ===================================================================
         // helpers
         // ===================================================================

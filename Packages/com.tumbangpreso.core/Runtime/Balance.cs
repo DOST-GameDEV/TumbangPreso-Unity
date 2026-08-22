@@ -42,6 +42,18 @@ namespace TumbangPreso.Core
         public const float SabotageWindow = 2.5f;
         public const float ThrowRestoreCooldown = 1.25f;
 
+        // Tournament Anti-Camping & Anti-Stall Penalties
+        public const float TayaCampRadius = 2.2f;
+        public const float TayaCampGracePeriod = 5.0f;
+        public const int ScoreTayaCampPenalty = -5;
+
+        public const float SlipperUnretrievedGracePeriod = 10.0f;
+        public const int ScoreUnretrievedPenalty = -5;
+
+        // Pektus (Curve Spin) Throwing
+        public const float PektusCurveStrength = 14.0f;
+        public const float MaxPektusSpin = 1.0f;
+
         // -------------------------------------------------------------------
         // MOVEMENT AND THE ARENA — character_base.gd
         // -------------------------------------------------------------------

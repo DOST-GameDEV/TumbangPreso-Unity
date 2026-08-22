@@ -44,6 +44,9 @@ namespace TumbangPreso
 
         public Vector2 Move { get; set; }
 
+        /// <summary>Lateral throw spin for Pektus curve shots (-1.0 left to +1.0 right).</summary>
+        public float SpinInput { get; set; }
+
         /// <summary>Where this unit is aiming, in world space. AI writes it directly;
         /// a human's comes from the camera ray.</summary>
         public Vector3 AimPoint
@@ -89,6 +92,7 @@ namespace TumbangPreso
         {
             _held.Clear();
             Move = Vector2.zero;
+            SpinInput = 0.0f;
             HasAimPoint = false;
         }
 

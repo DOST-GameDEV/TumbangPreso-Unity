@@ -410,11 +410,19 @@ namespace TumbangPreso
             return true;
         }
 
-        public void HostThrow(CharacterMotor thrower, Vector3 origin, Vector3 velocity, SlipperAffinity affinity = SlipperAffinity.Normal)
+        public float PektusSpin { get; private set; }
+
+        public void HostThrow(CharacterMotor thrower, Vector3 origin, Vector3 velocity, SlipperAffinity affinity = SlipperAffinity.Normal, float pektusSpin = 0.0f)
         {
             SetState(SlipperState.InFlight);
             _throwerSlot = thrower != null ? thrower.PlayerSlot : -1;
             Affinity = affinity;
+            PektusSpin = Mathf.Clamp(pektusSpin, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
+
+            if (Mathf.Abs(PektusSpin) > 0.4f)
+            {
+                Visual.ComicPopup.Spawn(origin + Vector3.up * 0.4f, "PEKTUS!", UI.UiTheme.Highlight, 1.2f);
+            }
 
             if (thrower != null) thrower.HoldingSlipper = false;
             Holder = null;
@@ -517,6 +525,7 @@ namespace TumbangPreso
                 _affinityVfxGo = null;
             }
             Affinity = SlipperAffinity.Normal;
+            PektusSpin = 0.0f;
         }
 
         /// <summary>
@@ -533,6 +542,18 @@ namespace TumbangPreso
             if (_throwerIgnoreLeft > 0.0f) _throwerIgnoreLeft -= dt;
 
             _velocity.y -= Balance.Gravity * dt;
+
+            // Apply lateral Magnus acceleration from Pektus spin
+            if (Mathf.Abs(PektusSpin) > 0.01f)
+            {
+                Vector3 flatVel = new Vector3(_velocity.x, 0.0f, _velocity.z);
+                if (flatVel.sqrMagnitude > 0.1f)
+                {
+                    Vector3 lateral = Vector3.Cross(flatVel.normalized, Vector3.up).normalized;
+                    _velocity += lateral * (PektusSpin * Balance.PektusCurveStrength * dt);
+                }
+            }
+
             transform.position += _velocity * dt;
 
             BounceOffBounds();

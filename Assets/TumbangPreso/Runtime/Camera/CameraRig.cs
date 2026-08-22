@@ -639,6 +639,20 @@ namespace TumbangPreso.CameraSystem
         /// shove on a long cooldown and completely wrong for a block that can fire as fast as
         /// three attackers can throw.
         /// </summary>
+        private Vector3 _impactPunchOffset;
+        private float _impactPunchLeft;
+        private const float ImpactPunchDuration = 0.16f;
+
+        /// <summary>
+        /// Directional camera impact punch for heavy ability hits and strikes.
+        /// </summary>
+        public void ImpactPunch(Vector3 direction, float strength = 1.0f)
+        {
+            _impactPunchLeft = ImpactPunchDuration;
+            _impactPunchOffset = direction.normalized * 0.20f * strength;
+            Shake(strength * 0.45f, 0.22f);
+        }
+
         public void Shake(float strength = 0.35f, float duration = 0.18f)
         {
             _shakeStrength = Mathf.Max(_shakeStrength, strength);
@@ -647,6 +661,13 @@ namespace TumbangPreso.CameraSystem
 
         private void StepShake()
         {
+            if (_impactPunchLeft > 0.0f)
+            {
+                _impactPunchLeft -= Time.deltaTime;
+                float punchRatio = Mathf.Clamp01(_impactPunchLeft / ImpactPunchDuration);
+                transform.position += _impactPunchOffset * punchRatio;
+            }
+
             if (_shakeLeft <= 0.0f) return;
 
             _shakeLeft -= Time.deltaTime;

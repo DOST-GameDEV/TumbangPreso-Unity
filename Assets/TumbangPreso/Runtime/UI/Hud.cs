@@ -637,6 +637,30 @@ namespace TumbangPreso.UI
             _crosshair.color = role;
             _indicators?.SetCanArrowColour(role);
 
+            var carrier = _local.GetComponent<Carrier>();
+            if (carrier != null && carrier.IsCharging)
+            {
+                float spin = carrier.CurrentPektusSpin;
+                if (spin < -0.2f)
+                {
+                    _crosshair.text = "◀◀ PEKTUS";
+                    _crosshair.color = UiTheme.Highlight;
+                }
+                else if (spin > 0.2f)
+                {
+                    _crosshair.text = "PEKTUS ▶▶";
+                    _crosshair.color = UiTheme.Highlight;
+                }
+                else
+                {
+                    _crosshair.text = "+";
+                }
+            }
+            else
+            {
+                _crosshair.text = "+";
+            }
+
             _vulnerable.enabled = _local.IsTaggable();
 
             if (_hitmarkerTimer > 0.0f)
@@ -1628,7 +1652,7 @@ namespace TumbangPreso.UI
                                   TextAnchor.MiddleCenter, CrosshairOutline);
 
             Place(_crosshair.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
-                  new Vector2(48, 48));
+                  new Vector2(240, 48));
 
             _crosshair.text = "+";
             _crosshair.enabled = false;
