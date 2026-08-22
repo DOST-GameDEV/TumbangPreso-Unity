@@ -75,6 +75,40 @@ namespace TumbangPreso.Core
     }
 
     /// <summary>
+    /// Pure tournament anti-stall rules shared by runtime code, bots, HUD, and tests.
+    /// The separate clear radius gives the can ring hysteresis so stepping across one
+    /// razor-thin boundary cannot flicker or erase a nearly-earned warning.
+    /// </summary>
+    public static class TournamentRules
+    {
+        public static bool IsTayaCamping(bool wasInsideCampZone, float distanceFromCan)
+        {
+            float radius = wasInsideCampZone
+                ? Balance.TayaCampClearRadius
+                : Balance.TayaCampRadius;
+            return distanceFromCan <= radius;
+        }
+
+        public static float StepViolationTimer(float current, bool violating, float dt)
+        {
+            if (!violating) return 0.0f;
+            return System.Math.Max(0.0f, current) + System.Math.Max(0.0f, dt);
+        }
+
+        public static bool IsCampWarning(float seconds)
+            => seconds >= Balance.TayaCampWarningTime;
+
+        public static bool IsCampPenalty(float seconds)
+            => seconds >= Balance.TayaCampGracePeriod;
+
+        public static bool IsSlipperWarning(float seconds)
+            => seconds >= Balance.SlipperUnretrievedWarningTime;
+
+        public static bool IsSlipperPenalty(float seconds)
+            => seconds >= Balance.SlipperUnretrievedGracePeriod;
+    }
+
+    /// <summary>
     /// Cumulative per-player score across the whole match.
     ///
     /// ⚠️ EVERY POINT IN THE GAME IS AWARDED THROUGH Add(), host-side. The predecessor

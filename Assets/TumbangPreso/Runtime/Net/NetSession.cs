@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
+using Unity.Collections;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
@@ -42,6 +45,20 @@ namespace TumbangPreso.Net
 
         private NetworkManager _nm;
         private UnityTransport _utp;
+
+        [Serializable]
+        private sealed class ConnectionHello
+        {
+            public string Token;
+            public string Name;
+        }
+
+        private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
+        private readonly Dictionary<ulong, ConnectionHello> _helloByClient =
+            new Dictionary<ulong, ConnectionHello>();
+        private bool _seatHandlerRegistered;
+        private GameObject _matchRpcPrefab;
+        private NetworkObject _matchRpcObject;
         private LanBeacon _beacon;
 #if MULTIPLAY_SDK
         private IServerQueryHandler _serverQueryHandler;
@@ -76,12 +93,26 @@ namespace TumbangPreso.Net
 
             _nm.NetworkConfig ??= new NetworkConfig();
             _nm.NetworkConfig.NetworkTransport = _utp;
+            _nm.NetworkConfig.ConnectionApproval = true;
 
             // ⚠️ SCENE MANAGEMENT OFF. The game loads its own scenes through SceneFlow, and
             // letting the netcode also drive scene loads means two systems racing to decide
             // which scene a client is in. The symptom is a client stuck on a black screen while
             // the host plays on.
             _nm.NetworkConfig.EnableSceneManagement = false;
+
+            // MatchRpc is the one persistent NetworkObject carrying every authoritative
+            // gameplay request and snapshot. It used to have no prefab, scene instance, or
+            // spawn call anywhere, which made the entire RPC surface unreachable in builds.
+            _matchRpcPrefab = Resources.Load<GameObject>("Net/MatchRpc");
+            if (_matchRpcPrefab == null)
+            {
+                Debug.LogError("[Net] Missing Resources/Net/MatchRpc network prefab.");
+            }
+            else if (!_nm.NetworkConfig.Prefabs.Contains(_matchRpcPrefab))
+            {
+                _nm.AddNetworkPrefab(_matchRpcPrefab);
+            }
 
             _beacon = GetComponent<LanBeacon>();
             if (_beacon == null) _beacon = gameObject.AddComponent<LanBeacon>();
@@ -96,6 +127,7 @@ namespace TumbangPreso.Net
 
             _nm.OnClientConnectedCallback += OnClientConnected;
             _nm.OnClientDisconnectCallback += OnClientDisconnected;
+            _nm.ConnectionApprovalCallback += ApproveConnection;
         }
 
         private void OnDestroy()
@@ -104,6 +136,10 @@ namespace TumbangPreso.Net
             {
                 _nm.OnClientConnectedCallback -= OnClientConnected;
                 _nm.OnClientDisconnectCallback -= OnClientDisconnected;
+                _nm.ConnectionApprovalCallback -= ApproveConnection;
+
+                if (_seatHandlerRegistered && _nm.CustomMessagingManager != null)
+                    _nm.CustomMessagingManager.UnregisterNamedMessageHandler(SeatAssignmentMessage);
             }
 
             if (Instance == this)
@@ -155,6 +191,7 @@ namespace TumbangPreso.Net
             if (ok)
             {
                 LocalSlot = dedicated ? -1 : 0;
+                EnsureMatchRpcSpawned();
 
                 _beacon.HostName = Settings.SettingsStore.Current.PlayerName;
                 _beacon.JoinCode = Lobby.JoinCode;
@@ -242,10 +279,12 @@ namespace TumbangPreso.Net
         public bool StartClient(string address, int port = DefaultPort)
         {
             Configure(address, port);
+            ConfigureClientHello();
             IsRelay = false;
             RelayJoinCode = null;
 
             bool ok = _nm.StartClient();
+            if (ok) RegisterSeatHandler();
             SetStatus(ok ? $"connecting to {address}:{port}" : "failed to connect");
             return ok;
         }
@@ -296,6 +335,7 @@ namespace TumbangPreso.Net
                 if (ok)
                 {
                     LocalSlot = 0;
+                    EnsureMatchRpcSpawned();
                     _beacon.HostName = Settings.SettingsStore.Current.PlayerName;
                     _beacon.JoinCode = Lobby.JoinCode;
                     _beacon.Port = DefaultPort;
@@ -354,7 +394,9 @@ namespace TumbangPreso.Net
                 IsRelay = true;
                 RelayJoinCode = relayJoinCode.Trim();
 
+                ConfigureClientHello();
                 bool ok = _nm.StartClient();
+                if (ok) RegisterSeatHandler();
                 SetStatus(ok ? "connecting to relay host..." : "failed to start relay client");
                 return ok;
             }
@@ -370,6 +412,10 @@ namespace TumbangPreso.Net
         {
             _beacon.StopAll();
             if (Query != null) _ = Query.DeleteHostedLobbyAsync();
+
+            if (_matchRpcObject != null && _matchRpcObject.IsSpawned && _nm.IsServer)
+                _matchRpcObject.Despawn(destroy: true);
+            _matchRpcObject = null;
 
             if (_nm != null && _nm.IsListening) _nm.Shutdown();
 
@@ -397,6 +443,116 @@ namespace TumbangPreso.Net
             _utp.MaxConnectAttempts = 12;
         }
 
+        private void EnsureMatchRpcSpawned()
+        {
+            if (_matchRpcObject != null || _matchRpcPrefab == null || !_nm.IsServer) return;
+
+            var instance = Instantiate(_matchRpcPrefab);
+            instance.name = "~MatchRpc";
+            DontDestroyOnLoad(instance);
+            _matchRpcObject = instance.GetComponent<NetworkObject>();
+            _matchRpcObject.Spawn(destroyWithScene: false);
+        }
+
+        /// <summary>
+        /// Put the player's durable reconnect identity into Netcode's approval payload. A
+        /// NetworkClientId belongs to one transport connection and necessarily changes after a
+        /// disconnect; using it as identity is what made a returning defender reappear in the
+        /// attacker's old seat.
+        /// </summary>
+        private void ConfigureClientHello()
+        {
+            var settings = Settings.SettingsStore.Current;
+            var hello = new ConnectionHello
+            {
+                Token = NetIdentity.Token,
+                Name = string.IsNullOrWhiteSpace(settings.PlayerName) ? "Player" : settings.PlayerName.Trim()
+            };
+
+            _nm.NetworkConfig.ConnectionData = Encoding.UTF8.GetBytes(JsonUtility.ToJson(hello));
+        }
+
+        private void ApproveConnection(NetworkManager.ConnectionApprovalRequest request,
+                                       NetworkManager.ConnectionApprovalResponse response)
+        {
+            var hello = DecodeHello(request.Payload);
+            _helloByClient[request.ClientNetworkId] = hello;
+
+            bool hasCapacity = _nm == null ||
+                               _nm.ConnectedClientsIds.Count < LobbySession.MaxConnections;
+            response.Approved = hasCapacity;
+            response.CreatePlayerObject = false;
+            response.Pending = false;
+            response.Reason = hasCapacity ? string.Empty : "Lobby is full";
+        }
+
+        private static ConnectionHello DecodeHello(byte[] payload)
+        {
+            try
+            {
+                if (payload != null && payload.Length > 0)
+                {
+                    var decoded = JsonUtility.FromJson<ConnectionHello>(Encoding.UTF8.GetString(payload));
+                    if (decoded != null && !string.IsNullOrWhiteSpace(decoded.Token))
+                    {
+                        decoded.Token = decoded.Token.Trim();
+                        decoded.Name = string.IsNullOrWhiteSpace(decoded.Name) ? "Player" : decoded.Name.Trim();
+                        return decoded;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Net] Ignoring malformed connection identity: {e.Message}");
+            }
+
+            // Old clients can still connect, but deliberately do not gain a durable reclaim
+            // identity. This fallback is unique to this connection and cannot steal a held seat.
+            return new ConnectionHello
+            {
+                Token = $"legacy-{Guid.NewGuid():N}",
+                Name = "Player"
+            };
+        }
+
+        private void RegisterSeatHandler()
+        {
+            if (_seatHandlerRegistered || _nm?.CustomMessagingManager == null) return;
+
+            _nm.CustomMessagingManager.RegisterNamedMessageHandler(
+                SeatAssignmentMessage, OnSeatAssignmentMessage);
+            _seatHandlerRegistered = true;
+        }
+
+        private void OnSeatAssignmentMessage(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int seat);
+            ApplyAssignedSeat(seat);
+        }
+
+        private void SendSeatAssignment(ulong clientId, int seat)
+        {
+            if (_nm == null) return;
+
+            if (_nm.IsClient && clientId == _nm.LocalClientId)
+            {
+                ApplyAssignedSeat(seat);
+                return;
+            }
+
+            using var writer = new FastBufferWriter(sizeof(int), Allocator.Temp);
+            writer.WriteValueSafe(seat);
+            _nm.CustomMessagingManager.SendNamedMessage(SeatAssignmentMessage, clientId, writer);
+        }
+
+        /// <summary>Applies the host's authoritative seat on this process.</summary>
+        public void ApplyAssignedSeat(int seat)
+        {
+            LocalSlot = seat;
+            GameLaunch.Spectator = seat < 0;
+            SetStatus(seat >= 0 ? $"connected as seat {seat + 1}" : "connected as spectator");
+        }
+
         // -------------------------------------------------------------------
 
         private void OnClientConnected(ulong clientId)
@@ -410,11 +566,23 @@ namespace TumbangPreso.Net
             // ⚠️ THE HOST SEATS THEM, AND THE HOST DECIDES. A client sends its token and name;
             // where it sits is not up to it. See LobbySession.RuleOnArrival for why the branch
             // order matters: a returning player outranks a newcomer for their own seat.
-            var s = Settings.SettingsStore.Current;
-            string token = clientId == _nm.LocalClientId
-                ? NetIdentity.Token
-                : $"{NetIdentity.LocalToken}_peer_{clientId}";
-            var record = Lobby.Admit((int)clientId, token, s.PlayerName);
+            var settings = Settings.SettingsStore.Current;
+            ConnectionHello hello;
+            if (clientId == _nm.LocalClientId)
+            {
+                hello = new ConnectionHello
+                {
+                    Token = NetIdentity.Token,
+                    Name = settings.PlayerName
+                };
+            }
+            else if (!_helloByClient.TryGetValue(clientId, out hello))
+            {
+                hello = DecodeHello(null);
+            }
+
+            var record = Lobby.Admit((int)clientId, hello.Token, hello.Name);
+            SendSeatAssignment(clientId, record.Seat);
 
             _beacon.Players = Lobby.PeerCount;
             if (Query != null && IsRelay)
@@ -432,6 +600,7 @@ namespace TumbangPreso.Net
                 // ⚠️ THE SEAT IS HELD, NOT FREED, so a reconnecting player gets their own chair
                 // back rather than finding a stranger in it holding their score.
                 MatchRpc.Instance?.HostPeerLeft((int)clientId);
+                _helloByClient.Remove(clientId);
                 _beacon.Players = Lobby.PeerCount;
                 if (Query != null && IsRelay)
                 {

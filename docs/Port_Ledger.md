@@ -909,7 +909,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | Godot autoload | Lines | Unity | Status |
 |---|---|---|---|
 | `audio_manager.gd` | 1125 | `AudioDirector` + `AudioCues` + `MusicDirector` + `VoiceDirector` (789) | PARTIAL: bus layout, mix levels, transitions, and voice triggers pending (N15) |
-| `round_manager.gd` | 476 | `RoundDirector.cs` (328) | PARTIAL: host score and state authoritative, tag resolution, per-round transitions |
+| `round_manager.gd` | 476 | `RoundDirector.cs` (328) | PARTIAL: host score and state authoritative, tag resolution, per-round transitions, tournament anti-stall clocks with hysteresis that hold rather than run while a unit cannot act (2026-08-23) |
 | `match_manager.gd` | 217 | `MatchDirector.cs` (156) | PARTIAL: four-round rotation, scoring, ranking, defender derivation |
 | `network_manager.gd` | 1413 | `NetSession` + `LobbySession` + `MatchRpc` + `NetAuthority` + `NetBootstrap` + `NetIdentity` (1675) | CONVERTED (N0-N11): NGO and UGS stack locked, NetIdentity wired, LanBeacon converted, Relay host and client plus UGS Lobby integrated, Lobby UI converted, spawning, seating, write permissions wired, Ready gate networked, prop and match replication plus late-join sync wired, disconnect, AI takeover, seat reclaim wired, Multiplay dedicated server and SQP integrated, multi-process verification probes passing |
 | `lan_beacon.gd` | 323 | `LanBeacon.cs` (374) | CONVERTED (N2): multi-interface subnet broadcast via NetworkInterface, signature change events, and joinable/fill sorting |
@@ -922,11 +922,11 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
-| `character_base.gd` | 2017 | `CharacterMotor` + `CombatVerbs` + `StatusStack` (1171) | PARTIAL: motor, physics step, combat verbs, stagger/stun, stamina; third-person charge pose pending (N14) |
+| `character_base.gd` | 2017 | `CharacterMotor` + `CombatVerbs` + `StatusStack` (1171) | PARTIAL: motor, physics step, combat verbs, stagger/stun, stamina, arena wall on the move step and on every teleport (2026-08-23); third-person charge pose pending (N14) |
 | `character_visual.gd` | 2494 | `CharacterVisual` + `CharacterAnimator` + `ImpactBurst` + `ToonSkin` (1844) | CONVERTED: clips, flash, burst, toon pass, ink outline, palette remap, measured hand attachment, remote smoothing, stun frost body half |
 | `carrier.gd` | 572 | `Carrier.cs` (650) | CONVERTED 2026-08-16: 2.5 s wind-up on `Pressed` not `JustPressed`, audio cues, observed charge visible to peers, camera aim cast, sight-line throw origin, arc, late-update carry anchor, grab and release host validation |
 | `character_nameplate.gd` | 165 | `CharacterNameplate.cs` (232) | CONVERTED: ring, tag, role colour, distance fade |
-| `slipper.gd` | 1881 | `Slipper.cs` (725) | CONVERTED (N8): flight, bounce, spin, void recovery, ground snap, landed highlight, owner rim/outline glow, hand attachment, and networked state replication via MatchRpc |
+| `slipper.gd` | 1881 | `Slipper.cs` (725) | CONVERTED (N8): flight, bounce, spin, void recovery, ground snap, landed highlight, owner rim/outline glow, hand attachment, networked state replication via MatchRpc, and out-of-reach recovery so a tsinelas that rests on a roof or a hazard is given back rather than lost (2026-08-23) |
 | `lata.gd` | 534 | `Lata.cs` (330) | CONVERTED (N8): topple, roll, hit window, ground snap, skins, righting channel, and networked state replication via MatchRpc |
 
 ## Systems
@@ -934,9 +934,9 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
 | `main.gd` | 3599 | `MatchHost.cs` + `MatchInstaller.cs` + `SliceRunner.cs` + `ReadyGate.cs` (1418) | CONVERTED (N6-N9): match lifecycle, spawn points, seating, write permissions, networked ready gate quorum, prop and world replication, late-join catchup, disconnect AI takeover, seat reclaim |
-| `ai_controller.gd` | 2225 | `AIController.cs` + `AiTuning.cs` + `AiPersonalityRoll.cs` (2301) | PARTIAL: tiers, personalities, 13-plan machine, unstick, lane sampling, intercept prediction; per-plan polish pending (N18) |
+| `ai_controller.gd` | 2225 | `AIController.cs` + `AiTuning.cs` + `AiPersonalityRoll.cs` (2301) | PARTIAL: tiers, personalities, 13-plan machine, unstick, lane sampling, intercept prediction, Pektus spin selection with drift compensation, hero kit decisions; measured end to end by `BotBehaviourProbe` and `AiDiagnosticProbe` from 2026-08-23; per-plan polish pending (N18) |
 | `camera_rig.gd` | 1111 | `CameraRig.cs` + `ViewmodelArms.cs` (1387) | CONVERTED: FPP, prop TPP, emote swing, viewmodel arms, exact baked transforms; carry-follow is dead code upstream |
-| `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (551) | CONVERTED: free, follow, POV modes, smoothed motion, direct hardware input, HUD status text, spectator seating integration |
+| `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (551) | CONVERTED: free, follow, POV modes, smoothed motion, direct hardware input, HUD status text, spectator seating integration, plus broadcast controls beyond the original: F1-F4 seat cuts, camera bookmarks, tactical pause, 0.25x/0.5x/1x speeds and a six second instant replay, all locked out on a live networked match |
 | `character_roster.gd` | 757 | `Roster.cs` + `RosterBook.cs` (449) | CONVERTED (20/20 validated, typed records) |
 | `env_toon_pass.gd` | 391 | `EnvColourPass.cs` (536) | CONVERTED 2026-08-16: tints, foliage, laundry sway, six roof atlases, name-hash seeding, building/car/tree classification |
 | `trajectory_preview.gd` | 273 | `TrajectoryPreview.cs` (350) | CONVERTED 2026-08-16: camera-facing ribbon, fades, landing mark, physics-tick integration, live match instantiation |

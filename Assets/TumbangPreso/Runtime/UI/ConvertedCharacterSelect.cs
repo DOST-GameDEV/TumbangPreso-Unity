@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TumbangPreso.Abilities;
 using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,8 +34,17 @@ namespace TumbangPreso.UI
         private int _tab;
         private readonly int[] _pick = new int[3];
 
+        private Texture2D _backdropTexture;
+        private Texture2D _glowTexture;
+        private Texture2D _scrimTexture;
+        private Sprite _backdropSprite;
+        private Sprite _glowSprite;
+        private Sprite _scrimSprite;
+        private Image _glowImage;
+
         protected override void Wire()
         {
+            ConfigureGodotBackdrop();
             SetText("GameBannerLabel", "CHARACTER");
 
             var s = Settings.SettingsStore.Current;
@@ -49,6 +59,142 @@ namespace TumbangPreso.UI
 
             WireTabs();
             Refresh();
+        }
+
+        /// <summary>
+        /// Recreates the three generated textures in Godot's CharacterSelect.tscn. Older
+        /// converted scenes flattened each GradientTexture2D to its first colour, which is why
+        /// the Unity screen became a washed-out grey sheet instead of the slate-to-midnight
+        /// stage shown in the reference captures.
+        /// </summary>
+        private void ConfigureGodotBackdrop()
+        {
+            _backdropTexture = VerticalBackdrop();
+            _glowTexture = RadialGlow();
+            _scrimTexture = HorizontalScrim();
+
+            _backdropSprite = ApplyTexture("Backdrop", _backdropTexture);
+            _glowSprite = ApplyTexture("BackdropGlow", _glowTexture);
+            _scrimSprite = ApplyTexture("Scrim", _scrimTexture);
+            _glowImage = Node("BackdropGlow")?.GetComponent<Image>();
+        }
+
+        private Sprite ApplyTexture(string nodeName, Texture2D texture)
+        {
+            var node = Node(nodeName);
+            if (node == null || texture == null) return null;
+
+            var image = node.GetComponent<Image>();
+            if (image == null) return null;
+
+            var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height),
+                                       new Vector2(0.5f, 0.5f), 100.0f);
+            sprite.name = $"CharacterSelect_{nodeName}";
+            image.sprite = sprite;
+            image.color = Color.white;
+            image.type = Image.Type.Simple;
+            image.preserveAspect = false;
+            return sprite;
+        }
+
+        private static Texture2D VerticalBackdrop()
+        {
+            const int height = 256;
+            var texture = NewTexture(8, height, "CharacterSelect_Backdrop");
+            var pixels = new Color[texture.width * texture.height];
+
+            // The Godot layout is the baseline, but its neutral grey top made the select screen
+            // feel detached from the game's Bayan navy identity. Keep the same three-stop shape
+            // and deepen only the hue/chroma so the yellow banner, wood panel and ink outlines
+            // remain the visual anchors.
+            var top = new Color(0.400f, 0.455f, 0.610f, 1.0f);
+            var middle = new Color(0.165f, 0.205f, 0.365f, 1.0f);
+            var bottom = new Color(0.015686f, 0.031373f, 0.219608f, 1.0f);
+
+            for (int y = 0; y < height; y++)
+            {
+                // Texture pixels run bottom-up; Godot's gradient offsets run top-down.
+                float t = 1.0f - y / (float)(height - 1);
+                Color colour = t <= 0.55f
+                    ? Color.Lerp(top, middle, t / 0.55f)
+                    : Color.Lerp(middle, bottom, (t - 0.55f) / 0.45f);
+
+                for (int x = 0; x < texture.width; x++)
+                    pixels[y * texture.width + x] = colour;
+            }
+
+            texture.SetPixels(pixels);
+            texture.Apply(false, true);
+            return texture;
+        }
+
+        private static Texture2D RadialGlow()
+        {
+            const int size = 256;
+            var texture = NewTexture(size, size, "CharacterSelect_Glow");
+            var pixels = new Color[size * size];
+            var centre = new Vector2(0.70f, 1.0f - 0.42f);
+
+            for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+            {
+                var uv = new Vector2(x / (float)(size - 1), y / (float)(size - 1));
+                float t = Mathf.Clamp01(Vector2.Distance(uv, centre) / 0.45f);
+                float alpha = t <= 0.45f
+                    ? Mathf.Lerp(0.30f, 0.13f, t / 0.45f)
+                    : Mathf.Lerp(0.13f, 0.0f, (t - 0.45f) / 0.55f);
+                pixels[y * size + x] = new Color(1.0f, 1.0f, 1.0f, alpha);
+            }
+
+            texture.SetPixels(pixels);
+            texture.Apply(false, true);
+            return texture;
+        }
+
+        private static Texture2D HorizontalScrim()
+        {
+            const int width = 256;
+            var texture = NewTexture(width, 8, "CharacterSelect_Scrim");
+            var pixels = new Color[texture.width * texture.height];
+            var ink = new Color(0.015686f, 0.031373f, 0.219608f, 1.0f);
+
+            for (int x = 0; x < width; x++)
+            {
+                float t = x / (float)(width - 1);
+                float alpha;
+                if (t <= 0.36f) alpha = Mathf.Lerp(0.85f, 0.70f, t / 0.36f);
+                else if (t <= 0.62f) alpha = Mathf.Lerp(0.70f, 0.12f, (t - 0.36f) / 0.26f);
+                else alpha = Mathf.Lerp(0.12f, 0.0f, (t - 0.62f) / 0.38f);
+
+                for (int y = 0; y < texture.height; y++)
+                    pixels[y * texture.width + x] = new Color(ink.r, ink.g, ink.b, alpha);
+            }
+
+            texture.SetPixels(pixels);
+            texture.Apply(false, true);
+            return texture;
+        }
+
+        private static Texture2D NewTexture(int width, int height, string name)
+        {
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false)
+            {
+                name = name,
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Bilinear,
+                hideFlags = HideFlags.DontSave,
+            };
+            return texture;
+        }
+
+        private void OnDestroy()
+        {
+            Destroy(_backdropSprite);
+            Destroy(_glowSprite);
+            Destroy(_scrimSprite);
+            Destroy(_backdropTexture);
+            Destroy(_glowTexture);
+            Destroy(_scrimTexture);
         }
 
         /// <summary>
@@ -119,6 +265,17 @@ namespace TumbangPreso.UI
 
             for (int i = rows.childCount - 1; i >= 0; i--) Destroy(rows.GetChild(i).gameObject);
 
+            // Hero Strike characters are defined by verbs and counter-play, not by the three
+            // Classic trait modifiers. Showing SPEED / POWER / GRIT here made the hero picker
+            // look like a stat-select screen while hiding the information that actually changes
+            // how a hero plays. The prop tabs keep their measured meters because cans and
+            // slippers use those values in both modes.
+            if (_tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike)
+            {
+                RefreshHeroLoadout(rows, entry.Id);
+                return;
+            }
+
             var labels = MeterLabels[_tab];
             int[] points = { entry.Bilis, entry.Lakas, entry.Tatag };
 
@@ -127,7 +284,8 @@ namespace TumbangPreso.UI
 
             // The camera controls are discoverable only if something says they exist. One line,
             // inside the panel, rebuilt with the meters so a roster change cannot orphan it.
-            var hint = MenuKit.Label(rows, "Drag to turn the view · scroll to zoom · right-click to reset", 14,
+            var hint = MenuKit.Label(rows, "Drag to turn the view · scroll to zoom · right-click to reset",
+                                     MenuKit.MinReadableUnits,
                                      new Color(0.961f, 0.902f, 0.784f, 0.65f),
                                      Vector2.zero, Vector2.zero, Vector2.zero,
                                      TextAnchor.MiddleLeft);
@@ -136,10 +294,67 @@ namespace TumbangPreso.UI
             hint.gameObject.AddComponent<LayoutElement>().preferredHeight = 24.0f;
         }
 
+        private static void RefreshHeroLoadout(Transform rows, string heroId)
+        {
+            var kit = HeroAbilitySystem.CreateKitFor(heroId);
+            Color accent = UiTheme.ColorForHero(heroId);
+
+            BuildAbilityRow(rows, "E", kit.Skill1, accent, false);
+            BuildAbilityRow(rows, "Q", kit.Skill2, accent, false);
+            BuildAbilityRow(rows, "F", kit.Ultimate, accent, true);
+
+            var hint = MenuKit.Label(rows,
+                "Drag to inspect · E / Q skills · F ultimate charges through objective play",
+                MenuKit.MinReadableUnits, new Color(0.961f, 0.902f, 0.784f, 0.72f),
+                Vector2.zero, Vector2.zero,
+                Vector2.zero, TextAnchor.MiddleLeft);
+            hint.raycastTarget = false;
+            hint.gameObject.AddComponent<LayoutElement>().preferredHeight = 24.0f;
+        }
+
+        private static void BuildAbilityRow(Transform parent, string key, HeroAbility ability,
+                                            Color accent, bool ultimate)
+        {
+            if (ability == null) return;
+
+            var rowGo = new GameObject($"Ability{key}Row");
+            rowGo.AddComponent<RectTransform>();
+            rowGo.transform.SetParent(parent, false);
+
+            var row = rowGo.AddComponent<HorizontalLayoutGroup>();
+            row.childControlHeight = true;
+            row.childControlWidth = true;
+            row.childForceExpandHeight = false;
+            row.childForceExpandWidth = false;
+            row.childAlignment = TextAnchor.MiddleLeft;
+            row.spacing = 10.0f;
+            rowGo.AddComponent<LayoutElement>().preferredHeight = 28.0f;
+
+            var keyLabel = MenuKit.Label(rowGo.transform, key, 18,
+                ultimate ? Color.white : accent, Vector2.zero, Vector2.zero, Vector2.zero,
+                TextAnchor.MiddleCenter);
+            keyLabel.raycastTarget = false;
+            keyLabel.gameObject.AddComponent<LayoutElement>().preferredWidth = 34.0f;
+
+            string timing = ultimate ? "SUPER" : $"{ability.Cooldown:0.#}s";
+            var nameLabel = MenuKit.Label(rowGo.transform,
+                $"{ability.Name}  ·  {timing}", 18, ultimate ? accent : Color.white,
+                Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
+            nameLabel.raycastTarget = false;
+            nameLabel.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1.0f;
+        }
+
         private static readonly Color PipFilled = new Color(0.98f, 0.78f, 0.12f, 1.0f);
         private static readonly Color PipEmpty = new Color(0.35f, 0.24f, 0.18f, 0.55f);
 
-        private const int GaugeSegments = 8;
+        /// <summary>
+        /// ⚠️⚠️ AS MANY SEGMENTS AS A TRAIT HAS POINTS, WHICH IS FIVE. This was eight, and the
+        /// consequence is not cosmetic: a trait is scored 1 to 5, so BERTO's GRIT of 5 drew as
+        /// five lit pips out of eight and read as a middling stat when it is the maximum in the
+        /// game. Every Godot capture in `docs/Godot_Character_Select_References` shows five
+        /// segments, and the meter is the only place the roster's numbers reach the player.
+        /// </summary>
+        private const int GaugeSegments = Core.Roster.TraitMax;
 
         private static void BuildTraitRow(Transform parent, string name, int points)
         {
@@ -215,7 +430,19 @@ namespace TumbangPreso.UI
 
             RefreshTabs();
             RefreshTraits(entry);
+            RefreshBackdropAccent(entry);
             ShowModel(entry);
+        }
+
+        private void RefreshBackdropAccent(RosterEntry entry)
+        {
+            if (_glowImage == null) return;
+
+            var bayanBlue = new Color(0.64f, 0.75f, 1.0f, 1.0f);
+            if (_tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike)
+                _glowImage.color = Color.Lerp(bayanBlue, UiTheme.ColorForHero(entry.Id), 0.52f);
+            else
+                _glowImage.color = bayanBlue;
         }
 
         /// <summary>

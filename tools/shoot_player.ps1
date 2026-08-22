@@ -39,7 +39,12 @@ public class Shot {
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 
 $proc = Start-Process -FilePath $Exe -PassThru
-Start-Sleep -Seconds 12
+# ⚠️ 24 SECONDS, NOT 12. The BH Studios screen is the loading screen now and cannot be
+# skipped: it holds until the shader warm, the roster book, the audio bank and the async
+# MainMenu load have all finished. At 12 seconds the first click landed while the sting was
+# still up, every later click was one screen out of step, and the probe photographed the
+# tutorial instead of a match.
+Start-Sleep -Seconds 24
 [void][Shot]::SetForegroundWindow($proc.MainWindowHandle)
 Start-Sleep -Seconds 2
 
@@ -99,7 +104,7 @@ Snap "01-title"
 
 AimRef 236 471 ; Tap ; Snap "02-mode"           # PLAY          (-123..596, 374..568)
 AimRef 402 450 ; Tap ; Snap "03-setup"          # SINGLE PLAYER (95..709, 400..501)
-AimRef 390 672 ; Tap ; Snap "04-match-ready"    # START MATCH
+AimRef 390 768 ; Tap ; Snap "04-match-ready"    # START MATCH
 
 Start-Sleep -Seconds 4
 Snap "05-match"

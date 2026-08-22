@@ -160,6 +160,7 @@ namespace TumbangPreso.Visual
         {
             float dt = Time.deltaTime > 0.0f ? Time.deltaTime : Time.unscaledDeltaTime;
             if (dt <= 0.0f) dt = 0.016f;
+            dt = Mathf.Min(dt, 0.10f);
 
             float time = (Application.isPlaying ? Time.time : Time.unscaledTime) + _timeOffset;
 
@@ -210,7 +211,17 @@ namespace TumbangPreso.Visual
             Vector3 desiredPos = anchor + floatOffset;
 
             // Smooth position lag / trailing
-            transform.position = Vector3.SmoothDamp(transform.position, desiredPos, ref _currentVelocity, _smoothTime, Mathf.Infinity, dt);
+            if (!IsFinite(transform.position) || !IsFinite(_currentVelocity))
+            {
+                transform.position = desiredPos;
+                _currentVelocity = Vector3.zero;
+            }
+            else
+            {
+                Vector3 next = Vector3.SmoothDamp(transform.position, desiredPos,
+                    ref _currentVelocity, _smoothTime, 30.0f, dt);
+                transform.position = IsFinite(next) ? next : desiredPos;
+            }
 
             // Velocity-based banking tilt & forward pitch into run
             float targetBank = 0.0f;
@@ -243,6 +254,11 @@ namespace TumbangPreso.Visual
                                              _baseScale.z * _fidgetScaleMul.z * (pulse + speedStretchZ));
             transform.localScale = finalScale;
         }
+
+        private static bool IsFinite(Vector3 value)
+            => !float.IsNaN(value.x) && !float.IsInfinity(value.x)
+               && !float.IsNaN(value.y) && !float.IsInfinity(value.y)
+               && !float.IsNaN(value.z) && !float.IsInfinity(value.z);
 
         private void UpdateFidgetAI(float dt, float speed, float time)
         {

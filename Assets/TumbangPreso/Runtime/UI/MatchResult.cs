@@ -20,6 +20,7 @@ namespace TumbangPreso.UI
 
         private Canvas _canvas;
         private Text _message;
+        private Text _broadcastLine;
         private readonly List<Text[]> _rows = new List<Text[]>();
         private Button _rematch;
         private Button _menu;
@@ -58,7 +59,30 @@ namespace TumbangPreso.UI
         private void OnDisable()
         {
             if (GameServices.Match != null) GameServices.Match.MatchEnded -= OnMatchWon;
+
+            // ⚠⚠ WHOEVER STOPPED TIME RESTORES IT, ON EVERY PATH INCLUDING DEATH. This
+            // board was the second class in the project to stop the clock from an instance and
+            // restore it only from a button, which is the exact lifetime fault `Hitstop`'s own
+            // header documents at length. Destroy this object while the board is up, which a
+            // scene unload, a host tearing the match down or a probe ending a run all do, and
+            // `Time.timeScale` stayed 0 for the rest of the process, so the MENUS the player
+            // returned to were frozen and nothing said why.
+            RestoreTime();
         }
+
+        private void OnDestroy() => RestoreTime();
+
+        /// <summary>Undoes this board's own pause, and only its own.</summary>
+        private void RestoreTime()
+        {
+            if (!_stoppedTime) return;
+
+            _stoppedTime = false;
+            Time.timeScale = 1.0f;
+        }
+
+        /// <summary>True while THIS board is the reason the match clock is stopped.</summary>
+        private bool _stoppedTime;
 
         /// <summary>Shown when the match ends. -1 is a genuine draw, not an error.</summary>
         public void OnMatchWon(int winningSlot)
@@ -77,6 +101,14 @@ namespace TumbangPreso.UI
                 _message.color = UiTheme.Cream;
             }
 
+            string mode = SceneFlow.SelectedMode == Core.GameMode.HeroStrike
+                ? "HERO STRIKE"
+                : "CLASSIC";
+            _broadcastLine.text = $"{mode}  ·  FINAL STANDINGS  ·  {Core.Balance.Rounds} ROUNDS";
+            _broadcastLine.color = SceneFlow.SelectedMode == Core.GameMode.HeroStrike
+                ? UiTheme.Highlight
+                : UiTheme.Amber;
+
             RenderStandings(winningSlot);
 
             _rematchVotes.Clear();
@@ -89,7 +121,11 @@ namespace TumbangPreso.UI
 
             // ⚠️ SINGLE PLAYER PAUSES, NETWORKED DOES NOT. A networked peer that froze its own
             // time would stop answering the host.
-            if (!NetAuthority.IsNetworked) Time.timeScale = 0.0f;
+            if (!NetAuthority.IsNetworked)
+            {
+                Time.timeScale = 0.0f;
+                _stoppedTime = true;
+            }
         }
 
         /// <summary>
@@ -169,6 +205,7 @@ namespace TumbangPreso.UI
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
+            AspectSafeCanvas.Apply(scaler);
             canvasGo.AddComponent<GraphicRaycaster>();
 
             // ⚠️ THE BACKDROP IS THE INK NAVY AT 0.72, NOT BLACK AT 0.55. `MatchResult.tscn`
@@ -192,7 +229,11 @@ namespace TumbangPreso.UI
             _message = CardLabel(card, "MessageLabel", 34, UiTheme.Cream, 76,
                                  TextAnchor.MiddleCenter);
 
-            Spacer(card, 16.0f);
+            _broadcastLine = CardLabel(card, "BroadcastLine", 18, UiTheme.Amber, 30,
+                                       TextAnchor.MiddleCenter);
+            _broadcastLine.text = "FINAL STANDINGS";
+
+            Spacer(card, 10.0f);
 
             var standings = SubStack(card, "Standings", 10.0f);
 
@@ -434,7 +475,7 @@ namespace TumbangPreso.UI
             // UI for the scoreboard doesnt dissappear"* — it stays up until the rematch is
             // actually agreed and the next round starts.
             _rematchVotes.Add(0);
-            Time.timeScale = 1.0f;
+            RestoreTime();
 
             // Single player is a vote of one, so it starts immediately. The networked path
             // waits for every playing peer and is pending netcode.
@@ -451,7 +492,7 @@ namespace TumbangPreso.UI
 
         private void OnMenuPressed()
         {
-            Time.timeScale = 1.0f;
+            RestoreTime();
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             SceneFlow.Go(SceneFlow.MainMenu);

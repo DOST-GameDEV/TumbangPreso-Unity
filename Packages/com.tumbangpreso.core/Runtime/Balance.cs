@@ -44,15 +44,40 @@ namespace TumbangPreso.Core
 
         // Tournament Anti-Camping & Anti-Stall Penalties
         public const float TayaCampRadius = 2.2f;
+        public const float TayaCampClearRadius = 2.8f;
+        public const float TayaCampWarningTime = 3.0f;
         public const float TayaCampGracePeriod = 5.0f;
         public const int ScoreTayaCampPenalty = -5;
 
+        public const float SlipperUnretrievedWarningTime = 7.0f;
         public const float SlipperUnretrievedGracePeriod = 10.0f;
         public const int ScoreUnretrievedPenalty = -5;
+        public const float TournamentPenaltyInterval = 1.0f;
+
+        // Hero Strike ultimate economy. Objective play is the primary source;
+        // passive gain only prevents a completely dry round.
+        public const float UltimatePassiveChargePerSecond = 1.0f;
+        public const float UltimateChargeLataKnock = 25.0f;
+        public const float UltimateChargeTag = 20.0f;
+        public const float UltimateChargeLegalThrow = 8.0f;
 
         // Pektus (Curve Spin) Throwing
         public const float PektusCurveStrength = 14.0f;
         public const float MaxPektusSpin = 1.0f;
+        /// <summary>
+        /// How far above a body's feet a resting tsinelas may sit and still be picked up.
+        ///
+        /// ⚠️ IT IS UNDER PickupRadius ON PURPOSE. `Slipper.CanBeGrabbedBy` measures a 3D
+        /// distance from the grabber's transform, which is at their feet, so a slipper this
+        /// high has already spent almost the whole 1.4 m budget on height alone and can only
+        /// be reached by standing exactly underneath it. Anything higher is out of play, and
+        /// a piece of ammunition that is out of play has to be given back rather than lost.
+        /// </summary>
+        public const float SlipperMaxRestReach = 1.2f;
+
+        public const float PektusBankSpinThreshold = 0.55f;
+        public const float PektusBankRestitution = 0.62f;
+        public const int MaxScoringBanks = 1;
 
         // -------------------------------------------------------------------
         // MOVEMENT AND THE ARENA — character_base.gd
@@ -178,6 +203,25 @@ namespace TumbangPreso.Core
         public const float LaunchSpeed = 18.5f;
         public const float SlipperHitRadius = 0.23f;
         public const float MaxFlightTime = 6.0f;
+
+        /// <summary>
+        /// The total time a tsinelas may spend off the ground, deflections included.
+        ///
+        /// ⚠️⚠️ `MaxFlightTime` CANNOT DO THIS JOB, BECAUSE A DEFLECT RESETS IT. Bouncing off a
+        /// body or off the can restarts the per-arc clock on purpose: the new arc genuinely is
+        /// a new flight and deserves its own budget. The consequence nobody wrote down is that a
+        /// slipper which deflects again before that budget runs out never runs it out at all. A
+        /// tsinelas falling onto somebody standing still gets lifted by `DeflectLift`, comes
+        /// straight back down onto them, and hovers there for the rest of the round. Its owner
+        /// is then fined -5 a second under the anti-stall rule for failing to fetch a slipper
+        /// that is not on the ground to be fetched.
+        ///
+        /// ⚠️ IT IS THE SAME 6 SECONDS AS THE PER-ARC CAP RATHER THAN A MULTIPLE. Real throws
+        /// resolve in about a second and a half, so six seconds of accumulated air is already
+        /// far beyond anything the game asks for; a larger number would only mean a longer
+        /// stall before the same recovery.
+        /// </summary>
+        public const float MaxAirborneTime = 6.0f;
         public const float ThrowerIgnoreTime = 0.25f;
 
         /// <summary>

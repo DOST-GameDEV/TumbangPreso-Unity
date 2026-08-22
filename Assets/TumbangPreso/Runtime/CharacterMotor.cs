@@ -181,6 +181,26 @@ namespace TumbangPreso
 
         public void Teleport(Vector3 position)
         {
+            // ⚠️⚠️ THE ARENA WALL IS ENFORCED HERE TOO, AND THIS IS THE PATH THAT ACTUALLY
+            // BROKE IT. `Confine` holds a body that WALKS or is PUSHED at the edge, and a
+            // teleport skips the whole movement step, so a caller handing this an arbitrary
+            // point put a player outside the world with nothing to pull them back. Nemu owns
+            // both such callers: PHANTOM PHASE ends by blinking to wherever the projected
+            // ghost drifted to, and the pet's `EndPossession` teleports Nemu onto the pet.
+            // Neither destination is bounded by anything.
+            //
+            // ⚠️ MEASURED 2026-08-23, and it read as an AI fault rather than an ability one.
+            // A whole Hero Strike match reported a seat 45.8 m out on X against a half width of
+            // 8.6, holding its tsinelas the entire way; it then threw from out there and spent
+            // the rest of the round unable to fetch, because a bot clamps its GOAL to the
+            // playable rectangle and so cannot follow itself out. Clamping at the one function
+            // every teleport already goes through fixes both callers and every future one.
+            //
+            // ⚠️ THE SPAWN MARKS AND THE TAG SAFE ZONE ARE ALL WELL INSIDE THIS, so nothing that
+            // was already correct moves by a millimetre.
+            position.x = Mathf.Clamp(position.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
+            position.z = Mathf.Clamp(position.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+
             _cc.enabled = false;      // CharacterController fights direct transform writes
             transform.position = position;
             _cc.enabled = true;
@@ -402,7 +422,15 @@ namespace TumbangPreso
             // silent, or a unit stepping off a kerb thumps like one that fell off a roof —
             // and on uneven ground the grounded flag flickers, so every step would thud.
             if (_grounded && wasAirborne && _fallSpeed > Balance.LandSfxMinSpeed)
-                GameServices.Audio?.PlayAt("land", transform.position);
+            {
+                float weight = Mathf.InverseLerp(Balance.LandSfxMinSpeed,
+                                                 Balance.MaxFallSpeed, _fallSpeed);
+                GameServices.Audio?.PlayAtVaried("land", transform.position,
+                                                 0.86f, 1.04f,
+                                                 Mathf.Lerp(0.65f, 1.0f, weight));
+                GetComponentInChildren<Visual.CharacterSquashStretch>()?
+                    .Squash(Mathf.Lerp(0.12f, 0.30f, weight));
+            }
 
             // Tracked on the way down, because by the time the capsule is grounded the
             // vertical velocity has already been zeroed.
@@ -439,7 +467,9 @@ namespace TumbangPreso
                 if (Intent.JustPressed(Verb.Jump) && CanAct())
                 {
                     _velocity.y = Balance.JumpVelocity;
-                    GameServices.Audio?.PlayAt("jump", transform.position);
+                    GameServices.Audio?.PlayAtVaried("jump", transform.position,
+                                                     0.96f, 1.08f, 0.9f);
+                    GetComponentInChildren<Visual.CharacterSquashStretch>()?.Stretch(0.20f);
                 }
             }
             else
@@ -499,17 +529,53 @@ namespace TumbangPreso
         /// </summary>
         private void Confine()
         {
-            if (!Confinement.IsConfined(RoundActive, _isDefender)) return;
-
             Vector3 p = transform.position;
             float x = p.x, z = p.z;
-            Confinement.ClampToBox(ref x, ref z);
 
-            if (x != p.x || z != p.z)
+            if (Confinement.IsConfined(RoundActive, _isDefender))
+                Confinement.ClampToBox(ref x, ref z);
+
+            // ⚠️⚠️ AND NOBODY LEAVES THE ARENA AT ALL, ROLE OR NO ROLE. The chalk box above is a
+            // RULE and applies to the taya only; this is the WALL and applies to everybody. The
+            // port had the wall for the tsinelas and not for the people: `Slipper.BounceOffBounds`
+            // has bounced off `PlayableHalfX/Z` since it was written, while a body could walk or
+            // be launched straight through the same line into empty space.
+            //
+            // ⚠️ MEASURED, AND IT IS NOT A CORNER CASE. `AiDiagnosticProbe` on 2026-08-23 caught
+            // seat 3 at z = 18.73 against a half depth of 13.0, eight seconds into a Hero Strike
+            // round, still holding its tsinelas. It threw from out there, the slipper landed at
+            // (62.7, 38.4), and the owner then spent the rest of the round in FETCH walking into
+            // the edge of the world at a goal it clamps but a body it did not. The whole-match
+            // probe reported that as 121 unretrieved-slipper penalties and a seat travelling
+            // 2,359 m: the AI looked broken and was in fact the only thing behaving.
+            //
+            // ⚠️ HERO STRIKE IS WHERE IT SURFACES BUT IT IS NOT A HERO BUG. Its kits apply far
+            // more knockback than Classic's do, so they find the missing wall first. A human
+            // shoved off the same edge in Classic has always had the same hole to fall into.
+            x = Mathf.Clamp(x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
+            z = Mathf.Clamp(z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+
+            if (x == p.x && z == p.z) return;
+
+            _cc.enabled = false;
+            transform.position = new Vector3(x, p.y, z);
+            _cc.enabled = true;
+
+            // ⚠️ THE PUSH THAT REACHED THE WALL IS SPENT AT THE WALL. Without this the body is
+            // clamped back every step while the impulse still points outwards, so a knockback
+            // into the edge reads as being pinned there for its whole duration instead of
+            // stopping against it. Only the component INTO the wall is removed: a knockback
+            // along the edge still slides.
+            if (x != p.x)
             {
-                _cc.enabled = false;
-                transform.position = new Vector3(x, p.y, z);
-                _cc.enabled = true;
+                _externalVelocity.x = 0.0f;
+                _velocity.x = 0.0f;
+            }
+
+            if (z != p.z)
+            {
+                _externalVelocity.z = 0.0f;
+                _velocity.z = 0.0f;
             }
         }
 

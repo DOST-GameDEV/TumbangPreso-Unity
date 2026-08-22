@@ -373,11 +373,27 @@ namespace TumbangPreso
         {
             if (Me.FetchCaution <= 0.0f || taya == null) return true;
 
-            // Waited long enough or unretrieved stall timer running. Go anyway to avoid penalty and keep game moving!
+            var round = GameServices.Round;
+
+            // ⚠️⚠️ THE TOURNAMENT CLOCK OUTRANKS CAUTION, AND IT HAS TO INTERRUPT EARLY ENOUGH
+            // TO ARRIVE. This waited until three quarters of a second before the WARNING, which
+            // is 6.25 s into a 10 s grace: enough time to decide, and not enough to cross an
+            // arena 13 m deep at 4.6 m/s while a hero hazard is in the way. Measured over whole
+            // Hero Strike matches the bots were still walking when the fine started, and the
+            // unretrieved-slipper penalty count swung between 0 and 205 on the personality roll
+            // alone. Half the warning time leaves 6.5 s of travel for a 3 s crossing.
+            //
+            // ⚠️ IT READS THE AUTHORITATIVE TIMER, THE SAME ONE THE HUD COUNTS DOWN. A bot with
+            // its own idea of how long it has been idle can be wrong in the direction that
+            // costs points.
+            if (round != null && round.AttackerIdleSeconds(_motor.PlayerSlot)
+                >= Balance.SlipperUnretrievedWarningTime * 0.5f) return true;
+
+            // Waited long enough. Go anyway to keep the round moving.
             if (_stalkTime >= 2.0f + Me.FetchCaution * 0.4f) return true;
 
             // The can is down: nobody can be tagged at all, so the run is free.
-            var lata = GameServices.Round?.Lata;
+            var lata = round?.Lata;
             if (lata != null && !lata.IsUpright) return true;
 
             // The taya just spent their lunge.
@@ -385,7 +401,7 @@ namespace TumbangPreso
             if (tayaVerbs != null && tayaVerbs.LungeCooldownLeft > 0.35f) return true;
 
             // Somebody ELSE is taggable, so the taya has a better target than me.
-            foreach (var who in GameServices.Round.Players)
+            foreach (var who in round.Players)
                 if (who != null && who != _motor && who.IsTaggable()) return true;
 
             // Or it is simply far enough from them to risk.
@@ -532,6 +548,10 @@ namespace TumbangPreso
         /// a better angle either way.
         /// </summary>
         private bool LaneBlocked(Vector3 origin, Vector3 target, float power)
+            => LaneBlockedWithSpin(origin, target, target, power, 0.0f);
+
+        private bool LaneBlockedWithSpin(Vector3 origin, Vector3 aimTarget, Vector3 arrivalTarget,
+            float power, float spin)
         {
             var round = GameServices.Round;
             if (round == null) return false;
@@ -539,7 +559,7 @@ namespace TumbangPreso
             int skin = _carrier != null && _carrier.Held != null ? _carrier.Held.SkinIndex : -1;
             float speed = ThrowRules.LaunchSpeedFor(skin, power);
 
-            Vector3 flat = target - origin;
+            Vector3 flat = aimTarget - origin;
             flat.y = 0.0f;
 
             float distance = flat.magnitude;
@@ -548,24 +568,33 @@ namespace TumbangPreso
             // ⚠️ THE SAME SOLVE THE THROW ITSELF USES, which is what makes this a prediction
             // rather than a second opinion. It was a fixed 45-degree lob here too, so the bot
             // was walking an arc the game does not fly and answering about the wrong lane.
-            Vector3 launch = Slipper.SolveArc(origin, target, speed) * speed;
+            Vector3 velocity = Slipper.SolveArc(origin, aimTarget, speed) * speed;
 
             float step = Mathf.Clamp(AiTuning.LaneSampleArc / Mathf.Max(speed, 1.0f),
                                      AiTuning.LaneStepMin, AiTuning.LaneStepMax);
 
-            float t = 0.0f;
+            Vector3 point = origin;
 
             for (int i = 0; i < AiTuning.LaneMaxSteps; i++)
             {
-                t += step;
+                velocity.y -= Balance.Gravity * step;
 
-                Vector3 point = origin + launch * t
-                                + Vector3.down * (0.5f * Balance.Gravity * t * t);
+                if (Mathf.Abs(spin) > 0.01f)
+                {
+                    Vector3 flatVelocity = new Vector3(velocity.x, 0.0f, velocity.z);
+                    if (flatVelocity.sqrMagnitude > 0.1f)
+                    {
+                        Vector3 lateral = Vector3.Cross(flatVelocity.normalized, Vector3.up).normalized;
+                        velocity += lateral * (spin * Balance.PektusCurveStrength * step);
+                    }
+                }
 
-                if (Flat(point, target) <= Balance.SlipperHitRadius + 0.30f)
+                point += velocity * step;
+
+                if (Flat(point, arrivalTarget) <= Balance.SlipperHitRadius + 0.30f)
                     return false;                       // it gets there
 
-                if (point.y < target.y - 1.0f)
+                if (point.y < arrivalTarget.y - 1.0f)
                     return true;                        // it fell short of the can's hit band
 
                 foreach (var who in round.Players)
@@ -590,6 +619,49 @@ namespace TumbangPreso
             }
 
             return true;
+        }
+
+        private Vector3 CompensatedPektusAim(Vector3 origin, Vector3 target, float power, float spin)
+        {
+            if (Mathf.Abs(spin) < 0.01f) return target;
+
+            int skin = _carrier != null && _carrier.Held != null ? _carrier.Held.SkinIndex : -1;
+            float speed = ThrowRules.LaunchSpeedFor(skin, power);
+            Vector3 flat = target - origin;
+            flat.y = 0.0f;
+            if (flat.sqrMagnitude < 0.01f) return target;
+
+            Vector3 launch = Slipper.SolveArc(origin, target, speed) * speed;
+            float flightTime = flat.magnitude /
+                Mathf.Max(new Vector2(launch.x, launch.z).magnitude, 0.1f);
+            Vector3 lateral = Vector3.Cross(flat.normalized, Vector3.up).normalized;
+            Vector3 drift = lateral * (0.5f * spin * Balance.PektusCurveStrength
+                                       * flightTime * flightTime);
+            return target - Vector3.ClampMagnitude(drift, 3.0f);
+        }
+
+        private float ChoosePektusSpin(Vector3 origin, Vector3 target, float power)
+        {
+            if (ActiveDifficulty == Difficulty.Bata) return 0.0f;
+            if (!LaneBlockedWithSpin(origin, target, target, power, 0.0f)) return 0.0f;
+
+            float[] candidates = ActiveDifficulty == Difficulty.Astig
+                ? new[] { -0.55f, 0.55f, -1.0f, 1.0f }
+                : new[] { -0.55f, 0.55f };
+
+            // Alternate the first side by seat so coordinated attackers do not all
+            // bend into the same interception lane.
+            if ((_motor.PlayerSlot & 1) != 0)
+                System.Array.Reverse(candidates);
+
+            foreach (float candidate in candidates)
+            {
+                Vector3 aim = CompensatedPektusAim(origin, target, power, candidate);
+                if (!LaneBlockedWithSpin(origin, aim, target, power, candidate))
+                    return candidate;
+            }
+
+            return 0.0f;
         }
 
         /// <summary>
@@ -696,6 +768,7 @@ namespace TumbangPreso
             // across frames on purpose, which is what the touch sweep at the bottom is for.
             intent.Move = Vector2.zero;
             intent.Set(Verb.Sprint, false);
+            if (Plan != AiPlan.Windup) intent.SpinInput = 0.0f;
 
             switch (Plan)
             {
@@ -735,8 +808,17 @@ namespace TumbangPreso
             // ⚠️ SPRINT THE LAST STRETCH INTO THE BOX AND NOTHING ELSE. The retrieval is the
             // only moment an attacker is taggable, and the whole bar is 1.25 s of sprint.
             // Spending it anywhere else spends it where it does not matter.
+            // ⚠️ AND THE ANTI-STALL CLOCK IS A REASON TO SPRINT. The other two conditions ask
+            // whether the run is dangerous or long; this one asks whether it is already late.
+            // A bot that walks the last stretch while the fine is ticking is spending points to
+            // save stamina it has no other use for.
+            var round = GameServices.Round;
+            bool late = round != null
+                        && round.AttackerIdleSeconds(_motor.PlayerSlot)
+                           >= Balance.SlipperUnretrievedWarningTime * 0.5f;
+
             bool hurry = distance > AiTuning.Reach
-                         && (MineIsExposed(mine) || distance > AiTuning.SprintDistance);
+                         && (late || MineIsExposed(mine) || distance > AiTuning.SprintDistance);
 
             Goto(intent, where, AiTuning.Reach * 0.75f, hurry);
 
@@ -868,6 +950,7 @@ namespace TumbangPreso
                 _blundering = Blunder();
                 _windupScatter = RollScatter();
                 _windupPower = PlanPower(lata);
+                _windupSpin = 0.0f;
             }
 
             _windupTime += dt;
@@ -884,7 +967,11 @@ namespace TumbangPreso
                 settle = Mathf.Lerp(1.0f, AiTuning.AimSettleFloor,
                                     Mathf.Clamp01(_windupTime / Mathf.Max(Me.AimSettle, 0.05f)));
 
-            intent.AimPoint = aim + _windupScatter * settle;
+            Vector3 target = aim + _windupScatter * settle;
+            Vector3 origin = _carrier.ThrowOrigin();
+            _windupSpin = ChoosePektusSpin(origin, target, _windupPower);
+            intent.AimPoint = CompensatedPektusAim(origin, target, _windupPower, _windupSpin);
+            intent.SpinInput = _windupSpin;
 
             float power = _carrier.ChargeRatio;
             Press(intent, Verb.SpecialAbility, true);
@@ -906,9 +993,7 @@ namespace TumbangPreso
             if (_windupTime < minHold) return;
 
             // Charged and committed. The only question left is whether the lane is open.
-            Vector3 origin = _carrier.ThrowOrigin();
-
-            if (!_blundering && LaneBlocked(origin, intent.AimPoint, power))
+            if (!_blundering && LaneBlockedWithSpin(origin, intent.AimPoint, target, power, _windupSpin))
             {
                 _windupWait += dt;
                 if (_windupWait < Me.LanePatience) return;
@@ -929,7 +1014,6 @@ namespace TumbangPreso
         private void ReleaseThrow(InputIntent intent)
         {
             Press(intent, Verb.SpecialAbility, false);   // the release IS the throw
-            intent.SpinInput = 0.0f;
             _windup = false;
             _goalValid = false;
             _commitLeft = 0.0f;
@@ -1049,8 +1133,10 @@ namespace TumbangPreso
 
             if (threat == null)
             {
-                // Stand outside the can-camping penalty ring (at least 2.7m away)
-                Vector3 safeGuard = lata.transform.position + Vector3.forward * (Balance.TayaCampRadius + 0.6f);
+                // Clear the hysteresis ring with a real movement margin. Stopping exactly
+                // on the clear radius still counts as camping by the tournament rule.
+                Vector3 safeGuard = lata.transform.position + Vector3.forward
+                    * (Balance.TayaCampClearRadius + 0.35f);
                 Goto(intent, ClampToBox(safeGuard), AiTuning.ArriveSlop, false);
                 return;
             }
@@ -1061,7 +1147,8 @@ namespace TumbangPreso
 
             if (toward.magnitude < 0.05f) toward = Vector3.forward;
 
-            float guardRadius = Mathf.Max(AiTuning.GuardRadius, Balance.TayaCampRadius + 0.6f);
+            float guardRadius = Mathf.Max(AiTuning.GuardRadius,
+                Balance.TayaCampClearRadius + 0.35f);
             Vector3 post = lata.transform.position + toward.normalized * guardRadius;
 
             Goto(intent, ClampToBox(post), AiTuning.ArriveSlop,
@@ -1865,6 +1952,18 @@ namespace TumbangPreso
                 // retrieval has to come through the taya rather than around it. `Camp` decides
                 // how far up the line that is: 0 leaves it standing on the can.
                 Vector3 candidate = at + toward.normalized * (0.6f + 0.9f * Me.Camp);
+
+                // A loose slipper near the lata must not lure the defender back into a
+                // penalized can camp. Cover its approach from outside the clear radius.
+                Vector3 fromCan = candidate - lata.transform.position;
+                fromCan.y = 0.0f;
+                float safeRadius = Balance.TayaCampClearRadius + 0.25f;
+                if (fromCan.magnitude < safeRadius)
+                {
+                    if (fromCan.sqrMagnitude < 0.01f) fromCan = toward;
+                    candidate = lata.transform.position + fromCan.normalized * safeRadius;
+                }
+
                 float distance = Flat(transform.position, candidate);
 
                 if (distance >= bestDistance) continue;
@@ -2018,74 +2117,71 @@ namespace TumbangPreso
 
         private void StepHeroAbilities(InputIntent intent, float dt)
         {
-            if (UI.SceneFlow.SelectedMode != GameMode.HeroStrike) return;
+            if (UI.SceneFlow.SelectedMode != GameMode.HeroStrike)
+            {
+                ReleaseUntouchedHeroButtons(intent);
+                return;
+            }
 
             var abilitySystem = _motor.AbilitySystem;
-            if (abilitySystem == null || abilitySystem.Kit == null) return;
+            if (abilitySystem == null || abilitySystem.Kit == null)
+            {
+                ReleaseUntouchedHeroButtons(intent);
+                return;
+            }
 
             var kit = abilitySystem.Kit;
             var round = GameServices.Round;
-            if (round == null || !round.RoundActive) return;
+            if (round == null || !round.RoundActive)
+            {
+                ReleaseUntouchedHeroButtons(intent);
+                return;
+            }
 
             Vector3 myPos = transform.position;
+            CharacterMotor target = _motor.IsDefender ? TagTarget() : DefenderOf(round);
+            float targetDistance = target != null
+                ? Flat(myPos, target.transform.position)
+                : float.MaxValue;
+            var lata = round.Lata;
+            float lataDistance = lata != null
+                ? Flat(myPos, lata.transform.position)
+                : float.MaxValue;
 
             // 1. Ultimate Decision
             if (kit.IsUltimateReady)
             {
                 if (kit is Abilities.DanteHeroKit)
                 {
-                    foreach (var p in round.Players)
-                    {
-                        if (p != null && p.PlayerSlot != _motor.PlayerSlot && Vector3.Distance(myPos, p.transform.position) <= 9.0f)
-                        {
-                            Tap(intent, Verb.Ultimate);
-                            break;
-                        }
-                    }
+                    bool safeForOwnCan = !_motor.IsDefender || lataDistance > 10.0f;
+                    if (targetDistance <= 9.0f && safeForOwnCan) Tap(intent, Verb.Ultimate);
                 }
                 else if (kit is Abilities.CheskaHeroKit)
                 {
-                    foreach (var p in round.Players)
-                    {
-                        if (p != null && p.PlayerSlot != _motor.PlayerSlot && Vector3.Distance(myPos, p.transform.position) <= 7.0f)
-                        {
-                            Tap(intent, Verb.Ultimate);
-                            break;
-                        }
-                    }
+                    if (targetDistance <= 7.0f) Tap(intent, Verb.Ultimate);
                 }
                 else if (kit is Abilities.SeanHeroKit)
                 {
-                    if (round.Lata != null && Vector3.Distance(myPos, round.Lata.transform.position) <= 6.0f)
+                    // Attackers may deliberately meteor the lata. A defending Sean must
+                    // never spend an ultimate knocking over their own objective.
+                    if (!_motor.IsDefender && lata != null && lata.IsUpright && lataDistance <= 6.0f)
                     {
                         Tap(intent, Verb.Ultimate);
                     }
-                    else
+                    else if (targetDistance <= 7.5f
+                             && (!_motor.IsDefender || lataDistance > 9.0f))
                     {
-                        foreach (var p in round.Players)
-                        {
-                            if (p != null && p.PlayerSlot != _motor.PlayerSlot && Vector3.Distance(myPos, p.transform.position) <= 7.5f)
-                            {
-                                Tap(intent, Verb.Ultimate);
-                                break;
-                            }
-                        }
+                        Tap(intent, Verb.Ultimate);
                     }
                 }
                 else if (kit is Abilities.ZackHeroKit)
                 {
-                    foreach (var p in round.Players)
-                    {
-                        if (p != null && p.PlayerSlot != _motor.PlayerSlot && Vector3.Distance(myPos, p.transform.position) <= 8.0f)
-                        {
-                            Tap(intent, Verb.Ultimate);
-                            break;
-                        }
-                    }
+                    if (targetDistance <= 8.0f) Tap(intent, Verb.Ultimate);
                 }
                 else if (kit is Abilities.NemuHeroKit)
                 {
-                    Tap(intent, Verb.Ultimate);
+                    Vector3 voidCenter = myPos + transform.forward * 4.5f;
+                    if (HasRelevantVoidTarget(voidCenter, 7.5f)) Tap(intent, Verb.Ultimate);
                 }
             }
 
@@ -2094,36 +2190,37 @@ namespace TumbangPreso
             {
                 if (kit is Abilities.DanteHeroKit)
                 {
-                    foreach (var p in round.Players)
-                    {
-                        if (p != null && p.PlayerSlot != _motor.PlayerSlot && Vector3.Distance(myPos, p.transform.position) <= 5.0f)
-                        {
-                            Tap(intent, Verb.Skill1);
-                            break;
-                        }
-                    }
+                    if (targetDistance <= 5.0f
+                        && (!_motor.IsDefender || lataDistance > 6.5f))
+                        Tap(intent, Verb.Skill1);
                 }
                 else if (kit is Abilities.CheskaHeroKit)
                 {
-                    if (_driving) Tap(intent, Verb.Skill1);
+                    if (_driving && (Plan == AiPlan.Fetch || Plan == AiPlan.Withdraw
+                                     || targetDistance <= 6.0f))
+                        Tap(intent, Verb.Skill1);
                 }
                 else if (kit is Abilities.SeanHeroKit)
                 {
-                    if (_driving && (_motor.HoldingSlipper || Plan == AiPlan.Fetch || Plan == AiPlan.Withdraw))
-                    {
+                    if (_driving && (Plan == AiPlan.Fetch || Plan == AiPlan.Withdraw
+                                     || targetDistance <= 4.0f))
                         Tap(intent, Verb.Skill1);
-                    }
                 }
                 else if (kit is Abilities.ZackHeroKit)
                 {
-                    if (_driving) Tap(intent, Verb.Skill1);
+                    if (_driving && (Plan == AiPlan.Withdraw || targetDistance <= 5.0f))
+                        Tap(intent, Verb.Skill1);
                 }
                 else if (kit is Abilities.NemuHeroKit)
                 {
-                    if (_motor.IsTaggable() || _motor.IsDefender)
-                    {
+                    // Phase before the pickup/engage. Using it while carrying now breaks
+                    // instantly by design and was wasting the bot's cooldown every time.
+                    bool phaseApproach = !_motor.HoldingSlipper
+                        && (Plan == AiPlan.Fetch || Plan == AiPlan.Stalk)
+                        && targetDistance <= 6.0f;
+                    bool phaseDefence = _motor.IsDefender && targetDistance <= 4.0f;
+                    if (phaseApproach || phaseDefence)
                         Tap(intent, Verb.Skill1);
-                    }
                 }
             }
 
@@ -2132,40 +2229,53 @@ namespace TumbangPreso
             {
                 if (kit is Abilities.DanteHeroKit)
                 {
-                    if (_motor.IsTaggable() || _motor.IsDefender)
-                    {
+                    if (targetDistance <= 4.5f || _motor.IsTaggable())
                         Tap(intent, Verb.Skill2);
-                    }
                 }
                 else if (kit is Abilities.CheskaHeroKit)
                 {
-                    if (_motor.IsDefender && round.Lata != null && Vector3.Distance(myPos, round.Lata.transform.position) <= 4.0f)
-                    {
+                    if (targetDistance <= 6.0f
+                        && (!_motor.IsDefender || lataDistance > Balance.TayaCampRadius))
                         Tap(intent, Verb.Skill2);
-                    }
                 }
                 else if (kit is Abilities.SeanHeroKit)
                 {
-                    if (_motor.HoldingSlipper)
-                    {
+                    if (_motor.HoldingSlipper && round.CanThrow(_motor))
                         Tap(intent, Verb.Skill2);
-                    }
                 }
                 else if (kit is Abilities.ZackHeroKit)
                 {
-                    if (_motor.HoldingSlipper)
-                    {
+                    if (_motor.HoldingSlipper && round.CanThrow(_motor))
                         Tap(intent, Verb.Skill2);
-                    }
                 }
                 else if (kit is Abilities.NemuHeroKit)
                 {
-                    if (_driving)
-                    {
+                    if (_driving && (Plan == AiPlan.Fetch || Plan == AiPlan.Stalk
+                                     || targetDistance <= 6.0f))
                         Tap(intent, Verb.Skill2);
-                    }
                 }
             }
+
+            ReleaseUntouchedHeroButtons(intent);
+        }
+
+        private void ReleaseUntouchedHeroButtons(InputIntent intent)
+        {
+            if (!_touched.Contains(Verb.Skill1)) Press(intent, Verb.Skill1, false);
+            if (!_touched.Contains(Verb.Skill2)) Press(intent, Verb.Skill2, false);
+            if (!_touched.Contains(Verb.Ultimate)) Press(intent, Verb.Ultimate, false);
+        }
+
+        private bool HasRelevantVoidTarget(Vector3 center, float radius)
+        {
+            foreach (var slipper in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            {
+                if (slipper == null || slipper.State != SlipperState.Loose) continue;
+                if (!_motor.IsDefender && slipper.OwnerSlot != _motor.PlayerSlot) continue;
+                if (Flat(center, slipper.transform.position) <= radius) return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -2196,6 +2306,7 @@ namespace TumbangPreso
         private float _windupTime;
         private float _windupWait;
         private float _windupPower = 1.0f;
+        private float _windupSpin;
         private Vector3 _windupScatter;
         private bool _blundering;
         private float _lungeHeld = -1.0f;

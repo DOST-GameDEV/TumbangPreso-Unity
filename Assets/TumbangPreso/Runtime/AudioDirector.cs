@@ -121,6 +121,16 @@ namespace TumbangPreso
         }
 
         public void PlayAt(string id, Vector3 position)
+            => PlayAtVaried(id, position, 1.0f, 1.0f, 1.0f);
+
+        /// <summary>
+        /// Plays a world cue with a small pitch window. Repeated slippers, footsteps and
+        /// impacts otherwise expose that they are the exact same recording within seconds.
+        /// The volume multiplier is intentionally clamped: this is expression inside the
+        /// authored mix, not a route around its headroom.
+        /// </summary>
+        public void PlayAtVaried(string id, Vector3 position, float pitchMin = 0.94f,
+                                 float pitchMax = 1.06f, float volumeScale = 1.0f)
         {
             if (!_cues.TryGetValue(id, out var cue))
             {
@@ -139,8 +149,29 @@ namespace TumbangPreso
 
             voice.transform.position = position;
             voice.clip = cue.Clip;
-            voice.volume = cue.Volume * SfxScale();
+            voice.pitch = Random.Range(Mathf.Min(pitchMin, pitchMax),
+                                       Mathf.Max(pitchMin, pitchMax));
+            voice.volume = cue.Volume * SfxScale() * Mathf.Clamp(volumeScale, 0.0f, 1.25f);
             voice.Play();
+        }
+
+        /// <summary>
+        /// Two restrained layers for the few match-defining impacts. The low-pitched layer
+        /// supplies weight while the primary keeps the event recognisable. A very short music
+        /// duck makes room for the transient without making the whole mix louder.
+        /// </summary>
+        public void PlayImpact(string primary, string weightLayer, Vector3 position,
+                               float energy = 1.0f)
+        {
+            energy = Mathf.Clamp01(energy);
+            PlayAtVaried(primary, position, 0.96f, 1.04f, Mathf.Lerp(0.82f, 1.0f, energy));
+
+            if (!string.IsNullOrEmpty(weightLayer) && weightLayer != primary)
+                PlayAtVaried(weightLayer, position, 0.72f, 0.84f,
+                             Mathf.Lerp(0.28f, 0.52f, energy));
+
+            GameServices.Music?.Duck(Mathf.Lerp(-2.5f, -5.0f, energy),
+                                     Mathf.Lerp(0.10f, 0.20f, energy));
         }
 
         /// <summary>
@@ -184,6 +215,10 @@ namespace TumbangPreso
                 // the call site already had.
                 made.spatialBlend = 1.0f;
                 made.playOnAwake = false;
+                made.dopplerLevel = 0.0f;
+                made.rolloffMode = AudioRolloffMode.Linear;
+                made.minDistance = 2.0f;
+                made.maxDistance = 32.0f;
 
                 _voices.Add(made);
                 return made;

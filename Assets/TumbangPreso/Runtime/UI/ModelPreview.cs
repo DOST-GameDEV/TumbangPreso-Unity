@@ -100,19 +100,13 @@ namespace TumbangPreso.UI
         public const float FacingYaw = 180.0f;
 
         /// <summary>
-        /// ⚠️⚠️ THE .tscn's TWO ENERGIES ARE 1.35 AND 0.45 AND THEY ARE SCALED HERE, NOT
-        /// RETUNED. One factor keeps the RATIO between key and fill exactly as authored, which is
-        /// the part that makes the shot read as lit rather than flat.
-        ///
-        /// ⚠️ IT WENT TO 1.0 FOR ONE BUILD AND BLEW THE FACE OUT TO NEAR WHITE. The reasoning
-        /// was that the tonemap and the ambient had since been built, so the compensation was no
-        /// longer needed. Measured against the toon bench, which is the render that reads
-        /// correctly: the bench lights a character with ONE key at 1.15 plus its ambient, and
-        /// 1.35 + 0.45 unscaled is 1.8 of direct light, 57% more. 0.66 puts the key at 0.891 and
-        /// the fill at 0.297, so the direct total lands at 1.19 against the bench's 1.15. That
-        /// agreement is why the number is this and not something rounder.
+        /// The CharacterSelect scene authors key 1.35 and fill 0.45. Keep those energies exact:
+        /// this preview has its own Godot-matched tonemap and ambient, and scaling them down to
+        /// the arena bench made every Classic palette several stops darker and more saturated
+        /// than its Godot character-select reference. This factor exists only to keep both call
+        /// sites tied to one explicit conversion value.
         /// </summary>
-        public const float LightExposure = 0.66f;
+        public const float LightExposure = 1.0f;
 
         /// <summary>
         /// ⚠️⚠️ THE PREVIEW HAD NO AMBIENT OF ITS OWN AND INHERITED THE MENU'S, WHICH IS WHY THE
@@ -151,6 +145,16 @@ namespace TumbangPreso.UI
 
         public const float TurnDegrees = 38.0f;
         public const float TurnPeriod = 9.0f;
+        /// <summary>
+        /// ⚠️ FRONT ON, WHICH IS WHAT THE APPROVED GODOT CAPTURES SHOW. This briefly started at
+        /// 0.58 of the sweep, three quarters turned, on the reasoning that a broad voxel head
+        /// looked stretched square on. That was the render target clamping one axis
+        /// independently, and it is fixed in `EnsureTexture`; the turn was compensating for a
+        /// bug rather than for the art. Every reference shot in
+        /// `docs/Godot_Character_Select_References` greets the player face on, and the slow
+        /// sweep still carries the character through three quarters a moment later.
+        /// </summary>
+        public const float InitialTurnPhase = 0.0f;
 
         public const float OrbitSensitivity = 0.4f;
         public const float OrbitPitchMin = -55.0f;
@@ -423,15 +427,26 @@ namespace TumbangPreso.UI
 
             var rect = _panel.rect;
 
-            int width = Mathf.Clamp(Mathf.RoundToInt(rect.width), 64, 2048);
-            int height = Mathf.Clamp(Mathf.RoundToInt(rect.height), 64, 2048);
-
             if (rect.width < 1.0f || rect.height < 1.0f) return;
+
+            // Cap memory without ever clamping one axis independently. On a 2560x1440 monitor
+            // the old code produced 2048x1440, changed the camera from 16:9 to 64:45, and then
+            // stretched that texture back across a 16:9 panel. That is a literal wide-character
+            // distortion at the resolutions where the new fullscreen build is meant to run.
+            float scale = Mathf.Min(1.0f, 2048.0f / Mathf.Max(rect.width, rect.height));
+            int width = Mathf.Max(64, Mathf.RoundToInt(rect.width * scale));
+            int height = Mathf.Max(64, Mathf.RoundToInt(rect.height * scale));
+
             if (_texture != null && _texture.width == width && _texture.height == height) return;
 
             var old = _texture;
 
-            _texture = new RenderTexture(width, height, 24) { name = "PreviewRT" };
+            _texture = new RenderTexture(width, height, 24)
+            {
+                name = "PreviewRT",
+                antiAliasing = 4,
+                filterMode = FilterMode.Bilinear,
+            };
             _camera.targetTexture = _texture;
             _surface.texture = _texture;
 
@@ -525,7 +540,11 @@ namespace TumbangPreso.UI
             // A new subject gets a fresh sweep: the player picked this one to look at, and the
             // arc's phase carrying over means one pick greets you front-on and the next shows
             // you its ear.
-            _turnPhase = 0.0f;
+            // Begin at the same readable three-quarter silhouette shown in the approved Godot
+            // captures. Starting square-on makes the broad-headed voxel rigs look horizontally
+            // stretched even when the projection is mathematically correct; the slow sweep can
+            // still travel through front-on after the player has already read the character.
+            _turnPhase = InitialTurnPhase;
 
             _needsFrame = true;
         }
@@ -574,6 +593,7 @@ namespace TumbangPreso.UI
             if (idle == null) return;
 
             _idle = idle;
+            _idleStartedAt = Time.unscaledTime;
 
             // ⚠️⚠️ AN ANIMATOR ON THE PREVIEW FIGHTS THE SAMPLING AND WINS. `SampleAnimation`
             // writes the pose straight onto the transforms; an Animator that is enabled with no
@@ -601,6 +621,7 @@ namespace TumbangPreso.UI
 
         /// <summary>The clip the preview stands in, sampled by hand. See PlayIdle.</summary>
         private AnimationClip _idle;
+        private float _idleStartedAt;
 
         /// <summary>
         /// ⚠️ SAMPLED RATHER THAN PLAYED THROUGH A GRAPH, AND THAT IS DELIBERATE.
@@ -613,7 +634,8 @@ namespace TumbangPreso.UI
         {
             if (_idle == null || _model == null) return;
 
-            _idle.SampleAnimation(_model, Time.unscaledTime % Mathf.Max(0.01f, _idle.length));
+            float elapsed = Mathf.Max(0.0f, Time.unscaledTime - _idleStartedAt);
+            _idle.SampleAnimation(_model, elapsed % Mathf.Max(0.01f, _idle.length));
         }
 
         /// <summary>
@@ -666,16 +688,36 @@ namespace TumbangPreso.UI
 
             bool any = false;
             Bounds bounds = default;
+            bool anyPosed = false;
+            Bounds posed = default;
 
             foreach (var r in _model.GetComponentsInChildren<Renderer>())
             {
-                // ⚠️ A SKINNED RENDERER'S BOUNDS ARE THE REST POSE UNLESS THIS IS SET, and the
-                // rest pose here is the T-pose. Asking for the posed bounds is what makes the
-                // measurement agree with what is actually on screen.
+                // ⚠️⚠️ THE POSED SILHOUETTE IS MEASURED TOO, AND ONLY THE PITCH USES IT. See the
+                // flatness note at the bottom of this function: the rest pose of these rigs is a
+                // T-pose, so it is nearly twice as wide as it is tall, and a pitch chosen from
+                // it decides a standing character is a thing lying on the ground and tilts the
+                // camera down onto the top of its head. That is what the first build of the
+                // restored Classic screen actually showed, against a Godot reference that looks
+                // BERTO in the face. Distance still comes from the rest bounds, because that is
+                // the measurement Godot frames against and it is the one that got the character
+                // back to the reference size.
                 if (r is SkinnedMeshRenderer skinned) skinned.updateWhenOffscreen = true;
 
-                if (!any) { bounds = r.bounds; any = true; }
-                else bounds.Encapsulate(r.bounds);
+                if (!anyPosed) { posed = r.bounds; anyPosed = true; }
+                else posed.Encapsulate(r.bounds);
+
+                // Godot's MeshInstance3D.get_aabb() measures the imported mesh in its REST pose.
+                // The Classic rigs rest in a T-pose, so that wider silhouette deliberately moves
+                // the camera back before the idle folds the arms in. Renderer.bounds measures
+                // Unity's currently animated pose instead, which made every restored Classic
+                // character roughly a third larger than the Godot reference and cropped their
+                // idle sweep near the edge. Transform localBounds ourselves to preserve the
+                // original rest-pose framing rule.
+                Bounds world = TransformBounds(r.localBounds, r.localToWorldMatrix);
+
+                if (!any) { bounds = world; any = true; }
+                else bounds.Encapsulate(world);
             }
 
             if (!any) return;
@@ -713,10 +755,30 @@ namespace TumbangPreso.UI
                 _frameDistance = (extent * FrameMargin * 0.5f) / (halfFov * Mathf.Min(aspect, 1.0f));
             }
 
-            float flatness = Mathf.Clamp01(height / width);
+            float poseHeight = anyPosed ? Mathf.Max(posed.size.y, 0.001f) : height;
+            float poseWidth = anyPosed
+                ? Mathf.Max(Mathf.Max(posed.size.x, posed.size.z), 0.001f)
+                : width;
+
+            float flatness = Mathf.Clamp01(poseHeight / poseWidth);
             _framePitch = Mathf.Lerp(CameraPitchFlatDegrees, CameraPitchDegrees, flatness);
 
             _needsFrame = false;
+        }
+
+        private static Bounds TransformBounds(Bounds local, Matrix4x4 matrix)
+        {
+            Vector3 centre = matrix.MultiplyPoint3x4(local.center);
+            Vector3 x = matrix.MultiplyVector(new Vector3(local.extents.x, 0.0f, 0.0f));
+            Vector3 y = matrix.MultiplyVector(new Vector3(0.0f, local.extents.y, 0.0f));
+            Vector3 z = matrix.MultiplyVector(new Vector3(0.0f, 0.0f, local.extents.z));
+
+            var extents = new Vector3(
+                Mathf.Abs(x.x) + Mathf.Abs(y.x) + Mathf.Abs(z.x),
+                Mathf.Abs(x.y) + Mathf.Abs(y.y) + Mathf.Abs(z.y),
+                Mathf.Abs(x.z) + Mathf.Abs(y.z) + Mathf.Abs(z.z));
+
+            return new Bounds(centre, extents * 2.0f);
         }
 
         private void LateUpdate()
@@ -828,7 +890,7 @@ namespace TumbangPreso.UI
             _userPitch = 0.0f;
             _userZoom = 1.0f;
             _userTookOver = false;
-            _turnPhase = 0.0f;
+            _turnPhase = InitialTurnPhase;
 
             if (_model != null)
                 _model.transform.localRotation = Quaternion.Euler(0.0f, FacingYaw, 0.0f);

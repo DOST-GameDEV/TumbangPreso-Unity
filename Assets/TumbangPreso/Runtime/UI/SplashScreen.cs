@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Video;
-using TumbangPreso.Core;
 
 namespace TumbangPreso.UI
 {
@@ -14,12 +13,11 @@ namespace TumbangPreso.UI
     /// ⚠️ EVERY TIME IS LITERAL. There is no "seen it already" flag and no skip-on-second-launch.
     /// That was an explicit call and it is not an oversight to fix.
     ///
-    /// ⚠️⚠️ IT MUST BE SKIPPABLE AND IT MUST NEVER STRAND THE PLAYER. Two independent exits,
-    /// because a splash that hangs is worse than no splash at all:
-    ///   1. any key, click or button skips immediately, and
-    ///   2. <see cref="MaxWait"/> is a hard watchdog.
-    /// If the video fails to decode, the file is missing from a build, or the finished callback
-    /// never fires on some driver, the game still reaches the menu.
+    /// ⚠️⚠️ THIS IS ALSO THE BOOT LOADING SCREEN, SO INPUT NEVER SKIPS IT. Earlier builds let a
+    /// buffered click jump straight to the menu while shaders, audio and both rosters were still
+    /// cold. That merely moved the wait to the first PLAY or CHARACTER press, where it looked
+    /// like the UI had frozen. The sting now stays up until both its presentation and the preload
+    /// barrier are complete.
     ///
     /// ⚠️⚠️ THE CLIP AND THE STING ARE ASSIGNED BY THE IMPORTER, NOT BY HAND. They are
     /// serialised fields and for the whole first conversion nothing ever set them: the component
@@ -33,14 +31,8 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed class SplashScreen : MonoBehaviour
     {
-        /// <summary>The clip is 3.0 s; this is that plus slack for a slow first-frame decode.</summary>
+        /// <summary>When crossed, log that loading is slow but keep the barrier intact.</summary>
         public const float MaxWait = 6.0f;
-
-        /// <summary>
-        /// ⚠️ INPUT IS IGNORED FOR A MOMENT so a keypress still in the buffer from launching
-        /// the game does not skip the sting before it is even visible.
-        /// </summary>
-        public const float SkipArmedAfter = 0.35f;
 
         [SerializeField] private VideoClip _clip;
         [SerializeField] private AudioClip _sting;
@@ -53,6 +45,8 @@ namespace TumbangPreso.UI
         private AsyncOperation _menu;
         private float _elapsed;
         private bool _leaving;
+        private bool _assetsPreloaded;
+        private bool _slowLoadReported;
 
         private void Start()
         {
@@ -99,13 +93,17 @@ namespace TumbangPreso.UI
                 fade = Mathf.Clamp01(_elapsed / 0.35f);
                 SetFade(1.0f - fade);
 
-                if (_elapsed >= SkipArmedAfter && AnyInput()) break;
+                bool presentationComplete = _clip == null
+                    ? _elapsed >= 0.5f
+                    : (_video.isPrepared && !_video.isPlaying && _elapsed > 0.5f);
 
-                // Exit 1: the clip finished honestly.
-                if (_clip != null && _video.isPrepared && !_video.isPlaying && _elapsed > 0.5f) break;
+                if (presentationComplete && PreloadComplete) break;
 
-                // Exit 2: the watchdog. See the class note.
-                if (_elapsed >= MaxWait) break;
+                if (!_slowLoadReported && _elapsed >= MaxWait)
+                {
+                    _slowLoadReported = true;
+                    Debug.LogWarning("[Splash] preload exceeded six seconds; keeping the BH loading screen visible until it is genuinely ready.");
+                }
 
                 yield return null;
             }
@@ -196,10 +194,12 @@ namespace TumbangPreso.UI
             _ = Roster.Cans;
             _ = Roster.Slippers;
             yield return null;
+
+            _assetsPreloaded = true;
         }
 
-        private static bool AnyInput() =>
-            Input.anyKeyDown || Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1);
+        private bool PreloadComplete =>
+            _assetsPreloaded && (_menu == null || _menu.progress >= 0.9f);
 
         private void SetFade(float alpha)
         {
@@ -236,6 +236,7 @@ namespace TumbangPreso.UI
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
             scaler.matchWidthOrHeight = 1.0f;
+            AspectSafeCanvas.Apply(scaler);
 
             // ⚠️ THE CONVERTED SCENE'S OWN CONTENT IS HIDDEN, not drawn underneath. `SplashScreen.tscn`
             // authors a Letterbox panel, a Video rect, a Fade and a SkipHint, and every one of
@@ -273,7 +274,7 @@ namespace TumbangPreso.UI
             // obvious tell that a screen was rebuilt rather than converted.
             var hint = hintGo.AddComponent<Text>();
             hint.font = MenuKit.Font;
-            hint.text = "press any key to skip";
+            hint.text = "loading game assets...";
             hint.fontSize = 20;
             hint.color = new Color(1, 1, 1, 0.45f);
             hint.alignment = TextAnchor.LowerRight;

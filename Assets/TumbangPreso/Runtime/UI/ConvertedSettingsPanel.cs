@@ -385,7 +385,7 @@ namespace TumbangPreso.UI
 
                 // ⚠️ APPLIED, NOT ONLY STORED. Fullscreen was saved and displayed and never
                 // actually set for the whole port, so the box claimed the opposite of the window.
-                Screen.fullScreen = v;
+                SettingsStore.Current.ApplyDisplay();
             });
         }
 

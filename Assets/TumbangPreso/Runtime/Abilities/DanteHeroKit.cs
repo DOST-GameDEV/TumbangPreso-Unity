@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using TumbangPreso.Visual;
@@ -177,6 +178,7 @@ namespace TumbangPreso.Abilities
                 forward.Normalize();
 
                 var round = ctx.Round;
+                var directlyHit = new HashSet<int>();
                 if (round != null)
                 {
                     foreach (var p in round.Players)
@@ -192,6 +194,7 @@ namespace TumbangPreso.Abilities
                             float angle = Vector3.Angle(forward, diff.normalized);
                             if (angle <= 45.0f)
                             {
+                                directlyHit.Add(p.PlayerSlot);
                                 Vector3 launch = forward * 9.0f + Vector3.up * 11.0f;
                                 p.ApplyImpulse(launch);
                                 p.ApplyStagger(2.2f);
@@ -202,7 +205,8 @@ namespace TumbangPreso.Abilities
                     }
                 }
 
-                HeroHazards.CreateExplosion(ctx.Position + forward * 3.5f, 6.5f, 16.0f, 2.0f, ctx.Motor.PlayerSlot, "KABOOM!");
+                HeroHazards.CreateExplosion(ctx.Position + forward * 3.5f, 6.5f, 16.0f, 2.0f,
+                    ctx.Motor.PlayerSlot, "KABOOM!", directlyHit);
 
                 // Spawn 6 basalt earth pillars in forward arc
                 for (int i = -2; i <= 3; i++)

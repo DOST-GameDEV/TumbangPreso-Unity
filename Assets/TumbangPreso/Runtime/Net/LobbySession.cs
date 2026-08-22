@@ -144,12 +144,48 @@ namespace TumbangPreso.Net
                 Name = Settings.GameSettings.SanitiseName(name),
             };
 
+            // A replacement connection can arrive before the transport's generous 30 second
+            // timeout declares the old one dead. Same durable token means the new transport
+            // connection takes over the existing peer record immediately; otherwise a quick
+            // relaunch is misclassified as a newcomer and receives a different seat.
+            PeerRecord replaced = null;
+            if (!string.IsNullOrEmpty(record.Token))
+            {
+                foreach (var connected in _peers.Values)
+                {
+                    if (connected.Token != record.Token) continue;
+                    replaced = connected;
+                    break;
+                }
+            }
+
+            if (replaced != null)
+            {
+                record.Seat = replaced.Seat;
+                record.Spectator = replaced.Spectator;
+                record.CharacterPick = replaced.CharacterPick;
+                record.CanPick = replaced.CanPick;
+                record.SlipperPick = replaced.SlipperPick;
+                _peers.Remove(replaced.PeerId);
+
+                if (LeaderPeerId == replaced.PeerId)
+                {
+                    LeaderPeerId = peerId;
+                    LeaderChanged?.Invoke(peerId);
+                }
+            }
+
             // ⚠ THE DEDICATED SERVER'S OWN PEER IS RULED ON BEFORE ARRIVAL RULES APPLY, because
             // it is not arriving to play. IsSeatlessReferee was already honoured by leader
             // election and by both peer counts, but not here, so on a dedicated host the server
             // process took seat 0 and the first real player was handed seat 1. A four player
             // match then had three human seats and a referee holding the fourth.
-            if (IsSeatlessReferee(peerId))
+            if (replaced != null)
+            {
+                // The complete role/round state is reapplied by MatchRpc after this transport
+                // record is swapped. Seating must stay stable here.
+            }
+            else if (IsSeatlessReferee(peerId))
             {
                 record.Seat = -1;
                 record.Spectator = true;
@@ -243,6 +279,15 @@ namespace TumbangPreso.Net
 
             return null;
         }
+
+        /// <summary>
+        /// Looks up transport identity, not gameplay seat. These integers often happen to
+        /// match for the first few local connections, which is why passing a peer id into
+        /// PeerInSeat survived until a reconnect received client id 5 and silently found no
+        /// seat at all.
+        /// </summary>
+        public PeerRecord PeerById(int peerId)
+            => _peers.TryGetValue(peerId, out var peer) ? peer : null;
 
         public bool IsSeatOccupied(int seat) => PeerInSeat(seat) != null || _heldSeats.ContainsKey(seat);
 

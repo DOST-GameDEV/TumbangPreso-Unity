@@ -219,8 +219,10 @@ namespace TumbangPreso
             // The same 45 degree launch every range bound in the game is solved against.
             Vector3 dir = (aim.normalized + Vector3.up).normalized;
 
-            GameServices.Audio?.PlayAt("throw_release", origin);
+            GameServices.Audio?.PlayAtVaried("throw_release", origin, 0.94f, 1.07f, 0.95f);
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
+            GetComponentInChildren<Visual.CharacterSquashStretch>()?.DashStretch(transform.forward, 0.14f);
+            UI.Hud.ReportStyle(_motor.PlayerSlot, 5.0f, "LET FLY");
 
             Held.HostThrow(_motor, origin, Held.LaunchVelocity(dir, Mathf.Clamp01(charge)));
 
@@ -248,11 +250,13 @@ namespace TumbangPreso
 
             if (what == null) return;
 
-            GameServices.Audio?.PlayAt("pickup", transform.position);
+            GameServices.Audio?.PlayAtVaried("pickup", transform.position, 0.96f, 1.08f, 0.9f);
 
             // Reaching down for a loose tsinelas — the literal clip for the job, and it now
             // reaches the first-person arm through the same call. See CharacterAnimator.PlayAction.
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("grab");
+            GetComponentInChildren<Visual.CharacterSquashStretch>()?.Squash(0.13f);
+            UI.Hud.ReportStyle(_motor.PlayerSlot, 14.0f, "SNATCH!");
 
             _throwLockLeft = what.ThrowLock;
         }
@@ -592,8 +596,12 @@ namespace TumbangPreso
 
             Vector3 origin = ThrowOrigin();
 
-            GameServices.Audio?.PlayAt("throw_release", origin);
+            GameServices.Audio?.PlayAtVaried("throw_release", origin, 0.94f, 1.07f, 0.95f);
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
+            GetComponentInChildren<Visual.CharacterSquashStretch>()?.DashStretch(transform.forward, 0.14f);
+            UI.Hud.ReportStyle(_motor.PlayerSlot,
+                               5.0f + Mathf.Abs(spin) * 7.0f,
+                               Mathf.Abs(spin) >= 0.4f ? "PEKTUS CURVE" : "LET FLY");
 
             var ability = _motor.AbilitySystem;
             ability?.OnThrowReleased();
@@ -667,6 +675,8 @@ namespace TumbangPreso
             if (_channel >= lata.ResetChannelTime)
             {
                 lata.HostRestore();
+                GetComponentInChildren<Visual.CharacterSquashStretch>()?.Stretch(0.18f);
+                UI.Hud.ReportStyle(_motor.PlayerSlot, 24.0f, "BANGON!");
                 _channel = 0.0f;
                 ChannelRatio = 0.0f;
             }

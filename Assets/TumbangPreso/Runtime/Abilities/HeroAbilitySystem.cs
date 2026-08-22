@@ -18,7 +18,11 @@ namespace TumbangPreso.Abilities
         private CombatVerbs _verbs;
         private AbilityContext _context;
 
-        public bool IsImmuneToTags => Kit is NemuHeroKit nemu && nemu.IsPhantomPhaseActive;
+        // Phantom Phase is an approach/escape tool, not a risk-free objective carry.
+        // Picking up a slipper immediately restores tag vulnerability.
+        public bool IsImmuneToTags => Kit is NemuHeroKit nemu
+            && nemu.IsPhantomPhaseActive
+            && (_motor == null || !_motor.HoldingSlipper);
         public bool IsImmuneToStuns => Kit is DanteHeroKit dante && dante.IsDemonicCarapaceActive;
 
         private GroundReticle _reticle;
@@ -93,8 +97,8 @@ namespace TumbangPreso.Abilities
             {
                 if (Kit.TryActivateSkill1(_context))
                 {
-                    GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("dash");
-                    CameraSystem.CameraRig.PlayViewmodelAction(_motor, "thrust");
+                    GetComponentInChildren<Visual.CharacterAnimator>()?
+                        .PlayAction("dash", "thrust");
                 }
             }
 
@@ -102,8 +106,8 @@ namespace TumbangPreso.Abilities
             {
                 if (Kit.TryActivateSkill2(_context))
                 {
-                    GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("shove");
-                    CameraSystem.CameraRig.PlayViewmodelAction(_motor, "cast");
+                    GetComponentInChildren<Visual.CharacterAnimator>()?
+                        .PlayAction("shove", "cast");
                 }
             }
 
@@ -111,10 +115,30 @@ namespace TumbangPreso.Abilities
             {
                 if (Kit.TryActivateUltimate(_context))
                 {
-                    GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("jump");
-                    CameraSystem.CameraRig.PlayViewmodelAction(_motor, "slam");
+                    GetComponentInChildren<Visual.CharacterAnimator>()?
+                        .PlayAction("jump", "slam");
+                    PlayUltimatePresentation();
                 }
             }
+        }
+
+        private void PlayUltimatePresentation()
+        {
+            var camera = UnityEngine.Camera.main;
+            if (camera == null) return;
+
+            var rig = camera.GetComponent<CameraSystem.CameraRig>();
+            bool isLocalHero = rig != null && rig.IsFollowing(_motor);
+            float distance = Vector3.Distance(camera.transform.position, _context.Position);
+            float falloff = isLocalHero ? 1.0f : Mathf.InverseLerp(22.0f, 5.0f, distance);
+            if (falloff <= 0.01f) return;
+
+            Vector3 away = camera.transform.position - _context.Position;
+            if (away.sqrMagnitude < 0.01f) away = -_context.Forward;
+            rig?.ImpactPunch(away.normalized, 0.9f * falloff);
+            camera.GetComponent<Visual.ColourGrade>()?.PulseChromatic(0.75f * falloff, 0.32f);
+
+            if (isLocalHero) Hitstop.Trigger(0.045f, 0.12f);
         }
 
         private void UpdateReticle(InputIntent intent)
@@ -146,17 +170,17 @@ namespace TumbangPreso.Abilities
 
         public void OnLataKnocked()
         {
-            Kit?.AddUltimateCharge(25.0f);
+            Kit?.AddUltimateCharge(Balance.UltimateChargeLataKnock);
         }
 
         public void OnTagScored()
         {
-            Kit?.AddUltimateCharge(20.0f);
+            Kit?.AddUltimateCharge(Balance.UltimateChargeTag);
         }
 
         public void OnThrowReleased()
         {
-            Kit?.AddUltimateCharge(8.0f);
+            Kit?.AddUltimateCharge(Balance.UltimateChargeLegalThrow);
         }
 
         public void ResetKit()

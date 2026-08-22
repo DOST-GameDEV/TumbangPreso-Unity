@@ -86,8 +86,19 @@ namespace TumbangPreso
         /// </summary>
         public Vector3 Velocity => _velocity;
         private float _flightTime;
+
+        /// <summary>Time in the air since the throw, which a deflect deliberately does NOT
+        /// reset. See <see cref="Balance.MaxAirborneTime"/>.</summary>
+        private float _airborneTotal;
         private int _throwerSlot = -1;
         private float _throwerIgnoreLeft;
+        private int _bankCount;
+        private float _closestCanFlat = float.PositiveInfinity;
+        private bool _nearMissReported;
+
+        public int BankCount => _bankCount;
+        public bool HasScoringCredit => _throwerSlot >= 0;
+        public int ThrowerSlot => _throwerSlot;
 
         public float FlightScale => Roster.SlipperFlightScale(_skinIndex);
         public float ThrowLock => ThrowRules.ThrowLockFor(_skinIndex);
@@ -412,12 +423,53 @@ namespace TumbangPreso
 
         public float PektusSpin { get; private set; }
 
+        /// <summary>
+        /// Restores authoritative slipper state for a late join without firing pickup sounds,
+        /// animation, scoring, or throw feedback. Both halves of the carrier relationship are
+        /// rewritten so a reclaimed player never has a slipper visually in hand while the
+        /// slipper still believes somebody else owns it.
+        /// </summary>
+        public void ApplySnapshotState(SlipperState state, CharacterMotor holder,
+                                       Vector3 position, Quaternion rotation,
+                                       Vector3 velocity, float pektusSpin,
+                                       SlipperAffinity affinity, int throwerSlot)
+        {
+            if (Holder != null && Holder != holder)
+                Holder.GetComponent<Carrier>()?.NotifyHolding(null);
+
+            transform.SetPositionAndRotation(position, rotation);
+            SetState(state);
+            Holder = state == SlipperState.Held ? holder : null;
+            _velocity = state == SlipperState.InFlight ? velocity : Vector3.zero;
+            PektusSpin = state == SlipperState.InFlight
+                ? Mathf.Clamp(pektusSpin, -Balance.MaxPektusSpin, Balance.MaxPektusSpin)
+                : 0.0f;
+            Affinity = state == SlipperState.InFlight ? affinity : SlipperAffinity.Normal;
+            _throwerSlot = state == SlipperState.InFlight ? throwerSlot : -1;
+            _flightTime = 0.0f;
+            _airborneTotal = 0.0f;
+            _throwerIgnoreLeft = 0.0f;
+            _bankCount = 0;
+            _closestCanFlat = float.PositiveInfinity;
+            _nearMissReported = false;
+
+            if (Holder != null)
+            {
+                Holder.HoldingSlipper = true;
+                Holder.GetComponent<Carrier>()?.NotifyEquipped(this);
+            }
+        }
+
         public void HostThrow(CharacterMotor thrower, Vector3 origin, Vector3 velocity, SlipperAffinity affinity = SlipperAffinity.Normal, float pektusSpin = 0.0f)
         {
             SetState(SlipperState.InFlight);
             _throwerSlot = thrower != null ? thrower.PlayerSlot : -1;
             Affinity = affinity;
             PektusSpin = Mathf.Clamp(pektusSpin, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
+            _bankCount = 0;
+            _airborneTotal = 0.0f;
+            _closestCanFlat = float.PositiveInfinity;
+            _nearMissReported = false;
 
             if (Mathf.Abs(PektusSpin) > 0.4f)
             {
@@ -539,6 +591,7 @@ namespace TumbangPreso
 
             float dt = Time.fixedDeltaTime;
             _flightTime += dt;
+            _airborneTotal += dt;
             if (_throwerIgnoreLeft > 0.0f) _throwerIgnoreLeft -= dt;
 
             _velocity.y -= Balance.Gravity * dt;
@@ -577,6 +630,8 @@ namespace TumbangPreso
                 return;
             }
 
+            TrackClassicNearMiss(round?.Lata);
+
             // ⚠️ THEN ANY STANDING BODY, ATTACKERS INCLUDED. Three of them crowding one box
             // means friendly fire is part of the traffic, and a slipper that passed through
             // teammates would make the Defender's body block the only block in the game.
@@ -604,8 +659,41 @@ namespace TumbangPreso
             // recovery instead.
             if (transform.position.y <= GroundY(transform.position) + Balance.SlipperRestHeight)
                 Land(fromFlight: true);
-            else if (_flightTime >= Balance.MaxFlightTime)
+            else if (_flightTime >= Balance.MaxFlightTime
+                     || _airborneTotal >= Balance.MaxAirborneTime)
                 Land(fromFlight: false);
+        }
+
+        /// <summary>
+        /// Turns a genuinely close miss into useful drama. It waits until the slipper is
+        /// moving away from its closest approach, so a hit on the next physics step is never
+        /// announced as a miss. Hero Strike already has affinity feedback; this is part of
+        /// Classic Mode's street-skill identity.
+        /// </summary>
+        private void TrackClassicNearMiss(Lata lata)
+        {
+            if (_nearMissReported || _throwerSlot < 0 || lata == null
+                || UI.SceneFlow.SelectedMode != GameMode.Classic || _flightTime < 0.12f)
+                return;
+
+            Vector3 delta = transform.position - lata.transform.position;
+            delta.y = 0.0f;
+            float distance = delta.magnitude;
+
+            if (distance < _closestCanFlat)
+            {
+                _closestCanFlat = distance;
+                return;
+            }
+
+            if (_closestCanFlat > 1.35f || distance < _closestCanFlat + 0.12f) return;
+
+            _nearMissReported = true;
+            Visual.ComicPopup.Spawn(lata.transform.position + Vector3.up * 0.9f,
+                                    "SABLAY!", UI.UiTheme.Highlight, 0.9f);
+            GameServices.Audio?.PlayAtVaried("slipper_bounce", lata.transform.position,
+                                             1.08f, 1.18f, 0.55f);
+            UI.Hud.ReportStyle(_throwerSlot, 10.0f, "SO CLOSE");
         }
 
         /// <summary>
@@ -677,20 +765,45 @@ namespace TumbangPreso
             float limitZ = AIController.PlayableHalfZ - Balance.SlipperHitRadius;
 
             Vector3 p = transform.position;
+            bool bounced = false;
+            float restitution = Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold
+                                && _bankCount == 0
+                ? Balance.PektusBankRestitution
+                : Balance.BounceRestitution;
 
             if (limitX > 0.0f && Mathf.Abs(p.x) > limitX)
             {
                 p.x = Mathf.Sign(p.x) * limitX;
-                _velocity.x = -Mathf.Sign(p.x) * Mathf.Abs(_velocity.x) * Balance.BounceRestitution;
+                _velocity.x = -Mathf.Sign(p.x) * Mathf.Abs(_velocity.x) * restitution;
+                bounced = true;
             }
 
             if (limitZ > 0.0f && Mathf.Abs(p.z) > limitZ)
             {
                 p.z = Mathf.Sign(p.z) * limitZ;
-                _velocity.z = -Mathf.Sign(p.z) * Mathf.Abs(_velocity.z) * Balance.BounceRestitution;
+                _velocity.z = -Mathf.Sign(p.z) * Mathf.Abs(_velocity.z) * restitution;
+                bounced = true;
             }
 
             transform.position = p;
+
+            if (!bounced) return;
+
+            _bankCount++;
+            GameServices.Audio?.PlayAtVaried("slipper_land", transform.position,
+                                             0.88f, 1.08f, 0.85f);
+
+            if (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
+            {
+                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.35f,
+                    "BANK!", UI.UiTheme.Highlight, 1.0f);
+                UI.Hud.ReportStyle(_throwerSlot, 18.0f, "BANK SHOT");
+            }
+
+            // One authored bank can still score. Further wall contacts remain valid
+            // physics but lose player credit, preventing pinball loops from farming cans.
+            if (_bankCount > Balance.MaxScoringBanks)
+                _throwerSlot = -1;
         }
 
         /// <summary>
@@ -724,13 +837,17 @@ namespace TumbangPreso
             // A body block is a hit too — it is the taya's entire passive verb.
             blocker.GetComponentInChildren<Visual.CharacterVisual>()?.FlashHit();
             Visual.ImpactBurst.SpawnAt(blocker.transform.position);
+            blocker.GetComponentInChildren<Visual.CharacterSquashStretch>()?
+                .Impact(_velocity, 0.22f);
 
             // ⚠️⚠️ AND IT MAKES A SOUND, WHICH IT DID NOT. `slipper.gd:1170` plays `hit_body` on
             // exactly this path. This function's own header says a verb with no feedback is a
             // verb the player cannot tell they performed, and it then gave the block a flash and
             // a burst and left it silent — so the one thing a taya can do without pressing
             // anything was the one thing they could not hear.
-            GameServices.Audio?.PlayAt("hit_body", transform.position);
+            GameServices.Audio?.PlayImpact("hit_body", "guard_block",
+                                           transform.position, 0.72f);
+            UI.Hud.ReportStyle(blocker.PlayerSlot, 12.0f, "HARANG!");
 
             float speed = Combat.BlockKnockbackSpeed(_skinIndex, blocker.CharacterIndex);
             Vector3 along = _velocity;
@@ -831,7 +948,38 @@ namespace TumbangPreso
             // ORIGIN sitting at the volume centroid, so "resting on the floor is half a slipper
             // up" — half a slipper up FROM THE FLOOR, which is what has to be found first.
             Vector3 p = transform.position;
-            transform.position = new Vector3(p.x, GroundY(p) + RestHeight, p.z);
+            float rest = GroundY(p) + RestHeight;
+
+            // ⚠️⚠️ A SLIPPER THAT COMES TO REST OUT OF REACH DELETES AN ATTACKER FROM THE ROUND,
+            // AND IT IS NOT RARE. `GroundY` casts down from six metres up and takes the HIGHEST
+            // surface it meets, which is exactly right for a raised slab and exactly wrong for a
+            // roof, an awning, a market stall or a hero hazard: the flight ends ON TOP of it and
+            // the tsinelas stays there for the rest of the round.
+            //
+            // ⚠️ MEASURED, NOT IMAGINED. `AiDiagnosticProbe` on 2026-08-23 caught two of the
+            // four tsinelas ending a Hero Strike round frozen at y = 3.46 and y = 3.39, both
+            // reading `grabbable=False`, with their owners standing directly underneath them in
+            // FETCH for 28 of the 30 seconds sampled. The whole-match probe then showed what
+            // that costs: 3 throws, 1 knockdown and 679 unretrieved-slipper penalties, because
+            // the anti-stall rule keeps charging an attacker who has nothing it can reach. It is
+            // most of what "ai is broken af in every game mode" actually was. The bots were
+            // playing correctly against a board that had taken their pieces away.
+            //
+            // ⚠️ IT RETURNS TO THE OWNER RATHER THAN DROPPING STRAIGHT DOWN. Dropping would put
+            // it inside whatever it landed on top of, and the void branch above already declares
+            // the intended rule for ammunition that leaves play: give it back rather than let
+            // the round quietly lose a piece of itself.
+            if (rest > ReachablePlaneY() + Balance.SlipperMaxRestReach)
+            {
+                p = OwnerMark();
+                rest = GroundY(p) + RestHeight;
+
+                // A recovery is not a landing: no thud, and no landed highlight pointing at a
+                // place the throw never reached.
+                fromFlight = false;
+            }
+
+            transform.position = new Vector3(p.x, rest, p.z);
 
             // ⚠️ AND IT MAKES A SOUND. A throw that hit a body played one cue and a throw that
             // hit the can played another, but a throw that simply MISSED, 38 of 71 flights in
@@ -843,13 +991,75 @@ namespace TumbangPreso
             if (fromFlight)
             {
                 TriggerAffinityImpact();
-                GameServices.Audio?.PlayAt("slipper_land", transform.position);
+                GameServices.Audio?.PlayAtVaried("slipper_land", transform.position,
+                                                 0.88f, 1.08f, 0.88f);
             }
 
             // § THE LANDED HIGHLIGHT. Written AFTER the state above, never before: SetState
             // clears the flag on any move out of Loose, so setting it first would be undone by
             // the very transition that brought us here.
             SetLandedHighlight(fromFlight);
+        }
+
+        /// <summary>
+        /// The height a body's feet are actually at, which is what a pickup is measured from.
+        /// `CanBeGrabbedBy` compares against `who.transform.position`, so this is the plane a
+        /// reachable slipper has to be near.
+        /// </summary>
+        private float ReachablePlaneY()
+        {
+            var round = GameServices.Round;
+            if (round == null) return 0.0f;
+
+            var owner = _ownerSlot >= 0 ? round.PlayerAt(_ownerSlot) : null;
+            if (owner != null) return owner.transform.position.y;
+
+            return round.Lata != null ? round.Lata.transform.position.y : 0.0f;
+        }
+
+        /// <summary>
+        /// Where an unreachable slipper is given back. The owner's own feet when there is an
+        /// owner standing somewhere, and the seat's mark on the attacker ring when there is
+        /// not, which is the position `SliceRunner.ResetWorld` would have chosen.
+        /// </summary>
+        private Vector3 OwnerMark()
+        {
+            var round = GameServices.Round;
+            var owner = round != null && _ownerSlot >= 0 ? round.PlayerAt(_ownerSlot) : null;
+            if (owner != null) return owner.transform.position;
+
+            float ring = Confinement.AttackerSpawnRing();
+            float bearing = Mathf.Max(0, _ownerSlot) * Mathf.PI * 0.5f;
+            return new Vector3(Mathf.Sin(bearing) * ring, 0.0f, Mathf.Cos(bearing) * ring);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE SWEEP EXISTS BECAUSE LANDING IS NOT THE ONLY WAY TO END UP STRANDED. A
+        /// tsinelas can land legitimately on a hero hazard that is still standing, pass the
+        /// check in `Land`, and be left floating when the hazard expires underneath it a few
+        /// seconds later. Nothing runs on that slipper afterwards: `FixedUpdate` returns on the
+        /// first line while it is Loose, so there is no path back into `Land` at all and the
+        /// piece is gone for the rest of the round.
+        ///
+        /// ⚠️ HALF A SECOND, NOT EVERY FRAME. The check is a raycast per slipper and the fault
+        /// it catches is measured in whole seconds, so polling it on the frame buys nothing.
+        /// </summary>
+        private float _reachSweepAccum;
+
+        private void Update()
+        {
+            if (State != SlipperState.Loose) return;
+            if (!NetAuthority.ShouldResolve()) return;
+
+            _reachSweepAccum += Time.deltaTime;
+            if (_reachSweepAccum < 0.5f) return;
+            _reachSweepAccum = 0.0f;
+
+            if (transform.position.y <= ReachablePlaneY() + Balance.SlipperMaxRestReach) return;
+
+            Vector3 mark = OwnerMark();
+            transform.position = new Vector3(mark.x, GroundY(mark) + RestHeight, mark.z);
+            SetLandedHighlight(false);
         }
     }
 }

@@ -103,6 +103,10 @@ namespace TumbangPreso.UI
         private readonly Text[] _scoreNames = new Text[Balance.PlayerCount];
         private readonly Text[] _scoreMarks = new Text[Balance.PlayerCount];
         private readonly Text[] _scoreValues = new Text[Balance.PlayerCount];
+        private readonly RectTransform[] _scoreRows = new RectTransform[Balance.PlayerCount];
+        private readonly float[] _scorePulses = new float[Balance.PlayerCount];
+        private readonly int[] _lastScoreBySlot = new int[Balance.PlayerCount];
+        private bool _scoresInitialised;
         private RectTransform _scoreboardRt;
 
         private Image _lataCard;
@@ -146,6 +150,17 @@ namespace TumbangPreso.UI
         private RectTransform _ultRt;
         private bool _lastUltReady;
 
+        private GameObject _classicDeck;
+        private Text _classicTitle;
+        private Text _classicEvent;
+        private Image _classicFill;
+        private RectTransform _classicDeckRt;
+        private float _streetHype;
+        private float _streetHypeGrace;
+        private float _streetHypePunch;
+        private bool _streetHypeMaxCelebrated;
+        private int _streetHypeRound = -1;
+
         private readonly List<StatusRow> _rows = new List<StatusRow>();
         private readonly List<StatusRow> _states = new List<StatusRow>();
         private readonly List<StatusRow> _cooldowns = new List<StatusRow>();
@@ -185,7 +200,7 @@ namespace TumbangPreso.UI
             {
                 _readyPrompt.text = SceneFlow.SelectedMode == GameMode.HeroStrike
                     ? "🎮 PRACTICE TIME! (SCORES PAUSED) - TEST YOUR HERO POWERS! Press [R] when ready."
-                    : "Walk around freely. Press [R] when you're ready to start the round.";
+                    : "STREET WARM-UP  ·  PRACTICE PEKTUS CURVES  ·  Press [R] when ready.";
                 _readyPrompt.enabled = show;
             }
             RefreshObjective(show);
@@ -212,9 +227,18 @@ namespace TumbangPreso.UI
             // Two sentences for the taya because it IS two jobs, and a player who only hears
             // "guard the lata" stands on the base and never tags anybody. Two for the attacker
             // for the same reason: the retrieval run is the half people miss.
-            _readyObjective.text = defending
-                ? "GUARD THE LATA.  TAG ANYONE HOLDING A SLIPPER."
-                : "KNOCK THE LATA DOWN.  RETRIEVE FROM THE BOX.";
+            if (SceneFlow.SelectedMode == GameMode.HeroStrike)
+            {
+                _readyObjective.text = defending
+                    ? "CONTROL THE BOX WITH YOUR KIT.  TAG THE RETRIEVER."
+                    : "COMBO YOUR HERO POWERS.  CREATE A RETRIEVAL WINDOW.";
+            }
+            else
+            {
+                _readyObjective.text = defending
+                    ? "GUARD THE LATA.  BODY-BLOCK SHOTS.  TAG THE RETRIEVER."
+                    : "CURVE OR BANK THE THROW.  THEN RISK THE RETRIEVAL.";
+            }
 
             _readyObjective.color = defending ? UiTheme.Defense : UiTheme.Offense;
             _readyObjective.enabled = true;
@@ -392,11 +416,15 @@ namespace TumbangPreso.UI
             // player's own award, because a floater about somebody else's points is noise on
             // your screen. The SOUND is the match reacting, and the original plays it off
             // `score_changed` without asking whose slot it was.
-            GameServices.Audio?.PlayAt("score_award", Vector3.zero);
+            int points = MatchRules.PointsFor(e);
+            GameServices.Audio?.PlayAtVaried("score_award", Vector3.zero,
+                                             points < 0 ? 0.78f : 0.96f,
+                                             points < 0 ? 0.86f : 1.04f,
+                                             points < 0 ? 0.65f : 0.9f);
 
             if (_local == null || _local.PlayerSlot != slot) return;
 
-            ShowToast($"+{MatchRules.PointsFor(e)}  {LabelOf(e)}", 1.2f);
+            ShowToast($"{(points > 0 ? "+" : "")}{points}  {LabelOf(e)}", 1.2f);
         }
 
         private static string LabelOf(ScoreEvent e)
@@ -406,6 +434,8 @@ namespace TumbangPreso.UI
                 case ScoreEvent.LataKnocked: return "LATA DOWN";
                 case ScoreEvent.Sabotage: return "SABOTAGE";
                 case ScoreEvent.Tag: return "TAG";
+                case ScoreEvent.TayaCampPenalty: return "CAMPING";
+                case ScoreEvent.UnretrievedSlipperPenalty: return "SLIPPER IDLE";
                 default: return "DEFENSE";
             }
         }
@@ -457,6 +487,8 @@ namespace TumbangPreso.UI
             if (_stackLeft != null) _stackLeft.gameObject.SetActive(false);
             if (_stackRight != null) _stackRight.gameObject.SetActive(false);
             if (_indicators != null) _indicators.gameObject.SetActive(false);
+            if (_heroDeck != null) _heroDeck.SetActive(false);
+            if (_classicDeck != null) _classicDeck.SetActive(false);
 
             BuildSpectatorReadout();
         }
@@ -464,6 +496,7 @@ namespace TumbangPreso.UI
         private Text _spectatorLegend;
         private Text _spectatorStatus;
         private Text _spectatorHint;
+        private Text _spectatorLiveBug;
         private CameraSystem.SpectatorCamera _spectatorCamera;
         private string _spectatorStatusShown = "";
         private bool _spectatorControlsVisible = true;
@@ -478,22 +511,28 @@ namespace TumbangPreso.UI
 
             _spectatorStatus = HudLabel(_root, "SpectatorStatus", 22, UiTheme.Cream,
                                         TextAnchor.MiddleCenter);
-            Place(_spectatorStatus.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 88),
+            Place(_spectatorStatus.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 108),
                   new Vector2(900, 32));
 
             _spectatorLegend = HudLabel(_root, "SpectatorLegend", 18, UiTheme.Cream,
                                         TextAnchor.MiddleCenter);
-            Place(_spectatorLegend.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 56),
-                  new Vector2(1600, 28));
+            Place(_spectatorLegend.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 48),
+                  new Vector2(1700, 54));
 
             _spectatorLegend.text = CameraSystem.SpectatorCamera.ControlsText();
 
-            _spectatorHint = HudLabel(_root, "SpectatorHint", 14, UiTheme.CreamMuted,
+            _spectatorHint = HudLabel(_root, "SpectatorHint", MenuKit.MinReadableUnits, UiTheme.CreamMuted,
                                       TextAnchor.LowerRight);
             Place(_spectatorHint.rectTransform, new Vector2(1.0f, 0.0f), new Vector2(-24, 20),
-                  new Vector2(240, 24));
+                  new Vector2(310, 28));
             _spectatorHint.text = "[C] CONTROLS OVERLAY";
             _spectatorHint.enabled = true;
+
+            _spectatorLiveBug = HudLabel(_root, "BroadcastBug", 20, UiTheme.Danger,
+                                          TextAnchor.MiddleRight, 4);
+            Place(_spectatorLiveBug.rectTransform, new Vector2(1.0f, 1.0f),
+                  new Vector2(-24, -24), new Vector2(260, 34));
+            _spectatorLiveBug.text = "● LIVE";
         }
 
         public void SetSpectatorControlsVisible(bool visible)
@@ -527,6 +566,25 @@ namespace TumbangPreso.UI
 
             _spectatorStatusShown = text;
             _spectatorStatus.text = text;
+
+            if (_spectatorLiveBug != null)
+            {
+                if (text.Contains("REPLAY"))
+                {
+                    _spectatorLiveBug.text = "⏪ INSTANT REPLAY";
+                    _spectatorLiveBug.color = UiTheme.Highlight;
+                }
+                else if (text.Contains("PAUSE"))
+                {
+                    _spectatorLiveBug.text = "⏸ TACTICAL PAUSE";
+                    _spectatorLiveBug.color = UiTheme.Amber;
+                }
+                else
+                {
+                    _spectatorLiveBug.text = "● LIVE";
+                    _spectatorLiveBug.color = UiTheme.Danger;
+                }
+            }
         }
 
         public bool IsCleanFeed => _cleanFeed;
@@ -607,6 +665,7 @@ namespace TumbangPreso.UI
             {
                 UpdateTimer(dt);
                 UpdateScores();
+                UpdateScorePulses(dt);
                 UpdateLataCard();
                 UpdateToast(dt);
                 UpdateCountdown(dt);
@@ -618,9 +677,11 @@ namespace TumbangPreso.UI
 
             UpdateTimer(dt);
             UpdateScores();
+            UpdateScorePulses(dt);
             UpdateLataCard();
             UpdateStatus();
             UpdateHeroDeck();
+            UpdateClassicDeck(dt);
             UpdateDanger();
             UpdateToast(dt);
             UpdateCountdown(dt);
@@ -640,24 +701,25 @@ namespace TumbangPreso.UI
             var carrier = _local.GetComponent<Carrier>();
             if (carrier != null && carrier.IsCharging)
             {
+                _crosshair.fontSize = 22;
                 float spin = carrier.CurrentPektusSpin;
-                if (spin < -0.2f)
+                float magnitude = Mathf.Abs(spin);
+                if (magnitude > 0.08f)
                 {
-                    _crosshair.text = "◀◀ PEKTUS";
-                    _crosshair.color = UiTheme.Highlight;
-                }
-                else if (spin > 0.2f)
-                {
-                    _crosshair.text = "PEKTUS ▶▶";
+                    string arrow = magnitude >= 0.85f ? "◀◀◀" : magnitude >= 0.45f ? "◀◀" : "◀";
+                    if (spin > 0.0f) arrow = arrow.Replace('◀', '▶');
+                    string bank = magnitude >= Balance.PektusBankSpinThreshold ? "\nBANK READY" : "";
+                    _crosshair.text = $"{arrow}  PEKTUS {Mathf.RoundToInt(magnitude * 100.0f)}%{bank}";
                     _crosshair.color = UiTheme.Highlight;
                 }
                 else
                 {
-                    _crosshair.text = "+";
+                    _crosshair.text = "+\nPEKTUS 0%";
                 }
             }
             else
             {
+                _crosshair.fontSize = 34;
                 _crosshair.text = "+";
             }
 
@@ -786,10 +848,18 @@ namespace TumbangPreso.UI
 
                 int slot = order[i];
                 bool isTaya = slot == m.DefenderSlot;
+                int scoreNow = m.ScoreFor(slot);
+
+                if (_scoresInitialised)
+                {
+                    int delta = scoreNow - _lastScoreBySlot[slot];
+                    if (Mathf.Abs(delta) >= 20) _scorePulses[i] = 0.34f;
+                }
+                _lastScoreBySlot[slot] = scoreNow;
 
                 _scoreNames[i].text = SeatName(slot);
                 _scoreMarks[i].text = isTaya ? TayaBadge : "";
-                _scoreValues[i].text = m.ScoreFor(slot).ToString();
+                _scoreValues[i].text = scoreNow.ToString();
 
                 // ⚠️ NO LEADING BULLET — THE COLOUR IS THE MARK. 🧑 2026-08-02: *"the arrow
                 // makes the names of the characters not aligned"*. The prefix was one character
@@ -801,6 +871,22 @@ namespace TumbangPreso.UI
 
                 _scoreNames[i].color = colour;
                 _scoreValues[i].color = colour;
+            }
+
+            _scoresInitialised = true;
+        }
+
+        private void UpdateScorePulses(float dt)
+        {
+            for (int i = 0; i < _scoreRows.Length; i++)
+            {
+                var row = _scoreRows[i];
+                if (row == null) continue;
+
+                _scorePulses[i] = Mathf.Max(0.0f, _scorePulses[i] - dt);
+                float ratio = Mathf.Clamp01(_scorePulses[i] / 0.34f);
+                float punch = Mathf.Sin(ratio * Mathf.PI) * 0.11f;
+                row.localScale = Vector3.one * (1.0f + punch);
             }
         }
 
@@ -834,7 +920,11 @@ namespace TumbangPreso.UI
             // the whole reason the card is not just a coloured light.
             string line = "";
 
-            if (_local.IsDefender)
+            if (_local == null)
+            {
+                line = lata.IsUpright ? "TAYA MAY TAG" : "ATTACKERS MAY RETRIEVE";
+            }
+            else if (_local.IsDefender)
             {
                 if (!lata.IsUpright)
                 {
@@ -845,10 +935,29 @@ namespace TumbangPreso.UI
                         ? $"RESETTING  {Mathf.RoundToInt(progress * 100.0f)}%"
                         : "HOLD E IN THE RING";
                 }
+                else if (GameServices.Round.IsTayaCampWarningActive)
+                {
+                    float left = Mathf.Max(0.0f, Balance.TayaCampGracePeriod
+                        - GameServices.Round.TayaCampSeconds);
+                    line = left > 0.0f
+                        ? $"LEAVE CAN RING  {left:0.0}s"
+                        : "CAMPING  ·  DEFENSE SCORE PAUSED";
+                }
             }
             else if (!_local.HoldingSlipper)
             {
-                line = "RETRIEVE A SLIPPER";
+                float idle = GameServices.Round.AttackerIdleSeconds(_local.PlayerSlot);
+                if (TournamentRules.IsSlipperWarning(idle))
+                {
+                    float left = Mathf.Max(0.0f, Balance.SlipperUnretrievedGracePeriod - idle);
+                    line = left > 0.0f
+                        ? $"FETCH SLIPPER  {left:0.0}s"
+                        : "FETCH SLIPPER  ·  -5 / SECOND";
+                }
+                else
+                {
+                    line = "RETRIEVE A SLIPPER";
+                }
             }
             else if (_local.IsInsideBox())
             {
@@ -1167,6 +1276,7 @@ namespace TumbangPreso.UI
             // ⚠️ MATCH ON HEIGHT, like every other screen, or the HUD drifts against the menus
             // it hands over from on anything that is not 16:9.
             scaler.matchWidthOrHeight = 1.0f;
+            AspectSafeCanvas.Apply(scaler);
 
             canvasGo.AddComponent<GraphicRaycaster>();
 
@@ -1185,6 +1295,7 @@ namespace TumbangPreso.UI
             BuildLataCard();
             BuildStatusStacks();
             BuildHeroDeck();
+            BuildClassicDeck();
             BuildFloatingText();
             BuildCrosshair();
 
@@ -1335,6 +1446,7 @@ namespace TumbangPreso.UI
                 row.spacing = 14.0f;
 
                 rowGo.AddComponent<LayoutElement>().preferredHeight = 30.0f;
+                _scoreRows[i] = rowGo.GetComponent<RectTransform>();
 
                 var name = HudLabel(rowGo.transform, "Name", 20, UiTheme.Cream,
                                     TextAnchor.MiddleLeft, ScoreOutline);
@@ -1652,7 +1764,7 @@ namespace TumbangPreso.UI
                                   TextAnchor.MiddleCenter, CrosshairOutline);
 
             Place(_crosshair.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
-                  new Vector2(240, 48));
+                  new Vector2(520, 72));
 
             _crosshair.text = "+";
             _crosshair.enabled = false;
@@ -1811,21 +1923,189 @@ namespace TumbangPreso.UI
             rt.anchorMax = new Vector2(0.5f, 0.0f);
             rt.pivot = new Vector2(0.5f, 0.0f);
             rt.anchoredPosition = new Vector2(0, 24);
-            rt.sizeDelta = new Vector2(490, 96);
+
+            // ⚠️⚠️ THE OLD DECK WAS NARROWER THAN ITS OWN CONTENTS. 16 + 16 of padding, two
+            // gaps of 14 and cards of 140 + 140 + 156 is 496 reference units of content inside
+            // a 490 unit panel, so the ultimate card hung six units past the wooden edge at
+            // every resolution. The cards below are wider as well, because the ability NAME is
+            // the only thing on this deck that says which power the bar belongs to and it was
+            // set at 13 units: 8.7 physical pixels on a 4:3 panel, which is not readable type.
+            rt.sizeDelta = new Vector2(578, 122);
 
             var hgroup = deckGo.AddComponent<HorizontalLayoutGroup>();
             hgroup.childControlHeight = true;
-            hgroup.childControlWidth = false;
+
+            // ⚠️⚠️ CONTROL THE WIDTHS, OR THE THREE CARD WIDTHS BELOW ARE DECORATION. With this
+            // off, a HorizontalLayoutGroup lays children out at whatever width their
+            // RectTransform happens to have, which for a code-built card is Unity's default
+            // 100. The 140, 140 and 156 the deck was written around never applied: in a player
+            // capture the cards were 100 wide, "SEISMIC STOMP" drew as "SEISMIC",
+            // "DEMON TITAN FISSURE" as "DEMON", "READY" as "R", and the ultimate's charge
+            // readout sat in the empty third of the panel the missing width left behind.
+            hgroup.childControlWidth = true;
             hgroup.childForceExpandHeight = true;
             hgroup.childForceExpandWidth = false;
             hgroup.spacing = 14.0f;
             hgroup.padding = new RectOffset(16, 16, 10, 10);
 
-            BuildAbilityCard(deckGo.transform, "Skill1", "[E]", 140, out _skill1CardBg, out _skill1KeyText, out _skill1NameText, out _skill1CdText, out _skill1Fill, out _);
-            BuildAbilityCard(deckGo.transform, "Skill2", "[Q]", 140, out _skill2CardBg, out _skill2KeyText, out _skill2NameText, out _skill2CdText, out _skill2Fill, out _);
-            BuildAbilityCard(deckGo.transform, "Ultimate", "[F]", 156, out _ultCardBg, out _ultKeyText, out _ultNameText, out _ultChargeText, out _ultFill, out _ultRt);
+            BuildAbilityCard(deckGo.transform, "Skill1", "[E]", 166, out _skill1CardBg, out _skill1KeyText, out _skill1NameText, out _skill1CdText, out _skill1Fill, out _);
+            BuildAbilityCard(deckGo.transform, "Skill2", "[Q]", 166, out _skill2CardBg, out _skill2KeyText, out _skill2NameText, out _skill2CdText, out _skill2Fill, out _);
+            BuildAbilityCard(deckGo.transform, "Ultimate", "[F]", 182, out _ultCardBg, out _ultKeyText, out _ultNameText, out _ultChargeText, out _ultFill, out _ultRt);
 
             _heroDeck.SetActive(false);
+        }
+
+        /// <summary>
+        /// Classic deliberately has no powers, but an empty bottom HUD made its mastery loop
+        /// feel less authored than Hero Strike. Street Hype is cosmetic: it names skilled
+        /// curves, banks, close calls, blocks and retrievals without changing a single point
+        /// or rule. It gives Classic its own identity instead of pretending it is Hero Strike
+        /// with three cards removed.
+        /// </summary>
+        private void BuildClassicDeck()
+        {
+            var go = new GameObject("ClassicStreetHype");
+            go.transform.SetParent(_root, false);
+            _classicDeck = go;
+
+            var bg = go.AddComponent<Image>();
+            bg.sprite = GodotTheme.Box(UiTheme.WoodDark, UiTheme.Amber,
+                                       GodotTheme.WoodBorderWidth, GodotTheme.WoodCornerRadius);
+            bg.type = Image.Type.Sliced;
+            bg.raycastTarget = false;
+
+            _classicDeckRt = go.GetComponent<RectTransform>();
+            Place(_classicDeckRt, new Vector2(0.5f, 0.0f), new Vector2(0, 24),
+                  new Vector2(520, 100));
+
+            var group = go.AddComponent<VerticalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = false;
+            group.childForceExpandWidth = true;
+            group.padding = new RectOffset(18, 18, 10, 10);
+            group.spacing = 4.0f;
+
+            _classicTitle = HudLabel(go.transform, "HypeTitle", 20, UiTheme.Highlight,
+                                     TextAnchor.MiddleCenter, 4);
+            _classicTitle.fontStyle = FontStyle.Bold;
+            _classicTitle.gameObject.AddComponent<LayoutElement>().minHeight = 24.0f;
+
+            _classicEvent = HudLabel(go.transform, "HypeEvent", MenuKit.MinReadableUnits,
+                                     UiTheme.Cream, TextAnchor.MiddleCenter, 3);
+            _classicEvent.gameObject.AddComponent<LayoutElement>().minHeight = 24.0f;
+
+            var bar = new GameObject("HypeBar");
+            bar.transform.SetParent(go.transform, false);
+            var barBg = bar.AddComponent<Image>();
+            barBg.sprite = GodotTheme.Plain(3);
+            barBg.type = Image.Type.Sliced;
+            barBg.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.8f);
+            var barLayout = bar.AddComponent<LayoutElement>();
+            barLayout.minHeight = 9.0f;
+            barLayout.preferredHeight = 9.0f;
+
+            var fillGo = new GameObject("Fill");
+            fillGo.transform.SetParent(bar.transform, false);
+            _classicFill = fillGo.AddComponent<Image>();
+            _classicFill.sprite = GodotTheme.Plain(3);
+            _classicFill.type = Image.Type.Filled;
+            _classicFill.fillMethod = Image.FillMethod.Horizontal;
+            _classicFill.color = UiTheme.Highlight;
+            _classicFill.raycastTarget = false;
+            MenuKit.Stretch(_classicFill.rectTransform);
+
+            _classicDeck.SetActive(false);
+        }
+
+        /// <summary>Reports a local cosmetic style event; never awards score.</summary>
+        public static void ReportStyle(int slot, float amount, string callout)
+        {
+            if (Instance == null || SceneFlow.SelectedMode != GameMode.Classic
+                || Instance._local == null || Instance._local.PlayerSlot != slot)
+                return;
+
+            Instance.AddStreetHype(amount, callout);
+        }
+
+        private void AddStreetHype(float amount, string callout)
+        {
+            int before = StreetTier(_streetHype);
+            _streetHype = Mathf.Clamp(_streetHype + Mathf.Max(0.0f, amount), 0.0f, 100.0f);
+            _streetHypeGrace = 3.0f;
+            _streetHypePunch = 0.38f;
+            _classicEvent.text = $"{callout}  ·  +{Mathf.RoundToInt(amount)} HYPE";
+
+            int after = StreetTier(_streetHype);
+            if (after > before && _local != null)
+            {
+                string tier = StreetTierName(after);
+                Visual.ComicPopup.Spawn(_local.transform.position + Vector3.up * 1.8f,
+                                        tier, UiTheme.Highlight, 1.05f);
+            }
+
+            if (_streetHype >= 100.0f && !_streetHypeMaxCelebrated)
+            {
+                _streetHypeMaxCelebrated = true;
+                GameServices.Audio?.PlayAtVaried("sfx_super_ready", _local.transform.position,
+                                                 1.02f, 1.10f, 0.9f);
+                ShowToast("HALIMAW HYPE  ·  KEEP THE RALLY ALIVE", 1.8f);
+            }
+        }
+
+        private void UpdateClassicDeck(float dt)
+        {
+            if (_classicDeck == null) return;
+
+            bool show = !_spectating && _local != null
+                        && SceneFlow.SelectedMode == GameMode.Classic;
+            if (_classicDeck.activeSelf != show) _classicDeck.SetActive(show);
+            if (!show) return;
+
+            int round = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
+            if (_streetHypeRound != round)
+            {
+                _streetHypeRound = round;
+                _streetHype = 0.0f;
+                _streetHypeGrace = 0.0f;
+                _streetHypeMaxCelebrated = false;
+                _classicEvent.text = "CURVE · BANK · BLOCK · SNATCH  (STYLE ONLY)";
+            }
+
+            if (GameServices.Round != null && GameServices.Round.RoundActive)
+            {
+                if (_streetHypeGrace > 0.0f) _streetHypeGrace -= dt;
+                else _streetHype = Mathf.Max(0.0f, _streetHype - 4.5f * dt);
+            }
+
+            if (_streetHype < 92.0f) _streetHypeMaxCelebrated = false;
+
+            int tier = StreetTier(_streetHype);
+            _classicTitle.text = $"STREET HYPE  ·  {StreetTierName(tier)}  ·  {Mathf.RoundToInt(_streetHype)}%";
+            _classicTitle.color = tier >= 3 ? UiTheme.Highlight : UiTheme.Amber;
+            _classicFill.fillAmount = _streetHype / 100.0f;
+            _classicFill.color = Color.Lerp(UiTheme.Offense, UiTheme.Highlight,
+                                             _streetHype / 100.0f);
+
+            _streetHypePunch = Mathf.Max(0.0f, _streetHypePunch - dt);
+            float ratio = Mathf.Clamp01(_streetHypePunch / 0.38f);
+            float scale = 1.0f + Mathf.Sin(ratio * Mathf.PI) * 0.07f;
+            _classicDeckRt.localScale = Vector3.one * scale;
+        }
+
+        private static int StreetTier(float hype)
+            => hype >= 100.0f ? 4 : hype >= 72.0f ? 3 : hype >= 44.0f ? 2 : hype >= 20.0f ? 1 : 0;
+
+        private static string StreetTierName(int tier)
+        {
+            switch (tier)
+            {
+                case 4: return "HALIMAW!";
+                case 3: return "ASTIG!";
+                case 2: return "MAINIT!";
+                case 1: return "GISING!";
+                default: return "SIMULA";
+            }
         }
 
         private void BuildAbilityCard(Transform parent, string name, string key, float width,
@@ -1856,8 +2136,16 @@ namespace TumbangPreso.UI
             topRow.transform.SetParent(cardGo.transform, false);
             var topGroup = topRow.AddComponent<HorizontalLayoutGroup>();
             topGroup.childControlHeight = true;
-            topGroup.childControlWidth = false;
-            topGroup.childForceExpandWidth = false;
+
+            // ⚠️ THE GROUP HAS TO CONTROL THE WIDTHS OR THE LAYOUT ELEMENTS BELOW DO NOTHING.
+            // With childControlWidth off, a HorizontalLayoutGroup places children at whatever
+            // width their RectTransform already has and ignores minWidth entirely, so the
+            // ultimate's charge readout kept the default 100 and then drew its text straight
+            // out of the card: the "10%" sat a hundred units to the right of the wooden edge in
+            // a player capture. Controlling and expanding makes the key and the readout share
+            // the row, which is what the two LayoutElements were always describing.
+            topGroup.childControlWidth = true;
+            topGroup.childForceExpandWidth = true;
             topGroup.spacing = 6.0f;
 
             keyText = HudLabel(topRow.transform, "Key", 18, UiTheme.Amber, TextAnchor.MiddleLeft, 4);
@@ -1866,16 +2154,38 @@ namespace TumbangPreso.UI
             var kle = keyText.gameObject.AddComponent<LayoutElement>();
             kle.minWidth = 32;
 
-            cdText = HudLabel(topRow.transform, "CD", 16, UiTheme.Highlight, TextAnchor.MiddleRight, 4);
+            cdText = HudLabel(topRow.transform, "CD", MenuKit.MinReadableUnits, UiTheme.Highlight,
+                              TextAnchor.MiddleRight, 4);
             cdText.fontStyle = FontStyle.Bold;
             cdText.text = "READY";
             var cdle = cdText.gameObject.AddComponent<LayoutElement>();
             cdle.minWidth = width - 52;
 
-            nameText = HudLabel(cardGo.transform, "Name", 13, UiTheme.Cream, TextAnchor.MiddleCenter, 4);
+            nameText = HudLabel(cardGo.transform, "Name", 20, UiTheme.Cream, TextAnchor.MiddleCenter, 4);
             nameText.fontStyle = FontStyle.Bold;
             nameText.text = name.ToUpperInvariant();
-            nameText.gameObject.AddComponent<LayoutElement>().minHeight = 20;
+            // ⚠️ ROOM FOR TWO LINES. "THUNDERSTRIKE OVERDRIVE" is 23 characters and will not fit
+            // one readable line in a card this wide; a single line rect truncated it to
+            // "THUNDERSTRIKE" in the build, and "SEISMIC STOMP" to "SEISMIC". Wrapping is what
+            // the best fit below is for, and it needs the height to wrap INTO.
+            var nameLayout = nameText.gameObject.AddComponent<LayoutElement>();
+            nameLayout.minHeight = 46;
+            nameLayout.preferredHeight = 46;
+
+            // ⚠️⚠️ TWO LINES AT A FIXED SIZE, NOT BEST FIT, AND THE DIFFERENCE WAS VISIBLE IN A
+            // PLAYER CAPTURE. Best fit plus Truncate looks like the right tool and is not: it
+            // wrapped "DEMONIC CARAPACE" correctly and then cut the second line off, so the
+            // card read "DEMONIC" and the player had no idea which power the bar belonged to.
+            // Wrapping with Overflow cannot lose a word: the longest name in any kit,
+            // "THUNDERSTRIKE OVERDRIVE", breaks after the first word and both halves clear the
+            // card's inner width at this size with room to spare.
+            //
+            // ⚠️ AND THE SIZE STAYS AT THE READABLE FLOOR RATHER THAN SHRINKING TO SUIT THE
+            // LONGEST NAME. A HUD card is read at a glance in peripheral vision during a match,
+            // which is the least forgiving reading anywhere in the game.
+            nameText.fontSize = MenuKit.MinReadableUnits;
+            nameText.horizontalOverflow = HorizontalWrapMode.Wrap;
+            nameText.verticalOverflow = VerticalWrapMode.Overflow;
 
             var barBg = new GameObject("BarBg");
             barBg.transform.SetParent(cardGo.transform, false);

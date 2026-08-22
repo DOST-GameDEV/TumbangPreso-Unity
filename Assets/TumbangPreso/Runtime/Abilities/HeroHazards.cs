@@ -13,6 +13,15 @@ namespace TumbangPreso.Abilities
     /// </summary>
     public static class HeroHazards
     {
+        private static bool CanPulse(Dictionary<int, float> nextPulseBySlot, int slot, float interval)
+        {
+            if (nextPulseBySlot.TryGetValue(slot, out float next) && Time.time < next)
+                return false;
+
+            nextPulseBySlot[slot] = Time.time + interval;
+            return true;
+        }
+
         // -------------------------------------------------------------------
         // ICE WALL BARRICADE (Cheska Skill 2)
         // -------------------------------------------------------------------
@@ -127,7 +136,12 @@ namespace TumbangPreso.Abilities
 
             var r = visual.GetComponent<Renderer>();
             if (r != null) r.material.color = new Color(0.3f, 0.85f, 1.0f, 0.65f);
-            Object.Destroy(visual.GetComponent<Collider>());
+            var collider = visual.GetComponent<Collider>();
+            if (collider != null)
+            {
+                if (Application.isPlaying) Object.Destroy(collider);
+                else Object.DestroyImmediate(collider);
+            }
 
             var inner = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             inner.name = "VisualInner";
@@ -255,14 +269,13 @@ namespace TumbangPreso.Abilities
             public float Duration = 3.0f;
             public int OwnerSlot = -1;
             private float _left;
-            private float _zapCooldown;
+            private readonly Dictionary<int, float> _nextStaggerBySlot = new Dictionary<int, float>();
 
             private void Start() => _left = Duration;
 
             private void Update()
             {
                 _left -= Time.deltaTime;
-                _zapCooldown -= Time.deltaTime;
 
                 if (_left <= 0.0f)
                 {
@@ -287,11 +300,11 @@ namespace TumbangPreso.Abilities
                         }
                         else
                         {
-                            // Stagger & electrify opponents
-                            p.ApplyStagger(0.25f);
-                            if (_zapCooldown <= 0.0f)
+                            // Discrete pulses keep the trail threatening without turning
+                            // every rendered frame into a permanent action lock.
+                            if (CanPulse(_nextStaggerBySlot, p.PlayerSlot, 1.1f))
                             {
-                                _zapCooldown = 0.8f;
+                                p.ApplyStagger(0.25f);
                                 ComicPopup.Zap(p.transform.position);
                                 DizzyStars.Attach(p.transform, 1.2f, UiTheme.HeroElectricBright);
                             }
@@ -343,14 +356,13 @@ namespace TumbangPreso.Abilities
             public float Duration = 3.0f;
             public int OwnerSlot = -1;
             private float _left;
-            private float _burnCooldown;
+            private readonly Dictionary<int, float> _nextBurnBySlot = new Dictionary<int, float>();
 
             private void Start() => _left = Duration;
 
             private void Update()
             {
                 _left -= Time.deltaTime;
-                _burnCooldown -= Time.deltaTime;
 
                 if (_left <= 0.0f)
                 {
@@ -368,12 +380,11 @@ namespace TumbangPreso.Abilities
                     diff.y = 0.0f;
                     if (diff.magnitude <= Radius)
                     {
-                        p.ApplyStagger(0.2f);
                         p.ApplyImpulse(diff.normalized * 3.5f * Time.deltaTime);
 
-                        if (_burnCooldown <= 0.0f)
+                        if (CanPulse(_nextBurnBySlot, p.PlayerSlot, 0.85f))
                         {
-                            _burnCooldown = 0.85f;
+                            p.ApplyStagger(0.2f);
                             ComicPopup.Bam(p.transform.position);
                         }
                     }
@@ -395,8 +406,21 @@ namespace TumbangPreso.Abilities
             visual.transform.localScale = Vector3.one * 0.8f;
 
             var r = visual.GetComponent<Renderer>();
-            if (r != null) r.material.color = new Color(0.85f, 0.4f, 1.0f, 0.9f);
-            Object.Destroy(visual.GetComponent<Collider>());
+            if (r != null)
+            {
+                var block = new MaterialPropertyBlock();
+                r.GetPropertyBlock(block);
+                var ghostColor = new Color(0.85f, 0.4f, 1.0f, 0.9f);
+                block.SetColor("_Color", ghostColor);
+                block.SetColor("_BaseColor", ghostColor);
+                r.SetPropertyBlock(block);
+            }
+            var ghostCollider = visual.GetComponent<Collider>();
+            if (ghostCollider != null)
+            {
+                if (Application.isPlaying) Object.Destroy(ghostCollider);
+                else Object.DestroyImmediate(ghostCollider);
+            }
 
             var lightGo = new GameObject("GhostLight");
             lightGo.transform.SetParent(go.transform, false);
@@ -450,6 +474,16 @@ namespace TumbangPreso.Abilities
                     }
 
                     transform.position += Direction * 10.0f * Time.deltaTime;
+
+                    // ⚠️ THE GHOST STAYS IN THE ARENA BECAUSE NEMU FOLLOWS IT. PHANTOM PHASE
+                    // ends by teleporting the caster onto this object, so a ghost that flies
+                    // out over the edge at 10 m/s is a hero blinking out of the world. The
+                    // teleport itself is clamped as a last line of defence, but clamping the
+                    // ghost is what keeps the destination somewhere worth blinking to.
+                    Vector3 flown = transform.position;
+                    flown.x = Mathf.Clamp(flown.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
+                    flown.z = Mathf.Clamp(flown.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+                    transform.position = flown;
                 }
                 else
                 {
@@ -621,6 +655,7 @@ namespace TumbangPreso.Abilities
             public float Duration = 5.0f;
             public int OwnerSlot = -1;
             private float _left;
+            private readonly Dictionary<int, float> _nextDrowseBySlot = new Dictionary<int, float>();
 
             private void Start() => _left = Duration;
 
@@ -648,8 +683,9 @@ namespace TumbangPreso.Abilities
                     diff.y = 0.0f;
                     if (diff.magnitude <= Radius)
                     {
-                        p.ApplyStagger(0.2f);
                         p.ApplyImpulse(diff.normalized * 4.0f * Time.deltaTime);
+                        if (CanPulse(_nextDrowseBySlot, p.PlayerSlot, 1.25f))
+                            p.ApplyStagger(0.35f);
                     }
                 }
 
@@ -749,7 +785,8 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         // GRAND EXPLOSION EFFECT (Sean Skill 2 & Ultimate, Dante Stomp)
         // -------------------------------------------------------------------
-        public static void CreateExplosion(Vector3 center, float radius, float knockback, float stunTime, int sourceSlot, string comicText = "KABOOM!")
+        public static void CreateExplosion(Vector3 center, float radius, float knockback, float stunTime,
+            int sourceSlot, string comicText = "KABOOM!", ISet<int> excludedSlots = null)
         {
             var round = GameServices.Round;
             if (round == null) return;
@@ -828,6 +865,7 @@ namespace TumbangPreso.Abilities
             foreach (var p in round.Players)
             {
                 if (p == null) continue;
+                if (excludedSlots != null && excludedSlots.Contains(p.PlayerSlot)) continue;
                 Vector3 to = p.transform.position - center;
                 to.y = 0.0f;
                 float d = to.magnitude;

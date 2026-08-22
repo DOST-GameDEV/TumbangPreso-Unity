@@ -219,6 +219,14 @@ namespace TumbangPreso
             // fade, under 🧑's *"pls js abruptly cut it"*.
             if (UseReadyGate) GameServices.Music?.StopNow();
             else GameServices.Music?.Play("match", GameServices.MatchTrack);
+
+            // Scene management is intentionally game-owned rather than Netcode-owned. Tell
+            // the host only after every local seat, prop, camera and HUD target exists; this
+            // closes the cold-rejoin race where the connection-time snapshot arrived while
+            // the client was still loading the arena and therefore had nothing to apply to.
+            var liveNet = Net.NetSession.Instance;
+            if (liveNet != null && liveNet.IsNetworked && !liveNet.IsHost)
+                Net.MatchRpc.Instance?.RequestWorldSnapshotServerRpc();
         }
 
         /// <summary>

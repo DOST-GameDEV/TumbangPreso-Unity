@@ -32,8 +32,22 @@ namespace TumbangPreso.EditorTools
 
         public static void BuildWindows()
         {
-            bool ok = Execute(DefaultOutput());
+            bool ok = Execute(CommandLineOutput() ?? DefaultOutput());
             EditorApplication.Exit(ok ? 0 : 1);
+        }
+
+        private static string CommandLineOutput()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            for (int i = 0; i < args.Length - 1; i++)
+            {
+                if (!string.Equals(args[i], "-buildOutput", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                return string.IsNullOrWhiteSpace(args[i + 1]) ? null : args[i + 1];
+            }
+
+            return null;
         }
 
         private static string DefaultOutput()
@@ -295,12 +309,12 @@ namespace TumbangPreso.EditorTools
             ConfigureIcon();
             EnsureRuntimeShaders();
 
-            // ⚠️ WINDOWED BY DEFAULT FOR A TEST BUILD. An exclusive-fullscreen build that
-            // starts on a broken frame is genuinely hard to get out of, and the whole point of
-            // this build is that somebody is about to look at it critically.
-            PlayerSettings.defaultScreenWidth = 1600;
-            PlayerSettings.defaultScreenHeight = 900;
-            PlayerSettings.fullScreenMode = FullScreenMode.Windowed;
+            // Ship at the monitor's native resolution in borderless fullscreen. Starting the
+            // player in a fixed 1600x900 window made a normal build look like a test harness;
+            // switching that window to fullscreen could also leave Unity stretching the same
+            // low-resolution backbuffer, which blurred the whole presentation.
+            PlayerSettings.defaultIsNativeResolution = true;
+            PlayerSettings.fullScreenMode = FullScreenMode.FullScreenWindow;
             PlayerSettings.resizableWindow = true;
             PlayerSettings.runInBackground = true;
 

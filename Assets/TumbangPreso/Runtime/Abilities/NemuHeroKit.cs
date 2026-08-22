@@ -22,7 +22,7 @@ namespace TumbangPreso.Abilities
             private GameObject _phantomLightGo;
 
             public PhantomPhaseAbility()
-                : base("nemu_skill1", "PHANTOM PHASE", "Phases into spirit realm for 2.5s, immune to tags and shoves.", 8.0f, 2.5f)
+                : base("nemu_skill1", "PHANTOM PHASE", "Phases for 2.5s; grabbing a slipper shatters the phase.", 8.0f, 2.5f)
             {
             }
 
@@ -51,6 +51,14 @@ namespace TumbangPreso.Abilities
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
+                if (ctx.Motor.HoldingSlipper)
+                {
+                    DurationRemaining = 0.0f;
+                    GameServices.Audio?.PlayAt("slipper_land", ctx.Position);
+                    ComicPopup.Spawn(ctx.Position, "PHASE BROKEN!", UiTheme.HeroSpiritBright, 1.0f);
+                    return;
+                }
+
                 // Speed boost during phantom phase
                 ctx.Motor.ApplyImpulse(ctx.Forward * 3.0f * dt);
             }
@@ -67,6 +75,8 @@ namespace TumbangPreso.Abilities
 
         private sealed class GhostlyPoltergeistAbility : HeroAbility
         {
+            private GameObject _projectedGhost;
+
             public GhostlyPoltergeistAbility()
                 : base("nemu_skill2", "ASTRAL PROJECTION", "Projects into ghost to fly freely; press again or wait to teleport to it.", 9.0f, 6.0f)
             {
@@ -86,7 +96,8 @@ namespace TumbangPreso.Abilities
                 }
                 else
                 {
-                    HeroHazards.SpawnGhostPoltergeist(ctx.Position, ctx.Forward, ctx.Motor.PlayerSlot);
+                    _projectedGhost = HeroHazards.SpawnGhostPoltergeist(
+                        ctx.Position, ctx.Forward, ctx.Motor.PlayerSlot);
                 }
             }
 
@@ -97,6 +108,21 @@ namespace TumbangPreso.Abilities
                 {
                     GameServices.Audio?.PlayAt("sfx_ghost_teleport", visual.transform.position);
                     visual.Companion.EndPossession(teleportNemu: true);
+                }
+                else if (_projectedGhost != null)
+                {
+                    Vector3 destination = _projectedGhost.transform.position;
+                    GameServices.Audio?.PlayAt("sfx_ghost_teleport", destination);
+
+                    // Runtime movement goes through CharacterMotor so its controller and
+                    // ground-settle state stay coherent. EditMode ability tests have no live
+                    // controller, but still exercise the complete reactivation lifecycle.
+                    if (Application.isPlaying) ctx.Motor.Teleport(destination);
+                    else ctx.Motor.transform.position = destination;
+
+                    if (Application.isPlaying) UnityEngine.Object.Destroy(_projectedGhost);
+                    else UnityEngine.Object.DestroyImmediate(_projectedGhost);
+                    _projectedGhost = null;
                 }
             }
         }

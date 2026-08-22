@@ -51,6 +51,7 @@ namespace TumbangPreso
         private float _defenseTickAccum;
         private float _tayaCampTimer;
         private float _tayaCampTickAccum;
+        private bool _tayaInsideCampZone;
         private readonly float[] _attackerIdleTimer = new float[Balance.PlayerCount];
         private readonly float[] _attackerIdleTickAccum = new float[Balance.PlayerCount];
 
@@ -61,6 +62,12 @@ namespace TumbangPreso
         private float _clock;
 
         public IReadOnlyList<CharacterMotor> Players => _players;
+        public float TayaCampSeconds => _tayaCampTimer;
+        public bool IsTayaCampWarningActive => TournamentRules.IsCampWarning(_tayaCampTimer);
+        public bool IsTayaCampPenaltyActive => TournamentRules.IsCampPenalty(_tayaCampTimer);
+
+        public float AttackerIdleSeconds(int slot)
+            => slot >= 0 && slot < _attackerIdleTimer.Length ? _attackerIdleTimer[slot] : 0.0f;
 
         public void Register(CharacterMotor m)
         {
@@ -76,6 +83,26 @@ namespace TumbangPreso
             return null;
         }
 
+        /// <summary>
+        /// Rehydrates the live round on a joining client without replaying BeginRound's
+        /// teleports, score events, or item hand-outs. Roles are round state, not connection
+        /// state: a player who disconnected as an attacker may be the current taya when they
+        /// return.
+        /// </summary>
+        public void ApplySnapshot(float timeLeft, bool roundActive, int defenderSlot)
+        {
+            TimeLeft = Mathf.Clamp(timeLeft, 0.0f, Balance.RoundTime);
+            RoundActive = roundActive;
+
+            foreach (var player in _players)
+            {
+                if (player == null) continue;
+                player.IsDefender = player.PlayerSlot == defenderSlot;
+                player.RoundActive = roundActive;
+                player.GetComponentInChildren<Visual.CharacterNameplate>()?.Refresh();
+            }
+        }
+
         public void BeginRound()
         {
             RoundActive = true;
@@ -84,6 +111,7 @@ namespace TumbangPreso
             _defenseTickAccum = 0.0f;
             _tayaCampTimer = 0.0f;
             _tayaCampTickAccum = 0.0f;
+            _tayaInsideCampZone = false;
             System.Array.Clear(_attackerIdleTimer, 0, _attackerIdleTimer.Length);
             System.Array.Clear(_attackerIdleTickAccum, 0, _attackerIdleTickAccum.Length);
             _shoveCredit.Clear();
@@ -111,6 +139,7 @@ namespace TumbangPreso
             _defenseTickAccum = 0.0f;
             _tayaCampTimer = 0.0f;
             _tayaCampTickAccum = 0.0f;
+            _tayaInsideCampZone = false;
             System.Array.Clear(_attackerIdleTimer, 0, _attackerIdleTimer.Length);
             System.Array.Clear(_attackerIdleTickAccum, 0, _attackerIdleTickAccum.Length);
             _shoveCredit.Clear();
@@ -128,8 +157,8 @@ namespace TumbangPreso
             if (_throwCooldownLeft > 0.0f)
                 _throwCooldownLeft = Mathf.Max(0.0f, _throwCooldownLeft - dt);
 
-            StepPassiveDefence(dt);
             StepTournamentPenalties(dt);
+            StepPassiveDefence(dt);
 
             if (TimeLeft <= 0.0f)
             {
@@ -154,6 +183,14 @@ namespace TumbangPreso
         {
             if (Lata == null || !Lata.IsUpright) return;
 
+            // A camping taya must not earn +10 defence while paying only -5 for
+            // camping. Once the grace period expires, can-ring income is suspended.
+            if (IsTayaCampPenaltyActive)
+            {
+                _defenseTickAccum = 0.0f;
+                return;
+            }
+
             _defenseTickAccum += dt;
             while (_defenseTickAccum >= Balance.DefenseTickInterval)
             {
@@ -170,20 +207,35 @@ namespace TumbangPreso
             int defenderSlot = GameServices.Match.DefenderSlot;
             var taya = PlayerAt(defenderSlot);
 
-            if (taya != null && Lata != null && Lata.IsUpright)
+            // ⚠️⚠️ A UNIT THAT CANNOT ACT CANNOT STALL, AND CHARGING IT ANYWAY IS A SECOND
+            // PUNISHMENT FOR BEING HIT. Both tournament clocks below exist to answer "is this
+            // player refusing to play", and a stunned, staggered or frozen body is not refusing
+            // anything: it is already paying the price the verb that hit it was for. Hero
+            // Strike is where this stopped being theoretical, because its kits stun far more
+            // often than Classic's do. Measured 2026-08-23 across a whole four round match:
+            // 69 unretrieved-slipper penalties and 9 camping penalties in Hero Strike against
+            // 0 and 0 in Classic, on bots making the same decisions in both. That difference
+            // was the abilities, not the play, and -5 per second while frozen is a stun that
+            // silently costs a round.
+            bool tayaCanAct = taya != null && taya.CanAct();
+
+            if (taya != null && tayaCanAct && Lata != null && Lata.IsUpright)
             {
                 float distToCan = Vector3.Distance(new Vector3(taya.transform.position.x, 0, taya.transform.position.z),
                                                    new Vector3(Lata.transform.position.x, 0, Lata.transform.position.z));
 
-                if (distToCan <= Balance.TayaCampRadius)
+                _tayaInsideCampZone = TournamentRules.IsTayaCamping(_tayaInsideCampZone, distToCan);
+                _tayaCampTimer = TournamentRules.StepViolationTimer(
+                    _tayaCampTimer, _tayaInsideCampZone, dt);
+
+                if (_tayaInsideCampZone)
                 {
-                    _tayaCampTimer += dt;
-                    if (_tayaCampTimer >= Balance.TayaCampGracePeriod)
+                    if (TournamentRules.IsCampPenalty(_tayaCampTimer))
                     {
                         _tayaCampTickAccum += dt;
-                        if (_tayaCampTickAccum >= 1.0f)
+                        while (_tayaCampTickAccum >= Balance.TournamentPenaltyInterval)
                         {
-                            _tayaCampTickAccum -= 1.0f;
+                            _tayaCampTickAccum -= Balance.TournamentPenaltyInterval;
                             GameServices.Match.AddScore(defenderSlot, ScoreEvent.TayaCampPenalty);
                             Visual.ComicPopup.Spawn(taya.transform.position + Vector3.up * 1.5f, "CAMPING! -5", UI.UiTheme.Defense, 1.0f);
                             UI.Hud.Instance?.PopHitmarker(UI.UiTheme.Defense, "⚠️");
@@ -192,14 +244,21 @@ namespace TumbangPreso
                 }
                 else
                 {
-                    _tayaCampTimer = Mathf.Max(0.0f, _tayaCampTimer - dt * 2.0f);
                     _tayaCampTickAccum = 0.0f;
                 }
+            }
+            else if (taya != null && !tayaCanAct)
+            {
+                // Hold the clock rather than clearing it: a taya stunned ON the can has not
+                // left it, and wiping the timer would make being hit a way to launder four
+                // seconds of camping.
+                _tayaCampTickAccum = 0.0f;
             }
             else
             {
                 _tayaCampTimer = 0.0f;
                 _tayaCampTickAccum = 0.0f;
+                _tayaInsideCampZone = false;
             }
 
             // 2. UNRETRIEVED SLIPPER IDLE MONITOR
@@ -230,18 +289,28 @@ namespace TumbangPreso
                     }
                 }
 
-                // If attacker remains in safe zone while their slipper is on the ground
-                bool inSafeZone = !Confinement.IsInsideBox(p.transform.position.x, p.transform.position.z);
-
-                if (hasLooseSlipper && inSafeZone)
+                // The anti-stall clock follows the unresolved objective, not the chalk
+                // line. Otherwise an empty-handed attacker can idle one step inside the
+                // danger box, be untargetable, and avoid the tournament rule forever.
+                if (hasLooseSlipper)
                 {
-                    _attackerIdleTimer[slot] += dt;
-                    if (_attackerIdleTimer[slot] >= Balance.SlipperUnretrievedGracePeriod)
+                    // Same rule as the camp clock above: the timer HOLDS while the attacker is
+                    // stunned rather than advancing, so a chain of hero crowd control cannot
+                    // post the penalty on somebody who was never given a chance to run.
+                    if (!p.CanAct())
+                    {
+                        _attackerIdleTickAccum[slot] = 0.0f;
+                        continue;
+                    }
+
+                    _attackerIdleTimer[slot] = TournamentRules.StepViolationTimer(
+                        _attackerIdleTimer[slot], true, dt);
+                    if (TournamentRules.IsSlipperPenalty(_attackerIdleTimer[slot]))
                     {
                         _attackerIdleTickAccum[slot] += dt;
-                        if (_attackerIdleTickAccum[slot] >= 1.0f)
+                        while (_attackerIdleTickAccum[slot] >= Balance.TournamentPenaltyInterval)
                         {
-                            _attackerIdleTickAccum[slot] -= 1.0f;
+                            _attackerIdleTickAccum[slot] -= Balance.TournamentPenaltyInterval;
                             GameServices.Match.AddScore(slot, ScoreEvent.UnretrievedSlipperPenalty);
                             Visual.ComicPopup.Spawn(p.transform.position + Vector3.up * 1.5f, "FETCH SLIPPER! -5", UI.UiTheme.Offense, 1.0f);
                             UI.Hud.Instance?.PopHitmarker(UI.UiTheme.Offense, "⚠️");
@@ -250,7 +319,7 @@ namespace TumbangPreso
                 }
                 else
                 {
-                    _attackerIdleTimer[slot] = Mathf.Max(0.0f, _attackerIdleTimer[slot] - dt * 2.0f);
+                    _attackerIdleTimer[slot] = 0.0f;
                     _attackerIdleTickAccum[slot] = 0.0f;
                 }
             }
@@ -315,6 +384,7 @@ namespace TumbangPreso
             if (Lata == null || !Lata.IsUpright) return;
 
             GameServices.Match.AddScore(taya.PlayerSlot, ScoreEvent.Tag);
+            taya.AbilitySystem?.OnTagScored();
 
             // ⚠️ SABOTAGE: an attacker who shoved this victim shortly before the tag gets
             // credit for setting it up. Its window has never been measured, because in every
@@ -327,7 +397,7 @@ namespace TumbangPreso
                 _shoveCredit.Remove(victim.PlayerSlot);
             }
 
-            ApplyTagPenalty(victim);
+            ApplyTagPenalty(taya, victim);
             Tagged?.Invoke(taya.PlayerSlot, victim.PlayerSlot);
         }
 
@@ -342,7 +412,7 @@ namespace TumbangPreso
         /// The penalty that remains is the teleport, the five seconds, and the whole trip to
         /// make again.
         /// </summary>
-        private void ApplyTagPenalty(CharacterMotor victim)
+        private void ApplyTagPenalty(CharacterMotor taya, CharacterMotor victim)
         {
             victim.ApplyStagger(Balance.TagStunTime);
             Visual.DizzyStars.Attach(victim.transform, Balance.TagStunTime, UI.UiTheme.Defense);
@@ -363,6 +433,11 @@ namespace TumbangPreso
             // burst is the read in the air: without it a tagged player sees particles beside
             // someone who looks untouched.
             victim.GetComponentInChildren<Visual.CharacterVisual>()?.FlashHit();
+            Vector3 hitDirection = victim.transform.position - taya.transform.position;
+            victim.GetComponentInChildren<Visual.CharacterSquashStretch>()?
+                .Impact(hitDirection, 0.30f);
+            taya.GetComponentInChildren<Visual.CharacterSquashStretch>()?
+                .DashStretch(taya.transform.forward, 0.18f);
 
             // ⚠️ THE SHAKE GOES TO THE VICTIM'S OWN CAMERA AND NOWHERE ELSE. Shaking every
             // rig would make one player's tag jolt three other screens.
@@ -370,11 +445,15 @@ namespace TumbangPreso
                 ? UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>()
                 : null;
 
-            if (rig != null && rig.IsFollowing(victim)) rig.Shake();
+            if (rig != null && rig.IsFollowing(victim))
+            {
+                Vector3 impact = victim.transform.position - taya.transform.position;
+                rig.ImpactPunch(impact.sqrMagnitude > 0.01f ? impact.normalized : Vector3.back, 1.0f);
+            }
 
-            GameServices.Audio?.PlayAt("tag", victim.transform.position);
-            GameServices.Audio?.PlayAt("downed", victim.transform.position);
+            GameServices.Audio?.PlayImpact("tag", "downed", victim.transform.position, 1.0f);
             GameServices.Voice?.OnAttackerTagged();
+            UI.Hud.ReportStyle(taya.PlayerSlot, 36.0f, "HULI!");
             victim.Stamina.RefillAndClearFatigue();
             victim.Teleport(SafeZonePointFor(victim));
         }

@@ -255,6 +255,7 @@ namespace TumbangPreso.UI
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
+            AspectSafeCanvas.Apply(scaler);
 
             // ⚠️ THE BACKDROP IS DEEP NAVY AT 0.82, NOT BLACK AT 0.45. `RoleSwapCard.tscn`
             // authors `Color(0.015686, 0.031373, 0.219608, 0.82)` — the same ink the outlines

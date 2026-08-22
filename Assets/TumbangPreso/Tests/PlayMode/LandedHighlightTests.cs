@@ -46,9 +46,21 @@ namespace TumbangPreso.PlayTests
             var renderer = slipper.GetComponentInChildren<Renderer>();
             Assert.IsNotNull(renderer, "the slipper has no renderer, so nothing can light");
 
-            // Straight up over the arena, so it falls and lands on the road rather than being
-            // caught by a body or the can on the way.
-            slipper.HostThrow(null, new Vector3(0.0f, 5.0f, 0.0f), new Vector3(0.0f, 0.5f, 0.0f));
+            // ⚠️⚠️ DROPPED ON CLEAR ROAD, NOT OVER THE ORIGIN, AND THE DIFFERENCE IS A REAL
+            // BUG RATHER THAN A TEST DETAIL. The origin is where the lata stands and where the
+            // taya stands to guard and to right it, so a slipper released straight above it
+            // lands on SOMETHING every time. Each contact deflects it upward by `DeflectLift`,
+            // which is an apex of 5^2 / (2 x 20) = 0.63 m, and it comes straight back down onto
+            // the same body: the tsinelas hovers at roughly 0.4 to 0.7 m for the rest of the
+            // round. That is exactly the y this test reported when it began failing.
+            //
+            // ⚠️ THE HOVER ITSELF IS FIXED IN THE GAME, NOT PAPERED OVER HERE. `Deflect` resets
+            // the per-arc flight clock on purpose, so `MaxFlightTime` could never expire during
+            // a bounce loop; `Balance.MaxAirborneTime` now caps the TOTAL time off the ground
+            // and forces a recovery. This test still moves, because a landing that arrives via
+            // that recovery is deliberately not a landing: no thud and no landed highlight,
+            // which are the two things being asserted below.
+            slipper.HostThrow(null, new Vector3(5.0f, 5.0f, 5.5f), new Vector3(0.0f, 0.5f, 0.0f));
             Assert.AreEqual(SlipperState.InFlight, slipper.State, "the throw did not take");
 
             // 5 m of fall is well under a second; 400 frames is a generous cap that still fails

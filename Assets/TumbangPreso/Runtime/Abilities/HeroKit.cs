@@ -34,10 +34,11 @@ namespace TumbangPreso.Abilities
 
         public virtual void Tick(AbilityContext ctx, float dt)
         {
-            // Passive ultimate charge over time: 2.5% per second (charges in 40s passively)
+            // Objective play is the main source of charge. The slow passive trickle
+            // prevents a dry round without rewarding ability spam or hiding.
             if (UltimateCharge < UltimateMax)
             {
-                AddUltimateCharge(2.5f * dt);
+                AddUltimateCharge(Balance.UltimatePassiveChargePerSecond * dt);
             }
 
             Skill1?.Tick(ctx, dt);
@@ -56,7 +57,6 @@ namespace TumbangPreso.Abilities
             if (Skill1.CanActivate(ctx))
             {
                 Skill1.Activate(ctx);
-                AddUltimateCharge(8.0f);
                 return true;
             }
             return false;
@@ -73,7 +73,6 @@ namespace TumbangPreso.Abilities
             if (Skill2.CanActivate(ctx))
             {
                 Skill2.Activate(ctx);
-                AddUltimateCharge(10.0f);
                 return true;
             }
             return false;

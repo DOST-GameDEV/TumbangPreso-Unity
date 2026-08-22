@@ -637,7 +637,30 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(-5, MatchRules.PointsFor(ScoreEvent.TayaCampPenalty));
             Assert.Equal(-5, MatchRules.PointsFor(ScoreEvent.UnretrievedSlipperPenalty));
             Assert.Equal(5.0f, Balance.TayaCampGracePeriod);
+            Assert.True(Balance.TayaCampWarningTime < Balance.TayaCampGracePeriod);
+            Assert.True(Balance.TayaCampClearRadius > Balance.TayaCampRadius);
+            Assert.True(Balance.SlipperUnretrievedWarningTime < Balance.SlipperUnretrievedGracePeriod);
             Assert.Equal(10.0f, Balance.SlipperUnretrievedGracePeriod);
+        }
+
+        [Fact]
+        public void TournamentCamping_UsesHysteresisAndDeterministicReset()
+        {
+            Assert.True(TournamentRules.IsTayaCamping(false, Balance.TayaCampRadius));
+            Assert.True(TournamentRules.IsTayaCamping(true, Balance.TayaCampRadius + 0.3f));
+            Assert.False(TournamentRules.IsTayaCamping(true, Balance.TayaCampClearRadius + 0.01f));
+
+            float timer = TournamentRules.StepViolationTimer(4.9f, true, 0.2f);
+            Assert.True(TournamentRules.IsCampPenalty(timer));
+            Assert.Equal(0.0f, TournamentRules.StepViolationTimer(timer, false, 0.1f));
+        }
+
+        [Fact]
+        public void HeroUltimateEconomy_FavorsObjectivesOverWaiting()
+        {
+            Assert.True(Balance.UltimateChargeLataKnock > Balance.UltimatePassiveChargePerSecond * 10.0f);
+            Assert.True(Balance.UltimateChargeTag > Balance.UltimatePassiveChargePerSecond * 10.0f);
+            Assert.True(Balance.UltimateChargeLegalThrow > 0.0f);
         }
 
         [Fact]
@@ -660,6 +683,12 @@ namespace TumbangPreso.Core.Tests
         {
             Assert.True(Balance.PektusCurveStrength > 0.0f);
             Assert.True(Balance.MaxPektusSpin >= 1.0f);
+            Assert.True(Balance.SlipperMaxRestReach > 0.0f);
+            Assert.True(Balance.SlipperMaxRestReach < Balance.PickupRadius,
+                "a slipper resting at the full pickup radius above the feet can only be " +
+                "reached from exactly underneath it, so the out-of-play cutoff must be lower");
+            Assert.True(Balance.PektusBankRestitution > Balance.BounceRestitution);
+            Assert.Equal(1, Balance.MaxScoringBanks);
         }
 
         // ===================================================================

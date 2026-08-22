@@ -47,6 +47,7 @@ namespace TumbangPreso.UI
 
             var canvas = go.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.pixelPerfect = true;
 
             var scaler = go.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -55,6 +56,7 @@ namespace TumbangPreso.UI
             // ⚠️ MATCH ON HEIGHT, like the converted screens. Matching halfway makes a code-built
             // overlay drift against the converted screen underneath it on a non-16:9 monitor.
             scaler.matchWidthOrHeight = 1.0f;
+            AspectSafeCanvas.Apply(scaler);
 
             go.AddComponent<GraphicRaycaster>();
 
@@ -98,6 +100,23 @@ namespace TumbangPreso.UI
 
             return t;
         }
+
+        /// <summary>
+        /// ⚠️⚠️ THE SMALLEST TYPE ANY SCREEN MAY USE, IN THE AUTHORED 1920x1080 SPACE. Every
+        /// canvas scales down on a panel smaller or narrower than the reference, so a font size
+        /// is not a pixel size: what a label ACTUALLY renders at is `fontSize x scaleFactor`,
+        /// and the smallest scale the game supports is the 4:3 case at 1024x768, which is
+        /// 768/1440 = 0.533 once AspectSafeCanvas stops the layout being cropped instead.
+        ///
+        /// So 18 units is the floor because 18 x 0.533 = 9.6 physical pixels, and Darumadrop is
+        /// a rounded display face that stops resolving below roughly ten. The two character
+        /// screen hint lines were authored at 14, which is 9.3 px at 720p and 7.5 px on a 4:3
+        /// panel: small enough that the line reads as a smudge rather than as words.
+        ///
+        /// `AspectRatioProbes` asserts this floor across all nine supported resolutions, so a
+        /// new label added below it fails a test rather than shipping.
+        /// </summary>
+        public const int MinReadableUnits = 18;
 
         public static Text Label(Transform parent, string text, int size, Color color,
                                  Vector2 anchor, Vector2 offset, Vector2 boxSize,

@@ -21,14 +21,53 @@ namespace TumbangPreso.Visual
         private Vector3 _startScale;
         private Color _mainColor;
 
+        /// <summary>
+        /// ⚠️⚠️ THE CALLOUTS ARE CAPPED AND STACKED, BECAUSE A HERO EXCHANGE FIRES FOUR AT ONCE.
+        /// Every ability, every tag and every knockdown spawns one, and they all spawn at head
+        /// height on whoever they happened to. A player capture of a single Cheska engagement
+        /// had "PHANTOM!", "BONK!", "ICE WALL!" and "TAGGED!" drawn through each other in the
+        /// middle of the screen, which is four pieces of information rendered as none.
+        ///
+        /// ⚠️ NEWEST WINS, RATHER THAN NEWEST BEING DROPPED. The most recent callout is the one
+        /// describing what just happened, so when the screen is full the OLDEST is retired
+        /// instead. That is also the one that has already been on screen longest.
+        /// </summary>
+        private const int MaxLive = 3;
+
+        private static readonly List<ComicPopup> Live = new List<ComicPopup>(8);
+
         public static void Spawn(Vector3 worldPos, string text, Color color, float scale = 1.0f)
         {
+            Live.RemoveAll(p => p == null);
+
+            while (Live.Count >= MaxLive)
+            {
+                var oldest = Live[0];
+                Live.RemoveAt(0);
+                if (oldest != null) Destroy(oldest.gameObject);
+            }
+
             var go = new GameObject($"ComicPopup_{text}");
-            go.transform.position = worldPos + Vector3.up * 1.3f + Random.insideUnitSphere * 0.2f;
+
+            // ⚠️ STACKED UPWARD, NOT SCATTERED. A random offset was already here and it is not
+            // enough: two callouts a fifth of a metre apart still overlap at any distance the
+            // camera actually sits at. Each live callout above the same moment goes a clear
+            // line higher, so a burst reads as a short column instead of as a smear.
+            float lift = 1.3f + Live.Count * 0.55f;
+            go.transform.position = worldPos + Vector3.up * lift + Random.insideUnitSphere * 0.12f;
 
             var popup = go.AddComponent<ComicPopup>();
             popup.Init(text, color, scale);
+            Live.Add(popup);
         }
+
+        private void OnDestroy() => Live.Remove(this);
+
+        /// <summary>⚠️ STATICS SURVIVE A PLAY SESSION WITH DOMAIN RELOAD OFF, and a list holding
+        /// destroyed popups from the last run would spend this run's whole budget on corpses.
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() => Live.Clear();
 
         public static void Bonk(Vector3 pos) => Spawn(pos, "BONK!", UiTheme.HeroEarthBright, 1.2f);
         public static void Zap(Vector3 pos) => Spawn(pos, "ZAP!", UiTheme.HeroElectric, 1.25f);

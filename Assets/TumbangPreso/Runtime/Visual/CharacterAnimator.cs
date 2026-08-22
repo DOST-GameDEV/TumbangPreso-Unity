@@ -612,7 +612,14 @@ namespace TumbangPreso.Visual
         /// caller reaching for PlayOneShot("attack-melee-right") directly re-merges the three
         /// verbs the 2026-08-01 split separated.
         /// </summary>
-        public void PlayAction(string action)
+        public void PlayAction(string action) => PlayAction(action, action);
+
+        /// <summary>
+        /// Some hero verbs use a full-body motion and a different first-person hand motion.
+        /// They still enter through this one bridge so the two views can never be triggered
+        /// independently.
+        /// </summary>
+        public void PlayAction(string action, string viewmodelAction)
         {
             // ⚠️⚠️ THE FIRST-PERSON ARM IS DRIVEN FROM HERE, AND FROM NOWHERE ELSE.
             // `character_visual.gd::play_action` opens with exactly this call and says why:
@@ -628,7 +635,7 @@ namespace TumbangPreso.Visual
             // miss would leave the rig untold. Every verb already calls this one method, so
             // throw, grab, shove, punch and lunge all reach the viewmodel for free — and a verb
             // added later cannot forget to.
-            CameraSystem.CameraRig.PlayViewmodelAction(_motor, action);
+            CameraSystem.CameraRig.PlayViewmodelAction(_motor, viewmodelAction);
 
             string clip = ResolveChain(ActionClips, action);
             if (clip != null) PlayOneShot(clip);

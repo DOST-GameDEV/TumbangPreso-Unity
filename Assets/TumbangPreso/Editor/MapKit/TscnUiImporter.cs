@@ -181,6 +181,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var canvasGo = new GameObject($"{screenName}Canvas");
             var canvas = canvasGo.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.pixelPerfect = true;
 
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -190,6 +191,12 @@ namespace TumbangPreso.EditorTools.MapKit
             // menus are anchored from the left edge; matching on width instead crops the arrow
             // buttons off the side on anything wider than 16:9.
             scaler.matchWidthOrHeight = 1.0f;
+
+            // ⚠️ AND EXPAND ON TOP OF IT, which is match-on-height at 16:9 and wider and stops
+            // being a crop at 16:10 and 4:3. See TumbangPreso.UI.AspectSafeCanvas for the
+            // arithmetic; ConvertedScreen applies the same rule at runtime for the screens that
+            // were imported before this line existed.
+            UI.AspectSafeCanvas.Apply(scaler);
 
             canvasGo.AddComponent<GraphicRaycaster>();
             EnsureEventSystem();

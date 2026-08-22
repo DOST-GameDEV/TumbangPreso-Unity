@@ -39,33 +39,26 @@ namespace TumbangPreso.EditorTools
         /// look right.
         /// </summary>
         /// <remarks>
-        /// ⚠️⚠️ `zack` IS THE FIRST ROW OF THE ART REPLACEMENT AND THE ONLY ONE SO FAR. He takes
-        /// ATE GIRLIE's index rather than being appended, so no seat moved; see `Roster.cs`.
-        /// `docs/Port_Plan.md` section 8.3 says replace one at a time and keep the old mesh until
-        /// the new one is measured, so `character-female-b.glb` is still in the repo and still
-        /// imports; nothing points at it. Repointing an EXISTING id is what keeps this safe:
-        /// `character_index` crosses the wire as a bare int and the mapping here is by id, so a
-        /// new model cannot move anybody's seat.
-        ///
-        /// The replacement is `tools/build_person_voxel.py`, which keeps the CC0 rig's skeleton
-        /// and all 32 clips and rebuilds only the mesh. See that file for why the skeleton is
-        /// untouchable while the clips are the ones that ship.
+        /// Classic and Hero Strike are different casts. The first twelve rows below reproduce
+        /// Godot's `character_roster.gd` exactly; the five `team-*` meshes belong only to the
+        /// Hero Strike ids. Pointing a Classic id at a Hero mesh keeps the name and stats intact
+        /// while silently replacing the character on the select screen and in the match.
         /// </remarks>
         private static readonly Dictionary<string, string> PersonModels = new Dictionary<string, string>
         {
-            // Classic Roster (Custom 3D Voxel Rigs)
-            { "bayan",       "characters/persons/team-bayan.glb" },
-            { "maring",      "characters/persons/team-cheska.glb" },
-            { "totoy",       "characters/persons/team-iggy.glb" },
-            { "inday",       "characters/persons/team-inday.glb" },
-            { "kuya_boy",    "characters/persons/team-sean.glb" },
-            { "ate_girlie",  "characters/persons/iteration-4.glb" },
-            { "tikboy",      "characters/persons/team-zack.glb" },
-            { "bebang",      "characters/persons/team-nemu.glb" },
-            { "jun_jun",     "characters/persons/team-iggy.glb" },
-            { "lola_pacing", "characters/persons/team-nemu.glb" },
-            { "mang_kanor",  "characters/persons/team-dante.glb" },
-            { "aling_nena",  "characters/persons/iteration-2.glb" },
+            // Classic roster. Unity retains the network-stable "bayan" id for BERTO.
+            { "bayan",       "characters/persons/character-male-f.glb" },
+            { "maring",      "characters/persons/character-female-f.glb" },
+            { "totoy",       "characters/persons/character-male-a.glb" },
+            { "inday",       "characters/persons/character-female-a.glb" },
+            { "kuya_boy",    "characters/persons/character-male-b.glb" },
+            { "ate_girlie",  "characters/persons/character-female-b.glb" },
+            { "tikboy",      "characters/persons/character-male-c.glb" },
+            { "bebang",      "characters/persons/character-female-c.glb" },
+            { "jun_jun",     "characters/persons/character-male-d.glb" },
+            { "lola_pacing", "characters/persons/character-female-d.glb" },
+            { "mang_kanor",  "characters/persons/character-male-e.glb" },
+            { "aling_nena",  "characters/persons/character-female-e.glb" },
 
             // Hero Strike Roster (5 action heroes)
             { "dante",       "characters/persons/team-dante.glb" },
