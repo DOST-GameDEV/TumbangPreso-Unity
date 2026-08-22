@@ -121,19 +121,19 @@ namespace TumbangPreso.Abilities
         {
             if (_reticle == null || Kit == null) return;
 
-            Color heroColor = UiTheme.ColorForHero(Kit.HeroId);
+            Color heroColor = UI.UiTheme.ColorForHero(Kit.HeroId);
 
-            if (intent.IsPressed(Verb.Ultimate) && Kit.IsUltimateReady)
+            if (intent.Pressed(Verb.Ultimate) && Kit.IsUltimateReady)
             {
                 Vector3 target = _context.Position + _context.Forward * 3.5f;
                 _reticle.Show(target, 7.5f, heroColor);
             }
-            else if (intent.IsPressed(Verb.Skill1) && Kit.Skill1 != null && Kit.Skill1.IsReady)
+            else if (intent.Pressed(Verb.Skill1) && Kit.Skill1 != null && Kit.Skill1.IsReady)
             {
                 Vector3 target = (Kit is CheskaHeroKit) ? (_context.Position + _context.Forward * 3.5f) : _context.Position;
                 _reticle.Show(target, 5.0f, heroColor);
             }
-            else if (intent.IsPressed(Verb.Skill2) && Kit.Skill2 != null && Kit.Skill2.IsReady)
+            else if (intent.Pressed(Verb.Skill2) && Kit.Skill2 != null && Kit.Skill2.IsReady)
             {
                 Vector3 target = (Kit is CheskaHeroKit) ? (_context.Position + _context.Forward * 2.4f) : _context.Position;
                 _reticle.Show(target, 3.5f, heroColor);

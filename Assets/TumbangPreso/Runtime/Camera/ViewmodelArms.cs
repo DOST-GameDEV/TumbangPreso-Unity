@@ -261,7 +261,6 @@ namespace TumbangPreso.CameraSystem
         public bool PlayAction(string clip)
         {
             _clip = clip == "throw" ? ThrowClip
-                  : clip == "grab" ? GrabClip
                   : clip == "slam" || clip == "stomp" ? SlamClip
                   : clip == "cast" || clip == "thrust" || clip == "dash" ? ThrustClip
                   : null;
