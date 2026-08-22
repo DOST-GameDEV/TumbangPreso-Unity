@@ -26,6 +26,10 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                // Play heavy titan grunt and bass thud
+                GameServices.Audio?.PlayAt("hero_dante_grunt", ctx.Position);
+                GameServices.Audio?.PlayAt("sfx_explosion_heavy", ctx.Position);
+
                 // Squash and stretch ground thump
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.Squash(0.35f);
@@ -122,7 +126,8 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("ability_bagsak_bomb", ctx.Position);
+                GameServices.Audio?.PlayAt("hero_dante_ult", ctx.Position);
+                GameServices.Audio?.PlayAt("sfx_explosion_heavy", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "EARTHQUAKE!", UiTheme.HeroEarthBright, 1.5f);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();

@@ -1649,6 +1649,7 @@ namespace TumbangPreso.UI
             _hitmarker.color = color;
             _hitmarker.rectTransform.localScale = Vector3.one * 1.6f;
             _hitmarker.enabled = true;
+            GameServices.Audio?.PlayAt("sfx_hitmarker", UnityEngine.Camera.main != null ? UnityEngine.Camera.main.transform.position : Vector3.zero);
         }
 
         public static void TriggerHitmarker(Color color, string symbol = "💥")
@@ -1952,7 +1953,7 @@ namespace TumbangPreso.UI
                     if (!_lastUltReady)
                     {
                         _lastUltReady = true;
-                        GameServices.Audio?.PlayAt("round_win", UnityEngine.Camera.main != null ? UnityEngine.Camera.main.transform.position : Vector3.zero);
+                        GameServices.Audio?.PlayAt("sfx_super_ready", UnityEngine.Camera.main != null ? UnityEngine.Camera.main.transform.position : Vector3.zero);
                         if (_local != null) ComicPopup.Super(_local.transform.position);
                     }
                 }

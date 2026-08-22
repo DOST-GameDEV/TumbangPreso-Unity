@@ -28,7 +28,8 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("ability_flick_dash", ctx.Position);
+                GameServices.Audio?.PlayAt("hero_nemu_grunt", ctx.Position);
+                GameServices.Audio?.PlayAt("sfx_ghost_teleport", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "PHANTOM!", UiTheme.HeroSpiritBright, 1.25f);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
@@ -75,6 +76,7 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                GameServices.Audio?.PlayAt("sfx_ghost_teleport", ctx.Position);
                 ComicPopup.Boo(ctx.Position);
 
                 var visual = ctx.Motor.GetComponent<Visual.CharacterVisual>();
@@ -93,6 +95,7 @@ namespace TumbangPreso.Abilities
                 var visual = ctx.Motor.GetComponent<Visual.CharacterVisual>();
                 if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
                 {
+                    GameServices.Audio?.PlayAt("sfx_ghost_teleport", visual.transform.position);
                     visual.Companion.EndPossession(teleportNemu: true);
                 }
             }
@@ -107,7 +110,8 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("ability_spin_guard", ctx.Position);
+                GameServices.Audio?.PlayAt("hero_nemu_ult", ctx.Position);
+                GameServices.Audio?.PlayAt("sfx_ghost_teleport", ctx.Position);
                 Vector3 voidPos = ctx.Position + ctx.Forward * 4.5f;
                 HeroHazards.SpawnSeanceVoid(voidPos, 7.5f, 5.0f, ctx.Motor.PlayerSlot);
             }

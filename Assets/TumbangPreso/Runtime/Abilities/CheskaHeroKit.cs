@@ -24,6 +24,9 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                GameServices.Audio?.PlayAt("hero_cheska_grunt", ctx.Position);
+                GameServices.Audio?.PlayAt("sfx_ice_freeze", ctx.Position);
+
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.DashStretch(ctx.Forward, 0.25f);
 
@@ -42,6 +45,8 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                GameServices.Audio?.PlayAt("sfx_ice_freeze", ctx.Position);
+
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.Squash(0.2f);
 
@@ -59,7 +64,8 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("ability_bakya_bash", ctx.Position);
+                GameServices.Audio?.PlayAt("hero_cheska_ult", ctx.Position);
+                GameServices.Audio?.PlayAt("sfx_ice_freeze", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "BLIZZARD NOVA!", UiTheme.HeroIceBright, 1.5f);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();

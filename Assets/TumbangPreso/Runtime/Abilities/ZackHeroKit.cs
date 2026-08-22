@@ -39,7 +39,8 @@ namespace TumbangPreso.Abilities
 
                 ctx.Motor.ApplyImpulse(forward.normalized * 12.0f);
 
-                GameServices.Audio?.PlayAt("dash", ctx.Position);
+                GameServices.Audio?.PlayAt("hero_zack_grunt", ctx.Position);
+                GameServices.Audio?.PlayAt("sfx_lightning_strike", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "RAIL GRIND!", UiTheme.HeroElectricBright, 1.2f);
                 HeroHazards.SpawnShockTrail(ctx.Position, 2.2f, 3.5f, ctx.Motor.PlayerSlot);
                 _trailDropTimer = 0.25f;
@@ -72,7 +73,7 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 _kit.IsOverchargeThrowActive = true;
-                GameServices.Audio?.PlayAt("throw_charge", ctx.Position);
+                GameServices.Audio?.PlayAt("sfx_lightning_strike", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "OVERCHARGE!", UiTheme.HeroElectricBright, 1.25f);
             }
 
@@ -94,6 +95,8 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                GameServices.Audio?.PlayAt("hero_zack_ult", ctx.Position);
+                GameServices.Audio?.PlayAt("sfx_lightning_strike", ctx.Position);
                 HeroHazards.CreateThunderstrike(ctx.Position, 7.0f, ctx.Motor.PlayerSlot);
                 ComicPopup.Spawn(ctx.Position, "THUNDERSTRIKE!", UiTheme.HeroElectricBright, 1.5f);
 

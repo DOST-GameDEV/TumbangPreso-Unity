@@ -37,7 +37,8 @@ namespace TumbangPreso.Abilities
 
                 ctx.Motor.ApplyImpulse(forward.normalized * 17.0f + Vector3.up * 1.5f);
                 HeroHazards.SpawnFireTrail(ctx.Position, 1.8f, 3.0f, ctx.Motor.PlayerSlot);
-                GameServices.Audio?.PlayAt("ability_flick_dash", ctx.Position);
+                GameServices.Audio?.PlayAt("hero_sean_grunt", ctx.Position);
+                GameServices.Audio?.PlayAt("sfx_fire_whoosh", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "ROCKET!", UiTheme.HeroFireBright, 1.2f);
             }
 
@@ -88,7 +89,7 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 _kit.IsIgnitionCannonActive = true;
-                GameServices.Audio?.PlayAt("throw_charge", ctx.Position);
+                GameServices.Audio?.PlayAt("sfx_fire_whoosh", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "IGNITE!", UiTheme.HeroFireBright, 1.25f);
             }
 
@@ -118,7 +119,8 @@ namespace TumbangPreso.Abilities
 
                 // Launch upward
                 ctx.Motor.ApplyImpulse(Vector3.up * 14.0f + ctx.Forward * 4.0f);
-                GameServices.Audio?.PlayAt("jump", ctx.Position);
+                GameServices.Audio?.PlayAt("hero_sean_ult", ctx.Position);
+                GameServices.Audio?.PlayAt("sfx_fire_whoosh", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "BLAST OFF!", UiTheme.HeroFireBright, 1.3f);
             }
 
@@ -134,6 +136,7 @@ namespace TumbangPreso.Abilities
 
                     // Slam downward
                     ctx.Motor.ApplyImpulse(Vector3.down * 28.0f);
+                    GameServices.Audio?.PlayAt("sfx_explosion_heavy", ctx.Position);
                     HeroHazards.CreateExplosion(ctx.Position, 8.5f, 18.0f, 2.5f, ctx.Motor.PlayerSlot, "SUPERNOVA!");
                 }
             }

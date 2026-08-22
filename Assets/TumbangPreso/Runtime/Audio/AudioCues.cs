@@ -92,9 +92,18 @@ namespace TumbangPreso.Audio
             "bump", "tag", "downed", "jump", "land", "dash", "guard_block", "respawn",
             "stamina_empty",
 
-            // Hero Abilities.
+            // Hero Abilities & Special Effects.
             "ability_bagsak_bomb", "ability_bakya_bash", "ability_flick_dash",
             "ability_shatter_trap", "ability_spin_guard",
+            "sfx_explosion_heavy", "sfx_lightning_strike", "sfx_ice_freeze",
+            "sfx_fire_whoosh", "sfx_ghost_teleport", "sfx_hitmarker", "sfx_super_ready",
+
+            // Hero Vocal Shouts & Grunts.
+            "hero_dante_ult", "hero_dante_grunt",
+            "hero_cheska_ult", "hero_cheska_grunt",
+            "hero_sean_ult", "hero_sean_grunt",
+            "hero_zack_ult", "hero_zack_grunt",
+            "hero_nemu_ult", "hero_nemu_grunt",
 
             // The shove and the block, via aliases.
             "hit_body", "bump_swing",
