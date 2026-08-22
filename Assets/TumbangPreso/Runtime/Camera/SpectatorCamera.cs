@@ -499,7 +499,7 @@ namespace TumbangPreso.CameraSystem
         /// the spectator stays a camera and nothing else — the same rule that keeps gameplay
         /// state out of it.</summary>
         public static string ControlsText()
-            => "SPECTATOR    WASD fly · SPACE up · CTRL down · SHIFT boost · TAB follow · V POV · F free · WHEEL speed, or follow distance while following";
+            => "SPECTATOR    WASD fly · SPACE up · CTRL down · SHIFT boost · TAB follow · V POV · F free · C toggle controls · WHEEL speed/zoom";
 
         /// <summary>
         /// ⚠️ §2.6 — WHAT THE CAMERA IS DOING RIGHT NOW, which the static legend cannot say.

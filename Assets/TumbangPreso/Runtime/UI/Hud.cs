@@ -447,27 +447,14 @@ namespace TumbangPreso.UI
 
         private Text _spectatorLegend;
         private Text _spectatorStatus;
+        private Text _spectatorHint;
         private CameraSystem.SpectatorCamera _spectatorCamera;
-        private string _spectatorStatusShown = "￿";
+        private string _spectatorStatusShown = "";
+        private bool _spectatorControlsVisible = true;
 
         /// <summary>
         /// The two lines along the bottom of a spectator's screen.
-        ///
-        /// ⚠️⚠️ BOTH STRINGS WERE WRITTEN AND NEITHER WAS EVER DRAWN.
-        /// <see cref="CameraSystem.SpectatorCamera.ControlsText"/> and
-        /// <see cref="CameraSystem.SpectatorCamera.StatusText"/> had no caller anywhere in the
-        /// project, so a spectator got a camera with eight controls on it and no way to learn
-        /// any of them, and no feedback at all from the two numbers the wheel changes. The
-        /// camera's own header says the legend is "built by the match installer rather than
-        /// here so the spectator stays a camera and nothing else" — it is built here instead,
-        /// which honours the same rule and puts it on the surface that already owns text.
-        ///
-        /// ⚠️ THE STATUS LINE IS THE ONE THAT MATTERS. The wheel means fly speed in free flight
-        /// and follow distance while following, so "am I at 3 m/s or 40" was answered by flying
-        /// and finding out, twice.
-        ///
-        /// ⚠️ AND IT GOES UNDER THE READY PROMPT'S BAND, not over it. That band is empty for a
-        /// watcher, but a clean feed is the point of this mode and two overlapping lines is not.
+        /// Can be toggled on/off with [C] to avoid hogging the screen.
         /// </summary>
         private void BuildSpectatorReadout()
         {
@@ -484,6 +471,24 @@ namespace TumbangPreso.UI
                   new Vector2(1600, 28));
 
             _spectatorLegend.text = CameraSystem.SpectatorCamera.ControlsText();
+
+            _spectatorHint = HudLabel(_root, "SpectatorHint", 14, UiTheme.CreamMuted,
+                                      TextAnchor.LowerRight);
+            Place(_spectatorHint.rectTransform, new Vector2(1.0f, 0.0f), new Vector2(-24, 20),
+                  new Vector2(240, 24));
+            _spectatorHint.text = "[C] CONTROLS OVERLAY";
+            _spectatorHint.enabled = true;
+        }
+
+        public void SetSpectatorControlsVisible(bool visible)
+        {
+            _spectatorControlsVisible = visible;
+            if (_spectatorLegend != null) _spectatorLegend.gameObject.SetActive(visible);
+            if (_spectatorStatus != null) _spectatorStatus.gameObject.SetActive(visible);
+            if (_spectatorHint != null)
+            {
+                _spectatorHint.text = visible ? "[C] HIDE CONTROLS" : "[C] SHOW CONTROLS";
+            }
         }
 
         /// <summary>
@@ -493,7 +498,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void UpdateSpectatorReadout()
         {
-            if (_spectatorStatus == null) return;
+            if (_spectatorStatus == null || !_spectatorControlsVisible) return;
 
             if (_spectatorCamera == null)
                 _spectatorCamera = FindFirstObjectByType<CameraSystem.SpectatorCamera>();
@@ -564,6 +569,7 @@ namespace TumbangPreso.UI
             // for. The toggle also has to keep working while the canvas is hidden, which it
             // does because this is a component callback and not a UI event.
             if (_spectating && Input.GetKeyDown(KeyCode.H)) SetCleanFeed(!_cleanFeed);
+            if (_spectating && Input.GetKeyDown(KeyCode.C)) SetSpectatorControlsVisible(!_spectatorControlsVisible);
 
             if (GameServices.Match == null || GameServices.Round == null) return;
 
