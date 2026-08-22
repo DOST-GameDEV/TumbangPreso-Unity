@@ -25,6 +25,7 @@ namespace TumbangPreso
         public int RoundNumber { get; private set; }
         public int DefenderSlot => MatchRules.DefenderSlotFor(RoundNumber);
         public bool MatchInProgress { get; private set; }
+        public bool IsWarmupBuffer { get; set; }
 
         public int ScoreFor(int slot) => _scores[slot];
 
@@ -63,6 +64,7 @@ namespace TumbangPreso
         public void AddScore(int slot, ScoreEvent e)
         {
             if (!MatchInProgress) return;
+            if (IsWarmupBuffer) return;
             if (!NetAuthority.ShouldResolve()) return;
 
             _scores.Add(slot, e);
@@ -81,50 +83,22 @@ namespace TumbangPreso
             _scores.Reset();
             RoundNumber = 0;
             MatchInProgress = true;
+            IsWarmupBuffer = false;
             AdvanceRound();
         }
 
-        /// <summary>
-        /// Wipe the board without starting anything. This is `match_manager.gd::reset()`, which
-        /// the port never carried across.
-        ///
-        /// ⚠️⚠️ THE .gd FIXED THIS AS **B-14** AND ITS NOTE IS THE WHOLE DIAGNOSIS: *"nothing
-        /// reset this autoload between matches, so a second match resumed the first one's score
-        /// and round number. Called both when returning to the main menu and defensively at the
-        /// top of `main.gd::_ready()` every time Main.tscn loads fresh."* Unity's `GameServices`
-        /// is `DontDestroyOnLoad`, which reproduces an autoload's lifetime exactly — including
-        /// the bug it had to be given a `reset()` for.
-        ///
-        /// ⚠️⚠️ THE FREE-ROAM WINDOW HAPPENS BEFORE `StartMatch`, AND UNTIL THIS EXISTED IT SHOWED
-        /// THE PREVIOUS MATCH'S SCOREBOARD. `GameServices` is `DontDestroyOnLoad`, so this
-        /// director outlives every scene change; `SliceRunner.Begin` — which is what calls
-        /// `StartMatch` and clears the round — does not run until the 3 · 2 · 1 finishes. So a
-        /// player who finished one match and started another spent the whole ready phase looking
-        /// at the last match's final scores and "ROUND 6 / 6", with the LATA card up because the
-        /// old round was still flagged active, and watched all of it snap to zero on "GO!".
-        /// Caught in `Logs/shots-runtime/Eskinita.png`, where a freshly-loaded arena opens on four
-        /// seats holding 900 points each.
-        ///
-        /// ⚠️ IT FIRES NOTHING, AND THAT IS THE POINT. `StartMatch` raises `RoundStarted`, which
-        /// begins round 1 underneath the countdown — the exact fault `SliceRunner.AutoStart` was
-        /// turned off to prevent. This only makes the HUD tell the truth while the player walks
-        /// around; `StartMatch` still owns the beginning of the match and is idempotent over this.
-        /// </summary>
         public void ResetForNewMatch()
         {
             _scores.Reset();
             RoundNumber = 0;
             MatchInProgress = false;
+            IsWarmupBuffer = false;
         }
 
-        /// <summary>
-        /// ⚠️ THE ROLE IS DERIVED FROM RoundNumber, NEVER ACCUMULATED. Incrementing the
-        /// round is the whole of the rotation: there is no separate taya counter that could
-        /// disagree with it, and nothing to resynchronise if a peer misses a call.
-        /// </summary>
         public void AdvanceRound()
         {
             RoundNumber++;
+            IsWarmupBuffer = false;
 
             if (RoundNumber > Balance.Rounds)
             {
@@ -136,20 +110,18 @@ namespace TumbangPreso
             RoundStarted?.Invoke(RoundNumber, DefenderSlot);
         }
 
-        /// <summary>
-        /// ⚠️ SCORES PERSIST ACROSS THE BOUNDARY AND THERE IS NO PER-ROUND WINNER. Only the
-        /// taya role rotates; the running totals are the whole game.
-        /// </summary>
         public void BeginIntermission()
         {
             int next = RoundNumber + 1;
             if (next > Balance.Rounds)
             {
                 MatchInProgress = false;
+                IsWarmupBuffer = false;
                 MatchEnded?.Invoke(_scores.WinningSlot());
                 return;
             }
 
+            IsWarmupBuffer = true;
             IntermissionStarted?.Invoke(next, MatchRules.DefenderSlotFor(next));
         }
     }

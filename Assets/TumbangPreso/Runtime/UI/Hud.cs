@@ -670,12 +670,15 @@ namespace TumbangPreso.UI
             // thing a player ever sees. The .gd has clamped this since the format was written.
             int round = Mathf.Max(1, GameServices.Match.RoundNumber);
 
-            // ⚠️ NAME, NOT SEAT. This used to print "P%d" off the raw slot, so a taya who set a
-            // name in Settings still read as "P3" on the one line that most needs to say who is
-            // playing.
-            // ⚠️ THREE SPACES EACH SIDE OF THE DOT, matching `hud.gd`'s own format string. Two
-            // reads as a tighter line than the original at the same font size.
-            _round.text = $"ROUND {round} / {Balance.Rounds}   ·   TAYA: {SeatName(GameServices.Match.DefenderSlot)}";
+            if (GameServices.Match.IsWarmupBuffer)
+            {
+                _round.text = "WARMUP / PRACTICE BUFFER   ·   SCORES PAUSED";
+                _timer.color = UiTheme.Highlight;
+            }
+            else
+            {
+                _round.text = $"ROUND {round} / {Balance.Rounds}   ·   TAYA: {SeatName(GameServices.Match.DefenderSlot)}";
+            }
         }
 
         /// <summary>

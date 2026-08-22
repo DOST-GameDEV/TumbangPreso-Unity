@@ -39,14 +39,32 @@ namespace TumbangPreso.Abilities
         private sealed class GhostlyPoltergeistAbility : HeroAbility
         {
             public GhostlyPoltergeistAbility()
-                : base("nemu_skill2", "GHOSTLY POLTERGEIST", "Sends ghost companion to haunt enemies and disrupt throws.", 7.5f, 0.0f)
+                : base("nemu_skill2", "ASTRAL PROJECTION", "Projects into ghost to fly freely; press again or wait to teleport to it.", 9.0f, 6.0f)
             {
             }
 
+            public override bool CanReactivate => true;
+
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("ability_shatter_trap", ctx.Position);
-                HeroHazards.SpawnGhostPoltergeist(ctx.Position, ctx.Forward, ctx.Motor.PlayerSlot);
+                var visual = ctx.Motor.GetComponent<Visual.CharacterVisual>();
+                if (visual != null && visual.Companion != null)
+                {
+                    visual.Companion.BeginPossession(ctx.Motor);
+                }
+                else
+                {
+                    HeroHazards.SpawnGhostPoltergeist(ctx.Position, ctx.Forward, ctx.Motor.PlayerSlot);
+                }
+            }
+
+            protected override void OnEnd(AbilityContext ctx)
+            {
+                var visual = ctx.Motor.GetComponent<Visual.CharacterVisual>();
+                if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
+                {
+                    visual.Companion.EndPossession(teleportNemu: true);
+                }
             }
         }
 

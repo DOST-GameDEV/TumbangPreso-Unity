@@ -61,6 +61,22 @@ namespace TumbangPreso.Abilities
             }
         }
 
+        public virtual bool CanReactivate => false;
+
+        public virtual void Reactivate(AbilityContext ctx)
+        {
+            EndEarly(ctx);
+        }
+
+        public void EndEarly(AbilityContext ctx)
+        {
+            if (DurationRemaining > 0.0f)
+            {
+                DurationRemaining = 0.0f;
+                OnEnd(ctx);
+            }
+        }
+
         public virtual void Reset()
         {
             CooldownRemaining = 0.0f;

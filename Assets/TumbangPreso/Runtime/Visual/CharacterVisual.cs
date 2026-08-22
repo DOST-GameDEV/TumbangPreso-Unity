@@ -58,6 +58,8 @@ namespace TumbangPreso.Visual
         /// </summary>
         private static readonly int FrostAmountId = Shader.PropertyToID("_FrostAmount");
 
+        public GhostPetCompanion Companion { get; private set; }
+
         /// <summary>
         /// ⚠️⚠️ THE KENNEY RIG IS AUTHORED ~0.67 UNITS TALL AND NOTHING HERE WAS SCALING IT.
         /// `character_visual.gd:714` runs `model.scale = Vector3.ONE * PERSON_SCALE` on every
@@ -249,6 +251,7 @@ namespace TumbangPreso.Visual
                 _petInstance.transform.localScale = Vector3.one * PersonScale;
                 var companion = _petInstance.AddComponent<GhostPetCompanion>();
                 companion.Bind(_instance != null ? _instance.transform : transform, new Vector3(-0.52f, 0.50f, -0.05f), PersonScale);
+                Companion = companion;
                 ToonSkin.Apply(_petInstance, person ? ToonSkin.PersonOutlineWidth : ToonSkin.PropOutlineWidth, palette);
                 _renderers.AddRange(_petInstance.GetComponentsInChildren<Renderer>(includeInactive: true));
             }

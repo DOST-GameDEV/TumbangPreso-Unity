@@ -23,6 +23,7 @@ namespace TumbangPreso.Core
         public const int PlayerCount = 4;
         public const float RoundTime = 90.0f;
         public const float IntermissionDuration = 3.0f;
+        public const float WarmupBufferDuration = 15.0f;
 
         // -------------------------------------------------------------------
         // SCORING — round_manager.gd

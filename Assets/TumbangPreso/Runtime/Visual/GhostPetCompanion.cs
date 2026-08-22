@@ -64,6 +64,12 @@ namespace TumbangPreso.Visual
         private float _fidgetExtraRoll;
         private Vector3 _fidgetScaleMul = Vector3.one;
 
+        // Possession state
+        public bool IsPossessed { get; private set; }
+        private CharacterMotor _nemuMotor;
+        private AIController _temporaryAi;
+        private GameObject _possessLightGo;
+
         private void Awake()
         {
             _baseScale = transform.localScale;
@@ -100,18 +106,74 @@ namespace TumbangPreso.Visual
             }
         }
 
+        public void BeginPossession(CharacterMotor nemuMotor)
+        {
+            _nemuMotor = nemuMotor;
+            IsPossessed = true;
+
+            if (_possessLightGo == null)
+            {
+                _possessLightGo = new GameObject("GhostPossessLight");
+                _possessLightGo.transform.SetParent(transform, false);
+                var l = _possessLightGo.AddComponent<Light>();
+                l.type = LightType.Point;
+                l.color = new Color(0.85f, 0.35f, 1.0f);
+                l.range = 7.0f;
+                l.intensity = 4.0f;
+            }
+
+            if (_nemuMotor != null && _nemuMotor.GetComponent<AIController>() == null)
+            {
+                _temporaryAi = _nemuMotor.gameObject.AddComponent<AIController>();
+            }
+
+            GameServices.Audio?.PlayAt("ability_flick_dash", transform.position);
+        }
+
+        public void EndPossession(bool teleportNemu)
+        {
+            if (!IsPossessed) return;
+
+            if (teleportNemu && _nemuMotor != null)
+            {
+                _nemuMotor.Teleport(transform.position);
+                GameServices.Audio?.PlayAt("respawn", transform.position);
+                Abilities.HeroHazards.SpawnShockTrail(transform.position, 2.5f, 2.0f, _nemuMotor.PlayerSlot);
+            }
+
+            if (_temporaryAi != null)
+            {
+                Destroy(_temporaryAi);
+                _temporaryAi = null;
+            }
+
+            if (_possessLightGo != null)
+            {
+                Destroy(_possessLightGo);
+                _possessLightGo = null;
+            }
+
+            IsPossessed = false;
+        }
+
         private void LateUpdate()
         {
+            float dt = Time.deltaTime > 0.0f ? Time.deltaTime : Time.unscaledDeltaTime;
+            if (dt <= 0.0f) dt = 0.016f;
+
+            float time = (Application.isPlaying ? Time.time : Time.unscaledTime) + _timeOffset;
+
+            if (IsPossessed)
+            {
+                UpdatePossession(dt, time);
+                return;
+            }
+
             if (_target == null)
             {
                 Destroy(gameObject);
                 return;
             }
-
-            float dt = Time.deltaTime > 0.0f ? Time.deltaTime : Time.unscaledDeltaTime;
-            if (dt <= 0.0f) dt = 0.016f;
-
-            float time = (Application.isPlaying ? Time.time : Time.unscaledTime) + _timeOffset;
 
             // Measure movement velocity
             Vector3 moveVel = Vector3.zero;
@@ -337,6 +399,54 @@ namespace TumbangPreso.Visual
                 {
                     _currentFidget = FidgetState.None;
                     ResetFidgetTimer();
+                }
+            }
+        }
+
+        private void UpdatePossession(float dt, float time)
+        {
+            Vector2 move = _nemuMotor != null && _nemuMotor.Intent != null ? _nemuMotor.Intent.MoveAxis : Vector2.zero;
+
+            Vector3 camFwd = Camera.main != null ? Camera.main.transform.forward : (_nemuMotor != null ? _nemuMotor.transform.forward : transform.forward);
+            Vector3 camRight = Camera.main != null ? Camera.main.transform.right : (_nemuMotor != null ? _nemuMotor.transform.right : transform.right);
+            camFwd.y = 0.0f;
+            camRight.y = 0.0f;
+
+            Vector3 moveDir = (camFwd.normalized * move.y + camRight.normalized * move.x);
+            float flySpeed = 12.5f;
+
+            if (moveDir.sqrMagnitude > 0.01f)
+            {
+                transform.position += moveDir.normalized * flySpeed * dt;
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveDir), dt * 14.0f);
+            }
+
+            // Floating bob & tilt
+            transform.position += Vector3.up * Mathf.Sin(time * 6.0f) * 0.02f;
+
+            // Height clamp to hover over street
+            if (Physics.Raycast(transform.position + Vector3.up * 1.5f, Vector3.down, out RaycastHit hit, 5.0f, ~0, QueryTriggerInteraction.Ignore))
+            {
+                float targetY = hit.point.y + 0.9f;
+                Vector3 p = transform.position;
+                p.y = Mathf.Lerp(p.y, targetY, dt * 8.0f);
+                transform.position = p;
+            }
+
+            // Haunt and chill opponents touched by ghost
+            var round = GameServices.Round;
+            if (round != null && _nemuMotor != null)
+            {
+                foreach (var p in round.Players)
+                {
+                    if (p == null || p.PlayerSlot == _nemuMotor.PlayerSlot) continue;
+                    Vector3 diff = p.transform.position - transform.position;
+                    diff.y = 0.0f;
+                    if (diff.magnitude < 1.6f)
+                    {
+                        p.ApplyStagger(0.35f);
+                        p.ApplyImpulse(diff.normalized * 3.0f * dt);
+                    }
                 }
             }
         }

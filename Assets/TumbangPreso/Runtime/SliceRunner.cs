@@ -189,8 +189,14 @@ namespace TumbangPreso
             }
         }
 
-        private void OnIntermission(int nextRound, int nextDefenderSlot) =>
-            Invoke(nameof(Advance), Balance.IntermissionDuration);
+        private void OnIntermission(int nextRound, int nextDefenderSlot)
+        {
+            ResetWorld(nextDefenderSlot);
+            EquipOwnedSlippers(nextDefenderSlot);
+
+            CancelInvoke(nameof(Advance));
+            Invoke(nameof(Advance), Balance.WarmupBufferDuration);
+        }
 
         private void Advance() => GameServices.Match.AdvanceRound();
 

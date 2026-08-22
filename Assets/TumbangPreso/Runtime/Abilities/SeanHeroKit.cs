@@ -22,16 +22,27 @@ namespace TumbangPreso.Abilities
             {
             }
 
+            private float _trailSpawnAccum;
+
             protected override void OnActivate(AbilityContext ctx)
             {
+                _trailSpawnAccum = 0.0f;
                 Vector3 forward = ctx.Forward;
                 forward.y = 0.0f;
-                ctx.Motor.ApplyImpulse(forward.normalized * 14.0f + Vector3.up * 1.5f);
+                ctx.Motor.ApplyImpulse(forward.normalized * 16.0f + Vector3.up * 1.5f);
+                HeroHazards.SpawnFireTrail(ctx.Position, 1.8f, 3.0f, ctx.Motor.PlayerSlot);
                 GameServices.Audio?.PlayAt("ability_flick_dash", ctx.Position);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
+                _trailSpawnAccum += dt;
+                if (_trailSpawnAccum >= 0.12f)
+                {
+                    _trailSpawnAccum = 0.0f;
+                    HeroHazards.SpawnFireTrail(ctx.Position, 1.8f, 3.0f, ctx.Motor.PlayerSlot);
+                }
+
                 // Hit check during dash
                 var round = ctx.Round;
                 if (round != null)
@@ -42,12 +53,12 @@ namespace TumbangPreso.Abilities
 
                         Vector3 diff = p.transform.position - ctx.Position;
                         diff.y = 0.0f;
-                        if (diff.magnitude <= 1.8f)
+                        if (diff.magnitude <= 2.0f)
                         {
-                            Vector3 hitForce = (diff.sqrMagnitude > 0.01f ? diff.normalized : ctx.Forward) * 12.0f;
-                            hitForce.y = 4.0f;
+                            Vector3 hitForce = (diff.sqrMagnitude > 0.01f ? diff.normalized : ctx.Forward) * 14.0f;
+                            hitForce.y = 4.5f;
                             p.ApplyImpulse(hitForce);
-                            p.ApplyStagger(1.4f);
+                            p.ApplyStagger(1.5f);
                             GameServices.Audio?.PlayAt("bump", p.transform.position);
                         }
                     }
@@ -104,8 +115,8 @@ namespace TumbangPreso.Abilities
                 {
                     _smashed = true;
                     // Slam downward
-                    ctx.Motor.ApplyImpulse(Vector3.down * 22.0f);
-                    HeroHazards.CreateExplosion(ctx.Position, 7.0f, 16.0f, 2.2f, ctx.Motor.PlayerSlot);
+                    ctx.Motor.ApplyImpulse(Vector3.down * 26.0f);
+                    HeroHazards.CreateExplosion(ctx.Position, 8.5f, 18.0f, 2.5f, ctx.Motor.PlayerSlot);
                 }
             }
         }

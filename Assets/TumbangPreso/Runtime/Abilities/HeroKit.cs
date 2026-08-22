@@ -47,7 +47,13 @@ namespace TumbangPreso.Abilities
 
         public virtual bool TryActivateSkill1(AbilityContext ctx)
         {
-            if (Skill1 != null && Skill1.CanActivate(ctx))
+            if (Skill1 == null) return false;
+            if (Skill1.IsActive && Skill1.CanReactivate)
+            {
+                Skill1.Reactivate(ctx);
+                return true;
+            }
+            if (Skill1.CanActivate(ctx))
             {
                 Skill1.Activate(ctx);
                 AddUltimateCharge(8.0f);
@@ -58,7 +64,13 @@ namespace TumbangPreso.Abilities
 
         public virtual bool TryActivateSkill2(AbilityContext ctx)
         {
-            if (Skill2 != null && Skill2.CanActivate(ctx))
+            if (Skill2 == null) return false;
+            if (Skill2.IsActive && Skill2.CanReactivate)
+            {
+                Skill2.Reactivate(ctx);
+                return true;
+            }
+            if (Skill2.CanActivate(ctx))
             {
                 Skill2.Activate(ctx);
                 AddUltimateCharge(10.0f);

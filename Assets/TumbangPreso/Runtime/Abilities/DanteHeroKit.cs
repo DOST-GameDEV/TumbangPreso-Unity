@@ -24,36 +24,21 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("ability_bagsak_bomb", ctx.Position);
+                HeroHazards.CreateExplosion(ctx.Position, 5.5f, 10.0f, 1.4f, ctx.Motor.PlayerSlot);
 
                 var round = ctx.Round;
                 if (round != null)
                 {
-                    foreach (var p in round.Players)
-                    {
-                        if (p == null || p.PlayerSlot == ctx.Motor.PlayerSlot) continue;
-
-                        Vector3 diff = p.transform.position - ctx.Position;
-                        diff.y = 0.0f;
-                        if (diff.magnitude <= 5.5f)
-                        {
-                            Vector3 push = (diff.sqrMagnitude > 0.01f ? diff.normalized : ctx.Forward) * 9.5f;
-                            push.y = 3.5f;
-                            p.ApplyImpulse(push);
-                            p.ApplyStagger(1.2f);
-                        }
-                    }
-
-                    // Repel slippers
-                    foreach (var s in UnityEngine.Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
+                    // Repel slippers with extra force
+                    foreach (var s in UnityEngine.Object.FindObjectsByType<Slipper>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                     {
                         if (s != null)
                         {
                             Vector3 sDiff = s.transform.position - ctx.Position;
                             sDiff.y = 0.0f;
-                            if (sDiff.magnitude <= 6.0f)
+                            if (sDiff.magnitude <= 6.5f)
                             {
-                                s.Deflect(sDiff.normalized * 14.0f + Vector3.up * 3.0f, 1.0f);
+                                s.Deflect(sDiff.normalized * 16.0f + Vector3.up * 4.0f, 1.0f);
                             }
                         }
                     }
@@ -121,14 +106,15 @@ namespace TumbangPreso.Abilities
                     }
                 }
 
-                // Spawn 3 rock pillars in cone
-                Vector3 p1 = ctx.Position + forward * 3.5f;
-                Vector3 p2 = ctx.Position + Quaternion.Euler(0, 25, 0) * forward * 6.5f;
-                Vector3 p3 = ctx.Position + Quaternion.Euler(0, -25, 0) * forward * 6.5f;
+                HeroHazards.CreateExplosion(ctx.Position + forward * 3.0f, 6.5f, 15.0f, 2.0f, ctx.Motor.PlayerSlot);
 
-                HeroHazards.SpawnEarthPillar(p1, 6.0f);
-                HeroHazards.SpawnEarthPillar(p2, 6.0f);
-                HeroHazards.SpawnEarthPillar(p3, 6.0f);
+                // Spawn 6 basalt earth pillars in forward arc / circle
+                for (int i = -2; i <= 3; i++)
+                {
+                    float angle = i * 35.0f;
+                    Vector3 offset = Quaternion.Euler(0, angle, 0) * forward * (i % 2 == 0 ? 5.5f : 4.0f);
+                    HeroHazards.SpawnEarthPillar(ctx.Position + offset, 6.0f);
+                }
             }
         }
     }

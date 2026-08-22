@@ -210,6 +210,45 @@ namespace TumbangPreso.Tests
         }
 
         [Test]
+        public void Nemu_AstralProjection_SupportsReactivation()
+        {
+            var nemu = new Abilities.NemuHeroKit();
+            Assert.IsTrue(nemu.Skill2.CanReactivate, "Nemu Skill 2 should support early reactivation");
+
+            var go = new GameObject("TestMotor");
+            var motor = go.AddComponent<CharacterMotor>();
+            var ctx = new Abilities.AbilityContext(motor, null, null);
+
+            Assert.IsTrue(nemu.TryActivateSkill2(ctx));
+            Assert.IsTrue(nemu.Skill2.IsActive);
+
+            // Second activation reactivates and ends early (teleport trigger)
+            Assert.IsTrue(nemu.TryActivateSkill2(ctx));
+            Assert.IsFalse(nemu.Skill2.IsActive, "Second activation should end early");
+
+            Object.DestroyImmediate(go);
+        }
+
+        [Test]
+        public void MatchDirector_WarmupBuffer_BlocksScoreAwards()
+        {
+            var go = new GameObject("TestMatchDirector");
+            var match = go.AddComponent<MatchDirector>();
+            match.StartMatch();
+
+            // When in live match, scoring works
+            match.AddScore(0, ScoreEvent.Tag);
+            Assert.AreEqual(Balance.ScoreTag, match.ScoreFor(0));
+
+            // When warmup buffer is active, scoring is blocked
+            match.IsWarmupBuffer = true;
+            match.AddScore(0, ScoreEvent.LataKnocked);
+            Assert.AreEqual(Balance.ScoreTag, match.ScoreFor(0), "Score must not increase during warmup buffer");
+
+            Object.DestroyImmediate(go);
+        }
+
+        [Test]
         public void GameMode_Rosters_AreDistinctAndCorrectSizes()
         {
             var classic = Roster.GetPeople(GameMode.Classic);
