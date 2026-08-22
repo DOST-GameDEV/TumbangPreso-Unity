@@ -216,11 +216,20 @@ namespace TumbangPreso.CameraSystem
             new Key(0.46f,  0.00f,  0.00f, 0.0f),
         };
 
-        private static readonly Key[] GrabClip =
+        private static readonly Key[] SlamClip =
         {
-            new Key(0.00f, 0.00f,  0.00f, 0.0f),
-            new Key(0.18f, 0.46f, -0.14f, 0.0f),
-            new Key(0.40f, 0.00f,  0.00f, 0.0f),
+            new Key(0.00f,  0.00f,  0.00f, 0.0f),
+            new Key(0.12f,  0.75f,  0.15f, 0.0f),
+            new Key(0.22f, -0.85f, -0.10f, 0.0f),
+            new Key(0.44f,  0.00f,  0.00f, 0.0f),
+        };
+
+        private static readonly Key[] ThrustClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f, 0.0f),
+            new Key(0.10f, -0.65f,  0.20f, 0.0f),
+            new Key(0.20f,  0.85f, -0.15f, 0.0f),
+            new Key(0.38f,  0.00f,  0.00f, 0.0f),
         };
 
         private Key[] _clip;
@@ -239,27 +248,6 @@ namespace TumbangPreso.CameraSystem
         /// <summary>-1 when nothing is charging, 0..1 while something is.</summary>
         private float _charge = -1.0f;
 
-        /// <summary>
-        /// Drive the wind-up from live charge power, 0..1, or -1 for "not charging".
-        /// `camera_rig.gd::set_viewmodel_charge`.
-        ///
-        /// ⚠️⚠️ THE PORT HAD NO WIND-UP POSE AT ALL, IN EITHER VIEW. The 2.5 s throw charge, the
-        /// taya's 0.5 s lunge and the shove all wound up with a completely motionless arm, so the
-        /// commitment the whole design hangs counterplay on was invisible to the person making it
-        /// and to everybody watching. The .gd carries two separate 🧑 reports about exactly this
-        /// — *"no hand animation kapag nag tag ka as defender"* and *"is that on purpose theres
-        /// no taya animation? can u make sure theres an animation or atleast a hand movement for
-        /// all movements"* — and both were fixed there and never came across.
-        ///
-        /// ⚠️ IT SUPPRESSES THE ACTION CLIP WHILE IT HOLDS. The .gd stops the idle for the same
-        /// reason: *"the idle clip animates the SAME rotation this writes, so it has to be
-        /// stopped while charging or it overwrites the pose every frame and the arm just sways
-        /// instead of cocking."*
-        ///
-        /// ⚠️ THE SIGN IS FLIPPED FROM THE .gd's `-WINDUP * power` by the same mirror every other
-        /// rotation in this file uses. Getting it wrong is B-131 — *"a wind-up that travelled the
-        /// right distance in the wrong direction"*, the hand dropping instead of cocking.
-        /// </summary>
         public void SetCharge(float power)
         {
             _charge = power < 0.0f ? -1.0f : Mathf.Clamp01(power);
@@ -268,17 +256,14 @@ namespace TumbangPreso.CameraSystem
         }
 
         /// <summary>
-        /// Play `throw` or `grab` on the right arm.
-        ///
-        /// ⚠️ IT REPORTS WHETHER IT HAD THE CLIP, because the caller's fallback depends on the
-        /// answer: `camera_rig.gd::play_viewmodel_action` plays a procedural kick for every
-        /// kind these arms carry no animation for, which is the punch, the shove and the lunge.
-        /// Returning void here is what made those three verbs silent in first person.
+        /// Play `throw`, `grab`, `slam`, or `cast` on the right arm.
         /// </summary>
         public bool PlayAction(string clip)
         {
             _clip = clip == "throw" ? ThrowClip
                   : clip == "grab" ? GrabClip
+                  : clip == "slam" || clip == "stomp" ? SlamClip
+                  : clip == "cast" || clip == "thrust" || clip == "dash" ? ThrustClip
                   : null;
 
             _clipTime = 0.0f;

@@ -437,6 +437,16 @@ namespace TumbangPreso
                 l.color = UI.UiTheme.HeroFireBright;
                 l.range = 3.5f;
                 l.intensity = 3.0f;
+
+                var trail = _affinityVfxGo.AddComponent<TrailRenderer>();
+                trail.time = 0.35f;
+                trail.startWidth = 0.24f;
+                trail.endWidth = 0.0f;
+                var mat = new Material(Shader.Find("Sprites/Default")) { color = UI.UiTheme.HeroFireBright };
+                trail.material = mat;
+                trail.startColor = mat.color;
+                trail.endColor = new Color(mat.color.r, mat.color.g, mat.color.b, 0.0f);
+
                 Visual.ComicPopup.Spawn(origin, "FIREBALL!", UI.UiTheme.HeroFireBright, 1.1f);
             }
             else if (Affinity == SlipperAffinity.ElectricZap)
@@ -448,7 +458,30 @@ namespace TumbangPreso
                 l.color = UI.UiTheme.HeroElectricBright;
                 l.range = 3.5f;
                 l.intensity = 3.0f;
+
+                var trail = _affinityVfxGo.AddComponent<TrailRenderer>();
+                trail.time = 0.35f;
+                trail.startWidth = 0.24f;
+                trail.endWidth = 0.0f;
+                var mat = new Material(Shader.Find("Sprites/Default")) { color = UI.UiTheme.HeroElectricBright };
+                trail.material = mat;
+                trail.startColor = mat.color;
+                trail.endColor = new Color(mat.color.r, mat.color.g, mat.color.b, 0.0f);
+
                 Visual.ComicPopup.Spawn(origin, "OVERCHARGE!", UI.UiTheme.HeroElectricBright, 1.1f);
+            }
+            else if (SceneFlow.SelectedMode == GameMode.HeroStrike)
+            {
+                _affinityVfxGo = new GameObject("HeroSlipperTrail");
+                _affinityVfxGo.transform.SetParent(transform, false);
+                var trail = _affinityVfxGo.AddComponent<TrailRenderer>();
+                trail.time = 0.22f;
+                trail.startWidth = 0.14f;
+                trail.endWidth = 0.0f;
+                var mat = new Material(Shader.Find("Sprites/Default")) { color = new Color(1.0f, 0.95f, 0.7f, 0.6f) };
+                trail.material = mat;
+                trail.startColor = mat.color;
+                trail.endColor = new Color(1.0f, 0.95f, 0.7f, 0.0f);
             }
         }
 

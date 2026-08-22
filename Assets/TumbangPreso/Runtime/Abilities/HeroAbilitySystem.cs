@@ -90,17 +90,29 @@ namespace TumbangPreso.Abilities
 
             if (intent.JustPressed(Verb.Skill1))
             {
-                Kit.TryActivateSkill1(_context);
+                if (Kit.TryActivateSkill1(_context))
+                {
+                    GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("dash");
+                    CameraSystem.CameraRig.PlayViewmodelAction(_motor, "thrust");
+                }
             }
 
             if (intent.JustPressed(Verb.Skill2))
             {
-                Kit.TryActivateSkill2(_context);
+                if (Kit.TryActivateSkill2(_context))
+                {
+                    GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("shove");
+                    CameraSystem.CameraRig.PlayViewmodelAction(_motor, "cast");
+                }
             }
 
             if (intent.JustPressed(Verb.Ultimate))
             {
-                Kit.TryActivateUltimate(_context);
+                if (Kit.TryActivateUltimate(_context))
+                {
+                    GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("jump");
+                    CameraSystem.CameraRig.PlayViewmodelAction(_motor, "slam");
+                }
             }
         }
 

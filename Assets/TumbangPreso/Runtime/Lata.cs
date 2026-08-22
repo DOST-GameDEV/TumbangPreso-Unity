@@ -192,8 +192,23 @@ namespace TumbangPreso
             GameServices.Audio?.PlayAt(value ? "reset_complete" : "can_knockdown",
                                        transform.position);
 
-            if (value) GameServices.Voice?.OnLataRestored();
-            else GameServices.Voice?.OnLataKnocked();
+            if (value)
+            {
+                GameServices.Voice?.OnLataRestored();
+                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, "RESTORED!", UI.UiTheme.Defense, 1.2f);
+            }
+            else
+            {
+                GameServices.Voice?.OnLataKnocked();
+                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, "DOWNED!", UI.UiTheme.Offense, 1.4f);
+                UI.Hud.TriggerHitmarker(UI.UiTheme.Offense, "💥");
+                Visual.ImpactBurst.SpawnAt(transform.position);
+                if (UnityEngine.Camera.main != null)
+                {
+                    var rig = UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>();
+                    if (rig != null) rig.Shake(0.35f, 0.2f);
+                }
+            }
 
             UprightChanged?.Invoke(value);
         }

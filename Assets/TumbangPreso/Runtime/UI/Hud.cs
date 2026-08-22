@@ -128,8 +128,12 @@ namespace TumbangPreso.UI
         private Material _frostMaterial;
         private float _frostCoverage;
 
+        public static Hud Instance { get; private set; }
+
         private Text _vulnerable;
         private Text _crosshair;
+        private Text _hitmarker;
+        private float _hitmarkerTimer;
         private OffscreenIndicators _indicators;
 
         private GameObject _heroDeck;
@@ -293,7 +297,11 @@ namespace TumbangPreso.UI
 
         // -------------------------------------------------------------------
 
-        private void Awake() => Build();
+        private void Awake()
+        {
+            Instance = this;
+            Build();
+        }
 
         /// <summary>
         /// ⚠️⚠️ THE HUD SUBSCRIBED TO EXACTLY ONE EVENT AND `hud.gd` SUBSCRIBES TO THREE.
@@ -630,6 +638,17 @@ namespace TumbangPreso.UI
             _indicators?.SetCanArrowColour(role);
 
             _vulnerable.enabled = _local.IsTaggable();
+
+            if (_hitmarkerTimer > 0.0f)
+            {
+                _hitmarkerTimer -= dt;
+                float t = Mathf.Clamp01(_hitmarkerTimer / 0.28f);
+                _hitmarker.rectTransform.localScale = Vector3.one * (1.0f + 0.6f * t);
+                Color c = _hitmarker.color;
+                c.a = t;
+                _hitmarker.color = c;
+                if (_hitmarkerTimer <= 0.0f) _hitmarker.enabled = false;
+            }
         }
 
         // -------------------------------------------------------------------
@@ -1230,6 +1249,7 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
+            if (Instance == this) Instance = null;
             Dispose(_frostMaterial);
             Dispose(_dangerMaterial);
         }
@@ -1612,6 +1632,28 @@ namespace TumbangPreso.UI
 
             _crosshair.text = "+";
             _crosshair.enabled = false;
+
+            _hitmarker = HudLabel(_root, "HitmarkerLabel", 42, UiTheme.Highlight,
+                                  TextAnchor.MiddleCenter, 5);
+            Place(_hitmarker.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
+                  new Vector2(64, 64));
+            _hitmarker.text = "💥";
+            _hitmarker.enabled = false;
+        }
+
+        public void PopHitmarker(Color color, string symbol = "💥")
+        {
+            if (_hitmarker == null) return;
+            _hitmarkerTimer = 0.28f;
+            _hitmarker.text = symbol;
+            _hitmarker.color = color;
+            _hitmarker.rectTransform.localScale = Vector3.one * 1.6f;
+            _hitmarker.enabled = true;
+        }
+
+        public static void TriggerHitmarker(Color color, string symbol = "💥")
+        {
+            Instance?.PopHitmarker(color, symbol);
         }
 
         // -------------------------------------------------------------------

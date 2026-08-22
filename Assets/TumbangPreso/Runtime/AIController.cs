@@ -166,6 +166,7 @@ namespace TumbangPreso
             StepPlan(dt);
 
             Act(intent, dt);
+            StepHeroAbilities(intent, dt);
 
             // ⚠️⚠️ NO COMMIT HERE ANY MORE, AND IT USED TO BE ON THIS LINE. The snapshot is taken
             // by the consumer at the end of `CharacterMotor.FixedUpdate`, not by each producer at
@@ -1969,6 +1970,158 @@ namespace TumbangPreso
         /// standing on its own slipper for ninety seconds.</summary>
         private void Tap(InputIntent intent, Verb verb)
             => Press(intent, verb, !_pressed.Contains(verb));
+
+        private void StepHeroAbilities(InputIntent intent, float dt)
+        {
+            if (SceneFlow.SelectedMode != GameMode.HeroStrike) return;
+
+            var abilitySystem = _motor.AbilitySystem;
+            if (abilitySystem == null || abilitySystem.Kit == null) return;
+
+            var kit = abilitySystem.Kit;
+            var round = GameServices.Round;
+            if (round == null || !round.RoundActive) return;
+
+            Vector3 myPos = transform.position;
+
+            // 1. Ultimate Decision
+            if (kit.IsUltimateReady)
+            {
+                if (kit is Abilities.DanteHeroKit)
+                {
+                    foreach (var p in round.Players)
+                    {
+                        if (p != null && p.PlayerSlot != _motor.PlayerSlot && Vector3.Distance(myPos, p.transform.position) <= 9.0f)
+                        {
+                            Tap(intent, Verb.Ultimate);
+                            break;
+                        }
+                    }
+                }
+                else if (kit is Abilities.CheskaHeroKit)
+                {
+                    foreach (var p in round.Players)
+                    {
+                        if (p != null && p.PlayerSlot != _motor.PlayerSlot && Vector3.Distance(myPos, p.transform.position) <= 7.0f)
+                        {
+                            Tap(intent, Verb.Ultimate);
+                            break;
+                        }
+                    }
+                }
+                else if (kit is Abilities.SeanHeroKit)
+                {
+                    if (round.Lata != null && Vector3.Distance(myPos, round.Lata.transform.position) <= 6.0f)
+                    {
+                        Tap(intent, Verb.Ultimate);
+                    }
+                    else
+                    {
+                        foreach (var p in round.Players)
+                        {
+                            if (p != null && p.PlayerSlot != _motor.PlayerSlot && Vector3.Distance(myPos, p.transform.position) <= 7.5f)
+                            {
+                                Tap(intent, Verb.Ultimate);
+                                break;
+                            }
+                        }
+                    }
+                }
+                else if (kit is Abilities.ZackHeroKit)
+                {
+                    foreach (var p in round.Players)
+                    {
+                        if (p != null && p.PlayerSlot != _motor.PlayerSlot && Vector3.Distance(myPos, p.transform.position) <= 8.0f)
+                        {
+                            Tap(intent, Verb.Ultimate);
+                            break;
+                        }
+                    }
+                }
+                else if (kit is Abilities.NemuHeroKit)
+                {
+                    Tap(intent, Verb.Ultimate);
+                }
+            }
+
+            // 2. Skill 1 Decision
+            if (kit.Skill1 != null && kit.Skill1.IsReady)
+            {
+                if (kit is Abilities.DanteHeroKit)
+                {
+                    foreach (var p in round.Players)
+                    {
+                        if (p != null && p.PlayerSlot != _motor.PlayerSlot && Vector3.Distance(myPos, p.transform.position) <= 5.0f)
+                        {
+                            Tap(intent, Verb.Skill1);
+                            break;
+                        }
+                    }
+                }
+                else if (kit is Abilities.CheskaHeroKit)
+                {
+                    if (_driving) Tap(intent, Verb.Skill1);
+                }
+                else if (kit is Abilities.SeanHeroKit)
+                {
+                    if (_driving && (_motor.HoldingSlipper || Plan == AiPlan.Retrieve || Plan == AiPlan.Withdraw))
+                    {
+                        Tap(intent, Verb.Skill1);
+                    }
+                }
+                else if (kit is Abilities.ZackHeroKit)
+                {
+                    if (_driving) Tap(intent, Verb.Skill1);
+                }
+                else if (kit is Abilities.NemuHeroKit)
+                {
+                    if (_motor.IsTaggable() || _motor.IsDefender)
+                    {
+                        Tap(intent, Verb.Skill1);
+                    }
+                }
+            }
+
+            // 3. Skill 2 Decision
+            if (kit.Skill2 != null && kit.Skill2.IsReady)
+            {
+                if (kit is Abilities.DanteHeroKit)
+                {
+                    if (_motor.IsTaggable() || _motor.IsDefender)
+                    {
+                        Tap(intent, Verb.Skill2);
+                    }
+                }
+                else if (kit is Abilities.CheskaHeroKit)
+                {
+                    if (_motor.IsDefender && round.Lata != null && Vector3.Distance(myPos, round.Lata.transform.position) <= 4.0f)
+                    {
+                        Tap(intent, Verb.Skill2);
+                    }
+                }
+                else if (kit is Abilities.SeanHeroKit)
+                {
+                    if (_motor.HoldingSlipper)
+                    {
+                        Tap(intent, Verb.Skill2);
+                    }
+                }
+                else if (kit is Abilities.ZackHeroKit)
+                {
+                    if (_motor.HoldingSlipper)
+                    {
+                        Tap(intent, Verb.Skill2);
+                    }
+                }
+                else if (kit is Abilities.NemuHeroKit)
+                {
+                    if (_driving)
+                    {
+                        Tap(intent, Verb.Skill2);
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Everything down, and every accumulator with it.
