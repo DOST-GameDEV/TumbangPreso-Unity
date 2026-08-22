@@ -348,6 +348,8 @@ namespace TumbangPreso
 
             victim.ApplyImpulse(push);
             victim.ApplyStagger(Balance.ShoveStun);
+            Visual.DizzyStars.Attach(victim.transform, Balance.ShoveStun);
+            Visual.ComicPopup.Bonk(victim.transform.position);
 
             GameServices.Round?.NoteShove(victim.PlayerSlot, _motor.PlayerSlot);
             _shoveCooldown = Balance.ShoveCooldown;

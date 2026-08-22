@@ -256,6 +256,8 @@ namespace TumbangPreso
         private void ApplyTagPenalty(CharacterMotor victim)
         {
             victim.ApplyStagger(Balance.TagStunTime);
+            Visual.DizzyStars.Attach(victim.transform, Balance.TagStunTime, UI.UiTheme.Defense);
+            Visual.ComicPopup.Spawn(victim.transform.position, "TAGGED!", UI.UiTheme.Defense, 1.4f);
 
             // The tag is the taya's moment: the hit itself, the victim going down, and the
             // announcer, all off the one resolution so they cannot disagree.

@@ -1,5 +1,7 @@
 using System;
 using TumbangPreso.Core;
+using TumbangPreso.UI;
+using TumbangPreso.Visual;
 using UnityEngine;
 
 namespace TumbangPreso.Abilities
@@ -31,22 +33,27 @@ namespace TumbangPreso.Abilities
             {
                 Vector3 forward = ctx.Forward;
                 forward.y = 0.0f;
-                ctx.Motor.ApplyImpulse(forward.normalized * 11.0f);
+
+                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
+                if (squash != null) squash.DashStretch(forward, 0.3f);
+
+                ctx.Motor.ApplyImpulse(forward.normalized * 12.0f);
 
                 GameServices.Audio?.PlayAt("dash", ctx.Position);
+                ComicPopup.Spawn(ctx.Position, "RAIL GRIND!", UiTheme.HeroElectricBright, 1.2f);
                 HeroHazards.SpawnShockTrail(ctx.Position, 2.2f, 3.5f, ctx.Motor.PlayerSlot);
-                _trailDropTimer = 0.3f;
+                _trailDropTimer = 0.25f;
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
                 // Speed boost during rail grind
-                ctx.Motor.ApplyImpulse(ctx.Forward * 3.5f * dt);
+                ctx.Motor.ApplyImpulse(ctx.Forward * 4.0f * dt);
 
                 _trailDropTimer -= dt;
                 if (_trailDropTimer <= 0.0f)
                 {
-                    _trailDropTimer = 0.35f;
+                    _trailDropTimer = 0.30f;
                     HeroHazards.SpawnShockTrail(ctx.Position, 2.0f, 3.0f, ctx.Motor.PlayerSlot);
                 }
             }
@@ -57,7 +64,7 @@ namespace TumbangPreso.Abilities
             private readonly ZackHeroKit _kit;
 
             public OverchargeThrowAbility(ZackHeroKit kit)
-                : base("zack_skill2", "OVERCHARGE THROW", "Electrifies next throw for high velocity & stun blast.", 8.0f, 10.0f)
+                : base("zack_skill2", "OVERCHARGE THROW", "Electrifies next throw for high velocity & chain lightning.", 8.0f, 10.0f)
             {
                 _kit = kit;
             }
@@ -66,6 +73,7 @@ namespace TumbangPreso.Abilities
             {
                 _kit.IsOverchargeThrowActive = true;
                 GameServices.Audio?.PlayAt("throw_charge", ctx.Position);
+                ComicPopup.Spawn(ctx.Position, "OVERCHARGE!", UiTheme.HeroElectricBright, 1.25f);
             }
 
             protected override void OnEnd(AbilityContext ctx)
@@ -79,20 +87,23 @@ namespace TumbangPreso.Abilities
             private readonly ZackHeroKit _kit;
 
             public ThunderstrikeOverdriveAbility(ZackHeroKit kit)
-                : base("zack_ultimate", "THUNDERSTRIKE OVERDRIVE", "Overvoltage state (+40% speed, instant throw, chain lightning).", 0.0f, 7.0f)
+                : base("zack_ultimate", "THUNDERSTRIKE OVERDRIVE", "Sky lightning strike and turbo overvoltage state.", 0.0f, 7.0f)
             {
                 _kit = kit;
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("ability_flick_dash", ctx.Position);
-                HeroHazards.CreateExplosion(ctx.Position, 5.0f, 8.0f, 1.2f, ctx.Motor.PlayerSlot);
+                HeroHazards.CreateThunderstrike(ctx.Position, 7.0f, ctx.Motor.PlayerSlot);
+                ComicPopup.Spawn(ctx.Position, "THUNDERSTRIKE!", UiTheme.HeroElectricBright, 1.5f);
+
+                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
+                if (squash != null) squash.Stretch(0.4f);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
-                ctx.Motor.ApplyImpulse(ctx.Forward * 5.0f * dt);
+                ctx.Motor.ApplyImpulse(ctx.Forward * 5.5f * dt);
             }
         }
     }

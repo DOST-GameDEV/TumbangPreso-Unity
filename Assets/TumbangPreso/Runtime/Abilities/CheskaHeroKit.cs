@@ -1,5 +1,7 @@
 using System;
 using TumbangPreso.Core;
+using TumbangPreso.UI;
+using TumbangPreso.Visual;
 using UnityEngine;
 
 namespace TumbangPreso.Abilities
@@ -22,9 +24,12 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                Vector3 target = ctx.Position + ctx.Forward * 3.0f;
+                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
+                if (squash != null) squash.DashStretch(ctx.Forward, 0.25f);
+
+                Vector3 target = ctx.Position + ctx.Forward * 3.5f;
                 HeroHazards.SpawnIceSheet(target, 5.0f, 6.0f, ctx.Motor.PlayerSlot);
-                GameServices.Audio?.PlayAt("ability_shatter_trap", target);
+                ComicPopup.Spawn(target, "SLIP ZONE!", UiTheme.HeroIceBright, 1.2f);
             }
         }
 
@@ -37,22 +42,35 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                Vector3 wallPos = ctx.Position + ctx.Forward * 2.2f;
+                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
+                if (squash != null) squash.Squash(0.2f);
+
+                Vector3 wallPos = ctx.Position + ctx.Forward * 2.4f;
                 HeroHazards.SpawnIceBarricade(wallPos, ctx.Forward, 6.5f);
-                GameServices.Audio?.PlayAt("ability_spin_guard", wallPos);
             }
         }
 
         private sealed class GlacialShatterBurstAbility : HeroAbility
         {
             public GlacialShatterBurstAbility()
-                : base("cheska_ultimate", "GLACIAL SHATTER BURST", "Freezes nearby enemies and violently deflects slippers.", 0.0f, 0.0f)
+                : base("cheska_ultimate", "GLACIAL BLIZZARD NOVA", "Freezes nearby enemies and violently deflects slippers.", 0.0f, 0.0f)
             {
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
                 GameServices.Audio?.PlayAt("ability_bakya_bash", ctx.Position);
+                ComicPopup.Spawn(ctx.Position, "BLIZZARD NOVA!", UiTheme.HeroIceBright, 1.5f);
+
+                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
+                if (squash != null) squash.Stretch(0.35f);
+
+                // Screen shake on main camera
+                if (UnityEngine.Camera.main != null)
+                {
+                    var rig = UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>();
+                    if (rig != null) rig.Shake(0.5f, 0.25f);
+                }
 
                 var round = ctx.Round;
                 if (round != null)
@@ -64,10 +82,12 @@ namespace TumbangPreso.Abilities
 
                         Vector3 diff = p.transform.position - ctx.Position;
                         diff.y = 0.0f;
-                        if (diff.magnitude <= 7.0f)
+                        if (diff.magnitude <= 7.5f)
                         {
                             p.ApplyStagger(2.5f);
-                            p.ApplyImpulse(diff.normalized * 8.0f + Vector3.up * 2.0f);
+                            p.ApplyImpulse(diff.normalized * 8.5f + Vector3.up * 2.5f);
+                            DizzyStars.Attach(p.transform, 2.5f, UiTheme.HeroIceBright);
+                            ComicPopup.Freeze(p.transform.position);
                         }
                     }
 
@@ -78,9 +98,9 @@ namespace TumbangPreso.Abilities
                         {
                             Vector3 away = s.transform.position - ctx.Position;
                             away.y = 0.0f;
-                            if (away.magnitude <= 8.0f)
+                            if (away.magnitude <= 8.5f)
                             {
-                                s.Deflect(away.normalized * 18.0f + Vector3.up * 4.0f, 1.0f);
+                                s.Deflect(away.normalized * 19.0f + Vector3.up * 4.5f, 1.1f);
                             }
                         }
                     }

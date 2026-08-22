@@ -1,5 +1,7 @@
 using System;
 using TumbangPreso.Core;
+using TumbangPreso.UI;
+using TumbangPreso.Visual;
 using UnityEngine;
 
 namespace TumbangPreso.Abilities
@@ -17,6 +19,8 @@ namespace TumbangPreso.Abilities
 
         private sealed class PhantomPhaseAbility : HeroAbility
         {
+            private GameObject _phantomLightGo;
+
             public PhantomPhaseAbility()
                 : base("nemu_skill1", "PHANTOM PHASE", "Phases into spirit realm for 2.5s, immune to tags and shoves.", 8.0f, 2.5f)
             {
@@ -25,14 +29,38 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 GameServices.Audio?.PlayAt("ability_flick_dash", ctx.Position);
+                ComicPopup.Spawn(ctx.Position, "PHANTOM!", UiTheme.HeroSpiritBright, 1.25f);
+
+                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
+                if (squash != null) squash.Stretch(0.3f);
+
                 // Mini forward slip
-                ctx.Motor.ApplyImpulse(ctx.Forward * 5.0f);
+                ctx.Motor.ApplyImpulse(ctx.Forward * 5.5f);
+
+                if (_phantomLightGo != null) UnityEngine.Object.Destroy(_phantomLightGo);
+                _phantomLightGo = new GameObject("PhantomGhostLight");
+                _phantomLightGo.transform.SetParent(ctx.Motor.transform, false);
+                _phantomLightGo.transform.localPosition = new Vector3(0, 1.0f, 0);
+                var light = _phantomLightGo.AddComponent<Light>();
+                light.type = LightType.Point;
+                light.color = UiTheme.HeroSpiritBright;
+                light.range = 5.0f;
+                light.intensity = 3.5f;
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
                 // Speed boost during phantom phase
-                ctx.Motor.ApplyImpulse(ctx.Forward * 2.5f * dt);
+                ctx.Motor.ApplyImpulse(ctx.Forward * 3.0f * dt);
+            }
+
+            protected override void OnEnd(AbilityContext ctx)
+            {
+                if (_phantomLightGo != null)
+                {
+                    UnityEngine.Object.Destroy(_phantomLightGo);
+                    _phantomLightGo = null;
+                }
             }
         }
 
@@ -47,6 +75,8 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                ComicPopup.Boo(ctx.Position);
+
                 var visual = ctx.Motor.GetComponent<Visual.CharacterVisual>();
                 if (visual != null && visual.Companion != null)
                 {
@@ -78,7 +108,7 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 GameServices.Audio?.PlayAt("ability_spin_guard", ctx.Position);
-                Vector3 voidPos = ctx.Position + ctx.Forward * 4.0f;
+                Vector3 voidPos = ctx.Position + ctx.Forward * 4.5f;
                 HeroHazards.SpawnSeanceVoid(voidPos, 7.5f, 5.0f, ctx.Motor.PlayerSlot);
             }
         }

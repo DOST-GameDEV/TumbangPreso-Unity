@@ -593,18 +593,22 @@ namespace TumbangPreso
             ability?.OnThrowReleased();
 
             Vector3 vel = Held.LaunchVelocityTo(origin, AimPoint(), power);
+            SlipperAffinity affinity = SlipperAffinity.Normal;
+
             if (ability != null && ability.Kit is ZackHeroKit zack && (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
             {
                 vel *= 1.6f;
+                affinity = SlipperAffinity.ElectricZap;
                 zack.IsOverchargeThrowActive = false;
             }
             else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
             {
                 vel *= 1.3f;
+                affinity = SlipperAffinity.FireExplosive;
                 sean.IsIgnitionCannonActive = false;
             }
 
-            Held.HostThrow(_motor, origin, vel);
+            Held.HostThrow(_motor, origin, vel, affinity);
 
             Held = null;
             _motor.HoldingSlipper = false;

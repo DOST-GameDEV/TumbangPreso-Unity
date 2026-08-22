@@ -272,6 +272,11 @@ namespace TumbangPreso.Visual
                 var clothingPhysics = _instance.AddComponent<BaggyClothingPhysics>();
                 clothingPhysics.Bind(_instance.transform);
             }
+
+            // Procedural cartoon squash-and-stretch
+            var squash = GetComponent<CharacterSquashStretch>();
+            if (squash == null) squash = gameObject.AddComponent<CharacterSquashStretch>();
+            if (_instance != null) squash.BindModel(_instance.transform);
         }
 
         /// <summary>

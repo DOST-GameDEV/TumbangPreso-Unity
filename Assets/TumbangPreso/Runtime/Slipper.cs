@@ -10,6 +10,13 @@ namespace TumbangPreso
         InFlight,   // thrown
     }
 
+    public enum SlipperAffinity
+    {
+        Normal,
+        FireExplosive,  // Sean Skill 2 (Ignition Cannon)
+        ElectricZap,    // Zack Skill 2 (Overcharge Throw)
+    }
+
     /// <summary>
     /// The tsinelas. Ammunition, and the thing the whole game is actually about.
     ///
@@ -24,6 +31,9 @@ namespace TumbangPreso
         [SerializeField] private int _ownerSlot = -1;
 
         public int SkinIndex { get => _skinIndex; set => _skinIndex = value; }
+        public SlipperAffinity Affinity { get; set; } = SlipperAffinity.Normal;
+        private GameObject _affinityVfxGo;
+
 
         /// <summary>
         /// ⚠️⚠️ OWNERSHIP IS A LABEL, NOT A LOCK. Any attacker may pick up any slipper. This
@@ -400,10 +410,11 @@ namespace TumbangPreso
             return true;
         }
 
-        public void HostThrow(CharacterMotor thrower, Vector3 origin, Vector3 velocity)
+        public void HostThrow(CharacterMotor thrower, Vector3 origin, Vector3 velocity, SlipperAffinity affinity = SlipperAffinity.Normal)
         {
             SetState(SlipperState.InFlight);
             _throwerSlot = thrower != null ? thrower.PlayerSlot : -1;
+            Affinity = affinity;
 
             if (thrower != null) thrower.HoldingSlipper = false;
             Holder = null;
@@ -414,6 +425,65 @@ namespace TumbangPreso
 
             // You cannot block your own throw on release.
             _throwerIgnoreLeft = Balance.ThrowerIgnoreTime;
+
+            if (_affinityVfxGo != null) Destroy(_affinityVfxGo);
+
+            if (Affinity == SlipperAffinity.FireExplosive)
+            {
+                _affinityVfxGo = new GameObject("FireSlipperVfx");
+                _affinityVfxGo.transform.SetParent(transform, false);
+                var l = _affinityVfxGo.AddComponent<Light>();
+                l.type = LightType.Point;
+                l.color = UI.UiTheme.HeroFireBright;
+                l.range = 3.5f;
+                l.intensity = 3.0f;
+                Visual.ComicPopup.Spawn(origin, "FIREBALL!", UI.UiTheme.HeroFireBright, 1.1f);
+            }
+            else if (Affinity == SlipperAffinity.ElectricZap)
+            {
+                _affinityVfxGo = new GameObject("ZapSlipperVfx");
+                _affinityVfxGo.transform.SetParent(transform, false);
+                var l = _affinityVfxGo.AddComponent<Light>();
+                l.type = LightType.Point;
+                l.color = UI.UiTheme.HeroElectricBright;
+                l.range = 3.5f;
+                l.intensity = 3.0f;
+                Visual.ComicPopup.Spawn(origin, "OVERCHARGE!", UI.UiTheme.HeroElectricBright, 1.1f);
+            }
+        }
+
+        private void TriggerAffinityImpact()
+        {
+            if (Affinity == SlipperAffinity.FireExplosive)
+            {
+                Abilities.HeroHazards.CreateExplosion(transform.position, 4.5f, 13.0f, 1.4f, _throwerSlot, "BOOM!");
+            }
+            else if (Affinity == SlipperAffinity.ElectricZap)
+            {
+                Visual.ComicPopup.Zap(transform.position);
+                GameServices.Audio?.PlayAt("ability_flick_dash", transform.position);
+
+                var round = GameServices.Round;
+                if (round != null)
+                {
+                    foreach (var p in round.Players)
+                    {
+                        if (p == null || p.PlayerSlot == _throwerSlot) continue;
+                        if (Vector3.Distance(transform.position, p.transform.position) <= 5.5f)
+                        {
+                            p.ApplyStagger(1.5f);
+                            Visual.DizzyStars.Attach(p.transform, 1.5f, UI.UiTheme.HeroElectricBright);
+                        }
+                    }
+                }
+            }
+
+            if (_affinityVfxGo != null)
+            {
+                Destroy(_affinityVfxGo);
+                _affinityVfxGo = null;
+            }
+            Affinity = SlipperAffinity.Normal;
         }
 
         /// <summary>
@@ -446,6 +516,7 @@ namespace TumbangPreso
             // The can first: it is the thing being aimed at.
             if (round?.Lata != null && round.Lata.IsUpright && round.Lata.Connects(transform.position))
             {
+                TriggerAffinityImpact();
                 round.Lata.HostKnockDown(_throwerSlot);
                 Deflect(-_velocity.normalized * Balance.LataRecoilScale * _velocity.magnitude,
                         Balance.LataRecoilLiftScale);
@@ -462,6 +533,7 @@ namespace TumbangPreso
                     if (p == null || p.PlayerSlot == _throwerSlot) continue;
                     if (!HitsBody(p)) continue;
 
+                    TriggerAffinityImpact();
                     HostBlockedBy(p);
                     return;
                 }
@@ -714,7 +786,11 @@ namespace TumbangPreso
             //
             // ⚠️ GATED ON `fromFlight` NOW. It used to fire on every route into this function,
             // including the round reset that teleports three slippers home on the same frame.
-            if (fromFlight) GameServices.Audio?.PlayAt("slipper_land", transform.position);
+            if (fromFlight)
+            {
+                TriggerAffinityImpact();
+                GameServices.Audio?.PlayAt("slipper_land", transform.position);
+            }
 
             // § THE LANDED HIGHLIGHT. Written AFTER the state above, never before: SetState
             // clears the flag on any move out of Loose, so setting it first would be undone by

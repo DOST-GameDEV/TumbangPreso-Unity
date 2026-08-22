@@ -1,5 +1,7 @@
 using System;
 using TumbangPreso.Core;
+using TumbangPreso.UI;
+using TumbangPreso.Visual;
 using UnityEngine;
 
 namespace TumbangPreso.Abilities
@@ -24,7 +26,19 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                HeroHazards.CreateExplosion(ctx.Position, 5.5f, 10.0f, 1.4f, ctx.Motor.PlayerSlot);
+                // Squash and stretch ground thump
+                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
+                if (squash != null) squash.Squash(0.35f);
+
+                // Small vertical hop
+                ctx.Motor.ApplyImpulse(Vector3.up * 4.0f);
+
+                // Spawn cracked lava decal on ground
+                HeroHazards.SpawnCrackedLavaDecal(ctx.Position, 5.5f, 4.0f);
+
+                // Explosion shockwave & comic floatie
+                HeroHazards.CreateExplosion(ctx.Position, 5.5f, 11.0f, 1.4f, ctx.Motor.PlayerSlot, "THUD!");
+                ComicPopup.Bonk(ctx.Position);
 
                 var round = ctx.Round;
                 if (round != null)
@@ -38,7 +52,7 @@ namespace TumbangPreso.Abilities
                             sDiff.y = 0.0f;
                             if (sDiff.magnitude <= 6.5f)
                             {
-                                s.Deflect(sDiff.normalized * 16.0f + Vector3.up * 4.0f, 1.0f);
+                                s.Deflect(sDiff.normalized * 18.0f + Vector3.up * 4.5f, 1.2f);
                             }
                         }
                     }
@@ -48,22 +62,54 @@ namespace TumbangPreso.Abilities
 
         private sealed class DemonicCarapaceAbility : HeroAbility
         {
+            private GameObject _auraGo;
+
             public DemonicCarapaceAbility()
-                : base("dante_skill2", "DEMONIC CARAPACE", "Iron armor granting 4s complete immunity to stuns and shoves.", 9.0f, 4.0f)
+                : base("dante_skill2", "DEMONIC CARAPACE", "Flaming magma armor granting complete immunity to stuns and shoves.", 9.0f, 4.0f)
             {
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
                 GameServices.Audio?.PlayAt("guard_block", ctx.Position);
+                ComicPopup.Spawn(ctx.Position, "CARAPACE!", UiTheme.HeroEarthBright, 1.25f);
+
                 // Clear any existing stuns immediately
                 ctx.Motor.ClearStun();
+
+                // Spawn fiery protective aura sphere
+                if (_auraGo != null) UnityEngine.Object.Destroy(_auraGo);
+                _auraGo = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                _auraGo.name = "DemonicCarapaceAura";
+                _auraGo.transform.SetParent(ctx.Motor.transform, false);
+                _auraGo.transform.localPosition = new Vector3(0, 0.9f, 0);
+                _auraGo.transform.localScale = Vector3.one * 1.85f;
+
+                var r = _auraGo.GetComponent<Renderer>();
+                if (r != null) r.material.color = new Color(1.0f, 0.45f, 0.05f, 0.35f);
+                UnityEngine.Object.Destroy(_auraGo.GetComponent<Collider>());
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
                 // Constantly purge stuns while active
                 ctx.Motor.ClearStun();
+
+                // Pulse aura
+                if (_auraGo != null)
+                {
+                    float pulse = 1.85f + Mathf.Sin(Time.time * 12.0f) * 0.15f;
+                    _auraGo.transform.localScale = Vector3.one * pulse;
+                }
+            }
+
+            protected override void OnEnd(AbilityContext ctx)
+            {
+                if (_auraGo != null)
+                {
+                    UnityEngine.Object.Destroy(_auraGo);
+                    _auraGo = null;
+                }
             }
         }
 
@@ -77,6 +123,10 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 GameServices.Audio?.PlayAt("ability_bagsak_bomb", ctx.Position);
+                ComicPopup.Spawn(ctx.Position, "EARTHQUAKE!", UiTheme.HeroEarthBright, 1.5f);
+
+                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
+                if (squash != null) squash.Stretch(0.4f);
 
                 Vector3 forward = ctx.Forward;
                 forward.y = 0.0f;
@@ -93,22 +143,24 @@ namespace TumbangPreso.Abilities
                         diff.y = 0.0f;
                         float d = diff.magnitude;
 
-                        if (d <= 10.0f)
+                        if (d <= 11.0f)
                         {
                             float angle = Vector3.Angle(forward, diff.normalized);
-                            if (angle <= 40.0f)
+                            if (angle <= 45.0f)
                             {
-                                Vector3 launch = forward * 8.0f + Vector3.up * 10.0f;
+                                Vector3 launch = forward * 9.0f + Vector3.up * 11.0f;
                                 p.ApplyImpulse(launch);
-                                p.ApplyStagger(2.0f);
+                                p.ApplyStagger(2.2f);
+                                DizzyStars.Attach(p.transform, 2.2f, UiTheme.HeroEarthBright);
+                                ComicPopup.Bonk(p.transform.position);
                             }
                         }
                     }
                 }
 
-                HeroHazards.CreateExplosion(ctx.Position + forward * 3.0f, 6.5f, 15.0f, 2.0f, ctx.Motor.PlayerSlot);
+                HeroHazards.CreateExplosion(ctx.Position + forward * 3.5f, 6.5f, 16.0f, 2.0f, ctx.Motor.PlayerSlot, "KABOOM!");
 
-                // Spawn 6 basalt earth pillars in forward arc / circle
+                // Spawn 6 basalt earth pillars in forward arc
                 for (int i = -2; i <= 3; i++)
                 {
                     float angle = i * 35.0f;

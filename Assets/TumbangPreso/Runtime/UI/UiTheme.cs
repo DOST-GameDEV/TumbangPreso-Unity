@@ -109,6 +109,45 @@ namespace TumbangPreso.UI
         public static readonly Color PropWebbing = Hex("c69a6b");
         public static readonly Color PropSarsiRed = Hex("d8221c");
 
+        // -------------------------------------------------------------------
+        // HERO ELEMENTS. Saturated kid-friendly arcade colors for Hero Strike mode.
+        // -------------------------------------------------------------------
+
+        public static readonly Color HeroFire = Hex("ff2a44");
+        public static readonly Color HeroFireBright = Hex("ff7043");
+        public static readonly Color HeroIce = Hex("00e5ff");
+        public static readonly Color HeroIceBright = Hex("80d8ff");
+        public static readonly Color HeroElectric = Hex("ffea00");
+        public static readonly Color HeroElectricBright = Hex("ffff52");
+        public static readonly Color HeroSpirit = Hex("d500f9");
+        public static readonly Color HeroSpiritBright = Hex("e040fb");
+        public static readonly Color HeroEarth = Hex("ff6d00");
+        public static readonly Color HeroEarthBright = Hex("ffab40");
+
+        /// <summary>Resolve primary element color for a given hero ID.</summary>
+        public static Color ColorForHero(string heroId)
+        {
+            if (string.IsNullOrEmpty(heroId)) return HeroEarth;
+            switch (heroId.ToLowerInvariant())
+            {
+                case "sean":
+                case "kuya_boy":
+                case "iggy":
+                    return HeroFire;
+                case "cheska":
+                case "inday":
+                    return HeroIce;
+                case "zack":
+                    return HeroElectric;
+                case "nemu":
+                    return HeroSpirit;
+                case "dante":
+                case "bayan":
+                default:
+                    return HeroEarth;
+            }
+        }
+
         /// <summary>
         /// The colour for a seat, by role. ⚠️ BY ROLE AND NOT BY SEAT NUMBER: the taya rotates
         /// every round, so a fixed per-seat colour would tell the player the wrong thing for
@@ -117,3 +156,4 @@ namespace TumbangPreso.UI
         public static Color ForRole(bool isDefender) => isDefender ? Defense : Offense;
     }
 }
+

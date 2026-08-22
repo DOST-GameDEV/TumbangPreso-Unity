@@ -1,5 +1,7 @@
 using System;
 using TumbangPreso.Core;
+using TumbangPreso.UI;
+using TumbangPreso.Visual;
 using UnityEngine;
 
 namespace TumbangPreso.Abilities
@@ -29,15 +31,20 @@ namespace TumbangPreso.Abilities
                 _trailSpawnAccum = 0.0f;
                 Vector3 forward = ctx.Forward;
                 forward.y = 0.0f;
-                ctx.Motor.ApplyImpulse(forward.normalized * 16.0f + Vector3.up * 1.5f);
+
+                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
+                if (squash != null) squash.DashStretch(forward, 0.35f);
+
+                ctx.Motor.ApplyImpulse(forward.normalized * 17.0f + Vector3.up * 1.5f);
                 HeroHazards.SpawnFireTrail(ctx.Position, 1.8f, 3.0f, ctx.Motor.PlayerSlot);
                 GameServices.Audio?.PlayAt("ability_flick_dash", ctx.Position);
+                ComicPopup.Spawn(ctx.Position, "ROCKET!", UiTheme.HeroFireBright, 1.2f);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
                 _trailSpawnAccum += dt;
-                if (_trailSpawnAccum >= 0.12f)
+                if (_trailSpawnAccum >= 0.10f)
                 {
                     _trailSpawnAccum = 0.0f;
                     HeroHazards.SpawnFireTrail(ctx.Position, 1.8f, 3.0f, ctx.Motor.PlayerSlot);
@@ -53,12 +60,14 @@ namespace TumbangPreso.Abilities
 
                         Vector3 diff = p.transform.position - ctx.Position;
                         diff.y = 0.0f;
-                        if (diff.magnitude <= 2.0f)
+                        if (diff.magnitude <= 2.2f)
                         {
-                            Vector3 hitForce = (diff.sqrMagnitude > 0.01f ? diff.normalized : ctx.Forward) * 14.0f;
+                            Vector3 hitForce = (diff.sqrMagnitude > 0.01f ? diff.normalized : ctx.Forward) * 15.0f;
                             hitForce.y = 4.5f;
                             p.ApplyImpulse(hitForce);
                             p.ApplyStagger(1.5f);
+                            DizzyStars.Attach(p.transform, 1.5f, UiTheme.HeroFireBright);
+                            ComicPopup.Bam(p.transform.position);
                             GameServices.Audio?.PlayAt("bump", p.transform.position);
                         }
                     }
@@ -71,7 +80,7 @@ namespace TumbangPreso.Abilities
             private readonly SeanHeroKit _kit;
 
             public IgnitionCannonAbility(SeanHeroKit kit)
-                : base("sean_skill2", "IGNITION CANNON", "Ignites next throw to trigger explosive force on impact.", 8.0f, 10.0f)
+                : base("sean_skill2", "IGNITION CANNON", "Ignites next throw into an explosive fireball.", 8.0f, 10.0f)
             {
                 _kit = kit;
             }
@@ -80,6 +89,7 @@ namespace TumbangPreso.Abilities
             {
                 _kit.IsIgnitionCannonActive = true;
                 GameServices.Audio?.PlayAt("throw_charge", ctx.Position);
+                ComicPopup.Spawn(ctx.Position, "IGNITE!", UiTheme.HeroFireBright, 1.25f);
             }
 
             protected override void OnEnd(AbilityContext ctx)
@@ -94,7 +104,7 @@ namespace TumbangPreso.Abilities
             private bool _smashed;
 
             public SupernovaSmashdownAbility()
-                : base("sean_ultimate", "SUPERNOVA SMASHDOWN", "Leaps high and crashes down with a massive crater explosion.", 0.0f, 1.2f)
+                : base("sean_ultimate", "SUPERNOVA METEOR SMASH", "Rockets high and crashes down with a massive crater explosion.", 0.0f, 1.2f)
             {
             }
 
@@ -103,9 +113,13 @@ namespace TumbangPreso.Abilities
                 _airTimer = 0.55f;
                 _smashed = false;
 
+                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
+                if (squash != null) squash.Stretch(0.45f);
+
                 // Launch upward
-                ctx.Motor.ApplyImpulse(Vector3.up * 13.0f + ctx.Forward * 4.0f);
+                ctx.Motor.ApplyImpulse(Vector3.up * 14.0f + ctx.Forward * 4.0f);
                 GameServices.Audio?.PlayAt("jump", ctx.Position);
+                ComicPopup.Spawn(ctx.Position, "BLAST OFF!", UiTheme.HeroFireBright, 1.3f);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
@@ -114,9 +128,13 @@ namespace TumbangPreso.Abilities
                 if (_airTimer <= 0.0f && !_smashed)
                 {
                     _smashed = true;
+
+                    var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
+                    if (squash != null) squash.Squash(0.4f);
+
                     // Slam downward
-                    ctx.Motor.ApplyImpulse(Vector3.down * 26.0f);
-                    HeroHazards.CreateExplosion(ctx.Position, 8.5f, 18.0f, 2.5f, ctx.Motor.PlayerSlot);
+                    ctx.Motor.ApplyImpulse(Vector3.down * 28.0f);
+                    HeroHazards.CreateExplosion(ctx.Position, 8.5f, 18.0f, 2.5f, ctx.Motor.PlayerSlot, "SUPERNOVA!");
                 }
             }
         }

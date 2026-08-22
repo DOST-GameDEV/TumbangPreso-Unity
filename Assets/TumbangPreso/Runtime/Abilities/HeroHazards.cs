@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 using TumbangPreso.Core;
+using TumbangPreso.UI;
+using TumbangPreso.Visual;
 using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
     /// <summary>
     /// Spawns and manages grand hazard entities, barriers, zones, and visual effects for hero abilities.
-    /// Features dynamic lighting, animated procedural geometry, ground shockwaves, and particle chunks.
+    /// Features dynamic lighting, animated procedural geometry, ground shockwaves, comic-style floaties,
+    /// and kid-friendly cartoon particle bursts.
     /// </summary>
     public static class HeroHazards
     {
@@ -26,19 +29,19 @@ namespace TumbangPreso.Abilities
                 pillar.name = $"IcePillar_{i}";
                 pillar.transform.SetParent(go.transform, false);
 
-                float height = (3.0f - Mathf.Abs(i) * 0.4f) * Random.Range(0.9f, 1.1f);
-                float width = 0.85f;
+                float height = (3.2f - Mathf.Abs(i) * 0.45f) * Random.Range(0.95f, 1.15f);
+                float width = 0.9f;
                 float rotY = i * 8.0f + Random.Range(-5.0f, 5.0f);
                 float rotZ = i * -4.0f;
 
-                pillar.transform.localScale = new Vector3(width, height, 0.55f);
-                pillar.transform.localPosition = new Vector3(i * 0.75f, height * 0.5f, -Mathf.Abs(i) * 0.15f);
+                pillar.transform.localScale = new Vector3(width, height, 0.6f);
+                pillar.transform.localPosition = new Vector3(i * 0.8f, height * 0.5f, -Mathf.Abs(i) * 0.15f);
                 pillar.transform.localRotation = Quaternion.Euler(Random.Range(-5.0f, 5.0f), rotY, rotZ);
 
                 var r = pillar.GetComponent<Renderer>();
                 if (r != null)
                 {
-                    r.material.color = new Color(0.45f, 0.88f, 1.0f, 0.9f);
+                    r.material.color = new Color(0.35f, 0.90f, 1.0f, 0.92f);
                 }
 
                 var col = pillar.GetComponent<Collider>();
@@ -51,11 +54,12 @@ namespace TumbangPreso.Abilities
             lightGo.transform.localPosition = new Vector3(0, 1.5f, 0);
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
-            light.color = new Color(0.3f, 0.85f, 1.0f);
-            light.range = 6.0f;
-            light.intensity = 2.5f;
+            light.color = UiTheme.HeroIceBright;
+            light.range = 6.5f;
+            light.intensity = 3.0f;
 
             GameServices.Audio?.PlayAt("ability_shatter_trap", position);
+            ComicPopup.Spawn(position, "ICE WALL!", UiTheme.HeroIceBright, 1.2f);
 
             var comp = go.AddComponent<IceBarricadeComponent>();
             comp.Duration = duration;
@@ -79,27 +83,28 @@ namespace TumbangPreso.Abilities
                 }
             }
 
-            private void Shatter()
+            public void Shatter()
             {
-                // Spawn ice explosion shards on break
-                for (int i = 0; i < 8; i++)
+                // Spawn 12 cartoon bouncy ice explosion cubes on break
+                for (int i = 0; i < 12; i++)
                 {
                     var shard = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     shard.name = "IceShard";
-                    shard.transform.position = transform.position + Vector3.up * Random.Range(0.5f, 1.8f) + Random.insideUnitSphere * 0.8f;
-                    shard.transform.localScale = Vector3.one * Random.Range(0.2f, 0.45f);
+                    shard.transform.position = transform.position + Vector3.up * Random.Range(0.4f, 2.0f) + Random.insideUnitSphere * 0.9f;
+                    shard.transform.localScale = Vector3.one * Random.Range(0.25f, 0.5f);
                     shard.transform.rotation = Random.rotation;
 
                     var r = shard.GetComponent<Renderer>();
-                    if (r != null) r.material.color = new Color(0.6f, 0.9f, 1.0f, 0.8f);
+                    if (r != null) r.material.color = new Color(0.6f, 0.95f, 1.0f, 0.85f);
 
                     var rb = shard.AddComponent<Rigidbody>();
-                    rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.2f) * Random.Range(3.0f, 7.0f);
-                    rb.angularVelocity = Random.insideUnitSphere * 15.0f;
+                    rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.4f) * Random.Range(4.0f, 9.0f);
+                    rb.angularVelocity = Random.insideUnitSphere * 20.0f;
 
                     Object.Destroy(shard, 1.2f);
                 }
 
+                ComicPopup.Freeze(transform.position);
                 GameServices.Audio?.PlayAt("slipper_land", transform.position);
                 Object.Destroy(gameObject);
             }
@@ -113,7 +118,7 @@ namespace TumbangPreso.Abilities
             var go = new GameObject("IceSheetZone");
             go.transform.position = position;
 
-            // Grand multi-disc frosted surface
+            // Grand multi-disc frosted surface with rotating snowflake ornaments
             var visual = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             visual.name = "VisualOuter";
             visual.transform.SetParent(go.transform, false);
@@ -121,17 +126,17 @@ namespace TumbangPreso.Abilities
             visual.transform.localPosition = new Vector3(0, 0.01f, 0);
 
             var r = visual.GetComponent<Renderer>();
-            if (r != null) r.material.color = new Color(0.4f, 0.85f, 1.0f, 0.6f);
+            if (r != null) r.material.color = new Color(0.3f, 0.85f, 1.0f, 0.65f);
             Object.Destroy(visual.GetComponent<Collider>());
 
             var inner = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             inner.name = "VisualInner";
             inner.transform.SetParent(go.transform, false);
-            inner.transform.localScale = new Vector3(radius * 1.2f, 0.025f, radius * 1.2f);
+            inner.transform.localScale = new Vector3(radius * 1.3f, 0.025f, radius * 1.3f);
             inner.transform.localPosition = new Vector3(0, 0.015f, 0);
 
             var ir = inner.GetComponent<Renderer>();
-            if (ir != null) ir.material.color = new Color(0.85f, 0.96f, 1.0f, 0.75f);
+            if (ir != null) ir.material.color = new Color(0.85f, 0.96f, 1.0f, 0.80f);
             Object.Destroy(inner.GetComponent<Collider>());
 
             // Glowing ice aura light
@@ -140,11 +145,12 @@ namespace TumbangPreso.Abilities
             lightGo.transform.localPosition = new Vector3(0, 0.6f, 0);
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
-            light.color = new Color(0.4f, 0.85f, 1.0f);
-            light.range = radius * 1.5f;
-            light.intensity = 2.0f;
+            light.color = UiTheme.HeroIceBright;
+            light.range = radius * 1.6f;
+            light.intensity = 2.5f;
 
             GameServices.Audio?.PlayAt("ability_shatter_trap", position);
+            ComicPopup.Spawn(position, "SLIP & SLIDE!", UiTheme.HeroIceBright, 1.15f);
 
             var comp = go.AddComponent<IceSheetComponent>();
             comp.Radius = radius;
@@ -160,35 +166,47 @@ namespace TumbangPreso.Abilities
             public float Duration = 5.0f;
             public int OwnerSlot = -1;
             private float _left;
+            private float _whoaCooldown;
 
             private void Start() => _left = Duration;
 
             private void Update()
             {
                 _left -= Time.deltaTime;
+                _whoaCooldown -= Time.deltaTime;
+
                 if (_left <= 0.0f)
                 {
                     Object.Destroy(gameObject);
                     return;
                 }
 
+                // Slow rotation on the ice zone
+                transform.Rotate(Vector3.up, 20.0f * Time.deltaTime);
+
                 var round = GameServices.Round;
                 if (round == null) return;
 
                 foreach (var p in round.Players)
                 {
-                    if (p == null) continue;
-                    if (p.PlayerSlot == OwnerSlot) continue;
+                    if (p == null || p.PlayerSlot == OwnerSlot) continue;
 
                     Vector3 diff = p.transform.position - transform.position;
                     diff.y = 0.0f;
                     if (diff.magnitude <= Radius)
                     {
-                        // Apply friction loss & uncontrollable slip in velocity direction
+                        // Apply friction loss & cartoon uncontrollable slip in velocity direction
                         if (p.Velocity.sqrMagnitude > 0.1f)
                         {
-                            Vector3 slip = p.Velocity.normalized * 4.5f * Time.deltaTime;
+                            Vector3 slip = p.Velocity.normalized * 5.5f * Time.deltaTime;
                             p.ApplyImpulse(slip);
+
+                            if (_whoaCooldown <= 0.0f)
+                            {
+                                _whoaCooldown = 1.2f;
+                                ComicPopup.Whoa(p.transform.position);
+                                GameServices.Audio?.PlayAt("ability_shatter_trap", p.transform.position);
+                            }
                         }
                     }
                 }
@@ -210,7 +228,7 @@ namespace TumbangPreso.Abilities
             visual.transform.localPosition = new Vector3(0, 0.015f, 0);
 
             var r = visual.GetComponent<Renderer>();
-            if (r != null) r.material.color = new Color(1.0f, 0.92f, 0.2f, 0.7f);
+            if (r != null) r.material.color = new Color(1.0f, 0.95f, 0.1f, 0.75f);
             Object.Destroy(visual.GetComponent<Collider>());
 
             // Flashing electric sparks light
@@ -219,9 +237,9 @@ namespace TumbangPreso.Abilities
             lightGo.transform.localPosition = new Vector3(0, 0.5f, 0);
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
-            light.color = new Color(1.0f, 0.95f, 0.3f);
-            light.range = radius * 2.0f;
-            light.intensity = 3.0f;
+            light.color = UiTheme.HeroElectricBright;
+            light.range = radius * 2.2f;
+            light.intensity = 3.5f;
 
             var comp = go.AddComponent<ShockTrailComponent>();
             comp.Radius = radius;
@@ -237,12 +255,15 @@ namespace TumbangPreso.Abilities
             public float Duration = 3.0f;
             public int OwnerSlot = -1;
             private float _left;
+            private float _zapCooldown;
 
             private void Start() => _left = Duration;
 
             private void Update()
             {
                 _left -= Time.deltaTime;
+                _zapCooldown -= Time.deltaTime;
+
                 if (_left <= 0.0f)
                 {
                     Object.Destroy(gameObject);
@@ -261,13 +282,19 @@ namespace TumbangPreso.Abilities
                     {
                         if (p.PlayerSlot == OwnerSlot)
                         {
-                            // Electric speed rail boost to owner
-                            p.ApplyImpulse(p.transform.forward * 5.0f * Time.deltaTime);
+                            // Turbo speed boost to Zack
+                            p.ApplyImpulse(p.transform.forward * 6.0f * Time.deltaTime);
                         }
                         else
                         {
                             // Stagger & electrify opponents
                             p.ApplyStagger(0.25f);
+                            if (_zapCooldown <= 0.0f)
+                            {
+                                _zapCooldown = 0.8f;
+                                ComicPopup.Zap(p.transform.position);
+                                DizzyStars.Attach(p.transform, 1.2f, UiTheme.HeroElectricBright);
+                            }
                         }
                     }
                 }
@@ -289,7 +316,7 @@ namespace TumbangPreso.Abilities
             visual.transform.localPosition = new Vector3(0, 0.015f, 0);
 
             var r = visual.GetComponent<Renderer>();
-            if (r != null) r.material.color = new Color(1.0f, 0.4f, 0.05f, 0.8f);
+            if (r != null) r.material.color = new Color(1.0f, 0.35f, 0.05f, 0.85f);
             Object.Destroy(visual.GetComponent<Collider>());
 
             // Flickering fire light
@@ -298,9 +325,9 @@ namespace TumbangPreso.Abilities
             lightGo.transform.localPosition = new Vector3(0, 0.6f, 0);
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
-            light.color = new Color(1.0f, 0.5f, 0.1f);
-            light.range = radius * 2.2f;
-            light.intensity = 3.2f;
+            light.color = UiTheme.HeroFireBright;
+            light.range = radius * 2.4f;
+            light.intensity = 3.5f;
 
             var comp = go.AddComponent<FireTrailComponent>();
             comp.Radius = radius;
@@ -316,12 +343,15 @@ namespace TumbangPreso.Abilities
             public float Duration = 3.0f;
             public int OwnerSlot = -1;
             private float _left;
+            private float _burnCooldown;
 
             private void Start() => _left = Duration;
 
             private void Update()
             {
                 _left -= Time.deltaTime;
+                _burnCooldown -= Time.deltaTime;
+
                 if (_left <= 0.0f)
                 {
                     Object.Destroy(gameObject);
@@ -339,7 +369,13 @@ namespace TumbangPreso.Abilities
                     if (diff.magnitude <= Radius)
                     {
                         p.ApplyStagger(0.2f);
-                        p.ApplyImpulse(diff.normalized * 3.0f * Time.deltaTime);
+                        p.ApplyImpulse(diff.normalized * 3.5f * Time.deltaTime);
+
+                        if (_burnCooldown <= 0.0f)
+                        {
+                            _burnCooldown = 0.85f;
+                            ComicPopup.Bam(p.transform.position);
+                        }
                     }
                 }
             }
@@ -356,19 +392,21 @@ namespace TumbangPreso.Abilities
             var visual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             visual.name = "GhostOrb";
             visual.transform.SetParent(go.transform, false);
-            visual.transform.localScale = Vector3.one * 0.75f;
+            visual.transform.localScale = Vector3.one * 0.8f;
 
             var r = visual.GetComponent<Renderer>();
-            if (r != null) r.material.color = new Color(0.75f, 0.35f, 0.95f, 0.85f);
+            if (r != null) r.material.color = new Color(0.85f, 0.4f, 1.0f, 0.9f);
             Object.Destroy(visual.GetComponent<Collider>());
 
             var lightGo = new GameObject("GhostLight");
             lightGo.transform.SetParent(go.transform, false);
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
-            light.color = new Color(0.8f, 0.4f, 1.0f);
-            light.range = 5.0f;
-            light.intensity = 2.5f;
+            light.color = UiTheme.HeroSpiritBright;
+            light.range = 5.5f;
+            light.intensity = 3.0f;
+
+            ComicPopup.Boo(position);
 
             var comp = go.AddComponent<GhostPoltergeistComponent>();
             comp.Direction = direction.normalized;
@@ -411,17 +449,19 @@ namespace TumbangPreso.Abilities
                         }
                     }
 
-                    transform.position += Direction * 9.5f * Time.deltaTime;
+                    transform.position += Direction * 10.0f * Time.deltaTime;
                 }
                 else
                 {
                     Vector3 targetPos = _target.transform.position + Vector3.up * 1.2f;
-                    transform.position = Vector3.MoveTowards(transform.position, targetPos, 11.5f * Time.deltaTime);
+                    transform.position = Vector3.MoveTowards(transform.position, targetPos, 12.0f * Time.deltaTime);
 
                     if (Vector3.Distance(transform.position, targetPos) < 0.9f)
                     {
                         _target.ApplyStagger(1.8f);
-                        _target.ApplyImpulse(Random.onUnitSphere * 3.5f);
+                        _target.ApplyImpulse(Random.onUnitSphere * 4.0f);
+                        DizzyStars.Attach(_target.transform, 1.8f, UiTheme.HeroSpiritBright);
+                        ComicPopup.Boo(_target.transform.position);
                         GameServices.Audio?.PlayAt("downed", transform.position);
                         Object.Destroy(gameObject);
                     }
@@ -437,33 +477,33 @@ namespace TumbangPreso.Abilities
             var go = new GameObject("EarthPillar");
             go.transform.position = position;
 
-            // Grand volcanic basalt pillar with magma crest
+            // Grand volcanic basalt pillar with molten magma crest
             var pillar = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             pillar.name = "PillarVisual";
             pillar.transform.SetParent(go.transform, false);
-            pillar.transform.localScale = new Vector3(1.35f, 2.4f, 1.35f);
-            pillar.transform.localPosition = new Vector3(0, 2.4f, 0);
+            pillar.transform.localScale = new Vector3(1.4f, 2.5f, 1.4f);
+            pillar.transform.localPosition = new Vector3(0, 2.5f, 0);
 
             var r = pillar.GetComponent<Renderer>();
-            if (r != null) r.material.color = new Color(0.3f, 0.22f, 0.18f);
+            if (r != null) r.material.color = new Color(0.28f, 0.20f, 0.16f);
 
             var magmaTop = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             magmaTop.name = "MagmaTop";
             magmaTop.transform.SetParent(go.transform, false);
-            magmaTop.transform.localScale = new Vector3(1.4f, 0.8f, 1.4f);
-            magmaTop.transform.localPosition = new Vector3(0, 4.6f, 0);
+            magmaTop.transform.localScale = new Vector3(1.45f, 0.85f, 1.45f);
+            magmaTop.transform.localPosition = new Vector3(0, 4.8f, 0);
             var mr = magmaTop.GetComponent<Renderer>();
-            if (mr != null) mr.material.color = new Color(1.0f, 0.35f, 0.05f);
+            if (mr != null) mr.material.color = UiTheme.HeroEarthBright;
             Object.Destroy(magmaTop.GetComponent<Collider>());
 
             var lightGo = new GameObject("MagmaLight");
             lightGo.transform.SetParent(go.transform, false);
-            lightGo.transform.localPosition = new Vector3(0, 4.0f, 0);
+            lightGo.transform.localPosition = new Vector3(0, 4.2f, 0);
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
-            light.color = new Color(1.0f, 0.4f, 0.1f);
-            light.range = 6.5f;
-            light.intensity = 3.0f;
+            light.color = UiTheme.HeroEarthBright;
+            light.range = 7.0f;
+            light.intensity = 3.5f;
 
             var comp = go.AddComponent<EarthPillarComponent>();
             comp.Duration = duration;
@@ -486,6 +526,48 @@ namespace TumbangPreso.Abilities
         }
 
         // -------------------------------------------------------------------
+        // CRACKED LAVA DECAL (Dante Skill 1 Seismic Stomp)
+        // -------------------------------------------------------------------
+        public static GameObject SpawnCrackedLavaDecal(Vector3 position, float radius = 5.5f, float duration = 4.0f)
+        {
+            var go = new GameObject("CrackedLavaDecal");
+            go.transform.position = position;
+
+            // Outer asphalt crack ring
+            var outer = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            outer.name = "CrackedAsphaltRing";
+            outer.transform.SetParent(go.transform, false);
+            outer.transform.localScale = new Vector3(radius * 2.0f, 0.02f, radius * 2.0f);
+            outer.transform.localPosition = new Vector3(0, 0.015f, 0);
+            var or = outer.GetComponent<Renderer>();
+            if (or != null) or.material.color = new Color(0.18f, 0.16f, 0.15f, 0.85f);
+            Object.Destroy(outer.GetComponent<Collider>());
+
+            // Glowing magma core disc
+            var core = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            core.name = "MagmaCore";
+            core.transform.SetParent(go.transform, false);
+            core.transform.localScale = new Vector3(radius * 1.2f, 0.025f, radius * 1.2f);
+            core.transform.localPosition = new Vector3(0, 0.02f, 0);
+            var cr = core.GetComponent<Renderer>();
+            if (cr != null) cr.material.color = UiTheme.HeroEarthBright;
+            Object.Destroy(core.GetComponent<Collider>());
+
+            // Lava pulse light
+            var lightGo = new GameObject("LavaLight");
+            lightGo.transform.SetParent(go.transform, false);
+            lightGo.transform.localPosition = new Vector3(0, 0.8f, 0);
+            var light = lightGo.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = UiTheme.HeroEarthBright;
+            light.range = radius * 1.8f;
+            light.intensity = 4.0f;
+
+            Object.Destroy(go, duration);
+            return go;
+        }
+
+        // -------------------------------------------------------------------
         // SEANCE VOID ZONE (Nemu Ultimate)
         // -------------------------------------------------------------------
         public static GameObject SpawnSeanceVoid(Vector3 position, float radius = 7.5f, float duration = 5.0f, int ownerSlot = -1)
@@ -500,16 +582,16 @@ namespace TumbangPreso.Abilities
             outer.transform.localScale = new Vector3(radius * 2.0f, 0.04f, radius * 2.0f);
             outer.transform.localPosition = new Vector3(0, 0.02f, 0);
             var r = outer.GetComponent<Renderer>();
-            if (r != null) r.material.color = new Color(0.25f, 0.05f, 0.45f, 0.75f);
+            if (r != null) r.material.color = new Color(0.35f, 0.05f, 0.55f, 0.85f);
             Object.Destroy(outer.GetComponent<Collider>());
 
             var inner = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             inner.name = "VortexInner";
             inner.transform.SetParent(go.transform, false);
-            inner.transform.localScale = new Vector3(radius * 1.1f, 0.05f, radius * 1.1f);
+            inner.transform.localScale = new Vector3(radius * 1.2f, 0.05f, radius * 1.2f);
             inner.transform.localPosition = new Vector3(0, 0.03f, 0);
             var ir = inner.GetComponent<Renderer>();
-            if (ir != null) ir.material.color = new Color(0.65f, 0.2f, 0.9f, 0.85f);
+            if (ir != null) ir.material.color = UiTheme.HeroSpiritBright;
             Object.Destroy(inner.GetComponent<Collider>());
 
             // Pulsing violet gravity light
@@ -518,11 +600,12 @@ namespace TumbangPreso.Abilities
             lightGo.transform.localPosition = new Vector3(0, 1.2f, 0);
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
-            light.color = new Color(0.7f, 0.2f, 1.0f);
-            light.range = radius * 1.6f;
-            light.intensity = 4.0f;
+            light.color = UiTheme.HeroSpiritBright;
+            light.range = radius * 1.8f;
+            light.intensity = 4.5f;
 
             GameServices.Audio?.PlayAt("ability_bagsak_bomb", position);
+            ComicPopup.Spawn(position, "VOID GALAXY!", UiTheme.HeroSpiritBright, 1.4f);
 
             var comp = go.AddComponent<SeanceVoidComponent>();
             comp.Radius = radius;
@@ -551,7 +634,7 @@ namespace TumbangPreso.Abilities
                 }
 
                 // Rotate cosmic vortex discs
-                transform.Rotate(Vector3.up, 60.0f * Time.deltaTime);
+                transform.Rotate(Vector3.up, 75.0f * Time.deltaTime);
 
                 var round = GameServices.Round;
                 if (round == null) return;
@@ -566,7 +649,7 @@ namespace TumbangPreso.Abilities
                     if (diff.magnitude <= Radius)
                     {
                         p.ApplyStagger(0.2f);
-                        p.ApplyImpulse(diff.normalized * 3.5f * Time.deltaTime);
+                        p.ApplyImpulse(diff.normalized * 4.0f * Time.deltaTime);
                     }
                 }
 
@@ -579,8 +662,75 @@ namespace TumbangPreso.Abilities
                         sDiff.y = 0.0f;
                         if (sDiff.magnitude <= Radius && sDiff.magnitude > 0.5f)
                         {
-                            s.transform.position += sDiff.normalized * 5.0f * Time.deltaTime;
+                            s.transform.position += sDiff.normalized * 5.5f * Time.deltaTime;
                         }
+                    }
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // THUNDERSTRIKE OVERDRIVE (Zack Ultimate)
+        // -------------------------------------------------------------------
+        public static void CreateThunderstrike(Vector3 position, float radius = 7.0f, int sourceSlot = -1)
+        {
+            // 1. Sky Lightning Bolt Column
+            var bolt = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            bolt.name = "SkyLightningBolt";
+            bolt.transform.position = position + Vector3.up * 10.0f;
+            bolt.transform.localScale = new Vector3(0.5f, 10.0f, 0.5f);
+            var br = bolt.GetComponent<Renderer>();
+            if (br != null) br.material.color = UiTheme.HeroElectricBright;
+            Object.Destroy(bolt.GetComponent<Collider>());
+            Object.Destroy(bolt, 0.25f);
+
+            // 2. Expanding Electric Ground Shockwave
+            var shockRing = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            shockRing.name = "ThunderShockRing";
+            shockRing.transform.position = position + Vector3.up * 0.04f;
+            shockRing.transform.localScale = new Vector3(0.5f, 0.03f, 0.5f);
+            var sr = shockRing.GetComponent<Renderer>();
+            if (sr != null) sr.material.color = UiTheme.HeroElectric;
+            Object.Destroy(shockRing.GetComponent<Collider>());
+
+            var ringAnim = shockRing.AddComponent<ShockwaveRingAnim>();
+            ringAnim.TargetRadius = radius * 1.5f;
+            Object.Destroy(shockRing, 0.45f);
+
+            // 3. Bright flash light
+            var lightGo = new GameObject("ThunderLight");
+            lightGo.transform.position = position + Vector3.up * 2.0f;
+            var light = lightGo.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = UiTheme.HeroElectricBright;
+            light.range = radius * 2.5f;
+            light.intensity = 6.0f;
+            Object.Destroy(lightGo, 0.35f);
+
+            GameServices.Audio?.PlayAt("ability_flick_dash", position);
+            ComicPopup.Zap(position);
+
+            // Camera shake on main camera
+            if (UnityEngine.Camera.main != null)
+            {
+                var rig = UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>();
+                if (rig != null) rig.Shake(0.6f, 0.3f);
+            }
+
+            // Stagger and knock back enemies
+            var round = GameServices.Round;
+            if (round != null)
+            {
+                foreach (var p in round.Players)
+                {
+                    if (p == null || p.PlayerSlot == sourceSlot) continue;
+                    Vector3 diff = p.transform.position - position;
+                    diff.y = 0.0f;
+                    if (diff.magnitude <= radius)
+                    {
+                        p.ApplyStagger(2.0f);
+                        p.ApplyImpulse((diff.sqrMagnitude > 0.01f ? diff.normalized : Vector3.forward) * 12.0f + Vector3.up * 3.5f);
+                        DizzyStars.Attach(p.transform, 2.0f, UiTheme.HeroElectricBright);
                     }
                 }
             }
@@ -589,7 +739,7 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         // GRAND EXPLOSION EFFECT (Sean Skill 2 & Ultimate, Dante Stomp)
         // -------------------------------------------------------------------
-        public static void CreateExplosion(Vector3 center, float radius, float knockback, float stunTime, int sourceSlot)
+        public static void CreateExplosion(Vector3 center, float radius, float knockback, float stunTime, int sourceSlot, string comicText = "KABOOM!")
         {
             var round = GameServices.Round;
             if (round == null) return;
@@ -601,7 +751,7 @@ namespace TumbangPreso.Abilities
             vfx.transform.localScale = Vector3.one * (radius * 0.4f);
 
             var r = vfx.GetComponent<Renderer>();
-            if (r != null) r.material.color = new Color(1.0f, 0.55f, 0.1f, 0.9f);
+            if (r != null) r.material.color = UiTheme.HeroFireBright;
             Object.Destroy(vfx.GetComponent<Collider>());
 
             var anim = vfx.AddComponent<ExplosionVfxAnim>();
@@ -615,7 +765,7 @@ namespace TumbangPreso.Abilities
             shockRing.transform.localScale = new Vector3(0.5f, 0.02f, 0.5f);
 
             var sr = shockRing.GetComponent<Renderer>();
-            if (sr != null) sr.material.color = new Color(1.0f, 0.85f, 0.3f, 0.8f);
+            if (sr != null) sr.material.color = UiTheme.HeroFire;
             Object.Destroy(shockRing.GetComponent<Collider>());
 
             var ringAnim = shockRing.AddComponent<ShockwaveRingAnim>();
@@ -623,20 +773,20 @@ namespace TumbangPreso.Abilities
             Object.Destroy(shockRing, 0.4f);
 
             // 3. Flying fiery debris sparks
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var spark = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 spark.name = "ExplosionSpark";
                 spark.transform.position = center + Vector3.up * 0.5f;
-                spark.transform.localScale = Vector3.one * Random.Range(0.15f, 0.35f);
+                spark.transform.localScale = Vector3.one * Random.Range(0.18f, 0.4f);
 
                 var spr = spark.GetComponent<Renderer>();
-                if (spr != null) spr.material.color = new Color(1.0f, Random.Range(0.4f, 0.8f), 0.1f);
+                if (spr != null) spr.material.color = new Color(1.0f, Random.Range(0.4f, 0.9f), 0.1f);
                 Object.Destroy(spark.GetComponent<Collider>());
 
                 var rb = spark.AddComponent<Rigidbody>();
-                rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.5f) * Random.Range(6.0f, 14.0f);
-                Object.Destroy(spark, 0.6f);
+                rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.6f) * Random.Range(7.0f, 15.0f);
+                Object.Destroy(spark, 0.65f);
             }
 
             // 4. Bright flash light
@@ -644,12 +794,25 @@ namespace TumbangPreso.Abilities
             lightGo.transform.position = center + Vector3.up * 1.0f;
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
-            light.color = new Color(1.0f, 0.65f, 0.2f);
-            light.range = radius * 2.5f;
-            light.intensity = 5.0f;
+            light.color = UiTheme.HeroFireBright;
+            light.range = radius * 2.6f;
+            light.intensity = 5.5f;
             Object.Destroy(lightGo, 0.35f);
 
             GameServices.Audio?.PlayAt("ability_bagsak_bomb", center);
+
+            // Comic Popup
+            if (!string.IsNullOrEmpty(comicText))
+            {
+                ComicPopup.Spawn(center, comicText, UiTheme.HeroFireBright, 1.4f);
+            }
+
+            // Camera Shake on local rig
+            if (UnityEngine.Camera.main != null)
+            {
+                var rig = UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>();
+                if (rig != null) rig.Shake(0.55f, 0.28f);
+            }
 
             // Damage / Knockback players
             foreach (var p in round.Players)
@@ -663,12 +826,13 @@ namespace TumbangPreso.Abilities
                 {
                     float force = Mathf.Lerp(knockback, knockback * 0.35f, d / radius);
                     Vector3 push = (to.sqrMagnitude > 0.01f ? to.normalized : Vector3.forward) * force;
-                    push.y = 5.0f;
+                    push.y = 5.5f;
 
                     p.ApplyImpulse(push);
                     if (p.PlayerSlot != sourceSlot && stunTime > 0.0f)
                     {
                         p.ApplyStagger(stunTime);
+                        DizzyStars.Attach(p.transform, stunTime, UiTheme.HeroFireBright);
                     }
                 }
             }
