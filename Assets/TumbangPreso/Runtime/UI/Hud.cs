@@ -1978,7 +1978,7 @@ namespace TumbangPreso.UI
                     {
                         _lastUltReady = true;
                         GameServices.Audio?.PlayAt("sfx_super_ready", UnityEngine.Camera.main != null ? UnityEngine.Camera.main.transform.position : Vector3.zero);
-                        if (_local != null) ComicPopup.Super(_local.transform.position);
+                        if (_local != null) Visual.ComicPopup.Super(_local.transform.position);
                     }
                 }
                 else

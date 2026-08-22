@@ -2018,7 +2018,7 @@ namespace TumbangPreso
 
         private void StepHeroAbilities(InputIntent intent, float dt)
         {
-            if (SceneFlow.SelectedMode != GameMode.HeroStrike) return;
+            if (UI.SceneFlow.SelectedMode != GameMode.HeroStrike) return;
 
             var abilitySystem = _motor.AbilitySystem;
             if (abilitySystem == null || abilitySystem.Kit == null) return;
@@ -2109,7 +2109,7 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.SeanHeroKit)
                 {
-                    if (_driving && (_motor.HoldingSlipper || Plan == AiPlan.Retrieve || Plan == AiPlan.Withdraw))
+                    if (_driving && (_motor.HoldingSlipper || Plan == AiPlan.Fetch || Plan == AiPlan.Withdraw))
                     {
                         Tap(intent, Verb.Skill1);
                     }

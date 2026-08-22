@@ -478,7 +478,7 @@ namespace TumbangPreso
 
                 Visual.ComicPopup.Spawn(origin, "OVERCHARGE!", UI.UiTheme.HeroElectricBright, 1.1f);
             }
-            else if (SceneFlow.SelectedMode == GameMode.HeroStrike)
+            else if (UI.SceneFlow.SelectedMode == GameMode.HeroStrike)
             {
                 _affinityVfxGo = new GameObject("HeroSlipperTrail");
                 _affinityVfxGo.transform.SetParent(transform, false);
