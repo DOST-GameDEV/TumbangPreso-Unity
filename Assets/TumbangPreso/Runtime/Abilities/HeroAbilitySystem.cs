@@ -1,5 +1,6 @@
 using System;
 using TumbangPreso.Core;
+using TumbangPreso.Visual;
 using UnityEngine;
 
 namespace TumbangPreso.Abilities
