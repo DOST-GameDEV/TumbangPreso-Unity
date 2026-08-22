@@ -674,17 +674,27 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         public static void CreateThunderstrike(Vector3 position, float radius = 7.0f, int sourceSlot = -1)
         {
-            // 1. Sky Lightning Bolt Column
-            var bolt = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            bolt.name = "SkyLightningBolt";
-            bolt.transform.position = position + Vector3.up * 10.0f;
-            bolt.transform.localScale = new Vector3(0.5f, 10.0f, 0.5f);
-            var br = bolt.GetComponent<Renderer>();
-            if (br != null) br.material.color = UiTheme.HeroElectricBright;
-            Object.Destroy(bolt.GetComponent<Collider>());
-            Object.Destroy(bolt, 0.25f);
+            // 1. Sky Lightning Bolt Column & Multi-segment Arc
+            SpawnLightningBolt(position + Vector3.up * 24.0f, position, UiTheme.HeroElectricBright, 0.40f);
 
-            // 2. Expanding Electric Ground Shockwave
+            // 2. Flying electric spark shards
+            for (int i = 0; i < 10; i++)
+            {
+                var spark = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                spark.name = "ThunderSpark";
+                spark.transform.position = position + Vector3.up * 0.5f;
+                spark.transform.localScale = Vector3.one * Random.Range(0.15f, 0.35f);
+
+                var spr = spark.GetComponent<Renderer>();
+                if (spr != null) spr.material.color = UiTheme.HeroElectricBright;
+                Object.Destroy(spark.GetComponent<Collider>());
+
+                var rb = spark.AddComponent<Rigidbody>();
+                rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.5f) * Random.Range(5.0f, 12.0f);
+                Object.Destroy(spark, 0.5f);
+            }
+
+            // 3. Expanding Electric Ground Shockwave
             var shockRing = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             shockRing.name = "ThunderShockRing";
             shockRing.transform.position = position + Vector3.up * 0.04f;
@@ -846,6 +856,189 @@ namespace TumbangPreso.Abilities
                 {
                     round.Lata.HostKnockDown(sourceSlot);
                 }
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // ICE CUBE PRISON (Cheska Freeze Nova)
+        // -------------------------------------------------------------------
+        public static GameObject SpawnIceCubePrison(Transform victim, float duration = 2.5f)
+        {
+            if (victim == null) return null;
+
+            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            go.name = "IceCubePrison";
+            go.transform.position = victim.position + Vector3.up * 0.95f;
+            go.transform.rotation = victim.rotation;
+            go.transform.localScale = new Vector3(1.35f, 1.95f, 1.35f);
+
+            var r = go.GetComponent<Renderer>();
+            if (r != null)
+            {
+                r.material.color = new Color(0.45f, 0.92f, 1.0f, 0.72f);
+            }
+            Object.Destroy(go.GetComponent<Collider>());
+
+            var comp = go.AddComponent<IceCubePrisonComponent>();
+            comp.Duration = duration;
+            comp.Victim = victim;
+
+            return go;
+        }
+
+        public sealed class IceCubePrisonComponent : MonoBehaviour
+        {
+            public float Duration = 2.5f;
+            public Transform Victim;
+            private float _left;
+
+            private void Start() => _left = Duration;
+
+            private void Update()
+            {
+                if (Victim != null)
+                {
+                    transform.position = Victim.position + Vector3.up * 0.95f;
+                }
+
+                _left -= Time.deltaTime;
+                if (_left <= 0.0f)
+                {
+                    Shatter();
+                }
+                else if (_left <= 0.5f)
+                {
+                    // Wobble before breaking
+                    transform.position += Random.insideUnitSphere * 0.04f;
+                }
+            }
+
+            public void Shatter()
+            {
+                for (int i = 0; i < 12; i++)
+                {
+                    var shard = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    shard.name = "PrisonIceShard";
+                    shard.transform.position = transform.position + Random.insideUnitSphere * 0.6f;
+                    shard.transform.localScale = Vector3.one * Random.Range(0.2f, 0.4f);
+                    shard.transform.rotation = Random.rotation;
+
+                    var r = shard.GetComponent<Renderer>();
+                    if (r != null) r.material.color = new Color(0.7f, 0.96f, 1.0f, 0.85f);
+
+                    var rb = shard.AddComponent<Rigidbody>();
+                    rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.5f) * Random.Range(3.5f, 8.0f);
+                    rb.angularVelocity = Random.insideUnitSphere * 25.0f;
+
+                    Object.Destroy(shard, 1.2f);
+                }
+
+                GameServices.Audio?.PlayAt("sfx_ice_freeze", transform.position);
+                ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, "SHATTER!", UiTheme.HeroIceBright, 1.2f);
+                Object.Destroy(gameObject);
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // CONFETTI CELEBRATION SHOWER
+        // -------------------------------------------------------------------
+        public static void SpawnConfettiShower(Vector3 center, int count = 24)
+        {
+            Color[] colors =
+            {
+                new Color(1.0f, 0.25f, 0.35f), // Pink Red
+                new Color(1.0f, 0.85f, 0.15f), // Gold
+                new Color(0.25f, 0.85f, 1.0f), // Sky Blue
+                new Color(0.35f, 1.0f, 0.45f), // Emerald Green
+                new Color(0.95f, 0.45f, 1.0f), // Magenta
+                new Color(1.0f, 0.55f, 0.15f), // Orange
+            };
+
+            for (int i = 0; i < count; i++)
+            {
+                var confetti = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                confetti.name = "ConfettiRibbon";
+                confetti.transform.position = center + Vector3.up * 1.2f + Random.insideUnitSphere * 0.4f;
+                confetti.transform.localScale = new Vector3(0.18f, 0.02f, 0.10f);
+                confetti.transform.rotation = Random.rotation;
+
+                var r = confetti.GetComponent<Renderer>();
+                if (r != null) r.material.color = colors[Random.Range(0, colors.Length)];
+                Object.Destroy(confetti.GetComponent<Collider>());
+
+                var rb = confetti.AddComponent<Rigidbody>();
+                rb.linearDamping = 1.8f;
+                rb.angularDamping = 2.5f;
+                rb.linearVelocity = (Random.insideUnitSphere * 4.0f + Vector3.up * Random.Range(6.0f, 11.0f));
+                rb.angularVelocity = Random.insideUnitSphere * 35.0f;
+
+                Object.Destroy(confetti, Random.Range(2.2f, 3.2f));
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // PROCEDURAL ZIG-ZAG LIGHTNING BOLT
+        // -------------------------------------------------------------------
+        public static GameObject SpawnLightningBolt(Vector3 start, Vector3 end, Color color, float duration = 0.25f)
+        {
+            var go = new GameObject("LightningBoltHierarchy");
+            int segments = 4;
+            Vector3 prev = start;
+
+            for (int i = 1; i <= segments; i++)
+            {
+                float t = (float)i / segments;
+                Vector3 target = Vector3.Lerp(start, end, t);
+                if (i < segments)
+                {
+                    target += Random.insideUnitSphere * 0.9f;
+                }
+
+                var seg = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                seg.name = $"BoltSeg_{i}";
+                seg.transform.SetParent(go.transform, false);
+
+                Vector3 dir = target - prev;
+                float len = dir.magnitude;
+                seg.transform.position = prev + dir * 0.5f;
+                seg.transform.rotation = Quaternion.FromToRotation(Vector3.up, dir);
+                seg.transform.localScale = new Vector3(0.28f, len * 0.5f, 0.28f);
+
+                var r = seg.GetComponent<Renderer>();
+                if (r != null) r.material.color = color;
+                Object.Destroy(seg.GetComponent<Collider>());
+
+                prev = target;
+            }
+
+            Object.Destroy(go, duration);
+            return go;
+        }
+
+        // -------------------------------------------------------------------
+        // VOLCANIC ROCK DEBRIS (Dante Skills)
+        // -------------------------------------------------------------------
+        public static void SpawnVolcanicRockDebris(Vector3 center, int count = 8)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var rock = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                rock.name = "VolcanicRock";
+                rock.transform.position = center + Vector3.up * 0.4f;
+                rock.transform.localScale = Vector3.one * Random.Range(0.25f, 0.55f);
+                rock.transform.rotation = Random.rotation;
+
+                var r = rock.GetComponent<Renderer>();
+                if (r != null)
+                {
+                    r.material.color = Random.value < 0.5f ? new Color(0.22f, 0.18f, 0.15f) : UiTheme.HeroEarthBright;
+                }
+
+                var rb = rock.AddComponent<Rigidbody>();
+                rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.8f) * Random.Range(6.0f, 13.0f);
+                rb.angularVelocity = Random.insideUnitSphere * 20.0f;
+
+                Object.Destroy(rock, 1.4f);
             }
         }
 

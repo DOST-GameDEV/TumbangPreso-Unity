@@ -94,6 +94,7 @@ namespace TumbangPreso.Abilities
                             p.ApplyImpulse(diff.normalized * 8.5f + Vector3.up * 2.5f);
                             DizzyStars.Attach(p.transform, 2.5f, UiTheme.HeroIceBright);
                             ComicPopup.Freeze(p.transform.position);
+                            HeroHazards.SpawnIceCubePrison(p.transform, 2.5f);
                         }
                     }
 

@@ -203,6 +203,7 @@ namespace TumbangPreso
                 Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, "DOWNED!", UI.UiTheme.Offense, 1.4f);
                 UI.Hud.TriggerHitmarker(UI.UiTheme.Offense, "💥");
                 Visual.ImpactBurst.SpawnAt(transform.position);
+                Abilities.HeroHazards.SpawnConfettiShower(transform.position, 24);
                 if (UnityEngine.Camera.main != null)
                 {
                     var rig = UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>();
