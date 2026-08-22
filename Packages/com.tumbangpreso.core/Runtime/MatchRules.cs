@@ -1,5 +1,15 @@
 namespace TumbangPreso.Core
 {
+    /// <summary>The two distinct match play modes.</summary>
+    public enum GameMode
+    {
+        /// <summary>Classic Tumbang Preso with traditional 12-character Kenney street roster.</summary>
+        Classic,
+
+        /// <summary>Action-packed Hero Strike mode with the 5 superpowered heroes and abilities.</summary>
+        HeroStrike
+    }
+
     /// <summary>The four ways a point can be created. There are no others.</summary>
     public enum ScoreEvent
     {

@@ -174,5 +174,51 @@ namespace TumbangPreso.Tests
                 "the standoff ring lands inside a wall: bots will jam against it trying to " +
                 "reach a goal they can never stand on, and it reads as broken pathfinding");
         }
+
+        // -------------------------------------------------------------------
+        // Hero Ability System & Gamemode Tests
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void HeroKits_CreateSuccessfully_ForEveryHero()
+        {
+            string[] heroes = { "zack", "cheska", "dante", "nemu", "sean" };
+            foreach (var h in heroes)
+            {
+                var kit = Abilities.HeroAbilitySystem.CreateKitFor(h);
+                Assert.IsNotNull(kit, $"kit for {h} must be created");
+                Assert.IsNotNull(kit.Skill1, $"skill 1 for {h} must exist");
+                Assert.IsNotNull(kit.Skill2, $"skill 2 for {h} must exist");
+                Assert.IsNotNull(kit.Ultimate, $"ultimate for {h} must exist");
+            }
+        }
+
+        [Test]
+        public void HeroKit_ChargesAndActivates_Ultimate()
+        {
+            var kit = new Abilities.ZackHeroKit();
+            Assert.AreEqual(0.0f, kit.UltimateCharge);
+            Assert.IsFalse(kit.IsUltimateReady);
+
+            kit.AddUltimateCharge(50.0f);
+            Assert.AreEqual(0.5f, kit.UltimateRatio, 0.001f);
+            Assert.IsFalse(kit.IsUltimateReady);
+
+            kit.AddUltimateCharge(50.0f);
+            Assert.AreEqual(1.0f, kit.UltimateRatio, 0.001f);
+            Assert.IsTrue(kit.IsUltimateReady);
+        }
+
+        [Test]
+        public void GameMode_Rosters_AreDistinctAndCorrectSizes()
+        {
+            var classic = Roster.GetPeople(GameMode.Classic);
+            var heroes = Roster.GetPeople(GameMode.HeroStrike);
+
+            Assert.AreEqual(12, classic.Count);
+            Assert.AreEqual(5, heroes.Count);
+            Assert.AreEqual("bayan", classic[0].Id);
+            Assert.AreEqual("dante", heroes[0].Id);
+        }
     }
 }

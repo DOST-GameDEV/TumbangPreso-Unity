@@ -79,6 +79,13 @@ namespace TumbangPreso
             return $"P{_playerSlot + 1}";
         }
 
+        /// <summary>Active game mode for trait lookups and ability kits.</summary>
+        public GameMode Mode { get; set; } = GameMode.HeroStrike;
+
+        private Abilities.HeroAbilitySystem _abilitySystem;
+        public Abilities.HeroAbilitySystem AbilitySystem =>
+            _abilitySystem != null ? _abilitySystem : (_abilitySystem = GetComponent<Abilities.HeroAbilitySystem>());
+
         /// <summary>The roster pick's name, falling back to the seat number.
         /// CharacterIndex is -1 until a pick arrives.</summary>
         private string CharacterName()
@@ -86,9 +93,10 @@ namespace TumbangPreso
             // ⚠️ THE CORE ROSTER, NOT RosterBook. RosterBook maps an index to a model; the
             // NAME is balance-layer data and lives in the engine-free package, so a headless
             // test can assert a legend without loading a single asset.
-            if (_characterIndex < 0 || _characterIndex >= Roster.People.Count)
+            var list = Roster.GetPeople(Mode);
+            if (_characterIndex < 0 || _characterIndex >= list.Count)
                 return $"P{_playerSlot + 1}";
-            return Roster.People[_characterIndex].Name;
+            return list[_characterIndex].Name;
         }
 
         public InputIntent Intent { get; } = new InputIntent();
@@ -351,7 +359,7 @@ namespace TumbangPreso
 
             float speed = Balance.Speed
                           * Stamina.RoleSpeedScale(_isDefender)
-                          * Roster.PersonSpeedScale(_characterIndex)
+                          * Roster.PersonSpeedScale(_characterIndex, Mode)
                           * sprint
                           * Stamina.SpeedZones.Value;
 
@@ -556,6 +564,7 @@ namespace TumbangPreso
         public bool IsTaggable()
         {
             if (_isDefender || !RoundActive) return false;
+            if (AbilitySystem != null && AbilitySystem.IsImmuneToTags) return false;
             if (!HoldingSlipper) return false;
             return IsInsideBox();
         }
@@ -570,10 +579,18 @@ namespace TumbangPreso
         /// raw number. Reset with the stun, never accumulated.</summary>
         public float StunTotal => _stunTotal;
 
+        public void ClearStun()
+        {
+            _stunLeft = 0.0f;
+            _stunTotal = 0.0f;
+        }
+
         /// <summary>⚠️ Max(), NEVER additive. That is the entire bound on a stun chain in a
         /// 1-vs-3 game.</summary>
         public void ApplyStagger(float duration)
         {
+            if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+
             _stunLeft = Combat.ApplyStagger(_stunLeft, duration);
 
             // The bar's denominator follows the same Max: a short stun landing inside a longer

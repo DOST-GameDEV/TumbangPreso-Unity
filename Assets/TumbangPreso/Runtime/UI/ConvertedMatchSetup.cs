@@ -93,6 +93,9 @@ namespace TumbangPreso.UI
             OnClick("MapPrevButton", () => OnMapCycle(-1));
             OnClick("MapNextButton", () => OnMapCycle(1));
 
+            OnClick("ModePrevButton", () => OnModeCycle(-1));
+            OnClick("ModeNextButton", () => OnModeCycle(1));
+
             OnClick("DifficultyPrevButton", () => OnDifficultyCycle(-1));
             OnClick("DifficultyNextButton", () => OnDifficultyCycle(1));
 
@@ -106,7 +109,7 @@ namespace TumbangPreso.UI
             });
 
             var modeRow = Node("ModeRow");
-            if (modeRow != null) modeRow.gameObject.SetActive(false);
+            if (modeRow != null) modeRow.gameObject.SetActive(true);
 
             BuildSpectateButton();
             WireSeats();
@@ -156,6 +159,25 @@ namespace TumbangPreso.UI
             {
                 MatchRpc.Instance?.SelectMapServerRpc(_map);
             }
+        }
+
+        private void OnModeCycle(int delta)
+        {
+            if (!NetAuthority.IsHost && SceneFlow.Networked) return;
+
+            SceneFlow.SelectedMode = SceneFlow.SelectedMode == GameMode.HeroStrike
+                ? GameMode.Classic
+                : GameMode.HeroStrike;
+
+            var s = Settings.SettingsStore.Current;
+            var list = Roster.GetPeople(SceneFlow.SelectedMode);
+            if (s.CharacterPick >= list.Count)
+            {
+                s.CharacterPick = 0;
+                Settings.SettingsStore.Save();
+            }
+
+            Refresh();
         }
 
         private void OnDifficultyCycle(int delta)
@@ -361,6 +383,7 @@ namespace TumbangPreso.UI
             SetText("MapValueLabel",
                     SceneFlow.SelectedMap.ToUpperInvariant().Replace("BAYANPLAZA", "BAYAN PLAZA"));
 
+            SetText("ModeValueLabel", SceneFlow.SelectedMode == GameMode.HeroStrike ? "HERO STRIKE" : "CLASSIC");
             SetText("DifficultyValueLabel", Difficulties[_difficulty]);
             SetText("DetailLabel", SceneFlow.PreviewFor(SceneFlow.SelectedMap).Detail);
 
@@ -374,7 +397,8 @@ namespace TumbangPreso.UI
             s.AiDifficulty = _difficulty;
             AIController.ApplyDifficulty(_difficulty);
 
-            string person = Roster.At(Roster.People, s.CharacterPick)?.Name ?? "BERTO";
+            var modePeople = Roster.GetPeople(SceneFlow.SelectedMode);
+            string person = Roster.At(modePeople, s.CharacterPick)?.Name ?? (SceneFlow.SelectedMode == GameMode.HeroStrike ? "DANTE" : "BAYAN");
             string can = Roster.At(Roster.Cans, s.CanPick)?.Name ?? "PASIP";
             string slipper = Roster.At(Roster.Slippers, s.SlipperPick)?.Name ?? "TSINELAS";
 

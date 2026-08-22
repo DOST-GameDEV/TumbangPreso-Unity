@@ -1,3 +1,5 @@
+using System;
+using TumbangPreso.Abilities;
 using TumbangPreso.Core;
 using UnityEngine;
 
@@ -565,10 +567,17 @@ namespace TumbangPreso
         {
             if (Held == null) return Vector3.zero;
 
-            // ⚠️⚠️ SOLVED THROUGH THE AIM POINT, NOT LOBBED AT 45 DEGREES. See
-            // `Slipper.SolveArc`: the fixed 45 threw the same towering arc at every range and
-            // ignored the vertical half of where the player was pointing entirely.
-            return Held.LaunchVelocityTo(ThrowOrigin(), AimPoint(), ChargeRatio);
+            Vector3 vel = Held.LaunchVelocityTo(ThrowOrigin(), AimPoint(), ChargeRatio);
+            var ability = _motor.AbilitySystem;
+            if (ability != null && ability.Kit is ZackHeroKit zack && (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
+            {
+                vel *= 1.6f;
+            }
+            else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
+            {
+                vel *= 1.3f;
+            }
+            return vel;
         }
 
         private void Release(float power)
@@ -580,10 +589,22 @@ namespace TumbangPreso
             GameServices.Audio?.PlayAt("throw_release", origin);
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
 
-            // ⚠️ THE SAME SOLVE THE PREVIEW DREW. The dotted line and the flight are one line
-            // only while both come out of `LaunchVelocityTo`; two call sites building a
-            // direction by hand is exactly how they drift.
-            Held.HostThrow(_motor, origin, Held.LaunchVelocityTo(origin, AimPoint(), power));
+            var ability = _motor.AbilitySystem;
+            ability?.OnThrowReleased();
+
+            Vector3 vel = Held.LaunchVelocityTo(origin, AimPoint(), power);
+            if (ability != null && ability.Kit is ZackHeroKit zack && (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
+            {
+                vel *= 1.6f;
+                zack.IsOverchargeThrowActive = false;
+            }
+            else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
+            {
+                vel *= 1.3f;
+                sean.IsIgnitionCannonActive = false;
+            }
+
+            Held.HostThrow(_motor, origin, vel);
 
             Held = null;
             _motor.HoldingSlipper = false;

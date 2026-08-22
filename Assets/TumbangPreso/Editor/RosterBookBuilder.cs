@@ -53,55 +53,49 @@ namespace TumbangPreso.EditorTools
         /// </remarks>
         private static readonly Dictionary<string, string> PersonModels = new Dictionary<string, string>
         {
-            { "bayan",       "characters/persons/team-bayan.glb" },
-            { "maring",      "characters/persons/character-female-f.glb" },
-            { "totoy",       "characters/persons/character-male-a.glb" },
-            { "inday",       "characters/persons/team-inday.glb" },
-            { "kuya_boy",    "characters/persons/team-iggy.glb" },
-            { "iggy",        "characters/persons/team-iggy.glb" },
+            // Classic Roster (12 original Kenney characters)
+            { "bayan",       "characters/persons/character-male-a.glb" },
+            { "maring",      "characters/persons/character-female-a.glb" },
+            { "totoy",       "characters/persons/character-male-b.glb" },
+            { "inday",       "characters/persons/character-female-b.glb" },
+            { "kuya_boy",    "characters/persons/character-male-c.glb" },
+            { "ate_girlie",  "characters/persons/character-female-c.glb" },
+            { "tikboy",      "characters/persons/character-male-d.glb" },
+            { "bebang",      "characters/persons/character-female-d.glb" },
+            { "jun_jun",     "characters/persons/character-male-e.glb" },
+            { "lola_pacing", "characters/persons/character-female-e.glb" },
+            { "mang_kanor",  "characters/persons/character-male-f.glb" },
+            { "aling_nena",  "characters/persons/character-female-f.glb" },
+
+            // Hero Strike Roster (5 action heroes)
+            { "dante",       "characters/persons/team-dante.glb" },
+            { "cheska",      "characters/persons/team-cheska.glb" },
+            { "sean",        "characters/persons/team-sean.glb" },
             { "zack",        "characters/persons/team-zack.glb" },
-            { "tikboy",      "characters/persons/character-male-c.glb" },
-            { "bebang",      "characters/persons/character-female-c.glb" },
-            { "jun_jun",     "characters/persons/character-male-d.glb" },
-            { "lola_pacing", "characters/persons/character-female-d.glb" },
-            { "mang_kanor",  "characters/persons/character-male-e.glb" },
-            { "aling_nena",  "characters/persons/character-female-e.glb" },
             { "nemu",        "characters/persons/team-nemu.glb" },
         };
 
-        /// <summary>
-        /// ⚠️⚠️ A CHARACTER IS A RIG PLUS A PALETTE, AND THE PALETTE IS HALF OF WHO THEY ARE.
-        /// Twelve people share twelve CC0 rigs and differ only by which sixteen colours their
-        /// shared atlas is remapped to. Without them the whole cast renders in Kenney's factory
-        /// colours: `bayan` and `totoy` are the same man in the same clothes, and the select
-        /// screen still shows the right name and the right meters over the top of it.
-        ///
-        /// ⚠️ THE ORDER OF THIS TABLE DOES NOT MATTER AND THE IDS DO. Matched by id exactly as
-        /// the model table above is, because index order is a network contract owned by
-        /// `Roster.cs`.
-        /// </summary>
         private static readonly Dictionary<string, string> PersonPalettes = new Dictionary<string, string>
         {
-            { "bayan",       "person_team-bayan.tres" },
+            // Classic Palettes
+            { "bayan",       "person_a.tres" },
             { "maring",      "person_b.tres" },
             { "totoy",       "person_totoy.tres" },
-            { "inday",       "person_team-inday.tres" },
-            { "kuya_boy",    "person_team-iggy.tres" },
-            { "iggy",        "person_team-iggy.tres" },
-            // ⚠️ THE ONE PALETTE IN THIS TABLE THAT IS NOT A COPY OF A GODOT FILE. The other
-            // eleven are carried over from `generate_person_palettes.py` in the Godot repo and
-            // must not be hand-edited there or here. This one is emitted by
-            // `tools/build_person_voxel.py`, in the same run and from the same table that lays
-            // out the model's UVs, because a slot number in the mesh and a colour in the palette
-            // are two halves of one decision: separate them and a renumbered slot silently
-            // repaints a limb with nothing failing.
-            { "zack",        "person_team-zack.tres" },
+            { "inday",       "person_inday.tres" },
+            { "kuya_boy",    "person_kuya-boy.tres" },
+            { "ate_girlie",  "person_ate-girlie.tres" },
             { "tikboy",      "person_tikboy.tres" },
             { "bebang",      "person_bebang.tres" },
             { "jun_jun",     "person_jun-jun.tres" },
             { "lola_pacing", "person_lola-pacing.tres" },
             { "mang_kanor",  "person_mang-kanor.tres" },
             { "aling_nena",  "person_aling-nena.tres" },
+
+            // Hero Palettes
+            { "dante",       "person_team-dante.tres" },
+            { "cheska",      "person_team-cheska.tres" },
+            { "sean",        "person_team-sean.tres" },
+            { "zack",        "person_team-zack.tres" },
             { "nemu",        "person_team-nemu.tres" },
         };
 

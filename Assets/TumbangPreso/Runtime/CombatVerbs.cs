@@ -342,8 +342,8 @@ namespace TumbangPreso
             Vector3 push = victim.transform.position - transform.position;
             push.y = 0.0f;
             push = push.normalized * Balance.ShoveSpeed
-                   * Roster.PersonPowerScale(_motor.CharacterIndex)
-                   / Roster.PersonGritScale(victim.CharacterIndex);
+                   * Roster.PersonPowerScale(_motor.CharacterIndex, _motor.Mode)
+                   / Roster.PersonGritScale(victim.CharacterIndex, victim.Mode);
             push.y = Balance.ShoveLift;
 
             victim.ApplyImpulse(push);

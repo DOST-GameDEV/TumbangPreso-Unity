@@ -92,6 +92,10 @@ namespace TumbangPreso.Audio
             "bump", "tag", "downed", "jump", "land", "dash", "guard_block", "respawn",
             "stamina_empty",
 
+            // Hero Abilities.
+            "ability_bagsak_bomb", "ability_bakya_bash", "ability_flick_dash",
+            "ability_shatter_trap", "ability_spin_guard",
+
             // The shove and the block, via aliases.
             "hit_body", "bump_swing",
 

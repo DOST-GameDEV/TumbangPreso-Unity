@@ -1,3 +1,4 @@
+using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -122,6 +123,9 @@ namespace TumbangPreso.UI
 
         /// <summary>Which map the next match loads. Set by the setup screen.</summary>
         public static string SelectedMap = Eskinita;
+
+        /// <summary>Which game mode the next match loads. Default is Hero Strike.</summary>
+        public static GameMode SelectedMode = GameMode.HeroStrike;
 
         /// <summary>True when the next match is networked rather than against bots.</summary>
         public static bool Networked;

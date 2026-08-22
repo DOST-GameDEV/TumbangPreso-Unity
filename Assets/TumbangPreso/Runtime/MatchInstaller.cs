@@ -1,4 +1,5 @@
 using TumbangPreso.Core;
+using TumbangPreso.UI;
 using UnityEngine;
 
 namespace TumbangPreso
@@ -352,6 +353,7 @@ namespace TumbangPreso
 
             var motor = go.AddComponent<CharacterMotor>();
             motor.PlayerSlot = slot;
+            motor.Mode = SceneFlow.SelectedMode;
 
             var net = Net.NetSession.Instance;
             bool isNetworked = net != null && net.IsNetworked;
@@ -388,6 +390,16 @@ namespace TumbangPreso
             go.AddComponent<CombatVerbs>();
             go.AddComponent<Social.EmotePlayer>();
 
+            if (SceneFlow.SelectedMode == GameMode.HeroStrike)
+            {
+                var abilities = go.AddComponent<Abilities.HeroAbilitySystem>();
+                var heroPeople = Roster.GetPeople(GameMode.HeroStrike);
+                string heroId = (motor.CharacterIndex >= 0 && motor.CharacterIndex < heroPeople.Count)
+                    ? heroPeople[motor.CharacterIndex].Id
+                    : "dante";
+                abilities.BindHero(heroId);
+            }
+
             // The role ring and floating tag. Parented under the seat so it inherits position
             // but sizes itself off the capsule.
             var plateGo = new GameObject("Nameplate");
@@ -404,7 +416,7 @@ namespace TumbangPreso
             // moved the CharacterController along with the mesh. See SetModelRoot.
             visual.SetModelRoot(visualRoot.transform);
 
-            var art = _book != null ? _book.PersonArt(motor.CharacterIndex) : null;
+            var art = _book != null ? _book.PersonArt(motor.CharacterIndex, SceneFlow.SelectedMode) : null;
 
             if (art != null && art.Model != null)
             {
@@ -705,7 +717,8 @@ namespace TumbangPreso
         /// </summary>
         private int AiCharacterIndex(int slot)
         {
-            int size = Roster.People.Count;
+            var people = Roster.GetPeople(SceneFlow.SelectedMode);
+            int size = people.Count;
             if (size <= 0) return 0;
 
             // The human's own pick is taken; a bot must not wear the player's face.

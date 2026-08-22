@@ -130,8 +130,15 @@ namespace TumbangPreso.UI
 
         private Text _vulnerable;
         private Text _crosshair;
-
         private OffscreenIndicators _indicators;
+
+        private GameObject _heroDeck;
+        private Text _skill1KeyText, _skill1NameText, _skill1CdText;
+        private Image _skill1Fill;
+        private Text _skill2KeyText, _skill2NameText, _skill2CdText;
+        private Image _skill2Fill;
+        private Text _ultKeyText, _ultNameText, _ultChargeText;
+        private Image _ultFill;
 
         private readonly List<StatusRow> _rows = new List<StatusRow>();
         private readonly List<StatusRow> _states = new List<StatusRow>();
@@ -591,6 +598,7 @@ namespace TumbangPreso.UI
             UpdateScores();
             UpdateLataCard();
             UpdateStatus();
+            UpdateHeroDeck();
             UpdateDanger();
             UpdateToast(dt);
             UpdateCountdown(dt);
@@ -1116,6 +1124,7 @@ namespace TumbangPreso.UI
             BuildClock();
             BuildLataCard();
             BuildStatusStacks();
+            BuildHeroDeck();
             BuildFloatingText();
             BuildCrosshair();
 
@@ -1696,6 +1705,185 @@ namespace TumbangPreso.UI
             ring.Radius = Mathf.Max(1.0f, outline * 0.5f);
 
             return t;
+        }
+
+        /// <summary>
+        /// Bottom-center: Hero Ability Deck for Hero Strike mode with Wood and Amber styling.
+        /// </summary>
+        private void BuildHeroDeck()
+        {
+            var deckGo = new GameObject("HeroDeck");
+            deckGo.transform.SetParent(_root, false);
+            _heroDeck = deckGo;
+
+            var bg = deckGo.AddComponent<Image>();
+            bg.sprite = GodotTheme.Box(UiTheme.WoodDark, UiTheme.WoodEdge,
+                                       GodotTheme.WoodBorderWidth, GodotTheme.WoodCornerRadius);
+            bg.type = Image.Type.Sliced;
+            bg.raycastTarget = false;
+
+            var rt = deckGo.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0.5f, 0.0f);
+            rt.anchorMax = new Vector2(0.5f, 0.0f);
+            rt.pivot = new Vector2(0.5f, 0.0f);
+            rt.anchoredPosition = new Vector2(0, 24);
+            rt.sizeDelta = new Vector2(430, 85);
+
+            var hgroup = deckGo.AddComponent<HorizontalLayoutGroup>();
+            hgroup.childControlHeight = true;
+            hgroup.childControlWidth = false;
+            hgroup.childForceExpandHeight = true;
+            hgroup.childForceExpandWidth = false;
+            hgroup.spacing = 12.0f;
+            hgroup.padding = new RectOffset(16, 16, 10, 10);
+
+            BuildAbilityCard(deckGo.transform, "Skill1", "[E]", 120, out _skill1KeyText, out _skill1NameText, out _skill1CdText, out _skill1Fill);
+            BuildAbilityCard(deckGo.transform, "Skill2", "[Q]", 120, out _skill2KeyText, out _skill2NameText, out _skill2CdText, out _skill2Fill);
+            BuildAbilityCard(deckGo.transform, "Ultimate", "[F]", 136, out _ultKeyText, out _ultNameText, out _ultChargeText, out _ultFill);
+
+            _heroDeck.SetActive(false);
+        }
+
+        private void BuildAbilityCard(Transform parent, string name, string key, float width,
+            out Text keyText, out Text nameText, out Text cdText, out Image fill)
+        {
+            var cardGo = new GameObject(name);
+            cardGo.transform.SetParent(parent, false);
+
+            var cardBg = cardGo.AddComponent<Image>();
+            cardBg.sprite = GodotTheme.Box(UiTheme.WoodDeep, UiTheme.WoodEdge, 2, 4);
+            cardBg.type = Image.Type.Sliced;
+            cardBg.raycastTarget = false;
+
+            var le = cardGo.AddComponent<LayoutElement>();
+            le.preferredWidth = width;
+            le.minWidth = width;
+
+            var group = cardGo.AddComponent<VerticalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = false;
+            group.childForceExpandWidth = true;
+            group.spacing = 2.0f;
+            group.padding = new RectOffset(6, 6, 4, 4);
+
+            var topRow = new GameObject("TopRow");
+            topRow.transform.SetParent(cardGo.transform, false);
+            var topGroup = topRow.AddComponent<HorizontalLayoutGroup>();
+            topGroup.childControlHeight = true;
+            topGroup.childControlWidth = false;
+            topGroup.childForceExpandWidth = false;
+            topGroup.spacing = 4.0f;
+
+            keyText = HudLabel(topRow.transform, "Key", 16, UiTheme.Amber, TextAnchor.MiddleLeft, 4);
+            keyText.text = key;
+            var kle = keyText.gameObject.AddComponent<LayoutElement>();
+            kle.minWidth = 28;
+
+            cdText = HudLabel(topRow.transform, "CD", 15, UiTheme.Highlight, TextAnchor.MiddleRight, 4);
+            cdText.text = "READY";
+            var cdle = cdText.gameObject.AddComponent<LayoutElement>();
+            cdle.minWidth = width - 44;
+
+            nameText = HudLabel(cardGo.transform, "Name", 12, UiTheme.Cream, TextAnchor.MiddleCenter, 4);
+            nameText.text = name.ToUpperInvariant();
+            nameText.gameObject.AddComponent<LayoutElement>().minHeight = 18;
+
+            var barBg = new GameObject("BarBg");
+            barBg.transform.SetParent(cardGo.transform, false);
+            var barImg = barBg.AddComponent<Image>();
+            barImg.sprite = GodotTheme.Plain(2);
+            barImg.type = Image.Type.Sliced;
+            barImg.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.6f);
+            var barLe = barBg.AddComponent<LayoutElement>();
+            barLe.minHeight = 6;
+            barLe.preferredHeight = 6;
+
+            var fillGo = new GameObject("Fill");
+            fillGo.transform.SetParent(barBg.transform, false);
+            fill = fillGo.AddComponent<Image>();
+            fill.sprite = GodotTheme.Plain(2);
+            fill.type = Image.Type.Filled;
+            fill.fillMethod = Image.FillMethod.Horizontal;
+            fill.color = UiTheme.Amber;
+            fill.raycastTarget = false;
+            MenuKit.Stretch(fill.rectTransform);
+        }
+
+        private void UpdateHeroDeck()
+        {
+            if (_heroDeck == null) return;
+
+            var abilitySystem = _local != null ? _local.AbilitySystem : null;
+            if (abilitySystem == null || abilitySystem.Kit == null)
+            {
+                if (_heroDeck.activeSelf) _heroDeck.SetActive(false);
+                return;
+            }
+
+            if (!_heroDeck.activeSelf) _heroDeck.SetActive(true);
+
+            var kit = abilitySystem.Kit;
+
+            // Skill 1
+            if (kit.Skill1 != null)
+            {
+                _skill1NameText.text = kit.Skill1.Name;
+                if (kit.Skill1.CooldownRemaining > 0.0f)
+                {
+                    _skill1CdText.text = $"{kit.Skill1.CooldownRemaining:0.0}s";
+                    _skill1CdText.color = UiTheme.CreamMuted;
+                    _skill1Fill.fillAmount = 1.0f - kit.Skill1.CooldownRatio;
+                    _skill1Fill.color = UiTheme.Amber;
+                }
+                else
+                {
+                    _skill1CdText.text = "READY";
+                    _skill1CdText.color = UiTheme.Highlight;
+                    _skill1Fill.fillAmount = 1.0f;
+                    _skill1Fill.color = UiTheme.Highlight;
+                }
+            }
+
+            // Skill 2
+            if (kit.Skill2 != null)
+            {
+                _skill2NameText.text = kit.Skill2.Name;
+                if (kit.Skill2.CooldownRemaining > 0.0f)
+                {
+                    _skill2CdText.text = $"{kit.Skill2.CooldownRemaining:0.0}s";
+                    _skill2CdText.color = UiTheme.CreamMuted;
+                    _skill2Fill.fillAmount = 1.0f - kit.Skill2.CooldownRatio;
+                    _skill2Fill.color = UiTheme.Amber;
+                }
+                else
+                {
+                    _skill2CdText.text = "READY";
+                    _skill2CdText.color = UiTheme.Highlight;
+                    _skill2Fill.fillAmount = 1.0f;
+                    _skill2Fill.color = UiTheme.Highlight;
+                }
+            }
+
+            // Ultimate
+            if (kit.Ultimate != null)
+            {
+                _ultNameText.text = kit.Ultimate.Name;
+                if (kit.IsUltimateReady)
+                {
+                    _ultChargeText.text = "READY!";
+                    _ultChargeText.color = UiTheme.Highlight;
+                    _ultFill.fillAmount = 1.0f;
+                    _ultFill.color = UiTheme.Highlight;
+                }
+                else
+                {
+                    _ultChargeText.text = $"{Mathf.FloorToInt(kit.UltimateRatio * 100f)}%";
+                    _ultChargeText.color = UiTheme.Amber;
+                    _ultFill.fillAmount = kit.UltimateRatio;
+                    _ultFill.color = UiTheme.Amber;
+                }
+            }
         }
     }
 }

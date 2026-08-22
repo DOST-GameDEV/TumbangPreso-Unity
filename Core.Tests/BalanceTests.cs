@@ -499,12 +499,22 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void AllPersonRows_AreDistinct()
         {
-            Assert.Equal(13, Roster.People.Count);
+            Assert.Equal(12, Roster.ClassicPeople.Count);
+            Assert.Equal(5, Roster.HeroPeople.Count);
+            Assert.Equal(17, Roster.AllPeople.Count);
 
-            var seen = new HashSet<string>();
-            foreach (var e in Roster.People)
-                Assert.True(seen.Add($"{e.Bilis}/{e.Lakas}/{e.Tatag}"),
-                    $"{e.Name} duplicates another row: two characters playing as one");
+            var seenClassic = new HashSet<string>();
+            foreach (var e in Roster.ClassicPeople)
+                Assert.True(seenClassic.Add($"{e.Bilis}/{e.Lakas}/{e.Tatag}"),
+                    $"{e.Name} duplicates another classic row: two characters playing as one");
+
+            var seenHeroes = new HashSet<string>();
+            foreach (var e in Roster.HeroPeople)
+                Assert.True(seenHeroes.Add($"{e.Bilis}/{e.Lakas}/{e.Tatag}"),
+                    $"{e.Name} duplicates another hero row: two characters playing as one");
+
+            Assert.Equal(Roster.ClassicPeople, Roster.GetPeople(GameMode.Classic));
+            Assert.Equal(Roster.HeroPeople, Roster.GetPeople(GameMode.HeroStrike));
         }
 
         /// <summary>

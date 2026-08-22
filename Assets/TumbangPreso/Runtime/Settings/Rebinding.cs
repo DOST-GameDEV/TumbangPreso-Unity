@@ -27,6 +27,7 @@ namespace TumbangPreso.Settings
         {
             "Move",              // the four directions are one composite here
             "SpecialAbility", "Grab", "Lunge", "Jump", "Sprint",
+            "Skill1", "Skill2", "Ultimate",
             "ReadyUp", "CleanFeed",
             "EmoteWheel",
             "ToggleFullscreen",
@@ -36,7 +37,7 @@ namespace TumbangPreso.Settings
         /// Human-readable labels. Two of these are named for the job the player cannot guess
         /// from the verb:
         /// - GRAB is also the hold that carries a displaced lata home (`Design.md` §5.2).
-        /// - LUNGE is the taya's tag — the only way to stop an attacker retrieving a slipper
+        /// - LUNGE is the taya's tag: the only way to stop an attacker retrieving a slipper
         ///   inside the box (§5.2, §6).
         /// </summary>
         public static readonly Dictionary<string, string> ActionLabels = new Dictionary<string, string>
@@ -47,6 +48,9 @@ namespace TumbangPreso.Settings
             { "Lunge", "Lunge" },
             { "Jump", "Jump" },
             { "Sprint", "Sprint" },
+            { "Skill1", "Skill 1" },
+            { "Skill2", "Skill 2" },
+            { "Ultimate", "Ultimate" },
             { "ReadyUp", "Ready Up" },
             { "CleanFeed", "Hide HUD" },
             { "EmoteWheel", "Emote Wheel" },
@@ -64,10 +68,10 @@ namespace TumbangPreso.Settings
         public static string DisplayNameFor(InputActionAsset asset, string action)
         {
             var a = Find(asset, action);
-            if (a == null) return "—";
+            if (a == null) return "-";
 
             int binding = FirstKeyboardBinding(a);
-            if (binding < 0) return "—";
+            if (binding < 0) return "-";
 
             return InputControlPath.ToHumanReadableString(
                 a.bindings[binding].effectivePath,

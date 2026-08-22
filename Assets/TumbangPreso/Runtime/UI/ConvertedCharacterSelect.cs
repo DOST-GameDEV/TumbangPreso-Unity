@@ -192,7 +192,7 @@ namespace TumbangPreso.UI
         }
 
         private IReadOnlyList<RosterEntry> Entries =>
-            _tab == 0 ? Roster.People : (_tab == 1 ? Roster.Cans : Roster.Slippers);
+            _tab == 0 ? Roster.GetPeople(SceneFlow.SelectedMode) : (_tab == 1 ? Roster.Cans : Roster.Slippers);
 
         private void CycleEntry(int delta)
         {
@@ -237,7 +237,7 @@ namespace TumbangPreso.UI
             var book = RosterBook.Load();
             if (book == null) return;
 
-            var art = _tab == 0 ? book.PersonArt(_pick[0])
+            var art = _tab == 0 ? book.PersonArt(_pick[0], SceneFlow.SelectedMode)
                     : (_tab == 1 ? book.CanArt(_pick[1]) : book.SlipperArt(_pick[2]));
 
             // ⚠️ THE LOOK-DOWN ANGLE IS NOT PASSED IN ANY MORE, IT IS MEASURED. A lata and a
@@ -262,21 +262,22 @@ namespace TumbangPreso.UI
         {
             switch (id)
             {
-                case "nemu": return "Sleepy spirit girl who drifts between dreams and the match. Accompanied by a floating ghost pet that watches her back while she floats past defenders.";
+                // Hero Strike Roster
+                case "dante": return "Earth / Demonic Juggernaut. Ground-shattering tremors, iron poise that resists stuns, and unstoppable momentum.";
+                case "cheska": return "Ice / Frost Striker. Controls the court with permafrost slip zones, crystal ice barricades, and glacial freeze.";
+                case "sean": return "Fire / Explosive Powerhouse. High-octane kinetic charge, explosive slipper cannons, and crater-smashing ultimates.";
+                case "zack": return "Electric / Lightning Skater. High-speed electric dash, overcharged lightning throws, and thunderstrike overdrive.";
+                case "nemu": return "Spirit / Ghost Summoner. Phases between dimensions, summons spectral companion ghosts, and creates drowsy seance voids.";
+
+                // Classic Roster
                 case "bayan":
-                case "dante":
-                case "berto": return "Built like a concrete wall. Slow to chase, but once he plants his feet and winds up a throw, the whole street clears out.";
+                case "berto": return "The original defender. Immovable, unhurriable, and still standing exactly where you left him.";
                 case "maring": return "Quick hands, quicker mouth. She has talked her way out of more tags than she has dodged.";
                 case "totoy": return "Raised barefoot in the eskinita. Nobody in this town has caught him twice.";
-                case "inday":
-                case "cheska": return "Ice-cold bakery prodigy with an unstoppable arm. Armed with heavy throws, a cheeky cat smirk, and a stance that never melts under pressure.";
+                case "inday": return "Minds the corner stall and is afraid of absolutely nothing that walks past it.";
                 case "kuya_boy":
-                case "sean":
-                case "iggy": return "Heavyweight champion of the barangay courts. Armed with blistering fists, maximum throwing power, and a fiery mohawk that blazes whenever the match heats up.";
-                // ⚠️ THE SENTENCE PAYS OUT THE METERS, which is this table's one rule. Speed 4
-                // is the loudest of his three, so the line claims quickness and nothing else:
-                // no strength boast on a 3, and no toughness boast on a 3.
-                case "zack": return "Got the streak the day the transformer on their corner blew, and kept it. First to the can, every time.";
+                case "iggy": return "Eldest of seven. He has been the taya since before he could count, and both the arm and the footwork know it.";
+                case "ate_girlie": return "Queen of patintero, slumming it at tumbang preso. The footwork came with her.";
                 case "tikboy": return "Always down to one tsinelas. Half the footwear, twice the throwing arm.";
                 case "bebang": return "Hits like a jeepney door closing, and moves about as easily. Do not tease her about it, and do not stand in front of her.";
                 case "jun_jun": return "The bunso of the street. Small, slippery, and impossible to corner. Also impossible to keep upright.";

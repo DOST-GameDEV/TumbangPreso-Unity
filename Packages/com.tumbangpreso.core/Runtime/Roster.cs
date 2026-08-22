@@ -70,60 +70,68 @@ namespace TumbangPreso.Core
         public const int TraitNeutral = 3;
 
         /// <summary>
-        /// The twelve playable people.
-        ///
-        /// ⚠️ ALL TWELVE ROWS MUST STAY DISTINCT. Two pairs were byte-identical until
-        /// 2026-08-01 (KUYA BOY against BEBANG, MANG KANOR against ATE GIRLIE), which is
-        /// two characters wearing two rigs and playing as one. It is invisible on the
-        /// select screen because the meters look correct on both. RosterTests asserts it.
-        ///
-        /// ⚠️ THE NUMBER MUST BE READABLE OFF THE SENTENCE. If the tagline says somebody
-        /// is quick, Bilis is high. A stat nobody can predict from the lore is a random
-        /// modifier, and a description nothing backs up is a lie the player finds out
-        /// about in round 2.
-        ///
-        /// ⚠️ TOTALS ARE NOT BUDGET-BALANCED, ON PURPOSE. Bebang is genuinely a heavier
-        /// pick than Jun-Jun overall, because "the small one is strictly equal to the big
-        /// one once you add the numbers up" is a spreadsheet result, not a cast. The
-        /// narrow per-point spread is what makes that affordable.
+        /// The twelve original Kenney street characters for Classic mode.
         /// </summary>
-        public static readonly IReadOnlyList<RosterEntry> People = new[]
+        public static readonly IReadOnlyList<RosterEntry> ClassicPeople = new[]
         {
             //                id              name           bilis lakas tatag
-            new RosterEntry("bayan",       "DANTE",           2,    4,    5),
+            new RosterEntry("bayan",       "BAYAN",           2,    4,    5),
             new RosterEntry("maring",      "MARING",          5,    2,    2),
             new RosterEntry("totoy",       "TOTOY",           5,    2,    3),
-            new RosterEntry("inday",       "CHESKA",          3,    4,    4),
-            new RosterEntry("kuya_boy",    "SEAN",            3,    5,    3),
-            // ⚠️⚠️ ZACK REPLACES ATE GIRLIE IN PLACE, AT THE SAME INDEX, AND THAT IS THE ONLY
-            // SAFE WAY TO RETIRE A CHARACTER. 🧑 2026-08-17: *"remove ate girlie na"*, *"we r
-            // gonna replacing characters anyways"*. Deleting the row would shift TIKBOY and
-            // everyone after him up by one, and `character_index` crosses the wire as a bare
-            // int, so two peers on different builds would render different people in the same
-            // seat with nothing to warn either of them. Overwriting a row keeps every index
-            // exactly where it was.
-            //
-            // ⚠️ WHAT THIS DOES COST is a saved pick: anything on disk holding the id
-            // `ate_girlie` no longer resolves and falls back. That is acceptable here and only
-            // here, because the Godot build is still the shipping one and this port has no
-            // players with saved rosters yet. It will not be acceptable later.
-            //
-            // ⚠️ AND IT IS NOW DRIFT FROM THE GODOT ROSTER, deliberately. `character_roster.gd`
-            // still carries ATE GIRLIE at this index. This is the first entry where the two
-            // builds disagree by design rather than by accident, because the replacement cast
-            // is being authored here. Do not "fix" it by porting the name back.
-            //
-            // Traits are unchanged from the row he replaces. The art changed; the balance did
-            // not, and moving both at once is how you lose track of which one moved a number.
-            new RosterEntry("zack",        "ZACK",            4,    3,    3),
+            new RosterEntry("inday",       "INDAY",           3,    4,    4),
+            new RosterEntry("kuya_boy",    "KUYA BOY",        3,    5,    3),
+            new RosterEntry("ate_girlie",  "ATE GIRLIE",      4,    3,    3),
             new RosterEntry("tikboy",      "TIKBOY",          4,    4,    2),
             new RosterEntry("bebang",      "BEBANG",          2,    5,    5),
             new RosterEntry("jun_jun",     "JUN-JUN",         5,    1,    2),
             new RosterEntry("lola_pacing", "LOLA PACING",     1,    4,    5),
             new RosterEntry("mang_kanor",  "MANG KANOR",      5,    3,    2),
             new RosterEntry("aling_nena",  "ALING NENA",      2,    3,    5),
+        };
+
+        /// <summary>
+        /// The five playable action heroes for Hero Strike mode.
+        /// </summary>
+        public static readonly IReadOnlyList<RosterEntry> HeroPeople = new[]
+        {
+            //                id              name           bilis lakas tatag
+            new RosterEntry("dante",       "DANTE",           2,    4,    5),
+            new RosterEntry("cheska",      "CHESKA",          3,    4,    4),
+            new RosterEntry("sean",        "SEAN",            3,    5,    3),
+            new RosterEntry("zack",        "ZACK",            4,    3,    3),
             new RosterEntry("nemu",        "NEMU",            4,    3,    4),
         };
+
+        /// <summary>
+        /// Master list containing all playable characters across all modes.
+        /// </summary>
+        public static readonly IReadOnlyList<RosterEntry> AllPeople = new[]
+        {
+            new RosterEntry("bayan",       "BAYAN",           2,    4,    5),
+            new RosterEntry("maring",      "MARING",          5,    2,    2),
+            new RosterEntry("totoy",       "TOTOY",           5,    2,    3),
+            new RosterEntry("inday",       "INDAY",           3,    4,    4),
+            new RosterEntry("kuya_boy",    "KUYA BOY",        3,    5,    3),
+            new RosterEntry("ate_girlie",  "ATE GIRLIE",      4,    3,    3),
+            new RosterEntry("tikboy",      "TIKBOY",          4,    4,    2),
+            new RosterEntry("bebang",      "BEBANG",          2,    5,    5),
+            new RosterEntry("jun_jun",     "JUN-JUN",         5,    1,    2),
+            new RosterEntry("lola_pacing", "LOLA PACING",     1,    4,    5),
+            new RosterEntry("mang_kanor",  "MANG KANOR",      5,    3,    2),
+            new RosterEntry("aling_nena",  "ALING NENA",      2,    3,    5),
+            new RosterEntry("dante",       "DANTE",           2,    4,    5),
+            new RosterEntry("cheska",      "CHESKA",          3,    4,    4),
+            new RosterEntry("sean",        "SEAN",            3,    5,    3),
+            new RosterEntry("zack",        "ZACK",            4,    3,    3),
+            new RosterEntry("nemu",        "NEMU",            4,    3,    4),
+        };
+
+        /// <summary>Default people list for global lookups.</summary>
+        public static readonly IReadOnlyList<RosterEntry> People = AllPeople;
+
+        /// <summary>Get roster characters for the given game mode.</summary>
+        public static IReadOnlyList<RosterEntry> GetPeople(GameMode mode) =>
+            mode == GameMode.HeroStrike ? HeroPeople : ClassicPeople;
 
         /// <summary>
         /// The four cans. RESET / REBOUND / STANCE.
@@ -224,6 +232,7 @@ namespace TumbangPreso.Core
         }
 
         public static int PersonTrait(int index, Trait t) => TraitPoints(People, index, t);
+        public static int PersonTrait(int index, Trait t, GameMode mode) => TraitPoints(GetPeople(mode), index, t);
         public static int CanTrait(int index, Trait t) => TraitPoints(Cans, index, t);
         public static int SlipperTrait(int index, Trait t) => TraitPoints(Slippers, index, t);
 
@@ -234,8 +243,14 @@ namespace TumbangPreso.Core
         public static float PersonSpeedScale(int index) =>
             TraitScale(PersonTrait(index, Trait.Bilis), Balance.TraitSpeedPerPoint);
 
+        public static float PersonSpeedScale(int index, GameMode mode) =>
+            TraitScale(PersonTrait(index, Trait.Bilis, mode), Balance.TraitSpeedPerPoint);
+
         public static float PersonPowerScale(int index) =>
             TraitScale(PersonTrait(index, Trait.Lakas), Balance.TraitPowerPerPoint);
+
+        public static float PersonPowerScale(int index, GameMode mode) =>
+            TraitScale(PersonTrait(index, Trait.Lakas, mode), Balance.TraitPowerPerPoint);
 
         /// <summary>
         /// ⚠️ FLOORED AT 0.1, MATCHING character_base.gd. Grit DIVIDES incoming knockback
@@ -246,6 +261,12 @@ namespace TumbangPreso.Core
         public static float PersonGritScale(int index)
         {
             float scale = TraitScale(PersonTrait(index, Trait.Tatag), Balance.TraitGritPerPoint);
+            return scale < 0.1f ? 0.1f : scale;
+        }
+
+        public static float PersonGritScale(int index, GameMode mode)
+        {
+            float scale = TraitScale(PersonTrait(index, Trait.Tatag, mode), Balance.TraitGritPerPoint);
             return scale < 0.1f ? 0.1f : scale;
         }
 

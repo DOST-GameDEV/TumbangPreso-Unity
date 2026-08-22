@@ -26,7 +26,7 @@ namespace TumbangPreso
         [SerializeField] private CharacterMotor _motor;
         [SerializeField] private Camera _aimCamera;
 
-        private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote;
+        private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote, _skill1, _skill2, _ultimate;
 
         private void Awake()
         {
@@ -67,6 +67,9 @@ namespace TumbangPreso
             _grab = map.FindAction("Grab", true);
             _lunge = map.FindAction("Lunge", true);
             _emote = map.FindAction("EmoteWheel", true);
+            _skill1 = map.FindAction("Skill1", false);
+            _skill2 = map.FindAction("Skill2", false);
+            _ultimate = map.FindAction("Ultimate", false);
 
             map.Enable();
         }
@@ -84,6 +87,9 @@ namespace TumbangPreso
             intent.Set(Verb.Grab, _grab.IsPressed());
             intent.Set(Verb.Lunge, _lunge.IsPressed());
             intent.Set(Verb.EmoteWheel, _emote.IsPressed());
+            if (_skill1 != null) intent.Set(Verb.Skill1, _skill1.IsPressed());
+            if (_skill2 != null) intent.Set(Verb.Skill2, _skill2.IsPressed());
+            if (_ultimate != null) intent.Set(Verb.Ultimate, _ultimate.IsPressed());
 
             intent.AimPoint = ReadAimPoint();
 

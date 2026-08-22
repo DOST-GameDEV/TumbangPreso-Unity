@@ -618,7 +618,7 @@ namespace TumbangPreso
             Deflect(-away.normalized * Balance.LaunchSpeed * Balance.DeflectSpeedScale, 1.0f);
         }
 
-        private void Deflect(Vector3 horizontal, float liftScale)
+        public void Deflect(Vector3 horizontal, float liftScale)
         {
             _velocity = horizontal;
             _velocity.y = Balance.DeflectLift * liftScale;
