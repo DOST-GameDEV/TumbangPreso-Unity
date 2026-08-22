@@ -231,7 +231,7 @@ namespace TumbangPreso
                 }
 
                 // If attacker remains in safe zone while their slipper is on the ground
-                bool inSafeZone = Confinement.IsInsideSafeZone(p.transform.position.x, p.transform.position.z);
+                bool inSafeZone = !Confinement.IsInsideBox(p.transform.position.x, p.transform.position.z);
 
                 if (hasLooseSlipper && inSafeZone)
                 {
