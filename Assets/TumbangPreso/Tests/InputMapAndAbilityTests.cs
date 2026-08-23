@@ -483,7 +483,7 @@ namespace TumbangPreso.Tests
         /// 78-97 throws a match down to 17, because a disc covering most of a 14 by 14 box has
         /// no way round it and the bots walked the perimeter instead of playing.
         ///
-        /// ⚠️ WHEN `docs/TODO.md` § 8 LANDS AND THE FOOTPRINTS COME DOWN, this stops being a
+        /// ⚠️ WHEN `docs/TODO.md` § 1 LANDS AND THE FOOTPRINTS COME DOWN, this stops being a
         /// special case on its own. Do not raise the cap to "fix" it; shrink the ability.
         /// </summary>
         [Test]

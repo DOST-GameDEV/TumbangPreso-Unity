@@ -898,7 +898,8 @@ Reconciled every row in this ledger against the real Godot 4.7 baseline (`f8ba5f
    - **MISSING rows:** 0
    - **PARTIAL rows:** 8 (`audio_manager.gd`, `round_manager.gd`, `match_manager.gd`,
      `debug_player_switcher.gd`, `character_base.gd`, `ai_controller.gd`, `match_result.gd`,
-     `HUD.tscn`)
+     `HUD.tscn`). What is left on each is listed in `docs/TODO.md` § 2, which is where the
+     work gets tracked and ticked.
    - **CONVERTED rows:** 38 scripts, 26 scenes
 
 ## Autoload singletons (9)
@@ -934,7 +935,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
 | `main.gd` | 3599 | `MatchHost.cs` + `MatchInstaller.cs` + `SliceRunner.cs` + `ReadyGate.cs` (1418) | CONVERTED (N6-N9): match lifecycle, spawn points, seating, write permissions, networked ready gate quorum, prop and world replication, late-join catchup, disconnect AI takeover, seat reclaim |
-| `ai_controller.gd` | 2225 | `AIController.cs` + `AiTuning.cs` + `AiPersonalityRoll.cs` (2301) | PARTIAL: tiers, personalities, 13-plan machine, unstick, lane sampling, intercept prediction, Pektus spin selection with drift compensation, hero kit decisions; measured end to end by `BotBehaviourProbe` and `AiDiagnosticProbe` from 2026-08-23; per-plan polish pending (N18) |
+| `ai_controller.gd` | 2225 | `AIController.cs` + `AiTuning.cs` + `AiPersonalityRoll.cs` + `HazardMap.cs` (2500) | PARTIAL: tiers, personalities, 13-plan machine, unstick, lane sampling, intercept prediction, Pektus spin selection with drift compensation, hero kit decisions, hero-hazard avoidance with a radius cap (2026-08-23); measured end to end by `BotBehaviourProbe`, now seeded, and `AiDiagnosticProbe`; per-plan polish pending (N18) |
 | `camera_rig.gd` | 1111 | `CameraRig.cs` + `ViewmodelArms.cs` (1387) | CONVERTED: FPP, prop TPP, emote swing, viewmodel arms, exact baked transforms; carry-follow is dead code upstream |
 | `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (551) | CONVERTED: free, follow, POV modes, smoothed motion, direct hardware input, HUD status text, spectator seating integration, plus broadcast controls beyond the original: F1-F4 seat cuts, camera bookmarks, tactical pause, 0.25x/0.5x/1x speeds and a six second instant replay, all locked out on a live networked match |
 | `character_roster.gd` | 757 | `Roster.cs` + `RosterBook.cs` (449) | CONVERTED (20/20 validated, typed records) |
@@ -1039,7 +1040,7 @@ Named individually so every scene can be checked against the source tree.
 | `MatchResult.tscn` | CONVERTED: board rebuilt in code (`MatchResult.unity`) |
 | `SettingsPanel.tscn` | CONVERTED: including rebinding (`SettingsPanel.unity` and prefab) |
 | `CreditsPanel.tscn` | CONVERTED: CC-BY strings verbatim (`CreditsPanel.unity`) |
-| `HUD.tscn` | PARTIAL: 35 nodes converted in `HUD.unity`; live HUD is built in code on the same theme, resolution in N17 |
+| `HUD.tscn` | PARTIAL: 35 nodes converted in `HUD.unity`; live HUD is built in code on the same theme, resolution in N17. Ability deck rebuilt 2026-08-23 around icon tiles, a notched ultimate meter and live key labels, with descriptions moved into `AbilityInspectPanel` behind a hold key |
 | `ArrowButton.tscn` | CONVERTED: inlined per instance, `ArrowButtonView` drives it |
 | `Tutorial.tscn` | CONVERTED: 8 pages, live 3D premise strip on page 1 (`Tutorial.unity`) |
 | `YouCard.tscn` | CONVERTED (built in code): built in code under HUD by `YouCard.cs` |
@@ -1112,16 +1113,40 @@ The networked half was ported in N7 (`ReadyGate.cs` and `MatchRpc.cs`):
 - Votes are tracked in an idempotent HashSet `_netReady` and re-evaluated on peer disconnect.
 - The host conducts a last-chance pick sweep before broadcasting countdown start.
 
-## Input actions (14) — all must exist in the Input System asset
+## Input actions — all must exist in the Input System asset
 
-`move_left` `move_right` `move_up` `move_down` `jump` `sprint` `grab` `lunge`
-`special_ability` `emote_wheel` `ready_up` `spectator_down` `clean_feed`
-`toggle_fullscreen`
+The fourteen Godot actions: `move_left` `move_right` `move_up` `move_down` `jump` `sprint`
+`grab` `lunge` `special_ability` `emote_wheel` `ready_up` `spectator_down` `clean_feed`
+`toggle_fullscreen`. The four directions are one composite in Unity, and Hero Strike adds
+`Skill1`, `Skill2`, `Ultimate` and `AbilityInfo`.
 
-`ready_up` is the missing ready-up phase. `spectator_down` is spectator descent.
-`clean_feed` hides HUD for capture. None of these may be dropped — each is
-rebindable through `settings_panel.gd`, and `tools/input_probe.gd` checks them
-for conflicts.
+`ready_up` is the ready-up phase. `spectator_down` is spectator descent. `clean_feed` hides
+the HUD for capture. `AbilityInfo` is the hold-to-read ability panel. None of these may be
+dropped: each is rebindable through the settings panel.
+
+✅ **REBOUND AND DE-CONFLICTED 2026-08-23. Every action now owns exactly ONE control and no
+control appears twice.**
+
+| Action | Control | | Action | Control |
+|---|---|---|---|---|
+| Move | WASD | | Skill1 | Q |
+| Sprint | Left Shift | | Skill2 | F |
+| Jump | Space | | Ultimate | X |
+| SpecialAbility (throw / punch) | **Left click** | | AbilityInfo (hold) | Tab |
+| Grab (pick up / shove / reset) | E | | ReadyUp | R |
+| Lunge (tag dash) | Right click | | EmoteWheel | B |
+| CleanFeed | H | | SpectatorDown | Left Ctrl |
+| ToggleFullscreen | F11 | | | |
+
+⚠⚠ **THE SHIPPED DEFAULTS USED TO CARRY FOUR COLLISIONS**, which is what
+`tools/input_probe.gd` existed to catch on the Godot side and nothing checked here: left click
+carried `SpecialAbility` AND `Grab`, E carried `Grab`, `Lunge` AND `Skill1`, Q carried
+`SpecialAbility` AND `Skill2`. Whichever consumer ran first won the press, so the throw did not
+feel like it was on left click even though it was bound there.
+`InputMapAndAbilityTests.NoTwoActionsShareAControl` is the Unity replacement for that probe.
+
+⚠️ **The debug seat cycle moved off Tab to F5** in the same change, because Tab is now a key a
+player holds during a real match.
 
 ## Constant audit — run it again after every balance change
 

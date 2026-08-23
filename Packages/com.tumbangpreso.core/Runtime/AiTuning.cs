@@ -190,7 +190,7 @@ namespace TumbangPreso.Core
         /// were correctly refusing to cross ground that covered most of the arena, and they
         /// never reached a throwing position again.
         ///
-        /// ⚠️ WHEN THE ABILITY FOOTPRINTS COME DOWN (`docs/TODO.md` § 8 targets roughly 2.5 m
+        /// ⚠️ WHEN THE ABILITY FOOTPRINTS COME DOWN (`docs/TODO.md` § 1 targets roughly 2.5 m
         /// for a skill), every hazard falls under this cap and avoidance starts applying to all
         /// of them with no further change here. That is the intended end state. Until then a
         /// bot takes the slow ground rather than never arriving, which is the same trade
