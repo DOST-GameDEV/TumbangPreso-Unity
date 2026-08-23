@@ -46,7 +46,7 @@ namespace TumbangPreso.CameraSystem
         // -------------------------------------------------------------------
         // Heroes
         public static readonly Color SkinSean = new Color(0.722f, 0.455f, 0.251f, 1.0f);     // Golden brown tan
-        public static readonly Color SkinZack = new Color(0.659f, 0.376f, 0.173f, 1.0f);     // Warm athletic bronze tan
+        public static readonly Color SkinZack = new Color(0.780f, 0.478f, 0.271f, 1.0f);     // Warm medium caramel
         public static readonly Color SkinDante = new Color(0.659f, 0.376f, 0.173f, 1.0f);    // SKIN #a8602c
         public static readonly Color SkinCheska = new Color(0.961f, 0.722f, 0.580f, 1.0f);   // Fair porcelain skin
         public static readonly Color SkinNemu = new Color(0.878f, 0.686f, 0.518f, 1.0f);     // Pale lavender / ghostly ethereal
@@ -893,54 +893,62 @@ namespace TumbangPreso.CameraSystem
 
         private static void BuildZackAccessories(Transform arm, bool isRight)
         {
-            var jacket = new Color(0.416f, 0.173f, 0.788f, 1.0f);
-            var jacketDark = new Color(0.271f, 0.094f, 0.541f, 1.0f);
-            var crest = new Color(0.659f, 0.196f, 1.000f, 1.0f);
+            var jacket = new Color(0.910f, 0.820f, 0.120f, 1.0f);
+            var jacketDark = new Color(0.650f, 0.500f, 0.080f, 1.0f);
+            var crest = new Color(0.980f, 0.950f, 0.220f, 1.0f);
 
-            // build_zack_voxel.py: purple jacket to 44 percent of the arm, a deep-purple
-            // cuff, bare forearm and hand, and one cyber-purple band on the left wrist.
-            AddBoxAccessory(arm, "PurpleJacketSleeve", new Vector3(0.30f, 0.37f, 0.30f),
+            // Zack's roster palette uses electric yellow for the jacket, cuff and crest.
+            AddBoxAccessory(arm, "ElectricJacketSleeve", new Vector3(0.30f, 0.37f, 0.30f),
                 new Vector3(0.0f, 0.185f, 0.0f), Quaternion.identity, jacket);
-            AddBoxAccessory(arm, "PurpleJacketCuff", new Vector3(0.32f, 0.065f, 0.32f),
+            AddBoxAccessory(arm, "ElectricJacketCuff", new Vector3(0.32f, 0.065f, 0.32f),
                 new Vector3(0.0f, 0.405f, 0.0f), Quaternion.identity, jacketDark);
-            AddBoxAccessory(arm, "PurpleSleeveStripe", new Vector3(0.24f, 0.025f, 0.025f),
+            AddBoxAccessory(arm, "ElectricSleeveStripe", new Vector3(0.24f, 0.025f, 0.025f),
                 new Vector3(0.0f, 0.29f, 0.16f), Quaternion.identity, jacketDark);
             if (!isRight)
             {
-                AddBoxAccessory(arm, "CyberWristband", new Vector3(0.31f, 0.085f, 0.30f),
+                AddBoxAccessory(arm, "ElectricWristband", new Vector3(0.31f, 0.085f, 0.30f),
                     new Vector3(0.0f, 0.505f, 0.0f), Quaternion.identity, crest);
             }
         }
 
         private static void BuildDanteAccessories(Transform arm, bool isRight)
         {
-            var runeGreen = new Color(0.220f, 0.722f, 0.282f, 1.0f);
+            var robeGreen = new Color(0.239f, 0.388f, 0.208f, 1.0f);
+            var robeDark = new Color(0.141f, 0.243f, 0.122f, 1.0f);
             var leather = new Color(0.282f, 0.184f, 0.114f, 1.0f);
-            var leatherShadow = new Color(0.141f, 0.243f, 0.122f, 1.0f);
             var gold = new Color(0.875f, 0.698f, 0.282f, 1.0f);
 
-            // ⚠️ Dante is asymmetric. His left arm is entirely bare with Karma runes. Only
-            // his right shoulder has the brown short sleeve and gold cuff authored in
-            // build_bayan_voxel.py. The old viewmodel put jade sleeves and pauldrons on both.
+            // Dante is asymmetric. His left arm carries the broad demonic chevrons.
+            // His right arm has a brown sleeve, gold cuff and a slimmer forest-green vine.
             if (isRight)
             {
                 AddBoxAccessory(arm, "BrownRightSleeve", new Vector3(0.30f, 0.31f, 0.29f),
                     new Vector3(0.0f, 0.155f, 0.0f), Quaternion.identity, leather);
                 AddBoxAccessory(arm, "BrownSleeveShadow", new Vector3(0.30f, 0.04f, 0.025f),
-                    new Vector3(0.0f, 0.29f, 0.155f), Quaternion.identity, leatherShadow);
+                    new Vector3(0.0f, 0.29f, 0.155f), Quaternion.identity, robeDark);
                 AddBoxAccessory(arm, "GoldRightCuff", new Vector3(0.32f, 0.09f, 0.31f),
                     new Vector3(0.0f, 0.355f, 0.0f), Quaternion.identity, gold);
-                AddBoxAccessory(arm, "RightRuneHook", new Vector3(0.05f, 0.22f, 0.018f),
-                    new Vector3(0.06f, 0.51f, 0.14f), Quaternion.Euler(0, 0, -16.0f), runeGreen);
+                AddBoxAccessory(arm, "NaturalVineStem", new Vector3(0.030f, 0.105f, 0.010f),
+                    new Vector3(0.075f, 0.475f, 0.146f), Quaternion.identity, robeGreen);
+                AddBoxAccessory(arm, "NaturalVineSweep", new Vector3(0.030f, 0.115f, 0.010f),
+                    new Vector3(0.035f, 0.535f, 0.146f), Quaternion.Euler(0, 0, 25.0f), robeGreen);
+                AddBoxAccessory(arm, "NaturalVineHook", new Vector3(0.125f, 0.030f, 0.010f),
+                    new Vector3(-0.035f, 0.595f, 0.146f), Quaternion.identity, robeGreen);
             }
             else
             {
-                AddBoxAccessory(arm, "LeftRuneChevronA", new Vector3(0.055f, 0.22f, 0.018f),
-                    new Vector3(-0.04f, 0.31f, 0.14f), Quaternion.Euler(0, 0, 36.0f), runeGreen);
-                AddBoxAccessory(arm, "LeftRuneChevronB", new Vector3(0.055f, 0.22f, 0.018f),
-                    new Vector3(0.04f, 0.48f, 0.14f), Quaternion.Euler(0, 0, -36.0f), runeGreen);
-                AddBoxAccessory(arm, "LeftRuneWrist", new Vector3(0.30f, 0.055f, 0.018f),
-                    new Vector3(0.0f, 0.62f, 0.14f), Quaternion.identity, runeGreen);
+                AddBoxAccessory(arm, "DemonicCarapaceShadow", new Vector3(0.26f, 0.030f, 0.010f),
+                    new Vector3(0.0f, 0.145f, 0.146f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "DemonicChevronA", new Vector3(0.035f, 0.185f, 0.010f),
+                    new Vector3(-0.040f, 0.275f, 0.146f), Quaternion.Euler(0, 0, 40.0f), robeGreen);
+                AddBoxAccessory(arm, "DemonicChevronALeg", new Vector3(0.035f, 0.100f, 0.010f),
+                    new Vector3(0.038f, 0.365f, 0.146f), Quaternion.identity, robeGreen);
+                AddBoxAccessory(arm, "DemonicChevronB", new Vector3(0.035f, 0.185f, 0.010f),
+                    new Vector3(-0.025f, 0.445f, 0.146f), Quaternion.Euler(0, 0, 40.0f), robeGreen);
+                AddBoxAccessory(arm, "DemonicChevronBLeg", new Vector3(0.035f, 0.100f, 0.010f),
+                    new Vector3(0.055f, 0.535f, 0.146f), Quaternion.identity, robeGreen);
+                AddBoxAccessory(arm, "DemonicOuterCrest", new Vector3(0.035f, 0.105f, 0.010f),
+                    new Vector3(0.105f, 0.615f, 0.146f), Quaternion.identity, robeGreen);
             }
         }
 
@@ -1278,21 +1286,23 @@ namespace TumbangPreso.CameraSystem
 
         private static void BuildMaringAccessories(Transform arm, bool isRight)
         {
-            var maroonTop = new Color(0.541f, 0.204f, 0.275f, 1.0f);
-            var darkWatch = new Color(0.192f, 0.141f, 0.114f, 1.0f);
-            var silverDial = new Color(0.85f, 0.88f, 0.92f, 1.0f);
+            var blouse = new Color(0.192f, 0.141f, 0.114f, 1.0f);
+            var maroon = new Color(0.541f, 0.204f, 0.275f, 1.0f);
+            var maroonDark = new Color(0.420f, 0.145f, 0.210f, 1.0f);
 
-            // 1. Maroon/magenta blouse sleeve
-            AddCylinderAccessory(arm, "MaroonSleeve", 0.144f, 0.144f, 0.24f, 12,
-                new Vector3(0.0f, 0.13f, 0.0f), Quaternion.identity, maroonTop);
+            // Maring has dark short sleeves on both arms. Only her left forearm has
+            // the broad maroon wrap visible on character-female-f.glb.
+            AddBoxAccessory(arm, "DarkBlouseSleeve", new Vector3(0.30f, 0.31f, 0.30f),
+                new Vector3(0.0f, 0.155f, 0.0f), Quaternion.identity, blouse);
+            AddBoxAccessory(arm, "BlouseSleeveHem", new Vector3(0.32f, 0.035f, 0.32f),
+                new Vector3(0.0f, 0.315f, 0.0f), Quaternion.identity, maroonDark);
 
-            // 2. Sleek wristwatch on left wrist
             if (!isRight)
             {
-                AddCylinderAccessory(arm, "WatchStrap", 0.145f, 0.145f, 0.05f, 12,
-                    new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, darkWatch);
-                AddBoxAccessory(arm, "WatchFace", new Vector3(0.04f, 0.04f, 0.02f),
-                    new Vector3(0.0f, 0.55f, 0.142f), Quaternion.identity, silverDial);
+                AddBoxAccessory(arm, "MaroonForearmWrap", new Vector3(0.32f, 0.16f, 0.32f),
+                    new Vector3(0.0f, 0.515f, 0.0f), Quaternion.identity, maroon);
+                AddBoxAccessory(arm, "MaroonWrapInset", new Vector3(0.19f, 0.075f, 0.018f),
+                    new Vector3(0.0f, 0.515f, 0.169f), Quaternion.identity, maroonDark);
             }
         }
 
@@ -1315,29 +1325,23 @@ namespace TumbangPreso.CameraSystem
 
         private static void BuildIndayAccessories(Transform arm, bool isRight)
         {
-            var coralRed = new Color(0.761f, 0.329f, 0.247f, 1.0f);
-            var goldTrim = new Color(0.878f, 0.706f, 0.235f, 1.0f);
-            var purpleBead = new Color(0.478f, 0.247f, 0.369f, 1.0f);
+            var yellow = new Color(0.878f, 0.706f, 0.235f, 1.0f);
+            var coral = new Color(0.761f, 0.329f, 0.247f, 1.0f);
+            var coralDark = new Color(0.639f, 0.255f, 0.220f, 1.0f);
+            var plum = new Color(0.478f, 0.247f, 0.369f, 1.0f);
 
-            // 1. Coral red short sleeve with gold trim
-            AddCylinderAccessory(arm, "CoralSleeve", 0.144f, 0.144f, 0.24f, 12,
-                new Vector3(0.0f, 0.13f, 0.0f), Quaternion.identity, coralRed);
-            AddCylinderAccessory(arm, "GoldTrim", 0.148f, 0.148f, 0.03f, 12,
-                new Vector3(0.0f, 0.24f, 0.0f), Quaternion.identity, goldTrim);
-
-            // 2. Beaded bracelet on right wrist, slender gold watch on left wrist
-            if (isRight)
-            {
-                AddCylinderAccessory(arm, "BeadedBracelet", 0.146f, 0.146f, 0.04f, 12,
-                    new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, purpleBead);
-                AddBoxAccessory(arm, "BeadCharm", new Vector3(0.03f, 0.03f, 0.02f),
-                    new Vector3(0.0f, 0.54f, 0.144f), Quaternion.identity, coralRed);
-            }
-            else
-            {
-                AddCylinderAccessory(arm, "GoldWatchStrap", 0.145f, 0.145f, 0.04f, 12,
-                    new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, goldTrim);
-            }
+            // character-female-a.glb uses a yellow short sleeve and the same chunky
+            // coral gauntlet with a plum centre strap on both arms.
+            AddBoxAccessory(arm, "YellowShortSleeve", new Vector3(0.30f, 0.30f, 0.30f),
+                new Vector3(0.0f, 0.15f, 0.0f), Quaternion.identity, yellow);
+            AddBoxAccessory(arm, "CoralSleeveCap", new Vector3(0.32f, 0.055f, 0.32f),
+                new Vector3(0.0f, 0.325f, 0.0f), Quaternion.identity, coral);
+            AddBoxAccessory(arm, "CoralForearmGuard", new Vector3(0.34f, 0.20f, 0.34f),
+                new Vector3(0.0f, 0.485f, 0.0f), Quaternion.identity, coral);
+            AddBoxAccessory(arm, "PlumGuardStrap", new Vector3(0.35f, 0.065f, 0.35f),
+                new Vector3(0.0f, 0.485f, 0.0f), Quaternion.identity, plum);
+            AddBoxAccessory(arm, "CoralGuardFace", new Vector3(0.19f, 0.11f, 0.024f),
+                new Vector3(0.0f, 0.485f, 0.182f), Quaternion.identity, coralDark);
         }
 
         private static void BuildKuyaBoyAccessories(Transform arm, bool isRight)
