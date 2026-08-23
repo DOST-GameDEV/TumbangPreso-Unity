@@ -27,7 +27,9 @@ namespace TumbangPreso.Abilities
                 : base("zack_skill1", "BOLT SPRINT",
                        "Overcharges your skates. You move faster, and the trail you leave behind shocks anyone chasing you.",
                        6.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.Dash,
-                       summary: "Move faster, and shock whoever chases your trail.")
+                       summary: "Move faster, and shock whoever chases your trail.",
+                       castAction: "hero-zack-sprint",
+                       viewmodelAction: "sprint-electric")
             {
                 _kit = kit;
             }
@@ -77,7 +79,9 @@ namespace TumbangPreso.Abilities
                 : base("zack_skill2", "STATIC CHARGE",
                        "Charges your next throw. It flies much faster and shocks the court where it lands.",
                        8.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.Empower,
-                       summary: "Your next throw flies faster and shocks where it lands.")
+                       summary: "Your next throw flies faster and shocks where it lands.",
+                       castAction: "hero-zack-charge",
+                       viewmodelAction: "overcharge")
             {
                 _kit = kit;
             }
@@ -85,6 +89,7 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 _kit.IsOverchargeThrowActive = true;
+                Visual.AbilityVfx.AttachHandVfx(ctx.Motor.transform, Visual.AbilityVfx.Aura.ElectricSpark, Duration);
                 GameServices.Audio?.PlayAt("sfx_lightning_strike", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "OVERCHARGE!", UiTheme.HeroElectricBright, 1.25f);
             }
@@ -104,7 +109,9 @@ namespace TumbangPreso.Abilities
                        "Calls lightning down on where you stand. Everyone caught underneath is stunned where they are.",
                        0.0f, 7.0f, TumbangPreso.UI.AbilityGlyph.Slam,
                        summary: "Lightning on your position. Stuns everyone it catches.",
-                       telegraphRadius: 4.5f, telegraphRange: 0.0f)
+                       telegraphRadius: 4.5f, telegraphRange: 0.0f,
+                       castAction: "hero-zack-summon",
+                       viewmodelAction: "summon-lightning")
             {
                 _kit = kit;
             }

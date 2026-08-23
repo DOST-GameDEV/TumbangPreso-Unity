@@ -378,6 +378,38 @@ namespace TumbangPreso.Tests
                 "long enough that a stale press fires at a moment nobody asked for");
         }
 
+        /// <summary>
+        /// ⚠️ EVERY HERO ABILITY HAS A BESPOKE 3RD-PERSON BODY ACTION AND 1ST-PERSON VIEWMODEL ACTION.
+        /// Generic fallback clips ("dash"/"shove"/"jump") are forbidden on hero abilities.
+        /// </summary>
+        [Test]
+        public void EveryHeroAbilityHasBespokeCastAndViewModelActions()
+        {
+            var vm = new GameObject("TestVM").AddComponent<CameraSystem.ViewmodelArms>();
+
+            foreach (string hero in Heroes)
+            {
+                var kit = HeroAbilitySystem.CreateKitFor(hero);
+
+                foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                {
+                    Assert.IsNotNull(ability, $"{hero} is missing an ability");
+                    Assert.IsFalse(string.IsNullOrEmpty(ability.CastAction),
+                        $"{hero}: {ability.Name} is missing a CastAction");
+                    Assert.IsFalse(string.IsNullOrEmpty(ability.ViewmodelAction),
+                        $"{hero}: {ability.Name} is missing a ViewmodelAction");
+
+                    Assert.IsFalse(ability.CastAction == "dash" || ability.CastAction == "shove" || ability.CastAction == "jump",
+                        $"{hero}: {ability.Name} still uses generic fallback CastAction '{ability.CastAction}'");
+
+                    Assert.IsTrue(vm.PlayAction(ability.ViewmodelAction),
+                        $"{hero}: {ability.Name} ViewmodelAction '{ability.ViewmodelAction}' is not supported by ViewmodelArms");
+                }
+            }
+
+            Object.DestroyImmediate(vm.gameObject);
+        }
+
         // ------------------------------------------------------------------ helpers
 
         private static void AssertTelegraph(string hero, int slot, float radius, float range)

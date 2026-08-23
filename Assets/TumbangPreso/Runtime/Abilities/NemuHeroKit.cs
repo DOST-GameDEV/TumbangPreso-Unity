@@ -25,7 +25,9 @@ namespace TumbangPreso.Abilities
                 : base("nemu_skill1", "GHOST STEP",
                        "You go part ghost: faster, and the taya cannot tag you. Picking up a tsinelas ends it early.",
                        8.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.Phase,
-                       summary: "Faster, and untaggable. Picking up a tsinelas ends it.")
+                       summary: "Faster, and untaggable. Picking up a tsinelas ends it.",
+                       castAction: "hero-nemu-ghoststep",
+                       viewmodelAction: "ghost-step")
             {
             }
 
@@ -96,7 +98,9 @@ namespace TumbangPreso.Abilities
                 : base("nemu_skill2", "ASTRAL PROJECTION",
                        "Sends a spirit double out ahead of you. Press again to swap places with it, wherever it has got to.",
                        9.0f, 6.0f, TumbangPreso.UI.AbilityGlyph.Phase,
-                       summary: "Send a double out. Press again to swap places with it.")
+                       summary: "Send a double out. Press again to swap places with it.",
+                       castAction: "hero-nemu-project",
+                       viewmodelAction: "project-spirit")
             {
             }
 
@@ -152,7 +156,9 @@ namespace TumbangPreso.Abilities
                        "Opens a vortex in front of you. It drags players and loose tsinelas in, and slows anyone caught inside.",
                        0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Zone,
                        summary: "A vortex ahead. Drags players and loose tsinelas into it.",
-                       telegraphRadius: 3.2f, telegraphRange: 3.5f)
+                       telegraphRadius: 3.2f, telegraphRange: 3.5f,
+                       castAction: "hero-nemu-seance",
+                       viewmodelAction: "seance-channel")
             {
             }
 

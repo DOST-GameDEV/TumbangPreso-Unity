@@ -419,5 +419,135 @@ namespace TumbangPreso.Visual
             ps.Play();
             return go;
         }
+
+        /// <summary>
+        /// Spawns a crisp, punchy radial flash / shock ring at the cast position.
+        /// </summary>
+        public static GameObject SpawnCastFlash(Vector3 pos, Color color, float radius = 1.8f)
+        {
+            var go = new GameObject("Vfx_CastFlash");
+            go.transform.position = pos + Vector3.up * 0.05f;
+
+            var ps = go.AddComponent<ParticleSystem>();
+            Quiesce(ps);
+
+            var pRenderer = go.GetComponent<ParticleSystemRenderer>();
+            pRenderer.material = GetParticleMaterial();
+
+            var main = ps.main;
+            main.duration = 0.35f;
+            main.loop = false;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(0.18f, 0.30f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(radius * 3.0f, radius * 5.0f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.08f, 0.20f);
+            main.startColor = new ParticleSystem.MinMaxGradient(Color.white, color);
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            main.stopAction = ParticleSystemStopAction.Destroy;
+
+            var emission = ps.emission;
+            emission.SetBursts(new[]
+            {
+                new ParticleSystem.Burst(0.0f, (short)(radius * 12))
+            });
+
+            var shape = ps.shape;
+            shape.shapeType = ParticleSystemShapeType.Circle;
+            shape.radius = 0.2f;
+
+            var col = ps.colorOverLifetime;
+            col.enabled = true;
+            var grad = new Gradient();
+            grad.SetKeys(
+                new[] { new GradientColorKey(Color.white, 0.0f), new GradientColorKey(color, 1.0f) },
+                new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
+            col.color = grad;
+
+            ps.Play();
+            return go;
+        }
+
+        /// <summary>
+        /// Attaches an elemental charging aura specifically to the character's right hand or arm bone
+        /// for weapon/throw empowerment skills (e.g. Ignition Cannon, Static Charge).
+        /// </summary>
+        public static GameObject AttachHandVfx(Transform host, Aura aura, float duration)
+        {
+            if (host == null) return null;
+
+            // Find right arm/hand bone if skinned mesh exists, otherwise use host
+            Transform mount = null;
+            var skinned = host.GetComponentInChildren<SkinnedMeshRenderer>();
+            if (skinned != null && skinned.bones != null)
+            {
+                foreach (var bone in skinned.bones)
+                {
+                    if (bone != null && (bone.name == "arm-right" || bone.name.Contains("hand-right") || bone.name.Contains("arm_right")))
+                    {
+                        mount = bone;
+                        break;
+                    }
+                }
+            }
+
+            if (mount == null) mount = host;
+
+            var go = new GameObject("Vfx_HandAura_" + aura);
+            go.transform.SetParent(mount, false);
+            go.transform.localPosition = mount == host ? new Vector3(0.35f, 0.8f, 0.35f) : new Vector3(0.0f, 0.35f, 0.0f);
+
+            var ps = go.AddComponent<ParticleSystem>();
+            Quiesce(ps);
+
+            var pRenderer = go.GetComponent<ParticleSystemRenderer>();
+            pRenderer.material = GetParticleMaterial();
+
+            var main = ps.main;
+            main.duration = Mathf.Max(0.2f, duration);
+            main.loop = false;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            main.stopAction = ParticleSystemStopAction.Destroy;
+
+            var emission = ps.emission;
+            var shape = ps.shape;
+            var col = ps.colorOverLifetime;
+            col.enabled = true;
+
+            var grad = new Gradient();
+
+            switch (aura)
+            {
+                case Aura.ElectricSpark:
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(0.12f, 0.28f);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(0.8f, 2.2f);
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.04f, 0.10f);
+                    main.startColor = new ParticleSystem.MinMaxGradient(Color.white, UiTheme.HeroElectricBright);
+                    emission.rateOverTime = 38.0f;
+                    shape.shapeType = ParticleSystemShapeType.Sphere;
+                    shape.radius = 0.22f;
+                    grad.SetKeys(
+                        new[] { new GradientColorKey(Color.white, 0.0f), new GradientColorKey(UiTheme.HeroElectricBright, 1.0f) },
+                        new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
+                    break;
+
+                case Aura.FireEmber:
+                default:
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(0.20f, 0.45f);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(0.5f, 1.6f);
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.05f, 0.14f);
+                    main.gravityModifier = -0.4f;
+                    main.startColor = new ParticleSystem.MinMaxGradient(new Color(1.0f, 0.9f, 0.4f), UiTheme.HeroFireBright);
+                    emission.rateOverTime = 42.0f;
+                    shape.shapeType = ParticleSystemShapeType.Sphere;
+                    shape.radius = 0.25f;
+                    grad.SetKeys(
+                        new[] { new GradientColorKey(new Color(1.0f, 0.95f, 0.5f), 0.0f), new GradientColorKey(UiTheme.HeroFire, 1.0f) },
+                        new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
+                    break;
+            }
+
+            col.color = grad;
+            ps.Play();
+            return go;
+        }
     }
 }

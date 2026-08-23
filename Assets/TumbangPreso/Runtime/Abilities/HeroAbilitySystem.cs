@@ -227,20 +227,30 @@ namespace TumbangPreso.Abilities
         private void PlayCastConfirm(Slot slot)
         {
             var animator = GetComponentInChildren<Visual.CharacterAnimator>();
+            var ability = AbilityFor(slot);
 
-            switch (slot)
+            string castClip = ability?.CastAction;
+            string vmClip = ability?.ViewmodelAction;
+
+            if (string.IsNullOrEmpty(castClip))
             {
-                case Slot.Skill1:
-                    animator?.PlayAction("dash", "thrust");
-                    break;
-                case Slot.Skill2:
-                    animator?.PlayAction("shove", "cast");
-                    break;
-                default:
-                    animator?.PlayAction("jump", "slam");
-                    PlayUltimatePresentation();
-                    break;
+                castClip = slot == Slot.Skill1 ? "dash" : slot == Slot.Skill2 ? "shove" : "jump";
             }
+            if (string.IsNullOrEmpty(vmClip))
+            {
+                vmClip = slot == Slot.Skill1 ? "thrust" : slot == Slot.Skill2 ? "cast" : "slam";
+            }
+
+            animator?.PlayAction(castClip, vmClip);
+
+            if (slot == Slot.Ultimate)
+            {
+                PlayUltimatePresentation();
+            }
+
+            // Visual feedback: momentary cast flash
+            Visual.AbilityVfx.SpawnCastFlash(transform.position, AccentColour(),
+                ability != null && ability.HasTelegraph ? Mathf.Min(ability.TelegraphRadius, 2.5f) : 1.8f);
 
             // ⚠️⚠️ THE GROUND CONFIRM EXISTS BECAUSE THE PRE-CAST RING WAS UNREACHABLE FOR EVERY
             // TAP. Every one of these powers fires on the press edge and resolves instantly, so
@@ -249,7 +259,6 @@ namespace TumbangPreso.Abilities
             // frames. A telegraph nobody can see is not a telegraph. Holding it for 0.35 s after
             // the cast turns it into what it should have been all along: the answer to "where
             // did that land", which is the question a player actually has.
-            var ability = AbilityFor(slot);
             if (_reticle == null || ability == null || !ability.HasTelegraph) return;
 
             _reticle.Flash(TelegraphCentre(ability), ability.TelegraphRadius, AccentColour(), 0.35f);

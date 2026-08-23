@@ -26,7 +26,9 @@ namespace TumbangPreso.Abilities
                 : base("sean_skill1", "FLAME RUSH",
                        "Rushes you forward in a line of fire. Anyone you run through is knocked down, and the trail burns whoever follows.",
                        6.5f, 0.6f, TumbangPreso.UI.AbilityGlyph.Dash,
-                       summary: "Rush forward. Knocks down who you hit, burns who follows.")
+                       summary: "Rush forward. Knocks down who you hit, burns who follows.",
+                       castAction: "hero-sean-dash",
+                       viewmodelAction: "thrust-fire")
             {
             }
 
@@ -102,7 +104,9 @@ namespace TumbangPreso.Abilities
                 : base("sean_skill2", "IGNITION CANNON",
                        "Loads your next throw with fire. Wherever that tsinelas lands it goes off, so a near miss still counts.",
                        8.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.Empower,
-                       summary: "Your next throw explodes where it lands.")
+                       summary: "Your next throw explodes where it lands.",
+                       castAction: "hero-sean-ignite",
+                       viewmodelAction: "ignite")
             {
                 _kit = kit;
             }
@@ -110,6 +114,7 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 _kit.IsIgnitionCannonActive = true;
+                Visual.AbilityVfx.AttachHandVfx(ctx.Motor.transform, Visual.AbilityVfx.Aura.FireEmber, Duration);
                 GameServices.Audio?.PlayAt("sfx_fire_whoosh", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "IGNITE!", UiTheme.HeroFireBright, 1.25f);
             }
@@ -133,7 +138,9 @@ namespace TumbangPreso.Abilities
                        "Launches you up and slams you back down. The blast knocks the lata over and everyone near it away.",
                        0.0f, 2.0f, TumbangPreso.UI.AbilityGlyph.Slam,
                        summary: "Leap and crash down. Knocks the lata over on impact.",
-                       telegraphRadius: 4.8f, telegraphRange: 0.0f)
+                       telegraphRadius: 4.8f, telegraphRange: 0.0f,
+                       castAction: "hero-sean-supernova",
+                       viewmodelAction: "supernova-slam")
             {
             }
 

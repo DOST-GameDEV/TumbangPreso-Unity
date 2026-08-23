@@ -79,6 +79,15 @@ yes, this closes.
 
 ## Closed
 
+- **Hero Ability Animations & VFX Overhaul.** ✅ 2026-08-23.
+  Overhauled cast animations and visual feedback across all 5 hero kits (15 abilities total).
+  - Built procedural 3D AnimationClips on the 7-bone rig (`HeroAbilityClips.cs`) replacing borrowed generic fallback clips (`dash`, `shove`, `jump`).
+  - Added bespoke 1st-person viewmodel animation keyframe clips (`ViewmodelArms.cs`) for all 15 hero cast verbs.
+  - Implemented elemental hand empower VFX (`AbilityVfx.AttachHandVfx`) for Sean's Ignition Cannon and Zack's Static Charge.
+  - Added responsive cast flash VFX bursts (`AbilityVfx.SpawnCastFlash`) and tightened integration with character squash/stretch.
+  - Preserved color laws, readability budget, and Quiesce rules (no auras on Cheska's body, no auras on trail discs).
+  - Verified with 56/56 core tests, 98 EditMode tests (`HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions`), 55 PlayMode tests, and standalone Windows build.
+
 - **Hero abilities felt clunky, and the hero UI was cramped and off-brand.** ✅ 2026-08-23.
   One request, seven separate faults, every one verified rather than assumed.
 

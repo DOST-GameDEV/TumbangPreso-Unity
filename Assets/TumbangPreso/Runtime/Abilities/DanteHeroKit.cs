@@ -25,7 +25,9 @@ namespace TumbangPreso.Abilities
                        "Slams the ground under you. Shoves nearby players off their feet and kicks loose tsinelas out of reach.",
                        6.5f, 0.0f, TumbangPreso.UI.AbilityGlyph.Slam,
                        summary: "Ground slam. Shoves players and tsinelas away from you.",
-                       telegraphRadius: 2.4f, telegraphRange: 0.0f)
+                       telegraphRadius: 2.4f, telegraphRange: 0.0f,
+                       castAction: "hero-dante-stomp",
+                       viewmodelAction: "stomp-heavy")
             {
             }
 
@@ -84,7 +86,9 @@ namespace TumbangPreso.Abilities
                 : base("dante_skill2", "DEMONIC CARAPACE",
                        "Armours you for a few seconds. Nothing can stun, shove or slip you, so you can walk in and take what you need.",
                        9.0f, 4.0f, TumbangPreso.UI.AbilityGlyph.Shield,
-                       summary: "Nothing stuns, shoves or slips you while it holds.")
+                       summary: "Nothing stuns, shoves or slips you while it holds.",
+                       castAction: "hero-dante-roar",
+                       viewmodelAction: "carapace-guard")
             {
             }
 
@@ -196,7 +200,9 @@ namespace TumbangPreso.Abilities
                        "Splits the court ahead of you. Everyone caught in the crack is thrown into the air and left dizzy.",
                        0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Burst,
                        summary: "Splits the ground ahead. Launches whoever is in front of you.",
-                       telegraphRadius: 4.5f, telegraphRange: 2.2f)
+                       telegraphRadius: 4.5f, telegraphRange: 2.2f,
+                       castAction: "hero-dante-fissure",
+                       viewmodelAction: "fissure-slam")
             {
             }
 

@@ -84,12 +84,24 @@ namespace TumbangPreso.Abilities
 
         public bool HasTelegraph => TelegraphRadius > 0.0f;
 
+        /// <summary>
+        /// The bespoke 3rd-person body action name (e.g. "hero-sean-dash", "hero-dante-stomp").
+        /// </summary>
+        public string CastAction { get; protected set; }
+
+        /// <summary>
+        /// The bespoke 1st-person viewmodel action name (e.g. "thrust-fire", "stomp-heavy").
+        /// </summary>
+        public string ViewmodelAction { get; protected set; }
+
         protected HeroAbility(string id, string name, string description, float cooldown,
                               float duration = 0.0f,
                               UI.AbilityGlyph glyph = UI.AbilityGlyph.Burst,
                               string summary = null,
                               float telegraphRadius = 0.0f,
-                              float telegraphRange = 0.0f)
+                              float telegraphRange = 0.0f,
+                              string castAction = null,
+                              string viewmodelAction = null)
         {
             Id = id;
             Name = name;
@@ -100,6 +112,8 @@ namespace TumbangPreso.Abilities
             Glyph = glyph;
             TelegraphRadius = telegraphRadius;
             TelegraphRange = telegraphRange;
+            CastAction = castAction;
+            ViewmodelAction = viewmodelAction ?? castAction;
         }
 
         public virtual bool CanActivate(AbilityContext ctx)

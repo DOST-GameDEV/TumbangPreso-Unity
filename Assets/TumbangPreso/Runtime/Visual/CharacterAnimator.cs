@@ -135,6 +135,27 @@ namespace TumbangPreso.Visual
             { "grab", new[] { PickUp, Interact, "interact-left" } },
             { "lunge", new[] { "attack-kick-right", "attack-melee-right", Interact } },
             { "punch", new[] { "attack-melee-right", "attack-kick-right", Interact } },
+
+            // Hero ability action fallback chains
+            { "hero-sean-dash", new[] { "hero-sean-dash", "attack-kick-right", Sprint } },
+            { "hero-sean-ignite", new[] { "hero-sean-ignite", "attack-melee-right", Interact } },
+            { "hero-sean-supernova", new[] { "hero-sean-supernova", "attack-melee-right", Jump } },
+
+            { "hero-zack-sprint", new[] { "hero-zack-sprint", Sprint, "attack-kick-right" } },
+            { "hero-zack-charge", new[] { "hero-zack-charge", "attack-melee-right", Interact } },
+            { "hero-zack-summon", new[] { "hero-zack-summon", "emote-yes", Interact } },
+
+            { "hero-dante-stomp", new[] { "hero-dante-stomp", "attack-kick-right", PickUp } },
+            { "hero-dante-roar", new[] { "hero-dante-roar", "emote-yes", "attack-melee-right" } },
+            { "hero-dante-fissure", new[] { "hero-dante-fissure", "attack-melee-right", PickUp } },
+
+            { "hero-cheska-frostwave", new[] { "hero-cheska-frostwave", "interact-right", "attack-melee-right" } },
+            { "hero-cheska-raise", new[] { "hero-cheska-raise", PickUp, Interact } },
+            { "hero-cheska-nova", new[] { "hero-cheska-nova", "emote-yes", Interact } },
+
+            { "hero-nemu-ghoststep", new[] { "hero-nemu-ghoststep", Sprint, Walk } },
+            { "hero-nemu-project", new[] { "hero-nemu-project", "interact-right", "attack-melee-right" } },
+            { "hero-nemu-seance", new[] { "hero-nemu-seance", "emote-yes", Interact } },
         };
 
         [SerializeField] private float _blend = 0.12f;
@@ -277,6 +298,13 @@ namespace TumbangPreso.Visual
 
             var dance = DanceClip.Build(_animator.transform);
             if (dance != null) _clips[DanceClip.ClipName] = dance;
+
+            var heroClips = HeroAbilityClips.BuildAll(_animator.transform);
+            if (heroClips != null)
+            {
+                foreach (var kvp in heroClips)
+                    if (kvp.Value != null) _clips[kvp.Key] = kvp.Value;
+            }
         }
 
         private void OnDestroy()

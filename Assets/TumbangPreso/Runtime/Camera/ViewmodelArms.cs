@@ -232,6 +232,132 @@ namespace TumbangPreso.CameraSystem
             new Key(0.38f,  0.00f,  0.00f, 0.0f),
         };
 
+        // § BESPOKE HERO ACTION CLIPS
+        private static readonly Key[] ThrustFireClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.08f,  0.45f,  0.20f, -0.10f),
+            new Key(0.20f, -0.95f, -0.15f,  0.15f),
+            new Key(0.42f,  0.00f,  0.00f,  0.00f),
+        };
+
+        private static readonly Key[] IgniteClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.12f,  0.60f, -0.25f,  0.20f),
+            new Key(0.24f,  0.48f, -0.20f,  0.15f),
+            new Key(0.40f,  0.00f,  0.00f,  0.00f),
+        };
+
+        private static readonly Key[] SupernovaSlamClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.15f,  0.90f,  0.25f,  0.10f),
+            new Key(0.30f,  0.85f,  0.20f,  0.10f),
+            new Key(0.45f, -1.10f, -0.20f, -0.15f),
+            new Key(0.70f,  0.00f,  0.00f,  0.00f),
+        };
+
+        private static readonly Key[] SprintElectricClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.08f, -0.50f,  0.30f,  0.20f),
+            new Key(0.18f,  0.60f, -0.25f, -0.15f),
+            new Key(0.28f, -0.55f,  0.25f,  0.15f),
+            new Key(0.45f,  0.00f,  0.00f,  0.00f),
+        };
+
+        private static readonly Key[] OverchargeClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.08f,  0.35f, -0.15f,  0.25f),
+            new Key(0.16f,  0.25f, -0.10f,  0.15f),
+            new Key(0.24f,  0.35f, -0.15f,  0.25f),
+            new Key(0.38f,  0.00f,  0.00f,  0.00f),
+        };
+
+        private static readonly Key[] SummonLightningClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.14f,  1.10f,  0.30f,  0.00f),
+            new Key(0.28f,  1.05f,  0.28f,  0.00f),
+            new Key(0.42f, -0.95f, -0.15f,  0.10f),
+            new Key(0.65f,  0.00f,  0.00f,  0.00f),
+        };
+
+        private static readonly Key[] StompHeavyClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.12f,  0.80f,  0.20f, -0.10f),
+            new Key(0.24f, -1.05f, -0.15f,  0.05f),
+            new Key(0.48f,  0.00f,  0.00f,  0.00f),
+        };
+
+        private static readonly Key[] CarapaceGuardClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.12f,  0.45f, -0.45f,  0.35f),
+            new Key(0.32f,  0.40f, -0.40f,  0.30f),
+            new Key(0.55f,  0.00f,  0.00f,  0.00f),
+        };
+
+        private static readonly Key[] FissureSlamClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.16f,  1.15f,  0.25f, -0.10f),
+            new Key(0.35f, -1.20f, -0.20f,  0.00f),
+            new Key(0.70f,  0.00f,  0.00f,  0.00f),
+        };
+
+        private static readonly Key[] FrostSweepClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.10f,  0.35f,  0.40f, -0.20f),
+            new Key(0.24f, -0.45f, -0.55f,  0.30f),
+            new Key(0.45f,  0.00f,  0.00f,  0.00f),
+        };
+
+        private static readonly Key[] RaiseBarricadeClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.10f, -0.55f,  0.10f, -0.15f),
+            new Key(0.24f,  0.75f, -0.20f,  0.20f),
+            new Key(0.48f,  0.00f,  0.00f,  0.00f),
+        };
+
+        private static readonly Key[] NovaBurstClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.12f,  0.50f, -0.30f,  0.20f),
+            new Key(0.25f, -0.90f,  0.15f, -0.25f),
+            new Key(0.55f,  0.00f,  0.00f,  0.00f),
+        };
+
+        private static readonly Key[] GhostStepClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.14f, -0.30f,  0.35f,  0.25f),
+            new Key(0.30f,  0.25f, -0.20f, -0.15f),
+            new Key(0.48f,  0.00f,  0.00f,  0.00f),
+        };
+
+        private static readonly Key[] ProjectSpiritClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.10f,  0.45f, -0.15f,  0.10f),
+            new Key(0.22f, -0.85f,  0.05f, -0.10f),
+            new Key(0.44f,  0.00f,  0.00f,  0.00f),
+        };
+
+        private static readonly Key[] SeanceChannelClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.15f,  0.60f,  0.30f, -0.25f),
+            new Key(0.32f,  0.35f, -0.35f,  0.30f),
+            new Key(0.50f, -0.60f, -0.10f,  0.15f),
+            new Key(0.75f,  0.00f,  0.00f,  0.00f),
+        };
+
         private Key[] _clip;
         private float _clipTime;
 
@@ -256,13 +382,28 @@ namespace TumbangPreso.CameraSystem
         }
 
         /// <summary>
-        /// Play `throw`, `grab`, `slam`, or `cast` on the right arm.
+        /// Play `throw`, `grab`, `slam`, `cast`, or bespoke hero actions on the viewmodel arm.
         /// </summary>
         public bool PlayAction(string clip)
         {
             _clip = clip == "throw" ? ThrowClip
-                  : clip == "slam" || clip == "stomp" ? SlamClip
+                  : clip == "slam" ? SlamClip
                   : clip == "cast" || clip == "thrust" || clip == "dash" ? ThrustClip
+                  : clip == "thrust-fire" ? ThrustFireClip
+                  : clip == "ignite" ? IgniteClip
+                  : clip == "supernova-slam" ? SupernovaSlamClip
+                  : clip == "sprint-electric" ? SprintElectricClip
+                  : clip == "overcharge" ? OverchargeClip
+                  : clip == "summon-lightning" ? SummonLightningClip
+                  : clip == "stomp-heavy" || clip == "stomp" ? StompHeavyClip
+                  : clip == "carapace-guard" ? CarapaceGuardClip
+                  : clip == "fissure-slam" ? FissureSlamClip
+                  : clip == "frost-sweep" ? FrostSweepClip
+                  : clip == "raise-barricade" ? RaiseBarricadeClip
+                  : clip == "nova-burst" ? NovaBurstClip
+                  : clip == "ghost-step" ? GhostStepClip
+                  : clip == "project-spirit" ? ProjectSpiritClip
+                  : clip == "seance-channel" ? SeanceChannelClip
                   : null;
 
             _clipTime = 0.0f;
