@@ -374,6 +374,71 @@ namespace TumbangPreso.Tests
             }
         }
 
+        // ------------------------------------------------------------------ audio
+
+        /// <summary>
+        /// ⚠⚠ THE ANNOUNCEMENTS DUCK THE BED AND THE IMPACTS DO NOT. `audio_manager.gd` 4.6
+        /// hooks the duck at the play path so no other file has to know the music exists; the
+        /// value of the table is entirely that the countdown, the round end and the score award
+        /// do not each have to remember. A cue quietly dropping out of it is silent: the mix
+        /// just gets muddier under the one moment that carries information.
+        /// </summary>
+        [Test]
+        public void TheAnnouncementCuesDuckTheMusicBed()
+        {
+            foreach (string cue in new[] { "countdown_tick", "countdown_go", "round_end",
+                                           "match_win", "round_lose", "score_award" })
+                Assert.IsTrue(Audio.AudioCues.DucksMusic(cue),
+                    $"'{cue}' no longer ducks the bed, so it plays over the top of it");
+
+            // An impact ducks through `PlayImpact` by its own tiny amount scaled to the hit.
+            // Putting it in this table as well would stack two ducks on one sound.
+            foreach (string cue in new[] { "slipper_land", "bump_swing", "sfx_ice_freeze" })
+                Assert.IsFalse(Audio.AudioCues.DucksMusic(cue),
+                    $"'{cue}' is an impact and should not take the announcement duck as well");
+        }
+
+        /// <summary>
+        /// ⚠️ THE MIX LEVEL OF A CUE IS ITS TRIM PLUS THE HEADROOM, AND THE TRIM CANNOT PUSH
+        /// A CUE UP. The SFX bus was measured clipping at +2.0 dBFS with the music silent; the
+        /// headroom is what stops a busy fight repeating that, and a positive trim would be a
+        /// route around it rather than an expression inside it.
+        /// </summary>
+        [Test]
+        public void NoCueTrimCanRaiseACueAboveTheHeadroom()
+        {
+            foreach (var pair in Audio.AudioCues.TrimDb)
+                Assert.LessOrEqual(Audio.AudioCues.TrimFor(pair.Key), Audio.AudioCues.HeadroomDb,
+                    $"'{pair.Key}' is trimmed above the mix headroom");
+
+            Assert.AreEqual(Audio.AudioCues.HeadroomDb, Audio.AudioCues.TrimFor("no_such_cue"),
+                            0.0001f, "an untrimmed cue should sit exactly at the headroom");
+        }
+
+        /// <summary>
+        /// ⚠⚠ THE LIFT IS THE STAND-IN FOR A PRESSURE TRACK THAT HAS NOT BEEN DELIVERED. The
+        /// Godot original says so and says what replaces it. If the numbers drift, the last
+        /// fifteen seconds of a round stop reading as the round tightening, which is the only
+        /// thing this exists to do.
+        /// </summary>
+        [Test]
+        public void TheIntensityLiftIsAModestRampNearTheEndOfARound()
+        {
+            Assert.Greater(Audio.MusicDirector.LiftDb, 0.0f, "a lift that does not lift");
+            Assert.LessOrEqual(Audio.MusicDirector.LiftDb, 6.0f,
+                "more than 6 dB on the same bed reads as a mistake in the mix rather than as " +
+                "pressure");
+
+            Assert.Greater(Audio.MusicDirector.LiftSecondsLeft, 0.0f);
+            Assert.Less(Audio.MusicDirector.LiftSecondsLeft, Core.Balance.RoundTime,
+                "the lift would be on for the whole round, which is not a lift");
+
+            Assert.Greater(Audio.MusicDirector.LiftTime, 0.0f,
+                "an instant jump on one frame reads as a mix error");
+            Assert.Less(Audio.MusicDirector.LiftTime, Audio.MusicDirector.LiftSecondsLeft,
+                "the ramp must finish well before the clock does");
+        }
+
         // ------------------------------------------------------------------ hazard steering
 
         /// <summary>

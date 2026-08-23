@@ -136,6 +136,33 @@ namespace TumbangPreso.Audio
 
         public const float MusicCrossfadeTime = 1.5f;
 
+        // -------------------------------------------------------------------
+        // § THE CUES THAT ARE THEMSELVES THE DUCK TRIGGER. `audio_manager.gd` 4.6.
+        //
+        // ⚠️⚠️ THE DUCK IS HOOKED WHERE THE SOUND IS PLAYED, SO NO OTHER FILE HAS TO KNOW IT
+        // EXISTS. The Godot original's note says exactly this: every one of these already goes
+        // through `play()` from the HUD and the match code, so hooking the duck at that one
+        // choke point means the countdown does not have to be taught about the music bed, and
+        // a screen added later gets the behaviour for free.
+        //
+        // ⚠️ THESE ARE ANNOUNCEMENTS, NOT IMPACTS. `PlayImpact` already ducks by its own tiny
+        // amount scaled to the hit; that is a transient getting out of its own way. This list
+        // is the countdown, the round end, the win and the score award, which are the moments
+        // the bed must get out of the way of INFORMATION.
+        // -------------------------------------------------------------------
+
+        public const float MusicDuckDb = -10.0f;
+        public const float MusicDuckHold = 0.5f;
+
+        private static readonly HashSet<string> DuckTriggers = new HashSet<string>
+        {
+            "countdown_tick", "countdown_go", "round_end", "match_win", "round_lose",
+            "score_award",
+        };
+
+        /// <summary>Whether playing this cue should duck the music bed under it.</summary>
+        public static bool DucksMusic(string cue) => cue != null && DuckTriggers.Contains(cue);
+
         /// <summary>Resolve a cue name to the file stem that actually exists on disk.</summary>
         public static string FileStemFor(string cue)
         {

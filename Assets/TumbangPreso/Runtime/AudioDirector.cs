@@ -153,7 +153,17 @@ namespace TumbangPreso
                                        Mathf.Max(pitchMin, pitchMax));
             voice.volume = cue.Volume * SfxScale() * Mathf.Clamp(volumeScale, 0.0f, 1.25f);
             voice.Play();
+
+            DuckIfAnnouncement(id);
         }
+
+        /// <summary>
+        /// ⚠️ THE LIFT IS POLLED, NOT EVENT-DRIVEN, and that is the cheaper correct answer.
+        /// The round clock has no "fifteen seconds left" event to subscribe to, and adding one
+        /// would put an audio concern into the rules layer. `SetLift` is idempotent, so calling
+        /// it every frame with the same answer costs a comparison.
+        /// </summary>
+        private void Update() => UpdateMusicLift();
 
         /// <summary>
         /// Two restrained layers for the few match-defining impacts. The low-pitched layer
@@ -172,6 +182,45 @@ namespace TumbangPreso
 
             GameServices.Music?.Duck(Mathf.Lerp(-2.5f, -5.0f, energy),
                                      Mathf.Lerp(0.10f, 0.20f, energy));
+        }
+
+        /// <summary>
+        /// Duck the bed if this cue is one of the announcements that should push it down.
+        ///
+        /// ⚠️ CALLED FROM THE PLAY PATH, NOT FROM THE CALLERS. See `AudioCues.DuckTriggers`:
+        /// the whole value of the table is that the countdown, the round end and the score
+        /// award do not each have to remember to duck.
+        /// </summary>
+        private static void DuckIfAnnouncement(string cue)
+        {
+            if (!Audio.AudioCues.DucksMusic(cue)) return;
+
+            GameServices.Music?.Duck(Audio.AudioCues.MusicDuckDb, Audio.AudioCues.MusicDuckHold);
+        }
+
+        /// <summary>
+        /// § THE INTENSITY LIFT, driven from the round clock.
+        ///
+        /// ⚠️⚠️ THE AUDIO ASKS THE ROUND, IT DOES NOT KEEP ITS OWN CLOCK. That is the same rule
+        /// the HUD follows and for the same reason: a second opinion about how long is left will
+        /// eventually disagree with the scoreboard, and the player believes the scoreboard.
+        ///
+        /// ⚠️ AND IT IS GATED ON THE ROUND BEING LIVE. Without that, the bed lifts during the
+        /// between-round buffer, when `TimeLeft` is sitting at whatever the last round ended on.
+        /// </summary>
+        private void UpdateMusicLift()
+        {
+            var music = GameServices.Music;
+            if (music == null) return;
+
+            var round = GameServices.Round;
+
+            bool shouldLift = round != null
+                              && round.RoundActive
+                              && round.TimeLeft > 0.0f
+                              && round.TimeLeft <= Audio.MusicDirector.LiftSecondsLeft;
+
+            music.SetLift(shouldLift);
         }
 
         /// <summary>

@@ -118,19 +118,30 @@ namespace TumbangPreso.PlayTests
             var renderer = slipper.GetComponentInChildren<Renderer>();
             Assert.IsNotNull(renderer);
 
-            // ⚠⚠ CLEAR ROAD, NOT OVER THE ORIGIN, FOR THE REASON THE TEST ABOVE SPELLS OUT
-            // AT LENGTH. This dropped at (0, 5, 0), which is where the lata stands and where the
-            // taya stands to guard it, so the tsinelas landed on a BODY, was deflected upward,
-            // came down on it again, and eventually recovered through `Balance.MaxAirborneTime`.
-            // A recovery is deliberately not a landing: no thud and no landed highlight. The
-            // assertion then failed with "it was not lit to begin with", which is the game
-            // behaving exactly as designed and the test asking the wrong question.
+            // ⚠⚠ A SHORT DROP ONTO KNOWN-FLAT GROUND, AND EVERY WORD OF THAT IS LOAD BEARING.
+            // Two earlier versions of this line passed in isolation and failed in a full suite
+            // run, which is the signature of a test that depends on where bodies are standing:
             //
-            // ⚠️ IT ONLY SHOWED UP IN A FULL SUITE RUN, never in isolation, because whether
-            // anything is standing on the origin depends on what the previous test left in the
-            // arena. Same drop point as the test above, which has carried this warning since it
-            // hit the same fault.
-            slipper.HostThrow(null, new Vector3(5.0f, 5.0f, 5.5f), new Vector3(0.0f, 0.5f, 0.0f));
+            //   * (0, 5, 0) drops onto the lata and the taya guarding it. The tsinelas bounces
+            //     off them, hovers, and is eventually recovered by `Balance.MaxAirborneTime`.
+            //   * (5, 5, 5.5) is clear road in an empty arena and is not clear once the seats
+            //     are placed. The slipper landed somewhere it could not be reached from and
+            //     `Land` returned it to its owner's mark, observed ending at (0.35, 0.15, 8.68),
+            //     which is the attacker spawn line rather than where it was thrown.
+            //
+            // ⚠️ **A RECOVERY IS DELIBERATELY NOT A LANDING: no thud, and no landed highlight.**
+            // Both failures were the game behaving exactly as designed and the test asking the
+            // wrong question.
+            //
+            // The lata's own position IS the floor plane by definition, so four metres along X
+            // from it is flat road inside the box, and no seat starts there: the taya spawns at
+            // z = -2.5 and the attackers on the line at z = +9. Two metres up is a flight long
+            // enough to be a real landing and too short to meet anything on the way down.
+            var lata = Object.FindFirstObjectByType<Lata>();
+            Assert.IsNotNull(lata, "the arena has no lata to measure the floor from");
+
+            Vector3 target = lata.transform.position + new Vector3(4.0f, 0.0f, 0.0f);
+            slipper.HostThrow(null, target + Vector3.up * 2.0f, target);
 
             // ⚠⚠ THE THROW HAS TO HAVE TAKEN, AND NOT CHECKING WAS HALF OF A FALSE FAILURE.
             // The wait below exits the moment the state is Loose, which is ALSO the state of a

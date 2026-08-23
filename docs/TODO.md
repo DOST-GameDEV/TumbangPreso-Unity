@@ -118,44 +118,35 @@ materials each `Spawn*` builds.
 
 ---
 
-## 2 · Close the 8 PARTIAL rows in `docs/Port_Ledger.md`
+## 2 · Peer rematch voting across the wire
 
-Zero MISSING rows remain. The eight partials, with what is actually left on each:
+**The last genuine PARTIAL row in the ledger, and the only one.**
 
-| File | What is missing |
-|---|---|
-| `audio_manager.gd` | Bus layout, mix levels, transitions, voice triggers (N15) |
-| `round_manager.gd` | Per-round transition polish |
-| `match_manager.gd` | Ranking and defender derivation edge cases |
-| `debug_player_switcher.gd` | Beyond seat drive, cycle and readout |
-| `character_base.gd` | Third-person charge pose (N14) |
-| `ai_controller.gd` | Per-plan polish (N18) |
-| `match_result.gd` | Peer rematch voting across the wire |
-| `HUD.tscn` | Resolution of N17 |
+`match_result.gd`'s rematch is a VOTE in a networked match. Here the button acts locally, so
+four peers can each think a rematch is or is not happening. Single-player rematch works.
 
-⚠️ **`audio_manager.gd` is the biggest single win here** and the most player-visible: mix
-levels and voice triggers are what make a match feel produced rather than assembled.
+**Needs:** an RPC pair (a peer votes, the host broadcasts the tally), the tally drawn on the
+result card, and the same "counts peers, not characters" rule `ReadyGate` already uses, since
+bot-filled seats cannot vote.
 
----
+**Where.** `Assets/TumbangPreso/Runtime/MatchResult.cs`,
+`Assets/TumbangPreso/Runtime/Net/MatchRpc.cs`, and `ReadyGate.cs` for the pattern to copy.
 
-## 3 · Reconnect is verified in simulation, not across two processes
-
-`LobbyAndSettingsTests` and `RuntimeLayerTests` cover token reclaim, seat restoration and the
-exact "dropped as attacker, returns as taya" case end to end; `NetworkMultiProcessProbes`
-covers topology. **Two real processes over a LAN has still never been run.** Before any
-bracket play, it has to be.
-
----
-
-## 4 · The IKE slipper still carries the real Nike wordmark as geometry
-
-First in the art replacement queue. `docs/Port_Plan.md` § 8 has the order and, more
-importantly, the list of properties a replacement must preserve, because several props were
-tuned against the exact shape that was drawn.
+⚠️ **This cannot be finished honestly without two real processes on a LAN**, which has never
+been run. Write it, cover it in `RuntimeLayerTests` the way reconnect is covered, and say
+plainly in the handoff that the wire half is simulated.
 
 ---
 
 ## Closed
+
+- **The 8 PARTIAL rows in `docs/Port_Ledger.md`.** ✅ 2026-08-23, audited against the code
+  rather than against the rows. **Seven of the eight were stale bookkeeping**: the work had
+  landed and the row was never updated. The audit table is in the ledger's status summary.
+  Two pieces were genuinely missing and were written: the music **intensity lift** in the last
+  15 s of a round, and the **duck-trigger table** that drops the bed under the countdown, the
+  round end, the win and the score award. One row remains genuinely partial and is § 2 above.
+
 
 - **Load every resource on the BH Studios loading screen.** ✅ 2026-08-23. The preload covered
   the roster, audio and the MAIN MENU scene, and then the arena, its materials, the baked UI
