@@ -1006,35 +1006,147 @@ namespace TumbangPreso.CameraSystem
 
         private static void BuildDanteAccessories(Transform arm, bool isRight)
         {
-            var robeGreen = new Color(0.239f, 0.388f, 0.208f, 1.0f);
-            var robeDark = new Color(0.141f, 0.243f, 0.122f, 1.0f);
-            var leather = new Color(0.282f, 0.184f, 0.114f, 1.0f);
-            var gold = new Color(0.875f, 0.698f, 0.282f, 1.0f);
+            var robeGreen   = new Color(0.239f, 0.388f, 0.208f, 1.0f); // #3d6335 - Primary Marking Green (Matte earthen)
+            var robeDark    = new Color(0.141f, 0.243f, 0.122f, 1.0f); // #243e1f - Shadow / Border Green
+            var leather     = new Color(0.282f, 0.184f, 0.114f, 1.0f); // #482f1d - Brown Warrior Tunic
+            var leatherDark = new Color(0.180f, 0.110f, 0.060f, 1.0f); // #2e1c0f - Dark Leather Crease
+            var gold        = new Color(0.875f, 0.698f, 0.282f, 1.0f); // #dfb248 - Canonical Gold Trim
+            var goldDark    = new Color(0.680f, 0.520f, 0.180f, 1.0f); // #ad842e - Shaded Gold Rim
+            var skinTone    = SkinDante;                                // #a8602c - Canonical Dante Skin
+            var skinDark    = new Color(0.549f, 0.282f, 0.102f, 1.0f); // #8c481a - Shaded Skin Tone
 
-            // team-dante.glb has a bare marked left arm. Its visible front pattern is
-            // three parallel forest-green conduits. The right arm has a brown sleeve,
-            // a gold cuff and one narrower natural-arm conduit.
             if (isRight)
             {
-                AddBoxAccessory(arm, "BrownRightSleeve", new Vector3(0.30f, 0.31f, 0.29f),
-                    new Vector3(0.0f, 0.155f, 0.0f), Quaternion.identity, leather);
-                AddBoxAccessory(arm, "GoldRightCuff", new Vector3(0.32f, 0.09f, 0.31f),
+                // ===================================================================
+                // § DANTE RIGHT ARM - Warrior Leather Sleeve, Gold Cuff & Runic Glyph
+                // ===================================================================
+                
+                // 1. Heavy Warrior Leather Sleeve (Y: 0.04 - 0.32)
+                AddBoxAccessory(arm, "LeatherSleeve", new Vector3(0.315f, 0.30f, 0.305f),
+                    new Vector3(0.0f, 0.16f, 0.0f), Quaternion.identity, leather);
+                AddBoxAccessory(arm, "LeatherSleeveCrease", new Vector3(0.325f, 0.04f, 0.315f),
+                    new Vector3(0.0f, 0.06f, 0.0f), Quaternion.identity, leatherDark);
+
+                // 2. Diagonal Harness Strap across Shoulder Armor
+                AddBoxAccessory(arm, "HarnessStrap", new Vector3(0.075f, 0.28f, 0.025f),
+                    new Vector3(0.02f, 0.16f, 0.155f), Quaternion.Euler(0, 0, -28.0f), gold);
+                AddBoxAccessory(arm, "HarnessBuckle", new Vector3(0.09f, 0.06f, 0.035f),
+                    new Vector3(-0.02f, 0.19f, 0.162f), Quaternion.identity, goldDark);
+
+                // 3. Volumetric 3D Beveled Gold Cuff Ring (Y: 0.32 - 0.40)
+                AddBoxAccessory(arm, "GoldCuffLining", new Vector3(0.325f, 0.09f, 0.315f),
+                    new Vector3(0.0f, 0.355f, 0.0f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "GoldCuffBody", new Vector3(0.345f, 0.080f, 0.335f),
                     new Vector3(0.0f, 0.355f, 0.0f), Quaternion.identity, gold);
-                AddBoxAccessory(arm, "NaturalConduit", new Vector3(0.032f, 0.18f, 0.007f),
-                    new Vector3(0.035f, 0.535f, 0.146f), Quaternion.Euler(0, 0, 32.0f), robeGreen);
-                AddBoxAccessory(arm, "NaturalConduitBase", new Vector3(0.11f, 0.028f, 0.007f),
-                    new Vector3(-0.030f, 0.605f, 0.146f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "GoldCuffRimTop", new Vector3(0.352f, 0.020f, 0.342f),
+                    new Vector3(0.0f, 0.385f, 0.0f), Quaternion.identity, gold);
+                AddBoxAccessory(arm, "GoldCuffRimBot", new Vector3(0.352f, 0.020f, 0.342f),
+                    new Vector3(0.0f, 0.325f, 0.0f), Quaternion.identity, goldDark);
+
+                // 4. Forearm Tribal Runic Glyph (360° wrap matching team-dante.glb)
+                // 4a. Vertical Central Spine (+X = 0.060, Y: 0.42 - 0.58)
+                AddBoxAccessory(arm, "ForearmConduitBase", new Vector3(0.050f, 0.17f, 0.015f),
+                    new Vector3(0.060f, 0.500f, 0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "ForearmConduitBody", new Vector3(0.042f, 0.16f, 0.018f),
+                    new Vector3(0.060f, 0.500f, 0.128f), Quaternion.identity, robeGreen);
+
+                // 4b. Horizontal Crossbar Branch (Y ~ 0.54, spanning X: +0.06 to -0.07)
+                AddBoxAccessory(arm, "UpperHookCrossbarBase", new Vector3(0.145f, 0.045f, 0.015f),
+                    new Vector3(-0.010f, 0.540f, 0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "UpperHookCrossbarBody", new Vector3(0.135f, 0.038f, 0.018f),
+                    new Vector3(-0.010f, 0.540f, 0.128f), Quaternion.identity, robeGreen);
+
+                // 4c. Downward Hook Branch (X ~ -0.060, Y: 0.45 - 0.54)
+                AddBoxAccessory(arm, "HookBranchBase", new Vector3(0.045f, 0.090f, 0.015f),
+                    new Vector3(-0.060f, 0.490f, 0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "HookBranchBody", new Vector3(0.038f, 0.080f, 0.018f),
+                    new Vector3(-0.060f, 0.490f, 0.128f), Quaternion.identity, robeGreen);
+
+                // 4d. Outer Edge & Dorsal Wrap (Visible in Showcase & Holding poses)
+                AddBoxAccessory(arm, "RightOuterWrapBase", new Vector3(0.015f, 0.17f, 0.120f),
+                    new Vector3(-0.130f, 0.50f, 0.02f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "RightOuterWrapBody", new Vector3(0.018f, 0.16f, 0.110f),
+                    new Vector3(-0.132f, 0.50f, 0.02f), Quaternion.identity, robeGreen);
+
+                AddBoxAccessory(arm, "RightBackSpineBase", new Vector3(0.050f, 0.17f, 0.015f),
+                    new Vector3(-0.020f, 0.500f, -0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "RightBackSpineBody", new Vector3(0.042f, 0.16f, 0.018f),
+                    new Vector3(-0.020f, 0.500f, -0.128f), Quaternion.identity, robeGreen);
+
+                AddBoxAccessory(arm, "RightDorsalSpineBase", new Vector3(0.050f, 0.17f, 0.015f),
+                    new Vector3(0.126f, 0.500f, 0.00f), Quaternion.Euler(0, 90.0f, 0), robeDark);
+                AddBoxAccessory(arm, "RightDorsalSpineBody", new Vector3(0.042f, 0.16f, 0.018f),
+                    new Vector3(0.128f, 0.500f, 0.00f), Quaternion.Euler(0, 90.0f, 0), robeGreen);
+
+                // 5. Modeled Hand & Knuckle Anatomy
+                AddBoxAccessory(arm, "RightKnucklePlate", new Vector3(0.280f, 0.055f, 0.032f),
+                    new Vector3(0.0f, 0.690f, 0.150f), Quaternion.identity, skinTone);
+                AddBoxAccessory(arm, "RightKnuckleIndent1", new Vector3(0.020f, 0.045f, 0.035f),
+                    new Vector3(-0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "RightKnuckleIndent2", new Vector3(0.020f, 0.045f, 0.035f),
+                    new Vector3(0.000f, 0.690f, 0.152f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "RightKnuckleIndent3", new Vector3(0.020f, 0.045f, 0.035f),
+                    new Vector3(0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "RightThumbKnuckle", new Vector3(0.040f, 0.080f, 0.032f),
+                    new Vector3(0.160f, 0.730f, 0.020f), Quaternion.identity, skinTone);
             }
             else
             {
-                AddBoxAccessory(arm, "DemonicConduitA", new Vector3(0.034f, 0.22f, 0.007f),
-                    new Vector3(-0.065f, 0.255f, 0.146f), Quaternion.Euler(0, 0, 34.0f), robeGreen);
-                AddBoxAccessory(arm, "DemonicConduitB", new Vector3(0.034f, 0.22f, 0.007f),
-                    new Vector3(0.000f, 0.420f, 0.146f), Quaternion.Euler(0, 0, 34.0f), robeGreen);
-                AddBoxAccessory(arm, "DemonicConduitC", new Vector3(0.034f, 0.22f, 0.007f),
-                    new Vector3(0.065f, 0.585f, 0.146f), Quaternion.Euler(0, 0, 34.0f), robeGreen);
-                AddBoxAccessory(arm, "DemonicCarapaceBase", new Vector3(0.27f, 0.026f, 0.007f),
-                    new Vector3(0.0f, 0.125f, 0.146f), Quaternion.identity, robeDark);
+                // ===================================================================
+                // § DANTE LEFT ARM - Bare Skin with 2 Bold Full-Width Chevrons
+                // ===================================================================
+
+                // 1. Dark Green Shoulder Collar / Sleeve Trim (Y: 0.04 - 0.16)
+                AddBoxAccessory(arm, "ShoulderCap", new Vector3(0.295f, 0.12f, 0.275f),
+                    new Vector3(0.0f, 0.07f, 0.0f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "ShoulderGoldTrim", new Vector3(0.305f, 0.035f, 0.285f),
+                    new Vector3(0.0f, 0.13f, 0.0f), Quaternion.identity, gold);
+                AddBoxAccessory(arm, "ShoulderGreenLining", new Vector3(0.300f, 0.03f, 0.280f),
+                    new Vector3(0.0f, 0.155f, 0.0f), Quaternion.identity, robeGreen);
+
+                // 2. Two Canonical Full-Width Chevrons (Y = 0.35, 0.49)
+                // Exactly 2 bold ^ chevrons centered on the bare forearm, pointing upward.
+                // -------------------------------------------------------------------------------------------------------
+
+                // CHEVRON 1: Lower Forearm (Y ~ 0.35)
+                AddBoxAccessory(arm, "Chevron1_LeftBase", new Vector3(0.046f, 0.16f, 0.015f),
+                    new Vector3(-0.055f, 0.310f, 0.126f), Quaternion.Euler(0, 0, -28.0f), robeDark);
+                AddBoxAccessory(arm, "Chevron1_LeftBody", new Vector3(0.040f, 0.15f, 0.018f),
+                    new Vector3(-0.055f, 0.310f, 0.128f), Quaternion.Euler(0, 0, -28.0f), robeGreen);
+                AddBoxAccessory(arm, "Chevron1_RightBase", new Vector3(0.046f, 0.16f, 0.015f),
+                    new Vector3(0.045f, 0.310f, 0.126f), Quaternion.Euler(0, 0, 28.0f), robeDark);
+                AddBoxAccessory(arm, "Chevron1_RightBody", new Vector3(0.040f, 0.15f, 0.018f),
+                    new Vector3(0.045f, 0.310f, 0.128f), Quaternion.Euler(0, 0, 28.0f), robeGreen);
+                AddBoxAccessory(arm, "Chevron1_Apex", new Vector3(0.052f, 0.042f, 0.018f),
+                    new Vector3(-0.005f, 0.350f, 0.128f), Quaternion.identity, robeGreen);
+                AddBoxAccessory(arm, "Chevron1_OuterWrap", new Vector3(0.018f, 0.055f, 0.060f),
+                    new Vector3(-0.132f, 0.280f, 0.02f), Quaternion.identity, robeGreen);
+
+                // CHEVRON 2: Upper Forearm (Y ~ 0.49)
+                AddBoxAccessory(arm, "Chevron2_LeftBase", new Vector3(0.046f, 0.16f, 0.015f),
+                    new Vector3(-0.055f, 0.450f, 0.126f), Quaternion.Euler(0, 0, -28.0f), robeDark);
+                AddBoxAccessory(arm, "Chevron2_LeftBody", new Vector3(0.040f, 0.15f, 0.018f),
+                    new Vector3(-0.055f, 0.450f, 0.128f), Quaternion.Euler(0, 0, -28.0f), robeGreen);
+                AddBoxAccessory(arm, "Chevron2_RightBase", new Vector3(0.046f, 0.16f, 0.015f),
+                    new Vector3(0.045f, 0.450f, 0.126f), Quaternion.Euler(0, 0, 28.0f), robeDark);
+                AddBoxAccessory(arm, "Chevron2_RightBody", new Vector3(0.040f, 0.15f, 0.018f),
+                    new Vector3(0.045f, 0.450f, 0.128f), Quaternion.Euler(0, 0, 28.0f), robeGreen);
+                AddBoxAccessory(arm, "Chevron2_Apex", new Vector3(0.052f, 0.042f, 0.018f),
+                    new Vector3(-0.005f, 0.490f, 0.128f), Quaternion.identity, robeGreen);
+                AddBoxAccessory(arm, "Chevron2_OuterWrap", new Vector3(0.018f, 0.055f, 0.060f),
+                    new Vector3(-0.132f, 0.420f, 0.02f), Quaternion.identity, robeGreen);
+
+                // 3. Modeled Hand & Knuckle Anatomy
+                AddBoxAccessory(arm, "LeftKnucklePlate", new Vector3(0.280f, 0.055f, 0.032f),
+                    new Vector3(0.0f, 0.690f, 0.150f), Quaternion.identity, skinTone);
+                AddBoxAccessory(arm, "LeftKnuckleIndent1", new Vector3(0.020f, 0.045f, 0.035f),
+                    new Vector3(-0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "LeftKnuckleIndent2", new Vector3(0.020f, 0.045f, 0.035f),
+                    new Vector3(0.000f, 0.690f, 0.152f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "LeftKnuckleIndent3", new Vector3(0.020f, 0.045f, 0.035f),
+                    new Vector3(0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "LeftThumbKnuckle", new Vector3(0.040f, 0.080f, 0.032f),
+                    new Vector3(-0.160f, 0.730f, 0.020f), Quaternion.identity, skinTone);
             }
         }
 
