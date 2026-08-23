@@ -26,7 +26,7 @@ namespace TumbangPreso.Abilities
             public StaticRailGrindAbility(ZackHeroKit kit)
                 : base("zack_skill1", "BOLT SPRINT",
                        "Overcharges your skates. You move faster, and the trail you leave behind shocks anyone chasing you.",
-                       6.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.Dash,
+                       6.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.ZackSprint,
                        summary: "Move faster, and shock whoever chases your trail.",
                        castAction: "hero-zack-sprint",
                        viewmodelAction: "sprint-electric")
@@ -78,7 +78,7 @@ namespace TumbangPreso.Abilities
             public OverchargeThrowAbility(ZackHeroKit kit)
                 : base("zack_skill2", "STATIC CHARGE",
                        "Charges your next throw. It flies much faster and shocks the court where it lands.",
-                       8.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.Empower,
+                       8.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.ZackOvercharge,
                        summary: "Your next throw flies faster and shocks where it lands.",
                        castAction: "hero-zack-charge",
                        viewmodelAction: "overcharge")
@@ -107,7 +107,7 @@ namespace TumbangPreso.Abilities
             public ThunderstrikeOverdriveAbility(ZackHeroKit kit)
                 : base("zack_ultimate", "THUNDERSTRIKE",
                        "Calls lightning down on where you stand. Everyone caught underneath is stunned where they are.",
-                       0.0f, 7.0f, TumbangPreso.UI.AbilityGlyph.Slam,
+                       0.0f, 7.0f, TumbangPreso.UI.AbilityGlyph.ZackThunderstrike,
                        summary: "Lightning on your position. Stuns everyone it catches.",
                        telegraphRadius: 4.5f, telegraphRange: 0.0f,
                        castAction: "hero-zack-summon",

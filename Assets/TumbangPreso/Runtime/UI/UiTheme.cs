@@ -235,6 +235,8 @@ namespace TumbangPreso.UI
         public static readonly Color HeroIceBright = Hex("b8fff2");
         public static readonly Color HeroElectric = Hex("e8f53a");
         public static readonly Color HeroElectricBright = Hex("f6ffa0");
+        public static Color HeroLightning => HeroElectric;
+        public static Color HeroLightningBright => HeroElectricBright;
         public static readonly Color HeroSpirit = Hex("b44dff");
         public static readonly Color HeroSpiritBright = Hex("dfaaff");
         public static readonly Color HeroEarth = Hex("3fa65c");

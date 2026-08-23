@@ -130,6 +130,10 @@ namespace TumbangPreso.CameraSystem
         private Transform _heldSlipper;
         private Renderer _heldRenderer;
 
+        private ViewmodelClothPhysics _rightClothPhysics;
+        private ViewmodelClothPhysics _leftClothPhysics;
+        private CharacterMotor _characterMotor;
+
         private Quaternion _rightRest;
         private Quaternion _leftRest;
         private Vector3 _rightRestPos;
@@ -431,6 +435,36 @@ namespace TumbangPreso.CameraSystem
                   : null;
 
             _clipTime = 0.0f;
+
+            if (_rightClothPhysics != null)
+            {
+                if (clip == "throw")
+                {
+                    _rightClothPhysics.AddImpulse(new Vector3(0.15f, 0.40f, -0.65f));
+                    _rightClothPhysics.AddAngularImpulse(new Vector3(-45.0f, 15.0f, -30.0f));
+                }
+                else if (clip == "slam" || clip == "supernova-slam" || clip == "fissure-slam")
+                {
+                    _rightClothPhysics.AddImpulse(new Vector3(0.0f, -0.75f, -0.40f));
+                    _rightClothPhysics.AddAngularImpulse(new Vector3(55.0f, 0.0f, 0.0f));
+                }
+                else if (clip == "ghost-step" || clip == "sprint-electric")
+                {
+                    _rightClothPhysics.AddImpulse(new Vector3(-0.35f, 0.20f, -0.45f));
+                    _rightClothPhysics.AddAngularImpulse(new Vector3(-25.0f, 35.0f, -40.0f));
+                }
+                else if (clip == "project-spirit" || clip == "nova-burst")
+                {
+                    _rightClothPhysics.AddImpulse(new Vector3(0.10f, 0.35f, 0.50f));
+                    _rightClothPhysics.AddAngularImpulse(new Vector3(30.0f, -20.0f, 25.0f));
+                }
+                else if (clip == "seance-channel" || clip == "ignite" || clip == "overcharge")
+                {
+                    _rightClothPhysics.AddImpulse(new Vector3(0.0f, 0.25f, 0.0f));
+                    _rightClothPhysics.AddAngularImpulse(new Vector3(20.0f, 25.0f, -20.0f));
+                }
+            }
+
             return _clip != null;
         }
 
@@ -656,6 +690,8 @@ namespace TumbangPreso.CameraSystem
             EnsureBuilt();
             if (character == null) return;
 
+            _characterMotor = character;
+
             string charId = null;
             if (character.Mode == Core.GameMode.HeroStrike)
             {
@@ -701,24 +737,44 @@ namespace TumbangPreso.CameraSystem
 
         private void ApplyCharacterStyle(string characterId)
         {
+            _rightClothPhysics = null;
+            _leftClothPhysics = null;
+
             ClearAccessories(_rightArm);
             ClearAccessories(_leftArm);
 
+            Vector3 armScale = Vector3.one;
+            if (characterId == "sean") armScale = new Vector3(1.24f, 1.0f, 1.24f);
+            else if (characterId == "dante") armScale = new Vector3(1.15f, 1.0f, 1.15f);
+
+            if (_rightArm != null) _rightArm.localScale = armScale;
+            if (_leftArm != null) _leftArm.localScale = armScale;
+
             Color skinColor = SkinColorForCharacter(characterId);
+
+            bool isNemu = characterId == "nemu";
 
             if (_rightArmRenderer != null)
             {
-                Visual.MaterialKit.Dress(_rightArmRenderer, skinColor);
-                Visual.ToonSkin.Apply(_rightArmRenderer, Visual.ToonSkin.PersonOutlineWidth);
+                _rightArmRenderer.enabled = !isNemu;
+                if (!isNemu)
+                {
+                    Visual.MaterialKit.Dress(_rightArmRenderer, skinColor);
+                    Visual.ToonSkin.Apply(_rightArmRenderer, Visual.ToonSkin.PersonOutlineWidth);
+                }
             }
             if (_leftArmRenderer != null)
             {
-                Visual.MaterialKit.Dress(_leftArmRenderer, skinColor);
-                Visual.ToonSkin.Apply(_leftArmRenderer, Visual.ToonSkin.PersonOutlineWidth);
+                _leftArmRenderer.enabled = !isNemu;
+                if (!isNemu)
+                {
+                    Visual.MaterialKit.Dress(_leftArmRenderer, skinColor);
+                    Visual.ToonSkin.Apply(_leftArmRenderer, Visual.ToonSkin.PersonOutlineWidth);
+                }
             }
 
-            if (_rightArm != null) BuildArmAccessories(_rightArm, characterId, isRight: true);
-            if (_leftArm != null) BuildArmAccessories(_leftArm, characterId, isRight: false);
+            if (_rightArm != null) BuildArmAccessories(_rightArm, characterId, isRight: true, parent: this);
+            if (_leftArm != null) BuildArmAccessories(_leftArm, characterId, isRight: false, parent: this);
         }
 
         private static void ClearAccessories(Transform arm)
@@ -735,7 +791,7 @@ namespace TumbangPreso.CameraSystem
             }
         }
 
-        private static void BuildArmAccessories(Transform arm, string characterId, bool isRight)
+        private static void BuildArmAccessories(Transform arm, string characterId, bool isRight, ViewmodelArms parent = null)
         {
             switch (characterId)
             {
@@ -755,7 +811,7 @@ namespace TumbangPreso.CameraSystem
                     BuildCheskaAccessories(arm, isRight);
                     break;
                 case "nemu":
-                    BuildNemuAccessories(arm, isRight);
+                    BuildNemuAccessories(arm, isRight, parent);
                     break;
 
                 // -----------------------------------------------------------
@@ -812,164 +868,406 @@ namespace TumbangPreso.CameraSystem
         {
             var vestRed = new Color(0.788f, 0.165f, 0.165f, 1.0f);
             var flameGold = new Color(0.941f, 0.647f, 0.000f, 1.0f);
-            var flameOrange = new Color(1.000f, 0.533f, 0.000f, 1.0f);
+            var wrapCloth = new Color(0.72f, 0.18f, 0.18f, 1.0f);
+            var wrapTrim = new Color(0.88f, 0.35f, 0.22f, 1.0f);
 
-            // 1. Sleeveless athletic flame vest strap at shoulder
-            AddCylinderAccessory(arm, "VestStrap", 0.146f, 0.146f, 0.22f, 12,
+            // 1. Sleeveless athletic flame vest shoulder trim
+            AddCylinderAccessory(arm, "VestStrap", 0.150f, 0.150f, 0.20f, 12,
                 new Vector3(0.0f, 0.12f, 0.0f), Quaternion.identity, vestRed);
-            AddCylinderAccessory(arm, "VestTrim", 0.148f, 0.148f, 0.04f, 12,
-                new Vector3(0.0f, 0.23f, 0.0f), Quaternion.identity, flameGold);
+            AddCylinderAccessory(arm, "VestTrim", 0.154f, 0.154f, 0.04f, 12,
+                new Vector3(0.0f, 0.22f, 0.0f), Quaternion.identity, flameGold);
 
-            // 2. Forearm flame markings / tribal flame tattoo
-            AddBoxAccessory(arm, "FlameTattooMain", new Vector3(0.04f, 0.26f, 0.015f),
-                new Vector3(isRight ? 0.134f : -0.134f, 0.38f, 0.02f), Quaternion.identity, flameOrange, emission: 0.30f);
-            AddBoxAccessory(arm, "FlameTattooSpur", new Vector3(0.06f, 0.08f, 0.015f),
-                new Vector3(isRight ? 0.134f : -0.134f, 0.46f, -0.02f), Quaternion.Euler(0, 0, isRight ? 25.0f : -25.0f), flameGold, emission: 0.30f);
+            // 2. Multi-layered criss-cross crimson brawler athletic wraps on forearm
+            AddBoxAccessory(arm, "WrapCross1", new Vector3(0.18f, 0.035f, 0.02f),
+                new Vector3(0.0f, 0.38f, 0.142f), Quaternion.Euler(0, 0, 20.0f), wrapCloth);
+            AddBoxAccessory(arm, "WrapCross2", new Vector3(0.18f, 0.035f, 0.02f),
+                new Vector3(0.0f, 0.44f, 0.142f), Quaternion.Euler(0, 0, -20.0f), wrapCloth);
 
-            // 3. Fiery crimson athletic wrist wraps with gold flame band
-            AddCylinderAccessory(arm, "Wristband", 0.148f, 0.148f, 0.10f, 12,
-                new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, UI.UiTheme.HeroMagmaCore);
-            AddCylinderAccessory(arm, "WristbandFlameBand", 0.152f, 0.152f, 0.03f, 12,
-                new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, UI.UiTheme.HeroFireBright, emission: 0.45f);
+            // 3. Heavy fighting wrist wraps with gold trim
+            AddCylinderAccessory(arm, "WristWrapBase", 0.152f, 0.152f, 0.12f, 12,
+                new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, wrapCloth);
+            AddCylinderAccessory(arm, "WristWrapTrim", 0.156f, 0.156f, 0.03f, 12,
+                new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, wrapTrim);
 
-            // 4. Crimson athletic hand wrap
-            AddBoxAccessory(arm, "PalmWrap", new Vector3(0.33f, 0.08f, 0.31f),
+            // 4. Crimson athletic knuckle wrap
+            AddBoxAccessory(arm, "KnuckleWrap", new Vector3(0.32f, 0.08f, 0.30f),
                 new Vector3(0.0f, 0.70f, 0.0f), Quaternion.identity, vestRed);
         }
 
         private static void BuildZackAccessories(Transform arm, bool isRight)
         {
-            var carbonDark = new Color(0.09f, 0.10f, 0.13f, 1.0f);
-            var armorDark = new Color(0.12f, 0.14f, 0.18f, 1.0f);
-            var neonPurple = new Color(0.659f, 0.196f, 1.000f, 1.0f);
+            var jacketDark = new Color(0.12f, 0.12f, 0.14f, 1.0f);
+            var lightningYellow = new Color(0.91f, 0.82f, 0.12f, 1.0f);
+            var neonYellow = new Color(0.98f, 0.95f, 0.22f, 1.0f);
 
-            // 1. High-tech compression sleeve
-            AddCylinderAccessory(arm, "TechSleeve", 0.142f, 0.142f, 0.42f, 12,
-                new Vector3(0.0f, 0.22f, 0.0f), Quaternion.identity, carbonDark);
+            // 1. Streetwear skate windbreaker jacket sleeve
+            AddCylinderAccessory(arm, "JacketSleeve", 0.148f, 0.148f, 0.22f, 12,
+                new Vector3(0.0f, 0.12f, 0.0f), Quaternion.identity, jacketDark);
+            AddCylinderAccessory(arm, "JacketYellowCuff", 0.154f, 0.154f, 0.045f, 12,
+                new Vector3(0.0f, 0.23f, 0.0f), Quaternion.identity, lightningYellow);
 
-            // 2. High-speed racing stripe & neon conductive trace
-            AddBoxAccessory(arm, "PurpleStripe", new Vector3(0.04f, 0.38f, 0.02f),
-                new Vector3(0.0f, 0.22f, 0.135f), Quaternion.identity, neonPurple, emission: 0.40f);
-            AddBoxAccessory(arm, "TealStripe", new Vector3(0.02f, 0.32f, 0.04f),
-                new Vector3(isRight ? 0.135f : -0.135f, 0.20f, 0.0f), Quaternion.identity, UI.UiTheme.HeroIce);
+            // Glowing neon yellow lightning trim down outer arm
+            AddBoxAccessory(arm, "JacketNeonStripe", new Vector3(0.03f, 0.18f, 0.02f),
+                new Vector3(isRight ? 0.138f : -0.138f, 0.12f, 0.0f), Quaternion.identity, neonYellow, emission: 0.45f);
 
-            // 3. Angular tech bracer with lightning conductor plates
-            AddCylinderAccessory(arm, "TechBracer", 0.152f, 0.152f, 0.10f, 12,
-                new Vector3(0.0f, 0.56f, 0.0f), Quaternion.identity, armorDark);
-            AddBoxAccessory(arm, "LightningConductor", new Vector3(0.06f, 0.08f, 0.025f),
-                new Vector3(0.0f, 0.56f, 0.145f), Quaternion.identity, UI.UiTheme.HeroElectricBright, emission: 0.85f);
-            AddBoxAccessory(arm, "SideConductor", new Vector3(0.025f, 0.06f, 0.05f),
-                new Vector3(isRight ? 0.145f : -0.145f, 0.56f, 0.0f), Quaternion.identity, UI.UiTheme.HeroElectric, emission: 0.70f);
-
-            // 4. Tech grip fingerless glove
-            AddBoxAccessory(arm, "TechGrip", new Vector3(0.33f, 0.07f, 0.31f),
-                new Vector3(0.0f, 0.70f, 0.0f), Quaternion.identity, carbonDark);
+            // 2. Forearms are clean bare athletic skin. Minimalist skate watch on right wrist
+            if (isRight)
+            {
+                AddCylinderAccessory(arm, "SkateWristband", 0.146f, 0.146f, 0.06f, 12,
+                    new Vector3(0.0f, 0.56f, 0.0f), Quaternion.identity, jacketDark);
+                AddBoxAccessory(arm, "SkateWatchScreen", new Vector3(0.04f, 0.04f, 0.02f),
+                    new Vector3(0.0f, 0.56f, 0.142f), Quaternion.identity, lightningYellow, emission: 0.6f);
+            }
         }
 
         private static void BuildDanteAccessories(Transform arm, bool isRight)
         {
             var jadeGreen = new Color(0.239f, 0.388f, 0.208f, 1.0f);
+            var jadeMarking = new Color(0.408f, 0.910f, 0.471f, 1.0f);
             var goldTrim = new Color(0.875f, 0.698f, 0.282f, 1.0f);
             var darkCuff = new Color(0.282f, 0.184f, 0.114f, 1.0f);
 
-            // 1. Jade green shoulder sleeve with gold trim
-            AddCylinderAccessory(arm, "DanteSleeve", 0.146f, 0.146f, 0.22f, 12,
+            // 1. Jade green shoulder sleeve with gold pauldron
+            AddCylinderAccessory(arm, "DanteSleeve", 0.148f, 0.148f, 0.22f, 12,
                 new Vector3(0.0f, 0.12f, 0.0f), Quaternion.identity, jadeGreen);
-            AddCylinderAccessory(arm, "DanteGoldTrim", 0.150f, 0.150f, 0.04f, 12,
+            AddCylinderAccessory(arm, "DanteGoldTrim", 0.152f, 0.152f, 0.04f, 12,
                 new Vector3(0.0f, 0.23f, 0.0f), Quaternion.identity, goldTrim);
+            AddBoxAccessory(arm, "DantePauldron", new Vector3(0.20f, 0.06f, 0.20f),
+                new Vector3(0.0f, 0.03f, 0.0f), Quaternion.identity, goldTrim);
 
+            // 2. Dante's bespoke arm markings matching his 3D model
             if (isRight)
             {
-                // Right Arm (viewer's left): Gold diagonal strap + Jade zig-zag marking
-                AddBoxAccessory(arm, "GoldArmStrap", new Vector3(0.18f, 0.04f, 0.02f),
-                    new Vector3(0.0f, 0.30f, 0.136f), Quaternion.Euler(0, 0, 25.0f), goldTrim);
-                AddBoxAccessory(arm, "JadeZigZag1", new Vector3(0.035f, 0.10f, 0.015f),
-                    new Vector3(0.04f, 0.38f, 0.135f), Quaternion.Euler(0, 0, -30.0f), jadeGreen);
-                AddBoxAccessory(arm, "JadeZigZag2", new Vector3(0.035f, 0.10f, 0.015f),
-                    new Vector3(-0.04f, 0.44f, 0.135f), Quaternion.Euler(0, 0, 30.0f), jadeGreen);
+                // Right Arm: Gold strap + Jade arm marking
+                AddBoxAccessory(arm, "GoldArmStrap", new Vector3(0.18f, 0.035f, 0.02f),
+                    new Vector3(0.0f, 0.30f, 0.138f), Quaternion.Euler(0, 0, 25.0f), goldTrim);
+                AddBoxAccessory(arm, "GoldBuckle", new Vector3(0.04f, 0.04f, 0.025f),
+                    new Vector3(0.0f, 0.30f, 0.145f), Quaternion.identity, goldTrim);
+                AddBoxAccessory(arm, "JadeMarking1", new Vector3(0.035f, 0.10f, 0.015f),
+                    new Vector3(0.04f, 0.38f, 0.136f), Quaternion.Euler(0, 0, -30.0f), jadeMarking, emission: 0.35f);
             }
             else
             {
-                // Left Arm (viewer's right): 3 downward pointing jade chevrons (>>>)
-                AddBoxAccessory(arm, "JadeChevron1A", new Vector3(0.07f, 0.025f, 0.015f),
-                    new Vector3(-0.03f, 0.32f, 0.135f), Quaternion.Euler(0, 0, 35.0f), jadeGreen);
-                AddBoxAccessory(arm, "JadeChevron1B", new Vector3(0.07f, 0.025f, 0.015f),
-                    new Vector3(0.03f, 0.32f, 0.135f), Quaternion.Euler(0, 0, -35.0f), jadeGreen);
-
-                AddBoxAccessory(arm, "JadeChevron2A", new Vector3(0.07f, 0.025f, 0.015f),
-                    new Vector3(-0.03f, 0.40f, 0.135f), Quaternion.Euler(0, 0, 35.0f), jadeGreen);
-                AddBoxAccessory(arm, "JadeChevron2B", new Vector3(0.07f, 0.025f, 0.015f),
-                    new Vector3(0.03f, 0.40f, 0.135f), Quaternion.Euler(0, 0, -35.0f), jadeGreen);
-
-                AddBoxAccessory(arm, "JadeChevron3A", new Vector3(0.07f, 0.025f, 0.015f),
-                    new Vector3(-0.03f, 0.48f, 0.135f), Quaternion.Euler(0, 0, 35.0f), jadeGreen);
-                AddBoxAccessory(arm, "JadeChevron3B", new Vector3(0.07f, 0.025f, 0.015f),
-                    new Vector3(0.03f, 0.48f, 0.135f), Quaternion.Euler(0, 0, -35.0f), jadeGreen);
+                // Left Arm: Jade markings
+                AddBoxAccessory(arm, "JadeMarkingL1", new Vector3(0.06f, 0.025f, 0.015f),
+                    new Vector3(-0.02f, 0.34f, 0.136f), Quaternion.Euler(0, 0, 30.0f), jadeMarking, emission: 0.35f);
+                AddBoxAccessory(arm, "JadeMarkingL2", new Vector3(0.06f, 0.025f, 0.015f),
+                    new Vector3(0.02f, 0.42f, 0.136f), Quaternion.Euler(0, 0, -30.0f), jadeMarking, emission: 0.35f);
             }
 
-            // 2. Dark wrist cuff with jade stud
-            AddCylinderAccessory(arm, "DarkWristCuff", 0.148f, 0.148f, 0.08f, 12,
+            // 3. Dark leather wrist cuff with polished jade stud
+            AddCylinderAccessory(arm, "DarkWristCuff", 0.150f, 0.150f, 0.08f, 12,
                 new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, darkCuff);
-            AddBoxAccessory(arm, "JadeWristStud", new Vector3(0.04f, 0.04f, 0.02f),
-                new Vector3(0.0f, 0.55f, 0.142f), Quaternion.identity, jadeGreen);
+            AddBoxAccessory(arm, "JadeWristStud", new Vector3(0.045f, 0.045f, 0.022f),
+                new Vector3(0.0f, 0.55f, 0.145f), Quaternion.identity, jadeMarking, emission: 0.25f);
         }
 
         private static void BuildCheskaAccessories(Transform arm, bool isRight)
         {
-            var deepGlacier = new Color(0.149f, 0.588f, 0.659f, 1.0f);
-            var cyanFrost = new Color(0.282f, 0.831f, 0.910f, 1.0f);
-            var frostWhite = new Color(0.957f, 0.980f, 1.000f, 1.0f);
+            var glacierCoat = new Color(0.35f, 0.75f, 0.85f, 1.0f);
+            var softWhiteFluff = new Color(0.96f, 0.98f, 1.00f, 1.0f);
 
-            // 1. Frost-cyan winter coat sleeve
-            AddCylinderAccessory(arm, "FrostSleeve", 0.145f, 0.145f, 0.38f, 12,
-                new Vector3(0.0f, 0.20f, 0.0f), Quaternion.identity, deepGlacier);
-            AddBoxAccessory(arm, "GlacierUnderPanel", new Vector3(0.22f, 0.36f, 0.02f),
-                new Vector3(0.0f, 0.20f, -0.13f), Quaternion.identity, cyanFrost);
+            // 1. Long light-blue winter parka coat sleeve covering the entire arm down to the wrist
+            AddCylinderAccessory(arm, "FrostCoatSleeve", 0.148f, 0.148f, 0.46f, 12,
+                new Vector3(0.0f, 0.28f, 0.0f), Quaternion.identity, glacierCoat);
 
-            // 2. Insulated soft fluffy frost-white cuff trim
-            AddCylinderAccessory(arm, "FluffyWhiteCuff", 0.162f, 0.162f, 0.08f, 12,
-                new Vector3(0.0f, 0.41f, 0.0f), Quaternion.identity, frostWhite);
+            // 2. Volumetric plush white fur cuff around the wrist
+            AddCylinderAccessory(arm, "FluffyFurWristCuff", 0.165f, 0.165f, 0.10f, 16,
+                new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, softWhiteFluff);
 
-            // 3. Crystalline ice bracer with delicate snowflake/crystal trim
-            AddCylinderAccessory(arm, "IceBracer", 0.150f, 0.150f, 0.09f, 12,
-                new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, UI.UiTheme.HeroIce);
-            AddBoxAccessory(arm, "SnowflakeCrystal", new Vector3(0.08f, 0.08f, 0.02f),
-                new Vector3(0.0f, 0.54f, 0.142f), Quaternion.Euler(0, 0, 45.0f), UI.UiTheme.HeroIceBright, emission: 0.50f);
-            AddBoxAccessory(arm, "SideCrystal", new Vector3(0.02f, 0.06f, 0.06f),
-                new Vector3(isRight ? 0.142f : -0.142f, 0.54f, 0.0f), Quaternion.Euler(45.0f, 0, 0), UI.UiTheme.HeroIceBright, emission: 0.50f);
-
-            // 4. Deep glacier fingerless frost winter glove
-            AddBoxAccessory(arm, "FrostGlove", new Vector3(0.33f, 0.11f, 0.31f),
-                new Vector3(0.0f, 0.68f, 0.0f), Quaternion.identity, deepGlacier);
+            // 3. Delicate translucent ice crystal bracelet on right wrist
+            if (isRight)
+            {
+                AddBoxAccessory(arm, "FrostGem", new Vector3(0.04f, 0.04f, 0.025f),
+                    new Vector3(0.0f, 0.54f, 0.168f), Quaternion.identity, UI.UiTheme.HeroIceBright, emission: 0.50f);
+            }
         }
 
-        private static void BuildNemuAccessories(Transform arm, bool isRight)
+        private static void BuildNemuAccessories(Transform arm, bool isRight, ViewmodelArms parent = null)
         {
-            var voidPurple = new Color(0.137f, 0.110f, 0.204f, 1.0f);
-            var voidDarkBand = new Color(0.094f, 0.071f, 0.141f, 1.0f);
-            var spectralViolet = new Color(0.667f, 0.361f, 0.941f, 1.0f);
+            // Exact color transcription from Nemu's 3D roster palette (tools/build_nemu_voxel.py & person_team-nemu.tres)
+            var hoodieDark = new Color(0.137f, 0.110f, 0.204f, 1.0f);   // HOODIE_DARK #231c34
+            var hoodieShadow = new Color(0.094f, 0.071f, 0.141f, 1.0f); // HOODIE_SHADOW #181224
+            var lavenderTrim = new Color(0.667f, 0.361f, 0.941f, 1.0f); // LAVENDER_GLOW #aa5cf0
+            var skinTone = SkinNemu;                                     // SKIN #e0af84
+            var skinDark = new Color(0.839f, 0.600f, 0.455f, 1.0f);     // SKIN_DARK #d69974
 
-            // 1. Dark-purple ghostly spirit wraps
-            AddCylinderAccessory(arm, "SpiritSleeve", 0.144f, 0.144f, 0.42f, 12,
-                new Vector3(0.0f, 0.22f, 0.0f), Quaternion.identity, voidPurple);
-            AddBoxAccessory(arm, "SpiritWrapStripe", new Vector3(0.18f, 0.04f, 0.02f),
-                new Vector3(0.0f, 0.26f, 0.138f), Quaternion.identity, spectralViolet, emission: 0.35f);
+            // 1. Oversized Stepped Boxy Streetwear Hoodie Sleeve Outer Shell
+            var sleeveMesh = CreateKimonoDrapedSleeveMesh(isRight);
+            var sleeveGo = new GameObject(AccessoryPrefix + "HoodieSleeve");
+            sleeveGo.transform.SetParent(arm, false);
+            sleeveGo.transform.localPosition = Vector3.zero;
+            sleeveGo.transform.localRotation = Quaternion.identity;
+            sleeveGo.transform.localScale = Vector3.one;
 
-            // 2. Flowing ethereal spirit ribbons along forearm
-            AddBoxAccessory(arm, "SpiritRibbonOuter", new Vector3(0.02f, 0.36f, 0.08f),
-                new Vector3(isRight ? 0.140f : -0.140f, 0.28f, 0.0f), Quaternion.identity, UI.UiTheme.HeroSpiritBright, emission: 0.65f);
-            AddBoxAccessory(arm, "SpiritRibbonInner", new Vector3(0.02f, 0.28f, 0.06f),
-                new Vector3(isRight ? -0.140f : 0.140f, 0.20f, 0.0f), Quaternion.identity, spectralViolet, emission: 0.65f);
+            var mf = sleeveGo.AddComponent<MeshFilter>();
+            mf.sharedMesh = sleeveMesh;
+            var mr = sleeveGo.AddComponent<MeshRenderer>();
+            Visual.MaterialKit.Dress(mr, hoodieDark);
+            Visual.ToonSkin.Apply(mr, Visual.ToonSkin.PersonOutlineWidth);
 
-            // 3. Void energy wrist cuff with glowing ethereal runes
-            AddCylinderAccessory(arm, "VoidWristCuff", 0.150f, 0.150f, 0.10f, 12,
-                new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, voidDarkBand);
-            AddBoxAccessory(arm, "SpectralRune", new Vector3(0.06f, 0.06f, 0.02f),
-                new Vector3(0.0f, 0.55f, 0.142f), Quaternion.Euler(0, 0, 45.0f), UI.UiTheme.HeroSpiritBright, emission: 0.95f);
+            // Bind dynamic cloth physics solver to sleeve
+            var clothPhys = sleeveGo.AddComponent<ViewmodelClothPhysics>();
+            clothPhys.BindMesh(mf, isRight, weightBoost: 1.0f);
+            if (parent != null)
+            {
+                if (isRight) parent._rightClothPhysics = clothPhys;
+                else parent._leftClothPhysics = clothPhys;
+            }
 
-            // 4. Spectral palm wraps
-            AddBoxAccessory(arm, "SpectralPalmWrap", new Vector3(0.33f, 0.08f, 0.31f),
-                new Vector3(0.0f, 0.70f, 0.0f), Quaternion.identity, voidPurple);
+            // 2. Hollow Interior Sleeve Cavity Lining
+            var innerMesh = CreateKimonoInnerLiningMesh(isRight);
+            var innerGo = new GameObject(AccessoryPrefix + "HoodieInnerLining");
+            innerGo.transform.SetParent(arm, false);
+            innerGo.transform.localPosition = Vector3.zero;
+            innerGo.transform.localRotation = Quaternion.identity;
+            innerGo.transform.localScale = Vector3.one;
+
+            var innerMf = innerGo.AddComponent<MeshFilter>();
+            innerMf.sharedMesh = innerMesh;
+            var innerMr = innerGo.AddComponent<MeshRenderer>();
+            Visual.MaterialKit.Dress(innerMr, hoodieShadow);
+            Visual.ToonSkin.Apply(innerMr, Visual.ToonSkin.PersonOutlineWidth);
+
+            // 3. Crisp Lavender Flared Cuff Border Band
+            var cuffMesh = CreateKimonoCuffRimMesh(isRight);
+            var cuffGo = new GameObject(AccessoryPrefix + "HoodieCuffRim");
+            cuffGo.transform.SetParent(arm, false);
+            cuffGo.transform.localPosition = Vector3.zero;
+            cuffGo.transform.localRotation = Quaternion.identity;
+            cuffGo.transform.localScale = Vector3.one;
+
+            var cuffMf = cuffGo.AddComponent<MeshFilter>();
+            cuffMf.sharedMesh = cuffMesh;
+            var cuffMr = cuffGo.AddComponent<MeshRenderer>();
+            Visual.MaterialKit.Dress(cuffMr, lavenderTrim);
+            Visual.ToonSkin.Apply(cuffMr, Visual.ToonSkin.PersonOutlineWidth);
+
+            // 4. Cute Tucked Hand in exact Nemu Skin Tone (#e0af84 and #d69974)
+            var handGo = new GameObject(AccessoryPrefix + "SpiritHand");
+            handGo.transform.SetParent(arm, false);
+            handGo.transform.localPosition = Vector3.zero;
+            handGo.transform.localRotation = Quaternion.identity;
+            handGo.transform.localScale = Vector3.one;
+
+            // Perfectly proportioned palm, thumb, fingers, and shaded tips wrapping the held slipper at Y ~ 0.70-0.82
+            AddBoxAccessory(handGo.transform, "Palm", new Vector3(0.082f, 0.085f, 0.038f),
+                new Vector3(0.0f, 0.72f, 0.0f), Quaternion.identity, skinTone);
+            AddBoxAccessory(handGo.transform, "Thumb", new Vector3(0.028f, 0.055f, 0.026f),
+                new Vector3(isRight ? -0.046f : 0.046f, 0.75f, 0.015f), Quaternion.Euler(0, 0, isRight ? 24f : -24f), skinTone);
+            AddBoxAccessory(handGo.transform, "Fingers", new Vector3(0.076f, 0.075f, 0.032f),
+                new Vector3(0.0f, 0.78f, -0.005f), Quaternion.identity, skinTone);
+            AddBoxAccessory(handGo.transform, "FingertipShade", new Vector3(0.072f, 0.032f, 0.024f),
+                new Vector3(0.0f, 0.82f, 0.010f), Quaternion.Euler(-14f, 0, 0), skinDark);
+        }
+
+        private static Vector3 RoundedBoxOffset(float angle, float rx, float rz, float power = 0.5f)
+        {
+            float cos = Mathf.Cos(angle);
+            float sin = Mathf.Sin(angle);
+            float x = Mathf.Sign(cos) * Mathf.Pow(Mathf.Abs(cos), power) * rx;
+            float z = Mathf.Sign(sin) * Mathf.Pow(Mathf.Abs(sin), power) * rz;
+            return new Vector3(x, 0.0f, z);
+        }
+
+        private static Mesh CreateKimonoDrapedSleeveMesh(bool isRight)
+        {
+            var mesh = new Mesh { name = "Nemu_HoodieSleeve" };
+            const int radialSegments = 24;
+            int ringCount = 8;
+
+            // Stepped streetwear hoodie progression (shoulder -> mid-sleeve drop -> flared cuff)
+            float[] ySteps       = { 0.04f, 0.20f, 0.22f, 0.42f, 0.44f, 0.58f, 0.67f, 0.70f };
+            float[] rxSteps      = { 0.100f, 0.115f, 0.135f, 0.150f, 0.170f, 0.188f, 0.198f, 0.202f };
+            float[] rzSteps      = { 0.080f, 0.090f, 0.105f, 0.115f, 0.130f, 0.142f, 0.152f, 0.155f };
+            float[] drapeOffsetZ = { 0.000f, -0.005f, -0.012f, -0.020f, -0.028f, -0.036f, -0.042f, -0.045f };
+
+            var vertices = new Vector3[ringCount * radialSegments];
+            var normals = new Vector3[ringCount * radialSegments];
+            var uvs = new Vector2[ringCount * radialSegments];
+
+            for (int ring = 0; ring < ringCount; ring++)
+            {
+                float y = ySteps[ring];
+                float rx = rxSteps[ring];
+                float rz = rzSteps[ring];
+                float dz = drapeOffsetZ[ring];
+                float ringProgress = (float)ring / (ringCount - 1);
+
+                for (int i = 0; i < radialSegments; i++)
+                {
+                    float angle = (float)i / radialSegments * Mathf.PI * 2.0f;
+                    Vector3 boxPt = RoundedBoxOffset(angle, rx, rz, 0.50f);
+
+                    int idx = ring * radialSegments + i;
+                    vertices[idx] = new Vector3(boxPt.x, y, boxPt.z + dz);
+                    normals[idx] = new Vector3(Mathf.Cos(angle), 0.10f, Mathf.Sin(angle)).normalized;
+                    uvs[idx] = new Vector2((float)i / radialSegments, ringProgress);
+                }
+            }
+
+            int triCount = (ringCount - 1) * radialSegments * 6;
+            var triangles = new int[triCount];
+            int t = 0;
+
+            for (int ring = 0; ring < ringCount - 1; ring++)
+            {
+                for (int i = 0; i < radialSegments; i++)
+                {
+                    int next = (i + 1) % radialSegments;
+                    int b1 = ring * radialSegments + i;
+                    int b2 = ring * radialSegments + next;
+                    int t1 = (ring + 1) * radialSegments + i;
+                    int t2 = (ring + 1) * radialSegments + next;
+
+                    triangles[t++] = b1;
+                    triangles[t++] = t1;
+                    triangles[t++] = b2;
+
+                    triangles[t++] = b2;
+                    triangles[t++] = t1;
+                    triangles[t++] = t2;
+                }
+            }
+
+            mesh.vertices = vertices;
+            mesh.normals = normals;
+            mesh.uv = uvs;
+            mesh.triangles = triangles;
+            mesh.RecalculateBounds();
+            mesh.RecalculateNormals();
+            return mesh;
+        }
+
+        private static Mesh CreateKimonoInnerLiningMesh(bool isRight)
+        {
+            var mesh = new Mesh { name = "Nemu_HoodieInnerLining" };
+            const int radialSegments = 24;
+            int ringCount = 3;
+
+            float[] ySteps       = { 0.69f, 0.58f, 0.46f };
+            float[] rxSteps      = { 0.192f, 0.175f, 0.150f };
+            float[] rzSteps      = { 0.146f, 0.130f, 0.112f };
+            float[] drapeOffsetZ = { -0.043f, -0.035f, -0.026f };
+
+            var vertices = new Vector3[ringCount * radialSegments];
+            var normals = new Vector3[ringCount * radialSegments];
+            var uvs = new Vector2[ringCount * radialSegments];
+
+            for (int ring = 0; ring < ringCount; ring++)
+            {
+                float y = ySteps[ring];
+                float rx = rxSteps[ring];
+                float rz = rzSteps[ring];
+                float dz = drapeOffsetZ[ring];
+
+                for (int i = 0; i < radialSegments; i++)
+                {
+                    float angle = (float)i / radialSegments * Mathf.PI * 2.0f;
+                    Vector3 boxPt = RoundedBoxOffset(angle, rx, rz, 0.50f);
+
+                    int idx = ring * radialSegments + i;
+                    vertices[idx] = new Vector3(boxPt.x, y, boxPt.z + dz);
+                    normals[idx] = -new Vector3(Mathf.Cos(angle), -0.10f, Mathf.Sin(angle)).normalized;
+                    uvs[idx] = new Vector2((float)i / radialSegments, (float)ring / (ringCount - 1));
+                }
+            }
+
+            int triCount = (ringCount - 1) * radialSegments * 6;
+            var triangles = new int[triCount];
+            int t = 0;
+
+            // Inverted winding so normals face inside the sleeve cavity
+            for (int ring = 0; ring < ringCount - 1; ring++)
+            {
+                for (int i = 0; i < radialSegments; i++)
+                {
+                    int next = (i + 1) % radialSegments;
+                    int b1 = ring * radialSegments + i;
+                    int b2 = ring * radialSegments + next;
+                    int t1 = (ring + 1) * radialSegments + i;
+                    int t2 = (ring + 1) * radialSegments + next;
+
+                    triangles[t++] = b1;
+                    triangles[t++] = b2;
+                    triangles[t++] = t1;
+
+                    triangles[t++] = b2;
+                    triangles[t++] = t2;
+                    triangles[t++] = t1;
+                }
+            }
+
+            mesh.vertices = vertices;
+            mesh.normals = normals;
+            mesh.uv = uvs;
+            mesh.triangles = triangles;
+            mesh.RecalculateBounds();
+            return mesh;
+        }
+
+        private static Mesh CreateKimonoCuffRimMesh(bool isRight)
+        {
+            var mesh = new Mesh { name = "Nemu_HoodieCuffRim" };
+            const int radialSegments = 24;
+            int ringCount = 2;
+
+            float[] ySteps       = { 0.67f, 0.71f };
+            float[] rxSteps      = { 0.201f, 0.205f };
+            float[] rzSteps      = { 0.155f, 0.159f };
+            float[] drapeOffsetZ = { -0.042f, -0.045f };
+
+            var vertices = new Vector3[ringCount * radialSegments];
+            var normals = new Vector3[ringCount * radialSegments];
+            var uvs = new Vector2[ringCount * radialSegments];
+
+            for (int ring = 0; ring < ringCount; ring++)
+            {
+                float y = ySteps[ring];
+                float rx = rxSteps[ring];
+                float rz = rzSteps[ring];
+                float dz = drapeOffsetZ[ring];
+
+                for (int i = 0; i < radialSegments; i++)
+                {
+                    float angle = (float)i / radialSegments * Mathf.PI * 2.0f;
+                    Vector3 boxPt = RoundedBoxOffset(angle, rx, rz, 0.50f);
+
+                    int idx = ring * radialSegments + i;
+                    vertices[idx] = new Vector3(boxPt.x, y, boxPt.z + dz);
+                    normals[idx] = new Vector3(Mathf.Cos(angle), 0.10f, Mathf.Sin(angle)).normalized;
+                    uvs[idx] = new Vector2((float)i / radialSegments, (float)ring);
+                }
+            }
+
+            int triCount = radialSegments * 6;
+            var triangles = new int[triCount];
+            int t = 0;
+
+            for (int i = 0; i < radialSegments; i++)
+            {
+                int next = (i + 1) % radialSegments;
+                int b1 = i;
+                int b2 = next;
+                int t1 = radialSegments + i;
+                int t2 = radialSegments + next;
+
+                triangles[t++] = b1;
+                triangles[t++] = t1;
+                triangles[t++] = b2;
+
+                triangles[t++] = b2;
+                triangles[t++] = t1;
+                triangles[t++] = t2;
+            }
+
+            mesh.vertices = vertices;
+            mesh.normals = normals;
+            mesh.uv = uvs;
+            mesh.triangles = triangles;
+            mesh.RecalculateBounds();
+            mesh.RecalculateNormals();
+            return mesh;
         }
 
         // -------------------------------------------------------------------
@@ -980,7 +1278,6 @@ namespace TumbangPreso.CameraSystem
         {
             var greenShirt = new Color(0.247f, 0.561f, 0.361f, 1.0f);
             var greenFold = new Color(0.20f, 0.46f, 0.30f, 1.0f);
-            var tattooDark = new Color(0.22f, 0.22f, 0.24f, 1.0f);
             var wristLeather = new Color(0.447f, 0.271f, 0.173f, 1.0f);
 
             // 1. Forest green rolled t-shirt sleeve
@@ -989,13 +1286,7 @@ namespace TumbangPreso.CameraSystem
             AddCylinderAccessory(arm, "GreenSleeveFold", 0.152f, 0.152f, 0.05f, 12,
                 new Vector3(0.0f, 0.26f, 0.0f), Quaternion.identity, greenFold);
 
-            // 2. Tribal tattoo band marking around upper forearm
-            AddCylinderAccessory(arm, "TribalTattooBand", 0.138f, 0.138f, 0.06f, 12,
-                new Vector3(0.0f, 0.38f, 0.0f), Quaternion.identity, tattooDark);
-            AddBoxAccessory(arm, "TribalPattern1", new Vector3(0.04f, 0.05f, 0.015f),
-                new Vector3(0.0f, 0.43f, 0.135f), Quaternion.Euler(0, 0, 45.0f), tattooDark);
-
-            // 3. Leather athletic wristband on right wrist
+            // 2. Leather athletic wristband on right wrist
             if (isRight)
             {
                 AddCylinderAccessory(arm, "LeatherWristband", 0.146f, 0.146f, 0.08f, 12,
@@ -1415,13 +1706,43 @@ namespace TumbangPreso.CameraSystem
         /// The idle breathe. Two arms, slightly different swings and the same period, so they
         /// move together without moving identically.
         /// </summary>
-        private void LateUpdate()
+        /// <summary>
+        /// The idle breathe. Two arms, slightly different swings and the same period, so they
+        /// move together without moving identically.
+        /// </summary>
+        private void LateUpdate() => StepVisuals(Time.deltaTime);
+
+        public void StepVisuals(float dt, bool snap = false)
         {
-            _phase += Time.deltaTime;
+            _phase += dt;
 
             // § THE ACTION CLIPS, stepped before the pose below so a throw reads over whatever
             // the pivot is doing rather than under it.
-            StepAction(Time.deltaTime);
+            StepAction(dt);
+
+            // Step dynamic cloth physics for baggy sleeves (Nemu / baggy clothing)
+            Vector3 worldVel = _characterMotor != null ? _characterMotor.Velocity : Vector3.zero;
+            Vector2 lookDelta = Vector2.zero;
+            if (Application.isPlaying)
+            {
+                lookDelta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+            }
+            float vertAccel = 0.0f;
+            if (_characterMotor != null && !_characterMotor.IsGrounded)
+            {
+                vertAccel = -9.81f;
+            }
+
+            if (snap)
+            {
+                if (_rightClothPhysics != null) _rightClothPhysics.ResetPose();
+                if (_leftClothPhysics != null) _leftClothPhysics.ResetPose();
+            }
+            else
+            {
+                if (_rightClothPhysics != null) _rightClothPhysics.StepSimulation(dt, worldVel, lookDelta, vertAccel);
+                if (_leftClothPhysics != null) _leftClothPhysics.StepSimulation(dt, worldVel, lookDelta, vertAccel);
+            }
 
             float t = Mathf.Sin(_phase / IdlePeriod * Mathf.PI * 2.0f);
 
@@ -1439,10 +1760,19 @@ namespace TumbangPreso.CameraSystem
 
             if (!_carrying)
             {
-                StepToward(_rightRestPos,
-                           _rightRest * Quaternion.Euler(-t * IdleRightSwing * Mathf.Rad2Deg, 0.0f,
-                                                         t * 0.02f * Mathf.Rad2Deg),
-                           _rightRestScale);
+                if (snap)
+                {
+                    _rightPivot.localPosition = _rightRestPos;
+                    _rightPivot.localRotation = _rightRest * Quaternion.Euler(-t * IdleRightSwing * Mathf.Rad2Deg, 0.0f, t * 0.02f * Mathf.Rad2Deg);
+                    _rightPivot.localScale = _rightRestScale;
+                }
+                else
+                {
+                    StepToward(_rightRestPos,
+                               _rightRest * Quaternion.Euler(-t * IdleRightSwing * Mathf.Rad2Deg, 0.0f,
+                                                             t * 0.02f * Mathf.Rad2Deg),
+                               _rightRestScale, dt);
+                }
                 return;
             }
 
@@ -1463,13 +1793,22 @@ namespace TumbangPreso.CameraSystem
             Vector3 right = Vector3.Cross(dir, reference).normalized;
             Vector3 forward = Vector3.Cross(right, dir).normalized;
 
-            StepToward(elbow, Quaternion.LookRotation(forward, dir), Vector3.one * CarryScale);
+            if (snap)
+            {
+                _rightPivot.localPosition = elbow;
+                _rightPivot.localRotation = Quaternion.LookRotation(forward, dir);
+                _rightPivot.localScale = Vector3.one * CarryScale;
+            }
+            else
+            {
+                StepToward(elbow, Quaternion.LookRotation(forward, dir), Vector3.one * CarryScale, dt);
+            }
         }
 
-        private void StepToward(Vector3 position, Quaternion rotation, Vector3 scale)
+        private void StepToward(Vector3 position, Quaternion rotation, Vector3 scale, float dt)
         {
             if (_rightPivot == null) return;
-            float k = Mathf.Clamp01(ReachSpeed * Time.deltaTime);
+            float k = Mathf.Clamp01(ReachSpeed * dt);
 
             _rightPivot.localPosition = Vector3.Lerp(_rightPivot.localPosition, position, k);
             _rightPivot.localRotation = Quaternion.Slerp(_rightPivot.localRotation, rotation, k);

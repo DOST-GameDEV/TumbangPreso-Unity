@@ -44,6 +44,55 @@ namespace TumbangPreso.UI
 
         /// <summary>Changes the tsinelas rather than the world. Overcharge, curve, empower.</summary>
         Empower,
+
+        // -------------------------------------------------------------------
+        // BESPOKE HERO GLYPHS (Unique across all 15 abilities)
+        // -------------------------------------------------------------------
+
+        /// <summary>Dante Skill 1: Seismic Stomp (Heavy downward ground slam with shockwaves).</summary>
+        DanteStomp,
+
+        /// <summary>Dante Skill 2: Demonic Carapace (Solid heavy armored crest).</summary>
+        DanteShield,
+
+        /// <summary>Dante Ultimate: Titan Fissure (Jagged tectonic ground split).</summary>
+        DanteFissure,
+
+        /// <summary>Sean Skill 1: Flame Rush (Forward flame rocket chevrons).</summary>
+        SeanRush,
+
+        /// <summary>Sean Skill 2: Ignition Cannon (Empowered flaming fireball / throw).</summary>
+        SeanIgnite,
+
+        /// <summary>Sean Ultimate: Supernova (High-impact 8-point explosive supernova star).</summary>
+        SeanSupernova,
+
+        /// <summary>Cheska Skill 1: Permafrost Sheet (Frosted ice ground zone with crystal shards).</summary>
+        CheskaFrostSheet,
+
+        /// <summary>Cheska Skill 2: Ice Barricade (Three crystalline ice pillars).</summary>
+        CheskaBarricade,
+
+        /// <summary>Cheska Ultimate: Glacial Nova (6-point radial blizzard snowflake).</summary>
+        CheskaNova,
+
+        /// <summary>Zack Skill 1: Bolt Sprint (Dynamic high-speed lightning streak bolt).</summary>
+        ZackSprint,
+
+        /// <summary>Zack Skill 2: Static Charge (Electrified spark core with orbital charge arcs).</summary>
+        ZackOvercharge,
+
+        /// <summary>Zack Ultimate: Thunderstrike (Overhead thundercloud with downward lightning strike).</summary>
+        ZackThunderstrike,
+
+        /// <summary>Nemu Skill 1: Ghost Step (Crescent moon spirit phase).</summary>
+        NemuPhase,
+
+        /// <summary>Nemu Skill 2: Astral Projection (Kuro the ghost companion pet silhouette).</summary>
+        NemuAstralPet,
+
+        /// <summary>Nemu Ultimate: Seance Void (Gravitational swirling spiral vortex).</summary>
+        NemuSeanceVoid,
     }
 
     /// <summary>
@@ -85,16 +134,45 @@ namespace TumbangPreso.UI
         {
             switch (glyph)
             {
-                case AbilityGlyph.Zone: return "GROUND ZONE";
-                case AbilityGlyph.Wall: return "BLOCKER";
-                case AbilityGlyph.Dash: return "MOBILITY";
-                case AbilityGlyph.Shield: return "PROTECTION";
-                case AbilityGlyph.Burst: return "AREA BURST";
-                case AbilityGlyph.Projectile: return "PROJECTILE";
-                case AbilityGlyph.Phase: return "EVASION";
-                case AbilityGlyph.Slam: return "FROM ABOVE";
-                case AbilityGlyph.Empower: return "TSINELAS BUFF";
-                default: return "POWER";
+                case AbilityGlyph.Zone:
+                case AbilityGlyph.CheskaFrostSheet:
+                    return "GROUND ZONE";
+                case AbilityGlyph.Wall:
+                case AbilityGlyph.CheskaBarricade:
+                    return "BLOCKER";
+                case AbilityGlyph.Dash:
+                case AbilityGlyph.SeanRush:
+                case AbilityGlyph.ZackSprint:
+                    return "MOBILITY";
+                case AbilityGlyph.Shield:
+                case AbilityGlyph.DanteShield:
+                    return "PROTECTION";
+                case AbilityGlyph.Burst:
+                case AbilityGlyph.SeanSupernova:
+                case AbilityGlyph.CheskaNova:
+                    return "AREA BURST";
+                case AbilityGlyph.Projectile:
+                    return "PROJECTILE";
+                case AbilityGlyph.Phase:
+                case AbilityGlyph.NemuPhase:
+                    return "EVASION";
+                case AbilityGlyph.Slam:
+                case AbilityGlyph.DanteStomp:
+                    return "FROM ABOVE";
+                case AbilityGlyph.Empower:
+                case AbilityGlyph.SeanIgnite:
+                case AbilityGlyph.ZackOvercharge:
+                    return "TSINELAS BUFF";
+                case AbilityGlyph.DanteFissure:
+                    return "SEISMIC CRACK";
+                case AbilityGlyph.ZackThunderstrike:
+                    return "LIGHTNING STRIKE";
+                case AbilityGlyph.NemuAstralPet:
+                    return "GHOST COMPANION";
+                case AbilityGlyph.NemuSeanceVoid:
+                    return "SEANCE VOID";
+                default:
+                    return "POWER";
             }
         }
 
@@ -136,111 +214,105 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// The nine glyphs, as signed-distance coverage in a -1..1 square.
-        ///
-        /// ⚠️⚠️ REDRAWN 2026-08-23 BECAUSE THEY WERE UNREADABLE AT THE SIZE THEY ARE ACTUALLY
-        /// DRAWN. A deck tile is 70 x 58 with the glyph inset to about 50 x 38, so a 128 px
-        /// sprite lands on screen at roughly 40 px. The old set was line art at 0.06 to 0.09
-        /// stroke, which is 4 to 6 texture pixels, which is ONE AND A HALF SCREEN PIXELS after
-        /// the downscale. Every one of them mushed into a grey smudge, and the Zone glyph in
-        /// particular (two concentric rings, a diamond and two tick markers) came out as a
-        /// three pixel funnel.
-        ///
-        /// ⚠️⚠️ THE RULES THAT REPLACED IT, AND THEY ARE THE VALORANT AND OVERWATCH RULES:
-        ///
-        ///   1. **One stroke weight, and it is fat.** `Stroke` below is 0.16 of the half-square,
-        ///      which is about 10 texture pixels and 3 screen pixels. Nothing is thinner.
-        ///   2. **At most three elements.** A glyph is recognised by SILHOUETTE, and detail
-        ///      inside the silhouette is invisible at 40 px. Every marker, notch, secondary ring
-        ///      and twin trail is gone.
-        ///   3. **Solid mass beats outline.** A filled shield reads instantly; a shield drawn as
-        ///      a rim reads as a ring.
-        ///
-        /// The test is whether it survives at 24 px. If a change fails that, it fails.
+        /// The glyph shapes, as signed-distance coverage in a -1..1 square.
         /// </summary>
         private static float Coverage(AbilityGlyph glyph, float u, float v)
         {
             switch (glyph)
             {
                 case AbilityGlyph.Zone:
-                    // A patch of ground, seen at an angle, with a marked spot in the middle.
-                    // ⚠️ THE CORE IS SMALL. At 0.30 by 0.17 the ring and the core were close
-                    // enough in size to read as an EYE, which is a different icon entirely.
-                    // ⚠️⚠️ THE CENTRE DOT IS GONE, AND THAT IS WHAT STOPPED IT BEING AN EYE. A
-                    // thick ellipse ring with a small dot inside it IS the eye icon, in every
-                    // icon set there has ever been, and rounding the ellipse off did not shift
-                    // the read at all: the pupil was doing the work. Two rounds of contact sheet
-                    // to find that out, which is the whole argument for rendering every change.
-                    //
-                    // ⚠️ AND A BARE RING IS THE RIGHT ANSWER ANYWAY, because it is what the
-                    // ability actually PUTS ON THE COURT. `GroundReticle` draws a rim and a
-                    // translucent fill; the glyph is now a small picture of the telegraph the
-                    // player is about to see, rather than a symbol they have to learn separately.
                     return EllipseRing(u, v, 0.82f, 0.54f, 0.26f);
 
                 case AbilityGlyph.Wall:
-                    // Three slabs standing on one line. The line is what says "placed", and the
-                    // uneven heights are what stop it reading as a bar chart.
                     return Mathf.Max(Mathf.Max(
                         Box(u + 0.44f, v + 0.16f, 0.18f, 0.50f),
                         Box(u, v - 0.02f, 0.20f, 0.68f)),
                         Box(u - 0.44f, v + 0.16f, 0.18f, 0.50f));
 
                 case AbilityGlyph.Dash:
-                    // Two fat chevrons. Motion, pointing the way the caster goes.
                     return Mathf.Max(
                         Chevron(u - 0.30f, v, 0.62f, Stroke),
                         Chevron(u + 0.16f, v, 0.62f, Stroke));
 
                 case AbilityGlyph.Shield:
-                    // A solid crest, and nothing inside it.
-                    // ⚠️⚠️ THE KNOCKED-OUT BAND WAS CUTTING IT IN HALF. At 40 px the gap read
-                    // as two shapes stacked on each other, and with the sharp taper below it the
-                    // lower half came out as a funnel. A shield is recognised by its SILHOUETTE
-                    // (flat top, straight shoulders, point at the bottom), so the fix is to stop
-                    // putting anything inside the silhouette at all.
+                case AbilityGlyph.DanteShield:
                     return Crest(u, v, 1.36f, 1.72f);
 
                 case AbilityGlyph.Burst:
-                    // Solid core, six fat rays. Six rather than eight: at 40 px, eight spokes
-                    // touch each other at the hub and the whole thing fills in as a disc.
                     return Mathf.Max(
                         Disc(u, v, 0.26f),
                         Spokes(u, v, 6, 0.40f, 0.94f, Stroke));
 
                 case AbilityGlyph.Projectile:
-                    // A head, a gap, and ONE trail behind it.
-                    // ⚠️⚠️ THE GAP IS THE ICON. Butted straight against its trail the head
-                    // stopped being a projectile and became the bell of a trumpet: one
-                    // continuous shape that flares. Separated, the eye reads a thing that has
-                    // LEFT something behind, which is what a projectile is.
                     return Mathf.Max(
                         RightTriangle(u - 0.30f, v, 0.44f, 0.60f),
                         Box(u + 0.60f, v, 0.26f, Stroke * 0.55f));
 
                 case AbilityGlyph.Phase:
-                    // A thick crescent with the caster half gone: here and not here at once.
+                case AbilityGlyph.NemuPhase:
+                    // A thick crescent with the caster half gone
                     return Mathf.Max(
                         Sub(Disc(u, v, 0.84f), Disc(u - 0.34f, v + 0.05f, 0.76f)),
                         Disc(u - 0.40f, v - 0.14f, 0.17f));
 
                 case AbilityGlyph.Slam:
-                    // Down arrow onto a line at the BOTTOM.
-                    // ⚠️⚠️ IT WAS UPSIDE DOWN, AND THE RENDER IS WHAT CAUGHT IT. Box(u, v - k)
-                    // centres at v = +k and v runs UP the texture, so the ground line sat at the
-                    // TOP of the tile with the arrow hanging below it: a thing dangling off a
-                    // ceiling rather than a slam coming down onto the court. Exactly why every
-                    // glyph change gets a picture (CLAUDE.md 6.1).
+                case AbilityGlyph.DanteStomp:
+                    // Down arrow/stomp slamming onto a ground bar
                     return Mathf.Max(Mathf.Max(
                         Box(u, v - 0.27f, Stroke, 0.45f),
                         DownTriangle(u, v + 0.18f, 0.46f, 0.44f)),
                         Box(u, v + 0.80f, 0.66f, 0.11f));
 
                 case AbilityGlyph.Empower:
-                    // A bolt, drawn as one solid stroke rather than a rimmed diamond with a
-                    // spike inside it. Three capsules meeting end to end, so the joints are
-                    // round and it holds together when it is four pixels wide.
+                case AbilityGlyph.ZackSprint:
                     return Bolt(u, v);
+
+                case AbilityGlyph.DanteFissure:
+                    // Jagged vertical split crack with branching fissures
+                    return FissureCrack(u, v);
+
+                case AbilityGlyph.SeanRush:
+                    // High-thrust flame chevrons
+                    return Mathf.Max(Mathf.Max(
+                        Chevron(u - 0.36f, v, 0.68f, Stroke * 1.15f),
+                        Chevron(u + 0.08f, v, 0.68f, Stroke * 1.15f)),
+                        RightTriangle(u + 0.62f, v, 0.30f, 0.36f));
+
+                case AbilityGlyph.SeanIgnite:
+                    // Flaming slipper / rising flame silhouette
+                    return FlameBurst(u, v);
+
+                case AbilityGlyph.SeanSupernova:
+                    // 8-ray brilliant exploding star
+                    return SupernovaStar(u, v);
+
+                case AbilityGlyph.CheskaFrostSheet:
+                    // Elliptical frost ring with diagonal crystal facets
+                    return FrostSheet(u, v);
+
+                case AbilityGlyph.CheskaBarricade:
+                    // 3 sharp crystalline ice pillars
+                    return IceBarricade(u, v);
+
+                case AbilityGlyph.CheskaNova:
+                    // 6-point snowflake
+                    return Snowflake(u, v);
+
+                case AbilityGlyph.ZackOvercharge:
+                    // Static charge orb with orbiting electric sparks
+                    return StaticOrb(u, v);
+
+                case AbilityGlyph.ZackThunderstrike:
+                    // Storm cloud striking lightning down
+                    return ThunderstrikeCloud(u, v);
+
+                case AbilityGlyph.NemuAstralPet:
+                    // Kuro the ghost companion pet silhouette
+                    return KuroGhostPet(u, v);
+
+                case AbilityGlyph.NemuSeanceVoid:
+                    // Swirling spiral seance vortex
+                    return SpiralVoid(u, v);
 
                 default:
                     return Disc(u, v, 0.62f);
@@ -267,10 +339,6 @@ namespace TumbangPreso.UI
 
         private static float Sub(float shape, float hole) => Mathf.Clamp01(shape - hole);
 
-        // ⚠️ `Ring` AND `Diamond` WERE DELETED WITH THE OLD LINE-ART SET, NOT MISLAID. Both drew
-        // strokes thinner than `Stroke` by construction and neither survived the 24 px test, so
-        // keeping them around as primitives would only make the next glyph easy to draw badly.
-
         private static float Disc(float u, float v, float r)
             => Edge(Mathf.Sqrt(u * u + v * v) - r);
 
@@ -295,10 +363,6 @@ namespace TumbangPreso.UI
 
         /// <summary>
         /// A capsule between two points.
-        ///
-        /// ⚠️ THE ROUND CAPS ARE WHY THE BOLT SURVIVES BEING FOUR PIXELS WIDE. Three boxes
-        /// meeting at an angle leave a notch at every joint, and a notch at this size is a break
-        /// in the stroke.
         /// </summary>
         private static float Segment(float u, float v, float ax, float ay, float bx, float by,
                                      float halfThickness)
@@ -337,14 +401,6 @@ namespace TumbangPreso.UI
             return Edge(Mathf.Abs(u) - halfW * t);
         }
 
-        /// <summary>
-        /// A triangle whose POINT is at the +u end and whose base is at -u.
-        ///
-        /// ⚠️⚠️ IT USED TO POINT BACKWARDS, AND ONLY THE CONTACT SHEET SHOWED IT. The taper ran
-        /// the other way, so the projectile glyph was a left-pointing wedge sitting to the right
-        /// of its own trail: an arrow flying away from the streak it had supposedly left. It
-        /// looked deliberate enough at 128 px to survive a code read.
-        /// </summary>
         private static float RightTriangle(float u, float v, float halfH, float length)
         {
             if (u < -length || u > 0.0f) return 0.0f;
@@ -359,11 +415,6 @@ namespace TumbangPreso.UI
             if (v > height * 0.5f || v < -height * 0.5f) return 0.0f;
 
             float t = Mathf.InverseLerp(height * 0.5f, -height * 0.5f, v);
-            // ⚠️⚠️ THE EXPONENT IS THE DIFFERENCE BETWEEN A SHIELD AND A PENNANT. A crest is
-            // recognised by STRAIGHT SHOULDERS that hold almost full width for the top half and
-            // then break to a point. At 1.55 the width was already down to 66% at half height,
-            // which is a triangle with a rounded top; at 4.0 it is still 94% there and the taper
-            // happens in the bottom third, where it belongs.
             float curve = 1.0f - Mathf.Pow(t, 4.0f);
             return Edge(Mathf.Abs(u) - width * 0.5f * Mathf.Max(0.02f, curve));
         }
@@ -387,5 +438,121 @@ namespace TumbangPreso.UI
 
             return best;
         }
+
+        // ------------------------------------------------------------------ bespoke helpers
+
+        private static float FissureCrack(float u, float v)
+        {
+            float s1 = Segment(u, v, 0.05f, 0.85f, -0.15f, 0.20f, Stroke * 0.9f);
+            float s2 = Segment(u, v, -0.15f, 0.20f, 0.15f, -0.25f, Stroke * 0.9f);
+            float s3 = Segment(u, v, 0.15f, -0.25f, -0.05f, -0.85f, Stroke * 0.9f);
+            float b1 = Segment(u, v, -0.15f, 0.20f, -0.65f, 0.45f, Stroke * 0.75f);
+            float b2 = Segment(u, v, 0.15f, -0.25f, 0.65f, -0.40f, Stroke * 0.75f);
+            return Mathf.Max(Mathf.Max(s1, s2), Mathf.Max(s3, Mathf.Max(b1, b2)));
+        }
+
+        private static float FlameBurst(float u, float v)
+        {
+            float body = EllipseDisc(u, v + 0.18f, 0.45f, 0.55f);
+            float tip = DownTriangle(u, v - 0.42f, 0.32f, 0.65f);
+            float leftSpur = Segment(u, v, -0.25f, -0.05f, -0.52f, 0.30f, Stroke * 0.85f);
+            float rightSpur = Segment(u, v, 0.25f, -0.05f, 0.52f, 0.25f, Stroke * 0.85f);
+            return Mathf.Max(Mathf.Max(body, tip), Mathf.Max(leftSpur, rightSpur));
+        }
+
+        private static float SupernovaStar(float u, float v)
+        {
+            float core = Disc(u, v, 0.28f);
+            float s4 = Spokes(u, v, 4, 0.24f, 0.92f, Stroke * 1.25f);
+            float d4 = Spokes(u * 0.7071f - v * 0.7071f, u * 0.7071f + v * 0.7071f, 4, 0.24f, 0.72f, Stroke * 0.85f);
+            return Mathf.Max(core, Mathf.Max(s4, d4));
+        }
+
+        private static float FrostSheet(float u, float v)
+        {
+            float ring = EllipseRing(u, v, 0.85f, 0.50f, Stroke * 1.1f);
+            float shard1 = Box(u + 0.25f, v, 0.10f, 0.28f);
+            float shard2 = Box(u - 0.25f, v, 0.10f, 0.28f);
+            float centerDot = Disc(u, v, 0.16f);
+            return Mathf.Max(Mathf.Max(ring, shard1), Mathf.Max(shard2, centerDot));
+        }
+
+        private static float IceBarricade(float u, float v)
+        {
+            float c1 = Box(u, v - 0.05f, 0.18f, 0.68f);
+            float t1 = DownTriangle(u, v - 0.73f, 0.18f, 0.22f);
+            float l1 = Box(u + 0.44f, v + 0.15f, 0.16f, 0.48f);
+            float lt1 = DownTriangle(u + 0.44f, v - 0.33f, 0.16f, 0.18f);
+            float r1 = Box(u - 0.44f, v + 0.15f, 0.16f, 0.48f);
+            float rt1 = DownTriangle(u - 0.44f, v - 0.33f, 0.16f, 0.18f);
+            return Mathf.Max(Mathf.Max(c1, t1), Mathf.Max(Mathf.Max(l1, lt1), Mathf.Max(r1, rt1)));
+        }
+
+        private static float Snowflake(float u, float v)
+        {
+            float rays = Spokes(u, v, 6, 0.0f, 0.90f, Stroke * 0.85f);
+            float ring = EllipseRing(u, v, 0.38f, 0.38f, Stroke * 0.75f);
+            float center = Disc(u, v, 0.18f);
+            return Mathf.Max(Mathf.Max(rays, ring), center);
+        }
+
+        private static float StaticOrb(float u, float v)
+        {
+            float core = Disc(u, v, 0.30f);
+            float orbit = EllipseRing(u, v, 0.72f, 0.72f, Stroke * 0.85f);
+            float n1 = Disc(u - 0.62f, v, 0.14f);
+            float n2 = Disc(u + 0.62f, v, 0.14f);
+            float n3 = Disc(u, v - 0.62f, 0.14f);
+            float n4 = Disc(u, v + 0.62f, 0.14f);
+            return Mathf.Max(Mathf.Max(core, orbit), Mathf.Max(Mathf.Max(n1, n2), Mathf.Max(n3, n4)));
+        }
+
+        private static float ThunderstrikeCloud(float u, float v)
+        {
+            // Storm cloud at the top (v < 0 in Unity texture coords is bottom, v > 0 is top)
+            float c1 = Disc(u - 0.32f, v - 0.38f, 0.28f);
+            float c2 = Disc(u + 0.32f, v - 0.38f, 0.28f);
+            float c3 = Disc(u, v - 0.46f, 0.34f);
+            float cloud = Mathf.Max(c1, Mathf.Max(c2, c3));
+
+            // Heavy lightning bolt striking down from cloud base
+            float boltTop = Segment(u, v, 0.08f, 0.20f, -0.22f, -0.22f, Stroke * 0.85f);
+            float boltCross = Segment(u, v, -0.22f, -0.22f, 0.14f, -0.26f, Stroke * 0.85f);
+            float boltBot = Segment(u, v, 0.14f, -0.26f, -0.06f, -0.88f, Stroke * 0.85f);
+            float strike = Mathf.Max(boltTop, Mathf.Max(boltCross, boltBot));
+
+            return Mathf.Max(cloud, strike);
+        }
+
+        private static float KuroGhostPet(float u, float v)
+        {
+            // Head and body
+            float head = Disc(u, v - 0.08f, 0.46f);
+            float earL = DownTriangle(u - 0.26f, v - 0.42f, 0.15f, 0.24f);
+            float earR = DownTriangle(u + 0.26f, v - 0.42f, 0.15f, 0.24f);
+            float body = Box(u, v + 0.18f, 0.46f, 0.26f);
+            float lobes = Mathf.Max(
+                Disc(u - 0.30f, v + 0.44f, 0.16f),
+                Mathf.Max(Disc(u, v + 0.44f, 0.16f), Disc(u + 0.30f, v + 0.44f, 0.16f)));
+
+            float ghost = Mathf.Max(head, Mathf.Max(body, Mathf.Max(lobes, Mathf.Max(earL, earR))));
+
+            // Cut out cute ghost eyes
+            float eyeL = Disc(u - 0.16f, v - 0.10f, 0.09f);
+            float eyeR = Disc(u + 0.16f, v - 0.10f, 0.09f);
+
+            return Sub(ghost, Mathf.Max(eyeL, eyeR));
+        }
+
+        private static float SpiralVoid(float u, float v)
+        {
+            float core = Disc(u, v, 0.22f);
+            float r1 = EllipseRing(u, v, 0.50f, 0.50f, Stroke * 0.70f);
+            float r2 = EllipseRing(u, v, 0.82f, 0.82f, Stroke * 0.85f);
+            float spiral1 = Segment(u, v, 0.0f, 0.20f, 0.65f, 0.45f, Stroke * 0.75f);
+            float spiral2 = Segment(u, v, 0.0f, -0.20f, -0.65f, -0.45f, Stroke * 0.75f);
+            return Mathf.Max(core, Mathf.Max(Mathf.Max(r1, r2), Mathf.Max(spiral1, spiral2)));
+        }
     }
 }
+

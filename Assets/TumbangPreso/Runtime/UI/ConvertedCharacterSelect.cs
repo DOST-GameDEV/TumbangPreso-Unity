@@ -570,8 +570,8 @@ namespace TumbangPreso.UI
             if (_glowImage == null) return;
 
             var bayanBlue = new Color(0.64f, 0.75f, 1.0f, 1.0f);
-            if (_tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike)
-                _glowImage.color = Color.Lerp(bayanBlue, UiTheme.ColorForHero(entry.Id), 0.52f);
+            if (entry != null && _tab == 0)
+                _glowImage.color = Color.Lerp(bayanBlue, UiTheme.ColorForHero(entry.Id), 0.65f);
             else
                 _glowImage.color = bayanBlue;
         }
@@ -629,7 +629,7 @@ namespace TumbangPreso.UI
                 case "cheska": return "Ice / Frost Striker. Controls the court with permafrost slip zones, crystal ice barricades, and glacial freeze.";
                 case "sean": return "Fire / Explosive Powerhouse. High-octane kinetic charge, explosive slipper cannons, and crater-smashing ultimates.";
                 case "zack": return "Electric / Lightning Skater. High-speed electric dash, overcharged lightning throws, and thunderstrike overdrive.";
-                case "nemu": return "Spirit / Ghost Summoner. Phases between dimensions, summons spectral companion ghosts, and creates drowsy seance voids.";
+                case "nemu": return "Spirit / Ghost Summoner. Phases between dimensions, commands spectral companion Kuro, and creates drowsy seance voids.";
 
                 // Classic Roster
                 case "bayan":

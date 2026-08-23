@@ -24,7 +24,7 @@ namespace TumbangPreso.Abilities
             public PermafrostSheetAbility()
                 : base("cheska_skill1", "PERMAFROST SHEET",
                        "Freezes a patch of court in front of you. Anyone who runs across it loses their footing and slides.",
-                       7.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Zone,
+                       7.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.CheskaFrostSheet,
                        summary: "Frost patch ahead. Whoever crosses it slides.",
                        telegraphRadius: 2.3f, telegraphRange: 2.8f,
                        castAction: "hero-cheska-frostwave",
@@ -58,7 +58,7 @@ namespace TumbangPreso.Abilities
             public IceBarricadeAbility()
                 : base("cheska_skill2", "ICE BARRICADE",
                        "Raises three ice pillars in front of you. Bodies and thrown tsinelas both stop at them, so the lata gets time.",
-                       9.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Wall,
+                       9.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.CheskaBarricade,
                        summary: "Three ice pillars ahead. Bodies and tsinelas stop at them.",
                        telegraphRadius: 1.6f, telegraphRange: 2.2f,
                        castAction: "hero-cheska-raise",
@@ -94,7 +94,7 @@ namespace TumbangPreso.Abilities
             public GlacialShatterBurstAbility()
                 : base("cheska_ultimate", "GLACIAL NOVA",
                        "Freezes everyone standing near you and blows the loose tsinelas away. Your way out when the whole court is on you.",
-                       0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Burst,
+                       0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.CheskaNova,
                        summary: "Freezes everyone near you and clears the tsinelas away.",
                        telegraphRadius: 4.6f, telegraphRange: 0.0f,
                        castAction: "hero-cheska-nova",

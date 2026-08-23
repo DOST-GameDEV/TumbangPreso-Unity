@@ -94,6 +94,16 @@ namespace TumbangPreso
 
             var intent = _motor.Intent;
 
+            var visual = _motor.GetComponent<Visual.CharacterVisual>();
+            if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
+            {
+                // Human controls Kuro the companion pet
+                visual.Companion.SetPlayerInput(_move.ReadValue<Vector2>());
+                // Allow skill2 recast to teleport and end possession
+                if (_skill2 != null) intent.Set(Verb.Skill2, _skill2.IsPressed());
+                return;
+            }
+
             intent.Move = _move.ReadValue<Vector2>();
             intent.Set(Verb.Sprint, _sprint.IsPressed());
             intent.Set(Verb.Jump, _jump.IsPressed());

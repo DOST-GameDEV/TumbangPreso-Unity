@@ -379,6 +379,18 @@ namespace TumbangPreso.CameraSystem
 
             if (_emoteView) { StepEmoteLook(); ApplyEmoteView(); return; }
 
+            var visual = _character.GetComponent<Visual.CharacterVisual>();
+            var companion = visual != null ? visual.Companion : null;
+            bool isPossessingCompanion = companion != null && companion.IsPossessed;
+
+            if (isPossessingCompanion)
+            {
+                StepCompanionLook(companion);
+                ApplyCompanionPossessionView(companion);
+                StepShake();
+                return;
+            }
+
             StepLook();
 
             if (_mode == CameraMode.Fpp) ApplyFpp();
@@ -386,6 +398,40 @@ namespace TumbangPreso.CameraSystem
 
             StepShake();
             StepViewmodelKick();
+        }
+
+        private void StepCompanionLook(Visual.GhostPetCompanion companion)
+        {
+            if (_aimSource != AimSource.Mouse) return;
+            if (UI.EmoteWheel.AnyOpen) return;
+
+            var s = Settings.SettingsStore.Current;
+            float sens = BaseSensitivity * s.MouseSensitivity;
+
+            float dx = Input.GetAxisRaw("Mouse X") * sens;
+            float dy = Input.GetAxisRaw("Mouse Y") * sens;
+            if (s.InvertY) dy = -dy;
+
+            if (Mathf.Abs(dx) > 0.0001f && companion != null)
+                companion.transform.Rotate(Vector3.up, dx * 10.0f, Space.World);
+
+            _pitchDeg = Mathf.Clamp(_pitchDeg - dy * 10.0f, PitchMinDeg, PitchMaxDeg);
+        }
+
+        private void ApplyCompanionPossessionView(Visual.GhostPetCompanion companion)
+        {
+            if (companion == null) return;
+
+            // Hide human FPP viewmodel arms while possessing companion pet
+            if (_viewmodel != null && _viewmodel.gameObject.activeSelf)
+                _viewmodel.gameObject.SetActive(false);
+
+            float yaw = companion.transform.eulerAngles.y;
+            Vector3 mount = companion.transform.position + Vector3.up * 0.35f;
+            var rot = Quaternion.Euler(Mathf.Clamp(_pitchDeg, -45.0f, 65.0f), yaw, 0.0f);
+            Vector3 wanted = mount - (rot * Vector3.forward) * 2.0f;
+
+            transform.SetPositionAndRotation(wanted, rot);
         }
 
         private void StepLook()

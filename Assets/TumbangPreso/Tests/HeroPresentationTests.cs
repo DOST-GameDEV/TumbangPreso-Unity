@@ -549,6 +549,41 @@ namespace TumbangPreso.Tests
                 $"places the effect {range} m ahead");
         }
 
+        [Test]
+        public void EveryAbilityAcrossAllHeroesHasAUniqueBespokeGlyph()
+        {
+            var seenGlyphs = new HashSet<AbilityGlyph>();
+            int totalAbilities = 0;
+
+            foreach (string hero in Heroes)
+            {
+                var kit = HeroAbilitySystem.CreateKitFor(hero);
+                var abilities = new[] { kit.Skill1, kit.Skill2, kit.Ultimate };
+
+                foreach (var ability in abilities)
+                {
+                    totalAbilities++;
+                    Assert.IsTrue(System.Enum.IsDefined(typeof(AbilityGlyph), ability.Glyph),
+                        $"{hero} {ability.Name} has an undefined glyph value: {ability.Glyph}");
+
+                    Assert.IsFalse(seenGlyphs.Contains(ability.Glyph),
+                        $"Duplicate glyph detected! {hero}'s ability '{ability.Name}' reuses glyph {ability.Glyph}, which is already used by another ability.");
+
+                    seenGlyphs.Add(ability.Glyph);
+
+                    // Ensure Sprite generation works and has a non-empty label
+                    var sprite = AbilityIcons.For(ability.Glyph);
+                    Assert.IsNotNull(sprite, $"AbilityIcons.For returned null for glyph {ability.Glyph}");
+
+                    string label = AbilityIcons.LabelFor(ability.Glyph);
+                    Assert.IsNotEmpty(label, $"AbilityIcons.LabelFor returned empty for glyph {ability.Glyph}");
+                }
+            }
+
+            Assert.AreEqual(15, totalAbilities, "Expected 15 total abilities across 5 heroes");
+            Assert.AreEqual(15, seenGlyphs.Count, "Expected 15 unique glyphs across 15 abilities");
+        }
+
         private static void AssertSameRgb(Color actual, Color expected, string name)
         {
             Assert.AreEqual(expected.r, actual.r, 0.001f, $"{name} red channel left the wood set");
@@ -564,6 +599,59 @@ namespace TumbangPreso.Tests
         }
 
         /// <summary>The short way round a 360 degree wheel.</summary>
+        /// <summary>
+        /// ⚠️ NEMU VIEWMODEL ARMS MUST INSTANTIATE BESPOKE DRAPED KIMONO SLEEVES, INNER SHADOW CAVITY,
+        /// GLOWING CUFF RIM, DELICATE SPIRIT HANDS, AND DYNAMIC CLOTH PHYSICS SOLVER.
+        /// </summary>
+        [Test]
+        public void Nemu_ViewmodelArms_CreatesBespokeDrapedKimonoSleevesAndClothPhysics()
+        {
+            var vm = new GameObject("TestVM_NemuCloth").AddComponent<CameraSystem.ViewmodelArms>();
+            vm.EnsureBuilt();
+            vm.SetCharacter("nemu");
+
+            var rightArm = vm.transform.Find("RightPivot/Arm");
+            var leftArm = vm.transform.Find("LeftPivot/Arm");
+            Assert.IsNotNull(rightArm, "RightPivot/Arm missing");
+            Assert.IsNotNull(leftArm, "LeftPivot/Arm missing");
+
+            // Verify sleeve and cloth physics on right arm
+            var rightSleeve = rightArm.Find("~HeroAccessory_KimonoSleeve");
+            Assert.IsNotNull(rightSleeve, "Right kimono sleeve missing");
+            var rightCloth = rightSleeve.GetComponent<CameraSystem.ViewmodelClothPhysics>();
+            Assert.IsNotNull(rightCloth, "Right kimono sleeve is missing ViewmodelClothPhysics component");
+            Assert.IsTrue(rightCloth.HasDeformableMesh, "Right kimono cloth physics failed to bind deformable mesh");
+
+            // Verify inner cavity and cuff rim
+            var rightInner = rightArm.Find("~HeroAccessory_KimonoInnerLining");
+            Assert.IsNotNull(rightInner, "Right kimono inner shadow lining cavity missing");
+            var rightCuff = rightArm.Find("~HeroAccessory_KimonoCuffRim");
+            Assert.IsNotNull(rightCuff, "Right kimono cuff rim band missing");
+
+            // Verify spirit hand
+            var rightHand = rightArm.Find("~HeroAccessory_SpiritHand");
+            Assert.IsNotNull(rightHand, "Right spirit hand missing");
+
+            // Verify cloth physics simulation step and impulse recovery
+            vm.StepVisuals(0.016f);
+            Assert.IsFalse(float.IsNaN(rightCloth.ClothOffset.x), "Cloth offset produced NaN");
+            Assert.IsFalse(float.IsNaN(rightCloth.ClothAngle.x), "Cloth angle produced NaN");
+
+            // Test recoil impulse on action
+            Assert.IsTrue(vm.PlayAction("throw"));
+            vm.StepVisuals(0.016f);
+            Assert.AreNotEqual(Vector3.zero, rightCloth.ClothOffset + rightCloth.ClothAngle, "Throw action did not perturb cloth physics");
+
+            // Step forward in time and verify cloth recovers stably
+            for (int i = 0; i < 60; i++)
+            {
+                vm.StepVisuals(0.016f);
+            }
+            Assert.Less(rightCloth.ClothOffset.magnitude, 0.05f, "Cloth offset failed to damp back to rest");
+
+            Object.DestroyImmediate(vm.gameObject);
+        }
+
         private static float HueDistance(float a, float b)
         {
             float d = Mathf.Abs(a - b) % 360.0f;
@@ -571,3 +659,4 @@ namespace TumbangPreso.Tests
         }
     }
 }
+

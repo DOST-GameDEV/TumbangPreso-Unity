@@ -64,11 +64,17 @@ namespace TumbangPreso.Visual
         private float _fidgetExtraRoll;
         private Vector3 _fidgetScaleMul = Vector3.one;
 
+        public const string PetName = "Kuro";
+        public string CompanionName => PetName;
+
         // Possession state
         public bool IsPossessed { get; private set; }
         private CharacterMotor _nemuMotor;
         private AIController _temporaryAi;
         private GameObject _possessLightGo;
+        private Vector2 _playerInput;
+
+        public void SetPlayerInput(Vector2 input) => _playerInput = input;
 
         private void Awake()
         {
@@ -110,6 +116,7 @@ namespace TumbangPreso.Visual
         {
             _nemuMotor = nemuMotor;
             IsPossessed = true;
+            _playerInput = Vector2.zero;
 
             if (_possessLightGo == null)
             {
@@ -128,6 +135,7 @@ namespace TumbangPreso.Visual
             }
 
             GameServices.Audio?.PlayAt("ability_flick_dash", transform.position);
+            ComicPopup.Spawn(transform.position, "KURO POSSESSED!", UI.UiTheme.HeroSpiritBright, 1.25f);
         }
 
         public void EndPossession(bool teleportNemu)
@@ -153,6 +161,7 @@ namespace TumbangPreso.Visual
                 _possessLightGo = null;
             }
 
+            _playerInput = Vector2.zero;
             IsPossessed = false;
         }
 
@@ -421,7 +430,9 @@ namespace TumbangPreso.Visual
 
         private void UpdatePossession(float dt, float time)
         {
-            Vector2 move = _nemuMotor != null && _nemuMotor.Intent != null ? _nemuMotor.Intent.MoveAxis : Vector2.zero;
+            Vector2 move = _playerInput.sqrMagnitude > 0.001f
+                ? _playerInput
+                : (_nemuMotor != null && _nemuMotor.Intent != null ? _nemuMotor.Intent.MoveAxis : Vector2.zero);
 
             Vector3 camFwd = Camera.main != null ? Camera.main.transform.forward : (_nemuMotor != null ? _nemuMotor.transform.forward : transform.forward);
             Vector3 camRight = Camera.main != null ? Camera.main.transform.right : (_nemuMotor != null ? _nemuMotor.transform.right : transform.right);
