@@ -410,7 +410,7 @@ namespace TumbangPreso
 
             if (art != null && art.Model != null)
             {
-                visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette);
+                visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
 
                 // Strip from the whole seat, because the visual parents the model under the
                 // seat root rather than under visualRoot. The CharacterController survives by

@@ -25,6 +25,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a664a9143af64ab49b73a5b1ecaa0e03, type: 2}
   - {fileID: 11400000, guid: d5b10303b2ddc354a9517cc13589e29e, type: 2}
   - {fileID: 11400000, guid: 6cd8ec6e55d51d64bbab750e156dde37, type: 2}
+  - {fileID: 11400000, guid: 86af06543288730408d46a1356227e28, type: 2}
   Cans:
   - {fileID: 11400000, guid: 87c3c01b07782624aa1933e1330ab204, type: 2}
   - {fileID: 11400000, guid: ce0626ac5db14f2409ddadc10dd61d76, type: 2}

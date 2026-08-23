@@ -57,7 +57,8 @@ namespace TumbangPreso.EditorTools
             { "maring",      "characters/persons/character-female-f.glb" },
             { "totoy",       "characters/persons/character-male-a.glb" },
             { "inday",       "characters/persons/team-inday.glb" },
-            { "kuya_boy",    "characters/persons/character-male-b.glb" },
+            { "kuya_boy",    "characters/persons/team-iggy.glb" },
+            { "iggy",        "characters/persons/team-iggy.glb" },
             { "zack",        "characters/persons/team-zack.glb" },
             { "tikboy",      "characters/persons/character-male-c.glb" },
             { "bebang",      "characters/persons/character-female-c.glb" },
@@ -65,6 +66,7 @@ namespace TumbangPreso.EditorTools
             { "lola_pacing", "characters/persons/character-female-d.glb" },
             { "mang_kanor",  "characters/persons/character-male-e.glb" },
             { "aling_nena",  "characters/persons/character-female-e.glb" },
+            { "nemu",        "characters/persons/team-nemu.glb" },
         };
 
         /// <summary>
@@ -84,7 +86,8 @@ namespace TumbangPreso.EditorTools
             { "maring",      "person_b.tres" },
             { "totoy",       "person_totoy.tres" },
             { "inday",       "person_team-inday.tres" },
-            { "kuya_boy",    "person_kuya-boy.tres" },
+            { "kuya_boy",    "person_team-iggy.tres" },
+            { "iggy",        "person_team-iggy.tres" },
             // ⚠️ THE ONE PALETTE IN THIS TABLE THAT IS NOT A COPY OF A GODOT FILE. The other
             // eleven are carried over from `generate_person_palettes.py` in the Godot repo and
             // must not be hand-edited there or here. This one is emitted by
@@ -99,6 +102,12 @@ namespace TumbangPreso.EditorTools
             { "lola_pacing", "person_lola-pacing.tres" },
             { "mang_kanor",  "person_mang-kanor.tres" },
             { "aling_nena",  "person_aling-nena.tres" },
+            { "nemu",        "person_team-nemu.tres" },
+        };
+
+        private static readonly Dictionary<string, string> PersonPets = new Dictionary<string, string>
+        {
+            { "nemu", "characters/pets/pet-nemu-ghost.glb" },
         };
 
         private const string PaletteDir = "MapSource/materials_persons";
@@ -143,6 +152,14 @@ namespace TumbangPreso.EditorTools
             ok &= Fill(book.People, Roster.People, PersonModels, "person");
             ok &= Fill(book.Cans, Roster.Cans, CanModels, "can");
             ok &= Fill(book.Slippers, Roster.Slippers, SlipperModels, "slipper");
+
+            // Also build standalone entries like nemu so they have valid .asset files
+            foreach (var kvp in PersonModels)
+            {
+                bool inTruth = false;
+                foreach (var p in Roster.People) { if (p.Id == kvp.Key) { inTruth = true; break; } }
+                if (!inTruth) BuildSingleEntry(kvp.Key, PersonModels, "person", ref ok);
+            }
 
             EditorUtility.SetDirty(book);
             AssetDatabase.SaveAssets();
@@ -281,10 +298,75 @@ namespace TumbangPreso.EditorTools
                     ok = false;
                 }
 
+                if (PersonPets.TryGetValue(entry.Id, out var petRel))
+                {
+                    string petFull = $"{ArtRoot}/{petRel}";
+                    asset.PetModel = AssetDatabase.LoadAssetAtPath<GameObject>(petFull);
+                }
+                else
+                {
+                    asset.PetModel = null;
+                }
+
                 EditorUtility.SetDirty(asset);
                 into.Add(asset);
             }
 
+            return ok;
+        }
+
+        private static bool BuildSingleEntry(string id,
+                                             Dictionary<string, string> models,
+                                             string kind,
+                                             ref bool ok)
+        {
+            string assetPath = $"{EntryDir}/{kind}_{id}.asset";
+
+            var asset = AssetDatabase.LoadAssetAtPath<RosterEntryAsset>(assetPath);
+            if (asset == null)
+            {
+                asset = ScriptableObject.CreateInstance<RosterEntryAsset>();
+                AssetDatabase.CreateAsset(asset, assetPath);
+            }
+
+            asset.Id = id;
+            asset.Tint = Color.white;
+            asset.Palette = ReadPalette(id, ref ok);
+
+            if (models.TryGetValue(id, out var rel))
+            {
+                string full = $"{ArtRoot}/{rel}";
+                asset.Model = AssetDatabase.LoadAssetAtPath<GameObject>(full);
+
+                if (asset.Model == null)
+                {
+                    Debug.LogError($"[RosterBook] no model at {full} for '{id}'.");
+                    ok = false;
+                }
+
+                var clips = new System.Collections.Generic.List<AnimationClip>();
+                foreach (var sub in AssetDatabase.LoadAllAssetsAtPath(full))
+                {
+                    if (sub is AnimationClip clip && !clip.name.StartsWith("__preview"))
+                        clips.Add(clip);
+                }
+
+                asset.Clips = clips.ToArray();
+
+                if (clips.Count == 0 && kind == "person")
+                {
+                    Debug.LogError($"[RosterBook] '{id}' has a model with no clips. " +
+                                   "That character will not animate.");
+                    ok = false;
+                }
+            }
+            else
+            {
+                Debug.LogError($"[RosterBook] no model mapped for {kind} '{id}'.");
+                ok = false;
+            }
+
+            EditorUtility.SetDirty(asset);
             return ok;
         }
     }

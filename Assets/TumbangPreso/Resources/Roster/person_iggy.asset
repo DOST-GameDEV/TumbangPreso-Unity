@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd6025c7ab6554d458e7834add491ac2, type: 3}
+  m_Name: person_iggy
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
+  Id: iggy
+  Model: {fileID: -1096751430798516641, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  PetModel: {fileID: 0}
+  Material: {fileID: 0}
+  Tint: {r: 1, g: 1, b: 1, a: 1}
+  Clips:
+  - {fileID: 6907475494324315746, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: 2203924018909043761, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -2058715007142741576, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: 6422398547263628574, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: 7394211616443434314, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -5788828422494046478, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -5656197328620225132, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: 8444169216349218833, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -6693012064394926207, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: 5638027722608592375, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: 6316504600807357666, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: 3916641520164824235, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -877892688320884640, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -3534582695741538158, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -6901733776427281509, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -1129283163419233802, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -2474113961476506421, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: 3136869955099575062, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: 6224930689648127318, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: 2652845254095363116, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -4718476750892910589, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: 6316130324300929012, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -2344400992752741691, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: 6669351404405404641, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -4832708865683171987, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: 3450422557711352013, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -3868565323850264498, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: 4889764192148153732, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -1602694845487291149, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -6296422904094572024, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -9152534441998152959, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  - {fileID: -4813772699318269175, guid: 23280ea1e083017459aac9ff6fc60670, type: 3}
+  Palette:
+  - {r: 0.721569, g: 0.454902, b: 0.25098, a: 1}
+  - {r: 0.588235, g: 0.34902, b: 0.180392, a: 1}
+  - {r: 0.796078, g: 0.52549, b: 0.305882, a: 1}
+  - {r: 0.788235, g: 0.164706, b: 0.164706, a: 1}
+  - {r: 0.6, g: 0.105882, b: 0.105882, a: 1}
+  - {r: 0.941176, g: 0.647059, b: 0, a: 1}
+  - {r: 0.721569, g: 0.478431, b: 0, a: 1}
+  - {r: 0.109804, g: 0.101961, b: 0.141176, a: 1}
+  - {r: 0.066667, g: 0.066667, b: 0.082353, a: 1}
+  - {r: 1, g: 0.756863, b: 0.027451, a: 1}
+  - {r: 0.862745, g: 0.14902, b: 0.14902, a: 1}
+  - {r: 0.360784, g: 0.227451, b: 0.129412, a: 1}
+  - {r: 0.788235, g: 0.164706, b: 0.164706, a: 1}
+  - {r: 0.941176, g: 0.94902, b: 0.960784, a: 1}
+  - {r: 1, g: 0.419608, b: 0.101961, a: 1}
+  - {r: 1, g: 0.533333, b: 0, a: 1}
+  Tagline: 

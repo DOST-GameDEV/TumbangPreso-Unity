@@ -497,9 +497,9 @@ namespace TumbangPreso.Core.Tests
         /// the select screen because the meters look correct on both.
         /// </summary>
         [Fact]
-        public void AllTwelvePersonRows_AreDistinct()
+        public void AllPersonRows_AreDistinct()
         {
-            Assert.Equal(12, Roster.People.Count);
+            Assert.Equal(13, Roster.People.Count);
 
             var seen = new HashSet<string>();
             foreach (var e in Roster.People)

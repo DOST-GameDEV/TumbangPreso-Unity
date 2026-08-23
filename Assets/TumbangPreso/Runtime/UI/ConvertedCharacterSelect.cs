@@ -249,7 +249,7 @@ namespace TumbangPreso.UI
             // ⚠️ AND THE CLIPS TRAVEL WITH THE MODEL, or the preview stands in a T-pose. They
             // are sub-assets of the `.glb` and this reference is what makes them ship.
             preview.Show(art == null ? null : art.Model, art == null ? null : art.Clips,
-                         art == null ? null : art.Palette);
+                         art == null ? null : art.Palette, art == null ? null : art.PetModel);
         }
 
         /// <summary>
@@ -262,6 +262,7 @@ namespace TumbangPreso.UI
         {
             switch (id)
             {
+                case "nemu": return "Sleepy spirit girl who drifts between dreams and the match. Accompanied by a floating ghost pet that watches her back while she floats past defenders.";
                 case "bayan":
                 case "dante":
                 case "berto": return "Built like a concrete wall. Slow to chase, but once he plants his feet and winds up a throw, the whole street clears out.";
@@ -269,7 +270,9 @@ namespace TumbangPreso.UI
                 case "totoy": return "Raised barefoot in the eskinita. Nobody in this town has caught him twice.";
                 case "inday":
                 case "cheska": return "Ice-cold bakery prodigy with an unstoppable arm. Armed with heavy throws, a cheeky cat smirk, and a stance that never melts under pressure.";
-                case "kuya_boy": return "Eldest of seven. He has been the taya since before he could count, and both the arm and the footwork know it.";
+                case "kuya_boy":
+                case "sean":
+                case "iggy": return "Heavyweight champion of the barangay courts. Armed with blistering fists, maximum throwing power, and a fiery mohawk that blazes whenever the match heats up.";
                 // ⚠️ THE SENTENCE PAYS OUT THE METERS, which is this table's one rule. Speed 4
                 // is the loudest of his three, so the line claims quickness and nothing else:
                 // no strength boast on a 3, and no toughness boast on a 3.
@@ -337,14 +340,6 @@ namespace TumbangPreso.UI
             }
 
             SceneFlow.Go(SceneFlow.MatchSetup);
-        }
-
-        private void Update()
-        {
-            if (!Input.GetKeyDown(KeyCode.Escape)) return;
-
-            MenuSfx.Back();
-            Dismiss();
         }
     }
 }

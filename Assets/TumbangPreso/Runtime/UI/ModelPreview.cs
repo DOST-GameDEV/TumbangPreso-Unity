@@ -457,16 +457,21 @@ namespace TumbangPreso.UI
         /// nothing else references them, so an asset nothing points at is stripped from the
         /// build. `RosterEntryAsset.Clips` is the reference that makes them ship.
         /// </summary>
-        public void Show(GameObject prefab, AnimationClip[] clips) => Show(prefab, clips, null);
+        private GameObject _pet;
+
+        public void Show(GameObject prefab, AnimationClip[] clips) => Show(prefab, clips, null, null);
+
+        public void Show(GameObject prefab, AnimationClip[] clips, Color[] palette) => Show(prefab, clips, palette, null);
 
         /// <summary>
         /// ⚠️ THE SCREEN AND THE MATCH MUST APPLY THE PALETTE THE SAME WAY. What you pick and
         /// what walks out cannot look like two different characters, and the only way to
         /// guarantee that is for both to go through `ToonSkin` with the same sixteen colours.
         /// </summary>
-        public void Show(GameObject prefab, AnimationClip[] clips, Color[] palette)
+        public void Show(GameObject prefab, AnimationClip[] clips, Color[] palette, GameObject petModel)
         {
             if (_model != null) Destroy(_model);
+            if (_pet != null) Destroy(_pet);
 
             _idle = null;
 
@@ -502,6 +507,16 @@ namespace TumbangPreso.UI
             // This screen is the one place a player looks at a character up close, so it is also
             // the only place the error was ever going to be visible.
             Visual.ToonSkin.Apply(_model, Visual.ToonSkin.PersonOutlineWidth, palette);
+
+            if (petModel != null)
+            {
+                _pet = Instantiate(petModel, _pivot);
+                _pet.transform.localScale = Vector3.one * PreviewScale;
+                SetLayerRecursively(_pet, PreviewLayer);
+                var companion = _pet.AddComponent<Visual.GhostPetCompanion>();
+                companion.Bind(_model.transform, new Vector3(-0.30f, 0.60f, 0.04f), PreviewScale);
+                Visual.ToonSkin.Apply(_pet, Visual.ToonSkin.PersonOutlineWidth, palette);
+            }
 
             PlayIdle(clips);
             IsolateFromForeignLights();

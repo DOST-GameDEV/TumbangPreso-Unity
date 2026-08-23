@@ -59,7 +59,7 @@ namespace TumbangPreso.Net
 
             string map = Value(args, MapSwitch) ?? UI.SceneFlow.Eskinita;
 
-            bool isDedicated = Has(args, DedicatedSwitch) || Has(args, "-dedicated") || Has(args, "--dedicated");
+            bool isDedicated = Has(args, DedicatedSwitch) || Has(args, "-dedicated") || Has(args, "--dedicated") || (Application.isBatchMode && !Application.isEditor);
             bool isHost = Has(args, HostSwitch) || Has(args, "-host") || Has(args, "--host") || isDedicated;
 
             if (isHost)

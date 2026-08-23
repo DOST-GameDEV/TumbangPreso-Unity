@@ -49,7 +49,7 @@ namespace TumbangPreso.Social
         /// The second half is what stops a press mid-emote from restarting the clip and
         /// re-triggering the camera swing on top of itself.</summary>
         public bool CanEmote() =>
-            _motor != null && _motor.CanAct() && !_motor.HoldingSlipper && !IsEmoting;
+            _motor != null && _motor.CanAct() && !IsEmoting;
 
         /// <summary>
         /// Local request. ⚠️ IT ASKS THE HOST RATHER THAN PLAYING IMMEDIATELY on a client, so a
