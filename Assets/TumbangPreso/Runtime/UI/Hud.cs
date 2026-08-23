@@ -181,6 +181,7 @@ namespace TumbangPreso.UI
             public Image Plate;
             public Image Rim;
             public Image Glyph;
+            public Image CooldownSweep;
             public Text Key;
             public Text State;
             public Image Fill;
@@ -222,13 +223,13 @@ namespace TumbangPreso.UI
         public const float KeyGap = 3.0f;
 
         /// <summary>How long the "your power is back" pop runs. Seconds.</summary>
-        private const float ReadyPopSeconds = 0.18f;
+        private const float ReadyPopSeconds = AbilityDeckHud.ReadyPopSeconds;
 
         /// <summary>How long a successful cast lights its own tile. Seconds.</summary>
-        private const float CastFlashSeconds = 0.14f;
+        private const float CastFlashSeconds = AbilityDeckHud.CastFlashSeconds;
 
         /// <summary>How long a refused press ticks its tile red. Seconds.</summary>
-        private const float RefusalFlashSeconds = 0.12f;
+        private const float RefusalFlashSeconds = AbilityDeckHud.RefusalFlashSeconds;
 
         private GameObject _classicDeck;
         private Text _classicTitle;
@@ -1145,6 +1146,7 @@ namespace TumbangPreso.UI
 
                 if (i >= wanted)
                 {
+                    w.Root.transform.localScale = Vector3.one;
                     w.Root.SetActive(false);
                     continue;
                 }
@@ -1166,6 +1168,17 @@ namespace TumbangPreso.UI
                 w.Fill.fillAmount = e.Timed && e.Remaining > 0.0f
                     ? Mathf.Clamp01(e.Remaining / Mathf.Max(0.01f, e.Total))
                     : 1.0f;
+
+                // The final quarter gives one restrained pulse. This is especially important
+                // for stun and vulnerability, where the end of the effect changes what the
+                // player can safely do before they have time to read the number again.
+                float ratio = e.Timed && e.Total > 0.0f
+                    ? Mathf.Clamp01(e.Remaining / e.Total)
+                    : 1.0f;
+                float pulse = ratio < 0.25f
+                    ? 1.0f + (Mathf.Sin(Time.unscaledTime * 10.0f) * 0.5f + 0.5f) * 0.035f
+                    : 1.0f;
+                w.Root.transform.localScale = Vector3.one * pulse;
             }
         }
 
@@ -2354,6 +2367,24 @@ namespace TumbangPreso.UI
             card.Glyph.rectTransform.offsetMin = new Vector2(11, 13);
             card.Glyph.rectTransform.offsetMax = new Vector2(-11, -11);
 
+            // A radial veil makes the direction of a cooldown readable without looking at the
+            // number. It sits above the glyph and below the countdown, so the remaining wedge
+            // can never hide the exact final seconds.
+            var sweepGo = new GameObject("CooldownSweep", typeof(RectTransform));
+            sweepGo.transform.SetParent(tileGo.transform, false);
+            card.CooldownSweep = sweepGo.AddComponent<Image>();
+            card.CooldownSweep.sprite = AbilityIcons.CooldownDisc();
+            card.CooldownSweep.type = Image.Type.Filled;
+            card.CooldownSweep.fillMethod = Image.FillMethod.Radial360;
+            card.CooldownSweep.fillOrigin = (int)Image.Origin360.Top;
+            card.CooldownSweep.fillClockwise = false;
+            card.CooldownSweep.fillAmount = 0.0f;
+            card.CooldownSweep.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.76f);
+            card.CooldownSweep.raycastTarget = false;
+            MenuKit.Stretch(card.CooldownSweep.rectTransform);
+            card.CooldownSweep.rectTransform.offsetMin = new Vector2(7, 7);
+            card.CooldownSweep.rectTransform.offsetMax = new Vector2(-7, -7);
+
             // ⚠️ THE COUNTDOWN SITS OVER THE GLYPH RATHER THAN BESIDE IT. A 60 px tile has no
             // room for two columns and the two are never both interesting: while a number is up
             // the glyph is at 20% and is only there to say WHICH power is coming back.
@@ -2449,13 +2480,13 @@ namespace TumbangPreso.UI
                 if (_bindingAsset != null) Settings.Rebinding.Load(_bindingAsset);
             }
 
-            if (_bindingAsset == null) return action == "Ultimate" ? "[X]" : action == "Skill2" ? "[F]" : "[Q]";
+            if (_bindingAsset == null) return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
 
             var map = _bindingAsset.FindActionMap("Player");
             var act = map?.FindAction(action);
 
             if (act == null || act.bindings.Count == 0)
-                return action == "Ultimate" ? "[X]" : action == "Skill2" ? "[F]" : "[Q]";
+                return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
 
             // ⚠️ THE STATIC FORM, NOT THE EXTENSION. `InputBinding.ToHumanReadableString` is an
             // extension method that only resolves with `using UnityEngine.InputSystem;` in
@@ -2546,10 +2577,12 @@ namespace TumbangPreso.UI
                 card.Key.color = UiTheme.HeroGlyphOff;
                 card.State.text = "";
                 if (card.Fill != null) card.Fill.fillAmount = 0.0f;
+                if (card.CooldownSweep != null) card.CooldownSweep.fillAmount = 0.0f;
                 return;
             }
 
             PaintGlyph(card.Glyph, skill);
+            card.Plate.color = Color.white;
 
             bool ready = skill.IsReady;
             if (ready && !card.WasReady) card.PopLeft = ReadyPopSeconds;
@@ -2574,6 +2607,7 @@ namespace TumbangPreso.UI
                     card.Fill.fillAmount = skill.DurationRatio;
                     card.Fill.color = heroColor;
                 }
+                if (card.CooldownSweep != null) card.CooldownSweep.fillAmount = 0.0f;
             }
             else if (skill.CooldownRemaining > 0.0f)
             {
@@ -2585,9 +2619,7 @@ namespace TumbangPreso.UI
                 // ticks tenths for nine seconds is a number nobody can read and a canvas rebuild
                 // every frame; one that only shows whole seconds is useless in the last moment,
                 // which is the only moment a player is actually waiting on it.
-                card.State.text = skill.CooldownRemaining < 3.0f
-                    ? $"{skill.CooldownRemaining:0.0}"
-                    : $"{Mathf.CeilToInt(skill.CooldownRemaining)}";
+                card.State.text = AbilityDeckHud.CooldownLabel(skill.CooldownRemaining);
                 card.State.color = UiTheme.HeroNumber;
 
                 if (card.Fill != null)
@@ -2595,6 +2627,9 @@ namespace TumbangPreso.UI
                     card.Fill.fillAmount = 1.0f - skill.CooldownRatio;
                     card.Fill.color = UiTheme.HeroNumber;
                 }
+                if (card.CooldownSweep != null)
+                    card.CooldownSweep.fillAmount = AbilityDeckHud.CooldownSweep(
+                        skill.CooldownRemaining, skill.Cooldown);
             }
             else
             {
@@ -2612,6 +2647,7 @@ namespace TumbangPreso.UI
                 {
                     card.Fill.fillAmount = 0.0f;
                 }
+                if (card.CooldownSweep != null) card.CooldownSweep.fillAmount = 0.0f;
             }
 
             ApplyAnswer(card, system, slot, heroColor);
@@ -2650,7 +2686,8 @@ namespace TumbangPreso.UI
             }
 
             if (answer == Abilities.HeroKit.CastOutcome.Cooling ||
-                answer == Abilities.HeroKit.CastOutcome.NoCharge)
+                answer == Abilities.HeroKit.CastOutcome.NoCharge ||
+                answer == Abilities.HeroKit.CastOutcome.CannotAct)
             {
                 if (since > RefusalFlashSeconds)
                 {
@@ -2700,6 +2737,7 @@ namespace TumbangPreso.UI
             if (card == null || kit.Ultimate == null) return;
 
             PaintGlyph(card.Glyph, kit.Ultimate);
+            card.Plate.color = Color.white;
 
             float ratio = kit.UltimateRatio;
 

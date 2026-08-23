@@ -28,7 +28,8 @@ namespace TumbangPreso.Settings
     /// was not on left click even though it was bound there, and a hero's first skill fired out
     /// of the pickup key. Rebinding anything onto E or Q was refused by our own asset.
     ///
-    /// Every action now holds exactly ONE control and no control appears twice.
+    /// Every action now holds exactly ONE control and no control appears twice. The hero deck
+    /// uses Q, E and F as a compact combat cluster; contextual pickup / shove / reset uses X.
     /// `SettingsPanelTests` asserts it, so the collisions cannot come back quietly.
     /// </summary>
     public static class Rebinding

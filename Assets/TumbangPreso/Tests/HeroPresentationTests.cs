@@ -311,6 +311,18 @@ namespace TumbangPreso.Tests
             Assert.LessOrEqual(Hud.DeckHeight, 80.0f, "the deck is tall enough to cover the hands");
         }
 
+        [Test]
+        public void CooldownReadoutIsPreciseOnlyWhenItMatters()
+        {
+            Assert.AreEqual("9", AbilityDeckHud.CooldownLabel(8.01f));
+            Assert.AreEqual("3", AbilityDeckHud.CooldownLabel(3.0f));
+            Assert.AreEqual("2.9", AbilityDeckHud.CooldownLabel(2.94f));
+            Assert.AreEqual("0.1", AbilityDeckHud.CooldownLabel(0.06f));
+            Assert.AreEqual(string.Empty, AbilityDeckHud.CooldownLabel(0.0f));
+            Assert.AreEqual(0.5f, AbilityDeckHud.CooldownSweep(4.0f, 8.0f), 0.001f);
+            Assert.AreEqual(0.0f, AbilityDeckHud.CooldownSweep(2.0f, 0.0f), 0.001f);
+        }
+
         // ------------------------------------------------------------------ cast outcomes
 
         /// <summary>
@@ -600,11 +612,11 @@ namespace TumbangPreso.Tests
 
         /// <summary>The short way round a 360 degree wheel.</summary>
         /// <summary>
-        /// ⚠️ NEMU VIEWMODEL ARMS MUST INSTANTIATE BESPOKE DRAPED KIMONO SLEEVES, INNER SHADOW CAVITY,
+        /// ⚠️ NEMU VIEWMODEL ARMS MUST INSTANTIATE BESPOKE DRAPED HOODIE SLEEVES, INNER SHADOW CAVITY,
         /// GLOWING CUFF RIM, DELICATE SPIRIT HANDS, AND DYNAMIC CLOTH PHYSICS SOLVER.
         /// </summary>
         [Test]
-        public void Nemu_ViewmodelArms_CreatesBespokeDrapedKimonoSleevesAndClothPhysics()
+        public void Nemu_ViewmodelArms_CreatesBespokeDrapedHoodieSleevesAndClothPhysics()
         {
             var vm = new GameObject("TestVM_NemuCloth").AddComponent<CameraSystem.ViewmodelArms>();
             vm.EnsureBuilt();
@@ -616,17 +628,17 @@ namespace TumbangPreso.Tests
             Assert.IsNotNull(leftArm, "LeftPivot/Arm missing");
 
             // Verify sleeve and cloth physics on right arm
-            var rightSleeve = rightArm.Find("~HeroAccessory_KimonoSleeve");
-            Assert.IsNotNull(rightSleeve, "Right kimono sleeve missing");
+            var rightSleeve = rightArm.Find("~HeroAccessory_HoodieSleeve");
+            Assert.IsNotNull(rightSleeve, "Right hoodie sleeve missing");
             var rightCloth = rightSleeve.GetComponent<CameraSystem.ViewmodelClothPhysics>();
-            Assert.IsNotNull(rightCloth, "Right kimono sleeve is missing ViewmodelClothPhysics component");
-            Assert.IsTrue(rightCloth.HasDeformableMesh, "Right kimono cloth physics failed to bind deformable mesh");
+            Assert.IsNotNull(rightCloth, "Right hoodie sleeve is missing ViewmodelClothPhysics component");
+            Assert.IsTrue(rightCloth.HasDeformableMesh, "Right hoodie cloth physics failed to bind deformable mesh");
 
             // Verify inner cavity and cuff rim
-            var rightInner = rightArm.Find("~HeroAccessory_KimonoInnerLining");
-            Assert.IsNotNull(rightInner, "Right kimono inner shadow lining cavity missing");
-            var rightCuff = rightArm.Find("~HeroAccessory_KimonoCuffRim");
-            Assert.IsNotNull(rightCuff, "Right kimono cuff rim band missing");
+            var rightInner = rightArm.Find("~HeroAccessory_HoodieInnerLining");
+            Assert.IsNotNull(rightInner, "Right hoodie inner shadow lining cavity missing");
+            var rightCuff = rightArm.Find("~HeroAccessory_HoodieCuffRim");
+            Assert.IsNotNull(rightCuff, "Right hoodie cuff rim band missing");
 
             // Verify spirit hand
             var rightHand = rightArm.Find("~HeroAccessory_SpiritHand");

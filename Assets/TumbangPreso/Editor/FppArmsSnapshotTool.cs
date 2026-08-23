@@ -9,11 +9,15 @@ namespace TumbangPreso.EditorTools
     public static class FppArmsSnapshotTool
     {
         private const string OutDir = "Logs/shots-fpp";
-        private const string ArtifactsDir = @"C:\Users\matth\.gemini\antigravity\brain\fbd1dc0b-1c5b-4d48-87b2-4b3dad7aba59";
         private const int Width = 1280;
         private const int Height = 720;
 
-        private static readonly string[] Characters = { "dante", "sean", "zack", "nemu", "cheska", "bayan" };
+        private static readonly string[] Characters =
+        {
+            "sean", "zack", "dante", "cheska", "nemu",
+            "bayan", "maring", "totoy", "inday", "kuya_boy", "ate_girlie",
+            "tikboy", "bebang", "jun_jun", "lola_pacing", "mang_kanor", "aling_nena",
+        };
 
         [MenuItem("Tumbang Preso/Capture FPP Arms Screenshots")]
         public static void CaptureAllFromMenu() => Execute();
@@ -55,7 +59,6 @@ namespace TumbangPreso.EditorTools
         private static void Execute()
         {
             Directory.CreateDirectory(OutDir);
-            if (!Directory.Exists(ArtifactsDir)) Directory.CreateDirectory(ArtifactsDir);
 
             // Open Eskinita or create isolated scene
             if (File.Exists("Assets/TumbangPreso/Scenes/Arena/Eskinita.unity"))
@@ -111,13 +114,11 @@ namespace TumbangPreso.EditorTools
                 arms.StepVisuals(0.016f, snap: true);
                 cam.Render();
                 SaveTexture(rt, Path.Combine(OutDir, $"fpp_{charId}_holding.png"));
-                SaveTexture(rt, Path.Combine(ArtifactsDir, $"fpp_{charId}_holding.png"));
 
                 arms.SetHolding(false);
                 arms.StepVisuals(0.016f, snap: true);
                 cam.Render();
                 SaveTexture(rt, Path.Combine(OutDir, $"fpp_{charId}_empty.png"));
-                SaveTexture(rt, Path.Combine(ArtifactsDir, $"fpp_{charId}_empty.png"));
 
                 // --- 2. Full Arm Showcase Inspect View (Showing sleeves, pauldron, markings, bracelets) ---
                 cam.transform.position = new Vector3(0.0f, 0.42f, -0.82f);
@@ -127,8 +128,6 @@ namespace TumbangPreso.EditorTools
                 arms.StepVisuals(0.016f, snap: true);
                 cam.Render();
                 SaveTexture(rt, Path.Combine(OutDir, $"fpp_{charId}_showcase.png"));
-                SaveTexture(rt, Path.Combine(ArtifactsDir, $"fpp_{charId}_showcase.png"));
-                SaveTexture(rt, Path.Combine(ArtifactsDir, $"fpp_{charId}.png"));
             }
 
             cam.targetTexture = null;

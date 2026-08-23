@@ -13,8 +13,8 @@ namespace TumbangPreso
         Lunge,          // Right click. The taya's dash tag.
         EmoteWheel,     // B
         Skill1,         // Hero Skill 1. Q
-        Skill2,         // Hero Skill 2. F
-        Ultimate,       // Hero Ultimate. X
+        Skill2,         // Hero Skill 2. E
+        Ultimate,       // Hero Ultimate. F
     }
 
     /// <summary>

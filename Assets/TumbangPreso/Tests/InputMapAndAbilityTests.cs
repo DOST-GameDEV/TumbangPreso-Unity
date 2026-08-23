@@ -120,6 +120,21 @@ namespace TumbangPreso.Tests
             }
         }
 
+        /// <summary>The three power prompts form the adjacent Q, E, F combat cluster.</summary>
+        [Test]
+        public void HeroPowerDefaultsMatchTheHudCluster()
+        {
+            var asset = LoadActions();
+            asset.RemoveAllBindingOverrides();
+            var map = asset.FindActionMap("Player", true);
+
+            Assert.AreEqual("<Keyboard>/q", map.FindAction("Skill1", true).bindings[0].effectivePath);
+            Assert.AreEqual("<Keyboard>/e", map.FindAction("Skill2", true).bindings[0].effectivePath);
+            Assert.AreEqual("<Keyboard>/f", map.FindAction("Ultimate", true).bindings[0].effectivePath);
+            Assert.AreEqual("<Keyboard>/x", map.FindAction("Grab", true).bindings[0].effectivePath,
+                "contextual pickup must not compete with the E power key");
+        }
+
         /// <summary>
         /// ⚠⚠ EVERY REBINDABLE ACTION BELONGS TO EXACTLY ONE GROUP. The settings panel now
         /// draws its rows by walking `Rebinding.Groups`, not `RebindableActions`, so an action

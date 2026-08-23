@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,23 @@ namespace TumbangPreso.UI
         public const float CastFlashSeconds = 0.14f;
         public const float RefusalFlashSeconds = 0.12f;
         public const float ReadyPopSeconds = 0.18f;
+
+        /// <summary>Formats cooldowns for fast reading without rebuilding text every tenth for
+        /// the entire cooldown.</summary>
+        public static string CooldownLabel(float secondsRemaining)
+        {
+            if (secondsRemaining <= 0.0f) return string.Empty;
+            return secondsRemaining < 3.0f
+                ? secondsRemaining.ToString("0.0", CultureInfo.InvariantCulture)
+                : Mathf.CeilToInt(secondsRemaining).ToString(CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>Returns the remaining radial veil. One means fully covered, zero means ready.</summary>
+        public static float CooldownSweep(float secondsRemaining, float totalSeconds)
+        {
+            if (totalSeconds <= 0.0f) return 0.0f;
+            return Mathf.Clamp01(secondsRemaining / totalSeconds);
+        }
 
         /// <summary>
         /// Paints the appropriate bespoke glyph for the ability.

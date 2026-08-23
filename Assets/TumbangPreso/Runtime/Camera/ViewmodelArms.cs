@@ -47,23 +47,23 @@ namespace TumbangPreso.CameraSystem
         // Heroes
         public static readonly Color SkinSean = new Color(0.722f, 0.455f, 0.251f, 1.0f);     // Golden brown tan
         public static readonly Color SkinZack = new Color(0.659f, 0.376f, 0.173f, 1.0f);     // Warm athletic bronze tan
-        public static readonly Color SkinDante = new Color(0.851f, 0.541f, 0.373f, 1.0f);    // Warm golden brown tan matching TPP palette
+        public static readonly Color SkinDante = new Color(0.659f, 0.376f, 0.173f, 1.0f);    // SKIN #a8602c
         public static readonly Color SkinCheska = new Color(0.961f, 0.722f, 0.580f, 1.0f);   // Fair porcelain skin
         public static readonly Color SkinNemu = new Color(0.878f, 0.686f, 0.518f, 1.0f);     // Pale lavender / ghostly ethereal
 
         // Classic Characters
-        public static readonly Color SkinBayan = new Color(0.941f, 0.694f, 0.518f, 1.0f);    // Berto tan
+        public static readonly Color SkinBayan = new Color(0.851f, 0.541f, 0.373f, 1.0f);    // Berto arm slot 13
         public static readonly Color SkinMaring = new Color(0.969f, 0.788f, 0.651f, 1.0f);   // Fair cream
         public static readonly Color SkinTotoy = new Color(0.447f, 0.271f, 0.173f, 1.0f);    // Warm dark tan
-        public static readonly Color SkinInday = new Color(0.851f, 0.604f, 0.424f, 1.0f);    // Warm golden brown
+        public static readonly Color SkinInday = new Color(0.369f, 0.216f, 0.133f, 1.0f);    // Inday arm slot 14
         public static readonly Color SkinKuyaBoy = new Color(0.690f, 0.443f, 0.290f, 1.0f);  // Deep sun-tan bronze
         public static readonly Color SkinAteGirlie = new Color(0.969f, 0.788f, 0.651f, 1.0f);// Fair porcelain
         public static readonly Color SkinTikboy = new Color(0.851f, 0.604f, 0.424f, 1.0f);   // Warm tan
         public static readonly Color SkinBebang = new Color(0.851f, 0.541f, 0.373f, 1.0f);   // Golden tan
         public static readonly Color SkinJunJun = new Color(0.969f, 0.788f, 0.651f, 1.0f);   // Fair kid tan
         public static readonly Color SkinLolaPacing = new Color(0.969f, 0.788f, 0.651f, 1.0f);// Gentle weathered fair
-        public static readonly Color SkinMangKanor = new Color(0.690f, 0.443f, 0.290f, 1.0f); // Deep weathered tan
-        public static readonly Color SkinAlingNena = new Color(0.851f, 0.604f, 0.424f, 1.0f); // Warm golden tan
+        public static readonly Color SkinMangKanor = new Color(0.192f, 0.141f, 0.114f, 1.0f); // Arm slot 8
+        public static readonly Color SkinAlingNena = new Color(0.878f, 0.478f, 0.227f, 1.0f); // Arm slot 5
 
         /// <summary>Idle breathing. 2.6 s, looping, a couple of degrees — the original's
         /// keyframes are ±0.045 rad on the right and ±0.038 on the left.</summary>
@@ -743,9 +743,9 @@ namespace TumbangPreso.CameraSystem
             ClearAccessories(_rightArm);
             ClearAccessories(_leftArm);
 
-            Vector3 armScale = Vector3.one;
-            if (characterId == "sean") armScale = new Vector3(1.24f, 1.0f, 1.24f);
-            else if (characterId == "dante") armScale = new Vector3(1.15f, 1.0f, 1.15f);
+            Vector3 armScale = characterId == "sean"
+                ? new Vector3(1.18f, 1.0f, 1.18f)
+                : Vector3.one;
 
             if (_rightArm != null) _rightArm.localScale = armScale;
             if (_leftArm != null) _leftArm.localScale = armScale;
@@ -866,120 +866,102 @@ namespace TumbangPreso.CameraSystem
 
         private static void BuildSeanAccessories(Transform arm, bool isRight)
         {
+            var skinHighlight = new Color(0.796f, 0.525f, 0.306f, 1.0f);
+            var skinShadow = new Color(0.588f, 0.349f, 0.180f, 1.0f);
             var vestRed = new Color(0.788f, 0.165f, 0.165f, 1.0f);
-            var flameGold = new Color(0.941f, 0.647f, 0.000f, 1.0f);
-            var wrapCloth = new Color(0.72f, 0.18f, 0.18f, 1.0f);
-            var wrapTrim = new Color(0.88f, 0.35f, 0.22f, 1.0f);
+            var gold = new Color(0.941f, 0.647f, 0.000f, 1.0f);
+            var goldShadow = new Color(0.722f, 0.478f, 0.000f, 1.0f);
 
-            // 1. Sleeveless athletic flame vest shoulder trim
-            AddCylinderAccessory(arm, "VestStrap", 0.150f, 0.150f, 0.20f, 12,
-                new Vector3(0.0f, 0.12f, 0.0f), Quaternion.identity, vestRed);
-            AddCylinderAccessory(arm, "VestTrim", 0.154f, 0.154f, 0.04f, 12,
-                new Vector3(0.0f, 0.22f, 0.0f), Quaternion.identity, flameGold);
-
-            // 2. Multi-layered criss-cross crimson brawler athletic wraps on forearm
-            AddBoxAccessory(arm, "WrapCross1", new Vector3(0.18f, 0.035f, 0.02f),
-                new Vector3(0.0f, 0.38f, 0.142f), Quaternion.Euler(0, 0, 20.0f), wrapCloth);
-            AddBoxAccessory(arm, "WrapCross2", new Vector3(0.18f, 0.035f, 0.02f),
-                new Vector3(0.0f, 0.44f, 0.142f), Quaternion.Euler(0, 0, -20.0f), wrapCloth);
-
-            // 3. Heavy fighting wrist wraps with gold trim
-            AddCylinderAccessory(arm, "WristWrapBase", 0.152f, 0.152f, 0.12f, 12,
-                new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, wrapCloth);
-            AddCylinderAccessory(arm, "WristWrapTrim", 0.156f, 0.156f, 0.03f, 12,
-                new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, wrapTrim);
-
-            // 4. Crimson athletic knuckle wrap
-            AddBoxAccessory(arm, "KnuckleWrap", new Vector3(0.32f, 0.08f, 0.30f),
-                new Vector3(0.0f, 0.70f, 0.0f), Quaternion.identity, vestRed);
+            // ⚠️ Sean is sleeveless in build_iggy_voxel.py. The old viewmodel invented a red
+            // shoulder sleeve and hand wraps. His authored silhouette is bare muscle followed
+            // by a red and gold combat bracer, then an uncovered fist.
+            AddBoxAccessory(arm, "Deltoid", new Vector3(0.34f, 0.22f, 0.34f),
+                new Vector3(0.0f, 0.12f, 0.0f), Quaternion.identity, skinHighlight);
+            AddBoxAccessory(arm, "Bicep", new Vector3(0.31f, 0.22f, 0.34f),
+                new Vector3(0.0f, 0.31f, 0.02f), Quaternion.identity, SkinSean);
+            AddBoxAccessory(arm, "BicepCrease", new Vector3(0.26f, 0.025f, 0.025f),
+                new Vector3(0.0f, 0.40f, 0.16f), Quaternion.identity, skinShadow);
+            AddBoxAccessory(arm, "BracerGoldInner", new Vector3(0.33f, 0.045f, 0.31f),
+                new Vector3(0.0f, 0.45f, 0.0f), Quaternion.identity, gold);
+            AddBoxAccessory(arm, "BracerBody", new Vector3(0.34f, 0.18f, 0.32f),
+                new Vector3(0.0f, 0.56f, 0.0f), Quaternion.identity, vestRed);
+            AddBoxAccessory(arm, "BracerPlate", new Vector3(0.19f, 0.12f, 0.025f),
+                new Vector3(0.0f, 0.56f, 0.17f), Quaternion.identity, gold);
+            AddBoxAccessory(arm, "BracerPlateShadow", new Vector3(0.09f, 0.07f, 0.028f),
+                new Vector3(0.0f, 0.56f, 0.185f), Quaternion.identity, goldShadow);
         }
 
         private static void BuildZackAccessories(Transform arm, bool isRight)
         {
-            var jacketDark = new Color(0.12f, 0.12f, 0.14f, 1.0f);
-            var lightningYellow = new Color(0.91f, 0.82f, 0.12f, 1.0f);
-            var neonYellow = new Color(0.98f, 0.95f, 0.22f, 1.0f);
+            var jacket = new Color(0.416f, 0.173f, 0.788f, 1.0f);
+            var jacketDark = new Color(0.271f, 0.094f, 0.541f, 1.0f);
+            var crest = new Color(0.659f, 0.196f, 1.000f, 1.0f);
 
-            // 1. Streetwear skate windbreaker jacket sleeve
-            AddCylinderAccessory(arm, "JacketSleeve", 0.148f, 0.148f, 0.22f, 12,
-                new Vector3(0.0f, 0.12f, 0.0f), Quaternion.identity, jacketDark);
-            AddCylinderAccessory(arm, "JacketYellowCuff", 0.154f, 0.154f, 0.045f, 12,
-                new Vector3(0.0f, 0.23f, 0.0f), Quaternion.identity, lightningYellow);
-
-            // Glowing neon yellow lightning trim down outer arm
-            AddBoxAccessory(arm, "JacketNeonStripe", new Vector3(0.03f, 0.18f, 0.02f),
-                new Vector3(isRight ? 0.138f : -0.138f, 0.12f, 0.0f), Quaternion.identity, neonYellow, emission: 0.45f);
-
-            // 2. Forearms are clean bare athletic skin. Minimalist skate watch on right wrist
-            if (isRight)
+            // build_zack_voxel.py: purple jacket to 44 percent of the arm, a deep-purple
+            // cuff, bare forearm and hand, and one cyber-purple band on the left wrist.
+            AddBoxAccessory(arm, "PurpleJacketSleeve", new Vector3(0.30f, 0.37f, 0.30f),
+                new Vector3(0.0f, 0.185f, 0.0f), Quaternion.identity, jacket);
+            AddBoxAccessory(arm, "PurpleJacketCuff", new Vector3(0.32f, 0.065f, 0.32f),
+                new Vector3(0.0f, 0.405f, 0.0f), Quaternion.identity, jacketDark);
+            AddBoxAccessory(arm, "PurpleSleeveStripe", new Vector3(0.24f, 0.025f, 0.025f),
+                new Vector3(0.0f, 0.29f, 0.16f), Quaternion.identity, jacketDark);
+            if (!isRight)
             {
-                AddCylinderAccessory(arm, "SkateWristband", 0.146f, 0.146f, 0.06f, 12,
-                    new Vector3(0.0f, 0.56f, 0.0f), Quaternion.identity, jacketDark);
-                AddBoxAccessory(arm, "SkateWatchScreen", new Vector3(0.04f, 0.04f, 0.02f),
-                    new Vector3(0.0f, 0.56f, 0.142f), Quaternion.identity, lightningYellow, emission: 0.6f);
+                AddBoxAccessory(arm, "CyberWristband", new Vector3(0.31f, 0.085f, 0.30f),
+                    new Vector3(0.0f, 0.505f, 0.0f), Quaternion.identity, crest);
             }
         }
 
         private static void BuildDanteAccessories(Transform arm, bool isRight)
         {
-            var jadeGreen = new Color(0.239f, 0.388f, 0.208f, 1.0f);
-            var jadeMarking = new Color(0.408f, 0.910f, 0.471f, 1.0f);
-            var goldTrim = new Color(0.875f, 0.698f, 0.282f, 1.0f);
-            var darkCuff = new Color(0.282f, 0.184f, 0.114f, 1.0f);
+            var runeGreen = new Color(0.220f, 0.722f, 0.282f, 1.0f);
+            var leather = new Color(0.282f, 0.184f, 0.114f, 1.0f);
+            var leatherShadow = new Color(0.141f, 0.243f, 0.122f, 1.0f);
+            var gold = new Color(0.875f, 0.698f, 0.282f, 1.0f);
 
-            // 1. Jade green shoulder sleeve with gold pauldron
-            AddCylinderAccessory(arm, "DanteSleeve", 0.148f, 0.148f, 0.22f, 12,
-                new Vector3(0.0f, 0.12f, 0.0f), Quaternion.identity, jadeGreen);
-            AddCylinderAccessory(arm, "DanteGoldTrim", 0.152f, 0.152f, 0.04f, 12,
-                new Vector3(0.0f, 0.23f, 0.0f), Quaternion.identity, goldTrim);
-            AddBoxAccessory(arm, "DantePauldron", new Vector3(0.20f, 0.06f, 0.20f),
-                new Vector3(0.0f, 0.03f, 0.0f), Quaternion.identity, goldTrim);
-
-            // 2. Dante's bespoke arm markings matching his 3D model
+            // ⚠️ Dante is asymmetric. His left arm is entirely bare with Karma runes. Only
+            // his right shoulder has the brown short sleeve and gold cuff authored in
+            // build_bayan_voxel.py. The old viewmodel put jade sleeves and pauldrons on both.
             if (isRight)
             {
-                // Right Arm: Gold strap + Jade arm marking
-                AddBoxAccessory(arm, "GoldArmStrap", new Vector3(0.18f, 0.035f, 0.02f),
-                    new Vector3(0.0f, 0.30f, 0.138f), Quaternion.Euler(0, 0, 25.0f), goldTrim);
-                AddBoxAccessory(arm, "GoldBuckle", new Vector3(0.04f, 0.04f, 0.025f),
-                    new Vector3(0.0f, 0.30f, 0.145f), Quaternion.identity, goldTrim);
-                AddBoxAccessory(arm, "JadeMarking1", new Vector3(0.035f, 0.10f, 0.015f),
-                    new Vector3(0.04f, 0.38f, 0.136f), Quaternion.Euler(0, 0, -30.0f), jadeMarking, emission: 0.35f);
+                AddBoxAccessory(arm, "BrownRightSleeve", new Vector3(0.30f, 0.31f, 0.29f),
+                    new Vector3(0.0f, 0.155f, 0.0f), Quaternion.identity, leather);
+                AddBoxAccessory(arm, "BrownSleeveShadow", new Vector3(0.30f, 0.04f, 0.025f),
+                    new Vector3(0.0f, 0.29f, 0.155f), Quaternion.identity, leatherShadow);
+                AddBoxAccessory(arm, "GoldRightCuff", new Vector3(0.32f, 0.09f, 0.31f),
+                    new Vector3(0.0f, 0.355f, 0.0f), Quaternion.identity, gold);
+                AddBoxAccessory(arm, "RightRuneHook", new Vector3(0.05f, 0.22f, 0.018f),
+                    new Vector3(0.06f, 0.51f, 0.14f), Quaternion.Euler(0, 0, -16.0f), runeGreen);
             }
             else
             {
-                // Left Arm: Jade markings
-                AddBoxAccessory(arm, "JadeMarkingL1", new Vector3(0.06f, 0.025f, 0.015f),
-                    new Vector3(-0.02f, 0.34f, 0.136f), Quaternion.Euler(0, 0, 30.0f), jadeMarking, emission: 0.35f);
-                AddBoxAccessory(arm, "JadeMarkingL2", new Vector3(0.06f, 0.025f, 0.015f),
-                    new Vector3(0.02f, 0.42f, 0.136f), Quaternion.Euler(0, 0, -30.0f), jadeMarking, emission: 0.35f);
+                AddBoxAccessory(arm, "LeftRuneChevronA", new Vector3(0.055f, 0.22f, 0.018f),
+                    new Vector3(-0.04f, 0.31f, 0.14f), Quaternion.Euler(0, 0, 36.0f), runeGreen);
+                AddBoxAccessory(arm, "LeftRuneChevronB", new Vector3(0.055f, 0.22f, 0.018f),
+                    new Vector3(0.04f, 0.48f, 0.14f), Quaternion.Euler(0, 0, -36.0f), runeGreen);
+                AddBoxAccessory(arm, "LeftRuneWrist", new Vector3(0.30f, 0.055f, 0.018f),
+                    new Vector3(0.0f, 0.62f, 0.14f), Quaternion.identity, runeGreen);
             }
-
-            // 3. Dark leather wrist cuff with polished jade stud
-            AddCylinderAccessory(arm, "DarkWristCuff", 0.150f, 0.150f, 0.08f, 12,
-                new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, darkCuff);
-            AddBoxAccessory(arm, "JadeWristStud", new Vector3(0.045f, 0.045f, 0.022f),
-                new Vector3(0.0f, 0.55f, 0.145f), Quaternion.identity, jadeMarking, emission: 0.25f);
         }
 
         private static void BuildCheskaAccessories(Transform arm, bool isRight)
         {
-            var glacierCoat = new Color(0.35f, 0.75f, 0.85f, 1.0f);
-            var softWhiteFluff = new Color(0.96f, 0.98f, 1.00f, 1.0f);
+            var white = new Color(0.957f, 0.980f, 1.000f, 1.0f);
+            var cyanCuff = new Color(0.149f, 0.588f, 0.659f, 1.0f);
+            var cyanBand = new Color(0.392f, 0.886f, 0.965f, 1.0f);
 
-            // 1. Long light-blue winter parka coat sleeve covering the entire arm down to the wrist
-            AddCylinderAccessory(arm, "FrostCoatSleeve", 0.148f, 0.148f, 0.46f, 12,
-                new Vector3(0.0f, 0.28f, 0.0f), Quaternion.identity, glacierCoat);
-
-            // 2. Volumetric plush white fur cuff around the wrist
-            AddCylinderAccessory(arm, "FluffyFurWristCuff", 0.165f, 0.165f, 0.10f, 16,
-                new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, softWhiteFluff);
-
-            // 3. Delicate translucent ice crystal bracelet on right wrist
-            if (isRight)
+            // build_person_voxel.py gives Cheska a white short sleeve, stepped cyan cuff,
+            // bare forearm and hand, with a striped sports band on the left wrist only.
+            AddBoxAccessory(arm, "WhiteShortSleeve", new Vector3(0.30f, 0.32f, 0.30f),
+                new Vector3(0.0f, 0.16f, 0.0f), Quaternion.identity, white);
+            AddBoxAccessory(arm, "CyanSleeveCuff", new Vector3(0.32f, 0.08f, 0.32f),
+                new Vector3(0.0f, 0.36f, 0.0f), Quaternion.identity, cyanCuff);
+            if (!isRight)
             {
-                AddBoxAccessory(arm, "FrostGem", new Vector3(0.04f, 0.04f, 0.025f),
-                    new Vector3(0.0f, 0.54f, 0.168f), Quaternion.identity, UI.UiTheme.HeroIceBright, emission: 0.50f);
+                AddBoxAccessory(arm, "CyanSportsBand", new Vector3(0.31f, 0.10f, 0.30f),
+                    new Vector3(0.0f, 0.50f, 0.0f), Quaternion.identity, cyanBand);
+                AddBoxAccessory(arm, "WhiteBandStripe", new Vector3(0.315f, 0.025f, 0.305f),
+                    new Vector3(0.0f, 0.50f, 0.0f), Quaternion.identity, white);
             }
         }
 
@@ -993,7 +975,7 @@ namespace TumbangPreso.CameraSystem
             var skinDark = new Color(0.839f, 0.600f, 0.455f, 1.0f);     // SKIN_DARK #d69974
 
             // 1. Oversized Stepped Boxy Streetwear Hoodie Sleeve Outer Shell
-            var sleeveMesh = CreateKimonoDrapedSleeveMesh(isRight);
+            var sleeveMesh = CreateHoodieDrapedSleeveMesh(isRight);
             var sleeveGo = new GameObject(AccessoryPrefix + "HoodieSleeve");
             sleeveGo.transform.SetParent(arm, false);
             sleeveGo.transform.localPosition = Vector3.zero;
@@ -1016,7 +998,7 @@ namespace TumbangPreso.CameraSystem
             }
 
             // 2. Hollow Interior Sleeve Cavity Lining
-            var innerMesh = CreateKimonoInnerLiningMesh(isRight);
+            var innerMesh = CreateHoodieInnerLiningMesh(isRight);
             var innerGo = new GameObject(AccessoryPrefix + "HoodieInnerLining");
             innerGo.transform.SetParent(arm, false);
             innerGo.transform.localPosition = Vector3.zero;
@@ -1030,7 +1012,7 @@ namespace TumbangPreso.CameraSystem
             Visual.ToonSkin.Apply(innerMr, Visual.ToonSkin.PersonOutlineWidth);
 
             // 3. Crisp Lavender Flared Cuff Border Band
-            var cuffMesh = CreateKimonoCuffRimMesh(isRight);
+            var cuffMesh = CreateHoodieCuffRimMesh(isRight);
             var cuffGo = new GameObject(AccessoryPrefix + "HoodieCuffRim");
             cuffGo.transform.SetParent(arm, false);
             cuffGo.transform.localPosition = Vector3.zero;
@@ -1070,7 +1052,7 @@ namespace TumbangPreso.CameraSystem
             return new Vector3(x, 0.0f, z);
         }
 
-        private static Mesh CreateKimonoDrapedSleeveMesh(bool isRight)
+        private static Mesh CreateHoodieDrapedSleeveMesh(bool isRight)
         {
             var mesh = new Mesh { name = "Nemu_HoodieSleeve" };
             const int radialSegments = 24;
@@ -1139,7 +1121,7 @@ namespace TumbangPreso.CameraSystem
             return mesh;
         }
 
-        private static Mesh CreateKimonoInnerLiningMesh(bool isRight)
+        private static Mesh CreateHoodieInnerLiningMesh(bool isRight)
         {
             var mesh = new Mesh { name = "Nemu_HoodieInnerLining" };
             const int radialSegments = 24;
@@ -1206,7 +1188,7 @@ namespace TumbangPreso.CameraSystem
             return mesh;
         }
 
-        private static Mesh CreateKimonoCuffRimMesh(bool isRight)
+        private static Mesh CreateHoodieCuffRimMesh(bool isRight)
         {
             var mesh = new Mesh { name = "Nemu_HoodieCuffRim" };
             const int radialSegments = 24;

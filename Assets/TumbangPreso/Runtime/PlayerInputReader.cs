@@ -18,7 +18,8 @@ namespace TumbangPreso
     /// on top of it. Whichever consumer ran first won the press, so throw did not feel like it
     /// was on left click even though it was bound there, and a hero's first skill came out of
     /// the pickup key. The full table is in `Settings.Rebinding` and a test asserts no control
-    /// is shared.
+    /// is shared. Hero powers now use the adjacent Q, E and F cluster, while the contextual
+    /// pickup key uses X so the HUD prompts and shipped controls agree without a collision.
     ///
     /// ⚠️ GRAB IS STILL CONTEXTUAL, AND THAT IS RESOLVED DOWNSTREAM, NOT HERE. One key, one
     /// action, but that action does several jobs depending on the world: tap with a slipper at
