@@ -33,9 +33,6 @@ bots, the hero ability layer, spectator, reconnect and the netcode layer.
 [`docs/Port_Ledger.md`](docs/Port_Ledger.md) is the file-by-file status and the definition of
 done; [`docs/TODO.md`](docs/TODO.md) is what is left.
 
-⚠️ **Every mesh, texture and animation currently in the repo is placeholder**, carried over so
-the game could run during the port. All of it is being replaced with the team's own work.
-
 ## Repository layout
 
 ```

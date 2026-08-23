@@ -209,11 +209,12 @@ finish something. Do not report the port as done while any row reads MISSING. A 
 
 ## 6 · Art, models and iteration
 
-⚠️ **All art AND all animation in this repo is placeholder**, carried over from the Godot
-build so the game could run. **All of it is being replaced with the team's own work.** Do not
-polish, retopologise or build finished materials for a mesh that is scheduled to go.
+⚠️ **The art is the team's own work and is being built character by character.** The voxel
+cast is authored here (`tools/build_person_voxel.py`, `docs/Voxel_Person_Guide.md`), and
+`docs/Port_Plan.md` § 8 carries the replacement queue and what each replacement must preserve.
+Ask which pieces are final before treating any of it as disposable.
 
-⚠️ **When the new animations land, revisit `ModelImportSetup`.** The rigs are imported as
+⚠️ **When new animations land, revisit `ModelImportSetup`.** The rigs are imported as
 **Generic** on purpose, because the current clips ship with their own rig; humanoid
 retargeting would re-solve poses that are already correct. If clips start coming from a
 library instead (Mixamo or similar), **Humanoid becomes the right answer**, and that is the

@@ -201,8 +201,8 @@ penalties on consecutive runs. **None of the three were visible by playing it.**
 - **The camera is FPP for people and TPP for props**, and emotes swing to TPP and back.
   `CLAUDE.md` § 3a, which exists because a previous session recorded the opposite and was wrong.
 - **Emotes end only by interruption.** There is no emote timer.
-- **All art and animation currently in the repo is placeholder**, being replaced by the team's
-  own. Do not polish a mesh that is scheduled to go. `CLAUDE.md` § 4a.
+- **The art is the team's own and is being built character by character.** The replacement
+  queue is `docs/Port_Plan.md` § 8; the authoring guide is `docs/Voxel_Person_Guide.md`.
 - **His UI art is the design system.** Wood, amber, cream, ink. Anything drawn in a different
   visual language is the thing that looks broken, not the thing that looks new.
 
