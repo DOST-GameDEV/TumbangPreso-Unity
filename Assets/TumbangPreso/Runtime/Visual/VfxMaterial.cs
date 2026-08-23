@@ -152,8 +152,11 @@ namespace TumbangPreso.Visual
         {
             if (renderer == null) return;
 
-            var m = renderer.material;
+            var template = MaterialKit.Lit;
+            var shader = template != null ? template.shader : (Shader.Find("Standard") ?? Shader.Find("Diffuse"));
+            var m = new Material(shader) { name = "HeroVfxSolid" };
             m.color = new Color(colour.r, colour.g, colour.b, 1.0f);
+            if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", m.color);
 
             if (m.HasProperty("_Glossiness")) m.SetFloat("_Glossiness", 0.0f);
             if (m.HasProperty("_Metallic")) m.SetFloat("_Metallic", 0.0f);
@@ -164,6 +167,8 @@ namespace TumbangPreso.Visual
                 m.SetColor("_EmissionColor", colour * emission);
                 m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
             }
+
+            renderer.sharedMaterial = m;
         }
 
         /// <summary>

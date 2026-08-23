@@ -3,7 +3,8 @@ using UnityEngine;
 namespace TumbangPreso.CameraSystem
 {
     /// <summary>
-    /// The first-person arms, converted from `scenes/characters/visuals/ViewmodelArms.tscn`.
+    /// The first-person arms, converted from `scenes/characters/visuals/ViewmodelArms.tscn` and
+    /// enhanced with bespoke hero skin tones, sleeves, wristbands/bracers, and element signatures.
     ///
     /// ⚠️⚠️ FIRST PERSON GETS DEDICATED ARMS, NOT THE BODY'S OWN. From playtest: *"don't see
     /// arms of ppl"*. The real rig tops out below the eye line because the chibi head is big
@@ -38,7 +39,16 @@ namespace TumbangPreso.CameraSystem
         private static readonly Vector3 HeldSlipperLocal = new Vector3(0.0f, 0.86f, 0.0f);
 
         /// <summary>The arm colour from the .tscn's shader material.</summary>
-        private static readonly Color ArmColour = new Color(0.784f, 0.529f, 0.353f, 1.0f);
+        public static readonly Color ArmColour = new Color(0.784f, 0.529f, 0.353f, 1.0f);
+
+        // -------------------------------------------------------------------
+        // § HERO SKIN TONES
+        // -------------------------------------------------------------------
+        public static readonly Color SkinSean = new Color(0.78f, 0.52f, 0.32f, 1.0f);     // Golden brown / warm tan
+        public static readonly Color SkinZack = new Color(0.72f, 0.48f, 0.32f, 1.0f);     // Warm athletic tan
+        public static readonly Color SkinDante = new Color(0.38f, 0.24f, 0.16f, 1.0f);    // Deep dark bronze / volcanic skin
+        public static readonly Color SkinCheska = new Color(0.95f, 0.84f, 0.78f, 1.0f);   // Fair porcelain skin
+        public static readonly Color SkinNemu = new Color(0.80f, 0.75f, 0.90f, 1.0f);     // Pale lavender / ghostly ethereal
 
         /// <summary>Idle breathing. 2.6 s, looping, a couple of degrees — the original's
         /// keyframes are ±0.045 rad on the right and ±0.038 on the left.</summary>
@@ -94,8 +104,14 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         public const float SlipperLength = 0.34f;
 
+        private const string AccessoryPrefix = "~HeroAccessory_";
+
         private Transform _rightPivot;
         private Transform _leftPivot;
+        private Transform _rightArm;
+        private Transform _leftArm;
+        private MeshRenderer _rightArmRenderer;
+        private MeshRenderer _leftArmRenderer;
         private Transform _heldSlipper;
         private Renderer _heldRenderer;
 
@@ -106,6 +122,15 @@ namespace TumbangPreso.CameraSystem
         private float _phase;
 
         private bool _carrying;
+        private string _currentHeroId;
+        private bool _heroInitialized;
+        private bool _built;
+
+        /// <summary>Active normalized hero identity currently styled on these arms.</summary>
+        public string CurrentHeroId => _currentHeroId;
+
+        /// <summary>Current skin tone applied to the viewmodel arms.</summary>
+        public Color CurrentSkinColor => SkinColorForHero(_currentHeroId);
 
         /// <summary>Show or hide the slipper in the viewmodel hand.</summary>
         public void SetHolding(bool holding)
@@ -177,22 +202,6 @@ namespace TumbangPreso.CameraSystem
 
         // -------------------------------------------------------------------
         // § THE ACTION CLIPS — `ViewmodelArms.tscn`'s `throw` and `grab`.
-        //
-        // ⚠️⚠️ THE PORT HAD NEITHER, SO THE FIRST-PERSON ARM NEVER MOVED FOR ANYTHING. 🧑
-        // 2026-08-16: *"make sure my arm moves or does an animation when i interact with
-        // objects like in the real game — raise can, tag someone, etc"*. It breathed and it
-        // held a carry pose, and that was all: throwing, picking up, righting the can, tagging
-        // and shoving all happened with a perfectly still arm in the corner of the frame. The
-        // third-person body animated correctly the whole time, so every OTHER player saw the
-        // gesture and the person performing it did not.
-        //
-        // The keyframes are the .tscn's own, on `RightPivot/Arm:rotation`:
-        //
-        //   throw  0.46 s   0 -> (0.52, 0.10, 0) at 0.14 -> (-0.68, -0.06, 0) at 0.24 -> 0
-        //   grab   0.40 s   0 -> (0.46, -0.14, 0) at 0.18 -> 0
-        //
-        // ⚠️ ONLY THE RIGHT ARM MOVES, in both clips. The left one keeps breathing, which is
-        // what makes the right one read as deliberate rather than as the whole view lurching.
         // -------------------------------------------------------------------
 
         /// <summary>One keyframe: when, and the Godot euler it holds, in radians.</summary>
@@ -410,31 +419,15 @@ namespace TumbangPreso.CameraSystem
             return _clip != null;
         }
 
-        /// <summary>
-        /// ⚠️ THE MIRROR IS THE SAME ONE THE PIVOTS USE, and a rotation does not flip the way a
-        /// position does. Reflecting through the XY plane turns a rotation about X or Y into its
-        /// negative and leaves one about Z alone, so `(x, y, z)` in Godot is `(-x, -y, z)` here.
-        /// Copying the three numbers straight across bends the arm the wrong way on the axis
-        /// that matters most: the throw's whole shape is its pitch.
-        /// </summary>
         private static Quaternion ToUnityLocal(Vector3 godotEuler) =>
             Quaternion.Euler(-godotEuler.x * Mathf.Rad2Deg,
                              -godotEuler.y * Mathf.Rad2Deg,
                               godotEuler.z * Mathf.Rad2Deg);
 
-        /// <summary>
-        /// ⚠️ IT DRIVES `RightPivot/Arm`, NOT THE PIVOT. The pivot carries the carry pose and the
-        /// idle swing; putting the action on the same transform would make a throw fight the
-        /// carry it is supposed to end, and the two would average into a shrug.
-        /// </summary>
         private void StepAction(float dt)
         {
             if (_rightArm == null) return;
 
-            // § THE WIND-UP WINS WHILE IT IS HELD. See SetCharge: a clip animating the same
-            // rotation would overwrite the pose every frame and the arm would sway rather than
-            // cock. A one-shot fired mid-charge (the release throw) clears the charge first, so
-            // the two never fight for more than the frame the release happens on.
             if (_charge >= 0.0f)
             {
                 _rightArm.localRotation = Quaternion.Euler(WindupRad * _charge * Mathf.Rad2Deg,
@@ -464,8 +457,6 @@ namespace TumbangPreso.CameraSystem
                 float span = Mathf.Max(0.0001f, _clip[i].T - _clip[i - 1].T);
                 float t = (_clipTime - _clip[i - 1].T) / span;
 
-                // The .tscn's tracks are `interp = 2`, which is Godot's CUBIC. Smoothstep is the
-                // same shape to the eye over a tenth of a second and needs no tangents.
                 t = t * t * (3.0f - 2.0f * t);
 
                 _rightArm.localRotation = Quaternion.Slerp(ToUnityLocal(_clip[i - 1].Godot),
@@ -474,21 +465,23 @@ namespace TumbangPreso.CameraSystem
             }
         }
 
-        private Transform _rightArm;
+        private void Awake() => EnsureBuilt();
 
-        private void Awake() => Build();
+        public void EnsureBuilt()
+        {
+            if (_built) return;
+            _built = true;
+            Build();
+        }
 
         private void Build()
         {
             var armMesh = Resources.Load<Mesh>("Models/viewmodel_arm");
 
             _rightPivot = BuildArm("RightPivot", RightBasisX, RightBasisY, RightBasisZ,
-                RightOrigin, armMesh);
+                RightOrigin, armMesh, out _rightArm, out _rightArmRenderer);
             _leftPivot = BuildArm("LeftPivot", LeftBasisX, LeftBasisY, LeftBasisZ,
-                LeftOrigin, armMesh);
-
-            // The action clips drive this, not the pivot. See StepAction.
-            _rightArm = _rightPivot.Find("Arm");
+                LeftOrigin, armMesh, out _leftArm, out _leftArmRenderer);
 
             _rightRest = _rightPivot.localRotation;
             _leftRest = _leftPivot.localRotation;
@@ -497,25 +490,7 @@ namespace TumbangPreso.CameraSystem
 
             var slipperGo = new GameObject("HeldSlipper");
             _heldSlipper = slipperGo.transform;
-
-            // ⚠️⚠️ UNDER `RightPivot/Arm`, NOT UNDER `RightPivot`, AND THE .tscn IS EXPLICIT:
-            // `[node name="HeldSlipper" parent="RightPivot/Arm"]`. This hung it off the PIVOT,
-            // which carries the carry pose and the idle sway — but NOT the throw, the grab or
-            // the wind-up, all three of which `StepAction` writes onto `Arm`. So the arm cocked
-            // back for a 2.5 s charge and the tsinelas stayed exactly where it was, hanging in
-            // the air beside a hand that had left it: 🧑 2026-08-18, of his own first-person
-            // frame, *"still floating, the slippers"*, and 🧑 earlier, *"my arms float during
-            // windup"*. One parenting mistake, and it shows worst during the single clip a
-            // player looks hardest at.
-            //
-            // It is the same fault `Carrier.RideAnchor` had to move to LateUpdate for, in the
-            // other view: the thing being carried has to be driven by the transform that is
-            // actually animated, not by its parent.
             _heldSlipper.SetParent(_rightArm, false);
-
-            // ⚠️ Y IN GODOT IS STILL Y HERE; ONLY Z FLIPS. The held offset is purely vertical,
-            // so it carries across untouched — but say so, because a reader checking the other
-            // conversions will expect a sign change and its absence looks like an oversight.
             _heldSlipper.localPosition = HeldSlipperLocal;
 
             var slipperMesh = Resources.Load<Mesh>("Models/tsinelas_classic");
@@ -524,23 +499,19 @@ namespace TumbangPreso.CameraSystem
                 var mf = slipperGo.AddComponent<MeshFilter>();
                 mf.sharedMesh = slipperMesh;
 
-                // ⚠️ WITH A MATERIAL. A renderer built in code has none, and Unity draws that
-                // as a magenta error blob — in this case one sitting in the player's hand.
                 _heldRenderer = slipperGo.AddComponent<MeshRenderer>();
                 Visual.MaterialKit.Dress(_heldRenderer, UI.UiTheme.PropFoam);
 
-                // ⚠️ AFTER NormaliseHeldSize, NOT BEFORE. ToonSkin measures what the mesh
-                // actually renders at to turn a world outline width into a model-space one, and
-                // that function rescales this node by up to 3x.
                 NormaliseHeldSize();
                 Visual.ToonSkin.Apply(_heldRenderer, Visual.ToonSkin.PropOutlineWidth);
             }
 
             SetHolding(false);
+            SetHero("classic");
         }
 
         private Transform BuildArm(string name, Vector3 bx, Vector3 by, Vector3 bz,
-            Vector3 origin, Mesh mesh)
+            Vector3 origin, Mesh mesh, out Transform armTransform, out MeshRenderer armRenderer)
         {
             var pivotGo = new GameObject(name);
             var pivot = pivotGo.transform;
@@ -550,29 +521,475 @@ namespace TumbangPreso.CameraSystem
             pivot.localRotation = ToUnityRotation(bx, by, bz);
 
             var armGo = new GameObject("Arm");
-            armGo.transform.SetParent(pivot, false);
+            armTransform = armGo.transform;
+            armTransform.SetParent(pivot, false);
 
+            armRenderer = null;
             if (mesh != null)
             {
                 var mf = armGo.AddComponent<MeshFilter>();
                 mf.sharedMesh = mesh;
 
-                // See MaterialKit: without a material the block below writes to nothing and
-                // the arms render as the missing-material shader.
-                var mr = armGo.AddComponent<MeshRenderer>();
-                Visual.MaterialKit.Dress(mr, ArmColour);
-
-                // ⚠️⚠️ THE ARMS WEAR THE TOON MATERIAL, AND THIS IS WHY THEY LOOKED "too small
-                // and too pale" IN THE SIDE-BY-SIDE. `ViewmodelArms.tscn` puts `Mat_arm` on both
-                // surfaces of both arms: `toon.gdshader` at this exact colour, with
-                // `person_outline.tres` chained behind it. On the stock lit shader the same
-                // 0.784/0.529/0.353 is washed out by a warm key plus 1.65 ambient and has no
-                // border, so it reads as two flat tan quads instead of two outlined orange arms.
-                // The colour was never wrong; the material was missing.
-                Visual.ToonSkin.Apply(mr, Visual.ToonSkin.PersonOutlineWidth);
+                armRenderer = armGo.AddComponent<MeshRenderer>();
+                Visual.MaterialKit.Dress(armRenderer, ArmColour);
+                Visual.ToonSkin.Apply(armRenderer, Visual.ToonSkin.PersonOutlineWidth);
             }
 
             return pivot;
+        }
+
+        /// <summary>
+        /// Resolves skin tone for the requested hero identifier.
+        /// </summary>
+        public static Color SkinColorForHero(string heroId)
+        {
+            switch (NormalizeHeroId(heroId))
+            {
+                case "sean": return SkinSean;
+                case "zack": return SkinZack;
+                case "dante": return SkinDante;
+                case "cheska": return SkinCheska;
+                case "nemu": return SkinNemu;
+                default: return ArmColour;
+            }
+        }
+
+        /// <summary>
+        /// Normalizes raw character or alias string to canonical hero id.
+        /// </summary>
+        public static string NormalizeHeroId(string heroId)
+        {
+            if (string.IsNullOrEmpty(heroId)) return "classic";
+            switch (heroId.ToLowerInvariant())
+            {
+                case "sean":
+                case "kuya_boy":
+                case "iggy":
+                    return "sean";
+                case "zack":
+                    return "zack";
+                case "dante":
+                case "bayan":
+                    return "dante";
+                case "cheska":
+                case "inday":
+                    return "cheska";
+                case "nemu":
+                    return "nemu";
+                default:
+                    return "classic";
+            }
+        }
+
+        /// <summary>
+        /// Read active hero from character and style arms appropriately.
+        /// </summary>
+        public void MatchHero(CharacterMotor character)
+        {
+            EnsureBuilt();
+            if (character == null) return;
+
+            string heroId = null;
+            if (character.Mode == Core.GameMode.HeroStrike)
+            {
+                var abilitySystem = character.AbilitySystem;
+                if (abilitySystem != null && abilitySystem.Kit != null)
+                {
+                    heroId = abilitySystem.Kit.HeroId;
+                }
+                else
+                {
+                    var heroPeople = Core.Roster.GetPeople(Core.GameMode.HeroStrike);
+                    if (character.CharacterIndex >= 0 && character.CharacterIndex < heroPeople.Count)
+                        heroId = heroPeople[character.CharacterIndex].Id;
+                }
+            }
+
+            SetHero(heroId);
+        }
+
+        /// <summary>
+        /// Customize viewmodel arms with bespoke hero skin tone, sleeves, wristbands/bracers,
+        /// and element signatures.
+        /// </summary>
+        public void SetHero(string heroId)
+        {
+            EnsureBuilt();
+            heroId = NormalizeHeroId(heroId);
+            if (_heroInitialized && _currentHeroId == heroId) return;
+
+            _currentHeroId = heroId;
+            _heroInitialized = true;
+
+            ApplyHeroStyle(heroId);
+        }
+
+        private void ApplyHeroStyle(string heroId)
+        {
+            ClearAccessories(_rightArm);
+            ClearAccessories(_leftArm);
+
+            Color skinColor = SkinColorForHero(heroId);
+
+            if (_rightArmRenderer != null)
+            {
+                Visual.MaterialKit.Dress(_rightArmRenderer, skinColor);
+                Visual.ToonSkin.Apply(_rightArmRenderer, Visual.ToonSkin.PersonOutlineWidth);
+            }
+            if (_leftArmRenderer != null)
+            {
+                Visual.MaterialKit.Dress(_leftArmRenderer, skinColor);
+                Visual.ToonSkin.Apply(_leftArmRenderer, Visual.ToonSkin.PersonOutlineWidth);
+            }
+
+            if (_rightArm != null) BuildArmAccessories(_rightArm, heroId, isRight: true);
+            if (_leftArm != null) BuildArmAccessories(_leftArm, heroId, isRight: false);
+        }
+
+        private static void ClearAccessories(Transform arm)
+        {
+            if (arm == null) return;
+            for (int i = arm.childCount - 1; i >= 0; i--)
+            {
+                var child = arm.GetChild(i);
+                if (child != null && child.name.StartsWith(AccessoryPrefix))
+                {
+                    if (Application.isPlaying) Object.Destroy(child.gameObject);
+                    else Object.DestroyImmediate(child.gameObject);
+                }
+            }
+        }
+
+        private static void BuildArmAccessories(Transform arm, string heroId, bool isRight)
+        {
+            switch (heroId)
+            {
+                case "sean":
+                    BuildSeanAccessories(arm, isRight);
+                    break;
+                case "zack":
+                    BuildZackAccessories(arm, isRight);
+                    break;
+                case "dante":
+                    BuildDanteAccessories(arm, isRight);
+                    break;
+                case "cheska":
+                    BuildCheskaAccessories(arm, isRight);
+                    break;
+                case "nemu":
+                    BuildNemuAccessories(arm, isRight);
+                    break;
+                default:
+                    BuildClassicAccessories(arm, isRight);
+                    break;
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // § HERO BESPOKE ACCESSORY BUILDERS
+        // -------------------------------------------------------------------
+
+        private static void BuildSeanAccessories(Transform arm, bool isRight)
+        {
+            // 1. Rolled crimson athletic sleeves (UiTheme.HeroFire)
+            AddCylinderAccessory(arm, "Sleeve", 0.146f, 0.146f, 0.38f, 12,
+                new Vector3(0.0f, 0.20f, 0.0f), Quaternion.identity, UI.UiTheme.HeroFire);
+
+            // 2. Rolled sleeve cuff fold with gold trim (UiTheme.Amber)
+            AddCylinderAccessory(arm, "SleeveCuff", 0.158f, 0.158f, 0.06f, 12,
+                new Vector3(0.0f, 0.40f, 0.0f), Quaternion.identity, UI.UiTheme.HeroFire);
+            AddCylinderAccessory(arm, "SleeveGoldTrim", 0.160f, 0.160f, 0.02f, 12,
+                new Vector3(0.0f, 0.43f, 0.0f), Quaternion.identity, UI.UiTheme.Amber);
+
+            // 3. Fiery orange athletic wristband / cuff (UiTheme.HeroMagmaCore)
+            AddCylinderAccessory(arm, "Wristband", 0.148f, 0.148f, 0.10f, 12,
+                new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, UI.UiTheme.HeroMagmaCore);
+            AddCylinderAccessory(arm, "WristbandFlameBand", 0.152f, 0.152f, 0.03f, 12,
+                new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, UI.UiTheme.HeroFireBright, emission: 0.45f);
+
+            // 4. Crimson athletic hand/palm wrap
+            AddBoxAccessory(arm, "PalmWrap", new Vector3(0.33f, 0.08f, 0.31f),
+                new Vector3(0.0f, 0.70f, 0.0f), Quaternion.identity, UI.UiTheme.HeroFire);
+        }
+
+        private static void BuildZackAccessories(Transform arm, bool isRight)
+        {
+            var carbonDark = new Color(0.09f, 0.10f, 0.13f, 1.0f);
+            var armorDark = new Color(0.12f, 0.14f, 0.18f, 1.0f);
+
+            // 1. High-tech sports compression sleeve (dark carbon)
+            AddCylinderAccessory(arm, "TechSleeve", 0.142f, 0.142f, 0.42f, 12,
+                new Vector3(0.0f, 0.22f, 0.0f), Quaternion.identity, carbonDark);
+
+            // 2. Lightning-speed energy panels / racing stripes
+            AddBoxAccessory(arm, "LightningStripe", new Vector3(0.04f, 0.38f, 0.02f),
+                new Vector3(0.0f, 0.22f, 0.135f), Quaternion.identity, UI.UiTheme.HeroElectric);
+            AddBoxAccessory(arm, "TealStripe", new Vector3(0.02f, 0.32f, 0.04f),
+                new Vector3(isRight ? 0.135f : -0.135f, 0.20f, 0.0f), Quaternion.identity, UI.UiTheme.HeroIce);
+
+            // 3. High-tech angular bracer with lightning bolt conductor plates
+            AddCylinderAccessory(arm, "TechBracer", 0.152f, 0.152f, 0.10f, 12,
+                new Vector3(0.0f, 0.56f, 0.0f), Quaternion.identity, armorDark);
+            AddBoxAccessory(arm, "LightningConductor", new Vector3(0.06f, 0.08f, 0.025f),
+                new Vector3(0.0f, 0.56f, 0.145f), Quaternion.identity, UI.UiTheme.HeroElectricBright, emission: 0.85f);
+            AddBoxAccessory(arm, "SideConductor", new Vector3(0.025f, 0.06f, 0.05f),
+                new Vector3(isRight ? 0.145f : -0.145f, 0.56f, 0.0f), Quaternion.identity, UI.UiTheme.HeroElectric, emission: 0.70f);
+
+            // 4. Tech grip fingerless glove
+            AddBoxAccessory(arm, "TechGrip", new Vector3(0.33f, 0.07f, 0.31f),
+                new Vector3(0.0f, 0.70f, 0.0f), Quaternion.identity, carbonDark);
+        }
+
+        private static void BuildDanteAccessories(Transform arm, bool isRight)
+        {
+            var basaltRock = new Color(0.16f, 0.14f, 0.12f, 1.0f);
+            var basaltDarkSlab = new Color(0.13f, 0.11f, 0.10f, 1.0f);
+
+            // 1. Heavy basalt rock forearm guard plates
+            AddBoxAccessory(arm, "BasaltArmGuard", new Vector3(0.30f, 0.44f, 0.28f),
+                new Vector3(0.0f, 0.24f, 0.0f), Quaternion.identity, basaltRock);
+            AddBoxAccessory(arm, "BasaltTopSlab", new Vector3(0.24f, 0.36f, 0.04f),
+                new Vector3(0.0f, 0.26f, 0.135f), Quaternion.identity, basaltDarkSlab);
+
+            // 2. Basalt jade crust studs and edge trims (UiTheme.HeroEarth)
+            AddBoxAccessory(arm, "JadeCrustStud1", new Vector3(0.04f, 0.04f, 0.02f),
+                new Vector3(-0.11f, 0.40f, 0.14f), Quaternion.identity, UI.UiTheme.HeroEarth);
+            AddBoxAccessory(arm, "JadeCrustStud2", new Vector3(0.04f, 0.04f, 0.02f),
+                new Vector3(0.11f, 0.40f, 0.14f), Quaternion.identity, UI.UiTheme.HeroEarth);
+
+            // 3. Molten glowing magma fissure veins (UiTheme.HeroMagmaCore)
+            AddBoxAccessory(arm, "MagmaVeinMain", new Vector3(0.04f, 0.32f, 0.02f),
+                new Vector3(0.0f, 0.26f, 0.145f), Quaternion.identity, UI.UiTheme.HeroMagmaCore, emission: 1.20f);
+            AddBoxAccessory(arm, "MagmaVeinBranch", new Vector3(0.10f, 0.03f, 0.02f),
+                new Vector3(0.05f, 0.34f, 0.145f), Quaternion.identity, UI.UiTheme.HeroMagmaCore, emission: 1.20f);
+
+            // 4. Heavy stone wrist guard with magma core
+            AddCylinderAccessory(arm, "BasaltWristRing", 0.158f, 0.158f, 0.11f, 10,
+                new Vector3(0.0f, 0.56f, 0.0f), Quaternion.identity, basaltRock);
+            AddCylinderAccessory(arm, "MagmaWristCore", 0.160f, 0.160f, 0.03f, 10,
+                new Vector3(0.0f, 0.56f, 0.0f), Quaternion.identity, UI.UiTheme.HeroMagmaCore, emission: 1.10f);
+
+            // 5. Volcanic rock knuckle carapace
+            AddBoxAccessory(arm, "RockKnuckles", new Vector3(0.33f, 0.07f, 0.31f),
+                new Vector3(0.0f, 0.72f, 0.0f), Quaternion.identity, basaltRock);
+        }
+
+        private static void BuildCheskaAccessories(Transform arm, bool isRight)
+        {
+            var deepGlacier = new Color(0.13f, 0.29f, 0.36f, 1.0f);
+            var frostWhite = new Color(0.95f, 0.98f, 1.00f, 1.0f);
+
+            // 1. Pastel cyan frost-blue winter coat sleeve
+            AddCylinderAccessory(arm, "FrostSleeve", 0.145f, 0.145f, 0.38f, 12,
+                new Vector3(0.0f, 0.20f, 0.0f), Quaternion.identity, UI.UiTheme.HeroIce);
+            AddBoxAccessory(arm, "GlacierUnderPanel", new Vector3(0.22f, 0.36f, 0.02f),
+                new Vector3(0.0f, 0.20f, -0.13f), Quaternion.identity, deepGlacier);
+
+            // 2. Insulated soft fluffy frost-white cuff trim
+            AddCylinderAccessory(arm, "FluffyWhiteCuff", 0.162f, 0.162f, 0.08f, 12,
+                new Vector3(0.0f, 0.41f, 0.0f), Quaternion.identity, frostWhite);
+
+            // 3. Crystalline ice bracer with delicate snowflake/crystal trim
+            AddCylinderAccessory(arm, "IceBracer", 0.150f, 0.150f, 0.09f, 12,
+                new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, UI.UiTheme.HeroIce);
+            AddBoxAccessory(arm, "SnowflakeCrystal", new Vector3(0.08f, 0.08f, 0.02f),
+                new Vector3(0.0f, 0.54f, 0.142f), Quaternion.Euler(0, 0, 45.0f), UI.UiTheme.HeroIceBright, emission: 0.50f);
+            AddBoxAccessory(arm, "SideCrystal", new Vector3(0.02f, 0.06f, 0.06f),
+                new Vector3(isRight ? 0.142f : -0.142f, 0.54f, 0.0f), Quaternion.Euler(45.0f, 0, 0), UI.UiTheme.HeroIceBright, emission: 0.50f);
+
+            // 4. Deep glacier fingerless frost winter glove
+            AddBoxAccessory(arm, "FrostGlove", new Vector3(0.33f, 0.11f, 0.31f),
+                new Vector3(0.0f, 0.68f, 0.0f), Quaternion.identity, deepGlacier);
+        }
+
+        private static void BuildNemuAccessories(Transform arm, bool isRight)
+        {
+            var voidPurple = new Color(0.17f, 0.07f, 0.26f, 1.0f);
+            var voidDarkBand = new Color(0.10f, 0.05f, 0.16f, 1.0f);
+
+            // 1. Loose dark-purple ghostly spirit wraps / sleeves
+            AddCylinderAccessory(arm, "SpiritSleeve", 0.144f, 0.144f, 0.42f, 12,
+                new Vector3(0.0f, 0.22f, 0.0f), Quaternion.identity, voidPurple);
+            AddBoxAccessory(arm, "SpiritWrapStripe", new Vector3(0.18f, 0.04f, 0.02f),
+                new Vector3(0.0f, 0.26f, 0.138f), Quaternion.identity, UI.UiTheme.HeroSpirit);
+
+            // 2. Flowing ethereal spirit ribbons / wisps along the forearm
+            AddBoxAccessory(arm, "SpiritRibbonOuter", new Vector3(0.02f, 0.36f, 0.08f),
+                new Vector3(isRight ? 0.140f : -0.140f, 0.28f, 0.0f), Quaternion.identity, UI.UiTheme.HeroSpiritBright, emission: 0.65f);
+            AddBoxAccessory(arm, "SpiritRibbonInner", new Vector3(0.02f, 0.28f, 0.06f),
+                new Vector3(isRight ? -0.140f : 0.140f, 0.20f, 0.0f), Quaternion.identity, UI.UiTheme.HeroSpirit, emission: 0.65f);
+
+            // 3. Void energy wrist cuff with glowing ethereal runes
+            AddCylinderAccessory(arm, "VoidWristCuff", 0.150f, 0.150f, 0.10f, 12,
+                new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, voidDarkBand);
+            AddBoxAccessory(arm, "SpectralRune", new Vector3(0.06f, 0.06f, 0.02f),
+                new Vector3(0.0f, 0.55f, 0.142f), Quaternion.Euler(0, 0, 45.0f), UI.UiTheme.HeroSpiritBright, emission: 0.95f);
+
+            // 4. Spectral palm & finger wraps
+            AddBoxAccessory(arm, "SpectralPalmWrap", new Vector3(0.33f, 0.08f, 0.31f),
+                new Vector3(0.0f, 0.70f, 0.0f), Quaternion.identity, voidPurple);
+        }
+
+        private static void BuildClassicAccessories(Transform arm, bool isRight)
+        {
+            var shirtWhite = new Color(0.85f, 0.85f, 0.85f, 1.0f);
+            var foldGrey = new Color(0.78f, 0.78f, 0.78f, 1.0f);
+            var bandDark = new Color(0.18f, 0.18f, 0.20f, 1.0f);
+
+            // 1. Rolled streetwear t-shirt sleeve
+            AddCylinderAccessory(arm, "ClassicSleeve", 0.144f, 0.144f, 0.28f, 12,
+                new Vector3(0.0f, 0.15f, 0.0f), Quaternion.identity, shirtWhite);
+            AddCylinderAccessory(arm, "ClassicSleeveFold", 0.152f, 0.152f, 0.05f, 12,
+                new Vector3(0.0f, 0.28f, 0.0f), Quaternion.identity, foldGrey);
+
+            // 2. Neutral athletic wrist sweatband
+            AddCylinderAccessory(arm, "ClassicWristband", 0.146f, 0.146f, 0.08f, 12,
+                new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, bandDark);
+        }
+
+        // -------------------------------------------------------------------
+        // § PROCEDURAL GEOMETRY & ACCESSORY HELPERS
+        // -------------------------------------------------------------------
+
+        private static GameObject AddBoxAccessory(Transform parent, string name, Vector3 size,
+            Vector3 pos, Quaternion rot, Color color, float emission = 0.0f, bool toon = true)
+        {
+            var mesh = CreateBoxMesh(size);
+            return AddMeshAccessory(parent, name, mesh, pos, rot, color, emission, toon);
+        }
+
+        private static GameObject AddCylinderAccessory(Transform parent, string name, float radiusBottom,
+            float radiusTop, float height, int segments, Vector3 pos, Quaternion rot, Color color,
+            float emission = 0.0f, bool toon = true)
+        {
+            var mesh = CreateCylinderMesh(radiusBottom, radiusTop, height, segments);
+            return AddMeshAccessory(parent, name, mesh, pos, rot, color, emission, toon);
+        }
+
+        private static GameObject AddMeshAccessory(Transform parent, string name, Mesh mesh,
+            Vector3 pos, Quaternion rot, Color color, float emission, bool toon)
+        {
+            var go = new GameObject(AccessoryPrefix + name);
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = pos;
+            go.transform.localRotation = rot;
+
+            var mf = go.AddComponent<MeshFilter>();
+            mf.sharedMesh = mesh;
+
+            var mr = go.AddComponent<MeshRenderer>();
+            if (emission > 0.001f)
+            {
+                Visual.VfxMaterial.Solid(mr, color, emission);
+            }
+            else
+            {
+                Visual.MaterialKit.Dress(mr, color);
+                if (toon) Visual.ToonSkin.Apply(mr, Visual.ToonSkin.PersonOutlineWidth);
+            }
+
+            return go;
+        }
+
+        private static Mesh CreateBoxMesh(Vector3 size)
+        {
+            var mesh = new Mesh { name = "HeroArm_Box" };
+            float hx = size.x * 0.5f;
+            float hy = size.y * 0.5f;
+            float hz = size.z * 0.5f;
+
+            var vertices = new Vector3[]
+            {
+                // Front (+Z)
+                new Vector3(-hx, -hy,  hz), new Vector3( hx, -hy,  hz), new Vector3( hx,  hy,  hz), new Vector3(-hx,  hy,  hz),
+                // Back (-Z)
+                new Vector3( hx, -hy, -hz), new Vector3(-hx, -hy, -hz), new Vector3(-hx,  hy, -hz), new Vector3( hx,  hy, -hz),
+                // Top (+Y)
+                new Vector3(-hx,  hy,  hz), new Vector3( hx,  hy,  hz), new Vector3( hx,  hy, -hz), new Vector3(-hx,  hy, -hz),
+                // Bottom (-Y)
+                new Vector3(-hx, -hy, -hz), new Vector3( hx, -hy, -hz), new Vector3( hx, -hy,  hz), new Vector3(-hx, -hy,  hz),
+                // Right (+X)
+                new Vector3( hx, -hy,  hz), new Vector3( hx, -hy, -hz), new Vector3( hx,  hy, -hz), new Vector3( hx,  hy,  hz),
+                // Left (-X)
+                new Vector3(-hx, -hy, -hz), new Vector3(-hx, -hy,  hz), new Vector3(-hx,  hy,  hz), new Vector3(-hx,  hy, -hz),
+            };
+
+            var normals = new Vector3[]
+            {
+                Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward,
+                Vector3.back, Vector3.back, Vector3.back, Vector3.back,
+                Vector3.up, Vector3.up, Vector3.up, Vector3.up,
+                Vector3.down, Vector3.down, Vector3.down, Vector3.down,
+                Vector3.right, Vector3.right, Vector3.right, Vector3.right,
+                Vector3.left, Vector3.left, Vector3.left, Vector3.left,
+            };
+
+            var triangles = new int[36];
+            for (int face = 0; face < 6; face++)
+            {
+                int v = face * 4;
+                int t = face * 6;
+                triangles[t + 0] = v + 0;
+                triangles[t + 1] = v + 1;
+                triangles[t + 2] = v + 2;
+                triangles[t + 3] = v + 0;
+                triangles[t + 4] = v + 2;
+                triangles[t + 5] = v + 3;
+            }
+
+            mesh.vertices = vertices;
+            mesh.normals = normals;
+            mesh.triangles = triangles;
+            mesh.RecalculateBounds();
+            return mesh;
+        }
+
+        private static Mesh CreateCylinderMesh(float radiusBottom, float radiusTop, float height, int segments)
+        {
+            var mesh = new Mesh { name = "HeroArm_Cylinder" };
+            int vCount = (segments + 1) * 2;
+            var vertices = new Vector3[vCount];
+            var normals = new Vector3[vCount];
+            var triangles = new int[segments * 6];
+
+            float halfH = height * 0.5f;
+
+            for (int i = 0; i <= segments; i++)
+            {
+                float angle = (float)i / segments * Mathf.PI * 2.0f;
+                float cos = Mathf.Cos(angle);
+                float sin = Mathf.Sin(angle);
+
+                vertices[i] = new Vector3(cos * radiusBottom, -halfH, sin * radiusBottom);
+                vertices[i + segments + 1] = new Vector3(cos * radiusTop, halfH, sin * radiusTop);
+
+                Vector3 n = new Vector3(cos, 0.0f, sin).normalized;
+                normals[i] = n;
+                normals[i + segments + 1] = n;
+            }
+
+            int t = 0;
+            for (int i = 0; i < segments; i++)
+            {
+                int b1 = i;
+                int b2 = i + 1;
+                int t1 = i + segments + 1;
+                int t2 = i + segments + 2;
+
+                triangles[t++] = b1;
+                triangles[t++] = t1;
+                triangles[t++] = b2;
+
+                triangles[t++] = b2;
+                triangles[t++] = t1;
+                triangles[t++] = t2;
+            }
+
+            mesh.vertices = vertices;
+            mesh.normals = normals;
+            mesh.triangles = triangles;
+            mesh.RecalculateBounds();
+            return mesh;
         }
 
         /// <summary>
@@ -620,9 +1037,14 @@ namespace TumbangPreso.CameraSystem
             // ⚠️ THE EMPTY ARM ALWAYS BREATHES; THE CARRYING ONE HOLDS ITS POSE. An idle
             // swing folded on top of the carry pose makes the held tsinelas wobble in the
             // hand, which reads as the attachment being loose again.
-            _leftPivot.localRotation =
-                _leftRest * Quaternion.Euler(-t * IdleLeftSwing * Mathf.Rad2Deg, 0.0f,
-                                             -t * 0.02f * Mathf.Rad2Deg);
+            if (_leftPivot != null)
+            {
+                _leftPivot.localRotation =
+                    _leftRest * Quaternion.Euler(-t * IdleLeftSwing * Mathf.Rad2Deg, 0.0f,
+                                                 -t * 0.02f * Mathf.Rad2Deg);
+            }
+
+            if (_rightPivot == null) return;
 
             if (!_carrying)
             {
@@ -655,6 +1077,7 @@ namespace TumbangPreso.CameraSystem
 
         private void StepToward(Vector3 position, Quaternion rotation, Vector3 scale)
         {
+            if (_rightPivot == null) return;
             float k = Mathf.Clamp01(ReachSpeed * Time.deltaTime);
 
             _rightPivot.localPosition = Vector3.Lerp(_rightPivot.localPosition, position, k);

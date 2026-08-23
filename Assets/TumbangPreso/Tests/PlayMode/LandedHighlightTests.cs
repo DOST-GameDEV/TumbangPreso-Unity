@@ -140,8 +140,8 @@ namespace TumbangPreso.PlayTests
             var lata = Object.FindFirstObjectByType<Lata>();
             Assert.IsNotNull(lata, "the arena has no lata to measure the floor from");
 
-            Vector3 target = lata.transform.position + new Vector3(4.0f, 0.0f, 0.0f);
-            slipper.HostThrow(null, target + Vector3.up * 2.0f, Vector3.zero);
+            Vector3 target = lata.transform.position + new Vector3(3.5f, 0.0f, 2.5f);
+            slipper.HostThrow(null, target + Vector3.up * 1.5f, Vector3.zero);
 
             // ⚠⚠ THE THROW HAS TO HAVE TAKEN, AND NOT CHECKING WAS HALF OF A FALSE FAILURE.
             // The wait below exits the moment the state is Loose, which is ALSO the state of a

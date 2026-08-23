@@ -410,6 +410,81 @@ namespace TumbangPreso.Tests
             Object.DestroyImmediate(vm.gameObject);
         }
 
+        /// <summary>
+        /// ⚠️ VIEWMODEL ARMS MUST STYLE BESPOKE SKIN TONES AND ACCESSORIES FOR EVERY HERO.
+        /// Generic brown arms for all characters is forbidden in Hero Strike.
+        /// </summary>
+        [Test]
+        public void ViewmodelArms_StylesUniqueSkinToneAndAccessories_ForEveryHero()
+        {
+            var vm = new GameObject("TestVM_HeroArms").AddComponent<CameraSystem.ViewmodelArms>();
+
+            string[] testHeroes = { "sean", "zack", "dante", "cheska", "nemu", "classic" };
+
+            foreach (string hero in testHeroes)
+            {
+                vm.SetHero(hero);
+
+                Assert.AreEqual(hero, vm.CurrentHeroId, $"ViewmodelArms failed to normalize hero {hero}");
+                Assert.AreEqual(CameraSystem.ViewmodelArms.SkinColorForHero(hero), vm.CurrentSkinColor,
+                    $"ViewmodelArms applied wrong skin tone for {hero}");
+
+                var renderers = vm.GetComponentsInChildren<MeshRenderer>(true);
+                int accessoryCount = 0;
+
+                foreach (var r in renderers)
+                {
+                    Assert.IsNotNull(r.sharedMaterial, $"{hero}: Renderer on {r.gameObject.name} has null material");
+                    Assert.IsNotNull(r.sharedMaterial.shader, $"{hero}: Renderer on {r.gameObject.name} has null shader");
+                    if (r.gameObject.name.StartsWith("~HeroAccessory_")) accessoryCount++;
+                }
+
+                Assert.Greater(accessoryCount, 0, $"{hero} viewmodel arms are missing bespoke sleeves/bracers/accessories");
+            }
+
+            Object.DestroyImmediate(vm.gameObject);
+        }
+
+        /// <summary>
+        /// ⚠️ THE HELD SLIPPER MUST REMAIN PARENTED UNDER RightPivot/Arm ACROSS HERO SWAPS AND PLAYING ACTIONS.
+        /// </summary>
+        [Test]
+        public void ViewmodelArms_PreservesHeldSlipperAndActions_AcrossHeroSwaps()
+        {
+            var vm = new GameObject("TestVM_Slipper").AddComponent<CameraSystem.ViewmodelArms>();
+            vm.EnsureBuilt();
+
+            var rightArm = vm.transform.Find("RightPivot/Arm");
+            Assert.IsNotNull(rightArm, "RightPivot/Arm transform missing from ViewmodelArms");
+
+            var heldSlipper = rightArm.Find("HeldSlipper");
+            Assert.IsNotNull(heldSlipper, "HeldSlipper missing or not parented to RightPivot/Arm");
+
+            foreach (string hero in Heroes)
+            {
+                vm.SetHero(hero);
+
+                // HeldSlipper must survive accessory clearing
+                heldSlipper = rightArm.Find("HeldSlipper");
+                Assert.IsNotNull(heldSlipper, $"{hero}: HeldSlipper was destroyed during SetHero");
+
+                vm.SetHolding(true);
+                Assert.IsTrue(heldSlipper.gameObject.activeSelf, $"{hero}: SetHolding(true) failed");
+
+                vm.SetHolding(false);
+                Assert.IsFalse(heldSlipper.gameObject.activeSelf, $"{hero}: SetHolding(false) failed");
+
+                var kit = HeroAbilitySystem.CreateKitFor(hero);
+                foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                {
+                    Assert.IsTrue(vm.PlayAction(ability.ViewmodelAction),
+                        $"{hero}: PlayAction failed for {ability.ViewmodelAction}");
+                }
+            }
+
+            Object.DestroyImmediate(vm.gameObject);
+        }
+
         // ------------------------------------------------------------------ helpers
 
         private static void AssertTelegraph(string hero, int slot, float radius, float range)
