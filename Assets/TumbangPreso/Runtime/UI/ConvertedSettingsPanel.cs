@@ -60,6 +60,7 @@ namespace TumbangPreso.UI
             WireSliders();
             WireChecks();
             WireNameField();
+            ConfigureScroll();
 
             OnClick("ResetAllButton", ResetAll);
             OnClick("ApplyButton", Apply);
@@ -67,6 +68,22 @@ namespace TumbangPreso.UI
 
             SetText("SettingsStatusLabel", "");
             RefreshApplyState();
+        }
+
+        private void ConfigureScroll()
+        {
+            var scroll = GetComponentInChildren<ScrollRect>(true);
+            if (scroll == null) return;
+
+            scroll.scrollSensitivity = 45.0f; // Fast, smooth, responsive mouse wheel scrolling
+            scroll.movementType = ScrollRect.MovementType.Clamped;
+            scroll.verticalNormalizedPosition = 1.0f; // Reset to top showing MOVEMENT / WASD
+
+            if (scroll.viewport != null)
+            {
+                if (scroll.viewport.GetComponent<RectMask2D>() == null && scroll.viewport.GetComponent<Mask>() == null)
+                    scroll.viewport.gameObject.AddComponent<RectMask2D>();
+            }
         }
 
         private Button FindButton(string node)
@@ -286,14 +303,18 @@ namespace TumbangPreso.UI
 
             SetButtonText(action, "…");
 
-            var target = _actions?.FindActionMap("Player", false)?.FindAction(action, false);
-            if (target == null) { CancelRebind(); return; }
+            if (!Rebinding.ResolveActionAndBindingIndex(_actions, action, out var target, out int targetIndex))
+            {
+                CancelRebind();
+                return;
+            }
 
             // The action must be disabled while it is being rebound, or the press being captured
             // also fires the verb it is bound to.
             target.Disable();
 
             _rebindOp = target.PerformInteractiveRebinding()
+                .WithTargetBinding(targetIndex)
                 .WithControlsExcluding("<Mouse>/position")
                 .WithControlsExcluding("<Mouse>/delta")
                 .WithCancelingThrough("<Keyboard>/escape")
@@ -310,10 +331,10 @@ namespace TumbangPreso.UI
                     _rebindOp = null;
                     target.Enable();
 
-                    // ⚠️ THE OVERRIDE THE OPERATION ALREADY APPLIED IS UNDONE FIRST, because the
-                    // conflict check has to run against the OTHER actions and report a refusal
+                    // The override the operation already applied is undone first, because the
+                    // conflict check has to run against the other actions and report a refusal
                     // rather than leave two verbs sharing one key.
-                    target.RemoveBindingOverride(op.bindingMask ?? default);
+                    target.RemoveBindingOverride(targetIndex);
 
                     string conflict = Rebinding.TryRebind(_actions, action, control);
 
@@ -324,8 +345,6 @@ namespace TumbangPreso.UI
                     }
                     else
                     {
-                        // ⚠️ THE CONFLICT BUZZ. A player looking at the keyboard rather than at
-                        // the status label gets no signal at all that the press was refused.
                         SetText("SettingsStatusLabel",
                                 $"That key is already \"{conflict}\". Choose a different key.");
                         MenuSfx.Error();

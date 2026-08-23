@@ -43,6 +43,24 @@ namespace TumbangPreso.Tests
 
 
         [Test]
+        public void InspectDanteMesh()
+        {
+            var book = Resources.Load<RosterBook>("RosterBook");
+            var dante = book.People.Find(p => p.Id == "dante");
+            Assert.IsNotNull(dante, "Dante missing");
+            var model = dante.Model;
+            var renderers = model.GetComponentsInChildren<Renderer>(true);
+            foreach (var r in renderers)
+            {
+                Debug.Log($"[DANTE_RENDERER] name={r.name} type={r.GetType().Name} mats={r.sharedMaterials.Length}");
+                if (r is SkinnedMeshRenderer smr)
+                {
+                    Debug.Log($"  Mesh submeshes={smr.sharedMesh.subMeshCount} verts={smr.sharedMesh.vertexCount}");
+                }
+            }
+        }
+
+        [Test]
         public void NoHeroAccentSitsOnARoleColour()
         {
             float offense = Hue(UiTheme.Offense);

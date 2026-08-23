@@ -33,11 +33,12 @@ namespace TumbangPreso.Settings
     /// </summary>
     public static class Rebinding
     {
-        /// <summary>Action names as they appear in the Input System asset.</summary>
+        /// <summary>Action names as they appear in the Input System asset or composite parts.</summary>
         public static readonly string[] RebindableActions =
         {
-            "Move",              // the four directions are one composite here
-            "SpecialAbility", "Grab", "Lunge", "Jump", "Sprint",
+            "MoveForward", "MoveBackward", "MoveLeft", "MoveRight",
+            "Sprint", "Jump",
+            "SpecialAbility", "Grab", "Lunge",
             "Skill1", "Skill2", "Ultimate",
             "ReadyUp", "CleanFeed", "AbilityInfo",
             "EmoteWheel",
@@ -58,6 +59,10 @@ namespace TumbangPreso.Settings
         /// </summary>
         public static readonly Dictionary<string, string> ActionLabels = new Dictionary<string, string>
         {
+            { "MoveForward", "Move Forward" },
+            { "MoveBackward", "Move Backward" },
+            { "MoveLeft", "Move Left" },
+            { "MoveRight", "Move Right" },
             { "Move", "Move" },
             { "SpecialAbility", "Throw / Punch" },
             { "Grab", "Pick Up / Shove / Reset" },
@@ -99,7 +104,7 @@ namespace TumbangPreso.Settings
         /// </summary>
         public static readonly (string Title, string[] Actions)[] Groups =
         {
-            ("MOVEMENT", new[] { "Move", "Sprint", "Jump" }),
+            ("MOVEMENT", new[] { "MoveForward", "MoveBackward", "MoveLeft", "MoveRight", "Sprint", "Jump" }),
             ("PLAYING THE GAME", new[] { "SpecialAbility", "Grab", "Lunge" }),
             ("HERO POWERS", new[] { "Skill1", "Skill2", "Ultimate", "AbilityInfo" }),
             ("ROUND AND SCREEN", new[] { "ReadyUp", "EmoteWheel", "CleanFeed", "SpectatorDown",
@@ -124,13 +129,50 @@ namespace TumbangPreso.Settings
         }
 
         /// <summary>
+        /// Resolves an action name (including discrete composite movements like MoveForward)
+        /// into the underlying InputAction and binding index.
+        /// </summary>
+        public static bool ResolveActionAndBindingIndex(InputActionAsset asset, string actionName,
+            out InputAction action, out int bindingIndex)
+        {
+            action = null;
+            bindingIndex = -1;
+            if (asset == null || string.IsNullOrEmpty(actionName)) return false;
+
+            if (actionName == "MoveForward" || actionName == "MoveBackward" ||
+                actionName == "MoveLeft" || actionName == "MoveRight")
+            {
+                action = Find(asset, "Move");
+                if (action == null) return false;
+
+                string part = actionName == "MoveForward" ? "up" :
+                              actionName == "MoveBackward" ? "down" :
+                              actionName == "MoveLeft" ? "left" : "right";
+
+                for (int i = 0; i < action.bindings.Count; i++)
+                {
+                    var b = action.bindings[i];
+                    if (b.isPartOfComposite && string.Equals(b.name, part, System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        bindingIndex = i;
+                        return true;
+                    }
+                }
+
+                bindingIndex = FirstKeyboardBinding(action);
+                return bindingIndex >= 0;
+            }
+
+            action = Find(asset, actionName);
+            if (action == null) return false;
+
+            bindingIndex = FirstKeyboardBinding(action);
+            return bindingIndex >= 0;
+        }
+
+        /// <summary>
         /// Every control bound twice across two different actions, as "path: ActionA, ActionB".
         /// Empty means the map is clean.
-        ///
-        /// ⚠️ THIS IS THE ASSERTION, NOT A DIAGNOSTIC. `TryRebind` already refuses a key
-        /// another action holds, so a duplicate can only enter through the .inputactions asset
-        /// itself, which no code path checks and no player can see. It went unnoticed long
-        /// enough to produce four live collisions.
         /// </summary>
         public static List<string> FindDuplicateBindings(InputActionAsset asset)
         {
@@ -140,21 +182,17 @@ namespace TumbangPreso.Settings
 
             foreach (string action in RebindableActions)
             {
-                var a = Find(asset, action);
-                if (a == null) continue;
+                if (!ResolveActionAndBindingIndex(asset, action, out var a, out int bindingIndex))
+                    continue;
 
-                foreach (var b in a.bindings)
-                {
-                    if (b.isComposite) continue;
+                var b = a.bindings[bindingIndex];
+                string path = b.effectivePath;
+                if (string.IsNullOrEmpty(path)) continue;
 
-                    string path = b.effectivePath;
-                    if (string.IsNullOrEmpty(path)) continue;
+                if (!owners.TryGetValue(path, out var list))
+                    owners[path] = list = new List<string>();
 
-                    if (!owners.TryGetValue(path, out var list))
-                        owners[path] = list = new List<string>();
-
-                    if (!list.Contains(action)) list.Add(action);
-                }
+                if (!list.Contains(action)) list.Add(action);
             }
 
             foreach (var pair in owners)
@@ -172,24 +210,16 @@ namespace TumbangPreso.Settings
         /// </summary>
         public static string DisplayNameFor(InputActionAsset asset, string action)
         {
-            var a = Find(asset, action);
-            if (a == null) return "-";
-
-            int binding = FirstKeyboardBinding(a);
-            if (binding < 0) return "-";
+            if (!ResolveActionAndBindingIndex(asset, action, out var a, out int bindingIndex))
+                return "-";
 
             return InputControlPath.ToHumanReadableString(
-                a.bindings[binding].effectivePath,
+                a.bindings[bindingIndex].effectivePath,
                 InputControlPath.HumanReadableStringOptions.OmitDevice);
         }
 
         /// <summary>
         /// Rebind <paramref name="action"/> to <paramref name="control"/>.
-        ///
-        /// ⚠️ IT REFUSES A KEY ALREADY IN USE AND SAYS WHICH ACTION HAS IT, rather than
-        /// silently creating a double binding. Godot returned the conflicting action's label
-        /// for exactly this message; two verbs on one key is unplayable and undiagnosable.
-        /// Returns null on success, or the conflicting action's LABEL on refusal.
         /// </summary>
         public static string TryRebind(InputActionAsset asset, string action, InputControl control)
         {
@@ -199,18 +229,15 @@ namespace TumbangPreso.Settings
             {
                 if (other == action) continue;
 
-                var o = Find(asset, other);
-                if (o == null) continue;
-
-                foreach (var b in o.bindings)
-                    if (b.effectivePath == path) return LabelFor(other);
+                if (ResolveActionAndBindingIndex(asset, other, out var otherAction, out int otherIndex))
+                {
+                    if (otherAction.bindings[otherIndex].effectivePath == path)
+                        return LabelFor(other);
+                }
             }
 
-            var target = Find(asset, action);
-            if (target == null) return LabelFor(action);
-
-            int index = FirstKeyboardBinding(target);
-            if (index < 0) return LabelFor(action);
+            if (!ResolveActionAndBindingIndex(asset, action, out var target, out int index))
+                return LabelFor(action);
 
             target.ApplyBindingOverride(index, path);
             Save(asset);

@@ -246,6 +246,13 @@ namespace TumbangPreso.UI
 
         private void OnEnable()
         {
+            var s = Settings.SettingsStore.Current;
+            if (s != null)
+            {
+                _pick[0] = Mathf.Max(0, s.CharacterPick);
+                _pick[1] = Mathf.Max(0, s.CanPick);
+                _pick[2] = Mathf.Max(0, s.SlipperPick);
+            }
             if (_tabButtons.Count > 0)
             {
                 int n = Entries.Count;

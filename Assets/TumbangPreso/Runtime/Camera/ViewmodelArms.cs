@@ -47,7 +47,7 @@ namespace TumbangPreso.CameraSystem
         // Heroes
         public static readonly Color SkinSean = new Color(0.722f, 0.455f, 0.251f, 1.0f);     // Golden brown tan
         public static readonly Color SkinZack = new Color(0.659f, 0.376f, 0.173f, 1.0f);     // Warm athletic bronze tan
-        public static readonly Color SkinDante = new Color(0.659f, 0.376f, 0.173f, 1.0f);    // Deep dark volcanic bronze
+        public static readonly Color SkinDante = new Color(0.851f, 0.541f, 0.373f, 1.0f);    // Warm golden brown tan matching TPP palette
         public static readonly Color SkinCheska = new Color(0.961f, 0.722f, 0.580f, 1.0f);   // Fair porcelain skin
         public static readonly Color SkinNemu = new Color(0.878f, 0.686f, 0.518f, 1.0f);     // Pale lavender / ghostly ethereal
 
@@ -868,36 +868,50 @@ namespace TumbangPreso.CameraSystem
 
         private static void BuildDanteAccessories(Transform arm, bool isRight)
         {
-            var basaltRock = new Color(0.16f, 0.14f, 0.12f, 1.0f);
-            var basaltDarkSlab = new Color(0.13f, 0.11f, 0.10f, 1.0f);
+            var jadeGreen = new Color(0.239f, 0.388f, 0.208f, 1.0f);
+            var goldTrim = new Color(0.875f, 0.698f, 0.282f, 1.0f);
+            var darkCuff = new Color(0.282f, 0.184f, 0.114f, 1.0f);
 
-            // 1. Heavy basalt rock forearm guard plates
-            AddBoxAccessory(arm, "BasaltArmGuard", new Vector3(0.30f, 0.44f, 0.28f),
-                new Vector3(0.0f, 0.24f, 0.0f), Quaternion.identity, basaltRock);
-            AddBoxAccessory(arm, "BasaltTopSlab", new Vector3(0.24f, 0.36f, 0.04f),
-                new Vector3(0.0f, 0.26f, 0.135f), Quaternion.identity, basaltDarkSlab);
+            // 1. Jade green shoulder sleeve with gold trim
+            AddCylinderAccessory(arm, "DanteSleeve", 0.146f, 0.146f, 0.22f, 12,
+                new Vector3(0.0f, 0.12f, 0.0f), Quaternion.identity, jadeGreen);
+            AddCylinderAccessory(arm, "DanteGoldTrim", 0.150f, 0.150f, 0.04f, 12,
+                new Vector3(0.0f, 0.23f, 0.0f), Quaternion.identity, goldTrim);
 
-            // 2. Basalt jade crust studs and edge trims
-            AddBoxAccessory(arm, "JadeCrustStud1", new Vector3(0.04f, 0.04f, 0.02f),
-                new Vector3(-0.11f, 0.40f, 0.14f), Quaternion.identity, UI.UiTheme.HeroEarth);
-            AddBoxAccessory(arm, "JadeCrustStud2", new Vector3(0.04f, 0.04f, 0.02f),
-                new Vector3(0.11f, 0.40f, 0.14f), Quaternion.identity, UI.UiTheme.HeroEarth);
+            if (isRight)
+            {
+                // Right Arm (viewer's left): Gold diagonal strap + Jade zig-zag marking
+                AddBoxAccessory(arm, "GoldArmStrap", new Vector3(0.18f, 0.04f, 0.02f),
+                    new Vector3(0.0f, 0.30f, 0.136f), Quaternion.Euler(0, 0, 25.0f), goldTrim);
+                AddBoxAccessory(arm, "JadeZigZag1", new Vector3(0.035f, 0.10f, 0.015f),
+                    new Vector3(0.04f, 0.38f, 0.135f), Quaternion.Euler(0, 0, -30.0f), jadeGreen);
+                AddBoxAccessory(arm, "JadeZigZag2", new Vector3(0.035f, 0.10f, 0.015f),
+                    new Vector3(-0.04f, 0.44f, 0.135f), Quaternion.Euler(0, 0, 30.0f), jadeGreen);
+            }
+            else
+            {
+                // Left Arm (viewer's right): 3 downward pointing jade chevrons (>>>)
+                AddBoxAccessory(arm, "JadeChevron1A", new Vector3(0.07f, 0.025f, 0.015f),
+                    new Vector3(-0.03f, 0.32f, 0.135f), Quaternion.Euler(0, 0, 35.0f), jadeGreen);
+                AddBoxAccessory(arm, "JadeChevron1B", new Vector3(0.07f, 0.025f, 0.015f),
+                    new Vector3(0.03f, 0.32f, 0.135f), Quaternion.Euler(0, 0, -35.0f), jadeGreen);
 
-            // 3. Molten glowing magma fissure veins
-            AddBoxAccessory(arm, "MagmaVeinMain", new Vector3(0.04f, 0.32f, 0.02f),
-                new Vector3(0.0f, 0.26f, 0.145f), Quaternion.identity, UI.UiTheme.HeroMagmaCore, emission: 1.20f);
-            AddBoxAccessory(arm, "MagmaVeinBranch", new Vector3(0.10f, 0.03f, 0.02f),
-                new Vector3(0.05f, 0.34f, 0.145f), Quaternion.identity, UI.UiTheme.HeroMagmaCore, emission: 1.20f);
+                AddBoxAccessory(arm, "JadeChevron2A", new Vector3(0.07f, 0.025f, 0.015f),
+                    new Vector3(-0.03f, 0.40f, 0.135f), Quaternion.Euler(0, 0, 35.0f), jadeGreen);
+                AddBoxAccessory(arm, "JadeChevron2B", new Vector3(0.07f, 0.025f, 0.015f),
+                    new Vector3(0.03f, 0.40f, 0.135f), Quaternion.Euler(0, 0, -35.0f), jadeGreen);
 
-            // 4. Heavy stone wrist guard with magma core
-            AddCylinderAccessory(arm, "BasaltWristRing", 0.158f, 0.158f, 0.11f, 10,
-                new Vector3(0.0f, 0.56f, 0.0f), Quaternion.identity, basaltRock);
-            AddCylinderAccessory(arm, "MagmaWristCore", 0.160f, 0.160f, 0.03f, 10,
-                new Vector3(0.0f, 0.56f, 0.0f), Quaternion.identity, UI.UiTheme.HeroMagmaCore, emission: 1.10f);
+                AddBoxAccessory(arm, "JadeChevron3A", new Vector3(0.07f, 0.025f, 0.015f),
+                    new Vector3(-0.03f, 0.48f, 0.135f), Quaternion.Euler(0, 0, 35.0f), jadeGreen);
+                AddBoxAccessory(arm, "JadeChevron3B", new Vector3(0.07f, 0.025f, 0.015f),
+                    new Vector3(0.03f, 0.48f, 0.135f), Quaternion.Euler(0, 0, -35.0f), jadeGreen);
+            }
 
-            // 5. Volcanic rock knuckle carapace
-            AddBoxAccessory(arm, "RockKnuckles", new Vector3(0.33f, 0.07f, 0.31f),
-                new Vector3(0.0f, 0.72f, 0.0f), Quaternion.identity, basaltRock);
+            // 2. Dark wrist cuff with jade stud
+            AddCylinderAccessory(arm, "DarkWristCuff", 0.148f, 0.148f, 0.08f, 12,
+                new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, darkCuff);
+            AddBoxAccessory(arm, "JadeWristStud", new Vector3(0.04f, 0.04f, 0.02f),
+                new Vector3(0.0f, 0.55f, 0.142f), Quaternion.identity, jadeGreen);
         }
 
         private static void BuildCheskaAccessories(Transform arm, bool isRight)

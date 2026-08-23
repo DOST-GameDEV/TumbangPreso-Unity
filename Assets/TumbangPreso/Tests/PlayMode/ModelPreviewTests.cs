@@ -314,6 +314,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator ClassicCharacterSelectDrawsTheGodotCastAndBackdrop()
         {
             Directory.CreateDirectory(OutDir);
+            Settings.SettingsStore.Current.CharacterPick = 0;
             UI.SceneFlow.SelectedMode = Core.GameMode.Classic;
 
             var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
@@ -322,6 +323,7 @@ namespace TumbangPreso.PlayTests
 
             var panel = Find("CharacterSelectPanel");
             Assert.IsNotNull(panel, "MatchSetup has no CharacterSelectPanel to open.");
+            panel.SetActive(false);
             panel.SetActive(true);
             for (int i = 0; i < 30; i++) yield return null;
 
@@ -346,6 +348,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes()
         {
+            Settings.SettingsStore.Current.CharacterPick = 0;
             UI.SceneFlow.SelectedMode = Core.GameMode.HeroStrike;
 
             var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
@@ -354,6 +357,7 @@ namespace TumbangPreso.PlayTests
 
             var panel = Find("CharacterSelectPanel");
             Assert.IsNotNull(panel, "MatchSetup has no CharacterSelectPanel to open.");
+            panel.SetActive(false);
             panel.SetActive(true);
             for (int i = 0; i < 20; i++) yield return null;
 
