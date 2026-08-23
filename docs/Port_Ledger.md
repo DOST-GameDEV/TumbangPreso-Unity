@@ -1209,3 +1209,11 @@ whole runtime.
 `Packages/com.tumbangpreso.core/` — engine-free C#, 32 tests green. Every constant
 transcribed from the .gd, NOT from `Design.md` (which has drifted; see
 `Design_Drift_Report.md` — all 4 discrepancies were stale prose, the code is right).
+
+## 2026-08-23 — Dante 3D Rig Head Mesh Z-Inversion Bug
+
+⚠️ **Dante's head mesh showed afro hair from the front and visor from behind.**
+Reported as *"his face still goes in"* and *"his model is broken"*.
+
+- **Root Cause**: In commit `f74710e`, when `team-dante.glb` was re-exported to 3,193 vertices, the `head-mesh` was exported with its local Z orientation inverted 180 degrees relative to the `body-mesh` and `root` skeleton. This caused the afro hair (intended for the back of the head) to sit on the front of his face, while the face/visor pointed backwards into the hair mesh.
+- **Resolution**: Restored the clean 4,533-vertex `team-dante.glb` (from `team-bayan.glb` in `backup` branch) where both `body-mesh` and `head-mesh` share forward (+Z) orientation. Rebuilt `RosterBook.asset` and validated character select and in-game renders.
