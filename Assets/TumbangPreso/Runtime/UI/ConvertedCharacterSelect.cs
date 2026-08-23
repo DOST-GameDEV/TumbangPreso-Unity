@@ -45,7 +45,9 @@ namespace TumbangPreso.UI
         protected override void Wire()
         {
             ConfigureGodotBackdrop();
-            SetText("GameBannerLabel", "CHARACTER");
+            SetText("GameBannerLabel", SceneFlow.SelectedMode == GameMode.HeroStrike
+                ? "CHOOSE YOUR HERO"
+                : "CHOOSE YOUR LOADOUT");
 
             var s = Settings.SettingsStore.Current;
             _pick[0] = Mathf.Max(0, s.CharacterPick);
@@ -220,7 +222,10 @@ namespace TumbangPreso.UI
             {
                 int index = i;
 
-                var button = MenuKit.WoodButton(bar, TabNames[i], Vector2.zero, Vector2.zero,
+                string tabName = i == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike
+                    ? "HERO"
+                    : TabNames[i];
+                var button = MenuKit.WoodButton(bar, tabName, Vector2.zero, Vector2.zero,
                                                 new Vector2(180.0f, 56.0f), () =>
                                                 {
                                                     _tab = index;
@@ -241,7 +246,30 @@ namespace TumbangPreso.UI
         private void RefreshTabs()
         {
             for (int i = 0; i < _tabButtons.Count; i++)
-                if (_tabButtons[i] != null) _tabButtons[i].interactable = i != _tab;
+            {
+                var button = _tabButtons[i];
+                if (button == null) continue;
+
+                bool active = i == _tab;
+                button.transition = Selectable.Transition.None;
+                button.interactable = !active;
+
+                if (button.targetGraphic is Image face)
+                {
+                    face.sprite = GodotTheme.Box(
+                        active ? UiTheme.Highlight : UiTheme.WoodDark,
+                        active ? UiTheme.Cream : UiTheme.WoodEdge,
+                        active ? 3 : 2, 6);
+                    face.type = Image.Type.Sliced;
+                }
+
+                var label = button.GetComponentInChildren<Text>();
+                if (label != null)
+                {
+                    label.color = active ? UiTheme.Ink : UiTheme.Cream;
+                    label.fontStyle = FontStyle.Bold;
+                }
+            }
         }
 
         private void OnEnable()
@@ -279,9 +307,14 @@ namespace TumbangPreso.UI
             // slippers use those values in both modes.
             if (_tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike)
             {
+                if (rows.TryGetComponent<LayoutElement>(out var heroRowsLayout))
+                    heroRowsLayout.preferredHeight = 214.0f;
                 RefreshHeroLoadout(rows, entry.Id);
                 return;
             }
+
+            if (rows.TryGetComponent<LayoutElement>(out var classicRowsLayout))
+                classicRowsLayout.preferredHeight = 104.0f;
 
             var labels = MeterLabels[_tab];
             int[] points = { entry.Bilis, entry.Lakas, entry.Tatag };
@@ -301,8 +334,6 @@ namespace TumbangPreso.UI
             hint.gameObject.AddComponent<LayoutElement>().preferredHeight = 24.0f;
         }
 
-        private static int _heroAbilityInspectIndex = 0;
-
         private void RefreshHeroLoadout(Transform rows, string heroId)
         {
             var kit = HeroAbilitySystem.CreateKitFor(heroId);
@@ -315,62 +346,35 @@ namespace TumbangPreso.UI
                 ("Ultimate", kit.Ultimate, true),
             };
 
-            if (_heroAbilityInspectIndex < 0 || _heroAbilityInspectIndex >= abilities.Length)
-                _heroAbilityInspectIndex = 0;
-
-            // ---- The kit, as three named rows ------------------------------------
-            //
-            // ⚠️⚠️ ALL THREE NAMES ARE ON SCREEN AT ONCE, AND THAT IS A CORRECTION. The first
-            // pass was a horizontal ribbon of three glyph tiles with a details card underneath
-            // showing only the SELECTED power, which meant a player choosing a hero could see
-            // exactly one of that hero's three abilities without clicking. That is the wrong
-            // trade on a PICKER: the whole question this screen answers is "what does this hero
-            // do", and the answer is the kit, not one third of it. Overwatch's hero panel lists
-            // every ability by name for the same reason.
-            //
-            // ⚠️ THE SELECTED ROW EXPANDS RATHER THAN A SEPARATE CARD APPEARING. One widget
-            // that grows is one thing to follow; a list plus a card that changes underneath it
-            // is two, and the eye has to work out which row the card belongs to every time.
+            // The picker must answer what the whole hero does without extra clicks. Each power
+            // therefore gets the same visual weight and keeps its summary directly below it.
             for (int i = 0; i < abilities.Length; i++)
             {
-                int index = i;
                 var item = abilities[i];
                 if (item.ability == null) continue;
 
-                bool isSelected = (index == _heroAbilityInspectIndex);
-
-                var rowGo = new GameObject($"AbilityRow_{index}");
+                var rowGo = new GameObject($"AbilityRow_{i}");
                 rowGo.AddComponent<RectTransform>();
                 rowGo.transform.SetParent(rows, false);
 
                 var rowBg = rowGo.AddComponent<Image>();
                 rowBg.sprite = GodotTheme.Box(
-                    UiTheme.HeroPlateRaised,
-                    isSelected ? accent : UiTheme.HeroRim,
-                    isSelected ? 2 : 1, 6);
+                    UiTheme.HeroPlate,
+                    item.ult ? accent : UiTheme.HeroRim,
+                    item.ult ? 2 : 1, 6);
                 rowBg.type = Image.Type.Sliced;
-                rowBg.raycastTarget = true;
-
-                var rowBtn = rowGo.AddComponent<Button>();
-                rowBtn.targetGraphic = rowBg;
-                rowBtn.onClick.AddListener(() =>
-                {
-                    _heroAbilityInspectIndex = index;
-                    MenuSfx.Click();
-                    var picked = Entries[_pick[_tab]];
-                    RefreshTraits(picked);
-                });
+                rowBg.raycastTarget = false;
 
                 var rowCol = rowGo.AddComponent<VerticalLayoutGroup>();
                 rowCol.childControlHeight = true;
                 rowCol.childControlWidth = true;
                 rowCol.childForceExpandHeight = false;
                 rowCol.childForceExpandWidth = true;
-                rowCol.spacing = 2.0f;
-                rowCol.padding = new RectOffset(8, 10, 5, 5);
+                rowCol.spacing = 3.0f;
+                rowCol.padding = new RectOffset(10, 10, 6, 6);
 
                 var rowLe = rowGo.AddComponent<LayoutElement>();
-                rowLe.preferredHeight = isSelected ? 72.0f : 36.0f;
+                rowLe.preferredHeight = 61.0f;
                 rowLe.minHeight = rowLe.preferredHeight;
 
                 // ---- header: glyph, key, name, timing ----
@@ -390,7 +394,7 @@ namespace TumbangPreso.UI
                 glyphGo.transform.SetParent(header.transform, false);
                 var glyph = glyphGo.AddComponent<Image>();
                 glyph.sprite = AbilityIcons.For(item.ability.Glyph);
-                glyph.color = isSelected ? UiTheme.HeroGlyphOn : UiTheme.HeroGlyphOff;
+                glyph.color = UiTheme.HeroGlyphOn;
                 glyph.preserveAspect = true;
                 glyph.raycastTarget = false;
 
@@ -414,14 +418,14 @@ namespace TumbangPreso.UI
                 chipLe.preferredHeight = 18;
 
                 var keyLabel = MenuKit.Label(chipGo.transform, Hud.KeyLabelFor(item.action), 13,
-                    isSelected ? accent : UiTheme.Cream,
+                    accent,
                     Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter);
                 keyLabel.fontStyle = FontStyle.Bold;
                 keyLabel.raycastTarget = false;
                 MenuKit.Stretch(keyLabel.rectTransform);
 
                 var nameLbl = MenuKit.Label(header.transform, item.ability.Name, 16,
-                    isSelected ? accent : UiTheme.Cream,
+                    accent,
                     Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
                 nameLbl.fontStyle = FontStyle.Bold;
                 nameLbl.raycastTarget = false;
@@ -440,39 +444,17 @@ namespace TumbangPreso.UI
                 timingLbl.raycastTarget = false;
                 timingLbl.gameObject.AddComponent<LayoutElement>().minWidth = 86.0f;
 
-                if (!isSelected) continue;
-
-                // ---- the selected row's own readout ----
-                //
-                // ⚠️ IT DRAWS `Summary`, NOT `Description`. This strip is 32 px at 14 pt,
-                // which is two lines; the full tactical sentences run to four or five and
-                // `Truncate` cuts them SILENTLY, so the screen a player uses to CHOOSE a hero
-                // was describing that hero in a sentence that stopped mid-word. The full text
-                // is one key away in the match, on the inspect tray, which does not truncate.
-                var kindLbl = MenuKit.Label(rowGo.transform,
-                    $"[{AbilityIcons.LabelFor(item.ability.Glyph)}]", 12,
-                    new Color(accent.r, accent.g, accent.b, 0.9f),
-                    Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
-                kindLbl.fontStyle = FontStyle.Bold;
-                kindLbl.raycastTarget = false;
-                kindLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = 14.0f;
-
-                var descLbl = MenuKit.Label(rowGo.transform, item.ability.Summary, 14,
-                    UiTheme.Cream, Vector2.zero, Vector2.zero, Vector2.zero,
+                var descLbl = MenuKit.Label(rowGo.transform, item.ability.Summary, 13,
+                    UiTheme.CreamMuted, Vector2.zero, Vector2.zero, Vector2.zero,
                     TextAnchor.UpperLeft);
                 descLbl.raycastTarget = false;
                 descLbl.horizontalOverflow = HorizontalWrapMode.Wrap;
                 descLbl.verticalOverflow = VerticalWrapMode.Overflow;
-                descLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = 32.0f;
+                descLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = 19.0f;
             }
 
-            var hint = MenuKit.Label(rows,
-                "Click a power to read it · hold [" + Hud.KeyLabelFor("AbilityInfo") + "] in match",
-                12, new Color(0.961f, 0.902f, 0.784f, 0.65f),
-                Vector2.zero, Vector2.zero,
-                Vector2.zero, TextAnchor.MiddleLeft);
-            hint.raycastTarget = false;
-            hint.gameObject.AddComponent<LayoutElement>().preferredHeight = 16.0f;
+            // The key chips already communicate Q, E and F. A fourth instruction line below
+            // the cards duplicated that information and clipped against the wood panel.
         }
 
         private static readonly Color PipFilled = new Color(0.98f, 0.78f, 0.12f, 1.0f);
@@ -555,9 +537,34 @@ namespace TumbangPreso.UI
             _pick[_tab] = Mathf.Clamp(_pick[_tab], 0, n - 1);
             var entry = Entries[_pick[_tab]];
 
-            SetText("NameCaption", "NAME:");
+            bool choosingHero = _tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike;
+            SetText("NameCaption", choosingHero ? "HERO" : "NAME");
             SetText("CharValueLabel", entry.Name);
             SetText("TaglineLabel", TaglineFor(entry.Id));
+
+            var caption = Node("NameCaption")?.GetComponent<Text>();
+            if (caption != null)
+            {
+                caption.fontSize = 20;
+                caption.color = UiTheme.CreamMuted;
+            }
+
+            var value = Node("CharValueLabel")?.GetComponent<Text>();
+            if (value != null)
+            {
+                value.fontSize = choosingHero ? 32 : 30;
+                value.fontStyle = FontStyle.Bold;
+                value.color = choosingHero ? UiTheme.ColorForHero(entry.Id) : UiTheme.Cream;
+            }
+
+            var tagline = Node("TaglineLabel")?.GetComponent<Text>();
+            if (tagline != null)
+            {
+                tagline.fontSize = choosingHero ? 18 : 19;
+                tagline.lineSpacing = 1.0f;
+                if (tagline.TryGetComponent<LayoutElement>(out var taglineLayout))
+                    taglineLayout.preferredHeight = choosingHero ? 66.0f : 96.0f;
+            }
 
             RefreshTabs();
             RefreshTraits(entry);
@@ -625,11 +632,11 @@ namespace TumbangPreso.UI
             switch (id)
             {
                 // Hero Strike Roster
-                case "dante": return "Earth / Demonic Juggernaut. Ground-shattering tremors, iron poise that resists stuns, and unstoppable momentum.";
-                case "cheska": return "Ice / Frost Striker. Controls the court with permafrost slip zones, crystal ice barricades, and glacial freeze.";
-                case "sean": return "Fire / Explosive Powerhouse. High-octane kinetic charge, explosive slipper cannons, and crater-smashing ultimates.";
-                case "zack": return "Electric / Lightning Skater. High-speed electric dash, overcharged lightning throws, and thunderstrike overdrive.";
-                case "nemu": return "Spirit / Ghost Summoner. Phases between dimensions, commands spectral companion Kuro, and creates drowsy seance voids.";
+                case "dante": return "EARTH JUGGERNAUT\nBreak formations with tremors, armor, and a map-splitting fissure.";
+                case "cheska": return "ICE CONTROLLER\nCreate slip zones and barricades, then lock the lane with Glacial Nova.";
+                case "sean": return "FIRE BRAWLER\nRush the lane, blast open space, and finish with Supernova.";
+                case "zack": return "LIGHTNING SKIRMISHER\nSprint through fights, build charge, and call down Thunderstrike.";
+                case "nemu": return "SPIRIT TRICKSTER\nPhase through danger, project Kuro, and pull enemies into the void.";
 
                 // Classic Roster
                 case "bayan":

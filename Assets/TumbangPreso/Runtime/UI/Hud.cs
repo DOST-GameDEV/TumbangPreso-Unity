@@ -333,19 +333,15 @@ namespace TumbangPreso.UI
                     : "Curve or bank the throw, then risk the retrieval.";
             }
 
-            // ⚠️⚠️ THE ROLE COLOUR MOVED OFF THE TEXT AND ONTO THE PLATE'S RIM. At 32 pt across
-            // 900 px this line WAS the largest orange object in the frame, which is a problem
-            // twice over: it is unreadable against a sunlit court, and `Art_Direction.md` § 1
-            // reserves that orange for "this player is an attacker" rather than for decoration.
-            // Cream on ink reads at a glance from anywhere, and the rim still answers the role
-            // question without shouting it.
+            // This is neutral coaching, not a role badge. Keep its rim in the HUD's quiet blue
+            // so the orange accent remains reserved for live attacker and impact feedback.
             _readyObjective.color = UiTheme.Cream;
             _readyObjective.enabled = true;
 
             if (_readyObjectivePlate != null)
             {
                 _readyObjectivePlate.sprite = GodotTheme.Box(
-                    UiTheme.HeroPlate, defending ? UiTheme.Defense : UiTheme.Offense, 2, 6);
+                    UiTheme.HeroPlate, UiTheme.HeroRimLit, 2, 6);
                 _readyObjectivePlate.enabled = true;
             }
         }
@@ -1893,7 +1889,7 @@ namespace TumbangPreso.UI
             _inspectHint.enabled = false;
 
             _readyObjectivePlate = BannerPlate("ReadyObjectivePlate", new Vector2(0, -206),
-                                               new Vector2(620, 38), UiTheme.Offense,
+                                               new Vector2(620, 38), UiTheme.HeroRimLit,
                                                fromTop: true);
 
             _readyObjective = HudLabel(_root, "ReadyObjective", 20, UiTheme.Cream,

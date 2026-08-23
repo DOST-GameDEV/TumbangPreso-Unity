@@ -63,6 +63,10 @@ namespace TumbangPreso.PlayTests
 
             yield return Shoot("ModeSelect");
             yield return Shoot("MatchSetup");
+
+            // Photograph the information-dense hero variant. Classic uses the same shell with
+            // simpler trait meters, so the hero picker is the stronger layout stress test.
+            SceneFlow.SelectedMode = Core.GameMode.HeroStrike;
             yield return Overlay("CharacterSelectPanel");
             yield return Shoot("MultiplayerSetup");
             yield return Shoot("MatchResult");
