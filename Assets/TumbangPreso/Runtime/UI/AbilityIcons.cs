@@ -62,7 +62,7 @@ namespace TumbangPreso.UI
     /// </summary>
     public static class AbilityIcons
     {
-        private const int Size = 64;
+        private const int Size = 128;
 
         private static readonly Dictionary<AbilityGlyph, Sprite> Cache =
             new Dictionary<AbilityGlyph, Sprite>();
@@ -108,8 +108,7 @@ namespace TumbangPreso.UI
             {
                 for (int x = 0; x < Size; x++)
                 {
-                    // Centred, normalised to roughly -1..1 so every shape below can be written
-                    // in the same coordinates whatever Size happens to be.
+                    // Centred, normalised to roughly -1..1
                     float u = (x + 0.5f) / Size * 2.0f - 1.0f;
                     float v = (y + 0.5f) / Size * 2.0f - 1.0f;
 
@@ -137,60 +136,82 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// ⚠️ EVERY SHAPE IS AN ANTI-ALIASED DISTANCE TEST, NOT A PIXEL PLOT. A hard in/out test
-        /// bakes a 64 px icon with staircase edges that survive being scaled to a 44-unit tile
-        /// and read as a compression artefact. `Edge` softens across roughly one pixel.
+        /// Modern tactical vector glyphs with smooth anti-aliasing.
         /// </summary>
         private static float Coverage(AbilityGlyph glyph, float u, float v)
         {
             switch (glyph)
             {
                 case AbilityGlyph.Zone:
-                    // A ring seen flat on the ground: a wide ellipse outline with a dot in it.
-                    return Mathf.Max(EllipseRing(u, v, 0.82f, 0.46f, 0.13f),
-                                     Disc(u, v, 0.14f));
+                    // Concentric tactical ground vortex rings with center diamond core
+                    float outerRing = EllipseRing(u, v, 0.85f, 0.48f, 0.11f);
+                    float innerRing = EllipseRing(u, v, 0.52f, 0.28f, 0.09f);
+                    float coreDiamond = Diamond(u, v, 0.16f);
+                    float topMarker = Box(u, v - 0.52f, 0.04f, 0.10f);
+                    float botMarker = Box(u, v + 0.52f, 0.04f, 0.10f);
+                    return Mathf.Max(Mathf.Max(outerRing, innerRing), Mathf.Max(coreDiamond, Mathf.Max(topMarker, botMarker)));
 
                 case AbilityGlyph.Wall:
-                    // A slab with two mortar lines, so it cannot be read as a plain box.
-                    return Sub(Box(u, v, 0.72f, 0.52f),
-                               Mathf.Max(Box(u, v + 0.04f, 0.74f, 0.035f),
-                                         Box(u - 0.02f, v - 0.28f, 0.035f, 0.24f)));
+                    // 3 tactical reinforced barrier pillars with angled crowns
+                    float p1 = BarrierPillar(u + 0.42f, v, 0.15f, 0.62f);
+                    float p2 = BarrierPillar(u, v + 0.08f, 0.18f, 0.78f);
+                    float p3 = BarrierPillar(u - 0.42f, v, 0.15f, 0.62f);
+                    float bar = Box(u, v - 0.12f, 0.65f, 0.06f);
+                    return Mathf.Max(Mathf.Max(p1, p2), Mathf.Max(p3, bar));
 
                 case AbilityGlyph.Dash:
-                    // Two chevrons. Motion reads as repetition more than as an arrowhead.
-                    return Mathf.Max(Chevron(u + 0.30f, v, 0.34f, 0.14f),
-                                     Chevron(u - 0.22f, v, 0.34f, 0.14f));
+                    // Dynamic supersonic dual speed wings
+                    float wing1 = AerodynamicChevron(u + 0.24f, v, 0.42f, 0.14f);
+                    float wing2 = AerodynamicChevron(u - 0.22f, v, 0.42f, 0.14f);
+                    return Mathf.Max(wing1, wing2);
 
                 case AbilityGlyph.Shield:
-                    return Shield(u, v);
+                    // Stylized angular knight crest shield with inner core notch
+                    float shieldOuter = CrestShield(u, v, 0.78f, 0.88f);
+                    float shieldHole = CrestShield(u, v + 0.02f, 0.54f, 0.64f);
+                    float shieldRim = Sub(shieldOuter, shieldHole);
+                    float core = Diamond(u, v - 0.04f, 0.22f);
+                    return Mathf.Max(shieldRim, core);
 
                 case AbilityGlyph.Burst:
-                    // A core with six spokes.
-                    return Mathf.Max(Disc(u, v, 0.26f), Spokes(u, v, 6, 0.34f, 0.86f, 0.085f));
+                    // Radiant 8-point shockwave starburst with glowing flare ring
+                    float ring = Ring(u, v, 0.42f, 0.08f);
+                    float center = Disc(u, v, 0.22f);
+                    float rays = Spokes(u, v, 8, 0.38f, 0.88f, 0.065f);
+                    return Mathf.Max(Mathf.Max(ring, center), rays);
 
                 case AbilityGlyph.Projectile:
-                    // A head with a speed tail behind it.
-                    return Mathf.Max(Disc(u - 0.34f, v, 0.28f),
-                            Mathf.Max(Box(u + 0.22f, v, 0.34f, 0.075f),
-                            Mathf.Max(Box(u + 0.34f, v - 0.32f, 0.26f, 0.065f),
-                                      Box(u + 0.34f, v + 0.32f, 0.26f, 0.065f))));
+                    // Kinetic plasma bolt with twin aerodynamic trails
+                    float head = Triangle(u - 0.38f, v, 0.32f, 0.55f);
+                    float trail1 = Box(u + 0.20f, v + 0.22f, 0.32f, 0.065f);
+                    float trail2 = Box(u + 0.28f, v, 0.40f, 0.08f);
+                    float trail3 = Box(u + 0.20f, v - 0.22f, 0.32f, 0.065f);
+                    return Mathf.Max(head, Mathf.Max(trail1, Mathf.Max(trail2, trail3)));
 
                 case AbilityGlyph.Phase:
-                    // A solid body and its offset outline: here, and also not here.
-                    return Mathf.Max(Sub(Disc(u + 0.20f, v, 0.44f), Disc(u - 0.16f, v, 0.46f)),
-                                     Ring(u - 0.16f, v, 0.44f, 0.085f));
+                    // Ethereal spirit wisp / dimensional rift portal
+                    float wispRing = Ring(u, v, 0.65f, 0.11f);
+                    float crescent = Sub(Disc(u + 0.12f, v, 0.44f), Disc(u - 0.18f, v + 0.05f, 0.46f));
+                    float innerGlow = Disc(u + 0.10f, v, 0.18f);
+                    return Mathf.Max(wispRing, Mathf.Max(crescent, innerGlow));
 
                 case AbilityGlyph.Slam:
-                    // An arrow coming down onto a ground line.
-                    return Mathf.Max(Box(u, v + 0.72f, 0.70f, 0.10f),
-                            Mathf.Max(Box(u, v - 0.30f, 0.11f, 0.44f),
-                                      Triangle(u, v + 0.18f, 0.34f, 0.30f)));
+                    // Heavy downward seismic impact spike with cracked ground plate
+                    float ground = Box(u, v - 0.68f, 0.78f, 0.09f);
+                    float groundLeft = Box(u - 0.55f, v - 0.52f, 0.18f, 0.07f);
+                    float groundRight = Box(u + 0.55f, v - 0.52f, 0.18f, 0.07f);
+                    float spikeShaft = Box(u, v + 0.22f, 0.12f, 0.42f);
+                    float spikeHead = Triangle(u, v - 0.18f, 0.38f, 0.42f);
+                    return Mathf.Max(Mathf.Max(ground, Mathf.Max(groundLeft, groundRight)),
+                                     Mathf.Max(spikeShaft, spikeHead));
 
                 case AbilityGlyph.Empower:
-                    // A chevron stack pointing up: the same thing, but more of it.
-                    return Mathf.Max(Chevron(v - 0.34f, u, 0.34f, 0.13f),
-                            Mathf.Max(Chevron(v + 0.04f, u, 0.34f, 0.13f),
-                                      Chevron(v + 0.42f, u, 0.34f, 0.13f)));
+                    // High-voltage overcharged lightning bolt diamond
+                    float d1 = Diamond(u, v, 0.72f);
+                    float d2 = Diamond(u, v, 0.50f);
+                    float dRim = Sub(d1, d2);
+                    float bolt1 = LightningSpike(u, v);
+                    return Mathf.Max(dRim, bolt1);
 
                 default:
                     return Disc(u, v, 0.6f);
@@ -199,10 +220,9 @@ namespace TumbangPreso.UI
 
         // ------------------------------------------------------------------ primitives
 
-        /// <summary>One pixel of softness, in the normalised space every shape uses.</summary>
         private static float Edge(float distance)
         {
-            const float feather = 2.0f / Size;
+            const float feather = 2.5f / Size;
             return Mathf.Clamp01(0.5f - distance / feather);
         }
 
@@ -227,34 +247,53 @@ namespace TumbangPreso.UI
             return Edge(Mathf.Max(dx, dy));
         }
 
-        /// <summary>A "&gt;" shape: two arms of a right angle, open to the left.</summary>
-        private static float Chevron(float u, float v, float size, float thickness)
+        private static float Diamond(float u, float v, float radius)
         {
-            float d = Mathf.Abs(Mathf.Abs(v) - (u + size)) * 0.7071f;
-            float inside = (u + size >= Mathf.Abs(v) - thickness) && u <= 0.05f ? d : 1.0f;
-            if (u < -size - thickness || u > 0.12f) return 0.0f;
-            return Edge(inside - thickness * 0.5f);
+            float d = (Mathf.Abs(u) + Mathf.Abs(v)) * 0.7071f - radius;
+            return Edge(d);
+        }
+
+        private static float AerodynamicChevron(float u, float v, float size, float thickness)
+        {
+            float forward = u + Mathf.Abs(v) * 0.85f;
+            float d = Mathf.Abs(forward - size * 0.5f);
+            if (u < -size || u > size * 0.8f) return 0.0f;
+            return Edge(d - thickness * 0.5f);
         }
 
         private static float Triangle(float u, float v, float halfW, float height)
         {
-            // Points DOWN: widest at the top, tip at -height.
+            // Pointing DOWN
             if (v < -height || v > 0.0f) return 0.0f;
             float t = Mathf.InverseLerp(-height, 0.0f, v);
             return Edge(Mathf.Abs(u) - halfW * t);
         }
 
-        private static float Shield(float u, float v)
+        private static float BarrierPillar(float u, float v, float halfW, float halfH)
         {
-            // Flat across the top, curving into a point at the bottom.
-            if (v > 0.72f || v < -0.86f) return 0.0f;
-            float t = Mathf.InverseLerp(0.72f, -0.86f, v);
-            float halfW = Mathf.Lerp(0.62f, 0.0f, t * t);
-            return Edge(Mathf.Abs(u) - halfW);
+            float body = Box(u, v, halfW, halfH);
+            float notch = Triangle(u, v + halfH, halfW * 1.3f, 0.18f);
+            return Mathf.Max(body, notch);
         }
 
-        private static float Spokes(float u, float v, int count, float inner, float outer,
-                                    float thickness)
+        private static float CrestShield(float u, float v, float width, float height)
+        {
+            if (v > height * 0.5f || v < -height * 0.5f) return 0.0f;
+            float t = Mathf.InverseLerp(height * 0.5f, -height * 0.5f, v);
+            float curve = 1.0f - Mathf.Pow(t, 1.8f);
+            float w = width * 0.5f * Mathf.Max(0.05f, curve);
+            return Edge(Mathf.Abs(u) - w);
+        }
+
+        private static float LightningSpike(float u, float v)
+        {
+            float upper = Box(u - 0.08f + v * 0.25f, v - 0.22f, 0.08f, 0.32f);
+            float lower = Box(u + 0.08f + v * 0.25f, v + 0.22f, 0.08f, 0.32f);
+            float cross = Box(u, v, 0.26f, 0.07f);
+            return Mathf.Max(Mathf.Max(upper, lower), cross);
+        }
+
+        private static float Spokes(float u, float v, int count, float inner, float outer, float thickness)
         {
             float best = 0.0f;
             for (int i = 0; i < count; i++)
@@ -263,7 +302,6 @@ namespace TumbangPreso.UI
                 float cos = Mathf.Cos(angle);
                 float sin = Mathf.Sin(angle);
 
-                // Rotate the point into the spoke's own frame, then it is just a box.
                 float su = u * cos + v * sin;
                 float sv = -u * sin + v * cos;
 

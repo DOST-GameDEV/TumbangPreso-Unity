@@ -294,148 +294,177 @@ namespace TumbangPreso.UI
             hint.gameObject.AddComponent<LayoutElement>().preferredHeight = 24.0f;
         }
 
-        private static void RefreshHeroLoadout(Transform rows, string heroId)
+        private static int _heroAbilityInspectIndex = 0;
+
+        private void RefreshHeroLoadout(Transform rows, string heroId)
         {
             var kit = HeroAbilitySystem.CreateKitFor(heroId);
             Color accent = UiTheme.ColorForHero(heroId);
 
-            // ⚠️ THE KEYS COME FROM THE BINDINGS, NOT FROM "E", "Q" AND "F". This screen used
-            // to print those three letters as literals, so it was wrong for anybody who had
-            // rebound a skill and became wrong for everybody when the input collisions were
-            // untangled on 2026-08-23. Character select is where a player LEARNS the hero; a
-            // screen that teaches the wrong key is worse than one that teaches none.
-            BuildAbilityRow(rows, "Skill1", kit.Skill1, accent, false);
-            BuildAbilityRow(rows, "Skill2", kit.Skill2, accent, false);
-            BuildAbilityRow(rows, "Ultimate", kit.Ultimate, accent, true);
+            var abilities = new (string action, HeroAbility ability, bool ult)[]
+            {
+                ("Skill1", kit.Skill1, false),
+                ("Skill2", kit.Skill2, false),
+                ("Ultimate", kit.Ultimate, true),
+            };
+
+            if (_heroAbilityInspectIndex < 0 || _heroAbilityInspectIndex >= abilities.Length)
+                _heroAbilityInspectIndex = 0;
+
+            // ---- Horizontal Ability Ribbon (Valorant Style) -----------------------
+            var ribbonGo = new GameObject("AbilitiesRibbon");
+            ribbonGo.AddComponent<RectTransform>();
+            ribbonGo.transform.SetParent(rows, false);
+
+            var ribbon = ribbonGo.AddComponent<HorizontalLayoutGroup>();
+            ribbon.childControlHeight = true;
+            ribbon.childControlWidth = false;
+            ribbon.childForceExpandHeight = false;
+            ribbon.childForceExpandWidth = false;
+            ribbon.childAlignment = TextAnchor.MiddleLeft;
+            ribbon.spacing = 10.0f;
+            ribbon.padding = new RectOffset(2, 2, 2, 2);
+            ribbonGo.AddComponent<LayoutElement>().preferredHeight = 52.0f;
+
+            for (int i = 0; i < abilities.Length; i++)
+            {
+                int index = i;
+                var item = abilities[i];
+                if (item.ability == null) continue;
+
+                bool isSelected = (index == _heroAbilityInspectIndex);
+
+                var tileGo = new GameObject($"AbilityTile_{index}");
+                tileGo.transform.SetParent(ribbonGo.transform, false);
+
+                var tileBg = tileGo.AddComponent<Image>();
+                tileBg.sprite = GodotTheme.Box(
+                    new Color(0.08f, 0.11f, 0.18f, 0.92f),
+                    isSelected ? accent : new Color(0.24f, 0.32f, 0.44f, 0.60f),
+                    isSelected ? 2 : 1, 6);
+                tileBg.type = Image.Type.Sliced;
+                tileBg.raycastTarget = true;
+
+                var btn = tileGo.AddComponent<Button>();
+                btn.targetGraphic = tileBg;
+                btn.onClick.AddListener(() =>
+                {
+                    _heroAbilityInspectIndex = index;
+                    MenuSfx.Click();
+                    var entry = Entries[_pick[_tab]];
+                    RefreshTraits(entry);
+                });
+
+                var tileLe = tileGo.AddComponent<LayoutElement>();
+                tileLe.minWidth = 54;
+                tileLe.preferredWidth = 54;
+                tileLe.minHeight = 54;
+                tileLe.preferredHeight = 54;
+
+                var glyphGo = new GameObject("Glyph");
+                glyphGo.transform.SetParent(tileGo.transform, false);
+                var glyph = glyphGo.AddComponent<Image>();
+                glyph.sprite = AbilityIcons.For(item.ability.Glyph);
+                glyph.color = isSelected ? Color.white : new Color(0.75f, 0.82f, 0.92f, 0.50f);
+                glyph.preserveAspect = true;
+                glyph.raycastTarget = false;
+                MenuKit.Stretch(glyph.rectTransform);
+                glyph.rectTransform.offsetMin = new Vector2(8, 8);
+                glyph.rectTransform.offsetMax = new Vector2(-8, -8);
+
+                var chipGo = new GameObject("KeyChip");
+                chipGo.transform.SetParent(tileGo.transform, false);
+                var chip = chipGo.AddComponent<Image>();
+                chip.sprite = GodotTheme.Box(UiTheme.Ink, new Color(0, 0, 0, 0), 0, 4);
+                chip.type = Image.Type.Sliced;
+                chip.raycastTarget = false;
+                var chipRt = chip.rectTransform;
+                chipRt.anchorMin = new Vector2(1.0f, 0.0f);
+                chipRt.anchorMax = new Vector2(1.0f, 0.0f);
+                chipRt.pivot = new Vector2(1.0f, 0.0f);
+                chipRt.anchoredPosition = new Vector2(-2, 2);
+                chipRt.sizeDelta = new Vector2(22, 16);
+
+                var keyLabel = MenuKit.Label(chipGo.transform, Hud.KeyLabelFor(item.action), 13,
+                    isSelected ? accent : UiTheme.Cream,
+                    Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter);
+                keyLabel.fontStyle = FontStyle.Bold;
+                keyLabel.raycastTarget = false;
+                MenuKit.Stretch(keyLabel.rectTransform);
+            }
+
+            // ---- Focused Ability Details Card ------------------------------------
+            var activeItem = abilities[_heroAbilityInspectIndex];
+            if (activeItem.ability != null)
+            {
+                var cardGo = new GameObject("AbilityDetailsCard");
+                cardGo.AddComponent<RectTransform>();
+                cardGo.transform.SetParent(rows, false);
+
+                var cardBg = cardGo.AddComponent<Image>();
+                cardBg.sprite = GodotTheme.Box(
+                    new Color(0.10f, 0.14f, 0.22f, 0.90f),
+                    new Color(0.24f, 0.32f, 0.44f, 0.60f),
+                    1, 6);
+                cardBg.type = Image.Type.Sliced;
+                cardBg.raycastTarget = false;
+
+                var cardCol = cardGo.AddComponent<VerticalLayoutGroup>();
+                cardCol.childControlHeight = true;
+                cardCol.childControlWidth = true;
+                cardCol.childForceExpandHeight = false;
+                cardCol.childForceExpandWidth = true;
+                cardCol.spacing = 3.0f;
+                cardCol.padding = new RectOffset(10, 10, 8, 8);
+
+                var cardLe = cardGo.AddComponent<LayoutElement>();
+                cardLe.preferredHeight = 84.0f;
+                cardLe.flexibleWidth = 1.0f;
+
+                string timing = activeItem.ult
+                    ? "OBJECTIVE CHARGE"
+                    : (activeItem.ability.Duration > 0.0f
+                        ? $"{activeItem.ability.Cooldown:0.#}s CD · {activeItem.ability.Duration:0.#}s"
+                        : $"{activeItem.ability.Cooldown:0.#}s CD");
+
+                var headerRow = new GameObject("HeaderRow", typeof(RectTransform));
+                headerRow.transform.SetParent(cardGo.transform, false);
+                var headerHlg = headerRow.AddComponent<HorizontalLayoutGroup>();
+                headerHlg.childControlHeight = true;
+                headerHlg.childControlWidth = true;
+                headerHlg.childForceExpandHeight = true;
+                headerHlg.childForceExpandWidth = false;
+                headerHlg.spacing = 8.0f;
+                headerRow.AddComponent<LayoutElement>().preferredHeight = 20.0f;
+
+                var nameLbl = MenuKit.Label(headerRow.transform, activeItem.ability.Name, 17,
+                    accent, Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
+                nameLbl.fontStyle = FontStyle.Bold;
+                nameLbl.raycastTarget = false;
+
+                var metaLbl = MenuKit.Label(headerRow.transform,
+                    $"[{AbilityIcons.LabelFor(activeItem.ability.Glyph)}] · {timing}",
+                    13, new Color(0.961f, 0.902f, 0.784f, 0.85f),
+                    Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
+                metaLbl.fontStyle = FontStyle.Bold;
+                metaLbl.raycastTarget = false;
+
+                var descLbl = MenuKit.Label(cardGo.transform, activeItem.ability.Description,
+                    14, UiTheme.Cream,
+                    Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.UpperLeft);
+                descLbl.raycastTarget = false;
+                descLbl.horizontalOverflow = HorizontalWrapMode.Wrap;
+                descLbl.verticalOverflow = VerticalWrapMode.Truncate;
+                descLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = 46.0f;
+            }
 
             var hint = MenuKit.Label(rows,
-                "Drag to inspect  ·  hold [" + Hud.KeyLabelFor("AbilityInfo") +
-                "] in a match to read your powers again",
-                MenuKit.MinReadableUnits, new Color(0.961f, 0.902f, 0.784f, 0.72f),
+                "Click abilities to inspect · hold [" + Hud.KeyLabelFor("AbilityInfo") + "] in match",
+                13, new Color(0.961f, 0.902f, 0.784f, 0.65f),
                 Vector2.zero, Vector2.zero,
                 Vector2.zero, TextAnchor.MiddleLeft);
             hint.raycastTarget = false;
-            hint.gameObject.AddComponent<LayoutElement>().preferredHeight = 24.0f;
-        }
-
-        /// <summary>
-        /// One ability, as an ICON TILE, a name, what kind of power it is, and one sentence.
-        ///
-        /// ⚠️⚠️ THE ROW USED TO BE A LETTER AND A LINE OF TEXT, AND THAT IS WHY NOBODY KNEW
-        /// WHAT ANY HERO DID. 🧑 2026-08-23: *"i want ppl to be able to get what all skills do
-        /// js by looking at them"*. A row reading "E   PERMAFROST SHEET · 7s" names the power
-        /// and says nothing about it. The description was already written on every ability and
-        /// this screen simply never drew it.
-        ///
-        /// ⚠️ THE TILE IS THE SAME COMPONENT THE HUD DRAWS, on purpose. A player who learns a
-        /// shape here recognises it in the deck at the bottom of the screen mid-round, which is
-        /// the entire value of having icons at all. Two different icon sets for one ability
-        /// would be worse than none.
-        /// </summary>
-        private static void BuildAbilityRow(Transform parent, string action, HeroAbility ability,
-                                            Color accent, bool ultimate)
-        {
-            if (ability == null) return;
-
-            var rowGo = new GameObject($"Ability{action}Row");
-            rowGo.AddComponent<RectTransform>();
-            rowGo.transform.SetParent(parent, false);
-
-            var row = rowGo.AddComponent<HorizontalLayoutGroup>();
-            row.childControlHeight = true;
-            row.childControlWidth = true;
-            row.childForceExpandHeight = true;
-            row.childForceExpandWidth = false;
-            row.childAlignment = TextAnchor.UpperLeft;
-            row.spacing = 10.0f;
-            row.padding = new RectOffset(0, 0, 3, 3);
-            rowGo.AddComponent<LayoutElement>().preferredHeight = 62.0f;
-
-            // ---- the tile ----------------------------------------------------------
-            var tileGo = new GameObject("Tile");
-            tileGo.transform.SetParent(rowGo.transform, false);
-            var tile = tileGo.AddComponent<Image>();
-            tile.sprite = GodotTheme.Box(accent, UiTheme.Ink, 3, 6);
-            tile.type = Image.Type.Sliced;
-            tile.raycastTarget = false;
-
-            var tileLe = tileGo.AddComponent<LayoutElement>();
-            tileLe.minWidth = 54;
-            tileLe.preferredWidth = 54;
-            tileLe.minHeight = 54;
-            tileLe.preferredHeight = 54;
-            tileLe.flexibleHeight = 0.0f;
-
-            var glyphGo = new GameObject("Glyph");
-            glyphGo.transform.SetParent(tileGo.transform, false);
-            var glyph = glyphGo.AddComponent<Image>();
-            glyph.sprite = AbilityIcons.For(ability.Glyph);
-            glyph.color = UiTheme.Ink;
-            glyph.preserveAspect = true;
-            glyph.raycastTarget = false;
-            MenuKit.Stretch(glyph.rectTransform);
-            glyph.rectTransform.offsetMin = new Vector2(9, 9);
-            glyph.rectTransform.offsetMax = new Vector2(-9, -9);
-
-            var chipGo = new GameObject("KeyChip");
-            chipGo.transform.SetParent(tileGo.transform, false);
-            var chip = chipGo.AddComponent<Image>();
-            chip.sprite = GodotTheme.Box(UiTheme.Ink, new Color(0, 0, 0, 0), 0, 4);
-            chip.type = Image.Type.Sliced;
-            chip.raycastTarget = false;
-            var chipRt = chip.rectTransform;
-            chipRt.anchorMin = new Vector2(1.0f, 0.0f);
-            chipRt.anchorMax = new Vector2(1.0f, 0.0f);
-            chipRt.pivot = new Vector2(1.0f, 0.0f);
-            chipRt.anchoredPosition = new Vector2(-2, 2);
-            chipRt.sizeDelta = new Vector2(28, 18);
-
-            var keyLabel = MenuKit.Label(chipGo.transform, Hud.KeyLabelFor(action), 16,
-                UiTheme.Cream, Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter);
-            keyLabel.raycastTarget = false;
-            MenuKit.Stretch(keyLabel.rectTransform);
-
-            // ---- the words ---------------------------------------------------------
-            var textGo = new GameObject("Text", typeof(RectTransform));
-            textGo.transform.SetParent(rowGo.transform, false);
-            var textCol = textGo.AddComponent<VerticalLayoutGroup>();
-            textCol.childControlHeight = true;
-            textCol.childControlWidth = true;
-            textCol.childForceExpandHeight = false;
-            textCol.childForceExpandWidth = true;
-            textCol.spacing = 1.0f;
-
-            var textLe = textGo.AddComponent<LayoutElement>();
-            textLe.flexibleWidth = 1.0f;
-
-            // ⚠️ THE TIMING SITS BESIDE THE KIND, NOT BESIDE THE NAME. "SUPER" glued onto the
-            // title was the only stat the row carried and it read as part of the ability's name.
-            string timing = ultimate
-                ? "CHARGES FROM OBJECTIVE PLAY"
-                : (ability.Duration > 0.0f
-                    ? $"{ability.Cooldown:0.#}s COOLDOWN  ·  LASTS {ability.Duration:0.#}s"
-                    : $"{ability.Cooldown:0.#}s COOLDOWN");
-
-            var nameLabel = MenuKit.Label(textGo.transform, ability.Name, 20,
-                ultimate ? accent : Color.white,
-                Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.UpperLeft);
-            nameLabel.raycastTarget = false;
-            nameLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 22.0f;
-
-            var kindLabel = MenuKit.Label(textGo.transform,
-                AbilityIcons.LabelFor(ability.Glyph) + "  ·  " + timing,
-                MenuKit.MinReadableUnits, accent,
-                Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.UpperLeft);
-            kindLabel.raycastTarget = false;
-            kindLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 17.0f;
-
-            var bodyLabel = MenuKit.Label(textGo.transform, ability.Description,
-                MenuKit.MinReadableUnits, new Color(0.961f, 0.902f, 0.784f, 0.80f),
-                Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.UpperLeft);
-            bodyLabel.raycastTarget = false;
-            bodyLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
-            bodyLabel.verticalOverflow = VerticalWrapMode.Overflow;
-            bodyLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 20.0f;
+            hint.gameObject.AddComponent<LayoutElement>().preferredHeight = 18.0f;
         }
 
         private static readonly Color PipFilled = new Color(0.98f, 0.78f, 0.12f, 1.0f);

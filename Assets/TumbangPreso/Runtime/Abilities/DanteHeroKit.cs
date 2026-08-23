@@ -21,7 +21,7 @@ namespace TumbangPreso.Abilities
         private sealed class SeismicStompAbility : HeroAbility
         {
             public SeismicStompAbility()
-                : base("dante_skill1", "SEISMIC STOMP", "Heavy ground slam knocking back foes and repelling slippers.", 6.5f, 0.0f, TumbangPreso.UI.AbilityGlyph.Slam)
+                : base("dante_skill1", "SEISMIC STOMP", "SLAM the earth with crushing force. Releases a 2.4m shockwave that knocks back nearby enemies, interrupts throws, and kicks away grounded slippers.", 6.5f, 0.0f, TumbangPreso.UI.AbilityGlyph.Slam)
             {
             }
 
@@ -38,12 +38,13 @@ namespace TumbangPreso.Abilities
                 // Small vertical hop
                 ctx.Motor.ApplyImpulse(Vector3.up * 4.0f);
 
-                // Spawn cracked lava decal on ground & volcanic rock debris
-                HeroHazards.SpawnCrackedLavaDecal(ctx.Position, 5.5f, 4.0f);
-                HeroHazards.SpawnVolcanicRockDebris(ctx.Position, 10);
+                // Spawn cracked lava decal on ground & volcanic rock debris (calibrated to 2.4m)
+                HeroHazards.SpawnCrackedLavaDecal(ctx.Position, 2.4f, 4.0f);
+                HeroHazards.SpawnVolcanicRockDebris(ctx.Position, 8);
+                Visual.AbilityVfx.SpawnMagmaEruption(ctx.Position, 2.4f);
 
                 // Explosion shockwave & comic floatie
-                HeroHazards.CreateExplosion(ctx.Position, 5.5f, 11.0f, 1.4f, ctx.Motor.PlayerSlot, "THUD!");
+                HeroHazards.CreateExplosion(ctx.Position, 2.4f, 10.0f, 1.2f, ctx.Motor.PlayerSlot, "THUD!");
                 ComicPopup.Bonk(ctx.Position);
 
                 var round = ctx.Round;
@@ -56,7 +57,7 @@ namespace TumbangPreso.Abilities
                         {
                             Vector3 sDiff = s.transform.position - ctx.Position;
                             sDiff.y = 0.0f;
-                            if (sDiff.magnitude <= 6.5f)
+                            if (sDiff.magnitude <= 3.2f)
                             {
                                 s.Deflect(sDiff.normalized * 18.0f + Vector3.up * 4.5f, 1.2f);
                             }
@@ -72,7 +73,7 @@ namespace TumbangPreso.Abilities
             private readonly GameObject[] _shieldPlates = new GameObject[3];
 
             public DemonicCarapaceAbility()
-                : base("dante_skill2", "DEMONIC CARAPACE", "Flaming magma armor granting complete immunity to stuns and shoves.", 9.0f, 4.0f, TumbangPreso.UI.AbilityGlyph.Shield)
+                : base("dante_skill2", "DEMONIC CARAPACE", "HARDEN your body in molten magma armor for 4s. Grants unstoppable immunity against enemy stuns, shoves, and slips so you can retrieve slippers safely.", 9.0f, 4.0f, TumbangPreso.UI.AbilityGlyph.Shield)
             {
             }
 
@@ -159,7 +160,7 @@ namespace TumbangPreso.Abilities
         private sealed class DemonTitanFissureAbility : HeroAbility
         {
             public DemonTitanFissureAbility()
-                : base("dante_ultimate", "DEMON TITAN FISSURE", "Rips open earthen fissures in a cone, launching foes and raising rock pillars.", 0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Burst)
+                : base("dante_ultimate", "DEMON TITAN FISSURE", "CHANNEL demonic rage to fracture the earth in a 5.5m cone. Erupts boiling magma, launching enemies airborne and shattering defense positions.", 0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Burst)
             {
             }
 
@@ -168,7 +169,8 @@ namespace TumbangPreso.Abilities
                 GameServices.Audio?.PlayAt("hero_dante_ult", ctx.Position);
                 GameServices.Audio?.PlayAt("sfx_explosion_heavy", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "EARTHQUAKE!", UiTheme.HeroEarthBright, 1.5f);
-                HeroHazards.SpawnVolcanicRockDebris(ctx.Position, 16);
+                HeroHazards.SpawnVolcanicRockDebris(ctx.Position, 14);
+                Visual.AbilityVfx.SpawnMagmaEruption(ctx.Position + ctx.Forward * 2.5f, 4.5f);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.Stretch(0.4f);
@@ -189,13 +191,13 @@ namespace TumbangPreso.Abilities
                         diff.y = 0.0f;
                         float d = diff.magnitude;
 
-                        if (d <= 11.0f)
+                        if (d <= 5.5f)
                         {
                             float angle = Vector3.Angle(forward, diff.normalized);
-                            if (angle <= 45.0f)
+                            if (angle <= 50.0f)
                             {
                                 directlyHit.Add(p.PlayerSlot);
-                                Vector3 launch = forward * 9.0f + Vector3.up * 11.0f;
+                                Vector3 launch = forward * 8.0f + Vector3.up * 10.0f;
                                 p.ApplyImpulse(launch);
                                 p.ApplyStagger(2.2f);
                                 DizzyStars.Attach(p.transform, 2.2f, UiTheme.HeroEarthBright);
@@ -205,15 +207,15 @@ namespace TumbangPreso.Abilities
                     }
                 }
 
-                HeroHazards.CreateExplosion(ctx.Position + forward * 3.5f, 6.5f, 16.0f, 2.0f,
+                HeroHazards.CreateExplosion(ctx.Position + forward * 2.2f, 4.5f, 14.0f, 1.8f,
                     ctx.Motor.PlayerSlot, "KABOOM!", directlyHit);
 
-                // Spawn 6 basalt earth pillars in forward arc
-                for (int i = -2; i <= 3; i++)
+                // Spawn 4 basalt earth pillars in forward arc
+                for (int i = -1; i <= 2; i++)
                 {
-                    float angle = i * 35.0f;
-                    Vector3 offset = Quaternion.Euler(0, angle, 0) * forward * (i % 2 == 0 ? 5.5f : 4.0f);
-                    HeroHazards.SpawnEarthPillar(ctx.Position + offset, 6.0f);
+                    float angle = i * 28.0f;
+                    Vector3 offset = Quaternion.Euler(0, angle, 0) * forward * (i % 2 == 0 ? 3.8f : 2.6f);
+                    HeroHazards.SpawnEarthPillar(ctx.Position + offset, 5.0f);
                 }
             }
         }

@@ -24,7 +24,7 @@ namespace TumbangPreso.Abilities
             private float _trailDropTimer;
 
             public StaticRailGrindAbility(ZackHeroKit kit)
-                : base("zack_skill1", "STATIC RAIL-GRIND", "High-speed electric dash leaving a shock trail.", 6.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.Dash)
+                : base("zack_skill1", "LIGHTNING BOLT SPRINT", "OVERCHARGE your roller skates with electric speed. Leaves a crackling shock trail behind that zaps and slows chasing defenders.", 6.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.Dash)
             {
                 _kit = kit;
             }
@@ -41,8 +41,8 @@ namespace TumbangPreso.Abilities
 
                 GameServices.Audio?.PlayAt("hero_zack_grunt", ctx.Position);
                 GameServices.Audio?.PlayAt("sfx_lightning_strike", ctx.Position);
-                ComicPopup.Spawn(ctx.Position, "RAIL GRIND!", UiTheme.HeroElectricBright, 1.2f);
-                HeroHazards.SpawnShockTrail(ctx.Position, 2.2f, 3.5f, ctx.Motor.PlayerSlot);
+                ComicPopup.Spawn(ctx.Position, "RAIL GRIND!", UiTheme.HeroElectricBright, 1.25f);
+                HeroHazards.SpawnShockTrail(ctx.Position, 1.8f, 3.0f, ctx.Motor.PlayerSlot);
                 _trailDropTimer = 0.25f;
             }
 
@@ -55,7 +55,7 @@ namespace TumbangPreso.Abilities
                 if (_trailDropTimer <= 0.0f)
                 {
                     _trailDropTimer = 0.30f;
-                    HeroHazards.SpawnShockTrail(ctx.Position, 2.0f, 3.0f, ctx.Motor.PlayerSlot);
+                    HeroHazards.SpawnShockTrail(ctx.Position, 1.8f, 3.0f, ctx.Motor.PlayerSlot);
                 }
             }
         }
@@ -65,7 +65,7 @@ namespace TumbangPreso.Abilities
             private readonly ZackHeroKit _kit;
 
             public OverchargeThrowAbility(ZackHeroKit kit)
-                : base("zack_skill2", "OVERCHARGE THROW", "Electrifies next throw for high velocity & chain lightning.", 8.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.Empower)
+                : base("zack_skill2", "STATIC SLIPPER CHARGE", "INFUSE your next tsinelas throw with high voltage. Increases throw projectile speed by 50% and causes a static shockwave upon striking the lata.", 8.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.Empower)
             {
                 _kit = kit;
             }
@@ -88,7 +88,7 @@ namespace TumbangPreso.Abilities
             private readonly ZackHeroKit _kit;
 
             public ThunderstrikeOverdriveAbility(ZackHeroKit kit)
-                : base("zack_ultimate", "THUNDERSTRIKE OVERDRIVE", "Sky lightning strike and turbo overvoltage state.", 0.0f, 7.0f, TumbangPreso.UI.AbilityGlyph.Slam)
+                : base("zack_ultimate", "THUNDERSTRIKE OVERDRIVE", "CALL DOWN a 4.5m lightning strike from the heavens. Stuns all targets in the impact radius for 2s and electrocutes the surrounding court.", 0.0f, 7.0f, TumbangPreso.UI.AbilityGlyph.Slam)
             {
                 _kit = kit;
             }
@@ -97,7 +97,8 @@ namespace TumbangPreso.Abilities
             {
                 GameServices.Audio?.PlayAt("hero_zack_ult", ctx.Position);
                 GameServices.Audio?.PlayAt("sfx_lightning_strike", ctx.Position);
-                HeroHazards.CreateThunderstrike(ctx.Position, 7.0f, ctx.Motor.PlayerSlot);
+                HeroHazards.CreateThunderstrike(ctx.Position, 4.5f, ctx.Motor.PlayerSlot);
+                Visual.AbilityVfx.SpawnElectricArcs(ctx.Position, 4.5f);
                 ComicPopup.Spawn(ctx.Position, "THUNDERSTRIKE!", UiTheme.HeroElectricBright, 1.5f);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();

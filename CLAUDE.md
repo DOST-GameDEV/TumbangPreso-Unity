@@ -299,6 +299,24 @@ run produces no log at all, check `Temp/UnityLockfile`.
 ⚠️ **`GameBuilder.BuildWindows` targets `C:\Users\matth\Desktop`.** Verify the .exe exists and
 report its path; do not claim a build that was never written.
 
+⚠️⚠️ **A successful incremental Windows build is not the same as a clean rebuild.** Unity can
+rewrite `TumbangPreso_Data`, Burst output and DLLs while reusing the byte-identical launcher
+`TumbangPreso.exe`; Explorer then keeps the executable's old creation/modified timestamp. This
+caused a build completed at 15:03 to look like the 14:34 player was still being shipped.
+
+When the user asks to **rebuild**, **clean rebuild**, or questions the output timestamp:
+
+1. Ensure no `TumbangPreso` or Unity process is using the output.
+2. Move the entire existing `Desktop\TumbangPreso-Unity` directory to a clearly named backup (or
+   delete it only when the user explicitly wants deletion).
+3. Run `GameBuilder.BuildWindows` into the now-missing/empty output directory. Rebuilding over the
+   existing folder is insufficient for this request.
+4. Verify the new `TumbangPreso.exe` **and** `TumbangPreso_Data` files have timestamps from the
+   current run, then launch that exact executable. Keep the backup until the new player passes.
+
+The build log's `SUCCEEDED` line proves Unity completed a player build; it does **not** prove that
+every file in a pre-existing output directory was freshly emitted.
+
 ### 7.1 Verify by measuring
 
 - `Core.Tests` asserts every balance number in about a second.

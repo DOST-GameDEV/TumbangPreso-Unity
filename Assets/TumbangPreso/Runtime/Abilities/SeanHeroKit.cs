@@ -23,7 +23,7 @@ namespace TumbangPreso.Abilities
             private readonly HashSet<int> _hitSlots = new HashSet<int>();
 
             public RocketBurnDashAbility()
-                : base("sean_skill1", "ROCKET BURN DASH", "Fiery shoulder charge delivering heavy knockback.", 6.5f, 0.6f, TumbangPreso.UI.AbilityGlyph.Dash)
+                : base("sean_skill1", "BLAZING FLAME RUSH", "SURGE forward in a fiery sprint, igniting a burning trail behind you that burns and staggers enemies who attempt to pursue.", 6.5f, 0.6f, TumbangPreso.UI.AbilityGlyph.Dash)
             {
             }
 
@@ -40,10 +40,10 @@ namespace TumbangPreso.Abilities
                 if (squash != null) squash.DashStretch(forward, 0.35f);
 
                 ctx.Motor.ApplyImpulse(forward.normalized * 17.0f + Vector3.up * 1.5f);
-                HeroHazards.SpawnFireTrail(ctx.Position, 1.8f, 3.0f, ctx.Motor.PlayerSlot);
+                HeroHazards.SpawnFireTrail(ctx.Position, 1.6f, 3.0f, ctx.Motor.PlayerSlot);
                 GameServices.Audio?.PlayAt("hero_sean_grunt", ctx.Position);
                 GameServices.Audio?.PlayAt("sfx_fire_whoosh", ctx.Position);
-                ComicPopup.Spawn(ctx.Position, "ROCKET!", UiTheme.HeroFireBright, 1.2f);
+                ComicPopup.Spawn(ctx.Position, "ROCKET!", UiTheme.HeroFireBright, 1.25f);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
@@ -52,7 +52,7 @@ namespace TumbangPreso.Abilities
                 if (_trailSpawnAccum >= 0.10f)
                 {
                     _trailSpawnAccum = 0.0f;
-                    HeroHazards.SpawnFireTrail(ctx.Position, 1.8f, 3.0f, ctx.Motor.PlayerSlot);
+                    HeroHazards.SpawnFireTrail(ctx.Position, 1.6f, 3.0f, ctx.Motor.PlayerSlot);
                 }
 
                 // Hit check during dash
@@ -87,7 +87,7 @@ namespace TumbangPreso.Abilities
             private readonly SeanHeroKit _kit;
 
             public IgnitionCannonAbility(SeanHeroKit kit)
-                : base("sean_skill2", "IGNITION CANNON", "Ignites next throw into an explosive fireball.", 8.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.Empower)
+                : base("sean_skill2", "IGNITION CANNON", "HURL an overcharged explosive magma blast straight forward. Knocks down the lata or launches enemies backwards upon impact.", 8.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.Empower)
             {
                 _kit = kit;
             }
@@ -114,7 +114,7 @@ namespace TumbangPreso.Abilities
             private bool _smashed;
 
             public SupernovaSmashdownAbility()
-                : base("sean_ultimate", "SUPERNOVA METEOR SMASH", "Rockets high and crashes down on contact with a massive crater explosion.", 0.0f, 2.0f, TumbangPreso.UI.AbilityGlyph.Slam)
+                : base("sean_ultimate", "SUPERNOVA ERUPTION", "DETONATE a catastrophic 4.8m solar explosion at your feet. Blasts all enemies back with massive force and knocks down the lata instantly.", 0.0f, 2.0f, TumbangPreso.UI.AbilityGlyph.Slam)
             {
             }
 
@@ -144,7 +144,7 @@ namespace TumbangPreso.Abilities
                 {
                     _diving = true;
                     ctx.Motor.ApplyImpulse(Vector3.down * 28.0f);
-                    ComicPopup.Spawn(ctx.Position, "INCOMING!", UiTheme.HeroFireBright, 1.0f);
+                    ComicPopup.Spawn(ctx.Position, "INCOMING!", UiTheme.HeroFireBright, 1.15f);
                 }
 
                 if (!_diving || _smashed) return;
@@ -158,7 +158,8 @@ namespace TumbangPreso.Abilities
                     if (squash != null) squash.Squash(0.4f);
 
                     GameServices.Audio?.PlayAt("sfx_explosion_heavy", ctx.Position);
-                    HeroHazards.CreateExplosion(ctx.Position, 8.5f, 18.0f, 2.5f, ctx.Motor.PlayerSlot, "SUPERNOVA!");
+                    HeroHazards.CreateExplosion(ctx.Position, 4.8f, 16.0f, 2.2f, ctx.Motor.PlayerSlot, "SUPERNOVA!");
+                    Visual.AbilityVfx.SpawnMagmaEruption(ctx.Position, 4.8f);
                 }
             }
         }

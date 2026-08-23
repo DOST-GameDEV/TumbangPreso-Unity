@@ -41,12 +41,64 @@ namespace TumbangPreso.UI
         private RawImage _surface;
         private RenderTexture _target;
         private Image _fade;
+        private Text _loadingLabel;
+        private Image _loadingFill;
+        private RectTransform[] _loadingDots;
         private GameObject _canvas;
         private AsyncOperation _menu;
         private float _elapsed;
         private bool _leaving;
         private bool _assetsPreloaded;
         private bool _slowLoadReported;
+        private float _loadingProgress;
+
+        /// <summary>
+        /// Unity performs an unused-asset sweep when the held MainMenu load activates. Merely
+        /// loading and unloading an arena therefore warms disk caches but does not guarantee its
+        /// meshes and textures remain in memory. These explicit static references survive the
+        /// SplashScreen scene and make the preload barrier mean what it says.
+        /// </summary>
+        private static class WarmAssetCache
+        {
+            private static readonly System.Collections.Generic.List<Object> Assets =
+                new System.Collections.Generic.List<Object>();
+            private static readonly System.Collections.Generic.HashSet<EntityId> EntityIds =
+                new System.Collections.Generic.HashSet<EntityId>();
+
+            public static int Count => Assets.Count;
+
+            public static void CaptureLoadedAssets()
+            {
+                foreach (Object asset in Resources.FindObjectsOfTypeAll<Object>())
+                {
+                    if (!ShouldRetain(asset) || !EntityIds.Add(asset.GetEntityId())) continue;
+                    Assets.Add(asset);
+                }
+            }
+
+            private static bool ShouldRetain(Object asset)
+            {
+                if (asset == null || asset is GameObject || asset is Component ||
+                    asset is RenderTexture)
+                    return false;
+
+                return asset is Mesh ||
+                       asset is Material ||
+                       asset is Texture ||
+                       asset is Shader ||
+                       asset is Sprite ||
+                       asset is AudioClip ||
+                       asset is AnimationClip ||
+                       asset is RuntimeAnimatorController ||
+                       asset is Avatar ||
+                       asset is Font ||
+                       asset is TextAsset ||
+                       asset is VideoClip ||
+                       asset is ScriptableObject ||
+                       asset is PhysicsMaterial ||
+                       asset is TerrainData;
+            }
+        }
 
         private void Start()
         {
@@ -89,6 +141,7 @@ namespace TumbangPreso.UI
             while (!_leaving)
             {
                 _elapsed += Time.unscaledDeltaTime;
+                UpdateLoadingAnimation();
 
                 fade = Mathf.Clamp01(_elapsed / 0.35f);
                 SetFade(1.0f - fade);
@@ -120,19 +173,22 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// ⚠️ THE MENU AND ASSETS ARE PRELOADED. `allowSceneActivation = false` holds the menu at
-        /// 90% until the animation is over, and shaders/roster assets are pre-warmed so clicking
-        /// Single Player or Character Select is instant with zero stutter.
+        /// ⚠️ THE ASSETS ARE WARMED BEFORE THE HELD MENU LOAD STARTS. Unity serialises scene
+        /// operations behind a load whose activation is held at 90%, so starting the menu first
+        /// deadlocks every additive arena load queued after it. The menu is deliberately the final
+        /// preload operation; only then is its activation held until the sting finishes.
         /// </summary>
         private void BeginPreload()
         {
-            if (Application.CanStreamedLevelBeLoaded(SceneFlow.MainMenu))
-            {
-                _menu = SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
-                if (_menu != null) _menu.allowSceneActivation = false;
-            }
-
             StartCoroutine(PreloadGameAssets());
+        }
+
+        private void BeginMenuPreload()
+        {
+            if (!Application.CanStreamedLevelBeLoaded(SceneFlow.MainMenu)) return;
+
+            _menu = SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
+            if (_menu != null) _menu.allowSceneActivation = false;
         }
 
         /// <summary>
@@ -158,10 +214,13 @@ namespace TumbangPreso.UI
         private IEnumerator PreloadGameAssets()
         {
             // 1. Warm up shaders across all materials
+            SetLoadingStage("preparing shaders", 0.04f);
+            yield return null;
             Shader.WarmupAllShaders();
             yield return null;
 
             // 2. Pre-load RosterBook (models, rigs, materials, clips, pets)
+            SetLoadingStage("loading characters", 0.14f);
             var book = RosterBook.Load();
             if (book != null)
             {
@@ -198,6 +257,7 @@ namespace TumbangPreso.UI
             yield return null;
 
             // 3. Pre-load Audio clips and sound resources
+            SetLoadingStage("loading audio", 0.27f);
             try
             {
                 var allAudio = Resources.LoadAll<AudioClip>("");
@@ -207,6 +267,7 @@ namespace TumbangPreso.UI
             yield return null;
 
             // 4. Pre-load Settings & Roster tables
+            SetLoadingStage("applying settings", 0.36f);
             _ = Settings.SettingsStore.Current;
             _ = Roster.People;
             _ = Roster.ClassicPeople;
@@ -219,6 +280,7 @@ namespace TumbangPreso.UI
             //
             // ⚠️ THE HUD READS BINDINGS TO DRAW ITS KEY CAPS, so a cold asset means the first
             // frame of the deck draws "?" on all three tiles and then corrects itself.
+            SetLoadingStage("preparing controls", 0.44f);
             var actions = Resources.Load<UnityEngine.InputSystem.InputActionAsset>("TumbangPreso");
             if (actions != null) Settings.Rebinding.Load(actions);
             yield return null;
@@ -229,10 +291,12 @@ namespace TumbangPreso.UI
             // `GodotTheme.Box` rasterises a rounded, bordered texture and uploads it, and the
             // HUD asks for a fresh one for every distinct fill, border, width and radius the
             // frame it is built. Baking them here moves the whole cost behind the logo.
+            SetLoadingStage("building interface", 0.52f);
             WarmSprites();
             yield return null;
 
             // 7. Every ability glyph.
+            SetLoadingStage("loading abilities", 0.61f);
             foreach (AbilityGlyph glyph in System.Enum.GetValues(typeof(AbilityGlyph)))
                 AbilityIcons.For(glyph);
             yield return null;
@@ -254,6 +318,8 @@ namespace TumbangPreso.UI
             //
             // ⚠️ CONSTRUCTING EVERY KIT TOUCHES EVERY ABILITY OBJECT, its strings and its glyph,
             // which is what the character select and the HUD read the instant Hero Strike opens.
+            SetLoadingStage("preparing hero abilities", 0.84f);
+            Visual.AbilityVfx.Warmup();
             foreach (string heroId in Roster.HeroPeople != null
                          ? HeroIdsFrom(Roster.HeroPeople)
                          : new string[0])
@@ -265,6 +331,13 @@ namespace TumbangPreso.UI
             }
             yield return null;
 
+            WarmAssetCache.CaptureLoadedAssets();
+            Debug.Log($"[Splash] preload retained {WarmAssetCache.Count} assets in memory.");
+
+            // This must remain the final scene operation in the preload chain. Once activation is
+            // held, Unity will not complete an additive load or unload queued behind this one.
+            SetLoadingStage("opening main menu", 0.92f);
+            BeginMenuPreload();
             _assetsPreloaded = true;
         }
 
@@ -286,39 +359,59 @@ namespace TumbangPreso.UI
         {
             string[] maps = { SceneFlow.Eskinita, SceneFlow.BayanPlaza };
 
-            foreach (string map in maps)
+            // MatchInstaller's setup happens in Start(). Mark these loads as previews before they
+            // are requested so no seats, HUD, services or match state are created behind the sting.
+            bool previousPreviewOnly = MatchInstaller.PreviewOnly;
+            MatchInstaller.PreviewOnly = true;
+
+            try
             {
-                if (!Application.CanStreamedLevelBeLoaded(map)) continue;
-
-                AsyncOperation load = null;
-                try
+                foreach (string map in maps)
                 {
-                    load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Additive);
+                    if (!Application.CanStreamedLevelBeLoaded(map)) continue;
+
+                    SetLoadingStage(map == SceneFlow.Eskinita
+                        ? "loading eskinita"
+                        : "loading bayan plaza",
+                        map == SceneFlow.Eskinita ? 0.68f : 0.76f);
+
+                    AsyncOperation load = null;
+                    try
+                    {
+                        load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Additive);
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogWarning($"[Splash] could not warm {map}: {e.Message}");
+                    }
+
+                    if (load == null) continue;
+
+                    while (!load.isDone) yield return null;
+
+                    var scene = SceneManager.GetSceneByName(map);
+                    if (scene.IsValid() && scene.isLoaded)
+                    {
+                        // Capture while the scene still owns every dependency. The static cache
+                        // keeps them reachable through the later MainMenu unused-asset sweep.
+                        WarmAssetCache.CaptureLoadedAssets();
+
+                        // Awake/OnEnable may already have run by the time an additive load reports
+                        // done, so PreviewOnly is the real match-start guard. Deactivating the roots
+                        // also prevents Start/Update work before the unload completes.
+                        foreach (var root in scene.GetRootGameObjects())
+                            if (root != null) root.SetActive(false);
+
+                        var unload = SceneManager.UnloadSceneAsync(scene);
+                        while (unload != null && !unload.isDone) yield return null;
+                    }
+
+                    yield return null;
                 }
-                catch (System.Exception e)
-                {
-                    Debug.LogWarning($"[Splash] could not warm {map}: {e.Message}");
-                }
-
-                if (load == null) continue;
-
-                while (!load.isDone) yield return null;
-
-                var scene = SceneManager.GetSceneByName(map);
-                if (scene.IsValid() && scene.isLoaded)
-                {
-                    // ⚠️ THE OBJECTS ARE SWITCHED OFF BEFORE THE UNLOAD, so nothing in the map
-                    // gets an Awake, a Start or a frame of Update inside the splash scene. A
-                    // SliceRunner with AutoStart waking up here would begin a match nobody is
-                    // in, behind the logo.
-                    foreach (var root in scene.GetRootGameObjects())
-                        if (root != null) root.SetActive(false);
-
-                    var unload = SceneManager.UnloadSceneAsync(scene);
-                    while (unload != null && !unload.isDone) yield return null;
-                }
-
-                yield return null;
+            }
+            finally
+            {
+                MatchInstaller.PreviewOnly = previousPreviewOnly;
             }
 
             // The meshes and textures stay resident; only the scene graph went away. Do NOT
@@ -348,6 +441,36 @@ namespace TumbangPreso.UI
 
         private bool PreloadComplete =>
             _assetsPreloaded && (_menu == null || _menu.progress >= 0.9f);
+
+        private void SetLoadingStage(string label, float progress)
+        {
+            _loadingProgress = Mathf.Clamp01(progress);
+            if (_loadingLabel != null) _loadingLabel.text = label;
+            if (_loadingFill != null) _loadingFill.fillAmount = _loadingProgress;
+        }
+
+        private void UpdateLoadingAnimation()
+        {
+            if (_assetsPreloaded && _menu != null)
+            {
+                _loadingProgress = Mathf.Max(_loadingProgress,
+                    0.92f + Mathf.Clamp01(_menu.progress / 0.9f) * 0.08f);
+                if (_loadingFill != null) _loadingFill.fillAmount = _loadingProgress;
+            }
+
+            if (_loadingDots == null) return;
+
+            for (int i = 0; i < _loadingDots.Length; i++)
+            {
+                var dot = _loadingDots[i];
+                if (dot == null) continue;
+
+                float bounce = Mathf.Max(0.0f,
+                    Mathf.Sin(_elapsed * 5.5f - i * 0.85f));
+                dot.anchoredPosition = new Vector2((i - 1) * 24.0f, bounce * 8.0f);
+                dot.localScale = Vector3.one * Mathf.Lerp(0.82f, 1.12f, bounce);
+            }
+        }
 
         private void SetFade(float alpha)
         {
@@ -414,27 +537,7 @@ namespace TumbangPreso.UI
             _fade.raycastTarget = false;
             Stretch(_fade.rectTransform);
 
-            var hintGo = new GameObject("SkipHint");
-            hintGo.transform.SetParent(canvasGo.transform, false);
-
-            // ⚠️ THE GAME'S OWN FACE, NOT LegacyRuntime. Godot sets Darumadrop project-wide, so
-            // every string in the game is that face; the built-in fallback is the single most
-            // obvious tell that a screen was rebuilt rather than converted.
-            var hint = hintGo.AddComponent<Text>();
-            hint.font = MenuKit.Font;
-            hint.text = "loading game assets...";
-            hint.fontSize = 20;
-            hint.color = new Color(1, 1, 1, 0.45f);
-            hint.alignment = TextAnchor.LowerRight;
-            hint.raycastTarget = false;
-
-            // The .tscn's own numbers: -320/-64 to -32/-28 off the bottom-right corner.
-            var hintRt = hint.rectTransform;
-            hintRt.anchorMin = Vector2.one;
-            hintRt.anchorMax = Vector2.one;
-            hintRt.pivot = Vector2.one;
-            hintRt.anchoredPosition = new Vector2(-32.0f, -28.0f);
-            hintRt.sizeDelta = new Vector2(288.0f, 36.0f);
+            BuildLoadingIndicator(canvasGo.transform);
 
             _target = new RenderTexture(1280, 720, 0);
             _surface.texture = _target;
@@ -451,6 +554,80 @@ namespace TumbangPreso.UI
             // to fitting inside; the black Backdrop above is what covers the difference on a
             // window that is not.
             _video.aspectRatio = VideoAspectRatio.Stretch;
+        }
+
+        private void BuildLoadingIndicator(Transform parent)
+        {
+            var panelGo = new GameObject("LoadingIndicator");
+            panelGo.transform.SetParent(parent, false);
+            var panelRt = panelGo.AddComponent<RectTransform>();
+            Stretch(panelRt);
+
+            var dotsGo = new GameObject("TansanDots");
+            dotsGo.transform.SetParent(panelGo.transform, false);
+            var dotsRt = dotsGo.AddComponent<RectTransform>();
+            dotsRt.anchorMin = new Vector2(0.5f, 0.0f);
+            dotsRt.anchorMax = new Vector2(0.5f, 0.0f);
+            dotsRt.anchoredPosition = new Vector2(0.0f, 152.0f);
+            dotsRt.sizeDelta = new Vector2(80.0f, 24.0f);
+
+            _loadingDots = new RectTransform[3];
+            for (int i = 0; i < _loadingDots.Length; i++)
+            {
+                var dotGo = new GameObject($"Tansan{i + 1}");
+                dotGo.transform.SetParent(dotsGo.transform, false);
+                var dot = dotGo.AddComponent<Image>();
+                dot.sprite = GodotTheme.Plain(12);
+                dot.color = new Color(0.03f, 0.03f, 0.03f, 0.88f - i * 0.16f);
+                dot.raycastTarget = false;
+
+                var rt = dot.rectTransform;
+                rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
+                rt.sizeDelta = new Vector2(16.0f, 16.0f);
+                _loadingDots[i] = rt;
+            }
+
+            var labelGo = new GameObject("Status");
+            labelGo.transform.SetParent(panelGo.transform, false);
+            _loadingLabel = labelGo.AddComponent<Text>();
+            _loadingLabel.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            _loadingLabel.text = "preparing game";
+            _loadingLabel.fontSize = 18;
+            _loadingLabel.color = new Color(0.03f, 0.03f, 0.03f, 0.72f);
+            _loadingLabel.alignment = TextAnchor.MiddleCenter;
+            _loadingLabel.raycastTarget = false;
+
+            var labelRt = _loadingLabel.rectTransform;
+            labelRt.anchorMin = new Vector2(0.5f, 0.0f);
+            labelRt.anchorMax = new Vector2(0.5f, 0.0f);
+            labelRt.pivot = new Vector2(0.5f, 0.0f);
+            labelRt.anchoredPosition = new Vector2(0.0f, 108.0f);
+            labelRt.sizeDelta = new Vector2(420.0f, 30.0f);
+
+            var trackGo = new GameObject("ProgressTrack");
+            trackGo.transform.SetParent(panelGo.transform, false);
+            var track = trackGo.AddComponent<Image>();
+            track.sprite = GodotTheme.Plain(4);
+            track.color = new Color(0.03f, 0.03f, 0.03f, 0.14f);
+            track.raycastTarget = false;
+            var trackRt = track.rectTransform;
+            trackRt.anchorMin = new Vector2(0.5f, 0.0f);
+            trackRt.anchorMax = new Vector2(0.5f, 0.0f);
+            trackRt.pivot = new Vector2(0.5f, 0.0f);
+            trackRt.anchoredPosition = new Vector2(0.0f, 90.0f);
+            trackRt.sizeDelta = new Vector2(360.0f, 4.0f);
+
+            var fillGo = new GameObject("ProgressFill");
+            fillGo.transform.SetParent(trackGo.transform, false);
+            _loadingFill = fillGo.AddComponent<Image>();
+            _loadingFill.sprite = GodotTheme.Plain(4);
+            _loadingFill.color = new Color(0.03f, 0.03f, 0.03f, 0.90f);
+            _loadingFill.type = Image.Type.Filled;
+            _loadingFill.fillMethod = Image.FillMethod.Horizontal;
+            _loadingFill.fillOrigin = 0;
+            _loadingFill.fillAmount = 0.0f;
+            _loadingFill.raycastTarget = false;
+            Stretch(_loadingFill.rectTransform);
         }
 
         /// <summary>

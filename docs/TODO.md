@@ -11,114 +11,7 @@ against the readability budget in its § 2.
 
 ---
 
-## 1 · The ability VFX are puddles. Smaller, more detailed, with real particles
-
-**This is the one live item, and it is the next session's whole job.** Everything else in the
-open list is smaller.
-
-**Symptom.** *"It just looks like puddles everywhere, they're all too big."* From a live
-build: a flat magenta plane covering most of the road, a purple plane under it, a yellow disc
-on top of both, and a solid ice wall filling the left third of the screen. Nothing reads.
-Also: *"i also want like actual special effects like idk particles? for some skills"*.
-
-**Big skills are fine. Every skill being big is not.** *"its okay for there to be big skills
-but not every single skill should be big bruhh, esp that ice shit its so big."*
-
-### 1.1 It is a footprint problem before it is an art problem, and it is measurable
-
-The box is `CONFINEMENT_RADIUS` **7.0**, so the danger zone is **14 x 14 = 196 sq m**.
-
-| Ability | Footprint in code | Share of the box |
-|---|---|---|
-| Cheska · Permafrost Sheet | radius **5.0**, 6.0 s | **40%** |
-| Cheska · Ice Barricade | width **6.5** | **46% of the 14 m edge** |
-| Cheska · Glacial Nova, residual sheet | radius **6.5** | **68%** |
-| Cheska · Glacial Nova, freeze radius | **7.5** | **90%** |
-| Cheska · Glacial Nova, slipper deflect | **8.5** | **116%, wider than the box itself** |
-| Nemu · Seance Void | radius **7.5**, 5.0 s | **90%** |
-| Dante · Cracked lava decal | radius **5.5**, 4.0 s | **48%** |
-| Sean · Fire Trail | radius **1.8** | 5% |
-| Zack · Shock Trail | radius **2.2** | 8% |
-
-⚠️ **SEAN AND ZACK ARE THE PROOF THAT THE TARGET IS RIGHT.** Their trails are 5% and 8% of the
-box, they read instantly, and nobody has complained about them. The three offenders are
-**Cheska, Nemu and Dante**. Two Permafrost Sheets already cover 80% of the arena, and Cheska's
-ultimate deflects slippers from outside the box.
-
-### 1.2 It already costs gameplay, measured
-
-`AiTuning.HazardAvoidMaxRadius` is **3.0**, and it exists only because of these numbers. Bots
-now steer around hero hazards, but there is no way round a disc covering half the arena, so
-anything wider is walked straight through. Turning avoidance on without that cap took
-`BotBehaviourProbe`'s Hero Strike run from **59 throws and 122 skill uses down to 11 and 3**,
-with 661 unretrieved-slipper penalties: every bot was surrounded by ground it was correctly
-refusing to cross, and simply stopped playing.
-
-**When the footprints come down, that cap stops mattering and the avoidance starts applying to
-every hazard with no further code change.** That is the intended end state.
-
-### 1.3 Direction
-
-Shrink the footprint, spend the saved budget on detail and particles.
-
-- Nothing but an ultimate should exceed roughly **2.5 m of radius**. Skills belong in the
-  1.8 to 2.5 band Sean and Zack already occupy.
-- Ultimates may be big, but **one at a time**. Glacial Nova paints the floor twice: a 6.5
-  residual sheet on top of its own 7.5 freeze. Pick one.
-- **Replace the flat coloured planes.** A single unlit quad at 40% of the arena is exactly what
-  reads as a puddle. The same silhouette at 2.2 m with a cracked edge, a rim, depth and
-  particles reads as ice.
-- **The floor is not the only place to put an effect.** Verticality, edge treatment and short
-  bursts cost no floor area at all.
-- **Cap the stacking.** Two translucent planes plus a disc plus a wall plus four popup labels
-  is not four effects, it is one unreadable frame.
-- **Cheska first.** She is the one he named.
-
-### 1.4 Particles: where they belong
-
-There are none today. Every effect is built from primitives and unlit materials in
-`HeroHazards.cs`; the only particle-like things in the game are `ComicPopup`, `DizzyStars` and
-`SpawnConfettiShower`, which are UI-ish rather than world VFX.
-
-⚠️ **DECIDE THE HOME BEFORE WRITING ANY.** The suggested split, to be confirmed by whoever
-does the work:
-
-- **A new `Assets/TumbangPreso/Runtime/Visual/AbilityVfx.cs`**, alongside the existing
-  `Visual/` effects, owning every `ParticleSystem` an ability spawns. `HeroHazards` keeps the
-  hazard's SHAPE and its GAMEPLAY volume; `AbilityVfx` owns what it looks like. That split is
-  what stops the next footprint change from being an art change.
-- **Built in code, cached, like every other surface in this project.** `GodotTheme` bakes every
-  UI sprite and `AbilityIcons` bakes every glyph, both for the reason `GodotTheme` records: a
-  baked asset that drifts from the code that wanted it is indistinguishable from a broken
-  conversion. A `ParticleSystem` authored in a prefab is a fair exception if the team wants to
-  art-direct it, but say so in the file.
-- **Warm them in the boot preload.** `SplashScreen.PreloadGameAssets` has a numbered list and
-  a note saying anything that can hitch warms there. A first-cast particle burst that compiles
-  a shader mid-round is exactly that.
-- **Budget them.** Four players casting at once in a 14 m box; a system that looks good alone
-  and unreadable in a fight has failed § 2 of `VISION.md`.
-
-### 1.5 Also in the same pass
-
-The stun frost (`Assets/TumbangPreso/Shaders/FrostVignette.shader`) was cut from 0.36 to 0.24
-screen heights of reach this session, which took the clear centre from 0.28 to 0.52 of the
-frame. **Look at it in a real match before deciding it is settled**; it is a judgement call
-and the arithmetic only says it is no longer covering three quarters of the screen.
-
-### 1.6 Done when
-
-No single skill covers more than about a tenth of the box, no two floor hazards at once cover
-more than a third of it, a screenshot taken mid-fight still shows the lata, the chalk and every
-player, and the skills that should feel big have particles rather than area. Take the
-screenshot from the built player and put it in the reply.
-
-**Where.** `Assets/TumbangPreso/Runtime/Abilities/*HeroKit.cs` for the radii,
-`Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs` (1126 lines) for the geometry and
-materials each `Spawn*` builds.
-
----
-
-## 2 · Peer rematch voting across the wire
+## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**
 
@@ -140,12 +33,40 @@ plainly in the handoff that the wire half is simulated.
 
 ## Closed
 
+- **Dante 3D Model Stray Geometry Fix.** ✅ 2026-08-23. Removed 1,340 stray vertex and triangle
+  elements (islands 959-992) from `team-dante.glb` head mesh that formed an asymmetrical floating horn/spike
+  protruding through the temple and rear of the character's head. Cleaned binary buffers and re-indexed
+  mesh to restore symmetrical head bounds `[-0.195, 0.188]`.
+
+- **In-Game Ability HUD Slimdown & First-Person Hand Clearance.** ✅ 2026-08-23. Redesigned `HeroDeck`
+  in `Hud.cs` into a slim, minimalist 240x68 dark glass panel anchored at `y = 10` (down from 592x122 at `y = 24`).
+  Replaced cramped 3-line text wrapping with centered high-DPI vector SDF glyphs, corner key chips (`[Q]`, `[F]`, `[X]`),
+  and bold centered cooldown countdowns (`4.2s`). Moved `ReadyObjective` to top-center (`y = -210`) and
+  `ReadyPrompt` to `y = 96` so game text never obstructs first-person hands.
+
+- **Character Select Ability Ribbon & Tile Polish.** ✅ 2026-08-23. Polished `ConvertedCharacterSelect.cs`
+  to style selected ability tiles with a crisp gold/accent glowing border over dark slate glass rather than
+  a solid orange background fill. Expanded ability details card to an uncluttered 2-line tactical readout.
+
+- **Ability VFX footprints, procedural particles & UI overhaul.** ✅ 2026-08-23. Calibrated all
+  hazard footprints (Cheska Permafrost 2.3m / Barricade 3.2m / Nova 4.6m, Dante Stomp 2.4m / Fissure
+  5.5m, Nemu Void 3.2m, Sean Supernova 4.8m, Zack Thunderstrike 4.5m). Introduced `AbilityVfx.cs`
+  procedural ParticleSystem generators for ice bursts, magma eruptions, void wisps, and electric arcs.
+  Overhauled `ComicPopup.cs` with comic font (Darumadrop One), ink outline layers, and punchy bounce.
+  Redesigned `AbilityIcons.cs` with 128px high-DPI procedural vector glyphs and modern tactical shapes.
+  Overhauled UI theming across Character Select, HUD Deck, and Inspect Panel, replacing solid bright
+  orange tiles with sleek dark glass plates (`rgba(16, 22, 34, 0.90)`) with glowing white/accent glyphs.
+  Redesigned Character Select Hero Loadout into a Valorant-style horizontal ability ribbon with an
+  interactive details card, eliminating button collisions. Rewrote all ability descriptions across all 5
+  hero kits into intuitive, action-driven tactical instructions (`ACTIVATE`, `DEPLOY`, `SLAM`, `PHASE`, `SURGE`).
+  Fixed font blurriness by increasing dynamic TTF raster size to 32 and removing unnecessary outline overhead.
+
 - **The 8 PARTIAL rows in `docs/Port_Ledger.md`.** ✅ 2026-08-23, audited against the code
   rather than against the rows. **Seven of the eight were stale bookkeeping**: the work had
   landed and the row was never updated. The audit table is in the ledger's status summary.
   Two pieces were genuinely missing and were written: the music **intensity lift** in the last
   15 s of a round, and the **duck-trigger table** that drops the bed under the countdown, the
-  round end, the win and the score award. One row remains genuinely partial and is § 2 above.
+  round end, the win and the score award. One row remains genuinely partial and is § 1 above.
 
 
 - **Load every resource on the BH Studios loading screen.** ✅ 2026-08-23. The preload covered

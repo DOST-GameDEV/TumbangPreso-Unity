@@ -29,29 +29,23 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed class AbilityInspectPanel : MonoBehaviour
     {
-        private const float SlideDistance = 90.0f;
-        private const float OpenSpeed = 7.5f;
-        private const float CloseSpeed = 11.0f;
-
-        /// <summary>
-        /// ⚠️ THE THREE CARDS DO NOT ARRIVE TOGETHER. A stagger is what makes the panel read as
-        /// one motion instead of a box appearing; each row is delayed by a fraction of the
-        /// whole so the eye is led down the list in the order the keys sit on the deck.
-        /// </summary>
-        private const float Stagger = 0.18f;
+        private const float SlideDistance = 45.0f;
+        private const float OpenSpeed = 8.5f;
+        private const float CloseSpeed = 12.0f;
+        private const float Stagger = 0.12f;
 
         private CanvasGroup _group;
         private RectTransform _rt;
         private InputAction _hold;
 
-        private readonly Row[] _rows = new Row[3];
+        private readonly Card[] _cards = new Card[3];
         private Text _title;
         private Text _hint;
 
         private float _open;          // 0 closed, 1 open
         private HeroKit _boundKit;
 
-        private sealed class Row
+        private sealed class Card
         {
             public RectTransform Rt;
             public CanvasGroup Group;
@@ -79,17 +73,15 @@ namespace TumbangPreso.UI
             _rt = gameObject.GetComponent<RectTransform>();
             if (_rt == null) _rt = gameObject.AddComponent<RectTransform>();
 
-            // Right-hand side, vertically centred. The deck owns the bottom of the screen and
-            // the scoreboard owns the top left, so this is the one large area that is free.
-            _rt.anchorMin = new Vector2(1.0f, 0.5f);
-            _rt.anchorMax = new Vector2(1.0f, 0.5f);
-            _rt.pivot = new Vector2(1.0f, 0.5f);
-            _rt.anchoredPosition = new Vector2(-28, 0);
-            _rt.sizeDelta = new Vector2(470, 396);
+            // Bottom-center horizontal tray inspired by modern hero shooters (Valorant style)
+            _rt.anchorMin = new Vector2(0.5f, 0.0f);
+            _rt.anchorMax = new Vector2(0.5f, 0.0f);
+            _rt.pivot = new Vector2(0.5f, 0.0f);
+            _rt.anchoredPosition = new Vector2(0, 16);
+            _rt.sizeDelta = new Vector2(1060, 236);
 
             var bg = gameObject.AddComponent<Image>();
-            bg.sprite = GodotTheme.Box(UiTheme.WoodDark, UiTheme.WoodEdge,
-                                       GodotTheme.WoodBorderWidth, GodotTheme.WoodCornerRadius);
+            bg.sprite = GodotTheme.Box(new Color(0.18f, 0.24f, 0.35f, 0.90f), new Color(0.05f, 0.07f, 0.11f, 0.95f), 2, 8);
             bg.type = Image.Type.Sliced;
             bg.raycastTarget = false;
 
@@ -103,75 +95,106 @@ namespace TumbangPreso.UI
             column.childControlWidth = true;
             column.childForceExpandHeight = false;
             column.childForceExpandWidth = true;
-            column.spacing = 8.0f;
-            column.padding = new RectOffset(14, 14, 12, 12);
+            column.spacing = 6.0f;
+            column.padding = new RectOffset(14, 14, 10, 10);
 
-            _title = Label(transform, "Title", 26, UiTheme.Amber, TextAnchor.MiddleLeft);
+            // ---- Top Header Row (Title on left, Hold Hint on right) ----
+            var headerRow = new GameObject("HeaderRow", typeof(RectTransform));
+            headerRow.transform.SetParent(transform, false);
+            var headerHlg = headerRow.AddComponent<HorizontalLayoutGroup>();
+            headerHlg.childControlHeight = true;
+            headerHlg.childControlWidth = true;
+            headerHlg.childForceExpandHeight = true;
+            headerHlg.childForceExpandWidth = false;
+            Height(headerRow, 26);
+
+            _title = Label(headerRow.transform, "Title", 22, UiTheme.Amber, TextAnchor.MiddleLeft);
             _title.fontStyle = FontStyle.Bold;
-            _title.text = "YOUR POWERS";
-            Height(_title.gameObject, 30);
+            _title.text = "HERO POWERS";
+            var titleLe = _title.gameObject.AddComponent<LayoutElement>();
+            titleLe.flexibleWidth = 1.0f;
 
-            for (int i = 0; i < _rows.Length; i++) _rows[i] = BuildRow(transform);
+            _hint = Label(headerRow.transform, "Hint", 15, UiTheme.CreamMuted, TextAnchor.MiddleRight);
+            _hint.text = "HOLD [TAB] TO INSPECT";
+            var hintLe = _hint.gameObject.AddComponent<LayoutElement>();
+            hintLe.minWidth = 220;
 
-            _hint = Label(transform, "Hint", MenuKit.MinReadableUnits, UiTheme.CreamMuted,
-                          TextAnchor.MiddleLeft);
-            _hint.text = "HOLD TO KEEP THIS OPEN";
-            Height(_hint.gameObject, 20);
+            // ---- Cards Row (3 side-by-side columns) ----
+            var cardsRow = new GameObject("CardsRow", typeof(RectTransform));
+            cardsRow.transform.SetParent(transform, false);
+            var cardsHlg = cardsRow.AddComponent<HorizontalLayoutGroup>();
+            cardsHlg.childControlHeight = true;
+            cardsHlg.childControlWidth = true;
+            cardsHlg.childForceExpandHeight = true;
+            cardsHlg.childForceExpandWidth = true;
+            cardsHlg.spacing = 10.0f;
+            Height(cardsRow, 178);
+
+            for (int i = 0; i < _cards.Length; i++)
+            {
+                _cards[i] = BuildCard(cardsRow.transform, i);
+            }
 
             gameObject.SetActive(false);
         }
 
-        private Row BuildRow(Transform parent)
+        private Card BuildCard(Transform parent, int slotIndex)
         {
-            var row = new Row();
+            var card = new Card();
 
-            // ⚠️ TYPED AT CONSTRUCTION. See the note in `Hud.BuildAbilityCard`: a plain
-            // `new GameObject` is not a RectTransform and parenting does not make it one.
-            var go = new GameObject("Ability", typeof(RectTransform));
+            var go = new GameObject($"AbilityCard_{slotIndex}", typeof(RectTransform));
             go.transform.SetParent(parent, false);
-            row.Rt = (RectTransform)go.transform;
-            row.Group = go.AddComponent<CanvasGroup>();
+            card.Rt = (RectTransform)go.transform;
+            card.Group = go.AddComponent<CanvasGroup>();
 
             var bg = go.AddComponent<Image>();
-            bg.sprite = GodotTheme.Box(UiTheme.WoodDeep, UiTheme.WoodEdge, 3, 6);
+            bg.sprite = GodotTheme.Box(new Color(0.16f, 0.22f, 0.32f, 0.85f), new Color(0.07f, 0.10f, 0.16f, 0.95f), 2, 6);
             bg.type = Image.Type.Sliced;
             bg.raycastTarget = false;
 
-            Height(go, 104);
+            var cardCol = go.AddComponent<VerticalLayoutGroup>();
+            cardCol.childControlHeight = true;
+            cardCol.childControlWidth = true;
+            cardCol.childForceExpandHeight = false;
+            cardCol.childForceExpandWidth = true;
+            cardCol.spacing = 6.0f;
+            cardCol.padding = new RectOffset(10, 10, 8, 8);
 
-            var group = go.AddComponent<HorizontalLayoutGroup>();
-            group.childControlHeight = true;
-            group.childControlWidth = true;
-            group.childForceExpandHeight = true;
-            group.childForceExpandWidth = false;
-            group.spacing = 10.0f;
-            group.padding = new RectOffset(10, 10, 9, 9);
-            group.childAlignment = TextAnchor.UpperLeft;
+            // Top section: Icon Tile + Name + Role + Cooldown
+            var topSection = new GameObject("TopSection", typeof(RectTransform));
+            topSection.transform.SetParent(go.transform, false);
+            var topHlg = topSection.AddComponent<HorizontalLayoutGroup>();
+            topHlg.childControlHeight = true;
+            topHlg.childControlWidth = true;
+            topHlg.childForceExpandHeight = true;
+            topHlg.childForceExpandWidth = false;
+            topHlg.spacing = 8.0f;
+            Height(topSection, 52);
 
-            // ---- the tile ----------------------------------------------------------
+            // Icon tile with key badge
             var tileGo = new GameObject("Tile");
-            tileGo.transform.SetParent(go.transform, false);
-            row.Tile = tileGo.AddComponent<Image>();
-            row.Tile.sprite = GodotTheme.Box(UiTheme.Amber, UiTheme.Ink, 3, 6);
-            row.Tile.type = Image.Type.Sliced;
-            row.Tile.raycastTarget = false;
+            tileGo.transform.SetParent(topSection.transform, false);
+            card.Tile = tileGo.AddComponent<Image>();
+            card.Tile.sprite = GodotTheme.Box(new Color(0.24f, 0.32f, 0.44f, 0.75f), new Color(0.06f, 0.08f, 0.13f, 0.95f), 2, 6);
+            card.Tile.type = Image.Type.Sliced;
+            card.Tile.raycastTarget = false;
 
             var tileLe = tileGo.AddComponent<LayoutElement>();
-            tileLe.minWidth = 68;
-            tileLe.preferredWidth = 68;
-            tileLe.minHeight = 68;
-            tileLe.preferredHeight = 68;
+            tileLe.minWidth = 50;
+            tileLe.preferredWidth = 50;
+            tileLe.minHeight = 50;
+            tileLe.preferredHeight = 50;
             tileLe.flexibleHeight = 0.0f;
 
             var glyphGo = new GameObject("Glyph");
             glyphGo.transform.SetParent(tileGo.transform, false);
-            row.Glyph = glyphGo.AddComponent<Image>();
-            row.Glyph.color = UiTheme.Ink;
-            row.Glyph.preserveAspect = true;
-            row.Glyph.raycastTarget = false;
-            MenuKit.Stretch(row.Glyph.rectTransform);
-            row.Glyph.rectTransform.offsetMin = new Vector2(11, 11);
-            row.Glyph.rectTransform.offsetMax = new Vector2(-11, -11);
+            card.Glyph = glyphGo.AddComponent<Image>();
+            card.Glyph.color = Color.white;
+            card.Glyph.preserveAspect = true;
+            card.Glyph.raycastTarget = false;
+            MenuKit.Stretch(card.Glyph.rectTransform);
+            card.Glyph.rectTransform.offsetMin = new Vector2(6, 6);
+            card.Glyph.rectTransform.offsetMax = new Vector2(-6, -6);
 
             var chipGo = new GameObject("KeyChip");
             chipGo.transform.SetParent(tileGo.transform, false);
@@ -183,52 +206,54 @@ namespace TumbangPreso.UI
             chipRt.anchorMin = new Vector2(1.0f, 0.0f);
             chipRt.anchorMax = new Vector2(1.0f, 0.0f);
             chipRt.pivot = new Vector2(1.0f, 0.0f);
-            chipRt.anchoredPosition = new Vector2(-2, 2);
-            chipRt.sizeDelta = new Vector2(30, 20);
+            chipRt.anchoredPosition = new Vector2(-1, 1);
+            chipRt.sizeDelta = new Vector2(24, 18);
 
-            row.Key = Label(chipGo.transform, "Key", 17, UiTheme.Cream, TextAnchor.MiddleCenter);
-            row.Key.fontStyle = FontStyle.Bold;
-            MenuKit.Stretch(row.Key.rectTransform);
+            card.Key = Label(chipGo.transform, "Key", 15, UiTheme.Cream, TextAnchor.MiddleCenter);
+            card.Key.fontStyle = FontStyle.Bold;
+            MenuKit.Stretch(card.Key.rectTransform);
 
-            // ---- the words ---------------------------------------------------------
-            var textGo = new GameObject("Text", typeof(RectTransform));
-            textGo.transform.SetParent(go.transform, false);
-            var textCol = textGo.AddComponent<VerticalLayoutGroup>();
-            textCol.childControlHeight = true;
-            textCol.childControlWidth = true;
-            textCol.childForceExpandHeight = false;
-            textCol.childForceExpandWidth = true;
-            textCol.spacing = 1.0f;
+            // Name + Role header stack
+            var nameStack = new GameObject("NameStack", typeof(RectTransform));
+            nameStack.transform.SetParent(topSection.transform, false);
+            var nameCol = nameStack.AddComponent<VerticalLayoutGroup>();
+            nameCol.childControlHeight = true;
+            nameCol.childControlWidth = true;
+            nameCol.childForceExpandHeight = false;
+            nameCol.childForceExpandWidth = true;
+            nameCol.spacing = 1.0f;
+            var nameStackLe = nameStack.AddComponent<LayoutElement>();
+            nameStackLe.flexibleWidth = 1.0f;
 
-            var textLe = textGo.AddComponent<LayoutElement>();
-            textLe.minWidth = 340;
-            textLe.preferredWidth = 340;
-            textLe.flexibleWidth = 1.0f;
+            card.Name = Label(nameStack.transform, "Name", 19, UiTheme.Cream, TextAnchor.MiddleLeft);
+            card.Name.fontStyle = FontStyle.Bold;
+            Height(card.Name.gameObject, 22);
 
-            row.Name = Label(textGo.transform, "Name", 22, UiTheme.Cream, TextAnchor.UpperLeft);
-            row.Name.fontStyle = FontStyle.Bold;
-            Height(row.Name.gameObject, 24);
+            var metaRow = new GameObject("MetaRow", typeof(RectTransform));
+            metaRow.transform.SetParent(nameStack.transform, false);
+            var metaHlg = metaRow.AddComponent<HorizontalLayoutGroup>();
+            metaHlg.childControlHeight = true;
+            metaHlg.childControlWidth = true;
+            metaHlg.childForceExpandHeight = true;
+            metaHlg.childForceExpandWidth = false;
+            metaHlg.spacing = 6.0f;
+            Height(metaRow, 18);
 
-            row.Kind = Label(textGo.transform, "Kind", MenuKit.MinReadableUnits, UiTheme.Amber,
-                             TextAnchor.UpperLeft);
-            row.Kind.fontStyle = FontStyle.Bold;
-            Height(row.Kind.gameObject, 18);
+            card.Kind = Label(metaRow.transform, "Kind", 14, UiTheme.Amber, TextAnchor.MiddleLeft);
+            card.Kind.fontStyle = FontStyle.Bold;
 
-            // ⚠️ THE DESCRIPTION WRAPS AND IS ALLOWED TO OVERFLOW ITS ROW. Truncating the one
-            // piece of text in the whole game whose entire job is to explain the power would be
-            // the same defect the deck already had, one level up.
-            row.Body = Label(textGo.transform, "Body", MenuKit.MinReadableUnits, UiTheme.CreamMuted,
-                             TextAnchor.UpperLeft);
-            row.Body.horizontalOverflow = HorizontalWrapMode.Wrap;
-            row.Body.verticalOverflow = VerticalWrapMode.Overflow;
-            Height(row.Body.gameObject, 34);
+            card.Meta = Label(metaRow.transform, "Meta", 14, UiTheme.Highlight, TextAnchor.MiddleLeft);
+            card.Meta.fontStyle = FontStyle.Bold;
 
-            row.Meta = Label(textGo.transform, "Meta", MenuKit.MinReadableUnits, UiTheme.Highlight,
-                             TextAnchor.UpperLeft);
-            row.Meta.fontStyle = FontStyle.Bold;
-            Height(row.Meta.gameObject, 18);
+            // Description body with generous padding and clean font
+            card.Body = Label(go.transform, "Body", 15, UiTheme.CreamMuted, TextAnchor.UpperLeft);
+            card.Body.horizontalOverflow = HorizontalWrapMode.Wrap;
+            card.Body.verticalOverflow = VerticalWrapMode.Truncate;
+            var bodyLe = card.Body.gameObject.AddComponent<LayoutElement>();
+            bodyLe.flexibleHeight = 1.0f;
+            bodyLe.minHeight = 90;
 
-            return row;
+            return card;
         }
 
         // ------------------------------------------------------------------ runtime
@@ -238,44 +263,45 @@ namespace TumbangPreso.UI
             if (kit == null || kit == _boundKit) return;
 
             _boundKit = kit;
-            _title.text = kit.HeroName + "  ·  POWERS";
-
             Color hero = UiTheme.ColorForHero(kit.HeroId);
+            _title.text = (kit.HeroName + "  ·  HERO POWERS").ToUpperInvariant();
+            _title.color = hero;
 
-            Fill(_rows[0], kit.Skill1, "Skill1", hero);
-            Fill(_rows[1], kit.Skill2, "Skill2", hero);
-            Fill(_rows[2], kit.Ultimate, "Ultimate", hero);
+            Fill(_cards[0], kit.Skill1, "Skill1", hero);
+            Fill(_cards[1], kit.Skill2, "Skill2", hero);
+            Fill(_cards[2], kit.Ultimate, "Ultimate", hero);
         }
 
-        private static void Fill(Row row, HeroAbility ability, string action, Color hero)
+        private static void Fill(Card card, HeroAbility ability, string action, Color hero)
         {
-            if (row == null) return;
+            if (card == null) return;
 
             if (ability == null)
             {
-                row.Rt.gameObject.SetActive(false);
+                card.Rt.gameObject.SetActive(false);
                 return;
             }
 
-            row.Rt.gameObject.SetActive(true);
-            row.Tile.color = hero;
-            row.Glyph.sprite = AbilityIcons.For(ability.Glyph);
-            row.Key.text = Hud.KeyLabelFor(action);
-            row.Name.text = ability.Name;
-            row.Kind.text = AbilityIcons.LabelFor(ability.Glyph);
-            row.Body.text = ability.Description;
+            card.Rt.gameObject.SetActive(true);
+            card.Tile.color = Color.white;
+            card.Glyph.sprite = AbilityIcons.For(ability.Glyph);
+            card.Glyph.color = Color.white;
+            card.Key.text = Hud.KeyLabelFor(action);
+            card.Name.text = ability.Name;
+            card.Name.color = hero;
+            card.Kind.text = $"[{AbilityIcons.LabelFor(ability.Glyph)}]";
+            card.Kind.color = hero;
+            card.Body.text = ability.Description;
 
-            // ⚠️ THE ULTIMATE HAS NO COOLDOWN AND SAYING "0.0s COOLDOWN" WOULD BE A LIE. It is
-            // gated by charge, which is a different economy, so it says so.
             if (ability.Cooldown > 0.0f)
             {
-                row.Meta.text = ability.Duration > 0.0f
-                    ? $"COOLDOWN {ability.Cooldown:0.#}s   ·   LASTS {ability.Duration:0.#}s"
-                    : $"COOLDOWN {ability.Cooldown:0.#}s";
+                card.Meta.text = ability.Duration > 0.0f
+                    ? $"· {ability.Cooldown:0.#}s CD ({ability.Duration:0.#}s DURATION)"
+                    : $"· {ability.Cooldown:0.#}s CD";
             }
             else
             {
-                row.Meta.text = "CHARGES FROM OBJECTIVE PLAY";
+                card.Meta.text = "· OBJECTIVE CHARGE";
             }
         }
 
@@ -301,27 +327,22 @@ namespace TumbangPreso.UI
 
             if (!gameObject.activeSelf) gameObject.SetActive(true);
 
-            // ⚠️ EASED, NOT LINEAR, AND THE TWO EASES DIFFER. Opening overshoots slightly and
-            // settles, which reads as the panel being pulled out; closing is a straight fall,
-            // because a bouncy exit keeps the eye on something the player has just dismissed.
             float eased = held ? EaseOutBack(_open) : EaseInQuad(_open);
 
             _group.alpha = Mathf.Clamp01(_open * 1.35f);
-            _rt.anchoredPosition = new Vector2(-28 + (1.0f - eased) * SlideDistance, 0);
+            _rt.anchoredPosition = new Vector2(0, 16 + (1.0f - eased) * -SlideDistance);
 
-            for (int i = 0; i < _rows.Length; i++)
+            for (int i = 0; i < _cards.Length; i++)
             {
-                var row = _rows[i];
-                if (row == null || row.Group == null) continue;
+                var card = _cards[i];
+                if (card == null || card.Group == null) continue;
 
-                // Each row runs the same 0..1 through its own slice of the timeline.
                 float begin = i * Stagger;
                 float local = Mathf.InverseLerp(begin, begin + (1.0f - Stagger * 2.0f), _open);
-                float rowEase = held ? EaseOutBack(local) : local;
+                float cardEase = held ? EaseOutBack(local) : local;
 
-                row.Group.alpha = Mathf.Clamp01(local * 1.4f);
-                row.Rt.anchoredPosition = new Vector2((1.0f - rowEase) * 46.0f,
-                                                      row.Rt.anchoredPosition.y);
+                card.Group.alpha = Mathf.Clamp01(local * 1.4f);
+                card.Rt.localScale = Vector3.one * Mathf.Lerp(0.92f, 1.0f, cardEase);
             }
         }
 
@@ -379,12 +400,8 @@ namespace TumbangPreso.UI
             t.alignment = align;
             t.alignByGeometry = true;
             t.raycastTarget = false;
-            t.horizontalOverflow = HorizontalWrapMode.Overflow;
+            t.horizontalOverflow = HorizontalWrapMode.Wrap;
             t.verticalOverflow = VerticalWrapMode.Overflow;
-
-            var ring = go.AddComponent<GodotOutline>();
-            ring.OutlineColour = UiTheme.Ink;
-            ring.Radius = 1.5f;
 
             return t;
         }

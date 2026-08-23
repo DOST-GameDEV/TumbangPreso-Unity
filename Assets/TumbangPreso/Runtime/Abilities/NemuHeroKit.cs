@@ -22,7 +22,7 @@ namespace TumbangPreso.Abilities
             private GameObject _phantomLightGo;
 
             public PhantomPhaseAbility()
-                : base("nemu_skill1", "PHANTOM PHASE", "Phases for 2.5s; grabbing a slipper shatters the phase.", 8.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.Phase)
+                : base("nemu_skill1", "ASTRAL GHOST STEP", "PHASE into the spirit realm for 2.5s. Gain increased movement speed and pass straight through player bodies without taking tags or collisions.", 8.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.Phase)
             {
             }
 
@@ -78,7 +78,7 @@ namespace TumbangPreso.Abilities
             private GameObject _projectedGhost;
 
             public GhostlyPoltergeistAbility()
-                : base("nemu_skill2", "ASTRAL PROJECTION", "Projects into ghost to fly freely; press again or wait to teleport to it.", 9.0f, 6.0f, TumbangPreso.UI.AbilityGlyph.Phase)
+                : base("nemu_skill2", "ASTRAL PROJECTION", "PROJECT a spirit decoy forward. PRESS AGAIN at any time to instantly teleport to the spirit's location and surprise opponents.", 9.0f, 6.0f, TumbangPreso.UI.AbilityGlyph.Phase)
             {
             }
 
@@ -130,7 +130,7 @@ namespace TumbangPreso.Abilities
         private sealed class NightmareSeanceVoidAbility : HeroAbility
         {
             public NightmareSeanceVoidAbility()
-                : base("nemu_ultimate", "NIGHTMARE SEANCE VOID", "Pulls dropped slippers inward and applies drowsy slow.", 0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Zone)
+                : base("nemu_ultimate", "SEANCE DROWSY VOID", "MANIFEST a 3.2m spiritual vortex for 5s. Pulls inward and slows all trapped opponents, inducing drowsiness while obscuring vision.", 0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Zone)
             {
             }
 
@@ -138,8 +138,9 @@ namespace TumbangPreso.Abilities
             {
                 GameServices.Audio?.PlayAt("hero_nemu_ult", ctx.Position);
                 GameServices.Audio?.PlayAt("sfx_ghost_teleport", ctx.Position);
-                Vector3 voidPos = ctx.Position + ctx.Forward * 4.5f;
-                HeroHazards.SpawnSeanceVoid(voidPos, 7.5f, 5.0f, ctx.Motor.PlayerSlot);
+                Vector3 voidPos = ctx.Position + ctx.Forward * 3.5f;
+                HeroHazards.SpawnSeanceVoid(voidPos, 3.2f, 5.0f, ctx.Motor.PlayerSlot);
+                Visual.AbilityVfx.SpawnVoidWisps(voidPos, 3.2f, 5.0f);
             }
         }
     }

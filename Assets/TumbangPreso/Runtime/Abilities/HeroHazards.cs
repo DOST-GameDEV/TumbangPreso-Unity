@@ -31,21 +31,21 @@ namespace TumbangPreso.Abilities
             go.transform.position = position;
             go.transform.rotation = Quaternion.LookRotation(forward);
 
-            // Create grand multi-pillar glacial wall (5 jagged ice crystals in an arc)
-            for (int i = -2; i <= 2; i++)
+            // Create compact glacial wall (3 jagged ice crystals in a focused barrier)
+            for (int i = -1; i <= 1; i++)
             {
                 var pillar = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 pillar.name = $"IcePillar_{i}";
                 pillar.transform.SetParent(go.transform, false);
 
-                float height = (3.2f - Mathf.Abs(i) * 0.45f) * Random.Range(0.95f, 1.15f);
-                float width = 0.9f;
-                float rotY = i * 8.0f + Random.Range(-5.0f, 5.0f);
+                float height = (2.6f - Mathf.Abs(i) * 0.4f) * Random.Range(0.95f, 1.15f);
+                float width = 0.85f;
+                float rotY = i * 8.0f + Random.Range(-4.0f, 4.0f);
                 float rotZ = i * -4.0f;
 
-                pillar.transform.localScale = new Vector3(width, height, 0.6f);
-                pillar.transform.localPosition = new Vector3(i * 0.8f, height * 0.5f, -Mathf.Abs(i) * 0.15f);
-                pillar.transform.localRotation = Quaternion.Euler(Random.Range(-5.0f, 5.0f), rotY, rotZ);
+                pillar.transform.localScale = new Vector3(width, height, 0.55f);
+                pillar.transform.localPosition = new Vector3(i * 0.75f, height * 0.5f, -Mathf.Abs(i) * 0.12f);
+                pillar.transform.localRotation = Quaternion.Euler(Random.Range(-4.0f, 4.0f), rotY, rotZ);
 
                 var r = pillar.GetComponent<Renderer>();
                 if (r != null)
@@ -60,12 +60,12 @@ namespace TumbangPreso.Abilities
             // Cyan frost glow light
             var lightGo = new GameObject("IceLight");
             lightGo.transform.SetParent(go.transform, false);
-            lightGo.transform.localPosition = new Vector3(0, 1.5f, 0);
+            lightGo.transform.localPosition = new Vector3(0, 1.2f, 0);
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
             light.color = UiTheme.HeroIceBright;
-            light.range = 6.5f;
-            light.intensity = 3.0f;
+            light.range = 5.0f;
+            light.intensity = 2.5f;
 
             GameServices.Audio?.PlayAt("ability_shatter_trap", position);
             ComicPopup.Spawn(position, "ICE WALL!", UiTheme.HeroIceBright, 1.2f);
@@ -73,12 +73,7 @@ namespace TumbangPreso.Abilities
             var comp = go.AddComponent<IceBarricadeComponent>();
             comp.Duration = duration;
 
-            // ⚠️ REGISTERED WITH `HazardMap` SO THE BOTS PATH AROUND IT. Without this an
-            // attacker walks straight through on its way to a tsinelas, gets caught, and the
-            // round charges it the unretrieved-slipper penalty for a fetch it was making.
-            // A wall, approximated as a disc covering its own half width. Good enough for
-            // steering: the point is not to walk into it.
-            HazardVolume.Attach(go, 3.0f, -1);
+            HazardVolume.Attach(go, 1.6f, -1);
 
             return go;
         }
@@ -129,7 +124,7 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         // ICE SHEET ZONE (Cheska Skill 1)
         // -------------------------------------------------------------------
-        public static GameObject SpawnIceSheet(Vector3 position, float radius = 4.5f, float duration = 5.0f, int ownerSlot = -1)
+        public static GameObject SpawnIceSheet(Vector3 position, float radius = 2.3f, float duration = 5.0f, int ownerSlot = -1)
         {
             var go = new GameObject("IceSheetZone");
             go.transform.position = position;
@@ -597,7 +592,7 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         // CRACKED LAVA DECAL (Dante Skill 1 Seismic Stomp)
         // -------------------------------------------------------------------
-        public static GameObject SpawnCrackedLavaDecal(Vector3 position, float radius = 5.5f, float duration = 4.0f)
+        public static GameObject SpawnCrackedLavaDecal(Vector3 position, float radius = 2.4f, float duration = 4.0f)
         {
             var go = new GameObject("CrackedLavaDecal");
             go.transform.position = position;
@@ -639,7 +634,7 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         // SEANCE VOID ZONE (Nemu Ultimate)
         // -------------------------------------------------------------------
-        public static GameObject SpawnSeanceVoid(Vector3 position, float radius = 7.5f, float duration = 5.0f, int ownerSlot = -1)
+        public static GameObject SpawnSeanceVoid(Vector3 position, float radius = 3.2f, float duration = 5.0f, int ownerSlot = -1)
         {
             var go = new GameObject("SeanceVoidZone");
             go.transform.position = position;

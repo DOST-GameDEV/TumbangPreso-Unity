@@ -18,7 +18,7 @@ namespace TumbangPreso.Abilities
         private sealed class PermafrostSheetAbility : HeroAbility
         {
             public PermafrostSheetAbility()
-                : base("cheska_skill1", "PERMAFROST SHEET", "Coats the ground in slippery ice, disrupting enemy footing.", 7.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Zone)
+                : base("cheska_skill1", "PERMAFROST SHEET", "ACTIVATE to coat the ground in slippery frost. Forces enemies to lose traction and slide uncontrollably, creating an opening to grab slippers or escape.", 7.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Zone)
             {
             }
 
@@ -30,16 +30,16 @@ namespace TumbangPreso.Abilities
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.DashStretch(ctx.Forward, 0.25f);
 
-                Vector3 target = ctx.Position + ctx.Forward * 3.5f;
-                HeroHazards.SpawnIceSheet(target, 5.0f, 6.0f, ctx.Motor.PlayerSlot);
-                ComicPopup.Spawn(target, "SLIP ZONE!", UiTheme.HeroIceBright, 1.2f);
+                Vector3 target = ctx.Position + ctx.Forward * 2.8f;
+                HeroHazards.SpawnIceSheet(target, 2.3f, 5.0f, ctx.Motor.PlayerSlot);
+                ComicPopup.Spawn(target, "SLIP ZONE!", UiTheme.HeroIceBright, 1.25f);
             }
         }
 
         private sealed class IceBarricadeAbility : HeroAbility
         {
             public IceBarricadeAbility()
-                : base("cheska_skill2", "ICE BARRICADE", "Deploys a crystalline ice wall to block attacks and routes.", 9.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Wall)
+                : base("cheska_skill2", "ICE BARRICADE", "DEPLOY 3 crystalline ice pillars in front of you. Blocks enemy charge paths, deflects thrown slippers, and guards the lata from attackers.", 9.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Wall)
             {
             }
 
@@ -50,15 +50,15 @@ namespace TumbangPreso.Abilities
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.Squash(0.2f);
 
-                Vector3 wallPos = ctx.Position + ctx.Forward * 2.4f;
-                HeroHazards.SpawnIceBarricade(wallPos, ctx.Forward, 6.5f);
+                Vector3 wallPos = ctx.Position + ctx.Forward * 2.2f;
+                HeroHazards.SpawnIceBarricade(wallPos, ctx.Forward, 3.2f);
             }
         }
 
         private sealed class GlacialShatterBurstAbility : HeroAbility
         {
             public GlacialShatterBurstAbility()
-                : base("cheska_ultimate", "GLACIAL BLIZZARD NOVA", "Freezes nearby enemies and violently deflects slippers.", 0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Burst)
+                : base("cheska_ultimate", "GLACIAL BLIZZARD NOVA", "UNLEASH a massive 4.6m frost shockwave. Instantly freezes all nearby opponents for 2.5s and violently deflects all slippers away from the zone.", 0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Burst)
             {
             }
 
@@ -81,14 +81,14 @@ namespace TumbangPreso.Abilities
                 var round = ctx.Round;
                 if (round != null)
                 {
-                    // Freeze all nearby opponents
+                    // Freeze all nearby opponents (balanced ultimate radius)
                     foreach (var p in round.Players)
                     {
                         if (p == null || p.PlayerSlot == ctx.Motor.PlayerSlot) continue;
 
                         Vector3 diff = p.transform.position - ctx.Position;
                         diff.y = 0.0f;
-                        if (diff.magnitude <= 7.5f)
+                        if (diff.magnitude <= 4.6f)
                         {
                             p.ApplyStagger(2.5f);
                             p.ApplyImpulse(diff.normalized * 8.5f + Vector3.up * 2.5f);
@@ -98,14 +98,14 @@ namespace TumbangPreso.Abilities
                         }
                     }
 
-                    // Deflect slippers away
+                    // Deflect slippers away within ultimate blast
                     foreach (var s in UnityEngine.Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
                     {
                         if (s != null)
                         {
                             Vector3 away = s.transform.position - ctx.Position;
                             away.y = 0.0f;
-                            if (away.magnitude <= 8.5f)
+                            if (away.magnitude <= 4.8f)
                             {
                                 s.Deflect(away.normalized * 19.0f + Vector3.up * 4.5f, 1.1f);
                             }
@@ -113,8 +113,8 @@ namespace TumbangPreso.Abilities
                     }
                 }
 
-                // Spawn residual permafrost ring
-                HeroHazards.SpawnIceSheet(ctx.Position, 6.5f, 5.0f, ctx.Motor.PlayerSlot);
+                // Burst particles via AbilityVfx
+                Visual.AbilityVfx.SpawnIceBurst(ctx.Position, 4.6f);
             }
         }
     }
