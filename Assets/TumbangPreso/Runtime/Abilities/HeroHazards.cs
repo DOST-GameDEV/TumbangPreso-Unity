@@ -56,6 +56,28 @@ namespace TumbangPreso.Abilities
 
                 var col = pillar.GetComponent<Collider>();
                 if (col != null) col.isTrigger = false;
+
+                // Crystal diamond topper for each pillar
+                var topper = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                topper.name = $"IceTopper_{i}";
+                topper.transform.SetParent(pillar.transform, false);
+                topper.transform.localPosition = new Vector3(0, 0.5f, 0);
+                topper.transform.localRotation = Quaternion.Euler(45.0f, 45.0f, 0);
+                topper.transform.localScale = new Vector3(0.55f, 0.55f, 0.55f);
+                VfxMaterial.Ghost(topper.GetComponent<Renderer>(), new Color(0.85f, 0.98f, 1.0f, 0.95f), 0.6f);
+            }
+
+            // Initial ground eruption frost chips
+            for (int c = 0; c < 6; c++)
+            {
+                var chip = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                chip.name = "IceEruptChip";
+                chip.transform.position = position + forward * Random.Range(-0.3f, 0.3f) + Vector3.up * 0.2f;
+                chip.transform.localScale = Vector3.one * Random.Range(0.14f, 0.26f);
+                VfxMaterial.Ghost(chip.GetComponent<Renderer>(), new Color(0.70f, 0.95f, 1.0f, 0.85f));
+                var rb = chip.AddComponent<Rigidbody>();
+                rb.linearVelocity = Vector3.up * 3.0f + Random.insideUnitSphere * 1.6f;
+                Object.Destroy(chip, 0.75f);
             }
 
             // Cyan frost glow light
@@ -150,6 +172,20 @@ namespace TumbangPreso.Abilities
             inner.transform.localPosition = new Vector3(0, 0.015f, 0);
 
             VfxMaterial.Ghost(inner.GetComponent<Renderer>(), new Color(0.85f, 0.96f, 1.0f, 0.80f));
+
+            // Rotating snowflake crystal arms (4 crossbars at 45 deg intervals)
+            var armsGo = new GameObject("SnowflakeArms");
+            armsGo.transform.SetParent(go.transform, false);
+            armsGo.transform.localPosition = new Vector3(0, 0.02f, 0);
+            for (int a = 0; a < 4; a++)
+            {
+                var bar = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                bar.name = $"FlakeBar_{a}";
+                bar.transform.SetParent(armsGo.transform, false);
+                bar.transform.localRotation = Quaternion.Euler(0, a * 45.0f, 0);
+                bar.transform.localScale = new Vector3(radius * 1.6f, 0.015f, 0.12f);
+                VfxMaterial.Ghost(bar.GetComponent<Renderer>(), new Color(0.92f, 0.98f, 1.0f, 0.85f), 0.5f);
+            }
 
             // Glowing ice aura light
             var lightGo = new GameObject("FrostLight");
@@ -438,6 +474,26 @@ namespace TumbangPreso.Abilities
             // purple ball rather than a spirit.
             VfxMaterial.Ghost(visual.GetComponent<Renderer>(), new Color(0.85f, 0.4f, 1.0f, 0.9f), 0.7f);
 
+            // Spectral Horns / Ears
+            for (int h = -1; h <= 1; h += 2)
+            {
+                var horn = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                horn.name = $"GhostHorn_{h}";
+                horn.transform.SetParent(visual.transform, false);
+                horn.transform.localPosition = new Vector3(h * 0.28f, 0.40f, 0.05f);
+                horn.transform.localRotation = Quaternion.Euler(15.0f, 0, h * -25.0f);
+                horn.transform.localScale = new Vector3(0.22f, 0.32f, 0.20f);
+                VfxMaterial.Ghost(horn.GetComponent<Renderer>(), new Color(0.95f, 0.65f, 1.0f, 0.85f), 0.8f);
+            }
+
+            // Swirling spirit halo ring
+            var halo = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            halo.name = "SpiritHalo";
+            halo.transform.SetParent(visual.transform, false);
+            halo.transform.localPosition = new Vector3(0, -0.1f, 0);
+            halo.transform.localScale = new Vector3(1.25f, 0.03f, 1.25f);
+            VfxMaterial.Ghost(halo.GetComponent<Renderer>(), new Color(0.75f, 0.30f, 1.0f, 0.65f), 0.6f);
+
             var lightGo = new GameObject("GhostLight");
             lightGo.transform.SetParent(go.transform, false);
             var light = lightGo.AddComponent<Light>();
@@ -545,6 +601,34 @@ namespace TumbangPreso.Abilities
             // `UiTheme.HeroMagmaCore`: his colour is the crust, this is the melt.
             VfxMaterial.Ghost(magmaTop.GetComponent<Renderer>(), UiTheme.HeroMagmaCore, 0.9f);
 
+            // 4 Basalt angled base buttresses
+            for (int b = 0; b < 4; b++)
+            {
+                var buttress = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                buttress.name = $"BasaltButtress_{b}";
+                buttress.transform.SetParent(go.transform, false);
+                float angle = b * 90.0f;
+                buttress.transform.localRotation = Quaternion.Euler(20.0f, angle, 0);
+                buttress.transform.localPosition = Quaternion.Euler(0, angle, 0) * new Vector3(0, 0.6f, 0.85f);
+                buttress.transform.localScale = new Vector3(0.65f, 1.4f, 0.55f);
+                VfxMaterial.Solid(buttress.GetComponent<Renderer>(), new Color(0.24f, 0.17f, 0.14f));
+                VfxMaterial.StripCollider(buttress);
+            }
+
+            // Initial eruption volcanic debris
+            for (int d = 0; d < 4; d++)
+            {
+                var rock = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                rock.name = "PillarEruptRock";
+                rock.transform.position = position + Vector3.up * 0.3f + Random.insideUnitSphere * 0.4f;
+                rock.transform.localScale = Vector3.one * Random.Range(0.18f, 0.35f);
+                VfxMaterial.Solid(rock.GetComponent<Renderer>(), UiTheme.HeroMagmaCore);
+                VfxMaterial.StripCollider(rock);
+                var rb = rock.AddComponent<Rigidbody>();
+                rb.linearVelocity = Vector3.up * 4.5f + Random.insideUnitSphere * 2.0f;
+                Object.Destroy(rock, 0.85f);
+            }
+
             var lightGo = new GameObject("MagmaLight");
             lightGo.transform.SetParent(go.transform, false);
             lightGo.transform.localPosition = new Vector3(0, 4.2f, 0);
@@ -640,6 +724,24 @@ namespace TumbangPreso.Abilities
                               new Color(UiTheme.HeroSpiritBright.r, UiTheme.HeroSpiritBright.g,
                                         UiTheme.HeroSpiritBright.b, 0.70f), 0.8f);
 
+            // Dark singularity core orb
+            var coreOrb = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            coreOrb.name = "SingularityCore";
+            coreOrb.transform.SetParent(go.transform, false);
+            coreOrb.transform.localScale = Vector3.one * (radius * 0.55f);
+            coreOrb.transform.localPosition = new Vector3(0, 0.35f, 0);
+            VfxMaterial.Ghost(coreOrb.GetComponent<Renderer>(),
+                              new Color(0.18f, 0.02f, 0.32f, 0.95f), 0.95f);
+
+            // Middle galactic spiral arm ring
+            var midRing = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            midRing.name = "VortexMidRing";
+            midRing.transform.SetParent(go.transform, false);
+            midRing.transform.localScale = new Vector3(radius * 1.6f, 0.03f, radius * 1.6f);
+            midRing.transform.localPosition = new Vector3(0, 0.025f, 0);
+            VfxMaterial.Ghost(midRing.GetComponent<Renderer>(),
+                              new Color(0.60f, 0.15f, 0.95f, 0.55f), 0.6f);
+
             // Pulsing violet gravity light
             var lightGo = new GameObject("VoidLight");
             lightGo.transform.SetParent(go.transform, false);
@@ -732,8 +834,12 @@ namespace TumbangPreso.Abilities
             // 1. Sky Lightning Bolt Column & Multi-segment Arc
             SpawnLightningBolt(position + Vector3.up * 24.0f, position, UiTheme.HeroElectricBright, 0.40f);
 
+            // 1b. Secondary Branching Fork Lightning Bolts
+            SpawnLightningBolt(position + new Vector3(-1.5f, 18.0f, 1.2f), position + new Vector3(-0.8f, 0, 0.6f), UiTheme.HeroElectricBright, 0.35f);
+            SpawnLightningBolt(position + new Vector3(1.4f, 20.0f, -1.0f), position + new Vector3(0.9f, 0, -0.5f), UiTheme.HeroElectricBright, 0.35f);
+
             // 2. Flying electric spark shards
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 12; i++)
             {
                 var spark = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 spark.name = "ThunderSpark";
@@ -753,6 +859,14 @@ namespace TumbangPreso.Abilities
             shockRing.transform.position = position + Vector3.up * 0.04f;
             shockRing.transform.localScale = new Vector3(0.5f, 0.03f, 0.5f);
             VfxMaterial.Ghost(shockRing.GetComponent<Renderer>(), UiTheme.HeroElectric, 0.8f);
+
+            // 3b. Inner Ionization Core Flash Disc
+            var ionCore = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            ionCore.name = "ThunderIonCore";
+            ionCore.transform.position = position + Vector3.up * 0.045f;
+            ionCore.transform.localScale = new Vector3(radius * 0.9f, 0.02f, radius * 0.9f);
+            VfxMaterial.Ghost(ionCore.GetComponent<Renderer>(), new Color(1.0f, 1.0f, 0.60f, 0.85f), 1.0f);
+            Object.Destroy(ionCore, 0.20f);
 
             var ringAnim = shockRing.AddComponent<ShockwaveRingAnim>();
             ringAnim.TargetRadius = radius * 1.5f;
