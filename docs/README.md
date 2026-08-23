@@ -13,7 +13,10 @@ add its row here in the same commit.
 | [`../CLAUDE.md`](../CLAUDE.md) | **First, always.** The rules of the repository: which git repo is live, the engine-free core rule, the build and test commands, the traps on this machine. |
 | [`VISION.md`](VISION.md) | **What the game is FOR.** The two modes and why both ship, the readability budget, how a player is meant to learn a power, what is settled. Read before making a design call. |
 | [`TODO.md`](TODO.md) | **What is actually open.** What is wrong, where it lives, what done looks like. Check before inventing a task; update in the same commit as the work. |
-| [`godot/Design.md`](godot/Design.md) | **The balance source of truth.** Every number that decides the game, and why. § 13 lists what it does NOT govern. ⚠️ **This copy is the live one**; the Godot repo's is the frozen 2026-08-02 original. |
+| [`Design.md`](Design.md) | **The balance source of truth.** Every number that decides the game, and why. § 13 lists what it does NOT govern. ⚠️ **This copy is the live one**; the Godot repo's is the frozen 2026-08-02 original. |
+| [`Art_Direction.md`](Art_Direction.md) | **The colour law, the scale and height laws, arena geometry, and which tool produces which asset.** § 1 is the one that never bends: **orange is OFFENSE, blue is DEFENCE**, and nothing else in the frame may sit near those hues. Read before adding anything the player looks at. |
+| [`HUMAN.md`](HUMAN.md) | **The standing instructions in his own words**, which is the record of what has already been asked for and what has already been rejected. Check it before proposing something that sounds new. |
+| [`art_refs/`](art_refs/) | The reference art the props were drawn from. ⚠️ `Art_Direction.md` § 4a records that the drawing-derived slippers were deleted and must not be rebuilt. |
 
 ## Port work
 
@@ -46,6 +49,21 @@ add its row here in the same commit.
 | File | What it is |
 |---|---|
 | [`CANONICAL_RENDERING_PIPELINE.md`](CANONICAL_RENDERING_PIPELINE.md) | The in-engine render pipeline for character models: the four-step workflow, the two canonical outputs (4-angle turnaround and cast lineup), the versioned-filename rule, and five recorded pitfalls. ⚠️ **It was written for Antigravity and its "MANDATE FOR ALL AGENTS" heading is that tool's, not this one's.** The pipeline itself is correct and worth following; where anything in it disagrees with `CLAUDE.md`, `CLAUDE.md` wins here. `CLAUDE.md` § 6.1 has the short version. |
+
+## A note on where these came from
+
+⚠⚠ **`Design.md`, `Art_Direction.md`, `HUMAN.md` and `art_refs/` began as copies of the
+Godot repo's boards and sat in a `docs/godot/` folder under a rule saying to edit them THERE
+and copy them here.** That rule inverted the day this repo became the game, and after that the
+folder name was telling every reader the opposite of the truth: it read as "the old engine's
+paperwork" when it held the live balance document. Flattened into `docs/` on 2026-08-23.
+
+**They are ordinary documents of this project now.** Edit them here. The Godot repo's versions
+are frozen at the day it stopped being the game and must never be copied back over these.
+
+Two files were dropped in the same pass: `Handoff_Open_Issues.md`, a Godot-era handoff about a
+skin-sync bug that the port has long since passed and which § 2.4 of `CLAUDE.md` bans as a file
+anyway, and the folder's own `README.md`, which this file replaces.
 
 ## Rules for anything added here
 

@@ -2,7 +2,7 @@
 
 **Investigated 2026-08-15, from the Godot repo's git history.**
 
-✅ **ALL FOUR CORRECTIONS APPLIED TO `docs/godot/Design.md` ON 2026-08-23.** ⚠️ **THE UNITY
+✅ **ALL FOUR CORRECTIONS APPLIED TO `docs/Design.md` ON 2026-08-23.** ⚠️ **THE UNITY
 COPY IS THE CURRENT ONE. The Godot repo's `docs/Design.md` was deliberately left alone** and is
 now the older of the two; do not sync it back over this one. Four more stale passages were found
 and fixed in the same pass: the chalk literal in §2 still read `|x| = |z| = 5.0`, §3 still called

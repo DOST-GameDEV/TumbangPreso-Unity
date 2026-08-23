@@ -30,7 +30,7 @@ aimed at different people.
 | Roster | The twelve street characters | The five heroes |
 | Powers | None, and that is the feature | Two skills and an ultimate each |
 | Verbs | Move, sprint, jump, throw, grab, shove, lunge, punch | The same, plus the kit |
-| Governed by | `docs/godot/Design.md` | `Design.md` § 13 points at the files |
+| Governed by | `docs/Design.md` | `Design.md` § 13 points at the files |
 
 **The stated reason, in the team's words:** *"We want to make original game ceiling cap higher
 and more fun for esports so im adding a second gamemode. i want to keep original simple
@@ -170,7 +170,7 @@ Read in this order. It is short on purpose.
    how to build and test on this machine.
 2. **This file**: what the game is for.
 3. **`docs/TODO.md`**: what is actually open. Check it before inventing a task.
-4. **`docs/godot/Design.md`**: every balance number, and § 13 for what it does NOT govern.
+4. **`docs/Design.md`**: every balance number, and § 13 for what it does NOT govern.
 5. **`docs/Port_Plan.md`** and **`docs/Port_Ledger.md`**: only when doing port work.
 
 ⚠️ **VERIFY BY MEASURING, NOT BY LOOKING.** This project has a probe harness because eyeballing

@@ -9,9 +9,15 @@ objects-are-players design completely. § 12 records what was deleted and why, b
 a deletion nobody wrote down is a deletion the next lane re-derives from a dangling
 comment.
 
-⚠️⚠️ **THIS COPY, IN THE UNITY REPO, IS THE CURRENT ONE.** The Godot repo's
-`docs/Design.md` is the 2026-08-02 original and was deliberately left untouched. The two are no
-longer byte-identical. **Never copy the Godot one over this one.**
+⚠️⚠️ **THIS FILE, IN THE UNITY REPO, IS THE CURRENT ONE.** A file of the same name sits
+at the same path in the **Godot** repo; that one is the 2026-08-02 original and was deliberately
+left untouched when this repo became the game. The two are no longer byte-identical. **Never
+copy the Godot one over this one.**
+
+⚠️ It lived at `docs/godot/Design.md` here until 2026-08-23, under a rule that said to edit
+it in the Godot repo and copy it across. That rule inverted the day this repo became the game,
+and the folder name then read as "the old engine's paperwork" while holding the live balance
+document. It is an ordinary document of this project now.
 
 ⚠️⚠️ **RECONCILED WITH THE SHIPPING CODE ON 2026-08-23.** This file was last touched
 2026-08-02 while `character_base.gd` kept moving until 2026-08-05, so eight passages had gone

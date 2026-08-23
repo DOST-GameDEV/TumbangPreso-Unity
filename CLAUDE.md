@@ -22,9 +22,11 @@ and cited. **Never edit it, commit to it, or copy one of its files over the equi
 Where the two disagree about anything, including a design document, **this repo is current.**
 Several sessions have re-derived this relationship and got it backwards.
 
-⚠️ **The concrete trap:** `Design.md` exists in both. The live one is
-**`docs/godot/Design.md` HERE.** The folder is named `godot/` because that is where the
-document came from, not because that repo owns it.
+⚠️ **The concrete trap:** `Design.md`, `Art_Direction.md` and `HUMAN.md` exist in both
+repos. **The live ones are the copies in `docs/` HERE.** They were carried over from the Godot
+repo and used to sit in a `docs/godot/` folder under a rule saying to edit them THERE and copy
+them here; that rule inverted the day this repo became the game, and the folder name was then
+telling every reader the opposite of the truth. Flattened into `docs/` on 2026-08-23.
 
 ⚠️⚠️ **THE GAME IS TWO MODES AND BOTH SHIP.** Classic is the street game with no powers, for
 players who want less happening on screen. Hero Strike adds five heroes with two skills and an
@@ -186,7 +188,7 @@ a clip-finished path is ever wanted, route it through `Stop()`.
 
 ## 5 · Design.md and the ledger
 
-**`docs/godot/Design.md` is the balance source of truth.** It opens with: *a number in the
+**`docs/Design.md` is the balance source of truth.** It opens with: *a number in the
 code must match a number here, or one of the two is a bug.*
 
 ✅ The eight places it had drifted are corrected as of 2026-08-23, and every one was stale

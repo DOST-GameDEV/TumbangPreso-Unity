@@ -312,7 +312,7 @@ into something a CI run answers:
 
 ### 7.1 ✅ RESOLVED, AND THE PROSE IS NOW FIXED. `Design.md` drifted in four places, and all four were stale prose.
 
-⚠️ **Corrected in `docs/godot/Design.md` on 2026-08-23**, together with four more stale
+⚠️ **Corrected in `docs/Design.md` on 2026-08-23**, together with four more stale
 passages found in the same pass (the chalk literal, the box half-width, the shortest legal
 throw, the spawn ring). **That file, in this repo, is the live design document.** The Godot
 repo's `docs/Design.md` is frozen at 2026-08-02 and must not be synced back over it. See
