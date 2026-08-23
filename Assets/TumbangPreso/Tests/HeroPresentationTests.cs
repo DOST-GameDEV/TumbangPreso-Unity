@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 using TumbangPreso.Abilities;
 using TumbangPreso.UI;
@@ -39,6 +40,8 @@ namespace TumbangPreso.Tests
         /// about 30 makes the warm half of the wheel unusable for three heroes whose elements
         /// are fire, magma and lightning. The tightest the shipping set gets is Sean at 27.
         /// </summary>
+
+
         [Test]
         public void NoHeroAccentSitsOnARoleColour()
         {
@@ -411,45 +414,54 @@ namespace TumbangPreso.Tests
         }
 
         /// <summary>
-        /// ⚠️ VIEWMODEL ARMS MUST STYLE BESPOKE SKIN TONES AND ACCESSORIES FOR EVERY HERO.
-        /// Generic brown arms for all characters is forbidden in Hero Strike.
+        /// ⚠️ VIEWMODEL ARMS MUST STYLE BESPOKE SKIN TONES, SLEEVES, MARKINGS, AND ACCESSORIES
+        /// FOR EVERY HERO AND EVERY CLASSIC CHARACTER MATCHING THEIR TPP MODEL.
         /// </summary>
         [Test]
-        public void ViewmodelArms_StylesUniqueSkinToneAndAccessories_ForEveryHero()
+        public void ViewmodelArms_StylesUniqueSkinToneAndAccessories_ForEveryCharacter()
         {
-            var vm = new GameObject("TestVM_HeroArms").AddComponent<CameraSystem.ViewmodelArms>();
+            var vm = new GameObject("TestVM_CharacterArms").AddComponent<CameraSystem.ViewmodelArms>();
 
-            string[] testHeroes = { "sean", "zack", "dante", "cheska", "nemu", "classic" };
-
-            foreach (string hero in testHeroes)
+            string[] allCharacters =
             {
-                vm.SetHero(hero);
+                // Heroes
+                "sean", "zack", "dante", "cheska", "nemu",
+                // Classic Roster
+                "bayan", "maring", "totoy", "inday", "kuya_boy", "ate_girlie",
+                "tikboy", "bebang", "jun_jun", "lola_pacing", "mang_kanor", "aling_nena",
+                "classic"
+            };
 
-                Assert.AreEqual(hero, vm.CurrentHeroId, $"ViewmodelArms failed to normalize hero {hero}");
-                Assert.AreEqual(CameraSystem.ViewmodelArms.SkinColorForHero(hero), vm.CurrentSkinColor,
-                    $"ViewmodelArms applied wrong skin tone for {hero}");
+            foreach (string charId in allCharacters)
+            {
+                vm.SetCharacter(charId);
+
+                string norm = CameraSystem.ViewmodelArms.NormalizeCharacterId(charId);
+                Assert.AreEqual(norm, vm.CurrentHeroId, $"ViewmodelArms failed to normalize character {charId}");
+                Assert.AreEqual(CameraSystem.ViewmodelArms.SkinColorForCharacter(charId), vm.CurrentSkinColor,
+                    $"ViewmodelArms applied wrong skin tone for {charId}");
 
                 var renderers = vm.GetComponentsInChildren<MeshRenderer>(true);
                 int accessoryCount = 0;
 
                 foreach (var r in renderers)
                 {
-                    Assert.IsNotNull(r.sharedMaterial, $"{hero}: Renderer on {r.gameObject.name} has null material");
-                    Assert.IsNotNull(r.sharedMaterial.shader, $"{hero}: Renderer on {r.gameObject.name} has null shader");
+                    Assert.IsNotNull(r.sharedMaterial, $"{charId}: Renderer on {r.gameObject.name} has null material");
+                    Assert.IsNotNull(r.sharedMaterial.shader, $"{charId}: Renderer on {r.gameObject.name} has null shader");
                     if (r.gameObject.name.StartsWith("~HeroAccessory_")) accessoryCount++;
                 }
 
-                Assert.Greater(accessoryCount, 0, $"{hero} viewmodel arms are missing bespoke sleeves/bracers/accessories");
+                Assert.Greater(accessoryCount, 0, $"{charId} viewmodel arms are missing bespoke sleeves/markings/accessories");
             }
 
             Object.DestroyImmediate(vm.gameObject);
         }
 
         /// <summary>
-        /// ⚠️ THE HELD SLIPPER MUST REMAIN PARENTED UNDER RightPivot/Arm ACROSS HERO SWAPS AND PLAYING ACTIONS.
+        /// ⚠️ THE HELD SLIPPER MUST REMAIN PARENTED UNDER RightPivot/Arm ACROSS CHARACTER SWAPS AND PLAYING ACTIONS.
         /// </summary>
         [Test]
-        public void ViewmodelArms_PreservesHeldSlipperAndActions_AcrossHeroSwaps()
+        public void ViewmodelArms_PreservesHeldSlipperAndActions_AcrossCharacterSwaps()
         {
             var vm = new GameObject("TestVM_Slipper").AddComponent<CameraSystem.ViewmodelArms>();
             vm.EnsureBuilt();
@@ -460,25 +472,41 @@ namespace TumbangPreso.Tests
             var heldSlipper = rightArm.Find("HeldSlipper");
             Assert.IsNotNull(heldSlipper, "HeldSlipper missing or not parented to RightPivot/Arm");
 
-            foreach (string hero in Heroes)
+            string[] testRoster =
             {
-                vm.SetHero(hero);
+                "sean", "zack", "dante", "cheska", "nemu",
+                "bayan", "maring", "totoy", "inday", "kuya_boy", "ate_girlie",
+                "tikboy", "bebang", "jun_jun", "lola_pacing", "mang_kanor", "aling_nena"
+            };
+
+            foreach (string charId in testRoster)
+            {
+                vm.SetCharacter(charId);
 
                 // HeldSlipper must survive accessory clearing
                 heldSlipper = rightArm.Find("HeldSlipper");
-                Assert.IsNotNull(heldSlipper, $"{hero}: HeldSlipper was destroyed during SetHero");
+                Assert.IsNotNull(heldSlipper, $"{charId}: HeldSlipper was destroyed during SetCharacter");
 
                 vm.SetHolding(true);
-                Assert.IsTrue(heldSlipper.gameObject.activeSelf, $"{hero}: SetHolding(true) failed");
+                Assert.IsTrue(heldSlipper.gameObject.activeSelf, $"{charId}: SetHolding(true) failed");
 
                 vm.SetHolding(false);
-                Assert.IsFalse(heldSlipper.gameObject.activeSelf, $"{hero}: SetHolding(false) failed");
+                Assert.IsFalse(heldSlipper.gameObject.activeSelf, $"{charId}: SetHolding(false) failed");
 
-                var kit = HeroAbilitySystem.CreateKitFor(hero);
-                foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                // If hero, check ability actions; otherwise check throw / grab
+                if (System.Array.IndexOf(Heroes, charId) >= 0)
                 {
-                    Assert.IsTrue(vm.PlayAction(ability.ViewmodelAction),
-                        $"{hero}: PlayAction failed for {ability.ViewmodelAction}");
+                    var kit = HeroAbilitySystem.CreateKitFor(charId);
+                    foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                    {
+                        Assert.IsTrue(vm.PlayAction(ability.ViewmodelAction),
+                            $"{charId}: PlayAction failed for {ability.ViewmodelAction}");
+                    }
+                }
+                else
+                {
+                    Assert.IsTrue(vm.PlayAction("throw"));
+                    Assert.IsTrue(vm.PlayAction("slam"));
                 }
             }
 

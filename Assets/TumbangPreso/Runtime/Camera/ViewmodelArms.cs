@@ -42,13 +42,28 @@ namespace TumbangPreso.CameraSystem
         public static readonly Color ArmColour = new Color(0.784f, 0.529f, 0.353f, 1.0f);
 
         // -------------------------------------------------------------------
-        // § HERO SKIN TONES
+        // § CHARACTER SKIN TONES (Transcribed from 3D TPP Roster Palettes)
         // -------------------------------------------------------------------
-        public static readonly Color SkinSean = new Color(0.78f, 0.52f, 0.32f, 1.0f);     // Golden brown / warm tan
-        public static readonly Color SkinZack = new Color(0.72f, 0.48f, 0.32f, 1.0f);     // Warm athletic tan
-        public static readonly Color SkinDante = new Color(0.38f, 0.24f, 0.16f, 1.0f);    // Deep dark bronze / volcanic skin
-        public static readonly Color SkinCheska = new Color(0.95f, 0.84f, 0.78f, 1.0f);   // Fair porcelain skin
-        public static readonly Color SkinNemu = new Color(0.80f, 0.75f, 0.90f, 1.0f);     // Pale lavender / ghostly ethereal
+        // Heroes
+        public static readonly Color SkinSean = new Color(0.722f, 0.455f, 0.251f, 1.0f);     // Golden brown tan
+        public static readonly Color SkinZack = new Color(0.659f, 0.376f, 0.173f, 1.0f);     // Warm athletic bronze tan
+        public static readonly Color SkinDante = new Color(0.659f, 0.376f, 0.173f, 1.0f);    // Deep dark volcanic bronze
+        public static readonly Color SkinCheska = new Color(0.961f, 0.722f, 0.580f, 1.0f);   // Fair porcelain skin
+        public static readonly Color SkinNemu = new Color(0.878f, 0.686f, 0.518f, 1.0f);     // Pale lavender / ghostly ethereal
+
+        // Classic Characters
+        public static readonly Color SkinBayan = new Color(0.941f, 0.694f, 0.518f, 1.0f);    // Berto tan
+        public static readonly Color SkinMaring = new Color(0.969f, 0.788f, 0.651f, 1.0f);   // Fair cream
+        public static readonly Color SkinTotoy = new Color(0.447f, 0.271f, 0.173f, 1.0f);    // Warm dark tan
+        public static readonly Color SkinInday = new Color(0.851f, 0.604f, 0.424f, 1.0f);    // Warm golden brown
+        public static readonly Color SkinKuyaBoy = new Color(0.690f, 0.443f, 0.290f, 1.0f);  // Deep sun-tan bronze
+        public static readonly Color SkinAteGirlie = new Color(0.969f, 0.788f, 0.651f, 1.0f);// Fair porcelain
+        public static readonly Color SkinTikboy = new Color(0.851f, 0.604f, 0.424f, 1.0f);   // Warm tan
+        public static readonly Color SkinBebang = new Color(0.851f, 0.541f, 0.373f, 1.0f);   // Golden tan
+        public static readonly Color SkinJunJun = new Color(0.969f, 0.788f, 0.651f, 1.0f);   // Fair kid tan
+        public static readonly Color SkinLolaPacing = new Color(0.969f, 0.788f, 0.651f, 1.0f);// Gentle weathered fair
+        public static readonly Color SkinMangKanor = new Color(0.690f, 0.443f, 0.290f, 1.0f); // Deep weathered tan
+        public static readonly Color SkinAlingNena = new Color(0.851f, 0.604f, 0.424f, 1.0f); // Warm golden tan
 
         /// <summary>Idle breathing. 2.6 s, looping, a couple of degrees — the original's
         /// keyframes are ±0.045 rad on the right and ±0.038 on the left.</summary>
@@ -539,97 +554,157 @@ namespace TumbangPreso.CameraSystem
         }
 
         /// <summary>
-        /// Resolves skin tone for the requested hero identifier.
+        /// Resolves skin tone for any hero or classic character identifier.
         /// </summary>
-        public static Color SkinColorForHero(string heroId)
+        public static Color SkinColorForHero(string heroId) => SkinColorForCharacter(heroId);
+
+        public static Color SkinColorForCharacter(string characterId)
         {
-            switch (NormalizeHeroId(heroId))
+            switch (NormalizeCharacterId(characterId))
             {
+                // Heroes
                 case "sean": return SkinSean;
                 case "zack": return SkinZack;
                 case "dante": return SkinDante;
                 case "cheska": return SkinCheska;
                 case "nemu": return SkinNemu;
+
+                // Classic Characters
+                case "bayan": return SkinBayan;
+                case "maring": return SkinMaring;
+                case "totoy": return SkinTotoy;
+                case "inday": return SkinInday;
+                case "kuya_boy": return SkinKuyaBoy;
+                case "ate_girlie": return SkinAteGirlie;
+                case "tikboy": return SkinTikboy;
+                case "bebang": return SkinBebang;
+                case "jun_jun": return SkinJunJun;
+                case "lola_pacing": return SkinLolaPacing;
+                case "mang_kanor": return SkinMangKanor;
+                case "aling_nena": return SkinAlingNena;
+
                 default: return ArmColour;
             }
         }
 
         /// <summary>
-        /// Normalizes raw character or alias string to canonical hero id.
+        /// Normalizes raw character or alias string to canonical character id.
         /// </summary>
-        public static string NormalizeHeroId(string heroId)
+        public static string NormalizeHeroId(string heroId) => NormalizeCharacterId(heroId);
+
+        public static string NormalizeCharacterId(string characterId)
         {
-            if (string.IsNullOrEmpty(heroId)) return "classic";
-            switch (heroId.ToLowerInvariant())
+            if (string.IsNullOrEmpty(characterId)) return "classic";
+            switch (characterId.ToLowerInvariant())
             {
                 case "sean":
-                case "kuya_boy":
                 case "iggy":
                     return "sean";
                 case "zack":
                     return "zack";
                 case "dante":
-                case "bayan":
                     return "dante";
                 case "cheska":
-                case "inday":
                     return "cheska";
                 case "nemu":
                     return "nemu";
+
+                case "bayan":
+                case "berto":
+                    return "bayan";
+                case "maring":
+                    return "maring";
+                case "totoy":
+                    return "totoy";
+                case "inday":
+                    return "inday";
+                case "kuya_boy":
+                case "kuya-boy":
+                    return "kuya_boy";
+                case "ate_girlie":
+                case "ate-girlie":
+                    return "ate_girlie";
+                case "tikboy":
+                    return "tikboy";
+                case "bebang":
+                    return "bebang";
+                case "jun_jun":
+                case "jun-jun":
+                    return "jun_jun";
+                case "lola_pacing":
+                case "lola-pacing":
+                    return "lola_pacing";
+                case "mang_kanor":
+                case "mang-kanor":
+                    return "mang_kanor";
+                case "aling_nena":
+                case "aling-nena":
+                    return "aling_nena";
+
                 default:
                     return "classic";
             }
         }
 
         /// <summary>
-        /// Read active hero from character and style arms appropriately.
+        /// Read active character from motor and style arms appropriately in FPP.
         /// </summary>
-        public void MatchHero(CharacterMotor character)
+        public void MatchHero(CharacterMotor character) => MatchCharacter(character);
+
+        public void MatchCharacter(CharacterMotor character)
         {
             EnsureBuilt();
             if (character == null) return;
 
-            string heroId = null;
+            string charId = null;
             if (character.Mode == Core.GameMode.HeroStrike)
             {
                 var abilitySystem = character.AbilitySystem;
                 if (abilitySystem != null && abilitySystem.Kit != null)
                 {
-                    heroId = abilitySystem.Kit.HeroId;
+                    charId = abilitySystem.Kit.HeroId;
                 }
                 else
                 {
                     var heroPeople = Core.Roster.GetPeople(Core.GameMode.HeroStrike);
                     if (character.CharacterIndex >= 0 && character.CharacterIndex < heroPeople.Count)
-                        heroId = heroPeople[character.CharacterIndex].Id;
+                        charId = heroPeople[character.CharacterIndex].Id;
                 }
             }
+            else
+            {
+                var classicPeople = Core.Roster.GetPeople(Core.GameMode.Classic);
+                if (character.CharacterIndex >= 0 && character.CharacterIndex < classicPeople.Count)
+                    charId = classicPeople[character.CharacterIndex].Id;
+            }
 
-            SetHero(heroId);
+            SetCharacter(charId);
         }
 
         /// <summary>
-        /// Customize viewmodel arms with bespoke hero skin tone, sleeves, wristbands/bracers,
-        /// and element signatures.
+        /// Customize viewmodel arms with bespoke skin tone, sleeves, wristbands/bracers,
+        /// markings/tattoos, and accessories matching the character's TPP model.
         /// </summary>
-        public void SetHero(string heroId)
+        public void SetHero(string heroId) => SetCharacter(heroId);
+
+        public void SetCharacter(string characterId)
         {
             EnsureBuilt();
-            heroId = NormalizeHeroId(heroId);
-            if (_heroInitialized && _currentHeroId == heroId) return;
+            characterId = NormalizeCharacterId(characterId);
+            if (_heroInitialized && _currentHeroId == characterId) return;
 
-            _currentHeroId = heroId;
+            _currentHeroId = characterId;
             _heroInitialized = true;
 
-            ApplyHeroStyle(heroId);
+            ApplyCharacterStyle(characterId);
         }
 
-        private void ApplyHeroStyle(string heroId)
+        private void ApplyCharacterStyle(string characterId)
         {
             ClearAccessories(_rightArm);
             ClearAccessories(_leftArm);
 
-            Color skinColor = SkinColorForHero(heroId);
+            Color skinColor = SkinColorForCharacter(characterId);
 
             if (_rightArmRenderer != null)
             {
@@ -642,8 +717,8 @@ namespace TumbangPreso.CameraSystem
                 Visual.ToonSkin.Apply(_leftArmRenderer, Visual.ToonSkin.PersonOutlineWidth);
             }
 
-            if (_rightArm != null) BuildArmAccessories(_rightArm, heroId, isRight: true);
-            if (_leftArm != null) BuildArmAccessories(_leftArm, heroId, isRight: false);
+            if (_rightArm != null) BuildArmAccessories(_rightArm, characterId, isRight: true);
+            if (_leftArm != null) BuildArmAccessories(_leftArm, characterId, isRight: false);
         }
 
         private static void ClearAccessories(Transform arm)
@@ -660,10 +735,13 @@ namespace TumbangPreso.CameraSystem
             }
         }
 
-        private static void BuildArmAccessories(Transform arm, string heroId, bool isRight)
+        private static void BuildArmAccessories(Transform arm, string characterId, bool isRight)
         {
-            switch (heroId)
+            switch (characterId)
             {
+                // -----------------------------------------------------------
+                // § HEROES
+                // -----------------------------------------------------------
                 case "sean":
                     BuildSeanAccessories(arm, isRight);
                     break;
@@ -679,6 +757,47 @@ namespace TumbangPreso.CameraSystem
                 case "nemu":
                     BuildNemuAccessories(arm, isRight);
                     break;
+
+                // -----------------------------------------------------------
+                // § CLASSIC ROSTER
+                // -----------------------------------------------------------
+                case "bayan":
+                    BuildBayanAccessories(arm, isRight);
+                    break;
+                case "maring":
+                    BuildMaringAccessories(arm, isRight);
+                    break;
+                case "totoy":
+                    BuildTotoyAccessories(arm, isRight);
+                    break;
+                case "inday":
+                    BuildIndayAccessories(arm, isRight);
+                    break;
+                case "kuya_boy":
+                    BuildKuyaBoyAccessories(arm, isRight);
+                    break;
+                case "ate_girlie":
+                    BuildAteGirlieAccessories(arm, isRight);
+                    break;
+                case "tikboy":
+                    BuildTikboyAccessories(arm, isRight);
+                    break;
+                case "bebang":
+                    BuildBebangAccessories(arm, isRight);
+                    break;
+                case "jun_jun":
+                    BuildJunJunAccessories(arm, isRight);
+                    break;
+                case "lola_pacing":
+                    BuildLolaPacingAccessories(arm, isRight);
+                    break;
+                case "mang_kanor":
+                    BuildMangKanorAccessories(arm, isRight);
+                    break;
+                case "aling_nena":
+                    BuildAlingNenaAccessories(arm, isRight);
+                    break;
+
                 default:
                     BuildClassicAccessories(arm, isRight);
                     break;
@@ -691,43 +810,50 @@ namespace TumbangPreso.CameraSystem
 
         private static void BuildSeanAccessories(Transform arm, bool isRight)
         {
-            // 1. Rolled crimson athletic sleeves (UiTheme.HeroFire)
-            AddCylinderAccessory(arm, "Sleeve", 0.146f, 0.146f, 0.38f, 12,
-                new Vector3(0.0f, 0.20f, 0.0f), Quaternion.identity, UI.UiTheme.HeroFire);
+            var vestRed = new Color(0.788f, 0.165f, 0.165f, 1.0f);
+            var flameGold = new Color(0.941f, 0.647f, 0.000f, 1.0f);
+            var flameOrange = new Color(1.000f, 0.533f, 0.000f, 1.0f);
 
-            // 2. Rolled sleeve cuff fold with gold trim (UiTheme.Amber)
-            AddCylinderAccessory(arm, "SleeveCuff", 0.158f, 0.158f, 0.06f, 12,
-                new Vector3(0.0f, 0.40f, 0.0f), Quaternion.identity, UI.UiTheme.HeroFire);
-            AddCylinderAccessory(arm, "SleeveGoldTrim", 0.160f, 0.160f, 0.02f, 12,
-                new Vector3(0.0f, 0.43f, 0.0f), Quaternion.identity, UI.UiTheme.Amber);
+            // 1. Sleeveless athletic flame vest strap at shoulder
+            AddCylinderAccessory(arm, "VestStrap", 0.146f, 0.146f, 0.22f, 12,
+                new Vector3(0.0f, 0.12f, 0.0f), Quaternion.identity, vestRed);
+            AddCylinderAccessory(arm, "VestTrim", 0.148f, 0.148f, 0.04f, 12,
+                new Vector3(0.0f, 0.23f, 0.0f), Quaternion.identity, flameGold);
 
-            // 3. Fiery orange athletic wristband / cuff (UiTheme.HeroMagmaCore)
+            // 2. Forearm flame markings / tribal flame tattoo
+            AddBoxAccessory(arm, "FlameTattooMain", new Vector3(0.04f, 0.26f, 0.015f),
+                new Vector3(isRight ? 0.134f : -0.134f, 0.38f, 0.02f), Quaternion.identity, flameOrange, emission: 0.30f);
+            AddBoxAccessory(arm, "FlameTattooSpur", new Vector3(0.06f, 0.08f, 0.015f),
+                new Vector3(isRight ? 0.134f : -0.134f, 0.46f, -0.02f), Quaternion.Euler(0, 0, isRight ? 25.0f : -25.0f), flameGold, emission: 0.30f);
+
+            // 3. Fiery crimson athletic wrist wraps with gold flame band
             AddCylinderAccessory(arm, "Wristband", 0.148f, 0.148f, 0.10f, 12,
-                new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, UI.UiTheme.HeroMagmaCore);
+                new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, UI.UiTheme.HeroMagmaCore);
             AddCylinderAccessory(arm, "WristbandFlameBand", 0.152f, 0.152f, 0.03f, 12,
-                new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, UI.UiTheme.HeroFireBright, emission: 0.45f);
+                new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, UI.UiTheme.HeroFireBright, emission: 0.45f);
 
-            // 4. Crimson athletic hand/palm wrap
+            // 4. Crimson athletic hand wrap
             AddBoxAccessory(arm, "PalmWrap", new Vector3(0.33f, 0.08f, 0.31f),
-                new Vector3(0.0f, 0.70f, 0.0f), Quaternion.identity, UI.UiTheme.HeroFire);
+                new Vector3(0.0f, 0.70f, 0.0f), Quaternion.identity, vestRed);
         }
 
         private static void BuildZackAccessories(Transform arm, bool isRight)
         {
             var carbonDark = new Color(0.09f, 0.10f, 0.13f, 1.0f);
             var armorDark = new Color(0.12f, 0.14f, 0.18f, 1.0f);
+            var neonPurple = new Color(0.659f, 0.196f, 1.000f, 1.0f);
 
-            // 1. High-tech sports compression sleeve (dark carbon)
+            // 1. High-tech compression sleeve
             AddCylinderAccessory(arm, "TechSleeve", 0.142f, 0.142f, 0.42f, 12,
                 new Vector3(0.0f, 0.22f, 0.0f), Quaternion.identity, carbonDark);
 
-            // 2. Lightning-speed energy panels / racing stripes
-            AddBoxAccessory(arm, "LightningStripe", new Vector3(0.04f, 0.38f, 0.02f),
-                new Vector3(0.0f, 0.22f, 0.135f), Quaternion.identity, UI.UiTheme.HeroElectric);
+            // 2. High-speed racing stripe & neon conductive trace
+            AddBoxAccessory(arm, "PurpleStripe", new Vector3(0.04f, 0.38f, 0.02f),
+                new Vector3(0.0f, 0.22f, 0.135f), Quaternion.identity, neonPurple, emission: 0.40f);
             AddBoxAccessory(arm, "TealStripe", new Vector3(0.02f, 0.32f, 0.04f),
                 new Vector3(isRight ? 0.135f : -0.135f, 0.20f, 0.0f), Quaternion.identity, UI.UiTheme.HeroIce);
 
-            // 3. High-tech angular bracer with lightning bolt conductor plates
+            // 3. Angular tech bracer with lightning conductor plates
             AddCylinderAccessory(arm, "TechBracer", 0.152f, 0.152f, 0.10f, 12,
                 new Vector3(0.0f, 0.56f, 0.0f), Quaternion.identity, armorDark);
             AddBoxAccessory(arm, "LightningConductor", new Vector3(0.06f, 0.08f, 0.025f),
@@ -751,13 +877,13 @@ namespace TumbangPreso.CameraSystem
             AddBoxAccessory(arm, "BasaltTopSlab", new Vector3(0.24f, 0.36f, 0.04f),
                 new Vector3(0.0f, 0.26f, 0.135f), Quaternion.identity, basaltDarkSlab);
 
-            // 2. Basalt jade crust studs and edge trims (UiTheme.HeroEarth)
+            // 2. Basalt jade crust studs and edge trims
             AddBoxAccessory(arm, "JadeCrustStud1", new Vector3(0.04f, 0.04f, 0.02f),
                 new Vector3(-0.11f, 0.40f, 0.14f), Quaternion.identity, UI.UiTheme.HeroEarth);
             AddBoxAccessory(arm, "JadeCrustStud2", new Vector3(0.04f, 0.04f, 0.02f),
                 new Vector3(0.11f, 0.40f, 0.14f), Quaternion.identity, UI.UiTheme.HeroEarth);
 
-            // 3. Molten glowing magma fissure veins (UiTheme.HeroMagmaCore)
+            // 3. Molten glowing magma fissure veins
             AddBoxAccessory(arm, "MagmaVeinMain", new Vector3(0.04f, 0.32f, 0.02f),
                 new Vector3(0.0f, 0.26f, 0.145f), Quaternion.identity, UI.UiTheme.HeroMagmaCore, emission: 1.20f);
             AddBoxAccessory(arm, "MagmaVeinBranch", new Vector3(0.10f, 0.03f, 0.02f),
@@ -776,14 +902,15 @@ namespace TumbangPreso.CameraSystem
 
         private static void BuildCheskaAccessories(Transform arm, bool isRight)
         {
-            var deepGlacier = new Color(0.13f, 0.29f, 0.36f, 1.0f);
-            var frostWhite = new Color(0.95f, 0.98f, 1.00f, 1.0f);
+            var deepGlacier = new Color(0.149f, 0.588f, 0.659f, 1.0f);
+            var cyanFrost = new Color(0.282f, 0.831f, 0.910f, 1.0f);
+            var frostWhite = new Color(0.957f, 0.980f, 1.000f, 1.0f);
 
-            // 1. Pastel cyan frost-blue winter coat sleeve
+            // 1. Frost-cyan winter coat sleeve
             AddCylinderAccessory(arm, "FrostSleeve", 0.145f, 0.145f, 0.38f, 12,
-                new Vector3(0.0f, 0.20f, 0.0f), Quaternion.identity, UI.UiTheme.HeroIce);
+                new Vector3(0.0f, 0.20f, 0.0f), Quaternion.identity, deepGlacier);
             AddBoxAccessory(arm, "GlacierUnderPanel", new Vector3(0.22f, 0.36f, 0.02f),
-                new Vector3(0.0f, 0.20f, -0.13f), Quaternion.identity, deepGlacier);
+                new Vector3(0.0f, 0.20f, -0.13f), Quaternion.identity, cyanFrost);
 
             // 2. Insulated soft fluffy frost-white cuff trim
             AddCylinderAccessory(arm, "FluffyWhiteCuff", 0.162f, 0.162f, 0.08f, 12,
@@ -804,20 +931,21 @@ namespace TumbangPreso.CameraSystem
 
         private static void BuildNemuAccessories(Transform arm, bool isRight)
         {
-            var voidPurple = new Color(0.17f, 0.07f, 0.26f, 1.0f);
-            var voidDarkBand = new Color(0.10f, 0.05f, 0.16f, 1.0f);
+            var voidPurple = new Color(0.137f, 0.110f, 0.204f, 1.0f);
+            var voidDarkBand = new Color(0.094f, 0.071f, 0.141f, 1.0f);
+            var spectralViolet = new Color(0.667f, 0.361f, 0.941f, 1.0f);
 
-            // 1. Loose dark-purple ghostly spirit wraps / sleeves
+            // 1. Dark-purple ghostly spirit wraps
             AddCylinderAccessory(arm, "SpiritSleeve", 0.144f, 0.144f, 0.42f, 12,
                 new Vector3(0.0f, 0.22f, 0.0f), Quaternion.identity, voidPurple);
             AddBoxAccessory(arm, "SpiritWrapStripe", new Vector3(0.18f, 0.04f, 0.02f),
-                new Vector3(0.0f, 0.26f, 0.138f), Quaternion.identity, UI.UiTheme.HeroSpirit);
+                new Vector3(0.0f, 0.26f, 0.138f), Quaternion.identity, spectralViolet, emission: 0.35f);
 
-            // 2. Flowing ethereal spirit ribbons / wisps along the forearm
+            // 2. Flowing ethereal spirit ribbons along forearm
             AddBoxAccessory(arm, "SpiritRibbonOuter", new Vector3(0.02f, 0.36f, 0.08f),
                 new Vector3(isRight ? 0.140f : -0.140f, 0.28f, 0.0f), Quaternion.identity, UI.UiTheme.HeroSpiritBright, emission: 0.65f);
             AddBoxAccessory(arm, "SpiritRibbonInner", new Vector3(0.02f, 0.28f, 0.06f),
-                new Vector3(isRight ? -0.140f : 0.140f, 0.20f, 0.0f), Quaternion.identity, UI.UiTheme.HeroSpirit, emission: 0.65f);
+                new Vector3(isRight ? -0.140f : 0.140f, 0.20f, 0.0f), Quaternion.identity, spectralViolet, emission: 0.65f);
 
             // 3. Void energy wrist cuff with glowing ethereal runes
             AddCylinderAccessory(arm, "VoidWristCuff", 0.150f, 0.150f, 0.10f, 12,
@@ -825,9 +953,258 @@ namespace TumbangPreso.CameraSystem
             AddBoxAccessory(arm, "SpectralRune", new Vector3(0.06f, 0.06f, 0.02f),
                 new Vector3(0.0f, 0.55f, 0.142f), Quaternion.Euler(0, 0, 45.0f), UI.UiTheme.HeroSpiritBright, emission: 0.95f);
 
-            // 4. Spectral palm & finger wraps
+            // 4. Spectral palm wraps
             AddBoxAccessory(arm, "SpectralPalmWrap", new Vector3(0.33f, 0.08f, 0.31f),
                 new Vector3(0.0f, 0.70f, 0.0f), Quaternion.identity, voidPurple);
+        }
+
+        // -------------------------------------------------------------------
+        // § CLASSIC ROSTER BESPOKE ACCESSORY BUILDERS
+        // -------------------------------------------------------------------
+
+        private static void BuildBayanAccessories(Transform arm, bool isRight)
+        {
+            var greenShirt = new Color(0.247f, 0.561f, 0.361f, 1.0f);
+            var greenFold = new Color(0.20f, 0.46f, 0.30f, 1.0f);
+            var tattooDark = new Color(0.22f, 0.22f, 0.24f, 1.0f);
+            var wristLeather = new Color(0.447f, 0.271f, 0.173f, 1.0f);
+
+            // 1. Forest green rolled t-shirt sleeve
+            AddCylinderAccessory(arm, "GreenSleeve", 0.145f, 0.145f, 0.26f, 12,
+                new Vector3(0.0f, 0.14f, 0.0f), Quaternion.identity, greenShirt);
+            AddCylinderAccessory(arm, "GreenSleeveFold", 0.152f, 0.152f, 0.05f, 12,
+                new Vector3(0.0f, 0.26f, 0.0f), Quaternion.identity, greenFold);
+
+            // 2. Tribal tattoo band marking around upper forearm
+            AddCylinderAccessory(arm, "TribalTattooBand", 0.138f, 0.138f, 0.06f, 12,
+                new Vector3(0.0f, 0.38f, 0.0f), Quaternion.identity, tattooDark);
+            AddBoxAccessory(arm, "TribalPattern1", new Vector3(0.04f, 0.05f, 0.015f),
+                new Vector3(0.0f, 0.43f, 0.135f), Quaternion.Euler(0, 0, 45.0f), tattooDark);
+
+            // 3. Leather athletic wristband on right wrist
+            if (isRight)
+            {
+                AddCylinderAccessory(arm, "LeatherWristband", 0.146f, 0.146f, 0.08f, 12,
+                    new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, wristLeather);
+            }
+        }
+
+        private static void BuildMaringAccessories(Transform arm, bool isRight)
+        {
+            var maroonTop = new Color(0.541f, 0.204f, 0.275f, 1.0f);
+            var darkWatch = new Color(0.192f, 0.141f, 0.114f, 1.0f);
+            var silverDial = new Color(0.85f, 0.88f, 0.92f, 1.0f);
+
+            // 1. Maroon/magenta blouse sleeve
+            AddCylinderAccessory(arm, "MaroonSleeve", 0.144f, 0.144f, 0.24f, 12,
+                new Vector3(0.0f, 0.13f, 0.0f), Quaternion.identity, maroonTop);
+
+            // 2. Sleek wristwatch on left wrist
+            if (!isRight)
+            {
+                AddCylinderAccessory(arm, "WatchStrap", 0.145f, 0.145f, 0.05f, 12,
+                    new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, darkWatch);
+                AddBoxAccessory(arm, "WatchFace", new Vector3(0.04f, 0.04f, 0.02f),
+                    new Vector3(0.0f, 0.55f, 0.142f), Quaternion.identity, silverDial);
+            }
+        }
+
+        private static void BuildTotoyAccessories(Transform arm, bool isRight)
+        {
+            var darkGreenShirt = new Color(0.184f, 0.490f, 0.310f, 1.0f);
+            var greySweatband = new Color(0.525f, 0.545f, 0.631f, 1.0f);
+
+            // 1. Dark green athletic t-shirt sleeve
+            AddCylinderAccessory(arm, "GreenSleeve", 0.144f, 0.144f, 0.26f, 12,
+                new Vector3(0.0f, 0.14f, 0.0f), Quaternion.identity, darkGreenShirt);
+
+            // 2. Grey athletic sweatband on right wrist
+            if (isRight)
+            {
+                AddCylinderAccessory(arm, "Sweatband", 0.148f, 0.148f, 0.09f, 12,
+                    new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, greySweatband);
+            }
+        }
+
+        private static void BuildIndayAccessories(Transform arm, bool isRight)
+        {
+            var coralRed = new Color(0.761f, 0.329f, 0.247f, 1.0f);
+            var goldTrim = new Color(0.878f, 0.706f, 0.235f, 1.0f);
+            var purpleBead = new Color(0.478f, 0.247f, 0.369f, 1.0f);
+
+            // 1. Coral red short sleeve with gold trim
+            AddCylinderAccessory(arm, "CoralSleeve", 0.144f, 0.144f, 0.24f, 12,
+                new Vector3(0.0f, 0.13f, 0.0f), Quaternion.identity, coralRed);
+            AddCylinderAccessory(arm, "GoldTrim", 0.148f, 0.148f, 0.03f, 12,
+                new Vector3(0.0f, 0.24f, 0.0f), Quaternion.identity, goldTrim);
+
+            // 2. Beaded bracelet on right wrist, slender gold watch on left wrist
+            if (isRight)
+            {
+                AddCylinderAccessory(arm, "BeadedBracelet", 0.146f, 0.146f, 0.04f, 12,
+                    new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, purpleBead);
+                AddBoxAccessory(arm, "BeadCharm", new Vector3(0.03f, 0.03f, 0.02f),
+                    new Vector3(0.0f, 0.54f, 0.144f), Quaternion.identity, coralRed);
+            }
+            else
+            {
+                AddCylinderAccessory(arm, "GoldWatchStrap", 0.145f, 0.145f, 0.04f, 12,
+                    new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, goldTrim);
+            }
+        }
+
+        private static void BuildKuyaBoyAccessories(Transform arm, bool isRight)
+        {
+            var navyShirt = new Color(0.165f, 0.290f, 0.478f, 1.0f);
+            var navyFold = new Color(0.12f, 0.22f, 0.38f, 1.0f);
+            var darkWatch = new Color(0.192f, 0.141f, 0.114f, 1.0f);
+
+            // 1. Navy blue rolled work shirt sleeve
+            AddCylinderAccessory(arm, "NavySleeve", 0.146f, 0.146f, 0.28f, 12,
+                new Vector3(0.0f, 0.15f, 0.0f), Quaternion.identity, navyShirt);
+            AddCylinderAccessory(arm, "NavySleeveFold", 0.154f, 0.154f, 0.06f, 12,
+                new Vector3(0.0f, 0.28f, 0.0f), Quaternion.identity, navyFold);
+
+            // 2. Sturdy dark utility watch on left wrist
+            if (!isRight)
+            {
+                AddCylinderAccessory(arm, "UtilityWatch", 0.148f, 0.148f, 0.07f, 12,
+                    new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, darkWatch);
+            }
+        }
+
+        private static void BuildAteGirlieAccessories(Transform arm, bool isRight)
+        {
+            var magentaTop = new Color(0.851f, 0.310f, 0.416f, 1.0f);
+            var silverTone = new Color(0.88f, 0.88f, 0.92f, 1.0f);
+
+            // 1. Magenta/pink top short sleeve
+            AddCylinderAccessory(arm, "PinkSleeve", 0.144f, 0.144f, 0.22f, 12,
+                new Vector3(0.0f, 0.12f, 0.0f), Quaternion.identity, magentaTop);
+
+            // 2. Slender wristband on left wrist
+            if (!isRight)
+            {
+                AddCylinderAccessory(arm, "PinkWristband", 0.145f, 0.145f, 0.04f, 12,
+                    new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, magentaTop);
+                AddBoxAccessory(arm, "SilverRing", new Vector3(0.03f, 0.03f, 0.015f),
+                    new Vector3(0.0f, 0.54f, 0.143f), Quaternion.identity, silverTone);
+            }
+        }
+
+        private static void BuildTikboyAccessories(Transform arm, bool isRight)
+        {
+            var oliveShirt = new Color(0.416f, 0.620f, 0.290f, 1.0f);
+            var digitalWatch = new Color(0.220f, 0.220f, 0.239f, 1.0f);
+            var watchScreen = new Color(0.12f, 0.14f, 0.12f, 1.0f);
+
+            // 1. Olive green streetwear sleeve
+            AddCylinderAccessory(arm, "OliveSleeve", 0.144f, 0.144f, 0.28f, 12,
+                new Vector3(0.0f, 0.15f, 0.0f), Quaternion.identity, oliveShirt);
+
+            // 2. Digital sports watch on left wrist
+            if (!isRight)
+            {
+                AddCylinderAccessory(arm, "DigitalStrap", 0.147f, 0.147f, 0.06f, 12,
+                    new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, digitalWatch);
+                AddBoxAccessory(arm, "DigitalFace", new Vector3(0.045f, 0.045f, 0.02f),
+                    new Vector3(0.0f, 0.55f, 0.144f), Quaternion.identity, watchScreen);
+            }
+        }
+
+        private static void BuildBebangAccessories(Transform arm, bool isRight)
+        {
+            var burgundyBlouse = new Color(0.541f, 0.227f, 0.227f, 1.0f);
+
+            // 1. Burgundy blouse sleeve
+            AddCylinderAccessory(arm, "BurgundySleeve", 0.144f, 0.144f, 0.24f, 12,
+                new Vector3(0.0f, 0.13f, 0.0f), Quaternion.identity, burgundyBlouse);
+
+            // 2. Burgundy wristband on right wrist
+            if (isRight)
+            {
+                AddCylinderAccessory(arm, "BurgundyWristband", 0.146f, 0.146f, 0.06f, 12,
+                    new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, burgundyBlouse);
+            }
+        }
+
+        private static void BuildJunJunAccessories(Transform arm, bool isRight)
+        {
+            var blueShirt = new Color(0.133f, 0.157f, 0.227f, 1.0f);
+            var whiteTrim = new Color(1.000f, 1.000f, 1.000f, 1.0f);
+            var redFriendship = new Color(0.85f, 0.18f, 0.18f, 1.0f);
+
+            // 1. Dark blue shirt sleeve with white cuff band
+            AddCylinderAccessory(arm, "BlueSleeve", 0.144f, 0.144f, 0.26f, 12,
+                new Vector3(0.0f, 0.14f, 0.0f), Quaternion.identity, blueShirt);
+            AddCylinderAccessory(arm, "WhiteCuffBand", 0.148f, 0.148f, 0.04f, 12,
+                new Vector3(0.0f, 0.26f, 0.0f), Quaternion.identity, whiteTrim);
+
+            // 2. Braided friendship bracelet on right wrist
+            if (isRight)
+            {
+                AddCylinderAccessory(arm, "FriendshipBand", 0.144f, 0.144f, 0.035f, 12,
+                    new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, redFriendship);
+            }
+        }
+
+        private static void BuildLolaPacingAccessories(Transform arm, bool isRight)
+        {
+            var greyBaro = new Color(0.541f, 0.478f, 0.416f, 1.0f);
+            var whiteLace = new Color(0.96f, 0.96f, 0.98f, 1.0f);
+            var goldBangle = new Color(0.88f, 0.72f, 0.24f, 1.0f);
+
+            // 1. Traditional baro sleeve with delicate lace trim
+            AddCylinderAccessory(arm, "BaroSleeve", 0.146f, 0.146f, 0.32f, 12,
+                new Vector3(0.0f, 0.17f, 0.0f), Quaternion.identity, greyBaro);
+            AddCylinderAccessory(arm, "LaceTrim", 0.152f, 0.152f, 0.05f, 12,
+                new Vector3(0.0f, 0.32f, 0.0f), Quaternion.identity, whiteLace);
+
+            // 2. Classic gold bangle on left wrist
+            if (!isRight)
+            {
+                AddCylinderAccessory(arm, "GoldBangle", 0.146f, 0.146f, 0.04f, 12,
+                    new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, goldBangle);
+            }
+        }
+
+        private static void BuildMangKanorAccessories(Transform arm, bool isRight)
+        {
+            var whiteSando = new Color(1.000f, 1.000f, 1.000f, 1.0f);
+            var vintageLeather = new Color(0.192f, 0.141f, 0.114f, 1.0f);
+            var brassDial = new Color(0.82f, 0.72f, 0.45f, 1.0f);
+
+            // 1. White sleeveless sando strap at shoulder (full bare muscular arms)
+            AddCylinderAccessory(arm, "SandoStrap", 0.144f, 0.144f, 0.14f, 12,
+                new Vector3(0.0f, 0.08f, 0.0f), Quaternion.identity, whiteSando);
+
+            // 2. Vintage leather strap wristwatch on left wrist
+            if (!isRight)
+            {
+                AddCylinderAccessory(arm, "VintageStrap", 0.146f, 0.146f, 0.06f, 12,
+                    new Vector3(0.0f, 0.55f, 0.0f), Quaternion.identity, vintageLeather);
+                AddBoxAccessory(arm, "VintageDial", new Vector3(0.04f, 0.04f, 0.02f),
+                    new Vector3(0.0f, 0.55f, 0.143f), Quaternion.identity, brassDial);
+            }
+        }
+
+        private static void BuildAlingNenaAccessories(Transform arm, bool isRight)
+        {
+            var whiteBlouse = new Color(1.000f, 1.000f, 1.000f, 1.0f);
+            var orangePattern = new Color(0.878f, 0.478f, 0.227f, 1.0f);
+
+            // 1. White blouse sleeve with orange duster trim
+            AddCylinderAccessory(arm, "BlouseSleeve", 0.144f, 0.144f, 0.24f, 12,
+                new Vector3(0.0f, 0.13f, 0.0f), Quaternion.identity, whiteBlouse);
+            AddCylinderAccessory(arm, "OrangePatternTrim", 0.148f, 0.148f, 0.04f, 12,
+                new Vector3(0.0f, 0.24f, 0.0f), Quaternion.identity, orangePattern);
+
+            // 2. Beaded orange bracelet on right wrist
+            if (isRight)
+            {
+                AddCylinderAccessory(arm, "OrangeBracelet", 0.146f, 0.146f, 0.045f, 12,
+                    new Vector3(0.0f, 0.54f, 0.0f), Quaternion.identity, orangePattern);
+            }
         }
 
         private static void BuildClassicAccessories(Transform arm, bool isRight)

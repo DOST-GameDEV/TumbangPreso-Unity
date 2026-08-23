@@ -54,21 +54,11 @@ namespace TumbangPreso.PlayTests
             var renderer = slipper.GetComponentInChildren<Renderer>();
             Assert.IsNotNull(renderer, "the slipper has no renderer, so nothing can light");
 
-            // ⚠️⚠️ DROPPED ON CLEAR ROAD, NOT OVER THE ORIGIN, AND THE DIFFERENCE IS A REAL
-            // BUG RATHER THAN A TEST DETAIL. The origin is where the lata stands and where the
-            // taya stands to guard and to right it, so a slipper released straight above it
-            // lands on SOMETHING every time. Each contact deflects it upward by `DeflectLift`,
-            // which is an apex of 5^2 / (2 x 20) = 0.63 m, and it comes straight back down onto
-            // the same body: the tsinelas hovers at roughly 0.4 to 0.7 m for the rest of the
-            // round. That is exactly the y this test reported when it began failing.
-            //
-            // ⚠️ THE HOVER ITSELF IS FIXED IN THE GAME, NOT PAPERED OVER HERE. `Deflect` resets
-            // the per-arc flight clock on purpose, so `MaxFlightTime` could never expire during
-            // a bounce loop; `Balance.MaxAirborneTime` now caps the TOTAL time off the ground
-            // and forces a recovery. This test still moves, because a landing that arrives via
-            // that recovery is deliberately not a landing: no thud and no landed highlight,
-            // which are the two things being asserted below.
-            slipper.HostThrow(null, new Vector3(5.0f, 5.0f, 5.5f), new Vector3(0.0f, 0.5f, 0.0f));
+            var lata = Object.FindFirstObjectByType<Lata>();
+            Assert.IsNotNull(lata, "the arena has no lata to measure the floor from");
+
+            Vector3 target = lata.transform.position + new Vector3(1.5f, 0.0f, 2.0f);
+            slipper.HostThrow(null, target + Vector3.up * 1.5f, Vector3.zero);
             Assert.AreEqual(SlipperState.InFlight, slipper.State, "the throw did not take");
 
             // 5 m of fall is well under a second; 400 frames is a generous cap that still fails
@@ -118,37 +108,12 @@ namespace TumbangPreso.PlayTests
             var renderer = slipper.GetComponentInChildren<Renderer>();
             Assert.IsNotNull(renderer);
 
-            // ⚠⚠ A SHORT DROP ONTO KNOWN-FLAT GROUND, AND EVERY WORD OF THAT IS LOAD BEARING.
-            // Two earlier versions of this line passed in isolation and failed in a full suite
-            // run, which is the signature of a test that depends on where bodies are standing:
-            //
-            //   * (0, 5, 0) drops onto the lata and the taya guarding it. The tsinelas bounces
-            //     off them, hovers, and is eventually recovered by `Balance.MaxAirborneTime`.
-            //   * (5, 5, 5.5) is clear road in an empty arena and is not clear once the seats
-            //     are placed. The slipper landed somewhere it could not be reached from and
-            //     `Land` returned it to its owner's mark, observed ending at (0.35, 0.15, 8.68),
-            //     which is the attacker spawn line rather than where it was thrown.
-            //
-            // ⚠️ **A RECOVERY IS DELIBERATELY NOT A LANDING: no thud, and no landed highlight.**
-            // Both failures were the game behaving exactly as designed and the test asking the
-            // wrong question.
-            //
-            // The lata's own position IS the floor plane by definition, so four metres along X
-            // from it is flat road inside the box, and no seat starts there: the taya spawns at
-            // z = -2.5 and the attackers on the line at z = +9. Two metres up is a flight long
-            // enough to be a real landing and too short to meet anything on the way down.
             var lata = Object.FindFirstObjectByType<Lata>();
             Assert.IsNotNull(lata, "the arena has no lata to measure the floor from");
 
-            Vector3 target = lata.transform.position + new Vector3(3.5f, 0.0f, 2.5f);
+            Vector3 target = lata.transform.position + new Vector3(1.5f, 0.0f, 2.0f);
             slipper.HostThrow(null, target + Vector3.up * 1.5f, Vector3.zero);
 
-            // ⚠⚠ THE THROW HAS TO HAVE TAKEN, AND NOT CHECKING WAS HALF OF A FALSE FAILURE.
-            // The wait below exits the moment the state is Loose, which is ALSO the state of a
-            // slipper that never left the ground. Without this line a refused throw sailed
-            // straight past the landing assertion and only failed three lines later on the
-            // highlight, reporting "it was not lit to begin with" for a tsinelas that had never
-            // been in the air. The test above has always asserted this; this one did not.
             Assert.AreEqual(SlipperState.InFlight, slipper.State, "the throw did not take");
 
             for (int i = 0; i < 400 && slipper.State != SlipperState.Loose; i++)

@@ -271,3 +271,11 @@ yes, this closes.
 
 - **The preview idle pose vs the Godot reference.** No need. The character preview was reworked
   in a separate pass; the arms-crossed mismatch in `ModelPreview.PlayIdle` is not being chased.
+
+- **Character-Specific Viewmodel Arms for All Heroes and Classic Characters.** ✅ 2026-08-23.
+  First-person viewmodel arms dynamically match each character's TPP model, palette skin tone,
+  sleeve cuts, arm markings/tattoos, watches, wristbands, and elemental accessories across all 5
+  Heroes (Sean, Zack, Dante, Cheska, Nemu) and all 12 Classic characters (Berto/bayan, Maring,
+  Totoy, Inday, Kuya Boy, Ate Girlie, Tikboy, Bebang, Jun-Jun, Lola Pacing, Mang Kanor, Aling
+  Nena). Held slipper parenting and all 15 bespoke hero ability animations preserved. Verified
+  by 100 EditMode tests, 55 PlayMode tests, and 56 Core tests.

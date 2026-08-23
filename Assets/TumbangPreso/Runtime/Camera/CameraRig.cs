@@ -256,7 +256,7 @@ namespace TumbangPreso.CameraSystem
 
             SubscribeEmotes();
             BuildPivots();
-            if (_arms != null && _character != null) _arms.MatchHero(_character);
+            if (_arms != null && _character != null) _arms.MatchCharacter(_character);
             ApplyFppSelfHide();
             SetActive(makeActive);
         }
@@ -443,7 +443,7 @@ namespace TumbangPreso.CameraSystem
             // The hand shows what the unit is actually carrying.
             if (_arms == null) return;
 
-            if (_character != null) _arms.MatchHero(_character);
+            if (_character != null) _arms.MatchCharacter(_character);
 
             // ⚠️ ASKED PER FRAME, NOT ON A PICK-UP EVENT. What a character holds changes
             // DURING a round, and the self-hide only re-runs on activation and model changes,
