@@ -1043,40 +1043,44 @@ namespace TumbangPreso.CameraSystem
                 AddBoxAccessory(arm, "GoldCuffRimBot", new Vector3(0.352f, 0.020f, 0.342f),
                     new Vector3(0.0f, 0.325f, 0.0f), Quaternion.identity, goldDark);
 
-                // 4. Forearm Tribal Runic Glyph (360° wrap matching team-dante.glb)
-                // 4a. Vertical Central Spine (+X = 0.060, Y: 0.42 - 0.58)
-                AddBoxAccessory(arm, "ForearmConduitBase", new Vector3(0.050f, 0.17f, 0.015f),
-                    new Vector3(0.060f, 0.500f, 0.126f), Quaternion.identity, robeDark);
-                AddBoxAccessory(arm, "ForearmConduitBody", new Vector3(0.042f, 0.16f, 0.018f),
-                    new Vector3(0.060f, 0.500f, 0.128f), Quaternion.identity, robeGreen);
+                // 4. Forearm Tribal Runic Glyph (Full 360° projection so Empty & Holding views both show the full glyph)
+                // 4a. Front Face (+Z) — Visible in Empty Hands View
+                AddBoxAccessory(arm, "FrontConduitBase", new Vector3(0.050f, 0.17f, 0.015f),
+                    new Vector3(0.060f, 0.490f, 0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "FrontConduitBody", new Vector3(0.042f, 0.16f, 0.018f),
+                    new Vector3(0.060f, 0.490f, 0.128f), Quaternion.identity, robeGreen);
 
-                // 4b. Horizontal Crossbar Branch (Y ~ 0.54, spanning X: +0.06 to -0.07)
-                AddBoxAccessory(arm, "UpperHookCrossbarBase", new Vector3(0.145f, 0.045f, 0.015f),
-                    new Vector3(-0.010f, 0.540f, 0.126f), Quaternion.identity, robeDark);
-                AddBoxAccessory(arm, "UpperHookCrossbarBody", new Vector3(0.135f, 0.038f, 0.018f),
-                    new Vector3(-0.010f, 0.540f, 0.128f), Quaternion.identity, robeGreen);
+                AddBoxAccessory(arm, "FrontCrossbarBase", new Vector3(0.145f, 0.045f, 0.015f),
+                    new Vector3(-0.010f, 0.535f, 0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "FrontCrossbarBody", new Vector3(0.135f, 0.038f, 0.018f),
+                    new Vector3(-0.010f, 0.535f, 0.128f), Quaternion.identity, robeGreen);
 
-                // 4c. Downward Hook Branch (X ~ -0.060, Y: 0.45 - 0.54)
-                AddBoxAccessory(arm, "HookBranchBase", new Vector3(0.045f, 0.090f, 0.015f),
-                    new Vector3(-0.060f, 0.490f, 0.126f), Quaternion.identity, robeDark);
-                AddBoxAccessory(arm, "HookBranchBody", new Vector3(0.038f, 0.080f, 0.018f),
-                    new Vector3(-0.060f, 0.490f, 0.128f), Quaternion.identity, robeGreen);
+                AddBoxAccessory(arm, "FrontHookBase", new Vector3(0.045f, 0.090f, 0.015f),
+                    new Vector3(-0.060f, 0.485f, 0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "FrontHookBody", new Vector3(0.038f, 0.080f, 0.018f),
+                    new Vector3(-0.060f, 0.485f, 0.128f), Quaternion.identity, robeGreen);
 
-                // 4d. Outer Edge & Dorsal Wrap (Visible in Showcase & Holding poses)
+                // 4b. Back/Dorsal Face (-Z) — Visible in Holding Slipper & Showcase Views
+                AddBoxAccessory(arm, "BackConduitBase", new Vector3(0.050f, 0.17f, 0.015f),
+                    new Vector3(0.040f, 0.490f, -0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "BackConduitBody", new Vector3(0.042f, 0.16f, 0.018f),
+                    new Vector3(0.040f, 0.490f, -0.128f), Quaternion.identity, robeGreen);
+
+                AddBoxAccessory(arm, "BackCrossbarBase", new Vector3(0.145f, 0.045f, 0.015f),
+                    new Vector3(-0.020f, 0.535f, -0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "BackCrossbarBody", new Vector3(0.135f, 0.038f, 0.018f),
+                    new Vector3(-0.020f, 0.535f, -0.128f), Quaternion.identity, robeGreen);
+
+                AddBoxAccessory(arm, "BackHookBase", new Vector3(0.045f, 0.090f, 0.015f),
+                    new Vector3(-0.065f, 0.485f, -0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "BackHookBody", new Vector3(0.038f, 0.080f, 0.018f),
+                    new Vector3(-0.065f, 0.485f, -0.128f), Quaternion.identity, robeGreen);
+
+                // 4c. Outer Edge Wrap
                 AddBoxAccessory(arm, "RightOuterWrapBase", new Vector3(0.015f, 0.17f, 0.120f),
-                    new Vector3(-0.130f, 0.50f, 0.02f), Quaternion.identity, robeDark);
+                    new Vector3(-0.130f, 0.49f, 0.00f), Quaternion.identity, robeDark);
                 AddBoxAccessory(arm, "RightOuterWrapBody", new Vector3(0.018f, 0.16f, 0.110f),
-                    new Vector3(-0.132f, 0.50f, 0.02f), Quaternion.identity, robeGreen);
-
-                AddBoxAccessory(arm, "RightBackSpineBase", new Vector3(0.050f, 0.17f, 0.015f),
-                    new Vector3(-0.020f, 0.500f, -0.126f), Quaternion.identity, robeDark);
-                AddBoxAccessory(arm, "RightBackSpineBody", new Vector3(0.042f, 0.16f, 0.018f),
-                    new Vector3(-0.020f, 0.500f, -0.128f), Quaternion.identity, robeGreen);
-
-                AddBoxAccessory(arm, "RightDorsalSpineBase", new Vector3(0.050f, 0.17f, 0.015f),
-                    new Vector3(0.126f, 0.500f, 0.00f), Quaternion.Euler(0, 90.0f, 0), robeDark);
-                AddBoxAccessory(arm, "RightDorsalSpineBody", new Vector3(0.042f, 0.16f, 0.018f),
-                    new Vector3(0.128f, 0.500f, 0.00f), Quaternion.Euler(0, 90.0f, 0), robeGreen);
+                    new Vector3(-0.132f, 0.49f, 0.00f), Quaternion.identity, robeGreen);
 
                 // 5. Modeled Hand & Knuckle Anatomy
                 AddBoxAccessory(arm, "RightKnucklePlate", new Vector3(0.280f, 0.055f, 0.032f),
@@ -1104,37 +1108,37 @@ namespace TumbangPreso.CameraSystem
                 AddBoxAccessory(arm, "ShoulderGreenLining", new Vector3(0.300f, 0.03f, 0.280f),
                     new Vector3(0.0f, 0.155f, 0.0f), Quaternion.identity, robeGreen);
 
-                // 2. Two Canonical Full-Width Chevrons (Y = 0.35, 0.49)
-                // Exactly 2 bold ^ chevrons centered on the bare forearm, pointing upward.
+                // 2. Two Canonical Full-Width Chevrons (Y = 0.42, 0.54)
+                // Both chevrons placed so they are fully framed in both Empty and Holding views.
                 // -------------------------------------------------------------------------------------------------------
 
-                // CHEVRON 1: Lower Forearm (Y ~ 0.35)
+                // CHEVRON 1: Mid Forearm (Y ~ 0.42)
                 AddBoxAccessory(arm, "Chevron1_LeftBase", new Vector3(0.046f, 0.16f, 0.015f),
-                    new Vector3(-0.055f, 0.310f, 0.126f), Quaternion.Euler(0, 0, -28.0f), robeDark);
+                    new Vector3(-0.055f, 0.380f, 0.126f), Quaternion.Euler(0, 0, -28.0f), robeDark);
                 AddBoxAccessory(arm, "Chevron1_LeftBody", new Vector3(0.040f, 0.15f, 0.018f),
-                    new Vector3(-0.055f, 0.310f, 0.128f), Quaternion.Euler(0, 0, -28.0f), robeGreen);
+                    new Vector3(-0.055f, 0.380f, 0.128f), Quaternion.Euler(0, 0, -28.0f), robeGreen);
                 AddBoxAccessory(arm, "Chevron1_RightBase", new Vector3(0.046f, 0.16f, 0.015f),
-                    new Vector3(0.045f, 0.310f, 0.126f), Quaternion.Euler(0, 0, 28.0f), robeDark);
+                    new Vector3(0.045f, 0.380f, 0.126f), Quaternion.Euler(0, 0, 28.0f), robeDark);
                 AddBoxAccessory(arm, "Chevron1_RightBody", new Vector3(0.040f, 0.15f, 0.018f),
-                    new Vector3(0.045f, 0.310f, 0.128f), Quaternion.Euler(0, 0, 28.0f), robeGreen);
+                    new Vector3(0.045f, 0.380f, 0.128f), Quaternion.Euler(0, 0, 28.0f), robeGreen);
                 AddBoxAccessory(arm, "Chevron1_Apex", new Vector3(0.052f, 0.042f, 0.018f),
-                    new Vector3(-0.005f, 0.350f, 0.128f), Quaternion.identity, robeGreen);
+                    new Vector3(-0.005f, 0.420f, 0.128f), Quaternion.identity, robeGreen);
                 AddBoxAccessory(arm, "Chevron1_OuterWrap", new Vector3(0.018f, 0.055f, 0.060f),
-                    new Vector3(-0.132f, 0.280f, 0.02f), Quaternion.identity, robeGreen);
+                    new Vector3(-0.132f, 0.350f, 0.02f), Quaternion.identity, robeGreen);
 
-                // CHEVRON 2: Upper Forearm (Y ~ 0.49)
+                // CHEVRON 2: Upper Forearm (Y ~ 0.54)
                 AddBoxAccessory(arm, "Chevron2_LeftBase", new Vector3(0.046f, 0.16f, 0.015f),
-                    new Vector3(-0.055f, 0.450f, 0.126f), Quaternion.Euler(0, 0, -28.0f), robeDark);
+                    new Vector3(-0.055f, 0.500f, 0.126f), Quaternion.Euler(0, 0, -28.0f), robeDark);
                 AddBoxAccessory(arm, "Chevron2_LeftBody", new Vector3(0.040f, 0.15f, 0.018f),
-                    new Vector3(-0.055f, 0.450f, 0.128f), Quaternion.Euler(0, 0, -28.0f), robeGreen);
+                    new Vector3(-0.055f, 0.500f, 0.128f), Quaternion.Euler(0, 0, -28.0f), robeGreen);
                 AddBoxAccessory(arm, "Chevron2_RightBase", new Vector3(0.046f, 0.16f, 0.015f),
-                    new Vector3(0.045f, 0.450f, 0.126f), Quaternion.Euler(0, 0, 28.0f), robeDark);
+                    new Vector3(0.045f, 0.500f, 0.126f), Quaternion.Euler(0, 0, 28.0f), robeDark);
                 AddBoxAccessory(arm, "Chevron2_RightBody", new Vector3(0.040f, 0.15f, 0.018f),
-                    new Vector3(0.045f, 0.450f, 0.128f), Quaternion.Euler(0, 0, 28.0f), robeGreen);
+                    new Vector3(0.045f, 0.500f, 0.128f), Quaternion.Euler(0, 0, 28.0f), robeGreen);
                 AddBoxAccessory(arm, "Chevron2_Apex", new Vector3(0.052f, 0.042f, 0.018f),
-                    new Vector3(-0.005f, 0.490f, 0.128f), Quaternion.identity, robeGreen);
+                    new Vector3(-0.005f, 0.540f, 0.128f), Quaternion.identity, robeGreen);
                 AddBoxAccessory(arm, "Chevron2_OuterWrap", new Vector3(0.018f, 0.055f, 0.060f),
-                    new Vector3(-0.132f, 0.420f, 0.02f), Quaternion.identity, robeGreen);
+                    new Vector3(-0.132f, 0.470f, 0.02f), Quaternion.identity, robeGreen);
 
                 // 3. Modeled Hand & Knuckle Anatomy
                 AddBoxAccessory(arm, "LeftKnucklePlate", new Vector3(0.280f, 0.055f, 0.032f),
