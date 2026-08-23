@@ -23,12 +23,34 @@ deleted once on another project.
 The **Unity 6 port** of Tumbang Preso, 1st place at the Gear Up NCR Esports Game Dev
 Challenge and NCR's entry at the nationals in General Santos City.
 
-The Godot 4.7 original is at
-[DOST-GameDev](https://github.com/DOST-GameDEV/DOST-GameDev) and **remains the running
-game** until this port reaches parity. It is the reference for every behaviour question.
+⚠️⚠️ **THIS REPO IS THE GAME NOW. THE GODOT REPO IS REFERENCE FOR THE OLD VERSION AND IS
+READ-ONLY.**
+
+[DOST-GameDev](https://github.com/DOST-GameDEV/DOST-GameDev) is the Godot 4.7 original. It is
+**frozen**. Read it freely, quote it, port from it, cite it in a commit message. **Do not edit
+it, do not commit to it, do not "sync" a file back into it, and do not copy one of its files
+over the equivalent here.** Where the two disagree about anything, including a design document,
+**this repo is the current one.**
+
+This has now gone wrong more than once, because the project has been passed between several
+sessions and each one re-derived the relationship from scratch and got it backwards. It is
+written here so nobody has to guess again:
+
+| | |
+|---|---|
+| **Unity repo (this one)** | The game. Newest of everything. The only one that gets edits. |
+| **Godot repo** | The old version. Reference only. Frozen. |
+
+⚠️ **THE ONE CONCRETE TRAP.** `docs/Design.md` exists in both. The Godot copy is the 2026-08-02
+original. **The current one is `docs/godot/Design.md` HERE**, reconciled with the shipping code
+on 2026-08-23. The folder is named `godot/` because that is where the document came from, not
+because the Godot repo owns it. See § 4.
 
 Read [`docs/Port_Plan.md`](docs/Port_Plan.md) before starting work. It carries the phase
 order, the exit criteria, and the reasoning behind both.
+[`docs/TODO.md`](docs/TODO.md) is the open-work list: what is wrong, where it lives, and what
+done looks like. **Check it before inventing a task, and update it in the same commit as the
+work.**
 
 ## 3 · The rule that matters most
 
@@ -189,17 +211,29 @@ Update the row when you finish something. Do not report the port as done, or as
 "mostly done", while any row reads MISSING. Small files are not optional: a
 26-line `kill_plane.gd` is still a feature the player meets.
 
-## 4 · Design.md is the balance source of truth, and it has drifted
+## 4 · Design.md is the balance source of truth. Use THIS repo's copy.
 
-`docs/Design.md` in the **Godot** repo is the balance source of truth for both projects. It
-opens with: *a number in the code must match a number here, or one of the two is a bug.*
+⚠️⚠️ **`docs/godot/Design.md` IN THIS REPO IS THE LIVE ONE.** The Godot repo's `docs/Design.md`
+is the frozen 2026-08-02 original (§ 2). They are no longer byte-identical and must never be
+re-synced.
 
-⚠️ **Four numbers currently disagree, and in every case the code is the newer half.** They are
-listed in `docs/Port_Plan.md` §7.1. **Port from the GDScript, never from the prose**, and if
-you find a fifth, add it there rather than silently picking a side.
+It opens with: *a number in the code must match a number here, or one of the two is a bug.*
 
-The most serious is the **lunge**: `LUNGE_SPEED` 7.746 gives 2.30 m of reach, while Design.md
-reports 3.20 m as measured. That is the taya's primary scoring verb, and it is unresolved.
+✅ **The drift is closed, as of 2026-08-23.** Eight passages disagreed with the shipping code,
+and **every one was stale prose, not a code defect**: the stamina pool, the lunge reach, the
+reset-channel pair, the throw gate, the chalk literal, the box half-width, the shortest legal
+throw and the spawn ring. All eight are corrected in this repo's copy.
+`docs/Design_Drift_Report.md` carries the git history and the verdict for each of the original
+four; `docs/Port_Plan.md` §7.1 has the summary.
+
+⚠️ **The habit that produced the drift has not changed, so keep the rule: port from the
+GDScript and from `Balance.cs`, never from the prose.** If you find a ninth disagreement, fix
+the prose, note it in `Design_Drift_Report.md`, and say so in the commit rather than silently
+picking a side.
+
+⚠️ **`Design.md` describes Classic only.** Hero Strike, the five ability kits and the ultimate
+charge have no entry in it. § 13 of that file lists what it does not govern and points at the
+files that do.
 
 ## 4a · The art AND the animations in this repo are placeholder
 

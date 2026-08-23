@@ -9,6 +9,21 @@ objects-are-players design completely. § 12 records what was deleted and why, b
 a deletion nobody wrote down is a deletion the next lane re-derives from a dangling
 comment.
 
+⚠️⚠️ **THIS COPY, IN THE UNITY REPO, IS THE CURRENT ONE.** The Godot repo's
+`docs/Design.md` is the 2026-08-02 original and was deliberately left untouched. The two are no
+longer byte-identical. **Never copy the Godot one over this one.**
+
+⚠️⚠️ **RECONCILED WITH THE SHIPPING CODE ON 2026-08-23.** This file was last touched
+2026-08-02 while `character_base.gd` kept moving until 2026-08-05, so eight passages had gone
+stale: the stamina pool, the lunge reach, the reset-channel pair, the throw gate, the chalk
+literal, the box half-width, the shortest legal throw and the spawn ring. **Every one was stale prose, not a code bug.**
+`docs/Design_Drift_Report.md` carries the git history and the verdict for each. Where a
+measurement was taken before the constant moved, the old figure is kept and labelled rather
+than deleted, because a measurement nobody can date is a measurement nobody can trust.
+
+⚠️ **§ 13 lists what this file does NOT govern.** Hero Strike, the ability kits and the
+ultimate charge are Unity-port systems with no Godot counterpart and no entry here.
+
 ## 0 · The premise
 
 **Four players. Four rounds. One taya.**
@@ -67,7 +82,8 @@ leave. Attackers move freely everywhere; the box is merely *dangerous* to them.
 full stop.
 
 ⚠️ **A SQUARE, NOT A CIRCLE, AND THE CHALK IS THE TRUTH.** Both map builders draw the
-marker as four straight court lines at \|x\| = \|z\| = 5.0, and `_move_and_confine()`
+marker as four straight court lines at \|x\| = \|z\| = `CONFINEMENT_RADIUS`
+(**7.0** today, 5.0 when this paragraph was written), and `_move_and_confine()`
 clamps X and Z independently to match. A square and a circle of the same "radius" only
 agree at the four edge midpoints; on the diagonals they disagree by 2.07 units, which is
 exactly where a taya moves when covering a corner. Human call, 2026-07-29.
@@ -94,10 +110,12 @@ ground to throw from on the east and west sides at all, only the two open ends. 
 throwing line, not the box, is what has to fit.** At 7.5 it lands at 8.5, just onto the
 apron, and all four bearings stay usable.
 
-The other two bounds are unchanged and both comfortable: the shortest legal throw is
-7.5 m against a 45° range of `LAUNCH_SPEED`² / `GRAVITY` = **17.11 m** (13.0–15.9 across
-the per-skin speed scales, §9), and the spawn ring is 9.5 against a `COURT_Z` of 13.0 on
-both maps. Both builders re-verify and abort.
+The other two bounds are unchanged and both comfortable: the shortest legal throw is one box
+half-width, **7.0 m** at the shipping radius, against a 45° range of `LAUNCH_SPEED`² /
+`GRAVITY` = **17.11 m** (13.0–15.9 across the per-skin speed scales, §9), and the spawn ring is
+`CONFINEMENT_RADIUS` + `SAFE_ZONE_MARGIN` = **9.0** against a `COURT_Z` of 13.0 on both maps.
+Both builders re-verify and abort. ⚠️ This paragraph read 7.5 and 9.5 until 2026-08-23, from
+the radius of the day; both bounds hold at either value, so the conclusion never moved.
 
 ⚠️⚠️ **AND 7.5 WAS STILL TOO BIG — 7.0 IS THE CEILING THIS MAP ALLOWS. THERE IS A
 THIRD BOUND AND NOBODY HAD WRITTEN IT DOWN: the attackers' standoff ring has to fit
@@ -198,8 +216,10 @@ sweep is now a no-op over an empty group. **The speed-zone STACK it feeds
 | `GRAVITY` | 20.0 | |
 | `FRICTION` | 30.0 | **knockback distance = v² / 60** |
 
-⚠️ **REVISED 2026-08-01 ON HUMAN INSTRUCTION — A 50-POINT POOL DRAINING AT 40/s**,
-i.e. **1.25 s of sprint**, down from 5.0 s. 🧑 specified the drain as *"10 Stamina
+⚠️ **REVISED TWICE ON 2026-08-01, BOTH ON HUMAN INSTRUCTION. THE POOL THAT SHIPS IS
+60 POINTS DRAINING AT 40/s**, i.e. **1.50 s of sprint**, down from 5.0 s. It entered that day
+at 50 points and was raised to 60 later the same day in `071061c`, to put the one-crossing
+property below back in step with the widened box. 🧑 specified the drain as *"10 Stamina
 Points every 0.25 seconds"*; it is implemented as a continuous 40/s, which spends the
 identical 10 points per quarter-second held and cannot be feathered by tapping Shift
 on a sub-tick rhythm.
@@ -209,18 +229,23 @@ with sprint locked out **and the bar refusing to refill at all**. Previously it
 refilled at full rate during the penalty, so the punishment did not touch the
 resource it was punishing.
 
-⚠️ **§2.5 MEASURED 2026-08-01** (`tools/mech_probe.tscn`): sprint to empty **1.25 s**
-exactly, fatigue lockout **2.00 s** exactly, and empty → full again in **2.97 s**. Every
-constant does what the table says.
+⚠️ **§2.5 MEASURED 2026-08-01, ON THE 50-POINT POOL, BEFORE THE RAISE**
+(`tools/mech_probe.tscn`): sprint to empty **1.25 s** exactly, fatigue lockout **2.00 s**
+exactly, and empty → full again in **2.97 s**. Every constant did what the table said.
+**On the 60-point pool that ships, sprint to empty is 1.50 s and a refill is 3.00 s.** The
+probe has not been re-run since the raise; those two are arithmetic on drain and regen rates
+the probe had already confirmed, not fresh measurements.
 
-⚠️⚠️ **THE FINDING IS THE DISTANCE, NOT THE TIME. One full sprint covers 6.84 m** — and
-that is almost exactly one box half-width (6.5 at the time of measurement; 91% of the
-current 7.5). So the stamina bar is dimensioned to **one crossing of the danger zone**,
-which is the retrieval the whole game is about (§0). Nothing had written that down, and
+⚠️⚠️ **THE FINDING IS THE DISTANCE, NOT THE TIME. One full sprint covers 8.2 m** on the
+60-point pool, against **6.84 m** on the 50-point pool it was measured on, and that is one box
+half-width and a little over (6.5 at the time of measurement, **7.0** today). So the stamina
+bar is dimensioned to **one crossing of the danger zone**, which is the retrieval the whole
+game is about (§0). Nothing had written that down, and
 it means `STAMINA_MAX`, `STAMINA_DRAIN_RATE`, `SPRINT_SCALE` and `CONFINEMENT_RADIUS` are
-one interlocked set: **move the box and you change what a sprint buys.** At 7.5 a sprint
-no longer quite crosses the box, which is part of why the box change hit offence as hard
-as it did.
+one interlocked set: **move the box and you change what a sprint buys.** On the 50-point pool
+a sprint no longer quite crossed the widened box, which is part of why the box change hit
+offence as hard as it did; **raising the pool to 60 is what bought the crossing back**, 8.2 m
+against a 7.0 half-width.
 
 **Fatigue rides the speed-zone stack** (`enter_speed_zone`/`exit_speed_zone`) rather
 than being multiplied in, so it composes with a hazard zone instead of one silently
@@ -291,7 +316,9 @@ file is 🤖 `build ai`'s; a second binding for one verb costs a human nothing.
 
 1. holding a slipper;
 2. the lata is **upright**;
-3. **outside the box** — `max(|x|,|z|) >= 5.0`;
+3. **outside the box** — `max(|x|,|z|) >= CONFINEMENT_RADIUS` (**7.0**). ⚠️ Written as a
+   bare `5.0` here until 2026-08-23; the code has always tested the constant, and the constant
+   was raised twice on 2026-08-01 (§2). Name it, never number it;
 4. the post-restore cooldown has expired.
 
 ⚠️ **§2.16 MEASURED 2026-08-01 — THE DOTTED ARC LANDS WHERE THE SLIPPER LANDS.**
@@ -374,10 +401,14 @@ have the tag, and giving them both would make the box unenterable.
 traits): knockback **2.40 m** against the predicted 2.50, stun **0.55 s** observed
 against a 1.25 const — the gap is the victim recovering while still sliding, so the
 *stun* is 1.25 and the *time they cannot act while being pushed* is about half that.
-Stamina **25.0 of 50.0** exactly, and the cooldown allows at most 12 shoves a round.
+Stamina **25.0**, measured against the 50-point pool of the day and so exactly half of it.
+On the 60-point pool that ships it is **25.0 of 60.0**, five twelfths. The cooldown allows at
+most 12 shoves a round either way.
 
-⚠️ **THE REAL PRICE IS THE SPRINT, NOT THE 25 POINTS.** That half-bar is **0.63 s of
-sprint = 3.2 m of running**, and the bar is the same one that gets you back out of the
+⚠️ **THE REAL PRICE IS THE SPRINT, NOT THE 25 POINTS.** Those 25 points are **0.63 s of
+sprint = 3.2 m of running**, and that figure is **unchanged by the pool raise**: cost divided
+by drain rate times sprint speed never mentions `STAMINA_MAX`. What the raise changed is the
+fraction of the bar it costs, not the distance it buys, and the bar is the same one that gets you back out of the
 box. A shove is paid for in escape distance, which is why it stays rare (§6.10 measures
 0–1 a match) without needing a bigger number on it.
 
@@ -392,7 +423,11 @@ deleted power bump was already tuned to 7.75 m/s against `FRICTION` 30, and
   kicked clear of the court; see §6.2 for why that quietly removed the taya's only way
   to score.
 * **Reset the lata.** Stand in the ring, hold **E** for `RESET_CHANNEL_TIME` **1.5 s at
-  neutral**, divided by the can's own SPEED (§9): 1.30 s on PASIP, 1.79 s on BOYBEN.
+  neutral**, divided by the can's own SPEED (§9) at `TRAIT_SPEED_PER_POINT`, 5% a point:
+  **1.36 s** on PASIP and **1.67 s** on BOYBEN. ⚠️ This pair read 1.30 and 1.79 until
+  2026-08-23, which needs roughly 8% a point, and no commit ever set that. It was hand
+  arithmetic against an assumed spread. The ORDERING is the design and is unaffected: the
+  tall empty can is quickest to right.
   It goes back on its mark **and then** stands up, in that order — a lata that stands
   up where it was knocked to is a lata the next throw cannot miss. Letting go zeroes the
   channel.
@@ -467,14 +502,34 @@ another slipper inside the box, so a taya who tagged well ended up standing on a
 of them. The penalty that remains is real — the safe-zone teleport, 5 s stunned, and
 the whole trip to make again.
 
-⚠️ **§2.6 MEASURED 2026-08-01, INCLUDING THE MOVING CASE THAT HAD NEVER BEEN RUN**
-(`tools/mech_probe.tscn`). The furthest start from which a lunge still tags is **3.20 m**
-against a stationary target — the dash (2.5 m) plus the sweep radius (1.3 m), minus the
-charge — **and 3.20 m against a target crossing at the full 3.45 m/s attacker walk. The
-two are identical.** There is no tunnelling: the every-frame sweep does exactly what its
-comment claims, and §2.6's worry ("a moving body sampled at 60 Hz can step over a narrow
-band") is answered. **The tag is a lead problem, not a reach problem** — the taya has to
-aim it, which is the counterplay.
+⚠️⚠️ **THE LUNGE REACHES 2.30 m, NOT 3.20 m.** `LUNGE_SPEED` is **7.746**, a **1.0 m**
+dash by `v²/60`, plus the 1.3 m sweep radius. It entered at 12.247 (a 2.5 m dash, 3.20 m of
+reach) on 2026-08-01 and was cut to 7.746 later the same day in `071061c`, on instruction:
+*"Lunge Tag (Hold E for 0.5s) ... a short 1-meter forward dash."* It was re-derived on the same
+`v²/FRICTION_2` solve every impulse in this file uses, `sqrt(1.0 x 60) = 7.746`, rather than
+nudged. Only the abandoned `HANSDAKS-ai` branch still carries 12.247.
+
+⚠️ **AND THE REACH LOSS IS COMPENSATED, WHICH IS THE PART THAT SETTLES IT.** The same commit
+gave the taya the **punch**: 1.7 m of reach, a 0.9 s cooldown, no charge, and it does not move
+the taya at all (§4). The taya went from one long verb to two complementary short ones. The
+lunge keeps the dash for somebody running past; the punch answers somebody standing next to
+you, which the lunge always answered badly because the charge is exactly long enough for them
+to leave.
+
+⚠️ **§2.6 MEASURED 2026-08-01, INCLUDING THE MOVING CASE THAT HAD NEVER BEEN RUN, AND IT
+PREDATES THE CUT** (`tools/mech_probe.tscn`). On the 12.247 lunge the furthest start from which
+a lunge still tagged was **3.20 m** against a stationary target, **and 3.20 m against a target
+crossing at the full 3.45 m/s attacker walk. The two were identical.** That is the finding
+worth keeping and it survives the cut: **there is no tunnelling**, the every-frame sweep does
+exactly what its comment claims, and §2.6's worry ("a moving body sampled at 60 Hz can step
+over a narrow band") is answered. Scaled to the shipping dash the same pair is **2.30 m and
+2.30 m**. **The tag is a lead problem, not a reach problem** — the taya has to aim it, which
+is the counterplay.
+
+⚠️ **WHAT IS STILL GENUINELY UNMEASURED** is what the shorter lunge did to the TAG share of
+all points across a whole match. The nerf was compensated by the punch **in design**, and no
+`fair_probe` has been run since to confirm it was compensated **in practice**. Worth doing on
+the Godot build before nationals.
 
 ⚠️ **§2.7 MEASURED.** `TAG_STUN_TIME` 5.0 s is **5.6%** of a round; stun plus a full
 re-charge is **7.5 s = 8.3%**. Against +100 for the taya, the attacker loses about a
@@ -484,10 +539,10 @@ twelfth of one round's throwing — and keeps their slipper (§6's anti-camping 
 ⚠️ **THE TAG IS NO LONGER PASSIVE — IT IS THE LUNGE.** Replaced 2026-08-01. It used to
 fire every physics frame on adjacency, with no input and no animation: 100 points for
 standing close enough. It is now charged on right-click (`LUNGE_CHARGE_TIME` 0.5 s),
-released as a **2.5 m dash** (`LUNGE_SPEED` 12.247, the same `v²/60` solve the shove
+released as a **1.0 m dash** (`LUNGE_SPEED` 7.746, the same `v²/60` solve the shove
 uses), and any vulnerable Attacker swept inside `LUNGE_TAG_RADIUS` during
 `LUNGE_ACTIVE_TIME` 0.45 s is tagged. `LUNGE_COOLDOWN` 1.5 s. The sweep runs **every
-frame the lunge is live**, not once at the end, or a 2.5 m dash at 60 Hz tunnels past
+frame the lunge is live**, not once at the end, or a dash at 60 Hz tunnels past
 a body standing halfway along it.
 
 ⚠️⚠️ **A BLOCKED SLIPPER DEFLECTS A SHORT WAY AND STAYS IN THE BOX — AND THAT IS THE
@@ -900,3 +955,52 @@ and slipper being a character and can being a character"*.
   the only reason one `_physics_process` serves both.
 * **`CANS` / `SLIPPERS` roster tables** — the models are still wanted.
 * **Spectator** — kept whole, on human instruction.
+
+---
+
+## 13 · What this file does NOT govern
+
+**Added 2026-08-23.** § 0 claims this file is the balance source of truth. That is still true
+for the rules the Godot build shipped, and it is **not** true for everything the Unity port has
+added since. A reader who assumes otherwise will go looking for numbers that were never here.
+
+⚠️⚠️ **THE GAME NOW HAS TWO MODES AND ONLY ONE OF THEM IS DESCRIBED ABOVE.**
+`GameMode.Classic` is this document. `GameMode.HeroStrike`
+(`Packages/com.tumbangpreso.core/Runtime/MatchRules.cs`) is a different roster with an ability
+layer on top of the same match structure: same four players, four rounds, 90 s, rotating taya
+and the scoring in § 8. Everything in §§ 1 to 12 that is not an ability still applies to it.
+
+| System | Where the numbers actually live |
+|---|---|
+| Mode split, rosters per mode | `Core/MatchRules.cs`, `Core/Roster.cs` (`ClassicPeople`, `HeroPeople`) |
+| Ability kits, five heroes, two skills and one ultimate each | `Assets/TumbangPreso/Runtime/Abilities/*HeroKit.cs` |
+| Ultimate economy | `Core/Balance.cs`: `UltimatePassiveChargePerSecond` 1.0/s, `UltimateChargeLataKnock` 25, `UltimateChargeTag` 20, `UltimateChargeLegalThrow` 8, against `HeroKit.UltimateMax` 100 |
+| Hazard volumes the skills leave behind | `Runtime/Abilities/HeroHazards.cs` |
+| Anti-camping and anti-stall penalties | `Core/Balance.cs`, the `TayaCamp*` and `SlipperUnretrieved*` block. Both clocks HOLD rather than run while a unit cannot act |
+| Tsinelas that cannot be reached where they landed | `Balance.SlipperMaxRestReach` 1.2, `Balance.MaxAirborneTime` |
+| Arena confinement for bodies, not just slippers | `CharacterMotor.Confine` and `CharacterMotor.Teleport` |
+| Pektus curve throw | `Core/Balance.cs`, the `Pektus*` block |
+
+**The five kits, for orientation only. The files are the truth.**
+
+| Hero | Skill 1 | Skill 2 | Ultimate |
+|---|---|---|---|
+| Cheska | Permafrost Sheet | Ice Barricade | Glacial Shatter Burst |
+| Dante | Seismic Stomp | Demonic Carapace | Demon Titan Fissure |
+| Nemu | Phantom Phase | Ghostly Poltergeist | Nightmare Seance Void |
+| Sean | Rocket Burn Dash | Ignition Cannon | Supernova Smashdown |
+| Zack | Static Rail Grind | Overcharge Throw | Thunderstrike Overdrive |
+
+⚠️ **THE ABILITY LAYER IS NOT THE ONE § 12 DELETED.** § 12 removed `scripts/abilities/**`
+because eight verbs nobody asked for sat on top of a game whose brief was "simpler". Hero
+Strike is a **separate mode** the player opts into, not a change to Classic, and Classic is
+still the tournament ruleset. Deleting the old layer and adding this one are not in conflict.
+
+⚠️ **§ 4 IS THE CLASSIC KEYMAP AND IT DOES NOT COVER THE SKILL KEYS.** Hero Strike adds
+`Skill1`, `Skill2` and `Ultimate` on top of it, and the shipping defaults put those on keys
+Classic already uses. `docs/TODO.md` § 2 has the full collision table. **Until that is settled,
+§ 4 above is accurate for Classic and incomplete for Hero Strike.**
+
+⚠️ **WHERE A HERO SYSTEM CONTRADICTS A NUMBER ABOVE, THE HERO SYSTEM IS SCOPED TO ITS MODE**
+and the number above still stands for Classic. Nothing in the ability layer is allowed to
+change a Classic constant; if one ever needs to, it moves here in the same commit, per § 0.
