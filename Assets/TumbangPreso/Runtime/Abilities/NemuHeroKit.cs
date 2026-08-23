@@ -22,7 +22,7 @@ namespace TumbangPreso.Abilities
             private GameObject _phantomLightGo;
 
             public PhantomPhaseAbility()
-                : base("nemu_skill1", "PHANTOM PHASE", "Phases for 2.5s; grabbing a slipper shatters the phase.", 8.0f, 2.5f)
+                : base("nemu_skill1", "PHANTOM PHASE", "Phases for 2.5s; grabbing a slipper shatters the phase.", 8.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.Phase)
             {
             }
 
@@ -78,7 +78,7 @@ namespace TumbangPreso.Abilities
             private GameObject _projectedGhost;
 
             public GhostlyPoltergeistAbility()
-                : base("nemu_skill2", "ASTRAL PROJECTION", "Projects into ghost to fly freely; press again or wait to teleport to it.", 9.0f, 6.0f)
+                : base("nemu_skill2", "ASTRAL PROJECTION", "Projects into ghost to fly freely; press again or wait to teleport to it.", 9.0f, 6.0f, TumbangPreso.UI.AbilityGlyph.Phase)
             {
             }
 
@@ -130,7 +130,7 @@ namespace TumbangPreso.Abilities
         private sealed class NightmareSeanceVoidAbility : HeroAbility
         {
             public NightmareSeanceVoidAbility()
-                : base("nemu_ultimate", "NIGHTMARE SEANCE VOID", "Pulls dropped slippers inward and applies drowsy slow.", 0.0f, 0.0f)
+                : base("nemu_ultimate", "NIGHTMARE SEANCE VOID", "Pulls dropped slippers inward and applies drowsy slow.", 0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Zone)
             {
             }
 

@@ -76,6 +76,15 @@ namespace TumbangPreso.Abilities
             if (Kit == null || _motor == null) return;
 
             float dt = Time.deltaTime;
+
+            // ⚠️⚠️ PRACTICE IS "THE ROUND CLOCK IS NOT RUNNING", asked of the rules rather than
+            // tracked here. `RoundDirector.RoundActive` is the same flag that gates scoring and
+            // `CanAct`, so the ultimate economy pauses in exactly the periods the scoreboard
+            // already calls paused: the warm-up before round one and the buffer between rounds.
+            // A second opinion about when a round is live is how a HUD ends up disagreeing with
+            // the rules.
+            Kit.PracticeMode = GameServices.Round == null || !GameServices.Round.RoundActive;
+
             Kit.Tick(_context, dt);
 
             if (!_motor.CanAct())
@@ -168,24 +177,44 @@ namespace TumbangPreso.Abilities
             }
         }
 
-        public void OnLataKnocked()
+        /// <summary>
+        /// ⚠️ THE THREE OBJECTIVE AWARDS ARE GATED ON PRACTICE TOO. They are already unlikely to
+        /// fire outside a live round because scoring is paused, but "unlikely" is not the same
+        /// as "cannot", and a knockdown landing during the buffer would hand out charge the
+        /// scoreboard did not pay for.
+        /// </summary>
+        private void Award(float amount)
         {
-            Kit?.AddUltimateCharge(Balance.UltimateChargeLataKnock);
+            if (Kit == null || Kit.PracticeMode) return;
+
+            Kit.AddUltimateCharge(amount);
         }
 
-        public void OnTagScored()
-        {
-            Kit?.AddUltimateCharge(Balance.UltimateChargeTag);
-        }
+        public void OnLataKnocked() => Award(Balance.UltimateChargeLataKnock);
 
-        public void OnThrowReleased()
-        {
-            Kit?.AddUltimateCharge(Balance.UltimateChargeLegalThrow);
-        }
+        public void OnTagScored() => Award(Balance.UltimateChargeTag);
 
+        public void OnThrowReleased() => Award(Balance.UltimateChargeLegalThrow);
+
+        /// <summary>
+        /// Wipe the kit back to how it starts a round: no charge, no cooldowns, nothing active.
+        ///
+        /// ⚠⚠ CALLED FROM `ResetWorld` IN BOTH RUNNERS, WHICH IS EVERY ROUND BOUNDARY THERE
+        /// IS. `SliceRunner.ResetWorld` and `MatchBootstrap.ResetWorld` are reached from
+        /// `RoundStarted` and from `IntermissionStarted`, so this covers the R press that starts
+        /// round 1 (the ready gate raises `RoundShouldBegin`, `Begin` calls `StartMatch`, and
+        /// that raises `RoundStarted`), the rotation into every later round, and a probe that
+        /// calls `ResetWorld` directly. It is idempotent, so a double call costs nothing.
+        /// </summary>
         public void ResetKit()
         {
-            Kit?.Reset();
+            Kit?.ResetForRound(_context);
+        }
+
+        /// <summary>Empties the bank as well. For the start of a whole match, not a round.</summary>
+        public void ResetKitForMatch()
+        {
+            Kit?.ResetForMatch(_context);
         }
     }
 }

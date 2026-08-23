@@ -21,7 +21,7 @@ namespace TumbangPreso.Abilities
         private sealed class SeismicStompAbility : HeroAbility
         {
             public SeismicStompAbility()
-                : base("dante_skill1", "SEISMIC STOMP", "Heavy ground slam knocking back foes and repelling slippers.", 6.5f, 0.0f)
+                : base("dante_skill1", "SEISMIC STOMP", "Heavy ground slam knocking back foes and repelling slippers.", 6.5f, 0.0f, TumbangPreso.UI.AbilityGlyph.Slam)
             {
             }
 
@@ -72,7 +72,7 @@ namespace TumbangPreso.Abilities
             private readonly GameObject[] _shieldPlates = new GameObject[3];
 
             public DemonicCarapaceAbility()
-                : base("dante_skill2", "DEMONIC CARAPACE", "Flaming magma armor granting complete immunity to stuns and shoves.", 9.0f, 4.0f)
+                : base("dante_skill2", "DEMONIC CARAPACE", "Flaming magma armor granting complete immunity to stuns and shoves.", 9.0f, 4.0f, TumbangPreso.UI.AbilityGlyph.Shield)
             {
             }
 
@@ -159,7 +159,7 @@ namespace TumbangPreso.Abilities
         private sealed class DemonTitanFissureAbility : HeroAbility
         {
             public DemonTitanFissureAbility()
-                : base("dante_ultimate", "DEMON TITAN FISSURE", "Rips open earthen fissures in a cone, launching foes and raising rock pillars.", 0.0f, 0.0f)
+                : base("dante_ultimate", "DEMON TITAN FISSURE", "Rips open earthen fissures in a cone, launching foes and raising rock pillars.", 0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Burst)
             {
             }
 

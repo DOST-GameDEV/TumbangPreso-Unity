@@ -24,7 +24,7 @@ namespace TumbangPreso.Abilities
             private float _trailDropTimer;
 
             public StaticRailGrindAbility(ZackHeroKit kit)
-                : base("zack_skill1", "STATIC RAIL-GRIND", "High-speed electric dash leaving a shock trail.", 6.0f, 2.5f)
+                : base("zack_skill1", "STATIC RAIL-GRIND", "High-speed electric dash leaving a shock trail.", 6.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.Dash)
             {
                 _kit = kit;
             }
@@ -65,7 +65,7 @@ namespace TumbangPreso.Abilities
             private readonly ZackHeroKit _kit;
 
             public OverchargeThrowAbility(ZackHeroKit kit)
-                : base("zack_skill2", "OVERCHARGE THROW", "Electrifies next throw for high velocity & chain lightning.", 8.0f, 10.0f)
+                : base("zack_skill2", "OVERCHARGE THROW", "Electrifies next throw for high velocity & chain lightning.", 8.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.Empower)
             {
                 _kit = kit;
             }
@@ -88,7 +88,7 @@ namespace TumbangPreso.Abilities
             private readonly ZackHeroKit _kit;
 
             public ThunderstrikeOverdriveAbility(ZackHeroKit kit)
-                : base("zack_ultimate", "THUNDERSTRIKE OVERDRIVE", "Sky lightning strike and turbo overvoltage state.", 0.0f, 7.0f)
+                : base("zack_ultimate", "THUNDERSTRIKE OVERDRIVE", "Sky lightning strike and turbo overvoltage state.", 0.0f, 7.0f, TumbangPreso.UI.AbilityGlyph.Slam)
             {
                 _kit = kit;
             }

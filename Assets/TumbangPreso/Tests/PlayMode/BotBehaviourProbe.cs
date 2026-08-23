@@ -75,6 +75,18 @@ namespace TumbangPreso.PlayTests
             var previousMode = UI.SceneFlow.SelectedMode;
             UI.SceneFlow.SelectedMode = mode;
 
+            // ⚠⚠ SEEDED, BECAUSE THE THRESHOLDS BELOW ARE MEANINGLESS OTHERWISE. Personality
+            // rolls, loiter beats and the AI's tie-breaks all draw from `UnityEngine.Random`, so
+            // an unseeded run measures a different match every time: the same build measured 110
+            // and then 467 unretrieved-slipper penalties on consecutive runs, either side of the
+            // 200 ceiling this asserts. A probe that passes or fails on the dice cannot tell
+            // anybody whether a change helped.
+            //
+            // ⚠️ THE SEED IS ARBITRARY AND MUST NOT BE TUNED TO MAKE A RUN PASS. If a real
+            // regression lands, change the CODE. If you find yourself reaching for a friendlier
+            // number, that is the regression talking.
+            UnityEngine.Random.InitState(20260823);
+
             Hitstop.End();
             Time.timeScale = 1.0f;
 

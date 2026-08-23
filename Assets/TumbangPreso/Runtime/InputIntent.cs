@@ -8,13 +8,13 @@ namespace TumbangPreso
     {
         Sprint,
         Jump,
-        SpecialAbility, // LMB / Q. Throw charge for an attacker, punch for the taya.
-        Grab,           // E / LMB. Contextual: pickup, shove, or the lata reset channel.
-        Lunge,          // E / RMB.
-        EmoteWheel,
-        Skill1,         // Hero Skill 1 (Default E)
-        Skill2,         // Hero Skill 2 (Default Q)
-        Ultimate,       // Hero Ultimate (Default F)
+        SpecialAbility, // Left click. Throw charge for an attacker, punch for the taya.
+        Grab,           // E. Contextual: pickup, shove, or the lata reset channel.
+        Lunge,          // Right click. The taya's dash tag.
+        EmoteWheel,     // B
+        Skill1,         // Hero Skill 1. Q
+        Skill2,         // Hero Skill 2. F
+        Ultimate,       // Hero Ultimate. X
     }
 
     /// <summary>

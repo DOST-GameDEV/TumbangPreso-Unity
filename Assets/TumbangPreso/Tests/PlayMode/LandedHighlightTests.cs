@@ -38,7 +38,15 @@ namespace TumbangPreso.PlayTests
 
             // Blue, the shipped default. Set explicitly so a stale settings.json on whatever
             // machine runs this cannot turn the feature off and pass the test by accident.
+            //
+            // ⚠⚠ AND THE CHANGE IS RAISED, NOT ONLY WRITTEN. Setting the field alone leaves
+            // every listener on whatever it last cached, so if anything earlier in the suite
+            // turned the highlight OFF and raised it, this test ran against an off feature and
+            // failed with "not lit at the landed rim strength" while the feature was working
+            // perfectly. It passed in isolation and failed in a full run, which is the signature
+            // of exactly this.
             SettingsStore.Current.SlipperHighlight = SlipperHighlights.Default;
+            SettingsStore.RaiseSlipperHighlightChanged();
 
             var slipper = Object.FindFirstObjectByType<Slipper>();
             Assert.IsNotNull(slipper, "the match built no slipper to test");
@@ -100,7 +108,9 @@ namespace TumbangPreso.PlayTests
 
             for (int i = 0; i < 20; i++) yield return null;
 
+            // Raised as well as written, for the reason the test above records.
             SettingsStore.Current.SlipperHighlight = SlipperHighlights.Default;
+            SettingsStore.RaiseSlipperHighlightChanged();
 
             var slipper = Object.FindFirstObjectByType<Slipper>();
             Assert.IsNotNull(slipper);
@@ -108,7 +118,28 @@ namespace TumbangPreso.PlayTests
             var renderer = slipper.GetComponentInChildren<Renderer>();
             Assert.IsNotNull(renderer);
 
-            slipper.HostThrow(null, new Vector3(0.0f, 5.0f, 0.0f), new Vector3(0.0f, 0.5f, 0.0f));
+            // ⚠⚠ CLEAR ROAD, NOT OVER THE ORIGIN, FOR THE REASON THE TEST ABOVE SPELLS OUT
+            // AT LENGTH. This dropped at (0, 5, 0), which is where the lata stands and where the
+            // taya stands to guard it, so the tsinelas landed on a BODY, was deflected upward,
+            // came down on it again, and eventually recovered through `Balance.MaxAirborneTime`.
+            // A recovery is deliberately not a landing: no thud and no landed highlight. The
+            // assertion then failed with "it was not lit to begin with", which is the game
+            // behaving exactly as designed and the test asking the wrong question.
+            //
+            // ⚠️ IT ONLY SHOWED UP IN A FULL SUITE RUN, never in isolation, because whether
+            // anything is standing on the origin depends on what the previous test left in the
+            // arena. Same drop point as the test above, which has carried this warning since it
+            // hit the same fault.
+            slipper.HostThrow(null, new Vector3(5.0f, 5.0f, 5.5f), new Vector3(0.0f, 0.5f, 0.0f));
+
+            // ⚠⚠ THE THROW HAS TO HAVE TAKEN, AND NOT CHECKING WAS HALF OF A FALSE FAILURE.
+            // The wait below exits the moment the state is Loose, which is ALSO the state of a
+            // slipper that never left the ground. Without this line a refused throw sailed
+            // straight past the landing assertion and only failed three lines later on the
+            // highlight, reporting "it was not lit to begin with" for a tsinelas that had never
+            // been in the air. The test above has always asserted this; this one did not.
+            Assert.AreEqual(SlipperState.InFlight, slipper.State, "the throw did not take");
+
             for (int i = 0; i < 400 && slipper.State != SlipperState.Loose; i++)
                 yield return new WaitForFixedUpdate();
             Assert.AreEqual(SlipperState.Loose, slipper.State,
@@ -116,7 +147,9 @@ namespace TumbangPreso.PlayTests
 
             var block = new MaterialPropertyBlock();
             renderer.GetPropertyBlock(block);
-            Assert.Greater(block.GetFloat(RimStrengthId), 0.0f, "it was not lit to begin with");
+            Assert.Greater(block.GetFloat(RimStrengthId), 0.0f,
+                $"it was not lit to begin with. state={slipper.State} " +
+                $"pos={slipper.transform.position} setting={SettingsStore.Current.SlipperHighlight}");
 
             // What the settings row does when the player cycles to Off.
             SettingsStore.Current.SlipperHighlight = SlipperHighlights.Off;

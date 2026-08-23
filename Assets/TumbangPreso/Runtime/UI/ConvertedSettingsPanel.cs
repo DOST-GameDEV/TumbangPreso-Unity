@@ -100,7 +100,54 @@ namespace TumbangPreso.UI
                 Destroy(child.gameObject);
             }
 
-            foreach (var action in Rebinding.RebindableActions)
+            foreach (var group in Rebinding.Groups)
+            {
+                BuildGroupHeading(list, group.Title);
+
+                foreach (var action in group.Actions) BuildRebindRow(list, action);
+            }
+        }
+
+        /// <summary>
+        /// A group heading, and the one line of explanation under it where there is one.
+        ///
+        /// ⚠️ THE HEADING IS AMBER AND THE ROWS ARE NOT, which is the whole reason the grouping
+        /// reads at a glance. A heading in the same weight as its rows is another row.
+        /// </summary>
+        private void BuildGroupHeading(Transform list, string title)
+        {
+            var headingGo = new GameObject($"{title}Heading");
+            headingGo.AddComponent<RectTransform>();
+            headingGo.transform.SetParent(list, false);
+
+            var column = headingGo.AddComponent<VerticalLayoutGroup>();
+            column.childControlHeight = true;
+            column.childControlWidth = true;
+            column.childForceExpandHeight = false;
+            column.childForceExpandWidth = true;
+            column.spacing = 0.0f;
+            column.padding = new RectOffset(0, 0, 14, 4);
+
+            var heading = MenuKit.Styled(headingGo.transform, "MenuBody", title,
+                                         TextAnchor.MiddleLeft);
+            heading.raycastTarget = false;
+            heading.color = UiTheme.Amber;
+            heading.fontStyle = FontStyle.Bold;
+            heading.gameObject.AddComponent<LayoutElement>().preferredHeight = 26.0f;
+
+            string blurb = Rebinding.BlurbFor(title);
+            if (string.IsNullOrEmpty(blurb)) return;
+
+            var note = MenuKit.Styled(headingGo.transform, "MenuBody", blurb,
+                                      TextAnchor.MiddleLeft);
+            note.raycastTarget = false;
+            note.color = UiTheme.CreamMuted;
+            note.fontSize = MenuKit.MinReadableUnits;
+            note.gameObject.AddComponent<LayoutElement>().preferredHeight = 20.0f;
+        }
+
+        private void BuildRebindRow(Transform list, string action)
+        {
             {
                 var rowGo = new GameObject($"{action}Row");
                 rowGo.AddComponent<RectTransform>();

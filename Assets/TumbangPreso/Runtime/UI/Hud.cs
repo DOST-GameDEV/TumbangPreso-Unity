@@ -142,13 +142,29 @@ namespace TumbangPreso.UI
 
         private GameObject _heroDeck;
         private Text _skill1KeyText, _skill1NameText, _skill1CdText;
-        private Image _skill1Fill, _skill1CardBg;
+        private Image _skill1Fill, _skill1CardBg, _skill1Cap, _skill1Glyph;
         private Text _skill2KeyText, _skill2NameText, _skill2CdText;
-        private Image _skill2Fill, _skill2CardBg;
+        private Image _skill2Fill, _skill2CardBg, _skill2Cap, _skill2Glyph;
         private Text _ultKeyText, _ultNameText, _ultChargeText;
-        private Image _ultFill, _ultCardBg;
+        private Image _ultFill, _ultCardBg, _ultCap, _ultGlyph;
+        private Image[] _ultSegments;
         private RectTransform _ultRt;
         private bool _lastUltReady;
+        private AbilityInspectPanel _inspect;
+        private Text _inspectHint;
+        private string _inspectHintText;
+
+        /// <summary>
+        /// How many notches the ultimate meter is cut into.
+        ///
+        /// ⚠⚠ THE SEGMENTS ARE THE WHOLE POINT OF THE ULT CARD, NOT DECORATION. A cooldown
+        /// and an ultimate charge are different quantities and used to be drawn with the same
+        /// smooth bar and the same text slot, so a card reading "READY!" and a card reading
+        /// "6%" looked like the same widget in two states. The eye cannot tell a ready skill
+        /// from a charging ultimate at a glance, which is the only way a HUD card is ever read.
+        /// A notched meter cannot be mistaken for a draining one even in peripheral vision.
+        /// </summary>
+        private const int UltSegments = 10;
 
         private GameObject _classicDeck;
         private Text _classicTitle;
@@ -198,9 +214,14 @@ namespace TumbangPreso.UI
         {
             if (_readyPrompt != null)
             {
+                // ⚠️ THE KEY IS READ, NOT SPELLED. A rebound ready key used to leave this
+                // line telling the player to press R, which is the one instruction on screen
+                // they cannot ignore and cannot follow.
+                string ready = "[" + KeyLabel("ReadyUp") + "]";
+
                 _readyPrompt.text = SceneFlow.SelectedMode == GameMode.HeroStrike
-                    ? "🎮 PRACTICE TIME! (SCORES PAUSED) - TEST YOUR HERO POWERS! Press [R] when ready."
-                    : "STREET WARM-UP  ·  PRACTICE PEKTUS CURVES  ·  Press [R] when ready.";
+                    ? $"PRACTICE TIME  ·  SCORES PAUSED  ·  TEST YOUR POWERS  ·  Press {ready} when ready."
+                    : $"STREET WARM-UP  ·  PRACTICE PEKTUS CURVES  ·  Press {ready} when ready.";
                 _readyPrompt.enabled = show;
             }
             RefreshObjective(show);
@@ -1295,6 +1316,7 @@ namespace TumbangPreso.UI
             BuildLataCard();
             BuildStatusStacks();
             BuildHeroDeck();
+            _inspect = AbilityInspectPanel.Create(_root);
             BuildClassicDeck();
             BuildFloatingText();
             BuildCrosshair();
@@ -1727,14 +1749,28 @@ namespace TumbangPreso.UI
 
             _readyPrompt = HudLabel(_root, "ReadyPrompt", 28, UiTheme.Cream,
                                     TextAnchor.MiddleCenter);
-            Place(_readyPrompt.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 138),
+            // ⚠⚠ ABOVE THE DECK, NOT THROUGH IT. This sat at 138 while the ability deck
+            // occupies 24 to 146 from the same bottom edge, so the practice prompt was drawn
+            // straight across the top of the three cards. Two things competing for one band is
+            // most of what read as *"so much shit on the screen"*, and it cost nothing to fix:
+            // there is empty screen directly above.
+            Place(_readyPrompt.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 196),
                   new Vector2(1040, 40));
             _readyPrompt.text = "Walk around freely. Press [R] when you're ready to start the round.";
             _readyPrompt.enabled = false;
 
+            // ⚠️ A HOLD KEY NOBODY IS TOLD ABOUT IS A KEY NOBODY PRESSES. One quiet line
+            // above the deck, in the muted cream the rest of the HUD uses for asides, naming
+            // whatever key is actually bound.
+            _inspectHint = HudLabel(_root, "InspectHint", MenuKit.MinReadableUnits,
+                                    UiTheme.CreamMuted, TextAnchor.MiddleCenter);
+            Place(_inspectHint.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 154),
+                  new Vector2(620, 22));
+            _inspectHint.enabled = false;
+
             _readyObjective = HudLabel(_root, "ReadyObjective", 44, UiTheme.Offense,
                                        TextAnchor.MiddleCenter);
-            Place(_readyObjective.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 200),
+            Place(_readyObjective.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 254),
                   new Vector2(1120, 64));
             _readyObjective.enabled = false;
 
@@ -1930,7 +1966,12 @@ namespace TumbangPreso.UI
             // every resolution. The cards below are wider as well, because the ability NAME is
             // the only thing on this deck that says which power the bar belongs to and it was
             // set at 13 units: 8.7 physical pixels on a 4:3 panel, which is not readable type.
-            rt.sizeDelta = new Vector2(578, 122);
+            // ⚠⚠ 592, AND THE NUMBER IS ARITHMETIC RATHER THAN TASTE. 16 + 16 of padding,
+            // two gaps of 14, and cards of 172 + 172 + 188 is exactly 592 reference units of
+            // content. At 578 the ultimate card hung fourteen units past the wooden edge at
+            // every resolution, which `HudLayoutProbe` catches by summing the contents rather
+            // than by looking. **If a card width changes, change this in the same edit.**
+            rt.sizeDelta = new Vector2(592, 122);
 
             var hgroup = deckGo.AddComponent<HorizontalLayoutGroup>();
             hgroup.childControlHeight = true;
@@ -1948,9 +1989,20 @@ namespace TumbangPreso.UI
             hgroup.spacing = 14.0f;
             hgroup.padding = new RectOffset(16, 16, 10, 10);
 
-            BuildAbilityCard(deckGo.transform, "Skill1", "[E]", 166, out _skill1CardBg, out _skill1KeyText, out _skill1NameText, out _skill1CdText, out _skill1Fill, out _);
-            BuildAbilityCard(deckGo.transform, "Skill2", "[Q]", 166, out _skill2CardBg, out _skill2KeyText, out _skill2NameText, out _skill2CdText, out _skill2Fill, out _);
-            BuildAbilityCard(deckGo.transform, "Ultimate", "[F]", 182, out _ultCardBg, out _ultKeyText, out _ultNameText, out _ultChargeText, out _ultFill, out _ultRt);
+            // ⚠️ THE KEY COMES FROM THE BINDING, NEVER FROM A LITERAL. These read "[E]",
+            // "[Q]" and "[F]" hard-coded, which was already wrong for a player who had rebound
+            // anything and became wrong for EVERYONE when the collisions were untangled on
+            // 2026-08-23. A HUD that names the wrong key is worse than a HUD that names none.
+            BuildAbilityCard(deckGo.transform, "Skill1", "Skill1", 172, false,
+                             out _skill1CardBg, out _skill1Cap, out _skill1Glyph, out _skill1KeyText,
+                             out _skill1NameText, out _skill1CdText, out _skill1Fill, out _, out _);
+            BuildAbilityCard(deckGo.transform, "Skill2", "Skill2", 172, false,
+                             out _skill2CardBg, out _skill2Cap, out _skill2Glyph, out _skill2KeyText,
+                             out _skill2NameText, out _skill2CdText, out _skill2Fill, out _, out _);
+            BuildAbilityCard(deckGo.transform, "Ultimate", "Ultimate", 188, true,
+                             out _ultCardBg, out _ultCap, out _ultGlyph, out _ultKeyText,
+                             out _ultNameText, out _ultChargeText, out _ultFill, out _ultSegments,
+                             out _ultRt);
 
             _heroDeck.SetActive(false);
         }
@@ -2108,8 +2160,28 @@ namespace TumbangPreso.UI
             }
         }
 
-        private void BuildAbilityCard(Transform parent, string name, string key, float width,
-            out Image cardBg, out Text keyText, out Text nameText, out Text cdText, out Image fill, out RectTransform cardRt)
+        /// <summary>
+        /// One ability card: a KEY CAP, the ability name beside it, and a meter under both.
+        ///
+        /// ⚠⚠ THE CAP IS THE PRIMARY READ AND IT REPLACED A TEXT LABEL FOR A MEASURABLE
+        /// REASON. The old card put a small "[E]" in the top-LEFT and the state ("READY", "6%")
+        /// in the top-RIGHT, so reading one card took two saccades across its full width, three
+        /// times over for three cards, in the middle of a round. The cap carries the key AND the
+        /// state at once through its own tint: lit in the hero's colour when the power can be
+        /// used, sunk to ink when it cannot. The player learns one shape instead of parsing two
+        /// strings at opposite corners.
+        ///
+        /// ⚠️ `actionName` IS AN INPUT ACTION, NOT A STRING TO PRINT. The cap's letter comes
+        /// from the live binding via `KeyLabel`, so a rebind in the settings panel is on the HUD
+        /// the same frame and the deck cannot go stale the way the hard-coded labels did.
+        ///
+        /// ⚠️ `segmented` PICKS THE METER, AND THE TWO ARE NOT INTERCHANGEABLE. A skill
+        /// drains a smooth bar; the ultimate FILLS a notched one. See `UltSegments`.
+        /// </summary>
+        private void BuildAbilityCard(Transform parent, string name, string actionName, float width,
+            bool segmented, out Image cardBg, out Image keyCap, out Image glyph, out Text keyText,
+            out Text nameText, out Text stateText, out Image fill, out Image[] segments,
+            out RectTransform cardRt)
         {
             var cardGo = new GameObject(name);
             cardGo.transform.SetParent(parent, false);
@@ -2129,73 +2201,152 @@ namespace TumbangPreso.UI
             group.childControlWidth = true;
             group.childForceExpandHeight = false;
             group.childForceExpandWidth = true;
-            group.spacing = 3.0f;
-            group.padding = new RectOffset(8, 8, 6, 6);
+            group.spacing = 5.0f;
+            group.padding = new RectOffset(8, 8, 7, 7);
 
+            // ---- the cap, and the name beside it -------------------------------------
             var topRow = new GameObject("TopRow");
             topRow.transform.SetParent(cardGo.transform, false);
             var topGroup = topRow.AddComponent<HorizontalLayoutGroup>();
             topGroup.childControlHeight = true;
-
-            // ⚠️ THE GROUP HAS TO CONTROL THE WIDTHS OR THE LAYOUT ELEMENTS BELOW DO NOTHING.
-            // With childControlWidth off, a HorizontalLayoutGroup places children at whatever
-            // width their RectTransform already has and ignores minWidth entirely, so the
-            // ultimate's charge readout kept the default 100 and then drew its text straight
-            // out of the card: the "10%" sat a hundred units to the right of the wooden edge in
-            // a player capture. Controlling and expanding makes the key and the readout share
-            // the row, which is what the two LayoutElements were always describing.
             topGroup.childControlWidth = true;
-            topGroup.childForceExpandWidth = true;
-            topGroup.spacing = 6.0f;
+            topGroup.childForceExpandHeight = true;
+            topGroup.childForceExpandWidth = false;
+            topGroup.spacing = 7.0f;
+            topGroup.childAlignment = TextAnchor.MiddleLeft;
 
-            keyText = HudLabel(topRow.transform, "Key", 18, UiTheme.Amber, TextAnchor.MiddleLeft, 4);
+            var topLe = topRow.AddComponent<LayoutElement>();
+            topLe.minHeight = 46;
+            topLe.preferredHeight = 46;
+
+            var capGo = new GameObject("KeyCap");
+            capGo.transform.SetParent(topRow.transform, false);
+            keyCap = capGo.AddComponent<Image>();
+            keyCap.sprite = GodotTheme.Box(UiTheme.Amber, UiTheme.Ink, 3, 5);
+            keyCap.type = Image.Type.Sliced;
+            keyCap.raycastTarget = false;
+
+            var capLe = capGo.AddComponent<LayoutElement>();
+            capLe.minWidth = 46;
+            capLe.preferredWidth = 46;
+            capLe.minHeight = 46;
+            capLe.preferredHeight = 46;
+
+            // ⚠⚠ THE GLYPH IS THE ICON AND THE TILE IS ITS BACKGROUND, WHICH IS THE
+            // ARRANGEMENT EVERY GAME HE NAMED USES. Overwatch, Valorant and Marvel Rivals all
+            // put a SHAPE in the slot and demote the key to a small chip on its corner, because
+            // a shape is recognised pre-attentively and a letter has to be read. `AbilityIcons`
+            // bakes the shape from the ability's own `Glyph`, so it says what the power DOES to
+            // the world rather than what element it is made of.
+            var glyphGo = new GameObject("Glyph");
+            glyphGo.transform.SetParent(capGo.transform, false);
+            glyph = glyphGo.AddComponent<Image>();
+            glyph.sprite = AbilityIcons.For(AbilityGlyph.Burst);
+            glyph.color = UiTheme.Ink;
+            glyph.preserveAspect = true;
+            glyph.raycastTarget = false;
+            MenuKit.Stretch(glyph.rectTransform);
+            glyph.rectTransform.offsetMin = new Vector2(7, 7);
+            glyph.rectTransform.offsetMax = new Vector2(-7, -7);
+
+            // ⚠️ THE KEY IS A CHIP ON THE CORNER, NOT THE CONTENT OF THE TILE. It has to be
+            // findable when a player is still learning the binding and ignorable once they are
+            // not, which is what a corner does and what a centred label cannot.
+            var chipGo = new GameObject("KeyChip");
+            chipGo.transform.SetParent(capGo.transform, false);
+            var chip = chipGo.AddComponent<Image>();
+            chip.sprite = GodotTheme.Box(UiTheme.Ink, new Color(0, 0, 0, 0), 0, 4);
+            chip.type = Image.Type.Sliced;
+            chip.raycastTarget = false;
+            Place(chip.rectTransform, new Vector2(1.0f, 0.0f), new Vector2(-1, 1), new Vector2(26, 18));
+
+            keyText = HudLabel(chipGo.transform, "Key", 16, UiTheme.Cream, TextAnchor.MiddleCenter, 0);
             keyText.fontStyle = FontStyle.Bold;
-            keyText.text = key;
-            var kle = keyText.gameObject.AddComponent<LayoutElement>();
-            kle.minWidth = 32;
+            keyText.text = KeyLabel(actionName);
+            MenuKit.Stretch(keyText.rectTransform);
 
-            cdText = HudLabel(topRow.transform, "CD", MenuKit.MinReadableUnits, UiTheme.Highlight,
-                              TextAnchor.MiddleRight, 4);
-            cdText.fontStyle = FontStyle.Bold;
-            cdText.text = "READY";
-            var cdle = cdText.gameObject.AddComponent<LayoutElement>();
-            cdle.minWidth = width - 52;
-
-            nameText = HudLabel(cardGo.transform, "Name", 20, UiTheme.Cream, TextAnchor.MiddleCenter, 4);
+            nameText = HudLabel(topRow.transform, "Name", MenuKit.MinReadableUnits, UiTheme.Cream,
+                                TextAnchor.MiddleLeft, 4);
             nameText.fontStyle = FontStyle.Bold;
             nameText.text = name.ToUpperInvariant();
-            // ⚠️ ROOM FOR TWO LINES. "THUNDERSTRIKE OVERDRIVE" is 23 characters and will not fit
-            // one readable line in a card this wide; a single line rect truncated it to
-            // "THUNDERSTRIKE" in the build, and "SEISMIC STOMP" to "SEISMIC". Wrapping is what
-            // the best fit below is for, and it needs the height to wrap INTO.
-            var nameLayout = nameText.gameObject.AddComponent<LayoutElement>();
-            nameLayout.minHeight = 46;
-            nameLayout.preferredHeight = 46;
 
-            // ⚠️⚠️ TWO LINES AT A FIXED SIZE, NOT BEST FIT, AND THE DIFFERENCE WAS VISIBLE IN A
-            // PLAYER CAPTURE. Best fit plus Truncate looks like the right tool and is not: it
-            // wrapped "DEMONIC CARAPACE" correctly and then cut the second line off, so the
-            // card read "DEMONIC" and the player had no idea which power the bar belonged to.
-            // Wrapping with Overflow cannot lose a word: the longest name in any kit,
-            // "THUNDERSTRIKE OVERDRIVE", breaks after the first word and both halves clear the
-            // card's inner width at this size with room to spare.
-            //
-            // ⚠️ AND THE SIZE STAYS AT THE READABLE FLOOR RATHER THAN SHRINKING TO SUIT THE
-            // LONGEST NAME. A HUD card is read at a glance in peripheral vision during a match,
-            // which is the least forgiving reading anywhere in the game.
-            nameText.fontSize = MenuKit.MinReadableUnits;
+            // ⚠️ ROOM FOR TWO LINES, WRAPPED, NEVER BEST-FIT. "THUNDERSTRIKE OVERDRIVE" is
+            // 23 characters and will not fit one readable line in a card this wide. Best fit
+            // plus Truncate looks like the right tool and is not: it wrapped "DEMONIC CARAPACE"
+            // correctly and then cut the second line off, so the card read "DEMONIC" and the
+            // player had no idea which power the bar belonged to. Wrapping with Overflow cannot
+            // lose a word.
             nameText.horizontalOverflow = HorizontalWrapMode.Wrap;
             nameText.verticalOverflow = VerticalWrapMode.Overflow;
 
+            var nameLe = nameText.gameObject.AddComponent<LayoutElement>();
+            nameLe.minWidth = width - 16 - 44 - 7;
+            nameLe.preferredWidth = width - 16 - 44 - 7;
+            nameLe.flexibleWidth = 1.0f;
+
+            // ---- the state line ------------------------------------------------------
+            stateText = HudLabel(cardGo.transform, "State", MenuKit.MinReadableUnits,
+                                 UiTheme.Highlight, TextAnchor.MiddleRight, 4);
+            stateText.fontStyle = FontStyle.Bold;
+            stateText.text = "READY";
+            var stateLe = stateText.gameObject.AddComponent<LayoutElement>();
+            stateLe.minHeight = 20;
+            stateLe.preferredHeight = 20;
+
+            // ---- the meter -----------------------------------------------------------
             var barBg = new GameObject("BarBg");
             barBg.transform.SetParent(cardGo.transform, false);
             var barImg = barBg.AddComponent<Image>();
             barImg.sprite = GodotTheme.Plain(3);
             barImg.type = Image.Type.Sliced;
             barImg.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.75f);
+            barImg.raycastTarget = false;
             var barLe = barBg.AddComponent<LayoutElement>();
-            barLe.minHeight = 8;
-            barLe.preferredHeight = 8;
+            barLe.minHeight = 10;
+            barLe.preferredHeight = 10;
+
+            if (segmented)
+            {
+                // ⚠️ A ROW OF NOTCHES, NOT A FILLED IMAGE. The notches are what make the
+                // ultimate unmistakable next to two draining cooldowns. It is the same quantity
+                // the percentage already reported, drawn in a shape a cooldown never takes.
+                // ⚠⚠ THE RECTTRANSFORM IS ADDED EXPLICITLY, AND LEAVING IT IMPLICIT BROKE
+                // EVERY PLAYMODE TEST THAT BUILDS A HUD. `new GameObject` gives a plain
+                // Transform; parenting it under a RectTransform does NOT upgrade it, and only
+                // adding a Graphic (Image, Text) does. This node holds a layout group and no
+                // graphic of its own, so nothing ever converted it and
+                // `HorizontalLayoutGroup` threw `MissingComponentException` on the first frame
+                // the deck was built. 37 of 55 PlayMode tests went red on one missing line.
+                var segRow = new GameObject("Segments", typeof(RectTransform));
+                segRow.transform.SetParent(barBg.transform, false);
+                MenuKit.Stretch((RectTransform)segRow.transform);
+
+                var segGroup = segRow.AddComponent<HorizontalLayoutGroup>();
+                segGroup.childControlHeight = true;
+                segGroup.childControlWidth = true;
+                segGroup.childForceExpandHeight = true;
+                segGroup.childForceExpandWidth = true;
+                segGroup.spacing = 2.0f;
+                segGroup.padding = new RectOffset(2, 2, 2, 2);
+
+                segments = new Image[UltSegments];
+                for (int i = 0; i < UltSegments; i++)
+                {
+                    var segGo = new GameObject("Seg" + i);
+                    segGo.transform.SetParent(segRow.transform, false);
+                    var seg = segGo.AddComponent<Image>();
+                    seg.sprite = GodotTheme.Plain(2);
+                    seg.type = Image.Type.Sliced;
+                    seg.color = UiTheme.CreamMuted;
+                    seg.raycastTarget = false;
+                    segments[i] = seg;
+                }
+
+                fill = null;
+                return;
+            }
+
+            segments = null;
 
             var fillGo = new GameObject("Fill");
             fillGo.transform.SetParent(barBg.transform, false);
@@ -2208,6 +2359,48 @@ namespace TumbangPreso.UI
             MenuKit.Stretch(fill.rectTransform);
         }
 
+        /// <summary>
+        /// The key currently bound to <paramref name="action"/>, short enough for a 44-unit cap.
+        ///
+        /// ⚠⚠ IT READS THE LIVE ASSET, WITH THE PLAYER'S OVERRIDES APPLIED. Same asset and
+        /// same `Rebinding.Load` the settings panel and `PlayerInputReader` use, so the key on
+        /// the HUD, the key in the menu and the key the game listens to are one answer. Three
+        /// separate literals is what produced a deck advertising E, Q and F for skills that had
+        /// moved.
+        ///
+        /// ⚠️ MOUSE BUTTONS ARE SHORTENED BY HAND. `ToHumanReadableString` gives "Left
+        /// Button", which is eleven characters in a cap sized for one or two.
+        /// </summary>
+        /// <summary>The key bound to an action, for anything outside this class that draws one.</summary>
+        public static string KeyLabelFor(string action) => KeyLabel(action);
+
+        private static string KeyLabel(string action)
+        {
+            if (_bindingAsset == null)
+            {
+                _bindingAsset = Resources.Load<UnityEngine.InputSystem.InputActionAsset>("TumbangPreso");
+                if (_bindingAsset != null) Settings.Rebinding.Load(_bindingAsset);
+            }
+
+            if (_bindingAsset == null) return "?";
+
+            string raw = Settings.Rebinding.DisplayNameFor(_bindingAsset, action);
+            if (string.IsNullOrEmpty(raw) || raw == "-") return "?";
+
+            raw = raw.Trim();
+
+            if (raw.Equals("Left Button", System.StringComparison.OrdinalIgnoreCase)) return "LMB";
+            if (raw.Equals("Right Button", System.StringComparison.OrdinalIgnoreCase)) return "RMB";
+            if (raw.Equals("Middle Button", System.StringComparison.OrdinalIgnoreCase)) return "MMB";
+            if (raw.Equals("Left Shift", System.StringComparison.OrdinalIgnoreCase)) return "SHIFT";
+            if (raw.Equals("Left Ctrl", System.StringComparison.OrdinalIgnoreCase)) return "CTRL";
+            if (raw.Equals("Space", System.StringComparison.OrdinalIgnoreCase)) return "SPACE";
+
+            return raw.ToUpperInvariant();
+        }
+
+        private static UnityEngine.InputSystem.InputActionAsset _bindingAsset;
+
         private void UpdateHeroDeck()
         {
             if (_heroDeck == null) return;
@@ -2216,92 +2409,246 @@ namespace TumbangPreso.UI
             if (abilitySystem == null || abilitySystem.Kit == null)
             {
                 if (_heroDeck.activeSelf) _heroDeck.SetActive(false);
+                if (_inspectHint != null) _inspectHint.enabled = false;
                 return;
+            }
+
+            if (_inspectHint != null)
+            {
+                _inspectHint.enabled = true;
+
+                // ⚠⚠ BUILT ONCE, NOT EVERY FRAME, AND THE FRAME VERSION WAS A MEASURABLE
+                // REGRESSION. `KeyLabel` ends in `InputControlPath.ToHumanReadableString`, which
+                // parses a control path and builds a string; doing that plus a concatenation on
+                // every HUD tick cost enough per frame that `BotBehaviourProbe`, which runs a
+                // whole match at 6x, lost roughly an eighth of its frames. `Time.maximumDeltaTime`
+                // then clamps the catch-up, so the physics steps the bots think in fell far
+                // further than the frame count did: **55 throws a match down to 11, and 77 skill
+                // uses down to 1**. At 1x it was invisible, which is exactly why the probe exists.
+                //
+                // ⚠️ AND `Text.text` IS COMPARED BEFORE ASSIGNMENT ANYWAY. UGUI skips the
+                // rebuild for an identical string, so the cost was never the canvas. It was
+                // producing the string.
+                if (_inspectHintText == null)
+                    _inspectHintText = "HOLD [" + KeyLabel("AbilityInfo") + "] FOR POWER DETAILS";
+
+                if (_inspectHint.text != _inspectHintText) _inspectHint.text = _inspectHintText;
             }
 
             if (!_heroDeck.activeSelf) _heroDeck.SetActive(true);
 
+            // ⚠️ UNSCALED, LIKE THE REST OF THIS HUD. The panel has to keep animating through
+            // hitstop and through a paused intermission; a player who opens it to read a power
+            // while the world is frozen is exactly the player it was built for.
+            _inspect?.Tick(abilitySystem.Kit, Time.unscaledDeltaTime);
+
             var kit = abilitySystem.Kit;
             Color heroColor = UiTheme.ColorForHero(kit.HeroId);
 
-            // Skill 1
-            if (kit.Skill1 != null)
+            PaintSkillCard(kit.Skill1, heroColor, _skill1Cap, _skill1Glyph, _skill1KeyText,
+                           _skill1NameText, _skill1CdText, _skill1Fill);
+            PaintSkillCard(kit.Skill2, heroColor, _skill2Cap, _skill2Glyph, _skill2KeyText,
+                           _skill2NameText, _skill2CdText, _skill2Fill);
+            PaintUltimateCard(kit, heroColor);
+        }
+
+        /// <summary>
+        /// A skill card in one of three states, and each state changes MORE THAN ONE thing.
+        ///
+        /// ⚠⚠ THE CAP CARRIES THE STATE, NOT JUST THE TEXT. Ready is a lit cap in the hero's
+        /// colour with a full bar; cooling is a sunk cap, a draining bar and the seconds left;
+        /// active is the cap pulsing so a duration reads as different from a cooldown. The old
+        /// card changed one word and one bar colour, which is not enough separation to read in
+        /// peripheral vision while somebody is throwing a tsinelas at your can.
+        ///
+        /// ⚠️ THE COOLDOWN BAR DRAINS AND THE ULTIMATE FILLS, DELIBERATELY. Opposite directions
+        /// on top of the notches is the second cue that these are different quantities.
+        /// </summary>
+        private static void PaintSkillCard(Abilities.HeroAbility skill, Color heroColor,
+                                           Image cap, Image glyph, Text key, Text name,
+                                           Text state, Image fill)
+        {
+            if (skill == null || cap == null) return;
+
+            name.text = skill.Name;
+            PaintGlyph(glyph, skill);
+
+            if (skill.IsActive)
             {
-                _skill1NameText.text = kit.Skill1.Name;
-                if (kit.Skill1.CooldownRemaining > 0.0f)
+                float pulse = Mathf.Sin(Time.time * 7.0f) * 0.5f + 0.5f;
+                cap.color = Color.Lerp(heroColor, UiTheme.Highlight, pulse);
+                key.color = UiTheme.Cream;
+                if (glyph != null) glyph.color = UiTheme.Ink;
+
+                state.text = $"{skill.DurationRemaining:0.0}s LEFT";
+                state.color = UiTheme.Highlight;
+
+                if (fill != null)
                 {
-                    _skill1CdText.text = $"{kit.Skill1.CooldownRemaining:0.0}s";
-                    _skill1CdText.color = UiTheme.CreamMuted;
-                    _skill1Fill.fillAmount = 1.0f - kit.Skill1.CooldownRatio;
-                    _skill1Fill.color = UiTheme.Amber;
+                    fill.fillAmount = skill.DurationRatio;
+                    fill.color = UiTheme.Highlight;
                 }
-                else
-                {
-                    _skill1CdText.text = "READY!";
-                    _skill1CdText.color = UiTheme.Highlight;
-                    _skill1Fill.fillAmount = 1.0f;
-                    _skill1Fill.color = heroColor;
-                }
+                return;
             }
 
-            // Skill 2
-            if (kit.Skill2 != null)
+            if (skill.CooldownRemaining > 0.0f)
             {
-                _skill2NameText.text = kit.Skill2.Name;
-                if (kit.Skill2.CooldownRemaining > 0.0f)
+                // ⚠️ SUNK, NOT GREYED. A cap the colour of the card's own shadow reads as
+                // "this one is off" at any size; a mid-grey reads as an unlit but usable key.
+                cap.color = UiTheme.WoodEdge;
+                key.color = UiTheme.CreamMuted;
+                if (glyph != null) glyph.color = UiTheme.CreamMuted;
+
+                state.text = $"{skill.CooldownRemaining:0.0}s";
+                state.color = UiTheme.CreamMuted;
+
+                if (fill != null)
                 {
-                    _skill2CdText.text = $"{kit.Skill2.CooldownRemaining:0.0}s";
-                    _skill2CdText.color = UiTheme.CreamMuted;
-                    _skill2Fill.fillAmount = 1.0f - kit.Skill2.CooldownRatio;
-                    _skill2Fill.color = UiTheme.Amber;
+                    fill.fillAmount = 1.0f - skill.CooldownRatio;
+                    fill.color = UiTheme.Amber;
                 }
-                else
-                {
-                    _skill2CdText.text = "READY!";
-                    _skill2CdText.color = UiTheme.Highlight;
-                    _skill2Fill.fillAmount = 1.0f;
-                    _skill2Fill.color = heroColor;
-                }
+                return;
             }
 
-            // Ultimate
-            if (kit.Ultimate != null)
+            cap.color = heroColor;
+            key.color = UiTheme.Cream;
+            if (glyph != null) glyph.color = UiTheme.Ink;
+
+            state.text = "READY";
+            state.color = UiTheme.Highlight;
+
+            if (fill != null)
             {
-                _ultNameText.text = kit.Ultimate.Name;
-                if (kit.IsUltimateReady)
-                {
-                    float pulse = Mathf.Sin(Time.time * 6.0f) * 0.5f + 0.5f;
-                    Color glowColor = Color.Lerp(UiTheme.Highlight, heroColor, pulse);
-
-                    _ultChargeText.text = "SUPER READY!";
-                    _ultChargeText.color = glowColor;
-                    _ultFill.fillAmount = 1.0f;
-                    _ultFill.color = glowColor;
-
-                    if (_ultRt != null)
-                    {
-                        float scalePulse = 1.0f + Mathf.Sin(Time.time * 8.0f) * 0.05f;
-                        _ultRt.localScale = Vector3.one * scalePulse;
-                    }
-
-                    if (!_lastUltReady)
-                    {
-                        _lastUltReady = true;
-                        GameServices.Audio?.PlayAt("sfx_super_ready", UnityEngine.Camera.main != null ? UnityEngine.Camera.main.transform.position : Vector3.zero);
-                        if (_local != null) Visual.ComicPopup.Super(_local.transform.position);
-                    }
-                }
-                else
-                {
-                    _lastUltReady = false;
-                    if (_ultRt != null) _ultRt.localScale = Vector3.one;
-
-                    _ultChargeText.text = $"{Mathf.FloorToInt(kit.UltimateRatio * 100f)}%";
-                    _ultChargeText.color = UiTheme.Amber;
-                    _ultFill.fillAmount = kit.UltimateRatio;
-                    _ultFill.color = heroColor;
-                }
+                fill.fillAmount = 1.0f;
+                fill.color = heroColor;
             }
         }
+
+        /// <summary>
+        /// The ultimate card. Notches fill, the percentage counts up, and READY is loud.
+        ///
+        /// ⚠⚠ IT NEVER SHOWS A COOLDOWN IN THE SAME SLOT AS A CHARGE. That collision is the
+        /// whole reason the deck read as confusing: two cards saying "READY!" and one saying
+        /// "6%" are three instances of one widget, and nothing told the player that the third
+        /// number was a different KIND of number. The notched meter, the fill direction and the
+        /// wording are three separate cues carrying the same distinction.
+        /// </summary>
+        private void PaintUltimateCard(Abilities.HeroKit kit, Color heroColor)
+        {
+            if (kit.Ultimate == null || _ultCap == null) return;
+
+            _ultNameText.text = kit.Ultimate.Name;
+            PaintGlyph(_ultGlyph, kit.Ultimate);
+
+            float ratio = kit.UltimateRatio;
+
+            // ⚠️⚠️ PRACTICE IS ITS OWN STATE ON THIS CARD, NOT A THIRD FLAVOUR OF READY. During
+            // the warm-up and the between-round buffer the ultimate is free to cast and the
+            // bank is frozen, so the card has to say BOTH: that pressing the key will work, and
+            // that nothing is being earned or spent. The notches keep showing the real banked
+            // charge, dimmed, because that is the number that matters once the whistle goes.
+            if (kit.PracticeMode)
+            {
+                float practicePulse = Mathf.Sin(Time.time * 4.0f) * 0.5f + 0.5f;
+
+                _ultCap.color = Color.Lerp(heroColor, UiTheme.Amber, practicePulse * 0.4f);
+                _ultKeyText.color = UiTheme.Cream;
+                if (_ultGlyph != null) _ultGlyph.color = UiTheme.Ink;
+
+                _ultChargeText.text = $"PRACTICE  ·  BANKED {Mathf.FloorToInt(ratio * 100f)}%";
+                _ultChargeText.color = UiTheme.Amber;
+
+                PaintUltSegments(ratio, UiTheme.Amber, UiTheme.CreamMuted);
+
+                _lastUltReady = false;
+                if (_ultRt != null) _ultRt.localScale = Vector3.one;
+                return;
+            }
+
+            bool ready = kit.IsUltimateReady;
+
+            if (ready)
+            {
+                float pulse = Mathf.Sin(Time.time * 6.0f) * 0.5f + 0.5f;
+                Color glow = Color.Lerp(UiTheme.Highlight, heroColor, pulse);
+
+                _ultCap.color = glow;
+                _ultKeyText.color = UiTheme.Cream;
+                if (_ultGlyph != null) _ultGlyph.color = UiTheme.Ink;
+
+                _ultChargeText.text = "ULT READY";
+                _ultChargeText.color = glow;
+
+                PaintUltSegments(1.0f, glow, glow);
+
+                if (_ultRt != null)
+                {
+                    float scalePulse = 1.0f + Mathf.Sin(Time.time * 8.0f) * 0.05f;
+                    _ultRt.localScale = Vector3.one * scalePulse;
+                }
+
+                if (!_lastUltReady)
+                {
+                    _lastUltReady = true;
+                    GameServices.Audio?.PlayAt("sfx_super_ready",
+                        UnityEngine.Camera.main != null
+                            ? UnityEngine.Camera.main.transform.position
+                            : Vector3.zero);
+                    if (_local != null) Visual.ComicPopup.Super(_local.transform.position);
+                }
+                return;
+            }
+
+            _lastUltReady = false;
+            if (_ultRt != null) _ultRt.localScale = Vector3.one;
+
+            // ⚠️ THE CAP STAYS SUNK UNTIL THE METER IS FULL, because pressing the key does
+            // nothing until then. A lit cap on a power that refuses to fire is the HUD lying.
+            _ultCap.color = UiTheme.WoodEdge;
+            _ultKeyText.color = UiTheme.CreamMuted;
+            if (_ultGlyph != null) _ultGlyph.color = UiTheme.CreamMuted;
+
+            _ultChargeText.text = $"{Mathf.FloorToInt(ratio * 100f)}%";
+            _ultChargeText.color = UiTheme.Amber;
+
+            PaintUltSegments(ratio, heroColor, UiTheme.CreamMuted);
+        }
+
+        /// <summary>
+        /// ⚠️ THE PARTIAL NOTCH IS DIMMED, NOT HALF-DRAWN. A segment either belongs to the
+        /// charge or it does not; fading the one currently filling is what stops ten notches
+        /// from reading as a coarse, jumpy bar.
+        /// </summary>
+        /// <summary>
+        /// ⚠️ THE SPRITE IS SET ONLY WHEN IT CHANGES. `AbilityIcons.For` is cached, so this
+        /// is cheap either way, but assigning `Image.sprite` every frame dirties the canvas
+        /// batch for three cards on every HUD tick and this runs during a live match.
+        /// </summary>
+        private static void PaintGlyph(Image target, Abilities.HeroAbility ability)
+        {
+            if (target == null || ability == null) return;
+
+            var want = AbilityIcons.For(ability.Glyph);
+            if (target.sprite != want) target.sprite = want;
+        }
+
+        private void PaintUltSegments(float ratio, Color on, Color off)
+        {
+            if (_ultSegments == null) return;
+
+            float exact = Mathf.Clamp01(ratio) * UltSegments;
+            int whole = Mathf.FloorToInt(exact);
+            float partial = exact - whole;
+
+            for (int i = 0; i < _ultSegments.Length; i++)
+            {
+                if (_ultSegments[i] == null) continue;
+
+                if (i < whole) _ultSegments[i].color = on;
+                else if (i == whole && partial > 0.05f) _ultSegments[i].color = Color.Lerp(off, on, partial);
+                else _ultSegments[i].color = off;
+            }
+        }
+
     }
 }

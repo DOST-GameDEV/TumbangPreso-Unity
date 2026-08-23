@@ -73,6 +73,13 @@ namespace TumbangPreso.Abilities
             var comp = go.AddComponent<IceBarricadeComponent>();
             comp.Duration = duration;
 
+            // ⚠️ REGISTERED WITH `HazardMap` SO THE BOTS PATH AROUND IT. Without this an
+            // attacker walks straight through on its way to a tsinelas, gets caught, and the
+            // round charges it the unretrieved-slipper penalty for a fetch it was making.
+            // A wall, approximated as a disc covering its own half width. Good enough for
+            // steering: the point is not to walk into it.
+            HazardVolume.Attach(go, 3.0f, -1);
+
             return go;
         }
 
@@ -171,6 +178,11 @@ namespace TumbangPreso.Abilities
             comp.Duration = duration;
             comp.OwnerSlot = ownerSlot;
 
+            // ⚠️ REGISTERED WITH `HazardMap` SO THE BOTS PATH AROUND IT. Without this an
+            // attacker walks straight through on its way to a tsinelas, gets caught, and the
+            // round charges it the unretrieved-slipper penalty for a fetch it was making.
+            HazardVolume.Attach(go, radius, ownerSlot);
+
             return go;
         }
 
@@ -254,6 +266,16 @@ namespace TumbangPreso.Abilities
             light.color = UiTheme.HeroElectricBright;
             light.range = radius * 2.2f;
             light.intensity = 3.5f;
+
+            // ⚠⚠ A TRAIL IS DELIBERATELY *NOT* REGISTERED WITH `HazardMap`, AND THAT IS A
+            // MEASUREMENT, NOT AN OVERSIGHT. `OnTick` drops one of these every 0.10 s for the
+            // whole dash and each lives 3 s, so a single dashing hero leaves up to THIRTY
+            // live discs and three of them fill a 14 by 14 box with a minefield. Registering
+            // them took `BotBehaviourProbe`'s Hero Strike run from 59 throws, 122 skill uses
+            // and 58 idle penalties down to **11 throws, 3 skill uses and 661 idle
+            // penalties**: every bot was surrounded by obstacles it was trying to respect and
+            // simply stopped playing. Trails are breadcrumbs to be run through, not terrain
+            // to be walked around.
 
             var comp = go.AddComponent<ShockTrailComponent>();
             comp.Radius = radius;
@@ -341,6 +363,16 @@ namespace TumbangPreso.Abilities
             light.color = UiTheme.HeroFireBright;
             light.range = radius * 2.4f;
             light.intensity = 3.5f;
+
+            // ⚠⚠ A TRAIL IS DELIBERATELY *NOT* REGISTERED WITH `HazardMap`, AND THAT IS A
+            // MEASUREMENT, NOT AN OVERSIGHT. `OnTick` drops one of these every 0.10 s for the
+            // whole dash and each lives 3 s, so a single dashing hero leaves up to THIRTY
+            // live discs and three of them fill a 14 by 14 box with a minefield. Registering
+            // them took `BotBehaviourProbe`'s Hero Strike run from 59 throws, 122 skill uses
+            // and 58 idle penalties down to **11 throws, 3 skill uses and 661 idle
+            // penalties**: every bot was surrounded by obstacles it was trying to respect and
+            // simply stopped playing. Trails are breadcrumbs to be run through, not terrain
+            // to be walked around.
 
             var comp = go.AddComponent<FireTrailComponent>();
             comp.Radius = radius;
@@ -542,6 +574,9 @@ namespace TumbangPreso.Abilities
             var comp = go.AddComponent<EarthPillarComponent>();
             comp.Duration = duration;
 
+            // A solid pillar. Nobody owns it, so everybody steers round it.
+            HazardVolume.Attach(go, 1.4f, -1);
+
             return go;
         }
 
@@ -640,6 +675,8 @@ namespace TumbangPreso.Abilities
 
             GameServices.Audio?.PlayAt("ability_bagsak_bomb", position);
             ComicPopup.Spawn(position, "VOID GALAXY!", UiTheme.HeroSpiritBright, 1.4f);
+
+            HazardVolume.Attach(go, radius, ownerSlot);
 
             var comp = go.AddComponent<SeanceVoidComponent>();
             comp.Radius = radius;

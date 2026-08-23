@@ -23,7 +23,7 @@ namespace TumbangPreso.Abilities
             private readonly HashSet<int> _hitSlots = new HashSet<int>();
 
             public RocketBurnDashAbility()
-                : base("sean_skill1", "ROCKET BURN DASH", "Fiery shoulder charge delivering heavy knockback.", 6.5f, 0.6f)
+                : base("sean_skill1", "ROCKET BURN DASH", "Fiery shoulder charge delivering heavy knockback.", 6.5f, 0.6f, TumbangPreso.UI.AbilityGlyph.Dash)
             {
             }
 
@@ -87,7 +87,7 @@ namespace TumbangPreso.Abilities
             private readonly SeanHeroKit _kit;
 
             public IgnitionCannonAbility(SeanHeroKit kit)
-                : base("sean_skill2", "IGNITION CANNON", "Ignites next throw into an explosive fireball.", 8.0f, 10.0f)
+                : base("sean_skill2", "IGNITION CANNON", "Ignites next throw into an explosive fireball.", 8.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.Empower)
             {
                 _kit = kit;
             }
@@ -114,7 +114,7 @@ namespace TumbangPreso.Abilities
             private bool _smashed;
 
             public SupernovaSmashdownAbility()
-                : base("sean_ultimate", "SUPERNOVA METEOR SMASH", "Rockets high and crashes down on contact with a massive crater explosion.", 0.0f, 2.0f)
+                : base("sean_ultimate", "SUPERNOVA METEOR SMASH", "Rockets high and crashes down on contact with a massive crater explosion.", 0.0f, 2.0f, TumbangPreso.UI.AbilityGlyph.Slam)
             {
             }
 

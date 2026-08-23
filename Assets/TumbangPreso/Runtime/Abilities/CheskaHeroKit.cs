@@ -18,7 +18,7 @@ namespace TumbangPreso.Abilities
         private sealed class PermafrostSheetAbility : HeroAbility
         {
             public PermafrostSheetAbility()
-                : base("cheska_skill1", "PERMAFROST SHEET", "Coats the ground in slippery ice, disrupting enemy footing.", 7.0f, 0.0f)
+                : base("cheska_skill1", "PERMAFROST SHEET", "Coats the ground in slippery ice, disrupting enemy footing.", 7.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Zone)
             {
             }
 
@@ -39,7 +39,7 @@ namespace TumbangPreso.Abilities
         private sealed class IceBarricadeAbility : HeroAbility
         {
             public IceBarricadeAbility()
-                : base("cheska_skill2", "ICE BARRICADE", "Deploys a crystalline ice wall to block attacks and routes.", 9.0f, 0.0f)
+                : base("cheska_skill2", "ICE BARRICADE", "Deploys a crystalline ice wall to block attacks and routes.", 9.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Wall)
             {
             }
 
@@ -58,7 +58,7 @@ namespace TumbangPreso.Abilities
         private sealed class GlacialShatterBurstAbility : HeroAbility
         {
             public GlacialShatterBurstAbility()
-                : base("cheska_ultimate", "GLACIAL BLIZZARD NOVA", "Freezes nearby enemies and violently deflects slippers.", 0.0f, 0.0f)
+                : base("cheska_ultimate", "GLACIAL BLIZZARD NOVA", "Freezes nearby enemies and violently deflects slippers.", 0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Burst)
             {
             }
 

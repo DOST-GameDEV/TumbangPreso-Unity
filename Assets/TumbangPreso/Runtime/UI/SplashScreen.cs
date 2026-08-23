@@ -135,6 +135,26 @@ namespace TumbangPreso.UI
             StartCoroutine(PreloadGameAssets());
         }
 
+        /// <summary>
+        /// Everything the game will need, brought into memory and onto the GPU while the sting
+        /// plays, so no first-use of anything happens during a round.
+        ///
+        /// ⚠⚠ THE POINT IS THE FIRST FRAME OF THE MATCH, NOT THE MENU. 🧑 2026-08-23: *"load
+        /// every resource in the BH studios loading screen, when i click play it lags and loads
+        /// everything i think"*. Exactly right, and the old routine is why: it warmed the
+        /// roster, the audio and the MAIN MENU scene, and then the arena, its materials, the
+        /// hero effect meshes and every procedurally baked UI sprite were all still cold when
+        /// the player pressed Play. The work did not disappear, it just happened at the worst
+        /// possible moment.
+        ///
+        /// ⚠️ IT YIELDS BETWEEN EVERY STAGE, DELIBERATELY. This runs while a video is playing;
+        /// a stage that blocks for 400 ms stutters the sting itself, which is the studio logo.
+        /// The barrier at the end is what guarantees completeness, not doing it all in one go.
+        ///
+        /// ⚠️ ADD NEW STAGES HERE, AND ADD THEM WITH A `yield`. Anything that is instantiated,
+        /// baked or compiled the first time it is used belongs in this list. The rule for
+        /// deciding: if it can hitch, it warms here.
+        /// </summary>
         private IEnumerator PreloadGameAssets()
         {
             // 1. Warm up shaders across all materials
@@ -195,7 +215,135 @@ namespace TumbangPreso.UI
             _ = Roster.Slippers;
             yield return null;
 
+            // 5. The input asset, with the player's rebinds already applied.
+            //
+            // ⚠️ THE HUD READS BINDINGS TO DRAW ITS KEY CAPS, so a cold asset means the first
+            // frame of the deck draws "?" on all three tiles and then corrects itself.
+            var actions = Resources.Load<UnityEngine.InputSystem.InputActionAsset>("TumbangPreso");
+            if (actions != null) Settings.Rebinding.Load(actions);
+            yield return null;
+
+            // 6. Every procedurally baked UI sprite.
+            //
+            // ⚠️⚠️ THESE ARE PAINTED PIXEL BY PIXEL ON FIRST USE AND THAT IS NOT FREE. Each
+            // `GodotTheme.Box` rasterises a rounded, bordered texture and uploads it, and the
+            // HUD asks for a fresh one for every distinct fill, border, width and radius the
+            // frame it is built. Baking them here moves the whole cost behind the logo.
+            WarmSprites();
+            yield return null;
+
+            // 7. Every ability glyph.
+            foreach (AbilityGlyph glyph in System.Enum.GetValues(typeof(AbilityGlyph)))
+                AbilityIcons.For(glyph);
+            yield return null;
+
+            // 8. Both arenas, as a dependency load rather than a scene load.
+            //
+            // ⚠️⚠️ THIS IS THE ONE THAT ACTUALLY FIXES THE STUTTER ON PLAY. Only the menu was
+            // being pre-loaded, so the map, its materials and its meshes were read off disk on
+            // the frame the player pressed the button. `LoadSceneAsync` cannot hold two scenes
+            // at 90% at once without activating one of them, so the arena is warmed through its
+            // ASSETS instead: everything the scene references is what costs the time, not the
+            // scene graph.
+            //
+            // ⚠️ BOTH MAPS, NOT THE SELECTED ONE. Nothing has been selected yet at boot, and the
+            // player can change the map on the setup screen without ever returning here.
+            yield return WarmMapAssets();
+
+            // 9. The hero ability layer.
+            //
+            // ⚠️ CONSTRUCTING EVERY KIT TOUCHES EVERY ABILITY OBJECT, its strings and its glyph,
+            // which is what the character select and the HUD read the instant Hero Strike opens.
+            foreach (string heroId in Roster.HeroPeople != null
+                         ? HeroIdsFrom(Roster.HeroPeople)
+                         : new string[0])
+            {
+                var kit = Abilities.HeroAbilitySystem.CreateKitFor(heroId);
+                _ = kit?.Skill1?.Name;
+                _ = kit?.Skill2?.Name;
+                _ = kit?.Ultimate?.Name;
+            }
+            yield return null;
+
             _assetsPreloaded = true;
+        }
+
+        private static string[] HeroIdsFrom(System.Collections.Generic.IReadOnlyList<RosterEntry> people)
+        {
+            var ids = new string[people.Count];
+            for (int i = 0; i < people.Count; i++) ids[i] = people[i] != null ? people[i].Id : null;
+            return ids;
+        }
+
+        /// <summary>
+        /// ⚠️ THE ARENA'S ASSETS, NOT THE ARENA. `Application.CanStreamedLevelBeLoaded` only
+        /// tells us the scene is in the build; there is no supported way to hold two scenes
+        /// pre-loaded at once. Loading additively and immediately unloading DOES warm the
+        /// dependency graph, and it happens behind a full-screen video where a frame spike
+        /// costs nothing.
+        /// </summary>
+        private IEnumerator WarmMapAssets()
+        {
+            string[] maps = { SceneFlow.Eskinita, SceneFlow.BayanPlaza };
+
+            foreach (string map in maps)
+            {
+                if (!Application.CanStreamedLevelBeLoaded(map)) continue;
+
+                AsyncOperation load = null;
+                try
+                {
+                    load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Additive);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogWarning($"[Splash] could not warm {map}: {e.Message}");
+                }
+
+                if (load == null) continue;
+
+                while (!load.isDone) yield return null;
+
+                var scene = SceneManager.GetSceneByName(map);
+                if (scene.IsValid() && scene.isLoaded)
+                {
+                    // ⚠️ THE OBJECTS ARE SWITCHED OFF BEFORE THE UNLOAD, so nothing in the map
+                    // gets an Awake, a Start or a frame of Update inside the splash scene. A
+                    // SliceRunner with AutoStart waking up here would begin a match nobody is
+                    // in, behind the logo.
+                    foreach (var root in scene.GetRootGameObjects())
+                        if (root != null) root.SetActive(false);
+
+                    var unload = SceneManager.UnloadSceneAsync(scene);
+                    while (unload != null && !unload.isDone) yield return null;
+                }
+
+                yield return null;
+            }
+
+            // The meshes and textures stay resident; only the scene graph went away. Do NOT
+            // call Resources.UnloadUnusedAssets here, it would undo the entire stage.
+        }
+
+        /// <summary>
+        /// Bake the boxes the menus and the HUD ask for, in the combinations they ask for them.
+        /// </summary>
+        private static void WarmSprites()
+        {
+            GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
+            GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
+            GodotTheme.CardBox(UiTheme.WoodDark, UiTheme.WoodEdge);
+            GodotTheme.CardBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
+            GodotTheme.ShadowBox();
+
+            for (int radius = 2; radius <= 6; radius++) GodotTheme.Plain(radius);
+
+            GodotTheme.Box(UiTheme.WoodDark, UiTheme.WoodEdge,
+                           GodotTheme.WoodBorderWidth, GodotTheme.WoodCornerRadius);
+            GodotTheme.Box(UiTheme.WoodDeep, UiTheme.WoodEdge, 3, 6);
+            GodotTheme.Box(UiTheme.Amber, UiTheme.Ink, 3, 5);
+            GodotTheme.Box(UiTheme.Amber, UiTheme.Ink, 3, 6);
+            GodotTheme.Box(UiTheme.Ink, new Color(0, 0, 0, 0), 0, 4);
         }
 
         private bool PreloadComplete =>

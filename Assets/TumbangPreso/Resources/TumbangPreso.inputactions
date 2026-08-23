@@ -130,6 +130,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "AbilityInfo",
+                    "type": "Button",
+                    "id": "6f1a2b30-0003-4000-8000-000000000001",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -223,17 +232,6 @@
                 },
                 {
                     "name": "",
-                    "id": "6f1a2b30-0002-4000-8000-000000000004",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "SpecialAbility",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000005",
                     "path": "<Keyboard>/e",
                     "interactions": "",
@@ -245,29 +243,7 @@
                 },
                 {
                     "name": "",
-                    "id": "6f1a2b30-0002-4000-8000-000000000006",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Grab",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000007",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Lunge",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "6f1a2b30-0002-4000-8000-000000000008",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
@@ -334,7 +310,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000020",
-                    "path": "<Keyboard>/e",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -345,7 +321,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000021",
-                    "path": "<Keyboard>/q",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -356,7 +332,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000022",
-                    "path": "<Keyboard>/f",
+                    "path": "<Keyboard>/x",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -366,12 +342,12 @@
                 },
                 {
                     "name": "",
-                    "id": "6f1a2b30-0002-4000-8000-000000000023",
-                    "path": "<Keyboard>/z",
+                    "id": "6f1a2b30-0003-4000-8000-000000000100",
+                    "path": "<Keyboard>/tab",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Ultimate",
+                    "action": "AbilityInfo",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -383,8 +359,16 @@
             "name": "Keyboard&Mouse",
             "bindingGroup": "Keyboard&Mouse",
             "devices": [
-                { "devicePath": "<Keyboard>", "isOptional": false, "isOR": false },
-                { "devicePath": "<Mouse>", "isOptional": false, "isOR": false }
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                }
             ]
         }
     ]

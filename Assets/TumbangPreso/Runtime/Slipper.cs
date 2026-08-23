@@ -979,6 +979,23 @@ namespace TumbangPreso
                 fromFlight = false;
             }
 
+            // ⚠⚠ AND THE RESTING PLACE IS WALLED, NOT ONLY THE FLIGHT. `BounceOffBounds`
+            // runs inside `FixedUpdate` and that returns immediately unless the state is
+            // InFlight, so every path that puts a slipper DOWN was outside the arena walls by
+            // construction: a landing at the very edge, a deflection resolved on the last frame
+            // of flight, or the owner-mark recovery above. `BotBehaviourProbe` caught one at
+            // x = 9.28 against a playable half width of 8.6, which is ammunition sitting
+            // somewhere no attacker is allowed to walk to, and therefore an attacker deleted
+            // from the round exactly as the note above describes.
+            //
+            // ⚠️ THE SAME LIMITS THE BOUNCE USES, so a slipper cannot come to rest anywhere a
+            // flight would have been turned back from.
+            float restLimitX = AIController.PlayableHalfX - Balance.SlipperHitRadius;
+            float restLimitZ = AIController.PlayableHalfZ - Balance.SlipperHitRadius;
+
+            if (restLimitX > 0.0f) p.x = Mathf.Clamp(p.x, -restLimitX, restLimitX);
+            if (restLimitZ > 0.0f) p.z = Mathf.Clamp(p.z, -restLimitZ, restLimitZ);
+
             transform.position = new Vector3(p.x, rest, p.z);
 
             // ⚠️ AND IT MAKES A SOUND. A throw that hit a body played one cue and a throw that

@@ -12,13 +12,25 @@ namespace TumbangPreso
     /// other cannot. Adding a `Keyboard.current` read anywhere else quietly reintroduces the
     /// divergence the whole indirection exists to prevent.
     ///
-    /// ⚠️ E IS CONTEXTUAL AND THAT IS RESOLVED DOWNSTREAM, NOT HERE. E is bound to BOTH
-    /// `Grab` and `Lunge`, and left-click to both `Grab` and `SpecialAbility`, exactly as the
-    /// Godot input map has it. This class reports both as held and lets the carrier take
-    /// first refusal: tap with a slipper at your feet is a pickup, tap with nothing grabbable
-    /// is a shove, hold as the taya in the lata's ring is the reset channel, and only a press
-    /// nothing consumed reaches the lunge. Resolving it here would need this class to know
-    /// the world state, which is how one keybind becomes three.
+    /// ⚠⚠ ONE CONTROL, ONE ACTION, SINCE 2026-08-23. The map used to bind E to `Grab`,
+    /// `Lunge` AND `Skill1`, left click to `Grab` AND `SpecialAbility`, and Q to
+    /// `SpecialAbility` AND `Skill2`, following the Godot map and then stacking the hero keys
+    /// on top of it. Whichever consumer ran first won the press, so throw did not feel like it
+    /// was on left click even though it was bound there, and a hero's first skill came out of
+    /// the pickup key. The full table is in `Settings.Rebinding` and a test asserts no control
+    /// is shared.
+    ///
+    /// ⚠️ GRAB IS STILL CONTEXTUAL, AND THAT IS RESOLVED DOWNSTREAM, NOT HERE. One key, one
+    /// action, but that action does several jobs depending on the world: tap with a slipper at
+    /// your feet is a pickup, tap with nothing grabbable is a shove, hold as the taya in the
+    /// lata's ring is the reset channel. The carrier takes first refusal and only a press it
+    /// did not consume reaches the shove. Resolving it here would need this class to know the
+    /// world state, which is how one keybind becomes three.
+    ///
+    /// ⚠️ THE TWO ROLES SHARE `SpecialAbility` DELIBERATELY, and that is a role split, not
+    /// a collision. Left click charges the throw for an attacker; `can_throw()` refuses a
+    /// defender outright, so for the taya the same button is the punch. Nobody loses anything,
+    /// and no frame has both branches live.
     /// </summary>
     public sealed class PlayerInputReader : MonoBehaviour
     {

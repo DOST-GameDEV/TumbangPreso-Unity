@@ -149,6 +149,55 @@ namespace TumbangPreso.Core
         public const float SeparationRadius = 1.45f;
         public const float SeparationWeight = 0.65f;
 
+        /// <summary>
+        /// How much room a body wants beside a hero hazard it is walking past.
+        ///
+        /// ⚠⚠ THE HAZARD'S OWN RADIUS IS NOT ENOUGH AND THAT IS THE WHOLE VALUE OF THIS
+        /// NUMBER. Steering to exactly the edge means clipping it: the heading is quantised to
+        /// eight compass directions (`EightWayThreshold`), the body has width, and the effect
+        /// is applied by distance to the CENTRE rather than to a collider. Half a metre of
+        /// margin is what turns "walked past it" into "walked past it every time".
+        ///
+        /// ⚠️ BIGGER IS NOT SAFER. Every extra metre is a longer detour, and a detour on the
+        /// way to a tsinelas is charged at 5 points a second by the unretrieved-slipper clock.
+        /// This is a trade, not a safety margin to max out.
+        /// </summary>
+        public const float HazardAvoidMargin = 0.55f;
+
+        /// <summary>
+        /// Below this distance to the goal, walk into the hazard rather than around it.
+        ///
+        /// ⚠⚠ A SLIPPER THAT LANDS INSIDE A HAZARD MUST STILL BE FETCHED. Without this rule
+        /// the avoidance is a trap of its own: the blocker is between the bot and the slipper
+        /// no matter which way it goes, so it circles the hazard forever and the round bills it
+        /// for the slipper the entire time. Taking the slow ground and getting out is strictly
+        /// better than never arriving.
+        /// </summary>
+        public const float HazardAvoidGiveUp = 1.8f;
+
+        /// <summary>
+        /// A hazard wider than this is walked THROUGH, not around.
+        ///
+        /// ⚠️⚠️ THIS IS NOT A TUNING KNOB, IT IS A MEASUREMENT OF THE CURRENT ABILITY SIZES,
+        /// AND IT SHOULD BECOME UNNECESSARY. The box is `CONFINEMENT_RADIUS` 7.0, so the whole
+        /// danger zone is 14 by 14. A Permafrost Sheet has a radius of 5.0 and a Seance Void
+        /// 7.5, which is 40% and 90% of that area from ONE cast. There is no way round a disc
+        /// that size inside the walls, so a bot that tries walks the perimeter forever.
+        ///
+        /// ⚠️ MEASURED, NOT GUESSED. Turning avoidance on with no cap dropped
+        /// `BotBehaviourProbe`'s Hero Strike run from 78-97 throws in four rounds to **17**,
+        /// while Classic, which has no hazards, did not move. The bots were not broken; they
+        /// were correctly refusing to cross ground that covered most of the arena, and they
+        /// never reached a throwing position again.
+        ///
+        /// ⚠️ WHEN THE ABILITY FOOTPRINTS COME DOWN (`docs/TODO.md` § 8 targets roughly 2.5 m
+        /// for a skill), every hazard falls under this cap and avoidance starts applying to all
+        /// of them with no further change here. That is the intended end state. Until then a
+        /// bot takes the slow ground rather than never arriving, which is the same trade
+        /// `HazardAvoidGiveUp` makes at close range.
+        /// </summary>
+        public const float HazardAvoidMaxRadius = 3.0f;
+
         /// <summary>sin(22.5°). The threshold that snaps a heading onto one of eight
         /// compass directions, so a bot walks the same lanes a keyboard player does
         /// instead of gliding along arbitrary angles.</summary>

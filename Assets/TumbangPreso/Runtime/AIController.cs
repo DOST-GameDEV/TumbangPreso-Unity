@@ -1489,6 +1489,8 @@ namespace TumbangPreso
             flat = flat.normalized;
             _driving = true;
 
+            flat = AvoidHazards(flat);
+
             // ⚠️ NINETY DEGREES OFF THE WANTED HEADING WHILE UNSTICKING. Enough to clear a
             // corner, and it still makes progress ALONG the obstacle rather than backing away
             // from it — backing off just walks into the same corner again a second later.
@@ -1503,6 +1505,64 @@ namespace TumbangPreso
         {
             intent.Move = Vector2.zero;
             intent.Set(Verb.Sprint, false);
+        }
+
+        /// <summary>
+        /// Bend a heading around whatever hero hazard is sitting on it.
+        ///
+        /// ⚠⚠ THIS IS THE FIX FOR THE HERO STRIKE PENALTY VARIANCE. `BotBehaviourProbe`
+        /// measured unretrieved-slipper penalties swinging from 0 to 28 across identical Hero
+        /// Strike runs while Classic held a flat 0, and the planner was never at fault: the
+        /// attacker decided correctly to fetch, `Drive` pointed it at the slipper in a straight
+        /// line, and the line ran through a Permafrost Sheet or a Seance Void. It was slowed,
+        /// slipped or pulled off course, arrived late or never, and was billed 5 points a second
+        /// for a slipper it was on its way to collect. How often a hazard happened to land
+        /// between a bot and its tsinelas is the entire variance.
+        ///
+        /// ⚠️ IT STEERS THE HEADING, IT DOES NOT REPLACE THE PLAN. The plan still says where
+        /// to go and why; this only changes the walk there, one frame at a time, so nothing in
+        /// the decision layer has to know hazards exist.
+        ///
+        /// ⚠️ IT GIVES UP CLOSE TO THE GOAL, and that clause is not an optimisation. A
+        /// slipper that lands INSIDE a hazard is still a slipper that has to be fetched; without
+        /// the give-up the blocker is unavoidable by construction and the bot orbits it for the
+        /// rest of the round while the penalty clock runs. Slow ground beats never arriving.
+        /// </summary>
+        private Vector3 AvoidHazards(Vector3 heading)
+        {
+            if (Abilities.HazardMap.Count == 0) return heading;
+
+            Vector3 here = transform.position;
+
+            // The goal is what the plan is walking to. Steering is only meaningful against a
+            // destination; a bot with no goal is loitering and has nothing to path around.
+            Vector3 target = _goal;
+            Vector3 toGoal = target - here;
+            toGoal.y = 0.0f;
+
+            if (toGoal.sqrMagnitude < 0.0001f) return heading;
+            if (toGoal.magnitude <= AiTuning.HazardAvoidGiveUp) return heading;
+
+            // ⚠⚠ ONLY WHEN THIS DRIVE IS ACTUALLY THE WALK TO THE GOAL, AND MISSING THIS
+            // CHECK COST A WHOLE MATCH. `Drive` is not only called with "head for the goal":
+            // `Loiter` drives back along its leash, the unstick drives ninety degrees off, and
+            // separation pushes away from a body. Bending every one of those toward a steer
+            // computed against `_goal` overrides a deliberate direction with an unrelated one.
+            // Measured in `BotBehaviourProbe`: Hero Strike fell to 15 throws and 645 idle
+            // penalties in four rounds, with one seat travelling 27 m in the entire match,
+            // because its recovery moves were being rewritten into a walk it had not asked for.
+            Vector3 goalDir = toGoal.normalized;
+            if (Vector3.Dot(heading, goalDir) < 0.7f) return heading;
+
+            if (!Abilities.HazardMap.TryFindBlocker(here, target, _motor.PlayerSlot,
+                                                    AiTuning.HazardAvoidMargin,
+                                                    AiTuning.HazardAvoidMaxRadius, out var blocker))
+                return heading;
+
+            Vector3 steer = Abilities.HazardMap.SteerAround(here, target, blocker,
+                                                            AiTuning.HazardAvoidMargin);
+
+            return steer.sqrMagnitude > 0.0001f ? steer.normalized : heading;
         }
 
         /// <summary>
