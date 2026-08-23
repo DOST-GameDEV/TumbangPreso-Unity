@@ -33,6 +33,203 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
+        /// Stop a freshly added emitter dead before anything is written to it.
+        ///
+        /// ⚠️⚠️ `AddComponent&lt;ParticleSystem&gt;()` COMES BACK ALREADY PLAYING, AND WRITING
+        /// `main.duration` TO A PLAYING SYSTEM IS AN ENGINE ASSERT: *"Setting the duration while
+        /// system is still playing is not supported."* All four generators here set `duration`
+        /// on the line after the component is added, so every hero ability that spawned
+        /// particles threw an assert. It went unnoticed because it is a LOG assert rather than
+        /// an exception: the effect still played, the game carried on, and only the PlayMode
+        /// runner treats an unexpected log line as a failure. `AiDiagnosticProbe` and
+        /// `BotBehaviourProbe` both went red on it the first time this branch compiled.
+        ///
+        /// ⚠️ `StopEmittingAndClear` RATHER THAN A PLAIN `Stop`. A plain stop leaves already
+        /// emitted particles alive and the system counts as still playing until they expire,
+        /// which is the same assert one frame later.
+        /// </summary>
+        private static void Quiesce(ParticleSystem ps)
+        {
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+            var main = ps.main;
+            main.playOnAwake = false;
+        }
+
+        // -------------------------------------------------------------------
+        // § AMBIENT AURAS: the particles that hang off a hero while a power is running.
+        //
+        // ⚠️⚠️ THEY GO ON THE BODY, AND ONLY ON THE FOUR POWERS THAT ARE ACTUALLY ON A BODY.
+        // 🧑 2026-08-23: *"did u add vfx particles too, like enderman or blaze in minecraft,
+        // try to implement it only for those that should have it"*. Right instinct and it is
+        // also the readability rule: an aura is a STATUS, so it has to mean one thing. Nemu is
+        // untaggable while the wisps are up; Dante is unstunnable while the embers are; Zack and
+        // Sean are moving fast while their trails are. A player who learns those four reads them
+        // from across the court without a nameplate icon.
+        //
+        // ⚠️⚠️ CHESKA GETS NONE, ON PURPOSE. Every one of her powers is placed on the GROUND, so
+        // an aura on her body would say "something is happening to Cheska" when the thing that
+        // is happening is three metres in front of her. The absence is the correct answer, not
+        // an omission to be tidied up later.
+        //
+        // ⚠️⚠️ AND NOTHING GOES ON A TRAIL. `HeroHazards` records the measurement: a dashing hero
+        // drops a trail disc every 0.10 s and each lives 3 s, so ONE dash leaves up to thirty
+        // live objects. Thirty looping ParticleSystems is a different kind of bug from the one
+        // this feature is for. Zone hazards are singular and get one each; trails get none.
+        // -------------------------------------------------------------------
+
+        /// <summary>What an aura is made of. One per hero state that has one.</summary>
+        public enum Aura
+        {
+            /// <summary>Nemu phasing. Purple motes falling off the body, Enderman-style.</summary>
+            VoidWisp,
+
+            /// <summary>Dante armoured. Embers rising off hot rock, Blaze-style.</summary>
+            MagmaEmber,
+
+            /// <summary>Zack overcharged. Sparks thrown off sideways.</summary>
+            ElectricSpark,
+
+            /// <summary>Sean rushing. A short, hot smear of fire.</summary>
+            FireEmber,
+
+            /// <summary>A frost zone breathing. The only one that is not on a body.</summary>
+            FrostMote,
+        }
+
+        /// <summary>
+        /// Hang a looping emitter off a transform for a fixed time, then clean it up.
+        ///
+        /// ⚠️ IT PARENTS, AND SIMULATES IN WORLD SPACE. Parenting is what makes it follow the
+        /// hero; world simulation is what makes the particles STAY BEHIND when the hero moves,
+        /// which is the entire difference between an aura and a cloud of dots glued to a model.
+        ///
+        /// ⚠️ THE CALLER DOES NOT OWN THE OBJECT. Every one of these runs for a known duration
+        /// (an ability's own), so it destroys itself rather than making five kits each remember
+        /// to tear one down in `OnEnd`, which is where the last aura leak came from.
+        /// </summary>
+        public static GameObject AttachAura(Transform host, Aura aura, float duration)
+        {
+            if (host == null) return null;
+
+            var go = new GameObject("Vfx_Aura_" + aura);
+            go.transform.SetParent(host, false);
+            go.transform.localPosition = new Vector3(0.0f, 0.9f, 0.0f);
+
+            var ps = go.AddComponent<ParticleSystem>();
+            Quiesce(ps);
+
+            var pRenderer = go.GetComponent<ParticleSystemRenderer>();
+            pRenderer.material = GetParticleMaterial();
+
+            var main = ps.main;
+            main.duration = Mathf.Max(0.2f, duration);
+            main.loop = false;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            main.stopAction = ParticleSystemStopAction.Destroy;
+
+            var emission = ps.emission;
+            var shape = ps.shape;
+            var col = ps.colorOverLifetime;
+            col.enabled = true;
+
+            var grad = new Gradient();
+
+            switch (aura)
+            {
+                case Aura.VoidWisp:
+                    // Falls rather than rises, and drifts slowly. Nemu is HERE AND NOT HERE, so
+                    // the motes should look like they are coming off her rather than driving.
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(0.55f, 1.1f);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(0.15f, 0.7f);
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.06f, 0.16f);
+                    main.gravityModifier = 0.28f;
+                    main.startColor = new ParticleSystem.MinMaxGradient(
+                        UiTheme.HeroSpirit, UiTheme.HeroSpiritBright);
+                    emission.rateOverTime = 26.0f;
+                    shape.shapeType = ParticleSystemShapeType.Box;
+                    shape.scale = new Vector3(0.7f, 1.5f, 0.7f);
+                    grad.SetKeys(
+                        new[] { new GradientColorKey(UiTheme.HeroSpiritBright, 0.0f),
+                                new GradientColorKey(new Color(0.18f, 0.02f, 0.34f), 1.0f) },
+                        new[] { new GradientAlphaKey(0.0f, 0.0f), new GradientAlphaKey(0.85f, 0.25f),
+                                new GradientAlphaKey(0.0f, 1.0f) });
+                    break;
+
+                case Aura.MagmaEmber:
+                    // Rises, because heat rises. Negative gravity is the whole read.
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(0.5f, 1.0f);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(0.5f, 1.4f);
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.05f, 0.13f);
+                    main.gravityModifier = -0.35f;
+                    main.startColor = new ParticleSystem.MinMaxGradient(
+                        UiTheme.HeroMagmaCore, new Color(1.0f, 0.92f, 0.55f, 1.0f));
+                    emission.rateOverTime = 32.0f;
+                    shape.shapeType = ParticleSystemShapeType.Box;
+                    shape.scale = new Vector3(0.85f, 1.4f, 0.85f);
+                    grad.SetKeys(
+                        new[] { new GradientColorKey(new Color(1.0f, 0.95f, 0.6f), 0.0f),
+                                new GradientColorKey(new Color(0.75f, 0.14f, 0.02f), 1.0f) },
+                        new[] { new GradientAlphaKey(0.95f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
+                    break;
+
+                case Aura.ElectricSpark:
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(0.14f, 0.34f);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(1.6f, 3.4f);
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.04f, 0.11f);
+                    main.gravityModifier = 0.1f;
+                    main.startColor = new ParticleSystem.MinMaxGradient(
+                        Color.white, UiTheme.HeroElectric);
+                    emission.rateOverTime = 46.0f;
+                    shape.shapeType = ParticleSystemShapeType.Sphere;
+                    shape.radius = 0.45f;
+                    grad.SetKeys(
+                        new[] { new GradientColorKey(Color.white, 0.0f),
+                                new GradientColorKey(UiTheme.HeroElectric, 1.0f) },
+                        new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
+                    break;
+
+                case Aura.FireEmber:
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(0.30f, 0.65f);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(0.8f, 2.2f);
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.07f, 0.18f);
+                    main.gravityModifier = -0.5f;
+                    main.startColor = new ParticleSystem.MinMaxGradient(
+                        new Color(1.0f, 0.86f, 0.35f, 1.0f), UiTheme.HeroFire);
+                    emission.rateOverTime = 55.0f;
+                    shape.shapeType = ParticleSystemShapeType.Sphere;
+                    shape.radius = 0.5f;
+                    grad.SetKeys(
+                        new[] { new GradientColorKey(new Color(1.0f, 0.9f, 0.45f), 0.0f),
+                                new GradientColorKey(UiTheme.HeroFire, 1.0f) },
+                        new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
+                    break;
+
+                default: // FrostMote
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(0.9f, 1.8f);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(0.1f, 0.45f);
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.05f, 0.12f);
+                    main.gravityModifier = -0.06f;
+                    main.startColor = new ParticleSystem.MinMaxGradient(
+                        UiTheme.HeroIceBright, UiTheme.HeroIce);
+                    emission.rateOverTime = 18.0f;
+                    shape.shapeType = ParticleSystemShapeType.Circle;
+                    shape.radius = 1.0f;
+                    grad.SetKeys(
+                        new[] { new GradientColorKey(Color.white, 0.0f),
+                                new GradientColorKey(UiTheme.HeroIceBright, 1.0f) },
+                        new[] { new GradientAlphaKey(0.0f, 0.0f), new GradientAlphaKey(0.7f, 0.3f),
+                                new GradientAlphaKey(0.0f, 1.0f) });
+                    break;
+            }
+
+            col.color = grad;
+
+            ps.Play();
+            return go;
+        }
+
+        /// <summary>
         /// Spawns a radial blizzard ice crystal burst at the given position.
         /// </summary>
         public static GameObject SpawnIceBurst(Vector3 pos, float radius)
@@ -41,6 +238,8 @@ namespace TumbangPreso.Visual
             go.transform.position = pos;
 
             var ps = go.AddComponent<ParticleSystem>();
+            Quiesce(ps);
+
             var pRenderer = go.GetComponent<ParticleSystemRenderer>();
             pRenderer.material = GetParticleMaterial();
 
@@ -87,6 +286,8 @@ namespace TumbangPreso.Visual
             go.transform.position = pos;
 
             var ps = go.AddComponent<ParticleSystem>();
+            Quiesce(ps);
+
             var pRenderer = go.GetComponent<ParticleSystemRenderer>();
             pRenderer.material = GetParticleMaterial();
 
@@ -134,6 +335,8 @@ namespace TumbangPreso.Visual
             go.transform.position = pos;
 
             var ps = go.AddComponent<ParticleSystem>();
+            Quiesce(ps);
+
             var pRenderer = go.GetComponent<ParticleSystemRenderer>();
             pRenderer.material = GetParticleMaterial();
 
@@ -177,6 +380,8 @@ namespace TumbangPreso.Visual
             go.transform.position = pos;
 
             var ps = go.AddComponent<ParticleSystem>();
+            Quiesce(ps);
+
             var pRenderer = go.GetComponent<ParticleSystemRenderer>();
             pRenderer.material = GetParticleMaterial();
 

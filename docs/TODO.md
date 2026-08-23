@@ -31,7 +31,143 @@ plainly in the handoff that the wire half is simulated.
 
 ---
 
+## 2 · Cheska's Ice Barricade duration was set by accident
+
+**A one-line balance question left open on purpose, because it wants a measurement.**
+
+`CheskaHeroKit.IceBarricadeAbility.OnActivate` calls
+`SpawnIceBarricade(position, forward, duration)`. A calibration pass on 2026-08-23 meant to
+set the wall's FOOTPRINT to 3.2 m and passed 3.2 into the third parameter, which is the
+DURATION in seconds. The signature has no radius parameter at all, so the footprint stayed at
+its `HazardVolume` default of 1.6 m and the wall's life quietly went from 6.0 s to 3.2 s.
+
+The 3.2 was kept rather than reverted, on the balance rather than on the history: the skill
+cools in 9 s, so a 6 s wall stands for two thirds of every cycle in front of a lata that only
+has to survive 90 s. But nobody has measured either value.
+
+**Needs:** a `BotBehaviourProbe` Hero Strike run at 3.2 s and at 6.0 s, comparing knockdowns
+against the round and unretrieved-slipper penalties, and the winner written into the call with
+its number. The argument is named now (`duration: 3.2f`) so the next reader cannot repeat the
+mistake, and the telegraph radius (1.6 m) is asserted against the `HazardVolume` in
+`HeroPresentationTests.TelegraphsMatchWhatTheAbilityPlaces`.
+
+**Where.** `Assets/TumbangPreso/Runtime/Abilities/CheskaHeroKit.cs`,
+`Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`.
+
+---
+
+## 3 · The five hero accents have not been seen in a real match
+
+**Not a bug. A judgement that needs a human and a played round.**
+
+`UiTheme`'s five hero accents were re-tuned on 2026-08-23 to answer `Art_Direction.md` § 1:
+Dante was four degrees off the Offense orange and Cheska twenty off the Defence blue, so both
+could read as a role rather than as a hero. The new set is asserted at 25 degrees clear of both
+role hues and 30 degrees clear of each other by `HeroPresentationTests`, and the reasoning is
+in `docs/Hero_Strike_UI.md` § 3.
+
+**The one worth arguing with is Dante.** His kit is magma and orange is the colour he cannot
+have, so his accent is now jade (`#3fa65c`), the colour of the crust, while his fissure light,
+embers and magma core stay hot orange through `UiTheme.HeroMagmaCore`. It is defensible and it
+is a real change to a character's identity.
+
+**Needs:** a played Hero Strike round, four seats, and an answer to one question: can you still
+tell at a glance which player is the taya. If the answer is no the accents move again; if it is
+yes, this closes.
+
+---
+
 ## Closed
+
+- **Hero abilities felt clunky, and the hero UI was cramped and off-brand.** ✅ 2026-08-23.
+  One request, seven separate faults, every one verified rather than assumed.
+
+  **It did not compile.** `Hud.BuildAbilityCard` was missing its closing brace at
+  `feat/hero-modes-and-abilities-ui-antigravity` HEAD, and `InputBinding.ToHumanReadableString`
+  was being reached as an extension method in a file with no `using UnityEngine.InputSystem`.
+  Two compile errors, so nothing on the branch had run.
+
+  **Presses were being eaten.** `HeroAbilitySystem.Update` returned before it read the intent
+  table whenever `CanAct()` was false, and `JustPressed` is a one-frame edge, so a skill
+  pressed during a stun, a stagger or a shove recovery vanished with nothing recording it. A tag
+  is a five second stun. There is now a 0.30 s buffer, and only "cannot act" is held: a cooldown
+  or charge refusal is answered and cleared. `TheInputBufferIsShortEnoughToBeAnAid`.
+
+  **A refused press looked identical to one that worked.** `TryActivate*` returned a bare
+  `bool`, so nothing could tell "on cooldown" from "stunned" from "meter empty", and all three
+  drew nothing at all. `HeroKit.CastOutcome` reports which; the tile now flashes hero-accent on
+  a cast and `Danger` with `ui_error` on a refusal, inside one frame.
+  `ACoolingAbilityAnswersDifferentlyFromAnEmptyMeter`, `ASkillOnCooldownSaysSo`.
+
+  **The ground telegraph lied.** The HUD invented 7.5 m for any ultimate, 5.0 m for any first
+  skill and 3.5 m for any second, and offset the ring forward only for Cheska. Nine of twelve
+  numbers disagreed with the ability they were drawn for: Dante's 2.4 m stomp drew 5.0 m, Nemu's
+  3.2 m void drew 7.5 m centred on Nemu when it lands 3.5 m ahead. `TelegraphRadius` and
+  `TelegraphRange` live on `HeroAbility` now and every pair is asserted against the spawn call
+  in `TelegraphsMatchWhatTheAbilityPlaces`. The ring also survives 0.35 s past the cast, because
+  every one of these fires on the press edge and the held ring was unreachable on a tap.
+
+  **Every see-through effect in Hero Strike was opaque.** `CreatePrimitive` returns the
+  built-in `Default-Material`, which is Standard in OPAQUE mode, and writing an alpha into
+  `material.color` there does nothing. Thirty-odd effects authored at 0.25 to 0.92 alpha all
+  rendered solid. Worst two: Sean's Supernova grew a solid 10.6 m sphere over the camera and
+  popped out at full brightness, and Dante's Carapace put a solid sphere around his own head for
+  four seconds of a nine second cooldown. `Visual.VfxMaterial` configures Standard for Fade
+  properly (the five flags the material inspector normally writes) and 25 call sites go through
+  it. It also strips the collider every decorative primitive arrives with: ice shards and
+  volcanic debris shipped with rigidbodies AND colliders and were physically shoving players.
+
+  **The hero UI was a different game's palette.** Seventeen `new Color(...)` slate-blue
+  literals across `Hud.cs`, `AbilityInspectPanel.cs` and `ConvertedCharacterSelect.cs`, none of
+  them in `UiTheme`, against `Art_Direction.md` § 1's "ui_theme.gd is the only place a colour is
+  named". 🧑: *"i lowk dont get why we use light blue and shit in some parts of ui, it doesnt
+  really look good with brown"*. All seventeen are gone; the chrome is six named constants
+  derived from the wood set. Two hero accents were also sitting on the role hues (Dante four
+  degrees off Offense, Cheska twenty off Defence) and the whole set was re-spaced.
+  `TheHeroChromeIsTheWoodSet`, `NoHeroAccentSitsOnARoleColour`,
+  `TheFiveHeroAccentsAreTellableApart`.
+
+  **Four of fifteen ability descriptions were cut off mid-word.** Character select drew
+  `Description` into a 46 px box with `VerticalWrapMode.Truncate`, silently, on the one screen a
+  player uses to CHOOSE a hero. `Summary` is a short line for that box and `Description` is the
+  full sentence for the tray, which no longer truncates. All fifteen were rewritten out of
+  shouty marketing copy into plain sentences on request. `EverySummaryFitsTheCardItIsDrawnIn`,
+  `EveryAbilityNameFitsItsHeaderRow`.
+
+  Design and reasoning: `docs/Hero_Strike_UI.md`. 95 EditMode tests green, 56 core tests green.
+
+- **The comic callouts were unreadable, and there really were ten of them.** ✅ 2026-08-23.
+  🧑: *"they feel diff earlier and weird and overwhelming bcz like 10 show up at once and u
+  cant read and they were a weird font"*. Three faults, none of them tunable:
+
+  **The font really was wrong.** They were `TextMesh`, which draws off a font's atlas material
+  and does not rebuild when that atlas does. Darumadrop is a dynamic font, so any other text
+  requesting a new glyph at a new size re-packs the atlas and every live callout's UVs then
+  point at other letters' pixels. Rewritten onto a world-space `Canvas` with a `Text`, which
+  re-runs its own layout on `Font.textureRebuilt`.
+
+  **They were blurry.** Rasterised at 64 px and drawn at about 112 screen px, so every glyph was
+  being blown up nearly two to one. Now 110 px into 0.48 m plus a 2x dynamic scaler.
+
+  **Ten really did show up.** The cap was 4 and evicted the OLDEST, so a hero exchange threw
+  away the score callout and kept four flavour hits. There is a `Weight` now (Flavour, Cast,
+  Score) and the LEAST important is evicted; duplicates within 0.35 s and 3 m kick the live one
+  instead of stacking; flavour hits past 15 m are not drawn at all. Eight call sites that fired
+  one callout per victim were cut: Dante's ultimate alone used to put five on screen in one
+  frame.
+
+- **The ability glyphs were a smudge at the size they are actually drawn.** ✅ 2026-08-23.
+  A deck tile shows a 128 px sprite at about 40 px, and the old set was line art at 0.06 to
+  0.09 stroke, which is one and a half screen pixels. All nine redrawn to one fat stroke
+  (`AbilityIcons.Stroke`, 0.16), at most three elements each, solid mass over outline. The
+  `Ring` and `Diamond` primitives went with them. `Logs/shots-hero/hero_glyphs_v1.png` draws
+  every glyph at 128, 64, 40 and 24 px on the real plate colour; the 24 px column is the test.
+
+- **The intermission banner was the loudest thing on screen and unreadable.** ✅ 2026-08-23.
+  `ReadyObjective` was 32 pt of ALL-CAPS `UiTheme.Offense` across 900 px, over a sunlit
+  asphalt court, which is both illegible and a role colour used decoratively. It is 20 pt cream
+  on a dark plate now, with the role colour on the plate's rim, in sentence case. The ready
+  prompt lost three of its four clauses.
 
 - **Dante 3D Model Stray Geometry Fix.** ✅ 2026-08-23. Removed 1,340 stray vertex and triangle
   elements (islands 959-992) from `team-dante.glb` head mesh that formed an asymmetrical floating horn/spike
@@ -67,7 +203,6 @@ plainly in the handoff that the wire half is simulated.
   Two pieces were genuinely missing and were written: the music **intensity lift** in the last
   15 s of a round, and the **duck-trigger table** that drops the bed under the countdown, the
   round end, the win and the score award. One row remains genuinely partial and is § 1 above.
-
 
 - **Load every resource on the BH Studios loading screen.** ✅ 2026-08-23. The preload covered
   the roster, audio and the MAIN MENU scene, and then the arena, its materials, the baked UI

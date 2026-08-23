@@ -22,7 +22,10 @@ namespace TumbangPreso.Abilities
             private GameObject _phantomLightGo;
 
             public PhantomPhaseAbility()
-                : base("nemu_skill1", "ASTRAL GHOST STEP", "PHASE into the spirit realm for 2.5s. Gain increased movement speed and pass straight through player bodies without taking tags or collisions.", 8.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.Phase)
+                : base("nemu_skill1", "GHOST STEP",
+                       "You go part ghost: faster, and the taya cannot tag you. Picking up a tsinelas ends it early.",
+                       8.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.Phase,
+                       summary: "Faster, and untaggable. Picking up a tsinelas ends it.")
             {
             }
 
@@ -47,6 +50,18 @@ namespace TumbangPreso.Abilities
                 light.color = UiTheme.HeroSpiritBright;
                 light.range = 5.0f;
                 light.intensity = 3.5f;
+
+                // ⚠️⚠️ THE AURA IS THE ONLY THING THAT TELLS ANYBODY ELSE SHE CANNOT BE TAGGED.
+                // Phantom Phase grants tag immunity for 2.5 s, and until this landed the ONLY
+                // sign of it was a point light on her own model, which a taya chasing her from
+                // behind cannot see at all. A taya who lunges at a phased Nemu and gets nothing
+                // has been given no way to know why. World-simulated, so the motes trail behind
+                // her instead of riding along.
+                //
+                // ⚠️ IT IS SIZED TO THE ABILITY'S OWN DURATION AND DESTROYS ITSELF. Nothing in
+                // `OnEnd` has to remember it, which is where the previous aura leak came from.
+                Visual.AbilityVfx.AttachAura(ctx.Motor.transform,
+                                             Visual.AbilityVfx.Aura.VoidWisp, Duration);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
@@ -78,7 +93,10 @@ namespace TumbangPreso.Abilities
             private GameObject _projectedGhost;
 
             public GhostlyPoltergeistAbility()
-                : base("nemu_skill2", "ASTRAL PROJECTION", "PROJECT a spirit decoy forward. PRESS AGAIN at any time to instantly teleport to the spirit's location and surprise opponents.", 9.0f, 6.0f, TumbangPreso.UI.AbilityGlyph.Phase)
+                : base("nemu_skill2", "ASTRAL PROJECTION",
+                       "Sends a spirit double out ahead of you. Press again to swap places with it, wherever it has got to.",
+                       9.0f, 6.0f, TumbangPreso.UI.AbilityGlyph.Phase,
+                       summary: "Send a double out. Press again to swap places with it.")
             {
             }
 
@@ -130,7 +148,11 @@ namespace TumbangPreso.Abilities
         private sealed class NightmareSeanceVoidAbility : HeroAbility
         {
             public NightmareSeanceVoidAbility()
-                : base("nemu_ultimate", "SEANCE DROWSY VOID", "MANIFEST a 3.2m spiritual vortex for 5s. Pulls inward and slows all trapped opponents, inducing drowsiness while obscuring vision.", 0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Zone)
+                : base("nemu_ultimate", "SEANCE VOID",
+                       "Opens a vortex in front of you. It drags players and loose tsinelas in, and slows anyone caught inside.",
+                       0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Zone,
+                       summary: "A vortex ahead. Drags players and loose tsinelas into it.",
+                       telegraphRadius: 3.2f, telegraphRange: 3.5f)
             {
             }
 

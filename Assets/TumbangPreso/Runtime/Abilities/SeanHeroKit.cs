@@ -23,7 +23,10 @@ namespace TumbangPreso.Abilities
             private readonly HashSet<int> _hitSlots = new HashSet<int>();
 
             public RocketBurnDashAbility()
-                : base("sean_skill1", "BLAZING FLAME RUSH", "SURGE forward in a fiery sprint, igniting a burning trail behind you that burns and staggers enemies who attempt to pursue.", 6.5f, 0.6f, TumbangPreso.UI.AbilityGlyph.Dash)
+                : base("sean_skill1", "FLAME RUSH",
+                       "Rushes you forward in a line of fire. Anyone you run through is knocked down, and the trail burns whoever follows.",
+                       6.5f, 0.6f, TumbangPreso.UI.AbilityGlyph.Dash,
+                       summary: "Rush forward. Knocks down who you hit, burns who follows.")
             {
             }
 
@@ -41,6 +44,13 @@ namespace TumbangPreso.Abilities
 
                 ctx.Motor.ApplyImpulse(forward.normalized * 17.0f + Vector3.up * 1.5f);
                 HeroHazards.SpawnFireTrail(ctx.Position, 1.6f, 3.0f, ctx.Motor.PlayerSlot);
+
+                // ⚠️ 0.6 s, WHICH IS THE DASH ITSELF AND NOT A SECOND LONGER. The rush is the
+                // shortest power in the game; an aura that outlived it would say Sean was still
+                // charging when he had already stopped.
+                Visual.AbilityVfx.AttachAura(ctx.Motor.transform,
+                                             Visual.AbilityVfx.Aura.FireEmber, Duration);
+
                 GameServices.Audio?.PlayAt("hero_sean_grunt", ctx.Position);
                 GameServices.Audio?.PlayAt("sfx_fire_whoosh", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "ROCKET!", UiTheme.HeroFireBright, 1.25f);
@@ -73,8 +83,10 @@ namespace TumbangPreso.Abilities
                             hitForce.y = 4.5f;
                             p.ApplyImpulse(hitForce);
                             p.ApplyStagger(1.5f);
+                            // ⚠️ A DASH THROUGH THREE PLAYERS USED TO PRINT THREE "BAM!"s
+                            // ON TOP OF ITS OWN "ROCKET!". The stars and the sound already
+                            // confirm each hit.
                             DizzyStars.Attach(p.transform, 1.5f, UiTheme.HeroFireBright);
-                            ComicPopup.Bam(p.transform.position);
                             GameServices.Audio?.PlayAt("bump", p.transform.position);
                         }
                     }
@@ -87,7 +99,10 @@ namespace TumbangPreso.Abilities
             private readonly SeanHeroKit _kit;
 
             public IgnitionCannonAbility(SeanHeroKit kit)
-                : base("sean_skill2", "IGNITION CANNON", "HURL an overcharged explosive magma blast straight forward. Knocks down the lata or launches enemies backwards upon impact.", 8.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.Empower)
+                : base("sean_skill2", "IGNITION CANNON",
+                       "Loads your next throw with fire. Wherever that tsinelas lands it goes off, so a near miss still counts.",
+                       8.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.Empower,
+                       summary: "Your next throw explodes where it lands.")
             {
                 _kit = kit;
             }
@@ -114,7 +129,11 @@ namespace TumbangPreso.Abilities
             private bool _smashed;
 
             public SupernovaSmashdownAbility()
-                : base("sean_ultimate", "SUPERNOVA ERUPTION", "DETONATE a catastrophic 4.8m solar explosion at your feet. Blasts all enemies back with massive force and knocks down the lata instantly.", 0.0f, 2.0f, TumbangPreso.UI.AbilityGlyph.Slam)
+                : base("sean_ultimate", "SUPERNOVA",
+                       "Launches you up and slams you back down. The blast knocks the lata over and everyone near it away.",
+                       0.0f, 2.0f, TumbangPreso.UI.AbilityGlyph.Slam,
+                       summary: "Leap and crash down. Knocks the lata over on impact.",
+                       telegraphRadius: 4.8f, telegraphRange: 0.0f)
             {
             }
 
@@ -143,8 +162,10 @@ namespace TumbangPreso.Abilities
                 if (_airTimer <= 0.0f && !_diving)
                 {
                     _diving = true;
+                    // ⚠️ THE MIDDLE BEAT LOSES ITS CAPTION. "BLAST OFF!" on the launch and
+                    // "SUPERNOVA!" on the landing are the two moments a player acts on; a third
+                    // word 0.55 s into a 2 s ultimate is one the eye never finishes reading.
                     ctx.Motor.ApplyImpulse(Vector3.down * 28.0f);
-                    ComicPopup.Spawn(ctx.Position, "INCOMING!", UiTheme.HeroFireBright, 1.15f);
                 }
 
                 if (!_diving || _smashed) return;

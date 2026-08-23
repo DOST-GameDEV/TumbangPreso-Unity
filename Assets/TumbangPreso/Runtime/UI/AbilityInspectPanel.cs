@@ -80,8 +80,12 @@ namespace TumbangPreso.UI
             _rt.anchoredPosition = new Vector2(0, 16);
             _rt.sizeDelta = new Vector2(1060, 236);
 
+            // ⚠️ THE WOOD SET, NOT A SLATE-BLUE GLASS OF ITS OWN. This tray opens over a
+            // live match with the wooden scoreboard and clock already on screen, so it was the
+            // single worst place in the game for the imported cold palette to land. See
+            // `UiTheme.HeroPlate`.
             var bg = gameObject.AddComponent<Image>();
-            bg.sprite = GodotTheme.Box(new Color(0.18f, 0.24f, 0.35f, 0.90f), new Color(0.05f, 0.07f, 0.11f, 0.95f), 2, 8);
+            bg.sprite = GodotTheme.Box(UiTheme.HeroPlate, UiTheme.HeroRim, 2, 8);
             bg.type = Image.Type.Sliced;
             bg.raycastTarget = false;
 
@@ -148,7 +152,7 @@ namespace TumbangPreso.UI
             card.Group = go.AddComponent<CanvasGroup>();
 
             var bg = go.AddComponent<Image>();
-            bg.sprite = GodotTheme.Box(new Color(0.16f, 0.22f, 0.32f, 0.85f), new Color(0.07f, 0.10f, 0.16f, 0.95f), 2, 6);
+            bg.sprite = GodotTheme.Box(UiTheme.HeroPlateRaised, UiTheme.HeroRim, 2, 6);
             bg.type = Image.Type.Sliced;
             bg.raycastTarget = false;
 
@@ -175,7 +179,7 @@ namespace TumbangPreso.UI
             var tileGo = new GameObject("Tile");
             tileGo.transform.SetParent(topSection.transform, false);
             card.Tile = tileGo.AddComponent<Image>();
-            card.Tile.sprite = GodotTheme.Box(new Color(0.24f, 0.32f, 0.44f, 0.75f), new Color(0.06f, 0.08f, 0.13f, 0.95f), 2, 6);
+            card.Tile.sprite = GodotTheme.Box(UiTheme.HeroPlateSunk, UiTheme.HeroRim, 2, 6);
             card.Tile.type = Image.Type.Sliced;
             card.Tile.raycastTarget = false;
 
@@ -189,7 +193,7 @@ namespace TumbangPreso.UI
             var glyphGo = new GameObject("Glyph");
             glyphGo.transform.SetParent(tileGo.transform, false);
             card.Glyph = glyphGo.AddComponent<Image>();
-            card.Glyph.color = Color.white;
+            card.Glyph.color = UiTheme.HeroGlyphOn;
             card.Glyph.preserveAspect = true;
             card.Glyph.raycastTarget = false;
             MenuKit.Stretch(card.Glyph.rectTransform);
@@ -199,7 +203,7 @@ namespace TumbangPreso.UI
             var chipGo = new GameObject("KeyChip");
             chipGo.transform.SetParent(tileGo.transform, false);
             var chip = chipGo.AddComponent<Image>();
-            chip.sprite = GodotTheme.Box(UiTheme.Ink, new Color(0, 0, 0, 0), 0, 4);
+            chip.sprite = GodotTheme.Box(UiTheme.WoodDark, new Color(0, 0, 0, 0), 0, 4);
             chip.type = Image.Type.Sliced;
             chip.raycastTarget = false;
             var chipRt = chip.rectTransform;
@@ -246,9 +250,13 @@ namespace TumbangPreso.UI
             card.Meta.fontStyle = FontStyle.Bold;
 
             // Description body with generous padding and clean font
-            card.Body = Label(go.transform, "Body", 15, UiTheme.CreamMuted, TextAnchor.UpperLeft);
+            // ⚠️⚠️ THE TRAY IS THE ONE PLACE THAT DOES NOT TRUNCATE. It exists to hold the
+            // sentences the deck deliberately refuses to carry, so cutting them off here would
+            // leave the full text nowhere in the game at all. `Overflow` rather than
+            // `Truncate`, and the card is tall enough for four lines at this size.
+            card.Body = Label(go.transform, "Body", 15, UiTheme.Cream, TextAnchor.UpperLeft);
             card.Body.horizontalOverflow = HorizontalWrapMode.Wrap;
-            card.Body.verticalOverflow = VerticalWrapMode.Truncate;
+            card.Body.verticalOverflow = VerticalWrapMode.Overflow;
             var bodyLe = card.Body.gameObject.AddComponent<LayoutElement>();
             bodyLe.flexibleHeight = 1.0f;
             bodyLe.minHeight = 90;
@@ -285,7 +293,7 @@ namespace TumbangPreso.UI
             card.Rt.gameObject.SetActive(true);
             card.Tile.color = Color.white;
             card.Glyph.sprite = AbilityIcons.For(ability.Glyph);
-            card.Glyph.color = Color.white;
+            card.Glyph.color = hero;
             card.Key.text = Hud.KeyLabelFor(action);
             card.Name.text = ability.Name;
             card.Name.color = hero;
@@ -343,6 +351,40 @@ namespace TumbangPreso.UI
 
                 card.Group.alpha = Mathf.Clamp01(local * 1.4f);
                 card.Rt.localScale = Vector3.one * Mathf.Lerp(0.92f, 1.0f, cardEase);
+            }
+        }
+
+        /// <summary>
+        /// Bind a kit and hold the tray fully open, for a capture.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE THIS PANEL IS OTHERWISE UNPHOTOGRAPHABLE, AND AN UNPHOTOGRAPHED
+        /// PANEL IS AN UNJUDGED ONE. The tray is a HOLD: it is only ever on screen while a key is
+        /// physically down, and `tools/shoot_player.ps1` records that synthesised keystrokes do
+        /// not reach the game window from a background shell, only mouse clicks do. So the one
+        /// surface in Hero Strike carrying every ability's full text had no path to a screenshot
+        /// at all, in the editor or in a player.
+        ///
+        /// ⚠️ IT CHANGES NOTHING ABOUT THE HOLD. `Tick` still drives `_open` from the live key
+        /// every frame, so anything that calls this and then keeps ticking goes straight back to
+        /// closed. It is for a probe that renders one frame and exits, and nothing in the game
+        /// calls it.
+        /// </summary>
+        public void OpenForCapture(HeroKit kit)
+        {
+            Bind(kit);
+
+            _open = 1.0f;
+            gameObject.SetActive(true);
+
+            if (_group != null) _group.alpha = 1.0f;
+            if (_rt != null) _rt.anchoredPosition = new Vector2(0, 16);
+
+            foreach (var card in _cards)
+            {
+                if (card?.Group == null) continue;
+
+                card.Group.alpha = 1.0f;
+                card.Rt.localScale = Vector3.one;
             }
         }
 

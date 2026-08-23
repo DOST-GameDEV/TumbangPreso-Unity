@@ -109,5 +109,16 @@ AimRef 390 768 ; Tap ; Snap "04-match-ready"    # START MATCH
 Start-Sleep -Seconds 4
 Snap "05-match"
 
+# ⚠️ A SINGLE FRAME FOUR SECONDS IN IS NOT ENOUGH, AND THE HERO DECK IS WHY. The HUD
+# rebuilds its bindings on the round boundary, so a capture that lands inside that window
+# photographs an empty scoreboard and no ability deck: the shot looks like a missing
+# feature and is in fact a missing MOMENT. Three spread over ten seconds always catches a
+# settled frame, and the extra two cost nothing.
+Start-Sleep -Seconds 5
+Snap "06-match-settled"
+
+Start-Sleep -Seconds 5
+Snap "07-match-late"
+
 Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
 "done"

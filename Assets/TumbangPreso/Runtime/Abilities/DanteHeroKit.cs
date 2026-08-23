@@ -21,7 +21,11 @@ namespace TumbangPreso.Abilities
         private sealed class SeismicStompAbility : HeroAbility
         {
             public SeismicStompAbility()
-                : base("dante_skill1", "SEISMIC STOMP", "SLAM the earth with crushing force. Releases a 2.4m shockwave that knocks back nearby enemies, interrupts throws, and kicks away grounded slippers.", 6.5f, 0.0f, TumbangPreso.UI.AbilityGlyph.Slam)
+                : base("dante_skill1", "SEISMIC STOMP",
+                       "Slams the ground under you. Shoves nearby players off their feet and kicks loose tsinelas out of reach.",
+                       6.5f, 0.0f, TumbangPreso.UI.AbilityGlyph.Slam,
+                       summary: "Ground slam. Shoves players and tsinelas away from you.",
+                       telegraphRadius: 2.4f, telegraphRange: 0.0f)
             {
             }
 
@@ -44,8 +48,9 @@ namespace TumbangPreso.Abilities
                 Visual.AbilityVfx.SpawnMagmaEruption(ctx.Position, 2.4f);
 
                 // Explosion shockwave & comic floatie
+                // ⚠️ THE EXPLOSION ALREADY SAYS "THUD!" AT THIS EXACT POINT. A "BONK!" on top
+                // of it is two words in the same place for one stomp.
                 HeroHazards.CreateExplosion(ctx.Position, 2.4f, 10.0f, 1.2f, ctx.Motor.PlayerSlot, "THUD!");
-                ComicPopup.Bonk(ctx.Position);
 
                 var round = ctx.Round;
                 if (round != null)
@@ -72,8 +77,14 @@ namespace TumbangPreso.Abilities
             private GameObject _auraGo;
             private readonly GameObject[] _shieldPlates = new GameObject[3];
 
+            // ⚠️ NO TELEGRAPH, AND A ZERO HERE IS A STATEMENT RATHER THAN AN OMISSION. This puts
+            // nothing on the ground; drawing a ring under a self-buff would tell the player
+            // there is an area to stand in or out of when there is not.
             public DemonicCarapaceAbility()
-                : base("dante_skill2", "DEMONIC CARAPACE", "HARDEN your body in molten magma armor for 4s. Grants unstoppable immunity against enemy stuns, shoves, and slips so you can retrieve slippers safely.", 9.0f, 4.0f, TumbangPreso.UI.AbilityGlyph.Shield)
+                : base("dante_skill2", "DEMONIC CARAPACE",
+                       "Armours you for a few seconds. Nothing can stun, shove or slip you, so you can walk in and take what you need.",
+                       9.0f, 4.0f, TumbangPreso.UI.AbilityGlyph.Shield,
+                       summary: "Nothing stuns, shoves or slips you while it holds.")
             {
             }
 
@@ -93,9 +104,15 @@ namespace TumbangPreso.Abilities
                 _auraGo.transform.localPosition = new Vector3(0, 0.9f, 0);
                 _auraGo.transform.localScale = Vector3.one * 1.85f;
 
-                var r = _auraGo.GetComponent<Renderer>();
-                if (r != null) r.material.color = new Color(1.0f, 0.45f, 0.05f, 0.35f);
-                UnityEngine.Object.Destroy(_auraGo.GetComponent<Collider>());
+                // ⚠️⚠️ AT 0.35 ALPHA ON AN OPAQUE MATERIAL THIS WAS A SOLID SPHERE AROUND DANTE'S
+                // HEAD. Carapace is a four second self-buff, so for four seconds out of every
+                // nine the player casting it could see nothing at all: the aura is drawn at
+                // 1.85 scale centred at eye height, and in first person that is the inside of
+                // an orange ball. The single worst instance of the opaque-VFX fault, and it was
+                // on the one ability whose whole purpose is to let you go and fetch a tsinelas.
+                VfxMaterial.Ghost(_auraGo.GetComponent<Renderer>(),
+                                  new Color(UiTheme.HeroMagmaCore.r, UiTheme.HeroMagmaCore.g,
+                                            UiTheme.HeroMagmaCore.b, 0.28f), 0.55f);
 
                 // Spawn 3 orbiting magma shield plates
                 for (int i = 0; i < 3; i++)
@@ -105,11 +122,22 @@ namespace TumbangPreso.Abilities
                     plate.name = $"MagmaPlate_{i}";
                     plate.transform.SetParent(ctx.Motor.transform, false);
                     plate.transform.localScale = new Vector3(0.5f, 0.7f, 0.15f);
-                    var pr = plate.GetComponent<Renderer>();
-                    if (pr != null) pr.material.color = UiTheme.HeroEarthBright;
-                    UnityEngine.Object.Destroy(plate.GetComponent<Collider>());
+                    // The plates are the READABLE half of the buff: three solid slabs orbiting
+                    // at 1.25 m tell every other player Dante cannot be stunned right now, from
+                    // any angle, without a nameplate icon anybody has to learn.
+                    VfxMaterial.Solid(plate.GetComponent<Renderer>(), UiTheme.HeroMagmaCore, 0.6f);
+                    VfxMaterial.StripCollider(plate);
                     _shieldPlates[i] = plate;
                 }
+
+                // ⚠️⚠️ EMBERS RISING OFF HOT ROCK, FOR EXACTLY AS LONG AS THE ARMOUR HOLDS.
+                // Carapace is the one buff other players most need to read: swinging at a
+                // carapaced Dante is wasted, and there was nothing at range that said so. The
+                // three orbiting plates carry it up close; the embers carry it across the court.
+                // Negative gravity is the whole read, because heat is the only thing in this
+                // game that goes up.
+                Visual.AbilityVfx.AttachAura(ctx.Motor.transform,
+                                             Visual.AbilityVfx.Aura.MagmaEmber, Duration);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
@@ -159,8 +187,16 @@ namespace TumbangPreso.Abilities
 
         private sealed class DemonTitanFissureAbility : HeroAbility
         {
+            // 4.5 m at 2.2 m out is where `CreateExplosion` actually goes off below. The 5.5 m
+            // cone in the description is the wider LAUNCH check, which only catches players
+            // inside 50 degrees of the facing, so it is not a circle and a circle must not
+            // claim it.
             public DemonTitanFissureAbility()
-                : base("dante_ultimate", "DEMON TITAN FISSURE", "CHANNEL demonic rage to fracture the earth in a 5.5m cone. Erupts boiling magma, launching enemies airborne and shattering defense positions.", 0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Burst)
+                : base("dante_ultimate", "TITAN FISSURE",
+                       "Splits the court ahead of you. Everyone caught in the crack is thrown into the air and left dizzy.",
+                       0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.Burst,
+                       summary: "Splits the ground ahead. Launches whoever is in front of you.",
+                       telegraphRadius: 4.5f, telegraphRange: 2.2f)
             {
             }
 
@@ -207,8 +243,13 @@ namespace TumbangPreso.Abilities
                     }
                 }
 
+                // ⚠️⚠️ THE BLAST DRAWS NO WORD OF ITS OWN. This ultimate used to put
+                // "EARTHQUAKE!" plus "KABOOM!" plus one "BONK!" per victim on screen inside a
+                // single frame: five callouts, four of which the player already knew from the
+                // fissure opening in front of them. `null` is the documented way to ask
+                // `CreateExplosion` for the physics without the caption.
                 HeroHazards.CreateExplosion(ctx.Position + forward * 2.2f, 4.5f, 14.0f, 1.8f,
-                    ctx.Motor.PlayerSlot, "KABOOM!", directlyHit);
+                    ctx.Motor.PlayerSlot, null, directlyHit);
 
                 // Spawn 4 basalt earth pillars in forward arc
                 for (int i = -1; i <= 2; i++)

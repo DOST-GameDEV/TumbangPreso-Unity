@@ -24,7 +24,10 @@ namespace TumbangPreso.Abilities
             private float _trailDropTimer;
 
             public StaticRailGrindAbility(ZackHeroKit kit)
-                : base("zack_skill1", "LIGHTNING BOLT SPRINT", "OVERCHARGE your roller skates with electric speed. Leaves a crackling shock trail behind that zaps and slows chasing defenders.", 6.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.Dash)
+                : base("zack_skill1", "BOLT SPRINT",
+                       "Overcharges your skates. You move faster, and the trail you leave behind shocks anyone chasing you.",
+                       6.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.Dash,
+                       summary: "Move faster, and shock whoever chases your trail.")
             {
                 _kit = kit;
             }
@@ -44,6 +47,12 @@ namespace TumbangPreso.Abilities
                 ComicPopup.Spawn(ctx.Position, "RAIL GRIND!", UiTheme.HeroElectricBright, 1.25f);
                 HeroHazards.SpawnShockTrail(ctx.Position, 1.8f, 3.0f, ctx.Motor.PlayerSlot);
                 _trailDropTimer = 0.25f;
+
+                // ⚠️ THE SPARKS GO ON ZACK, NOT ON THE TRAIL DISCS. One dash drops up to thirty
+                // of those, and thirty looping emitters is a different bug from the one this is
+                // for. One aura on the body reads as speed and costs one system.
+                Visual.AbilityVfx.AttachAura(ctx.Motor.transform,
+                                             Visual.AbilityVfx.Aura.ElectricSpark, Duration);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
@@ -65,7 +74,10 @@ namespace TumbangPreso.Abilities
             private readonly ZackHeroKit _kit;
 
             public OverchargeThrowAbility(ZackHeroKit kit)
-                : base("zack_skill2", "STATIC SLIPPER CHARGE", "INFUSE your next tsinelas throw with high voltage. Increases throw projectile speed by 50% and causes a static shockwave upon striking the lata.", 8.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.Empower)
+                : base("zack_skill2", "STATIC CHARGE",
+                       "Charges your next throw. It flies much faster and shocks the court where it lands.",
+                       8.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.Empower,
+                       summary: "Your next throw flies faster and shocks where it lands.")
             {
                 _kit = kit;
             }
@@ -88,7 +100,11 @@ namespace TumbangPreso.Abilities
             private readonly ZackHeroKit _kit;
 
             public ThunderstrikeOverdriveAbility(ZackHeroKit kit)
-                : base("zack_ultimate", "THUNDERSTRIKE OVERDRIVE", "CALL DOWN a 4.5m lightning strike from the heavens. Stuns all targets in the impact radius for 2s and electrocutes the surrounding court.", 0.0f, 7.0f, TumbangPreso.UI.AbilityGlyph.Slam)
+                : base("zack_ultimate", "THUNDERSTRIKE",
+                       "Calls lightning down on where you stand. Everyone caught underneath is stunned where they are.",
+                       0.0f, 7.0f, TumbangPreso.UI.AbilityGlyph.Slam,
+                       summary: "Lightning on your position. Stuns everyone it catches.",
+                       telegraphRadius: 4.5f, telegraphRange: 0.0f)
             {
                 _kit = kit;
             }

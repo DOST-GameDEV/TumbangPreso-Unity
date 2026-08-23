@@ -10,7 +10,30 @@ namespace TumbangPreso.Abilities
     {
         public string Id { get; }
         public string Name { get; }
+
+        /// <summary>
+        /// The full tactical sentence, for the hold-to-read tray.
+        ///
+        /// ⚠️ THE TRAY IS THE ONLY PLACE THIS BELONGS. The deck at the bottom of the screen
+        /// carries what is true RIGHT NOW and nothing else; 🧑 2026-08-23 on why:
+        /// *"games like valorant overwatch league etc dont clog their screen with text"*.
+        /// </summary>
         public string Description { get; }
+
+        /// <summary>
+        /// One short line for anywhere the full sentence does not fit, chiefly the character
+        /// select ribbon's details card.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE FOUR OF THE FIFTEEN POWERS DESCRIBED THEMSELVES IN A SENTENCE
+        /// THAT STOPPED MID-WORD. The card draws `Description` into a 46 px box at 14 pt with
+        /// `VerticalWrapMode.Truncate`, which is about three lines, and the tactical sentences
+        /// run to four or five. Truncation is silent, so the screen a player uses to CHOOSE a
+        /// hero was the one screen lying to them about what the hero does.
+        ///
+        /// Falls back to the full description, so an ability that has not been given one is
+        /// merely long rather than blank.
+        /// </summary>
+        public string Summary { get; }
 
         /// <summary>
         /// What KIND of power this is, drawn as a shape wherever it is shown.
@@ -31,16 +54,52 @@ namespace TumbangPreso.Abilities
         public float CooldownRatio => Cooldown > 0.0f ? Mathf.Clamp01(CooldownRemaining / Cooldown) : 0.0f;
         public float DurationRatio => Duration > 0.0f ? Mathf.Clamp01(DurationRemaining / Duration) : 0.0f;
 
+        /// <summary>
+        /// How wide the ground telegraph is, in metres, or 0 for a power that puts nothing on
+        /// the ground.
+        ///
+        /// ⚠️⚠️ IT LIVES ON THE ABILITY BECAUSE THE HUD USED TO INVENT IT.
+        /// `HeroAbilitySystem.UpdateReticle` drew 7.5 m for ANY ultimate, 5.0 m for ANY first
+        /// skill and 3.5 m for ANY second, and offset the ring forward only when the kit
+        /// happened to be Cheska's. So Dante's 2.4 m stomp drew a 5.0 m ring, Nemu's 3.2 m void
+        /// drew 7.5 m, and the void landed 3.5 m in front of the ring the player had just been
+        /// shown. **A telegraph that lies is worse than no telegraph**, because a player
+        /// believes it once and then stops believing all of them.
+        ///
+        /// Same reasoning as <see cref="Glyph"/>: a lookup table keyed by ability id is a
+        /// second place to forget, and a new hero would compile, run and draw three wrong
+        /// rings.
+        /// </summary>
+        public float TelegraphRadius { get; protected set; }
+
+        /// <summary>
+        /// How far in front of the caster the telegraph centre sits, in metres. 0 means it goes
+        /// off around the caster.
+        ///
+        /// ⚠️ IT MUST MATCH THE NUMBER THE `OnActivate` ACTUALLY SPAWNS AT. These two are the
+        /// same measurement written twice, which is the shape of drift `Design.md` opens by
+        /// warning about, so `TelegraphsMatchWhatTheAbilityActuallyPlaces` asserts the pair.
+        /// </summary>
+        public float TelegraphRange { get; protected set; }
+
+        public bool HasTelegraph => TelegraphRadius > 0.0f;
+
         protected HeroAbility(string id, string name, string description, float cooldown,
                               float duration = 0.0f,
-                              UI.AbilityGlyph glyph = UI.AbilityGlyph.Burst)
+                              UI.AbilityGlyph glyph = UI.AbilityGlyph.Burst,
+                              string summary = null,
+                              float telegraphRadius = 0.0f,
+                              float telegraphRange = 0.0f)
         {
             Id = id;
             Name = name;
             Description = description;
+            Summary = string.IsNullOrEmpty(summary) ? description : summary;
             Cooldown = cooldown;
             Duration = duration;
             Glyph = glyph;
+            TelegraphRadius = telegraphRadius;
+            TelegraphRange = telegraphRange;
         }
 
         public virtual bool CanActivate(AbilityContext ctx)

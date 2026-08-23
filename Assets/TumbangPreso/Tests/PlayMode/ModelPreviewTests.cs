@@ -364,12 +364,26 @@ namespace TumbangPreso.PlayTests
             foreach (var label in rows.GetComponentsInChildren<UnityEngine.UI.Text>(true))
                 copy += label.text + "\n";
 
-            StringAssert.Contains("SEISMIC STOMP", copy,
-                "Dante's E skill is not explained on the Hero picker.");
-            StringAssert.Contains("DEMONIC CARAPACE", copy,
-                "Dante's Q skill is not explained on the Hero picker.");
-            StringAssert.Contains("DEMON TITAN FISSURE", copy,
-                "Dante's F ultimate is not explained on the Hero picker.");
+            // ⚠️⚠️ THE NAMES ARE ASKED OF THE KIT, NOT SPELLED OUT HERE. This used to hard-code
+            // three strings and went red the day an ability was renamed, which is a test failing
+            // for a reason that has nothing to do with what it is checking. What it is actually
+            // asserting is that a player choosing a hero can see the WHOLE kit named on this
+            // screen rather than one third of it, and that survives any amount of renaming.
+            //
+            // ⚠️ IT IS ALSO WHY THE PICKER LISTS ALL THREE. An earlier pass showed a ribbon of
+            // three glyphs with a details card under it carrying only the SELECTED power, so two
+            // of every hero's three abilities were invisible until clicked. On the one screen
+            // whose entire job is "what does this hero do", that is the wrong trade.
+            var danteKit = Abilities.HeroAbilitySystem.CreateKitFor("dante");
+
+            StringAssert.Contains(danteKit.Skill1.Name, copy,
+                "Dante's first skill is not named on the Hero picker.");
+            StringAssert.Contains(danteKit.Skill2.Name, copy,
+                "Dante's second skill is not named on the Hero picker.");
+            StringAssert.Contains(danteKit.Ultimate.Name, copy,
+                "Dante's ultimate is not named on the Hero picker.");
+            StringAssert.Contains(danteKit.Skill1.Summary, copy,
+                "The selected power is named but never explained.");
             StringAssert.DoesNotContain("SPEED", copy,
                 "Hero select still exposes Classic SPEED attributes.");
             StringAssert.DoesNotContain("POWER", copy,

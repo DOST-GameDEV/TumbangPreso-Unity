@@ -47,11 +47,12 @@ namespace TumbangPreso.Abilities
                 pillar.transform.localPosition = new Vector3(i * 0.75f, height * 0.5f, -Mathf.Abs(i) * 0.12f);
                 pillar.transform.localRotation = Quaternion.Euler(Random.Range(-4.0f, 4.0f), rotY, rotZ);
 
-                var r = pillar.GetComponent<Renderer>();
-                if (r != null)
-                {
-                    r.material.color = new Color(0.35f, 0.90f, 1.0f, 0.92f);
-                }
+                // ⚠️ THE ONE EFFECT THAT IS BOTH SEE-THROUGH AND SOLID. Everything else that
+                // goes through `VfxMaterial` loses its collider; a barricade is the wall the
+                // ability is named after, so it keeps it.
+                VfxMaterial.Ghost(pillar.GetComponent<Renderer>(),
+                                  new Color(0.35f, 0.90f, 1.0f, 0.92f), 0.35f,
+                                  stripCollider: false);
 
                 var col = pillar.GetComponent<Collider>();
                 if (col != null) col.isTrigger = false;
@@ -105,8 +106,12 @@ namespace TumbangPreso.Abilities
                     shard.transform.localScale = Vector3.one * Random.Range(0.25f, 0.5f);
                     shard.transform.rotation = Random.rotation;
 
-                    var r = shard.GetComponent<Renderer>();
-                    if (r != null) r.material.color = new Color(0.6f, 0.95f, 1.0f, 0.85f);
+                    // ⚠️⚠️ THE COLLIDER GOES, AND THAT IS A GAMEPLAY FIX RATHER THAN A VISUAL
+                    // ONE. Twelve cubes with rigidbodies AND colliders spawned inside the
+                    // barricade every time one expired, so anybody standing near a wall that
+                    // timed out got shoved around by decoration.
+                    VfxMaterial.Ghost(shard.GetComponent<Renderer>(),
+                                      new Color(0.6f, 0.95f, 1.0f, 0.85f));
 
                     var rb = shard.AddComponent<Rigidbody>();
                     rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.4f) * Random.Range(4.0f, 9.0f);
@@ -136,14 +141,7 @@ namespace TumbangPreso.Abilities
             visual.transform.localScale = new Vector3(radius * 2.0f, 0.02f, radius * 2.0f);
             visual.transform.localPosition = new Vector3(0, 0.01f, 0);
 
-            var r = visual.GetComponent<Renderer>();
-            if (r != null) r.material.color = new Color(0.3f, 0.85f, 1.0f, 0.65f);
-            var collider = visual.GetComponent<Collider>();
-            if (collider != null)
-            {
-                if (Application.isPlaying) Object.Destroy(collider);
-                else Object.DestroyImmediate(collider);
-            }
+            VfxMaterial.Ghost(visual.GetComponent<Renderer>(), new Color(0.3f, 0.85f, 1.0f, 0.65f));
 
             var inner = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             inner.name = "VisualInner";
@@ -151,9 +149,7 @@ namespace TumbangPreso.Abilities
             inner.transform.localScale = new Vector3(radius * 1.3f, 0.025f, radius * 1.3f);
             inner.transform.localPosition = new Vector3(0, 0.015f, 0);
 
-            var ir = inner.GetComponent<Renderer>();
-            if (ir != null) ir.material.color = new Color(0.85f, 0.96f, 1.0f, 0.80f);
-            Object.Destroy(inner.GetComponent<Collider>());
+            VfxMaterial.Ghost(inner.GetComponent<Renderer>(), new Color(0.85f, 0.96f, 1.0f, 0.80f));
 
             // Glowing ice aura light
             var lightGo = new GameObject("FrostLight");
@@ -164,6 +160,15 @@ namespace TumbangPreso.Abilities
             light.color = UiTheme.HeroIceBright;
             light.range = radius * 1.6f;
             light.intensity = 2.5f;
+
+            // ⚠️⚠️ CHESKA'S AMBIENCE IS ON HER ZONE, NOT ON HER BODY. She is the one hero with
+            // no aura of her own and that is deliberate: all three of her powers are placed on
+            // the GROUND, so motes on her model would point at her while the thing that matters
+            // is three metres in front of her. The frost breathes where the danger is.
+            //
+            // ⚠️ ONE EMITTER, ON A ZONE, NEVER ON A TRAIL. A zone is singular and lives 5 s;
+            // the dash trails drop thirty discs a dash and get nothing.
+            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.FrostMote, duration);
 
             GameServices.Audio?.PlayAt("ability_shatter_trap", position);
             ComicPopup.Spawn(position, "SLIP & SLIDE!", UiTheme.HeroIceBright, 1.15f);
@@ -248,9 +253,7 @@ namespace TumbangPreso.Abilities
             visual.transform.localScale = new Vector3(radius * 2.0f, 0.03f, radius * 2.0f);
             visual.transform.localPosition = new Vector3(0, 0.015f, 0);
 
-            var r = visual.GetComponent<Renderer>();
-            if (r != null) r.material.color = new Color(1.0f, 0.95f, 0.1f, 0.75f);
-            Object.Destroy(visual.GetComponent<Collider>());
+            VfxMaterial.Ghost(visual.GetComponent<Renderer>(), new Color(1.0f, 0.95f, 0.1f, 0.75f), 0.6f);
 
             // Flashing electric sparks light
             var lightGo = new GameObject("ShockLight");
@@ -322,7 +325,7 @@ namespace TumbangPreso.Abilities
                             if (CanPulse(_nextStaggerBySlot, p.PlayerSlot, 1.1f))
                             {
                                 p.ApplyStagger(0.25f);
-                                ComicPopup.Zap(p.transform.position);
+                                ComicPopup.Zap(p.transform.position);   // Flavour: culled past 15 m
                                 DizzyStars.Attach(p.transform, 1.2f, UiTheme.HeroElectricBright);
                             }
                         }
@@ -345,9 +348,7 @@ namespace TumbangPreso.Abilities
             visual.transform.localScale = new Vector3(radius * 2.0f, 0.03f, radius * 2.0f);
             visual.transform.localPosition = new Vector3(0, 0.015f, 0);
 
-            var r = visual.GetComponent<Renderer>();
-            if (r != null) r.material.color = new Color(1.0f, 0.35f, 0.05f, 0.85f);
-            Object.Destroy(visual.GetComponent<Collider>());
+            VfxMaterial.Ghost(visual.GetComponent<Renderer>(), new Color(1.0f, 0.35f, 0.05f, 0.85f), 0.6f);
 
             // Flickering fire light
             var lightGo = new GameObject("FireLight");
@@ -432,22 +433,10 @@ namespace TumbangPreso.Abilities
             visual.transform.SetParent(go.transform, false);
             visual.transform.localScale = Vector3.one * 0.8f;
 
-            var r = visual.GetComponent<Renderer>();
-            if (r != null)
-            {
-                var block = new MaterialPropertyBlock();
-                r.GetPropertyBlock(block);
-                var ghostColor = new Color(0.85f, 0.4f, 1.0f, 0.9f);
-                block.SetColor("_Color", ghostColor);
-                block.SetColor("_BaseColor", ghostColor);
-                r.SetPropertyBlock(block);
-            }
-            var ghostCollider = visual.GetComponent<Collider>();
-            if (ghostCollider != null)
-            {
-                if (Application.isPlaying) Object.Destroy(ghostCollider);
-                else Object.DestroyImmediate(ghostCollider);
-            }
+            // ⚠️ A PROPERTY BLOCK CANNOT MAKE AN OPAQUE MATERIAL SEE-THROUGH. The block wrote
+            // an alpha of 0.9 into a shader that never reads one, so the decoy was a solid
+            // purple ball rather than a spirit.
+            VfxMaterial.Ghost(visual.GetComponent<Renderer>(), new Color(0.85f, 0.4f, 1.0f, 0.9f), 0.7f);
 
             var lightGo = new GameObject("GhostLight");
             lightGo.transform.SetParent(go.transform, false);
@@ -545,24 +534,23 @@ namespace TumbangPreso.Abilities
             pillar.transform.localScale = new Vector3(1.4f, 2.5f, 1.4f);
             pillar.transform.localPosition = new Vector3(0, 2.5f, 0);
 
-            var r = pillar.GetComponent<Renderer>();
-            if (r != null) r.material.color = new Color(0.28f, 0.20f, 0.16f);
+            VfxMaterial.Solid(pillar.GetComponent<Renderer>(), new Color(0.28f, 0.20f, 0.16f));
 
             var magmaTop = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             magmaTop.name = "MagmaTop";
             magmaTop.transform.SetParent(go.transform, false);
             magmaTop.transform.localScale = new Vector3(1.45f, 0.85f, 1.45f);
             magmaTop.transform.localPosition = new Vector3(0, 4.8f, 0);
-            var mr = magmaTop.GetComponent<Renderer>();
-            if (mr != null) mr.material.color = UiTheme.HeroEarthBright;
-            Object.Destroy(magmaTop.GetComponent<Collider>());
+            // ⚠️ MAGMA STAYS ORANGE WHILE DANTE KEEPS A JADE ACCENT. See the note on
+            // `UiTheme.HeroMagmaCore`: his colour is the crust, this is the melt.
+            VfxMaterial.Ghost(magmaTop.GetComponent<Renderer>(), UiTheme.HeroMagmaCore, 0.9f);
 
             var lightGo = new GameObject("MagmaLight");
             lightGo.transform.SetParent(go.transform, false);
             lightGo.transform.localPosition = new Vector3(0, 4.2f, 0);
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
-            light.color = UiTheme.HeroEarthBright;
+            light.color = UiTheme.HeroMagmaCore;
             light.range = 7.0f;
             light.intensity = 3.5f;
 
@@ -603,9 +591,7 @@ namespace TumbangPreso.Abilities
             outer.transform.SetParent(go.transform, false);
             outer.transform.localScale = new Vector3(radius * 2.0f, 0.02f, radius * 2.0f);
             outer.transform.localPosition = new Vector3(0, 0.015f, 0);
-            var or = outer.GetComponent<Renderer>();
-            if (or != null) or.material.color = new Color(0.18f, 0.16f, 0.15f, 0.85f);
-            Object.Destroy(outer.GetComponent<Collider>());
+            VfxMaterial.Ghost(outer.GetComponent<Renderer>(), new Color(0.18f, 0.16f, 0.15f, 0.85f), 0.0f);
 
             // Glowing magma core disc
             var core = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
@@ -613,9 +599,7 @@ namespace TumbangPreso.Abilities
             core.transform.SetParent(go.transform, false);
             core.transform.localScale = new Vector3(radius * 1.2f, 0.025f, radius * 1.2f);
             core.transform.localPosition = new Vector3(0, 0.02f, 0);
-            var cr = core.GetComponent<Renderer>();
-            if (cr != null) cr.material.color = UiTheme.HeroEarthBright;
-            Object.Destroy(core.GetComponent<Collider>());
+            VfxMaterial.Ghost(core.GetComponent<Renderer>(), UiTheme.HeroMagmaCore, 0.9f);
 
             // Lava pulse light
             var lightGo = new GameObject("LavaLight");
@@ -623,7 +607,7 @@ namespace TumbangPreso.Abilities
             lightGo.transform.localPosition = new Vector3(0, 0.8f, 0);
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
-            light.color = UiTheme.HeroEarthBright;
+            light.color = UiTheme.HeroMagmaCore;
             light.range = radius * 1.8f;
             light.intensity = 4.0f;
 
@@ -645,18 +629,16 @@ namespace TumbangPreso.Abilities
             outer.transform.SetParent(go.transform, false);
             outer.transform.localScale = new Vector3(radius * 2.0f, 0.04f, radius * 2.0f);
             outer.transform.localPosition = new Vector3(0, 0.02f, 0);
-            var r = outer.GetComponent<Renderer>();
-            if (r != null) r.material.color = new Color(0.35f, 0.05f, 0.55f, 0.85f);
-            Object.Destroy(outer.GetComponent<Collider>());
+            VfxMaterial.Ghost(outer.GetComponent<Renderer>(), new Color(0.35f, 0.05f, 0.55f, 0.85f), 0.5f);
 
             var inner = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             inner.name = "VortexInner";
             inner.transform.SetParent(go.transform, false);
             inner.transform.localScale = new Vector3(radius * 1.2f, 0.05f, radius * 1.2f);
             inner.transform.localPosition = new Vector3(0, 0.03f, 0);
-            var ir = inner.GetComponent<Renderer>();
-            if (ir != null) ir.material.color = UiTheme.HeroSpiritBright;
-            Object.Destroy(inner.GetComponent<Collider>());
+            VfxMaterial.Ghost(inner.GetComponent<Renderer>(),
+                              new Color(UiTheme.HeroSpiritBright.r, UiTheme.HeroSpiritBright.g,
+                                        UiTheme.HeroSpiritBright.b, 0.70f), 0.8f);
 
             // Pulsing violet gravity light
             var lightGo = new GameObject("VoidLight");
@@ -667,6 +649,11 @@ namespace TumbangPreso.Abilities
             light.color = UiTheme.HeroSpiritBright;
             light.range = radius * 1.8f;
             light.intensity = 4.5f;
+
+            // ⚠️ THE VORTEX EMITS FOR ITS WHOLE LIFE, not just at the moment it opens. It is
+            // a 5 s zone that DRAGS people in, so it has to keep looking dangerous the whole
+            // time; a one-shot burst at cast leaves four seconds of a flat purple disc.
+            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.VoidWisp, duration);
 
             GameServices.Audio?.PlayAt("ability_bagsak_bomb", position);
             ComicPopup.Spawn(position, "VOID GALAXY!", UiTheme.HeroSpiritBright, 1.4f);
@@ -753,9 +740,7 @@ namespace TumbangPreso.Abilities
                 spark.transform.position = position + Vector3.up * 0.5f;
                 spark.transform.localScale = Vector3.one * Random.Range(0.15f, 0.35f);
 
-                var spr = spark.GetComponent<Renderer>();
-                if (spr != null) spr.material.color = UiTheme.HeroElectricBright;
-                Object.Destroy(spark.GetComponent<Collider>());
+                VfxMaterial.Ghost(spark.GetComponent<Renderer>(), UiTheme.HeroElectricBright, 1.0f);
 
                 var rb = spark.AddComponent<Rigidbody>();
                 rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.5f) * Random.Range(5.0f, 12.0f);
@@ -767,9 +752,7 @@ namespace TumbangPreso.Abilities
             shockRing.name = "ThunderShockRing";
             shockRing.transform.position = position + Vector3.up * 0.04f;
             shockRing.transform.localScale = new Vector3(0.5f, 0.03f, 0.5f);
-            var sr = shockRing.GetComponent<Renderer>();
-            if (sr != null) sr.material.color = UiTheme.HeroElectric;
-            Object.Destroy(shockRing.GetComponent<Collider>());
+            VfxMaterial.Ghost(shockRing.GetComponent<Renderer>(), UiTheme.HeroElectric, 0.8f);
 
             var ringAnim = shockRing.AddComponent<ShockwaveRingAnim>();
             ringAnim.TargetRadius = radius * 1.5f;
@@ -829,9 +812,7 @@ namespace TumbangPreso.Abilities
             vfx.transform.position = center + Vector3.up * 0.6f;
             vfx.transform.localScale = Vector3.one * (radius * 0.4f);
 
-            var r = vfx.GetComponent<Renderer>();
-            if (r != null) r.material.color = UiTheme.HeroFireBright;
-            Object.Destroy(vfx.GetComponent<Collider>());
+            VfxMaterial.Ghost(vfx.GetComponent<Renderer>(), UiTheme.HeroFireBright, 0.9f);
 
             var anim = vfx.AddComponent<ExplosionVfxAnim>();
             anim.TargetRadius = radius * 1.1f;
@@ -843,9 +824,7 @@ namespace TumbangPreso.Abilities
             shockRing.transform.position = center + Vector3.up * 0.05f;
             shockRing.transform.localScale = new Vector3(0.5f, 0.02f, 0.5f);
 
-            var sr = shockRing.GetComponent<Renderer>();
-            if (sr != null) sr.material.color = UiTheme.HeroFire;
-            Object.Destroy(shockRing.GetComponent<Collider>());
+            VfxMaterial.Ghost(shockRing.GetComponent<Renderer>(), UiTheme.HeroFire, 0.8f);
 
             var ringAnim = shockRing.AddComponent<ShockwaveRingAnim>();
             ringAnim.TargetRadius = radius * 1.4f;
@@ -859,9 +838,8 @@ namespace TumbangPreso.Abilities
                 spark.transform.position = center + Vector3.up * 0.5f;
                 spark.transform.localScale = Vector3.one * Random.Range(0.18f, 0.4f);
 
-                var spr = spark.GetComponent<Renderer>();
-                if (spr != null) spr.material.color = new Color(1.0f, Random.Range(0.4f, 0.9f), 0.1f);
-                Object.Destroy(spark.GetComponent<Collider>());
+                VfxMaterial.Ghost(spark.GetComponent<Renderer>(),
+                                  new Color(1.0f, Random.Range(0.4f, 0.9f), 0.1f), 0.9f);
 
                 var rb = spark.AddComponent<Rigidbody>();
                 rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.6f) * Random.Range(7.0f, 15.0f);
@@ -942,12 +920,10 @@ namespace TumbangPreso.Abilities
             go.transform.rotation = victim.rotation;
             go.transform.localScale = new Vector3(1.35f, 1.95f, 1.35f);
 
-            var r = go.GetComponent<Renderer>();
-            if (r != null)
-            {
-                r.material.color = new Color(0.45f, 0.92f, 1.0f, 0.72f);
-            }
-            Object.Destroy(go.GetComponent<Collider>());
+            // ⚠️ THIS ONE HAD TO BE SEE-THROUGH OR THE ABILITY IS UNPLAYABLE. It encases a
+            // PLAYER, so at full opacity the victim spent 2.5 s looking at the inside of a
+            // solid box and everyone else lost track of where they were.
+            VfxMaterial.Ghost(go.GetComponent<Renderer>(), new Color(0.45f, 0.92f, 1.0f, 0.72f), 0.3f);
 
             var comp = go.AddComponent<IceCubePrisonComponent>();
             comp.Duration = duration;
@@ -993,8 +969,8 @@ namespace TumbangPreso.Abilities
                     shard.transform.localScale = Vector3.one * Random.Range(0.2f, 0.4f);
                     shard.transform.rotation = Random.rotation;
 
-                    var r = shard.GetComponent<Renderer>();
-                    if (r != null) r.material.color = new Color(0.7f, 0.96f, 1.0f, 0.85f);
+                    VfxMaterial.Ghost(shard.GetComponent<Renderer>(),
+                                      new Color(0.7f, 0.96f, 1.0f, 0.85f));
 
                     var rb = shard.AddComponent<Rigidbody>();
                     rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.5f) * Random.Range(3.5f, 8.0f);
@@ -1003,8 +979,10 @@ namespace TumbangPreso.Abilities
                     Object.Destroy(shard, 1.2f);
                 }
 
+                // ⚠️ THE SHATTER IS TWELVE FLYING SHARDS AND A SOUND. It does not also need
+                // a word, and it fires once per frozen player, so a three-target nova used to
+                // print three of them 2.5 s after the cast.
                 GameServices.Audio?.PlayAt("sfx_ice_freeze", transform.position);
-                ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, "SHATTER!", UiTheme.HeroIceBright, 1.2f);
                 Object.Destroy(gameObject);
             }
         }
@@ -1032,9 +1010,8 @@ namespace TumbangPreso.Abilities
                 confetti.transform.localScale = new Vector3(0.18f, 0.02f, 0.10f);
                 confetti.transform.rotation = Random.rotation;
 
-                var r = confetti.GetComponent<Renderer>();
-                if (r != null) r.material.color = colors[Random.Range(0, colors.Length)];
-                Object.Destroy(confetti.GetComponent<Collider>());
+                VfxMaterial.Solid(confetti.GetComponent<Renderer>(), colors[Random.Range(0, colors.Length)]);
+                VfxMaterial.StripCollider(confetti);
 
                 var rb = confetti.AddComponent<Rigidbody>();
                 rb.linearDamping = 1.8f;
@@ -1074,9 +1051,7 @@ namespace TumbangPreso.Abilities
                 seg.transform.rotation = Quaternion.FromToRotation(Vector3.up, dir);
                 seg.transform.localScale = new Vector3(0.28f, len * 0.5f, 0.28f);
 
-                var r = seg.GetComponent<Renderer>();
-                if (r != null) r.material.color = color;
-                Object.Destroy(seg.GetComponent<Collider>());
+                VfxMaterial.Ghost(seg.GetComponent<Renderer>(), color, 1.0f);
 
                 prev = target;
             }
@@ -1098,11 +1073,12 @@ namespace TumbangPreso.Abilities
                 rock.transform.localScale = Vector3.one * Random.Range(0.25f, 0.55f);
                 rock.transform.rotation = Random.rotation;
 
-                var r = rock.GetComponent<Renderer>();
-                if (r != null)
-                {
-                    r.material.color = Random.value < 0.5f ? new Color(0.22f, 0.18f, 0.15f) : UiTheme.HeroEarthBright;
-                }
+                // ⚠️⚠️ FOURTEEN OF THESE COME OUT OF ONE ULTIMATE, EACH WITH A COLLIDER AND A
+                // RIGIDBODY, ALL SPAWNED ON TOP OF WHOEVER WAS JUST HIT. Decoration was doing
+                // physics to players. Rock is opaque and lit flat; only the collider goes.
+                VfxMaterial.Solid(rock.GetComponent<Renderer>(),
+                                  Random.value < 0.5f ? new Color(0.22f, 0.18f, 0.15f) : UiTheme.HeroMagmaCore);
+                VfxMaterial.StripCollider(rock);
 
                 var rb = rock.AddComponent<Rigidbody>();
                 rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.8f) * Random.Range(6.0f, 13.0f);
@@ -1112,9 +1088,25 @@ namespace TumbangPreso.Abilities
             }
         }
 
+        /// <summary>
+        /// The fireball: grows fast, fades out.
+        ///
+        /// ⚠️⚠️ IT NEVER FADED, AND ON THE BIGGEST EFFECT IN THE GAME. Both animators here have
+        /// always written a falling alpha into `material.color`, and both materials were the
+        /// built-in opaque `Default-Material`, which does not read one. So Sean's Supernova grew
+        /// a SOLID sphere to `4.8 * 2.2 = 10.6 m` across, centred one metre in front of the
+        /// player who cast it, and then vanished at full brightness half a second later. From
+        /// inside, the ultimate was an orange screen. `VfxMaterial.Ghost` at the spawn site is
+        /// what makes these two lines do the thing they say.
+        ///
+        /// ⚠️ THE SCALE CURVE IS `Sqrt(t)`, WHICH IS THE HALF OF THIS THAT WAS ALWAYS RIGHT. A
+        /// blast that expands linearly reads as a balloon; one that expands fastest at the start
+        /// reads as a detonation. Do not "simplify" it to `t`.
+        /// </summary>
         private sealed class ExplosionVfxAnim : MonoBehaviour
         {
             public float TargetRadius = 5.0f;
+            private readonly Fader _fade = new Fader();
             private float _elapsed;
 
             private void Update()
@@ -1123,19 +1115,14 @@ namespace TumbangPreso.Abilities
                 float t = Mathf.Clamp01(_elapsed / 0.5f);
                 transform.localScale = Vector3.one * Mathf.Lerp(1.0f, TargetRadius * 2.0f, Mathf.Sqrt(t));
 
-                var r = GetComponent<Renderer>();
-                if (r != null)
-                {
-                    var col = r.material.color;
-                    col.a = Mathf.Lerp(0.9f, 0.0f, t);
-                    r.material.color = col;
-                }
+                _fade.Apply(GetComponent<Renderer>(), Mathf.Lerp(0.85f, 0.0f, t));
             }
         }
 
         private sealed class ShockwaveRingAnim : MonoBehaviour
         {
             public float TargetRadius = 6.0f;
+            private readonly Fader _fade = new Fader();
             private float _elapsed;
 
             private void Update()
@@ -1145,13 +1132,54 @@ namespace TumbangPreso.Abilities
                 float r = Mathf.Lerp(0.5f, TargetRadius * 2.0f, t);
                 transform.localScale = new Vector3(r, 0.02f, r);
 
-                var rend = GetComponent<Renderer>();
-                if (rend != null)
+                _fade.Apply(GetComponent<Renderer>(), Mathf.Lerp(0.8f, 0.0f, t));
+            }
+        }
+
+        /// <summary>
+        /// Drops a renderer's alpha, and takes its glow down with it.
+        ///
+        /// ⚠️ THE EMISSION HAS TO FALL TOO, AND IT HAS TO FALL FROM A REMEMBERED BASE.
+        /// `VfxMaterial` lights these flatly through `_EmissionColor` so a blast is not shaded
+        /// by the arena's key light, and emission is ADDED after the blend: an effect faded to
+        /// alpha 0 with its glow left at full still deposits its own colour on the frame, so the
+        /// ring reaches zero opacity and stays visible.
+        ///
+        /// ⚠️⚠️ AND THE BASE IS CAPTURED ONCE RATHER THAN READ BACK EACH FRAME. Reading the
+        /// current emission and scaling it by the current alpha COMPOUNDS: at 60 fps a half
+        /// second fade multiplies by 0.9-ish thirty times over and the glow is gone in four
+        /// frames, which is a pop rather than a fade and looks like the effect was destroyed
+        /// early.
+        /// </summary>
+        private sealed class Fader
+        {
+            private Color _baseEmission;
+            private bool _captured;
+
+            public void Apply(Renderer target, float alpha)
+            {
+                if (target == null) return;
+
+                var material = target.material;
+                bool glows = material.HasProperty("_EmissionColor");
+
+                if (!_captured)
                 {
-                    var col = rend.material.color;
-                    col.a = Mathf.Lerp(0.8f, 0.0f, t);
-                    rend.material.color = col;
+                    if (glows) _baseEmission = material.GetColor("_EmissionColor");
+                    _captured = true;
                 }
+
+                float a = Mathf.Clamp01(alpha);
+
+                var colour = material.color;
+                colour.a = a;
+                material.color = colour;
+
+                if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", colour);
+
+                if (glows)
+                    material.SetColor("_EmissionColor",
+                        new Color(_baseEmission.r, _baseEmission.g, _baseEmission.b, 1.0f) * a);
             }
         }
     }
