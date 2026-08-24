@@ -65,10 +65,16 @@ namespace TumbangPreso.EditorTools.MapKit
             // 7. Hero Structures (LRT Viaduct Deck, Pillars, PC Express Building)
             BuildHeroStructures(geomRoot.transform);
 
-            // 8. Street Props & Dressing (Pisonet, Pares Cart, Cargo Trike, Jersey Barriers, Buildings, Poles)
+            // 8. Overhead LRT Train Flyby System
+            BuildLrtTrainSystem(geomRoot.transform);
+
+            // 9. PC Express Overclock Turbo Boost Pad
+            BuildOverclockPad(geomRoot.transform);
+
+            // 10. Street Props & Dressing (Pisonet, Pares Cart, Cargo Trike, Jersey Barriers, Buildings, Poles)
             BuildStreetProps(geomRoot.transform);
 
-            // 9. Interactive Street Tripping Hazards
+            // 11. Interactive Street Tripping Hazards
             BuildTripHazards(geomRoot.transform);
 
             // Ensure directories and save scene
@@ -256,20 +262,14 @@ namespace TumbangPreso.EditorTools.MapKit
             var deck = InstantiateProp("env_lrt_viaduct_deck", new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity, heroGo.transform);
             if (deck != null)
             {
-                // Solid BoxCollider for underside girder
                 var deckCol = deck.AddComponent<BoxCollider>();
                 deckCol.center = new Vector3(0.0f, 9.0f, 0.0f);
                 deckCol.size = new Vector3(6.8f, 2.2f, 40.0f);
             }
 
-            // 2. Viaduct Tactical Pillars (Hero Bank-shot & Cover Columns)
-            // Tactical Pillar Left at (X: -2.5, Z: 11.5)
+            // 2. Viaduct Tactical Pillars (Bank-shot & Cover Columns)
             CreateViaductPillar(heroGo.transform, new Vector3(-2.5f, 0.0f, 11.5f), "LrtPillar_TacticalLeft");
-
-            // Tactical Pillar Right at (X: +2.5, Z: 11.5)
             CreateViaductPillar(heroGo.transform, new Vector3(2.5f, 0.0f, 11.5f), "LrtPillar_TacticalRight");
-
-            // Southern Avenue Support Pillars at (X: +/-2.5, Z: -5.0)
             CreateViaductPillar(heroGo.transform, new Vector3(-2.5f, 0.0f, -5.0f), "LrtPillar_SouthLeft");
             CreateViaductPillar(heroGo.transform, new Vector3(2.5f, 0.0f, -5.0f), "LrtPillar_SouthRight");
 
@@ -314,6 +314,58 @@ namespace TumbangPreso.EditorTools.MapKit
             }
         }
 
+        private static void BuildLrtTrainSystem(Transform parent)
+        {
+            var trainSystemGo = new GameObject("LrtTrainSystem");
+            trainSystemGo.transform.SetParent(parent, false);
+
+            var flyby = trainSystemGo.AddComponent<LrtTrainFlyby>();
+            flyby.TrackX = -1.45f;
+            flyby.TrackY = 9.2f;
+            flyby.Speed = 24.0f;
+            flyby.Interval = 24.0f;
+            flyby.InitialDelay = 6.0f;
+
+            // Train Car 1 (Lead Cab)
+            InstantiateProp("env_lrt_train_car", new Vector3(0.0f, 0.0f, 7.5f), Quaternion.identity, trainSystemGo.transform);
+
+            // Train Car 2 (Trailing Cab)
+            InstantiateProp("env_lrt_train_car", new Vector3(0.0f, 0.0f, -7.5f), Quaternion.identity, trainSystemGo.transform);
+        }
+
+        private static void BuildOverclockPad(Transform parent)
+        {
+            var padGo = new GameObject("OverclockTurboPad");
+            padGo.transform.SetParent(parent, false);
+            padGo.transform.position = new Vector3(-4.8f, 0.05f, 5.5f);
+
+            var col = padGo.AddComponent<BoxCollider>();
+            col.isTrigger = true;
+            col.size = new Vector3(2.0f, 0.4f, 2.0f);
+
+            var boost = padGo.AddComponent<OverclockBoostPad>();
+
+            // RGB light
+            var lightGo = new GameObject("OverclockRgbLight");
+            lightGo.transform.SetParent(padGo.transform, false);
+            lightGo.transform.localPosition = new Vector3(0.0f, 0.4f, 0.0f);
+            var pLight = lightGo.AddComponent<Light>();
+            pLight.type = LightType.Point;
+            pLight.range = 3.5f;
+            pLight.intensity = 1.5f;
+            pLight.color = Color.cyan;
+            boost.PadLight = pLight;
+
+            // Visual pad quad
+            var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            quad.name = "PadVisual";
+            quad.transform.SetParent(padGo.transform, false);
+            quad.transform.localPosition = new Vector3(0.0f, 0.02f, 0.0f);
+            quad.transform.localRotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
+            quad.transform.localScale = new Vector3(1.8f, 1.8f, 1.0f);
+            UnityEngine.Object.DestroyImmediate(quad.GetComponent<Collider>());
+        }
+
         private static void CreateViaductPillar(Transform parent, Vector3 pos, string name)
         {
             var pillar = InstantiateProp("env_lrt_pillar", pos, Quaternion.identity, parent);
@@ -355,6 +407,9 @@ namespace TumbangPreso.EditorTools.MapKit
                 col.center = new Vector3(0.0f, 0.95f, -0.2f);
                 col.size = new Vector3(1.1f, 1.9f, 1.6f);
 
+                // Add interactive arcade component
+                var arcade = pisonet.AddComponent<PisonetInteractive>();
+
                 // Cyber CRT/LCD screen point light
                 var screenLightGo = new GameObject("ScreenGlow");
                 screenLightGo.transform.SetParent(pisonet.transform, false);
@@ -364,6 +419,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 sLight.color = new Color(0.0f, 0.90f, 1.0f);
                 sLight.range = 3.0f;
                 sLight.intensity = 1.2f;
+                arcade.ScreenLight = sLight;
             }
 
             // 2. Street Pares Food Cart (East Sidewalk X = 6.8, Z = -5.0, facing West -90 deg into road)
@@ -374,6 +430,9 @@ namespace TumbangPreso.EditorTools.MapKit
                 var col = pares.AddComponent<BoxCollider>();
                 col.center = new Vector3(0.0f, 1.3f, 0.0f);
                 col.size = new Vector3(1.9f, 2.6f, 1.8f);
+
+                // Add interactive pares food cart component
+                pares.AddComponent<StreetParesInteractive>();
 
                 var brothLightGo = new GameObject("FoodWarmerLight");
                 brothLightGo.transform.SetParent(pares.transform, false);
