@@ -77,6 +77,94 @@ yes, this closes.
 
 ---
 
+## 4 · Bayan Plaza's monument stands inside the defender's box
+
+**Found by `MapGeometryCheck`, not by playing, and it is a Hero Strike fairness problem.**
+
+`BayanPlaza/Obstacles/MonumentBody/CollisionShape3D` occupies **0.70 m by 1.90 m of the chalk,
+from y = 0.10 to y = 5.10**. The taya is CLAMPED into that box (`Confinement.ClampToBox`) and
+cannot step out to walk around it, so one approach to the can is permanently shielded for
+whoever is defending.
+
+In Classic that is a quirk you play around. In Hero Strike it is a coin flip: a wall or a zone
+placed against the monument closes a lane outright, so the seat that draws the taya round with
+the good geometry has a different game from the other three, and `docs/VISION.md` § 4 says the
+mode is aimed at a bracket.
+
+**Needs:** the monument moved to the plaza edge outside |x|, |z| = 7.0, or its collider reduced
+to something below `CharacterController.stepOffset` (0.30 m) so it is a plinth rather than a
+wall. Then add `BayanPlaza.unity` to `MapGeometryCheck.Gated`.
+
+⚠️ **The scene is an IMPORTED `.tscn`, not built from code**, so this is a scene edit rather
+than a builder change. That is also why the map is only reported on today and not gated.
+
+**Where.** `Assets/TumbangPreso/Scenes/Maps/BayanPlaza.unity`,
+`Assets/TumbangPreso/Editor/MapKit/MapGeometryCheck.cs`.
+
+---
+
+## 5 · Three measured art faults under the LRT guideway
+
+**All three are small, all three are recorded with their numbers, none is worth a render on its
+own.** Grouped so they can be fixed in one pass on the models.
+
+1. **The train's wheel gauge does not match the rails.** `env_lrt_viaduct_deck.obj`'s
+   `lrt_steel_rail` puts the westbound pair at x -2.360..-2.280 and -0.920..-0.840, so the
+   gauge is **1.44 m**. `env_lrt_train_car.obj`'s wheel boxes are at x ±1.02..1.18 from the car
+   centre, a gauge of **2.20 m**. The car is centred on the track correctly and rides the rail
+   head at y = 10.360 correctly; only the bogies are wrong. Invisible from the street because
+   the underframe hides them, visible from anywhere above the deck.
+   **Done looks like:** the eight wheel boxes moved to ±0.68..0.76, which is ±0.72 about the
+   car centre and lands them on the rail centres.
+
+2. **The third rails have no insulators.** `lrt_third_rail` spans y 10.240..10.460 over sleepers
+   whose tops are at 10.210, so both power rails hang 0.030 m in mid-air for the whole 40 m.
+   That is correct for a real third rail and wrong-looking without the brackets that carry it.
+   **Done looks like:** a bracket every 2 m at the sleeper pitch, or the rails dropped to 10.210.
+
+3. **`env_cargo_tricycle_boxes` has a floating handlebar.** Two detached islands, at y 1.02..1.07
+   (`trike_chrome`, the bar) and y 0.85..1.05 (the grip), with the frame ending at y 0.93 and
+   nothing joining them. Roughly 0.09 m of daylight.
+   **Done looks like:** a stem box from the frame top to the bar.
+
+⚠️ **`MapGeometryCheck` cannot catch any of these** and that is a known limit, not an oversight:
+it works on `Renderer.bounds`, which is one AABB for a whole `.obj` prop, so a part floating
+INSIDE a prop's own bounds is invisible to it. They were found by walking each `.obj`'s faces
+into connected islands and reporting islands whose bounding box touches no other island. If a
+fourth one of these turns up, that island walk is worth committing as a tool.
+
+**Where.** `Assets/TumbangPreso/Art/models/env_lrt_viaduct_deck.obj`,
+`env_lrt_train_car.obj`, `env_cargo_tricycle_boxes.obj`.
+
+---
+
+## 6 · The overclock window has not been measured against a match
+
+**A new Hero Strike mechanic with a defensible number and no evidence behind it.**
+
+`OverheadPassWindow.OverclockRate` is **2.0** for the ~2.6 s the LRT consist is over the street,
+every 24 s. The reasoning is in `docs/Ilalim_Ng_Tulay.md` § 3.5 and it is sound: it pays a
+player who is already casting rather than one who is waiting, so it cannot violate
+`docs/VISION.md` § 4. What nobody has is the number.
+
+At 24 s intervals and a 2.6 s window, the mode spends **10.8 per cent of a round** at double
+cooldown rate. Against a 9 s skill that is roughly one extra cast every four cycles for a player
+who plays around it, and zero for one who does not. Whether that gap is "a skill" or "a tax on
+not knowing" is the open question.
+
+**Needs:** a `BotBehaviourProbe` Hero Strike run on this map at `OverclockRate` 1.0 (off), 1.5
+and 2.0, comparing skill uses, ultimates and knockdowns per round. The winner goes into the
+constant with its number, the way every other measured value in this repo does.
+
+⚠️ **The probe runs on Eskinita today.** Pointing it at a second map is part of the work, and it
+is worth doing anyway: § 4 above and `docs/Ilalim_Ng_Tulay.md` § 1 are both arguments that map
+geometry changes Hero Strike outcomes, and nothing in the harness has ever measured that.
+
+**Where.** `Assets/TumbangPreso/Runtime/Map/OverheadPassWindow.cs`,
+`Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`.
+
+---
+
 ## Closed
 
 - **First-Person Character-Specific Viewmodel Arms.** ✅ 2026-08-23.
@@ -280,10 +368,72 @@ yes, this closes.
   Nena). Held slipper parenting and all 15 bespoke hero ability animations preserved. Verified
   by 100 EditMode tests, 55 PlayMode tests, and 56 Core tests.
 
-- **Map "Ilalim ng Tulay" (LRT Gilmore Strip) with PC Express and Street Tripping Mechanics.** ✅ 2026-08-24.
-  Added brand-new 32m x 16m urban commercial arena under the elevated railway viaduct (inspired by
-  Gilmore Ave / Aurora Blvd) with PC Express showroom storefront, overhead LRT-2 train flyby event,
-  PC Express RGB overclock turbo boost pads, interactive pisonet coin slot and pares food cart,
-  tactical hazard-striped bank-shot pillars, and environmental tripping hazards (extension cords, broth
-  slicks, shipping debris, potholes) with full knockdown falling and getting-up animations. Verified by
-  56 Core tests, HeadlessCheck, ArenaCheck, and built to Windows Standalone player.
+- **Map "Ilalim ng Tulay" (LRT Gilmore Strip).** ✅ 2026-08-24, rebuilt from the cross section
+  out. It shipped on 2026-08-24 and every one of the faults below was in that build; the map
+  now has a design document, `docs/Ilalim_Ng_Tulay.md`, and a check that refuses it,
+  `MapGeometryCheck`.
+
+  **The geometry was wrong in ways four signed-off renders did not show.** `MapGeometryCheck`
+  measured **62 findings** on the shipped scene and **0** on this one:
+  - Both pavements floated **0.15 m over open air**: 40 plaza tiles with nothing built under
+    them. Five buildings, a pole, the pares cart and the PC Express storefront stood on nothing
+    at all, 1.5 m past where the ground stopped.
+  - Every prop on either pavement was **sunk 0.062 m into it**, because the placement height was
+    the plaza tile's ORIGIN and not its TOP. Everything is placed through `SurfaceTop(x)` now and
+    the builder holds no typed-in heights.
+  - All 50 kerb tiles were laid **across** the carriageway instead of along it, because
+    `env_kerb_tile` is 2.0 m on local X and 0.35 m on local Z and the street runs along Z. Those
+    are the loose pale slabs strewn over the road in `ilalim_thrower_view.png`.
+  - The map **ended in white sky** in every direction a metre past the pavement. There is a
+    240 m ground plate, a shopfront line, a cross row closing each end and a far belt now, which
+    is what the other two maps already had.
+  - All four **utility poles were yawed the wrong way**, hanging their 6.6 m wire spans out over
+    the back lots instead of over the street.
+  - The collision floor was one flat plane at y = 0 while the pavement was drawn 0.212 m up, so
+    every body walked through both pavements to the shin.
+
+  **The rules geometry was wrong, and that mattered more.**
+  - There was **no chalk box at all**. It drew a "throwing line" at z = 3.0 and a "base circle"
+    at z = 13.5, neither derived from anything, while the can spawns at the world origin: the
+    circle was **13.5 m from the can it was drawn for**. All of it comes from
+    `Balance.ConfinementRadius` and `Confinement` now.
+  - Two 3.4 m **viaduct columns stood inside the box** at z = -5.0. The taya is clamped in there
+    and cannot step out to walk around one. Both live rows are outside |z| = 7 now, scaled to
+    0.6 so the centre gap is 4.4 m instead of 1.6 m.
+  - A **trip hazard was centred on the world origin**, which is where the can spawns and where
+    every retrieval in the match converges.
+  - The **overclock pad was inside the PC Express collider** and could not be reached.
+  - The PC Express collider itself reached **2.1 m into the carriageway**.
+
+  **It did not look like the same game, and the cause was one word.**
+  `EnvColourPass.DressingRoot()` looks for a child named exactly `Dressing`; the map put
+  everything under `Geometry`, so the pass walked nothing and repainted nothing while both other
+  maps were getting the seeded Manila palette, the roof atlases, the road correction and the
+  belt fade. The map was not using a different palette, it was using no palette. Groups are
+  named `Kalsada`, `Slab`, `Belt`, `Malayo` now. The near blocks are deliberately left unpainted
+  because their `.mtl` already carries the palette and multiplying terracotta by terracotta is
+  nearly black. The showcase probe also runs `EnvColourPass.Apply()` before rendering, without
+  which an edit-mode capture shows raw `.mtl` colours.
+
+  **PC Express is the shop it is named after.** It shipped as a green lightbox with two blank
+  white slabs and a green-white-red awning. `PcExpressSignAuthor` re-authors the fascia as the
+  real one: red field, white rim, blue PC tile, "PC EXPRESS" in a 5-by-7 blocky face, red-white-
+  blue awning. The tool is idempotent via a sentinel comment, which it needed after the first
+  version leaked 776 vertices per run (364, 1140, 1916) with nothing looking broken.
+
+  **New for Hero Strike**, all of it argued in `docs/Ilalim_Ng_Tulay.md` § 3:
+  - The chalk box IS the carriageway, so a player reads the danger zone off the kerb line.
+  - **4.2 m of legal standing room** outside the box on each long side against Eskinita's 1.6 m,
+    which is the measured reason 🧑 reported both existing maps as *"weird to play abilities
+    gamemode on"*. `ArenaCheck` bound 3 now clears its wall by 2.6 m instead of by 0.0.
+  - The **train pass is a mechanic**: `OverheadPassWindow` doubles ability COOLDOWN rate (only
+    the cooldown, never the ultimate charge) for the ~2.6 s the consist is overhead, every 24 s.
+    Classic gets Street Hype and the spectacle instead, per `VISION.md` § 1.1.
+  - The **bridge hoop**: a tsinelas through the ring fires "TRES!" and Street Hype, and awards
+    no score, because `MatchDirector.AddScore` stays the only place a point is made.
+  - "BAWAL UMIHI DITO" on the column faces, two potholes off the spawn-to-can line, and clutter
+    that is all on the pavements.
+
+  Verified by 56 core tests, 105 EditMode, 55 PlayMode, `HeadlessCheck`, `ArenaCheck`,
+  `MapGeometryCheck` at 0 findings, seven in-engine renders in `Logs/shots-ilalim/`, and a
+  Windows player build.

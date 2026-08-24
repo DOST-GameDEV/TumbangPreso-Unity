@@ -27,6 +27,12 @@ add its row here in the same commit.
 | [`Design_Drift_Report.md`](Design_Drift_Report.md) | The investigation into the eight places `Design.md` disagreed with the shipping code. All resolved: every one was stale prose. Kept as evidence, not as an open action. |
 | [`Feature_Audit.txt`](Feature_Audit.txt) | Raw audit output from the port survey. Reference only. |
 
+## Maps
+
+| File | What it is |
+|---|---|
+| [`Ilalim_Ng_Tulay.md`](Ilalim_Ng_Tulay.md) | **The LRT Gilmore strip, and the only map with a design document.** Why its chalk box is the carriageway, the measured reason the other two maps feel wrong for Hero Strike, where each ultimate wants to be spent, what the train pass does in each mode, and how the map gets the other maps' palette. Read before changing anything in `IlalimNgTulayBuilder`. |
+
 ## Testing
 
 | File | What it is |

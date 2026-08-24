@@ -52,7 +52,7 @@ then try again. An empty log is not a passing run.
 
 ---
 
-## 3 · The three checkers
+## 3 · The four checkers
 
 Each writes a readable report into `Logs/` and exits non-zero on failure.
 
@@ -63,6 +63,25 @@ Each writes a readable report into `Logs/` and exits non-zero on failure.
 `Logs/arena-check.txt`. The `floorcheck.py` replacement: five bounds, and it **aborts rather
 than warns**. Bound 3 is the one nobody had written down, and it currently sits **exactly** on
 its limit at 8.60 against a wall face of 8.60. **If you grow the box, this is what tells you.**
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -quit -nographics -projectPath . -executeMethod TumbangPreso.EditorTools.MapKit.MapGeometryCheck.Run -logFile Logs/mapgeom.log
+```
+
+`Logs/map-geometry-check.txt`. Opens each map and measures four things: every renderer rests on
+something (or carries an `AirborneByDesign` with a printed reason), nothing solid taller than
+`stepOffset` stands inside the chalk, nothing is within 1.4 m of where the can spawns, and a
+0.5 m grid across the walled area has ground under every sample.
+
+⚠️ **It gates Ilalim ng Tulay only.** Eskinita and Bayan Plaza are imported `.tscn` scenes and
+are reported on rather than gated, because gating them today would mean either fixing two
+imported scenes in one pass or switching the check off, and the second of those is how a check
+dies. Their findings are `TODO.md` § 4.
+
+⚠️ **A float finding prints the level profile under the prop** (`0.212 x5, 0.150 x20`). The
+coverage rule is the part that is easy to get wrong, and arguing with it from the source instead
+cost a round trip. That profile is also what caught all four utility poles yawed backwards, with
+twenty of the twenty-five squares under each one sitting over the back lots.
 
 ```bash
 "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -quit -nographics -projectPath . -executeMethod TumbangPreso.EditorTools.AudioCueCheck.Run -logFile Logs/audio.log

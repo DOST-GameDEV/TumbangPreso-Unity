@@ -326,6 +326,10 @@ every file in a pre-existing output directory was freshly emitted.
 - `AiDiagnosticProbe` runs one round at 1x with every decision written out, for WHY rather
   than how much.
 - `AspectRatioProbes` drives real layout through nine resolutions.
+- `MapGeometryCheck` refuses an arena whose props float, whose props are buried, whose floor
+  has holes, or whose furniture stands inside the defender's box. ⚠️ **It found six faults on a
+  map whose four showcase renders had already been signed off**, including both pavements
+  floating 0.15 m over open air. A render only shows the angles somebody chose.
 - `tools/` holds player-side capture scripts.
 
 Three faults from one session that no amount of playing would have found: a HUD string rebuilt

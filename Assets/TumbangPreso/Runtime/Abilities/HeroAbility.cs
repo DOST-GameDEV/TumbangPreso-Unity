@@ -133,8 +133,17 @@ namespace TumbangPreso.Abilities
 
         public virtual void Tick(AbilityContext ctx, float dt)
         {
+            // ⚠️⚠️ THE COOLDOWN IS THE ONLY QUANTITY A MAP MAY SPEED UP, AND IT IS SCALED HERE
+            // RATHER THAN AT THE CALL SITE ON PURPOSE. `HeroAbilitySystem` hands `Tick` one `dt`
+            // that also drives `DurationRemaining` and, through `HeroKit`, the ultimate charge.
+            // Scaling that `dt` would shorten every live effect and fill the meter faster, and
+            // `docs/VISION.md` § 4 forbids the second of those outright: a meter that fills on a
+            // timer is a reason to stand still. Scaling only the drain pays a player who is
+            // already casting, which is the point of the window.
+            //
+            // Everywhere except under the LRT guideway on Ilalim ng Tulay this is 1.0.
             if (CooldownRemaining > 0.0f)
-                CooldownRemaining = Mathf.Max(0.0f, CooldownRemaining - dt);
+                CooldownRemaining = Mathf.Max(0.0f, CooldownRemaining - dt * OverheadPassWindow.CooldownRate);
 
             if (DurationRemaining > 0.0f)
             {
