@@ -279,3 +279,11 @@ yes, this closes.
   Totoy, Inday, Kuya Boy, Ate Girlie, Tikboy, Bebang, Jun-Jun, Lola Pacing, Mang Kanor, Aling
   Nena). Held slipper parenting and all 15 bespoke hero ability animations preserved. Verified
   by 100 EditMode tests, 55 PlayMode tests, and 56 Core tests.
+
+- **Map "Ilalim ng Tulay" (LRT Gilmore Strip) with PC Express and Street Tripping Mechanics.** ✅ 2026-08-24.
+  Added brand-new 32m x 16m urban commercial arena under the elevated railway viaduct (inspired by
+  Gilmore Ave / Aurora Blvd) with PC Express showroom storefront, overhead LRT-2 train flyby event,
+  PC Express RGB overclock turbo boost pads, interactive pisonet coin slot and pares food cart,
+  tactical hazard-striped bank-shot pillars, and environmental tripping hazards (extension cords, broth
+  slicks, shipping debris, potholes) with full knockdown falling and getting-up animations. Verified by
+  56 Core tests, HeadlessCheck, ArenaCheck, and built to Windows Standalone player.
