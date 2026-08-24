@@ -333,7 +333,8 @@ namespace TumbangPreso.Visual
             // jumping up and down the floor and lying down"*. Locomotion loops; an emote loops
             // only if EmoteLoops says so, and otherwise holds its last frame.
             bool emoting = _emote != null && _emote.IsEmoting;
-            bool loop = !emoting || !EmoteHoldsLastFrame(_emote.Current);
+            bool tripped = _motor != null && _motor.IsTripped;
+            bool loop = (!emoting || !EmoteHoldsLastFrame(_emote.Current)) && !tripped;
 
             Play(Choose(), loop);
             Blend();
@@ -430,6 +431,12 @@ namespace TumbangPreso.Visual
         /// </summary>
         private string Choose()
         {
+            if (_motor != null && _motor.IsTripped)
+            {
+                // When tripped, lie flat on the ground for the majority of the duration, then play get-up
+                return _motor.TripLeft > 0.7f ? Die : PickUp;
+            }
+
             if (_emote != null && _emote.IsEmoting)
             {
                 string emoteClip = ResolveChain(EmoteClips, _emote.Current);

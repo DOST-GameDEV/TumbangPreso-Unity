@@ -1,3 +1,4 @@
+using System;
 using TumbangPreso.Core;
 using UnityEngine;
 
@@ -607,8 +608,10 @@ namespace TumbangPreso
                 }
             }
 
+            Vector3 prevPos = transform.position;
             transform.position += _velocity * dt;
 
+            BounceOffObstacles(prevPos, dt);
             BounceOffBounds();
             SpinInFlight(dt);
 
@@ -755,10 +758,75 @@ namespace TumbangPreso
         ///
         /// ⚠️ THE FORM IS `-sign(position) * abs(velocity)`, NOT A PLAIN SIGN FLIP. A flip
         /// would send a slipper that is somehow ALREADY outside and travelling inward back
-        /// out again — and being outside is exactly the state this exists to recover from, so
-        /// it must not have a way to make it worse. This form always ends up pointing at the
-        /// court.
+        /// <summary>
+        /// Bounces off solid obstacle colliders (such as viaduct pillars and roadside walls)
+        /// in the arena, enabling tactical bank shots.
         /// </summary>
+        private void BounceOffObstacles(Vector3 previousPos, float dt)
+        {
+            Vector3 disp = transform.position - previousPos;
+            float dist = disp.magnitude;
+            if (dist < 0.001f) return;
+
+            var hits = Physics.SphereCastAll(previousPos, Balance.SlipperHitRadius, disp.normalized, dist,
+                                             ~0, QueryTriggerInteraction.Ignore);
+
+            if (hits == null || hits.Length == 0) return;
+
+            RaycastHit closest = default;
+            float closestDist = float.MaxValue;
+            bool hitFound = false;
+
+            foreach (var hit in hits)
+            {
+                if (hit.collider == null) continue;
+                if (hit.collider.isTrigger) continue;
+                if (hit.collider.GetComponentInParent<CharacterMotor>() != null) continue;
+                if (hit.collider.GetComponentInParent<Lata>() != null) continue;
+                if (hit.collider.GetComponentInParent<Slipper>() != null) continue;
+                if (hit.collider.name.StartsWith("Floor", StringComparison.OrdinalIgnoreCase)) continue;
+
+                // Vertical / obstacle hits (ground hits are handled by Land)
+                if (Vector3.Dot(hit.normal, Vector3.up) > 0.6f) continue;
+
+                if (hit.distance < closestDist)
+                {
+                    closestDist = hit.distance;
+                    closest = hit;
+                    hitFound = true;
+                }
+            }
+
+            if (!hitFound) return;
+
+            float restitution = Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold
+                                && _bankCount == 0
+                ? Balance.PektusBankRestitution
+                : Balance.BounceRestitution;
+
+            Vector3 normal = closest.normal;
+            normal.y = 0.0f;
+            if (normal.sqrMagnitude > 0.001f) normal.Normalize();
+            else normal = -disp.normalized;
+
+            _velocity = Vector3.Reflect(_velocity, normal) * restitution;
+            transform.position = closest.point + normal * (Balance.SlipperHitRadius + 0.02f);
+
+            _bankCount++;
+            GameServices.Audio?.PlayAtVaried("slipper_land", transform.position,
+                                             0.88f, 1.08f, 0.85f);
+
+            if (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
+            {
+                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.35f,
+                    "BANK!", UI.UiTheme.Highlight, 1.0f);
+                UI.Hud.ReportStyle(_throwerSlot, 18.0f, "BANK SHOT");
+            }
+
+            if (_bankCount > Balance.MaxScoringBanks)
+                _throwerSlot = -1;
+        }
+
         private void BounceOffBounds()
         {
             float limitX = AIController.PlayableHalfX - Balance.SlipperHitRadius;

@@ -113,6 +113,26 @@ namespace TumbangPreso
             // player chose. Applied once here, before any seat is built.
             AIController.ApplyDifficultyFromSettings();
 
+            var bounds = GameObject.Find("Bounds");
+            if (bounds != null)
+            {
+                float maxX = 8.6f;
+                float maxZ = 13.0f;
+                foreach (var col in bounds.GetComponentsInChildren<BoxCollider>())
+                {
+                    Vector3 c = col.transform.position + col.center;
+                    if (Mathf.Abs(c.x) > 1.0f) maxX = Mathf.Max(maxX, Mathf.Abs(c.x));
+                    if (Mathf.Abs(c.z) > 1.0f) maxZ = Mathf.Max(maxZ, Mathf.Abs(c.z));
+                }
+                AIController.PlayableHalfX = maxX;
+                AIController.PlayableHalfZ = maxZ;
+            }
+            else
+            {
+                AIController.PlayableHalfX = 8.6f;
+                AIController.PlayableHalfZ = 13.0f;
+            }
+
             var lata = BuildLata();
             var seats = new CharacterMotor[Balance.PlayerCount];
             var slippers = new Slipper[Balance.PlayerCount];

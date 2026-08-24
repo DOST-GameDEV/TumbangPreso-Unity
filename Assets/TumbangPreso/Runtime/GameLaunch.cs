@@ -43,6 +43,8 @@ namespace TumbangPreso
                 "Urban side street. Sari-sari, sampay, kanal.", SceneFlow.Eskinita),
             new MapEntry("bayan_plaza", "BAYAN PLAZA",
                 "Barangay plaza. Church, basketball ring, acacia.", SceneFlow.BayanPlaza),
+            new MapEntry("ilalim_ng_tulay", "ILALIM NG TULAY",
+                "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", SceneFlow.IlalimNgTulay),
         };
 
         public static string SelectedMap = "eskinita";

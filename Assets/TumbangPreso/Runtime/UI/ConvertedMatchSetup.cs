@@ -380,8 +380,7 @@ namespace TumbangPreso.UI
         {
             SceneFlow.SelectedMap = SceneFlow.Maps[Mathf.Clamp(_map, 0, SceneFlow.Maps.Length - 1)];
 
-            SetText("MapValueLabel",
-                    SceneFlow.SelectedMap.ToUpperInvariant().Replace("BAYANPLAZA", "BAYAN PLAZA"));
+            SetText("MapValueLabel", SceneFlow.PreviewFor(SceneFlow.SelectedMap).Name);
 
             SetText("ModeValueLabel", SceneFlow.SelectedMode == GameMode.HeroStrike ? "HERO STRIKE" : "CLASSIC");
             SetText("DifficultyValueLabel", Difficulties[_difficulty]);

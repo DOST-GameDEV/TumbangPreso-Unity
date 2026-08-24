@@ -637,6 +637,8 @@ namespace TumbangPreso
 
         private float _stunLeft;
         private float _stunTotal;
+        private float _tripLeft;
+        private float _tripTotal;
 
         /// <summary>Seconds of stun left, so the HUD can print the number the player needs.</summary>
         public float StunLeft => _stunLeft;
@@ -645,10 +647,36 @@ namespace TumbangPreso
         /// raw number. Reset with the stun, never accumulated.</summary>
         public float StunTotal => _stunTotal;
 
+        /// <summary>True while the character has tripped and is grounded on the floor.</summary>
+        public bool IsTripped => _tripLeft > 0.0f;
+        public float TripLeft => _tripLeft;
+        public float TripTotal => _tripTotal;
+
         public void ClearStun()
         {
             _stunLeft = 0.0f;
             _stunTotal = 0.0f;
+        }
+
+        public void ClearTrip()
+        {
+            _tripLeft = 0.0f;
+            _tripTotal = 0.0f;
+        }
+
+        /// <summary>
+        /// Trips the character, making them tumble flat onto the ground for a duration (e.g. 2.5s)
+        /// before rising back up.
+        /// </summary>
+        public void ApplyTrip(float duration = 2.5f)
+        {
+            if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+
+            _tripLeft = Mathf.Max(_tripLeft, duration);
+            _tripTotal = Mathf.Max(_tripTotal, _tripLeft);
+            ApplyStagger(duration);
+            _velocity.x = 0.0f;
+            _velocity.z = 0.0f;
         }
 
         /// <summary>⚠️ Max(), NEVER additive. That is the entire bound on a stun chain in a
@@ -678,6 +706,12 @@ namespace TumbangPreso
 
         private void Update()
         {
+            if (_tripLeft > 0.0f)
+            {
+                _tripLeft = Mathf.Max(0.0f, _tripLeft - Time.deltaTime);
+                if (_tripLeft <= 0.0f) _tripTotal = 0.0f;
+            }
+
             if (_stunLeft <= 0.0f) return;
 
             _stunLeft = Mathf.Max(0.0f, _stunLeft - Time.deltaTime);

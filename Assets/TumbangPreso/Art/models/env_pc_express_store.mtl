@@ -1,0 +1,150 @@
+# Material definition for env_pc_express_store
+
+newmtl pcex_wall
+Kd 0.88000 0.89000 0.91000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_floor
+Kd 0.28000 0.30000 0.34000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_roof
+Kd 0.42000 0.45000 0.48000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_pillar
+Kd 0.22000 0.24000 0.28000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_sign_green
+Kd 0.00000 0.52900 0.24300
+Ke 0.00000 0.25000 0.10000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_sign_red
+Kd 0.89000 0.10600 0.13700
+Ke 0.35000 0.05000 0.05000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_sign_white
+Kd 0.98000 0.98000 0.98000
+Ke 0.60000 0.60000 0.60000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_glass
+Kd 0.25000 0.45000 0.65000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 0.6500
+illum 2
+
+newmtl pcex_shutter
+Kd 0.62000 0.65000 0.68000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_awning_green
+Kd 0.00000 0.52900 0.24300
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_awning_white
+Kd 0.95000 0.95000 0.95000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_awning_red
+Kd 0.89000 0.10600 0.13700
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_aircon
+Kd 0.82000 0.83000 0.85000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_bucket
+Kd 0.85000 0.25000 0.20000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_gpu_green
+Kd 0.10000 0.75000 0.25000
+Ke 0.05000 0.45000 0.15000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_gpu_red
+Kd 0.85000 0.15000 0.20000
+Ke 0.45000 0.05000 0.10000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_mobo_dark
+Kd 0.12000 0.14000 0.18000
+Ke 0.05000 0.05000 0.10000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_rgb_cyan
+Kd 0.00000 0.90000 1.00000
+Ke 0.00000 0.90000 1.00000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_rgb_magenta
+Kd 1.00000 0.00000 0.70000
+Ke 1.00000 0.00000 0.70000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl pcex_counter
+Kd 0.18000 0.20000 0.24000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
