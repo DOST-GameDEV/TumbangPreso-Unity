@@ -11,13 +11,13 @@ namespace TumbangPreso
     {
         [Header("Train Movement Settings")]
         [Tooltip("Seconds between train passes.")]
-        public float Interval = 26.0f;
+        public float Interval = 24.0f;
 
         [Tooltip("Initial delay before the first train pass.")]
-        public float InitialDelay = 7.0f;
+        public float InitialDelay = 5.0f;
 
         [Tooltip("Speed of the train crossing the viaduct (m/s).")]
-        public float Speed = 22.0f;
+        public float Speed = 24.0f;
 
         [Tooltip("Start Z position of the train.")]
         public float StartZ = -48.0f;
@@ -25,11 +25,11 @@ namespace TumbangPreso
         [Tooltip("End Z position where the train disappears.")]
         public float EndZ = 48.0f;
 
-        [Tooltip("Track X offset (Track 1 = -1.5m, Track 2 = +1.5m).")]
-        public float TrackX = -1.5f;
+        [Tooltip("Track X offset (Track 1 = -1.6m, Track 2 = +1.6m).")]
+        public float TrackX = -1.6f;
 
-        [Tooltip("Track Y elevation.")]
-        public float TrackY = 9.2f;
+        [Tooltip("Track Y elevation (Top of rail deck).")]
+        public float TrackY = 10.3f;
 
         private float _timer;
         private bool _isRunning;

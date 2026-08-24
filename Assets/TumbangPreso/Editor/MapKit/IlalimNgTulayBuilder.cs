@@ -154,7 +154,7 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
-            go.transform.position = pos;
+            go.transform.localPosition = pos;
         }
 
         private static void BuildBounds(Transform parent)
@@ -205,8 +205,8 @@ namespace TumbangPreso.EditorTools.MapKit
             var throwLine = GameObject.CreatePrimitive(PrimitiveType.Quad);
             throwLine.name = "ThrowingLine";
             throwLine.transform.SetParent(decalsGo.transform, false);
-            throwLine.transform.position = new Vector3(0.0f, 0.02f, 3.0f);
-            throwLine.transform.rotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
+            throwLine.transform.localPosition = new Vector3(0.0f, 0.02f, 3.0f);
+            throwLine.transform.localRotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
             throwLine.transform.localScale = new Vector3(10.0f, 0.18f, 1.0f);
             
             // Remove standard collider from decal quad
@@ -216,7 +216,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var baseCircle = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             baseCircle.name = "BaseCircle";
             baseCircle.transform.SetParent(decalsGo.transform, false);
-            baseCircle.transform.position = new Vector3(0.0f, 0.015f, 13.5f);
+            baseCircle.transform.localPosition = new Vector3(0.0f, 0.015f, 13.5f);
             baseCircle.transform.localScale = new Vector3(2.4f, 0.005f, 2.4f);
             UnityEngine.Object.DestroyImmediate(baseCircle.GetComponent<Collider>());
         }
@@ -273,8 +273,8 @@ namespace TumbangPreso.EditorTools.MapKit
             CreateViaductPillar(heroGo.transform, new Vector3(-2.5f, 0.0f, -5.0f), "LrtPillar_SouthLeft");
             CreateViaductPillar(heroGo.transform, new Vector3(2.5f, 0.0f, -5.0f), "LrtPillar_SouthRight");
 
-            // 3. PC Express Storefront (West Sidewalk X: -7.0, Z: 5.5, facing East into street +X)
-            var pcex = InstantiateProp("env_pc_express_store", new Vector3(-7.0f, 0.15f, 5.5f), Quaternion.Euler(0.0f, 90.0f, 0.0f), heroGo.transform);
+            // 3. PC Express Storefront (West Sidewalk X: -7.0, Z: 5.5, facing East into street +X with Euler 0, -90, 0)
+            var pcex = InstantiateProp("env_pc_express_store", new Vector3(-7.0f, 0.15f, 5.5f), Quaternion.Euler(0.0f, -90.0f, 0.0f), heroGo.transform);
             if (pcex != null)
             {
                 pcex.name = "PC_Express_Store";
@@ -318,26 +318,27 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             var trainSystemGo = new GameObject("LrtTrainSystem");
             trainSystemGo.transform.SetParent(parent, false);
+            trainSystemGo.transform.localPosition = new Vector3(-1.6f, 10.3f, 0.0f);
 
             var flyby = trainSystemGo.AddComponent<LrtTrainFlyby>();
-            flyby.TrackX = -1.45f;
-            flyby.TrackY = 9.2f;
+            flyby.TrackX = -1.6f;
+            flyby.TrackY = 10.3f;
             flyby.Speed = 24.0f;
             flyby.Interval = 24.0f;
-            flyby.InitialDelay = 6.0f;
+            flyby.InitialDelay = 5.0f;
 
             // Train Car 1 (Lead Cab)
             InstantiateProp("env_lrt_train_car", new Vector3(0.0f, 0.0f, 7.5f), Quaternion.identity, trainSystemGo.transform);
 
             // Train Car 2 (Trailing Cab)
-            InstantiateProp("env_lrt_train_car", new Vector3(0.0f, 0.0f, -7.5f), Quaternion.identity, trainSystemGo.transform);
+            InstantiateProp("env_lrt_train_car", new Vector3(0.0f, 0.0f, -7.5f), Quaternion.Euler(0.0f, 180.0f, 0.0f), trainSystemGo.transform);
         }
 
         private static void BuildOverclockPad(Transform parent)
         {
             var padGo = new GameObject("OverclockTurboPad");
             padGo.transform.SetParent(parent, false);
-            padGo.transform.position = new Vector3(-4.8f, 0.05f, 5.5f);
+            padGo.transform.localPosition = new Vector3(-4.8f, 0.05f, 5.5f);
 
             var col = padGo.AddComponent<BoxCollider>();
             col.isTrigger = true;
@@ -398,8 +399,8 @@ namespace TumbangPreso.EditorTools.MapKit
             var streetGo = new GameObject("StreetDressing");
             streetGo.transform.SetParent(parent, false);
 
-            // 1. Pisonet Kiosk (East Sidewalk X = 6.8, Z = 3.5, facing West -90 deg into road)
-            var pisonet = InstantiateProp("env_pisonet_kiosk", new Vector3(6.8f, 0.15f, 3.5f), Quaternion.Euler(0.0f, -90.0f, 0.0f), streetGo.transform);
+            // 1. Pisonet Kiosk (East Sidewalk X = 6.8, Z = 3.5, facing West 90 deg into road)
+            var pisonet = InstantiateProp("env_pisonet_kiosk", new Vector3(6.8f, 0.15f, 3.5f), Quaternion.Euler(0.0f, 90.0f, 0.0f), streetGo.transform);
             if (pisonet != null)
             {
                 pisonet.name = "Pisonet_Kiosk";
@@ -422,8 +423,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 arcade.ScreenLight = sLight;
             }
 
-            // 2. Street Pares Food Cart (East Sidewalk X = 6.8, Z = -5.0, facing West -90 deg into road)
-            var pares = InstantiateProp("env_street_pares_cart", new Vector3(6.8f, 0.15f, -5.0f), Quaternion.Euler(0.0f, -75.0f, 0.0f), streetGo.transform);
+            // 2. Street Pares Food Cart (East Sidewalk X = 6.8, Z = -5.0, facing West 90 deg into road)
+            var pares = InstantiateProp("env_street_pares_cart", new Vector3(6.8f, 0.15f, -5.0f), Quaternion.Euler(0.0f, 90.0f, 0.0f), streetGo.transform);
             if (pares != null)
             {
                 pares.name = "Street_Pares_Cart";
@@ -524,7 +525,7 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             var hazardGo = new GameObject(name);
             hazardGo.transform.SetParent(parent, false);
-            hazardGo.transform.position = pos;
+            hazardGo.transform.localPosition = pos;
 
             var col = hazardGo.AddComponent<BoxCollider>();
             col.isTrigger = true;
@@ -571,8 +572,8 @@ namespace TumbangPreso.EditorTools.MapKit
             var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
             instance.name = modelName;
             instance.transform.SetParent(parent, false);
-            instance.transform.position = position;
-            instance.transform.rotation = rotation;
+            instance.transform.localPosition = position;
+            instance.transform.localRotation = rotation;
 
             return instance;
         }
