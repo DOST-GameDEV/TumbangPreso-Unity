@@ -201,6 +201,8 @@ namespace TumbangPreso.EditorTools.MapKit
             failures += CheckBoxIsClear(sb);
             failures += CheckLataIsClear(pieces, sb);
             failures += CheckFloorCoversThePlayableArea(pieces, sb);
+            if (scenePath == IlalimNgTulayBuilder.ScenePath)
+                failures += CheckIlalimElevatedAssembly(sb);
 
             if (excused.Count > 0)
             {
@@ -221,6 +223,229 @@ namespace TumbangPreso.EditorTools.MapKit
             sb.AppendLine($"   findings   {failures}");
             sb.AppendLine();
             return failures;
+        }
+
+        /// <summary>
+        /// The ordinary resting check deliberately skips `AirborneByDesign`, which is correct
+        /// for signs and wrong as the only proof behind a bridge. This measures every join in
+        /// the elevated assembly instead: pillars to soffit, bridge bay to bridge bay, track to
+        /// deck, train to rail, and the complete utility span from ground to cable crown.
+        /// </summary>
+        private static int CheckIlalimElevatedAssembly(StringBuilder sb)
+        {
+            int failures = 0;
+            var map = GameObject.Find("IlalimNgTulay");
+            var tulay = map != null ? map.transform.Find("Dressing/Tulay") : null;
+            var guideway = tulay != null ? tulay.Find("LrtGuideway") : null;
+
+            if (guideway == null)
+            {
+                sb.AppendLine("   FAIL elevated: Dressing/Tulay/LrtGuideway is missing.");
+                return 1;
+            }
+
+            var bays = new List<Bounds>();
+            foreach (Transform child in guideway)
+            {
+                if (!child.name.StartsWith("GuidewayBay_")) continue;
+                if (TryRendererBounds(child, out Bounds bounds)) bays.Add(bounds);
+            }
+
+            bays.Sort((a, b) => a.min.z.CompareTo(b.min.z));
+            if (bays.Count != 12)
+            {
+                sb.AppendLine($"   FAIL elevated: guideway has {bays.Count} rendered bays, expected 12.");
+                failures++;
+            }
+
+            Bounds deck = bays.Count > 0 ? bays[0] : new Bounds();
+            for (int i = 0; i < bays.Count; i++)
+            {
+                Bounds bay = bays[i];
+                if (i > 0)
+                {
+                    float seam = bay.min.z - bays[i - 1].max.z;
+                    if (Mathf.Abs(seam) > FloatTolerance)
+                    {
+                        sb.AppendLine($"   FAIL elevated: guideway bay seam {i - 1}/{i} is {seam:F3} m.");
+                        failures++;
+                    }
+                    deck.Encapsulate(bay);
+                }
+            }
+
+            if (bays.Count > 0)
+            {
+                failures += Join(sb, "guideway soffit", deck.min.y, IlalimNgTulayBuilder.ViaductSoffit);
+                failures += Join(sb, "guideway top", deck.max.y, IlalimNgTulayBuilder.GuidewayTop);
+            }
+
+            int pillars = 0;
+            if (tulay != null)
+            {
+                foreach (Transform child in tulay)
+                {
+                    if (!child.name.StartsWith("LrtPillar_")) continue;
+                    if (!TryRendererBounds(child, out Bounds pillar)) continue;
+                    pillars++;
+                    failures += Join(sb, child.name + " to soffit", pillar.max.y, deck.min.y);
+                }
+            }
+
+            if (pillars != 8)
+            {
+                sb.AppendLine($"   FAIL elevated: guideway has {pillars} rendered pillars, expected 8.");
+                failures++;
+            }
+
+            float railTop = float.NegativeInfinity;
+            foreach (string trackName in new[] { "WestboundTrack", "EastboundTrack" })
+            {
+                var track = guideway.Find(trackName);
+                if (track == null || !TryRendererBounds(track, out Bounds bounds))
+                {
+                    sb.AppendLine($"   FAIL elevated: {trackName} is missing.");
+                    failures++;
+                    continue;
+                }
+
+                failures += Join(sb, trackName + " to deck", bounds.min.y, deck.max.y);
+                failures += Join(sb, trackName + " rail head", bounds.max.y, IlalimNgTulayBuilder.RailHead);
+                railTop = Mathf.Max(railTop, bounds.max.y);
+            }
+
+            var train = tulay != null ? tulay.Find("LrtTrainSystem") : null;
+            if (train == null)
+            {
+                sb.AppendLine("   FAIL elevated: LrtTrainSystem is missing.");
+                failures++;
+            }
+            else if (!float.IsNegativeInfinity(railTop))
+            {
+                float wheelBottom = float.PositiveInfinity;
+                int wheelRenderers = 0;
+                foreach (var renderer in train.GetComponentsInChildren<Renderer>(includeInactive: true))
+                {
+                    if (!renderer.name.StartsWith("wheels-")) continue;
+                    wheelBottom = Mathf.Min(wheelBottom, renderer.bounds.min.y);
+                    wheelRenderers++;
+                }
+
+                if (wheelRenderers == 0)
+                {
+                    sb.AppendLine("   FAIL elevated: train has no named wheel renderers.");
+                    failures++;
+                }
+                else
+                {
+                    failures += Join(sb, $"{wheelRenderers} train wheel meshes to rail head",
+                                     wheelBottom, railTop);
+                }
+            }
+
+            int utilitySpans = 0;
+            int utilityPoles = 0;
+            var westUtility = new List<Bounds>();
+            var eastUtility = new List<Bounds>();
+            var cable = map != null ? map.transform.Find("Dressing/Kable") : null;
+            if (cable != null)
+            {
+                foreach (Transform child in cable)
+                {
+                    if (!TryRendererBounds(child, out Bounds span)) continue;
+
+                    if (child.name.StartsWith("SidewalkWire_"))
+                    {
+                        utilitySpans++;
+                        (span.center.x < 0.0f ? westUtility : eastUtility).Add(span);
+                        if (span.size.z < 12.00f || span.size.x > 2.40f)
+                        {
+                            sb.AppendLine($"   FAIL elevated: utility wire is x {span.size.x:F2}, " +
+                                          $"z {span.size.z:F2} m. It must run parallel to Z.");
+                            failures++;
+                        }
+                    }
+                    else if (child.name.StartsWith("SidewalkPole_"))
+                    {
+                        utilityPoles++;
+                        failures += Join(sb, "utility pole foot", span.min.y,
+                                         IlalimNgTulayBuilder.SurfaceTop(span.center.x));
+                    }
+
+                    if ((child.name.StartsWith("SidewalkWire_") || child.name.StartsWith("SidewalkPole_")) &&
+                        Mathf.Abs(span.center.x) < 9.80f)
+                    {
+                        sb.AppendLine($"   FAIL elevated: utility piece centre x={span.center.x:F2} " +
+                                      "is not at the shopfront edge of the pavement.");
+                        failures++;
+                    }
+                }
+            }
+
+            foreach (var side in new[] { westUtility, eastUtility })
+            {
+                side.Sort((a, b) => a.min.z.CompareTo(b.min.z));
+                for (int i = 1; i < side.Count; i++)
+                {
+                    float seam = side[i].min.z - side[i - 1].max.z;
+                    if (Mathf.Abs(seam) <= FloatTolerance) continue;
+                    sb.AppendLine($"   FAIL elevated: sidewalk cable seam {i - 1}/{i} is {seam:F3} m.");
+                    failures++;
+                }
+            }
+
+            if (utilitySpans != 26)
+            {
+                sb.AppendLine($"   FAIL elevated: map has {utilitySpans} complete utility spans, expected 26.");
+                failures++;
+            }
+            if (utilityPoles != 28)
+            {
+                sb.AppendLine($"   FAIL elevated: map has {utilityPoles} single utility poles, expected 28.");
+                failures++;
+            }
+
+            var trike = map != null ? map.transform.Find("Dressing/Tindahan/Cargo_Tricycle_Boxes") : null;
+            if (trike == null || trike.Find("HandlebarStem") == null || trike.Find("HandlebarGripJoin") == null)
+            {
+                sb.AppendLine("   FAIL elevated: cargo tricycle handlebar stem or grip join is missing.");
+                failures++;
+            }
+
+            var hoop = map != null ? map.transform.Find("Dressing/Tindahan/BridgeHoop") : null;
+            if (hoop == null || hoop.Find("RimBracket") == null)
+            {
+                sb.AppendLine("   FAIL elevated: bridge hoop rim bracket is missing.");
+                failures++;
+            }
+
+            sb.AppendLine($"   elevated   {bays.Count} joined bays, {pillars} pillar-to-soffit joins, " +
+                          $"2 track-to-deck joins, train on rail, {utilitySpans} wire spans on " +
+                          $"{utilityPoles} grounded single poles, " +
+                          "trike and hoop brackets present");
+            return failures;
+        }
+
+        private static int Join(StringBuilder sb, string name, float first, float second)
+        {
+            float gap = first - second;
+            if (Mathf.Abs(gap) <= FloatTolerance) return 0;
+            sb.AppendLine($"   FAIL elevated: {name} misses by {gap:F3} m ({first:F3} vs {second:F3}).");
+            return 1;
+        }
+
+        private static bool TryRendererBounds(Transform root, out Bounds bounds)
+        {
+            var renderers = root.GetComponentsInChildren<Renderer>(includeInactive: true);
+            if (renderers.Length == 0)
+            {
+                bounds = default;
+                return false;
+            }
+
+            bounds = renderers[0].bounds;
+            for (int i = 1; i < renderers.Length; i++) bounds.Encapsulate(renderers[i].bounds);
+            return true;
         }
 
         /// <summary>

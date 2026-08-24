@@ -1,0 +1,18 @@
+# Generated from the supplied official PC Express logo.
+
+newmtl logo_return_blue
+Kd 0.04000 0.19000 0.56000
+Ke 0.01500 0.06000 0.18000
+Ks 0 0 0
+Ns 10
+d 1
+illum 2
+
+newmtl logo_face_white
+Kd 0.98500 0.98500 0.98000
+Ke 0.46000 0.46000 0.46000
+Ks 0 0 0
+Ns 10
+d 1
+illum 2
+

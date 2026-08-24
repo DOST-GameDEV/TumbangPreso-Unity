@@ -34,7 +34,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private const int ShotHeight = 720;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v6";
+        private const string Version = "v14";
 
         [MenuItem("Tumbang Preso/Capture Ilalim Ng Tulay Showcase")]
         public static void RunFromMenu() => Execute();
@@ -58,7 +58,7 @@ namespace TumbangPreso.EditorTools.MapKit
 
             // 1. The street, from above the south east pavement. Chalk, kerb line, guideway,
             // both column rows and the shopfront line all in one frame.
-            Shot("overview", new Vector3(9.5f, 6.6f, -19.5f), Quaternion.Euler(17.0f, -19.0f, 0.0f), 66.0f);
+            Shot("overview", new Vector3(6.2f, 7.0f, -15.2f), Quaternion.Euler(18.0f, -13.0f, 0.0f), 66.0f);
 
             // 2. The taya's problem. Standing on the can, looking down the south lane at where
             // the attackers throw from.
@@ -82,7 +82,12 @@ namespace TumbangPreso.EditorTools.MapKit
             // both ends instead of opening into sky.
             Shot("corridor", new Vector3(0.0f, 1.6f, -14.0f), Quaternion.Euler(2.0f, 0.0f, 0.0f), 74.0f);
 
-            Debug.Log($"[IlalimNgTulayShowcaseProbe] captured 7 shots ({Version}) into {OutDir}. " +
+            // 8. Above the parapet, because wheel-to-rail fit and dual-track width cannot be
+            // judged from the street even though the whole structure reads from down there.
+            Shot("guideway", new Vector3(13.0f, 13.0f, -19.0f),
+                 Quaternion.Euler(23.0f, -22.0f, 0.0f), 66.0f);
+
+            Debug.Log($"[IlalimNgTulayShowcaseProbe] captured 8 shots ({Version}) into {OutDir}. " +
                       $"chalk r={r:F2}, throwing line={line:F2}, spawn ring={ring:F2}");
             return true;
         }

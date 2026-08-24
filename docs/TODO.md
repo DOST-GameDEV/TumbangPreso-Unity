@@ -103,51 +103,16 @@ than a builder change. That is also why the map is only reported on today and no
 
 ---
 
-## 5 · Three measured art faults under the LRT guideway
-
-**All three are small, all three are recorded with their numbers, none is worth a render on its
-own.** Grouped so they can be fixed in one pass on the models.
-
-1. **The train's wheel gauge does not match the rails.** `env_lrt_viaduct_deck.obj`'s
-   `lrt_steel_rail` puts the westbound pair at x -2.360..-2.280 and -0.920..-0.840, so the
-   gauge is **1.44 m**. `env_lrt_train_car.obj`'s wheel boxes are at x ±1.02..1.18 from the car
-   centre, a gauge of **2.20 m**. The car is centred on the track correctly and rides the rail
-   head at y = 10.360 correctly; only the bogies are wrong. Invisible from the street because
-   the underframe hides them, visible from anywhere above the deck.
-   **Done looks like:** the eight wheel boxes moved to ±0.68..0.76, which is ±0.72 about the
-   car centre and lands them on the rail centres.
-
-2. **The third rails have no insulators.** `lrt_third_rail` spans y 10.240..10.460 over sleepers
-   whose tops are at 10.210, so both power rails hang 0.030 m in mid-air for the whole 40 m.
-   That is correct for a real third rail and wrong-looking without the brackets that carry it.
-   **Done looks like:** a bracket every 2 m at the sleeper pitch, or the rails dropped to 10.210.
-
-3. **`env_cargo_tricycle_boxes` has a floating handlebar.** Two detached islands, at y 1.02..1.07
-   (`trike_chrome`, the bar) and y 0.85..1.05 (the grip), with the frame ending at y 0.93 and
-   nothing joining them. Roughly 0.09 m of daylight.
-   **Done looks like:** a stem box from the frame top to the bar.
-
-⚠️ **`MapGeometryCheck` cannot catch any of these** and that is a known limit, not an oversight:
-it works on `Renderer.bounds`, which is one AABB for a whole `.obj` prop, so a part floating
-INSIDE a prop's own bounds is invisible to it. They were found by walking each `.obj`'s faces
-into connected islands and reporting islands whose bounding box touches no other island. If a
-fourth one of these turns up, that island walk is worth committing as a tool.
-
-**Where.** `Assets/TumbangPreso/Art/models/env_lrt_viaduct_deck.obj`,
-`env_lrt_train_car.obj`, `env_cargo_tricycle_boxes.obj`.
-
----
-
 ## 6 · The overclock window has not been measured against a match
 
 **A new Hero Strike mechanic with a defensible number and no evidence behind it.**
 
-`OverheadPassWindow.OverclockRate` is **2.0** for the ~2.6 s the LRT consist is over the street,
+`OverheadPassWindow.OverclockRate` is **2.0** for the 2.70 s the LRT consist is over the street,
 every 24 s. The reasoning is in `docs/Ilalim_Ng_Tulay.md` § 3.5 and it is sound: it pays a
 player who is already casting rather than one who is waiting, so it cannot violate
 `docs/VISION.md` § 4. What nobody has is the number.
 
-At 24 s intervals and a 2.6 s window, the mode spends **10.8 per cent of a round** at double
+At 24 s intervals and a 2.70 s window, the mode spends **11.25 per cent of a round** at double
 cooldown rate. Against a 9 s skill that is roughly one extra cast every four cycles for a player
 who plays around it, and zero for one who does not. Whether that gap is "a skill" or "a tax on
 not knowing" is the open question.
@@ -166,6 +131,15 @@ geometry changes Hero Strike outcomes, and nothing in the harness has ever measu
 ---
 
 ## Closed
+
+- **The three measured art faults under the LRT guideway.** ✅ 2026-08-24. The 6.88 m custom
+  deck, its unsupported third rails and the wrong-gauge custom train were replaced together by
+  a 10.5 m `roads/road-bridge` guideway, two `train/track-detailed` lines and a three-piece
+  `train-electric-city` consist. The cargo tricycle now has a stem from its y = 0.93 frame to
+  its y = 1.025 handlebar and a second join across the 0.15 m handlebar-to-grip gap. The
+  basketball rim's separate 0.23 m gap to its backboard was found in the same island audit and
+  received a bracket too. Verified from the v9 guideway and hoop captures, the committed island
+  checker, and gated `MapGeometryCheck` including the elevated-assembly joins.
 
 - **First-Person Character-Specific Viewmodel Arms.** ✅ 2026-08-23.
   Customized first-person viewmodel arms (`ViewmodelArms.cs`) with bespoke skin tones, sleeves, wristbands/bracers, and elemental signatures for each hero (Sean, Zack, Dante, Cheska, Nemu, and Classic street mode):
@@ -385,8 +359,9 @@ geometry changes Hero Strike outcomes, and nothing in the harness has ever measu
     `env_kerb_tile` is 2.0 m on local X and 0.35 m on local Z and the street runs along Z. Those
     are the loose pale slabs strewn over the road in `ilalim_thrower_view.png`.
   - The map **ended in white sky** in every direction a metre past the pavement. There is a
-    240 m ground plate, a shopfront line, a cross row closing each end and a far belt now, which
-    is what the other two maps already had.
+    240 m ground plate now. The road and supported pavements continue to the fog limit, with
+    car-kit traffic, background intersections, corner shops and a lower mid-rise belt instead
+    of the later cross rows that made the carriageway look built against a wall.
   - All four **utility poles were yawed the wrong way**, hanging their 6.6 m wire spans out over
     the back lots instead of over the street.
   - The collision floor was one flat plane at y = 0 while the pavement was drawn 0.212 m up, so
@@ -398,8 +373,8 @@ geometry changes Hero Strike outcomes, and nothing in the harness has ever measu
     circle was **13.5 m from the can it was drawn for**. All of it comes from
     `Balance.ConfinementRadius` and `Confinement` now.
   - Two 3.4 m **viaduct columns stood inside the box** at z = -5.0. The taya is clamped in there
-    and cannot step out to walk around one. Both live rows are outside |z| = 7 now, scaled to
-    0.6 so the centre gap is 4.4 m instead of 1.6 m.
+    and cannot step out to walk around one. Both live rows are outside |z| = 7 now; 1.4 m kit
+    pillars at x = +/-4.45 leave a measured 7.5 m centre gap and 1.85 m kerb gaps.
   - A **trip hazard was centred on the world origin**, which is where the can spawns and where
     every retrieval in the match converges.
   - The **overclock pad was inside the PC Express collider** and could not be reached.
@@ -410,16 +385,19 @@ geometry changes Hero Strike outcomes, and nothing in the harness has ever measu
   everything under `Geometry`, so the pass walked nothing and repainted nothing while both other
   maps were getting the seeded Manila palette, the roof atlases, the road correction and the
   belt fade. The map was not using a different palette, it was using no palette. Groups are
-  named `Kalsada`, `Slab`, `Belt`, `Malayo` now. The near blocks are deliberately left unpainted
-  because their `.mtl` already carries the palette and multiplying terracotta by terracotta is
-  nearly black. The showcase probe also runs `EnvColourPass.Apply()` before rendering, without
-  which an edit-mode capture shows raw `.mtl` colours.
+  named `Kalsada`, `Slab` and `Malayo` now. The hand-built near blocks are gone; commercial,
+  industrial, roads, train, factory and car kits use complete generated warm atlas replacements
+  so their orange and blue source swatches never become role-colour decoration. The showcase
+  probe also runs `EnvColourPass.Apply()` before rendering, without which an edit-mode capture
+  shows raw materials.
 
   **PC Express is the shop it is named after.** It shipped as a green lightbox with two blank
-  white slabs and a green-white-red awning. `PcExpressSignAuthor` re-authors the fascia as the
-  real one: red field, white rim, blue PC tile, "PC EXPRESS" in a 5-by-7 blocky face, red-white-
-  blue awning. The tool is idempotent via a sentinel comment, which it needed after the first
-  version leaked 776 vertices per run (364, 1140, 1916) with nothing looking broken.
+  white slabs and a green-white-red awning. `PcExpressSignAuthor` now builds the deep red-blue
+  lightbox and metal return from the supplied real exterior. The official horizontal artwork
+  is traced by `build_pc_express_logo_mesh.py` into smooth raised white letters with the real PC
+  monogram, italic X and one clean blue channel return. The registered-mark badge is omitted
+  because it is not mounted on the real storefront. Glass mullions, centre doors, kick plate and
+  a slim overhang replace the market awning. Both authoring tools are idempotent.
 
   **New for Hero Strike**, all of it argued in `docs/Ilalim_Ng_Tulay.md` § 3:
   - The chalk box IS the carriageway, so a player reads the danger zone off the kerb line.
@@ -427,13 +405,21 @@ geometry changes Hero Strike outcomes, and nothing in the harness has ever measu
     which is the measured reason 🧑 reported both existing maps as *"weird to play abilities
     gamemode on"*. `ArenaCheck` bound 3 now clears its wall by 2.6 m instead of by 0.0.
   - The **train pass is a mechanic**: `OverheadPassWindow` doubles ability COOLDOWN rate (only
-    the cooldown, never the ultimate charge) for the ~2.6 s the consist is overhead, every 24 s.
+    the cooldown, never the ultimate charge) for the measured 2.70 s the consist is overhead,
+    every 24 s.
     Classic gets Street Hype and the spectacle instead, per `VISION.md` § 1.1.
   - The **bridge hoop**: a tsinelas through the ring fires "TRES!" and Street Hype, and awards
     no score, because `MatchDirector.AddScore` stays the only place a point is made.
   - "BAWAL UMIHI DITO" on the column faces, two potholes off the spawn-to-can line, and clutter
     that is all on the pavements.
 
+  **The final composition pass removed the set edge.** The road and pavements now reach the
+  120 m plate and disappear into fog; 26 joined wire spans sit on 28 single shopfront-edge
+  posts; the side gaps contain dense second and outer building rows, industrial tanks and far
+  intersection blocks; the pisonet, PC-repair, pares, regulatory and civic signs each use a
+  different silhouette and mounting. Boundary cars remain wholly outside |z| = 16.5.
+
   Verified by 56 core tests, 105 EditMode, 55 PlayMode, `HeadlessCheck`, `ArenaCheck`,
-  `MapGeometryCheck` at 0 findings, seven in-engine renders in `Logs/shots-ilalim/`, and a
-  Windows player build.
+  `AudioCueCheck`, `MapGeometryCheck` at 0 findings including every elevated join, eight v14
+  in-engine renders in `Logs/shots-ilalim/`, idempotent palette/logo/sign generators, the model
+  island checker, and a clean Windows player build smoke-launched from the Desktop.

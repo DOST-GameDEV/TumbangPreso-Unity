@@ -97,8 +97,9 @@ builder holds no typed-in heights at all: everything asks `IlalimNgTulayBuilder.
   they cannot stand on.
 - **The shopfront apron, |x| 11.0 to 20.0.** Solid plate. It exists so no building in the
   street stands on air, and PC Express's face lands exactly on the west wall.
-- **The corridor, |z| to 24.0**, walls at |z| = 16.5, closed at both ends by a cross row of
-  blocks at |z| = 21, with a far belt and a 240 m ground plate behind that.
+- **The corridor, |z| to 24.0**, walls at |z| = 16.5. The visible road continues past them to
+  intersections at |z| = 31, with car-kit traffic, corner shops, traffic lights, a lower
+  mid-rise belt and a 240 m ground plate behind that. Nothing solid visually terminates the road.
 
 ---
 
@@ -132,7 +133,8 @@ No other map in the game has a roof.
 
 ### 3.3 Cover at the box edge, never inside it
 
-Four columns at (±3.2, ±10.0), scaled to 0.6 on X and Z, plus a structural pair at |z| = 19.
+Four live columns at (±4.45, ±10.0), plus a structural pair at each side of |z| = 19. Each is
+1.4 m square and reaches the 8.0 m soffit.
 
 - They are **outside the chalk** (|z| = 10 against a box that ends at 7.0), so the taya never has
   to walk around one.
@@ -142,9 +144,8 @@ Four columns at (±3.2, ±10.0), scaled to 0.6 on X and Z, plus a structural pai
 - They **break Sean's Ignition Cannon**, whose range is 10.0 m, at exactly the distance it wants
   to fire from.
 - They **bank slippers** (`Slipper.BounceOffObstacles`), which the map's callouts name.
-- At full size the pair left a **1.6 m gap** down the middle of a 14 m carriageway, which is a
-  chokepoint on the only line between the south spawns and the can. At 0.6 the gap is **4.4 m**
-  and they still read as columns.
+- The pair leaves a **7.5 m centre gap** and **1.85 m side gaps** to the kerbs. The middle is
+  the fast retrieval lane. The gutters are slower bank-shot routes with real cover.
 
 ### 3.4 Where each ultimate wants to be spent
 
@@ -155,13 +156,14 @@ better here than elsewhere.
 |---|---|---|
 | Sean | Supernova, 4.8 m | The corridor funnels three attackers onto the can from two ends. It is the only map where they converge on a line rather than a circle. |
 | Dante | Titan Fissure, 5.5 m | A line weapon down a 14 m straight lane. Fired along Z it covers the whole approach; fired across X it is wasted. That is a real read. |
-| Cheska | Glacial Nova, 4.6 m | At the column choke, where the 4.4 m gap and a 4.6 m radius are the same number. |
+| Cheska | Glacial Nova, 4.6 m | At a support row, where it catches the 7.5 m centre and one gutter but cannot own both pavement exits. |
 | Zack | Thunderstrike, 4.5 m | On the throwing line at \|z\| = 8.0, where every attacker has to stand to be legal. |
 | Nemu | Seance Void, 3.2 m | On the can itself. Retrieval converges there and nothing else contests that square metre. |
 
-**Cheska's Ice Barricade is strongest here and that is deliberate.** A 3.2 m wall across the
-4.4 m column gap closes a lane outright for its duration; on an open plaza the same wall is
-walked around. Every hero should have one map that is theirs.
+**Cheska's Ice Barricade cuts rather than closes.** A 3.2 m wall covers 43 per cent of the
+7.5 m middle, so it forces a direction without switching the whole north or south approach
+off. Zack and Sean keep clean dash exits; Nemu can take a 1.85 m gutter; Dante still has the
+long Z line. The geometry gives each kit a use and no kit ownership of the map.
 
 ### 3.5 The train, as a mechanic rather than a backdrop
 
@@ -171,9 +173,14 @@ because every player learns its period inside a single round.
 
 ```
 WARNING  3.0 s   toast, rail hum, the shadow sweeping in from the south
-OVERHEAD 2.6 s   the pass itself, keyed to the walls at |z| = 16.5 plus the 14 m consist
+OVERHEAD 2.70 s  nose entering the south wall through tail leaving the north wall
 idle     rest    back to Interval = 24 s
 ```
+
+The three-car city consist is 15.6 m long and moves at 18 m/s. Its trigger watches the train
+centre across |z| = `16.5 + 7.8 = 24.3`, so the measured window is
+`(33.0 + 15.6) / 18 = 2.70 s`. The earlier trigger watched only the origin and did not match
+the train still visible above the street.
 
 **Hero Strike gets `OverheadPassWindow.CooldownRate = 2.0` while the consist is over the
 street.** Named OVERCLOCK, which ties it to the PC Express theme. It is a power window every
@@ -248,22 +255,20 @@ knows:
 |---|---|---|
 | `Kalsada` | asphalt, road sub-base | `RoadTint`, the warm-neutral correction |
 | `Slab` | pavement tiles, kerbs, shopfront apron | `SlabTint` |
-| `Belt` | the far horizon blocks | facade tint, then 68% toward `BeltFade` |
 | `Malayo` | the 240 m ground plate | the same fade |
-| `Gilid` | the near shophouses and both cross rows | **nothing, on purpose. See below** |
+| `Gilid`, `BackgroundStreet` | commercial kit shophouses and the two far intersections | nothing: each instance has a complete warm atlas variant |
+| `SkylineKit`, `BacklotKit` | low-detail commercial skyline and industrial rail lots | nothing: warm atlas plus distance fog |
 | `Tulay` | guideway, columns, the consist | nothing: concrete and livery are the point |
 | `Tindahan` | PC Express, pisonet, pares cart | nothing: brand colours are the point |
 | `Kalat`, `Kable`, `Hazards` | clutter, poles, pads and trips | nothing, matching Eskinita |
 
-⚠️ **The near blocks are deliberately NOT in a facade group.** Eskinita and Bayan Plaza dress
-themselves out of the Kenney City Kit, whose walls ship near-white, so MULTIPLYING a Manila
-facade tint into them is what gives those maps their colour. This project's own
-`env_building_block_*` meshes already carry the palette baked into their `.mtl`: block_a is
-cream 0.886/0.824/0.675, block_b is terracotta 0.710/0.400/0.298. Multiplying terracotta by
-terracotta gives 0.50/0.16/0.09, which is nearly black, and that is exactly how the whole
-shopfront line came out of the first capture. **Same palette, reached by the model rather than
-by the pass.** The far belt does stay in a facade group, because there the pass fades toward the
-sky and a fade lightens.
+⚠️ **The kit buildings are deliberately NOT in a facade group.** The commercial and industrial
+meshes already sample a coloured atlas. `tools/make_ilalim_kit_palettes.py` emits three complete
+commercial variants and two industrial variants from those source atlases, replacing saturated
+blue and orange swatches with cream, concrete, mint, ochre, faded rose, rust and galvanized
+metal. The builder swaps the whole atlas per instance. Multiplying another facade tint into it
+would crush walls and trim together and would reintroduce the exact palette failure recorded in
+`EnvColourPass`.
 
 ⚠️ **And the showcase probe now runs `EnvColourPass.Apply()` before rendering.** The pass runs
 from `Start()`, which never happens in an edit-mode capture. The first four renders of this map
@@ -294,13 +299,160 @@ of the twenty-five squares under each pole were over the shopfront apron.
 
 ## 7 · Still open
 
-- The train's wheel gauge does not match the rails. Measured: `lrt_steel_rail` puts the
-  westbound pair at x -2.32 and -0.88, a 1.44 m gauge; `env_lrt_train_car`'s wheels are at
-  ±1.10 from the car centre, a 2.20 m gauge. The car is centred correctly and rides the rail
-  head at the right height, and the bogie skirt hides the wheels from every angle a player has,
-  so this is cosmetic from the ground and wrong from the guideway. `TODO.md` § 5.
-- The guideway's third rails float 0.030 m over the sleepers with no insulator brackets under
-  them. Correct for a real third rail, wrong-looking without the brackets. `TODO.md` § 5.
-- `env_cargo_tricycle_boxes` has two detached islands at y 1.02 and y 0.85, which are the
-  handlebar and its grip with no stem joining them to the frame at y 0.93. `TODO.md` § 5.
 - Bayan Plaza's monument stands inside the chalk. `TODO.md` § 4.
+
+---
+
+## 8 · The v2 rebuild plan, written before construction
+
+🧑, 2026-08-24: the map needs to read as Filipino Skyways with PC Express among the stalls,
+feel good for the hero mode, and have quirks that make it pleasant to return to. The v1 rules
+geometry is worth keeping. The v1 architecture is not: four box buildings repeated through the
+whole frame make the one authored storefront look as if it was pasted into a blockout, and the
+6.88 m deck covers only 49 per cent of the 14 m carriageway. This pass keeps the cross section
+and rebuilds everything above it.
+
+### 8.1 The guideway is the map's silhouette
+
+The target deck is **10.5 m wide**, or **75 per cent of the carriageway**, built from twelve
+4 m `roads/road-bridge` bays for a 48 m visible run. Its soffit stays at y = 8.0, so gameplay
+clearance and the hard shadow band do not change. Two detailed tracks sit at x = +/-2.35. A
+2x train scale makes the widest city carriage 2.6 m wide, leaving 1.6 m from its outer side to
+the deck edge and making the consist look carried by the guideway instead of balanced on it.
+
+Each live support row stays at z = +/-10.0, outside the box by 3.0 m. The wide kit pillars are
+scaled to **1.4 m square** and centred at x = +/-4.45, which gives:
+
+- a **7.5 m central gap**, up from 4.4 m;
+- **1.85 m side gaps** to the kerb;
+- 43 per cent central-lane coverage from Cheska's 3.2 m wall, instead of a full closure;
+- a pillar inner edge at |x| = 3.75, far enough from the spawn-to-can axis for a straight
+  retrieval while still giving both sides bank-shot cover.
+
+This deliberately removes the v1 map's best-hero bias. Cheska still cuts a lane, but she does
+not get to switch the entire north or south approach off with one skill. Zack and Sean get
+clean dash exits through the middle, Nemu can phase through a side gap, and Dante still has a
+long Z lane for Titan Fissure.
+
+### 8.2 The train window must match the train players see
+
+The consist becomes three `train-electric-city` pieces at 2x scale, **15.6 m long**. At
+18 m/s, a window that starts when its nose reaches the south wall and ends when its tail leaves
+the north wall is `(33.0 + 15.6) / 18 = 2.70 s`. The trigger half-distance is therefore
+`16.5 + 7.8 = 24.3 m`. This replaces the v1 prose claim of 2.6 s over a trigger that actually
+watched only the train origin and lasted 1.38 s at 24 m/s.
+
+Hero Strike keeps cooldown overclock and Classic keeps spectacle plus Street Hype. The train
+still never charges an ultimate, awards a point, or rewards waiting.
+
+### 8.3 Build a Gilmore strip, not a row of boxes
+
+The six near `env_building_block_*` instances are replaced by the committed commercial kit at
+5x scale. The cross rows are removed completely: they made Aurora Boulevard look built against
+a wall. Asphalt and supported pavements now continue to intersections at |z| = 31, car-kit
+traffic sits wholly beyond the |z| = 16.5 gameplay wall, and corner shops plus traffic lights
+frame the road without closing it. The far belt uses smaller low-detail mid-rises, with a small
+industrial back-lot cluster beyond the north wall.
+
+PC Express remains the authored hero storefront at the west wall and is now based on the
+supplied real exterior. `tools/build_pc_express_logo_mesh.py` traces the official horizontal
+artwork into one clean raised white silhouette with a blue channel-letter return; the noisy
+doubled red-blue face outline was rejected in the v13 review. The registered-mark badge is
+omitted because it is not mounted on the real storefront. A deep red-blue lightbox,
+metal returns, a slim overhang, glass mullions, centre doors, kick plate, repair signs and
+delivery boxes make it one shop in a continuous computer strip rather than the only detailed
+object in the scene. The official red and blue are a recorded brand exception to the role-hue
+law and appear only on this fixed environmental mark, never on a gameplay signal.
+
+The palette is an **atlas replacement**, never a renderer tint. The commercial, industrial,
+roads and train kit colormaps contain saturated orange and blue swatches close to the role
+hues. A repeatable palette tool emits map-specific warm atlases from the source maps, replacing
+those swatches with cream, concrete, mint, ochre, faded rose, rust and dark galvanized metal.
+Each kit instance receives a complete atlas variant. `EnvColourPass` does not multiply a second
+colour into those already-coloured atlases.
+
+That inverts § 5's v1 exception: the near row remains outside the facade tint groups because
+its variation now comes from whole warm atlas swaps, not because a hand-built `.mtl` carries a
+baked facade colour.
+
+### 8.4 Make the pisonet read or remove it
+
+It stays, but not as the lone cabinet that failed. Three terminals under one tarpaulin, three
+monobloc chairs, bundled extension leads and a hand-painted **PISONET / P1 / 5 MIN** board make
+it a recognisable sidewalk business. The PC Express showroom and the pisonet then read in the
+same frame as two ends of Gilmore computer culture instead of as unrelated props. If the
+cluster still reads as random in the v7 street-life capture, it is cut rather than defended by
+prose.
+
+### 8.5 Quirks with a gameplay job
+
+The empty 14 m box remains non-negotiable. Character comes from the ring around it:
+
+1. **Overclock train pass.** A learned 24 s rhythm and one 2.70 s cooldown window.
+2. **Bridge hoop.** A hard optional slipper shot with callout and no score.
+3. **Split support rows.** Two wide middle lanes plus risky 1.85 m bank-shot gutters.
+4. **PC Express pad.** A short pavement speed route that costs the direct throwing line.
+5. **Readable pisonet and pares corners.** Interactive street pockets on the safe flanks,
+   never new objectives and never score sources.
+6. **Vertical Manila layer.** Awnings, signs, cable spans, lamps, rust and damp marks put detail
+   above eye level while the asphalt remains quiet enough for ability telegraphs.
+7. **Continuous shopfront-edge wiring.** Thirteen 12.09 m wire-only spans per side run parallel
+   to the Z street from the south district into the north district and disappear into fog before
+   their end can be seen. Fourteen single posts per side carry the shared joins, so no seam gets
+   a doubled pole pair. Their centres sit at |x| = 10.65 beside the shopfront, leaving the 4 m
+   pavement clear. The gate rejects a seam, an X-oriented span, a mid-pavement part or a floating
+   pole foot.
+
+### 8.6 Updated Hero Strike spots against the target geometry
+
+| Hero | Best local use after the rebuild | Counterplay left by the map |
+|---|---|---|
+| Sean | Supernova at a throwing line catches a committed retrieval and both exits. | Pavement retreat remains outside its 4.8 m radius. |
+| Dante | Titan Fissure along Z owns the straight road; across X it spends only 14 m. | A player can cut behind either support or onto a pavement. |
+| Cheska | Glacial Nova at a support row catches the 7.5 m centre and one side gap. | It cannot cover both pavement exits, and the 3.2 m wall closes only 43 per cent of centre. |
+| Zack | Thunderstrike on the can punishes a pile-up, while the centre gap gives Bolt Sprint a clean exit. | Both 4 m pavements remain lateral escape routes. |
+| Nemu | Seance Void on the can controls retrieval; Phase Walk can take the 1.85 m gutter others hesitate to enter. | The opposite gutter and the wide centre stay open. |
+
+Acceptance is not a beauty shot alone: `MapGeometryCheck` stays at zero, the box stays empty,
+the taya and thrower views keep the lata and all four chalk edges readable, and the overview
+must show PC Express as part of the strip beneath a guideway that unmistakably carries a train.
+
+---
+
+## 9 · Final composition plan after the v13 review
+
+The v13 review caught three faults that measurements alone cannot: complete cable-span prefabs
+duplicated a pole at every seam, six block-letter rectangles made every business look owned by
+the same sign painter, and the sparse far belt left beige ground visible behind the near row.
+The correction is a hierarchy, not more random clutter.
+
+### 9.1 Three visual depths
+
+1. **Gameplay depth, |x| <= 11.** Quiet asphalt, chalk, lata, two support rows and readable
+   ability floor. Nothing new spends this layer.
+2. **Street depth, |x| = 11..30.** Continuous commercial facades, the five actual businesses,
+   delivery traffic, kerb-edge utility posts, awnings, chairs and repair clutter. Every object
+   answers a shop or street use.
+3. **District depth, 30..120 m.** A dense second mid-rise row, industrial back lots, far
+   intersection corners, car traffic, lamps, fences and a lower horizon belt. Roads and
+   pavements continue to the 120 m plate and disappear into fog at 110 m, so no player ray ends
+   on an exposed world edge.
+
+### 9.2 One sign language per job
+
+- **PC Express:** the supplied official mark as smooth raised channel letters. No registered
+  badge, no block-font substitute.
+- **Pisonet:** one framed cream rate fascia tied to its awning, with maroon hand-painted type.
+- **PC repair:** a projecting vertical blade sign read while moving along the pavement.
+- **Pares:** a small ground A-board beside the cart, not another wall fascia.
+- **Regulatory:** the two small red BAWAL placards remain on concrete, where repetition is real.
+- **Civic:** the barangay notice remains one blue cloth-scale tarp at the far support.
+
+No two adjacent businesses get the same sign silhouette, size, mounting or colour blocking.
+
+### 9.3 Utility line construction
+
+The full-span prefab is replaced by one `electricity-pole-single` at each shared join and one
+`electricity-wires-wide` mesh between joins. Posts sit at the shopfront edge |x| = 10.65, not
+mid-pavement, and the cable runs stay parallel to Z. The elevated gate measures all 28 post
+feet, all 26 wire spans, every seam, orientation and street clearance.

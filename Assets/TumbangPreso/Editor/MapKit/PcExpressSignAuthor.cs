@@ -12,12 +12,12 @@ namespace TumbangPreso.EditorTools.MapKit
     /// Re-authors the PC Express fascia on `env_pc_express_store.obj` so it reads as the shop it
     /// is named after.
     ///
-    /// ⚠️⚠️ THE SIGN WAS THE WRONG COLOUR AND CARRIED NO WORDMARK. It shipped as a plain GREEN
-    /// lightbox with two blank white slabs on it and a green-white-red awning, which is a
-    /// sari-sari palette, not this one. The real fascia is a RED lightbox with a white rim, a
-    /// BLUE tile carrying "PC", and "EXPRESS" in white across the rest. From five metres away
-    /// in-game the colour blocking is the whole recognition: red board, blue tile, white
-    /// wordmark. That is what this builds.
+    /// ⚠️⚠️ THE OFFICIAL LOGO IS AN ASSET, NOT A FONT TO APPROXIMATE. The first authored pass
+    /// rebuilt "PC EXPRESS" in a 5 by 7 block face. It carried the colours and remained the
+    /// wrong mark: the real logo has a joined PC monogram, an italic X, a blue shadow and a
+    /// slanted red-blue field. `tools/build_pc_express_logo_mesh.py` traces the supplied
+    /// official artwork into raised letter geometry; this tool builds the deep lightbox,
+    /// frame, backing and halo it mounts on.
     ///
     /// ⚠️ IT REWRITES THE `.obj` IN PLACE AND IS IDEMPOTENT. Every block it emits is keyed to a
     /// material name in <see cref="SignMaterials"/>, and the first thing it does is delete every
@@ -51,7 +51,8 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             "pcex_sign_green", "pcex_sign_red", "pcex_sign_white",  // the shipped set
             "pcex_sign_rim", "pcex_sign_field", "pcex_sign_tile",
-            "pcex_sign_text", "pcex_sign_edge",
+            "pcex_sign_text", "pcex_sign_edge", "pcex_sign_logo_edge",
+            "pcex_awning_green", "pcex_awning_red", "pcex_awning_white",
         };
 
         // ------------------------------------------------------------------
@@ -61,7 +62,7 @@ namespace TumbangPreso.EditorTools.MapKit
         // ------------------------------------------------------------------
 
         private const float BoardMinX = -2.15f, BoardMaxX = 2.15f;
-        private const float BoardMinY = 3.15f, BoardMaxY = 3.95f;
+        private const float BoardMinY = 3.00f, BoardMaxY = 4.137f;
 
         /// <summary>Each layer stands 12 mm proud of the one behind it, which is enough for the
         /// rim, the tile and the letters to catch the sun separately without z-fighting.</summary>
@@ -69,26 +70,11 @@ namespace TumbangPreso.EditorTools.MapKit
 
         private const float RimFront = -3.130f;
         private const float FieldFront = RimFront - LayerStep;
-        private const float TileFront = FieldFront - LayerStep;
-        private const float TextFront = TileFront - LayerStep;
+        private const float LogoEdgeFront = FieldFront - 0.040f;
 
         /// <summary>How far back each layer reaches. One depth for all of them; only the front
         /// face is ever seen.</summary>
         private const float BoardBack = -2.990f;
-
-        // The blue tile that carries "PC".
-        private const float TileMinX = -2.00f, TileMaxX = -0.55f;
-        private const float TileMinY = 3.22f, TileMaxY = 3.88f;
-
-        // "PC", inside the tile.
-        private const float PcGlyphHeight = 0.54f;
-        private const float PcGlyphWidth = 0.42f;
-        private const float PcGlyphGap = 0.10f;
-
-        // "EXPRESS", across the rest of the board.
-        private const float WordMinX = -0.38f, WordMaxX = 2.02f;
-        private const float WordGlyphHeight = 0.46f;
-        private const float WordGap = 0.055f;
 
         /// <summary>
         /// A 5 by 7 blocky face, top row first.
@@ -110,18 +96,37 @@ namespace TumbangPreso.EditorTools.MapKit
             ['C'] = new[] { "01110", "10001", "10000", "10000", "10000", "10001", "01110" },
             ['D'] = new[] { "11110", "10001", "10001", "10001", "10001", "10001", "11110" },
             ['E'] = new[] { "11111", "10000", "10000", "11110", "10000", "10000", "11111" },
+            ['F'] = new[] { "11111", "10000", "10000", "11110", "10000", "10000", "10000" },
+            ['G'] = new[] { "01110", "10001", "10000", "10111", "10001", "10001", "01110" },
             ['H'] = new[] { "10001", "10001", "10001", "11111", "10001", "10001", "10001" },
             ['I'] = new[] { "11111", "00100", "00100", "00100", "00100", "00100", "11111" },
+            ['J'] = new[] { "00111", "00010", "00010", "00010", "10010", "10010", "01100" },
+            ['K'] = new[] { "10001", "10010", "10100", "11000", "10100", "10010", "10001" },
             ['L'] = new[] { "10000", "10000", "10000", "10000", "10000", "10000", "11111" },
             ['M'] = new[] { "10001", "11011", "10101", "10101", "10001", "10001", "10001" },
+            ['N'] = new[] { "10001", "11001", "10101", "10011", "10001", "10001", "10001" },
             ['O'] = new[] { "01110", "10001", "10001", "10001", "10001", "10001", "01110" },
             ['P'] = new[] { "11110", "10001", "10001", "11110", "10000", "10000", "10000" },
+            ['Q'] = new[] { "01110", "10001", "10001", "10001", "10101", "10010", "01101" },
             ['R'] = new[] { "11110", "10001", "10001", "11110", "10100", "10010", "10001" },
             ['S'] = new[] { "01111", "10000", "10000", "01110", "00001", "10001", "01110" },
             ['T'] = new[] { "11111", "00100", "00100", "00100", "00100", "00100", "00100" },
             ['U'] = new[] { "10001", "10001", "10001", "10001", "10001", "10001", "01110" },
+            ['V'] = new[] { "10001", "10001", "10001", "10001", "10001", "01010", "00100" },
             ['W'] = new[] { "10001", "10001", "10001", "10101", "10101", "11011", "10001" },
             ['X'] = new[] { "10001", "10001", "01010", "00100", "01010", "10001", "10001" },
+            ['Y'] = new[] { "10001", "10001", "01010", "00100", "00100", "00100", "00100" },
+            ['Z'] = new[] { "11111", "00001", "00010", "00100", "01000", "10000", "11111" },
+            ['0'] = new[] { "01110", "10001", "10011", "10101", "11001", "10001", "01110" },
+            ['1'] = new[] { "00100", "01100", "00100", "00100", "00100", "00100", "01110" },
+            ['2'] = new[] { "01110", "10001", "00001", "00010", "00100", "01000", "11111" },
+            ['3'] = new[] { "11110", "00001", "00001", "01110", "00001", "00001", "11110" },
+            ['4'] = new[] { "00010", "00110", "01010", "10010", "11111", "00010", "00010" },
+            ['5'] = new[] { "11111", "10000", "10000", "11110", "00001", "00001", "11110" },
+            ['6'] = new[] { "01110", "10000", "10000", "11110", "10001", "10001", "01110" },
+            ['7'] = new[] { "11111", "00001", "00010", "00100", "01000", "01000", "01000" },
+            ['8'] = new[] { "01110", "10001", "10001", "01110", "10001", "10001", "01110" },
+            ['9'] = new[] { "01110", "10001", "10001", "01111", "00001", "00001", "01110" },
         };
 
         private readonly struct Box
@@ -153,62 +158,26 @@ namespace TumbangPreso.EditorTools.MapKit
 
             var boxes = new List<Box>();
 
-            // 1. The white rim, slightly proud of the board on every side. A frame drawn as four
-            // strips would be four times the geometry for the same read at this distance.
+            // 1. A dark metal return gives the sign a readable side profile from both lanes.
+            boxes.Add(new Box("pcex_sign_edge",
+                new Vector3(BoardMinX - 0.12f, BoardMinY - 0.12f, RimFront + 0.025f),
+                new Vector3(BoardMaxX + 0.12f, BoardMaxY + 0.12f, BoardBack + 0.05f)));
+
+            // 2. The white illuminated rim from the supplied exterior reference.
             boxes.Add(new Box("pcex_sign_rim",
                 new Vector3(BoardMinX - 0.07f, BoardMinY - 0.07f, RimFront),
                 new Vector3(BoardMaxX + 0.07f, BoardMaxY + 0.07f, BoardBack)));
 
-            // 2. The red field.
+            // 3. Red glass backing remains visible around the raised official logo plate.
             boxes.Add(new Box("pcex_sign_field",
                 new Vector3(BoardMinX, BoardMinY, FieldFront),
                 new Vector3(BoardMaxX, BoardMaxY, BoardBack)));
 
-            // 3. The blue tile behind "PC".
-            boxes.Add(new Box("pcex_sign_tile",
-                new Vector3(TileMinX, TileMinY, TileFront),
-                new Vector3(TileMaxX, TileMaxY, BoardBack)));
-
-            // 4. "PC" on the tile, centred in it.
-            float pcWidth = PcGlyphWidth * 2.0f + PcGlyphGap;
-            float pcX = (TileMinX + TileMaxX) * 0.5f - pcWidth * 0.5f;
-            float pcY = (TileMinY + TileMaxY) * 0.5f - PcGlyphHeight * 0.5f;
-
-            foreach (char c in "PC")
-            {
-                EmitGlyph(boxes, c, pcX, pcY, PcGlyphWidth, PcGlyphHeight);
-                pcX += PcGlyphWidth + PcGlyphGap;
-            }
-
-            // 5. "EXPRESS" across the rest of the board.
-            const string word = "EXPRESS";
-            float glyphWidth = (WordMaxX - WordMinX - WordGap * (word.Length - 1)) / word.Length;
-            float wordX = WordMinX;
-            float wordY = (BoardMinY + BoardMaxY) * 0.5f - WordGlyphHeight * 0.5f;
-
-            foreach (char c in word)
-            {
-                EmitGlyph(boxes, c, wordX, wordY, glyphWidth, WordGlyphHeight);
-                wordX += glyphWidth + WordGap;
-            }
-
-            // ⚠️⚠️ THE WHOLE FASCIA IS MIRRORED IN LOCAL X, AND WITHOUT THIS THE SHOP SAYS
-            // "SSERPXE CP". The shop front is the model's -Z face. A viewer reading a -Z-facing
-            // surface stands at -Z looking toward +Z, and for that viewer "right" is local
-            // MINUS X, not plus. Laying the glyphs out along +X the way you would on paper
-            // therefore renders the wordmark backwards, and it renders backwards no matter how
-            // the builder yaws the building, because the mirror is between the text and the face
-            // it is painted on rather than between the building and the street.
-            //
-            // Mirroring here rather than at each layout site also moves the blue PC tile to the
-            // viewer's left, which is the side it is on in the real fascia.
-            for (int i = 0; i < boxes.Count; i++)
-            {
-                var b = boxes[i];
-                boxes[i] = new Box(b.Material,
-                                   new Vector3(-b.Max.x, b.Min.y, b.Min.z),
-                                   new Vector3(-b.Min.x, b.Max.y, b.Max.z));
-            }
+            // 4. A 40 mm blue glass band carries the separate generated 3D letter mesh. That
+            // mesh is derived from the supplied official logo rather than from this block font.
+            boxes.Add(new Box("pcex_sign_logo_edge",
+                new Vector3(BoardMinX + 0.025f, BoardMinY + 0.025f, LogoEdgeFront),
+                new Vector3(BoardMaxX - 0.025f, BoardMaxY - 0.025f, FieldFront)));
 
             bool ok = RewriteObj(boxes);
             ok &= RewriteMtl();
@@ -218,52 +187,10 @@ namespace TumbangPreso.EditorTools.MapKit
             AssetDatabase.Refresh();
 
             Debug.Log(ok
-                ? $"[PcExpressSign] rewrote the fascia: {boxes.Count} boxes across " +
-                  $"{SignMaterials.Length - 3} materials."
+                ? $"[PcExpressSign] mounted the official logo on {boxes.Count} fascia layers."
                 : "[PcExpressSign] FAILED");
 
             return ok;
-        }
-
-        /// <summary>
-        /// One box per contiguous vertical run in a column. The letters stand on the tile or the
-        /// field, so their back face is the layer behind them and only the front is ever lit.
-        /// </summary>
-        private static void EmitGlyph(List<Box> boxes, char c, float x, float y, float w, float h)
-        {
-            if (!Font.TryGetValue(c, out var rows)) return;
-
-            float cell = w / 5.0f;
-            float rowHeight = h / 7.0f;
-
-            for (int col = 0; col < 5; col++)
-            {
-                int run = -1;
-
-                for (int row = 0; row <= 7; row++)
-                {
-                    bool lit = row < 7 && rows[row][col] == '1';
-
-                    if (lit && run < 0) run = row;
-                    if (lit || run < 0) continue;
-
-                    // Rows run top to bottom, so row 0 is the TOP of the glyph.
-                    float top = y + h - run * rowHeight;
-                    float bottom = y + h - row * rowHeight;
-
-                    // ⚠️ THE BACK FACE GOES ALL THE WAY TO `BoardBack`, NOT TO THE LAYER BEHIND
-                    // IT. "PC" sits on the blue tile and "EXPRESS" sits on the red field, and
-                    // those two are 12 mm apart in Z. Ending every letter at the tile's front
-                    // left the seven EXPRESS glyphs hovering 12 mm off the board with a shadow
-                    // line under each one. Buried depth costs nothing: no side of a letter is
-                    // ever seen.
-                    boxes.Add(new Box("pcex_sign_text",
-                        new Vector3(x + col * cell, bottom, TextFront),
-                        new Vector3(x + (col + 1) * cell, top, BoardBack)));
-
-                    run = -1;
-                }
-            }
         }
 
         private static bool RewriteObj(List<Box> boxes)
@@ -312,13 +239,19 @@ namespace TumbangPreso.EditorTools.MapKit
                 kept.Add(line);
             }
 
+            // The sentinel is preceded by the blank line this tool emitted last run. Keeping
+            // that line and then emitting another one grows the source by one newline per run,
+            // which is still non-idempotent even though the vertex count stays fixed.
+            while (kept.Count > 0 && string.IsNullOrWhiteSpace(kept[kept.Count - 1]))
+                kept.RemoveAt(kept.Count - 1);
+
             var sb = new StringBuilder();
             foreach (string line in kept) sb.AppendLine(line);
 
             sb.AppendLine();
             sb.AppendLine(Sentinel);
             sb.AppendLine("# Everything below is regenerated. Edit PcExpressSignAuthor, not this.");
-            sb.AppendLine("# Red lightbox, white rim, blue PC tile, white EXPRESS wordmark.");
+            sb.AppendLine("# Official PC Express logo on a raised red-glass lightbox.");
 
             // Vertices first, so every face below can be written against one running base.
             var verts = new StringBuilder();
@@ -373,20 +306,16 @@ namespace TumbangPreso.EditorTools.MapKit
         }
 
         /// <summary>
-        /// ⚠️ THE AWNING GOES WITH THE SIGN. It shipped green, white and red, which is the
-        /// palette of the sari-sari store two maps over. A shop whose fascia is red and blue and
-        /// whose canopy is red and green does not read as one building, it reads as two props
-        /// that happen to touch.
+        /// ⚠️ THE OLD STRIPED AWNING IS REMOVED WITH THE SIGN MATERIAL BLOCKS. The supplied
+        /// exterior is a glass computer showroom under one red-blue fascia, not a sari-sari
+        /// canopy. A thin modern overhang is added by the scene builder instead.
         /// </summary>
         private static readonly (string name, Color diffuse, Color emission)[] Materials =
         {
+            ("pcex_sign_edge", new Color(0.120f, 0.135f, 0.155f), Color.clear),
             ("pcex_sign_rim", new Color(0.980f, 0.980f, 0.975f), new Color(0.42f, 0.42f, 0.42f)),
             ("pcex_sign_field", new Color(0.855f, 0.098f, 0.129f), new Color(0.40f, 0.04f, 0.05f)),
-            ("pcex_sign_tile", new Color(0.086f, 0.220f, 0.596f), new Color(0.04f, 0.10f, 0.30f)),
-            ("pcex_sign_text", new Color(0.985f, 0.985f, 0.980f), new Color(0.62f, 0.62f, 0.62f)),
-            ("pcex_awning_green", new Color(0.086f, 0.220f, 0.596f), Color.clear),
-            ("pcex_awning_red", new Color(0.855f, 0.098f, 0.129f), Color.clear),
-            ("pcex_awning_white", new Color(0.960f, 0.960f, 0.955f), Color.clear),
+            ("pcex_sign_logo_edge", new Color(0.055f, 0.180f, 0.490f), new Color(0.02f, 0.06f, 0.16f)),
         };
 
         private static bool RewriteMtl()

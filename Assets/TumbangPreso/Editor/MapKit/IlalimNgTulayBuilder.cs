@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using TumbangPreso.Abilities;
 using TumbangPreso.Core;
@@ -38,6 +39,10 @@ namespace TumbangPreso.EditorTools.MapKit
     {
         public const string ScenePath = "Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity";
         private const string ModelsDir = "Assets/TumbangPreso/Art/models";
+        private const string KitsDir = ModelsDir + "/kits";
+
+        private static readonly Dictionary<(Material, Texture2D), Material> KitMaterials =
+            new Dictionary<(Material, Texture2D), Material>();
 
         // ------------------------------------------------------------------
         // The cross section. Everything in the file is derived from this block.
@@ -99,22 +104,28 @@ namespace TumbangPreso.EditorTools.MapKit
         /// <summary>Top of the far plate, which is exactly where the road tiles' undersides sit.</summary>
         public const float HazeTop = RoadTop - RoadTileThickness;
 
-        /// <summary>Underside of the LRT guideway, measured from `env_lrt_viaduct_deck.obj`.</summary>
+        /// <summary>Underside of the LRT guideway.</summary>
         public const float ViaductSoffit = 8.0f;
 
-        /// <summary>
-        /// Rail head, measured from `env_lrt_viaduct_deck.obj`: `lrt_steel_rail` spans y 10.200
-        /// to 10.360. The shipped map put the train at 10.300, which sank its wheels 60 mm into
-        /// the rail it is supposed to be riding on.
-        /// </summary>
-        public const float RailHead = 10.360f;
+        /// <summary>`road-bridge` is 0.52 m tall and is scaled 2x on Y.</summary>
+        public const float GuidewayTop = ViaductSoffit + 1.04f;
 
+        /// <summary>`track-detailed` is 0.15 m tall and sits on the guideway.</summary>
+        public const float RailHead = GuidewayTop + 0.15f;
+
+        public const float WestboundTrackX = -2.35f;
+        public const float EastboundTrackX = 2.35f;
+        public const float GuidewayWidth = 10.5f;
+        public const float GuidewayLength = 48.0f;
+        public const float TrainScale = 2.0f;
+        public const float TrainConsistHalfLength = 7.8f;
         /// <summary>
-        /// Centre of the westbound track, measured from the two rails that make it up:
-        /// `lrt_steel_rail` boxes at x -2.360..-2.280 and -0.920..-0.840, so the centre is
-        /// -1.600. The shipped value was right; only the height was wrong.
+        /// ⚠️ THE UNITY PREFAB ROOT IS ALREADY NORMALISED TO ITS WHEEL UNDERSIDE. The glTF
+        /// POSITION accessor reaches -0.3595 in source space, but adding that correction here
+        /// applies the importer's root transform twice and floats the wheels 0.719 m over rail.
+        /// `MapGeometryCheck` measures the rendered prefab bounds and gates this exact join.
         /// </summary>
-        public const float WestboundTrackX = -1.600f;
+        public const float TrainRootY = RailHead;
 
         // ------------------------------------------------------------------
         // Ground tints. Named here because this is the only map whose ground is built from
@@ -125,7 +136,9 @@ namespace TumbangPreso.EditorTools.MapKit
         private static readonly Color ConcreteApron = new Color(0.640f, 0.618f, 0.576f);
         private static readonly Color HazeGround = new Color(0.788f, 0.760f, 0.700f);
         private static readonly Color ChalkWhite = new Color(0.960f, 0.950f, 0.910f);
-        private static readonly Color BoostPadGlow = new Color(0.100f, 0.760f, 0.900f);
+        private static readonly Color BoostPadGlow = new Color(0.120f, 0.680f, 0.530f);
+        private static readonly Color BoostPadPlum = new Color(0.550f, 0.280f, 0.620f);
+        private static readonly Color BoostPadGold = new Color(0.750f, 0.580f, 0.200f);
         private static readonly Color CordYellow = new Color(0.900f, 0.800f, 0.120f);
         private static readonly Color BrothSlick = new Color(0.560f, 0.380f, 0.200f);
         private static readonly Color CardboardTan = new Color(0.720f, 0.560f, 0.340f);
@@ -136,6 +149,10 @@ namespace TumbangPreso.EditorTools.MapKit
         /// blue a barangay notice is printed on.</summary>
         private static readonly Color BawalRed = new Color(0.720f, 0.180f, 0.150f);
         private static readonly Color TarpBlue = new Color(0.160f, 0.360f, 0.620f);
+        private static readonly Color SignCream = new Color(0.900f, 0.830f, 0.650f);
+        private static readonly Color SignMaroon = new Color(0.430f, 0.120f, 0.130f);
+        private static readonly Color SignWood = new Color(0.230f, 0.150f, 0.105f);
+        private static readonly Color Chalkboard = new Color(0.105f, 0.150f, 0.125f);
 
         [MenuItem("Tumbang Preso/Build Ilalim Ng Tulay Map")]
         public static void BuildFromMenu() => Execute();
@@ -149,6 +166,8 @@ namespace TumbangPreso.EditorTools.MapKit
         public static bool Execute()
         {
             Debug.Log("[IlalimNgTulayBuilder] Starting map construction...");
+
+            KitMaterials.Clear();
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
@@ -254,9 +273,21 @@ namespace TumbangPreso.EditorTools.MapKit
             RenderSettings.fogStartDistance = WallHalfZ + 6.0f;
             RenderSettings.fogEndDistance = 110.0f;
 
-            const string skyMatPath = "Assets/TumbangPreso/Art/models/materials/Sky.mat";
-            var skyMat = AssetDatabase.LoadAssetAtPath<Material>(skyMatPath);
-            if (skyMat != null) RenderSettings.skybox = skyMat;
+            // The old panorama blows out to white at every street opening. The committed warm
+            // Kenney panorama carries an actual cloud horizon, so the corridor ends in Manila
+            // haze rather than in an empty render background. "Morning" is the asset name; its
+            // low warm sun is rotated and graded here as the same after-school hour as Eskinita.
+            const string skyPath = "Assets/TumbangPreso/Art/models/materials/skyboxes/skybox-morning.png";
+            var sky = AssetDatabase.LoadAssetAtPath<Texture2D>(skyPath);
+            var skyShader = Shader.Find("Skybox/Panoramic");
+            if (sky != null && skyShader != null)
+            {
+                var skyMat = new Material(skyShader) { name = "Ilalim_LateAfternoonSky" };
+                skyMat.SetTexture("_MainTex", sky);
+                skyMat.SetFloat("_Exposure", 0.82f);
+                skyMat.SetFloat("_Rotation", 72.0f);
+                RenderSettings.skybox = skyMat;
+            }
         }
 
         private static void BuildGameplayRig(Transform parent)
@@ -525,79 +556,233 @@ namespace TumbangPreso.EditorTools.MapKit
         /// </summary>
         private static void BuildBackdrop(Transform parent)
         {
-            // ⚠️ `CrossRow`, `Belt` AND `Malayo` ARE `EnvColourPass.FacadeGroups` ENTRIES, and
-            // the last two are the ones it fades 68 per cent toward the sky. That fade is what
-            // makes Eskinita's horizon sit BEHIND its street instead of beside it, and it is
-            // free here for the cost of using the same two words.
-            // ⚠️⚠️ THE NEAR BLOCKS ARE NOT IN A FACADE GROUP, AND THAT IS DELIBERATE. Eskinita
-            // and Bayan Plaza dress themselves out of the Kenney City Kit, whose walls ship
-            // near-white, so EnvColourPass MULTIPLYING a Manila facade tint into them is what
-            // gives those maps their colour. This project's own env_building_block_* meshes
-            // already carry the palette baked into their .mtl: block_a is cream 0.886/0.824/0.675
-            // and block_b is terracotta 0.710/0.400/0.298. Multiplying terracotta by terracotta
-            // gives 0.50/0.16/0.09, which is nearly black, and that is exactly how the whole
-            // shopfront line came out of the first capture. Same palette, reached by the model
-            // rather than by the pass.
-            //
-            // The far belt DOES stay in a facade group, because there the pass fades 68 per cent
-            // toward the sky and a fade LIGHTENS: that is the horizon treatment the other two
-            // maps have and it is what makes distance read as distance.
-            var crossRow = Group(parent, "Gilid");
-            var belt = Group(parent, "Belt");
+            // ⚠️⚠️ KIT BUILDINGS ARE COLOURED BY A COMPLETE ATLAS REPLACEMENT, NOT BY
+            // `EnvColourPass`. Commercial and industrial colormaps contain blue and orange
+            // swatches close to the two role hues. `make_ilalim_kit_palettes.py` moves those
+            // swatches into the Manila environment set while keeping the kit's UV layout.
+            // These groups therefore stay outside `FacadeGroups`; multiplying another tint
+            // into an already-coloured atlas is the exact failure recorded in EnvColourPass.
+            var near = Group(parent, "Gilid");
+            var skyline = Group(parent, "SkylineKit");
+            var backlot = Group(parent, "BacklotKit");
 
-            string[] blocks = { "env_building_block_a", "env_building_block_b",
-                                "env_building_block_c", "env_building_block_d" };
+            BuildSideFacade(near, -1, "building-k", -12.0f, "tumbang-warm-b", "Shophouse_W0");
+            BuildSideFacade(near, -1, "building-b", -4.2f, "tumbang-warm-a", "Shophouse_W1");
+            BuildSideFacade(near, -1, "building-c", 0.8f, "tumbang-warm-c", "Shophouse_W2");
+            BuildSideFacade(near, -1, "building-e", 12.5f, "tumbang-warm-a", "Shophouse_W3");
 
-            // The two cross rows that close the street, just past the walls and just inside the
-            // built ground so their footings are never over the plate's edge.
-            for (int end = -1; end <= 1; end += 2)
+            BuildSideFacade(near, 1, "building-e", -12.0f, "tumbang-warm-c", "Shophouse_E0");
+            BuildSideFacade(near, 1, "building-b", -5.0f, "tumbang-warm-b", "Shophouse_E1");
+            BuildSideFacade(near, 1, "building-j", 3.5f, "tumbang-warm-a", "Shophouse_E2");
+            BuildSideFacade(near, 1, "building-d", 12.0f, "tumbang-warm-c", "Shophouse_E3");
+
+            BuildBackgroundStreets(parent);
+
+            // The rail-corridor back lots are low and broad. They are deliberately beyond the
+            // player walls, where their tanks and roofs carry the Gilmore silhouette without
+            // becoming cover or spending the ability floor budget.
+            string[] industrial = { "building-a", "building-g", "building-p", "building-t" };
+            for (int i = 0; i < industrial.Length; i++)
             {
-                float z = end * (CorridorHalfZ - 3.0f);
-                int i = 0;
-
-                for (float x = -8.0f; x <= 8.0f; x += 4.0f)
-                {
-                    var block = InstantiateProp(blocks[(i + (end > 0 ? 2 : 0)) % blocks.Length],
-                                                new Vector3(x, SurfaceTop(x), z),
-                                                Quaternion.Euler(0.0f, end > 0 ? 180.0f : 0.0f, 0.0f),
-                                                crossRow);
-                    if (block != null) block.name = $"CrossBlock_{(end > 0 ? "N" : "S")}{i}";
-                    i++;
-                }
+                float side = i % 2 == 0 ? -1.0f : 1.0f;
+                float x = side * (23.0f + i * 2.5f);
+                float z = -8.0f + i * 8.0f;
+                var building = InstantiateKitProp("industrial", industrial[i],
+                    new Vector3(x, HazeTop, z), Quaternion.Euler(0.0f, side < 0 ? 90.0f : -90.0f, 0.0f),
+                    Vector3.one * 6.0f, backlot, i % 2 == 0 ? "tumbang-warm-a" : "tumbang-warm-b");
+                if (building != null) building.name = $"Backlot_{i}";
             }
 
-            // The far belt. Thin and irregular on purpose: it exists to give the horizon a
-            // profile, and a dense wall of blocks at this distance reads as a fence.
+            BuildOuterDistrict(backlot, skyline);
+
+            // Low-detail towers make an irregular city horizon at a fraction of the geometry
+            // of the old repeated hand-built blocks. Fog, rather than a second colour multiply,
+            // handles their distance.
             var rng = new System.Random(20260824);
+            string[] low = { "low-detail-building-a", "low-detail-building-b", "low-detail-building-c",
+                             "low-detail-building-d", "low-detail-building-e", "low-detail-building-f" };
             int made = 0;
 
             for (int ring = 0; ring < 3; ring++)
             {
-                float radius = 30.0f + ring * 14.0f;
+                float radius = 36.0f + ring * 15.0f;
 
-                for (int step = 0; step < 14; step++)
+                for (int step = 0; step < 16; step++)
                 {
-                    if (rng.NextDouble() > 0.62) continue;
+                    if (rng.NextDouble() > 0.70) continue;
 
-                    float angle = step / 14.0f * Mathf.PI * 2.0f + ring * 0.31f;
-                    float x = Mathf.Sin(angle) * radius * 1.15f;
-                    float z = Mathf.Cos(angle) * radius * 1.55f;
+                    float angle = step / 16.0f * Mathf.PI * 2.0f + ring * 0.27f;
+                    float x = Mathf.Sin(angle) * radius * 1.18f;
+                    float z = Mathf.Cos(angle) * radius * 1.48f;
+                    if (Mathf.Abs(x) < BacklotOuterX + 2.0f && Mathf.Abs(z) < CorridorHalfZ + 3.0f) continue;
 
-                    // Never in the street itself: the corridor is closed by the cross rows.
-                    if (Mathf.Abs(x) < BacklotOuterX && Mathf.Abs(z) < CorridorHalfZ) continue;
-
-                    var far = InstantiateProp(blocks[rng.Next(blocks.Length)],
-                                              new Vector3(x, HazeTop, z),
-                                              Quaternion.Euler(0.0f, rng.Next(4) * 90.0f, 0.0f),
-                                              belt);
+                    float scale = 6.5f + (float)rng.NextDouble() * 3.0f;
+                    var far = InstantiateKitProp("commercial", low[rng.Next(low.Length)],
+                        new Vector3(x, HazeTop, z), Quaternion.Euler(0.0f, rng.Next(4) * 90.0f, 0.0f),
+                        Vector3.one * scale, skyline, $"tumbang-warm-{(char)('a' + rng.Next(3))}");
                     if (far == null) continue;
 
-                    float lift = 1.0f + (float)rng.NextDouble() * 1.4f;
-                    far.transform.localScale = new Vector3(1.6f, lift, 1.6f);
-                    far.name = $"BeltX_{made}";
+                    far.name = $"Skyline_{made}";
                     made++;
                 }
             }
+        }
+
+        private static void BuildOuterDistrict(Transform backlot, Transform skyline)
+        {
+            string[] commercial = { "building-a", "building-c", "building-f", "building-h",
+                                    "building-i", "building-k", "building-l", "building-n" };
+            string[] industrial = { "building-a", "building-c", "building-e", "building-g",
+                                    "building-l", "building-q", "building-r", "building-t" };
+            string[] low = { "low-detail-building-a", "low-detail-building-b", "low-detail-building-c",
+                             "low-detail-building-d", "low-detail-building-e", "low-detail-building-f" };
+
+            int made = 0;
+            foreach (int side in new[] { -1, 1 })
+            {
+                // Dense second row immediately behind the playable shopfronts. Alternating
+                // commercial and industrial forms reads as Gilmore back lots, not one repeated
+                // apartment prefab, and removes the beige void visible through side gaps.
+                for (int i = 0; i < 8; i++)
+                {
+                    float z = -28.0f + i * 8.0f;
+                    bool warehouse = (i + (side > 0 ? 1 : 0)) % 3 == 0;
+                    string kit = warehouse ? "industrial" : "commercial";
+                    string model = warehouse ? industrial[i % industrial.Length]
+                                             : commercial[(i + 2) % commercial.Length];
+                    var building = InstantiateKitProp(kit, model,
+                        new Vector3(side * (24.0f + (i % 2) * 2.5f), HazeTop, z),
+                        Quaternion.Euler(0.0f, side < 0 ? 90.0f : -90.0f, 0.0f),
+                        Vector3.one * (warehouse ? 5.6f : 5.2f), backlot,
+                        warehouse ? $"tumbang-warm-{(i % 2 == 0 ? 'a' : 'b')}"
+                                  : $"tumbang-warm-{(char)('a' + i % 3)}");
+                    if (building != null) building.name = $"DistrictInner_{made++}";
+                }
+
+                // A lower outer row holds the side horizon. It is intentionally continuous;
+                // fog provides the variation, while holes here are what made the map look like
+                // a floating island from first-person cameras.
+                for (int i = 0; i < 11; i++)
+                {
+                    float z = -60.0f + i * 12.0f;
+                    var building = InstantiateKitProp("commercial", low[(i + (side > 0 ? 2 : 0)) % low.Length],
+                        new Vector3(side * 40.0f, HazeTop, z),
+                        Quaternion.Euler(0.0f, side < 0 ? 90.0f : -90.0f, 0.0f),
+                        Vector3.one * (7.5f + (i % 3)), skyline,
+                        $"tumbang-warm-{(char)('a' + (i + 1) % 3)}");
+                    if (building != null) building.name = $"DistrictOuter_{made++}";
+                }
+            }
+
+            // Far end blocks sit beyond the background intersections and leave the 14 m road
+            // opening clear. They are deep in fog, so they close the ground plane without
+            // recreating the near cross-row wall the traffic pass removed.
+            foreach (int end in new[] { -1, 1 })
+            {
+                for (int slot = -5; slot <= 5; slot++)
+                {
+                    if (Mathf.Abs(slot) <= 1) continue;
+                    float x = slot * 10.0f;
+                    var building = InstantiateKitProp("commercial", low[Mathf.Abs(slot + end) % low.Length],
+                        new Vector3(x, HazeTop, end * 56.0f),
+                        Quaternion.Euler(0.0f, end > 0 ? 0.0f : 180.0f, 0.0f),
+                        Vector3.one * (8.0f + Mathf.Abs(slot) % 3), skyline,
+                        $"tumbang-warm-{(char)('a' + Mathf.Abs(slot + end) % 3)}");
+                    if (building != null) building.name = $"DistrictFar_{made++}";
+                }
+            }
+
+            // Back-lot tanks are grouped with warehouses rather than scattered under the
+            // bridge, which makes them environmental evidence instead of random kit props.
+            foreach (int side in new[] { -1, 1 })
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    var tank = InstantiateKitProp("industrial", "detail-tank",
+                        new Vector3(side * 30.0f, HazeTop, -14.0f + i * 14.0f),
+                        Quaternion.Euler(0.0f, i * 90.0f, 0.0f), Vector3.one * 5.5f,
+                        backlot, i % 2 == 0 ? "tumbang-warm-a" : "tumbang-warm-b");
+                    if (tank != null) tank.name = $"BacklotTank_{side}_{i}";
+                }
+            }
+        }
+
+        private static void BuildBackgroundStreets(Transform parent)
+        {
+            var road = Group(parent, "Kalsada");
+            var pavement = Group(parent, "Slab");
+            var district = Group(parent, "BackgroundStreet");
+            float farLength = HazeHalf - CorridorHalfZ;
+            float farMid = (HazeHalf + CorridorHalfZ) * 0.5f;
+
+            // The playable road already reaches z = +/-24. These backed slabs continue it to
+            // two visible intersections, then turn left and right between building corners.
+            // No cross-row facade stands in the carriageway, so the road reads as a street that
+            // carries on through Manila rather than as a set built against a wall.
+            foreach (int end in new[] { -1, 1 })
+            {
+                var extension = Slab(road, end < 0 ? "RoadContinuationSouth" : "RoadContinuationNorth",
+                    new Vector3(0.0f, -RoadTileThickness * 0.5f, end * farMid),
+                    new Vector3(RoadHalfX * 2.0f, RoadTileThickness, farLength), AsphaltAlbedo);
+                Object.DestroyImmediate(extension.GetComponent<Collider>());
+
+                foreach (int side in new[] { -1, 1 })
+                {
+                    var sidewalk = Slab(pavement, $"BackgroundSidewalk_{end}_{side}",
+                        new Vector3(side * 9.0f, (HazeTop + PavementTop) * 0.5f, end * farMid),
+                        new Vector3(PavementOuterX - RoadHalfX, PavementTop - HazeTop, farLength),
+                        ConcreteAlbedo);
+                    Object.DestroyImmediate(sidewalk.GetComponent<Collider>());
+
+                    var cross = Slab(road, $"BackgroundCrossroad_{end}_{side}",
+                        new Vector3(side * 23.5f, -RoadTileThickness * 0.5f, end * 31.0f),
+                        new Vector3(33.0f, RoadTileThickness, 9.0f), AsphaltAlbedo);
+                    Object.DestroyImmediate(cross.GetComponent<Collider>());
+                }
+
+                string[] cornerModels = { "building-n", "building-l", "building-i", "building-e" };
+                for (int sideIndex = 0; sideIndex < 2; sideIndex++)
+                {
+                    int side = sideIndex == 0 ? -1 : 1;
+                    for (int row = 0; row < 2; row++)
+                    {
+                        float x = side * (13.5f + row * 7.5f);
+                        float z = end * (31.5f + row * 7.0f);
+                        var building = InstantiateKitProp("commercial",
+                            cornerModels[(end > 0 ? 2 : 0) + sideIndex],
+                            new Vector3(x, HazeTop, z),
+                            Quaternion.Euler(0.0f, end > 0 ? 0.0f : 180.0f, 0.0f),
+                            Vector3.one * (row == 0 ? 5.0f : 5.8f), district,
+                            $"tumbang-warm-{(char)('a' + (row + sideIndex + (end > 0 ? 1 : 0)) % 3)}");
+                        if (building != null)
+                            building.name = $"IntersectionShop_{end}_{side}_{row}";
+                    }
+
+                    var light = InstantiateKitProp("roads", "traffic-light",
+                        new Vector3(side * 8.4f, RoadTop, end * 29.0f),
+                        Quaternion.Euler(0.0f, end > 0 ? 180.0f : 0.0f, 0.0f),
+                        Vector3.one * 10.0f, district, "tumbang-warm-a");
+                    if (light != null) light.name = $"BackgroundTrafficLight_{end}_{side}";
+                }
+            }
+        }
+
+        private static void BuildSideFacade(Transform parent, int side, string model, float z,
+                                            string palette, string name)
+        {
+            var building = InstantiateKitProp("commercial", model,
+                new Vector3(side * 13.5f, KerbTop, z),
+                Quaternion.Euler(0.0f, side < 0 ? -90.0f : 90.0f, 0.0f),
+                Vector3.one * 5.0f, parent, palette);
+            if (building == null) return;
+
+            building.name = name;
+
+            // The model origin is not its shop face. Move the rendered near edge to the wall
+            // at |x| = 11 so the row closes the side without taking pavement from the player.
+            Bounds bounds = RenderBounds(building);
+            float nearX = side < 0 ? bounds.max.x : bounds.min.x;
+            building.transform.position += new Vector3(side * PavementOuterX - nearX, 0.0f, 0.0f);
         }
 
         private static void BuildHeroStructures(Transform parent)
@@ -608,18 +793,40 @@ namespace TumbangPreso.EditorTools.MapKit
             // Manila house colour on the one structure the map is named after.
             var heroGo = Group(parent, "Tulay");
 
-            // 1. The guideway. Its footprint is 6.9 m by 40 m and the columns under it cover
-            // about 3 per cent of that, so no support test can ever call it held up. It is
-            // marked rather than special-cased, and the mark carries the reason.
-            var deck = InstantiateProp("env_lrt_viaduct_deck", Vector3.zero, Quaternion.identity, heroGo);
-            if (deck != null)
-            {
-                var deckCol = deck.AddComponent<BoxCollider>();
-                deckCol.center = new Vector3(0.0f, 9.0f, 0.0f);
-                deckCol.size = new Vector3(6.8f, 2.2f, 40.0f);
+            // 1. The guideway. Twelve 4 m bridge bays make a 10.5 by 48 m dual-track deck.
+            // The previous 6.88 m deck covered 49 per cent of the road and read as a footbridge.
+            // This one covers 75 per cent, which is the width argued in the v2 plan.
+            var guideway = new GameObject("LrtGuideway");
+            guideway.transform.SetParent(heroGo, false);
+            AirborneByDesign.Attach(guideway, "The LRT-2 guideway. Its soffit is 8.0 m up and " +
+                                                    "the live support rows stand at z = +/-10.");
 
-                AirborneByDesign.Attach(deck, "The LRT-2 guideway. Its soffit is 8.0 m up and the " +
-                                              "four column rows under it cover 3 per cent of its footprint.");
+            for (float z = -GuidewayLength * 0.5f + 2.0f; z < GuidewayLength * 0.5f; z += 4.0f)
+            {
+                var bay = InstantiateKitProp("roads", "road-bridge",
+                    new Vector3(0.0f, ViaductSoffit, z), Quaternion.identity,
+                    new Vector3(GuidewayWidth, 2.0f, 4.0f), guideway.transform, "tumbang-warm-a");
+                if (bay != null) bay.name = $"GuidewayBay_{z + GuidewayLength * 0.5f:F0}";
+            }
+
+            var deckCol = guideway.AddComponent<BoxCollider>();
+            deckCol.center = new Vector3(0.0f, ViaductSoffit + 0.52f, 0.0f);
+            deckCol.size = new Vector3(GuidewayWidth, 1.04f, GuidewayLength);
+
+            // Two real detailed tracks sit on the deck. Their 3 m width leaves 1.4 m between
+            // tracks and 1.4 m to each parapet, enough for a 2.6 m city carriage at 2x scale.
+            foreach (float trackX in new[] { WestboundTrackX, EastboundTrackX })
+            {
+                var track = new GameObject(trackX < 0 ? "WestboundTrack" : "EastboundTrack");
+                track.transform.SetParent(guideway.transform, false);
+                AirborneByDesign.Attach(track, "Detailed rail and sleepers resting on the LRT guideway deck.");
+
+                for (float z = -GuidewayLength * 0.5f + 2.0f; z < GuidewayLength * 0.5f; z += 4.0f)
+                {
+                    InstantiateKitProp("train", "track-detailed",
+                        new Vector3(trackX, GuidewayTop, z), Quaternion.identity,
+                        new Vector3(3.0f, 1.0f, 4.0f), track.transform, "tumbang-lrt");
+                }
             }
 
             // 2. The columns.
@@ -630,18 +837,15 @@ namespace TumbangPreso.EditorTools.MapKit
             // bug, it gets reported as the taya getting stuck or as one side of the can being
             // impossible to defend. Both live rows are now outside |z| = 7.
             //
-            // ⚠️ AND THEY ARE SCALED TO 0.6 ON X AND Z. At full size the pair left a 1.6 m gap
-            // down the middle of a 14 m carriageway, which is a chokepoint on the only line
-            // between the south spawns and the can. At 0.6 the gap is 4.4 m and the columns
-            // still read as columns. Y is untouched, so the shaft still meets the soffit at 8.0.
-            CreateViaductPillar(heroGo, new Vector3(-3.2f, 0.0f, 10.0f), "LrtPillar_NorthWest");
-            CreateViaductPillar(heroGo, new Vector3(3.2f, 0.0f, 10.0f), "LrtPillar_NorthEast");
-            CreateViaductPillar(heroGo, new Vector3(-3.2f, 0.0f, -10.0f), "LrtPillar_SouthWest");
-            CreateViaductPillar(heroGo, new Vector3(3.2f, 0.0f, -10.0f), "LrtPillar_SouthEast");
-            CreateViaductPillar(heroGo, new Vector3(-3.2f, 0.0f, 19.0f), "LrtPillar_FarNorthWest");
-            CreateViaductPillar(heroGo, new Vector3(3.2f, 0.0f, 19.0f), "LrtPillar_FarNorthEast");
-            CreateViaductPillar(heroGo, new Vector3(-3.2f, 0.0f, -19.0f), "LrtPillar_FarSouthWest");
-            CreateViaductPillar(heroGo, new Vector3(3.2f, 0.0f, -19.0f), "LrtPillar_FarSouthEast");
+            // The 1.4 m wide kit pillars at x = +/-4.45 leave a measured 7.5 m centre gap and
+            // 1.85 m to each kerb. Cheska's 3.2 m wall cuts 43 per cent rather than closing it.
+            foreach (float z in new[] { -19.0f, -10.0f, 10.0f, 19.0f })
+            {
+                CreateViaductPillar(heroGo, new Vector3(-4.45f, 0.0f, z),
+                                    $"LrtPillar_{(z > 0 ? "North" : "South")}West_{Mathf.Abs(z):F0}");
+                CreateViaductPillar(heroGo, new Vector3(4.45f, 0.0f, z),
+                                    $"LrtPillar_{(z > 0 ? "North" : "South")}East_{Mathf.Abs(z):F0}");
+            }
 
             // 3. PC Express.
             //
@@ -678,6 +882,59 @@ namespace TumbangPreso.EditorTools.MapKit
                               new Color(1.0f, 0.94f, 0.86f), 5.5f, 1.5f);
                 AddPointLight(pcex.transform, "RgbShowcaseLight", new Vector3(-0.4f, 1.2f, -2.4f),
                               new Color(0.2f, 0.8f, 1.0f), 4.0f, 1.1f);
+
+                BuildPcExpressExterior(pcex.transform);
+
+                var officialLogo = InstantiateProp("env_pc_express_logo_3d", Vector3.zero,
+                    Quaternion.identity, pcex.transform);
+                if (officialLogo != null)
+                {
+                    officialLogo.name = "PC_Express_Official_Raised_Logo";
+                    AirborneByDesign.Attach(officialLogo,
+                        "Raised official PC Express letters mounted on the storefront lightbox.");
+                }
+            }
+        }
+
+        private static void BuildPcExpressExterior(Transform store)
+        {
+            // The supplied exterior is a glass showroom under one red-blue fascia. The source
+            // model had a striped market awning and one undivided opening, so even the correct
+            // colours still read as a stall. These pieces give it the metal-and-glass rhythm of
+            // the real shop while leaving the walk-under clearance and collider unchanged.
+            Color metal = new Color(0.18f, 0.20f, 0.23f);
+            Color brandBlue = new Color(0.055f, 0.180f, 0.490f);
+            Color brandRed = new Color(0.855f, 0.098f, 0.129f);
+
+            var overhang = Slab(store, "ShowroomOverhang", new Vector3(0.0f, 2.62f, -3.56f),
+                                new Vector3(5.15f, 0.16f, 0.82f), brandBlue);
+            Object.DestroyImmediate(overhang.GetComponent<Collider>());
+            AirborneByDesign.Attach(overhang, "Bolted to the PC Express glass facade at y = 2.62.");
+
+            var redLip = Slab(store, "ShowroomRedLip", new Vector3(0.0f, 2.56f, -3.98f),
+                              new Vector3(5.15f, 0.10f, 0.08f), brandRed);
+            Object.DestroyImmediate(redLip.GetComponent<Collider>());
+            AirborneByDesign.Attach(redLip, "The red leading edge is part of the showroom overhang.");
+
+            foreach (float x in new[] { -2.36f, -1.18f, 0.0f, 1.18f, 2.36f })
+            {
+                var mullion = Slab(store, $"GlassMullion_{x:F2}",
+                    new Vector3(x, 1.32f, -3.19f), new Vector3(0.065f, 2.42f, 0.075f), metal);
+                Object.DestroyImmediate(mullion.GetComponent<Collider>());
+                AirborneByDesign.Attach(mullion, "Mounted to the PC Express showroom glazing.");
+            }
+
+            var kick = Slab(store, "ShowroomKickPlate", new Vector3(0.0f, 0.22f, -3.20f),
+                            new Vector3(4.90f, 0.30f, 0.08f), metal);
+            Object.DestroyImmediate(kick.GetComponent<Collider>());
+            AirborneByDesign.Attach(kick, "Mounted across the foot of the PC Express glazing.");
+
+            foreach (float x in new[] { -0.12f, 0.12f })
+            {
+                var handle = Slab(store, $"DoorHandle_{x:F2}",
+                    new Vector3(x, 1.22f, -3.25f), new Vector3(0.035f, 0.42f, 0.035f), ChalkWhite);
+                Object.DestroyImmediate(handle.GetComponent<Collider>());
+                AirborneByDesign.Attach(handle, "Mounted on the centre glass doors.");
             }
         }
 
@@ -701,22 +958,25 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             var trainSystemGo = new GameObject("LrtTrainSystem");
             trainSystemGo.transform.SetParent(Group(parent, "Tulay"), false);
-            trainSystemGo.transform.localPosition = new Vector3(WestboundTrackX, RailHead, 0.0f);
+            trainSystemGo.transform.localPosition = new Vector3(WestboundTrackX, TrainRootY, 0.0f);
 
             var flyby = trainSystemGo.AddComponent<LrtTrainFlyby>();
             flyby.TrackX = WestboundTrackX;
-            flyby.TrackY = RailHead;
-            flyby.Speed = 24.0f;
+            flyby.TrackY = TrainRootY;
+            flyby.Speed = 18.0f;
             flyby.Interval = 24.0f;
             flyby.InitialDelay = 5.0f;
+            flyby.OverheadHalfZ = WallHalfZ + TrainConsistHalfLength;
 
             AirborneByDesign.Attach(trainSystemGo, "The LRT-2 consist, riding the westbound rail " +
                                                    $"head at y = {RailHead:F3} on the guideway.");
 
-            InstantiateProp("env_lrt_train_car", new Vector3(0.0f, 0.0f, 7.5f),
-                            Quaternion.identity, trainSystemGo.transform);
-            InstantiateProp("env_lrt_train_car", new Vector3(0.0f, 0.0f, -7.5f),
-                            Quaternion.Euler(0.0f, 180.0f, 0.0f), trainSystemGo.transform);
+            InstantiateKitProp("train", "train-electric-city-a", new Vector3(0.0f, 0.0f, -5.1f),
+                Quaternion.identity, Vector3.one * TrainScale, trainSystemGo.transform, "tumbang-lrt");
+            InstantiateKitProp("train", "train-electric-city-b", Vector3.zero,
+                Quaternion.identity, Vector3.one * TrainScale, trainSystemGo.transform, "tumbang-lrt");
+            InstantiateKitProp("train", "train-electric-city-c", new Vector3(0.0f, 0.0f, 5.1f),
+                Quaternion.identity, Vector3.one * TrainScale, trainSystemGo.transform, "tumbang-lrt");
         }
 
         /// <summary>
@@ -741,45 +1001,48 @@ namespace TumbangPreso.EditorTools.MapKit
 
             var boost = padGo.AddComponent<OverclockBoostPad>();
             boost.PadLight = AddPointLight(padGo.transform, "OverclockRgbLight",
-                                           new Vector3(0.0f, 0.4f, 0.0f), Color.cyan, 3.5f, 1.5f);
+                                           new Vector3(0.0f, 0.4f, 0.0f), BoostPadGlow, 3.5f, 1.5f);
 
-            var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            quad.name = "PadVisual";
-            quad.transform.SetParent(padGo.transform, false);
-            quad.transform.localPosition = new Vector3(0.0f, 0.012f, 0.0f);
-            quad.transform.localRotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
-            quad.transform.localScale = new Vector3(1.8f, 1.8f, 1.0f);
-            Paint(quad, BoostPadGlow);
-            Object.DestroyImmediate(quad.GetComponent<Collider>());
+            // A hardware display pad, not another opaque ability puddle. The dark plate keeps
+            // its footprint quiet and three safe-hue light bars carry the PC-shop read.
+            var basePlate = Slab(padGo.transform, "PadBase", new Vector3(0.0f, 0.018f, 0.0f),
+                                 new Vector3(1.8f, 0.03f, 1.8f), PotholeGrey);
+            Object.DestroyImmediate(basePlate.GetComponent<Collider>());
+
+            Color[] bars = { BoostPadPlum, BoostPadGlow, BoostPadGold };
+            for (int i = 0; i < bars.Length; i++)
+            {
+                var bar = Slab(padGo.transform, $"RgbBar_{i}",
+                    new Vector3(-0.46f + i * 0.46f, 0.040f, 0.0f),
+                    new Vector3(0.20f, 0.015f, 1.48f), bars[i]);
+                Object.DestroyImmediate(bar.GetComponent<Collider>());
+            }
         }
 
-        /// <summary>Column footprint scale. See the note at the call site in BuildHeroStructures.</summary>
-        private const float PillarScale = 0.6f;
+        /// <summary>Raw `bridge-pillar-wide` is 0.14 by 0.5 by 0.14 m.</summary>
+        private const float PillarHorizontalScale = 10.0f;
+        private const float PillarVerticalScale = 16.0f;
+        private const float PillarWorldHalf = 0.70f;
 
         private static void CreateViaductPillar(Transform parent, Vector3 pos, string name)
         {
-            var pillar = InstantiateProp("env_lrt_pillar", new Vector3(pos.x, SurfaceTop(pos.x), pos.z),
-                                         Quaternion.identity, parent);
+            var pillar = InstantiateKitProp("roads", "bridge-pillar-wide",
+                new Vector3(pos.x, SurfaceTop(pos.x), pos.z), Quaternion.identity,
+                new Vector3(PillarHorizontalScale, PillarVerticalScale, PillarHorizontalScale),
+                parent, "tumbang-warm-a");
             if (pillar == null) return;
 
             pillar.name = name;
 
-            // ⚠️ Y IS LEFT AT 1.0. The shaft is modelled 0.000 to 8.000 and the guideway soffit is
-            // at 8.000; scaling the height would either pull the column off the deck or push it
-            // through it, and neither is visible from the ground where the join is 8 m up.
-            pillar.transform.localScale = new Vector3(PillarScale, 1.0f, PillarScale);
-
-            // Local space, so it scales with the transform. Measured from `env_lrt_pillar.obj`:
-            // x +/-1.700, z -1.675..1.100, y 0..8.000.
+            // Local space. The non-uniform instance scale turns this measured raw kit bound
+            // into the 1.4 by 8.0 by 1.4 m support argued in the map plan.
             var col = pillar.AddComponent<BoxCollider>();
-            col.center = new Vector3(0.0f, 4.0f, -0.2875f);
-            col.size = new Vector3(3.40f, 8.0f, 2.775f);
+            col.center = new Vector3(0.0f, 0.25f, 0.0f);
+            col.size = new Vector3(0.14f, 0.50f, 0.14f);
 
-            // Bot steering radius, sized to what the column actually occupies after the scale
-            // rather than to the number the unscaled model would have wanted.
-            HazardVolume.Attach(pillar, 1.70f * PillarScale + 0.4f, -1);
+            HazardVolume.Attach(pillar, PillarWorldHalf + 0.4f, -1);
 
-            AddPointLight(pillar.transform, "MercuryVaporLamp", new Vector3(0.0f, 5.2f, -1.45f),
+            AddPointLight(pillar.transform, "MercuryVaporLamp", new Vector3(0.0f, 0.325f, -0.09f),
                           new Color(0.88f, 0.96f, 1.0f), 7.5f, 1.1f);
         }
 
@@ -790,37 +1053,48 @@ namespace TumbangPreso.EditorTools.MapKit
             //             blue, the pisonet's cyan screen and the pares cart's steel are the
             //             point of them and a facade tint would flatten all three.
             //   Kalat     street clutter, which the other maps also leave alone.
-            //   Bahay     the shopfront row, which SHOULD take the Manila palette and the roof
-            //             atlases, because it is the same row of houses the other maps have.
             //   Kable     poles and wires, untouched, matching Eskinita's group of the same name.
             var streetGo = Group(parent, "Tindahan");
             var kalat = Group(parent, "Kalat");
-            var bahay = Group(parent, "Gilid");
             var kable = Group(parent, "Kable");
 
-            // 1. The pisonet, against the east shopfront line.
+            // 1. The pisonet cluster, against the east shopfront line.
             //
-            // ⚠️ PLACED FROM ITS OWN MEASURED FOOTPRINT, NOT FROM ITS ORIGIN. `env_pisonet_kiosk`
-            // runs local z -1.075..0.425, so a 90 degree yaw puts its near edge 1.075 m toward
-            // the road from wherever it is dropped. Anything closer in than x = 8.1 therefore
-            // reaches over the chalk at x = 7.0 and becomes an obstacle inside the taya's box.
-            const float pisonetX = 9.0f;
-            var pisonet = InstantiateProp("env_pisonet_kiosk",
-                                          new Vector3(pisonetX, SurfaceTop(pisonetX), 3.5f),
-                                          Quaternion.Euler(0.0f, 90.0f, 0.0f), streetGo.transform);
-            if (pisonet != null)
+            // ⚠️⚠️ ONE CABINET DID NOT READ AS A BUSINESS. It looked like a random computer on
+            // a pavement, which is exactly what 🧑 reported. Three terminals, chairs, one awning
+            // and a rate board make the same joke legible without explanation: showroom PCs on
+            // the west, one-peso street PCs on the east.
+            const float pisonetX = 9.70f;
+            for (int i = 0; i < 3; i++)
             {
-                pisonet.name = "Pisonet_Kiosk";
+                float z = 1.7f + i * 1.75f;
+                var pisonet = InstantiateProp("env_pisonet_kiosk",
+                    new Vector3(pisonetX, SurfaceTop(pisonetX), z),
+                    Quaternion.Euler(0.0f, 90.0f, 0.0f), streetGo.transform);
+                if (pisonet == null) continue;
 
+                pisonet.name = $"Pisonet_Kiosk_{i + 1}";
                 var col = pisonet.AddComponent<BoxCollider>();
                 col.center = new Vector3(0.0f, 0.98f, -0.325f);
                 col.size = new Vector3(1.08f, 1.96f, 1.50f);
 
                 var arcade = pisonet.AddComponent<PisonetInteractive>();
                 arcade.ScreenLight = AddPointLight(pisonet.transform, "ScreenGlow",
-                                                   new Vector3(0.0f, 1.22f, -0.10f),
-                                                   new Color(0.0f, 0.90f, 1.0f), 3.0f, 1.2f);
+                    new Vector3(0.0f, 1.22f, -0.10f), new Color(0.20f, 0.82f, 0.72f), 2.2f, 0.75f);
+
+                AddClutter(kalat, "env_monobloc_chair", 8.15f, z, i % 2 == 0 ? -75.0f : -105.0f);
             }
+
+            var pisonetAwning = InstantiateKitProp("commercial", "detail-awning-wide",
+                new Vector3(10.55f, 2.45f, 3.45f), Quaternion.Euler(0.0f, 90.0f, 0.0f),
+                new Vector3(6.8f, 3.0f, 5.5f), streetGo.transform, "tumbang-warm-b");
+            if (pisonetAwning != null)
+                AirborneByDesign.Attach(pisonetAwning, "Bolted to the east shopfront above the pisonet row.");
+
+            AddFramedWallSign(streetGo.transform, "Pisonet_Rate_Fascia",
+                new Vector3(10.96f, 2.82f, 3.45f), 90.0f, new Vector2(3.55f, 0.86f),
+                SignWood, SignCream, SignMaroon, new[] { "PISONET", "P1  5 MIN" },
+                "Framed rate fascia bolted above the three pisonet terminals.");
 
             // 2. The pares cart, same pavement, further south.
             const float paresX = 8.8f;
@@ -840,6 +1114,13 @@ namespace TumbangPreso.EditorTools.MapKit
                               new Color(1.0f, 0.70f, 0.30f), 3.8f, 1.0f);
             }
 
+            var paresParasol = InstantiateKitProp("commercial", "detail-parasol-a",
+                new Vector3(9.65f, SurfaceTop(9.65f), -6.9f), Quaternion.identity,
+                Vector3.one * 4.5f, streetGo.transform, "tumbang-warm-c");
+            if (paresParasol != null) paresParasol.name = "Pares_Parasol";
+
+            BuildParesBoard(streetGo.transform);
+
             // 3. The delivery trike outside PC Express, on the west pavement.
             const float trikeX = -9.1f;
             var trike = InstantiateProp("env_cargo_tricycle_boxes",
@@ -852,6 +1133,20 @@ namespace TumbangPreso.EditorTools.MapKit
                 var col = trike.AddComponent<BoxCollider>();
                 col.center = new Vector3(0.255f, 0.68f, -0.05f);
                 col.size = new Vector3(2.07f, 1.36f, 2.24f);
+
+                // The source mesh ends its frame at y = 0.93 while the handlebar begins at
+                // y = 1.025 and z = -0.69. This short stem closes the measured 95 mm gap.
+                var stem = Slab(trike.transform, "HandlebarStem",
+                    new Vector3(-0.55f, 0.98f, -0.56f), new Vector3(0.10f, 0.11f, 0.18f),
+                    new Color(0.62f, 0.64f, 0.66f));
+                Object.DestroyImmediate(stem.GetComponent<Collider>());
+                AirborneByDesign.Attach(stem, "Joins the cargo tricycle frame to its handlebar.");
+
+                var gripJoin = Slab(trike.transform, "HandlebarGripJoin",
+                    new Vector3(-0.55f, 1.05f, -0.725f), new Vector3(0.10f, 0.05f, 0.23f),
+                    new Color(0.62f, 0.64f, 0.66f));
+                Object.DestroyImmediate(gripJoin.GetComponent<Collider>());
+                AirborneByDesign.Attach(gripJoin, "Joins the cargo tricycle handlebar to its grip.");
             }
 
             // 4. The bridge hoop.
@@ -868,57 +1163,58 @@ namespace TumbangPreso.EditorTools.MapKit
             // is held up by the same rule as everything else on the map.
             BuildBridgeHoop(streetGo);
 
-            // 5. Jersey barriers closing the two ends of the carriageway, outside the walls so
-            // they frame the street without narrowing the play area.
-            for (int end = -1; end <= 1; end += 2)
-            {
-                float z = end * (WallHalfZ + 1.4f);
+            // 5. Aurora Boulevard continues beyond both gameplay walls. The first version put
+            // a solid row of jersey barriers across each end and a row of buildings behind it,
+            // which read as a road terminating at the arena. Real kit vehicles now carry the
+            // boundary beyond |z| = 16.5. Their nearest body edge stays outside the wall, and
+            // they have no collider, hazard or gameplay role.
+            BuildBoundaryTraffic(kalat);
 
-                for (float x = -RoadHalfX + 1.0f; x < RoadHalfX; x += 2.0f)
-                    AddJerseyBarrier(kalat, new Vector3(x, SurfaceTop(x), z),
-                                     Quaternion.Euler(0.0f, 90.0f, 0.0f));
-            }
-
-            // 6. Utility poles on both pavements.
-            //
-            // ⚠️⚠️ THE CROSSARM HAS TO REACH OVER THE ROAD, AND IT WAS POINTING THE OTHER WAY.
-            // `env_post_electric` is 7.4 m across its own X (measured: -0.800 to 6.600) because
-            // almost all of that is the wire span, with the post itself near the origin. Yawed
-            // the wrong way, all four poles hung their wires out over the back lots where no
-            // camera ever looks, and the street had bare sky between the pavements. It was found
-            // by `MapGeometryCheck`, not by looking: the support grid reported "0.212 x5,
-            // 0.150 x20", meaning twenty of the twenty-five squares under each pole were over
-            // the shopfront apron instead of over the carriageway.
-            foreach (float z in new[] { -12.0f, 10.0f })
+            // 6. Two complete kit utility spans, rotated ALONG the pavements. The v8 placement
+            // ran their 12.95 m cable length across the road and made the wires another arena
+            // ceiling. Each 2.57 m deep assembly now stays between |x| = 8.4 and the shopfront,
+            // with one staggered run per sidewalk and no cable or post over the chalk.
+            // One full `electricity-pole-wide` per segment duplicates a pole at every join,
+            // which is why the v13 capture showed fat pairs in the pavement even after the
+            // line moved to the kerb. Build one continuous line from wire-only spans and one
+            // single post per shared endpoint instead.
+            const float cableSpan = 12.0862f;
+            const float cableMinZ = -5.6591f;
+            const float cableMaxZ = 6.4271f;
+            foreach (float x in new[] { -10.65f, 10.65f })
             {
-                foreach (int side in new[] { -1, 1 })
+                // Different offsets keep a pole pair out of both hero storefronts: west avoids
+                // PC Express at z = 5.5, east avoids the pisonet row at z = 1.7..5.2.
+                float stagger = x < 0.0f ? 3.0f : 4.5f;
+                for (int segment = -6; segment <= 6; segment++)
                 {
-                    float x = side * (PavementOuterX - 1.2f);
-                    InstantiateProp("env_post_electric", new Vector3(x, SurfaceTop(x), z),
-                                    Quaternion.Euler(0.0f, side < 0 ? 180.0f : 0.0f, 0.0f), kable);
+                    var wire = InstantiateKitProp("roads", "electricity-wires-wide",
+                        new Vector3(x, SurfaceTop(x), segment * cableSpan + stagger),
+                        Quaternion.Euler(0.0f, 90.0f, 0.0f),
+                        Vector3.one * 12.0f, kable, "tumbang-warm-a");
+                    if (wire != null)
+                    {
+                        wire.name = $"SidewalkWire_{(x < 0 ? "W" : "E")}_{segment + 6}";
+                        AirborneByDesign.Attach(wire,
+                            "Continuous utility wires carried by the single posts at both endpoints.");
+                    }
+                }
+
+                float firstCentre = -6.0f * cableSpan + stagger;
+                for (int joint = 0; joint <= 13; joint++)
+                {
+                    float z = joint == 0
+                        ? firstCentre + cableMinZ
+                        : firstCentre + (joint - 1) * cableSpan + cableMaxZ;
+                    var pole = InstantiateKitProp("roads", "electricity-pole-single",
+                        new Vector3(x, SurfaceTop(x), z), Quaternion.Euler(0.0f, 90.0f, 0.0f),
+                        Vector3.one * 12.0f, kable, "tumbang-warm-a");
+                    if (pole != null)
+                        pole.name = $"SidewalkPole_{(x < 0 ? "W" : "E")}_{joint}";
                 }
             }
 
-            // 7. The shopfront line either side, standing on the apron rather than on air. The
-            // shipped map put five of these at |x| = 10.5 while the ground stopped at |x| = 9.
-            const float shopX = 13.0f;
-            string[] west = { "env_building_block_a", "env_building_block_b", "env_building_block_c" };
-            string[] east = { "env_building_block_d", "env_building_block_a", "env_building_block_b" };
-
-            for (int i = 0; i < 3; i++)
-            {
-                float z = -12.0f + i * 12.0f;
-
-                var w = InstantiateProp(west[i], new Vector3(-shopX, SurfaceTop(-shopX), z),
-                                        Quaternion.Euler(0.0f, 90.0f, 0.0f), bahay);
-                if (w != null) w.name = $"Shophouse_W{i}";
-
-                var e = InstantiateProp(east[i], new Vector3(shopX, SurfaceTop(shopX), z + 4.0f),
-                                        Quaternion.Euler(0.0f, -90.0f, 0.0f), bahay);
-                if (e != null) e.name = $"Shophouse_E{i}";
-            }
-
-            // 8. Clutter, all of it on the pavements and none of it in the box.
+            // 7. Clutter, all of it on the pavements and none of it in the box.
             AddClutter(kalat, "env_crate_stack", -9.4f, -3.2f, 25.0f);
             AddClutter(kalat, "env_oil_drum", -8.6f, -4.6f, 0.0f);
             AddClutter(kalat, "env_monobloc_chair", 8.2f, 1.2f, -60.0f);
@@ -928,6 +1224,8 @@ namespace TumbangPreso.EditorTools.MapKit
             AddClutter(kalat, "env_crate_stack", 9.2f, 7.4f, -15.0f);
             AddClutter(kalat, "env_bollard", -8.2f, -8.4f, 0.0f);
             AddClutter(kalat, "env_bollard", -8.2f, -6.4f, 0.0f);
+
+            BuildRepairBladeSign(streetGo.transform);
 
             BuildUnderBridgeSignage(kalat);
         }
@@ -958,6 +1256,13 @@ namespace TumbangPreso.EditorTools.MapKit
             var col = hoop.AddComponent<BoxCollider>();
             col.center = new Vector3(0.0f, 1.55f, 0.62f);
             col.size = new Vector3(0.24f, 3.10f, 0.24f);
+
+            // The generated ring stops 0.23 m short of its backboard. This bracket is the
+            // missing support, not decoration: without it the rim visibly floats in the air.
+            var bracket = Slab(hoop.transform, "RimBracket", new Vector3(0.0f, 3.07f, 0.37f),
+                               new Vector3(0.10f, 0.08f, 0.24f), BawalRed);
+            Object.DestroyImmediate(bracket.GetComponent<Collider>());
+            AirborneByDesign.Attach(bracket, "The bracket joins the hoop rim to its backboard at y = 3.07.");
         }
 
         /// <summary>
@@ -971,13 +1276,8 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             var sign = Group(parent, "Karatula");
 
-            // ⚠️ FLAT ON THE COLUMN'S ROAD-FACING FACE, WHICH IS A MEASURED PLANE AND NOT A
-            // GUESS. `env_lrt_pillar` runs x +/-1.700 and is scaled to 0.6, so a column at
-            // x = -3.2 presents its inner face at -3.2 + 1.700 * 0.6 = -2.18. The first pass put
-            // these at -2.05, which is 130 mm of daylight between a painted sign and the
-            // concrete it is painted on. Its z span after the same scale is z -1.005..+0.660,
-            // so the placard has to sit inside that too.
-            float face = 3.2f - 1.7f * PillarScale;
+            // Flat on the measured inner face: centres at |x| = 4.45 minus a 0.70 m half width.
+            float face = 4.45f - PillarWorldHalf;
 
             // ⚠️⚠️ THE TEXT IS THE WHOLE POINT AND A BLANK PLATE IS WORSE THAN NOTHING. The first
             // pass put untitled red rectangles on the columns; in the capture they read as
@@ -1001,26 +1301,93 @@ namespace TumbangPreso.EditorTools.MapKit
         private static void AddPlacard(Transform parent, string name, Vector3 pos, float yaw,
                                        Color tint, string[] lines)
         {
-            const float width = 1.10f;
-            const float height = 0.72f;
+            AddWallPlacard(parent, name, pos, yaw, new Vector2(1.10f, 0.72f), tint, lines,
+                "Painted flat on the LRT column face at x = " +
+                $"{Mathf.Abs(pos.x):F2}. A sign on a wall has nothing under it.");
+        }
 
-            var go = Slab(parent, name, pos, new Vector3(width, height, 0.04f), tint);
+        private static void AddWallPlacard(Transform parent, string name, Vector3 pos, float yaw,
+                                           Vector2 size, Color tint, string[] lines, string reason)
+        {
+            var go = Slab(parent, name, pos, new Vector3(size.x, size.y, 0.04f), tint);
             go.transform.localRotation = Quaternion.Euler(0.0f, yaw, 0.0f);
             Object.DestroyImmediate(go.GetComponent<Collider>());
+            AirborneByDesign.Attach(go, reason);
 
-            AirborneByDesign.Attach(go, "Painted flat on the LRT column face at x = " +
-                                        $"{Mathf.Abs(pos.x):F2}. A sign on a wall has nothing under it.");
-
-            // ⚠️ THE LETTERS ARE CHILDREN OF THE PLATE AND ARE SIZED IN ITS LOCAL SPACE, which is
-            // a unit cube scaled to the plate. Everything below is therefore a fraction of the
-            // plate, so changing the plate size cannot leave the text behind.
+            // Letters are fractions of the plate local space, so every sign size uses the same
+            // font and line layout without leaving the text behind when its width changes.
             float lineHeight = 1.0f / (lines.Length + 0.6f);
 
             for (int i = 0; i < lines.Length; i++)
             {
                 float cy = 0.5f - lineHeight * (i + 0.8f);
-                PaintText(go.transform, lines[i], cy, lineHeight * 0.72f, name + "_L" + i);
+                PaintText(go.transform, lines[i], cy, lineHeight * 0.72f, name + "_L" + i,
+                          ChalkWhite);
             }
+        }
+
+        private static void AddFramedWallSign(Transform parent, string name, Vector3 pos, float yaw,
+                                              Vector2 size, Color frameColour, Color faceColour,
+                                              Color ink, string[] lines, string reason)
+        {
+            Quaternion rotation = Quaternion.Euler(0.0f, yaw, 0.0f);
+            Vector3 normal = rotation * Vector3.back;
+
+            var frame = Slab(parent, name + "_Frame", pos,
+                new Vector3(size.x + 0.18f, size.y + 0.18f, 0.09f), frameColour);
+            frame.transform.localRotation = rotation;
+            Object.DestroyImmediate(frame.GetComponent<Collider>());
+            AirborneByDesign.Attach(frame, reason);
+
+            var face = Slab(parent, name, pos + normal * 0.065f,
+                new Vector3(size.x, size.y, 0.045f), faceColour);
+            face.transform.localRotation = rotation;
+            Object.DestroyImmediate(face.GetComponent<Collider>());
+            AirborneByDesign.Attach(face, reason);
+
+            float lineHeight = 1.0f / (lines.Length + 0.6f);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                float cy = 0.5f - lineHeight * (i + 0.8f);
+                PaintText(face.transform, lines[i], cy, lineHeight * 0.72f, name + "_L" + i, ink);
+            }
+        }
+
+        private static void BuildRepairBladeSign(Transform parent)
+        {
+            const float x = -10.15f;
+            const float y = 2.55f;
+            const float z = -4.0f;
+
+            foreach (float bracketY in new[] { 2.18f, 2.90f })
+            {
+                var bracket = Slab(parent, $"RepairBladeBracket_{bracketY:F2}",
+                    new Vector3(-10.58f, bracketY, z), new Vector3(0.78f, 0.055f, 0.055f), SignWood);
+                Object.DestroyImmediate(bracket.GetComponent<Collider>());
+                AirborneByDesign.Attach(bracket, "Bracket joining the projecting repair sign to the west shopfront.");
+            }
+
+            AddFramedWallSign(parent, "Repair_Blade", new Vector3(x, y, z), 0.0f,
+                new Vector2(1.05f, 1.48f), SignWood, TarpBlue, SignCream,
+                new[] { "PC", "REPAIR" }, "Projecting blade sign carried by two shopfront brackets.");
+        }
+
+        private static void BuildParesBoard(Transform parent)
+        {
+            const float x = 8.05f;
+            const float z = -3.75f;
+            float surface = SurfaceTop(x);
+
+            foreach (float legZ in new[] { z - 0.30f, z + 0.30f })
+            {
+                var leg = Slab(parent, $"ParesBoardLeg_{legZ:F2}",
+                    new Vector3(x, surface + 0.30f, legZ), new Vector3(0.055f, 0.60f, 0.055f), SignWood);
+                Object.DestroyImmediate(leg.GetComponent<Collider>());
+            }
+
+            AddWallPlacard(parent, "Pares_A_Board", new Vector3(x, surface + 0.78f, z), 90.0f,
+                new Vector2(0.92f, 0.72f), Chalkboard, new[] { "PARES", "MAMI" },
+                "Small menu board carried by its two pavement legs beside the pares cart.");
         }
 
         /// <summary>
@@ -1031,7 +1398,7 @@ namespace TumbangPreso.EditorTools.MapKit
         /// keep in step, and the one that drifts is always the one nobody is looking at.
         /// </summary>
         private static void PaintText(Transform plate, string text, float centreY, float glyphH,
-                                      string name)
+                                      string name, Color ink)
         {
             const float margin = 0.08f;
             float gap = 0.16f;
@@ -1070,7 +1437,7 @@ namespace TumbangPreso.EditorTools.MapKit
                         bar.transform.localPosition = new Vector3(
                             x + glyphW * (col + 0.5f) / 5.0f, (top + bottom) * 0.5f, -0.62f);
                         bar.transform.localScale = new Vector3(glyphW / 5.0f, top - bottom, 0.30f);
-                        Paint(bar, ChalkWhite);
+                        Paint(bar, ink);
                         Object.DestroyImmediate(bar.GetComponent<Collider>());
 
                         run = -1;
@@ -1087,14 +1454,40 @@ namespace TumbangPreso.EditorTools.MapKit
                             Quaternion.Euler(0.0f, yaw, 0.0f), parent);
         }
 
-        private static void AddJerseyBarrier(Transform parent, Vector3 pos, Quaternion rot)
+        private static void BuildBoundaryTraffic(Transform parent)
         {
-            var jb = InstantiateProp("env_jersey_barrier", pos, rot, parent);
-            if (jb == null) return;
+            var traffic = Group(parent, "BoundaryTraffic");
+            (string model, float x, float z, float yaw, string palette)[] vehicles =
+            {
+                ("delivery", -3.8f, 19.0f, 180.0f, "tumbang-warm-a"),
+                ("sedan", 2.6f, 18.45f, 0.0f, "tumbang-warm-c"),
+                ("truck", -2.7f, -18.70f, 180.0f, "tumbang-warm-b"),
+                ("van", 3.5f, -18.55f, 0.0f, "tumbang-warm-a"),
+                ("taxi", 0.2f, 22.1f, 180.0f, "tumbang-warm-b"),
+                ("van", -2.8f, 30.0f, 180.0f, "tumbang-warm-c"),
+                ("truck", 3.1f, 35.0f, 0.0f, "tumbang-warm-a"),
+                ("taxi", -3.0f, -28.5f, 0.0f, "tumbang-warm-b"),
+                ("delivery", 3.0f, -33.5f, 180.0f, "tumbang-warm-c"),
+            };
 
-            var col = jb.AddComponent<BoxCollider>();
-            col.center = new Vector3(0.0f, 0.425f, 0.0f);
-            col.size = new Vector3(0.62f, 0.85f, 2.0f);
+            for (int i = 0; i < vehicles.Length; i++)
+            {
+                var spec = vehicles[i];
+                var vehicle = InstantiateKitProp("car", spec.model,
+                    new Vector3(spec.x, RoadTop, spec.z), Quaternion.Euler(0.0f, spec.yaw, 0.0f),
+                    Vector3.one * 1.35f, traffic, spec.palette);
+                if (vehicle == null) continue;
+
+                vehicle.name = $"BoundaryVehicle_{i}_{spec.model}";
+
+                // Kenney cars import with their prefab root below the visible tyres. Placing the
+                // root at road zero repeats Eskinita's measured 0.263 m vehicle float. Solve from
+                // the rendered underside so every tyre, not an invisible origin, touches road.
+                Bounds bounds = RenderBounds(vehicle);
+                vehicle.transform.position += Vector3.up * (RoadTop - bounds.min.y);
+                AirborneByDesign.Attach(vehicle,
+                    "Wheel-supported boundary traffic. The rendered tyre underside is solved to road y = 0.");
+            }
         }
 
         /// <summary>
@@ -1148,14 +1541,54 @@ namespace TumbangPreso.EditorTools.MapKit
             trip.BurstColor = burstColor;
             trip.HazardRadius = Mathf.Max(size.x, size.z) * 0.6f;
 
-            var visual = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            visual.name = "HazardVisual";
-            visual.transform.SetParent(hazardGo.transform, false);
-            visual.transform.localPosition = new Vector3(0.0f, 0.010f, 0.0f);
-            visual.transform.localRotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
-            visual.transform.localScale = new Vector3(size.x, size.z, 1.0f);
-            Paint(visual, burstColor);
-            Object.DestroyImmediate(visual.GetComponent<Collider>());
+            BuildTripHazardVisual(hazardGo.transform, name, size, burstColor);
+        }
+
+        private static void BuildTripHazardVisual(Transform parent, string name, Vector3 size, Color colour)
+        {
+            // ⚠️ THE TRIGGER FOOTPRINT IS NOT A COLOURED MAT. The v1 visual drew every hazard
+            // as one opaque rectangle, exactly the "puddles everywhere" failure VISION § 2
+            // forbids for abilities. These small objects show the cause while the invisible
+            // trigger keeps the forgiving gameplay radius.
+            if (name.Contains("PisonetCord"))
+            {
+                for (int i = -1; i <= 1; i++)
+                {
+                    var cord = Slab(parent, $"Cord_{i}", new Vector3(i * 0.16f, 0.018f, i * 0.28f),
+                                    new Vector3(0.055f, 0.025f, size.z * 0.82f), colour);
+                    cord.transform.localRotation = Quaternion.Euler(0.0f, -13.0f + i * 7.0f, 0.0f);
+                    Object.DestroyImmediate(cord.GetComponent<Collider>());
+                }
+                return;
+            }
+
+            if (name.Contains("GpuBox"))
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    var box = InstantiateKitProp("factory", i == 2 ? "box-wide" : "box-small",
+                        new Vector3(-0.45f + i * 0.42f, 0.0f, (i % 2 == 0 ? -0.28f : 0.24f)),
+                        Quaternion.Euler(0.0f, -18.0f + i * 23.0f, i == 1 ? 8.0f : 0.0f),
+                        Vector3.one * 0.72f, parent, "tumbang-warm-a");
+                    if (box != null) box.name = $"DroppedGpuBox_{i}";
+                }
+                return;
+            }
+
+            int blobs = name.Contains("Pothole") ? 3 : 4;
+            for (int i = 0; i < blobs; i++)
+            {
+                var blob = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                blob.name = name.Contains("Pothole") ? $"BrokenAsphalt_{i}" : $"BrothSpill_{i}";
+                blob.transform.SetParent(parent, false);
+                float angle = i * 2.17f;
+                blob.transform.localPosition = new Vector3(Mathf.Sin(angle) * size.x * 0.16f, 0.008f,
+                                                            Mathf.Cos(angle) * size.z * 0.16f);
+                blob.transform.localScale = new Vector3(size.x * (0.23f + i * 0.025f), 0.006f,
+                                                        size.z * (0.18f + (blobs - i) * 0.018f));
+                Paint(blob, colour);
+                Object.DestroyImmediate(blob.GetComponent<Collider>());
+            }
         }
 
         // ------------------------------------------------------------------
@@ -1190,6 +1623,92 @@ namespace TumbangPreso.EditorTools.MapKit
             if (mat.HasProperty("_Glossiness")) mat.SetFloat("_Glossiness", 0.08f);
 
             renderer.sharedMaterial = mat;
+        }
+
+        private static readonly string[] KitTextureProperties =
+        {
+            "_BaseMap", "_MainTex", "baseColorTexture", "_BaseColorMap",
+        };
+
+        /// <summary>
+        /// Instantiate a Kenney kit model and replace its complete colour atlas.
+        ///
+        /// ⚠️⚠️ THIS IS AN ATLAS SWAP, NOT A TINT. These kits are one mesh and one material,
+        /// with walls, trim, roof and windows all sampling different regions of one image.
+        /// Multiplying a colour into the material cannot move a saturated blue roof without
+        /// also crushing the cream wall. The generated warm atlases preserve every UV and move
+        /// the source swatches instead.
+        /// </summary>
+        private static GameObject InstantiateKitProp(string kit, string modelName, Vector3 position,
+                                                      Quaternion rotation, Vector3 scale,
+                                                      Transform parent, string palette)
+        {
+            string path = $"{KitsDir}/{kit}/{modelName}.glb";
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+
+            if (prefab == null)
+            {
+                Debug.LogWarning($"[IlalimNgTulayBuilder] Missing kit model at {path}");
+                return null;
+            }
+
+            var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+            instance.name = $"{kit}_{modelName}";
+            instance.transform.SetParent(parent, false);
+            instance.transform.localPosition = position;
+            instance.transform.localRotation = rotation;
+            instance.transform.localScale = scale;
+
+            string texturePath = $"{KitsDir}/{kit}/Textures/{palette}.png";
+            var atlas = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
+
+            if (atlas == null)
+            {
+                Debug.LogWarning($"[IlalimNgTulayBuilder] Missing kit palette at {texturePath}");
+                return instance;
+            }
+
+            foreach (var renderer in instance.GetComponentsInChildren<Renderer>(includeInactive: true))
+            {
+                var source = renderer.sharedMaterial;
+                if (source == null) continue;
+
+                var key = (source, atlas);
+                if (!KitMaterials.TryGetValue(key, out var material) || material == null)
+                {
+                    material = new Material(source) { name = $"{source.name}_{palette}" };
+                    bool set = false;
+
+                    foreach (string property in KitTextureProperties)
+                    {
+                        if (!material.HasProperty(property)) continue;
+                        material.SetTexture(property, atlas);
+                        set = true;
+                    }
+
+                    if (!set)
+                    {
+                        Debug.LogWarning($"[IlalimNgTulayBuilder] '{source.shader.name}' has no " +
+                                         $"known texture property for palette {palette}.");
+                    }
+
+                    KitMaterials[key] = material;
+                }
+
+                renderer.sharedMaterial = material;
+            }
+
+            return instance;
+        }
+
+        private static Bounds RenderBounds(GameObject root)
+        {
+            var renderers = root.GetComponentsInChildren<Renderer>(includeInactive: true);
+            if (renderers.Length == 0) return new Bounds(root.transform.position, Vector3.zero);
+
+            Bounds bounds = renderers[0].bounds;
+            for (int i = 1; i < renderers.Length; i++) bounds.Encapsulate(renderers[i].bounds);
+            return bounds;
         }
 
         private static GameObject InstantiateProp(string modelName, Vector3 position,

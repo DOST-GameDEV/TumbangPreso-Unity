@@ -17,7 +17,7 @@ namespace TumbangPreso
     /// What it does now, in three phases:
     ///
     ///   WARNING  (3.0 s)  the toast, the rail hum, the shadow sweeping in from the south
-    ///   OVERHEAD (~2.6 s) the pass itself
+    ///   OVERHEAD (2.7 s)  the pass itself
     ///   idle     (rest)   back to `Interval`
     ///
     /// ⚠️⚠️ AND THE TWO MODES ANSWER IT DIFFERENTLY. See `OverheadPassWindow`: Hero Strike gets
@@ -35,7 +35,7 @@ namespace TumbangPreso
         public float InitialDelay = 5.0f;
 
         [Tooltip("Speed of the train crossing the viaduct (m/s).")]
-        public float Speed = 24.0f;
+        public float Speed = 18.0f;
 
         [Tooltip("Start Z position of the train.")]
         public float StartZ = -48.0f;
@@ -43,21 +43,22 @@ namespace TumbangPreso
         [Tooltip("End Z position where the train disappears.")]
         public float EndZ = 48.0f;
 
-        [Tooltip("Track X offset. Measured from the rail pair in env_lrt_viaduct_deck.obj.")]
-        public float TrackX = -1.6f;
+        [Tooltip("Track X offset. Measured from the dual-track guideway centre.")]
+        public float TrackX = -2.35f;
 
-        [Tooltip("Track Y elevation. The rail HEAD, not the deck: see IlalimNgTulayBuilder.RailHead.")]
-        public float TrackY = 10.36f;
+        [Tooltip("Train root Y. Unity normalises the imported prefab root to its wheel underside.")]
+        public float TrackY = 9.190f;
 
         /// <summary>
         /// How far down the street the consist counts as "overhead".
         ///
         /// ⚠️ MEASURED FROM THE PLAY AREA, NOT PICKED. The walls stand at z = +/-16.5 and the
-        /// chalk box ends at +/-7.0. A window keyed to the box alone would be 0.6 s long at
-        /// 24 m/s, which is not long enough to plan a cast around; keyed to the walls it is
-        /// 2.6 s including the 14 m consist, which is one skill and most of a second.
+        /// chalk box ends at +/-7.0. A window keyed to the train origin lasted only 1.83 s at
+        /// 18 m/s and closed while half the consist was still above the street. This half-range
+        /// is wall half-length 16.5 plus consist half-length 7.8. The full window is therefore
+        /// `(33.0 + 15.6) / 18 = 2.70 s`, from nose entering to tail leaving.
         /// </summary>
-        public float OverheadHalfZ = 16.5f;
+        public float OverheadHalfZ = 24.3f;
 
         /// <summary>Seconds of warning before the consist reaches the overhead window.</summary>
         public float WarningLead = 3.0f;
