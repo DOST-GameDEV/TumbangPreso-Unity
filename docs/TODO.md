@@ -92,6 +92,71 @@ the two ROLES and `UiTheme` spends five more on hero identity.
 
 ---
 
+## 9 · Ilalim ng Tulay dressing defects, reported off the 2026-08-25 player
+
+Five things 🧑 found by playing the build rather than by any check. Grouped because four of
+them are the same map and the fifth was found in the same pass.
+
+**9.1 ✅ FIXED: a facade sign whose lettering hung in the air.** 🧑: *"floating texg here pls
+remove"*, with `Sign_ComputerParts` in the shot. `ShopFaceX` solves the wall PLANE from the
+building's rendered bounds and carries a ⚠️ note about never typing that number in, but the
+signs bolted to that wall still typed in their z centre, their width and their height, so
+nothing tied a 4.60 m run of capitals to the extent of the wall it names. `PaintedWall` draws
+letters and no plate on purpose, so the overhang is not a board past a corner, it is loose
+capitals over a pavement gap. `FitToFacade` now narrows the sign to the facade and only then
+moves its centre, so a sign that already fitted is left where it was authored. Applied to
+`Sign_ComputerParts`, `Sign_Labada` and `Sign_Paluto`.
+**Done looks like:** a render of the west corridor with the whole word on the wall.
+
+**9.2 ✅ FIXED: the map is still too dark.** 🧑: *"less dark as before but still dark."* The
+exposure fix landed and the frame contrast did not. `Hero_Strike_Balance.md` § 3.0.1 has the
+arithmetic: at the shipped 0.92 exposure a contrast of 1.12 still clipped every linear pixel
+below **0.0966** to pure black, and Eskinita's 1.03 moves that floor to **0.0422**.
+⚠️⚠️ **`MapGradeSanityTests` compares the builder call against the value baked into the scene,
+so this REQUIRES a rebuild through `IlalimNgTulayPipeline` in the same change.**
+
+**9.3 OPEN: the pisonet rate sign renders near black.** 🧑: *"the pc for 10 mins sign is bugged
+too"*. `Sign_Pisonet` is a `FramedFascia` built with `SignCream` as its face and `SignMaroon` as
+its ink, and in the build it is a dark board with barely legible text. **`EnvColourPass` is NOT
+the cause and this has been checked:** the signs live in a group called `Karatula`, which is in
+none of `SlabGroups`, `RoadGroups` or `FacadeGroups`, so the pass hits `continue` and never
+touches them. That leaves lighting, and the sign sits at y = 3.42 on the east shopfront directly
+under the guideway. Likely the same shadowed band as 9.2 rather than a separate defect, so
+**re-check it against a render after 9.2 lands before changing any colour.**
+**Done looks like:** PISONET and its rate line readable from the road in a capture.
+
+**9.4 ✅ FIXED: the train floated, and the ride height was never the reason.** 🧑: *"it wasnt on
+tracks it was js floating there"*, then *"its weird that the bridge js cuts off, i want the rails
+to continue past map or smth"*.
+
+⚠️⚠️ **The first guess was wrong and the check said so.** Seating the consist by measuring its
+car bounds against `RailHead` moved it by **exactly 0.000 m**: the kit's origin really is at the
+wheel underside and the train really was on the rail, which is why the report has always read
+`train on rail`. The seat is kept as a guard, not as the fix.
+
+**The actual cause:** `LrtTrainFlyby` runs z from **-48 to +48** and **parks at -48 between
+passes**, while the deck was `GuidewayLength` 48 m, spanning **z -24 to +24**. So a carriage sat
+24 m past the south end of the viaduct over open sky for about **21 of every 24 seconds**, and
+every existing check measured it against the RAIL rather than asking whether there was rail under
+it.
+
+**Fixed** by splitting scenery from structure: `GuidewayVisualLength` 112 m draws bays and rail
+out to z +/-56 (the train's +/-48 plus its 7.8 m consist half length), while `GuidewayLength`
+stays 48 m and still owns the deck collider and the four live pillar rows, so no footprint in
+`Hero_Strike_Balance.md` § 1 moves. Eight far column pairs continue the 9 m rhythm to z +/-55,
+seated on the `FarGroundPlate` by measurement, built without the `HazardVolume` and mercury lamp
+the live rows carry.
+
+**Guard added:** `MapGeometryCheck` now fails if the deck does not span the flyby's own travel,
+which is the bound nothing was asserting. Its bay count is also derived from the builder instead
+of the hardcoded 12 that failed at 28 when the map was fixed.
+**Verified:** `geometry OK, capture OK`, 28 joined bays, 0 floating, and `ilalim_guideway_v23.png`.
+
+**9.5 OPEN: text overflows its box in the UI.** 🧑 has the screenshot. Not located yet, and the
+panel has to be identified from the shot rather than guessed at.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

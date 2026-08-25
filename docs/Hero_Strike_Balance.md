@@ -230,6 +230,38 @@ against arithmetic.
 exposure is either exactly 0 or inside 0.6 to 1.2. One test, no Unity launch of its own, and it
 catches the whole class.
 
+#### 3.0.1 The contrast, resolved against the render it was waiting for
+
+The section above shipped the exposure at 0.92 and deliberately left the contrast alone, saying
+the 1.12 was *"worth a second look at 0.92"* and was a judgement to make against a render.
+
+🧑, off the build carrying the 0.92 exposure: *"less dark as before but still dark."* That is
+the render, so the fallback named above is taken: **contrast 1.12 becomes Eskinita's 1.03.**
+
+Why fixing the exposure improved it without finishing it: exposure and contrast crush the frame
+independently, and only the exposure was corrected. Running the same arithmetic forward at the
+shipped 0.92, with brightness 1.05, `lerp(0.5, c, contrast)` reaching zero at
+`c = 0.5 - 0.5/contrast`, and inverting the ACES fit at `_White` 1.85:
+
+| Contrast | Clips at (post-BCS) | Tonemapped | **Linear input** |
+|---|---|---|---|
+| 1.12 (as shipped) | 0.05357 | 0.05102 | **0.0966** |
+| 1.03 (Eskinita) | 0.01456 | 0.01387 | **0.0422** |
+
+So the black floor moved 0.5922 → 0.0966 when the exposure was fixed, which is why the map went
+from unplayable to merely dark, and 1.03 moves it again to **0.0422**: **2.3x less of the range
+crushed to pure black.** Under a solid viaduct with the sun shadowed out, the shaded pavement and
+the shopfronts in the deck's shadow sit exactly in the 0.04 to 0.10 band that 1.12 was still
+eating.
+
+⚠️ Eskinita has run 1.03 for the whole port and is the map nobody has ever called dark, so this
+matches a known-good frame rather than inventing a value. Saturation stays 1.15: the complaint is
+about value, not colour.
+
+⚠️⚠️ **`MapGradeSanityTests` asserts the builder's `grade.Set` call against the value baked into
+`IlalimNgTulay.unity`, so changing the builder alone FAILS the test.** The scene has to be rebuilt
+through `IlalimNgTulayPipeline` in the same change.
+
 ### 3.1 The economy: charges, long cooldowns, and an ultimate that has to be earned
 
 🧑 2026-08-25: *"maybe make it like valorant wherein they have charges for their skill that they
