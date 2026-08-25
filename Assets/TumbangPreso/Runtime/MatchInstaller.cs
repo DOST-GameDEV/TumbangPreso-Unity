@@ -248,7 +248,7 @@ namespace TumbangPreso
             // the client was still loading the arena and therefore had nothing to apply to.
             var liveNet = Net.NetSession.Instance;
             if (liveNet != null && liveNet.IsNetworked && !liveNet.IsHost)
-                Net.MatchRpc.Instance?.RequestWorldSnapshotServerRpc();
+                Net.MatchRpc.Instance?.RequestWorldSnapshot();
         }
 
         /// <summary>
