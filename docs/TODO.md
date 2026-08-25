@@ -211,10 +211,37 @@ against the mashing window rather than the time on the floor: 1.60 / 0.13 = 12.3
 it is 8 presses, 0.80 s, for **1.70 s** total. Still a real burst, and `MashCooldown`'s anti-turbo
 bound is untouched.
 
-⚠️ **STILL OPEN from the same report:** the fall does not cut to TPP, and the landing still uses
-the icy material. 🧑: *"i dont want the effect to be ice too when i fell down it feels weird"*.
-`Hero_Strike_Balance.md` § 8.6 has the camera rule and lists falling as one of only two cases
-that earn TPP, but the cut itself is not built.
+**9.7 ✅ FIXED: the fall now cuts to third person.** `Hero_Strike_Balance.md` § 8.6 lists falling
+as one of only two things in the game that earn the camera, on the rule that an event takes it
+when the body changes or the player stops driving it. In first person a fall was the floor
+arriving and then 2.5 s of looking at it: the knockdown clip, the get-up clip and the whole
+moment happened off screen.
+
+⚠️ **It reuses the emote swing rather than adding a second one.** `BeginEmoteView` already calls
+`RestoreSelfHide`, and without that the camera orbits a body `ApplyFppSelfHide` has put into
+SHADOWS_ONLY, which is the exact bug reported for emotes as *"doing emote doesnt show myself in
+tpp"*. A fall-specific path would have rediscovered it.
+⚠️ **It is a CUT, not a blend**, and deliberately the opposite of the possession: a possession is
+a transformation and the eye has to travel, an impact is an impact.
+⚠️ `_fallView` clears in `Follow` beside `_emoteView`, or a seat change would leave the rig
+believing it had already swung and refusing to swing for the next fall.
+
+**9.8 ✅ FIXED: a fall no longer freezes the body.** 🧑: *"i dont want the effect to be ice too
+when i fell down it feels weird"*.
+
+⚠️ **The cause is one line and it was a reasonable line.** `CharacterMotor.ApplyTrip` calls
+`ApplyStagger` as well as setting `_tripLeft`, correctly, because a player on the floor must not
+be able to act. But both frost drivers keyed off `IsStunned` alone, so tripping over a kerb
+rendered exactly like being tagged.
+
+**The frost means one specific thing and that is its whole value:** its own note says the taya who
+spent their scoring verb on a tag needs to SEE the attacker freeze, and the other two need to know
+that seat is gone for five seconds. A trip is a stumble nobody scored for. Both halves now read
+`IsStunned && !IsTripped` and they must stay in step, or a fall would frost the screen while the
+body on it did not. The trip already has its own read: the knockdown clip, the get-up clip and the
+mash card.
+**Verified:** PlayMode 57/57 including `StunFrostTests`, which still ices on a tag because it
+staggers directly rather than tripping.
 
 ---
 

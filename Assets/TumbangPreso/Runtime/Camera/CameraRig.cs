@@ -158,6 +158,10 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private const float PossessBlendSeconds = 0.28f;
 
+        /// <summary>True while the third-person swing is being held by a FALL rather than by an
+        /// emote. See <see cref="StepFallView"/>.</summary>
+        private bool _fallView;
+
         private bool _wasPossessing;
         private float _possessBlend;
         private Vector3 _possessFromPos;
@@ -275,6 +279,14 @@ namespace TumbangPreso.CameraSystem
             UnsubscribeEmotes();
 
             _emoteView = false;
+
+            // ⚠️ THE FALL FLAG CLEARS WITH THE EMOTE FLAG, because it is a claim ABOUT the emote
+            // flag. This function's own note above is the reason: a rig that keeps a stale swing
+            // across a seat change leaves the player orbiting a stranger with no way back. Left
+            // set here, `StepFallView` would believe it had already swung out and would refuse
+            // to swing again for the next fall on this body.
+            _fallView = false;
+
             _character = character;
             _mode = CameraMode.Fpp;
 
@@ -408,6 +420,8 @@ namespace TumbangPreso.CameraSystem
             // than motion, and skipping either during a hold would pop the arms or the FOV.
             // See `HoldFrame` for why this is a camera hold and not a time scale.
             if (StepHold()) return;
+
+            StepFallView();
 
             if (_emoteView) { StepEmoteLook(); ApplyEmoteView(); return; }
 
@@ -875,6 +889,50 @@ namespace TumbangPreso.CameraSystem
         /// leaking into a view that is no longer FPP. The self-hide is a property of what the
         /// camera is LOOKING AT, so it is toggled by the same two functions that decide that.
         /// </summary>
+        /// <summary>
+        /// Swings out to third person while the local player is on the floor, and back when they
+        /// stand up.
+        ///
+        /// ⚠️⚠️ FALLING IS ONE OF ONLY TWO THINGS IN THE GAME THAT EARN THE CAMERA, and the rule
+        /// that decides it is `docs/Hero_Strike_Balance.md` § 8.6: an ability or event takes the
+        /// camera only when the body the player is driving changes, or when they stop driving it.
+        /// A fall is the second of those. Every hero SKILL is refused by that same rule because
+        /// its arms already say it, so this is not a general licence to swing the camera around.
+        ///
+        /// 🧑, after playing the build: *"i dont feel like i fell down"*. In first person a fall
+        /// is the floor arriving and then two and a half seconds of looking at it. The player
+        /// cannot see the knockdown clip, cannot see themselves get up, and the one moment the
+        /// game most wants them to feel happens entirely off screen.
+        ///
+        /// ⚠️ IT REUSES THE EMOTE SWING RATHER THAN ADDING A SECOND ONE, deliberately. That path
+        /// already solves the hard half: `BeginEmoteView` calls `RestoreSelfHide`, and without it
+        /// the camera orbits a body that `ApplyFppSelfHide` has put into SHADOWS_ONLY, which is
+        /// the exact bug 🧑 reported for emotes as *"doing emote doesnt show myself in tpp, i
+        /// think my body is hidden"*. A fresh fall-specific path would have rediscovered it.
+        ///
+        /// ⚠️ AND IT IS A CUT, NOT A BLEND, WHICH IS THE OPPOSITE OF THE POSSESSION.
+        /// `PossessBlendSeconds` travels the eye because a possession is a TRANSFORMATION and the
+        /// player has to see themselves leave. A fall is an IMPACT: cutting on the frame the
+        /// body hits is what sells it, and easing out over a quarter second would read as a
+        /// cutscene starting rather than as being knocked over.
+        /// </summary>
+        private void StepFallView()
+        {
+            bool down = _character != null && _character.IsTripped;
+            if (down == _fallView) return;
+
+            // ⚠️ AN EMOTE ALREADY OWNS THE SWING, SO DO NOT TAKE IT FROM ONE. `EmotePlayer.Stop`
+            // is reached by losing the right to act, and a trip does exactly that, so an emote
+            // running when the body goes down ends itself and hands the view back through
+            // `OnEmoteStopped`. Grabbing it here as well would have two owners for one flag.
+            if (down && _emoteView) return;
+
+            _fallView = down;
+
+            if (down) BeginEmoteView();
+            else EndEmoteView();
+        }
+
         public void BeginEmoteView()
         {
             if (_emoteView) return;

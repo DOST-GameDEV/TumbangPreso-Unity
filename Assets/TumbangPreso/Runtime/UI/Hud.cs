@@ -1317,7 +1317,11 @@ namespace TumbangPreso.UI
 
             float target = 0.0f;
 
-            if (_local != null && _local.IsStunned)
+            // ⚠️ THE TRIP IS EXCLUDED HERE FOR THE SAME REASON AS THE BODY HALF, and both halves
+            // have to agree or a fall would frost the screen while the character on it did not.
+            // `CharacterMotor.ApplyTrip` staggers as well as tripping, so `IsStunned` alone
+            // caught every stumble. See `CharacterVisual.ProcessFrost`.
+            if (_local != null && _local.IsStunned && !_local.IsTripped)
             {
                 // ⚠️ THE LOCAL CHARACTER IS ALWAYS THE ONE THIS PEER SIMULATES, so unlike the
                 // body half this side can always trust the countdown. `StunLeft` reads 0 only
