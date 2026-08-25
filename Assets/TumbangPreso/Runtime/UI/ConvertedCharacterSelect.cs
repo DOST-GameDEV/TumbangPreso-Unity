@@ -680,14 +680,27 @@ namespace TumbangPreso.UI
                 // names and description"*.
                 tagline.alignment = TextAnchor.UpperLeft;
 
-                // ⚠️ AND THE BOX COMES DOWN TO THE TEXT. Aligning alone only moves the gap to
-                // the bottom of the box; the rows below would not shift a pixel. Two lines at
-                // 18 pt with `lineSpacing` 1.0 is about 44 px, so 48 holds them with a margin
-                // and hands the rest of the panel back. The Classic tab keeps a taller box
-                // because its taglines run longer and it has no ability rows competing for the
-                // same height.
+                // ⚠️⚠️ TWO COMPONENTS WERE FIGHTING OVER THIS LABEL'S HEIGHT AND NEITHER WON
+                // CLEANLY, WHICH IS WHY SETTING THE `LayoutElement` DID NOTHING VISIBLE. The
+                // scene puts a `ContentSizeFitter` on it with `m_VerticalFit: 2`
+                // (PreferredSize) AND a `LayoutElement` with a preferred height, on a child of
+                // the ConfigPanel's `VerticalLayoutGroup`. That is three things with an opinion
+                // about one number. Unity does not error on it, it just produces a height nobody
+                // asked for, and the leftover showed up as a band of empty wood between the
+                // description and the ability rows. 🧑: *"big empty space js move it up a bit"*.
+                //
+                // ⚠️ THE FITTER IS TURNED OFF ON THE VERTICAL AXIS RATHER THAN THE ELEMENT BEING
+                // DELETED, because the horizontal fit is still doing useful work and because the
+                // `LayoutElement` is what the rest of this method already tunes. One owner.
+                if (tagline.TryGetComponent<ContentSizeFitter>(out var taglineFitter))
+                    taglineFitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+                // Two lines at 18 pt with `lineSpacing` 1.0 measure about 44 px, so 46 holds
+                // them with a hairline of margin and hands the rest of the panel back to the
+                // rows. Classic keeps a taller box: its taglines run longer and it has no
+                // ability rows competing for the same height.
                 if (tagline.TryGetComponent<LayoutElement>(out var taglineLayout))
-                    taglineLayout.preferredHeight = choosingHero ? 48.0f : 96.0f;
+                    taglineLayout.preferredHeight = choosingHero ? 46.0f : 96.0f;
             }
 
             RefreshTabs();
