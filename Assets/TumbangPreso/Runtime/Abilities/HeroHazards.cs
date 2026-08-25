@@ -203,6 +203,15 @@ namespace TumbangPreso.Abilities
             VfxMaterial.Ghost(rim.GetComponent<Renderer>(), new Color(0.70f, 0.93f, 1.0f, 0.42f), 0.28f);
             VfxMaterial.StripCollider(rim);
 
+            // ⚠️ THE SLOWEST OF THE THREE, because ice is the one that GREW rather than spread,
+            // and it is the one where the expiry read matters most: this is a slip zone a player
+            // stands at the edge of deciding whether to cross. § 8.5 item 2 names it by name.
+            var iceLife = rim.AddComponent<HazardRimLife>();
+            iceLife.Duration = duration;
+            iceLife.BaseAlpha = 0.42f;
+            iceLife.PulseAmount = 0.10f;
+            iceLife.PulseHz = 0.9f;
+
             // ⚠️ THE SPIKES ARE THE READ FROM ACROSS THE COURT, AND THEY ARE DELIBERATELY SOLID
             // RATHER THAN GHOSTED. Every other part of this effect is translucent, so the eye
             // has nothing to fix on; five opaque shards catching the key light is what says
@@ -378,6 +387,14 @@ namespace TumbangPreso.Abilities
             // past white and `ability_shock_trail_v1.png` came back as one flat yellow coin with
             // the arc invisible on top of it.
             VfxMaterial.Ghost(ring.GetComponent<Renderer>(), new Color(1.0f, 0.92f, 0.18f, 0.55f), 0.32f);
+
+            // Electricity does not breathe, it flickers. Fastest pulse of the three and a
+            // shallower swing, so it reads as current rather than as heat.
+            var shockLife = ring.AddComponent<HazardRimLife>();
+            shockLife.Duration = duration;
+            shockLife.BaseAlpha = 0.55f;
+            shockLife.PulseAmount = 0.13f;
+            shockLife.PulseHz = 4.1f;
             VfxMaterial.StripCollider(ring);
 
             // ⚠️ THE ARC IS A JAGGED LINE THAT REBUILDS ITSELF ON A TIMER. A straight bolt reads
@@ -560,6 +577,13 @@ namespace TumbangPreso.Abilities
             // before `ColourGrade` ever sees the frame. 0.30 keeps it hot and keeps it ORANGE.
             VfxMaterial.Ghost(edge.GetComponent<Renderer>(), new Color(1.0f, 0.36f, 0.05f, 0.42f), 0.22f);
             VfxMaterial.StripCollider(edge);
+
+            // The rim licks while the fire burns and dies back as it goes out. See `HazardRimLife`.
+            var fireLife = edge.AddComponent<HazardRimLife>();
+            fireLife.Duration = duration;
+            fireLife.BaseAlpha = 0.42f;
+            fireLife.PulseAmount = 0.20f;   // flame is the most restless of the three
+            fireLife.PulseHz = 2.3f;
 
             // ⚠️⚠️ THE EMBERS ARE CUBES, AND THE BILLBOARD QUADS THEY REPLACE RENDERED AS
             // LITERAL YELLOW SQUARES. `ability_fire_trail_v1.png` is unambiguous about it: three
@@ -1823,6 +1847,62 @@ namespace TumbangPreso.Abilities
         /// frames, which is a pop rather than a fade and looks like the effect was destroyed
         /// early.
         /// </summary>
+        /// <summary>
+        /// A zone's rim breathes while it is live, and thins out as it runs out.
+        ///
+        /// ⚠️⚠️ THE ZONES WERE STATIC PLATES AND THAT IS MOST OF WHY THEY LOOK CHEAP.
+        /// `docs/Hero_Strike_Balance.md` § 8.2 lists four channels an effect has, and MOTION is
+        /// the one that carries *whether it is live or spent*. Every hazard in the game spent
+        /// exactly none of it: `SpawnFireTrail`, `SpawnShockTrail` and `SpawnIceSheet` build
+        /// their meshes once and never touch them again, so a 3 s zone at 0.1 s remaining is
+        /// pixel-identical to one that just landed. 🧑: the skills *"feel repetitive or too
+        /// simple, or too empty"*.
+        ///
+        /// ⚠️ THE PULSE IS SMALL ON PURPOSE, AND IT IS ON THE RIM ONLY. `VISION.md` § 2 rule 3
+        /// spends the readability budget on detail rather than area, and rule 5 says a mid-fight
+        /// frame must still show the lata, the chalk and every player. A zone that throbs hard
+        /// enough to notice on its own is a zone competing with the ball. 16 per cent at 1.6 Hz
+        /// on the EDGE reads as heat or charge without the core moving at all.
+        ///
+        /// ⚠️ AND THE DYING RAMP IS THE GAMEPLAY HALF. It is the read § 8.5 item 2 asks for:
+        /// *"a player cannot tell whether the ice they are about to run across is spent."* The
+        /// last 30 per cent of the life fades the rim toward nothing, so committing to a
+        /// crossing becomes a decision made on what is on screen instead of on a count kept in
+        /// the player's head. ⚠️ It fades the RIM rather than the whole effect, exactly as that
+        /// item specifies: the char and the danger area stay put, because the hazard is still
+        /// live right up to the moment it is not.
+        /// </summary>
+        private sealed class HazardRimLife : MonoBehaviour
+        {
+            public float Duration = 3.0f;
+            public float BaseAlpha = 0.45f;
+            public float PulseAmount = 0.16f;
+            public float PulseHz = 1.6f;
+
+            /// <summary>Fraction of the life after which the rim starts going.</summary>
+            private const float FadeFrom = 0.70f;
+
+            private readonly Fader _fade = new Fader();
+            private Renderer _renderer;
+            private float _elapsed;
+
+            private void Awake() => _renderer = GetComponent<Renderer>();
+
+            private void Update()
+            {
+                if (_renderer == null) return;
+
+                _elapsed += Time.deltaTime;
+
+                float pulse = 1.0f + PulseAmount * Mathf.Sin(_elapsed * PulseHz * Mathf.PI * 2.0f);
+
+                float life = Duration > 0.001f ? Mathf.Clamp01(_elapsed / Duration) : 1.0f;
+                float dying = life < FadeFrom ? 1.0f : Mathf.InverseLerp(1.0f, FadeFrom, life);
+
+                _fade.Apply(_renderer, Mathf.Clamp01(BaseAlpha * pulse * dying));
+            }
+        }
+
         private sealed class Fader
         {
             private Color _baseEmission;
