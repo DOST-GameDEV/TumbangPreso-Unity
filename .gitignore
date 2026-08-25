@@ -87,3 +87,7 @@ desktop.ini
 # Python bytecode from the tools/ scripts.
 __pycache__/
 *.pyc
+
+# The PlayMode test runner drops a throwaway bootstrap scene at the Assets root.
+Assets/InitTestScene*.unity
+Assets/InitTestScene*.unity.meta
