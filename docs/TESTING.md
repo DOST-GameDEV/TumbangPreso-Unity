@@ -52,7 +52,7 @@ then try again. An empty log is not a passing run.
 
 ---
 
-## 3 · The four checkers
+## 3 · The five checkers
 
 Each writes a readable report into `Logs/` and exits non-zero on failure.
 
@@ -91,7 +91,31 @@ twenty of the twenty-five squares under each one sitting over the back lots.
 It currently reports the five `ability_*` sounds as known-dead, which is correct: they ship for
 a system that was deleted.
 
-Both are also on the **Tumbang Preso** menu in the editor.
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -quit -nographics -projectPath . -executeMethod TumbangPreso.EditorTools.SceneScriptCheck.Run -logFile Logs/scenescript.log
+```
+
+`Logs/scene-script-check.txt`. Fails any scene in the build settings holding a `MonoBehaviour`
+the player cannot bind to a script: an inline `MonoScript` stub, an `m_Script` with no guid, or
+a guid resolving to nothing. Scenes outside the build settings are reported, not gated.
+
+⚠️⚠️ **THIS IS THE ONLY CHECK THAT CAN SEE THIS CLASS OF BUG AND IT WAS WRITTEN AFTER ONE
+SHIPPED.** The 2026-08-25 build hard crashed the moment a player selected Ilalim ng Tulay, with
+"The file 'level8' is corrupted!" and "[Position out of bounds!]" in the player log. Nothing was
+corrupt: every serialized file parsed clean. Eight `HazardVolume` components referenced a stub
+because the class was declared inside `HazardMap.cs`, and **Unity only binds a MonoBehaviour to
+a script asset when the class name matches the file name.** Core 60/60, EditMode 105/105,
+PlayMode 55/55, Headless, Arena, Audio and MapGeometry were ALL green on that commit, because
+every one of them runs in the editor and the editor resolves the stub by class name.
+
+⚠️ **It reads the scene as text and never opens it.** Opening the scene is what makes the fault
+invisible, and saving it afterwards would rewrite the stub away without anyone learning it had
+been there.
+
+⚠️ **`GameBuilder` runs it before every build** and refuses to write a player that would carry
+the fault.
+
+All are also on the **Tumbang Preso** menu in the editor.
 
 ---
 

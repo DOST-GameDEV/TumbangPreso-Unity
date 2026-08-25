@@ -147139,7 +147139,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 961611713}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1972599078}
+  m_Script: {fileID: 11500000, guid: 7d903a3bc52a0bf9397ec7483179f20e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Abilities.HazardVolume
   Radius: 1.1
@@ -155732,7 +155732,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1025063978}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1972599078}
+  m_Script: {fileID: 11500000, guid: 7d903a3bc52a0bf9397ec7483179f20e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Abilities.HazardVolume
   Radius: 1.1
@@ -164788,7 +164788,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1082259653}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1972599078}
+  m_Script: {fileID: 11500000, guid: 7d903a3bc52a0bf9397ec7483179f20e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Abilities.HazardVolume
   Radius: 1.1
@@ -199400,7 +199400,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1313106657}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1972599078}
+  m_Script: {fileID: 11500000, guid: 7d903a3bc52a0bf9397ec7483179f20e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Abilities.HazardVolume
   Radius: 1.1
@@ -223668,7 +223668,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1470367956}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1972599078}
+  m_Script: {fileID: 11500000, guid: 7d903a3bc52a0bf9397ec7483179f20e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Abilities.HazardVolume
   Radius: 1.1
@@ -289486,7 +289486,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1910273466}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1972599078}
+  m_Script: {fileID: 11500000, guid: 7d903a3bc52a0bf9397ec7483179f20e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Abilities.HazardVolume
   Radius: 1.1
@@ -299271,21 +299271,6 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!115 &1972599078
-MonoScript:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  serializedVersion: 7
-  m_DefaultReferences: {}
-  m_Icon: {fileID: 0}
-  m_Type: 0
-  m_ExecutionOrder: 0
-  m_ClassName: HazardVolume
-  m_Namespace: TumbangPreso.Abilities
-  m_AssemblyName: TumbangPreso.Runtime
 --- !u!21 &1974640298
 Material:
   serializedVersion: 8
@@ -303903,7 +303888,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2007007696}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1972599078}
+  m_Script: {fileID: 11500000, guid: 7d903a3bc52a0bf9397ec7483179f20e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Abilities.HazardVolume
   Radius: 1.1
@@ -311736,7 +311721,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2067199974}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1972599078}
+  m_Script: {fileID: 11500000, guid: 7d903a3bc52a0bf9397ec7483179f20e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Abilities.HazardVolume
   Radius: 1.1

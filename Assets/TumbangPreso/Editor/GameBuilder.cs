@@ -21,6 +21,12 @@ namespace TumbangPreso.EditorTools
     /// fine in the editor and does nothing in a build, so every button that leads to it becomes
     /// dead on the shipped copy only.
     ///
+    /// ⚠️⚠️ IT RUNS `SceneScriptCheck` BEFORE BUILDING AND DELETES THE PREVIOUS PLAYER FIRST.
+    /// Both replaced something that shipped. The check catches a component the player cannot
+    /// bind to a script, which crashed the released build on the Ilalim ng Tulay map select
+    /// while every editor-side test stayed green. The delete makes every build a clean build,
+    /// which `CLAUDE.md` § 7 asked for in prose and therefore did not always get.
+    ///
     /// Run:
     ///   Unity.exe -batchmode -quit -nographics -projectPath . \
     ///             -executeMethod TumbangPreso.EditorTools.GameBuilder.BuildWindows
@@ -264,6 +270,71 @@ namespace TumbangPreso.EditorTools
             Debug.Log($"[Build] added {added} runtime shaders to the always-included list.");
         }
 
+        /// <summary>
+        /// Delete the previous player before writing a new one. Every build is a clean build.
+        ///
+        /// ⚠️⚠️ THIS IS A RULE, NOT AN OPTIMISATION, AND IT IS ENFORCED HERE RATHER THAN IN A
+        /// DOCUMENT BECAUSE A DOCUMENT GETS SKIPPED. `CLAUDE.md` § 7 has carried "delete the
+        /// previous output folder first" since an incremental rebuild kept a corrupted `level1`
+        /// and cost an hour; it was still written as something the operator had to remember, and
+        /// so it was forgotten. Unity happily rewrites `TumbangPreso_Data` while reusing the
+        /// byte-identical launcher, which leaves Explorer showing the OLD creation timestamp on
+        /// `TumbangPreso.exe` and makes a finished build look like a stale one. Deleting the
+        /// directory outright is the only version of this that cannot half-happen.
+        ///
+        /// ⚠️ IT REFUSES TO DELETE ANYTHING THAT IS NOT OBVIOUSLY A PLAYER OUTPUT. `-buildOutput`
+        /// takes an arbitrary path from the command line, so this will not touch a drive root, a
+        /// directory holding a `.git`, or any directory that does not already look like a build.
+        /// A wrong path should fail the build, never eat a folder.
+        /// </summary>
+        private static bool PurgeOutputDirectory(string dir)
+        {
+            if (string.IsNullOrEmpty(dir) || !Directory.Exists(dir)) return true;
+
+            var info = new DirectoryInfo(Path.GetFullPath(dir));
+
+            if (info.Parent == null)
+            {
+                Debug.LogError($"[Build] output '{dir}' is a drive root. Refusing to build there.");
+                return false;
+            }
+
+            if (Directory.Exists(Path.Combine(info.FullName, ".git")))
+            {
+                Debug.LogError($"[Build] output '{dir}' holds a git repository. Refusing to delete it.");
+                return false;
+            }
+
+            // What a Unity Windows player always leaves behind. If none of it is here, this
+            // directory is something else and deleting it is not this method's business.
+            bool looksLikeAPlayer =
+                File.Exists(Path.Combine(info.FullName, "UnityPlayer.dll")) ||
+                Directory.Exists(Path.Combine(info.FullName, "TumbangPreso_Data")) ||
+                info.GetFileSystemInfos().Length == 0;
+
+            if (!looksLikeAPlayer)
+            {
+                Debug.LogError($"[Build] output '{dir}' exists but does not look like a previous " +
+                               "player (no UnityPlayer.dll, no TumbangPreso_Data). Refusing to " +
+                               "delete it. Move it aside or point -buildOutput somewhere else.");
+                return false;
+            }
+
+            try
+            {
+                Directory.Delete(info.FullName, recursive: true);
+                Debug.Log($"[Build] deleted the previous player at {info.FullName}");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[Build] could not delete '{dir}': {e.Message}. The game or a " +
+                               "file browser is probably still holding it open. Close it and " +
+                               "build again rather than shipping a half-overwritten player.");
+                return false;
+            }
+        }
+
         private static bool Execute(string outputPath)
         {
             var scenes = EditorBuildSettings.scenes
@@ -299,7 +370,21 @@ namespace TumbangPreso.EditorTools
                 return false;
             }
 
+            // ⚠️⚠️ A SCENE WHOSE COMPONENTS THE PLAYER CANNOT BIND IS A CRASH, AND IT IS THE
+            // ONE FAILURE THE REST OF THE GATE IS STRUCTURALLY BLIND TO. See `SceneScriptCheck`:
+            // the editor resolves an inline MonoScript stub by class name and the player cannot,
+            // so every in-editor test passes and the shipped .exe dies on the scene load. This
+            // runs BEFORE the build because the point is to never write the broken player at
+            // all, and because the crash it prevents cost a whole handoff to find.
+            if (!SceneScriptCheck.Execute(gate: true))
+            {
+                Debug.LogError("[Build] refusing to build: a scene holds a script reference the " +
+                               "player cannot bind. See Logs/scene-script-check.txt.");
+                return false;
+            }
+
             string dir = Path.GetDirectoryName(outputPath);
+            if (!PurgeOutputDirectory(dir)) return false;
             if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
 
             PlayerSettings.companyName = "BH Studios";

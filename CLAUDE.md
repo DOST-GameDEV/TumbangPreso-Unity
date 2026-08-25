@@ -75,8 +75,14 @@ items still open: *"ur supposed to build only when ur done with everything"*.
 
 1. **Do ALL the work** and verify it yourself: `dotnet test`, EditMode, PlayMode, and the
    probes for anything a screenshot would settle.
-2. **Build the .exe to the Desktop**, deleting the previous output folder first. An
-   incremental rebuild once kept a corrupted `level1` and cost an hour.
+2. **Build the .exe to the Desktop.** ⚠️⚠️ **DELETE THE PREVIOUS BUILD FIRST, EVERY TIME.**
+   Not only when asked for a "clean rebuild", not only when a timestamp looks wrong: **every
+   build deletes the old output folder before it writes the new one.** An incremental rebuild
+   once kept a corrupted `level1` and cost an hour, and Unity will rewrite `TumbangPreso_Data`
+   while reusing the byte-identical launcher, so the finished .exe still carries the OLD
+   creation timestamp and looks stale. `GameBuilder.PurgeOutputDirectory` now does this in code
+   rather than trusting anyone to remember it, and it refuses to delete a path that is not
+   obviously a previous player. § 7 has the procedure for the manual case.
 3. **Write the handoff in the chat reply.** Never as a file. See § 2.4.
 
 ⚠️⚠️ **"TASK" MEANS THE WHOLE REQUEST, NOT EACH ITEM IN IT.** A build is a claim that there is
@@ -304,13 +310,18 @@ rewrite `TumbangPreso_Data`, Burst output and DLLs while reusing the byte-identi
 `TumbangPreso.exe`; Explorer then keeps the executable's old creation/modified timestamp. This
 caused a build completed at 15:03 to look like the 14:34 player was still being shipped.
 
+✅ **`GameBuilder.PurgeOutputDirectory` now deletes the output folder on EVERY build**, so the
+old-folder half of this is automatic and step 2 below is only needed when you want the previous
+player kept. The build **fails** rather than half-overwriting if the folder is locked, which is
+almost always the game still being open.
+
 When the user asks to **rebuild**, **clean rebuild**, or questions the output timestamp:
 
-1. Ensure no `TumbangPreso` or Unity process is using the output.
-2. Move the entire existing `Desktop\TumbangPreso-Unity` directory to a clearly named backup (or
-   delete it only when the user explicitly wants deletion).
-3. Run `GameBuilder.BuildWindows` into the now-missing/empty output directory. Rebuilding over the
-   existing folder is insufficient for this request.
+1. Ensure no `TumbangPreso` or Unity process is using the output. This is the one step still on
+   you: a running game holds the folder and the build will refuse it.
+2. To KEEP the old player, move `Desktop\TumbangPreso-Unity` to a clearly named backup first.
+   Otherwise the build deletes it.
+3. Run `GameBuilder.BuildWindows`. It writes into a now-missing directory by construction.
 4. Verify the new `TumbangPreso.exe` **and** `TumbangPreso_Data` files have timestamps from the
    current run, then launch that exact executable. Keep the backup until the new player passes.
 
@@ -326,6 +337,12 @@ every file in a pre-existing output directory was freshly emitted.
 - `AiDiagnosticProbe` runs one round at 1x with every decision written out, for WHY rather
   than how much.
 - `AspectRatioProbes` drives real layout through nine resolutions.
+- `SceneScriptCheck` refuses a build scene holding a component the PLAYER cannot bind to a
+  script. ⚠️⚠️ **It is the only check that can see this class of bug, because every other one
+  runs in the editor and the editor resolves the broken reference by class name.** A shipped
+  build crashed on the Ilalim ng Tulay map select with all of Core, EditMode, PlayMode,
+  Headless, Arena, Audio and MapGeometry green. It reads scenes as TEXT on purpose: opening the
+  scene is what hides the fault. `GameBuilder` runs it before every build.
 - `MapGeometryCheck` refuses an arena whose props float, whose props are buried, whose floor
   has holes, or whose furniture stands inside the defender's box. ⚠️ **It found six faults on a
   map whose four showcase renders had already been signed off**, including both pavements

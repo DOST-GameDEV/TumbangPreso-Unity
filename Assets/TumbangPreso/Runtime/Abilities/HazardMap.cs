@@ -172,39 +172,4 @@ namespace TumbangPreso.Abilities
             return steer.sqrMagnitude > 0.0001f ? steer.normalized : dir;
         }
     }
-
-    /// <summary>
-    /// Put this on anything the bots should walk around. One component, one disc.
-    ///
-    /// ⚠️ THE RADIUS IS THE HAZARD'S GAMEPLAY RADIUS, NOT ITS VISUAL ONE. The extra margin a
-    /// body needs is added by the caller at query time, because it belongs to the body.
-    /// </summary>
-    public sealed class HazardVolume : MonoBehaviour
-    {
-        public float Radius = 2.0f;
-
-        /// <summary>The slot that cast it. -1 for a hazard nobody owns.</summary>
-        public int OwnerSlot = -1;
-
-        public static HazardVolume Attach(GameObject go, float radius, int ownerSlot)
-        {
-            if (go == null) return null;
-
-            var v = go.GetComponent<HazardVolume>();
-            if (v == null) v = go.AddComponent<HazardVolume>();
-
-            v.Radius = radius;
-            v.OwnerSlot = ownerSlot;
-
-            // ⚠⚠ REGISTERED HERE AS WELL AS IN OnEnable, AND THAT IS NOT BELT AND BRACES.
-            // OUTSIDE PLAY MODE UNITY NEVER CALLS OnEnable on a plain MonoBehaviour, so an
-            // EditMode test that attaches a volume gets an object that exists and a map that is
-            // empty. `Register` refuses a duplicate, so the two paths cannot double up.
-            HazardMap.Register(v);
-            return v;
-        }
-
-        private void OnEnable() => HazardMap.Register(this);
-        private void OnDisable() => HazardMap.Unregister(this);
-    }
 }

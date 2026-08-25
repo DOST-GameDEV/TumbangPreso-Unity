@@ -130,7 +130,115 @@ geometry changes Hero Strike outcomes, and nothing in the harness has ever measu
 
 ---
 
+## 6 · `AiDiagnosticProbe`'s Classic round is a real-time test and it flickers red
+
+**Found on 2026-08-25 while verifying an unrelated fix. It is NOT a gameplay regression, and
+the evidence for that is written down here so nobody re-derives it.**
+
+`OneClassicRoundAtRealSpeedIsFullyExplained` asserts no tsinelas stays loose longer than
+**20.0 s**. It failed twice in a row at **21.6 s** and then **29.9 s**, and passed on the same
+machine minutes earlier.
+
+⚠️ **It runs at 1x for 40 real seconds by design** (see the class note: anything measured at a
+high time scale is partly a measurement of the harness). That makes it the one test in the
+repo whose result depends on how busy the machine is, and two consecutive failures 8.3 s apart
+in value is the signature of a frame-rate difference, not of a behaviour change.
+
+**Why it is not the hazard fix that landed the same day:** Eskinita, the map it loads, contains
+exactly four MonoBehaviours (`EnvColourPass`, `KillPlane`, `MapGrade`, `MatchInstaller`) and no
+`HazardVolume` or `StreetTripHazard` at all, and Classic casts no hero abilities, so `HazardMap`
+is empty for the entire run. `OneHeroRoundAtRealSpeedIsFullyExplained`, which is the mode that
+does populate it, passed in the same suite.
+
+**Needs:** a decision, not a bug hunt. Either the bound moves with a measured reason, or the
+probe stops asserting on wall-clock-sensitive quantities and only prints them, or it is marked
+explicit-run-only so it stops costing a full PlayMode suite to learn nothing. The worst outcome
+is the current one, where a red result carries no information and the next session spends a run
+finding that out again.
+
+⚠️ **The second failure is worth one look before deciding.** It printed
+`own=3 plan=Fetch ownerAct=True d3=1.10 grabbable=True`: a bot 1.10 m from a grabbable slipper
+it had already decided to fetch, still not holding it. If that is reproducible at a normal frame
+rate it is a real retrieval bug and this entry becomes a gameplay one.
+
+**Where.** `Assets/TumbangPreso/Tests/PlayMode/AiDiagnosticProbe.cs:242`.
+
+---
+
+## 7 · The test suite costs more to run than it is currently returning
+
+**Raised by 🧑 on 2026-08-25: *"we have too many tests and we are wasting so many credits to run
+them all and fix the code for the test"*. This is a real constraint and it belongs on the list
+rather than in a chat log.**
+
+A full verification pass today is Core (1 s) plus EditMode (105 tests) plus PlayMode (55 tests,
+several of which run whole matches at 1x) plus four separate editor checks, and **each of the
+last five is its own Unity launch**. The launches, not the assertions, are the cost.
+
+⚠️ **THE ANSWER IS NOT TO DELETE TESTS, AND SPECIFICALLY NOT THE MEASURED ONES.** `CLAUDE.md`
+§ 7.1 lists three faults that no amount of playing would have found, and the crash closed on
+2026-08-25 was caught by nothing at all and cost a whole session. Coverage is not the problem.
+**Cadence and batching are.**
+
+**Needs, in order of payoff:**
+
+1. **One launch, many checks.** `ArenaCheck`, `MapGeometryCheck`, `AudioCueCheck` and
+   `SceneScriptCheck` are four `-executeMethod` launches that could be one entry point running
+   all four and exiting non-zero if any fails. That is the single biggest saving and it changes
+   no test logic.
+2. **Name a fast gate and a full gate.** Fast: Core plus EditMode plus the combined checks, for
+   every change. Full: adds PlayMode, for anything touching gameplay, and before a build.
+   Right now every change pays for everything.
+3. **Take the wall-clock probes out of the default PlayMode run** (§ 6). `AiDiagnosticProbe`
+   alone is 80 real seconds of the suite and produces a report to read, not a pass to rely on.
+
+**Done looks like:** a documented two-tier command list in `docs/TESTING.md`, and a full pass
+that is fewer than four Unity launches.
+
+---
+
 ## Closed
+
+- **The shipped build hard crashed the moment a player selected Ilalim ng Tulay.** ✅ 2026-08-25.
+  Reported from the actual .exe, not from a test.
+
+  **The symptom lied.** `Player.log` read
+  `The file '.../TumbangPreso_Data/level8' is corrupted! Remove it and launch unity again!`
+  followed by `[Position out of bounds!]` and a native `Crash!!!`. Nothing was corrupt. Every
+  serialized file in the build parses clean: headers self-consistent, all 12,045 objects in
+  `level8` inside the data section with zero overlaps and zero slack, all 8 external references
+  present, and all 78 mesh and texture streaming records inside their `.resS`.
+
+  **The cause.** Eight `HazardVolume` components in the scene had an `m_Script` pointing at an
+  inline `!u!115 MonoScript` document written into the scene file itself rather than at a script
+  asset. Unity emits that stub when it cannot resolve a `MonoScript` for a type, which happens
+  whenever **the class name does not match the file name**: `HazardVolume` was declared at line
+  182 of `HazardMap.cs`. The player has no layout to deserialize the component against, reads
+  past the end of the object, and dies.
+
+  **Why nothing caught it.** Core 60/60, EditMode 105/105, PlayMode 55/55, HeadlessCheck,
+  ArenaCheck, AudioCueCheck and MapGeometryCheck were all green on the commit that shipped it.
+  ⚠️⚠️ **Every one of them runs in the editor, and the editor resolves the stub by class name.**
+  This failure is invisible to any in-editor check by construction. Every other `HazardVolume`
+  in the game is attached at RUNTIME by `HeroHazards` and `StreetTripHazard`, where nothing is
+  serialized and the defect cannot occur; Ilalim ng Tulay is the first map to bake one into a
+  scene at author time (`IlalimNgTulayBuilder` attaches one per LRT pillar), which is why one
+  map and only one map crashed.
+
+  **The fix, in three parts.** `HazardVolume` moved to its own `HazardVolume.cs` with a note
+  saying why nothing may be merged back into it. All three affected scenes repointed at real
+  script assets: `IlalimNgTulay.unity` (8 x `HazardVolume`), and two that never shipped and had
+  never been mentioned anywhere, `CharacterSelect.unity` (1 x `ConvertedCharacterSelect`) and
+  `VerticalSlice.unity` (4 x `EmotePlayer`) whose stubs were stale rather than structural, since
+  both of those classes already live in correctly named files. Then `SceneScriptCheck`, which
+  fails any build scene carrying a stub, a guid-less `m_Script` or a guid that resolves to
+  nothing, reading the scene as TEXT because opening it is what hides the fault.
+
+  **Verified** by reintroducing the exact defect into `IlalimNgTulay.unity` and confirming the
+  new check exits 1 and names all nine findings, then restoring and confirming it exits 0 across
+  all 9 build scenes and 8 non-shipping ones. `GameBuilder` now runs it before every build, and
+  the rebuilt player reaches the map with no `MonoScript` object in `level8` at all.
+
 
 - **Ilalim ng Tulay looked assembled rather than lived in.** ✅ 2026-08-25. Four faults, all
   found in renders and all fixed against renders rather than against prose.
