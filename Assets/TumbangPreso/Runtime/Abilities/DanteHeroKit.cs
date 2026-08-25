@@ -78,7 +78,7 @@ namespace TumbangPreso.Abilities
                 // style drops the fireball entirely, throws rock instead of embers and plays
                 // `sfx_quake_slam` rather than the leftover bomb every kit used to share.
                 HeroHazards.CreateExplosion(ctx.Position, 2.2f, 10.0f, 1.2f, ctx.Motor.PlayerSlot, "THUD!",
-                    style: HeroHazards.ExplosionStyle.Quake);
+                    style: HeroHazards.ExplosionStyle.Quake, facing: ctx.Forward);
 
                 var round = ctx.Round;
                 if (round != null)
@@ -299,8 +299,11 @@ namespace TumbangPreso.Abilities
                 // single frame: five callouts, four of which the player already knew from the
                 // fissure opening in front of them. `null` is the documented way to ask
                 // `CreateExplosion` for the physics without the caption.
+                // ⚠️ The front points where the fissure was thrown. This is the one blast in the
+                // game that is AIMED (cast 2.2 m ahead), so it is the one that has a direction
+                // worth drawing.
                 HeroHazards.CreateExplosion(ctx.Position + forward * 2.2f, 4.5f, 14.0f, 1.8f,
-                    ctx.Motor.PlayerSlot, null, directlyHit, HeroHazards.ExplosionStyle.Quake);
+                    ctx.Motor.PlayerSlot, null, directlyHit, HeroHazards.ExplosionStyle.Quake, forward);
 
                 // ⚠️⚠️ TWO PILLARS ON THE FISSURE LINE, DOWN FROM FOUR IN A 28 DEGREE ARC, AND
                 // THIS IS A READABILITY FIX RATHER THAN A BALANCE ONE. `docs/VISION.md` § 2

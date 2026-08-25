@@ -304,6 +304,76 @@ namespace TumbangPreso.Visual
         /// <summary>
         /// Spawns a volcanic magma eruption of embers and sparks at the given position.
         /// </summary>
+        /// <summary>
+        /// Sean's fire blast: a fast outward ring of embers that RISES as it goes.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE SEAN DID NOT HAVE ONE AND WAS BORROWING. His Supernova called
+        /// `SpawnMagmaEruption`, which is Dante's, so the biggest moment in Sean's kit threw up
+        /// Dante's orange rock. Replacing that with `SpawnCastFlash` only traded a borrowed
+        /// effect for a generic one: that flash is what EVERY ability plays on cast, so the
+        /// ultimate's payload would have looked like any cast in the game.
+        ///
+        /// ⚠️ HOW IT DIFFERS FROM THE MAGMA, deliberately, because they are the two warm kits
+        /// and are the pair most at risk of reading as one hero:
+        ///   * magma has gravity 1.6 and ARCS: rock is thrown up and falls back;
+        ///   * fire has gravity -0.7 and CLIMBS, because flame does not fall;
+        ///   * magma is chunky (0.14 to 0.32) and fire is fine (0.07 to 0.19);
+        ///   * magma ends deep red, fire ends in `UiTheme.HeroFire`, which is Sean's own hue and
+        ///     is asserted 25 degrees clear of every other hero by `HeroPresentationTests`.
+        /// </summary>
+        public static GameObject SpawnFireBurst(Vector3 pos, float radius)
+        {
+            var go = new GameObject("Vfx_FireBurst");
+            go.transform.position = pos;
+
+            var ps = go.AddComponent<ParticleSystem>();
+            Quiesce(ps);
+
+            var pRenderer = go.GetComponent<ParticleSystemRenderer>();
+            pRenderer.material = GetParticleMaterial();
+
+            var main = ps.main;
+            main.duration = 1.0f;
+            main.loop = false;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(0.35f, 0.8f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(radius * 2.0f, radius * 3.6f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.07f, 0.19f);
+            main.startColor = new ParticleSystem.MinMaxGradient(
+                new Color(1.0f, 0.93f, 0.55f, 1.0f), UiTheme.HeroFireBright);
+
+            // ⚠️ NEGATIVE, AND THIS IS THE WHOLE SEPARATION FROM DANTE. Heat climbs.
+            main.gravityModifier = -0.7f;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            main.stopAction = ParticleSystemStopAction.Destroy;
+
+            var emission = ps.emission;
+            emission.SetBursts(new[]
+            {
+                // A hard front, then a thinner second wave so the blast has a tail rather than
+                // ending on one frame.
+                new ParticleSystem.Burst(0.0f, (short)(radius * 20)),
+                new ParticleSystem.Burst(0.12f, (short)(radius * 7)),
+            });
+
+            var shape = ps.shape;
+            // A flat ring rather than a hemisphere: the blast goes OUT along the street first.
+            shape.shapeType = ParticleSystemShapeType.Circle;
+            shape.radius = radius * 0.35f;
+
+            var col = ps.colorOverLifetime;
+            col.enabled = true;
+            var grad = new Gradient();
+            grad.SetKeys(
+                new[] { new GradientColorKey(new Color(1.0f, 0.95f, 0.6f), 0.0f),
+                        new GradientColorKey(UiTheme.HeroFire, 1.0f) },
+                new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.9f, 0.35f),
+                        new GradientAlphaKey(0.0f, 1.0f) });
+            col.color = grad;
+
+            ps.Play();
+            return go;
+        }
+
         public static GameObject SpawnMagmaEruption(Vector3 pos, float radius)
         {
             var go = new GameObject("Vfx_MagmaEruption");

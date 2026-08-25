@@ -1228,18 +1228,42 @@ namespace TumbangPreso.Abilities
                 Object.Destroy(spark, 0.5f);
             }
 
+            // ⚠️ ONE SEED FOR BOTH HALVES OF THE STRIKE, declared before either uses it. The
+            // ground star and the column above it are the same discharge, so they are generated
+            // from the same number and a capture of one strike is reproducible.
+            int boltSeed = Mathf.RoundToInt((position.x + position.z * 3.0f) * 411.0f);
+
             // 3. Expanding Electric Ground Shockwave
-            var shockRing = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            shockRing.name = "ThunderShockRing";
+            // ⚠️ ZACK'S OWN SILHOUETTE, not a cylinder. § 8.3 gives the discharge STAR to
+            // lightning because it arrives at a point and runs out along the ground, and his
+            // Bolt Sprint trail has used it since the silhouette pass. His ultimate was still
+            // drawing the circle the trail had already stopped drawing.
+            var shockRing = VfxShapes.Lay(null, "ThunderShockRing",
+                                          VfxShapes.Star(9, 0.46f, boltSeed), 0.5f, 0.0f);
             shockRing.transform.position = position + Vector3.up * 0.04f;
-            shockRing.transform.localScale = new Vector3(0.5f, 0.03f, 0.5f);
             VfxMaterial.Ghost(shockRing.GetComponent<Renderer>(), UiTheme.HeroElectric, 0.8f);
 
-            // 3b. Inner Ionization Core Flash Disc
-            var ionCore = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            ionCore.name = "ThunderIonCore";
+            // 3b. The ionisation column.
+            //
+            // ⚠️⚠️ THIS WAS A FLAT `Cylinder` DISC, ON THE ONE ABILITY WHOSE ENTIRE FICTION IS
+            // THE VERTICAL AXIS. `Hero_Strike_Balance.md` § 8.4: *"horizontal versus vertical is
+            // a bigger difference than any two outlines on the same plane"*, which is why the
+            // void was lifted rather than reshaped. Thunderstrike drops a bolt from 24 m up and
+            // then marked the ground with another circle, so the moment it landed it became
+            // indistinguishable from every other blast in the game.
+            //
+            // ⚠️ IT IS SHORT AND WIDE RATHER THAN TALL. `VISION.md` § 2 rule 5 says a mid-fight
+            // frame must still show the lata, the chalk and every player: a full-height pillar at
+            // the strike point would hide a body in a 14 m box. 1.6 m is over head height for the
+            // read and under the sightline that matters, and it lives 0.2 s.
+            var ionCore = new GameObject("ThunderIonCore");
             ionCore.transform.position = position + Vector3.up * 0.045f;
-            ionCore.transform.localScale = new Vector3(radius * 0.9f, 0.02f, radius * 0.9f);
+            ionCore.transform.localScale = new Vector3(radius * 0.34f, 1.6f, radius * 0.34f);
+            Mesh spire = VfxShapes.Spire(7, 0.20f, 0.34f, boltSeed);
+            ionCore.AddComponent<MeshFilter>().sharedMesh = spire;
+            ionCore.AddComponent<MeshRenderer>();
+            VfxShapes.Own(ionCore, spire);
+
             VfxMaterial.Ghost(ionCore.GetComponent<Renderer>(), new Color(1.0f, 1.0f, 0.60f, 0.85f), 1.0f);
             Object.Destroy(ionCore, 0.20f);
 
@@ -1323,7 +1347,7 @@ namespace TumbangPreso.Abilities
         /// <summary>The per-style numbers. See `ExplosionStyle` for why this is not one look.</summary>
         private readonly struct ExplosionLook
         {
-            public readonly Color Core;
+            public readonly Color CoreColour;
             public readonly Color Edge;
             public readonly string Cue;
             public readonly bool HasCore;
@@ -1345,11 +1369,65 @@ namespace TumbangPreso.Abilities
                                  float shakeAmount, float shakeSeconds)
             {
                 _style = style;
-                Core = core; Edge = edge; Cue = cue; HasCore = hasCore;
+                CoreColour = core; Edge = edge; Cue = cue; HasCore = hasCore;
                 DebrisCount = debrisCount; DebrisSize = debrisSize; DebrisSpeed = debrisSpeed;
                 DebrisLift = debrisLift; DebrisLife = debrisLife;
                 FlashIntensity = flashIntensity; FlashSeconds = flashSeconds;
                 ShakeAmount = shakeAmount; ShakeSeconds = shakeSeconds;
+            }
+
+            /// <summary>
+            /// The BODY of the blast, generated rather than primitive. Null means this style has
+            /// no core at all, which is a real answer: a thrown tsinelas has no ball of anything.
+            /// </summary>
+            public Mesh Core(int seed)
+            {
+                if (!HasCore) return null;
+
+                switch (_style)
+                {
+                    // ⚠️ A FRONT, NOT A BALL. § 8.5 item 1 asks for "a shockwave with a FRONT",
+                    // and for Dante it is a gameplay read too: Titan Fissure is cast 2.2 m AHEAD
+                    // of him, so it is the one blast in the game that is AIMED, and a 360 degree
+                    // ball said nothing about where. The arc points where it was thrown.
+                    case ExplosionStyle.Quake:
+                        return VfxShapes.Shockfront(155.0f, 14, 0.34f, 0.44f, 0.18f, seed);
+
+                    // Ice keeps the hard, ordered faceting it has everywhere else in the kit:
+                    // few rings, no roughness, so it reads as GROWN rather than blown apart.
+                    case ExplosionStyle.Frost:
+                        return VfxShapes.NovaShell(5, 9, 0.0f, seed);
+
+                    // Fire is the same form roughened. A blast is radial but it is not TIDY.
+                    default:
+                        return VfxShapes.NovaShell(6, 10, 0.16f, seed);
+                }
+            }
+
+            /// <summary>How high off the ground the core sits. A ground wave sits ON the road.</summary>
+            public float CoreLift => _style == ExplosionStyle.Quake ? 0.04f : 0.6f;
+
+            /// <summary>
+            /// The vertical scale ceiling. ⚠️ ONLY THE GROUND WAVE HAS ONE: a shell is meant to
+            /// grow in all three axes, and capping it would flatten a nova into a pancake.
+            /// 0.9 holds Dante's rim near 0.30 m, which is a lip you can see over and step across
+            /// rather than a wall standing in a 14 m box.
+            /// </summary>
+            public float CoreVerticalCap =>
+                _style == ExplosionStyle.Quake ? 0.9f : float.PositiveInfinity;
+
+            /// <summary>
+            /// ⚠️ ONLY THE FRONT CARES WHICH WAY IT POINTS. A shell is radial, so yawing it
+            /// would spend a transform on a rotation nobody can see.
+            /// </summary>
+            public float CoreYaw(Vector3 facing)
+            {
+                if (_style != ExplosionStyle.Quake) return 0.0f;
+
+                facing.y = 0.0f;
+                if (facing.sqrMagnitude < 0.0001f) return 0.0f;
+
+                return Quaternion.LookRotation(facing.normalized, Vector3.up).eulerAngles.y;
             }
 
             /// <summary>
@@ -1412,7 +1490,11 @@ namespace TumbangPreso.Abilities
                     case ExplosionStyle.Quake: Visual.AbilityVfx.SpawnMagmaEruption(at, radius); break;
                     case ExplosionStyle.Frost: Visual.AbilityVfx.SpawnIceBurst(at, radius); break;
                     case ExplosionStyle.Slipper: break;   // deliberately bare. It is a slipper.
-                    default: Visual.AbilityVfx.SpawnCastFlash(at, UiTheme.HeroFire, radius * 0.6f); break;
+
+                    // ⚠️ SEAN'S OWN BURST, not `SpawnCastFlash`. That flash is what every
+                    // ability in the game plays at cast, so routing the ultimate's PAYLOAD to it
+                    // would have made the biggest moment in his kit look like any cast.
+                    default: Visual.AbilityVfx.SpawnFireBurst(at, radius); break;
                 }
             }
         }
@@ -1422,8 +1504,11 @@ namespace TumbangPreso.Abilities
             switch (style)
             {
                 case ExplosionStyle.Quake:
+                    // ⚠️ `hasCore` IS NOW TRUE AND THE CORE IS NOT A BALL. It was false because
+                    // the only core available was a fireball and a quake has no fire in it.
+                    // `VfxShapes.Shockfront` gave the style something a slam can actually have.
                     return new ExplosionLook(style, UiTheme.HeroMagmaCore, new Color(0.55f, 0.40f, 0.28f),
-                        "sfx_quake_slam", hasCore: false, debrisCount: 14,
+                        "sfx_quake_slam", hasCore: true, debrisCount: 14,
                         debrisSize: new Vector2(0.22f, 0.52f), debrisSpeed: new Vector2(4.0f, 9.0f),
                         debrisLift: 1.1f, debrisLife: 1.1f,
                         flashIntensity: 2.4f, flashSeconds: 0.22f,
@@ -1455,9 +1540,13 @@ namespace TumbangPreso.Abilities
             }
         }
 
+        /// <param name="facing">
+        /// Which way the blast was aimed. ⚠️ Only the `Quake` front reads it; every other style
+        /// is radial and ignores it. Leave it default for an unaimed blast.
+        /// </param>
         public static void CreateExplosion(Vector3 center, float radius, float knockback, float stunTime,
             int sourceSlot, string comicText = "KABOOM!", ISet<int> excludedSlots = null,
-            ExplosionStyle style = ExplosionStyle.Fire)
+            ExplosionStyle style = ExplosionStyle.Fire, Vector3 facing = default)
         {
             var round = GameServices.Round;
             if (round == null) return;
@@ -1471,18 +1560,38 @@ namespace TumbangPreso.Abilities
 
             // 1. The core. A fireball is a fire thing: a quake has no ball of flame in it and
             //    a slipper has none either, so the sphere is the style's to refuse.
-            if (look.HasCore)
+            // ⚠️⚠️ THE CORE IS A GENERATED FACETED MESH, NOT `PrimitiveType.Sphere`. 🧑, after
+            //    playing the styles: *"not all js spheres (its okay to have spheres but its ugly
+            //    if they all are"*. Unity's sphere is smooth-shaded and near-perfectly round in a
+            //    game whose cast and city are boxes, so it was both the same shape four times AND
+            //    the wrong visual language. `VfxShapes.NovaShell` keeps the radius exactly (a
+            //    nova IS radial, and squaring it off would lie about the danger, § 8.4) and
+            //    spends the difference on facets that catch the key light one at a time.
+            //    `VfxShapes.Shockfront` gives the quake a leading edge instead of a ball.
+            Mesh coreMesh = look.Core(seed);
+            if (coreMesh != null)
             {
-                var vfx = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                vfx.name = "ExplosionCore";
-                vfx.transform.position = center + Vector3.up * 0.6f;
+                var vfx = new GameObject("ExplosionCore");
+                vfx.transform.position = center + Vector3.up * look.CoreLift;
+                vfx.transform.rotation = Quaternion.Euler(0.0f, look.CoreYaw(facing), 0.0f);
                 vfx.transform.localScale = Vector3.one * (radius * 0.4f);
 
-                VfxMaterial.Ghost(vfx.GetComponent<Renderer>(), look.Core, 0.9f);
-                VfxMaterial.StripCollider(vfx);
+                vfx.AddComponent<MeshFilter>().sharedMesh = coreMesh;
+                vfx.AddComponent<MeshRenderer>();
+                VfxShapes.Own(vfx, coreMesh);
+
+                VfxMaterial.Ghost(vfx.GetComponent<Renderer>(), look.CoreColour, 0.9f);
 
                 var anim = vfx.AddComponent<ExplosionVfxAnim>();
                 anim.TargetRadius = radius * 1.1f;
+
+                // Every `VfxShapes` mesh is unit RADIUS. See `ExplosionVfxAnim.MeshRadius`.
+                anim.MeshRadius = 1.0f;
+
+                // Only the ground wave is capped, and only vertically. 0.9 keeps Dante's rim
+                // around 0.30 m: a lip of broken road you can see over and step across.
+                anim.MaxVerticalScale = look.CoreVerticalCap;
+
                 Object.Destroy(vfx, 0.5f);
             }
 
@@ -1534,7 +1643,7 @@ namespace TumbangPreso.Abilities
             lightGo.transform.position = center + Vector3.up * 1.0f;
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
-            light.color = look.Core;
+            light.color = look.CoreColour;
             light.range = radius * 2.6f;
             light.intensity = look.FlashIntensity;
             Object.Destroy(lightGo, look.FlashSeconds);
@@ -1802,6 +1911,26 @@ namespace TumbangPreso.Abilities
         private sealed class ExplosionVfxAnim : MonoBehaviour
         {
             public float TargetRadius = 5.0f;
+
+            /// <summary>
+            /// ⚠️⚠️ UNIT RADIUS, NOT UNIT DIAMETER, AND GETTING THIS WRONG DOUBLES EVERY BLAST.
+            /// This used to read `TargetRadius * 2.0f` and that was CORRECT for what it animated:
+            /// `PrimitiveType.Sphere` is one unit ACROSS, so radius 0.5, so a scale of 2R gives a
+            /// radius of R. Every shape `VfxShapes` generates is built at one unit of RADIUS
+            /// instead, so the same line would have drawn a 4.8 m Supernova at 9.9 m and swallowed
+            /// most of a 14 m arena. `VISION.md` § 2 exists because of exactly that failure.
+            /// </summary>
+            public float MeshRadius = 1.0f;
+
+            /// <summary>
+            /// ⚠️ A GROUND WAVE MUST NOT GROW INTO A WALL. The scale is uniform, so a
+            /// `Shockfront` whose rim stands 0.34 units proud would reach 0.34 x 4.95 = 1.7 m on
+            /// Dante's ultimate: over head height, in a box where `VISION.md` § 2 rule 5 requires
+            /// that a mid-fight frame still show the lata, the chalk and every player. Capping
+            /// only the Y lets the wave spread across the floor without ever hiding a body.
+            /// </summary>
+            public float MaxVerticalScale = float.PositiveInfinity;
+
             private readonly Fader _fade = new Fader();
             private float _elapsed;
 
@@ -1809,7 +1938,12 @@ namespace TumbangPreso.Abilities
             {
                 _elapsed += Time.deltaTime;
                 float t = Mathf.Clamp01(_elapsed / 0.5f);
-                transform.localScale = Vector3.one * Mathf.Lerp(1.0f, TargetRadius * 2.0f, Mathf.Sqrt(t));
+
+                float wide = Mathf.Lerp(0.35f, TargetRadius / Mathf.Max(0.01f, MeshRadius),
+                                        Mathf.Sqrt(t));
+                float tall = Mathf.Min(wide, MaxVerticalScale);
+
+                transform.localScale = new Vector3(wide, tall, wide);
 
                 _fade.Apply(GetComponent<Renderer>(), Mathf.Lerp(0.85f, 0.0f, t));
             }

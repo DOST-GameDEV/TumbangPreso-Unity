@@ -1784,7 +1784,71 @@ namespace TumbangPreso.UI
                                  TextAnchor.MiddleLeft);
             _lataHint.enabled = false;
 
+            // ⚠️⚠️ THE CARD IS SIZED TO ITS OWN WIDEST LINE, AND THE 380 WAS NOT WIDE ENOUGH.
+            // 🧑 sent a screenshot of the bottom right corner: the card reads
+            // "FETCH SLIPPER  ·  -5 / SEC" with the rest of the word missing. The string is
+            // "-5 / SECOND"; `HudLabel` sets `horizontalOverflow = Overflow`, so the line does
+            // not wrap or shrink, it simply runs out of the card and off the screen edge, and
+            // the card is anchored to the RIGHT corner so the overflow has nowhere to go.
+            //
+            // ⚠️ MEASURED, NOT TYPED, and for the reason `WorstCaseNameWidth` gives a few
+            // methods down: `preferredWidth` read through THIS label is what this exact
+            // component lays out to, so it cannot be a few pixels short the way a guessed
+            // number can. Typing 460 here would be right until somebody changes the 34.
+            //
+            // ⚠️ AND THE FONT SIZE IS NOT THE LEVER. `ui_theme.gd`'s note above is explicit:
+            // these sizes went 16/13, 22/19, 30/28 and were answered with *"text still small"*
+            // every time. Shrinking the text to fit the box would walk straight back into that.
+            // The box grows instead.
+            _lataCard.rectTransform.sizeDelta =
+                new Vector2(WidestLineWidth(_lataHint, LataHintLines), 0.0f);
+
             _lataCard.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// Every line `UpdateLataCard` can put in the hint row.
+        ///
+        /// ⚠️ THE TIMER LINES CARRY THEIR WIDEST VALUE, not a live one. `{left:0.0}s` renders at
+        /// most as four characters plus the suffix, so "9.9s" is the true ceiling and measuring
+        /// against an empty format string would size the card for a case that never ships.
+        /// ⚠️ Keep this in step with `UpdateLataCard`. A line added there and not here is a line
+        /// that overflows again, which is exactly how this bug arrived.
+        /// </summary>
+        private static readonly string[] LataHintLines =
+        {
+            "TAYA MAY TAG",
+            "ATTACKERS MAY RETRIEVE",
+            "RESETTING  100%",
+            "HOLD E IN THE RING",
+            "LEAVE CAN RING  9.9s",
+            "CAMPING  ·  DEFENSE SCORE PAUSED",
+            "FETCH SLIPPER  9.9s",
+            "FETCH SLIPPER  ·  -5 / SECOND",
+            "RETRIEVE A SLIPPER",
+            "GET OUT OF THE BOX TO THROW",
+        };
+
+        /// <summary>
+        /// The width the card needs for the longest string it can ever show, measured through the
+        /// label that will draw it and padded by the `WoodCard` inset.
+        /// </summary>
+        private static float WidestLineWidth(Text probe, string[] lines)
+        {
+            string keep = probe.text;
+            float widest = 0.0f;
+
+            foreach (string line in lines)
+            {
+                probe.text = line;
+                widest = Mathf.Max(widest, probe.preferredWidth);
+            }
+
+            probe.text = keep;
+
+            // 22 left and 22 right, from `WoodCard`'s padding, plus a pixel so a rounded
+            // `preferredWidth` never lands exactly on the border.
+            return Mathf.Ceil(widest) + 45.0f;
         }
 
         private void BuildStatusStacks()
