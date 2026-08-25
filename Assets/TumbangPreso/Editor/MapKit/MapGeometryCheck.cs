@@ -252,9 +252,17 @@ namespace TumbangPreso.EditorTools.MapKit
             }
 
             bays.Sort((a, b) => a.min.z.CompareTo(b.min.z));
-            if (bays.Count != 12)
+
+            // ⚠️ THE COUNT IS DERIVED FROM THE BUILDER, NOT TYPED IN. It read 12, which was the
+            // deck's structural length of 48 m over a 4 m bay. When the deck was carried out
+            // past the map so the line stops cutting off in mid air, this failed at 28 and the
+            // number in the checker was the only thing that had to change: the map was correct.
+            // A hardcoded expectation that fails when the map is FIXED is a check arguing with
+            // its own subject, so it now asks the builder how long the deck is.
+            int expectedBays = Mathf.RoundToInt(IlalimNgTulayBuilder.GuidewayVisualLength / 4.0f);
+            if (bays.Count != expectedBays)
             {
-                sb.AppendLine($"   FAIL elevated: guideway has {bays.Count} rendered bays, expected 12.");
+                sb.AppendLine($"   FAIL elevated: guideway has {bays.Count} rendered bays, expected {expectedBays}.");
                 failures++;
             }
 
@@ -278,6 +286,32 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 failures += Join(sb, "guideway soffit", deck.min.y, IlalimNgTulayBuilder.ViaductSoffit);
                 failures += Join(sb, "guideway top", deck.max.y, IlalimNgTulayBuilder.GuidewayTop);
+
+                // ⚠️⚠️ THE DECK HAS TO COVER THE WHOLE ROUTE, AND NOTHING USED TO ASK. Every
+                // other test here measures the train against the RAIL and it always passed,
+                // because the consist really does sit on the rail head at y = 9.190. What no
+                // check asked was whether there was any rail under it at the far end of its run:
+                // `LrtTrainFlyby` drives z from -48 to +48 and PARKS at -48 between passes,
+                // while the deck stopped at -24. A carriage therefore hung in open sky for most
+                // of every round and the report said "train on rail" the whole time. 🧑 found it
+                // from a screenshot: *"it wasnt on tracks it was js floating there"*.
+                //
+                // ⚠️ This is the one bound that catches it, and it is the whole class: it fails
+                // if the deck shortens OR if the flyby's travel grows past the deck.
+                var flyby = UnityEngine.Object.FindFirstObjectByType<LrtTrainFlyby>();
+                if (flyby != null)
+                {
+                    float reach = Mathf.Max(Mathf.Abs(flyby.StartZ), Mathf.Abs(flyby.EndZ))
+                                  + IlalimNgTulayBuilder.TrainConsistHalfLength;
+
+                    if (deck.min.z > -reach + FloatTolerance || deck.max.z < reach - FloatTolerance)
+                    {
+                        sb.AppendLine($"   FAIL elevated: the consist runs to z +/-{reach:F2} m but the deck "
+                                      + $"spans z [{deck.min.z:F2}, {deck.max.z:F2}]. A train off the end of "
+                                      + "its own viaduct is a train floating in the sky.");
+                        failures++;
+                    }
+                }
             }
 
             int pillars = 0;

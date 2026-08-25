@@ -117,6 +117,34 @@ namespace TumbangPreso.EditorTools.MapKit
         public const float EastboundTrackX = 2.35f;
         public const float GuidewayWidth = 10.5f;
         public const float GuidewayLength = 48.0f;
+
+        /// <summary>
+        /// How far the deck and its rails are DRAWN, as opposed to how much of it the map is
+        /// built around.
+        ///
+        /// ⚠️⚠️ THE VIADUCT USED TO END IN MID AIR AT z = +/-24 AND THE TRAIN DID NOT. 🧑, off
+        /// the 2026-08-25 build, with a shot of a carriage hanging in the sky past the skyline:
+        /// *"this was train earlier btw it wasnt on tracks it was js floating there"*, then
+        /// *"its weird that the bridge js cuts off, i want the rails to continue past map"*.
+        ///
+        /// `LrtTrainFlyby` runs the consist from z = -48 to z = +48 and PARKS IT AT -48 between
+        /// passes, so for about 21 of every 24 seconds a train sat 24 m beyond the south end of
+        /// a 48 m deck with nothing under it at all. The ride height was never wrong: the
+        /// geometry check measures the consist resting on the rail head at y = 9.190 and it
+        /// always did. What was wrong is that the deck stopped and the route did not.
+        ///
+        /// ⚠️ SO THE STRUCTURE AND THE SCENERY ARE NOW TWO DIFFERENT NUMBERS. `GuidewayLength`
+        /// stays 48.0 and still owns the deck collider and the supported bays, because
+        /// `Hero_Strike_Balance.md` § 1 measures footprints against the built map and the play
+        /// corridor is only 33 m long. This one only adds bays and rail, out past the fog line,
+        /// so the line reads as a line that goes somewhere.
+        ///
+        /// 112 m covers z = +/-56, which is the train's own travel of +/-48 plus its
+        /// `TrainConsistHalfLength` of 7.8 with a bay to spare, so no part of the consist is
+        /// ever over open air at either end of its run.
+        /// </summary>
+        public const float GuidewayVisualLength = 112.0f;
+
         public const float TrainScale = 2.0f;
         public const float TrainConsistHalfLength = 7.8f;
         /// <summary>
@@ -221,11 +249,33 @@ namespace TumbangPreso.EditorTools.MapKit
             // `MapGeometryCheck` measures geometry and cannot see brightness at all.
             // `MapGradeSanityTests` now asserts the band so this cannot recur silently.
             //
-            // ⚠️ THE CONTRAST STAYS 1.12 FOR NOW. It is defensible at a correct exposure and it
-            // is a judgement to make against a render, not against arithmetic. Eskinita's 1.03
-            // is the fallback if the street reads too crushed at 0.92.
+            // ⚠️⚠️ THE CONTRAST IS NOW 1.03, AND THE RENDER IS WHAT DECIDED IT. The note here
+            // used to read "the contrast stays 1.12 for now", with Eskinita's 1.03 named as the
+            // fallback "if the street reads too crushed at 0.92". 🧑, off the build that shipped
+            // the 0.92 exposure: *"less dark as before but still dark"*. That is the render this
+            // value was waiting on, so the fallback is taken.
+            //
+            // Fixing the exposure did most of the work and did not finish it, because exposure
+            // and contrast crush the street in two different ways and only one of them was
+            // corrected. Running the same arithmetic forward at the SHIPPED 0.92 exposure, with
+            // brightness 1.05, `lerp(0.5, c, contrast)` reaching zero at c = 0.5 - 0.5/contrast:
+            //
+            //     contrast 1.12: c = 0.05357, /1.05 = 0.05102 tonemapped, linear = 0.0966
+            //     contrast 1.03: c = 0.01456, /1.05 = 0.01387 tonemapped, linear = 0.0422
+            //
+            // ⚠️ So at 1.12 every linear pixel below **0.0966** was still clipping to pure black
+            // even after the exposure fix, and 1.03 pulls that floor down to **0.0422**: 2.3x
+            // less of the range crushed. The map is lit at 0.5922 in the old build and 0.0966 in
+            // the current one, which is why it went from unplayable to merely dark rather than
+            // to correct. Under a solid viaduct with the sun shadowed out, the shadowed pavement
+            // and the shopfronts in the deck's shade are exactly the values in that band.
+            //
+            // ⚠️ Eskinita has run 1.03 the whole time and is the map nobody has called dark, so
+            // this is matching a known-good frame rather than inventing a number. Saturation
+            // stays 1.15: the complaint is value, not colour, and 1.15 is what the cast was
+            // graded against.
             var grade = mapRoot.AddComponent<MapGrade>();
-            grade.Set(1.05f, 1.12f, 1.15f, 0.92f, 1.85f);
+            grade.Set(1.05f, 1.03f, 1.15f, 0.92f, 1.85f);
 
             BuildLighting(mapRoot.transform);
             BuildGameplayRig(mapRoot.transform);
@@ -1079,12 +1129,16 @@ namespace TumbangPreso.EditorTools.MapKit
             AirborneByDesign.Attach(guideway, "The LRT-2 guideway. Its soffit is 8.0 m up and " +
                                                     "the live support rows stand at z = +/-10.");
 
-            for (float z = -GuidewayLength * 0.5f + 2.0f; z < GuidewayLength * 0.5f; z += 4.0f)
+            // ⚠️ THE BAYS RUN THE VISUAL LENGTH, THE COLLIDER RUNS THE STRUCTURAL ONE. See
+            // `GuidewayVisualLength`: past z = +/-24 these are scenery carrying the line out of
+            // the map, and giving them deck collider would put 64 m of solid surface into a
+            // street whose geometry has been measured against a 48 m deck.
+            for (float z = -GuidewayVisualLength * 0.5f + 2.0f; z < GuidewayVisualLength * 0.5f; z += 4.0f)
             {
                 var bay = InstantiateKitProp("roads", "road-bridge",
                     new Vector3(0.0f, ViaductSoffit, z), Quaternion.identity,
                     new Vector3(GuidewayWidth, 2.0f, 4.0f), guideway.transform, "tumbang-warm-a");
-                if (bay != null) bay.name = $"GuidewayBay_{z + GuidewayLength * 0.5f:F0}";
+                if (bay != null) bay.name = $"GuidewayBay_{z + GuidewayVisualLength * 0.5f:F0}";
             }
 
             var deckCol = guideway.AddComponent<BoxCollider>();
@@ -1099,7 +1153,9 @@ namespace TumbangPreso.EditorTools.MapKit
                 track.transform.SetParent(guideway.transform, false);
                 AirborneByDesign.Attach(track, "Detailed rail and sleepers resting on the LRT guideway deck.");
 
-                for (float z = -GuidewayLength * 0.5f + 2.0f; z < GuidewayLength * 0.5f; z += 4.0f)
+                // The rail follows the deck the whole way. A deck that continues under a train
+                // with the rail stopping short would trade one floating object for another.
+                for (float z = -GuidewayVisualLength * 0.5f + 2.0f; z < GuidewayVisualLength * 0.5f; z += 4.0f)
                 {
                     InstantiateKitProp("train", "track-detailed",
                         new Vector3(trackX, GuidewayTop, z), Quaternion.identity,
@@ -1123,6 +1179,23 @@ namespace TumbangPreso.EditorTools.MapKit
                                     $"LrtPillar_{(z > 0 ? "North" : "South")}West_{Mathf.Abs(z):F0}");
                 CreateViaductPillar(heroGo, new Vector3(4.45f, 0.0f, z),
                                     $"LrtPillar_{(z > 0 ? "North" : "South")}East_{Mathf.Abs(z):F0}");
+            }
+
+            // ⚠️⚠️ THE EXTENDED DECK NEEDS COLUMNS OR IT IS A 112 m SLAB HANGING IN THE AIR,
+            // which is the same complaint in a bigger size. The live rows above keep the 9 m
+            // rhythm out to z = +/-19; these continue it to +/-55 so the line recedes on its own
+            // supports instead of stopping being a viaduct at the fog line.
+            //
+            // ⚠️ THEY ARE SCENERY AND ARE BUILT DELIBERATELY DIFFERENTLY. `CreateViaductPillar`
+            // attaches a `HazardVolume` and a mercury vapour lamp, and neither belongs 40 m
+            // outside the arena: the hazard is gameplay in a place no player can stand, and
+            // twenty-four more real-time point lights is a frame cost paid for something the fog
+            // is already eating. `docs/VISION.md` § 2 counts what shares the box, and this is
+            // outside it in the same sense the column placards are.
+            foreach (float z in new[] { -55.0f, -46.0f, -37.0f, -28.0f, 28.0f, 37.0f, 46.0f, 55.0f })
+            {
+                CreateDistantViaductPillar(heroGo, -4.45f, z);
+                CreateDistantViaductPillar(heroGo, 4.45f, z);
             }
 
             // 3. PC Express.
@@ -1242,23 +1315,48 @@ namespace TumbangPreso.EditorTools.MapKit
             trainSystemGo.transform.SetParent(Group(parent, "Tulay"), false);
             trainSystemGo.transform.localPosition = new Vector3(WestboundTrackX, TrainRootY, 0.0f);
 
-            var flyby = trainSystemGo.AddComponent<LrtTrainFlyby>();
-            flyby.TrackX = WestboundTrackX;
-            flyby.TrackY = TrainRootY;
-            flyby.Speed = 18.0f;
-            flyby.Interval = 24.0f;
-            flyby.InitialDelay = 5.0f;
-            flyby.OverheadHalfZ = WallHalfZ + TrainConsistHalfLength;
-
-            AirborneByDesign.Attach(trainSystemGo, "The LRT-2 consist, riding the westbound rail " +
-                                                   $"head at y = {RailHead:F3} on the guideway.");
-
+            // ⚠️ THE CARS GO IN BEFORE THE FLYBY, because the flyby's `TrackY` has to be the
+            // MEASURED ride height and there is nothing to measure until the meshes exist.
             InstantiateKitProp("train", "train-electric-city-a", new Vector3(0.0f, 0.0f, -5.1f),
                 Quaternion.identity, Vector3.one * TrainScale, trainSystemGo.transform, "tumbang-lrt");
             InstantiateKitProp("train", "train-electric-city-b", Vector3.zero,
                 Quaternion.identity, Vector3.one * TrainScale, trainSystemGo.transform, "tumbang-lrt");
             InstantiateKitProp("train", "train-electric-city-c", new Vector3(0.0f, 0.0f, 5.1f),
                 Quaternion.identity, Vector3.one * TrainScale, trainSystemGo.transform, "tumbang-lrt");
+
+            // ⚠️⚠️ THE RIDE HEIGHT IS SOLVED FROM THE CARS, NOT ASSUMED FROM THE MODEL ORIGIN.
+            // `TrainRootY` is `RailHead`, and putting the ROOT there only seats the train if the
+            // kit's origin happens to sit at the bottom of the wheels. It is a Kenney city-kit
+            // model scaled by `TrainScale` 2.0, so any offset baked into that origin is doubled
+            // before it reaches the rail, and the consist rides that far off the track. 🧑, off
+            // the 2026-08-25 build: the trains float.
+            //
+            // ⚠️ AND `AirborneByDesign` IS WHY NO CHECK CAUGHT IT. It is attached to the consist
+            // root below, so `MapGeometryCheck` excuses every renderer under it from the
+            // resting test: the one check that measures whether things sit on other things was
+            // told, correctly, that a train on a viaduct is meant to be in the air. An exemption
+            // from "rests on the ground" was silently also an exemption from "rests on the rail".
+            // Solving the height here is what makes the printed reason true rather than a claim.
+            Bounds consist = RenderBounds(trainSystemGo);
+            float rideY = TrainRootY + (RailHead - consist.min.y);
+            trainSystemGo.transform.localPosition = new Vector3(WestboundTrackX, rideY, 0.0f);
+
+            var flyby = trainSystemGo.AddComponent<LrtTrainFlyby>();
+            flyby.TrackX = WestboundTrackX;
+            // ⚠️⚠️ THE FLYBY HAS TO CARRY THE CORRECTED HEIGHT TOO. `LrtTrainFlyby` writes
+            // `transform.position = (TrackX, TrackY, z)` every frame it runs, so a seated
+            // transform with a stale `TrackY` is re-lifted the moment the first train departs
+            // and the fix would appear to work only until the 5 s initial delay elapsed.
+            flyby.TrackY = rideY;
+            flyby.Speed = 18.0f;
+            flyby.Interval = 24.0f;
+            flyby.InitialDelay = 5.0f;
+            flyby.OverheadHalfZ = WallHalfZ + TrainConsistHalfLength;
+
+            AirborneByDesign.Attach(trainSystemGo, "The LRT-2 consist, riding the westbound rail " +
+                                                   $"head at y = {RailHead:F3} on the guideway. " +
+                                                   $"Root seated at y = {rideY:F3}, solved from " +
+                                                   "the car bounds rather than the model origin.");
         }
 
         /// <summary>
@@ -1326,6 +1424,50 @@ namespace TumbangPreso.EditorTools.MapKit
 
             AddPointLight(pillar.transform, "MercuryVaporLamp", new Vector3(0.0f, 0.325f, -0.09f),
                           new Color(0.88f, 0.96f, 1.0f), 7.5f, 1.1f);
+        }
+
+        /// <summary>
+        /// A support column for the scenery run of the guideway, past the play corridor.
+        ///
+        /// ⚠️⚠️ IT IS SEATED AND SIZED BY MEASUREMENT, NOT BY REUSING THE LIVE ROW'S NUMBERS.
+        /// `CreateViaductPillar` places at `SurfaceTop(x)`, which is the carriageway, and
+        /// `PillarVerticalScale` is tuned to reach the soffit FROM the carriageway. Out here the
+        /// road has ended: the geometry check measures solid floor only across z = +/-16.7, and
+        /// what these land on is the `FarGroundPlate` at `HazeTop`, which is a different height.
+        /// Reusing the live numbers would leave every one of them either sunk into the haze
+        /// plate or short of the deck, and a column short of the deck is a floating column.
+        ///
+        /// So the kit bound is measured, scaled to exactly span `HazeTop` to `ViaductSoffit`,
+        /// then translated so its foot sits on the plate. This is the rule `BuildSideFacade` and
+        /// `ShopFaceX` already follow, and it cannot drift when the soffit or the haze moves.
+        /// </summary>
+        private static void CreateDistantViaductPillar(Transform parent, float x, float z)
+        {
+            var pillar = InstantiateKitProp("roads", "bridge-pillar-wide",
+                new Vector3(x, HazeTop, z), Quaternion.identity,
+                new Vector3(PillarHorizontalScale, PillarVerticalScale, PillarHorizontalScale),
+                parent, "tumbang-warm-a");
+            if (pillar == null) return;
+
+            pillar.name = $"LrtPillarFar_{(z > 0 ? "North" : "South")}{(x < 0 ? "West" : "East")}_{Mathf.Abs(z):F0}";
+
+            // No collider: `InstantiateKitProp` may hand one over and nothing out here is ever
+            // touched, so it is removed rather than left for the physics broadphase to carry.
+            var stray = pillar.GetComponent<Collider>();
+            if (stray != null) Object.DestroyImmediate(stray);
+
+            float want = ViaductSoffit - HazeTop;
+            Bounds raw = RenderBounds(pillar);
+            if (raw.size.y > 0.001f)
+            {
+                float scale = PillarVerticalScale * (want / raw.size.y);
+                pillar.transform.localScale = new Vector3(PillarHorizontalScale, scale, PillarHorizontalScale);
+            }
+
+            // Re-measure after scaling: the kit's pivot is not its foot, so the scale moves the
+            // bottom as well as the top and only a second reading can seat it.
+            Bounds seated = RenderBounds(pillar);
+            pillar.transform.position += new Vector3(0.0f, HazeTop - seated.min.y, 0.0f);
         }
 
         private static void BuildStreetProps(Transform parent)
@@ -1572,6 +1714,55 @@ namespace TumbangPreso.EditorTools.MapKit
             return side < 0 ? bounds.max.x : bounds.min.x;
         }
 
+        // ------------------------------------------------------------------
+        // ⚠⚠ THE WALL PLANE WAS SOLVED FROM THE BUILDING AND THE WALL'S EXTENT WAS NOT, WHICH
+        // IS THE SAME DRIFT `ShopFaceX` EXISTS TO PREVENT, LEFT OPEN ON THE OTHER TWO AXES. A
+        // facade sign took its x from the rendered bounds and then typed in its z centre, its
+        // width and its height, so nothing tied the lettering to the wall it is painted on. The
+        // moment a shopfront's model, scale or setback changed, the sign stopped fitting it.
+        //
+        // `Sign_ComputerParts` is where it showed: 4.60 m of lettering placed at z = -1.2 on
+        // `Shophouse_W2`, which is `building-b` at scale 5.30, and the run of capitals reaches
+        // past the north end of that facade into the gap before `Shophouse_W3` at z = 9.8.
+        // `PaintedWall` draws letters and NO plate, on purpose, so the overhang is not a board
+        // sticking out past a corner that a player would read as a sign. It is loose capitals
+        // hanging in mid air over the pavement. 🧑, on the 2026-08-25 build: "floating texg
+        // here pls remove".
+        //
+        // ⚠ FIT, DO NOT JUST CLAMP THE CENTRE. Sliding a 4.60 m sign back inside a shorter wall
+        // moves the word off the shopfront it names; narrowing it to the wall keeps it centred
+        // on its own building. Width is surrendered first and the centre only moves after the
+        // sign already fits, so a sign that was always inside its facade is left exactly where
+        // it was authored.
+        // ------------------------------------------------------------------
+
+        private static void FitToFacade(GameObject building, ref Vector3 wallPoint,
+                                        ref Vector2 size, float margin = 0.15f)
+        {
+            if (building == null) return;
+
+            Bounds bounds = RenderBounds(building);
+
+            float usableZ = bounds.size.z - margin * 2.0f;
+            float usableY = bounds.size.y - margin * 2.0f;
+            if (usableZ <= 0.0f || usableY <= 0.0f) return;
+
+            if (size.x > usableZ) size.x = usableZ;
+            if (size.y > usableY) size.y = usableY;
+
+            wallPoint.z = ClampSpan(wallPoint.z, bounds.min.z, bounds.max.z, size.x, margin);
+            wallPoint.y = ClampSpan(wallPoint.y, bounds.min.y, bounds.max.y, size.y, margin);
+        }
+
+        /// <summary>Keeps a span of <paramref name="extent"/> inside min..max, inset by a margin.</summary>
+        private static float ClampSpan(float centre, float min, float max, float extent, float margin)
+        {
+            float half = extent * 0.5f;
+            float lo = min + margin + half;
+            float hi = max - margin - half;
+            return lo > hi ? (min + max) * 0.5f : Mathf.Clamp(centre, lo, hi);
+        }
+
         private static void BuildUnderBridgeSignage(Transform parent)
         {
             var sign = Group(parent, "Karatula");
@@ -1628,9 +1819,16 @@ namespace TumbangPreso.EditorTools.MapKit
 
             // ---------------- west pavement, south to north ----------------
 
-            StreetSignKit.VerticalBanner(sign, "Sign_Labada",
-                new Vector3(ShopFaceX(west.Count > 0 ? west[0] : null, -1) + 0.06f, 3.05f, -13.4f),
-                -90.0f, new Vector2(0.74f, 3.30f), StreetSignKit.ShopGreen, StreetSignKit.Ink,
+            // ⚠ The two strapped banners are fitted for the same reason the painted word is.
+            // They carry a plate, so an overhang reads as a board past a corner rather than as
+            // loose letters, but it is the same sign hanging off the same unchecked wall.
+            var labadaWall = west.Count > 0 ? west[0] : null;
+            var labadaPoint = new Vector3(ShopFaceX(labadaWall, -1) + 0.06f, 3.05f, -13.4f);
+            var labadaSize = new Vector2(0.74f, 3.30f);
+            FitToFacade(labadaWall, ref labadaPoint, ref labadaSize);
+
+            StreetSignKit.VerticalBanner(sign, "Sign_Labada", labadaPoint,
+                -90.0f, labadaSize, StreetSignKit.ShopGreen, StreetSignKit.Ink,
                 "LABADA", "Printed banner strapped to the west shopfront at two wall bands.");
 
             StreetSignKit.TinSheet(sign, "Sign_Xerox",
@@ -1641,14 +1839,20 @@ namespace TumbangPreso.EditorTools.MapKit
 
             BuildRepairBladeSign(sign);
 
-            StreetSignKit.PaintedWall(sign, "Sign_ComputerParts",
-                new Vector3(ShopFaceX(west.Count > 2 ? west[2] : null, -1) + 0.03f, 3.55f, -1.2f),
+            // ⚠ FITTED TO `Shophouse_W2`, NOT TYPED ONTO IT. See `FitToFacade`: this is the
+            // sign whose lettering ran off the end of its own wall and floated.
+            var partsWall = west.Count > 2 ? west[2] : null;
+            var partsPoint = new Vector3(ShopFaceX(partsWall, -1) + 0.03f, 3.55f, -1.2f);
+            var partsSize = new Vector2(4.60f, 0.92f);
+            FitToFacade(partsWall, ref partsPoint, ref partsSize);
+
+            StreetSignKit.PaintedWall(sign, "Sign_ComputerParts", partsPoint,
                 // ⚠ FADED DARK, NOT FADED PALE. The first pass painted this in `SunBleach`, a
                 // light warm grey, onto a cream facade: in `ilalim_corridor_v19.png` the whole
                 // word collapses into one pale smudge that reads as an untextured panel rather
                 // than as a sign. Sun-bleached paint on a light wall keeps its VALUE contrast
                 // and loses its saturation, which is the opposite of what was drawn.
-                -90.0f, new Vector2(4.60f, 0.92f), StreetSignKit.MuralInk,
+                -90.0f, partsSize, StreetSignKit.MuralInk,
                 new[] { "COMPUTER PARTS" },
                 "Sun-bleached paint on the west facade render. There is no plate to hold up.");
 
@@ -1676,9 +1880,13 @@ namespace TumbangPreso.EditorTools.MapKit
 
             BuildParesBoard(sign);
 
-            StreetSignKit.VerticalBanner(sign, "Sign_Paluto",
-                new Vector3(ShopFaceX(east.Count > 2 ? east[2] : null, 1) - 0.06f, 2.95f, -0.4f),
-                90.0f, new Vector2(0.70f, 3.05f), StreetSignKit.SignMaroon, StreetSignKit.SignCream,
+            var palutoWall = east.Count > 2 ? east[2] : null;
+            var palutoPoint = new Vector3(ShopFaceX(palutoWall, 1) - 0.06f, 2.95f, -0.4f);
+            var palutoSize = new Vector2(0.70f, 3.05f);
+            FitToFacade(palutoWall, ref palutoPoint, ref palutoSize);
+
+            StreetSignKit.VerticalBanner(sign, "Sign_Paluto", palutoPoint,
+                90.0f, palutoSize, StreetSignKit.SignMaroon, StreetSignKit.SignCream,
                 "PALUTO", "Printed banner strapped to the east shopfront at two wall bands.");
 
             // ⚠ ABOVE THE AWNING, NOT BEHIND IT. At y = 2.86 the fascia sat inside the
