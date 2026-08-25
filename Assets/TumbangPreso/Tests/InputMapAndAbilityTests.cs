@@ -205,6 +205,72 @@ namespace TumbangPreso.Tests
                 "the round boundary emptied the ultimate bank; it is meant to carry over");
         }
 
+        /// <summary>
+        /// ⚠️⚠️ TWO KINDS OF "CHARGE" MEET AT ONE CALL AND THEY GO OPPOSITE WAYS. Since the
+        /// 2026-08-25 economy rework the word is overloaded, and the two behaviours are one line
+        /// apart inside `HeroKit.ResetForRound`, so a change aimed at either can silently take
+        /// the other with it. Nothing asserted them together until now.
+        ///
+        ///  * The **ultimate meter** is a RESOURCE earned across the whole match and it
+        ///    PERSISTS. 🧑 has asked for this twice: *"its okay for ult progress to persist
+        ///    after round and into next rounds"* (2026-08-23), and again on 2026-08-25 after the
+        ///    rework: *"i want ult charges to stay in between rounds ... Only ult tho"*.
+        ///  * A skill's **charges** are a PER-ROUND allowance and they REFILL, because his rule
+        ///    for those was *"charges ... that reset each round"*.
+        ///
+        /// ⚠️ THE "Only ult tho" IS THE HALF WORTH TESTING. Persisting the meter is easy to get
+        /// right by accident; persisting it *without* also carrying a spent barricade into the
+        /// next round is the part that needs pinning, and a test that only checked the meter
+        /// would have passed on a build where skills never refilled either.
+        /// </summary>
+        [Test]
+        public void UltimateChargePersistsButSkillChargesRefill()
+        {
+            var kit = HeroAbilitySystem.CreateKitFor("cheska");
+
+            var go = new GameObject("RoundBoundaryProbeMotor");
+
+            // Cheska's barricade spawns ice chips that self-destruct on a timer, and `Destroy`
+            // outside play mode logs an error the framework promotes to a failure. Same
+            // suppression and same reason as `ChargesComeBackOnPlayAndOnlyForTheSkillsThatShould`.
+            bool ignoring = LogAssert.ignoreFailingMessages;
+            LogAssert.ignoreFailingMessages = true;
+
+            try
+            {
+                var ctx = new AbilityContext(go.AddComponent<CharacterMotor>(), null, null);
+
+                // Bank most of an ultimate and spend the round's only barricade.
+                kit.AddUltimateCharge(kit.UltimateCost * 0.75f);
+                float banked = kit.UltimateCharge;
+
+                kit.Skill2.Activate(ctx);
+                Assert.AreEqual(0, kit.Skill2.ChargesRemaining, "the barricade did not spend");
+
+                kit.ResetForRound(ctx);
+
+                Assert.AreEqual(banked, kit.UltimateCharge, 0.0001f,
+                    "the round boundary emptied the ultimate meter. It is a match-long resource "
+                    + "and only ResetForMatch may clear it; see HeroKit.ResetForRound.");
+
+                Assert.AreEqual(kit.Skill2.MaxCharges, kit.Skill2.ChargesRemaining,
+                    "the barricade did not refill at the round boundary. Skill charges are a "
+                    + "per-round allowance and every round starts full.");
+
+                // ⚠️ AND THE MATCH BOUNDARY IS THE ONE THAT TAKES THE METER. Without this the
+                // test above is satisfied by a build that never clears the meter at all, which
+                // would carry an ultimate from one match into the next.
+                kit.ResetForMatch(ctx);
+                Assert.AreEqual(0.0f, kit.UltimateCharge, 0.0001f,
+                    "ultimate charge survived into a new match");
+            }
+            finally
+            {
+                LogAssert.ignoreFailingMessages = ignoring;
+                Object.DestroyImmediate(go);
+            }
+        }
+
         /// <summary>A new match starts everybody at zero, whatever last match left behind.</summary>
         [Test]
         public void ResetForMatchClearsUltimateCharge()

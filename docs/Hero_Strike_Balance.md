@@ -537,6 +537,22 @@ throw **4** (down from 8), time passing **0** (deleted).
 
 Casts per 90 s round across four seats fell from **44 to 56** to roughly **14 to 18**.
 
+⚠️⚠️ **THE TWO KINDS OF "CHARGE" GO OPPOSITE WAYS AT A ROUND BOUNDARY, AND THE WORD IS
+OVERLOADED SINCE THIS REWORK.** 🧑 2026-08-25: *"i want ult charges to stay in between rounds if
+u havent yet. Only ult tho"*.
+
+| | Round boundary | Match boundary |
+|---|---|---|
+| **Ultimate meter** (`HeroKit.UltimateCharge`) | **persists** | cleared |
+| **Skill charges** (`HeroAbility.ChargesRemaining`) | **refill to full** | refill to full |
+| Cooldowns, live durations | cleared | cleared |
+
+The meter is a resource earned across a whole match; skill charges are a per-round allowance.
+Both live one line apart in `HeroKit.ResetForRound`, so a change aimed at either can silently
+take the other, and `UltimateChargePersistsButSkillChargesRefill` asserts them together.
+⚠️ `HeroKit.Reset()` zeroes the meter and is **not** the round boundary despite sitting directly
+above it; it has no runtime callers.
+
 ### 7.2 The footprints, as shipped
 
 | Power | Was | Now |

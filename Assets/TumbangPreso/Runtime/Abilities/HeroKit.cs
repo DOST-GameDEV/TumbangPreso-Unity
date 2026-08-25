@@ -245,6 +245,23 @@ namespace TumbangPreso.Abilities
 
         public bool TryActivateUltimate(AbilityContext ctx) => CastUltimate(ctx) == CastOutcome.Cast;
 
+        /// <summary>
+        /// Everything to zero, ultimate meter included.
+        ///
+        /// ⚠️⚠️ THIS IS NOT THE ROUND BOUNDARY AND IT MUST NOT BE CALLED AT ONE. It sits one
+        /// method above <see cref="ResetForRound"/>, it is shorter, its name is the obvious one
+        /// to reach for, and it does the thing 🧑 has now asked against twice: *"its okay for ult
+        /// progress to persist after round and into next rounds"* (2026-08-23) and *"i want ult
+        /// charges to stay in between rounds ... Only ult tho"* (2026-08-25).
+        ///
+        /// It also skips `OnEnd`, so an ability mid-duration has its grant left switched on with
+        /// no timer left to switch it off. `HeroAbility.ResetForRound` carries that story: a
+        /// hero caught mid-Carapace would start the next round permanently unstunnable.
+        ///
+        /// ⚠️ IT HAS NO RUNTIME CALLERS AND IT IS KEPT FOR TESTS. `ResetForRound` and
+        /// `ResetForMatch` are the two the game uses. If you are reaching for this from gameplay
+        /// code, one of those two is what you actually want.
+        /// </summary>
         public virtual void Reset()
         {
             UltimateCharge = 0.0f;
@@ -254,15 +271,33 @@ namespace TumbangPreso.Abilities
         }
 
         /// <summary>
-        /// Round-boundary reset. Charge to zero, cooldowns cleared, and anything still running
-        /// ended through `OnEnd` rather than dropped.
+        /// Round-boundary reset. Cooldowns cleared, skill CHARGES refilled, and anything still
+        /// running ended through `OnEnd` rather than dropped.
         ///
-        /// ⚠⚠ THE CHARGE RESET IS THE POINT, AND NOTHING USED TO CALL IT. `Tick` trickles
-        /// `Balance.UltimatePassiveChargePerSecond` every frame the kit ticks, practice time
-        /// included, and `HeroAbilitySystem.ResetKit` had NO CALL SITES anywhere in `Assets` or
-        /// `Packages`. So charge banked during the warm-up, and during round 1, was still
-        /// sitting there at the start of round 2. Reported as *"why is ult charging up at ready
-        /// screen"*: charging there is fine and deliberate, **never clearing is the bug**.
+        /// ⚠️⚠️ THE ULTIMATE METER IS THE ONE THING THAT SURVIVES, AND THIS SUMMARY USED TO SAY
+        /// THE OPPOSITE. It opened with "Charge to zero", which flatly contradicted the ⚠️ note
+        /// in the body three lines below it saying the charge must NOT be reset here. Two
+        /// instructions in one method, and the wrong one was the one a reader met first.
+        /// Corrected 2026-08-25 after 🧑 asked for the behaviour that was already shipping:
+        /// *"i want ult charges to stay in between rounds if u havent yet. Only ult tho"*.
+        ///
+        /// ⚠️⚠️ TWO KINDS OF "CHARGE" MEET AT THIS ONE CALL AND THEY GO OPPOSITE WAYS. Since the
+        /// 2026-08-25 economy rework the word is overloaded, so name them before touching this:
+        ///
+        ///  * The **ultimate meter** (`UltimateCharge`) is a RESOURCE earned by objective play
+        ///    across the whole match. It persists here. Only `ResetForMatch` empties it.
+        ///  * A skill's **charges** (`HeroAbility.ChargesRemaining`) are a PER-ROUND allowance.
+        ///    They refill here, through `HeroAbility.Reset`, because 🧑's rule for them was
+        ///    *"charges ... that reset each round"*.
+        ///
+        /// `UltimateChargePersistsButSkillChargesRefill` asserts both halves together, because
+        /// they are one line apart and a change aimed at either can silently take the other.
+        ///
+        /// ⚠️ THE ORIGINAL BUG THIS METHOD WAS WRITTEN FOR, kept because it explains the shape:
+        /// `HeroAbilitySystem.ResetKit` once had NO CALL SITES anywhere in `Assets` or
+        /// `Packages`, so cooldowns banked during the warm-up were still there at the start of
+        /// round 2. Reported as *"why is ult charging up at ready screen"*. Charging during
+        /// practice is fine and deliberate; **never clearing the timers was the bug.**
         /// </summary>
         public virtual void ResetForRound(AbilityContext ctx)
         {
