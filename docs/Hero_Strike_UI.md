@@ -159,6 +159,24 @@ knew.
 at different distances: the meter is peripheral vision ("nearly back"), the number is a glance
 ("1.8, I can wait"). Removing either was tried and the tile got worse, not cleaner.
 
+⚠️⚠️ **THE TABLE ABOVE HAS THREE ROWS AND THE REWORK NEEDS A FOURTH.**
+[`Hero_Strike_Balance.md`](Hero_Strike_Balance.md) § 3.1 proposes putting several skills on
+CHARGES rather than on a cooldown, and a charge tile fits none of these rows: it is Ready **and**
+holding 1 of 2, at the same time, which no row here can say. It needs its own state and its own
+mark.
+
+**And the mark cannot be either existing meter.** `VISION.md` § 3 settles that a cooldown drains
+a smooth bar and an ultimate fills a notched one, precisely because those two used to share a
+widget and could not be told apart. Charges are a third quantity and want a third shape:
+**discrete pips**, one per charge, filled or hollow. Three quantities, three shapes, still no
+sentence on the HUD.
+
+⚠️ **The meter, not the number, is what breaks at a long cooldown.** At the 30 to 45 s cooldowns
+§ 3.1 proposes, a bar crossing 2.5 per cent a second reads as stationary while the number carries
+on working fine. If that needs answering, answer it with a halfway tick on the bar rather than by
+making the bar drain non-linearly: a bar that runs fast then slow is a bar lying about time
+remaining, and § 8 below is titled "Telegraphs tell the truth".
+
 ---
 
 ## 5 · Motion, which is a signal and not decoration

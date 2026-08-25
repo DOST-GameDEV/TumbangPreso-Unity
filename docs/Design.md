@@ -980,8 +980,9 @@ and the scoring in § 8. Everything in §§ 1 to 12 that is not an ability still
 |---|---|
 | Mode split, rosters per mode | `Core/MatchRules.cs`, `Core/Roster.cs` (`ClassicPeople`, `HeroPeople`) |
 | Ability kits, five heroes, two skills and one ultimate each | `Assets/TumbangPreso/Runtime/Abilities/*HeroKit.cs` |
-| Ultimate economy | `Core/Balance.cs`: `UltimatePassiveChargePerSecond` 1.0/s, `UltimateChargeLataKnock` 25, `UltimateChargeTag` 20, `UltimateChargeLegalThrow` 8, against `HeroKit.UltimateMax` 100 |
-| Hazard volumes the skills leave behind | `Runtime/Abilities/HeroHazards.cs` |
+| **What those kit numbers were measured against, and why** | **[`docs/Hero_Strike_Balance.md`](Hero_Strike_Balance.md)**. § 1 is the per-ability floor footprint table against the `VISION.md` § 2 readability budget; § 2 is the cooldown and ultimate economy as shipped |
+| Ultimate economy | `Core/Balance.cs`: `UltimatePassiveChargePerSecond` 1.0/s, `UltimateChargeLataKnock` 25, `UltimateChargeTag` 20, `UltimateChargeLegalThrow` 8, against `HeroKit.UltimateMax` 100. ⚠️ **The passive drip alone delivers 90 of the 100 in a 90 s round**, so the meter is currently a timer rather than an economy, and that conflicts with `VISION.md` § 4's "nothing may reward waiting". Measured and written up in `Hero_Strike_Balance.md` § 2.1 |
+| Hazard volumes the skills leave behind | `Runtime/Abilities/HeroHazards.cs`, measured in `Hero_Strike_Balance.md` § 1 |
 | Anti-camping and anti-stall penalties | `Core/Balance.cs`, the `TayaCamp*` and `SlipperUnretrieved*` block. Both clocks HOLD rather than run while a unit cannot act |
 | Tsinelas that cannot be reached where they landed | `Balance.SlipperMaxRestReach` 1.2, `Balance.MaxAirborneTime` |
 | Arena confinement for bodies, not just slippers | `CharacterMotor.Confine` and `CharacterMotor.Teleport` |

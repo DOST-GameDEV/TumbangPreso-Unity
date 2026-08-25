@@ -11,6 +11,38 @@ against the readability budget in its § 2.
 
 ---
 
+## 0 · Hero Strike is being reworked, and the plan is its own file
+
+**Numbered 0 rather than 1 on purpose: every other entry here keeps the number it already had,
+because `VISION.md`, `CLAUDE.md` and two handoffs cite them.**
+
+The measurements and the proposal are [`Hero_Strike_Balance.md`](Hero_Strike_Balance.md). Do not
+copy them here; that is how § 1 came to be pointed at by `VISION.md` § 2 while holding something
+else entirely.
+
+**The three things it found that are facts rather than proposals**, all derived from the code
+with no Unity launch:
+
+1. ⚠️⚠️ **Ilalim ng Tulay renders black, and it is one wrong constant.**
+   `IlalimNgTulayBuilder.cs:192` sets the map's tonemap exposure to **0.15** where Eskinita uses
+   **0.92**. Every linear pixel below **0.59** clips to pure black before it reaches the screen.
+   The derivation is § 3.0 of the plan. **This outranks every other item in the file**, because
+   nothing else on that map can be judged through it. Reported from the built player, not a test.
+2. **Zack's Bolt Sprint paints 27.2 % of the arena off a 6.0 s cooldown**, which is more floor
+   than any ultimate. Invisible to every previous pass because the trails were always measured
+   one disc at a time and neither trail ability places one disc.
+3. **The ultimate meter is a timer.** `UltimatePassiveChargePerSecond` 1.0 against
+   `UltimateMax` 100 hands a player who does nothing 90 of the 100 in a 90 s round, which
+   `VISION.md` § 4 forbids in as many words.
+
+**Status:** 🧑 has the plan and is arguing with it. **No code has moved.**
+
+**Folds in §§ 2 and 5 below**, both of which the plan answers: the barricade duration becomes a
+consequence of the charge economy (§ 3.2) rather than an open measurement, and the overclock rate
+loses four fifths of its value the moment cooldowns get long (§ 4.5).
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**
@@ -50,6 +82,12 @@ against the round and unretrieved-slipper penalties, and the winner written into
 its number. The argument is named now (`duration: 3.2f`) so the next reader cannot repeat the
 mistake, and the telegraph radius (1.6 m) is asserted against the `HazardVolume` in
 `HeroPresentationTests.TelegraphsMatchWhatTheAbilityPlaces`.
+
+⚠️ **§ 0's plan may answer this without a probe run.** Under the charge economy in
+`Hero_Strike_Balance.md` § 3.1 the barricade becomes ONE charge per round, and a wall you get
+once a round has to be worth the charge. § 3.2 proposes restoring **6.0 s** on that ground rather
+than on the A/B. If the charge economy lands, this entry closes as a consequence; if it does not,
+the measurement above is still the way to settle it.
 
 **Where.** `Assets/TumbangPreso/Runtime/Abilities/CheskaHeroKit.cs`,
 `Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`.
@@ -124,6 +162,13 @@ constant with its number, the way every other measured value in this repo does.
 ⚠️ **The probe runs on Eskinita today.** Pointing it at a second map is part of the work, and it
 is worth doing anyway: § 4 above and `docs/Ilalim_Ng_Tulay.md` § 1 are both arguments that map
 geometry changes Hero Strike outcomes, and nothing in the harness has ever measured that.
+
+⚠️⚠️ **DO NOT RUN THIS A/B UNTIL § 0 SETTLES, BECAUSE THE COOLDOWNS MOVE UNDER IT.** Doubling
+the rate saves 2.70 s of cooldown whatever the cooldown is, so the RELATIVE value collapses from
+41 per cent of a 6.5 s cycle to 7.9 per cent of the 34 s cycle `Hero_Strike_Balance.md` § 3.1
+proposes. Measuring 1.0 against 1.5 against 2.0 today measures a mechanic that is about to
+change shape. § 4.5 of that file argues the multiplier should become a flat saving or a charge,
+which survives any later retune.
 
 **Where.** `Assets/TumbangPreso/Runtime/Map/OverheadPassWindow.cs`,
 `Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`.

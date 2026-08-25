@@ -299,6 +299,43 @@ of the twenty-five squares under each pole were over the shopfront apron.
 
 ## 7 · Still open
 
+- ⚠️⚠️ **THE MAP RENDERS BLACK IN THE BUILT PLAYER, AND IT IS ONE CONSTANT.** 🧑, on the shipped
+  .exe: *"New map is just black wtf, i cant see shit properly"*. Nothing in §§ 2, 5 or 9 is wrong
+  and the lighting rig in `BuildLighting` is fine: sun 1.15, trilight ambient, sky 0.85/0.90/0.98,
+  and the scene file carries all of it correctly.
+
+  **`IlalimNgTulayBuilder.cs:192` sets the map's tonemap exposure to 0.15.** Eskinita uses
+  **0.92** and Bayan Plaza uses **0**, tonemap off. `TscnImporter.cs:871` can only ever produce 0
+  or a Godot value defaulting to 1.0, so **0.15 is not a number any import path can emit**: this
+  is the one map built from code rather than imported, and it was typed by hand.
+
+  Run `ColourGrade.shader`'s own curve on it and a mid-grey linear 0.5 comes out at **0.0391**
+  against Eskinita's **0.4088**, which is **10.5 times darker**. The frame's contrast of 1.12
+  then finishes the job, because `lerp(0.5, c, 1.12)` reaches zero at c = 0.05357. Working that
+  back through the tonemap gives the threshold that matters:
+
+  ⚠️ **every linear pixel below 0.59 clips to pure black before it reaches the screen.** The
+  arena sits under a solid viaduct with the sun shadowed out, so the whole street is under 0.59.
+  Only the emissive HUD, the sign lights and the road paint survive, which is the screenshot
+  exactly.
+
+  **Fix and its guard** are `Hero_Strike_Balance.md` § 3.0. The exposure goes to 0.92, the scene
+  is rebuilt through `IlalimNgTulayPipeline` so the serialized value follows, and the contrast is
+  re-judged against a render rather than against arithmetic. **Not yet applied.**
+
+  ⚠️ **Why four signed-off showcase renders missed it:** they were captured in the editor at v15
+  to v22 against the map's own probe camera, and § 5's palette work was judged on them. The grade
+  is a camera pass and the defect is at its worst under the deck, which is where a showcase
+  camera is least likely to be pointed. `MapGeometryCheck` measures geometry and cannot see
+  brightness at all.
+
+- **The overclock window loses most of its point if Hero Strike cooldowns get long.** § 3.5 sets
+  `OverclockRate` 2.0 for 2.70 s every 24 s, and doubling the rate saves 2.70 s of cooldown
+  whatever the cooldown is. Against today's 6.5 s skill that is **41 per cent of a cycle**;
+  against the 34 s cooldown proposed in `Hero_Strike_Balance.md` § 3.1 it is **7.9 per cent**.
+  A flat saving or a charge would survive a cooldown retune where a multiplier does not.
+  `Hero_Strike_Balance.md` § 4.5 has the proposal; `TODO.md` § 5 is the measurement it replaces.
+
 - Bayan Plaza's monument stands inside the chalk. `TODO.md` § 4.
 
 ---

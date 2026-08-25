@@ -105,7 +105,19 @@ perimeter until the round ends. When the footprints come down, that cap stops ma
 the avoidance starts working for every hazard with no further change. The bots are a canary
 for whether a human can read the floor.
 
-Current state, the per-ability numbers and the plan: `docs/TODO.md` § 1.
+⚠️ **THE PER-ABILITY NUMBERS LIVE IN [`docs/Hero_Strike_Balance.md`](Hero_Strike_Balance.md) § 1.**
+This line pointed at `docs/TODO.md` § 1 until 2026-08-25, and by then § 1 had become peer rematch
+voting, so the most important page in this file pointed at nothing. Nothing held the table at all.
+
+Two findings from writing it that change how this section should be read:
+
+- **The trails are measured as discs and played as corridors.** Rule 1 above names Sean's Fire
+  Trail and Zack's Shock Trail as the reference the budget is set from. That measures ONE DISC,
+  and neither ability places one disc: both drop a disc on a timer for the whole cast, each
+  living longer than the cast. Zack's Bolt Sprint corridor is **27.2 per cent of the box off a
+  6.0 s cooldown**, which is more floor than any ultimate in the game.
+- **The worst credible frame today paints 81.9 per cent of the box**, before props, tsinelas and
+  nameplates. Rule 5 cannot pass against it, and no amount of better rendering fixes 82 per cent.
 
 ---
 
