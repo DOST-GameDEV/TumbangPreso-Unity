@@ -17,14 +17,35 @@ namespace TumbangPreso.Abilities
             Ultimate = new NightmareSeanceVoidAbility();
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE CHEAPEST ULTIMATE IN THE GAME, AND THAT IS THE POINT OF PRICING THEM
+        /// SEPARATELY AT ALL. Seance Void is a zone that drags and slows. It knocks nobody
+        /// down, stuns nobody, scores nothing on its own and ends no round: it is the one
+        /// ultimate that sets up a play rather than being one.
+        ///
+        /// Under a single shared cost it was worth exactly what Thunderstrike was worth, so
+        /// Nemu paid a round-ending price for a round-shaping power. At 90 she casts it most
+        /// rounds, which is what a setup tool should do. 90 is 3.6 lata knockdowns.
+        /// `docs/Hero_Strike_Balance.md` § 3.1.
+        /// </summary>
+        public override float UltimateCost => 90.0f;
+
         private sealed class PhantomPhaseAbility : HeroAbility
         {
             private GameObject _phantomLightGo;
 
             public PhantomPhaseAbility()
+                // ⚠️⚠️ 36 s, UP FROM 8.0, AND IT SITS BETWEEN SEAN'S 34 AND DANTE'S 45. Tag
+                // immunity is the strongest defensive verb in the game: for 2.5 s the taya
+                // simply cannot do their job. It is priced under Carapace only because picking
+                // up a tsinelas cancels it, so it cannot be used to complete the retrieval it
+                // makes possible. 2.5 casts a round.
+                //
+                // ⚠️ A COOLDOWN AND NOT CHARGES: it moves and protects her own body and puts
+                // nothing on the floor. `HeroAbility.MaxCharges` carries the rule.
                 : base("nemu_skill1", "GHOST STEP",
                        "You go part ghost: faster, and the taya cannot tag you. Picking up a tsinelas ends it early.",
-                       8.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.NemuPhase,
+                       36.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.NemuPhase,
                        summary: "Faster, and untaggable. Picking up a tsinelas ends it.",
                        castAction: "hero-nemu-ghoststep",
                        viewmodelAction: "ghost-step")
@@ -95,12 +116,22 @@ namespace TumbangPreso.Abilities
             private GameObject _projectedGhost;
 
             public GhostlyPoltergeistAbility()
+                // ⚠️⚠️ TWO CHARGES A ROUND AND NO RECHARGE. It puts a body on the court that
+                // everyone else has to react to, which is the charge half of the split even
+                // though what it leaves is a pet rather than a zone: the test is whether the
+                // ability creates a thing the other three play around, and Kuro is exactly that.
+                //
+                // ⚠️ THE REACTIVATION IS FREE AND MUST STAY FREE. `CanReactivate` returns the
+                // trip home, and `HeroKit.Fire` deliberately does not gate a reactivation on
+                // readiness. A charge is spent on the way OUT only, so a player can never be
+                // stranded in a possession with no charge left to come back with.
                 : base("nemu_skill2", "ASTRAL PROJECTION",
                        "Sends Kuro your spirit pet out ahead. Possess Kuro, then press again to teleport your body to Kuro.",
-                       9.0f, 6.0f, TumbangPreso.UI.AbilityGlyph.NemuAstralPet,
+                       0.0f, 6.0f, TumbangPreso.UI.AbilityGlyph.NemuAstralPet,
                        summary: "Possess Kuro your spirit pet. Press again to teleport to it.",
                        castAction: "hero-nemu-project",
-                       viewmodelAction: "project-spirit")
+                       viewmodelAction: "project-spirit",
+                       charges: 2)
             {
             }
 
@@ -156,7 +187,18 @@ namespace TumbangPreso.Abilities
                        "Opens a vortex in front of you. It drags players and loose tsinelas in, and slows anyone caught inside.",
                        0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.NemuSeanceVoid,
                        summary: "A vortex ahead. Drags players and loose tsinelas into it.",
-                       telegraphRadius: 3.2f, telegraphRange: 3.5f,
+                       // ⚠️⚠️ 2.8 m, DOWN FROM 3.2, AND THE 0.4 m BUYS THE BOTS BACK.
+                       // `AiTuning.HazardAvoidMaxRadius` is 3.0 and this was the ONE registered
+                       // hazard in the game above it, so it was the one thing the bots were
+                       // told to walk straight through rather than around. Its own note says
+                       // *"when the ability footprints come down, every hazard falls under this
+                       // cap and avoidance starts applying to all of them with no further
+                       // change here. That is the intended end state."* This is that change.
+                       //
+                       // ⚠️ THE AREA COMES BACK AS THE FUNNEL. `docs/VISION.md` § 2 rule 3: a
+                       // smaller flat plane is still a puddle. The void reads vertically now,
+                       // through a deeper core and pulled debris, rather than by being wide.
+                       telegraphRadius: 2.8f, telegraphRange: 3.5f,
                        castAction: "hero-nemu-seance",
                        viewmodelAction: "seance-channel")
             {
@@ -167,8 +209,8 @@ namespace TumbangPreso.Abilities
                 GameServices.Audio?.PlayAt("hero_nemu_ult", ctx.Position);
                 GameServices.Audio?.PlayAt("sfx_ghost_teleport", ctx.Position);
                 Vector3 voidPos = ctx.Position + ctx.Forward * 3.5f;
-                HeroHazards.SpawnSeanceVoid(voidPos, 3.2f, 5.0f, ctx.Motor.PlayerSlot);
-                Visual.AbilityVfx.SpawnVoidWisps(voidPos, 3.2f, 5.0f);
+                HeroHazards.SpawnSeanceVoid(voidPos, 2.8f, 5.0f, ctx.Motor.PlayerSlot);
+                Visual.AbilityVfx.SpawnVoidWisps(voidPos, 2.8f, 5.0f);
             }
         }
     }

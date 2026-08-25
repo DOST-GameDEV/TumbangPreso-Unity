@@ -54,12 +54,45 @@ namespace TumbangPreso.Core
         public const int ScoreUnretrievedPenalty = -5;
         public const float TournamentPenaltyInterval = 1.0f;
 
-        // Hero Strike ultimate economy. Objective play is the primary source;
-        // passive gain only prevents a completely dry round.
-        public const float UltimatePassiveChargePerSecond = 1.0f;
+        // ------------------------------------------------------------------
+        // Hero Strike ultimate economy. EVERY POINT IS EARNED BY AN ACT.
+        //
+        // ⚠️⚠️ `UltimatePassiveChargePerSecond` WAS DELETED ON 2026-08-25 AND MUST NOT COME
+        // BACK. It was 1.0/s against a max of 100, so a player who did nothing at all reached
+        // **90 of the 100 in a 90 s round**: the meter was a 100 second clock wearing an
+        // economy's clothes, and objective play was a bonus on top of a gift.
+        //
+        // `docs/VISION.md` § 4 lists **"Nothing may reward waiting"** as a competitive
+        // requirement and names the ultimate charge in the same breath, so the trickle was
+        // against the mode's own stated rules the whole time. 🧑 2026-08-25: *"make it so that
+        // ult has to be charged and isnt cooldown gated"*.
+        //
+        // ⚠️ THE COST IS PER HERO NOW, at `HeroKit.UltimateCost`, and ranges 90 to 150 against
+        // these earnings. `HeroKit.UltimateMax` 100 is only the meter's full scale.
+        // `docs/Hero_Strike_Balance.md` § 3.1 has both tables and the reasoning for each price.
+        // ------------------------------------------------------------------
+
+        /// <summary>The objective. Unchanged; it was always the right size.</summary>
         public const float UltimateChargeLataKnock = 25.0f;
+
+        /// <summary>The taya's only way to earn, so it stays close to the objective's value.</summary>
         public const float UltimateChargeTag = 20.0f;
-        public const float UltimateChargeLegalThrow = 8.0f;
+
+        /// <summary>
+        /// ⚠️⚠️ NEW, AND IT PAYS THE ACT THE WHOLE GAME IS BUILT AROUND. `docs/VISION.md` § 0:
+        /// *"The tension is the retrieval, not the throw. Throwing is safe and free; going back
+        /// in for your tsinelas is the only moment you can be caught."* Until now the retrieval
+        /// earned NOTHING toward an ultimate and the safe act earned 8, which paid the two
+        /// halves of the game in exactly the wrong order.
+        /// </summary>
+        public const float UltimateChargeOwnSlipperRetrieved = 12.0f;
+
+        /// <summary>
+        /// ⚠️ HALVED FROM 8, for the reason above. A throw costs nothing and risks nothing, so
+        /// it is the one act that should pay least. It still pays something, because a round
+        /// where nobody throws is not a round.
+        /// </summary>
+        public const float UltimateChargeLegalThrow = 4.0f;
 
         // Pektus (Curve Spin) Throwing
         public const float PektusCurveStrength = 14.0f;

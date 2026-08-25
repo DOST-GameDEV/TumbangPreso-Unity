@@ -18,14 +18,49 @@ namespace TumbangPreso.Abilities
             Ultimate = new SupernovaSmashdownAbility();
         }
 
+        /// <summary>
+        /// ⚠️ PRICED ABOVE DANTE AND BELOW CHESKA BECAUSE IT PAYS A POINT DIRECTLY. Supernova's
+        /// blast knocks the lata over, so unlike every other ultimate in the game it converts
+        /// into score without needing a follow-up. It has to be aimed and it can be walked out
+        /// of, which is what keeps it under Thunderstrike's 150.
+        ///
+        /// 130 is 5.2 lata knockdowns. `docs/Hero_Strike_Balance.md` § 3.1.
+        /// </summary>
+        public override float UltimateCost => 130.0f;
+
         private sealed class RocketBurnDashAbility : HeroAbility
         {
             private readonly HashSet<int> _hitSlots = new HashSet<int>();
 
+            /// <summary>
+            /// ⚠️⚠️ 1.0 m, DOWN FROM 1.6, FOR THE REASON WRITTEN UP ON ZACK'S `TrailRadius`: the
+            /// per-disc number was never what the player was looking at. `OnTick` drops one
+            /// every 0.10 s for the whole dash and each lives 3.0 s, so the whole run is live at
+            /// once.
+            ///
+            /// The dash carries `17² / (2 · Balance.Friction) = 4.82 m`, so the corridor was
+            /// `2 · 1.6 · 4.82 + π · 1.6² = 23.5 m² = 12.0 per cent of the box` for a skill,
+            /// against a budget of 3 to 8 per cent. At 1.0 m it is 7.5 per cent and the lane is
+            /// 2.0 m across, which is one body plus margin.
+            /// </summary>
+            private const float TrailRadius = 1.0f;
+
+            /// <summary>See Zack's `MaxLiveDiscs`. Six is the whole dash at the new 0.15 s drop
+            /// rate, so for Sean this is a ceiling rather than a window: his rush is short
+            /// enough that the cap should never bind, and it is here so a future change to the
+            /// dash distance cannot quietly reintroduce the corridor.</summary>
+            private const int MaxLiveDiscs = 6;
+
+            private readonly Queue<GameObject> _live = new Queue<GameObject>();
+
             public RocketBurnDashAbility()
+                // ⚠️⚠️ 34 s, UP FROM 6.5. Longer than Zack's 30 because this dash also KNOCKS
+                // DOWN everyone it passes through, so it is a mobility skill and an opener at
+                // once. 2.6 casts a round. See Zack's `StaticRailGrindAbility` for the reasoning
+                // behind the whole retune and `docs/Hero_Strike_Balance.md` § 3.1 for the table.
                 : base("sean_skill1", "FLAME RUSH",
                        "Rushes you forward in a line of fire. Anyone you run through is knocked down, and the trail burns whoever follows.",
-                       6.5f, 0.6f, TumbangPreso.UI.AbilityGlyph.SeanRush,
+                       34.0f, 0.6f, TumbangPreso.UI.AbilityGlyph.SeanRush,
                        summary: "Rush forward. Knocks down who you hit, burns who follows.",
                        castAction: "hero-sean-dash",
                        viewmodelAction: "thrust-fire")
@@ -45,7 +80,8 @@ namespace TumbangPreso.Abilities
                 if (squash != null) squash.DashStretch(forward, 0.35f);
 
                 ctx.Motor.ApplyImpulse(forward.normalized * 17.0f + Vector3.up * 1.5f);
-                HeroHazards.SpawnFireTrail(ctx.Position, 1.6f, 3.0f, ctx.Motor.PlayerSlot);
+                _live.Clear();
+                DropScorch(ctx);
 
                 // ⚠️ 0.6 s, WHICH IS THE DASH ITSELF AND NOT A SECOND LONGER. The rush is the
                 // shortest power in the game; an aura that outlived it would say Sean was still
@@ -60,11 +96,14 @@ namespace TumbangPreso.Abilities
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
+                // ⚠️ 0.15 s RATHER THAN 0.10. At 1.0 m the discs no longer need to overlap
+                // heavily to read as a continuous line, and a third fewer of them is a third
+                // fewer translucent primitives in a frame `docs/VISION.md` § 2 rule 4 is about.
                 _trailSpawnAccum += dt;
-                if (_trailSpawnAccum >= 0.10f)
+                if (_trailSpawnAccum >= 0.15f)
                 {
                     _trailSpawnAccum = 0.0f;
-                    HeroHazards.SpawnFireTrail(ctx.Position, 1.6f, 3.0f, ctx.Motor.PlayerSlot);
+                    DropScorch(ctx);
                 }
 
                 // Hit check during dash
@@ -90,10 +129,31 @@ namespace TumbangPreso.Abilities
                             // confirm each hit.
                             DizzyStars.Attach(p.transform, 1.5f, UiTheme.HeroFireBright);
                             GameServices.Audio?.PlayAt("bump", p.transform.position);
+                            Visual.HitFeel.Land(p, Visual.HitFeel.Weight.Knockdown,
+                                                UiTheme.HeroFireBright);
                         }
                     }
                 }
             }
+
+            private void DropScorch(AbilityContext ctx)
+            {
+                var disc = HeroHazards.SpawnFireTrail(ctx.Position, TrailRadius, 3.0f,
+                                                      ctx.Motor.PlayerSlot);
+                if (disc == null) return;
+
+                _live.Enqueue(disc);
+
+                while (_live.Count > MaxLiveDiscs)
+                {
+                    var oldest = _live.Dequeue();
+                    if (oldest != null) UnityEngine.Object.Destroy(oldest);
+                }
+            }
+
+            /// <summary>See Zack's. The queue is cleared and the discs are left to their own
+            /// 3.0 s life, which they are meant to outlive the dash by.</summary>
+            protected override void OnEnd(AbilityContext ctx) => _live.Clear();
         }
 
         private sealed class IgnitionCannonAbility : HeroAbility
@@ -101,12 +161,23 @@ namespace TumbangPreso.Abilities
             private readonly SeanHeroKit _kit;
 
             public IgnitionCannonAbility(SeanHeroKit kit)
+                // ⚠️⚠️ TWO CHARGES A ROUND, BACK ONE PER LATA KNOCKDOWN. It leaves an effect on
+                // the court, so it takes charges rather than a cooldown (`HeroAbility.MaxCharges`
+                // has the rule), and paying it off the objective closes the skill's own loop:
+                // charge the throw, land it, get the charge back.
+                //
+                // ⚠️ THE EXPLOSION STAYS HERE AND LEAVES ZACK'S KIT. Sean and Zack shipped as
+                // the same kit in three matching slots, and this is the slot where they split:
+                // Sean is the one whose near miss still counts. `docs/Hero_Strike_Balance.md`
+                // § 4.4.
                 : base("sean_skill2", "IGNITION CANNON",
                        "Loads your next throw with fire. Wherever that tsinelas lands it goes off, so a near miss still counts.",
-                       8.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.SeanIgnite,
+                       0.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.SeanIgnite,
                        summary: "Your next throw explodes where it lands.",
                        castAction: "hero-sean-ignite",
-                       viewmodelAction: "ignite")
+                       viewmodelAction: "ignite",
+                       charges: 2,
+                       rechargedBy: Recharge.LataKnocked)
             {
                 _kit = kit;
             }

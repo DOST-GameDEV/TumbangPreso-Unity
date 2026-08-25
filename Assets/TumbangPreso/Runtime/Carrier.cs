@@ -258,6 +258,24 @@ namespace TumbangPreso
             GetComponentInChildren<Visual.CharacterSquashStretch>()?.Squash(0.13f);
             UI.Hud.ReportStyle(_motor.PlayerSlot, 14.0f, "SNATCH!");
 
+            // ⚠️⚠️ THE RETRIEVAL PAYS THE HERO ECONOMY, AND IT IS WIRED HERE BECAUSE THIS IS THE
+            // ONE FUNNEL EVERY PICKUP GOES THROUGH. `HostPickUp`, the proximity grab and
+            // `Slipper.HostGrab` all arrive here, and the guard above makes it idempotent, so a
+            // reward placed here is paid exactly once per pickup and cannot be paid twice by the
+            // double call the guard exists for.
+            //
+            // `docs/VISION.md` § 0: *"The tension is the retrieval, not the throw. Throwing is
+            // safe and free; going back in for your tsinelas is the only moment you can be
+            // caught."* The ultimate economy paid 8 for the throw and nothing at all for this
+            // until 2026-08-25, which is the two halves of the game rewarded in exactly the
+            // wrong order. `docs/Hero_Strike_Balance.md` § 3.1.
+            //
+            // ⚠️ ONLY YOUR OWN TSINELAS COUNTS. Picking up somebody else's is a denial play and
+            // a fine one, but it is not the run this game is built around and it carries none of
+            // the same risk. `OwnerSlot` is authoritative; a slipper nobody owns pays nothing.
+            if (what.OwnerSlot == _motor.PlayerSlot)
+                _motor.AbilitySystem?.OnOwnSlipperRetrieved();
+
             _throwLockLeft = what.ThrowLock;
         }
 

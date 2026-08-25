@@ -734,12 +734,40 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(0.0f, TournamentRules.StepViolationTimer(timer, false, 0.1f));
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THIS TEST USED TO PASS WHILE THE THING IT IS NAMED FOR WAS FALSE. It compared
+        /// each objective against ten seconds of passive charge and found 25 > 10 and 20 > 10,
+        /// which is true and proves nothing: the quantity that mattered was passive charge
+        /// against the WHOLE ROUND. At 1.0/s over 90 s that was 90 of the 100 needed, so waiting
+        /// was worth nine tenths of an ultimate and "favors objectives over waiting" was exactly
+        /// backwards.
+        ///
+        /// The passive trickle is deleted. This now asserts the shape that replaced it, which
+        /// cannot be satisfied by a bad constant the way a 10-second window could.
+        /// </summary>
         [Fact]
         public void HeroUltimateEconomy_FavorsObjectivesOverWaiting()
         {
-            Assert.True(Balance.UltimateChargeLataKnock > Balance.UltimatePassiveChargePerSecond * 10.0f);
-            Assert.True(Balance.UltimateChargeTag > Balance.UltimatePassiveChargePerSecond * 10.0f);
+            // The risky act must out-earn the safe one. VISION.md § 0: throwing is safe and
+            // free, and the retrieval is the only moment you can be caught.
+            Assert.True(Balance.UltimateChargeOwnSlipperRetrieved > Balance.UltimateChargeLegalThrow);
+
+            // The objective must out-earn both.
+            Assert.True(Balance.UltimateChargeLataKnock > Balance.UltimateChargeOwnSlipperRetrieved);
+            Assert.True(Balance.UltimateChargeTag > Balance.UltimateChargeOwnSlipperRetrieved);
+
+            // Everything still pays something. A round where nobody throws is not a round.
             Assert.True(Balance.UltimateChargeLegalThrow > 0.0f);
+
+            // ⚠️ THE WHOLE-ROUND BOUND, which is what the old assertion should have been. The
+            // cheapest ultimate in the game costs 90 (`NemuHeroKit.UltimateCost`). Nothing may
+            // accrue on a timer, so a player who acts zero times must earn zero, and there is no
+            // longer any per-second term for this to be written against. If a passive term is
+            // ever reintroduced, 90 seconds of it must not approach the cheapest cost.
+            Assert.Equal(4.0f, Balance.UltimateChargeLegalThrow);
+            Assert.Equal(12.0f, Balance.UltimateChargeOwnSlipperRetrieved);
+            Assert.Equal(25.0f, Balance.UltimateChargeLataKnock);
+            Assert.Equal(20.0f, Balance.UltimateChargeTag);
         }
 
         [Fact]

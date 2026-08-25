@@ -193,6 +193,16 @@ namespace TumbangPreso.Tests
             }
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE HALFWAY POINT IS HALF OF `UltimateCost`, NOT HALF OF 100, AND WRITING 50.0f
+        /// HERE IS WHAT BROKE THIS TEST. Until 2026-08-25 every hero's ultimate cost the same
+        /// `HeroKit.UltimateMax`, so the two were interchangeable and a literal was harmless.
+        /// They are not interchangeable now: Zack pays 150 because Thunderstrike cannot miss,
+        /// and Nemu pays 90 because Seance Void ends no round on its own.
+        ///
+        /// Derived from the kit rather than restated, so this keeps testing "half fills half the
+        /// bar" through any future retune instead of testing one hero's price.
+        /// </summary>
         [Test]
         public void HeroKit_ChargesAndActivates_Ultimate()
         {
@@ -200,11 +210,13 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(0.0f, kit.UltimateCharge);
             Assert.IsFalse(kit.IsUltimateReady);
 
-            kit.AddUltimateCharge(50.0f);
+            float half = kit.UltimateCost * 0.5f;
+
+            kit.AddUltimateCharge(half);
             Assert.AreEqual(0.5f, kit.UltimateRatio, 0.001f);
             Assert.IsFalse(kit.IsUltimateReady);
 
-            kit.AddUltimateCharge(50.0f);
+            kit.AddUltimateCharge(half);
             Assert.AreEqual(1.0f, kit.UltimateRatio, 0.001f);
             Assert.IsTrue(kit.IsUltimateReady);
         }

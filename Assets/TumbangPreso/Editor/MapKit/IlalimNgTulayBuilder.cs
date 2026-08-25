@@ -188,8 +188,44 @@ namespace TumbangPreso.EditorTools.MapKit
             mapRoot.transform.position = Vector3.zero;
             mapRoot.AddComponent<EnvColourPass>();
 
+            // ⚠️⚠️ THE FOURTH ARGUMENT IS THE TONEMAP EXPOSURE AND IT USED TO READ 0.15, WHICH
+            // IS WHY THE SHIPPED PLAYER RENDERED THIS MAP BLACK. 🧑, off the .exe: *"New map is
+            // just black wtf, i cant see shit properly"*.
+            //
+            // Nothing about the lighting rig was wrong. `BuildLighting` sets sun 1.15, trilight
+            // ambient and a 0.85/0.90/0.98 sky, and the scene file carries all of it correctly.
+            // `ColourGrade.shader` then multiplies the WHOLE FRAME by this number before the
+            // ACES curve, so it is the one value in the map that can darken everything at once.
+            //
+            // Eskinita runs 0.92 and Bayan Plaza runs 0 (tonemap off). `TscnImporter` can only
+            // ever emit 0 or a Godot `tonemap_exposure` that defaults to 1.0, so ⚠️ **0.15 is
+            // not a number any import path can produce.** This is the one map built from code
+            // rather than imported, and the value was typed by hand.
+            //
+            // Run the shader's own curve on it, with `_White` 1.85 so the divisor is
+            // 1.85/1.9 = 0.9737. A mid-grey linear 0.5:
+            //
+            //     x      = 0.5 * 0.15 * 0.6 / 0.9737                        = 0.0462
+            //     mapped = x(2.51x + 0.03) / (x(2.43x + 0.59) + 0.14)       = 0.0391
+            //
+            // The same pixel at 0.92 is 0.4088, so the map rendered **10.5x darker than
+            // Eskinita**. The frame contrast of 1.12 then finished it: `lerp(0.5, c, 1.12)`
+            // reaches zero at c = 0.05357, which works back through the tonemap to an input
+            // threshold of 0.5922. ⚠️⚠️ **Every linear pixel below 0.59 clipped to pure black
+            // before it reached the screen.** The arena sits under a solid viaduct with the sun
+            // shadowed out, so the whole street was under that threshold and only the emissive
+            // HUD, the sign lights and the road paint survived.
+            //
+            // ⚠️ WHY FOUR SIGNED-OFF SHOWCASE RENDERS MISSED IT. The grade is a camera pass, the
+            // defect is worst under the deck, and a showcase camera is not pointed there.
+            // `MapGeometryCheck` measures geometry and cannot see brightness at all.
+            // `MapGradeSanityTests` now asserts the band so this cannot recur silently.
+            //
+            // ⚠️ THE CONTRAST STAYS 1.12 FOR NOW. It is defensible at a correct exposure and it
+            // is a judgement to make against a render, not against arithmetic. Eskinita's 1.03
+            // is the fallback if the street reads too crushed at 0.92.
             var grade = mapRoot.AddComponent<MapGrade>();
-            grade.Set(1.05f, 1.12f, 1.15f, 0.15f, 1.85f);
+            grade.Set(1.05f, 1.12f, 1.15f, 0.92f, 1.85f);
 
             BuildLighting(mapRoot.transform);
             BuildGameplayRig(mapRoot.transform);

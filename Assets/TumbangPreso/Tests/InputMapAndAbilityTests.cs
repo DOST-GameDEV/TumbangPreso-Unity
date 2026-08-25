@@ -6,6 +6,7 @@ using TumbangPreso.Settings;
 using TumbangPreso.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.TestTools;
 
 namespace TumbangPreso.Tests
 {
@@ -218,26 +219,197 @@ namespace TumbangPreso.Tests
         }
 
         /// <summary>
-        /// ⚠️⚠️ NO CHARGE IS EARNED WHILE THE ROUND CLOCK IS STOPPED. 🧑 2026-08-23: *"i js
-        /// want it to pause when the game isnt ongoing like during the buffer period in between
-        /// rounds it should pause"*. `Tick` used to trickle on every frame it ran, so a player
-        /// who took their time in the warm-up arrived at the whistle with free charge.
+        /// ⚠️⚠️ TIME PASSING EARNS NOTHING, IN OR OUT OF PRACTICE, AND THIS TEST USED TO ASSERT
+        /// THE OPPOSITE. It was written when charge trickled at `UltimatePassiveChargePerSecond`
+        /// 1.0/s and it checked the two halves of that: frozen in practice, resuming when live.
+        /// The first half was right. The second half was asserting a bug.
+        ///
+        /// At 1.0/s against a max of 100, a player who did NOTHING reached 90 of the 100 needed
+        /// in a 90 s round, so the meter was a 100 second clock and the objectives were a bonus
+        /// on top. `docs/VISION.md` § 4 lists **"Nothing may reward waiting"** as a competitive
+        /// requirement and names the ultimate charge in the same sentence, so the trickle was
+        /// against the mode's own rules the whole time it was passing this test.
+        ///
+        /// 🧑 2026-08-25: *"make it so that ult has to be charged and isnt cooldown gated"*.
+        /// The trickle is deleted, so both halves now assert zero and the test is named for what
+        /// it actually checks. `docs/Hero_Strike_Balance.md` § 2.1.
         /// </summary>
         [Test]
-        public void PracticeModeFreezesTheBank()
+        public void TimePassingEarnsNoUltimateCharge()
         {
             var kit = new ProbeKit { PracticeMode = true };
 
             for (int i = 0; i < 120; i++) kit.Tick(null, 1.0f / 60.0f);
 
             Assert.AreEqual(0.0f, kit.UltimateCharge, 0.0001f,
-                "the passive trickle ran during practice, so warm-up time earns an ultimate");
+                "charge accrued during practice, so warm-up time earns an ultimate");
 
+            // A whole 90 s round at 60 Hz, live, with the player doing nothing at all.
             kit.PracticeMode = false;
-            for (int i = 0; i < 120; i++) kit.Tick(null, 1.0f / 60.0f);
+            for (int i = 0; i < 90 * 60; i++) kit.Tick(null, 1.0f / 60.0f);
 
-            Assert.Greater(kit.UltimateCharge, 0.0f,
-                "the passive trickle did not resume once the round went live");
+            Assert.AreEqual(0.0f, kit.UltimateCharge, 0.0001f,
+                "a full live round of standing still produced ultimate charge. Every point must "
+                + "be earned by an act: see Balance's note on why the passive trickle was "
+                + "deleted, and do not reintroduce one");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE FIVE ULTIMATES DO NOT COST THE SAME, AND UNTIL 2026-08-25 THEY DID. The
+        /// price was `HeroKit.UltimateMax`, a `const` shared by every kit, so a Thunderstrike
+        /// that stuns everyone within 4.5 m of Zack's own feet with no aim and no counterplay
+        /// cost exactly what Nemu's Seance Void costs, which is a zone that drags and slows and
+        /// ends no round on its own.
+        ///
+        /// This asserts the ORDER rather than the five numbers, because the order is the design
+        /// decision and the numbers are a tuning pass waiting on `BotBehaviourProbe`. The
+        /// reasoning for each is on the `UltimateCost` override in its own kit, and the table is
+        /// `docs/Hero_Strike_Balance.md` § 3.1.
+        /// </summary>
+        [Test]
+        public void UltimateCostsAreRankedByHowMuchTheUltimateSwingsARound()
+        {
+            float zack = HeroAbilitySystem.CreateKitFor("zack").UltimateCost;
+            float cheska = HeroAbilitySystem.CreateKitFor("cheska").UltimateCost;
+            float sean = HeroAbilitySystem.CreateKitFor("sean").UltimateCost;
+            float dante = HeroAbilitySystem.CreateKitFor("dante").UltimateCost;
+            float nemu = HeroAbilitySystem.CreateKitFor("nemu").UltimateCost;
+
+            // Cannot-miss burst at the top; the setup zone at the bottom.
+            Assert.Greater(zack, cheska, "Thunderstrike must cost more than Glacial Nova");
+            Assert.Greater(cheska, sean, "Glacial Nova must cost more than Supernova");
+            Assert.Greater(sean, dante, "Supernova must cost more than Titan Fissure");
+            Assert.Greater(dante, nemu, "Titan Fissure must cost more than Seance Void");
+
+            // ⚠️ AND EVERY ONE MUST BE REACHABLE IN A ROUND. The best objective in the game pays
+            // `UltimateChargeLataKnock` 25, so a cost past 175 is more than seven knockdowns and
+            // the power would effectively not exist. This is the bound, not a target.
+            Assert.LessOrEqual(zack, Balance.UltimateChargeLataKnock * 7.0f,
+                "the most expensive ultimate is out of reach inside a single round");
+
+            // And none may be so cheap it is spammable off throws alone.
+            Assert.GreaterOrEqual(nemu, Balance.UltimateChargeLegalThrow * 15.0f,
+                "the cheapest ultimate can be bought with throws, which are safe and free");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ AN ABILITY IS EITHER ON A COOLDOWN OR ON CHARGES, NEVER BOTH, AND NEVER NEITHER.
+        /// A charge ability carries `Cooldown` 0, so if one ever also acquired a cooldown the
+        /// deck would draw it as Cooling while it still had charges in hand, and if a cooldown
+        /// ability lost its cooldown it would be castable every frame with nothing to say so.
+        /// Both are silent failures in play and neither is visible in a review of the one file
+        /// that would cause it.
+        /// </summary>
+        [Test]
+        public void EveryShippedAbilityIsGatedByExactlyOneOfCooldownOrCharges()
+        {
+            foreach (string hero in new[] { "sean", "zack", "dante", "cheska", "nemu" })
+            {
+                var kit = HeroAbilitySystem.CreateKitFor(hero);
+
+                foreach (var skill in new[] { kit.Skill1, kit.Skill2 })
+                {
+                    Assert.NotNull(skill, hero + " is missing a skill");
+
+                    if (skill.UsesCharges)
+                    {
+                        Assert.AreEqual(0.0f, skill.Cooldown, 0.0001f,
+                            $"{hero}/{skill.Id} has charges AND a {skill.Cooldown}s cooldown");
+                        Assert.AreEqual(skill.MaxCharges, skill.ChargesRemaining,
+                            $"{hero}/{skill.Id} does not start a round full");
+                    }
+                    else
+                    {
+                        // ⚠️ 30 s IS THE FLOOR AND IT IS 🧑'S NUMBER, NOT AN INFERENCE.
+                        // 2026-08-25: *"make it long tho like 30seconds to 45 seconds"*. At the
+                        // old 6 to 9 s cooldowns four seats cast 44 to 56 times in a 90 s round,
+                        // one every 1.8 seconds, and nothing at that rate is a decision.
+                        Assert.GreaterOrEqual(skill.Cooldown, 30.0f,
+                            $"{hero}/{skill.Id} cools in {skill.Cooldown}s, under the 30s floor");
+                        Assert.LessOrEqual(skill.Cooldown, 45.0f,
+                            $"{hero}/{skill.Id} cools in {skill.Cooldown}s, over the 45s ceiling");
+                    }
+                }
+
+                // ⚠️ THE ULTIMATE IS GATED BY THE METER AND MUST NOT ALSO CARRY A COOLDOWN.
+                // Two gates on one power means a player who earned 150 points can still be told
+                // to wait, which is the refusal `docs/Hero_Strike_UI.md` § 6 has no answer for.
+                Assert.AreEqual(0.0f, kit.Ultimate.Cooldown, 0.0001f,
+                    hero + "'s ultimate carries a cooldown as well as a charge cost");
+                Assert.IsFalse(kit.Ultimate.UsesCharges,
+                    hero + "'s ultimate is on ability charges as well as the ultimate meter");
+            }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A RECHARGE IS AN EVENT, NEVER A TIMER, AND ONLY SOME SKILLS GET ONE. A kit where
+        /// everything comes back is a kit with cooldowns and extra bookkeeping, which is the
+        /// thing the charge split was introduced to get away from. This pins both halves: that
+        /// the recharging skills recharge off the right event, and that the rest genuinely run
+        /// out. `docs/Hero_Strike_Balance.md` § 3.1.
+        /// </summary>
+        [Test]
+        public void ChargesComeBackOnPlayAndOnlyForTheSkillsThatShould()
+        {
+            var cheska = HeroAbilitySystem.CreateKitFor("cheska");
+
+            // ⚠️ A REAL MOTOR, BECAUSE `OnActivate` SPAWNS. Cheska's barricade reads
+            // `ctx.Position` and `ctx.Forward` off the motor's transform and then builds the
+            // wall, so a null context throws before the charge bookkeeping this test is about
+            // ever runs. `Nemu_AstralProjection_SupportsReactivation` in `RuntimeLayerTests`
+            // sets one up the same way.
+            var go = new GameObject("ChargeProbeMotor");
+
+            // ⚠️⚠️ THE BARRICADE'S ICE CHIPS CALL `Destroy` ON A SELF-TIMER AND UNITY LOGS AN
+            // ERROR FOR THAT OUTSIDE PLAY MODE. It is an EditMode artefact and nothing else:
+            // `Destroy` is correct at runtime, which is the only place the barricade is ever
+            // built for real, and the test framework promotes any unexpected `[Error]` to a
+            // failure. Suppressed narrowly and restored in `finally`, so it cannot mask an error
+            // from a later test.
+            bool ignoring = LogAssert.ignoreFailingMessages;
+            LogAssert.ignoreFailingMessages = true;
+
+            try
+            {
+                var motor = go.AddComponent<CharacterMotor>();
+                var ctx = new AbilityContext(motor, null, null);
+
+                // The barricade is one charge, refilled by the retrieval. Spend it, then take
+                // the risk the whole game is built around and get it back.
+                Assert.AreEqual(1, cheska.Skill2.MaxCharges);
+                cheska.Skill2.Activate(ctx);
+                Assert.AreEqual(0, cheska.Skill2.ChargesRemaining, "the barricade did not spend");
+
+                cheska.OnRechargeEvent(HeroAbility.Recharge.LataKnocked);
+                Assert.AreEqual(0, cheska.Skill2.ChargesRemaining,
+                    "the barricade recharged off the wrong event");
+
+                cheska.OnRechargeEvent(HeroAbility.Recharge.OwnSlipperRetrieved);
+                Assert.AreEqual(1, cheska.Skill2.ChargesRemaining,
+                    "retrieving her own tsinelas did not hand the barricade back");
+
+                // ⚠️ AND IT CANNOT OVERFILL. Two retrievals must not bank two walls.
+                cheska.OnRechargeEvent(HeroAbility.Recharge.OwnSlipperRetrieved);
+                Assert.AreEqual(1, cheska.Skill2.ChargesRemaining,
+                    "the barricade banked past its cap");
+
+                // The frost sheet is deliberately one of the ones that runs out.
+                Assert.AreEqual(HeroAbility.Recharge.Never, cheska.Skill1.RechargedBy,
+                    "the frost sheet acquired a recharge; it is meant to run out");
+
+                var sean = HeroAbilitySystem.CreateKitFor("sean");
+                sean.Skill2.Activate(ctx);
+                Assert.AreEqual(1, sean.Skill2.ChargesRemaining, "the cannon did not spend");
+
+                sean.OnRechargeEvent(HeroAbility.Recharge.LataKnocked);
+                Assert.AreEqual(2, sean.Skill2.ChargesRemaining,
+                    "knocking the lata over did not hand the ignition charge back");
+            }
+            finally
+            {
+                LogAssert.ignoreFailingMessages = ignoring;
+                Object.DestroyImmediate(go);
+            }
         }
 
         /// <summary>

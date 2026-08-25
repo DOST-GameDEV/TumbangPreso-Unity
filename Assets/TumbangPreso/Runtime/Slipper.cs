@@ -550,7 +550,18 @@ namespace TumbangPreso
         {
             if (Affinity == SlipperAffinity.FireExplosive)
             {
-                Abilities.HeroHazards.CreateExplosion(transform.position, 4.5f, 13.0f, 1.4f, _throwerSlot, "BOOM!");
+                // ⚠️⚠️ 2.6 m, DOWN FROM 4.5, BECAUSE THIS IS A SKILL'S PAYLOAD AND NOT AN
+                // ULTIMATE. At 4.5 m it covered **32.5 per cent of the 14 by 14 box**, the same
+                // area as Zack's Thunderstrike, off Sean's second skill. `docs/VISION.md` § 2
+                // rule 1 asks a skill for 1.8 to 2.5 m and rule 2 reserves "big" for one
+                // ultimate at a time.
+                //
+                // ⚠️ THE REACH IS REPLACED BY A HARD VERTICAL, WHICH IS RULE 3. A smaller flat
+                // blast is still a puddle, so `CreateExplosion` is given a taller, faster
+                // silhouette to work with rather than a wider one: the knockback is unchanged
+                // at 13.0 and the stun at 1.4 s, so what a direct hit DOES is untouched. What
+                // changed is how far away it can be felt by someone who was nowhere near it.
+                Abilities.HeroHazards.CreateExplosion(transform.position, 2.6f, 13.0f, 1.4f, _throwerSlot, "BOOM!");
             }
             else if (Affinity == SlipperAffinity.ElectricZap)
             {
@@ -563,10 +574,25 @@ namespace TumbangPreso
                     foreach (var p in round.Players)
                     {
                         if (p == null || p.PlayerSlot == _throwerSlot) continue;
-                        if (Vector3.Distance(transform.position, p.transform.position) <= 5.5f)
+
+                        // ⚠️⚠️ 2.0 m, DOWN FROM 5.5, AND 5.5 WAS THE WORST NUMBER IN THE GAME.
+                        // It staggered everyone within **48 per cent of the box** and drew
+                        // NOTHING on the floor to say so, which is worse than a puddle: a
+                        // player knocked about by a tsinelas that landed six metres away has
+                        // been given no way to understand what hit them, and no telegraph
+                        // rule can help because there was no telegraph to be wrong.
+                        //
+                        // ⚠️ AND CUTTING IT IS WHAT SPLITS ZACK FROM SEAN. Their kits shipped
+                        // as three matching slots, and this was Zack's copy of Sean's Ignition
+                        // Cannon. Static Charge is a SPEED skill now: the throw flies faster
+                        // and flatter and jolts whoever it actually lands on.
+                        // `docs/Hero_Strike_Balance.md` § 4.4.
+                        if (Vector3.Distance(transform.position, p.transform.position) <= 2.0f)
                         {
                             p.ApplyStagger(1.5f);
                             Visual.DizzyStars.Attach(p.transform, 1.5f, UI.UiTheme.HeroElectricBright);
+                            Visual.HitFeel.Land(p, Visual.HitFeel.Weight.Jolt,
+                                                UI.UiTheme.HeroElectricBright);
                         }
                     }
                 }

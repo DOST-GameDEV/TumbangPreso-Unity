@@ -431,8 +431,12 @@ namespace TumbangPreso.PlayTests
             /// </summary>
             private void CountUltimate(HeroKit kit)
             {
+                // ⚠️ THE THRESHOLD IS THE KIT'S OWN COST, NOT `UltimateMax`. Since 2026-08-25
+                // each hero pays a different price (90 for Nemu up to 150 for Zack), so half of
+                // the shared 100 is above Nemu's whole meter and would have counted every one
+                // of her casts twice while missing Zack's entirely.
                 _lastUltimate.TryGetValue(kit, out float previous);
-                if (previous > HeroKit.UltimateMax * 0.5f && kit.UltimateCharge <= 0.01f)
+                if (previous > kit.UltimateCost * 0.5f && kit.UltimateCharge <= 0.01f)
                     UltimateUses++;
                 _lastUltimate[kit] = kit.UltimateCharge;
             }

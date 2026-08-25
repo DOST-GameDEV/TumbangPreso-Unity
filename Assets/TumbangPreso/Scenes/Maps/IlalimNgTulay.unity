@@ -105631,7 +105631,7 @@ MonoBehaviour:
   _brightness: 1.05
   _contrast: 1.12
   _saturation: 1.15
-  _exposure: 0.15
+  _exposure: 0.92
   _white: 1.85
 --- !u!114 &677398967
 MonoBehaviour:

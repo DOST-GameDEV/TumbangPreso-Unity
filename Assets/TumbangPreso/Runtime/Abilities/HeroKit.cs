@@ -16,8 +16,41 @@ namespace TumbangPreso.Abilities
         public HeroAbility Ultimate { get; protected set; }
 
         public float UltimateCharge { get; protected set; }
+
+        /// <summary>
+        /// ⚠️⚠️ KEPT AS THE METER'S FULL-SCALE VALUE, NOT AS THE PRICE. It used to be both, and
+        /// that is why every hero's ultimate cost the same. <see cref="UltimateCost"/> is the
+        /// price now; this is only what "100 per cent" means on the widget.
+        ///
+        /// It stays a `const` because a dozen tests and the HUD arithmetic read it, and because
+        /// a meter whose full scale varies per hero cannot be compared across the four cards on
+        /// a spectator's screen.
+        /// </summary>
         public const float UltimateMax = 100.0f;
-        public float UltimateRatio => Mathf.Clamp01(UltimateCharge / UltimateMax);
+
+        /// <summary>
+        /// What THIS hero's ultimate costs, in the same points <see cref="UltimateCharge"/> is
+        /// measured in.
+        ///
+        /// ⚠️⚠️ IT IS PER HERO BECAUSE THE FIVE ULTIMATES ARE NOT WORTH THE SAME. Until
+        /// 2026-08-25 a Thunderstrike that stuns everyone within 4.5 m of your own feet, needs
+        /// no aim and has no counterplay cost exactly what a Seance Void costs, which is a zone
+        /// that drags and slows and ends no round on its own. One price for five different
+        /// powers is a balance lever nobody was pulling.
+        ///
+        /// The costs and the reasoning behind each are `docs/Hero_Strike_Balance.md` § 3.1.
+        /// A kit that does not override this pays the meter's full scale, which is the old
+        /// behaviour exactly.
+        /// </summary>
+        public virtual float UltimateCost => UltimateMax;
+
+        /// <summary>
+        /// ⚠️ THE RATIO IS AGAINST THE COST, NOT AGAINST THE SCALE, because it is what the HUD
+        /// fills. A player whose ultimate costs 90 must see a full bar at 90, not at 100, or the
+        /// widget lies about a power they can already cast. Clamped, so a cheap ultimate simply
+        /// reads full early rather than overflowing.
+        /// </summary>
+        public float UltimateRatio => Mathf.Clamp01(UltimateCharge / Mathf.Max(1.0f, UltimateCost));
 
         /// <summary>
         /// True whenever the round clock is NOT running: the warm-up before round one, and the
@@ -48,7 +81,7 @@ namespace TumbangPreso.Abilities
         /// `Ultimate.IsReady` is still consulted so a practice cast cannot re-fire mid-animation.
         /// </summary>
         public bool IsUltimateReady =>
-            (PracticeMode || UltimateCharge >= UltimateMax) && (Ultimate == null || Ultimate.IsReady);
+            (PracticeMode || UltimateCharge >= UltimateCost) && (Ultimate == null || Ultimate.IsReady);
 
         public HeroKit(string heroId, string heroName)
         {
@@ -57,26 +90,54 @@ namespace TumbangPreso.Abilities
             UltimateCharge = 0.0f;
         }
 
+        /// <summary>
+        /// ⚠️ CLAMPED TO THE COST, NOT TO THE SCALE. A hero whose ultimate costs 90 stops
+        /// accruing at 90; banking 100 for a 90-point power would let a player carry ten points
+        /// of head start into the next ultimate, which is a small reward for having already had
+        /// one and compounds across a match.
+        /// </summary>
         public void AddUltimateCharge(float amount)
         {
-            UltimateCharge = Mathf.Clamp(UltimateCharge + amount, 0.0f, UltimateMax);
+            UltimateCharge = Mathf.Clamp(UltimateCharge + amount, 0.0f, UltimateCost);
+        }
+
+        /// <summary>
+        /// The match telling the kit that something happened which some abilities pay for.
+        ///
+        /// ⚠️⚠️ ROUTED THROUGH THE KIT RATHER THAN MATCHED BY ABILITY ID AT THE CALL SITE. A
+        /// lookup keyed by id is a second place to forget, which is the same reasoning
+        /// `HeroAbility.Glyph` and `TelegraphRadius` are written down for: a new hero with a
+        /// recharging skill must not be able to compile while silently never recharging.
+        /// </summary>
+        public void OnRechargeEvent(HeroAbility.Recharge what)
+        {
+            if (what == HeroAbility.Recharge.Never) return;
+
+            if (Skill1 != null && Skill1.RechargedBy == what) Skill1.GrantCharge();
+            if (Skill2 != null && Skill2.RechargedBy == what) Skill2.GrantCharge();
         }
 
         public virtual void Tick(AbilityContext ctx, float dt)
         {
-            // Objective play is the main source of charge. The slow passive trickle
-            // prevents a dry round without rewarding ability spam or hiding.
+            // ⚠️⚠️ THERE IS NO PASSIVE CHARGE HERE ANY MORE, AND ITS ABSENCE IS THE FEATURE.
+            // DELETED 2026-08-25. DO NOT ADD A TRICKLE BACK.
             //
-            // ⚠️⚠️ IT DOES NOT RUN WHILE THE ROUND CLOCK IS STOPPED. This used to trickle on
-            // every frame the kit ticked, warm-up and intermission included, which is what
-            // produced *"why is ult charging up at ready screen"*. A player who sat through the
-            // practice period arrived at the whistle with charge nobody earned, and the longer
-            // they waited before pressing ready the more they got. Charge is a reward for
-            // objective play; time spent not playing is not objective play.
-            if (!PracticeMode && UltimateCharge < UltimateMax)
-            {
-                AddUltimateCharge(Balance.UltimatePassiveChargePerSecond * dt);
-            }
+            // `Balance.UltimatePassiveChargePerSecond` was 1.0 against a max of 100, so a
+            // player who did NOTHING AT ALL reached 90 of the 100 in a 90 s round. Objective
+            // play was worth 25 for knocking the lata over and 20 for a tag, so a good round
+            // added one ultimate on top of one that time was going to hand over regardless.
+            // ⚠️ **The meter was a 100 second clock with a small bonus**, which is the thing
+            // 🧑 2026-08-25 asked to stop: *"make it so that ult has to be charged and isnt
+            // cooldown gated"*.
+            //
+            // It also sat directly against `docs/VISION.md` § 4, which lists **"Nothing may
+            // reward waiting"** as a competitive requirement and names the ultimate charge in
+            // the same sentence. The previous pass here fixed the half of that which was
+            // visible (the trickle running during the warm-up) and left the half that was not.
+            //
+            // Every point is now earned by an act: knocking the lata over, tagging an attacker,
+            // retrieving your own tsinelas, or releasing a legal throw.
+            // `docs/Hero_Strike_Balance.md` § 3.1 has the table and what each is worth.
 
             // ⚠️ COOLDOWNS TICK IN PRACTICE, DELIBERATELY. The point of a practice range is to
             // learn the real rhythm of the kit, and a kit with no cooldowns teaches the wrong
@@ -137,7 +198,7 @@ namespace TumbangPreso.Abilities
             // meter is told the meter is empty, which is the fact they can do something about,
             // rather than being told to wait for a cast that would be refused anyway.
             if (!Ultimate.IsReady) return CastOutcome.Cooling;
-            if (!PracticeMode && UltimateCharge < UltimateMax) return CastOutcome.NoCharge;
+            if (!PracticeMode && UltimateCharge < UltimateCost) return CastOutcome.NoCharge;
             if (ctx != null && ctx.Motor != null && !ctx.Motor.CanAct()) return CastOutcome.CannotAct;
             if (!Ultimate.CanActivate(ctx)) return CastOutcome.CannotAct;
 

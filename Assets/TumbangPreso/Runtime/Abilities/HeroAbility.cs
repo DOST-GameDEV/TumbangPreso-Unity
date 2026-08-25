@@ -49,7 +49,78 @@ namespace TumbangPreso.Abilities
         public float CooldownRemaining { get; protected set; }
         public float DurationRemaining { get; protected set; }
         public bool IsActive => DurationRemaining > 0.0f;
-        public bool IsReady => CooldownRemaining <= 0.0f;
+
+        // ------------------------------------------------------------------ charges
+        //
+        // ⚠️⚠️ AN ABILITY IS EITHER ON A COOLDOWN OR ON CHARGES, NEVER ON BOTH, AND WHICH ONE IT
+        // GETS FOLLOWS WHAT IT DOES RATHER THAN WHICH SLOT IT IS IN.
+        //
+        // 🧑 2026-08-25, on a build where four seats cast 44 to 56 times in a 90 s round:
+        // *"game feels awkward when theres 20 abilities at once and i think the fix to this is
+        // making the abilities timers longer? ... maybe make it like valorant wherein they have
+        // charges for their skill that they can use once per round"*, then *"for some skills
+        // they can have a cooldown instead of charges that reset each round, make it long tho
+        // like 30 seconds to 45 seconds"*.
+        //
+        // The rule the split follows, so it is not decided case by case:
+        //
+        //  * An ability that LEAVES AN OBJECT ON THE FLOOR takes CHARGES. A wall or a zone is a
+        //    decision the whole court then plays around, and scarcity is what makes placing it
+        //    interesting. Spending your last one is meant to hurt.
+        //  * An ability that MOVES OR PROTECTS YOUR OWN BODY takes a LONG COOLDOWN. A dash or an
+        //    armour is a reaction, and a reaction you have permanently spent is a character who
+        //    stops being able to play. A player holding their last escape charge does not
+        //    escape, they hoard, and `docs/VISION.md` § 4 forbids anything that rewards waiting.
+        //
+        // `docs/Hero_Strike_Balance.md` § 3.1 has the per-ability table and the reasoning.
+
+        /// <summary>
+        /// How many casts this ability gets per round, or **0 for a cooldown ability**.
+        ///
+        /// ⚠️ ZERO IS THE DEFAULT AND MEANS "NOT A CHARGE ABILITY", not "no casts". Every
+        /// ability shipped before 2026-08-25 is a cooldown ability and none of them had to
+        /// change to keep working.
+        /// </summary>
+        public int MaxCharges { get; protected set; }
+
+        public bool UsesCharges => MaxCharges > 0;
+
+        /// <summary>How many are left this round. Refilled by <see cref="ResetForRound"/>.</summary>
+        public int ChargesRemaining { get; protected set; }
+
+        /// <summary>
+        /// What play, if anything, hands a charge back mid-round.
+        ///
+        /// ⚠️⚠️ IT IS AN EVENT, NEVER A TIMER, AND THAT IS THE WHOLE POINT OF THE SPLIT. A charge
+        /// that comes back on a clock is a cooldown with extra bookkeeping, and it re-creates the
+        /// problem the charges were introduced to solve.
+        /// </summary>
+        public enum Recharge
+        {
+            /// <summary>It runs out. Most charge abilities.</summary>
+            Never,
+
+            /// <summary>
+            /// ⚠️ THE ACT THE WHOLE GAME IS BUILT AROUND, AND IT USED TO PAY NOTHING AT ALL.
+            /// `docs/VISION.md` § 0: *"The tension is the retrieval, not the throw."* Going back
+            /// in for your tsinelas is the only moment you can be caught, and before this the
+            /// game's entire reward for it was the tsinelas.
+            /// </summary>
+            OwnSlipperRetrieved,
+
+            /// <summary>The objective. Closes the loop on a skill that buffs a throw: charge it,
+            /// land it, get the charge back.</summary>
+            LataKnocked,
+        }
+
+        public Recharge RechargedBy { get; protected set; } = Recharge.Never;
+
+        /// <summary>
+        /// ⚠️⚠️ READY MEANS TWO DIFFERENT THINGS AND BOTH CALLERS USED TO ASSUME THE COOLDOWN
+        /// ONE. A charge ability's cooldown is 0 forever, so before this every charge ability
+        /// read as permanently ready and could be cast past empty.
+        /// </summary>
+        public bool IsReady => UsesCharges ? ChargesRemaining > 0 : CooldownRemaining <= 0.0f;
 
         public float CooldownRatio => Cooldown > 0.0f ? Mathf.Clamp01(CooldownRemaining / Cooldown) : 0.0f;
         public float DurationRatio => Duration > 0.0f ? Mathf.Clamp01(DurationRemaining / Duration) : 0.0f;
@@ -101,7 +172,9 @@ namespace TumbangPreso.Abilities
                               float telegraphRadius = 0.0f,
                               float telegraphRange = 0.0f,
                               string castAction = null,
-                              string viewmodelAction = null)
+                              string viewmodelAction = null,
+                              int charges = 0,
+                              Recharge rechargedBy = Recharge.Never)
         {
             Id = id;
             Name = name;
@@ -114,6 +187,19 @@ namespace TumbangPreso.Abilities
             TelegraphRange = telegraphRange;
             CastAction = castAction;
             ViewmodelAction = viewmodelAction ?? castAction;
+            MaxCharges = charges;
+            ChargesRemaining = charges;
+            RechargedBy = rechargedBy;
+        }
+
+        /// <summary>
+        /// Hands one charge back, up to the cap. Called by <see cref="HeroKit"/> when the match
+        /// reports the event this ability is keyed to.
+        /// </summary>
+        public void GrantCharge()
+        {
+            if (!UsesCharges) return;
+            ChargesRemaining = Mathf.Min(MaxCharges, ChargesRemaining + 1);
         }
 
         public virtual bool CanActivate(AbilityContext ctx)
@@ -126,7 +212,13 @@ namespace TumbangPreso.Abilities
 
         public virtual void Activate(AbilityContext ctx)
         {
-            CooldownRemaining = Cooldown;
+            // ⚠️ A CHARGE ABILITY SPENDS A CHARGE AND NOTHING ELSE. Setting `CooldownRemaining`
+            // as well would put it behind two gates, and the deck would then draw it as Cooling
+            // while it still had charges in hand: `Cooldown` is 0 on every charge ability, so
+            // this is written as a branch rather than relying on that to stay true.
+            if (UsesCharges) ChargesRemaining = Mathf.Max(0, ChargesRemaining - 1);
+            else CooldownRemaining = Cooldown;
+
             DurationRemaining = Duration;
             OnActivate(ctx);
         }
@@ -175,6 +267,14 @@ namespace TumbangPreso.Abilities
         {
             CooldownRemaining = 0.0f;
             DurationRemaining = 0.0f;
+
+            // ⚠️⚠️ CHARGES REFILL AT A ROUND BOUNDARY AND ONLY THERE. 🧑 2026-08-25: *"a cooldown
+            // instead of charges that reset each round"*. Four rounds is four fresh sets, so a
+            // player who spends everything in round one is not punished for the rest of the
+            // match, and one who hoards gains nothing by carrying them over. That symmetry is
+            // what stops the charge economy from rewarding a quiet round, which
+            // `docs/VISION.md` § 4 forbids.
+            ChargesRemaining = MaxCharges;
         }
 
         /// <summary>

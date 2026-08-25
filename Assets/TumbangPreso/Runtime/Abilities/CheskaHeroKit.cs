@@ -15,6 +15,17 @@ namespace TumbangPreso.Abilities
             Ultimate = new GlacialShatterBurstAbility();
         }
 
+        /// <summary>
+        /// ⚠️ SECOND MOST EXPENSIVE, BECAUSE IT IS TWO ULTIMATES IN ONE PRESS. Glacial Nova
+        /// freezes everyone within 4.6 m AND clears every loose tsinelas out to 4.8 m, so it is
+        /// simultaneously an escape for a surrounded taya and a reset of the ammunition on the
+        /// court. It goes off around the caster, so like Thunderstrike it cannot miss.
+        ///
+        /// It sits under Zack's 150 only because the freeze is a stagger rather than a full
+        /// stun. 140 is 5.6 lata knockdowns. `docs/Hero_Strike_Balance.md` § 3.1.
+        /// </summary>
+        public override float UltimateCost => 140.0f;
+
         private sealed class PermafrostSheetAbility : HeroAbility
         {
             // ⚠️ THE TELEGRAPH NUMBERS ARE THE SPAWN NUMBERS. 2.3 m is the radius handed to
@@ -22,13 +33,24 @@ namespace TumbangPreso.Abilities
             // same measurement written twice, so `TelegraphsMatchWhatTheAbilityPlaces` asserts
             // the pair rather than trusting either.
             public PermafrostSheetAbility()
+                // ⚠️⚠️ TWO CHARGES A ROUND AND NO RECHARGE, DOWN FROM 12.8 CASTS OFF A 7 s
+                // COOLDOWN. It places a zone, so it is on the charge half of the split, and it
+                // is one of the abilities meant to run out: Cheska has to decide WHICH two
+                // approaches to the lata she is closing this round.
+                //
+                // ⚠️ THE RADIUS IS UNCHANGED AT 2.3 AND THAT IS DELIBERATE. It already sits
+                // inside the 1.8 to 2.5 m budget. What was wrong with this power was never its
+                // size but its RENDER: five overlapping translucent primitives, which is
+                // `docs/VISION.md` § 2 rule 4 broken by one ability against itself. That is
+                // fixed in `HeroHazards.SpawnIceSheet` rather than here.
                 : base("cheska_skill1", "PERMAFROST SHEET",
                        "Freezes a patch of court in front of you. Anyone who runs across it loses their footing and slides.",
-                       7.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.CheskaFrostSheet,
+                       0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.CheskaFrostSheet,
                        summary: "Frost patch ahead. Whoever crosses it slides.",
                        telegraphRadius: 2.3f, telegraphRange: 2.8f,
                        castAction: "hero-cheska-frostwave",
-                       viewmodelAction: "frost-sweep")
+                       viewmodelAction: "frost-sweep",
+                       charges: 2)
             {
             }
 
@@ -56,13 +78,26 @@ namespace TumbangPreso.Abilities
             // 2.35 m across the face, so the ring reads as slightly tighter than the wall looks:
             // that is the right way round, because the ends of the wall are the gaps.
             public IceBarricadeAbility()
+                // ⚠️⚠️ ONE CHARGE A ROUND, BACK ONE WHEN SHE RETRIEVES HER OWN TSINELAS. The
+                // scarcest ability in the game, and it is the one that most deserves to be: a
+                // wall in front of the lata closes a lane outright, and one per round makes
+                // WHERE it goes the whole decision.
+                //
+                // ⚠️ THE RECHARGE PAYS THE ACT THE GAME IS BUILT AROUND. `docs/VISION.md` § 0:
+                // *"The tension is the retrieval, not the throw."* Cheska gets her wall back by
+                // going in and getting her slipper, which is the one moment she can be caught,
+                // so the strongest defensive tool in the mode is refilled by taking the game's
+                // central risk rather than by a timer. It is also the only recharge in the game
+                // keyed to this event, which keeps it hers.
                 : base("cheska_skill2", "ICE BARRICADE",
                        "Raises three ice pillars in front of you. Bodies and thrown tsinelas both stop at them, so the lata gets time.",
-                       9.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.CheskaBarricade,
+                       0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.CheskaBarricade,
                        summary: "Three ice pillars ahead. Bodies and tsinelas stop at them.",
                        telegraphRadius: 1.6f, telegraphRange: 2.2f,
                        castAction: "hero-cheska-raise",
-                       viewmodelAction: "raise-barricade")
+                       viewmodelAction: "raise-barricade",
+                       charges: 1,
+                       rechargedBy: Recharge.OwnSlipperRetrieved)
             {
             }
 
@@ -81,11 +116,18 @@ namespace TumbangPreso.Abilities
                 // silently halved how long the wall stands and left the footprint at its
                 // default. Named now so the next reader cannot make the same mistake.
                 //
-                // ⚠️ AND THE 3.2 IS KEPT RATHER THAN RESTORED TO 6.0, on the balance rather than
-                // on the history: the skill cools in 9 s, so a 6 s wall is up two thirds of
-                // every cycle in front of a lata that only has to survive 90 s. It wants a real
-                // measured pass against `BotBehaviourProbe`; `docs/TODO.md` carries it.
-                HeroHazards.SpawnIceBarricade(wallPos, ctx.Forward, duration: 3.2f);
+                // ✅ AND THE 3.2 IS NOW 6.0, WHICH CLOSES `docs/TODO.md` § 2 AS A CONSEQUENCE
+                // RATHER THAN AS A MEASUREMENT. The whole argument for keeping 3.2 was that the
+                // skill cooled in 9 s, so a 6 s wall stood for two thirds of every cycle in
+                // front of a lata that only has to survive 90 s. **That premise is gone.** The
+                // barricade is one charge per round now, refilled only by retrieving her own
+                // tsinelas, so it is up for 6 s out of 90 rather than for 60 s out of 90.
+                //
+                // A wall you get ONCE has to be worth walking around, and 3.2 s is barely long
+                // enough to cross the box. 6.0 s is what the signature always defaulted to and
+                // what the ability was written against before the parameter mix-up on
+                // 2026-08-23. `docs/Hero_Strike_Balance.md` § 3.2.
+                HeroHazards.SpawnIceBarricade(wallPos, ctx.Forward, duration: 6.0f);
             }
         }
 
@@ -139,6 +181,8 @@ namespace TumbangPreso.Abilities
                             // readable from any angle; the words are not.
                             DizzyStars.Attach(p.transform, 2.5f, UiTheme.HeroIceBright);
                             HeroHazards.SpawnIceCubePrison(p.transform, 2.5f);
+                            Visual.HitFeel.Land(p, Visual.HitFeel.Weight.Ultimate,
+                                                UiTheme.HeroIceBright, ctx.Position);
                         }
                     }
 

@@ -187,6 +187,34 @@ namespace TumbangPreso.UI
             public Image Fill;
             public Image[] Segments;
 
+            /// <summary>
+            /// The charge dots, for a skill that is on charges rather than on a cooldown.
+            ///
+            /// ⚠️⚠️ A THIRD SHAPE FOR A THIRD QUANTITY, AND THAT IS A SETTLED RULE RATHER THAN
+            /// A STYLE CHOICE. `docs/VISION.md` § 3: *"Cooldown and ultimate charge must not
+            /// look alike. A cooldown drains a smooth bar; the ultimate fills a notched one.
+            /// They are different quantities and used to share a widget."* Charges are a third
+            /// quantity, so reusing either of the first two would recreate exactly the fault
+            /// that rule was written to close.
+            ///
+            /// Discrete dots are the right shape because the quantity IS discrete: "one left"
+            /// is a fact a player acts on, and a bar at 50 per cent of two charges is the same
+            /// picture as a bar at 50 per cent of a cooldown while meaning something completely
+            /// different. Valorant draws them the same way for the same reason.
+            ///
+            /// Null on every cooldown ability, which is what `PaintCharges` keys off.
+            /// </summary>
+            public Image[] Pips;
+
+            /// <summary>How many charges the pips were built for, so a kit swap rebuilds.</summary>
+            public int PipCount;
+
+            /// <summary>Seconds left of the flash that fires when a charge is handed back.</summary>
+            public float PipGrantLeft;
+
+            /// <summary>Charges seen last frame, so a grant can be told from a spend.</summary>
+            public int WasCharges = -1;
+
             /// <summary>Seconds left of the 0.18 s pop that fires when a power comes back up.</summary>
             public float PopLeft;
 
@@ -2622,6 +2650,34 @@ namespace TumbangPreso.UI
             if (ready && !card.WasReady) card.PopLeft = ReadyPopSeconds;
             card.WasReady = ready;
 
+            PaintCharges(card, skill, heroColor, dt);
+
+            // ⚠️⚠️ A CHARGE SKILL AT ZERO IS NOT "COOLING", AND THAT DISTINCTION IS THE WHOLE
+            // REASON THIS BRANCH EXISTS. Its `Cooldown` is 0 so it would fall through to the
+            // Ready arm below and draw a lit rim over a power that cannot be cast, which is the
+            // exact failure `docs/Hero_Strike_UI.md` § 6 calls the anti-clunk fix: a press that
+            // is refused must not look like a press that worked.
+            //
+            // It gets its own look rather than borrowing the Cooling one, because the two are
+            // different facts. Cooling means WAIT. Empty means NOT THIS ROUND, unless this is
+            // one of the skills that recharges off play. A countdown would be a lie either way,
+            // so there is no number: the pips above the tile already say how many are left, and
+            // `docs/VISION.md` § 3 forbids putting a sentence here to explain it.
+            if (skill.UsesCharges && !skill.IsActive && skill.ChargesRemaining <= 0)
+            {
+                card.Rim.color = UiTheme.HeroRim;
+                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Key.color = UiTheme.CreamMuted;
+                card.State.text = "";
+
+                if (card.Fill != null) card.Fill.fillAmount = 0.0f;
+                if (card.CooldownSweep != null) card.CooldownSweep.fillAmount = 0.0f;
+
+                ApplyAnswer(card, system, slot, heroColor);
+                ApplyPop(card, dt);
+                return;
+            }
+
             if (skill.IsActive)
             {
                 float breath = Mathf.Sin(Time.time * 7.0f) * 0.5f + 0.5f;
@@ -2686,6 +2742,123 @@ namespace TumbangPreso.UI
 
             ApplyAnswer(card, system, slot, heroColor);
             ApplyPop(card, dt);
+        }
+
+        /// <summary>
+        /// Draws the charge dots above a tile, building them on first sight of a charge skill.
+        ///
+        /// ⚠️⚠️ BUILT LAZILY RATHER THAN AT CARD CONSTRUCTION, BECAUSE THE CARD IS BUILT BEFORE
+        /// THE KIT IS KNOWN. `BuildAbilityCard` runs once for the deck and the same three cards
+        /// are then repainted for whichever hero the seat is playing, so "how many charges" is
+        /// not a fact that exists yet at build time. Rebuilding on a count change is also what
+        /// makes a mid-match character swap draw the right number of dots instead of the
+        /// previous hero's.
+        ///
+        /// ⚠️ THE PIPS SIT ABOVE THE TILE, NOT INSIDE IT. Inside would put them in the same
+        /// square as the glyph, which is the mistake the key labels made and which
+        /// `docs/Hero_Strike_UI.md` records being reported as *"three illegible smudges"*. The
+        /// groove under the tile is already spoken for by the cooldown bar and the ultimate
+        /// segments, so above is the only clear edge left.
+        /// </summary>
+        private static void PaintCharges(AbilityCard card, Abilities.HeroAbility skill,
+                                         Color heroColor, float dt)
+        {
+            if (card == null || skill == null) return;
+
+            if (!skill.UsesCharges)
+            {
+                // A cooldown ability on a card that previously held a charge one. Hide rather
+                // than destroy: a seat can swap back, and rebuilding is the expensive half.
+                if (card.Pips != null)
+                    foreach (var p in card.Pips) if (p != null) p.enabled = false;
+
+                card.WasCharges = -1;
+                return;
+            }
+
+            if (card.Pips == null || card.PipCount != skill.MaxCharges)
+                BuildPips(card, skill.MaxCharges);
+
+            if (card.Pips == null) return;
+
+            // ⚠️ THE FLASH FIRES ON A GAIN AND NEVER ON A SPEND. A player who casts something
+            // already knows they cast it; a charge handed back by `Recharge.LataKnocked` or
+            // `Recharge.OwnSlipperRetrieved` arrives while they are looking at the lata or at
+            // their own feet, several metres from the deck, and is the one charge event they
+            // will otherwise miss entirely.
+            if (card.WasCharges >= 0 && skill.ChargesRemaining > card.WasCharges)
+                card.PipGrantLeft = 0.45f;
+
+            card.WasCharges = skill.ChargesRemaining;
+
+            if (card.PipGrantLeft > 0.0f) card.PipGrantLeft = Mathf.Max(0.0f, card.PipGrantLeft - dt);
+
+            float flash = card.PipGrantLeft > 0.0f
+                ? Mathf.Sin(card.PipGrantLeft * 28.0f) * 0.5f + 0.5f
+                : 0.0f;
+
+            for (int i = 0; i < card.Pips.Length; i++)
+            {
+                var pip = card.Pips[i];
+                if (pip == null) continue;
+
+                pip.enabled = true;
+
+                bool held = i < skill.ChargesRemaining;
+
+                // ⚠️ A SPENT PIP IS DIMMED, NOT REMOVED. Keeping the empty socket on screen is
+                // what tells the player how many they STARTED with, which is the number they
+                // need to plan a round around. Dots that vanish leave "one left" and "one, and
+                // that is all I ever had" looking identical.
+                pip.color = held
+                    ? Color.Lerp(heroColor, Color.white, flash * 0.75f)
+                    : UiTheme.HeroRim;
+            }
+        }
+
+        private static void BuildPips(AbilityCard card, int count)
+        {
+            if (card == null || card.Rt == null || count <= 0) return;
+
+            if (card.Pips != null)
+                foreach (var p in card.Pips)
+                    if (p != null) UnityEngine.Object.Destroy(p.gameObject);
+
+            var row = new GameObject("Pips", typeof(RectTransform));
+            row.transform.SetParent(card.Rt, false);
+
+            var rowRt = (RectTransform)row.transform;
+            rowRt.anchorMin = new Vector2(0.5f, 1.0f);
+            rowRt.anchorMax = new Vector2(0.5f, 1.0f);
+            rowRt.pivot = new Vector2(0.5f, 0.0f);
+            rowRt.anchoredPosition = new Vector2(0.0f, 3.0f);
+            rowRt.sizeDelta = new Vector2(count * 9.0f + (count - 1) * 3.0f, 5.0f);
+
+            var group = row.AddComponent<HorizontalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = true;
+            group.childForceExpandWidth = true;
+            group.childAlignment = TextAnchor.MiddleCenter;
+            group.spacing = 3.0f;
+            group.padding = new RectOffset(0, 0, 0, 0);
+
+            card.Pips = new Image[count];
+            for (int i = 0; i < count; i++)
+            {
+                var go = new GameObject("Pip" + i);
+                go.transform.SetParent(row.transform, false);
+
+                var img = go.AddComponent<Image>();
+                img.sprite = GodotTheme.Plain(1);
+                img.type = Image.Type.Sliced;
+                img.color = UiTheme.HeroRim;
+                img.raycastTarget = false;
+
+                card.Pips[i] = img;
+            }
+
+            card.PipCount = count;
         }
 
         /// <summary>

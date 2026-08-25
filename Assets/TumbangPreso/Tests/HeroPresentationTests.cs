@@ -239,13 +239,13 @@ namespace TumbangPreso.Tests
             AssertTelegraph("cheska", 2, 1.6f, 2.2f);   // barricade HazardVolume 1.6 at fwd*2.2
             AssertTelegraph("cheska", 3, 4.6f, 0.0f);   // nova freeze check <= 4.6 at self
 
-            AssertTelegraph("dante", 1, 2.4f, 0.0f);    // CreateExplosion(pos, 2.4)
+            AssertTelegraph("dante", 1, 2.2f, 0.0f);    // CreateExplosion(pos, 2.2)
             AssertTelegraph("dante", 2, 0.0f, 0.0f);    // self-buff, nothing on the ground
             AssertTelegraph("dante", 3, 4.5f, 2.2f);    // CreateExplosion(pos + fwd*2.2, 4.5)
 
             AssertTelegraph("nemu", 1, 0.0f, 0.0f);     // mobility
             AssertTelegraph("nemu", 2, 0.0f, 0.0f);     // projectile decoy
-            AssertTelegraph("nemu", 3, 3.2f, 3.5f);     // SpawnSeanceVoid(pos + fwd*3.5, 3.2)
+            AssertTelegraph("nemu", 3, 2.8f, 3.5f);     // SpawnSeanceVoid(pos + fwd*3.5, 2.8)
 
             AssertTelegraph("sean", 1, 0.0f, 0.0f);     // dash
             AssertTelegraph("sean", 2, 0.0f, 0.0f);     // throw empower

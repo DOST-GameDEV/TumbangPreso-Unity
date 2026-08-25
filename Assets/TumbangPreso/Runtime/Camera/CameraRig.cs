@@ -377,6 +377,12 @@ namespace TumbangPreso.CameraSystem
             ApplyLens();
             ApplyCarriedSelfHide();
 
+            // ⚠️ THE HITSTOP GATE SITS ABOVE EVERYTHING THAT WRITES THE TRANSFORM AND BELOW
+            // EVERYTHING THAT DOES NOT. The lens and the self-hide are per-frame state rather
+            // than motion, and skipping either during a hold would pop the arms or the FOV.
+            // See `HoldFrame` for why this is a camera hold and not a time scale.
+            if (StepHold()) return;
+
             if (_emoteView) { StepEmoteLook(); ApplyEmoteView(); return; }
 
             var visual = _character.GetComponent<Visual.CharacterVisual>();
@@ -706,6 +712,53 @@ namespace TumbangPreso.CameraSystem
         {
             _shakeStrength = Mathf.Max(_shakeStrength, strength);
             _shakeLeft = Mathf.Max(_shakeLeft, duration);
+        }
+
+        // ------------------------------------------------------------------ hitstop
+
+        /// <summary>
+        /// ⚠️⚠️ THE IMPACT FRAME, AND IT IS A CAMERA HOLD RATHER THAN A TIME SCALE. A hit in
+        /// this game used to land with no instant of contact at all: a `bump`, some stars and an
+        /// impulse, which between them describe the aftermath and never the moment. This is the
+        /// beat every fighting game spends its budget on. `Visual.HitFeel` is the only caller
+        /// and it carries the reasoning and the weights.
+        ///
+        /// ⚠️⚠️ IT MUST NOT BECOME `Time.timeScale`, WHICH IS THE OBVIOUS IMPLEMENTATION AND IS
+        /// WRONG HERE FOR THREE SEPARATE REASONS. This is a four-player game on one shared
+        /// simulation: a global scale would freeze the physics step for all four, stop the round
+        /// clock, and in a networked match desynchronise the host from its peers. It would also
+        /// hand the anti-stall clocks in `docs/VISION.md` § 4 a free pause on every hit.
+        ///
+        /// What actually happens is much narrower. `LateUpdate` stops WRITING the camera
+        /// transform for a few frames, so the view sticks where it was while the world carries on
+        /// simulating underneath it. The player's own input is not eaten and their character
+        /// keeps moving; only the picture lags, which is exactly the illusion wanted.
+        ///
+        /// ⚠️ UNSCALED TIME, so a hold cannot be stretched by anything else that scales time.
+        /// </summary>
+        public void HoldFrame(float seconds)
+        {
+            if (seconds <= 0.0f) return;
+
+            _holdLeft = Mathf.Max(_holdLeft, seconds);
+        }
+
+        private float _holdLeft;
+
+        /// <summary>
+        /// ⚠️ THE SHAKE AND THE PUNCH ARE STILL STEPPED WHILE HELD, AND THAT IS NOT AN
+        /// OVERSIGHT. Their timers have to keep draining or the punch that started with the hit
+        /// would begin only after the freeze released, which reads as two separate events
+        /// instead of one. What is suspended is the FOLLOW: the rig does not re-derive its
+        /// position from the character it is tracking.
+        /// </summary>
+        private bool StepHold()
+        {
+            if (_holdLeft <= 0.0f) return false;
+
+            _holdLeft -= Time.unscaledDeltaTime;
+            StepShake();
+            return true;
         }
 
         private void StepShake()

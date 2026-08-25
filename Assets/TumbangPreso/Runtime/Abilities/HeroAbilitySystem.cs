@@ -370,11 +370,45 @@ namespace TumbangPreso.Abilities
             Kit.AddUltimateCharge(amount);
         }
 
-        public void OnLataKnocked() => Award(Balance.UltimateChargeLataKnock);
+        public void OnLataKnocked()
+        {
+            Award(Balance.UltimateChargeLataKnock);
+            Recharge(HeroAbility.Recharge.LataKnocked);
+        }
 
         public void OnTagScored() => Award(Balance.UltimateChargeTag);
 
         public void OnThrowReleased() => Award(Balance.UltimateChargeLegalThrow);
+
+        /// <summary>
+        /// ⚠️⚠️ THE ACT THE WHOLE GAME IS BUILT AROUND, AND IT PAID NOTHING UNTIL 2026-08-25.
+        /// `docs/VISION.md` § 0: *"The tension is the retrieval, not the throw. Throwing is safe
+        /// and free; going back in for your tsinelas is the only moment you can be caught."*
+        /// The ultimate economy nevertheless paid 8 for a throw and 0 for a retrieval, which is
+        /// the two halves of the game rewarded in exactly the wrong order.
+        ///
+        /// It now pays `Balance.UltimateChargeOwnSlipperRetrieved` and refills Cheska's
+        /// barricade. `docs/Hero_Strike_Balance.md` § 3.1.
+        /// </summary>
+        public void OnOwnSlipperRetrieved()
+        {
+            Award(Balance.UltimateChargeOwnSlipperRetrieved);
+            Recharge(HeroAbility.Recharge.OwnSlipperRetrieved);
+        }
+
+        /// <summary>
+        /// ⚠️ GATED ON PRACTICE FOR THE SAME REASON `Award` IS. A charge handed back during the
+        /// buffer is a charge the round did not pay for, and unlike the meter a charge cannot be
+        /// spent back down: `ResetForRound` refills to the cap either way, so a practice-period
+        /// grant that pushed a player over would simply be lost, and one that did not would be
+        /// free. Neither is a state worth having.
+        /// </summary>
+        private void Recharge(HeroAbility.Recharge what)
+        {
+            if (Kit == null || Kit.PracticeMode) return;
+
+            Kit.OnRechargeEvent(what);
+        }
 
         /// <summary>
         /// Wipe the kit back to how it starts a round: no charge, no cooldowns, nothing active.
