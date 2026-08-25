@@ -55,8 +55,17 @@ namespace TumbangPreso
         }
 
         public RosterEntryAsset PersonArt(int index) => Resolve(People, Roster.People, index);
+        public RosterEntryAsset PersonArt(int index, GameMode mode) => Resolve(People, Roster.GetPeople(mode), index);
         public RosterEntryAsset CanArt(int index) => Resolve(Cans, Roster.Cans, index);
         public RosterEntryAsset SlipperArt(int index) => Resolve(Slippers, Roster.Slippers, index);
+
+        public RosterEntryAsset FindPersonArt(string id)
+        {
+            if (People == null) return null;
+            for (int i = 0; i < People.Count; i++)
+                if (People[i] != null && People[i].Id == id) return People[i];
+            return null;
+        }
 
         private static RosterEntryAsset Resolve(List<RosterEntryAsset> art,
                                                 IReadOnlyList<RosterEntry> truth,

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TumbangPreso.Visual;
@@ -10,11 +10,11 @@ namespace TumbangPreso.EditorTools
 {
     public static class InGameAngleProbe
     {
-        private const string ModelPath = "Assets/TumbangPreso/Art/characters/persons/team-bayan.glb";
-        private const string RosterId = "bayan";
+        private const string ModelPath = "Assets/TumbangPreso/Art/characters/persons/team-iggy.glb";
+        private const string RosterId = "kuya_boy";
         private const int CellPixels = 340;
 
-        [MenuItem("Tumbang Preso/Probe Dante In-Game Angles")]
+        [MenuItem("Tumbang Preso/Probe Iggy In-Game Angles")]
         public static void RunFromMenu() => Execute();
 
         public static void Run() => EditorApplication.Exit(Execute() ? 0 : 1);
@@ -25,13 +25,16 @@ namespace TumbangPreso.EditorTools
             Directory.CreateDirectory("Logs");
 
             // 1. Eight-angle 360° orbital showcase at gameplay isometric elevation (pitch 18°)
-            ShootOrbit(palette, "Logs/dante_8angle_orbit.png");
+            ShootOrbit(palette, "Logs/iggy_8angle_orbit.png");
 
             // 2. Gameplay Action Sheet (Third-Person Player View, Aiming Throw, Sprinting, Smirk)
-            ShootActionSheet(palette, "Logs/dante_ingame_action_sheet.png");
+            ShootActionSheet(palette, "Logs/iggy_ingame_action_sheet.png");
 
-            // 3. Head Zoom 4-Angle Turnaround (Focused on Horn details)
-            ShootHeadZoom(palette, "Logs/dante_head_closeup_orbit.png");
+            // 3. Head Zoom 4-Angle Turnaround (Focused on Mohawk details)
+            ShootHeadZoom(palette, "Logs/iggy_head_closeup_orbit.png");
+
+            // 4. True In-Game Scale Cast Lineup (Shared Scale Grounded Comparison)
+            ShootCastLineup("Logs/cast_lineup.png");
 
             return true;
         }
@@ -48,9 +51,9 @@ namespace TumbangPreso.EditorTools
                 ("90° Right Profile", 90.0f),
                 ("135° Front-Right", 135.0f),
                 ("180° Front View", 180.0f),
-                ("225° Front-Left (Horn Focus)", 220.0f),
-                ("270° Left Profile (Horn Side)", 270.0f),
-                ("315° Rear-Left (Horn Rear)", 315.0f)
+                ("225° Front-Left (Flame Focus)", 220.0f),
+                ("270° Left Profile (Flame Crest)", 270.0f),
+                ("315° Rear-Left (Mohawk Spine)", 315.0f)
             };
 
             for (int i = 0; i < angles.Length; i++)
@@ -74,7 +77,7 @@ namespace TumbangPreso.EditorTools
                 ("1. Third-Person Idle (Player View)", "idle", 20.0f, true),
                 ("2. Sprinting Forward (Rear Cam)", "sprint", 15.0f, false),
                 ("3. Slipper Aim & Wind-up (Action Cam)", "holding-right-shoot", 40.0f, true),
-                ("4. Earth Smirk / Emote (Front View)", "emote-yes", 180.0f, false),
+                ("4. Cheerful Smile / Emote (Front View)", "emote-yes", 180.0f, false),
             };
 
             for (int i = 0; i < shots.Length; i++)
@@ -96,9 +99,9 @@ namespace TumbangPreso.EditorTools
             var angles = new[]
             {
                 ("Front Head View", 180.0f),
-                ("3/4 Front (Horn Focus)", 220.0f),
-                ("Left Side (Horn Profile)", 270.0f),
-                ("Back View (Horn Rear)", 0.0f)
+                ("3/4 Front (Flame Focus)", 220.0f),
+                ("Left Side (Mohawk Profile)", 270.0f),
+                ("Back View (Mohawk Spine)", 0.0f)
             };
 
             for (int i = 0; i < angles.Length; i++)
@@ -281,6 +284,63 @@ namespace TumbangPreso.EditorTools
             var book = AssetDatabase.LoadAssetAtPath<RosterBook>("Assets/TumbangPreso/Resources/RosterBook.asset");
             var entry = book == null ? null : book.People.FirstOrDefault(p => p != null && p.Id == id);
             return entry != null && entry.Palette != null && entry.Palette.Length == 16 ? entry.Palette : null;
+        }
+
+        private static void ShootCastLineup(string outPath)
+        {
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            BuildLight();
+
+            var cast = new[]
+            {
+                new { Path = "Assets/TumbangPreso/Art/characters/persons/character-male-b.glb", RosterId = "kuya_boy", Label = "Base (male-b)" },
+                new { Path = "Assets/TumbangPreso/Art/characters/persons/team-inday.glb", RosterId = "inday", Label = "Inday" },
+                new { Path = "Assets/TumbangPreso/Art/characters/persons/team-zack.glb", RosterId = "zack", Label = "Zack" },
+                new { Path = "Assets/TumbangPreso/Art/characters/persons/team-bayan.glb", RosterId = "bayan", Label = "Bayan" },
+                new { Path = "Assets/TumbangPreso/Art/characters/persons/team-iggy.glb", RosterId = "kuya_boy", Label = "Iggy (Heavyweight)" },
+            };
+
+            for (int i = 0; i < cast.Length; i++)
+            {
+                var pal = PaletteFor(cast[i].RosterId);
+                PlaceTrueScale(cast[i].Path, pal, 180.0f, i, 0, cast[i].Label);
+            }
+
+            var camera = BuildCamera(cast.Length, 1, pitch: 12.0f);
+            camera.orthographicSize = 0.52f;
+            Vector3 center = new Vector3((cast.Length - 1) * 0.90f * 0.5f, 0.40f, 0.0f);
+            Quaternion rot = Quaternion.Euler(12.0f, 0.0f, 0.0f);
+            camera.transform.rotation = rot;
+            camera.transform.position = center - rot * Vector3.forward * 15.0f;
+
+            CaptureTo(camera, cast.Length * CellPixels, CellPixels + 80, outPath);
+
+            EditorSceneManager.CloseScene(scene, true);
+        }
+
+        private static void PlaceTrueScale(string path, Color[] palette, float yaw, int col, int row, string label)
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (prefab == null) return;
+
+            var pivot = new GameObject($"lineup-{row}-{col}");
+            pivot.transform.position = new Vector3(col * 0.90f, 0.0f, 0.0f);
+
+            var model = Object.Instantiate(prefab, pivot.transform);
+            model.transform.localRotation = Quaternion.Euler(0.0f, CharacterVisual.PersonModelYaw + yaw, 0.0f);
+
+            ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth, palette);
+
+            var renderers = model.GetComponentsInChildren<Renderer>();
+            if (renderers.Length == 0) return;
+
+            var bounds = renderers[0].bounds;
+            foreach (var r in renderers) bounds.Encapsulate(r.bounds);
+
+            // Ground the feet at y = 0
+            model.transform.position += pivot.transform.position - new Vector3(bounds.center.x, bounds.min.y, bounds.center.z);
+
+            Caption(pivot.transform, label, yOffset: -0.06f);
         }
     }
 }

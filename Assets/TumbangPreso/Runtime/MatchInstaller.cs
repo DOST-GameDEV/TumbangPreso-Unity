@@ -1,4 +1,5 @@
 using TumbangPreso.Core;
+using TumbangPreso.UI;
 using UnityEngine;
 
 namespace TumbangPreso
@@ -113,6 +114,26 @@ namespace TumbangPreso
             // player chose. Applied once here, before any seat is built.
             AIController.ApplyDifficultyFromSettings();
 
+            var bounds = GameObject.Find("Bounds");
+            if (bounds != null)
+            {
+                float maxX = 8.6f;
+                float maxZ = 13.0f;
+                foreach (var col in bounds.GetComponentsInChildren<BoxCollider>())
+                {
+                    Vector3 c = col.transform.position + col.center;
+                    if (Mathf.Abs(c.x) > 1.0f) maxX = Mathf.Max(maxX, Mathf.Abs(c.x));
+                    if (Mathf.Abs(c.z) > 1.0f) maxZ = Mathf.Max(maxZ, Mathf.Abs(c.z));
+                }
+                AIController.PlayableHalfX = maxX;
+                AIController.PlayableHalfZ = maxZ;
+            }
+            else
+            {
+                AIController.PlayableHalfX = 8.6f;
+                AIController.PlayableHalfZ = 13.0f;
+            }
+
             var lata = BuildLata();
             var seats = new CharacterMotor[Balance.PlayerCount];
             var slippers = new Slipper[Balance.PlayerCount];
@@ -220,6 +241,14 @@ namespace TumbangPreso
             // fade, under 🧑's *"pls js abruptly cut it"*.
             if (UseReadyGate) GameServices.Music?.StopNow();
             else GameServices.Music?.Play("match", GameServices.MatchTrack);
+
+            // Scene management is intentionally game-owned rather than Netcode-owned. Tell
+            // the host only after every local seat, prop, camera and HUD target exists; this
+            // closes the cold-rejoin race where the connection-time snapshot arrived while
+            // the client was still loading the arena and therefore had nothing to apply to.
+            var liveNet = Net.NetSession.Instance;
+            if (liveNet != null && liveNet.IsNetworked && !liveNet.IsHost)
+                Net.MatchRpc.Instance?.RequestWorldSnapshotServerRpc();
         }
 
         /// <summary>
@@ -354,6 +383,7 @@ namespace TumbangPreso
 
             var motor = go.AddComponent<CharacterMotor>();
             motor.PlayerSlot = slot;
+            motor.Mode = SceneFlow.SelectedMode;
 
             var net = Net.NetSession.Instance;
             bool isNetworked = net != null && net.IsNetworked;
@@ -390,6 +420,16 @@ namespace TumbangPreso
             go.AddComponent<CombatVerbs>();
             go.AddComponent<Social.EmotePlayer>();
 
+            if (SceneFlow.SelectedMode == GameMode.HeroStrike)
+            {
+                var abilities = go.AddComponent<Abilities.HeroAbilitySystem>();
+                var heroPeople = Roster.GetPeople(GameMode.HeroStrike);
+                string heroId = (motor.CharacterIndex >= 0 && motor.CharacterIndex < heroPeople.Count)
+                    ? heroPeople[motor.CharacterIndex].Id
+                    : "dante";
+                abilities.BindHero(heroId);
+            }
+
             // The role ring and floating tag. Parented under the seat so it inherits position
             // but sizes itself off the capsule.
             var plateGo = new GameObject("Nameplate");
@@ -406,11 +446,11 @@ namespace TumbangPreso
             // moved the CharacterController along with the mesh. See SetModelRoot.
             visual.SetModelRoot(visualRoot.transform);
 
-            var art = _book != null ? _book.PersonArt(motor.CharacterIndex) : null;
+            var art = _book != null ? _book.PersonArt(motor.CharacterIndex, SceneFlow.SelectedMode) : null;
 
             if (art != null && art.Model != null)
             {
-                visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette);
+                visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
 
                 // Strip from the whole seat, because the visual parents the model under the
                 // seat root rather than under visualRoot. The CharacterController survives by
@@ -754,7 +794,8 @@ namespace TumbangPreso
         /// </summary>
         private int AiCharacterIndex(int slot)
         {
-            int size = Roster.People.Count;
+            var people = Roster.GetPeople(SceneFlow.SelectedMode);
+            int size = people.Count;
             if (size <= 0) return 0;
 
             // The human's own pick is taken; a bot must not wear the player's face.

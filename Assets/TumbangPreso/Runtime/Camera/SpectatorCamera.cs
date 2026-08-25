@@ -180,8 +180,46 @@ namespace TumbangPreso.CameraSystem
 
         private InputAction _move, _jump, _sprint, _down;
 
+        private const float ReplaySeconds = 6.0f;
+        private const float ReplaySampleInterval = 0.10f;
+        private const int ReplayFrameCapacity = 80;
+
+        private struct ReplayPose
+        {
+            public Transform Target;
+            public Vector3 Position;
+            public Quaternion Rotation;
+        }
+
+        private sealed class ReplayFrame
+        {
+            public Vector3 CameraPosition;
+            public Quaternion CameraRotation;
+            public float FieldOfView;
+            public readonly List<ReplayPose> Actors = new List<ReplayPose>(10);
+        }
+
+        private readonly List<ReplayFrame> _replayFrames = new List<ReplayFrame>(ReplayFrameCapacity);
+        private float _replayRecordAccum;
+        private bool _replaying;
+        private float _replayClock;
+        private int _replayFirstFrame;
+        private ReplayFrame _liveFrame;
+
+        private bool _broadcastPaused;
+        private float _selectedTimeScale = 1.0f;
+        private float _initialTimeScale = 1.0f;
+        private bool _ownsTimeScale;
+
+        private bool _hasBookmark;
+        private Vector3 _bookmarkPosition;
+        private Quaternion _bookmarkRotation;
+        private float _bookmarkFov;
+
         private void Awake()
         {
+            _initialTimeScale = Time.timeScale > 0.0f ? Time.timeScale : 1.0f;
+            _selectedTimeScale = _initialTimeScale;
             _camera = GetComponent<Camera>();
             if (_camera == null) _camera = gameObject.AddComponent<Camera>();
             _camera.fieldOfView = SpectatorFov;
@@ -264,6 +302,19 @@ namespace TumbangPreso.CameraSystem
 
         private void OnEnable() { if (_camera != null) _camera.enabled = true; }
 
+        private void OnDisable()
+        {
+            if (_replaying && _liveFrame != null) ApplyFrame(_liveFrame, 0.0f, null);
+            _replaying = false;
+
+            if (_ownsTimeScale)
+            {
+                Hitstop.End();
+                Time.timeScale = _initialTimeScale;
+                _ownsTimeScale = false;
+            }
+        }
+
         private void Update()
         {
             // ⚠️⚠️ NOT WHILE AN OVERLAY IS UP. The pause card releases the cursor so its buttons
@@ -294,6 +345,15 @@ namespace TumbangPreso.CameraSystem
             // owner of the view.
             ReclaimView();
 
+            StepBroadcastKeys();
+            if (_replaying)
+            {
+                StepReplay();
+                return;
+            }
+
+            RecordReplayFrame();
+
             StepLook();
             StepWheel();
             StepKeys();
@@ -301,7 +361,9 @@ namespace TumbangPreso.CameraSystem
             // ⚠️ Update, NOT FixedUpdate. There is no physics here — nothing to step, nothing
             // to collide, nothing another body has to agree with — and a camera that moves on
             // the render frame is smoother than one moving on the physics tick.
-            float delta = Time.deltaTime;
+            // Broadcast cameras remain responsive during a tactical pause and do not become
+            // syrupy in slow motion. The match clock is scaled; the operator is not.
+            float delta = Time.unscaledDeltaTime;
 
             if (_follow != null)
             {
@@ -417,6 +479,287 @@ namespace TumbangPreso.CameraSystem
             }
         }
 
+        // -------------------------------------------------------------------
+        // BROADCAST CONTROLS. Time manipulation is offline-only by construction: a remote
+        // viewer must never acquire authority over a live tournament simply by spectating.
+
+        private void StepBroadcastKeys()
+        {
+            var kb = Keyboard.current;
+            if (kb == null) return;
+
+            if (_replaying)
+            {
+                if (kb.rKey.wasPressedThisFrame || kb.escapeKey.wasPressedThisFrame)
+                    EndReplay();
+                return;
+            }
+
+            if (kb.bKey.wasPressedThisFrame)
+            {
+                _bookmarkPosition = transform.position;
+                _bookmarkRotation = transform.rotation;
+                _bookmarkFov = _camera != null ? _camera.fieldOfView : SpectatorFov;
+                _hasBookmark = true;
+                UI.Hud.Instance?.ShowToast("CAMERA MARK SAVED  ·  [N] TO RECALL", 1.2f);
+            }
+
+            if (kb.nKey.wasPressedThisFrame && _hasBookmark)
+            {
+                _follow = null;
+                _followIndex = -1;
+                _pov = false;
+                transform.SetPositionAndRotation(_bookmarkPosition, _bookmarkRotation);
+                _targetPosition = _bookmarkPosition;
+                if (_camera != null) _camera.fieldOfView = _bookmarkFov;
+                SyncAnglesFromTransform();
+                UI.Hud.Instance?.ShowToast("CAMERA MARK RECALLED", 0.9f);
+            }
+
+            if (kb.f1Key.wasPressedThisFrame) SelectPlayerPov(0);
+            if (kb.f2Key.wasPressedThisFrame) SelectPlayerPov(1);
+            if (kb.f3Key.wasPressedThisFrame) SelectPlayerPov(2);
+            if (kb.f4Key.wasPressedThisFrame) SelectPlayerPov(3);
+
+            bool askedForTime = kb.pKey.wasPressedThisFrame || kb.rKey.wasPressedThisFrame
+                                || kb.digit1Key.wasPressedThisFrame
+                                || kb.digit2Key.wasPressedThisFrame
+                                || kb.digit3Key.wasPressedThisFrame;
+
+            if (askedForTime && NetAuthority.IsNetworked)
+            {
+                UI.Hud.Instance?.ShowToast("LIVE NETWORK  ·  TIME CONTROLS LOCKED", 1.5f);
+                return;
+            }
+
+            if (kb.pKey.wasPressedThisFrame) ToggleBroadcastPause();
+            if (kb.rKey.wasPressedThisFrame) StartReplay();
+            if (kb.digit1Key.wasPressedThisFrame) SetBroadcastScale(0.25f);
+            if (kb.digit2Key.wasPressedThisFrame) SetBroadcastScale(0.50f);
+            if (kb.digit3Key.wasPressedThisFrame) SetBroadcastScale(1.00f);
+        }
+
+        private void ToggleBroadcastPause()
+        {
+            Hitstop.End();
+            _ownsTimeScale = true;
+            _broadcastPaused = !_broadcastPaused;
+            Time.timeScale = _broadcastPaused ? 0.0f : _selectedTimeScale;
+            UI.Hud.Instance?.ShowToast(_broadcastPaused
+                ? "TACTICAL PAUSE  ·  CAMERA STILL LIVE"
+                : $"BACK TO ACTION  ·  {_selectedTimeScale:0.##}x", 1.1f);
+        }
+
+        private void SetBroadcastScale(float scale)
+        {
+            Hitstop.End();
+            _ownsTimeScale = true;
+            _broadcastPaused = false;
+            _selectedTimeScale = Mathf.Clamp(scale, 0.25f, 1.0f);
+            Time.timeScale = _selectedTimeScale;
+            UI.Hud.Instance?.ShowToast(_selectedTimeScale < 1.0f
+                ? $"BROADCAST SLOW-MO  ·  {_selectedTimeScale:0.##}x"
+                : "BROADCAST SPEED  ·  LIVE", 1.1f);
+        }
+
+        private void RecordReplayFrame()
+        {
+            if (_broadcastPaused || NetAuthority.IsNetworked) return;
+
+            _replayRecordAccum += Time.unscaledDeltaTime;
+            if (_replayRecordAccum < ReplaySampleInterval) return;
+            _replayRecordAccum %= ReplaySampleInterval;
+
+            _replayFrames.Add(CaptureFrame());
+            if (_replayFrames.Count > ReplayFrameCapacity) _replayFrames.RemoveAt(0);
+        }
+
+        private ReplayFrame CaptureFrame()
+        {
+            var frame = new ReplayFrame
+            {
+                CameraPosition = transform.position,
+                CameraRotation = transform.rotation,
+                FieldOfView = _camera != null ? _camera.fieldOfView : SpectatorFov,
+            };
+
+            foreach (var actor in FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude,
+                                                                     FindObjectsSortMode.None))
+                AddPose(frame, actor != null ? actor.transform : null);
+
+            foreach (var lata in FindObjectsByType<Lata>(FindObjectsInactive.Exclude,
+                                                         FindObjectsSortMode.None))
+                AddPose(frame, lata != null ? lata.transform : null);
+
+            foreach (var slipper in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude,
+                                                               FindObjectsSortMode.None))
+                AddPose(frame, slipper != null ? slipper.transform : null);
+
+            return frame;
+        }
+
+        private static void AddPose(ReplayFrame frame, Transform target)
+        {
+            if (frame == null || target == null) return;
+            frame.Actors.Add(new ReplayPose
+            {
+                Target = target,
+                Position = target.position,
+                Rotation = target.rotation,
+            });
+        }
+
+        private void StartReplay()
+        {
+            int wanted = Mathf.CeilToInt(ReplaySeconds / ReplaySampleInterval);
+            if (_replayFrames.Count < Mathf.Min(12, wanted))
+            {
+                UI.Hud.Instance?.ShowToast("REPLAY BUFFER IS STILL WARMING UP", 1.2f);
+                return;
+            }
+
+            Hitstop.End();
+            _liveFrame = CaptureFrame();
+            _replayFirstFrame = Mathf.Max(0, _replayFrames.Count - wanted);
+            _replayClock = 0.0f;
+            _replaying = true;
+            _ownsTimeScale = true;
+            _broadcastPaused = false;
+            Time.timeScale = 0.0f;
+
+            _follow = null;
+            _followIndex = -1;
+            _pov = false;
+            UI.Hud.Instance?.ShowToast("INSTANT REPLAY  ·  [R] RETURN LIVE", 1.4f);
+        }
+
+        private void StepReplay()
+        {
+            int available = _replayFrames.Count - _replayFirstFrame;
+            if (available < 2) { EndReplay(); return; }
+
+            // 0.72x gives the decisive beat room to read without turning six seconds into a
+            // painfully long stoppage.
+            _replayClock += Time.unscaledDeltaTime * 0.72f;
+            float sample = _replayClock / ReplaySampleInterval;
+            int localIndex = Mathf.FloorToInt(sample);
+
+            if (localIndex >= available - 1)
+            {
+                EndReplay();
+                return;
+            }
+
+            var a = _replayFrames[_replayFirstFrame + localIndex];
+            var b = _replayFrames[_replayFirstFrame + localIndex + 1];
+            ApplyFrame(a, sample - localIndex, b);
+        }
+
+        private void EndReplay()
+        {
+            if (!_replaying) return;
+
+            if (_liveFrame != null)
+            {
+                ApplyFrame(_liveFrame, 0.0f, null);
+                _targetPosition = _liveFrame.CameraPosition;
+                SyncAnglesFromTransform();
+            }
+
+            _replaying = false;
+            _liveFrame = null;
+            Time.timeScale = _selectedTimeScale;
+            UI.Hud.Instance?.ShowToast("LIVE", 0.8f);
+        }
+
+        private void ApplyFrame(ReplayFrame a, float t, ReplayFrame b)
+        {
+            if (a == null) return;
+
+            transform.position = b == null
+                ? a.CameraPosition
+                : Vector3.Lerp(a.CameraPosition, b.CameraPosition, t);
+            transform.rotation = b == null
+                ? a.CameraRotation
+                : Quaternion.Slerp(a.CameraRotation, b.CameraRotation, t);
+            if (_camera != null)
+                _camera.fieldOfView = b == null
+                    ? a.FieldOfView
+                    : Mathf.Lerp(a.FieldOfView, b.FieldOfView, t);
+
+            foreach (var pose in a.Actors)
+            {
+                if (pose.Target == null) continue;
+
+                Vector3 position = pose.Position;
+                Quaternion rotation = pose.Rotation;
+                if (b != null && TryFindPose(b, pose.Target, out var next))
+                {
+                    position = Vector3.Lerp(position, next.Position, t);
+                    rotation = Quaternion.Slerp(rotation, next.Rotation, t);
+                }
+                pose.Target.SetPositionAndRotation(position, rotation);
+            }
+        }
+
+        private static bool TryFindPose(ReplayFrame frame, Transform target, out ReplayPose found)
+        {
+            foreach (var pose in frame.Actors)
+            {
+                if (pose.Target != target) continue;
+                found = pose;
+                return true;
+            }
+            found = default;
+            return false;
+        }
+
+        private void SyncAnglesFromTransform()
+        {
+            Vector3 euler = transform.eulerAngles;
+            _yawDeg = euler.y;
+            _pitchDeg = euler.x > 180.0f ? euler.x - 360.0f : euler.x;
+        }
+
+        /// <summary>
+        /// Direct broadcast cut to a seat's eye line. Function keys avoid colliding with the
+        /// number-row slow-motion controls and give an operator four predictable camera cuts
+        /// without tabbing through the roster on air.
+        /// </summary>
+        private void SelectPlayerPov(int slot)
+        {
+            CharacterMotor wanted = null;
+
+            foreach (var unit in Spectatable)
+            {
+                if (unit == null || unit.PlayerSlot != slot) continue;
+                wanted = unit;
+                break;
+            }
+
+            if (wanted == null)
+            {
+                foreach (var unit in FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude,
+                                                                       FindObjectsSortMode.None))
+                {
+                    if (unit == null || unit.PlayerSlot != slot) continue;
+                    wanted = unit;
+                    break;
+                }
+            }
+
+            if (wanted == null)
+            {
+                UI.Hud.Instance?.ShowToast($"P{slot + 1} POV IS NOT AVAILABLE", 1.0f);
+                return;
+            }
+
+            _follow = wanted;
+            _followIndex = -1;
+            _pov = true;
+            UI.Hud.Instance?.ShowToast($"POV CUT  ·  {wanted.DisplayName()}", 0.9f);
+        }
+
         /// <summary>
         /// Tab / F / V, read straight off the keyboard device.
         ///
@@ -499,7 +842,8 @@ namespace TumbangPreso.CameraSystem
         /// the spectator stays a camera and nothing else — the same rule that keeps gameplay
         /// state out of it.</summary>
         public static string ControlsText()
-            => "SPECTATOR    WASD fly · SPACE up · CTRL down · SHIFT boost · TAB follow · V POV · F free · WHEEL speed, or follow distance while following";
+            => "SPECTATOR    WASD fly · F1-F4 player POV · TAB follow · V POV/chase · F free · WHEEL speed/zoom\n"
+             + "BROADCAST    P pause · R replay 6s · 1/2/3 speed .25/.5/1x · B save cam · N recall · C controls";
 
         /// <summary>
         /// ⚠️ §2.6 — WHAT THE CAMERA IS DOING RIGHT NOW, which the static legend cannot say.
@@ -513,12 +857,22 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         public string StatusText()
         {
+            string broadcast = "";
+            if (_replaying)
+                broadcast = $"⏪ REPLAY  ·  {_replayClock:0.0}s / {ReplaySeconds:0}s  |  ";
+            else if (_broadcastPaused)
+                broadcast = "⏸ TACTICAL PAUSE  |  ";
+            else if (_selectedTimeScale < 0.99f)
+                broadcast = $"SLOW-MO {_selectedTimeScale:0.##}x  |  ";
+            else if (NetAuthority.IsNetworked)
+                broadcast = "● LIVE NETWORK  |  ";
+
             if (_follow != null)
             {
-                if (_pov) return $"POV  {FollowName()}  ·  through their eyes";
-                return $"FOLLOWING  {FollowName()}  ·  {_followDistance:F1} m";
+                if (_pov) return $"{broadcast}POV  {FollowName()}  ·  through their eyes";
+                return $"{broadcast}FOLLOWING  {FollowName()}  ·  {_followDistance:F1} m";
             }
-            return $"FREE FLIGHT  ·  {_speed:F1} m/s";
+            return $"{broadcast}FREE FLIGHT  ·  {_speed:F1} m/s";
         }
 
         /// <summary>Where this unit's eyes are. A Person stands; a lata and a tsinelas lie on

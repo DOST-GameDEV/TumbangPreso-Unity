@@ -681,70 +681,40 @@ def _donor_head():
     # Scar Depth Crevice / Shadow
     add_quad([(0.036, 0.585), (0.036, 0.655), (0.038, 0.655), (0.038, 0.585)],
              INK, PANEL_PROUD * 2.1)
-    add_quad([(0.040, 0.525), (0.040, 0.585), (0.042, 0.585), (0.042, 0.525)],
-             INK, PANEL_PROUD * 2.1)
     add_quad([(0.050, 0.485), (0.050, 0.525), (0.052, 0.525), (0.052, 0.485)],
              INK, PANEL_PROUD * 2.1)
 
-    # 4. 👁️ EXACT MATCHING ANIME EYE SHAPE & DESIGN (EMERALD / GOLD HETEROCHROMIA)
-    # --- RIGHT EYE (-X, Viewer's Left): NORMAL SLEEK EMERALD GREEN ANIME EYE (WHITE SCLERA) ---
-    # White Sclera Aperture (Exact mirrored shape of left eye aperture)
-    add_quad([(-0.114, 0.460), (-0.114, 0.496), (-0.034, 0.502), (-0.034, 0.460)],
-             WHITE, PANEL_PROUD * 2.8)
-    # Radiant Emerald Green Iris (Fills the iris aperture)
-    add_quad([(-0.092, 0.464), (-0.092, 0.492), (-0.054, 0.488), (-0.054, 0.464)],
-             EYE_EMERALD, PANEL_PROUD * 3.2)
-    # Centered Deep Charcoal Pupil Core (Normal round/square anime pupil, NOT a slit!)
-    add_quad([(-0.078, 0.468), (-0.078, 0.486), (-0.064, 0.484), (-0.064, 0.468)],
-             INK, PANEL_PROUD * 3.6)
-    # Crisp Bright Anime Glint Sparkle (Top-left glint highlight)
-    add_quad([(-0.082, 0.476), (-0.082, 0.484), (-0.072, 0.483), (-0.072, 0.476)],
-             WHITE, PANEL_PROUD * 4.2)
-    # Thick Sharp Slanted Upper Lash Wing (INK)
-    add_quad([(-0.116, 0.488), (-0.116, 0.504), (-0.032, 0.500), (-0.032, 0.484)],
-             INK, PANEL_PROUD * 4.0)
-    # Lower Lash Continuous Underline (INK)
-    add_quad([(-0.114, 0.460), (-0.114, 0.466), (-0.034, 0.466), (-0.034, 0.460)],
-             INK, PANEL_PROUD * 4.0)
+    # 4. 👁️ TOON HETEROCHROMIA EYES (MATCHING CAST TOON SILHOUETTE) - NO BROWS
+    # --- RIGHT EYE (-X, Viewer's Left: Slanted-Top Rounded-Bottom INK Toon Eye) ---
+    add_quad([(-0.096, 0.456), (-0.104, 0.488), (-0.044, 0.480), (-0.048, 0.456)],
+             INK, PANEL_PROUD * 2.6)
+    add_quad([(-0.104, 0.488), (-0.098, 0.510), (-0.040, 0.490), (-0.044, 0.480)],
+             INK, PANEL_PROUD * 2.6)
+    add_quad([(-0.112, 0.470), (-0.112, 0.496), (-0.104, 0.496), (-0.104, 0.470)],
+             INK, PANEL_PROUD * 2.6)
+    add_quad([(-0.088, 0.450), (-0.088, 0.456), (-0.056, 0.456), (-0.056, 0.450)],
+             INK, PANEL_PROUD * 2.6)
 
-    # --- LEFT EYE (+X, Viewer's Right): DEMONIC BLACK SCLERA WITH GLOWING GOLDEN IRIS ---
-    # Jade Earth Rune Eye Frame Bed
-    add_quad([(0.030, 0.456), (0.030, 0.498), (0.118, 0.504), (0.118, 0.456)],
-             ROBE_DARK, PANEL_PROUD * 2.3)
-    # Pitch-Black Sclera & Eye Body (COMPLETELY BLACK, ZERO WHITE!)
-    add_quad([(0.034, 0.460), (0.034, 0.496), (0.114, 0.502), (0.114, 0.460)],
-             INK, PANEL_PROUD * 2.8)
-    # Radiant Glowing Golden Iris in Center (EYE_GOLD)
-    add_quad([(0.054, 0.464), (0.054, 0.488), (0.092, 0.492), (0.092, 0.464)],
+    # --- LEFT EYE (+X, Viewer's Right: Demonic Black Sclera + Glowing Gold Iris) ---
+    # Black Sclera Body (Matching exact eye silhouette)
+    add_quad([(0.048, 0.456), (0.044, 0.480), (0.104, 0.488), (0.096, 0.456)],
+             INK, PANEL_PROUD * 2.6)
+    add_quad([(0.044, 0.480), (0.040, 0.490), (0.098, 0.510), (0.104, 0.488)],
+             INK, PANEL_PROUD * 2.6)
+    add_quad([(0.104, 0.470), (0.104, 0.496), (0.112, 0.496), (0.112, 0.470)],
+             INK, PANEL_PROUD * 2.6)
+    add_quad([(0.056, 0.450), (0.056, 0.456), (0.088, 0.456), (0.088, 0.450)],
+             INK, PANEL_PROUD * 2.6)
+
+    # Radiant Glowing Golden Iris
+    add_quad([(0.058, 0.466), (0.058, 0.488), (0.090, 0.492), (0.090, 0.466)],
              EYE_GOLD, PANEL_PROUD * 3.4)
-    # Sharp Otsutsuki Vertical Pupil Slit (INK)
-    add_quad([(0.068, 0.466), (0.068, 0.488), (0.076, 0.488), (0.076, 0.466)],
+    # Sharp Vertical Pupil Slit (INK)
+    add_quad([(0.070, 0.468), (0.070, 0.490), (0.078, 0.490), (0.078, 0.468)],
              INK, PANEL_PROUD * 3.8)
-    # Radiant Glowing Core Flare (WHITE)
-    add_quad([(0.070, 0.473), (0.070, 0.483), (0.074, 0.483), (0.074, 0.473)],
+    # Bright Core Flare Sparkle (WHITE)
+    add_quad([(0.072, 0.476), (0.072, 0.484), (0.076, 0.484), (0.076, 0.476)],
              WHITE, PANEL_PROUD * 4.2)
-    # Thick Sharp Slanted Upper Lash Wing (INK)
-    add_quad([(0.032, 0.484), (0.032, 0.500), (0.116, 0.504), (0.116, 0.488)],
-             INK, PANEL_PROUD * 4.0)
-    # Lower Lash Continuous Underline (INK)
-    add_quad([(0.034, 0.460), (0.034, 0.466), (0.114, 0.468), (0.114, 0.460)],
-             INK, PANEL_PROUD * 4.0)
-
-    # 5. 😠 EXACT MATCHING ARCHED ANIME EYEBROWS & PIERCING
-    # Right Eyebrow (Solid continuous arched anime eyebrow, thickness 0.018)
-    add_quad([(-0.114, 0.514), (-0.114, 0.532), (-0.036, 0.518), (-0.036, 0.498)],
-             INK, PANEL_PROUD * 3.4)
-    # Silver Eyebrow Piercing Bar on Right Brow Outer Edge
-    add_quad([(-0.116, 0.520), (-0.116, 0.532), (-0.104, 0.532), (-0.104, 0.520)],
-             SILVER, PANEL_PROUD * 3.8)
-
-    # Left Eyebrow (Exact matching arched anime eyebrow split by Karma slash)
-    # Inner piece
-    add_quad([(0.036, 0.498), (0.036, 0.516), (0.052, 0.518), (0.052, 0.500)],
-             INK, PANEL_PROUD * 3.4)
-    # Outer piece
-    add_quad([(0.072, 0.508), (0.072, 0.526), (0.114, 0.532), (0.114, 0.514)],
-             INK, PANEL_PROUD * 3.4)
 
     # 6. 🪨 CHUNKY LOW-POLY SWEPT-BACK OTSUTSUKI HORN (media_1787216732286.jpg Iteration B)
     _add_horn_geometry(pos, nrm, uv, tris)

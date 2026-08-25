@@ -18,13 +18,18 @@ MonoBehaviour:
   - {fileID: 11400000, guid: cd0266a3c5a0ee544b799bc85c68bf5d, type: 2}
   - {fileID: 11400000, guid: 9d33113825fe9d54b85af9407d0fc4d2, type: 2}
   - {fileID: 11400000, guid: 926192f18303cf24892f824b508a5881, type: 2}
-  - {fileID: 11400000, guid: 7c7994baa482eb64ba8bc1809d5b3cc9, type: 2}
+  - {fileID: 11400000, guid: 9afc7dde271a3e142bcd0b2024f1565c, type: 2}
   - {fileID: 11400000, guid: 5740019657866a54b848d5681a85197d, type: 2}
   - {fileID: 11400000, guid: 59463cc4bee1e5544894d2474ed94b4d, type: 2}
   - {fileID: 11400000, guid: fe18a81fc7cfe1d4e8861808d75ec837, type: 2}
   - {fileID: 11400000, guid: a664a9143af64ab49b73a5b1ecaa0e03, type: 2}
   - {fileID: 11400000, guid: d5b10303b2ddc354a9517cc13589e29e, type: 2}
   - {fileID: 11400000, guid: 6cd8ec6e55d51d64bbab750e156dde37, type: 2}
+  - {fileID: 11400000, guid: 2a13a80f58f901b4e809e9074550567e, type: 2}
+  - {fileID: 11400000, guid: 5dbd585c066147e438c31a525bad4e39, type: 2}
+  - {fileID: 11400000, guid: d87b038099b2e0740a7c0fd166cb44da, type: 2}
+  - {fileID: 11400000, guid: 7c7994baa482eb64ba8bc1809d5b3cc9, type: 2}
+  - {fileID: 11400000, guid: 86af06543288730408d46a1356227e28, type: 2}
   Cans:
   - {fileID: 11400000, guid: 87c3c01b07782624aa1933e1330ab204, type: 2}
   - {fileID: 11400000, guid: ce0626ac5db14f2409ddadc10dd61d76, type: 2}

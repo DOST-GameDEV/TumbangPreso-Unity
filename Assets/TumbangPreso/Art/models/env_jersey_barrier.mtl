@@ -1,0 +1,17 @@
+# Material definition for env_jersey_barrier
+
+newmtl jersey_concrete
+Kd 0.74000 0.76000 0.78000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+
+newmtl jersey_reflector
+Kd 0.98000 0.82000 0.10000
+Ke 0.35000 0.25000 0.00000
+Ks 0.00000 0.00000 0.00000
+Ns 10.0
+d 1.0000
+illum 2
+

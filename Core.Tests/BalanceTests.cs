@@ -282,6 +282,85 @@ namespace TumbangPreso.Core.Tests
         }
 
         // ===================================================================
+        // GETTING BACK UP
+        //
+        // 🧑, 2026-08-25: *"then fall down animation plays and u have to spam a button to
+        // get back up"*. These four assert the bound rather than the feel: what a mash is worth,
+        // what it cannot do, and that hardware cannot beat a hand.
+        // ===================================================================
+
+        /// <summary>
+        /// ⚠️ A MASH SHORTENS A TRIP, IT DOES NOT CANCEL ONE. If a press could take the fall to
+        /// zero the hazard would cost nothing to whoever reacts first, and a hazard that can be
+        /// answered for free is a hazard nobody has to route around.
+        /// </summary>
+        [Fact]
+        public void Mash_ShortensATripButNeverCancelsIt()
+        {
+            float left = 2.5f;
+            for (int i = 0; i < 200; i++)
+                left = Combat.MashRecover(left, Balance.MashCooldown, out _);
+
+            Assert.Equal(Balance.MinTripDown, left, 3);
+            Assert.True(left > 0.0f);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE RATE CAP IS THE ANTI-TURBO BOUND. A press inside `MashCooldown` of the
+        /// last accepted one changes nothing at all, so a macro or a turbo-fire mouse cannot
+        /// take a trip below what a human burst reaches. `docs/VISION.md` § 4 aims the mode at
+        /// a bracket, and a status that is answered by hardware does not belong in one.
+        /// </summary>
+        [Fact]
+        public void Mash_IgnoresPressesInsideTheRateCap()
+        {
+            float left = Combat.MashRecover(2.5f, Balance.MashCooldown * 0.5f, out bool accepted);
+
+            Assert.False(accepted);
+            Assert.Equal(2.5f, left, 3);
+
+            left = Combat.MashRecover(2.5f, Balance.MashCooldown, out accepted);
+            Assert.True(accepted);
+            Assert.Equal(2.5f - Balance.MashRecoverPerPress, left, 3);
+        }
+
+        /// <summary>
+        /// ⚠️ THE SAVING HAS TO FIT INSIDE THE FALL, OR THE CAP IS THE REAL RULE AND THE
+        /// PER-PRESS VALUE IS DECORATION. `StreetTripHazard` trips for 2.50 s and the floor is
+        /// 0.90 s, so 1.60 s has to be removable at 0.13 s a press and no faster than 10 Hz:
+        /// 12.3 presses over 1.23 s, comfortably inside the 2.50 s the player is down for.
+        /// </summary>
+        [Fact]
+        public void Mash_CanReachTheFloorWithinTheFallItself()
+        {
+            const float trip = 2.5f;
+            float removable = trip - Balance.MinTripDown;
+            float presses = removable / Balance.MashRecoverPerPress;
+            float secondsOfMashing = presses * Balance.MashCooldown;
+
+            Assert.True(secondsOfMashing < trip,
+                        $"{presses:F1} presses need {secondsOfMashing:F2} s of a {trip:F2} s fall.");
+        }
+
+        /// <summary>
+        /// ⚠️ THE FLOOR MUST LEAVE THE KNOCKDOWN CLIP TIME TO PLAY. `CharacterAnimator.Choose`
+        /// switches from the knockdown to the get-up at `TripLeft` = 0.70, so a floor at or under
+        /// that would let a perfect mash skip the fall entirely and pop the body upright with no
+        /// animation. The 0.70 is transcribed here on purpose: if it moves, this goes red.
+        /// </summary>
+        [Fact]
+        public void Mash_LeavesTheKnockdownClipTimeToPlay()
+        {
+            const float getUpBegins = 0.70f;
+
+            Assert.True(Balance.MinTripDown > getUpBegins);
+            Assert.Equal(Balance.MinTripDown, Combat.FastestTripRecovery(2.5f), 3);
+
+            // A trip already shorter than the floor is not lengthened by the rule.
+            Assert.Equal(0.4f, Combat.FastestTripRecovery(0.4f), 3);
+        }
+
+        // ===================================================================
         // THE THROW AND THE HIT WINDOW
         // ===================================================================
 
@@ -497,14 +576,24 @@ namespace TumbangPreso.Core.Tests
         /// the select screen because the meters look correct on both.
         /// </summary>
         [Fact]
-        public void AllTwelvePersonRows_AreDistinct()
+        public void AllPersonRows_AreDistinct()
         {
-            Assert.Equal(12, Roster.People.Count);
+            Assert.Equal(12, Roster.ClassicPeople.Count);
+            Assert.Equal(5, Roster.HeroPeople.Count);
+            Assert.Equal(17, Roster.AllPeople.Count);
 
-            var seen = new HashSet<string>();
-            foreach (var e in Roster.People)
-                Assert.True(seen.Add($"{e.Bilis}/{e.Lakas}/{e.Tatag}"),
-                    $"{e.Name} duplicates another row: two characters playing as one");
+            var seenClassic = new HashSet<string>();
+            foreach (var e in Roster.ClassicPeople)
+                Assert.True(seenClassic.Add($"{e.Bilis}/{e.Lakas}/{e.Tatag}"),
+                    $"{e.Name} duplicates another classic row: two characters playing as one");
+
+            var seenHeroes = new HashSet<string>();
+            foreach (var e in Roster.HeroPeople)
+                Assert.True(seenHeroes.Add($"{e.Bilis}/{e.Lakas}/{e.Tatag}"),
+                    $"{e.Name} duplicates another hero row: two characters playing as one");
+
+            Assert.Equal(Roster.ClassicPeople, Roster.GetPeople(GameMode.Classic));
+            Assert.Equal(Roster.HeroPeople, Roster.GetPeople(GameMode.HeroStrike));
         }
 
         /// <summary>
@@ -617,6 +706,96 @@ namespace TumbangPreso.Core.Tests
             foreach (var e in Roster.People)
                 Assert.True(e.Name.Length <= Balance.PlayerNameMax,
                     $"{e.Name} is {e.Name.Length} chars and would be clipped on a card");
+        }
+
+        [Fact]
+        public void TournamentPenalties_ValuesAreNegativeAndConsistent()
+        {
+            Assert.Equal(-5, Balance.ScoreTayaCampPenalty);
+            Assert.Equal(-5, Balance.ScoreUnretrievedPenalty);
+            Assert.Equal(-5, MatchRules.PointsFor(ScoreEvent.TayaCampPenalty));
+            Assert.Equal(-5, MatchRules.PointsFor(ScoreEvent.UnretrievedSlipperPenalty));
+            Assert.Equal(5.0f, Balance.TayaCampGracePeriod);
+            Assert.True(Balance.TayaCampWarningTime < Balance.TayaCampGracePeriod);
+            Assert.True(Balance.TayaCampClearRadius > Balance.TayaCampRadius);
+            Assert.True(Balance.SlipperUnretrievedWarningTime < Balance.SlipperUnretrievedGracePeriod);
+            Assert.Equal(10.0f, Balance.SlipperUnretrievedGracePeriod);
+        }
+
+        [Fact]
+        public void TournamentCamping_UsesHysteresisAndDeterministicReset()
+        {
+            Assert.True(TournamentRules.IsTayaCamping(false, Balance.TayaCampRadius));
+            Assert.True(TournamentRules.IsTayaCamping(true, Balance.TayaCampRadius + 0.3f));
+            Assert.False(TournamentRules.IsTayaCamping(true, Balance.TayaCampClearRadius + 0.01f));
+
+            float timer = TournamentRules.StepViolationTimer(4.9f, true, 0.2f);
+            Assert.True(TournamentRules.IsCampPenalty(timer));
+            Assert.Equal(0.0f, TournamentRules.StepViolationTimer(timer, false, 0.1f));
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THIS TEST USED TO PASS WHILE THE THING IT IS NAMED FOR WAS FALSE. It compared
+        /// each objective against ten seconds of passive charge and found 25 > 10 and 20 > 10,
+        /// which is true and proves nothing: the quantity that mattered was passive charge
+        /// against the WHOLE ROUND. At 1.0/s over 90 s that was 90 of the 100 needed, so waiting
+        /// was worth nine tenths of an ultimate and "favors objectives over waiting" was exactly
+        /// backwards.
+        ///
+        /// The passive trickle is deleted. This now asserts the shape that replaced it, which
+        /// cannot be satisfied by a bad constant the way a 10-second window could.
+        /// </summary>
+        [Fact]
+        public void HeroUltimateEconomy_FavorsObjectivesOverWaiting()
+        {
+            // The risky act must out-earn the safe one. VISION.md § 0: throwing is safe and
+            // free, and the retrieval is the only moment you can be caught.
+            Assert.True(Balance.UltimateChargeOwnSlipperRetrieved > Balance.UltimateChargeLegalThrow);
+
+            // The objective must out-earn both.
+            Assert.True(Balance.UltimateChargeLataKnock > Balance.UltimateChargeOwnSlipperRetrieved);
+            Assert.True(Balance.UltimateChargeTag > Balance.UltimateChargeOwnSlipperRetrieved);
+
+            // Everything still pays something. A round where nobody throws is not a round.
+            Assert.True(Balance.UltimateChargeLegalThrow > 0.0f);
+
+            // ⚠️ THE WHOLE-ROUND BOUND, which is what the old assertion should have been. The
+            // cheapest ultimate in the game costs 90 (`NemuHeroKit.UltimateCost`). Nothing may
+            // accrue on a timer, so a player who acts zero times must earn zero, and there is no
+            // longer any per-second term for this to be written against. If a passive term is
+            // ever reintroduced, 90 seconds of it must not approach the cheapest cost.
+            Assert.Equal(4.0f, Balance.UltimateChargeLegalThrow);
+            Assert.Equal(12.0f, Balance.UltimateChargeOwnSlipperRetrieved);
+            Assert.Equal(25.0f, Balance.UltimateChargeLataKnock);
+            Assert.Equal(20.0f, Balance.UltimateChargeTag);
+        }
+
+        [Fact]
+        public void Scoreboard_PenaltiesClampAtZero()
+        {
+            var board = new Scoreboard();
+            board.Add(0, ScoreEvent.TayaCampPenalty);
+            Assert.Equal(0, board[0]); // should clamp at zero, not go negative
+
+            board.Set(0, 10);
+            board.Add(0, ScoreEvent.TayaCampPenalty);
+            Assert.Equal(5, board[0]);
+
+            board.Add(0, ScoreEvent.UnretrievedSlipperPenalty);
+            Assert.Equal(0, board[0]);
+        }
+
+        [Fact]
+        public void Pektus_CurveConstantsAreValid()
+        {
+            Assert.True(Balance.PektusCurveStrength > 0.0f);
+            Assert.True(Balance.MaxPektusSpin >= 1.0f);
+            Assert.True(Balance.SlipperMaxRestReach > 0.0f);
+            Assert.True(Balance.SlipperMaxRestReach < Balance.PickupRadius,
+                "a slipper resting at the full pickup radius above the feet can only be " +
+                "reached from exactly underneath it, so the out-of-play cutoff must be lower");
+            Assert.True(Balance.PektusBankRestitution > Balance.BounceRestitution);
+            Assert.Equal(1, Balance.MaxScoringBanks);
         }
 
         // ===================================================================

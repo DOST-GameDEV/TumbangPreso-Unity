@@ -12,13 +12,26 @@ namespace TumbangPreso
     /// other cannot. Adding a `Keyboard.current` read anywhere else quietly reintroduces the
     /// divergence the whole indirection exists to prevent.
     ///
-    /// ⚠️ E IS CONTEXTUAL AND THAT IS RESOLVED DOWNSTREAM, NOT HERE. E is bound to BOTH
-    /// `Grab` and `Lunge`, and left-click to both `Grab` and `SpecialAbility`, exactly as the
-    /// Godot input map has it. This class reports both as held and lets the carrier take
-    /// first refusal: tap with a slipper at your feet is a pickup, tap with nothing grabbable
-    /// is a shove, hold as the taya in the lata's ring is the reset channel, and only a press
-    /// nothing consumed reaches the lunge. Resolving it here would need this class to know
-    /// the world state, which is how one keybind becomes three.
+    /// ⚠⚠ ONE CONTROL, ONE ACTION, SINCE 2026-08-23. The map used to bind E to `Grab`,
+    /// `Lunge` AND `Skill1`, left click to `Grab` AND `SpecialAbility`, and Q to
+    /// `SpecialAbility` AND `Skill2`, following the Godot map and then stacking the hero keys
+    /// on top of it. Whichever consumer ran first won the press, so throw did not feel like it
+    /// was on left click even though it was bound there, and a hero's first skill came out of
+    /// the pickup key. The full table is in `Settings.Rebinding` and a test asserts no control
+    /// is shared. Hero powers now use the adjacent Q, E and F cluster, while the contextual
+    /// pickup key uses X so the HUD prompts and shipped controls agree without a collision.
+    ///
+    /// ⚠️ GRAB IS STILL CONTEXTUAL, AND THAT IS RESOLVED DOWNSTREAM, NOT HERE. One key, one
+    /// action, but that action does several jobs depending on the world: tap with a slipper at
+    /// your feet is a pickup, tap with nothing grabbable is a shove, hold as the taya in the
+    /// lata's ring is the reset channel. The carrier takes first refusal and only a press it
+    /// did not consume reaches the shove. Resolving it here would need this class to know the
+    /// world state, which is how one keybind becomes three.
+    ///
+    /// ⚠️ THE TWO ROLES SHARE `SpecialAbility` DELIBERATELY, and that is a role split, not
+    /// a collision. Left click charges the throw for an attacker; `can_throw()` refuses a
+    /// defender outright, so for the taya the same button is the punch. Nobody loses anything,
+    /// and no frame has both branches live.
     /// </summary>
     public sealed class PlayerInputReader : MonoBehaviour
     {
@@ -26,7 +39,7 @@ namespace TumbangPreso
         [SerializeField] private CharacterMotor _motor;
         [SerializeField] private Camera _aimCamera;
 
-        private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote;
+        private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote, _skill1, _skill2, _ultimate;
 
         private void Awake()
         {
@@ -67,15 +80,30 @@ namespace TumbangPreso
             _grab = map.FindAction("Grab", true);
             _lunge = map.FindAction("Lunge", true);
             _emote = map.FindAction("EmoteWheel", true);
+            _skill1 = map.FindAction("Skill1", false);
+            _skill2 = map.FindAction("Skill2", false);
+            _ultimate = map.FindAction("Ultimate", false);
 
             map.Enable();
         }
+
+        private float _currentPektusSpin;
 
         private void Update()
         {
             if (_motor == null) return;
 
             var intent = _motor.Intent;
+
+            var visual = _motor.GetComponent<Visual.CharacterVisual>();
+            if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
+            {
+                // Human controls Kuro the companion pet
+                visual.Companion.SetPlayerInput(_move.ReadValue<Vector2>());
+                // Allow skill2 recast to teleport and end possession
+                if (_skill2 != null) intent.Set(Verb.Skill2, _skill2.IsPressed());
+                return;
+            }
 
             intent.Move = _move.ReadValue<Vector2>();
             intent.Set(Verb.Sprint, _sprint.IsPressed());
@@ -84,7 +112,35 @@ namespace TumbangPreso
             intent.Set(Verb.Grab, _grab.IsPressed());
             intent.Set(Verb.Lunge, _lunge.IsPressed());
             intent.Set(Verb.EmoteWheel, _emote.IsPressed());
+            if (_skill1 != null) intent.Set(Verb.Skill1, _skill1.IsPressed());
+            if (_skill2 != null) intent.Set(Verb.Skill2, _skill2.IsPressed());
+            if (_ultimate != null) intent.Set(Verb.Ultimate, _ultimate.IsPressed());
 
+            // Pektus (Curve Spin) control: Independent of WASD movement!
+            // Controlled via Mouse Wheel Up/Down (or Left/Right arrow keys) while charging throw.
+            if (_special.IsPressed())
+            {
+                if (Mouse.current != null)
+                {
+                    float scrollY = Mouse.current.scroll.ReadValue().y;
+                    if (scrollY > 0.1f) _currentPektusSpin = Mathf.Clamp(_currentPektusSpin + 0.35f, -1.0f, 1.0f);
+                    else if (scrollY < -0.1f) _currentPektusSpin = Mathf.Clamp(_currentPektusSpin - 0.35f, -1.0f, 1.0f);
+                }
+
+                if (Keyboard.current != null)
+                {
+                    if (Keyboard.current.leftArrowKey.isPressed)
+                        _currentPektusSpin = Mathf.Clamp(_currentPektusSpin - Time.deltaTime * 2.5f, -1.0f, 1.0f);
+                    if (Keyboard.current.rightArrowKey.isPressed)
+                        _currentPektusSpin = Mathf.Clamp(_currentPektusSpin + Time.deltaTime * 2.5f, -1.0f, 1.0f);
+                }
+            }
+            else
+            {
+                _currentPektusSpin = 0.0f;
+            }
+
+            intent.SpinInput = _currentPektusSpin;
             intent.AimPoint = ReadAimPoint();
 
             // ⚠️⚠️ THE COMMIT DOES NOT HAPPEN HERE, AND DOING IT HERE IS WHY JUMP AND GRAB DID

@@ -107,12 +107,30 @@ namespace TumbangPreso
             return ThrowRules.Connects(Vector3.Distance(a, b), _skinIndex);
         }
 
+        /// <summary>
+        /// Applies a host snapshot without playing knockdown/restoration feedback. Rejoin is
+        /// observation of an existing state, not a new can event.
+        /// </summary>
+        public void ApplySnapshotState(Vector3 position, Quaternion rotation,
+                                       bool isUpright, int skinIndex)
+        {
+            transform.SetPositionAndRotation(position, rotation);
+            _skinIndex = skinIndex;
+            _isUpright = isUpright;
+            _toppleTimer = 0.0f;
+            _toppleAngle = isUpright ? 0.0f : rotation.eulerAngles.x;
+            _rollAngleDeg = isUpright ? 0.0f : rotation.eulerAngles.y;
+            _lastRollPosition = position;
+            UprightChanged?.Invoke(isUpright);
+        }
+
         /// <summary>Host-side. Knock it over and pay the thrower.</summary>
         public void HostKnockDown(int throwerSlot)
         {
             if (!NetAuthority.ShouldResolve()) return;
             if (!_isUpright) return;
 
+            Hitstop.Trigger(0.045f, 0.10f);
             SetUpright(false);
             _toppleTimer = Balance.ToppleTime;
 
@@ -140,6 +158,19 @@ namespace TumbangPreso
             if (GameServices.Match != null && throwerSlot == GameServices.Match.DefenderSlot) return;
 
             GameServices.Match.AddScore(throwerSlot, ScoreEvent.LataKnocked);
+            UI.Hud.ReportStyle(throwerSlot, 42.0f, "TUMBA!");
+
+            var throwerMotor = GameServices.Round.PlayerAt(throwerSlot);
+            if (throwerMotor != null)
+            {
+                throwerMotor.AbilitySystem?.OnLataKnocked();
+                var ai = throwerMotor.GetComponent<AIController>();
+                if (ai != null)
+                {
+                    string[] celebEmotes = { "dance", "yes", "tpose", "crouch" };
+                    ai.TryTriggerEmote(celebEmotes[UnityEngine.Random.Range(0, celebEmotes.Length)], 0.9f);
+                }
+            }
         }
 
         /// <summary>
@@ -189,11 +220,37 @@ namespace TumbangPreso
             // taya's longest commitment in the game was the cue that means "starting". It is also
             // why `reset_complete` and `reset_channel_complete` both shipped as live cues with
             // zero call sites anywhere in the port.
-            GameServices.Audio?.PlayAt(value ? "reset_complete" : "can_knockdown",
-                                       transform.position);
+            if (value)
+                GameServices.Audio?.PlayImpact("reset_complete", "lata_seal",
+                                               transform.position, 0.72f);
+            else
+                GameServices.Audio?.PlayImpact("can_knockdown", "lata_impact",
+                                               transform.position, 1.0f);
 
-            if (value) GameServices.Voice?.OnLataRestored();
-            else GameServices.Voice?.OnLataKnocked();
+            if (value)
+            {
+                GameServices.Voice?.OnLataRestored();
+                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, "RESTORED!", UI.UiTheme.Defense, 1.2f);
+            }
+            else
+            {
+                GameServices.Voice?.OnLataKnocked();
+                string callout = UI.SceneFlow.SelectedMode == GameMode.Classic
+                    ? "TUMBA!" : "LATA DOWN!";
+                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, callout, UI.UiTheme.Offense, 1.4f);
+                UI.Hud.TriggerHitmarker(UI.UiTheme.Offense, "💥");
+                Visual.ImpactBurst.SpawnAt(transform.position);
+                Abilities.HeroHazards.SpawnConfettiShower(transform.position, 24);
+                if (UnityEngine.Camera.main != null)
+                {
+                    var rig = UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>();
+                    if (rig != null)
+                    {
+                        Vector3 away = UnityEngine.Camera.main.transform.position - transform.position;
+                        rig.ImpactPunch(away.sqrMagnitude > 0.01f ? away.normalized : Vector3.back, 0.8f);
+                    }
+                }
+            }
 
             UprightChanged?.Invoke(value);
         }

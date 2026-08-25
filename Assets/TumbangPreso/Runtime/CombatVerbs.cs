@@ -202,8 +202,11 @@ namespace TumbangPreso
         /// </summary>
         private void StepLunge(float dt)
         {
-            // While the reset channel runs, the lunge charge is cancelled. Both are E held as
-            // the taya, and resetting the can must never fire a lunge out of it.
+            // While the reset channel runs, the lunge charge is cancelled. They are separate
+            // keys now (E channels, right click lunges), so this is no longer a shared-key
+            // problem, but it stays: a taya who starts a lunge with one hand while righting the
+            // can with the other should still finish the can, and this is what makes the
+            // channel uninterruptible from their own inputs.
             if (_carrier != null && _carrier.ChannelRatio > 0.0f)
             {
                 _lungeCharging = false;
@@ -342,12 +345,14 @@ namespace TumbangPreso
             Vector3 push = victim.transform.position - transform.position;
             push.y = 0.0f;
             push = push.normalized * Balance.ShoveSpeed
-                   * Roster.PersonPowerScale(_motor.CharacterIndex)
-                   / Roster.PersonGritScale(victim.CharacterIndex);
+                   * Roster.PersonPowerScale(_motor.CharacterIndex, _motor.Mode)
+                   / Roster.PersonGritScale(victim.CharacterIndex, victim.Mode);
             push.y = Balance.ShoveLift;
 
             victim.ApplyImpulse(push);
             victim.ApplyStagger(Balance.ShoveStun);
+            Visual.DizzyStars.Attach(victim.transform, Balance.ShoveStun);
+            Visual.ComicPopup.Bonk(victim.transform.position);
 
             GameServices.Round?.NoteShove(victim.PlayerSlot, _motor.PlayerSlot);
             _shoveCooldown = Balance.ShoveCooldown;

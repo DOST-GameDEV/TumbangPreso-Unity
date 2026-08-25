@@ -256,6 +256,7 @@ namespace TumbangPreso.CameraSystem
 
             SubscribeEmotes();
             BuildPivots();
+            if (_arms != null && _character != null) _arms.MatchCharacter(_character);
             ApplyFppSelfHide();
             SetActive(makeActive);
         }
@@ -376,7 +377,25 @@ namespace TumbangPreso.CameraSystem
             ApplyLens();
             ApplyCarriedSelfHide();
 
+            // ⚠️ THE HITSTOP GATE SITS ABOVE EVERYTHING THAT WRITES THE TRANSFORM AND BELOW
+            // EVERYTHING THAT DOES NOT. The lens and the self-hide are per-frame state rather
+            // than motion, and skipping either during a hold would pop the arms or the FOV.
+            // See `HoldFrame` for why this is a camera hold and not a time scale.
+            if (StepHold()) return;
+
             if (_emoteView) { StepEmoteLook(); ApplyEmoteView(); return; }
+
+            var visual = _character.GetComponent<Visual.CharacterVisual>();
+            var companion = visual != null ? visual.Companion : null;
+            bool isPossessingCompanion = companion != null && companion.IsPossessed;
+
+            if (isPossessingCompanion)
+            {
+                StepCompanionLook(companion);
+                ApplyCompanionPossessionView(companion);
+                StepShake();
+                return;
+            }
 
             StepLook();
 
@@ -385,6 +404,40 @@ namespace TumbangPreso.CameraSystem
 
             StepShake();
             StepViewmodelKick();
+        }
+
+        private void StepCompanionLook(Visual.GhostPetCompanion companion)
+        {
+            if (_aimSource != AimSource.Mouse) return;
+            if (UI.EmoteWheel.AnyOpen) return;
+
+            var s = Settings.SettingsStore.Current;
+            float sens = BaseSensitivity * s.MouseSensitivity;
+
+            float dx = Input.GetAxisRaw("Mouse X") * sens;
+            float dy = Input.GetAxisRaw("Mouse Y") * sens;
+            if (s.InvertY) dy = -dy;
+
+            if (Mathf.Abs(dx) > 0.0001f && companion != null)
+                companion.transform.Rotate(Vector3.up, dx * 10.0f, Space.World);
+
+            _pitchDeg = Mathf.Clamp(_pitchDeg - dy * 10.0f, PitchMinDeg, PitchMaxDeg);
+        }
+
+        private void ApplyCompanionPossessionView(Visual.GhostPetCompanion companion)
+        {
+            if (companion == null) return;
+
+            // Hide human FPP viewmodel arms while possessing companion pet
+            if (_viewmodel != null && _viewmodel.gameObject.activeSelf)
+                _viewmodel.gameObject.SetActive(false);
+
+            float yaw = companion.transform.eulerAngles.y;
+            Vector3 mount = companion.transform.position + Vector3.up * 0.35f;
+            var rot = Quaternion.Euler(Mathf.Clamp(_pitchDeg, -45.0f, 65.0f), yaw, 0.0f);
+            Vector3 wanted = mount - (rot * Vector3.forward) * 2.0f;
+
+            transform.SetPositionAndRotation(wanted, rot);
         }
 
         private void StepLook()
@@ -441,6 +494,8 @@ namespace TumbangPreso.CameraSystem
 
             // The hand shows what the unit is actually carrying.
             if (_arms == null) return;
+
+            if (_character != null) _arms.MatchCharacter(_character);
 
             // ⚠️ ASKED PER FRAME, NOT ON A PICK-UP EVENT. What a character holds changes
             // DURING a round, and the self-hide only re-runs on activation and model changes,
@@ -639,14 +694,82 @@ namespace TumbangPreso.CameraSystem
         /// shove on a long cooldown and completely wrong for a block that can fire as fast as
         /// three attackers can throw.
         /// </summary>
+        private Vector3 _impactPunchOffset;
+        private float _impactPunchLeft;
+        private const float ImpactPunchDuration = 0.16f;
+
+        /// <summary>
+        /// Directional camera impact punch for heavy ability hits and strikes.
+        /// </summary>
+        public void ImpactPunch(Vector3 direction, float strength = 1.0f)
+        {
+            _impactPunchLeft = ImpactPunchDuration;
+            _impactPunchOffset = direction.normalized * 0.20f * strength;
+            Shake(strength * 0.45f, 0.22f);
+        }
+
         public void Shake(float strength = 0.35f, float duration = 0.18f)
         {
             _shakeStrength = Mathf.Max(_shakeStrength, strength);
             _shakeLeft = Mathf.Max(_shakeLeft, duration);
         }
 
+        // ------------------------------------------------------------------ hitstop
+
+        /// <summary>
+        /// ⚠️⚠️ THE IMPACT FRAME, AND IT IS A CAMERA HOLD RATHER THAN A TIME SCALE. A hit in
+        /// this game used to land with no instant of contact at all: a `bump`, some stars and an
+        /// impulse, which between them describe the aftermath and never the moment. This is the
+        /// beat every fighting game spends its budget on. `Visual.HitFeel` is the only caller
+        /// and it carries the reasoning and the weights.
+        ///
+        /// ⚠️⚠️ IT MUST NOT BECOME `Time.timeScale`, WHICH IS THE OBVIOUS IMPLEMENTATION AND IS
+        /// WRONG HERE FOR THREE SEPARATE REASONS. This is a four-player game on one shared
+        /// simulation: a global scale would freeze the physics step for all four, stop the round
+        /// clock, and in a networked match desynchronise the host from its peers. It would also
+        /// hand the anti-stall clocks in `docs/VISION.md` § 4 a free pause on every hit.
+        ///
+        /// What actually happens is much narrower. `LateUpdate` stops WRITING the camera
+        /// transform for a few frames, so the view sticks where it was while the world carries on
+        /// simulating underneath it. The player's own input is not eaten and their character
+        /// keeps moving; only the picture lags, which is exactly the illusion wanted.
+        ///
+        /// ⚠️ UNSCALED TIME, so a hold cannot be stretched by anything else that scales time.
+        /// </summary>
+        public void HoldFrame(float seconds)
+        {
+            if (seconds <= 0.0f) return;
+
+            _holdLeft = Mathf.Max(_holdLeft, seconds);
+        }
+
+        private float _holdLeft;
+
+        /// <summary>
+        /// ⚠️ THE SHAKE AND THE PUNCH ARE STILL STEPPED WHILE HELD, AND THAT IS NOT AN
+        /// OVERSIGHT. Their timers have to keep draining or the punch that started with the hit
+        /// would begin only after the freeze released, which reads as two separate events
+        /// instead of one. What is suspended is the FOLLOW: the rig does not re-derive its
+        /// position from the character it is tracking.
+        /// </summary>
+        private bool StepHold()
+        {
+            if (_holdLeft <= 0.0f) return false;
+
+            _holdLeft -= Time.unscaledDeltaTime;
+            StepShake();
+            return true;
+        }
+
         private void StepShake()
         {
+            if (_impactPunchLeft > 0.0f)
+            {
+                _impactPunchLeft -= Time.deltaTime;
+                float punchRatio = Mathf.Clamp01(_impactPunchLeft / ImpactPunchDuration);
+                transform.position += _impactPunchOffset * punchRatio;
+            }
+
             if (_shakeLeft <= 0.0f) return;
 
             _shakeLeft -= Time.deltaTime;

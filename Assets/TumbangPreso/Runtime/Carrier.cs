@@ -1,3 +1,5 @@
+using System;
+using TumbangPreso.Abilities;
 using TumbangPreso.Core;
 using UnityEngine;
 
@@ -124,6 +126,9 @@ namespace TumbangPreso
         public float ChargeRatio => ThrowRules.ChargeRatio(_charge);
         public float ChannelRatio { get; private set; }
 
+        private float _pektusSpin;
+        public float CurrentPektusSpin => _charging ? _pektusSpin : 0.0f;
+
         /// <summary>True while this unit is winding a throw up. Read by the aim arc and by the
         /// YOU card's charge meter.</summary>
         public bool IsCharging => _charging;
@@ -214,8 +219,10 @@ namespace TumbangPreso
             // The same 45 degree launch every range bound in the game is solved against.
             Vector3 dir = (aim.normalized + Vector3.up).normalized;
 
-            GameServices.Audio?.PlayAt("throw_release", origin);
+            GameServices.Audio?.PlayAtVaried("throw_release", origin, 0.94f, 1.07f, 0.95f);
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
+            GetComponentInChildren<Visual.CharacterSquashStretch>()?.DashStretch(transform.forward, 0.14f);
+            UI.Hud.ReportStyle(_motor.PlayerSlot, 5.0f, "LET FLY");
 
             Held.HostThrow(_motor, origin, Held.LaunchVelocity(dir, Mathf.Clamp01(charge)));
 
@@ -243,11 +250,31 @@ namespace TumbangPreso
 
             if (what == null) return;
 
-            GameServices.Audio?.PlayAt("pickup", transform.position);
+            GameServices.Audio?.PlayAtVaried("pickup", transform.position, 0.96f, 1.08f, 0.9f);
 
             // Reaching down for a loose tsinelas — the literal clip for the job, and it now
             // reaches the first-person arm through the same call. See CharacterAnimator.PlayAction.
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("grab");
+            GetComponentInChildren<Visual.CharacterSquashStretch>()?.Squash(0.13f);
+            UI.Hud.ReportStyle(_motor.PlayerSlot, 14.0f, "SNATCH!");
+
+            // ⚠️⚠️ THE RETRIEVAL PAYS THE HERO ECONOMY, AND IT IS WIRED HERE BECAUSE THIS IS THE
+            // ONE FUNNEL EVERY PICKUP GOES THROUGH. `HostPickUp`, the proximity grab and
+            // `Slipper.HostGrab` all arrive here, and the guard above makes it idempotent, so a
+            // reward placed here is paid exactly once per pickup and cannot be paid twice by the
+            // double call the guard exists for.
+            //
+            // `docs/VISION.md` § 0: *"The tension is the retrieval, not the throw. Throwing is
+            // safe and free; going back in for your tsinelas is the only moment you can be
+            // caught."* The ultimate economy paid 8 for the throw and nothing at all for this
+            // until 2026-08-25, which is the two halves of the game rewarded in exactly the
+            // wrong order. `docs/Hero_Strike_Balance.md` § 3.1.
+            //
+            // ⚠️ ONLY YOUR OWN TSINELAS COUNTS. Picking up somebody else's is a denial play and
+            // a fine one, but it is not the run this game is built around and it carries none of
+            // the same risk. `OwnerSlot` is authoritative; a slipper nobody owns pays nothing.
+            if (what.OwnerSlot == _motor.PlayerSlot)
+                _motor.AbilitySystem?.OnOwnSlipperRetrieved();
 
             _throwLockLeft = what.ThrowLock;
         }
@@ -445,6 +472,7 @@ namespace TumbangPreso
             if (intent.Pressed(Verb.SpecialAbility))
             {
                 _charge = Mathf.Min(_charge + dt, Balance.ChargeFullTime);
+                _pektusSpin = Mathf.Clamp(intent.SpinInput, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
 
                 // ⚠️ STEPPING OUT OF LEGALITY MID-CHARGE CANCELS IT RATHER THAN BANKING IT.
                 // Walking into the box while charging must not launch on release: the crosshair
@@ -455,9 +483,10 @@ namespace TumbangPreso
 
             // Released.
             float power = ChargeRatio;
+            float spin = _pektusSpin;
             CancelCharge();
 
-            if (canThrow) Release(power);
+            if (canThrow) Release(power, spin);
         }
 
         /// <summary>
@@ -471,6 +500,7 @@ namespace TumbangPreso
 
             _charging = false;
             _charge = 0.0f;
+            _pektusSpin = 0.0f;
             BroadcastCharge(false);
         }
 
@@ -565,29 +595,57 @@ namespace TumbangPreso
         {
             if (Held == null) return Vector3.zero;
 
-            // ⚠️⚠️ SOLVED THROUGH THE AIM POINT, NOT LOBBED AT 45 DEGREES. See
-            // `Slipper.SolveArc`: the fixed 45 threw the same towering arc at every range and
-            // ignored the vertical half of where the player was pointing entirely.
-            return Held.LaunchVelocityTo(ThrowOrigin(), AimPoint(), ChargeRatio);
+            Vector3 vel = Held.LaunchVelocityTo(ThrowOrigin(), AimPoint(), ChargeRatio);
+            var ability = _motor.AbilitySystem;
+            if (ability != null && ability.Kit is ZackHeroKit zack && (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
+            {
+                vel *= 1.6f;
+            }
+            else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
+            {
+                vel *= 1.3f;
+            }
+            return vel;
         }
 
-        private void Release(float power)
+        private void Release(float power, float spin = 0.0f)
         {
             if (Held == null) return;
 
             Vector3 origin = ThrowOrigin();
 
-            GameServices.Audio?.PlayAt("throw_release", origin);
+            GameServices.Audio?.PlayAtVaried("throw_release", origin, 0.94f, 1.07f, 0.95f);
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
+            GetComponentInChildren<Visual.CharacterSquashStretch>()?.DashStretch(transform.forward, 0.14f);
+            UI.Hud.ReportStyle(_motor.PlayerSlot,
+                               5.0f + Mathf.Abs(spin) * 7.0f,
+                               Mathf.Abs(spin) >= 0.4f ? "PEKTUS CURVE" : "LET FLY");
 
-            // ⚠️ THE SAME SOLVE THE PREVIEW DREW. The dotted line and the flight are one line
-            // only while both come out of `LaunchVelocityTo`; two call sites building a
-            // direction by hand is exactly how they drift.
-            Held.HostThrow(_motor, origin, Held.LaunchVelocityTo(origin, AimPoint(), power));
+            var ability = _motor.AbilitySystem;
+            ability?.OnThrowReleased();
+
+            Vector3 vel = Held.LaunchVelocityTo(origin, AimPoint(), power);
+            SlipperAffinity affinity = SlipperAffinity.Normal;
+
+            if (ability != null && ability.Kit is ZackHeroKit zack && (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
+            {
+                vel *= 1.6f;
+                affinity = SlipperAffinity.ElectricZap;
+                zack.IsOverchargeThrowActive = false;
+            }
+            else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
+            {
+                vel *= 1.3f;
+                affinity = SlipperAffinity.FireExplosive;
+                sean.IsIgnitionCannonActive = false;
+            }
+
+            Held.HostThrow(_motor, origin, vel, affinity, spin);
 
             Held = null;
             _motor.HoldingSlipper = false;
             _charge = 0.0f;
+            _pektusSpin = 0.0f;
         }
 
         // -------------------------------------------------------------------
@@ -635,6 +693,8 @@ namespace TumbangPreso
             if (_channel >= lata.ResetChannelTime)
             {
                 lata.HostRestore();
+                GetComponentInChildren<Visual.CharacterSquashStretch>()?.Stretch(0.18f);
+                UI.Hud.ReportStyle(_motor.PlayerSlot, 24.0f, "BANGON!");
                 _channel = 0.0f;
                 ChannelRatio = 0.0f;
             }

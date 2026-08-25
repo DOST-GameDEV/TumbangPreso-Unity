@@ -103,6 +103,10 @@ namespace TumbangPreso.UI
         private readonly Text[] _scoreNames = new Text[Balance.PlayerCount];
         private readonly Text[] _scoreMarks = new Text[Balance.PlayerCount];
         private readonly Text[] _scoreValues = new Text[Balance.PlayerCount];
+        private readonly RectTransform[] _scoreRows = new RectTransform[Balance.PlayerCount];
+        private readonly float[] _scorePulses = new float[Balance.PlayerCount];
+        private readonly int[] _lastScoreBySlot = new int[Balance.PlayerCount];
+        private bool _scoresInitialised;
         private RectTransform _scoreboardRt;
 
         private Image _lataCard;
@@ -118,6 +122,8 @@ namespace TumbangPreso.UI
 
         private Text _readyPrompt;
         private Text _readyObjective;
+        private Image _readyPromptPlate;
+        private Image _readyObjectivePlate;
 
         private Image _dangerFlash;
         private bool _dangerHeld;
@@ -128,10 +134,141 @@ namespace TumbangPreso.UI
         private Material _frostMaterial;
         private float _frostCoverage;
 
+        public static Hud Instance { get; private set; }
+
         private Text _vulnerable;
         private Text _crosshair;
-
+        private Text _hitmarker;
+        private float _hitmarkerTimer;
         private OffscreenIndicators _indicators;
+
+        private GameObject _heroDeck;
+        private AbilityCard _skill1Card, _skill2Card, _ultCard;
+        private bool _lastUltReady;
+        private AbilityInspectPanel _inspect;
+        private Text _inspectHint;
+        private string _inspectHintText;
+
+        /// <summary>
+        /// How many notches the ultimate meter is cut into.
+        ///
+        /// ⚠⚠ THE SEGMENTS ARE THE WHOLE POINT OF THE ULT CARD, NOT DECORATION. A cooldown
+        /// and an ultimate charge are different quantities and used to be drawn with the same
+        /// smooth bar and the same text slot, so a card reading "READY!" and a card reading
+        /// "6%" looked like the same widget in two states. The eye cannot tell a ready skill
+        /// from a charging ultimate at a glance, which is the only way a HUD card is ever read.
+        /// A notched meter cannot be mistaken for a draining one even in peripheral vision.
+        /// </summary>
+        private const int UltSegments = 10;
+
+        /// <summary>
+        /// One tile in the hero deck, and everything it needs to draw its own state.
+        ///
+        /// ⚠️⚠️ THE RIM IS A SEPARATE IMAGE FROM THE PLATE, AND IT HAS TO BE. `Image.color`
+        /// multiplies the WHOLE nine-slice, border included, so a single sprite carrying both
+        /// cannot light its edge without also lifting its fill: the old deck tinted the entire
+        /// tile hero-orange to say "ready", which is a colour wash where the design wanted an
+        /// outline. A transparent-fill box stacked on a static dark plate gives the rim its own
+        /// colour for the cost of one extra draw per tile.
+        ///
+        /// ⚠️ THE ANIMATION STATE LIVES ON THE CARD, NOT IN THREE SETS OF FIELDS ON THE HUD.
+        /// `_lastUltReady` is the last survivor of the old shape and it only exists because the
+        /// ultimate's ready sting is a sound rather than a scale.
+        /// </summary>
+        private sealed class AbilityCard
+        {
+            public RectTransform Rt;
+            public Image Plate;
+            public Image Rim;
+            public Image Glyph;
+            public Image CooldownSweep;
+            public Text Key;
+            public Text State;
+            public Image Fill;
+            public Image[] Segments;
+
+            /// <summary>
+            /// The charge dots, for a skill that is on charges rather than on a cooldown.
+            ///
+            /// ⚠️⚠️ A THIRD SHAPE FOR A THIRD QUANTITY, AND THAT IS A SETTLED RULE RATHER THAN
+            /// A STYLE CHOICE. `docs/VISION.md` § 3: *"Cooldown and ultimate charge must not
+            /// look alike. A cooldown drains a smooth bar; the ultimate fills a notched one.
+            /// They are different quantities and used to share a widget."* Charges are a third
+            /// quantity, so reusing either of the first two would recreate exactly the fault
+            /// that rule was written to close.
+            ///
+            /// Discrete dots are the right shape because the quantity IS discrete: "one left"
+            /// is a fact a player acts on, and a bar at 50 per cent of two charges is the same
+            /// picture as a bar at 50 per cent of a cooldown while meaning something completely
+            /// different. Valorant draws them the same way for the same reason.
+            ///
+            /// Null on every cooldown ability, which is what `PaintCharges` keys off.
+            /// </summary>
+            public Image[] Pips;
+
+            /// <summary>How many charges the pips were built for, so a kit swap rebuilds.</summary>
+            public int PipCount;
+
+            /// <summary>Seconds left of the flash that fires when a charge is handed back.</summary>
+            public float PipGrantLeft;
+
+            /// <summary>Charges seen last frame, so a grant can be told from a spend.</summary>
+            public int WasCharges = -1;
+
+            /// <summary>Seconds left of the 0.18 s pop that fires when a power comes back up.</summary>
+            public float PopLeft;
+
+            /// <summary>Whether it was available on the previous frame, so the edge can be seen.</summary>
+            public bool WasReady;
+        }
+
+        // -------------------------------------------------------------------
+        // § THE DECK'S GEOMETRY, AS NAMED NUMBERS RATHER THAN LITERALS
+        //
+        // ⚠️⚠️ THEY ARE PUBLIC SO A TEST CAN DO THE ARITHMETIC. A `HorizontalLayoutGroup` will
+        // lay three cards out past the edge of a rect that no longer fits them, silently, and
+        // the overflow lands under the first-person hands where it is least visible and most
+        // annoying. `TheHeroDeckWidthMatchesItsChildren` asserts the identity below, so the next
+        // person to widen a card gets a red test rather than a HUD that looks almost right.
+        //
+        //     DeckWidth = pad*2 + spacing*(cards-1) + skill + skill + ultimate
+        //     240       = 6*2   + 6*2               + 70    + 70    + 76
+        // -------------------------------------------------------------------
+
+        public const float DeckWidth = 214.0f;
+        public const float DeckHeight = 78.0f;
+        public const float DeckBottomMargin = 14.0f;
+        public const float DeckPadding = 0.0f;
+        public const float DeckSpacing = 11.0f;
+        public const float SkillCardWidth = 64.0f;
+        public const float UltimateCardWidth = 64.0f;
+        public const int DeckCardCount = 3;
+
+        /// <summary>The square icon itself. The rest of a card's height is the key under it.</summary>
+        public const float TileSize = 60.0f;
+
+        /// <summary>Gap between the tile and the key label under it.</summary>
+        public const float KeyGap = 3.0f;
+
+        /// <summary>How long the "your power is back" pop runs. Seconds.</summary>
+        private const float ReadyPopSeconds = AbilityDeckHud.ReadyPopSeconds;
+
+        /// <summary>How long a successful cast lights its own tile. Seconds.</summary>
+        private const float CastFlashSeconds = AbilityDeckHud.CastFlashSeconds;
+
+        /// <summary>How long a refused press ticks its tile red. Seconds.</summary>
+        private const float RefusalFlashSeconds = AbilityDeckHud.RefusalFlashSeconds;
+
+        private GameObject _classicDeck;
+        private Text _classicTitle;
+        private Text _classicEvent;
+        private Image _classicFill;
+        private RectTransform _classicDeckRt;
+        private float _streetHype;
+        private float _streetHypeGrace;
+        private float _streetHypePunch;
+        private bool _streetHypeMaxCelebrated;
+        private int _streetHypeRound = -1;
 
         private readonly List<StatusRow> _rows = new List<StatusRow>();
         private readonly List<StatusRow> _states = new List<StatusRow>();
@@ -168,7 +305,24 @@ namespace TumbangPreso.UI
         /// </summary>
         public void ShowReadyPrompt(bool show)
         {
-            if (_readyPrompt != null) _readyPrompt.enabled = show;
+            if (_readyPrompt != null)
+            {
+                // ⚠️ THE KEY IS READ, NOT SPELLED. A rebound ready key used to leave this
+                // line telling the player to press R, which is the one instruction on screen
+                // they cannot ignore and cannot follow.
+                string ready = "[" + KeyLabel("ReadyUp") + "]";
+
+                // ⚠️⚠️ SENTENCE CASE AND ONE CLAUSE OF CONTEXT, NOT FOUR IN CAPITALS. The old
+                // line was "PRACTICE TIME  ·  SCORES PAUSED  ·  TEST YOUR POWERS  ·  Press [R]
+                // when ready." across 800 px of screen, which is four separate assertions the
+                // player has to parse to find the one instruction in it. All-caps also removes
+                // the word shapes that make a glance enough.
+                _readyPrompt.text = SceneFlow.SelectedMode == GameMode.HeroStrike
+                    ? $"Practice freely, scores are paused. Press {ready} when ready."
+                    : $"Warm up freely, scores are paused. Press {ready} when ready.";
+                _readyPrompt.enabled = show;
+                if (_readyPromptPlate != null) _readyPromptPlate.enabled = show;
+            }
             RefreshObjective(show);
         }
 
@@ -185,6 +339,7 @@ namespace TumbangPreso.UI
             if (!active || _local == null)
             {
                 _readyObjective.enabled = false;
+                if (_readyObjectivePlate != null) _readyObjectivePlate.enabled = false;
                 return;
             }
 
@@ -193,12 +348,30 @@ namespace TumbangPreso.UI
             // Two sentences for the taya because it IS two jobs, and a player who only hears
             // "guard the lata" stands on the base and never tags anybody. Two for the attacker
             // for the same reason: the retrieval run is the half people miss.
-            _readyObjective.text = defending
-                ? "GUARD THE LATA.  TAG ANYONE HOLDING A SLIPPER."
-                : "KNOCK THE LATA DOWN.  RETRIEVE FROM THE BOX.";
+            if (SceneFlow.SelectedMode == GameMode.HeroStrike)
+            {
+                _readyObjective.text = defending
+                    ? "Hold the box with your powers, then tag the retriever."
+                    : "Open a gap with your powers, then make the retrieval run.";
+            }
+            else
+            {
+                _readyObjective.text = defending
+                    ? "Guard the lata, block the shots, tag the retriever."
+                    : "Curve or bank the throw, then risk the retrieval.";
+            }
 
-            _readyObjective.color = defending ? UiTheme.Defense : UiTheme.Offense;
+            // This is neutral coaching, not a role badge. Keep its rim in the HUD's quiet blue
+            // so the orange accent remains reserved for live attacker and impact feedback.
+            _readyObjective.color = UiTheme.Cream;
             _readyObjective.enabled = true;
+
+            if (_readyObjectivePlate != null)
+            {
+                _readyObjectivePlate.sprite = GodotTheme.Box(
+                    UiTheme.HeroPlate, UiTheme.HeroRimLit, 2, 6);
+                _readyObjectivePlate.enabled = true;
+            }
         }
 
         /// <summary>
@@ -278,7 +451,11 @@ namespace TumbangPreso.UI
 
         // -------------------------------------------------------------------
 
-        private void Awake() => Build();
+        private void Awake()
+        {
+            Instance = this;
+            Build();
+        }
 
         /// <summary>
         /// ⚠️⚠️ THE HUD SUBSCRIBED TO EXACTLY ONE EVENT AND `hud.gd` SUBSCRIBES TO THREE.
@@ -369,11 +546,15 @@ namespace TumbangPreso.UI
             // player's own award, because a floater about somebody else's points is noise on
             // your screen. The SOUND is the match reacting, and the original plays it off
             // `score_changed` without asking whose slot it was.
-            GameServices.Audio?.PlayAt("score_award", Vector3.zero);
+            int points = MatchRules.PointsFor(e);
+            GameServices.Audio?.PlayAtVaried("score_award", Vector3.zero,
+                                             points < 0 ? 0.78f : 0.96f,
+                                             points < 0 ? 0.86f : 1.04f,
+                                             points < 0 ? 0.65f : 0.9f);
 
             if (_local == null || _local.PlayerSlot != slot) return;
 
-            ShowToast($"+{MatchRules.PointsFor(e)}  {LabelOf(e)}", 1.2f);
+            ShowToast($"{(points > 0 ? "+" : "")}{points}  {LabelOf(e)}", 1.2f);
         }
 
         private static string LabelOf(ScoreEvent e)
@@ -383,6 +564,8 @@ namespace TumbangPreso.UI
                 case ScoreEvent.LataKnocked: return "LATA DOWN";
                 case ScoreEvent.Sabotage: return "SABOTAGE";
                 case ScoreEvent.Tag: return "TAG";
+                case ScoreEvent.TayaCampPenalty: return "CAMPING";
+                case ScoreEvent.UnretrievedSlipperPenalty: return "SLIPPER IDLE";
                 default: return "DEFENSE";
             }
         }
@@ -424,6 +607,8 @@ namespace TumbangPreso.UI
             _vulnerable.enabled = false;
             _readyPrompt.enabled = false;
             _readyObjective.enabled = false;
+            if (_readyPromptPlate != null) _readyPromptPlate.enabled = false;
+            if (_readyObjectivePlate != null) _readyObjectivePlate.enabled = false;
             _dangerFlash.enabled = false;
 
             // § THE STUN FROST rides along: it is a transient like the flash above, and a
@@ -434,33 +619,23 @@ namespace TumbangPreso.UI
             if (_stackLeft != null) _stackLeft.gameObject.SetActive(false);
             if (_stackRight != null) _stackRight.gameObject.SetActive(false);
             if (_indicators != null) _indicators.gameObject.SetActive(false);
+            if (_heroDeck != null) _heroDeck.SetActive(false);
+            if (_classicDeck != null) _classicDeck.SetActive(false);
 
             BuildSpectatorReadout();
         }
 
         private Text _spectatorLegend;
         private Text _spectatorStatus;
+        private Text _spectatorHint;
+        private Text _spectatorLiveBug;
         private CameraSystem.SpectatorCamera _spectatorCamera;
-        private string _spectatorStatusShown = "￿";
+        private string _spectatorStatusShown = "";
+        private bool _spectatorControlsVisible = true;
 
         /// <summary>
         /// The two lines along the bottom of a spectator's screen.
-        ///
-        /// ⚠️⚠️ BOTH STRINGS WERE WRITTEN AND NEITHER WAS EVER DRAWN.
-        /// <see cref="CameraSystem.SpectatorCamera.ControlsText"/> and
-        /// <see cref="CameraSystem.SpectatorCamera.StatusText"/> had no caller anywhere in the
-        /// project, so a spectator got a camera with eight controls on it and no way to learn
-        /// any of them, and no feedback at all from the two numbers the wheel changes. The
-        /// camera's own header says the legend is "built by the match installer rather than
-        /// here so the spectator stays a camera and nothing else" — it is built here instead,
-        /// which honours the same rule and puts it on the surface that already owns text.
-        ///
-        /// ⚠️ THE STATUS LINE IS THE ONE THAT MATTERS. The wheel means fly speed in free flight
-        /// and follow distance while following, so "am I at 3 m/s or 40" was answered by flying
-        /// and finding out, twice.
-        ///
-        /// ⚠️ AND IT GOES UNDER THE READY PROMPT'S BAND, not over it. That band is empty for a
-        /// watcher, but a clean feed is the point of this mode and two overlapping lines is not.
+        /// Can be toggled on/off with [C] to avoid hogging the screen.
         /// </summary>
         private void BuildSpectatorReadout()
         {
@@ -468,15 +643,39 @@ namespace TumbangPreso.UI
 
             _spectatorStatus = HudLabel(_root, "SpectatorStatus", 22, UiTheme.Cream,
                                         TextAnchor.MiddleCenter);
-            Place(_spectatorStatus.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 88),
+            Place(_spectatorStatus.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 108),
                   new Vector2(900, 32));
 
             _spectatorLegend = HudLabel(_root, "SpectatorLegend", 18, UiTheme.Cream,
                                         TextAnchor.MiddleCenter);
-            Place(_spectatorLegend.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 56),
-                  new Vector2(1600, 28));
+            Place(_spectatorLegend.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 48),
+                  new Vector2(1700, 54));
 
             _spectatorLegend.text = CameraSystem.SpectatorCamera.ControlsText();
+
+            _spectatorHint = HudLabel(_root, "SpectatorHint", MenuKit.MinReadableUnits, UiTheme.CreamMuted,
+                                      TextAnchor.LowerRight);
+            Place(_spectatorHint.rectTransform, new Vector2(1.0f, 0.0f), new Vector2(-24, 20),
+                  new Vector2(310, 28));
+            _spectatorHint.text = "[C] CONTROLS OVERLAY";
+            _spectatorHint.enabled = true;
+
+            _spectatorLiveBug = HudLabel(_root, "BroadcastBug", 20, UiTheme.Danger,
+                                          TextAnchor.MiddleRight, 4);
+            Place(_spectatorLiveBug.rectTransform, new Vector2(1.0f, 1.0f),
+                  new Vector2(-24, -24), new Vector2(260, 34));
+            _spectatorLiveBug.text = "● LIVE";
+        }
+
+        public void SetSpectatorControlsVisible(bool visible)
+        {
+            _spectatorControlsVisible = visible;
+            if (_spectatorLegend != null) _spectatorLegend.gameObject.SetActive(visible);
+            if (_spectatorStatus != null) _spectatorStatus.gameObject.SetActive(visible);
+            if (_spectatorHint != null)
+            {
+                _spectatorHint.text = visible ? "[C] HIDE CONTROLS" : "[C] SHOW CONTROLS";
+            }
         }
 
         /// <summary>
@@ -486,7 +685,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void UpdateSpectatorReadout()
         {
-            if (_spectatorStatus == null) return;
+            if (_spectatorStatus == null || !_spectatorControlsVisible) return;
 
             if (_spectatorCamera == null)
                 _spectatorCamera = FindFirstObjectByType<CameraSystem.SpectatorCamera>();
@@ -499,6 +698,25 @@ namespace TumbangPreso.UI
 
             _spectatorStatusShown = text;
             _spectatorStatus.text = text;
+
+            if (_spectatorLiveBug != null)
+            {
+                if (text.Contains("REPLAY"))
+                {
+                    _spectatorLiveBug.text = "⏪ INSTANT REPLAY";
+                    _spectatorLiveBug.color = UiTheme.Highlight;
+                }
+                else if (text.Contains("PAUSE"))
+                {
+                    _spectatorLiveBug.text = "⏸ TACTICAL PAUSE";
+                    _spectatorLiveBug.color = UiTheme.Amber;
+                }
+                else
+                {
+                    _spectatorLiveBug.text = "● LIVE";
+                    _spectatorLiveBug.color = UiTheme.Danger;
+                }
+            }
         }
 
         public bool IsCleanFeed => _cleanFeed;
@@ -557,6 +775,7 @@ namespace TumbangPreso.UI
             // for. The toggle also has to keep working while the canvas is hidden, which it
             // does because this is a component callback and not a UI event.
             if (_spectating && Input.GetKeyDown(KeyCode.H)) SetCleanFeed(!_cleanFeed);
+            if (_spectating && Input.GetKeyDown(KeyCode.C)) SetSpectatorControlsVisible(!_spectatorControlsVisible);
 
             if (GameServices.Match == null || GameServices.Round == null) return;
 
@@ -578,6 +797,7 @@ namespace TumbangPreso.UI
             {
                 UpdateTimer(dt);
                 UpdateScores();
+                UpdateScorePulses(dt);
                 UpdateLataCard();
                 UpdateToast(dt);
                 UpdateCountdown(dt);
@@ -589,13 +809,17 @@ namespace TumbangPreso.UI
 
             UpdateTimer(dt);
             UpdateScores();
+            UpdateScorePulses(dt);
             UpdateLataCard();
             UpdateStatus();
+            UpdateHeroDeck();
+            UpdateClassicDeck(dt);
             UpdateDanger();
             UpdateToast(dt);
             UpdateCountdown(dt);
             UpdateFrost(dt);
             UpdateIndicators();
+            UpdateGetUpPrompt();
 
             bool live = GameServices.Round.CanThrow(_local);
             _crosshair.enabled = live;
@@ -607,7 +831,43 @@ namespace TumbangPreso.UI
             _crosshair.color = role;
             _indicators?.SetCanArrowColour(role);
 
+            var carrier = _local.GetComponent<Carrier>();
+            if (carrier != null && carrier.IsCharging)
+            {
+                _crosshair.fontSize = 22;
+                float spin = carrier.CurrentPektusSpin;
+                float magnitude = Mathf.Abs(spin);
+                if (magnitude > 0.08f)
+                {
+                    string arrow = magnitude >= 0.85f ? "◀◀◀" : magnitude >= 0.45f ? "◀◀" : "◀";
+                    if (spin > 0.0f) arrow = arrow.Replace('◀', '▶');
+                    string bank = magnitude >= Balance.PektusBankSpinThreshold ? "\nBANK READY" : "";
+                    _crosshair.text = $"{arrow}  PEKTUS {Mathf.RoundToInt(magnitude * 100.0f)}%{bank}";
+                    _crosshair.color = UiTheme.Highlight;
+                }
+                else
+                {
+                    _crosshair.text = "+\nPEKTUS 0%";
+                }
+            }
+            else
+            {
+                _crosshair.fontSize = 34;
+                _crosshair.text = "+";
+            }
+
             _vulnerable.enabled = _local.IsTaggable();
+
+            if (_hitmarkerTimer > 0.0f)
+            {
+                _hitmarkerTimer -= dt;
+                float t = Mathf.Clamp01(_hitmarkerTimer / 0.28f);
+                _hitmarker.rectTransform.localScale = Vector3.one * (1.0f + 0.6f * t);
+                Color c = _hitmarker.color;
+                c.a = t;
+                _hitmarker.color = c;
+                if (_hitmarkerTimer <= 0.0f) _hitmarker.enabled = false;
+            }
         }
 
         // -------------------------------------------------------------------
@@ -662,12 +922,15 @@ namespace TumbangPreso.UI
             // thing a player ever sees. The .gd has clamped this since the format was written.
             int round = Mathf.Max(1, GameServices.Match.RoundNumber);
 
-            // ⚠️ NAME, NOT SEAT. This used to print "P%d" off the raw slot, so a taya who set a
-            // name in Settings still read as "P3" on the one line that most needs to say who is
-            // playing.
-            // ⚠️ THREE SPACES EACH SIDE OF THE DOT, matching `hud.gd`'s own format string. Two
-            // reads as a tighter line than the original at the same font size.
-            _round.text = $"ROUND {round} / {Balance.Rounds}   ·   TAYA: {SeatName(GameServices.Match.DefenderSlot)}";
+            if (GameServices.Match.IsWarmupBuffer)
+            {
+                _round.text = "WARMUP / PRACTICE BUFFER   ·   SCORES PAUSED";
+                _timer.color = UiTheme.Highlight;
+            }
+            else
+            {
+                _round.text = $"ROUND {round} / {Balance.Rounds}   ·   TAYA: {SeatName(GameServices.Match.DefenderSlot)}";
+            }
         }
 
         /// <summary>
@@ -718,10 +981,18 @@ namespace TumbangPreso.UI
 
                 int slot = order[i];
                 bool isTaya = slot == m.DefenderSlot;
+                int scoreNow = m.ScoreFor(slot);
+
+                if (_scoresInitialised)
+                {
+                    int delta = scoreNow - _lastScoreBySlot[slot];
+                    if (Mathf.Abs(delta) >= 20) _scorePulses[i] = 0.34f;
+                }
+                _lastScoreBySlot[slot] = scoreNow;
 
                 _scoreNames[i].text = SeatName(slot);
                 _scoreMarks[i].text = isTaya ? TayaBadge : "";
-                _scoreValues[i].text = m.ScoreFor(slot).ToString();
+                _scoreValues[i].text = scoreNow.ToString();
 
                 // ⚠️ NO LEADING BULLET — THE COLOUR IS THE MARK. 🧑 2026-08-02: *"the arrow
                 // makes the names of the characters not aligned"*. The prefix was one character
@@ -733,6 +1004,22 @@ namespace TumbangPreso.UI
 
                 _scoreNames[i].color = colour;
                 _scoreValues[i].color = colour;
+            }
+
+            _scoresInitialised = true;
+        }
+
+        private void UpdateScorePulses(float dt)
+        {
+            for (int i = 0; i < _scoreRows.Length; i++)
+            {
+                var row = _scoreRows[i];
+                if (row == null) continue;
+
+                _scorePulses[i] = Mathf.Max(0.0f, _scorePulses[i] - dt);
+                float ratio = Mathf.Clamp01(_scorePulses[i] / 0.34f);
+                float punch = Mathf.Sin(ratio * Mathf.PI) * 0.11f;
+                row.localScale = Vector3.one * (1.0f + punch);
             }
         }
 
@@ -766,7 +1053,11 @@ namespace TumbangPreso.UI
             // the whole reason the card is not just a coloured light.
             string line = "";
 
-            if (_local.IsDefender)
+            if (_local == null)
+            {
+                line = lata.IsUpright ? "TAYA MAY TAG" : "ATTACKERS MAY RETRIEVE";
+            }
+            else if (_local.IsDefender)
             {
                 if (!lata.IsUpright)
                 {
@@ -777,10 +1068,29 @@ namespace TumbangPreso.UI
                         ? $"RESETTING  {Mathf.RoundToInt(progress * 100.0f)}%"
                         : "HOLD E IN THE RING";
                 }
+                else if (GameServices.Round.IsTayaCampWarningActive)
+                {
+                    float left = Mathf.Max(0.0f, Balance.TayaCampGracePeriod
+                        - GameServices.Round.TayaCampSeconds);
+                    line = left > 0.0f
+                        ? $"LEAVE CAN RING  {left:0.0}s"
+                        : "CAMPING  ·  DEFENSE SCORE PAUSED";
+                }
             }
             else if (!_local.HoldingSlipper)
             {
-                line = "RETRIEVE A SLIPPER";
+                float idle = GameServices.Round.AttackerIdleSeconds(_local.PlayerSlot);
+                if (TournamentRules.IsSlipperWarning(idle))
+                {
+                    float left = Mathf.Max(0.0f, Balance.SlipperUnretrievedGracePeriod - idle);
+                    line = left > 0.0f
+                        ? $"FETCH SLIPPER  {left:0.0}s"
+                        : "FETCH SLIPPER  ·  -5 / SECOND";
+                }
+                else
+                {
+                    line = "RETRIEVE A SLIPPER";
+                }
             }
             else if (_local.IsInsideBox())
             {
@@ -861,6 +1171,7 @@ namespace TumbangPreso.UI
 
                 if (i >= wanted)
                 {
+                    w.Root.transform.localScale = Vector3.one;
                     w.Root.SetActive(false);
                     continue;
                 }
@@ -882,6 +1193,17 @@ namespace TumbangPreso.UI
                 w.Fill.fillAmount = e.Timed && e.Remaining > 0.0f
                     ? Mathf.Clamp01(e.Remaining / Mathf.Max(0.01f, e.Total))
                     : 1.0f;
+
+                // The final quarter gives one restrained pulse. This is especially important
+                // for stun and vulnerability, where the end of the effect changes what the
+                // player can safely do before they have time to read the number again.
+                float ratio = e.Timed && e.Total > 0.0f
+                    ? Mathf.Clamp01(e.Remaining / e.Total)
+                    : 1.0f;
+                float pulse = ratio < 0.25f
+                    ? 1.0f + (Mathf.Sin(Time.unscaledTime * 10.0f) * 0.5f + 0.5f) * 0.035f
+                    : 1.0f;
+                w.Root.transform.localScale = Vector3.one * pulse;
             }
         }
 
@@ -1035,6 +1357,43 @@ namespace TumbangPreso.UI
                                            _dangerHeld ? DangerHoldAlpha : 0.0f);
         }
 
+        /// <summary>
+        /// "Hammer this key to get up", while a trip is still answerable.
+        ///
+        /// ⚠⚠ A MECHANIC NOBODY IS TOLD ABOUT IS NOT A MECHANIC. The mash exists because a
+        /// trip used to be the one piece of dead time in the game a player could not answer, and
+        /// a player who does not know they can answer it is in exactly the position the change
+        /// was made to fix. This is the cheapest possible teach: it appears only while it is
+        /// true, and it disappears the instant pressing stops buying anything.
+        ///
+        /// ⚠️ THE KEY COMES FROM THE LIVE BINDING, NEVER FROM A LITERAL. `docs/VISION.md`
+        /// § 3: a screen that teaches the wrong key is worse than one that teaches none, and
+        /// this key is rebindable in the settings panel like every other.
+        ///
+        /// ⚠️ IT IS PUSHED THROUGH THE TOAST EVERY FRAME RATHER THAN SET ONCE. `ShowToast`
+        /// counts down and switches itself off, so a one-shot call would vanish half a second
+        /// into a two and a half second fall. Refreshing it holds it up for exactly as long as
+        /// the state lasts, and costs one string comparison when nothing has changed.
+        /// </summary>
+        private void UpdateGetUpPrompt()
+        {
+            if (_local == null || !_local.IsTripped || !_local.CanMashUp) return;
+
+            string text = "MASH [" + KeyLabel("Jump") + "] TO GET UP";
+
+            // ⚠️ THE STRING IS ONLY REBUILT WHEN IT CHANGES. A HUD string rebuilt every frame
+            // once cost the 6x behaviour probe an eighth of its frames and most of its physics
+            // steps; that finding is recorded in `CLAUDE.md` § 7.1 and this is the same shape of
+            // code in the same file.
+            if (_toast != null && _toast.text == text && _toast.enabled)
+            {
+                _toastLeft = 0.25f;
+                return;
+            }
+
+            ShowToast(text, 0.25f);
+        }
+
         private void UpdateToast(float dt)
         {
             if (_toastLeft <= 0.0f) return;
@@ -1099,6 +1458,7 @@ namespace TumbangPreso.UI
             // ⚠️ MATCH ON HEIGHT, like every other screen, or the HUD drifts against the menus
             // it hands over from on anything that is not 16:9.
             scaler.matchWidthOrHeight = 1.0f;
+            AspectSafeCanvas.Apply(scaler);
 
             canvasGo.AddComponent<GraphicRaycaster>();
 
@@ -1116,6 +1476,9 @@ namespace TumbangPreso.UI
             BuildClock();
             BuildLataCard();
             BuildStatusStacks();
+            BuildHeroDeck();
+            _inspect = AbilityInspectPanel.Create(_root);
+            BuildClassicDeck();
             BuildFloatingText();
             BuildCrosshair();
 
@@ -1204,6 +1567,7 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
+            if (Instance == this) Instance = null;
             Dispose(_frostMaterial);
             Dispose(_dangerMaterial);
         }
@@ -1265,6 +1629,7 @@ namespace TumbangPreso.UI
                 row.spacing = 14.0f;
 
                 rowGo.AddComponent<LayoutElement>().preferredHeight = 30.0f;
+                _scoreRows[i] = rowGo.GetComponent<RectTransform>();
 
                 var name = HudLabel(rowGo.transform, "Name", 20, UiTheme.Cream,
                                     TextAnchor.MiddleLeft, ScoreOutline);
@@ -1395,7 +1760,7 @@ namespace TumbangPreso.UI
             // the two facts that change everything about how the next 90 s goes — and it was
             // styled as a caption under the clock.
             _round = HudLabel(column.transform, "RoundLabel", 20, UiTheme.Cream,
-                              TextAnchor.MiddleCenter);
+                              TextAnchor.MiddleCenter, 0);
             _round.gameObject.AddComponent<LayoutElement>().minHeight = 34.0f;
         }
 
@@ -1519,6 +1884,29 @@ namespace TumbangPreso.UI
             return new StatusWidget { Root = rowGo, Label = label, Fill = fill, Back = back };
         }
 
+        /// <summary>
+        /// A dark plate behind one line of intermission text.
+        ///
+        /// ⚠️ IT IS BUILT BEFORE ITS LABEL, ON PURPOSE. Sibling order is draw order in a canvas,
+        /// so a plate created after its text would sit on top of it and hide the very thing it
+        /// exists to make readable.
+        /// </summary>
+        private Image BannerPlate(string name, Vector2 offset, Vector2 size, Color rim,
+                                  bool fromTop = false)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(_root, false);
+
+            var plate = go.AddComponent<Image>();
+            plate.sprite = GodotTheme.Box(UiTheme.HeroPlate, rim, 2, 6);
+            plate.type = Image.Type.Sliced;
+            plate.raycastTarget = false;
+
+            Place(plate.rectTransform, new Vector2(0.5f, fromTop ? 1.0f : 0.0f), offset, size);
+            plate.enabled = false;
+            return plate;
+        }
+
         private void BuildFloatingText()
         {
             // Toast, top-centre under the clock, at the .tscn's +160.
@@ -1543,17 +1931,37 @@ namespace TumbangPreso.UI
             _countdown.enabled = false;
             _countdownRt = _countdown.rectTransform;
 
-            _readyPrompt = HudLabel(_root, "ReadyPrompt", 28, UiTheme.Cream,
+            // ⚠️ BOTH INTERMISSION LINES SIT ON A PLATE NOW. They are drawn over a sunlit
+            // asphalt court with a white centre circle on it, and cream text with nothing behind
+            // it is legible over exactly none of that. See the screenshot the redesign came
+            // from: the objective line was unreadable at 32 pt in the brightest colour available.
+            _readyPromptPlate = BannerPlate("ReadyPromptPlate", new Vector2(0, 92),
+                                            new Vector2(520, 34), UiTheme.HeroRim);
+
+            _readyPrompt = HudLabel(_root, "ReadyPrompt", 17, UiTheme.Cream,
                                     TextAnchor.MiddleCenter);
-            Place(_readyPrompt.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 138),
-                  new Vector2(1040, 40));
+            Place(_readyPrompt.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 92),
+                  new Vector2(520, 30));
             _readyPrompt.text = "Walk around freely. Press [R] when you're ready to start the round.";
             _readyPrompt.enabled = false;
 
-            _readyObjective = HudLabel(_root, "ReadyObjective", 44, UiTheme.Offense,
+            // ⚠️ A HOLD KEY NOBODY IS TOLD ABOUT IS A KEY NOBODY PRESSES. One quiet line
+            // above the deck, in the muted cream the rest of the HUD uses for asides, naming
+            // whatever key is actually bound.
+            _inspectHint = HudLabel(_root, "InspectHint", 14,
+                                    UiTheme.CreamMuted, TextAnchor.MiddleCenter, 2);
+            Place(_inspectHint.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 78),
+                  new Vector2(400, 18));
+            _inspectHint.enabled = false;
+
+            _readyObjectivePlate = BannerPlate("ReadyObjectivePlate", new Vector2(0, -206),
+                                               new Vector2(620, 38), UiTheme.HeroRimLit,
+                                               fromTop: true);
+
+            _readyObjective = HudLabel(_root, "ReadyObjective", 20, UiTheme.Cream,
                                        TextAnchor.MiddleCenter);
-            Place(_readyObjective.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 200),
-                  new Vector2(1120, 64));
+            Place(_readyObjective.rectTransform, new Vector2(0.5f, 1.0f), new Vector2(0, -206),
+                  new Vector2(900, 44));
             _readyObjective.enabled = false;
 
             // ⚠️⚠️ THE VULNERABLE LINE IS OFF DEAD CENTRE, ON A PLAYTEST REPORT. 🧑 2026-08-02,
@@ -1582,10 +1990,33 @@ namespace TumbangPreso.UI
                                   TextAnchor.MiddleCenter, CrosshairOutline);
 
             Place(_crosshair.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
-                  new Vector2(48, 48));
+                  new Vector2(520, 72));
 
             _crosshair.text = "+";
             _crosshair.enabled = false;
+
+            _hitmarker = HudLabel(_root, "HitmarkerLabel", 42, UiTheme.Highlight,
+                                  TextAnchor.MiddleCenter, 5);
+            Place(_hitmarker.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
+                  new Vector2(64, 64));
+            _hitmarker.text = "💥";
+            _hitmarker.enabled = false;
+        }
+
+        public void PopHitmarker(Color color, string symbol = "💥")
+        {
+            if (_hitmarker == null) return;
+            _hitmarkerTimer = 0.28f;
+            _hitmarker.text = symbol;
+            _hitmarker.color = color;
+            _hitmarker.rectTransform.localScale = Vector3.one * 1.6f;
+            _hitmarker.enabled = true;
+            GameServices.Audio?.PlayAt("sfx_hitmarker", UnityEngine.Camera.main != null ? UnityEngine.Camera.main.transform.position : Vector3.zero);
+        }
+
+        public static void TriggerHitmarker(Color color, string symbol = "💥")
+        {
+            Instance?.PopHitmarker(color, symbol);
         }
 
         // -------------------------------------------------------------------
@@ -1691,11 +2122,934 @@ namespace TumbangPreso.UI
             t.horizontalOverflow = HorizontalWrapMode.Overflow;
             t.verticalOverflow = VerticalWrapMode.Overflow;
 
-            var ring = go.AddComponent<GodotOutline>();
-            ring.OutlineColour = UiTheme.Ink;
-            ring.Radius = Mathf.Max(1.0f, outline * 0.5f);
+            if (outline > 0)
+            {
+                var ring = go.AddComponent<GodotOutline>();
+                ring.OutlineColour = UiTheme.Ink;
+                ring.Radius = Mathf.Max(1.0f, outline * 0.5f);
+            }
 
             return t;
         }
+
+        /// <summary>
+        /// Bottom centre: the three hero powers, and nothing else.
+        ///
+        /// ⚠️⚠️ THE ARITHMETIC HAS TO HOLD OR THE CARDS RUN OFF THE PLATE:
+        ///
+        ///     width = pad_left + pad_right + (cards - 1) * spacing + sum(card_widths)
+        ///     240   = 6        + 6         + 2 * 6                 + (70 + 70 + 76)
+        ///
+        /// A `HorizontalLayoutGroup` lays children out past the edge of a rect that no longer
+        /// fits them without complaining, and the overflow lands under the first-person hands
+        /// where it is least visible and most annoying. Change a width, redo the line.
+        ///
+        /// ⚠️ 240 x 68 AT `y = 10`, AND IT IS A BADGE RATHER THAN A BAR. It was 592 x 122 at
+        /// `y = 24`, which is a quarter of a 1080p screen's width of chrome sitting on top of
+        /// the viewmodel.
+        ///
+        /// ⚠️ THE PALETTE IS THE WOOD SET, NOT A SLATE-BLUE GLASS OF ITS OWN. See
+        /// `UiTheme.HeroPlate` for what naming seventeen colours inline cost.
+        /// </summary>
+        private void BuildHeroDeck()
+        {
+            // ⚠️⚠️ `typeof(RectTransform)` IS LOAD-BEARING AND ITS ABSENCE TOOK THE WHOLE HUD
+            // DOWN. `new GameObject(name)` gives a plain `Transform`; the deck used to get a
+            // `RectTransform` for free because the very next line added an `Image`, and every
+            // uGUI graphic requires one. Dropping the background plate in the Overwatch redesign
+            // silently dropped that too, so `GetComponent<RectTransform>()` returned null and
+            // `Hud.Build` threw a NullReferenceException out of `Awake`.
+            //
+            // ⚠️ THE FAILURE DOES NOT LOOK LIKE A MISSING DECK, WHICH IS WHY IT IS WORTH THIS
+            // NOTE. An exception in `Awake` abandons the rest of `Build`, so the scoreboard came
+            // up as an empty box, the ability deck was absent and the crosshair never appeared:
+            // three unrelated-looking faults from one missing type argument. EditMode and
+            // PlayMode were both green through it, because neither constructs the in-match HUD.
+            // `tools/shoot_player.ps1` is the only check that sees what the .exe does.
+            var deckGo = new GameObject("HeroDeck", typeof(RectTransform));
+            deckGo.transform.SetParent(_root, false);
+            _heroDeck = deckGo;
+
+            // ⚠️⚠️ NO PLATE BEHIND THE ROW, AND THAT IS THE WHOLE REDESIGN. 🧑, looking at the
+            // wooden version beside an Overwatch frame: *"the brown shit looks ugly. kinda
+            // wanted just the icons like in overwatchh or something"*. He is right, and the
+            // reason is structural rather than a matter of taste: a container says "these three
+            // things are a group", which the player already knew, and it costs a slab of opaque
+            // furniture across the bottom of the frame to say it. Three floating squares say the
+            // same thing for free and let the court show through between them.
+            //
+            // ⚠️ THE GameObject STILL CARRIES A RectTransform AND THE LAYOUT GROUP. Only the
+            // Image is gone; the arithmetic below is unchanged and still asserted.
+            var rt = deckGo.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0.5f, 0.0f);
+            rt.anchorMax = new Vector2(0.5f, 0.0f);
+            rt.pivot = new Vector2(0.5f, 0.0f);
+            rt.anchoredPosition = new Vector2(0, DeckBottomMargin);
+            rt.sizeDelta = new Vector2(DeckWidth, DeckHeight);
+
+            var hgroup = deckGo.AddComponent<HorizontalLayoutGroup>();
+            hgroup.childControlHeight = true;
+            hgroup.childControlWidth = true;
+            hgroup.childForceExpandHeight = true;
+            hgroup.childForceExpandWidth = false;
+            hgroup.childAlignment = TextAnchor.LowerCenter;
+            hgroup.spacing = DeckSpacing;
+            hgroup.padding = new RectOffset((int)DeckPadding, (int)DeckPadding, 0, 0);
+
+            _skill1Card = BuildAbilityCard(deckGo.transform, "Skill1", "Skill1", SkillCardWidth, false);
+            _skill2Card = BuildAbilityCard(deckGo.transform, "Skill2", "Skill2", SkillCardWidth, false);
+            _ultCard = BuildAbilityCard(deckGo.transform, "Ultimate", "Ultimate", UltimateCardWidth, true);
+
+            _heroDeck.SetActive(false);
+        }
+
+        /// <summary>
+        /// Classic deliberately has no powers, but an empty bottom HUD made its mastery loop
+        /// feel less authored than Hero Strike. Street Hype is cosmetic: it names skilled
+        /// curves, banks, close calls, blocks and retrievals without changing a single point
+        /// or rule. It gives Classic its own identity instead of pretending it is Hero Strike
+        /// with three cards removed.
+        /// </summary>
+        private void BuildClassicDeck()
+        {
+            var go = new GameObject("ClassicStreetHype");
+            go.transform.SetParent(_root, false);
+            _classicDeck = go;
+
+            var bg = go.AddComponent<Image>();
+            bg.sprite = GodotTheme.Box(UiTheme.WoodDark, UiTheme.Amber,
+                                       GodotTheme.WoodBorderWidth, GodotTheme.WoodCornerRadius);
+            bg.type = Image.Type.Sliced;
+            bg.raycastTarget = false;
+
+            _classicDeckRt = go.GetComponent<RectTransform>();
+            Place(_classicDeckRt, new Vector2(0.5f, 0.0f), new Vector2(0, 24),
+                  new Vector2(520, 100));
+
+            var group = go.AddComponent<VerticalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = false;
+            group.childForceExpandWidth = true;
+            group.padding = new RectOffset(18, 18, 10, 10);
+            group.spacing = 4.0f;
+
+            _classicTitle = HudLabel(go.transform, "HypeTitle", 20, UiTheme.Highlight,
+                                     TextAnchor.MiddleCenter, 4);
+            _classicTitle.fontStyle = FontStyle.Bold;
+            _classicTitle.gameObject.AddComponent<LayoutElement>().minHeight = 24.0f;
+
+            _classicEvent = HudLabel(go.transform, "HypeEvent", MenuKit.MinReadableUnits,
+                                     UiTheme.Cream, TextAnchor.MiddleCenter, 3);
+            _classicEvent.gameObject.AddComponent<LayoutElement>().minHeight = 24.0f;
+
+            var bar = new GameObject("HypeBar");
+            bar.transform.SetParent(go.transform, false);
+            var barBg = bar.AddComponent<Image>();
+            barBg.sprite = GodotTheme.Plain(3);
+            barBg.type = Image.Type.Sliced;
+            barBg.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.8f);
+            var barLayout = bar.AddComponent<LayoutElement>();
+            barLayout.minHeight = 9.0f;
+            barLayout.preferredHeight = 9.0f;
+
+            var fillGo = new GameObject("Fill");
+            fillGo.transform.SetParent(bar.transform, false);
+            _classicFill = fillGo.AddComponent<Image>();
+            _classicFill.sprite = GodotTheme.Plain(3);
+            _classicFill.type = Image.Type.Filled;
+            _classicFill.fillMethod = Image.FillMethod.Horizontal;
+            _classicFill.color = UiTheme.Highlight;
+            _classicFill.raycastTarget = false;
+            MenuKit.Stretch(_classicFill.rectTransform);
+
+            _classicDeck.SetActive(false);
+        }
+
+        /// <summary>Reports a local cosmetic style event; never awards score.</summary>
+        public static void ReportStyle(int slot, float amount, string callout)
+        {
+            if (Instance == null || SceneFlow.SelectedMode != GameMode.Classic
+                || Instance._local == null || Instance._local.PlayerSlot != slot)
+                return;
+
+            Instance.AddStreetHype(amount, callout);
+        }
+
+        private void AddStreetHype(float amount, string callout)
+        {
+            int before = StreetTier(_streetHype);
+            _streetHype = Mathf.Clamp(_streetHype + Mathf.Max(0.0f, amount), 0.0f, 100.0f);
+            _streetHypeGrace = 3.0f;
+            _streetHypePunch = 0.38f;
+            _classicEvent.text = $"{callout}  ·  +{Mathf.RoundToInt(amount)} HYPE";
+
+            int after = StreetTier(_streetHype);
+            if (after > before && _local != null)
+            {
+                string tier = StreetTierName(after);
+                Visual.ComicPopup.Spawn(_local.transform.position + Vector3.up * 1.8f,
+                                        tier, UiTheme.Highlight, 1.05f);
+            }
+
+            if (_streetHype >= 100.0f && !_streetHypeMaxCelebrated)
+            {
+                _streetHypeMaxCelebrated = true;
+                GameServices.Audio?.PlayAtVaried("sfx_super_ready", _local.transform.position,
+                                                 1.02f, 1.10f, 0.9f);
+                ShowToast("HALIMAW HYPE  ·  KEEP THE RALLY ALIVE", 1.8f);
+            }
+        }
+
+        private void UpdateClassicDeck(float dt)
+        {
+            if (_classicDeck == null) return;
+
+            bool show = !_spectating && _local != null
+                        && SceneFlow.SelectedMode == GameMode.Classic;
+            if (_classicDeck.activeSelf != show) _classicDeck.SetActive(show);
+            if (!show) return;
+
+            int round = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
+            if (_streetHypeRound != round)
+            {
+                _streetHypeRound = round;
+                _streetHype = 0.0f;
+                _streetHypeGrace = 0.0f;
+                _streetHypeMaxCelebrated = false;
+                _classicEvent.text = "CURVE · BANK · BLOCK · SNATCH  (STYLE ONLY)";
+            }
+
+            if (GameServices.Round != null && GameServices.Round.RoundActive)
+            {
+                if (_streetHypeGrace > 0.0f) _streetHypeGrace -= dt;
+                else _streetHype = Mathf.Max(0.0f, _streetHype - 4.5f * dt);
+            }
+
+            if (_streetHype < 92.0f) _streetHypeMaxCelebrated = false;
+
+            int tier = StreetTier(_streetHype);
+            _classicTitle.text = $"STREET HYPE  ·  {StreetTierName(tier)}  ·  {Mathf.RoundToInt(_streetHype)}%";
+            _classicTitle.color = tier >= 3 ? UiTheme.Highlight : UiTheme.Amber;
+            _classicFill.fillAmount = _streetHype / 100.0f;
+            _classicFill.color = Color.Lerp(UiTheme.Offense, UiTheme.Highlight,
+                                             _streetHype / 100.0f);
+
+            _streetHypePunch = Mathf.Max(0.0f, _streetHypePunch - dt);
+            float ratio = Mathf.Clamp01(_streetHypePunch / 0.38f);
+            float scale = 1.0f + Mathf.Sin(ratio * Mathf.PI) * 0.07f;
+            _classicDeckRt.localScale = Vector3.one * scale;
+        }
+
+        private static int StreetTier(float hype)
+            => hype >= 100.0f ? 4 : hype >= 72.0f ? 3 : hype >= 44.0f ? 2 : hype >= 20.0f ? 1 : 0;
+
+        private static string StreetTierName(int tier)
+        {
+            switch (tier)
+            {
+                case 4: return "HALIMAW!";
+                case 3: return "ASTIG!";
+                case 2: return "MAINIT!";
+                case 1: return "GISING!";
+                default: return "SIMULA";
+            }
+        }
+
+        /// <summary>
+        /// One tile: a glyph, the key it is on, one number when there is one, and a meter.
+        ///
+        /// ⚠️⚠️ THE THREE STATES ARE RIM, GLYPH AND ONE NUMBER, AND NONE OF THEM IS A WORD.
+        /// Ready is a lit glyph inside an accent rim and prints NOTHING in the middle, because
+        /// the state a player is in most of the time has to be the quietest thing on screen; a
+        /// tile that says "READY" is shouting at somebody who already knew. Cooling dims the
+        /// glyph to 20% and puts the seconds in the middle. Active keeps the glyph lit and
+        /// breathes the rim. `docs/Hero_Strike_UI.md` section 4 carries the table.
+        ///
+        /// ⚠️ THE NUMBER AND THE METER SAY THE SAME THING ON PURPOSE. They are read at
+        /// different distances: the meter is peripheral vision ("nearly back"), the number is a
+        /// glance ("1.8, I can wait"). Dropping either was tried and the tile got worse.
+        ///
+        /// ⚠️ `actionName` IS AN INPUT ACTION, NOT A STRING TO PRINT. The chip's letter comes
+        /// from the live binding via `KeyLabel`, so a rebind in the settings panel is on the HUD
+        /// the same frame and the deck cannot go stale the way hard-coded labels did.
+        ///
+        /// ⚠️ `segmented` PICKS THE METER, AND THE TWO ARE NOT INTERCHANGEABLE. A skill
+        /// DRAINS a smooth bar; the ultimate FILLS a notched one. See `UltSegments`.
+        /// </summary>
+        private AbilityCard BuildAbilityCard(Transform parent, string name, string actionName,
+                                             float width, bool segmented)
+        {
+            var card = new AbilityCard();
+
+            // The card is the tile PLUS the key label under it, so the layout group can align
+            // three of them on one baseline.
+            var cardGo = new GameObject(name, typeof(RectTransform));
+            cardGo.transform.SetParent(parent, false);
+            card.Rt = cardGo.GetComponent<RectTransform>();
+
+            var le = cardGo.AddComponent<LayoutElement>();
+            le.preferredWidth = width;
+            le.minWidth = width;
+
+            // ---- the square tile -------------------------------------------------
+            var tileGo = new GameObject("Tile", typeof(RectTransform));
+            tileGo.transform.SetParent(cardGo.transform, false);
+
+            card.Plate = tileGo.AddComponent<Image>();
+            card.Plate.sprite = GodotTheme.Box(UiTheme.HeroPlateRaised, new Color(0, 0, 0, 0), 0, 8);
+            card.Plate.type = Image.Type.Sliced;
+            card.Plate.raycastTarget = false;
+
+            Place(card.Plate.rectTransform, new Vector2(0.5f, 1.0f), new Vector2(0, 0),
+                  new Vector2(TileSize, TileSize));
+
+            // ⚠️⚠️ THE RIM IS ITS OWN IMAGE. `Image.color` multiplies the WHOLE nine-slice,
+            // border included, so one sprite carrying both a fill and a border cannot light its
+            // edge without also lifting its fill: the old deck tinted the entire tile
+            // hero-orange to say "ready", which is a colour wash where the design wants an
+            // outline. A transparent-fill box stacked on the plate gives the rim its own colour
+            // for one extra draw.
+            var rimGo = new GameObject("Rim", typeof(RectTransform));
+            rimGo.transform.SetParent(tileGo.transform, false);
+            card.Rim = rimGo.AddComponent<Image>();
+            card.Rim.sprite = GodotTheme.Box(new Color(0, 0, 0, 0), Color.white, 2, 8);
+            card.Rim.type = Image.Type.Sliced;
+            card.Rim.raycastTarget = false;
+            MenuKit.Stretch(card.Rim.rectTransform);
+
+            var glyphGo = new GameObject("Glyph");
+            glyphGo.transform.SetParent(tileGo.transform, false);
+            card.Glyph = glyphGo.AddComponent<Image>();
+            card.Glyph.sprite = AbilityIcons.For(AbilityGlyph.Burst);
+            card.Glyph.color = UiTheme.HeroGlyphOn;
+            card.Glyph.preserveAspect = true;
+            card.Glyph.raycastTarget = false;
+            MenuKit.Stretch(card.Glyph.rectTransform);
+            card.Glyph.rectTransform.offsetMin = new Vector2(11, 13);
+            card.Glyph.rectTransform.offsetMax = new Vector2(-11, -11);
+
+            // A radial veil makes the direction of a cooldown readable without looking at the
+            // number. It sits above the glyph and below the countdown, so the remaining wedge
+            // can never hide the exact final seconds.
+            var sweepGo = new GameObject("CooldownSweep", typeof(RectTransform));
+            sweepGo.transform.SetParent(tileGo.transform, false);
+            card.CooldownSweep = sweepGo.AddComponent<Image>();
+            card.CooldownSweep.sprite = AbilityIcons.CooldownDisc();
+            card.CooldownSweep.type = Image.Type.Filled;
+            card.CooldownSweep.fillMethod = Image.FillMethod.Radial360;
+            card.CooldownSweep.fillOrigin = (int)Image.Origin360.Top;
+            card.CooldownSweep.fillClockwise = false;
+            card.CooldownSweep.fillAmount = 0.0f;
+            card.CooldownSweep.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.76f);
+            card.CooldownSweep.raycastTarget = false;
+            MenuKit.Stretch(card.CooldownSweep.rectTransform);
+            card.CooldownSweep.rectTransform.offsetMin = new Vector2(7, 7);
+            card.CooldownSweep.rectTransform.offsetMax = new Vector2(-7, -7);
+
+            // ⚠️ THE COUNTDOWN SITS OVER THE GLYPH RATHER THAN BESIDE IT. A 60 px tile has no
+            // room for two columns and the two are never both interesting: while a number is up
+            // the glyph is at 20% and is only there to say WHICH power is coming back.
+            card.State = HudLabel(tileGo.transform, "State", 22, UiTheme.HeroNumber,
+                                  TextAnchor.MiddleCenter, 2);
+            card.State.fontStyle = FontStyle.Bold;
+            card.State.text = "";
+            MenuKit.Stretch(card.State.rectTransform);
+
+            // ---- the meter, inside the bottom edge of the tile --------------------
+            var groove = new GameObject("Groove", typeof(RectTransform));
+            groove.transform.SetParent(tileGo.transform, false);
+            var grooveImg = groove.AddComponent<Image>();
+            grooveImg.sprite = GodotTheme.Plain(2);
+            grooveImg.type = Image.Type.Sliced;
+            grooveImg.color = UiTheme.HeroPlateSunk;
+            grooveImg.raycastTarget = false;
+            var grooveRt = (RectTransform)groove.transform;
+            grooveRt.anchorMin = new Vector2(0.0f, 0.0f);
+            grooveRt.anchorMax = new Vector2(1.0f, 0.0f);
+            grooveRt.pivot = new Vector2(0.5f, 0.0f);
+            grooveRt.anchoredPosition = new Vector2(0, 6);
+            grooveRt.sizeDelta = new Vector2(-16, 3);
+
+            // ---- the key, BELOW the tile and outside it ---------------------------
+            //
+            // ⚠️⚠️ OUTSIDE, NOT IN A CHIP IN THE CORNER. 🧑: *"i want the keybind for the icons
+            // to show too"*, sent with a crop of the deck in which the corner chips are three
+            // illegible smudges. They were 22 x 15 with 13 pt type inside a tile that is itself
+            // only 60 px, competing with the glyph for the same square. Overwatch, Valorant and
+            // Apex all put the key on its own line under the icon for the same reason: it is
+            // read ONCE, while learning, and then never again, so it must be legible and must
+            // not cost the icon any room.
+            card.Key = HudLabel(cardGo.transform, "Key", 15,
+                                new Color(UiTheme.Cream.r, UiTheme.Cream.g, UiTheme.Cream.b, 0.90f),
+                                TextAnchor.MiddleCenter, 2);
+            card.Key.fontStyle = FontStyle.Bold;
+            card.Key.text = KeyLabel(actionName);
+            Place(card.Key.rectTransform, new Vector2(0.5f, 1.0f),
+                  new Vector2(0, -(TileSize + KeyGap)), new Vector2(width, 15));
+
+            if (segmented)
+            {
+                var segRow = new GameObject("Segments", typeof(RectTransform));
+                segRow.transform.SetParent(groove.transform, false);
+                MenuKit.Stretch((RectTransform)segRow.transform);
+
+                var segGroup = segRow.AddComponent<HorizontalLayoutGroup>();
+                segGroup.childControlHeight = true;
+                segGroup.childControlWidth = true;
+                segGroup.childForceExpandHeight = true;
+                segGroup.childForceExpandWidth = true;
+                segGroup.spacing = 1.0f;
+                segGroup.padding = new RectOffset(0, 0, 0, 0);
+
+                card.Segments = new Image[UltSegments];
+                for (int i = 0; i < UltSegments; i++)
+                {
+                    var segGo = new GameObject("Seg" + i);
+                    segGo.transform.SetParent(segRow.transform, false);
+                    var seg = segGo.AddComponent<Image>();
+                    seg.sprite = GodotTheme.Plain(1);
+                    seg.type = Image.Type.Sliced;
+                    seg.color = UiTheme.HeroRim;
+                    seg.raycastTarget = false;
+                    card.Segments[i] = seg;
+                }
+
+                return card;
+            }
+
+            var fillGo = new GameObject("Fill");
+            fillGo.transform.SetParent(groove.transform, false);
+            card.Fill = fillGo.AddComponent<Image>();
+            card.Fill.sprite = GodotTheme.Plain(1);
+            card.Fill.type = Image.Type.Filled;
+            card.Fill.fillMethod = Image.FillMethod.Horizontal;
+            card.Fill.color = UiTheme.HeroNumber;
+            card.Fill.raycastTarget = false;
+            MenuKit.Stretch(card.Fill.rectTransform);
+
+            return card;
+        }
+
+        /// <summary>The key bound to an action, for anything outside this class that draws one.</summary>
+        public static string KeyLabelFor(string action) => KeyLabel(action);
+
+        private static string KeyLabel(string action)
+        {
+            if (_bindingAsset == null)
+            {
+                _bindingAsset = Resources.Load<UnityEngine.InputSystem.InputActionAsset>("TumbangPreso");
+                if (_bindingAsset != null) Settings.Rebinding.Load(_bindingAsset);
+            }
+
+            if (_bindingAsset == null) return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
+
+            var map = _bindingAsset.FindActionMap("Player");
+            var act = map?.FindAction(action);
+
+            if (act == null || act.bindings.Count == 0)
+                return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
+
+            // ⚠️ THE STATIC FORM, NOT THE EXTENSION. `InputBinding.ToHumanReadableString` is an
+            // extension method that only resolves with `using UnityEngine.InputSystem;` in
+            // scope, and this file deliberately does not carry one: it fully qualifies the two
+            // input types it touches so nothing else in a 2,500 line HUD picks up that
+            // namespace by accident. `InputControlPath.ToHumanReadableString` is the same
+            // implementation reached as a plain static.
+            string key = UnityEngine.InputSystem.InputControlPath.ToHumanReadableString(
+                act.bindings[0].effectivePath,
+                UnityEngine.InputSystem.InputControlPath.HumanReadableStringOptions.OmitDevice);
+
+            if (string.IsNullOrEmpty(key)) return "";
+
+            // Mouse button abbreviations
+            if (key == "Left Button" || key == "LeftButton") return "LMB";
+            if (key == "Right Button" || key == "RightButton") return "RMB";
+            if (key == "Middle Button" || key == "MiddleButton") return "MMB";
+
+            return key.ToUpperInvariant();
+        }
+
+        private static UnityEngine.InputSystem.InputActionAsset _bindingAsset;
+
+        private void UpdateHeroDeck()
+        {
+            if (_heroDeck == null) return;
+
+            bool isHeroMode = SceneFlow.SelectedMode == GameMode.HeroStrike;
+            bool show = !_spectating && _local != null && isHeroMode;
+
+            if (_heroDeck.activeSelf != show) _heroDeck.SetActive(show);
+            if (!show) return;
+
+            var abilitySystem = _local.GetComponent<Abilities.HeroAbilitySystem>();
+            if (abilitySystem == null || abilitySystem.Kit == null)
+            {
+                _heroDeck.SetActive(false);
+                return;
+            }
+
+            if (_inspectHint != null)
+            {
+                if (_inspectHintText == null)
+                    _inspectHintText = "HOLD [" + KeyLabel("AbilityInfo") + "] FOR POWER DETAILS";
+
+                if (_inspectHint.text != _inspectHintText) _inspectHint.text = _inspectHintText;
+            }
+
+            if (!_heroDeck.activeSelf) _heroDeck.SetActive(true);
+
+            _inspect?.Tick(abilitySystem.Kit, Time.unscaledDeltaTime);
+
+            var kit = abilitySystem.Kit;
+            Color heroColor = UiTheme.ColorForHero(kit.HeroId);
+            float dt = Time.unscaledDeltaTime;
+
+            PaintSkillCard(_skill1Card, kit.Skill1, heroColor, abilitySystem,
+                           Abilities.HeroAbilitySystem.Slot.Skill1, dt);
+            PaintSkillCard(_skill2Card, kit.Skill2, heroColor, abilitySystem,
+                           Abilities.HeroAbilitySystem.Slot.Skill2, dt);
+            PaintUltimateCard(kit, heroColor, abilitySystem, dt);
+        }
+
+        /// <summary>
+        /// One skill tile, in whichever of the three states it is in.
+        ///
+        /// ⚠️⚠️ THE READY POP IS THE FEEDBACK THAT DID NOT EXIST AT ALL. Nothing anywhere told
+        /// a player their skill had come back: the number simply stopped being drawn, on a tile
+        /// they were not looking at, in the middle of a fight. A single 0.18 s scale to 1.12 on
+        /// the frame the cooldown clears is enough to catch in peripheral vision and short
+        /// enough that it cannot be confused with the ultimate's slow breath.
+        ///
+        /// ⚠️ AND THE POP FIRES ON THE EDGE, NOT ON THE STATE. `WasReady` is what makes it
+        /// once rather than every frame the skill happens to be up, which would be a tile that
+        /// never stops moving and therefore a tile nobody reads.
+        /// </summary>
+        private static void PaintSkillCard(AbilityCard card, Abilities.HeroAbility skill,
+                                           Color heroColor, Abilities.HeroAbilitySystem system,
+                                           Abilities.HeroAbilitySystem.Slot slot, float dt)
+        {
+            if (card == null) return;
+
+            if (skill == null)
+            {
+                // A hero without this power draws an empty plate rather than a stale one.
+                card.Rim.color = UiTheme.HeroRim;
+                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Key.color = UiTheme.HeroGlyphOff;
+                card.State.text = "";
+                if (card.Fill != null) card.Fill.fillAmount = 0.0f;
+                if (card.CooldownSweep != null) card.CooldownSweep.fillAmount = 0.0f;
+                return;
+            }
+
+            PaintGlyph(card.Glyph, skill);
+            card.Plate.color = Color.white;
+
+            bool ready = skill.IsReady;
+            if (ready && !card.WasReady) card.PopLeft = ReadyPopSeconds;
+            card.WasReady = ready;
+
+            PaintCharges(card, skill, heroColor, dt);
+
+            // ⚠️⚠️ A CHARGE SKILL AT ZERO IS NOT "COOLING", AND THAT DISTINCTION IS THE WHOLE
+            // REASON THIS BRANCH EXISTS. Its `Cooldown` is 0 so it would fall through to the
+            // Ready arm below and draw a lit rim over a power that cannot be cast, which is the
+            // exact failure `docs/Hero_Strike_UI.md` § 6 calls the anti-clunk fix: a press that
+            // is refused must not look like a press that worked.
+            //
+            // It gets its own look rather than borrowing the Cooling one, because the two are
+            // different facts. Cooling means WAIT. Empty means NOT THIS ROUND, unless this is
+            // one of the skills that recharges off play. A countdown would be a lie either way,
+            // so there is no number: the pips above the tile already say how many are left, and
+            // `docs/VISION.md` § 3 forbids putting a sentence here to explain it.
+            if (skill.UsesCharges && !skill.IsActive && skill.ChargesRemaining <= 0)
+            {
+                card.Rim.color = UiTheme.HeroRim;
+                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Key.color = UiTheme.CreamMuted;
+                card.State.text = "";
+
+                if (card.Fill != null) card.Fill.fillAmount = 0.0f;
+                if (card.CooldownSweep != null) card.CooldownSweep.fillAmount = 0.0f;
+
+                ApplyAnswer(card, system, slot, heroColor);
+                ApplyPop(card, dt);
+                return;
+            }
+
+            if (skill.IsActive)
+            {
+                float breath = Mathf.Sin(Time.time * 7.0f) * 0.5f + 0.5f;
+                // ⚠️⚠️ ACTIVE IS THE ONE STATE THAT GETS THE HERO ACCENT, AND THAT IS WHY THE
+                // ACCENT MEANS ANYTHING. Ready is a white rim, cooling is a dim one; colour is
+                // reserved for "this power is RUNNING RIGHT NOW", which is the only state with
+                // a clock on it that the player is inside rather than waiting on.
+                card.Rim.color = Color.Lerp(heroColor, Color.white, breath * 0.35f);
+                card.Glyph.color = UiTheme.HeroGlyphOn;
+                card.Key.color = UiTheme.Cream;
+
+                card.State.text = $"{skill.DurationRemaining:0.0}";
+                card.State.color = heroColor;
+
+                if (card.Fill != null)
+                {
+                    card.Fill.fillAmount = skill.DurationRatio;
+                    card.Fill.color = heroColor;
+                }
+                if (card.CooldownSweep != null) card.CooldownSweep.fillAmount = 0.0f;
+            }
+            else if (skill.CooldownRemaining > 0.0f)
+            {
+                card.Rim.color = UiTheme.HeroRim;
+                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Key.color = UiTheme.CreamMuted;
+
+                // ⚠️ ONE DECIMAL UNDER THREE SECONDS, WHOLE SECONDS ABOVE IT. A countdown that
+                // ticks tenths for nine seconds is a number nobody can read and a canvas rebuild
+                // every frame; one that only shows whole seconds is useless in the last moment,
+                // which is the only moment a player is actually waiting on it.
+                card.State.text = AbilityDeckHud.CooldownLabel(skill.CooldownRemaining);
+                card.State.color = UiTheme.HeroNumber;
+
+                if (card.Fill != null)
+                {
+                    card.Fill.fillAmount = 1.0f - skill.CooldownRatio;
+                    card.Fill.color = UiTheme.HeroNumber;
+                }
+                if (card.CooldownSweep != null)
+                    card.CooldownSweep.fillAmount = AbilityDeckHud.CooldownSweep(
+                        skill.CooldownRemaining, skill.Cooldown);
+            }
+            else
+            {
+                // ⚠️ READY IS A WHITE RIM, NOT AN ACCENT ONE. Three coloured outlines sitting
+                // there permanently is a deck that is always shouting, and it leaves nothing
+                // louder to say when a power actually fires.
+                card.Rim.color = UiTheme.HeroRimLit;
+                card.Glyph.color = UiTheme.HeroGlyphOn;
+                card.Key.color = UiTheme.Cream;
+
+                // ⚠️⚠️ READY PRINTS NOTHING. See `docs/Hero_Strike_UI.md` section 4.
+                card.State.text = "";
+
+                if (card.Fill != null)
+                {
+                    card.Fill.fillAmount = 0.0f;
+                }
+                if (card.CooldownSweep != null) card.CooldownSweep.fillAmount = 0.0f;
+            }
+
+            ApplyAnswer(card, system, slot, heroColor);
+            ApplyPop(card, dt);
+        }
+
+        /// <summary>
+        /// Draws the charge dots above a tile, building them on first sight of a charge skill.
+        ///
+        /// ⚠️⚠️ BUILT LAZILY RATHER THAN AT CARD CONSTRUCTION, BECAUSE THE CARD IS BUILT BEFORE
+        /// THE KIT IS KNOWN. `BuildAbilityCard` runs once for the deck and the same three cards
+        /// are then repainted for whichever hero the seat is playing, so "how many charges" is
+        /// not a fact that exists yet at build time. Rebuilding on a count change is also what
+        /// makes a mid-match character swap draw the right number of dots instead of the
+        /// previous hero's.
+        ///
+        /// ⚠️ THE PIPS SIT ABOVE THE TILE, NOT INSIDE IT. Inside would put them in the same
+        /// square as the glyph, which is the mistake the key labels made and which
+        /// `docs/Hero_Strike_UI.md` records being reported as *"three illegible smudges"*. The
+        /// groove under the tile is already spoken for by the cooldown bar and the ultimate
+        /// segments, so above is the only clear edge left.
+        /// </summary>
+        private static void PaintCharges(AbilityCard card, Abilities.HeroAbility skill,
+                                         Color heroColor, float dt)
+        {
+            if (card == null || skill == null) return;
+
+            if (!skill.UsesCharges)
+            {
+                // A cooldown ability on a card that previously held a charge one. Hide rather
+                // than destroy: a seat can swap back, and rebuilding is the expensive half.
+                if (card.Pips != null)
+                    foreach (var p in card.Pips) if (p != null) p.enabled = false;
+
+                card.WasCharges = -1;
+                return;
+            }
+
+            if (card.Pips == null || card.PipCount != skill.MaxCharges)
+                BuildPips(card, skill.MaxCharges);
+
+            if (card.Pips == null) return;
+
+            // ⚠️ THE FLASH FIRES ON A GAIN AND NEVER ON A SPEND. A player who casts something
+            // already knows they cast it; a charge handed back by `Recharge.LataKnocked` or
+            // `Recharge.OwnSlipperRetrieved` arrives while they are looking at the lata or at
+            // their own feet, several metres from the deck, and is the one charge event they
+            // will otherwise miss entirely.
+            if (card.WasCharges >= 0 && skill.ChargesRemaining > card.WasCharges)
+                card.PipGrantLeft = 0.45f;
+
+            card.WasCharges = skill.ChargesRemaining;
+
+            if (card.PipGrantLeft > 0.0f) card.PipGrantLeft = Mathf.Max(0.0f, card.PipGrantLeft - dt);
+
+            float flash = card.PipGrantLeft > 0.0f
+                ? Mathf.Sin(card.PipGrantLeft * 28.0f) * 0.5f + 0.5f
+                : 0.0f;
+
+            for (int i = 0; i < card.Pips.Length; i++)
+            {
+                var pip = card.Pips[i];
+                if (pip == null) continue;
+
+                pip.enabled = true;
+
+                bool held = i < skill.ChargesRemaining;
+
+                // ⚠️ A SPENT PIP IS DIMMED, NOT REMOVED. Keeping the empty socket on screen is
+                // what tells the player how many they STARTED with, which is the number they
+                // need to plan a round around. Dots that vanish leave "one left" and "one, and
+                // that is all I ever had" looking identical.
+                pip.color = held
+                    ? Color.Lerp(heroColor, Color.white, flash * 0.75f)
+                    : UiTheme.HeroRim;
+            }
+        }
+
+        private static void BuildPips(AbilityCard card, int count)
+        {
+            if (card == null || card.Rt == null || count <= 0) return;
+
+            if (card.Pips != null)
+                foreach (var p in card.Pips)
+                    if (p != null) UnityEngine.Object.Destroy(p.gameObject);
+
+            var row = new GameObject("Pips", typeof(RectTransform));
+            row.transform.SetParent(card.Rt, false);
+
+            var rowRt = (RectTransform)row.transform;
+            rowRt.anchorMin = new Vector2(0.5f, 1.0f);
+            rowRt.anchorMax = new Vector2(0.5f, 1.0f);
+            rowRt.pivot = new Vector2(0.5f, 0.0f);
+            rowRt.anchoredPosition = new Vector2(0.0f, 3.0f);
+            rowRt.sizeDelta = new Vector2(count * 9.0f + (count - 1) * 3.0f, 5.0f);
+
+            var group = row.AddComponent<HorizontalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = true;
+            group.childForceExpandWidth = true;
+            group.childAlignment = TextAnchor.MiddleCenter;
+            group.spacing = 3.0f;
+            group.padding = new RectOffset(0, 0, 0, 0);
+
+            card.Pips = new Image[count];
+            for (int i = 0; i < count; i++)
+            {
+                var go = new GameObject("Pip" + i);
+                go.transform.SetParent(row.transform, false);
+
+                var img = go.AddComponent<Image>();
+                img.sprite = GodotTheme.Plain(1);
+                img.type = Image.Type.Sliced;
+                img.color = UiTheme.HeroRim;
+                img.raycastTarget = false;
+
+                card.Pips[i] = img;
+            }
+
+            card.PipCount = count;
+        }
+
+        /// <summary>
+        /// The 0.14 s confirm and the 0.12 s refusal tick.
+        ///
+        /// ⚠️⚠️ THIS IS THE WHOLE ANTI-CLUNK FIX AND IT IS FOUR LINES. A press refused because
+        /// the power was down used to look EXACTLY like a press that worked: no flash, no tick,
+        /// no movement anywhere on screen. The only reading available to the player was that the
+        /// game had dropped their input, and they were wrong, and nothing could have told them.
+        /// The rim answers every press within a frame. `HeroAbilitySystem` section on the cast
+        /// answer has the other half.
+        ///
+        /// ⚠️ IT PAINTS OVER THE STATE COLOUR RATHER THAN INSTEAD OF IT, so a tile that is
+        /// mid-cooldown still shows its countdown while it ticks red. Replacing the state would
+        /// hide the very number that explains the refusal.
+        /// </summary>
+        private static void ApplyAnswer(AbilityCard card, Abilities.HeroAbilitySystem system,
+                                        Abilities.HeroAbilitySystem.Slot slot, Color heroColor)
+        {
+            if (system == null) return;
+
+            float since = system.SecondsSinceAnswer(slot);
+            var answer = system.LastAnswer(slot);
+
+            if (answer == Abilities.HeroKit.CastOutcome.Cast)
+            {
+                if (since > CastFlashSeconds) return;
+                float t = 1.0f - since / CastFlashSeconds;
+                card.Rim.color = Color.Lerp(card.Rim.color, UiTheme.Cream, t);
+                card.Plate.color = Color.Lerp(Color.white, heroColor, t * 0.55f);
+                return;
+            }
+
+            if (answer == Abilities.HeroKit.CastOutcome.Cooling ||
+                answer == Abilities.HeroKit.CastOutcome.NoCharge ||
+                answer == Abilities.HeroKit.CastOutcome.CannotAct)
+            {
+                if (since > RefusalFlashSeconds)
+                {
+                    card.Plate.color = Color.white;
+                    return;
+                }
+
+                float t = 1.0f - since / RefusalFlashSeconds;
+                card.Rim.color = Color.Lerp(card.Rim.color, UiTheme.Danger, t);
+                card.Plate.color = Color.Lerp(Color.white, UiTheme.Danger, t * 0.45f);
+                return;
+            }
+
+            card.Plate.color = Color.white;
+        }
+
+        private static void ApplyPop(AbilityCard card, float dt)
+        {
+            if (card.Rt == null) return;
+
+            if (card.PopLeft <= 0.0f)
+            {
+                if (card.Rt.localScale != Vector3.one) card.Rt.localScale = Vector3.one;
+                return;
+            }
+
+            card.PopLeft = Mathf.Max(0.0f, card.PopLeft - dt);
+
+            // A half sine: out to 1.12 and back, with no discontinuity at either end.
+            float t = 1.0f - card.PopLeft / ReadyPopSeconds;
+            card.Rt.localScale = Vector3.one * (1.0f + Mathf.Sin(t * Mathf.PI) * 0.12f);
+        }
+
+        /// <summary>
+        /// The ultimate tile. Three states again, but the middle one is CHARGING rather than
+        /// cooling, and the meter is notched rather than smooth.
+        ///
+        /// ⚠️ THE PERCENTAGE MOVED OUT OF THE CENTRE. A big "64%" over the glyph made the
+        /// charging state the loudest tile in the deck, which is exactly backwards: charge is
+        /// the one quantity a player can do nothing about in the moment. The notched meter
+        /// carries it, and the number only appears once it is worth acting on.
+        /// </summary>
+        private void PaintUltimateCard(Abilities.HeroKit kit, Color heroColor,
+                                       Abilities.HeroAbilitySystem system, float dt)
+        {
+            var card = _ultCard;
+            if (card == null || kit.Ultimate == null) return;
+
+            PaintGlyph(card.Glyph, kit.Ultimate);
+            card.Plate.color = Color.white;
+
+            float ratio = kit.UltimateRatio;
+
+            if (kit.PracticeMode)
+            {
+                // ⚠️ THE PRACTICE TILE IS LIT WITHOUT PRETENDING TO BE CHARGED. The meter still
+                // draws the banked charge, because that IS what the player will start the round
+                // with; the rim says the cast is free right now. Showing 100% here would tell
+                // them they had an ultimate they have not earned.
+                card.Rim.color = heroColor;
+                card.Glyph.color = UiTheme.HeroGlyphOn;
+                card.Key.color = UiTheme.Cream;
+                card.State.text = "";
+
+                PaintUltSegments(card, ratio, heroColor, UiTheme.HeroRim);
+
+                _lastUltReady = false;
+                ApplyAnswer(card, system, Abilities.HeroAbilitySystem.Slot.Ultimate, heroColor);
+                ApplyPop(card, dt);
+                return;
+            }
+
+            bool ready = kit.IsUltimateReady;
+            if (ready && !card.WasReady) card.PopLeft = ReadyPopSeconds;
+            card.WasReady = ready;
+
+            if (ready)
+            {
+                // ⚠️ A SLOW BREATH, NOT A FAST PULSE. 1.4 s is the only continuous motion the
+                // deck is allowed, and it has to be distinguishable from a skill's 0.18 s pop at
+                // a glance or neither of them means anything.
+                float breath = Mathf.Sin(Time.time * (Mathf.PI * 2.0f / 1.4f)) * 0.5f + 0.5f;
+                card.Rim.color = Color.Lerp(heroColor, Color.white, breath * 0.55f);
+                card.Glyph.color = UiTheme.HeroGlyphOn;
+                card.Key.color = UiTheme.Cream;
+                card.State.text = "";
+
+                PaintUltSegments(card, 1.0f, card.Rim.color, card.Rim.color);
+
+                if (!_lastUltReady)
+                {
+                    _lastUltReady = true;
+                    GameServices.Audio?.PlayAt("sfx_super_ready",
+                        UnityEngine.Camera.main != null
+                            ? UnityEngine.Camera.main.transform.position
+                            : Vector3.zero);
+                    if (_local != null) Visual.ComicPopup.Super(_local.transform.position);
+                }
+
+                ApplyAnswer(card, system, Abilities.HeroAbilitySystem.Slot.Ultimate, heroColor);
+                ApplyPop(card, dt);
+                return;
+            }
+
+            _lastUltReady = false;
+
+            card.Rim.color = UiTheme.HeroRim;
+            card.Glyph.color = UiTheme.HeroGlyphOff;
+            card.Key.color = UiTheme.CreamMuted;
+
+            // Only worth reading once it is nearly there. Below that the notches say enough.
+            card.State.text = ratio >= 0.75f ? $"{Mathf.FloorToInt(ratio * 100f)}%" : "";
+            card.State.color = UiTheme.HeroNumber;
+
+            PaintUltSegments(card, ratio, heroColor, UiTheme.HeroRim);
+
+            ApplyAnswer(card, system, Abilities.HeroAbilitySystem.Slot.Ultimate, heroColor);
+            ApplyPop(card, dt);
+        }
+
+        /// <summary>
+        /// ⚠️ THE SPRITE IS SET ONLY WHEN IT CHANGES. `AbilityIcons.For` is cached, so this
+        /// is cheap either way, but assigning `Image.sprite` every frame dirties the canvas
+        /// batch for three cards on every HUD tick and this runs during a live match.
+        /// </summary>
+        private static void PaintGlyph(Image target, Abilities.HeroAbility ability)
+        {
+            if (target == null || ability == null) return;
+
+            var want = AbilityIcons.For(ability.Glyph);
+            if (target.sprite != want) target.sprite = want;
+        }
+
+        /// <summary>
+        /// ⚠️ THE PARTIAL NOTCH IS DIMMED, NOT HALF-DRAWN. A segment either belongs to the
+        /// charge or it does not; fading the one currently filling is what stops ten notches
+        /// from reading as a coarse, jumpy bar.
+        /// </summary>
+        private static void PaintUltSegments(AbilityCard card, float ratio, Color on, Color off)
+        {
+            if (card == null || card.Segments == null) return;
+
+            float exact = Mathf.Clamp01(ratio) * UltSegments;
+            int whole = Mathf.FloorToInt(exact);
+            float partial = exact - whole;
+
+            for (int i = 0; i < card.Segments.Length; i++)
+            {
+                if (card.Segments[i] == null) continue;
+
+                if (i < whole) card.Segments[i].color = on;
+                else if (i == whole && partial > 0.05f) card.Segments[i].color = Color.Lerp(off, on, partial);
+                else card.Segments[i].color = off;
+            }
+        }
+
     }
 }

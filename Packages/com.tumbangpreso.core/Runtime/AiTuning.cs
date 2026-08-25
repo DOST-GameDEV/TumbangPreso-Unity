@@ -149,6 +149,71 @@ namespace TumbangPreso.Core
         public const float SeparationRadius = 1.45f;
         public const float SeparationWeight = 0.65f;
 
+        /// <summary>
+        /// How much room a body wants beside a hero hazard it is walking past.
+        ///
+        /// ⚠⚠ THE HAZARD'S OWN RADIUS IS NOT ENOUGH AND THAT IS THE WHOLE VALUE OF THIS
+        /// NUMBER. Steering to exactly the edge means clipping it: the heading is quantised to
+        /// eight compass directions (`EightWayThreshold`), the body has width, and the effect
+        /// is applied by distance to the CENTRE rather than to a collider. Half a metre of
+        /// margin is what turns "walked past it" into "walked past it every time".
+        ///
+        /// ⚠️ BIGGER IS NOT SAFER. Every extra metre is a longer detour, and a detour on the
+        /// way to a tsinelas is charged at 5 points a second by the unretrieved-slipper clock.
+        /// This is a trade, not a safety margin to max out.
+        /// </summary>
+        public const float HazardAvoidMargin = 0.55f;
+
+        /// <summary>
+        /// Below this distance to the goal, walk into the hazard rather than around it.
+        ///
+        /// ⚠⚠ A SLIPPER THAT LANDS INSIDE A HAZARD MUST STILL BE FETCHED. Without this rule
+        /// the avoidance is a trap of its own: the blocker is between the bot and the slipper
+        /// no matter which way it goes, so it circles the hazard forever and the round bills it
+        /// for the slipper the entire time. Taking the slow ground and getting out is strictly
+        /// better than never arriving.
+        /// </summary>
+        public const float HazardAvoidGiveUp = 1.8f;
+
+        /// <summary>
+        /// A hazard wider than this is walked THROUGH, not around.
+        ///
+        /// ⚠️⚠️ THIS IS NOT A TUNING KNOB, IT IS A MEASUREMENT OF THE CURRENT ABILITY SIZES,
+        /// AND IT SHOULD BECOME UNNECESSARY. The box is `CONFINEMENT_RADIUS` 7.0, so the whole
+        /// danger zone is 14 by 14. A Permafrost Sheet has a radius of 5.0 and a Seance Void
+        /// 7.5, which is 40% and 90% of that area from ONE cast. There is no way round a disc
+        /// that size inside the walls, so a bot that tries walks the perimeter forever.
+        ///
+        /// ⚠️ MEASURED, NOT GUESSED. Turning avoidance on with no cap dropped
+        /// `BotBehaviourProbe`'s Hero Strike run from 78-97 throws in four rounds to **17**,
+        /// while Classic, which has no hazards, did not move. The bots were not broken; they
+        /// were correctly refusing to cross ground that covered most of the arena, and they
+        /// never reached a throwing position again.
+        ///
+        /// ✅ **THE END STATE ARRIVED ON 2026-08-25 AND THIS CAP NOW BINDS NOTHING.** The
+        /// paragraph above describes sizes that no longer ship: the sheet is 2.3 and the void
+        /// came down from 3.2 to 2.8 in the footprint pass. Every hazard registered with
+        /// `HazardMap` is under 3.0, so avoidance applies to all of them and no bot is told to
+        /// walk through anything.
+        ///
+        /// Registered today: Permafrost Sheet 2.3, Ice Barricade 1.6, Seance Void 2.8, Titan
+        /// Fissure's earth pillars 1.4, and Ilalim ng Tulay's LRT pillars. Trails are
+        /// deliberately NOT registered and never were; `HeroHazards.SpawnFireTrail` has the
+        /// measurement that settled that and it is a different question from this one.
+        ///
+        /// ⚠️⚠️ DO NOT DELETE IT. IT STOPPED BEING A LIMIT AND BECAME A GUARD. The failure it
+        /// prevents is not hypothetical and it is not visible in the file that would cause it: a
+        /// future ability registering a 4 m zone would strand every bot on the perimeter, and
+        /// the measurement above is what that costs (78 to 97 throws down to 17). With the cap
+        /// in place that ability is merely walked through, which is survivable.
+        /// `EveryRegisteredHazardStaysUnderTheBotAvoidanceCap` asserts the ceiling holds, so the
+        /// next one is caught by a test rather than by a probe run nobody thought to do.
+        ///
+        /// `docs/VISION.md` § 2 is right that the bots are the canary for whether a human can
+        /// read the floor. This is that canary made automatic.
+        /// </summary>
+        public const float HazardAvoidMaxRadius = 3.0f;
+
         /// <summary>sin(22.5°). The threshold that snaps a heading onto one of eight
         /// compass directions, so a bot walks the same lanes a keyboard player does
         /// instead of gliding along arbitrary angles.</summary>

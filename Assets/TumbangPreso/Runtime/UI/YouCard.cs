@@ -329,6 +329,7 @@ namespace TumbangPreso.UI
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
             scaler.matchWidthOrHeight = 1.0f;
+            AspectSafeCanvas.Apply(scaler);
 
             var cardGo = new GameObject("Card", typeof(RectTransform), typeof(Image));
             cardGo.transform.SetParent(canvasGo.transform, false);

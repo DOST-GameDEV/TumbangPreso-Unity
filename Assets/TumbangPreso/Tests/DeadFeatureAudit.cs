@@ -154,6 +154,20 @@ namespace TumbangPreso.Tests
                 + "character_visual.gd::play_action. Found: " + callers[0]);
         }
 
+        [Test]
+        public void TacticalPauseBelongsOnlyToSpectatorCamera()
+        {
+            string spectator = File.ReadAllText(Path.Combine(
+                RuntimeRoot, "Camera", "SpectatorCamera.cs"));
+            string playerMenu = File.ReadAllText(Path.Combine(
+                RuntimeRoot, "UI", "PausePanel.cs"));
+
+            StringAssert.Contains("Time.timeScale = 0.0f", spectator,
+                "Spectator broadcast controls should own tactical pause");
+            StringAssert.DoesNotContain("Time.timeScale = 0.0f", playerMenu,
+                "The ordinary player menu must never freeze the live match");
+        }
+
         private static string ReadRuntimeSource()
         {
             var text = new StringBuilder();

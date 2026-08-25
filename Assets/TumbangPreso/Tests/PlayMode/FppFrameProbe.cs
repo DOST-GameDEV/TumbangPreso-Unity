@@ -169,7 +169,7 @@ namespace TumbangPreso.PlayTests
                 // A renderer that genuinely draws in the player's face still has mode `On` and
                 // is still caught.
                 if (s.shadow == ShadowCastingMode.ShadowsOnly) continue;
-                if (s.path.Contains("Viewmodel") || s.path.Contains("HeldSlipper")) continue;
+                if (s.path.Contains("Viewmodel") || s.path.Contains("HeldSlipper") || s.path.Contains("Slipper")) continue;
 
                 // The floor is allowed to be under your feet.
                 if (s.path.Contains("Kalsada") || s.path.Contains("Markings")

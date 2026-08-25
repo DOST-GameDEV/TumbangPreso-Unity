@@ -39,7 +39,9 @@ namespace TumbangPreso.EditorTools
             {
                 // The rules core has to be reachable from Unity, not just from dotnet test.
                 // If the local package or its asmdef is misconfigured, this is where it shows.
-                Check(ref failures, "roster size", Roster.People.Count == 12);
+                Check(ref failures, "classic roster size", Roster.ClassicPeople.Count == 12);
+                Check(ref failures, "hero roster size", Roster.HeroPeople.Count == 5);
+                Check(ref failures, "all roster size", Roster.AllPeople.Count == 17);
                 Check(ref failures, "cans", Roster.Cans.Count == 4);
                 Check(ref failures, "slippers", Roster.Slippers.Count == 4);
 

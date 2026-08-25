@@ -174,5 +174,258 @@ namespace TumbangPreso.Tests
                 "the standoff ring lands inside a wall: bots will jam against it trying to " +
                 "reach a goal they can never stand on, and it reads as broken pathfinding");
         }
+
+        // -------------------------------------------------------------------
+        // Hero Ability System & Gamemode Tests
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void HeroKits_CreateSuccessfully_ForEveryHero()
+        {
+            string[] heroes = { "zack", "cheska", "dante", "nemu", "sean" };
+            foreach (var h in heroes)
+            {
+                var kit = Abilities.HeroAbilitySystem.CreateKitFor(h);
+                Assert.IsNotNull(kit, $"kit for {h} must be created");
+                Assert.IsNotNull(kit.Skill1, $"skill 1 for {h} must exist");
+                Assert.IsNotNull(kit.Skill2, $"skill 2 for {h} must exist");
+                Assert.IsNotNull(kit.Ultimate, $"ultimate for {h} must exist");
+            }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE HALFWAY POINT IS HALF OF `UltimateCost`, NOT HALF OF 100, AND WRITING 50.0f
+        /// HERE IS WHAT BROKE THIS TEST. Until 2026-08-25 every hero's ultimate cost the same
+        /// `HeroKit.UltimateMax`, so the two were interchangeable and a literal was harmless.
+        /// They are not interchangeable now: Zack pays 150 because Thunderstrike cannot miss,
+        /// and Nemu pays 90 because Seance Void ends no round on its own.
+        ///
+        /// Derived from the kit rather than restated, so this keeps testing "half fills half the
+        /// bar" through any future retune instead of testing one hero's price.
+        /// </summary>
+        [Test]
+        public void HeroKit_ChargesAndActivates_Ultimate()
+        {
+            var kit = new Abilities.ZackHeroKit();
+            Assert.AreEqual(0.0f, kit.UltimateCharge);
+            Assert.IsFalse(kit.IsUltimateReady);
+
+            float half = kit.UltimateCost * 0.5f;
+
+            kit.AddUltimateCharge(half);
+            Assert.AreEqual(0.5f, kit.UltimateRatio, 0.001f);
+            Assert.IsFalse(kit.IsUltimateReady);
+
+            kit.AddUltimateCharge(half);
+            Assert.AreEqual(1.0f, kit.UltimateRatio, 0.001f);
+            Assert.IsTrue(kit.IsUltimateReady);
+        }
+
+        [Test]
+        public void Nemu_AstralProjection_SupportsReactivation()
+        {
+            var nemu = new Abilities.NemuHeroKit();
+            Assert.IsTrue(nemu.Skill2.CanReactivate, "Nemu Skill 2 should support early reactivation");
+
+            var go = new GameObject("TestMotor");
+            var motor = go.AddComponent<CharacterMotor>();
+            var ctx = new Abilities.AbilityContext(motor, null, null);
+
+            Assert.IsTrue(nemu.TryActivateSkill2(ctx));
+            Assert.IsTrue(nemu.Skill2.IsActive);
+
+            // Second activation reactivates and ends early (teleport trigger)
+            Assert.IsTrue(nemu.TryActivateSkill2(ctx));
+            Assert.IsFalse(nemu.Skill2.IsActive, "Second activation should end early");
+
+            Object.DestroyImmediate(go);
+        }
+
+        [Test]
+        public void MatchDirector_WarmupBuffer_BlocksScoreAwards()
+        {
+            var go = new GameObject("TestMatchDirector");
+            var match = go.AddComponent<MatchDirector>();
+            match.StartMatch();
+
+            // When in live match, scoring works
+            match.AddScore(0, ScoreEvent.Tag);
+            Assert.AreEqual(Balance.ScoreTag, match.ScoreFor(0));
+
+            // When warmup buffer is active, scoring is blocked
+            match.IsWarmupBuffer = true;
+            match.AddScore(0, ScoreEvent.LataKnocked);
+            Assert.AreEqual(Balance.ScoreTag, match.ScoreFor(0), "Score must not increase during warmup buffer");
+
+            Object.DestroyImmediate(go);
+        }
+
+        [Test]
+        public void GameMode_Rosters_AreDistinctAndCorrectSizes()
+        {
+            var classic = Roster.GetPeople(GameMode.Classic);
+            var heroes = Roster.GetPeople(GameMode.HeroStrike);
+
+            Assert.AreEqual(12, classic.Count);
+            Assert.AreEqual(5, heroes.Count);
+            Assert.AreEqual("bayan", classic[0].Id);
+            Assert.AreEqual("dante", heroes[0].Id);
+        }
+
+        [Test]
+        public void RoundSnapshotReappliesCurrentDefenderAndActionState()
+        {
+            var roundGo = new GameObject("SnapshotRound");
+            var round = roundGo.AddComponent<RoundDirector>();
+            var players = new CharacterMotor[Balance.PlayerCount];
+
+            for (int slot = 0; slot < players.Length; slot++)
+            {
+                var go = new GameObject($"SnapshotSeat{slot}");
+                go.AddComponent<CharacterController>();
+                players[slot] = go.AddComponent<CharacterMotor>();
+                players[slot].PlayerSlot = slot;
+                players[slot].IsDefender = slot == 0; // stale role from the disconnected round
+                round.Register(players[slot]);
+            }
+
+            round.ApplySnapshot(37.5f, true, defenderSlot: 2);
+
+            Assert.AreEqual(37.5f, round.TimeLeft, 0.001f);
+            Assert.IsTrue(round.RoundActive);
+            for (int slot = 0; slot < players.Length; slot++)
+            {
+                Assert.AreEqual(slot == 2, players[slot].IsDefender);
+                Assert.IsTrue(players[slot].RoundActive);
+                Object.DestroyImmediate(players[slot].gameObject);
+            }
+            Object.DestroyImmediate(roundGo);
+        }
+
+        [Test]
+        public void SlipperSnapshotRestoresLiveBallisticsWithoutReplayingThrow()
+        {
+            var go = new GameObject("SnapshotSlipper");
+            var slipper = go.AddComponent<Slipper>();
+            Vector3 velocity = new Vector3(8.0f, 2.0f, -4.0f);
+
+            slipper.ApplySnapshotState(
+                SlipperState.InFlight, null, new Vector3(1.0f, 3.0f, 5.0f),
+                Quaternion.Euler(10.0f, 20.0f, 30.0f), velocity, 0.65f,
+                SlipperAffinity.ElectricZap, throwerSlot: 3);
+
+            Assert.AreEqual(SlipperState.InFlight, slipper.State);
+            Assert.AreEqual(velocity, slipper.Velocity);
+            Assert.AreEqual(0.65f, slipper.PektusSpin, 0.001f);
+            Assert.AreEqual(SlipperAffinity.ElectricZap, slipper.Affinity);
+            Assert.AreEqual(3, slipper.ThrowerSlot);
+            Object.DestroyImmediate(go);
+        }
+
+        [Test]
+        public void MatchRpcNetworkPrefabExistsAndHasAStableSpawnHash()
+        {
+            var prefab = Resources.Load<GameObject>("Net/MatchRpc");
+            Assert.NotNull(prefab, "The persistent gameplay RPC prefab must ship in Resources");
+
+            Component networkObject = null;
+            Component matchRpc = null;
+            foreach (var component in prefab.GetComponents<Component>())
+            {
+                if (component.GetType().Name == "NetworkObject") networkObject = component;
+                if (component.GetType().Name == "MatchRpc") matchRpc = component;
+            }
+
+            Assert.NotNull(networkObject);
+            Assert.NotNull(matchRpc);
+            var hashProperty = networkObject.GetType().GetProperty("PrefabIdHash");
+            Assert.NotNull(hashProperty);
+            Assert.Greater((uint)hashProperty.GetValue(networkObject), 0u,
+                "A zero prefab hash cannot be spawned on reconnecting clients");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE GODOT BUG, END TO END, IN ONE TEST. Reported as: a player drops out while
+        /// they are an ATTACKER, the round turns over while they are away, and they come back
+        /// into a seat that is now the TAYA holding their old attacker state. They cannot tag,
+        /// the box does not confine them, and from their side the game is simply broken.
+        ///
+        /// The repair is three separate pieces and each of them is already covered on its own:
+        /// the lobby reclaims by durable TOKEN rather than by transport id, the taya is DERIVED
+        /// from the round number rather than remembered, and the round snapshot rewrites every
+        /// seat's role. What no test asserted is that the three AGREE, which is the only thing
+        /// the player actually experiences. A seat reclaim that lands next to a stale role is
+        /// exactly the shipped bug with two thirds of the fix in place.
+        /// </summary>
+        [Test]
+        public void AReturningPlayerWhoseRoleChangedWhileAwayComesBackAsTheTaya()
+        {
+            var lobby = new Net.LobbySession();
+            lobby.OpenLobby(new System.Random(7));
+
+            lobby.Admit(41, "token-host", "Host");
+            var leaving = lobby.Admit(42, "token-returning", "Returning");
+            lobby.Admit(43, "token-third", "Third");
+            lobby.Admit(44, "token-fourth", "Fourth");
+
+            int seat = leaving.Seat;
+            Assert.AreEqual(1, seat, "the fixture wants the seat that defends in round two");
+
+            lobby.StartMatch();
+
+            // Round 1: this seat is an ATTACKER, which is the state it disconnects holding.
+            Assert.AreNotEqual(seat, MatchRules.DefenderSlotFor(1));
+
+            var roundGo = new GameObject("RejoinRound");
+            var round = roundGo.AddComponent<RoundDirector>();
+            var seats = new CharacterMotor[Balance.PlayerCount];
+
+            for (int slot = 0; slot < seats.Length; slot++)
+            {
+                var go = new GameObject($"RejoinSeat{slot}");
+                go.AddComponent<CharacterController>();
+                seats[slot] = go.AddComponent<CharacterMotor>();
+                seats[slot].PlayerSlot = slot;
+                seats[slot].IsDefender = slot == MatchRules.DefenderSlotFor(1);
+                seats[slot].RoundActive = true;
+                round.Register(seats[slot]);
+            }
+
+            lobby.Depart(42);
+
+            // ⚠️ THE ROUND TURNS OVER WHILE THEY ARE GONE. This is the whole scenario: nothing
+            // is wrong until the role they left with stops being the role they own.
+            int defenderNow = MatchRules.DefenderSlotFor(2);
+            Assert.AreEqual(seat, defenderNow, "round two must hand this seat the taya");
+
+            // ⚠️ A NEW TRANSPORT CONNECTION MEANS A NEW PEER ID, ALWAYS. Using it as identity
+            // is the original fault; the durable token is what reclaims the seat.
+            var returning = lobby.Admit(915, "token-returning", "Returning");
+            Assert.AreEqual(seat, returning.Seat, "the seat was not reclaimed by token");
+            Assert.AreSame(returning, lobby.PeerById(915));
+
+            // What the host sends on the way back in, which is the authoritative round state
+            // rather than anything the client remembered.
+            round.ApplySnapshot(52.5f, roundActive: true, defenderSlot: defenderNow);
+
+            Assert.IsTrue(seats[seat].IsDefender,
+                "the returning player is still holding their old attacker role, which is the " +
+                "reported bug: they cannot tag and the chalk box does not hold them");
+
+            Assert.IsTrue(seats[seat].RoundActive,
+                "a returning player who is not round-active cannot act at all");
+
+            Assert.IsTrue(Confinement.IsConfined(seats[seat].RoundActive, seats[seat].IsDefender),
+                "the box has to close around them the moment they are the taya again");
+
+            for (int slot = 0; slot < seats.Length; slot++)
+            {
+                Assert.AreEqual(slot == defenderNow, seats[slot].IsDefender,
+                    $"seat {slot} disagrees with the authoritative defender after the rejoin");
+                Object.DestroyImmediate(seats[slot].gameObject);
+            }
+
+            Object.DestroyImmediate(roundGo);
+        }
     }
 }

@@ -92,6 +92,19 @@ namespace TumbangPreso.Audio
             "bump", "tag", "downed", "jump", "land", "dash", "guard_block", "respawn",
             "stamina_empty",
 
+            // Hero Abilities & Special Effects.
+            "ability_bagsak_bomb", "ability_bakya_bash", "ability_flick_dash",
+            "ability_shatter_trap", "ability_spin_guard",
+            "sfx_explosion_heavy", "sfx_lightning_strike", "sfx_ice_freeze",
+            "sfx_fire_whoosh", "sfx_ghost_teleport", "sfx_hitmarker", "sfx_super_ready",
+
+            // Hero Vocal Shouts & Grunts.
+            "hero_dante_ult", "hero_dante_grunt",
+            "hero_cheska_ult", "hero_cheska_grunt",
+            "hero_sean_ult", "hero_sean_grunt",
+            "hero_zack_ult", "hero_zack_grunt",
+            "hero_nemu_ult", "hero_nemu_grunt",
+
             // The shove and the block, via aliases.
             "hit_body", "bump_swing",
 
@@ -122,6 +135,33 @@ namespace TumbangPreso.Audio
             };
 
         public const float MusicCrossfadeTime = 1.5f;
+
+        // -------------------------------------------------------------------
+        // § THE CUES THAT ARE THEMSELVES THE DUCK TRIGGER. `audio_manager.gd` 4.6.
+        //
+        // ⚠️⚠️ THE DUCK IS HOOKED WHERE THE SOUND IS PLAYED, SO NO OTHER FILE HAS TO KNOW IT
+        // EXISTS. The Godot original's note says exactly this: every one of these already goes
+        // through `play()` from the HUD and the match code, so hooking the duck at that one
+        // choke point means the countdown does not have to be taught about the music bed, and
+        // a screen added later gets the behaviour for free.
+        //
+        // ⚠️ THESE ARE ANNOUNCEMENTS, NOT IMPACTS. `PlayImpact` already ducks by its own tiny
+        // amount scaled to the hit; that is a transient getting out of its own way. This list
+        // is the countdown, the round end, the win and the score award, which are the moments
+        // the bed must get out of the way of INFORMATION.
+        // -------------------------------------------------------------------
+
+        public const float MusicDuckDb = -10.0f;
+        public const float MusicDuckHold = 0.5f;
+
+        private static readonly HashSet<string> DuckTriggers = new HashSet<string>
+        {
+            "countdown_tick", "countdown_go", "round_end", "match_win", "round_lose",
+            "score_award",
+        };
+
+        /// <summary>Whether playing this cue should duck the music bed under it.</summary>
+        public static bool DucksMusic(string cue) => cue != null && DuckTriggers.Contains(cue);
 
         /// <summary>Resolve a cue name to the file stem that actually exists on disk.</summary>
         public static string FileStemFor(string cue)

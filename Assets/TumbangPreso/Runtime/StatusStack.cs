@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TumbangPreso.Abilities;
 using TumbangPreso.Core;
 using UnityEngine;
 
@@ -122,6 +123,66 @@ namespace TumbangPreso
                         Label = "PUNCH CD",
                         Remaining = verbs.PunchCooldownLeft,
                         Total = Balance.PunchCooldown,
+                        Timed = true,
+                    });
+            }
+
+            var abilitySystem = m.AbilitySystem;
+            if (abilitySystem != null && abilitySystem.Kit != null)
+            {
+                var kit = abilitySystem.Kit;
+
+                // Active Buffs
+                if (kit.Skill1 != null && kit.Skill1.IsActive)
+                    into.Add(new StatusRow
+                    {
+                        Label = kit.Skill1.Name,
+                        Remaining = kit.Skill1.DurationRemaining,
+                        Total = kit.Skill1.Duration,
+                        Timed = true,
+                    });
+
+                if (kit.Skill2 != null && kit.Skill2.IsActive)
+                    into.Add(new StatusRow
+                    {
+                        Label = kit.Skill2.Name,
+                        Remaining = kit.Skill2.DurationRemaining,
+                        Total = kit.Skill2.Duration,
+                        Timed = true,
+                    });
+
+                if (kit.Ultimate != null && kit.Ultimate.IsActive)
+                    into.Add(new StatusRow
+                    {
+                        Label = kit.Ultimate.Name,
+                        Remaining = kit.Ultimate.DurationRemaining,
+                        Total = kit.Ultimate.Duration,
+                        Timed = true,
+                    });
+
+                // Specific kit states
+                if (kit is ZackHeroKit zack && zack.IsOverchargeThrowActive)
+                    into.Add(new StatusRow { Label = "OVERCHARGE", Timed = false });
+
+                if (kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
+                    into.Add(new StatusRow { Label = "IGNITION", Timed = false });
+
+                // Ability Cooldowns (suffixed with " CD" to route to right-hand stack)
+                if (kit.Skill1 != null && kit.Skill1.CooldownRemaining > 0.0f)
+                    into.Add(new StatusRow
+                    {
+                        Label = $"{kit.Skill1.Name} CD",
+                        Remaining = kit.Skill1.CooldownRemaining,
+                        Total = kit.Skill1.Cooldown,
+                        Timed = true,
+                    });
+
+                if (kit.Skill2 != null && kit.Skill2.CooldownRemaining > 0.0f)
+                    into.Add(new StatusRow
+                    {
+                        Label = $"{kit.Skill2.Name} CD",
+                        Remaining = kit.Skill2.CooldownRemaining,
+                        Total = kit.Skill2.Cooldown,
                         Timed = true,
                     });
             }

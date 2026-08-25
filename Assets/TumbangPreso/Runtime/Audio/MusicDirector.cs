@@ -33,6 +33,87 @@ namespace TumbangPreso.Audio
         /// <summary>See the class note: a starting point, not a measured value.</summary>
         public const float BedLevel = 0.55f;
 
+        // -------------------------------------------------------------------
+        // § THE INTENSITY LIFT. `audio_manager.gd` 4.2's third bed.
+        //
+        // ⚠️⚠️ THERE IS NO PRESSURE TRACK, AND UNTIL ONE IS DELIVERED THE LAST SECONDS OF A
+        // ROUND GET A LIFT ON THE SAME BED RATHER THAN A SILENT GAP. The Godot original says
+        // exactly this and says what replaces it: *"Swap this for a real play_music("pressure")
+        // cross-fade the day ost_pressure.ogg lands; the hook already exists."* The hook is
+        // `SetLift` below, and it is the whole point of porting this rather than waiting.
+        //
+        // ⚠️ IT IS A RAMP, NOT A STEP. A bed that jumps 4 dB on one frame reads as a mistake in
+        // the mix. One second is long enough to feel like the round tightening and short enough
+        // to arrive before the clock does.
+        // -------------------------------------------------------------------
+
+        public const float LiftDb = 4.0f;
+        public const float LiftSecondsLeft = 15.0f;
+        public const float LiftTime = 1.0f;
+
+        private float _liftScale = 1.0f;
+        private bool _lifted;
+
+        /// <summary>Whether the bed is currently carrying the end-of-round lift.</summary>
+        public bool IsLifted => _lifted;
+
+        /// <summary>The lift multiplier, for anything that has to reason about the bed level.</summary>
+        public float LiftScale => _liftScale;
+
+        /// <summary>
+        /// Turn the end-of-round lift on or off. Idempotent, so the caller can pass a
+        /// clock comparison every frame without tracking edges itself.
+        ///
+        /// ⚠️ CALLED FROM `AudioDirector`, WHICH ALREADY WATCHES THE ROUND CLOCK. Putting the
+        /// clock check in here would give this class an opinion about the rules, and the rule
+        /// this project keeps is that the HUD and the audio ASK the round rather than mirroring
+        /// it.
+        /// </summary>
+        public void SetLift(bool on)
+        {
+            if (_lifted == on) return;
+
+            _lifted = on;
+
+            if (_lift != null) StopCoroutine(_lift);
+            _lift = StartCoroutine(LiftRoutine(on ? Mathf.Pow(10.0f, LiftDb / 20.0f) : 1.0f));
+        }
+
+        private Coroutine _lift;
+
+        private System.Collections.IEnumerator LiftRoutine(float target)
+        {
+            float from = _liftScale;
+            float t = 0.0f;
+
+            while (t < LiftTime)
+            {
+                // ⚠️ UNSCALED. The lift runs across the end of a round, and a round can end
+                // inside hitstop; a scaled ramp would stall halfway up and finish late.
+                t += Time.unscaledDeltaTime;
+                _liftScale = Mathf.Lerp(from, target, t / LiftTime);
+                Apply();
+                yield return null;
+            }
+
+            _liftScale = target;
+            Apply();
+            _lift = null;
+        }
+
+        /// <summary>
+        /// ⚠️ THE LIFT IS DROPPED WHEN THE TRACK CHANGES, immediately rather than over a second.
+        /// A menu bed that starts 4 dB hot because the last round ended in its final fifteen
+        /// seconds is the kind of fault nobody traces back to here.
+        /// </summary>
+        public void ClearLift()
+        {
+            if (_lift != null) { StopCoroutine(_lift); _lift = null; }
+
+            _lifted = false;
+            _liftScale = 1.0f;
+        }
+
         private AudioSource _a;
         private AudioSource _b;
         private bool _aIsActive;
@@ -66,6 +147,7 @@ namespace TumbangPreso.Audio
             if (Current == cue) return;
             Current = cue;
 
+            ClearLift();
             Cut(clip);
         }
 
@@ -171,14 +253,27 @@ namespace TumbangPreso.Audio
         private float MusicVolume()
         {
             var s = Settings.SettingsStore.Current;
-            return BedLevel * s.MusicVolume * s.MasterVolume * _duckScale;
+
+            // ⚠️ THE LIFT MULTIPLIES IN HERE, WITH EVERYTHING ELSE, and not by writing to
+            // `volume` from the lift routine. This method is the one place a music level is
+            // computed and `Apply` runs every frame; anything that writes the source directly is
+            // overwritten on the next tick, which is how the duck was nearly lost once already.
+            return BedLevel * s.MusicVolume * s.MasterVolume * _duckScale * _liftScale;
         }
 
-        private void Update()
+        private void Update() => Apply();
+
+        /// <summary>
+        /// Push the computed level onto whichever source is live.
+        ///
+        /// ⚠️ CALLED FROM `Update` AND FROM THE LIFT RAMP. The ramp cannot wait for the next
+        /// Update to be heard, and Update cannot be dropped, because it is what tracks the
+        /// settings sliders and the duck without either needing to notify anybody.
+        /// </summary>
+        private void Apply()
         {
-            // Track the settings sliders and the duck without needing either to notify us.
             AudioSource active = _aIsActive ? _a : _b;
-            if (active.isPlaying) active.volume = MusicVolume();
+            if (active != null && active.isPlaying) active.volume = MusicVolume();
         }
     }
 }

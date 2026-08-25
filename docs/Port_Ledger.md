@@ -930,11 +930,41 @@ Reconciled every row in this ledger against the real Godot 4.7 baseline (`f8ba5f
    `CONVERTED (built in code)` with explicit architectural reasons so future passes do not
    create redundant prefabs.
 
-3. **Current status summary:**
+3. **Current status summary, re-audited against the code on 2026-08-23:**
    - **MISSING rows:** 0
-   - **PARTIAL rows:** 8 (`audio_manager.gd`, `round_manager.gd`, `match_manager.gd`,
-     `debug_player_switcher.gd`, `character_base.gd`, `ai_controller.gd`, `match_result.gd`,
-     `HUD.tscn`)
+   - **PARTIAL rows:** 1 (`match_result.gd`)
+   - **CONVERTED rows:** everything else
+
+   ⚠️⚠️ **SEVEN OF THE EIGHT PARTIALS WERE STALE BOOKKEEPING, NOT MISSING WORK.** Each was
+   opened against a real gap and then closed by a later session that updated the CODE and not
+   this row. The audit checked each claim against the file rather than against the row:
+
+   | Row | What the row said was missing | What the code actually has |
+   |---|---|---|
+   | `audio_manager.gd` | bus layout, mix levels, transitions, voice triggers | Per-cue `TrimDb` and `HeadroomDb`, bounded polyphony, pitch jitter, VO pools with no-repeat and per-line cooldowns, and every voice trigger wired (countdown, round start, match won, lata knocked and restored, tag, clock). The music **lift** and the **duck-trigger table** were the last two genuinely absent pieces and landed 2026-08-23 |
+   | `round_manager.gd` | per-round transitions | Present, plus passive defence ticks, throw cooldown and the anti-stall clocks |
+   | `match_manager.gd` | ranking, defender derivation | Both present; `Ranking()` and `MatchRules.DefenderSlotFor` |
+   | `debug_player_switcher.gd` | beyond seat drive, cycle, readout | `DebugBar` registration and the networked refusal |
+   | `character_base.gd` | third-person charge pose (N14) | `CharacterAnimator.StepChargePose`, driven by all three charges |
+   | `ai_controller.gd` | per-plan polish (N18) | Tuning, not conversion. Measured green by two probes |
+   | `HUD.tscn` | resolution of N17 | Superseded on purpose by the code-built HUD |
+
+   ⚠️ **THE LESSON, AND IT IS THE RULE FOR THIS FILE: UPDATE THE ROW IN THE SAME COMMIT AS THE
+   WORK.** A ledger that reads worse than the code is not a cautious ledger, it is a wrong one.
+   It cost this session an audit, and before that it told at least one handoff that eight
+   subsystems were unfinished when one was.
+
+   **Two deliberate divergences from the Godot original, recorded so they are not read as gaps:**
+
+   - ⚠️ **NO AUDIO MIXER BUSES.** Godot's three-bus model (Master / SFX / Music) is applied as
+     per-source multiplication instead: `AudioCues.TrimFor` gives a cue its mix level, and the
+     player's sliders scale everything together in `SfxScale`, `MusicVolume` and `VoiceVolume`.
+     The reason the .gd gives for keeping headroom OUT of the bus volume, that `_apply_bus`
+     overwrites it from the slider every time it moves, is exactly the failure this shape
+     cannot have.
+   - ⚠️ **NO MUSIC CROSSFADE, ON INSTRUCTION.** 🧑, on both builds: *"please remove music fade,
+     js let it end abruptly"*. `MusicDirector` cuts. `MusicCrossfadeTime` survives in the cue
+     table and is used by nothing.
    - **CONVERTED rows:** 38 scripts, 26 scenes
 
 ## Autoload singletons (9)
@@ -944,25 +974,25 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 
 | Godot autoload | Lines | Unity | Status |
 |---|---|---|---|
-| `audio_manager.gd` | 1125 | `AudioDirector` + `AudioCues` + `MusicDirector` + `VoiceDirector` (789) | PARTIAL: bus layout, mix levels, transitions, and voice triggers pending (N15) |
-| `round_manager.gd` | 476 | `RoundDirector.cs` (328) | PARTIAL: host score and state authoritative, tag resolution, per-round transitions |
-| `match_manager.gd` | 217 | `MatchDirector.cs` (156) | PARTIAL: four-round rotation, scoring, ranking, defender derivation |
+| `audio_manager.gd` | 1125 | `AudioDirector` + `AudioCues` + `MusicDirector` + `VoiceDirector` (789) | CONVERTED 2026-08-23, with two deliberate divergences. See the audit note below |
+| `round_manager.gd` | 476 | `RoundDirector.cs` (328) | CONVERTED. Host score and state authoritative, tag resolution, passive defence ticks, throw cooldown, per-round transitions, tournament anti-stall clocks with hysteresis that hold rather than run while a unit cannot act. ⚠️ Its per-event `host_broadcast_*` / `_sync_*` pairs are replaced by one authoritative world snapshot plus targeted RPCs; see the audit note |
+| `match_manager.gd` | 217 | `MatchDirector.cs` (156) | CONVERTED. Four-round rotation, scoring, ranking, defender derivation from `MatchRules`, snapshot adoption, intermission and match end. `is_defender_slot` and `_leading_slot` are one-liners off `DefenderSlot` and `Ranking()` rather than named members |
 | `network_manager.gd` | 1413 | `NetSession` + `LobbySession` + `MatchRpc` + `NetAuthority` + `NetBootstrap` + `NetIdentity` (1675) | CONVERTED (N0-N11): NGO and UGS stack locked, NetIdentity wired, LanBeacon converted, Relay host and client plus UGS Lobby integrated, Lobby UI converted, spawning, seating, write permissions wired, Ready gate networked, prop and match replication plus late-join sync wired, disconnect, AI takeover, seat reclaim wired, multi-process verification probes passing. ⚠️ Multiplay fleet registration and SQP are GATED OFF behind `MULTIPLAY_SDK` and the package is out of the manifest: every published `com.unity.services.multiplay`, 1.1.1 through 1.3.1, calls `EndNameEditAction`, which Unity 6000.5 marks obsolete as an error, so it cannot be installed on this editor at any version (confirmed against the 2026-08-19 UGS account audit). Dedicated hosting still serves clients, it just does not report itself to the fleet. Two ways back are written above `StartMultiplayServerAsync`. ⚠️ Relay peer hosting is now the PRIMARY online path (2026-08-20, superseding E.2 in `Unity_UGS_Networking_Prompts.md`), not a fallback behind Multiplay fleet allocation |
 | `lan_beacon.gd` | 323 | `LanBeacon.cs` (374) | CONVERTED (N2): multi-interface subnet broadcast via NetworkInterface, signature change events, and joinable/fill sorting |
 | `server_query.gd` | 536 | `ServerQuery.cs` (436) | CONVERTED (N4): legacy VPS pool retired, UGS Lobby discovery with LAN-first code resolution, distinct seated and occupied counts |
 | `game_launch.gd` | 301 | `GameLaunch.cs` (109) | CONVERTED: map registry, pending action, seating |
 | `settings_manager.gd` | 810 | `GameSettings` + `Rebinding` + `SlipperHighlights` (525) | CONVERTED: Sliders, rebinding, applied on load, landed-highlight palette and change signal |
-| `debug_player_switcher.gd` | 420 | `DebugPlayerSwitcher.cs` (220) | PARTIAL: seat drive, cycle, readout |
+| `debug_player_switcher.gd` | 420 | `DebugPlayerSwitcher.cs` (220) | CONVERTED. Seat drive, cycle, readout, `DebugBar` registration. ⚠️ `_solo_networked_unit` is replaced by refusing outright in a networked session, which is stricter and was the intent; the cycle key moved from Tab to F5 on 2026-08-23 because Tab is now a key a player holds in a real match |
 
 ## Characters and objects
 
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
-| `character_base.gd` | 2017 | `CharacterMotor` + `CombatVerbs` + `StatusStack` (1171) | PARTIAL: motor, physics step, combat verbs, stagger/stun, stamina; third-person charge pose pending (N14) |
+| `character_base.gd` | 2017 | `CharacterMotor` + `CombatVerbs` + `StatusStack` + `Visual/CharacterAnimator` (1171) | CONVERTED. Motor, physics step, combat verbs, stagger and stun, stamina, arena wall on the move step and on every teleport. The third-person charge pose is `CharacterAnimator.StepChargePose`, and all three charges (throw, lunge, shove) drive it |
 | `character_visual.gd` | 2494 | `CharacterVisual` + `CharacterAnimator` + `ImpactBurst` + `ToonSkin` (1844) | CONVERTED: clips, flash, burst, toon pass, ink outline, palette remap, measured hand attachment, remote smoothing, stun frost body half |
 | `carrier.gd` | 572 | `Carrier.cs` (650) | CONVERTED 2026-08-16: 2.5 s wind-up on `Pressed` not `JustPressed`, audio cues, observed charge visible to peers, camera aim cast, sight-line throw origin, arc, late-update carry anchor, grab and release host validation |
 | `character_nameplate.gd` | 165 | `CharacterNameplate.cs` (232) | CONVERTED: ring, tag, role colour, distance fade |
-| `slipper.gd` | 1881 | `Slipper.cs` (725) | CONVERTED (N8): flight, bounce, spin, void recovery, ground snap, landed highlight, owner rim/outline glow, hand attachment, and networked state replication via MatchRpc |
+| `slipper.gd` | 1881 | `Slipper.cs` (725) | CONVERTED (N8): flight, bounce, spin, void recovery, ground snap, landed highlight, owner rim/outline glow, hand attachment, networked state replication via MatchRpc, and out-of-reach recovery so a tsinelas that rests on a roof or a hazard is given back rather than lost (2026-08-23) |
 | `lata.gd` | 534 | `Lata.cs` (330) | CONVERTED (N8): topple, roll, hit window, ground snap, skins, righting channel, and networked state replication via MatchRpc |
 
 ## Systems
@@ -970,9 +1000,9 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | Godot | Lines | Unity | Status |
 |---|---|---|---|
 | `main.gd` | 3599 | `MatchHost.cs` + `MatchInstaller.cs` + `SliceRunner.cs` + `ReadyGate.cs` (1418) | CONVERTED (N6-N9): match lifecycle, spawn points, seating, write permissions, networked ready gate quorum, prop and world replication, late-join catchup, disconnect AI takeover, seat reclaim |
-| `ai_controller.gd` | 2225 | `AIController.cs` + `AiTuning.cs` + `AiPersonalityRoll.cs` (2301) | PARTIAL: tiers, personalities, 13-plan machine, unstick, lane sampling, intercept prediction; per-plan polish pending (N18) |
+| `ai_controller.gd` | 2225 | `AIController.cs` + `AiTuning.cs` + `AiPersonalityRoll.cs` + `HazardMap.cs` (2500) | CONVERTED. Tiers, personalities, 13-plan machine, unstick, lane sampling, intercept prediction, Pektus spin selection with drift compensation, hero kit decisions, hero-hazard avoidance with a radius cap. Measured end to end by `BotBehaviourProbe`, now seeded, and `AiDiagnosticProbe`. ⚠️ Ongoing behaviour TUNING is not a conversion gap and is tracked in `docs/TODO.md` |
 | `camera_rig.gd` | 1111 | `CameraRig.cs` + `ViewmodelArms.cs` (1387) | CONVERTED: FPP, prop TPP, emote swing, viewmodel arms, exact baked transforms; carry-follow is dead code upstream |
-| `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (551) | CONVERTED: free, follow, POV modes, smoothed motion, direct hardware input, HUD status text, spectator seating integration |
+| `spectator_camera.gd` | 431 | `SpectatorCamera.cs` (551) | CONVERTED: free, follow, POV modes, smoothed motion, direct hardware input, HUD status text, spectator seating integration, plus broadcast controls beyond the original: F1-F4 seat cuts, camera bookmarks, tactical pause, 0.25x/0.5x/1x speeds and a six second instant replay, all locked out on a live networked match |
 | `character_roster.gd` | 757 | `Roster.cs` + `RosterBook.cs` (449) | CONVERTED (20/20 validated, typed records) |
 | `env_toon_pass.gd` | 391 | `EnvColourPass.cs` (536) | CONVERTED 2026-08-16: tints, foliage, laundry sway, six roof atlases, name-hash seeding, building/car/tree classification |
 | `trajectory_preview.gd` | 273 | `TrajectoryPreview.cs` (350) | CONVERTED 2026-08-16: camera-facing ribbon, fades, landing mark, physics-tick integration, live match instantiation |
@@ -1046,7 +1076,7 @@ tracked here.
 | `settings_panel.gd` | 508 | `ConvertedSettingsPanel.cs` (552) + `Rebinding.cs` (163) | CONVERTED: rebinding, conflicts, reset, landed-tsinelas colour row |
 | `emote_wheel.gd` | 425 | `EmoteWheel.cs` (445) + `Emotes.cs` (71) + `EmotePlayer.cs` (135) + `EmoteDef.cs` (26) | CONVERTED: hold, steer, release, DANCE in place of PLAY DEAD, camera swing |
 | `character_select.gd` | 341 | `ConvertedCharacterSelect.cs` (347) | CONVERTED: tabs, chalk pips, live 3D |
-| `match_result.gd` | 339 | `MatchResult.cs` (460) + `ConvertedMatchResult.cs` (56) | PARTIAL: board, single-player rematch, card turned-up corner, spectator button hiding; peer rematch voting across wire pending |
+| `match_result.gd` | 339 | `MatchResult.cs` (460) + `ConvertedMatchResult.cs` (56) | **PARTIAL**, and it is the only genuine one left. Board, single-player rematch, card turned-up corner and spectator button hiding are done. **Peer rematch voting across the wire is not written**: in a networked match the rematch button acts locally, so four peers can disagree about whether a rematch is happening. Needs an RPC pair (a vote, and a broadcast of the tally) plus the tally on the result card |
 | `credits_panel.gd` | 292 | `CreditsContent.cs` (174) + `ConvertedCreditsPanel.cs` (48) | CONVERTED: CC-BY strings verbatim |
 | `role_swap_card.gd` | 274 | `RoleSwapCard.cs` (453) | CONVERTED: intermission timeline, swap, standings |
 | `arrow_button.gd` | 262 | `ArrowButtonView.cs` (358) | CONVERTED: unfurl, hover, press, both cues, inner-stroke hover rim |
@@ -1075,7 +1105,7 @@ Named individually so every scene can be checked against the source tree.
 | `MatchResult.tscn` | CONVERTED: board rebuilt in code (`MatchResult.unity`) |
 | `SettingsPanel.tscn` | CONVERTED: including rebinding (`SettingsPanel.unity` and prefab) |
 | `CreditsPanel.tscn` | CONVERTED: CC-BY strings verbatim (`CreditsPanel.unity`) |
-| `HUD.tscn` | PARTIAL: 35 nodes converted in `HUD.unity`; live HUD is built in code on the same theme, resolution in N17 |
+| `HUD.tscn` | CONVERTED BY SUPERSESSION. 35 nodes exist in `HUD.unity`, but the live HUD is built in code (`Hud.cs`) on the same theme and the scene is not what ships. ⚠️ That is deliberate: the importer rebakes converted scenes, so anything added to `HUD.unity` by hand disappears on the next reimport, which is the same reason the settings rows and the ability deck are code-built. Ability deck rebuilt 2026-08-23 around icon tiles, a notched ultimate meter and live key labels, with descriptions moved into `AbilityInspectPanel` behind a hold key |
 | `ArrowButton.tscn` | CONVERTED: inlined per instance, `ArrowButtonView` drives it |
 | `Tutorial.tscn` | CONVERTED: 8 pages, live 3D premise strip on page 1 (`Tutorial.unity`) |
 | `YouCard.tscn` | CONVERTED (built in code): built in code under HUD by `YouCard.cs` |
@@ -1148,16 +1178,40 @@ The networked half was ported in N7 (`ReadyGate.cs` and `MatchRpc.cs`):
 - Votes are tracked in an idempotent HashSet `_netReady` and re-evaluated on peer disconnect.
 - The host conducts a last-chance pick sweep before broadcasting countdown start.
 
-## Input actions (14) — all must exist in the Input System asset
+## Input actions — all must exist in the Input System asset
 
-`move_left` `move_right` `move_up` `move_down` `jump` `sprint` `grab` `lunge`
-`special_ability` `emote_wheel` `ready_up` `spectator_down` `clean_feed`
-`toggle_fullscreen`
+The fourteen Godot actions: `move_left` `move_right` `move_up` `move_down` `jump` `sprint`
+`grab` `lunge` `special_ability` `emote_wheel` `ready_up` `spectator_down` `clean_feed`
+`toggle_fullscreen`. The four directions are one composite in Unity, and Hero Strike adds
+`Skill1`, `Skill2`, `Ultimate` and `AbilityInfo`.
 
-`ready_up` is the missing ready-up phase. `spectator_down` is spectator descent.
-`clean_feed` hides HUD for capture. None of these may be dropped — each is
-rebindable through `settings_panel.gd`, and `tools/input_probe.gd` checks them
-for conflicts.
+`ready_up` is the ready-up phase. `spectator_down` is spectator descent. `clean_feed` hides
+the HUD for capture. `AbilityInfo` is the hold-to-read ability panel. None of these may be
+dropped: each is rebindable through the settings panel.
+
+✅ **REBOUND AND DE-CONFLICTED 2026-08-23. Every action now owns exactly ONE control and no
+control appears twice.**
+
+| Action | Control | | Action | Control |
+|---|---|---|---|---|
+| Move | WASD | | Skill1 | Q |
+| Sprint | Left Shift | | Skill2 | F |
+| Jump | Space | | Ultimate | X |
+| SpecialAbility (throw / punch) | **Left click** | | AbilityInfo (hold) | Tab |
+| Grab (pick up / shove / reset) | E | | ReadyUp | R |
+| Lunge (tag dash) | Right click | | EmoteWheel | B |
+| CleanFeed | H | | SpectatorDown | Left Ctrl |
+| ToggleFullscreen | F11 | | | |
+
+⚠⚠ **THE SHIPPED DEFAULTS USED TO CARRY FOUR COLLISIONS**, which is what
+`tools/input_probe.gd` existed to catch on the Godot side and nothing checked here: left click
+carried `SpecialAbility` AND `Grab`, E carried `Grab`, `Lunge` AND `Skill1`, Q carried
+`SpecialAbility` AND `Skill2`. Whichever consumer ran first won the press, so the throw did not
+feel like it was on left click even though it was bound there.
+`InputMapAndAbilityTests.NoTwoActionsShareAControl` is the Unity replacement for that probe.
+
+⚠️ **The debug seat cycle moved off Tab to F5** in the same change, because Tab is now a key a
+player holds during a real match.
 
 ## Constant audit — run it again after every balance change
 
@@ -1175,9 +1229,10 @@ with their original reasoning: `BounceRestitution`, `MinPowerScale`,
 `SlipperModelLength`, `VoidY`, `OwnerRimStrength`, `HitstopDuration`,
 `HitstopTimeScale`, `LandSfxMinSpeed`, `SlipperSyncInterval`.
 
-⚠️ **The numbers landing is not the feature landing.** Nothing reads most of them yet
-— slipper flight, hitstop and the owner rim glow are all still PARTIAL rows above.
-They are transcribed first so the port cannot quietly re-derive a number by taste.
+⚠️ **The numbers landing is not the feature landing.** They were transcribed first so the
+port could not quietly re-derive a number by taste, and at the time of the audit nothing read
+most of them. ✅ **All twelve are live now**: slipper flight, the bounce, hitstop and the owner
+rim glow all read theirs.
 
 ⚠️ Two earlier passes of this audit gave WRONG answers and both are worth knowing.
 Matching by value alone reports `BounceRestitution` as present because `LungeActiveTime`
@@ -1190,3 +1245,11 @@ whole runtime.
 `Packages/com.tumbangpreso.core/` — engine-free C#, 32 tests green. Every constant
 transcribed from the .gd, NOT from `Design.md` (which has drifted; see
 `Design_Drift_Report.md` — all 4 discrepancies were stale prose, the code is right).
+
+## 2026-08-23 — Dante 3D Rig Head Mesh Z-Inversion Bug
+
+⚠️ **Dante's head mesh showed afro hair from the front and visor from behind.**
+Reported as *"his face still goes in"* and *"his model is broken"*.
+
+- **Root Cause**: In commit `f74710e`, when `team-dante.glb` was re-exported to 3,193 vertices, the `head-mesh` was exported with its local Z orientation inverted 180 degrees relative to the `body-mesh` and `root` skeleton. This caused the afro hair (intended for the back of the head) to sit on the front of his face, while the face/visor pointed backwards into the hair mesh.
+- **Resolution**: Restored the clean 4,533-vertex `team-dante.glb` (from `team-bayan.glb` in `backup` branch) where both `body-mesh` and `head-mesh` share forward (+Z) orientation. Rebuilt `RosterBook.asset` and validated character select and in-game renders.

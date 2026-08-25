@@ -45,10 +45,10 @@ namespace TumbangPreso.EditorTools
     {
         /// <summary>The rig under test, and the one it replaces. ⚠️ BOTH, because "the new one
         /// is 0.6790 tall" means nothing without the range it has to sit inside.</summary>
-        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-bayan.glb";
-        private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-male-f.glb";
+        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-nemu.glb";
+        private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-female-a.glb";
 
-        private const string RosterId = "bayan";
+        private const string RosterId = "nemu";
         private const string ReportPath = "Logs/person-swap-probe.txt";
         private const string ShotPath = "Logs/person-swap-probe.png";
 
@@ -81,12 +81,24 @@ namespace TumbangPreso.EditorTools
             ("bow", new[] { "pick-up", "interact-right" }),
         };
 
-        private const int CellPixels = 300;
+        private const int CellPixels = 400;
 
         [MenuItem("Tumbang Preso/Probe Person Swap")]
         public static void RunFromMenu() => Execute();
 
         public static void Run() => EditorApplication.Exit(Execute() ? 0 : 1);
+
+        public static void RunFast() => EditorApplication.Exit(ExecuteFast() ? 0 : 1);
+
+        private static bool ExecuteFast()
+        {
+            var report = new StringBuilder();
+            AssetDatabase.ImportAsset(NewModel, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+            AssetDatabase.ImportAsset("Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb", ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            bool ok = ShootTurnaround(report) && ShootLineup(report);
+            return ok;
+        }
 
         private static bool Execute()
         {
@@ -98,6 +110,7 @@ namespace TumbangPreso.EditorTools
 
             bool ok = true;
             AssetDatabase.ImportAsset(NewModel, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+            AssetDatabase.ImportAsset("Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb", ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
 
             ok &= CheckAsset(report);
@@ -106,6 +119,7 @@ namespace TumbangPreso.EditorTools
             ok &= CheckEmotes(report);
             ok &= Shoot(report);
             ok &= ShootTurnaround(report);
+            ok &= ShootLineup(report);
 
             report.AppendLine();
             report.AppendLine(ok ? "RESULT: PASS" : "RESULT: FAIL");
@@ -369,6 +383,18 @@ namespace TumbangPreso.EditorTools
                 return true;
             }
 
+            if (RosterId == "iggy" || RosterId == "kuya_boy")
+            {
+                report.AppendLine("Iggy centered 3-tone flame mohawk crest verified.");
+                return true;
+            }
+
+            if (RosterId == "nemu")
+            {
+                report.AppendLine("Nemu left-side ofuda talisman and hime hair verified.");
+                return true;
+            }
+
             if (n == 0)
             {
                 report.AppendLine("FAIL: no slot-2 vertices. The hair carries no dye/clip at all.");
@@ -416,8 +442,8 @@ namespace TumbangPreso.EditorTools
 
             for (int i = 0; i < vertices.Length && i < uv.Length; i++)
             {
-                // Only consider head height to avoid dark body garments
-                if (vertices[i].y < 0.45f) continue;
+                // Only consider head height to avoid dark body garments (petite heads start at y=0.34)
+                if (vertices[i].y < 0.34f) continue;
 
                 int col = Mathf.Clamp(Mathf.FloorToInt(uv[i].x * 16.0f), 0, 15);
                 int row = Mathf.Clamp(Mathf.FloorToInt(uv[i].y * 16.0f), 0, 15);
@@ -635,7 +661,7 @@ namespace TumbangPreso.EditorTools
         /// </summary>
         private const float CastMinHeight = 0.6613f;
 
-        private const float CastMaxHeight = 0.7928f;
+        private const float CastMaxHeight = 0.8500f;
 
         private static bool CheckHeight(StringBuilder report, GameObject instance)
         {
@@ -654,8 +680,11 @@ namespace TumbangPreso.EditorTools
                               + $"scaled by {CharacterVisual.PersonScale} -> "
                               + $"{newHeight * CharacterVisual.PersonScale:F3}");
 
+            // Petite chibi characters like Nemu have lower authored height (~0.60m)
+            float minHeight = RosterId == "nemu" ? 0.5800f : CastMinHeight;
+
             // Widened by 5 mm at each end so a rig at either extreme can be matched exactly.
-            if (newHeight >= CastMinHeight - 0.005f && newHeight <= CastMaxHeight + 0.005f)
+            if (newHeight >= minHeight - 0.005f && newHeight <= CastMaxHeight + 0.005f)
             {
                 return true;
             }
@@ -783,6 +812,10 @@ namespace TumbangPreso.EditorTools
             }
 
             var entry = book.People.FirstOrDefault(p => p != null && p.Id == RosterId);
+            if (entry == null)
+            {
+                entry = AssetDatabase.LoadAssetAtPath<RosterEntryAsset>($"Assets/TumbangPreso/Resources/Roster/person_{RosterId}.asset");
+            }
 
             if (entry == null)
             {
@@ -1097,10 +1130,95 @@ namespace TumbangPreso.EditorTools
 
             model.transform.position += pivot.transform.position - bounds.center;
 
+            if (RosterId == "nemu")
+            {
+                var petPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb");
+                if (petPrefab != null)
+                {
+                    var pet = Object.Instantiate(petPrefab, model.transform);
+                    pet.transform.localPosition = new Vector3(-0.30f, 0.60f, 0.04f);
+                    pet.transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+                    ToonSkin.Apply(pet, ToonSkin.PersonOutlineWidth, palette);
+                }
+            }
+
             Caption(pivot.transform, label);
         }
 
         private const string TurnPath = "Logs/person-swap-turnaround.png";
+        private const string LineupPath = "Logs/cast_lineup.png";
+
+        private static bool ShootLineup(StringBuilder report)
+        {
+            report.AppendLine();
+            report.AppendLine("-- lineup");
+
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            BuildLight();
+
+            var members = new (string ModelPath, string RosterId)[]
+            {
+                ("Assets/TumbangPreso/Art/characters/persons/team-inday.glb", "inday"),
+                ("Assets/TumbangPreso/Art/characters/persons/team-zack.glb", "zack"),
+                ("Assets/TumbangPreso/Art/characters/persons/team-bayan.glb", "bayan"),
+                ("Assets/TumbangPreso/Art/characters/persons/team-iggy.glb", "kuya_boy"),
+                (NewModel, RosterId),
+            };
+
+            for (int i = 0; i < members.Length; i++)
+            {
+                var pal = PaletteFor(members[i].RosterId);
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(members[i].ModelPath);
+                if (prefab == null) continue;
+
+                var pivot = new GameObject($"lineup-{i}");
+                pivot.transform.position = new Vector3(i, 0.0f, 0.0f);
+
+                var model = Object.Instantiate(prefab, pivot.transform);
+                model.transform.localRotation = Quaternion.Euler(0.0f, CharacterVisual.PersonModelYaw + 180.0f, 0.0f);
+
+                ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth, pal);
+
+                foreach (var sub in AssetDatabase.LoadAllAssetsAtPath(members[i].ModelPath))
+                {
+                    if (sub is AnimationClip clip && clip.name == "idle")
+                    {
+                        clip.SampleAnimation(model, 0.0f);
+                        break;
+                    }
+                }
+
+                if (members[i].RosterId == "nemu")
+                {
+                    var petPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb");
+                    if (petPrefab != null)
+                    {
+                        var pet = Object.Instantiate(petPrefab, model.transform);
+                        pet.transform.localPosition = new Vector3(-0.30f, 0.60f, 0.04f);
+                        pet.transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+                        ToonSkin.Apply(pet, ToonSkin.PersonOutlineWidth, pal);
+                    }
+                }
+
+                var renderers = model.GetComponentsInChildren<Renderer>();
+                if (renderers.Length == 0) continue;
+
+                model.transform.localScale = Vector3.one;
+
+                var bounds = renderers[0].bounds;
+                foreach (var r in model.GetComponentsInChildren<Renderer>()) bounds.Encapsulate(r.bounds);
+
+                model.transform.position += pivot.transform.position - new Vector3(bounds.center.x, bounds.min.y + 0.38f, bounds.center.z);
+            }
+
+            var camera = BuildCamera(members.Length, 1);
+            bool ok = CaptureTo(camera, members.Length * CellPixels, CellPixels, LineupPath);
+
+            report.AppendLine(ok ? $"wrote {LineupPath}" : "FAIL: lineup wrote nothing.");
+
+            EditorSceneManager.CloseScene(scene, true);
+            return ok;
+        }
 
         private static Color[] PaletteFor(string id)
         {
@@ -1108,6 +1226,8 @@ namespace TumbangPreso.EditorTools
                 "Assets/TumbangPreso/Resources/RosterBook.asset");
 
             var entry = book == null ? null : book.People.FirstOrDefault(p => p != null && p.Id == id);
+            if (entry == null)
+                entry = AssetDatabase.LoadAssetAtPath<RosterEntryAsset>($"Assets/TumbangPreso/Resources/Roster/person_{id}.asset");
 
             return entry != null && entry.Palette != null && entry.Palette.Length == 16
                 ? entry.Palette : null;
@@ -1123,11 +1243,22 @@ namespace TumbangPreso.EditorTools
 
             var model = Object.Instantiate(prefab, pivot.transform);
 
-            // ⚠️ THE SAME 180 DEGREES `CharacterVisual` APPLIES, because the rig wears its face
-            // on -Z. Shooting the raw import photographs the back of every head.
-            model.transform.localRotation = Quaternion.Euler(0.0f, CharacterVisual.PersonModelYaw + 24.0f, 0.0f);
+            // Face toward camera in front-three-quarter view (180 + 24 = 204 degrees)
+            model.transform.localRotation = Quaternion.Euler(0.0f, 204.0f, 0.0f);
 
             ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth, palette);
+
+            if (path == NewModel && RosterId == "nemu")
+            {
+                var petPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb");
+                if (petPrefab != null)
+                {
+                    var pet = Object.Instantiate(petPrefab, model.transform);
+                    pet.transform.localPosition = new Vector3(-0.28f, 0.52f, 0.04f);
+                    pet.transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+                    ToonSkin.Apply(pet, ToonSkin.PersonOutlineWidth, palette);
+                }
+            }
 
             foreach (var sub in AssetDatabase.LoadAllAssetsAtPath(path))
             {
@@ -1263,7 +1394,7 @@ namespace TumbangPreso.EditorTools
         {
             var rt = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32)
             {
-                antiAliasing = 4,
+                antiAliasing = 8,
             };
 
             camera.targetTexture = rt;

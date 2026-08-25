@@ -58,6 +58,8 @@ namespace TumbangPreso.Visual
         /// </summary>
         private static readonly int FrostAmountId = Shader.PropertyToID("_FrostAmount");
 
+        public GhostPetCompanion Companion { get; private set; }
+
         /// <summary>
         /// ⚠️⚠️ THE KENNEY RIG IS AUTHORED ~0.67 UNITS TALL AND NOTHING HERE WAS SCALING IT.
         /// `character_visual.gd:714` runs `model.scale = Vector3.ONE * PERSON_SCALE` on every
@@ -128,16 +130,25 @@ namespace TumbangPreso.Visual
         private Color _tint = Color.white;
         private float _flashLeft;
         private GameObject _instance;
+        private GameObject _petInstance;
 
         /// <summary>The instanced rig, or null before a model has been applied. Read-only:
         /// <see cref="ApplyModel"/> is the one writer, and the facing correction lives on this
         /// transform rather than on the seat.</summary>
         public GameObject Model => _instance;
 
+        /// <summary>The instanced companion pet, or null if this character has none.</summary>
+        public GameObject Pet => _petInstance;
+
         private void Awake()
         {
             _block = new MaterialPropertyBlock();
             if (_modelRoot == null) _modelRoot = transform;
+        }
+
+        private void OnDestroy()
+        {
+            if (_petInstance != null) Destroy(_petInstance);
         }
 
         /// <summary>
@@ -170,16 +181,20 @@ namespace TumbangPreso.Visual
         /// stripped from the build and the character never moves.
         /// </summary>
         public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips)
-            => ApplyModel(prefab, tint, clips, null);
+            => ApplyModel(prefab, tint, clips, null, null);
+
+        public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips, Color[] palette)
+            => ApplyModel(prefab, tint, clips, palette, null);
 
         /// <summary>
         /// ⚠️ THE PALETTE TRAVELS WITH THE MODEL TOO. The twelve people share twelve rigs and
         /// differ only by which sixteen colours their atlas is remapped to; a seat handed the
         /// model and no palette is a character wearing somebody else's clothes.
         /// </summary>
-        public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips, Color[] palette)
+        public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips, Color[] palette, GameObject petModel)
         {
             if (_instance != null) Destroy(_instance);
+            if (_petInstance != null) Destroy(_petInstance);
 
             _tint = tint;
 
@@ -228,6 +243,19 @@ namespace TumbangPreso.Visual
                                              : ToonSkin.PropOutlineWidth, palette);
 
             AlignToCapsuleFloor();
+
+            if (petModel != null)
+            {
+                var petParent = _modelRoot != null && _modelRoot.parent != null ? _modelRoot.parent : transform;
+                _petInstance = Instantiate(petModel, petParent);
+                _petInstance.transform.localScale = Vector3.one * PersonScale;
+                var companion = _petInstance.AddComponent<GhostPetCompanion>();
+                companion.Bind(_instance != null ? _instance.transform : transform, new Vector3(-0.52f, 0.50f, -0.05f), PersonScale);
+                Companion = companion;
+                ToonSkin.Apply(_petInstance, person ? ToonSkin.PersonOutlineWidth : ToonSkin.PropOutlineWidth, palette);
+                _renderers.AddRange(_petInstance.GetComponentsInChildren<Renderer>(includeInactive: true));
+            }
+
             BuildHandAnchor();
             PushColour();
 
@@ -237,6 +265,18 @@ namespace TumbangPreso.Visual
             var anim = GetComponent<CharacterAnimator>();
             if (anim == null) anim = gameObject.AddComponent<CharacterAnimator>();
             if (_instance != null) anim.Bind(_instance, clips);
+
+            // Subtle procedural secondary cloth physics for baggy streetwear sleeves
+            if (_instance != null && (petModel != null || (prefab != null && prefab.name.ToLower().Contains("nemu"))))
+            {
+                var clothingPhysics = _instance.AddComponent<BaggyClothingPhysics>();
+                clothingPhysics.Bind(_instance.transform);
+            }
+
+            // Procedural cartoon squash-and-stretch
+            var squash = GetComponent<CharacterSquashStretch>();
+            if (squash == null) squash = gameObject.AddComponent<CharacterSquashStretch>();
+            if (_instance != null) squash.BindModel(_instance.transform);
         }
 
         /// <summary>

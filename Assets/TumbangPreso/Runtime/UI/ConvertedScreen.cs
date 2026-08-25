@@ -56,6 +56,19 @@ namespace TumbangPreso.UI
             // in the base class means a screen added later cannot forget.
             CursorMode.Release();
 
+            // Legacy Text is rasterised into the Canvas at its final transform. Allowing
+            // fractional canvas pixels softens every Darumadrop edge, especially after a
+            // fullscreen resolution change. Godot snaps this UI to physical pixels; do the
+            // same for every converted screen from the shared base so one panel cannot regress.
+            var canvas = GetComponentInParent<Canvas>();
+            if (canvas != null) canvas.pixelPerfect = true;
+
+            // ⚠️ THE SCALER IS FIXED HERE RATHER THAN IN THE IMPORTER because the converted
+            // screens are committed scene assets: their CanvasScaler was serialised by an
+            // importer run that has already happened, so an importer-only change reaches
+            // nothing that ships. See AspectSafeCanvas for what match-on-height cropped.
+            AspectSafeCanvas.ApplyToParentOf(this);
+
             Index(transform);
             Wire();
         }
