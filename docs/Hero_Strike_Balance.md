@@ -8,8 +8,21 @@ rematch voting and the numbers were never written anywhere. They are here now.
 the layer between the two: the kit files hold the constants, this holds what they were measured
 against and why.
 
-Written 2026-08-25. **Nothing in § 3 onward has been built.** § 1 and § 2 are measurements taken
-off the code at HEAD `2bff8536`; everything after is a proposal to argue with.
+Written 2026-08-25. § 1 and § 2 are measurements taken off the code at HEAD `2bff8536`.
+
+✅ **§§ 3 and 4 WERE ARGUED AND THEN BUILT, THE SAME DAY.** 🧑 read the plan and said *"pls work
+on this now"*, so everything below except where marked **NOT BUILT** is shipped. The numbers in
+those sections are what is in the code; the reasoning is repeated in a ⚠️ note above each
+constant, so this file and the code are two copies of the same decision and either can catch the
+other drifting.
+
+**What is still NOT BUILT and why:**
+
+| Item | § | Why not |
+|---|---|---|
+| A choice between rounds | 4.7 | It adds asymmetry to a mode whose fairness argument rests on four identical seats, and it was flagged as the one idea that could make the mode worse. It needs 🧑's call, not mine |
+| The cooldown bar's halfway tick | 4.6 | The deck already prints the seconds, which is the half that matters. Marginal, and a widget change wants a render pass of its own |
+| The `BotBehaviourProbe` A/B on every new number | 3.1, 3.2 | Every cooldown, charge count and ultimate cost is a starting position with reasoning, not a measured result. 🧑 2026-08-25: *"u can test but dont test fairness yet"* |
 
 ---
 
@@ -500,3 +513,189 @@ arithmetic in § 2.1, and the whole of § 3.0 including the 0.59 black threshold
 positions with reasoning attached. `BotBehaviourProbe` is what settles them, and per 🧑 on
 2026-08-25 the suite is not to be run out of habit, so they get measured once when there is code
 to measure rather than at each step.
+
+---
+
+## 7 · As built, 2026-08-25
+
+What actually shipped, so this file can be read as a record rather than only as an argument.
+Every number below is also written next to the constant it governs, in a ⚠️ note with its
+reasoning, which is the repo's rule from `CLAUDE.md` § 3.
+
+### 7.1 The economy, as shipped
+
+| Hero | Skill 1 | Skill 2 | Ultimate cost |
+|---|---|---|---|
+| Sean | Flame Rush, **34 s cooldown** | Ignition Cannon, **2 charges**, +1 per lata knockdown | **130** |
+| Zack | Bolt Sprint, **30 s cooldown** | Static Charge, **2 charges**, +1 per lata knockdown | **150** |
+| Dante | Seismic Stomp, **2 charges**, no recharge | Demonic Carapace, **45 s cooldown** | **110** |
+| Cheska | Permafrost Sheet, **2 charges**, no recharge | Ice Barricade, **1 charge**, +1 per own retrieval | **140** |
+| Nemu | Ghost Step, **36 s cooldown** | Astral Projection, **2 charges**, no recharge | **90** |
+
+Ultimate points: lata knockdown **25**, tag **20**, own tsinelas retrieved **12** (new), legal
+throw **4** (down from 8), time passing **0** (deleted).
+
+Casts per 90 s round across four seats fell from **44 to 56** to roughly **14 to 18**.
+
+### 7.2 The footprints, as shipped
+
+| Power | Was | Now |
+|---|---|---|
+| Sean Flame Rush trail | 1.6 per disc, uncapped corridor, 11.97 % | **1.0, capped at 6 live discs** |
+| Zack Bolt Sprint trail | 1.8 per disc, uncapped corridor, 27.24 % | **1.0, capped at 6, laid 0.6 s behind him** |
+| Sean ignited tsinelas | 4.5, 32.46 % | **2.6** |
+| Zack static tsinelas | 5.5 stagger with no telegraph at all, 48 % | **2.0** |
+| Dante Seismic Stomp | 2.4 blast, 3.2 slipper repel | **2.2 blast, 2.6 repel** |
+| Dante Titan Fissure pillars | 4 in an arc to 3.8 m | **2 on the fissure line** |
+| Nemu Seance Void | 3.2, over the bot cap | **2.8, under it** |
+| Cheska Ice Barricade | 3.2 s duration | **6.0 s** |
+| Cheska Permafrost Sheet | 2.3, five translucent layers | **2.3, two layers plus rim and spikes** |
+
+Ultimates kept their size, per rule 2. `AiTuning.HazardAvoidMaxRadius` now binds nothing and is
+a guard rather than a limit; `EveryRegisteredHazardStaysUnderTheBotAvoidanceCap` asserts it.
+
+### 7.3 ⚠️⚠️ What the renders found, which is more than the arithmetic did
+
+**This is the part worth reading if you read nothing else in § 7.** The footprint work in § 3.2
+was derived on paper and it was correct. It was also not the biggest problem. Four capture passes
+through `AbilityShowcaseProbe` found faults that no amount of measuring radii could have:
+
+1. **Everything was clipping to pure white.** The frost sheet's 2.3 m disc came back at
+   255,255,255 across its whole area. The cause is a pair rather than either half: a ghost
+   material at 0.65 alpha is fine and a 2.5-intensity point light 0.6 m above it is fine, and
+   together they write far past 1.0 before `ColourGrade`'s ACES curve ever sees the frame. **Every
+   hazard light in the game came down by roughly two thirds and moved up**, so it lights the
+   street rather than its own effect.
+2. **The Seance Void rendered as a cartoon eyeball.** A violet ring around a blown-white disc with
+   a solid purple ball in it. It is dark-cored with a bright lip and inward-leaning shards now,
+   because a thing that pulls you in has to look like it goes down.
+3. **`SpawnCrackedLavaDecal` drew no cracks.** It was a flat yellow plate under a name that
+   promised fissured ground. It is a dark crust with seven glowing seams now.
+4. **The ember billboards rendered as literal yellow squares**, because a `Quad` with an
+   untextured material is a rectangle and facing the camera does not change that. They are small
+   voxel cubes now, which is also the right answer rather than a cheap one: this is a voxel game
+   and a soft photographic flame is the thing that would look broken.
+5. ⚠️ **And three of the four passes fixed the wrong thing.** The fire trail's char was specified
+   dark and rendered orange. v1 blamed the colour, v2 blamed the light, v3 blamed both, and all
+   three still rendered orange. The cause was **alpha**: the char is drawn on top of `edge`, which
+   is a full bright DISC and not a ring, so any alpha under about 0.9 blends the char with the
+   orange plate beneath it rather than with the road. `ability_fire_trail_v1.png` through `_v3.png`
+   are kept on disk as the three wrong answers.
+
+⚠️⚠️ **AND THE PROBE THAT SHOULD HAVE CAUGHT THE BLACK MAP WAS HARD-CODING THE GRADE.**
+`IlalimNgTulayShowcaseProbe.Shot` built its camera with `ColourGrade.Set(..., 0.92f, ...)`, which
+is **Eskinita's** exposure, while the map's own `MapGrade` carried 0.15. Every showcase render
+from v15 to v22, eight sets of fifteen frames, was taken through a grade the game never used.
+That is why four signed-off render passes missed a map that shipped black. It calls
+`AdoptFromScene()` now, the same call `CameraRig` makes when a match starts, so a capture grades
+the way the match grades or it is not evidence.
+
+**Renders on disk:** `Logs/shots-ilalim/*_v23.png` (the map at the corrected exposure) and
+`Logs/shots-abilities/*_v1.png` through `*_v4.png` (the ability passes, all four kept).
+
+---
+
+## 8 · The visual identity plan: why every skill looked the same, and the rule that fixes it
+
+🧑, 2026-08-25, looking at the first ability capture: *"look at this shit all of them look like
+circles lang"*, and then: *"thoroughly plan how to make the skills all look better bcz they all
+look repetitive and look like circles"*.
+
+⚠️⚠️ **HE IS RIGHT, AND THE DIAGNOSIS IS NOT "THEY NEED MORE POLISH". IT IS THAT THE GAME WAS
+SPENDING ONE CHANNEL AND HAD FOUR.**
+
+### 8.1 The actual cause
+
+Every floor effect in Hero Strike was built the same way: `GameObject.CreatePrimitive(Cylinder)`
+scaled flat. Fire, lightning, ice, magma and a tear in the world were **five different fictions
+drawn as one primitive in five colours**.
+
+That leaves **hue** doing all the work of telling them apart, and hue is the one channel this
+game cannot spare, because it is already spent twice:
+
+- `Art_Direction.md` § 1 reserves **orange for OFFENSE and blue for DEFENCE**, and those two
+  track the role, which rotates every round. They are the only two colours a player has to READ
+  rather than merely see.
+- `UiTheme` then spends five more hues on hero identity, asserted 25 degrees clear of both role
+  colours and 30 degrees clear of each other by `HeroPresentationTests`.
+
+So by the time an effect gets to pick a colour, the palette is full and every remaining
+difference is a few degrees of hue on the same shape. That is why they read as repetitive: **they
+are repetitive.** It is one shape, seven times.
+
+### 8.2 The four channels an effect actually has, and what each is for
+
+This is the rule the rest of this section applies, and it is what should be checked before any
+new ability ships.
+
+| Channel | What it carries | Read at |
+|---|---|---|
+| **Silhouette** | WHICH ability this is | any distance, any angle, colour-blind |
+| **Axis** | whether it is ground, air or body | any distance |
+| **Motion** | whether it is live or spent | mid distance |
+| **Hue** | WHOSE it is | close, and only if the palette has room |
+
+⚠️ **Silhouette is the channel that was completely unused and it is the strongest one.** It
+survives being seen edge-on in first person, it costs nothing per frame because the shape is
+baked once at spawn, and it works for a player who cannot separate the hues at all.
+
+### 8.3 One silhouette per fiction, and none of them is a circle
+
+`Visual.VfxShapes` builds these as meshes in the XZ plane at one unit of radius, so a caller
+scales them exactly the way it scaled a cylinder and no footprint arithmetic in § 1 changes.
+
+| Ability | Shape | Why that shape |
+|---|---|---|
+| Sean, Flame Rush trail | **Streak** | a dash leaves a smear, and a smear POINTS: it tells you which way he went, which a circle cannot |
+| Zack, Bolt Sprint trail | **Star**, 7 uneven points | lightning arrives at a point and runs out along the ground. A discharge pattern, not a puddle |
+| Cheska, Permafrost Sheet | **Crystal**, 6 hard sides | the only thing here that GREW rather than spread or broke, so it is the only shape that reads as ordered |
+| Dante, Seismic Stomp | **Splat**, 11 ragged sides | stomped ground fractures along uneven lines |
+| Nemu, Seance Void | **stays round, and hovers** | see § 8.4 |
+
+⚠️ **THE SHAPES ARE ANGULAR ON PURPOSE.** This is a voxel game and the whole cast is built from
+boxes. A smooth airbrushed decal would be the thing that looked broken beside it, which is
+`VISION.md` § 6: *"his UI art is the design system."*
+
+⚠️ **AND THEY ARE SEEDED OFF POSITION.** Two scorch marks in one trail differ from each other,
+but any given mark is identical between captures, which is what makes the probe's renders
+comparable version to version. `CLAUDE.md` § 7.1 records what an unseeded probe costs.
+
+### 8.4 Axis: the void hovers, and it is the only one that does
+
+🧑: *"make make blackhole float, its on the floor"*.
+
+A vortex is genuinely radial, so a circle is the honest outline for it and changing that would be
+a lie. Instead it changes **axis**: the whole assembly lifts to **1.35 m** and the street carries
+on underneath it, with debris shards caught partway up the column so the hover reads as lifting
+rather than as art floating by mistake.
+
+⚠️⚠️ **Horizontal versus vertical is a bigger difference than any two outlines on the same
+plane**, which is why this is the better answer for the one effect whose shape should not change.
+
+⚠️ **The ground still says where the danger is.** `SeanceVoidComponent` resolves by flat distance
+on the FLOOR, so lifting the art without leaving a mark would put the gameplay circle somewhere
+the player cannot see it. A faint ring at the true radius stays on the road. A telegraph that
+lies is worse than no telegraph.
+
+### 8.5 What is still open, and it is the honest part of this section
+
+Applied so far: silhouette for five effects and axis for one. **That is the cheap half.** What
+has NOT been done, roughly in order of payoff:
+
+1. **The ultimates are untouched.** Supernova, Thunderstrike and Glacial Nova are still expanding
+   spheres and rings, which is four more circles, and they are the biggest things on screen.
+   They want the same pass: a slam should be a shockwave with a FRONT, a lightning strike should
+   be vertical, a nova should be radial but crystalline.
+2. **Motion is doing nothing.** Nothing in this set animates except the shock arc and the void's
+   spin. A spent effect and a live one look identical, so a player cannot tell whether a patch of
+   ice is about to expire. That is a real gameplay read and it is free: fade the rim, not the
+   whole thing.
+3. **The explosion, the ring and the flash are still shared by every ability.** `CreateExplosion`
+   draws the same sphere and shockwave for a 2.2 m stomp and a 4.8 m Supernova, so the two
+   biggest moments in two different kits are the same picture at two sizes.
+4. **Nothing has been seen in motion.** Every judgement in this section is off still frames.
+   Timing, overlap in a real round and how a corridor reads while it is being laid are all
+   unmeasured, and a still cannot answer any of them.
+
+**`docs/TODO.md` § 8 carries this list.** It is not finished work and should not be reported as
+finished work.

@@ -36,8 +36,27 @@ namespace TumbangPreso
         /// <summary>True during the three second run-up, when the warning is on screen.</summary>
         public static bool Warning { get; private set; }
 
-        /// <summary>The rate applied while the train is overhead. See `docs/Ilalim_Ng_Tulay.md`.</summary>
-        public const float OverclockRate = 2.0f;
+        /// <summary>
+        /// The rate applied while the train is overhead. See `docs/Ilalim_Ng_Tulay.md` § 3.5.
+        ///
+        /// ⚠️⚠️ 3.5, UP FROM 2.0, AND THE RAISE IS ARITHMETIC RATHER THAN A BUFF. A rate
+        /// multiplier saves the SAME ABSOLUTE 2.70 s of cooldown whatever the cooldown is, so
+        /// its worth is entirely relative to the cycle it is measured against. At the old 6.5 s
+        /// skill cooldowns, 2.0 for 2.70 s was **41 per cent of a cycle** and a real mechanic.
+        /// Against the 30 to 45 s cooldowns that landed on 2026-08-25 the same number is
+        /// **6.0 to 9.0 per cent**, which is not worth learning the train's timing for, and a
+        /// map mechanic nobody plays around is a map mechanic that does not exist.
+        ///
+        /// 3.5 restores it to roughly 6.75 s off a 34 s cooldown, or a fifth of a cycle: less
+        /// than it used to be worth in relative terms, which is correct, because a long cooldown
+        /// should not be brushed aside by standing in the right place. `docs/TODO.md` § 5 asks
+        /// for the A/B that settles this properly and it is still owed; what changed here is
+        /// that the old number is now provably too small rather than merely unmeasured.
+        ///
+        /// ⚠️ IT STILL DOES NOT TOUCH THE ULTIMATE. See `CooldownRate` above: the meter is
+        /// earned by acts, and a window that filled it would be a reason to stand still.
+        /// </summary>
+        public const float OverclockRate = 3.5f;
 
         public static void SetWarning(bool on) => Warning = on;
 

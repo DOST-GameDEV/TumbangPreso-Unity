@@ -264,7 +264,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: SINGLE PLAYER
+  m_Text: PRACTICE MODE
 --- !u!222 &139045956
 CanvasRenderer:
   m_ObjectHideFlags: 0

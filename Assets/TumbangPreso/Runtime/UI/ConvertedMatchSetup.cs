@@ -73,7 +73,7 @@ namespace TumbangPreso.UI
             }
             else
             {
-                SetText("BannerLabel", "SINGLE PLAYER");
+                SetText("BannerLabel", "PRACTICE MODE");
             }
 
             SetText("SeatHeading", "YOUR CHARACTER");

@@ -34,7 +34,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private const int ShotHeight = 720;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v22";
+        private const string Version = "v23";
 
         [MenuItem("Tumbang Preso/Capture Ilalim Ng Tulay Showcase")]
         public static void RunFromMenu() => Execute();
@@ -160,7 +160,20 @@ namespace TumbangPreso.EditorTools.MapKit
             cam.farClipPlane = 260.0f;
             cam.clearFlags = CameraClearFlags.Skybox;
 
-            camGo.AddComponent<ColourGrade>().Set(1.05f, 1.10f, 1.15f, 0.92f, 1.85f);
+            // ⚠️⚠️ IT ADOPTS THE MAP'S OWN GRADE AND IT USED TO HARD-CODE ONE, WHICH IS THE
+            // WHOLE REASON THIS PROBE SIGNED OFF A MAP THAT SHIPPED BLACK.
+            //
+            // The line here read `Set(1.05f, 1.10f, 1.15f, 0.92f, 1.85f)`. The map's `MapGrade`
+            // carried an exposure of **0.15**, so every showcase render from v15 to v22 was
+            // taken through Eskinita's 0.92 while the GAME rendered the street through 0.15,
+            // where every linear value under 0.59 clips to pure black. Fifteen frames per set,
+            // eight sets, all of them lying about the one property that made the map unplayable.
+            //
+            // ⚠️ A CAPTURE MUST GRADE THE WAY THE MATCH GRADES OR IT IS NOT EVIDENCE.
+            // `ColourGrade.AdoptFromScene` is the same call `CameraRig` makes when a match
+            // starts, so the probe now sees exactly what a player sees, including a wrong grade.
+            // `MapGradeSanityTests` catches the value; this makes the picture honest as well.
+            camGo.AddComponent<ColourGrade>().AdoptFromScene();
 
             var rt = new RenderTexture(ShotWidth, ShotHeight, 24, RenderTextureFormat.ARGB32)
             {

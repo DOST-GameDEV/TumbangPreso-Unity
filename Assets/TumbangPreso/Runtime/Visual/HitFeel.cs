@@ -31,11 +31,23 @@ namespace TumbangPreso.Visual
     ///     would mean a four-player fight is mostly stutter. `CheskaHeroKit`'s nova already
     ///     learned the local version of this lesson with its camera shake.
     ///
-    /// ⚠️ IT IS ALSO WHY THIS IS NOT `Time.timeScale`. A global time scale freezes the physics
-    /// step for all four players and the round clock with it, so it would be a genuine gameplay
-    /// pause rather than a presentation one. The freeze here is a CAMERA hold: the world keeps
-    /// simulating and only the victim's view lags behind it for a few frames, which is what
-    /// makes it safe to use in a networked match at all.
+    /// ⚠️⚠️ AND IT IS NOT `TumbangPreso.Hitstop`, WHICH ALREADY EXISTS AND IS NOT A DUPLICATE OF
+    /// THIS. Read that class before assuming one of the two should be deleted. `Hitstop` scales
+    /// GLOBAL `Time.timeScale`, and it is correct for what it does: one bounded freeze on the
+    /// frame an ultimate detonates, felt by the whole match, which is a shared event that
+    /// deserves a shared beat. Its own header records what it cost to make safe, including a
+    /// probe that ran a 120x slowdown for a whole match because an orphaned timer never
+    /// restored the scale.
+    ///
+    /// That mechanism cannot do this job. A global time scale freezes the physics step for all
+    /// four players and the round clock with it, so a per-hit version would be a real gameplay
+    /// pause, would desynchronise a host from its peers, and would stutter three screens for one
+    /// victim's knockdown. `Hitstop` also ignores re-entrant calls by design, so three hits in a
+    /// window would produce one freeze rather than three confirms.
+    ///
+    /// So the freeze here is a CAMERA hold, on one rig: the world keeps simulating and only the
+    /// victim's own view lags behind it for a few frames. Global beat, `Hitstop`. Per-victim
+    /// confirm, this. Both ship.
     ///
     /// `docs/Hero_Strike_Balance.md` § 4.1.
     /// </summary>

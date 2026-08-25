@@ -35,11 +35,60 @@ with no Unity launch:
    `UltimateMax` 100 hands a player who does nothing 90 of the 100 in a 90 s round, which
    `VISION.md` § 4 forbids in as many words.
 
-**Status:** 🧑 has the plan and is arguing with it. **No code has moved.**
+✅ **STATUS: ARGUED AND BUILT, SAME DAY.** 🧑 read the plan and said *"pls work on this now"*, so
+§§ 3 and 4 of that file are shipped except for three items it marks **NOT BUILT** and explains.
+§ 7 of it is the as-built record.
 
-**Folds in §§ 2 and 5 below**, both of which the plan answers: the barricade duration becomes a
-consequence of the charge economy (§ 3.2) rather than an open measurement, and the overclock rate
-loses four fifths of its value the moment cooldowns get long (§ 4.5).
+⚠️⚠️ **WHAT IS OPEN IS THE MEASUREMENT, AND IT IS OPEN ON PURPOSE.** Every cooldown, charge
+count and ultimate cost is a starting position with reasoning attached, not a measured result.
+🧑 2026-08-25: *"u can test but dont test fairness yet, js think abt what is fair and what makes
+sense and what needs it"*. The `BotBehaviourProbe` Hero Strike A/B that settles them is the next
+real piece of work on this entry, and it wants a played build first.
+
+**Also open:** whether 45 s on Carapace and 30 s on Bolt Sprint are the right ENDS of the band.
+The order is argued (a power that ignores the game's central risk waits longest) and the band is
+🧑's (*"like 30seconds to 45 seconds"*), but nothing has measured whether four seats at those
+numbers produces a round worth watching.
+
+**Folded in §§ 2 and 5 below.** § 2 is closed by construction: the barricade returned to 6.0 s
+because the charge economy removed the premise that kept it at 3.2. § 5 stays open but its
+question changed, and the entry says how.
+
+---
+
+## 8 · The abilities still look repetitive, and half the fix is not done
+
+**Raised by 🧑 on 2026-08-25, twice, off the ability captures:** *"look at this shit all of them
+look like circles lang"*, then *"thoroughly plan how to make the skills all look better bcz they
+all look repetitive and look like circles"*.
+
+**The plan and the diagnosis are [`Hero_Strike_Balance.md`](Hero_Strike_Balance.md) § 8.** The
+short version: every floor effect was a scaled `Cylinder`, so five different fictions were one
+primitive in five colours, and HUE was doing all the work of telling them apart. Hue is the one
+channel this game cannot spare, because `Art_Direction.md` § 1 already spends orange and blue on
+the two ROLES and `UiTheme` spends five more on hero identity.
+
+✅ **Done:** a silhouette each for the five skills (streak, star, crystal, splat) via
+`Visual.VfxShapes`, and the Seance Void lifted to 1.35 m so it changes AXIS rather than outline.
+
+⚠️⚠️ **NOT DONE, AND THIS IS THE HALF THAT IS LEFT.** Do not read § 8 as finished work:
+
+1. **The ultimates are untouched and they are the biggest things on screen.** Supernova,
+   Thunderstrike and Glacial Nova are still expanding spheres and rings. Four more circles.
+2. **Motion carries nothing.** A live effect and one about to expire look identical, so a player
+   cannot tell whether the ice they are about to run across is spent. That is a gameplay read,
+   not a polish item, and fading the RIM rather than the whole effect is close to free.
+3. **`CreateExplosion` is shared by everything.** The same sphere and shockwave draw a 2.2 m
+   stomp and a 4.8 m Supernova, so the two biggest moments in two different kits are one picture
+   at two sizes.
+4. ⚠️ **Nothing has been judged in motion.** Every call in § 8 was made off still frames from
+   `AbilityShowcaseProbe`. Timing, overlap in a real round, and how a corridor reads while it is
+   being laid are all unmeasured, and a still cannot answer any of them. **This wants a played
+   build before more art time goes in.**
+
+**Where.** `Assets/TumbangPreso/Runtime/Visual/VfxShapes.cs`,
+`Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs`,
+`Assets/TumbangPreso/Editor/MapKit/AbilityShowcaseProbe.cs` for the captures.
 
 ---
 
@@ -63,7 +112,7 @@ plainly in the handoff that the wire half is simulated.
 
 ---
 
-## 2 · Cheska's Ice Barricade duration was set by accident
+## 2 · Cheska's Ice Barricade duration was set by accident ✅ CLOSED 2026-08-25
 
 **A one-line balance question left open on purpose, because it wants a measurement.**
 
@@ -83,11 +132,18 @@ its number. The argument is named now (`duration: 3.2f`) so the next reader cann
 mistake, and the telegraph radius (1.6 m) is asserted against the `HazardVolume` in
 `HeroPresentationTests.TelegraphsMatchWhatTheAbilityPlaces`.
 
-⚠️ **§ 0's plan may answer this without a probe run.** Under the charge economy in
-`Hero_Strike_Balance.md` § 3.1 the barricade becomes ONE charge per round, and a wall you get
-once a round has to be worth the charge. § 3.2 proposes restoring **6.0 s** on that ground rather
-than on the A/B. If the charge economy lands, this entry closes as a consequence; if it does not,
-the measurement above is still the way to settle it.
+✅ **CLOSED BY CONSTRUCTION RATHER THAN BY THE A/B ABOVE, AND THE A/B IS NO LONGER THE RIGHT
+TEST.** The whole argument for keeping 3.2 was the one in the paragraph above: the skill cooled
+in 9 s, so a 6 s wall stood for two thirds of every cycle. **That premise is gone.** § 0's charge
+economy makes the barricade ONE charge per round, refilled only by Cheska retrieving her own
+tsinelas, so the wall is up for 6 s out of 90 rather than for 60 s out of 90.
+
+A wall you get once a round has to be worth walking around, and 3.2 s is barely long enough to
+cross the box. Restored to **6.0 s**, which is what the signature always defaulted to and what
+the ability was written against before the 2026-08-23 parameter mix-up.
+
+⚠️ **The named argument stays** (`duration: 6.0f`), because the mistake this entry records was a
+positional one and naming it is what stops it recurring.
 
 **Where.** `Assets/TumbangPreso/Runtime/Abilities/CheskaHeroKit.cs`,
 `Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`.
@@ -163,12 +219,17 @@ constant with its number, the way every other measured value in this repo does.
 is worth doing anyway: § 4 above and `docs/Ilalim_Ng_Tulay.md` § 1 are both arguments that map
 geometry changes Hero Strike outcomes, and nothing in the harness has ever measured that.
 
-⚠️⚠️ **DO NOT RUN THIS A/B UNTIL § 0 SETTLES, BECAUSE THE COOLDOWNS MOVE UNDER IT.** Doubling
-the rate saves 2.70 s of cooldown whatever the cooldown is, so the RELATIVE value collapses from
-41 per cent of a 6.5 s cycle to 7.9 per cent of the 34 s cycle `Hero_Strike_Balance.md` § 3.1
-proposes. Measuring 1.0 against 1.5 against 2.0 today measures a mechanic that is about to
-change shape. § 4.5 of that file argues the multiplier should become a flat saving or a charge,
-which survives any later retune.
+⚠️⚠️ **THE COOLDOWNS MOVED UNDER THIS ENTRY ON 2026-08-25 AND THE NUMBER ABOVE IS STALE.**
+`OverclockRate` is **3.5** now, not 2.0, and the raise is arithmetic rather than a buff: a rate
+multiplier saves the same absolute 2.70 s whatever the cooldown is, so against § 0's 30 to 45 s
+cooldowns the old 2.0 was worth **6.0 to 9.0 per cent of a cycle** where it used to be worth
+**41 per cent**. A map mechanic nobody plays around is a map mechanic that does not exist.
+
+**What is still owed is the A/B, and it should now compare 1.0, 3.5 and a FLAT saving rather
+than three multipliers.** `Hero_Strike_Balance.md` § 4.5 argues the mechanic should stop being a
+multiplier at all and become a flat cooldown reduction or a charge, on the grounds that a flat
+figure survives any later cooldown retune where a multiplier does not. That is the real question
+here and the three-rate sweep in the paragraph above no longer answers it.
 
 **Where.** `Assets/TumbangPreso/Runtime/Map/OverheadPassWindow.cs`,
 `Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`.

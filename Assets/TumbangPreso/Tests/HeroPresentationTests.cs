@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using TumbangPreso.Abilities;
+using TumbangPreso.Core;
 using TumbangPreso.UI;
 using UnityEngine;
 
@@ -254,6 +255,54 @@ namespace TumbangPreso.Tests
             AssertTelegraph("zack", 1, 0.0f, 0.0f);     // dash
             AssertTelegraph("zack", 2, 0.0f, 0.0f);     // throw empower
             AssertTelegraph("zack", 3, 4.5f, 0.0f);     // CreateThunderstrike(pos, 4.5)
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE BOTS ARE THE CANARY FOR WHETHER A HUMAN CAN READ THE FLOOR, AND THIS MAKES
+        /// THE CANARY AUTOMATIC. `docs/VISION.md` § 2 states it directly, and
+        /// `AiTuning.HazardAvoidMaxRadius` is the cap that exists because of it: there is no way
+        /// around a disc that covers half the arena, so a bot that tries walks the perimeter
+        /// until the round ends. Measured, when avoidance was first switched on with no cap:
+        /// `BotBehaviourProbe`'s Hero Strike run fell from 78 to 97 throws in four rounds to
+        /// **17**, while Classic, which has no hazards, did not move.
+        ///
+        /// As of the 2026-08-25 footprint pass every registered hazard is under the cap, so the
+        /// cap binds nothing and avoidance applies to all of them. **That is a property worth
+        /// keeping and it is not visible in the file that would break it**: a new ability
+        /// registering a 4 m zone compiles, runs, looks fine in the editor, and strands every
+        /// bot on the perimeter of every map it is cast on.
+        ///
+        /// ⚠️ IT ASSERTS THE TELEGRAPH RADIUS RATHER THAN THE `HazardVolume`, because the volume
+        /// only exists at runtime and `TelegraphsMatchWhatTheAbilityPlaces` above already pins
+        /// the telegraph to what the ability actually spawns. The two tests together cover the
+        /// spawn without needing a live scene.
+        /// </summary>
+        [Test]
+        public void EveryRegisteredHazardStaysUnderTheBotAvoidanceCap()
+        {
+            foreach (string hero in Heroes)
+            {
+                var kit = Abilities.HeroAbilitySystem.CreateKitFor(hero);
+
+                foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                {
+                    if (ability == null || !ability.HasTelegraph) continue;
+
+                    // ⚠️ ULTIMATES ARE EXEMPT AND THAT IS `docs/VISION.md` § 2 RULE 2: *"An
+                    // ultimate may be big. One at a time."* Supernova, Thunderstrike, Glacial
+                    // Nova and Titan Fissure are all over the cap by design and none of them
+                    // registers a persistent `HazardVolume`: they are instantaneous blasts, so
+                    // there is no ground for a bot to path around after the frame they fire.
+                    // Seance Void is the one ultimate that DOES persist, and it is checked.
+                    if (ability == kit.Ultimate && ability.Id != "nemu_ultimate") continue;
+
+                    Assert.LessOrEqual(ability.TelegraphRadius, AiTuning.HazardAvoidMaxRadius,
+                        $"{hero}/{ability.Id} leaves a {ability.TelegraphRadius} m hazard, over "
+                        + $"the {AiTuning.HazardAvoidMaxRadius} m cap. The bots will walk "
+                        + "straight through it: see AiTuning.HazardAvoidMaxRadius for what that "
+                        + "measured last time, and docs/Hero_Strike_Balance.md § 3.3.");
+                }
+            }
         }
 
         /// <summary>

@@ -138,8 +138,12 @@ namespace TumbangPreso.Abilities
 
             private void DropScorch(AbilityContext ctx)
             {
+                // ⚠️ THE FACING IS PASSED SO THE MARK POINTS. `SpawnFireTrail` lays a STREAK
+                // rather than a disc now, and a streak with no direction is just a disc that
+                // took more triangles to draw. A player who finds one has to be able to tell
+                // which way Sean went, which is most of what surviving Sean is.
                 var disc = HeroHazards.SpawnFireTrail(ctx.Position, TrailRadius, 3.0f,
-                                                      ctx.Motor.PlayerSlot);
+                                                      ctx.Motor.PlayerSlot, ctx.Forward);
                 if (disc == null) return;
 
                 _live.Enqueue(disc);

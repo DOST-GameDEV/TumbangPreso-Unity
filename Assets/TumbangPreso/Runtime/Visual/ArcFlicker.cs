@@ -17,8 +17,10 @@ namespace TumbangPreso.Visual
     ///
     /// ⚠️⚠️ KNEE HEIGHT, NEVER HIGHER. `docs/VISION.md` § 2 rule 5 requires a mid-fight frame to
     /// still show the lata, the chalk and every player. Six of these are live during a sprint,
-    /// and six head-height arcs would be a fence across the arena. At 0.45 m they mark the
-    /// ground without hiding anybody standing behind them.
+    /// and six head-height arcs would be a fence across the arena. At **0.72 m** they mark the
+    /// ground without hiding anybody standing behind them, which is a little over knee height on
+    /// a 1.8 m body and is the ceiling for this: do not raise it again without re-taking
+    /// `AbilityShowcaseProbe`'s worst-frame shots, which are what that rule is judged on.
     ///
     /// `docs/Hero_Strike_Balance.md` § 3.2.
     /// </summary>
@@ -26,7 +28,7 @@ namespace TumbangPreso.Visual
     public sealed class ArcFlicker : MonoBehaviour
     {
         private const int Segments = 4;
-        private const float Height = 0.45f;
+        private const float Height = 0.72f;
         private const float RebuildInterval = 0.09f;
 
         private readonly Transform[] _segments = new Transform[Segments];
@@ -43,8 +45,14 @@ namespace TumbangPreso.Visual
                 seg.name = $"ArcSeg_{i}";
                 seg.transform.SetParent(transform, false);
 
-                VfxMaterial.Ghost(seg.GetComponent<Renderer>(),
-                                  new Color(1.0f, 0.98f, 0.55f, 0.85f), 1.6f);
+                // ⚠️ EMISSION 1.6 WROTE PAST WHITE AND THE ARC DISAPPEARED INTO ITS OWN RING.
+                // `Logs/shots-abilities/ability_shock_trail_v1.png` shows the whole effect as
+                // one flat yellow coin with a two-pixel white squiggle standing on it, which is
+                // the arc. Solid rather than ghosted so the bolt
+                // has an edge against the bright ring underneath it, and 0.35 emission keeps it
+                // hot without clipping. Same fault as every other rim in this file.
+                VfxMaterial.Solid(seg.GetComponent<Renderer>(),
+                                  new Color(1.0f, 0.97f, 0.62f), 0.35f);
                 VfxMaterial.StripCollider(seg);
 
                 _segments[i] = seg.transform;
@@ -94,7 +102,7 @@ namespace TumbangPreso.Visual
 
                 seg.localPosition = from + leg * 0.5f;
                 seg.localRotation = Quaternion.LookRotation(leg / len, Vector3.up);
-                seg.localScale = new Vector3(0.045f, 0.045f, len);
+                seg.localScale = new Vector3(0.085f, 0.085f, len);
 
                 from = to;
             }

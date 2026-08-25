@@ -190,11 +190,27 @@ namespace TumbangPreso.Core
         /// were correctly refusing to cross ground that covered most of the arena, and they
         /// never reached a throwing position again.
         ///
-        /// ⚠️ WHEN THE ABILITY FOOTPRINTS COME DOWN (`docs/TODO.md` § 1 targets roughly 2.5 m
-        /// for a skill), every hazard falls under this cap and avoidance starts applying to all
-        /// of them with no further change here. That is the intended end state. Until then a
-        /// bot takes the slow ground rather than never arriving, which is the same trade
-        /// `HazardAvoidGiveUp` makes at close range.
+        /// ✅ **THE END STATE ARRIVED ON 2026-08-25 AND THIS CAP NOW BINDS NOTHING.** The
+        /// paragraph above describes sizes that no longer ship: the sheet is 2.3 and the void
+        /// came down from 3.2 to 2.8 in the footprint pass. Every hazard registered with
+        /// `HazardMap` is under 3.0, so avoidance applies to all of them and no bot is told to
+        /// walk through anything.
+        ///
+        /// Registered today: Permafrost Sheet 2.3, Ice Barricade 1.6, Seance Void 2.8, Titan
+        /// Fissure's earth pillars 1.4, and Ilalim ng Tulay's LRT pillars. Trails are
+        /// deliberately NOT registered and never were; `HeroHazards.SpawnFireTrail` has the
+        /// measurement that settled that and it is a different question from this one.
+        ///
+        /// ⚠️⚠️ DO NOT DELETE IT. IT STOPPED BEING A LIMIT AND BECAME A GUARD. The failure it
+        /// prevents is not hypothetical and it is not visible in the file that would cause it: a
+        /// future ability registering a 4 m zone would strand every bot on the perimeter, and
+        /// the measurement above is what that costs (78 to 97 throws down to 17). With the cap
+        /// in place that ability is merely walked through, which is survivable.
+        /// `EveryRegisteredHazardStaysUnderTheBotAvoidanceCap` asserts the ceiling holds, so the
+        /// next one is caught by a test rather than by a probe run nobody thought to do.
+        ///
+        /// `docs/VISION.md` § 2 is right that the bots are the canary for whether a human can
+        /// read the floor. This is that canary made automatic.
         /// </summary>
         public const float HazardAvoidMaxRadius = 3.0f;
 

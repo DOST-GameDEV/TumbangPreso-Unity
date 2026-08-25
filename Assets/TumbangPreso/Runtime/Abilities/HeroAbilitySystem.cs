@@ -303,6 +303,29 @@ namespace TumbangPreso.Abilities
 
         private void PlayUltimatePresentation()
         {
+            // ⚠️⚠️ THE COLUMN IS THE PART THE OTHER THREE PLAYERS SEE, AND IT IS DRAWN BEFORE
+            // ANY OF THE CAMERA WORK BELOW BECAUSE IT IS THE ONLY PIECE THAT IS NOT LOCAL.
+            //
+            // Every ultimate in this game used to resolve in the frame it was cast, so from
+            // three metres away an ultimate and a skill were the same event: a flash and then
+            // consequences. There was no moment, and an ultimate that costs 90 to 150 points to
+            // earn has to HAVE a moment or it is just a large skill.
+            //
+            // ⚠️ IT IS ALSO WHAT MAKES COUNTERPLAY POSSIBLE AT ALL, which is the reason Hero
+            // Strike exists. `docs/VISION.md` § 1.1: *"Combos, timing, counterplay, reading
+            // which ultimate is banked."* You cannot read something that has already happened.
+            // A column of hero-coloured light standing off the caster is legible from across the
+            // arena and through the crowd, and it says WHO and WHERE without a word on screen,
+            // which `docs/VISION.md` § 3 requires of anything the HUD is not allowed to say.
+            //
+            // ⚠️ IT DOES NOT DELAY THE CAST. A real 0.4 s wind-up on the ABILITY would be a
+            // fourth thing that can be interrupted, and every one of the five ultimates would
+            // need its own answer to being stunned halfway through; the buffering rules in
+            // `docs/Hero_Strike_UI.md` § 7 have no story for a half-cast power. This announces
+            // the ultimate as it fires and stands for 0.9 s afterwards, so the beat is real for
+            // everyone watching without adding a state the ability can die inside.
+            Visual.UltimateColumn.Raise(_context.Position, AccentColour());
+
             var camera = UnityEngine.Camera.main;
             if (camera == null) return;
 
