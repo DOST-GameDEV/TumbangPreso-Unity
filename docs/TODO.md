@@ -243,6 +243,23 @@ mash card.
 **Verified:** PlayMode 57/57 including `StunFrostTests`, which still ices on a tag because it
 staggers directly rather than tripping.
 
+**9.9 ✅ FIXED: a recastable ability now says so.** 🧑: *"i dont feel or know that some abilities
+are recast too"*. It was invisible by construction: a running ability drew a countdown, and a
+running ability you can press AGAIN drew the same countdown. Nemu's Astral Projection is one press
+out and one press back, so the entire second half of the ability was an affordance the deck never
+mentioned.
+
+The tile now reads **RECAST** in place of the number while `CanReactivate` is true.
+⚠️ **The word replaces the number rather than crowding it**: `card.Fill` already carries
+`DurationRatio` in the same tile, so the timer is not lost and the text slot is spent on the thing
+the player cannot otherwise know.
+⚠️ **Gated on `CanReactivate`, never on a hero id**, so a recast added to any future ability lights
+up the day it is added.
+⚠️ **And it is drawn at 14 pt, not 22.** Six bold capitals do not fit a 60 px tile at the
+countdown's size, and `HudLabel` sets `horizontalOverflow = Overflow`, so it would have hung out of
+both sides: the identical fault as 9.5, one commit later. The size resets every frame in
+`PaintSkillCard` so a tile that showed RECAST cannot keep drawing its cooldown small afterwards.
+
 ---
 
 ## 1 · Peer rematch voting across the wire

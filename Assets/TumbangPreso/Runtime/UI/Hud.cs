@@ -258,6 +258,18 @@ namespace TumbangPreso.UI
         /// <summary>How long the "your power is back" pop runs. Seconds.</summary>
         private const float ReadyPopSeconds = AbilityDeckHud.ReadyPopSeconds;
 
+        /// <summary>The deck tile's countdown size, from `BuildAbilityCard`. Sized for "9.9".</summary>
+        private const int StateFontSize = 22;
+
+        /// <summary>
+        /// The size the word RECAST is drawn at instead.
+        ///
+        /// ⚠️ SIX BOLD CAPITALS DO NOT FIT A 60 px TILE AT 22 pt, and `HudLabel` sets
+        /// `horizontalOverflow = Overflow`, so an oversized string hangs out of the tile rather
+        /// than wrapping or shrinking. See `PaintSkillCard`.
+        /// </summary>
+        private const int RecastFontSize = 14;
+
         /// <summary>How long a successful cast lights its own tile. Seconds.</summary>
         private const float CastFlashSeconds = AbilityDeckHud.CastFlashSeconds;
 
@@ -2817,6 +2829,13 @@ namespace TumbangPreso.UI
             PaintGlyph(card.Glyph, skill);
             card.Plate.color = Color.white;
 
+            // ⚠️ THE SIZE IS RESET EVERY FRAME, BEFORE ANY BRANCH CHOOSES A STRING. Only the
+            // recast arm changes it, and a tile that showed RECAST and then went on cooldown
+            // would otherwise draw its countdown at 14 pt for the rest of the round: the other
+            // arms set `text` and never touch `fontSize`. Defaulting here means one place owns
+            // it and no branch has to remember to put it back.
+            card.State.fontSize = StateFontSize;
+
             bool ready = skill.IsReady;
             if (ready && !card.WasReady) card.PopLeft = ReadyPopSeconds;
             card.WasReady = ready;
@@ -2860,8 +2879,38 @@ namespace TumbangPreso.UI
                 card.Glyph.color = UiTheme.HeroGlyphOn;
                 card.Key.color = UiTheme.Cream;
 
-                card.State.text = $"{skill.DurationRemaining:0.0}";
-                card.State.color = heroColor;
+                // ⚠️⚠️ A RECASTABLE POWER SAYS SO, AND UNTIL NOW NOTHING IN THE GAME DID.
+                // 🧑, off the build: *"i dont feel or know that some abilities are recast too"*.
+                // He is right and it was invisible by construction: a running ability drew a
+                // countdown, and a running ability you can press AGAIN drew the same countdown.
+                // Nemu's Astral Projection is one press out and one press back, so the entire
+                // second half of the ability was an affordance the deck never mentioned.
+                //
+                // ⚠️ THE WORD REPLACES THE NUMBER RATHER THAN CROWDING IT, because the bar
+                // underneath is already the timer: `card.Fill` carries `DurationRatio` in the
+                // same tile, so nothing is lost by spending the text slot on the thing the
+                // player cannot otherwise know. `docs/VISION.md` § 3 forbids a SENTENCE here to
+                // explain a state; one word naming the action available is what the key cap and
+                // the glyph already are.
+                //
+                // ⚠️ AND IT IS GATED ON `CanReactivate`, not on a hero id. `HeroAbility` already
+                // owns that fact and `HeroKit.Fire` already routes a press by it, so the deck
+                // reads the same property the input path does and a recast added to any future
+                // ability lights up here the day it is added.
+                //
+                // ⚠️⚠️ THE WORD IS SET SMALLER THAN THE NUMBER AND THAT IS NOT A STYLE CHOICE.
+                // The tile is 60 px and `State` is 22 pt bold, sized for "9.9". Six bold
+                // capitals at 22 pt run about 78 px, and `HudLabel` sets
+                // `horizontalOverflow = Overflow`, so it would not wrap or shrink: it would
+                // simply hang out of both sides of the tile. That is the identical fault just
+                // fixed on the objective card, where "-5 / SECOND" ran off the screen edge, so
+                // shipping it again one commit later would be careless. 14 pt puts the word at
+                // roughly 51 px, inside the tile with a margin.
+                bool recastable = skill.CanReactivate;
+
+                card.State.fontSize = recastable ? RecastFontSize : StateFontSize;
+                card.State.text = recastable ? "RECAST" : $"{skill.DurationRemaining:0.0}";
+                card.State.color = recastable ? Color.Lerp(heroColor, Color.white, 0.35f) : heroColor;
 
                 if (card.Fill != null)
                 {
