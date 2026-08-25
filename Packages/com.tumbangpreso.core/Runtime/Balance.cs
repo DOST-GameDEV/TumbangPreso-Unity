@@ -387,5 +387,50 @@ namespace TumbangPreso.Core
 
         /// <summary>How often a networked slipper's transform is sent.</summary>
         public const float SlipperSyncInterval = 0.25f;
+
+        // -------------------------------------------------------------------
+        // GETTING BACK UP
+        //
+        // 🧑, 2026-08-25, on the street trip hazards: *"like maybe places u can trip on?
+        // then fall down animation plays and u have to spam a button to get back up"*.
+        //
+        // ⚠⚠ A TRIP WAS THE ONLY DEAD TIME IN THE GAME A PLAYER COULD NOT ANSWER. The knockdown
+        // and the get-up already shipped: `StreetTripHazard` calls `CharacterMotor.ApplyTrip`,
+        // `CharacterAnimator` plays the knockdown while `TripLeft > 0.7` and the get-up under it,
+        // and the stagger runs for the same span. Then the timer ran down on its own and no
+        // input touched it, so 2.5 s on the floor was 2.5 s of watching. Every other status in
+        // this game is either short, self-inflicted or answered by a decision.
+        //
+        // ⚠⚠ IT IS A FLOOR, NOT A RACE, AND THAT IS THE WHOLE BALANCE OF IT. Rewarding raw
+        // press rate would hand the round to whoever owns a mouse with a turbo switch, and
+        // `docs/VISION.md` § 4 aims Hero Strike at a bracket. So: presses are RATE-CAPPED, each
+        // one buys a fixed slice, and no amount of mashing takes the fall below `MinTripDown`.
+        // The gap a mash can close is therefore bounded and knowable: from 2.50 s down to 0.90 s.
+        // -------------------------------------------------------------------
+
+        /// <summary>Seconds a single accepted press removes from a trip.
+        ///
+        /// ⚠ SOLVED, NOT PICKED. `StreetTripHazard` sets `TripDuration` to 2.50 s and
+        /// `MinTripDown` is 0.90 s, so a mash has 1.60 s to remove. At `MashCooldown` = 0.10 s a
+        /// player who mashes cleanly gets at most 16 presses into that window; 0.13 s each takes
+        /// 1.60 s off in 12.3 presses, which lands the full saving comfortably inside the fall
+        /// while still asking for a real burst rather than two taps.</summary>
+        public const float MashRecoverPerPress = 0.13f;
+
+        /// <summary>Shortest gap between two presses that both count.
+        ///
+        /// ⚠ THIS IS THE ANTI-TURBO BOUND AND IT IS THE REASON THE MASH IS FAIR. 10 Hz is
+        /// comfortably above what a human sustains on a burst and comfortably below what a macro
+        /// or a turbo-fire mouse does, so the ceiling is reachable by hand and cannot be beaten
+        /// by hardware.</summary>
+        public const float MashCooldown = 0.10f;
+
+        /// <summary>How long a trip lasts however hard it is answered.
+        ///
+        /// ⚠ THE KNOCKDOWN CLIP HAS TO PLAY. `CharacterAnimator.Choose` switches from the
+        /// knockdown to the get-up at `TripLeft` = 0.70, so a floor below that would let a mash
+        /// skip straight past the fall and pop the body upright with no animation at all. 0.90 s
+        /// leaves 0.20 s of knockdown before the get-up starts.</summary>
+        public const float MinTripDown = 0.90f;
     }
 }

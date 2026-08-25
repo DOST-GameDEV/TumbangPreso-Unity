@@ -439,6 +439,14 @@ namespace TumbangPreso
             ShedCharacterPerch();
             Confine();
 
+            // ⚠⚠ THE MASH IS READ HERE, BEFORE `CommitFrame`, AND IT IS THE JUMP KEY ON
+            // PURPOSE. Jump is the one verb that is meaningless while a body is face down on the
+            // tarmac, so nothing is taken away by giving it a second job in that state, and
+            // "hammer the jump key to get up" needs no teaching. It follows the pattern `Grab`
+            // already uses: one control, one action, resolved by context. No new binding is
+            // added, so `InputMapAndAbilityTests`' one-control-one-action rule is untouched.
+            if (_tripLeft > 0.0f && Intent.JustPressed(Verb.Jump)) MashRecover();
+
             // ⚠️⚠️ THE INTENT SNAPSHOT IS TAKEN HERE, AT THE END OF THE AUTHORITATIVE STEP, AND
             // NOWHERE ELSE. `JustPressed` and `JustReleased` are a diff against it, so whoever
             // takes it decides which readers can still see a press edge. Both producers used to
@@ -652,6 +660,22 @@ namespace TumbangPreso
         public float TripLeft => _tripLeft;
         public float TripTotal => _tripTotal;
 
+        private float _lastMashTime = -99.0f;
+        private int _mashPresses;
+
+        /// <summary>Accepted presses in the current fall, so the HUD can show it filling.</summary>
+        public int MashPresses => _mashPresses;
+
+        /// <summary>
+        /// True while the player should be told to mash.
+        ///
+        /// ⚠️ IT GOES FALSE AT THE FLOOR RATHER THAN AT THE END OF THE TRIP. Once
+        /// `Balance.MinTripDown` is reached nothing further can be bought, and a prompt that
+        /// keeps asking for presses it will not honour teaches the player that mashing does not
+        /// work, which is the opposite of the intent.
+        /// </summary>
+        public bool CanMashUp => _tripLeft > Balance.MinTripDown;
+
         public void ClearStun()
         {
             _stunLeft = 0.0f;
@@ -662,6 +686,7 @@ namespace TumbangPreso
         {
             _tripLeft = 0.0f;
             _tripTotal = 0.0f;
+            _mashPresses = 0;
         }
 
         /// <summary>
@@ -677,6 +702,47 @@ namespace TumbangPreso
             ApplyStagger(duration);
             _velocity.x = 0.0f;
             _velocity.z = 0.0f;
+
+            // A new fall is a new mash. Carrying the count over would let a second trip start
+            // with its prompt already full.
+            _mashPresses = 0;
+            _lastMashTime = -99.0f;
+        }
+
+        /// <summary>
+        /// One mash press against the current fall.
+        ///
+        /// 🧑, 2026-08-25: *"then fall down animation plays and u have to spam a button to
+        /// get back up"*.
+        ///
+        /// ⚠⚠️ THE STUN COMES DOWN WITH THE TRIP, AND FORGETTING THAT IS THE WHOLE BUG
+        /// WAITING TO HAPPEN HERE. `ApplyTrip` sets BOTH `_tripLeft` and, through
+        /// `ApplyStagger`, `_stunLeft` to the same duration. Shortening only the trip stands the
+        /// body up on schedule and leaves it unable to move, sprint, throw or grab for the rest
+        /// of the original 2.5 s: the player mashes, watches themselves get up, and then watches
+        /// themselves stand there, which reads as the mash having broken the character.
+        ///
+        /// ⚠️ THE RATE CAP LIVES IN `Combat.MashRecover`, NOT HERE. A bot presses the same
+        /// buttons a human does, so both reach the cap through the same function rather than
+        /// through an input-layer check only one of them passes through.
+        /// </summary>
+        public bool MashRecover()
+        {
+            if (_tripLeft <= 0.0f) return false;
+
+            float since = Time.time - _lastMashTime;
+            float before = _tripLeft;
+            float after = Combat.MashRecover(_tripLeft, since, out bool accepted);
+            if (!accepted) return false;
+
+            _lastMashTime = Time.time;
+            _mashPresses++;
+
+            float removed = before - after;
+            _tripLeft = after;
+            _stunLeft = Mathf.Max(0.0f, _stunLeft - removed);
+
+            return removed > 0.0f;
         }
 
         /// <summary>⚠️ Max(), NEVER additive. That is the entire bound on a stun chain in a

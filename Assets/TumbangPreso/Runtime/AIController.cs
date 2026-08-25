@@ -193,6 +193,21 @@ namespace TumbangPreso
             if (!_motor.CanAct())
             {
                 ReleaseAll(intent);
+
+                // ⚠⚠ A BOT MASHES TO GET UP, BECAUSE A BOT PRESSES THE SAME BUTTONS A HUMAN
+                // DOES. `docs/VISION.md` § 4 makes that an invariant rather than a nicety: the
+                // alternative is a second path where a human answers a trip and a bot cannot,
+                // which would show up in `BotBehaviourProbe` as bots spending measurably longer
+                // on the floor than the same seat played by hand, and would quietly bias every
+                // hazard measurement taken from that probe.
+                //
+                // ⚠ THE TOGGLE IS WHAT MAKES IT A MASH. `MashRecover` reads `JustPressed`, which
+                // is an EDGE, so a held key produces exactly one press in a lifetime. Alternating
+                // the held state gives one edge every other frame; `Combat.MashRecover`'s rate
+                // cap then throws away everything above 10 Hz, so the bot is held to the same
+                // ceiling as a player rather than to the frame rate.
+                if (_motor.IsTripped) intent.Set(Verb.Jump, !intent.Pressed(Verb.Jump));
+
                 return;
             }
 

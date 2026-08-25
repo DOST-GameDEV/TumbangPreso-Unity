@@ -103,7 +103,7 @@ than a builder change. That is also why the map is only reported on today and no
 
 ---
 
-## 6 · The overclock window has not been measured against a match
+## 5 · The overclock window has not been measured against a match
 
 **A new Hero Strike mechanic with a defensible number and no evidence behind it.**
 
@@ -131,6 +131,82 @@ geometry changes Hero Strike outcomes, and nothing in the harness has ever measu
 ---
 
 ## Closed
+
+- **Ilalim ng Tulay looked assembled rather than lived in.** ✅ 2026-08-25. Four faults, all
+  found in renders and all fixed against renders rather than against prose.
+
+  **The PC Express sign was not the PC Express mark.**
+  `tools/build_pc_express_logo_mesh.py` kept only the WHITE pixels of the supplied artwork, so
+  the blue "P" of EXPRESS vanished (v14 reads "PC EX RESS"), the italic X collapsed into a
+  starburst and the slanted red-over-blue field was replaced by a blue rectangle with a red bar.
+  It now segments all three brand colours (`#FFFFFF`, `#D22630`, `#003DA5`) off one quantised
+  image and extrudes **five stacked plates**: the parallelogram panel, the red field band, the
+  white keyline around the monogram, the red PC outline with its counters, and the white letter
+  faces. 5,272 vertices, 18 contours, 48 mm of relief, registered mark omitted. Three faults
+  were found and fixed by capture on the way: the ® sat INSIDE the panel so forcing its corner
+  to red before the panel was solved grew a square red horn (v15); the dark metal return was a
+  SOLID box pushed 0.19 m proud, which buried the whole mark behind a grey slab (v16), and is
+  four perimeter rails now; and the plate emission at 0.30 to 0.52 Ke under a 1.5-intensity sign
+  light clipped the whites to paper and washed the field pink, so both came down by more than
+  half. Verified in `ilalim_pcexpress_close_v22.png`, `ilalim_pcexpress_v22.png` and
+  `ilalim_thrower_view_v22.png`, where it reads from the throwing line.
+
+  **Every sign on the strip was the same sign.** § 9.2 was ticked off with six different
+  STRINGS on six near-identical wall-flush rectangles. `StreetSignKit` now holds **eleven sign
+  systems** (lightbox, framed fascia, projecting blade, ground A-board, enamel placard, lashed
+  tarpaulin, pole pylon, hung panel, painted wall, vertical banner, corrugated tin sheet) and
+  one `LetterStyle` (aspect, weight, tracking, slant, relief) applied to the ONE 5-by-7 glyph
+  table this repo is allowed to have. Thirteen businesses, and no two neighbours share a
+  silhouette. Two real bugs were found by capture: glyph aspect was computed in the plate's
+  normalised space, so on the 1.80 by 0.92 m tin sheet a 0.78 ratio became 1.53 in world and the
+  strokes merged into slabs; and the tin sheet's corrugation ribs were 13 mm PROUD of the board,
+  interleaving through every letter. Verified in `ilalim_pavement_west_v22.png` and
+  `ilalim_pavement_east_v22.png`, where GOMA and XEROX PRINT read cleanly.
+
+  **The background was underfilled and visibly repeated.** Renderers went from **1,242 to
+  2,314**. The near rows carry per-instance scale (4.40 to 6.20 instead of a flat 5.0) and
+  setbacks of 0.00 to 1.10 m, and the two sides run different sequences so the street is not
+  mirrored. Added: roof tanks, chimneys, aircon plant and aerials on every near shophouse, five
+  swaying `Sampay` washing lines, a twelve-building second shop row, yard fencing, back-lot
+  stacks, a pipe run on trestles, a crane, a hopper, six hoardings on masts, district lamp rows,
+  cross-street traffic and a four-piece stabled consist. Verified in
+  `ilalim_depth_overview_v22.png` and `ilalim_background_north_v22.png`.
+
+  **And the far ground plate was being painted as a BUILDING.** It was named `MalayoX_Ground`
+  under `Malayo`, and `EnvColourPass.IsBuilding` matches any `MalayoX_` instance, so the pass
+  gave the 240 m ground a facade tint and mapped a corrugated ROOF atlas across it. That is why
+  every gap in the district read warm pink. It sits in its own `Lupa` group now.
+
+  **Two grounding bugs the gate caught that no render would have.** `Renderer.bounds` is a
+  cached world AABB and had not taken the position written one line earlier, so solving a ground
+  offset from it read the model's LOCAL underside as a world height: `TryVisibleBounds` pushes
+  the mesh bounds through `localToWorldMatrix` instead, which cannot be stale. And
+  `AirborneByDesign` on a whole vehicle was hiding the resulting float behind an excuse whose own
+  text named the number; `ExcuseSuperstructure` excuses the body and leaves the WHEELS gated, so
+  the solve stays verifiable. The boundary cars now touch the road.
+
+  Verified: `MapGeometryCheck` **0 findings** on the gated map with 12 joined bays, 8
+  pillar-to-soffit joins, 2 track-to-deck joins, train on rail, 26 wire spans and 28 grounded
+  poles; box clear; floor solid across x +/-11.2, z +/-16.7; Core 60/60, EditMode 105/105,
+  PlayMode 55/55, `HeadlessCheck` OK, `ArenaCheck` OK, `AudioCueCheck` OK. Renders v15 to v22 in
+  `Logs/shots-ilalim/`. The plan they were built against is `docs/Ilalim_Ng_Tulay.md` § 10.
+
+- **A trip put you on the floor and gave you nothing to do about it.** ✅ 2026-08-25.
+  🧑: *"like maybe places u can trip on? then fall down animation plays and u have to spam a
+  button to get back up"*. The knockdown already shipped (`CharacterAnimator` plays `die` while
+  `TripLeft > 0.70` and `pick-up` under it, both non-looping) but nothing could shorten it.
+  `Combat.MashRecover` takes `Balance.MashRecoverPerPress` (0.13 s) off per press, rate-capped by
+  `Balance.MashCooldown` (0.10 s, so 10 Hz) and floored at `Balance.MinTripDown` (0.90 s), which
+  leaves 0.20 s of knockdown before the get-up begins. `CharacterMotor.MashRecover` takes the
+  STUN down with the trip, without which the player mashes free and then stands frozen for the
+  rest of the original 2.5 s. Bound to Jump contextually, so no binding was added; the AI toggles
+  the same verb so a bot is held to the same 10 Hz ceiling by the same function; the HUD prompt
+  reads the live binding. Two new trip sites inside the chalk, both on road detail that explains
+  them (the loose lid at -4.60, 2.40 and the sunken trench at 4.60, -2.60), both clearing the can
+  by over 5 m against a 1.40 m minimum. Four Core tests assert the bound rather than the feel:
+  a mash cannot cancel a trip, presses inside the cap do nothing, the saving fits inside the fall
+  (12.3 presses over 1.23 s of a 2.50 s trip), and the floor leaves the knockdown clip time to
+  play.
 
 - **The three measured art faults under the LRT guideway.** ✅ 2026-08-24. The 6.88 m custom
   deck, its unsupported third rails and the wrong-gauge custom train were replaced together by

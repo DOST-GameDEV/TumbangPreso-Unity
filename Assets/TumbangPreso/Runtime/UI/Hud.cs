@@ -791,6 +791,7 @@ namespace TumbangPreso.UI
             UpdateCountdown(dt);
             UpdateFrost(dt);
             UpdateIndicators();
+            UpdateGetUpPrompt();
 
             bool live = GameServices.Round.CanThrow(_local);
             _crosshair.enabled = live;
@@ -1326,6 +1327,43 @@ namespace TumbangPreso.UI
             _dangerFlash.enabled = _dangerHeld;
             _dangerFlash.color = new Color(UiTheme.Danger.r, UiTheme.Danger.g, UiTheme.Danger.b,
                                            _dangerHeld ? DangerHoldAlpha : 0.0f);
+        }
+
+        /// <summary>
+        /// "Hammer this key to get up", while a trip is still answerable.
+        ///
+        /// ⚠⚠ A MECHANIC NOBODY IS TOLD ABOUT IS NOT A MECHANIC. The mash exists because a
+        /// trip used to be the one piece of dead time in the game a player could not answer, and
+        /// a player who does not know they can answer it is in exactly the position the change
+        /// was made to fix. This is the cheapest possible teach: it appears only while it is
+        /// true, and it disappears the instant pressing stops buying anything.
+        ///
+        /// ⚠️ THE KEY COMES FROM THE LIVE BINDING, NEVER FROM A LITERAL. `docs/VISION.md`
+        /// § 3: a screen that teaches the wrong key is worse than one that teaches none, and
+        /// this key is rebindable in the settings panel like every other.
+        ///
+        /// ⚠️ IT IS PUSHED THROUGH THE TOAST EVERY FRAME RATHER THAN SET ONCE. `ShowToast`
+        /// counts down and switches itself off, so a one-shot call would vanish half a second
+        /// into a two and a half second fall. Refreshing it holds it up for exactly as long as
+        /// the state lasts, and costs one string comparison when nothing has changed.
+        /// </summary>
+        private void UpdateGetUpPrompt()
+        {
+            if (_local == null || !_local.IsTripped || !_local.CanMashUp) return;
+
+            string text = "MASH [" + KeyLabel("Jump") + "] TO GET UP";
+
+            // ⚠️ THE STRING IS ONLY REBUILT WHEN IT CHANGES. A HUD string rebuilt every frame
+            // once cost the 6x behaviour probe an eighth of its frames and most of its physics
+            // steps; that finding is recorded in `CLAUDE.md` § 7.1 and this is the same shape of
+            // code in the same file.
+            if (_toast != null && _toast.text == text && _toast.enabled)
+            {
+                _toastLeft = 0.25f;
+                return;
+            }
+
+            ShowToast(text, 0.25f);
         }
 
         private void UpdateToast(float dt)

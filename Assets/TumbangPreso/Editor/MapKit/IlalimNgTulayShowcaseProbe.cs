@@ -34,12 +34,17 @@ namespace TumbangPreso.EditorTools.MapKit
         private const int ShotHeight = 720;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v14";
+        private const string Version = "v22";
 
         [MenuItem("Tumbang Preso/Capture Ilalim Ng Tulay Showcase")]
         public static void RunFromMenu() => Execute();
 
         public static void Run() => EditorApplication.Exit(Execute() ? 0 : 1);
+
+        /// <summary>When set, only the frames that judge the PC Express fascia are rendered.
+        /// ⚠ IT IS A LOOKING TOOL, NOT A SIGN-OFF. A three-frame set cannot show a floating
+        /// prop or a repeated sign, which is the whole reason the full set has fifteen.</summary>
+        internal static bool FasciaOnly;
 
         public static bool Execute()
         {
@@ -71,6 +76,16 @@ namespace TumbangPreso.EditorTools.MapKit
             // 4. PC Express from the carriageway, which is where a player sees it from.
             Shot("pcexpress", new Vector3(-2.0f, 2.1f, 5.5f), Quaternion.Euler(6.0f, -74.0f, 0.0f), 62.0f);
 
+            if (FasciaOnly)
+            {
+                Shot("pcexpress_close", new Vector3(-6.2f, 3.30f, 5.5f),
+                     Quaternion.Euler(-5.0f, -90.0f, 0.0f), 42.0f);
+                Shot("pcexpress_angle", new Vector3(-4.4f, 2.60f, 1.4f),
+                     Quaternion.Euler(-6.0f, -58.0f, 0.0f), 55.0f);
+                Debug.Log($"[IlalimNgTulayShowcaseProbe] fascia-only set ({Version}).");
+                return true;
+            }
+
             // 5. The east pavement: pisonet, pares cart, clutter, and the kerb step that tells a
             // player where the box ends.
             Shot("street_life", new Vector3(2.0f, 2.0f, -1.5f), Quaternion.Euler(6.0f, 68.0f, 0.0f), 70.0f);
@@ -87,7 +102,48 @@ namespace TumbangPreso.EditorTools.MapKit
             Shot("guideway", new Vector3(13.0f, 13.0f, -19.0f),
                  Quaternion.Euler(23.0f, -22.0f, 0.0f), 66.0f);
 
-            Debug.Log($"[IlalimNgTulayShowcaseProbe] captured 8 shots ({Version}) into {OutDir}. " +
+            // ------------------------------------------------------------------
+            // 9 to 15 were added for the composition pass.
+            //
+            // ⚠⚠ THE FIRST EIGHT ALL LOOK AT SOMETHING THAT WAS BUILT ON PURPOSE, AND THAT
+            // IS EXACTLY WHY THEY MISSED WHAT WAS WRONG. Every one of them frames the guideway,
+            // a shop or the chalk, so the v14 set contains no picture of the ground between the
+            // near row and the far belt, no picture of the strip read ALONG a pavement (which is
+            // how sign repetition shows), and only one direction of the lane a thrower stands
+            // in. The shots below are chosen to expose faults rather than to present features.
+            // ------------------------------------------------------------------
+
+            // 9. The fascia at reading distance. The mark is traced from the official artwork
+            // and the only way to judge a trace is to fill the frame with it.
+            Shot("pcexpress_close", new Vector3(-6.2f, 3.30f, 5.5f),
+                 Quaternion.Euler(-5.0f, -90.0f, 0.0f), 42.0f);
+
+            // 10. The other throwing lane. A map with a front and a back is a map that was
+            // composed from one camera, and the north approach had never been rendered.
+            Shot("thrower_view_north", new Vector3(1.4f, 1.65f, ring),
+                 Quaternion.Euler(5.0f, 186.0f, 0.0f), 72.0f);
+
+            // 11 and 12. Along each pavement, at eye height, looking down the row. This is the
+            // frame that shows whether two neighbouring businesses share a sign silhouette,
+            // because it is the only one that puts several of them side by side.
+            Shot("pavement_west", new Vector3(-9.2f, 1.65f, -12.5f),
+                 Quaternion.Euler(2.0f, 12.0f, 0.0f), 74.0f);
+            Shot("pavement_east", new Vector3(9.2f, 1.65f, 12.5f),
+                 Quaternion.Euler(2.0f, 192.0f, 0.0f), 74.0f);
+
+            // 13. High enough to hold all three depths of § 9.1 at once: the quiet box, the
+            // shop strip, and the district behind it.
+            Shot("depth_overview", new Vector3(-26.0f, 26.0f, -30.0f),
+                 Quaternion.Euler(30.0f, 40.0f, 0.0f), 60.0f);
+
+            // 14 and 15. The background on its own terms, from inside the walls, which is where
+            // a player actually sees it from. Repetition and bare ground both show here first.
+            Shot("background_north", new Vector3(-4.0f, 2.4f, 14.0f),
+                 Quaternion.Euler(-2.0f, 24.0f, 0.0f), 76.0f);
+            Shot("background_south", new Vector3(5.0f, 2.4f, -14.0f),
+                 Quaternion.Euler(-2.0f, 200.0f, 0.0f), 76.0f);
+
+            Debug.Log($"[IlalimNgTulayShowcaseProbe] captured 15 shots ({Version}) into {OutDir}. " +
                       $"chalk r={r:F2}, throwing line={line:F2}, spawn ring={ring:F2}");
             return true;
         }

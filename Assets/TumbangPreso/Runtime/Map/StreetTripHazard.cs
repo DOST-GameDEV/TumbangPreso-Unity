@@ -8,7 +8,19 @@ namespace TumbangPreso
     /// <summary>
     /// Interactive environmental hazard (loose extension cords, oil/pares broth slicks,
     /// discarded PC component boxes, road trenches) that trips characters who run across them.
-    /// When tripped, the character falls flat on the ground for 2-3 seconds before standing up.
+    /// When tripped, the character falls flat on the ground and has to get back up.
+    ///
+    /// ⚠️⚠️ THE FALL IS ANSWERABLE NOW, AND IT WAS NOT. 🧑, 2026-08-25: *"then fall
+    /// down animation plays and u have to spam a button to get back up"*. The knockdown always
+    /// shipped: `CharacterAnimator.Choose` plays `die` while `TripLeft` is over 0.70 and
+    /// `pick-up` under it, both non-looping, so the body really is face down on the tarmac and
+    /// really does push itself back up. What did not exist was any way to answer it. The timer
+    /// ran down on its own and no input touched it, so 2.50 s on the ground was 2.50 s of
+    /// watching: the longest dead time in the game and the only one with no decision in it.
+    ///
+    /// `CharacterMotor.MashRecover` and `Combat.MashRecover` now shorten it toward a floor of
+    /// `Balance.MinTripDown`, rate-capped at 10 Hz so a turbo-fire mouse cannot beat a hand, and
+    /// the stun comes down WITH the trip so the player who mashes free can actually move.
     /// </summary>
     [RequireComponent(typeof(Collider))]
     public sealed class StreetTripHazard : MonoBehaviour

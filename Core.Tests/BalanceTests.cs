@@ -282,6 +282,85 @@ namespace TumbangPreso.Core.Tests
         }
 
         // ===================================================================
+        // GETTING BACK UP
+        //
+        // 🧑, 2026-08-25: *"then fall down animation plays and u have to spam a button to
+        // get back up"*. These four assert the bound rather than the feel: what a mash is worth,
+        // what it cannot do, and that hardware cannot beat a hand.
+        // ===================================================================
+
+        /// <summary>
+        /// ⚠️ A MASH SHORTENS A TRIP, IT DOES NOT CANCEL ONE. If a press could take the fall to
+        /// zero the hazard would cost nothing to whoever reacts first, and a hazard that can be
+        /// answered for free is a hazard nobody has to route around.
+        /// </summary>
+        [Fact]
+        public void Mash_ShortensATripButNeverCancelsIt()
+        {
+            float left = 2.5f;
+            for (int i = 0; i < 200; i++)
+                left = Combat.MashRecover(left, Balance.MashCooldown, out _);
+
+            Assert.Equal(Balance.MinTripDown, left, 3);
+            Assert.True(left > 0.0f);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE RATE CAP IS THE ANTI-TURBO BOUND. A press inside `MashCooldown` of the
+        /// last accepted one changes nothing at all, so a macro or a turbo-fire mouse cannot
+        /// take a trip below what a human burst reaches. `docs/VISION.md` § 4 aims the mode at
+        /// a bracket, and a status that is answered by hardware does not belong in one.
+        /// </summary>
+        [Fact]
+        public void Mash_IgnoresPressesInsideTheRateCap()
+        {
+            float left = Combat.MashRecover(2.5f, Balance.MashCooldown * 0.5f, out bool accepted);
+
+            Assert.False(accepted);
+            Assert.Equal(2.5f, left, 3);
+
+            left = Combat.MashRecover(2.5f, Balance.MashCooldown, out accepted);
+            Assert.True(accepted);
+            Assert.Equal(2.5f - Balance.MashRecoverPerPress, left, 3);
+        }
+
+        /// <summary>
+        /// ⚠️ THE SAVING HAS TO FIT INSIDE THE FALL, OR THE CAP IS THE REAL RULE AND THE
+        /// PER-PRESS VALUE IS DECORATION. `StreetTripHazard` trips for 2.50 s and the floor is
+        /// 0.90 s, so 1.60 s has to be removable at 0.13 s a press and no faster than 10 Hz:
+        /// 12.3 presses over 1.23 s, comfortably inside the 2.50 s the player is down for.
+        /// </summary>
+        [Fact]
+        public void Mash_CanReachTheFloorWithinTheFallItself()
+        {
+            const float trip = 2.5f;
+            float removable = trip - Balance.MinTripDown;
+            float presses = removable / Balance.MashRecoverPerPress;
+            float secondsOfMashing = presses * Balance.MashCooldown;
+
+            Assert.True(secondsOfMashing < trip,
+                        $"{presses:F1} presses need {secondsOfMashing:F2} s of a {trip:F2} s fall.");
+        }
+
+        /// <summary>
+        /// ⚠️ THE FLOOR MUST LEAVE THE KNOCKDOWN CLIP TIME TO PLAY. `CharacterAnimator.Choose`
+        /// switches from the knockdown to the get-up at `TripLeft` = 0.70, so a floor at or under
+        /// that would let a perfect mash skip the fall entirely and pop the body upright with no
+        /// animation. The 0.70 is transcribed here on purpose: if it moves, this goes red.
+        /// </summary>
+        [Fact]
+        public void Mash_LeavesTheKnockdownClipTimeToPlay()
+        {
+            const float getUpBegins = 0.70f;
+
+            Assert.True(Balance.MinTripDown > getUpBegins);
+            Assert.Equal(Balance.MinTripDown, Combat.FastestTripRecovery(2.5f), 3);
+
+            // A trip already shorter than the floor is not lengthened by the rule.
+            Assert.Equal(0.4f, Combat.FastestTripRecovery(0.4f), 3);
+        }
+
+        // ===================================================================
         // THE THROW AND THE HIT WINDOW
         // ===================================================================
 

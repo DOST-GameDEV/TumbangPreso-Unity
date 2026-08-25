@@ -1,16 +1,40 @@
 # Generated from the supplied official PC Express logo.
 
-newmtl logo_return_blue
-Kd 0.04000 0.19000 0.56000
-Ke 0.01500 0.06000 0.18000
+newmtl pcex_logo_panel_blue
+Kd 0.04300 0.17600 0.54500
+Ke 0.01000 0.03200 0.08600
 Ks 0 0 0
 Ns 10
 d 1
 illum 2
 
-newmtl logo_face_white
+newmtl pcex_logo_field_red
+Kd 0.80000 0.13000 0.16500
+Ke 0.11800 0.02000 0.02400
+Ks 0 0 0
+Ns 10
+d 1
+illum 2
+
+newmtl pcex_logo_keyline_white
+Kd 0.97500 0.97500 0.96800
+Ke 0.15000 0.15000 0.14800
+Ks 0 0 0
+Ns 10
+d 1
+illum 2
+
+newmtl pcex_logo_letter_red
+Kd 0.84500 0.14000 0.17500
+Ke 0.13000 0.02200 0.02600
+Ks 0 0 0
+Ns 10
+d 1
+illum 2
+
+newmtl pcex_logo_letter_white
 Kd 0.98500 0.98500 0.98000
-Ke 0.46000 0.46000 0.46000
+Ke 0.20500 0.20500 0.20300
 Ks 0 0 0
 Ns 10
 d 1

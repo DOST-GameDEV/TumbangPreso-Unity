@@ -134,7 +134,24 @@ namespace TumbangPreso.EditorTools.MapKit
         // ------------------------------------------------------------------
 
         private static readonly Color ConcreteApron = new Color(0.640f, 0.618f, 0.576f);
-        private static readonly Color HazeGround = new Color(0.788f, 0.760f, 0.700f);
+        /// <summary>
+        /// The 240 m plate that closes the world.
+        ///
+        /// ⚠⚠ IT WAS BEING GIVEN A FACADE TINT AND A ROOF ATLAS, AND THAT IS WHY THE DISTANCE
+        /// READ PINK. The plate was named `MalayoX_Ground` and parented under `Malayo`, and
+        /// `EnvColourPass.IsBuilding` matches any instance whose name starts with `MalayoX_`. So
+        /// the pass classified the GROUND as a mid-rise, replaced this colour with one of the
+        /// seeded Manila facade tints and mapped a corrugated ROOF texture across it. In
+        /// `ilalim_depth_overview_v19.png` every gap between the district blocks shows it: warm
+        /// pink desert where there should be haze. It sits in its own `Lupa` group now, which no
+        /// list in that pass names, so the colour below is the colour it keeps.
+        ///
+        /// ⚠ AND THE COLOUR CAME DOWN WITH IT. 0.788, 0.760, 0.700 was chosen to survive a
+        /// facade tint it should never have been getting. Unpainted it is far too warm and too
+        /// light for ground seen at 60 to 120 m through fog, so it is pulled toward the
+        /// concrete apron and desaturated.
+        /// </summary>
+        private static readonly Color HazeGround = new Color(0.688f, 0.668f, 0.632f);
         private static readonly Color ChalkWhite = new Color(0.960f, 0.950f, 0.910f);
         private static readonly Color BoostPadGlow = new Color(0.120f, 0.680f, 0.530f);
         private static readonly Color BoostPadPlum = new Color(0.550f, 0.280f, 0.620f);
@@ -144,15 +161,11 @@ namespace TumbangPreso.EditorTools.MapKit
         private static readonly Color CardboardTan = new Color(0.720f, 0.560f, 0.340f);
         private static readonly Color PotholeGrey = new Color(0.300f, 0.300f, 0.320f);
 
-        /// <summary>Under-bridge signage. Not tuned by eye: the first is the faded enamel red
-        /// every "BAWAL UMIHI DITO" placard in the country is painted in, the second the tarpaulin
-        /// blue a barangay notice is printed on.</summary>
-        private static readonly Color BawalRed = new Color(0.720f, 0.180f, 0.150f);
-        private static readonly Color TarpBlue = new Color(0.160f, 0.360f, 0.620f);
-        private static readonly Color SignCream = new Color(0.900f, 0.830f, 0.650f);
-        private static readonly Color SignMaroon = new Color(0.430f, 0.120f, 0.130f);
-        private static readonly Color SignWood = new Color(0.230f, 0.150f, 0.105f);
-        private static readonly Color Chalkboard = new Color(0.105f, 0.150f, 0.125f);
+        /// <summary>⚠ THE SIGN PALETTE LIVES IN `StreetSignKit`, NOT HERE. Six sign colours used
+        /// to be declared in this file and read by one method each. They are shared by eleven
+        /// sign systems now, and a second copy of a colour is a second thing to keep in step for
+        /// no gain: the faded enamel red every BAWAL placard in the country is painted in is one
+        /// colour, wherever it is used.</summary>
 
         [MenuItem("Tumbang Preso/Build Ilalim Ng Tulay Map")]
         public static void BuildFromMenu() => Execute();
@@ -205,6 +218,8 @@ namespace TumbangPreso.EditorTools.MapKit
             BuildLrtTrainSystem(dressing.transform);
             BuildOverclockPad(dressing.transform);
             BuildStreetProps(dressing.transform);
+            BuildRoadSurfaceDetail(dressing.transform);
+            BuildStreetFurniture(dressing.transform);
             BuildTripHazards(dressing.transform);
 
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath));
@@ -473,7 +488,7 @@ namespace TumbangPreso.EditorTools.MapKit
             // 1. The far plate. Everything else in the map rests on this, directly or through
             // one more layer, so no renderer anywhere is left standing over nothing. It goes in
             // `Malayo` so it takes the same fade toward the sky the other maps' distance does.
-            var haze = Slab(floor, "MalayoX_Ground",
+            var haze = Slab(Group(parent, "Lupa"), "FarGroundPlate",
                             new Vector3(0.0f, HazeTop - 0.40f, 0.0f),
                             new Vector3(HazeHalf * 2.0f, 0.80f, HazeHalf * 2.0f),
                             HazeGround);
@@ -566,15 +581,39 @@ namespace TumbangPreso.EditorTools.MapKit
             var skyline = Group(parent, "SkylineKit");
             var backlot = Group(parent, "BacklotKit");
 
-            BuildSideFacade(near, -1, "building-k", -12.0f, "tumbang-warm-b", "Shophouse_W0");
-            BuildSideFacade(near, -1, "building-b", -4.2f, "tumbang-warm-a", "Shophouse_W1");
-            BuildSideFacade(near, -1, "building-c", 0.8f, "tumbang-warm-c", "Shophouse_W2");
-            BuildSideFacade(near, -1, "building-e", 12.5f, "tumbang-warm-a", "Shophouse_W3");
+            // ⚠⚠ THE ROW USED TO BE FOUR INSTANCES A SIDE AT ONE SCALE, FLUSH TO ONE LINE,
+            // AND THAT IS WHY IT READ AS A COMB. Every near facade was `Vector3.one * 5.0` with
+            // its rendered near edge solved onto |x| = 11.0, so the parapet ran dead level, the
+            // shopfronts made one unbroken plane, and the two sides mirrored each other closely
+            // enough that `ilalim_corridor_v14.png` has no front and no back. Width, height,
+            // setback and palette now vary per instance, and the two sides carry different
+            // sequences on purpose: a mirrored street reads as a level-editor corridor.
+            //
+            // The setback is the one that does the most work. A shopfront pushed back 0.6 to
+            // 1.1 m makes a doorway recess, gives the awning something to sit under and gives
+            // the pavement clutter somewhere to gather, which is what turns a row of boxes into
+            // premises. It is spent OUTWARD, away from the pavement, so the 4 m of legal flank
+            // in § 1 is never touched.
+            var westRow = new List<GameObject>();
+            var eastRow = new List<GameObject>();
 
-            BuildSideFacade(near, 1, "building-e", -12.0f, "tumbang-warm-c", "Shophouse_E0");
-            BuildSideFacade(near, 1, "building-b", -5.0f, "tumbang-warm-b", "Shophouse_E1");
-            BuildSideFacade(near, 1, "building-j", 3.5f, "tumbang-warm-a", "Shophouse_E2");
-            BuildSideFacade(near, 1, "building-d", 12.0f, "tumbang-warm-c", "Shophouse_E3");
+            westRow.Add(BuildSideFacade(near, -1, "building-k", -13.4f, 6.15f, 0.00f, "tumbang-warm-b", "Shophouse_W0"));
+            westRow.Add(BuildSideFacade(near, -1, "building-f", -7.6f, 4.55f, 0.85f, "tumbang-warm-c", "Shophouse_W1"));
+            westRow.Add(BuildSideFacade(near, -1, "building-b", -1.9f, 5.30f, 0.30f, "tumbang-warm-a", "Shophouse_W2"));
+            westRow.Add(BuildSideFacade(near, -1, "building-c", 9.8f, 5.85f, 0.55f, "tumbang-warm-c", "Shophouse_W3"));
+            westRow.Add(BuildSideFacade(near, -1, "building-m", 14.9f, 4.40f, 1.10f, "tumbang-warm-a", "Shophouse_W4"));
+
+            eastRow.Add(BuildSideFacade(near, 1, "building-e", -14.2f, 4.70f, 0.95f, "tumbang-warm-c", "Shophouse_E0"));
+            eastRow.Add(BuildSideFacade(near, 1, "building-h", -8.4f, 6.05f, 0.15f, "tumbang-warm-a", "Shophouse_E1"));
+            eastRow.Add(BuildSideFacade(near, 1, "building-b", -2.6f, 4.90f, 0.70f, "tumbang-warm-b", "Shophouse_E2"));
+            eastRow.Add(BuildSideFacade(near, 1, "building-j", 4.1f, 5.60f, 0.00f, "tumbang-warm-a", "Shophouse_E3"));
+            eastRow.Add(BuildSideFacade(near, 1, "building-d", 11.6f, 6.20f, 0.45f, "tumbang-warm-c", "Shophouse_E4"));
+            eastRow.Add(BuildSideFacade(near, 1, "building-l", 16.8f, 4.60f, 0.90f, "tumbang-warm-b", "Shophouse_E5"));
+
+            BuildRoofline(parent, westRow, -1);
+            BuildRoofline(parent, eastRow, 1);
+            BuildSecondShopRow(parent);
+            BuildShopSigns(parent, westRow, eastRow);
 
             BuildBackgroundStreets(parent);
 
@@ -594,6 +633,7 @@ namespace TumbangPreso.EditorTools.MapKit
             }
 
             BuildOuterDistrict(backlot, skyline);
+            BuildDistrictDetail(backlot, skyline);
 
             // Low-detail towers make an irregular city horizon at a fraction of the geometry
             // of the old repeated hand-built blocks. Fog, rather than a second colour multiply,
@@ -707,6 +747,197 @@ namespace TumbangPreso.EditorTools.MapKit
             }
         }
 
+
+        /// <summary>
+        /// The district band: 30 to 120 m, massing and silhouette only.
+        ///
+        /// ⚠️⚠️ THE FAULT THIS ANSWERS IS "REPEATED PIECES", NOT "NOT ENOUGH PIECES".
+        /// `BuildOuterDistrict` already puts 60-odd buildings out here and the v14 captures still
+        /// read as a kit, because every one of them is the same KIND of object: a rectangular
+        /// block, standing on the ground, at one of three palettes. What a real rail corridor has
+        /// between the blocks is the stuff below, and none of it was on the map: yard fencing,
+        /// storage tanks grouped with the warehouse that owns them, chimneys and pipe runs, a
+        /// crane, rooftop hoardings, lamp columns down the far pavements, and traffic on the
+        /// cross streets rather than only on the main one.
+        ///
+        /// ⚠️ NOTHING HERE IS INSIDE |z| = 16.5 OR |x| = 20. It is all beyond both gameplay walls
+        /// and beyond the shopfront apron, so it cannot become cover, cannot be walked into, and
+        /// cannot spend any of the ability floor budget. It exists to be looked past.
+        /// </summary>
+        private static void BuildDistrictDetail(Transform backlot, Transform skyline)
+        {
+            var rng = new System.Random(20260825);
+
+            // 1. Yard fencing along the back lots. A warehouse without a fence reads as a model;
+            //    with one it reads as a plot somebody owns.
+            foreach (int side in new[] { -1, 1 })
+            {
+                for (int i = 0; i < 14; i++)
+                {
+                    float z = -34.0f + i * 5.6f;
+                    PlaceKit(backlot, "roads", "construction-fence", "tumbang-warm-b",
+                             new Vector3(side * 21.4f, HazeTop, z), 0.0f, Vector3.one * 5.4f,
+                             $"YardFence_{(side < 0 ? "W" : "E")}_{i}");
+                }
+            }
+
+            // 2. Plant grouped with the warehouses that own it, never scattered on its own.
+            (float x, float z, string model, float scale)[] plant =
+            {
+                (-27.5f, -20.0f, "chimney-large", 5.0f),
+                (-31.0f,   6.0f, "chimney-medium", 4.4f),
+                ( 28.5f, -26.0f, "chimney-medium", 4.6f),
+                ( 32.0f,  14.0f, "chimney-large", 5.2f),
+            };
+
+            foreach (var spec in plant)
+            {
+                PlaceKit(backlot, "industrial", spec.model, "tumbang-warm-b",
+                         new Vector3(spec.x, HazeTop, spec.z), 0.0f, Vector3.one * spec.scale,
+                         $"BacklotStack_{spec.x:F0}_{spec.z:F0}");
+            }
+
+            // ⚠⚠ A PIPE RACK NEEDS THE RACK. The first version put six pipe runs 2.6 to 4.2 m
+            // up with nothing beneath them, which the gate reported as six props standing on the
+            // sky and which looks exactly as wrong as it sounds from the guideway shot. Each run
+            // gets a pair of trestles down to the yard, the same answer the bridge hoop's rim
+            // bracket got: build the support, do not excuse the absence of one.
+            for (int i = 0; i < 6; i++)
+            {
+                float side = i % 2 == 0 ? -1.0f : 1.0f;
+                float x = side * (25.5f + (i % 2) * 1.6f);
+                float y = HazeTop + 2.6f + (i % 3) * 0.8f;
+                float z = -22.0f + i * 9.0f;
+
+                var pipe = PlaceKit(backlot, "factory", i % 3 == 0 ? "pipe-large-long" : "pipe-large",
+                                    "tumbang-warm-b", new Vector3(x, y, z), 90.0f,
+                                    Vector3.one * 3.2f, $"BacklotPipe_{i}");
+                if (pipe == null) continue;
+
+                AirborneByDesign.Attach(pipe,
+                    $"Pipe run carried by its two trestles at y = {y:F2} in the back lot.");
+
+                foreach (float legZ in new[] { z - 2.6f, z + 2.6f })
+                {
+                    var trestle = Slab(backlot, $"BacklotPipeTrestle_{i}_{legZ:F0}",
+                                       new Vector3(x, (HazeTop + y) * 0.5f, legZ),
+                                       new Vector3(0.34f, y - HazeTop, 0.34f),
+                                       new Color(0.355f, 0.340f, 0.310f));
+                    Object.DestroyImmediate(trestle.GetComponent<Collider>());
+                }
+            }
+
+            PlaceKit(backlot, "factory", "crane", "tumbang-warm-b",
+                     new Vector3(-33.0f, HazeTop, -30.0f), 34.0f, Vector3.one * 4.2f, "BacklotCrane");
+
+            PlaceKit(backlot, "factory", "hopper-high-square", "tumbang-warm-a",
+                     new Vector3(30.5f, HazeTop, -6.0f), -18.0f, Vector3.one * 4.0f, "BacklotHopper");
+
+            // 3. Rooftop hoardings. Aurora Boulevard advertises at roof height, and a hoarding is
+            //    the only thing out here that breaks a parapet line without adding a storey.
+            (float x, float z, float y, float yaw, float scale)[] hoardings =
+            {
+                (-24.5f, -12.0f, 12.4f,  90.0f, 7.5f),
+                ( 25.5f,   4.5f, 13.8f, -90.0f, 8.2f),
+                (-26.0f,  17.5f, 11.2f,  90.0f, 6.8f),
+                ( 27.0f, -22.0f, 12.9f, -90.0f, 7.8f),
+                (  9.0f,  34.0f, 10.6f, 180.0f, 7.0f),
+                ( -8.5f, -34.5f,  9.8f,   0.0f, 6.6f),
+            };
+
+            // ⚠⚠ THEY STAND ON MASTS, AND THE FIRST VERSION DID NOT. Six hoardings were placed
+            // at a typed height with `AirborneByDesign` and the words "bolted to a district
+            // parapet" on them. Nothing was under any of them: in
+            // `ilalim_depth_overview_v19.png` they read as green boards hanging in the sky over
+            // the rooftops, which is worse than having no hoardings at all because it is the one
+            // kind of wrongness a viewer cannot explain to themselves. A highway hoarding on a
+            // vacant lot is the honest object, it needs no roof to be solved against, and its
+            // mast is what tells the eye how far away it is.
+            for (int i = 0; i < hoardings.Length; i++)
+            {
+                var spec = hoardings[i];
+                var board = InstantiateKitProp("roads", i % 2 == 0 ? "sign-highway-wide" : "sign-highway-detailed",
+                    new Vector3(spec.x, spec.y, spec.z), Quaternion.Euler(0.0f, spec.yaw, 0.0f),
+                    Vector3.one * spec.scale, skyline, $"tumbang-warm-{(char)('a' + i % 3)}");
+                if (board == null) continue;
+
+                board.name = $"Hoarding_{i}";
+                AirborneByDesign.Attach(board,
+                    $"Advertising hoarding carried by its two masts to the lot at y = {spec.y:F1}.");
+
+                float lean = Mathf.Abs(Mathf.Sin(spec.yaw * Mathf.Deg2Rad)) > 0.5f ? 0.0f : 1.0f;
+                foreach (float offset in new[] { -spec.scale * 0.30f, spec.scale * 0.30f })
+                {
+                    var mast = Slab(skyline, $"HoardingMast_{i}_{offset:F1}",
+                        new Vector3(spec.x + offset * lean, (HazeTop + spec.y) * 0.5f,
+                                    spec.z + offset * (1.0f - lean)),
+                        new Vector3(0.42f, spec.y - HazeTop, 0.42f),
+                        new Color(0.345f, 0.335f, 0.320f));
+                    Object.DestroyImmediate(mast.GetComponent<Collider>());
+                }
+            }
+
+            // 4. Lamp columns down the two background pavements, which is what actually tells the
+            //    eye that the road continues rather than stops at the intersection.
+            foreach (int end in new[] { -1, 1 })
+            {
+                foreach (int side in new[] { -1, 1 })
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        float z = end * (20.0f + i * 9.0f);
+                        PlaceKit(skyline, "roads", "light-square-double", "tumbang-warm-a",
+                                 new Vector3(side * 9.6f, HazeTop, z), side < 0 ? 90.0f : -90.0f,
+                                 Vector3.one * 9.5f,
+                                 $"DistrictLamp_{(end < 0 ? "S" : "N")}_{(side < 0 ? "W" : "E")}_{i}");
+                    }
+                }
+            }
+
+            // 5. Traffic on the CROSS streets. The boundary traffic already runs the main road;
+            //    a junction with nothing turning through it is what made the intersections read
+            //    as painted-on rather than as somewhere the street goes.
+            string[] cars = { "sedan", "taxi", "van", "delivery", "truck" };
+            foreach (int end in new[] { -1, 1 })
+            {
+                foreach (int side in new[] { -1, 1 })
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        float x = side * (14.0f + i * 6.5f);
+                        float z = end * 31.0f + (i % 2 == 0 ? 2.1f : -2.1f);
+                        var car = PlaceKit(skyline, "car", cars[rng.Next(cars.Length)],
+                                           $"tumbang-warm-{(char)('a' + rng.Next(3))}",
+                                           new Vector3(x, RoadTop, z), side < 0 ? 90.0f : -90.0f,
+                                           Vector3.one * 1.35f,
+                                           $"CrossTraffic_{(end < 0 ? "S" : "N")}_{(side < 0 ? "W" : "E")}_{i}");
+                        ExcuseSuperstructure(car,
+                            "Cross-street traffic beyond the gameplay wall. Its wheels are solved " +
+                            "onto road y = 0 and are still gated; the body above them is carried by them.");
+                    }
+                }
+            }
+
+            // 6. A stabled freight consist in the rail corridor, well past the north wall. The map
+            //    is named for a railway and the only rolling stock on it was the one that flies
+            //    over the street every 24 s.
+            for (int i = 0; i < 4; i++)
+            {
+                string carriage = i == 0 ? "train-diesel-a"
+                                : i == 1 ? "train-carriage-container-red"
+                                : i == 2 ? "train-carriage-flatbed" : "train-carriage-tank";
+                // Every carriage in this kit carries `wheels-front` and `wheels-back` at
+                // y = 0.3595 in source space, so the body sits 0.319 m over the yard at 2x scale
+                // and is held there by its own bogies, exactly like a car.
+                var stock = PlaceKit(backlot, "train", carriage, "tumbang-lrt",
+                                     new Vector3(-38.0f, HazeTop, 26.0f + i * 9.4f), 0.0f,
+                                     Vector3.one * 2.0f, $"StabledCarriage_{i}");
+                ExcuseSuperstructure(stock,
+                    "Stabled rail vehicle in the back lot. Its bogies are solved onto the yard " +
+                    "and are still gated; the body above them is carried by them.");
+            }
+        }
+
         private static void BuildBackgroundStreets(Transform parent)
         {
             var road = Group(parent, "Kalsada");
@@ -767,22 +998,33 @@ namespace TumbangPreso.EditorTools.MapKit
             }
         }
 
-        private static void BuildSideFacade(Transform parent, int side, string model, float z,
-                                            string palette, string name)
+        /// <summary>
+        /// One shophouse on a near row.
+        ///
+        /// ⚠⚠ THE SETBACK IS SPENT AWAY FROM THE PLAYER, NEVER INTO THE PAVEMENT. The near
+        /// edge is still solved from the RENDERED bounds rather than from the model origin,
+        /// because the origin is not the shop face and hard-coding an offset per model is how
+        /// five buildings ended up standing on air 1.5 m past the ground. A setback of `s`
+        /// moves that solved edge to |x| = 11 + s, which opens a recess in the row and leaves
+        /// every one of the 4 m of legal flank exactly where it was.
+        /// </summary>
+        private static GameObject BuildSideFacade(Transform parent, int side, string model, float z,
+                                                  float scale, float setback, string palette,
+                                                  string name)
         {
             var building = InstantiateKitProp("commercial", model,
                 new Vector3(side * 13.5f, KerbTop, z),
                 Quaternion.Euler(0.0f, side < 0 ? -90.0f : 90.0f, 0.0f),
-                Vector3.one * 5.0f, parent, palette);
-            if (building == null) return;
+                Vector3.one * scale, parent, palette);
+            if (building == null) return null;
 
             building.name = name;
 
-            // The model origin is not its shop face. Move the rendered near edge to the wall
-            // at |x| = 11 so the row closes the side without taking pavement from the player.
             Bounds bounds = RenderBounds(building);
             float nearX = side < 0 ? bounds.max.x : bounds.min.x;
-            building.transform.position += new Vector3(side * PavementOuterX - nearX, 0.0f, 0.0f);
+            building.transform.position +=
+                new Vector3(side * (PavementOuterX + setback) - nearX, 0.0f, 0.0f);
+            return building;
         }
 
         private static void BuildHeroStructures(Transform parent)
@@ -878,8 +1120,12 @@ namespace TumbangPreso.EditorTools.MapKit
                 // fascia became the real red one, was washing a green cast across white letters
                 // on a red board: the three colours that carry the recognition were the three it
                 // was destroying. Warm white lets the board be the colour it is painted.
+                // The intensity came down from 1.5 after v16. The fascia carries its own
+                // emission on five plates, and a 1.5 point light 0.45 m in front of them clipped
+                // the white letters to flat paper and washed the red field to pink across its
+                // middle. See the note in tools/build_pc_express_logo_mesh.py.
                 AddPointLight(pcex.transform, "SignboardGlowLight", new Vector3(0.0f, 3.5f, -3.6f),
-                              new Color(1.0f, 0.94f, 0.86f), 5.5f, 1.5f);
+                              new Color(1.0f, 0.94f, 0.86f), 4.6f, 0.85f);
                 AddPointLight(pcex.transform, "RgbShowcaseLight", new Vector3(-0.4f, 1.2f, -2.4f),
                               new Color(0.2f, 0.8f, 1.0f), 4.0f, 1.1f);
 
@@ -1091,11 +1337,6 @@ namespace TumbangPreso.EditorTools.MapKit
             if (pisonetAwning != null)
                 AirborneByDesign.Attach(pisonetAwning, "Bolted to the east shopfront above the pisonet row.");
 
-            AddFramedWallSign(streetGo.transform, "Pisonet_Rate_Fascia",
-                new Vector3(10.96f, 2.82f, 3.45f), 90.0f, new Vector2(3.55f, 0.86f),
-                SignWood, SignCream, SignMaroon, new[] { "PISONET", "P1  5 MIN" },
-                "Framed rate fascia bolted above the three pisonet terminals.");
-
             // 2. The pares cart, same pavement, further south.
             const float paresX = 8.8f;
             var pares = InstantiateProp("env_street_pares_cart",
@@ -1118,8 +1359,6 @@ namespace TumbangPreso.EditorTools.MapKit
                 new Vector3(9.65f, SurfaceTop(9.65f), -6.9f), Quaternion.identity,
                 Vector3.one * 4.5f, streetGo.transform, "tumbang-warm-c");
             if (paresParasol != null) paresParasol.name = "Pares_Parasol";
-
-            BuildParesBoard(streetGo.transform);
 
             // 3. The delivery trike outside PC Express, on the west pavement.
             const float trikeX = -9.1f;
@@ -1225,8 +1464,6 @@ namespace TumbangPreso.EditorTools.MapKit
             AddClutter(kalat, "env_bollard", -8.2f, -8.4f, 0.0f);
             AddClutter(kalat, "env_bollard", -8.2f, -6.4f, 0.0f);
 
-            BuildRepairBladeSign(streetGo.transform);
-
             BuildUnderBridgeSignage(kalat);
         }
 
@@ -1260,7 +1497,7 @@ namespace TumbangPreso.EditorTools.MapKit
             // The generated ring stops 0.23 m short of its backboard. This bracket is the
             // missing support, not decoration: without it the rim visibly floats in the air.
             var bracket = Slab(hoop.transform, "RimBracket", new Vector3(0.0f, 3.07f, 0.37f),
-                               new Vector3(0.10f, 0.08f, 0.24f), BawalRed);
+                               new Vector3(0.10f, 0.08f, 0.24f), StreetSignKit.BawalRed);
             Object.DestroyImmediate(bracket.GetComponent<Collider>());
             AirborneByDesign.Attach(bracket, "The bracket joins the hoop rim to its backboard at y = 3.07.");
         }
@@ -1272,6 +1509,33 @@ namespace TumbangPreso.EditorTools.MapKit
         /// OVER. `docs/VISION.md` § 2 counts everything that shares the box; this is outside it,
         /// flat against concrete, and never overlaps an ability footprint.
         /// </summary>
+        // ------------------------------------------------------------------
+        // Signage.
+        //
+        // ⚠⚠ THE PLATE BUILDER, THE FRAME BUILDER AND THE LETTER PAINTER THAT USED TO LIVE
+        // HERE ARE GONE, AND SO IS THE LOOK THEY PRODUCED. `AddWallPlacard`, `AddFramedWallSign`
+        // and `PaintText` gave every business on the strip the same horizontal rectangle with
+        // the same 5-by-7 face at the same stroke weight, wall-flush at the same height, and
+        // § 9.2 of the map document was ticked off by giving each of them a different STRING.
+        // In `ilalim_street_life_v14.png` the six of them read as one sign painter with one
+        // stencil set. `StreetSignKit` holds eleven sign SYSTEMS instead, sharing the one glyph
+        // table this repository is allowed to have and varying aspect, weight, tracking, slant,
+        // relief, silhouette, mounting and material.
+        //
+        // ⚠ THE WALL PLANE IS SOLVED FROM THE BUILDING, NOT TYPED IN. The near rows now carry
+        // per-instance setbacks, so "the shopfront is at |x| = 11" stopped being true the moment
+        // the row gained variety. Asking the rendered bounds is the same rule `BuildSideFacade`
+        // already uses, and it cannot drift when a setback moves.
+        // ------------------------------------------------------------------
+
+        private static float ShopFaceX(GameObject building, int side)
+        {
+            if (building == null) return side * PavementOuterX;
+
+            Bounds bounds = RenderBounds(building);
+            return side < 0 ? bounds.max.x : bounds.min.x;
+        }
+
         private static void BuildUnderBridgeSignage(Transform parent)
         {
             var sign = Group(parent, "Karatula");
@@ -1279,174 +1543,153 @@ namespace TumbangPreso.EditorTools.MapKit
             // Flat on the measured inner face: centres at |x| = 4.45 minus a 0.70 m half width.
             float face = 4.45f - PillarWorldHalf;
 
-            // ⚠️⚠️ THE TEXT IS THE WHOLE POINT AND A BLANK PLATE IS WORSE THAN NOTHING. The first
+            // ⚠⚠ THE TEXT IS THE WHOLE POINT AND A BLANK PLATE IS WORSE THAN NOTHING. The first
             // pass put untitled red rectangles on the columns; in the capture they read as
             // missing textures, not as signage. The line every under-bridge column in the country
             // carries is the joke, so if it cannot be read it is not worth the draw call.
-            // ⚠️ THE YAW PUTS THE PRINTED FACE TOWARD THE ROAD, AND THE FIRST PASS HAD IT
+            // ⚠ THE YAW PUTS THE PRINTED FACE TOWARD THE ROAD, AND THE FIRST PASS HAD IT
             // BACKWARDS ON ALL THREE. The lettering is a child at the plate's local -Z, and a
             // yaw of +90 maps local -Z to world -X: on the WEST column that points into the
             // concrete. Both plates rendered as blank coloured rectangles with their text buried
             // inside the pillar, which in a capture reads as a missing texture.
-            AddPlacard(sign, "Bawal_West", new Vector3(-face, 1.25f, -10.0f), -90.0f, BawalRed,
-                       new[] { "BAWAL", "UMIHI", "DITO" });
-            AddPlacard(sign, "Bawal_East", new Vector3(face, 1.25f, 10.0f), 90.0f, BawalRed,
-                       new[] { "BAWAL", "UMIHI", "DITO" });
+            StreetSignKit.Placard(sign, "Bawal_West", new Vector3(-face, 1.25f, -10.0f), -90.0f,
+                new Vector2(1.10f, 0.72f), StreetSignKit.BawalRed,
+                new[] { "BAWAL", "UMIHI", "DITO" },
+                "Enamel notice painted flat on the west LRT column face at x = " + face.ToString("F2") + ".");
 
-            // A barangay tarpaulin on the far column, the other half of the vocabulary.
-            AddPlacard(sign, "Tarpaulin", new Vector3(-face, 1.65f, 19.0f), -90.0f, TarpBlue,
-                       new[] { "BARANGAY", "PAT ROL" });
+            StreetSignKit.Placard(sign, "Bawal_East", new Vector3(face, 1.25f, 10.0f), 90.0f,
+                new Vector2(1.10f, 0.72f), StreetSignKit.BawalRed,
+                new[] { "BAWAL", "UMIHI", "DITO" },
+                "Enamel notice painted flat on the east LRT column face at x = " + face.ToString("F2") + ".");
+
+            // The civic voice, and the only cloth sign on the map. § 9.2 keeps it to one.
+            StreetSignKit.Tarpaulin(sign, "Barangay_Tarp", new Vector3(-face, 1.74f, 19.0f), -90.0f,
+                new Vector2(1.72f, 1.02f), StreetSignKit.TarpBlue,
+                new[] { "BARANGAY", "PATROL" },
+                "Barangay tarpaulin lashed at four corners to the far west LRT column.");
         }
 
-        private static void AddPlacard(Transform parent, string name, Vector3 pos, float yaw,
-                                       Color tint, string[] lines)
+        /// <summary>
+        /// The businesses of the strip, one sign system each.
+        ///
+        /// ⚠⚠ THE ORDER IN THIS METHOD IS THE ORDER ALONG THE PAVEMENT, AND NO TWO NEIGHBOURS
+        /// DRAW FROM THE SAME ROW OF § 10.4's TABLE. That adjacency rule is the whole point: a
+        /// street with eleven sign types placed at random still shows two identical fascias side
+        /// by side, and the eye finds that pair before it finds the variety. Reading either
+        /// `pavement_west` or `pavement_east` from the showcase set is how the rule is checked,
+        /// because those are the only two frames that put several businesses in one picture.
+        ///
+        /// ⚠ PC EXPRESS IS NOT IN THIS LIST. Its fascia is geometry on `env_pc_express_store.obj`,
+        /// authored by `PcExpressSignAuthor` and carrying the traced official mark, because it is
+        /// a real brand and the one recorded exception to the role-hue law.
+        /// </summary>
+        private static void BuildShopSigns(Transform parent, List<GameObject> west,
+                                           List<GameObject> east)
         {
-            AddWallPlacard(parent, name, pos, yaw, new Vector2(1.10f, 0.72f), tint, lines,
-                "Painted flat on the LRT column face at x = " +
-                $"{Mathf.Abs(pos.x):F2}. A sign on a wall has nothing under it.");
+            var sign = Group(parent, "Karatula");
+            float pavementW = SurfaceTop(-9.0f);
+            float pavementE = SurfaceTop(9.0f);
+
+            // ---------------- west pavement, south to north ----------------
+
+            StreetSignKit.VerticalBanner(sign, "Sign_Labada",
+                new Vector3(ShopFaceX(west.Count > 0 ? west[0] : null, -1) + 0.06f, 3.05f, -13.4f),
+                -90.0f, new Vector2(0.74f, 3.30f), StreetSignKit.ShopGreen, StreetSignKit.Ink,
+                "LABADA", "Printed banner strapped to the west shopfront at two wall bands.");
+
+            StreetSignKit.TinSheet(sign, "Sign_Xerox",
+                new Vector3(-10.30f, pavementW, -9.0f), -90.0f,
+                new Vector2(1.95f, 0.86f), 2.42f, StreetSignKit.RustedTin, StreetSignKit.SignMaroon,
+                new[] { "XEROX PRINT" },
+                "Hand-painted tin sheet nailed to its own two posts on the west pavement.");
+
+            BuildRepairBladeSign(sign);
+
+            StreetSignKit.PaintedWall(sign, "Sign_ComputerParts",
+                new Vector3(ShopFaceX(west.Count > 2 ? west[2] : null, -1) + 0.03f, 3.55f, -1.2f),
+                // ⚠ FADED DARK, NOT FADED PALE. The first pass painted this in `SunBleach`, a
+                // light warm grey, onto a cream facade: in `ilalim_corridor_v19.png` the whole
+                // word collapses into one pale smudge that reads as an untextured panel rather
+                // than as a sign. Sun-bleached paint on a light wall keeps its VALUE contrast
+                // and loses its saturation, which is the opposite of what was drawn.
+                -90.0f, new Vector2(4.60f, 0.92f), StreetSignKit.MuralInk,
+                new[] { "COMPUTER PARTS" },
+                "Sun-bleached paint on the west facade render. There is no plate to hold up.");
+
+            // PC Express sits here, at z = 5.5. See the method note.
+
+            StreetSignKit.HungPanel(sign, "Sign_Load",
+                new Vector3(-10.42f, 2.44f, 15.0f), -90.0f, new Vector2(1.28f, 0.56f), 0.24f,
+                StreetSignKit.ShopOchre, StreetSignKit.SignMaroon,
+                new[] { "LOAD" },
+                "Panel hung on two drop rods beneath the north west shopfront awning.");
+
+            // ---------------- east pavement, south to north ----------------
+
+            StreetSignKit.Pylon(sign, "Sign_Billiards",
+                new Vector3(9.55f, pavementE, -14.0f), 90.0f, new Vector2(1.72f, 0.88f), 3.95f,
+                StreetSignKit.ShopPlum, StreetSignKit.Ink,
+                new[] { "BILLIARDS" },
+                "Double-sided pylon on its own post at the east shopfront edge.");
+
+            StreetSignKit.HungPanel(sign, "Sign_Barber",
+                new Vector3(10.40f, 2.38f, -9.6f), 90.0f, new Vector2(1.34f, 0.58f), 0.22f,
+                StreetSignKit.PlasticWhite, StreetSignKit.SignMaroon,
+                new[] { "BARBER" },
+                "Panel hung on two drop rods beneath the south east shopfront awning.");
+
+            BuildParesBoard(sign);
+
+            StreetSignKit.VerticalBanner(sign, "Sign_Paluto",
+                new Vector3(ShopFaceX(east.Count > 2 ? east[2] : null, 1) - 0.06f, 2.95f, -0.4f),
+                90.0f, new Vector2(0.70f, 3.05f), StreetSignKit.SignMaroon, StreetSignKit.SignCream,
+                "PALUTO", "Printed banner strapped to the east shopfront at two wall bands.");
+
+            // ⚠ ABOVE THE AWNING, NOT BEHIND IT. At y = 2.86 the fascia sat inside the
+            // `detail-awning-wide` mounted at 2.45, so the canopy cut a diagonal across its top
+            // right corner in `ilalim_street_life_v20.png` and ate two letters. A shop fascia
+            // goes over its own awning.
+            StreetSignKit.FramedFascia(sign, "Sign_Pisonet",
+                new Vector3(10.94f, 3.42f, 3.45f), 90.0f, new Vector2(3.45f, 0.84f),
+                StreetSignKit.SignCream, StreetSignKit.SignMaroon,
+                new[] { "PISONET", "P1  5 MIN" },
+                "Framed rate fascia bolted above the three pisonet terminals.");
+
+            StreetSignKit.TinSheet(sign, "Sign_Goma",
+                new Vector3(10.28f, pavementE, 9.2f), 90.0f,
+                new Vector2(1.80f, 0.92f), 2.30f, StreetSignKit.RustedTin, StreetSignKit.SignCream,
+                new[] { "GOMA" },
+                "Hand-painted tin sheet nailed to its own two posts on the east pavement.");
+
+            StreetSignKit.RoofLetters(sign, "Sign_Panaderia",
+                new Vector3(ShopFaceX(east.Count > 4 ? east[4] : null, 1) + 0.55f,
+                            RooflineOf(east.Count > 4 ? east[4] : null), 11.6f),
+                90.0f, 3.60f, 0.82f, StreetSignKit.SignCream, "PANADERIA",
+                "Free-standing roof letters on the north east parapet, carried by their truss.");
         }
 
-        private static void AddWallPlacard(Transform parent, string name, Vector3 pos, float yaw,
-                                           Vector2 size, Color tint, string[] lines, string reason)
-        {
-            var go = Slab(parent, name, pos, new Vector3(size.x, size.y, 0.04f), tint);
-            go.transform.localRotation = Quaternion.Euler(0.0f, yaw, 0.0f);
-            Object.DestroyImmediate(go.GetComponent<Collider>());
-            AirborneByDesign.Attach(go, reason);
-
-            // Letters are fractions of the plate local space, so every sign size uses the same
-            // font and line layout without leaving the text behind when its width changes.
-            float lineHeight = 1.0f / (lines.Length + 0.6f);
-
-            for (int i = 0; i < lines.Length; i++)
-            {
-                float cy = 0.5f - lineHeight * (i + 0.8f);
-                PaintText(go.transform, lines[i], cy, lineHeight * 0.72f, name + "_L" + i,
-                          ChalkWhite);
-            }
-        }
-
-        private static void AddFramedWallSign(Transform parent, string name, Vector3 pos, float yaw,
-                                              Vector2 size, Color frameColour, Color faceColour,
-                                              Color ink, string[] lines, string reason)
-        {
-            Quaternion rotation = Quaternion.Euler(0.0f, yaw, 0.0f);
-            Vector3 normal = rotation * Vector3.back;
-
-            var frame = Slab(parent, name + "_Frame", pos,
-                new Vector3(size.x + 0.18f, size.y + 0.18f, 0.09f), frameColour);
-            frame.transform.localRotation = rotation;
-            Object.DestroyImmediate(frame.GetComponent<Collider>());
-            AirborneByDesign.Attach(frame, reason);
-
-            var face = Slab(parent, name, pos + normal * 0.065f,
-                new Vector3(size.x, size.y, 0.045f), faceColour);
-            face.transform.localRotation = rotation;
-            Object.DestroyImmediate(face.GetComponent<Collider>());
-            AirborneByDesign.Attach(face, reason);
-
-            float lineHeight = 1.0f / (lines.Length + 0.6f);
-            for (int i = 0; i < lines.Length; i++)
-            {
-                float cy = 0.5f - lineHeight * (i + 0.8f);
-                PaintText(face.transform, lines[i], cy, lineHeight * 0.72f, name + "_L" + i, ink);
-            }
-        }
+        /// <summary>Top of a facade's rendered bounds, or a sane default if it failed to load.</summary>
+        private static float RooflineOf(GameObject building) =>
+            building != null ? RenderBounds(building).max.y : 6.0f;
 
         private static void BuildRepairBladeSign(Transform parent)
         {
-            const float x = -10.15f;
-            const float y = 2.55f;
-            const float z = -4.0f;
-
-            foreach (float bracketY in new[] { 2.18f, 2.90f })
-            {
-                var bracket = Slab(parent, $"RepairBladeBracket_{bracketY:F2}",
-                    new Vector3(-10.58f, bracketY, z), new Vector3(0.78f, 0.055f, 0.055f), SignWood);
-                Object.DestroyImmediate(bracket.GetComponent<Collider>());
-                AirborneByDesign.Attach(bracket, "Bracket joining the projecting repair sign to the west shopfront.");
-            }
-
-            AddFramedWallSign(parent, "Repair_Blade", new Vector3(x, y, z), 0.0f,
-                new Vector2(1.05f, 1.48f), SignWood, TarpBlue, SignCream,
-                new[] { "PC", "REPAIR" }, "Projecting blade sign carried by two shopfront brackets.");
+            // ⚠ A BLADE IS READ WHILE MOVING, so it faces along the pavement rather than across
+            // it. That is the one sign on the strip a player sees before they see the shop.
+            StreetSignKit.Blade(parent, "Sign_PcRepair", new Vector3(-10.22f, 2.62f, -4.0f), 0.0f,
+                new Vector2(1.02f, 1.55f), StreetSignKit.TarpBlue, StreetSignKit.SignCream,
+                new[] { "PC", "REPAIR" },
+                "Projecting blade sign carried by two brackets on the west shopfront.");
         }
 
         private static void BuildParesBoard(Transform parent)
         {
             const float x = 8.05f;
-            const float z = -3.75f;
-            float surface = SurfaceTop(x);
-
-            foreach (float legZ in new[] { z - 0.30f, z + 0.30f })
-            {
-                var leg = Slab(parent, $"ParesBoardLeg_{legZ:F2}",
-                    new Vector3(x, surface + 0.30f, legZ), new Vector3(0.055f, 0.60f, 0.055f), SignWood);
-                Object.DestroyImmediate(leg.GetComponent<Collider>());
-            }
-
-            AddWallPlacard(parent, "Pares_A_Board", new Vector3(x, surface + 0.78f, z), 90.0f,
-                new Vector2(0.92f, 0.72f), Chalkboard, new[] { "PARES", "MAMI" },
-                "Small menu board carried by its two pavement legs beside the pares cart.");
+            StreetSignKit.ABoard(parent, "Sign_Pares", new Vector3(x, SurfaceTop(x), -3.75f), 90.0f,
+                new Vector2(0.94f, 0.74f), new[] { "PARES", "MAMI" },
+                "Chalk A-board standing on its own two legs beside the pares cart.");
         }
 
-        /// <summary>
-        /// One line of blocky text, laid out in the parent plate's local space.
-        ///
-        /// ⚠️ THE ALPHABET IS `PcExpressSignAuthor.Font`, SHARED ON PURPOSE. The map already had
-        /// one 5-by-7 face for the shop fascia; a second copy here would be a second thing to
-        /// keep in step, and the one that drifts is always the one nobody is looking at.
-        /// </summary>
-        private static void PaintText(Transform plate, string text, float centreY, float glyphH,
-                                      string name, Color ink)
-        {
-            const float margin = 0.08f;
-            float gap = 0.16f;
-            float glyphW = (1.0f - margin * 2.0f - gap * glyphH * (text.Length - 1)) / text.Length;
-            float x = -0.5f + margin;
-
-            var root = new GameObject(name);
-            root.transform.SetParent(plate, false);
-
-            foreach (char c in text)
-            {
-                if (c == ' ') { x += glyphW + gap * glyphH; continue; }
-                if (!PcExpressSignAuthor.Font.TryGetValue(c, out var rows))
-                {
-                    x += glyphW + gap * glyphH;
-                    continue;
-                }
-
-                for (int col = 0; col < 5; col++)
-                {
-                    int run = -1;
-
-                    for (int row = 0; row <= 7; row++)
-                    {
-                        bool lit = row < 7 && rows[row][col] == '1';
-
-                        if (lit && run < 0) run = row;
-                        if (lit || run < 0) continue;
-
-                        float top = centreY + glyphH * (0.5f - run / 7.0f);
-                        float bottom = centreY + glyphH * (0.5f - row / 7.0f);
-
-                        var bar = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        bar.name = "g";
-                        bar.transform.SetParent(root.transform, false);
-                        bar.transform.localPosition = new Vector3(
-                            x + glyphW * (col + 0.5f) / 5.0f, (top + bottom) * 0.5f, -0.62f);
-                        bar.transform.localScale = new Vector3(glyphW / 5.0f, top - bottom, 0.30f);
-                        Paint(bar, ink);
-                        Object.DestroyImmediate(bar.GetComponent<Collider>());
-
-                        run = -1;
-                    }
-                }
-
-                x += glyphW + gap * glyphH;
-            }
-        }
 
         private static void AddClutter(Transform parent, string model, float x, float z, float yaw)
         {
@@ -1480,13 +1723,22 @@ namespace TumbangPreso.EditorTools.MapKit
 
                 vehicle.name = $"BoundaryVehicle_{i}_{spec.model}";
 
-                // Kenney cars import with their prefab root below the visible tyres. Placing the
-                // root at road zero repeats Eskinita's measured 0.263 m vehicle float. Solve from
-                // the rendered underside so every tyre, not an invisible origin, touches road.
-                Bounds bounds = RenderBounds(vehicle);
-                vehicle.transform.position += Vector3.up * (RoadTop - bounds.min.y);
-                AirborneByDesign.Attach(vehicle,
-                    "Wheel-supported boundary traffic. The rendered tyre underside is solved to road y = 0.");
+                // ⚠⚠ THE EXCUSE THAT USED TO BE ON THIS LINE WAS COVERING A BUG, NOT A
+                // DESIGN. Kenney cars import with their prefab root below the visible tyres, so
+                // this solved the underside to road zero and then attached `AirborneByDesign`
+                // because the gate still reported a 0.259 m float afterwards. Both halves were
+                // wrong together: the solve read `Renderer.bounds`, whose world AABB cache had
+                // not yet taken the position written one line earlier, so the correction was the
+                // model's own local underside and the car ended up floating by precisely the
+                // amount the excuse then forgave. `TryVisibleBounds` solves it through the
+                // transform matrix instead, the wheels touch the road, and the excuse is gone:
+                // a car parked on a street is not airborne by design.
+                if (TryVisibleBounds(vehicle, out Bounds bounds))
+                    vehicle.transform.position += Vector3.up * (RoadTop - bounds.min.y);
+
+                ExcuseSuperstructure(vehicle,
+                    "Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; " +
+                    "the body above them is carried by them.");
             }
         }
 
@@ -1521,6 +1773,29 @@ namespace TumbangPreso.EditorTools.MapKit
             CreateTripHazard(hazardGroup.transform, "TripHazard_RoadPotholeEast",
                              3.6f, -5.2f, new Vector3(2.0f, 0.4f, 1.6f),
                              "POTHOLE!", PotholeGrey);
+
+            // 🧑, 2026-08-25: *"like maybe places u can trip on? then fall down animation
+            // plays and u have to spam a button to get back up"*. These two are the answer to the
+            // first half; `Combat.MashRecovery` is the answer to the second.
+            //
+            // ⚠⚠ BOTH SIT ON SOMETHING `BuildRoadSurfaceDetail` ALREADY DREW, AND THAT IS THE
+            // RULE FOR ANY FUTURE ONE. A trigger volume on blank asphalt is an invisible tax:
+            // the player is knocked down by nothing and learns nothing they can use next lap.
+            // A loose lid sits on the manhole at (-4.60, 2.40) and the trench sits in the
+            // resurfaced patch at (4.60, -2.60), so both are legible from the taya's own eye
+            // height before anybody runs through them.
+            //
+            // ⚠ AND BOTH CLEAR THE CAN. `MapGeometryCheck.CheckLataIsClear` refuses a trip
+            // hazard within 1.40 m of the world origin, because retrieval converges there and a
+            // hazard on that square metre taxes the one move the whole game is about rather than
+            // adding risk to a choice. These stand at 5.19 m and 5.30 m.
+            CreateTripHazard(hazardGroup.transform, "TripHazard_LooseManhole",
+                             -4.6f, 2.4f, new Vector3(1.5f, 0.4f, 1.5f),
+                             "KANAL!", PotholeGrey);
+
+            CreateTripHazard(hazardGroup.transform, "TripHazard_SunkenTrench",
+                             4.6f, -2.6f, new Vector3(2.1f, 0.4f, 2.6f),
+                             "TRENCH!", CordYellow);
         }
 
         private static void CreateTripHazard(Transform parent, string name, float x, float z,
@@ -1562,6 +1837,40 @@ namespace TumbangPreso.EditorTools.MapKit
                 return;
             }
 
+            if (name.Contains("LooseManhole"))
+            {
+                // The lid, tipped up on one edge, and the dark hole under it. Flat enough to
+                // stay well under `StepOffset`, so the box clearance rule never sees it.
+                var hole = Slab(parent, "OpenShaft", new Vector3(0.10f, 0.010f, 0.05f),
+                                new Vector3(0.78f, 0.014f, 0.78f), new Color(0.055f, 0.058f, 0.065f));
+                Object.DestroyImmediate(hole.GetComponent<Collider>());
+
+                var lid = Slab(parent, "TippedLid", new Vector3(-0.34f, 0.055f, -0.12f),
+                               new Vector3(0.72f, 0.05f, 0.72f), new Color(0.205f, 0.208f, 0.222f));
+                lid.transform.localRotation = Quaternion.Euler(0.0f, 18.0f, 22.0f);
+                Object.DestroyImmediate(lid.GetComponent<Collider>());
+                return;
+            }
+
+            if (name.Contains("SunkenTrench"))
+            {
+                // A resurfaced cut that settled, with the hazard paint somebody sprayed on it.
+                var cut = Slab(parent, "SettledCut", new Vector3(0.0f, 0.008f, 0.0f),
+                               new Vector3(size.x * 0.86f, 0.012f, size.z * 0.80f),
+                               new Color(0.205f, 0.215f, 0.240f));
+                Object.DestroyImmediate(cut.GetComponent<Collider>());
+
+                for (int i = -1; i <= 1; i++)
+                {
+                    var stripe = Slab(parent, $"TrenchPaint_{i + 1}",
+                                      new Vector3(i * size.x * 0.26f, 0.016f, 0.0f),
+                                      new Vector3(0.11f, 0.010f, size.z * 0.74f), colour);
+                    stripe.transform.localRotation = Quaternion.Euler(0.0f, 24.0f, 0.0f);
+                    Object.DestroyImmediate(stripe.GetComponent<Collider>());
+                }
+                return;
+            }
+
             if (name.Contains("GpuBox"))
             {
                 for (int i = 0; i < 3; i++)
@@ -1592,6 +1901,533 @@ namespace TumbangPreso.EditorTools.MapKit
         }
 
         // ------------------------------------------------------------------
+
+
+        // ==================================================================
+        // The composition pass. `docs/Ilalim_Ng_Tulay.md` § 10.
+        // ==================================================================
+
+        /// <summary>
+        /// Instantiate a kit model and solve its Y from the RENDERED underside.
+        ///
+        /// ⚠️⚠️ EVERY PROP ADDED BY THIS PASS GOES THROUGH HERE, AND THAT IS NOT TIDINESS. The
+        /// kits do not agree with each other about where a model's origin is: Kenney cars sit
+        /// with their root below the tyres, several road props carry their origin at the top of
+        /// a post, and the commercial buildings put it at a corner. Placing any of them at the
+        /// surface height puts them into it or over it by a different amount each time, which is
+        /// exactly the family of faults `MapGeometryCheck` was written for and which no render
+        /// catches. Asking the rendered bounds cannot be wrong for a model that loaded.
+        /// </summary>
+        private static GameObject PlaceKit(Transform parent, string kit, string model, string palette,
+                                           Vector3 groundPoint, float yaw, Vector3 scale, string name)
+        {
+            var go = InstantiateKitProp(kit, model, groundPoint, Quaternion.Euler(0.0f, yaw, 0.0f),
+                                        scale, parent, palette);
+            if (go == null) return null;
+
+            go.name = name;
+
+            // ⚠⚠ ACTIVE RENDERERS ONLY, AND THAT IS NOT THE SAME SET `RenderBounds` USES.
+            // `RenderBounds` passes `includeInactive: true`, while `MapGeometryCheck` measures
+            // `FindObjectsByType<MeshRenderer>(FindObjectsInactive.Exclude)`. For most kit models
+            // the two agree, and for the ones that ship a disabled variant renderer they do not:
+            // the union with a stale inactive bound sits lower than the visible mesh, so solving
+            // against it lifts the prop by the difference. That is exactly the 0.259 m the
+            // Kenney cars are excused for in `BuildBoundaryTraffic`, and measuring the set the
+            // gate measures fixes it instead of excusing it.
+            if (!TryVisibleBounds(go, out Bounds bounds)) return go;
+
+            go.transform.position += Vector3.up * (groundPoint.y - bounds.min.y);
+            return go;
+        }
+
+
+        /// <summary>
+        /// Excuse everything on a wheeled vehicle EXCEPT its wheels.
+        ///
+        /// ⚠️⚠️ `MapGeometryCheck` REQUIRES EVERY RENDERER TO REST, ONE AT A TIME, and a vehicle
+        /// cannot satisfy that: its body is held up by its own wheels and its doors are held up
+        /// by its body. The shipped answer was `AirborneByDesign` on the whole vehicle, which
+        /// works and costs the one thing worth keeping. With the wheels excused too, a vehicle
+        /// placed 0.26 m over the tarmac reports nothing at all, which is exactly what happened:
+        /// the boundary cars floated for four versions behind an excuse whose own text named the
+        /// number it was hiding.
+        ///
+        /// ⚠️ SO THE WHEELS STAY GATED. They are the parts that touch the road, they are the
+        /// parts `TryVisibleBounds` solves against, and leaving them measurable is what makes
+        /// the solve verifiable instead of asserted. Every Kenney car and every rail carriage in
+        /// these kits names them `wheels-front`, `wheels-back` or `wheel-*`, and the elevated
+        /// gate already keys off the same prefix for the LRT consist.
+        /// </summary>
+        private static void ExcuseSuperstructure(GameObject vehicle, string reason)
+        {
+            if (vehicle == null) return;
+
+            foreach (var renderer in vehicle.GetComponentsInChildren<Renderer>(includeInactive: true))
+            {
+                if (renderer.name.StartsWith("wheel", System.StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                AirborneByDesign.Attach(renderer.gameObject, reason);
+            }
+        }
+
+        /// <summary>
+        /// The union of the ENABLED meshes on a prop, in world space, solved from each mesh's
+        /// own bounds through its transform matrix.
+        ///
+        /// ⚠⚠ IT DOES NOT READ `Renderer.bounds`, AND THAT IS THE ENTIRE POINT OF IT.
+        /// `Renderer.bounds` is a CACHED world AABB, and in an edit-mode builder the cache is
+        /// still holding the value from the prefab's own origin at the moment a freshly
+        /// instantiated object is measured. Solving a ground offset from it therefore reads the
+        /// model's LOCAL underside as if it were a world height and lifts the prop by exactly
+        /// that much: four stabled rail carriages, four different models, all four landing
+        /// 0.319 m too high, and the Kenney cars in `BuildBoundaryTraffic` carrying a standing
+        /// excuse for the same 0.259 m rather than a fix.
+        ///
+        /// ⚠ `Transform.localToWorldMatrix` IS COMPUTED ON DEMAND AND CANNOT BE STALE, and
+        /// `Mesh.bounds` is a property of the asset rather than of the instance. Pushing the
+        /// eight corners of the second through the first is exact, needs no transform flush, and
+        /// gives the same answer whether it is called one line after `InstantiatePrefab` or a
+        /// frame later.
+        /// </summary>
+        private static bool TryVisibleBounds(GameObject root, out Bounds bounds)
+        {
+            bounds = default;
+            bool any = false;
+
+            foreach (var filter in root.GetComponentsInChildren<MeshFilter>(includeInactive: false))
+            {
+                var mesh = filter.sharedMesh;
+                if (mesh == null) continue;
+
+                var renderer = filter.GetComponent<Renderer>();
+                if (renderer == null || !renderer.enabled) continue;
+
+                Bounds local = mesh.bounds;
+                Matrix4x4 toWorld = filter.transform.localToWorldMatrix;
+
+                for (int corner = 0; corner < 8; corner++)
+                {
+                    var sign = new Vector3((corner & 1) == 0 ? -1.0f : 1.0f,
+                                           (corner & 2) == 0 ? -1.0f : 1.0f,
+                                           (corner & 4) == 0 ? -1.0f : 1.0f);
+                    Vector3 world = toWorld.MultiplyPoint3x4(local.center + Vector3.Scale(local.extents, sign));
+
+                    if (!any) { bounds = new Bounds(world, Vector3.zero); any = true; }
+                    else bounds.Encapsulate(world);
+                }
+            }
+
+            return any;
+        }
+
+        /// <summary>
+        /// Roof equipment on the near shophouses.
+        ///
+        /// ⚠️⚠️ THIS IS THE CHEAPEST DETAIL ON THE MAP AND THE v14 SET HAD NONE OF IT. Every
+        /// near facade ended in a flat parapet, so the whole street silhouetted as one stepped
+        /// rectangle against the sky, and the eye has nothing to catch on above the awning line.
+        /// A water tank, a run of aircon boxes, an aerial and a washing line cost four props and
+        /// change the top edge of the frame in `corridor`, `pavement_west` and `overview` at
+        /// once. It is also the honest read: every one of these buildings would have a tank.
+        ///
+        /// ⚠️ THE ROOF HEIGHT IS THE BUILDING'S OWN RENDERED TOP, so a prop placed on it rests on
+        /// the building's bounds by construction and cannot be reported floating. Do not swap it
+        /// for a typed height; the row now carries five different scales per side.
+        /// </summary>
+        private static void BuildRoofline(Transform parent, List<GameObject> row, int side)
+        {
+            var roofs = Group(parent, "Bubong");
+
+            for (int i = 0; i < row.Count; i++)
+            {
+                var building = row[i];
+                if (building == null) continue;
+
+                Bounds bounds = RenderBounds(building);
+                float top = bounds.max.y;
+                float z = bounds.center.z;
+
+                // ⚠⚠ OFFSETS ARE FRACTIONS OF THE BUILDING'S OWN EXTENTS, NEVER METRES. The
+                // first version stepped a fixed 1.15 m and 3.10 m in from the rendered edge,
+                // which is inside a 6.2-scale shophouse and OUTSIDE a 4.4-scale one: the roof
+                // aerials on `Shophouse_W1` and `Shophouse_E2` landed past the parapet and the
+                // gate correctly reported them standing 7.7 m and 6.3 m over the apron with the
+                // building beside them rather than under them. A fraction of the half-extent
+                // cannot leave the roof however the row is rescaled, and the row now carries
+                // five different scales a side on purpose.
+                float inner = bounds.center.x - side * bounds.extents.x * 0.42f;
+                float outer = bounds.center.x + side * bounds.extents.x * 0.38f;
+                float deep = Mathf.Min(1.2f, bounds.extents.z * 0.42f);
+                string palette = $"tumbang-warm-{(char)('a' + (i + (side > 0 ? 1 : 0)) % 3)}";
+                string tag = side < 0 ? "W" : "E";
+
+                // A tank on four legs. The single most Filipino thing that can stand on a roof.
+                if (i % 2 == 0)
+                {
+                    PlaceKit(roofs, "industrial", "detail-tank", palette,
+                             new Vector3(outer, top, z + deep * 0.7f), i * 37.0f, Vector3.one * 1.45f,
+                             $"RoofTank_{tag}{i}");
+                }
+                else
+                {
+                    PlaceKit(roofs, "industrial", i % 4 == 1 ? "chimney-small" : "chimney-medium",
+                             palette, new Vector3(outer, top, z + deep), 0.0f, Vector3.one * 2.2f,
+                             $"RoofStack_{tag}{i}");
+                }
+
+                // Aircon plant, clustered rather than spread: it is one building's kit.
+                for (int unit = 0; unit < 2 + i % 2; unit++)
+                {
+                    PlaceKit(roofs, "factory", unit == 0 ? "box-wide" : "box-small", palette,
+                             new Vector3(inner, top, z - deep + unit * deep * 0.7f),
+                             12.0f * unit, Vector3.one * 0.85f, $"RoofPlant_{tag}{i}_{unit}");
+                }
+
+                // An aerial, at a different height on every roof so the skyline is not a comb.
+                // ⚠ THE MAST STANDS ON THE ROOF AND IS NOT EXCUSED, so if it ever wanders off
+                // the building again the gate says so. Only the CROSSARMS are excused, because a
+                // crossarm bolted to a mast is the one thing here that genuinely hangs in air.
+                float mast = 1.4f + (i % 3) * 0.55f;
+                var pole = Slab(roofs, $"RoofAerial_{tag}{i}",
+                                new Vector3(bounds.center.x, top + mast * 0.5f, z + deep * 0.5f),
+                                new Vector3(0.06f, mast, 0.06f), new Color(0.28f, 0.30f, 0.32f));
+                Object.DestroyImmediate(pole.GetComponent<Collider>());
+
+                for (int arm = 0; arm < 3; arm++)
+                {
+                    var cross = Slab(pole.transform, $"Arm_{arm}",
+                                     new Vector3(0.0f, 0.18f + arm * 0.22f, 0.0f),
+                                     new Vector3(7.0f - arm * 1.6f, 0.30f, 0.5f),
+                                     new Color(0.30f, 0.32f, 0.34f));
+                    Object.DestroyImmediate(cross.GetComponent<Collider>());
+                    AirborneByDesign.Attach(cross,
+                        $"Aerial crossarm clamped to the mast standing on the {(side < 0 ? "west" : "east")} " +
+                        $"shophouse roof at y = {top:F2}.");
+                }
+
+                // ⚠️ THE PREFIX IS `Sampay` ON PURPOSE. `EnvColourPass.WindPrefix` sweeps the whole
+                // map root for it and sways anything it finds, so naming the line correctly is
+                // the entire cost of getting moving laundry on this map.
+                if (i % 2 == 1)
+                {
+                    var line = InstantiateProp("env_laundry_line",
+                        new Vector3(side * (PavementOuterX + 2.2f), top - 1.1f, z),
+                        Quaternion.Euler(0.0f, 90.0f, 0.0f), roofs);
+                    if (line != null)
+                    {
+                        line.name = $"Sampay_Roof_{tag}{i}";
+                        AirborneByDesign.Attach(line,
+                            $"Washing strung across the {(side < 0 ? "west" : "east")} shophouse roof at y = {top - 1.1f:F2}.");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// A second row of shopfronts behind the first, on the apron.
+        ///
+        /// ⚠️⚠️ THE GAP BETWEEN THE NEAR ROW AND THE FAR BELT IS WHAT MADE THE MAP LOOK ASSEMBLED.
+        /// `ilalim_overview_v14.png` and `ilalim_corridor_v14.png` both show pale apron and haze
+        /// ground THROUGH the setbacks and past the ends of the near row, because the next thing
+        /// behind it was 13 m further out and half a storey shorter. The row below is deliberately
+        /// taller than the one in front of it and offset so it shows through the gaps rather than
+        /// lining up with them, which is what gives the street a middle distance at all.
+        /// </summary>
+        private static void BuildSecondShopRow(Transform parent)
+        {
+            var backRow = Group(parent, "Gilid");
+
+            (int side, string model, float z, float x, float scale, string palette)[] row =
+            {
+                (-1, "building-i", -18.5f, 16.4f, 6.6f, "tumbang-warm-a"),
+                (-1, "building-a", -10.5f, 17.8f, 7.4f, "tumbang-warm-c"),
+                (-1, "building-n",  -3.0f, 16.9f, 6.2f, "tumbang-warm-b"),
+                (-1, "building-g",   4.6f, 17.5f, 7.0f, "tumbang-warm-a"),
+                (-1, "building-l",  12.8f, 16.6f, 6.4f, "tumbang-warm-c"),
+                (-1, "building-c",  20.0f, 17.9f, 7.2f, "tumbang-warm-b"),
+                ( 1, "building-a", -20.5f, 17.6f, 7.1f, "tumbang-warm-b"),
+                ( 1, "building-l", -12.8f, 16.5f, 6.3f, "tumbang-warm-a"),
+                ( 1, "building-f",  -5.4f, 17.9f, 7.5f, "tumbang-warm-c"),
+                ( 1, "building-n",   2.2f, 16.7f, 6.1f, "tumbang-warm-b"),
+                ( 1, "building-i",  10.4f, 17.4f, 6.9f, "tumbang-warm-a"),
+                ( 1, "building-g",  18.6f, 16.8f, 6.7f, "tumbang-warm-c"),
+            };
+
+            foreach (var spec in row)
+            {
+                PlaceKit(backRow, "commercial", spec.model, spec.palette,
+                         new Vector3(spec.side * spec.x, KerbTop, spec.z),
+                         spec.side < 0 ? -90.0f : 90.0f, Vector3.one * spec.scale,
+                         $"BackShop_{(spec.side < 0 ? "W" : "E")}_{spec.z:F0}");
+            }
+        }
+
+        /// <summary>
+        /// What a carriageway has on it.
+        ///
+        /// 🧑, 2026-08-25: *"u can put shit in the box too bcz it feels empty but not too much"*,
+        /// *"js make sure the shit u put in it makes sense"*.
+        ///
+        /// ⚠️⚠️ EVERYTHING HERE IS FLAT, COLLIDERLESS AND DESATURATED, AND ALL THREE ARE RULES
+        /// RATHER THAN STYLE. Flat, because `MapGeometryCheck.CheckBoxIsClear` fails the build on
+        /// any solid collider taller than `StepOffset` inside the chalk and the taya is CLAMPED in
+        /// there and cannot walk around anything. Colliderless, because a slab primitive arrives
+        /// with a box collider and thirty road markings would be thirty findings. Desaturated,
+        /// because `VISION.md` § 2 spends this exact surface on ability telegraphs: fire orange,
+        /// ice cyan and void purple read loudest on quiet mid-value ground, and a bright decal in
+        /// the box competes with the thing the box exists to display.
+        ///
+        /// ⚠️ THERE IS NO CENTRE LINE, AND THE WORN STRIP DOWN THE MIDDLE IS WHY. A painted centre
+        /// line on a 14 m road runs through `Vector3.zero`, which is where the can spawns and
+        /// where every retrieval in the match converges; drawing the eye there with a hard white
+        /// stripe fights the lata for the most important square metre on the map. Two lane dashes
+        /// at |x| = 3.5 and a patched, resurfaced middle say the same thing about the road and
+        /// leave the centre quiet.
+        /// </summary>
+        private static void BuildRoadSurfaceDetail(Transform parent)
+        {
+            var marks = Group(parent, "Marka");
+
+            Color lanePaint = new Color(0.700f, 0.680f, 0.620f);
+            Color fadedPaint = new Color(0.560f, 0.548f, 0.505f);
+            Color patch = new Color(0.238f, 0.250f, 0.278f);
+            Color oldPatch = new Color(0.330f, 0.340f, 0.360f);
+            Color ironwork = new Color(0.205f, 0.208f, 0.222f);
+            Color stain = new Color(0.185f, 0.180f, 0.180f);
+
+            GameObject Mark(string name, Vector3 centre, Vector3 size, Color tint)
+            {
+                var go = Slab(marks, name, centre, size, tint);
+                Object.DestroyImmediate(go.GetComponent<Collider>());
+                return go;
+            }
+
+            // 1. Two dashed lane lines. 2.4 m of paint, 3.0 m of gap, the length of the corridor.
+            for (int i = -8; i <= 8; i++)
+            {
+                float z = i * 5.4f;
+                foreach (float x in new[] { -3.5f, 3.5f })
+                {
+                    Mark($"LaneDash_{(x < 0 ? "W" : "E")}_{i + 8}",
+                         new Vector3(x, RoadTop + 0.006f, z), new Vector3(0.14f, 0.012f, 2.4f),
+                         i % 3 == 0 ? fadedPaint : lanePaint);
+                }
+            }
+
+            // 2. A crossing at each end. Outside the chalk by 3.8 m, so it never draws a line
+            //    through the box, and worn enough to read as paint that has been driven over.
+            foreach (int end in new[] { -1, 1 })
+            {
+                for (int bar = 0; bar < 6; bar++)
+                {
+                    float z = end * (10.8f + bar * 0.98f);
+                    Mark($"Crossing_{(end < 0 ? "S" : "N")}_{bar}",
+                         new Vector3(0.0f, RoadTop + 0.005f, z),
+                         new Vector3(12.6f - bar * 0.4f, 0.010f, 0.48f),
+                         bar % 2 == 0 ? lanePaint : fadedPaint);
+                }
+            }
+
+            // 3. The resurfaced middle. Long, low-contrast rectangles of newer asphalt that
+            //    explain the missing centre line and give the box texture at zero height.
+            (float x, float z, float w, float l)[] patches =
+            {
+                (-0.9f, -4.6f, 3.2f, 7.4f),
+                ( 1.4f,  3.1f, 2.6f, 9.0f),
+                (-2.2f,  9.8f, 2.0f, 5.2f),
+                ( 4.6f, -2.6f, 2.5f, 3.4f),   // the resurfaced trench the TRENCH! hazard sits in
+                ( 4.9f, -9.4f, 2.4f, 4.6f),
+                (-5.4f,  6.2f, 1.9f, 3.8f),
+                ( 0.4f, -13.6f, 4.4f, 5.0f),
+            };
+
+            for (int i = 0; i < patches.Length; i++)
+            {
+                var p = patches[i];
+                Mark($"AsphaltPatch_{i}", new Vector3(p.x, RoadTop + 0.004f, p.z),
+                     new Vector3(p.w, 0.008f, p.l), i % 2 == 0 ? patch : oldPatch);
+            }
+
+            // 4. Manholes and inspection covers. Two stand inside the chalk, which is where a
+            //    real road puts them, and both clear the can by more than `LataClearance`.
+            (float x, float z, float r)[] covers =
+            {
+                (-4.6f,  2.4f, 0.36f),
+                ( 4.2f, -3.6f, 0.32f),
+                (-5.2f, -11.5f, 0.38f),
+                ( 5.6f, 11.9f, 0.34f),
+                ( 2.9f, 14.8f, 0.30f),
+                (-1.8f, -16.2f, 0.36f),
+            };
+
+            for (int i = 0; i < covers.Length; i++)
+            {
+                var c = covers[i];
+                var lid = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                lid.name = $"ManholeCover_{i}";
+                lid.transform.SetParent(marks, false);
+                lid.transform.localPosition = new Vector3(c.x, RoadTop + 0.008f, c.z);
+                lid.transform.localScale = new Vector3(c.r * 2.0f, 0.008f, c.r * 2.0f);
+                Paint(lid, ironwork);
+                Object.DestroyImmediate(lid.GetComponent<Collider>());
+
+                var collar = Mark($"ManholeCollar_{i}", new Vector3(c.x, RoadTop + 0.004f, c.z),
+                                  new Vector3(c.r * 2.34f, 0.006f, c.r * 2.34f), oldPatch);
+                collar.name = $"ManholeCollar_{i}";
+            }
+
+            // 5. Gutter grates against the kerb line, where the water actually goes.
+            foreach (int side in new[] { -1, 1 })
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    float z = -14.0f + i * 7.0f + (side > 0 ? 3.5f : 0.0f);
+                    Mark($"GutterGrate_{(side < 0 ? "W" : "E")}_{i}",
+                         new Vector3(side * 6.72f, RoadTop + 0.010f, z),
+                         new Vector3(0.42f, 0.012f, 0.92f), ironwork);
+                }
+            }
+
+            // 6. Skid arcs and one oil stain. Both live outside the chalk: they are the marks a
+            //    vehicle leaves, and no vehicle is allowed inside the box.
+            foreach (int end in new[] { -1, 1 })
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    var skid = Mark($"Skid_{(end < 0 ? "S" : "N")}_{i}",
+                                    new Vector3(-2.6f + i * 0.42f, RoadTop + 0.003f, end * (9.4f + i * 0.5f)),
+                                    new Vector3(0.20f, 0.006f, 3.6f - i * 0.4f), stain);
+                    skid.transform.localRotation = Quaternion.Euler(0.0f, end * (6.0f + i * 2.0f), 0.0f);
+                }
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                Mark($"OilStain_{i}", new Vector3(3.9f + i * 0.30f, RoadTop + 0.003f, -11.8f + i * 0.5f),
+                     new Vector3(1.5f - i * 0.35f, 0.006f, 1.1f - i * 0.22f), stain);
+            }
+        }
+
+        /// <summary>
+        /// Lamps, bins, planting and the parked clutter of a working pavement.
+        ///
+        /// ⚠️⚠️ IT ALL STANDS AT THE SHOPFRONT EDGE AND NONE OF IT IS MID-PAVEMENT. The 4 m of
+        /// legal standing room on each long side is the reason this map exists at all
+        /// (`docs/Ilalim_Ng_Tulay.md` § 1: Eskinita has 1.6 m and it is the fault that map is
+        /// judged on). A bin placed for the composition, halfway across the pavement, spends the
+        /// map's one advantage. The rule is the same one the utility line already follows.
+        ///
+        /// ⚠️ THE CLUSTERS ARE PER PREMISES, NOT PER METRE. Props are grouped where a business
+        /// would put them, so each pile reads as somebody's stock, somebody's bins or somebody's
+        /// seating rather than as scatter, which is the difference § 10 draws between detail and
+        /// object count.
+        /// </summary>
+        private static void BuildStreetFurniture(Transform parent)
+        {
+            var street = Group(parent, "Kasangkapan");
+            var kalat = Group(parent, "Kalat");
+
+            // 1. A lamp column every 12 m, staggered across the street so the two rows never
+            //    line up into a corridor of pairs.
+            foreach (int side in new[] { -1, 1 })
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    float z = -16.0f + i * 11.5f + (side > 0 ? 5.75f : 0.0f);
+                    float x = side * 10.15f;
+                    PlaceKit(street, "roads", side < 0 ? "light-curved" : "light-square",
+                             "tumbang-warm-a", new Vector3(x, SurfaceTop(x), z),
+                             side < 0 ? 90.0f : -90.0f, Vector3.one * 9.0f,
+                             $"StreetLamp_{(side < 0 ? "W" : "E")}_{i}");
+                }
+            }
+
+            // 2. The sari-sari store: the one business on the strip that needs no sign, because
+            //    the goods in the window are the sign. It closes the gap between the pisonet row
+            //    and the north end of the east pavement.
+            var sariSari = InstantiateProp("env_sari_sari_store",
+                new Vector3(9.55f, SurfaceTop(9.55f), 12.6f),
+                Quaternion.Euler(0.0f, -90.0f, 0.0f), street);
+            if (sariSari != null)
+            {
+                sariSari.name = "Sari_Sari_Store";
+                var col = sariSari.AddComponent<BoxCollider>();
+                col.center = new Vector3(0.0f, 1.30f, -0.35f);
+                col.size = new Vector3(2.40f, 2.60f, 1.70f);
+                AddPointLight(sariSari.transform, "SariSariBulb", new Vector3(0.0f, 2.05f, -0.55f),
+                              new Color(1.0f, 0.92f, 0.72f), 4.2f, 1.05f);
+            }
+
+            AddClutter(kalat, "env_monobloc_chair", 8.35f, 11.6f, -70.0f);
+            AddClutter(kalat, "env_monobloc_chair", 8.30f, 13.5f, 110.0f);
+            AddClutter(kalat, "env_crate_stack", 10.05f, 14.1f, 12.0f);
+            AddClutter(kalat, "env_halaman_lata", 8.80f, 12.4f, 0.0f);
+            AddClutter(kalat, "env_halaman_lata", 8.95f, 13.9f, 40.0f);
+
+            // 3. The vulcanising yard on the west pavement, under its tin sign. Tyres, a drum
+            //    and a bucket read as a trade the moment they are in a heap rather than a line.
+            AddClutter(kalat, "env_tire", -9.35f, -8.55f, 0.0f);
+            AddClutter(kalat, "env_tire", -9.75f, -9.15f, 25.0f);
+            AddClutter(kalat, "env_tire", -9.05f, -9.60f, 62.0f);
+            AddClutter(kalat, "env_oil_drum", -10.05f, -10.2f, 0.0f);
+            AddClutter(kalat, "env_bollard", -8.35f, -11.4f, 0.0f);
+
+            // 4. The delivery corner outside PC Express: a hand truck's worth of boxes and a bin.
+            for (int i = 0; i < 4; i++)
+            {
+                PlaceKit(kalat, "factory", i % 2 == 0 ? "box-large" : "box-wide", "tumbang-warm-a",
+                         new Vector3(-10.10f + (i % 2) * 0.42f, SurfaceTop(-10.1f), 7.6f + i * 0.46f),
+                         14.0f * i, Vector3.one * (0.90f - i * 0.06f), $"DeliveryBox_{i}");
+            }
+
+            var bin = PlaceKit(kalat, "roads", "dumpster", "tumbang-warm-b",
+                               new Vector3(-9.95f, SurfaceTop(-9.95f), -14.6f), 90.0f,
+                               Vector3.one * 3.6f, "ShopfrontDumpster");
+            if (bin != null)
+            {
+                // The kit model ships with both lids modelled open, so they stand 0.49 m over
+                // the pavement on their hinges. The body rests; the lids are the excused part.
+                foreach (var lid in new[] { "lid-left", "lid-right" })
+                {
+                    var piece = bin.transform.Find(lid);
+                    if (piece != null)
+                        AirborneByDesign.Attach(piece.gameObject, "Open dumpster lid, on its hinge.");
+                }
+            }
+
+            // 5. Planting, two clusters only. A street tree every ten metres is a suburb.
+            PlaceKit(street, "city", "planter", "tumbang-warm-c",
+                     new Vector3(-8.60f, SurfaceTop(-8.6f), 12.9f), 0.0f, Vector3.one * 4.5f,
+                     "PavementPlanter_W");
+            PlaceKit(street, "city", "tree-small", "tumbang-warm-c",
+                     new Vector3(-8.60f, SurfaceTop(-8.6f), 12.9f), 30.0f, Vector3.one * 3.2f,
+                     "PavementTree_W");
+            PlaceKit(street, "town", "hedge", "tumbang-warm-c",
+                     new Vector3(9.90f, SurfaceTop(9.9f), -12.2f), 90.0f, Vector3.one * 4.0f,
+                     "PavementHedge_E");
+
+            // 6. A parked tricycle at the north end. It is the vehicle that is allowed inside the
+            //    walls, because it is parked ON THE PAVEMENT and not on the carriageway.
+            var trike = InstantiateProp("env_tricycle",
+                new Vector3(-9.45f, SurfaceTop(-9.45f), -2.2f),
+                Quaternion.Euler(0.0f, 104.0f, 0.0f), street);
+            if (trike != null) trike.name = "Parked_Tricycle";
+
+            // 7. Washing between the two pavements is the layer that puts something ACROSS the
+            //    street at eye-lift height without touching the guideway's shadow band.
+            foreach (float z in new[] { -6.4f, 8.8f })
+            {
+                var line = InstantiateProp("env_laundry_line",
+                    new Vector3(-10.4f, 3.35f, z), Quaternion.Euler(0.0f, 90.0f, 0.0f), street);
+                if (line == null) continue;
+
+                line.name = $"Sampay_Street_{z:F0}";
+                AirborneByDesign.Attach(line,
+                    $"Washing strung along the west shopfront at y = 3.35, z = {z:F1}.");
+            }
+        }
 
         private static GameObject Slab(Transform parent, string name, Vector3 centre, Vector3 size, Color tint)
         {

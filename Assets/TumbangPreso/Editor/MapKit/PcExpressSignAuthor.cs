@@ -19,6 +19,15 @@ namespace TumbangPreso.EditorTools.MapKit
     /// official artwork into raised letter geometry; this tool builds the deep lightbox,
     /// frame, backing and halo it mounts on.
     ///
+    /// ⚠️⚠️ AND THE FIELD BOXES THIS TOOL USED TO EMIT ARE GONE, BECAUSE THE FIELD IS PART OF
+    /// THE MARK. It used to lay a red `pcex_sign_field` rectangle and a blue
+    /// `pcex_sign_logo_edge` band under a white-only letter mesh, which is a rectangle wearing
+    /// the brand colours rather than the brand. The traced mesh now carries the slanted
+    /// parallelogram, both field bands, the white keyline and the red PC outline as five
+    /// stacked plates, so everything left here is the BOX: a dark return, one illuminated
+    /// acrylic face and the two brackets that tie it to the wall. Both dead names stay in
+    /// `SignMaterials` so a re-run on an already-converted file still deletes their faces.
+    ///
     /// ⚠️ IT REWRITES THE `.obj` IN PLACE AND IS IDEMPOTENT. Every block it emits is keyed to a
     /// material name in <see cref="SignMaterials"/>, and the first thing it does is delete every
     /// face that uses one of those names. Running it twice produces the same file, so it can be
@@ -52,6 +61,7 @@ namespace TumbangPreso.EditorTools.MapKit
             "pcex_sign_green", "pcex_sign_red", "pcex_sign_white",  // the shipped set
             "pcex_sign_rim", "pcex_sign_field", "pcex_sign_tile",
             "pcex_sign_text", "pcex_sign_edge", "pcex_sign_logo_edge",
+            "pcex_sign_bracket",
             "pcex_awning_green", "pcex_awning_red", "pcex_awning_white",
         };
 
@@ -61,16 +71,17 @@ namespace TumbangPreso.EditorTools.MapKit
         // measured out of the shipped file.
         // ------------------------------------------------------------------
 
+        /// <summary>⚠️ THESE FOUR NUMBERS ARE REPEATED IN `tools/build_pc_express_logo_mesh.py`
+        /// AS `BOARD_MIN_X`..`BOARD_MAX_Y`, WHICH SOLVES THE TRACED PLATE'S HEIGHT FROM THEM
+        /// RATHER THAN TYPING ONE IN. Move one here and the mark stops fitting the box it is
+        /// bolted to, in a way that reads as a stretched logo rather than as a mismatch.</summary>
         private const float BoardMinX = -2.15f, BoardMaxX = 2.15f;
         private const float BoardMinY = 3.00f, BoardMaxY = 4.137f;
 
-        /// <summary>Each layer stands 12 mm proud of the one behind it, which is enough for the
-        /// rim, the tile and the letters to catch the sun separately without z-fighting.</summary>
-        private const float LayerStep = 0.012f;
-
+        /// <summary>The illuminated acrylic face the traced mark stands on. The plate's own five
+        /// colour layers run from z = -3.150 out to -3.178, so the mark reaches 48 mm proud of
+        /// this and the toon shader has an edge to separate every colour on.</summary>
         private const float RimFront = -3.130f;
-        private const float FieldFront = RimFront - LayerStep;
-        private const float LogoEdgeFront = FieldFront - 0.040f;
 
         /// <summary>How far back each layer reaches. One depth for all of them; only the front
         /// face is ever seen.</summary>
@@ -158,26 +169,56 @@ namespace TumbangPreso.EditorTools.MapKit
 
             var boxes = new List<Box>();
 
-            // 1. A dark metal return gives the sign a readable side profile from both lanes.
+            // 1. The dark metal carcass BEHIND the acrylic. It gives the box a body and a side
+            //    profile from both lanes without ever standing in front of the face.
             boxes.Add(new Box("pcex_sign_edge",
-                new Vector3(BoardMinX - 0.12f, BoardMinY - 0.12f, RimFront + 0.025f),
-                new Vector3(BoardMaxX + 0.12f, BoardMaxY + 0.12f, BoardBack + 0.05f)));
+                new Vector3(BoardMinX - 0.14f, BoardMinY - 0.14f, RimFront + 0.025f),
+                new Vector3(BoardMaxX + 0.14f, BoardMaxY + 0.14f, BoardBack + 0.05f)));
 
-            // 2. The white illuminated rim from the supplied exterior reference.
+            // 2. Four rails around the perimeter carry that carcass 0.19 m PAST the acrylic, so
+            //    the fascia reads as the deep box the supplied storefront photograph shows.
+            //
+            // ⚠⚠ FOUR RAILS, NOT ONE SLAB, AND THE DIFFERENCE IS THE WHOLE SIGN. The first
+            // attempt simply moved the carcass box's front face out to `RimFront - 0.190`. That
+            // box is SOLID and the shop face is -Z, so a front face further out than the mark's
+            // frontmost plate (-3.178) does not frame the mark, it buries it: the v15 capture
+            // shows a blank dark grey rectangle with 40 mm of blue and red peeking out under its
+            // bottom edge, and nothing else. The centre has to stay open.
+            float railFront = RimFront - 0.190f;
+            float railBack = RimFront + 0.010f;
+            float outerMinX = BoardMinX - 0.14f, outerMaxX = BoardMaxX + 0.14f;
+            float outerMinY = BoardMinY - 0.14f, outerMaxY = BoardMaxY + 0.14f;
+            const float railWidth = 0.11f;
+
+            boxes.Add(new Box("pcex_sign_edge",
+                new Vector3(outerMinX, outerMaxY - railWidth, railFront),
+                new Vector3(outerMaxX, outerMaxY, railBack)));
+            boxes.Add(new Box("pcex_sign_edge",
+                new Vector3(outerMinX, outerMinY, railFront),
+                new Vector3(outerMaxX, outerMinY + railWidth, railBack)));
+            boxes.Add(new Box("pcex_sign_edge",
+                new Vector3(outerMinX, outerMinY + railWidth, railFront),
+                new Vector3(outerMinX + railWidth, outerMaxY - railWidth, railBack)));
+            boxes.Add(new Box("pcex_sign_edge",
+                new Vector3(outerMaxX - railWidth, outerMinY + railWidth, railFront),
+                new Vector3(outerMaxX, outerMaxY - railWidth, railBack)));
+
+            // 3. The illuminated acrylic face. The traced mark covers all but a 30 mm reveal of
+            //    it, so what shows is a thin light border and the four corner wedges the
+            //    lockup's slant leaves, which is the artwork's own white page.
             boxes.Add(new Box("pcex_sign_rim",
                 new Vector3(BoardMinX - 0.07f, BoardMinY - 0.07f, RimFront),
                 new Vector3(BoardMaxX + 0.07f, BoardMaxY + 0.07f, BoardBack)));
 
-            // 3. Red glass backing remains visible around the raised official logo plate.
-            boxes.Add(new Box("pcex_sign_field",
-                new Vector3(BoardMinX, BoardMinY, FieldFront),
-                new Vector3(BoardMaxX, BoardMaxY, BoardBack)));
-
-            // 4. A 40 mm blue glass band carries the separate generated 3D letter mesh. That
-            // mesh is derived from the supplied official logo rather than from this block font.
-            boxes.Add(new Box("pcex_sign_logo_edge",
-                new Vector3(BoardMinX + 0.025f, BoardMinY + 0.025f, LogoEdgeFront),
-                new Vector3(BoardMaxX - 0.025f, BoardMaxY - 0.025f, FieldFront)));
+            // 4. Two mounting brackets from the box back to the shopfront. A 4.3 m lightbox
+            //    that meets the wall on nothing is the same fault the elevated gate exists to
+            //    catch, and it shows in any shot taken along the pavement.
+            foreach (float x in new[] { BoardMinX + 0.55f, BoardMaxX - 0.55f })
+            {
+                boxes.Add(new Box("pcex_sign_bracket",
+                    new Vector3(x - 0.06f, BoardMinY + 0.10f, BoardBack - 0.02f),
+                    new Vector3(x + 0.06f, BoardMaxY - 0.10f, BoardBack + 0.16f)));
+            }
 
             bool ok = RewriteObj(boxes);
             ok &= RewriteMtl();
@@ -187,7 +228,7 @@ namespace TumbangPreso.EditorTools.MapKit
             AssetDatabase.Refresh();
 
             Debug.Log(ok
-                ? $"[PcExpressSign] mounted the official logo on {boxes.Count} fascia layers."
+                ? $"[PcExpressSign] mounted the traced official mark on {boxes.Count} box pieces."
                 : "[PcExpressSign] FAILED");
 
             return ok;
@@ -314,8 +355,7 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             ("pcex_sign_edge", new Color(0.120f, 0.135f, 0.155f), Color.clear),
             ("pcex_sign_rim", new Color(0.980f, 0.980f, 0.975f), new Color(0.42f, 0.42f, 0.42f)),
-            ("pcex_sign_field", new Color(0.855f, 0.098f, 0.129f), new Color(0.40f, 0.04f, 0.05f)),
-            ("pcex_sign_logo_edge", new Color(0.055f, 0.180f, 0.490f), new Color(0.02f, 0.06f, 0.16f)),
+            ("pcex_sign_bracket", new Color(0.155f, 0.170f, 0.190f), Color.clear),
         };
 
         private static bool RewriteMtl()

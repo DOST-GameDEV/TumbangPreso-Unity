@@ -456,3 +456,177 @@ The full-span prefab is replaced by one `electricity-pole-single` at each shared
 `electricity-wires-wide` mesh between joins. Posts sit at the shopfront edge |x| = 10.65, not
 mid-pavement, and the cable runs stay parallel to Z. The elevated gate measures all 28 post
 feet, all 26 wire spans, every seam, orientation and street clearance.
+
+---
+
+## 10 · The v15 composition plan: making the street feel lived in
+
+🧑, 2026-08-25, looking at the v14 set: *"overall i want u to make this map look better and more
+detailed and give it some personality"*, *"like thoroughly plan how to make this map feel better
+and right"*. This section is that plan, written before the pass, so the next reader can tell
+what was intended from what merely happened.
+
+The v13 review produced § 9, and § 9 was correct and still got built thin. The gap is worth
+naming, because it is the trap of this whole task: **§ 9 describes categories, and the map was
+built by satisfying one instance of each category.** One blade sign exists, so "blade" is
+ticked. One awning exists, so "awning" is ticked. The result passes a reading of the document
+and fails a look at the render, because a street does not read as a street from one of each
+thing. It reads as a street from RHYTHM: many of a few kinds, unevenly spaced, at different
+sizes, with the same kind repeated at different weights.
+
+### 10.1 The three faults, restated as what the eye actually catches
+
+| Fault | What gives it away in the v14 set |
+|---|---|
+| **Sameness of sign** | `street_life` and `corridor`: every fascia is a horizontal rectangle at 2.5 to 2.8 m, wall-flush, with 5-by-7 letters at one weight. Six businesses, one sign painter. |
+| **Sameness of building** | `corridor`: four near facades a side, all 5.0 scale, all flush to |x| = 11, all with their near edge solved to the same line. The row has no front and no back. |
+| **Emptiness of ground** | `overview` and `corridor`: pale ground visible between the near row and the far belt, and again past the intersections. Nothing occupies the middle distance. |
+| **Emptiness of the box** | 🧑: *"u can put shit in the box too bcz it feels empty but not too much"*. 196 m² of unbroken asphalt with two potholes on it. |
+| **Nothing above eye line** | No roof equipment, no tanks, no antennae, no laundry, no hoardings. Every silhouette is a flat parapet. |
+
+### 10.2 What is not allowed to move, and why each one is load-bearing
+
+These are the constraints the pass is measured against, not preferences:
+
+1. **The 14 m box carries no solid furniture.** `VISION.md` § 2 and § 3.1 above. A taya is
+   CLAMPED in there and cannot walk around anything. `MapGeometryCheck.CheckBoxIsClear` fails
+   the build on any non-trigger collider taller than `StepOffset` (0.30 m) inside it.
+2. **The ability floor stays quiet.** Everything added inside the chalk is FLAT and
+   DESATURATED. A saturated decal inside the box competes with the exact thing the box exists
+   to display.
+3. **The 4.2 m legal flank on each long side stays walkable.** It is the reason this map was
+   built (§ 1). Props stay against the shopfront edge, never mid-pavement.
+4. **Cars stay outside |z| = 16.5.** Wheel-supported, solved from the rendered tyre underside.
+5. **The verified geometry does not regress.** 12 joined guideway bays, 8 pillar-to-soffit
+   joins, 2 track-to-deck joins, train on rail, 26 wire spans, 28 grounded poles, zero
+   findings.
+6. **Roads, pavements and the fog edge stay continuous.** No player ray ends on an exposed
+   world edge.
+
+### 10.3 Depth bands, and one rule per band
+
+§ 9.1 named three depths. This is what each one is allowed to contain.
+
+**Band A, the carriageway, |x| <= 7.** *Flat only.* Lane dashes, a faded crossing outside the
+chalk, manhole and inspection covers, patched asphalt in a different aggregate tint, gutter
+grates at the kerb line, skid arcs, an oil stain where the delivery van stands. Every piece is
+under 30 mm tall and carries no collider, so `CheckBoxIsClear` never sees it and a body never
+paths around it. **This is what answers "the box feels empty" without spending the readability
+budget:** the ground gains texture at zero height.
+
+**Band B, the street, |x| = 7..30.** *Everything answers a shop or a street use.* The two
+pavements carry the businesses and their clutter, grouped so each cluster reads as one
+premises: sign, goods, seating, bin, light. The facade row behind them varies in width, height,
+setback, roofline and palette. Above them, the vertical layer: awnings at three different
+depths, roof water tanks, aircon boxes, antennae, laundry lines, satellite dishes, cable drops.
+
+**Band C, the district, 30..120 m.** *Massing and silhouette, no detail.* Second mid-rise row,
+industrial back lots behind fences with tanks, chimneys, pipes and a crane, two intersecting
+streets with their own traffic, hoardings on roof parapets, lamp rows, and the low horizon
+belt into fog at 110 m.
+
+### 10.4 Breaking sign repetition properly: one alphabet, eleven sign systems
+
+⚠️ **THE ALPHABET STAYS SHARED AND THE STYLE IS WHAT VARIES.** `CLAUDE.md` § 3 and the note on
+`PcExpressSignAuthor.Font`: two blocky faces in one map is two things to keep in step and the
+one that drifts is the one nobody is looking at. So `StreetSignKit` takes the ONE 5-by-7 face
+and applies a `LetterStyle`: glyph aspect, stroke weight, tracking, slant and relief. A
+condensed 0.50-aspect stencil and a wide 0.95-aspect hand-painted sign share no visual DNA and
+share every glyph definition.
+
+The eleven systems, and the job each one does. **No two adjacent businesses may draw from the
+same row:**
+
+| System | Silhouette | Mounting | Material | Letter style |
+|---|---|---|---|---|
+| Lightbox | Deep horizontal box, framed | Wall, on brackets | Acrylic and dark metal | The traced official mark |
+| Framed fascia | Horizontal, thick timber frame | Wall-flush above an awning | Painted board | Hand-painted, wide, heavy |
+| Blade | Tall narrow vertical | Projecting on two brackets | Painted steel | Italic, condensed |
+| A-board | Small, ground level, two legs | Freestanding on the pavement | Chalkboard | Chalky, loose tracking |
+| Placard | Small rectangle | Painted flat on concrete | Enamel on column | Stencil |
+| Tarpaulin | Wide, slight sag, eyelets | Lashed at four corners | Cloth | Thin, wide |
+| Pylon | Double-sided box on a post | Own post to the ground | Painted metal | Wide, heavy |
+| Hung panel | Small landscape panel | Two drop rods under an awning | Plastic | Condensed |
+| Painted wall | No plate at all | The facade itself | Faded paint on render | Very wide, weathered |
+| Vertical banner | Tall narrow, letters stacked | Two wall bands | Printed cloth | Condensed, tight |
+| Tin sheet | Irregular, corrugated | Nailed to a post frame | Rusted galvanised | Hand-painted, uneven |
+
+### 10.5 Breaking building repetition
+
+Four levers, applied per instance rather than per row:
+
+1. **Width and height.** Scale varies 4.4 to 6.2 instead of a flat 5.0, so the parapet line
+   steps instead of running level.
+2. **Setback.** Some shopfronts sit flush to |x| = 11 and some are pushed back 0.6 to 1.1 m,
+   which makes a doorway recess and a place for clutter to gather.
+3. **Roofline.** Water tanks, aircon plant, antennae and parapet hoardings at different
+   heights on different buildings, so the skyline is not a comb.
+4. **Palette and use.** Three warm atlas variants already exist; the pass distributes them so
+   no two neighbours share one, and each facade gets a use that its clutter agrees with.
+
+⚠️ **AND THE ROW IS NOT MIRRORED.** The two sides get different building sequences, different
+setbacks and different business types. A mirrored street reads as a corridor in a level editor.
+
+### 10.6 The box, and the one gameplay verb this pass adds
+
+🧑, 2026-08-25: *"like maybe places u can trip on? then fall down animation plays and u have to
+spam a button to get back up"*.
+
+Half of that already ships and half of it does not, and the half that does not is the
+interesting half. `StreetTripHazard` calls `CharacterMotor.ApplyTrip`, `CharacterAnimator`
+plays the knockdown for `TripLeft > 0.7` and the get-up under it, and the stagger runs for the
+same duration. **The timer then runs down on its own and no input touches it.** That is the
+longest dead time in the game and the only one a player cannot answer.
+
+So the pass adds the mash, and it goes in the engine-free core with the rest of the stun model,
+because "how much does one press buy" is a balance number and every balance number in this repo
+is asserted rather than playtested. `TODO.md` § 7 carries it.
+
+Trip sites inside the chalk follow the rule already recorded in § 4: **off the spawn-to-can
+axis, and never within `MapGeometryCheck.LataClearance` of the origin.** A hazard at the can
+does not add risk to a choice, it taxes the one move the whole game is about.
+
+### 10.7 Acceptance
+
+Not a beauty shot. The pass is done when all of these hold at once:
+
+- `MapGeometryCheck` reports **0 findings** on the gated map and the elevated line still reads
+  12 bays, 8 pillar joins, 2 track joins, train on rail, 26 wire spans, 28 grounded poles.
+- `ArenaCheck` and `AudioCueCheck` OK, Core 56/56, EditMode and PlayMode green.
+- **No two neighbouring businesses share a sign silhouette** in `pavement_west` or
+  `pavement_east`.
+- **No frame in the set contains bare ground** between the near row and the horizon.
+- The taya view and both thrower views still read the lata, all four chalk edges and the kerb
+  line, and nothing added inside the box is taller than 30 mm.
+- The fascia reads as PC Express at `pcexpress_close`, at `pcexpress`, and at `overview`.
+
+### 10.8 What was built, and the six faults found by capture
+
+The pass landed on 2026-08-25. Renderers went from **1,242 to 2,314**, `MapGeometryCheck` stayed
+at **0 findings**, and the elevated gate still reads 12 joined bays, 8 pillar joins, 2 track
+joins, train on rail, 26 wire spans and 28 grounded poles.
+
+⚠️ **Six faults were found by RENDERING, not by reasoning, and every one of them looked correct
+in the source.** They are listed because the next person will make the same kind:
+
+1. **The ® is inside the panel.** Forcing its corner to field red before the parallelogram was
+   solved painted the white page above the lockup's slanted top edge as well, and the panel grew
+   a square red horn. The mask has to be intersected with the panel.
+2. **A solid return in front of a sign is not a frame, it is a lid.** Pushing the dark carcass
+   0.19 m proud of the acrylic buried the entire mark behind a grey rectangle. Four perimeter
+   rails, centre open.
+3. **Emission plus a sign light clips.** Five plates at 0.30 to 0.52 Ke under a 1.5-intensity
+   point light 0.45 m away turned the white letters into paper and the red field into pink.
+4. **A ratio in a plate's local space is not a ratio on the wall.** The plates are non-uniformly
+   scaled cubes, so `LetterStyle.Aspect` 0.78 became 1.53 in world on the 1.80 by 0.92 m tin
+   sheet, the run overflowed, and the shrunk column pitch let a 1.3 weight merge adjacent strokes.
+5. **Anything drawn on a sign face must stay behind the ink.** The tin sheet's corrugation ribs
+   were 13 mm proud and ran straight through every glyph.
+6. **`Renderer.bounds` is a cache and it lies to a builder.** Solving a ground offset from it one
+   line after `InstantiatePrefab` reads the model's LOCAL underside as a world height. Worse, the
+   float it produces was being hidden by an `AirborneByDesign` on the whole vehicle. Solve through
+   `localToWorldMatrix`; excuse the superstructure and leave the WHEELS gated.
+
+⚠️ **And one fault the gate found that no render would have:** the 240 m ground plate was named
+`MalayoX_Ground`, which `EnvColourPass.IsBuilding` matches, so the pass had been handing the
+GROUND a facade tint and a corrugated roof atlas. It is in a `Lupa` group now.
