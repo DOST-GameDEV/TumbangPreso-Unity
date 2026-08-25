@@ -38,10 +38,21 @@ namespace TumbangPreso
         ///
         /// The services object owns one and it persists, so it cannot be forgotten per scene.
         /// </summary>
+        /// ⚠️⚠️ UNCONDITIONAL, NOT "IF NONE EXISTS". It used to check
+        /// `FindFirstObjectByType&lt;AudioListener&gt;() == null` first, on the theory that some
+        /// other system might already have one. In practice the only other system that ever did
+        /// was `BootSting`, which built its own on a `HideAndDontSave` GameObject so it could be
+        /// heard before this object existed at all. `FindFirstObjectByType` does not return
+        /// objects with that flag, which was measured directly: logging the query at the moment
+        /// Unity's own "There are 2 audio listeners" warning was firing showed it finding ZERO
+        /// listeners while two real, enabled ones were alive, one on `~BootSting` and one on
+        /// `~GameServices`. Both were invisible to the very query meant to prevent duplicates, so
+        /// both existed for the entire session and neither was ever disabled. `BootSting` no
+        /// longer creates a listener of its own; it calls `GameServices.Ensure()` so this object
+        /// exists first, and this is now the ONLY place in the game a listener is ever created.
         private void Awake()
         {
-            if (FindFirstObjectByType<AudioListener>() == null)
-                gameObject.AddComponent<AudioListener>();
+            gameObject.AddComponent<AudioListener>();
 
             LoadCuesFromResources();
 
@@ -58,6 +69,16 @@ namespace TumbangPreso
         /// ⚠️ THE OTHERS ARE DISABLED, NOT DESTROYED. They belong to scenes this object does not
         /// own, and destroying a component out of somebody else's scene is how a re-import
         /// silently puts it back.
+        ///
+        /// ⚠️ THIS LOOP CANNOT SEE `mine`, AND THAT IS FINE NOW. `mine` lives on a
+        /// `HideAndDontSave` object, so `FindObjectsByType` never returns it even with
+        /// `FindObjectsInactive.Include` — that exclusion is what let this object's listener and
+        /// BootSting's coexist unseen (see the ⚠️ on Awake). The loop no longer needs to find
+        /// `mine`; it only needs to find and disable whatever a SCENE brings, which is an
+        /// ordinary object and not hidden. `mine` is held by direct reference and is never a
+        /// member of the set this searches, so the `listener == mine` check below only ever
+        /// short-circuits nothing found; it is kept because a false positive here (disabling the
+        /// real listener) would be silent, and the guard costs nothing to leave in.
         /// </summary>
         private void KeepOneListener()
         {

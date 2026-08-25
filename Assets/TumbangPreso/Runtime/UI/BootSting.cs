@@ -39,14 +39,27 @@ namespace TumbangPreso.UI
             var clip = Resources.Load<AudioClip>("Sfx/boot_sting");
             if (clip == null) return;
 
+            // ⚠️⚠️ NO LONGER ITS OWN LISTENER. It used to build one here, on the theory that
+            // GameServices had not been built yet and a clip with no listener anywhere is silent
+            // with no warning. That was true, but the fix created a second, permanent bug: this
+            // GameObject and GameServices' were both HideAndDontSave, and FindObjectsByType does
+            // not return objects with that flag. So AudioDirector's own "is one already here"
+            // check could never see this one, and this listener's dedupe (never written, because
+            // this system did not know it needed one) could never see AudioDirector's either.
+            // Both existed, both stayed enabled, for the entire process, and Unity's own
+            // duplicate-listener warning printed every frame it ran. Measured directly: logging
+            // AudioDirector's own FindObjectsByType query at the moment the warning fired showed
+            // it returning zero results while two real listeners were alive.
+            //
+            // Calling Ensure() here, at BeforeSplashScreen, forces GameServices (and its ONE
+            // AudioListener) to exist before this line runs, rather than racing BeforeSceneLoad,
+            // which is a separate hook of a later load type but was still one call this file used
+            // to make an assumption about instead of forcing.
+            GameServices.Ensure();
+
             var go = new GameObject("~BootSting");
             Object.DontDestroyOnLoad(go);
             go.hideFlags = HideFlags.HideAndDontSave;
-
-            // ⚠️ ITS OWN LISTENER, because GameServices has not been built yet at this point in
-            // the boot and a clip played with no listener in the scene is silent with no warning.
-            if (Object.FindFirstObjectByType<AudioListener>() == null)
-                go.AddComponent<AudioListener>();
 
             _source = go.AddComponent<AudioSource>();
             _source.clip = clip;

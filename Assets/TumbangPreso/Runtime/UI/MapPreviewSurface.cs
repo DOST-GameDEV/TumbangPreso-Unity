@@ -307,6 +307,15 @@ namespace TumbangPreso.UI
                 foreach (var hud in root.GetComponentsInChildren<Canvas>(true))
                     Destroy(hud.gameObject);
 
+                // ⚠️ CANNOT LEAVE THE GAME WITH ZERO LISTENERS, AND STRUCTURALLY CANNOT.
+                // `root` here is one of THIS additively loaded arena scene's own root objects.
+                // The game's one real AudioListener lives on `~GameServices`, which is
+                // DontDestroyOnLoad and was created long before any preview arena loads, so it is
+                // never a descendant of `root` and this loop can never reach it. What this
+                // destroys is only a listener the arena scene itself happened to bake in (a
+                // camera carried over from Godot import), which must go regardless, since the
+                // scene is invisible geometry behind a render texture and must not compete for
+                // the real listener slot.
                 foreach (var listener in root.GetComponentsInChildren<AudioListener>(true))
                     Destroy(listener);
 

@@ -868,6 +868,42 @@ components rather than greenfield:
    online and stable minted tokens offline. Implements profile switching (via `-tp-profile`) to
    prevent multi-instance session/seat collisions on the same machine.
 
+## 2026-08-19: the UGS account audit (the five steps no script can do)
+
+N0 step 4 asked for the Unity Gaming Services account setup. Only the first of the five steps
+was ever done, nothing in the repository recorded that fact, and the port ran for a week on a
+project with a blank `cloudProjectId`. Measured rather than remembered:
+
+| # | Step | State |
+|---|------|-------|
+| 1 | Sign in to a Unity account | **DONE.** The licensing client holds a live access token and resolves one entitlement. |
+| 2 | Link a UGS project (`Project Settings > Services`) | **NOT DONE.** `cloudProjectId`, `organizationId`, `projectName` all blank. |
+| 3 | Anonymous sign-in, Relay, Lobby in the dashboard | Unknown until 2. Anonymous is off by default. |
+| 4 | Multiplay Hosting and billing | Not done, and separately blocked: see below. |
+| 5 | Restart and confirm `cloudProjectId` | Pending 2. |
+
+⚠️ **THE SYMPTOM WAS ALREADY IN THE LOG AND READS AS SOMETHING ELSE.** `Logs/Editor.log` carries
+`[NetIdentity] Online sign-in unavailable, using local token: Some services couldn't be
+initialized.` That is the missing project link. The `Access token is unavailable` line quoted in
+an older handoff appears nowhere in the current logs and was a different, resolved problem.
+
+⚠️ **NOTHING WENT RED BECAUSE NOTHING WAS SUPPOSED TO.** `NetIdentity.EnsureSignedInAsync`
+catches the failure and mints a local token so a LAN match in a hall with no internet works, and
+`ServerQuery` warns and returns an empty list. An unconfigured cloud project is therefore
+indistinguishable from no Wi-Fi, by design. The fix is not to make those throw. It is
+`Assets/TumbangPreso/Editor/UgsCheck.cs`, which asks the services directly: anonymous sign-in, a
+Relay allocation, and a Lobby create and delete, writing `Logs/ugs-check.txt` with the dashboard
+toggle named behind every failure.
+
+⚠️ **THE N10 MULTIPLAY ROW WAS STALE AND IS NOW CORRECTED IN THE TABLE BELOW.** The fleet registration and SQP
+heartbeat exist as written, but they sit behind `MULTIPLAY_SDK`, which is defined nowhere,
+because `com.unity.services.multiplay` fails to compile on Unity 6000.5 at every published
+version. A dedicated server still hosts and serves clients; it does not report to a fleet.
+Enabling Multiplay in the dashboard is necessary and not sufficient, and the Phase 5 exit
+criterion cannot be met until one of the two routes back in `NetSession.StartMultiplayServerAsync`
+lands.
+
+
 ## 2026-08-19: the ledger reconciliation (N12)
 
 Reconciled every row in this ledger against the real Godot 4.7 baseline (`f8ba5f4`,
@@ -941,7 +977,7 @@ Godot autoloads are always-on globals. Unity has no equivalent; these become
 | `audio_manager.gd` | 1125 | `AudioDirector` + `AudioCues` + `MusicDirector` + `VoiceDirector` (789) | CONVERTED 2026-08-23, with two deliberate divergences. See the audit note below |
 | `round_manager.gd` | 476 | `RoundDirector.cs` (328) | CONVERTED. Host score and state authoritative, tag resolution, passive defence ticks, throw cooldown, per-round transitions, tournament anti-stall clocks with hysteresis that hold rather than run while a unit cannot act. ⚠️ Its per-event `host_broadcast_*` / `_sync_*` pairs are replaced by one authoritative world snapshot plus targeted RPCs; see the audit note |
 | `match_manager.gd` | 217 | `MatchDirector.cs` (156) | CONVERTED. Four-round rotation, scoring, ranking, defender derivation from `MatchRules`, snapshot adoption, intermission and match end. `is_defender_slot` and `_leading_slot` are one-liners off `DefenderSlot` and `Ranking()` rather than named members |
-| `network_manager.gd` | 1413 | `NetSession` + `LobbySession` + `MatchRpc` + `NetAuthority` + `NetBootstrap` + `NetIdentity` (1675) | CONVERTED (N0-N11): NGO and UGS stack locked, NetIdentity wired, LanBeacon converted, Relay host and client plus UGS Lobby integrated, Lobby UI converted, spawning, seating, write permissions wired, Ready gate networked, prop and match replication plus late-join sync wired, disconnect, AI takeover, seat reclaim wired, Multiplay dedicated server and SQP integrated, multi-process verification probes passing |
+| `network_manager.gd` | 1413 | `NetSession` + `LobbySession` + `MatchRpc` + `NetAuthority` + `NetBootstrap` + `NetIdentity` (1675) | CONVERTED (N0-N11): NGO and UGS stack locked, NetIdentity wired, LanBeacon converted, Relay host and client plus UGS Lobby integrated, Lobby UI converted, spawning, seating, write permissions wired, Ready gate networked, prop and match replication plus late-join sync wired, disconnect, AI takeover, seat reclaim wired, multi-process verification probes passing. ⚠️ Multiplay fleet registration and SQP are GATED OFF behind `MULTIPLAY_SDK` and the package is out of the manifest: every published `com.unity.services.multiplay`, 1.1.1 through 1.3.1, calls `EndNameEditAction`, which Unity 6000.5 marks obsolete as an error, so it cannot be installed on this editor at any version (confirmed against the 2026-08-19 UGS account audit). Dedicated hosting still serves clients, it just does not report itself to the fleet. Two ways back are written above `StartMultiplayServerAsync`. ⚠️ Relay peer hosting is now the PRIMARY online path (2026-08-20, superseding E.2 in `Unity_UGS_Networking_Prompts.md`), not a fallback behind Multiplay fleet allocation |
 | `lan_beacon.gd` | 323 | `LanBeacon.cs` (374) | CONVERTED (N2): multi-interface subnet broadcast via NetworkInterface, signature change events, and joinable/fill sorting |
 | `server_query.gd` | 536 | `ServerQuery.cs` (436) | CONVERTED (N4): legacy VPS pool retired, UGS Lobby discovery with LAN-first code resolution, distinct seated and occupied counts |
 | `game_launch.gd` | 301 | `GameLaunch.cs` (109) | CONVERTED: map registry, pending action, seating |

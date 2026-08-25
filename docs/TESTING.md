@@ -115,7 +115,24 @@ been there.
 ⚠️ **`GameBuilder` runs it before every build** and refuses to write a player that would carry
 the fault.
 
-All are also on the **Tumbang Preso** menu in the editor.
+```bash
+Unity -batchmode -nographics -projectPath . -executeMethod TumbangPreso.EditorTools.UgsCheck.Run -logFile -
+```
+
+`Logs/ugs-check.txt`. **The only check here that asks a server rather than a file.** It signs in
+anonymously, allocates a Relay server, creates and deletes a Lobby, and names the dashboard
+toggle behind each failure. Run it whenever online play misbehaves, because the five setup steps
+it covers live in the Unity account and leave no trace in this repository at all: one of them
+was skipped for a week without anything going red. `docs/Port_Plan.md` §5 has the table.
+
+⚠️ **It takes no `-quit`**, unlike the four above. The service calls are async, so the check pumps
+`EditorApplication.update` until they return and exits the editor itself.
+
+⚠️ **Batchmode cannot see whether you are signed in**, because the access token is handed to the
+editor by the Hub. It reports that as unknown rather than as a failure. Step 3 passing proves
+the sign-in anyway.
+
+All five are also on the **Tumbang Preso** menu in the editor.
 
 ---
 
