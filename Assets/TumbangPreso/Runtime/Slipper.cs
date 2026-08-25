@@ -561,7 +561,11 @@ namespace TumbangPreso
                 // silhouette to work with rather than a wider one: the knockback is unchanged
                 // at 13.0 and the stun at 1.4 s, so what a direct hit DOES is untouched. What
                 // changed is how far away it can be felt by someone who was nowhere near it.
-                Abilities.HeroHazards.CreateExplosion(transform.position, 2.6f, 13.0f, 1.4f, _throwerSlot, "BOOM!");
+                // ⚠️ THE SLIPPER STYLE, because a tsinelas going off is the game's joke and not
+                // an ultimate. It shared the supernova's fireball, flash, shake and sound, which
+                // told the player the two were the same size of event.
+                Abilities.HeroHazards.CreateExplosion(transform.position, 2.6f, 13.0f, 1.4f, _throwerSlot, "BOOM!",
+                    style: Abilities.HeroHazards.ExplosionStyle.Slipper);
             }
             else if (Affinity == SlipperAffinity.ElectricZap)
             {

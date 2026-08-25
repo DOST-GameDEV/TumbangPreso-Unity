@@ -304,9 +304,14 @@ def synth_nemu_grunt():
     return synth_vocal_shout(360.0, 290.0, formants, 0.30, grit=0.35, attack=0.03)
 
 def generate_all():
+    # ⚠️ RESOLVED FROM THIS FILE, NOT TYPED IN. These were two absolute paths under a
+    # `C:\Users\matth\Documents\GitHub` checkout that does not exist on every machine the
+    # repository is cloned to, so the script silently wrote a fresh sound set into a directory
+    # tree it had just created outside the project and reported success for all seventeen.
+    root = os.path.dirname(os.path.abspath(__file__))
     out_dirs = [
-        r"C:\Users\matth\Documents\GitHub\TumbangPreso-Unity\Assets\TumbangPreso\Art\audio\sfx",
-        r"C:\Users\matth\Documents\GitHub\TumbangPreso-Unity\Assets\TumbangPreso\Resources\Sfx",
+        os.path.join(root, "Assets", "TumbangPreso", "Art", "audio", "sfx"),
+        os.path.join(root, "Assets", "TumbangPreso", "Resources", "Sfx"),
     ]
     
     generators = {

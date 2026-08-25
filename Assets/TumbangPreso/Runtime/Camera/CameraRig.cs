@@ -137,6 +137,32 @@ namespace TumbangPreso.CameraSystem
         private float _emotePitchDeg;
         private CameraMode _modeBeforeEmote = CameraMode.Fpp;
 
+        /// <summary>
+        /// How long the eye takes to travel from Nemu into Kuro when a possession starts.
+        ///
+        /// ⚠️⚠️ THE POSSESSION WAS ALREADY A TPP VIEW OF THE PET AND STILL DID NOT READ AS ONE.
+        /// 🧑: *"it doesnt feel like im in the pet's body"*, and the first reading of that, that
+        /// the camera never moved, is wrong: `ApplyCompanionPossessionView` has always mounted
+        /// behind Kuro and `StepCompanionLook` has always steered him. What it did was call
+        /// `SetPositionAndRotation` with the finished pose on the possession's FIRST frame.
+        ///
+        /// ⚠️ A CUT IS NOT A TRANSFORMATION. With no travel between the two poses the player
+        /// never sees themselves leave, so there is no moment to attribute the new body to and
+        /// the swap reads as a glitch or as nothing at all. Kuro is projected out AHEAD of Nemu,
+        /// so simply giving the move a duration makes the camera fly from her head to his, which
+        /// is the spirit leaving one body and arriving in the other, drawn rather than asserted.
+        ///
+        /// 0.28 s is short enough that it never costs the player a fight and long enough to be
+        /// seen. `docs/Hero_Strike_Balance.md` § 8.6 is the rule that says this ability, and
+        /// almost none of the others, is allowed to take the camera at all.
+        /// </summary>
+        private const float PossessBlendSeconds = 0.28f;
+
+        private bool _wasPossessing;
+        private float _possessBlend;
+        private Vector3 _possessFromPos;
+        private Quaternion _possessFromRot;
+
         public CameraMode Mode => _mode;
         public AimSource Aim => _aimSource;
         public bool IsLocalFpp => _active && _mode == CameraMode.Fpp;
@@ -389,6 +415,19 @@ namespace TumbangPreso.CameraSystem
             var companion = visual != null ? visual.Companion : null;
             bool isPossessingCompanion = companion != null && companion.IsPossessed;
 
+            // ⚠️ THE EDGE IS CAUGHT HERE AND NOWHERE ELSE. `GhostPetCompanion` owns the
+            // possession state and the rig only reads it, so the frame the flag flips is the
+            // only place the rig can learn where the eye was standing when the body was left.
+            // Sampling it later would blend from a pose that has already been overwritten.
+            if (isPossessingCompanion && !_wasPossessing)
+            {
+                _possessBlend = 0.0f;
+                _possessFromPos = transform.position;
+                _possessFromRot = transform.rotation;
+            }
+
+            _wasPossessing = isPossessingCompanion;
+
             if (isPossessingCompanion)
             {
                 StepCompanionLook(companion);
@@ -436,6 +475,22 @@ namespace TumbangPreso.CameraSystem
             Vector3 mount = companion.transform.position + Vector3.up * 0.35f;
             var rot = Quaternion.Euler(Mathf.Clamp(_pitchDeg, -45.0f, 65.0f), yaw, 0.0f);
             Vector3 wanted = mount - (rot * Vector3.forward) * 2.0f;
+
+            // ⚠️⚠️ THE ARRIVAL IS TRAVELLED, NOT CUT. See `PossessBlendSeconds`. Until the blend
+            // completes the eye is carried from where it stood in Nemu's head to the mount
+            // behind Kuro, which is what makes the possession read as a possession.
+            if (_possessBlend < 1.0f)
+            {
+                _possessBlend = Mathf.Clamp01(_possessBlend + Time.deltaTime / PossessBlendSeconds);
+
+                // ⚠️ SMOOTHSTEP RATHER THAN LINEAR. A constant-speed camera arriving at a dead
+                // stop reads as a scripted move; easing both ends reads as the eye being pulled.
+                float e = _possessBlend * _possessBlend * (3.0f - 2.0f * _possessBlend);
+
+                transform.SetPositionAndRotation(Vector3.Lerp(_possessFromPos, wanted, e),
+                                                 Quaternion.Slerp(_possessFromRot, rot, e));
+                return;
+            }
 
             transform.SetPositionAndRotation(wanted, rot);
         }

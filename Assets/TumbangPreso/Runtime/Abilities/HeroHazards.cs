@@ -1104,7 +1104,11 @@ namespace TumbangPreso.Abilities
             // time; a one-shot burst at cast leaves four seconds of a flat purple disc.
             AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.VoidWisp, duration);
 
-            GameServices.Audio?.PlayAt("ability_bagsak_bomb", position);
+            // ⚠️ A TEAR IN THE WORLD IS NOT A BOMB. This played `ability_bagsak_bomb`, so Nemu's
+            // ultimate opened with the same detonation as Sean's and Dante's. `sfx_possess_enter`
+            // is the rising, sucking shape written for her possession and it is the same gesture
+            // a vortex makes: something being pulled through.
+            GameServices.Audio?.PlayAt("sfx_possess_enter", position);
             ComicPopup.Spawn(position, "VOID GALAXY!", UiTheme.HeroSpiritBright, 1.4f);
 
             HazardVolume.Attach(go, radius, ownerSlot);
@@ -1229,7 +1233,11 @@ namespace TumbangPreso.Abilities
             light.intensity = 6.0f;
             Object.Destroy(lightGo, 0.35f);
 
-            GameServices.Audio?.PlayAt("ability_flick_dash", position);
+            // ⚠️⚠️ THIS WAS `ability_flick_dash`. Zack's ultimate, the loudest thing in his kit,
+            // landed on the sound of a dash, from the deleted ability set. `sfx_lightning_strike`
+            // stays on the CAST, where the arc is; this is the bolt reaching the street, and it
+            // has the crack, the ground sub and the roll that a dash cannot supply.
+            GameServices.Audio?.PlayAt("sfx_thunder_impact", position);
             ComicPopup.Zap(position);
 
             // Camera shake on main camera
@@ -1261,63 +1269,257 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         // GRAND EXPLOSION EFFECT (Sean Skill 2 & Ultimate, Dante Stomp)
         // -------------------------------------------------------------------
+        /// <summary>
+        /// Which fiction a blast belongs to.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE ONE FUNCTION WAS DRAWING FOUR DIFFERENT EVENTS.
+        /// `Hero_Strike_Balance.md` § 8.5 item 3: *"`CreateExplosion` draws the same sphere and
+        /// shockwave for a 2.2 m stomp and a 4.8 m Supernova, so the two biggest moments in two
+        /// different kits are the same picture at two sizes."* They were also the same SOUND at
+        /// two sizes, and the same colour, and the same debris.
+        ///
+        /// ⚠️ THE DEFAULT IS `Fire` SO THE ENUM IS ADDITIVE. Every existing call keeps exactly
+        /// the look it had unless it opts into another one.
+        /// </summary>
+        public enum ExplosionStyle
+        {
+            /// <summary>Sean. A ball of flame, embers, a burnt splat on the road.</summary>
+            Fire,
+
+            /// <summary>Dante. No fireball at all: the ground breaks and throws rock.</summary>
+            Quake,
+
+            /// <summary>Cheska. Ice going outward, shards rather than embers.</summary>
+            Frost,
+
+            /// <summary>A thrown tsinelas. Small, light, and the joke rather than an ultimate.</summary>
+            Slipper,
+        }
+
+        /// <summary>The per-style numbers. See `ExplosionStyle` for why this is not one look.</summary>
+        private readonly struct ExplosionLook
+        {
+            public readonly Color Core;
+            public readonly Color Edge;
+            public readonly string Cue;
+            public readonly bool HasCore;
+            public readonly int DebrisCount;
+            public readonly Vector2 DebrisSize;
+            public readonly Vector2 DebrisSpeed;
+            public readonly float DebrisLift;
+            public readonly float DebrisLife;
+            public readonly float FlashIntensity;
+            public readonly float FlashSeconds;
+            public readonly float ShakeAmount;
+            public readonly float ShakeSeconds;
+
+            private readonly ExplosionStyle _style;
+
+            public ExplosionLook(ExplosionStyle style, Color core, Color edge, string cue, bool hasCore,
+                                 int debrisCount, Vector2 debrisSize, Vector2 debrisSpeed, float debrisLift,
+                                 float debrisLife, float flashIntensity, float flashSeconds,
+                                 float shakeAmount, float shakeSeconds)
+            {
+                _style = style;
+                Core = core; Edge = edge; Cue = cue; HasCore = hasCore;
+                DebrisCount = debrisCount; DebrisSize = debrisSize; DebrisSpeed = debrisSpeed;
+                DebrisLift = debrisLift; DebrisLife = debrisLife;
+                FlashIntensity = flashIntensity; FlashSeconds = flashSeconds;
+                ShakeAmount = shakeAmount; ShakeSeconds = shakeSeconds;
+            }
+
+            /// <summary>
+            /// The outline the blast leaves. ⚠️ NONE OF THEM IS A CIRCLE, which is the whole
+            /// point of `VfxShapes`: `Hero_Strike_Balance.md` § 8.3 gives one silhouette per
+            /// fiction and the shared explosion was the last thing still drawing a cylinder.
+            /// </summary>
+            public Mesh Ring(int seed)
+            {
+                switch (_style)
+                {
+                    // Broken ground fractures along uneven lines, and more raggedly than a burn.
+                    case ExplosionStyle.Quake: return VfxShapes.Splat(13, 0.34f, seed);
+
+                    // Ice is the one thing here that is ORDERED, so it is the one hard shape.
+                    case ExplosionStyle.Frost: return VfxShapes.Crystal(6, 0.18f);
+
+                    // A sandal makes a comic pop, not a crater. Few points, short ones.
+                    case ExplosionStyle.Slipper: return VfxShapes.Star(6, 0.62f, seed);
+
+                    // Burnt ground: ragged, but rounder than a fracture.
+                    default: return VfxShapes.Splat(11, 0.22f, seed);
+                }
+            }
+
+            /// <summary>Debris tint, varied per shard so the throw is not one flat colour.</summary>
+            public Color DebrisColour()
+            {
+                switch (_style)
+                {
+                    case ExplosionStyle.Quake:
+                        // Rock and dust, not sparks. Desaturated and dark so it reads as mass.
+                        float g = Random.Range(0.28f, 0.46f);
+                        return new Color(g * 1.15f, g, g * 0.82f);
+
+                    case ExplosionStyle.Frost:
+                        return Color.Lerp(UiTheme.HeroIce, UiTheme.HeroIceBright, Random.value);
+
+                    case ExplosionStyle.Slipper:
+                        // The tsinelas itself: rubber blue and foam cream.
+                        return Random.value < 0.5f
+                            ? new Color(0.24f, 0.45f, 0.72f)
+                            : new Color(0.92f, 0.88f, 0.74f);
+
+                    default:
+                        return new Color(1.0f, Random.Range(0.4f, 0.9f), 0.1f);
+                }
+            }
+
+            /// <summary>
+            /// ⚠️ THE ELEMENTAL BURSTS ALREADY EXISTED AND THIS FUNCTION NEVER CALLED ONE.
+            /// `AbilityVfx` has `SpawnMagmaEruption`, `SpawnIceBurst` and the rest, and the kits
+            /// fire them at CAST. The payload drew its own ten cubes and nothing else, which is
+            /// most of why the moment felt empty: the particles stopped before the blast landed.
+            /// </summary>
+            public void Burst(Vector3 at, float radius)
+            {
+                switch (_style)
+                {
+                    case ExplosionStyle.Quake: Visual.AbilityVfx.SpawnMagmaEruption(at, radius); break;
+                    case ExplosionStyle.Frost: Visual.AbilityVfx.SpawnIceBurst(at, radius); break;
+                    case ExplosionStyle.Slipper: break;   // deliberately bare. It is a slipper.
+                    default: Visual.AbilityVfx.SpawnCastFlash(at, UiTheme.HeroFire, radius * 0.6f); break;
+                }
+            }
+        }
+
+        private static ExplosionLook LookFor(ExplosionStyle style)
+        {
+            switch (style)
+            {
+                case ExplosionStyle.Quake:
+                    return new ExplosionLook(style, UiTheme.HeroMagmaCore, new Color(0.55f, 0.40f, 0.28f),
+                        "sfx_quake_slam", hasCore: false, debrisCount: 14,
+                        debrisSize: new Vector2(0.22f, 0.52f), debrisSpeed: new Vector2(4.0f, 9.0f),
+                        debrisLift: 1.1f, debrisLife: 1.1f,
+                        flashIntensity: 2.4f, flashSeconds: 0.22f,
+                        shakeAmount: 0.85f, shakeSeconds: 0.42f);
+
+                case ExplosionStyle.Frost:
+                    return new ExplosionLook(style, UiTheme.HeroIceBright, UiTheme.HeroIce,
+                        "sfx_frost_nova", hasCore: true, debrisCount: 16,
+                        debrisSize: new Vector2(0.10f, 0.26f), debrisSpeed: new Vector2(8.0f, 15.0f),
+                        debrisLift: 1.0f, debrisLife: 0.8f,
+                        flashIntensity: 4.2f, flashSeconds: 0.28f,
+                        shakeAmount: 0.45f, shakeSeconds: 0.24f);
+
+                case ExplosionStyle.Slipper:
+                    return new ExplosionLook(style, new Color(1.0f, 0.93f, 0.72f), new Color(0.95f, 0.80f, 0.45f),
+                        "sfx_slipper_burst", hasCore: false, debrisCount: 8,
+                        debrisSize: new Vector2(0.10f, 0.22f), debrisSpeed: new Vector2(5.0f, 10.0f),
+                        debrisLift: 1.8f, debrisLife: 0.7f,
+                        flashIntensity: 1.6f, flashSeconds: 0.14f,
+                        shakeAmount: 0.22f, shakeSeconds: 0.16f);
+
+                default:
+                    return new ExplosionLook(style, UiTheme.HeroFireBright, UiTheme.HeroFire,
+                        "sfx_explosion_heavy", hasCore: true, debrisCount: 12,
+                        debrisSize: new Vector2(0.18f, 0.40f), debrisSpeed: new Vector2(7.0f, 15.0f),
+                        debrisLift: 1.6f, debrisLife: 0.65f,
+                        flashIntensity: 5.5f, flashSeconds: 0.35f,
+                        shakeAmount: 0.55f, shakeSeconds: 0.28f);
+            }
+        }
+
         public static void CreateExplosion(Vector3 center, float radius, float knockback, float stunTime,
-            int sourceSlot, string comicText = "KABOOM!", ISet<int> excludedSlots = null)
+            int sourceSlot, string comicText = "KABOOM!", ISet<int> excludedSlots = null,
+            ExplosionStyle style = ExplosionStyle.Fire)
         {
             var round = GameServices.Round;
             if (round == null) return;
 
-            // 1. Expanding fireball core sphere
-            var vfx = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            vfx.name = "ExplosionCore";
-            vfx.transform.position = center + Vector3.up * 0.6f;
-            vfx.transform.localScale = Vector3.one * (radius * 0.4f);
+            ExplosionLook look = LookFor(style);
 
-            VfxMaterial.Ghost(vfx.GetComponent<Renderer>(), UiTheme.HeroFireBright, 0.9f);
+            // ⚠️ SEEDED OFF POSITION, for the reason `VfxShapes` gives: two blasts in different
+            // places differ from each other, but a given blast is identical between captures and
+            // `AbilityShowcaseProbe`'s renders stay comparable version to version.
+            int seed = Mathf.RoundToInt((center.x - center.z) * 613.0f);
 
-            var anim = vfx.AddComponent<ExplosionVfxAnim>();
-            anim.TargetRadius = radius * 1.1f;
-            Object.Destroy(vfx, 0.5f);
+            // 1. The core. A fireball is a fire thing: a quake has no ball of flame in it and
+            //    a slipper has none either, so the sphere is the style's to refuse.
+            if (look.HasCore)
+            {
+                var vfx = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                vfx.name = "ExplosionCore";
+                vfx.transform.position = center + Vector3.up * 0.6f;
+                vfx.transform.localScale = Vector3.one * (radius * 0.4f);
 
-            // 2. Expanding ground shockwave ring
-            var shockRing = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            shockRing.name = "ShockwaveRing";
+                VfxMaterial.Ghost(vfx.GetComponent<Renderer>(), look.Core, 0.9f);
+                VfxMaterial.StripCollider(vfx);
+
+                var anim = vfx.AddComponent<ExplosionVfxAnim>();
+                anim.TargetRadius = radius * 1.1f;
+                Object.Destroy(vfx, 0.5f);
+            }
+
+            // 2. The ground shockwave, and ⚠️⚠️ THIS IS THE LINE THAT MADE THEM ALL ONE PICTURE.
+            //    It was a `Cylinder`, so a 2.2 m stomp, a 4.5 m fissure, a 4.8 m supernova and a
+            //    thrown tsinelas all drew the same expanding circle in the same fire colour.
+            //    `Hero_Strike_Balance.md` § 8.2: silhouette carries WHICH ability this is and it
+            //    was the one channel nothing was spending. A `VfxShapes` mesh scales exactly the
+            //    way the cylinder did, so `ShockwaveRingAnim` is untouched and no footprint moves.
+            //
+            //    ⚠️ It also drops a collider nobody wanted. `CreatePrimitive` hands out a
+            //    `SphereCollider` and a `CapsuleCollider`, and neither the core nor the ring ever
+            //    stripped one, so every blast in the game briefly put two solid bodies in the
+            //    street. `VfxShapes.Lay` builds a `MeshFilter` and a `MeshRenderer` and nothing else.
+            var shockRing = VfxShapes.Lay(null, "ShockwaveRing", look.Ring(seed), 0.5f, 0.0f);
             shockRing.transform.position = center + Vector3.up * 0.05f;
-            shockRing.transform.localScale = new Vector3(0.5f, 0.02f, 0.5f);
 
-            VfxMaterial.Ghost(shockRing.GetComponent<Renderer>(), UiTheme.HeroFire, 0.8f);
+            VfxMaterial.Ghost(shockRing.GetComponent<Renderer>(), look.Edge, 0.8f);
 
             var ringAnim = shockRing.AddComponent<ShockwaveRingAnim>();
             ringAnim.TargetRadius = radius * 1.4f;
             Object.Destroy(shockRing, 0.4f);
 
-            // 3. Flying fiery debris sparks
-            for (int i = 0; i < 10; i++)
+            // 3. Debris. ⚠️ THE COUNT AND THE SIZE SCALE WITH THE BLAST. Ten cubes at a fixed
+            //    size told the player a slipper and a supernova threw the same amount of the
+            //    same thing. Rock from a quake is bigger, slower and duller than an ember.
+            int shards = Mathf.Clamp(Mathf.RoundToInt(look.DebrisCount * (radius / 3.0f)), 4, 22);
+            for (int i = 0; i < shards; i++)
             {
                 var spark = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 spark.name = "ExplosionSpark";
                 spark.transform.position = center + Vector3.up * 0.5f;
-                spark.transform.localScale = Vector3.one * Random.Range(0.18f, 0.4f);
+                spark.transform.localScale = Vector3.one
+                    * Random.Range(look.DebrisSize.x, look.DebrisSize.y)
+                    * Mathf.Clamp(radius / 3.0f, 0.7f, 1.6f);
+                spark.transform.rotation = Random.rotation;
 
-                VfxMaterial.Ghost(spark.GetComponent<Renderer>(),
-                                  new Color(1.0f, Random.Range(0.4f, 0.9f), 0.1f), 0.9f);
+                VfxMaterial.Ghost(spark.GetComponent<Renderer>(), look.DebrisColour(), 0.9f);
 
                 var rb = spark.AddComponent<Rigidbody>();
-                rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.6f) * Random.Range(7.0f, 15.0f);
-                Object.Destroy(spark, 0.65f);
+                rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * look.DebrisLift)
+                                    * Random.Range(look.DebrisSpeed.x, look.DebrisSpeed.y);
+                rb.angularVelocity = Random.insideUnitSphere * 12.0f;
+                Object.Destroy(spark, look.DebrisLife);
             }
 
-            // 4. Bright flash light
+            // 4. The flash.
             var lightGo = new GameObject("ExplosionLight");
             lightGo.transform.position = center + Vector3.up * 1.0f;
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
-            light.color = UiTheme.HeroFireBright;
+            light.color = look.Core;
             light.range = radius * 2.6f;
-            light.intensity = 5.5f;
-            Object.Destroy(lightGo, 0.35f);
+            light.intensity = look.FlashIntensity;
+            Object.Destroy(lightGo, look.FlashSeconds);
 
-            GameServices.Audio?.PlayAt("ability_bagsak_bomb", center);
+            // 5. The elemental particle burst, which already existed per element and was simply
+            //    never reached from here. `AbilityVfx` has one for each of these.
+            look.Burst(center, radius);
+
+            GameServices.Audio?.PlayAt(look.Cue, center);
 
             // Comic Popup
             if (!string.IsNullOrEmpty(comicText))
@@ -1329,7 +1531,16 @@ namespace TumbangPreso.Abilities
             if (UnityEngine.Camera.main != null)
             {
                 var rig = UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>();
-                if (rig != null) rig.Shake(0.55f, 0.28f);
+                // ⚠️ THE SHAKE IS THE STYLE'S AND IT SCALES WITH THE BLAST. A flat 0.55 for
+                // 0.28 s meant a thrown slipper hit the player's camera exactly as hard as a
+                // Supernova, which is the same "one picture at two sizes" fault in the channel
+                // the player feels rather than sees. Dante shakes hardest and longest because a
+                // quake is the one of the four that is genuinely the ground moving.
+                if (rig != null)
+                {
+                    float scale = Mathf.Clamp(radius / 3.0f, 0.6f, 1.5f);
+                    rig.Shake(look.ShakeAmount * scale, look.ShakeSeconds);
+                }
             }
 
             // Damage / Knockback players

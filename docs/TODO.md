@@ -71,20 +71,44 @@ the two ROLES and `UiTheme` spends five more on hero identity.
 ✅ **Done:** a silhouette each for the five skills (streak, star, crystal, splat) via
 `Visual.VfxShapes`, and the Seance Void lifted to 1.35 m so it changes AXIS rather than outline.
 
-⚠️⚠️ **NOT DONE, AND THIS IS THE HALF THAT IS LEFT.** Do not read § 8 as finished work:
+✅ **ALSO DONE, 2026-08-25**, after 🧑 played the build and said the effects still *"feel
+repetitive or too simple, or too empty"*, which is the played-build judgement item 4 was waiting
+for:
 
-1. **The ultimates are untouched and they are the biggest things on screen.** Supernova,
-   Thunderstrike and Glacial Nova are still expanding spheres and rings. Four more circles.
-2. **Motion carries nothing.** A live effect and one about to expire look identical, so a player
-   cannot tell whether the ice they are about to run across is spent. That is a gameplay read,
-   not a polish item, and fading the RIM rather than the whole effect is close to free.
-3. **`CreateExplosion` is shared by everything.** The same sphere and shockwave draw a 2.2 m
-   stomp and a 4.8 m Supernova, so the two biggest moments in two different kits are one picture
-   at two sizes.
-4. ⚠️ **Nothing has been judged in motion.** Every call in § 8 was made off still frames from
-   `AbilityShowcaseProbe`. Timing, overlap in a real round, and how a corridor reads while it is
-   being laid are all unmeasured, and a still cannot answer any of them. **This wants a played
-   build before more art time goes in.**
+1. ✅ **`CreateExplosion` carries a style.** It was one function drawing four events: a 2.2 m
+   stomp, a 4.5 m fissure, a 4.8 m Supernova and a thrown tsinelas shared a fire sphere, a
+   **`Cylinder` shockwave**, ten fixed-size cubes, one flash, one shake and one sound.
+   `ExplosionStyle` gives Fire, Quake, Frost and Slipper their own `VfxShapes` silhouette (none
+   is a circle), colour, debris material, flash, radius-scaled shake and cue. Quake drops the
+   fireball entirely, because Dante breaks the ground rather than lighting it.
+2. ✅ **The payload sounds exist and are the right fiction.** Every kit already fired its element
+   on the CAST and then shared two leftovers for the payload: `CreateExplosion` played
+   `ability_bagsak_bomb` for all four callers and `CreateThunderstrike` played
+   `ability_flick_dash`, **which is a dash**, and both are from the deleted ability set.
+   `tools/generate_ability_audio.py` adds six seeded cues: `sfx_quake_slam`,
+   `sfx_thunder_impact`, `sfx_frost_nova`, `sfx_possess_enter`, `sfx_possess_exit`,
+   `sfx_slipper_burst`.
+3. ✅ **Sean's Supernova was spawning Dante's magma.** `SpawnMagmaEruption` in
+   `SeanHeroKit`, where Sean is `HeroFire` and Dante is `HeroMagmaCore`. Two heroes reading as
+   one is the most expensive form of "repetitive", because it costs a character.
+4. ✅ **Auras thin as they expire.** `AttachAura` emitted at a flat rate for its whole life, so
+   Dante's carapace looked identical at 0.4 s left and at 6.0 s and the counterplay was counting
+   in your head. The RATE falls on a curve that holds to 65 % and then drops to 14 %; the colour
+   is left alone so it reads as running out rather than dimming.
+5. ✅ **The blast primitives no longer drop colliders.** `CreatePrimitive` hands out a
+   `SphereCollider` and a `CapsuleCollider` and neither was ever stripped, so every explosion
+   briefly put two solid bodies in the street.
+
+⚠️⚠️ **STILL NOT DONE:**
+
+1. **The three ultimates' own shapes.** Supernova, Thunderstrike and Glacial Nova now differ in
+   colour, debris, sound, shake and ground silhouette, but the CORE is still an expanding sphere
+   and Thunderstrike's ion disc is still a cylinder. § 8.5 item 1 wants a slam to be a shockwave
+   with a FRONT and a nova to be radial but crystalline, and that is unbuilt.
+2. ⚠️⚠️ **NONE OF THE ABOVE HAS BEEN SEEN.** `AbilityShowcaseProbe` captures the persistent
+   zones only, and every one of these changes is on a transient that lives 0.4 to 1.1 s, so the
+   v7 captures do not show a single one of them. **This wants a played build to judge**, and
+   until then it is written work rather than verified work.
 
 **Where.** `Assets/TumbangPreso/Runtime/Visual/VfxShapes.cs`,
 `Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs`,
@@ -115,15 +139,20 @@ below **0.0966** to pure black, and Eskinita's 1.03 moves that floor to **0.0422
 ⚠️⚠️ **`MapGradeSanityTests` compares the builder call against the value baked into the scene,
 so this REQUIRES a rebuild through `IlalimNgTulayPipeline` in the same change.**
 
-**9.3 OPEN: the pisonet rate sign renders near black.** 🧑: *"the pc for 10 mins sign is bugged
-too"*. `Sign_Pisonet` is a `FramedFascia` built with `SignCream` as its face and `SignMaroon` as
-its ink, and in the build it is a dark board with barely legible text. **`EnvColourPass` is NOT
-the cause and this has been checked:** the signs live in a group called `Karatula`, which is in
-none of `SlabGroups`, `RoadGroups` or `FacadeGroups`, so the pass hits `continue` and never
-touches them. That leaves lighting, and the sign sits at y = 3.42 on the east shopfront directly
-under the guideway. Likely the same shadowed band as 9.2 rather than a separate defect, so
-**re-check it against a render after 9.2 lands before changing any colour.**
-**Done looks like:** PISONET and its rate line readable from the road in a capture.
+**9.3 ✅ FIXED BY 9.2, AND IT WAS NEVER ITS OWN BUG.** 🧑: *"the pc for 10 mins sign is bugged
+too"*. `Sign_Pisonet` is a `FramedFascia` with a `SignCream` face and `SignMaroon` ink, and it
+shipped as a dark board with barely legible text.
+
+⚠️ `EnvColourPass` was ruled out before anything was changed: the signs live in a `Karatula`
+group, which is in none of `SlabGroups`, `RoadGroups` or `FacadeGroups`, so the pass reaches
+`continue` and never touches them. That left lighting, and the fascia sits at y = 3.42 on the
+east shopfront directly under the guideway, which is exactly the shadowed 0.04 to 0.10 band the
+1.12 contrast was still crushing.
+
+**No colour was touched.** `ability_corridors_v7.png` shows the board reading cream with
+"PISONET / P1 5 MIN" legible from the middle of the road. ⚠️ Worth keeping as the example of why
+9.2 had to be measured rather than eyeballed: a second "fix" recolouring this sign would have
+made it wrong once the grade was corrected.
 
 **9.4 ✅ FIXED: the train floated, and the ride height was never the reason.** 🧑: *"it wasnt on
 tracks it was js floating there"*, then *"its weird that the bridge js cuts off, i want the rails

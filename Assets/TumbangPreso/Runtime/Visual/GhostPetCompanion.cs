@@ -134,7 +134,14 @@ namespace TumbangPreso.Visual
                 _temporaryAi = _nemuMotor.gameObject.AddComponent<AIController>();
             }
 
-            GameServices.Audio?.PlayAt("ability_flick_dash", transform.position);
+            // ⚠️⚠️ THE SOUND HAS THE SAME SHAPE AS THE CAMERA MOVE, AND THAT IS THE FIX.
+            // 🧑: *"it doesnt feel like im in the pet's body."* The camera was already on Kuro
+            // (`Hero_Strike_Balance.md` § 8.6.1); what neither half had was duration.
+            // `sfx_possess_enter` RISES over 1.0 s and ends on an arrival tap, so the ear hears
+            // the trip that `CameraRig.PossessBlendSeconds` is drawing. It replaces
+            // `ability_flick_dash`, a dash sound from the deleted ability set, which announced
+            // the single strangest thing Nemu can do as a footstep.
+            GameServices.Audio?.PlayAt("sfx_possess_enter", transform.position);
             ComicPopup.Spawn(transform.position, "KURO POSSESSED!", UI.UiTheme.HeroSpiritBright, 1.25f);
         }
 
@@ -145,7 +152,11 @@ namespace TumbangPreso.Visual
             if (teleportNemu && _nemuMotor != null)
             {
                 _nemuMotor.Teleport(transform.position);
-                GameServices.Audio?.PlayAt("respawn", transform.position);
+
+                // ⚠️ THE RETURN IS THE ENTER SOUND REVERSED, on purpose: a falling formant onto
+                // a thump, so leaving and arriving are audibly one gesture in two directions.
+                // `respawn` is a MATCH event and using it here told the player they had died.
+                GameServices.Audio?.PlayAt("sfx_possess_exit", transform.position);
                 Abilities.HeroHazards.SpawnShockTrail(transform.position, 2.5f, 2.0f, _nemuMotor.PlayerSlot);
             }
 

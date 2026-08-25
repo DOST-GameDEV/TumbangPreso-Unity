@@ -147,7 +147,13 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 GameServices.Audio?.PlayAt("hero_cheska_ult", ctx.Position);
-                GameServices.Audio?.PlayAt("sfx_ice_freeze", ctx.Position);
+
+                // ⚠️ NOVA, NOT FREEZE, AND THE DIFFERENCE IS THE DIRECTION. `sfx_ice_freeze` is
+                // ice FORMING, a rising chime, and it stays on Permafrost Sheet and the
+                // Barricade where something is being built. This is ice BREAKING outward, so
+                // `sfx_frost_nova` descends and leads with shards. Cheska's three abilities
+                // fired one sound between them and the ultimate sounded like the skill.
+                GameServices.Audio?.PlayAt("sfx_frost_nova", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "BLIZZARD NOVA!", UiTheme.HeroIceBright, 1.5f);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();

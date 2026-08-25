@@ -225,6 +225,30 @@ namespace TumbangPreso.Visual
 
             col.color = grad;
 
+            // ⚠️⚠️ THE AURA THINS AS IT DIES, AND UNTIL NOW IT DID NOT.
+            // `docs/Hero_Strike_Balance.md` § 8.5 item 2: *"a spent effect and a live one look
+            // identical, so a player cannot tell whether a patch of ice is about to expire. That
+            // is a real gameplay read and it is free."* The same fault was on the bodies. Dante's
+            // carapace makes him immune to stuns, shoves and slips, and at 0.4 s left it emitted
+            // exactly as hard as at 6.0 s: the three people deciding whether to commit had no way
+            // to see the window closing, so the only counterplay was counting in your head.
+            //
+            // ⚠️ THE RATE FALLS, THE COLOUR DOES NOT. Fading the aura's colour would fight
+            // `colorOverLifetime`, which is already spending alpha on each particle's OWN life,
+            // and the two curves would multiply into something that vanishes far too early.
+            // Emitting FEWER particles leaves every one of them as bright as it ever was and
+            // simply makes them sparse, which reads as running out rather than as dimming.
+            //
+            // ⚠️ AND IT HOLDS NEAR FULL FOR THE FIRST TWO THIRDS. A rate decaying from the first
+            // frame reads as a failing effect rather than as a timer: the drop has to arrive late
+            // enough that it can only mean "nearly over".
+            float peakRate = emission.rateOverTime.constant;
+            var falloff = new AnimationCurve(
+                new Keyframe(0.00f, 1.00f),
+                new Keyframe(0.65f, 0.82f),
+                new Keyframe(1.00f, 0.14f));
+            emission.rateOverTime = new ParticleSystem.MinMaxCurve(peakRate, falloff);
+
             ps.Play();
             return go;
         }

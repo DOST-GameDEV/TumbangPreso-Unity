@@ -77,7 +77,15 @@ Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Uni
 # 2. Compile standalone Windows player to Desktop:
 Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe" -ArgumentList "-batchmode -quit -nographics -projectPath . -executeMethod TumbangPreso.EditorTools.GameBuilder.BuildWindows -logFile Logs/build.log" -Wait
 ```
-*Output Target:* `C:\Users\matth\Desktop\TumbangPreso-Unity\TumbangPreso.exe`
+*Output Target:* `<Desktop>\TumbangPreso-Unity\TumbangPreso.exe`
+
+⚠️ **The desktop is RESOLVED, not typed.** `GameBuilder` calls
+`Environment.GetFolderPath(SpecialFolder.DesktopDirectory)`, so the player lands on whichever
+machine's desktop ran the build. This line used to read `C:\Users\matth\Desktop\...`, which is
+one particular checkout and sent a session looking for a build on a path that does not exist
+here. The same stale user directory is still quoted in `character_bayan_reference.md` and
+`CUSTOMIZATION_SYSTEM_PROMPT.md`; those are historical records of where reference images came
+from rather than commands, but do not run them expecting them to resolve.
 
 ---
 

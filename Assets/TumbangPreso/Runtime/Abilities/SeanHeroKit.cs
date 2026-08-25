@@ -261,8 +261,16 @@ namespace TumbangPreso.Abilities
                     if (squash != null) squash.Squash(0.4f);
 
                     GameServices.Audio?.PlayAt("sfx_explosion_heavy", ctx.Position);
-                    HeroHazards.CreateExplosion(ctx.Position, 4.8f, 16.0f, 2.2f, ctx.Motor.PlayerSlot, "SUPERNOVA!");
-                    Visual.AbilityVfx.SpawnMagmaEruption(ctx.Position, 4.8f);
+                    HeroHazards.CreateExplosion(ctx.Position, 4.8f, 16.0f, 2.2f, ctx.Motor.PlayerSlot, "SUPERNOVA!",
+                        style: HeroHazards.ExplosionStyle.Fire);
+
+                    // ⚠️⚠️ THIS WAS `SpawnMagmaEruption`, WHICH IS DANTE'S. Sean's whole identity
+                    // is `HeroFire` and Dante's is `HeroMagmaCore`, and the biggest moment in
+                    // Sean's kit was throwing up Dante's orange rock. Two heroes reading as one
+                    // is the most expensive version of *"they all look repetitive"*, because it
+                    // costs a CHARACTER rather than an effect. `SpawnCastFlash` in Sean's own
+                    // colour is now inside `CreateExplosion` via the Fire style, so the eruption
+                    // here is removed rather than recoloured: one blast, one set of particles.
                 }
             }
         }

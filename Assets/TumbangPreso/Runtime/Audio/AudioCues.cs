@@ -59,9 +59,9 @@ namespace TumbangPreso.Audio
             };
 
         /// <summary>
-        /// ⚠️⚠️ THESE FIVE SHIP AND CAN NEVER PLAY. `scripts/abilities/**` was deleted outright
-        /// in the design pivot (eight verbs nobody asked for), so every caller for these went
-        /// with it, but the .wav files were never removed from the build.
+        /// The five .wav files left behind when `scripts/abilities/**` was deleted outright in
+        /// the design pivot (eight verbs nobody asked for). Every caller went with it; the
+        /// files did not.
         ///
         /// They are listed rather than silently dropped because they are exactly the failure
         /// this whole registry exists to catch, in its other direction: a FILE with no cue,
@@ -69,8 +69,20 @@ namespace TumbangPreso.Audio
         /// mixed and completely silent for weeks because nothing ever called it, and it was
         /// the single most common outcome in the game, 38 of 71 flights.
         ///
-        /// ⚠️ DO NOT PORT THEM AS LIVE CUES. Carry them here so the orphan report can name
-        /// them, and let a human decide whether the files leave the build.
+        /// ⚠️⚠️ THIS LIST AND `Live` NOW OVERLAP, AND THE HEADING USED TO DENY IT. It read
+        /// "THESE FIVE SHIP AND CAN NEVER PLAY" with a "DO NOT PORT THEM AS LIVE CUES"
+        /// underneath, while all five sat in `Live` a few lines below and three of them were
+        /// being fired by Hero Strike every round. `docs/TESTING.md` repeated the claim.
+        /// Reading either one and believing it costs a session: the obvious next move is to
+        /// delete "dead" audio that the game is actually playing.
+        ///
+        /// ⚠️ WHAT IS TRUE AS OF 2026-08-25: Hero Strike reached for these because it had
+        /// nothing else, and it now has `sfx_quake_slam`, `sfx_thunder_impact`,
+        /// `sfx_frost_nova`, `sfx_possess_enter`, `sfx_possess_exit` and `sfx_slipper_burst`.
+        /// `ability_bagsak_bomb` and `ability_flick_dash` are free again. `ability_shatter_trap`
+        /// is still live on the ice barricade, where it genuinely fits, so it is a survivor
+        /// rather than an orphan and this list is a history of where the files came from, not
+        /// a claim that none of them plays.
         /// </summary>
         public static readonly IReadOnlyList<string> DeletedAbilityCues = new[]
         {
@@ -97,6 +109,17 @@ namespace TumbangPreso.Audio
             "ability_shatter_trap", "ability_spin_guard",
             "sfx_explosion_heavy", "sfx_lightning_strike", "sfx_ice_freeze",
             "sfx_fire_whoosh", "sfx_ghost_teleport", "sfx_hitmarker", "sfx_super_ready",
+
+            // ⚠️⚠️ THE PAYLOADS, WHICH ARE NOT THE CASTS. Every kit already fired its own
+            // element on the CAST and then shared two leftovers for what actually happened:
+            // `CreateExplosion` played `ability_bagsak_bomb` for a 2.2 m stomp, a 4.5 m
+            // fissure, a 4.8 m supernova AND a thrown slipper, and `CreateThunderstrike`
+            // played `ability_flick_dash`, which is a dash. Both of those are in
+            // `DeletedAbilityCues` below: the biggest moments in the game were carried by
+            // sounds written for a system that no longer exists. `tools/generate_ability_audio.py`
+            // makes these six and says what each one is shaped like and why.
+            "sfx_quake_slam", "sfx_thunder_impact", "sfx_frost_nova",
+            "sfx_possess_enter", "sfx_possess_exit", "sfx_slipper_burst",
 
             // Hero Vocal Shouts & Grunts.
             "hero_dante_ult", "hero_dante_grunt",

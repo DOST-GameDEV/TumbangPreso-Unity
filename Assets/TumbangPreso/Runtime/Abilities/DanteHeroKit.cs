@@ -74,7 +74,11 @@ namespace TumbangPreso.Abilities
                 // Explosion shockwave & comic floatie
                 // ⚠️ THE EXPLOSION ALREADY SAYS "THUD!" AT THIS EXACT POINT. A "BONK!" on top
                 // of it is two words in the same place for one stomp.
-                HeroHazards.CreateExplosion(ctx.Position, 2.2f, 10.0f, 1.2f, ctx.Motor.PlayerSlot, "THUD!");
+                // ⚠️ QUAKE, NOT FIRE. Dante breaks the ground; he does not set it alight. The
+                // style drops the fireball entirely, throws rock instead of embers and plays
+                // `sfx_quake_slam` rather than the leftover bomb every kit used to share.
+                HeroHazards.CreateExplosion(ctx.Position, 2.2f, 10.0f, 1.2f, ctx.Motor.PlayerSlot, "THUD!",
+                    style: HeroHazards.ExplosionStyle.Quake);
 
                 var round = ctx.Round;
                 if (round != null)
@@ -296,7 +300,7 @@ namespace TumbangPreso.Abilities
                 // fissure opening in front of them. `null` is the documented way to ask
                 // `CreateExplosion` for the physics without the caption.
                 HeroHazards.CreateExplosion(ctx.Position + forward * 2.2f, 4.5f, 14.0f, 1.8f,
-                    ctx.Motor.PlayerSlot, null, directlyHit);
+                    ctx.Motor.PlayerSlot, null, directlyHit, HeroHazards.ExplosionStyle.Quake);
 
                 // ⚠️⚠️ TWO PILLARS ON THE FISSURE LINE, DOWN FROM FOUR IN A 28 DEGREE ARC, AND
                 // THIS IS A READABILITY FIX RATHER THAN A BALANCE ONE. `docs/VISION.md` § 2

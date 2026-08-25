@@ -747,3 +747,61 @@ has NOT been done, roughly in order of payoff:
 
 **`docs/TODO.md` § 8 carries this list.** It is not finished work and should not be reported as
 finished work.
+
+### 8.6 When an ability is allowed to take the camera, and the answer for all fifteen
+
+⚠️⚠️ **THIS SECTION EXISTS SO THAT "GIVE IT A TPP BEAT" NEVER BECOMES A PER-ABILITY TOGGLE.**
+`CLAUDE.md` § 4 states the invariant in one line: *"A Person is always FPP, a Prop is always TPP,
+derived from `is_person` and asserted."* Two exceptions are already shipped and both are
+categorical rather than per-case: emotes swing to TPP and back, and the spectator is a fourth rig
+entirely. Adding a third exception one ability at a time is how an invariant stops being one.
+
+**The rule.** An ability takes the camera only when **the body the player is driving changes, or
+the player stops driving it.** Not when the effect is large, not when it is the ultimate, not
+when it looks good from outside.
+
+⚠️ **The test that decides it:** *if the player looked down at their own hands, would the game
+have already told them what changed?* The viewmodel is not a decoration. Every skill in the game
+carries a `viewmodelAction`, so the arms already animate for the cast, and where the arms can say
+it, FPP says it better: it is faster, it keeps the crosshair, and it does not cost the player
+their aim in a fight.
+
+| Ability | Body or control changes? | Camera |
+|---|---|---|
+| Sean, Flame Rush | no, he moves faster | FPP |
+| Sean, Ignition Cannon | no, `ignition-cannon` arms | FPP |
+| Sean, Supernova | no. Big is not the test | FPP |
+| Zack, Bolt Sprint | no, he moves faster | FPP |
+| Zack, Static Charge | no, a buff | FPP |
+| Zack, Thunderstrike | no. The bolt is vertical and FPP sees it | FPP |
+| Cheska, Permafrost Sheet | no, floor effect | FPP |
+| Cheska, Ice Barricade | no, it places a prop | FPP |
+| Cheska, Glacial Nova | no. Big is not the test | FPP |
+| Dante, Seismic Stomp | no, floor effect | FPP |
+| Dante, Demonic Carapace | silhouette only, and `carapace-guard` shows it on the arms | FPP |
+| Dante, Titan Fissure | no, floor effect | FPP |
+| Nemu, Ghost Step | silhouette only, and `ghost-step` shows it on the arms | FPP |
+| **Nemu, Astral Projection** | ⚠️⚠️ **yes. The player drives a different body** | **TPP, already** |
+| Nemu, Seance Void | no. § 8.4 changes the EFFECT's axis, not the camera's | FPP |
+| **Falling** | ⚠️ **yes. The player stops driving anything** | **TPP** |
+
+**So the rule produces two, and it produced them rather than being written to fit them.** That is
+the point of writing it first. Carapace and Ghost Step are the two that look like candidates and
+are not, and the reason they are not is the same reason: their arms already say it.
+
+#### 8.6.1 Astral Projection was already TPP, and that was never the complaint
+
+🧑: *"it doesnt feel like im in the pet's body."*
+
+⚠️⚠️ **THE CAMERA WAS ALREADY ON THE PET AND HAD BEEN THE WHOLE TIME.**
+`CameraRig.ApplyCompanionPossessionView` mounts 2.0 m behind Kuro at 0.35 m, hides the human
+viewmodel arms, and `StepCompanionLook` steers the pet with the mouse. Reading the complaint as
+"the camera does not move" and moving it again would have produced a second camera path doing
+what the first already did.
+
+**What is actually wrong is that the swap has no duration.** The rig calls
+`SetPositionAndRotation` with the finished pose on the first frame of the possession and again on
+the way out. A cut with no travel between two poses does not read as *becoming* something, it
+reads as a glitch or as nothing: the player never sees themselves leave, so there is no moment to
+attribute the new body to. ⚠️ This is the same fault as § 8.5 item 2 in a different channel:
+**motion was carrying nothing.**
