@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
@@ -234,6 +234,7 @@ namespace TumbangPreso.Abilities
                        viewmodelAction: "summon-lightning")
             {
                 _kit = kit;
+                Windup = UltimateWindup;
             }
 
             protected override void OnActivate(AbilityContext ctx)

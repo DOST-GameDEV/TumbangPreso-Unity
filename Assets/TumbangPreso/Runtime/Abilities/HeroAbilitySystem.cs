@@ -318,12 +318,28 @@ namespace TumbangPreso.Abilities
             // arena and through the crowd, and it says WHO and WHERE without a word on screen,
             // which `docs/VISION.md` § 3 requires of anything the HUD is not allowed to say.
             //
-            // ⚠️ IT DOES NOT DELAY THE CAST. A real 0.4 s wind-up on the ABILITY would be a
-            // fourth thing that can be interrupted, and every one of the five ultimates would
-            // need its own answer to being stunned halfway through; the buffering rules in
-            // `docs/Hero_Strike_UI.md` § 7 have no story for a half-cast power. This announces
-            // the ultimate as it fires and stands for 0.9 s afterwards, so the beat is real for
-            // everyone watching without adding a state the ability can die inside.
+            // ⚠️⚠️ THIS NOW RUNS AT THE PRESS AND THE EFFECT LANDS 0.4 s LATER, WHICH IS THE
+            // OPPOSITE OF WHAT THIS NOTE USED TO SAY. It read *"IT DOES NOT DELAY THE CAST"*,
+            // and gave a good reason: a wind-up would be *"a fourth thing that can be
+            // interrupted, and every one of the five ultimates would need its own answer to
+            // being stunned halfway through; the buffering rules in `docs/Hero_Strike_UI.md`
+            // § 7 have no story for a half-cast power."*
+            //
+            // ⚠️ THAT OBJECTION WAS ANSWERED BY REMOVING THE INTERRUPT, NOT BY ARGUING WITH IT.
+            // `HeroAbility.Windup` is uninterruptible: once the press lands the ultimate fires,
+            // so there is no half-cast state for any of the five to have an answer to and § 7's
+            // buffering never meets one. The meter is still spent at the press, so there is no
+            // refund path either. 🧑 asked for the wind-up directly after the refusal was put to
+            // him: *"u can do windup lowk"*, *"im okay with windup or holdable shit"*.
+            //
+            // ⚠️ SO THE COLUMN IS A TELEGRAPH NOW RATHER THAN AN ANNOUNCEMENT, which is what
+            // `Hero_Strike_Balance.md` § 4.3 wanted it to be: it stands up while the caster is
+            // rooted, and the other three get those 0.4 s to run, reposition or spend something
+            // defensive. It is the same object doing the same job 0.4 s earlier.
+            //
+            // ⚠️ THE IMPACT FEEDBACK BELOW STAYS ON THE PRESS AND IS NOT A SECOND PUNCH. It
+            // reads as the caster bracing into the wind-up; the blast supplies its own shake
+            // when it lands, scaled per style and per radius in `HeroHazards.CreateExplosion`.
             Visual.UltimateColumn.Raise(_context.Position, AccentColour());
 
             var camera = UnityEngine.Camera.main;

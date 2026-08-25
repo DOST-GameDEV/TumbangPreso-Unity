@@ -116,6 +116,11 @@ namespace TumbangPreso.UI
         private Text _toast;
         private float _toastLeft;
 
+        private Image _getUpCard;
+        private Text _getUpLabel;
+        private Image _getUpFill;
+        private string _getUpShown = "";
+
         private Text _countdown;
         private float _countdownPop;
         private RectTransform _countdownRt;
@@ -1377,21 +1382,57 @@ namespace TumbangPreso.UI
         /// </summary>
         private void UpdateGetUpPrompt()
         {
-            if (_local == null || !_local.IsTripped || !_local.CanMashUp) return;
+            if (_getUpCard == null) return;
 
-            string text = "MASH [" + KeyLabel("Jump") + "] TO GET UP";
+            // ⚠️ THE CARD FOLLOWS `IsTripped`, NOT `CanMashUp`. The old prompt returned early
+            // once the mash hit `Balance.MinTripDown`, so the feedback vanished for the last
+            // 0.9 s of every fall: the player was still on the floor, still unable to act, and
+            // the screen had gone quiet again. That gap is most of what "nothing happened" was.
+            if (_local == null || !_local.IsTripped)
+            {
+                if (_getUpCard.gameObject.activeSelf)
+                {
+                    _getUpCard.gameObject.SetActive(false);
+                    _getUpShown = "";
+                }
+                return;
+            }
+
+            if (!_getUpCard.gameObject.activeSelf) _getUpCard.gameObject.SetActive(true);
+
+            // Two phases, because the fall genuinely has two. While there is slack above the
+            // floor, pressing buys time and the prompt asks for presses. Below it nothing more
+            // can be bought and the prompt stops asking, which is the rule `CanMashUp` already
+            // states: a prompt that keeps demanding presses it will not honour teaches the
+            // player that mashing does not work.
+            bool buying = _local.CanMashUp;
+
+            string text = buying
+                ? "MASH [" + KeyLabel("Jump") + "] TO GET UP"
+                : "GETTING UP";
 
             // ⚠️ THE STRING IS ONLY REBUILT WHEN IT CHANGES. A HUD string rebuilt every frame
             // once cost the 6x behaviour probe an eighth of its frames and most of its physics
             // steps; that finding is recorded in `CLAUDE.md` § 7.1 and this is the same shape of
             // code in the same file.
-            if (_toast != null && _toast.text == text && _toast.enabled)
+            if (text != _getUpShown)
             {
-                _toastLeft = 0.25f;
-                return;
+                _getUpShown = text;
+                _getUpLabel.text = text;
+                _getUpLabel.color = buying ? UiTheme.Cream : UiTheme.Amber;
             }
 
-            ShowToast(text, 0.25f);
+            // ⚠️⚠️ THE BAR SPANS THE WHOLE FALL, NOT THE MASHABLE PART OF IT. Filling only
+            // across `TripTotal` down to `MinTripDown` would slam to 100 per cent and then sit
+            // there for the 0.9 s floor, which reads as a bar that has finished while the player
+            // is demonstrably still down. Measuring against the full trip means the last stretch
+            // keeps moving on its own, so "about to be done" stays true right to the end.
+            float total = Mathf.Max(0.01f, _local.TripTotal);
+            _getUpFill.fillAmount = Mathf.Clamp01(1.0f - _local.TripLeft / total);
+
+            // Amber once the presses have done all they can, so the colour change and the
+            // wording agree that the player has stopped being able to help.
+            _getUpFill.color = buying ? UiTheme.Offense : UiTheme.Amber;
         }
 
         private void UpdateToast(float dt)
@@ -1475,6 +1516,7 @@ namespace TumbangPreso.UI
             BuildScoreboard();
             BuildClock();
             BuildLataCard();
+            BuildGetUpCard();
             BuildStatusStacks();
             BuildHeroDeck();
             _inspect = AbilityInspectPanel.Create(_root);
@@ -1849,6 +1891,67 @@ namespace TumbangPreso.UI
             // 22 left and 22 right, from `WoodCard`'s padding, plus a pixel so a rounded
             // `preferredWidth` never lands exactly on the border.
             return Mathf.Ceil(widest) + 45.0f;
+        }
+
+        /// <summary>
+        /// The get-up prompt: which key, and how close the mashing has got.
+        ///
+        /// ⚠️⚠️ THE MECHANIC SHIPPED WITHOUT ITS FEEDBACK AND THAT IS WHY THE FALL FELT LIKE
+        /// NOTHING. `CharacterMotor.MashRecover`, `CanMashUp`, `TripLeft`, `TripTotal` and
+        /// `MashPresses` all exist, and `MashPresses` even carries the note *"so the HUD can
+        /// show it filling"*. Nothing ever filled. All the player got was a text toast reading
+        /// MASH [SPACE] TO GET UP, with no way to tell whether mashing was doing anything or how
+        /// much was left. 🧑: *"i dont feel like i fell down"*.
+        ///
+        /// ⚠️ A BAR RATHER THAN A COUNTER, because the question a player on the floor is asking
+        /// is "how much longer", not "how many presses". The bar answers it at a glance while
+        /// they are mashing and cannot read.
+        ///
+        /// ⚠️ CENTRE SCREEN, LOW. It has to be findable without looking, by somebody who has
+        /// just been knocked over and whose camera is on the ground. The corners are where the
+        /// standing HUD lives and are the first thing a fall makes irrelevant.
+        /// </summary>
+        private void BuildGetUpCard()
+        {
+            var group = WoodCard("GetUpCard", new Vector2(0.5f, 0.0f), new Vector2(0.0f, 150.0f),
+                                 460.0f, out _getUpCard, sink: false, border: UiTheme.Offense);
+
+            group.childAlignment = TextAnchor.MiddleCenter;
+
+            _getUpLabel = HudLabel(group.transform, "GetUpLabel", 30, UiTheme.Cream,
+                                   TextAnchor.MiddleCenter);
+            _getUpLabel.text = "MASH TO GET UP";
+            _getUpLabel.gameObject.AddComponent<LayoutElement>().minHeight = 40.0f;
+
+            // The bar. Same two-part build as the status rows: a sunk plate, and a horizontal
+            // fill stretched across it.
+            var backGo = new GameObject("GetUpBarBack");
+            backGo.transform.SetParent(group.transform, false);
+
+            var back = backGo.AddComponent<Image>();
+            back.sprite = GodotTheme.Plain(3);
+            back.type = Image.Type.Sliced;
+            back.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.55f);
+            back.raycastTarget = false;
+
+            var box = backGo.AddComponent<LayoutElement>();
+            box.minHeight = 22.0f;
+            box.preferredHeight = 22.0f;
+
+            var fillGo = new GameObject("GetUpBarFill");
+            fillGo.transform.SetParent(backGo.transform, false);
+
+            _getUpFill = fillGo.AddComponent<Image>();
+            _getUpFill.sprite = GodotTheme.Plain(3);
+            _getUpFill.type = Image.Type.Filled;
+            _getUpFill.fillMethod = Image.FillMethod.Horizontal;
+            _getUpFill.color = UiTheme.Offense;
+            _getUpFill.raycastTarget = false;
+            _getUpFill.fillAmount = 0.0f;
+
+            MenuKit.Stretch(_getUpFill.rectTransform);
+
+            _getUpCard.gameObject.SetActive(false);
         }
 
         private void BuildStatusStacks()

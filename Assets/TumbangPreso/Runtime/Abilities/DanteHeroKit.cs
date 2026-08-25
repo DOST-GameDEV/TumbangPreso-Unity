@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
@@ -247,6 +247,7 @@ namespace TumbangPreso.Abilities
                        castAction: "hero-dante-fissure",
                        viewmodelAction: "fissure-slam")
             {
+                Windup = UltimateWindup;
             }
 
             protected override void OnActivate(AbilityContext ctx)

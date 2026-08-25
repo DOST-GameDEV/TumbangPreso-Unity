@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using TumbangPreso.Visual;
@@ -142,6 +142,7 @@ namespace TumbangPreso.Abilities
                        castAction: "hero-cheska-nova",
                        viewmodelAction: "nova-burst")
             {
+                Windup = UltimateWindup;
             }
 
             protected override void OnActivate(AbilityContext ctx)

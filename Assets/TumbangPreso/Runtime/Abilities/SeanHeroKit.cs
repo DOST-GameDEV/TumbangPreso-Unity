@@ -217,6 +217,7 @@ namespace TumbangPreso.Abilities
                        castAction: "hero-sean-supernova",
                        viewmodelAction: "supernova-slam")
             {
+                Windup = UltimateWindup;
             }
 
             protected override void OnActivate(AbilityContext ctx)

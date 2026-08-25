@@ -50,6 +50,58 @@ namespace TumbangPreso.Abilities
         public float DurationRemaining { get; protected set; }
         public bool IsActive => DurationRemaining > 0.0f;
 
+        // ------------------------------------------------------------------ wind-up
+        //
+        // ⚠️⚠️ THIS WAS DELIBERATELY REFUSED ONCE AND THE REFUSAL IS WORTH READING BEFORE
+        // TOUCHING IT. `HeroAbilitySystem.PlayUltimatePresentation` carries the note: *"A real
+        // 0.4 s wind-up on the ABILITY would be a fourth thing that can be interrupted, and every
+        // one of the five ultimates would need its own answer to being stunned halfway through;
+        // the buffering rules in `docs/Hero_Strike_UI.md` § 7 have no story for a half-cast
+        // power."* That objection was correct, and it is about INTERRUPTION rather than about
+        // the delay.
+        //
+        // ⚠️⚠️ SO THE WIND-UP IS UNINTERRUPTIBLE, WHICH DISSOLVES THE OBJECTION RATHER THAN
+        // ARGUING WITH IT. Once the press lands the ultimate WILL fire: nothing stuns, trips or
+        // cancels it, so there is no half-cast state for any of the five to have an answer to,
+        // and § 7's buffering never sees one. The meter is spent at the press, exactly as before,
+        // so no refund path exists to get wrong either.
+        //
+        // What the beat buys is what `Hero_Strike_Balance.md` § 4.3 actually asked for: *"The
+        // other three players get a beat to react, which is what makes an ultimate an event
+        // rather than a large skill."* Reacting means running, repositioning or spending a
+        // defensive power, and none of those need the cast to be cancellable.
+        //
+        // ⚠️ THE CASTER ROOTS, AND THAT IS THE COST THE BEAT IS PAID FOR WITH. Standing still
+        // for 0.4 s in a 14 m arena is real, and it is what stops the wind-up from being pure
+        // spectacle. § 4.3 also floats interruptibility as a balance knob; it is NOT taken here,
+        // and taking it later means writing the half-cast story the note above says is missing.
+        //
+        // ⚠️ ULTIMATES ONLY. 🧑, authorising this: *"just dont spam it for everything"*. The five
+        // skills resolve on the frame they are pressed and should keep doing so; a wind-up on a
+        // 6 s cooldown skill is a tax, not an event.
+
+        /// <summary>
+        /// The one wind-up length, shared by all five ultimates.
+        ///
+        /// ⚠️ IT IS A CONSTANT RATHER THAN A PER-HERO NUMBER BECAUSE THE BEAT IS A RULE, NOT A
+        /// BALANCE DIAL. Five different wind-ups would mean five different windows to learn for
+        /// no gain: what a player reads is "somebody is ultimate-ing", and that has to look and
+        /// last the same whoever cast it. 0.4 s is `Hero_Strike_Balance.md` § 4.3's own figure.
+        /// </summary>
+        public const float UltimateWindup = 0.4f;
+
+        /// <summary>Seconds between the press and the effect. 0 on everything but an ultimate.</summary>
+        public float Windup { get; protected set; }
+
+        public float WindupRemaining { get; private set; }
+        public bool IsWindingUp => WindupRemaining > 0.0f;
+
+        /// <summary>⚠️ A TRUE ROOT, and the stack takes the MINIMUM rather than the product, so
+        /// this cannot compound with fatigue or a hazard into something stranger than a stop.</summary>
+        private const float RootSpeed = 0.0f;
+
+        private CharacterMotor _rooted;
+
         // ------------------------------------------------------------------ charges
         //
         // ⚠️⚠️ AN ABILITY IS EITHER ON A COOLDOWN OR ON CHARGES, NEVER ON BOTH, AND WHICH ONE IT
@@ -206,6 +258,12 @@ namespace TumbangPreso.Abilities
         {
             if (ctx == null || ctx.Motor == null) return false;
             if (!IsReady) return false;
+
+            // ⚠️ A WIND-UP ALREADY RUNNING IS NOT A SECOND CAST. Without this a player mashing
+            // the ultimate key during the beat would re-enter the speed zone once per press and
+            // exit it once, leaving one root behind for every extra press.
+            if (IsWindingUp) return false;
+
             if (!ctx.Motor.CanAct()) return false;
             return true;
         }
@@ -219,8 +277,41 @@ namespace TumbangPreso.Abilities
             if (UsesCharges) ChargesRemaining = Mathf.Max(0, ChargesRemaining - 1);
             else CooldownRemaining = Cooldown;
 
+            // ⚠️ THE RESOURCE IS SPENT AT THE PRESS, BEFORE THE WIND-UP, and that is deliberate:
+            // the cast is committed the moment it starts, which is what lets the wind-up be
+            // uninterruptible without any refund path. See the block above.
+            //
+            // ⚠️ NO MOTOR MEANS NO WIND-UP. The EditMode ability tests drive `Activate(null)` and
+            // assert the effect synchronously, and a headless harness has nothing to root and no
+            // `Tick` loop to finish the cast. Falling straight through keeps those honest.
+            if (Windup > 0.0f && ctx != null && ctx.Motor != null)
+            {
+                WindupRemaining = Windup;
+
+                _rooted = ctx.Motor;
+                _rooted.EnterSpeedZone(RootSpeed);
+                return;
+            }
+
             DurationRemaining = Duration;
             OnActivate(ctx);
+        }
+
+        /// <summary>
+        /// Lets the caster move again.
+        ///
+        /// ⚠️⚠️ EVERY PATH OUT OF A WIND-UP MUST REACH THIS. A speed zone is entered on one
+        /// object and exited on another call, so an ability that leaves a wind-up without
+        /// exiting leaves the player rooted at 0.0 for the rest of the match with nothing left
+        /// to release it. This is the same class of leak `ResetForRound`'s note describes for
+        /// Carapace's stun immunity, and it is worse, because a rooted player cannot play at all.
+        /// </summary>
+        private void ReleaseRoot()
+        {
+            if (_rooted == null) return;
+
+            _rooted.ExitSpeedZone(RootSpeed);
+            _rooted = null;
         }
 
         public virtual void Tick(AbilityContext ctx, float dt)
@@ -236,6 +327,25 @@ namespace TumbangPreso.Abilities
             // Everywhere except under the LRT guideway on Ilalim ng Tulay this is 1.0.
             if (CooldownRemaining > 0.0f)
                 CooldownRemaining = Mathf.Max(0.0f, CooldownRemaining - dt * OverheadPassWindow.CooldownRate);
+
+            // ⚠️ THE WIND-UP RUNS BELOW THE COOLDOWN AND ABOVE THE DURATION. The cooldown must
+            // keep draining (the ability is spent either way), and the duration must NOT start
+            // until the effect actually exists, or a 0.4 s wind-up would silently eat 0.4 s off
+            // every ultimate's live time.
+            //
+            // ⚠️ NOTHING HERE CAN CANCEL IT. There is no stun check and no `CanAct` check on
+            // purpose: see the wind-up block at the top of the class.
+            if (WindupRemaining > 0.0f)
+            {
+                WindupRemaining = Mathf.Max(0.0f, WindupRemaining - dt);
+                if (WindupRemaining > 0.0f) return;
+
+                ReleaseRoot();
+
+                DurationRemaining = Duration;
+                OnActivate(ctx);
+                return;
+            }
 
             if (DurationRemaining > 0.0f)
             {
@@ -265,6 +375,12 @@ namespace TumbangPreso.Abilities
 
         public virtual void Reset()
         {
+            // ⚠️ THE ROOT COMES OFF FIRST. A round can end mid-wind-up, and `Reset` zeroing the
+            // timer behind the wind-up's back would strand the speed zone with nothing left to
+            // release it. See `ReleaseRoot`.
+            ReleaseRoot();
+            WindupRemaining = 0.0f;
+
             CooldownRemaining = 0.0f;
             DurationRemaining = 0.0f;
 

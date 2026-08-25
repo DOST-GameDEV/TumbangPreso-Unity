@@ -181,8 +181,40 @@ which is the bound nothing was asserting. Its bay count is also derived from the
 of the hardcoded 12 that failed at 28 when the map was fixed.
 **Verified:** `geometry OK, capture OK`, 28 joined bays, 0 floating, and `ilalim_guideway_v23.png`.
 
-**9.5 OPEN: text overflows its box in the UI.** 🧑 has the screenshot. Not located yet, and the
-panel has to be identified from the shot rather than guessed at.
+**9.5 ✅ FIXED: text overflowed the objective card.** 🧑's screenshot, bottom right of a gameplay
+frame: the card reads `FETCH SLIPPER  ·  -5 / SEC`. The string is `-5 / SECOND`. `HudLabel` sets
+`horizontalOverflow = Overflow`, so the line neither wraps nor shrinks, and the card is anchored
+to the RIGHT screen corner, so what runs past its 380 px simply leaves the screen.
+
+**Fixed by measuring, not by typing a wider number**, following the idiom `WorstCaseNameWidth`
+already uses in the same file: `LataHintLines` lists every string `UpdateLataCard` can show and
+the card sizes to the widest of them through the label that will draw it.
+⚠️ **The font size is not the lever.** `ui_theme.gd`'s note records these sizes going 16/13,
+22/19 and 30/28, answered each time with *"text still small"*. Shrinking text to fit a box walks
+straight back into that. ⚠️ **Keep `LataHintLines` in step with `UpdateLataCard`**: a line added
+there and not here is a line that overflows again.
+
+**9.6 ✅ FIXED: the fall had a mechanic and no feedback.** 🧑: *"i dont feel like i fell down"*,
+then *"make sure theres ui for the button clicking to get back up, make sure it has progress
+animation too"*.
+
+⚠️ **Every part of the mechanic already existed.** `MashRecover`, `CanMashUp`, `TripLeft`,
+`TripTotal` and `MashPresses` are all there, and `MashPresses` even carries the comment *"so the
+HUD can show it filling"*. Nothing ever filled: the whole feedback was a text toast, and it
+switched OFF at `MinTripDown`, so the last 0.9 s of every fall went silent while the player was
+still on the floor. `BuildGetUpCard` draws a centred prompt with a bar that spans the whole trip,
+and it now follows `IsTripped` rather than `CanMashUp`, so it stays up until the player is up.
+
+**And the fall is inside the 1 to 2 s 🧑 asked for.** `MashRecoverPerPress` 0.13 was solved
+against the mashing window rather than the time on the floor: 1.60 / 0.13 = 12.3 presses at
+0.10 s is 1.23 s, but the floor adds 0.90 s, so a perfect answer still took **2.13 s**. At 0.20
+it is 8 presses, 0.80 s, for **1.70 s** total. Still a real burst, and `MashCooldown`'s anti-turbo
+bound is untouched.
+
+⚠️ **STILL OPEN from the same report:** the fall does not cut to TPP, and the landing still uses
+the icy material. 🧑: *"i dont want the effect to be ice too when i fell down it feels weird"*.
+`Hero_Strike_Balance.md` § 8.6 has the camera rule and lists falling as one of only two cases
+that earn TPP, but the cut itself is not built.
 
 ---
 

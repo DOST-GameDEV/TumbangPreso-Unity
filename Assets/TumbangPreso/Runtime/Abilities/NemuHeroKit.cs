@@ -202,6 +202,7 @@ namespace TumbangPreso.Abilities
                        castAction: "hero-nemu-seance",
                        viewmodelAction: "seance-channel")
             {
+                Windup = UltimateWindup;
             }
 
             protected override void OnActivate(AbilityContext ctx)

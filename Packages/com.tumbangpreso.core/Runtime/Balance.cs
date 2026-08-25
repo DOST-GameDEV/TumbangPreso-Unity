@@ -445,10 +445,23 @@ namespace TumbangPreso.Core
         ///
         /// ⚠ SOLVED, NOT PICKED. `StreetTripHazard` sets `TripDuration` to 2.50 s and
         /// `MinTripDown` is 0.90 s, so a mash has 1.60 s to remove. At `MashCooldown` = 0.10 s a
-        /// player who mashes cleanly gets at most 16 presses into that window; 0.13 s each takes
-        /// 1.60 s off in 12.3 presses, which lands the full saving comfortably inside the fall
-        /// while still asking for a real burst rather than two taps.</summary>
-        public const float MashRecoverPerPress = 0.13f;
+        /// player who mashes cleanly gets at most 16 presses into that window.
+        ///
+        /// ⚠⚠ RAISED FROM 0.13 TO 0.20 ON 2026-08-25, AND THE OLD VALUE WAS SOLVED AGAINST THE
+        /// WRONG QUANTITY. 0.13 was chosen so the saving "lands comfortably inside the fall",
+        /// which it did: 1.60 / 0.13 = 12.3 presses at 0.10 s is 1.23 s of mashing. But what the
+        /// player experiences is not the mashing window, it is the WHOLE TIME ON THE FLOOR, and
+        /// that is the mash plus the floor: 1.23 + 0.90 = **2.13 s**. 🧑 asked for a fall you can
+        /// answer "in 1-2 seconds", and 2.13 is outside that.
+        ///
+        /// 0.20 s takes the same 1.60 s off in 8 presses, which is 0.80 s of mashing, for a total
+        /// of 0.80 + 0.90 = **1.70 s** on the floor. Still eight real presses, so it remains a
+        /// burst rather than two taps, and the anti-turbo bound in `MashCooldown` is untouched.
+        ///
+        /// ⚠ THE FLOOR IS NOT THE LEVER AND MUST NOT BECOME ONE. `MinTripDown` is pinned at
+        /// 0.90 by the knockdown clip, as its own note explains, so the only honest way to
+        /// shorten a fall is to buy the slack faster.</summary>
+        public const float MashRecoverPerPress = 0.20f;
 
         /// <summary>Shortest gap between two presses that both count.
         ///

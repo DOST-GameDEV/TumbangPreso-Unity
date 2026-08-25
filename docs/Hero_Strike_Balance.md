@@ -437,6 +437,37 @@ counterplay are the reason Hero Strike exists.
 ⚠️ **The wind-up is also the balance lever.** An ultimate you can be interrupted out of is worth
 less than one you cannot, and that is a much better knob than the radius.
 
+#### 4.3.1 ✅ BUILT 2026-08-25, and the refusal it had to get past
+
+This was proposed, **refused**, and then built, and all three steps matter to anyone reading it.
+
+The refusal lived in `HeroAbilitySystem.PlayUltimatePresentation` and was correct on its own
+terms: *"A real 0.4 s wind-up on the ABILITY would be a fourth thing that can be interrupted, and
+every one of the five ultimates would need its own answer to being stunned halfway through; the
+buffering rules in `docs/Hero_Strike_UI.md` § 7 have no story for a half-cast power."* What
+shipped instead was the column, the camera punch and the hitstop, all fired **as** the ultimate
+resolved.
+
+⚠️⚠️ **The objection is entirely about INTERRUPTION, not about the delay, so the wind-up is
+uninterruptible and the objection dissolves.** Once the press lands the ultimate fires: no stun,
+trip or death cancels it. There is therefore no half-cast state for any of the five to answer
+for, and § 7's buffering never meets one. The meter is still spent at the press, so there is no
+refund path to get wrong either.
+
+**What it costs the caster** is a 0.4 s root, entered through `Stamina.SpeedZones` at 0.0. That is
+the price the beat is paid for with, and it is real in a 14 m box.
+
+**What it buys** is the thing this section asked for: the other three players get 0.4 s to run,
+reposition or spend something defensive. The column now rises at the press instead of at the
+resolve, so it is a telegraph rather than an announcement, which is the role § 4.3 described.
+
+⚠️ **Interruptibility is still NOT taken**, and taking it later means first writing the half-cast
+story `Hero_Strike_UI.md` § 7 is missing. Do not add a stun check to `HeroAbility.Tick` without it.
+
+⚠️ **Ultimates only.** 🧑, authorising it: *"just dont spam it for everything"*. `UltimateWindup`
+is one shared constant rather than five tuned numbers, because what a player reads is "somebody is
+ultimate-ing" and that must look and last the same whoever cast it.
+
 ### 4.4 Sean and Zack are currently the same kit in two colours
 
 This is the kit-identity answer and I think it matters more than any single radius.

@@ -388,13 +388,8 @@ namespace TumbangPreso.Abilities
             // the arc invisible on top of it.
             VfxMaterial.Ghost(ring.GetComponent<Renderer>(), new Color(1.0f, 0.92f, 0.18f, 0.55f), 0.32f);
 
-            // Electricity does not breathe, it flickers. Fastest pulse of the three and a
-            // shallower swing, so it reads as current rather than as heat.
-            var shockLife = ring.AddComponent<HazardRimLife>();
-            shockLife.Duration = duration;
-            shockLife.BaseAlpha = 0.55f;
-            shockLife.PulseAmount = 0.13f;
-            shockLife.PulseHz = 4.1f;
+            // ⚠️ NO `HazardRimLife` HERE EITHER, and for the same reason as the fire trail: this
+            // is the other per-disc trail, and Zack's corridor is the widest in the game.
             VfxMaterial.StripCollider(ring);
 
             // ⚠️ THE ARC IS A JAGGED LINE THAT REBUILDS ITSELF ON A TIMER. A straight bolt reads
@@ -578,12 +573,21 @@ namespace TumbangPreso.Abilities
             VfxMaterial.Ghost(edge.GetComponent<Renderer>(), new Color(1.0f, 0.36f, 0.05f, 0.42f), 0.22f);
             VfxMaterial.StripCollider(edge);
 
-            // The rim licks while the fire burns and dies back as it goes out. See `HazardRimLife`.
-            var fireLife = edge.AddComponent<HazardRimLife>();
-            fireLife.Duration = duration;
-            fireLife.BaseAlpha = 0.42f;
-            fireLife.PulseAmount = 0.20f;   // flame is the most restless of the three
-            fireLife.PulseHz = 2.3f;
+            // ⚠️⚠️ NO `HazardRimLife` ON A TRAIL DISC, AND I PUT ONE HERE BEFORE REMOVING IT.
+            // `AbilityVfx` already states the rule for this exact object: *"a dashing hero drops
+            // a trail disc every 0.10 s and each lives 3 s, so ONE dash leaves up to thirty live
+            // objects. Thirty looping ParticleSystems is a different kind of bug from the one
+            // this feature is for. Zone hazards are singular and get one each; trails get none."*
+            //
+            // A per-frame material write is not a ParticleSystem, but it is the same shape of
+            // mistake: thirty `Update` calls each writing colour and emission, and thirty rims
+            // throbbing out of phase along a corridor, which is visual noise in the one place
+            // `VISION.md` § 2 already measures as the worst offender at 27.2 per cent of the box.
+            //
+            // ⚠️ The expiry read is also worth least here. A trail disc lives 3 s and a player
+            // runs THROUGH it; the ice sheet is a zone somebody stands at the edge of deciding
+            // whether to cross, which is the case § 8.5 item 2 actually names. The pulse stays
+            // on the sheet and off the trails.
 
             // ⚠️⚠️ THE EMBERS ARE CUBES, AND THE BILLBOARD QUADS THEY REPLACE RENDERED AS
             // LITERAL YELLOW SQUARES. `ability_fire_trail_v1.png` is unambiguous about it: three
