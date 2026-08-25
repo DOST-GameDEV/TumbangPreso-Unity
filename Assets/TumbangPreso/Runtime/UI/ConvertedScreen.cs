@@ -210,5 +210,55 @@ namespace TumbangPreso.UI
             var text = t.GetComponent<Text>() ?? t.GetComponentInChildren<Text>();
             if (text != null) text.text = value;
         }
+
+        /// <summary>
+        /// Writes a headline and shrinks it until it fits the box it was authored in.
+        ///
+        /// ⚠️⚠️ THE CONVERTED BANNERS OVERFLOW AND CANNOT TELL YOU THEY HAVE. Every one of them
+        /// carries `m_HorizontalOverflow: 1`, which is `Overflow`: the string neither wraps nor
+        /// shrinks, it simply draws past the edge of its plate. On `CharacterSelect` the ribbon
+        /// is 614 px, the label box inside it is 424, and the font is 66 pt, so "SINGLE PLAYER"
+        /// lands about right and "CHOOSE YOUR HERO" runs a good hundred pixels out of the
+        /// yellow. 🧑: *"choose your hero overfills the box too"*.
+        ///
+        /// ⚠️ THIS IS THE THIRD TIME THE SAME SETTING HAS DONE THE SAME THING in one session:
+        /// the objective card's "-5 / SECOND" ran off the screen edge, the deck tile's "RECAST"
+        /// would have hung out of a 60 px tile, and now the banner. `Overflow` is the default
+        /// these screens were converted with, so assume any authored label can overflow and size
+        /// it against the string rather than trusting the author's font choice.
+        ///
+        /// ⚠️ IT SHRINKS RATHER THAN WRAPS. The ribbon is 101 px tall and holds one line by
+        /// design; wrapping "CHOOSE YOUR HERO" would put a second line outside the plate, which
+        /// trades an overflow sideways for an overflow downwards.
+        ///
+        /// ⚠️ AND IT ONLY EVER SHRINKS, never grows. Raising a short headline to fill the plate
+        /// would make the banner change size from screen to screen, and the ribbon is a fixed
+        /// piece of art that the rest of the layout is positioned against.
+        /// </summary>
+        protected void SetHeadline(string nodeName, string value, int authoredSize)
+        {
+            var node = Node(nodeName);
+            if (node == null) return;
+
+            var text = node.GetComponent<Text>() ?? node.GetComponentInChildren<Text>();
+            if (text == null) return;
+
+            text.text = value;
+            text.fontSize = authoredSize;
+
+            var rect = text.rectTransform;
+            float room = rect.rect.width;
+
+            // A rect that has not been laid out yet reports 0 and would drive the font to its
+            // floor. Leaving it at the authored size is the safe answer: it is what shipped.
+            if (room <= 1.0f) return;
+
+            // ⚠️ MEASURED THROUGH THIS LABEL, not a spare font metric, for the reason
+            // `Hud.WorstCaseNameWidth` gives: `preferredWidth` is what this exact component will
+            // lay out to, same font, same generator settings.
+            const int floorSize = 24;
+            while (text.fontSize > floorSize && text.preferredWidth > room)
+                text.fontSize -= 2;
+        }
     }
 }

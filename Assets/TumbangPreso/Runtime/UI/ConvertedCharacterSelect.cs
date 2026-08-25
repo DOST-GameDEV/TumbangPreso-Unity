@@ -45,9 +45,12 @@ namespace TumbangPreso.UI
         protected override void Wire()
         {
             ConfigureGodotBackdrop();
-            SetText("GameBannerLabel", SceneFlow.SelectedMode == GameMode.HeroStrike
+            // ⚠️ 66 IS THE SIZE THE SCENE AUTHORS IT AT, and it is passed in rather than read so
+            // the fit starts from the same place every time this screen refreshes. See
+            // `SetHeadline`: "CHOOSE YOUR LOADOUT" is nineteen characters into a 424 px box.
+            SetHeadline("GameBannerLabel", SceneFlow.SelectedMode == GameMode.HeroStrike
                 ? "CHOOSE YOUR HERO"
-                : "CHOOSE YOUR LOADOUT");
+                : "CHOOSE YOUR LOADOUT", 66);
 
             var s = Settings.SettingsStore.Current;
             _pick[0] = Mathf.Max(0, s.CharacterPick);
@@ -357,9 +360,24 @@ namespace TumbangPreso.UI
                 rowGo.AddComponent<RectTransform>();
                 rowGo.transform.SetParent(rows, false);
 
+                // ⚠️ THE ULTIMATE'S PLATE IS TINTED, NOT JUST OUTLINED. 🧑, on the picker:
+                // *"ui here ugly and repetitive"*, and the three rows were the largest part of
+                // that: same plate, same dark fill, same layout, three times down the panel,
+                // separated only by a one-pixel difference in border width. The ultimate is the
+                // thing a whole round is spent earning and it looked like the third item in a
+                // list. A wash of the hero's own colour through the fill costs nothing and
+                // makes the row read as a different KIND of thing at a glance.
+                //
+                // ⚠️ 0.14, AND DELIBERATELY UNDER THE TEXT'S CONTRAST FLOOR. The summary line
+                // sits on this plate at full Cream; a heavier tint would start eating the
+                // legibility that was just fixed a few lines below.
+                Color plate = item.ult
+                    ? Color.Lerp(UiTheme.HeroPlate, accent, 0.14f)
+                    : UiTheme.HeroPlate;
+
                 var rowBg = rowGo.AddComponent<Image>();
                 rowBg.sprite = GodotTheme.Box(
-                    UiTheme.HeroPlate,
+                    plate,
                     item.ult ? accent : UiTheme.HeroRim,
                     item.ult ? 2 : 1, 6);
                 rowBg.type = Image.Type.Sliced;
@@ -370,9 +388,20 @@ namespace TumbangPreso.UI
                 rowCol.childControlWidth = true;
                 rowCol.childForceExpandHeight = false;
                 rowCol.childForceExpandWidth = true;
+                // 5 top and bottom rather than 6, which is the two pixels the bigger summary
+                // needed. See the height note below.
                 rowCol.spacing = 3.0f;
-                rowCol.padding = new RectOffset(10, 10, 6, 6);
+                rowCol.padding = new RectOffset(10, 10, 5, 5);
 
+                // ⚠️⚠️ 61 IS THE PANEL'S BUDGET AND IT IS NOT NEGOTIABLE FROM IN HERE. I raised
+                // this to 68 to make room for the bigger summary, and three rows times seven
+                // pixels ate the wood panel's bottom padding: the ultimate's border ended up
+                // sitting on the panel edge. 🧑: *"it goes out the box"*. The panel is authored
+                // at a fixed height in `CharacterSelect.unity` and does not grow to fit, so a
+                // row that wants more height has to find it INSIDE itself.
+                //
+                // The budget, and it balances exactly: 26 header + 20 description + 3 spacing +
+                // 10 padding = 59, inside 61 with two pixels spare.
                 var rowLe = rowGo.AddComponent<LayoutElement>();
                 rowLe.preferredHeight = 61.0f;
                 rowLe.minHeight = rowLe.preferredHeight;
@@ -431,26 +460,74 @@ namespace TumbangPreso.UI
                 nameLbl.raycastTarget = false;
                 nameLbl.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1.0f;
 
-                string timing = item.ult
-                    ? "ULTIMATE"
-                    : (item.ability.Duration > 0.0f
-                        ? $"{item.ability.Cooldown:0.#}s · {item.ability.Duration:0.#}s"
-                        : $"{item.ability.Cooldown:0.#}s");
+                // ⚠️⚠️ A CHARGE ABILITY HAS NO COOLDOWN AND THIS USED TO PRINT ITS ZERO AS ONE.
+                // `HeroAbility` states the rule: an ability is on a cooldown OR on charges,
+                // never both, so `Cooldown` is exactly 0.0 on every charge power. This label
+                // printed it unconditionally, so Seismic Stomp read "0s" and Ignition Cannon
+                // read "0s · 10s". 🧑, on the picker: *"why does this say 1 second cooldown"*.
+                // Two of the five heroes were being described by a number that means "this
+                // field does not apply to me".
+                //
+                // ⚠️ `Hud.PaintSkillCard` ALREADY CARRIES THIS DISTINCTION and says why in as
+                // many words: *"A CHARGE SKILL AT ZERO IS NOT 'COOLING', AND THAT DISTINCTION IS
+                // THE WHOLE REASON THIS BRANCH EXISTS."* The deck learned it and the picker
+                // never did, which is how the same fact ends up drawn two different ways.
+                //
+                // ⚠️ AND THE UNITS ARE NAMED NOW. The old format was two bare numbers with a dot
+                // between them, so "34s · 0.6s" gave the reader nothing to tell a cooldown from
+                // a duration; the shorter one is not obviously either. A picker exists to be
+                // read by somebody who does not know the kit yet.
+                string timing;
 
-                var timingLbl = MenuKit.Label(header.transform, timing, 13,
-                    new Color(0.961f, 0.902f, 0.784f, 0.75f),
+                if (item.ult)
+                {
+                    timing = "ULTIMATE";
+                }
+                else if (item.ability.UsesCharges)
+                {
+                    int max = item.ability.MaxCharges;
+                    timing = max == 1 ? "1 USE" : $"{max} USES";
+                    if (item.ability.Duration > 0.0f) timing += $" · {item.ability.Duration:0.#}s";
+                }
+                else
+                {
+                    timing = $"{item.ability.Cooldown:0.#}s CD";
+                    if (item.ability.Duration > 0.0f) timing += $" · {item.ability.Duration:0.#}s";
+                }
+
+                // ⚠️ CREAM AT FULL ALPHA, NOT 0.75. 🧑: *"shit down there is small and cant be
+                // seent"*. This sat at 13 pt and three quarters opacity on a dark plate, which
+                // is the least readable thing on the screen carrying the only NUMBERS on it.
+                var timingLbl = MenuKit.Label(header.transform, timing, 14,
+                    UiTheme.Cream,
                     Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleRight);
                 timingLbl.fontStyle = FontStyle.Bold;
                 timingLbl.raycastTarget = false;
-                timingLbl.gameObject.AddComponent<LayoutElement>().minWidth = 86.0f;
 
-                var descLbl = MenuKit.Label(rowGo.transform, item.ability.Summary, 13,
-                    UiTheme.CreamMuted, Vector2.zero, Vector2.zero, Vector2.zero,
+                // ⚠️ WIDE ENOUGH FOR THE LONGEST STRING THIS CAN PRODUCE, which is now
+                // "45s CD · 4s" rather than "45s · 4s". 86 px was sized for the old format and
+                // `MenuKit.Label` does not wrap, so the extra characters would have pushed the
+                // ability NAME along instead of overflowing visibly, which is worse: it looks
+                // like a layout choice rather than a bug.
+                timingLbl.gameObject.AddComponent<LayoutElement>().minWidth = 116.0f;
+
+                // ⚠️⚠️ 15 pt AND FULL CREAM, UP FROM 13 pt MUTED. 🧑: *"shit down there is small
+                // and cant be seent"*. This line is the only place the picker explains what a
+                // power actually DOES, and it was the least legible text on the screen: the
+                // smallest size in the panel, at `CreamMuted`, over a dark plate. Muted grey is
+                // for text the reader may skip, and a player choosing a hero for the first time
+                // cannot skip this one.
+                //
+                // ⚠️ THE ROW GREW WITH IT. A taller line inside a `preferredHeight` that did not
+                // move would push the description into the plate's bottom border, which is the
+                // fault this was supposed to fix wearing a different hat.
+                var descLbl = MenuKit.Label(rowGo.transform, item.ability.Summary, 15,
+                    UiTheme.Cream, Vector2.zero, Vector2.zero, Vector2.zero,
                     TextAnchor.UpperLeft);
                 descLbl.raycastTarget = false;
                 descLbl.horizontalOverflow = HorizontalWrapMode.Wrap;
                 descLbl.verticalOverflow = VerticalWrapMode.Overflow;
-                descLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = 19.0f;
+                descLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = 20.0f;
             }
 
             // The key chips already communicate Q, E and F. A fourth instruction line below
@@ -538,17 +615,49 @@ namespace TumbangPreso.UI
             var entry = Entries[_pick[_tab]];
 
             bool choosingHero = _tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike;
-            SetText("NameCaption", choosingHero ? "HERO" : "NAME");
             SetText("CharValueLabel", entry.Name);
             SetText("TaglineLabel", TaglineFor(entry.Id));
 
-            var caption = Node("NameCaption")?.GetComponent<Text>();
-            if (caption != null)
-            {
-                caption.fontSize = 20;
-                caption.color = UiTheme.CreamMuted;
-            }
+            // ⚠️⚠️ THE CAPTION IS GONE BECAUSE IT SAID WHAT THE TAB ABOVE IT ALREADY SAID.
+            // 🧑, on the picker: *"here is said twice"*. The tab bar reads HERO | LATA | TSINELAS
+            // with HERO selected, and eighty pixels below it this label read "HERO" again, in a
+            // muted grey, against the selector holding the hero's actual name. On the other two
+            // tabs it read "NAME", which is worse: the tab says LATA and the row says NAME, so a
+            // word was being spent to announce that a name field contains a name.
+            //
+            // ⚠️ IT IS DISABLED RATHER THAN BLANKED. Setting the text to "" leaves the object in
+            // the row's layout still holding its width, so the selector would keep the gap where
+            // the redundant word used to be and the fix would look like a rendering fault.
+            var caption = Node("NameCaption");
+            if (caption != null && caption.gameObject.activeSelf)
+                caption.gameObject.SetActive(false);
 
+            // ⚠️⚠️ AND THE ROW HAS TO BE RE-CENTRED, OR REMOVING THE WORD JUST MOVES THE PROBLEM.
+            // `NameRow` is authored as a `HorizontalLayoutGroup` with `m_ChildAlignment: 3`,
+            // which is MiddleLeft: the caption held the left edge and the selector sat wherever
+            // it landed after it. Hiding the caption on its own leaves the selector pinned left
+            // with the gap where the word used to be, and a hole down the right of the panel.
+            // 🧑: *"the uncentered shit looks ugly"*, *"maybe js remove hero and center this
+            // shit"*, and the second half of that is the half that does the work.
+            //
+            // ⚠️ SET AT REFRESH RATHER THAN IN THE SCENE, because the caption is hidden here too
+            // and the two facts are one decision: a scene edit that centred the row while the
+            // caption was still active would centre the PAIR and look deliberate but wrong.
+            var nameRow = Node("NameRow")?.GetComponent<HorizontalLayoutGroup>();
+            if (nameRow != null) nameRow.childAlignment = TextAnchor.MiddleCenter;
+
+            // ⚠️⚠️ THE TAGLINE FLOATS IN A BOX TWICE THE SIZE OF ITS TEXT, AND THAT IS THE GAP.
+            // 🧑: *"theres big empty space in between character names and description"*. The
+            // scene authors this label with `m_PreferredHeight: 96` and `m_Alignment: 3`, which
+            // is MiddleLeft: two lines of 22 pt is about 56 px, so the text sits centred in 96
+            // with roughly twenty dead pixels above it and twenty below. The space reads as a
+            // layout mistake because it is one, and no amount of moving the rows fixes it while
+            // the label keeps reserving the height.
+            //
+            // ⚠️ TOP-ALIGNED AND SIZED TO THE TEXT, not merely top-aligned. Aligning alone moves
+            // the gap to the bottom of the box instead of removing it, and the rows below would
+            // sit exactly where they do now. The change itself is in the tagline block further
+            // down, which already owns this label's size.
             var value = Node("CharValueLabel")?.GetComponent<Text>();
             if (value != null)
             {
@@ -562,8 +671,23 @@ namespace TumbangPreso.UI
             {
                 tagline.fontSize = choosingHero ? 18 : 19;
                 tagline.lineSpacing = 1.0f;
+
+                // ⚠️⚠️ TOP-ALIGNED, AND THE ALIGNMENT IS WHY THE GAP LOOKED LIKE A BUG. The
+                // scene authors this label `MiddleLeft`, so two lines of 18 pt sat vertically
+                // CENTRED in whatever height was reserved: the text floated with dead space
+                // above it and below it, and the description appeared to have been pushed away
+                // from the name for no reason. 🧑: *"theres big empty space in between character
+                // names and description"*.
+                tagline.alignment = TextAnchor.UpperLeft;
+
+                // ⚠️ AND THE BOX COMES DOWN TO THE TEXT. Aligning alone only moves the gap to
+                // the bottom of the box; the rows below would not shift a pixel. Two lines at
+                // 18 pt with `lineSpacing` 1.0 is about 44 px, so 48 holds them with a margin
+                // and hands the rest of the panel back. The Classic tab keeps a taller box
+                // because its taglines run longer and it has no ability rows competing for the
+                // same height.
                 if (tagline.TryGetComponent<LayoutElement>(out var taglineLayout))
-                    taglineLayout.preferredHeight = choosingHero ? 66.0f : 96.0f;
+                    taglineLayout.preferredHeight = choosingHero ? 48.0f : 96.0f;
             }
 
             RefreshTabs();
