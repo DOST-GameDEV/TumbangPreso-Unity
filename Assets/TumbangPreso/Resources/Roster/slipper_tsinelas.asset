@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: tsinelas
   Model: {fileID: 919132149155446097, guid: 81fd73f2c00eb3646abb66759d4e7178, type: 3}
-  PetModel: {fileID: 0}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}
   Clips: []

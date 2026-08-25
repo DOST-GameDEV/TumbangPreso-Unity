@@ -174,33 +174,33 @@ def cell_uv(slot):
 # something appears on.
 #
 # Slot key, and what the reference art puts there:
-#   0 jacket yellow    1 black cloth      2 electric crest 3 buckle gold
-#   4 shoe yellow      5 chain silver     6 hair black     7 jacket shadow
+#   0 jacket purple    1 black cloth      2 clip magenta   3 buckle gold
+#   4 shoe purple      5 chain silver     6 hair black     7 jacket shadow
 #   8 face and ink     12 white           13/14/15 skin ramp
 # ---------------------------------------------------------------------------
 
-JACKET, CLOTH, ELECTRIC_CREST, GOLD = 0, 1, 2, 3
+JACKET, CLOTH, MAGENTA_CREST, GOLD = 0, 1, 2, 3
 SHOE, CHAIN, HAIR, JACKET_DARK = 4, 5, 6, 7
 INK, CARGO_BUCKLE, CRYSTAL, CRYSTAL_LIT = 8, 9, 10, 11
 WHITE, SKIN, SKIN_DARK, SKIN_LIT = 12, 13, 14, 15
 
 PALETTE = {
-    JACKET:        "e8d11f",   # Electric yellow open jacket and blazer
+    JACKET:        "6a2cc9",   # Vibrant cyber purple open jacket/blazer
     CLOTH:         "14121a",   # Deep midnight black cloth (undershirt, cargo pants)
-    ELECTRIC_CREST:"faf238",   # Neon yellow hair quiff and electric crest
+    MAGENTA_CREST: "a832ff",   # Vibrant electric cyber purple / neon violet hair quiff
     GOLD:          "f5a820",   # Gold rectangular belt buckle, earring, lapel pin
-    SHOE:          "e0bd1a",   # Electric yellow skate sneakers
+    SHOE:          "6a2cc9",   # Purple skate sneakers
     CHAIN:         "d4e2ec",   # Silver wallet chain, necklace chain, hardware
     HAIR:          "14121a",   # Dark midnight black hair undercut / fade
-    JACKET_DARK:   "a68014",   # Deep ochre jacket collar, lining and shadows
-    INK:           "1f1f24",   # Charcoal face ink for eyes, brows and mouth
+    JACKET_DARK:   "45188a",   # Rich deep purple jacket collar/lapels lining & shadows
+    INK:           "221430",   # Dark purple-black face ink (eyes, brows, mouth)
     CARGO_BUCKLE:  "525460",   # Utility strap buckles & cargo hardware
-    CRYSTAL:       "f5eb59",   # Layered electric yellow crystal pendant
-    CRYSTAL_LIT:   "fafaa6",   # Crystal highlight sparkle
+    CRYSTAL:       "b870ff",   # Layered glowing crystal pendant
+    CRYSTAL_LIT:   "e2b8ff",   # Crystal highlight sparkle
     WHITE:         "ffffff",   # Crisp snow white sneaker soles, toe cap, laces
-    SKIN:          "c77a45",   # Warm medium caramel skin
-    SKIN_DARK:     "925027",   # Warm caramel shadow
-    SKIN_LIT:      "c77a45",   # Matches skin for a uniform arm and face tone
+    SKIN:          "a8602c",   # Warm caramel tan midtone skin (Option 2)
+    SKIN_DARK:     "82451b",   # Rich warm caramel shadow
+    SKIN_LIT:      "a8602c",   # 100% matched with SKIN for uniform skin tone
 }
 
 MAX_FACE_LUMINANCE = 0.30
@@ -218,13 +218,13 @@ def mirrored(boxes, bone_from, bone_to):
 LEG_LEFT = [
     # White sneaker sole
     ("shoe-sole-left",   "leg-left", (0.006, 0.000, -0.134), (0.158, 0.024, 0.082), WHITE),
-    # Electric yellow sneaker upper
+    # Purple sneaker upper
     ("shoe-upper-left",  "leg-left", (0.014, 0.024, -0.126), (0.152, 0.056, 0.076), SHOE),
     # White toe cap
     ("shoe-toe-left",    "leg-left", (0.012, 0.024, -0.132), (0.154, 0.042, -0.100), WHITE),
     # White heel counter
     ("shoe-heel-left",   "leg-left", (0.012, 0.024, 0.050), (0.154, 0.056, 0.080), WHITE),
-    # Electric yellow sneaker collar
+    # Purple sneaker collar
     ("shoe-collar-left", "leg-left", (0.012, 0.056, -0.098), (0.154, 0.074, 0.078), SHOE),
     # White laces
     ("shoe-lace-l-1",    "leg-left", (0.030, 0.040, -0.106), (0.136, 0.048, -0.094), WHITE),
@@ -245,13 +245,13 @@ LEG_LEFT = [
 LEG_RIGHT = [
     # White sneaker sole
     ("shoe-sole-right",   "leg-right", (-0.158, 0.000, -0.134), (-0.006, 0.024, 0.082), WHITE),
-    # Electric yellow sneaker upper
+    # Purple sneaker upper
     ("shoe-upper-right",  "leg-right", (-0.152, 0.024, -0.126), (-0.014, 0.056, 0.076), SHOE),
     # White toe cap
     ("shoe-toe-right",    "leg-right", (-0.154, 0.024, -0.132), (-0.012, 0.042, -0.100), WHITE),
     # White heel counter
     ("shoe-heel-right",   "leg-right", (-0.154, 0.024, 0.050), (-0.012, 0.056, 0.080), WHITE),
-    # Electric yellow sneaker collar
+    # Purple sneaker collar
     ("shoe-collar-right", "leg-right", (-0.154, 0.056, -0.098), (-0.012, 0.074, 0.078), SHOE),
     # White laces
     ("shoe-lace-r-1",    "leg-right", (-0.136, 0.040, -0.106), (-0.030, 0.048, -0.094), WHITE),
@@ -291,7 +291,7 @@ TORSO = [
     ("necklace-gem-core",  "torso", (-0.012, 0.345, -0.110), (0.012, 0.372, -0.084), CRYSTAL_LIT),
     ("necklace-gem-tip",   "torso", (-0.008, 0.320, -0.104), (0.008, 0.338, -0.082), CRYSTAL),
     
-    # Electric Yellow Open Jacket / Blazer
+    # Purple Open Jacket / Blazer
     ("jacket-left",        "torso", (0.048, 0.232, -0.100), (0.138, 0.445, 0.092), JACKET),
     ("jacket-right",       "torso", (-0.138, 0.232, -0.100), (-0.048, 0.445, 0.092), JACKET),
     ("jacket-back",        "torso", (-0.138, 0.232, 0.076), (0.138, 0.445, 0.094), JACKET),
@@ -317,18 +317,18 @@ TORSO = [
 ]
 
 ARM_LEFT = [
-    # Electric yellow jacket sleeve
+    # Purple jacket sleeve
     ("sleeve-left",        "arm-left", (0.0999, 0.330, -0.066), (0.226, 0.470, 0.084), JACKET),
     ("cuff-left",          "arm-left", (0.226, 0.324, -0.072), (0.248, 0.476, 0.090), JACKET_DARK),
     ("sleeve-stripe-left", "arm-left", (0.120, 0.4660, -0.052), (0.222, 0.4740, 0.070), JACKET_DARK),
     # Forearm & Hand in uniform warm skin tone
     ("hand-left",          "arm-left", (0.248, 0.3383, -0.020), (0.3836, 0.4617, 0.038), SKIN_LIT),
-    # Electric yellow wristband on left wrist
-    ("wristband-left",     "arm-left", (0.256, 0.332, -0.026), (0.284, 0.468, 0.044), ELECTRIC_CREST),
+    # Cyber purple wristband on left wrist
+    ("wristband-left",     "arm-left", (0.256, 0.332, -0.026), (0.284, 0.468, 0.044), MAGENTA_CREST),
 ]
 
 ARM_RIGHT = [
-    # Electric yellow jacket sleeve
+    # Purple jacket sleeve
     ("sleeve-right",        "arm-right", (-0.226, 0.330, -0.066), (-0.0999, 0.470, 0.084), JACKET),
     ("cuff-right",          "arm-right", (-0.248, 0.324, -0.072), (-0.226, 0.476, 0.090), JACKET_DARK),
     ("sleeve-stripe-right", "arm-right", (-0.222, 0.4660, -0.052), (-0.120, 0.4740, 0.070), JACKET_DARK),
@@ -360,25 +360,25 @@ HEAD = [
     ("fringe-r-forehead",   "head", (-0.140, 0.560, 0.120), (-0.050, 0.630, 0.175), HAIR),
     ("fringe-r-point",      "head", (-0.145, 0.500, 0.125), (-0.085, 0.565, 0.172), HAIR),
     
-    # VIBRANT ELECTRIC YELLOW SPIKY QUIFF (#faf238)
+    # 💜 VIBRANT ELECTRIC CYBER PURPLE / NEON VIOLET SPIKY QUIFF (#a832ff)
     # Top-Center High Spike (Rising upward & slightly right)
-    ("electric-spike-top-base", "head", (-0.050, 0.640, 0.000), (0.050, 0.720, 0.120), ELECTRIC_CREST),
-    ("electric-spike-top-peak", "head", (-0.035, 0.710, 0.010), (0.040, 0.790, 0.110), ELECTRIC_CREST),
+    ("purple-spike-top-base", "head", (-0.050, 0.640, 0.000), (0.050, 0.720, 0.120), MAGENTA_CREST),
+    ("purple-spike-top-peak", "head", (-0.035, 0.710, 0.010), (0.040, 0.790, 0.110), MAGENTA_CREST),
     
     # Top-Right Accent Spike
-    ("electric-spike-r-top",  "head", (0.030, 0.650, -0.020), (0.115, 0.740, 0.080), ELECTRIC_CREST),
+    ("purple-spike-r-top",    "head", (0.030, 0.650, -0.020), (0.115, 0.740, 0.080), MAGENTA_CREST),
     
-    # Chunky forward electric fringe with a stepped quiff over the left brow
-    ("electric-fringe-root",    "head", (-0.020, 0.600, 0.110), (0.090, 0.685, 0.178), ELECTRIC_CREST),
-    ("electric-fringe-main",    "head", (0.015, 0.570, 0.140), (0.130, 0.670, 0.215), ELECTRIC_CREST),
-    ("electric-fringe-stepped", "head", (0.040, 0.530, 0.150), (0.135, 0.615, 0.218), ELECTRIC_CREST),
-    ("electric-fringe-tip",     "head", (0.065, 0.500, 0.155), (0.120, 0.560, 0.205), ELECTRIC_CREST),
+    # Chunky Forward Purple Fringe (Cascading stepped quiff over left brow)
+    ("purple-fringe-root",    "head", (-0.020, 0.600, 0.110), (0.090, 0.685, 0.178), MAGENTA_CREST),
+    ("purple-fringe-main",    "head", (0.015, 0.570, 0.140), (0.130, 0.670, 0.215), MAGENTA_CREST),
+    ("purple-fringe-stepped", "head", (0.040, 0.530, 0.150), (0.135, 0.615, 0.218), MAGENTA_CREST),
+    ("purple-fringe-tip",     "head", (0.065, 0.500, 0.155), (0.120, 0.560, 0.205), MAGENTA_CREST),
     
     # Soft bevel transition into crown
-    ("electric-crown-bridge", "head", (-0.040, 0.635, -0.050), (0.040, 0.690, 0.010), ELECTRIC_CREST),
+    ("purple-crown-bridge",   "head", (-0.040, 0.635, -0.050), (0.040, 0.690, 0.010), MAGENTA_CREST),
     
     # 🖤 SPIKY BLACK HAIR CLUSTERS (Character's Left / +X & Back)
-    # Left-side black spikes framing behind the electric lock
+    # Left-side black spikes framing behind the purple lock
     ("spike-l-top-back",    "head", (0.090, 0.640, -0.070), (0.155, 0.725, 0.020), HAIR),
     ("spike-l-upper",       "head", (0.140, 0.610, -0.030), (0.190, 0.690, 0.070), HAIR),
     ("spike-l-mid",         "head", (0.155, 0.540, -0.040), (0.205, 0.620, 0.060), HAIR),

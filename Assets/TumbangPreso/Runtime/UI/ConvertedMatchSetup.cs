@@ -77,9 +77,6 @@ namespace TumbangPreso.UI
             OnClick("MapPrevButton", () => OnMapCycle(-1));
             OnClick("MapNextButton", () => OnMapCycle(1));
 
-            OnClick("ModePrevButton", () => OnModeCycle(-1));
-            OnClick("ModeNextButton", () => OnModeCycle(1));
-
             OnClick("DifficultyPrevButton", () => OnDifficultyCycle(-1));
             OnClick("DifficultyNextButton", () => OnDifficultyCycle(1));
 
@@ -93,7 +90,7 @@ namespace TumbangPreso.UI
             });
 
             var modeRow = Node("ModeRow");
-            if (modeRow != null) modeRow.gameObject.SetActive(true);
+            if (modeRow != null) modeRow.gameObject.SetActive(false);
 
             BuildRightPanelNetwork();
             WireSeats();
@@ -367,25 +364,6 @@ namespace TumbangPreso.UI
             }
         }
 
-        private void OnModeCycle(int delta)
-        {
-            if (!NetAuthority.IsHost && SceneFlow.Networked) return;
-
-            SceneFlow.SelectedMode = SceneFlow.SelectedMode == GameMode.HeroStrike
-                ? GameMode.Classic
-                : GameMode.HeroStrike;
-
-            var s = Settings.SettingsStore.Current;
-            var list = Roster.GetPeople(SceneFlow.SelectedMode);
-            if (s.CharacterPick >= list.Count)
-            {
-                s.CharacterPick = 0;
-                Settings.SettingsStore.Save();
-            }
-
-            Refresh();
-        }
-
         private void OnDifficultyCycle(int delta)
         {
             if (!NetAuthority.IsHost && SceneFlow.Networked) return;
@@ -572,17 +550,13 @@ namespace TumbangPreso.UI
 
             SceneFlow.SelectedMap = SceneFlow.Maps[Mathf.Clamp(_map, 0, SceneFlow.Maps.Length - 1)];
 
-            // ⚠️ THE NAME AND TAGLINE COME FROM THE MAP REGISTRY, NOT FROM STRING SURGERY ON THE
-            // SCENE ID. The old uppercase-and-patch-BAYANPLAZA line rendered the third map as
-            // "ILALIMNGTULAY", and every map added after it would have needed another patch.
-            var mapEntry = SceneFlow.PreviewFor(SceneFlow.SelectedMap);
-            string mapName = mapEntry.Name;
-            string tagline = mapEntry.Tagline;
+            string mapName = SceneFlow.SelectedMap.ToUpperInvariant().Replace("BAYANPLAZA", "BAYAN PLAZA");
+            string tagline = SceneFlow.SelectedMap.ToLowerInvariant().Contains("plaza")
+                ? "Barangay plaza. Church, basketball ring, acacia."
+                : "Urban side street. Sari-sari, sampay, kanal.";
 
             SetText("BannerLabel", isNetworked ? "LOBBY" : "SINGLE PLAYER");
             SetText("MapValueLabel", mapName);
-
-            SetText("ModeValueLabel", SceneFlow.SelectedMode == GameMode.HeroStrike ? "HERO STRIKE" : "CLASSIC");
             SetText("DifficultyValueLabel", Difficulties[_difficulty]);
             SetText("DetailLabel", $"{mapName}   {tagline}");
 
@@ -596,8 +570,7 @@ namespace TumbangPreso.UI
             s.AiDifficulty = _difficulty;
             AIController.ApplyDifficulty(_difficulty);
 
-            var modePeople = Roster.GetPeople(SceneFlow.SelectedMode);
-            string person = Roster.At(modePeople, s.CharacterPick)?.Name ?? (SceneFlow.SelectedMode == GameMode.HeroStrike ? "DANTE" : "BAYAN");
+            string person = Roster.At(Roster.People, s.CharacterPick)?.Name ?? "BERTO";
             string can = Roster.At(Roster.Cans, s.CanPick)?.Name ?? "PASIP";
             string slipper = Roster.At(Roster.Slippers, s.SlipperPick)?.Name ?? "TSINELAS";
 

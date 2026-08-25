@@ -39,12 +39,7 @@ public class Shot {
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 
 $proc = Start-Process -FilePath $Exe -PassThru
-# ⚠️ 24 SECONDS, NOT 12. The BH Studios screen is the loading screen now and cannot be
-# skipped: it holds until the shader warm, the roster book, the audio bank and the async
-# MainMenu load have all finished. At 12 seconds the first click landed while the sting was
-# still up, every later click was one screen out of step, and the probe photographed the
-# tutorial instead of a match.
-Start-Sleep -Seconds 24
+Start-Sleep -Seconds 12
 [void][Shot]::SetForegroundWindow($proc.MainWindowHandle)
 Start-Sleep -Seconds 2
 
@@ -104,21 +99,10 @@ Snap "01-title"
 
 AimRef 236 471 ; Tap ; Snap "02-mode"           # PLAY          (-123..596, 374..568)
 AimRef 402 450 ; Tap ; Snap "03-setup"          # SINGLE PLAYER (95..709, 400..501)
-AimRef 390 768 ; Tap ; Snap "04-match-ready"    # START MATCH
+AimRef 390 672 ; Tap ; Snap "04-match-ready"    # START MATCH
 
 Start-Sleep -Seconds 4
 Snap "05-match"
-
-# ⚠️ A SINGLE FRAME FOUR SECONDS IN IS NOT ENOUGH, AND THE HERO DECK IS WHY. The HUD
-# rebuilds its bindings on the round boundary, so a capture that lands inside that window
-# photographs an empty scoreboard and no ability deck: the shot looks like a missing
-# feature and is in fact a missing MOMENT. Three spread over ten seconds always catches a
-# settled frame, and the extra two cost nothing.
-Start-Sleep -Seconds 5
-Snap "06-match-settled"
-
-Start-Sleep -Seconds 5
-Snap "07-match-late"
 
 Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
 "done"

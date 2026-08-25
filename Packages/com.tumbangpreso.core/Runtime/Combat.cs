@@ -163,42 +163,5 @@ namespace TumbangPreso.Core
         /// </summary>
         public static float ResetChannelFor(int canIndex) =>
             Balance.ResetChannelTime / Roster.CanResetScale(canIndex);
-
-        /// <summary>
-        /// One mash press against a trip. Returns what is left of the fall.
-        ///
-        /// ⚠️⚠️ THE COOLDOWN IS CHECKED HERE RATHER THAN AT THE CALL SITE, so a bot and a
-        /// human are held to the same press rate by the same code. `docs/VISION.md` § 4: a bot
-        /// presses the same buttons a human does, and there is no second path where either can
-        /// do something the other cannot. A rate check living in the input layer would be
-        /// exactly that second path.
-        ///
-        /// ⚠️ IT CLAMPS AT `MinTripDown` RATHER THAN AT ZERO. Mashing cannot cancel a trip, it
-        /// can only shorten it, so the hazard still costs a beat no matter how fast anybody is.
-        /// </summary>
-        /// <param name="tripLeft">Seconds of trip remaining.</param>
-        /// <param name="secondsSinceLastPress">Time since the last press that was ACCEPTED.</param>
-        /// <param name="accepted">True when this press counted against the rate cap.</param>
-        public static float MashRecover(float tripLeft, float secondsSinceLastPress, out bool accepted)
-        {
-            accepted = false;
-            if (tripLeft <= 0.0f) return tripLeft;
-            if (secondsSinceLastPress < Balance.MashCooldown) return tripLeft;
-
-            accepted = true;
-
-            float reduced = tripLeft - Balance.MashRecoverPerPress;
-            return reduced < Balance.MinTripDown ? Balance.MinTripDown : reduced;
-        }
-
-        /// <summary>
-        /// The shortest a trip of <paramref name="duration"/> can be made by mashing perfectly.
-        ///
-        /// ⚠️ IT EXISTS SO THE BOUND CAN BE ASSERTED RATHER THAN PLAYTESTED. Every balance
-        /// number in this repository is measured, and "how much does the mash actually buy" is
-        /// the only question worth asking about this one.
-        /// </summary>
-        public static float FastestTripRecovery(float duration) =>
-            duration < Balance.MinTripDown ? duration : Balance.MinTripDown;
     }
 }

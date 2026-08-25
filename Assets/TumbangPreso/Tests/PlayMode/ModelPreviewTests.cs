@@ -227,7 +227,7 @@ namespace TumbangPreso.PlayTests
             var book = RosterBook.Load();
             Assert.IsNotNull(book, "No RosterBook. Run RosterBookBuilder.Build.");
 
-            foreach (var (replacedId, replacedMesh) in HeroCharacters)
+            foreach (var (replacedId, replacedMesh) in ReplacedCharacters)
             {
                 int index = Core.Roster.IndexIn(Core.Roster.People, replacedId);
                 Assert.GreaterOrEqual(index, 0, $"No roster entry '{replacedId}'.");
@@ -262,23 +262,15 @@ namespace TumbangPreso.PlayTests
                     Assert.IsTrue(found, $"The previewed rig has no '{wanted}' bone.");
                 }
 
-                var poses = new System.Collections.Generic.Dictionary<Transform, Quaternion>();
-                foreach (var b in skinned.bones)
-                {
-                    if (b != null) poses[b] = b.localRotation;
-                }
+                var bone = DeepestBone(skinned);
+                Assert.IsNotNull(bone);
+
+                Quaternion pose = bone.localRotation;
 
                 for (int i = 0; i < 30; i++) yield return null;
 
-                float maxAngle = 0.0f;
-                foreach (var kvp in poses)
-                {
-                    float angle = Quaternion.Angle(kvp.Value, kvp.Key.localRotation);
-                    if (angle > maxAngle) maxAngle = angle;
-                }
-
-                Assert.Greater(maxAngle, 0.01f,
-                    "No bone in the rig has moved in 30 frames, so the select screen is showing " +
+                Assert.Greater(Quaternion.Angle(pose, bone.localRotation), 0.01f,
+                    $"'{bone.name}' has not moved in 30 frames, so the select screen is showing " +
                     "this character's bind pose.");
 
                 bool palettedAny = false;
@@ -300,132 +292,14 @@ namespace TumbangPreso.PlayTests
             }
         }
 
-        /// <summary>The Hero Strike cast and the custom meshes they alone must wear.</summary>
-        private static readonly (string Id, string Mesh)[] HeroCharacters = new[]
+        /// <summary>The roster ids whose art has been replaced, and the meshes they must now be
+        /// wearing. See `docs/Port_Plan.md` section 8.4.</summary>
+        private static readonly (string Id, string Mesh)[] ReplacedCharacters = new[]
         {
-            ("dante", "team-dante"),
-            ("cheska", "team-cheska"),
-            ("sean", "team-sean"),
             ("zack", "team-zack"),
-            ("nemu", "team-nemu"),
+            ("inday", "team-inday"),
+            ("bayan", "team-bayan"),
         };
-
-        [UnityTest]
-        public IEnumerator ClassicCharacterSelectDrawsTheGodotCastAndBackdrop()
-        {
-            Directory.CreateDirectory(OutDir);
-            Settings.SettingsStore.Current.CharacterPick = 0;
-            UI.SceneFlow.SelectedMode = Core.GameMode.Classic;
-
-            var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
-            for (int i = 0; i < 30; i++) yield return null;
-
-            var panel = Find("CharacterSelectPanel");
-            Assert.IsNotNull(panel, "MatchSetup has no CharacterSelectPanel to open.");
-            panel.SetActive(false);
-            panel.SetActive(true);
-            for (int i = 0; i < 30; i++) yield return null;
-
-            var name = FindIn(panel.transform, "CharValueLabel")?.GetComponent<UnityEngine.UI.Text>();
-            Assert.IsNotNull(name, "Classic select has no character name label.");
-            Assert.AreEqual("BERTO", name.text, "Classic select did not open on the Classic roster.");
-
-            var preview = panel.GetComponentInChildren<ModelPreview>(true);
-            Assert.IsNotNull(preview?.Subject, "Classic select built no preview subject.");
-            StringAssert.AreEqualIgnoringCase("character-male-f(Clone)", preview.Subject.name,
-                "Classic index zero is not the Godot BERTO model.");
-
-            var backdrop = FindIn(panel.transform, "Backdrop")?.GetComponent<UnityEngine.UI.Image>();
-            Assert.IsNotNull(backdrop, "Classic select has no backdrop image.");
-            Assert.IsNotNull(backdrop.sprite,
-                "The Godot slate-to-midnight gradient was flattened to a solid colour.");
-
-            Capture("character-classic-godot");
-            UI.SceneFlow.SelectedMode = Core.GameMode.HeroStrike;
-        }
-
-        [UnityTest]
-        public IEnumerator HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes()
-        {
-            Settings.SettingsStore.Current.CharacterPick = 0;
-            UI.SceneFlow.SelectedMode = Core.GameMode.HeroStrike;
-
-            var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
-            for (int i = 0; i < 30; i++) yield return null;
-
-            var panel = Find("CharacterSelectPanel");
-            Assert.IsNotNull(panel, "MatchSetup has no CharacterSelectPanel to open.");
-            panel.SetActive(false);
-            panel.SetActive(true);
-            for (int i = 0; i < 20; i++) yield return null;
-
-            var rows = FindIn(panel.transform, "TraitRows");
-            Assert.IsNotNull(rows, "Hero select has no loadout area.");
-
-            string copy = string.Empty;
-            foreach (var label in rows.GetComponentsInChildren<UnityEngine.UI.Text>(true))
-                copy += label.text + "\n";
-
-            // ⚠️⚠️ THE NAMES ARE ASKED OF THE KIT, NOT SPELLED OUT HERE. This used to hard-code
-            // three strings and went red the day an ability was renamed, which is a test failing
-            // for a reason that has nothing to do with what it is checking. What it is actually
-            // asserting is that a player choosing a hero can see the WHOLE kit named on this
-            // screen rather than one third of it, and that survives any amount of renaming.
-            //
-            // ⚠️ IT IS ALSO WHY THE PICKER LISTS ALL THREE. An earlier pass showed a ribbon of
-            // three glyphs with a details card under it carrying only the SELECTED power, so two
-            // of every hero's three abilities were invisible until clicked. On the one screen
-            // whose entire job is "what does this hero do", that is the wrong trade.
-            var danteKit = Abilities.HeroAbilitySystem.CreateKitFor("dante");
-
-            StringAssert.Contains(danteKit.Skill1.Name, copy,
-                "Dante's first skill is not named on the Hero picker.");
-            StringAssert.Contains(danteKit.Skill2.Name, copy,
-                "Dante's second skill is not named on the Hero picker.");
-            StringAssert.Contains(danteKit.Ultimate.Name, copy,
-                "Dante's ultimate is not named on the Hero picker.");
-            StringAssert.Contains(danteKit.Skill1.Summary, copy,
-                "The selected power is named but never explained.");
-            StringAssert.DoesNotContain("SPEED", copy,
-                "Hero select still exposes Classic SPEED attributes.");
-            StringAssert.DoesNotContain("POWER", copy,
-                "Hero select still exposes Classic POWER attributes.");
-            StringAssert.DoesNotContain("GRIT", copy,
-                "Hero select still exposes Classic GRIT attributes.");
-
-            Capture("character-hero-abilities");
-        }
-
-        [Test]
-        public void ClassicRosterUsesTheApprovedClassicRigsAndNoHeroMeshes()
-        {
-            var book = RosterBook.Load();
-            Assert.IsNotNull(book, "No RosterBook. Run RosterBookBuilder.Build.");
-
-            var expected = new[]
-            {
-                "character-male-f", "character-female-f",
-                "character-male-a", "character-female-a",
-                "character-male-b", "character-female-b",
-                "character-male-c", "character-female-c",
-                "character-male-d", "character-female-d",
-                "character-male-e", "character-female-e",
-            };
-
-            Assert.AreEqual(expected.Length, Core.Roster.ClassicPeople.Count);
-            for (int i = 0; i < expected.Length; i++)
-            {
-                var art = book.PersonArt(i, Core.GameMode.Classic);
-                Assert.IsNotNull(art, $"Classic index {i} has no art entry.");
-                Assert.IsNotNull(art.Model, $"Classic index {i} has no model.");
-                Assert.AreEqual(expected[i], art.Model.name,
-                    $"{Core.Roster.ClassicPeople[i].Name} is not using the Godot Classic rig.");
-                StringAssert.DoesNotStartWith("team-", art.Model.name,
-                    "A Hero Strike mesh leaked into the Classic cast.");
-            }
-        }
 
         /// <summary>The bone furthest down the rig, so the sample is a limb rather than the
         /// root the clip may deliberately leave still.</summary>

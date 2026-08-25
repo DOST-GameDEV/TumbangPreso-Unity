@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: mang_kanor
   Model: {fileID: -3584597187675866282, guid: d1c9d88c7d83a6d4e8b29bf82a2514e1, type: 3}
-  PetModel: {fileID: 0}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}
   Clips:

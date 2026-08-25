@@ -19,190 +19,42 @@ namespace TumbangPreso.Settings
     /// scoring verb had no rebind row at all. Both `lunge` and `emote_wheel` belong; they
     /// arrived from different branches and taking either side alone drops the other's control
     /// off the panel, which is a defect nobody would go looking for.
-    ///
-    /// ⚠⚠ ONE CONTROL, ONE ACTION, AND THE DEFAULTS NOW OBEY THAT RULE. `TryRebind` below
-    /// refuses a key that another action already holds, and names the action holding it. The
-    /// shipped defaults used to violate the rule the panel enforces: LEFT CLICK carried both
-    /// `SpecialAbility` and `Grab`, E carried `Grab`, `Lunge` AND `Skill1`, and Q carried both
-    /// `SpecialAbility` and `Skill2`. Whichever consumer ran first won, so throw felt like it
-    /// was not on left click even though it was bound there, and a hero's first skill fired out
-    /// of the pickup key. Rebinding anything onto E or Q was refused by our own asset.
-    ///
-    /// Every action now holds exactly ONE control and no control appears twice. The hero deck
-    /// uses Q, E and F as a compact combat cluster; contextual pickup / shove / reset uses X.
-    /// `SettingsPanelTests` asserts it, so the collisions cannot come back quietly.
     /// </summary>
     public static class Rebinding
     {
-        /// <summary>Action names as they appear in the Input System asset or composite parts.</summary>
+        /// <summary>Action names as they appear in the Input System asset.</summary>
         public static readonly string[] RebindableActions =
         {
-            "MoveForward", "MoveBackward", "MoveLeft", "MoveRight",
-            "Sprint", "Jump",
-            "SpecialAbility", "Grab", "Lunge",
-            "Skill1", "Skill2", "Ultimate",
-            "ReadyUp", "CleanFeed", "AbilityInfo",
+            "Move",              // the four directions are one composite here
+            "SpecialAbility", "Grab", "Lunge", "Jump", "Sprint",
+            "ReadyUp", "CleanFeed",
             "EmoteWheel",
-            "SpectatorDown",
             "ToggleFullscreen",
         };
 
         /// <summary>
-        /// Human-readable labels. Several are named for the JOB rather than the verb, because
-        /// one key genuinely does several jobs and the player cannot guess which from a name:
-        /// - THROW / PUNCH is one key doing two things by ROLE. An attacker charges and throws;
-        ///   the taya, who `can_throw()` refuses outright, punches (`Design.md` §4, §5.1).
-        /// - PICK UP / SHOVE / RESET is the contextual key. Tap with a tsinelas in reach picks
-        ///   it up, tap with nothing grabbable shoves, hold as the taya in the lata's ring runs
-        ///   the reset channel (§4, §5.2, §5.3).
-        /// - LUNGE TAG is the taya's dash tag: the way to stop an attacker retrieving a slipper
+        /// Human-readable labels. Two of these are named for the job the player cannot guess
+        /// from the verb:
+        /// - GRAB is also the hold that carries a displaced lata home (`Design.md` §5.2).
+        /// - LUNGE is the taya's tag — the only way to stop an attacker retrieving a slipper
         ///   inside the box (§5.2, §6).
         /// </summary>
         public static readonly Dictionary<string, string> ActionLabels = new Dictionary<string, string>
         {
-            { "MoveForward", "Move Forward" },
-            { "MoveBackward", "Move Backward" },
-            { "MoveLeft", "Move Left" },
-            { "MoveRight", "Move Right" },
             { "Move", "Move" },
-            { "SpecialAbility", "Throw / Punch" },
-            { "Grab", "Pick Up / Shove / Reset" },
-            { "Lunge", "Lunge Tag" },
+            { "SpecialAbility", "Throw" },
+            { "Grab", "Grab" },
+            { "Lunge", "Lunge" },
             { "Jump", "Jump" },
             { "Sprint", "Sprint" },
-            { "Skill1", "Skill 1" },
-            { "Skill2", "Skill 2" },
-            { "Ultimate", "Ultimate" },
             { "ReadyUp", "Ready Up" },
             { "CleanFeed", "Hide HUD" },
-            { "AbilityInfo", "Hold: Ability Info" },
             { "EmoteWheel", "Emote Wheel" },
-            { "SpectatorDown", "Spectator Down" },
             { "ToggleFullscreen", "Fullscreen" },
         };
 
         public static string LabelFor(string action)
             => ActionLabels.TryGetValue(action, out string label) ? label : action;
-
-        /// <summary>
-        /// The controls list, cut into named groups in the order they should be shown.
-        ///
-        /// ⚠️⚠️ ONE FLAT LIST OF FOURTEEN ROWS IS WHAT THIS REPLACED, and it was rejected on
-        /// sight: *"can u also organize setttings better, separet diff controls to diff groups
-        /// bcz it feels overwhelming to look at now"*. Fourteen unlabelled rows is a wall. The
-        /// grouping is not decoration, it is what lets somebody scan for the one line they came
-        /// to change instead of reading all of them.
-        ///
-        /// ⚠️ THE GROUPS ARE BY WHEN YOU USE THEM, NOT BY DEVICE OR BY SUBSYSTEM. "Movement" is
-        /// what you press constantly, "Playing the game" is the tumbang preso verbs, "Hero
-        /// powers" only exists in Hero Strike, and "Interface" is everything you press between
-        /// rounds. A player looking for the throw key does not think "mouse buttons".
-        ///
-        /// ⚠️ EVERY ACTION IN `RebindableActions` MUST APPEAR IN EXACTLY ONE GROUP. A row that
-        /// belongs to no group would vanish from the panel with no error, which is the same
-        /// silent failure the class note at the top warns about. `SettingsGroupsCoverEveryAction`
-        /// asserts it.
-        /// </summary>
-        public static readonly (string Title, string[] Actions)[] Groups =
-        {
-            ("MOVEMENT", new[] { "MoveForward", "MoveBackward", "MoveLeft", "MoveRight", "Sprint", "Jump" }),
-            ("PLAYING THE GAME", new[] { "SpecialAbility", "Grab", "Lunge" }),
-            ("HERO POWERS", new[] { "Skill1", "Skill2", "Ultimate", "AbilityInfo" }),
-            ("ROUND AND SCREEN", new[] { "ReadyUp", "EmoteWheel", "CleanFeed", "SpectatorDown",
-                                         "ToggleFullscreen" }),
-        };
-
-        /// <summary>
-        /// A short line under a group heading, for the two groups whose rows do more than one
-        /// job and cannot say so in a label.
-        /// </summary>
-        public static string BlurbFor(string title)
-        {
-            switch (title)
-            {
-                case "PLAYING THE GAME":
-                    return "One key can do several jobs, chosen by what is in front of you.";
-                case "HERO POWERS":
-                    return "Hero Strike only. Classic has no powers.";
-                default:
-                    return null;
-            }
-        }
-
-        /// <summary>
-        /// Resolves an action name (including discrete composite movements like MoveForward)
-        /// into the underlying InputAction and binding index.
-        /// </summary>
-        public static bool ResolveActionAndBindingIndex(InputActionAsset asset, string actionName,
-            out InputAction action, out int bindingIndex)
-        {
-            action = null;
-            bindingIndex = -1;
-            if (asset == null || string.IsNullOrEmpty(actionName)) return false;
-
-            if (actionName == "MoveForward" || actionName == "MoveBackward" ||
-                actionName == "MoveLeft" || actionName == "MoveRight")
-            {
-                action = Find(asset, "Move");
-                if (action == null) return false;
-
-                string part = actionName == "MoveForward" ? "up" :
-                              actionName == "MoveBackward" ? "down" :
-                              actionName == "MoveLeft" ? "left" : "right";
-
-                for (int i = 0; i < action.bindings.Count; i++)
-                {
-                    var b = action.bindings[i];
-                    if (b.isPartOfComposite && string.Equals(b.name, part, System.StringComparison.OrdinalIgnoreCase))
-                    {
-                        bindingIndex = i;
-                        return true;
-                    }
-                }
-
-                bindingIndex = FirstKeyboardBinding(action);
-                return bindingIndex >= 0;
-            }
-
-            action = Find(asset, actionName);
-            if (action == null) return false;
-
-            bindingIndex = FirstKeyboardBinding(action);
-            return bindingIndex >= 0;
-        }
-
-        /// <summary>
-        /// Every control bound twice across two different actions, as "path: ActionA, ActionB".
-        /// Empty means the map is clean.
-        /// </summary>
-        public static List<string> FindDuplicateBindings(InputActionAsset asset)
-        {
-            var owners = new Dictionary<string, List<string>>();
-            var clashes = new List<string>();
-            if (asset == null) return clashes;
-
-            foreach (string action in RebindableActions)
-            {
-                if (!ResolveActionAndBindingIndex(asset, action, out var a, out int bindingIndex))
-                    continue;
-
-                var b = a.bindings[bindingIndex];
-                string path = b.effectivePath;
-                if (string.IsNullOrEmpty(path)) continue;
-
-                if (!owners.TryGetValue(path, out var list))
-                    owners[path] = list = new List<string>();
-
-                if (!list.Contains(action)) list.Add(action);
-            }
-
-            foreach (var pair in owners)
-                if (pair.Value.Count > 1)
-                    clashes.Add(pair.Key + ": " + string.Join(", ", pair.Value));
-
-            clashes.Sort();
-            return clashes;
-        }
 
         private const string OverridesKey = "tumbangpreso.bindings";
 
@@ -211,16 +63,24 @@ namespace TumbangPreso.Settings
         /// </summary>
         public static string DisplayNameFor(InputActionAsset asset, string action)
         {
-            if (!ResolveActionAndBindingIndex(asset, action, out var a, out int bindingIndex))
-                return "-";
+            var a = Find(asset, action);
+            if (a == null) return "—";
+
+            int binding = FirstKeyboardBinding(a);
+            if (binding < 0) return "—";
 
             return InputControlPath.ToHumanReadableString(
-                a.bindings[bindingIndex].effectivePath,
+                a.bindings[binding].effectivePath,
                 InputControlPath.HumanReadableStringOptions.OmitDevice);
         }
 
         /// <summary>
         /// Rebind <paramref name="action"/> to <paramref name="control"/>.
+        ///
+        /// ⚠️ IT REFUSES A KEY ALREADY IN USE AND SAYS WHICH ACTION HAS IT, rather than
+        /// silently creating a double binding. Godot returned the conflicting action's label
+        /// for exactly this message; two verbs on one key is unplayable and undiagnosable.
+        /// Returns null on success, or the conflicting action's LABEL on refusal.
         /// </summary>
         public static string TryRebind(InputActionAsset asset, string action, InputControl control)
         {
@@ -230,15 +90,18 @@ namespace TumbangPreso.Settings
             {
                 if (other == action) continue;
 
-                if (ResolveActionAndBindingIndex(asset, other, out var otherAction, out int otherIndex))
-                {
-                    if (otherAction.bindings[otherIndex].effectivePath == path)
-                        return LabelFor(other);
-                }
+                var o = Find(asset, other);
+                if (o == null) continue;
+
+                foreach (var b in o.bindings)
+                    if (b.effectivePath == path) return LabelFor(other);
             }
 
-            if (!ResolveActionAndBindingIndex(asset, action, out var target, out int index))
-                return LabelFor(action);
+            var target = Find(asset, action);
+            if (target == null) return LabelFor(action);
+
+            int index = FirstKeyboardBinding(target);
+            if (index < 0) return LabelFor(action);
 
             target.ApplyBindingOverride(index, path);
             Save(asset);

@@ -102,7 +102,7 @@ namespace TumbangPreso.Visual
                 // carried its own loop would repeat correctly while quietly bypassing the one
                 // mechanism every other emote goes through, leaving the next person to edit
                 // `EmoteLoops` with one emote it does not govern.
-                wrapMode = WrapMode.Loop,
+                wrapMode = WrapMode.ClampForever,
             };
 
             var rootPosX = new AnimationCurve();

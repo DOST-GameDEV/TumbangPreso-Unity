@@ -1,4 +1,3 @@
-using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -30,7 +29,6 @@ namespace TumbangPreso.UI
         /// <summary>The playable arenas, by the names the Godot builders gave them.</summary>
         public const string Eskinita = "Eskinita";
         public const string BayanPlaza = "BayanPlaza";
-        public const string IlalimNgTulay = "IlalimNgTulay";
 
         /// <summary>
         /// One map's registry row, from `game_launch.gd`'s `MAPS`.
@@ -83,12 +81,9 @@ namespace TumbangPreso.UI
 
             new MapEntry(BayanPlaza, "BAYAN PLAZA",
                          "Barangay plaza. Church, basketball ring, acacia.", 0.0f, 22.0f, 16.0f),
-
-            new MapEntry(IlalimNgTulay, "ILALIM NG TULAY",
-                         "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", 35.0f, 22.0f, 13.5f),
         };
 
-        public static readonly string[] Maps = { Eskinita, BayanPlaza, IlalimNgTulay };
+        public static readonly string[] Maps = { Eskinita, BayanPlaza };
 
         /// <summary>
         /// True while an ARENA is the active scene rather than a menu.
@@ -127,9 +122,6 @@ namespace TumbangPreso.UI
 
         /// <summary>Which map the next match loads. Set by the setup screen.</summary>
         public static string SelectedMap = Eskinita;
-
-        /// <summary>Which game mode the next match loads. Default is Hero Strike.</summary>
-        public static GameMode SelectedMode = GameMode.HeroStrike;
 
         /// <summary>True when the next match is networked rather than against bots.</summary>
         public static bool Networked;

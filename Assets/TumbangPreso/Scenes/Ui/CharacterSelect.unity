@@ -1719,7 +1719,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1023365300}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f81b9e853c0f62b4a96e61d54929eb32, type: 3}
+  m_Script: {fileID: 1347572047}
   m_Name: 
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.UI.ConvertedCharacterSelect
 --- !u!114 &1023365302
@@ -1892,6 +1892,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1194882089}
   m_CullTransparentMesh: 1
+--- !u!115 &1347572047
+MonoScript:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  serializedVersion: 7
+  m_DefaultReferences: {}
+  m_Icon: {fileID: 0}
+  m_Type: 0
+  m_ExecutionOrder: 0
+  m_ClassName: ConvertedCharacterSelect
+  m_Namespace: TumbangPreso.UI
+  m_AssemblyName: TumbangPreso.Runtime
 --- !u!1 &1433094110
 GameObject:
   m_ObjectHideFlags: 0

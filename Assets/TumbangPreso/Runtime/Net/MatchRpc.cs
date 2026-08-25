@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using TumbangPreso.Core;
 using Unity.Collections;
@@ -37,7 +36,6 @@ namespace TumbangPreso.Net
         private void Awake()
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
 
         private void OnDestroy()
@@ -49,15 +47,6 @@ namespace TumbangPreso.Net
         {
             _nm = nm;
             RegisterHandlers();
-
-            // ⚠️ A CLIENT ASKS FOR THE WORLD ONCE ITS ARENA EXISTS, rather than trusting the
-            // snapshot the host sent at connect time. Transport finishes before SceneFlow has
-            // finished building the seats, so on a cold relaunch that first snapshot lands in
-            // an empty scene and the joiner sits there with no lata and no seat.
-            if (!NetAuthority.IsHost && isActiveAndEnabled)
-            {
-                StartCoroutine(RequestSnapshotWhenArenaReady());
-            }
         }
 
         private void RegisterHandlers()
@@ -93,8 +82,6 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReqEmote", OnReqEmoteMsg);
             cm.RegisterNamedMessageHandler("PlayEmote", OnPlayEmoteMsg);
             cm.RegisterNamedMessageHandler("StartMatch", OnStartMatchMsg);
-            cm.RegisterNamedMessageHandler("ReqSnapshot", OnReqSnapshotMsg);
-            cm.RegisterNamedMessageHandler("RebindSeat", OnRebindSeatMsg);
         }
 
         private static CharacterMotor Unit(int slot)
@@ -908,27 +895,31 @@ namespace TumbangPreso.Net
             var lata = GameServices.Round?.Lata;
             if (lata == null) return;
 
-            lata.ApplySnapshotState(pos, rot, isUpright, skinIndex);
+            lata.transform.position = pos;
+            lata.transform.rotation = rot;
+            lata.SkinIndex = skinIndex;
         }
 
-        public void SyncSlipperClientRpc(int ownerSlot, int holderSlot, Vector3 pos,
-                                         Quaternion rot, int state, Vector3 velocity,
-                                         float pektusSpin, int affinity, int throwerSlot)
+        public void SyncSlipperClientRpc(int ownerSlot, int holderSlot, Vector3 pos, Quaternion rot, int state)
         {
             var s = FindSlipper(ownerSlot);
             if (s == null) return;
 
-            var holder = holderSlot >= 0 ? Unit(holderSlot) : null;
-            s.ApplySnapshotState((SlipperState)state, holder, pos, rot, velocity,
-                                 pektusSpin, (SlipperAffinity)affinity, throwerSlot);
+            if (state == (int)SlipperState.Held && holderSlot >= 0)
+            {
+                var holder = Unit(holderSlot);
+                var carrier = holder != null ? holder.GetComponent<Carrier>() : null;
+                carrier?.NotifyHolding(s);
+            }
+            else
+            {
+                s.transform.SetPositionAndRotation(pos, rot);
+            }
         }
 
-        public void SyncWorldSnapshotClientRpc(int roundNumber, int defenderSlot,
-                                               float timeLeft, int[] scores,
-                                               bool inProgress, bool roundActive)
+        public void SyncWorldSnapshotClientRpc(int roundNumber, int defenderSlot, float timeLeft, int[] scores, bool inProgress)
         {
             GameServices.Match?.ApplySnapshot(scores, roundNumber, inProgress);
-            GameServices.Round?.ApplySnapshot(timeLeft, roundActive, defenderSlot);
         }
 
         public void BroadcastWorldSnapshot()
@@ -944,21 +935,16 @@ namespace TumbangPreso.Net
             var scores = new int[Balance.PlayerCount];
             for (int i = 0; i < scores.Length; i++) scores[i] = match.ScoreFor(i);
 
-            bool roundActive = round != null && round.RoundActive;
-            float timeLeft = round != null ? round.TimeLeft : Balance.RoundTime;
-
-            SyncWorldSnapshotClientRpc(match.RoundNumber, match.DefenderSlot, timeLeft, scores,
-                                       match.MatchInProgress, roundActive);
+            SyncWorldSnapshotClientRpc(match.RoundNumber, match.DefenderSlot, round != null ? round.TimeLeft : Balance.RoundTime, scores, match.MatchInProgress);
 
             if (_nm != null && _nm.CustomMessagingManager != null)
             {
                 using var writer = new FastBufferWriter(256, Allocator.Temp);
                 writer.WriteValueSafe(match.RoundNumber);
                 writer.WriteValueSafe(match.DefenderSlot);
-                writer.WriteValueSafe(timeLeft);
+                writer.WriteValueSafe(round != null ? round.TimeLeft : Balance.RoundTime);
                 writer.WriteValueSafe(scores);
                 writer.WriteValueSafe(match.MatchInProgress);
-                writer.WriteValueSafe(roundActive);
                 _nm.CustomMessagingManager.SendNamedMessageToAll("SyncWorld", writer);
             }
 
@@ -984,22 +970,16 @@ namespace TumbangPreso.Net
                 if (s != null)
                 {
                     int holderSlot = s.Holder != null ? s.Holder.PlayerSlot : -1;
-                    SyncSlipperClientRpc(s.OwnerSlot, holderSlot, s.transform.position,
-                        s.transform.rotation, (int)s.State, s.Velocity, s.PektusSpin,
-                        (int)s.Affinity, s.ThrowerSlot);
+                    SyncSlipperClientRpc(s.OwnerSlot, holderSlot, s.transform.position, s.transform.rotation, (int)s.State);
 
                     if (_nm != null && _nm.CustomMessagingManager != null)
                     {
-                        using var writer = new FastBufferWriter(128, Allocator.Temp);
+                        using var writer = new FastBufferWriter(64, Allocator.Temp);
                         writer.WriteValueSafe(s.OwnerSlot);
                         writer.WriteValueSafe(holderSlot);
                         writer.WriteValueSafe(s.transform.position);
                         writer.WriteValueSafe(s.transform.rotation);
                         writer.WriteValueSafe((int)s.State);
-                        writer.WriteValueSafe(s.Velocity);
-                        writer.WriteValueSafe(s.PektusSpin);
-                        writer.WriteValueSafe((int)s.Affinity);
-                        writer.WriteValueSafe(s.ThrowerSlot);
                         _nm.CustomMessagingManager.SendNamedMessageToAll("SyncSlipper", writer);
                     }
                 }
@@ -1019,10 +999,8 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float timeLeft);
             reader.ReadValueSafe(out int[] scores);
             reader.ReadValueSafe(out bool inProgress);
-            reader.ReadValueSafe(out bool roundActive);
 
-            SyncWorldSnapshotClientRpc(roundNumber, defenderSlot, timeLeft, scores, inProgress,
-                                       roundActive);
+            SyncWorldSnapshotClientRpc(roundNumber, defenderSlot, timeLeft, scores, inProgress);
         }
 
         private void OnSyncLataMsg(ulong senderClientId, FastBufferReader reader)
@@ -1042,13 +1020,8 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Vector3 pos);
             reader.ReadValueSafe(out Quaternion rot);
             reader.ReadValueSafe(out int state);
-            reader.ReadValueSafe(out Vector3 velocity);
-            reader.ReadValueSafe(out float pektusSpin);
-            reader.ReadValueSafe(out int affinity);
-            reader.ReadValueSafe(out int throwerSlot);
 
-            SyncSlipperClientRpc(ownerSlot, holderSlot, pos, rot, state, velocity, pektusSpin,
-                                 affinity, throwerSlot);
+            SyncSlipperClientRpc(ownerSlot, holderSlot, pos, rot, state);
         }
 
         // -------------------------------------------------------------------
@@ -1061,7 +1034,7 @@ namespace TumbangPreso.Net
             if (!_spawned.Add(peerId)) return;
 
             var lobby = NetSession.Instance?.Lobby;
-            var peerRecord = lobby?.PeerById(peerId);
+            var peerRecord = lobby?.PeerInSeat(peerId);
             if (peerRecord != null && peerRecord.Seat >= 0)
             {
                 var unit = Unit(peerRecord.Seat);
@@ -1075,77 +1048,6 @@ namespace TumbangPreso.Net
                 }
             }
 
-            HostSyncPeer(peerId);
-        }
-
-        /// <summary>
-        /// Asks the host to rehydrate this process once its arena objects exist. Transport
-        /// connection can finish before the client-controlled SceneFlow has built its seats, so
-        /// the connection-time snapshot alone is not sufficient for a cold app relaunch.
-        ///
-        /// ⚠️ IT TRAVELS AS A NAMED MESSAGE, NOT AN [ServerRpc]. This component is a plain
-        /// MonoBehaviour on the Relay path, so there is no NetworkBehaviour to carry one, and
-        /// every other request in this file already goes through CustomMessagingManager.
-        /// </summary>
-        public void RequestWorldSnapshot()
-        {
-            if (_nm == null || _nm.CustomMessagingManager == null) return;
-
-            if (NetAuthority.IsHost)
-            {
-                HostSyncPeer((int)_nm.LocalClientId);
-                return;
-            }
-
-            using var writer = new FastBufferWriter(sizeof(byte), Allocator.Temp);
-            writer.WriteValueSafe((byte)0);
-            _nm.CustomMessagingManager.SendNamedMessage("ReqSnapshot", NetworkManager.ServerClientId, writer);
-        }
-
-        private void OnReqSnapshotMsg(ulong senderClientId, FastBufferReader reader)
-        {
-            HostSyncPeer((int)senderClientId);
-        }
-
-        private IEnumerator RequestSnapshotWhenArenaReady()
-        {
-            // NetBootstrap starts transport and scene loading independently. Wait for the
-            // client-owned arena to finish installing before asking the host to rehydrate it.
-            // This also handles a slow disk or a cold app relaunch without timing guesses.
-            while (_nm != null && _nm.IsClient && !NetAuthority.IsHost)
-            {
-                var round = GameServices.Round;
-                if (round != null && round.Lata != null &&
-                    round.Players.Count >= Balance.PlayerCount)
-                {
-                    yield return null; // let camera and HUD finish their Start methods
-                    RequestWorldSnapshot();
-                    yield break;
-                }
-
-                yield return null;
-            }
-        }
-
-        private void HostSyncPeer(int peerId)
-        {
-            if (!NetAuthority.IsHost) return;
-
-            var lobby = NetSession.Instance?.Lobby;
-            var peerRecord = lobby?.PeerById(peerId);
-            if (peerRecord != null && peerRecord.Seat >= 0)
-            {
-                var match = GameServices.Match;
-                var round = GameServices.Round;
-                SendRebindLocalSeat(peerId,
-                                    peerRecord.Seat,
-                                    match != null ? match.DefenderSlot : -1,
-                                    round != null && round.RoundActive,
-                                    peerRecord.Name);
-            }
-
-            // The joiner needs the whole world state, not just its own seat. Broadcast is
-            // intentionally idempotent and also repairs any packet-lagged observer.
             BroadcastWorldSnapshot();
         }
 
@@ -1158,7 +1060,7 @@ namespace TumbangPreso.Net
             var lobby = NetSession.Instance?.Lobby;
             if (lobby != null)
             {
-                var peer = lobby.PeerById(peerId);
+                var peer = lobby.PeerInSeat(peerId);
                 int seat = peer != null ? peer.Seat : -1;
 
                 lobby.Depart(peerId);
@@ -1181,114 +1083,7 @@ namespace TumbangPreso.Net
             BroadcastWorldSnapshot();
         }
 
-        /// <summary>
-        /// The host tells only the reconnecting process which seat it controls. The world
-        /// bodies are scene objects rather than NetworkObjects, so Netcode cannot transfer
-        /// ownership for us; input, camera, HUD, and role presentation must be rebound as one
-        /// atomic operation.
-        /// </summary>
-        private void SendRebindLocalSeat(int peerId, int seat, int defenderSlot,
-                                         bool roundActive, string playerName)
-        {
-            if (_nm == null || _nm.CustomMessagingManager == null) return;
-
-            if ((ulong)peerId == _nm.LocalClientId)
-            {
-                ApplyRebindLocalSeat(seat, defenderSlot, roundActive, playerName);
-                return;
-            }
-
-            using var writer = new FastBufferWriter(256, Allocator.Temp);
-            writer.WriteValueSafe(seat);
-            writer.WriteValueSafe(defenderSlot);
-            writer.WriteValueSafe(roundActive);
-            writer.WriteValueSafe(playerName ?? "");
-            _nm.CustomMessagingManager.SendNamedMessage("RebindSeat", (ulong)peerId, writer);
-        }
-
-        private void OnRebindSeatMsg(ulong senderClientId, FastBufferReader reader)
-        {
-            reader.ReadValueSafe(out int seat);
-            reader.ReadValueSafe(out int defenderSlot);
-            reader.ReadValueSafe(out bool roundActive);
-            reader.ReadValueSafe(out string playerName);
-
-            ApplyRebindLocalSeat(seat, defenderSlot, roundActive, playerName);
-        }
-
-        private void ApplyRebindLocalSeat(int seat, int defenderSlot, bool roundActive,
-                                          string playerName)
-        {
-            var net = NetSession.Instance;
-            net?.ApplyAssignedSeat(seat);
-
-            var round = GameServices.Round;
-            if (round == null || seat < 0) return;
-
-            CharacterMotor local = null;
-            foreach (var unit in round.Players)
-            {
-                if (unit == null) continue;
-
-                unit.IsDefender = unit.PlayerSlot == defenderSlot;
-                unit.RoundActive = roundActive;
-
-                var reader = unit.GetComponent<PlayerInputReader>();
-                if (unit.PlayerSlot == seat)
-                {
-                    local = unit;
-                    unit.IsBot = false;
-                    unit.PlayerName = playerName;
-
-                    var ai = unit.GetComponent<AIController>();
-                    if (ai != null)
-                    {
-                        ai.enabled = false;
-                        Destroy(ai);
-                    }
-
-                    if (reader == null) unit.gameObject.AddComponent<PlayerInputReader>();
-                    else reader.enabled = true;
-                }
-                else if (reader != null)
-                {
-                    reader.enabled = false;
-                    Destroy(reader);
-                }
-
-                unit.GetComponentInChildren<Visual.CharacterNameplate>()?.Refresh();
-            }
-
-            if (local == null) return;
-
-            var spectator = FindFirstObjectByType<CameraSystem.SpectatorCamera>();
-            if (spectator != null) spectator.enabled = false;
-
-            var camera = UnityEngine.Camera.main;
-            var rig = camera != null ? camera.GetComponent<CameraSystem.CameraRig>() : null;
-            if (rig == null) rig = FindFirstObjectByType<CameraSystem.CameraRig>();
-            if (rig != null)
-            {
-                rig.Follow(local);
-                rig.SetAimSource(CameraSystem.AimSource.Mouse);
-                rig.SetActive(true);
-            }
-
-            UI.Hud.Instance?.Bind(local);
-            var youCard = FindFirstObjectByType<UI.YouCard>();
-            if (youCard != null)
-            {
-                youCard.Bind(local);
-                youCard.Refresh();
-            }
-
-            var pause = FindFirstObjectByType<PauseWatcher>();
-            if (pause != null) pause.Local = local;
-
-            foreach (var slipper in FindObjectsByType<Slipper>(FindObjectsSortMode.None))
-                slipper.SetOwnerGlow(slipper.OwnerSlot == seat);
-        }
-
         private readonly HashSet<int> _spawned = new HashSet<int>();
     }
 }
+

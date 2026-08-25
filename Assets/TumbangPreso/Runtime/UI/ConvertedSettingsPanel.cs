@@ -60,7 +60,6 @@ namespace TumbangPreso.UI
             WireSliders();
             WireChecks();
             WireNameField();
-            ConfigureScroll();
 
             OnClick("ResetAllButton", ResetAll);
             OnClick("ApplyButton", Apply);
@@ -68,22 +67,6 @@ namespace TumbangPreso.UI
 
             SetText("SettingsStatusLabel", "");
             RefreshApplyState();
-        }
-
-        private void ConfigureScroll()
-        {
-            var scroll = GetComponentInChildren<ScrollRect>(true);
-            if (scroll == null) return;
-
-            scroll.scrollSensitivity = 45.0f; // Fast, smooth, responsive mouse wheel scrolling
-            scroll.movementType = ScrollRect.MovementType.Clamped;
-            scroll.verticalNormalizedPosition = 1.0f; // Reset to top showing MOVEMENT / WASD
-
-            if (scroll.viewport != null)
-            {
-                if (scroll.viewport.GetComponent<RectMask2D>() == null && scroll.viewport.GetComponent<Mask>() == null)
-                    scroll.viewport.gameObject.AddComponent<RectMask2D>();
-            }
         }
 
         private Button FindButton(string node)
@@ -117,54 +100,7 @@ namespace TumbangPreso.UI
                 Destroy(child.gameObject);
             }
 
-            foreach (var group in Rebinding.Groups)
-            {
-                BuildGroupHeading(list, group.Title);
-
-                foreach (var action in group.Actions) BuildRebindRow(list, action);
-            }
-        }
-
-        /// <summary>
-        /// A group heading, and the one line of explanation under it where there is one.
-        ///
-        /// ⚠️ THE HEADING IS AMBER AND THE ROWS ARE NOT, which is the whole reason the grouping
-        /// reads at a glance. A heading in the same weight as its rows is another row.
-        /// </summary>
-        private void BuildGroupHeading(Transform list, string title)
-        {
-            var headingGo = new GameObject($"{title}Heading");
-            headingGo.AddComponent<RectTransform>();
-            headingGo.transform.SetParent(list, false);
-
-            var column = headingGo.AddComponent<VerticalLayoutGroup>();
-            column.childControlHeight = true;
-            column.childControlWidth = true;
-            column.childForceExpandHeight = false;
-            column.childForceExpandWidth = true;
-            column.spacing = 0.0f;
-            column.padding = new RectOffset(0, 0, 14, 4);
-
-            var heading = MenuKit.Styled(headingGo.transform, "MenuBody", title,
-                                         TextAnchor.MiddleLeft);
-            heading.raycastTarget = false;
-            heading.color = UiTheme.Amber;
-            heading.fontStyle = FontStyle.Bold;
-            heading.gameObject.AddComponent<LayoutElement>().preferredHeight = 26.0f;
-
-            string blurb = Rebinding.BlurbFor(title);
-            if (string.IsNullOrEmpty(blurb)) return;
-
-            var note = MenuKit.Styled(headingGo.transform, "MenuBody", blurb,
-                                      TextAnchor.MiddleLeft);
-            note.raycastTarget = false;
-            note.color = UiTheme.CreamMuted;
-            note.fontSize = MenuKit.MinReadableUnits;
-            note.gameObject.AddComponent<LayoutElement>().preferredHeight = 20.0f;
-        }
-
-        private void BuildRebindRow(Transform list, string action)
-        {
+            foreach (var action in Rebinding.RebindableActions)
             {
                 var rowGo = new GameObject($"{action}Row");
                 rowGo.AddComponent<RectTransform>();
@@ -303,18 +239,14 @@ namespace TumbangPreso.UI
 
             SetButtonText(action, "…");
 
-            if (!Rebinding.ResolveActionAndBindingIndex(_actions, action, out var target, out int targetIndex))
-            {
-                CancelRebind();
-                return;
-            }
+            var target = _actions?.FindActionMap("Player", false)?.FindAction(action, false);
+            if (target == null) { CancelRebind(); return; }
 
             // The action must be disabled while it is being rebound, or the press being captured
             // also fires the verb it is bound to.
             target.Disable();
 
             _rebindOp = target.PerformInteractiveRebinding()
-                .WithTargetBinding(targetIndex)
                 .WithControlsExcluding("<Mouse>/position")
                 .WithControlsExcluding("<Mouse>/delta")
                 .WithCancelingThrough("<Keyboard>/escape")
@@ -331,10 +263,10 @@ namespace TumbangPreso.UI
                     _rebindOp = null;
                     target.Enable();
 
-                    // The override the operation already applied is undone first, because the
-                    // conflict check has to run against the other actions and report a refusal
+                    // ⚠️ THE OVERRIDE THE OPERATION ALREADY APPLIED IS UNDONE FIRST, because the
+                    // conflict check has to run against the OTHER actions and report a refusal
                     // rather than leave two verbs sharing one key.
-                    target.RemoveBindingOverride(targetIndex);
+                    target.RemoveBindingOverride(op.bindingMask ?? default);
 
                     string conflict = Rebinding.TryRebind(_actions, action, control);
 
@@ -345,6 +277,8 @@ namespace TumbangPreso.UI
                     }
                     else
                     {
+                        // ⚠️ THE CONFLICT BUZZ. A player looking at the keyboard rather than at
+                        // the status label gets no signal at all that the press was refused.
                         SetText("SettingsStatusLabel",
                                 $"That key is already \"{conflict}\". Choose a different key.");
                         MenuSfx.Error();
@@ -451,7 +385,7 @@ namespace TumbangPreso.UI
 
                 // ⚠️ APPLIED, NOT ONLY STORED. Fullscreen was saved and displayed and never
                 // actually set for the whole port, so the box claimed the opposite of the window.
-                SettingsStore.Current.ApplyDisplay();
+                Screen.fullScreen = v;
             });
         }
 

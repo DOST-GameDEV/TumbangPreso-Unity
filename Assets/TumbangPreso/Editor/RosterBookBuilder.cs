@@ -39,62 +39,66 @@ namespace TumbangPreso.EditorTools
         /// look right.
         /// </summary>
         /// <remarks>
-        /// Classic and Hero Strike are different casts. The first twelve rows below reproduce
-        /// Godot's `character_roster.gd` exactly; the five `team-*` meshes belong only to the
-        /// Hero Strike ids. Pointing a Classic id at a Hero mesh keeps the name and stats intact
-        /// while silently replacing the character on the select screen and in the match.
+        /// ⚠️⚠️ `zack` IS THE FIRST ROW OF THE ART REPLACEMENT AND THE ONLY ONE SO FAR. He takes
+        /// ATE GIRLIE's index rather than being appended, so no seat moved; see `Roster.cs`.
+        /// `docs/Port_Plan.md` section 8.3 says replace one at a time and keep the old mesh until
+        /// the new one is measured, so `character-female-b.glb` is still in the repo and still
+        /// imports; nothing points at it. Repointing an EXISTING id is what keeps this safe:
+        /// `character_index` crosses the wire as a bare int and the mapping here is by id, so a
+        /// new model cannot move anybody's seat.
+        ///
+        /// The replacement is `tools/build_person_voxel.py`, which keeps the CC0 rig's skeleton
+        /// and all 32 clips and rebuilds only the mesh. See that file for why the skeleton is
+        /// untouchable while the clips are the ones that ship.
         /// </remarks>
         private static readonly Dictionary<string, string> PersonModels = new Dictionary<string, string>
         {
-            // Classic roster. Unity retains the network-stable "bayan" id for BERTO.
-            { "bayan",       "characters/persons/character-male-f.glb" },
+            { "bayan",       "characters/persons/team-bayan.glb" },
             { "maring",      "characters/persons/character-female-f.glb" },
             { "totoy",       "characters/persons/character-male-a.glb" },
-            { "inday",       "characters/persons/character-female-a.glb" },
+            { "inday",       "characters/persons/team-inday.glb" },
             { "kuya_boy",    "characters/persons/character-male-b.glb" },
-            { "ate_girlie",  "characters/persons/character-female-b.glb" },
+            { "zack",        "characters/persons/team-zack.glb" },
             { "tikboy",      "characters/persons/character-male-c.glb" },
             { "bebang",      "characters/persons/character-female-c.glb" },
             { "jun_jun",     "characters/persons/character-male-d.glb" },
             { "lola_pacing", "characters/persons/character-female-d.glb" },
             { "mang_kanor",  "characters/persons/character-male-e.glb" },
             { "aling_nena",  "characters/persons/character-female-e.glb" },
-
-            // Hero Strike Roster (5 action heroes)
-            { "dante",       "characters/persons/team-dante.glb" },
-            { "cheska",      "characters/persons/team-cheska.glb" },
-            { "sean",        "characters/persons/team-sean.glb" },
-            { "zack",        "characters/persons/team-zack.glb" },
-            { "nemu",        "characters/persons/team-nemu.glb" },
         };
 
+        /// <summary>
+        /// ⚠️⚠️ A CHARACTER IS A RIG PLUS A PALETTE, AND THE PALETTE IS HALF OF WHO THEY ARE.
+        /// Twelve people share twelve CC0 rigs and differ only by which sixteen colours their
+        /// shared atlas is remapped to. Without them the whole cast renders in Kenney's factory
+        /// colours: `bayan` and `totoy` are the same man in the same clothes, and the select
+        /// screen still shows the right name and the right meters over the top of it.
+        ///
+        /// ⚠️ THE ORDER OF THIS TABLE DOES NOT MATTER AND THE IDS DO. Matched by id exactly as
+        /// the model table above is, because index order is a network contract owned by
+        /// `Roster.cs`.
+        /// </summary>
         private static readonly Dictionary<string, string> PersonPalettes = new Dictionary<string, string>
         {
-            // Classic Palettes
-            { "bayan",       "person_a.tres" },
+            { "bayan",       "person_team-bayan.tres" },
             { "maring",      "person_b.tres" },
             { "totoy",       "person_totoy.tres" },
-            { "inday",       "person_inday.tres" },
+            { "inday",       "person_team-inday.tres" },
             { "kuya_boy",    "person_kuya-boy.tres" },
-            { "ate_girlie",  "person_ate-girlie.tres" },
+            // ⚠️ THE ONE PALETTE IN THIS TABLE THAT IS NOT A COPY OF A GODOT FILE. The other
+            // eleven are carried over from `generate_person_palettes.py` in the Godot repo and
+            // must not be hand-edited there or here. This one is emitted by
+            // `tools/build_person_voxel.py`, in the same run and from the same table that lays
+            // out the model's UVs, because a slot number in the mesh and a colour in the palette
+            // are two halves of one decision: separate them and a renumbered slot silently
+            // repaints a limb with nothing failing.
+            { "zack",        "person_team-zack.tres" },
             { "tikboy",      "person_tikboy.tres" },
             { "bebang",      "person_bebang.tres" },
             { "jun_jun",     "person_jun-jun.tres" },
             { "lola_pacing", "person_lola-pacing.tres" },
             { "mang_kanor",  "person_mang-kanor.tres" },
             { "aling_nena",  "person_aling-nena.tres" },
-
-            // Hero Palettes
-            { "dante",       "person_team-dante.tres" },
-            { "cheska",      "person_team-cheska.tres" },
-            { "sean",        "person_team-sean.tres" },
-            { "zack",        "person_team-zack.tres" },
-            { "nemu",        "person_team-nemu.tres" },
-        };
-
-        private static readonly Dictionary<string, string> PersonPets = new Dictionary<string, string>
-        {
-            { "nemu", "characters/pets/pet-nemu-ghost.glb" },
         };
 
         private const string PaletteDir = "MapSource/materials_persons";
@@ -139,14 +143,6 @@ namespace TumbangPreso.EditorTools
             ok &= Fill(book.People, Roster.People, PersonModels, "person");
             ok &= Fill(book.Cans, Roster.Cans, CanModels, "can");
             ok &= Fill(book.Slippers, Roster.Slippers, SlipperModels, "slipper");
-
-            // Also build standalone entries like nemu so they have valid .asset files
-            foreach (var kvp in PersonModels)
-            {
-                bool inTruth = false;
-                foreach (var p in Roster.People) { if (p.Id == kvp.Key) { inTruth = true; break; } }
-                if (!inTruth) BuildSingleEntry(kvp.Key, PersonModels, "person", ref ok);
-            }
 
             EditorUtility.SetDirty(book);
             AssetDatabase.SaveAssets();
@@ -285,75 +281,10 @@ namespace TumbangPreso.EditorTools
                     ok = false;
                 }
 
-                if (PersonPets.TryGetValue(entry.Id, out var petRel))
-                {
-                    string petFull = $"{ArtRoot}/{petRel}";
-                    asset.PetModel = AssetDatabase.LoadAssetAtPath<GameObject>(petFull);
-                }
-                else
-                {
-                    asset.PetModel = null;
-                }
-
                 EditorUtility.SetDirty(asset);
                 into.Add(asset);
             }
 
-            return ok;
-        }
-
-        private static bool BuildSingleEntry(string id,
-                                             Dictionary<string, string> models,
-                                             string kind,
-                                             ref bool ok)
-        {
-            string assetPath = $"{EntryDir}/{kind}_{id}.asset";
-
-            var asset = AssetDatabase.LoadAssetAtPath<RosterEntryAsset>(assetPath);
-            if (asset == null)
-            {
-                asset = ScriptableObject.CreateInstance<RosterEntryAsset>();
-                AssetDatabase.CreateAsset(asset, assetPath);
-            }
-
-            asset.Id = id;
-            asset.Tint = Color.white;
-            asset.Palette = ReadPalette(id, ref ok);
-
-            if (models.TryGetValue(id, out var rel))
-            {
-                string full = $"{ArtRoot}/{rel}";
-                asset.Model = AssetDatabase.LoadAssetAtPath<GameObject>(full);
-
-                if (asset.Model == null)
-                {
-                    Debug.LogError($"[RosterBook] no model at {full} for '{id}'.");
-                    ok = false;
-                }
-
-                var clips = new System.Collections.Generic.List<AnimationClip>();
-                foreach (var sub in AssetDatabase.LoadAllAssetsAtPath(full))
-                {
-                    if (sub is AnimationClip clip && !clip.name.StartsWith("__preview"))
-                        clips.Add(clip);
-                }
-
-                asset.Clips = clips.ToArray();
-
-                if (clips.Count == 0 && kind == "person")
-                {
-                    Debug.LogError($"[RosterBook] '{id}' has a model with no clips. " +
-                                   "That character will not animate.");
-                    ok = false;
-                }
-            }
-            else
-            {
-                Debug.LogError($"[RosterBook] no model mapped for {kind} '{id}'.");
-                ok = false;
-            }
-
-            EditorUtility.SetDirty(asset);
             return ok;
         }
     }

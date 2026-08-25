@@ -145,39 +145,8 @@ namespace TumbangPreso.Settings
         /// </summary>
         public void Apply()
         {
-            ApplyDisplay();
+            Screen.fullScreen = Fullscreen;
             AIController.ApplyDifficulty(AiDifficulty);
-        }
-
-        /// <summary>
-        /// Applies the display preference without carrying a small window's backbuffer into
-        /// fullscreen. Borderless fullscreen uses the desktop resolution, so both the 3D view
-        /// and screen-space UI remain pixel sharp on the player's monitor.
-        /// </summary>
-        public void ApplyDisplay()
-        {
-            if (Application.isBatchMode) return;
-
-            if (Fullscreen)
-            {
-                int width = Display.main != null && Display.main.systemWidth > 0
-                    ? Display.main.systemWidth
-                    : Screen.currentResolution.width;
-                int height = Display.main != null && Display.main.systemHeight > 0
-                    ? Display.main.systemHeight
-                    : Screen.currentResolution.height;
-
-                Screen.SetResolution(width, height, FullScreenMode.FullScreenWindow);
-                return;
-            }
-
-            // Keep windowed mode comfortably inside a 1080p desktop while preserving the
-            // game's authored 16:9 layout. Do not reuse a 4K fullscreen size for a window.
-            const int preferredWidth = 1600;
-            const int preferredHeight = 900;
-            int windowWidth = Mathf.Min(preferredWidth, Screen.currentResolution.width);
-            int windowHeight = Mathf.Min(preferredHeight, Screen.currentResolution.height);
-            Screen.SetResolution(windowWidth, windowHeight, FullScreenMode.Windowed);
         }
 
         public void Validate()
@@ -265,13 +234,7 @@ namespace TumbangPreso.Settings
                 Debug.LogWarning($"[Settings] could not read {Path}, using defaults: {e.Message}");
             }
 
-            bool mintedIdentity = string.IsNullOrEmpty(_current.PlayerToken);
             _current.Validate();
-
-            // Validate mints the reconnect identity, but an identity that only lives in RAM
-            // changes on every cold launch. Persist it immediately instead of waiting for the
-            // player to happen to open and save a settings screen.
-            if (mintedIdentity) Save();
 
             // ⚠️ VALIDATE THEN APPLY, IN THAT ORDER. Applying an unclamped value read off disk
             // would push a nonsense difficulty index straight into the AI.

@@ -628,59 +628,6 @@ namespace TumbangPreso.Tests
         }
 
         [Test]
-        public void ReconnectLookupUsesPeerIdWhileCurrentRoleComesFromRound()
-        {
-            var lobby = new LobbySession();
-            lobby.OpenLobby(new System.Random(42));
-
-            lobby.Admit(101, "token-host", "Host");
-            var original = lobby.Admit(202, "token-returning", "Returning");
-            Assert.AreEqual(1, original.Seat);
-
-            lobby.StartMatch();
-            lobby.Depart(202);
-
-            // A transport reconnect always gets a new peer id, while the durable token must
-            // reclaim the same seat. Peer ids are deliberately much larger than seat indices
-            // so accidentally calling PeerInSeat(peerId) cannot pass this regression test.
-            var rejoined = lobby.Admit(904, "token-returning", "Returning");
-            Assert.AreEqual(1, rejoined.Seat);
-            Assert.AreSame(rejoined, lobby.PeerById(904));
-            Assert.IsNull(lobby.PeerInSeat(904));
-
-            // By round two that stable seat is now the defender. Reconnect restores the seat;
-            // live role must be derived from authoritative round state, never cached from the
-            // role the peer held when it disconnected.
-            Assert.AreEqual(rejoined.Seat, MatchRules.DefenderSlotFor(2));
-        }
-
-        [Test]
-        public void FastReconnectReplacesStillConnectedTransportWithoutChangingSeat()
-        {
-            var lobby = new LobbySession();
-            lobby.OpenLobby(new System.Random(42));
-            lobby.Admit(101, "host-token", "Host");
-            var firstConnection = lobby.Admit(202, "durable-token", "Player");
-            firstConnection.CharacterPick = 4;
-            firstConnection.SlipperPick = 2;
-
-            // The new socket arrives before Depart(202), exactly what happens when the old
-            // socket is waiting out the venue-friendly disconnect timeout.
-            var replacement = lobby.Admit(904, "durable-token", "Player");
-
-            Assert.AreEqual(1, replacement.Seat);
-            Assert.AreEqual(4, replacement.CharacterPick);
-            Assert.AreEqual(2, replacement.SlipperPick);
-            Assert.IsNull(lobby.PeerById(202));
-            Assert.AreSame(replacement, lobby.PeerById(904));
-            Assert.AreEqual(2, lobby.PeerCount);
-
-            // A late disconnect callback from the superseded socket must be harmless.
-            lobby.Depart(202);
-            Assert.AreSame(replacement, lobby.PeerInSeat(1));
-        }
-
-        [Test]
         public void ArrivalRulingOrdersReclaimBeforeFreeSeatAndSpectate()
         {
             var lobby = new LobbySession();

@@ -135,27 +135,6 @@ namespace TumbangPreso.Visual
             { "grab", new[] { PickUp, Interact, "interact-left" } },
             { "lunge", new[] { "attack-kick-right", "attack-melee-right", Interact } },
             { "punch", new[] { "attack-melee-right", "attack-kick-right", Interact } },
-
-            // Hero ability action fallback chains
-            { "hero-sean-dash", new[] { "hero-sean-dash", "attack-kick-right", Sprint } },
-            { "hero-sean-ignite", new[] { "hero-sean-ignite", "attack-melee-right", Interact } },
-            { "hero-sean-supernova", new[] { "hero-sean-supernova", "attack-melee-right", Jump } },
-
-            { "hero-zack-sprint", new[] { "hero-zack-sprint", Sprint, "attack-kick-right" } },
-            { "hero-zack-charge", new[] { "hero-zack-charge", "attack-melee-right", Interact } },
-            { "hero-zack-summon", new[] { "hero-zack-summon", "emote-yes", Interact } },
-
-            { "hero-dante-stomp", new[] { "hero-dante-stomp", "attack-kick-right", PickUp } },
-            { "hero-dante-roar", new[] { "hero-dante-roar", "emote-yes", "attack-melee-right" } },
-            { "hero-dante-fissure", new[] { "hero-dante-fissure", "attack-melee-right", PickUp } },
-
-            { "hero-cheska-frostwave", new[] { "hero-cheska-frostwave", "interact-right", "attack-melee-right" } },
-            { "hero-cheska-raise", new[] { "hero-cheska-raise", PickUp, Interact } },
-            { "hero-cheska-nova", new[] { "hero-cheska-nova", "emote-yes", Interact } },
-
-            { "hero-nemu-ghoststep", new[] { "hero-nemu-ghoststep", Sprint, Walk } },
-            { "hero-nemu-project", new[] { "hero-nemu-project", "interact-right", "attack-melee-right" } },
-            { "hero-nemu-seance", new[] { "hero-nemu-seance", "emote-yes", Interact } },
         };
 
         [SerializeField] private float _blend = 0.12f;
@@ -298,13 +277,6 @@ namespace TumbangPreso.Visual
 
             var dance = DanceClip.Build(_animator.transform);
             if (dance != null) _clips[DanceClip.ClipName] = dance;
-
-            var heroClips = HeroAbilityClips.BuildAll(_animator.transform);
-            if (heroClips != null)
-            {
-                foreach (var kvp in heroClips)
-                    if (kvp.Value != null) _clips[kvp.Key] = kvp.Value;
-            }
         }
 
         private void OnDestroy()
@@ -333,8 +305,7 @@ namespace TumbangPreso.Visual
             // jumping up and down the floor and lying down"*. Locomotion loops; an emote loops
             // only if EmoteLoops says so, and otherwise holds its last frame.
             bool emoting = _emote != null && _emote.IsEmoting;
-            bool tripped = _motor != null && _motor.IsTripped;
-            bool loop = (!emoting || !EmoteHoldsLastFrame(_emote.Current)) && !tripped;
+            bool loop = !emoting || !EmoteHoldsLastFrame(_emote.Current);
 
             Play(Choose(), loop);
             Blend();
@@ -431,12 +402,6 @@ namespace TumbangPreso.Visual
         /// </summary>
         private string Choose()
         {
-            if (_motor != null && _motor.IsTripped)
-            {
-                // When tripped, lie flat on the ground for the majority of the duration, then play get-up
-                return _motor.TripLeft > 0.7f ? Die : PickUp;
-            }
-
             if (_emote != null && _emote.IsEmoting)
             {
                 string emoteClip = ResolveChain(EmoteClips, _emote.Current);
@@ -647,14 +612,7 @@ namespace TumbangPreso.Visual
         /// caller reaching for PlayOneShot("attack-melee-right") directly re-merges the three
         /// verbs the 2026-08-01 split separated.
         /// </summary>
-        public void PlayAction(string action) => PlayAction(action, action);
-
-        /// <summary>
-        /// Some hero verbs use a full-body motion and a different first-person hand motion.
-        /// They still enter through this one bridge so the two views can never be triggered
-        /// independently.
-        /// </summary>
-        public void PlayAction(string action, string viewmodelAction)
+        public void PlayAction(string action)
         {
             // ⚠️⚠️ THE FIRST-PERSON ARM IS DRIVEN FROM HERE, AND FROM NOWHERE ELSE.
             // `character_visual.gd::play_action` opens with exactly this call and says why:
@@ -670,7 +628,7 @@ namespace TumbangPreso.Visual
             // miss would leave the rig untold. Every verb already calls this one method, so
             // throw, grab, shove, punch and lunge all reach the viewmodel for free — and a verb
             // added later cannot forget to.
-            CameraSystem.CameraRig.PlayViewmodelAction(_motor, viewmodelAction);
+            CameraSystem.CameraRig.PlayViewmodelAction(_motor, action);
 
             string clip = ResolveChain(ActionClips, action);
             if (clip != null) PlayOneShot(clip);

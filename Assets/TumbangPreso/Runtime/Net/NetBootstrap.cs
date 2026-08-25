@@ -59,13 +59,8 @@ namespace TumbangPreso.Net
 
             string map = Value(args, MapSwitch) ?? UI.SceneFlow.Eskinita;
 
-            bool explicitJoin = !string.IsNullOrEmpty(Value(args, JoinSwitch));
-            bool explicitHost = Has(args, HostSwitch) || Has(args, "-host") || Has(args, "--host");
-            bool isDedicated = Has(args, DedicatedSwitch) || Has(args, "-dedicated") ||
-                               Has(args, "--dedicated") ||
-                               (Application.isBatchMode && !Application.isEditor &&
-                                !explicitJoin && !explicitHost);
-            bool isHost = explicitHost || isDedicated;
+            bool isDedicated = Has(args, DedicatedSwitch) || Has(args, "-dedicated") || Has(args, "--dedicated");
+            bool isHost = Has(args, HostSwitch) || Has(args, "-host") || Has(args, "--host") || isDedicated;
 
             if (isHost)
             {

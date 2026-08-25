@@ -46,22 +46,13 @@ Shader "TumbangPreso/FrostVignette"
         // How far in from the frame the ice reaches at full coverage, in units of SCREEN
         // HEIGHT.
         //
-        // ⚠️⚠️ CUT 0.36 → 0.24 ON 2026-08-23, AND THE ARITHMETIC IS THE ARGUMENT.
-        // Reach is measured in SCREEN HEIGHTS from each edge, and the two opposite edges both
-        // spend it: at 0.36 the clear strip left in the middle was 1 - 0.72 = **0.28 of the
-        // screen height**. Roughly three quarters of the frame was ice, held for the whole five
-        // second stun. That is the same failure `Hud.SetDownedFlash` records for the held red
-        // tint, arriving through coverage instead of through alpha. At 0.24 the clear centre is
-        // **0.52**, so the stunned player keeps half the frame to watch the round in and the
-        // frost is still unmistakably a frozen frame.
-        //
-        // ⚠️ THE SHAPE AND THE FILAMENTS ARE UNTOUCHED. What was wrong was how much of the
-        // screen it covered, not what it looked like.
-        //
-        // History: the Godot shader's own default said 0.15 and `HUD.tscn` overrode it to 0.36
-        // on the material, so 0.36 is what that build rendered. The 0.15 was a tuning pass that
-        // never took effect. This lands between the two, deliberately.
-        _MaxReach ("Max Reach", Range(0.05, 0.5)) = 0.24
+        // ⚠️⚠️ 0.36, AND THE GODOT SHADER'S OWN DEFAULT SAYS 0.15. Both are in that tree and
+        // the .tscn wins: `HUD.tscn` sets `shader_parameter/max_reach = 0.36` on the material,
+        // which overrides the uniform default, so 0.36 is what the shipped Godot build actually
+        // renders no matter what the shader file says. The 0.15 was a tuning pass that never
+        // took effect. Ported at the value the running game shows, because that is the look
+        // that was approved; flagged in the ledger rather than silently picking the other one.
+        _MaxReach ("Max Reach", Range(0.05, 0.5)) = 0.36
 
         // Viewport width / height, written from `Hud` every frame.
         //
@@ -204,11 +195,7 @@ Shader "TumbangPreso/FrostVignette"
                 // those values and is untouched; only the weight came off. The filaments keep
                 // the largest share of what is left, because they are what makes it read as ice
                 // rather than as a blue haze.
-                // ⚠️ THE BODY LOST WEIGHT AGAIN AND THE FILAMENTS DID NOT, for the reason
-                // the first tune-down gives: the cracks are what make this read as ice rather
-                // than as a blue haze, so the flat wash behind them is the part that can afford
-                // to go. 0.36 → 0.30 on the body, alongside the reach cut above.
-                float alpha = saturate(body * 0.30 + cracks * 0.64 + speck * 0.24) * _Coverage;
+                float alpha = saturate(body * 0.36 + cracks * 0.64 + speck * 0.28) * _Coverage;
 
                 return fixed4(rgb, alpha * i.color.a);
             }

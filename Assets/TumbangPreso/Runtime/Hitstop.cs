@@ -36,19 +36,14 @@ namespace TumbangPreso
         /// <summary>Freeze. Re-entrant calls during a freeze are ignored rather than
         /// extending it — three attackers landing hits together must not stack into a stall.</summary>
         public static void Trigger()
-            => Trigger(Balance.HitstopDuration, Balance.HitstopTimeScale);
-
-        /// <summary>Tiered micro-hitstop for can hits and ultimates. Values are bounded so
-        /// presentation can never become a gameplay-length freeze.</summary>
-        public static void Trigger(float duration, float timeScale)
         {
             if (_active) return;
 
             _active = true;
             _restoreScale = Time.timeScale;
-            _until = Time.unscaledTime + Mathf.Clamp(duration, 0.02f, 0.08f);
+            _until = Time.unscaledTime + Balance.HitstopDuration;
 
-            Time.timeScale = Mathf.Clamp(timeScale, 0.03f, 0.35f);
+            Time.timeScale = Balance.HitstopTimeScale;
         }
 
         /// <summary>

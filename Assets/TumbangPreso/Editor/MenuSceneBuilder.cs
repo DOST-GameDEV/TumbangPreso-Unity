@@ -47,7 +47,6 @@ namespace TumbangPreso.EditorTools
                 $"{UiDir}/{SceneFlow.MatchResult}.unity",
                 $"{MapDir}/{SceneFlow.Eskinita}.unity",
                 $"{MapDir}/{SceneFlow.BayanPlaza}.unity",
-                $"{MapDir}/{SceneFlow.IlalimNgTulay}.unity",
             };
 
             var list = new List<EditorBuildSettingsScene>();

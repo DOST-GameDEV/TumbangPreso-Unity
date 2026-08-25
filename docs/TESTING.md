@@ -52,7 +52,7 @@ then try again. An empty log is not a passing run.
 
 ---
 
-## 3 · The five checkers
+## 3 · The checkers
 
 Each writes a readable report into `Logs/` and exits non-zero on failure.
 
@@ -65,55 +65,12 @@ than warns**. Bound 3 is the one nobody had written down, and it currently sits 
 its limit at 8.60 against a wall face of 8.60. **If you grow the box, this is what tells you.**
 
 ```bash
-"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -quit -nographics -projectPath . -executeMethod TumbangPreso.EditorTools.MapKit.MapGeometryCheck.Run -logFile Logs/mapgeom.log
-```
-
-`Logs/map-geometry-check.txt`. Opens each map and measures four things: every renderer rests on
-something (or carries an `AirborneByDesign` with a printed reason), nothing solid taller than
-`stepOffset` stands inside the chalk, nothing is within 1.4 m of where the can spawns, and a
-0.5 m grid across the walled area has ground under every sample.
-
-⚠️ **It gates Ilalim ng Tulay only.** Eskinita and Bayan Plaza are imported `.tscn` scenes and
-are reported on rather than gated, because gating them today would mean either fixing two
-imported scenes in one pass or switching the check off, and the second of those is how a check
-dies. Their findings are `TODO.md` § 4.
-
-⚠️ **A float finding prints the level profile under the prop** (`0.212 x5, 0.150 x20`). The
-coverage rule is the part that is easy to get wrong, and arguing with it from the source instead
-cost a round trip. That profile is also what caught all four utility poles yawed backwards, with
-twenty of the twenty-five squares under each one sitting over the back lots.
-
-```bash
 "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -quit -nographics -projectPath . -executeMethod TumbangPreso.EditorTools.AudioCueCheck.Run -logFile Logs/audio.log
 ```
 
 `Logs/audio-cue-check.txt`. Checks cues against files **in both directions**, plus magic bytes.
 It currently reports the five `ability_*` sounds as known-dead, which is correct: they ship for
 a system that was deleted.
-
-```bash
-"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -quit -nographics -projectPath . -executeMethod TumbangPreso.EditorTools.SceneScriptCheck.Run -logFile Logs/scenescript.log
-```
-
-`Logs/scene-script-check.txt`. Fails any scene in the build settings holding a `MonoBehaviour`
-the player cannot bind to a script: an inline `MonoScript` stub, an `m_Script` with no guid, or
-a guid resolving to nothing. Scenes outside the build settings are reported, not gated.
-
-⚠️⚠️ **THIS IS THE ONLY CHECK THAT CAN SEE THIS CLASS OF BUG AND IT WAS WRITTEN AFTER ONE
-SHIPPED.** The 2026-08-25 build hard crashed the moment a player selected Ilalim ng Tulay, with
-"The file 'level8' is corrupted!" and "[Position out of bounds!]" in the player log. Nothing was
-corrupt: every serialized file parsed clean. Eight `HazardVolume` components referenced a stub
-because the class was declared inside `HazardMap.cs`, and **Unity only binds a MonoBehaviour to
-a script asset when the class name matches the file name.** Core 60/60, EditMode 105/105,
-PlayMode 55/55, Headless, Arena, Audio and MapGeometry were ALL green on that commit, because
-every one of them runs in the editor and the editor resolves the stub by class name.
-
-⚠️ **It reads the scene as text and never opens it.** Opening the scene is what makes the fault
-invisible, and saving it afterwards would rewrite the stub away without anyone learning it had
-been there.
-
-⚠️ **`GameBuilder` runs it before every build** and refuses to write a player that would carry
-the fault.
 
 ```bash
 Unity -batchmode -nographics -projectPath . -executeMethod TumbangPreso.EditorTools.UgsCheck.Run -logFile -
@@ -125,14 +82,14 @@ toggle behind each failure. Run it whenever online play misbehaves, because the 
 it covers live in the Unity account and leave no trace in this repository at all: one of them
 was skipped for a week without anything going red. `docs/Port_Plan.md` §5 has the table.
 
-⚠️ **It takes no `-quit`**, unlike the four above. The service calls are async, so the check pumps
+⚠️ **It takes no `-quit`**, unlike the two above. The service calls are async, so the check pumps
 `EditorApplication.update` until they return and exits the editor itself.
 
 ⚠️ **Batchmode cannot see whether you are signed in**, because the access token is handed to the
 editor by the Hub. It reports that as unknown rather than as a failure. Step 3 passing proves
 the sign-in anyway.
 
-All five are also on the **Tumbang Preso** menu in the editor.
+All three are also on the **Tumbang Preso** menu in the editor.
 
 ---
 

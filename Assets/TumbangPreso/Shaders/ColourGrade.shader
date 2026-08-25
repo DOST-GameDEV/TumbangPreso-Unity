@@ -24,7 +24,6 @@ Shader "TumbangPreso/ColourGrade"
         // 0 disables it and passes the frame through untonemapped. See the Tonemap note.
         _Exposure ("Tonemap Exposure", Range(0, 4)) = 0
         _White ("Tonemap White", Range(0.5, 8)) = 1.9
-        _Chromatic ("Impact Chromatic Split", Range(0, 1)) = 0
     }
 
     SubShader
@@ -44,7 +43,6 @@ Shader "TumbangPreso/ColourGrade"
             half _Saturation;
             half _Exposure;
             half _White;
-            half _Chromatic;
 
             // ⚠️⚠️ THE TONEMAP BELONGS TO THE FRAME, NOT TO A MATERIAL, AND HAVING IT ON THE
             // MATERIAL IS WHY THE SKY BLEW OUT. `Toon.shader` was carrying the ACES curve because
@@ -89,10 +87,7 @@ Shader "TumbangPreso/ColourGrade"
             // is the whole thing this pass exists to match.
             half4 frag (v2f_img i) : SV_Target
             {
-                half2 split = half2(_Chromatic * 0.006h, 0.0h);
                 half4 source = tex2D(_MainTex, i.uv);
-                source.r = tex2D(_MainTex, i.uv + split).r;
-                source.b = tex2D(_MainTex, i.uv - split).b;
 
                 // ⚠️ TONEMAP FIRST, THEN THE BCS ADJUSTMENT. That is the order Godot's
                 // `tonemap.glsl` runs them in, and it is not interchangeable: grading before the

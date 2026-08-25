@@ -23,7 +23,6 @@ namespace TumbangPreso.Core
         public const int PlayerCount = 4;
         public const float RoundTime = 90.0f;
         public const float IntermissionDuration = 3.0f;
-        public const float WarmupBufferDuration = 15.0f;
 
         // -------------------------------------------------------------------
         // SCORING — round_manager.gd
@@ -41,76 +40,6 @@ namespace TumbangPreso.Core
         public const float TagStunTime = 5.0f;
         public const float SabotageWindow = 2.5f;
         public const float ThrowRestoreCooldown = 1.25f;
-
-        // Tournament Anti-Camping & Anti-Stall Penalties
-        public const float TayaCampRadius = 2.2f;
-        public const float TayaCampClearRadius = 2.8f;
-        public const float TayaCampWarningTime = 3.0f;
-        public const float TayaCampGracePeriod = 5.0f;
-        public const int ScoreTayaCampPenalty = -5;
-
-        public const float SlipperUnretrievedWarningTime = 7.0f;
-        public const float SlipperUnretrievedGracePeriod = 10.0f;
-        public const int ScoreUnretrievedPenalty = -5;
-        public const float TournamentPenaltyInterval = 1.0f;
-
-        // ------------------------------------------------------------------
-        // Hero Strike ultimate economy. EVERY POINT IS EARNED BY AN ACT.
-        //
-        // ⚠️⚠️ `UltimatePassiveChargePerSecond` WAS DELETED ON 2026-08-25 AND MUST NOT COME
-        // BACK. It was 1.0/s against a max of 100, so a player who did nothing at all reached
-        // **90 of the 100 in a 90 s round**: the meter was a 100 second clock wearing an
-        // economy's clothes, and objective play was a bonus on top of a gift.
-        //
-        // `docs/VISION.md` § 4 lists **"Nothing may reward waiting"** as a competitive
-        // requirement and names the ultimate charge in the same breath, so the trickle was
-        // against the mode's own stated rules the whole time. 🧑 2026-08-25: *"make it so that
-        // ult has to be charged and isnt cooldown gated"*.
-        //
-        // ⚠️ THE COST IS PER HERO NOW, at `HeroKit.UltimateCost`, and ranges 90 to 150 against
-        // these earnings. `HeroKit.UltimateMax` 100 is only the meter's full scale.
-        // `docs/Hero_Strike_Balance.md` § 3.1 has both tables and the reasoning for each price.
-        // ------------------------------------------------------------------
-
-        /// <summary>The objective. Unchanged; it was always the right size.</summary>
-        public const float UltimateChargeLataKnock = 25.0f;
-
-        /// <summary>The taya's only way to earn, so it stays close to the objective's value.</summary>
-        public const float UltimateChargeTag = 20.0f;
-
-        /// <summary>
-        /// ⚠️⚠️ NEW, AND IT PAYS THE ACT THE WHOLE GAME IS BUILT AROUND. `docs/VISION.md` § 0:
-        /// *"The tension is the retrieval, not the throw. Throwing is safe and free; going back
-        /// in for your tsinelas is the only moment you can be caught."* Until now the retrieval
-        /// earned NOTHING toward an ultimate and the safe act earned 8, which paid the two
-        /// halves of the game in exactly the wrong order.
-        /// </summary>
-        public const float UltimateChargeOwnSlipperRetrieved = 12.0f;
-
-        /// <summary>
-        /// ⚠️ HALVED FROM 8, for the reason above. A throw costs nothing and risks nothing, so
-        /// it is the one act that should pay least. It still pays something, because a round
-        /// where nobody throws is not a round.
-        /// </summary>
-        public const float UltimateChargeLegalThrow = 4.0f;
-
-        // Pektus (Curve Spin) Throwing
-        public const float PektusCurveStrength = 14.0f;
-        public const float MaxPektusSpin = 1.0f;
-        /// <summary>
-        /// How far above a body's feet a resting tsinelas may sit and still be picked up.
-        ///
-        /// ⚠️ IT IS UNDER PickupRadius ON PURPOSE. `Slipper.CanBeGrabbedBy` measures a 3D
-        /// distance from the grabber's transform, which is at their feet, so a slipper this
-        /// high has already spent almost the whole 1.4 m budget on height alone and can only
-        /// be reached by standing exactly underneath it. Anything higher is out of play, and
-        /// a piece of ammunition that is out of play has to be given back rather than lost.
-        /// </summary>
-        public const float SlipperMaxRestReach = 1.2f;
-
-        public const float PektusBankSpinThreshold = 0.55f;
-        public const float PektusBankRestitution = 0.62f;
-        public const int MaxScoringBanks = 1;
 
         // -------------------------------------------------------------------
         // MOVEMENT AND THE ARENA — character_base.gd
@@ -236,25 +165,6 @@ namespace TumbangPreso.Core
         public const float LaunchSpeed = 18.5f;
         public const float SlipperHitRadius = 0.23f;
         public const float MaxFlightTime = 6.0f;
-
-        /// <summary>
-        /// The total time a tsinelas may spend off the ground, deflections included.
-        ///
-        /// ⚠️⚠️ `MaxFlightTime` CANNOT DO THIS JOB, BECAUSE A DEFLECT RESETS IT. Bouncing off a
-        /// body or off the can restarts the per-arc clock on purpose: the new arc genuinely is
-        /// a new flight and deserves its own budget. The consequence nobody wrote down is that a
-        /// slipper which deflects again before that budget runs out never runs it out at all. A
-        /// tsinelas falling onto somebody standing still gets lifted by `DeflectLift`, comes
-        /// straight back down onto them, and hovers there for the rest of the round. Its owner
-        /// is then fined -5 a second under the anti-stall rule for failing to fetch a slipper
-        /// that is not on the ground to be fetched.
-        ///
-        /// ⚠️ IT IS THE SAME 6 SECONDS AS THE PER-ARC CAP RATHER THAN A MULTIPLE. Real throws
-        /// resolve in about a second and a half, so six seconds of accumulated air is already
-        /// far beyond anything the game asks for; a larger number would only mean a longer
-        /// stall before the same recovery.
-        /// </summary>
-        public const float MaxAirborneTime = 6.0f;
         public const float ThrowerIgnoreTime = 0.25f;
 
         /// <summary>
@@ -420,50 +330,5 @@ namespace TumbangPreso.Core
 
         /// <summary>How often a networked slipper's transform is sent.</summary>
         public const float SlipperSyncInterval = 0.25f;
-
-        // -------------------------------------------------------------------
-        // GETTING BACK UP
-        //
-        // 🧑, 2026-08-25, on the street trip hazards: *"like maybe places u can trip on?
-        // then fall down animation plays and u have to spam a button to get back up"*.
-        //
-        // ⚠⚠ A TRIP WAS THE ONLY DEAD TIME IN THE GAME A PLAYER COULD NOT ANSWER. The knockdown
-        // and the get-up already shipped: `StreetTripHazard` calls `CharacterMotor.ApplyTrip`,
-        // `CharacterAnimator` plays the knockdown while `TripLeft > 0.7` and the get-up under it,
-        // and the stagger runs for the same span. Then the timer ran down on its own and no
-        // input touched it, so 2.5 s on the floor was 2.5 s of watching. Every other status in
-        // this game is either short, self-inflicted or answered by a decision.
-        //
-        // ⚠⚠ IT IS A FLOOR, NOT A RACE, AND THAT IS THE WHOLE BALANCE OF IT. Rewarding raw
-        // press rate would hand the round to whoever owns a mouse with a turbo switch, and
-        // `docs/VISION.md` § 4 aims Hero Strike at a bracket. So: presses are RATE-CAPPED, each
-        // one buys a fixed slice, and no amount of mashing takes the fall below `MinTripDown`.
-        // The gap a mash can close is therefore bounded and knowable: from 2.50 s down to 0.90 s.
-        // -------------------------------------------------------------------
-
-        /// <summary>Seconds a single accepted press removes from a trip.
-        ///
-        /// ⚠ SOLVED, NOT PICKED. `StreetTripHazard` sets `TripDuration` to 2.50 s and
-        /// `MinTripDown` is 0.90 s, so a mash has 1.60 s to remove. At `MashCooldown` = 0.10 s a
-        /// player who mashes cleanly gets at most 16 presses into that window; 0.13 s each takes
-        /// 1.60 s off in 12.3 presses, which lands the full saving comfortably inside the fall
-        /// while still asking for a real burst rather than two taps.</summary>
-        public const float MashRecoverPerPress = 0.13f;
-
-        /// <summary>Shortest gap between two presses that both count.
-        ///
-        /// ⚠ THIS IS THE ANTI-TURBO BOUND AND IT IS THE REASON THE MASH IS FAIR. 10 Hz is
-        /// comfortably above what a human sustains on a burst and comfortably below what a macro
-        /// or a turbo-fire mouse does, so the ceiling is reachable by hand and cannot be beaten
-        /// by hardware.</summary>
-        public const float MashCooldown = 0.10f;
-
-        /// <summary>How long a trip lasts however hard it is answered.
-        ///
-        /// ⚠ THE KNOCKDOWN CLIP HAS TO PLAY. `CharacterAnimator.Choose` switches from the
-        /// knockdown to the get-up at `TripLeft` = 0.70, so a floor below that would let a mash
-        /// skip straight past the fall and pop the body upright with no animation at all. 0.90 s
-        /// leaves 0.20 s of knockdown before the get-up starts.</summary>
-        public const float MinTripDown = 0.90f;
     }
 }

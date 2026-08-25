@@ -2,15 +2,6 @@
 
 **Investigated 2026-08-15, from the Godot repo's git history.**
 
-✅ **ALL FOUR CORRECTIONS APPLIED TO `docs/Design.md` ON 2026-08-23.** ⚠️ **THE UNITY
-COPY IS THE CURRENT ONE. The Godot repo's `docs/Design.md` was deliberately left alone** and is
-now the older of the two; do not sync it back over this one. Four more stale passages were found
-and fixed in the same pass: the chalk literal in §2 still read `|x| = |z| = 5.0`, §3 still called
-the box half-width 7.5 when §2 itself already records the 7.5 to 7.0 correction, and §2's other
-two bounds still quoted a 7.5 m shortest throw and a 9.5 spawn ring. `Design.md` also gained a §13 listing what it does not
-govern, because Hero Strike and the ability kits have no entry in it at all. **This report is
-kept as the evidence, not as an open action.**
-
 Four numbers disagree between `docs/Design.md` in the Godot repo and the GDScript that ships.
 `Design.md` opens with *"a number in the code must match a number here, or one of the two is a
 bug"*, so each needed a verdict rather than a shrug.

@@ -29,7 +29,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/TumbangPreso/Scenes/Maps/BayanPlaza.unity
     guid: c9edd12a70832094fa645890b398ef90
-  - enabled: 1
-    path: Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity
-    guid: d1023436a0787e94abfffc99704e8f3a
   m_configObjects: {}

@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: decades
   Model: {fileID: 919132149155446097, guid: d38a36eda45042c44a2a5f37c58e57ae, type: 3}
-  PetModel: {fileID: 0}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}
   Clips: []

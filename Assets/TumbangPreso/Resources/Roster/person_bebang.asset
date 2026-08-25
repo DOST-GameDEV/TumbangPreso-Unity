@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: bebang
   Model: {fileID: -214969759585143616, guid: d8ebae840337ee04ebd8d247b70c9bb2, type: 3}
-  PetModel: {fileID: 0}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}
   Clips:

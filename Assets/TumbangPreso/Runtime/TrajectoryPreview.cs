@@ -206,7 +206,6 @@ namespace TumbangPreso
 
             Vector3 origin = _carrier.ThrowOrigin();
             Vector3 velocity = _carrier.LaunchVelocityNow();
-            float spin = _carrier.CurrentPektusSpin;
             float floor = Mathf.Max(FloorEpsilon, _carrier.Held.RestHeight);
 
             // ⚠️⚠️ INTEGRATE AT THE PHYSICS TIMESTEP, THEN SUB-SAMPLE FOR DRAWING. The .gd used
@@ -228,17 +227,6 @@ namespace TumbangPreso
             for (int i = 0; i < totalSteps; i++)
             {
                 v.y -= Balance.Gravity * step;
-
-                if (Mathf.Abs(spin) > 0.01f)
-                {
-                    Vector3 flatVel = new Vector3(v.x, 0.0f, v.z);
-                    if (flatVel.sqrMagnitude > 0.1f)
-                    {
-                        Vector3 lateral = Vector3.Cross(flatVel.normalized, Vector3.up).normalized;
-                        v += lateral * (spin * Balance.PektusCurveStrength * step);
-                    }
-                }
-
                 p += v * step;
 
                 bool grounded = p.y <= floor;

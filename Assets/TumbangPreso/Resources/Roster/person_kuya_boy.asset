@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: kuya_boy
   Model: {fileID: 4595338474431026101, guid: c6d6044d86592bc40b66cd723262f8c9, type: 3}
-  PetModel: {fileID: 0}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}
   Clips:
@@ -67,6 +66,4 @@ MonoBehaviour:
   - {r: 0.541176, g: 0.309804, b: 0.196078, a: 1}
   - {r: 0.258824, g: 0.14902, b: 0.101961, a: 1}
   - {r: 0.690196, g: 0.443137, b: 0.290196, a: 1}
-  Tagline: Heavyweight champion of the barangay courts. Armed with blistering fists,
-    maximum throwing power, and a fiery mohawk that blazes whenever the match heats
-    up.
+  Tagline: 

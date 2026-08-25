@@ -8,13 +8,10 @@ namespace TumbangPreso
     {
         Sprint,
         Jump,
-        SpecialAbility, // Left click. Throw charge for an attacker, punch for the taya.
-        Grab,           // E. Contextual: pickup, shove, or the lata reset channel.
-        Lunge,          // Right click. The taya's dash tag.
-        EmoteWheel,     // B
-        Skill1,         // Hero Skill 1. Q
-        Skill2,         // Hero Skill 2. E
-        Ultimate,       // Hero Ultimate. F
+        SpecialAbility, // LMB / Q. Throw charge for an attacker, punch for the taya.
+        Grab,           // E / LMB. Contextual: pickup, shove, or the lata reset channel.
+        Lunge,          // E / RMB.
+        EmoteWheel,
     }
 
     /// <summary>
@@ -43,9 +40,6 @@ namespace TumbangPreso
         private readonly HashSet<Verb> _heldPrev = new HashSet<Verb>();
 
         public Vector2 Move { get; set; }
-
-        /// <summary>Lateral throw spin for Pektus curve shots (-1.0 left to +1.0 right).</summary>
-        public float SpinInput { get; set; }
 
         /// <summary>Where this unit is aiming, in world space. AI writes it directly;
         /// a human's comes from the camera ray.</summary>
@@ -92,7 +86,6 @@ namespace TumbangPreso
         {
             _held.Clear();
             Move = Vector2.zero;
-            SpinInput = 0.0f;
             HasAimPoint = false;
         }
 

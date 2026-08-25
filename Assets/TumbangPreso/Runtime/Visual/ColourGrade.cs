@@ -33,35 +33,12 @@ namespace TumbangPreso.Visual
         [SerializeField] private float _white = 1.9f;
 
         private Material _material;
-        private float _chromaticPeak;
-        private float _chromaticUntil;
-        private float _chromaticDuration;
 
         private static readonly int BrightnessId = Shader.PropertyToID("_Brightness");
         private static readonly int ContrastId = Shader.PropertyToID("_Contrast");
         private static readonly int SaturationId = Shader.PropertyToID("_Saturation");
         private static readonly int ExposureId = Shader.PropertyToID("_Exposure");
         private static readonly int WhiteId = Shader.PropertyToID("_White");
-        private static readonly int ChromaticId = Shader.PropertyToID("_Chromatic");
-
-        /// <summary>Short, bounded screen-space colour split for local ultimate impact.</summary>
-        public void PulseChromatic(float strength, float duration)
-        {
-            if (Time.unscaledTime >= _chromaticUntil) _chromaticPeak = 0.0f;
-            _chromaticPeak = Mathf.Max(_chromaticPeak, Mathf.Clamp01(strength));
-            _chromaticDuration = Mathf.Max(0.05f, duration);
-            _chromaticUntil = Mathf.Max(_chromaticUntil, Time.unscaledTime + _chromaticDuration);
-        }
-
-        private float CurrentChromatic
-        {
-            get
-            {
-                float left = _chromaticUntil - Time.unscaledTime;
-                if (left <= 0.0f) return 0.0f;
-                return _chromaticPeak * Mathf.Clamp01(left / Mathf.Max(_chromaticDuration, 0.05f));
-            }
-        }
 
         public void Set(float brightness, float contrast, float saturation,
                         float exposure, float white)
@@ -127,8 +104,7 @@ namespace TumbangPreso.Visual
             Mathf.Approximately(_brightness, 1.0f)
             && Mathf.Approximately(_contrast, 1.0f)
             && Mathf.Approximately(_saturation, 1.0f)
-            && _exposure <= 0.0f
-            && CurrentChromatic <= 0.0f;
+            && _exposure <= 0.0f;
 
         /// <summary>
         /// ⚠️ A NO-OP GRADE STILL COSTS A FULL-SCREEN BLIT, so it is skipped outright. This runs
@@ -164,7 +140,6 @@ namespace TumbangPreso.Visual
             _material.SetFloat(SaturationId, _saturation);
             _material.SetFloat(ExposureId, _exposure);
             _material.SetFloat(WhiteId, _white);
-            _material.SetFloat(ChromaticId, CurrentChromatic);
 
             Graphics.Blit(source, destination, _material);
         }

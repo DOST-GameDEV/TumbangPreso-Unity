@@ -124,13 +124,6 @@ namespace TumbangPreso
                 m.HoldingSlipper = false;
                 m.Stamina.RefillAndClearFatigue();
 
-                // ⚠⚠ THE HERO KIT RESETS WITH THE BODY. Ultimate charge, cooldowns and
-                // anything still running are cleared here, at the one place every round
-                // boundary already passes through. `HeroKit.Tick` trickles passive charge every
-                // frame including practice time, and nothing called `ResetKit` before this, so
-                // charge banked before the whistle survived into the next round.
-                m.GetComponent<Abilities.HeroAbilitySystem>()?.ResetKit();
-
                 m.Teleport(m.IsDefender ? DefenderMark() : AttackerSpawn(slot));
             }
 

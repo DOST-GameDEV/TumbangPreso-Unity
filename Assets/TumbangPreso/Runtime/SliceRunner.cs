@@ -58,13 +58,6 @@ namespace TumbangPreso
             if (TimeScale > 1.0f) Time.timeScale = TimeScale;
 
             Running = true;
-
-            // ⚠️ THE ONE PLACE THE ULTIMATE BANK IS EMPTIED. Charge carries across the four
-            // rounds of a match on purpose; it must not carry into the NEXT match, and this
-            // component is reachable more than once in a session.
-            foreach (var seat in Seats)
-                seat?.GetComponent<Abilities.HeroAbilitySystem>()?.ResetKitForMatch();
-
             GameServices.Match.StartMatch();
         }
 
@@ -196,14 +189,8 @@ namespace TumbangPreso
             }
         }
 
-        private void OnIntermission(int nextRound, int nextDefenderSlot)
-        {
-            ResetWorld(nextDefenderSlot);
-            EquipOwnedSlippers(nextDefenderSlot);
-
-            CancelInvoke(nameof(Advance));
-            Invoke(nameof(Advance), Balance.WarmupBufferDuration);
-        }
+        private void OnIntermission(int nextRound, int nextDefenderSlot) =>
+            Invoke(nameof(Advance), Balance.IntermissionDuration);
 
         private void Advance() => GameServices.Match.AdvanceRound();
 
@@ -239,13 +226,6 @@ namespace TumbangPreso
                 m.HoldingSlipper = false;
                 m.Stamina.RefillAndClearFatigue();
 
-                // ⚠⚠ THE HERO KIT RESETS WITH THE BODY. Ultimate charge, cooldowns and
-                // anything still running are cleared here, at the one place every round
-                // boundary already passes through. `HeroKit.Tick` trickles passive charge every
-                // frame including practice time, and nothing called `ResetKit` before this, so
-                // charge banked before the whistle survived into the next round.
-                m.GetComponent<Abilities.HeroAbilitySystem>()?.ResetKit();
-
                 // ⚠️ THE SPAWN IS RECORDED, NOT JUST USED. The kill plane returns whoever falls
                 // off the world to their OWN spawn, and it has no other way to know where that
                 // is. Written every round because the mark moves when roles rotate.
@@ -280,12 +260,6 @@ namespace TumbangPreso
                 var plate = m.GetComponentInChildren<Visual.CharacterNameplate>();
                 if (plate != null) { plate.ApplySizing(); plate.Refresh(); }
             }
-
-            // ⚠️ THE HAZARD MAP IS EMPTIED WITH THE ROUND. Hazard objects are destroyed at a
-            // round boundary and each unregisters itself in OnDisable, but a teardown that skips
-            // OnDisable would leave the bots steering around patches of empty road for the rest
-            // of the match. Clearing here costs nothing and cannot go stale.
-            Abilities.HazardMap.Clear();
 
             if (Lata != null)
             {
