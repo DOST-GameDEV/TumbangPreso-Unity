@@ -41,6 +41,9 @@ namespace TumbangPreso.Net
         /// <summary>The online pool browser. Idle until a screen calls StartBrowsing.</summary>
         public ServerQuery Query { get; private set; }
 
+        /// <summary>The local network beacon for LAN game discovery.</summary>
+        public LanBeacon Beacon => _beacon;
+
         public event Action<string> StatusChanged;
 
         private NetworkManager _nm;
@@ -88,6 +91,10 @@ namespace TumbangPreso.Net
             _nm = GetComponent<NetworkManager>();
             if (_nm == null) _nm = gameObject.AddComponent<NetworkManager>();
 
+            var rpc = GetComponent<MatchRpc>();
+            if (rpc == null) rpc = gameObject.AddComponent<MatchRpc>();
+            rpc.Initialize(_nm);
+
             _utp = GetComponent<UnityTransport>();
             if (_utp == null) _utp = gameObject.AddComponent<UnityTransport>();
 
@@ -118,7 +125,7 @@ namespace TumbangPreso.Net
             if (_beacon == null) _beacon = gameObject.AddComponent<LanBeacon>();
 
             // ⚠️ THE ONLINE BROWSER SITS BESIDE THE LAN BEACON, NOT INSIDE IT. They answer
-            // different questions — "what is on this network" and "what is on the pool" — and
+            // different questions: "what is on this network" and "what is on the pool", and
             // a build that cannot reach the pool must still find a game on the LAN.
             Query = GetComponent<ServerQuery>();
             if (Query == null) Query = gameObject.AddComponent<ServerQuery>();
@@ -170,6 +177,8 @@ namespace TumbangPreso.Net
 
         public bool StartHost(int port = DefaultPort, bool dedicated = false)
         {
+            if (_nm != null && _nm.IsListening) Stop();
+
             Configure("0.0.0.0", port);
             IsRelay = false;
             RelayJoinCode = null;
@@ -190,6 +199,12 @@ namespace TumbangPreso.Net
 
             if (ok)
             {
+                var netObj = GetComponent<NetworkObject>();
+                if (netObj != null && !netObj.IsSpawned)
+                {
+                    netObj.Spawn();
+                }
+
                 LocalSlot = dedicated ? -1 : 0;
                 EnsureMatchRpcSpawned();
 
@@ -226,22 +241,33 @@ namespace TumbangPreso.Net
         /// <summary>
         /// Registers this process with the Multiplay fleet and starts answering SQP queries.
         /// </summary>
-        // ⚠ The body is gated on MULTIPLAY_SDK, which is currently defined nowhere, because
-        // com.unity.services.multiplay cannot be installed on Unity 6000.5 at all. Every
-        // published version of it, 1.1.1 through 1.3.1, ships
+        // ⚠⚠ DEFERRED, 2026-08-20, NOT IN PROGRESS. This superseded the E.2 decision
+        // (`Unity_UGS_Networking_Prompts.md`, 2026-08-19) that chose Multiplay Hosting over the
+        // Singapore VPS: com.unity.services.multiplay cannot be installed on Unity 6000.5 at all.
+        // Every published version of it, 1.1.1 through 1.3.1, ships
         // Editor/Authoring/Assets/CreateMultiplayConfigMenu.cs, which calls EndNameEditAction.
         // Unity 6000.5 marks that obsolete as an ERROR rather than a warning, so the package's
         // authoring assembly fails to build and takes the whole project's compile down with it.
         // The package was therefore removed from the manifest.
         //
-        // ⚠ The code is kept rather than deleted because the fleet path is real shipped
-        // behaviour, not dead code. Two ways back, whichever lands first: Unity publishes a
+        // ⚠ Checked, not assumed, that the consolidated package does not rescue this.
+        // com.unity.services.multiplayer@2.3.0 does ship a Server/ assembly, but its contents are
+        // Sessions and Matchmaker server support (MultiplayerServerService,
+        // MatchmakerServerExtensions). There is no ServerQueryHandler, no allocation callback
+        // surface, and no server.json reader. SQP and fleet allocation both still need the
+        // blocked package.
+        //
+        // ⚠ RELAY PEER HOSTING IS NOW THE PRIMARY ONLINE PATH, not a fallback behind this. See
+        // NetSession.StartHost's Relay branch and Port_Plan.md Phase 5. The body below is gated
+        // on MULTIPLAY_SDK, defined nowhere, kept rather than deleted because the fleet path is
+        // real shipped behaviour. Two ways back, whichever lands first: Unity publishes a
         // multiplay build that compiles on 6.5, in which case re-add the package and define
-        // MULTIPLAY_SDK and nothing else changes; or this is re-ported onto the session API in
-        // com.unity.services.multiplayer 2.x, which is Unity's stated replacement but exposes
-        // MultiplayerServerService.CreateSessionAsync instead of a ServerQueryHandler, so the
-        // SQP heartbeat in Update becomes the service's job rather than ours. That port needs a
-        // real fleet to verify, so it is deliberately not guessed at here.
+        // MULTIPLAY_SDK and nothing else changes; or this is re-ported onto
+        // MultiplayerServerService.CreateSessionAsync, which is Unity's actual replacement API but
+        // exposes sessions rather than a ServerQueryHandler, so the SQP heartbeat in Update
+        // becomes the service's job rather than ours. That port needs a real fleet to verify, so
+        // it is deliberately not guessed at here. The dedicated Linux server build is unaffected
+        // either way: it still serves clients today, it just does not register with a fleet.
         public async Task StartMultiplayServerAsync(int port, string serverName = "Tumbang Preso Dedicated", string map = "Eskinita")
         {
 #if !MULTIPLAY_SDK
@@ -278,6 +304,8 @@ namespace TumbangPreso.Net
 
         public bool StartClient(string address, int port = DefaultPort)
         {
+            if (_nm != null && _nm.IsListening) Stop();
+
             Configure(address, port);
             ConfigureClientHello();
             IsRelay = false;
@@ -301,11 +329,18 @@ namespace TumbangPreso.Net
         /// </summary>
         public async Task<bool> StartRelayHost(int maxConnections = LobbySession.MaxConnections)
         {
+            if (_nm != null && _nm.IsListening) Stop();
+
             SetStatus("signing in to online services...");
+
+            // ⚠ NO FALLBACK HERE, DELIBERATELY. Relay needs a real signed-in session, so there
+            // is nothing to degrade to: the local token works for LAN and cannot allocate a
+            // relay. The status now carries which of the three situations stopped it rather
+            // than the single "authentication failed" that covered all of them.
             bool authOk = await NetIdentity.EnsureSignedInAsync();
             if (!authOk)
             {
-                SetStatus("online authentication failed");
+                SetStatus($"cannot go online: {NetIdentity.StateReason}");
                 return false;
             }
 
@@ -334,6 +369,12 @@ namespace TumbangPreso.Net
 
                 if (ok)
                 {
+                    var netObj = GetComponent<NetworkObject>();
+                    if (netObj != null && !netObj.IsSpawned)
+                    {
+                        netObj.Spawn();
+                    }
+
                     LocalSlot = 0;
                     EnsureMatchRpcSpawned();
                     _beacon.HostName = Settings.SettingsStore.Current.PlayerName;
@@ -360,7 +401,7 @@ namespace TumbangPreso.Net
             catch (Exception e)
             {
                 SetStatus($"relay allocation failed: {e.Message}");
-                Debug.LogWarning($"[Net] Relay allocation exception: {e}");
+                NetIdentity.ReportServiceCallFailed("Relay allocation", e);
                 return false;
             }
         }
@@ -370,6 +411,8 @@ namespace TumbangPreso.Net
         /// </summary>
         public async Task<bool> StartRelayClient(string relayJoinCode)
         {
+            if (_nm != null && _nm.IsListening) Stop();
+
             if (string.IsNullOrWhiteSpace(relayJoinCode))
             {
                 SetStatus("invalid relay join code");
@@ -377,10 +420,15 @@ namespace TumbangPreso.Net
             }
 
             SetStatus("signing in to online services...");
+
+            // ⚠ NO FALLBACK HERE, DELIBERATELY. Relay needs a real signed-in session, so there
+            // is nothing to degrade to: the local token works for LAN and cannot allocate a
+            // relay. The status now carries which of the three situations stopped it rather
+            // than the single "authentication failed" that covered all of them.
             bool authOk = await NetIdentity.EnsureSignedInAsync();
             if (!authOk)
             {
-                SetStatus("online authentication failed");
+                SetStatus($"cannot go online: {NetIdentity.StateReason}");
                 return false;
             }
 
@@ -403,7 +451,7 @@ namespace TumbangPreso.Net
             catch (Exception e)
             {
                 SetStatus($"relay connection failed: {e.Message}");
-                Debug.LogWarning($"[Net] Relay join exception: {e}");
+                NetIdentity.ReportServiceCallFailed("Relay join", e);
                 return false;
             }
         }
@@ -441,6 +489,18 @@ namespace TumbangPreso.Net
             _utp.DisconnectTimeoutMS = 30000;
             _utp.ConnectTimeoutMS = 2000;
             _utp.MaxConnectAttempts = 12;
+        }
+
+        public void SetLocalSeating(int seat, bool spectator)
+        {
+            LocalSlot = seat;
+            GameLaunch.Spectator = spectator;
+            SetStatus($"seated in slot {seat} (spectator={spectator})");
+        }
+
+        public void SetStatusForHost()
+        {
+            SetStatus($"{Lobby.PeerCount} connected");
         }
 
         private void EnsureMatchRpcSpawned()
@@ -559,9 +619,17 @@ namespace TumbangPreso.Net
         {
             if (!IsHost)
             {
-                if (clientId == _nm.LocalClientId) SetStatus("connected");
+                if (clientId == _nm.LocalClientId)
+                {
+                    MatchRpc.Instance?.Initialize(_nm);
+                    SetStatus("connected");
+                    var s = Settings.SettingsStore.Current;
+                    MatchRpc.Instance?.IdentifyServerRpc(NetIdentity.Token, s.PlayerName, s.CharacterPick, s.CanPick, s.SlipperPick);
+                }
                 return;
             }
+
+            MatchRpc.Instance?.Initialize(_nm);
 
             // ⚠️ THE HOST SEATS THEM, AND THE HOST DECIDES. A client sends its token and name;
             // where it sits is not up to it. See LobbySession.RuleOnArrival for why the branch
@@ -584,13 +652,19 @@ namespace TumbangPreso.Net
             var record = Lobby.Admit((int)clientId, hello.Token, hello.Name);
             SendSeatAssignment(clientId, record.Seat);
 
+            // ⚠️ THE HOST NEVER SENDS ITSELF AN IdentifyServerRpc, so its own character, can and
+            // slipper picks reach the lobby from here or not at all. Every other seat's picks
+            // still arrive on the RPC.
+            if (clientId == _nm.LocalClientId)
+            {
+                Lobby.SetPicks((int)clientId, settings.CharacterPick, settings.CanPick, settings.SlipperPick);
+            }
+
             _beacon.Players = Lobby.PeerCount;
             if (Query != null && IsRelay)
             {
                 _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(), Lobby.PeerCount, Lobby.MatchInProgress);
             }
-            MatchRpc.Instance?.HostLateJoin((int)clientId);
-            SetStatus($"{Lobby.PeerCount} connected, seat {record.Seat}");
         }
 
         private void OnClientDisconnected(ulong clientId)
@@ -599,6 +673,7 @@ namespace TumbangPreso.Net
             {
                 // ⚠️ THE SEAT IS HELD, NOT FREED, so a reconnecting player gets their own chair
                 // back rather than finding a stranger in it holding their score.
+                Lobby.Depart((int)clientId);
                 MatchRpc.Instance?.HostPeerLeft((int)clientId);
                 _helloByClient.Remove(clientId);
                 _beacon.Players = Lobby.PeerCount;
@@ -613,7 +688,7 @@ namespace TumbangPreso.Net
             SetStatus("disconnected");
         }
 
-        private void SetStatus(string s)
+        public void SetStatus(string s)
         {
             Status = s;
             StatusChanged?.Invoke(s);

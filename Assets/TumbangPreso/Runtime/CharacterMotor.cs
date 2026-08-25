@@ -460,6 +460,11 @@ namespace TumbangPreso
             // runs, which is what stops a press being dropped entirely on a frame that happens to
             // carry no physics step at all.
             Intent.CommitFrame();
+
+            if (NetAuthority.ShouldRequest() && _playerSlot == NetAuthority.LocalSlot)
+            {
+                Net.MatchRpc.Instance?.SubmitMoveServerRpc(_playerSlot, transform.position, transform.eulerAngles.y, _velocity);
+            }
         }
 
         private void ApplyGravity(float dt)

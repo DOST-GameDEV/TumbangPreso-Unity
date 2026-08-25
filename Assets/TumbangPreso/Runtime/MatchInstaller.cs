@@ -50,6 +50,7 @@ namespace TumbangPreso
 
         private RosterBook _book;
         private bool _spectating;
+        private CharacterMotor[] _seats;
 
         /// <summary>
         /// § THE HANDLERS THIS INSTALLER PUTS ON THE `DontDestroyOnLoad` DIRECTORS.
@@ -136,6 +137,7 @@ namespace TumbangPreso
             var lata = BuildLata();
             var seats = new CharacterMotor[Balance.PlayerCount];
             var slippers = new Slipper[Balance.PlayerCount];
+            _seats = seats;
 
             for (int slot = 0; slot < Balance.PlayerCount; slot++)
             {
@@ -485,13 +487,56 @@ namespace TumbangPreso
         /// gate would hold the round open forever.</summary>
         public bool UseReadyGate = true;
 
+        public void RebindLocalSeat(int seat, bool spectator)
+        {
+            _spectating = spectator;
+            if (_seats == null || seat < 0 || seat >= _seats.Length) return;
+
+            var local = _seats[seat];
+            if (local == null) return;
+
+            var rig = UnityEngine.Object.FindFirstObjectByType<CameraSystem.CameraRig>();
+            if (rig != null)
+            {
+                if (spectator)
+                {
+                    rig.SetActive(false);
+                    if (UnityEngine.Object.FindFirstObjectByType<CameraSystem.SpectatorCamera>() == null)
+                    {
+                        var specGo = new GameObject("SpectatorCamera");
+                        specGo.tag = "MainCamera";
+                        specGo.AddComponent<CameraSystem.SpectatorCamera>();
+                    }
+                }
+                else
+                {
+                    rig.SetActive(true);
+                    rig.Follow(local);
+                    rig.SetAimSource(CameraSystem.AimSource.Mouse);
+                }
+            }
+
+            var hud = UnityEngine.Object.FindFirstObjectByType<UI.Hud>();
+            if (hud != null)
+            {
+                hud.Bind(local);
+                if (spectator) hud.EnterSpectatorMode();
+            }
+
+            var gate = UnityEngine.Object.FindFirstObjectByType<ReadyGate>();
+            if (gate != null)
+            {
+                gate.Open(local);
+            }
+        }
+
         private void BuildReadyGate(CharacterMotor local, SliceRunner runner)
         {
             var gate = gameObject.AddComponent<ReadyGate>();
 
             gate.RoundShouldBegin += runner.Begin;
 
-            // The ready press is readable in the world, not only on the HUD — the other
+            // The ready press is readable in the world, not only on the HUD: the other
             // players can see somebody signal that they are set.
             gate.ReadyGestureRequested += who =>
                 who.GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("ready");
@@ -509,6 +554,10 @@ namespace TumbangPreso
             gate.CountdownTick += tick => GameServices.Voice?.PlayCountdown(tick);
 
             gate.Open(local);
+            if (NetAuthority.IsNetworked && NetAuthority.IsHost)
+            {
+                gate.OpenNetworked();
+            }
         }
 
         private void BuildCameraAndHud(CharacterMotor local, Lata lata)

@@ -213,29 +213,99 @@ shims. `MatchRpc` uses explicit `[ServerRpc(RequireOwnership = false)]` and `[Cl
 attributes across all gameplay verbs.
 
 **Unity Gaming Services (UGS) integration:**
-- **Dedicated hosting (Multiplay Hosting):** Replaces the Singapore VPS, `spawner.py`, systemd
-  units, `deploy.sh`, `POOL_ADDRESS`, and the 8910-8917 port range. Fleet allocation spins up
-  dedicated server instances on demand. Scaling ensures servers exist when players need them
-  and prevents the memory exhaustion that crashed the 946 MB VPS twice during peak play.
+- ~~**Dedicated hosting (Multiplay Hosting):** Replaces the Singapore VPS, `spawner.py`,
+  systemd units, `deploy.sh`, `POOL_ADDRESS`, and the 8910-8917 port range. Fleet allocation
+  spins up dedicated server instances on demand.~~ — ⚠️ **DEFERRED 2026-08-20, SUPERSEDING E.2**
+  (`Unity_UGS_Networking_Prompts.md`). `com.unity.services.multiplay` cannot be installed on
+  Unity 6000.5 at all: every published version, 1.1.1 through 1.3.1, ships
+  `Editor/Authoring/Assets/CreateMultiplayConfigMenu.cs`, which calls `EndNameEditAction`, and
+  6000.5 marks that obsolete as a compile ERROR rather than a warning. The consolidated
+  `com.unity.services.multiplayer@2.3.0` does not rescue this either, checked rather than
+  assumed: its `Server/` assembly is Sessions and Matchmaker server support
+  (`MultiplayerServerService`, `MatchmakerServerExtensions`), and carries no
+  `ServerQueryHandler`, no allocation callback surface, and no `server.json` reader. SQP and
+  fleet allocation both still require the blocked package. Waiting on an SDK release is not a
+  plan on a competition timeline, so **Relay peer hosting is now the primary online path** and
+  Multiplay is deferred, not cancelled: the code is gated behind `MULTIPLAY_SDK`
+  (`NetSession.StartMultiplayServerAsync`) rather than deleted, and comes back the moment either
+  Unity ships a compiling `multiplay` build, or the fleet path is re-ported onto
+  `MultiplayerServerService.CreateSessionAsync` against a real fleet to verify it. The dedicated
+  Linux server build is unaffected: it still serves clients today, it just does not register
+  itself with a fleet, which is exactly the capability the Singapore VPS option would need back
+  if that is chosen instead.
 - **Online discovery (UGS Lobby):** Replaces the raw UDP pool browse in `ServerQuery`. Live
   lobbies publish custom data using the game's 4-character confusable-free join codes.
   `ServerQuery` retains its LAN-first code resolution order (checking `LanBeacon` before UGS
   Lobbies).
-- **NAT traversal (Relay):** Retained as a fallback for peer-hosted online matches without
-  requiring port forwarding or VPNs.
+- **NAT traversal (Relay):** ~~Retained as a fallback for peer-hosted online matches~~ — ⚠️ **NOW
+  THE PRIMARY ONLINE PATH, 2026-08-20**, per the Multiplay deferral above, not merely a fallback
+  behind fleet hosting. Still avoids requiring port forwarding or VPNs either way.
 - **Player identity (UGS Authentication):** Maps authenticated `PlayerId` to the existing stable
   player token, with automatic fallback to local minted tokens for offline LAN play.
 - **Lobby rules invariant:** Seating, reconnection, seat reclamation, picks, and ready counts
   remain strictly inside the transport-agnostic `LobbySession` and NGO RPCs, never delegated
   to async cloud service calls.
 
+**⚠️⚠️ THE UGS SETUP THAT NO SCRIPT CAN DO, AND THAT WAS SILENTLY SKIPPED.** Five steps live in
+the Unity account rather than in this repository, behind a password. N0 step 4 asked for them,
+none of them past the first were done, and the repository did not notice for a week. Recorded
+here because that is the only place a skipped account step can be recorded at all.
+
+| # | Step | Where | State, measured 2026-08-19 |
+|---|------|-------|-----------------------------|
+| 1 | Sign in to a Unity account | Editor top right, or Unity Hub | **DONE.** The licensing client holds a live access token and resolves one entitlement. |
+| 2 | Link a UGS project | `Project Settings > Services` | **NOT DONE.** `cloudProjectId`, `organizationId` and `projectName` are all blank in `ProjectSettings.asset`. |
+| 3 | Enable Anonymous sign-in | Dashboard > Authentication | Unknown until 2 is done. **Off by default and the single most likely thing to be missed.** |
+| 3 | Enable Relay and Lobby | Dashboard | Unknown until 2 is done. |
+| 4 | Enable Multiplay Hosting, add billing | Dashboard | Not done, and see below: the client SDK cannot be installed on this editor anyway. |
+| 5 | Restart the editor, confirm `cloudProjectId` | `ProjectSettings.asset` | Pending 2. |
+
+⚠️ **THE `Access token is unavailable` LINE IN AN OLD HANDOFF WAS A DIFFERENT PROBLEM AND IS
+GONE.** It does not appear anywhere in the current `Logs/Editor.log` or in the licensing client
+log. The live failure is one line and it names itself:
+
+```
+[NetIdentity] Online sign-in unavailable, using local token:
+Some services couldn't be initialized.
+```
+
+That is step 2 missing, not step 1.
+
+⚠️ **WHY A WEEK PASSED WITHOUT ANYONE NOTICING, WHICH IS THE PART WORTH REMEMBERING.** The
+fallback is correct and deliberate: `NetIdentity.EnsureSignedInAsync` catches the failure and
+mints a local token so a LAN match in a venue with no internet still works, and `ServerQuery`
+logs a warning and returns an empty list. An unconfigured cloud project therefore looks exactly
+like a hall with no Wi-Fi. **Do not make either of them throw to make this louder.** The check
+below is the answer instead, because it asks the services directly rather than inferring from a
+symptom.
+
+```bash
+Unity -batchmode -nographics -projectPath . -executeMethod TumbangPreso.EditorTools.UgsCheck.Run -logFile -
+```
+
+`Assets/TumbangPreso/Editor/UgsCheck.cs` signs in anonymously, allocates a Relay server, creates
+and deletes a Lobby, and writes `Logs/ugs-check.txt` naming the dashboard toggle behind every
+failure. It is also on the menu at `Tumbang Preso > Check UGS Wiring`. **It takes no
+`-quit`:** the service calls are async, so the check exits the editor itself once they return.
+
+⚠️ **MULTIPLAY IS NOT MERELY UNCONFIGURED, IT IS UNINSTALLABLE HERE.** Every published version
+of `com.unity.services.multiplay`, 1.1.1 through 1.3.1, fails to compile on Unity 6000.5, so the
+fleet registration and SQP heartbeat in `NetSession.StartMultiplayServerAsync` are gated behind
+`MULTIPLAY_SDK`, which is defined nowhere. A dedicated server still hosts and still serves
+clients; it just does not report itself to a fleet. Enabling Multiplay Hosting in the dashboard
+and adding billing is still needed before fleet allocation works, but it is not sufficient on
+its own, and **the Phase 5 exit criterion below cannot be met until one of the two routes back
+in that method lands.**
+
 Scope: the request/resolve/broadcast triplet, reconnection tokens, lobby leader election,
 join codes, spectators, mid-match arrival rulings, late-joiner state sync, UGS Relay/Lobby, and
-the Linux dedicated server build with Multiplay.
+the Linux dedicated server build (Multiplay fleet registration deferred, see above).
 
-**Exit:** 4 real peers on an allocated Multiplay server (and via Relay peer host), and a
+**Exit:** ~~4 real peers on an allocated Multiplay server (and via Relay peer host), and a
 reconnect that restores the player's seat. (Updated from the original Singapore VPS exit
-criterion, which was retired when hosting moved to Multiplay fleet allocation).
+criterion, which was retired when hosting moved to Multiplay fleet allocation).~~ — ⚠️ **REVISED
+2026-08-20.** 4 real peers on a Relay-hosted peer session (Multiplay fleet hosting deferred, see
+above), and a reconnect that restores the player's seat.
 
 ---
 

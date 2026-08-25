@@ -54,6 +54,49 @@ namespace TumbangPreso.Tests
             }
         }
 
+        [Test]
+        public void SetJoinCodeUpdatesPropertyAndFiresEvent()
+        {
+            var lobby = new LobbySession();
+            string eventCode = null;
+            int eventCount = 0;
+
+            lobby.JoinCodeChanged += c =>
+            {
+                eventCode = c;
+                eventCount++;
+            };
+
+            lobby.SetJoinCode("ABCD");
+            Assert.AreEqual("ABCD", lobby.JoinCode);
+            Assert.AreEqual("ABCD", eventCode);
+            Assert.AreEqual(1, eventCount);
+
+            // Setting identical code should not fire duplicate event
+            lobby.SetJoinCode("ABCD");
+            Assert.AreEqual(1, eventCount);
+
+            // Setting null should sanitize to empty string
+            lobby.SetJoinCode(null);
+            Assert.AreEqual("", lobby.JoinCode);
+            Assert.AreEqual("", eventCode);
+            Assert.AreEqual(2, eventCount);
+        }
+
+        [Test]
+        public void EndMatchClearsJoinCodeAndFiresEvent()
+        {
+            var lobby = NewLobby();
+            Assert.IsNotEmpty(lobby.JoinCode);
+
+            string eventCode = null;
+            lobby.JoinCodeChanged += c => eventCode = c;
+
+            lobby.EndMatch();
+            Assert.AreEqual("", lobby.JoinCode);
+            Assert.AreEqual("", eventCode);
+        }
+
         // -------------------------------------------------------------------
         // SEATING AND RECONNECTION
         // -------------------------------------------------------------------
