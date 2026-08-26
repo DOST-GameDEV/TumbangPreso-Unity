@@ -103,6 +103,18 @@ namespace TumbangPreso.UI
             MatchRpc.OnLobbyPicksSynced += HandleLobbyPicksSynced;
             MatchRpc.OnMatchStarted += HandleMatchStarted;
 
+            var s = Settings.SettingsStore.Current;
+            var modePeople = Roster.GetPeople(SceneFlow.SelectedMode);
+            if (s.CharacterPick < 0 || s.CharacterPick >= modePeople.Count) s.CharacterPick = 0;
+            if (s.CanPick < 0 || s.CanPick >= Roster.Cans.Count) s.CanPick = 0;
+            if (s.SlipperPick < 0 || s.SlipperPick >= Roster.Slippers.Count) s.SlipperPick = 0;
+            Settings.SettingsStore.Save();
+
+            if (isNetworked)
+            {
+                MatchRpc.Instance?.SelectLobbyPickServerRpc(s.CharacterPick, s.CanPick, s.SlipperPick);
+            }
+
             if (isNetworked && NetAuthority.IsHost)
             {
                 SetStatus("You are now the lobby leader - you pick the map, the mode, and when to start.");
@@ -377,10 +389,16 @@ namespace TumbangPreso.UI
 
             var s = Settings.SettingsStore.Current;
             var list = Roster.GetPeople(SceneFlow.SelectedMode);
-            if (s.CharacterPick >= list.Count)
+            if (s.CharacterPick >= list.Count || s.CharacterPick < 0)
             {
                 s.CharacterPick = 0;
                 Settings.SettingsStore.Save();
+            }
+
+            var net = NetSession.Instance;
+            if (net != null && net.IsNetworked)
+            {
+                MatchRpc.Instance?.SelectLobbyPickServerRpc(s.CharacterPick, s.CanPick, s.SlipperPick);
             }
 
             Refresh();
@@ -460,11 +478,12 @@ namespace TumbangPreso.UI
             {
                 bool mine = !GameLaunch.Spectator && (isNetworked ? (net.LocalSlot == seat) : (seat == GameLaunch.SoloSeat));
 
+                var seatInfo = isNetworked ? MatchRpc.Instance?.GetSeatInfo(seat) : null;
                 string characterName = "";
-                int charPickIndex = seat * 4 + 1;
-                if (charPickIndex < _replicatedPicks.Length && _replicatedPicks[charPickIndex] >= 0)
+                if (seatInfo != null && seatInfo.CharacterPick >= 0)
                 {
-                    characterName = Roster.At(Roster.People, _replicatedPicks[charPickIndex])?.Name ?? "";
+                    var modePeople = Roster.GetPeople(SceneFlow.SelectedMode);
+                    characterName = Roster.At(modePeople, seatInfo.CharacterPick)?.Name ?? "";
                 }
 
                 string seatText;
@@ -476,11 +495,16 @@ namespace TumbangPreso.UI
                 }
                 else if (isNetworked)
                 {
-                    bool isOccupied = (net != null && net.Lobby.IsSeatOccupied(seat)) ||
-                                      (_replicatedPicks.Length > seat * 4 && _replicatedPicks[seat * 4] >= 0);
-                    seatText = isOccupied
-                        ? $"{SeatName(seat)}   · PLAYER {(string.IsNullOrEmpty(characterName) ? "" : $"({characterName})")}"
-                        : $"{SeatName(seat)}   · BOT";
+                    bool isOccupied = seatInfo != null && seatInfo.Occupied;
+                    if (isOccupied)
+                    {
+                        string displayName = !string.IsNullOrEmpty(seatInfo.Name) ? seatInfo.Name : $"PLAYER {seat + 1}";
+                        seatText = $"{SeatName(seat)}   · {displayName} {(string.IsNullOrEmpty(characterName) ? "" : $"({characterName})")}";
+                    }
+                    else
+                    {
+                        seatText = $"{SeatName(seat)}   · BOT";
+                    }
                 }
                 else
                 {
@@ -559,8 +583,7 @@ namespace TumbangPreso.UI
             var net = NetSession.Instance;
             if (net != null && net.IsNetworked)
             {
-                int localPeerId = net.LocalSlot >= 0 ? net.LocalSlot : 0;
-                MatchRpc.Instance?.SelectLobbyPickServerRpc(localPeerId, s.CharacterPick, s.CanPick, s.SlipperPick);
+                MatchRpc.Instance?.SelectLobbyPickServerRpc(s.CharacterPick, s.CanPick, s.SlipperPick);
             }
             Refresh();
         }
