@@ -89,7 +89,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static bool _gateBlowout;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v15";
+        private const string Version = "v16";
 
         [MenuItem("Tumbang Preso/Capture Ability Showcase")]
         public static void RunFromMenu() => Execute();
@@ -136,6 +136,17 @@ namespace TumbangPreso.EditorTools.MapKit
 
                 Solo(spawned, "lava_decal",
                      () => HeroHazards.SpawnCrackedLavaDecal(Vector3.zero, 2.2f, 60.0f));
+
+                // ⚠⚠ PHAISTER'S TWO SIGILS. The sixth hero arrived with a hazard that drew
+                // NOTHING (`docs/TODO.md` § 21.1), so the first thing her marks need is to be
+                // photographed at all. Both are captured because her kit is deliberately ONE
+                // silhouette at two scales: if the pentagram and the heptagram cannot be told
+                // apart in these frames, the escalation § 21.5 describes does not exist.
+                Solo(spawned, "hex_sigil",
+                     () => HeroHazards.SpawnWitchSigil(Vector3.zero, 2.4f, 60.0f, 5, 2));
+
+                Solo(spawned, "coven_eclipse",
+                     () => HeroHazards.SpawnWitchSigil(Vector3.zero, 3.4f, 60.0f, 7, 3, 0.02f, 11));
 
                 // ---------------------------------------------------------------
                 // 2. A DASH CORRIDOR, which is the shape that was actually wrong and

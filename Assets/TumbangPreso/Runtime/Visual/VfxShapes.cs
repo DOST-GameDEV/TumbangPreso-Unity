@@ -892,6 +892,138 @@ namespace TumbangPreso.Visual
             return FacetedOriented(tris, "VfxFunnel", new Vector3(0.0f, -depth - 10.0f, 0.0f));
         }
 
+        /// <summary>
+        /// A witch's sigil: a ring, an inner ring, a star drawn as LINES rather than filled, and
+        /// rune ticks around the rim. Flat, unit radius, in the XZ plane.
+        ///
+        /// ⚠️⚠️ IT IS LINE ART, AND NOTHING ELSE IN THIS FILE IS. Every other builder here makes
+        /// a SOLID: a fan, a slab, a shell, a funnel. A sigil is the opposite kind of object,
+        /// strokes with the ground showing between them, and that is not a variation on a filled
+        /// shape, it is a different way of making geometry. 🧑, on the sixth hero: *"the abilities
+        /// i want for phaister are witch based and she does hexes curses and spells and has
+        /// glyphs effects during spells or abilities casting"*.
+        ///
+        /// ⚠️⚠️ IT ALSO COSTS ALMOST NO FLOOR, WHICH IS WHY IT IS THE RIGHT ANSWER HERE RATHER
+        /// THAN A LUCKY ONE. `docs/VISION.md` § 2 is a budget on painted AREA, and a hero whose
+        /// whole identity is drawing symbols on the ground is exactly the hero that could break
+        /// it. At the shipped bar width a 2.4 m sigil paints about **8 per cent of its own
+        /// circle** and the rest is road: a full disc of the same radius is twelve times the
+        /// pixels. Strokes are how this hero can be the most ornate in the game and the cheapest
+        /// on screen at the same time.
+        ///
+        /// ⚠️ THE STAR IS A {points/skip} POLYGON, which is what makes it read as occult rather
+        /// than as decoration. 5 and 2 is a pentagram: every vertex joined to the one two along,
+        /// so the strokes cross and never retrace. 7 and 3 is a heptagram, and 6 and 2 degenerates
+        /// into two triangles (a hexagram), which is why `skip` and `points` must be coprime and
+        /// the caller picks the pair rather than a "complexity" number.
+        ///
+        /// ⚠️ SEEDED, and the seed only moves the RUNE TICKS. The ring and the star are exact on
+        /// purpose: a hand-wobbled pentagram reads as a mistake, while uneven tick marks read as
+        /// writing. It is the same argument `Crystal` makes for having no jitter at all.
+        /// </summary>
+        public static Mesh Sigil(int points = 5, int skip = 2, float bar = 0.045f,
+                                 float innerRatio = 0.74f, int runes = 12,
+                                 int segments = 40, int seed = 0)
+        {
+            points = Mathf.Max(3, points);
+            skip = Mathf.Clamp(skip, 1, points - 1);
+            segments = Mathf.Max(8, segments);
+            innerRatio = Mathf.Clamp(innerRatio, 0.2f, 0.95f);
+
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var tris = new System.Collections.Generic.List<Vector3>(segments * 12);
+
+            // The two rings.
+            FlatRing(tris, 1.0f - bar, 1.0f, segments);
+            FlatRing(tris, innerRatio - bar * 0.5f, innerRatio + bar * 0.5f, segments);
+
+            // The star, inside the inner ring so the strokes never touch it.
+            float starR = innerRatio - bar * 1.2f;
+            for (int i = 0; i < points; i++)
+            {
+                float a0 = i / (float)points * Mathf.PI * 2.0f - Mathf.PI * 0.5f;
+                float a1 = ((i + skip) % points) / (float)points * Mathf.PI * 2.0f - Mathf.PI * 0.5f;
+
+                FlatBar(tris,
+                        new Vector3(Mathf.Cos(a0) * starR, 0.0f, Mathf.Sin(a0) * starR),
+                        new Vector3(Mathf.Cos(a1) * starR, 0.0f, Mathf.Sin(a1) * starR),
+                        bar * 0.5f);
+            }
+
+            // The runes: short radial strokes in the band between the rings, at uneven lengths
+            // so the rim reads as inscribed rather than as a gear.
+            for (int r = 0; r < runes; r++)
+            {
+                float a = r / (float)runes * Mathf.PI * 2.0f;
+                var dir = new Vector3(Mathf.Cos(a), 0.0f, Mathf.Sin(a));
+
+                float from = innerRatio + bar * Random.Range(1.2f, 2.4f);
+                float to = 1.0f - bar * Random.Range(1.2f, 2.6f);
+                if (to <= from) continue;
+
+                FlatBar(tris, dir * from, dir * to, bar * 0.38f);
+            }
+
+            Random.state = state;
+
+            // Ground art: "outward" is up, so the reference point sits far below the road. Same
+            // convention `Wedges` uses and for the same reason.
+            return FacetedOriented(tris, "VfxSigil", new Vector3(0.0f, -10.0f, 0.0f));
+        }
+
+        /// <summary>A flat annulus band in the XZ plane, as a strip of quads.</summary>
+        private static void FlatRing(System.Collections.Generic.List<Vector3> tris,
+                                     float rInner, float rOuter, int segments)
+        {
+            if (rOuter <= rInner) return;
+
+            for (int i = 0; i < segments; i++)
+            {
+                float a0 = i / (float)segments * Mathf.PI * 2.0f;
+                float a1 = (i + 1) / (float)segments * Mathf.PI * 2.0f;
+
+                var d0 = new Vector3(Mathf.Cos(a0), 0.0f, Mathf.Sin(a0));
+                var d1 = new Vector3(Mathf.Cos(a1), 0.0f, Mathf.Sin(a1));
+
+                Vector3 i0 = d0 * rInner, i1 = d1 * rInner;
+                Vector3 o0 = d0 * rOuter, o1 = d1 * rOuter;
+
+                tris.Add(i0); tris.Add(o0); tris.Add(o1);
+                tris.Add(i0); tris.Add(o1); tris.Add(i1);
+            }
+        }
+
+        /// <summary>
+        /// A flat stroke from a to b, <paramref name="halfWidth"/> either side, in the XZ plane.
+        ///
+        /// ⚠️ IT IS A QUAD AND NOT A `Tube`. `Bolt` uses tubes because a bolt stands up in the
+        /// world and needs a silhouette from the side; a sigil lies on the road and is only ever
+        /// seen from above, so a triangular prism per stroke would triple the triangles to draw
+        /// two faces nobody can see.
+        /// </summary>
+        private static void FlatBar(System.Collections.Generic.List<Vector3> tris,
+                                    Vector3 a, Vector3 b, float halfWidth)
+        {
+            Vector3 along = b - a;
+            along.y = 0.0f;
+
+            float len = along.magnitude;
+            if (len < 0.0001f) return;
+
+            along /= len;
+
+            // Perpendicular in the plane. Cross with up rather than normalising a swapped pair,
+            // so a stroke through the origin cannot produce a zero vector.
+            var side = new Vector3(-along.z, 0.0f, along.x) * halfWidth;
+
+            Vector3 p0 = a - side, p1 = a + side, p2 = b + side, p3 = b - side;
+
+            tris.Add(p0); tris.Add(p1); tris.Add(p2);
+            tris.Add(p0); tris.Add(p2); tris.Add(p3);
+        }
+
         private static Vector3 Ring(float angle, float radius, float y)
         {
             return new Vector3(Mathf.Cos(angle) * radius, y, Mathf.Sin(angle) * radius);

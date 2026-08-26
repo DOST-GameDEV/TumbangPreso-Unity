@@ -56,6 +56,11 @@ namespace TumbangPreso.Audio
                 // wall landing and a wall failing are both events a player has to act on, and
                 // the sheet spreading is the quietest of the three because it is the least
                 // urgent thing to know about.
+                // A bell is the one cue in the game that is meant to be HEARD OVER the fight
+                // rather than located in it, and it is also the longest at 2.2 s. Lower than the
+                // other casts so a 2 s tail does not sit on top of everything that follows it.
+                { "sfx_eclipse_toll", -6.0f },
+
                 { "sfx_ice_form",    -5.0f },
                 { "sfx_barricade_raise", -3.0f },
                 { "sfx_ice_shatter", -3.0f },
@@ -169,6 +174,11 @@ namespace TumbangPreso.Audio
             // silence. `docs/TODO.md` § 20.
             "sfx_ice_form", "sfx_barricade_raise", "sfx_ice_shatter",
             "sfx_ice_thaw", "sfx_void_close", "sfx_magma_cool",
+
+            // ⚠️⚠️ PHAISTER'S ULTIMATE, WHICH ARRIVED CALLING `sfx_ghost_appear`: A CUE WITH NO
+            // FILE AND NO REGISTRATION. It is the same silent-cue fault `sfx_lrt_pass` above
+            // records, on the biggest moment in the newest kit. `docs/TODO.md` § 21.
+            "sfx_eclipse_toll",
 
             // Hero Vocal Shouts & Grunts.
             "hero_dante_ult", "hero_dante_grunt",

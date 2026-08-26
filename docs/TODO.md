@@ -1273,6 +1273,93 @@ the other.
 
 ---
 
+## 21 · Phaister merged in, and what she arrived without
+
+**`feat/hero-witch-v2` merged into `feat/ilalim-ng-tulay-map` on 2026-08-26, at 🧑's request.**
+The merge itself was clean: that branch forked at `349b0171` and touches no file the § 19 and
+§ 20 work touches, so nothing had to be reconciled by hand.
+
+⚠️ **She is the SIXTH hero and several places in the docs still say five.** `VISION.md` § 1,
+`GAME_OVERVIEW.md` § 6 and `Hero_Strike_Balance.md` § 1 all enumerate five kits. Nothing is
+broken by that, but the next person to count heroes from the prose will be wrong.
+
+✅ **Four things she shipped without, all found by reading her kit against this repository's own
+rules rather than by playing it.**
+
+**21.1 ⚠️⚠️ HER HEX HAZARD DREW NOTHING AT ALL.** `PhaisterHexHazard.Initialize` added a `Light`
+and an aura and no geometry, so her signature power was an invisible purple glow with a 2.4 m
+damage circle a player could not see. `HeroAbility.TelegraphRadius` exists to stop a telegraph
+that LIES; this was one that was never drawn.
+
+**21.2 ⚠️⚠️ HER ULTIMATE WAS SILENT.** It called `sfx_ghost_appear`, which has no file and no
+registration, so `AudioDirector` logged `no cue registered` and returned. That is a WARNING and
+not an exception, which is exactly how `LrtTrainFlyby` called `ui_move` for two months with the
+one recurring event on Ilalim ng Tulay making no sound. Now `sfx_eclipse_toll`, the only bell in
+the game: an eclipse is announced rather than delivered.
+
+**21.3 Her three powers had no cast animation.** `PhaisterHeroKit` names `hero-phaister-hex`,
+`hero-phaister-blink` and `hero-phaister-eclipse` as cast actions and `HeroAbilityClips.BuildAll`
+had no entry for any of them, so all three fired with the body standing still. It fails silently:
+a missing key returns nothing rather than erroring, which is how a whole hero ships
+animation-less with every test green.
+
+**21.4 Her hazard light was 2.5 at `radius * 2.0`.** Every hazard light in `HeroHazards` came
+down by roughly two thirds on 2026-08-25 because a hot source sitting on top of its own effect
+paints the effect rather than the street. The new hero reintroduced the old value.
+
+### 21.5 The sigils, and why her kit breaks the silhouette rule on purpose
+
+🧑, while this was being merged: *"the abilities i want for phaister are witch based and she does
+hexes curses and spells and has glyphs effects during spells or abilities casting"*, and *"yk
+witch symbols"*.
+
+`VfxShapes.Sigil` is **line art, and nothing else in that file is.** Every other builder makes a
+solid: a fan, a slab, a shell, a funnel. A sigil is strokes with the road showing between them,
+which is a different way of making geometry rather than a variation on a filled shape. It draws
+an outer ring, an inner ring, a `{points/skip}` star polygon and rune ticks around the rim.
+
+⚠️⚠️ **AND IT COSTS ALMOST NO FLOOR, WHICH IS WHY IT IS THE RIGHT ANSWER RATHER THAN A LUCKY
+ONE.** `VISION.md` § 2 is a budget on painted AREA, and a hero whose entire identity is drawing
+symbols on the ground is exactly the hero who could break it. At the shipped bar width a sigil
+paints roughly **8 per cent of its own circle**; a filled disc of the same radius is about twelve
+times the pixels. Strokes are how she can be the most ornate hero in the game and the cheapest on
+screen at once.
+
+⚠️⚠️ **ALL THREE OF HER POWERS DRAW THE SAME KIND OF MARK, AND THAT INVERTS § 8.3 DELIBERATELY.**
+For the other five heroes the silhouette says WHICH ability it is, because their kits are five
+unrelated physical events. Phaister's kit is one CRAFT. So the sigil is her signature and the
+three are told apart the way real occult diagrams escalate: the skills draw a **pentagram**, the
+ultimate draws a **heptagram** at more than double the radius, and a small short-lived
+**cast glyph** at her feet says a spell is being cast without saying which. A player learns one
+visual language instead of three.
+
+⚠️ **The blink marks BOTH ends.** A blink that only marks where she arrived tells the three people
+chasing her nothing they had not already worked out by looking at her; the mark left behind is the
+one that carries information, and it is also where the knockback `OverlapSphere` is centred.
+
+**Still open, and deliberately not done here:**
+
+* ⚠️ **She borrows `hero_nemu_grunt` for two of her three casts.** That is the same class of fault
+  § 20 closed for Cheska, and it cannot be fixed the same way: a hero voice is a recorded asset,
+  not a synthesised cue, and `tools/generate_hero_audio.py` is UNSEEDED, so touching it rewrites
+  all seventeen existing voice files. Needs its own pass.
+* ⚠️ **Her accent colour has not been checked against the hue law.** `UiTheme` gained a sixth
+  entry and `HeroPresentationTests` asserts the accents stay 25 degrees clear of the two ROLE
+  colours and 30 clear of each other. The suite is green, so it either passes or does not cover
+  six; somebody should confirm which.
+* **Her footprints have no row in `Hero_Strike_Balance.md` § 1.**
+
+⚠️ **`HANDOFF.md` CAME IN WITH THE MERGE AND WAS DELETED.** `CLAUDE.md` § 2.4: a handoff goes in
+the chat reply, never as a file, and a stale one committed to this repository has already had to
+be deleted twice. This is the third.
+
+**Where.** `Assets/TumbangPreso/Runtime/Visual/VfxShapes.cs` (`Sigil`),
+`Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs` (`SpawnWitchSigil`, `SpawnCastGlyph`,
+`WitchSigilSpin`), `Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs`,
+`Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.cs`, `tools/generate_ability_audio.py`.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

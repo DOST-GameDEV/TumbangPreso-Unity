@@ -1533,6 +1533,198 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         // THUNDERSTRIKE OVERDRIVE (Zack Ultimate)
         // -------------------------------------------------------------------
+        // -------------------------------------------------------------------
+        // WITCH SIGILS (Phaister, all three powers)
+        //
+        // ⚠️⚠️ THE HEX HAZARD SHIPPED WITH NO GEOMETRY AT ALL. `PhaisterHexHazard.Initialize`
+        // added a `Light` and an aura and nothing else, so the sixth hero's signature power was
+        // an invisible purple glow on the road with a damage circle nobody could see. That is
+        // the fault `HeroAbility.TelegraphRadius` exists to prevent, in its most complete form:
+        // not a telegraph that lies, a telegraph that is not drawn.
+        //
+        // ⚠️⚠️ AND EVERY ONE OF HER POWERS DRAWS THE SAME KIND OF MARK ON PURPOSE, WHICH IS THE
+        // OPPOSITE OF THE RULE THE OTHER FIVE FOLLOW. 🧑: *"she does hexes curses and spells and
+        // has glyphs effects during spells or abilities casting"*. For Sean, Zack, Cheska, Dante
+        // and Nemu the silhouette says WHICH ability it is, because their kits are five unrelated
+        // physical events. Phaister's kit is one CRAFT: everything she does is a symbol drawn in
+        // the air or on the ground, so the sigil is her signature and the three are told apart by
+        // SIZE, by how many rings they carry and by where they sit, exactly the way real occult
+        // diagrams are. A pentagram at her feet, a heptagram over the court.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// A witch's circle: two counter-rotating sigils on the ground, and a light that reaches
+        /// the street rather than the mark.
+        /// </summary>
+        /// <param name="points">Star points. 5 is a pentagram, 7 a heptagram.</param>
+        /// <param name="skip">How far along each stroke jumps. Must be coprime with points.</param>
+        public static GameObject SpawnWitchSigil(Vector3 position, float radius, float duration,
+                                                 int points = 5, int skip = 2,
+                                                 float lift = 0.02f, int seed = 0)
+        {
+            var go = new GameObject("WitchSigil");
+            go.transform.position = position;
+
+            // ⚠️ TWO WHEELS TURNING OPPOSITE WAYS IS THE ENTIRE READ, and it is one extra mesh.
+            // A single ring rotating is a loading spinner; two nested rings turning against each
+            // other is a mechanism, which is what an occult diagram is supposed to look like.
+            // The outer carries the star, the inner is a plain rune band so the two do not fight
+            // each other for the eye.
+            // ⚠️⚠️ `HeroWitch`, NOT `HeroSpirit`, AND THE FIRST VERSION OF THIS DREW HER IN
+            // NEMU'S PURPLE. `UiTheme` already carries `HeroWitch` (e82882) and
+            // `HeroWitchBright` (f44498) for the sixth hero, and nothing in her kit used either
+            // of them: every popup, light and mark reached for `HeroSpiritBright`, which is
+            // Nemu's. `Hero_Strike_Balance.md` § 8.1 is explicit that hue is the one channel this
+            // game cannot spare, and § 8's own history has the worked example of what sharing it
+            // costs: *"Sean's Supernova was spawning Dante's magma. Two heroes reading as one is
+            // the most expensive form of repetitive, because it costs a character."* Two spirit
+            // heroes on one violet is that fault with the colour instead of the geometry.
+            //
+            // ⚠️ IT MATTERS MOST FOR THESE TWO SPECIFICALLY. Nemu and Phaister are the only pair
+            // in the game who share an ELEMENT, so hue is doing more work here than anywhere
+            // else: Nemu's void is a dark funnel and Phaister's hex is bright line art, but a
+            // player catching either in the corner of their eye reads the colour first.
+            var outer = VfxShapes.Lay(go.transform, "SigilOuter",
+                                      VfxShapes.Sigil(points, skip, 0.045f, 0.74f, 14, 40, seed),
+                                      radius, lift);
+            VfxMaterial.Ghost(outer.GetComponent<Renderer>(),
+                              Alpha(UiTheme.HeroWitch, 0.88f), 0.30f);
+
+            // ⚠️ THE INNER WHEEL IS ALWAYS A PENTAGRAM, WHATEVER THE OUTER ONE IS. It was
+            // `points + 2` with `skip + 1`, so the ultimate's outer heptagram sat over a
+            // nine-pointed inner star and the two together read as a compass rose or a sunburst
+            // rather than as an occult diagram: `ability_coven_eclipse_v16.png`. Holding the
+            // inner ring constant leaves the OUTER star as the only thing that changes between
+            // her skill and her ultimate, which is the escalation § 21.5 is actually claiming.
+            var inner = VfxShapes.Lay(go.transform, "SigilInner",
+                                      VfxShapes.Sigil(5, 2, 0.055f, 0.52f, 8, 32, seed + 17),
+                                      radius * 0.55f, lift + 0.008f);
+            VfxMaterial.Ghost(inner.GetComponent<Renderer>(),
+                              Alpha(UiTheme.HeroWitchBright, 0.78f), 0.26f);
+
+            // ⚠️⚠️ 1.1, NOT 2.5, AND THE 2.5 CAME IN WITH THE HERO. Every hazard light in this
+            // file came down by roughly two thirds on 2026-08-25 for one reason, written up on
+            // the ice sheet: a hot source sitting on top of its own effect paints the EFFECT and
+            // not the street, so the dark parts of the mark render as the light's own colour at
+            // full brightness. `PhaisterHexHazard` set 2.5 at `radius * 2.0` and would have
+            // washed a violet sigil to flat white the first time anybody rendered it.
+            //
+            // ⚠️ RAISED AS WELL AS DIMMED. Higher up the falloff across the mark is much flatter,
+            // so what is left spills onto the road, which is the job: the glow says something is
+            // there before a player can see what it is.
+            var lightGo = new GameObject("SigilLight");
+            lightGo.transform.SetParent(go.transform, false);
+            lightGo.transform.localPosition = new Vector3(0.0f, 1.7f, 0.0f);
+
+            var light = lightGo.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = UiTheme.HeroWitchBright;
+            light.range = radius * 2.4f;
+            light.intensity = 1.1f;
+
+            var spin = go.AddComponent<WitchSigilSpin>();
+            spin.Outer = outer.transform;
+            spin.Inner = inner.transform;
+            spin.Duration = duration;
+
+            return go;
+        }
+
+        /// <summary>A theme colour at a given alpha, so a call site states the two separately.</summary>
+        private static Color Alpha(Color c, float a) => new Color(c.r, c.g, c.b, a);
+
+        /// <summary>
+        /// Turns the two rings against each other and fades the whole mark out at the end.
+        ///
+        /// ⚠️ IT IS AN `IVfxTimeline`, so `AbilityShowcaseProbe` can wind it to any moment of its
+        /// own life and photograph it. `ArcFlicker`'s note has the argument: an effect that
+        /// animates in `Update` and nothing else is an effect that freezes on frame one in every
+        /// capture, which is how the whole § 8 silhouette pass came to be reviewed against
+        /// pictures that could not contain it.
+        ///
+        /// ⚠️ THE FADE IS THE LAST FIFTH ONLY. `Hero_Strike_Balance.md` § 8.5 item 2: a player has
+        /// to be able to tell a spent zone from a live one, and a mark that dims from the first
+        /// frame reads as a failing effect rather than as a timer.
+        /// </summary>
+        public sealed class WitchSigilSpin : MonoBehaviour, Visual.IVfxTimeline
+        {
+            public Transform Outer;
+            public Transform Inner;
+            public float Duration = 6.0f;
+
+            /// <summary>Degrees per second, opposite ways. Slow: this is a diagram, not a fan.</summary>
+            private const float OuterSpin = 26.0f;
+            private const float InnerSpin = -41.0f;
+
+            private const float FadeFrom = 0.8f;
+
+            private float _elapsed;
+            private Renderer _outerRenderer;
+            private Renderer _innerRenderer;
+            private float _outerAlpha = 1.0f;
+            private float _innerAlpha = 1.0f;
+
+            public float LifeSeconds => Mathf.Max(0.2f, Duration);
+
+            private void Awake()
+            {
+                if (Outer != null) _outerRenderer = Outer.GetComponent<Renderer>();
+                if (Inner != null) _innerRenderer = Inner.GetComponent<Renderer>();
+
+                if (_outerRenderer != null) _outerAlpha = _outerRenderer.sharedMaterial.color.a;
+                if (_innerRenderer != null) _innerAlpha = _innerRenderer.sharedMaterial.color.a;
+            }
+
+            private void Update() => StepTo(_elapsed + Time.deltaTime);
+
+            public void StepTo(float seconds)
+            {
+                _elapsed = seconds;
+
+                if (Outer != null)
+                    Outer.localRotation = Quaternion.Euler(0.0f, OuterSpin * _elapsed, 0.0f);
+
+                if (Inner != null)
+                    Inner.localRotation = Quaternion.Euler(0.0f, InnerSpin * _elapsed, 0.0f);
+
+                float t = Mathf.Clamp01(_elapsed / LifeSeconds);
+                if (t < FadeFrom) return;
+
+                float k = 1.0f - Mathf.InverseLerp(FadeFrom, 1.0f, t);
+                Fade(_outerRenderer, _outerAlpha * k);
+                Fade(_innerRenderer, _innerAlpha * k);
+            }
+
+            private static void Fade(Renderer r, float alpha)
+            {
+                if (r == null || r.sharedMaterial == null) return;
+
+                var c = r.sharedMaterial.color;
+                c.a = alpha;
+                r.sharedMaterial.color = c;
+            }
+        }
+
+        /// <summary>
+        /// The glyph that flashes while a spell is being CAST, at the caster's feet.
+        ///
+        /// ⚠️ IT IS SHORT AND IT IS SMALL, because it is punctuation rather than a hazard. 🧑
+        /// asked for *"glyphs effects during spells or abilities casting"*, and the trap in that
+        /// is drawing a second full-size circle every time she presses a button: three of those
+        /// live at once is `docs/VISION.md` § 2 rule 4 broken by one hero on her own. A 1.1 m
+        /// mark for under a second says "a spell is being cast here" and is gone before the thing
+        /// it summoned has finished arriving.
+        /// </summary>
+        public static GameObject SpawnCastGlyph(Vector3 position, float radius = 1.1f,
+                                                float duration = 0.75f, int seed = 3)
+        {
+            var go = SpawnWitchSigil(position, radius, duration, 5, 2, 0.03f, seed);
+            go.name = "WitchCastGlyph";
+
+            Object.Destroy(go, duration);
+            return go;
+        }
+
         public static void CreateThunderstrike(Vector3 position, float radius = 7.0f, int sourceSlot = -1)
         {
             // 1. Sky Lightning Bolt Column & Multi-segment Arc

@@ -531,6 +531,56 @@ def synth_magma_cool(duration=1.4):
 # ⚠️ THE SLOTS BELOW ARE THE ORIGINAL SEVEN'S OLD INDICES, so those files regenerate BYTE
 # IDENTICAL and the diff shows only what actually changed. New cues take the next free number.
 # NEVER renumber an existing row: the number IS the sound.
+def synth_eclipse_toll(duration=2.2):
+    """
+    Phaister. Grand Coven Eclipse.
+
+    ⚠️ IT REPLACES `sfx_ghost_appear`, WHICH DOES NOT EXIST AND NEVER DID. The sixth hero's
+    ULTIMATE asked for a cue with no file behind it, so `AudioDirector` warned and returned and
+    the biggest moment in her kit was silent apart from a borrowed grunt. `AudioCues` records
+    the same failure costing `LrtTrainFlyby` two months.
+
+    A BELL, and deliberately the only one in the game. Every other payload here is an impact,
+    a whump or a hiss; an eclipse is announced rather than delivered, so this is a struck tone
+    with a long inharmonic tail over a slow rising shimmer. Bell partials are NOT harmonic
+    multiples, which is the whole difference between a bell and an organ: the ratios below are
+    the classic minor-third strike tone and they are why it reads as ominous without any
+    processing.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+
+    fundamental = 116.0
+    partials = [
+        (0.5, 1.00, 1.1),    # hum, an octave below the strike
+        (1.0, 0.85, 1.5),    # the strike note
+        (1.2, 0.55, 2.1),    # minor third: the sound of a bell rather than a tone
+        (1.5, 0.40, 2.6),
+        (2.0, 0.30, 3.2),
+        (2.7, 0.18, 4.4),
+        (3.4, 0.12, 5.5),
+    ]
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        bell = 0.0
+        for ratio, gain, decay in partials:
+            bell += math.sin(2.0 * math.pi * fundamental * ratio * t) * gain * math.exp(-t * decay)
+
+        # The strike itself: a very short noise transient, or the bell starts as a pure tone
+        # with no hammer in it.
+        strike = random.uniform(-1.0, 1.0) * math.exp(-t * 90.0) * 0.35
+
+        # The eclipse arriving underneath. It RISES while the bell decays, so the cue hands over
+        # from one to the other rather than simply fading.
+        shimmer = (math.sin(2.0 * math.pi * (420.0 + 260.0 * (1.0 - math.exp(-t * 1.1))) * t)
+                   * 0.16 * (1.0 - math.exp(-t * 1.4)) * math.exp(-t * 0.9))
+
+        out[i] = math.tanh((bell * 0.42 + strike + shimmer) * 1.05)
+    return out
+
+
 GENERATORS = {
     # (seed slot, synth). Slots 0 to 6 are the original payload set, in the alphabetical order
     # that produced the audio currently in the repository.
@@ -549,6 +599,9 @@ GENERATORS = {
     "sfx_ice_thaw.wav": (10, synth_ice_thaw),
     "sfx_void_close.wav": (11, synth_void_close),
     "sfx_magma_cool.wav": (12, synth_magma_cool),
+
+    # Phaister, the sixth hero, whose ultimate asked for a file that was never made.
+    "sfx_eclipse_toll.wav": (13, synth_eclipse_toll),
 }
 
 

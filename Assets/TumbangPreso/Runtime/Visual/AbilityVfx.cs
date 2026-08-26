@@ -95,6 +95,17 @@ namespace TumbangPreso.Visual
 
             /// <summary>A frost zone breathing. The only one that is not on a body.</summary>
             FrostMote,
+
+            /// <summary>
+            /// Phaister casting. Rune chips spiralling UP off the hands.
+            ///
+            /// ⚠️⚠️ SHE HAD `VoidWisp`, WHICH IS NEMU'S, AND THE TWO ARE THE ONLY HEROES IN THE
+            /// GAME WHO SHARE AN ELEMENT. Borrowing the aura put both spirit heroes in the same
+            /// purple with the same motes falling the same way, so the one channel left to tell
+            /// them apart was the model. This one is her magenta and it goes UP rather than down:
+            /// Nemu is coming apart, Phaister is working.
+            /// </summary>
+            HexRune,
         }
 
         /// <summary>
@@ -203,6 +214,24 @@ namespace TumbangPreso.Visual
                         new[] { new GradientColorKey(new Color(1.0f, 0.9f, 0.45f), 0.0f),
                                 new GradientColorKey(UiTheme.HeroFire, 1.0f) },
                         new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
+                    break;
+
+                case Aura.HexRune:
+                    // Rises, and lives a long time: a rune drifts off the hand and hangs.
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(0.7f, 1.4f);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(0.35f, 1.0f);
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.07f, 0.17f);
+                    main.gravityModifier = -0.22f;
+                    main.startColor = new ParticleSystem.MinMaxGradient(
+                        UiTheme.HeroWitch, UiTheme.HeroWitchBright);
+                    emission.rateOverTime = 30.0f;
+                    shape.shapeType = ParticleSystemShapeType.Box;
+                    shape.scale = new Vector3(1.0f, 1.2f, 1.0f);
+                    grad.SetKeys(
+                        new[] { new GradientColorKey(UiTheme.HeroWitchBright, 0.0f),
+                                new GradientColorKey(UiTheme.HeroWitch, 1.0f) },
+                        new[] { new GradientAlphaKey(0.0f, 0.0f), new GradientAlphaKey(0.9f, 0.2f),
+                                new GradientAlphaKey(0.0f, 1.0f) });
                     break;
 
                 default: // FrostMote
@@ -364,6 +393,23 @@ namespace TumbangPreso.Visual
                     size.size = new ParticleSystem.MinMaxCurve(1.0f, new AnimationCurve(
                         new Keyframe(0.0f, 0.45f), new Keyframe(0.35f, 1.0f),
                         new Keyframe(1.0f, 0.15f)));
+                    break;
+
+                case Aura.HexRune:
+                    // ⚠️ IT ORBITS THE OTHER WAY FROM NEMU'S, which is the cheapest possible way
+                    // to separate two auras that are both spirit-coloured motes on a body. Hers
+                    // is a vortex pulling IN; this is a spell being wound OUT, so the sign of the
+                    // orbital term and the sign of the radial term are both flipped.
+                    UseMesh(pRenderer, Chip);
+                    orbit.enabled = true;
+                    orbit.space = ParticleSystemSimulationSpace.Local;
+                    orbit.orbitalX = new ParticleSystem.MinMaxCurve(0.0f, 0.0f);
+                    orbit.orbitalY = new ParticleSystem.MinMaxCurve(-2.2f, -0.9f);
+                    orbit.orbitalZ = new ParticleSystem.MinMaxCurve(0.0f, 0.0f);
+                    orbit.radial = new ParticleSystem.MinMaxCurve(0.08f, 0.30f);
+
+                    Tumble(spin, 2.0f, 4.0f);
+                    Shrink(size, 1.0f, 0.3f);
                     break;
 
                 case Aura.MagmaEmber:

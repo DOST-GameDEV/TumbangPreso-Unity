@@ -283,7 +283,182 @@ namespace TumbangPreso.Visual
             dict["hero-nemu-project"] = BuildNemuProject(paths);
             dict["hero-nemu-seance"] = BuildNemuSeance(paths);
 
+            // ⚠️⚠️ PHAISTER, THE SIXTH HERO, ARRIVED WITH NO CAST ANIMATION AT ALL.
+            // `PhaisterHeroKit` names `hero-phaister-hex`, `hero-phaister-blink` and
+            // `hero-phaister-eclipse` as its cast actions and this dictionary had no entry for
+            // any of them, so all three powers fired with the body standing still. It fails
+            // silently: a missing key is a lookup that returns nothing, not an error, which is
+            // why a whole hero can ship animation-less with every test green.
+            //
+            // ⚠️ SHE IS SPIRIT, LIKE NEMU, AND THE TWO MUST NOT MOVE ALIKE. Nemu's fiction is
+            // ABSENCE (she goes part-ghost and cannot be tagged); Phaister's is CASTING, which
+            // is a thing done TO the world with the hands. So Nemu drifts and Phaister points.
+            // Two heroes sharing an element is exactly where a kit starts reading as a reskin.
+            dict["hero-phaister-hex"] = BuildPhaisterHex(paths);
+            dict["hero-phaister-blink"] = BuildPhaisterBlink(paths);
+            dict["hero-phaister-eclipse"] = BuildPhaisterEclipse(paths);
+
             return dict;
+        }
+
+        // ===================================================================
+        // § PHAISTER CLIPS
+        // ===================================================================
+
+        private static AnimationClip BuildPhaisterHex(Dictionary<string, string> paths)
+        {
+            var b = new ClipBuilder("hero-phaister-hex", paths);
+            // 0.55s Draw the sigil, then STAMP it into the ground.
+            // ⚠️ The impact is the stamp, not the drawing. A hex is placed; the arm circling
+            // above it is the wind-up and it should hang.
+            b.PunchAt(0.34f);
+
+            b.KeyPos(0.00f, 0, 0, 0);
+            b.KeyPos(0.16f, 0, 0.03f, -0.02f);
+            b.KeyPos(0.34f, 0, -0.06f, 0.05f);
+            b.KeyPos(0.55f, 0, 0, 0);
+
+            // Torso rises for the draw, then drops over the sigil.
+            b.KeyRot("torso", 0.00f, 0, 0, 0);
+            b.KeyRot("torso", 0.16f, -12.0f, -18.0f, 0);
+            b.KeyRot("torso", 0.34f, 26.0f, 8.0f, 0);
+            b.KeyRot("torso", 0.55f, 0, 0, 0);
+
+            b.KeyRot("head", 0.00f, 0, 0, 0);
+            b.KeyRot("head", 0.16f, -10.0f, -12.0f, 0);
+            b.KeyRot("head", 0.34f, 24.0f, 6.0f, 0);
+            b.KeyRot("head", 0.55f, 0, 0, 0);
+
+            // The casting arm traces a circle overhead and drives down, palm to the floor.
+            b.KeyRot("arm-right", 0.00f, 0, 0, -15.0f);
+            b.KeyRot("arm-right", 0.16f, -120.0f, 30.0f, -50.0f);
+            b.KeyRot("arm-right", 0.34f, 45.0f, -10.0f, -12.0f);
+            b.KeyRot("arm-right", 0.55f, 0, 0, -15.0f);
+
+            // The off hand braces across the body, which is what stops it reading as a wave.
+            b.KeyRot("arm-left", 0.00f, 0, 0, 15.0f);
+            b.KeyRot("arm-left", 0.16f, -30.0f, -20.0f, 48.0f);
+            b.KeyRot("arm-left", 0.34f, -14.0f, -30.0f, 30.0f);
+            b.KeyRot("arm-left", 0.55f, 0, 0, 15.0f);
+
+            b.KeyRot("leg-left", 0.00f, 0, 0, 0);
+            b.KeyRot("leg-left", 0.34f, -18.0f, 0, 6.0f);
+            b.KeyRot("leg-left", 0.55f, 0, 0, 0);
+
+            b.KeyRot("leg-right", 0.00f, 0, 0, 0);
+            b.KeyRot("leg-right", 0.34f, 14.0f, 0, -6.0f);
+            b.KeyRot("leg-right", 0.55f, 0, 0, 0);
+
+            return b.Build();
+        }
+
+        private static AnimationClip BuildPhaisterBlink(Dictionary<string, string> paths)
+        {
+            var b = new ClipBuilder("hero-phaister-blink", paths);
+            // 0.42s Collapse inward, then snap out of the far side.
+            //
+            // ⚠️⚠️ IT PUNCHES ON THE ARRIVAL AND NEMU'S GHOST STEP DOES NOT, WHICH IS THE WHOLE
+            // DIFFERENCE BETWEEN THE TWO SPIRIT HEROES. Ghost Step is a state you enter and
+            // drift in, so it has no frame where the world stops. A blink is INSTANTANEOUS: the
+            // body is gone and then it is somewhere else, and the snap is the read.
+            b.PunchAt(0.24f);
+
+            b.KeyPos(0.00f, 0, 0, 0);
+            b.KeyPos(0.12f, 0, -0.07f, -0.04f);
+            b.KeyPos(0.24f, 0, 0.02f, 0.14f);
+            b.KeyPos(0.42f, 0, 0, 0);
+
+            // Folds down and forward, then whips upright on arrival.
+            b.KeyRot("torso", 0.00f, 0, 0, 0);
+            b.KeyRot("torso", 0.12f, 30.0f, 26.0f, 0);
+            b.KeyRot("torso", 0.24f, -16.0f, -22.0f, 0);
+            b.KeyRot("torso", 0.42f, 0, 0, 0);
+
+            b.KeyRot("head", 0.00f, 0, 0, 0);
+            b.KeyRot("head", 0.12f, 18.0f, 20.0f, 0);
+            b.KeyRot("head", 0.24f, -20.0f, -16.0f, 0);
+            b.KeyRot("head", 0.42f, 0, 0, 0);
+
+            // Both arms pull IN to the chest and then flare, which is a dissolve rather than a
+            // stride. A blink that swings its arms reads as a dash.
+            b.KeyRot("arm-right", 0.00f, 0, 0, -15.0f);
+            b.KeyRot("arm-right", 0.12f, -50.0f, -35.0f, -8.0f);
+            b.KeyRot("arm-right", 0.24f, 20.0f, 25.0f, -56.0f);
+            b.KeyRot("arm-right", 0.42f, 0, 0, -15.0f);
+
+            b.KeyRot("arm-left", 0.00f, 0, 0, 15.0f);
+            b.KeyRot("arm-left", 0.12f, -50.0f, 35.0f, 8.0f);
+            b.KeyRot("arm-left", 0.24f, 20.0f, -25.0f, 56.0f);
+            b.KeyRot("arm-left", 0.42f, 0, 0, 15.0f);
+
+            b.KeyRot("leg-left", 0.00f, 0, 0, 0);
+            b.KeyRot("leg-left", 0.12f, 22.0f, 0, 0);
+            b.KeyRot("leg-left", 0.24f, -30.0f, 0, 0);
+            b.KeyRot("leg-left", 0.42f, 0, 0, 0);
+
+            b.KeyRot("leg-right", 0.00f, 0, 0, 0);
+            b.KeyRot("leg-right", 0.12f, 22.0f, 0, 0);
+            b.KeyRot("leg-right", 0.24f, -22.0f, 0, 0);
+            b.KeyRot("leg-right", 0.42f, 0, 0, 0);
+
+            return b.Build();
+        }
+
+        private static AnimationClip BuildPhaisterEclipse(Dictionary<string, string> paths)
+        {
+            var b = new ClipBuilder("hero-phaister-eclipse", paths);
+            // 0.95s Raise both arms to the sky, HOLD, then throw the eclipse down over the court.
+            //
+            // ⚠️ THE HOLD IS THE UPPER BODY AND IT IS THE POINT OF AN ULTIMATE.
+            // `Hero_Strike_Balance.md` § 4.3 asks for a wind-up so the payoff has a moment; this
+            // is the longest anticipation of the six kits, which is what an arena-wide power
+            // should cost to cast.
+            b.PunchAt(0.62f);
+
+            b.KeyPos(0.00f, 0, 0, 0);
+            b.KeyPos(0.20f, 0, -0.08f, -0.03f);
+            b.KeyPos(0.44f, 0, 0.12f, 0);
+            b.KeyPos(0.62f, 0, -0.05f, 0.04f);
+            b.KeyPos(0.95f, 0, 0, 0);
+
+            // Arches back for the call, then folds forward over the release.
+            b.KeyRot("torso", 0.00f, 0, 0, 0);
+            b.KeyRot("torso", 0.20f, 14.0f, 0, 0);
+            b.KeyRot("torso", 0.44f, -30.0f, 0, 0);
+            b.KeyRot("torso", 0.62f, 22.0f, 0, 0);
+            b.KeyRot("torso", 0.95f, 0, 0, 0);
+
+            b.KeyRot("head", 0.00f, 0, 0, 0);
+            b.KeyRot("head", 0.20f, 8.0f, 0, 0);
+            b.KeyRot("head", 0.44f, -40.0f, 0, 0);
+            b.KeyRot("head", 0.62f, 18.0f, 0, 0);
+            b.KeyRot("head", 0.95f, 0, 0, 0);
+
+            // Both arms go up together, which is the gesture that separates an ultimate from a
+            // skill: a skill is one hand, a summons is two.
+            b.KeyRot("arm-right", 0.00f, 0, 0, -15.0f);
+            b.KeyRot("arm-right", 0.20f, 25.0f, 0, -30.0f);
+            b.KeyRot("arm-right", 0.44f, -155.0f, 0, -28.0f);
+            b.KeyRot("arm-right", 0.62f, -30.0f, 0, -60.0f);
+            b.KeyRot("arm-right", 0.95f, 0, 0, -15.0f);
+
+            b.KeyRot("arm-left", 0.00f, 0, 0, 15.0f);
+            b.KeyRot("arm-left", 0.20f, 25.0f, 0, 30.0f);
+            b.KeyRot("arm-left", 0.44f, -155.0f, 0, 28.0f);
+            b.KeyRot("arm-left", 0.62f, -30.0f, 0, 60.0f);
+            b.KeyRot("arm-left", 0.95f, 0, 0, 15.0f);
+
+            b.KeyRot("leg-left", 0.00f, 0, 0, 0);
+            b.KeyRot("leg-left", 0.44f, -10.0f, 0, 8.0f);
+            b.KeyRot("leg-left", 0.62f, -24.0f, 0, 8.0f);
+            b.KeyRot("leg-left", 0.95f, 0, 0, 0);
+
+            b.KeyRot("leg-right", 0.00f, 0, 0, 0);
+            b.KeyRot("leg-right", 0.44f, 10.0f, 0, -8.0f);
+            b.KeyRot("leg-right", 0.62f, 20.0f, 0, -8.0f);
+            b.KeyRot("leg-right", 0.95f, 0, 0, 0);
+
+            return b.Build();
         }
 
         // ===================================================================
