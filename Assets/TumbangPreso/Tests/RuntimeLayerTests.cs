@@ -322,6 +322,26 @@ namespace TumbangPreso.Tests
             Object.DestroyImmediate(go);
         }
 
+        // -------------------------------------------------------------------
+        // THE REMATCH VOTE
+        //
+        // ⚠️⚠️ THE COUNTING RULES ARE IN `Core.Tests`, NOT HERE, because `Core.RematchVote` is
+        // engine-free on purpose and that suite runs in a second from a terminal. What is left
+        // for this file is the one thing that needs UnityEngine: the sentence the screen draws.
+        // ⚠️ AND THE TRANSPORT IS STILL UNPROVEN. `docs/TODO.md` § 1 says why: two real
+        // processes on a LAN have never been run, and nothing in this repository can stand in
+        // for that.
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void RematchTallyIsSilentWhenNobodyElseIsVoting()
+        {
+            Assert.AreEqual("", UI.MatchResult.TallyLine(1, 1),
+                "\"1 / 1 WANT A REMATCH\" is a sentence about nobody");
+            Assert.AreEqual("", UI.MatchResult.TallyLine(0, 0));
+            Assert.AreEqual("2 / 3 WANT A REMATCH", UI.MatchResult.TallyLine(2, 3));
+        }
+
         [Test]
         public void MatchRpcNetworkPrefabExistsAndHasAStableSpawnHash()
         {

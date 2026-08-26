@@ -37,26 +37,62 @@ namespace TumbangPreso
         public static bool Warning { get; private set; }
 
         /// <summary>
+        /// How many seconds of cooldown one pass under the train is worth.
+        ///
+        /// ⚠️⚠️ THIS IS THE AUTHORED NUMBER NOW, AND THE MULTIPLIER IS DERIVED FROM IT. It used
+        /// to be the other way round: `OverclockRate` was a hand-set 2.0, then a hand-set 3.5,
+        /// and the thing a designer actually cares about — how much of a cooldown the window
+        /// takes off — was nowhere in the file. `docs/Hero_Strike_Balance.md` § 4.5 argued the
+        /// mechanic should stop being a multiplier *"on the grounds that a flat figure survives
+        /// any later cooldown retune where a multiplier does not"*, and `docs/TODO.md` § 5
+        /// carries it. This is that change.
+        ///
+        /// ⚠️⚠️ THE HISTORY IS THE ARGUMENT AND IT IS WORTH KEEPING. A rate `r` held for a
+        /// window `W` advances the cooldown clock by `W * r`, so it SAVES `W * (r - 1)` seconds
+        /// of real time, and that saving never depended on the cooldown at all. What moved was
+        /// only what it was worth as a fraction of a cycle:
+        ///
+        ///   * At the old 6.5 s skill cooldowns, rate 2.0 saved 2.70 s: **41 per cent of a
+        ///     cycle**, a real mechanic.
+        ///   * Against the 30 to 45 s cooldowns that landed on 2026-08-25, the same rate saved
+        ///     the same 2.70 s, now **6.0 to 9.0 per cent**. Not worth learning the train's
+        ///     timing for, and a map mechanic nobody plays around does not exist.
+        ///   * Rate 3.5 was then set to restore it, which saves 6.75 s: about a fifth of a 34 s
+        ///     cooldown. Correct, and completely invisible in the constant `3.5f`.
+        ///
+        /// So the number below is the one every one of those bullets is really about, and the
+        /// two ways of writing it agree exactly today: `1 + 6.75 / 2.70 = 3.5`.
+        ///
+        /// ⚠️ IT IS DELIBERATELY LESS THAN A WHOLE COOLDOWN. A window that refunded a cast
+        /// outright would make the train the ability, and `docs/VISION.md` § 4 wants the
+        /// counterplay to be timing rather than a free press.
+        /// </summary>
+        public const float OverclockSeconds = 6.75f;
+
+        /// <summary>
+        /// How long the consist is actually over the street.
+        ///
+        /// ⚠️ MIRRORED FROM `LrtTrainFlyby`, WHICH DERIVES IT: `(33.0 + 15.6) / 18 = 2.70 s`
+        /// from nose entering to tail leaving. It is repeated here rather than read from the
+        /// component because this class is a plain static that must answer before any flyby
+        /// exists, and `OverclockWindowMatchesTheTrain` in `MapGradeSanityTests` asserts the two
+        /// still agree so the copy cannot drift in silence.
+        /// </summary>
+        public const float PassSeconds = 2.70f;
+
+        /// <summary>
         /// The rate applied while the train is overhead. See `docs/Ilalim_Ng_Tulay.md` § 3.5.
         ///
-        /// ⚠️⚠️ 3.5, UP FROM 2.0, AND THE RAISE IS ARITHMETIC RATHER THAN A BUFF. A rate
-        /// multiplier saves the SAME ABSOLUTE 2.70 s of cooldown whatever the cooldown is, so
-        /// its worth is entirely relative to the cycle it is measured against. At the old 6.5 s
-        /// skill cooldowns, 2.0 for 2.70 s was **41 per cent of a cycle** and a real mechanic.
-        /// Against the 30 to 45 s cooldowns that landed on 2026-08-25 the same number is
-        /// **6.0 to 9.0 per cent**, which is not worth learning the train's timing for, and a
-        /// map mechanic nobody plays around is a map mechanic that does not exist.
-        ///
-        /// 3.5 restores it to roughly 6.75 s off a 34 s cooldown, or a fifth of a cycle: less
-        /// than it used to be worth in relative terms, which is correct, because a long cooldown
-        /// should not be brushed aside by standing in the right place. `docs/TODO.md` § 5 asks
-        /// for the A/B that settles this properly and it is still owed; what changed here is
-        /// that the old number is now provably too small rather than merely unmeasured.
+        /// ⚠️⚠️ DERIVED, NEVER TYPED. `OverclockSeconds` is the design decision; this is the
+        /// arithmetic that delivers it through the one mechanism `HeroAbility.Tick` already
+        /// reads. Retuning the train's speed now keeps the saving constant instead of silently
+        /// changing it, which is the failure mode a hand-set multiplier has and the reason
+        /// § 4.5 asked for the swap.
         ///
         /// ⚠️ IT STILL DOES NOT TOUCH THE ULTIMATE. See `CooldownRate` above: the meter is
         /// earned by acts, and a window that filled it would be a reason to stand still.
         /// </summary>
-        public const float OverclockRate = 3.5f;
+        public const float OverclockRate = 1.0f + OverclockSeconds / PassSeconds;
 
         public static void SetWarning(bool on) => Warning = on;
 

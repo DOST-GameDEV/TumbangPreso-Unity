@@ -99,16 +99,65 @@ for:
    `SphereCollider` and a `CapsuleCollider` and neither was ever stripped, so every explosion
    briefly put two solid bodies in the street.
 
-⚠️⚠️ **STILL NOT DONE:**
+✅ **CLOSED 2026-08-26. Both remaining items, and the second one found two real defects on the
+first frame it could finally photograph.**
 
-1. **The three ultimates' own shapes.** Supernova, Thunderstrike and Glacial Nova now differ in
-   colour, debris, sound, shake and ground silhouette, but the CORE is still an expanding sphere
-   and Thunderstrike's ion disc is still a cylinder. § 8.5 item 1 wants a slam to be a shockwave
-   with a FRONT and a nova to be radial but crystalline, and that is unbuilt.
-2. ⚠️⚠️ **NONE OF THE ABOVE HAS BEEN SEEN.** `AbilityShowcaseProbe` captures the persistent
-   zones only, and every one of these changes is on a transient that lives 0.4 to 1.1 s, so the
-   v7 captures do not show a single one of them. **This wants a played build to judge**, and
-   until then it is written work rather than verified work.
+1. ✅ **The three ultimates' own shapes were already built, and this entry was stale.** Re-read
+   against the code rather than against the entry: `ExplosionLook.Core` returns
+   `VfxShapes.Shockfront` for Quake (a leading edge, not a ball), `VfxShapes.NovaShell(5, 9)` for
+   Frost and `NovaShell(6, 10)` for Fire, and `CreateThunderstrike` draws a `VfxShapes.Spire`
+   with a `VfxShapes.Star` ground discharge. Not one of them is a `PrimitiveType` any more. The
+   work landed with the § 8.5 volume pass; nobody updated the item.
+2. ✅ **`AbilityShowcaseProbe` photographs the transients now**, which is what "none of this has
+   been seen" actually needed. Two things were in the way and both were fixed rather than worked
+   around:
+   * `CreateExplosion` opened with `if (round == null) return;`, so in an edit-mode capture it
+     drew **nothing at all**. `HeroHazards.CreateExplosionVisual` is now the half that puts
+     pixels on screen and needs no match; `CreateExplosion` calls it and then resolves damage.
+   * `Update` never runs in edit mode, so a spawned blast froze on its first frame at scale 0.35.
+     `Visual.IVfxTimeline` lets a capture wind an effect to any moment of its own life, and
+     `VfxTimeline.StepAll(0.35f)` winds every one to the same FRACTION (a core runs 0.5 s and its
+     wave 0.4 s, so a shared number of SECONDS would photograph them at different moments of one
+     event). ⚠️ The player's frame and the capture's frame come from the same body: each
+     implementer's `Update` is one line calling `StepTo`.
+
+⚠️⚠️ **AND THE FIRST TRANSIENT CAPTURE IMMEDIATELY FOUND TWO SHIPPED DEFECTS, WHICH IS THE
+ARGUMENT FOR THE WHOLE EXERCISE:**
+
+**8a ✅ FIXED: every ground shockwave in the game was drawn at DOUBLE its size.**
+`ShockwaveRingAnim` read `Mathf.Lerp(0.5f, TargetRadius * 2.0f, t)`, which was correct while the
+ring was a `PrimitiveType.Cylinder` (one unit ACROSS, so a scale of 2R gives a radius of R). The
+§ 8 silhouette pass swapped in a `VfxShapes` mesh, and every one of those is built at one unit of
+**RADIUS**, so the same line started giving 2R. `ExplosionVfxAnim.MeshRadius` carries a long note
+about exactly this trap and the core was fixed at the time; the ring was missed. Measured off
+`ability_blast_thunder_v8.png`: Sean's Supernova ring reached **26.9 m across in a 14 m box** and
+Zack's Thunderstrike star **42 m**. Restoring the divide puts the final radius back on
+`TargetRadius`, which is what the cylinder drew and what every footprint in
+`Hero_Strike_Balance.md` § 1 was measured against, so this is a regression fix and not a balance
+change.
+
+**8b ✅ FIXED: Thunderstrike whited out the street, and now there is a number that says so.**
+Measured on the v9 set: **62.8 per cent** of the overhead frame and **49.9 per cent** of the
+eye-height frame were at or above 245/255 luminance, against **8.3 per cent** for the worst of
+every other effect and **3.0 per cent** for the empty street. The road markings themselves were
+gone, which is `VISION.md` § 2 rule 5 failing outright. Cause: a point light at intensity 6.0
+over a 17.5 m range in a 14 m box (the fire blast uses 5.5 over 12.5 m), plus a near-white ion
+spire sitting inside it. Now 3.0 over `radius * 1.6`, and the spire keeps its hue at a lower
+value. **After: 6.5 per cent overhead and 3.6 at eye height**, the loudest of the five rather
+than seven times over everything.
+
+⚠️⚠️ **AND RULE 5 IS A GATE NOW RATHER THAN AN OPINION.** `AbilityShowcaseProbe.MaxBlownFraction`
+is **12 per cent**, and the probe FAILS a run where a transient frame exceeds it. The bound is
+measured, not picked: everything the team has already accepted fits under 9 (empty street 3.0,
+corridors 3.0, the deliberate worst-frame pile-up 4.1, frost 8.3), and the one defect sat at
+62.8. It measures Rec. 601 luminance rather than the max channel, because a saturated blue at
+full strength is a colour and white is an absence of picture.
+
+**Verified:** the `v10` set in `Logs/shots-abilities`, every transient under the bound.
+
+⚠️ **What is still a human call:** whether the five now read as five different events in motion,
+in a real round with four seats. A still frame cannot answer that and this entry never claimed
+it could.
 
 **Where.** `Assets/TumbangPreso/Runtime/Visual/VfxShapes.cs`,
 `Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs`,
@@ -425,9 +474,38 @@ bot-filled seats cannot vote.
 **Where.** `Assets/TumbangPreso/Runtime/MatchResult.cs`,
 `Assets/TumbangPreso/Runtime/Net/MatchRpc.cs`, and `ReadyGate.cs` for the pattern to copy.
 
-⚠️ **This cannot be finished honestly without two real processes on a LAN**, which has never
-been run. Write it, cover it in `RuntimeLayerTests` the way reconnect is covered, and say
-plainly in the handoff that the wire half is simulated.
+✅ **DONE 2026-08-26, with the one caveat this entry always predicted.**
+
+Three named messages, mirroring the ready gate deliberately: a peer sends `VoteRematch` to the
+host, the host tallies and broadcasts `RematchTally`, and `BeginRematch` starts everybody at
+once. ⚠️ **The middle one is the point.** A vote that only travelled peer-to-host would start the
+rematch correctly and leave the other three staring at a button they had already pressed with no
+way to tell whether anybody agreed; `match_result.gd` draws the count for the same reason.
+
+⚠️ **The rules are engine-free in `Core.RematchVote` and asserted in `Core.Tests`, not played.**
+Every bug this has ever had was a counting bug, and all five are the ready gate's own scars:
+ * the host's press arrives with a sender id of **0** and is resolved at the door, or the host can
+   never satisfy a gate it is part of (and counts twice in a two-peer match);
+ * a second press from one peer changes nothing, because it is a set;
+ * it counts **peers, never seats** (`ReadyGate.ExpectedReadyCount`'s rule), since bot-filled
+   seats cannot press a button and a gate waiting for four seats in a two-human match never
+   opens;
+ * a peer leaving re-evaluates rather than stranding the rest, hooked at the same place
+   `ReadyGate.OnPeerLeft` is;
+ * **zero votes never opens the gate**, however small `expected` gets, or a lobby that empties
+   out would start a rematch nobody asked for.
+
+⚠️ **Only the host calls `StartMatch`.** Every peer hides its own board and unlocks its own
+cursor, which is local presentation, but match state is host-side per `CLAUDE.md` § 4: four peers
+each starting a match is four matches.
+
+⚠️ The tally line is its own label, not `_broadcastLine`. The first version wrote into it and
+deleted "HERO STRIKE · FINAL STANDINGS · 8 ROUNDS" from a screen whose entire job is the final
+standings.
+
+⚠️⚠️ **THE TRANSPORT ITSELF IS STILL UNPROVEN AND THE LEDGER ROW SAYS SO.** Two real processes on
+a LAN have never been run, and nothing in this repository can stand in for that. `Port_Ledger.md`
+records the row as CONVERTED with that caveat written into it rather than implying otherwise.
 
 ---
 
@@ -504,9 +582,30 @@ placed against the monument closes a lane outright, so the seat that draws the t
 the good geometry has a different game from the other three, and `docs/VISION.md` § 4 says the
 mode is aimed at a bracket.
 
-**Needs:** the monument moved to the plaza edge outside |x|, |z| = 7.0, or its collider reduced
-to something below `CharacterController.stepOffset` (0.30 m) so it is a plinth rather than a
-wall. Then add `BayanPlaza.unity` to `MapGeometryCheck.Gated`.
+✅ **FIXED 2026-08-26, and Bayan Plaza is gated now.** `BayanPlazaMonumentFix` moves the statue
+**0.45 m west** and solves the collider's east face **0.05 m outside the chalk**, then saves the
+scene. `MapGeometryCheck` reports `box 0 solid object(s) inside the chalk` and the map has moved
+from `Informational` to `Gated`.
+
+⚠️ **The collider and the statue live in different hierarchies and both had to move.** The box is
+`Obstacles/MonumentBody/CollisionShape3D` and the mesh is `Dressing/Monument/Monument`, and they
+measured identically before the fix. Moving one alone is an invisible wall or a statue you walk
+through, so the script measures both and refuses rather than guesses.
+
+⚠️ **Neither option in the original entry worked on its own, and the corner is why.**
+ * The plaza rail runs at x = -9.51, so the statue cannot travel the full 0.70 m it needs to clear
+   the chalk by itself: at -0.70 its base sits inside the railing.
+ * "Move it to the plaza edge" is not free either. The corner outside the box is occupied by
+   `MonHedge_1` and `Rail_5`, so it would mean relocating a hedge and a railing somebody
+   arranged.
+ * A collider below `stepOffset` would leave a 5 m statue you walk straight through.
+
+So: move what can move, take the rest off the collider. **0.30 m of statue is left inside the box
+and it is walkable rather than solid.** A taya clipping the corner of a statue for a third of a
+metre is a smaller fault than a 1.90 m wall that decides who wins the round.
+
+⚠️ **The script is idempotent** (it solves the collider from where the statue actually is) and it
+is a script rather than a hand edit because the scene is an imported `.tscn`.
 
 ⚠️ **The scene is an IMPORTED `.tscn`, not built from code**, so this is a scene edit rather
 than a builder change. That is also why the map is only reported on today and not gated.
@@ -544,14 +643,115 @@ multiplier saves the same absolute 2.70 s whatever the cooldown is, so against �
 cooldowns the old 2.0 was worth **6.0 to 9.0 per cent of a cycle** where it used to be worth
 **41 per cent**. A map mechanic nobody plays around is a map mechanic that does not exist.
 
-**What is still owed is the A/B, and it should now compare 1.0, 3.5 and a FLAT saving rather
-than three multipliers.** `Hero_Strike_Balance.md` § 4.5 argues the mechanic should stop being a
-multiplier at all and become a flat cooldown reduction or a charge, on the grounds that a flat
-figure survives any later cooldown retune where a multiplier does not. That is the real question
-here and the three-rate sweep in the paragraph above no longer answers it.
+✅ **THE REAL QUESTION IS ANSWERED, 2026-08-26. THE A/B IS NOT, AND CANNOT BE BY THIS PROBE.**
+
+**The question § 4.5 actually asked was multiplier versus flat, and it is settled by
+construction.** `OverheadPassWindow.OverclockSeconds` is **6.75 s** and is now the AUTHORED
+number; `OverclockRate` is derived as `1 + OverclockSeconds / PassSeconds` and comes out at
+exactly the 3.5 that was there before, so nothing in play changes today. What changes is which
+number a person edits.
+
+The arithmetic that makes the swap correct rather than cosmetic: a rate `r` held for a window `W`
+advances the cooldown clock by `W * r`, so it saves `W * (r - 1)` seconds **whatever the cooldown
+is**. The saving was always flat. Only its WORTH moved, and it moved a long way:
+
+| Skill cooldown | Rate | Seconds saved | Share of a cycle |
+|---|---|---|---|
+| 6.5 s (pre-2026-08-25) | 2.0 | 2.70 | **41 %** |
+| 30 to 45 s (today) | 2.0 | 2.70 | **6.0 to 9.0 %** |
+| 34 s (today) | 3.5 | 6.75 | **20 %** |
+
+So `3.5f` was a proxy for 6.75 s that nobody reading the file could see, and it needed hand-editing
+every time cooldowns moved. The flat figure does not. ⚠️ **`PassSeconds` is a deliberate copy of a
+number `LrtTrainFlyby` derives** (`(33.0 + 15.6) / 18 = 2.70`), because this is a plain static that
+must answer before any flyby exists, and
+`MapGradeSanityTests.TheOverclockWindowAgreesWithTheTrainThatCausesIt` asserts the two still agree
+AND that the derived rate still delivers the authored saving. Change the train's speed and it goes
+red instead of silently paying a different amount.
+
+⚠️⚠️ **THE THREE-RATE SWEEP IS STILL OWED AND `BotBehaviourProbe` CANNOT SUPPLY IT.** This is not
+a scheduling excuse, it is the probe's own measurement: its seeding note records two runs of the
+**same seeded build, back to back**, reporting **530 and then 83** unretrieved-slipper penalties,
+because the match is stepped in real time at 6x and the bots think in frames. A comparison between
+two such runs measures the machine. Every assertion in that probe is deliberately a liveness
+FLOOR for the same reason. **Settling this wants the probe stepping the world by hand at a fixed
+delta**, which is its own piece of work and is written up as § 10 below.
+
+✅ **What did land is the second map.** `HeroStrikeBotsPlayAWholeMatchUnderTheBridge` runs a whole
+Hero Strike match on Ilalim ng Tulay, so the flyby, the overclock window, the eight pillar hazards
+and the trip hazards are exercised against the same liveness floors. The harness had never run a
+match on any map but Eskinita, while two entries in this file argue that map geometry changes Hero
+Strike outcomes. ⚠️ **The counts from the two maps must not be compared**, for the reason above;
+what this catches is a map that breaks the loop.
 
 **Where.** `Assets/TumbangPreso/Runtime/Map/OverheadPassWindow.cs`,
-`Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`.
+`Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`,
+`Assets/TumbangPreso/Tests/MapGradeSanityTests.cs`.
+
+---
+
+## 11 · Every probe number ever printed was an average over a seat that could not play ✅ CLOSED 2026-08-26
+
+**Found by reading the report rather than the assertions, while adding the Ilalim ng Tulay run.**
+
+`GameLaunch.SoloSeat` defaults to **1**, so in a headless probe seat 1 was given a
+`PlayerInputReader` and no human to drive it. Measured across all three matches on 2026-08-26,
+before the fix:
+
+| Run | seat 0 | seat 1 | seat 2 | seat 3 |
+|---|---|---|---|---|
+| Classic, Eskinita | 573.0 m / 3590 | **23.1 m / 30** | 477.9 m / 3510 | 463.1 m / 3020 |
+| Hero, Eskinita | 1154.8 m / 6720 | **68.3 m / 50** | 999.0 m / 4670 | 1191.1 m / 6700 |
+| Hero, Ilalim ng Tulay | 996.0 m / 6060 | **69.1 m / 40** | 1018.2 m / 4070 | 1064.0 m / 5070 |
+
+⚠️⚠️ **It is not an AI bug and that is what made it invisible.** A parked human seat is correct
+behaviour for a seat with no human on it. What was wrong is that the probe called this a four-bot
+match, and every throw, tag and knockdown count it has ever printed was three bots' worth of
+activity divided by four seats.
+
+⚠️ **The "they leave spawn" floor was 20 m, which is under 23.1.** The one assertion that could
+have caught it had been set just low enough to pass it, which is how a placeholder number becomes
+a permanent blind spot.
+
+**Fixed** with `GameLaunch.AllBots`, set and restored by `RunMatch`. `MatchInstaller` already had
+`_allBots`, but it is a `[SerializeField]` authored per scene and a caller that loads a scene
+cannot reach it before `Awake` reads it. ⚠️ Not `Spectator`, which also builds a fourth camera rig
+and changes the HUD: a measurement may only change one thing. The travel floor rose to **150 m**,
+comfortably under the 460 m a real bot manages in the shortest match and comfortably over a stuck
+one.
+
+⚠️⚠️ **EVERY NUMBER IN `Logs/bot-behaviour-*.txt` FROM BEFORE THIS DATE IS THREE SEATS' WORTH.**
+Do not compare an old report against a new one.
+
+---
+
+## 10 · `BotBehaviourProbe` cannot answer a comparison, and every open balance question is one
+
+**Raised 2026-08-26 while trying to run § 5's A/B, and it blocks § 0's too.**
+
+The probe steps a match in real time at `MatchTimeScale` 6x and the AI decides in `Update` on
+`Time.deltaTime`, so the number of decisions a bot makes depends on how busy the machine was. Its
+own note records the consequence: two runs of the **same seeded build, back to back**, measured
+**530 and 83** unretrieved-slipper penalties. `UnityEngine.Random.InitState` removes one source of
+noise and the clock is the other.
+
+Everything in this file that is still open and says "needs an A/B" is blocked on this:
+ * **§ 0**, every Hero Strike cooldown, charge count and ultimate cost, all of which are starting
+   positions with reasoning attached.
+ * **§ 5**, the overclock window at 1.0 against a flat saving.
+ * The Ice Barricade duration, if § 2's premise ever comes back.
+
+**Needs:** a fixed-delta mode. Drive the match from a loop that advances physics and the AI by a
+constant `dt` rather than by wall clock, so two runs of one build produce identical numbers and a
+difference between two builds means something. `Time.captureDeltaTime` plus
+`Physics.Simulate` is the shape of it; the bots already read `InputIntent` and one physics step
+already serves human and AI alike (`CLAUDE.md` § 4), so nothing about the game has to change.
+
+**Done looks like:** the same seed run twice reports the same throws, retrievals, tags and
+penalties to the unit. Until then, ⚠️ **no number out of this probe may be reported as a
+comparison**, only as a liveness floor, which is what every assertion in it already is.
+
+**Where.** `Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`.
 
 ---
 
@@ -581,11 +781,28 @@ exactly four MonoBehaviours (`EnvColourPass`, `KillPlane`, `MapGrade`, `MatchIns
 is empty for the entire run. `OneHeroRoundAtRealSpeedIsFullyExplained`, which is the mode that
 does populate it, passed in the same suite.
 
-**Needs:** a decision, not a bug hunt. Either the bound moves with a measured reason, or the
-probe stops asserting on wall-clock-sensitive quantities and only prints them, or it is marked
-explicit-run-only so it stops costing a full PlayMode suite to learn nothing. The worst outcome
-is the current one, where a red result carries no information and the next session spends a run
-finding that out again.
+✅ **DECIDED 2026-08-26: the third option. `AiDiagnosticProbe` is `[Category("WallClock")]` and
+is excluded from the default PlayMode run.**
+
+The entry asked for a decision rather than a bug hunt, and three data points all of one shape is
+enough to make it: 21.6 s, then 29.9 s, then 37.6 s against a 20.0 s bound, each passing on an
+immediate re-run with nothing changed. 37.6 is not a near miss; it is a round that spent most of
+its wall clock somewhere other than this test.
+
+⚠️ **The tests are not deleted and must not be.** They are the only thing in the harness that
+explains WHY a bot did something rather than how much, and § 7 is explicit that the answer to a
+slow suite is never to delete the measured ones. What changed is cadence: roughly **80 real
+seconds** of every PlayMode suite now only runs when somebody is going to read the report.
+
+⚠️⚠️ **`[Explicit]` ALONE DOES NOT WORK IN BATCH MODE AND WAS TRIED FIRST.** The run with the
+attribute in place still reported 60 tests including both of these. The exclusion has to be in
+the COMMAND, so the default PlayMode line in `CLAUDE.md` § 7 and `docs/TESTING.md` now carries
+`-testCategory "!WallClock"`, and running them is `-testCategory "WallClock"`.
+
+⚠️ **The one genuine lead in this entry is preserved and is still open.** The second failure
+printed `own=3 plan=Fetch ownerAct=True d3=1.10 grabbable=True`: a bot 1.10 m from a grabbable
+slipper it had already decided to fetch, still not holding it. If that reproduces at a normal
+frame rate it is a real retrieval bug. Nothing here has looked at it.
 
 ⚠️ **The second failure is worth one look before deciding.** It printed
 `own=3 plan=Fetch ownerAct=True d3=1.10 grabbable=True`: a bot 1.10 m from a grabbable slipper
@@ -613,18 +830,35 @@ last five is its own Unity launch**. The launches, not the assertions, are the c
 
 **Needs, in order of payoff:**
 
-1. **One launch, many checks.** `ArenaCheck`, `MapGeometryCheck`, `AudioCueCheck` and
-   `SceneScriptCheck` are four `-executeMethod` launches that could be one entry point running
-   all four and exiting non-zero if any fails. That is the single biggest saving and it changes
-   no test logic.
+1. ✅ **DONE 2026-08-26. One launch, many checks: `TumbangPreso.EditorTools.Checks.RunAll`.**
+   It runs `HeadlessCheck`, `ArenaCheck`, `MapGeometryCheck`, `AudioCueCheck` and
+   `SceneScriptCheck` in a single editor start and exits non-zero if any fails. Five launches
+   became one and no test logic changed.
+   ⚠️ **It runs all five even after one fails**, because stopping at the first is how a session
+   fixes one thing, relaunches, finds the second, and pays the start-up cost this exists to
+   remove. Each check still writes its own report file, and `Logs/checks.txt` says which went
+   red so the next reader opens one file rather than five.
+   ⚠️ **A thrown check is a failed check, not a dead run.**
+   ⚠️ **`HeadlessCheck` had to be split** into `Execute` and `Run`: it called
+   `EditorApplication.Exit` from inside, which kills the process, so a batched caller reaching it
+   first would never reach the rest.
+   ⚠️ **`GameBuilder` still runs `SceneScriptCheck` separately and that is deliberate.** It is
+   the only check that can see a scene holding a component the PLAYER cannot bind, a shipped
+   build once crashed with everything else green, and a build-time gate must not depend on
+   somebody having run this first.
 2. **Name a fast gate and a full gate.** Fast: Core plus EditMode plus the combined checks, for
    every change. Full: adds PlayMode, for anything touching gameplay, and before a build.
    Right now every change pays for everything.
-3. **Take the wall-clock probes out of the default PlayMode run** (§ 6). `AiDiagnosticProbe`
-   alone is 80 real seconds of the suite and produces a report to read, not a pass to rely on.
+3. ✅ **DONE 2026-08-26** (§ 6). `AiDiagnosticProbe` carries `[Category("WallClock")]` and the
+   default PlayMode command excludes it with `-testCategory "!WallClock"`.
 
 **Done looks like:** a documented two-tier command list in `docs/TESTING.md`, and a full pass
 that is fewer than four Unity launches.
+
+✅ **Both halves are in place as of 2026-08-26.** A full pass is now **three** Unity launches
+(`Checks.RunAll`, EditMode, PlayMode) plus `dotnet test`, down from seven, and `docs/TESTING.md`
+carries the fast gate and the full gate as commands. **Item 2 is what remains**: nothing enforces
+which gate a given change pays for, and that is a habit rather than a script.
 
 ---
 

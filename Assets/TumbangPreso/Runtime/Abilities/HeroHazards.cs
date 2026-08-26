@@ -1268,21 +1268,42 @@ namespace TumbangPreso.Abilities
             ionCore.AddComponent<MeshRenderer>();
             VfxShapes.Own(ionCore, spire);
 
-            VfxMaterial.Ghost(ionCore.GetComponent<Renderer>(), new Color(1.0f, 1.0f, 0.60f, 0.85f), 1.0f);
+            // ⚠️ PULLED OFF WHITE, FOR THE REASON ON THE FLASH ABOVE. `(1, 1, 0.60)` at full
+            // emission is the brightest surface in the game, and it sat in the middle of the
+            // brightest light in the game. Keeping the hue and dropping the value leaves the
+            // ionisation reading as the hottest thing on screen without taking the frame with it.
+            VfxMaterial.Ghost(ionCore.GetComponent<Renderer>(), new Color(1.0f, 0.96f, 0.42f, 0.72f), 0.7f);
             Object.Destroy(ionCore, 0.20f);
 
             var ringAnim = shockRing.AddComponent<ShockwaveRingAnim>();
             ringAnim.TargetRadius = radius * 1.5f;
             Object.Destroy(shockRing, 0.45f);
 
-            // 3. Bright flash light
+            // 3. The flash.
+            //
+            // ⚠️⚠️ IT WAS BLOWING OUT THE ENTIRE STREET, AND IT TOOK THE FIRST TRANSIENT
+            // CAPTURE TO SEE IT. Measured on `ability_blast_thunder_v9.png`: **62.8 per cent of
+            // the overhead frame and 49.9 per cent of the eye-height frame were at or above
+            // 245/255 luminance**, against 8.3 per cent for the worst of every other effect in
+            // the set and 3.0 per cent for the empty street. `docs/VISION.md` § 2 rule 5 asks
+            // that a mid-fight frame still show the lata, the chalk and every player; in that
+            // frame the road markings themselves are gone.
+            //
+            // ⚠️ THE OLD NUMBERS WERE THE LOUDEST IN THE GAME BY A DISTANCE and nothing in the
+            // repo said why. Intensity 6.0 over a 17.5 m range in a 14 m box, against the fire
+            // blast's 5.5 over 12.5 m, so Zack's ultimate lit the whole arena about twice as
+            // hard as Sean's did from half again the distance. These land it inside the family:
+            // brightest of the five, and still a frame you can play through.
+            //
+            // ⚠️ THE RANGE IS TIED TO THE BLAST RADIUS, not to the map, so a future retune of
+            // the ultimate's footprint carries its own light with it.
             var lightGo = new GameObject("ThunderLight");
             lightGo.transform.position = position + Vector3.up * 2.0f;
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
             light.color = UiTheme.HeroElectricBright;
-            light.range = radius * 2.5f;
-            light.intensity = 6.0f;
+            light.range = radius * 1.6f;
+            light.intensity = 3.0f;
             Object.Destroy(lightGo, 0.35f);
 
             // ⚠️⚠️ THIS WAS `ability_flick_dash`. Zack's ultimate, the loudest thing in his kit,
@@ -1552,9 +1573,66 @@ namespace TumbangPreso.Abilities
             int sourceSlot, string comicText = "KABOOM!", ISet<int> excludedSlots = null,
             ExplosionStyle style = ExplosionStyle.Fire, Vector3 facing = default)
         {
+            // ⚠️⚠️ THE PICTURE IS DRAWN BEFORE THE ROUND IS ASKED FOR, AND THAT ORDER IS THE
+            // POINT. This function opened with `if (round == null) return;`, so an explosion
+            // outside a live match drew NOTHING — which is every context the harness has.
+            // `AbilityShowcaseProbe` runs in edit mode with no match, so the biggest effects in
+            // the game were the ones it could never photograph, which is `docs/TODO.md` § 8
+            // item 2. Splitting the visual out costs one call and makes the whole § 8 pass
+            // reviewable against pictures instead of against prose. In play nothing changes:
+            // a live match always has a round.
+            CreateExplosionVisual(center, radius, comicText, style, facing);
+
             var round = GameServices.Round;
             if (round == null) return;
 
+            // Damage / Knockback players
+            foreach (var p in round.Players)
+            {
+                if (p == null) continue;
+                if (excludedSlots != null && excludedSlots.Contains(p.PlayerSlot)) continue;
+                Vector3 to = p.transform.position - center;
+                to.y = 0.0f;
+                float d = to.magnitude;
+
+                if (d <= radius)
+                {
+                    float force = Mathf.Lerp(knockback, knockback * 0.35f, d / radius);
+                    Vector3 push = (to.sqrMagnitude > 0.01f ? to.normalized : Vector3.forward) * force;
+                    push.y = 5.5f;
+
+                    p.ApplyImpulse(push);
+                    if (p.PlayerSlot != sourceSlot && stunTime > 0.0f)
+                    {
+                        p.ApplyStagger(stunTime);
+                        DizzyStars.Attach(p.transform, stunTime, UiTheme.HeroFireBright);
+                    }
+                }
+            }
+
+            // Also launch can if within explosion
+            if (round.Lata != null)
+            {
+                Vector3 canDiff = round.Lata.transform.position - center;
+                canDiff.y = 0.0f;
+                if (canDiff.magnitude <= radius)
+                {
+                    round.Lata.HostKnockDown(sourceSlot);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Everything a blast PUTS ON SCREEN, with no dependency on there being a match.
+        ///
+        /// ⚠️ IT IS NOT A PREVIEW OR A STUB. This is the only code that draws an explosion;
+        /// <see cref="CreateExplosion"/> calls it and then resolves the damage. See that
+        /// function's note for why the two were separated.
+        /// </summary>
+        public static void CreateExplosionVisual(Vector3 center, float radius,
+            string comicText = "KABOOM!", ExplosionStyle style = ExplosionStyle.Fire,
+            Vector3 facing = default)
+        {
             ExplosionLook look = LookFor(style);
 
             // ⚠️ SEEDED OFF POSITION, for the reason `VfxShapes` gives: two blasts in different
@@ -1680,40 +1758,6 @@ namespace TumbangPreso.Abilities
                 }
             }
 
-            // Damage / Knockback players
-            foreach (var p in round.Players)
-            {
-                if (p == null) continue;
-                if (excludedSlots != null && excludedSlots.Contains(p.PlayerSlot)) continue;
-                Vector3 to = p.transform.position - center;
-                to.y = 0.0f;
-                float d = to.magnitude;
-
-                if (d <= radius)
-                {
-                    float force = Mathf.Lerp(knockback, knockback * 0.35f, d / radius);
-                    Vector3 push = (to.sqrMagnitude > 0.01f ? to.normalized : Vector3.forward) * force;
-                    push.y = 5.5f;
-
-                    p.ApplyImpulse(push);
-                    if (p.PlayerSlot != sourceSlot && stunTime > 0.0f)
-                    {
-                        p.ApplyStagger(stunTime);
-                        DizzyStars.Attach(p.transform, stunTime, UiTheme.HeroFireBright);
-                    }
-                }
-            }
-
-            // Also launch can if within explosion
-            if (round.Lata != null)
-            {
-                Vector3 canDiff = round.Lata.transform.position - center;
-                canDiff.y = 0.0f;
-                if (canDiff.magnitude <= radius)
-                {
-                    round.Lata.HostKnockDown(sourceSlot);
-                }
-            }
         }
 
         // -------------------------------------------------------------------
@@ -1912,7 +1956,7 @@ namespace TumbangPreso.Abilities
         /// blast that expands linearly reads as a balloon; one that expands fastest at the start
         /// reads as a detonation. Do not "simplify" it to `t`.
         /// </summary>
-        private sealed class ExplosionVfxAnim : MonoBehaviour
+        private sealed class ExplosionVfxAnim : MonoBehaviour, Visual.IVfxTimeline
         {
             public float TargetRadius = 5.0f;
 
@@ -1938,10 +1982,15 @@ namespace TumbangPreso.Abilities
             private readonly Fader _fade = new Fader();
             private float _elapsed;
 
-            private void Update()
+            public float LifeSeconds => 0.5f;
+
+            /// <summary>⚠️ THE PLAYER'S FRAME AND THE CAPTURE'S FRAME COME FROM THIS ONE BODY.
+            /// See <see cref="Visual.IVfxTimeline"/>: a separate preview path would be a second
+            /// answer to what an explosion looks like.</summary>
+            public void StepTo(float seconds)
             {
-                _elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(_elapsed / 0.5f);
+                _elapsed = seconds;
+                float t = Mathf.Clamp01(_elapsed / LifeSeconds);
 
                 float wide = Mathf.Lerp(0.35f, TargetRadius / Mathf.Max(0.01f, MeshRadius),
                                         Mathf.Sqrt(t));
@@ -1951,23 +2000,54 @@ namespace TumbangPreso.Abilities
 
                 _fade.Apply(GetComponent<Renderer>(), Mathf.Lerp(0.85f, 0.0f, t));
             }
+
+            private void Update() => StepTo(_elapsed + Time.deltaTime);
         }
 
-        private sealed class ShockwaveRingAnim : MonoBehaviour
+        private sealed class ShockwaveRingAnim : MonoBehaviour, Visual.IVfxTimeline
         {
             public float TargetRadius = 6.0f;
+
+            /// <summary>
+            /// ⚠️⚠️ EVERY GROUND SHOCKWAVE IN THE GAME WAS DRAWN AT DOUBLE ITS INTENDED SIZE,
+            /// FOR EXACTLY THE REASON `ExplosionVfxAnim.MeshRadius` IS WRITTEN UP TO PREVENT,
+            /// AND IT WENT UNNOTICED BECAUSE NOTHING COULD PHOTOGRAPH IT.
+            ///
+            /// This line read `Mathf.Lerp(0.5f, TargetRadius * 2.0f, t)`. That was CORRECT while
+            /// the ring was a `PrimitiveType.Cylinder`, which is one unit ACROSS: a scale of 2R
+            /// on a mesh of radius 0.5 gives a radius of R. The § 8 silhouette pass replaced the
+            /// cylinder with a `VfxShapes` mesh, and every one of those is built at one unit of
+            /// RADIUS, so the same scale now gives a radius of 2R. The core's copy of this bug
+            /// was caught and annotated at the time; the ring's was not.
+            ///
+            /// ⚠️ MEASURED OFF THE FIRST TRANSIENT CAPTURE, 2026-08-26. Sean's Supernova ring
+            /// reached **26.9 m across** in a **14 m** box, and Zack's Thunderstrike star reached
+            /// **42 m**, which whited out the entire street: `ability_blast_thunder_v8.png` is a
+            /// frame in which the lata, the chalk and every player are gone, and that is
+            /// precisely what `docs/VISION.md` § 2 rule 5 forbids.
+            ///
+            /// ⚠️ THIS IS A REGRESSION FIX AND NOT A BALANCE CHANGE. Restoring the divide puts
+            /// the final radius back on `TargetRadius`, which is what the cylinder drew and what
+            /// every footprint in `docs/Hero_Strike_Balance.md` § 1 was measured against.
+            /// </summary>
+            public float MeshRadius = 1.0f;
+
             private readonly Fader _fade = new Fader();
             private float _elapsed;
 
-            private void Update()
+            public float LifeSeconds => 0.4f;
+
+            public void StepTo(float seconds)
             {
-                _elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(_elapsed / 0.4f);
-                float r = Mathf.Lerp(0.5f, TargetRadius * 2.0f, t);
+                _elapsed = seconds;
+                float t = Mathf.Clamp01(_elapsed / LifeSeconds);
+                float r = Mathf.Lerp(0.25f, TargetRadius / Mathf.Max(0.01f, MeshRadius), t);
                 transform.localScale = new Vector3(r, 0.02f, r);
 
                 _fade.Apply(GetComponent<Renderer>(), Mathf.Lerp(0.8f, 0.0f, t));
             }
+
+            private void Update() => StepTo(_elapsed + Time.deltaTime);
         }
 
         /// <summary>

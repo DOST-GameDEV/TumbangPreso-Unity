@@ -138,6 +138,61 @@ namespace TumbangPreso.Tests
         /// `HeroPresentationTests.TelegraphsMatchWhatTheAbilityPlaces` asserts a telegraph
         /// against what its ability actually spawns.
         /// </summary>
+        /// <summary>
+        /// The overclock window's copy of the pass length still matches the train that produces
+        /// it.
+        ///
+        /// ⚠️⚠️ IT IS A COPY ON PURPOSE AND THAT IS EXACTLY WHY IT NEEDS A TEST.
+        /// `OverheadPassWindow` is a plain static that has to answer before any `LrtTrainFlyby`
+        /// exists, so it cannot read the component; it carries `PassSeconds = 2.70` and derives
+        /// `OverclockRate` from it. `LrtTrainFlyby` derives the same 2.70 from its consist length
+        /// and its speed. Change the train's `Speed` from 18 and the two disagree, the saving
+        /// silently stops being `OverclockSeconds`, and the one number a designer authored is
+        /// quietly no longer the number the game delivers. That is precisely the class of drift
+        /// `docs/Hero_Strike_Balance.md` § 4.5 wanted the flat figure to be immune to.
+        ///
+        /// ⚠️ IT READS THE FLYBY AS TEXT, like the builder-versus-scene test below, because the
+        /// fields are serialised defaults on a component this suite does not instantiate.
+        /// </summary>
+        [Test]
+        public void TheOverclockWindowAgreesWithTheTrainThatCausesIt()
+        {
+            const string flyby = "Assets/TumbangPreso/Runtime/Map/LrtTrainFlyby.cs";
+            Assert.IsTrue(File.Exists(flyby), flyby + " is missing");
+
+            string text = File.ReadAllText(flyby);
+
+            var speed = Regex.Match(text, @"public float Speed\s*=\s*([0-9.]+)f");
+            var halfZ = Regex.Match(text, @"public float OverheadHalfZ\s*=\s*([0-9.]+)f");
+
+            Assert.IsTrue(speed.Success, "LrtTrainFlyby no longer declares Speed");
+            Assert.IsTrue(halfZ.Success, "LrtTrainFlyby no longer declares OverheadHalfZ");
+
+            float v = float.Parse(speed.Groups[1].Value,
+                                  System.Globalization.CultureInfo.InvariantCulture);
+            float z = float.Parse(halfZ.Groups[1].Value,
+                                  System.Globalization.CultureInfo.InvariantCulture);
+
+            // ⚠️ THE CONSIST LENGTH IS ALREADY INSIDE `OverheadHalfZ` AND ADDING IT AGAIN IS
+            // THE MISTAKE THIS COMMENT EXISTS TO STOP. The field's own note reads
+            // `(33.0 + 15.6) / 18 = 2.70 s`, which lists wall length 33.0 plus consist 15.6, and
+            // that sum IS 48.6 = 2 x 24.3. So the window is the range the flag is true over,
+            // divided by the speed, and nothing else. The first version of this test added the
+            // 15.6 a second time and reported 3.57 s against a correct 2.70.
+            float pass = (z * 2.0f) / v;
+
+            Assert.AreEqual(pass, OverheadPassWindow.PassSeconds, 0.02f,
+                $"the train is overhead for {pass:F2} s but OverheadPassWindow says " +
+                $"{OverheadPassWindow.PassSeconds:F2} s, so the window no longer takes " +
+                $"{OverheadPassWindow.OverclockSeconds:F2} s off a cooldown.");
+
+            // ⚠️ AND THE DERIVED RATE STILL DELIVERS THE AUTHORED SAVING. A rate r held for a
+            // window W advances the clock by W * r, so it saves W * (r - 1).
+            float saved = OverheadPassWindow.PassSeconds * (OverheadPassWindow.OverclockRate - 1.0f);
+            Assert.AreEqual(OverheadPassWindow.OverclockSeconds, saved, 0.01f,
+                "the derived rate no longer saves the seconds it was authored to save");
+        }
+
         [Test]
         public void TheIlalimBuilderAgreesWithTheSceneItGenerates()
         {

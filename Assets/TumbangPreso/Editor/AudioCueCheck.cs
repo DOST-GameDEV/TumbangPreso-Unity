@@ -39,7 +39,9 @@ namespace TumbangPreso.EditorTools
 
         public static void Run() => EditorApplication.Exit(Execute() ? 0 : 1);
 
-        private static bool Execute()
+        /// <summary>⚠️ PUBLIC SO `Checks` CAN RUN IT WITHOUT A SECOND UNITY LAUNCH. See that
+        /// class: the launches, not the assertions, are what a verification pass costs.</summary>
+        public static bool Execute()
         {
             var sb = new StringBuilder();
             int problems = 0;

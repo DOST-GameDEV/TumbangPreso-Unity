@@ -58,22 +58,65 @@ namespace TumbangPreso.PlayTests
             Time.timeScale = 1.0f;
         }
 
+        /// <summary>
+        /// ⚠️ THE DEFAULT MAP. Eskinita is the one every previous number in
+        /// `Logs/bot-behaviour-*.txt` was measured on, so it stays the default and a second map
+        /// is an addition rather than a replacement.
+        /// </summary>
+        private const string DefaultMap = "Eskinita";
+
         [UnityTest]
         public IEnumerator ClassicBotsPlayAWholeMatch()
         {
-            yield return RunMatch(GameMode.Classic);
+            yield return RunMatch(GameMode.Classic, DefaultMap);
         }
 
         [UnityTest]
         public IEnumerator HeroStrikeBotsPlayAWholeMatchAndUseTheirKits()
         {
-            yield return RunMatch(GameMode.HeroStrike);
+            yield return RunMatch(GameMode.HeroStrike, DefaultMap);
         }
 
-        private IEnumerator RunMatch(GameMode mode)
+        /// <summary>
+        /// The same Hero Strike match on Ilalim ng Tulay, which is the only map with a mechanic
+        /// of its own.
+        ///
+        /// ⚠️⚠️ THE HARNESS HAD NEVER RUN A MATCH ON A SECOND MAP AT ALL, and two separate
+        /// entries in `docs/TODO.md` are arguments that map geometry changes Hero Strike
+        /// outcomes: § 4 (Bayan Plaza's monument inside the defender's box) and
+        /// `docs/Ilalim_Ng_Tulay.md` § 1 (why the other two maps feel wrong for the mode).
+        /// Nothing measured either claim, because every probe loaded Eskinita.
+        ///
+        /// ⚠️⚠️ THIS IS NOT THE `docs/TODO.md` § 5 A/B AND MUST NOT BE REPORTED AS ONE. That
+        /// entry wants the overclock window compared at different values, and this probe cannot
+        /// answer a comparison: read the seeding note in `RunMatch`, where two runs of the SAME
+        /// seeded build measured **530 and 83** unretrieved-slipper penalties back to back
+        /// because the match is stepped in real time and the bots think in frames. What this
+        /// run does is exercise the map's own code path — the flyby, the overclock window, the
+        /// eight pillar hazards and the trip hazards — against the same LIVENESS FLOORS, so a
+        /// map that breaks the loop is caught. A difference in the counts between the two maps
+        /// is noise until the probe steps the world by hand.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator HeroStrikeBotsPlayAWholeMatchUnderTheBridge()
+        {
+            yield return RunMatch(GameMode.HeroStrike, "IlalimNgTulay");
+        }
+
+        private IEnumerator RunMatch(GameMode mode, string map)
         {
             var previousMode = UI.SceneFlow.SelectedMode;
             UI.SceneFlow.SelectedMode = mode;
+
+            // ⚠️⚠️ ALL FOUR SEATS ARE BOTS, AND UNTIL 2026-08-26 ONE OF THEM WAS NOT.
+            // `GameLaunch.SoloSeat` defaults to 1, so seat 1 got a `PlayerInputReader` in a run
+            // with no human at the keyboard and simply stood still: it travelled 23.1 m, 68.3 m
+            // and 69.1 m in the three matches on the day this was found, against 460 to 1190 m
+            // for the others, and scored 30 to 50 against 3000 to 6700. Every per-seat figure in
+            // this report was diluted by a seat that could not play, and the travel floor below
+            // was set just low enough not to notice.
+            bool previousAllBots = GameLaunch.AllBots;
+            GameLaunch.AllBots = true;
 
             // ⚠️ SEEDED, WHICH HELPS AND IS NOT ENOUGH. Personality rolls, loiter beats and
             // the AI's tie-breaks all draw from `UnityEngine.Random`, so an unseeded run varies
@@ -98,7 +141,7 @@ namespace TumbangPreso.PlayTests
             Hitstop.End();
             Time.timeScale = 1.0f;
 
-            var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
+            var load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Single);
             while (load != null && !load.isDone) yield return null;
             for (int i = 0; i < 25; i++) yield return null;
 
@@ -200,7 +243,7 @@ namespace TumbangPreso.PlayTests
             Time.timeScale = 1.0f;
 
             var log = new StringBuilder();
-            log.AppendLine($"bot behaviour probe  ·  {mode}");
+            log.AppendLine($"bot behaviour probe  ·  {mode}  ·  {map}");
             log.AppendLine($"wall clock {guard:F1}s  ·  match in progress at exit: {match.MatchInProgress}");
             log.AppendLine(tally.Describe());
             log.AppendLine($"furthest a body reached: x {bodyX:F2} of {AIController.PlayableHalfX:F1}  " +
@@ -211,24 +254,30 @@ namespace TumbangPreso.PlayTests
                 log.AppendLine($"seat {i} travelled {travelled[i]:F1} m  final score {match.ScoreFor(i)}");
 
             Directory.CreateDirectory("Logs");
-            File.WriteAllText($"Logs/bot-behaviour-{mode}.txt", log.ToString());
+            File.WriteAllText($"Logs/bot-behaviour-{mode}-{map}.txt", log.ToString());
             Debug.Log(log.ToString());
 
             UI.SceneFlow.SelectedMode = previousMode;
+            GameLaunch.AllBots = previousAllBots;
 
             // ---- THE MATCH ITSELF ------------------------------------------------------
             Assert.IsFalse(match.MatchInProgress,
-                $"{mode}: the match never ended inside {guard:F0}s of wall clock. See " +
-                $"Logs/bot-behaviour-{mode}.txt.");
+                $"{mode} on {map}: the match never ended inside {guard:F0}s of wall clock. See " +
+                $"Logs/bot-behaviour-{mode}-{map}.txt.");
 
             for (int slot = 0; slot < Balance.PlayerCount; slot++)
                 Assert.IsTrue(tally.Defended[slot],
-                    $"{mode}: seat {slot} never defended, so the rotation stalled.");
+                    $"{mode} on {map}: seat {slot} never defended, so the rotation stalled.");
 
             // ---- THEY LEAVE SPAWN ------------------------------------------------------
+            // ⚠️ THE FLOOR ROSE FROM 20 m TO 150 m WITH `GameLaunch.AllBots`, AND THE OLD VALUE
+            // WAS NOT CAUTIOUS, IT WAS BLIND. 20 m was low enough to pass the parked human seat
+            // that used to sit in every run at 23 m. With four real bots the observed spread is
+            // 460 to 1190 m over a Classic match, so 150 m is comfortably under anything a
+            // playing bot does and comfortably over anything a stuck one does.
             for (int i = 0; i < seats.Count; i++)
-                Assert.Greater(travelled[i], 20.0f,
-                    $"{mode}: seat {i} covered {travelled[i]:F1} m across a whole match, which " +
+                Assert.Greater(travelled[i], 150.0f,
+                    $"{mode} on {map}: seat {i} covered {travelled[i]:F1} m across a whole match, which " +
                     "is a bot that is stuck rather than one that is playing.");
 
             // ---- NOTHING LEAVES THE ARENA ----------------------------------------------
@@ -240,19 +289,19 @@ namespace TumbangPreso.PlayTests
             // ⚠️ HALF A METRE OF SLACK. The clamp lands a body ON the line and a capsule's own
             // radius can read fractionally past it for a frame.
             Assert.LessOrEqual(bodyX, AIController.PlayableHalfX + 0.1f,
-                $"{mode}: a body reached x {bodyX:F2} against a half width of " +
+                $"{mode} on {map}: a body reached x {bodyX:F2} against a half width of " +
                 $"{AIController.PlayableHalfX:F1}, so somebody left the arena.");
 
             Assert.LessOrEqual(bodyZ, AIController.PlayableHalfZ + 0.1f,
-                $"{mode}: a body reached z {bodyZ:F2} against a half depth of " +
+                $"{mode} on {map}: a body reached z {bodyZ:F2} against a half depth of " +
                 $"{AIController.PlayableHalfZ:F1}, so somebody left the arena.");
 
             Assert.LessOrEqual(strayX, AIController.PlayableHalfX + 0.5f,
-                $"{mode}: a free slipper reached x {strayX:F2}, so a piece of ammunition " +
+                $"{mode} on {map}: a free slipper reached x {strayX:F2}, so a piece of ammunition " +
                 "is somewhere no attacker is allowed to walk to.");
 
             Assert.LessOrEqual(strayZ, AIController.PlayableHalfZ + 0.5f,
-                $"{mode}: a free slipper reached z {strayZ:F2}, so a piece of ammunition " +
+                $"{mode} on {map}: a free slipper reached z {strayZ:F2}, so a piece of ammunition " +
                 "is somewhere no attacker is allowed to walk to.");
 
             // ---- THE ATTACKING LOOP ----------------------------------------------------
@@ -262,23 +311,23 @@ namespace TumbangPreso.PlayTests
             // throws and 7 retrievals in four whole rounds. Twenty separates those two by a
             // wide margin in both directions.
             Assert.Greater(tally.Throws, 20,
-                $"{mode}: only {tally.Throws} slippers were thrown in {totalRounds} rounds. A healthy " +
+                $"{mode} on {map}: only {tally.Throws} slippers were thrown in {totalRounds} rounds. A healthy " +
                 "match at this time scale throws upwards of fifty.");
 
             Assert.Greater(tally.Retrievals, 20,
-                $"{mode}: only {tally.Retrievals} loose slippers were picked back up, so the " +
+                $"{mode} on {map}: only {tally.Retrievals} loose slippers were picked back up, so the " +
                 "retrieval half of the loop is stalling and rounds run out of ammunition.");
 
             Assert.Greater(tally.LataKnocks, 0,
-                $"{mode}: the lata was never knocked over in {totalRounds} rounds. The bots throw but " +
+                $"{mode} on {map}: the lata was never knocked over in {totalRounds} rounds. The bots throw but " +
                 "cannot hit, which is an aim or a lane problem rather than a plan problem.");
 
             Assert.Greater(tally.LataRestores, 0,
-                $"{mode}: the taya never righted the lata after a knockdown.");
+                $"{mode} on {map}: the taya never righted the lata after a knockdown.");
 
             // ---- THE DEFENDING LOOP ----------------------------------------------------
             Assert.Greater(tally.Tags, 0,
-                $"{mode}: no attacker was tagged in four whole rounds, so the taya never " +
+                $"{mode} on {map}: no attacker was tagged in four whole rounds, so the taya never " +
                 "closed on a vulnerable retriever.");
 
             // ---- THE TOURNAMENT RULES --------------------------------------------------
@@ -308,11 +357,11 @@ namespace TumbangPreso.PlayTests
             int deadLoopFloor = 600 * totalRounds / Balance.Rounds;
 
             Assert.Less(tally.CampPenalties, deadLoopFloor,
-                $"{mode}: {tally.CampPenalties} can-camping penalties across the match. The " +
+                $"{mode} on {map}: {tally.CampPenalties} can-camping penalties across the match. The " +
                 "defender is parking inside the ring instead of guarding the approach.");
 
             Assert.Less(tally.IdlePenalties, deadLoopFloor,
-                $"{mode}: {tally.IdlePenalties} unretrieved-slipper penalties. Attackers are " +
+                $"{mode} on {map}: {tally.IdlePenalties} unretrieved-slipper penalties. Attackers are " +
                 "not reaching their tsinelas at all, which is the retrieval loop being dead " +
                 "rather than the bots being cautious.");
 

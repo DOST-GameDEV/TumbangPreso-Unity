@@ -26,8 +26,44 @@ namespace TumbangPreso.PlayTests
     /// measurement of the harness. A single round at real speed is slower to run and is the
     /// only reading that is entirely about the bots.
     /// </summary>
+    [Category(WallClock)]
     public class AiDiagnosticProbe
     {
+        /// <summary>
+        /// The category that keeps this class out of the default PlayMode run.
+        ///
+        /// ⚠️⚠️ THIS IS `docs/TODO.md` § 6 BEING DECIDED RATHER THAN RE-DIAGNOSED, AND THE
+        /// ENTRY ASKED FOR EXACTLY THAT: *"a decision, not a bug hunt"*. Three data points now,
+        /// all the same shape: `OneClassicRoundAtRealSpeedIsFullyExplained` failed at **21.6 s**,
+        /// then **29.9 s**, then **37.6 s** against a 20.0 s bound, and passed on immediate
+        /// re-runs with nothing changed between them. 37.6 is not a near miss; it is a round
+        /// that spent most of its wall clock somewhere other than this test.
+        ///
+        /// ⚠️ THE TESTS ARE NOT DELETED AND MUST NOT BE. They are the only thing in the harness
+        /// that explains WHY a bot did something rather than how much, and § 7 is explicit that
+        /// the answer to a slow suite is never to delete the measured tests. What changes is
+        /// cadence: they are run deliberately, when somebody is going to read the report, on a
+        /// machine that is not also compiling something.
+        ///
+        /// ⚠️⚠️ `[Explicit]` WAS TRIED FIRST AND DOES NOT WORK HERE. A PlayMode run in batch
+        /// mode with the attribute in place still reported both of these among 60 tests. The
+        /// exclusion has to live in the COMMAND, which is why the default PlayMode line in
+        /// `CLAUDE.md` § 7 and `docs/TESTING.md` carries `-testCategory "!WallClock"`. Do not
+        /// re-add the attribute believing it changes anything.
+        ///
+        /// ⚠️ AND THE COST IS REAL. This class is roughly **80 real seconds** of a PlayMode
+        /// suite, at 1x by design, and a red result from it carries no information: the next
+        /// session spends a full run learning that again. That is the worst outcome the entry
+        /// names.
+        ///
+        /// Run it on purpose:
+        /// <code>
+        /// Unity.exe -batchmode -runTests -projectPath . -testPlatform PlayMode \
+        ///   -testCategory "WallClock" -testResults Logs/ai.xml -logFile Logs/ai.log
+        /// </code>
+        /// </summary>
+        public const string WallClock = "WallClock";
+
         [TearDown]
         public void TearDown()
         {

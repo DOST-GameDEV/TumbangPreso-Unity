@@ -95,12 +95,24 @@ namespace TumbangPreso.EditorTools.MapKit
         private static readonly string[] Gated =
         {
             IlalimNgTulayBuilder.ScenePath,
+
+            // ⚠️ BAYAN PLAZA JOINED THE GATE ON 2026-08-26, WHICH IS THE POINT OF FIXING A
+            // FINDING RATHER THAN RECORDING IT. `docs/TODO.md` § 4 was the only thing this map
+            // reported: the monument's collider held 0.70 m by 1.90 m of the defender's box, and
+            // the taya is clamped in there and cannot walk around it.
+            // `BayanPlazaMonumentFix` moved the statue 0.45 m west and solved the collider's east
+            // face 0.05 m outside the chalk. An imported `.tscn` can be gated the moment it is
+            // clean; what kept it out was the finding, not the file format.
+            "Assets/TumbangPreso/Scenes/Maps/BayanPlaza.unity",
         };
 
         private static readonly string[] Informational =
         {
+            // ⚠️ ESKINITA STAYS INFORMATIONAL AND ITS FINDINGS ARE REAL: seven floating props
+            // (two washing lines at 1.66 m and 2.47 m, four car bodies at 0.263 m, one car door)
+            // and a washing line 0.79 m from the can. They are written up as their own entry
+            // rather than silently tolerated here.
             "Assets/TumbangPreso/Scenes/Maps/Eskinita.unity",
-            "Assets/TumbangPreso/Scenes/Maps/BayanPlaza.unity",
         };
 
         public static bool Execute(bool gate)

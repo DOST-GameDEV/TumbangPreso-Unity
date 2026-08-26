@@ -37,7 +37,10 @@ namespace TumbangPreso
         {
             get
             {
-                if (_allBots || GameLaunch.Spectator) return -1;
+                // ⚠️ `GameLaunch.AllBots` IS THE ONE A HEADLESS CALLER CAN SET. `_allBots` is a
+                // serialised field authored per scene, so a probe that loads a scene cannot
+                // reach it before this runs. See that switch's note for what it was hiding.
+                if (_allBots || GameLaunch.AllBots || GameLaunch.Spectator) return -1;
                 var net = Net.NetSession.Instance;
                 if (net != null && net.IsNetworked)
                 {

@@ -758,6 +758,15 @@ lies is worse than no telegraph.
 
 ### 8.5 What is still open, and it is the honest part of this section
 
+✅ **ITEMS 1 AND 4 CLOSED 2026-08-26; SEE `docs/TODO.md` § 8 FOR HOW.** Item 1 turned out to have
+been built with the volume pass and never ticked: every ultimate core is a generated `VfxShapes`
+mesh (`Shockfront` for the quake, `NovaShell` for fire and frost, `Spire` plus a `Star` discharge
+for Thunderstrike) and not one is a `PrimitiveType`. Item 4 needed the probe to be able to
+photograph a transient at all, which is now `Visual.IVfxTimeline` plus
+`HeroHazards.CreateExplosionVisual`, and **the first frame it could finally take found two
+shipped defects**: every ground shockwave in the game was drawn at double its size, and
+Thunderstrike blew 62.8 per cent of the frame to white. Both fixed, and rule 5 is a gate now.
+
 Applied so far: silhouette for five effects and axis for one. **That is the cheap half.** What
 has NOT been done, roughly in order of payoff:
 
@@ -776,8 +785,11 @@ has NOT been done, roughly in order of payoff:
    Timing, overlap in a real round and how a corridor reads while it is being laid are all
    unmeasured, and a still cannot answer any of them.
 
-**`docs/TODO.md` § 8 carries this list.** It is not finished work and should not be reported as
-finished work.
+**`docs/TODO.md` § 8 carries this list.** ⚠️ Items 2 and 3 above are also closed (motion: the
+auras thin as they expire; the shared explosion: `ExplosionStyle` gives each fiction its own
+silhouette, colour, debris, flash, shake and cue). **What is genuinely still open is a human
+judgement: do the five read as five different events IN MOTION, in a real round with four
+seats.** A still frame cannot answer that, and this section never claimed it could.
 
 ### 8.6 When an ability is allowed to take the camera, and the answer for all fifteen
 

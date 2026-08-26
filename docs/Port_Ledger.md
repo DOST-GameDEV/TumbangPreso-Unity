@@ -932,8 +932,16 @@ Reconciled every row in this ledger against the real Godot 4.7 baseline (`f8ba5f
 
 3. **Current status summary, re-audited against the code on 2026-08-23:**
    - **MISSING rows:** 0
-   - **PARTIAL rows:** 1 (`match_result.gd`)
+   - **PARTIAL rows:** 0 as of 2026-08-26. `match_result.gd`, the last one, is closed below.
    - **CONVERTED rows:** everything else
+
+   ⚠️⚠️ **THE LAST PARTIAL CLOSED ON 2026-08-26 AND ITS ONE CAVEAT IS WRITTEN INTO THE ROW.**
+   Peer rematch voting is now three named messages (`VoteRematch` peer to host, `RematchTally`
+   host to all, `BeginRematch` host to all), the rules live engine-free in `Core.RematchVote`
+   with four assertions in `Core.Tests`, and the tally is drawn on the card. **The transport
+   itself has still never been run across two processes on a LAN**, which `docs/TODO.md` § 1
+   said from the start and which no test in this repository can stand in for. The row says so
+   rather than reading CONVERTED and implying otherwise.
 
    ⚠️⚠️ **SEVEN OF THE EIGHT PARTIALS WERE STALE BOOKKEEPING, NOT MISSING WORK.** Each was
    opened against a real gap and then closed by a later session that updated the CODE and not
@@ -1076,7 +1084,7 @@ tracked here.
 | `settings_panel.gd` | 508 | `ConvertedSettingsPanel.cs` (552) + `Rebinding.cs` (163) | CONVERTED: rebinding, conflicts, reset, landed-tsinelas colour row |
 | `emote_wheel.gd` | 425 | `EmoteWheel.cs` (445) + `Emotes.cs` (71) + `EmotePlayer.cs` (135) + `EmoteDef.cs` (26) | CONVERTED: hold, steer, release, DANCE in place of PLAY DEAD, camera swing |
 | `character_select.gd` | 341 | `ConvertedCharacterSelect.cs` (347) | CONVERTED: tabs, chalk pips, live 3D |
-| `match_result.gd` | 339 | `MatchResult.cs` (460) + `ConvertedMatchResult.cs` (56) | **PARTIAL**, and it is the only genuine one left. Board, single-player rematch, card turned-up corner and spectator button hiding are done. **Peer rematch voting across the wire is not written**: in a networked match the rematch button acts locally, so four peers can disagree about whether a rematch is happening. Needs an RPC pair (a vote, and a broadcast of the tally) plus the tally on the result card |
+| `match_result.gd` | 339 | `MatchResult.cs` (598) + `ConvertedMatchResult.cs` (56) + `Core/RematchVote.cs` (52) | **CONVERTED 2026-08-26**, ⚠️ with the wire unproven. Board, single-player rematch, card turned-up corner and spectator button hiding were already done. The vote is now three named messages: a peer sends `VoteRematch`, the host tallies and broadcasts `RematchTally`, and `BeginRematch` starts everybody at once. It counts PEERS rather than seats (`ReadyGate`'s rule, because bot seats cannot press a button), the host's own press arrives as sender 0 and is resolved at the door, a second press from one peer changes nothing, a peer leaving re-evaluates the gate, and zero votes never opens it. Those five rules are `Core.RematchVote` and are asserted in `Core.Tests`; the tally line is asserted in `RuntimeLayerTests`. ⚠️ **Two real processes on a LAN have never been run**, so the transport is the one part still taken on faith |
 | `credits_panel.gd` | 292 | `CreditsContent.cs` (174) + `ConvertedCreditsPanel.cs` (48) | CONVERTED: CC-BY strings verbatim |
 | `role_swap_card.gd` | 274 | `RoleSwapCard.cs` (453) | CONVERTED: intermission timeline, swap, standings |
 | `arrow_button.gd` | 262 | `ArrowButtonView.cs` (358) | CONVERTED: unfurl, hover, press, both cues, inner-stroke hover rim |

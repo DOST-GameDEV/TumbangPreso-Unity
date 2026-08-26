@@ -886,6 +886,96 @@ namespace TumbangPreso.Core.Tests
             return s;
         }
 
+        // ===================================================================
+        // THE REMATCH VOTE
+        //
+        // ⚠️⚠️ `docs/TODO.md` § 1 WARNS THAT THE WIRE HALF CANNOT BE FINISHED HONESTLY WITHOUT
+        // TWO REAL PROCESSES ON A LAN, AND THAT IS STILL TRUE OF THE TRANSPORT. It is not true
+        // of the rules the transport carries, and those are the parts that actually broke: the
+        // ready gate shipped with a host that could not satisfy its own gate because its press
+        // arrived with a sender id of 0. `Core.RematchVote` holds the same rules where they can
+        // be asserted rather than played.
+        // ===================================================================
+
+        /// <summary>
+        /// ⚠️ THE HOST'S OWN PRESS ARRIVES AS PEER 0 AND MUST NOT BE A SECOND VOTER.
+        /// `ReadyGate.DeclareReady` carries this note for the same reason. Without the resolve
+        /// the host counts twice in a two-peer match, the gate opens on one press, and a rematch
+        /// starts that the other player never agreed to.
+        /// </summary>
+        [Fact]
+        public void Rematch_TheHostsOwnPressIsResolvedToItsRealId()
+        {
+            var vote = new RematchVote();
+
+            Assert.True(vote.Add(0, hostPeerId: 1));
+            Assert.False(vote.Add(1, hostPeerId: 1));
+
+            Assert.Equal(1, vote.Count);
+            Assert.True(vote.HasVoted(0, hostPeerId: 1));
+            Assert.True(vote.HasVoted(1, hostPeerId: 1));
+        }
+
+        /// <summary>⚠️ A SECOND PRESS FROM ONE PEER CHANGES NOTHING. It is a set, exactly as the
+        /// ready gate is, so a player leaning on the button cannot open a gate alone.</summary>
+        [Fact]
+        public void Rematch_APeerCannotVoteTwice()
+        {
+            var vote = new RematchVote();
+
+            vote.Add(2, hostPeerId: 1);
+            vote.Add(2, hostPeerId: 1);
+            vote.Add(3, hostPeerId: 1);
+
+            Assert.Equal(2, vote.Count);
+            Assert.False(vote.Satisfied(3));
+            Assert.True(vote.Satisfied(2));
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A PEER THAT LEAVES MID-VOTE MUST NOT STRAND THE REST, and this is the failure
+        /// `ReadyGate.OnPeerLeft` was written for: the expected count drops when somebody quits,
+        /// and if nobody re-evaluates, the players still watching wait forever on a gate that is
+        /// already satisfied.
+        /// </summary>
+        [Fact]
+        public void Rematch_ALeavingPeerReleasesTheGate()
+        {
+            var vote = new RematchVote();
+
+            vote.Add(1, hostPeerId: 1);
+            vote.Add(2, hostPeerId: 1);
+            Assert.False(vote.Satisfied(3));
+
+            // Peer 3 quits without voting. Two of two remaining have pressed.
+            Assert.False(vote.Remove(3));
+            Assert.True(vote.Satisfied(2));
+
+            // And a peer that HAD voted takes its vote with it.
+            Assert.True(vote.Remove(2));
+            Assert.Equal(1, vote.Count);
+            Assert.False(vote.Satisfied(2));
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ AN EMPTY LOBBY MUST NOT START A MATCH. `Count >= expected` alone is true at
+        /// 0 >= 0, so a lobby that empties out entirely would have begun a rematch that nobody
+        /// asked for. The floor is the whole reason `Satisfied` exists rather than the caller
+        /// comparing two numbers.
+        /// </summary>
+        [Fact]
+        public void Rematch_NobodyVotingNeverStartsAMatch()
+        {
+            var vote = new RematchVote();
+
+            Assert.False(vote.Satisfied(0));
+            Assert.False(vote.Satisfied(1));
+
+            vote.Add(1, hostPeerId: 1);
+            vote.Clear();
+            Assert.False(vote.Satisfied(0));
+        }
+
         private static int IndexOf(IReadOnlyList<RosterEntry> entries, string id)
         {
             for (int i = 0; i < entries.Count; i++)

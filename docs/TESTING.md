@@ -1,44 +1,100 @@
 # How to test this
 
-Three ways in, cheapest first. **Do the cheap ones before opening Unity**: they run in seconds
-and they tell you whether anything is broken before you spend two minutes on an editor launch.
+**Two gates. Pay the fast one for every change and the full one before a build or for anything
+that touches gameplay.** `docs/TODO.md` § 7 is the reason this page is shaped this way: 🧑,
+2026-08-25, *"we have too many tests and we are wasting so many credits to run them all"*. The
+cost was never the assertions, it was the **Unity launches** (each pays the editor start, the
+asset database and a script compile), and a full pass used to be seven of them. It is three.
+
+---
+
+## 0 · The two gates
+
+**FAST GATE. Every change.** One second plus two Unity launches.
+
+```bash
+dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj --nologo
+```
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -projectPath . -executeMethod TumbangPreso.EditorTools.Checks.RunAll -logFile Logs/checks.log
+```
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -nographics -projectPath . -testPlatform EditMode -testResults Logs/edit.xml -logFile Logs/edit.log
+```
+
+**FULL GATE. Anything touching gameplay, and before every build.** The fast gate plus:
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock" -testResults Logs/play.xml -logFile Logs/play.log
+```
+
+⚠️⚠️ **PlayMode has NO `-nographics` and adding it CRASHES the editor**, not the tests. Unity
+selects `NullGfxDevice` and the first offscreen camera dies inside it; the run writes no `.xml`
+and still exits 0. This page carried the flag on that line for months.
+
+⚠️⚠️ **ALWAYS ASSERT ON THE `.xml`, NEVER ON THE EXIT CODE.** Both that crash and a genuine
+failure come back as 0.
 
 ---
 
 ## 1 · The rules, in one second, no Unity at all
 
 ```bash
-dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj
+dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj --nologo
 ```
 
-**Expect:** `Passed! - Failed: 0, Passed: 32`
+**Expect 67 passed** (2026-08-26).
 
 This is the balance layer: match rotation, scoring, traits, stamina, throw legality, the hit
-window, the combat geometry. Every number here was reproduced from the measurements recorded in
-the Godot `Design.md`, so **if this goes red, the tuning changed**, and that is the one thing in
-this port that must never change by accident.
+window, the combat geometry, the trip and mash arithmetic, and the rematch vote's counting rules.
+Every number here was reproduced from the measurements recorded in `Design.md`, so **if this goes
+red, the tuning changed**, and that is the one thing in this port that must never change by
+accident.
+
+⚠️ **This is where a new rule belongs if it can live here at all.** `CLAUDE.md` § 4: the package
+must never acquire a `UnityEngine` reference, and being engine-free is exactly what lets these run
+in a second instead of behind a two-minute editor launch.
 
 ---
 
-## 2 · Everything else, headless, no clicking
-
-Two suites. Both launch Unity themselves and print a pass count.
+## 2 · The two suites, headless
 
 ```bash
 "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -nographics -projectPath . -testPlatform EditMode -testResults Logs/edit.xml -logFile Logs/edit.log
 ```
 
-**Expect 21 passed.** Wiring, the arena bounds, reconnection, seat reclaim, leader election,
-join codes, names, emotes.
+**Expect 120 passed** (2026-08-26). Wiring, the arena bounds, reconnection, seat reclaim, leader
+election, join codes, names, emotes, the map grades, the dead-feature audit and the HUD's
+measured layout.
 
 ```bash
-"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -nographics -projectPath . -testPlatform PlayMode -testResults Logs/play.xml -logFile Logs/play.log
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock" -testResults Logs/play.xml -logFile Logs/play.log
 ```
 
-**Expect 5 passed.** This one actually **runs the game**: a full four-round match completes with
-the taya rotating through every seat, bodies stay on the ground, the taya is held in the box, an
-attacker walks freely through the chalk, and sprinting drains to fatigue in the time the
-arithmetic says it should.
+**Expect 58 passed** (2026-08-26). This one actually **runs the game**: three whole matches
+(Classic and Hero Strike on Eskinita, Hero Strike on Ilalim ng Tulay), the taya rotating through
+every seat, bodies staying on the ground, the box holding the taya, and sprinting draining to
+fatigue in the time the arithmetic says it should.
+
+### The WallClock category
+
+⚠️⚠️ **`-testCategory "!WallClock"` IS NOT OPTIONAL AND IT IS NOT A SPEED TRICK.**
+`AiDiagnosticProbe` runs a round at **1x for about 80 real seconds** on purpose, so its result
+depends on how busy the machine is: it has failed at 21.6 s, 29.9 s and 37.6 s against a 20.0 s
+bound and passed on immediate re-runs with nothing changed. A red result from it in a default run
+carries no information and costs the next session a full suite to learn that again.
+`docs/TODO.md` § 6 has the decision and the evidence.
+
+⚠️ **`[Explicit]` does not do this in batch mode.** It was tried; the run still reported both
+tests. The exclusion has to be on the command line.
+
+Run it on purpose, when somebody is going to read the report:
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "WallClock" -testResults Logs/ai.xml -logFile Logs/ai.log
+```
 
 Read the counts out of the XML:
 
@@ -48,11 +104,29 @@ powershell -c "$x=[xml](gc Logs/play.xml); $x.'test-run'.passed + '/' + $x.'test
 
 ⚠️ **If a run produces no log at all, Unity never started.** It leaves child processes holding
 the project lock after it exits. Kill `Unity`, `Unity.ILPP.Runner` and `UnityPackageManager`,
-then try again. An empty log is not a passing run.
+delete `Temp/UnityLockfile`, then try again. An empty log is not a passing run.
+
+⚠️⚠️ **A STALE `Temp/UnityLockfile` LOOKS EXACTLY LIKE A BROKEN INSTALL.** On 2026-08-26 one made
+the package manager answer `path ... Received undefined` on every launch, including against an
+empty project, and the session before it concluded Unity itself was broken machine-wide. Deleting
+the file fixed it outright. **Check it before believing anything worse.**
 
 ---
 
 ## 3 · The five checkers
+
+⚠️⚠️ **RUN THEM AS ONE LAUNCH. THE INDIVIDUAL COMMANDS BELOW ARE FOR WHEN YOU WANT ONE REPORT,
+NOT FOR A VERIFICATION PASS.**
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -projectPath . -executeMethod TumbangPreso.EditorTools.Checks.RunAll -logFile Logs/checks.log
+```
+
+`Checks.RunAll` runs `HeadlessCheck`, `ArenaCheck`, `MapGeometryCheck`, `AudioCueCheck` and
+`SceneScriptCheck` in one editor start and exits non-zero if any fails. It runs all five **even
+after one fails**, because stopping at the first is how a session fixes one thing, relaunches,
+finds the second, and pays the start-up cost five times over. `Logs/checks.txt` says which one
+went red; each check still writes its own report beside it.
 
 Each writes a readable report into `Logs/` and exits non-zero on failure.
 

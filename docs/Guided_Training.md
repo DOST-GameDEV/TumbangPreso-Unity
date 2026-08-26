@@ -55,6 +55,21 @@ debugging. `Backspace` exits training. Completion returns to the main menu with 
 - The original tutorial pages still open and turn exactly as before.
 - A `START TRAINING` button appears inside the tutorial panel.
 - All 17 objectives can be completed with player input or skipped with `N`.
+
+⚠️⚠️ **TWO OBJECTIVES COULD NOT BE COMPLETED BY PLAYING, AND BOTH WERE FIXED 2026-08-26.** The
+acceptance line above was the claim; the code did not meet it, and `N` hid both. A route whose
+only exit is the skip key has failed.
+
+- **Lesson 16, trip recovery, could strand the player.** The trip is applied ONCE on entering the
+  lesson and the exit condition is five ACCEPTED presses, but a fall holds at most
+  (2.50 - 0.90) / 0.20 = **8** of them. Watching the first fall out instead of mashing reached
+  zero with the counter short and nothing left to press. It now puts the player back down until
+  the counter is met, which is also the honest teaching: mashing is what ends a fall.
+- **Lessons 9 to 12 cannot be answered by a seat with no hero kit.** `AbilityInfo`, `Skill1`,
+  `Skill2` and `Ultimate` all read `HeroAbilitySystem`, and Classic is a shipping mode with no
+  powers at all (`CLAUDE.md` § 1), so the key produced no cast and the check stayed false
+  forever. `LessonNeedsAKit` completes them automatically when there is no kit. The route
+  launches in Hero Strike today, so this is a guard against the day it does not.
 - The player experiences both attacker and defender verbs in one session.
 - Core tests, runtime compilation, EditMode compilation, PlayMode compilation and a standalone
   player build pass.

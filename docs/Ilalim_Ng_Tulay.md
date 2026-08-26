@@ -182,8 +182,17 @@ centre across |z| = `16.5 + 7.8 = 24.3`, so the measured window is
 `(33.0 + 15.6) / 18 = 2.70 s`. The earlier trigger watched only the origin and did not match
 the train still visible above the street.
 
-**Hero Strike gets `OverheadPassWindow.CooldownRate = 2.0` while the consist is over the
-street.** Named OVERCLOCK, which ties it to the PC Express theme. It is a power window every
+**Hero Strike gets a cooldown OVERCLOCK while the consist is over the street**, named for the
+PC Express theme.
+
+⚠️⚠️ **THE AUTHORED NUMBER IS `OverclockSeconds` = 6.75 s, NOT A RATE, AS OF 2026-08-26.** The
+rate is derived: `1 + 6.75 / 2.70 = 3.5`. The paragraphs below that talk about "2.0" are the
+history and are kept because the argument matters, but the constant a designer edits is the
+number of seconds a pass takes off a cooldown. A rate `r` held for a window `W` advances the
+cooldown clock by `W * r`, so it always saved a flat `W * (r - 1)`; what a hand-set rate hid was
+which flat amount. `MapGradeSanityTests.TheOverclockWindowAgreesWithTheTrainThatCausesIt` asserts
+the derived rate still delivers the authored saving and that the window length still matches this
+train. It is a power window every
 24 s, and reading it is a skill: bank an ultimate for it, hold a barricade until it opens, save
 a dash. That is exactly the counterplay `VISION.md` § 1.1 says Hero Strike exists to add.
 
@@ -329,14 +338,16 @@ of the twenty-five squares under each pole were over the shopfront apron.
   camera is least likely to be pointed. `MapGeometryCheck` measures geometry and cannot see
   brightness at all.
 
-- **The overclock window loses most of its point if Hero Strike cooldowns get long.** § 3.5 sets
-  `OverclockRate` 2.0 for 2.70 s every 24 s, and doubling the rate saves 2.70 s of cooldown
-  whatever the cooldown is. Against today's 6.5 s skill that is **41 per cent of a cycle**;
-  against the 34 s cooldown proposed in `Hero_Strike_Balance.md` § 3.1 it is **7.9 per cent**.
-  A flat saving or a charge would survive a cooldown retune where a multiplier does not.
-  `Hero_Strike_Balance.md` § 4.5 has the proposal; `TODO.md` § 5 is the measurement it replaces.
+- ✅ **The overclock window is a flat saving now, 2026-08-26.** This entry read: doubling the
+  rate saves 2.70 s of cooldown whatever the cooldown is, which was **41 per cent of a cycle**
+  against a 6.5 s skill and **7.9 per cent** against the 34 s cooldown that landed, so a flat
+  saving or a charge would survive a retune where a multiplier does not. That is now what it is:
+  `OverclockSeconds` = **6.75 s** is authored and `OverclockRate` = 3.5 is derived from it and the
+  2.70 s window. Nothing changes in play today; what changes is which number goes stale when
+  cooldowns move again. `TODO.md` § 5 has the arithmetic and what is still owed.
 
-- Bayan Plaza's monument stands inside the chalk. `TODO.md` § 4.
+- ✅ **Bayan Plaza's monument is out of the chalk, 2026-08-26**, and the map is gated by
+  `MapGeometryCheck` now. `TODO.md` § 4.
 
 ---
 

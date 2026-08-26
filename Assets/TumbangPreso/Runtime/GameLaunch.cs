@@ -90,6 +90,29 @@ namespace TumbangPreso
         public static int SoloSeat = 1;
 
         /// <summary>
+        /// Fill every seat with a bot, including the one a human would normally take.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE `BotBehaviourProbe` WAS MEASURING A THREE-BOT MATCH AND
+        /// REPORTING IT AS FOUR. `SoloSeat` defaults to **1**, so in a headless run seat 1 got a
+        /// `PlayerInputReader` and no input: measured across all three probe matches on
+        /// 2026-08-26, seat 1 travelled **23.1 m, 68.3 m and 69.1 m** and scored **30, 50 and
+        /// 40**, against 460 to 1190 m and 3000 to 6700 points for the other three. Every
+        /// per-seat number in the probe's report was an average over one seat that could not
+        /// play, and the "they leave spawn" floor of 20 m was set just low enough to let it
+        /// through.
+        ///
+        /// ⚠️ `MatchInstaller` ALREADY HAD `_allBots` AND IT COULD NOT BE REACHED. It is a
+        /// `[SerializeField]` on a component in the scene, so it is authored per scene and a
+        /// caller that loads a scene cannot set it before `Awake` reads it. This is the same
+        /// switch where the other launch switches live.
+        ///
+        /// ⚠️ IT IS NOT `Spectator`. Spectating also builds a fourth camera rig and changes the
+        /// HUD, which is a second variable in a measurement, and this one has to change exactly
+        /// one thing.
+        /// </summary>
+        public static bool AllBots;
+
+        /// <summary>
         /// ⚠️ A SPECTATOR HOLDS NO SEAT AND SPAWNS NO CHARACTER. It is skipped by the spawn
         /// path, excluded from the ready gate's expected count, and its slot is filled by the
         /// same placeholder-AI path that fills any empty one — so a 2v2 stays a 2v2.

@@ -274,7 +274,20 @@ dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj
 ```
 
 ```bash
-"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testResults Logs/play.xml -logFile Logs/play.log
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock" -testResults Logs/play.xml -logFile Logs/play.log
+```
+
+⚠️⚠️ **`-testCategory "!WallClock"` IS PART OF THE COMMAND, NOT AN OPTIMISATION.**
+`AiDiagnosticProbe` runs a round at 1x for about 80 real seconds by design, so its result depends
+on how busy the machine is: it has failed at 21.6 s, 29.9 s and 37.6 s against a 20.0 s bound and
+passed on immediate re-runs with nothing changed. `docs/TODO.md` § 6 carries the decision.
+⚠️ `[Explicit]` does NOT do this in batch mode; it was tried and the tests still ran.
+Run them on purpose with `-testCategory "WallClock"`.
+
+**All five editor checks, in one launch:**
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -projectPath . -executeMethod TumbangPreso.EditorTools.Checks.RunAll -logFile Logs/checks.log
 ```
 
 ```bash
@@ -295,10 +308,16 @@ failure come back as 0.
 comes back empty and the log file is sometimes never created, which is indistinguishable from
 a failed run.
 
-⚠️ **Unity leaves child processes holding the project lock after it exits.**
-`Unity.ILPP.Runner`, `UnityPackageManager` and `UnityShaderCompiler` can outlive the editor,
-and while they do the next launch silently does nothing: no log, no error, no exit code. If a
-run produces no log at all, check `Temp/UnityLockfile`.
+⚠️⚠️ **Unity leaves child processes holding the project lock after it exits, AND A STALE
+`Temp/UnityLockfile` LOOKS EXACTLY LIKE A BROKEN INSTALL.** `Unity.ILPP.Runner`,
+`UnityPackageManager` and `UnityShaderCompiler` can outlive the editor, and while they do the
+next launch silently does nothing: no log, no error, no exit code.
+
+**On 2026-08-26 a stale lockfile with no Unity process alive made the package manager answer
+`path ... Received undefined` on every launch, including against an empty project.** The session
+before it concluded Unity was broken machine-wide, gave up on EditMode, PlayMode and every build,
+and handed that on as a blocker. `rm Temp/UnityLockfile` fixed it outright. **Check that file
+before believing anything worse**, and check it whether or not a Unity process is running.
 
 ⚠️ **Bash heredocs are unreliable here.** Write the script to a file and run it.
 
@@ -332,10 +351,18 @@ every file in a pre-existing output directory was freshly emitted.
 
 - `Core.Tests` asserts every balance number in about a second.
 - `BotBehaviourProbe` runs a whole match in both modes and prints throws, retrievals, tags,
-  skills, ultimates and penalties. ⚠️ **It is seeded. Do not change the seed to make a run
-  pass**; if a run goes red, change the code.
+  skills, ultimates and penalties, on Eskinita and on Ilalim ng Tulay. ⚠️ **It is seeded. Do not
+  change the seed to make a run pass**; if a run goes red, change the code.
+  ⚠️⚠️ **AND ITS NUMBERS ARE LIVENESS FLOORS, NEVER COMPARISONS.** It steps in real time at 6x
+  and the bots think in frames, so two runs of the same seeded build measured 530 and then 83
+  unretrieved-slipper penalties. Every open balance question in `docs/TODO.md` that asks for an
+  A/B is blocked on this; § 10 there is the fixed-delta work that would unblock them.
+  ⚠️ **Every report from before 2026-08-26 is three seats' worth**, because `GameLaunch.SoloSeat`
+  defaults to 1 and that seat was a parked human until `GameLaunch.AllBots` landed. Do not compare
+  an old report against a new one.
 - `AiDiagnosticProbe` runs one round at 1x with every decision written out, for WHY rather
-  than how much.
+  than how much. ⚠️ **`[Category("WallClock")]`, excluded from the default PlayMode run.** See
+  § 7's command and `docs/TODO.md` § 6.
 - `AspectRatioProbes` drives real layout through nine resolutions.
 - `SceneScriptCheck` refuses a build scene holding a component the PLAYER cannot bind to a
   script. ⚠️⚠️ **It is the only check that can see this class of bug, because every other one
@@ -347,6 +374,15 @@ every file in a pre-existing output directory was freshly emitted.
   has holes, or whose furniture stands inside the defender's box. ⚠️ **It found six faults on a
   map whose four showcase renders had already been signed off**, including both pavements
   floating 0.15 m over open air. A render only shows the angles somebody chose.
+- `Checks.RunAll` runs `HeadlessCheck`, `ArenaCheck`, `MapGeometryCheck`, `AudioCueCheck` and
+  `SceneScriptCheck` in ONE editor launch, and runs all five even after one fails. ⚠️ **The
+  launches are the cost of a verification pass, not the assertions.** A full pass is three Unity
+  launches plus `dotnet test`; it used to be seven. `GameBuilder` still runs `SceneScriptCheck`
+  itself, deliberately: a build-time gate must not depend on somebody having run this first.
+- `AbilityShowcaseProbe` photographs the ability TRANSIENTS as well as the persistent zones, and
+  **fails a run where one blows more than 12 per cent of the frame to white**. That bound is
+  `docs/VISION.md` § 2 rule 5 as a number, and the first run of it found Zack's ultimate at
+  **62.8 per cent** against 8.3 for the worst of everything else.
 - `tools/` holds player-side capture scripts.
 
 Three faults from one session that no amount of playing would have found: a HUD string rebuilt

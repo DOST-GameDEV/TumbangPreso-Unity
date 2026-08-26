@@ -31,8 +31,15 @@ namespace TumbangPreso.EditorTools
 
         private static readonly System.Text.StringBuilder Report = new System.Text.StringBuilder();
 
-        public static void Run()
+        /// <summary>⚠️ `Run` EXITS THE EDITOR AND `Execute` DOES NOT, and the split exists so
+        /// `Checks` can run this alongside the other three in one launch. `EditorApplication.Exit`
+        /// kills the process, so a batched caller that reached this one first would never reach
+        /// the rest.</summary>
+        public static void Run() => EditorApplication.Exit(Execute() ? 0 : 1);
+
+        public static bool Execute()
         {
+            Report.Clear();
             int failures = 0;
 
             try
@@ -73,7 +80,7 @@ namespace TumbangPreso.EditorTools
             Flush();
 
             Debug.Log(Report.ToString());
-            EditorApplication.Exit(failures > 0 ? 1 : 0);
+            return failures == 0;
         }
 
         private static void Flush()

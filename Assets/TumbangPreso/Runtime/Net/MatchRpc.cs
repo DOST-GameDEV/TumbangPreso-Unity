@@ -70,6 +70,9 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("Seating", OnSeatingMsg);
             cm.RegisterNamedMessageHandler("DeclareReady", OnDeclareReadyMsg);
             cm.RegisterNamedMessageHandler("BeginCountdown", OnBeginCountdownMsg);
+            cm.RegisterNamedMessageHandler("VoteRematch", OnVoteRematchMsg);
+            cm.RegisterNamedMessageHandler("RematchTally", OnRematchTallyMsg);
+            cm.RegisterNamedMessageHandler("BeginRematch", OnBeginRematchMsg);
             cm.RegisterNamedMessageHandler("SyncMap", OnSyncMapMsg);
             cm.RegisterNamedMessageHandler("SelectMap", OnSelectMapMsg);
             cm.RegisterNamedMessageHandler("SyncDiff", OnSyncDiffMsg);
@@ -249,6 +252,75 @@ namespace TumbangPreso.Net
         private void OnBeginCountdownMsg(ulong senderClientId, FastBufferReader reader)
         {
             FindFirstObjectByType<ReadyGate>()?.StartLocalCountdown();
+        }
+
+        // -------------------------------------------------------------------
+        // THE REMATCH VOTE
+        //
+        // ⚠️⚠️ THREE MESSAGES, NOT ONE, AND THE MIDDLE ONE IS THE POINT. A vote that only
+        // travelled peer-to-host would start the rematch correctly and leave the other three
+        // players staring at a button they had already pressed, with no way to tell whether
+        // anybody else had. `match_result.gd` draws the tally for the same reason: waiting is
+        // only tolerable when you can see what you are waiting for.
+        //
+        // ⚠️ IT MIRRORS THE READY GATE ABOVE DELIBERATELY, down to resolving the host's own
+        // sender id of 0 at the door. The two are the same problem (count the PEERS, not the
+        // characters, because bot-filled seats cannot press anything) and a second shape for it
+        // is a second thing to get wrong.
+        // -------------------------------------------------------------------
+
+        public void VoteRematchServerRpc(int peerId)
+        {
+            if (NetAuthority.IsHost)
+            {
+                FindFirstObjectByType<UI.MatchResult>()?.HostReceiveVote(peerId);
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(peerId);
+            _nm.CustomMessagingManager.SendNamedMessage("VoteRematch", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnVoteRematchMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            FindFirstObjectByType<UI.MatchResult>()?.HostReceiveVote((int)senderClientId);
+        }
+
+        /// <summary>HOST ONLY. Broadcasts "n of m have voted" so every screen can draw it.</summary>
+        public void RematchTallyClientRpc(int votes, int expected)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+
+            using var writer = new FastBufferWriter(32, Allocator.Temp);
+            writer.WriteValueSafe(votes);
+            writer.WriteValueSafe(expected);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("RematchTally", writer);
+        }
+
+        private void OnRematchTallyMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int votes);
+            reader.ReadValueSafe(out int expected);
+            FindFirstObjectByType<UI.MatchResult>()?.ShowTally(votes, expected);
+        }
+
+        /// <summary>HOST ONLY. Every playing peer has voted; everyone starts.</summary>
+        public void BeginRematchClientRpc()
+        {
+            if (!NetAuthority.IsHost) return;
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("BeginRematch", writer);
+        }
+
+        private void OnBeginRematchMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            FindFirstObjectByType<UI.MatchResult>()?.BeginRematchLocally();
         }
 
         // -------------------------------------------------------------------
@@ -1178,6 +1250,13 @@ namespace TumbangPreso.Net
             }
 
             FindFirstObjectByType<ReadyGate>()?.OnPeerLeft(peerId);
+
+            // ⚠️ THE REMATCH VOTE HAS THE SAME HOLE AND IS CLOSED AT THE SAME PLACE. A peer that
+            // quits from the result screen drops the expected count, and with nobody
+            // re-evaluating, the players still watching wait forever on a gate that is already
+            // satisfied. See MatchResult.OnPeerLeft.
+            FindFirstObjectByType<UI.MatchResult>()?.OnPeerLeft(peerId);
+
             BroadcastWorldSnapshot();
         }
 

@@ -100,6 +100,15 @@ The working rules that came out of that:
 5. **A screenshot taken mid-fight must still show the lata, the chalk and every player.** If
    it does not, the effect is too big however good it looks alone.
 
+   ✅ **THIS RULE IS MEASURED AND GATED AS OF 2026-08-26, AND IT CAUGHT SOMETHING THE DAY IT
+   WAS.** `AbilityShowcaseProbe` photographs the ability TRANSIENTS as well as the persistent
+   zones, and fails a run in which one blows more than **12 per cent** of the frame to white
+   (Rec. 601 luminance at or above 245/255; a saturated colour is a colour, white is an absence
+   of picture). The bound is measured rather than picked: the empty street reads 3.0 per cent,
+   the ability corridors 3.0, the deliberate worst-frame pile-up 4.1, and the loudest legitimate
+   effect 8.3. Zack's Thunderstrike read **62.8**, with the road markings themselves gone. It is
+   now 6.5. `docs/TODO.md` § 8 has the two defects that first frame found.
+
 ⚠️ **THIS IS NOT ONLY AN ART CONSTRAINT, IT IS A GAMEPLAY ONE.** `AiTuning.HazardAvoidMaxRadius`
 exists because a bot cannot path around a disc that covers half the arena; it walks the
 perimeter until the round ends. When the footprints come down, that cap stops mattering and
@@ -191,9 +200,20 @@ has been wrong repeatedly and expensively:
 
 - `dotnet test Core.Tests/...` for every balance number, in about a second.
 - `BotBehaviourProbe` runs a whole match in both modes and prints throws, retrievals, tags,
-  skills, ultimates and penalties. It is **seeded**; do not change the seed to make a run pass.
+  skills, ultimates and penalties, on Eskinita and on Ilalim ng Tulay. It is **seeded**; do not
+  change the seed to make a run pass. ⚠️ **Its numbers are LIVENESS FLOORS, never comparisons.**
+  It steps in real time at 6x and the bots think in frames, so two runs of the same seeded build
+  measured 530 and then 83 unretrieved-slipper penalties. `docs/TODO.md` § 10 is the fixed-delta
+  work that would make a comparison mean something.
 - `AiDiagnosticProbe` runs one round at 1x with every decision written out, when you need to
-  know WHY rather than how much.
+  know WHY rather than how much. ⚠️ **It is `[Category("WallClock")]` and excluded from the
+  default PlayMode run** with `-testCategory "!WallClock"`, because at 1x its result depends on
+  how busy the machine is: it has failed at 21.6 s, 29.9 s and 37.6 s against a 20.0 s bound and
+  passed on immediate re-runs. `docs/TODO.md` § 6.
+- `AbilityShowcaseProbe` photographs every ability, including the TRANSIENTS, and fails a run
+  where one blows more than 12 per cent of a frame to white. That is rule 5 above as a number.
+- `Checks.RunAll` runs all five editor checks in ONE Unity launch. The launches are what a
+  verification pass costs, not the assertions.
 - `AspectRatioProbes` drives real layout through nine resolutions.
 - `tools/` has player-side screenshot scripts for anything a picture would settle.
 

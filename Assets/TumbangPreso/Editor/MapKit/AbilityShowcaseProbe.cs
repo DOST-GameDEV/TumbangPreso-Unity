@@ -31,6 +31,23 @@ namespace TumbangPreso.EditorTools.MapKit
     /// ⚠️⚠️ THE FILENAMES CARRY A VERSION AND `Version` MUST BE BUMPED EVERY TIME. `CLAUDE.md`
     /// § 6.1: chat clients cache by name, so overwriting a render leaves the previous image on
     /// screen and the review is conducted against a picture that is not on disk any more.
+    ///
+    /// ⚠️⚠️ AND IT NOW PHOTOGRAPHS THE TRANSIENTS TOO, WHICH IS WHAT IT COULD NEVER DO.
+    /// `docs/TODO.md` § 8 item 2, open since 2026-08-25: this probe captured *"the persistent
+    /// zones only, and every one of these changes is on a transient that lives 0.4 to 1.1 s, so
+    /// the v7 captures do not show a single one of them."* Every blast core, every shockwave and
+    /// all three ultimates are transients, so the entire § 8 silhouette pass — a nova shell
+    /// instead of a sphere, a shockfront with a leading edge, an ion spire instead of a disc —
+    /// was reviewed against pictures that could not contain it.
+    ///
+    /// Two things were in the way and both are fixed rather than worked around:
+    ///  * `CreateExplosion` opened with `if (round == null) return;`, so in an edit-mode capture
+    ///    it drew nothing at all. `HeroHazards.CreateExplosionVisual` is now the half that puts
+    ///    pixels on screen and it does not need a match.
+    ///  * `Update` never runs here, so a spawned blast froze on its first frame: scale 0.35, the
+    ///    moment before it becomes the thing being argued about. `Visual.VfxTimeline.StepAll`
+    ///    winds every effect to the same fraction of its own life, through the same code the
+    ///    player's frame comes from.
     /// </summary>
     public static class AbilityShowcaseProbe
     {
@@ -38,8 +55,41 @@ namespace TumbangPreso.EditorTools.MapKit
         private const int ShotWidth = 1280;
         private const int ShotHeight = 720;
 
+        /// <summary>
+        /// The share of a frame that may sit at or above <see cref="BlownLevel"/> before the
+        /// capture is a failure rather than a picture.
+        ///
+        /// ⚠️⚠️ THIS IS `docs/VISION.md` § 2 RULE 5 AS A NUMBER, AND IT EXISTS BECAUSE THE RULE
+        /// WAS BEING BROKEN BY A FACTOR OF SEVEN WITH NOBODY ABLE TO SEE IT. Rule 5 is a picture
+        /// test: *"a screenshot taken mid-fight must still show the lata, the chalk and every
+        /// player"*. A frame that is 60 per cent white shows none of them, and no amount of
+        /// reading the code says so.
+        ///
+        /// ⚠️ THE BOUND IS MEASURED, NOT PICKED. The v9 set, with Thunderstrike's flash still
+        /// wrong: the empty street reads **3.0 per cent**, the worst legitimate effect
+        /// (Cheska's frost blast) **8.3 per cent**, the ability corridors **3.0**, the deliberate
+        /// worst-frame pile-up **4.1**, and Thunderstrike **62.8**. Everything the team has
+        /// already accepted fits under 9; the one defect sits seven times over it. 12 leaves
+        /// room for a brighter effect somebody argues for on purpose and still catches this
+        /// class of fault on the day it lands.
+        /// </summary>
+        private const float MaxBlownFraction = 0.12f;
+
+        /// <summary>Luminance at which a pixel counts as blown, out of 255.</summary>
+        private const int BlownLevel = 245;
+
+        /// <summary>Frames that broke the bound, reported together at the end of a run.</summary>
+        private static readonly System.Collections.Generic.List<string> Blown =
+            new System.Collections.Generic.List<string>();
+
+        /// <summary>⚠️ ONLY THE TRANSIENTS ARE GATED, and only while one is on screen. A flash
+        /// is the thing that blows a frame; a floor decal cannot. Measuring the persistent shots
+        /// too would add nothing and would make the bound answer to a lighting change on the
+        /// map rather than to an ability.</summary>
+        private static bool _gateBlowout;
+
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v7";
+        private const string Version = "v10";
 
         [MenuItem("Tumbang Preso/Capture Ability Showcase")]
         public static void RunFromMenu() => Execute();
@@ -141,7 +191,45 @@ namespace TumbangPreso.EditorTools.MapKit
                 Shot("worstframe_taya", new Vector3(0.0f, 1.65f, 0.4f),
                      Quaternion.Euler(6.0f, 180.0f, 0.0f), 72.0f);
 
+                // ---------------------------------------------------------------
+                // 4. THE TRANSIENTS: the four blast styles and Zack's ultimate, each
+                //    photographed at the moment it is biggest on screen rather than at
+                //    the frame it is born on. See the class note for why this could not
+                //    be done before.
+                // ---------------------------------------------------------------
+
+                Clear(spawned);
+                _gateBlowout = true;
+
+                Transient("blast_fire", () => HeroHazards.CreateExplosionVisual(
+                    Vector3.zero, 4.8f, null, HeroHazards.ExplosionStyle.Fire));
+
+                Transient("blast_quake", () => HeroHazards.CreateExplosionVisual(
+                    Vector3.zero, 4.5f, null, HeroHazards.ExplosionStyle.Quake, Vector3.forward));
+
+                Transient("blast_frost", () => HeroHazards.CreateExplosionVisual(
+                    Vector3.zero, 4.2f, null, HeroHazards.ExplosionStyle.Frost));
+
+                Transient("blast_slipper", () => HeroHazards.CreateExplosionVisual(
+                    Vector3.zero, 2.2f, null, HeroHazards.ExplosionStyle.Slipper));
+
+                Transient("blast_thunder", () => HeroHazards.CreateThunderstrike(Vector3.zero, 7.0f));
+
+                _gateBlowout = false;
+
                 Debug.Log($"[AbilityShowcaseProbe] wrote the {Version} set to {OutDir}.");
+
+                if (Blown.Count > 0)
+                {
+                    foreach (string line in Blown)
+                        Debug.LogError($"[AbilityShowcaseProbe] FAIL {line}");
+
+                    Debug.LogError("[AbilityShowcaseProbe] see MaxBlownFraction: VISION.md " +
+                                   "section 2 rule 5 asks that a mid-fight frame still show the " +
+                                   "lata, the chalk and every player.");
+                    return false;
+                }
+
                 return true;
             }
             finally
@@ -165,6 +253,62 @@ namespace TumbangPreso.EditorTools.MapKit
             // the asymmetry `Visual.DamageVignette` exists to answer.
             Shot(name, new Vector3(0.0f, 4.6f, -3.4f), Quaternion.Euler(46.0f, 0.0f, 0.0f), 55.0f);
             Shot(name + "_eye", new Vector3(0.0f, 1.65f, -4.6f), Quaternion.Euler(6.0f, 0.0f, 0.0f), 70.0f);
+        }
+
+        /// <summary>
+        /// One transient effect, wound to the moment worth looking at, then swept up.
+        ///
+        /// ⚠️⚠️ IT SWEEPS BY DIFFING THE SCENE ROOTS, NOT BY COLLECTING RETURN VALUES. A blast
+        /// is not one object: `CreateExplosionVisual` alone creates a core, a ground wave, up to
+        /// 22 debris cubes, a light and a popup, and `CreateThunderstrike` adds three lightning
+        /// columns and twelve sparks. None of them are returned, and `Object.Destroy(go, t)`
+        /// never comes due in edit mode, so anything not swept here would survive into the NEXT
+        /// capture and quietly appear in a frame that is supposed to show one ability.
+        ///
+        /// ⚠️ AT 0.35 OF EACH EFFECT'S OWN LIFE. `VfxTimeline.StepAll`'s note has the reasoning:
+        /// a fraction rather than a time, because a core runs 0.5 s and its wave 0.4 s and
+        /// asking both for the same number of seconds photographs them at different moments of
+        /// the same event. 0.35 is past the birth frame, before the fade takes the alpha, and it
+        /// is where a silhouette is at its most legible.
+        /// </summary>
+        private static void Transient(string name, System.Action make)
+        {
+            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            var before = new System.Collections.Generic.HashSet<GameObject>(scene.GetRootGameObjects());
+
+            make();
+
+            int stepped = Visual.VfxTimeline.StepAll(0.35f);
+
+            Shot(name, new Vector3(0.0f, 4.6f, -6.2f), Quaternion.Euler(30.0f, 0.0f, 0.0f), 62.0f);
+            Shot(name + "_eye", new Vector3(0.0f, 1.65f, -7.4f), Quaternion.Euler(6.0f, 0.0f, 0.0f), 72.0f);
+
+            Debug.Log($"[AbilityShowcaseProbe] {name}: stepped {stepped} timed effect(s).");
+
+            foreach (var go in scene.GetRootGameObjects())
+                if (!before.Contains(go)) Object.DestroyImmediate(go);
+        }
+
+        /// <summary>
+        /// What share of a frame is at or above <see cref="BlownLevel"/>.
+        ///
+        /// ⚠️ LUMINANCE, NOT THE MAX CHANNEL. A saturated blue at full strength is a colour;
+        /// white is an absence of picture. Rec. 601 weights are what separates the two, and the
+        /// whole point of this measurement is to catch the second without punishing the first.
+        /// </summary>
+        private static float BlownFraction(Texture2D tex)
+        {
+            var pixels = tex.GetPixels32();
+            if (pixels.Length == 0) return 0.0f;
+
+            int over = 0;
+            foreach (var p in pixels)
+            {
+                int luma = (p.r * 299 + p.g * 587 + p.b * 114) / 1000;
+                if (luma >= BlownLevel) over++;
+            }
+
+            return over / (float)pixels.Length;
         }
 
         private static void Clear(System.Collections.Generic.List<GameObject> live)
@@ -208,9 +352,18 @@ namespace TumbangPreso.EditorTools.MapKit
             RenderTexture.active = null;
             cam.targetTexture = null;
 
+            float blown = BlownFraction(tex);
+
             string path = Path.Combine(OutDir, $"ability_{name}_{Version}.png");
             File.WriteAllBytes(path, tex.EncodeToPNG());
-            Debug.Log($"[AbilityShowcaseProbe] {path} ({new FileInfo(path).Length / 1024} KB)");
+            Debug.Log($"[AbilityShowcaseProbe] {path} ({new FileInfo(path).Length / 1024} KB, " +
+                      $"{blown * 100.0f:F1}% blown)");
+
+            if (_gateBlowout && blown > MaxBlownFraction)
+            {
+                Blown.Add($"{name}: {blown * 100.0f:F1}% of the frame is at or above " +
+                          $"{BlownLevel}/255, over the {MaxBlownFraction * 100.0f:F0}% bound");
+            }
 
             Object.DestroyImmediate(tex);
             rt.Release();
