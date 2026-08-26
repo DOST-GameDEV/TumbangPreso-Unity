@@ -1035,6 +1035,54 @@ preferred width is a property of the font, the size and the string and does not 
 the object is switched on. **What that cannot see is a box whose width is computed by a layout
 group only while it is active**, and the report marks those lines `[hidden]`.
 
+### 18.1 What the first three runs found, including two faults in the probe itself
+
+✅ **THE ONE REAL DEFECT: the round line overflowed its card at every resolution.**
+`RoundLabel` needed **510 units for `ROUND 8 / 8   ·   DEFENDER: <14 characters>` in a 240-unit
+box**, so it hung 270 units out, on all nine screens. The top-centre column is measured through
+the label now and the wooden plate stays at its authored 240, because **the plate was never what
+was clipping**: the round line is a SIBLING of the card in `TopCentre`, not a child of it, and
+the first fix widened the card and changed nothing.
+
+⚠️⚠️ **AND MEASURING IT ONCE AT BUILD TIME IS NOT ENOUGH.** The build-time version produced a
+column of **276 units at 720p, 304 at 900p, 315 at 1080p and 306 at 1440p** against 500 to 525
+needed. Two faults in one number: the font's glyph metrics are not final while the HUD is being
+constructed, so the measurement is taken cold; and `preferredWidth` comes from integer pixel
+metrics divided by the canvas scale, so it moves about **14 per cent** across the shipped
+resolutions for one unchanged string. `Hud.FitTopCentre` re-measures on a text change or a scale
+change, and is guarded because its caller runs every frame (`CLAUDE.md` § 7.1 records a HUD
+string rebuilt per frame costing the 6x probe an eighth of its frames).
+
+⚠️⚠️ **TWO OF THE THREE FINDINGS WERE THE PROBE BEING WRONG, AND BOTH ARE WORTH KEEPING WRITTEN
+DOWN BECAUSE THEY ARE THE SAME MISTAKE IN TWO PLACES.**
+
+**18.1a A rect is not a box when something else sizes it.** The first run reported **205
+overflows** and almost all of them were labels that had never been laid out: a `RectTransform`
+that has not run reports its authored `sizeDelta`, which for anything built by `MenuKit.Stretch`
+or driven by a parent is the uGUI default of **100 x 100**. So `LataHintLabel` came back as a
+527-unit string in a "100-unit box" while the card it lives in is sized by `Hud.WidestLineWidth`
+and fits it exactly. Then the same fault in its other form: a label whose parent
+`HorizontalOrVerticalLayoutGroup` has `childControlWidth` is sized to ITS OWN preferred width, so
+the rect tracks whatever string is in it right now; swapping in a longer one and comparing
+against the old rect reported `RoundLabel` as "needs 510 in a 305-unit box" when the column around
+it was already over 510 wide. **Both are now reported and not asserted**, and the fitter case was
+exempt from the start for exactly this reason.
+
+**18.1b The HUD is not one canvas.** `CanArrow` was reported as running **3,323,799 units off the
+LEFT of the screen**. `OffscreenIndicators` builds its OWN canvas for the arrows that point at the
+lata, and converting one of its corners into the HUD canvas's local space is two coordinate
+systems, not an overflow. Each label is measured against `label.canvas` now. ⚠️ **A number that
+absurd is the tell**: a real overflow here is tens of units, so anything in the millions means the
+conversion is wrong rather than the layout.
+
+⚠️ **The `RECAST` exception has to be honoured or the probe reports it as the bug.**
+`Hud.PaintSkillCard` sets `RecastFontSize` (14) instead of the deck's 22 for that one string,
+because six bold capitals do not fit a 60 px tile. Measuring it at the label's own size invents a
+12-unit overflow that does not exist.
+
+**Verified:** PlayMode 66/66 with the probe green, and `Logs/hud-overflow.txt` carries the full
+table for every label at every resolution.
+
 **Needs, in order:**
 
 1. ✅ **A probe that FINDS them, before anything is fixed.** `HudOverflowProbe`: drive the HUD

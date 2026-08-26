@@ -383,6 +383,33 @@ namespace TumbangPreso.PlayTests
                 return element.preferredWidth;
             }
 
+            // ⚠️⚠️ A LABEL WHOSE PARENT LAYOUT GROUP CONTROLS ITS WIDTH HAS NO FIXED BOX EITHER,
+            // AND TREATING ITS RECT AS ONE IS A FALSE POSITIVE THIS PROBE REPORTED NINE TIMES.
+            // With `childControlWidth` on, the group sizes each child to that child's own
+            // PREFERRED width, so the rect tracks whatever string is in the label right now. The
+            // probe then swapped in a longer string, compared its width against a rect laid out
+            // for the shorter one, and called the difference an overflow. `RoundLabel` reported
+            // "needs 510 in a 305-unit box" while the column around it was already over 510 wide
+            // and the label would have grown to fit on the next layout pass.
+            //
+            // ⚠️ WHAT ACTUALLY CONSTRAINS SUCH A LABEL IS THE GROUP'S OWN RECT, because the
+            // preferred width is clamped to it. That is a real limit and it is worth printing,
+            // so the kind carries the group's inner width rather than nothing. It is not
+            // asserted, for the same reason the `fitter` case is not: the box moves with the
+            // content by design.
+            var group = label.transform.parent != null
+                ? label.transform.parent.GetComponent<HorizontalOrVerticalLayoutGroup>()
+                : null;
+
+            if (group != null && group.childControlWidth)
+            {
+                var groupRt = (RectTransform)group.transform;
+                float inner = groupRt.rect.width - group.padding.left - group.padding.right;
+
+                kind = $"group {inner:F0}";
+                return -1.0f;
+            }
+
             kind = "rect";
             return label.rectTransform.rect.width;
         }
