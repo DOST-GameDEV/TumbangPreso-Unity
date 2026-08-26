@@ -239,6 +239,8 @@ namespace TumbangPreso.UI
         public static Color HeroLightningBright => HeroElectricBright;
         public static readonly Color HeroSpirit = Hex("b44dff");
         public static readonly Color HeroSpiritBright = Hex("dfaaff");
+        public static readonly Color HeroWitch = Hex("e82882");
+        public static readonly Color HeroWitchBright = Hex("f44498");
         public static readonly Color HeroEarth = Hex("3fa65c");
         public static readonly Color HeroEarthBright = Hex("8fe0a0");
 
@@ -268,6 +270,9 @@ namespace TumbangPreso.UI
                     return HeroElectric;
                 case "nemu":
                     return HeroSpirit;
+                case "phaister":
+                case "witch":
+                    return HeroWitch;
                 case "dante":
                 case "bayan":
                 default:

@@ -50,6 +50,7 @@ namespace TumbangPreso.CameraSystem
         public static readonly Color SkinDante = new Color(0.659f, 0.376f, 0.173f, 1.0f);    // SKIN #a8602c
         public static readonly Color SkinCheska = new Color(0.961f, 0.722f, 0.580f, 1.0f);   // Fair porcelain skin
         public static readonly Color SkinNemu = new Color(0.878f, 0.686f, 0.518f, 1.0f);     // Pale lavender / ghostly ethereal
+        public static readonly Color SkinPhaister = new Color(0.957f, 0.784f, 0.659f, 1.0f); // Warm porcelain peach #f4c8a8
 
         // Classic Characters
         public static readonly Color SkinBayan = new Color(0.851f, 0.541f, 0.373f, 1.0f);    // Berto arm slot 13
@@ -602,6 +603,7 @@ namespace TumbangPreso.CameraSystem
                 case "dante": return SkinDante;
                 case "cheska": return SkinCheska;
                 case "nemu": return SkinNemu;
+                case "phaister": return SkinPhaister;
 
                 // Classic Characters
                 case "bayan": return SkinBayan;
@@ -642,6 +644,9 @@ namespace TumbangPreso.CameraSystem
                     return "cheska";
                 case "nemu":
                     return "nemu";
+                case "phaister":
+                case "witch":
+                    return "phaister";
 
                 case "bayan":
                 case "berto":
@@ -819,6 +824,9 @@ namespace TumbangPreso.CameraSystem
                     break;
                 case "nemu":
                     BuildNemuAccessories(arm, isRight, parent);
+                    break;
+                case "phaister":
+                    BuildPhaisterAccessories(arm, isRight);
                     break;
 
                 // -----------------------------------------------------------
@@ -1251,6 +1259,63 @@ namespace TumbangPreso.CameraSystem
                 new Vector3(0.0f, 0.78f, -0.005f), Quaternion.identity, skinTone);
             AddBoxAccessory(handGo.transform, "FingertipShade", new Vector3(0.072f, 0.032f, 0.024f),
                 new Vector3(0.0f, 0.82f, 0.010f), Quaternion.Euler(-14f, 0, 0), skinDark);
+        }
+
+        private static void BuildPhaisterAccessories(Transform arm, bool isRight)
+        {
+            var blackSleeve = new Color(0.094f, 0.086f, 0.133f, 1.0f); // COAT_DARK #181622
+            var purpleBand = new Color(0.290f, 0.118f, 0.471f, 1.0f);  // CLOTH_PURPLE #4a1e78
+            var goldStripe = new Color(0.973f, 0.722f, 0.141f, 1.0f);  // GOLD #f8b824
+            var whiteCuff = Color.white;                                 // WHITE #ffffff
+            var skinTone = SkinPhaister;                                 // SKIN #f4c098
+            var skinDark = new Color(0.878f, 0.627f, 0.471f, 1.0f);     // SKIN_DARK #e0a078
+
+            // 1. Black coat upper sleeve (Y ~ 0.10 to 0.26)
+            AddBoxAccessory(arm, "BlackUpperSleeve", new Vector3(0.29f, 0.20f, 0.29f),
+                new Vector3(0.0f, 0.14f, 0.0f), Quaternion.identity, blackSleeve);
+
+            // 2. Royal Purple Forearm Band (Y ~ 0.24 to 0.35)
+            AddBoxAccessory(arm, "PurpleSleeveBand", new Vector3(0.30f, 0.11f, 0.30f),
+                new Vector3(0.0f, 0.285f, 0.0f), Quaternion.identity, purpleBand);
+
+            // Gold Cross Emblem on outer forearm
+            float crossSign = isRight ? 1.0f : -1.0f;
+            AddBoxAccessory(arm, "GoldSleeveCrossV", new Vector3(0.040f, 0.080f, 0.020f),
+                new Vector3(crossSign * 0.155f, 0.285f, 0.0f), Quaternion.identity, goldStripe);
+            AddBoxAccessory(arm, "GoldSleeveCrossH", new Vector3(0.040f, 0.025f, 0.070f),
+                new Vector3(crossSign * 0.155f, 0.285f, 0.0f), Quaternion.identity, goldStripe);
+
+            // 3. Gold Stripe (Y ~ 0.34 to 0.37)
+            AddBoxAccessory(arm, "GoldSleeveStripe", new Vector3(0.305f, 0.03f, 0.305f),
+                new Vector3(0.0f, 0.355f, 0.0f), Quaternion.identity, goldStripe);
+
+            // 4. Crisp White Cuff Rim (Y ~ 0.37 to 0.42)
+            AddBoxAccessory(arm, "WhiteCuffRim", new Vector3(0.315f, 0.05f, 0.315f),
+                new Vector3(0.0f, 0.395f, 0.0f), Quaternion.identity, whiteCuff);
+
+            // 5. Bare Porcelain Skin Forearm & Hand details
+            if (isRight)
+            {
+                AddBoxAccessory(arm, "RightKnuckleIndent1", new Vector3(0.020f, 0.045f, 0.035f),
+                    new Vector3(-0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "RightKnuckleIndent2", new Vector3(0.020f, 0.045f, 0.035f),
+                    new Vector3(0.000f, 0.690f, 0.152f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "RightKnuckleIndent3", new Vector3(0.020f, 0.045f, 0.035f),
+                    new Vector3(0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "RightThumbKnuckle", new Vector3(0.040f, 0.080f, 0.032f),
+                    new Vector3(0.160f, 0.730f, 0.020f), Quaternion.identity, skinTone);
+            }
+            else
+            {
+                AddBoxAccessory(arm, "LeftKnuckleIndent1", new Vector3(0.020f, 0.045f, 0.035f),
+                    new Vector3(-0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "LeftKnuckleIndent2", new Vector3(0.020f, 0.045f, 0.035f),
+                    new Vector3(0.000f, 0.690f, 0.152f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "LeftKnuckleIndent3", new Vector3(0.020f, 0.045f, 0.035f),
+                    new Vector3(0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "LeftThumbKnuckle", new Vector3(0.040f, 0.080f, 0.032f),
+                    new Vector3(-0.160f, 0.730f, 0.020f), Quaternion.identity, skinTone);
+            }
         }
 
         private static Vector3 RoundedBoxOffset(float angle, float rx, float rz, float power = 0.5f)

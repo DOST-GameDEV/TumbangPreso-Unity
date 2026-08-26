@@ -35,6 +35,11 @@ namespace TumbangPreso.UI
             { "nemu_skill1", AbilityGlyph.NemuPhase },
             { "nemu_skill2", AbilityGlyph.NemuAstralPet },
             { "nemu_ultimate", AbilityGlyph.NemuSeanceVoid },
+
+            // Phaister (Street Witch)
+            { "phaister_skill1", AbilityGlyph.PhaisterHexSigil },
+            { "phaister_skill2", AbilityGlyph.PhaisterShadowBlink },
+            { "phaister_ultimate", AbilityGlyph.PhaisterEclipse },
         };
 
         /// <summary>

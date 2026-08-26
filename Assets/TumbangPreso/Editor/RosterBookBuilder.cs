@@ -60,12 +60,13 @@ namespace TumbangPreso.EditorTools
             { "mang_kanor",  "characters/persons/character-male-e.glb" },
             { "aling_nena",  "characters/persons/character-female-e.glb" },
 
-            // Hero Strike Roster (5 action heroes)
+            // Hero Strike Roster (6 action heroes)
             { "dante",       "characters/persons/team-dante.glb" },
             { "cheska",      "characters/persons/team-cheska.glb" },
             { "sean",        "characters/persons/team-sean.glb" },
             { "zack",        "characters/persons/team-zack.glb" },
             { "nemu",        "characters/persons/team-nemu.glb" },
+            { "phaister",    "characters/persons/team-phaister.glb" },
         };
 
         private static readonly Dictionary<string, string> PersonPalettes = new Dictionary<string, string>
@@ -90,6 +91,7 @@ namespace TumbangPreso.EditorTools
             { "sean",        "person_team-sean.tres" },
             { "zack",        "person_team-zack.tres" },
             { "nemu",        "person_team-nemu.tres" },
+            { "phaister",    "person_team-phaister.tres" },
         };
 
         private static readonly Dictionary<string, string> PersonPets = new Dictionary<string, string>

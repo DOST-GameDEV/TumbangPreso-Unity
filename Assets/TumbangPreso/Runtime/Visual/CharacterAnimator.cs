@@ -156,6 +156,10 @@ namespace TumbangPreso.Visual
             { "hero-nemu-ghoststep", new[] { "hero-nemu-ghoststep", Sprint, Walk } },
             { "hero-nemu-project", new[] { "hero-nemu-project", "interact-right", "attack-melee-right" } },
             { "hero-nemu-seance", new[] { "hero-nemu-seance", "emote-yes", Interact } },
+
+            { "hero-phaister-hex", new[] { "hero-phaister-hex", "interact-right", "attack-melee-right" } },
+            { "hero-phaister-blink", new[] { "hero-phaister-blink", "attack-kick-right", Sprint } },
+            { "hero-phaister-eclipse", new[] { "hero-phaister-eclipse", "emote-yes", Interact } },
         };
 
         [SerializeField] private float _blend = 0.12f;

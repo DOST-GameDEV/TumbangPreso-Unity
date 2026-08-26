@@ -822,6 +822,7 @@ namespace TumbangPreso.UI
                 case "sean": return "FIRE BRAWLER\nRush the lane, blast open space, and finish with Supernova.";
                 case "zack": return "LIGHTNING SKIRMISHER\nSprint through fights, build charge, and call down Thunderstrike.";
                 case "nemu": return "SPIRIT TRICKSTER\nPhase through danger, project Kuro, and pull enemies into the void.";
+                case "phaister": return "STREET WITCH\nCurse zones with kulam, teleport across alleys, and cast Grand Eclipse.";
 
                 // Classic Roster
                 case "bayan":
