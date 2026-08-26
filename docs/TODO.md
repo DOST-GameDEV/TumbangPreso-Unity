@@ -979,6 +979,64 @@ and `BotBehaviourProbe.FixedStep`, which carries the table.
 
 ---
 
+## 18 · HUD strings overflow their boxes, in more than one place
+
+**Reported by 🧑 on 2026-08-26, from playing: *"fix all UI overflows as well for the HUDS bcz
+theres a lot"*. One instance is already closed (§ 9.5) and it was closed one string at a time,
+which is why this entry is about the CLASS rather than about the next one he happens to see.**
+
+⚠️⚠️ **THE CAUSE IS ONE LINE AND IT IS DELIBERATE.** `Hud.HudLabel` sets
+`horizontalOverflow = Overflow` and `verticalOverflow = Overflow` on every label it builds, so a
+string that does not fit **neither wraps nor shrinks: it hangs out of its box.** That is the
+right default for a HUD (a wrapped timer or a shrunk score is worse than a wide one), and it
+means every card has to be sized against the LONGEST STRING IT CAN EVER SHOW rather than against
+the one that was in it when somebody looked.
+
+⚠️⚠️ **AND THE FONT SIZE IS NOT THE LEVER.** `ui_theme.gd` records these sizes going 16/13, then
+22/19, then 30/28, answered every time with *"text still small"*. Shrinking text to fit a box
+walks straight back into that. **Size the box, or shorten the string. Never the font.**
+
+**The idiom to follow already exists in the same file, twice:**
+
+* `Hud.WorstCaseNameWidth` measures `Balance.PlayerNameMax` (14) "W"s **in the real theme font,
+  through the label that will draw them**, and keeps the .tscn's authored 132 as a floor. So the
+  name column cannot drift when a font size changes somewhere else.
+* `LataHintLines` lists every string `UpdateLataCard` can show and sizes the card to the widest
+  of them through the label that draws it (§ 9.5). ⚠️ **Keep that list in step with the method**:
+  a line added to one and not the other is an overflow again.
+
+**Needs, in order:**
+
+1. **A probe that FINDS them, before anything is fixed.** `HudOverflowProbe`: drive the HUD
+   through every state it has (attacker, taya, lata up and down, tripped, stunned, the ready
+   gate, the countdown, a toast, the hero deck, Street Hype, spectator), at the same nine
+   resolutions `AspectRatioProbes` uses, and for every `Text` under the HUD canvas print the
+   label, its string, its preferred width, its box width and the overflow in pixels. Assert on
+   the ones that are inside a fixed-width card; report the rest. ⚠️ **Measure in the CANVAS's own
+   space, not in world corners:** `SettingsScrollProbe` did the latter first and printed zero for
+   every column while passing nine resolutions, because on a canvas rendering to a camera every
+   element sits within a hair of the same world x.
+2. **Feed it the worst case, not the typical one.** Four names at `PlayerNameMax` = 14
+   characters, the longest ability names in the game (**PERMAFROST SHEET**, **DEMONIC CARAPACE**,
+   **ASTRAL PROJECTION** at 17 characters), `ROUND 8 / 8`, `TAYA (DEFENDER) P4`, and every
+   `LataHintLines` string. A probe fed "P1" proves nothing.
+3. **Then fix by sizing, one card at a time**, each one measured through its own label.
+
+**Already known and already closed, as the worked example:** the objective card read
+`FETCH SLIPPER · -5 / SEC` because the string is `-5 / SECOND` and the card is anchored to the
+RIGHT screen corner, so what ran past its 380 px left the screen entirely (§ 9.5).
+
+**Also known:** `RecastFontSize` is 14 against the deck's 22 because **six bold capitals do not
+fit a 60 px tile**, which is the one place in the HUD where shrinking WAS the answer, and it is
+documented as an exception rather than a pattern.
+
+**Where.** `Assets/TumbangPreso/Runtime/UI/Hud.cs` (`HudLabel`, `WorstCaseNameWidth`,
+`LataHintLines`, `PaintSkillCard`), `Assets/TumbangPreso/Runtime/UI/AbilityDeckHud.cs`,
+`Assets/TumbangPreso/Tests/PlayMode/HudLayoutProbe.cs` for the pattern of measuring live rects,
+and `Assets/TumbangPreso/Tests/PlayMode/AspectRatioProbes.cs` for the resolution list.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**
