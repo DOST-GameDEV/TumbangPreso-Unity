@@ -536,44 +536,40 @@ namespace TumbangPreso.Core
         /// GETTING UP, and the body still face down. One number, one meaning.</summary>
         public const float MinTripDown = 0.35f;
 
-        /// <summary>How fast a trip runs down on its own, as a multiple of real time, while
-        /// there is still slack a mash could buy.
+        /// <summary>How long a fall may last with NOBODY pressing anything, after which the
+        /// body is released whatever the mash meter says.
         ///
-        /// ⚠⚠ THIS EXISTS BECAUSE THE BAR WAS A COUNTDOWN WEARING A MASH METER'S CLOTHES.
-        /// 🧑, 2026-08-26, playing the build: the get-up *"automatically resolves without doing
-        /// anything"*. He was right and it was the design, not a regression. `_tripLeft` decayed
-        /// by `Time.deltaTime` every frame whatever the player did, so the fall completed on its
-        /// own and mashing only steepened it a little: 2.50 s untouched against 1.70 s mashed
-        /// perfectly. A 0.80 s saving on a 2.50 s event is inside the noise of not knowing what
-        /// you were supposed to press.
+        /// ⚠️⚠️ IT REPLACES `TripPassiveDecayRate`, WHICH WAS DELETED ON 2026-08-26, AND THE
+        /// DELETION IS THE FIX. That constant bled the fall away on its own at 0.60x, so a
+        /// player who pressed nothing still stood up in 3.93 s and the get-up meter was not the
+        /// thing that ended the fall. 🧑, off the 4.70 player: *"u randomly get up after set amt
+        /// of time, i dont have to actually mash it"* and *"i want it so that i can only get up
+        /// when ive reached the end of the mashing shit bcz sometimes i get up with it still at
+        /// middle or when i only clicked once"*. Both sentences describe a clock, and no value
+        /// of a decay RATE can answer them: while a rate above zero exists, time alone ends the
+        /// fall and the meter is decoration on a countdown. The three previous passes at this
+        /// (§ 12.1, § 13.1, § 14.1 in `docs/TODO.md`) each retuned the rate and each left that
+        /// property standing.
         ///
-        /// ⚠ SOLVED AGAINST THE GAP, NOT PICKED FOR FEEL. The mashable slack is
-        /// `TripDuration` - `MinTripDown` = 2.15 s. At this rate a player who never presses
-        /// spends 2.15 / 0.75 = 2.87 s buying it, plus the 0.35 s get-up, for **3.22 s** down. A
-        /// player who mashes cleanly spends 6.1 presses at `MashCooldown` = 0.61 s, plus the
-        /// same get-up, for **0.96 s**. Answering the fall is worth **3.3x**, and it is inside
-        /// the 1 to 2 s 🧑 asked a fall to last.
+        /// ⚠️⚠️ SO THE RULE IS NOW ONE SENTENCE: **above `MinTripDown` only an accepted press
+        /// moves the fall.** The meter is the gate rather than a readout, and
+        /// `CharacterMotor.MashRemoved` reaching the mashable slack is the ONLY thing that puts
+        /// a player on their feet inside this window.
         ///
-        /// ⚠⚠ THE PREVIOUS PAIR WAS 0.60 AND A 0.90 FLOOR, AND IT PRODUCED THE TWO THINGS HE
-        /// REPORTED OFF THE PLAYER. *"If i dont mash, i get up in 2 seconds"*: the fall lasted
-        /// 3.57 s but `ApplyTrip` staggered for only `TripDuration`, so control came back at
-        /// 2.50 s with a third of the fall still to run. `CharacterMotor` now holds the stagger
-        /// to the trip. *"If i mash it, the progress pauses"*: see `MinTripDown`.
+        /// ⚠️ THIS IS A STRANDING GUARD, NOT A SECOND WAY UP, and it is set far enough out that
+        /// it can never be the better option. A perfectly answered fall is 1.33 s; this is 5.0,
+        /// which is **3.8x** that and **5.1x** the 0.98 s mash window. Nobody waits five seconds
+        /// on the road to save ten presses. What it does buy is the property the old note on
+        /// `TripPassiveDecayRate` was right about: a trip that ONLY a press can clear strands a
+        /// player whose hands left the keyboard, and hands a griefing tool to anything that can
+        /// re-apply one.
         ///
-        /// ⚠ IT IS NOT ZERO, AND THAT IS DELIBERATE. A trip that only ends when you press it
-        /// away strands a player whose hands left the keyboard, and it hands a griefing tool to
-        /// anything that can re-apply one. The bleed is the guarantee that a fall always ends.
-        ///
-        /// ⚠ IT APPLIES ONLY ABOVE `MinTripDown`. Below the floor nothing can be bought, the
-        /// get-up clip is playing, and that stretch runs at real time so the animation and the
-        /// clock agree.</summary>
-        /// ⚠️ 0.60, DOWN FROM 0.75 ON 2026-08-26, AND IT IS THE SMALLER HALF OF THE SAME FIX.
-        /// `MashRecoverPerPress` is the half that matters; this is what stops "press twice and
-        /// wait" from being a strategy. At 0.75 an ignored fall was 3.22 s, so two taps and a
-        /// pause got you up in about two and a half seconds, which is most of the way to the
-        /// answered time. At 0.60 an ignored fall is **3.93 s** against **1.33 s** answered:
-        /// worth **3.0x**, and the lazy middle is no longer close to the fast path.
-        public const float TripPassiveDecayRate = 0.60f;
+        /// ⚠️⚠️ AND WHEN IT FIRES IT FILLS THE METER. `CharacterMotor` credits the whole slack
+        /// to `MashRemoved` on the way out, so the invariant a player can see holds without
+        /// exception: **you never stand up with the bar part-full.** Without that line this
+        /// constant would reintroduce, once every five seconds, the exact frame he photographed.
+        /// </summary>
+        public const float TripAutoRecoverSeconds = 5.0f;
 
         /// <summary>Seconds after a trip ends during which no hazard may start another one.
         ///

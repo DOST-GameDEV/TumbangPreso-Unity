@@ -40,6 +40,8 @@ namespace TumbangPreso.Visual
         [SerializeField] private float _tiltSmoothTime = 0.10f;
 
         private Vector3 _currentVelocity;
+        private bool _ownerVisible = true;
+        private bool _mirrored;
         private Vector3 _baseScale = Vector3.one;
         private float _timeOffset;
         private float _tiltVelocity;
@@ -196,6 +198,21 @@ namespace TumbangPreso.Visual
                 return;
             }
 
+            // ⚠️⚠️ THE PET IS UNPARENTED, SO HIDING ITS OWNER DOES NOT HIDE IT. `Bind` moves this
+            // object to the scene root on purpose (it lags behind Nemu and must not inherit her
+            // transform), and the consequence nobody had traced is that every path which hides a
+            // SEAT leaves Kuro floating in the street on his own. 🧑, 2026-08-26, on the guided
+            // tutorial with the whole cast switched off: *"the pet of nemu is here??"*.
+            // `GuidedTraining.HideTheCast` deactivates the other three seats; the pet was the one
+            // thing they own that does not go with them.
+            //
+            // ⚠️ RENDERERS, NOT `SetActive`. Deactivating this object stops `LateUpdate`, which
+            // is the only thing that could ever bring it back: the pet would then stay gone for
+            // the rest of the match the first time its owner was hidden for one frame. Toggling
+            // what it DRAWS is reversible by construction, and the lesson that stands a dummy
+            // back up gets its pet back on the same frame.
+            MirrorOwnerVisibility(_target.gameObject.activeInHierarchy);
+
             // Measure movement velocity
             Vector3 moveVel = Vector3.zero;
             if (_hasLastPos)
@@ -273,6 +290,26 @@ namespace TumbangPreso.Visual
                                              _baseScale.y * _fidgetScaleMul.y * (pulse - speedSquashX),
                                              _baseScale.z * _fidgetScaleMul.z * (pulse + speedStretchZ));
             transform.localScale = finalScale;
+        }
+
+        /// <summary>
+        /// Draw only while the owner is drawn. See the call site in <see cref="LateUpdate"/>.
+        ///
+        /// ⚠️ THE LIST IS RE-READ ON EVERY TRANSITION RATHER THAN CACHED ONCE, because things
+        /// are added to this object after it is built: `ToonSkin.Apply` swaps materials, the
+        /// possession light arrives with a cast, and a fidget never touches the hierarchy. A
+        /// transition happens a handful of times a match, so the search costs nothing, and a
+        /// cached array is how a renderer added later stays visible through a hide.
+        /// </summary>
+        private void MirrorOwnerVisibility(bool visible)
+        {
+            if (_ownerVisible == visible && _mirrored) return;
+
+            _ownerVisible = visible;
+            _mirrored = true;
+
+            foreach (var r in GetComponentsInChildren<Renderer>(includeInactive: true))
+                if (r != null) r.enabled = visible;
         }
 
         private static bool IsFinite(Vector3 value)

@@ -91,15 +91,6 @@ namespace TumbangPreso
             _abilities = _local.AbilitySystem;
             _emotes = _local.GetComponent<EmotePlayer>();
 
-            foreach (var slipper in _slippers)
-            {
-                if (slipper != null && slipper.OwnerSlot == _local.PlayerSlot)
-                {
-                    _ownSlipper = slipper;
-                    break;
-                }
-            }
-
             foreach (var seat in _seats)
             {
                 if (seat == null || seat == _local) continue;
@@ -116,8 +107,6 @@ namespace TumbangPreso
                 foreach (var seat in _seats)
                     if (seat != null && seat != _local) { _dummy = seat; break; }
             }
-
-            HideTheCast();
 
             _hud = GuidedTrainingHud.Build(transform);
             _marker = TrainingMarker.Build();
@@ -136,6 +125,24 @@ namespace TumbangPreso
             yield return null;
 
             _runner.Begin();
+
+            // ⚠️⚠️ OWNERSHIP IS DEALT BY `Begin`, NOT BY THE SLIPPER'S NAME, AND ASKING
+            // BEFORE IT RAN IS WHERE THE FLOATING TSINELAS CAME FROM.
+            // `SliceRunner.EquipOwnedSlippers` REWRITES `OwnerSlot` every round: it walks the
+            // attackers in seat order and hands them `Slippers[0]`, `[1]`, `[2]`, so with seat 0
+            // as the taya the local seat 1 owns SLIPPER 0, not slipper 1. This used to run in
+            // `Configure`, one frame earlier, and matched on the pre-round ownership, so
+            // `_ownSlipper` was a tsinelas belonging to somebody else. `HideTheCast` then
+            // switched off the one that was really in the player's hand and KEPT the other,
+            // which was in a hidden seat's hand: a shoe hanging 0.85 m over an empty road, which
+            // is the reported *"theres a floating slipper check ss"*. Measured by
+            // `TrainingStreetProbe`, which is why it prints the holder of every tsinelas.
+            ResolveOwnSlipper();
+            HideTheCast();
+
+            // ⚠️ THE KIT IS HIDDEN UNTIL ITS OWN LESSON. See `Hud.SetTrainingDeckHidden`.
+            UI.Hud.Instance?.SetTrainingDeckHidden(true);
+
             _ready = true;
             EnterLesson(Lesson.Look);
         }
@@ -272,15 +279,15 @@ namespace TumbangPreso
                     break;
 
                 case Lesson.TripRecovery:
-                    // A press is detected as a drop LARGER than the passive bleed could have
-                    // produced in one frame, so it counts only presses `CharacterMotor` actually
-                    // accepted through the real rate cap.
+                    // A press is detected as a drop LARGER than one frame of real time, so it
+                    // counts only presses `CharacterMotor` actually accepted through the real
+                    // rate cap.
                     //
-                    // ⚠️ THE BLEED IS NO LONGER ONE SECOND PER SECOND, and this comment used to
-                    // say it was. Above `Balance.MinTripDown` it runs at
-                    // `Balance.TripPassiveDecayRate`, so the real per-frame drop is SMALLER than
-                    // the `Time.deltaTime` assumed here. That only widens the gap a press has to
-                    // clear, so the detector still cannot credit the bleed as a press.
+                    // ⚠️ THERE IS NO BLEED AT ALL ABOVE `Balance.MinTripDown` AS OF 2026-08-26,
+                    // so above the floor the expected drop is zero and any movement is a press.
+                    // The `Time.deltaTime` allowance is kept because the LAST stretch of a fall,
+                    // under the floor, does still run at real time and would otherwise be
+                    // credited as presses nobody made.
                     float expected = Mathf.Max(0.0f, _lastTripLeft - Time.deltaTime);
                     if (_local.TripLeft < expected - 0.05f) _metric += 1.0f;
                     _lastTripLeft = _local.TripLeft;
@@ -295,7 +302,7 @@ namespace TumbangPreso
                     // ⚠️⚠️ THE LESSON PUTS YOU BACK DOWN, AND WITHOUT THIS IT COULD STRAND THE
                     // PLAYER. The trip is applied ONCE, on entering the lesson, and the exit
                     // condition is five ACCEPTED presses. A fall holds at most
-                    // (2.50 - 0.90) / 0.20 = 8 of them, so a player who watches the first fall
+                    // (2.50 - 0.35) / 0.22 = 10 of them, so a player who watches the first fall
                     // out instead of mashing reaches zero with the counter short and nothing
                     // left to press: the lesson can then never be completed and the route stops
                     // dead at step 15 of 17. Re-applying is also the honest teaching, because
@@ -485,6 +492,11 @@ namespace TumbangPreso
                     break;
 
                 case Lesson.Retrieve:
+                    // ⚠️ THE SHOE GOES ON THE ROAD FIRST, WHATEVER THE THROW LESSON LEFT
+                    // BEHIND. See `PlaceOwnSlipperOnTheRoad`: skipping the throw arrives here
+                    // still holding it, and you cannot pick up what is already in your hand.
+                    if (_ownSlipper == null || _ownSlipper.State != SlipperState.Loose)
+                        PlaceOwnSlipperTowardTheLata();
                     title = "GET YOUR TSINELAS BACK";
                     body = "Walk to your own slipper and press the pickup key. Holding it inside the box makes you taggable.";
                     action = Key("Grab") + "  ·  PICK UP";
@@ -494,13 +506,20 @@ namespace TumbangPreso
                 case Lesson.Pektus:
                     PrepareAttackerThrow();
                     title = "CURVE A PEKTUS THROW";
-                    body = "Charge another throw, add spin with the wheel or arrow keys, then release. Strong spin can bank once.";
-                    action = Key("SpecialAbility") + " + MOUSE WHEEL / ARROWS";
+                    body = "Charge another throw, add spin, then release. Strong spin can bank once. The mouse wheel does it too.";
+                    // ⚠️ THE LIVE BINDING, NOT THE WORD "ARROWS". The curve is two real actions
+                    // in the map as of 2026-08-26 (`PlayerInputReader._curveLeft`), so this
+                    // lesson teaches whatever the player has bound, like every other one.
+                    action = Key("SpecialAbility") + " + " + Key("CurveLeft") + " / " + Key("CurveRight");
                     _marker?.Bind(_lata.transform);
                     break;
 
                 case Lesson.Shove:
-                    PrepareDummyInFront(1.15f, attacker: true);
+                    // ⚠️ 1.40 m, OUT FROM 1.15. `TrainingStreetProbe` measured the dummy's body
+                    // mesh 1.09 m from the eye on this lesson, which is a character filling the
+                    // frame rather than one standing in front of you. `Balance.ShoveRange` is
+                    // 1.60, so this is still comfortably inside the verb being taught.
+                    PrepareDummyInFront(1.40f, attacker: true);
                     _local.Stamina.RefillAndClearFatigue();
                     _baselineCooldown = _verbs != null ? _verbs.ShoveCooldownLeft : 0.0f;
                     title = "SHOVE AN ATTACKER";
@@ -510,6 +529,8 @@ namespace TumbangPreso
                     break;
 
                 case Lesson.AbilityInfo:
+                    // ⚠️ THIS IS THE LESSON THE DECK EXISTS FOR, so this is where it appears.
+                    UI.Hud.Instance?.SetTrainingDeckHidden(false);
                     title = "READ YOUR HERO KIT";
                     body = "Hold the info key to inspect every power without filling the live HUD with instructions.";
                     action = Key("AbilityInfo") + "  ·  HOLD FOR DETAILS";
@@ -548,7 +569,8 @@ namespace TumbangPreso
                     break;
 
                 case Lesson.Punch:
-                    PrepareDummyInFront(1.25f, attacker: true);
+                    // ⚠️ 1.50 m against `Balance.PunchRange` 1.70, for the reason on the shove.
+                    PrepareDummyInFront(1.50f, attacker: true);
                     _baselineCooldown = _verbs != null ? _verbs.PunchCooldownLeft : 0.0f;
                     title = "PUNCH A VULNERABLE ATTACKER";
                     body = "The defender's left click is a quick stationary tag. The dummy is holding a slipper inside your box.";
@@ -616,13 +638,10 @@ namespace TumbangPreso
         {
             ApplyRoles(_local.PlayerSlot);
 
+            // ⚠️ THROUGH THE ONE PLACEMENT, so this drop is grounded like every other. It
+            // used to write the player's own Y, which is the sole of the foot and not the road.
             if (_ownSlipper != null && _ownSlipper.State == SlipperState.Held)
-            {
-                Vector3 drop = _local.transform.position + _local.transform.right * 3.0f;
-                _ownSlipper.ApplySnapshotState(SlipperState.Loose, null, drop,
-                    _ownSlipper.transform.rotation, Vector3.zero, 0.0f,
-                    SlipperAffinity.Normal, -1);
-            }
+                PlaceOwnSlipperOnTheRoad(_local.transform.right, 3.0f);
             _carrier?.NotifyHolding(null);
             _local.HoldingSlipper = false;
 
@@ -758,6 +777,100 @@ namespace TumbangPreso
                 if (slipper == null || slipper == _ownSlipper) continue;
                 if (slipper.gameObject.activeSelf) slipper.gameObject.SetActive(false);
             }
+        }
+
+        /// <summary>
+        /// Which tsinelas is actually the player's, asked AFTER the round has dealt them.
+        ///
+        /// ⚠️ THE CARRIER IS ASKED FIRST BECAUSE IT CANNOT BE WRONG. What is in the hand is
+        /// the answer to "your own slipper" for every lesson on the route; `OwnerSlot` is the
+        /// fallback for the frame before the equip, and matching on neither leaves the retrieval
+        /// lesson pointing at nothing, which is worth logging rather than silently surviving.
+        /// </summary>
+        private void ResolveOwnSlipper()
+        {
+            _ownSlipper = _carrier != null ? _carrier.Held : null;
+
+            if (_ownSlipper == null && _slippers != null)
+            {
+                foreach (var slipper in _slippers)
+                {
+                    if (slipper != null && slipper.OwnerSlot == _local.PlayerSlot)
+                    {
+                        _ownSlipper = slipper;
+                        break;
+                    }
+                }
+            }
+
+            if (_ownSlipper == null)
+                Debug.LogWarning("[Training] the player owns no tsinelas; the retrieval lesson " +
+                                 "will have nothing to point at.");
+        }
+
+        /// <summary>
+        /// Puts the player's own tsinelas on the road in front of them, so the retrieval lesson
+        /// has something to retrieve.
+        ///
+        /// ⚠️⚠️ WITHOUT THIS THE LESSON POINTED AT THE PLAYER'S OWN HAND. The route reaches
+        /// RETRIEVE with the shoe still held whenever the throw lesson was skipped with N, and
+        /// you cannot pick up what you are already holding: the lesson could never complete, and
+        /// the objective marker bound to the slipper drew its 0.70 m ring **0.55 m from the eye**
+        /// (`TrainingStreetProbe`, viewport 0.83, 0.29). That is the reported *"i clicked N skip
+        /// and this shit showed up wtf is this yellow shit on me??"*, and it was the marker
+        /// rather than the shoe.
+        ///
+        /// ⚠️ IT IS GROUNDED THROUGH `Slipper.GroundY` RATHER THAN THE PLAYER'S OWN Y. A LOOSE
+        /// slipper does not fall: `Slipper.FixedUpdate` only integrates a flight, so a drop point
+        /// written in the air stays in the air forever. Every other placement in this file had
+        /// the same hole.
+        ///
+        /// ⚠️ AND IT IS CLAMPED INSIDE THE BOX, because a player facing the wall on the last
+        /// lesson would otherwise be sent to fetch a tsinelas from outside the arena.
+        /// </summary>
+        private void PlaceOwnSlipperOnTheRoad(Vector3 direction, float distance)
+        {
+            if (_ownSlipper == null) return;
+
+            direction.y = 0.0f;
+            if (direction.sqrMagnitude < 0.01f) direction = Vector3.forward;
+            direction.Normalize();
+
+            Vector3 at = _local.transform.position + direction * distance;
+
+            // ⚠️ THE ARENA, NOT THE DANGER BOX. `Balance.ConfinementRadius` is 7.0 and the
+            // attacker line stands at z = 9.0, well outside it: clamping to the box would have
+            // put the retrieval lesson's tsinelas BEHIND a player standing on his own mark. These
+            // are the arena bounds `MatchInstaller` writes, with a metre of margin, and they are
+            // a guard against a wall rather than the thing that chooses the spot.
+            at.x = Mathf.Clamp(at.x, -8.0f, 8.0f);
+            at.z = Mathf.Clamp(at.z, -12.0f, 12.0f);
+            at.y = Slipper.GroundY(at) + _ownSlipper.RestHeight;
+
+            _ownSlipper.ApplySnapshotState(SlipperState.Loose, null, at,
+                _ownSlipper.transform.rotation, Vector3.zero, 0.0f, SlipperAffinity.Normal, -1);
+
+            _carrier?.NotifyHolding(null);
+            _local.HoldingSlipper = false;
+        }
+
+        /// <summary>
+        /// The retrieval lesson's own placement: on the line between the player and the lata,
+        /// which is where a thrown tsinelas actually ends up.
+        ///
+        /// ⚠️ HALF THE DISTANCE, CAPPED AT FOUR METRES. `docs/VISION.md` § 0: *"the tension is
+        /// the retrieval"*, and the run this lesson is teaching is the run IN toward the can. A
+        /// shoe dropped behind the player teaches the walk and not the risk. Half the gap keeps
+        /// it inside the street whatever mark the player is standing on, and the four metre cap
+        /// stops it landing on top of the lata when they are already close.
+        /// </summary>
+        private void PlaceOwnSlipperTowardTheLata()
+        {
+            Vector3 toLata = _lata.transform.position - _local.transform.position;
+            toLata.y = 0.0f;
+
+            float reach = Mathf.Min(4.0f, Mathf.Max(2.0f, toLata.magnitude * 0.5f));
+            PlaceOwnSlipperOnTheRoad(toLata, reach);
         }
 
         private void OnDestroy()
@@ -1356,9 +1469,31 @@ namespace TumbangPreso
         /// sky.</summary>
         private const float PipHeight = 1.05f;
 
+        /// <summary>
+        /// Closer than this to the eye and the marker draws nothing.
+        ///
+        /// ⚠️⚠️ A POINTER YOU ARE STANDING INSIDE IS NOT A POINTER, IT IS A WALL. Measured by
+        /// `TrainingStreetProbe`: on the retrieval lesson the ring sat **0.55 m** from the
+        /// camera at viewport (0.83, 0.29), and on the shove and reset lessons it sat at 1.15 m
+        /// filling the bottom of the frame. 🧑 photographed all three and could not tell what he
+        /// was looking at: *"genuinely wtf is happening what is that haha"*. A 0.70 m ring seen
+        /// from half a metre is a coloured plane over the whole screen, which is
+        /// `docs/VISION.md` § 2 rule 5 with a tutorial marker in the role of the ultimate.
+        ///
+        /// ⚠️ 1.10 m, AND THE BOUND IS THE THREE LESSONS THAT PUT SOMETHING CLOSE ON PURPOSE:
+        /// the shove at 1.40 m, the punch at 1.50 and the defender reset with the lata at 1.15.
+        /// A marker on the ground in front of you at those distances is doing its job. Half a
+        /// metre is not a distance any lesson asks for, so anything that near is the pointer
+        /// having ended up on the player.
+        /// </summary>
+        private const float HideWithin = 1.10f;
+
         private Transform _target;
         private Transform _pip;
         private Light _light;
+        private Renderer[] _shapes;
+        private bool _drawn = true;
+        private Camera _eye;
 
         public static TrainingMarker Build()
         {
@@ -1377,8 +1512,21 @@ namespace TumbangPreso
 
         private void BuildVisual()
         {
+            // ⚠️⚠️ A FLAT FAN, AND `NovaShell` WAS THE WHOLE OF *"wtf is this yellow shit on
+            // me"*. `VfxShapes.Lay` scales X and Z by the radius and LEAVES Y AT 1.0, because
+            // every other caller in the game hands it a flat mesh (`Crystal`, `Star`, `Splat`,
+            // `Ring`, all fans at y = 0). `NovaShell` is a unit SPHERE shell, y from -1 to +1, so
+            // this line drew a translucent amber ball 1.40 m wide and **2.00 m tall** standing on
+            // the target, half of it under the road. `TrainingStreetProbe` printed its bounds:
+            // `size (1.40, 2.00, 1.39)`. Met at half a metre it is a yellow wall; met at the
+            // dummy's feet it is a yellow cone around her, which is what he photographed twice.
+            //
+            // ⚠️ THIS IS THE SECOND OVERSIZED MARKER, so the shape is now measured rather than
+            // argued. `docs/TODO.md` § 13.6 replaced a 5.2 m pole with "a 0.70 m ground ring",
+            // and the ring it reached for was a ball. `Crystal(22)` is the flat 22-sided fan the
+            // hazard footprints use, unit radius, ZERO height.
             var ring = Visual.VfxShapes.Lay(transform, "ObjectiveRing",
-                                            Visual.VfxShapes.NovaShell(2, 22), RingRadius, 0.04f);
+                                            Visual.VfxShapes.Crystal(22), RingRadius, 0.04f);
             Visual.VfxMaterial.Ghost(ring.GetComponent<Renderer>(),
                 new Color(UiTheme.Highlight.r, UiTheme.Highlight.g, UiTheme.Highlight.b, 0.32f),
                 1.5f);
@@ -1431,6 +1579,41 @@ namespace TumbangPreso
             }
 
             if (_light != null) _light.intensity = Mathf.Lerp(0.9f, 1.8f, pulse);
+
+            HideIfTheEyeIsInsideIt();
+        }
+
+        /// <summary>Switch the shapes off while the camera is on top of them. See
+        /// <see cref="HideWithin"/>.</summary>
+        private void HideIfTheEyeIsInsideIt()
+        {
+            // ⚠️ `Camera.main` IS NOT ENOUGH ON ITS OWN. It resolves by TAG, and the rig's camera
+            // is built from code; a probe run measured this method doing nothing at all because
+            // of it. The rig is asked first and the result cached, so this is one lookup.
+            if (_eye == null)
+            {
+                var rig = FindFirstObjectByType<CameraSystem.CameraRig>();
+                _eye = rig != null && rig.Camera != null ? rig.Camera : Camera.main;
+            }
+
+            var cam = _eye;
+            if (cam == null) return;
+
+            bool draw = Vector3.Distance(cam.transform.position, transform.position) > HideWithin;
+            if (draw == _drawn) return;
+
+            _drawn = draw;
+
+            // ⚠️ THE RENDERERS, NOT THE OBJECT. `LateUpdate` is what re-tests the distance, so an
+            // object that switched ITSELF off could never come back when the player walked away.
+            if (_shapes == null || _shapes.Length == 0)
+                _shapes = GetComponentsInChildren<Renderer>(true);
+
+            foreach (var r in _shapes)
+                if (r != null) r.enabled = draw;
+
+            // The light goes with them: a point light inside your own head is a white screen.
+            if (_light != null) _light.enabled = draw;
         }
     }
 }

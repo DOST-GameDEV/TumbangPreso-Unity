@@ -70,13 +70,47 @@ namespace TumbangPreso.UI
             RefreshApplyState();
         }
 
+        /// <summary>
+        /// Everything that makes this list scrollable, and it is more than one line now.
+        ///
+        /// ⚠️⚠️ THE LIST IS TWICE THE HEIGHT OF ITS WINDOW AND NOTHING ON SCREEN SAID SO.
+        /// 🧑, 2026-08-26, twice: *"make it easier to scroll thru settings bcz its so hard to"*
+        /// and *"here its so weird to scroll in setttings here"*, with a screenshot of a row cut
+        /// in half at the bottom edge. Three separate things were wrong and only the first is
+        /// the one people reach for:
+        ///
+        ///  1. NO SCROLLBAR AT ALL. `ScrollRect.verticalScrollbar` was never assigned, so there
+        ///     was no handle to drag, no indication that there was more below, and no way to tell
+        ///     how much. A cut-off row is the only cue the panel gave, and a cut-off row reads as
+        ///     a layout bug rather than as an invitation.
+        ///  2. THE WHEEL WAS SET TO 45, which is about four rows a notch on a 46 px row. It was
+        ///     commented "fast, smooth, responsive" and it is the first two: one notch skips a
+        ///     whole group heading and its rows, which is exactly what "weird" describes. 24 is
+        ///     two rows.
+        ///  3. NO KEYBOARD. A settings screen with fifteen rebindable rows is one a player is
+        ///     already using the keyboard on.
+        ///
+        /// ⚠️ THE BAR IS BUILT IN CODE BECAUSE THE .tscn HAS NO NODE FOR ONE. `TscnUiImporter`
+        /// converts what Godot authored, and Godot's `ScrollContainer` draws its own bar from the
+        /// theme rather than from a child node, so there was nothing to import. It is drawn in
+        /// wood and amber (`docs/VISION.md` § 6) rather than in Unity's default grey.
+        /// </summary>
         private void ConfigureScroll()
         {
             var scroll = GetComponentInChildren<ScrollRect>(true);
             if (scroll == null) return;
 
-            scroll.scrollSensitivity = 45.0f; // Fast, smooth, responsive mouse wheel scrolling
+            _scroll = scroll;
+
+            scroll.scrollSensitivity = WheelStep;
             scroll.movementType = ScrollRect.MovementType.Clamped;
+            scroll.horizontal = false;
+            scroll.vertical = true;
+
+            // ⚠️ INERTIA OFF. With it, a flick keeps sliding after the wheel stops and the row
+            // under the cursor is not the row that ends up there.
+            scroll.inertia = false;
+
             scroll.verticalNormalizedPosition = 1.0f; // Reset to top showing MOVEMENT / WASD
 
             if (scroll.viewport != null)
@@ -84,6 +118,135 @@ namespace TumbangPreso.UI
                 if (scroll.viewport.GetComponent<RectMask2D>() == null && scroll.viewport.GetComponent<Mask>() == null)
                     scroll.viewport.gameObject.AddComponent<RectMask2D>();
             }
+
+            if (scroll.verticalScrollbar == null) BuildScrollbar(scroll);
+        }
+
+        /// <summary>Two rows of the list per wheel notch. A row is
+        /// <see cref="BindingControlSize"/>.y = 46 px.</summary>
+        private const float WheelStep = 24.0f;
+
+        /// <summary>How far one key press moves the list, in pixels.</summary>
+        private const float KeyStep = 92.0f;
+
+        private ScrollRect _scroll;
+
+        /// <summary>
+        /// A wood track with an amber handle, down the right-hand edge of the viewport.
+        ///
+        /// ⚠️ IT SHRINKS THE VIEWPORT BY ITS OWN WIDTH rather than floating over the rows. A
+        /// bar drawn on top of the list covers the right end of every key cap, which is the one
+        /// column on this screen a player is reading.
+        /// </summary>
+        private void BuildScrollbar(ScrollRect scroll)
+        {
+            var viewport = scroll.viewport;
+            if (viewport == null) return;
+
+            const float Width = 14.0f;
+
+            var barGo = new GameObject("VerticalScrollbar", typeof(RectTransform), typeof(Image));
+            barGo.transform.SetParent(scroll.transform, false);
+
+            var barRt = barGo.GetComponent<RectTransform>();
+            barRt.anchorMin = new Vector2(1.0f, 0.0f);
+            barRt.anchorMax = Vector2.one;
+            barRt.pivot = new Vector2(1.0f, 0.5f);
+            barRt.offsetMin = new Vector2(-Width, 0.0f);
+            barRt.offsetMax = Vector2.zero;
+
+            var track = barGo.GetComponent<Image>();
+            track.color = new Color(UiTheme.WoodDark.r, UiTheme.WoodDark.g, UiTheme.WoodDark.b, 0.85f);
+
+            var handleAreaGo = new GameObject("SlidingArea", typeof(RectTransform));
+            handleAreaGo.transform.SetParent(barGo.transform, false);
+            var areaRt = handleAreaGo.GetComponent<RectTransform>();
+            areaRt.anchorMin = Vector2.zero;
+            areaRt.anchorMax = Vector2.one;
+            areaRt.offsetMin = new Vector2(2.0f, 2.0f);
+            areaRt.offsetMax = new Vector2(-2.0f, -2.0f);
+
+            var handleGo = new GameObject("Handle", typeof(RectTransform), typeof(Image));
+            handleGo.transform.SetParent(handleAreaGo.transform, false);
+            var handleRt = handleGo.GetComponent<RectTransform>();
+            handleRt.offsetMin = Vector2.zero;
+            handleRt.offsetMax = Vector2.zero;
+            handleGo.GetComponent<Image>().color = UiTheme.Amber;
+
+            var bar = barGo.AddComponent<Scrollbar>();
+            bar.direction = Scrollbar.Direction.BottomToTop;
+            bar.handleRect = handleRt;
+            bar.targetGraphic = handleGo.GetComponent<Image>();
+
+            scroll.verticalScrollbar = bar;
+
+            // ⚠️ PERMANENT, NOT AUTO-HIDE. The list is always longer than the window (fifteen
+            // rebind rows, four sliders and the name field against about eleven rows of glass),
+            // so auto-hide only ever costs the affordance that was missing in the first place.
+            // `AutoHideAndExpandViewport` also asks the ScrollRect to drive the viewport rect,
+            // which fights the sizes `TscnUiImporter` authored.
+            scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.Permanent;
+            scroll.verticalScrollbarSpacing = 0.0f;
+
+            // ⚠️⚠️ THE ROWS ARE PADDED AWAY FROM THE BAR RATHER THAN THE VIEWPORT BEING SHRUNK,
+            // AND THE FIRST VERSION DID THE OTHER ONE. The content is authored at a fixed width
+            // out of the .tscn rather than stretched to its viewport, so moving the viewport's
+            // right edge moved the window and left the rows where they were: the bar drew over
+            // the right end of every key cap and cut the username field in half.
+            // `Logs/shots-runtime/SettingsPanel.png` showed it in one frame.
+            var group = scroll.content != null
+                ? scroll.content.GetComponent<HorizontalOrVerticalLayoutGroup>()
+                : null;
+
+            if (group != null)
+            {
+                var pad = group.padding;
+                pad.right = Mathf.Max(pad.right, (int)Width + 6);
+                group.padding = pad;
+            }
+        }
+
+        /// <summary>
+        /// Page Up / Page Down / Home / End and the arrow keys move the list.
+        ///
+        /// ⚠️ IT IS REFUSED WHILE A REBIND IS LISTENING, because during one the whole keyboard
+        /// belongs to the key being captured and scrolling on the press that is being recorded
+        /// would move the list out from under the row you just clicked.
+        /// </summary>
+        private void StepScrollFromKeyboard()
+        {
+            if (_scroll == null || _scroll.content == null || _scroll.viewport == null) return;
+            if (!string.IsNullOrEmpty(_listening)) return;
+
+            var keyboard = Keyboard.current;
+            if (keyboard == null) return;
+
+            float window = _scroll.viewport.rect.height;
+            float travel = Mathf.Max(1.0f, _scroll.content.rect.height - window);
+            float page = window * 0.85f;
+            float move = 0.0f;
+
+            if (keyboard.pageDownKey.wasPressedThisFrame) move -= page;
+            if (keyboard.pageUpKey.wasPressedThisFrame) move += page;
+            if (keyboard.downArrowKey.isPressed) move -= KeyStep * Time.unscaledDeltaTime * 12.0f;
+            if (keyboard.upArrowKey.isPressed) move += KeyStep * Time.unscaledDeltaTime * 12.0f;
+
+            if (keyboard.homeKey.wasPressedThisFrame)
+            {
+                _scroll.verticalNormalizedPosition = 1.0f;
+                return;
+            }
+
+            if (keyboard.endKey.wasPressedThisFrame)
+            {
+                _scroll.verticalNormalizedPosition = 0.0f;
+                return;
+            }
+
+            if (Mathf.Approximately(move, 0.0f)) return;
+
+            _scroll.verticalNormalizedPosition =
+                Mathf.Clamp01(_scroll.verticalNormalizedPosition + move / travel);
         }
 
         private Button FindButton(string node)
@@ -602,6 +765,11 @@ namespace TumbangPreso.UI
 
         protected override void Update()
         {
+            // ⚠️ BEFORE THE ESC GUARD BELOW, because that guard RETURNS on a listening rebind and
+            // the keyboard scroll has its own refusal for exactly that case. Putting it after
+            // would have made this work only when nothing else was going on.
+            StepScrollFromKeyboard();
+
             // ⚠️ ESC IS THE REBIND'S CANCEL WHILE ONE IS LISTENING, not the panel's exit. The
             // rebinding operation already owns that key; letting the base class also act on it
             // closes the whole panel on a cancelled rebind.

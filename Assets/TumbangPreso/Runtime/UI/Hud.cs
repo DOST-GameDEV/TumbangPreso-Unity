@@ -1631,12 +1631,19 @@ namespace TumbangPreso.UI
             //
             // ⚠️⚠️ THE DENOMINATOR IS THE WHOLE MASHABLE SLACK, `TripTotal - MinTripDown`, AND
             // IT IS FIXED FOR THE FALL. It is 2.15 s on a 2.50 s trip. Dividing by what is
-            // CURRENTLY still buyable was the obvious alternative and it is wrong twice: it goes
-            // to zero when the passive bleed reaches the floor on its own, and it would let the
-            // bar creep as the denominator shrank, which is the exact behaviour being removed.
-            // Fixed means a player who reacts in 0.25 s and mashes cleanly reads about 91 per
-            // cent, and a player who never presses reads zero and stands up anyway. Both are
-            // true statements about who did the work.
+            // CURRENTLY still buyable was the obvious alternative and it was wrong twice: it
+            // went to zero when the passive bleed reached the floor on its own (that bleed is
+            // deleted as of 2026-08-26, see below) and it would let the bar creep as the
+            // denominator shrank, which is the exact behaviour being removed.
+            // Fixed means the bar reaching 1.0 and the body standing up are the SAME EVENT:
+            // the last accepted press is the one that puts `TripLeft` on the floor, so the fill
+            // completes exactly as the get-up clip starts.
+            //
+            // ⚠️⚠️ AND AS OF 2026-08-26 THAT IS A GUARANTEE RATHER THAN A COINCIDENCE. Nothing
+            // else ends a fall any more: `Balance.TripPassiveDecayRate` is deleted, and the
+            // stranding guard in `CharacterMotor` credits the whole remaining slack to
+            // `MashRemoved` on its way out. 🧑: *"sometimes i get up with it still at middle or
+            // when i only clicked once"*. That frame is now unreachable.
             float slack = Mathf.Max(0.01f, _local.TripTotal - Balance.MinTripDown);
             _getUpFill.fillAmount = Mathf.Clamp01(_local.MashRemoved / slack);
 
@@ -1804,6 +1811,29 @@ namespace TumbangPreso.UI
         /// Set once, in <see cref="StripToTrainingChrome"/>, and read by the handful of update
         /// methods that own their own visibility.</summary>
         private bool _trainingChrome;
+
+        /// <summary>
+        /// True while the guided route has not taught the kit yet.
+        ///
+        /// ⚠️⚠️ 🧑, 2026-08-26: *"make it so that my skills cant be seen too until i need to use
+        /// them myself"*, and, in the next message, *"THIS IS FOR TUTORIAL BTW NOT THE ACTUAL
+        /// GAME"*. It is the same argument as `InputIntent.AllowOnly` one layer up: the route
+        /// already refuses the skill VERBS until their lesson, so a deck showing three powers you
+        /// cannot cast is an invitation to press keys the tutorial will ignore.
+        ///
+        /// ⚠️ INSTANCE STATE, NOT A STATIC. `Hud` is rebuilt with the arena, so this cannot
+        /// survive into a match by construction, which is the property he asked for in capitals.
+        /// Nothing but `GuidedTraining` writes it and it defaults to false.
+        /// </summary>
+        private bool _trainingDeckHidden;
+
+        /// <summary>Show or hide the hero deck for the guided route. See
+        /// <see cref="_trainingDeckHidden"/>.</summary>
+        public void SetTrainingDeckHidden(bool hidden)
+        {
+            _trainingDeckHidden = hidden;
+            if (hidden && _heroDeck != null) _heroDeck.SetActive(false);
+        }
 
         /// <summary>
         /// Full-screen, behind everything, and never a raycast target.
@@ -3191,7 +3221,7 @@ namespace TumbangPreso.UI
             if (_heroDeck == null) return;
 
             bool isHeroMode = SceneFlow.SelectedMode == GameMode.HeroStrike;
-            bool show = !_spectating && _local != null && isHeroMode;
+            bool show = !_spectating && _local != null && isHeroMode && !_trainingDeckHidden;
 
             if (_heroDeck.activeSelf != show) _heroDeck.SetActive(show);
             if (!show) return;

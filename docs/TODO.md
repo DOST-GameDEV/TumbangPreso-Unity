@@ -670,6 +670,197 @@ like a broken match.
 
 ---
 
+## 14 · The 4.69 player's second batch, shipped in `349b0171`
+
+**Six reports in one sitting, all closed the same day, and the entry exists because
+`CLAUDE.md` § 2.3 asks for the account to live here rather than only in a commit message.**
+The commit has the full derivation; this is the short form plus the numbers, in the same shape
+as § 13.
+
+**14.1 ✅ The mash was a tap.** 🧑: *"mash is weird now, I js have to click it twice to get up im
+not fr mashing"*. He was measuring correctly. At `MashRecoverPerPress` 0.35 the 2.15 s of
+mashable slack was **6.1 presses**, so two of them plus a second and a half of passive bleed had
+him up: the bleed was doing most of the work in any real fall, which is the same complaint as
+*"it automatically resolves"* in different clothes. 0.22 makes the slack **9.8 presses**, which
+is 0.98 s of hammering at the 10 Hz cap and **1.33 s** on the floor. `TripPassiveDecayRate`
+0.75 → 0.60 is the smaller half and stops "press twice and wait" being a strategy: ignored is
+**3.93 s** against 1.33 s answered, worth **3.0x**.
+
+⚠️ **Superseded by § 15.1 on 2026-08-26.** He played it and reported the fall still ending on a
+clock. The constants above are still the constants; what changed is that the clock no longer
+ends a fall at all.
+
+**14.2 ✅ "Cant pick up any slipper", in every mode, and the mechanism was not broken.**
+`SoloPracticeTests` puts a loose tsinelas at a seat's own feet and the grab connects, so what he
+met was REACH. `Balance.PickupRadius` is a 3D distance from the motor's transform, which sits at
+the SOLE OF THE FOOT, while the camera is at about 1.6 m and pitched down: at 1.40 m a legally
+grabbable tsinelas sits near the bottom edge of the frame and anything visible at the crosshair
+is three or four metres out and refuses silently. **1.75 m**, still well under the 2.60 m hazard
+footprint § 12.2 turns on.
+
+⚠️ **The real fix is the prompt.** `Hud.UpdatePickupPrompt` says when a tsinelas is in reach, and
+asks `Slipper.CanBeGrabbedBy` rather than its own distance check, so it cannot promise a pickup
+the carrier would refuse. A silent refusal is indistinguishable from a broken key, which is
+exactly how this was reported.
+
+**14.3 ✅ The hazard sweep no longer takes a tsinelas out of somebody's hands.** § 13.2's poll
+moved slippers without asking anybody, so a player closing on one would have had it teleport as
+they arrived. The guard is `PickupRadius` itself: if a body is close enough to grab it, the grab
+is the answer and the ejector has nothing left to fix.
+
+**14.4 ✅ The tutorial is a sequence, not a sandbox with a card over it.** 🧑: *"i can still do
+everything at lesson one"*. `InputIntent.AllowOnly` locks the seat to the verbs the route has
+taught. Cumulative, because the retrieval run wants sprint and jump and the trip lesson is
+answered with the jump key; what is removed is running ahead. ⚠️ It defaults to **null** so no
+match is affected, and it is released in `OnDestroy` because `InputIntent` belongs to the SEAT
+and outlives the route.
+
+**14.5 ✅ The other three seats and their tsinelas are off for the whole route**, and one comes
+back for the shove, the punch and the lunge. See § 15.2: their PET did not go with them.
+
+**14.6 ✅ The training card had dead space and covered the ability deck.** Both were layout. Six
+rows at hand-written offsets inside a fixed 274 px box is a hole for a short title and an
+overdraw for a long body, and nothing in the code said so; it is a `VerticalLayoutGroup` under a
+`ContentSizeFitter` now, so dead space is impossible by construction. The route controls moved
+into the card as its last row because bottom-centre is the ability deck's lane.
+`TrainingCardProbe` photographs the REAL card at four lesson shapes (`Logs/shots-training`).
+⚠️ **Use it before changing that card again.** `CLAUDE.md` § 6.1 was written about models and is
+just as true of a card that has now been rejected twice on its layout.
+
+**Also in that commit, and worth keeping:** `BotBehaviourProbe` carries an explicit **420 s**
+timeout (it measures 170 to 174 s against NUnit's 180 s default) and `SoloPracticeTests` ends its
+match in `TearDown`. Both are the same lesson: a PlayMode test that leaves a live round poisons
+the next suite, because the directors are `DontDestroyOnLoad`. `LandedHighlightTests` failed that
+way twice and passes alone.
+
+---
+
+## 15 · The 4.70 tutorial batch, and why four screenshots were one probe apart
+
+**Seven reports off the played 4.70 player. ✅ ALL CLOSED.** Three of the four things he
+photographed were objects nobody could name from the pixels, and every one of them was named in
+a single probe run. `TrainingStreetProbe` is that probe and it is the lasting part of this entry.
+
+⚠️⚠️ **THE PATTERN, AND IT IS § 13'S ONE LEVEL UP: A REPORT ABOUT A PICTURE NEEDS A PROBE THAT
+NAMES OBJECTS, NOT A CLOSER LOOK AT THE PICTURE.** `FppFrameProbe` exists for exactly this class
+of report and could not have caught any of these: it skips every path containing "Slipper",
+which is what two of them turned out to be, and it never loads the tutorial. The new probe walks
+the route lesson by lesson, prints every renderer within two metres of the eye with its viewport
+position and its WORLD SIZE, and prints every tsinelas with its state, its holder and its
+clearance off the road. The four answers fell out of one run in three seconds.
+
+**15.1 ✅ The mash was still a clock, and the fix was to delete the clock.** 🧑: *"mashing still
+weird, u randomly get up after set amt of time, i dont have to actually mash it"*, and *"i want
+it so that i can only get up when ive reached the end of the mashing shit bcz sometimes i get up
+with it still at middle or when i only clicked once"*.
+
+Three passes had answered this by retuning a decay RATE (§ 12.1, § 13.1, § 14.1) and each left
+the property he was describing standing: **while a rate above zero exists, time ends the fall
+and the meter decorates a countdown.** `Balance.TripPassiveDecayRate` is **deleted**. Above
+`MinTripDown` only an accepted press moves a fall; below it, where the get-up clip is playing,
+it runs at real time so the animation and the clock agree.
+
+`Balance.TripAutoRecoverSeconds` = **5.0** replaces it as a STRANDING GUARD, not a second way
+up: a perfectly answered fall is 1.33 s, so it is 3.8x that and 5.1x the 0.98 s mash window, and
+nobody waits five seconds on the road to save ten presses. ⚠️ **When it fires it credits the
+whole remaining slack to `MashRemoved`**, so the invariant a player can see holds with no
+exception: **you never stand up with the bar part-full.**
+
+Held by `Trip_OnlyPressesEndAFallInsideTheGuard` in Core and by
+`InputEdgeTests.MashingShortensAFallByWhatBalanceSays`, which now asserts three things rather
+than one: an unanswered fall lasts the guard (not a decay), the meter reads full at the moment
+of standing on BOTH paths, and answering is still worth more than waiting.
+
+**15.2 ✅ *"the pet of nemu is here??"* in a street with nobody in it.**
+`GhostPetCompanion.Bind` unparents Kuro to the scene ROOT on purpose, because he lags behind
+Nemu and must not inherit her transform. The consequence nobody had traced: every path that
+hides a SEAT leaves the pet floating in the street on his own, and `GuidedTraining.HideTheCast`
+hides three of them. The pet now mirrors its owner's `activeInHierarchy` every `LateUpdate`.
+⚠️ **Renderers, not `SetActive`**: deactivating the object stops the `LateUpdate` that is the
+only thing that could bring it back.
+
+**15.3 ✅ *"theres a floating slipper check ss"*: the route was pointing at somebody else's
+tsinelas.** `SliceRunner.EquipOwnedSlippers` **rewrites `OwnerSlot` every round**, walking the
+attackers in seat order and handing them `Slippers[0]`, `[1]`, `[2]`, so with seat 0 as the taya
+the local seat 1 owns SLIPPER 0. `GuidedTraining.Configure` asked one frame EARLIER, matched on
+the pre-round ownership, and got slipper 1. `HideTheCast` then switched off the tsinelas that was
+really in the player's hand and KEPT the other one, which was in a hidden seat's hand: measured
+at **0.85 m over an empty road**. Resolution moved after `_runner.Begin()` and asks the CARRIER
+first, which cannot be wrong.
+
+**15.4 ✅ *"i can pick up slippers from ppl's hands wtf?"*, and this one is a MATCH bug, not a
+tutorial one.** `Slipper.HostForceEquip` wrote `Holder` and told the NEW carrier and nothing
+anywhere told the old one. `Carrier.RideAnchor` writes `Held`'s transform every `LateUpdate` and
+asks nothing about the slipper's STATE, so a carrier never told it had lost one keeps dragging
+it: the shoe hangs at hand height wherever that body goes, and because it is LOOSE it lights up,
+prompts, and can be taken. Measured on the punch lesson: a LOOSE tsinelas resting **0.91 m** off
+the road in the dummy's hand. Every write of `Holder` now goes through one
+`ReleasePreviousHolder`, which also refuses to touch a carrier that has since picked up a
+different shoe. ⚠️ `HostForceEquip` is the ROUND-START ARMING and runs in every match, so this
+was reachable outside the tutorial.
+
+**15.5 ✅ *"wtf is this yellow shit on me"*: the objective marker is a 2 m ball.**
+`VfxShapes.Lay` scales X and Z by the radius and **leaves Y at 1.0**, because every other caller
+hands it a flat mesh. `NovaShell` is a unit SPHERE shell, so the marker drew a translucent amber
+ball **1.40 by 2.00 by 1.39** standing on its target, half of it under the road. It is
+`Crystal(22)`, the flat fan the hazard footprints use, and the probe now fails any marker
+renderer over 0.60 m tall. ⚠️ **This is the second oversized marker on this entry's route:**
+§ 13.6 replaced a 5.2 m pole with what its own note called a ground ring, and the ring it reached
+for was a ball. Two halves of the same lesson about drawing a pointer from a description.
+
+Two supporting fixes came out of the same measurement: the marker hides itself inside **1.10 m**
+of the eye (a pointer you are standing in is a wall), and the retrieval lesson **puts the shoe on
+the road** rather than binding the marker to the player's own hand. That last one also made the
+lesson completable: skipping the throw with N arrived at RETRIEVE still holding the tsinelas, and
+you cannot pick up what is already in your hand.
+
+**15.6 ✅ The kit is off screen until the lesson that teaches it.** 🧑: *"make it so that my
+skills cant be seen too until i need to use them myself"*, and *"THIS IS FOR TUTORIAL BTW NOT THE
+ACTUAL GAME"*. `Hud.SetTrainingDeckHidden`, instance state rather than a static so it cannot
+survive into a match by construction. The deck appears on READ YOUR HERO KIT and the probe
+asserts it is absent on every lesson before that. Same argument as `InputIntent.AllowOnly` one
+layer up: the route already refuses the skill verbs, so a deck showing three powers you cannot
+cast invites presses the tutorial will ignore.
+
+**15.7 ✅ The pektus curve was not in the settings, because it was not in the input map.** 🧑:
+*"im not sure as well if pektus controls are in settings, allow them to be rebindable"*. It was
+`Keyboard.current.leftArrowKey` read inline in `PlayerInputReader`, which breaks `CLAUDE.md` § 4's
+*"one control, one action, in the input map"*: unbindable, unlistable, and unprintable by
+`Hud.KeyLabel`, which is why the pektus lesson had to name the arrow keys in a hard-coded string
+while every other lesson drew the live binding. `CurveLeft` and `CurveRight` are real actions now,
+in PLAYING THE GAME, and the lesson prints whatever they are bound to. ⚠️ The mouse wheel is
+still read directly and that is not the same fault: a scroll axis is not a button and there is
+nothing to rebind it to.
+
+**15.8 ✅ Scrolling the settings.** 🧑, twice: *"make it easier to scroll thru settings bcz its so
+hard to"* and *"here its so weird to scroll in setttings here"*, with a screenshot of a row cut
+in half at the bottom edge. Three things, and only the first is the one people reach for:
+
+* **No scrollbar existed at all.** `ScrollRect.verticalScrollbar` was never assigned, so there
+  was no handle, no indication that there was more below, and no sense of how much. A cut-off row
+  was the only cue, and a cut-off row reads as a layout bug rather than as an invitation. There
+  is a wood track with an amber handle down the right edge now, drawn in code because Godot's
+  `ScrollContainer` draws its bar from the theme and `TscnUiImporter` had no node to convert.
+* **The wheel was set to 45**, about four rows a notch, commented "fast, smooth, responsive". It
+  is the first two. 24 is two rows, and inertia is off so the row under the cursor is the row
+  that ends up there.
+* **No keyboard.** Page Up / Page Down / Home / End and the arrows move the list, refused while a
+  rebind is listening.
+
+⚠️ **The rows are PADDED away from the bar rather than the viewport being shrunk**, and the first
+version did the other one: the content is authored at a fixed width out of the .tscn rather than
+stretched, so moving the viewport's right edge moved the window and left the rows where they
+were. The bar drew over the right end of every key cap and cut the username field in half.
+`Logs/shots-runtime/SettingsPanel.png` showed it in one frame, which is why that shot is worth
+taking after any change to this panel.
+
+**Still open on this entry:** nothing, but every item wants a played build. The mash in
+particular is a FEEL change and the guard at 5.0 s is a starting position: if an unanswered fall
+reads as being stuck rather than as being punished, that constant is the one to move, and its
+note says what it was solved against.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**
