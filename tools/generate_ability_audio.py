@@ -581,6 +581,76 @@ def synth_eclipse_toll(duration=2.2):
     return out
 
 
+def synth_hex_cast(duration=1.0):
+    """
+    Phaister. A hex being SPOKEN, then the sigil catching.
+
+    ⚠️ IT REPLACES `ability_shatter_trap` ON HER HEX. That cue is a trap breaking, it belongs to
+    the deleted ability set, and it was already carrying Cheska's two ground powers until
+    `docs/TODO.md` § 20 gave those their own. A third hero reaching for it would have made it
+    three kits sharing one leftover, which is the fault this whole file was written to end.
+
+    Two halves, in order, because a spell is spoken and THEN it takes: a low rasping swell with
+    no clear pitch, and a bright rune chime that only arrives at the end.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+    catch = 0.58
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        # The incantation: filtered noise pushed through a slow wobble, so it reads as a voice
+        # without being one. No fundamental, because a pitch here would sound like a synth pad.
+        k = min(1.0, t / catch)
+        rasp = (random.uniform(-1.0, 1.0) * 0.30
+                * (0.25 + 0.75 * k)
+                * (0.6 + 0.4 * math.sin(2.0 * math.pi * 11.0 * t))
+                * (1.0 if t < catch else math.exp(-(t - catch) * 12.0)))
+
+        # A low drone under it, rising a little as the words land.
+        drone = math.sin(2.0 * math.pi * (58.0 + 26.0 * k) * t) * 0.22 * k
+
+        # The catch: the sigil taking, as a struck chime with an odd partial in it.
+        chime = 0.0
+        if t >= catch:
+            c = t - catch
+            for idx, f in enumerate([1180.0, 1770.0, 2360.0]):
+                chime += (math.sin(2.0 * math.pi * f * c)
+                          * math.exp(-c * (5.0 + idx * 3.0)) / (idx + 1.5))
+            chime *= 0.5
+
+        out[i] = math.tanh((rasp + drone + chime) * 1.15)
+    return out
+
+
+def synth_hex_afflict(duration=0.8):
+    """
+    Phaister. The moment the hex takes hold of somebody.
+
+    ⚠️ IT IS THE VICTIM'S CUE AND IT IS DELIBERATELY UNPLEASANT. Every other on-hit sound in this
+    game is an impact: something struck something. A curse is not struck, it SETTLES, so this
+    falls rather than rises and has a sour detuned pair at the bottom of it that none of the
+    other cues use. A player who has been hexed should be able to tell without reading the HUD.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        # Two tones a hair apart, which is what makes it sour rather than musical.
+        f = 330.0 * math.exp(-t * 1.6) + 110.0
+        pair = (math.sin(2.0 * math.pi * f * t)
+                + math.sin(2.0 * math.pi * f * 1.032 * t)) * 0.5
+
+        # A short scrape at the front so it has an onset.
+        scrape = random.uniform(-1.0, 1.0) * math.exp(-t * 24.0) * 0.28
+
+        out[i] = math.tanh((pair * 0.55 * math.exp(-t * 2.2) + scrape) * 1.2)
+    return out
+
+
 GENERATORS = {
     # (seed slot, synth). Slots 0 to 6 are the original payload set, in the alphabetical order
     # that produced the audio currently in the repository.
@@ -602,6 +672,8 @@ GENERATORS = {
 
     # Phaister, the sixth hero, whose ultimate asked for a file that was never made.
     "sfx_eclipse_toll.wav": (13, synth_eclipse_toll),
+    "sfx_hex_cast.wav": (14, synth_hex_cast),
+    "sfx_hex_afflict.wav": (15, synth_hex_afflict),
 }
 
 

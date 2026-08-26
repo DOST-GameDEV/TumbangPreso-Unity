@@ -72,7 +72,7 @@ namespace TumbangPreso.EditorTools
         /// </summary>
         private static void CaptureInspectTray()
         {
-            string[] heroes = { "cheska", "dante", "nemu", "sean", "zack" };
+            string[] heroes = { "cheska", "dante", "nemu", "sean", "zack", "phaister" };
 
             foreach (string hero in heroes)
             {
@@ -205,7 +205,7 @@ namespace TumbangPreso.EditorTools
         /// </summary>
         private static void CaptureKitSheet()
         {
-            string[] heroes = { "cheska", "dante", "nemu", "sean", "zack" };
+            string[] heroes = { "cheska", "dante", "nemu", "sean", "zack", "phaister" };
 
             const int tile = 96;
             const int pad = 16;

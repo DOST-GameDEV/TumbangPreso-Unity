@@ -267,7 +267,12 @@ namespace TumbangPreso.Tests
             var heroes = Roster.GetPeople(GameMode.HeroStrike);
 
             Assert.AreEqual(12, classic.Count);
-            Assert.AreEqual(5, heroes.Count);
+
+            // ⚠ SIX SINCE 2026-08-26, when Phaister merged in. The number is asserted rather
+            // than derived on purpose: a hero appearing or disappearing from the Hero Strike
+            // roster is a product decision and should have to be typed here, not noticed later.
+            // `docs/TODO.md` § 21.
+            Assert.AreEqual(6, heroes.Count);
             Assert.AreEqual("bayan", classic[0].Id);
             Assert.AreEqual("dante", heroes[0].Id);
         }

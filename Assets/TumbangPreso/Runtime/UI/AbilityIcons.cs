@@ -205,6 +205,10 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.NemuPhase: return "GHOST STEP";
                 case AbilityGlyph.NemuAstralPet: return "KURO PROJECTION";
                 case AbilityGlyph.NemuSeanceVoid: return "SEANCE VOID";
+                case AbilityGlyph.PhaisterHexSigil: return "HEX SIGIL";
+                case AbilityGlyph.PhaisterShadowBlink: return "BLINK";
+                case AbilityGlyph.PhaisterEclipse: return "ECLIPSE";
+                case AbilityGlyph.PhaisterWitchfire: return "WITCHFIRE";
                 default:
                     return "POWER";
             }

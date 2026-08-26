@@ -1090,6 +1090,7 @@ namespace TumbangPreso.EditorTools
                 PlaceTurn(angles[i].Item1, angles[i].Item2, palette, i);
 
             var camera = BuildCamera(angles.Length, 1);
+            camera.orthographicSize = 0.58f;
             bool ok = CaptureTo(camera, angles.Length * CellPixels, CellPixels, TurnPath);
 
             report.AppendLine(ok ? $"wrote {TurnPath}" : "FAIL: turnaround wrote nothing.");
@@ -1130,7 +1131,9 @@ namespace TumbangPreso.EditorTools
             var bounds = renderers[0].bounds;
             foreach (var r in renderers) bounds.Encapsulate(r.bounds);
 
-            float extent = Mathf.Max(bounds.extents.x, Mathf.Max(bounds.extents.y, bounds.extents.z));
+            // Use standard canonical cast height rather than accessory height so tall hats do not shrink the character
+            float baseRefHeight = 0.85f;
+            float extent = Mathf.Max(bounds.extents.x, Mathf.Max(baseRefHeight * 0.5f, bounds.extents.z));
             if (extent < 0.0001f) return;
 
             model.transform.localScale = Vector3.one * (0.76f / (extent * 2.0f));
@@ -1222,6 +1225,7 @@ namespace TumbangPreso.EditorTools
             }
 
             var camera = BuildCamera(members.Length, 1);
+            camera.orthographicSize = 0.58f;
             bool ok = CaptureTo(camera, members.Length * CellPixels, CellPixels, LineupPath);
 
             report.AppendLine(ok ? $"wrote {LineupPath}" : "FAIL: lineup wrote nothing.");

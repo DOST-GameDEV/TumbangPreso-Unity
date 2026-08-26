@@ -89,7 +89,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static bool _gateBlowout;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v16";
+        private const string Version = "v17";
 
         [MenuItem("Tumbang Preso/Capture Ability Showcase")]
         public static void RunFromMenu() => Execute();
@@ -142,11 +142,17 @@ namespace TumbangPreso.EditorTools.MapKit
                 // photographed at all. Both are captured because her kit is deliberately ONE
                 // silhouette at two scales: if the pentagram and the heptagram cannot be told
                 // apart in these frames, the escalation § 21.5 describes does not exist.
+                // ⚠ THE REAL SPAWNERS, NOT THE SHAPE BUILDER UNDERNEATH THEM. The kit calls
+                // `SpawnKulamHexSigil` and `SpawnGrandCovenEclipse`; photographing
+                // `SpawnWitchSigil` directly would show the sigil without the perimeter nodes,
+                // the moon or the light, which is not what a player ever sees. This is the same
+                // rule the class note gives for spawning hazards rather than casting them: call
+                // the single place the footprint is actually built.
                 Solo(spawned, "hex_sigil",
-                     () => HeroHazards.SpawnWitchSigil(Vector3.zero, 2.4f, 60.0f, 5, 2));
+                     () => HeroHazards.SpawnKulamHexSigil(Vector3.zero, 2.4f, 60.0f, 5));
 
                 Solo(spawned, "coven_eclipse",
-                     () => HeroHazards.SpawnWitchSigil(Vector3.zero, 3.4f, 60.0f, 7, 3, 0.02f, 11));
+                     () => HeroHazards.SpawnGrandCovenEclipse(Vector3.zero, 5.0f, 60.0f));
 
                 // ---------------------------------------------------------------
                 // 2. A DASH CORRIDOR, which is the shape that was actually wrong and

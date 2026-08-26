@@ -1032,6 +1032,7 @@ namespace TumbangPreso.UI
             if (GameServices.Match.IsWarmupBuffer)
             {
                 _round.text = WarmupLine;
+                FitTopCentre();
                 _timer.color = UiTheme.Highlight;
                 _urgent = -1;
                 if (_timerPressure != null) _timerPressure.enabled = false;
@@ -1040,6 +1041,7 @@ namespace TumbangPreso.UI
             {
                 _round.text = RoundLine(round, GameServices.Match.TotalRounds,
                                     SeatName(GameServices.Match.DefenderSlot));
+                FitTopCentre();
 
                 if (_timerPressure != null)
                 {
@@ -2238,6 +2240,47 @@ namespace TumbangPreso.UI
 
         /// <summary>The .tscn's authored top-centre width, kept as the floor.</summary>
         public const float TopCentreFloor = 240.0f;
+
+        private string _fittedLine;
+        private float _fittedScale = -1.0f;
+
+        /// <summary>
+        /// Re-measure the top-centre column against the worst line it can hold, but only when
+        /// something that changes the answer has actually changed.
+        ///
+        /// ⚠️⚠️ MEASURING ONCE AT BUILD TIME IS NOT ENOUGH, AND THE FIRST FIX FOR THIS DID
+        /// EXACTLY THAT. `HudOverflowProbe` on the build-time version: the column came out **276
+        /// units at 720p, 304 at 900p, 315 at 1080p and 306 at 1440p** against 500 to 525 needed.
+        /// Two separate faults in one number. The font's glyph metrics are not final when the HUD
+        /// is constructed, so the measurement is taken cold and lands far short; and
+        /// `preferredWidth` is derived from integer pixel metrics divided by the canvas scale, so
+        /// it moves by about 14 per cent across the shipped resolutions even for one string.
+        ///
+        /// ⚠️ SO IT RE-FITS ON A SCALE CHANGE AS WELL AS A TEXT CHANGE. A player who moves the
+        /// window to another monitor gets the column re-measured for that monitor's scale, which
+        /// is the case the resolution spread above is really describing.
+        ///
+        /// ⚠️⚠️ AND IT IS GUARDED, BECAUSE THE CALLER RUNS EVERY FRAME. `CLAUDE.md` § 7.1 records
+        /// a HUD string being rebuilt every frame costing the 6x probe an eighth of its frames
+        /// and most of its physics steps. Measuring two strings through a `Text` generates their
+        /// glyphs; doing that 60 times a second to get the same answer is that bug again. The
+        /// round line changes once per round, so this runs a handful of times a match.
+        /// </summary>
+        private void FitTopCentre()
+        {
+            if (_round == null || _topCentre == null) return;
+
+            var canvas = _round.canvas;
+            float scale = canvas != null ? canvas.scaleFactor : 1.0f;
+
+            if (_round.text == _fittedLine && Mathf.Approximately(scale, _fittedScale)) return;
+
+            _fittedLine = _round.text;
+            _fittedScale = scale;
+
+            var rt = (RectTransform)_topCentre.transform;
+            rt.sizeDelta = new Vector2(TopCentreColumnWidth(_round), rt.sizeDelta.y);
+        }
 
         /// <summary>Bottom-right, at the .tscn's -396,-172 to -16,-64.</summary>
         private void BuildLataCard()

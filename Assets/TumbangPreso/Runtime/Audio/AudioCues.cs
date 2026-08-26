@@ -61,6 +61,11 @@ namespace TumbangPreso.Audio
                 // other casts so a 2 s tail does not sit on top of everything that follows it.
                 { "sfx_eclipse_toll", -6.0f },
 
+                // The affliction fires per victim per hex, so it is mixed as a status rather
+                // than as an event: four people standing in one circle must not stack into a wall.
+                { "sfx_hex_afflict", -10.0f },
+                { "sfx_hex_cast",     -4.0f },
+
                 { "sfx_ice_form",    -5.0f },
                 { "sfx_barricade_raise", -3.0f },
                 { "sfx_ice_shatter", -3.0f },
@@ -178,7 +183,7 @@ namespace TumbangPreso.Audio
             // ⚠️⚠️ PHAISTER'S ULTIMATE, WHICH ARRIVED CALLING `sfx_ghost_appear`: A CUE WITH NO
             // FILE AND NO REGISTRATION. It is the same silent-cue fault `sfx_lrt_pass` above
             // records, on the biggest moment in the newest kit. `docs/TODO.md` § 21.
-            "sfx_eclipse_toll",
+            "sfx_eclipse_toll", "sfx_hex_cast", "sfx_hex_afflict",
 
             // Hero Vocal Shouts & Grunts.
             "hero_dante_ult", "hero_dante_grunt",

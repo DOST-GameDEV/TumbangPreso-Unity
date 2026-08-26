@@ -1531,6 +1531,228 @@ namespace TumbangPreso.Abilities
         }
 
         // -------------------------------------------------------------------
+        // KULAM HEX SIGIL & WITCH REGALIA (Phaister Abilities)
+        // -------------------------------------------------------------------
+        public static GameObject SpawnKulamHexSigil(Vector3 position, float radius = 2.4f, float duration = 6.0f, int ownerSlot = -1)
+        {
+            var go = new GameObject("KulamHexSigilZone");
+            go.transform.position = position;
+
+            // ⚠️⚠️ THE CIRCLE IS DRAWN AS STROKES, AND IT WAS TWO FILLED DISCS. What stood here
+            // was `PrimitiveType.Cylinder` at `radius * 2.0` and another at `radius * 1.25`, and
+            // a Unity cylinder is SOLID: those are not rings, they are two stacked translucent
+            // PLATES covering the whole footprint and then some. At the shipped 2.4 m that is
+            // about **18 m² of a 196 m² court painted magenta for one skill**, before the spokes
+            // and the nodes, which is the puddle `docs/VISION.md` § 2 exists to stop.
+            //
+            // ⚠️⚠️ AND TWO COPLANAR TRANSLUCENT PLATES SORT ARBITRARILY, so which of the two
+            // colours won was decided per frame by a distance comparison between two centres 3 mm
+            // apart. `docs/TODO.md` § 19.2a has the account: the same fault shipped on Sean's
+            // trail and drew a different colour per drop.
+            //
+            // `VfxShapes.Sigil` draws the same circle as LINE ART: an outer ring, an inner ring,
+            // a five-pointed star and rune ticks, with the road showing between them. It paints
+            // roughly **8 per cent of its own circle** against the two discs' 200 per cent, it
+            // cannot lose a sort because there is nothing stacked on it, and it actually looks
+            // like a witch's circle rather than a coloured coin. § 21.5.
+            SpawnWitchSigil(position, radius, duration, 5, 2)
+                .transform.SetParent(go.transform, worldPositionStays: true);
+
+            // ⚠️ THE PERIMETER NODES STAY, BECAUSE THEY ARE THE ONLY VERTICAL THING IN THE
+            // EFFECT and a mark on the road is edge-on at eye height. They are `Prism` shards
+            // rather than `PrimitiveType.Cube` for the reason § 19 gives: the cube was the one
+            // primitive Dante's debris, Sean's embers, the void's shards and the frost spikes
+            // were ALL made of, so four fictions shared one lump of geometry.
+            for (int n = 0; n < 6; n++)
+            {
+                float ang = n * 60.0f * Mathf.Deg2Rad;
+                float dist = radius * 0.88f;
+
+                var node = VfxShapes.Stand(go.transform, $"HexNode_{n}",
+                                           VfxShapes.Prism(5, 1.0f, 0.18f, 0.2f, 0.4f, 40 + n),
+                                           0.11f, heightScale: 0.34f);
+                node.transform.localPosition =
+                    new Vector3(Mathf.Sin(ang) * dist, 0.16f, Mathf.Cos(ang) * dist);
+                node.transform.localRotation = Quaternion.Euler(0.0f, n * 60.0f, 0.0f);
+
+                VfxMaterial.Ghost(node.GetComponent<Renderer>(),
+                                  new Color(0.98f, 0.25f, 0.65f, 0.85f), 0.45f);
+            }
+
+            // ⚠️ THE "CRESCENT MOON" IS DELETED. It was a `Cylinder` scaled flat and tilted 30
+            // degrees, which is an ELLIPSE seen at an angle and not a crescent by any
+            // construction. The sigil's own inner wheel now occupies that space and actually
+            // carries a symbol.
+
+            // 6. Violet / Magenta Occult Light
+            var lightGo = new GameObject("HexLight");
+            lightGo.transform.SetParent(go.transform, false);
+            lightGo.transform.localPosition = new Vector3(0, 1.4f, 0);
+            var light = lightGo.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = UiTheme.HeroWitchBright;
+            light.range = radius * 2.2f;
+            light.intensity = 0.95f;
+
+            // 7. Rising Witch Cast Particles (Occult motes & gold sparkles)
+            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchSigil, duration);
+
+            // ⚠️⚠️ HER OWN CUE, AND THIS PLAYED `ability_shatter_trap` PLUS `sfx_ghost_teleport`:
+            // a trap breaking, and Nemu's teleport. Both are borrowed, and the first is from the
+            // deleted ability set that `AudioCues.DeletedAbilityCues` exists to track.
+            // `docs/TODO.md` § 20 had just finished taking that same cue off Cheska's two ground
+            // powers; a third kit reaching for it would have made it three.
+            GameServices.Audio?.PlayAt("sfx_hex_cast", position);
+            ComicPopup.Spawn(position, "KULAM!", UiTheme.HeroWitchBright, 1.25f);
+
+            var comp = go.AddComponent<KulamHexSigilComponent>();
+            comp.Radius = radius;
+            comp.Duration = duration;
+            comp.OwnerSlot = ownerSlot;
+
+            HazardVolume.Attach(go, radius, ownerSlot);
+            return go;
+        }
+
+        public static void SpawnShadowBlinkBurst(Vector3 departurePos, Vector3 arrivalPos)
+        {
+            // ⚠️⚠️ BOTH ENDS ARE GLYPHS NOW, NOT FILLED DISCS. A 3.2-scale `Cylinder` is a
+            // 1.6 m RADIUS solid plate, so a blink stamped 8 m² of magenta on the road at the
+            // departure point and another 4.5 m² at the arrival, for two marks that live under
+            // half a second each. A cast glyph says the same thing (a spell happened HERE) in
+            // strokes, and it is the same symbol her other two powers draw, which is what makes
+            // the three read as one hero's craft rather than three unrelated flashes.
+            //
+            // ⚠️ THE DEPARTURE MARK IS THE BIGGER OF THE TWO AND THAT IS DELIBERATE. It is where
+            // the knockback `OverlapSphere` is centred, so it is the one the other three players
+            // need to see; the arrival is where she already is and her body marks that.
+            SpawnCastGlyph(departurePos, 1.55f, 0.55f, seed: 5);
+
+            for (int i = 0; i < 8; i++)
+            {
+                var shard = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                shard.name = "BlinkShard";
+                shard.transform.position = departurePos + Vector3.up * 0.5f;
+                shard.transform.localScale = Vector3.one * Random.Range(0.12f, 0.24f);
+                VfxMaterial.Ghost(shard.GetComponent<Renderer>(),
+                                  new Color(0.70f, 0.15f, 0.95f, 0.90f), 0.5f);
+                var rb = shard.AddComponent<Rigidbody>();
+                rb.linearVelocity = Vector3.up * 2.5f + Random.insideUnitSphere * 3.5f;
+                Object.Destroy(shard, 0.60f);
+            }
+
+            // Arrival Glow Rune Stamp, smaller and shorter: she is standing on it.
+            SpawnCastGlyph(arrivalPos, 1.15f, 0.42f, seed: 6);
+        }
+
+        /// ⚠ IT RETURNS THE OBJECT, AND IT USED TO RETURN void. Every other spawner in this
+        /// file hands back what it made, and `AbilityShowcaseProbe.Solo` needs that to sweep the
+        /// effect up before the next capture: an effect it cannot collect survives into the NEXT
+        /// frame and quietly appears in a shot that is supposed to show one ability. The class
+        /// note on `Transient` records that exact trap.
+        public static GameObject SpawnGrandCovenEclipse(Vector3 position, float radius = 5.0f, float duration = 5.0f)
+        {
+            var go = new GameObject("GrandCovenEclipseEffect");
+            go.transform.position = position;
+
+            // ⚠️⚠️ THIS WAS THE SINGLE LARGEST PAINTED OBJECT EVER PUT IN THIS GAME AND THE
+            // ARITHMETIC IS NOT CLOSE. The corona was a `Cylinder` at `radius * 2.0`, and a Unity
+            // cylinder is one unit across, so at the default 5.0 m it is a solid disc of radius
+            // 5 m: **78.5 m² of a 196 m² court, 40 per cent of the box in one plate**, with a
+            // second 23.8 m² disc stacked on top of it. `docs/VISION.md` § 2 rule 5 asks that a
+            // mid-fight frame still show the lata, the chalk and every player, and rule 1 puts a
+            // skill's floor at 3 to 8 per cent. The old measured worst offender in the whole game
+            // was Zack's corridor at 27.2 per cent.
+            //
+            // ⚠️ AN ULTIMATE MAY BE BIG. RULE 2 SAYS SO, AND THAT IS NOT WHAT THIS WAS. Big and
+            // FILLED are different claims: the heptagram below keeps the full 5 m reach, so the
+            // power reads as arena-wide exactly as intended, and paints about 8 per cent of the
+            // circle it covers because it is strokes. Same footprint, a twelfth of the pixels.
+            //
+            // ⚠️ SEVEN POINTS, NOT FIVE, AND IT IS HOW HER ULTIMATE IS TOLD FROM HER SKILL.
+            // § 21.5: everything Phaister does is a drawn symbol, so the silhouette rule the
+            // other five heroes follow cannot separate her own kit. The skills draw a pentagram
+            // and the ultimate draws a heptagram at double the radius, which is how occult
+            // diagrams actually escalate.
+            SpawnWitchSigil(position, radius, duration, 7, 3, 0.02f, 11)
+                .transform.SetParent(go.transform, worldPositionStays: true);
+
+            // ⚠️ THE DARK MOON STAYS, BECAUSE IT IS THE ONLY THING IN THE EFFECT THAT SAYS
+            // "ECLIPSE" RATHER THAN "SPELL", and it comes down from `radius * 1.1` to `0.34`.
+            // At the old size it was a 23.8 m² black plate over the middle of the court; at this
+            // one it is a disc under her feet that the sigil's inner wheel rings, which is what
+            // an eclipse actually looks like from below.
+            var moonCore = VfxShapes.Lay(go.transform, "EclipseMoonCore",
+                                         VfxShapes.Crystal(18, 0.0f),
+                                         radius * 0.34f, 0.025f);
+            VfxMaterial.Ghost(moonCore.GetComponent<Renderer>(),
+                              new Color(0.05f, 0.01f, 0.08f, 0.95f), 0.0f);
+            VfxMaterial.StripCollider(moonCore);
+
+            // ⚠️ THE EIGHT CUBE "SOLAR FLARE BEAMS" ARE DELETED. They were 9 m long stretched
+            // cubes crossing the whole arena at 0.80 alpha, and the sigil's own rune ticks and
+            // star strokes already give the mark its radial structure. Eight more bars on top of
+            // it is `VISION.md` § 2 rule 4 broken inside one effect.
+
+            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchSigil, duration);
+            Object.Destroy(go, duration);
+            return go;
+        }
+
+        public sealed class KulamHexSigilComponent : MonoBehaviour
+        {
+            public float Radius = 2.4f;
+            public float Duration = 6.0f;
+            public int OwnerSlot = -1;
+            private float _left;
+            private readonly Dictionary<int, float> _nextHexBySlot = new Dictionary<int, float>();
+
+            private void Start() => _left = Duration;
+
+            private void Update()
+            {
+                _left -= Time.deltaTime;
+                if (_left <= 0.0f)
+                {
+                    Object.Destroy(gameObject);
+                    return;
+                }
+
+                // Slow rotation on occult hex circle
+                transform.Rotate(Vector3.up, 18.0f * Time.deltaTime);
+
+                var round = GameServices.Round;
+                if (round == null) return;
+
+                foreach (var p in round.Players)
+                {
+                    if (p == null || p.PlayerSlot == OwnerSlot) continue;
+
+                    Vector3 diff = p.transform.position - transform.position;
+                    diff.y = 0.0f;
+                    if (diff.magnitude <= Radius)
+                    {
+                        // Apply hex curse: reduce speed and stagger on intervals
+                        p.ApplyImpulse(-p.Velocity.normalized * 3.5f * Time.deltaTime);
+
+                        if (CanPulse(_nextHexBySlot, p.PlayerSlot, 1.10f))
+                        {
+                            p.ApplyStagger(0.35f);
+                            ComicPopup.Spawn(p.transform.position + Vector3.up * 1.2f, "HEXED!", UiTheme.HeroWitchBright, 1.0f);
+
+                            // ⚠ THE VICTIM GETS A DIFFERENT CUE FROM THE CAST, and it falls
+                            // rather than rises. Every other on-hit sound in this game is an
+                            // impact; a curse is not struck, it SETTLES. It also fires once per
+                            // victim per 1.1 s, which is why it is mixed ten down: four people in
+                            // one circle must not stack into a wall.
+                            GameServices.Audio?.PlayAt("sfx_hex_afflict", p.transform.position);
+                        }
+                    }
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------
         // THUNDERSTRIKE OVERDRIVE (Zack Ultimate)
         // -------------------------------------------------------------------
         // -------------------------------------------------------------------

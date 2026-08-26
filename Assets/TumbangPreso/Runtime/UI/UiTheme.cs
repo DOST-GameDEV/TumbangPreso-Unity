@@ -239,8 +239,30 @@ namespace TumbangPreso.UI
         public static Color HeroLightningBright => HeroElectricBright;
         public static readonly Color HeroSpirit = Hex("b44dff");
         public static readonly Color HeroSpiritBright = Hex("dfaaff");
-        public static readonly Color HeroWitch = Hex("e82882");
-        public static readonly Color HeroWitchBright = Hex("f44498");
+        /// <summary>
+        /// Phaister's orchid. Hue 311.
+        ///
+        /// ⚠️⚠️ IT SHIPPED AT `e82882`, HUE 332, WHICH IS **18.1 DEGREES FROM SEAN** AND BROKE THE
+        /// ONE COLOUR LAW THIS GAME HAS. `HeroPresentationTests.TheFiveHeroAccentsAreTellableApart`
+        /// caught it the moment the branch merged: *"sean and phaister are only 18.1 degrees
+        /// apart, which is one colour on a deck tile"*. The rule is 30 degrees between any two
+        /// hero accents and 25 clear of both ROLE colours, because orange tracks the attacker and
+        /// blue the defender and those two rotate every round: they are the only colours a player
+        /// has to READ rather than merely see.
+        ///
+        /// ⚠️ 311 IS NOT A TASTE CHOICE, IT IS ONE OF THREE LEGAL WINDOWS. With fire at 350, ice
+        /// at 170, electric at 64, spirit at 275, earth at 137 and the two roles at 22 and 207,
+        /// exactly three bands satisfy both constraints: 95 to 106 (a yellow-green), 232 to 244
+        /// (a blue-violet) and 305 to 320 (this one). The first two are not colours a witch can
+        /// have, and inside the third, 311 sits furthest from its nearest neighbour at 36.2
+        /// degrees from Nemu's violet and 39.1 from Sean's red.
+        ///
+        /// ⚠️ THE SATURATION AND VALUE ARE THE ONES THE HERO SHIPPED WITH, carried across
+        /// unchanged. Only the hue moved, so she is the same vivid magenta she was authored as,
+        /// a step further from Sean and no further from anybody else.
+        /// </summary>
+        public static readonly Color HeroWitch = Hex("e828c5");
+        public static readonly Color HeroWitchBright = Hex("f444d4");
         public static readonly Color HeroEarth = Hex("3fa65c");
         public static readonly Color HeroEarthBright = Hex("8fe0a0");
 

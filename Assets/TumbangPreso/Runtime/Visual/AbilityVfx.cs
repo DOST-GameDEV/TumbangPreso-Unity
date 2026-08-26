@@ -97,15 +97,15 @@ namespace TumbangPreso.Visual
             FrostMote,
 
             /// <summary>
-            /// Phaister casting. Rune chips spiralling UP off the hands.
+            /// Phaister casting. Rising occult sigils, magenta wisps and gold sparkles.
             ///
-            /// ⚠️⚠️ SHE HAD `VoidWisp`, WHICH IS NEMU'S, AND THE TWO ARE THE ONLY HEROES IN THE
-            /// GAME WHO SHARE AN ELEMENT. Borrowing the aura put both spirit heroes in the same
-            /// purple with the same motes falling the same way, so the one channel left to tell
-            /// them apart was the model. This one is her magenta and it goes UP rather than down:
-            /// Nemu is coming apart, Phaister is working.
+            /// ⚠️⚠️ SHE SHIPPED WITH `VoidWisp`, WHICH IS NEMU'S, AND THE TWO ARE THE ONLY
+            /// HEROES IN THE GAME WHO SHARE AN ELEMENT. Borrowing the aura put both spirit
+            /// heroes in the same purple with the same motes falling the same way, so the only
+            /// channel left to tell them apart was the model. This one is her magenta, it carries
+            /// gold, and it goes UP rather than down: Nemu is coming apart, Phaister is working.
             /// </summary>
-            HexRune,
+            WitchSigil,
         }
 
         /// <summary>
@@ -216,21 +216,28 @@ namespace TumbangPreso.Visual
                         new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
                     break;
 
-                case Aura.HexRune:
-                    // Rises, and lives a long time: a rune drifts off the hand and hangs.
-                    main.startLifetime = new ParticleSystem.MinMaxCurve(0.7f, 1.4f);
-                    main.startSpeed = new ParticleSystem.MinMaxCurve(0.35f, 1.0f);
-                    main.startSize = new ParticleSystem.MinMaxCurve(0.07f, 0.17f);
-                    main.gravityModifier = -0.22f;
+                case Aura.WitchSigil:
+                    // ⚠️ THE NUMBERS AND THE GRADIENT ARE THE ONES THAT CAME WITH THE HERO, AND
+                    // THE GOLD IN THEM IS WORTH KEEPING: magenta into gold is a richer story than
+                    // magenta into magenta, and it is the one hero palette in the game with two
+                    // hues in it. What this case does NOT do is say what the particle is MADE of;
+                    // that is `Construct` below, for every aura, and it is where her emitter stops
+                    // being Nemu's with different constants.
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(1.2f, 2.2f);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(0.2f, 0.75f);
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.08f, 0.22f);
+                    main.gravityModifier = -0.15f;
                     main.startColor = new ParticleSystem.MinMaxGradient(
-                        UiTheme.HeroWitch, UiTheme.HeroWitchBright);
-                    emission.rateOverTime = 30.0f;
-                    shape.shapeType = ParticleSystemShapeType.Box;
-                    shape.scale = new Vector3(1.0f, 1.2f, 1.0f);
+                        UiTheme.HeroWitchBright, new Color(1.0f, 0.85f, 0.25f, 1.0f));
+                    emission.rateOverTime = 28.0f;
+                    shape.shapeType = ParticleSystemShapeType.Circle;
+                    shape.radius = 1.6f;
                     grad.SetKeys(
-                        new[] { new GradientColorKey(UiTheme.HeroWitchBright, 0.0f),
-                                new GradientColorKey(UiTheme.HeroWitch, 1.0f) },
-                        new[] { new GradientAlphaKey(0.0f, 0.0f), new GradientAlphaKey(0.9f, 0.2f),
+                        new[] { new GradientColorKey(new Color(1.0f, 0.90f, 0.40f), 0.0f),
+                                new GradientColorKey(UiTheme.HeroWitchBright, 0.5f),
+                                new GradientColorKey(new Color(0.45f, 0.05f, 0.65f), 1.0f) },
+                        new[] { new GradientAlphaKey(0.0f, 0.0f),
+                                new GradientAlphaKey(0.95f, 0.25f),
                                 new GradientAlphaKey(0.0f, 1.0f) });
                     break;
 
@@ -395,7 +402,7 @@ namespace TumbangPreso.Visual
                         new Keyframe(1.0f, 0.15f)));
                     break;
 
-                case Aura.HexRune:
+                case Aura.WitchSigil:
                     // ⚠️ IT ORBITS THE OTHER WAY FROM NEMU'S, which is the cheapest possible way
                     // to separate two auras that are both spirit-coloured motes on a body. Hers
                     // is a vortex pulling IN; this is a spell being wound OUT, so the sign of the

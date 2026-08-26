@@ -23,7 +23,7 @@ namespace TumbangPreso.Tests
     /// </summary>
     public sealed class HeroPresentationTests
     {
-        private static readonly string[] Heroes = { "cheska", "dante", "nemu", "sean", "zack" };
+        private static readonly string[] Heroes = { "cheska", "dante", "nemu", "sean", "zack", "phaister" };
 
         // ------------------------------------------------------------------ the colour law
 
@@ -255,6 +255,10 @@ namespace TumbangPreso.Tests
             AssertTelegraph("zack", 1, 0.0f, 0.0f);     // dash
             AssertTelegraph("zack", 2, 0.0f, 0.0f);     // throw empower
             AssertTelegraph("zack", 3, 4.5f, 0.0f);     // CreateThunderstrike(pos, 4.5)
+
+            AssertTelegraph("phaister", 1, 2.4f, 4.5f); // Kulam Hex Sigil
+            AssertTelegraph("phaister", 2, 0.0f, 0.0f); // blink
+            AssertTelegraph("phaister", 3, 0.0f, 0.0f); // eclipse
         }
 
         /// <summary>
@@ -641,8 +645,8 @@ namespace TumbangPreso.Tests
                 }
             }
 
-            Assert.AreEqual(15, totalAbilities, "Expected 15 total abilities across 5 heroes");
-            Assert.AreEqual(15, seenGlyphs.Count, "Expected 15 unique glyphs across 15 abilities");
+            Assert.AreEqual(18, totalAbilities, "Expected 18 total abilities across 6 heroes");
+            Assert.AreEqual(18, seenGlyphs.Count, "Expected 18 unique glyphs across 18 abilities");
         }
 
         private static void AssertSameRgb(Color actual, Color expected, string name)

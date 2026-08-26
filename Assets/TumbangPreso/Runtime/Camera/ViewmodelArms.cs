@@ -387,6 +387,71 @@ namespace TumbangPreso.CameraSystem
             new Key(0.75f,  0.00f,  0.00f,  0.00f),
         };
 
+        // -------------------------------------------------------------------
+        // § PHAISTER, and she arrived with NONE of these.
+        //
+        // ⚠️⚠️ ALL THREE OF HER POWERS NAMED A VIEWMODEL ACTION THAT DID NOT EXIST.
+        // `PhaisterHeroKit` asks for `cast-hex`, `blink` and `coven-eclipse`; `PlayAction`'s
+        // chain had no arm for any of them, so it returned null and the first-person arms did
+        // NOTHING for the entire sixth kit.
+        // `HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions` is the test
+        // that exists for exactly this and it went red the moment the branch merged:
+        // *"phaister: KULAM HEX ViewmodelAction 'cast-hex' is not supported by ViewmodelArms"*.
+        //
+        // ⚠️ THE HAND IS THE WHOLE CHARACTER IN FIRST PERSON. Every other hero got three bespoke
+        // arm clips because the caster's own screen shows nothing else: the sigil she draws is on
+        // the floor and out of frame at the moment she casts it.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// Drawing the hex: a circle traced in the air, then pushed down to set it.
+        ///
+        /// ⚠️ IT ORBITS BEFORE IT STRIKES, which is what separates her from every other caster in
+        /// the game. Sean punches, Dante slams, Cheska sweeps; Phaister DRAWS, so the hand has to
+        /// go around before it goes down or the gesture is just another jab.
+        /// </summary>
+        private static readonly Key[] CastHexClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.12f,  0.35f,  0.45f, -0.30f),
+            new Key(0.24f,  0.50f, -0.10f, -0.55f),
+            new Key(0.36f,  0.20f, -0.50f, -0.20f),
+            new Key(0.50f, -0.70f, -0.15f,  0.35f),
+            new Key(0.72f,  0.00f,  0.00f,  0.00f),
+        };
+
+        /// <summary>
+        /// The blink: the hand collapses inward and snaps out on the far side.
+        ///
+        /// ⚠️ IT IS THE SHORTEST CLIP IN THE FILE ON PURPOSE. A teleport that takes as long as a
+        /// slam is not a teleport. The hand is gone from the frame at 0.14 and back by 0.40.
+        /// </summary>
+        private static readonly Key[] BlinkClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.09f, -0.55f,  0.50f,  0.40f),
+            new Key(0.18f,  0.75f, -0.45f, -0.50f),
+            new Key(0.40f,  0.00f,  0.00f,  0.00f),
+        };
+
+        /// <summary>
+        /// The ultimate: both the reach up and the long hold before the eclipse is thrown down.
+        ///
+        /// ⚠️ THE HOLD IS THE POINT. `Hero_Strike_Balance.md` § 4.3 asks an ultimate for a wind-up
+        /// so the payoff has a moment, and this is the longest clip here: the arm is up and still
+        /// from 0.30 to 0.58, which is most of a second doing nothing, which is what makes the
+        /// throw land.
+        /// </summary>
+        private static readonly Key[] CovenEclipseClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.18f, -0.30f,  0.20f,  0.15f),
+            new Key(0.30f, -0.95f,  0.10f, -0.10f),
+            new Key(0.58f, -0.90f, -0.05f, -0.05f),
+            new Key(0.70f,  0.65f, -0.20f,  0.30f),
+            new Key(0.95f,  0.00f,  0.00f,  0.00f),
+        };
+
         private Key[] _clip;
         private float _clipTime;
 
@@ -433,6 +498,9 @@ namespace TumbangPreso.CameraSystem
                   : clip == "ghost-step" ? GhostStepClip
                   : clip == "project-spirit" ? ProjectSpiritClip
                   : clip == "seance-channel" ? SeanceChannelClip
+                  : clip == "cast-hex" ? CastHexClip
+                  : clip == "blink" ? BlinkClip
+                  : clip == "coven-eclipse" ? CovenEclipseClip
                   : null;
 
             _clipTime = 0.0f;
@@ -459,10 +527,18 @@ namespace TumbangPreso.CameraSystem
                     _rightClothPhysics.AddImpulse(new Vector3(0.10f, 0.35f, 0.50f));
                     _rightClothPhysics.AddAngularImpulse(new Vector3(30.0f, -20.0f, 25.0f));
                 }
-                else if (clip == "seance-channel" || clip == "ignite" || clip == "overcharge")
+                else if (clip == "seance-channel" || clip == "ignite" || clip == "overcharge"
+                         || clip == "cast-hex" || clip == "coven-eclipse")
                 {
                     _rightClothPhysics.AddImpulse(new Vector3(0.0f, 0.25f, 0.0f));
                     _rightClothPhysics.AddAngularImpulse(new Vector3(20.0f, 25.0f, -20.0f));
+                }
+                else if (clip == "blink")
+                {
+                    // ⚠️ THE SLEEVE GOES THE OTHER WAY FROM THE HAND, because the body arrives
+                    // before the cloth does. It is the same reason `ghost-step` pulls backward.
+                    _rightClothPhysics.AddImpulse(new Vector3(-0.45f, 0.30f, -0.55f));
+                    _rightClothPhysics.AddAngularImpulse(new Vector3(-40.0f, 45.0f, -35.0f));
                 }
             }
 
