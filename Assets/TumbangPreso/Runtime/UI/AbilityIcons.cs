@@ -93,6 +93,18 @@ namespace TumbangPreso.UI
 
         /// <summary>Nemu Ultimate: Seance Void (Gravitational swirling spiral vortex).</summary>
         NemuSeanceVoid,
+
+        /// <summary>Phaister Skill 1: Kulam Hex Sigil (Occult hexagonal magic circle rune).</summary>
+        PhaisterHexSigil,
+
+        /// <summary>Phaister Skill 2: Shadow Blink (Occult dimensional warp diamond with shadow streaks).</summary>
+        PhaisterShadowBlink,
+
+        /// <summary>Phaister Ultimate: Grand Eclipse (Crowned solar eclipse corona with flare rays).</summary>
+        PhaisterEclipse,
+
+        /// <summary>Phaister Witchfire Empower (Witchfire empowered mystical slipper wisp).</summary>
+        PhaisterWitchfire,
     }
 
     /// <summary>
@@ -345,6 +357,22 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.NemuSeanceVoid:
                     // Swirling spiral seance vortex
                     return SpiralVoid(u, v);
+
+                case AbilityGlyph.PhaisterHexSigil:
+                    // Occult hexagonal magic rune sigil
+                    return HexWardSigil(u, v);
+
+                case AbilityGlyph.PhaisterShadowBlink:
+                    // Dimensional shadow warp rift
+                    return ShadowBlinkRift(u, v);
+
+                case AbilityGlyph.PhaisterEclipse:
+                    // Solar eclipse with dark moon core and corona rays
+                    return SolarEclipseNova(u, v);
+
+                case AbilityGlyph.PhaisterWitchfire:
+                    // Empowered witchfire flame wisp
+                    return WitchfireOrb(u, v);
 
                 default:
                     return Disc(u, v, 0.62f);
@@ -644,6 +672,54 @@ namespace TumbangPreso.UI
             float tail2 = Segment(u, v, -0.52f, -0.30f, -0.66f, -0.10f, Stroke * 0.44f);
             return Mathf.Max(eye, Mathf.Max(core,
                 Mathf.Max(Mathf.Max(hook1, hook2), Mathf.Max(tail1, tail2))));
+        }
+
+        private static float HexWardSigil(float u, float v)
+        {
+            // Hexagonal rune circle with outer ring, inner ring and 6 radiating rune spokes
+            float outerRing = EllipseRing(u, v, 0.84f, 0.84f, Stroke * 0.72f);
+            float innerRing = EllipseRing(u, v, 0.44f, 0.44f, Stroke * 0.60f);
+            float spokes = Spokes(u, v, 6, 0.22f, 0.90f, Stroke * 0.55f);
+            float core = Disc(u, v, 0.16f);
+            return Mathf.Max(outerRing, Mathf.Max(innerRing, Mathf.Max(spokes, core)));
+        }
+
+        private static float ShadowBlinkRift(float u, float v)
+        {
+            // Diamond dimensional rift with shadow streaks
+            float dx = Mathf.Abs(u) / 0.42f + Mathf.Abs(v) / 0.65f;
+            float riftCore = Edge(dx - 1.0f);
+            float dxIn = Mathf.Abs(u) / 0.24f + Mathf.Abs(v) / 0.42f;
+            float riftHole = Edge(dxIn - 1.0f);
+            float riftRing = Sub(riftCore, riftHole);
+            float centerGlint = Disc(u, v, 0.10f);
+            float streakL = Segment(u, v, -0.82f, 0.0f, -0.42f, 0.0f, Stroke * 0.75f);
+            float streakR = Segment(u, v, 0.42f, 0.0f, 0.82f, 0.0f, Stroke * 0.75f);
+            float spark1 = Segment(u, v, -0.55f, 0.35f, -0.32f, 0.22f, Stroke * 0.45f);
+            float spark2 = Segment(u, v, 0.32f, -0.22f, 0.55f, -0.35f, Stroke * 0.45f);
+            return Mathf.Max(riftRing, Mathf.Max(centerGlint,
+                Mathf.Max(Mathf.Max(streakL, streakR), Mathf.Max(spark1, spark2))));
+        }
+
+        private static float SolarEclipseNova(float u, float v)
+        {
+            // Crowned solar eclipse: dark moon core, glowing corona ring, and 8 solar flare rays
+            float corona = EllipseRing(u, v, 0.55f, 0.55f, Stroke * 0.85f);
+            float rays8 = Spokes(u, v, 8, 0.55f, 0.92f, Stroke * 0.65f);
+            float moonDisc = Disc(u + 0.08f, v - 0.04f, 0.38f);
+            float innerCrescent = Sub(Disc(u, v, 0.40f), moonDisc);
+            return Mathf.Max(corona, Mathf.Max(rays8, innerCrescent));
+        }
+
+        private static float WitchfireOrb(float u, float v)
+        {
+            float wisp = EllipseRing(u, v, 0.60f, 0.75f, Stroke * 0.70f);
+            float core = Disc(u, v + 0.05f, 0.22f);
+            float tip = UpTriangle(u, v - 0.45f, 0.22f, 0.35f);
+            float flame = Mathf.Max(wisp, Mathf.Max(core, tip));
+            float sparkL = Segment(u, v, -0.70f, 0.10f, -0.50f, 0.25f, Stroke * 0.45f);
+            float sparkR = Segment(u, v, 0.50f, -0.15f, 0.70f, 0.00f, Stroke * 0.45f);
+            return Mathf.Max(flame, Mathf.Max(sparkL, sparkR));
         }
     }
 }

@@ -131,6 +131,9 @@ namespace TumbangPreso.Abilities
                 case "nemu":
                     return new NemuHeroKit();
 
+                case "phaister":
+                    return new PhaisterHeroKit();
+
                 default:
                     return new DanteHeroKit();
             }

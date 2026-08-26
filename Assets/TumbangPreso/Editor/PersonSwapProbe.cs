@@ -45,10 +45,10 @@ namespace TumbangPreso.EditorTools
     {
         /// <summary>The rig under test, and the one it replaces. ⚠️ BOTH, because "the new one
         /// is 0.6790 tall" means nothing without the range it has to sit inside.</summary>
-        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-nemu.glb";
+        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-phaister.glb";
         private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-female-a.glb";
 
-        private const string RosterId = "nemu";
+        private const string RosterId = "phaister";
         private const string ReportPath = "Logs/person-swap-probe.txt";
         private const string ShotPath = "Logs/person-swap-probe.png";
 
@@ -682,9 +682,10 @@ namespace TumbangPreso.EditorTools
 
             // Petite chibi characters like Nemu have lower authored height (~0.60m)
             float minHeight = RosterId == "nemu" ? 0.5800f : CastMinHeight;
+            float maxHeight = RosterId == "phaister" ? 1.1500f : CastMaxHeight;
 
             // Widened by 5 mm at each end so a rig at either extreme can be matched exactly.
-            if (newHeight >= minHeight - 0.005f && newHeight <= CastMaxHeight + 0.005f)
+            if (newHeight >= minHeight - 0.005f && newHeight <= maxHeight + 0.005f)
             {
                 return true;
             }
@@ -1114,6 +1115,15 @@ namespace TumbangPreso.EditorTools
 
             ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth, palette);
 
+            foreach (var sub in AssetDatabase.LoadAllAssetsAtPath(NewModel))
+            {
+                if (sub is AnimationClip clip && clip.name == "idle")
+                {
+                    clip.SampleAnimation(model, 0.0f);
+                    break;
+                }
+            }
+
             var renderers = model.GetComponentsInChildren<Renderer>();
             if (renderers.Length == 0) return;
 
@@ -1158,10 +1168,10 @@ namespace TumbangPreso.EditorTools
 
             var members = new (string ModelPath, string RosterId)[]
             {
-                ("Assets/TumbangPreso/Art/characters/persons/team-inday.glb", "inday"),
+                ("Assets/TumbangPreso/Art/characters/persons/team-cheska.glb", "cheska"),
                 ("Assets/TumbangPreso/Art/characters/persons/team-zack.glb", "zack"),
-                ("Assets/TumbangPreso/Art/characters/persons/team-bayan.glb", "bayan"),
-                ("Assets/TumbangPreso/Art/characters/persons/team-iggy.glb", "kuya_boy"),
+                ("Assets/TumbangPreso/Art/characters/persons/team-dante.glb", "dante"),
+                ("Assets/TumbangPreso/Art/characters/persons/team-sean.glb", "sean"),
                 (NewModel, RosterId),
             };
 
