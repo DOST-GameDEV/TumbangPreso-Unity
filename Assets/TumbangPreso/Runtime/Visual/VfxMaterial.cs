@@ -142,6 +142,10 @@ namespace TumbangPreso.Visual
             }
 
             if (stripCollider) StripCollider(renderer.gameObject);
+
+            // See VfxRenderTag: this is what keeps an effect parented to a prop from being
+            // read as part of that prop's model.
+            VfxRenderTag.Attach(renderer.gameObject);
         }
 
         /// <summary>
@@ -169,6 +173,7 @@ namespace TumbangPreso.Visual
             }
 
             renderer.sharedMaterial = m;
+            VfxRenderTag.Attach(renderer.gameObject);
         }
 
         /// <summary>

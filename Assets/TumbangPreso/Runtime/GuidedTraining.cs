@@ -163,6 +163,19 @@ namespace TumbangPreso
                 return;
             }
 
+            // ⚠️⚠️ A LESSON THE SEAT CANNOT ANSWER IS SKIPPED, NOT WAITED ON. The four hero
+            // lessons check `HeroAbilitySystem`, and a seat with no kit has no way to satisfy
+            // any of them: pressing the key produces no cast, so `WasSuccessfulCast` is false
+            // forever and the route stops at step 10 of 17. The N key would carry a player past
+            // it, but a tutorial whose only exit is the skip key is a tutorial that has failed.
+            // Classic is a shipping mode with no powers at all (`CLAUDE.md` § 1), so this is a
+            // real seat, not a broken one.
+            if (LessonNeedsAKit(_lesson) && (_abilities == null || _abilities.Kit == null))
+            {
+                CompleteLesson();
+                return;
+            }
+
             EvaluateLesson();
         }
 
@@ -257,13 +270,39 @@ namespace TumbangPreso
                     break;
 
                 case Lesson.TripRecovery:
-                    // Natural drain is one second per second. Any larger drop came from an
-                    // accepted mash through CharacterMotor's real rate cap.
+                    // A press is detected as a drop LARGER than the passive bleed could have
+                    // produced in one frame, so it counts only presses `CharacterMotor` actually
+                    // accepted through the real rate cap.
+                    //
+                    // ⚠️ THE BLEED IS NO LONGER ONE SECOND PER SECOND, and this comment used to
+                    // say it was. Above `Balance.MinTripDown` it runs at
+                    // `Balance.TripPassiveDecayRate`, so the real per-frame drop is SMALLER than
+                    // the `Time.deltaTime` assumed here. That only widens the gap a press has to
+                    // clear, so the detector still cannot credit the bleed as a press.
                     float expected = Mathf.Max(0.0f, _lastTripLeft - Time.deltaTime);
                     if (_local.TripLeft < expected - 0.05f) _metric += 1.0f;
                     _lastTripLeft = _local.TripLeft;
                     SetProgress(_metric / 5.0f);
-                    if (_metric >= 5.0f) CompleteLesson();
+
+                    if (_metric >= 5.0f)
+                    {
+                        CompleteLesson();
+                        break;
+                    }
+
+                    // ⚠️⚠️ THE LESSON PUTS YOU BACK DOWN, AND WITHOUT THIS IT COULD STRAND THE
+                    // PLAYER. The trip is applied ONCE, on entering the lesson, and the exit
+                    // condition is five ACCEPTED presses. A fall holds at most
+                    // (2.50 - 0.90) / 0.20 = 8 of them, so a player who watches the first fall
+                    // out instead of mashing reaches zero with the counter short and nothing
+                    // left to press: the lesson can then never be completed and the route stops
+                    // dead at step 15 of 17. Re-applying is also the honest teaching, because
+                    // the thing being taught is that mashing is what ends a fall.
+                    if (!_local.IsTripped)
+                    {
+                        _local.ApplyTrip();
+                        _lastTripLeft = _local.TripLeft;
+                    }
                     break;
 
                 case Lesson.Emote:
@@ -271,6 +310,16 @@ namespace TumbangPreso
                     break;
             }
         }
+
+        /// <summary>Lessons that only exist for a seat carrying a hero kit.
+        ///
+        /// ⚠️ `AbilityInfo` IS IN HERE TOO. It teaches holding the key that inspects the kit,
+        /// and with no kit the panel it opens has nothing in it to read.</summary>
+        private static bool LessonNeedsAKit(Lesson lesson)
+            => lesson == Lesson.AbilityInfo
+               || lesson == Lesson.Skill1
+               || lesson == Lesson.Skill2
+               || lesson == Lesson.Ultimate;
 
         private bool WasSuccessfulCast(HeroAbilitySystem.Slot slot)
             => _abilities != null

@@ -343,21 +343,82 @@ namespace TumbangPreso.Core.Tests
         }
 
         /// <summary>
-        /// ⚠️ THE FLOOR MUST LEAVE THE KNOCKDOWN CLIP TIME TO PLAY. `CharacterAnimator.Choose`
-        /// switches from the knockdown to the get-up at `TripLeft` = 0.70, so a floor at or under
-        /// that would let a perfect mash skip the fall entirely and pop the body upright with no
-        /// animation. The 0.70 is transcribed here on purpose: if it moves, this goes red.
+        /// ⚠️ THE FLOOR MUST LEAVE THE KNOCKDOWN CLIP TIME TO PLAY.
+        ///
+        /// ⚠️⚠️ AND THE SEPARATE 0.70 THIS TEST USED TO TRANSCRIBE IS GONE. `CharacterAnimator`
+        /// switched from the knockdown clip to the get-up at a hardcoded 0.70 while the mash
+        /// floor and the HUD both used `MinTripDown` = 0.90, so for 0.20 s of every fall the
+        /// player was refused a press, told GETTING UP, and left face down. `StepTripPose` now
+        /// switches at `MinTripDown` itself, which is why there is no second number left to
+        /// compare against here: one number, one meaning.
         /// </summary>
         [Fact]
         public void Mash_LeavesTheKnockdownClipTimeToPlay()
         {
-            const float getUpBegins = 0.70f;
-
-            Assert.True(Balance.MinTripDown > getUpBegins);
+            Assert.True(Balance.MinTripDown > 0.0f);
             Assert.Equal(Balance.MinTripDown, Combat.FastestTripRecovery(2.5f), 3);
 
             // A trip already shorter than the floor is not lengthened by the rule.
             Assert.Equal(0.4f, Combat.FastestTripRecovery(0.4f), 3);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ MASHING HAS TO BE WORTH DOING, AND THE ARITHMETIC IS THE ONLY WAY TO KNOW.
+        /// 🧑, 2026-08-26, on the shipped build: the get-up *"automatically resolves without
+        /// doing anything"*. He was measuring correctly. With the trip bleeding at real time the
+        /// two outcomes were 2.50 s for a player who never pressed and 1.70 s for one who mashed
+        /// perfectly: a 0.80 s difference on an event that lasts two and a half seconds, which
+        /// is inside the time it takes to work out what to press.
+        ///
+        /// `Balance.TripPassiveDecayRate` slows the bleed while there is slack a press could
+        /// buy, so the ANSWERED fall is unchanged and the UNANSWERED one is genuinely longer.
+        /// This asserts the gap rather than the constant, because the gap is the design.
+        /// </summary>
+        [Fact]
+        public void Trip_AnsweringItIsWorthAtLeastHalfTheFall()
+        {
+            const float trip = 2.5f;
+            float slack = trip - Balance.MinTripDown;
+
+            float mashed = (slack / Balance.MashRecoverPerPress) * Balance.MashCooldown
+                           + Balance.MinTripDown;
+            float ignored = slack / Balance.TripPassiveDecayRate + Balance.MinTripDown;
+
+            Assert.True(mashed <= 2.0f,
+                        $"a perfectly answered fall is {mashed:F2} s, outside the 1-2 s asked for.");
+            Assert.True(ignored >= mashed * 2.0f,
+                        $"ignoring the fall costs {ignored:F2} s against {mashed:F2} s answered, " +
+                        "which is not enough of a difference to teach anybody to press.");
+
+            // ⚠️ AND IT STILL ENDS ON ITS OWN. A trip that only a press can clear strands a
+            // player whose hands left the keyboard and hands a griefing tool to anything that
+            // can re-apply one.
+            Assert.True(Balance.TripPassiveDecayRate > 0.0f);
+            Assert.True(ignored < 4.0f, $"an unanswered fall lasts {ignored:F2} s.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE GRACE HAS TO OUTLAST THE HAZARD YOU ARE STANDING ON. The mash is bound to
+        /// Jump, so a fall ends with a jump by construction, and a jump clears
+        /// `StreetTripHazard.MinSpeedToTrip` (1.0 m/s) while the body is still on the thing that
+        /// felled it. `TripGraceAfterGetUp` has to carry an attacker clear of the widest hazard
+        /// footprint on the map, which is the sunken trench at 2.60 m.
+        /// </summary>
+        [Fact]
+        public void Trip_GraceCarriesAPlayerClearOfTheHazardThatFelledThem()
+        {
+            const float widestHazardFootprint = 2.6f;
+
+            float attackerSpeed = Balance.Speed * Balance.AttackerSpeedScale;
+            float carried = attackerSpeed * Balance.TripGraceAfterGetUp;
+
+            Assert.True(carried > widestHazardFootprint,
+                        $"the grace carries {carried:F2} m, which does not clear a " +
+                        $"{widestHazardFootprint:F2} m hazard.");
+
+            // ⚠️ AND IT IS SHORTER THAN THE FALL IT FOLLOWS, so it cannot become a window in
+            // which a player is immune to the map while doing something else.
+            Assert.True(Balance.TripGraceAfterGetUp < 2.5f);
         }
 
         // ===================================================================

@@ -481,10 +481,61 @@ namespace TumbangPreso.Core
 
         /// <summary>How long a trip lasts however hard it is answered.
         ///
-        /// ⚠ THE KNOCKDOWN CLIP HAS TO PLAY. `CharacterAnimator.Choose` switches from the
-        /// knockdown to the get-up at `TripLeft` = 0.70, so a floor below that would let a mash
-        /// skip straight past the fall and pop the body upright with no animation at all. 0.90 s
-        /// leaves 0.20 s of knockdown before the get-up starts.</summary>
+        /// ⚠ THE KNOCKDOWN CLIP HAS TO PLAY. `CharacterAnimator` switches from the knockdown to
+        /// the get-up at this value, so a floor below it would let a mash skip straight past the
+        /// fall and pop the body upright with no animation at all. It is also the length the
+        /// get-up clip is time-scaled to fill, so the get-up lands exactly as control returns.
+        ///
+        /// ⚠ THE SWITCH USED TO BE A SEPARATE 0.70 TYPED INTO `CharacterAnimator.Choose`, which
+        /// meant the last 0.20 s of a fall was a state with no name: the mash had already been
+        /// refused, the HUD had already said GETTING UP, and the body was still face down. One
+        /// number, one meaning.</summary>
         public const float MinTripDown = 0.90f;
+
+        /// <summary>How fast a trip runs down on its own, as a multiple of real time, while
+        /// there is still slack a mash could buy.
+        ///
+        /// ⚠⚠ THIS EXISTS BECAUSE THE BAR WAS A COUNTDOWN WEARING A MASH METER'S CLOTHES.
+        /// 🧑, 2026-08-26, playing the build: the get-up *"automatically resolves without doing
+        /// anything"*. He was right and it was the design, not a regression. `_tripLeft` decayed
+        /// by `Time.deltaTime` every frame whatever the player did, so the fall completed on its
+        /// own and mashing only steepened it a little: 2.50 s untouched against 1.70 s mashed
+        /// perfectly. A 0.80 s saving on a 2.50 s event is inside the noise of not knowing what
+        /// you were supposed to press.
+        ///
+        /// ⚠ SOLVED AGAINST THE GAP, NOT PICKED FOR FEEL. The mashable slack is
+        /// `TripDuration` - `MinTripDown` = 1.60 s. At this rate a player who never presses
+        /// spends 1.60 / 0.60 = 2.67 s buying it, plus the 0.90 s floor, for **3.57 s** down. A
+        /// player who mashes cleanly still spends 8 presses at `MashCooldown` = 0.80 s, plus the
+        /// same floor, for **1.70 s**. So answering the fall now halves it, and the two outcomes
+        /// are 1.87 s apart rather than 0.80 s apart.
+        ///
+        /// ⚠ IT IS NOT ZERO, AND THAT IS DELIBERATE. A trip that only ends when you press it
+        /// away strands a player whose hands left the keyboard, and it hands a griefing tool to
+        /// anything that can re-apply one. The bleed is the guarantee that a fall always ends.
+        ///
+        /// ⚠ IT APPLIES ONLY ABOVE `MinTripDown`. Below the floor nothing can be bought, the
+        /// get-up clip is playing, and that stretch runs at real time so the animation and the
+        /// clock agree.</summary>
+        public const float TripPassiveDecayRate = 0.60f;
+
+        /// <summary>Seconds after a trip ends during which no hazard may start another one.
+        ///
+        /// ⚠⚠ WITHOUT IT THE MASH IS A TRAP AND THE HAZARD FIELD IS A LOOP. The mash is bound
+        /// to Jump (`CharacterMotor`), so the instant `_tripLeft` reaches 0 the same hammering
+        /// becomes real jumps. A jump gives the body well over `StreetTripHazard`'s
+        /// `MinSpeedToTrip` of 1.0 m/s while it is still standing on or beside the hazard, and
+        /// the hazard trips it again. `StreetTripHazard`'s own `Cooldown` cannot answer this
+        /// because it is PER HAZARD: a neighbouring one re-trips with no wait at all, which on
+        /// Ilalim ng Tulay meant two hazards 2.6 m apart could pass a player back and forth.
+        ///
+        /// ⚠ SOLVED AGAINST THE FOOTPRINT, NOT PICKED. An attacker moves at
+        /// `Speed` * `AttackerSpeedScale` = 3.45 m/s, so 1.20 s carries them 4.14 m. The largest
+        /// hazard footprint on the map is 2.60 m, so the grace covers walking clear of the thing
+        /// that felled you from its centre, with margin.
+        ///
+        /// ⚠ IT LIVES ON THE MOTOR, NOT ON THE HAZARD, so every hazard present and future
+        /// respects one window rather than each keeping its own.</summary>
+        public const float TripGraceAfterGetUp = 1.20f;
     }
 }

@@ -667,9 +667,47 @@ namespace TumbangPreso
 
         private float _lastMashTime = -99.0f;
         private int _mashPresses;
+        private float _mashRemoved;
+        private float _tripImmuneUntil = -99.0f;
 
         /// <summary>Accepted presses in the current fall, so the HUD can show it filling.</summary>
         public int MashPresses => _mashPresses;
+
+        /// <summary>Seconds of the current fall that PRESSES bought, as opposed to the seconds
+        /// the passive bleed bought.
+        ///
+        /// ⚠️⚠️ THE HUD DRAWS THIS AS ITS OWN SEGMENT AND THAT IS THE POINT OF EXPOSING IT.
+        /// 🧑, 2026-08-26: the get-up *"automatically resolves without doing anything"*. Half of
+        /// that was `Balance.TripPassiveDecayRate`, and half was that one bar drew both causes
+        /// in one colour, so a player mashing correctly saw the same bar as a player doing
+        /// nothing and concluded the presses were decoration. A number that is not attributable
+        /// to the player cannot teach the player anything.</summary>
+        public float MashRemoved => _mashRemoved;
+
+        /// <summary>When the last ACCEPTED press landed, so the HUD can pop on it.
+        ///
+        /// ⚠️ A REJECTED PRESS IS A DEAD PRESS, NEVER A PENALTY, and the screen has to say so.
+        /// `Combat.MashRecover` returns `accepted: false` inside `Balance.MashCooldown` and
+        /// changes nothing, but with no feedback either way a player mashing above 10 Hz sees
+        /// most of their presses do nothing and reads the rate cap as being punished for
+        /// mashing. Popping on the accepted ones makes the cap legible as a rhythm.</summary>
+        public float LastMashAcceptedTime => _lastMashTime;
+
+        /// <summary>
+        /// True while no hazard may trip this body, because it has only just got up.
+        ///
+        /// ⚠️⚠️ THE MASH IS THE JUMP KEY, SO GETTING UP ENDS WITH A JUMP, EVERY TIME. The
+        /// presses that free a player do not stop the instant `_tripLeft` reaches zero: the next
+        /// one is a real jump, it carries the body well past `StreetTripHazard.MinSpeedToTrip`,
+        /// and it happens while they are still standing on the hazard. The hazard's own
+        /// `Cooldown` is per hazard and cannot see a neighbour, so on Ilalim ng Tulay a pair of
+        /// hazards a few metres apart passed a player back and forth indefinitely. 🧑 reported
+        /// it as not being able to get up at all.
+        ///
+        /// ⚠️ IT IS ONE WINDOW ON THE BODY, NOT A LONGER COOLDOWN ON EACH HAZARD, so a hazard
+        /// added later inherits it without being told about it.
+        /// </summary>
+        public bool IsTripImmune => Time.time < _tripImmuneUntil;
 
         /// <summary>
         /// True while the player should be told to mash.
@@ -692,6 +730,11 @@ namespace TumbangPreso
             _tripLeft = 0.0f;
             _tripTotal = 0.0f;
             _mashPresses = 0;
+            _mashRemoved = 0.0f;
+
+            // ⚠️ NO GRACE FROM HERE. `ClearTrip` is the round and seat reset path, not the
+            // player answering a fall, and handing a fresh round a window of hazard immunity
+            // would be a rule nobody asked for.
         }
 
         /// <summary>
@@ -711,6 +754,7 @@ namespace TumbangPreso
             // A new fall is a new mash. Carrying the count over would let a second trip start
             // with its prompt already full.
             _mashPresses = 0;
+            _mashRemoved = 0.0f;
             _lastMashTime = -99.0f;
         }
 
@@ -745,6 +789,7 @@ namespace TumbangPreso
 
             float removed = before - after;
             _tripLeft = after;
+            _mashRemoved += removed;
             _stunLeft = Mathf.Max(0.0f, _stunLeft - removed);
 
             return removed > 0.0f;
@@ -779,8 +824,28 @@ namespace TumbangPreso
         {
             if (_tripLeft > 0.0f)
             {
-                _tripLeft = Mathf.Max(0.0f, _tripLeft - Time.deltaTime);
-                if (_tripLeft <= 0.0f) _tripTotal = 0.0f;
+                // ⚠️⚠️ THE BLEED IS SLOWED WHILE THERE IS SLACK A PRESS COULD BUY, AND THAT IS
+                // THE FIX FOR "IT RESOLVES ITSELF". At 1.0x this line cleared the whole fall on
+                // its own in `TripDuration` seconds whatever the player did, so the get-up bar
+                // was a countdown and the mash was a garnish worth 0.80 s on 2.50. Above the
+                // floor it now runs at `Balance.TripPassiveDecayRate`; below it, where nothing
+                // can be bought and the get-up clip is playing, it runs at real time so the
+                // animation and the clock agree. The arithmetic on both outcomes is on that
+                // constant.
+                float rate = _tripLeft > Balance.MinTripDown
+                    ? Balance.TripPassiveDecayRate
+                    : 1.0f;
+
+                _tripLeft = Mathf.Max(0.0f, _tripLeft - Time.deltaTime * rate);
+
+                if (_tripLeft <= 0.0f)
+                {
+                    _tripTotal = 0.0f;
+
+                    // ⚠️ THE GRACE IS OPENED HERE, AT THE ONE PLACE A FALL ACTUALLY ENDS, so it
+                    // covers a fall that was mashed away and a fall that timed out alike.
+                    _tripImmuneUntil = Time.time + Balance.TripGraceAfterGetUp;
+                }
             }
 
             if (_stunLeft <= 0.0f) return;

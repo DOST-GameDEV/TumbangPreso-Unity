@@ -83,6 +83,41 @@ namespace TumbangPreso.CameraSystem
         public const float EmotePitchMaxDeg = 20.0f;
 
         // -------------------------------------------------------------------
+        // § THE FALL FRAMING. The fall REUSES the emote swing's machinery and NOT its shot.
+        //
+        // ⚠️⚠️ THE SHARED PATH IS LOAD-BEARING AND STAYS SHARED. `BeginEmoteView` calls
+        // `RestoreSelfHide`, and without it the camera orbits a body `ApplyFppSelfHide` has put
+        // into SHADOWS_ONLY: that is the reported *"doing emote doesnt show myself in tpp"* bug,
+        // and a fall-specific entry point would rediscover it. Only the three numbers below are
+        // the fall's own.
+        //
+        // ⚠️⚠️ AND THE SHOT COULD NOT STAY SHARED, WHICH IS WHY THESE EXIST. 🧑, 2026-08-26:
+        // the fall camera *"is awkward"*. An emote is a pose you chose while STANDING, so it is
+        // framed off `TppMountHeight` = 1.20 m, a body's chest. A fall is a body flat on the
+        // tarmac, roughly 0.40 m tall and 4.5 m away from a mount that is now 1.2 m of empty
+        // air above it: the subject ends up small, low in frame and partly behind the shot.
+        //
+        // ⚠️ THIS IS NOT THE DELETED HAND-PICKED EMOTE BOOM COMING BACK. `ApplyEmoteView`'s own
+        // note records a 2.6 m arm at a flat 1.0 m being wrong FOR AN EMOTE, because an emote is
+        // a standing character and third person already knows how to frame one of those. That
+        // argument is about a standing body and it is untouched: emotes still ride the TPP boom
+        // exactly as before. These apply only while `_fallView` is true.
+        //
+        // The numbers, solved rather than picked: a body on the road occupies y = 0 to about
+        // 0.40 m, so the mount sits at its middle. At 26 degrees the eye is
+        // 0.20 + 2.80 * sin 26 = 1.43 m up and 2.52 m back, which looks DOWN at the tarmac the
+        // player is lying on rather than across it.
+        public const float FallMountHeight = 0.20f;
+        public const float FallSpringLength = 2.80f;
+        public const float FallPitchDeg = 26.0f;
+
+        /// ⚠️ THE FALL KEEPS ITS OWN CLAMP because the emote band tops out at 20 degrees, which
+        /// is BELOW the angle a fall opens at. Sharing it would have silently pulled the shot
+        /// back up to the standing framing on the first frame.
+        public const float FallPitchMinDeg = 6.0f;
+        public const float FallPitchMaxDeg = 48.0f;
+
+        // -------------------------------------------------------------------
 
         [SerializeField] private AimSource _aimSource = AimSource.Movement;
         /// <summary>
@@ -929,7 +964,15 @@ namespace TumbangPreso.CameraSystem
 
             _fallView = down;
 
-            if (down) BeginEmoteView();
+            if (down)
+            {
+                BeginEmoteView();
+
+                // ⚠️ AFTER, NEVER BEFORE. `BeginEmoteView` seeds the pitch from `_tppPitchDeg`,
+                // which is the standing shot; writing the fall angle first would be overwritten
+                // on the same line that opens the view.
+                _emotePitchDeg = FallPitchDeg;
+            }
             else EndEmoteView();
         }
 
@@ -1005,7 +1048,8 @@ namespace TumbangPreso.CameraSystem
 
             _emoteYawDeg += dx * 10.0f;
             _emotePitchDeg = Mathf.Clamp(_emotePitchDeg - dy * 10.0f,
-                                         EmotePitchMinDeg, EmotePitchMaxDeg);
+                                         _fallView ? FallPitchMinDeg : EmotePitchMinDeg,
+                                         _fallView ? FallPitchMaxDeg : EmotePitchMaxDeg);
         }
 
         /// <summary>
@@ -1020,18 +1064,32 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void ApplyEmoteView()
         {
-            _emotePitchDeg = Mathf.Clamp(_emotePitchDeg, EmotePitchMinDeg, EmotePitchMaxDeg);
+            _emotePitchDeg = Mathf.Clamp(_emotePitchDeg,
+                                         _fallView ? FallPitchMinDeg : EmotePitchMinDeg,
+                                         _fallView ? FallPitchMaxDeg : EmotePitchMaxDeg);
 
-            Vector3 mount = _character.transform.position + Vector3.up * TppMountHeight;
+            // See § THE FALL FRAMING. An emote rides the TPP boom, unchanged; a fall does not,
+            // because the subject is on the ground.
+            float mountHeight = _fallView ? FallMountHeight : TppMountHeight;
+            float arm = _fallView ? FallSpringLength : _tppSpringLength;
+
+            Vector3 mount = _character.transform.position + Vector3.up * mountHeight;
             var rot = Quaternion.Euler(_emotePitchDeg, _emoteYawDeg, 0.0f);
-            Vector3 wanted = mount - (rot * Vector3.forward) * _tppSpringLength;
+            Vector3 wanted = mount - (rot * Vector3.forward) * arm;
 
-            float length = _tppSpringLength;
+            float length = arm;
             if (Physics.SphereCast(mount, 0.2f, (wanted - mount).normalized, out var hit,
-                                   _tppSpringLength, ~0, QueryTriggerInteraction.Ignore))
+                                   arm, ~0, QueryTriggerInteraction.Ignore))
             {
                 if (hit.collider.GetComponentInParent<CharacterMotor>() != _character)
-                    length = Mathf.Max(TppMinSpringLength, hit.distance - TppArmMargin);
+                {
+                    // ⚠️ THE FALL FLOOR IS ITS OWN. `TppMinSpringLength` is 1.80 m, which is
+                    // longer than the whole fall arm would ever need to shrink to, so a kerb or
+                    // a wall behind a fallen player would have pushed the camera back OUT to
+                    // 1.80 m and straight through it.
+                    float floor = _fallView ? 1.0f : TppMinSpringLength;
+                    length = Mathf.Max(floor, hit.distance - TppArmMargin);
+                }
             }
 
             transform.SetPositionAndRotation(mount - (rot * Vector3.forward) * length, rot);

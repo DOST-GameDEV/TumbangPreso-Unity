@@ -123,6 +123,16 @@ namespace TumbangPreso.UI
         private Image _getUpCard;
         private Text _getUpLabel;
         private Image _getUpFill;
+        private Image _getUpMashFill;
+        private RectTransform _getUpBarRt;
+
+        /// <summary>How long the get-up bar stays popped after an accepted press.
+        ///
+        /// ⚠️ SHORTER THAN `Balance.MashCooldown` WOULD LEAVE A GAP BETWEEN TWO GOOD PRESSES and
+        /// make a clean 10 Hz burst flicker. 0.14 s against the 0.10 s cap means a player at the
+        /// cap holds the bar popped continuously, which is what "you are doing this right" wants
+        /// to look like.</summary>
+        private const float MashPopSeconds = 0.14f;
         private string _getUpShown = "";
 
         private Text _countdown;
@@ -1508,6 +1518,7 @@ namespace TumbangPreso.UI
                 {
                     _getUpCard.gameObject.SetActive(false);
                     _getUpShown = "";
+                    if (_getUpBarRt != null) _getUpBarRt.localScale = Vector3.one;
                 }
                 return;
             }
@@ -1547,6 +1558,25 @@ namespace TumbangPreso.UI
             // Amber once the presses have done all they can, so the colour change and the
             // wording agree that the player has stopped being able to help.
             _getUpFill.color = buying ? UiTheme.Offense : UiTheme.Amber;
+
+            // ⚠️ THE GOLD SEGMENT IS WHAT THE PRESSES BOUGHT, MEASURED AGAINST THE SAME
+            // DENOMINATOR, so the two read as one bar with the player's share at the front
+            // rather than as two competing bars.
+            if (_getUpMashFill != null)
+                _getUpMashFill.fillAmount = Mathf.Clamp01(_local.MashRemoved / total);
+
+            // ⚠️⚠️ THE POP IS THE ONLY THING THAT SEPARATES A DEAD PRESS FROM A REAL ONE.
+            // `Combat.MashRecover` refuses a press inside `Balance.MashCooldown` and changes
+            // nothing, so without this a player mashing above 10 Hz watched most of their
+            // presses vanish and read the rate cap as a punishment for mashing. A press that
+            // counted moves the bar; the pop makes that visible even when the movement is
+            // 0.20 s out of 2.50.
+            if (_getUpBarRt != null)
+            {
+                float sincePress = Time.time - _local.LastMashAcceptedTime;
+                float pop = Mathf.Clamp01(1.0f - sincePress / MashPopSeconds);
+                _getUpBarRt.localScale = new Vector3(1.0f, 1.0f + 0.35f * pop * pop, 1.0f);
+            }
         }
 
         private void UpdateToast(float dt)
@@ -2062,6 +2092,28 @@ namespace TumbangPreso.UI
             _getUpFill.fillAmount = 0.0f;
 
             MenuKit.Stretch(_getUpFill.rectTransform);
+
+            // ⚠️⚠️ A SECOND FILL, DRAWN OVER THE FIRST, AND IT IS THE PLAYER'S OWN SHARE.
+            // 🧑, 2026-08-26: the get-up *"automatically resolves without doing anything"*. One
+            // bar could not answer that, because it drew the passive bleed and the presses in
+            // the same colour: mashing well and doing nothing looked identical for the first
+            // second, and by the time they diverged the fall was over. This one measures
+            // `MashRemoved` only, so every accepted press visibly extends it and nothing else
+            // ever does.
+            var mashGo = new GameObject("GetUpBarMashFill");
+            mashGo.transform.SetParent(backGo.transform, false);
+
+            _getUpMashFill = mashGo.AddComponent<Image>();
+            _getUpMashFill.sprite = GodotTheme.Plain(3);
+            _getUpMashFill.type = Image.Type.Filled;
+            _getUpMashFill.fillMethod = Image.FillMethod.Horizontal;
+            _getUpMashFill.color = UiTheme.Highlight;
+            _getUpMashFill.raycastTarget = false;
+            _getUpMashFill.fillAmount = 0.0f;
+
+            MenuKit.Stretch(_getUpMashFill.rectTransform);
+
+            _getUpBarRt = backGo.GetComponent<RectTransform>();
 
             _getUpCard.gameObject.SetActive(false);
         }

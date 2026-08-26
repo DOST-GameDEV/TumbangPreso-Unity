@@ -185,9 +185,20 @@ namespace TumbangPreso.EditorTools.MapKit
         private static readonly Color BoostPadPlum = new Color(0.550f, 0.280f, 0.620f);
         private static readonly Color BoostPadGold = new Color(0.750f, 0.580f, 0.200f);
         private static readonly Color CordYellow = new Color(0.900f, 0.800f, 0.120f);
-        private static readonly Color BrothSlick = new Color(0.560f, 0.380f, 0.200f);
         private static readonly Color CardboardTan = new Color(0.720f, 0.560f, 0.340f);
         private static readonly Color PotholeGrey = new Color(0.300f, 0.300f, 0.320f);
+
+        // ⚠️ `BrothSlick` WAS DELETED WITH THE PARES SPILL ON 2026-08-26. It had one
+        // reader. See `BuildTripHazards` for why a slick was the wrong hazard for a game whose
+        // only verb here is a trip.
+
+        /// <summary>The three tones a hazard needs and a flat mat does not: the shadow inside an
+        /// opening, the lit top edge of the lip around it, and the raw broken face between the
+        /// two. `VISION.md` § 2 rule 3 asks for detail rather than area, and a hole reads as a
+        /// hole because you can see that its edge is thick.</summary>
+        private static readonly Color HazardVoid = new Color(0.030f, 0.032f, 0.038f);
+        private static readonly Color HazardLip = new Color(0.310f, 0.318f, 0.336f);
+        private static readonly Color HazardBreak = new Color(0.185f, 0.190f, 0.205f);
 
         /// <summary>⚠ THE SIGN PALETTE LIVES IN `StreetSignKit`, NOT HERE. Six sign colours used
         /// to be declared in this file and read by one method each. They are shared by eleven
@@ -2031,25 +2042,38 @@ namespace TumbangPreso.EditorTools.MapKit
             var hazardGroup = new GameObject("StreetTripHazards");
             hazardGroup.transform.SetParent(Group(parent, "Hazards"), false);
 
+            // ⚠️⚠️ SEVEN BECAME FOUR ON 2026-08-26, AND THE COUNT WAS THE DEFECT. 🧑, playing
+            // the build: there were *"too many"* of them and they did not read as things you
+            // fall over. Seven triggers inside a street this size is not a hazard, it is a
+            // hazard FIELD: the interesting choice a hazard buys is "do I cut this corner", and
+            // it stops existing the moment every line across the road crosses one. It also fed
+            // the re-trip loop directly, because two hazards 2.6 m apart could hand a player
+            // back and forth. `CharacterMotor.IsTripImmune` fixes the loop; this fixes the cause.
+            //
+            // ⚠️ CUT BY FICTION, NOT BY POSITION. What went were the three that read as another
+            // one already on the map:
+            //   * `TripHazard_RoadPotholeWest` and `_RoadPotholeEast` were "a hole in the road",
+            //     which is what the loose manhole and the sunken trench already are, and their
+            //     whole visual was three flat grey cylinders. That is the puddle failure
+            //     `VISION.md` § 2 rule 3 forbids: footprint doing the work that detail should.
+            //     They also sat 2.6 m and 2.8 m from the manhole and the trench respectively,
+            //     which is exactly the pair spacing the re-trip loop needed.
+            //   * `TripHazard_ParesSpill` was a SLICK. Sliding and tripping are different
+            //     verbs and the game only has the one, so it promised something it could not
+            //     deliver, and it was drawn with the same four flat cylinders.
+            //
+            // The four that stayed each have a different silhouette, sit on something
+            // `BuildRoadSurfaceDetail` already drew, and are at least 5.5 m from each other:
+            // cord at (8.4, 1.6), trench at (4.6, -2.6), manhole at (-4.6, 2.4), boxes at
+            // (-9.2, 7.8). The closest pair is the cord and the trench at 5.66 m, which is more
+            // than an attacker covers during `Balance.TripGraceAfterGetUp`.
             CreateTripHazard(hazardGroup.transform, "TripHazard_PisonetCord",
                              8.4f, 1.6f, new Vector3(1.4f, 0.4f, 2.6f),
                              "CORD TRIP!", CordYellow);
 
-            CreateTripHazard(hazardGroup.transform, "TripHazard_ParesSpill",
-                             8.6f, -6.8f, new Vector3(1.8f, 0.4f, 1.8f),
-                             "NADULAS!", BrothSlick);
-
             CreateTripHazard(hazardGroup.transform, "TripHazard_GpuBoxDebris",
                              -9.2f, 7.8f, new Vector3(1.6f, 0.4f, 2.2f),
                              "BOX TRIP!", CardboardTan);
-
-            CreateTripHazard(hazardGroup.transform, "TripHazard_RoadPotholeWest",
-                             -3.4f, 4.6f, new Vector3(2.2f, 0.4f, 1.6f),
-                             "POTHOLE!", PotholeGrey);
-
-            CreateTripHazard(hazardGroup.transform, "TripHazard_RoadPotholeEast",
-                             3.6f, -5.2f, new Vector3(2.0f, 0.4f, 1.6f),
-                             "POTHOLE!", PotholeGrey);
 
             // 🧑, 2026-08-25: *"like maybe places u can trip on? then fall down animation
             // plays and u have to spam a button to get back up"*. These two are the answer to the
@@ -2104,13 +2128,47 @@ namespace TumbangPreso.EditorTools.MapKit
             // trigger keeps the forgiving gameplay radius.
             if (name.Contains("PisonetCord"))
             {
+                // ⚠️⚠️ A CORD ONLY TRIPS YOU IF IT IS OFF THE GROUND, AND THESE WERE LYING ON
+                // IT. Three flat strips at y = 0.018 are a painted line: nothing about them said
+                // a foot would catch. They are now lifted to 0.055 m in the middle and pinned at
+                // both ends by something that explains the lift, which is the same argument as
+                // the manhole rim and the trench lip: the trippable part is a raised EDGE, and
+                // the player has to be able to see it before they run at it.
                 for (int i = -1; i <= 1; i++)
                 {
-                    var cord = Slab(parent, $"Cord_{i}", new Vector3(i * 0.16f, 0.018f, i * 0.28f),
-                                    new Vector3(0.055f, 0.025f, size.z * 0.82f), colour);
+                    var cord = Slab(parent, $"Cord_{i}", new Vector3(i * 0.16f, 0.055f, i * 0.28f),
+                                    new Vector3(0.055f, 0.030f, size.z * 0.82f), colour);
                     cord.transform.localRotation = Quaternion.Euler(0.0f, -13.0f + i * 7.0f, 0.0f);
                     Object.DestroyImmediate(cord.GetComponent<Collider>());
                 }
+
+                // The extension block the cords run out of, at the shop end, and the coil of
+                // slack beside it. It is what a player reads FIRST from a distance, because it
+                // is the only part of this hazard tall enough to catch the eye, and it names the
+                // cause: somebody ran power out to the pisonet across the pavement.
+                var block = Slab(parent, "ExtensionBlock", new Vector3(0.0f, 0.055f, size.z * 0.44f),
+                                 new Vector3(0.42f, 0.11f, 0.20f), new Color(0.94f, 0.92f, 0.86f));
+                block.transform.localRotation = Quaternion.Euler(0.0f, -9.0f, 0.0f);
+                Object.DestroyImmediate(block.GetComponent<Collider>());
+
+                for (int i = 0; i < 3; i++)
+                {
+                    var coil = Slab(parent, $"CordCoil_{i}",
+                                    new Vector3(0.30f + i * 0.02f, 0.032f + i * 0.020f,
+                                                size.z * 0.40f - i * 0.05f),
+                                    new Vector3(0.30f - i * 0.05f, 0.026f, 0.30f - i * 0.05f),
+                                    colour);
+                    coil.transform.localRotation = Quaternion.Euler(0.0f, 21.0f * i, 0.0f);
+                    Object.DestroyImmediate(coil.GetComponent<Collider>());
+                }
+
+                // ⚠️ THE TAPE IS NOT DECORATION. It is the one piece of this hazard that says
+                // "somebody knew this was a problem", which is what makes running into it the
+                // player's fault rather than the map's.
+                var tape = Slab(parent, "CordTape", new Vector3(-0.30f, 0.014f, -size.z * 0.30f),
+                                new Vector3(0.34f, 0.012f, 0.16f), new Color(0.86f, 0.84f, 0.80f));
+                tape.transform.localRotation = Quaternion.Euler(0.0f, -22.0f, 0.0f);
+                Object.DestroyImmediate(tape.GetComponent<Collider>());
                 return;
             }
 
@@ -2118,13 +2176,43 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 // The lid, tipped up on one edge, and the dark hole under it. Flat enough to
                 // stay well under `StepOffset`, so the box clearance rule never sees it.
-                var hole = Slab(parent, "OpenShaft", new Vector3(0.10f, 0.010f, 0.05f),
-                                new Vector3(0.78f, 0.014f, 0.78f), new Color(0.055f, 0.058f, 0.065f));
+                var hole = Slab(parent, "OpenShaft", new Vector3(0.10f, 0.008f, 0.05f),
+                                new Vector3(0.78f, 0.012f, 0.78f), HazardVoid);
                 Object.DestroyImmediate(hole.GetComponent<Collider>());
 
-                var lid = Slab(parent, "TippedLid", new Vector3(-0.34f, 0.055f, -0.12f),
+                // ⚠️⚠️ THE RIM IS THE WHOLE READ, AND IT WAS MISSING. The
+                // hazards did not read as things you fall over, and a dark square on tarmac is
+                // exactly why: that is a stain. A dark square with a RAISED CAST EDGE standing
+                // proud of the road is an opening, and the edge is the part a toe actually
+                // catches. Twelve segments on a 0.46 m circle is a ring at this size: eight
+                // reads as an octagon from a player's eye height and twenty is geometry nobody
+                // sees.
+                //
+                // ⚠️ 0.07 m TALL, FAR UNDER `CharacterController.stepOffset` (0.30 m).
+                // The rim must never become something a body climbs, or the hazard would start
+                // shoving players sideways instead of tripping them. It carries no collider at
+                // all, like every other piece here.
+                for (int i = 0; i < 12; i++)
+                {
+                    float a = i * (Mathf.PI * 2.0f / 12.0f);
+                    var seg = Slab(parent, $"ShaftRim_{i}",
+                                   new Vector3(0.10f + Mathf.Sin(a) * 0.46f, 0.035f,
+                                               0.05f + Mathf.Cos(a) * 0.46f),
+                                   new Vector3(0.15f, 0.07f, 0.26f), HazardLip);
+                    seg.transform.localRotation =
+                        Quaternion.Euler(0.0f, a * Mathf.Rad2Deg, 0.0f);
+                    Object.DestroyImmediate(seg.GetComponent<Collider>());
+                }
+
+                // The raw shaft wall between the rim and the void, so the opening has depth
+                // rather than being a decal with a frame around it.
+                var throat = Slab(parent, "ShaftThroat", new Vector3(0.10f, 0.018f, 0.05f),
+                                  new Vector3(0.86f, 0.030f, 0.86f), HazardBreak);
+                Object.DestroyImmediate(throat.GetComponent<Collider>());
+
+                var lid = Slab(parent, "TippedLid", new Vector3(-0.46f, 0.060f, -0.16f),
                                new Vector3(0.72f, 0.05f, 0.72f), new Color(0.205f, 0.208f, 0.222f));
-                lid.transform.localRotation = Quaternion.Euler(0.0f, 18.0f, 22.0f);
+                lid.transform.localRotation = Quaternion.Euler(0.0f, 18.0f, 26.0f);
                 Object.DestroyImmediate(lid.GetComponent<Collider>());
                 return;
             }
@@ -2132,16 +2220,50 @@ namespace TumbangPreso.EditorTools.MapKit
             if (name.Contains("SunkenTrench"))
             {
                 // A resurfaced cut that settled, with the hazard paint somebody sprayed on it.
-                var cut = Slab(parent, "SettledCut", new Vector3(0.0f, 0.008f, 0.0f),
-                               new Vector3(size.x * 0.86f, 0.012f, size.z * 0.80f),
-                               new Color(0.205f, 0.215f, 0.240f));
+                //
+                // ⚠️⚠️ THE BROKEN EDGE IS WHAT MAKES IT A TRENCH RATHER THAN
+                // A PATCH. The previous draw was a slightly darker rectangle with three stripes
+                // on it, which from a player's eye height is a differently coloured piece of
+                // road: nothing about it said the surface STOPPED. What a settled cut looks like
+                // is a ragged asphalt lip down each long side standing a few centimetres over a
+                // floor that has dropped away, and the lip is the part a foot catches.
+                var trenchFloor = Slab(parent, "TrenchFloor", new Vector3(0.0f, 0.006f, 0.0f),
+                                       new Vector3(size.x * 0.62f, 0.010f, size.z * 0.78f),
+                                       HazardVoid);
+                Object.DestroyImmediate(trenchFloor.GetComponent<Collider>());
+
+                var cut = Slab(parent, "SettledCut", new Vector3(0.0f, 0.012f, 0.0f),
+                               new Vector3(size.x * 0.78f, 0.016f, size.z * 0.82f),
+                               HazardBreak);
                 Object.DestroyImmediate(cut.GetComponent<Collider>());
+
+                // ⚠️ THE RAGGEDNESS IS DERIVED FROM THE INDEX, NEVER FROM `Random`.
+                // This builder is re-run by `IlalimNgTulayPipeline` and its output is compared
+                // against the scene by `MapGradeSanityTests`; an edge that rolled dice would
+                // differ on every rebuild and no one could tell a regression from noise.
+                for (int side = -1; side <= 1; side += 2)
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        float t = (i - 2.0f) / 2.0f;
+                        var chunk = Slab(parent, $"TrenchLip_{(side > 0 ? "E" : "W")}_{i}",
+                                         new Vector3(side * size.x * 0.34f,
+                                                     0.024f + 0.012f * (i % 2),
+                                                     t * size.z * 0.30f),
+                                         new Vector3(0.16f + 0.05f * (i % 3),
+                                                     0.048f + 0.022f * (i % 2),
+                                                     size.z * 0.17f), HazardLip);
+                        chunk.transform.localRotation =
+                            Quaternion.Euler(0.0f, side * (9.0f + i * 6.0f), 0.0f);
+                        Object.DestroyImmediate(chunk.GetComponent<Collider>());
+                    }
+                }
 
                 for (int i = -1; i <= 1; i++)
                 {
                     var stripe = Slab(parent, $"TrenchPaint_{i + 1}",
-                                      new Vector3(i * size.x * 0.26f, 0.016f, 0.0f),
-                                      new Vector3(0.11f, 0.010f, size.z * 0.74f), colour);
+                                      new Vector3(i * size.x * 0.20f, 0.022f, 0.0f),
+                                      new Vector3(0.11f, 0.010f, size.z * 0.62f), colour);
                     stripe.transform.localRotation = Quaternion.Euler(0.0f, 24.0f, 0.0f);
                     Object.DestroyImmediate(stripe.GetComponent<Collider>());
                 }
@@ -2161,20 +2283,16 @@ namespace TumbangPreso.EditorTools.MapKit
                 return;
             }
 
-            int blobs = name.Contains("Pothole") ? 3 : 4;
-            for (int i = 0; i < blobs; i++)
-            {
-                var blob = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                blob.name = name.Contains("Pothole") ? $"BrokenAsphalt_{i}" : $"BrothSpill_{i}";
-                blob.transform.SetParent(parent, false);
-                float angle = i * 2.17f;
-                blob.transform.localPosition = new Vector3(Mathf.Sin(angle) * size.x * 0.16f, 0.008f,
-                                                            Mathf.Cos(angle) * size.z * 0.16f);
-                blob.transform.localScale = new Vector3(size.x * (0.23f + i * 0.025f), 0.006f,
-                                                        size.z * (0.18f + (blobs - i) * 0.018f));
-                Paint(blob, colour);
-                Object.DestroyImmediate(blob.GetComponent<Collider>());
-            }
+            // ⚠️⚠️ THERE IS NO GENERIC VISUAL ANY MORE, AND THAT IS THE POINT. Every branch
+            // above returns, so reaching this line means a hazard was added with no drawing of
+            // its own. What used to be here was a ring of flat cylinders, which is precisely the
+            // failure that got three of the seven hazards deleted on 2026-08-26: a coloured mat
+            // is a footprint pretending to be an object, and it teaches a player nothing about
+            // why they fell. A loud editor warning costs one line and one rebuild; a silent mat
+            // ships.
+            Debug.LogWarning($"[IlalimNgTulay] {name} has no trip-hazard visual. A hazard must " +
+                             "show its cause: a raised edge, a broken lip or a real object. See " +
+                             "BuildTripHazardVisual, and VISION.md section 2 rule 3.");
         }
 
         // ------------------------------------------------------------------

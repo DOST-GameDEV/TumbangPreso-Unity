@@ -263,6 +263,13 @@ namespace TumbangPreso.PlayTests
 
             foreach (var r in root.GetComponentsInChildren<Renderer>(true))
             {
+                // ⚠️ AN EFFECT PARENTED TO A PROP IS NOT PART OF THE PROP. The lata's
+                // restore-protection shell is a transparent sphere under the can, and a toon
+                // shader would draw an ink outline round it and make it a solid object: the one
+                // thing it must not be. `VfxRenderTag` is attached by `VfxMaterial` itself, so
+                // this exempts every effect written later without anybody editing this test.
+                if (r.GetComponent<Visual.VfxRenderTag>() != null) continue;
+
                 var material = r.sharedMaterial;
                 if (material == null || material.shader == null) continue;
 

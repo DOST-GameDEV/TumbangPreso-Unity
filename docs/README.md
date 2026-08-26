@@ -26,7 +26,6 @@ add its row here in the same commit.
 | [`Port_Plan.md`](Port_Plan.md) | The phase order for the Godot to Unity port, the exit criteria, and the reasoning. § 8 is the art replacement queue. |
 | [`Port_Ledger.md`](Port_Ledger.md) | Every Godot script and scene with a CONVERTED / PARTIAL / MISSING status, measured from both trees. **The definition of done.** |
 | [`Design_Drift_Report.md`](Design_Drift_Report.md) | The investigation into the eight places `Design.md` disagreed with the shipping code. All resolved: every one was stale prose. Kept as evidence, not as an open action. |
-| [`Feature_Audit.txt`](Feature_Audit.txt) | Raw audit output from the port survey. Reference only. |
 
 ## Maps
 
@@ -46,9 +45,7 @@ add its row here in the same commit.
 |---|---|
 | [`Voxel_Person_Guide.md`](Voxel_Person_Guide.md) | How to author the next voxel character. A guide, not a handoff; nothing in it goes stale when a character lands. |
 | [`Voxel_Person_Log.md`](Voxel_Person_Log.md) | What building ZACK actually cost, and why the code looks the way it does. |
-| [`character_bayan_reference.md`](character_bayan_reference.md) | Bayan's visual specification and iteration notes. |
 | [`wearables_catalog.md`](wearables_catalog.md) | The modular voxel wearable catalog and its palette slot contract. |
-| [`CUSTOMIZATION_SYSTEM_PROMPT.md`](CUSTOMIZATION_SYSTEM_PROMPT.md) | A standalone specification for the not-yet-built character customization feature. |
 | [`Godot_Character_Select_References/`](Godot_Character_Select_References/) | The twelve approved Godot captures the Unity character select is measured against. |
 
 ## Written for another tool, but useful here
@@ -80,5 +77,19 @@ anyway, and the folder's own `README.md`, which this file replaces.
   the repository. Two committed ones were deleted on 2026-08-23 (`ZACK_AND_EXPRESSIONS_HANDOFF.md`
   and `ZACK_HAIR_AND_ELECTRICITY_HANDOFF.md`); a stale handoff in a repo is worse than none,
   because the next session believes it.
+- ⚠️⚠️ **AND A THIRD WAS DELETED ON 2026-08-26, ALONG WITH TWO OTHER DEAD FILES.** 🧑 pointed at
+  the GitHub listing and said the docs folder was carrying useless files. Removed:
+  - `CUSTOMIZATION_SYSTEM_PROMPT.md`, which called itself an "Agent Handoff & Implementation
+    Blueprint" for a feature that was never built. It is the same rule as the two above, one
+    heading away from being obvious. `wearables_catalog.md` keeps the part that was real: the
+    voxel wearable geometry and its palette slot contract.
+  - `character_bayan_reference.md`, a spec for a character who is in no roster the game ships,
+    whose every reference image and render path pointed into a `.gemini/antigravity/brain/`
+    directory that no longer exists. A reference document whose references are all dead links
+    is a document that cannot be acted on.
+  - `Feature_Audit.txt`, raw counts of GDScript functions "with no Unity counterpart" from an
+    early survey. `Port_Ledger.md` answers the same question per script with a status that is
+    kept current, and it is the definition of done. A stale second answer to a question that
+    already has a maintained one only produces arguments about which is right.
 - **Session-specific state belongs in `TODO.md`,** which is written to be ticked and added to.
   A document that needs a "where I left off" section is a `TODO.md` entry wearing a disguise.

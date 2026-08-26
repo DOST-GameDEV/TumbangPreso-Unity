@@ -260,6 +260,155 @@ countdown's size, and `HudLabel` sets `horizontalOverflow = Overflow`, so it wou
 both sides: the identical fault as 9.5, one commit later. The size resets every frame in
 `PaintSkillCard` so a tile that showed RECAST cannot keep drawing its cooldown small afterwards.
 
+**9.10 ✅ FIXED: seven trip hazards in one street, and none of them read as trippable.**
+🧑, 2026-08-26, off the played build: there were *"too many"* of them and they did not
+look like things you fall over.
+
+**Both halves were the same mistake.** Seven triggers across an 18 by 15 m street is not a
+hazard, it is a hazard FIELD: the choice a hazard buys is *do I cut this corner*, and it stops
+existing once every line across the road crosses one. And three of the seven were drawn as flat
+coloured cylinders, which is the puddle failure `VISION.md` § 2 rule 3 forbids for abilities:
+footprint doing the work that detail should do.
+
+**Cut to four, by fiction rather than by position.** Both `RoadPothole`s were "a hole in the
+road", which the loose manhole and the sunken trench already are, and they sat 2.6 m and 2.8 m
+from them: exactly the pair spacing the re-trip loop in 9.11 fed on. `ParesSpill` was a SLICK,
+and sliding and tripping are different verbs of which the game has one. The four that stayed are
+at least 5.66 m apart and each sits on something `BuildRoadSurfaceDetail` already drew.
+
+**And the survivors got depth instead of area.** A dark square on tarmac is a stain; a dark
+square with a raised cast rim standing proud of the road is an opening, and the rim is what a toe
+catches. The manhole gained a twelve-segment rim and a shaft throat, the trench gained a ragged
+asphalt lip down both long sides over a dropped floor, and the pisonet cords were lifted off the
+road to 0.055 m and given the extension block and coil that explain the lift. Nothing grew: the
+trigger footprints are untouched. Three tones (`HazardVoid`, `HazardLip`, `HazardBreak`) replace
+the single flat colour.
+⚠️ **The generic fallback visual is gone and is now a `Debug.LogWarning`.** A hazard added with
+no drawing of its own used to get a ring of flat cylinders, which is how three of these shipped.
+⚠️ **The lip jitter is derived from the loop index, never from `Random`**, because
+`MapGradeSanityTests` compares the builder against the baked scene and a random edge would differ
+on every rebuild.
+**Verified:** rebuilt through `IlalimNgTulayPipeline`, `geometry OK, capture OK`, Ilalim reports
+0 floating, 0 buried, 0 over void.
+
+**9.11 ✅ FIXED: the get-up bar resolved itself, and mashing put you straight back down.**
+🧑, 2026-08-26: it *"automatically resolves without doing anything"*, and separately that you
+*"CAN'T get up"*. Two defects that look contradictory and are both real.
+
+**The bar was a countdown wearing a mash meter's clothes.** `_tripLeft` decayed by
+`Time.deltaTime` every frame whatever the player did, so a fall ended on its own in 2.50 s and
+mashing perfectly ended it in 1.70 s. A 0.80 s saving on a 2.50 s event is inside the time it
+takes to work out what to press. `Balance.TripPassiveDecayRate` (0.60) slows the bleed only while
+there is slack a press could buy, so an answered fall is unchanged at **1.70 s** and an ignored
+one is **3.57 s**. The bleed is deliberately not zero: a fall that only a press can end strands a
+player whose hands left the keyboard.
+⚠️ **And the bar now shows whose work it was.** `CharacterMotor.MashRemoved` is drawn as its
+own gold segment over the passive fill, and the bar pops for 0.14 s on every ACCEPTED press, so a
+press refused inside `Balance.MashCooldown` reads as a dead press rather than as a punishment.
+
+**The "can't get up" half was the mash key.** It is bound to `Verb.Jump`, so the instant
+`_tripLeft` reaches zero the same hammering becomes real jumps, a jump clears
+`StreetTripHazard.MinSpeedToTrip` (1.0 m/s) on the spot, and the hazard trips you again.
+`StreetTripHazard.Cooldown` cannot answer it because it is PER HAZARD, so a neighbour 2.6 m away
+re-tripped with no wait at all. `CharacterMotor.IsTripImmune` is one window on the body that every
+hazard reads, opened where a fall actually ends so it covers a mashed fall and a timed-out one
+alike. `Balance.TripGraceAfterGetUp` is 1.20 s, which carries an attacker 4.14 m, more than the
+widest hazard footprint on the map (2.60 m).
+**Verified:** `Trip_AnsweringItIsWorthAtLeastHalfTheFall` and
+`Trip_GraceCarriesAPlayerClearOfTheHazardThatFelledThem` in `Core.Tests`, plus the hazard cut in
+9.10 which removed the two pairs that made the loop reachable at all.
+
+**9.12 ✅ FIXED: the fall camera was framed for a standing body.**
+🧑, 2026-08-26: the placement is *"awkward"*. 9.7 gave the fall a third-person cut and reused
+the emote swing wholesale, including its SHOT. An emote is a pose you chose while standing, so it
+is framed off `TppMountHeight` = 1.20 m at 4.5 m out; a fall is a body flat on the tarmac, and
+that mount is now 1.2 m of empty air above a subject 0.40 m tall.
+
+The fall gets three numbers of its own (`FallMountHeight` 0.20, `FallSpringLength` 2.80,
+`FallPitchDeg` 26) and its own pitch clamp, because the emote band tops out at 20 degrees, BELOW
+the angle a fall opens at, so sharing it would have pulled the shot back to the standing framing
+on the first frame. The eye ends up 1.43 m up and 2.52 m back, looking DOWN at the road.
+⚠️ **The shared entry point is untouched and must stay that way.** `BeginEmoteView` calls
+`RestoreSelfHide`; without it the camera orbits a body in SHADOWS_ONLY, which is the reported
+*"doing emote doesnt show myself in tpp"* bug. Only the numbers are the fall's own.
+⚠️ **Emotes are not affected.** `ApplyEmoteView`'s own note records a hand-picked short boom
+being wrong FOR AN EMOTE; that argument is about a standing body and it still holds.
+
+**9.13 ✅ FIXED: you were never actually on the floor, and the cause was in the assets.**
+🧑, 2026-08-26: *"it js plays an animation and ur already up"*.
+
+⚠⚠ **EVERY CLIP ON ALL 29 RIGS IS 0.333 s AND EVERY ONE IMPORTS WITH `isLooping = true`,
+measured on 2026-08-26.** That single fact is behind both halves and neither is guessable from
+the code:
+
+* `SetDuration(clip.length)` does not stop an `AnimationClipPlayable` whose CLIP is marked
+  looping. So `die`, played with `loop: false` precisely so it would hold its last frame, wrapped
+  every third of a second: over the 1.6 s of a fall the body dropped and sprang upright about
+  five times. The note above that call already described that exact bug as fixed. It was not: the
+  flag on the asset outranks the call.
+* `pick-up` is also 0.333 s and played at 1x into the 0.90 s floor, so the get-up finished 0.57 s
+  early and the body held a bent-over pose for the rest.
+
+`CharacterAnimator._holdAtEnd` freezes any non-looping clip on its last frame in code rather than
+trusting the importer, which fixes the emote hold path too. `StepTripPose` owns a fall end to end
+and time-scales `pick-up` from the clip's own measured length, so a re-export cannot silently
+reintroduce a get-up that lands early.
+⚠️ **`MinTripDown` was NOT the lever**, exactly as its note demands. What moved is the
+hardcoded **0.70** that `Choose` switched clips at, which disagreed with the 0.90 the mash floor
+and the HUD both used, so 0.20 s of every fall was a state where the press was refused, the HUD
+said GETTING UP, and the body was still face down. One number, one meaning.
+
+**9.14 ✅ FIXED: two ways the guided training route could not be finished by playing it.**
+Found by reading `GuidedTraining.cs` against the code it drives, both on the 17-lesson route
+behind `START TRAINING`.
+
+* **`TripRecovery` could strand the player.** The trip is applied ONCE on entering the lesson and
+  the exit condition is five ACCEPTED presses, but a fall holds at most
+  (2.50 - 0.90) / 0.20 = 8 of them. A player who watched the first fall out instead of mashing
+  reached zero with the counter short and nothing left to press. It now puts you back down until
+  the counter is met, which is also the honest teaching: mashing is what ends a fall.
+* **The four hero lessons cannot be answered by a seat with no kit.** `AbilityInfo`, `Skill1`,
+  `Skill2` and `Ultimate` all check `HeroAbilitySystem`, and Classic is a shipping mode with no
+  powers at all (`CLAUDE.md` § 1), so pressing the key produced no cast and `WasSuccessfulCast`
+  stayed false forever. `LessonNeedsAKit` skips them when there is no kit. The N key would have
+  carried a player past both, but a tutorial whose only exit is the skip key has failed.
+⚠️ **`TripRecovery`'s "natural drain is one second per second" comment was stale** the moment
+9.11 landed. The detector still cannot credit the bleed as a press: the bleed got SMALLER, which
+only widens the gap a press has to clear.
+
+**9.15 ✅ FIXED: `DeadFeatureAudit` failed a feature that was never removed.**
+`TacticalPauseBelongsOnlyToSpectatorCamera` asserted the exact literal
+`"Time.timeScale = 0.0f"` in `SpectatorCamera.cs`. `ToggleBroadcastPause` became
+`Time.timeScale = _broadcastPaused ? 0.0f : _selectedTimeScale` when the broadcast speed keys
+landed: same pause, same P binding, same zeroed clock, different spelling. A source audit that
+pins the spelling of a line reports a refactor as a deleted feature, which is the opposite of what
+that file is for. Now a regex, with a lookbehind so it does not match the `0f` inside
+`PausePanel`'s `Time.timeScale = 1.0f` resume line.
+
+**9.17 ✅ FIXED: an effect parented to the can failed the prop outline test.**
+`InputEdgeTests.EverySlipperAndTheLataWearTheToonOutline` walks every renderer under a slipper or
+the lata and demands `TumbangPreso/Toon`, because the ink outline and the palette remap are the
+look. `LataRestoreShield`, the restore-protection shell, is a transparent sphere parented to the
+can, so it is a renderer under the lata by construction and it came back on `Standard`.
+
+⚠️ **Making it toon would have been the wrong fix.** A shell with an ink outline drawn round it
+is a solid object, and the entire point of it is that the can is visible through it. The rule the
+test wants is "is this part of the model", so `Visual.VfxRenderTag` is attached by
+`VfxMaterial.Ghost` and `VfxMaterial.Solid` themselves and the test skips anything carrying it. An
+effect written later is exempt on the day it is written, and a name in a skip list would have had
+to be added again for the next one.
+**Verified:** PlayMode 59/59.
+
+**9.16 ✅ DONE: three dead documents deleted.** `docs/README.md` has the reasoning per file.
+`CUSTOMIZATION_SYSTEM_PROMPT.md` was a committed agent handoff for a feature that was never built,
+which `CLAUDE.md` § 2.4 forbids; `character_bayan_reference.md` pointed every reference image and
+render at a `.gemini/antigravity/brain/` path that no longer exists; `Feature_Audit.txt` was a
+stale second answer to the question `Port_Ledger.md` answers and keeps current.
+⚠️ **`ZACK_AND_EXPRESSIONS_HANDOFF.md` and `ZACK_HAIR_AND_ELECTRICITY_HANDOFF.md` are still on
+`main`.** They were deleted on this branch on 2026-08-23 and `d6131f67`, the revert of the first
+Ilalim merge, put them back on `main`. Deleting them here cannot remove them there. **Open: one
+commit on `main` that deletes both.**
+
 ---
 
 ## 1 · Peer rematch voting across the wire
@@ -414,6 +563,12 @@ the evidence for that is written down here so nobody re-derives it.**
 `OneClassicRoundAtRealSpeedIsFullyExplained` asserts no tsinelas stays loose longer than
 **20.0 s**. It failed twice in a row at **21.6 s** and then **29.9 s**, and passed on the same
 machine minutes earlier.
+
+⚠️ **A third data point, 2026-08-26: it failed at 37.6 s and then passed on an immediate re-run
+with nothing changed between the two**, on a machine that had just finished a map rebuild and an
+EditMode run. That is the same signature again and it is the strongest evidence yet that the
+failure is the harness rather than the AI: 37.6 s is not a near miss of a 20 s bound, it is a
+round that spent most of its wall clock somewhere other than this test.**
 
 ⚠️ **It runs at 1x for 40 real seconds by design** (see the class note: anything measured at a
 high time scale is partly a measurement of the harness). That makes it the one test in the

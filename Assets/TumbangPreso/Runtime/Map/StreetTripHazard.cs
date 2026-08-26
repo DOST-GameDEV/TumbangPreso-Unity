@@ -65,6 +65,16 @@ namespace TumbangPreso
             var motor = other.GetComponentInParent<CharacterMotor>();
             if (motor == null || motor.IsTripped) return;
 
+            // ⚠️⚠️ THE GRACE IS THE BODY'S, NOT THIS HAZARD'S, AND THE DIFFERENCE IS THE WHOLE
+            // BUG IT FIXES. `Cooldown` below is keyed per motor PER HAZARD, so it stops this
+            // object re-tripping the same player and does nothing at all about the one 2.6 m
+            // away. Getting up ends in a jump by construction (the mash is bound to Jump), that
+            // jump clears `MinSpeedToTrip` on the spot, and a neighbouring hazard took it
+            // immediately: 🧑 reported it as not being able to get up. `IsTripImmune` is one
+            // window on the character that every hazard reads, so two of them cannot hand a
+            // player back and forth.
+            if (motor.IsTripImmune) return;
+
             // Must have some horizontal movement speed or be sprinting/dashing
             Vector3 flatVel = motor.Velocity;
             flatVel.y = 0.0f;

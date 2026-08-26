@@ -173,6 +173,27 @@ namespace TumbangPreso.Visual
         private float _weight;
         private float _oneShotLeft;
 
+        /// ⚠️⚠️ EVERY CLIP ON THESE RIGS IS 0.333 s AND EVERY ONE IS MARKED `isLooping = true`,
+        /// MEASURED OFF ALL 29 GLBs ON 2026-08-26. That single fact is behind both halves of the
+        /// fall reading wrong, and neither is guessable from reading the code:
+        ///
+        ///  * `SetDuration(clip.length)` does NOT stop an `AnimationClipPlayable` whose clip is
+        ///    marked looping. So `die`, played with `loop: false` precisely so it would hold its
+        ///    last frame, wrapped every third of a second instead: over the 1.6 s of a fall the
+        ///    body dropped and sprang upright about five times. The comment above the `loop`
+        ///    line already describes that exact bug as fixed. It was not; the flag on the asset
+        ///    outranks the call.
+        ///  * `pick-up` is also 0.333 s and was played at 1x into a 0.90 s floor, so the get-up
+        ///    finished 0.57 s early and the body then held a bent-over pose for the remainder.
+        ///    🧑, 2026-08-26: *"it js plays an animation and ur already up"*.
+        ///
+        /// `_holdAtEnd` is the general answer: a clip played non-looping is frozen on its last
+        /// frame by this file rather than by the importer, so it holds whatever the asset says
+        /// about itself. `_tripPhase` is the specific one: it drives the two clips of a fall
+        /// explicitly and fits the get-up to `Balance.MinTripDown`.
+        private bool _holdAtEnd;
+        private int _tripPhase;
+
         private void Awake()
         {
             _motor = GetComponent<CharacterMotor>();
@@ -321,10 +342,15 @@ namespace TumbangPreso.Visual
             // straight back over the wind-up.
             if (StepChargePose()) return;
 
+            // ⚠️ BEFORE THE ONE-SHOT, because a fall interrupts whatever the body was doing.
+            // A player tripped mid-throw must be on the tarmac, not finishing the throw.
+            if (StepTripPose()) return;
+
             if (_oneShotLeft > 0.0f)
             {
                 _oneShotLeft -= Time.deltaTime;
                 Blend();
+                HoldLastFrame();
                 return;
             }
 
@@ -338,6 +364,7 @@ namespace TumbangPreso.Visual
 
             Play(Choose(), loop);
             Blend();
+            HoldLastFrame();
 
             StepEmoteFinished(emoting);
         }
@@ -431,11 +458,12 @@ namespace TumbangPreso.Visual
         /// </summary>
         private string Choose()
         {
-            if (_motor != null && _motor.IsTripped)
-            {
-                // When tripped, lie flat on the ground for the majority of the duration, then play get-up
-                return _motor.TripLeft > 0.7f ? Die : PickUp;
-            }
+            // ⚠️ THE TRIP IS NOT CHOSEN HERE ANY MORE. It used to be one line,
+            // `_motor.TripLeft > 0.7f ? Die : PickUp`, which picked the right two clips and
+            // could say nothing about their SPEED or about holding a frame, and both of those
+            // turned out to be the whole defect. See `StepTripPose`, which runs before this and
+            // owns a fall end to end. The 0.70 also disagreed with `Balance.MinTripDown` by
+            // 0.20 s for no reason anybody recorded.
 
             if (_emote != null && _emote.IsEmoting)
             {
@@ -699,10 +727,104 @@ namespace TumbangPreso.Visual
             => EmoteLoops.TryGetValue(emoteId, out bool loops) && !loops;
         public void PlayPunch() => PlayOneShot(Punch);
 
+        /// <summary>
+        /// The clip playable currently on the front input of the mixer, or an invalid handle.
+        /// </summary>
+        private AnimationClipPlayable Front()
+        {
+            var input = _mixer.IsValid() ? _mixer.GetInput(1) : default;
+            return input.IsValid() && input.IsPlayableOfType<AnimationClipPlayable>()
+                ? (AnimationClipPlayable)input
+                : default;
+        }
+
+        private float ClipLength(string clipName)
+            => _clips.TryGetValue(clipName, out var clip) ? clip.length : 0.0f;
+
+        /// <summary>
+        /// Freeze a non-looping clip on its last frame.
+        ///
+        /// ⚠️⚠️ THIS IS DONE HERE BECAUSE THE ASSETS SAY OTHERWISE. Every clip on these rigs
+        /// imports with `isLooping = true`, and a looping clip wraps regardless of what
+        /// `SetDuration` was told, so "played non-looping" was a description of intent rather
+        /// than of behaviour. Zeroing the speed one frame short of the end holds the pose for
+        /// as long as the state that asked for it lasts.
+        /// </summary>
+        private void HoldLastFrame()
+        {
+            if (!_holdAtEnd) return;
+
+            var front = Front();
+            if (!front.IsValid()) return;
+
+            double length = front.GetAnimationClip() != null
+                ? front.GetAnimationClip().length
+                : 0.0;
+            if (length <= 0.0) return;
+
+            if (front.GetTime() >= length - 0.001)
+            {
+                front.SetTime(length - 0.001);
+                front.SetSpeed(0.0);
+            }
+        }
+
+        /// <summary>
+        /// A fall, end to end: the knockdown held on the tarmac, then the get-up time-scaled so
+        /// it lands exactly as control returns.
+        ///
+        /// ⚠️⚠️ IT OWNS BOTH CLIPS AND THEIR SPEED, WHICH `Choose` COULD NOT. `Choose` returns a
+        /// clip NAME, and the two things wrong with the fall were a clip that would not stay on
+        /// the floor and a clip that finished 0.57 s before the player could move. Neither is
+        /// expressible as a name.
+        ///
+        /// ⚠️ THE SWITCH IS `Balance.MinTripDown`, THE SAME NUMBER THE MASH FLOOR AND THE HUD
+        /// USE. Below it nothing can be bought, the prompt has already changed to GETTING UP,
+        /// and the body should be getting up. A separate 0.70 lived here and left 0.20 s where
+        /// all three disagreed.
+        /// </summary>
+        private bool StepTripPose()
+        {
+            if (_motor == null || !_motor.IsTripped)
+            {
+                _tripPhase = 0;
+                return false;
+            }
+
+            if (_motor.TripLeft <= Core.Balance.MinTripDown)
+            {
+                if (_tripPhase != 2)
+                {
+                    _tripPhase = 2;
+                    Play(PickUp, loop: false, force: true);
+
+                    // ⚠️ SOLVED FROM THE CLIP, NOT TYPED. `pick-up` measures 0.333 s on every
+                    // rig today, which is 0.37x here, but a re-export that changes the clip must
+                    // not silently reintroduce a get-up that ends early.
+                    float length = ClipLength(PickUp);
+                    if (length > 0.0f)
+                    {
+                        var front = Front();
+                        if (front.IsValid())
+                            front.SetSpeed(length / Core.Balance.MinTripDown);
+                    }
+                }
+            }
+            else if (_tripPhase != 1)
+            {
+                _tripPhase = 1;
+                Play(Die, loop: false, force: true);
+            }
+
+            Blend();
+            HoldLastFrame();
+            return true;
+        }
+
         private void Play(string clipName, bool loop, bool force = false)
         {
             if (!force && clipName == _current) return;
-            if (!_clips.TryGetValue(clipName, out var clip)) return;
+            if (!_clips.TryGetValue(clipName, out var clip) || !_mixer.IsValid()) return;
 
             // Retire whatever was on input 0 and slide the current clip down to it, so the
             // mixer always crossfades from what you were doing to what you are doing now.
@@ -720,6 +842,7 @@ namespace TumbangPreso.Visual
             _mixer.ConnectInput(1, playable, 0);
             _weight = 0.0f;
             _current = clipName;
+            _holdAtEnd = !loop;
         }
 
         private void Blend()
