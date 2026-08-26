@@ -41,6 +41,23 @@ namespace TumbangPreso
 
         private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote, _skill1, _skill2, _ultimate;
 
+        /// <summary>
+        /// The pektus curve, left and right.
+        ///
+        /// ⚠️⚠️ THEY WERE `Keyboard.current.leftArrowKey` READ INLINE, WHICH BREAKS THE ONE
+        /// RULE THIS CLASS EXISTS FOR. `CLAUDE.md` § 4: *"One control, one action, in the input
+        /// map."* A hardware read that never passes through an `InputAction` cannot be rebound,
+        /// cannot be shown in the settings panel, and cannot be printed by `Hud.KeyLabel`, so the
+        /// tutorial's pektus lesson had to name the arrow keys in a hard-coded string while every
+        /// other lesson drew the live binding. 🧑, 2026-08-26: *"im not sure as well if pektus
+        /// controls are in settings"*. They were not.
+        ///
+        /// ⚠️ THE MOUSE WHEEL IS STILL READ DIRECTLY AND THAT IS NOT THE SAME FAULT. A scroll
+        /// axis is not a button and there is nothing to rebind it to; it is the shortcut, and
+        /// these two are the binding the panel teaches.
+        /// </summary>
+        private InputAction _curveLeft, _curveRight;
+
         private void Awake()
         {
             if (_motor == null) _motor = GetComponent<CharacterMotor>();
@@ -83,6 +100,8 @@ namespace TumbangPreso
             _skill1 = map.FindAction("Skill1", false);
             _skill2 = map.FindAction("Skill2", false);
             _ultimate = map.FindAction("Ultimate", false);
+            _curveLeft = map.FindAction("CurveLeft", false);
+            _curveRight = map.FindAction("CurveRight", false);
 
             map.Enable();
         }
@@ -127,13 +146,12 @@ namespace TumbangPreso
                     else if (scrollY < -0.1f) _currentPektusSpin = Mathf.Clamp(_currentPektusSpin - 0.35f, -1.0f, 1.0f);
                 }
 
-                if (Keyboard.current != null)
-                {
-                    if (Keyboard.current.leftArrowKey.isPressed)
-                        _currentPektusSpin = Mathf.Clamp(_currentPektusSpin - Time.deltaTime * 2.5f, -1.0f, 1.0f);
-                    if (Keyboard.current.rightArrowKey.isPressed)
-                        _currentPektusSpin = Mathf.Clamp(_currentPektusSpin + Time.deltaTime * 2.5f, -1.0f, 1.0f);
-                }
+                // ⚠️ THROUGH THE MAP, SO THE PANEL CAN REBIND THEM. See `_curveLeft`.
+                if (_curveLeft != null && _curveLeft.IsPressed())
+                    _currentPektusSpin = Mathf.Clamp(_currentPektusSpin - Time.deltaTime * 2.5f, -1.0f, 1.0f);
+
+                if (_curveRight != null && _curveRight.IsPressed())
+                    _currentPektusSpin = Mathf.Clamp(_currentPektusSpin + Time.deltaTime * 2.5f, -1.0f, 1.0f);
             }
             else
             {

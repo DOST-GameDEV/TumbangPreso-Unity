@@ -326,6 +326,25 @@ namespace TumbangPreso.PlayTests
             Assert.False(faller.IsTripped, $"an unanswered {Trip:0.00} s fall never ended: it was " +
                                            $"still running after {ignored:0.00} s");
 
+            // ⚠️⚠️ AND IT LASTED THE GUARD, NOT A DECAY. Nothing bleeds a fall away any more, so
+            // an unanswered one has to sit at its starting length until
+            // `Balance.TripAutoRecoverSeconds` releases it. A shorter reading here means some
+            // clock has been reintroduced above `MinTripDown`, which is the defect this whole
+            // rework removes.
+            Assert.Greater(ignored, Balance.TripAutoRecoverSeconds * 0.9f,
+                $"an unanswered fall ended after {ignored:0.00} s, well inside the " +
+                $"{Balance.TripAutoRecoverSeconds:0.00} s guard: something is still running the " +
+                "trip down on its own.");
+
+            // ⚠️⚠️ THE BAR IS THE GATE, SO IT MUST READ FULL AT THE MOMENT OF STANDING, INCLUDING
+            // ON THE PATH NOBODY PRESSED. 🧑: *"sometimes i get up with it still at middle or
+            // when i only clicked once"*. `Hud.UpdateGetUpPrompt` draws `MashRemoved` over the
+            // mashable slack, so this is that frame measured rather than looked at.
+            float slack = Trip - Balance.MinTripDown;
+            Assert.GreaterOrEqual(faller.MashRemoved, slack - 0.01f,
+                $"the fall ended with the get-up meter at {faller.MashRemoved / slack:P0}, which is " +
+                "the exact frame the report was about.");
+
             faller.ClearTrip();
             faller.ApplyTrip(Trip);
 
@@ -341,10 +360,13 @@ namespace TumbangPreso.PlayTests
                 $"a mashed fall never ended: still down after {mashed:0.00} s with " +
                 $"{faller.MashPresses} accepted presses");
 
-            // ⚠️ THE BOUND IS A RATIO, NOT A TIME. `TripPassiveDecayRate` and
+            Assert.GreaterOrEqual(faller.MashRemoved, slack - 0.01f,
+                $"a mashed fall ended with the meter at {faller.MashRemoved / slack:P0}.");
+
+            // ⚠️ THE BOUND IS A RATIO, NOT A TIME. `TripAutoRecoverSeconds` and
             // `MashRecoverPerPress` are both open balance numbers; what must never regress is
             // that pressing is worth substantially more than waiting. The arithmetic on those
-            // two constants says 3.3x today, and 1.6x is a floor a real defect falls through
+            // two constants says 4.0x today, and 1.6x is a floor a real defect falls through
             // while a tuning pass does not.
             Assert.Greater(ignored / mashed, 1.6f,
                 $"mashing bought almost nothing: an ignored fall ran {ignored:0.00} s and a " +

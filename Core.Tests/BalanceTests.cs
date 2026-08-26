@@ -420,38 +420,46 @@ namespace TumbangPreso.Core.Tests
         }
 
         /// <summary>
-        /// ⚠️⚠️ MASHING HAS TO BE WORTH DOING, AND THE ARITHMETIC IS THE ONLY WAY TO KNOW.
-        /// 🧑, 2026-08-26, on the shipped build: the get-up *"automatically resolves without
-        /// doing anything"*. He was measuring correctly. With the trip bleeding at real time the
-        /// two outcomes were 2.50 s for a player who never pressed and 1.70 s for one who mashed
-        /// perfectly: a 0.80 s difference on an event that lasts two and a half seconds, which
-        /// is inside the time it takes to work out what to press.
-        ///
-        /// `Balance.TripPassiveDecayRate` slows the bleed while there is slack a press could
-        /// buy, so the ANSWERED fall is unchanged and the UNANSWERED one is genuinely longer.
-        /// This asserts the gap rather than the constant, because the gap is the design.
+        /// ⚠️⚠️ THE MASH IS THE ONLY WAY UP INSIDE THE WINDOW, AND THAT IS A PROPERTY OF THE
+        /// NUMBERS RATHER THAN OF THE MOTOR. 🧑, 2026-08-26, off the 4.70 player: *"u randomly
+        /// get up after set amt of time, i dont have to actually mash it"*. Three passes before
+        /// this one answered that complaint by retuning a decay RATE, and each left the thing he
+        /// was describing in place. `Balance.TripPassiveDecayRate` is deleted; what is left is a
+        /// count of presses and a stranding guard far enough out that waiting is never the
+        /// better play.
         /// </summary>
         [Fact]
-        public void Trip_AnsweringItIsWorthAtLeastHalfTheFall()
+        public void Trip_OnlyPressesEndAFallInsideTheGuard()
         {
             const float trip = 2.5f;
             float slack = trip - Balance.MinTripDown;
 
-            float mashed = (slack / Balance.MashRecoverPerPress) * Balance.MashCooldown
-                           + Balance.MinTripDown;
-            float ignored = slack / Balance.TripPassiveDecayRate + Balance.MinTripDown;
+            int presses = (int)System.Math.Ceiling(slack / Balance.MashRecoverPerPress);
+            float mashWindow = presses * Balance.MashCooldown;
+            float mashed = mashWindow + Balance.MinTripDown;
 
             Assert.True(mashed <= 2.0f,
                         $"a perfectly answered fall is {mashed:F2} s, outside the 1-2 s asked for.");
-            Assert.True(ignored >= mashed * 2.0f,
-                        $"ignoring the fall costs {ignored:F2} s against {mashed:F2} s answered, " +
-                        "which is not enough of a difference to teach anybody to press.");
 
-            // ⚠️ AND IT STILL ENDS ON ITS OWN. A trip that only a press can clear strands a
-            // player whose hands left the keyboard and hands a griefing tool to anything that
-            // can re-apply one.
-            Assert.True(Balance.TripPassiveDecayRate > 0.0f);
-            Assert.True(ignored < 4.0f, $"an unanswered fall lasts {ignored:F2} s.");
+            // ⚠️ THE GUARD IS A STRANDING GUARD, NOT A SECOND WAY UP. If it were close to the
+            // answered time, "wait it out" would be a strategy again and the meter would be back
+            // to decorating a countdown.
+            Assert.True(Balance.TripAutoRecoverSeconds >= mashed * 3.0f,
+                        $"waiting costs {Balance.TripAutoRecoverSeconds:F2} s against {mashed:F2} s " +
+                        "answered, which is close enough that not pressing is playable.");
+
+            // ⚠️ AND IT STILL ENDS. A fall only a press can clear strands a player whose hands
+            // left the keyboard and hands a griefing tool to anything that can re-apply one.
+            Assert.True(Balance.TripAutoRecoverSeconds > 0.0f);
+            Assert.True(Balance.TripAutoRecoverSeconds <= 6.0f,
+                        $"an unanswered fall lasts {Balance.TripAutoRecoverSeconds:F2} s, which is "
+                        + "long enough to read as being stuck rather than as being punished.");
+
+            // ⚠️ THE MASH IS STILL A BURST, NOT A TAP. § 14.1 shipped 0.22 because at 0.35 two
+            // presses plus the bleed were enough; with the bleed gone the press count IS the
+            // fall, so it has to stay a number you feel.
+            Assert.True(presses >= 8,
+                        $"the slack is {presses} presses, which is a tap rather than a mash.");
         }
 
         /// <summary>

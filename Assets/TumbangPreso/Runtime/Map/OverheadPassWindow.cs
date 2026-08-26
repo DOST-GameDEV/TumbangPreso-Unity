@@ -94,12 +94,39 @@ namespace TumbangPreso
         /// </summary>
         public const float OverclockRate = 1.0f + OverclockSeconds / PassSeconds;
 
+        /// <summary>
+        /// The rate a pass ACTUALLY applies. It is <see cref="OverclockRate"/> and nothing in the
+        /// game ever writes it.
+        ///
+        /// ⚠️⚠️ IT EXISTS SO THE SWEEP `docs/TODO.md` § 5 HAS OWED SINCE 2026-08-25 CAN BE
+        /// RUN AT ALL. That entry wants the window compared at several values, and the shipped
+        /// number is a `const` derived from `OverclockSeconds` by design, so the only other way
+        /// to answer it is to edit the constant, recompile, run, and repeat: three builds whose
+        /// only guarantee that they differ by one number is that somebody was careful. A field
+        /// one probe writes and restores makes the comparison a single run of a single build,
+        /// which is the whole reason the fixed-step probe was built (§ 10).
+        ///
+        /// ⚠️ NOTHING IN THE GAME MAY READ THIS EXCEPT `SetOverhead`, AND NOTHING MAY WRITE IT
+        /// EXCEPT A MEASUREMENT. It is deliberately not a setting, not a difficulty, and not
+        /// networked: two peers disagreeing about it would pay different cooldowns for the same
+        /// train. `BotBehaviourProbe` restores it in a `finally`-shaped teardown for the reason
+        /// `SoloPracticeTests` restores the difficulty, which is that a static left modified
+        /// silently retunes every test after it.
+        /// </summary>
+        public static float AppliedRate { get; private set; } = OverclockRate;
+
+        /// <summary>Set the applied rate for a measurement. See <see cref="AppliedRate"/>.</summary>
+        public static void SetAppliedRateForMeasurement(float rate) => AppliedRate = rate;
+
+        /// <summary>Put the applied rate back to the shipped one.</summary>
+        public static void RestoreAppliedRate() => AppliedRate = OverclockRate;
+
         public static void SetWarning(bool on) => Warning = on;
 
         public static void SetOverhead(bool on)
         {
             Overhead = on;
-            CooldownRate = on ? OverclockRate : 1.0f;
+            CooldownRate = on ? AppliedRate : 1.0f;
         }
 
         /// <summary>Back to neutral. Called when the flyby leaves the scene.</summary>

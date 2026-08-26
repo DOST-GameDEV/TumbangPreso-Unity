@@ -666,6 +666,12 @@ namespace TumbangPreso
         public float TripTotal => _tripTotal;
 
         private float _lastMashTime = -99.0f;
+
+        /// <summary>Real seconds since this fall began, and the ONLY clock left in a trip.
+        /// It drives nothing but <see cref="Balance.TripAutoRecoverSeconds"/>: the fall itself
+        /// no longer runs down with time.</summary>
+        private float _tripElapsed;
+
         private int _mashPresses;
         private float _mashRemoved;
         private float _tripImmuneUntil = -99.0f;
@@ -673,15 +679,19 @@ namespace TumbangPreso
         /// <summary>Accepted presses in the current fall, so the HUD can show it filling.</summary>
         public int MashPresses => _mashPresses;
 
-        /// <summary>Seconds of the current fall that PRESSES bought, as opposed to the seconds
-        /// the passive bleed bought.
+        /// <summary>Seconds of the current fall that PRESSES have bought.
         ///
-        /// ⚠️⚠️ THE HUD DRAWS THIS AS ITS OWN SEGMENT AND THAT IS THE POINT OF EXPOSING IT.
-        /// 🧑, 2026-08-26: the get-up *"automatically resolves without doing anything"*. Half of
-        /// that was `Balance.TripPassiveDecayRate`, and half was that one bar drew both causes
-        /// in one colour, so a player mashing correctly saw the same bar as a player doing
-        /// nothing and concluded the presses were decoration. A number that is not attributable
-        /// to the player cannot teach the player anything.</summary>
+        /// ⚠️⚠️ IT IS THE GATE, NOT A READOUT, AS OF 2026-08-26. Reaching the mashable slack
+        /// (`TripTotal` - `Balance.MinTripDown`) is the only thing that puts a player back on
+        /// their feet inside `Balance.TripAutoRecoverSeconds`, and the HUD's one bar is this
+        /// number over that slack. So the bar filling and the body standing are the same event,
+        /// which is what 🧑 asked for after three passes that retuned a decay rate instead:
+        /// *"i want it so that i can only get up when ive reached the end of the mashing shit
+        /// bcz sometimes i get up with it still at middle or when i only clicked once"*.
+        ///
+        /// ⚠️ THE STRANDING GUARD CREDITS THE REST OF THE SLACK HERE RATHER THAN BYPASSING IT,
+        /// so the invariant holds with no exception: nobody ever stands up with the bar
+        /// part-full.</summary>
         public float MashRemoved => _mashRemoved;
 
         /// <summary>When the last ACCEPTED press landed, so the HUD can pop on it.
@@ -731,6 +741,7 @@ namespace TumbangPreso
             _tripTotal = 0.0f;
             _mashPresses = 0;
             _mashRemoved = 0.0f;
+            _tripElapsed = 0.0f;
 
             // ⚠️ NO GRACE FROM HERE. `ClearTrip` is the round and seat reset path, not the
             // player answering a fall, and handing a fresh round a window of hazard immunity
@@ -756,6 +767,7 @@ namespace TumbangPreso
             _mashPresses = 0;
             _mashRemoved = 0.0f;
             _lastMashTime = -99.0f;
+            _tripElapsed = 0.0f;
         }
 
         /// <summary>
@@ -824,29 +836,45 @@ namespace TumbangPreso
         {
             if (_tripLeft > 0.0f)
             {
-                // ⚠️⚠️ THE BLEED IS SLOWED WHILE THERE IS SLACK A PRESS COULD BUY, AND THAT IS
-                // THE FIX FOR "IT RESOLVES ITSELF". At 1.0x this line cleared the whole fall on
-                // its own in `TripDuration` seconds whatever the player did, so the get-up bar
-                // was a countdown and the mash was a garnish worth 0.80 s on 2.50. Above the
-                // floor it now runs at `Balance.TripPassiveDecayRate`; below it, where nothing
-                // can be bought and the get-up clip is playing, it runs at real time so the
-                // animation and the clock agree. The arithmetic on both outcomes is on that
-                // constant.
-                float rate = _tripLeft > Balance.MinTripDown
-                    ? Balance.TripPassiveDecayRate
-                    : 1.0f;
+                // ⚠️⚠️ ABOVE THE FLOOR NOTHING RUNS DOWN ON ITS OWN. THAT IS THE WHOLE RULE.
+                // 🧑, 2026-08-26, off the 4.70 player: *"u randomly get up after set amt of
+                // time, i dont have to actually mash it"*, and *"i want it so that i can only
+                // get up when ive reached the end of the mashing shit bcz sometimes i get up
+                // with it still at middle or when i only clicked once"*. Three previous passes
+                // answered that by retuning a decay RATE (docs/TODO.md §§ 12.1, 13.1, 14.1) and
+                // every one of them left the property he is describing in place: while a rate
+                // above zero exists, TIME ends the fall and the meter is a decoration on a
+                // countdown. `Balance.TripPassiveDecayRate` is deleted; see
+                // `Balance.TripAutoRecoverSeconds` for the whole argument.
+                //
+                // Below `MinTripDown` the get-up clip is playing, nothing can be bought, and
+                // this runs at real time so the animation and the clock agree.
+                if (_tripLeft <= Balance.MinTripDown)
+                    _tripLeft = Mathf.Max(0.0f, _tripLeft - Time.deltaTime);
 
-                _tripLeft = Mathf.Max(0.0f, _tripLeft - Time.deltaTime * rate);
+                // ⚠️⚠️ THE STRANDING GUARD, AND IT FILLS THE METER ON ITS WAY OUT. A fall that
+                // only a press can clear strands a player whose hands left the keyboard, so
+                // `Balance.TripAutoRecoverSeconds` releases one that nobody answered. Crediting
+                // the remaining slack to `_mashRemoved` is not cosmetic: the bar is the gate
+                // now, and standing up with it part-full is the exact frame he photographed.
+                _tripElapsed += Time.deltaTime;
+
+                if (_tripLeft > Balance.MinTripDown && _tripElapsed >= Balance.TripAutoRecoverSeconds)
+                {
+                    _mashRemoved += _tripLeft - Balance.MinTripDown;
+                    _tripLeft = Balance.MinTripDown;
+                }
 
                 // ⚠️⚠️ THE STAGGER IS HELD TO THE TRIP, AND WITHOUT THIS LINE A PLAYER GETS UP
                 // BEFORE THE FALL ENDS. 🧑, 2026-08-26, off the built player: *"if i dont mash,
                 // i get up in 2 seconds wtf"*. He was right and the arithmetic says why.
                 // `ApplyTrip` calls `ApplyStagger(duration)` once, with the trip's STARTING
-                // length, and the stun then runs down at real time while the trip runs down at
-                // `Balance.TripPassiveDecayRate`. So an unanswered 2.50 s trip lasted 3.22 s
-                // while the stun expired at 2.50: for the last 0.72 s the body could walk, aim
-                // and throw while `IsTripped` was still true, the camera was still in the fall
-                // view and the HUD still said GETTING UP.
+                // length, and the stun then ran down at real time while the trip ran down more
+                // slowly, so an unanswered 2.50 s trip lasted 3.22 s while the stun expired at
+                // 2.50: for the last 0.72 s the body could walk, aim and throw while `IsTripped`
+                // was still true, the camera was still in the fall view and the HUD still said
+                // GETTING UP. The gap is wider now, not narrower: an unanswered fall holds at
+                // `Balance.TripAutoRecoverSeconds`, twice the stun it was staggered with.
                 //
                 // ⚠️ IT IS `Max`, NEVER AN ASSIGNMENT. A tag landing on a player who is already
                 // on the floor must not have its 5 s stun cut short to the remaining trip, and

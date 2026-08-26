@@ -353,10 +353,17 @@ every file in a pre-existing output directory was freshly emitted.
 - `BotBehaviourProbe` runs a whole match in both modes and prints throws, retrievals, tags,
   skills, ultimates and penalties, on Eskinita and on Ilalim ng Tulay. ⚠️ **It is seeded. Do not
   change the seed to make a run pass**; if a run goes red, change the code.
-  ⚠️⚠️ **AND ITS NUMBERS ARE LIVENESS FLOORS, NEVER COMPARISONS.** It steps in real time at 6x
-  and the bots think in frames, so two runs of the same seeded build measured 530 and then 83
-  unretrieved-slipper penalties. Every open balance question in `docs/TODO.md` that asks for an
-  A/B is blocked on this; § 10 there is the fixed-delta work that would unblock them.
+  ⚠️⚠️ **AND ITS NUMBERS ARE LIVENESS FLOORS, NEVER COMPARISONS AT n = 1.** It is stepped at a
+  fixed 1/60 s now rather than at a 6x time scale, and that removed most of the noise and not all
+  of it: eight matches at the shipped settings spread from **58 to 100 throws**, about 20 per
+  cent, and two runs of one build with one seed are still not identical.
+  ⚠️⚠️ **`docs/TODO.md` § 10 SAYS THIS WAS SOLVED AND § 16 IS THE MEASUREMENT THAT SAYS IT WAS
+  NOT.** § 10 was closed on the ARGUMENT that a fixed step removes the clock; the first sweep to
+  run one configuration twice got 43 throws and then 83. Read § 16 before quoting any number this
+  probe prints as a comparison: it carries the noise floor and the arithmetic for how many runs an
+  arm an A/B has to buy (three for anything worth 20 per cent).
+  ⚠️ **`TwoIdenticalMatchesLandInsideTheNoiseFloor` is how you ask whether it is still honest**,
+  six minutes, `WallClock`. Run it after touching anything the bots read.
   ⚠️ **Every report from before 2026-08-26 is three seats' worth**, because `GameLaunch.SoloSeat`
   defaults to 1 and that seat was a parked human until `GameLaunch.AllBots` landed. Do not compare
   an old report against a new one.

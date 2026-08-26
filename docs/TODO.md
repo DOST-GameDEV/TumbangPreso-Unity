@@ -670,6 +670,373 @@ like a broken match.
 
 ---
 
+## 14 · The 4.69 player's second batch, shipped in `349b0171`
+
+**Six reports in one sitting, all closed the same day, and the entry exists because
+`CLAUDE.md` § 2.3 asks for the account to live here rather than only in a commit message.**
+The commit has the full derivation; this is the short form plus the numbers, in the same shape
+as § 13.
+
+**14.1 ✅ The mash was a tap.** 🧑: *"mash is weird now, I js have to click it twice to get up im
+not fr mashing"*. He was measuring correctly. At `MashRecoverPerPress` 0.35 the 2.15 s of
+mashable slack was **6.1 presses**, so two of them plus a second and a half of passive bleed had
+him up: the bleed was doing most of the work in any real fall, which is the same complaint as
+*"it automatically resolves"* in different clothes. 0.22 makes the slack **9.8 presses**, which
+is 0.98 s of hammering at the 10 Hz cap and **1.33 s** on the floor. `TripPassiveDecayRate`
+0.75 → 0.60 is the smaller half and stops "press twice and wait" being a strategy: ignored is
+**3.93 s** against 1.33 s answered, worth **3.0x**.
+
+⚠️ **Superseded by § 15.1 on 2026-08-26.** He played it and reported the fall still ending on a
+clock. The constants above are still the constants; what changed is that the clock no longer
+ends a fall at all.
+
+**14.2 ✅ "Cant pick up any slipper", in every mode, and the mechanism was not broken.**
+`SoloPracticeTests` puts a loose tsinelas at a seat's own feet and the grab connects, so what he
+met was REACH. `Balance.PickupRadius` is a 3D distance from the motor's transform, which sits at
+the SOLE OF THE FOOT, while the camera is at about 1.6 m and pitched down: at 1.40 m a legally
+grabbable tsinelas sits near the bottom edge of the frame and anything visible at the crosshair
+is three or four metres out and refuses silently. **1.75 m**, still well under the 2.60 m hazard
+footprint § 12.2 turns on.
+
+⚠️ **The real fix is the prompt.** `Hud.UpdatePickupPrompt` says when a tsinelas is in reach, and
+asks `Slipper.CanBeGrabbedBy` rather than its own distance check, so it cannot promise a pickup
+the carrier would refuse. A silent refusal is indistinguishable from a broken key, which is
+exactly how this was reported.
+
+**14.3 ✅ The hazard sweep no longer takes a tsinelas out of somebody's hands.** § 13.2's poll
+moved slippers without asking anybody, so a player closing on one would have had it teleport as
+they arrived. The guard is `PickupRadius` itself: if a body is close enough to grab it, the grab
+is the answer and the ejector has nothing left to fix.
+
+**14.4 ✅ The tutorial is a sequence, not a sandbox with a card over it.** 🧑: *"i can still do
+everything at lesson one"*. `InputIntent.AllowOnly` locks the seat to the verbs the route has
+taught. Cumulative, because the retrieval run wants sprint and jump and the trip lesson is
+answered with the jump key; what is removed is running ahead. ⚠️ It defaults to **null** so no
+match is affected, and it is released in `OnDestroy` because `InputIntent` belongs to the SEAT
+and outlives the route.
+
+**14.5 ✅ The other three seats and their tsinelas are off for the whole route**, and one comes
+back for the shove, the punch and the lunge. See § 15.2: their PET did not go with them.
+
+**14.6 ✅ The training card had dead space and covered the ability deck.** Both were layout. Six
+rows at hand-written offsets inside a fixed 274 px box is a hole for a short title and an
+overdraw for a long body, and nothing in the code said so; it is a `VerticalLayoutGroup` under a
+`ContentSizeFitter` now, so dead space is impossible by construction. The route controls moved
+into the card as its last row because bottom-centre is the ability deck's lane.
+`TrainingCardProbe` photographs the REAL card at four lesson shapes (`Logs/shots-training`).
+⚠️ **Use it before changing that card again.** `CLAUDE.md` § 6.1 was written about models and is
+just as true of a card that has now been rejected twice on its layout.
+
+**Also in that commit, and worth keeping:** `BotBehaviourProbe` carries an explicit **420 s**
+timeout (it measures 170 to 174 s against NUnit's 180 s default) and `SoloPracticeTests` ends its
+match in `TearDown`. Both are the same lesson: a PlayMode test that leaves a live round poisons
+the next suite, because the directors are `DontDestroyOnLoad`. `LandedHighlightTests` failed that
+way twice and passes alone.
+
+---
+
+## 15 · The 4.70 tutorial batch, and why four screenshots were one probe apart
+
+**Seven reports off the played 4.70 player. ✅ ALL CLOSED.** Three of the four things he
+photographed were objects nobody could name from the pixels, and every one of them was named in
+a single probe run. `TrainingStreetProbe` is that probe and it is the lasting part of this entry.
+
+⚠️⚠️ **THE PATTERN, AND IT IS § 13'S ONE LEVEL UP: A REPORT ABOUT A PICTURE NEEDS A PROBE THAT
+NAMES OBJECTS, NOT A CLOSER LOOK AT THE PICTURE.** `FppFrameProbe` exists for exactly this class
+of report and could not have caught any of these: it skips every path containing "Slipper",
+which is what two of them turned out to be, and it never loads the tutorial. The new probe walks
+the route lesson by lesson, prints every renderer within two metres of the eye with its viewport
+position and its WORLD SIZE, and prints every tsinelas with its state, its holder and its
+clearance off the road. The four answers fell out of one run in three seconds.
+
+**15.1 ✅ The mash was still a clock, and the fix was to delete the clock.** 🧑: *"mashing still
+weird, u randomly get up after set amt of time, i dont have to actually mash it"*, and *"i want
+it so that i can only get up when ive reached the end of the mashing shit bcz sometimes i get up
+with it still at middle or when i only clicked once"*.
+
+Three passes had answered this by retuning a decay RATE (§ 12.1, § 13.1, § 14.1) and each left
+the property he was describing standing: **while a rate above zero exists, time ends the fall
+and the meter decorates a countdown.** `Balance.TripPassiveDecayRate` is **deleted**. Above
+`MinTripDown` only an accepted press moves a fall; below it, where the get-up clip is playing,
+it runs at real time so the animation and the clock agree.
+
+`Balance.TripAutoRecoverSeconds` = **5.0** replaces it as a STRANDING GUARD, not a second way
+up: a perfectly answered fall is 1.33 s, so it is 3.8x that and 5.1x the 0.98 s mash window, and
+nobody waits five seconds on the road to save ten presses. ⚠️ **When it fires it credits the
+whole remaining slack to `MashRemoved`**, so the invariant a player can see holds with no
+exception: **you never stand up with the bar part-full.**
+
+Held by `Trip_OnlyPressesEndAFallInsideTheGuard` in Core and by
+`InputEdgeTests.MashingShortensAFallByWhatBalanceSays`, which now asserts three things rather
+than one: an unanswered fall lasts the guard (not a decay), the meter reads full at the moment
+of standing on BOTH paths, and answering is still worth more than waiting.
+
+**15.2 ✅ *"the pet of nemu is here??"* in a street with nobody in it.**
+`GhostPetCompanion.Bind` unparents Kuro to the scene ROOT on purpose, because he lags behind
+Nemu and must not inherit her transform. The consequence nobody had traced: every path that
+hides a SEAT leaves the pet floating in the street on his own, and `GuidedTraining.HideTheCast`
+hides three of them. The pet now mirrors its owner's `activeInHierarchy` every `LateUpdate`.
+⚠️ **Renderers, not `SetActive`**: deactivating the object stops the `LateUpdate` that is the
+only thing that could bring it back.
+
+**15.3 ✅ *"theres a floating slipper check ss"*: the route was pointing at somebody else's
+tsinelas.** `SliceRunner.EquipOwnedSlippers` **rewrites `OwnerSlot` every round**, walking the
+attackers in seat order and handing them `Slippers[0]`, `[1]`, `[2]`, so with seat 0 as the taya
+the local seat 1 owns SLIPPER 0. `GuidedTraining.Configure` asked one frame EARLIER, matched on
+the pre-round ownership, and got slipper 1. `HideTheCast` then switched off the tsinelas that was
+really in the player's hand and KEPT the other one, which was in a hidden seat's hand: measured
+at **0.85 m over an empty road**. Resolution moved after `_runner.Begin()` and asks the CARRIER
+first, which cannot be wrong.
+
+**15.4 ✅ *"i can pick up slippers from ppl's hands wtf?"*, and this one is a MATCH bug, not a
+tutorial one.** `Slipper.HostForceEquip` wrote `Holder` and told the NEW carrier and nothing
+anywhere told the old one. `Carrier.RideAnchor` writes `Held`'s transform every `LateUpdate` and
+asks nothing about the slipper's STATE, so a carrier never told it had lost one keeps dragging
+it: the shoe hangs at hand height wherever that body goes, and because it is LOOSE it lights up,
+prompts, and can be taken. Measured on the punch lesson: a LOOSE tsinelas resting **0.91 m** off
+the road in the dummy's hand. Every write of `Holder` now goes through one
+`ReleasePreviousHolder`, which also refuses to touch a carrier that has since picked up a
+different shoe. ⚠️ `HostForceEquip` is the ROUND-START ARMING and runs in every match, so this
+was reachable outside the tutorial.
+
+**15.5 ✅ *"wtf is this yellow shit on me"*: the objective marker is a 2 m ball.**
+`VfxShapes.Lay` scales X and Z by the radius and **leaves Y at 1.0**, because every other caller
+hands it a flat mesh. `NovaShell` is a unit SPHERE shell, so the marker drew a translucent amber
+ball **1.40 by 2.00 by 1.39** standing on its target, half of it under the road. It is
+`Crystal(22)`, the flat fan the hazard footprints use, and the probe now fails any marker
+renderer over 0.60 m tall. ⚠️ **This is the second oversized marker on this entry's route:**
+§ 13.6 replaced a 5.2 m pole with what its own note called a ground ring, and the ring it reached
+for was a ball. Two halves of the same lesson about drawing a pointer from a description.
+
+Two supporting fixes came out of the same measurement: the marker hides itself inside **1.10 m**
+of the eye (a pointer you are standing in is a wall), and the retrieval lesson **puts the shoe on
+the road** rather than binding the marker to the player's own hand. That last one also made the
+lesson completable: skipping the throw with N arrived at RETRIEVE still holding the tsinelas, and
+you cannot pick up what is already in your hand.
+
+**15.6 ✅ The kit is off screen until the lesson that teaches it.** 🧑: *"make it so that my
+skills cant be seen too until i need to use them myself"*, and *"THIS IS FOR TUTORIAL BTW NOT THE
+ACTUAL GAME"*. `Hud.SetTrainingDeckHidden`, instance state rather than a static so it cannot
+survive into a match by construction. The deck appears on READ YOUR HERO KIT and the probe
+asserts it is absent on every lesson before that. Same argument as `InputIntent.AllowOnly` one
+layer up: the route already refuses the skill verbs, so a deck showing three powers you cannot
+cast invites presses the tutorial will ignore.
+
+**15.7 ✅ The pektus curve was not in the settings, because it was not in the input map.** 🧑:
+*"im not sure as well if pektus controls are in settings, allow them to be rebindable"*. It was
+`Keyboard.current.leftArrowKey` read inline in `PlayerInputReader`, which breaks `CLAUDE.md` § 4's
+*"one control, one action, in the input map"*: unbindable, unlistable, and unprintable by
+`Hud.KeyLabel`, which is why the pektus lesson had to name the arrow keys in a hard-coded string
+while every other lesson drew the live binding. `CurveLeft` and `CurveRight` are real actions now,
+in PLAYING THE GAME, and the lesson prints whatever they are bound to. ⚠️ The mouse wheel is
+still read directly and that is not the same fault: a scroll axis is not a button and there is
+nothing to rebind it to.
+
+**15.8 ✅ Scrolling the settings.** 🧑, twice: *"make it easier to scroll thru settings bcz its so
+hard to"* and *"here its so weird to scroll in setttings here"*, with a screenshot of a row cut
+in half at the bottom edge. Three things, and only the first is the one people reach for:
+
+* **No scrollbar existed at all.** `ScrollRect.verticalScrollbar` was never assigned, so there
+  was no handle, no indication that there was more below, and no sense of how much. A cut-off row
+  was the only cue, and a cut-off row reads as a layout bug rather than as an invitation. There
+  is a wood track with an amber handle down the right edge now, drawn in code because Godot's
+  `ScrollContainer` draws its bar from the theme and `TscnUiImporter` had no node to convert.
+* **The wheel was set to 45**, about four rows a notch, commented "fast, smooth, responsive". It
+  is the first two. 24 is two rows, and inertia is off so the row under the cursor is the row
+  that ends up there.
+* **No keyboard.** Page Up / Page Down / Home / End and the arrows move the list, refused while a
+  rebind is listening.
+
+⚠️ **The rows are PADDED away from the bar rather than the viewport being shrunk**, and the first
+version did the other one: the content is authored at a fixed width out of the .tscn rather than
+stretched, so moving the viewport's right edge moved the window and left the rows where they
+were. The bar drew over the right end of every key cap and cut the username field in half.
+`Logs/shots-runtime/SettingsPanel.png` showed it in one frame, which is why that shot is worth
+taking after any change to this panel.
+
+**Still open on this entry:** nothing, but every item wants a played build. The mash in
+particular is a FEEL change and the guard at 5.0 s is a starting position: if an unanswered fall
+reads as being stuck rather than as being punished, that constant is the one to move, and its
+note says what it was solved against.
+
+---
+
+## 16 · The probe was never deterministic, and § 10 was closed on an argument
+
+**Found on 2026-08-26 by the first thing that ever ran one configuration twice.**
+
+⚠️⚠️ **THIS IS § 13'S LESSON A THIRD TIME AND IT COST TWO ENTRIES.** § 10 was marked done because
+`Time.captureDeltaTime` plus a seed REMOVE THE CLOCK, which is true, and because that argument is
+convincing, which is not the same as it being enough. § 5 then waited on a sweep the probe was
+believed able to run. The sweep ran the shipped overclock rate as its first row and its last, one
+build, one seed, one session:
+
+```
+  rate   saves  skills  ults  knocks  tags  throws  retr  restores  idlePen  frames
+  3.50   6.75s      18     6      24     7      43    40        39      822   49809   (ship-a)
+  3.50   6.75s      37    19      43    39      83    80        58      464   50612   (ship-b)
+```
+
+**Twice as much game in the second run**, with the two rows being tested landing in between, so a
+sweep read at face value would have ranked the rates by WHEN THEY RAN.
+
+**16.1 ✅ `Hitstop` measured its freeze against `Time.unscaledTime`.** It has to measure against
+something unscaled, because the thing it freezes is scaled time, and its own note has always said
+so. But `Time.captureDeltaTime` does not pin unscaled time: that keeps running at whatever speed
+the machine renders. So a 60 ms freeze lasted a number of FRAMES that depended on the machine
+while `Time.timeScale` was 0.05 for every one of them, and the wall clock was back inside the
+simulation through the one door the fixed step left open. A cold first match is the slowest match
+in a session, which is why the first row was the outlier rather than a random one.
+
+`Hitstop` now advances its own clock by `Time.captureDeltaTime` when a capture is running and by
+`Time.unscaledDeltaTime` when one is not. ⚠️ **Nothing in the game sets a capture**, so every
+shipped path takes the branch it always took.
+
+**16.2 ✅ The first match of a session was never warmed up.** 25 frames after the load was not
+enough. With 120 more before the whistle, the first match went from 58 throws and 28 skill uses
+to **100 throws, 41 skill uses and 144 idle penalties**, the healthiest run this probe has
+recorded, and the first-run-is-worst pattern stopped: in the run after the change the FIRST match
+was the busier of the two. ⚠️ The loop was written as a physics-phase alignment and does not
+align anything (`Time.time - Time.fixedTime` never reaches the threshold, and the phase it
+reports is 8 to 9 ms either way). It is kept for what it measurably does, under its real name.
+
+**16.3 ⏳ AND THEY ARE STILL NOT IDENTICAL.** Eight matches at the shipped settings spread from
+**58 to 100 throws** around a mean near 80. What changed is that the spread is no longer ORDERED:
+before these two fixes, run order predicted the result, and now it does not.
+
+⚠️⚠️ **SO THE HARNESS IS A NOISY SIMULATOR, NOT A DETERMINISTIC ONE, AND THAT CHANGES HOW EVERY
+A/B IN THIS FILE HAS TO BE BOUGHT.** `TwoIdenticalMatchesLandInsideTheNoiseFloor` measures the
+spread and gates a collapse rather than a difference. The arithmetic that follows from it:
+
+| runs per arm | error on the mean | smallest effect it can resolve |
+|---|---|---|
+| 1 | ~20 % | ~40 % |
+| 3 | ~11 % | ~23 % |
+| 9 | ~7 % | ~13 % |
+
+§ 5's overclock window is worth about 20 per cent of a cooldown cycle, so **it needs at least
+three runs an arm**, which is nine matches and about half an hour. That is the real price of the
+answer and it was never one run.
+
+**Still open:** what the residual is. Candidates not yet ruled out: a `Random` draw whose count
+depends on how many frames a visual effect lived for, PhysX's own solver state carried across
+scene loads, and the frame-to-step interleave that § 17 shows the bots are extremely sensitive to.
+
+**Where.** `Assets/TumbangPreso/Runtime/Hitstop.cs`,
+`Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`.
+
+---
+
+## 17 · The bots are steeply sensitive to the frame step, and a 50 fps machine is in the bad band
+
+**Found on 2026-08-26 while trying to make `BotBehaviourProbe` deterministic (§ 16). It is not a
+harness finding. It is about the shipped AI.**
+
+Four configurations, same build, one whole match each:
+
+| frame step | physics step | what the bots did |
+|---|---|---|
+| 1/30 s | 0.02 s | 9 throws, 0 tags, 673 idle penalties (Classic) |
+| **1/60 s** | **0.02 s** | 40 to 90 throws, 27 to 38 skill uses, seats travelling 600 to 1100 m |
+| 0.02 s | 0.02 s | **18 throws, 0 skill uses**, three of four seats travelling 190 m |
+| 1/60 s | 1/60 s | 20 retrievals, under the probe's own liveness floor |
+
+⚠️⚠️ **A 20 PER CENT CHANGE IN DECISION RATE COST FIVE SIXTHS OF THE THROWS AND ALL OF THE
+CASTING.** 60 decisions a second is healthy and 50 is not. That is far too steep to be a smooth
+sensitivity to `Time.deltaTime`, and `AIController.Update` scales everything it owns by `dt`, so
+something further down is quantised: a window measured in frames, an edge that has to be seen
+twice, or a threshold that a slightly larger step steps over.
+
+⚠️⚠️ **THE SHIPPED GAME CAN BE IN THAT BAND.** The project's physics step is 0.02 s
+(`ProjectSettings/TimeManager.asset`, 50 Hz) and a machine rendering at 50 fps has
+`Time.deltaTime` = 0.02: a 50 Hz panel, vsync on a heavy scene, a laptop under load. That is the
+row with **zero skill uses** in it. Every probe number in this repository was taken at 1/60, and
+nobody has played the game at a capped frame rate to see whether the bots stop playing.
+
+⚠️ **The fourth row is a separate lever and it is worth keeping.** Pinning the PHYSICS to 1/60
+while leaving the frame at 1/60 also broke the bots, at a decision rate that is otherwise
+healthy. So both the frame step and the physics step move the outcome on their own, and the
+shipped pair is the only combination that has been measured working.
+
+**Needs, in order:**
+1. **Reproduce it in the player, not in the probe.** `Application.targetFrameRate = 50`, vsync
+   off, one Hero Strike match against bots, and watch whether they cast and retrieve. If they do,
+   the effect is a batch-mode artefact and this entry closes with that written down. **Do this
+   first: everything below is only worth doing if a player can meet it.**
+2. **Find the quantised thing.** The first suspect is the `InputIntent` edge protocol.
+   `CharacterMotor.FixedUpdate` reads `JustPressed` and calls `CommitFrame` at the END of the
+   physics step while the producers write in `Update`, so how many `Update`s fall between two
+   commits decides how many decisions are seen at all. At 1/60 against 0.02 one frame in five
+   carries no physics step; at 1:1 every frame carries exactly one. A verb that needs to be seen
+   twice, or a release edge being swallowed, would look exactly like this.
+3. **Then decide whether it is a bug or a bound.** If the AI genuinely needs `Update` to run
+   faster than `FixedUpdate`, that is a shipping constraint and belongs in `CLAUDE.md` § 4 beside
+   "a bot presses the same buttons a human does", not in a probe comment.
+
+**Where.** `Assets/TumbangPreso/Runtime/AIController.cs`,
+`Assets/TumbangPreso/Runtime/InputIntent.cs`, `Assets/TumbangPreso/Runtime/CharacterMotor.cs`,
+and `BotBehaviourProbe.FixedStep`, which carries the table.
+
+---
+
+## 18 · HUD strings overflow their boxes, in more than one place
+
+**Reported by 🧑 on 2026-08-26, from playing: *"fix all UI overflows as well for the HUDS bcz
+theres a lot"*. One instance is already closed (§ 9.5) and it was closed one string at a time,
+which is why this entry is about the CLASS rather than about the next one he happens to see.**
+
+⚠️⚠️ **THE CAUSE IS ONE LINE AND IT IS DELIBERATE.** `Hud.HudLabel` sets
+`horizontalOverflow = Overflow` and `verticalOverflow = Overflow` on every label it builds, so a
+string that does not fit **neither wraps nor shrinks: it hangs out of its box.** That is the
+right default for a HUD (a wrapped timer or a shrunk score is worse than a wide one), and it
+means every card has to be sized against the LONGEST STRING IT CAN EVER SHOW rather than against
+the one that was in it when somebody looked.
+
+⚠️⚠️ **AND THE FONT SIZE IS NOT THE LEVER.** `ui_theme.gd` records these sizes going 16/13, then
+22/19, then 30/28, answered every time with *"text still small"*. Shrinking text to fit a box
+walks straight back into that. **Size the box, or shorten the string. Never the font.**
+
+**The idiom to follow already exists in the same file, twice:**
+
+* `Hud.WorstCaseNameWidth` measures `Balance.PlayerNameMax` (14) "W"s **in the real theme font,
+  through the label that will draw them**, and keeps the .tscn's authored 132 as a floor. So the
+  name column cannot drift when a font size changes somewhere else.
+* `LataHintLines` lists every string `UpdateLataCard` can show and sizes the card to the widest
+  of them through the label that draws it (§ 9.5). ⚠️ **Keep that list in step with the method**:
+  a line added to one and not the other is an overflow again.
+
+**Needs, in order:**
+
+1. **A probe that FINDS them, before anything is fixed.** `HudOverflowProbe`: drive the HUD
+   through every state it has (attacker, taya, lata up and down, tripped, stunned, the ready
+   gate, the countdown, a toast, the hero deck, Street Hype, spectator), at the same nine
+   resolutions `AspectRatioProbes` uses, and for every `Text` under the HUD canvas print the
+   label, its string, its preferred width, its box width and the overflow in pixels. Assert on
+   the ones that are inside a fixed-width card; report the rest. ⚠️ **Measure in the CANVAS's own
+   space, not in world corners:** `SettingsScrollProbe` did the latter first and printed zero for
+   every column while passing nine resolutions, because on a canvas rendering to a camera every
+   element sits within a hair of the same world x.
+2. **Feed it the worst case, not the typical one.** Four names at `PlayerNameMax` = 14
+   characters, the longest ability names in the game (**PERMAFROST SHEET**, **DEMONIC CARAPACE**,
+   **ASTRAL PROJECTION** at 17 characters), `ROUND 8 / 8`, `TAYA (DEFENDER) P4`, and every
+   `LataHintLines` string. A probe fed "P1" proves nothing.
+3. **Then fix by sizing, one card at a time**, each one measured through its own label.
+
+**Already known and already closed, as the worked example:** the objective card read
+`FETCH SLIPPER · -5 / SEC` because the string is `-5 / SECOND` and the card is anchored to the
+RIGHT screen corner, so what ran past its 380 px left the screen entirely (§ 9.5).
+
+**Also known:** `RecastFontSize` is 14 against the deck's 22 because **six bold capitals do not
+fit a 60 px tile**, which is the one place in the HUD where shrinking WAS the answer, and it is
+documented as an exception rather than a pattern.
+
+**Where.** `Assets/TumbangPreso/Runtime/UI/Hud.cs` (`HudLabel`, `WorstCaseNameWidth`,
+`LataHintLines`, `PaintSkillCard`), `Assets/TumbangPreso/Runtime/UI/AbilityDeckHud.cs`,
+`Assets/TumbangPreso/Tests/PlayMode/HudLayoutProbe.cs` for the pattern of measuring live rects,
+and `Assets/TumbangPreso/Tests/PlayMode/AspectRatioProbes.cs` for the resolution list.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**
@@ -913,6 +1280,36 @@ match on any map but Eskinita, while two entries in this file argue that map geo
 Strike outcomes. ⚠️ **The counts from the two maps must not be compared**, for the reason above;
 what this catches is a map that breaks the loop.
 
+⚠️⚠️ **THE SWEEP WAS RUN ON 2026-08-26 AND IT MEASURED THE HARNESS, NOT THE WINDOW.**
+`BotBehaviourProbe.TheOverclockWindowSweep` runs four whole Hero Strike matches on Ilalim ng
+Tulay in one session, at the shipped rate, at 1.0 (the window off), at the 2.25 midpoint and at
+the shipped rate again, and compares the two shipped runs line for line before it will let anyone
+read the table. **They disagreed, twice**, so the table is noise both times and the entry stays
+open. § 16 is the investigation that produced, and the two determinism holes it closed.
+
+The second run, after `Hitstop` was taught about captures:
+
+```
+  rate   saves  skills  ults  knocks  tags  throws  retr  restores  idlePen  frames
+  3.50   6.75s      27    10      28    25      59    58        43      492   49654   (ship-a)
+  1.00   0.00s      33    20      47    44      86    85        60      492   49761   (off)
+  2.25   3.38s      33    13      35    29      66    65        51      358   49687   (mid)
+  3.50   6.75s      38    20      50    50      94    92        65      332   49789   (ship-b)
+```
+
+⚠️ **READ THE FIRST AND LAST ROWS BEFORE THE MIDDLE TWO.** They are the same configuration and
+they differ by 41 per cent of the throws. Everything between them is ordered by WHEN it ran.
+
+**What the sweep is worth keeping for anyway:** it is the only thing in the repository that has
+ever asked the probe to answer a comparison, and it is the reason two real determinism faults
+were found rather than a table being quoted for the next year. It writes its rows incrementally,
+so a run that goes red at the third rate still leaves the two it measured.
+
+**Still needed, unchanged:** the three-rate comparison, once
+`BotBehaviourProbe.TwoIdenticalMatchesAreIdentical` passes. The arithmetic in this entry (a rate
+`r` held for a window `W` saves `W * (r - 1)` seconds whatever the cooldown is) is not in
+question; what nobody has is what that saving is WORTH in a played round.
+
 **Where.** `Assets/TumbangPreso/Runtime/Map/OverheadPassWindow.cs`,
 `Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`,
 `Assets/TumbangPreso/Tests/MapGradeSanityTests.cs`.
@@ -988,8 +1385,14 @@ numbers.
 `AiTuning`: if it moves, every figure in `Logs/bot-behaviour-*.txt` moves with it and none may be
 compared across the change.
 
-**What this unblocks:** § 0 and § 5 can now be A/B'd, because two runs of one build are the same
-run. Neither sweep has been performed yet; the harness is what was missing and it is no longer.
+**What this was believed to unblock:** § 0 and § 5, on the grounds that two runs of one build
+would be the same run.
+
+⚠️⚠️ **THAT LAST SENTENCE WAS NEVER TESTED AND IT IS FALSE. SEE § 16.** The first sweep to run one
+configuration twice measured 43 throws and then 83 on one build, one seed and one session. Two
+causes were found and fixed and the runs are still not identical; what changed is that the spread
+stopped being ordered by run order. An A/B on this probe has to be bought with repeats, and § 16
+carries the arithmetic for how many.
 
 **Where.** `Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`.
 

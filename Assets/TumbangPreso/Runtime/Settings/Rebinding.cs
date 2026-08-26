@@ -39,7 +39,7 @@ namespace TumbangPreso.Settings
         {
             "MoveForward", "MoveBackward", "MoveLeft", "MoveRight",
             "Sprint", "Jump",
-            "SpecialAbility", "Grab", "Lunge",
+            "SpecialAbility", "Grab", "Lunge", "CurveLeft", "CurveRight",
             "Skill1", "Skill2", "Ultimate",
             "ReadyUp", "CleanFeed", "AbilityInfo",
             "EmoteWheel",
@@ -68,6 +68,8 @@ namespace TumbangPreso.Settings
             { "SpecialAbility", "Throw / Punch" },
             { "Grab", "Pick Up / Shove / Reset" },
             { "Lunge", "Lunge Tag" },
+            { "CurveLeft", "Curve Left (Pektus)" },
+            { "CurveRight", "Curve Right (Pektus)" },
             { "Jump", "Jump" },
             { "Sprint", "Sprint" },
             { "Skill1", "Skill 1" },
@@ -106,7 +108,8 @@ namespace TumbangPreso.Settings
         public static readonly (string Title, string[] Actions)[] Groups =
         {
             ("MOVEMENT", new[] { "MoveForward", "MoveBackward", "MoveLeft", "MoveRight", "Sprint", "Jump" }),
-            ("PLAYING THE GAME", new[] { "SpecialAbility", "Grab", "Lunge" }),
+            ("PLAYING THE GAME", new[] { "SpecialAbility", "Grab", "Lunge",
+                                         "CurveLeft", "CurveRight" }),
             ("HERO POWERS", new[] { "Skill1", "Skill2", "Ultimate", "AbilityInfo" }),
             ("ROUND AND SCREEN", new[] { "ReadyUp", "EmoteWheel", "CleanFeed", "SpectatorDown",
                                          "ToggleFullscreen" }),
@@ -121,6 +124,10 @@ namespace TumbangPreso.Settings
             switch (title)
             {
                 case "PLAYING THE GAME":
+                    // ⚠️ ONE LINE. The blurb draws in a 20 px row under the heading and does not
+                    // wrap; a second sentence was added here on 2026-08-26 and the screenshot in
+                    // `Logs/shots-runtime/SettingsPanel.png` cut it off mid-word. What the curve
+                    // rows do is in their own labels.
                     return "One key can do several jobs, chosen by what is in front of you.";
                 case "HERO POWERS":
                     return "Hero Strike only. Classic has no powers.";

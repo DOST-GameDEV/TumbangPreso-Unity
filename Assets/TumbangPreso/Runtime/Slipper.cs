@@ -340,6 +340,44 @@ namespace TumbangPreso
             }
         }
 
+        /// <summary>
+        /// Takes this tsinelas out of whoever was holding it before <paramref name="next"/>.
+        ///
+        /// ⚠️⚠️ WITHOUT THIS A LOOSE SLIPPER RIDES SOMEBODY'S HAND, AND THAT IS TWO OF THE FOUR
+        /// THINGS 🧑 PHOTOGRAPHED IN THE 4.70 TUTORIAL AT ONCE. `Carrier.RideAnchor` writes
+        /// `Held`'s transform every LateUpdate and asks nothing about the slipper's STATE, so a
+        /// carrier that was never told it had lost one keeps dragging it: the shoe hangs at hand
+        /// height wherever that body goes, and because it is LOOSE it also lights up, prompts and
+        /// can be picked up. *"theres a floating slipper check ss"* and *"i can pick up slippers
+        /// from ppl's hands wtf?"* are the same defect seen from two angles.
+        ///
+        /// ⚠️ THE ROUTE IN WAS `HostForceEquip`, WHICH IS THE ROUND-START ARMING AND RUNS IN
+        /// EVERY MATCH. It wrote `Holder` and told the NEW carrier, and nothing anywhere told
+        /// the old one. `ApplySnapshotState` had the clearing line from the day it was written,
+        /// for exactly this reason, and it was the only writer of four that did.
+        /// `TrainingStreetProbe` measures it: before this, the guided route reached its punch
+        /// lesson with a LOOSE tsinelas resting 0.91 m off the road in the dummy's hand.
+        ///
+        /// ⚠️ IT IS `slipper.gd`'S RULE RESTATED: *"Two writers of the same relationship is how
+        /// it ends up half-cleared."* Every write of `Holder` in this file goes through here.
+        /// </summary>
+        private void ReleasePreviousHolder(CharacterMotor next)
+        {
+            if (Holder == null || Holder == next) return;
+
+            var previous = Holder;
+            var carrier = previous.GetComponent<Carrier>();
+
+            // ⚠️⚠️ ONLY IF THAT CARRIER IS STILL POINTING AT *THIS* TSINELAS. `Holder` can be
+            // stale in the other direction too: a body that has since picked up a different
+            // shoe is holding something real, and clearing its hand from here would be this
+            // same bug with the sign flipped.
+            if (carrier != null && carrier.Held != this) return;
+
+            previous.HoldingSlipper = false;
+            carrier?.NotifyHolding(null);
+        }
+
         public bool CanBeGrabbedBy(CharacterMotor who)
         {
             if (State != SlipperState.Loose || who == null) return false;
@@ -378,6 +416,7 @@ namespace TumbangPreso
         {
             if (!CanBeGrabbedBy(who)) return false;
 
+            ReleasePreviousHolder(who);
             SetState(SlipperState.Held);
             Holder = who;
             who.HoldingSlipper = true;
@@ -413,6 +452,7 @@ namespace TumbangPreso
         {
             if (who == null || who.IsDefender) return false;
 
+            ReleasePreviousHolder(who);
             SetState(SlipperState.Held);
             Holder = who;
             who.HoldingSlipper = true;
@@ -435,8 +475,7 @@ namespace TumbangPreso
                                        Vector3 velocity, float pektusSpin,
                                        SlipperAffinity affinity, int throwerSlot)
         {
-            if (Holder != null && Holder != holder)
-                Holder.GetComponent<Carrier>()?.NotifyHolding(null);
+            ReleasePreviousHolder(holder);
 
             transform.SetPositionAndRotation(position, rotation);
             SetState(state);
@@ -478,6 +517,12 @@ namespace TumbangPreso
             }
 
             if (thrower != null) thrower.HoldingSlipper = false;
+
+            // ⚠️ A THROW IS A RELEASE TOO. `Carrier.HostThrowAt` clears its own `Held` on the way
+            // through, but the AI, the networked throw and any future caller do not all pass the
+            // holder as the thrower, and a carrier still pointing at a slipper in flight drags it
+            // back out of the air.
+            ReleasePreviousHolder(thrower);
             Holder = null;
 
             transform.position = origin;
