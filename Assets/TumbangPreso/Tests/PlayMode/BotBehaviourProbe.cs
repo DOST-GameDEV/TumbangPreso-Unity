@@ -72,6 +72,35 @@ namespace TumbangPreso.PlayTests
         /// ⚠️ IT COSTS WALL CLOCK AND THAT IS THE PRICE OF A COMPARABLE NUMBER. A Classic match
         /// is 4 rounds of 90 s, so 21600 frames; Hero Strike is 8 rounds, so 43200.
         /// </summary>
+        /// <summary>
+        /// How much game time one frame of this probe advances.
+        ///
+        /// ⚠️⚠️ 1/60 s, AND IT IS NOT A ROUND NUMBER, IT IS THE ONLY VALUE THE BOTS PLAY AT.
+        /// Three have been measured on this build and two of them are unplayable:
+        ///
+        /// | frame step | Update : FixedUpdate | what the bots did |
+        /// |---|---|---|
+        /// | 1/30 s | 1 : 1.67 | 9 throws, 0 tags, 673 idle penalties in a Classic match |
+        /// | **1/60 s** | **1.2 : 1** | **the shipped figures: 40 to 90 throws, kits cast** |
+        /// | 0.02 s | 1 : 1 | 18 throws, **0 skill uses**, three seats travelling 190 m |
+        /// | 1/60 s with physics pinned to match | 1 : 1 | 20 retrievals, under the floor |
+        ///
+        /// ⚠️⚠️ READ THE TWO 1:1 ROWS TOGETHER: THE COLLAPSE FOLLOWS THE RATIO, NOT THE RATE.
+        /// Both ways of making a frame carry exactly one physics step break the bots, at two
+        /// different rates, while the mismatched 60-against-50 they ship with is healthy. That is
+        /// not a fact about this probe, it is a fact about the AI, and `docs/TODO.md` § 17 is the
+        /// entry it earned: a player whose machine renders at 50 fps is in the collapsing
+        /// configuration.
+        ///
+        /// `Time.captureDeltaTime` makes `Time.deltaTime` a constant, so a frame advances the
+        /// same slice of game time whatever the machine is doing. What it does NOT do is pin
+        /// `Time.unscaledTime`, which is why `Hitstop` had to be taught about captures before
+        /// two runs could be compared at all (§ 16).
+        ///
+        /// ⚠️ THE STEP IS A TUNING CONSTANT OF THE AI, NOT A HARNESS DETAIL. If it moves, every
+        /// figure in `Logs/bot-behaviour-*.txt` moves with it and none may be compared across the
+        /// change.
+        /// </summary>
         private const float FixedStep = 1.0f / 60.0f;
 
         [TearDown]
@@ -85,6 +114,11 @@ namespace TumbangPreso.PlayTests
             // ran this probe first would silently pin every later PlayMode test to 30 frames a
             // second of game time regardless of what it was measuring.
             Time.captureDeltaTime = 0.0f;
+
+            // ⚠️ AND THE SWEEP'S RATE WITH IT, for the same reason and with worse consequences:
+            // a leaked overclock rate is a BALANCE change that every later test would measure
+            // without knowing. See `OverheadPassWindow.AppliedRate`.
+            OverheadPassWindow.RestoreAppliedRate();
         }
 
         /// <summary>
@@ -151,7 +185,210 @@ namespace TumbangPreso.PlayTests
             yield return RunMatch(GameMode.HeroStrike, "IlalimNgTulay");
         }
 
-        private IEnumerator RunMatch(GameMode mode, string map)
+        /// <summary>
+        /// The same match, twice, to measure how far apart two identical runs land.
+        ///
+        /// ⚠️⚠️ IT STARTED LIFE ASSERTING THEY WOULD BE IDENTICAL AND THEY ARE NOT. `docs/TODO.md`
+        /// § 10 closed on the argument that a seed plus `Time.captureDeltaTime` removes the clock
+        /// as an input; this is the first thing that ever ran one configuration twice, and it
+        /// found **18 skill uses and 43 throws against 37 and 83** on one build, one seed, one
+        /// session. Two real holes were found and closed by chasing it (`Hitstop`'s real-time
+        /// deadline, and the first match of a session never being warmed up), and the runs are
+        /// still not identical. § 16 carries what is known and what is not.
+        ///
+        /// ⚠️⚠️ SO IT MEASURES THE NOISE FLOOR INSTEAD, AND THAT IS THE NUMBER AN A/B ACTUALLY
+        /// NEEDS. Eight matches at the shipped settings spread from 58 to 100 throws around a
+        /// mean near 80, which is about **20 per cent**. A single run per arm therefore cannot
+        /// resolve anything smaller than roughly half that spread again, and every open balance
+        /// question in `docs/TODO.md` that wants an A/B (§ 0, § 5) has to buy repeats instead:
+        /// three runs an arm brings the error on the mean down to about 11 per cent.
+        ///
+        /// ⚠️ WHAT IT GATES IS A COLLAPSE, NOT A DIFFERENCE. 40 per cent is twice the observed
+        /// spread: two runs further apart than that are not noise, they are a build where
+        /// something has stopped working for one of them, which is exactly what the 1:1 frame
+        /// experiments in § 17 looked like.
+        /// </summary>
+        [UnityTest, Timeout(MatchTimeoutMs * 2), Category("WallClock")]
+        public IEnumerator TwoIdenticalMatchesLandInsideTheNoiseFloor()
+        {
+            yield return RunMatch(GameMode.HeroStrike, "IlalimNgTulay", "twin-a");
+            string first = _lastReport;
+            int firstThrows = _lastTally.Throws;
+            int firstSkills = _lastTally.SkillUses;
+
+            yield return RunMatch(GameMode.HeroStrike, "IlalimNgTulay", "twin-b");
+            string second = _lastReport;
+            int secondThrows = _lastTally.Throws;
+            int secondSkills = _lastTally.SkillUses;
+
+            float throwSpread = Spread(firstThrows, secondThrows);
+            float skillSpread = Spread(firstSkills, secondSkills);
+
+            var report = new StringBuilder();
+            report.AppendLine("TWO RUNS OF ONE BUILD, ONE SEED, ONE SESSION.");
+            report.AppendLine();
+            report.AppendLine($"throws     {firstThrows,6} {secondThrows,6}   spread {throwSpread:P0}");
+            report.AppendLine($"skill uses {firstSkills,6} {secondSkills,6}   spread {skillSpread:P0}");
+            report.AppendLine();
+            report.AppendLine(first == second
+                ? "The two reports are identical. If this ever prints, docs/TODO.md section 16 "
+                  + "can be closed and the sweep can be read at n = 1."
+                : "The two reports differ. Section 16 is still open; size an A/B with repeats.");
+            report.AppendLine();
+            report.AppendLine("--- first ---");
+            report.AppendLine(first);
+            report.AppendLine("--- second ---");
+            report.AppendLine(second);
+
+            Directory.CreateDirectory("Logs");
+            File.WriteAllText("Logs/determinism.txt", report.ToString());
+            Debug.Log(report.ToString());
+
+            Assert.Less(throwSpread, 0.40f,
+                $"two runs of the same match threw {firstThrows} and {secondThrows} slippers, "
+                + $"{throwSpread:P0} apart. The measured noise floor is about 20 per cent, so "
+                + "this is not noise: something works in one run and not the other. Read "
+                + "Logs/determinism.txt.");
+        }
+
+        /// <summary>Difference as a fraction of the larger of the two, so it is symmetric.</summary>
+        private static float Spread(int a, int b)
+        {
+            int high = Mathf.Max(a, b);
+            return high <= 0 ? 0.0f : Mathf.Abs(a - b) / (float)high;
+        }
+
+        /// <summary>
+        /// The overclock sweep `docs/TODO.md` § 5 has owed since 2026-08-25, plus the proof that
+        /// the harness can answer it.
+        ///
+        /// ⚠️⚠️ IT RUNS THE SHIPPED RATE TWICE, FIRST AND LAST, AND ASSERTS THE TWO REPORTS
+        /// ARE IDENTICAL. That is not a formality. Every earlier attempt at this comparison was
+        /// refused on the grounds that the probe measured the machine as much as the build
+        /// (§ 10: two runs of the same seeded build, back to back, reported **530 and then 83**
+        /// unretrieved-slipper penalties), and a sweep run on a harness whose determinism is
+        /// ASSUMED is exactly the mistake `docs/TODO.md` § 13 is about. If the two ends of this
+        /// run disagree, the middle of it means nothing and the test says so instead of printing
+        /// a table somebody would quote.
+        ///
+        /// ⚠️ WALL CLOCK IS DROPPED BEFORE THE COMPARISON and everything else is included:
+        /// frames, every score event, both stray-distance figures, per-seat travel and per-seat
+        /// score. A determinism check that only compared the headline counts would pass a run
+        /// that diverged in the last round.
+        ///
+        /// ⚠️ THE RATES. 1.0 is the window OFF, which is the honest floor for "is this
+        /// mechanic worth anything". 2.25 is the midpoint, so a result that is not monotonic is
+        /// visible rather than interpolated. 3.5 is what ships, derived from
+        /// `OverheadPassWindow.OverclockSeconds` = 6.75 s.
+        ///
+        /// ⚠️⚠️ IT IS `WallClock` BECAUSE IT IS A REPORT, NOT A GATE, and that category is
+        /// what `docs/TODO.md` § 7 named for exactly this: four whole Hero Strike matches is
+        /// about eleven minutes, and the default PlayMode run may not grow by that. Run it with
+        /// `./tools/verify.sh wallclock`, or on its own with
+        /// `-testCategory "WallClock" -testFilter TumbangPreso.PlayTests.BotBehaviourProbe`.
+        /// The category means "excluded from the default run"; its two members are excluded for
+        /// different reasons, `AiDiagnosticProbe` because it is real-time and this because it is
+        /// long.
+        ///
+        /// ⚠️ AND IT ASSERTS ALMOST NOTHING ABOUT THE OUTCOME ON PURPOSE. Which rate is right
+        /// is a judgement about how much a map mechanic should be worth, and the point of the
+        /// run is to put numbers in front of that judgement. What it does gate is the two things
+        /// that would make the numbers lies: that the harness is deterministic, and that the
+        /// rate it was told to apply is the rate the window actually applied.
+        /// </summary>
+        [UnityTest, Timeout(SweepTimeoutMs), Category("WallClock")]
+        public IEnumerator TheOverclockWindowSweep()
+        {
+            const string Arena = "IlalimNgTulay";
+
+            float shipped = ShippedRate;
+            var rates = new[] { shipped, 1.0f, 2.25f, shipped };
+            var labels = new[] { "ship-a", "off", "mid", "ship-b" };
+            var rows = new List<string>();
+            var reports = new string[rates.Length];
+
+            var sweep = new StringBuilder();
+            sweep.AppendLine("THE OVERCLOCK WINDOW, MEASURED. docs/TODO.md section 5.");
+            sweep.AppendLine();
+            sweep.AppendLine($"Hero Strike, {Arena}, {MatchRules.RoundCountFor(GameMode.HeroStrike)} rounds, " +
+                             $"seeded, stepped at {FixedStep * 1000.0f:F1} ms.");
+            sweep.AppendLine($"The window is {PassSeconds:F2} s of every 24 s. A rate r saves " +
+                             $"PassSeconds * (r - 1) seconds of cooldown per pass, whatever the cooldown is.");
+            sweep.AppendLine();
+            sweep.AppendLine($"{"rate",6} {"saves",7} {"skills",7} {"ults",5} {"knocks",7} {"tags",5} " +
+                             $"{"throws",7} {"retr",5} {"restores",9} {"idlePen",8} {"frames",7}");
+            sweep.AppendLine(new string('-', 92));
+
+            for (int i = 0; i < rates.Length; i++)
+            {
+                OverheadPassWindow.SetAppliedRateForMeasurement(rates[i]);
+
+                Assert.AreEqual(rates[i], OverheadPassWindow.AppliedRate, 0.0001f,
+                    "the window did not take the rate it was handed, so this row would be a lie");
+
+                yield return RunMatch(GameMode.HeroStrike, Arena, labels[i]);
+
+                reports[i] = _lastReport;
+                var t = _lastTally;
+
+                rows.Add($"{rates[i],6:F2} {PassSeconds * (rates[i] - 1.0f),6:F2}s " +
+                         $"{t.SkillUses,7} {t.UltimateUses,5} {t.LataKnocks,7} {t.Tags,5} " +
+                         $"{t.Throws,7} {t.Retrievals,5} {t.LataRestores,9} {t.IdlePenalties,8} " +
+                         $"{_lastFrames,7}   ({labels[i]})");
+
+                // ⚠️ WRITTEN AFTER EVERY ROW, NOT AT THE END. Each row is three minutes of
+                // matches, and `RunMatch` asserts liveness floors of its own: a run that goes
+                // red at the third rate would otherwise throw away the two that had already been
+                // measured, and the next reader would have nothing to look at but the failure.
+                Directory.CreateDirectory("Logs");
+                File.WriteAllText("Logs/overclock-sweep.txt", sweep.ToString() +
+                                  string.Join("\n", rows) + "\n");
+            }
+
+            OverheadPassWindow.RestoreAppliedRate();
+
+            foreach (string row in rows) sweep.AppendLine(row);
+
+            bool deterministic = reports[0] == reports[3];
+
+            sweep.AppendLine();
+            sweep.AppendLine(deterministic
+                ? "DETERMINISM: the two runs at the shipped rate are identical, line for line, so "
+                  + "the differences above are the rate and nothing else."
+                : "DETERMINISM: THE TWO RUNS AT THE SHIPPED RATE DISAGREE. Everything above is noise.");
+
+            Directory.CreateDirectory("Logs");
+            File.WriteAllText("Logs/overclock-sweep.txt", sweep.ToString());
+            Debug.Log(sweep.ToString());
+
+            Assert.IsTrue(deterministic,
+                "two runs of the same build at the same rate produced different matches, so this "
+                + "probe still cannot answer a comparison and docs/TODO.md section 5 stays open. "
+                + "Read Logs/overclock-sweep.txt and the two Logs/bot-behaviour-*-ship-*.txt.");
+        }
+
+        /// <summary>Four whole Hero Strike matches. See the sweep's own note on why it is
+        /// `WallClock`.</summary>
+        private const int SweepTimeoutMs = 1500000;
+
+        /// <summary>⚠️ ALIASES SO THE SWEEP READS AS ARITHMETIC RATHER THAN AS A LOOKUP. Both are
+        /// the shipped constants and neither is a second copy of them.</summary>
+        private static float ShippedRate => OverheadPassWindow.OverclockRate;
+        private static float PassSeconds => OverheadPassWindow.PassSeconds;
+
+        /// <summary>The tally of the last match `RunMatch` ran, for a caller comparing several.
+        /// ⚠️ Written at the END of a match, so a run that threw leaves the previous one here
+        /// rather than a half-filled one.</summary>
+        private Tally _lastTally;
+
+        /// <summary>The last match's report, verbatim, so two runs can be compared as text.</summary>
+        private string _lastReport = "";
+
+        /// <summary>Frames the last match took. ⚠️ The one number that proves two runs simulated
+        /// the same amount of game time; the wall clock proves nothing.</summary>
+        private int _lastFrames;
+
+        private IEnumerator RunMatch(GameMode mode, string map, string label = null)
         {
             var previousMode = UI.SceneFlow.SelectedMode;
             UI.SceneFlow.SelectedMode = mode;
@@ -216,7 +453,18 @@ namespace TumbangPreso.PlayTests
             var travelled = new float[seats.Count];
             var slipperWasLoose = new Dictionary<Slipper, bool>();
 
-            runner.Begin();
+            // ⚠️⚠️ SEEDED A SECOND TIME, HERE, AND THE FIRST SEED IS NOT ENOUGH ON ITS OWN.
+            // The one above runs before `LoadSceneAsync`, so every draw the LOAD makes comes out
+            // of the same stream: decorations, personality rolls and anything a one-time
+            // initialiser does on the first scene of a session. If the first load in a session
+            // consumes a different NUMBER of draws from the second, every draw after it is
+            // shifted and the match that follows is a different match. Re-seeding at the last
+            // moment before the whistle pins the MATCH regardless of what the load did.
+            //
+            // ⚠️ IT DOES NOT PIN THE CAST, which is picked during the load, and that is why the
+            // report prints every seat's hero and model below. A difference there is visible
+            // instead of being an unexplained difference in the counts.
+            UnityEngine.Random.InitState(20260823);
 
             // ⚠️⚠️ THE STEP IS SET AFTER THE SCENE HAS SETTLED, NOT BEFORE. The 25 warm-up
             // frames above run at whatever rate the editor gives them, and pinning the step
@@ -224,6 +472,39 @@ namespace TumbangPreso.PlayTests
             // than as many as it needs.
             Time.timeScale = 1.0f;
             Time.captureDeltaTime = FixedStep;
+
+            // ⚠️ THE PHYSICS RATE IS LEFT ALONE, AND SO IS THE MISMATCH. See `FixedStep`: every
+            // attempt to make one frame carry exactly one physics step, at either rate, took the
+            // bots below this file's own liveness floors.
+
+            // ⚠️⚠️ 120 MORE FRAMES BEFORE THE WHISTLE, AND THEY BOUGHT THE FIRST MATCH OF A
+            // SESSION ITS PLAY. This started as an attempt to align the physics PHASE: at 1/60 s
+            // a frame against a 0.02 s step a frame carries 0, 1 or 2 `FixedUpdate`s, and where
+            // in that cycle a match starts is inherited from the previous scene.
+            // `Time.time - Time.fixedTime` never fell below the threshold, so the loop always
+            // runs its full 120 and the phase it reports is 8 to 9 ms either way: **the
+            // alignment does not work and the entry says so.**
+            //
+            // What it did do is measurable and worth keeping. Before it, the first match in a
+            // session was reliably the worst one: 58 throws and 28 skill uses against 92 and 37
+            // for the second, on the same build and seed. With it, the first match reports 100
+            // throws, 41 skill uses and 144 idle penalties, which is the healthiest run this
+            // probe has recorded. Two seconds of settled frames is the cheapest possible answer
+            // to a cold start, and the 25 above were not enough.
+            //
+            // ⚠️ IT IS STILL NOT DETERMINISM. What is left is measured by
+            // `TwoIdenticalMatchesLandInsideTheNoiseFloor`, and `docs/TODO.md` § 16 carries what
+            // is known and what is not.
+            int aligned = 0;
+            while (aligned < 120 && Time.time - Time.fixedTime > 0.0005f)
+            {
+                aligned++;
+                yield return null;
+            }
+
+            float phase = Time.time - Time.fixedTime;
+
+            runner.Begin();
 
             // ⚠️ THE GUARD IS A FRAME COUNT NOW, NOT WALL CLOCK, AND THAT IS THE SAME CHANGE AS
             // EVERYTHING ELSE HERE. A guard measured in seconds is a second way for the machine's
@@ -233,7 +514,8 @@ namespace TumbangPreso.PlayTests
             //
             // 90 s a round at `FixedStep` is 5400 frames, so a Hero Strike match is 43200 plus
             // the between-round handoffs. 64000 leaves about 48 per cent of headroom over the
-            // longest legitimate match, which is a match that has genuinely stopped advancing.
+            // longest legitimate match, which is a match that has genuinely stopped advancing
+            // rather than a slow one.
             const int frameBudget = 64000;
             int frames = 0;
             float guard = 0.0f;
@@ -312,7 +594,26 @@ namespace TumbangPreso.PlayTests
             log.AppendLine($"{frames} frames at {FixedStep * 1000.0f:F1} ms  ·  " +
                            $"{frames * FixedStep:F1}s simulated  ·  {guard:F1}s wall clock  ·  " +
                            $"match in progress at exit: {match.MatchInProgress}");
+
+            // ⚠️ THE STARTING PHASE IS PART OF THE MEASUREMENT, not a diagnostic. Two runs that
+            // began at different points of the frame-to-step cycle are two different experiments
+            // (§ 17), so a reader comparing two reports has to be able to see that they did not.
+            log.AppendLine($"physics phase at the whistle: {phase * 1000.0f:F3} ms " +
+                           $"after {aligned} aligning frame(s)");
             log.AppendLine(tally.Describe());
+            // ⚠️ THE CAST IS PART OF THE MEASUREMENT. Two runs with different heroes in the
+            // seats are two different experiments, and until this line existed that difference
+            // was invisible in a report full of counts.
+            for (int i = 0; i < seats.Count; i++)
+            {
+                var kit = seats[i] != null ? seats[i].AbilitySystem?.Kit : null;
+                var visual = seats[i] != null
+                    ? seats[i].GetComponentInChildren<Visual.CharacterVisual>() : null;
+
+                log.AppendLine($"seat {i} hero {(kit != null ? kit.HeroId : "-"),-12} " +
+                               $"model {(visual != null && visual.Model != null ? visual.Model.name : "-")}");
+            }
+
             log.AppendLine($"furthest a body reached: x {bodyX:F2} of {AIController.PlayableHalfX:F1}  " +
                            $"z {bodyZ:F2} of {AIController.PlayableHalfZ:F1}");
             log.AppendLine($"furthest a free slipper reached: x {strayX:F2}  z {strayZ:F2}");
@@ -321,8 +622,23 @@ namespace TumbangPreso.PlayTests
                 log.AppendLine($"seat {i} travelled {travelled[i]:F1} m  final score {match.ScoreFor(i)}");
 
             Directory.CreateDirectory("Logs");
-            File.WriteAllText($"Logs/bot-behaviour-{mode}-{map}.txt", log.ToString());
+
+            string suffix = string.IsNullOrEmpty(label) ? "" : "-" + label;
+            File.WriteAllText($"Logs/bot-behaviour-{mode}-{map}{suffix}.txt", log.ToString());
             Debug.Log(log.ToString());
+
+            _lastTally = tally;
+            _lastFrames = frames;
+
+            // ⚠️ THE HEADER LINE IS DROPPED FROM THE COMPARABLE TEXT ON PURPOSE. It carries the
+            // WALL CLOCK, which is the one number in the report that is allowed to differ
+            // between two identical runs; comparing it would make the determinism check fail on
+            // the machine being busy, which is the exact fault the fixed step removed.
+            var comparable = new StringBuilder();
+            foreach (string line in log.ToString().Split('\n'))
+                if (!line.Contains("wall clock")) comparable.AppendLine(line.TrimEnd());
+
+            _lastReport = comparable.ToString();
 
             UI.SceneFlow.SelectedMode = previousMode;
             GameLaunch.AllBots = previousAllBots;

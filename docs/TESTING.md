@@ -65,7 +65,7 @@ in a second instead of behind a two-minute editor launch.
 "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -nographics -projectPath . -testPlatform EditMode -testResults Logs/edit.xml -logFile Logs/edit.log
 ```
 
-**Expect 120 passed** (2026-08-26). Wiring, the arena bounds, reconnection, seat reclaim, leader
+**Expect 121 passed** (2026-08-26). Wiring, the arena bounds, reconnection, seat reclaim, leader
 election, join codes, names, emotes, the map grades, the dead-feature audit and the HUD's
 measured layout.
 
@@ -73,10 +73,28 @@ measured layout.
 "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock" -testResults Logs/play.xml -logFile Logs/play.log
 ```
 
-**Expect 58 passed** (2026-08-26). This one actually **runs the game**: three whole matches
+**Expect 62 passed** (2026-08-26). This one actually **runs the game**: three whole matches
 (Classic and Hero Strike on Eskinita, Hero Strike on Ilalim ng Tulay), the taya rotating through
 every seat, bodies staying on the ground, the box holding the taya, and sprinting draining to
 fatigue in the time the arithmetic says it should.
+
+Two of those are new on 2026-08-26 and both were written to answer a report about a PICTURE:
+
+* **`TrainingStreetProbe`** walks the guided tutorial lesson by lesson and writes down every
+  renderer within two metres of the eye with its viewport position and its WORLD SIZE, plus every
+  tsinelas with its state, its holder and its clearance off the road (`Logs/training-street.txt`,
+  `Logs/training-lessons.txt`). ⚠️ **Use it before reasoning about any screenshot of the
+  tutorial.** Three of the four things 🧑 photographed on 2026-08-26 were objects nobody could
+  name from the pixels, and one run of this named all of them: a 2 m amber ball where a ground
+  ring was meant to be, a loose tsinelas riding a hidden seat's hand, and a pet whose owner had
+  been switched off. `docs/TODO.md` § 15.
+* **`SettingsScrollProbe`** opens the settings list at the same nine resolutions
+  `AspectRatioProbes` uses and asserts the scrollbar is inside the panel, that no rebind row is
+  drawn underneath it, and that the list can be scrolled from end to end
+  (`Logs/settings-scroll.txt`). ⚠️ Its first version compared WORLD corners and printed zero for
+  every column: on a canvas rendering to a camera every element sits within a hair of the same
+  world x, so it passed nine resolutions while measuring nothing. It converts into the canvas's
+  own space now, the way `AspectRatioProbes.AssertInside` does.
 
 ### The WallClock category
 
@@ -90,7 +108,14 @@ carries no information and costs the next session a full suite to learn that aga
 ⚠️ **`[Explicit]` does not do this in batch mode.** It was tried; the run still reported both
 tests. The exclusion has to be on the command line.
 
-Run it on purpose, when somebody is going to read the report:
+⚠️⚠️ **THE CATEGORY MEANS "EXCLUDED FROM THE DEFAULT RUN", AND ITS TWO MEMBERS ARE EXCLUDED FOR
+DIFFERENT REASONS.** `AiDiagnosticProbe` is excluded because it is REAL-TIME and its result
+depends on the machine. `BotBehaviourProbe.TheOverclockWindowSweep` is excluded because it is
+LONG: four whole Hero Strike matches, about twelve minutes, and `docs/TODO.md` § 7 is an entry
+about the suite already costing more than it returns. Neither is optional to run when the thing
+it measures is what you changed.
+
+Run them on purpose, when somebody is going to read the report:
 
 ```bash
 "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "WallClock" -testResults Logs/ai.xml -logFile Logs/ai.log

@@ -202,9 +202,10 @@ has been wrong repeatedly and expensively:
 - `BotBehaviourProbe` runs a whole match in both modes and prints throws, retrievals, tags,
   skills, ultimates and penalties, on Eskinita and on Ilalim ng Tulay. It is **seeded**; do not
   change the seed to make a run pass. ⚠️ **Its numbers are LIVENESS FLOORS, never comparisons.**
-  It steps in real time at 6x and the bots think in frames, so two runs of the same seeded build
-  measured 530 and then 83 unretrieved-slipper penalties. `docs/TODO.md` § 10 is the fixed-delta
-  work that would make a comparison mean something.
+  It is stepped at a fixed 1/60 s now, which removed most of the noise and not all of it: eight
+  matches at the shipped settings spread from 58 to 100 throws. ⚠️⚠️ **`docs/TODO.md` § 10 claims
+  this was solved and § 16 is the measurement that says it was not**; § 16 also carries how many
+  runs an arm an A/B has to buy before its answer means anything.
 - `AiDiagnosticProbe` runs one round at 1x with every decision written out, when you need to
   know WHY rather than how much. ⚠️ **It is `[Category("WallClock")]` and excluded from the
   default PlayMode run** with `-testCategory "!WallClock"`, because at 1x its result depends on

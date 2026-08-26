@@ -861,6 +861,124 @@ note says what it was solved against.
 
 ---
 
+## 16 · The probe was never deterministic, and § 10 was closed on an argument
+
+**Found on 2026-08-26 by the first thing that ever ran one configuration twice.**
+
+⚠️⚠️ **THIS IS § 13'S LESSON A THIRD TIME AND IT COST TWO ENTRIES.** § 10 was marked done because
+`Time.captureDeltaTime` plus a seed REMOVE THE CLOCK, which is true, and because that argument is
+convincing, which is not the same as it being enough. § 5 then waited on a sweep the probe was
+believed able to run. The sweep ran the shipped overclock rate as its first row and its last, one
+build, one seed, one session:
+
+```
+  rate   saves  skills  ults  knocks  tags  throws  retr  restores  idlePen  frames
+  3.50   6.75s      18     6      24     7      43    40        39      822   49809   (ship-a)
+  3.50   6.75s      37    19      43    39      83    80        58      464   50612   (ship-b)
+```
+
+**Twice as much game in the second run**, with the two rows being tested landing in between, so a
+sweep read at face value would have ranked the rates by WHEN THEY RAN.
+
+**16.1 ✅ `Hitstop` measured its freeze against `Time.unscaledTime`.** It has to measure against
+something unscaled, because the thing it freezes is scaled time, and its own note has always said
+so. But `Time.captureDeltaTime` does not pin unscaled time: that keeps running at whatever speed
+the machine renders. So a 60 ms freeze lasted a number of FRAMES that depended on the machine
+while `Time.timeScale` was 0.05 for every one of them, and the wall clock was back inside the
+simulation through the one door the fixed step left open. A cold first match is the slowest match
+in a session, which is why the first row was the outlier rather than a random one.
+
+`Hitstop` now advances its own clock by `Time.captureDeltaTime` when a capture is running and by
+`Time.unscaledDeltaTime` when one is not. ⚠️ **Nothing in the game sets a capture**, so every
+shipped path takes the branch it always took.
+
+**16.2 ✅ The first match of a session was never warmed up.** 25 frames after the load was not
+enough. With 120 more before the whistle, the first match went from 58 throws and 28 skill uses
+to **100 throws, 41 skill uses and 144 idle penalties**, the healthiest run this probe has
+recorded, and the first-run-is-worst pattern stopped: in the run after the change the FIRST match
+was the busier of the two. ⚠️ The loop was written as a physics-phase alignment and does not
+align anything (`Time.time - Time.fixedTime` never reaches the threshold, and the phase it
+reports is 8 to 9 ms either way). It is kept for what it measurably does, under its real name.
+
+**16.3 ⏳ AND THEY ARE STILL NOT IDENTICAL.** Eight matches at the shipped settings spread from
+**58 to 100 throws** around a mean near 80. What changed is that the spread is no longer ORDERED:
+before these two fixes, run order predicted the result, and now it does not.
+
+⚠️⚠️ **SO THE HARNESS IS A NOISY SIMULATOR, NOT A DETERMINISTIC ONE, AND THAT CHANGES HOW EVERY
+A/B IN THIS FILE HAS TO BE BOUGHT.** `TwoIdenticalMatchesLandInsideTheNoiseFloor` measures the
+spread and gates a collapse rather than a difference. The arithmetic that follows from it:
+
+| runs per arm | error on the mean | smallest effect it can resolve |
+|---|---|---|
+| 1 | ~20 % | ~40 % |
+| 3 | ~11 % | ~23 % |
+| 9 | ~7 % | ~13 % |
+
+§ 5's overclock window is worth about 20 per cent of a cooldown cycle, so **it needs at least
+three runs an arm**, which is nine matches and about half an hour. That is the real price of the
+answer and it was never one run.
+
+**Still open:** what the residual is. Candidates not yet ruled out: a `Random` draw whose count
+depends on how many frames a visual effect lived for, PhysX's own solver state carried across
+scene loads, and the frame-to-step interleave that § 17 shows the bots are extremely sensitive to.
+
+**Where.** `Assets/TumbangPreso/Runtime/Hitstop.cs`,
+`Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`.
+
+---
+
+## 17 · The bots are steeply sensitive to the frame step, and a 50 fps machine is in the bad band
+
+**Found on 2026-08-26 while trying to make `BotBehaviourProbe` deterministic (§ 16). It is not a
+harness finding. It is about the shipped AI.**
+
+Four configurations, same build, one whole match each:
+
+| frame step | physics step | what the bots did |
+|---|---|---|
+| 1/30 s | 0.02 s | 9 throws, 0 tags, 673 idle penalties (Classic) |
+| **1/60 s** | **0.02 s** | 40 to 90 throws, 27 to 38 skill uses, seats travelling 600 to 1100 m |
+| 0.02 s | 0.02 s | **18 throws, 0 skill uses**, three of four seats travelling 190 m |
+| 1/60 s | 1/60 s | 20 retrievals, under the probe's own liveness floor |
+
+⚠️⚠️ **A 20 PER CENT CHANGE IN DECISION RATE COST FIVE SIXTHS OF THE THROWS AND ALL OF THE
+CASTING.** 60 decisions a second is healthy and 50 is not. That is far too steep to be a smooth
+sensitivity to `Time.deltaTime`, and `AIController.Update` scales everything it owns by `dt`, so
+something further down is quantised: a window measured in frames, an edge that has to be seen
+twice, or a threshold that a slightly larger step steps over.
+
+⚠️⚠️ **THE SHIPPED GAME CAN BE IN THAT BAND.** The project's physics step is 0.02 s
+(`ProjectSettings/TimeManager.asset`, 50 Hz) and a machine rendering at 50 fps has
+`Time.deltaTime` = 0.02: a 50 Hz panel, vsync on a heavy scene, a laptop under load. That is the
+row with **zero skill uses** in it. Every probe number in this repository was taken at 1/60, and
+nobody has played the game at a capped frame rate to see whether the bots stop playing.
+
+⚠️ **The fourth row is a separate lever and it is worth keeping.** Pinning the PHYSICS to 1/60
+while leaving the frame at 1/60 also broke the bots, at a decision rate that is otherwise
+healthy. So both the frame step and the physics step move the outcome on their own, and the
+shipped pair is the only combination that has been measured working.
+
+**Needs, in order:**
+1. **Reproduce it in the player, not in the probe.** `Application.targetFrameRate = 50`, vsync
+   off, one Hero Strike match against bots, and watch whether they cast and retrieve. If they do,
+   the effect is a batch-mode artefact and this entry closes with that written down. **Do this
+   first: everything below is only worth doing if a player can meet it.**
+2. **Find the quantised thing.** The first suspect is the `InputIntent` edge protocol.
+   `CharacterMotor.FixedUpdate` reads `JustPressed` and calls `CommitFrame` at the END of the
+   physics step while the producers write in `Update`, so how many `Update`s fall between two
+   commits decides how many decisions are seen at all. At 1/60 against 0.02 one frame in five
+   carries no physics step; at 1:1 every frame carries exactly one. A verb that needs to be seen
+   twice, or a release edge being swallowed, would look exactly like this.
+3. **Then decide whether it is a bug or a bound.** If the AI genuinely needs `Update` to run
+   faster than `FixedUpdate`, that is a shipping constraint and belongs in `CLAUDE.md` § 4 beside
+   "a bot presses the same buttons a human does", not in a probe comment.
+
+**Where.** `Assets/TumbangPreso/Runtime/AIController.cs`,
+`Assets/TumbangPreso/Runtime/InputIntent.cs`, `Assets/TumbangPreso/Runtime/CharacterMotor.cs`,
+and `BotBehaviourProbe.FixedStep`, which carries the table.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**
@@ -1104,6 +1222,36 @@ match on any map but Eskinita, while two entries in this file argue that map geo
 Strike outcomes. ⚠️ **The counts from the two maps must not be compared**, for the reason above;
 what this catches is a map that breaks the loop.
 
+⚠️⚠️ **THE SWEEP WAS RUN ON 2026-08-26 AND IT MEASURED THE HARNESS, NOT THE WINDOW.**
+`BotBehaviourProbe.TheOverclockWindowSweep` runs four whole Hero Strike matches on Ilalim ng
+Tulay in one session, at the shipped rate, at 1.0 (the window off), at the 2.25 midpoint and at
+the shipped rate again, and compares the two shipped runs line for line before it will let anyone
+read the table. **They disagreed, twice**, so the table is noise both times and the entry stays
+open. § 16 is the investigation that produced, and the two determinism holes it closed.
+
+The second run, after `Hitstop` was taught about captures:
+
+```
+  rate   saves  skills  ults  knocks  tags  throws  retr  restores  idlePen  frames
+  3.50   6.75s      27    10      28    25      59    58        43      492   49654   (ship-a)
+  1.00   0.00s      33    20      47    44      86    85        60      492   49761   (off)
+  2.25   3.38s      33    13      35    29      66    65        51      358   49687   (mid)
+  3.50   6.75s      38    20      50    50      94    92        65      332   49789   (ship-b)
+```
+
+⚠️ **READ THE FIRST AND LAST ROWS BEFORE THE MIDDLE TWO.** They are the same configuration and
+they differ by 41 per cent of the throws. Everything between them is ordered by WHEN it ran.
+
+**What the sweep is worth keeping for anyway:** it is the only thing in the repository that has
+ever asked the probe to answer a comparison, and it is the reason two real determinism faults
+were found rather than a table being quoted for the next year. It writes its rows incrementally,
+so a run that goes red at the third rate still leaves the two it measured.
+
+**Still needed, unchanged:** the three-rate comparison, once
+`BotBehaviourProbe.TwoIdenticalMatchesAreIdentical` passes. The arithmetic in this entry (a rate
+`r` held for a window `W` saves `W * (r - 1)` seconds whatever the cooldown is) is not in
+question; what nobody has is what that saving is WORTH in a played round.
+
 **Where.** `Assets/TumbangPreso/Runtime/Map/OverheadPassWindow.cs`,
 `Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`,
 `Assets/TumbangPreso/Tests/MapGradeSanityTests.cs`.
@@ -1179,8 +1327,14 @@ numbers.
 `AiTuning`: if it moves, every figure in `Logs/bot-behaviour-*.txt` moves with it and none may be
 compared across the change.
 
-**What this unblocks:** § 0 and § 5 can now be A/B'd, because two runs of one build are the same
-run. Neither sweep has been performed yet; the harness is what was missing and it is no longer.
+**What this was believed to unblock:** § 0 and § 5, on the grounds that two runs of one build
+would be the same run.
+
+⚠️⚠️ **THAT LAST SENTENCE WAS NEVER TESTED AND IT IS FALSE. SEE § 16.** The first sweep to run one
+configuration twice measured 43 throws and then 83 on one build, one seed and one session. Two
+causes were found and fixed and the runs are still not identical; what changed is that the spread
+stopped being ordered by run order. An A/B on this probe has to be bought with repeats, and § 16
+carries the arithmetic for how many.
 
 **Where.** `Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`.
 
