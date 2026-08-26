@@ -688,6 +688,11 @@ namespace TumbangPreso.Tests
             Assert.Greater(Audio.MusicDirector.LiftSecondsLeft, 0.0f);
             Assert.Less(Audio.MusicDirector.LiftSecondsLeft, Core.Balance.RoundTime,
                 "the lift would be on for the whole round, which is not a lift");
+            Assert.Greater(Audio.MusicDirector.PressureSecondsLeft,
+                           Audio.MusicDirector.LiftSecondsLeft,
+                "pressure should build before the final lift reaches its decisive band");
+            Assert.Less(Audio.MusicDirector.PressureSecondsLeft, Core.Balance.RoundTime,
+                "pressure cannot be active for the whole round");
 
             Assert.Greater(Audio.MusicDirector.LiftTime, 0.0f,
                 "an instant jump on one frame reads as a mix error");

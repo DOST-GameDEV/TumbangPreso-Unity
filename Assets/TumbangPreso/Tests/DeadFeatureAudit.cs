@@ -168,6 +168,69 @@ namespace TumbangPreso.Tests
                 "The ordinary player menu must never freeze the live match");
         }
 
+        [Test]
+        public void ReplayIsLocalToTheSpectatorAndNeverStopsTheMatch()
+        {
+            string spectator = File.ReadAllText(Path.Combine(
+                RuntimeRoot, "Camera", "SpectatorCamera.cs"));
+
+            int start = spectator.IndexOf("private void StartReplay", StringComparison.Ordinal);
+            int end = spectator.IndexOf("private void StepReplay", start, StringComparison.Ordinal);
+            Assert.GreaterOrEqual(start, 0, "SpectatorCamera has no replay entry point");
+            Assert.Greater(end, start, "the replay entry point could not be isolated for audit");
+
+            string startReplay = spectator.Substring(start, end - start);
+
+            StringAssert.DoesNotContain("Time.timeScale", startReplay,
+                "starting a replay must not pause or slow the live match");
+            StringAssert.DoesNotContain("SetPositionAndRotation", startReplay,
+                "a local replay must never rewind a live actor or camera transform");
+            StringAssert.DoesNotContain("ServerRpc", startReplay,
+                "spectator replay is local presentation and must send no server message");
+            StringAssert.DoesNotContain("ClientRpc", startReplay,
+                "spectator replay is local presentation and must send no peer message");
+
+            StringAssert.Contains("RawImage", spectator,
+                "the replay should display captured pixels without touching live state");
+            StringAssert.Contains("LIVE PLAY CONTINUES", spectator,
+                "the spectator must be told that the match is still running behind the replay");
+        }
+
+        [Test]
+        public void GuidedTrainingCoversTheLiveGameWithoutCallingVerbsForThePlayer()
+        {
+            string training = File.ReadAllText(Path.Combine(RuntimeRoot, "GuidedTraining.cs"));
+            string panel = File.ReadAllText(Path.Combine(
+                RuntimeRoot, "UI", "ConvertedTutorialPanel.cs"));
+
+            foreach (string lesson in new[]
+            {
+                "Look", "Move", "Sprint", "Jump", "Throw", "Retrieve", "Pektus",
+                "Shove", "AbilityInfo", "Skill1", "Skill2", "Ultimate", "DefenderReset",
+                "Punch", "Lunge", "TripRecovery", "Emote",
+            })
+            {
+                StringAssert.Contains("case Lesson." + lesson, training,
+                    "guided training dropped the lesson for " + lesson);
+            }
+
+            foreach (string forbidden in new[]
+            {
+                "HostThrowAt(", "HostResolvePunch(", "HostResolveLunge(",
+                "HostResolveShove(", "TryActivateSkill1(", "TryActivateSkill2(",
+                "TryActivateUltimate(",
+            })
+            {
+                StringAssert.DoesNotContain(forbidden, training,
+                    "training completed a gameplay verb for the player instead of observing input");
+            }
+
+            StringAssert.Contains("START TRAINING", panel,
+                "the existing How to Play panel has no way to launch playable training");
+            Assert.AreEqual(17, GuidedTraining.LessonCount,
+                "the objective counter no longer agrees with the complete training route");
+        }
+
         private static string ReadRuntimeSource()
         {
             var text = new StringBuilder();

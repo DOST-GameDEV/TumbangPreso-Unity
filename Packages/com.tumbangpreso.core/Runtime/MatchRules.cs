@@ -40,11 +40,15 @@ namespace TumbangPreso.Core
     /// mutating counter has no way to state the invariant it is supposed to keep, and it
     /// desyncs the moment one peer misses one call. "Everyone defends exactly once,
     /// clockwise" is true here BY CONSTRUCTION. The 2v2 format this replaced needed a
-    /// whole paired-set system to reach the same property; four players and four rounds
-    /// get it for free.
+    /// whole paired-set system to reach the same property. Classic gets one complete rotation
+    /// in four rounds; Hero Strike gets two complete rotations in eight.
     /// </summary>
     public static class MatchRules
     {
+        /// <summary>The shipped match length for the selected first-class mode.</summary>
+        public static int RoundCountFor(GameMode mode)
+            => mode == GameMode.HeroStrike ? Balance.HeroStrikeRounds : Balance.Rounds;
+
         /// <summary>
         /// Which slot is the taya in a given round. Rounds are 1-based.
         ///

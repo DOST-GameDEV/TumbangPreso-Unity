@@ -157,6 +157,15 @@ namespace TumbangPreso
             if (_throwCooldownLeft > 0.0f)
                 _throwCooldownLeft = Mathf.Max(0.0f, _throwCooldownLeft - dt);
 
+            // Guided training is a practice range, not a scored round. The rules and every
+            // verb stay live, including throw restoration protection and real ability
+            // cooldowns, but the lesson must not end halfway through because 90 seconds passed.
+            if (GameLaunch.GuidedTutorial)
+            {
+                TimeLeft = Balance.RoundTime;
+                return;
+            }
+
             StepTournamentPenalties(dt);
             StepPassiveDefence(dt);
 
@@ -342,6 +351,32 @@ namespace TumbangPreso
                 HoldingSlipper = who.HoldingSlipper,
                 LataUpright = Lata != null && Lata.IsUpright,
                 ThrowCooldownLeft = _throwCooldownLeft,
+                X = who.transform.position.x,
+                Z = who.transform.position.z,
+                ConfinementRadius = Balance.ConfinementRadius,
+            };
+            return ThrowRules.CanThrow(in ctx);
+        }
+
+        /// <summary>
+        /// Whether an already-started throw wind-up may stay visually committed.
+        ///
+        /// The lata being down and the short restoration lock are transient release gates, not
+        /// reasons to snap a charged arm back to idle. Starting still asks <see cref="CanThrow"/>
+        /// and releasing still asks it again, so this cannot launch an illegal throw. It only
+        /// keeps the animation and stored charge while the attacker holds the button.
+        /// </summary>
+        public bool CanMaintainThrowCharge(CharacterMotor who)
+        {
+            if (who == null) return false;
+
+            var ctx = new ThrowContext
+            {
+                RoundActive = RoundActive,
+                IsDefender = who.IsDefender,
+                HoldingSlipper = who.HoldingSlipper,
+                LataUpright = true,
+                ThrowCooldownLeft = 0.0f,
                 X = who.transform.position.x,
                 Z = who.transform.position.z,
                 ConfinementRadius = Balance.ConfinementRadius,

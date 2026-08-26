@@ -48,10 +48,12 @@ namespace TumbangPreso.Audio
         // -------------------------------------------------------------------
 
         public const float LiftDb = 4.0f;
+        public const float PressureSecondsLeft = 30.0f;
         public const float LiftSecondsLeft = 15.0f;
         public const float LiftTime = 1.0f;
 
         private float _liftScale = 1.0f;
+        private float _liftTargetScale = 1.0f;
         private bool _lifted;
 
         /// <summary>Whether the bed is currently carrying the end-of-round lift.</summary>
@@ -71,34 +73,19 @@ namespace TumbangPreso.Audio
         /// </summary>
         public void SetLift(bool on)
         {
-            if (_lifted == on) return;
-
-            _lifted = on;
-
-            if (_lift != null) StopCoroutine(_lift);
-            _lift = StartCoroutine(LiftRoutine(on ? Mathf.Pow(10.0f, LiftDb / 20.0f) : 1.0f));
+            SetPressure(on ? 1.0f : 0.0f);
         }
 
-        private Coroutine _lift;
-
-        private System.Collections.IEnumerator LiftRoutine(float target)
+        /// <summary>
+        /// Continuously raises the SAME playing bed from 0 to the authored lift. The clock feeds
+        /// this a two-stage pressure curve, so there is no track restart, splice or volume step
+        /// when the final push begins.
+        /// </summary>
+        public void SetPressure(float amount)
         {
-            float from = _liftScale;
-            float t = 0.0f;
-
-            while (t < LiftTime)
-            {
-                // ⚠️ UNSCALED. The lift runs across the end of a round, and a round can end
-                // inside hitstop; a scaled ramp would stall halfway up and finish late.
-                t += Time.unscaledDeltaTime;
-                _liftScale = Mathf.Lerp(from, target, t / LiftTime);
-                Apply();
-                yield return null;
-            }
-
-            _liftScale = target;
-            Apply();
-            _lift = null;
+            float pressure = Mathf.Clamp01(amount);
+            _lifted = pressure > 0.001f;
+            _liftTargetScale = Mathf.Pow(10.0f, (LiftDb * pressure) / 20.0f);
         }
 
         /// <summary>
@@ -108,10 +95,9 @@ namespace TumbangPreso.Audio
         /// </summary>
         public void ClearLift()
         {
-            if (_lift != null) { StopCoroutine(_lift); _lift = null; }
-
             _lifted = false;
             _liftScale = 1.0f;
+            _liftTargetScale = 1.0f;
         }
 
         private AudioSource _a;
@@ -261,7 +247,15 @@ namespace TumbangPreso.Audio
             return BedLevel * s.MusicVolume * s.MasterVolume * _duckScale * _liftScale;
         }
 
-        private void Update() => Apply();
+        private void Update()
+        {
+            // Unscaled, so hitstop cannot freeze the mix halfway between pressure bands.
+            float fullLift = Mathf.Pow(10.0f, LiftDb / 20.0f);
+            float speed = (fullLift - 1.0f) / Mathf.Max(0.01f, LiftTime);
+            _liftScale = Mathf.MoveTowards(_liftScale, _liftTargetScale,
+                                           speed * Time.unscaledDeltaTime);
+            Apply();
+        }
 
         /// <summary>
         /// Push the computed level onto whichever source is live.

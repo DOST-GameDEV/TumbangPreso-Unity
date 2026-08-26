@@ -108,6 +108,7 @@ namespace TumbangPreso
             }
 
             _book = RosterBook.Load();
+            bool guided = GameLaunch.GuidedTutorial;
 
             // ⚠️ THE SAVED DIFFICULTY WAS BEING IGNORED. It is written by the settings panel
             // and was never read back, so every bot played at Normal no matter what the
@@ -179,7 +180,7 @@ namespace TumbangPreso
             // begins under the countdown and the free-roam window never happens. A headless
             // probe has nobody to press R, which is what UseReadyGate is for — leave it true
             // for anything a human will look at.
-            runner.AutoStart = !UseReadyGate;
+            runner.AutoStart = !UseReadyGate && !guided;
 
             // ⚠️⚠️ THE BOARD IS WIPED HERE, NOT AT `StartMatch`, BECAUSE THE PLAYER LOOKS AT IT
             // FIRST. `GameServices` is `DontDestroyOnLoad`, so the match and round directors
@@ -222,9 +223,9 @@ namespace TumbangPreso
             // Placing them only in `OnRoundStarted` left all four stacked on the world origin
             // underneath the countdown, so the opening shot was an empty street — which is
             // exactly what the report's screenshot of the Unity build shows.
-            if (UseReadyGate) runner.ResetWorld(MatchRules.DefenderSlotFor(1));
+            if (UseReadyGate || guided) runner.ResetWorld(MatchRules.DefenderSlotFor(1));
 
-            if (UseReadyGate) BuildReadyGate(seats[human], runner);
+            if (UseReadyGate && !guided) BuildReadyGate(seats[human], runner);
 
             // ⚠️⚠️ THE MATCH BED IS NOT STARTED HERE WHEN A READY GATE OWNS THE OPENING. It
             // starts on the first countdown tick instead — see `Hud.ShowCountdownTick`, which
@@ -239,7 +240,7 @@ namespace TumbangPreso
             // and it enters the actual game"*, and `audio_manager.gd::_poll_scene_state()`
             // already answers it on the "match" branch with `stop_music_now()` rather than a
             // fade, under 🧑's *"pls js abruptly cut it"*.
-            if (UseReadyGate) GameServices.Music?.StopNow();
+            if (UseReadyGate && !guided) GameServices.Music?.StopNow();
             else GameServices.Music?.Play("match", GameServices.MatchTrack);
 
             // Scene management is intentionally game-owned rather than Netcode-owned. Tell
@@ -249,6 +250,12 @@ namespace TumbangPreso
             var liveNet = Net.NetSession.Instance;
             if (liveNet != null && liveNet.IsNetworked && !liveNet.IsHost)
                 Net.MatchRpc.Instance?.RequestWorldSnapshot();
+
+            if (guided)
+            {
+                var training = gameObject.AddComponent<GuidedTraining>();
+                training.Configure(seats[human], lata, seats, slippers, runner);
+            }
         }
 
         /// <summary>
@@ -639,8 +646,9 @@ namespace TumbangPreso
 
                     if (up) { hud.ShowToast("LATA IS BACK UP", 1.2f); return; }
 
-                    hud.ShowToast(local.IsDefender ? "LATA DOWN  ·  RESET IT"
-                                                   : "LATA DOWN", 1.6f);
+                    hud.ShowToast(local == null ? "LATA DOWN"
+                                  : local.IsDefender ? "LATA DOWN  ·  RESET IT"
+                                  : "LATA DOWN  ·  RETRIEVE NOW", 1.6f);
                 };
             }
 

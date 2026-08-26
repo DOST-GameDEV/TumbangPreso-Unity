@@ -447,6 +447,8 @@ namespace TumbangPreso
             bool canThrow = GameServices.Round != null
                             && GameServices.Round.CanThrow(_motor)
                             && _throwLockLeft <= 0.0f;
+            bool canMaintainCharge = GameServices.Round != null
+                                     && GameServices.Round.CanMaintainThrowCharge(_motor);
 
             // ⚠️⚠️ `Pressed`, NOT `JustPressed`, TO START A CHARGE, AND THAT IS MEASURED. The
             // .gd records it: `input_probe` drove a synthetic press that lasted one frame and
@@ -474,10 +476,13 @@ namespace TumbangPreso
                 _charge = Mathf.Min(_charge + dt, Balance.ChargeFullTime);
                 _pektusSpin = Mathf.Clamp(intent.SpinInput, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
 
-                // ⚠️ STEPPING OUT OF LEGALITY MID-CHARGE CANCELS IT RATHER THAN BANKING IT.
-                // Walking into the box while charging must not launch on release: the crosshair
-                // has already greyed out, and firing anyway is the rules disagreeing with the UI.
-                if (!canThrow) CancelCharge();
+                // Walking into the box, losing the slipper or ending the round cancels the
+                // commitment. The lata going down does not. That state is often caused by a
+                // teammate during somebody else's wind-up, and snapping every charged arm to
+                // idle on that frame made the shared knockdown feel like an animation error.
+                // Release legality is still checked below, so holding the pose cannot bank an
+                // illegal shot inside the box or launch through restoration protection.
+                if (!canMaintainCharge) CancelCharge();
                 return;
             }
 

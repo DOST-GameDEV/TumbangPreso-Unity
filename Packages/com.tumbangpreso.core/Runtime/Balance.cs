@@ -19,7 +19,15 @@ namespace TumbangPreso.Core
         // MATCH STRUCTURE — match_manager.gd, round_manager.gd
         // -------------------------------------------------------------------
 
+        /// <summary>Classic keeps the one-defence-turn street format.</summary>
         public const int Rounds = 4;
+
+        /// <summary>
+        /// Hero Strike runs two complete role rotations. Eight rounds gives every seat the
+        /// attacker and defender matchup twice, which is the requested competitive format,
+        /// while Classic remains the shorter four-round street game.
+        /// </summary>
+        public const int HeroStrikeRounds = 8;
         public const int PlayerCount = 4;
         public const float RoundTime = 90.0f;
         public const float IntermissionDuration = 3.0f;

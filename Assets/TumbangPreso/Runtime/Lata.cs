@@ -28,9 +28,15 @@ namespace TumbangPreso
         private bool _isUpright = true;
         private float _toppleTimer;
         private Vector3 _mark;
+        private float _restoreProtectionLeft;
+        private GameObject _downBeacon;
+        private Light _downBeaconLight;
+        private GameObject _protectionShell;
 
         public int SkinIndex { get => _skinIndex; set => _skinIndex = value; }
         public bool IsUpright => _isUpright;
+        public bool IsProtected => _restoreProtectionLeft > 0.0f;
+        public float ProtectionLeft => Mathf.Max(0.0f, _restoreProtectionLeft);
 
         /// <summary>The scoring window for the CURRENT can skin, divided by its STANCE.</summary>
         public float HitWindow => ThrowRules.HitWindow(_skinIndex);
@@ -114,13 +120,17 @@ namespace TumbangPreso
         public void ApplySnapshotState(Vector3 position, Quaternion rotation,
                                        bool isUpright, int skinIndex)
         {
+            bool restoredOnThisPeer = !_isUpright && isUpright;
             transform.SetPositionAndRotation(position, rotation);
             _skinIndex = skinIndex;
             _isUpright = isUpright;
+            if (restoredOnThisPeer) _restoreProtectionLeft = Balance.ThrowRestoreCooldown;
+            else if (!isUpright) _restoreProtectionLeft = 0.0f;
             _toppleTimer = 0.0f;
             _toppleAngle = isUpright ? 0.0f : rotation.eulerAngles.x;
             _rollAngleDeg = isUpright ? 0.0f : rotation.eulerAngles.y;
             _lastRollPosition = position;
+            RefreshStatePresentation();
             UprightChanged?.Invoke(isUpright);
         }
 
@@ -129,6 +139,18 @@ namespace TumbangPreso
         {
             if (!NetAuthority.ShouldResolve()) return;
             if (!_isUpright) return;
+
+            // A reset must create a real safe beat, not only refuse newly launched throws.
+            // A slipper that was already airborne when the channel completed can otherwise
+            // knock the lata down on the very next physics frame. It still bounces off the can,
+            // but no state change or score is created during the visible shield window.
+            if (IsProtected)
+            {
+                PulseProtection();
+                GameServices.Audio?.PlayAtVaried("lata_seal", transform.position,
+                                                 1.05f, 1.12f, 0.55f);
+                return;
+            }
 
             Hitstop.Trigger(0.045f, 0.10f);
             SetUpright(false);
@@ -193,6 +215,7 @@ namespace TumbangPreso
             _toppleTimer = 0.0f;
             _lastRollPosition = _mark;
 
+            _restoreProtectionLeft = Balance.ThrowRestoreCooldown;
             SetUpright(true);
 
             // ⚠️ NO CUE HERE EITHER. `SetUpright(true)` above already sounds the restore; see
@@ -252,6 +275,8 @@ namespace TumbangPreso
                 }
             }
 
+            RefreshStatePresentation();
+
             UprightChanged?.Invoke(value);
         }
 
@@ -265,6 +290,8 @@ namespace TumbangPreso
         /// </summary>
         private void Update()
         {
+            StepStatePresentation();
+
             if (_isUpright || _toppleTimer <= 0.0f) return;
 
             _toppleTimer = Mathf.Max(0.0f, _toppleTimer - Time.deltaTime);
@@ -272,6 +299,129 @@ namespace TumbangPreso
 
             _toppleAngle = Mathf.Lerp(0.0f, Balance.DownedTiltDeg, t);
             ApplyTilt(_toppleAngle);
+        }
+
+        /// <summary>
+        /// The lata is the objective, so its state must still read when the HUD is hidden or the
+        /// player is watching the fight instead of the bottom-right card. A narrow vertical
+        /// beacon marks DOWN without spending more floor area, while the short restoration
+        /// protection gets a compact shell whose lifetime is the actual gameplay timer.
+        /// </summary>
+        private void RefreshStatePresentation()
+        {
+            if (_isUpright)
+            {
+                ClearDownBeacon();
+                if (IsProtected) BuildProtectionShell();
+                else ClearProtectionShell();
+                return;
+            }
+
+            _restoreProtectionLeft = 0.0f;
+            ClearProtectionShell();
+            BuildDownBeacon();
+        }
+
+        private void BuildDownBeacon()
+        {
+            if (_downBeacon != null) return;
+
+            _downBeacon = new GameObject("LataDownBeacon");
+            _downBeacon.transform.SetParent(transform, false);
+
+            var shaft = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            shaft.name = "DownShaft";
+            shaft.transform.SetParent(_downBeacon.transform, false);
+            shaft.transform.localPosition = new Vector3(0.0f, 2.0f, 0.0f);
+            shaft.transform.localScale = new Vector3(0.18f, 2.0f, 0.18f);
+            Visual.VfxMaterial.Ghost(shaft.GetComponent<Renderer>(),
+                new Color(UI.UiTheme.Danger.r, UI.UiTheme.Danger.g, UI.UiTheme.Danger.b, 0.18f),
+                1.3f);
+            Visual.VfxMaterial.StripCollider(shaft);
+
+            var flare = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            flare.name = "DownFlare";
+            flare.transform.SetParent(_downBeacon.transform, false);
+            flare.transform.localPosition = new Vector3(0.0f, 0.04f, 0.0f);
+            flare.transform.localScale = new Vector3(1.35f, 0.018f, 1.35f);
+            Visual.VfxMaterial.Ghost(flare.GetComponent<Renderer>(),
+                new Color(UI.UiTheme.Danger.r, UI.UiTheme.Danger.g, UI.UiTheme.Danger.b, 0.38f),
+                1.7f);
+            Visual.VfxMaterial.StripCollider(flare);
+
+            var lightGo = new GameObject("DownLight");
+            lightGo.transform.SetParent(_downBeacon.transform, false);
+            lightGo.transform.localPosition = new Vector3(0.0f, 0.7f, 0.0f);
+            _downBeaconLight = lightGo.AddComponent<Light>();
+            _downBeaconLight.type = LightType.Point;
+            _downBeaconLight.color = UI.UiTheme.Danger;
+            _downBeaconLight.range = 4.5f;
+            _downBeaconLight.intensity = 2.2f;
+            _downBeaconLight.shadows = LightShadows.None;
+        }
+
+        private void ClearDownBeacon()
+        {
+            if (_downBeacon != null) Destroy(_downBeacon);
+            _downBeacon = null;
+            _downBeaconLight = null;
+        }
+
+        private void BuildProtectionShell()
+        {
+            if (_protectionShell != null) return;
+
+            _protectionShell = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            _protectionShell.name = "LataRestoreShield";
+            _protectionShell.transform.SetParent(transform, false);
+            _protectionShell.transform.localPosition = new Vector3(0.0f, 0.22f, 0.0f);
+            _protectionShell.transform.localScale = Vector3.one * 0.72f;
+            Visual.VfxMaterial.Ghost(_protectionShell.GetComponent<Renderer>(),
+                new Color(UI.UiTheme.Defense.r, UI.UiTheme.Defense.g, UI.UiTheme.Defense.b, 0.28f),
+                2.0f);
+            Visual.VfxMaterial.StripCollider(_protectionShell);
+        }
+
+        private void ClearProtectionShell()
+        {
+            if (_protectionShell != null) Destroy(_protectionShell);
+            _protectionShell = null;
+        }
+
+        private void PulseProtection()
+        {
+            BuildProtectionShell();
+            if (_protectionShell != null) _protectionShell.transform.localScale = Vector3.one * 0.92f;
+            Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f,
+                                    "PROTECTED!", UI.UiTheme.Defense, 0.9f,
+                                    Visual.ComicPopup.Weight.Cast);
+        }
+
+        private void StepStatePresentation()
+        {
+            if (_restoreProtectionLeft > 0.0f)
+            {
+                _restoreProtectionLeft = Mathf.Max(0.0f, _restoreProtectionLeft - Time.deltaTime);
+                BuildProtectionShell();
+
+                if (_protectionShell != null)
+                {
+                    float pulse = 0.72f + (Mathf.Sin(Time.time * 18.0f) * 0.5f + 0.5f) * 0.10f;
+                    _protectionShell.transform.localScale = Vector3.one * pulse;
+                    _protectionShell.transform.Rotate(0.0f, 120.0f * Time.deltaTime, 0.0f,
+                                                       Space.Self);
+                }
+
+                if (_restoreProtectionLeft <= 0.0f) ClearProtectionShell();
+            }
+
+            if (_downBeacon != null)
+            {
+                float pulse = Mathf.Sin(Time.time * 7.0f) * 0.5f + 0.5f;
+                _downBeacon.transform.localScale = Vector3.one * Mathf.Lerp(0.92f, 1.08f, pulse);
+                if (_downBeaconLight != null)
+                    _downBeaconLight.intensity = Mathf.Lerp(1.5f, 3.2f, pulse);
+            }
         }
 
         /// <summary>

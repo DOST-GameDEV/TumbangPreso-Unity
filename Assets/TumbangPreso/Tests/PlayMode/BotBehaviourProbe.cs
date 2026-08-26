@@ -111,6 +111,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsNotNull(runner, "MatchInstaller built no SliceRunner to drive the match.");
 
             var tally = new Tally(mode);
+            int totalRounds = MatchRules.RoundCountFor(mode);
             tally.Subscribe(match, round);
 
             var seats = new List<CharacterMotor>(round.Players);
@@ -261,7 +262,7 @@ namespace TumbangPreso.PlayTests
             // throws and 7 retrievals in four whole rounds. Twenty separates those two by a
             // wide margin in both directions.
             Assert.Greater(tally.Throws, 20,
-                $"{mode}: only {tally.Throws} slippers were thrown in four rounds. A healthy " +
+                $"{mode}: only {tally.Throws} slippers were thrown in {totalRounds} rounds. A healthy " +
                 "match at this time scale throws upwards of fifty.");
 
             Assert.Greater(tally.Retrievals, 20,
@@ -269,7 +270,7 @@ namespace TumbangPreso.PlayTests
                 "retrieval half of the loop is stalling and rounds run out of ammunition.");
 
             Assert.Greater(tally.LataKnocks, 0,
-                $"{mode}: the lata was never knocked over in four rounds. The bots throw but " +
+                $"{mode}: the lata was never knocked over in {totalRounds} rounds. The bots throw but " +
                 "cannot hit, which is an aim or a lane problem rather than a plan problem.");
 
             Assert.Greater(tally.LataRestores, 0,
@@ -304,13 +305,13 @@ namespace TumbangPreso.PlayTests
             // ⚠️ **IF YOU WANT A TIGHTER NUMBER, MAKE THE PROBE DETERMINISTIC FIRST** by
             // stepping the world by hand instead of running it at 6x against the wall clock.
             // Until then the FLOORS above are the assertions that carry weight.
-            const int DeadLoopFloor = 600;
+            int deadLoopFloor = 600 * totalRounds / Balance.Rounds;
 
-            Assert.Less(tally.CampPenalties, DeadLoopFloor,
+            Assert.Less(tally.CampPenalties, deadLoopFloor,
                 $"{mode}: {tally.CampPenalties} can-camping penalties across the match. The " +
                 "defender is parking inside the ring instead of guarding the approach.");
 
-            Assert.Less(tally.IdlePenalties, DeadLoopFloor,
+            Assert.Less(tally.IdlePenalties, deadLoopFloor,
                 $"{mode}: {tally.IdlePenalties} unretrieved-slipper penalties. Attackers are " +
                 "not reaching their tsinelas at all, which is the retrieval loop being dead " +
                 "rather than the bots being cautious.");
@@ -322,14 +323,14 @@ namespace TumbangPreso.PlayTests
                 "Hero Strike seated nobody with a hero kit, so the mode did not install.");
 
             Assert.Greater(tally.SkillUses, 0,
-                "Hero Strike: not one skill was used in four rounds, so every bot ignored its " +
+                $"Hero Strike: not one skill was used in {totalRounds} rounds, so every bot ignored its " +
                 "own kit.");
 
             // ⚠️ A CEILING AS WELL AS A FLOOR, BECAUSE SPAM IS THE OTHER FAILURE. A bot that
             // holds E down uses a skill every time the cooldown lifts, which over a six minute
             // match is several hundred activations and is exactly what "uses skills without
             // spamming uselessly" rules out.
-            Assert.Less(tally.SkillUses, 260,
+            Assert.Less(tally.SkillUses, 260 * totalRounds / Balance.Rounds,
                 $"Hero Strike: {tally.SkillUses} skill activations across the match is a bot " +
                 "firing on cooldown rather than on an opportunity.");
         }

@@ -5,7 +5,8 @@ using UnityEngine;
 namespace TumbangPreso
 {
     /// <summary>
-    /// The match: four rounds, four players, one taya per round.
+    /// The match: four Classic rounds or eight Hero Strike rounds, four players, one taya per
+    /// round. Hero Strike therefore runs two complete role rotations.
     ///
     /// ⚠️⚠️ EVERY POINT IN THE GAME IS AWARDED THROUGH AddScore, AND ONLY ON THE HOST. The
     /// predecessor spread its win conditions across four files and the recurring bug class
@@ -24,6 +25,7 @@ namespace TumbangPreso
 
         public int RoundNumber { get; private set; }
         public int DefenderSlot => MatchRules.DefenderSlotFor(RoundNumber);
+        public int TotalRounds => MatchRules.RoundCountFor(UI.SceneFlow.SelectedMode);
         public bool MatchInProgress { get; private set; }
         public bool IsWarmupBuffer { get; set; }
 
@@ -100,7 +102,7 @@ namespace TumbangPreso
             RoundNumber++;
             IsWarmupBuffer = false;
 
-            if (RoundNumber > Balance.Rounds)
+            if (RoundNumber > TotalRounds)
             {
                 MatchInProgress = false;
                 MatchEnded?.Invoke(_scores.WinningSlot());
@@ -113,7 +115,7 @@ namespace TumbangPreso
         public void BeginIntermission()
         {
             int next = RoundNumber + 1;
-            if (next > Balance.Rounds)
+            if (next > TotalRounds)
             {
                 MatchInProgress = false;
                 IsWarmupBuffer = false;

@@ -27,7 +27,26 @@ namespace TumbangPreso.UI
             OnClick("NextButton", () => Turn(1));
             OnClick("BackButton", Close);
 
+            var training = MenuKit.WoodButton(transform, "START TRAINING",
+                new Vector2(0.5f, 0.0f), new Vector2(0.0f, 58.0f), new Vector2(330.0f, 68.0f),
+                StartTraining, "WoodPrimaryButton");
+            training.name = "StartTrainingButton";
+
             ApplyPage();
+        }
+
+        private static void StartTraining()
+        {
+            GameLaunch.Reset();
+            GameLaunch.GuidedTutorial = true;
+            GameLaunch.PendingAction = "local";
+            GameLaunch.SelectedMap = "eskinita";
+            GameLaunch.SoloSeat = 1;
+
+            SceneFlow.Networked = false;
+            SceneFlow.SelectedMap = SceneFlow.Eskinita;
+            SceneFlow.SelectedMode = GameMode.HeroStrike;
+            SceneFlow.Go(SceneFlow.Eskinita);
         }
 
         public void ResetToFirstPage()

@@ -49,7 +49,9 @@ namespace TumbangPreso.EditorTools
             int failures = 0;
 
             sb.AppendLine("MATCH PROBE");
-            sb.AppendLine($"rounds={Balance.Rounds} players={Balance.PlayerCount} " +
+            sb.AppendLine($"classicRounds={MatchRules.RoundCountFor(GameMode.Classic)} " +
+                          $"heroStrikeRounds={MatchRules.RoundCountFor(GameMode.HeroStrike)} " +
+                          $"players={Balance.PlayerCount} " +
                           $"roundTime={Balance.RoundTime}");
             sb.AppendLine();
 
@@ -61,21 +63,23 @@ namespace TumbangPreso.EditorTools
             int ceiling = (int)(Balance.RoundTime / Balance.DefenseTickInterval) * Balance.ScoreDefensePerTick;
             sb.AppendLine($"passive ceiling per round (arithmetic, not reachable): {ceiling}");
 
-            // Structural check: the rotation caps passive defence at ONE round per seat, so no
-            // seat can bank more than one round of it however well they play.
-            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            // Structural check: every mode is made of complete role rotations. Classic gives
+            // each seat one defence; Hero Strike gives each seat two.
+            foreach (GameMode mode in new[] { GameMode.Classic, GameMode.HeroStrike })
             {
-                int rounds = 0;
-                for (int r = 1; r <= Balance.Rounds; r++)
-                    if (MatchRules.DefenderSlotFor(r) == slot) rounds++;
-
-                if (rounds != 1)
+                int expected = MatchRules.RoundCountFor(mode) / Balance.PlayerCount;
+                for (int slot = 0; slot < Balance.PlayerCount; slot++)
                 {
-                    sb.AppendLine($"FAIL: seat {slot} defends {rounds} times, not exactly once.");
+                    int rounds = 0;
+                    for (int r = 1; r <= MatchRules.RoundCountFor(mode); r++)
+                        if (MatchRules.DefenderSlotFor(r) == slot) rounds++;
+
+                    if (rounds == expected) continue;
+                    sb.AppendLine($"FAIL: {mode} seat {slot} defends {rounds} times, expected {expected}.");
                     failures++;
                 }
             }
-            sb.AppendLine("ok  : every seat defends exactly once (structural cap on passive defence)");
+            sb.AppendLine("ok  : every mode contains complete, equal defender rotations");
 
             // ⚠️ A LIVE MATCH RUN NEEDS PLAY MODE AND A SCENE WITH PREFABS WIRED, which does
             // not exist yet: Phase 3 has to land first. Rather than print a fabricated

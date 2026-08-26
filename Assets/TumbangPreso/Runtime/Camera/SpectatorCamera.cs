@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 namespace TumbangPreso.CameraSystem
 {
@@ -180,31 +182,38 @@ namespace TumbangPreso.CameraSystem
 
         private InputAction _move, _jump, _sprint, _down;
 
-        private const float ReplaySeconds = 6.0f;
+        private const float ReplaySeconds = 5.5f;
         private const float ReplaySampleInterval = 0.10f;
-        private const int ReplayFrameCapacity = 80;
-
-        private struct ReplayPose
-        {
-            public Transform Target;
-            public Vector3 Position;
-            public Quaternion Rotation;
-        }
+        private const int ReplayFrameCapacity = 70;
+        private const int ReplayWidth = 854;
+        private const int ReplayHeight = 480;
+        private const float HighlightPostRoll = 1.0f;
+        private const float AutoReplayCooldown = 4.0f;
 
         private sealed class ReplayFrame
         {
-            public Vector3 CameraPosition;
-            public Quaternion CameraRotation;
-            public float FieldOfView;
-            public readonly List<ReplayPose> Actors = new List<ReplayPose>(10);
+            public Texture2D Image;
         }
 
         private readonly List<ReplayFrame> _replayFrames = new List<ReplayFrame>(ReplayFrameCapacity);
+        private readonly List<ReplayFrame> _replayClip = new List<ReplayFrame>(ReplayFrameCapacity);
         private float _replayRecordAccum;
+        private bool _captureReplayFrame;
         private bool _replaying;
         private float _replayClock;
-        private int _replayFirstFrame;
-        private ReplayFrame _liveFrame;
+        private string _replayReason = "LAST PLAY";
+        private Canvas _replayCanvas;
+        private RawImage _replayImage;
+        private Text _replayLabel;
+
+        private string _pendingHighlight;
+        private float _pendingHighlightLeft;
+        private float _lastAutoReplayAt = -100.0f;
+        private bool _lataStateKnown;
+        private bool _lastLataUpright;
+        private bool _scoreStateKnown;
+        private readonly int[] _lastScores = new int[Balance.PlayerCount];
+        private MatchDirector _highlightMatch;
 
         private bool _broadcastPaused;
         private float _selectedTimeScale = 1.0f;
@@ -224,6 +233,7 @@ namespace TumbangPreso.CameraSystem
             if (_camera == null) _camera = gameObject.AddComponent<Camera>();
             _camera.fieldOfView = SpectatorFov;
             _camera.farClipPlane = SpectatorFar;
+            BuildReplayOverlay();
 
             // ⚠️⚠️ THE MAP'S GRADE AND ITS TONEMAP, WHICH THIS CAMERA HAD NEITHER OF, AND THAT
             // IS "the characters are all light as frick, same with map and game overall".
@@ -294,18 +304,24 @@ namespace TumbangPreso.CameraSystem
         }
 
         private Visual.ColourGrade _grade;
+        private SpectatorReplayCapture _replayCapture;
 
         private void Start()
         {
             if (_grade != null) _grade.AdoptFromScene();
+
+            // Added after ColourGrade so the replay records the same graded picture the
+            // spectator saw, not the bright pre-tonemap frame that enters the grade pass.
+            _replayCapture = gameObject.AddComponent<SpectatorReplayCapture>();
+            _replayCapture.Owner = this;
         }
 
         private void OnEnable() { if (_camera != null) _camera.enabled = true; }
 
         private void OnDisable()
         {
-            if (_replaying && _liveFrame != null) ApplyFrame(_liveFrame, 0.0f, null);
-            _replaying = false;
+            EndReplay(showLiveToast: false);
+            UnhookHighlights();
 
             if (_ownsTimeScale)
             {
@@ -349,10 +365,15 @@ namespace TumbangPreso.CameraSystem
             if (_replaying)
             {
                 StepReplay();
-                return;
             }
 
             RecordReplayFrame();
+            PollHighlights();
+            StepPendingHighlight();
+
+            // A replay is now a picture-in-picture recording. The operator keeps flying the
+            // live camera and the match keeps advancing behind it instead of returning early
+            // and freezing both the game and camera controls.
 
             StepLook();
             StepWheel();
@@ -480,8 +501,9 @@ namespace TumbangPreso.CameraSystem
         }
 
         // -------------------------------------------------------------------
-        // BROADCAST CONTROLS. Time manipulation is offline-only by construction: a remote
-        // viewer must never acquire authority over a live tournament simply by spectating.
+        // BROADCAST CONTROLS. Pause and speed manipulation are offline-only by construction:
+        // a remote viewer must never acquire authority over a live tournament simply by
+        // spectating. Replay is a local pixel overlay and is safe on either side of the wire.
 
         private void StepBroadcastKeys()
         {
@@ -521,7 +543,7 @@ namespace TumbangPreso.CameraSystem
             if (kb.f3Key.wasPressedThisFrame) SelectPlayerPov(2);
             if (kb.f4Key.wasPressedThisFrame) SelectPlayerPov(3);
 
-            bool askedForTime = kb.pKey.wasPressedThisFrame || kb.rKey.wasPressedThisFrame
+            bool askedForTime = kb.pKey.wasPressedThisFrame
                                 || kb.digit1Key.wasPressedThisFrame
                                 || kb.digit2Key.wasPressedThisFrame
                                 || kb.digit3Key.wasPressedThisFrame;
@@ -533,7 +555,7 @@ namespace TumbangPreso.CameraSystem
             }
 
             if (kb.pKey.wasPressedThisFrame) ToggleBroadcastPause();
-            if (kb.rKey.wasPressedThisFrame) StartReplay();
+            if (kb.rKey.wasPressedThisFrame) StartReplay("LAST PLAY");
             if (kb.digit1Key.wasPressedThisFrame) SetBroadcastScale(0.25f);
             if (kb.digit2Key.wasPressedThisFrame) SetBroadcastScale(0.50f);
             if (kb.digit3Key.wasPressedThisFrame) SetBroadcastScale(1.00f);
@@ -564,53 +586,66 @@ namespace TumbangPreso.CameraSystem
 
         private void RecordReplayFrame()
         {
-            if (_broadcastPaused || NetAuthority.IsNetworked) return;
+            if (_broadcastPaused) return;
 
             _replayRecordAccum += Time.unscaledDeltaTime;
             if (_replayRecordAccum < ReplaySampleInterval) return;
             _replayRecordAccum %= ReplaySampleInterval;
 
-            _replayFrames.Add(CaptureFrame());
-            if (_replayFrames.Count > ReplayFrameCapacity) _replayFrames.RemoveAt(0);
+            _captureReplayFrame = true;
         }
 
-        private ReplayFrame CaptureFrame()
+        /// <summary>
+        /// Copies a small post-render frame into the replay ring. The replay is pixels rather
+        /// than rewound scene transforms, so showing it cannot move a live player, lata or
+        /// slipper and cannot require <c>Time.timeScale = 0</c>.
+        /// </summary>
+        internal void CaptureReplayFrame(RenderTexture source)
         {
-            var frame = new ReplayFrame
+            if (!_captureReplayFrame) return;
+            _captureReplayFrame = false;
+
+            var scratch = RenderTexture.GetTemporary(ReplayWidth, ReplayHeight, 0,
+                                                      RenderTextureFormat.ARGB32);
+            var previous = RenderTexture.active;
+
+            try
             {
-                CameraPosition = transform.position,
-                CameraRotation = transform.rotation,
-                FieldOfView = _camera != null ? _camera.fieldOfView : SpectatorFov,
-            };
+                Graphics.Blit(source, scratch);
+                RenderTexture.active = scratch;
 
-            foreach (var actor in FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude,
-                                                                     FindObjectsSortMode.None))
-                AddPose(frame, actor != null ? actor.transform : null);
+                var texture = new Texture2D(ReplayWidth, ReplayHeight, TextureFormat.RGB24,
+                                            mipChain: false)
+                {
+                    name = "SpectatorReplayFrame",
+                    filterMode = FilterMode.Bilinear,
+                    wrapMode = TextureWrapMode.Clamp,
+                };
+                texture.ReadPixels(new Rect(0, 0, ReplayWidth, ReplayHeight), 0, 0, false);
+                texture.Apply(updateMipmaps: false, makeNoLongerReadable: false);
 
-            foreach (var lata in FindObjectsByType<Lata>(FindObjectsInactive.Exclude,
-                                                         FindObjectsSortMode.None))
-                AddPose(frame, lata != null ? lata.transform : null);
-
-            foreach (var slipper in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude,
-                                                               FindObjectsSortMode.None))
-                AddPose(frame, slipper != null ? slipper.transform : null);
-
-            return frame;
-        }
-
-        private static void AddPose(ReplayFrame frame, Transform target)
-        {
-            if (frame == null || target == null) return;
-            frame.Actors.Add(new ReplayPose
+                _replayFrames.Add(new ReplayFrame { Image = texture });
+                while (_replayFrames.Count > ReplayFrameCapacity)
+                {
+                    DestroyFrame(_replayFrames[0]);
+                    _replayFrames.RemoveAt(0);
+                }
+            }
+            finally
             {
-                Target = target,
-                Position = target.position,
-                Rotation = target.rotation,
-            });
+                RenderTexture.active = previous;
+                RenderTexture.ReleaseTemporary(scratch);
+            }
         }
 
-        private void StartReplay()
+        private void StartReplay(string reason)
         {
+            if (_broadcastPaused)
+            {
+                UI.Hud.Instance?.ShowToast("RESUME LIVE PLAY BEFORE REPLAY", 1.2f);
+                return;
+            }
+
             int wanted = Mathf.CeilToInt(ReplaySeconds / ReplaySampleInterval);
             if (_replayFrames.Count < Mathf.Min(12, wanted))
             {
@@ -618,100 +653,244 @@ namespace TumbangPreso.CameraSystem
                 return;
             }
 
-            Hitstop.End();
-            _liveFrame = CaptureFrame();
-            _replayFirstFrame = Mathf.Max(0, _replayFrames.Count - wanted);
+            if (_replaying) EndReplay(showLiveToast: false);
+
+            int first = Mathf.Max(0, _replayFrames.Count - wanted);
+            for (int i = 0; i < first; i++) DestroyFrame(_replayFrames[i]);
+
+            _replayClip.Clear();
+            for (int i = first; i < _replayFrames.Count; i++)
+                _replayClip.Add(_replayFrames[i]);
+            _replayFrames.Clear();
+
             _replayClock = 0.0f;
             _replaying = true;
-            _ownsTimeScale = true;
-            _broadcastPaused = false;
-            Time.timeScale = 0.0f;
+            _replayReason = string.IsNullOrEmpty(reason) ? "LAST PLAY" : reason;
 
-            _follow = null;
-            _followIndex = -1;
-            _pov = false;
-            UI.Hud.Instance?.ShowToast("INSTANT REPLAY  ·  [R] RETURN LIVE", 1.4f);
+            if (_replayCanvas != null) _replayCanvas.enabled = true;
+            if (_replayLabel != null) _replayLabel.text = "INSTANT REPLAY  ·  " + _replayReason;
+            if (_replayImage != null && _replayClip.Count > 0)
+                _replayImage.texture = _replayClip[0].Image;
+
+            UI.Hud.Instance?.ShowToast("INSTANT REPLAY  ·  LIVE PLAY CONTINUES", 1.4f);
         }
 
         private void StepReplay()
         {
-            int available = _replayFrames.Count - _replayFirstFrame;
+            int available = _replayClip.Count;
             if (available < 2) { EndReplay(); return; }
 
-            // 0.72x gives the decisive beat room to read without turning six seconds into a
-            // painfully long stoppage.
-            _replayClock += Time.unscaledDeltaTime * 0.72f;
+            // A restrained 0.82x lets the decisive beat read while the match remains live in
+            // the rest of the screen.
+            _replayClock += Time.unscaledDeltaTime * 0.82f;
             float sample = _replayClock / ReplaySampleInterval;
-            int localIndex = Mathf.FloorToInt(sample);
+            int localIndex = Mathf.Clamp(Mathf.FloorToInt(sample), 0, available - 1);
 
-            if (localIndex >= available - 1)
+            if (sample >= available)
             {
                 EndReplay();
                 return;
             }
 
-            var a = _replayFrames[_replayFirstFrame + localIndex];
-            var b = _replayFrames[_replayFirstFrame + localIndex + 1];
-            ApplyFrame(a, sample - localIndex, b);
+            if (_replayImage != null) _replayImage.texture = _replayClip[localIndex].Image;
         }
 
-        private void EndReplay()
+        private void EndReplay(bool showLiveToast = true)
         {
             if (!_replaying) return;
 
-            if (_liveFrame != null)
-            {
-                ApplyFrame(_liveFrame, 0.0f, null);
-                _targetPosition = _liveFrame.CameraPosition;
-                SyncAnglesFromTransform();
-            }
-
             _replaying = false;
-            _liveFrame = null;
-            Time.timeScale = _selectedTimeScale;
-            UI.Hud.Instance?.ShowToast("LIVE", 0.8f);
+            if (_replayCanvas != null) _replayCanvas.enabled = false;
+            if (_replayImage != null) _replayImage.texture = null;
+
+            foreach (var frame in _replayClip) DestroyFrame(frame);
+            _replayClip.Clear();
+
+            if (showLiveToast) UI.Hud.Instance?.ShowToast("LIVE", 0.8f);
         }
 
-        private void ApplyFrame(ReplayFrame a, float t, ReplayFrame b)
+        private void BuildReplayOverlay()
         {
-            if (a == null) return;
+            var canvasGo = new GameObject("InstantReplayOverlay");
+            canvasGo.transform.SetParent(transform, false);
 
-            transform.position = b == null
-                ? a.CameraPosition
-                : Vector3.Lerp(a.CameraPosition, b.CameraPosition, t);
-            transform.rotation = b == null
-                ? a.CameraRotation
-                : Quaternion.Slerp(a.CameraRotation, b.CameraRotation, t);
-            if (_camera != null)
-                _camera.fieldOfView = b == null
-                    ? a.FieldOfView
-                    : Mathf.Lerp(a.FieldOfView, b.FieldOfView, t);
+            _replayCanvas = canvasGo.AddComponent<Canvas>();
+            _replayCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            _replayCanvas.overrideSorting = true;
+            _replayCanvas.sortingOrder = 500;
 
-            foreach (var pose in a.Actors)
+            var scaler = canvasGo.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920.0f, 1080.0f);
+            scaler.matchWidthOrHeight = 1.0f;
+
+            var panelGo = new GameObject("ReplayPictureInPicture");
+            panelGo.transform.SetParent(canvasGo.transform, false);
+            var panel = panelGo.AddComponent<Image>();
+            panel.sprite = UI.GodotTheme.Box(UI.UiTheme.WoodDark, UI.UiTheme.Highlight,
+                                             UI.GodotTheme.WoodBorderWidth,
+                                             UI.GodotTheme.WoodCornerRadius);
+            panel.type = Image.Type.Sliced;
+            panel.raycastTarget = false;
+
+            var panelRt = panel.rectTransform;
+            panelRt.anchorMin = new Vector2(0.54f, 0.51f);
+            panelRt.anchorMax = new Vector2(0.985f, 0.965f);
+            panelRt.offsetMin = Vector2.zero;
+            panelRt.offsetMax = Vector2.zero;
+
+            var imageGo = new GameObject("ReplayImage");
+            imageGo.transform.SetParent(panelGo.transform, false);
+            _replayImage = imageGo.AddComponent<RawImage>();
+            _replayImage.color = Color.white;
+            _replayImage.raycastTarget = false;
+            _replayImage.uvRect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
+
+            var imageRt = _replayImage.rectTransform;
+            imageRt.anchorMin = Vector2.zero;
+            imageRt.anchorMax = Vector2.one;
+            imageRt.offsetMin = new Vector2(10.0f, 10.0f);
+            imageRt.offsetMax = new Vector2(-10.0f, -52.0f);
+
+            var labelGo = new GameObject("ReplayLabel");
+            labelGo.transform.SetParent(panelGo.transform, false);
+            _replayLabel = labelGo.AddComponent<Text>();
+            _replayLabel.font = UI.MenuKit.Font;
+            _replayLabel.fontSize = 24;
+            _replayLabel.alignment = TextAnchor.MiddleLeft;
+            _replayLabel.color = UI.UiTheme.Highlight;
+            _replayLabel.raycastTarget = false;
+            _replayLabel.text = "INSTANT REPLAY";
+
+            var outline = labelGo.AddComponent<Outline>();
+            outline.effectColor = UI.UiTheme.Ink;
+            outline.effectDistance = new Vector2(3.0f, -3.0f);
+
+            var labelRt = _replayLabel.rectTransform;
+            labelRt.anchorMin = new Vector2(0.0f, 1.0f);
+            labelRt.anchorMax = new Vector2(1.0f, 1.0f);
+            labelRt.pivot = new Vector2(0.5f, 1.0f);
+            labelRt.offsetMin = new Vector2(18.0f, -48.0f);
+            labelRt.offsetMax = new Vector2(-18.0f, -8.0f);
+
+            _replayCanvas.enabled = false;
+        }
+
+        private void PollHighlights()
+        {
+            TryHookHighlights();
+
+            bool lataKnockedNow = false;
+
+            var lata = GameServices.Round != null ? GameServices.Round.Lata : null;
+            if (lata == null)
             {
-                if (pose.Target == null) continue;
+                _lataStateKnown = false;
+            }
+            else if (!_lataStateKnown)
+            {
+                _lataStateKnown = true;
+                _lastLataUpright = lata.IsUpright;
+            }
+            else
+            {
+                lataKnockedNow = _lastLataUpright && !lata.IsUpright;
+                if (lataKnockedNow) QueueHighlight("LATA KNOCKDOWN");
+                _lastLataUpright = lata.IsUpright;
+            }
 
-                Vector3 position = pose.Position;
-                Quaternion rotation = pose.Rotation;
-                if (b != null && TryFindPose(b, pose.Target, out var next))
+            var match = GameServices.Match;
+            if (match == null)
+            {
+                _scoreStateKnown = false;
+                return;
+            }
+
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            {
+                int score = match.ScoreFor(slot);
+                if (_scoreStateKnown && !lataKnockedNow)
                 {
-                    position = Vector3.Lerp(position, next.Position, t);
-                    rotation = Quaternion.Slerp(rotation, next.Rotation, t);
+                    int gain = score - _lastScores[slot];
+                    if (gain >= 100)
+                        QueueHighlight(slot == match.DefenderSlot ? "TAG" : "SCORE PLAY");
+                    else if (gain >= 50)
+                        QueueHighlight("SABOTAGE");
                 }
-                pose.Target.SetPositionAndRotation(position, rotation);
+                _lastScores[slot] = score;
+            }
+            _scoreStateKnown = true;
+        }
+
+        private void TryHookHighlights()
+        {
+            var match = GameServices.Match;
+            if (_highlightMatch == match) return;
+
+            UnhookHighlights();
+            _highlightMatch = match;
+            if (_highlightMatch != null) _highlightMatch.Scored += OnHighlightScored;
+        }
+
+        private void UnhookHighlights()
+        {
+            if (_highlightMatch != null) _highlightMatch.Scored -= OnHighlightScored;
+            _highlightMatch = null;
+        }
+
+        private void OnHighlightScored(int slot, ScoreEvent scoreEvent)
+        {
+            switch (scoreEvent)
+            {
+                case ScoreEvent.LataKnocked:
+                    QueueHighlight("LATA KNOCKDOWN");
+                    break;
+                case ScoreEvent.Tag:
+                    QueueHighlight("TAG");
+                    break;
+                case ScoreEvent.Sabotage:
+                    QueueHighlight("SABOTAGE");
+                    break;
             }
         }
 
-        private static bool TryFindPose(ReplayFrame frame, Transform target, out ReplayPose found)
+        private void QueueHighlight(string reason)
         {
-            foreach (var pose in frame.Actors)
-            {
-                if (pose.Target != target) continue;
-                found = pose;
-                return true;
-            }
-            found = default;
-            return false;
+            if (Time.unscaledTime - _lastAutoReplayAt < AutoReplayCooldown) return;
+
+            _pendingHighlight = reason;
+            _pendingHighlightLeft = HighlightPostRoll;
+        }
+
+        private void StepPendingHighlight()
+        {
+            if (string.IsNullOrEmpty(_pendingHighlight)) return;
+            if (_replaying) return;
+
+            _pendingHighlightLeft -= Time.unscaledDeltaTime;
+            if (_pendingHighlightLeft > 0.0f) return;
+
+            string reason = _pendingHighlight;
+            _pendingHighlight = null;
+
+            if (_replayFrames.Count < 12) return;
+
+            _lastAutoReplayAt = Time.unscaledTime;
+            StartReplay(reason);
+        }
+
+        private void DestroyFrame(ReplayFrame frame)
+        {
+            if (frame != null && frame.Image != null) Destroy(frame.Image);
+        }
+
+        private void OnDestroy()
+        {
+            UnhookHighlights();
+            foreach (var frame in _replayFrames) DestroyFrame(frame);
+            foreach (var frame in _replayClip) DestroyFrame(frame);
+            _replayFrames.Clear();
+            _replayClip.Clear();
         }
 
         private void SyncAnglesFromTransform()
@@ -843,7 +1022,7 @@ namespace TumbangPreso.CameraSystem
         /// state out of it.</summary>
         public static string ControlsText()
             => "SPECTATOR    WASD fly · F1-F4 player POV · TAB follow · V POV/chase · F free · WHEEL speed/zoom\n"
-             + "BROADCAST    P pause · R replay 6s · 1/2/3 speed .25/.5/1x · B save cam · N recall · C controls";
+             + "BROADCAST    AUTO highlights · R replay · P pause · 1/2/3 speed .25/.5/1x · B save cam · N recall · C controls";
 
         /// <summary>
         /// ⚠️ §2.6 — WHAT THE CAMERA IS DOING RIGHT NOW, which the static legend cannot say.
@@ -859,7 +1038,7 @@ namespace TumbangPreso.CameraSystem
         {
             string broadcast = "";
             if (_replaying)
-                broadcast = $"⏪ REPLAY  ·  {_replayClock:0.0}s / {ReplaySeconds:0}s  |  ";
+                broadcast = $"⏪ REPLAY {_replayReason}  ·  {_replayClock:0.0}s / {ReplaySeconds:0.0}s  ·  LIVE CONTINUES  |  ";
             else if (_broadcastPaused)
                 broadcast = "⏸ TACTICAL PAUSE  |  ";
             else if (_selectedTimeScale < 0.99f)
@@ -900,6 +1079,23 @@ namespace TumbangPreso.CameraSystem
         {
             if (_follow == null) return "";
             return $"{_follow.DisplayName()} · {(_follow.IsDefender ? "TAYA" : "ATTACKER")}";
+        }
+    }
+
+    /// <summary>
+    /// Final local render pass for the spectator's replay buffer. It is attached at runtime
+    /// after the colour grade, has no network component, and only copies pixels owned by this
+    /// camera. Keeping it separate also means a gameplay camera can never record or display a
+    /// replay by sharing a helper intended for the spectator.
+    /// </summary>
+    internal sealed class SpectatorReplayCapture : MonoBehaviour
+    {
+        public SpectatorCamera Owner { get; set; }
+
+        private void OnRenderImage(RenderTexture source, RenderTexture destination)
+        {
+            Graphics.Blit(source, destination);
+            Owner?.CaptureReplayFrame(source);
         }
     }
 }

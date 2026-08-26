@@ -236,12 +236,24 @@ namespace TumbangPreso
 
             var round = GameServices.Round;
 
-            bool shouldLift = round != null
-                              && round.RoundActive
-                              && round.TimeLeft > 0.0f
-                              && round.TimeLeft <= Audio.MusicDirector.LiftSecondsLeft;
+            float pressure = 0.0f;
 
-            music.SetLift(shouldLift);
+            if (round != null && round.RoundActive && round.TimeLeft > 0.0f
+                && round.TimeLeft <= Audio.MusicDirector.PressureSecondsLeft)
+            {
+                float left = round.TimeLeft;
+                float final = Audio.MusicDirector.LiftSecondsLeft;
+                float start = Audio.MusicDirector.PressureSecondsLeft;
+
+                // The first fifteen seconds build to 45 percent, then the last fifteen carry
+                // the decisive rise. Both are gain on the already-playing source, so the music
+                // never cuts or restarts under the clock.
+                pressure = left > final
+                    ? Mathf.Lerp(0.0f, 0.45f, (start - left) / Mathf.Max(0.01f, start - final))
+                    : Mathf.Lerp(0.45f, 1.0f, (final - left) / Mathf.Max(0.01f, final));
+            }
+
+            music.SetPressure(pressure);
         }
 
         /// <summary>

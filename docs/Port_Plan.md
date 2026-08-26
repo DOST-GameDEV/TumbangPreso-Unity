@@ -123,7 +123,7 @@ PUNCH  range 1.7 · arc 75° · cd 0.9
 THROW  charge 2.5 · min power 0.35 · lock 1.25 · pickup 1.4 · launch 18.5 · hit radius 0.23
 LATA   interaction 1.6 · reset channel 1.5 · tilt 88° · topple 0.22 · HIT_MARGIN 0.30
 SCORE  knockdown 100 · tag 100 · sabotage 50 · defense 10/s · tag stun 5.0
-MATCH  4 rounds · 4 players · 90 s · intermission 3.0 · throw restore cd 1.25
+MATCH  Classic 4 rounds · Hero Strike 8 rounds · 4 players · 90 s · intermission 3.0 · throw restore cd 1.25
 TRAITS speed ±5% · power ±7% · grit ±7%, on 1..5 with 3 neutral
 ```
 
@@ -372,7 +372,7 @@ into something a CI run answers:
 | lunge reach | 3.20 m, **identical** against a stationary and a 3.45 m/s crossing target |
 | trajectory preview vs flight | 0.000 m miss on TSINELAS / PANTULOG / IKE, 0.263 m on CROCS |
 | hit window per can | BOYBEN 0.493 m, PASIP 0.579 m |
-| defender rotation | every slot defends exactly once across 4 rounds |
+| defender rotation | every slot defends once in Classic and twice in Hero Strike |
 | passive defence share | ≤ 50% of all points under a `turtle` taya |
 | roster distinctness | all 12 person rows differ |
 

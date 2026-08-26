@@ -126,8 +126,8 @@ namespace TumbangPreso.UI
                 new[]
             {
                 new Row("1v1v1v1", "Four players, four separate scores. No teams, no allies — empty seats are bots."),
-                new Row("90s × 4 ROUNDS", "The taya moves one seat clockwise each round, so everybody is taya exactly once."),
-                new Row("POINTS, NOT WINS", "You carry your own score across all four rounds. Highest total takes the match."),
+                new Row("90s ROUNDS", "Classic plays 4 rounds; Hero Strike plays 8. The taya moves one seat clockwise each round."),
+                new Row("POINTS, NOT WINS", "You carry your score across the whole match. Highest total takes it."),
                 new Row("TAYA", "Guard the lata and never leave the box. Block throws, stand it back up, tag attackers."),
                 new Row("ATTACKERS", "Throw from outside the box, then walk in and get your slipper back."),
             }),

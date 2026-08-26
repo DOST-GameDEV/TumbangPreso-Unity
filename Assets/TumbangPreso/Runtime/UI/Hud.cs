@@ -76,7 +76,7 @@ namespace TumbangPreso.UI
         /// measures "TAYA" at font 15 and falls back to 54 when it has no font, which is what
         /// this is.
         /// </summary>
-        public const float TayaBadgeWidth = 54.0f;
+        public const float TayaBadgeWidth = 132.0f;
 
         /// <summary>
         /// The .tscn's authored floor for the name cell, from when every row read "P1".."P4".
@@ -97,6 +97,7 @@ namespace TumbangPreso.UI
         private Image _timerCard;
         private RectTransform _timerCardRt;
         private Text _round;
+        private Text _timerPressure;
 
         private Image _scoreboard;
         private Text _scoreTitle;
@@ -104,6 +105,8 @@ namespace TumbangPreso.UI
         private readonly Text[] _scoreMarks = new Text[Balance.PlayerCount];
         private readonly Text[] _scoreValues = new Text[Balance.PlayerCount];
         private readonly RectTransform[] _scoreRows = new RectTransform[Balance.PlayerCount];
+        private readonly Image[] _scoreRowPlates = new Image[Balance.PlayerCount];
+        private readonly Image[] _scoreRoleRails = new Image[Balance.PlayerCount];
         private readonly float[] _scorePulses = new float[Balance.PlayerCount];
         private readonly int[] _lastScoreBySlot = new int[Balance.PlayerCount];
         private bool _scoresInitialised;
@@ -112,6 +115,7 @@ namespace TumbangPreso.UI
         private Image _lataCard;
         private Text _lataLabel;
         private Text _lataHint;
+        private Text _lataAlert;
 
         private Text _toast;
         private float _toastLeft;
@@ -826,8 +830,9 @@ namespace TumbangPreso.UI
             UpdateIndicators();
             UpdateGetUpPrompt();
 
+            var carrier = _local.GetComponent<Carrier>();
             bool live = GameServices.Round.CanThrow(_local);
-            _crosshair.enabled = live;
+            _crosshair.enabled = live || (carrier != null && carrier.IsCharging);
 
             // R-28 — the two in-world markers that answer "what am I doing" take the LOCAL
             // player's role colour: the crosshair they aim with, and the edge arrow pointing at
@@ -836,23 +841,37 @@ namespace TumbangPreso.UI
             _crosshair.color = role;
             _indicators?.SetCanArrowColour(role);
 
-            var carrier = _local.GetComponent<Carrier>();
             if (carrier != null && carrier.IsCharging)
             {
                 _crosshair.fontSize = 22;
-                float spin = carrier.CurrentPektusSpin;
-                float magnitude = Mathf.Abs(spin);
-                if (magnitude > 0.08f)
+                var lata = GameServices.Round.Lata;
+
+                if (lata != null && !lata.IsUpright)
                 {
-                    string arrow = magnitude >= 0.85f ? "◀◀◀" : magnitude >= 0.45f ? "◀◀" : "◀";
-                    if (spin > 0.0f) arrow = arrow.Replace('◀', '▶');
-                    string bank = magnitude >= Balance.PektusBankSpinThreshold ? "\nBANK READY" : "";
-                    _crosshair.text = $"{arrow}  PEKTUS {Mathf.RoundToInt(magnitude * 100.0f)}%{bank}";
-                    _crosshair.color = UiTheme.Highlight;
+                    _crosshair.text = "LATA DOWN\nHOLDING CHARGE";
+                    _crosshair.color = UiTheme.Offense;
+                }
+                else if (lata != null && lata.IsProtected)
+                {
+                    _crosshair.text = $"LATA PROTECTED\n{lata.ProtectionLeft:0.0}s";
+                    _crosshair.color = UiTheme.Defense;
                 }
                 else
                 {
-                    _crosshair.text = "+\nPEKTUS 0%";
+                    float spin = carrier.CurrentPektusSpin;
+                    float magnitude = Mathf.Abs(spin);
+                    if (magnitude > 0.08f)
+                    {
+                        string arrow = magnitude >= 0.85f ? "◀◀◀" : magnitude >= 0.45f ? "◀◀" : "◀";
+                        if (spin > 0.0f) arrow = arrow.Replace('◀', '▶');
+                        string bank = magnitude >= Balance.PektusBankSpinThreshold ? "\nBANK READY" : "";
+                        _crosshair.text = $"{arrow}  PEKTUS {Mathf.RoundToInt(magnitude * 100.0f)}%{bank}";
+                        _crosshair.color = UiTheme.Highlight;
+                    }
+                    else
+                    {
+                        _crosshair.text = "+\nPEKTUS 0%";
+                    }
                 }
             }
             else
@@ -902,8 +921,10 @@ namespace TumbangPreso.UI
             // ⚠️ THE CLOCK GOES AMBER UNDER PRESSURE AND PULSES UNDER TEN. Red means destructive
             // or out of bounds everywhere else in this palette, and a timer running out is
             // neither: it is the round ending normally, for everybody, on schedule.
-            bool urgent = left < 15.0f;
-            int want = urgent ? 1 : 0;
+            int want = left <= 10.0f ? 3
+                     : left <= 15.0f ? 2
+                     : left <= 30.0f ? 1
+                     : 0;
 
             if (want != _urgent)
             {
@@ -912,13 +933,29 @@ namespace TumbangPreso.UI
                 // ⚠️ BACK TO AMBER, NOT TO THE VARIATION'S OWN COLOUR. Falling through would
                 // give the near-white the wood restyle replaced, so the timer would go white
                 // the moment it climbed back over 15 s.
-                _timer.color = urgent ? UiTheme.Highlight : UiTheme.Amber;
+                _timer.color = want >= 2 ? UiTheme.Highlight : UiTheme.Amber;
+                _timer.fontSize = want >= 3 ? 52 : 44;
+
+                if (_timerCard != null)
+                {
+                    Color rim = want >= 2 ? UiTheme.Highlight
+                              : want == 1 ? UiTheme.Amber
+                              : UiTheme.WoodEdge;
+                    _timerCard.sprite = GodotTheme.Box(UiTheme.WoodDark, rim,
+                                                       GodotTheme.WoodBorderWidth,
+                                                       GodotTheme.WoodCornerRadius);
+                }
             }
 
-            // A scale pulse rather than a colour flash, to avoid colliding with the danger
-            // vignette that may be running at the same time.
+            // Pressure grows in three readable bands. The clock gets physically harder to
+            // ignore without flashing role colours across the playfield.
             float scale = 1.0f;
-            if (left < 10.0f) scale = 1.0f + Mathf.Abs(Mathf.Sin(Time.unscaledTime * Mathf.PI)) * 0.05f;
+            if (want == 1)
+                scale += (Mathf.Sin(Time.unscaledTime * 3.0f) * 0.5f + 0.5f) * 0.025f;
+            else if (want == 2)
+                scale += (Mathf.Sin(Time.unscaledTime * 5.0f) * 0.5f + 0.5f) * 0.065f;
+            else if (want == 3)
+                scale += (Mathf.Sin(Time.unscaledTime * 8.0f) * 0.5f + 0.5f) * 0.12f;
 
             if (_timerCardRt != null) _timerCardRt.localScale = Vector3.one * scale;
 
@@ -931,10 +968,36 @@ namespace TumbangPreso.UI
             {
                 _round.text = "WARMUP / PRACTICE BUFFER   ·   SCORES PAUSED";
                 _timer.color = UiTheme.Highlight;
+                _urgent = -1;
+                if (_timerPressure != null) _timerPressure.enabled = false;
             }
             else
             {
-                _round.text = $"ROUND {round} / {Balance.Rounds}   ·   TAYA: {SeatName(GameServices.Match.DefenderSlot)}";
+                _round.text = $"ROUND {round} / {GameServices.Match.TotalRounds}   ·   DEFENDER: {SeatName(GameServices.Match.DefenderSlot)}";
+
+                if (_timerPressure != null)
+                {
+                    bool livePressure = GameServices.Round.RoundActive && want > 0;
+                    _timerPressure.enabled = livePressure;
+
+                    if (livePressure)
+                    {
+                        string action = _local == null
+                            ? "EVERY SECOND COUNTS"
+                            : _local.IsDefender ? "DEFEND THE LATA" : "ATTACK NOW";
+
+                        _timerPressure.text = want == 1
+                            ? "PRESSURE BUILDING"
+                            : want == 2
+                                ? $"FINAL PUSH  ·  {action}"
+                                : $"LAST 10  ·  {action}";
+                        _timerPressure.color = want >= 3 ? UiTheme.Cream : UiTheme.Highlight;
+                        _timerPressure.rectTransform.localScale = Vector3.one
+                            * (1.0f + (want >= 2
+                                ? (Mathf.Sin(Time.unscaledTime * 6.0f) * 0.5f + 0.5f) * 0.055f
+                                : 0.0f));
+                    }
+                }
             }
         }
 
@@ -996,7 +1059,9 @@ namespace TumbangPreso.UI
                 _lastScoreBySlot[slot] = scoreNow;
 
                 _scoreNames[i].text = SeatName(slot);
-                _scoreMarks[i].text = isTaya ? TayaBadge : "";
+                bool isMine = slot == mine;
+                _scoreMarks[i].text = (isTaya ? "DEFENDER" : "ATTACKER")
+                    + (isMine ? "  ·  YOU" : "");
                 _scoreValues[i].text = scoreNow.ToString();
 
                 // ⚠️ NO LEADING BULLET — THE COLOUR IS THE MARK. 🧑 2026-08-02: *"the arrow
@@ -1005,10 +1070,17 @@ namespace TumbangPreso.UI
                 // at a different x and the column read as ragged. Highlighting the row says the
                 // same thing and costs no width.
                 Color colour = isTaya ? UiTheme.Defense : UiTheme.Offense;
-                if (slot == mine) colour = UiTheme.Highlight;
 
                 _scoreNames[i].color = colour;
+                _scoreMarks[i].color = colour;
                 _scoreValues[i].color = colour;
+
+                if (_scoreRoleRails[i] != null) _scoreRoleRails[i].color = colour;
+                if (_scoreRowPlates[i] != null)
+                {
+                    float alpha = isMine ? 0.22f : 0.10f;
+                    _scoreRowPlates[i].color = new Color(colour.r, colour.g, colour.b, alpha);
+                }
             }
 
             _scoresInitialised = true;
@@ -1042,6 +1114,7 @@ namespace TumbangPreso.UI
             if (lata == null || !GameServices.Round.RoundActive)
             {
                 _lataCard.gameObject.SetActive(false);
+                if (_lataAlert != null) _lataAlert.enabled = false;
                 return;
             }
 
@@ -1050,15 +1123,40 @@ namespace TumbangPreso.UI
             if (_lataUprightShown != (lata.IsUpright ? 1 : 0))
             {
                 _lataUprightShown = lata.IsUpright ? 1 : 0;
-                _lataLabel.text = lata.IsUpright ? "LATA  ·  UPRIGHT" : "LATA  ·  DOWN";
+                _lataLabel.text = lata.IsUpright ? "LATA  ·  UPRIGHT" : "⚠  LATA DOWN  ⚠";
                 _lataLabel.color = lata.IsUpright ? UiTheme.Defense : UiTheme.Offense;
+            }
+
+            bool down = !lata.IsUpright;
+            float canPulse = down
+                ? 1.0f + (Mathf.Sin(Time.unscaledTime * 7.0f) * 0.5f + 0.5f) * 0.10f
+                : 1.0f;
+            _lataCard.rectTransform.localScale = Vector3.one * canPulse;
+
+            if (_lataAlert != null)
+            {
+                _lataAlert.enabled = down;
+                if (down)
+                {
+                    _lataAlert.text = _local == null
+                        ? "LATA DOWN"
+                        : _local.IsDefender
+                            ? "LATA DOWN  ·  RESET IT NOW"
+                            : "LATA DOWN  ·  RETRIEVE NOW";
+                    _lataAlert.rectTransform.localScale = Vector3.one
+                        * (1.0f + (Mathf.Sin(Time.unscaledTime * 8.0f) * 0.5f + 0.5f) * 0.09f);
+                }
             }
 
             // The second line is what THIS player can do about it, which differs by role and is
             // the whole reason the card is not just a coloured light.
             string line = "";
 
-            if (_local == null)
+            if (lata.IsProtected)
+            {
+                line = $"PROTECTED  {lata.ProtectionLeft:0.0}s";
+            }
+            else if (_local == null)
             {
                 line = lata.IsUpright ? "TAYA MAY TAG" : "ATTACKERS MAY RETRIEVE";
             }
@@ -1639,7 +1737,7 @@ namespace TumbangPreso.UI
         {
             // Amber, per `hud.gd::_build_scoreboard`. See WoodCard.
             var card = WoodCard("Scoreboard", new Vector2(0.0f, 1.0f), new Vector2(16, -28),
-                                440.0f, out _scoreboard, sink: false, border: UiTheme.Amber);
+                                520.0f, out _scoreboard, sink: false, border: UiTheme.Amber);
 
             // ⚠️ 4, THE .tscn's `separation` ON `Scoreboard/Column`. `WoodCard`'s own 2 is the
             // right default for a two-line card like the lata readout, but this column is a
@@ -1658,6 +1756,10 @@ namespace TumbangPreso.UI
                 var rowGo = new GameObject($"ScoreRow{i}");
                 rowGo.transform.SetParent(card.transform, false);
 
+                var rowPlate = rowGo.AddComponent<Image>();
+                rowPlate.raycastTarget = false;
+                _scoreRowPlates[i] = rowPlate;
+
                 var row = rowGo.AddComponent<HorizontalLayoutGroup>();
                 row.childControlHeight = true;
                 row.childControlWidth = true;
@@ -1672,6 +1774,13 @@ namespace TumbangPreso.UI
 
                 rowGo.AddComponent<LayoutElement>().preferredHeight = 30.0f;
                 _scoreRows[i] = rowGo.GetComponent<RectTransform>();
+
+                var railGo = new GameObject("RoleRail");
+                railGo.transform.SetParent(rowGo.transform, false);
+                var rail = railGo.AddComponent<Image>();
+                rail.raycastTarget = false;
+                railGo.AddComponent<LayoutElement>().preferredWidth = 8.0f;
+                _scoreRoleRails[i] = rail;
 
                 var name = HudLabel(rowGo.transform, "Name", 20, UiTheme.Cream,
                                     TextAnchor.MiddleLeft, ScoreOutline);
@@ -1804,6 +1913,11 @@ namespace TumbangPreso.UI
             _round = HudLabel(column.transform, "RoundLabel", 20, UiTheme.Cream,
                               TextAnchor.MiddleCenter, 0);
             _round.gameObject.AddComponent<LayoutElement>().minHeight = 34.0f;
+
+            _timerPressure = HudLabel(column.transform, "TimerPressure", 20, UiTheme.Highlight,
+                                      TextAnchor.MiddleCenter, 4);
+            _timerPressure.gameObject.AddComponent<LayoutElement>().minHeight = 32.0f;
+            _timerPressure.enabled = false;
         }
 
         /// <summary>Bottom-right, at the .tscn's -396,-172 to -16,-64.</summary>
@@ -1825,25 +1939,6 @@ namespace TumbangPreso.UI
             _lataHint = HudLabel(card.transform, "LataHintLabel", 34, UiTheme.Cream,
                                  TextAnchor.MiddleLeft);
             _lataHint.enabled = false;
-
-            // ⚠️⚠️ THE CARD IS SIZED TO ITS OWN WIDEST LINE, AND THE 380 WAS NOT WIDE ENOUGH.
-            // 🧑 sent a screenshot of the bottom right corner: the card reads
-            // "FETCH SLIPPER  ·  -5 / SEC" with the rest of the word missing. The string is
-            // "-5 / SECOND"; `HudLabel` sets `horizontalOverflow = Overflow`, so the line does
-            // not wrap or shrink, it simply runs out of the card and off the screen edge, and
-            // the card is anchored to the RIGHT corner so the overflow has nowhere to go.
-            //
-            // ⚠️ MEASURED, NOT TYPED, and for the reason `WorstCaseNameWidth` gives a few
-            // methods down: `preferredWidth` read through THIS label is what this exact
-            // component lays out to, so it cannot be a few pixels short the way a guessed
-            // number can. Typing 460 here would be right until somebody changes the 34.
-            //
-            // ⚠️ AND THE FONT SIZE IS NOT THE LEVER. `ui_theme.gd`'s note above is explicit:
-            // these sizes went 16/13, 22/19, 30/28 and were answered with *"text still small"*
-            // every time. Shrinking the text to fit the box would walk straight back into that.
-            // The box grows instead.
-            _lataCard.rectTransform.sizeDelta =
-                new Vector2(WidestLineWidth(_lataHint, LataHintLines), 0.0f);
 
             _lataCard.gameObject.SetActive(false);
         }
@@ -1869,6 +1964,7 @@ namespace TumbangPreso.UI
             "FETCH SLIPPER  ·  -5 / SECOND",
             "RETRIEVE A SLIPPER",
             "GET OUT OF THE BOX TO THROW",
+            "PROTECTED  9.9s",
         };
 
         /// <summary>
@@ -2081,6 +2177,12 @@ namespace TumbangPreso.UI
             Place(_toast.rectTransform, new Vector2(0.5f, 1.0f), new Vector2(0, -160),
                   new Vector2(600, 44));
             _toast.enabled = false;
+
+            _lataAlert = HudLabel(_root, "LataDownAlert", 42, UiTheme.Danger,
+                                  TextAnchor.MiddleCenter, 10);
+            Place(_lataAlert.rectTransform, new Vector2(0.5f, 1.0f), new Vector2(0, -228),
+                  new Vector2(980, 70));
+            _lataAlert.enabled = false;
 
             // The countdown owns the middle of the screen for its three seconds, because
             // nothing is in play behind it yet.

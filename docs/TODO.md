@@ -431,6 +431,26 @@ that is fewer than four Unity launches.
 
 ## Closed
 
+- **Gameplay readability, spectator highlights, match length and guided training.** ✅ 2026-08-26.
+  Throw commitments now survive a teammate knocking the lata down; a restored lata has a real
+  1.25 s impact shield; a persistent world beacon, central alert and pulsing card make a down
+  lata unmistakable. Hero Strike plays eight rounds while Classic remains four. Scoreboard
+  rows spell out ATTACKER and DEFENDER with role rails instead of replacing role colour with a
+  yellow local-player tint. The final 30 seconds build through three visual pressure bands and
+  a continuous gain curve on the same music bed, with no track cut.
+
+  Spectator replay now captures local graded pixels, detects lata knockdowns, tags, sabotage
+  and large score plays, then shows a picture-in-picture replay while live play and the local
+  spectator camera continue. It sends no RPC and rewinds no live transform.
+
+  The existing How to Play pages now include `START TRAINING`, which launches a local 17-lesson
+  route covering look, movement, sprint, jump, normal throw, retrieval, Pektus, shove, ability
+  information, both skills, ultimate, defender reset, punch, lunge, trip recovery and emotes.
+  Verified by 61 Core tests plus clean full-runtime and test-assembly compilation. Native Unity
+  was attempted but the machine's package manager returned `path ... Received undefined` even
+  on an empty Unity project; `-noUpm` also omitted package assemblies, so native XML and the
+  Windows player build still need to be produced after that machine-level failure clears.
+
 - **The shipped build hard crashed the moment a player selected Ilalim ng Tulay.** ✅ 2026-08-25.
   Reported from the actual .exe, not from a test.
 

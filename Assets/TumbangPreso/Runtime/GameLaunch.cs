@@ -97,6 +97,13 @@ namespace TumbangPreso
         /// </summary>
         public static bool Spectator;
 
+        /// <summary>
+        /// The next arena is a private guided training session launched from the existing How
+        /// to Play panel. It is local-only, uses Hero Strike so every control is available, and
+        /// is cleared on every ordinary launch reset.
+        /// </summary>
+        public static bool GuidedTutorial;
+
         public static void ClearSeating() => SeatTokens.Clear();
 
         public static void Reset()
@@ -105,6 +112,7 @@ namespace TumbangPreso
             PendingJoinAddress = "";
             PendingStatusMessage = "";
             Spectator = false;
+            GuidedTutorial = false;
             ClearSeating();
         }
     }

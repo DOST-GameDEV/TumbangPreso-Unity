@@ -104,7 +104,8 @@ namespace TumbangPreso.UI
             string mode = SceneFlow.SelectedMode == Core.GameMode.HeroStrike
                 ? "HERO STRIKE"
                 : "CLASSIC";
-            _broadcastLine.text = $"{mode}  ·  FINAL STANDINGS  ·  {Core.Balance.Rounds} ROUNDS";
+            int rounds = Core.MatchRules.RoundCountFor(SceneFlow.SelectedMode);
+            _broadcastLine.text = $"{mode}  ·  FINAL STANDINGS  ·  {rounds} ROUNDS";
             _broadcastLine.color = SceneFlow.SelectedMode == Core.GameMode.HeroStrike
                 ? UiTheme.Highlight
                 : UiTheme.Amber;

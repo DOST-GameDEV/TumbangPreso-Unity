@@ -257,15 +257,16 @@ Big. Street-corner big. This is the first thing anyone hears.
 
 ⚠️ **This section said to hold these back because 📋 `build rules` was about to turn single
 rounds into paired sets. The opposite happened.** Paired sets were deleted on 2026-07-31 with the
-whole 2v2 design, `build rules` is closed, and the format has been settled since: **four rounds of
-90 seconds, one taya who rotates clockwise, cumulative personal scores.** So most of the old
+whole 2v2 design, `build rules` is closed, and Classic remains **four rounds of 90 seconds,
+one taya who rotates clockwise, cumulative personal scores.** Hero Strike now plays two full
+rotations, eight rounds. So most of the old
 blocklist is now safe, and two entries on it describe things that no longer exist at all.
 
 **Safe to record now:**
 
-- **Round numbers** — *"Round one"* through *"Round four"*, and no further. There are exactly
-  four, always, and which one you are in is a pure function of the round number.
-- **"Match winner"** — highest cumulative score after round four takes it.
+- **Round numbers:** *"Round one"* through *"Round eight"*. Classic uses the first four;
+  Hero Strike uses all eight, and the taya is always a pure function of the round number.
+- **"Match winner":** highest cumulative score after the selected mode's final round takes it.
 
 **Do NOT record these, because the game has no such concept:**
 

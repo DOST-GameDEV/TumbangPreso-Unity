@@ -973,8 +973,10 @@ added since. A reader who assumes otherwise will go looking for numbers that wer
 ⚠️⚠️ **THE GAME NOW HAS TWO MODES AND ONLY ONE OF THEM IS DESCRIBED ABOVE.**
 `GameMode.Classic` is this document. `GameMode.HeroStrike`
 (`Packages/com.tumbangpreso.core/Runtime/MatchRules.cs`) is a different roster with an ability
-layer on top of the same match structure: same four players, four rounds, 90 s, rotating taya
-and the scoring in § 8. Everything in §§ 1 to 12 that is not an ability still applies to it.
+layer on top of the same round rules: same four players, 90 s, rotating taya and the scoring in
+§ 8. Hero Strike plays **8 rounds**, two complete role rotations, where Classic plays the four
+rounds described above. Everything in §§ 1 to 12 that is not the match length or an ability
+still applies to it.
 
 | System | Where the numbers actually live |
 |---|---|

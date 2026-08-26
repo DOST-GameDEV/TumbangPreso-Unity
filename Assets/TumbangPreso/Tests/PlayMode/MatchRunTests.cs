@@ -25,6 +25,66 @@ namespace TumbangPreso.PlayTests
     {
         private GameObject _root;
 
+        [UnityTest]
+        public IEnumerator RestoredLataRejectsAnAlreadyAirborneFollowUpDuringProtection()
+        {
+            _root = new GameObject("RestoreProtectionWorld");
+            var lata = _root.AddComponent<Lata>();
+            yield return null;
+
+            lata.HostKnockDown(-1);
+            Assert.IsFalse(lata.IsUpright, "the setup knockdown did not take");
+
+            lata.HostRestore();
+            Assert.IsTrue(lata.IsUpright);
+            Assert.IsTrue(lata.IsProtected,
+                "restoring the lata did not open its visible protection window");
+
+            lata.HostKnockDown(-1);
+            Assert.IsTrue(lata.IsUpright,
+                "an impact already in flight knocked the lata down through restore protection");
+
+            yield return new WaitForSeconds(Balance.ThrowRestoreCooldown + 0.1f);
+            Assert.IsFalse(lata.IsProtected, "restore protection never expired");
+
+            lata.HostKnockDown(-1);
+            Assert.IsFalse(lata.IsUpright,
+                "the lata stayed invulnerable after the authored protection window");
+        }
+
+        [UnityTest]
+        public IEnumerator ACanKnockdownDoesNotCancelAnExistingThrowCommitment()
+        {
+            _root = new GameObject("ChargeContinuityWorld");
+
+            var roundGo = new GameObject("Round");
+            roundGo.transform.SetParent(_root.transform, false);
+            var round = roundGo.AddComponent<RoundDirector>();
+
+            var lataGo = new GameObject("Lata");
+            lataGo.transform.SetParent(_root.transform, false);
+            var lata = lataGo.AddComponent<Lata>();
+            round.Lata = lata;
+
+            var attackerGo = new GameObject("Attacker");
+            attackerGo.transform.SetParent(_root.transform, false);
+            attackerGo.transform.position = new Vector3(Balance.ConfinementRadius + 1.0f, 0.0f, 0.0f);
+            attackerGo.AddComponent<CharacterController>();
+            var attacker = attackerGo.AddComponent<CharacterMotor>();
+            attacker.IsDefender = false;
+            attacker.HoldingSlipper = true;
+            round.Register(attacker);
+            round.BeginRound();
+            yield return null;
+
+            Assert.IsTrue(round.CanThrow(attacker), "the attacker did not begin in a legal throw state");
+            lata.HostKnockDown(-1);
+
+            Assert.IsFalse(round.CanThrow(attacker), "a down lata still accepted a release");
+            Assert.IsTrue(round.CanMaintainThrowCharge(attacker),
+                "the teammate's knockdown cancelled an existing throw animation and charge");
+        }
+
         /// <summary>
         /// ⚠️⚠️ THE CLOCK IS RECLAIMED BEFORE EVERY TEST, NOT ONLY AFTER ONE. Nothing in this
         /// class is the only thing in the run: the scene-heavy suites load a whole arena and
@@ -221,7 +281,7 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>
-        /// ⚠️ THE WHOLE MATCH MUST ADVANCE THROUGH ALL FOUR ROUNDS AND ROTATE THE TAYA. Run at
+        /// ⚠️ THE WHOLE MATCH MUST ADVANCE THROUGH EVERY ROUND IN THE SELECTED MODE AND ROTATE THE TAYA. Run at
         /// a high time scale so a six minute match fits in a test. This is the closest thing to
         /// "the game works" that can be asserted without a human.
         /// </summary>
