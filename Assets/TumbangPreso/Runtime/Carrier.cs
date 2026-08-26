@@ -610,6 +610,10 @@ namespace TumbangPreso
             {
                 vel *= 1.3f;
             }
+            else if (ability != null && ability.Kit is PhaisterHeroKit phaister && (phaister.IsWitchfireInfused || phaister.IsEclipseActive))
+            {
+                vel *= 1.35f;
+            }
             return vel;
         }
 
@@ -643,6 +647,11 @@ namespace TumbangPreso
                 vel *= 1.3f;
                 affinity = SlipperAffinity.FireExplosive;
                 sean.IsIgnitionCannonActive = false;
+            }
+            else if (ability != null && ability.Kit is PhaisterHeroKit phaister && (phaister.IsWitchfireInfused || phaister.IsEclipseActive))
+            {
+                vel *= 1.35f;
+                phaister.IsWitchfireInfused = false;
             }
 
             Held.HostThrow(_motor, origin, vel, affinity, spin);

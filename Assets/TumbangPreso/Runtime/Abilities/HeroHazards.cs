@@ -1206,6 +1206,232 @@ namespace TumbangPreso.Abilities
         }
 
         // -------------------------------------------------------------------
+        // KULAM HEX SIGIL & WITCH REGALIA (Phaister Abilities)
+        // -------------------------------------------------------------------
+        public static GameObject SpawnKulamHexSigil(Vector3 position, float radius = 2.4f, float duration = 6.0f, int ownerSlot = -1)
+        {
+            var go = new GameObject("KulamHexSigilZone");
+            go.transform.position = position;
+
+            // 1. Outer Concentric Witch Magic Circle Rings
+            var outerRing = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            outerRing.name = "HexOuterRing";
+            outerRing.transform.SetParent(go.transform, false);
+            outerRing.transform.localScale = new Vector3(radius * 2.0f, 0.02f, radius * 2.0f);
+            outerRing.transform.localPosition = new Vector3(0, 0.012f, 0);
+            VfxMaterial.Ghost(outerRing.GetComponent<Renderer>(),
+                              new Color(0.95f, 0.16f, 0.58f, 0.60f), 0.35f);
+            VfxMaterial.StripCollider(outerRing);
+
+            var outerRimGlow = outerRing.AddComponent<HazardRimLife>();
+            outerRimGlow.Duration = duration;
+            outerRimGlow.BaseAlpha = 0.60f;
+
+            // 2. Concentric Inner Occult Rune Ring
+            var innerRing = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            innerRing.name = "HexInnerRing";
+            innerRing.transform.SetParent(go.transform, false);
+            innerRing.transform.localScale = new Vector3(radius * 1.25f, 0.025f, radius * 1.25f);
+            innerRing.transform.localPosition = new Vector3(0, 0.015f, 0);
+            VfxMaterial.Ghost(innerRing.GetComponent<Renderer>(),
+                              new Color(0.60f, 0.10f, 0.85f, 0.70f), 0.40f);
+            VfxMaterial.StripCollider(innerRing);
+
+            // 3. Three Intersecting Hex Spoke Crossbars across floor (6-point Star Geometry)
+            for (int k = 0; k < 3; k++)
+            {
+                var spoke = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                spoke.name = $"HexSpoke_{k}";
+                spoke.transform.SetParent(go.transform, false);
+                spoke.transform.localScale = new Vector3(0.06f, 0.03f, radius * 1.95f);
+                spoke.transform.localPosition = new Vector3(0, 0.018f, 0);
+                spoke.transform.localRotation = Quaternion.Euler(0, k * 60.0f, 0);
+                VfxMaterial.Ghost(spoke.GetComponent<Renderer>(),
+                                  new Color(1.0f, 0.85f, 0.30f, 0.75f), 0.45f);
+                VfxMaterial.StripCollider(spoke);
+            }
+
+            // 4. Six Floating Occult Node Prisms around perimeter
+            for (int n = 0; n < 6; n++)
+            {
+                var node = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                node.name = $"HexNode_{n}";
+                node.transform.SetParent(go.transform, false);
+
+                float ang = n * 60.0f * Mathf.Deg2Rad;
+                float dist = radius * 0.90f;
+                node.transform.localPosition = new Vector3(Mathf.Sin(ang) * dist, 0.28f, Mathf.Cos(ang) * dist);
+                node.transform.localRotation = Quaternion.Euler(45.0f, n * 60.0f, 45.0f);
+                node.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f);
+                VfxMaterial.Ghost(node.GetComponent<Renderer>(),
+                                  new Color(0.98f, 0.25f, 0.65f, 0.85f), 0.60f);
+                VfxMaterial.StripCollider(node);
+            }
+
+            // 5. Floating Center Crescent Moon Occult Sigil
+            var moon = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            moon.name = "HexCenterMoon";
+            moon.transform.SetParent(go.transform, false);
+            moon.transform.localScale = new Vector3(0.55f, 0.05f, 0.55f);
+            moon.transform.localPosition = new Vector3(0, 0.42f, 0);
+            moon.transform.localRotation = Quaternion.Euler(30.0f, 0, 0);
+            VfxMaterial.Ghost(moon.GetComponent<Renderer>(),
+                              new Color(1.0f, 0.85f, 0.30f, 0.90f), 0.75f);
+            VfxMaterial.StripCollider(moon);
+
+            // 6. Violet / Magenta Occult Light
+            var lightGo = new GameObject("HexLight");
+            lightGo.transform.SetParent(go.transform, false);
+            lightGo.transform.localPosition = new Vector3(0, 1.4f, 0);
+            var light = lightGo.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = UiTheme.HeroWitchBright;
+            light.range = radius * 2.2f;
+            light.intensity = 0.95f;
+
+            // 7. Rising Witch Cast Particles (Occult motes & gold sparkles)
+            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchSigil, duration);
+
+            GameServices.Audio?.PlayAt("ability_shatter_trap", position);
+            GameServices.Audio?.PlayAt("sfx_ghost_teleport", position);
+            ComicPopup.Spawn(position, "KULAM!", UiTheme.HeroWitchBright, 1.25f);
+
+            var comp = go.AddComponent<KulamHexSigilComponent>();
+            comp.Radius = radius;
+            comp.Duration = duration;
+            comp.OwnerSlot = ownerSlot;
+
+            HazardVolume.Attach(go, radius, ownerSlot);
+            return go;
+        }
+
+        public static void SpawnShadowBlinkBurst(Vector3 departurePos, Vector3 arrivalPos)
+        {
+            // Departure Shockwave Ring & Purple Flame Burst
+            var depRing = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            depRing.name = "BlinkDepartureRing";
+            depRing.transform.position = departurePos;
+            depRing.transform.localScale = new Vector3(3.2f, 0.03f, 3.2f);
+            VfxMaterial.Ghost(depRing.GetComponent<Renderer>(),
+                              new Color(0.95f, 0.16f, 0.58f, 0.85f), 0.65f);
+            VfxMaterial.StripCollider(depRing);
+            Object.Destroy(depRing, 0.45f);
+
+            for (int i = 0; i < 8; i++)
+            {
+                var shard = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                shard.name = "BlinkShard";
+                shard.transform.position = departurePos + Vector3.up * 0.5f;
+                shard.transform.localScale = Vector3.one * Random.Range(0.12f, 0.24f);
+                VfxMaterial.Ghost(shard.GetComponent<Renderer>(),
+                                  new Color(0.70f, 0.15f, 0.95f, 0.90f), 0.5f);
+                var rb = shard.AddComponent<Rigidbody>();
+                rb.linearVelocity = Vector3.up * 2.5f + Random.insideUnitSphere * 3.5f;
+                Object.Destroy(shard, 0.60f);
+            }
+
+            // Arrival Glow Rune Stamp
+            var arrRing = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            arrRing.name = "BlinkArrivalRing";
+            arrRing.transform.position = arrivalPos;
+            arrRing.transform.localScale = new Vector3(2.4f, 0.03f, 2.4f);
+            VfxMaterial.Ghost(arrRing.GetComponent<Renderer>(),
+                              new Color(1.0f, 0.85f, 0.30f, 0.80f), 0.70f);
+            VfxMaterial.StripCollider(arrRing);
+            Object.Destroy(arrRing, 0.35f);
+        }
+
+        public static void SpawnGrandCovenEclipse(Vector3 position, float radius = 5.0f, float duration = 5.0f)
+        {
+            var go = new GameObject("GrandCovenEclipseEffect");
+            go.transform.position = position;
+
+            // Grand Eclipse Corona Ring
+            var corona = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            corona.name = "EclipseCorona";
+            corona.transform.SetParent(go.transform, false);
+            corona.transform.localScale = new Vector3(radius * 2.0f, 0.03f, radius * 2.0f);
+            corona.transform.localPosition = new Vector3(0, 0.02f, 0);
+            VfxMaterial.Ghost(corona.GetComponent<Renderer>(),
+                              new Color(0.95f, 0.16f, 0.58f, 0.75f), 0.60f);
+            VfxMaterial.StripCollider(corona);
+
+            // Dark Moon Center Core
+            var moonCore = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            moonCore.name = "EclipseMoonCore";
+            moonCore.transform.SetParent(go.transform, false);
+            moonCore.transform.localScale = new Vector3(radius * 1.1f, 0.04f, radius * 1.1f);
+            moonCore.transform.localPosition = new Vector3(0, 0.025f, 0);
+            VfxMaterial.Ghost(moonCore.GetComponent<Renderer>(),
+                              new Color(0.05f, 0.01f, 0.08f, 0.95f), 0.0f);
+            VfxMaterial.StripCollider(moonCore);
+
+            // 8 Solar Flare Beams radiating outward
+            for (int b = 0; b < 8; b++)
+            {
+                var beam = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                beam.name = $"EclipseRay_{b}";
+                beam.transform.SetParent(go.transform, false);
+                beam.transform.localScale = new Vector3(0.08f, 0.04f, radius * 1.8f);
+                beam.transform.localPosition = new Vector3(0, 0.03f, 0);
+                beam.transform.localRotation = Quaternion.Euler(0, b * 45.0f, 0);
+                VfxMaterial.Ghost(beam.GetComponent<Renderer>(),
+                                  new Color(1.0f, 0.85f, 0.30f, 0.80f), 0.70f);
+                VfxMaterial.StripCollider(beam);
+            }
+
+            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchSigil, duration);
+            Object.Destroy(go, duration);
+        }
+
+        public sealed class KulamHexSigilComponent : MonoBehaviour
+        {
+            public float Radius = 2.4f;
+            public float Duration = 6.0f;
+            public int OwnerSlot = -1;
+            private float _left;
+            private readonly Dictionary<int, float> _nextHexBySlot = new Dictionary<int, float>();
+
+            private void Start() => _left = Duration;
+
+            private void Update()
+            {
+                _left -= Time.deltaTime;
+                if (_left <= 0.0f)
+                {
+                    Object.Destroy(gameObject);
+                    return;
+                }
+
+                // Slow rotation on occult hex circle
+                transform.Rotate(Vector3.up, 18.0f * Time.deltaTime);
+
+                var round = GameServices.Round;
+                if (round == null) return;
+
+                foreach (var p in round.Players)
+                {
+                    if (p == null || p.PlayerSlot == OwnerSlot) continue;
+
+                    Vector3 diff = p.transform.position - transform.position;
+                    diff.y = 0.0f;
+                    if (diff.magnitude <= Radius)
+                    {
+                        // Apply hex curse: reduce speed and stagger on intervals
+                        p.ApplyImpulse(-p.Velocity.normalized * 3.5f * Time.deltaTime);
+
+                        if (CanPulse(_nextHexBySlot, p.PlayerSlot, 1.10f))
+                        {
+                            p.ApplyStagger(0.35f);
+                            ComicPopup.Spawn(p.transform.position + Vector3.up * 1.2f, "HEXED!", UiTheme.HeroWitchBright, 1.0f);
+                            GameServices.Audio?.PlayAt("ability_shatter_trap", p.transform.position);
+                        }
+                    }
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------
         // THUNDERSTRIKE OVERDRIVE (Zack Ultimate)
         // -------------------------------------------------------------------
         public static void CreateThunderstrike(Vector3 position, float radius = 7.0f, int sourceSlot = -1)

@@ -167,6 +167,9 @@ namespace TumbangPreso
                 if (kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
                     into.Add(new StatusRow { Label = "IGNITION", Timed = false });
 
+                if (kit is PhaisterHeroKit phaister && phaister.IsWitchfireInfused)
+                    into.Add(new StatusRow { Label = "WITCHFIRE", Timed = false });
+
                 // Ability Cooldowns (suffixed with " CD" to route to right-hand stack)
                 if (kit.Skill1 != null && kit.Skill1.CooldownRemaining > 0.0f)
                     into.Add(new StatusRow

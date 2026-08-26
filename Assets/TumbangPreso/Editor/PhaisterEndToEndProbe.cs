@@ -88,44 +88,50 @@ namespace TumbangPreso.EditorTools
             Settings.SettingsStore.Current.CharacterPick = heroIndex;
 
             var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            var cam = Camera.main;
+            if (cam == null) cam = Object.FindFirstObjectByType<Camera>();
+            if (cam == null)
+            {
+                var camGo = new GameObject("ProbeCam");
+                cam = camGo.AddComponent<Camera>();
+            }
+
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            cam.backgroundColor = new Color(0.12f, 0.10f, 0.18f, 1.0f);
+
             var charSelect = Object.FindFirstObjectByType<ConvertedCharacterSelect>();
             if (charSelect != null)
             {
-                // Force UI layout rebuild
-                Canvas.ForceUpdateCanvases();
                 foreach (var canvas in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 {
+                    canvas.renderMode = RenderMode.ScreenSpaceCamera;
+                    canvas.worldCamera = cam;
+                    canvas.planeDistance = 1.0f;
                     LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)canvas.transform);
                 }
                 Canvas.ForceUpdateCanvases();
             }
 
-            // Find main camera in scene
-            var cam = Camera.main;
-            if (cam == null) cam = Object.FindFirstObjectByType<Camera>();
-            if (cam != null)
-            {
-                int width = 1280;
-                int height = 720;
-                var rt = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
-                cam.targetTexture = rt;
-                cam.Render();
+            int width = 1280;
+            int height = 720;
+            var rt = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
+            cam.targetTexture = rt;
+            cam.Render();
 
-                RenderTexture.active = rt;
-                var tex = new Texture2D(width, height, TextureFormat.RGB24, false);
-                tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
-                tex.Apply();
+            RenderTexture.active = rt;
+            var tex = new Texture2D(width, height, TextureFormat.RGB24, false);
+            tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+            tex.Apply();
 
-                RenderTexture.active = null;
-                cam.targetTexture = null;
+            RenderTexture.active = null;
+            cam.targetTexture = null;
 
-                string shotPath = Path.Combine(OutDir, "character_select_phaister.png");
-                File.WriteAllBytes(shotPath, tex.EncodeToPNG());
-                Debug.Log($"[PhaisterEndToEndProbe] wrote {shotPath} ({width}x{height})");
+            string shotPath = Path.Combine(OutDir, "character_select_phaister.png");
+            File.WriteAllBytes(shotPath, tex.EncodeToPNG());
+            Debug.Log($"[PhaisterEndToEndProbe] wrote {shotPath} ({width}x{height})");
 
-                Object.DestroyImmediate(tex);
-                Object.DestroyImmediate(rt);
-            }
+            Object.DestroyImmediate(tex);
+            Object.DestroyImmediate(rt);
         }
     }
 }

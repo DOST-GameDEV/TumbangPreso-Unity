@@ -80,7 +80,7 @@ PALETTE = {
     HAIR_MAGENTA:   "d8186e",   # Vibrant rich hot pink/magenta hair body
     HAIR_HIGHLIGHT: "e82882",   # Magenta hair highlights and stepped locks
     INK:            "14101c",   # Solid dark ink for eyes
-    TEAL_KNOT:      "20b2aa",   # Teal/cyan collar knot above medallion
+    TEAL_KNOT:      "f4c098",   # Remapped to uniform skin tone (no green/teal!)
     CRIMSON:        "8c1424",   # Crimson cape, high collar, sleeve stripe, ankle stripe
     GOLD_SHADOW:    "b87814",   # Deep gold buckle shadow
     WHITE:          "ffffff",   # Crisp white shoe sole slabs, shirt cuffs
@@ -164,35 +164,31 @@ TORSO = [
     ("coat-side-l",            "torso", (0.100,  0.180, -0.088), (0.152, 0.343, 0.084), COAT_DARK),
     ("coat-side-r",            "torso", (-0.152, 0.180, -0.088), (-0.100, 0.343, 0.084), COAT_DARK),
 
-    # Deep V-Neck Peach Skin Chest Opening
+    # Deep V-Neck Peach Skin Chest Opening (Clean skin, no teal knot!)
     ("chest-skin-v",           "torso", (-0.048, 0.280, -0.092), (0.048, 0.343, -0.080), SKIN),
-    # High Teal Collar Brooch nestled in V-neck opening
-    ("collar-teal-brooch",     "torso", (-0.015, 0.315, -0.098), (0.015, 0.338, -0.082), TEAL_KNOT),
-    ("collar-teal-ribbon-l",   "torso", (0.004,  0.298, -0.097), (0.014, 0.316, -0.084), TEAL_KNOT),
-    ("collar-teal-ribbon-r",   "torso", (-0.014, 0.298, -0.097), (-0.004, 0.316, -0.084), TEAL_KNOT),
 
-    # 5. Front Coat Peplum & Diagonal Split with Royal Purple Trim
+    # 5. Front Coat Peplum & Diagonal Split with Royal Purple Trim (Hang BELOW Belt, Y <= 0.160)
     # Front Left Skirt Body (+X)
-    ("skirt-front-l",          "torso", (0.020,  0.105, -0.105), (0.175, 0.185, -0.078), COAT_DARK),
-    ("skirt-front-trim-bot-l", "torso", (0.020,  0.088, -0.108), (0.180, 0.106, -0.076), CLOTH_PURPLE),
-    ("skirt-front-trim-diag-l","torso", (0.015,  0.105, -0.108), (0.036, 0.185, -0.076), CLOTH_PURPLE),
+    ("skirt-front-l",          "torso", (0.020,  0.085, -0.096), (0.175, 0.160, -0.078), COAT_DARK),
+    ("skirt-front-trim-bot-l", "torso", (0.020,  0.070, -0.098), (0.180, 0.088, -0.076), CLOTH_PURPLE),
+    ("skirt-front-trim-diag-l","torso", (0.012,  0.085, -0.098), (0.032, 0.160, -0.076), CLOTH_PURPLE),
 
     # Front Right Skirt Body (-X)
-    ("skirt-front-r",          "torso", (-0.175, 0.105, -0.105), (-0.020, 0.185, -0.078), COAT_DARK),
-    ("skirt-front-trim-bot-r", "torso", (-0.180, 0.088, -0.108), (-0.020, 0.106, -0.076), CLOTH_PURPLE),
-    ("skirt-front-trim-diag-r","torso", (-0.036, 0.105, -0.108), (-0.015, 0.185, -0.076), CLOTH_PURPLE),
+    ("skirt-front-r",          "torso", (-0.175, 0.085, -0.096), (-0.020, 0.160, -0.078), COAT_DARK),
+    ("skirt-front-trim-bot-r", "torso", (-0.180, 0.070, -0.098), (-0.020, 0.088, -0.076), CLOTH_PURPLE),
+    ("skirt-front-trim-diag-r","torso", (-0.032, 0.085, -0.098), (-0.012, 0.160, -0.076), CLOTH_PURPLE),
 
     # Side Hip Flared Skirt Panels
-    ("skirt-side-l",           "torso", (0.138,  0.105, -0.090), (0.188, 0.185, 0.050),  COAT_DARK),
-    ("skirt-side-r",           "torso", (-0.188, 0.105, -0.090), (-0.138, 0.185, 0.050), COAT_DARK),
-    ("skirt-side-trim-l",      "torso", (0.138,  0.088, -0.092), (0.192, 0.106, 0.052),  CLOTH_PURPLE),
-    ("skirt-side-trim-r",      "torso", (-0.192, 0.088, -0.092), (-0.138, 0.106, 0.052), CLOTH_PURPLE),
+    ("skirt-side-l",           "torso", (0.138,  0.085, -0.088), (0.188, 0.160, 0.050),  COAT_DARK),
+    ("skirt-side-r",           "torso", (-0.188, 0.085, -0.088), (-0.138, 0.160, 0.050), COAT_DARK),
+    ("skirt-side-trim-l",      "torso", (0.138,  0.070, -0.090), (0.192, 0.088, 0.052),  CLOTH_PURPLE),
+    ("skirt-side-trim-r",      "torso", (-0.192, 0.070, -0.090), (-0.138, 0.088, 0.052), CLOTH_PURPLE),
 
     # Front-Side Diagonal Corners
-    ("skirt-corner-fl",        "torso", (0.118,  0.105, -0.105), (0.182, 0.185, -0.058), COAT_DARK),
-    ("skirt-corner-fr",        "torso", (-0.182, 0.105, -0.105), (-0.118, 0.185, -0.058), COAT_DARK),
-    ("skirt-corner-trim-fl",   "torso", (0.118,  0.088, -0.107), (0.186, 0.106, -0.058), CLOTH_PURPLE),
-    ("skirt-corner-trim-fr",   "torso", (-0.186, 0.088, -0.107), (-0.118, 0.106, -0.058), CLOTH_PURPLE),
+    ("skirt-corner-fl",        "torso", (0.118,  0.085, -0.098), (0.182, 0.160, -0.058), COAT_DARK),
+    ("skirt-corner-fr",        "torso", (-0.182, 0.085, -0.098), (-0.118, 0.160, -0.058), COAT_DARK),
+    ("skirt-corner-trim-fl",   "torso", (0.118,  0.070, -0.100), (0.186, 0.088, -0.058), CLOTH_PURPLE),
+    ("skirt-corner-trim-fr",   "torso", (-0.186, 0.070, -0.100), (-0.118, 0.088, -0.058), CLOTH_PURPLE),
 
     # 6. Outermost Black Cape / Swallowtail Back with Stepped Inverted-V Chevron (PERFECT - PRESERVED)
     ("coat-back-main-upper",   "torso", (-0.195, 0.220, 0.086),  (0.195, 0.340, 0.115),  COAT_DARK),
@@ -223,11 +219,11 @@ TORSO = [
     ("coat-back-trim-r-s4",    "torso", (-0.205, 0.054, 0.116),  (-0.155, 0.080, 0.140), CLOTH_PURPLE),
     ("coat-back-trim-r-tip",   "torso", (-0.235, 0.035, 0.118),  (-0.185, 0.056, 0.144), CLOTH_PURPLE),
 
-    # 7. Royal Purple Waist Belt & Large Square Gold Buckle (Lowered for Clear Vertical Separation)
-    ("waist-belt-purple",      "torso", (-0.152, 0.170, -0.095), (0.152, 0.208, 0.088), CLOTH_PURPLE),
-    ("waist-buckle-gold",      "torso", (-0.048, 0.162, -0.106), (0.048, 0.216, -0.086), GOLD),
-    ("waist-buckle-slot",      "torso", (-0.024, 0.172, -0.108), (0.024, 0.206, -0.090), COAT_DARK),
-    ("waist-buckle-prong",     "torso", (-0.024, 0.184, -0.112), (0.016, 0.194, -0.092), GOLD),
+    # 7. Royal Purple Waist Belt & Large Square Gold Buckle (Worn OVER the coat & robe!)
+    ("waist-belt-purple",      "torso", (-0.155, 0.160, -0.108), (0.155, 0.208, 0.092), CLOTH_PURPLE),
+    ("waist-buckle-gold",      "torso", (-0.052, 0.154, -0.120), (0.052, 0.214, -0.096), GOLD),
+    ("waist-buckle-slot",      "torso", (-0.026, 0.166, -0.122), (0.026, 0.202, -0.098), COAT_DARK),
+    ("waist-buckle-prong",     "torso", (-0.026, 0.180, -0.125), (0.018, 0.190, -0.100), GOLD),
 
     # 8. Scalloped Gold Arcane V-Chain Necklace & Faceted Amethyst Talisman (Elevated with Clear Gap)
     # Scalloped Gold V-Chain Links (Double-tiered drape)
@@ -370,11 +366,18 @@ HEAD = [
     ("hair-side-r3-tip",       "head", (-0.220, 0.345, 0.050),  (-0.165, 0.405, 0.135),  HAIR_MAGENTA),
 
     # -----------------------------------------------------------------------
-    # 5. Wide Volumetric Back Bob with 5 V-Tiered Locks (Full Clearance for Cape Moon!)
+    # 5. Wide Volumetric Back Bob with 5 V-Tiered Locks & Full Gap Fill (No Bald Spots!)
     # -----------------------------------------------------------------------
-    # Foundation Back Dome Cap
+    # Foundation Back Dome Cap & Continuous Under-Plate (100% encapsulates skull skin!)
     ("hair-back-foundation",   "head", (-0.205, 0.485, 0.115),  (0.205, 0.665, 0.165),  HAIR_MAGENTA),
     ("hair-back-upper-terrace","head", (-0.195, 0.435, 0.125),  (0.195, 0.540, 0.172),  HAIR_MAGENTA),
+    ("hair-back-under-plate",  "head", (-0.190, 0.335, 0.110),  (0.190, 0.450, 0.172),  HAIR_MAGENTA),
+
+    # Inter-lock Webbing Plates (Fills empty notches between stepped locks without making them longer)
+    ("hair-web-1-2",           "head", (-0.165, 0.355, 0.120),  (-0.110, 0.440, 0.174), HAIR_MAGENTA),
+    ("hair-web-2-3",           "head", (-0.090, 0.315, 0.128),  (-0.035, 0.430, 0.176), HAIR_MAGENTA),
+    ("hair-web-3-4",           "head", (0.035,  0.315, 0.128),  (0.090,  0.430, 0.176), HAIR_MAGENTA),
+    ("hair-web-4-5",           "head", (0.110,  0.355, 0.120),  (0.165,  0.440, 0.174), HAIR_MAGENTA),
 
     # Lock 1 (Far Left Lock -X, chunky block ending high at Y=0.385)
     ("hair-lock1-upper",       "head", (-0.210, 0.435, 0.125),  (-0.135, 0.530, 0.175), HAIR_MAGENTA),

@@ -307,6 +307,10 @@ namespace TumbangPreso.UI
                     ? $"· {ability.Cooldown:0.#}s CD ({ability.Duration:0.#}s DURATION)"
                     : $"· {ability.Cooldown:0.#}s CD";
             }
+            else if (ability.UsesCharges)
+            {
+                card.Meta.text = ability.MaxCharges == 1 ? "· 1 CHARGE" : $"· {ability.MaxCharges} CHARGES";
+            }
             else
             {
                 card.Meta.text = "· OBJECTIVE CHARGE";

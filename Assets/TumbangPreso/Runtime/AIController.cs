@@ -2310,6 +2310,10 @@ namespace TumbangPreso
                     Vector3 voidCenter = myPos + transform.forward * 4.5f;
                     if (HasRelevantVoidTarget(voidCenter, 7.5f)) Tap(intent, Verb.Ultimate);
                 }
+                else if (kit is Abilities.PhaisterHeroKit)
+                {
+                    if (targetDistance <= 8.5f) Tap(intent, Verb.Ultimate);
+                }
             }
 
             // 2. Skill 1 Decision
@@ -2349,6 +2353,10 @@ namespace TumbangPreso
                     if (phaseApproach || phaseDefence)
                         Tap(intent, Verb.Skill1);
                 }
+                else if (kit is Abilities.PhaisterHeroKit)
+                {
+                    if (targetDistance <= 6.5f) Tap(intent, Verb.Skill1);
+                }
             }
 
             // 3. Skill 2 Decision
@@ -2379,6 +2387,11 @@ namespace TumbangPreso
                 {
                     if (_driving && (Plan == AiPlan.Fetch || Plan == AiPlan.Stalk
                                      || targetDistance <= 6.0f))
+                        Tap(intent, Verb.Skill2);
+                }
+                else if (kit is Abilities.PhaisterHeroKit)
+                {
+                    if (_driving && (Plan == AiPlan.Withdraw || targetDistance <= 5.5f))
                         Tap(intent, Verb.Skill2);
                 }
             }

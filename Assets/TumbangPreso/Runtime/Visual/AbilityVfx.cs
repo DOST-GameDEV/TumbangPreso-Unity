@@ -95,6 +95,9 @@ namespace TumbangPreso.Visual
 
             /// <summary>A frost zone breathing. The only one that is not on a body.</summary>
             FrostMote,
+
+            /// <summary>Phaister witch casting. Rising occult sigils, magenta wisps, and gold sparkles.</summary>
+            WitchSigil,
         }
 
         /// <summary>
@@ -203,6 +206,26 @@ namespace TumbangPreso.Visual
                         new[] { new GradientColorKey(new Color(1.0f, 0.9f, 0.45f), 0.0f),
                                 new GradientColorKey(UiTheme.HeroFire, 1.0f) },
                         new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
+                    break;
+
+                case Aura.WitchSigil:
+                    // Rising occult particles, magenta witchfire embers, and gold sparkles
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(1.2f, 2.2f);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(0.2f, 0.75f);
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.08f, 0.22f);
+                    main.gravityModifier = -0.15f;
+                    main.startColor = new ParticleSystem.MinMaxGradient(
+                        UiTheme.HeroWitchBright, new Color(1.0f, 0.85f, 0.25f, 1.0f));
+                    emission.rateOverTime = 28.0f;
+                    shape.shapeType = ParticleSystemShapeType.Circle;
+                    shape.radius = 1.6f;
+                    grad.SetKeys(
+                        new[] { new GradientColorKey(new Color(1.0f, 0.90f, 0.40f), 0.0f),
+                                new GradientColorKey(UiTheme.HeroWitchBright, 0.5f),
+                                new GradientColorKey(new Color(0.45f, 0.05f, 0.65f), 1.0f) },
+                        new[] { new GradientAlphaKey(0.0f, 0.0f),
+                                new GradientAlphaKey(0.95f, 0.25f),
+                                new GradientAlphaKey(0.0f, 1.0f) });
                     break;
 
                 default: // FrostMote
