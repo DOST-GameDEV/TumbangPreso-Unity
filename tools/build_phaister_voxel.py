@@ -105,296 +105,473 @@ def mirrored(boxes, bone_from, bone_to):
 # LEGS & SHOES (Black trousers, crimson ankle band, purple shoes, white sole)
 # Full 1:1 scale (X in [0.006, 0.158])
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# LEGS & SHOES (Black trousers, crimson ankle band, purple shoes, white sole)
+# Full 1:1 chunky cast scale (X in [0.005, 0.160])
+# ---------------------------------------------------------------------------
 LEG_LEFT = [
     # 1. Crisp White Sneaker Sole Slab (Y in [0.000, 0.024])
-    ("shoe-sole-left",         "leg-left", (0.006, 0.000, -0.134), (0.158, 0.024, 0.082), WHITE),
+    ("shoe-sole-left",         "leg-left", (0.005, 0.000, -0.136), (0.160, 0.024, 0.084), WHITE),
 
-    # 2. Royal Purple Shoe Upper (Y in [0.024, 0.058])
-    ("shoe-upper-left",        "leg-left", (0.014, 0.024, -0.126), (0.152, 0.058, 0.076), CLOTH_PURPLE),
-    ("shoe-toe-left",          "leg-left", (0.012, 0.024, -0.132), (0.154, 0.046, -0.090), CLOTH_PURPLE),
-    ("shoe-heel-left",         "leg-left", (0.012, 0.024, 0.045),  (0.154, 0.058, 0.080), CLOTH_PURPLE),
+    # 2. Royal Purple Shoe Upper (Y in [0.024, 0.060])
+    ("shoe-upper-left",        "leg-left", (0.012, 0.024, -0.128), (0.154, 0.060, 0.078), CLOTH_PURPLE),
+    ("shoe-toe-left",          "leg-left", (0.010, 0.024, -0.134), (0.156, 0.048, -0.090), CLOTH_PURPLE),
+    ("shoe-heel-left",         "leg-left", (0.010, 0.024, 0.045),  (0.156, 0.060, 0.082), CLOTH_PURPLE),
 
-    # 3. Crimson Red Ankle Stripe (Y in [0.058, 0.070])
-    ("shoe-ankle-crimson-l",   "leg-left", (0.014, 0.058, -0.085), (0.152, 0.070, 0.070), CRIMSON),
+    # 3. Crimson Red Ankle Stripe (Y in [0.060, 0.074])
+    ("shoe-ankle-crimson-l",   "leg-left", (0.012, 0.060, -0.088), (0.154, 0.074, 0.074), CRIMSON),
 
-    # 4. Full-Length Black Trousers (Y in [0.070, 0.176])
-    ("pants-cuff-left",        "leg-left", (0.014, 0.070, -0.080), (0.154, 0.100, 0.074), COAT_DARK),
-    ("pants-leg-left",         "leg-left", (0.018, 0.100, -0.075), (0.150, 0.176, 0.072), COAT_DARK),
+    # 4. Full-Length Black Trousers (Y in [0.074, 0.176])
+    ("pants-cuff-left",        "leg-left", (0.012, 0.074, -0.084), (0.156, 0.104, 0.078), COAT_DARK),
+    ("pants-leg-left",         "leg-left", (0.016, 0.104, -0.078), (0.152, 0.176, 0.075), COAT_DARK),
 ]
 
 LEG_RIGHT = mirrored(LEG_LEFT, "leg-left", "leg-right")
 
 
 # ---------------------------------------------------------------------------
-# TORSO: FULL SCALE FROCK COAT, CAPE, V-CHAIN, MEDALLION, BELT, MOON & STARS
-# Full 1:1 scale (X in [-0.142, 0.142], Cape wings in [-0.220, 0.220])
+# TORSO: BROAD FROCK COAT, EXPANDED CAPE, V-CHAIN, MEDALLION, BELT, MOON & STARS
+# (Master Reference: media_1787737584126.png - Witch Qualities & Arcane Regalia)
 # ---------------------------------------------------------------------------
 TORSO = [
     # 1. Black Trousers Pelvis / Hips / Crotch
-    ("pants-pelvis",           "torso", (-0.140, 0.176, -0.082), (0.140, 0.200, 0.078), COAT_DARK),
-    ("pants-crotch-center",    "torso", (-0.050, 0.095, -0.076), (0.050, 0.176, 0.070), COAT_DARK),
+    ("pants-pelvis",           "torso", (-0.148, 0.160, -0.085), (0.148, 0.185, 0.082), COAT_DARK),
+    ("pants-crotch-center",    "torso", (-0.055, 0.085, -0.078), (0.055, 0.160, 0.072), COAT_DARK),
 
-    # 2. High Upturned Crimson Red Collar (Flanking neck behind chin)
-    ("collar-crimson-left",    "torso", (0.050,  0.280, -0.090), (0.115, 0.355, -0.070), CRIMSON),
-    ("collar-crimson-right",   "torso", (-0.115, 0.280, -0.090), (-0.050, 0.355, -0.070), CRIMSON),
-    ("collar-crimson-back",    "torso", (-0.110, 0.300, 0.065),  (0.110, 0.355, 0.090),  CRIMSON),
+    # 2. Dramatic High Upturned Crimson Witch Collar (Flanking neck & jaw)
+    ("collar-crimson-left",    "torso", (0.055,  0.280, -0.098), (0.132, 0.365, -0.070), CRIMSON),
+    ("collar-crimson-right",   "torso", (-0.132, 0.280, -0.098), (-0.055, 0.365, -0.070), CRIMSON),
+    ("collar-crimson-flare-l", "torso", (0.115,  0.315, -0.095), (0.142, 0.365, -0.065), CRIMSON),
+    ("collar-crimson-flare-r", "torso", (-0.142, 0.315, -0.095), (-0.115, 0.365, -0.065), CRIMSON),
+    ("collar-crimson-back",    "torso", (-0.125, 0.300, 0.070),  (0.125, 0.365, 0.098),  CRIMSON),
 
-    # 3. Crimson Red Cape INNER LINING (Inside layer of cape, visible in front flanking legs)
-    ("cape-lining-upper",      "torso", (-0.185, 0.148, 0.065),  (0.185, 0.300, 0.088),  CRIMSON),
+    # 3. Crimson Red Cape INNER LINING (Visible in front & 3/4 views flanking legs)
+    ("cape-lining-upper",      "torso", (-0.195, 0.148, 0.068),  (0.195, 0.300, 0.092),  CRIMSON),
     # Left Wing Lining (+X)
-    ("cape-lining-wing-l1",    "torso", (0.065,  0.110, 0.068),  (0.130, 0.160, 0.092),  CRIMSON),
-    ("cape-lining-wing-l2",    "torso", (0.110,  0.078, 0.072),  (0.175, 0.125, 0.096),  CRIMSON),
-    ("cape-lining-wing-l3",    "torso", (0.155,  0.045, 0.076),  (0.220, 0.090, 0.100),  CRIMSON),
+    ("cape-lining-wing-l1",    "torso", (0.070,  0.110, 0.072),  (0.140, 0.160, 0.096),  CRIMSON),
+    ("cape-lining-wing-l2",    "torso", (0.120,  0.078, 0.076),  (0.185, 0.125, 0.100),  CRIMSON),
+    ("cape-lining-wing-l3",    "torso", (0.165,  0.045, 0.080),  (0.235, 0.090, 0.104),  CRIMSON),
     # Right Wing Lining (-X)
-    ("cape-lining-wing-r1",    "torso", (-0.130, 0.110, 0.068),  (-0.065, 0.160, 0.092), CRIMSON),
-    ("cape-lining-wing-r2",    "torso", (-0.175, 0.078, 0.072),  (-0.110, 0.125, 0.096), CRIMSON),
-    ("cape-lining-wing-r3",    "torso", (-0.220, 0.045, 0.076),  (-0.155, 0.090, 0.100), CRIMSON),
+    ("cape-lining-wing-r1",    "torso", (-0.140, 0.110, 0.072),  (-0.070, 0.160, 0.096), CRIMSON),
+    ("cape-lining-wing-r2",    "torso", (-0.185, 0.078, 0.076),  (-0.120, 0.125, 0.096), CRIMSON),
+    ("cape-lining-wing-r3",    "torso", (-0.235, 0.045, 0.080),  (-0.165, 0.090, 0.104), CRIMSON),
     # Side Cape Flaps (visible in side view connecting cape to upper torso)
-    ("cape-side-l",            "torso", (0.165,  0.140, 0.035),  (0.200, 0.280, 0.082),  CRIMSON),
-    ("cape-side-r",            "torso", (-0.200, 0.140, 0.035),  (-0.165, 0.280, 0.082), CRIMSON),
+    ("cape-side-l",            "torso", (0.175,  0.135, 0.035),  (0.220, 0.285, 0.088),  CRIMSON),
+    ("cape-side-r",            "torso", (-0.220, 0.135, 0.035),  (-0.175, 0.285, 0.088), CRIMSON),
 
     # 4. Main Coat Body Core & Under-tunic
-    ("coat-chest-core",        "torso", (-0.138, 0.230, -0.082), (0.138, 0.343, 0.078), COAT_DARK),
-    ("coat-side-l",            "torso", (0.095,  0.200, -0.084), (0.142, 0.343, 0.080), COAT_DARK),
-    ("coat-side-r",            "torso", (-0.142, 0.200, -0.084), (-0.095, 0.343, 0.080), COAT_DARK),
-    ("shirt-neck-v",           "torso", (-0.050, 0.290, -0.086), (0.050, 0.343, -0.076), COAT_DARK),
+    ("coat-chest-core",        "torso", (-0.148, 0.200, -0.088), (0.148, 0.343, 0.082), COAT_DARK),
+    ("coat-side-l",            "torso", (0.100,  0.180, -0.088), (0.152, 0.343, 0.084), COAT_DARK),
+    ("coat-side-r",            "torso", (-0.152, 0.180, -0.088), (-0.100, 0.343, 0.084), COAT_DARK),
 
-    # 5. Full 3D Flared Coat Peplum Skirt (Jacket Flaps below belt, Side Hips, Corners & Purple Hem)
-    # Front Flap Left (+X)
-    ("skirt-front-l",          "torso", (0.020,  0.122, -0.105), (0.165, 0.192, -0.075), COAT_DARK),
-    ("skirt-front-trim-l",     "torso", (0.020,  0.110, -0.107), (0.170, 0.124, -0.075), CLOTH_PURPLE),
+    # Deep V-Neck Peach Skin Chest Opening
+    ("chest-skin-v",           "torso", (-0.048, 0.280, -0.092), (0.048, 0.343, -0.080), SKIN),
+    # High Teal Collar Brooch nestled in V-neck opening
+    ("collar-teal-brooch",     "torso", (-0.015, 0.315, -0.098), (0.015, 0.338, -0.082), TEAL_KNOT),
+    ("collar-teal-ribbon-l",   "torso", (0.004,  0.298, -0.097), (0.014, 0.316, -0.084), TEAL_KNOT),
+    ("collar-teal-ribbon-r",   "torso", (-0.014, 0.298, -0.097), (-0.004, 0.316, -0.084), TEAL_KNOT),
 
-    # Front Flap Right (-X)
-    ("skirt-front-r",          "torso", (-0.165, 0.122, -0.105), (-0.020, 0.192, -0.075), COAT_DARK),
-    ("skirt-front-trim-r",     "torso", (-0.170, 0.110, -0.107), (-0.020, 0.124, -0.075), CLOTH_PURPLE),
+    # 5. Front Coat Peplum & Diagonal Split with Royal Purple Trim
+    # Front Left Skirt Body (+X)
+    ("skirt-front-l",          "torso", (0.020,  0.105, -0.105), (0.175, 0.185, -0.078), COAT_DARK),
+    ("skirt-front-trim-bot-l", "torso", (0.020,  0.088, -0.108), (0.180, 0.106, -0.076), CLOTH_PURPLE),
+    ("skirt-front-trim-diag-l","torso", (0.015,  0.105, -0.108), (0.036, 0.185, -0.076), CLOTH_PURPLE),
+
+    # Front Right Skirt Body (-X)
+    ("skirt-front-r",          "torso", (-0.175, 0.105, -0.105), (-0.020, 0.185, -0.078), COAT_DARK),
+    ("skirt-front-trim-bot-r", "torso", (-0.180, 0.088, -0.108), (-0.020, 0.106, -0.076), CLOTH_PURPLE),
+    ("skirt-front-trim-diag-r","torso", (-0.036, 0.105, -0.108), (-0.015, 0.185, -0.076), CLOTH_PURPLE),
 
     # Side Hip Flared Skirt Panels
-    ("skirt-side-l",           "torso", (0.130,  0.122, -0.085), (0.175, 0.192, 0.045),  COAT_DARK),
-    ("skirt-side-r",           "torso", (-0.175, 0.122, -0.085), (-0.130, 0.192, 0.045), COAT_DARK),
-    ("skirt-side-trim-l",      "torso", (0.130,  0.110, -0.088), (0.178, 0.124, 0.048),  CLOTH_PURPLE),
-    ("skirt-side-trim-r",      "torso", (-0.178, 0.110, -0.088), (-0.130, 0.124, 0.048), CLOTH_PURPLE),
+    ("skirt-side-l",           "torso", (0.138,  0.105, -0.090), (0.188, 0.185, 0.050),  COAT_DARK),
+    ("skirt-side-r",           "torso", (-0.188, 0.105, -0.090), (-0.138, 0.185, 0.050), COAT_DARK),
+    ("skirt-side-trim-l",      "torso", (0.138,  0.088, -0.092), (0.192, 0.106, 0.052),  CLOTH_PURPLE),
+    ("skirt-side-trim-r",      "torso", (-0.192, 0.088, -0.092), (-0.138, 0.106, 0.052), CLOTH_PURPLE),
 
     # Front-Side Diagonal Corners
-    ("skirt-corner-fl",        "torso", (0.110,  0.122, -0.104), (0.170, 0.192, -0.055), COAT_DARK),
-    ("skirt-corner-fr",        "torso", (-0.170, 0.122, -0.104), (-0.110, 0.192, -0.055), COAT_DARK),
-    ("skirt-corner-trim-fl",   "torso", (0.110,  0.110, -0.106), (0.174, 0.124, -0.055), CLOTH_PURPLE),
-    ("skirt-corner-trim-fr",   "torso", (-0.174, 0.110, -0.106), (-0.110, 0.124, -0.055), CLOTH_PURPLE),
+    ("skirt-corner-fl",        "torso", (0.118,  0.105, -0.105), (0.182, 0.185, -0.058), COAT_DARK),
+    ("skirt-corner-fr",        "torso", (-0.182, 0.105, -0.105), (-0.118, 0.185, -0.058), COAT_DARK),
+    ("skirt-corner-trim-fl",   "torso", (0.118,  0.088, -0.107), (0.186, 0.106, -0.058), CLOTH_PURPLE),
+    ("skirt-corner-trim-fr",   "torso", (-0.186, 0.088, -0.107), (-0.118, 0.106, -0.058), CLOTH_PURPLE),
 
-    # 6. Outermost Black Cape / Swallowtail Back with Stepped Inverted-V Chevron (Down to Y=0.042)
-    ("coat-back-main-upper",   "torso", (-0.185, 0.220, 0.082),  (0.185, 0.340, 0.110),  COAT_DARK),
-    ("coat-back-main-mid",     "torso", (-0.195, 0.148, 0.090),  (0.195, 0.220, 0.118),  COAT_DARK),
+    # 6. Outermost Black Cape / Swallowtail Back with Stepped Inverted-V Chevron (PERFECT - PRESERVED)
+    ("coat-back-main-upper",   "torso", (-0.195, 0.220, 0.086),  (0.195, 0.340, 0.115),  COAT_DARK),
+    ("coat-back-main-mid",     "torso", (-0.205, 0.148, 0.094),  (0.205, 0.220, 0.122),  COAT_DARK),
     # Left Swallowtail Stepped Body (+X)
-    ("coat-back-tail-l-seg1",  "torso", (0.020,  0.138, 0.092),  (0.060, 0.220, 0.120),  COAT_DARK),
-    ("coat-back-tail-l-seg2",  "torso", (0.058,  0.118, 0.094),  (0.105, 0.220, 0.122),  COAT_DARK),
-    ("coat-back-tail-l-seg3",  "torso", (0.100,  0.094, 0.096),  (0.150, 0.220, 0.126),  COAT_DARK),
-    ("coat-back-tail-l-seg4",  "torso", (0.148,  0.070, 0.098),  (0.195, 0.220, 0.130),  COAT_DARK),
-    ("coat-back-tail-l-seg5",  "torso", (0.175,  0.048, 0.100),  (0.220, 0.220, 0.134),  COAT_DARK),
+    ("coat-back-tail-l-seg1",  "torso", (0.020,  0.138, 0.096),  (0.065, 0.220, 0.125),  COAT_DARK),
+    ("coat-back-tail-l-seg2",  "torso", (0.062,  0.118, 0.098),  (0.112, 0.220, 0.128),  COAT_DARK),
+    ("coat-back-tail-l-seg3",  "torso", (0.108,  0.094, 0.100),  (0.160, 0.220, 0.132),  COAT_DARK),
+    ("coat-back-tail-l-seg4",  "torso", (0.155,  0.070, 0.102),  (0.205, 0.220, 0.136),  COAT_DARK),
+    ("coat-back-tail-l-seg5",  "torso", (0.185,  0.045, 0.105),  (0.235, 0.220, 0.140),  COAT_DARK),
     # Right Swallowtail Stepped Body (-X)
-    ("coat-back-tail-r-seg1",  "torso", (-0.060, 0.138, 0.092),  (-0.020, 0.220, 0.120), COAT_DARK),
-    ("coat-back-tail-r-seg2",  "torso", (-0.105, 0.118, 0.094),  (-0.058, 0.220, 0.122), COAT_DARK),
-    ("coat-back-tail-r-seg3",  "torso", (-0.150, 0.094, 0.096),  (-0.100, 0.220, 0.126), COAT_DARK),
-    ("coat-back-tail-r-seg4",  "torso", (-0.195, 0.070, 0.098),  (-0.148, 0.220, 0.130), COAT_DARK),
-    ("coat-back-tail-r-seg5",  "torso", (-0.220, 0.048, 0.100),  (-0.175, 0.220, 0.134), COAT_DARK),
+    ("coat-back-tail-r-seg1",  "torso", (-0.065, 0.138, 0.096),  (-0.020, 0.220, 0.125), COAT_DARK),
+    ("coat-back-tail-r-seg2",  "torso", (-0.112, 0.118, 0.098),  (-0.062, 0.220, 0.128), COAT_DARK),
+    ("coat-back-tail-r-seg3",  "torso", (-0.160, 0.094, 0.100),  (-0.108, 0.220, 0.132), COAT_DARK),
+    ("coat-back-tail-r-seg4",  "torso", (-0.205, 0.070, 0.102),  (-0.155, 0.220, 0.136), COAT_DARK),
+    ("coat-back-tail-r-seg5",  "torso", (-0.235, 0.045, 0.105),  (-0.185, 0.220, 0.140), COAT_DARK),
 
     # Continuous Royal Purple Chevron Trim Band (/ \)
-    ("coat-back-trim-apex",    "torso", (-0.024, 0.138, 0.104),  (0.024, 0.148, 0.122),  CLOTH_PURPLE),
-    ("coat-back-trim-l-s1",    "torso", (0.020,  0.122, 0.106),  (0.060, 0.140, 0.124),  CLOTH_PURPLE),
-    ("coat-back-trim-l-s2",    "torso", (0.058,  0.102, 0.108),  (0.105, 0.124, 0.126),  CLOTH_PURPLE),
-    ("coat-back-trim-l-s3",    "torso", (0.100,  0.078, 0.110),  (0.150, 0.104, 0.130),  CLOTH_PURPLE),
-    ("coat-back-trim-l-s4",    "torso", (0.148,  0.054, 0.112),  (0.195, 0.080, 0.134),  CLOTH_PURPLE),
-    ("coat-back-trim-l-tip",   "torso", (0.175,  0.038, 0.114),  (0.220, 0.056, 0.138),  CLOTH_PURPLE),
-    ("coat-back-trim-r-s1",    "torso", (-0.060, 0.122, 0.106),  (-0.020, 0.140, 0.124), CLOTH_PURPLE),
-    ("coat-back-trim-r-s2",    "torso", (-0.105, 0.102, 0.108),  (-0.058, 0.124, 0.126), CLOTH_PURPLE),
-    ("coat-back-trim-r-s3",    "torso", (-0.150, 0.078, 0.110),  (-0.100, 0.104, 0.130), CLOTH_PURPLE),
-    ("coat-back-trim-r-s4",    "torso", (-0.195, 0.054, 0.112),  (-0.148, 0.080, 0.134), CLOTH_PURPLE),
-    ("coat-back-trim-r-tip",   "torso", (-0.220, 0.038, 0.114),  (-0.175, 0.056, 0.138), CLOTH_PURPLE),
+    ("coat-back-trim-apex",    "torso", (-0.025, 0.138, 0.108),  (0.025, 0.148, 0.128),  CLOTH_PURPLE),
+    ("coat-back-trim-l-s1",    "torso", (0.020,  0.122, 0.110),  (0.065, 0.140, 0.130),  CLOTH_PURPLE),
+    ("coat-back-trim-l-s2",    "torso", (0.062,  0.102, 0.112),  (0.112, 0.124, 0.132),  CLOTH_PURPLE),
+    ("coat-back-trim-l-s3",    "torso", (0.108,  0.078, 0.114),  (0.160, 0.104, 0.136),  CLOTH_PURPLE),
+    ("coat-back-trim-l-s4",    "torso", (0.155,  0.054, 0.116),  (0.205, 0.080, 0.140),  CLOTH_PURPLE),
+    ("coat-back-trim-l-tip",   "torso", (0.185,  0.035, 0.118),  (0.235, 0.056, 0.144),  CLOTH_PURPLE),
+    ("coat-back-trim-r-s1",    "torso", (-0.065, 0.122, 0.110),  (-0.020, 0.140, 0.130), CLOTH_PURPLE),
+    ("coat-back-trim-r-s2",    "torso", (-0.112, 0.102, 0.112),  (-0.062, 0.124, 0.132), CLOTH_PURPLE),
+    ("coat-back-trim-r-s3",    "torso", (-0.160, 0.078, 0.114),  (-0.108, 0.104, 0.136), CLOTH_PURPLE),
+    ("coat-back-trim-r-s4",    "torso", (-0.205, 0.054, 0.116),  (-0.155, 0.080, 0.140), CLOTH_PURPLE),
+    ("coat-back-trim-r-tip",   "torso", (-0.235, 0.035, 0.118),  (-0.185, 0.056, 0.144), CLOTH_PURPLE),
 
-    # 7. Royal Purple Waist Belt & Large Square Gold Buckle
-    ("waist-belt-purple",      "torso", (-0.142, 0.194, -0.090), (0.142, 0.230, 0.084), CLOTH_PURPLE),
-    ("waist-buckle-gold",      "torso", (-0.048, 0.186, -0.100), (0.048, 0.242, -0.082), GOLD),
-    ("waist-buckle-slot",      "torso", (-0.025, 0.196, -0.102), (0.025, 0.232, -0.086), COAT_DARK),
-    ("waist-buckle-prong",     "torso", (-0.025, 0.208, -0.105), (0.015, 0.220, -0.088), GOLD),
+    # 7. Royal Purple Waist Belt & Large Square Gold Buckle (Lowered for Clear Vertical Separation)
+    ("waist-belt-purple",      "torso", (-0.152, 0.170, -0.095), (0.152, 0.208, 0.088), CLOTH_PURPLE),
+    ("waist-buckle-gold",      "torso", (-0.048, 0.162, -0.106), (0.048, 0.216, -0.086), GOLD),
+    ("waist-buckle-slot",      "torso", (-0.024, 0.172, -0.108), (0.024, 0.206, -0.090), COAT_DARK),
+    ("waist-buckle-prong",     "torso", (-0.024, 0.184, -0.112), (0.016, 0.194, -0.092), GOLD),
 
-    # 8. Scalloped Gold V-Chain Necklace, Teal Collar Knot & Faceted Amethyst Medallion
-    # Teal Collar Bow/Knot
-    ("collar-teal-knot-c",     "torso", (-0.015, 0.270, -0.104), (0.015, 0.292, -0.084), TEAL_KNOT),
-    ("collar-teal-knot-l",     "torso", (0.012,  0.274, -0.102), (0.028, 0.290, -0.084), TEAL_KNOT),
-    ("collar-teal-knot-r",     "torso", (-0.028, 0.274, -0.102), (-0.012, 0.290, -0.084), TEAL_KNOT),
-    # Scalloped Gold V-Chain Links
-    ("chain-v-link-l1",        "torso", (0.075,  0.315, -0.096), (0.110, 0.345, -0.078), GOLD),
-    ("chain-v-link-l2",        "torso", (0.040,  0.285, -0.100), (0.078, 0.318, -0.082), GOLD),
-    ("chain-v-link-l3",        "torso", (0.018,  0.262, -0.104), (0.044, 0.288, -0.084), GOLD),
-    ("chain-v-link-r1",        "torso", (-0.110, 0.315, -0.096), (-0.075, 0.345, -0.078), GOLD),
-    ("chain-v-link-r2",        "torso", (-0.078, 0.285, -0.100), (-0.040, 0.318, -0.082), GOLD),
-    ("chain-v-link-r3",        "torso", (-0.044, 0.262, -0.104), (-0.018, 0.288, -0.084), GOLD),
-    # Faceted Amethyst Medallion with Gold Prongs & Specular Highlight
-    ("pendant-gold-frame",     "torso", (-0.030, 0.222, -0.106), (0.030, 0.268, -0.086), GOLD),
-    ("pendant-gem-core",       "torso", (-0.024, 0.226, -0.110), (0.024, 0.264, -0.086), LILAC_GEM),
-    ("pendant-gem-top",        "torso", (-0.016, 0.260, -0.108), (0.016, 0.270, -0.086), LILAC_GEM),
-    ("pendant-gold-prong-bot", "torso", (-0.012, 0.216, -0.107), (0.012, 0.226, -0.088), GOLD),
-    ("pendant-gem-highlight",  "torso", (-0.016, 0.248, -0.112), (-0.005, 0.258, -0.088), WHITE),
+    # 8. Scalloped Gold Arcane V-Chain Necklace & Faceted Amethyst Talisman (Elevated with Clear Gap)
+    # Scalloped Gold V-Chain Links (Double-tiered drape)
+    ("chain-v-link-l1",        "torso", (0.075,  0.305, -0.100), (0.125, 0.335, -0.082), GOLD),
+    ("chain-v-link-l2",        "torso", (0.042,  0.280, -0.104), (0.085, 0.310, -0.085), GOLD),
+    ("chain-v-link-l3",        "torso", (0.018,  0.258, -0.108), (0.048, 0.285, -0.088), GOLD),
+    ("chain-v-link-r1",        "torso", (-0.125, 0.305, -0.100), (-0.075, 0.335, -0.082), GOLD),
+    ("chain-v-link-r2",        "torso", (-0.085, 0.280, -0.104), (-0.042, 0.310, -0.085), GOLD),
+    ("chain-v-link-r3",        "torso", (-0.048, 0.258, -0.108), (-0.018, 0.285, -0.088), GOLD),
 
-    # 9. Back Coat Graphic: Gold Crescent Moon + 2 Stars
-    ("back-moon-spine",        "torso", (-0.020, 0.168, 0.116),  (0.010, 0.228, 0.125),  GOLD),
-    ("back-moon-top",          "torso", (0.008,  0.210, 0.116),  (0.030, 0.228, 0.125),  GOLD),
-    ("back-moon-bot",          "torso", (0.008,  0.168, 0.116),  (0.030, 0.186, 0.125),  GOLD),
-    ("back-moon-cut",          "torso", (0.008,  0.182, 0.117),  (0.032, 0.214, 0.126),  COAT_DARK),
-    ("back-star-l-vert",       "torso", (-0.105, 0.168, 0.116),  (-0.088, 0.194, 0.125), GOLD),
-    ("back-star-l-horiz",      "torso", (-0.120, 0.175, 0.116),  (-0.072, 0.187, 0.125), GOLD),
-    ("back-star-r-vert",       "torso", (0.088,  0.168, 0.116),  (0.105, 0.194, 0.125),  GOLD),
-    ("back-star-r-horiz",      "torso", (0.072,  0.175, 0.116),  (0.120, 0.187, 0.125),  GOLD),
+    # Faceted Amethyst Witch Medallion with Gold Setting & Drop Charm (100% NON-OVERLAPPING with belt!)
+    ("pendant-gold-frame",     "torso", (-0.028, 0.238, -0.112), (0.028, 0.278, -0.090), GOLD),
+    ("pendant-gold-corner-tl", "torso", (-0.032, 0.264, -0.114), (-0.024, 0.282, -0.092), GOLD),
+    ("pendant-gold-corner-tr", "torso", (0.024,  0.264, -0.114), (0.032, 0.282, -0.092), GOLD),
+    ("pendant-gem-core",       "torso", (-0.022, 0.242, -0.116), (0.022, 0.274, -0.090), LILAC_GEM),
+    ("pendant-gem-top",        "torso", (-0.015, 0.270, -0.114), (0.015, 0.280, -0.090), LILAC_GEM),
+    ("pendant-gold-prong-bot", "torso", (-0.012, 0.232, -0.113), (0.012, 0.240, -0.092), GOLD),
+    ("pendant-gold-charm-tip", "torso", (-0.006, 0.226, -0.114), (0.006, 0.234, -0.094), GOLD),
+    ("pendant-gem-highlight",  "torso", (-0.015, 0.258, -0.118), (-0.005, 0.270, -0.092), WHITE),
+
+    # 9. Back Coat Graphic: Large Gold Crescent Moon + 2 Stars (PERFECT - PRESERVED)
+    ("back-moon-spine",        "torso", (-0.024, 0.190, 0.120),  (0.014, 0.262, 0.130),  GOLD),
+    ("back-moon-top",          "torso", (0.012,  0.238, 0.120),  (0.038, 0.262, 0.130),  GOLD),
+    ("back-moon-bot",          "torso", (0.012,  0.190, 0.120),  (0.038, 0.214, 0.130),  GOLD),
+    ("back-moon-cut",          "torso", (0.010,  0.206, 0.122),  (0.040, 0.246, 0.132),  COAT_DARK),
+    ("back-star-l-vert",       "torso", (-0.120, 0.195, 0.120),  (-0.098, 0.228, 0.130), GOLD),
+    ("back-star-l-horiz",      "torso", (-0.136, 0.204, 0.120),  (-0.082, 0.219, 0.130), GOLD),
+    ("back-star-r-vert",       "torso", (0.098,  0.195, 0.120),  (0.120, 0.228, 0.130),  GOLD),
+    ("back-star-r-horiz",      "torso", (0.082,  0.204, 0.120),  (0.136, 0.219, 0.130),  GOLD),
 ]
 
 
 # ---------------------------------------------------------------------------
-# ARMS: FULL SCALE BLACK UPPER, ROYAL PURPLE BAND, GOLD CROSS, WHITE CUFF, SKIN HAND
-# Full 1:1 scale matching Kenney cast (X in [0.0999, 0.3836])
+# ARMS: FULL CHUNKY CAST SCALE WITH GOLD CROSS & STAR SLEEVE EMBLEMS
+# (Master Reference: media_1787737584126.png)
 # ---------------------------------------------------------------------------
 ARM_LEFT = [
-    # 1. Black Coat Upper Sleeve (X in [0.0999, 0.226])
-    ("sleeve-upper-l",         "arm-left", (0.0999, 0.218, -0.066), (0.226, 0.358, 0.084), COAT_DARK),
+    # 1. Black Coat Upper Sleeve (X in [0.0999, 0.220])
+    ("sleeve-upper-l",         "arm-left", (0.0999, 0.208, -0.074), (0.220, 0.364, 0.090), COAT_DARK),
 
-    # 2. Royal Purple Forearm Band (X in [0.226, 0.265])
-    ("sleeve-purple-l",        "arm-left", (0.226, 0.216, -0.068),  (0.265, 0.360, 0.086), CLOTH_PURPLE),
+    # 2. Royal Purple Forearm Band (X in [0.220, 0.265])
+    ("sleeve-band-l",          "arm-left", (0.220,  0.204, -0.076), (0.265, 0.366, 0.092), CLOTH_PURPLE),
 
-    # 3. Gold Cross Emblem placed on the outside (+Z in T-pose / side view)
-    ("sleeve-cross-v-side-l",  "arm-left", (0.240, 0.270, 0.076),  (0.255, 0.315, 0.092), GOLD),
-    ("sleeve-cross-h-side-l",  "arm-left", (0.230, 0.288, 0.076),  (0.265, 0.300, 0.092), GOLD),
+    # 3. Gold Emblems on Forearm Band - Signature Cross on Outer Lateral Side
+    # Front-facing cross representation
+    ("sleeve-gold-cross-v-l",  "arm-left", (0.236, 0.245, -0.082),  (0.250, 0.325, -0.065), GOLD),
+    ("sleeve-gold-cross-h-l",  "arm-left", (0.228, 0.272, -0.082),  (0.258, 0.298, -0.065), GOLD),
+    # Lateral side-facing cross representation (3/4 and side views)
+    ("sleeve-gold-cross-side-v-l", "arm-left", (0.264, 0.245, -0.025), (0.272, 0.325, 0.025), GOLD),
+    ("sleeve-gold-cross-side-h-l", "arm-left", (0.264, 0.272, -0.045), (0.272, 0.298, 0.045), GOLD),
 
-    # 4. Crimson Red Sleeve Stripe (X in [0.265, 0.288])
-    ("sleeve-crimson-l",       "arm-left", (0.265, 0.216, -0.068),  (0.288, 0.360, 0.086), CRIMSON),
+    # 4. Gold Lower Rim Band beneath Purple Band (X in [0.265, 0.276])
+    ("sleeve-gold-rim-l",      "arm-left", (0.265, 0.204, -0.078),  (0.276, 0.366, 0.094), GOLD),
 
-    # 5. Crisp White Shirt Cuff (X in [0.288, 0.320])
-    ("sleeve-white-cuff-l",    "arm-left", (0.288, 0.212, -0.072),  (0.320, 0.364, 0.090), WHITE),
+    # 5. Crisp White Shirt Cuff (X in [0.276, 0.312])
+    ("sleeve-white-cuff-l",    "arm-left", (0.276, 0.202, -0.080),  (0.312, 0.368, 0.096), WHITE),
 
-    # 6. Warm Peach Skin Hand (X in [0.320, 0.3836]) - EXACT Kenney palm/anchor span
-    ("hand-left",              "arm-left", (0.320, 0.228, -0.038),  (0.3836, 0.348, 0.038), SKIN),
+    # 6. Crimson Under-Cuff Peeking along inner hem (X in [0.276, 0.312])
+    ("sleeve-crimson-under-l", "arm-left", (0.276, 0.198, -0.076),  (0.308, 0.208, 0.092), CRIMSON),
+
+    # 7. Warm Peach Skin Hand (X in [0.312, 0.3836]) - EXACT Kenney palm/anchor span
+    ("hand-left",              "arm-left", (0.312, 0.222, -0.042),  (0.3836, 0.354, 0.042), SKIN),
 ]
 
 ARM_RIGHT = mirrored(ARM_LEFT, "arm-left", "arm-right")
 
 
 # ---------------------------------------------------------------------------
-# HEAD: FULL 1:1 CANONICAL HEAD (Y: 0.343 -> 0.695, |X|: 0.225) WITH SNUG WITCH HAT (Y: 0.660 -> 1.015)
+# HEAD: HAND-SCULPTED VOXEL HAIR & WITCH HAT (Attached over Donor Head Mesh)
+# (Master Reference: media_1787735121595.png)
 # ---------------------------------------------------------------------------
 HEAD = [
     # -----------------------------------------------------------------------
-    # 1. 100% Solid Magenta Skull Enclosure (Full 1:1 scale matching Kenney head)
+    # 1. Hair Crown & Internal Cap (Full rear cranium encapsulation)
     # -----------------------------------------------------------------------
-    ("hair-skull-main",        "head", (-0.225, 0.343, -0.165), (0.225, 0.695, 0.175), HAIR_MAGENTA),
-    ("hair-forehead-brow",     "head", (-0.225, 0.520, -0.178), (0.225, 0.695, -0.120), HAIR_MAGENTA),
+    ("hair-skull-crown",       "head", (-0.225, 0.540, -0.155), (0.225, 0.665, 0.165), HAIR_MAGENTA),
 
     # -----------------------------------------------------------------------
-    # 2. Warm Peach Skin Face Opening (Width 0.29m, matching cast!)
+    # 2. Front Bangs & Dipping Bang (Frames the canonical donor face plate)
     # -----------------------------------------------------------------------
-    ("face-opening",           "head", (-0.145, 0.343, -0.168), (0.145, 0.540, -0.135), SKIN),
-    ("face-neck-connector",    "head", (-0.075, 0.330, -0.070), (0.075, 0.343, 0.030),  SKIN),
+    # Brow base beneath hat brim
+    ("hair-bang-brow-base",    "head", (-0.150, 0.535, -0.174), (0.150, 0.645, -0.135), HAIR_MAGENTA),
+
+    # Far Left Cheek Lock (-X, X <= -0.135)
+    ("hair-bang-far-l-upper",  "head", (-0.175, 0.485, -0.178), (-0.135, 0.635, -0.135), HAIR_MAGENTA),
+    ("hair-bang-far-l-mid",    "head", (-0.170, 0.425, -0.176), (-0.140, 0.495, -0.140), HAIR_MAGENTA),
+    ("hair-bang-far-l-tip",    "head", (-0.165, 0.385, -0.174), (-0.145, 0.435, -0.145), HAIR_MAGENTA),
+
+    # Left Brow Step (-X) - Stepping down to Y=0.515
+    ("hair-bang-mid-l-step",   "head", (-0.135, 0.515, -0.176), (-0.070, 0.575, -0.135), HAIR_MAGENTA),
+
+    # Center-Right Dipping Notch Lock (Between eyes, terminates cleanly at Y=0.475)
+    ("hair-bang-notch-t1",     "head", (-0.010, 0.515, -0.186), (0.045,  0.590, -0.135), HAIR_MAGENTA),
+    ("hair-bang-notch-tip",    "head", (0.005,  0.475, -0.180), (0.038,  0.520, -0.145), HAIR_MAGENTA),
+
+    # Right Brow Step (+X) - Stepping down to Y=0.515
+    ("hair-bang-mid-r-step",   "head", (0.070,  0.515, -0.176), (0.135,  0.575, -0.135), HAIR_MAGENTA),
+
+    # Far Right Cheek Lock (+X, X >= 0.135)
+    ("hair-bang-far-r-upper",  "head", (0.135,  0.485, -0.178), (0.175,  0.635, -0.135), HAIR_MAGENTA),
+    ("hair-bang-far-r-mid",    "head", (0.140,  0.425, -0.176), (0.170,  0.495, -0.140), HAIR_MAGENTA),
+    ("hair-bang-far-r-tip",    "head", (0.145,  0.385, -0.174), (0.165,  0.435, -0.145), HAIR_MAGENTA),
 
     # -----------------------------------------------------------------------
-    # 3. Detailed & Expressive Face Features (Slot 8 INK #14101c):
-    # Eyes, Playful Arched Eyebrows, Expressive Playful Witch Smirk/Smile
+    # 3. Articulated Side Hair Lock Columns (Left Side +X, Chunky Layered Wave)
     # -----------------------------------------------------------------------
-    # Eyes (Full scale, 2 voxels tall, crisp and clean)
-    ("eye-left",               "head", (0.050,  0.435, -0.172), (0.098, 0.505, -0.160), INK),
-    ("eye-right",              "head", (-0.098, 0.435, -0.172), (-0.050, 0.505, -0.160), INK),
+    # Strand L1 (Cheek Flange, Z in [-0.160, -0.065])
+    ("hair-side-l1-upper",     "head", (0.155,  0.465, -0.160), (0.230,  0.635, -0.065), HAIR_MAGENTA),
+    ("hair-side-l1-mid",       "head", (0.160,  0.405, -0.155), (0.225,  0.475, -0.070), HAIR_MAGENTA),
+    ("hair-side-l1-tip",       "head", (0.165,  0.360, -0.150), (0.218,  0.415, -0.075), HAIR_MAGENTA),
 
-    # Playful Eyebrows (confident slight arch above eyes)
-    ("eyebrow-left",           "head", (0.045,  0.518, -0.172), (0.108, 0.542, -0.160), INK),
-    ("eyebrow-right",          "head", (-0.108, 0.518, -0.172), (-0.045, 0.542, -0.160), INK),
+    # Strand L2 (Mid-Ear Outward Wave, Z in [-0.065, 0.040] - Proud Protrusion)
+    ("hair-side-l2-upper",     "head", (0.165,  0.465, -0.065), (0.240,  0.640, 0.040),  HAIR_MAGENTA),
+    ("hair-side-l2-mid",       "head", (0.170,  0.385, -0.060), (0.235,  0.475, 0.035),  HAIR_MAGENTA),
+    ("hair-side-l2-low",       "head", (0.175,  0.330, -0.055), (0.230,  0.395, 0.030),  HAIR_MAGENTA),
+    ("hair-side-l2-tip",       "head", (0.180,  0.295, -0.050), (0.225,  0.340, 0.025),  HAIR_MAGENTA),
 
-    # Expressive Witch Smirk / Smile
-    ("mouth-center",           "head", (-0.045, 0.365, -0.172), (0.045, 0.388, -0.160), INK),
-    ("mouth-smirk-corner-l",   "head", (0.040,  0.378, -0.172), (0.068, 0.408, -0.160), INK),
-    ("mouth-smirk-corner-r",   "head", (-0.055, 0.370, -0.172), (-0.038, 0.390, -0.160), INK),
-
-    # -----------------------------------------------------------------------
-    # 4. Front Bangs & Fringe (Framing forehead and dipping naturally into face opening)
-    # -----------------------------------------------------------------------
-    # Horizontal brow fringe
-    ("hair-bang-brow-base",    "head", (-0.145, 0.525, -0.182), (0.145, 0.660, -0.145), HAIR_MAGENTA),
-    # Left stepped fringe (-X)
-    ("hair-bang-l-step",       "head", (-0.145, 0.485, -0.180), (-0.040, 0.540, -0.145), HAIR_MAGENTA),
-    ("hair-bang-l-outer",      "head", (-0.145, 0.450, -0.178), (-0.100, 0.520, -0.145), HAIR_MAGENTA),
-    # Right fringe (+X / viewer's right): Distinct diagonal notched fringe dipping down!
-    ("hair-bang-r-notch",      "head", (0.010,  0.430, -0.184), (0.065,  0.540, -0.145), HAIR_MAGENTA),
-    ("hair-bang-r-step",       "head", (0.060,  0.475, -0.180), (0.145,  0.540, -0.145), HAIR_MAGENTA),
-    ("hair-bang-r-outer",      "head", (0.105,  0.445, -0.178), (0.145,  0.510, -0.145), HAIR_MAGENTA),
+    # Strand L3 (Rear Corner Flange, Z in [0.040, 0.145])
+    ("hair-side-l3-upper",     "head", (0.155,  0.465, 0.040),   (0.232,  0.635, 0.145),  HAIR_MAGENTA),
+    ("hair-side-l3-mid",       "head", (0.160,  0.395, 0.045),   (0.226,  0.475, 0.140),  HAIR_MAGENTA),
+    ("hair-side-l3-tip",       "head", (0.165,  0.345, 0.050),   (0.220,  0.405, 0.135),  HAIR_MAGENTA),
 
     # -----------------------------------------------------------------------
-    # 5. Cheek Framing Side Locks & Side Volume (Full 1:1 scale)
+    # 4. Articulated Side Hair Lock Columns (Right Side -X, Chunky Layered Wave)
     # -----------------------------------------------------------------------
-    # Left side (+X, viewer's right)
-    ("hair-cheek-l",           "head", (0.145,  0.320, -0.178), (0.225, 0.600, -0.050), HAIR_MAGENTA),
-    ("hair-side-l-outer",      "head", (0.190,  0.315, -0.160), (0.245, 0.690, 0.165),  HAIR_MAGENTA),
-    ("hair-side-l-highlight",  "head", (0.200,  0.360, -0.100), (0.248, 0.580, 0.030),  HAIR_HIGHLIGHT),
-    ("hair-side-l-step2",      "head", (0.175,  0.335, -0.170), (0.225, 0.450, -0.080), HAIR_HIGHLIGHT),
+    # Strand R1 (Cheek Flange, Z in [-0.160, -0.065])
+    ("hair-side-r1-upper",     "head", (-0.230, 0.465, -0.160), (-0.155, 0.635, -0.065), HAIR_MAGENTA),
+    ("hair-side-r1-mid",       "head", (-0.225, 0.405, -0.155), (-0.160, 0.475, -0.070), HAIR_MAGENTA),
+    ("hair-side-r1-tip",       "head", (-0.218, 0.360, -0.150), (-0.165, 0.415, -0.075), HAIR_MAGENTA),
 
-    # Right side (-X, viewer's left)
-    ("hair-cheek-r",           "head", (-0.225, 0.320, -0.178), (-0.145, 0.600, -0.050), HAIR_MAGENTA),
-    ("hair-side-r-outer",      "head", (-0.245, 0.315, -0.160), (-0.190, 0.690, 0.165),  HAIR_MAGENTA),
-    ("hair-side-r-highlight",  "head", (-0.248, 0.360, -0.100), (-0.200, 0.580, 0.030),  HAIR_HIGHLIGHT),
-    ("hair-side-r-step2",      "head", (-0.225, 0.335, -0.170), (-0.175, 0.450, -0.080), HAIR_HIGHLIGHT),
+    # Strand R2 (Mid-Ear Outward Wave, Z in [-0.065, 0.040] - Proud Protrusion)
+    ("hair-side-r2-upper",     "head", (-0.240, 0.465, -0.065), (-0.165, 0.640, 0.040),  HAIR_MAGENTA),
+    ("hair-side-r2-mid",       "head", (-0.235, 0.385, -0.060), (-0.170, 0.475, 0.035),  HAIR_MAGENTA),
+    ("hair-side-r2-low",       "head", (-0.230, 0.330, -0.055), (-0.175, 0.395, 0.030),  HAIR_MAGENTA),
+    ("hair-side-r2-tip",       "head", (-0.225, 0.295, -0.050), (-0.180, 0.340, 0.025),  HAIR_MAGENTA),
 
-    # -----------------------------------------------------------------------
-    # 6. Volumetric 5-Lock Stepped Hair Mane (Back & Side Cascade down to Y=0.250)
-    # -----------------------------------------------------------------------
-    ("hair-back-tier1",        "head", (-0.225, 0.480, 0.130),  (0.225, 0.690, 0.195),  HAIR_MAGENTA),
-    # 5 Cascading Vertical Locks
-    ("hair-lock-outer-l",      "head", (0.150,  0.360, 0.130),  (0.225, 0.560, 0.190),  HAIR_MAGENTA),
-    ("hair-lock-mid-l",        "head", (0.070,  0.310, 0.135),  (0.155, 0.520, 0.200),  HAIR_MAGENTA),
-    ("hair-lock-spine-c",      "head", (-0.055, 0.260, 0.140),  (0.055, 0.520, 0.208),  HAIR_MAGENTA),
-    ("hair-lock-mid-r",        "head", (-0.155, 0.310, 0.135),  (-0.070, 0.520, 0.200), HAIR_MAGENTA),
-    ("hair-lock-outer-r",      "head", (-0.225, 0.360, 0.130),  (-0.150, 0.560, 0.190), HAIR_MAGENTA),
-    # Stepped highlights on tips
-    ("hair-back-step-l",       "head", (0.055,  0.295, 0.150),  (0.145, 0.370, 0.204),  HAIR_HIGHLIGHT),
-    ("hair-back-step-r",       "head", (-0.145, 0.295, 0.150),  (-0.055, 0.370, 0.204), HAIR_HIGHLIGHT),
-    ("hair-back-tail-tip",     "head", (-0.035, 0.250, 0.155),  (0.035, 0.295, 0.208),  HAIR_HIGHLIGHT),
+    # Strand R3 (Rear Corner Flange, Z in [0.040, 0.145])
+    ("hair-side-r3-upper",     "head", (-0.232, 0.465, 0.040),  (-0.155, 0.635, 0.145),  HAIR_MAGENTA),
+    ("hair-side-r3-mid",       "head", (-0.226, 0.395, 0.045),  (-0.160, 0.475, 0.140),  HAIR_MAGENTA),
+    ("hair-side-r3-tip",       "head", (-0.220, 0.345, 0.050),  (-0.165, 0.405, 0.135),  HAIR_MAGENTA),
 
     # -----------------------------------------------------------------------
-    # 7. Snug Pointed Witch Hat with Large Gold Buckle & 2 Wands (Y: 0.655 -> 1.015)
+    # 5. Wide Volumetric Back Bob with 5 V-Tiered Locks (Full Clearance for Cape Moon!)
     # -----------------------------------------------------------------------
-    # Wide Octagonal Hat Brim (Y in [0.655, 0.695])
-    ("hat-brim-core",          "head", (-0.310, 0.655, -0.235), (0.310, 0.695, 0.235),  COAT_DARK),
-    ("hat-brim-fb",            "head", (-0.235, 0.655, -0.310), (0.235, 0.695, 0.310),  COAT_DARK),
-    ("hat-brim-c-fl",          "head", (0.180,  0.655, -0.285), (0.285, 0.695, -0.180), COAT_DARK),
-    ("hat-brim-c-fr",          "head", (-0.285, 0.655, -0.285), (-0.180, 0.695, -0.180), COAT_DARK),
-    ("hat-brim-c-bl",          "head", (0.180,  0.655, 0.180),  (0.285, 0.695, 0.285),  COAT_DARK),
-    ("hat-brim-c-br",          "head", (-0.285, 0.655, 0.180),  (-0.180, 0.695, 0.285), COAT_DARK),
+    # Foundation Back Dome Cap
+    ("hair-back-foundation",   "head", (-0.205, 0.485, 0.115),  (0.205, 0.665, 0.165),  HAIR_MAGENTA),
+    ("hair-back-upper-terrace","head", (-0.195, 0.435, 0.125),  (0.195, 0.540, 0.172),  HAIR_MAGENTA),
 
-    # Royal Purple Hat Ribbon Band (Y in [0.695, 0.770])
-    ("hat-band-core",          "head", (-0.215, 0.695, -0.215), (0.215, 0.770, 0.215),  CLOTH_PURPLE),
-    ("hat-band-front",         "head", (-0.205, 0.695, -0.230), (0.205, 0.770, -0.205), CLOTH_PURPLE),
-    ("hat-band-back",          "head", (-0.205, 0.695, 0.205),  (0.205, 0.770, 0.230),  CLOTH_PURPLE),
-    ("hat-band-left",          "head", (0.205,  0.695, -0.205), (0.230, 0.770, 0.205),  CLOTH_PURPLE),
-    ("hat-band-right",         "head", (-0.230, 0.695, -0.205), (-0.205, 0.770, 0.205), CLOTH_PURPLE),
+    # Lock 1 (Far Left Lock -X, chunky block ending high at Y=0.385)
+    ("hair-lock1-upper",       "head", (-0.210, 0.435, 0.125),  (-0.135, 0.530, 0.175), HAIR_MAGENTA),
+    ("hair-lock1-tip",         "head", (-0.200, 0.385, 0.130),  (-0.145, 0.445, 0.170), HAIR_MAGENTA),
+
+    # Lock 2 (Mid Left Lock -X, chunky stepped block ending at Y=0.325)
+    ("hair-lock2-upper",       "head", (-0.135, 0.415, 0.130),  (-0.060, 0.510, 0.182), HAIR_MAGENTA),
+    ("hair-lock2-mid",         "head", (-0.128, 0.355, 0.135),  (-0.068, 0.425, 0.178), HAIR_MAGENTA),
+    ("hair-lock2-tip",         "head", (-0.120, 0.325, 0.138),  (-0.075, 0.365, 0.174), HAIR_MAGENTA),
+
+    # Lock 3 (Central Spine V-Tail Lock - Thick Center Lock ending at Y=0.285 above moon)
+    ("hair-lock3-upper",       "head", (-0.060, 0.425, 0.135),  (0.060,  0.525, 0.188), HAIR_MAGENTA),
+    ("hair-lock3-mid",         "head", (-0.052, 0.355, 0.138),  (0.052,  0.435, 0.192), HAIR_MAGENTA),
+    ("hair-lock3-low",         "head", (-0.042, 0.310, 0.142),  (0.042,  0.365, 0.188), HAIR_MAGENTA),
+    ("hair-lock3-tip",         "head", (-0.028, 0.285, 0.145),  (0.028,  0.320, 0.184), HAIR_MAGENTA),
+
+    # Lock 4 (Mid Right Lock +X, chunky stepped block ending at Y=0.325)
+    ("hair-lock4-upper",       "head", (0.060,  0.415, 0.130),  (0.135,  0.510, 0.182), HAIR_MAGENTA),
+    ("hair-lock4-mid",         "head", (0.068,  0.355, 0.135),  (0.128,  0.425, 0.178), HAIR_MAGENTA),
+    ("hair-lock4-tip",         "head", (0.075,  0.325, 0.138),  (0.120,  0.365, 0.174), HAIR_MAGENTA),
+
+    # Lock 5 (Far Right Lock +X, chunky block ending high at Y=0.385)
+    ("hair-lock5-upper",       "head", (0.135,  0.435, 0.125),  (0.210,  0.530, 0.175), HAIR_MAGENTA),
+    ("hair-lock5-tip",         "head", (0.145,  0.385, 0.130),  (0.200,  0.445, 0.170), HAIR_MAGENTA),
+
+    # -----------------------------------------------------------------------
+    # 6. Snug Pointed Witch Hat with Large Gold Buckle & 2 Wands (Y: 0.640 -> 1.000)
+    # -----------------------------------------------------------------------
+    # Wide Octagonal Hat Brim (Y in [0.640, 0.680])
+    ("hat-brim-core",          "head", (-0.330, 0.640, -0.250), (0.330, 0.680, 0.250),  COAT_DARK),
+    ("hat-brim-fb",            "head", (-0.250, 0.640, -0.330), (0.250, 0.680, 0.330),  COAT_DARK),
+    ("hat-brim-c-fl",          "head", (0.190,  0.640, -0.300), (0.300, 0.680, -0.190), COAT_DARK),
+    ("hat-brim-c-fr",          "head", (-0.300, 0.640, -0.300), (-0.190, 0.680, -0.190), COAT_DARK),
+    ("hat-brim-c-bl",          "head", (0.190,  0.640, 0.190),  (0.300, 0.680, 0.300),  COAT_DARK),
+    ("hat-brim-c-br",          "head", (-0.300, 0.640, 0.190),  (-0.190, 0.680, 0.300), COAT_DARK),
+
+    # Royal Purple Hat Ribbon Band (Y in [0.680, 0.755])
+    ("hat-band-core",          "head", (-0.225, 0.680, -0.225), (0.225, 0.755, 0.225),  CLOTH_PURPLE),
+    ("hat-band-front",         "head", (-0.215, 0.680, -0.242), (0.215, 0.755, -0.215), CLOTH_PURPLE),
+    ("hat-band-back",          "head", (-0.215, 0.680, 0.215),  (0.215, 0.755, 0.242),  CLOTH_PURPLE),
+    ("hat-band-left",          "head", (0.215,  0.680, -0.215), (0.242, 0.755, 0.215),  CLOTH_PURPLE),
+    ("hat-band-right",         "head", (-0.242, 0.680, -0.215), (-0.215, 0.755, 0.215), CLOTH_PURPLE),
 
     # Large Square Gold Hat Buckle with Hollow Slot & Horizontal Prong (Center Front)
-    ("hat-buckle-frame",       "head", (-0.058, 0.700, -0.242), (0.058, 0.765, -0.222), GOLD),
-    ("hat-buckle-slot",        "head", (-0.032, 0.713, -0.245), (0.032, 0.753, -0.224), COAT_DARK),
-    ("hat-buckle-prong",       "head", (-0.032, 0.727, -0.248), (0.020, 0.741, -0.226), GOLD),
+    ("hat-buckle-frame",       "head", (-0.062, 0.685, -0.254), (0.062, 0.750, -0.234), GOLD),
+    ("hat-buckle-slot",        "head", (-0.035, 0.698, -0.257), (0.035, 0.738, -0.236), COAT_DARK),
+    ("hat-buckle-prong",       "head", (-0.035, 0.712, -0.260), (0.022, 0.726, -0.238), GOLD),
 
     # 2 Tucked Wands on Left Side (+X, character's left)
     # Forward Wand
-    ("wand1-wood-lo",          "head", (0.205,  0.705, -0.095), (0.235, 0.785, -0.065), WAND_WOOD),
-    ("wand1-wood-hi",          "head", (0.212,  0.785, -0.108), (0.242, 0.895, -0.075), WAND_WOOD),
-    ("wand1-wrap",             "head", (0.208,  0.735, -0.100), (0.238, 0.760, -0.070), WAND_BAND),
-    ("wand1-gem-base",         "head", (0.218,  0.895, -0.118), (0.255, 0.950, -0.078), LILAC_GEM),
-    ("wand1-gem-tip",          "head", (0.222,  0.950, -0.115), (0.250, 0.970, -0.082), LILAC_GEM),
+    ("wand1-wood-lo",          "head", (0.215,  0.690, -0.100), (0.248, 0.770, -0.068), WAND_WOOD),
+    ("wand1-wood-hi",          "head", (0.222,  0.770, -0.114), (0.255, 0.880, -0.078), WAND_WOOD),
+    ("wand1-wrap",             "head", (0.218,  0.720, -0.105), (0.250, 0.745, -0.072), WAND_BAND),
+    ("wand1-gem-base",         "head", (0.228,  0.880, -0.124), (0.268, 0.935, -0.082), LILAC_GEM),
+    ("wand1-gem-tip",          "head", (0.232,  0.935, -0.120), (0.262, 0.955, -0.086), LILAC_GEM),
 
     # Rear Wand
-    ("wand2-wood-lo",          "head", (0.205,  0.705, 0.020),  (0.235, 0.785, 0.050),  WAND_WOOD),
-    ("wand2-wood-hi",          "head", (0.215,  0.785, 0.032),  (0.245, 0.870, 0.062),  WAND_WOOD),
-    ("wand2-wrap",             "head", (0.210,  0.740, 0.025),  (0.240, 0.765, 0.055),  WAND_BAND),
-    ("wand2-gem-base",         "head", (0.222,  0.870, 0.038),  (0.258, 0.925, 0.076),  LILAC_GEM),
-    ("wand2-gem-tip",          "head", (0.226,  0.925, 0.042),  (0.254, 0.945, 0.070),  LILAC_GEM),
+    ("wand2-wood-lo",          "head", (0.215,  0.690, 0.022),  (0.248, 0.770, 0.054),  WAND_WOOD),
+    ("wand2-wood-hi",          "head", (0.225,  0.770, 0.035),  (0.258, 0.855, 0.066),  WAND_WOOD),
+    ("wand2-wrap",             "head", (0.220,  0.725, 0.028),  (0.252, 0.750, 0.058),  WAND_BAND),
+    ("wand2-gem-base",         "head", (0.232,  0.855, 0.040),  (0.270, 0.910, 0.080),  LILAC_GEM),
+    ("wand2-gem-tip",          "head", (0.236,  0.910, 0.045),  (0.266, 0.930, 0.074),  LILAC_GEM),
 
     # Stepped Cone Tiers (Swept back towards apex)
-    ("hat-cone-t1",            "head", (-0.178, 0.770, -0.178), (0.178, 0.835, 0.178),  COAT_DARK),
-    ("hat-cone-t2",            "head", (-0.145, 0.835, -0.115), (0.145, 0.895, 0.175),  COAT_DARK),
-    ("hat-cone-t3",            "head", (-0.105, 0.895, -0.055), (0.105, 0.950, 0.160),  COAT_DARK),
-    ("hat-cone-t4",            "head", (-0.060, 0.950, 0.010),  (0.060, 0.990, 0.125),  COAT_DARK),
-    ("hat-cone-tip",           "head", (-0.025, 0.990, 0.040),  (0.025, 1.015, 0.100),  COAT_DARK),
+    ("hat-cone-t1",            "head", (-0.185, 0.755, -0.185), (0.185, 0.820, 0.185),  COAT_DARK),
+    ("hat-cone-t2",            "head", (-0.150, 0.820, -0.120), (0.150, 0.880, 0.180),  COAT_DARK),
+    ("hat-cone-t3",            "head", (-0.110, 0.880, -0.060), (0.110, 0.935, 0.165),  COAT_DARK),
+    ("hat-cone-t4",            "head", (-0.065, 0.935, 0.010),  (0.065, 0.975, 0.130),  COAT_DARK),
+    ("hat-cone-tip",           "head", (-0.028, 0.975, 0.040),  (0.028, 1.000, 0.105),  COAT_DARK),
 ]
+
+DONOR_SKULL = "Assets/TumbangPreso/Art/characters/persons/character-female-b.glb"
+SKULL_SLOTS = {15: SKIN, 8: INK}
+
+EYE_SQUASH = 0.65
+EYE_DROP = 0.005
+
+MOUTH_Z = 0.1596
+MOUTH_HALF = 0.030
+MOUTH_BASE = 0.4120
+MOUTH_RISE = 0.004
+MOUTH_THIN = 0.0030
+MOUTH_THICK = 0.0055
+MOUTH_HOOK_FROM = 0.60
+MOUTH_HOOK = 0.003
+MOUTH_STEPS = 12
+
+
+def _mouth_polygon():
+    """Sleek, nonchalant, mysterious mouth on the face plate."""
+    upper, lower = [], []
+    for k in range(MOUTH_STEPS + 1):
+        t = k / MOUTH_STEPS
+        x = -MOUTH_HALF + t * (2.0 * MOUTH_HALF)
+
+        centre = MOUTH_BASE + (t - 0.5) * MOUTH_RISE
+        half = 0.5 * (MOUTH_THIN + t * (MOUTH_THICK - MOUTH_THIN))
+
+        if t > MOUTH_HOOK_FROM:
+            u = (t - MOUTH_HOOK_FROM) / (1.0 - MOUTH_HOOK_FROM)
+            centre += MOUTH_HOOK * u * u
+
+        upper.append((x, centre + half))
+        lower.append((x, centre - half))
+
+    return upper + list(reversed(lower))
+
+
+def _slot_at(u, v):
+    col = min(int(u * 16.0), 15)
+    row = min(int(v * 16.0), 15)
+    if row < 8:
+        return None
+    return (col // 2) + (8 if row >= 12 else 0)
+
+
+def _donor_part(path, slots):
+    gltf, buffer = read_glb(path)
+    for node in gltf["nodes"]:
+        if node.get("name") != "head-mesh":
+            continue
+
+        prim = gltf["meshes"][node["mesh"]]["primitives"][0]
+        src_pos = [tuple(p) for p in read_accessor(gltf, buffer, prim["attributes"]["POSITION"])]
+        src_nrm = [tuple(n) for n in read_accessor(gltf, buffer, prim["attributes"]["NORMAL"])]
+        src_uv = [tuple(t) for t in read_accessor(gltf, buffer, prim["attributes"]["TEXCOORD_0"])]
+
+        raw = read_accessor(gltf, buffer, prim["indices"])
+        idx = [v[0] for v in raw] if isinstance(raw[0], tuple) else list(raw)
+
+        pos, nrm, uv, tris = [], [], [], []
+        remap = {}
+
+        for t in range(0, len(idx), 3):
+            tri = (idx[t], idx[t + 1], idx[t + 2])
+            slot = _slot_at(*src_uv[tri[0]])
+            if slot not in slots:
+                continue
+
+            paint = slots[slot]
+            for i in tri:
+                if i not in remap:
+                    remap[i] = len(pos)
+                    pos.append(src_pos[i])
+                    nrm.append(src_nrm[i])
+                    uv.append(cell_uv(paint) if paint is not None else src_uv[i])
+
+            tris.append(tuple(remap[i] for i in tri))
+
+        if not tris:
+            raise SystemExit(f"{path} has no triangles in slots {sorted(slots)}")
+
+        return pos, nrm, uv, tris
+
+    raise SystemExit(f"{path} has no head-mesh")
+
+
+def _donor_head():
+    """Builds the canonical donor skull with nonchalant/mysterious half-lidded eyes and sleek mouth."""
+    pos, nrm, uv, tris = _donor_part(DONOR_SKULL, SKULL_SLOTS)
+
+    mouth, eyes, mouth_tris = set(), set(), set()
+    for a, b, c in tris:
+        if _slot_at(*uv[a]) != INK:
+            continue
+        if (pos[a][1] + pos[b][1] + pos[c][1]) / 3.0 < 0.45:
+            mouth.update((a, b, c))
+            mouth_tris.add((a, b, c))
+        else:
+            eyes.add((a, b, c))
+
+    # Half-lid both eyes for the nonchalant / mysterious anime gaze
+    for side in (1.0, -1.0):
+        lid = {i for tri in eyes for i in tri if pos[i][0] * side > 0.0}
+        if not lid:
+            continue
+        centre = sum(pos[i][1] for i in lid) / len(lid)
+        for i in lid:
+            x, y, z = pos[i]
+            pos[i] = (x, centre + (y - centre) * EYE_SQUASH - EYE_DROP, z)
+
+    # Replace donor mouth with sleek mysterious mouth line
+    tris = [t for t in tris if t not in mouth_tris]
+    first = len(pos)
+    plate = MOUTH_Z + PANEL_PROUD
+
+    poly = _mouth_polygon()
+    for x, y in poly:
+        pos.append((x, y, plate))
+        nrm.append((0.0, 0.0, 1.0))
+        uv.append(cell_uv(INK))
+
+    n = len(poly)
+    for k in range(1, n - 1):
+        tris.append((first, first + k, first + k + 1))
+
+    return pos, nrm, uv, tris
 
 
 BODY_BOXES = (LEG_LEFT + LEG_RIGHT
@@ -774,7 +951,7 @@ def main():
     bind_matrices(gltf)
 
     body = build_mesh(BODY_BOXES)
-    head = build_mesh(HEAD_BOXES)
+    head = build_mesh(HEAD_BOXES, donor=_donor_head())
 
     blob = bytearray()
     new_views = []
