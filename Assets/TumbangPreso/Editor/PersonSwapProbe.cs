@@ -1114,6 +1114,15 @@ namespace TumbangPreso.EditorTools
 
             ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth, palette);
 
+            foreach (var sub in AssetDatabase.LoadAllAssetsAtPath(NewModel))
+            {
+                if (sub is AnimationClip clip && clip.name == "idle")
+                {
+                    clip.SampleAnimation(model, 0.0f);
+                    break;
+                }
+            }
+
             var renderers = model.GetComponentsInChildren<Renderer>();
             if (renderers.Length == 0) return;
 

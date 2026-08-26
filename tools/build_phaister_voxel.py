@@ -51,7 +51,7 @@ def cell_uv(slot):
 
 
 # ---------------------------------------------------------------------------
-# 16-COLOR PALETTE DEFINITION (Transcribed from media_1787715744980.png)
+# 16-COLOR PALETTE DEFINITION (Transcribed from media_1787716960756.png)
 # ---------------------------------------------------------------------------
 COAT_DARK      = 0   # Deep black/charcoal coat, hat, trousers (#181622)
 CLOTH_PURPLE   = 1   # Royal purple hat band, belt, sleeve band, coat trim, shoes (#4a1e78)
@@ -61,9 +61,9 @@ WAND_WOOD      = 4   # Warm wood wand shafts (#7c3c20)
 WAND_BAND      = 5   # Crimson wand wrap bands (#b83424)
 HAIR_MAGENTA   = 6   # Vibrant rich hot pink/magenta hair body (#d8186e)
 HAIR_HIGHLIGHT = 7   # Magenta hair highlights and stepped locks (#e82882)
-INK            = 8   # Solid dark ink for eyes and mouth (#14101c)
-GEM_DARK       = 9   # Dark purple medallion backing / socket (#361250)
-CRIMSON        = 10  # Crimson inner cape, collar accent, ankle stripe (#8c1424)
+INK            = 8   # Solid dark ink for eyes (#14101c)
+TEAL_KNOT      = 9   # Teal/cyan collar knot above medallion (#20b2aa)
+CRIMSON        = 10  # Crimson cape, high collar, sleeve stripe, ankle stripe (#8c1424)
 GOLD_SHADOW    = 11  # Deep gold buckle shadow (#b87814)
 WHITE          = 12  # Crisp white shoe sole slabs, shirt cuffs (#ffffff)
 SKIN           = 13  # Warm porcelain peach skin midtone (#f4c098)
@@ -79,9 +79,9 @@ PALETTE = {
     WAND_BAND:      "b83424",   # Crimson wand wrap bands
     HAIR_MAGENTA:   "d8186e",   # Vibrant rich hot pink/magenta hair body
     HAIR_HIGHLIGHT: "e82882",   # Magenta hair highlights and stepped locks
-    INK:            "14101c",   # Solid dark ink for eyes and mouth
-    GEM_DARK:       "361250",   # Dark purple medallion backing / socket
-    CRIMSON:        "8c1424",   # Crimson inner cape, collar accent, ankle stripe
+    INK:            "14101c",   # Solid dark ink for eyes
+    TEAL_KNOT:      "20b2aa",   # Teal/cyan collar knot above medallion
+    CRIMSON:        "8c1424",   # Crimson cape, high collar, sleeve stripe, ankle stripe
     GOLD_SHADOW:    "b87814",   # Deep gold buckle shadow
     WHITE:          "ffffff",   # Crisp white shoe sole slabs, shirt cuffs
     SKIN:           "f4c098",   # Warm porcelain peach skin midtone
@@ -163,15 +163,16 @@ TORSO = [
     ("waist-buckle-slot",      "torso", (-0.020, 0.198, -0.090), (0.020, 0.230, -0.076), COAT_DARK),
     ("waist-buckle-pin",       "torso", (-0.006, 0.198, -0.092), (0.006, 0.230, -0.078), GOLD),
 
-    # 8. Scalloped Gold V-Chain Necklace & Large Amethyst Medallion
+    # 8. Scalloped Gold V-Chain Necklace, Teal Collar Knot & Amethyst Medallion
+    ("collar-teal-knot",       "torso", (-0.014, 0.272, -0.088), (0.014, 0.292, -0.074), TEAL_KNOT),
     ("chain-v-link-l1",        "torso", (0.055,  0.310, -0.082), (0.092, 0.345, -0.068), GOLD),
     ("chain-v-link-l2",        "torso", (0.025,  0.280, -0.086), (0.062, 0.315, -0.072), GOLD),
     ("chain-v-link-r1",        "torso", (-0.092, 0.310, -0.082), (-0.055, 0.345, -0.068), GOLD),
     ("chain-v-link-r2",        "torso", (-0.062, 0.280, -0.086), (-0.025, 0.315, -0.072), GOLD),
-    ("chain-v-knot",           "torso", (-0.025, 0.265, -0.088), (0.025, 0.285, -0.074), GOLD),
-    ("pendant-gem",            "torso", (-0.022, 0.228, -0.095), (0.022, 0.265, -0.078), LILAC_GEM),
+    ("chain-v-knot",           "torso", (-0.025, 0.262, -0.088), (0.025, 0.278, -0.074), GOLD),
+    ("pendant-gem",            "torso", (-0.022, 0.228, -0.095), (0.022, 0.262, -0.078), LILAC_GEM),
     ("pendant-prong-bot",      "torso", (-0.010, 0.215, -0.092), (0.010, 0.228, -0.078), GOLD),
-    ("pendant-gem-hl",         "torso", (-0.008, 0.245, -0.097), (0.008, 0.258, -0.080), WHITE),
+    ("pendant-gem-hl",         "torso", (-0.008, 0.245, -0.097), (0.008, 0.256, -0.080), WHITE),
 
     # 9. Back Coat Graphic: Gold Crescent Moon + 2 Stars
     ("back-moon-spine",        "torso", (-0.016, 0.185, 0.097),  (0.016, 0.245, 0.104),  GOLD),
@@ -186,20 +187,18 @@ TORSO = [
 
 
 # ---------------------------------------------------------------------------
-# ARMS: BLACK UPPER, ROYAL PURPLE FOREARM, CRIMSON STRIPE, WHITE CUFF, HAND
+# ARMS: BLACK UPPER, ROYAL PURPLE FOREARM (NO FRONT CROSS), CRIMSON STRIPE, WHITE CUFF, HAND
 # ---------------------------------------------------------------------------
 ARM_LEFT = [
     # 1. Black Coat Upper Sleeve (X in [0.0999, 0.170])
     ("sleeve-upper-l",         "arm-left", (0.0999, 0.230, -0.055), (0.170, 0.343, 0.055), COAT_DARK),
 
-    # 2. Royal Purple Forearm Band (X in [0.170, 0.235])
+    # 2. Royal Purple Forearm Band (X in [0.170, 0.235]) - Pure solid purple in front view!
     ("sleeve-purple-l",        "arm-left", (0.170, 0.224, -0.058),  (0.235, 0.345, 0.058), CLOTH_PURPLE),
 
-    # 3. Gold Cross Emblem on Forearm (Front, Back, and Outer)
-    ("sleeve-cross-v-front-l", "arm-left", (0.190, 0.245, -0.063),  (0.215, 0.325, -0.056), GOLD),
-    ("sleeve-cross-h-front-l", "arm-left", (0.178, 0.275, -0.063),  (0.228, 0.295, -0.056), GOLD),
-    ("sleeve-cross-v-back-l",  "arm-left", (0.190, 0.245, 0.056),   (0.215, 0.325, 0.063),  GOLD),
-    ("sleeve-cross-h-back-l",  "arm-left", (0.178, 0.275, 0.056),   (0.228, 0.295, 0.063),  GOLD),
+    # 3. Small Gold Cross Emblem ONLY on the outer back/side (+Z facing)
+    ("sleeve-cross-v-back-l",  "arm-left", (0.195, 0.255, 0.057),   (0.215, 0.315, 0.063),  GOLD),
+    ("sleeve-cross-h-back-l",  "arm-left", (0.185, 0.278, 0.057),   (0.225, 0.292, 0.063),  GOLD),
 
     # 4. Crimson Red Sleeve Stripe (X in [0.235, 0.252])
     ("sleeve-crimson-l",       "arm-left", (0.235, 0.222, -0.060),  (0.252, 0.347, 0.060), CRIMSON),
@@ -215,62 +214,58 @@ ARM_RIGHT = mirrored(ARM_LEFT, "arm-left", "arm-right")
 
 
 # ---------------------------------------------------------------------------
-# HEAD: WIDE FACE, UNBLOCKED EYES, NOTCHED MAGENTA HAIR, POINTED WITCH HAT & WANDS
+# HEAD: WIDE FACE, PERFECTLY FRAMED NOTCHED MAGENTA HAIR, WITCH HAT & WANDS
 # ---------------------------------------------------------------------------
 HEAD = [
     # -----------------------------------------------------------------------
-    # 1. Warm Peach Skin Head & Face
+    # 1. Warm Peach Skin Head & Face (NO MOUTH - Clean Chibi Anime Face)
     # -----------------------------------------------------------------------
-    ("face-core",              "head", (-0.160, 0.343, -0.155), (0.160, 0.535, 0.145), SKIN),
-    ("face-jaw-taper",         "head", (-0.145, 0.343, -0.158), (0.145, 0.380, 0.140), SKIN),
-    ("face-front-plane",       "head", (-0.150, 0.370, -0.160), (0.150, 0.530, -0.140), SKIN),
+    ("face-core",              "head", (-0.150, 0.343, -0.155), (0.150, 0.535, 0.145), SKIN),
+    ("face-jaw-taper",         "head", (-0.140, 0.343, -0.158), (0.140, 0.380, 0.140), SKIN),
+    ("face-front-plane",       "head", (-0.145, 0.370, -0.160), (0.145, 0.530, -0.140), SKIN),
 
     # Exposed square toon ears
-    ("ear-left",               "head", (0.160,  0.420, -0.040), (0.185, 0.470, 0.020),  SKIN),
-    ("ear-right",              "head", (-0.185, 0.420, -0.040), (-0.160, 0.470, 0.020), SKIN),
+    ("ear-left",               "head", (0.150,  0.420, -0.040), (0.175, 0.470, 0.020),  SKIN),
+    ("ear-right",              "head", (-0.175, 0.420, -0.040), (-0.150, 0.470, 0.020), SKIN),
 
-    # Eyes in solid INK (#14101c) (2 blocks tall, crystal clear and fully exposed)
-    ("eye-left",               "head", (0.050,  0.415, -0.164), (0.088, 0.485, -0.156), INK),
-    ("eye-right",              "head", (-0.088, 0.415, -0.164), (-0.050, 0.485, -0.156), INK),
+    # Eyes in solid INK (#14101c) (2 blocks tall, crisp and cleanly spaced)
+    ("eye-left",               "head", (0.045,  0.415, -0.164), (0.080, 0.485, -0.156), INK),
+    ("eye-right",              "head", (-0.080, 0.415, -0.164), (-0.045, 0.485, -0.156), INK),
 
     # -----------------------------------------------------------------------
-    # 2. Vibrant Hot Pink / Magenta Hair (Framing face cleanly around eyes)
+    # 2. Vibrant Hot Pink / Magenta Hair (Framing face closely & naturally)
     # -----------------------------------------------------------------------
     # Skull base
-    ("hair-skull-encap",       "head", (-0.175, 0.460, -0.165), (0.175, 0.535, 0.165), HAIR_MAGENTA),
+    ("hair-skull-encap",       "head", (-0.170, 0.460, -0.162), (0.170, 0.535, 0.165), HAIR_MAGENTA),
 
-    # Top forehead fringe (Above eye level Y > 0.485)
-    ("hair-bang-top-l",        "head", (-0.130, 0.490, -0.168), (-0.040, 0.535, -0.150), HAIR_MAGENTA),
-    ("hair-bang-top-c",        "head", (-0.040, 0.512, -0.168), (0.020,  0.535, -0.150), HAIR_MAGENTA),
-    ("hair-bang-top-r",        "head", (0.020,  0.490, -0.168), (0.130,  0.535, -0.150), HAIR_MAGENTA),
+    # Left forehead fringe (viewer's left / -X): Flat stepped horizontal fringe
+    ("hair-bang-l-top",        "head", (-0.115, 0.490, -0.168), (-0.025, 0.535, -0.150), HAIR_MAGENTA),
+    ("hair-bang-l-step",       "head", (-0.115, 0.465, -0.169), (-0.065, 0.495, -0.150), HAIR_MAGENTA),
 
-    # Left fringe step (viewer's left / -X, outside right eye)
-    ("hair-bang-l-step",       "head", (-0.135, 0.450, -0.168), (-0.090, 0.495, -0.150), HAIR_HIGHLIGHT),
+    # Right forehead fringe (viewer's right / +X): Distinct diagonal notched fringe!
+    ("hair-bang-r-top",        "head", (0.010,  0.485, -0.168), (0.115,  0.535, -0.150), HAIR_MAGENTA),
+    ("hair-bang-r-notch",      "head", (0.025,  0.440, -0.170), (0.055,  0.488, -0.150), HAIR_MAGENTA),
+    ("hair-bang-r-outer-step", "head", (0.075,  0.460, -0.169), (0.115,  0.495, -0.150), HAIR_MAGENTA),
 
-    # Right diagonal notch fringe (viewer's right / +X, between center and left eye)
-    ("hair-bang-notch-tip",    "head", (0.015,  0.460, -0.168), (0.048,  0.495, -0.150), HAIR_HIGHLIGHT),
-    ("hair-bang-r-outer-step", "head", (0.090,  0.450, -0.168), (0.135,  0.495, -0.150), HAIR_HIGHLIGHT),
+    # Cheek Framing Side Locks (Chunky stepped locks framing face closely down to Y=0.320)
+    # Left side (+X, viewer's right)
+    ("hair-side-l-front",      "head", (0.095,  0.330, -0.162), (0.145, 0.520, -0.050), HAIR_MAGENTA),
+    ("hair-side-l-outer",      "head", (0.135,  0.320, -0.150), (0.175, 0.520, 0.040),  HAIR_MAGENTA),
+    ("hair-side-l-back",       "head", (0.125,  0.320, 0.020),  (0.175, 0.520, 0.120),  HAIR_MAGENTA),
+    ("hair-side-l-highlight",  "head", (0.145,  0.360, -0.100), (0.180, 0.480, 0.020),  HAIR_HIGHLIGHT),
 
-    # Symmetrical chunky wavy side locks (Draping down to Y=0.320)
-    # Left side (+X)
-    ("hair-side-l-front",      "head", (0.135,  0.320, -0.150), (0.180, 0.520, -0.040), HAIR_MAGENTA),
-    ("hair-side-l-back",       "head", (0.145,  0.320, -0.040), (0.185, 0.520, 0.080),  HAIR_MAGENTA),
-    ("hair-side-l-tuft",       "head", (0.165,  0.380, -0.100), (0.192, 0.495, 0.040),  HAIR_HIGHLIGHT),
-    # Right side (-X)
-    ("hair-side-r-front",      "head", (-0.180, 0.320, -0.150), (-0.135, 0.520, -0.040), HAIR_MAGENTA),
-    ("hair-side-r-back",       "head", (-0.185, 0.320, -0.040), (-0.145, 0.520, 0.080),  HAIR_MAGENTA),
-    ("hair-side-r-tuft",       "head", (-0.192, 0.380, -0.100), (-0.165, 0.495, 0.040),  HAIR_HIGHLIGHT),
+    # Right side (-X, viewer's left)
+    ("hair-side-r-front",      "head", (-0.145, 0.330, -0.162), (-0.095, 0.520, -0.050), HAIR_MAGENTA),
+    ("hair-side-r-outer",      "head", (-0.175, 0.320, -0.150), (-0.135, 0.520, 0.040),  HAIR_MAGENTA),
+    ("hair-side-r-back",       "head", (-0.175, 0.320, 0.020),  (-0.125, 0.520, 0.120),  HAIR_MAGENTA),
+    ("hair-side-r-highlight",  "head", (-0.180, 0.360, -0.100), (-0.145, 0.480, 0.020),  HAIR_HIGHLIGHT),
 
     # Back hair cascade (Multi-tiered stepped mane draping down over upper back down to Y=0.295)
-    ("hair-back-upper",        "head", (-0.170, 0.460, 0.125),  (0.170, 0.535, 0.175),  HAIR_MAGENTA),
-    ("hair-back-mid-l",        "head", (0.090,  0.380, 0.130),  (0.165, 0.470, 0.180),  HAIR_MAGENTA),
-    ("hair-back-mid-cl",       "head", (0.030,  0.360, 0.135),  (0.095, 0.460, 0.182),  HAIR_HIGHLIGHT),
-    ("hair-back-mid-c",        "head", (-0.035, 0.340, 0.138),  (0.035, 0.460, 0.185),  HAIR_MAGENTA),
-    ("hair-back-mid-cr",       "head", (-0.095, 0.360, 0.135),  (-0.030, 0.460, 0.182), HAIR_HIGHLIGHT),
-    ("hair-back-mid-r",        "head", (-0.165, 0.380, 0.130),  (-0.090, 0.470, 0.180), HAIR_MAGENTA),
-    ("hair-back-tail-c",       "head", (-0.025, 0.295, 0.140),  (0.025, 0.350, 0.188),  HAIR_HIGHLIGHT),
-    ("hair-back-tail-l",       "head", (0.025,  0.320, 0.138),  (0.065, 0.370, 0.184),  HAIR_MAGENTA),
-    ("hair-back-tail-r",       "head", (-0.065, 0.320, 0.138),  (-0.025, 0.370, 0.184), HAIR_MAGENTA),
+    ("hair-back-upper",        "head", (-0.165, 0.450, 0.125),  (0.165, 0.535, 0.175),  HAIR_MAGENTA),
+    ("hair-back-mid-l",        "head", (0.075,  0.360, 0.130),  (0.155, 0.460, 0.180),  HAIR_MAGENTA),
+    ("hair-back-mid-c",        "head", (-0.040, 0.340, 0.135),  (0.040, 0.460, 0.185),  HAIR_MAGENTA),
+    ("hair-back-mid-r",        "head", (-0.155, 0.360, 0.130),  (-0.075, 0.460, 0.180), HAIR_MAGENTA),
+    ("hair-back-tail",         "head", (-0.025, 0.295, 0.140),  (0.025, 0.350, 0.188),  HAIR_HIGHLIGHT),
 
     # -----------------------------------------------------------------------
     # 3. Pointed Witch Hat with Large Gold Buckle & 2 Wands
