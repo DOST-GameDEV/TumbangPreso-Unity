@@ -682,9 +682,10 @@ namespace TumbangPreso.EditorTools
 
             // Petite chibi characters like Nemu have lower authored height (~0.60m)
             float minHeight = RosterId == "nemu" ? 0.5800f : CastMinHeight;
+            float maxHeight = RosterId == "phaister" ? 1.1500f : CastMaxHeight;
 
             // Widened by 5 mm at each end so a rig at either extreme can be matched exactly.
-            if (newHeight >= minHeight - 0.005f && newHeight <= CastMaxHeight + 0.005f)
+            if (newHeight >= minHeight - 0.005f && newHeight <= maxHeight + 0.005f)
             {
                 return true;
             }

@@ -1264,58 +1264,62 @@ namespace TumbangPreso.CameraSystem
         private static void BuildPhaisterAccessories(Transform arm, bool isRight)
         {
             var blackSleeve = new Color(0.094f, 0.086f, 0.133f, 1.0f); // COAT_DARK #181622
-            var purpleBand = new Color(0.290f, 0.118f, 0.471f, 1.0f);  // CLOTH_PURPLE #4a1e78
+            var purpleBand  = new Color(0.290f, 0.118f, 0.471f, 1.0f); // CLOTH_PURPLE #4a1e78
             var crimsonBand = new Color(0.549f, 0.078f, 0.141f, 1.0f); // CRIMSON #8c1424
-            var goldStripe = new Color(0.973f, 0.722f, 0.141f, 1.0f);  // GOLD #f8b824
-            var whiteCuff = Color.white;                                 // WHITE #ffffff
-            var skinTone = SkinPhaister;                                 // SKIN #f4c098
-            var skinDark = new Color(0.878f, 0.627f, 0.471f, 1.0f);     // SKIN_DARK #e0a078
+            var goldStripe  = new Color(0.973f, 0.722f, 0.141f, 1.0f); // GOLD #f8b824
+            var whiteCuff   = Color.white;                              // WHITE #ffffff
+            var skinTone    = SkinPhaister;                             // SKIN #f4c098
+            var skinDark    = new Color(0.878f, 0.627f, 0.471f, 1.0f); // SKIN_DARK #e0a078
 
-            // 1. Black coat upper sleeve (Y ~ 0.05 to 0.22)
-            AddBoxAccessory(arm, "BlackUpperSleeve", new Vector3(0.29f, 0.22f, 0.29f),
-                new Vector3(0.0f, 0.11f, 0.0f), Quaternion.identity, blackSleeve);
+            // 1. Black coat upper sleeve (Y ~ 0.04 to 0.22)
+            AddBoxAccessory(arm, "BlackUpperSleeve", new Vector3(0.295f, 0.220f, 0.295f),
+                new Vector3(0.0f, 0.110f, 0.0f), Quaternion.identity, blackSleeve);
 
             // 2. Royal Purple Forearm Band (Y ~ 0.22 to 0.48)
-            AddBoxAccessory(arm, "PurpleSleeveBand", new Vector3(0.30f, 0.26f, 0.30f),
-                new Vector3(0.0f, 0.35f, 0.0f), Quaternion.identity, purpleBand);
+            AddBoxAccessory(arm, "PurpleSleeveBand", new Vector3(0.305f, 0.260f, 0.305f),
+                new Vector3(0.0f, 0.350f, 0.0f), Quaternion.identity, purpleBand);
 
             // Gold Cross Emblem on outer forearm
             float crossSign = isRight ? 1.0f : -1.0f;
-            AddBoxAccessory(arm, "GoldSleeveCrossV", new Vector3(0.040f, 0.080f, 0.020f),
-                new Vector3(crossSign * 0.155f, 0.35f, 0.0f), Quaternion.identity, goldStripe);
-            AddBoxAccessory(arm, "GoldSleeveCrossH", new Vector3(0.040f, 0.025f, 0.070f),
-                new Vector3(crossSign * 0.155f, 0.35f, 0.0f), Quaternion.identity, goldStripe);
+            AddBoxAccessory(arm, "GoldSleeveCrossV", new Vector3(0.025f, 0.090f, 0.025f),
+                new Vector3(crossSign * 0.156f, 0.350f, 0.0f), Quaternion.identity, goldStripe);
+            AddBoxAccessory(arm, "GoldSleeveCrossH", new Vector3(0.025f, 0.025f, 0.080f),
+                new Vector3(crossSign * 0.156f, 0.350f, 0.0f), Quaternion.identity, goldStripe);
 
             // 3. Crimson Red Sleeve Stripe (Y ~ 0.48 to 0.53)
-            AddBoxAccessory(arm, "CrimsonSleeveStripe", new Vector3(0.305f, 0.05f, 0.305f),
+            AddBoxAccessory(arm, "CrimsonSleeveStripe", new Vector3(0.310f, 0.050f, 0.310f),
                 new Vector3(0.0f, 0.505f, 0.0f), Quaternion.identity, crimsonBand);
 
             // 4. Crisp White Flared Cuff Rim (Y ~ 0.53 to 0.62, right at wrist)
-            AddBoxAccessory(arm, "WhiteCuffRim", new Vector3(0.320f, 0.09f, 0.320f),
-                new Vector3(0.0f, 0.575f, 0.0f), Quaternion.identity, whiteCuff);
+            AddBoxAccessory(arm, "WhiteCuffRim", new Vector3(0.330f, 0.085f, 0.330f),
+                new Vector3(0.0f, 0.570f, 0.0f), Quaternion.identity, whiteCuff);
 
             // 5. Porcelain Skin Hand & Knuckle details (Y ~ 0.62 to 0.82)
             if (isRight)
             {
-                AddBoxAccessory(arm, "RightKnuckleIndent1", new Vector3(0.020f, 0.045f, 0.035f),
-                    new Vector3(-0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "RightKnuckleIndent2", new Vector3(0.020f, 0.045f, 0.035f),
-                    new Vector3(0.000f, 0.690f, 0.152f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "RightKnuckleIndent3", new Vector3(0.020f, 0.045f, 0.035f),
-                    new Vector3(0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "RightThumbKnuckle", new Vector3(0.040f, 0.080f, 0.032f),
-                    new Vector3(0.160f, 0.730f, 0.020f), Quaternion.identity, skinTone);
+                AddBoxAccessory(arm, "RightKnucklePlate", new Vector3(0.260f, 0.055f, 0.030f),
+                    new Vector3(0.0f, 0.690f, 0.148f), Quaternion.identity, skinTone);
+                AddBoxAccessory(arm, "RightKnuckleIndent1", new Vector3(0.020f, 0.045f, 0.034f),
+                    new Vector3(-0.065f, 0.690f, 0.150f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "RightKnuckleIndent2", new Vector3(0.020f, 0.045f, 0.034f),
+                    new Vector3(0.000f, 0.690f, 0.150f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "RightKnuckleIndent3", new Vector3(0.020f, 0.045f, 0.034f),
+                    new Vector3(0.065f, 0.690f, 0.150f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "RightThumbKnuckle", new Vector3(0.040f, 0.075f, 0.030f),
+                    new Vector3(0.150f, 0.725f, 0.020f), Quaternion.identity, skinTone);
             }
             else
             {
-                AddBoxAccessory(arm, "LeftKnuckleIndent1", new Vector3(0.020f, 0.045f, 0.035f),
-                    new Vector3(-0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "LeftKnuckleIndent2", new Vector3(0.020f, 0.045f, 0.035f),
-                    new Vector3(0.000f, 0.690f, 0.152f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "LeftKnuckleIndent3", new Vector3(0.020f, 0.045f, 0.035f),
-                    new Vector3(0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "LeftThumbKnuckle", new Vector3(0.040f, 0.080f, 0.032f),
-                    new Vector3(-0.160f, 0.730f, 0.020f), Quaternion.identity, skinTone);
+                AddBoxAccessory(arm, "LeftKnucklePlate", new Vector3(0.260f, 0.055f, 0.030f),
+                    new Vector3(0.0f, 0.690f, 0.148f), Quaternion.identity, skinTone);
+                AddBoxAccessory(arm, "LeftKnuckleIndent1", new Vector3(0.020f, 0.045f, 0.034f),
+                    new Vector3(-0.065f, 0.690f, 0.150f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "LeftKnuckleIndent2", new Vector3(0.020f, 0.045f, 0.034f),
+                    new Vector3(0.000f, 0.690f, 0.150f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "LeftKnuckleIndent3", new Vector3(0.020f, 0.045f, 0.034f),
+                    new Vector3(0.065f, 0.690f, 0.150f), Quaternion.identity, skinDark);
+                AddBoxAccessory(arm, "LeftThumbKnuckle", new Vector3(0.040f, 0.075f, 0.030f),
+                    new Vector3(-0.150f, 0.725f, 0.020f), Quaternion.identity, skinTone);
             }
         }
 
