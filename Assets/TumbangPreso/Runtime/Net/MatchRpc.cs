@@ -129,6 +129,9 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("StartMatch", OnStartMatchMsg);
             cm.RegisterNamedMessageHandler("ReqSnapshot", OnReqSnapshotMsg);
             cm.RegisterNamedMessageHandler("RebindSeat", OnRebindSeatMsg);
+            cm.RegisterNamedMessageHandler("ReqCue", OnReqCueMsg);
+            cm.RegisterNamedMessageHandler("PlayCue", OnPlayCueMsg);
+            cm.RegisterNamedMessageHandler("ReqBlink", OnReqBlinkMsg);
         }
 
         private static CharacterMotor Unit(int slot)
@@ -732,6 +735,132 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out string id);
             Unit(slot)?.GetComponent<Social.EmotePlayer>()?.Play(id);
+        }
+
+        // -------------------------------------------------------------------
+        // WORLD SOUND, AND THE ONE ABILITY EFFECT THAT MOVES SOMEBODY ELSE'S BODY
+        //
+        // ⚠️⚠️ THE CUE RELAY IS THE ANSWER TO A MEASURED FAULT, NOT A CONVENIENCE.
+        // `tools/audit_audio_reach.py` reports every `GameServices.Audio` call whose enclosing
+        // method sits behind an open `NetAuthority.ShouldResolve()` return, and two of them are
+        // the loudest events in the game: `Carrier.HostThrowAt` plays `throw_release` and
+        // `Lata.HostKnockDown` plays `lata_seal`. Both are host-only, so in a networked match a
+        // client has never heard a throw leave a hand or the can go over. `TumbangPreso.NetCue`
+        // is the call site's half; this is the wire.
+        //
+        // ⚠️ IT SENDS PER CLIENT RATHER THAN `SendNamedMessageToAll`, BECAUSE THE PEER THAT MADE
+        // THE SOUND HAS ALREADY PLAYED IT. `NetCue` plays locally first so the player who threw
+        // hears it on the frame they threw, with no round trip; relaying to everyone would give
+        // that one peer the sound twice, a few tens of milliseconds apart, which is a flam rather
+        // than an echo and is worse than either.
+        // -------------------------------------------------------------------
+
+        /// <summary>Play a world cue on every peer except the one that already played it.</summary>
+        public void BroadcastCue(string id, Vector3 position, float volumeScale)
+        {
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+
+            if (!NetAuthority.IsHost)
+            {
+                using var ask = new FastBufferWriter(96, Allocator.Temp);
+                ask.WriteValueSafe(id ?? "");
+                ask.WriteValueSafe(position);
+                ask.WriteValueSafe(volumeScale);
+                _nm.CustomMessagingManager.SendNamedMessage("ReqCue", NetworkManager.ServerClientId, ask);
+                return;
+            }
+
+            HostRelayCue(id, position, volumeScale, _nm.LocalClientId);
+        }
+
+        /// <summary>
+        /// ⚠️ `except` IS THE PEER THAT ALREADY HEARD IT, and on the host's own cue that is the
+        /// host. A dedicated server is a referee with no seat (`NetAuthority.IsSeatlessReferee`),
+        /// so on the VPS path nothing is excluded that anybody was listening on: the local
+        /// `PlayAt` in `NetCue` goes to a machine with no player at it and this reaches all four.
+        /// </summary>
+        private void HostRelayCue(string id, Vector3 position, float volumeScale, ulong except)
+        {
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+
+            foreach (ulong client in _nm.ConnectedClientsIds)
+            {
+                if (client == except) continue;
+
+                using var writer = new FastBufferWriter(96, Allocator.Temp);
+                writer.WriteValueSafe(id ?? "");
+                writer.WriteValueSafe(position);
+                writer.WriteValueSafe(volumeScale);
+                _nm.CustomMessagingManager.SendNamedMessage("PlayCue", client, writer);
+            }
+        }
+
+        private void OnReqCueMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            reader.ReadValueSafe(out string id);
+            reader.ReadValueSafe(out Vector3 position);
+            reader.ReadValueSafe(out float volumeScale);
+
+            // ⚠️ THE HOST PLAYS IT TOO. It is not the sender, so it did not play it locally, and
+            // a host that only relayed would be the one machine that could not hear a client's
+            // throw. It is excluded from the relay below for the opposite reason, so both
+            // branches together mean every peer plays every cue exactly once.
+            GameServices.Audio?.PlayAtVaried(id, position, 0.94f, 1.06f, volumeScale);
+            HostRelayCue(id, position, volumeScale, senderClientId);
+        }
+
+        private void OnPlayCueMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out string id);
+            reader.ReadValueSafe(out Vector3 position);
+            reader.ReadValueSafe(out float volumeScale);
+
+            GameServices.Audio?.PlayAtVaried(id, position, 0.94f, 1.06f, volumeScale);
+        }
+
+        /// <summary>
+        /// A client asking the host to resolve Phaister's blink knockback.
+        ///
+        /// ⚠️⚠️ THE CLIENT SENDS AN INTENT, NEVER A RESULT, which is `NetAuthority`'s rule and
+        /// the reason this carries a POINT and a FACING rather than a list of who was hit. The
+        /// host runs the same `OverlapSphere` the solo game runs, from the position the client
+        /// believed it blinked out of, and decides for itself who that reached. A message that
+        /// could name its victims is a client that can stagger anybody it likes.
+        ///
+        /// ⚠️ THE SEAT COMES FROM THE SENDER'S OWN LOBBY RECORD, NOT FROM THE MESSAGE. Trusting
+        /// a slot in the payload would let a peer resolve a blink on somebody else's behalf and
+        /// exclude whoever it wanted from the shove.
+        /// </summary>
+        public void RequestBlinkShoveServerRpc(int slot, Vector3 at, Vector3 facing)
+        {
+            if (NetAuthority.IsHost)
+            {
+                Abilities.PhaisterHeroKit.ResolveBlinkShove(slot, at, facing);
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(at);
+            writer.WriteValueSafe(facing);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqBlink", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqBlinkMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            reader.ReadValueSafe(out Vector3 at);
+            reader.ReadValueSafe(out Vector3 facing);
+
+            var peer = NetSession.Instance?.Lobby?.PeerById((int)senderClientId);
+            int seat = peer != null ? peer.Seat : -1;
+            if (seat < 0) return;
+
+            Abilities.PhaisterHeroKit.ResolveBlinkShove(seat, at, facing);
         }
 
         // -------------------------------------------------------------------

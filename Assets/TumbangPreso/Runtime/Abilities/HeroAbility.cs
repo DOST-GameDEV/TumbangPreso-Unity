@@ -207,6 +207,96 @@ namespace TumbangPreso.Abilities
 
         public bool HasTelegraph => TelegraphRadius > 0.0f;
 
+        // ------------------------------------------------------------------ hold to aim
+        //
+        // ⚠️⚠️ 🧑 2026-08-26, ON THE BLINK: *"let her HOLD e to control where she will go and make
+        // it a teleport abilitiy and make it prettier"*. Everything below is that, and it is
+        // written on the BASE class rather than inside Phaister's kit because the second ability
+        // that wants it must not have to reimplement the release edge, the cap and the auto-fire.
+        //
+        // ⚠️⚠️ AND IT IS THE ONE PLACE `docs/VISION.md` § 4 COULD BE BROKEN BY A FEATURE THAT
+        // SOUNDS HARMLESS. *"Nothing may reward waiting"* is a competitive requirement, not a
+        // mood, and the obvious implementation of hold-to-aim breaks it three separate ways: a
+        // hold that ROOTS you is a stall, a hold that PAUSES the anti-camp clock is a hiding
+        // place, and a hold with no ceiling is a player standing in a corner with an escape
+        // permanently half-pressed. So:
+        //
+        //   * The caster keeps full movement while aiming. There is no root and no slow.
+        //   * Nothing about aiming touches `RoundDirector`'s clocks. Holding E in the taya's
+        //     circle accrues exactly the penalty standing there always did.
+        //   * <see cref="MaxAimSeconds"/> is a hard ceiling: the power FIRES at it rather than
+        //     being cancelled, so the hold cannot be used as a parking brake and a player who
+        //     was genuinely aiming still gets their cast.
+        //   * The reach stops growing well before the ceiling, so the last half second of a hold
+        //     buys nothing at all. That is what actually removes the incentive to wait; the cap
+        //     alone would only bound it.
+
+        /// <summary>
+        /// True when the press begins AIMING and the release is what casts.
+        ///
+        /// ⚠️ IT CHANGES WHICH EDGE FIRES THE ABILITY, so `HeroAbilitySystem` has to know before
+        /// it services the input buffer. Everything else in the game casts on `JustPressed`.
+        /// </summary>
+        public bool HoldToAim { get; protected set; }
+
+        /// <summary>
+        /// How long a hold may last before the ability fires on its own. Seconds.
+        ///
+        /// ⚠️ 1.10 s IS DERIVED, NOT PICKED. `HeroAbilitySystem.InputBufferWindow` is 0.30 s and
+        /// the reach below finishes growing at 0.55 s, so the ceiling is twice the time the aim
+        /// is still worth anything: long enough that a player turning to look behind them is
+        /// never cut off, short enough that holding it is not a stance.
+        /// </summary>
+        public float MaxAimSeconds { get; protected set; } = 1.10f;
+
+        /// <summary>Nearest the power can be aimed, in metres. The reach at zero hold.</summary>
+        public float AimMinRange { get; protected set; }
+
+        /// <summary>Furthest it can be aimed. Reached at <see cref="AimRampSeconds"/>.</summary>
+        public float AimMaxRange { get; protected set; }
+
+        /// <summary>
+        /// How long the reach takes to run from min to max.
+        ///
+        /// ⚠️ SHORTER THAN THE CEILING BY DESIGN. See the section note: a hold that keeps paying
+        /// out right up to its limit is a hold a player is rewarded for maxing every time, which
+        /// makes the ability one length with extra steps.
+        /// </summary>
+        public float AimRampSeconds { get; protected set; } = 0.55f;
+
+        /// <summary>How far this cast is aimed, for a hold of the given length.</summary>
+        public float AimRangeFor(float heldSeconds)
+        {
+            if (AimMaxRange <= 0.0f) return TelegraphRange;
+
+            float t = AimRampSeconds > 0.0f
+                ? Mathf.Clamp01(heldSeconds / AimRampSeconds)
+                : 1.0f;
+
+            return Mathf.Lerp(AimMinRange, AimMaxRange, t);
+        }
+
+        /// <summary>
+        /// How long the finger was down on the press that produced the cast currently running.
+        ///
+        /// ⚠️ WRITTEN BY `HeroAbilitySystem` IMMEDIATELY BEFORE `Activate`, AND READ INSIDE
+        /// `OnActivate`. It is a field rather than an `Activate` parameter because five kits and
+        /// eighteen abilities override `OnActivate` with the signature it has today, and adding
+        /// an argument that seventeen of them ignore is how a signature becomes noise.
+        /// </summary>
+        public float HeldSecondsOnCast { get; internal set; }
+
+        /// <summary>Turns this ability into a hold-to-aim cast. Call from a kit's constructor.</summary>
+        protected void AimByHolding(float minRange, float maxRange,
+                                    float rampSeconds = 0.55f, float maxHoldSeconds = 1.10f)
+        {
+            HoldToAim = true;
+            AimMinRange = minRange;
+            AimMaxRange = maxRange;
+            AimRampSeconds = rampSeconds;
+            MaxAimSeconds = maxHoldSeconds;
+        }
+
         /// <summary>
         /// The bespoke 3rd-person body action name (e.g. "hero-sean-dash", "hero-dante-stomp").
         /// </summary>

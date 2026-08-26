@@ -115,8 +115,8 @@ namespace TumbangPreso.Abilities
 
                 ctx.Motor.ApplyImpulse(forward.normalized * 12.0f);
 
-                GameServices.Audio?.PlayAt("hero_zack_grunt", ctx.Position);
-                GameServices.Audio?.PlayAt("sfx_lightning_strike", ctx.Position);
+                NetCue.Play("hero_zack_grunt", ctx.Position);
+                NetCue.Play("sfx_lightning_strike", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "RAIL GRIND!", UiTheme.HeroElectricBright, 1.25f);
 
                 _wake.Clear();
@@ -210,8 +210,21 @@ namespace TumbangPreso.Abilities
             {
                 _kit.IsOverchargeThrowActive = true;
                 Visual.AbilityVfx.AttachHandVfx(ctx.Motor.transform, Visual.AbilityVfx.Aura.ElectricSpark, Duration);
-                GameServices.Audio?.PlayAt("sfx_lightning_strike", ctx.Position);
+                NetCue.Play("sfx_lightning_strike", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "OVERCHARGE!", UiTheme.HeroElectricBright, 1.25f);
+
+                // ⚠️⚠️ HIS MOTIF: THE CHARGE LOOKS FOR SOMEWHERE TO GO. `docs/TODO.md` § 27.2.
+                // Every other effect in this game is built from constants and a position; this
+                // one asks what is actually near him and arcs to it, so a charged Zack standing
+                // next to the lata looks different from a charged Zack alone in a corner. It is
+                // the one element whose fiction is that it connects things that already exist,
+                // and nothing else in the kit was saying so.
+                //
+                // ⚠️ PURELY VISUAL AND DELIBERATELY SHORT. It places no `HazardVolume`, staggers
+                // nobody and reaches 3.2 m, which is inside the arc's own fiction and well under
+                // the range at which knowing where somebody is standing would matter. An arc that
+                // reached a body through a barricade would be an aimbot drawn in lightning.
+                HeroHazards.SpawnCircuitArcs(ctx.Position, 3.2f, ctx.Motor.PlayerSlot);
             }
 
             protected override void OnEnd(AbilityContext ctx)
@@ -239,8 +252,8 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("hero_zack_ult", ctx.Position);
-                GameServices.Audio?.PlayAt("sfx_lightning_strike", ctx.Position);
+                NetCue.Play("hero_zack_ult", ctx.Position);
+                NetCue.Play("sfx_lightning_strike", ctx.Position);
                 HeroHazards.CreateThunderstrike(ctx.Position, 4.5f, ctx.Motor.PlayerSlot);
                 Visual.AbilityVfx.SpawnElectricArcs(ctx.Position, 4.5f);
                 ComicPopup.Spawn(ctx.Position, "THUNDERSTRIKE!", UiTheme.HeroElectricBright, 1.5f);

@@ -127,6 +127,16 @@ namespace TumbangPreso
         {
             RoundActive = false;
             foreach (var p in _players) p.RoundActive = false;
+
+            // ⚠️⚠️ THE WEATHER IS PUT BACK HERE, AND IT IS THE ONE PIECE OF AN ABILITY THAT CAN
+            // OUTLIVE THE ROUND THAT CAST IT. `Visual.SkyEvent` writes `RenderSettings`, which is
+            // scene-global: an ultimate cast in the last second of a round would otherwise still
+            // be blending the street toward night while the scoreboard is up, and if anything
+            // tore down the effect's own object in between, the map would stay dark with nothing
+            // on screen to say why. The event restores from every exit it has; this is the one
+            // that says WHEN, and it belongs to the rules rather than to the effect because the
+            // rules are what decide a round is over.
+            Visual.SkyEvent.StopAll();
         }
 
         public void ResetForNewMatch()

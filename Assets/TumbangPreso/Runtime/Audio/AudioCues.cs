@@ -73,6 +73,33 @@ namespace TumbangPreso.Audio
                 { "sfx_lrt_rumble", -16.0f },
                 { "sfx_hex_cast",     -4.0f },
 
+                // ⚠️ THE BREAK IS MIXED LIKE A STATUS, NOT AN EVENT, for the same reason
+                // `sfx_hex_afflict` is: this is a 1-vs-3 game and a nova can hold three people
+                // at once, so three breaks can land inside a second. The arrival sits with the
+                // casts because there is only ever one of her.
+                // ⚠️⚠️ THE WEATHER BEDS ARE THE QUIETEST THINGS IN THE GAME AND THAT IS WHAT
+                // "UNDER" MEANS. Each runs for two to three seconds under a payload cue, a hero
+                // voice and whatever the fight is already doing; the LRT bed's own row records
+                // what happens to a sustained sound with no trim, which is that it *"arrived
+                // louder than every ability payload in the game"* and was reported as a loud
+                // random noise. The storm is the loudest of the six because a thunder crack is
+                // an event rather than a bed, and the seance is the quietest because a seance
+                // that announced itself would be somebody else's ultimate.
+                // The maw is an event and carries a full mix; the flight home is punctuation on
+                // an animation the player is already watching, so it sits well under it.
+                { "sfx_kuro_unbound", -4.0f },
+                { "sfx_kuro_return", -10.0f },
+
+                { "sfx_sky_storm",     -9.0f },
+                { "sfx_sky_eclipse",  -11.0f },
+                { "sfx_sky_dustveil", -11.0f },
+                { "sfx_sky_emberfall", -12.0f },
+                { "sfx_sky_whiteout", -13.0f },
+                { "sfx_sky_seance",   -14.0f },
+
+                { "sfx_stun_break",  -9.0f },
+                { "sfx_blink_arrive", -4.0f },
+
                 { "sfx_ice_form",    -5.0f },
                 { "sfx_barricade_raise", -3.0f },
                 { "sfx_ice_shatter", -3.0f },
@@ -196,6 +223,35 @@ namespace TumbangPreso.Audio
             // warning; `sfx_lrt_rumble` is the seamless bed the moving source loops while the
             // consist crosses. Looping the first one faded the train out while it arrived.
             "sfx_lrt_rumble",
+
+            // ⚠️ THE 2026-08-26 SPARSE PASS, AND IT IS TWO CUES BECAUSE THE BAR IS TWO CUES
+            // WIDE. 🧑: *"Find where a sound is missing, but keep it sparse. The bar is a player
+            // having to guess whether something happened. Nothing that already reads visually."*
+            // Everything else audited either had a cue or was already unmistakable on screen.
+            //
+            //  * `sfx_blink_arrive`: Phaister's blink plays at the DEPARTURE only, and after the
+            //    rebuild the far end can be 5.5 m away. Whoever is standing there heard nothing.
+            //  * `sfx_stun_break`: `docs/TODO.md` § 23 built a whole mash-out system and ended it
+            //    in silence. The pips are on a card the player is not looking at while three
+            //    people run at them.
+            "sfx_blink_arrive", "sfx_stun_break",
+
+            // ⚠️ ONE WEATHER CUE PER ULTIMATE. 🧑 2026-08-26: *"add thunder shit and under sfx
+            // when they ult and the sky changes to their theme"*, then *"add personalized sfx to
+            // all ULTs"*. `Visual.SkyEvent` plays these and the kits keep their own payload cues;
+            // these are the bed underneath, which is why every one of them is mixed well down.
+            //
+            // ⚠️ THEY ARE SIX SOUNDS AND NOT ONE WITH SIX PITCHES, for the same reason the six
+            // LOOKS are six profiles: `docs/TODO.md` § 26. A shared cue would put every hero's
+            // biggest moment through one recording, which is § 8 item 3's fault in the mix
+            // instead of in the geometry.
+            "sfx_sky_eclipse", "sfx_sky_storm", "sfx_sky_whiteout",
+            "sfx_sky_emberfall", "sfx_sky_dustveil", "sfx_sky_seance",
+
+            // ⚠️ NEMU'S ULTIMATE IS HER PET NOW, so it needed a sound that is not a teleport.
+            // It called `sfx_ghost_teleport`, which is the blink she shares with Phaister, for
+            // the biggest moment in her kit. `docs/TODO.md` § 28.
+            "sfx_kuro_unbound", "sfx_kuro_return",
 
             // Hero Vocal Shouts & Grunts.
             "hero_dante_ult", "hero_dante_grunt",

@@ -166,9 +166,9 @@ namespace TumbangPreso.Abilities
             // THE FIX. The old code returned above this line while stunned, so the edge died
             // unread. Recording it first means a stun can DELAY a cast; it can no longer
             // DISAPPEAR one.
-            if (intent.JustPressed(Verb.Skill1)) _skill1BufferedAt = Time.time;
-            if (intent.JustPressed(Verb.Skill2)) _skill2BufferedAt = Time.time;
-            if (intent.JustPressed(Verb.Ultimate)) _ultimateBufferedAt = Time.time;
+            Aim(intent, Verb.Skill1, Slot.Skill1, ref _skill1BufferedAt);
+            Aim(intent, Verb.Skill2, Slot.Skill2, ref _skill2BufferedAt);
+            Aim(intent, Verb.Ultimate, Slot.Ultimate, ref _ultimateBufferedAt);
 
             UpdateReticle(intent);
 
@@ -177,6 +177,90 @@ namespace TumbangPreso.Abilities
             ServiceBuffer(ref _ultimateBufferedAt, Slot.Ultimate);
 
             _reticle?.Tick(dt);
+        }
+
+        // -------------------------------------------------------------------
+        // § AIMING BY HOLDING
+        //
+        // ⚠️⚠️ IT IS THE SAME BUFFER, FED FROM A DIFFERENT EDGE, AND THAT IS WHY IT IS SIX LINES
+        // RATHER THAN A SECOND INPUT PATH. Everything above this point already handles a cast
+        // that cannot resolve on the frame it was asked for: the press is recorded, retried for
+        // 0.30 s, and answered once. A hold-to-aim ability changes exactly one thing, which edge
+        // writes the stamp, so it writes the same stamp on RELEASE instead of on press and the
+        // whole buffering, refusal and confirmation story is inherited unchanged.
+        //
+        // ⚠️ THE ABILITY DECIDES, NOT THE SLOT. `HeroAbility.HoldToAim` is per ability, so Q and
+        // R keep firing on the press edge while E waits for the release, on the same hero, in the
+        // same frame. A slot-keyed rule would have made "the second skill is the holdable one" a
+        // fact about the game.
+        //
+        // ⚠️⚠️ AND A HOLD THAT REACHES THE CEILING FIRES RATHER THAN CANCELS. `docs/VISION.md`
+        // § 4 forbids anything that rewards waiting, and a hold that could be held forever is a
+        // player standing still with an escape half-pressed all round. Firing at the cap removes
+        // the incentive without ever eating an input the player meant.
+        // -------------------------------------------------------------------
+
+        /// <summary>How long each slot's key has been down, or a negative number if it is not.</summary>
+        private readonly float[] _heldSince = { -1.0f, -1.0f, -1.0f };
+
+        /// <summary>Seconds the current hold has lasted, or 0 when nothing is being aimed.</summary>
+        public float HeldSeconds(Slot slot)
+        {
+            float since = _heldSince[(int)slot];
+            return since < 0.0f ? 0.0f : Time.time - since;
+        }
+
+        /// <summary>True while this slot is being aimed rather than cast.</summary>
+        public bool IsAiming(Slot slot)
+        {
+            var ability = AbilityFor(slot);
+            return ability != null && ability.HoldToAim && _heldSince[(int)slot] >= 0.0f;
+        }
+
+        private void Aim(InputIntent intent, Verb verb, Slot slot, ref float bufferedAt)
+        {
+            var ability = AbilityFor(slot);
+            int i = (int)slot;
+
+            if (ability == null || !ability.HoldToAim)
+            {
+                _heldSince[i] = -1.0f;
+                if (intent.JustPressed(verb)) bufferedAt = Time.time;
+                return;
+            }
+
+            if (intent.JustPressed(verb))
+            {
+                _heldSince[i] = Time.time;
+                return;
+            }
+
+            if (_heldSince[i] < 0.0f) return;
+
+            // ⚠️⚠️ LOSING THE RIGHT TO ACT CANCELS THE AIM, IT DOES NOT FIRE IT. Getting tagged
+            // or shoved mid-aim must not spend the ability, and this branch is also what makes
+            // the aim safe against `InputIntent.Clear`. `docs/TODO.md` § 22's trap list records
+            // that `ReleaseAll` calls `Clear()`, *"so anything reading `intent.Pressed()` right
+            // after gets false forever"*: treating a cleared table as a release would turn every
+            // round transition into a free blink in a direction nobody chose.
+            if (_motor == null || !_motor.CanAct())
+            {
+                _heldSince[i] = -1.0f;
+                return;
+            }
+
+            float held = Time.time - _heldSince[i];
+
+            // ⚠️ THE RELEASE IS CHECKED BEFORE THE CEILING, so a player who lets go on the exact
+            // frame the cap lands gets one cast rather than two stamps a frame apart.
+            bool released = intent.JustReleased(verb);
+            bool capped = held >= ability.MaxAimSeconds;
+
+            if (!released && !capped) return;
+
+            ability.HeldSecondsOnCast = Mathf.Min(held, ability.MaxAimSeconds);
+            _heldSince[i] = -1.0f;
+            bufferedAt = Time.time;
         }
 
         /// <summary>
@@ -304,6 +388,29 @@ namespace TumbangPreso.Abilities
             return _context.Position + _context.Forward * ability.TelegraphRange;
         }
 
+        /// <summary>
+        /// Which weather this hero's ultimate brings, or null for a hero with none.
+        ///
+        /// ⚠️ THE MINIMUM IS 2.2 s AT THE CALL SITE, NOT HERE, because three of the six
+        /// ultimates have a `Duration` of 0: they are instantaneous blasts and the field means
+        /// "how long the power stays active", which for a nova is nothing. A sky that lasted zero
+        /// seconds would be a one-frame colour glitch, so the shortest weather is the length of a
+        /// held breath and the four that run longer keep their own.
+        /// </summary>
+        private static Visual.SkyEvent.Look? LookFor(string heroId)
+        {
+            switch (heroId)
+            {
+                case "phaister": return Visual.SkyEvent.Look.Eclipse;
+                case "zack": return Visual.SkyEvent.Look.Stormfront;
+                case "cheska": return Visual.SkyEvent.Look.Whiteout;
+                case "sean": return Visual.SkyEvent.Look.Emberfall;
+                case "dante": return Visual.SkyEvent.Look.Dustveil;
+                case "nemu": return Visual.SkyEvent.Look.Seance;
+                default: return null;
+            }
+        }
+
         private void PlayUltimatePresentation()
         {
             // ⚠️⚠️ THE COLUMN IS THE PART THE OTHER THREE PLAYERS SEE, AND IT IS DRAWN BEFORE
@@ -344,6 +451,26 @@ namespace TumbangPreso.Abilities
             // reads as the caster bracing into the wind-up; the blast supplies its own shake
             // when it lands, scaled per style and per radius in `HeroHazards.CreateExplosion`.
             Visual.UltimateColumn.Raise(_context.Position, AccentColour());
+
+            // ⚠️⚠️ THE WEATHER IS THE SECOND THING THAT IS NOT LOCAL, AND IT IS HERE RATHER THAN
+            // IN SIX KITS ON PURPOSE. 🧑 2026-08-26, having asked for Phaister's eclipse: *"maybe
+            // give some other characters other versions of this"*. Six kits each calling
+            // `SkyEvent.Play` would be six places to forget, and the seventh hero would ship with
+            // the one ultimate that does not change the sky — which is exactly how
+            // `docs/VISION.md` § 3 argues `AbilityGlyph` onto the ability rather than into a
+            // lookup table. One call, at the single point every ultimate in the game passes
+            // through, and a new hero gets weather by existing.
+            //
+            // ⚠️ IT IS KEYED OFF THE HERO ID AND FALLS BACK TO NOTHING RATHER THAN TO A DEFAULT
+            // LOOK. A hero with no row gets no weather, which is a missing feature; giving them
+            // somebody else's storm would be `docs/TODO.md` § 8 item 3's fault again, *"Sean's
+            // Supernova was spawning Dante's magma ... two heroes reading as one is the most
+            // expensive form of repetitive, because it costs a character."*
+            var look = LookFor(Kit != null ? Kit.HeroId : null);
+            if (look.HasValue && Kit != null && Kit.Ultimate != null)
+            {
+                Visual.SkyEvent.Play(look.Value, Mathf.Max(2.2f, Kit.Ultimate.Duration));
+            }
 
             var camera = UnityEngine.Camera.main;
             if (camera == null) return;
@@ -395,9 +522,58 @@ namespace TumbangPreso.Abilities
             if (!intent.Pressed(verb)) return false;
             if (_motor == null || !_motor.CanAct()) return false;
 
-            _reticle.Show(TelegraphCentre(ability), ability.TelegraphRadius, AccentColour());
+            // ⚠️⚠️ A HOLD-TO-AIM POWER'S RING MOVES WHILE THE KEY IS DOWN, AND THIS IS THE ONE
+            // PLACE IN THE GAME WHERE THE PRE-CAST RING IS ACTUALLY WORTH DRAWING. This class's
+            // own note records why it never was before: *"every one of these powers fires on the
+            // press edge and resolves instantly, so the reticle drawn while the key is HELD
+            // appears on the same frame the ability goes off"*. An ability that fires on RELEASE
+            // inverts that: the ring is on screen for the whole decision, which is the entire
+            // point of holding the key, and `GroundReticle.Flash` still answers "where did it
+            // land" afterwards.
+            float range = ability.HoldToAim
+                ? ability.AimRangeFor(HeldSecondsFor(ability))
+                : ability.TelegraphRange;
+
+            _reticle.Show(AimPoint(ability, range), ability.TelegraphRadius, AccentColour());
             return true;
         }
+
+        /// <summary>How long this ability's own key has been held, whichever slot it sits in.</summary>
+        private float HeldSecondsFor(HeroAbility ability)
+        {
+            if (Kit == null) return 0.0f;
+            if (ability == Kit.Skill1) return HeldSeconds(Slot.Skill1);
+            if (ability == Kit.Skill2) return HeldSeconds(Slot.Skill2);
+            return HeldSeconds(Slot.Ultimate);
+        }
+
+        /// <summary>
+        /// Where a power aimed at <paramref name="range"/> would land, inside the arena.
+        ///
+        /// ⚠️⚠️ THE BOX IS A SQUARE AND X AND Z CLAMP INDEPENDENTLY. `CLAUDE.md` § 4 states this
+        /// as an architecture invariant and gives the number: a radial clamp and a square clamp
+        /// disagree by **2.9 m on the diagonal**, which is exactly where somebody aims when they
+        /// are cutting a corner. Clamping this ring radially would draw the destination in a
+        /// different place from where `CharacterMotor.Teleport` actually puts the body, and a
+        /// telegraph that lies is the fault `HeroAbility.TelegraphRadius` exists to stop.
+        ///
+        /// ⚠️ IT CLAMPS TO THE SAME RECTANGLE `Teleport` DOES, from the same constants, so the
+        /// ring and the landing cannot drift apart when one of them is retuned.
+        /// </summary>
+        private Vector3 AimPoint(HeroAbility ability, float range)
+        {
+            Vector3 at = _context.Position + _context.Forward * range;
+
+            if (!ability.HoldToAim) return at;
+
+            at.x = Mathf.Clamp(at.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
+            at.z = Mathf.Clamp(at.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+            return at;
+        }
+
+        /// <summary>Where a hold-to-aim power aimed by the live hold would land. For a kit.</summary>
+        public Vector3 AimDestination(HeroAbility ability)
+            => AimPoint(ability, ability.AimRangeFor(ability.HeldSecondsOnCast));
 
         /// <summary>
         /// ⚠️ THE THREE OBJECTIVE AWARDS ARE GATED ON PRACTICE TOO. They are already unlikely to

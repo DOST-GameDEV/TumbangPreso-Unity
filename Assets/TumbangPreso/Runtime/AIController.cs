@@ -2281,6 +2281,61 @@ namespace TumbangPreso
         private void Tap(InputIntent intent, Verb verb)
             => Press(intent, verb, !_pressed.Contains(verb));
 
+        // -------------------------------------------------------------------
+        // § HOLDING A HOLD-TO-AIM POWER
+        //
+        // ⚠️⚠️ `Tap` ALTERNATES ON AND OFF EVERY FRAME, SO A BOT'S HOLD IS ONE FRAME LONG. That
+        // is exactly right for the eight verbs that read `JustPressed`, and it is silently wrong
+        // for `HeroAbility.HoldToAim`: the press and the release land a sixtieth of a second
+        // apart, so `AimRangeFor` returns the MINIMUM every time and every bot Phaister blinks
+        // 2.0 m for the rest of the game. Nothing errors and nothing looks broken; the ability
+        // simply has one length for three of the four seats.
+        //
+        // ⚠️ WHICH WOULD BREAK `CLAUDE.md` § 4's *"a bot presses the same buttons a human
+        // does"*. It is not a rule about the API, it is a rule about there being no second path:
+        // an ability whose interesting half only a human can reach is an ability the probes
+        // cannot measure and the bots cannot demonstrate. So a bot holds the key, for as long as
+        // holding is worth anything, and lets go.
+        //
+        // ⚠️ IT HOLDS FOR THE RAMP, NOT FOR THE CEILING. `AimRampSeconds` is the point past which
+        // the reach stops growing; holding to `MaxAimSeconds` would buy the bot nothing and would
+        // make it stand there with a key down for twice as long, which is the behaviour
+        // `docs/VISION.md` § 4 forbids the ability from rewarding in the first place.
+        // -------------------------------------------------------------------
+
+        /// <summary>How long each hold-to-aim verb has been down, or -1 when it is not.</summary>
+        private readonly Dictionary<Verb, float> _aimHeld = new Dictionary<Verb, float>();
+
+        private void HoldAim(InputIntent intent, Verb verb, Abilities.HeroAbility ability, float dt)
+        {
+            if (ability == null || !ability.HoldToAim)
+            {
+                Tap(intent, verb);
+                return;
+            }
+
+            float held = _aimHeld.TryGetValue(verb, out float h) ? h : -1.0f;
+
+            if (held < 0.0f)
+            {
+                _aimHeld[verb] = 0.0f;
+                Press(intent, verb, true);
+                return;
+            }
+
+            held += dt;
+
+            if (held >= ability.AimRampSeconds)
+            {
+                _aimHeld[verb] = -1.0f;
+                Press(intent, verb, false);   // the release IS the cast
+                return;
+            }
+
+            _aimHeld[verb] = held;
+            Press(intent, verb, true);
+        }
+
         private void StepHeroAbilities(InputIntent intent, float dt)
         {
             if (UI.SceneFlow.SelectedMode != GameMode.HeroStrike)
@@ -2430,8 +2485,11 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.PhaisterHeroKit)
                 {
+                    // ⚠️ HER BLINK IS THE ONE HOLD-TO-AIM POWER IN THE GAME. See § HOLDING A
+                    // HOLD-TO-AIM POWER: `Tap` would give it a one-frame hold and pin every bot
+                    // blink to the minimum 2.0 m.
                     if (_driving && (Plan == AiPlan.Withdraw || targetDistance <= 5.5f))
-                        Tap(intent, Verb.Skill2);
+                        HoldAim(intent, Verb.Skill2, kit.Skill2, dt);
                 }
             }
 
@@ -2473,6 +2531,12 @@ namespace TumbangPreso
             _stuckTime = 0.0f;
             _unstickLeft = 0.0f;
             _driving = false;
+
+            // ⚠️ THE AIM HOLD RESETS HERE FOR THE SAME REASON THE LUNGE CHARGE DOES, one note
+            // up. A bot stunned mid-aim otherwise resumes counting from wherever it stopped and
+            // fires a blink the instant it recovers, in the direction it was facing before it
+            // was hit, which is a teleport nobody saw wind up.
+            _aimHeld.Clear();
 
             intent.Clear();
             _pressed.Clear();

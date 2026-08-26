@@ -89,7 +89,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static bool _gateBlowout;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v18";
+        private const string Version = "v27";
 
         [MenuItem("Tumbang Preso/Capture Ability Showcase")]
         public static void RunFromMenu() => Execute();
@@ -137,22 +137,61 @@ namespace TumbangPreso.EditorTools.MapKit
                 Solo(spawned, "lava_decal",
                      () => HeroHazards.SpawnCrackedLavaDecal(Vector3.zero, 2.2f, 60.0f));
 
-                // ⚠⚠ PHAISTER'S TWO SIGILS. The sixth hero arrived with a hazard that drew
-                // NOTHING (`docs/TODO.md` § 21.1), so the first thing her marks need is to be
-                // photographed at all. Both are captured because her kit is deliberately ONE
-                // silhouette at two scales: if the pentagram and the heptagram cannot be told
-                // apart in these frames, the escalation § 21.5 describes does not exist.
-                // ⚠ THE REAL SPAWNERS, NOT THE SHAPE BUILDER UNDERNEATH THEM. The kit calls
-                // `SpawnKulamHexSigil` and `SpawnGrandCovenEclipse`; photographing
-                // `SpawnWitchSigil` directly would show the sigil without the perimeter nodes,
-                // the moon or the light, which is not what a player ever sees. This is the same
-                // rule the class note gives for spawning hazards rather than casting them: call
-                // the single place the footprint is actually built.
-                Solo(spawned, "hex_sigil",
+                // ⚠️⚠️ PHAISTER'S THREE POWERS, AND THE POINT OF PHOTOGRAPHING ALL THREE IS THAT
+                // THEY MUST NOT MATCH. Until 2026-08-26 her kit went through one builder at
+                // three radii and 🧑 read it straight off the screen: *"her Q is just 2 stars on
+                // top of each other"*. `docs/TODO.md` § 24 rebuilt each on its own construction,
+                // and these frames are the test of whether that worked: a ward, a tear and a
+                // corona should not be mistakable for one another in a still.
+                //
+                // ⚠️ THE REAL SPAWNERS, NOT THE SHAPE BUILDERS UNDERNEATH THEM, which is the same
+                // rule the class note gives for spawning hazards rather than casting them. The
+                // ward without its standing marks and its light is not what a player ever sees.
+                Solo(spawned, "hex_ward",
                      () => HeroHazards.SpawnKulamHexSigil(Vector3.zero, 2.4f, 60.0f, 5));
+
+                Solo(spawned, "blink_rift",
+                     () => HeroHazards.SpawnShadowRift(Vector3.zero, Vector3.forward));
+
+                Solo(spawned, "blink_arrival",
+                     () => HeroHazards.SpawnShadowArrival(Vector3.zero));
 
                 Solo(spawned, "coven_eclipse",
                      () => HeroHazards.SpawnGrandCovenEclipse(Vector3.zero, 5.0f, 60.0f));
+
+                // ⚠️⚠️ NEMU'S ULTIMATE IS HER PET NOW (`docs/TODO.md` § 28) AND IT HAD NEVER BEEN
+                // PHOTOGRAPHED IN ANY FORM. The old Seance Void was captured through
+                // `SpawnSeanceVoid` above; this is a different object with different geometry, and
+                // the thing these two frames have to answer is whether a rim around NOTHING reads
+                // as a hole rather than as a dark disc, which is § 27.5's whole claim.
+                // ⚠️⚠️ `fromPet: false`, AND THE FLAG CHANGES WHAT IS IN THE FRAME. With a pet
+                // out, Kuro himself is the centre and `GhostPetCompanion.Devour` grows him there;
+                // an edit-mode capture has no pet and no match, so `true` photographed a torn ring
+                // with a hole in it and read as a missing model. The fallback path is the one this
+                // probe can honestly show, and it is also the one that most needed looking at,
+                // because until 2026-08-27 it was genuinely empty.
+                // ⚠️⚠️ THE REAL PET IS SPAWNED AND DEVOURED, WHICH IS THE ONLY HONEST WAY TO
+                // PHOTOGRAPH THIS ULTIMATE. Everything else in this probe is a hazard called
+                // directly, because the class note's rule is that the GEOMETRY is what is being
+                // judged. Nemu's ultimate breaks that rule on purpose: after `docs/TODO.md` § 28
+                // the geometry is what happens AROUND the pet, and a frame without him in it is
+                // a frame of the half that is not the point. 🧑, twice, at two versions of
+                // exactly that frame: *"where tf is kiro in this ult?"*.
+                Solo(spawned, "kuro_unbound", () => KuroUnbound(true));
+
+                // The no-pet fallback, which is a different composition and is also shipped.
+                Solo(spawned, "kuro_unbound_nopet", () => KuroUnbound(false));
+
+                Solo(spawned, "spirit_return",
+                     () => HeroHazards.SpawnSpiritReturn(Vector3.zero));
+
+                // ⚠️ ZACK'S ARCS ARE THE ONE EFFECT IN THE GAME WHOSE SHAPE DEPENDS ON WHAT IS
+                // NEARBY, so an empty-street capture is the WORST case for it by construction:
+                // nothing to arc to, which is the fallback stub path. That is deliberate. A frame
+                // where the fallback looks like a mistake is a frame that says the fallback is
+                // wrong, and there is no other way to see it.
+                Solo(spawned, "circuit_arcs",
+                     () => HeroHazards.SpawnCircuitArcs(Vector3.zero, 3.2f, 1, 60.0f));
 
                 // ---------------------------------------------------------------
                 // 2. A DASH CORRIDOR, which is the shape that was actually wrong and
@@ -232,6 +271,30 @@ namespace TumbangPreso.EditorTools.MapKit
 
                 Transient("blast_thunder", () => HeroHazards.CreateThunderstrike(Vector3.zero, 7.0f));
 
+                // ---------------------------------------------------------------
+                // 5. THE SIX WEATHERS.
+                //
+                // ⚠️⚠️ THEY ARE GATED FOR THE BLOWOUT BOUND AND THAT IS THE WHOLE REASON THEY ARE
+                //    HERE. `Visual.SkyEvent` changes ambient, fog, the sun, the skybox and the
+                //    frame grade for five seconds at a time: it is the only thing in the game
+                //    that can move EVERY pixel, so it is the only thing that could break
+                //    `docs/VISION.md` § 2 rule 5 without touching a square metre of floor.
+                //    Every profile is capped at a brightness multiplier of 1.0 by construction
+                //    (`ColourGrade.SetEventGrade` clamps it), and this is the measurement that
+                //    says so rather than the comment.
+                //
+                // ⚠️ THE OTHER HALF OF THE TEST IS THE OPPOSITE FAULT, and no number catches it:
+                //    a weather dark enough to hide the lata, the chalk and the players is just as
+                //    much a rule 5 failure as one that whites them out. That is what the eye
+                //    frame is for, and it is why every look also raises a coloured fill light.
+                // ---------------------------------------------------------------
+
+                foreach (Visual.SkyEvent.Look look in
+                         System.Enum.GetValues(typeof(Visual.SkyEvent.Look)))
+                {
+                    Weather(look);
+                }
+
                 _gateBlowout = false;
 
                 Debug.Log($"[AbilityShowcaseProbe] wrote the {Version} set to {OutDir}.");
@@ -253,6 +316,108 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 Clear(spawned);
             }
+        }
+
+        /// <summary>
+        /// One weather, at full strength, over the empty street.
+        ///
+        /// ⚠️⚠️ IT STOPS THE EVENT IN A `finally`, AND WITHOUT THAT THIS PROBE WOULD DARKEN THE
+        /// MAP ON DISK. `SkyEvent` writes `RenderSettings`, which is scene state: an exception
+        /// between the `Play` and the `StopAll` would leave the open scene holding an eclipse,
+        /// and `EditorSceneManager` would offer to save it. The event restores from every exit it
+        /// has, and this is the one that says WHEN in an edit-mode capture, where `Update` never
+        /// runs and its own curve therefore never reaches the end.
+        ///
+        /// ⚠️ WOUND TO 1.0 OF THE RISE RATHER THAN THE 0.35 THE TRANSIENTS USE. A blast is judged
+        /// at the moment its silhouette is most legible; a weather is judged at full strength,
+        /// because full strength is where it either hides the arena or does not.
+        /// </summary>
+        private static void Weather(Visual.SkyEvent.Look look)
+        {
+            Visual.SkyEvent.Play(look, 6.0f);
+
+            try
+            {
+                Visual.VfxTimeline.StepAll(0.5f);
+
+                string name = "sky_" + look.ToString().ToLowerInvariant();
+                Shot(name, new Vector3(0.0f, 5.4f, -8.6f),
+                     Quaternion.Euler(24.0f, 0.0f, 0.0f), 62.0f);
+                Shot(name + "_eye", new Vector3(0.0f, 1.65f, -7.4f),
+                     Quaternion.Euler(4.0f, 0.0f, 0.0f), 72.0f);
+            }
+            finally
+            {
+                Visual.SkyEvent.StopAll();
+            }
+        }
+
+        /// <summary>
+        /// Nemu's ultimate, with or without the pet that is supposed to be inside it.
+        ///
+        /// ⚠️⚠️ `GhostPetCompanion` IS AN `IVfxTimeline` SO THAT THIS CAN WORK. His swell runs in
+        /// `LateUpdate`, which never fires here, so without that he would stand at bind scale in
+        /// the middle of the maw wearing his ordinary face: the exact opposite of what the frame
+        /// is for. `Solo` calls `VfxTimeline.StepAll` through the same path every transient uses.
+        ///
+        /// ⚠️ THE MODEL IS LOADED BY PATH BECAUSE THERE IS NO ROSTER HERE. In a match
+        /// `CharacterVisual` instantiates it from `RosterEntryAsset.PetModel`; an edit-mode
+        /// capture has no match, no roster and no Nemu, so the probe reaches for the asset
+        /// directly. If the pet is ever re-authored, this path is the thing that has to move.
+        /// </summary>
+        private const string PetModelPath =
+            "Assets/TumbangPreso/Art/models/kits/graveyard/character-ghost.glb";
+
+        private static GameObject KuroUnbound(bool withPet)
+        {
+            var maw = HeroHazards.SpawnKuroUnbound(Vector3.zero, 2.8f, 60.0f, 3, withPet);
+            if (!withPet) return maw;
+
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(PetModelPath);
+            if (model == null)
+            {
+                Debug.LogWarning($"[AbilityShowcaseProbe] no pet model at {PetModelPath}; " +
+                                 "the Kuro Unbound frame will be the fallback composition.");
+                return maw;
+            }
+
+            var pet = Object.Instantiate(model);
+            pet.name = "~ProbeKuro";
+            pet.transform.position = Vector3.zero;
+
+            // ⚠️⚠️ `PersonScale`, NOT 1. `CharacterVisual` instantiates the pet at
+            // `Vector3.one * PersonScale` and binds it at the same number, because the voxel
+            // model is authored in centimetres. Binding at 1 here made the capture 2.38 times
+            // too small and `ability_kuro_unbound_eye_v25.png` came back with a thumb-sized
+            // Kuro sitting in a 2.8 m maw, which reads as the ultimate being broken rather than
+            // as the probe being wrong. **A probe that does not set up what the game sets up
+            // measures something the game never renders.**
+            pet.transform.localScale = Vector3.one * Visual.CharacterVisual.PersonScale;
+
+            var companion = pet.AddComponent<Visual.GhostPetCompanion>();
+
+            // ⚠️ BOUND TO NOTHING, WHICH IS FINE AND IS WHY `Bind` TAKES A NULLABLE TARGET. The
+            // follow behaviour never runs: `Devour` takes the transform over for its whole life
+            // and this frame is inside that life.
+            companion.Bind(null, Vector3.zero, Visual.CharacterVisual.PersonScale);
+            companion.Devour(60.0f);
+
+            // ⚠️⚠️ WOUND EXPLICITLY, BECAUSE `Solo` DOES NOT WIND ANYTHING. Only `Transient` calls
+            // `VfxTimeline.StepAll`, and that is correct for it: the persistent zones `Solo`
+            // photographs are built at full size by their spawners and have nothing to step.
+            // The pet is the one thing in this probe that is BOTH persistent and animated, so
+            // `ability_kuro_unbound_eye_v26.png` came back with an ordinary lavender pet at bind
+            // scale sitting in the maw: `Devour` only arms the swell, and `LateUpdate` never runs
+            // here to play it.
+            //
+            // ⚠️ HALF THE LIFE, WHICH IS THE HOLD. The swell finishes early by design (see
+            // `StepDevour`), so any moment past the first second is full transformation: grown,
+            // horned, darkened, mouth open. 30 of 60 is unambiguously inside it.
+            companion.StepTo(30.0f);
+
+            // Parent it to the maw so `Solo`'s sweep collects both as one effect.
+            pet.transform.SetParent(maw.transform, worldPositionStays: true);
+            return maw;
         }
 
         /// <summary>One effect, one overhead frame and one at eye height.</summary>

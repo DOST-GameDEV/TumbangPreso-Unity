@@ -747,6 +747,423 @@ def synth_lrt_rumble(duration=2.0):
     return out
 
 
+def synth_blink_arrive(duration=0.55):
+    """
+    Phaister. The moment she is suddenly standing there.
+
+    ⚠️⚠️ THE ARRIVAL WAS SILENT AND THAT IS A REAL GAP RATHER THAN A MISSING FLOURISH. The blink
+    plays `sfx_ghost_teleport` at the DEPARTURE, which is where she left; after the 2026-08-26
+    rebuild the destination can be 5.5 m away, so the players standing next to where she lands
+    heard nothing at all. The bar for adding a sound in this game is *"a player having to guess
+    whether something happened"*, and a witch materialising beside you in silence is the clearest
+    case of it in the kit.
+
+    ⚠️ IT IS THE OPPOSITE SHAPE TO THE DEPARTURE CUE, not a variation on it. A teleport OUT is a
+    swallow: broadband, decaying. This is an intake run backwards into a hard stop, so the two
+    ends of one ability are told apart by ear as well as by eye. The tail is the only part with a
+    pitch in it, because the last thing to arrive is her.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+    land = 0.34
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        if t < land:
+            # The suck: noise gated by a curve that TIGHTENS, plus a rising whistle. Both stop
+            # dead at `land` rather than decaying, which is what makes the stop read as an
+            # arrival instead of a fade.
+            k = t / land
+            tighten = k * k * k
+            rush = random.uniform(-1.0, 1.0) * 0.34 * tighten
+            whistle = math.sin(2.0 * math.pi * (240.0 + 900.0 * k * k) * t) * 0.16 * tighten
+            out[i] = math.tanh((rush + whistle) * 1.2)
+            continue
+
+        # The body landing: a short struck pair a fifth apart, gold rather than violet, which is
+        # the colour the arrival glyphs are drawn in.
+        c = t - land
+        body = (math.sin(2.0 * math.pi * 392.0 * c) * math.exp(-c * 11.0) * 0.42
+                + math.sin(2.0 * math.pi * 588.0 * c) * math.exp(-c * 16.0) * 0.24
+                + random.uniform(-1.0, 1.0) * 0.10 * math.exp(-c * 34.0))
+        out[i] = math.tanh(body * 1.1)
+
+    return out
+
+
+def synth_stun_break(duration=0.7):
+    """
+    Anybody. The element coming OFF a body that fought its way out of a hold.
+
+    ⚠️⚠️ BREAKING FREE MADE NO SOUND, WHICH IS THE ONE PLACE `docs/TODO.md` § 23 LEFT THE PLAYER
+    READING THE HUD. That entry built the whole mash-out system on the argument that a held player
+    should be FIGHTING rather than waiting, gave it a pip card and an element coat, and then ended
+    the fight silently: the pips fill, the coat goes, and the only confirmation that the last press
+    was the one that worked is a picture you are not looking at, because you are looking at the
+    three people running at you.
+
+    ⚠️ ONE CUE FOR ALL SIX ELEMENTS ON PURPOSE. § 23's own rule is that the coat says WHAT IS ON
+    YOU and the mash says you are fighting it; the BREAK is the same event whoever caused it, and
+    six variants would be six ways to say one thing. It is also mixed low for the reason
+    `sfx_hex_afflict` is: in a 1-vs-3 game three of these can land inside a second.
+
+    A shell failing: a short crack, then pieces, then nothing. No pitch anywhere in it, because a
+    pitched break would belong to whichever element happened to own that note.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+
+    # ⚠️ THE PIECES ARE DISCRETE GRAINS, NOT A NOISE TAIL, which is the same distinction
+    # `synth_quake_slam` draws about rubble: continuous noise is a hiss, and separated grains are
+    # things falling. Seven, at falling density, so the last two are clearly individual.
+    grains = []
+    at = 0.06
+    gap = 0.035
+    for _ in range(7):
+        grains.append((at, random.uniform(0.35, 0.9)))
+        gap *= 1.34
+        at += gap
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        # The crack itself: one very short broadband burst with a hard edge.
+        crack = random.uniform(-1.0, 1.0) * 0.85 * math.exp(-t * 90.0)
+
+        pieces = 0.0
+        for start, weight in grains:
+            if t < start:
+                continue
+            c = t - start
+            if c > 0.09:
+                continue
+            pieces += random.uniform(-1.0, 1.0) * 0.22 * weight * math.exp(-c * 46.0)
+
+        out[i] = math.tanh((crack + pieces) * 1.05)
+
+    return out
+
+
+def _rumble_tail(out, start, duration, cutoff_hz, level, seed_drift=0.0):
+    """
+    A low bed made by integrating noise, which is what makes it a RUMBLE and not a hiss.
+
+    ⚠️ ONE-POLE INTEGRATION RATHER THAN A FILTER SWEEP. Summing white noise with a leak is a
+    brown-noise generator: energy falls at 6 dB per octave, so what survives is the bottom.
+    A band-passed hiss sounds like wind through a gap; this sounds like mass moving.
+    """
+    n = len(out)
+    state = 0.0
+    leak = math.exp(-2.0 * math.pi * cutoff_hz / SAMPLE_RATE)
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+        if t < start:
+            continue
+
+        c = t - start
+        if c > duration:
+            continue
+
+        state = state * leak + random.uniform(-1.0, 1.0) * (1.0 - leak)
+
+        # A slow swell in and a long decay out, so the bed has a shape rather than a switch.
+        k = min(1.0, c / 0.35) * math.exp(-c * 0.9)
+        wobble = 1.0 + seed_drift * math.sin(2.0 * math.pi * 0.7 * c)
+        out[i] += state * level * k * wobble * 14.0
+
+
+def synth_sky_eclipse(duration=2.6):
+    """
+    Phaister. The sky being pulled over.
+
+    ⚠️ IT IS THE ONLY ONE THAT DESCENDS IN PITCH, and that is the whole read. An eclipse is
+    something arriving from above and closing, so a falling tone under a struck bell says it
+    without any of the other five needing to avoid the same idea. `sfx_eclipse_toll` is her
+    PAYLOAD and is a single bell; this is the world answering it, so it is longer, lower and
+    has no clear strike in it.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        # The descent: two detuned partials sliding down a fifth over the first second.
+        slide = math.exp(-t * 0.85)
+        f = 96.0 * (0.55 + 0.45 * slide)
+        voice = (math.sin(2.0 * math.pi * f * t) * 0.30
+                 + math.sin(2.0 * math.pi * f * 1.497 * t) * 0.14) * math.exp(-t * 0.7)
+
+        # A sour upper pair that beats slowly against itself: the magic in the sky.
+        shimmer = (math.sin(2.0 * math.pi * 611.0 * t)
+                   + math.sin(2.0 * math.pi * 617.0 * t)) * 0.05 * math.exp(-t * 1.4)
+
+        out[i] = voice + shimmer
+
+    _rumble_tail(out, 0.05, duration - 0.05, 55.0, 0.30, seed_drift=0.10)
+    return [math.tanh(v * 1.1) for v in out]
+
+
+def synth_sky_storm(duration=2.8):
+    """
+    Zack. Thunder, and then the roll.
+
+    ⚠️⚠️ THE CRACK IS SHAPED, NOT JUST LOUD. Real thunder is a near-instant edge followed by a
+    tail whose top end disappears first, because air absorbs high frequencies over distance.
+    Two strikes a beat apart, the second further away and duller, is what separates thunder from
+    a snare hit, and it is the only cue in this file with a deliberate second event in it.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+
+    # (when, level, how fast the top end goes)
+    strikes = [(0.02, 1.0, 26.0), (0.34, 0.55, 44.0)]
+
+    for when, level, damp in strikes:
+        smooth = 0.0
+        for i in range(n):
+            t = i / SAMPLE_RATE
+            if t < when:
+                continue
+
+            c = t - when
+
+            # A one-pole low pass whose cutoff FALLS with time: the strike starts bright and
+            # the distance eats the top of it.
+            cutoff = 5200.0 * math.exp(-c * damp) + 90.0
+            leak = math.exp(-2.0 * math.pi * cutoff / SAMPLE_RATE)
+            smooth = smooth * leak + random.uniform(-1.0, 1.0) * (1.0 - leak)
+
+            out[i] += smooth * level * math.exp(-c * 3.2) * 2.4
+
+    _rumble_tail(out, 0.30, duration - 0.30, 70.0, 0.34, seed_drift=0.22)
+    return [math.tanh(v * 1.05) for v in out]
+
+
+def synth_sky_whiteout(duration=2.6):
+    """
+    Cheska. A squall arriving.
+
+    ⚠️ IT IS THE ONLY ONE WITH NO LOW END TO SPEAK OF. Every other weather here is mass; a
+    whiteout is AIR, and giving it a rumble would put it in the same band as the storm and the
+    dust. What carries it is a rising band of noise plus a thin whistle that arrives late, which
+    is the sound of something being blown past an edge.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+    smooth = 0.0
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+        k = min(1.0, t / 0.9)
+
+        # A band that OPENS as it arrives: cutoff climbs, so the squall gets brighter and
+        # closer rather than simply louder.
+        cutoff = 320.0 + 2600.0 * k
+        leak = math.exp(-2.0 * math.pi * cutoff / SAMPLE_RATE)
+        smooth = smooth * leak + random.uniform(-1.0, 1.0) * (1.0 - leak)
+
+        body = smooth * 2.2 * k * math.exp(-max(0.0, t - 1.1) * 1.5)
+
+        # The whistle, late and detuned, so it reads as a gap in something rather than a tone.
+        whistle = 0.0
+        if t > 0.55:
+            c = t - 0.55
+            whistle = (math.sin(2.0 * math.pi * (1180.0 + 90.0 * math.sin(2.0 * math.pi * 1.7 * c)) * c)
+                       * 0.10 * math.exp(-c * 1.1))
+
+        out[i] = math.tanh((body + whistle) * 1.0)
+
+    return out
+
+
+def synth_sky_emberfall(duration=2.7):
+    """
+    Sean. A firestorm drawing breath.
+
+    ⚠️ A ROAR IS AMPLITUDE-MODULATED NOISE, NOT FILTERED NOISE. Fire is irregular at a few
+    hertz: the modulation is what makes it read as combustion rather than as wind, and it is the
+    one thing `synth_sky_whiteout` above must not have. Two modulators at unrelated rates so the
+    pattern never repeats inside the cue.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+    smooth = 0.0
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        cutoff = 1500.0 - 900.0 * min(1.0, t / 1.6)
+        leak = math.exp(-2.0 * math.pi * cutoff / SAMPLE_RATE)
+        smooth = smooth * leak + random.uniform(-1.0, 1.0) * (1.0 - leak)
+
+        gust = (0.62
+                + 0.26 * math.sin(2.0 * math.pi * 3.1 * t)
+                + 0.12 * math.sin(2.0 * math.pi * 7.3 * t + 1.1))
+
+        swell = min(1.0, t / 0.45) * math.exp(-max(0.0, t - 0.9) * 1.2)
+        out[i] = smooth * gust * swell * 2.6
+
+    _rumble_tail(out, 0.10, duration - 0.10, 62.0, 0.24, seed_drift=0.16)
+    return [math.tanh(v * 1.08) for v in out]
+
+
+def synth_sky_dustveil(duration=2.9):
+    """
+    Dante. The street coming up off the ground.
+
+    ⚠️ THE GRAINS ARE THE POINT AND THEY ARE DISCRETE. `synth_quake_slam` draws the same
+    distinction about rubble: continuous noise is a hiss and separated grains are things
+    falling. This is the lowest and longest of the six because it is the only one whose subject
+    is MASS rather than air or light, and it is deliberately the dullest: nothing about a dust
+    cloud sparkles.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+
+    # A shove at the front, then debris at falling density for a second and a half.
+    grains = []
+    at = 0.05
+    gap = 0.012
+    while at < 1.7:
+        grains.append((at, random.uniform(0.25, 1.0)))
+        gap *= 1.06
+        at += gap
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+        v = 0.0
+
+        for start, weight in grains:
+            if t < start:
+                continue
+            c = t - start
+            if c > 0.05:
+                continue
+            v += random.uniform(-1.0, 1.0) * 0.16 * weight * math.exp(-c * 70.0)
+
+        out[i] = v
+
+    _rumble_tail(out, 0.0, duration, 42.0, 0.46, seed_drift=0.28)
+    return [math.tanh(v * 1.05) for v in out]
+
+
+def synth_sky_seance(duration=2.7):
+    """
+    Nemu. The one that is not weather.
+
+    ⚠️⚠️ IT SWELLS BACKWARDS, WHICH IS THE ONLY WAY TO MAKE A SOUND THAT IS WRONG RATHER THAN
+    LOUD. Her whole character is that things stop being right rather than that something
+    arrives (`docs/TODO.md` section 27.5), so this is built and then its ENVELOPE is reversed:
+    the tail comes first and the strike is at the end, which no physical event does. It is also
+    the quietest of the six, because a seance that announced itself would be somebody else's
+    ultimate.
+    """
+    n = int(duration * SAMPLE_RATE)
+    body = [0.0] * n
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        # Two voices a semitone apart, which is the interval that refuses to resolve.
+        pair = (math.sin(2.0 * math.pi * 174.0 * t)
+                + math.sin(2.0 * math.pi * 184.4 * t)) * 0.22
+
+        # A breath under them, filtered so it has no edge at all.
+        breath = random.uniform(-1.0, 1.0) * 0.08
+
+        body[i] = pair + breath
+
+    # ⚠️ THE ENVELOPE IS APPLIED IN REVERSE, not the samples. Reversing the audio would reverse
+    # the noise too, which sounds identical; reversing only the shape is what produces the
+    # backwards-swell without touching the timbre.
+    out = [0.0] * n
+    for i in range(n):
+        t = i / SAMPLE_RATE
+        back = t / duration
+        shape = (back * back) * (0.35 + 0.65 * min(1.0, t / 0.4))
+        out[i] = math.tanh(body[i] * shape * 2.3)
+
+    _rumble_tail(out, 0.0, duration, 48.0, 0.16, seed_drift=0.34)
+    return [math.tanh(v) for v in out]
+
+
+def synth_kuro_unbound(duration=2.2):
+    """
+    Nemu. A pet becoming a mouth.
+
+    ⚠️⚠️ IT IS AN INHALE, WHICH IS THE ONE ENVELOPE NOTHING ELSE IN THIS FILE USES. Every other
+    payload here is a strike: an edge and a decay. A thing that SUCKS has the opposite shape, so
+    this swells from nothing into its loudest moment and stops there, and the stop is what tells
+    a player the maw is now open rather than still arriving.
+
+    ⚠️ THE PITCH RISES AS IT SWELLS, which is the cheapest way to say "drawing in" without a
+    doppler. Under it, a detuned pair a semitone apart: the same interval `synth_sky_seance` uses,
+    because these two are the same character and should share an interval the way she and
+    Phaister must not share a colour.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+    smooth = 0.0
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+        k = min(1.0, t / (duration * 0.8))
+
+        # An intake: noise through a band that OPENS, gated by a curve that accelerates.
+        cutoff = 240.0 + 1900.0 * k * k
+        leak = math.exp(-2.0 * math.pi * cutoff / SAMPLE_RATE)
+        smooth = smooth * leak + random.uniform(-1.0, 1.0) * (1.0 - leak)
+
+        draw = smooth * 2.3 * (k * k)
+
+        # The pair underneath, rising a minor third across the whole cue.
+        f = 82.0 * (1.0 + 0.19 * k)
+        pair = (math.sin(2.0 * math.pi * f * t)
+                + math.sin(2.0 * math.pi * f * 1.059 * t)) * 0.20 * k
+
+        out[i] = math.tanh((draw + pair) * 1.05)
+
+    return out
+
+
+def synth_kuro_return(duration=0.8):
+    """
+    Nemu. The pet coming home.
+
+    ⚠️ IT IS SHORT, LIGHT AND THE ONLY CUE IN HER SET WITH A SMILE IN IT. Everything else she has
+    is a hole, a possession or a maw; Kuro flying back to her shoulder is the one moment in her
+    kit that is not sinister, and giving it another dark swell would make the whole character one
+    note. A rising two-tone chirp with a soft landing, mixed low: it is punctuation on an
+    animation the player is already watching.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+    land = 0.52
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        if t < land:
+            # The flight: a tone bending up, thin, with a little air behind it.
+            k = t / land
+            f = 430.0 + 320.0 * k * k
+            body = math.sin(2.0 * math.pi * f * t) * 0.26 * (0.35 + 0.65 * k)
+            air = random.uniform(-1.0, 1.0) * 0.05 * k
+            out[i] = math.tanh((body + air) * 1.1)
+            continue
+
+        # The landing: a soft struck pair, gone quickly.
+        c = t - land
+        out[i] = math.tanh((math.sin(2.0 * math.pi * 720.0 * c) * math.exp(-c * 15.0) * 0.34
+                            + math.sin(2.0 * math.pi * 1080.0 * c) * math.exp(-c * 22.0) * 0.16)
+                           * 1.05)
+
+    return out
+
+
 GENERATORS = {
     # (seed slot, synth). Slots 0 to 6 are the original payload set, in the alphabetical order
     # that produced the audio currently in the repository.
@@ -774,6 +1191,26 @@ GENERATORS = {
     # The looping bed the LRT consist carries. See the synth for why `sfx_lrt_pass` could not
     # simply be looped: it is a one-shot that begins and ends on silence.
     "sfx_lrt_rumble.wav": (16, synth_lrt_rumble),
+
+    # The 2026-08-26 sparse pass. Two sounds, both for events a player could not otherwise be
+    # sure had happened: the far end of a 5.5 m teleport, and the last press of a mash landing.
+    "sfx_blink_arrive.wav": (17, synth_blink_arrive),
+    "sfx_stun_break.wav": (18, synth_stun_break),
+
+    # ⚠️ ONE PER WEATHER, WHICH IS ONE PER ULTIMATE. Asked for directly: *"add thunder shit and
+    # under sfx when they ult and the sky changes to their theme"*, then *"add personalized sfx
+    # to all ULTs"*. `Visual.SkyEvent` plays these; the kits keep their own payload cues, and
+    # these sit under them.
+    "sfx_sky_eclipse.wav": (19, synth_sky_eclipse),
+    "sfx_sky_storm.wav": (20, synth_sky_storm),
+    "sfx_sky_whiteout.wav": (21, synth_sky_whiteout),
+    "sfx_sky_emberfall.wav": (22, synth_sky_emberfall),
+    "sfx_sky_dustveil.wav": (23, synth_sky_dustveil),
+    "sfx_sky_seance.wav": (24, synth_sky_seance),
+
+    # Nemu's kit moving onto her pet. `docs/TODO.md` § 28.
+    "sfx_kuro_unbound.wav": (25, synth_kuro_unbound),
+    "sfx_kuro_return.wav": (26, synth_kuro_return),
 }
 
 

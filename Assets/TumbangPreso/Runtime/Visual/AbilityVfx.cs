@@ -120,6 +120,25 @@ namespace TumbangPreso.Visual
             WitchScatter,
 
             /// <summary>
+            /// Kuro's maw taking the street in. The only aura that ACCELERATES toward its own
+            /// centre.
+            ///
+            /// ⚠️⚠️ `VoidWisp` ALREADY ORBITS AND PULLS IN, AND IT IS NOT THE SAME THING. That
+            /// one is her body coming apart: motes leaving a person, drifting round the axis and
+            /// going out. This is an intake, so it starts WIDE and travels fast toward a point
+            /// that is somewhere else, which is the difference between "something is happening to
+            /// her" and "something is happening to you". 🧑 asked for the ultimate to *"look like
+            /// it got bigger and is sucking everyone up"*: the geometry can say bigger on its own,
+            /// and only particles can say sucking.
+            ///
+            /// ⚠️ IT EMITS ON THE SHELL AND NOT IN THE VOLUME. A `Circle` shape with
+            /// `radiusThickness` left at its default fills the disc, which puts most of the motes
+            /// near the middle where they have no distance left to travel and nothing to show.
+            /// Emitting only on the rim gives every particle the full radius to cross.
+            /// </summary>
+            MawIntake,
+
+            /// <summary>
             /// Phaister's eclipse. The script falling INWARD and downward, slowly.
             ///
             /// ⚠️ IT IS THE ONLY ONE THAT FALLS. Her other two lift, because a cast rises off
@@ -268,6 +287,26 @@ namespace TumbangPreso.Visual
                     emission.rateOverTime = 90.0f;
                     shape.shapeType = ParticleSystemShapeType.Sphere;
                     shape.radius = 0.45f;
+                    break;
+
+                case Aura.MawIntake:
+                    // ⚠️ FAST, SHORT-LIVED, AND THERE ARE A LOT OF THEM. A mote that lives three
+                    // seconds while crossing 2.6 m reads as drifting; the whole claim here is that
+                    // the court is being taken, so they cross the radius in well under a second.
+                    //
+                    // ⚠️ `startSpeed` IS ZERO ON PURPOSE. All of the motion comes from the radial
+                    // term in `Construct`; a start speed would fire them outward first and the
+                    // intake would begin with an explosion.
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(0.45f, 0.85f);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(0.0f, 0.0f);
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.09f, 0.24f);
+                    main.gravityModifier = 0.0f;
+                    main.startColor = new ParticleSystem.MinMaxGradient(
+                        UiTheme.HeroSpiritBright, new Color(0.30f, 0.12f, 0.46f, 1.0f));
+                    emission.rateOverTime = 54.0f;
+                    shape.shapeType = ParticleSystemShapeType.Circle;
+                    shape.radius = 2.6f;
+                    shape.radiusThickness = 0.0f;
                     break;
 
                 case Aura.WitchEclipse:
@@ -540,6 +579,34 @@ namespace TumbangPreso.Visual
                     drag.enabled = true;
                     drag.dampen = 0.35f;
                     drag.limit = new ParticleSystem.MinMaxCurve(1.4f);
+                    break;
+
+                case Aura.MawIntake:
+                    // ⚠️⚠️ THE RADIAL TERM IS STRONGLY NEGATIVE AND IT IS THE WHOLE EFFECT. Every
+                    // other aura in this file uses `radial` for a hint of drift; here it is the
+                    // motion, at ten times the magnitude. It is paired with a slow orbit so the
+                    // paths CURVE inward rather than converging on straight lines, which is the
+                    // difference between a drain and a magnet.
+                    UseMesh(pRenderer, Chip);
+                    orbit.enabled = true;
+                    orbit.space = ParticleSystemSimulationSpace.Local;
+
+                    // ⚠️ ALL THREE ORBITAL AXES, for the reason `VoidWisp` records above: mixing
+                    // a two-constant range with single-constant defaults is an engine error once
+                    // per emitter per frame, and it goes to the log rather than throwing.
+                    orbit.orbitalX = new ParticleSystem.MinMaxCurve(0.0f, 0.0f);
+                    orbit.orbitalY = new ParticleSystem.MinMaxCurve(0.9f, 1.8f);
+                    orbit.orbitalZ = new ParticleSystem.MinMaxCurve(0.0f, 0.0f);
+                    orbit.radial = new ParticleSystem.MinMaxCurve(-4.2f, -2.4f);
+
+                    Tumble(spin, 2.0f, 5.0f);
+
+                    // ⚠️ IT SHRINKS TO NOTHING RATHER THAN FADING. Something being consumed gets
+                    // smaller as it goes in; a fade would read as it giving up on the way.
+                    size.enabled = true;
+                    size.size = new ParticleSystem.MinMaxCurve(1.0f, new AnimationCurve(
+                        new Keyframe(0.0f, 1.0f), new Keyframe(0.7f, 0.62f),
+                        new Keyframe(1.0f, 0.0f)));
                     break;
 
                 case Aura.WitchEclipse:

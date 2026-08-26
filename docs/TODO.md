@@ -963,6 +963,33 @@ shipped pair is the only combination that has been measured working.
    off, one Hero Strike match against bots, and watch whether they cast and retrieve. If they do,
    the effect is a batch-mode artefact and this entry closes with that written down. **Do this
    first: everything below is only worth doing if a player can meet it.**
+
+   ✅ **THE HARNESS FOR THIS EXISTS AS OF 2026-08-26.**
+   `Assets/TumbangPreso/Runtime/Diagnostics/FrameCapProbe.cs` runs exactly that measurement from
+   the SHIPPED EXECUTABLE, which is the part no PlayMode test can do, because a PlayMode test is
+   the probe. It is off unless asked for on the command line:
+
+   ```
+   TumbangPreso.exe -tp-framecap 50 -tp-botmatch -tp-report frames50.txt
+   ```
+
+   It writes throws, skill uses, ultimate uses, lata knocks, tags and idle penalties to a named
+   file beside the player, alongside the **measured** frame rate as well as the requested one.
+
+   ⚠️⚠️ **THE MEASURED RATE IS THE NUMBER THAT MATTERS AND THAT IS WHY IT IS IN THE
+   REPORT.** `targetFrameRate` is a request: a machine that cannot hold 50 reports a cap of 50
+   and runs at 31, and the whole premise of this entry is that those two bands behave
+   differently. A sweep read off the requested value could close the entry against a run that was
+   never in the band being tested.
+
+   ⚠️ **`vSyncCount = 0` IS SET WITH IT, NOT NEAR IT.** With vsync on, `targetFrameRate` is
+   ignored outright and the run looks like a 50 fps machine while being paced by the display.
+   That is the one failure mode that would make this probe LIE rather than fail.
+
+   **The sweep to run:** 30, 50, 60 and 120, three runs each (§ 16's noise floor: three runs an
+   arm for anything worth 20 per cent), and compare skill uses first. The batch-mode row that
+   started this entry read **zero** at 0.02 s, so a player row with any casting at all in it
+   already answers the question.
 2. **Find the quantised thing.** The first suspect is the `InputIntent` edge protocol.
    `CharacterMotor.FixedUpdate` reads `JustPressed` and calls `CommitFrame` at the END of the
    physics step while the producers write in `Update`, so how many `Update`s fall between two
@@ -1724,17 +1751,601 @@ really is the only thing that ends it.
 
 **Still open:**
 
-* **Nothing here has been seen in motion.** The coats, the TPP swing and the pip card are all
-  argued from code and still frames. Same open judgement § 19 and § 21 end on.
 * **The press counts have not been measured against a match.** They are reasoned from
   `Hero_Strike_Balance.md` § 1's weighting and want a `BotBehaviourProbe` sweep, remembering
   § 16's noise floor: three runs an arm for anything worth 20 per cent.
-* **Phaister's eclipse curse staggers for 0.50 s**, below `MinStunDown`, so her ultimate does not
-  hold anybody and gets no coat. That is a balance question, not a bug, and it was left alone
-  rather than retuned unilaterally.
-* **Bots do not mash out of stuns.** `AIController` never presses Jump while held, so every bot
-  eats the full duration and a human does not. That is a real asymmetry against
-  `CLAUDE.md` § 4's "a bot presses the same buttons a human does".
+
+✅ **CLOSED 2026-08-26, both of the others:**
+
+* ✅ **Phaister's eclipse curse now holds.** It was 0.50 s, below `MinStunDown`, so it drew no
+  coat and could not be mashed. It is **1.60 s, five presses, inside a 5.0 m reach**, and § 24.3
+  has the arithmetic for each of the three numbers and why a multi-target hold has to be shorter
+  per victim than a single-target one.
+* ✅ **Bots DO mash out of stuns, and this entry was stale the day it was written.** The
+  condition at `AIController.Update` reads
+  `if (_motor.IsTripped || _motor.StunElement != StunElement.None)` and alternates `Verb.Jump` off
+  a dedicated field. § 22's bot-mash fix covered element stuns as well as trips in the same line;
+  the entry was written from the older code. ⚠️ **Verified by grepping the call site rather
+  than the entry**, which is § 22's own rule turned on § 23.
+* ⚠️ **A NEW ASYMMETRY REPLACED THE OLD ONE AND IS FIXED.** `Tap` alternates every frame, so
+  a bot's hold of a `HeroAbility.HoldToAim` power is one frame long: every bot Phaister would have
+  blinked the minimum 2.0 m forever. `AIController.HoldAim` holds for the ramp. § 24.2.
+
+---
+
+## 24 · Phaister's three powers were one builder at three radii
+
+**Reported by 🧑 on 2026-08-26, and it is the sharpest kind of report there is: he read the code
+off the screen without seeing it.** *"the fucking abilities of phaister are repetitive they use
+the same magic circle i want them to have different colors and different animations and different
+symbols. DIFFERENT EVERYTHING FIGURE OUT HOW THEY WILL ALL BE DIFF"*, then, precisely: *"her Q is
+just 2 stars on top of each other"*, and the general rule: *"pls dont use the same script to
+generate any abilitiy as it will feel cheap and it will look all the same"*.
+
+⚠️⚠️ **HE WAS DESCRIBING SOMETHING LITERALLY TRUE.** Every witch effect went through
+`HeroHazards.SpawnWitchSigil`, which drew `VfxShapes.Sigil` **twice**, an outer star polygon and
+an inner one, counter-rotating. `SpawnCastGlyph` called it with a hard-coded `5, 2`. So the hex,
+**both ends** of the blink and the ultimate were the same pentagram stacked on itself, varying
+only by radius and by a seed that jitters rim ticks and nothing else. Two stars on top of each
+other, four times, in one kit.
+
+⚠️⚠️ **AND § 21.5 ARGUED FOR IT ON PURPOSE, WHICH IS THE PART WORTH KEEPING.** That entry says
+her kit is one CRAFT, so the three should be told apart *"by SIZE, by how many rings they carry
+and by where they sit"*. The reasoning is good and the conclusion does not follow: **a shared
+visual language is a palette and a vocabulary, not a shared mesh function.** Taking it to mean
+one builder is how a whole hero became three sizes of one object, and it is the same class § 19
+named for the other five (*"fifteen poses sharing one construction"*) arriving by a different
+argument.
+
+✅ **DONE 2026-08-26. Three constructions, three motions, three places in space, three hues.**
+
+| | Q, KULAM HEX | E, SHADOW BLINK | R, GRAND COVEN |
+|---|---|---|---|
+| Built by | `VfxShapes.WardCircle` | `VfxShapes.Rift` + `Rune` | `VfxShapes.Corona` + `SkyEvent` |
+| Made of | rings, a written band, nested squares, medallions | two ragged edges and the threads between them | tapering teeth around an empty middle |
+| Geometry | rectilinear, closed figures | a vertical split | a ring seen from BELOW |
+| Where | on the road | at head height, facing the blink | 11 m up |
+| Motion | inscribed in 0.42 s, then **dead still** | opens across, snaps shut vertically | falls out of the sky, turns slowly |
+| Hue | magenta rules, gold writing | near-white: a rip is not a colour | gold on black, no magenta at all |
+
+⚠️ **NOT ONE OF THE THREE IS A `{points/skip}` STAR POLYGON**, which is the one shape he named.
+
+### 24.1 The ward, and why it is static
+
+`VfxShapes.WardCircle` is built the way 🧑's references are: two rules with a **band of written
+glyphs** between them, radial dividers making the band into cells, **two squares 45 degrees
+apart** forming an octagram with flat sides and real corners, an inscribed triangle to break the
+eight-fold symmetry, and four **medallions** on the rim each holding a glyph.
+
+⚠️ **A SQUARE IS THE SHAPE NOTHING ELSE IN `VfxShapes` MAKES, AND THAT IS THE SEPARATION.** A
+star polygon is one loop of strokes chasing itself around a centre, so however many points it has
+it reads as a spinner. Closed straight-sided figures laid over each other read as a diagram
+somebody ruled.
+
+⚠️ **THE MEDALLIONS ARE WHY IT SURVIVES EYE HEIGHT.** A ground mark is nearly edge-on at 1.65 m
+and a rim band compresses to a line there; four small circles keep four places on the mark
+legible from the side, and they say which way it is facing, which a rotationally symmetric ring
+cannot.
+
+⚠️⚠️ **AND IT DOES NOT ROTATE. THAT IS THE ANIMATION.** `WitchSigilSpin` turned two wheels
+against each other for the whole six seconds, which is right for a summoning circle in a cutscene
+and wrong for a trap on a road: a moving mark is one the eye keeps returning to while it is armed.
+`WardInscribe` writes it on in 0.42 s, rules first and gold writing lagging a third behind, and
+then it is still until it expires. **Its motion happens once.**
+
+⚠️ **ONE MESH, NOT TWO STACKED ONES.** The old pair were two `Sigil`s 8 mm apart, which is the
+coplanar translucent pair § 19.2a records sorting arbitrarily on Sean's trail and drawing a
+different colour per drop. Everything the ward is made of goes into one triangle list.
+
+### 24.2 The blink is a teleport now, and the effect used to lie about that
+
+🧑: *"let her HOLD e to control where she will go and make it a teleport abilitiy and make it
+prettier"*.
+
+⚠️⚠️ **THE VFX WAS LYING ABOUT WHAT THE CODE DID.** `OnActivate` computed
+`endPos = startPos + forward * 4.2` **only to feed the visual**, then moved the body with
+`ctx.Motor.ApplyImpulse(pushDir * 12.0f)`. She was shoved four metres **through whatever was in
+the way** while two glyphs claimed she had vanished and reappeared.
+
+* **Hold E to aim, release to blink.** `HeroAbility.AimByHolding` puts the mechanism on the base
+  class: the press begins aiming, the release casts, and the reach runs **2.0 m to 5.5 m over the
+  first 0.55 s** of the hold.
+* **`CharacterMotor.Teleport`, never an impulse.** That method clamps **X and Z independently**,
+  which is `CLAUDE.md` § 4's square box: a radial clamp disagrees with it by 2.9 m on the
+  diagonal, exactly where somebody blinks when cutting a corner. Its own note records it as the
+  path that once put *"a seat 45.8 m out on X against a half width of 8.6"*, so it is the one
+  that has been fixed. `HeroAbilitySystem.AimPoint` clamps the reticle from the same constants,
+  so the ring and the landing cannot disagree.
+* **Holding is worth nothing by itself**, which is `docs/VISION.md` § 4. She keeps full movement,
+  nothing about aiming touches the anti-camp or anti-stall clocks, the hold **fires itself at
+  1.10 s** rather than being cancellable, and the reach stops growing at 0.55 s so the second
+  half of the ceiling buys nothing. The cap alone would only have bounded the stall; the ramp
+  ending early is what removes the incentive.
+* **The shove is host-side and has a request path.** It moves three bodies the caster does not
+  own; on a client that meant three victims rubber-banding on the host's next transform sync.
+  `MatchRpc.RequestBlinkShoveServerRpc` is the ask, and it carries a POINT and a FACING rather
+  than a list of who was hit, so a client cannot name its own victims. ⚠️ The seat comes from the
+  sender's lobby record, never from the payload.
+* **A bot holds the key.** `Tap` alternates every frame, so a bot's hold is one frame and every
+  bot blink would have been the minimum 2.0 m forever. `AIController.HoldAim` holds for the ramp
+  and releases, which is `CLAUDE.md` § 4's *"a bot presses the same buttons a human does"*.
+
+⚠️ **THE TWO ENDS ARE TWO DIFFERENT EFFECTS.** Departure is `SpawnShadowRift`: a torn vertical
+sheet, two ragged edges pinched shut at both ends by a sine so it is a split in a surface rather
+than a gap in a wall, with three cross-strokes reading as the last threads. Arrival is
+`SpawnShadowArrival`: six written characters falling onto the spot on their own clocks. **They
+share no geometry.** The departure is the bigger of the two because it is where the shove is
+centred and the thing the three people chasing her did not already know.
+
+### 24.3 What the ultimate does, which is the open balance question in § 23 answered
+
+⚠️⚠️ **§ 23 LEFT IT OPEN IN AS MANY WORDS AND THE ANSWER IS WRITTEN DOWN HERE.** *"Phaister's
+eclipse curse staggers for 0.50 s, below `MinStunDown`, so her ultimate does not hold anybody and
+gets no coat."* `ApplyStagger` forces anything at or under the 1.20 s floor back to
+`StunElement.None`, so the most expensive power in her kit applied a knockback hitch, drew no
+coat, raised no mash card, and was unmashable and unnoticeable at once.
+
+**Now 1.60 s, five break presses, and only inside 5.0 m.** The three numbers, each with its
+reason:
+
+* **1.60 s** clears `Balance.MinStunDown` by 0.40, which is the smallest hold that actually is
+  one.
+* **5 presses** against Cheska's 9, Dante's 8, Zack's 7, Nemu's 6 and Sean's 4. § 23's rule is
+  *"how hard the skill is supposed to hit"*, and what separates this from Cheska's nova is that it
+  can hold **three people at once**: a multi-target hold has to be shorter per victim than a
+  single-target one or it is three novas for one price. `perPress = (1.60 - 1.20) / 5 = 0.08 s`,
+  so an answered curse is about 1.2 s against 1.6 unanswered.
+* **5.0 m**, where it used to hit `round.Players` with **no distance test at all**. An ultimate
+  that reaches the far corner of a 14 m box cannot be positioned against, and positioning is the
+  counterplay. The reach is drawn on the ground and asserted by
+  `TelegraphsMatchWhatTheAbilityPlaces`.
+
+### 24.4 The sky, which is the other half of what an ultimate is now
+
+🧑: *"can we make her ult cooler? on top of magic and shit / i want the sky to look ominous and
+shit and change for a brief moment into night and filled with magic"*, and then *"maybe give some
+other characters other versions of this"*. That is § 26.
+
+`SpawnGrandCovenEclipse` puts **nothing on the floor** but a thin `Collar` at the reach. The
+eclipse is a `Corona` hung **11 m up** with an opaque moon in the middle of it, and the weather is
+`Visual.SkyEvent`.
+
+⚠️ **11 M IS UNDER THE GUIDEWAY.** Ilalim ng Tulay has a deck over the street, so an eclipse at
+40 m would be behind the map on the one arena it was designed for.
+
+⚠️ **THE MOON IS THE ONLY OPAQUE THING IN THE EFFECT, AND THAT IS § 19.2a's RULE APPLIED.** A dark
+disc ghosted over a bright corona is two coplanar translucent plates; an eclipse also has to
+actually OCCLUDE to read as one, and an opaque renderer writes depth by construction rather than
+by winning a sort. It costs no floor because it is eleven metres up.
+
+⚠️ **THE LIGHT IS 2.4 AT 26 M, NOT SOMETHING BRIGHT AND CLOSE.** § 8b is the recorded cost of the
+other choice: Zack's ultimate ran a 6.0 point light over 17.5 m in a 14 m box and blew **62.8 per
+cent** of the frame to white.
+
+**Where.** `Assets/TumbangPreso/Runtime/Visual/VfxShapes.cs` (`WardCircle`, `Rift`, `Corona`,
+`FlatRune`), `Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs`,
+`Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs`,
+`Assets/TumbangPreso/Runtime/Abilities/HeroAbility.cs` (hold to aim),
+`Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs`,
+`Assets/TumbangPreso/Runtime/Visual/SkyEvent.cs`.
+
+⚠️ **`SpawnWitchSigil`, `WitchSigilSpin` AND `SpawnCastGlyph` WERE DELETED RATHER THAN LEFT
+UNUSED.** § 22 opens on the pattern that cost two sessions: *"grep for the call site, not the
+asset"*. A helper named `SpawnWitchSigil` sitting in the file every witch effect is written in is
+the helper the next witch power gets built out of, whatever any comment says. `VfxShapes.Sigil`
+itself survives and is now used by nothing.
+
+---
+
+## 25 · Which peers actually hear a sound, measured rather than assumed
+
+**Asked for by 🧑 on 2026-08-26, and he called it correctly:** *"Verify SFX actually reach every
+peer in multiplayer. This is unverified and is the risky one. Most cues fire from kit code that
+runs host-side; a cue played inside a branch gated on `NetAuthority.ShouldResolve()` is silent on
+clients. Audit every `GameServices.Audio` call site for which peers reach it."*
+
+✅ **AUDITED AND TOOLED. `tools/audit_audio_reach.py` walks the runtime tree, finds each audio
+call's enclosing method, and reports whether a `ShouldResolve` early return is open at that brace
+depth.** 63 call sites, and **two came back HOST-ONLY**. Both are load-bearing:
+
+| Where | Cue | What it means |
+|---|---|---|
+| `Carrier.HostThrowAt` | `throw_release` | **No peer but the host has ever heard a throw leave a hand**, and the throw is the most frequent verb in the game. |
+| `Lata.HostKnockDown` | `lata_seal` | The sound of the **objective going over**, which is the most important event in a round. |
+
+⚠️⚠️ **THE FIX IS NOT TO MOVE THE CALL OUT OF THE GATE.** The gate is right: only the host may
+DECIDE a throw happened. What was wrong is that deciding and announcing were the same line.
+`TumbangPreso.NetCue` separates them, which is the shape `NetAuthority`'s own class note already
+prescribes for every verb (*"host decides -> HostResolveX() ... host announces -> RpcX()"*).
+
+⚠️ **IT IS A NO-OP IN SINGLE PLAYER**, because `NetAuthority.IsNetworked` is false with no
+transport up. Nothing about the offline game, the bot probes or the editor checks changes, and no
+call site has to ask which mode it is in.
+
+⚠️ **THE RELAY EXCLUDES THE PEER THAT MADE THE SOUND.** `NetCue` plays locally first so the
+thrower hears it on the frame they threw with no round trip; sending to everybody would give that
+one peer the sound twice a few tens of milliseconds apart, which is a flam rather than an echo and
+is worse than either.
+
+⚠️ **UI AND REFUSAL CUES MUST NOT GO THROUGH IT.** `HeroAbilitySystem.PlayRefusal`'s own note is
+explicit that its cue is *"on the player rather than at a world point"*; broadcasting it would
+play one player's mis-press in three other people's ears.
+
+### 25.1 The larger finding, which is not about audio ⚠️⚠️ OPEN
+
+**The ability layer is not replicated at all.** `MatchRpc` has RPCs for movement, the punch, the
+lunge, the shove, the grab, the throw, the reset, emotes, the lata, slippers, seats, picks, maps
+and the world snapshot. **It has none for a skill or an ultimate**, and
+`grep -n "Skill\|Ultimate\|Ability" Assets/TumbangPreso/Runtime/Net/*.cs` returns nothing outside
+comments.
+
+Every seat gets a `HeroAbilitySystem` on every peer (`MatchInstaller`), and it casts off
+`_motor.Intent`, which only the owning peer writes. So in a networked match a remote player's
+ultimate produces **no VFX, no sound, no `UltimateColumn` and now no sky** on anybody else's
+screen. What they see is the consequences: bodies moving, a score changing.
+
+⚠️ **THIS IS BIGGER THAN A BUG AND IT IS WHY IT IS WRITTEN DOWN RATHER THAN PATCHED HERE.** The
+right shape is the one every other verb already uses: the owning peer sends a cast INTENT (ability
+id, position, facing, and for a hold-to-aim power the held seconds), the host resolves it with the
+same code the solo game runs, and a `PlayAbilityClientRpc` makes every peer draw it. That is a
+session's work on its own and it wants `NetAuthority`'s three-line pattern followed exactly.
+
+**Done looks like:** two peers, one Hero Strike match, and the same effect on both screens for
+every one of the eighteen powers.
+
+### 25.2 Two cues added, and the bar they had to clear
+
+🧑 set it himself: *"Find where a sound is missing, but keep it sparse. The bar is a player having
+to guess whether something happened. Nothing that already reads visually."* Two passed:
+
+* **`sfx_blink_arrive`.** The blink plays `sfx_ghost_teleport` at the DEPARTURE, and after § 24
+  the far end can be 5.5 m away: whoever is standing there heard nothing at all. A cue fired at
+  the start point cannot cover it, for the reason § 22.7 records about the train, which is that
+  `PlayAtVaried` parks a pooled voice at the position it is given.
+* **`sfx_stun_break`.** § 23 built the whole mash-out system and ended it in silence. It fires on
+  the press that reaches `MinStunDown`, not on every press: one per break is sparse, one per press
+  is a cue at up to 10 Hz, which is the buzzsaw `AudioCues.HeadroomDb` exists to keep out. **One
+  cue for all six elements**, because the coat says what is on you and the break is the same event
+  whoever caused it.
+
+⚠️ **THE SEEDING HELD, AND IT WAS CHECKED RATHER THAN ASSUMED.** § 19.2b records
+`generate_ability_audio.py` once seeding from a position in a sorted list, so adding a cue rewrote
+seven shipped files. Adding these two changed **four files on disk: the two new cues, in the two
+output directories.** Nothing else moved.
+
+⚠️ **NOTHING ELSE PASSED THE BAR**, and that is the result rather than the absence of one. The
+sky change was considered and rejected: six ultimates already fire a payload cue at the instant
+the weather turns, and a seventh layer there is clutter, not sparsity.
+
+---
+
+## 26 · Every ultimate changes the weather, and each hero changes it differently
+
+**🧑 2026-08-26, after asking for Phaister's eclipse:** *"maybe give some other characters other
+versions of this"*.
+
+✅ **DONE. `Visual.SkyEvent`, six looks, wired at the one point every ultimate in the game passes
+through (`HeroAbilitySystem.PlayUltimatePresentation`).**
+
+⚠️⚠️ **IT EXISTS BECAUSE THE FLOOR IS FULL AND THE SKY IS EMPTY.** `VISION.md` § 2 is a budget on
+painted floor and every previous attempt to make an ultimate feel bigger spent it.
+`Visual.UltimateColumn` made the argument first: **an environment change costs zero square
+metres.**
+
+| Look | Hero | What it is | What carries it |
+|---|---|---|---|
+| `Eclipse` | Phaister | afternoon into night | the deepest of the six, and the only fill that is a hero accent |
+| `Stormfront` | Zack | iron cloud, cold blue key | the only one whose key light **flickers**, on Perlin noise rather than a sine |
+| `Whiteout` | Cheska | colour drains, fog closes | saturation **0.34**, the strongest desaturation of the six |
+| `Emberfall` | Sean | a sun behind smoke | the sun stays high and goes orange, which is hotter than a brighter frame |
+| `Dustveil` | Dante | ochre, thick and low | fog comes closest of the six; the sky nearly goes out |
+| `Seance` | Nemu | the light barely moves, the COLOUR goes wrong | green ambient under a violet sky, a combination daylight never makes |
+
+⚠️⚠️ **EVERY LOOK IS NET-DARKENING OR NEUTRAL, AND IT IS ENFORCED IN CODE RATHER THAN BY THE
+TABLE.** `ColourGrade.SetEventGrade` clamps brightness to a maximum of 1.0. A system that can
+brighten the whole screen for five seconds is § 8b's Thunderstrike defect with a longer fuse, and
+that one measured **62.8 per cent** of a frame blown to white. The looks are separated by HUE, by
+ambient DIRECTION and by fog, which are free.
+
+⚠️⚠️ **AND DARKENING IS PAID FOR WITH A FILL LIGHT RATHER THAN OUT OF READABILITY.** Rule 5 asks
+that a mid-fight frame still show the lata, the chalk and every player; dropping the sun to a
+fifth would break that outright. Every look raises a coloured fill 11 m over the arena centre, so
+the court is lit **differently** rather than **less**. That is also what "ominous" actually looks
+like.
+
+⚠️ **NEITHER FAILURE MODE IS CAUGHT BY ONE NUMBER.** `AbilityShowcaseProbe` now photographs all
+six, gated for the blowout bound, which catches the bright half. The dark half has no number and
+is what the eye-height frame is for.
+
+⚠️ **IT RESTORES FROM EVERY EXIT, AND `RoundDirector.EndRound` IS THE ONE THAT SAYS WHEN.**
+`RenderSettings` is scene-global and outlives the object that wrote it: an ultimate cast in the
+last second of a round would otherwise still be blending toward night over the scoreboard, and a
+teardown at the wrong moment would leave the map permanently dark with nothing on screen to say
+why. The skybox is **instanced** rather than written through, because `RenderSettings.skybox` is a
+project asset and editing it in play mode changes the map on disk.
+
+⚠️ **A HERO WITH NO ROW GETS NO WEATHER, NOT SOMEBODY ELSE'S.** `LookFor` returns null rather than
+a default, which is § 8 item 3's fault avoided by construction: *"Sean's Supernova was spawning
+Dante's magma. Two heroes reading as one is the most expensive form of repetitive, because it
+costs a character."*
+
+---
+
+## 27 · The other five heroes need a motif, and it is not more symbols
+
+**🧑 2026-08-26, setting the task and the bound in one line:** *"look for a motif OR something
+else we can try to add to increase the quality or experience of playing the characters, so that it
+doesnt feel like party confetti or some shit"*, and separately: *"pls dont use the same script to
+generate any abilitiy"*.
+
+⚠️⚠️ **PHAISTER'S MOTIF IS WRITTEN LANGUAGE BECAUSE SHE IS A WITCH. COPYING IT IS THE FAILURE
+MODE.** § 24 gave her rings, glyph bands and medallions; giving Zack recoloured runes would be
+§ 19's fault at the level of the whole roster instead of the level of one builder. **Each hero
+needs their own answer to "what does this element leave behind".**
+
+⚠️ **THE METHOD IS § 19.1's AND IT IS THE ONLY PART THAT TRANSFERS.** Ask how the geometry is
+BUILT, not what colour it is. A motif is a construction rule that produces many different objects,
+which is why one builder per hero is wrong too: `WardCircle`, `Rift` and `Corona` are three
+builders serving one motif.
+
+**The five, as proposals with their acceptance test. None of these is built.**
+
+### 27.1 Sean, fire: **what is left burning**
+
+His trail already has `Tongue` flames and an opaque char. The motif is that fire **spreads and
+outlives the cast**: a mark that grows outward for a moment after it lands, edges that char
+inward, and heat shimmer over anything he has touched in the last few seconds.
+
+* **Construction:** a char boundary that ADVANCES, built as a ring of independently-timed
+  segments rather than a scaling disc, so the edge is ragged and different every drop.
+* **Done looks like:** two drops of the same trail, photographed 1 s apart, are visibly different
+  ages rather than different sizes. `Burn`'s shrink-toward-its-own-end already does half of this.
+
+### 27.2 Zack, electric: **the circuit**
+
+Every other hero's effects happen in empty space. Electricity is the one element that wants to
+**jump between things that exist**: arcs from him to the lata, to a barricade, to another player,
+following what is actually on the court.
+
+* **Construction:** `Bolt` already walks a tube from a to b. The motif is choosing a and b from the
+  live scene rather than from a random offset, which is a different kind of code from every other
+  effect in the game.
+* **Done looks like:** standing next to the lata while he is charged does something visible that
+  standing in an empty corner does not.
+* ⚠️ **It must not become a targeting aid.** The arc says where charge is, not where a player is;
+  arcing to a body through a wall would be an aimbot drawn in lightning.
+
+### 27.3 Cheska, ice: **the fracture**
+
+Ice does not appear, it **propagates along cracks**. Her sheet grows as a branching crack pattern
+rather than as a disc, and her barricade fails by **shedding real plates** rather than fading.
+
+* **Construction:** a recursive branch walk laying `Prism` slivers along its path. `Wedges` is the
+  wrong builder: it makes separate plates with gaps, and a crack is connected.
+* **Done looks like:** the sheet's outline is different every cast from one seed, and the
+  barricade's death leaves geometry on the ground for a moment.
+
+### 27.4 Dante, earth: **displacement**
+
+His motif is that the ground he breaks **goes somewhere and stays there**. `Wedges` already tips
+plates; what is missing is that nothing he does leaves a permanent mark on the round.
+
+* **Construction:** the ground under a stomp drops a few centimetres and the displaced material
+  stands up at the rim. One mesh, two halves, conserved.
+* **Done looks like:** you can see where Dante has been fighting from across the arena, thirty
+  seconds later.
+* ⚠️ **It must not become collision.** `MapGeometryCheck` refuses props that float or bury, and a
+  hole a player can stand in is a hole the bots will path into.
+
+### 27.5 Nemu, spirit: **absence**
+
+The hardest one and the most valuable. Every other hero ADDS something to the frame; hers should
+**take something away**. Things she touches lose colour, lose their outline, lose parts of
+themselves.
+
+* **Construction:** not geometry at all, mostly. A material effect on what is already there, which
+  is a category this game has exactly one of (`_FrostAmount`, and § 22.6 freed it up by taking the
+  frost off the tag).
+* **Done looks like:** a screenshot of her ultimate has fewer things in it than the same frame
+  without it, and it still passes rule 5.
+* ⚠️ **She and Phaister are the only pair sharing an element** (§ 21.5), so this is the one that
+  most has to not be a sigil.
+
+**Where it would go.** `Assets/TumbangPreso/Runtime/Visual/VfxShapes.cs` for builders,
+`Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs` for the spawners, and a row per hero in
+`AbilityShowcaseProbe` so each is photographed alone before anything overlaps it.
+
+---
+
+## 28 · Nemu's ultimate is her pet now, and her kit is named after him
+
+**Reported by 🧑 on 2026-08-26, and the diagnosis is his:** *"her black hole dont make sense
+lowkey? maybe just make nemu's pet the black whole and make it look like it got bigger and is
+sucking everyone up, change the text that says its a blackhole"*, then *"for nemu i want her
+skills to involve her pet more as well as her ult"*, *"make her pet move and do shit and go back
+to her after"*, and *"use her pet name in new skill name and skill descriptions"*.
+
+⚠️⚠️ **HE IS RIGHT AND THE REASON IS A DESIGN RULE RATHER THAN A PREFERENCE. Everything Nemu
+does is Kuro, and her most expensive power was the one that ignored him.** Seance Void opened a
+vortex three metres in front of her, out of nothing, with the pet standing beside it unchanged.
+That is a physics effect wearing her colour, and it is why the ultimate never read as hers.
+
+✅ **DONE 2026-08-26.**
+
+### 28.1 KURO UNBOUND
+
+* **It opens ON Kuro** whenever Kuro is out, which makes RIDE KURO a setup for it: send the pet
+  somewhere, then unbind it there. With no pet out it falls back to a point in front of her, and
+  the fallback is deliberately the worse option, because the reward for playing her kit as a kit
+  is choosing the spot in advance.
+* **The pet is consumed by it.** `GhostPetCompanion.Devour` hides Kuro for the duration and the
+  maw stands where he was, so what the other three see is the small thing that has been following
+  her all round becoming the thing that is eating them. A vortex spawned beside an unchanged pet
+  would have been the old effect with a new name.
+* ⚠️ **A possession ends the moment he stops being a body.** Driving a pet that is currently a
+  black hole is a state nothing else in the game has an answer for, and the camera would be
+  mounted 2 m behind an object eight times its own size. It ends with `teleportNemu: false`,
+  because her ultimate is not a mobility power.
+* ⚠️ **The hazard is untouched at 2.8 m.** The drag, the slow and the `HazardVolume` are what
+  `Hero_Strike_Balance.md` measured and what the bots path around. **This is a fiction and
+  presentation change and it must not quietly become a balance one.**
+* **The maw has real height and the old void did not.** `Funnel` dished DOWN, which reads from
+  above and disappears at eye level; a mouth standing 1.2 m off the road is readable from a
+  standing player's own height, which is where this game is played from.
+
+### 28.2 The pet flies home, and everyone sees it
+
+🧑: *"after her ult ends make the pet go back to her make sure she sees that as well as everyone
+else"*.
+
+⚠️⚠️ **THE CHEAP IMPLEMENTATION IS THE WRONG ONE AND IT IS THE OBVIOUS ONE.** Re-enabling the
+renderer at her feet is a pet that VANISHES and REAPPEARS, and **from her own first-person view
+nothing happens at all**, because the bind offset puts him behind her shoulder. So the return is
+FLOWN: `ReturnSeconds` **0.85 s**, on an arc lifted **1.6 m** at its middle so the whole flight is
+against the sky for players who are not standing on it, scaling back up as it goes, with a small
+overshoot that closes in the last fifth. It is a world-space move, so it is not a local effect.
+
+### 28.3 Her kit is named after him
+
+| | Was | Now |
+|---|---|---|
+| Skill 1 | GHOST STEP | **KURO'S SHADOW** |
+| Skill 2 | ASTRAL PROJECTION | **RIDE KURO** |
+| Ultimate | SEANCE VOID | **KURO UNBOUND** |
+
+⚠️ **THE WORD "VOID" IS GONE FROM EVERY STRING A PLAYER READS**, and `Id` is unchanged at
+`nemu_ultimate`. Ids are keys: `HeroPresentationTests`, the HUD deck and the ability tray all
+index off them, and renaming a key to match a label is how a rename becomes six silent lookup
+failures. `AbilityGlyph.NemuSeanceVoid` is kept for the same reason.
+
+⚠️ **AND THE SUMMARIES WERE CAUGHT BY A TEST RATHER THAN BY EYE.**
+`EverySummaryFitsTheCardItIsDrawnIn` bounds a summary at **62 characters**, because the character
+select card truncates silently; the first draft of all three ran over. That test exists because
+four of the fifteen powers once described themselves in a sentence that stopped mid-word.
+
+### 28.4 Two faults found on the way, and one was a live hazard
+
+**28.4a ⚠️⚠️ HER TELEPORT HOME SPAWNED ZACK'S SHOCK TRAIL, WITH A `HazardVolume` ON IT.**
+`GhostPetCompanion.EndPossession` called `HeroHazards.SpawnShockTrail(...)`, so every time Nemu
+teleported to Kuro she dropped **a two-second electric damage zone belonging to another hero** on
+the road. It is § 8 item 3's fault (*"Sean's Supernova was spawning Dante's magma"*) with a
+gameplay consequence on top of the visual one. Replaced with `SpawnSpiritReturn`, which is built
+on her own `VfxShapes.Hollow`, lasts half a second and damages nobody.
+
+**28.4b ⚠️⚠️ LEAVING A POSSESSION WAS A HARD CUT.** `CameraRig.PossessBlendSeconds` carries the
+eye from her head to the mount behind Kuro over 0.28 s, and that blend is most of why the
+possession reads as one; the return simply stopped drawing that view and the next frame was
+rendered from her skull. 🧑: *"make sure i switch to tpp view when i go to the body of the pet of
+nemu and control it, when it ends too"*. Now blended both ways, same length.
+
+⚠️ **The exit blend also covers the teleport**, which is the worst frame in the ability: pressing
+again while possessing moves her BODY to the pet, so the eye's destination jumps several metres in
+the same frame the possession ends.
+
+### 28.5 Her motif, and two cues
+
+`VfxShapes.Hollow` is a rim around **nothing** with a torn inner edge, and nothing else in the
+game uses it. § 27.5's argument: every other effect in this game ADDS something to the frame and
+hers has to look like it removed something, so the way to draw a hole is to draw only its edge.
+It is deliberately not `Collar`, which is the boundary builder every other rim uses: a `Collar`
+says *here is an edge* and this says *here is where something stopped existing*.
+
+* **`sfx_kuro_unbound`** is an INHALE, which is the one envelope nothing else in the cue set uses:
+  every other payload is a strike, an edge and a decay. It swells from nothing into its loudest
+  moment and stops there, and the stop is what says the maw is open rather than still arriving.
+  Her ultimate had been playing `sfx_ghost_teleport`, the blink she shares with Phaister.
+* **`sfx_kuro_return`** is the only cue in her set with a smile in it. Everything else she has is
+  a hole, a possession or a maw; the pet flying back to her shoulder is the one moment in the kit
+  that is not sinister, and another dark swell would have made the character one note.
+
+---
+
+## 29 · The other four heroes got their motif, and none of them shares a builder
+
+**🧑 2026-08-26:** *"improve all other abilities thoroughly too thank you, in their own ways u
+figure out how, make sure they dont share builders"*, and *"make all other skills better as well,
+look better, feel better etc / nemu and phaister are done, do everyone else"*.
+
+⚠️⚠️ **THE FIVE KITS ALREADY HAD DIFFERENT BUILDERS AND STILL FELT ALIKE, WHICH IS THE FINDING.**
+§ 19 gave each of them its own construction and that pass was right. What none of them got was an
+answer to the question a MOTIF answers, which is not *"what does this ability look like"* but
+**"what does this element LEAVE BEHIND"**. Four new builders, four signature layers, one per hero:
+
+| Hero | Builder | The motif | The acceptance test |
+|---|---|---|---|
+| Cheska | `Fracture` | ice **propagates** along cracks | the outline differs every cast from one seed |
+| Dante | `Upheaval` | earth is **displaced**, not removed | you can see where he fought, later |
+| Sean | `Cinder` | fire **spreads** and outlives the cast | two drops of one trail read as different ages |
+| Zack | `Filament` | current wants a **circuit** | standing by the lata looks different from standing alone |
+
+⚠️ **NOT ONE OF THEM IS A FAN, WHICH IS WHAT EVERY EFFECT IN THIS GAME USED TO BE.** § 19:
+*"`Splat`, `Star`, `Streak` and `Crystal` are four different POLYGONS handed to ONE builder."*
+`Fracture` is a recursive walk, `Upheaval` tips plates out of a dish, `Cinder` is a field of
+separate quadrilaterals and `Filament` is a web between caller-supplied points.
+
+⚠️⚠️ **AND THEY COST ALMOST NO AREA, WHICH IS THE ONLY REASON THEY COULD BE ADDED AT ALL.**
+`docs/VISION.md` § 2 rule 3 spends the budget on detail rather than area, and Sean's corridor is
+the worst offender ever measured in this game at **27.2 per cent of the box**. Every one of these
+is strokes or pieces: the cracks are hairlines, the cinders cover about **9 per cent** of the ring
+they are scattered in, and the arcs are 3.5 cm bars. Between them the four add roughly **3 m²
+across the whole roster**.
+
+⚠️ **THE TWO THAT DRAW OUTSIDE THEIR HAZARD CARRY THE SAME BOUND.** `HeroAbility.TelegraphRadius`
+exists because *"a telegraph that lies is worse than no telegraph"*, so Cheska's cracks and Sean's
+cinders are unmistakably decoration: no fill, no rim, no glow, a third of the alpha of the thing
+they came off, and reaching only 1.28 to 1.35 times its radius. A player reads the slab as the ice
+and the cracks as what the ice did to the road.
+
+⚠️⚠️ **ZACK'S IS THE ONE THAT COULD BECOME A CHEAT AND THE BOUND IS WRITTEN INTO IT.** An arc that
+reached a body through a barricade would tell a player where somebody is hiding, which is
+information this game does not otherwise give: **an aimbot drawn in lightning**. It reaches 3.2 m,
+takes at most the nearest three ends, places no `HazardVolume`, staggers nobody, and draws two
+stubs going nowhere when it finds nothing, because *"the charge is live and found no route"* is a
+real answer and inventing a target is not.
+
+⚠️ **`SpawnUpheaval` IS A DECAL WITH HEIGHT AND MUST NOT BECOME COLLISION.** `MapGeometryCheck`
+refuses geometry that floats or buries, the bots path around `HazardVolume` radii and nothing
+else, and a hole a player can stand in is a hole they will get stuck in. The slabs lean OUT from
+the rim so they never occupy the middle a player walks through.
+
+**Where.** `Assets/TumbangPreso/Runtime/Visual/VfxShapes.cs` (`Fracture`, `Upheaval`, `Cinder`,
+`Filament`, `Hollow`, `TwoSided`), `Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs`
+(`SpawnFrostCracks`, `SpawnUpheaval`, `SpawnCinderFringe`, `SpawnCircuitArcs`).
+
+---
+
+## 30 · Two findings from measuring the cue files, and one stale line in `CLAUDE.md`
+
+**`tools/audit_cue_audio.py` was written on 2026-08-26 to answer the third part of 🧑's audio
+ask:** *"Check no cue is broken. AudioCueCheck passes but only proves a file exists, is a real
+WAV, and has a call site."* It opens every cue and reports peak, rms, DC offset and the loop
+seam. **80 files, and it found things nothing else could.**
+
+⚠️⚠️ **NINE SHIPPED CUES CARRY A DC OFFSET AND THEY ARE ALL THE UI AND ANNOUNCER SET.**
+`countdown_tick` reads **-0.139**, `ui_click` -0.121, `score_award` -0.125, and `boot_sting`,
+`countdown_go`, `match_win`, `round_win`, `ui_back` and `ui_hover` are all between -0.04 and -0.11.
+
+A non-zero mean is not a subtlety: it is a step at the start and the end of every play, it eats
+headroom that the mix then cannot use, and on a cue that fires as often as `ui_hover` it is a low
+thump under the whole menu. **None of the 2026-08-26 cues has one** (every new file measures under
+0.01), so whatever produced these is not `generate_ability_audio.py`.
+
+**Done looks like:** find what generated the nine, subtract the mean, regenerate, and confirm the
+peak did not move. ⚠️ **Do not simply high-pass them.** These are short clicks and a filter with
+any real slope will ring on a 30 ms sample; the offset is a constant and subtracting it is exact.
+
+⚠️ **THE SEAM COLUMN IS ONLY MEANINGFUL FOR A CUE SOMETHING LOOPS**, and today that is
+`sfx_lrt_rumble` alone. It is reported for every file because the point is to have the number when
+somebody decides to loop one: § 22.7 records `sfx_lrt_pass` being looped and dropping the train to
+silence at 2.70 s because it was authored with a fade at both ends. `sfx_stun_break` reads **0.85**
+and `sfx_sky_seance` **0.71**; both are one-shots and both would do exactly that.
+
+⚠️⚠️ **AND `CLAUDE.md` § 7 IS WRONG ABOUT THE BUILD PATH ON THIS MACHINE.** It says
+*"`GameBuilder.BuildWindows` targets `C:\\Users\\matth\\Desktop`"*. `GameBuilder` actually calls
+`Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)`, which resolves per
+machine, and this profile is `C:\\Users\\Matthew`. **The code is right and the note is a hard-coded
+path from the other laptop.** It matters because the § 2.2 build procedure tells you to check a
+folder that does not exist here, which reads as a build that never ran.
 
 ---
 

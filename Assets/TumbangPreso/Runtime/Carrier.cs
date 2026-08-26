@@ -219,7 +219,17 @@ namespace TumbangPreso
             // The same 45 degree launch every range bound in the game is solved against.
             Vector3 dir = (aim.normalized + Vector3.up).normalized;
 
-            GameServices.Audio?.PlayAtVaried("throw_release", origin, 0.94f, 1.07f, 0.95f);
+            // ⚠️⚠️ `NetCue`, NOT `GameServices.Audio`, AND THIS LINE IS WHY THAT CLASS EXISTS.
+            // It sits inside `HostThrowAt`, which opens with `if (!NetAuthority.ShouldResolve())
+            // return;`, so on a client it is never reached: **no peer but the host has ever
+            // heard a throw leave a hand in a networked match**, and the throw is the most
+            // frequent verb in the game. Found by `tools/audit_audio_reach.py`, which walks every
+            // audio call in the runtime tree and reports the ones behind an open authority gate.
+            //
+            // ⚠️ THE GATE IS CORRECT AND STAYS. Only the host may DECIDE a throw happened. What
+            // was wrong is that deciding and announcing were one line; `NetCue` separates them,
+            // which is the shape `NetAuthority`'s class note already describes for every verb.
+            NetCue.PlayVaried("throw_release", origin, 0.94f, 1.07f, 0.95f);
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
             GetComponentInChildren<Visual.CharacterSquashStretch>()?.DashStretch(transform.forward, 0.14f);
             UI.Hud.ReportStyle(_motor.PlayerSlot, 5.0f, "LET FLY");

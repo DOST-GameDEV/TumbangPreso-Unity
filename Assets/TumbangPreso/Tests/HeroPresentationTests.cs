@@ -256,9 +256,20 @@ namespace TumbangPreso.Tests
             AssertTelegraph("zack", 2, 0.0f, 0.0f);     // throw empower
             AssertTelegraph("zack", 3, 4.5f, 0.0f);     // CreateThunderstrike(pos, 4.5)
 
-            AssertTelegraph("phaister", 1, 2.4f, 4.5f); // Kulam Hex Sigil
-            AssertTelegraph("phaister", 2, 0.0f, 0.0f); // blink
-            AssertTelegraph("phaister", 3, 0.0f, 0.0f); // eclipse
+            AssertTelegraph("phaister", 1, 2.4f, 4.5f); // Kulam Hex ward
+
+            // ⚠️ THE BLINK HAS A TELEGRAPH NOW BECAUSE IT IS AIMED. It was 0/0 while it was an
+            // impulse fired on the press edge, which the reticle could never have drawn in time.
+            // 5.5 is its maximum reach at a full hold and 1.15 is the arrival mark it stamps
+            // there, so the ring a player holds E to move is the size and the place of the thing
+            // that actually happens. `HeroAbility`'s hold-to-aim section has the rest.
+            AssertTelegraph("phaister", 2, 1.15f, 5.5f); // SpawnShadowArrival at fwd*5.5 max
+
+            // ⚠️ AND THE ECLIPSE DECLARES ITS REACH, WHICH IT DID NOT WHEN IT HIT EVERYBODY. The
+            // old ultimate staggered `round.Players` with no distance test at all, so there was
+            // no radius to draw and nothing to position against. 5.0 is what `Curse` now tests
+            // and what `SpawnGrandCovenEclipse` draws on the ground. `docs/TODO.md` § 24.
+            AssertTelegraph("phaister", 3, 5.0f, 0.0f); // curse reach, centred on the caster
         }
 
         /// <summary>

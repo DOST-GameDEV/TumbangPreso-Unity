@@ -89,8 +89,8 @@ namespace TumbangPreso.Abilities
                 Visual.AbilityVfx.AttachAura(ctx.Motor.transform,
                                              Visual.AbilityVfx.Aura.FireEmber, Duration);
 
-                GameServices.Audio?.PlayAt("hero_sean_grunt", ctx.Position);
-                GameServices.Audio?.PlayAt("sfx_fire_whoosh", ctx.Position);
+                NetCue.Play("hero_sean_grunt", ctx.Position);
+                NetCue.Play("sfx_fire_whoosh", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "ROCKET!", UiTheme.HeroFireBright, 1.25f);
             }
 
@@ -133,7 +133,7 @@ namespace TumbangPreso.Abilities
                             // ON TOP OF ITS OWN "ROCKET!". The stars and the sound already
                             // confirm each hit.
                             DizzyStars.Attach(p.transform, 1.5f, UiTheme.HeroFireBright);
-                            GameServices.Audio?.PlayAt("bump", p.transform.position);
+                            NetCue.Play("bump", p.transform.position);
                             Visual.HitFeel.Land(p, Visual.HitFeel.Weight.Knockdown,
                                                 UiTheme.HeroFireBright);
                         }
@@ -195,7 +195,7 @@ namespace TumbangPreso.Abilities
             {
                 _kit.IsIgnitionCannonActive = true;
                 Visual.AbilityVfx.AttachHandVfx(ctx.Motor.transform, Visual.AbilityVfx.Aura.FireEmber, Duration);
-                GameServices.Audio?.PlayAt("sfx_fire_whoosh", ctx.Position);
+                NetCue.Play("sfx_fire_whoosh", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "IGNITE!", UiTheme.HeroFireBright, 1.25f);
             }
 
@@ -238,8 +238,8 @@ namespace TumbangPreso.Abilities
 
                 // Launch upward
                 ctx.Motor.ApplyImpulse(Vector3.up * 14.0f + ctx.Forward * 4.0f);
-                GameServices.Audio?.PlayAt("hero_sean_ult", ctx.Position);
-                GameServices.Audio?.PlayAt("sfx_fire_whoosh", ctx.Position);
+                NetCue.Play("hero_sean_ult", ctx.Position);
+                NetCue.Play("sfx_fire_whoosh", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "BLAST OFF!", UiTheme.HeroFireBright, 1.3f);
             }
 
@@ -266,7 +266,7 @@ namespace TumbangPreso.Abilities
                     var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                     if (squash != null) squash.Squash(0.4f);
 
-                    GameServices.Audio?.PlayAt("sfx_explosion_heavy", ctx.Position);
+                    NetCue.Play("sfx_explosion_heavy", ctx.Position);
                     HeroHazards.CreateExplosion(ctx.Position, 4.8f, 16.0f, 2.2f, ctx.Motor.PlayerSlot, "SUPERNOVA!",
                         style: HeroHazards.ExplosionStyle.Fire);
 

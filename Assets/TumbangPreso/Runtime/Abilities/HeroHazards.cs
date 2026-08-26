@@ -199,6 +199,12 @@ namespace TumbangPreso.Abilities
                                          VfxShapes.Prism(6, 1.0f, 0.80f, 0.0f, 0.26f, seed),
                                          radius, heightScale: 0.26f, lift: 0.01f);
 
+            // ⚠️ HER MOTIF: THE ICE KEEPS GOING. A slab says a patch froze; cracks running out of
+            // it say the freeze PROPAGATED, which is what ice actually does and what separates
+            // her from a hero who places a shape. Hairlines outside the hazard, so nothing about
+            // the danger radius changes. See `SpawnFrostCracks` for the bound.
+            SpawnFrostCracks(go.transform, radius, seed + 17);
+
             // ⚠️⚠️ ALPHA 0.30, DOWN FROM 0.65, AND THIS DISC USED TO RENDER AS A HOLE OF PURE
             // WHITE. Measured off `Logs/shots-abilities/ability_ice_sheet_v1.png`: the whole
             // 2.3 m circle came back at 255,255,255 with the ice spikes standing on it invisible
@@ -642,6 +648,17 @@ namespace TumbangPreso.Abilities
             // reasoning; an unseeded probe is one that measured 110 and then 467 penalties on
             // consecutive runs (`CLAUDE.md` § 7.1).
             int seed = Mathf.RoundToInt((position.x + position.z) * 977.0f);
+
+            // ⚠️ HIS MOTIF: IT IS STILL EATING. `docs/TODO.md` § 27.1. A trail drop is otherwise
+            // a mark that appears whole and shrinks; separate burning pieces at falling density
+            // outside its edge say the fire got there and has not finished, which is the only
+            // thing that gives one drop an AGE distinct from the drop beside it.
+            //
+            // ⚠️ AND IT PUTS NO AREA BACK. His corridor was the worst offender ever measured in
+            // this game at 27.2 per cent of the box (`docs/VISION.md` § 2), and § 19.3 took a
+            // full-radius bright plate out of every drop to fix it. These are pieces with gaps:
+            // about 9 per cent of the ring they are scattered in. See `SpawnCinderFringe`.
+            SpawnCinderFringe(go.transform, radius, seed + 53);
             float yaw = 0.0f;
             if (forward.sqrMagnitude > 0.0001f)
             {
@@ -1189,6 +1206,12 @@ namespace TumbangPreso.Abilities
             // ⚠️ SO THE CRUST IS OPAQUE. Burnt asphalt is opaque, an opaque surface writes depth,
             // and depth cannot be out-sorted. The bright pixels are now exactly the gaps between
             // the plates, which is what the whole two-layer idea was for.
+            // ⚠️ HIS MOTIF: THE GROUND WENT SOMEWHERE. `docs/TODO.md` § 27.4. Everything else in
+            // this game leaves the street exactly as it found it; displacement is the one element
+            // whose real signature is that you can see where the fight was afterwards. The slabs
+            // lean OUT from the rim, so they never stand in the middle a player walks through.
+            SpawnUpheaval(go.transform, radius, seed + 29);
+
             var bed = VfxShapes.Lay(go.transform, "MagmaBed",
                                     VfxShapes.Splat(11, 0.22f, seed + 3),
                                     radius * 0.74f, 0.010f);
@@ -1535,89 +1558,713 @@ namespace TumbangPreso.Abilities
         }
 
         // -------------------------------------------------------------------
-        // KULAM HEX SIGIL & WITCH REGALIA (Phaister Abilities)
+        // PHAISTER'S THREE POWERS, BUILT THREE DIFFERENT WAYS
+        //
+        // ⚠️⚠️ THEY USED TO BE ONE BUILDER AT THREE RADII AND THAT IS THE FAULT THIS SECTION
+        // EXISTS TO ANSWER. 🧑 2026-08-26: *"the fucking abilities of phaister are repetitive
+        // they use the same magic circle i want them to have different colors and different
+        // animations and different symbols. DIFFERENT EVERYTHING FIGURE OUT HOW THEY WILL ALL BE
+        // DIFF"*, and, exactly: *"her Q is just 2 stars on top of each other"*.
+        //
+        // ⚠️⚠️ HE WAS READING THE CODE OFF THE SCREEN. `SpawnWitchSigil` drew `VfxShapes.Sigil`
+        // twice, an outer star polygon and an inner one, and `SpawnCastGlyph` called it with a
+        // hard-coded `5, 2`. The hex, BOTH ends of the blink and the eclipse were therefore the
+        // same pentagram stacked on itself; the only things that varied were radius and a seed
+        // that moves the rim ticks and nothing else. `docs/TODO.md` § 21.5 argued for that on
+        // purpose (*"her kit is one CRAFT"*) and the argument does not survive being looked at:
+        // a shared visual LANGUAGE is a palette and a vocabulary, not a shared mesh function.
+        //
+        // ⚠️ SO ALL FIVE CHANNELS ARE NOW SPENT ON HER, INCLUDING THE FIFTH. `docs/TODO.md`
+        // § 19.1 added CONSTRUCTION to silhouette, axis, motion and hue, and construction is the
+        // one nobody had spent here:
+        //
+        //   Q  KULAM HEX    `VfxShapes.WardCircle`  rectilinear, dense, WRITTEN, and STATIC.
+        //   E  SHADOW BLINK `VfxShapes.Rift`        vertical, torn, no circle in it at all.
+        //   R  GRAND COVEN  `VfxShapes.Corona`      overhead, and the middle is empty.
+        //
+        //   Q  inscribes itself and then does not move.
+        //   E  is two DIFFERENT events: a tear that opens, and a fall that closes.
+        //   R  arrives from the sky and takes the sky with it (`Visual.SkyEvent`).
+        //
+        //   Q  magenta rules with gold writing.
+        //   R  gold corona against a black hole; no magenta in the ultimate at all.
+        //   E  near-white at the tear, because a rip in the world is not a colour.
         // -------------------------------------------------------------------
-        public static GameObject SpawnKulamHexSigil(Vector3 position, float radius = 2.4f, float duration = 6.0f, int ownerSlot = -1)
+
+        // -------------------------------------------------------------------
+        // THE SIGNATURE LAYER, ONE PER HERO
+        //
+        // ⚠️⚠️ THE FIVE KITS ALREADY HAD DIFFERENT BUILDERS AND STILL FELT ALIKE, WHICH IS THE
+        // FINDING THIS SECTION EXISTS FOR. `docs/TODO.md` § 19 gave each of them its own
+        // construction (a slab for Cheska, broken plates for Dante, a swept flame for Sean, a
+        // branching tube for Zack, a funnel for Nemu) and that pass was right. What none of them
+        // got was an answer to the question a MOTIF answers, which is not *"what does this
+        // ability look like"* but *"what does this element LEAVE BEHIND"*. 🧑 2026-08-26: *"look
+        // for a motif OR something else we can try to add to increase the quality or experience
+        // of playing the characters, so that it doesnt feel like party confetti or some shit"*.
+        //
+        // ⚠️ SO EACH OF THESE IS ONE EXTRA LAYER ON THE EFFECT THAT HERO ALREADY HAD, on a
+        // builder nothing else in the game uses, and every one of them is STROKES or PIECES
+        // rather than area. `docs/VISION.md` § 2 rule 3: spend the budget on detail, not on
+        // area. Between them these four add about 3 m² across the whole roster.
+        //
+        //   Cheska  `Fracture`  the ice keeps GOING past the slab, along cracks
+        //   Dante   `Upheaval`  the road he broke is standing up around the hole
+        //   Sean    `Cinder`    the fire has spread past its own edge and is still eating
+        //   Zack    `Filament`  the charge has found something to arc to
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// Cracks running out of Cheska's ice, past the slab it froze.
+        ///
+        /// ⚠️⚠️ IT IS OUTSIDE THE HAZARD AND HURTS NOBODY, WHICH IS THE POINT AND ALSO THE RISK.
+        /// `HeroAbility.TelegraphRadius` exists because *"a telegraph that lies is worse than no
+        /// telegraph"*, so anything drawn beyond a zone's real radius has to be unmistakably
+        /// DECORATION rather than danger. These are hairlines: no fill, no glow, no rim, at a
+        /// third of the alpha of the slab itself. A player reads the slab as the ice and these as
+        /// what the ice did to the road, which is exactly the distinction.
+        ///
+        /// ⚠️ THE REACH IS 1.35x AND NOT MORE. Far enough that the sheet visibly propagated;
+        /// close enough that nobody standing on a crack thinks they are standing on ice.
+        /// </summary>
+        public static GameObject SpawnFrostCracks(Transform parent, float radius, int seed)
         {
-            var go = new GameObject("KulamHexSigilZone");
-            go.transform.position = position;
-
-            // ⚠️⚠️ THE CIRCLE IS DRAWN AS STROKES, AND IT WAS TWO FILLED DISCS. What stood here
-            // was `PrimitiveType.Cylinder` at `radius * 2.0` and another at `radius * 1.25`, and
-            // a Unity cylinder is SOLID: those are not rings, they are two stacked translucent
-            // PLATES covering the whole footprint and then some. At the shipped 2.4 m that is
-            // about **18 m² of a 196 m² court painted magenta for one skill**, before the spokes
-            // and the nodes, which is the puddle `docs/VISION.md` § 2 exists to stop.
+            // ⚠️⚠️ THEY START AT THE SLAB'S EDGE AND THEY ARE HAIRLINES, AND THE FIRST VERSION
+            // WAS NEITHER. `ability_ice_sheet_v21.png`: arms beginning at the centre at a 0.045
+            // bar, ghosted at 0.34 with emission, drew as **white spokes laid over the ice** and
+            // read as tape rather than as damage. Two separate mistakes and both are visible only
+            // in a render. `0.72` puts the origin outside the hexagon so every stroke is on the
+            // ROAD, and 0.014 is about 4 cm at this radius, which is a crack.
             //
-            // ⚠️⚠️ AND TWO COPLANAR TRANSLUCENT PLATES SORT ARBITRARILY, so which of the two
-            // colours won was decided per frame by a distance comparison between two centres 3 mm
-            // apart. `docs/TODO.md` § 19.2a has the account: the same fault shipped on Sean's
-            // trail and drew a different colour per drop.
-            //
-            // `VfxShapes.Sigil` draws the same circle as LINE ART: an outer ring, an inner ring,
-            // a five-pointed star and rune ticks, with the road showing between them. It paints
-            // roughly **8 per cent of its own circle** against the two discs' 200 per cent, it
-            // cannot lose a sort because there is nothing stacked on it, and it actually looks
-            // like a witch's circle rather than a coloured coin. § 21.5.
-            SpawnWitchSigil(position, radius, duration, 5, 2)
-                .transform.SetParent(go.transform, worldPositionStays: true);
+            // ⚠️ AND NO EMISSION AT ALL. A crack is an absence of material, so it must not glow:
+            // emission is what made these the brightest thing in the frame, on the effect whose
+            // own note records the same slab clipping to pure white once already.
+            var cracks = VfxShapes.Lay(parent, "FrostCracks",
+                                       VfxShapes.Fracture(7, 3, 0.014f, seed, from: 0.72f),
+                                       radius * 1.35f, 0.012f);
 
-            // ⚠️ THE PERIMETER NODES STAY, BECAUSE THEY ARE THE ONLY VERTICAL THING IN THE
-            // EFFECT and a mark on the road is edge-on at eye height. They are `Prism` shards
-            // rather than `PrimitiveType.Cube` for the reason § 19 gives: the cube was the one
-            // primitive Dante's debris, Sean's embers, the void's shards and the frost spikes
-            // were ALL made of, so four fictions shared one lump of geometry.
-            for (int n = 0; n < 6; n++)
+            VfxMaterial.Ghost(cracks.GetComponent<Renderer>(),
+                              new Color(0.72f, 0.88f, 0.98f, 0.42f), 0.0f);
+            VfxMaterial.StripCollider(cracks);
+            return cracks;
+        }
+
+        /// <summary>
+        /// The road Dante broke, standing up around the hole he made.
+        ///
+        /// ⚠️⚠️ IT IS THE ONLY THING IN THE GAME THAT SAYS WHERE A FIGHT HAPPENED. Every other
+        /// effect is gone in seconds and leaves the street exactly as it found it. Displacement
+        /// is his motif because it is the one element whose real-world signature is PERMANENT,
+        /// and `docs/TODO.md` § 27.4's acceptance test is *"you can see where Dante has been
+        /// fighting from across the arena, thirty seconds later"*.
+        ///
+        /// ⚠️ IT IS A DECAL WITH HEIGHT, NOT COLLISION, AND THAT BOUND IS LOAD-BEARING.
+        /// `MapGeometryCheck` refuses geometry that floats or buries, the bots path around
+        /// `HazardVolume` radii and nothing else, and a hole a player could stand in is a hole
+        /// they will get stuck in. The slabs lean OUT from the rim so they never occupy the
+        /// middle a player walks through.
+        ///
+        /// ⚠️ `Stand`, NEVER `Lay`. It has real height; § 19.1 records the 2 m ball that shipped
+        /// from `Lay` leaving the Y scale at 1.0.
+        /// </summary>
+        public static GameObject SpawnUpheaval(Transform parent, float radius, int seed)
+        {
+            // ⚠️⚠️ SIX SLABS, OUTSIDE THE CRUST, AND THE FIRST VERSION WAS THE BLACK FLOWER
+            // § 19.2d ALREADY WARNED ABOUT. Nine evenly spaced slabs of similar width at 0.92 of
+            // the radius covered the hot bed completely and drew as a dark PINWHEEL:
+            // `ability_lava_decal_v21.png`. That entry says it in as many words, about `Wedges`,
+            // and it happened again to a different builder in the same place. **Even spacing is
+            // the fault, not the count.**
+            //
+            // ⚠️ SO IT SITS AT 1.18 OF THE RADIUS, OUTSIDE the crust rather than on top of it,
+            // exactly as Cheska's cracks sit outside her slab. What Dante's stomp did to the road
+            // is a separate statement from what is burning in the middle of it, and stacking them
+            // hid the effect the ability is actually about.
+            //
+            // ⚠️ THE RISE IS DOUBLED AND THE FOOTPRINT HALVED, because these have to read as
+            // STANDING UP from eye height. A slab tipped 0.24 m is a plate on the road; the point
+            // of the whole motif is that the material went somewhere.
+            var raised = VfxShapes.Stand(parent, "Upheaval",
+                                         VfxShapes.Upheaval(6, 0.06f, 0.72f, seed),
+                                         radius * 1.18f,
+                                         heightScale: radius * 0.62f,
+                                         lift: 0.015f);
+
+            // ⚠️ OPAQUE, BECAUSE BROKEN GROUND IS GROUND. `docs/TODO.md` § 19.2a's rule: ground
+            // that has been burnt or broken is opaque and only things you can genuinely see
+            // through are ghosted.
+            //
+            // ⚠️ AND IT IS ROAD-COLOURED, NOT NEAR-BLACK. 0.26/0.21/0.18 read as a hole in the
+            // frame at this size; concrete that has been lifted is still concrete, and the whole
+            // claim of the motif is that a player recognises it as the street.
+            VfxMaterial.Solid(raised.GetComponent<Renderer>(), new Color(0.42f, 0.38f, 0.34f));
+            VfxMaterial.StripCollider(raised);
+            return raised;
+        }
+
+        /// <summary>
+        /// Fire that has spread past its own edge and is still going.
+        ///
+        /// ⚠️⚠️ THE GAPS ARE THE EFFECT. A continuous shape says "this area is on fire"; separate
+        /// pieces at falling density say "this is spreading and it has not got everywhere yet",
+        /// which is the only thing that makes a trail drop feel like it has an age.
+        /// `HeroHazards.Burn` already shrinks the mark toward its own end for the same reason;
+        /// this is that idea in the geometry rather than in the animation.
+        ///
+        /// ⚠️ IT SITS OUTSIDE THE DISC AND IS DECORATION, exactly like Cheska's cracks, and it
+        /// carries the same bound: no rim, low alpha, nothing that could be mistaken for the
+        /// hazard's own edge. Sean's corridor was the worst offender in the game at 27.2 per cent
+        /// of the box (`docs/VISION.md` § 2) and this must not put a single square metre back.
+        /// Measured: the pieces cover about 9 per cent of the ring they are scattered in.
+        /// </summary>
+        public static GameObject SpawnCinderFringe(Transform parent, float radius, int seed)
+        {
+            var fringe = VfxShapes.Lay(parent, "CinderFringe",
+                                       VfxShapes.Cinder(4, 8, 0.42f, seed),
+                                       radius * 1.28f, 0.014f);
+
+            VfxMaterial.Ghost(fringe.GetComponent<Renderer>(),
+                              new Color(0.96f, 0.42f, 0.14f, 0.55f), 0.85f);
+            VfxMaterial.StripCollider(fringe);
+            return fringe;
+        }
+
+        /// <summary>
+        /// Zack's charge finding something to arc to.
+        ///
+        /// ⚠️⚠️ THE ENDS COME OFF THE LIVE SCENE, WHICH IS THE WHOLE MOTIF AND IS NOT SOMETHING
+        /// ANY OTHER EFFECT IN THIS GAME DOES. Every hazard here is built from constants and a
+        /// position; this one asks what is actually nearby and draws to it, so standing next to
+        /// the lata while Zack is charged looks different from standing in an empty corner.
+        /// `docs/TODO.md` § 27.2: electricity is the one element whose fiction is that it
+        /// connects things that already exist.
+        ///
+        /// ⚠️⚠️ IT MUST NOT BECOME A TARGETING AID, AND THAT BOUND IS WHY IT IS SHORT AND WHY IT
+        /// IGNORES WHAT IT CANNOT SEE. An arc that reached a body through a barricade would tell
+        /// a player where somebody is hiding, which is information the game does not otherwise
+        /// give and would be an aimbot drawn in lightning. 3.2 m is inside the arc's own fiction
+        /// and well under the distance at which hiding matters.
+        ///
+        /// ⚠️ AND IT IS PURELY VISUAL. No `HazardVolume`, no stagger, no collider: the arcs say
+        /// where charge IS, and `ZackHeroKit` remains the only thing that decides what it does.
+        /// </summary>
+        public static GameObject SpawnCircuitArcs(Vector3 at, float reach, int ownerSlot,
+                                                  float duration = 0.55f)
+        {
+            var go = new GameObject("CircuitArcs");
+            go.transform.position = at + Vector3.up * 0.9f;
+
+            // ⚠️ AT MOST THREE, AND THE NEAREST THREE. `docs/VISION.md` § 2 rule 4 caps what may
+            // overlap, and a discharge that arced to everything on a busy court would be a web
+            // over the whole arena. Three is enough to read as "it found something" and few
+            // enough that the individual spans stay legible.
+            var ends = new System.Collections.Generic.List<Vector3>(3);
+
+            foreach (var hit in Physics.OverlapSphere(at, reach))
             {
-                float ang = n * 60.0f * Mathf.Deg2Rad;
-                float dist = radius * 0.88f;
+                if (ends.Count >= 3) break;
 
-                // ⚠️⚠️ THESE WERE FIVE-SIDED PRISMS AND THEY ARE THE CONES IN THE REPORTED
-                // FRAME. Off the played build, looking at this circle: *"the effects it has look
-                // like party shit haha"*, then *"i want sigils to come out of here not wtv effect
-                // that is / sigils glyphs ancient letters"*. Six magenta spikes standing round a
-                // ring is a birthday cake, and the note directly above this loop is about not
-                // sharing one lump of geometry between four fictions: a prism is that lump.
-                //
-                // ⚠️ THE MARKS AT THE COMPASS POINTS ARE THE ONE PLACE A CIRCLE LIKE THIS
-                // SHOULD CARRY WRITING. `VfxShapes.Sigil` already inscribes the rim; these are
-                // the six standing characters that make it a cast rather than a decal, and they
-                // are the same `Rune` builder the rising particles use, so the thing lifting off
-                // the circle is visibly the same script that is written on it.
-                var node = VfxShapes.Stand(go.transform, $"HexNode_{n}",
-                                           VfxShapes.Rune(140 + n),
-                                           0.24f, heightScale: 0.40f);
-                node.transform.localPosition =
-                    new Vector3(Mathf.Sin(ang) * dist, 0.16f, Mathf.Cos(ang) * dist);
-                node.transform.localRotation = Quaternion.Euler(0.0f, n * 60.0f, 0.0f);
+                var motor = hit.GetComponentInParent<CharacterMotor>();
+                if (motor != null && motor.PlayerSlot == ownerSlot) continue;
 
-                VfxMaterial.Ghost(node.GetComponent<Renderer>(),
-                                  new Color(0.98f, 0.25f, 0.65f, 0.85f), 0.45f);
+                var body = hit.GetComponentInParent<Transform>();
+                if (body == null) continue;
+
+                Vector3 to = body.position + Vector3.up * 0.6f - go.transform.position;
+                if (to.sqrMagnitude < 0.35f) continue;
+
+                // Local space is the unit circle, like every builder in `VfxShapes`, so the
+                // reach divides out here and the mesh is scaled by it below.
+                ends.Add(to / reach);
             }
 
-            // ⚠️ THE "CRESCENT MOON" IS DELETED. It was a `Cylinder` scaled flat and tilted 30
-            // degrees, which is an ELLIPSE seen at an angle and not a crescent by any
-            // construction. The sigil's own inner wheel now occupies that space and actually
-            // carries a symbol.
+            if (ends.Count == 0)
+            {
+                // ⚠️ NOTHING NEARBY IS A REAL ANSWER AND IT IS DRAWN AS ONE. Two stubs going
+                // nowhere say the charge is live and found no route, which is more honest than
+                // either drawing nothing (the ability looks broken) or inventing a target.
+                ends.Add(new Vector3(0.42f, -0.35f, 0.30f));
+                ends.Add(new Vector3(-0.38f, -0.30f, -0.26f));
+            }
 
-            // 6. Violet / Magenta Occult Light
-            var lightGo = new GameObject("HexLight");
+            var web = VfxShapes.Stand(go.transform, "Arcs",
+                                      VfxShapes.TwoSided(
+                                          VfxShapes.Filament(ends.ToArray(), 2, 0.035f,
+                                                             ownerSlot * 31 + 7)),
+                                      reach, heightScale: reach);
+
+            VfxMaterial.Ghost(web.GetComponent<Renderer>(), UiTheme.HeroElectricBright, 1.20f);
+            VfxMaterial.StripCollider(web);
+
+            var flick = go.AddComponent<ArcFade>();
+            flick.Web = web.transform;
+            flick.Duration = duration;
+
+            Object.Destroy(go, duration);
+            return go;
+        }
+
+        /// <summary>
+        /// The arcs guttering out.
+        ///
+        /// ⚠️ IT FLICKERS RATHER THAN FADES, and the two are not the same read. A discharge does
+        /// not dim: it is either conducting or it is not, several times a second, which is what
+        /// `Visual.ArcFlicker` already does for Zack's other geometry. A smooth fade here would
+        /// make his one instantaneous element the only thing in his kit that eases out.
+        /// </summary>
+        public sealed class ArcFade : MonoBehaviour, Visual.IVfxTimeline
+        {
+            public Transform Web;
+            public float Duration = 0.55f;
+
+            private float _elapsed;
+            private Renderer _renderer;
+            private float _alpha = 1.0f;
+
+            public float LifeSeconds => Mathf.Max(0.1f, Duration);
+
+            private void Awake()
+            {
+                if (Web != null) _renderer = Web.GetComponent<Renderer>();
+                if (_renderer != null) _alpha = _renderer.sharedMaterial.color.a;
+            }
+
+            private void Update() => StepTo(_elapsed + Time.deltaTime);
+
+            public void StepTo(float seconds)
+            {
+                _elapsed = seconds;
+
+                if (_renderer == null || _renderer.sharedMaterial == null) return;
+
+                float t = Mathf.Clamp01(_elapsed / LifeSeconds);
+
+                // Two square waves at unrelated rates: on most of the time early, off most of
+                // the time late, and never a smooth ramp between the two.
+                float gate = (Mathf.Repeat(_elapsed * 23.0f, 1.0f) > t * 0.85f) ? 1.0f : 0.15f;
+
+                var c = _renderer.sharedMaterial.color;
+                c.a = _alpha * gate * (1.0f - t * t);
+                _renderer.sharedMaterial.color = c;
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // NEMU, WHOSE MOTIF IS ABSENCE
+        //
+        // ⚠️⚠️ EVERY OTHER EFFECT IN THIS GAME ADDS SOMETHING TO THE FRAME. Hers has to look
+        // like it took something out of it: `docs/TODO.md` § 27.5, and `VfxShapes.Hollow` is the
+        // construction, a rim around nothing with a torn inner edge. Nothing else in the file
+        // uses it and nothing else should.
+        //
+        // ⚠️ AND HER KIT IS THE PET NOW, WHICH IS WHY BOTH OF THESE ARE ABOUT KURO. 🧑
+        // 2026-08-26: *"for nemu i want her skills to involve her pet more as well as her ult"*,
+        // and, on the old ultimate: *"her black hole dont make sense lowkey?"*. The vortex that
+        // opened out of nothing three metres in front of her is gone; what is left either comes
+        // out of the pet or marks where the pet went.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// KURO UNBOUND. The pet, swollen into a maw, eating the street around it.
+        ///
+        /// ⚠️⚠️ IT IS THE OLD SEANCE VOID'S HAZARD WITH A NEW BODY, DELIBERATELY. The drag, the
+        /// slow, the 2.8 m radius and the `HazardVolume` are what `Hero_Strike_Balance.md`
+        /// measured and what the bots path around, so none of them moves: this is a fiction and
+        /// presentation change and it must not quietly become a balance one. What changes is that
+        /// it is no longer a hole that appeared, it is Kuro.
+        ///
+        /// ⚠️ THE MAW HAS REAL HEIGHT AND THE OLD ONE DID NOT. `Funnel` dished DOWN, which reads
+        /// from above and disappears at eye level; a mouth standing 1.2 m off the road is
+        /// readable from a standing player's own height, which is where this game is played from.
+        /// The `Hollow` rim on the ground says how far it reaches and the maw says what it is.
+        /// </summary>
+        public static GameObject SpawnKuroUnbound(Vector3 position, float radius, float duration,
+                                                  int ownerSlot, bool fromPet)
+        {
+            var go = new GameObject("KuroUnbound");
+            go.transform.position = position;
+
+            // The bite out of the road: her motif, and the thing that says how far it reaches.
+            var rim = VfxShapes.Lay(go.transform, "Bite",
+                                    VfxShapes.Hollow(48, 0.66f, 0.18f, ownerSlot * 13 + 5),
+                                    radius, 0.02f);
+            VfxMaterial.Ghost(rim.GetComponent<Renderer>(),
+                              new Color(0.06f, 0.02f, 0.10f, 0.92f), 0.0f);
+            VfxMaterial.StripCollider(rim);
+
+            // ⚠️ THE MAW IS A `NovaShell` TURNED INSIDE OUT BY ITS COLOUR, NOT A NEW BUILDER.
+            // Nemu already owns one construction here (`Hollow`) and § 27's rule is one motif per
+            // hero, not one builder per object: a shell painted so dark it reads as an opening is
+            // the same statement as the rim, in three dimensions. Giving her a second bespoke
+            // solid would be the thing that rule exists to stop.
+            // ⚠️⚠️ IT IS A MOUTH AROUND HIM, NOT A DOME OVER HIM, AND THE FIRST VERSION WAS THE
+            // second. `ability_kuro_unbound_eye_v23.png` is a 1.3 m shell standing where the pet
+            // is: at 5x scale Kuro is about 2.5 m, so the shell covered his legs and most of his
+            // body and the effect read as a hole with a dog's head on top. **The whole point of
+            // moving this ultimate onto the pet is that the pet is the thing you look at**, so
+            // the shell comes down to a knee-high collar of teeth and he stands in it.
+            //
+            // ⚠️ AND IT IS GHOSTED HARDER FOR THE SAME REASON. At 0.88 it occluded him outright
+            // from any angle that put it between him and the camera, which in a four-player
+            // arena is most of them.
+            var maw = VfxShapes.Stand(go.transform, "Maw",
+                                      VfxShapes.NovaShell(6, 12, 0.22f, ownerSlot * 7 + 3),
+                                      radius * 0.62f, heightScale: radius * 0.20f, lift: 0.10f);
+            VfxMaterial.Ghost(maw.GetComponent<Renderer>(),
+                              new Color(0.10f, 0.03f, 0.16f, 0.62f), 0.10f);
+            VfxMaterial.StripCollider(maw);
+
+            // ⚠️ A DARK SOURCE IS NOT A THING, SO THE LIGHT IS A THIN VIOLET RIM LIGHT RATHER
+            // THAN A GLOW IN THE MIDDLE. Lighting the inside of a hole is the one thing that
+            // would destroy the read, and every hazard light in this file already came down by
+            // two thirds for the smaller version of the same mistake.
+            var lightGo = new GameObject("MawRimLight");
             lightGo.transform.SetParent(go.transform, false);
-            lightGo.transform.localPosition = new Vector3(0, 1.4f, 0);
+            lightGo.transform.localPosition = new Vector3(0.0f, 0.25f, 0.0f);
+
+            var light = lightGo.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = UiTheme.HeroSpiritBright;
+            light.range = radius * 2.0f;
+            light.intensity = 0.85f;
+            light.shadows = LightShadows.None;
+
+            // ⚠️ `MawIntake`, NOT `VoidWisp`. Her phase already uses `VoidWisp` and that one is
+            // her body coming apart: motes leaving a person and drifting. This has to say the
+            // opposite, that the court is being taken IN, and the geometry cannot say it on its
+            // own. The two auras differ by the sign and the size of one module.
+            // ⚠️⚠️ WITH NO PET OUT THERE IS NOTHING IN THE MIDDLE, AND THAT IS A HOLE IN THE
+            // DESIGN RATHER THAN IN THE RENDER. `ability_kuro_unbound_v23.png` is what an empty
+            // one looks like and 🧑 asked the right question of it: *"where tf is kiro in this
+            // ult? did u js forget to render him or what"*. In a match with Kuro out he is the
+            // centrepiece: `GhostPetCompanion.Devour` grows him five times, horns him and turns
+            // him black, and the geometry above is what happens AROUND him.
+            //
+            // ⚠️⚠️ BUT THE ABILITY HAS A FALLBACK PATH (`NemuHeroKit`, no pet out, it opens in
+            // front of her) AND ON THAT PATH THERE IS NO KURO AT ALL. So the ultimate would be a
+            // torn ring with a hole in it, which is the old Seance Void wearing the new name: the
+            // exact thing this rework was for. **The fallback grows its own.** A spectral core,
+            // dark, spiky and turning, so the power always has a body at its centre and the
+            // sentence "Kuro is the black hole" is true however it was cast.
+            //
+            // ⚠️ IT IS DELIBERATELY NOT THE PET'S MESH. Loading `character-ghost.glb` here would
+            // put an asset dependency into the hazard layer, and the fallback is not Kuro: it is
+            // the shape of him that the spell reaches for when he is not there. `Spire` at a low
+            // side count reads as a hunched, horned mass at this size and is what his own horns
+            // are made of, which ties the two paths together without pretending they are one.
+            if (!fromPet)
+            {
+                var core = VfxShapes.Stand(go.transform, "MawCore",
+                                           VfxShapes.Spire(5, 0.34f, 0.42f, ownerSlot * 17 + 9),
+                                           radius * 0.30f,
+                                           heightScale: radius * 0.62f,
+                                           lift: 0.05f);
+
+                VfxMaterial.Ghost(core.GetComponent<Renderer>(),
+                                  new Color(0.09f, 0.03f, 0.14f, 0.94f), 0.12f);
+                VfxMaterial.StripCollider(core);
+
+                for (int h = 0; h < 5; h++)
+                {
+                    float a = h / 5.0f * Mathf.PI * 2.0f;
+
+                    var horn = VfxShapes.Stand(core.transform, $"MawCoreHorn_{h}",
+                                               VfxShapes.Spire(4, 0.08f, 0.30f, 700 + h * 13),
+                                               0.30f, heightScale: 0.85f);
+
+                    horn.transform.localPosition = new Vector3(Mathf.Cos(a) * 0.42f, 0.55f,
+                                                               Mathf.Sin(a) * 0.42f);
+                    horn.transform.localRotation = Quaternion.Euler(Mathf.Sin(a) * 38.0f, 0.0f,
+                                                                    -Mathf.Cos(a) * 38.0f);
+
+                    VfxMaterial.Ghost(horn.GetComponent<Renderer>(),
+                                      new Color(0.06f, 0.02f, 0.10f, 0.96f), 0.0f);
+                    VfxMaterial.StripCollider(horn);
+                }
+
+                var turn = core.AddComponent<MawCoreTurn>();
+                turn.Duration = duration;
+            }
+
+            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.MawIntake, duration);
+
+            GameServices.Audio?.PlayAt("sfx_kuro_unbound", position);
+            ComicPopup.Spawn(position + Vector3.up * 1.4f,
+                             fromPet ? "KURO UNBOUND!" : "UNBOUND!",
+                             UiTheme.HeroSpiritBright, 1.6f);
+
+            var anim = go.AddComponent<MawSwell>();
+            anim.Rim = rim.transform;
+            anim.Maw = maw.transform;
+            anim.Duration = duration;
+
+            var comp = go.AddComponent<SeanceVoidComponent>();
+            comp.Radius = radius;
+            comp.Duration = duration;
+            comp.OwnerSlot = ownerSlot;
+
+            HazardVolume.Attach(go, radius, ownerSlot);
+            Object.Destroy(go, duration);
+            return go;
+        }
+
+        /// <summary>
+        /// The fallback core rising and turning.
+        ///
+        /// ⚠️ IT TURNS THE OPPOSITE WAY FROM THE SHELL AROUND IT, for the reason
+        /// `GhostPetCompanion.StepDevour` gives about the real pet: two objects turning at the
+        /// same rate are one rigid object, and the whole read here is a thing standing inside
+        /// something else.
+        /// </summary>
+        public sealed class MawCoreTurn : MonoBehaviour, Visual.IVfxTimeline
+        {
+            public float Duration = 5.0f;
+
+            private const float Rise = 0.6f;
+
+            private float _elapsed;
+            private Vector3 _full = Vector3.one;
+
+            public float LifeSeconds => Mathf.Max(0.3f, Duration);
+
+            private void Awake() => _full = transform.localScale;
+
+            private void Update() => StepTo(_elapsed + Time.deltaTime);
+
+            public void StepTo(float seconds)
+            {
+                _elapsed = seconds;
+
+                // Sqrt so it arrives early, matching the pet's own swell curve rather than
+                // growing across the whole five seconds.
+                float k = Mathf.Sqrt(Mathf.Clamp01(_elapsed / Rise));
+
+                transform.localScale = new Vector3(_full.x * k, _full.y * k, _full.z * k);
+                transform.localRotation = Quaternion.Euler(0.0f, -30.0f * _elapsed, 0.0f);
+            }
+        }
+
+        /// <summary>
+        /// The maw opening, breathing, and closing.
+        ///
+        /// ⚠️ IT OPENS FROM NOTHING AND SHUTS TO NOTHING, which is the one motion a hole is
+        /// allowed. Every other transient in this game grows and then fades in place; a mouth
+        /// that faded would leave a translucent ghost of itself on the road for the last fifth of
+        /// its life, which is exactly what "absence" must not look like.
+        /// </summary>
+        public sealed class MawSwell : MonoBehaviour, Visual.IVfxTimeline
+        {
+            public Transform Rim;
+            public Transform Maw;
+            public float Duration = 5.0f;
+
+            /// <summary>How long it takes to open. Slower than a skill: this is an ultimate.</summary>
+            private const float Open = 0.55f;
+
+            /// <summary>How long it takes to shut. Faster than it opened: it is being let go.</summary>
+            private const float Shut = 0.40f;
+
+            private float _elapsed;
+            private Vector3 _rimFull = Vector3.one;
+            private Vector3 _mawFull = Vector3.one;
+
+            public float LifeSeconds => Mathf.Max(0.3f, Duration);
+
+            private void Awake()
+            {
+                if (Rim != null) _rimFull = Rim.localScale;
+                if (Maw != null) _mawFull = Maw.localScale;
+            }
+
+            private void Update() => StepTo(_elapsed + Time.deltaTime);
+
+            public void StepTo(float seconds)
+            {
+                _elapsed = seconds;
+
+                float open = Mathf.Clamp01(_elapsed / Open);
+                float left = LifeSeconds - _elapsed;
+                float shut = left >= Shut ? 1.0f : Mathf.Clamp01(left / Shut);
+
+                // Sqrt on the way open so it arrives fast, squared on the way shut so the last of
+                // it goes suddenly. `ExplosionVfxAnim` makes the same pairing for the same reason.
+                float k = Mathf.Sqrt(open) * shut * shut;
+
+                // ⚠️ THE MAW BREATHES AND THE RIM DOES NOT. A bite in the road is a fact and does
+                // not pulse; the thing standing in it is alive. Two objects, two behaviours, one
+                // effect: § 19's whole argument in miniature.
+                float breath = 1.0f + Mathf.Sin(_elapsed * 3.4f) * 0.06f * shut;
+
+                if (Rim != null)
+                    Rim.localScale = new Vector3(_rimFull.x * k, _rimFull.y, _rimFull.z * k);
+
+                if (Maw != null)
+                {
+                    Maw.localScale = new Vector3(_mawFull.x * k * breath,
+                                                 _mawFull.y * k * breath,
+                                                 _mawFull.z * k * breath);
+                    Maw.localRotation = Quaternion.Euler(0.0f, _elapsed * 22.0f, 0.0f);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Where Kuro landed after carrying her home. A bite, and nothing else.
+        ///
+        /// ⚠️⚠️ IT REPLACES A CALL TO `SpawnShockTrail`, WHICH IS ZACK'S AND IS A LIVE HAZARD.
+        /// `GhostPetCompanion.EndPossession` dropped a two-second electric zone with a
+        /// `HazardVolume` on it every time Nemu teleported home, so her mobility power was
+        /// placing another hero's damage on the court. This one damages nobody: it is 0.9 m of
+        /// her own mark, for half a second, saying a body arrived here.
+        /// </summary>
+        public static GameObject SpawnSpiritReturn(Vector3 at)
+        {
+            var go = new GameObject("SpiritReturn");
+            go.transform.position = at;
+
+            var bite = VfxShapes.Lay(go.transform, "ReturnBite",
+                                     VfxShapes.Hollow(28, 0.58f, 0.26f, 91),
+                                     0.9f, 0.02f);
+            VfxMaterial.Ghost(bite.GetComponent<Renderer>(),
+                              new Color(0.30f, 0.12f, 0.46f, 0.85f), 0.30f);
+            VfxMaterial.StripCollider(bite);
+
+            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.VoidWisp, 0.5f);
+
+            var fade = go.AddComponent<BiteFade>();
+            fade.Bite = bite.transform;
+
+            Object.Destroy(go, 0.75f);
+            return go;
+        }
+
+        /// <summary>A bite spreading and going out. Half a second, and no hazard behind it.</summary>
+        public sealed class BiteFade : MonoBehaviour, Visual.IVfxTimeline
+        {
+            public Transform Bite;
+
+            private const float Life = 0.55f;
+
+            private float _elapsed;
+            private Vector3 _full = Vector3.one;
+            private Renderer _renderer;
+            private float _alpha = 1.0f;
+
+            public float LifeSeconds => Life;
+
+            private void Awake()
+            {
+                if (Bite != null)
+                {
+                    _full = Bite.localScale;
+                    _renderer = Bite.GetComponent<Renderer>();
+                    if (_renderer != null) _alpha = _renderer.sharedMaterial.color.a;
+                }
+            }
+
+            private void Update() => StepTo(_elapsed + Time.deltaTime);
+
+            public void StepTo(float seconds)
+            {
+                _elapsed = seconds;
+
+                float t = Mathf.Clamp01(_elapsed / Life);
+                float k = Mathf.Sqrt(t);
+
+                if (Bite != null)
+                    Bite.localScale = new Vector3(_full.x * k, _full.y, _full.z * k);
+
+                if (_renderer != null && _renderer.sharedMaterial != null)
+                {
+                    var c = _renderer.sharedMaterial.color;
+                    c.a = _alpha * (1.0f - t * t);
+                    _renderer.sharedMaterial.color = c;
+                }
+            }
+        }
+
+        /// <summary>A theme colour at a given alpha, so a call site states the two separately.</summary>
+        private static Color Alpha(Color c, float a) => new Color(c.r, c.g, c.b, a);
+
+        /// <summary>
+        /// KULAM HEX. A ward chalked on the road: rings, a written band, nested squares.
+        /// </summary>
+        public static GameObject SpawnKulamHexSigil(Vector3 position, float radius = 2.4f,
+                                                    float duration = 6.0f, int ownerSlot = -1)
+        {
+            var go = new GameObject("KulamHexWardZone");
+            go.transform.position = position;
+
+            // ⚠️⚠️ ONE MESH, NOT TWO STACKED ONES. What stood here was two `Sigil`s at different
+            // radii with the smaller one 8 mm above the larger, counter-rotating. That is two
+            // coplanar translucent plates a centimetre apart, which `docs/TODO.md` § 19.2a
+            // records sorting arbitrarily on Sean's trail and drawing a different colour per
+            // drop, and it is also literally the thing 🧑 named: two stars on top of each other.
+            // `WardCircle` puts the rings, the band, the squares, the triangle, the medallions
+            // and every glyph into ONE triangle list, so there is no sort to lose and no second
+            // wheel to turn.
+            var ward = VfxShapes.Lay(go.transform, "Ward",
+                                     VfxShapes.WardCircle(12, 4, 0.030f, ownerSlot * 7 + 3),
+                                     radius, 0.02f);
+
+            // ⚠️ MAGENTA RULES. The lines of the diagram are hers; the WRITING is gold, and it
+            // is a second object for exactly that reason. Two hues in one hero palette is the
+            // thing § 21.5 got right, and the way to spend it is on which PART of the mark is
+            // which, not on a gradient nobody can point at.
+            VfxMaterial.Ghost(ward.GetComponent<Renderer>(),
+                              Alpha(UiTheme.HeroWitch, 0.90f), 0.34f);
+
+            // The gold overlay: the same builder at a different seed, so the strokes land in
+            // different cells and the two do not simply double each other's lines. Slightly
+            // higher and much thinner, so it reads as ink ON the rules rather than beside them.
+            var written = VfxShapes.Lay(go.transform, "WardWriting",
+                                        VfxShapes.WardCircle(12, 4, 0.017f, ownerSlot * 7 + 41),
+                                        radius * 0.995f, 0.032f);
+            VfxMaterial.Ghost(written.GetComponent<Renderer>(),
+                              new Color(1.00f, 0.86f, 0.32f, 0.80f), 0.42f);
+
+            // ⚠️ THE PERIMETER MARKS ARE FOUR, NOT SIX, AND THEY STAND ON THE MEDALLIONS. Six at
+            // 60 degrees lined up with nothing; the ward has four medallions at the compass
+            // points and a standing character on each is the same glyph twice, once flat and once
+            // upright, which is what makes the mark look like it was drawn by somebody who then
+            // stood things on it.
+            for (int n = 0; n < 4; n++)
+            {
+                float ang = (n * 90.0f + 45.0f) * Mathf.Deg2Rad;
+                float dist = radius * 0.845f;
+
+                // ⚠️ TWO-SIDED. Four marks at the compass points around a ward that four
+                // players stand around: there is no yaw at which all four face the camera, so a
+                // one-sided glyph is a mark that is missing from whichever side you approach.
+                var node = VfxShapes.Stand(go.transform, $"WardMark_{n}",
+                                           VfxShapes.TwoSided(VfxShapes.Rune(220 + n * 13)),
+                                           0.22f, heightScale: 0.44f);
+                node.transform.localPosition =
+                    new Vector3(Mathf.Sin(ang) * dist, 0.14f, Mathf.Cos(ang) * dist);
+                node.transform.localRotation =
+                    Quaternion.Euler(0.0f, n * 90.0f + 45.0f, 0.0f);
+
+                VfxMaterial.Ghost(node.GetComponent<Renderer>(),
+                                  new Color(1.00f, 0.80f, 0.30f, 0.85f), 0.50f);
+            }
+
+            var lightGo = new GameObject("WardLight");
+            lightGo.transform.SetParent(go.transform, false);
+            lightGo.transform.localPosition = new Vector3(0.0f, 1.7f, 0.0f);
+
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
             light.color = UiTheme.HeroWitchBright;
-            light.range = radius * 2.2f;
-            light.intensity = 0.95f;
+            light.range = radius * 2.4f;
+            light.intensity = 1.1f;
 
-            // 7. Rising Witch Cast Particles (Occult motes & gold sparkles)
+            var inscribe = go.AddComponent<WardInscribe>();
+            inscribe.Rules = ward.transform;
+            inscribe.Writing = written.transform;
+            inscribe.Duration = duration;
+
             AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchSigil, duration);
 
-            // ⚠️⚠️ HER OWN CUE, AND THIS PLAYED `ability_shatter_trap` PLUS `sfx_ghost_teleport`:
-            // a trap breaking, and Nemu's teleport. Both are borrowed, and the first is from the
-            // deleted ability set that `AudioCues.DeletedAbilityCues` exists to track.
-            // `docs/TODO.md` § 20 had just finished taking that same cue off Cheska's two ground
-            // powers; a third kit reaching for it would have made it three.
             GameServices.Audio?.PlayAt("sfx_hex_cast", position);
             ComicPopup.Spawn(position, "KULAM!", UiTheme.HeroWitchBright, 1.25f);
 
@@ -1630,89 +2277,552 @@ namespace TumbangPreso.Abilities
             return go;
         }
 
-        public static void SpawnShadowBlinkBurst(Vector3 departurePos, Vector3 arrivalPos)
+        /// <summary>
+        /// The ward being DRAWN, and then not moving.
+        ///
+        /// ⚠️⚠️ IT DOES NOT ROTATE, AND THAT IS THE ANIMATION. `WitchSigilSpin` turned two wheels
+        /// against each other forever, which is a mechanism: right for a summoning circle in a
+        /// cutscene and wrong for a trap on a road, because a moving mark is one a player's eye
+        /// keeps returning to for the whole six seconds it is armed. This one is written on in
+        /// under half a second and is then dead still until it expires. 🧑 asked for *"different
+        /// animations"* between her three powers; the honest answer for the hex is that its
+        /// motion happens once, at the start, and the ability is the thing that stays behind.
+        ///
+        /// ⚠️ THE TWO LAYERS ARE INSCRIBED IN ORDER: the magenta rules first, the gold writing
+        /// after, with the writing lagging by a third of the reveal. Ruling a diagram and then
+        /// filling in the characters is the order a person would do it in, and it is the only
+        /// place in her kit where two objects are deliberately NOT in step.
+        ///
+        /// ⚠️ AN `IVfxTimeline`, so `AbilityShowcaseProbe` can wind it to any moment and
+        /// photograph it. `ArcFlicker` carries the argument; a mark that only animates in
+        /// `Update` is one that freezes on frame 1 in every capture.
+        /// </summary>
+        public sealed class WardInscribe : MonoBehaviour, Visual.IVfxTimeline
         {
-            // ⚠️⚠️ BOTH ENDS ARE GLYPHS NOW, NOT FILLED DISCS. A 3.2-scale `Cylinder` is a
-            // 1.6 m RADIUS solid plate, so a blink stamped 8 m² of magenta on the road at the
-            // departure point and another 4.5 m² at the arrival, for two marks that live under
-            // half a second each. A cast glyph says the same thing (a spell happened HERE) in
-            // strokes, and it is the same symbol her other two powers draw, which is what makes
-            // the three read as one hero's craft rather than three unrelated flashes.
-            //
-            // ⚠️ THE DEPARTURE MARK IS THE BIGGER OF THE TWO AND THAT IS DELIBERATE. It is where
-            // the knockback `OverlapSphere` is centred, so it is the one the other three players
-            // need to see; the arrival is where she already is and her body marks that.
-            SpawnCastGlyph(departurePos, 1.55f, 0.55f, seed: 5);
+            public Transform Rules;
+            public Transform Writing;
+            public float Duration = 6.0f;
 
-            for (int i = 0; i < 8; i++)
+            /// <summary>How long the hand takes. Short: a hex is snapped down, not laboured.</summary>
+            private const float Inscribe = 0.42f;
+
+            /// <summary>The writing starts this far into the reveal, as a fraction of it.</summary>
+            private const float WritingLag = 0.34f;
+
+            private const float FadeFrom = 0.82f;
+
+            private float _elapsed;
+            private Vector3 _rulesScale = Vector3.one;
+            private Vector3 _writingScale = Vector3.one;
+            private Renderer _rulesRenderer;
+            private Renderer _writingRenderer;
+            private float _rulesAlpha = 1.0f;
+            private float _writingAlpha = 1.0f;
+
+            public float LifeSeconds => Mathf.Max(0.2f, Duration);
+
+            private void Awake()
             {
-                var shard = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                shard.name = "BlinkShard";
-                shard.transform.position = departurePos + Vector3.up * 0.5f;
-                shard.transform.localScale = Vector3.one * Random.Range(0.12f, 0.24f);
-                VfxMaterial.Ghost(shard.GetComponent<Renderer>(),
-                                  new Color(0.70f, 0.15f, 0.95f, 0.90f), 0.5f);
-                var rb = shard.AddComponent<Rigidbody>();
-                rb.linearVelocity = Vector3.up * 2.5f + Random.insideUnitSphere * 3.5f;
-                Object.Destroy(shard, 0.60f);
+                if (Rules != null)
+                {
+                    _rulesScale = Rules.localScale;
+                    _rulesRenderer = Rules.GetComponent<Renderer>();
+                    if (_rulesRenderer != null) _rulesAlpha = _rulesRenderer.sharedMaterial.color.a;
+                }
+
+                if (Writing != null)
+                {
+                    _writingScale = Writing.localScale;
+                    _writingRenderer = Writing.GetComponent<Renderer>();
+                    if (_writingRenderer != null)
+                        _writingAlpha = _writingRenderer.sharedMaterial.color.a;
+                }
             }
 
-            // Arrival Glow Rune Stamp, smaller and shorter: she is standing on it.
-            SpawnCastGlyph(arrivalPos, 1.15f, 0.42f, seed: 6);
+            private void Update() => StepTo(_elapsed + Time.deltaTime);
+
+            public void StepTo(float seconds)
+            {
+                _elapsed = seconds;
+
+                // ⚠️ IT OPENS OUTWARD FROM 0.62, NOT FROM ZERO. A mark that grows from a point is
+                // a shockwave, and this game already has four of those. Starting most of the way
+                // out and snapping to full size reads as a stamp landing, which is the gesture.
+                float rules = Mathf.Clamp01(_elapsed / Inscribe);
+                Scale(Rules, _rulesScale, Mathf.Lerp(0.62f, 1.0f, Ease(rules)));
+                Fade(_rulesRenderer, _rulesAlpha * rules);
+
+                float writeStart = Inscribe * WritingLag;
+                float write = Mathf.Clamp01((_elapsed - writeStart) / (Inscribe * 0.9f));
+                Scale(Writing, _writingScale, Mathf.Lerp(0.74f, 1.0f, Ease(write)));
+                Fade(_writingRenderer, _writingAlpha * write);
+
+                float t = Mathf.Clamp01(_elapsed / LifeSeconds);
+                if (t < FadeFrom) return;
+
+                // ⚠️ THE FADE IS THE LAST FIFTH ONLY, for the reason `WitchSigilSpin` recorded
+                // and `Hero_Strike_Balance.md` § 8.5 argues: a player has to be able to tell a
+                // spent zone from a live one, and a mark that dims from the first frame reads as
+                // a broken effect rather than as a timer.
+                float k = 1.0f - Mathf.InverseLerp(FadeFrom, 1.0f, t);
+                Fade(_rulesRenderer, _rulesAlpha * k);
+                Fade(_writingRenderer, _writingAlpha * k);
+            }
+
+            /// <summary>Fast in, hard stop. The same shape `ClipBuilder.PunchAt` gives a strike.</summary>
+            private static float Ease(float t) => 1.0f - (1.0f - t) * (1.0f - t) * (1.0f - t);
+
+            private static void Scale(Transform target, Vector3 full, float k)
+            {
+                if (target == null) return;
+                target.localScale = new Vector3(full.x * k, full.y, full.z * k);
+            }
+
+            private static void Fade(Renderer r, float alpha)
+            {
+                if (r == null || r.sharedMaterial == null) return;
+
+                var c = r.sharedMaterial.color;
+                c.a = Mathf.Clamp01(alpha);
+                r.sharedMaterial.color = c;
+            }
+        }
+
+        /// <summary>
+        /// SHADOW BLINK, the departure: the hole she left.
+        ///
+        /// ⚠️⚠️ THE TWO ENDS OF A BLINK ARE TWO DIFFERENT EVENTS AND THEY USED TO BE ONE BURST
+        /// MIRRORED. `SpawnShadowBlinkBurst` stamped a cast glyph at each end, the same pentagram
+        /// at two radii, plus eight `PrimitiveType.Cube` shards: so the moment she vanished and
+        /// the moment she appeared were the same picture in two sizes. Leaving and arriving are
+        /// opposite gestures and nothing about them should match.
+        ///
+        /// ⚠️ THE DEPARTURE IS THE ONE THAT CARRIES INFORMATION, which is why it is the bigger of
+        /// the two and why the knockback is centred here. The three people chasing her already
+        /// know where she went: they can see her. What they need is the mark that says she was
+        /// standing HERE a moment ago, and it is where the shove came from.
+        ///
+        /// ⚠️ IT FACES THE BLINK. A tear is a flat thing and a flat thing seen edge-on is not
+        /// there, so it is turned across the direction of travel: she went through it, so the
+        /// people she left are looking at its face.
+        /// </summary>
+        public static GameObject SpawnShadowRift(Vector3 at, Vector3 direction)
+        {
+            var go = new GameObject("ShadowRift");
+            go.transform.position = at + Vector3.up * 1.05f;
+
+            direction.y = 0.0f;
+            if (direction.sqrMagnitude < 0.0001f) direction = Vector3.forward;
+            go.transform.rotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
+
+            // ⚠️ `Stand`, NOT `Lay`. `Lay` leaves the Y scale at 1.0, so a mesh authored at one
+            // unit of height would come out 1 m tall whatever radius it was given.
+            // `docs/TODO.md` § 19.1 records the 2 m ball that shipped from that exact mistake.
+            // ⚠️ TWO-SIDED, AND THE ONE-SIDED VERSION SHIPPED INVISIBLE. `Rift` builds in the
+            // XY plane and its front face is local +Z; turning the object to LOOK ALONG the
+            // blink put that front where she went, so the three people she left behind, who are
+            // the entire audience for this mark, were on the culled side.
+            // `ability_blink_rift_eye_v19.png` has the light on the road and no tear in it.
+            var tear = VfxShapes.Stand(go.transform, "Tear",
+                                       VfxShapes.TwoSided(
+                                           VfxShapes.Rift(11, 0.40f, 0.46f, 0.055f, 5)),
+                                       0.95f, heightScale: 1.05f);
+
+            // ⚠️ NEAR-WHITE, AND IT IS THE ONLY THING IN HER KIT THAT IS NOT MAGENTA OR GOLD. A
+            // rip in the world is not one of her colours: the edge is the light of wherever the
+            // tear goes, and giving it her palette would make it the third magenta mark in a kit
+            // that already has two. It is also the cheapest possible way for the blink to be
+            // told from the hex at a glance across the arena.
+            VfxMaterial.Ghost(tear.GetComponent<Renderer>(),
+                              new Color(0.94f, 0.88f, 1.00f, 0.95f), 1.05f);
+
+            var lightGo = new GameObject("RiftLight");
+            lightGo.transform.SetParent(go.transform, false);
+            var light = lightGo.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = new Color(0.86f, 0.62f, 1.00f);
+            light.range = 5.0f;
+            light.intensity = 2.2f;
+            light.shadows = LightShadows.None;
+
+            var anim = go.AddComponent<RiftOpen>();
+            anim.Tear = tear.transform;
+            anim.Glow = light;
+
+            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchScatter, 0.5f);
+            return go;
+        }
+
+        /// <summary>
+        /// The tear opening and snapping shut.
+        ///
+        /// ⚠️⚠️ IT OPENS ACROSS AND CLOSES VERTICALLY, which is what makes it a tear rather than
+        /// a scale. A shape that grows and shrinks on both axes is a bubble; a split widens
+        /// sideways while it is being pulled apart and then the whole height collapses when it
+        /// lets go. Two axes, two different curves, one object.
+        /// </summary>
+        public sealed class RiftOpen : MonoBehaviour, Visual.IVfxTimeline
+        {
+            public Transform Tear;
+            public Light Glow;
+
+            private const float Life = 0.52f;
+
+            /// <summary>Fraction of the life spent widening. The rest is the snap.</summary>
+            private const float OpenFraction = 0.34f;
+
+            private float _elapsed;
+            private Vector3 _full = Vector3.one;
+            private float _glow = 2.2f;
+
+            public float LifeSeconds => Life;
+
+            private void Awake()
+            {
+                if (Tear != null) _full = Tear.localScale;
+                if (Glow != null) _glow = Glow.intensity;
+            }
+
+            private void Update() => StepTo(_elapsed + Time.deltaTime);
+
+            public void StepTo(float seconds)
+            {
+                _elapsed = seconds;
+
+                float t = _elapsed / Life;
+                if (t >= 1.0f)
+                {
+                    Destroy(gameObject);
+                    return;
+                }
+
+                float open = Mathf.Clamp01(t / OpenFraction);
+                float shut = Mathf.Clamp01((t - OpenFraction) / (1.0f - OpenFraction));
+
+                if (Tear != null)
+                {
+                    // Sqrt on the widen so it is quick off the mark, squared on the collapse so
+                    // the last of it goes suddenly. Same reasoning `ExplosionVfxAnim` gives.
+                    float wide = Mathf.Sqrt(open) * (1.0f - shut * shut);
+                    float tall = 1.0f - shut * shut * shut;
+
+                    Tear.localScale = new Vector3(_full.x * wide, _full.y * tall, _full.z * wide);
+                }
+
+                if (Glow != null) Glow.intensity = _glow * (1.0f - t) * open;
+            }
+        }
+
+        /// <summary>
+        /// SHADOW BLINK, the arrival: the script that carried her, falling in.
+        ///
+        /// ⚠️⚠️ IT IS BUILT FROM SEPARATE FALLING GLYPHS AND NOT FROM A MARK, so it shares no
+        /// geometry with the departure at all. The tear is one torn sheet standing up; this is
+        /// six small written characters dropping onto the spot and going out as they land. She
+        /// does not arrive through a hole, she reassembles, and the two halves of the ability
+        /// should not be able to be mistaken for each other in a still frame.
+        ///
+        /// ⚠️ IT IS SMALLER AND SHORTER THAN THE DEPARTURE ON PURPOSE. She is standing on it, so
+        /// her body is the thing marking this place; the effect only has to say she got here.
+        /// </summary>
+        public static GameObject SpawnShadowArrival(Vector3 at)
+        {
+            var go = new GameObject("ShadowArrival");
+            go.transform.position = at;
+
+            for (int i = 0; i < 6; i++)
+            {
+                float ang = i / 6.0f * Mathf.PI * 2.0f + 0.4f;
+                float reach = 0.42f + (i % 3) * 0.14f;
+
+                // ⚠️ TWO-SIDED FOR THE SAME REASON THE TEAR IS. These are turned to face
+                // outward around a circle, so at any camera angle roughly half of them present
+                // their back and half of the effect is missing from every frame.
+                var glyph = VfxShapes.Stand(go.transform, $"ArrivalGlyph_{i}",
+                                            VfxShapes.TwoSided(VfxShapes.Rune(310 + i * 7)),
+                                            0.26f, heightScale: 0.42f);
+
+                glyph.transform.localPosition = new Vector3(Mathf.Cos(ang) * reach,
+                                                            1.75f + (i % 2) * 0.30f,
+                                                            Mathf.Sin(ang) * reach);
+                glyph.transform.localRotation = Quaternion.Euler(0.0f, -ang * Mathf.Rad2Deg, 0.0f);
+
+                VfxMaterial.Ghost(glyph.GetComponent<Renderer>(),
+                                  new Color(1.00f, 0.84f, 0.34f, 0.92f), 0.60f);
+
+                var fall = glyph.AddComponent<GlyphSettle>();
+                fall.Delay = i * 0.035f;
+            }
+
+            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchScatter, 0.34f);
+            Object.Destroy(go, 0.75f);
+            return go;
+        }
+
+        /// <summary>
+        /// One arrival glyph dropping to the ground and going out.
+        ///
+        /// ⚠️ EACH ONE IS ON ITS OWN CLOCK, offset by a few hundredths, which is the difference
+        /// between six things landing and one thing landing six times. The same argument
+        /// `HeroHazards.Burn` makes about trail drops shrinking toward their own end.
+        /// </summary>
+        public sealed class GlyphSettle : MonoBehaviour, Visual.IVfxTimeline
+        {
+            public float Delay;
+
+            private const float Life = 0.40f;
+
+            private float _elapsed;
+            private Vector3 _from;
+            private Renderer _renderer;
+            private float _alpha = 1.0f;
+
+            public float LifeSeconds => Life + Delay;
+
+            private void Awake()
+            {
+                _from = transform.localPosition;
+                _renderer = GetComponent<Renderer>();
+                if (_renderer != null) _alpha = _renderer.sharedMaterial.color.a;
+            }
+
+            private void Update() => StepTo(_elapsed + Time.deltaTime);
+
+            public void StepTo(float seconds)
+            {
+                _elapsed = seconds;
+
+                float t = Mathf.Clamp01((_elapsed - Delay) / Life);
+                if (t <= 0.0f) return;
+
+                // Accelerating fall, so it arrives rather than drifts.
+                var to = new Vector3(_from.x * 0.35f, 0.14f, _from.z * 0.35f);
+                transform.localPosition = Vector3.Lerp(_from, to, t * t);
+
+                if (_renderer != null && _renderer.sharedMaterial != null)
+                {
+                    var c = _renderer.sharedMaterial.color;
+                    c.a = _alpha * (1.0f - t * t);
+                    _renderer.sharedMaterial.color = c;
+                }
+            }
         }
 
         /// ⚠ IT RETURNS THE OBJECT, AND IT USED TO RETURN void. Every other spawner in this
         /// file hands back what it made, and `AbilityShowcaseProbe.Solo` needs that to sweep the
         /// effect up before the next capture: an effect it cannot collect survives into the NEXT
-        /// frame and quietly appears in a shot that is supposed to show one ability. The class
-        /// note on `Transient` records that exact trap.
-        public static GameObject SpawnGrandCovenEclipse(Vector3 position, float radius = 5.0f, float duration = 5.0f)
+        /// frame and quietly appears in a shot that is supposed to show one ability.
+        /// <summary>
+        /// GRAND COVEN ECLIPSE. The sky goes out, and something opens in it.
+        ///
+        /// ⚠️⚠️ IT IS NOT A FLOOR CIRCLE ANY MORE AND THAT IS THE WHOLE REDESIGN. Every version
+        /// of this ability so far has been a mark on the road: the merged one was a filled disc
+        /// at **78.5 m², 40 per cent of the box** (`docs/TODO.md` § 21.2), and the version that
+        /// replaced it was a heptagram, which was twelve times cheaper and still the same kind of
+        /// object as her skill. 🧑 2026-08-26: *"can we make her ult cooler? on top of magic and
+        /// shit / i want the sky to look ominous and shit and change for a brief moment into
+        /// night and filled with magic"*.
+        ///
+        /// ⚠️⚠️ SO THE ULTIMATE'S FOOTPRINT IS ZERO SQUARE METRES OF FLOOR. `docs/VISION.md` § 2
+        /// rule 2 allows an ultimate to be big and rule 5 requires the frame to still show the
+        /// lata, the chalk and every player; an effect that lives in the SKY satisfies both
+        /// without a trade, which is the argument `Visual.UltimateColumn` already made for going
+        /// up. The only thing this puts on the road is a thin `Collar` at the reach, so the power
+        /// still says how far it goes.
+        ///
+        /// ⚠️ THE THREE PARTS ARE THREE DIFFERENT OBJECTS BUILT THREE WAYS: the weather is
+        /// `Visual.SkyEvent` (no geometry at all), the eclipse is a `Corona` with an empty middle
+        /// hung face-down, and the reach is a `Collar`. Not one of them is the ward, and none of
+        /// them is a star polygon.
+        /// </summary>
+        public static GameObject SpawnGrandCovenEclipse(Vector3 position, float radius = 5.0f,
+                                                        float duration = 5.0f)
         {
             var go = new GameObject("GrandCovenEclipseEffect");
             go.transform.position = position;
 
-            // ⚠️⚠️ THIS WAS THE SINGLE LARGEST PAINTED OBJECT EVER PUT IN THIS GAME AND THE
-            // ARITHMETIC IS NOT CLOSE. The corona was a `Cylinder` at `radius * 2.0`, and a Unity
-            // cylinder is one unit across, so at the default 5.0 m it is a solid disc of radius
-            // 5 m: **78.5 m² of a 196 m² court, 40 per cent of the box in one plate**, with a
-            // second 23.8 m² disc stacked on top of it. `docs/VISION.md` § 2 rule 5 asks that a
-            // mid-fight frame still show the lata, the chalk and every player, and rule 1 puts a
-            // skill's floor at 3 to 8 per cent. The old measured worst offender in the whole game
-            // was Zack's corridor at 27.2 per cent.
-            //
-            // ⚠️ AN ULTIMATE MAY BE BIG. RULE 2 SAYS SO, AND THAT IS NOT WHAT THIS WAS. Big and
-            // FILLED are different claims: the heptagram below keeps the full 5 m reach, so the
-            // power reads as arena-wide exactly as intended, and paints about 8 per cent of the
-            // circle it covers because it is strokes. Same footprint, a twelfth of the pixels.
-            //
-            // ⚠️ SEVEN POINTS, NOT FIVE, AND IT IS HOW HER ULTIMATE IS TOLD FROM HER SKILL.
-            // § 21.5: everything Phaister does is a drawn symbol, so the silhouette rule the
-            // other five heroes follow cannot separate her own kit. The skills draw a pentagram
-            // and the ultimate draws a heptagram at double the radius, which is how occult
-            // diagrams actually escalate.
-            SpawnWitchSigil(position, radius, duration, 7, 3, 0.02f, 11)
-                .transform.SetParent(go.transform, worldPositionStays: true);
+            // ⚠️⚠️ THE WEATHER IS THE ULTIMATE. Everything else here is the thing you look at
+            // once; this is what the other three players are still inside four seconds later.
+            Visual.SkyEvent.Play(Visual.SkyEvent.Look.Eclipse, duration);
 
-            // ⚠️ THE DARK MOON STAYS, BECAUSE IT IS THE ONLY THING IN THE EFFECT THAT SAYS
-            // "ECLIPSE" RATHER THAN "SPELL", and it comes down from `radius * 1.1` to `0.34`.
-            // At the old size it was a 23.8 m² black plate over the middle of the court; at this
-            // one it is a disc under her feet that the sigil's inner wheel rings, which is what
-            // an eclipse actually looks like from below.
-            var moonCore = VfxShapes.Lay(go.transform, "EclipseMoonCore",
-                                         VfxShapes.Crystal(18, 0.0f),
-                                         radius * 0.34f, 0.025f);
-            VfxMaterial.Ghost(moonCore.GetComponent<Renderer>(),
-                              new Color(0.05f, 0.01f, 0.08f, 0.95f), 0.0f);
-            VfxMaterial.StripCollider(moonCore);
+            // ⚠️ 11 M UP, WHICH IS ABOVE EVERYTHING AND UNDER THE GUIDEWAY. Ilalim ng Tulay has a
+            // deck over the street, so an eclipse at 40 m would be behind the map on the one arena
+            // it was designed for. Low enough to be under the bridge and high enough that no
+            // player, pillar or barricade can reach it.
+            const float Height = 11.0f;
 
-            // ⚠️ THE EIGHT CUBE "SOLAR FLARE BEAMS" ARE DELETED. They were 9 m long stretched
-            // cubes crossing the whole arena at 0.80 alpha, and the sigil's own rune ticks and
-            // star strokes already give the mark its radial structure. Eight more bars on top of
-            // it is `VISION.md` § 2 rule 4 broken inside one effect.
+            var hung = new GameObject("Eclipse");
+            hung.transform.SetParent(go.transform, false);
+            hung.transform.localPosition = new Vector3(0.0f, Height, 0.0f);
+
+            var corona = VfxShapes.Lay(hung.transform, "Corona",
+                                       VfxShapes.Corona(24, 0.62f, 0.45f, 11),
+                                       radius * 0.62f, 0.0f);
+
+            // ⚠️ GOLD, WITH NO MAGENTA IN IT. Her skills are magenta rules with gold writing; if
+            // the ultimate were magenta too, the only thing separating the three would be size
+            // again, which is the fault this whole pass exists to remove. A corona is the colour
+            // of a sun's edge and hers is the one that burns.
+            VfxMaterial.Ghost(corona.GetComponent<Renderer>(),
+                              new Color(1.00f, 0.78f, 0.26f, 0.95f), 1.30f);
+
+            // ⚠️ THE MOON IS OPAQUE AND IT IS THE ONLY OPAQUE THING IN THE EFFECT. `docs/TODO.md`
+            // § 19.2a's rule: two coplanar translucent plates sort arbitrarily, and a dark disc
+            // ghosted over a bright corona is exactly that pair. It also has to actually OCCLUDE
+            // to read as an eclipse, and an opaque renderer writes depth by construction rather
+            // than by winning a sort. This costs no floor because it is eleven metres up.
+            var moon = VfxShapes.Lay(hung.transform, "Moon",
+                                     VfxShapes.Crystal(28, 0.0f),
+                                     radius * 0.40f, -0.02f);
+
+            // ⚠️⚠️ TURNED OVER, BECAUSE `Crystal` IS A FAN WOUND TO FACE UP AND THE AUDIENCE IS
+            // UNDERNEATH IT. `Fan`'s note is the record of this exact fault costing a whole
+            // capture pass: *"the object exists, the renderer is enabled, the material is correct
+            // and the hierarchy looks right in every inspector; the shape is simply not in the
+            // frame"*. Every other user of these builders lays them on the road and looks down at
+            // them, so up is the right default and this is the first thing in the game hung over
+            // the players' heads. `Corona` needs no equivalent: it goes through
+            // `FacetedOriented` with a reference point ABOVE it, which turns every triangle for
+            // the same reason without a transform.
+            moon.transform.localRotation = Quaternion.Euler(180.0f, 0.0f, 0.0f);
+
+            VfxMaterial.Solid(moon.GetComponent<Renderer>(), new Color(0.03f, 0.01f, 0.05f));
+            VfxMaterial.StripCollider(moon);
+
+            var glow = new GameObject("EclipseGlow");
+            glow.transform.SetParent(hung.transform, false);
+            var light = glow.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = new Color(1.00f, 0.74f, 0.30f);
+
+            // ⚠️ 2.4 AT 26 M RATHER THAN SOMETHING BRIGHT AND CLOSE. `docs/TODO.md` § 8b is the
+            // recorded cost of the other choice: Zack's ultimate ran a 6.0 point light over a
+            // 17.5 m range in a 14 m box and blew **62.8 per cent** of the frame to white. This
+            // one is eleven metres away from everything it lights, so its falloff across the
+            // court is nearly flat and it reads as a sky rather than as a lamp.
+            light.range = 26.0f;
+            light.intensity = 2.4f;
+            light.shadows = LightShadows.None;
+
+            // The reach, on the ground, and nothing else on the ground. An annulus, because
+            // `docs/TODO.md` § 19.2's rule is that a BOUNDARY has to be continuous to read as
+            // one: `Wedges` is for ground that is genuinely in pieces.
+            var reach = VfxShapes.Lay(go.transform, "EclipseReach",
+                                      VfxShapes.Collar(48, 0.06f, 0.965f),
+                                      radius, 0.03f);
+            VfxMaterial.Ghost(reach.GetComponent<Renderer>(),
+                              new Color(1.00f, 0.80f, 0.30f, 0.66f), 0.55f);
+            VfxMaterial.StripCollider(reach);
+
+            var anim = go.AddComponent<EclipseFall>();
+            anim.Hung = hung.transform;
+            anim.Corona = corona.transform;
+            anim.Reach = reach.transform;
+            anim.Glow = light;
+            anim.Duration = duration;
+            anim.RestHeight = Height;
 
             AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchEclipse, duration);
             Object.Destroy(go, duration);
             return go;
+        }
+
+        /// <summary>
+        /// The eclipse arriving, breathing, and going.
+        ///
+        /// ⚠️⚠️ IT COMES DOWN OUT OF THE SKY, WHICH IS THE ONLY MOTION IN HER KIT THAT STARTS
+        /// OFF-SCREEN. The ward is stamped onto the road, the rift opens at head height, and this
+        /// falls from above the map into place. Three powers, three directions of travel: 🧑 asked
+        /// for *"different animations"* and this is the axis that actually separates them, not
+        /// the speed of a spin.
+        ///
+        /// ⚠️ THE CORONA TURNS AND THE MOON DOES NOT. A ring of teeth rotating slowly around a
+        /// dead black disc is the difference between an eclipse and a logo, and it is one line
+        /// rather than the two counter-rotating wheels `WitchSigilSpin` used on all three powers.
+        /// </summary>
+        public sealed class EclipseFall : MonoBehaviour, Visual.IVfxTimeline
+        {
+            public Transform Hung;
+            public Transform Corona;
+            public Transform Reach;
+            public Light Glow;
+            public float Duration = 5.0f;
+            public float RestHeight = 11.0f;
+
+            /// <summary>How long it takes to arrive. Slower than a skill: it is an event.</summary>
+            private const float Arrive = 0.75f;
+
+            /// <summary>Degrees per second. Slow enough to read as astronomical.</summary>
+            private const float CoronaSpin = 9.0f;
+
+            private const float FadeFrom = 0.86f;
+
+            private float _elapsed;
+            private float _glow = 2.4f;
+            private Vector3 _reachScale = Vector3.one;
+            private Renderer _reachRenderer;
+            private float _reachAlpha = 1.0f;
+
+            public float LifeSeconds => Mathf.Max(0.3f, Duration);
+
+            private void Awake()
+            {
+                if (Glow != null) _glow = Glow.intensity;
+
+                if (Reach != null)
+                {
+                    _reachScale = Reach.localScale;
+                    _reachRenderer = Reach.GetComponent<Renderer>();
+                    if (_reachRenderer != null)
+                        _reachAlpha = _reachRenderer.sharedMaterial.color.a;
+                }
+            }
+
+            private void Update() => StepTo(_elapsed + Time.deltaTime);
+
+            public void StepTo(float seconds)
+            {
+                _elapsed = seconds;
+
+                float arrive = Mathf.Clamp01(_elapsed / Arrive);
+                float eased = 1.0f - (1.0f - arrive) * (1.0f - arrive);
+
+                if (Hung != null)
+                {
+                    // Down from twice the rest height, and it grows into place: something
+                    // enormous coming closer, rather than something small being turned on.
+                    Hung.localPosition = new Vector3(
+                        0.0f, Mathf.Lerp(RestHeight * 2.1f, RestHeight, eased), 0.0f);
+                    Hung.localScale = Vector3.one * Mathf.Lerp(0.45f, 1.0f, eased);
+                }
+
+                if (Corona != null)
+                    Corona.localRotation = Quaternion.Euler(0.0f, CoronaSpin * _elapsed, 0.0f);
+
+                // The reach sweeps out under it as it lands, so the ground mark is caused by the
+                // thing in the sky rather than being a second, separate announcement.
+                if (Reach != null)
+                {
+                    float k = Mathf.Sqrt(arrive);
+                    Reach.localScale = new Vector3(_reachScale.x * k, _reachScale.y,
+                                                   _reachScale.z * k);
+                }
+
+                if (Glow != null) Glow.intensity = _glow * eased;
+
+                float t = Mathf.Clamp01(_elapsed / LifeSeconds);
+                if (t < FadeFrom) return;
+
+                float fade = 1.0f - Mathf.InverseLerp(FadeFrom, 1.0f, t);
+                if (Glow != null) Glow.intensity = _glow * fade;
+
+                if (_reachRenderer != null && _reachRenderer.sharedMaterial != null)
+                {
+                    var c = _reachRenderer.sharedMaterial.color;
+                    c.a = _reachAlpha * fade;
+                    _reachRenderer.sharedMaterial.color = c;
+                }
+            }
         }
 
         public sealed class KulamHexSigilComponent : MonoBehaviour
@@ -1772,196 +2882,28 @@ namespace TumbangPreso.Abilities
         // THUNDERSTRIKE OVERDRIVE (Zack Ultimate)
         // -------------------------------------------------------------------
         // -------------------------------------------------------------------
-        // WITCH SIGILS (Phaister, all three powers)
+        // ⚠️⚠️ `SpawnWitchSigil`, `WitchSigilSpin` AND `SpawnCastGlyph` WERE DELETED HERE ON
+        // 2026-08-26, AND THE DELETION IS THE FIX RATHER THAN A TIDY-UP.
         //
-        // ⚠️⚠️ THE HEX HAZARD SHIPPED WITH NO GEOMETRY AT ALL. `PhaisterHexHazard.Initialize`
-        // added a `Light` and an aura and nothing else, so the sixth hero's signature power was
-        // an invisible purple glow on the road with a damage circle nobody could see. That is
-        // the fault `HeroAbility.TelegraphRadius` exists to prevent, in its most complete form:
-        // not a telegraph that lies, a telegraph that is not drawn.
+        // The three of them were the ONE function all three of Phaister's powers were drawn by.
+        // It laid `VfxShapes.Sigil` twice, an outer star polygon over an inner one, turned them
+        // against each other, and every caller passed the same `5, 2`: so her hex, both ends of
+        // her blink and her ultimate were the same pentagram stacked on itself at four radii.
+        // 🧑, off the played build: *"her Q is just 2 stars on top of each other"*, and *"pls
+        // dont use the same script to generate any abilitiy as it will feel cheap and it will
+        // look all the same"*.
         //
-        // ⚠️⚠️ AND EVERY ONE OF HER POWERS DRAWS THE SAME KIND OF MARK ON PURPOSE, WHICH IS THE
-        // OPPOSITE OF THE RULE THE OTHER FIVE FOLLOW. 🧑: *"she does hexes curses and spells and
-        // has glyphs effects during spells or abilities casting"*. For Sean, Zack, Cheska, Dante
-        // and Nemu the silhouette says WHICH ability it is, because their kits are five unrelated
-        // physical events. Phaister's kit is one CRAFT: everything she does is a symbol drawn in
-        // the air or on the ground, so the sigil is her signature and the three are told apart by
-        // SIZE, by how many rings they carry and by where they sit, exactly the way real occult
-        // diagrams are. A pentagram at her feet, a heptagram over the court.
+        // ⚠️ LEAVING THEM IN PLACE UNUSED WOULD HAVE PUT THEM BACK. `docs/TODO.md` § 22 opens on
+        // the pattern that cost this project two sessions: *"an entry marked closed is not
+        // evidence the code changed ... grep for the call site, not the asset"*. A helper named
+        // `SpawnWitchSigil` sitting in the file that every witch effect is written in is a helper
+        // the next hero power will be built out of, whatever any comment says.
+        //
+        // What replaced them is above: `SpawnKulamHexSigil` on `VfxShapes.WardCircle`,
+        // `SpawnShadowRift` plus `SpawnShadowArrival` on `VfxShapes.Rift` and `Rune`, and
+        // `SpawnGrandCovenEclipse` on `VfxShapes.Corona` and `Visual.SkyEvent`. `VfxShapes.Sigil`
+        // itself survives in that file and is now used by nothing.
         // -------------------------------------------------------------------
-
-        /// <summary>
-        /// A witch's circle: two counter-rotating sigils on the ground, and a light that reaches
-        /// the street rather than the mark.
-        /// </summary>
-        /// <param name="points">Star points. 5 is a pentagram, 7 a heptagram.</param>
-        /// <param name="skip">How far along each stroke jumps. Must be coprime with points.</param>
-        public static GameObject SpawnWitchSigil(Vector3 position, float radius, float duration,
-                                                 int points = 5, int skip = 2,
-                                                 float lift = 0.02f, int seed = 0)
-        {
-            var go = new GameObject("WitchSigil");
-            go.transform.position = position;
-
-            // ⚠️ TWO WHEELS TURNING OPPOSITE WAYS IS THE ENTIRE READ, and it is one extra mesh.
-            // A single ring rotating is a loading spinner; two nested rings turning against each
-            // other is a mechanism, which is what an occult diagram is supposed to look like.
-            // The outer carries the star, the inner is a plain rune band so the two do not fight
-            // each other for the eye.
-            // ⚠️⚠️ `HeroWitch`, NOT `HeroSpirit`, AND THE FIRST VERSION OF THIS DREW HER IN
-            // NEMU'S PURPLE. `UiTheme` already carries `HeroWitch` (e82882) and
-            // `HeroWitchBright` (f44498) for the sixth hero, and nothing in her kit used either
-            // of them: every popup, light and mark reached for `HeroSpiritBright`, which is
-            // Nemu's. `Hero_Strike_Balance.md` § 8.1 is explicit that hue is the one channel this
-            // game cannot spare, and § 8's own history has the worked example of what sharing it
-            // costs: *"Sean's Supernova was spawning Dante's magma. Two heroes reading as one is
-            // the most expensive form of repetitive, because it costs a character."* Two spirit
-            // heroes on one violet is that fault with the colour instead of the geometry.
-            //
-            // ⚠️ IT MATTERS MOST FOR THESE TWO SPECIFICALLY. Nemu and Phaister are the only pair
-            // in the game who share an ELEMENT, so hue is doing more work here than anywhere
-            // else: Nemu's void is a dark funnel and Phaister's hex is bright line art, but a
-            // player catching either in the corner of their eye reads the colour first.
-            var outer = VfxShapes.Lay(go.transform, "SigilOuter",
-                                      VfxShapes.Sigil(points, skip, 0.045f, 0.74f, 14, 40, seed),
-                                      radius, lift);
-            VfxMaterial.Ghost(outer.GetComponent<Renderer>(),
-                              Alpha(UiTheme.HeroWitch, 0.88f), 0.30f);
-
-            // ⚠️ THE INNER WHEEL IS ALWAYS A PENTAGRAM, WHATEVER THE OUTER ONE IS. It was
-            // `points + 2` with `skip + 1`, so the ultimate's outer heptagram sat over a
-            // nine-pointed inner star and the two together read as a compass rose or a sunburst
-            // rather than as an occult diagram: `ability_coven_eclipse_v16.png`. Holding the
-            // inner ring constant leaves the OUTER star as the only thing that changes between
-            // her skill and her ultimate, which is the escalation § 21.5 is actually claiming.
-            var inner = VfxShapes.Lay(go.transform, "SigilInner",
-                                      VfxShapes.Sigil(5, 2, 0.055f, 0.52f, 8, 32, seed + 17),
-                                      radius * 0.55f, lift + 0.008f);
-            VfxMaterial.Ghost(inner.GetComponent<Renderer>(),
-                              Alpha(UiTheme.HeroWitchBright, 0.78f), 0.26f);
-
-            // ⚠️⚠️ 1.1, NOT 2.5, AND THE 2.5 CAME IN WITH THE HERO. Every hazard light in this
-            // file came down by roughly two thirds on 2026-08-25 for one reason, written up on
-            // the ice sheet: a hot source sitting on top of its own effect paints the EFFECT and
-            // not the street, so the dark parts of the mark render as the light's own colour at
-            // full brightness. `PhaisterHexHazard` set 2.5 at `radius * 2.0` and would have
-            // washed a violet sigil to flat white the first time anybody rendered it.
-            //
-            // ⚠️ RAISED AS WELL AS DIMMED. Higher up the falloff across the mark is much flatter,
-            // so what is left spills onto the road, which is the job: the glow says something is
-            // there before a player can see what it is.
-            var lightGo = new GameObject("SigilLight");
-            lightGo.transform.SetParent(go.transform, false);
-            lightGo.transform.localPosition = new Vector3(0.0f, 1.7f, 0.0f);
-
-            var light = lightGo.AddComponent<Light>();
-            light.type = LightType.Point;
-            light.color = UiTheme.HeroWitchBright;
-            light.range = radius * 2.4f;
-            light.intensity = 1.1f;
-
-            var spin = go.AddComponent<WitchSigilSpin>();
-            spin.Outer = outer.transform;
-            spin.Inner = inner.transform;
-            spin.Duration = duration;
-
-            return go;
-        }
-
-        /// <summary>A theme colour at a given alpha, so a call site states the two separately.</summary>
-        private static Color Alpha(Color c, float a) => new Color(c.r, c.g, c.b, a);
-
-        /// <summary>
-        /// Turns the two rings against each other and fades the whole mark out at the end.
-        ///
-        /// ⚠️ IT IS AN `IVfxTimeline`, so `AbilityShowcaseProbe` can wind it to any moment of its
-        /// own life and photograph it. `ArcFlicker`'s note has the argument: an effect that
-        /// animates in `Update` and nothing else is an effect that freezes on frame one in every
-        /// capture, which is how the whole § 8 silhouette pass came to be reviewed against
-        /// pictures that could not contain it.
-        ///
-        /// ⚠️ THE FADE IS THE LAST FIFTH ONLY. `Hero_Strike_Balance.md` § 8.5 item 2: a player has
-        /// to be able to tell a spent zone from a live one, and a mark that dims from the first
-        /// frame reads as a failing effect rather than as a timer.
-        /// </summary>
-        public sealed class WitchSigilSpin : MonoBehaviour, Visual.IVfxTimeline
-        {
-            public Transform Outer;
-            public Transform Inner;
-            public float Duration = 6.0f;
-
-            /// <summary>Degrees per second, opposite ways. Slow: this is a diagram, not a fan.</summary>
-            private const float OuterSpin = 26.0f;
-            private const float InnerSpin = -41.0f;
-
-            private const float FadeFrom = 0.8f;
-
-            private float _elapsed;
-            private Renderer _outerRenderer;
-            private Renderer _innerRenderer;
-            private float _outerAlpha = 1.0f;
-            private float _innerAlpha = 1.0f;
-
-            public float LifeSeconds => Mathf.Max(0.2f, Duration);
-
-            private void Awake()
-            {
-                if (Outer != null) _outerRenderer = Outer.GetComponent<Renderer>();
-                if (Inner != null) _innerRenderer = Inner.GetComponent<Renderer>();
-
-                if (_outerRenderer != null) _outerAlpha = _outerRenderer.sharedMaterial.color.a;
-                if (_innerRenderer != null) _innerAlpha = _innerRenderer.sharedMaterial.color.a;
-            }
-
-            private void Update() => StepTo(_elapsed + Time.deltaTime);
-
-            public void StepTo(float seconds)
-            {
-                _elapsed = seconds;
-
-                if (Outer != null)
-                    Outer.localRotation = Quaternion.Euler(0.0f, OuterSpin * _elapsed, 0.0f);
-
-                if (Inner != null)
-                    Inner.localRotation = Quaternion.Euler(0.0f, InnerSpin * _elapsed, 0.0f);
-
-                float t = Mathf.Clamp01(_elapsed / LifeSeconds);
-                if (t < FadeFrom) return;
-
-                float k = 1.0f - Mathf.InverseLerp(FadeFrom, 1.0f, t);
-                Fade(_outerRenderer, _outerAlpha * k);
-                Fade(_innerRenderer, _innerAlpha * k);
-            }
-
-            private static void Fade(Renderer r, float alpha)
-            {
-                if (r == null || r.sharedMaterial == null) return;
-
-                var c = r.sharedMaterial.color;
-                c.a = alpha;
-                r.sharedMaterial.color = c;
-            }
-        }
-
-        /// <summary>
-        /// The glyph that flashes while a spell is being CAST, at the caster's feet.
-        ///
-        /// ⚠️ IT IS SHORT AND IT IS SMALL, because it is punctuation rather than a hazard. 🧑
-        /// asked for *"glyphs effects during spells or abilities casting"*, and the trap in that
-        /// is drawing a second full-size circle every time she presses a button: three of those
-        /// live at once is `docs/VISION.md` § 2 rule 4 broken by one hero on her own. A 1.1 m
-        /// mark for under a second says "a spell is being cast here" and is gone before the thing
-        /// it summoned has finished arriving.
-        /// </summary>
-        public static GameObject SpawnCastGlyph(Vector3 position, float radius = 1.1f,
-                                                float duration = 0.75f, int seed = 3)
-        {
-            var go = SpawnWitchSigil(position, radius, duration, 5, 2, 0.03f, seed);
-            go.name = "WitchCastGlyph";
-
-            Object.Destroy(go, duration);
-            return go;
-        }
 
         public static void CreateThunderstrike(Vector3 position, float radius = 7.0f, int sourceSlot = -1)
         {

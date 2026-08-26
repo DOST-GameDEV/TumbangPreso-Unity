@@ -587,6 +587,11 @@ namespace TumbangPreso.Visual
             float sector = 360.0f / count;
             float half = Mathf.Max(0.0f, sector - gapDegrees) * 0.5f * Mathf.Deg2Rad;
 
+            // ⚠️ SEEDED START, so one seed still produces one exact mesh. The walk below is
+            // cumulative, which is the whole point: an error that accumulates is what stops the
+            // plates snapping back onto the grid on every iteration.
+            float _wedgeWalk = Random.Range(0.0f, 360.0f);
+
             for (int i = 0; i < count; i++)
             {
                 // ⚠️⚠️ THE ANGULAR SPAN IS JITTERED, NOT ONLY THE RADIUS, AND WITHOUT THIS IT IS
@@ -602,7 +607,17 @@ namespace TumbangPreso.Visual
                 // and overlap and the ring stops reading as a ring: on a rim it looks like
                 // litter thrown across the road rather than a dashed edge. A third of the gap is
                 // enough to kill the machined look `_v13` had and not enough to break the lane.
-                float mid = (i * sector + Random.Range(-gapDegrees, gapDegrees) * 0.35f) * Mathf.Deg2Rad;
+                // ⚠️⚠️ THE JITTER IS A THIRD OF ONE GAP AND THAT IS NOT ENOUGH, WHICH
+                // `ability_lava_decal_v22.png` SHOWS THREE PASSES LATER. § 19.2d called this
+                // exact read (*"identical width at identical spacing reads as a black FLOWER"*)
+                // and answered it by jittering an EVEN step, which is still an even step: the
+                // plates land within a few degrees of where a pinwheel would put them, and from
+                // above that is what it draws. `Upheaval` was written against the same trap and
+                // walks a varying gap instead; this does the same, in the one line that decides
+                // it, so the phase of each plate accumulates rather than resetting to the grid
+                // every iteration.
+                _wedgeWalk += sector * Random.Range(0.55f, 1.5f);
+                float mid = (_wedgeWalk + Random.Range(-gapDegrees, gapDegrees) * 0.35f) * Mathf.Deg2Rad;
                 float span = Random.Range(0.62f, 1.0f);
                 float outerR = 1.0f - Random.Range(0.0f, jitter);
                 float y = Random.Range(0.0f, lift);
@@ -1083,6 +1098,401 @@ namespace TumbangPreso.Visual
             tris.Add(a0); tris.Add(b1); tris.Add(a1);
         }
 
+        // ===================================================================
+        // THREE BUILDERS FOR ONE HERO, BECAUSE ONE BUILDER FOR ONE HERO IS THE BUG
+        //
+        // ⚠️⚠️ `Sigil` USED TO DRAW ALL THREE OF PHAISTER'S POWERS AND THAT IS WHY THEY LOOKED
+        // THE SAME. 🧑 2026-08-26, off the played build: *"the fucking abilities of phaister are
+        // repetitive they use the same magic circle i want them to have different colors and
+        // different animations and different symbols. DIFFERENT EVERYTHING"*, and, precisely:
+        // *"her Q is just 2 stars on top of each other"*.
+        //
+        // ⚠️⚠️ HE WAS DESCRIBING THE CODE, NOT A FEELING. `HeroHazards.SpawnWitchSigil` drew
+        // `Sigil` TWICE, an outer and an inner star polygon, and `SpawnCastGlyph` called it with
+        // a hard-coded `5, 2`. So the hex, BOTH ends of the blink and the eclipse were the same
+        // pentagram stacked on itself, separated by radius and by a seed that only jitters the
+        // rim ticks. `docs/TODO.md` § 19 already named the class (*"fifteen poses sharing one
+        // construction"*) and § 21.5 then argued the sixth hero into it deliberately, on the
+        // grounds that her kit is one CRAFT. **That argument was wrong in one specific way:**
+        // a shared visual LANGUAGE does not require a shared MESH BUILDER, and taking it to mean
+        // that is how one hero's whole kit became three sizes of one object.
+        //
+        // ⚠️ WHAT SURVIVES OF § 21.5 IS THE PALETTE AND THE VOCABULARY. All three are still
+        // strokes with the road showing through, still magenta into gold, still written rather
+        // than splashed. What changes is that each one is now BUILT differently, which is the
+        // fifth channel `docs/TODO.md` § 19.1 added and the only one that had never been spent
+        // on her:
+        //
+        //   Q, KULAM HEX     `WardCircle`  concentric rings, a dense rune band, nested rotated
+        //                                  squares, radial dividers, medallions. Static.
+        //   E, SHADOW BLINK  `Rift`        a torn VERTICAL sheet. No circle anywhere in it.
+        //   R, GRAND COVEN   `Corona`      a ring of tapering teeth around an empty middle,
+        //                                  built to be seen from BELOW.
+        //
+        // ⚠️ AND NONE OF THE THREE IS A {points/skip} STAR POLYGON, which is what `Sigil` is made
+        // of and the one shape 🧑 named. `Sigil` itself is left in the file and is now unused by
+        // the kit; deleting it is a separate decision from fixing the hero.
+        // ===================================================================
+
+        /// <summary>
+        /// A drawn WARD: rings, a written band, nested squares and medallions. Phaister's hex.
+        ///
+        /// ⚠️⚠️ ITS CONSTRUCTION IS RECTILINEAR WHERE `Sigil`'S IS RADIAL, AND THAT IS THE WHOLE
+        /// SEPARATION. A star polygon is one loop of strokes chasing itself around a centre, so
+        /// however many points it has it reads as a spinner. This is built from CLOSED FIGURES
+        /// laid over each other: two axis-aligned squares turned 45 degrees apart make an
+        /// eight-pointed frame with straight sides and real corners, and a square has an inside
+        /// and an outside in a way a star never does. The eye reads it as a diagram somebody
+        /// ruled, which is what a ward is.
+        ///
+        /// ⚠️ THE RUNE BAND IS THE POINT, NOT DECORATION. 🧑's references are all the same thing:
+        /// a continuous ring of small written characters between two rules. `Sigil` had radial
+        /// TICKS there, which is a gear. Real glyphs standing upright around the rim are what
+        /// separate "a circle with marks on it" from "something written down", and this hero's
+        /// entire motif is written language (`docs/TODO.md` § 19's per-hero motif table).
+        ///
+        /// ⚠️ THE MEDALLIONS ARE WHY IT SURVIVES BEING SEEN FROM EYE HEIGHT. A ground mark is
+        /// nearly edge-on at 1.65 m, and at that angle a rim band compresses to a line. Four
+        /// small circles at the compass points each hold their own glyph, so there are four
+        /// places on the mark that stay legible from the side, and they also say which way it is
+        /// facing, which a rotationally symmetric ring cannot.
+        ///
+        /// ⚠️ EVERYTHING IS BUILT AT ONE UNIT OF RADIUS, like every other builder here, so
+        /// <see cref="Lay"/> and every footprint in `Hero_Strike_Balance.md` § 1 keep working.
+        /// The painted fraction is about 11 per cent of its own circle: denser than `Sigil`'s 8
+        /// because there is more writing, and still a ninth of what a filled disc costs.
+        /// </summary>
+        /// <param name="cells">How many cells the rune band is divided into by radial rules.</param>
+        /// <param name="medallions">Small glyph circles on the rim. 4 is the compass.</param>
+        public static Mesh WardCircle(int cells = 12, int medallions = 4, float bar = 0.030f,
+                                      int seed = 0)
+        {
+            cells = Mathf.Clamp(cells, 6, 24);
+            medallions = Mathf.Clamp(medallions, 0, 8);
+
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var tris = new System.Collections.Generic.List<Vector3>(1024);
+
+            // ⚠️ FOUR RINGS AND TWO OF THEM ARE A PAIR. A single line at the rim is a circle; two
+            // lines 4 per cent apart with writing between them is a BAND, and a band is the thing
+            // that reads as inscribed. The references are unanimous about this and it is the
+            // cheapest part of the whole shape.
+            const float rimOuter = 1.0f;
+            const float rimInner = 0.845f;
+
+            FlatRing(tris, rimOuter - bar, rimOuter, 72);
+            FlatRing(tris, rimInner - bar, rimInner, 72);
+
+            // The inner rule the squares sit against, and the small hub the glyph sits in.
+            FlatRing(tris, 0.615f - bar * 0.8f, 0.615f, 64);
+            FlatRing(tris, 0.185f - bar * 0.9f, 0.185f, 40);
+
+            // ⚠️ THE RADIAL DIVIDERS RUN ONLY ACROSS THE BAND. Taken to the centre they become
+            // spokes and the ward turns into a wheel, which is the exact read `Sigil`'s rim ticks
+            // were criticised for. Between two rules they are cell walls, and cells are what make
+            // the writing look organised rather than scattered.
+            for (int c = 0; c < cells; c++)
+            {
+                float a = c / (float)cells * Mathf.PI * 2.0f;
+                var dir = new Vector3(Mathf.Cos(a), 0.0f, Mathf.Sin(a));
+                FlatBar(tris, dir * rimInner, dir * (rimOuter - bar), bar * 0.42f);
+            }
+
+            // A glyph in every cell, sitting on the band's midline and turned to face out.
+            float bandMid = (rimInner + rimOuter - bar) * 0.5f;
+            for (int c = 0; c < cells; c++)
+            {
+                float a = (c + 0.5f) / cells * Mathf.PI * 2.0f;
+                FlatRune(tris, new Vector3(Mathf.Cos(a), 0.0f, Mathf.Sin(a)) * bandMid,
+                         0.105f, a, bar * 0.40f, Random.Range(0, 4096));
+            }
+
+            // ⚠️⚠️ THE TWO SQUARES, WHICH ARE THE SHAPE NOTHING ELSE IN THIS FILE MAKES. Built
+            // corner to corner as four straight bars each, then the second one turned 45 degrees:
+            // the union is an octagram with FLAT sides, and every crossing is a real intersection
+            // of two rules rather than a vertex of one loop. `Star` and `Sigil` both produce
+            // points radiating from a middle; this produces a frame.
+            const float squareR = 0.615f;
+            Square(tris, squareR, 0.0f, bar * 0.5f);
+            Square(tris, squareR, Mathf.PI * 0.25f, bar * 0.5f);
+
+            // An inscribed triangle, which is the one figure that breaks the eight-fold symmetry
+            // and stops the middle reading as a compass rose. Three is coprime with four and
+            // eight, so no stroke of it lands on a square's corner.
+            Polygon(tris, 3, 0.44f, Mathf.PI * 0.5f, bar * 0.46f);
+
+            // The medallions: a small ring with a glyph inside, straddling the inner rule.
+            for (int m = 0; m < medallions; m++)
+            {
+                float a = m / (float)medallions * Mathf.PI * 2.0f + Mathf.PI * 0.25f;
+                Vector3 at = new Vector3(Mathf.Cos(a), 0.0f, Mathf.Sin(a)) * rimInner;
+
+                RingAt(tris, at, 0.105f, bar * 0.62f, 22);
+                FlatRune(tris, at, 0.085f, a, bar * 0.42f, Random.Range(0, 4096));
+            }
+
+            // The hub glyph. One mark at the middle, larger than the rest: what the ward is FOR.
+            FlatRune(tris, Vector3.zero, 0.16f, Mathf.PI * 0.5f, bar * 0.6f, seed * 31 + 7);
+
+            Random.state = state;
+
+            // Ground art: outward is up, so the reference point is far below the road. Same
+            // convention `Sigil` and `Wedges` use.
+            return FacetedOriented(tris, "VfxWardCircle", new Vector3(0.0f, -10.0f, 0.0f));
+        }
+
+        /// <summary>
+        /// A TORN SHEET standing upright: the hole a blink leaves behind.
+        ///
+        /// ⚠️⚠️ IT IS DELIBERATELY NOT A CIRCLE AND NOT ON THE FLOOR, WHICH IS THE ENTIRE FIX FOR
+        /// THE BLINK. Both ends of `SpawnShadowBlinkBurst` used to stamp a cast glyph on the
+        /// road: the same pentagram as her hex, twice, half a second apart, for an ability whose
+        /// fiction is that space came APART. A mark on the ground says a spell was cast at a
+        /// place. A vertical tear says the place itself broke, and it is the only thing in her
+        /// kit that stands up.
+        ///
+        /// ⚠️ IT IS BUILT AS A SPLIT RATHER THAN AS AN OUTLINE. Two ragged edges are walked from
+        /// the bottom to the top, pushed apart by a width that swells in the middle and closes at
+        /// both ends, and the strokes are the EDGES only: the gap between them is empty, so what
+        /// the player sees through the tear is the street behind it. An outline of a lens shape
+        /// would be one closed curve; this is two independent curves that happen to meet, which
+        /// is why it looks torn rather than drawn.
+        ///
+        /// ⚠️ STANDS IN THE XY PLANE, so a caller rotates it to face however the blink went. Use
+        /// <see cref="Stand"/>, never <see cref="Lay"/>: `Lay` leaves the Y scale at 1 and would
+        /// hand a 4 m tear on a 1.55 m mark. § 19.1 records the 2 m ball that came from exactly
+        /// that.
+        /// </summary>
+        /// <param name="steps">Segments up each edge. More is more ragged, not larger.</param>
+        /// <param name="bite">How far each edge wanders sideways, as a fraction of the width.</param>
+        public static Mesh Rift(int steps = 9, float width = 0.34f, float bite = 0.42f,
+                                float bar = 0.05f, int seed = 0)
+        {
+            steps = Mathf.Clamp(steps, 4, 24);
+
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var tris = new System.Collections.Generic.List<Vector3>(256);
+
+            var left = new Vector3[steps + 1];
+            var right = new Vector3[steps + 1];
+
+            for (int i = 0; i <= steps; i++)
+            {
+                float t = i / (float)steps;
+                float y = Mathf.Lerp(-1.0f, 1.0f, t);
+
+                // ⚠️ THE MOUTH IS A SINE, SO IT CLOSES AT BOTH ENDS BY CONSTRUCTION. A tear that
+                // is widest at the top or is a constant width is a gap in a wall; one that pinches
+                // to nothing at each end is a split in a surface, and the surface here is the air.
+                float open = Mathf.Sin(t * Mathf.PI);
+                float half = width * open * 0.5f;
+
+                float wanderL = (Random.value - 0.5f) * bite * width * open;
+                float wanderR = (Random.value - 0.5f) * bite * width * open;
+
+                left[i] = new Vector3(-half + wanderL, y, 0.0f);
+                right[i] = new Vector3(half + wanderR, y, 0.0f);
+            }
+
+            for (int i = 0; i < steps; i++)
+            {
+                UprightBar(tris, left[i], left[i + 1], bar * 0.5f);
+                UprightBar(tris, right[i], right[i + 1], bar * 0.5f);
+            }
+
+            // ⚠️ THE CROSS-STROKES ARE WHAT MAKE IT A TEAR AND NOT A LEAF. A few short bars
+            // spanning the gap read as the last threads of a surface that has not finished
+            // parting. Three of them, at uneven heights, because four evenly spaced would be a
+            // ladder.
+            for (int i = 0; i < 3; i++)
+            {
+                int at = Mathf.Clamp(Mathf.RoundToInt(steps * (0.28f + i * 0.22f)), 1, steps - 1);
+                UprightBar(tris, left[at], right[at], bar * 0.30f);
+            }
+
+            var mesh = new Mesh { name = "VfxRift" + seed };
+            var verts = tris.ToArray();
+            var idx = new int[verts.Length];
+            for (int i = 0; i < idx.Length; i++) idx[i] = i;
+
+            mesh.SetVertices(new System.Collections.Generic.List<Vector3>(verts));
+            mesh.SetTriangles(idx, 0);
+
+            // Flat forward normals, for the reason `Rune` gives: every triangle is in the XY
+            // plane, so a recalculation returns one vector and costs a pass to do it.
+            var normals = new Vector3[verts.Length];
+            for (int i = 0; i < normals.Length; i++) normals[i] = Vector3.back;
+            mesh.normals = normals;
+
+            mesh.RecalculateBounds();
+
+            Random.state = state;
+            return mesh;
+        }
+
+        /// <summary>
+        /// A ring of tapering teeth around an EMPTY middle, built to be looked up at.
+        ///
+        /// ⚠️⚠️ THE MIDDLE IS THE EFFECT. Every previous version of the eclipse put something
+        /// solid in the centre and paid for it: `docs/TODO.md` § 21.2 measured the merged corona
+        /// at **78.5 m², 40 per cent of the box in one plate**, and the version that replaced it
+        /// still laid a dark disc on the road. An eclipse is a hole with light round the edge, so
+        /// the hole is modelled as nothing at all and only the corona is geometry.
+        ///
+        /// ⚠️⚠️ AND IT HANGS OVERHEAD RATHER THAN LYING ON THE ROAD, WHICH IS THE POINT OF THE
+        /// WHOLE ABILITY. 🧑: *"i want the sky to look ominous"*. `Visual.UltimateColumn` made
+        /// the argument first and `Visual.SkyEvent` generalises it: the floor is full, up is
+        /// empty, and an object in the sky costs zero square metres of the 196 m² this game is
+        /// fought in. It is also the only power in the game a player finds by looking UP.
+        ///
+        /// ⚠️ THE TEETH ARE UNEVEN AND THAT IS LOAD-BEARING. `Wedges` already recorded what
+        /// evenly spaced identical plates look like (`docs/TODO.md` § 19.2d: *"nine plates of
+        /// identical width at identical spacing read as a black FLOWER"*). A corona is a plasma
+        /// edge; every tooth gets its own length and its own width, and the ones that are nearly
+        /// gone are what stop it reading as a gear.
+        ///
+        /// ⚠️ IT IS BUILT FLAT IN XZ AND HUNG FACE-DOWN BY THE CALLER, so `FacetedOriented` is
+        /// given a point far ABOVE it: the audience is underneath.
+        /// </summary>
+        public static Mesh Corona(int teeth = 22, float innerRatio = 0.62f, float ragged = 0.45f,
+                                  int seed = 0)
+        {
+            teeth = Mathf.Clamp(teeth, 8, 48);
+            innerRatio = Mathf.Clamp(innerRatio, 0.3f, 0.9f);
+
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var tris = new System.Collections.Generic.List<Vector3>(teeth * 12);
+
+            // The lip: a thin continuous ring at the hole's edge, so the corona is attached to
+            // something. Without it the teeth float in a circle and read as a sunburst.
+            FlatRing(tris, innerRatio, innerRatio + 0.035f, 64);
+
+            float step = Mathf.PI * 2.0f / teeth;
+            for (int t = 0; t < teeth; t++)
+            {
+                float a = t * step;
+
+                // ⚠️ THE ANGULAR JITTER IS SMALL AND THE LENGTH JITTER IS LARGE. Moving a tooth
+                // sideways makes the ring look badly made; making it shorter makes the edge look
+                // alive. Same distinction `Sigil` draws about wobbling a pentagram versus
+                // wobbling its tick marks.
+                a += (Random.value - 0.5f) * step * 0.35f;
+
+                float reach = Mathf.Lerp(innerRatio + 0.06f, 1.0f,
+                                         1.0f - Random.value * ragged);
+                float halfWidth = step * Mathf.Lerp(0.16f, 0.40f, Random.value);
+
+                Vector3 baseL = Ring(a - halfWidth, innerRatio, 0.0f);
+                Vector3 baseR = Ring(a + halfWidth, innerRatio, 0.0f);
+                Vector3 tip = Ring(a, reach, 0.0f);
+
+                tris.Add(baseL); tris.Add(baseR); tris.Add(tip);
+            }
+
+            Random.state = state;
+
+            return FacetedOriented(tris, "VfxCorona", new Vector3(0.0f, 10.0f, 0.0f));
+        }
+
+        // ------------------------------------------------------------------ ward helpers
+
+        /// <summary>
+        /// One written glyph laid FLAT in the XZ plane, turned so its top points outward.
+        ///
+        /// ⚠️⚠️ IT IS NOT `Rune` ROTATED, AND THE DIFFERENCE IS NOT COSMETIC. `Rune` builds in
+        /// the XY plane because it is a PARTICLE mesh, billboarded toward the camera; laying that
+        /// on the road would need a transform per glyph and a separate GameObject to carry it,
+        /// which for twelve cells plus four medallions plus a hub is seventeen renderers for one
+        /// decal. Emitting the strokes straight into the ward's own triangle list keeps the whole
+        /// mark ONE mesh, which is also why it can be faded as one thing.
+        ///
+        /// ⚠️ THE ALPHABET IS THE SAME INVENTED ONE. Three to five straight strokes: a stem, arms
+        /// off it, sometimes a bar. `Rune`'s note has the bound it is built to (*"i dont want
+        /// english letters"*), and using the same construction here is what makes the writing on
+        /// the ground and the writing lifting off it visibly one hand.
+        /// </summary>
+        private static void FlatRune(System.Collections.Generic.List<Vector3> tris,
+                                     Vector3 at, float size, float facing,
+                                     float halfWidth, int seed)
+        {
+            var state = Random.state;
+            Random.InitState(seed);
+
+            // "Up" for a glyph on the ground is radially outward; "across" is the tangent.
+            var up = new Vector3(Mathf.Cos(facing), 0.0f, Mathf.Sin(facing));
+            var across = new Vector3(-up.z, 0.0f, up.x);
+
+            Vector3 P(float x, float y) => at + across * (x * size) + up * (y * size);
+
+            float h = Random.Range(0.62f, 1.0f);
+            float lean = Random.Range(-0.16f, 0.16f);
+            FlatBar(tris, P(-lean, -h * 0.5f), P(lean, h * 0.5f), halfWidth);
+
+            int arms = Random.Range(1, 3);
+            for (int i = 0; i < arms; i++)
+            {
+                float atY = Random.Range(-0.34f, 0.40f);
+                float len = Random.Range(0.28f, 0.52f);
+                float rise = Random.Range(0.18f, 0.46f) * (Random.value < 0.5f ? -1.0f : 1.0f);
+                float side = Random.value < 0.5f ? -1.0f : 1.0f;
+
+                float fx = lean * (atY * 2.0f);
+                float fy = atY * h;
+                FlatBar(tris, P(fx, fy), P(fx + len * side, fy + rise), halfWidth * 0.82f);
+            }
+
+            if (Random.value < 0.55f)
+            {
+                float atY = Random.Range(-0.22f, 0.28f) * h;
+                float w = Random.Range(0.24f, 0.44f);
+                FlatBar(tris, P(-w, atY), P(w, atY), halfWidth * 0.74f);
+            }
+
+            Random.state = state;
+        }
+
+        /// <summary>Four straight rules closing a square of the given half-diagonal.</summary>
+        private static void Square(System.Collections.Generic.List<Vector3> tris,
+                                   float radius, float rotation, float halfWidth)
+            => Polygon(tris, 4, radius, rotation, halfWidth);
+
+        /// <summary>A closed straight-sided figure, corner to corner. Not a star: no skip.</summary>
+        private static void Polygon(System.Collections.Generic.List<Vector3> tris,
+                                    int sides, float radius, float rotation, float halfWidth)
+        {
+            if (sides < 3) return;
+
+            for (int i = 0; i < sides; i++)
+            {
+                float a0 = rotation + i / (float)sides * Mathf.PI * 2.0f;
+                float a1 = rotation + (i + 1) / (float)sides * Mathf.PI * 2.0f;
+
+                FlatBar(tris, Ring(a0, radius, 0.0f), Ring(a1, radius, 0.0f), halfWidth);
+            }
+        }
+
+        /// <summary>A small ring somewhere other than the origin, for a medallion.</summary>
+        private static void RingAt(System.Collections.Generic.List<Vector3> tris,
+                                   Vector3 centre, float radius, float bar, int segments)
+        {
+            for (int i = 0; i < segments; i++)
+            {
+                float a0 = i / (float)segments * Mathf.PI * 2.0f;
+                float a1 = (i + 1) / (float)segments * Mathf.PI * 2.0f;
+
+                FlatBar(tris,
+                        centre + Ring(a0, radius, 0.0f),
+                        centre + Ring(a1, radius, 0.0f),
+                        bar * 0.5f);
+            }
+        }
+
         /// <summary>A flat annulus band in the XZ plane, as a strip of quads.</summary>
         private static void FlatRing(System.Collections.Generic.List<Vector3> tris,
                                      float rInner, float rOuter, int segments)
@@ -1208,6 +1618,450 @@ namespace TumbangPreso.Visual
 
             Own(go, mesh);
             return go;
+        }
+
+        // ===================================================================
+        // ONE CONSTRUCTION PER HERO, AND THE RULE IS THAT THEY DO NOT SHARE
+        //
+        // ⚠️⚠️ 🧑 2026-08-26, after the Phaister rebuild: *"improve all other abilities
+        // thoroughly too thank you, in their own ways u figure out how, make sure they dont
+        // share builders"*, and earlier: *"look for a motif OR something else we can try to add
+        // to increase the quality or experience of playing the characters, so that it doesnt
+        // feel like party confetti or some shit"*.
+        //
+        // ⚠️⚠️ THE TRAP IS COPYING PHAISTER, AND IT IS THE OBVIOUS THING TO DO. Her motif is
+        // WRITTEN LANGUAGE because she is a witch; giving Zack runes in yellow would be
+        // `docs/TODO.md` § 19's fault at the level of the roster instead of the level of one
+        // function. So each of these answers a different question about what its element LEAVES
+        // BEHIND, and each is a different kind of geometry:
+        //
+        //   `Fracture`  Cheska   ice PROPAGATES along cracks       a branching walk
+        //   `Upheaval`  Dante    earth is DISPLACED, not removed   plates tipped from a dish
+        //   `Cinder`    Sean     fire SPREADS and outlives you     a field of separate pieces
+        //   `Filament`  Zack     current wants a CIRCUIT           a web between terminals
+        //   `Hollow`    Nemu     spirit TAKES SOMETHING AWAY       a rim around nothing
+        //
+        // ⚠️ AND NOT ONE OF THEM IS A FAN, WHICH IS WHAT EVERY EFFECT IN THIS GAME USED TO BE.
+        // `docs/TODO.md` § 19: *"`Splat`, `Star`, `Streak` and `Crystal` are four different
+        // POLYGONS handed to ONE builder."* Four of the five below emit their triangles directly
+        // and the fifth walks a tree; none of them triangulates a rim around a centre vertex.
+        // ===================================================================
+
+        /// <summary>
+        /// A CRACK that branches. Cheska's ice, which propagates rather than appears.
+        ///
+        /// ⚠️⚠️ IT IS A WALK, NOT AN OUTLINE, AND THAT IS THE WHOLE SEPARATION FROM `Wedges`.
+        /// `Wedges` makes separate plates with gaps between them, which is right for ground that
+        /// is genuinely in pieces (Dante's crust) and wrong for ice: a crack is CONNECTED, and
+        /// what makes it read as ice rather than as a drawing is that every branch is narrower
+        /// than the one it came off. The recursion carries the width down, so the tips are
+        /// hairlines and the trunk is a finger's width, which no fan can do at all.
+        ///
+        /// ⚠️ IT SPREADS FROM THE CENTRE OUTWARD, so a caller can animate it by scale and get a
+        /// propagating crack for free rather than a growing disc. That is `HeroHazards`' job,
+        /// but the mesh has to be built the right way round for it to be possible.
+        ///
+        /// ⚠️ SEEDED, AND THE SEED IS THE POINT. Two Permafrost Sheets cast in one round should
+        /// not be the same object twice. `Sigil`'s note argues the opposite for a pentagram (a
+        /// hand-wobbled one reads as a mistake); a crack is the case where identical twice is
+        /// the mistake.
+        /// </summary>
+        /// <param name="from">Where the arms START, as a fraction of the radius. A crack running
+        /// out of a slab has to begin AT the slab's edge: `ability_ice_sheet_v21.png` is what
+        /// starting at the centre looks like, which is a set of white spokes laid over the ice
+        /// rather than damage spreading out of it.</param>
+        public static Mesh Fracture(int arms = 5, int depth = 3, float bar = 0.055f, int seed = 0,
+                                    float from = 0.0f)
+        {
+            arms = Mathf.Clamp(arms, 3, 9);
+            depth = Mathf.Clamp(depth, 1, 4);
+            from = Mathf.Clamp01(from);
+
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var tris = new System.Collections.Generic.List<Vector3>(512);
+
+            for (int a = 0; a < arms; a++)
+            {
+                float angle = a / (float)arms * Mathf.PI * 2.0f
+                              + Random.Range(-0.25f, 0.25f);
+
+                var start = new Vector3(Mathf.Cos(angle), 0.0f, Mathf.Sin(angle)) * from;
+
+                Branch(tris, start, angle, (1.0f - from) * 0.46f, bar, depth);
+            }
+
+            Random.state = state;
+
+            return FacetedOriented(tris, "VfxFracture", new Vector3(0.0f, -10.0f, 0.0f));
+        }
+
+        /// <summary>One limb of a <see cref="Fracture"/>, and the children it throws.</summary>
+        private static void Branch(System.Collections.Generic.List<Vector3> tris,
+                                   Vector3 from, float angle, float length,
+                                   float halfWidth, int depth)
+        {
+            if (depth <= 0 || halfWidth < 0.004f) return;
+
+            // ⚠️ EACH SEGMENT KINKS. A straight limb reads as a spoke; ice runs along whatever
+            // was weakest, so the direction is perturbed once per segment and the perturbation
+            // is what makes the whole shape look found rather than drawn.
+            var to = from + new Vector3(Mathf.Cos(angle), 0.0f, Mathf.Sin(angle)) * length;
+            FlatBar(tris, from, to, halfWidth);
+
+            int children = Random.value < 0.45f ? 2 : 1;
+            for (int c = 0; c < children; c++)
+            {
+                float turn = Random.Range(0.25f, 0.75f) * (Random.value < 0.5f ? -1.0f : 1.0f);
+
+                Branch(tris, to, angle + turn,
+                       length * Random.Range(0.45f, 0.72f),
+                       halfWidth * 0.62f,
+                       depth - 1);
+            }
+
+            // The trunk continues past the fork more often than not, which is what stops the
+            // shape becoming a tidy binary tree.
+            if (Random.value < 0.6f)
+            {
+                Branch(tris, to, angle + Random.Range(-0.18f, 0.18f),
+                       length * Random.Range(0.55f, 0.8f),
+                       halfWidth * 0.78f,
+                       depth - 1);
+            }
+        }
+
+        /// <summary>
+        /// Ground TIPPED UP out of a dish. Dante's earth, which is displaced rather than removed.
+        ///
+        /// ⚠️⚠️ IT CONSERVES MATERIAL AND `Wedges` DOES NOT, WHICH IS THE ENTIRE DIFFERENCE.
+        /// `Wedges` lays flat plates with gaps: broken ground seen from above. This one drops the
+        /// middle and stands the displaced slabs up around the rim, so what came out of the hole
+        /// is visibly what is now leaning over it. That is the only one of these five shapes with
+        /// real HEIGHT on purpose, because Dante's motif is that you can see where he has been.
+        ///
+        /// ⚠️ USE `Stand`, NEVER `Lay`. It has height and `Lay` leaves the Y scale at 1.0;
+        /// § 19.1 records the 2 m ball that shipped from exactly that.
+        ///
+        /// ⚠️ THE DISH IS SHALLOW AND THAT IS DELIBERATE. It is a decal, not collision: a hole a
+        /// player could stand in is a hole the bots will path into, and `MapGeometryCheck`
+        /// refuses geometry that floats or buries. The read comes from the tipped slabs.
+        /// </summary>
+        public static Mesh Upheaval(int slabs = 8, float depth = 0.10f, float rise = 0.34f,
+                                    int seed = 0)
+        {
+            slabs = Mathf.Clamp(slabs, 4, 16);
+
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var tris = new System.Collections.Generic.List<Vector3>(slabs * 24);
+
+            // The dish: a cone pressed into the road, wound so it is seen from above.
+            for (int i = 0; i < slabs * 2; i++)
+            {
+                float a0 = i / (float)(slabs * 2) * Mathf.PI * 2.0f;
+                float a1 = (i + 1) / (float)(slabs * 2) * Mathf.PI * 2.0f;
+
+                tris.Add(new Vector3(0.0f, -depth, 0.0f));
+                tris.Add(Ring(a0, 0.62f, 0.0f));
+                tris.Add(Ring(a1, 0.62f, 0.0f));
+            }
+
+            // ⚠️⚠️ THE SLABS ARE PLACED BY WALKING A VARYING GAP, NOT BY DIVIDING THE CIRCLE, AND
+            // THAT IS THE FIX FOR THE BLACK FLOWER. `docs/TODO.md` § 19.2d says it about `Wedges`
+            // and it happened here too (`ability_lava_decal_v21.png`): *"nine plates of identical
+            // width at identical spacing read as a black FLOWER, which is a manufactured object
+            // and the one thing broken ground must never look like."* Jittering an even step by
+            // 18 per cent is still an even step; walking a gap drawn from 0.5x to 1.8x means two
+            // slabs can genuinely touch and the next gap can be twice as wide as either.
+            //
+            // ⚠️ AND THE RING IS LEFT OPEN. The walk is scaled to cover about three quarters of
+            // the circle, so there is a side the ground did NOT come up on. A stomp is a shove in
+            // a direction; a complete ring is a manufactured object again, one ring further out.
+            var gaps = new float[slabs];
+            float total = 0.0f;
+            for (int g = 0; g < slabs; g++)
+            {
+                gaps[g] = Random.Range(0.5f, 1.8f);
+                total += gaps[g];
+            }
+
+            float span = Mathf.PI * 2.0f * 0.76f;
+            float at = Random.Range(0.0f, Mathf.PI * 2.0f);
+
+            for (int s = 0; s < slabs; s++)
+            {
+                float step = span * (gaps[s] / total);
+                float a = at + step * 0.5f;
+                at += step;
+
+                // ⚠️ WIDTH IS DRAWN INDEPENDENTLY OF THE GAP, so a wide slab can sit in a narrow
+                // space and overlap its neighbour. Tying the two together is what makes a ring of
+                // plates look laid out rather than broken.
+                float half = step * Random.Range(0.30f, 0.62f);
+                float lean = Random.Range(0.35f, 1.0f);
+
+                // Each slab hinges on the rim and leans OUTWARD, so it is unmistakably the
+                // material that used to be in the middle.
+                Vector3 hingeL = Ring(a - half, 0.62f, 0.0f);
+                Vector3 hingeR = Ring(a + half, 0.62f, 0.0f);
+                Vector3 tipL = Ring(a - half * 0.7f, 0.62f + 0.34f * lean, rise * lean);
+                Vector3 tipR = Ring(a + half * 0.7f, 0.62f + 0.34f * lean, rise * lean);
+
+                tris.Add(hingeL); tris.Add(hingeR); tris.Add(tipR);
+                tris.Add(hingeL); tris.Add(tipR); tris.Add(tipL);
+            }
+
+            Random.state = state;
+
+            return FacetedOriented(tris, "VfxUpheaval", new Vector3(0.0f, -10.0f, 0.0f));
+        }
+
+        /// <summary>
+        /// A field of SEPARATE burning pieces with an advancing edge. Sean's fire.
+        ///
+        /// ⚠️⚠️ IT IS NOT A SHAPE WITH AN OUTLINE, WHICH IS WHY IT IS NOT `Splat`. `Splat` is one
+        /// irregular blob: a thing that landed. Fire is not a thing that landed, it is a set of
+        /// places that are burning, and the gaps between them are what say it is spreading. The
+        /// pieces are laid on rings of increasing radius with FALLING density, so the middle
+        /// reads as consumed and the edge as the front.
+        ///
+        /// ⚠️ EACH PIECE IS A QUADRILATERAL WITH FOUR INDEPENDENT CORNERS, not a scaled square.
+        /// Identical pieces at different sizes read as a texture; corners that disagree read as
+        /// char. That is the same argument `Wedges` lost the first time (§ 19.2d, *"nine plates
+        /// of identical width at identical spacing read as a black FLOWER"*).
+        /// </summary>
+        public static Mesh Cinder(int rings = 4, int perRing = 9, float bite = 0.42f, int seed = 0)
+        {
+            rings = Mathf.Clamp(rings, 2, 8);
+            perRing = Mathf.Clamp(perRing, 4, 20);
+
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var tris = new System.Collections.Generic.List<Vector3>(rings * perRing * 6);
+
+            for (int r = 0; r < rings; r++)
+            {
+                float t = (r + 1) / (float)rings;
+                float radius = Mathf.Lerp(0.18f, 1.0f, t);
+
+                // ⚠️ DENSITY FALLS OUTWARD, so the front is sparse. A uniform field is a
+                // texture; a thinning one is a thing moving.
+                int count = Mathf.Max(3, Mathf.RoundToInt(perRing * (1.25f - t * 0.75f)));
+
+                for (int i = 0; i < count; i++)
+                {
+                    float a = i / (float)count * Mathf.PI * 2.0f
+                              + Random.Range(-0.3f, 0.3f) + r * 0.4f;
+
+                    float rr = radius * Random.Range(0.86f, 1.06f);
+                    var at = new Vector3(Mathf.Cos(a) * rr, 0.0f, Mathf.Sin(a) * rr);
+
+                    float size = Mathf.Lerp(0.16f, 0.06f, t) * Random.Range(0.7f, 1.35f);
+
+                    Vector3 c0 = at + Jitter(size, bite);
+                    Vector3 c1 = at + Jitter(size, bite);
+                    Vector3 c2 = at + Jitter(size, bite);
+                    Vector3 c3 = at + Jitter(size, bite);
+
+                    tris.Add(c0); tris.Add(c1); tris.Add(c2);
+                    tris.Add(c0); tris.Add(c2); tris.Add(c3);
+                }
+            }
+
+            Random.state = state;
+
+            return FacetedOriented(tris, "VfxCinder", new Vector3(0.0f, -10.0f, 0.0f));
+        }
+
+        private static Vector3 Jitter(float size, float bite)
+        {
+            return new Vector3(Random.Range(-size, size) * (1.0f + bite),
+                               0.0f,
+                               Random.Range(-size, size) * (1.0f + bite));
+        }
+
+        /// <summary>
+        /// A WEB between terminals. Zack's current, which wants somewhere to go.
+        ///
+        /// ⚠️⚠️ IT IS THE ONLY SHAPE IN THIS FILE BUILT FROM POINTS THE CALLER SUPPLIES, and that
+        /// is the motif rather than a convenience. Every other effect in this game happens in
+        /// empty space; electricity is the one element whose fiction is that it CONNECTS things
+        /// that already exist. `HeroHazards.SpawnCircuitArcs` picks the ends off the live scene,
+        /// so standing next to the lata while Zack is charged looks different from standing in an
+        /// empty corner, which is the whole point.
+        ///
+        /// ⚠️ IT IS NOT `Bolt`, WHICH IS A TUBE FROM A TO B. A bolt is one jagged span with
+        /// volume, right for a strike out of the sky. This is flat, thin and BRANCHED: several
+        /// paths leaving one terminal and only some of them arriving, which is what a discharge
+        /// looking for a route actually does.
+        ///
+        /// ⚠️ LOCAL SPACE IS THE UNIT CIRCLE, like every other builder here, so the caller scales
+        /// it. Ends are given as directions and reaches rather than as world points for exactly
+        /// that reason.
+        /// </summary>
+        public static Mesh Filament(Vector3[] ends, int forks = 2, float bar = 0.035f, int seed = 0)
+        {
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var tris = new System.Collections.Generic.List<Vector3>(256);
+
+            if (ends != null)
+            {
+                foreach (var end in ends)
+                {
+                    // The main run, in three kinked segments, so it is a path rather than a line.
+                    Vector3 previous = Vector3.zero;
+                    for (int seg = 1; seg <= 3; seg++)
+                    {
+                        float t = seg / 3.0f;
+                        Vector3 on = Vector3.Lerp(Vector3.zero, end, t);
+
+                        var side = new Vector3(-end.z, 0.0f, end.x).normalized;
+                        on += side * Random.Range(-0.09f, 0.09f) * (1.0f - Mathf.Abs(t - 0.5f) * 2.0f);
+
+                        FlatBar(tris, previous, on, bar * 0.5f);
+
+                        // ⚠️ THE FORKS DIE IN MID-AIR, WHICH IS WHAT SAYS "LOOKING FOR A ROUTE".
+                        // A discharge that only ever arrives is a wire; the failed branches are
+                        // the difference between a circuit diagram and a live arc.
+                        for (int f = 0; f < forks && seg < 3; f++)
+                        {
+                            if (Random.value > 0.55f) continue;
+
+                            Vector3 stray = on
+                                + side * Random.Range(-0.30f, 0.30f)
+                                + end.normalized * Random.Range(0.05f, 0.22f);
+
+                            FlatBar(tris, on, stray, bar * 0.28f);
+                        }
+
+                        previous = on;
+                    }
+                }
+            }
+
+            Random.state = state;
+
+            return FacetedOriented(tris, "VfxFilament", new Vector3(0.0f, -10.0f, 0.0f));
+        }
+
+        /// <summary>
+        /// A rim around NOTHING. Nemu's spirit, whose motif is absence.
+        ///
+        /// ⚠️⚠️ EVERY OTHER EFFECT IN THIS GAME ADDS SOMETHING TO THE FRAME AND THIS ONE HAS TO
+        /// LOOK LIKE IT REMOVED SOMETHING. `docs/TODO.md` § 27.5: *"a screenshot of her ultimate
+        /// has fewer things in it than the same frame without it"*. The way to draw a hole is to
+        /// draw only its EDGE and leave the middle empty, which is the same argument
+        /// `VfxShapes.Corona` makes about an eclipse and is why those two are the only shapes
+        /// here with nothing in the centre.
+        ///
+        /// ⚠️ THE INNER EDGE IS TORN AND THE OUTER ONE IS CLEAN. A clean annulus is a washer.
+        /// What makes this read as something missing is that the boundary facing the hole is
+        /// ragged, as though the surface gave way, while the far side is still ordinary road.
+        ///
+        /// ⚠️ IT IS NOT `Collar`, WHICH IS A REAL ANNULUS WITH WALLS AND IS THE BOUNDARY BUILDER
+        /// EVERY OTHER RIM IN THE GAME USES. A `Collar` says "here is an edge"; this says "here
+        /// is where something stopped existing", and the two must not be the same object.
+        /// </summary>
+        public static Mesh Hollow(int segments = 40, float innerRatio = 0.66f, float tear = 0.16f,
+                                  int seed = 0)
+        {
+            segments = Mathf.Clamp(segments, 12, 96);
+            innerRatio = Mathf.Clamp(innerRatio, 0.2f, 0.92f);
+
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var tris = new System.Collections.Generic.List<Vector3>(segments * 6);
+
+            var inner = new float[segments + 1];
+            for (int i = 0; i <= segments; i++)
+                inner[i] = innerRatio * (1.0f + Random.Range(-tear, tear));
+
+            // Close the ring exactly, or the first and last segments leave a wedge-shaped scar
+            // that reads as a modelling error rather than as a tear.
+            inner[segments] = inner[0];
+
+            for (int i = 0; i < segments; i++)
+            {
+                float a0 = i / (float)segments * Mathf.PI * 2.0f;
+                float a1 = (i + 1) / (float)segments * Mathf.PI * 2.0f;
+
+                Vector3 i0 = Ring(a0, inner[i], 0.0f);
+                Vector3 i1 = Ring(a1, inner[i + 1], 0.0f);
+                Vector3 o0 = Ring(a0, 1.0f, 0.0f);
+                Vector3 o1 = Ring(a1, 1.0f, 0.0f);
+
+                tris.Add(i0); tris.Add(o0); tris.Add(o1);
+                tris.Add(i0); tris.Add(o1); tris.Add(i1);
+            }
+
+            Random.state = state;
+
+            return FacetedOriented(tris, "VfxHollow", new Vector3(0.0f, -10.0f, 0.0f));
+        }
+
+        /// <summary>
+        /// The same mesh, drawable from BOTH sides.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE AN UPRIGHT SHAPE IS CULLED FROM HALF THE ARENA AND THAT LOOKS
+        /// EXACTLY LIKE A SPAWN FAILURE. `Fan`'s note is the standing record of this class:
+        /// *"the object exists, the renderer is enabled, the material is correct and the
+        /// hierarchy looks right in every inspector; the shape is simply not in the frame"*, and
+        /// it cost a whole capture pass the first time. `ability_blink_rift_eye_v19.png` is the
+        /// second time: the tear was there, its light was spilling on the road, and the geometry
+        /// was turned a quarter turn away from the only camera in the shot.
+        ///
+        /// ⚠️ GROUND ART DOES NOT NEED THIS AND MUST NOT GET IT. A decal is seen from above, from
+        /// above only, and `FacetedOriented` already turns every triangle the right way for that.
+        /// Doubling those would double the triangle count of the busiest meshes in the game to
+        /// draw faces under the road.
+        ///
+        /// ⚠️⚠️ WHAT NEEDS IT IS ANYTHING THAT STANDS UP AND CAN BE WALKED AROUND, which in a
+        /// four-player arena is all of them: the tear a blink leaves, the characters standing on
+        /// a ward, the glyphs falling onto an arrival. There is no facing that is right for four
+        /// players at once, so the honest answer is that a rip in the world is a rip from behind
+        /// too.
+        /// </summary>
+        public static Mesh TwoSided(Mesh mesh)
+        {
+            if (mesh == null) return null;
+
+            var verts = new System.Collections.Generic.List<Vector3>();
+            mesh.GetVertices(verts);
+
+            var tris = mesh.triangles;
+            int count = tris.Length;
+
+            var doubled = new int[count * 2];
+            for (int i = 0; i < count; i += 3)
+            {
+                doubled[i] = tris[i];
+                doubled[i + 1] = tris[i + 1];
+                doubled[i + 2] = tris[i + 2];
+
+                // The back face is the same triangle with two indices swapped, which is the one
+                // operation that reverses winding without moving a vertex.
+                doubled[count + i] = tris[i];
+                doubled[count + i + 1] = tris[i + 2];
+                doubled[count + i + 2] = tris[i + 1];
+            }
+
+            mesh.SetTriangles(doubled, 0);
+
+            // ⚠️ NORMALS ARE RECALCULATED RATHER THAN KEPT. A vertex shared by a front and a back
+            // triangle averages to something facing neither way, so this deliberately lets Unity
+            // produce the average: these are ghosted, emissive shapes whose look comes from
+            // `VfxMaterial.Ghost` rather than from being shaded, and a flat unlit read is the
+            // house style for them anyway.
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            return mesh;
         }
 
         private static Mesh Faceted(System.Collections.Generic.List<Vector3> tris, string name)

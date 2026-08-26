@@ -146,7 +146,11 @@ namespace TumbangPreso
             if (IsProtected)
             {
                 PulseProtection();
-                GameServices.Audio?.PlayAtVaried("lata_seal", transform.position,
+                // ⚠️⚠️ `NetCue`: THIS IS INSIDE `HostKnockDown` AND WAS HOST-ONLY. The sound of
+                // the OBJECTIVE going over is the single most important event in a round, and
+                // three of the four players could not hear it. See `Carrier.HostThrowAt` for the
+                // audit that found both and why the authority gate itself is not the problem.
+                NetCue.PlayVaried("lata_seal", transform.position,
                                                  1.05f, 1.12f, 0.55f);
                 return;
             }

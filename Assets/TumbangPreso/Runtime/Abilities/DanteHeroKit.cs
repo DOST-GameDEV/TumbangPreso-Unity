@@ -56,8 +56,8 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 // Play heavy titan grunt and bass thud
-                GameServices.Audio?.PlayAt("hero_dante_grunt", ctx.Position);
-                GameServices.Audio?.PlayAt("sfx_explosion_heavy", ctx.Position);
+                NetCue.Play("hero_dante_grunt", ctx.Position);
+                NetCue.Play("sfx_explosion_heavy", ctx.Position);
 
                 // Squash and stretch ground thump
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
@@ -137,7 +137,7 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("guard_block", ctx.Position);
+                NetCue.Play("guard_block", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "CARAPACE!", UiTheme.HeroEarthBright, 1.25f);
 
                 // Clear any existing stuns immediately
@@ -252,8 +252,8 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("hero_dante_ult", ctx.Position);
-                GameServices.Audio?.PlayAt("sfx_explosion_heavy", ctx.Position);
+                NetCue.Play("hero_dante_ult", ctx.Position);
+                NetCue.Play("sfx_explosion_heavy", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "EARTHQUAKE!", UiTheme.HeroEarthBright, 1.5f);
                 HeroHazards.SpawnVolcanicRockDebris(ctx.Position, 14);
                 Visual.AbilityVfx.SpawnMagmaEruption(ctx.Position + ctx.Forward * 2.5f, 4.5f);

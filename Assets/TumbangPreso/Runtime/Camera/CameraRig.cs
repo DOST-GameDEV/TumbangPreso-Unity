@@ -202,6 +202,12 @@ namespace TumbangPreso.CameraSystem
         private Vector3 _possessFromPos;
         private Quaternion _possessFromRot;
 
+        /// <summary>The trip BACK out of Kuro. 1 means finished, so a rig that never possessed
+        /// anything is already done and costs one comparison a frame.</summary>
+        private float _unpossessBlend = 1.0f;
+        private Vector3 _unpossessFromPos;
+        private Quaternion _unpossessFromRot;
+
         public CameraMode Mode => _mode;
         public AimSource Aim => _aimSource;
         public bool IsLocalFpp => _active && _mode == CameraMode.Fpp;
@@ -468,6 +474,20 @@ namespace TumbangPreso.CameraSystem
             // possession state and the rig only reads it, so the frame the flag flips is the
             // only place the rig can learn where the eye was standing when the body was left.
             // Sampling it later would blend from a pose that has already been overwritten.
+            // ⚠️⚠️ LEAVING A POSSESSION WAS A HARD CUT AND ENTERING ONE WAS NOT, WHICH IS HALF A
+            // FEATURE. `PossessBlendSeconds` carries the eye from Nemu's head to the mount behind
+            // Kuro over 0.28 s, and that is the whole reason the possession reads as one; the
+            // return simply stopped drawing this view and the next frame was rendered from her
+            // skull. 🧑 2026-08-26: *"make sure i switch to tpp view when i go to the body of the
+            // pet of nemu and control it, when it ends too"*. Same blend, same length, other
+            // direction, so the trip out and the trip back are one gesture.
+            if (!isPossessingCompanion && _wasPossessing)
+            {
+                _unpossessBlend = 0.0f;
+                _unpossessFromPos = transform.position;
+                _unpossessFromRot = transform.rotation;
+            }
+
             if (isPossessingCompanion && !_wasPossessing)
             {
                 _possessBlend = 0.0f;
@@ -489,6 +509,27 @@ namespace TumbangPreso.CameraSystem
 
             if (_mode == CameraMode.Fpp) ApplyFpp();
             else ApplyTpp();
+
+            // ⚠️⚠️ THE RETURN IS TRAVELLED, LIKE THE TRIP OUT. This runs AFTER the normal view has
+            // been applied on purpose: `ApplyFpp` has already written where the eye belongs now,
+            // so all this does is drag it back toward where it was standing in Kuro and release
+            // it over the same 0.28 s. Blending before the apply would have been a lerp toward a
+            // target a frame out of date, which shows up as the last few centimetres snapping.
+            //
+            // ⚠️ IT ALSO COVERS THE TELEPORT. Pressing again while possessing moves her BODY to
+            // the pet (`GhostPetCompanion.EndPossession`), so the eye's destination has jumped
+            // several metres in the same frame the possession ended. Cutting there is the worst
+            // frame in the ability; this is the one place the camera can absorb it.
+            if (_unpossessBlend < 1.0f)
+            {
+                _unpossessBlend = Mathf.Clamp01(_unpossessBlend + Time.deltaTime / PossessBlendSeconds);
+
+                float e = _unpossessBlend * _unpossessBlend * (3.0f - 2.0f * _unpossessBlend);
+
+                transform.SetPositionAndRotation(
+                    Vector3.Lerp(_unpossessFromPos, transform.position, e),
+                    Quaternion.Slerp(_unpossessFromRot, transform.rotation, e));
+            }
 
             StepShake();
             StepViewmodelKick();

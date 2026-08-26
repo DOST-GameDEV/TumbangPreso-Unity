@@ -56,8 +56,19 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("hero_cheska_grunt", ctx.Position);
-                GameServices.Audio?.PlayAt("sfx_ice_freeze", ctx.Position);
+                // ⚠️⚠️ `NetCue`, NOT `GameServices.Audio`, ACROSS ALL FIVE REMAINING KITS. Every
+                // hero cast cue in the game is a WORLD event: a grunt, an element, an impact at a
+                // point on the court that the other three players are meant to hear and locate.
+                // `tools/audit_audio_reach.py` and `docs/TODO.md` § 25 have the audit; `NetCue`
+                // is a no-op with no transport running, so nothing about the offline game, the
+                // bot probes or the editor checks changes by this.
+                //
+                // ⚠️ THE ABILITY LAYER ITSELF IS STILL NOT REPLICATED (§ 25.1), so today this
+                // buys nothing on its own: the cast does not reach another peer to make a sound
+                // on. It is done now because the alternative is doing it later, from memory,
+                // across five files, on the day the ability RPC lands.
+                NetCue.Play("hero_cheska_grunt", ctx.Position);
+                NetCue.Play("sfx_ice_freeze", ctx.Position);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.DashStretch(ctx.Forward, 0.25f);
@@ -103,7 +114,7 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("sfx_ice_freeze", ctx.Position);
+                NetCue.Play("sfx_ice_freeze", ctx.Position);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.Squash(0.2f);
@@ -147,14 +158,14 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("hero_cheska_ult", ctx.Position);
+                NetCue.Play("hero_cheska_ult", ctx.Position);
 
                 // ⚠️ NOVA, NOT FREEZE, AND THE DIFFERENCE IS THE DIRECTION. `sfx_ice_freeze` is
                 // ice FORMING, a rising chime, and it stays on Permafrost Sheet and the
                 // Barricade where something is being built. This is ice BREAKING outward, so
                 // `sfx_frost_nova` descends and leads with shards. Cheska's three abilities
                 // fired one sound between them and the ultimate sounded like the skill.
-                GameServices.Audio?.PlayAt("sfx_frost_nova", ctx.Position);
+                NetCue.Play("sfx_frost_nova", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "BLIZZARD NOVA!", UiTheme.HeroIceBright, 1.5f);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();

@@ -929,6 +929,23 @@ namespace TumbangPreso
             _stunMashPresses++;
             _stunLeft = after;
 
+            // ⚠️⚠️ IT FIRES ON THE PRESS THAT REACHES THE FLOOR, NOT ON EVERY PRESS. `docs/TODO.md`
+            // § 23 ended the mash silently, so the only confirmation that the last press was the
+            // one that worked was a card the player is not looking at. One cue per BREAK is the
+            // sparse answer; one per press would be a cue at up to 10 Hz, which is the buzzsaw
+            // case `AudioCues.HeadroomDb` exists to keep out.
+            //
+            // ⚠️ AND `MinStunDown` IS THE TEST, NOT ZERO. The floor is deliberately left to run
+            // down (see the note below), so the moment the fight is WON is the moment the meter
+            // can buy nothing more, which is exactly when `CanMashOutOfStun` goes false and the
+            // card stops asking. Waiting for the stun to expire would put the sound on the clock
+            // rather than on the player.
+            if (after <= Balance.MinStunDown && before > Balance.MinStunDown)
+            {
+                GameServices.Audio?.PlayAtVaried("sfx_stun_break", transform.position,
+                                                 0.94f, 1.06f, 1.0f);
+            }
+
             // ⚠️⚠️ THE FLOOR IS LEFT TO RUN DOWN AND IS NOT CLEARED HERE. Releasing the body the
             // moment the meter fills would put a perfectly answered 3.0 s stun at **0.6 s**, six
             // presses at the 10 Hz cap and nothing else, which is not a control ability any more

@@ -51,8 +51,22 @@ namespace TumbangPreso.EditorTools
         /// (`LrtTrainFlyby`, § THE PASS). Without it here, moving `sfx_lrt_pass` onto that path
         /// would make this check report the file as one nothing plays, which is the exact
         /// direction-3 hole the note above says it exists to close.
+        /// ⚠️⚠️ `NetCue` IS A SECOND PLAY SURFACE AND THIS CHECK WAS BLIND TO IT THE MOMENT IT
+        /// LANDED. The note above predicted exactly this (*"a play method added later and not
+        /// added here is a call site this check cannot see"*) and it came true within the hour:
+        /// `TumbangPreso.NetCue` was added on 2026-08-26 so a world sound reaches every peer
+        /// (`docs/TODO.md` § 25), five Phaister call sites moved onto it, and the first run of
+        /// this check afterwards reported **"cues fired in code that nothing declares: none"**
+        /// while being unable to see any of them. A typo behind `NetCue` would have been the
+        /// `sfx_ghost_appear` fault again, with the check green, which is the whole reason
+        /// direction 3 exists.
+        ///
+        /// ⚠️ ANCHORED ON `Audio` OR ON `NetCue`, NOT ON A BARE `Play`. Dropping the anchor would
+        /// match `Music.Play("match")`, `EmotePlayer.Play(id)` and every other `Play` in the tree,
+        /// and the note above records the music beds being reported as silent sound effects the
+        /// first time that was tried.
         private const string CallSitePattern =
-            @"Audio\??\.(?:PlayAtVaried|PlayAt2D|PlayAt|PlayUi|TryGetClip|Play)\s*\(\s*""(?<cue>[a-zA-Z0-9_]+)""";
+            @"(?:Audio\??\.|NetCue\.)(?:PlayAtVaried|PlayAt2D|PlayAt|PlayUi|PlayVaried|TryGetClip|Play)\s*\(\s*""(?<cue>[a-zA-Z0-9_]+)""";
         private const string MusicDir = "Assets/TumbangPreso/Art/audio/music";
         private const string ResultPath = "Logs/audio-cue-check.txt";
 

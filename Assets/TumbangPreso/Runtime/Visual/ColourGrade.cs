@@ -63,6 +63,33 @@ namespace TumbangPreso.Visual
             }
         }
 
+        // ------------------------------------------------------------------ the event grade
+        //
+        // ⚠️⚠️ IT MULTIPLIES THE MAP'S GRADE RATHER THAN REPLACING IT, AND THAT IS THE WHOLE
+        // REASON IT IS A SECOND PAIR OF FIELDS INSTEAD OF A CALL TO `Set`. `AdoptFromScene`
+        // writes the numbers off the loaded map's `MapGrade`, and Eskinita's saturation of 1.18
+        // is a real part of how that street looks. A `Visual.SkyEvent` that called `Set` to
+        // desaturate for five seconds would have to remember and restore five values, and would
+        // silently overwrite a map that had been regraded in the meantime. A multiplier composes
+        // with whatever the map says and returns to a clean 1.0.
+        //
+        // ⚠️ AND IT IS DRIVEN FROM OUTSIDE RATHER THAN TICKED HERE. The event owns the curve; it
+        // already has to blend ambient, fog, the sun and the skybox on the same clock, and a
+        // second opinion about how far through it is would show up as the frame and the world
+        // disagreeing for a frame or two at each end.
+
+        private float _eventBrightness = 1.0f;
+        private float _eventSaturation = 1.0f;
+
+        /// <summary>
+        /// A whole-frame multiplier for the length of one <see cref="SkyEvent"/>. 1, 1 is off.
+        /// </summary>
+        public void SetEventGrade(float brightness, float saturation)
+        {
+            _eventBrightness = Mathf.Clamp(brightness, 0.15f, 1.0f);
+            _eventSaturation = Mathf.Clamp(saturation, 0.0f, 1.0f);
+        }
+
         public void Set(float brightness, float contrast, float saturation,
                         float exposure, float white)
         {
@@ -124,9 +151,9 @@ namespace TumbangPreso.Visual
         }
 
         private bool IsIdentity =>
-            Mathf.Approximately(_brightness, 1.0f)
+            Mathf.Approximately(_brightness * _eventBrightness, 1.0f)
             && Mathf.Approximately(_contrast, 1.0f)
-            && Mathf.Approximately(_saturation, 1.0f)
+            && Mathf.Approximately(_saturation * _eventSaturation, 1.0f)
             && _exposure <= 0.0f
             && CurrentChromatic <= 0.0f;
 
@@ -159,9 +186,9 @@ namespace TumbangPreso.Visual
                 _material = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
             }
 
-            _material.SetFloat(BrightnessId, _brightness);
+            _material.SetFloat(BrightnessId, _brightness * _eventBrightness);
             _material.SetFloat(ContrastId, _contrast);
-            _material.SetFloat(SaturationId, _saturation);
+            _material.SetFloat(SaturationId, _saturation * _eventSaturation);
             _material.SetFloat(ExposureId, _exposure);
             _material.SetFloat(WhiteId, _white);
             _material.SetFloat(ChromaticId, CurrentChromatic);

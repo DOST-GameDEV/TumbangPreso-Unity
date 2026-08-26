@@ -112,13 +112,28 @@ namespace TumbangPreso.CameraSystem
         /// <summary>
         /// Toe-to-heel length the held slipper presents, in metres, so it reads at arm's length.
         ///
-        /// ⚠️ MEASURED, NOT TYPED, AND THE OLD VALUE WAS 0.171 m. The node is authored at mesh
-        /// scale and then inherits TWO nested shrinks — the arms' own 0.72 and the carry pose's
-        /// 0.55 — so a 0.432 m mesh arrived on screen at 0.396 of its size. It was reported as
-        /// "it doesnt get seen in first person" rather than as a size bug, because nothing was
+        /// ⚠️ MEASURED, NOT TYPED, AND THE ORIGINAL VALUE WAS 0.171 m. The node is authored at
+        /// mesh scale and then inherits TWO nested shrinks, the arms' own 0.72 and the carry
+        /// pose's 0.55, so a 0.432 m mesh arrived on screen at 0.396 of its size. It was reported
+        /// as "it doesnt get seen in first person" rather than as a size bug, because nothing was
         /// switched off: it was simply too small to notice at the fingertip.
+        ///
+        /// ⚠️⚠️ 0.46 m, UP FROM 0.34, ON A SECOND REPORT OF THE SAME THING. 🧑 2026-08-26, after
+        /// the first correction had shipped and been played: *"pls try to make slipper look
+        /// bigger in fpp too bcz it looks so small"*. The first pass fixed the ARITHMETIC (a
+        /// number that had been silently multiplied down twice) and left the presented size at
+        /// roughly life size, which is the trap: **a first-person prop at its true size reads as
+        /// small**, because it sits at arm's length under a 70 degree field of view while the
+        /// player's attention is at the centre of the screen. Every shipped shooter oversizes the
+        /// thing in the hand for exactly this reason.
+        ///
+        /// ⚠️ AND IT IS THE PRESENTED LENGTH, NOT A SCALE MULTIPLIER, which is what makes it safe
+        /// to raise. `FitHeldSlipper` solves each skin's own mesh to this number, so the IKE, the
+        /// Spartan and every future replacement present identically rather than each inheriting
+        /// its author's units. Nothing about the WORLD slipper moves: this is the viewmodel copy
+        /// only, and third person still shows the real object at its real size.
         /// </summary>
-        public const float SlipperLength = 0.34f;
+        public const float SlipperLength = 0.46f;
 
         private const string AccessoryPrefix = "~HeroAccessory_";
 

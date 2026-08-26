@@ -43,10 +43,16 @@ namespace TumbangPreso.Abilities
                 //
                 // ⚠️ A COOLDOWN AND NOT CHARGES: it moves and protects her own body and puts
                 // nothing on the floor. `HeroAbility.MaxCharges` carries the rule.
-                : base("nemu_skill1", "GHOST STEP",
-                       "You go part ghost: faster, and the taya cannot tag you. Picking up a tsinelas ends it early.",
+                // ⚠️ THE PET IS NAMED IN ALL THREE OF HER POWERS NOW. 🧑 2026-08-26: *"use her
+                // pet name in new skill name and skill descriptions"*, and it is the right call
+                // for the same reason her ultimate moved onto Kuro: the character IS the pair,
+                // and a kit that only mentions him in one of three tiles reads as one hero with
+                // an accessory. `docs/VISION.md` § 3 puts the whole teaching load on the name,
+                // the glyph and one sentence, so the name is where this has to land.
+                : base("nemu_skill1", "KURO'S SHADOW",
+                       "You step into Kuro's shadow: faster, and the taya cannot tag you. Picking up a tsinelas ends it early.",
                        36.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.NemuPhase,
-                       summary: "Faster, and untaggable. Picking up a tsinelas ends it.",
+                       summary: "Kuro's shadow: faster, untaggable until you grab one.",
                        castAction: "hero-nemu-ghoststep",
                        viewmodelAction: "ghost-step")
             {
@@ -54,8 +60,8 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("hero_nemu_grunt", ctx.Position);
-                GameServices.Audio?.PlayAt("sfx_ghost_teleport", ctx.Position);
+                NetCue.Play("hero_nemu_grunt", ctx.Position);
+                NetCue.Play("sfx_ghost_teleport", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "PHANTOM!", UiTheme.HeroSpiritBright, 1.25f);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
@@ -92,7 +98,7 @@ namespace TumbangPreso.Abilities
                 if (ctx.Motor.HoldingSlipper)
                 {
                     DurationRemaining = 0.0f;
-                    GameServices.Audio?.PlayAt("slipper_land", ctx.Position);
+                    NetCue.Play("slipper_land", ctx.Position);
                     ComicPopup.Spawn(ctx.Position, "PHASE BROKEN!", UiTheme.HeroSpiritBright, 1.0f);
                     return;
                 }
@@ -125,10 +131,10 @@ namespace TumbangPreso.Abilities
                 // trip home, and `HeroKit.Fire` deliberately does not gate a reactivation on
                 // readiness. A charge is spent on the way OUT only, so a player can never be
                 // stranded in a possession with no charge left to come back with.
-                : base("nemu_skill2", "ASTRAL PROJECTION",
-                       "Sends Kuro your spirit pet out ahead. Possess Kuro, then press again to teleport your body to Kuro.",
+                : base("nemu_skill2", "RIDE KURO",
+                       "Sends Kuro out ahead and rides along in his body. Press again and yours follows him.",
                        0.0f, 6.0f, TumbangPreso.UI.AbilityGlyph.NemuAstralPet,
-                       summary: "Possess Kuro your spirit pet. Press again to teleport to it.",
+                       summary: "Drive Kuro. Press again to follow him there.",
                        castAction: "hero-nemu-project",
                        viewmodelAction: "project-spirit",
                        charges: 2)
@@ -139,7 +145,7 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("sfx_ghost_teleport", ctx.Position);
+                NetCue.Play("sfx_ghost_teleport", ctx.Position);
                 ComicPopup.Boo(ctx.Position);
 
                 var visual = ctx.Motor.GetComponent<Visual.CharacterVisual>();
@@ -159,13 +165,13 @@ namespace TumbangPreso.Abilities
                 var visual = ctx.Motor.GetComponent<Visual.CharacterVisual>();
                 if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
                 {
-                    GameServices.Audio?.PlayAt("sfx_ghost_teleport", visual.transform.position);
+                    NetCue.Play("sfx_ghost_teleport", visual.transform.position);
                     visual.Companion.EndPossession(teleportNemu: true);
                 }
                 else if (_projectedGhost != null)
                 {
                     Vector3 destination = _projectedGhost.transform.position;
-                    GameServices.Audio?.PlayAt("sfx_ghost_teleport", destination);
+                    NetCue.Play("sfx_ghost_teleport", destination);
 
                     // Runtime movement goes through CharacterMotor so its controller and
                     // ground-settle state stay coherent. EditMode ability tests have no live
@@ -180,13 +186,46 @@ namespace TumbangPreso.Abilities
             }
         }
 
+        /// <summary>
+        /// Ultimate: KURO UNBOUND. The pet stops being a pet.
+        ///
+        /// ⚠️⚠️ IT WAS A VORTEX THAT APPEARED OUT OF NOTHING AND 🧑 CALLED IT: *"her black hole
+        /// dont make sense lowkey? maybe just make nemu's pet the black whole and make it look
+        /// like it got bigger and is sucking everyone up, change the text that says its a
+        /// blackhole"*. He is right, and the reason is worth stating because it is a design rule
+        /// rather than a preference: **every other thing Nemu does is Kuro**, and her most
+        /// expensive power was the one that ignored him. A hole in the road three metres in front
+        /// of a girl with a spirit pet is a physics effect wearing her colour.
+        ///
+        /// ⚠️⚠️ SO THE ULTIMATE IS THE PET, AND THAT CHANGES WHERE IT LANDS. It opens **on Kuro**
+        /// whenever Kuro is out, which makes Astral Projection a setup for it: send the pet
+        /// somewhere, then unbind it there. With no pet out it falls back to a point in front of
+        /// her, so the power is never unusable, and the fallback is deliberately the WORSE
+        /// option: the reward for playing her kit as a kit is that she chooses the spot in
+        /// advance. 🧑, in the same session: *"for nemu i want her skills to involve her pet more
+        /// as well as her ult"*.
+        ///
+        /// ⚠️ THE WORD "VOID" IS GONE FROM EVERY STRING A PLAYER READS. The name, the tactical
+        /// sentence and the select-screen summary all say what it now is. `Id` is unchanged at
+        /// `nemu_ultimate`, because ids are keys: `HeroPresentationTests`, the HUD deck and the
+        /// ability tray all index off it, and renaming a key to match a label is how a rename
+        /// becomes six silent lookup failures.
+        ///
+        /// ⚠️ THE FOOTPRINT AND THE HAZARD ARE UNCHANGED AT 2.8 m. This is a presentation and
+        /// fiction change, not a balance one: the drag, the slow and the radius are what
+        /// `Hero_Strike_Balance.md` measured and what the bots path around. The note below on
+        /// 2.8 versus 3.2 is still the reason for the number.
+        /// </summary>
         private sealed class NightmareSeanceVoidAbility : HeroAbility
         {
+            /// <summary>Where it opens when Kuro is not out. Her own reach, as before.</summary>
+            private const float FallbackRange = 3.5f;
+
             public NightmareSeanceVoidAbility()
-                : base("nemu_ultimate", "SEANCE VOID",
-                       "Opens a vortex in front of you. It drags players and loose tsinelas in, and slows anyone caught inside.",
+                : base("nemu_ultimate", "KURO UNBOUND",
+                       "Unbinds Kuro. Your pet swells into a devouring maw where it stands and drags players and loose tsinelas into it.",
                        0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.NemuSeanceVoid,
-                       summary: "A vortex ahead. Drags players and loose tsinelas into it.",
+                       summary: "Kuro swells and devours where he stands.",
                        // ⚠️⚠️ 2.8 m, DOWN FROM 3.2, AND THE 0.4 m BUYS THE BOTS BACK.
                        // `AiTuning.HazardAvoidMaxRadius` is 3.0 and this was the ONE registered
                        // hazard in the game above it, so it was the one thing the bots were
@@ -207,11 +246,27 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("hero_nemu_ult", ctx.Position);
-                GameServices.Audio?.PlayAt("sfx_ghost_teleport", ctx.Position);
-                Vector3 voidPos = ctx.Position + ctx.Forward * 3.5f;
-                HeroHazards.SpawnSeanceVoid(voidPos, 2.8f, 5.0f, ctx.Motor.PlayerSlot);
-                Visual.AbilityVfx.SpawnVoidWisps(voidPos, 2.8f, 5.0f);
+                NetCue.Play("hero_nemu_ult", ctx.Position);
+
+                // ⚠️ ON KURO IF KURO IS OUT. `CharacterVisual.Companion` is the pet, and it is
+                // present whenever she has one whether or not it is currently possessed: an
+                // ultimate cast from inside a possession opens under the body the player is
+                // driving, which is the strongest version of this and needs no special case.
+                var companion = ctx.Motor.GetComponent<Visual.CharacterVisual>()?.Companion;
+
+                bool onPet = companion != null;
+                Vector3 at = onPet
+                    ? companion.transform.position
+                    : ctx.Position + ctx.Forward * FallbackRange;
+
+                // ⚠️⚠️ THE PET IS CONSUMED BY IT AND THAT IS THE ANIMATION. `Devour` swells Kuro
+                // into the maw over the wind-up and hides the pet inside it, so what the other
+                // three players see is the small thing that has been following her around all
+                // round becoming the thing that is eating them. A vortex spawned beside an
+                // unchanged pet would have been the old effect with a new name.
+                if (onPet) companion.Devour(5.0f);
+
+                HeroHazards.SpawnKuroUnbound(at, 2.8f, 5.0f, ctx.Motor.PlayerSlot, onPet);
             }
         }
     }

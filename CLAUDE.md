@@ -321,8 +321,12 @@ before believing anything worse**, and check it whether or not a Unity process i
 
 ⚠️ **Bash heredocs are unreliable here.** Write the script to a file and run it.
 
-⚠️ **`GameBuilder.BuildWindows` targets `C:\Users\matth\Desktop`.** Verify the .exe exists and
-report its path; do not claim a build that was never written.
+⚠️ **`GameBuilder.BuildWindows` targets THIS MACHINE'S DESKTOP, whatever it is.** It calls
+`Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)`, so it resolves per
+profile: `C:\Users\matth\Desktop` on one laptop and `C:\Users\Matthew\Desktop` on the other.
+⚠️⚠️ **THIS LINE USED TO NAME ONE OF THEM AS A CONSTANT**, which sent a session on the
+other machine to check a folder that does not exist and reads exactly like a build that never
+ran. Verify the .exe exists and report its path; do not claim a build that was never written.
 
 ⚠️⚠️ **A successful incremental Windows build is not the same as a clean rebuild.** Unity can
 rewrite `TumbangPreso_Data`, Burst output and DLLs while reusing the byte-identical launcher
