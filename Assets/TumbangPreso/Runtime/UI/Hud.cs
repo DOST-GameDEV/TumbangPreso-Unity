@@ -857,6 +857,7 @@ namespace TumbangPreso.UI
             UpdateFrost(dt);
             UpdateIndicators();
             UpdateGetUpPrompt();
+            UpdatePickupPrompt();
 
             var carrier = _local.GetComponent<Carrier>();
 
@@ -2451,7 +2452,86 @@ namespace TumbangPreso.UI
                   new Vector2(64, 64));
             _hitmarker.text = "💥";
             _hitmarker.enabled = false;
+
+            // ⚠️⚠️ A SILENT REFUSAL IS INDISTINGUISHABLE FROM A BROKEN KEY, AND THAT IS EXACTLY
+            // HOW IT WAS REPORTED. 🧑, off the 4.69 player: *"cant pick up any slipper"*, in
+            // every mode. `SoloPracticeTests` proves the grab connects at a seat's own feet, so
+            // what he met was `Balance.PickupRadius` refusing without saying so: the reach is
+            // measured from the SOLE OF THE FOOT and the camera is at 1.6 m looking down, so a
+            // tsinelas the player can see at the crosshair is metres outside it. The radius went
+            // up; this line is what makes the radius knowable at all.
+            //
+            // ⚠️ UNDER THE CROSSHAIR, NOT IN A CORNER. It answers a question about the thing the
+            // player is looking at, and `docs/VISION.md` § 3 keeps sentences out of the HUD: it
+            // is a key and two words.
+            _pickupPrompt = HudLabel(_root, "PickupPrompt", 26, UiTheme.Highlight,
+                                     TextAnchor.MiddleCenter, 5);
+            Place(_pickupPrompt.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0, -74),
+                  new Vector2(560, 40));
+            _pickupPrompt.enabled = false;
         }
+
+        private Text _pickupPrompt;
+        private string _pickupPromptShown = "";
+
+        /// <summary>
+        /// "There is a tsinelas in reach" and nothing else.
+        ///
+        /// ⚠️ IT ASKS `Slipper.CanBeGrabbedBy`, THE SAME FUNCTION THE GRAB ITSELF ASKS, so the
+        /// prompt cannot promise a pickup the carrier would then refuse. A prompt derived from
+        /// its own distance check is a second answer to one question, and this HUD has been
+        /// bitten by that before.
+        ///
+        /// ⚠️ AND IT COSTS A SCAN OVER FOUR OBJECTS, RATE-LIMITED. `FindObjectsByType` every
+        /// frame is the shape of the fault recorded in `CLAUDE.md` § 7.1, so the set is refreshed
+        /// on the same 0.20 s cadence the hazard sweep uses and only the distances are re-asked.
+        /// </summary>
+        private void UpdatePickupPrompt()
+        {
+            if (_pickupPrompt == null) return;
+
+            bool eligible = !_spectating && _local != null && !_local.IsDefender
+                            && !_local.HoldingSlipper && _local.CanAct();
+
+            if (!eligible)
+            {
+                if (_pickupPrompt.enabled) _pickupPrompt.enabled = false;
+                return;
+            }
+
+            if (Time.time >= _pickupScanAt)
+            {
+                _pickupScanAt = Time.time + 0.20f;
+                _pickupCandidates = FindObjectsByType<Slipper>(
+                    FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            }
+
+            bool inReach = false;
+
+            if (_pickupCandidates != null)
+            {
+                foreach (var s in _pickupCandidates)
+                {
+                    if (s == null || !s.CanBeGrabbedBy(_local)) continue;
+                    inReach = true;
+                    break;
+                }
+            }
+
+            if (_pickupPrompt.enabled != inReach) _pickupPrompt.enabled = inReach;
+            if (!inReach) return;
+
+            string text = "[" + KeyLabel("Grab") + "]  PICK UP";
+
+            if (text != _pickupPromptShown)
+            {
+                _pickupPromptShown = text;
+                _pickupPrompt.text = text;
+            }
+        }
+
+        private Slipper[] _pickupCandidates;
+        private float _pickupScanAt = -99.0f;
 
         public void PopHitmarker(Color color, string symbol = "💥")
         {

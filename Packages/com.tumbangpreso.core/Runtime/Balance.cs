@@ -238,7 +238,26 @@ namespace TumbangPreso.Core
         public const float ChargeFullTime = 2.5f;
         public const float ChargeMinPower = 0.35f;
         public const float ThrowLockTime = 1.25f;
-        public const float PickupRadius = 1.4f;
+        /// <summary>How close a body's FEET have to be to a resting tsinelas to pick it up.
+        ///
+        /// ⚠️⚠️ 1.75, UP FROM 1.40 ON 2026-08-26. 🧑, off the 4.69 player: *"cant pick up any
+        /// slipper"*, in every mode. The mechanism was not broken — `SoloPracticeTests` puts a
+        /// loose tsinelas at a seat's own feet and the grab connects — so what he was reporting
+        /// is REACH, and the geometry says he is right. This is a 3D distance measured from the
+        /// motor's transform, which sits at the SOLE OF THE FOOT, while the camera is at about
+        /// 1.6 m and pitched down. At 1.40 m a tsinelas that is legally grabbable sits near the
+        /// BOTTOM EDGE of the frame; anything the player can see at the crosshair is three or
+        /// four metres out and refuses silently.
+        ///
+        /// ⚠️ 1.75 IS BOUNDED BY THE HAZARD ARITHMETIC AND NOT BY FEEL. `docs/TODO.md` § 12.2
+        /// turns on this radius being SMALLER than the widest trip-hazard footprint of 2.60 m,
+        /// which is what makes a swallowed tsinelas unreachable and the ejector necessary. 1.75
+        /// keeps that true with 0.85 m to spare, so nothing in that entry changes.
+        ///
+        /// ⚠️ AND THE REAL FIX IS THE PROMPT, NOT THE NUMBER. `Hud.UpdatePickupPrompt` now says
+        /// when a tsinelas is in reach, because a silent refusal is indistinguishable from a
+        /// broken key and that is exactly how this was reported.</summary>
+        public const float PickupRadius = 1.75f;
         public const float MuzzleForward = 0.15f;
 
         public const float LaunchSpeed = 18.5f;
@@ -472,7 +491,19 @@ namespace TumbangPreso.Core
         /// ⚠ THE FLOOR IS NOT THE LEVER AND MUST NOT BECOME ONE. `MinTripDown` is pinned at
         /// 0.90 by the knockdown clip, as its own note explains, so the only honest way to
         /// shorten a fall is to buy the slack faster.</summary>
-        public const float MashRecoverPerPress = 0.35f;
+        /// ⚠️⚠️ 0.22, DOWN FROM 0.35 ON 2026-08-26, BECAUSE 0.35 MADE THE MASH A TAP. 🧑, off
+        /// the 4.69 player: *"mash is weird now, I js have to click it twice to get up im not fr
+        /// mashing"*. He was measuring correctly and the arithmetic agrees: at 0.35 the 2.15 s
+        /// slack was 6.1 presses, and two of them plus a second and a half of passive bleed had
+        /// him up. A six-press burst is short enough that the passive rate is doing most of the
+        /// work in any real fall, which is the same complaint as *"it automatically resolves"*
+        /// wearing different clothes.
+        ///
+        /// At 0.22 the slack is **9.8 presses**, which is 0.98 s of hammering at the 10 Hz cap
+        /// and 1.33 s on the floor in total. That is a burst you have to commit to, it is inside
+        /// the 1 to 2 s he asked a fall to last, and two taps now buy 20 per cent of the meter
+        /// rather than a third of it.
+        public const float MashRecoverPerPress = 0.22f;
 
         /// <summary>Shortest gap between two presses that both count.
         ///
@@ -536,7 +567,13 @@ namespace TumbangPreso.Core
         /// ⚠ IT APPLIES ONLY ABOVE `MinTripDown`. Below the floor nothing can be bought, the
         /// get-up clip is playing, and that stretch runs at real time so the animation and the
         /// clock agree.</summary>
-        public const float TripPassiveDecayRate = 0.75f;
+        /// ⚠️ 0.60, DOWN FROM 0.75 ON 2026-08-26, AND IT IS THE SMALLER HALF OF THE SAME FIX.
+        /// `MashRecoverPerPress` is the half that matters; this is what stops "press twice and
+        /// wait" from being a strategy. At 0.75 an ignored fall was 3.22 s, so two taps and a
+        /// pause got you up in about two and a half seconds, which is most of the way to the
+        /// answered time. At 0.60 an ignored fall is **3.93 s** against **1.33 s** answered:
+        /// worth **3.0x**, and the lazy middle is no longer close to the fast path.
+        public const float TripPassiveDecayRate = 0.60f;
 
         /// <summary>Seconds after a trip ends during which no hazard may start another one.
         ///

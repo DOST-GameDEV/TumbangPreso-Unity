@@ -117,6 +117,8 @@ namespace TumbangPreso
                     if (seat != null && seat != _local) { _dummy = seat; break; }
             }
 
+            HideTheCast();
+
             _hud = GuidedTrainingHud.Build(transform);
             _marker = TrainingMarker.Build();
 
@@ -351,6 +353,81 @@ namespace TumbangPreso
             EnterLesson((Lesson)((int)_lesson + 1));
         }
 
+        /// <summary>
+        /// The verb this lesson is about. Everything up to and including it is unlocked;
+        /// everything after it is dead until the route gets there.
+        ///
+        /// ⚠️⚠️ 🧑, 2026-08-26: *"i dont want there to be bots and other shit like skills or
+        /// throwing until the tutorial wants u to actually do it bcz its confusing that i can do
+        /// a lot of shit, theres a tendency to not follow and focus on tutorial"*. He is
+        /// describing a real failure of the route: every verb in the game was live on lesson
+        /// one, so the tutorial was a suggestion laid over a sandbox rather than a sequence.
+        ///
+        /// ⚠️ CUMULATIVE, NOT EXCLUSIVE, AND THAT IS NOT A SOFTENING OF IT. Several lessons NEED
+        /// an earlier verb to be performed at all: the retrieval run wants sprint and jump, the
+        /// shove wants you to walk into somebody, and the trip lesson is answered with the jump
+        /// key. Locking to exactly one verb would make half the route unplayable. What is
+        /// removed is the ability to run AHEAD of the lesson, which is the thing he described.
+        ///
+        /// ⚠️ `Verb.None` MEANS THE LESSON TEACHES NO BUTTON. Look and Move are the mouse and
+        /// the movement axis, neither of which is a `Verb`, and both are always available.
+        /// </summary>
+        private static Verb? VerbTaughtBy(Lesson lesson)
+        {
+            switch (lesson)
+            {
+                case Lesson.Look:           return null;
+                case Lesson.Move:           return null;
+                case Lesson.Sprint:         return Verb.Sprint;
+                case Lesson.Jump:           return Verb.Jump;
+                case Lesson.Throw:          return Verb.SpecialAbility;
+                case Lesson.Retrieve:       return Verb.Grab;
+                case Lesson.Pektus:         return Verb.SpecialAbility;
+                case Lesson.Shove:          return Verb.Grab;
+                case Lesson.AbilityInfo:    return null;
+                case Lesson.Skill1:         return Verb.Skill1;
+                case Lesson.Skill2:         return Verb.Skill2;
+                case Lesson.Ultimate:       return Verb.Ultimate;
+                case Lesson.DefenderReset:  return Verb.Grab;
+                case Lesson.Punch:          return Verb.SpecialAbility;
+                case Lesson.Lunge:          return Verb.Lunge;
+                case Lesson.TripRecovery:   return Verb.Jump;
+                case Lesson.Emote:          return Verb.EmoteWheel;
+                default:                    return null;
+            }
+        }
+
+        private readonly System.Collections.Generic.HashSet<Verb> _unlocked =
+            new System.Collections.Generic.HashSet<Verb>();
+
+        /// <summary>
+        /// ⚠️ THE LOCK IS LIFTED ENTIRELY ON `Complete`, so the free-play window at the end of
+        /// the route is the real game. A tutorial that hands back a crippled character is worse
+        /// than one that never restricted anything.
+        ///
+        /// ⚠️ AND IT IS RELEASED IN `OnDestroy` TOO. `InputIntent` outlives this component with
+        /// the seat it belongs to, so exiting training mid-route without clearing this would hand
+        /// the next match a player who cannot throw.
+        /// </summary>
+        private void ApplyVerbLock(Lesson lesson)
+        {
+            if (_local == null) return;
+
+            if (lesson >= Lesson.Complete)
+            {
+                _local.Intent.AllowOnly(null);
+                return;
+            }
+
+            for (var step = Lesson.Look; step <= lesson; step++)
+            {
+                var taught = VerbTaughtBy(step);
+                if (taught.HasValue) _unlocked.Add(taught.Value);
+            }
+
+            _local.Intent.AllowOnly(_unlocked);
+        }
+
         private void EnterLesson(Lesson lesson)
         {
             _lesson = lesson;
@@ -360,6 +437,13 @@ namespace TumbangPreso
             _defenderResetArmed = false;
             _marker?.Bind(null);
             SetProgress(0.0f);
+            ApplyVerbLock(lesson);
+
+            // ⚠️ THE DUMMY GOES AWAY AGAIN BETWEEN THE LESSONS THAT WANT IT. Three of the
+            // seventeen need a body in front of you; the other fourteen do not, and a character
+            // standing on the road for all of them is the *"other shit"* the route was asked to
+            // stop showing. `PrepareDummyInFront` brings it back on the frame it is needed.
+            if (_dummy != null && _dummy.gameObject.activeSelf) _dummy.gameObject.SetActive(false);
 
             string title;
             string body;
@@ -561,6 +645,13 @@ namespace TumbangPreso
         {
             if (_dummy == null) return;
 
+            // ⚠️ THE DUMMY IS SHOWN HERE AND NOWHERE ELSE. See `HideTheCast`: the whole street
+            // is empty for a training run, and this is the one moment a second body belongs in
+            // it. Bringing it back for the lesson that needs it, rather than parking four
+            // characters on the road for the whole route, is what "no bots" has to mean for a
+            // tutorial that still teaches the shove, the punch and the lunge.
+            if (!_dummy.gameObject.activeSelf) _dummy.gameObject.SetActive(true);
+
             _dummy.IsDefender = !attacker;
             _dummy.RoundActive = true;
             _dummy.HoldingSlipper = attacker;
@@ -630,9 +721,55 @@ namespace TumbangPreso
             SceneFlow.Go(SceneFlow.MainMenu);
         }
 
+        /// <summary>
+        /// Takes the other three off the street until a lesson asks for one.
+        ///
+        /// ⚠️⚠️ 🧑, 2026-08-26: *"i dont want there to be bots"*. Parking their intent, which is
+        /// what this used to do on its own, stops them PLAYING and leaves them standing on the
+        /// attacker line for the whole route: three motionless characters, three nameplates and
+        /// three tsinelas on the ground, all of them things the player is being asked not to look
+        /// at while a card tells them where to look. `PrepareDummyInFront` brings one back for
+        /// the three lessons that need a body to hit.
+        ///
+        /// ⚠️ THE INTENT IS STILL PARKED AS WELL AS THE OBJECT DISABLED. `Configure` does that
+        /// above, and it has to stay: the dummy comes back for a lesson and must arrive with an
+        /// empty input table rather than whatever it was holding when it was switched off.
+        ///
+        /// ⚠️ AND THEY ARE DISABLED, NOT DESTROYED. `SliceRunner` holds the seat array and
+        /// `RoundDirector` holds the registry; destroying a registered seat mid-round is a null
+        /// in four loops, and the route may hand one back at any point.
+        /// </summary>
+        private void HideTheCast()
+        {
+            foreach (var seat in _seats)
+            {
+                if (seat == null || seat == _local) continue;
+                if (seat.gameObject.activeSelf) seat.gameObject.SetActive(false);
+            }
+
+            // ⚠️ AND THEIR AMMUNITION WITH THEM. Three spare tsinelas on the road is three things
+            // that light up, three the pickup prompt can fire on, and three the retrieval lesson
+            // can be completed with instead of the one the marker is pointing at. The lesson says
+            // "your own slipper"; leaving the others out makes that sentence false.
+            if (_slippers == null) return;
+
+            foreach (var slipper in _slippers)
+            {
+                if (slipper == null || slipper == _ownSlipper) continue;
+                if (slipper.gameObject.activeSelf) slipper.gameObject.SetActive(false);
+            }
+        }
+
         private void OnDestroy()
         {
             GameLaunch.GuidedTutorial = false;
+
+            // ⚠️⚠️ THE VERB LOCK IS RELEASED WITH THE ROUTE, AND NOT DOING THIS WOULD SHIP A
+            // PLAYER WHO CANNOT THROW. `InputIntent` belongs to the SEAT, which outlives this
+            // component; a player who quits training on lesson three and starts a match would
+            // otherwise carry a three-verb character into it with nothing on screen to say why.
+            if (_local != null) _local.Intent.AllowOnly(null);
+
             if (_marker != null) Destroy(_marker.gameObject);
             if (_hud != null) Destroy(_hud.gameObject);
         }
@@ -665,10 +802,14 @@ namespace TumbangPreso
     /// (`docs/VISION.md` § 6): anything here in a different visual language would be the thing
     /// that looks broken, not the thing that looks new.
     /// </summary>
-    internal sealed class GuidedTrainingHud : MonoBehaviour
+    /// <remarks>⚠️ PUBLIC SO THE EDITOR CAN PHOTOGRAPH IT. `TrainingCardProbe` builds the REAL
+    /// card rather than a mock, for the reason `HeroUiProbe` records about the inspect tray: a
+    /// mock photographs whatever the probe author believed the layout was, which is the one thing
+    /// a screenshot is supposed to rule out. This card has now been rejected twice on its
+    /// layout.</remarks>
+    public sealed class GuidedTrainingHud : MonoBehaviour
     {
         private const float CardWidth = 690.0f;
-        private const float CardHeight = 274.0f;
         private const float Pad = 26.0f;
 
         /// <summary>Inner width available to anything inside the card.</summary>
@@ -706,12 +847,19 @@ namespace TumbangPreso
             scaler.referenceResolution = new Vector2(1920.0f, 1080.0f);
             scaler.matchWidthOrHeight = 1.0f;
 
-            // ⚠️ THE SAME ASPECT GUARD THE REST OF THE GAME'S UI USES. Without it this canvas
-            // scales on its own terms and the card drifts against the HUD it sits beside on
-            // anything that is not 16:9, which is the whole class of fault `AspectRatioProbes`
-            // exists for.
+            // ⚠️ THE SAME ASPECT GUARD THE REST OF THE GAME'S UI USES, or the card drifts
+            // against the HUD it sits beside on anything that is not 16:9.
             AspectSafeCanvas.Apply(scaler);
 
+            // ⚠️⚠️ THE CARD IS A LAYOUT NOW AND ITS HEIGHT IS ITS CONTENT'S. The first version
+            // placed six rows at hand-written offsets inside a fixed 274 px box, and 🧑 answered
+            // it with *"the ui has problems like big open space"*. Absolute offsets cannot be
+            // right for a card whose title is one line on one lesson and whose body is three on
+            // another: every row that came up short left a hole, and a row that came up long
+            // drew over its neighbour. A `VerticalLayoutGroup` under a `ContentSizeFitter` makes
+            // dead space impossible by construction, because there is no space that is not a
+            // row, and it means a lesson with a longer sentence grows the card instead of
+            // spilling out of it.
             var panelGo = new GameObject("ObjectiveCard");
             panelGo.transform.SetParent(transform, false);
             var panel = panelGo.AddComponent<Image>();
@@ -726,38 +874,78 @@ namespace TumbangPreso
             rt.anchorMax = new Vector2(0.0f, 1.0f);
             rt.pivot = new Vector2(0.0f, 1.0f);
             rt.anchoredPosition = new Vector2(36.0f, -36.0f);
-            rt.sizeDelta = new Vector2(CardWidth, CardHeight);
+            rt.sizeDelta = new Vector2(CardWidth, 0.0f);
 
-            // ---- header band: the word, and the count, on one line ----
-            var band = Plate(panelGo.transform, "HeaderBand",
-                             new Vector2(Pad, -Pad), new Vector2(Inner, 34.0f),
-                             new Color(UiTheme.Amber.r, UiTheme.Amber.g, UiTheme.Amber.b, 0.14f), 6);
-            band.raycastTarget = false;
+            var column = panelGo.AddComponent<VerticalLayoutGroup>();
+            column.childAlignment = TextAnchor.UpperLeft;
+            column.childControlWidth = true;
+            column.childControlHeight = true;
+            column.childForceExpandWidth = true;
+            column.childForceExpandHeight = false;
+            column.spacing = 10.0f;
+            column.padding = new RectOffset((int)Pad, (int)Pad, (int)Pad, (int)Pad);
 
-            Label(panelGo.transform, 19, UiTheme.Amber,
-                  new Vector2(Pad + 12.0f, -Pad - 4.0f), new Vector2(300.0f, 26.0f))
-                .text = "TRAINING";
+            var fitter = panelGo.AddComponent<ContentSizeFitter>();
 
-            _counter = Label(panelGo.transform, 19, UiTheme.Highlight,
-                             new Vector2(Pad, -Pad - 4.0f), new Vector2(Inner - 12.0f, 26.0f));
-            _counter.alignment = TextAnchor.UpperRight;
+            // ⚠️ VERTICAL ONLY. The width is a design decision (a card that changes width with
+            // the sentence in it reads as broken), the height is a consequence.
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            // ---- header row: the word on the left, the count on the right ----
+            var header = Row(panelGo.transform, "HeaderRow", 30.0f);
+            var headerBg = header.gameObject.AddComponent<Image>();
+            headerBg.sprite = GodotTheme.Plain(6);
+            headerBg.type = Image.Type.Sliced;
+            headerBg.color = new Color(UiTheme.Amber.r, UiTheme.Amber.g, UiTheme.Amber.b, 0.16f);
+            headerBg.raycastTarget = false;
+
+            var headerRow = header.gameObject.AddComponent<HorizontalLayoutGroup>();
+            headerRow.childAlignment = TextAnchor.MiddleLeft;
+            headerRow.childControlWidth = true;
+            headerRow.childControlHeight = true;
+            headerRow.childForceExpandWidth = true;
+            headerRow.childForceExpandHeight = true;
+            headerRow.padding = new RectOffset(12, 12, 0, 0);
+
+            var word = Label(header, 19, UiTheme.Amber, TextAnchor.MiddleLeft);
+            word.text = "TRAINING";
+
+            _counter = Label(header, 19, UiTheme.Highlight, TextAnchor.MiddleRight);
+            _counter.text = "01 / 17";
 
             // ---- the route rail ----
-            BuildRail(panelGo.transform, new Vector2(Pad, -Pad - 44.0f), GuidedTraining.LessonCount);
+            BuildRail(panelGo.transform, GuidedTraining.LessonCount);
 
-            _title = Label(panelGo.transform, 34, UiTheme.Cream,
-                           new Vector2(Pad, -Pad - 60.0f), new Vector2(Inner, 46.0f));
+            // ---- title ----
+            _title = Label(panelGo.transform, 34, UiTheme.Cream, TextAnchor.UpperLeft);
+            _title.text = "TRAINING";
 
-            _body = Label(panelGo.transform, 20, UiTheme.CreamMuted,
-                          new Vector2(Pad, -Pad - 108.0f), new Vector2(Inner, 62.0f));
+            // ⚠️ A ROW STILL NEEDS A HEIGHT ON THE FIRST PASS. A legacy `Text` reports a
+            // preferred height of ZERO before it has a width, which is the exact fault
+            // `Hud.BuildClock`'s note records: the row collapses and the card closes over it.
+            Box(_title, 42.0f);
+
+            // ---- body ----
+            _body = Label(panelGo.transform, 20, UiTheme.CreamMuted, TextAnchor.UpperLeft);
             _body.horizontalOverflow = HorizontalWrapMode.Wrap;
             _body.verticalOverflow = VerticalWrapMode.Overflow;
+            _body.text = "";
+
+            // ⚠️⚠️ A FLOOR ONLY, SO THE BODY IS AS TALL AS ITS SENTENCE AND NO TALLER. A fixed
+            // two-line box left a hole under every one-line lesson, which is the same fault as
+            // the one this whole card was rebuilt for, one row further down. `preferredHeight` is
+            // deliberately left at -1 so `LayoutUtility` falls through to the `Text`'s own
+            // measurement, and the floor covers the first pass, before the label has a width and
+            // reports zero.
+            var bodyBox = _body.gameObject.AddComponent<LayoutElement>();
+            bodyBox.minHeight = 26.0f;
+            bodyBox.preferredHeight = -1.0f;
 
             // ---- the key caps ----
             var keyGo = new GameObject("KeyRow", typeof(RectTransform));
             keyGo.transform.SetParent(panelGo.transform, false);
             _keyRow = keyGo.GetComponent<RectTransform>();
-            Place(_keyRow, new Vector2(Pad, -Pad - 176.0f), new Vector2(Inner, 40.0f));
 
             var keyLayout = keyGo.AddComponent<HorizontalLayoutGroup>();
             keyLayout.childAlignment = TextAnchor.MiddleLeft;
@@ -767,11 +955,22 @@ namespace TumbangPreso
             keyLayout.childForceExpandHeight = false;
             keyLayout.spacing = 8.0f;
 
+            var keyBox = keyGo.AddComponent<LayoutElement>();
+            keyBox.minHeight = 36.0f;
+            keyBox.preferredHeight = 36.0f;
+
             // ---- the lesson's own progress ----
-            var barBack = Plate(panelGo.transform, "ProgressBack",
-                                new Vector2(Pad, -Pad - 226.0f), new Vector2(Inner, 12.0f),
-                                new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.80f), 4);
-            barBack.raycastTarget = false;
+            var barBack = new GameObject("ProgressBack");
+            barBack.transform.SetParent(panelGo.transform, false);
+            var back = barBack.AddComponent<Image>();
+            back.sprite = GodotTheme.Plain(4);
+            back.type = Image.Type.Sliced;
+            back.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.80f);
+            back.raycastTarget = false;
+
+            var barBox = barBack.AddComponent<LayoutElement>();
+            barBox.minHeight = 12.0f;
+            barBox.preferredHeight = 12.0f;
 
             var fillGo = new GameObject("ProgressFill");
             fillGo.transform.SetParent(barBack.transform, false);
@@ -785,68 +984,129 @@ namespace TumbangPreso
             MenuKit.Stretch(_fill.rectTransform);
 
             // ---- centre flash and the two route controls ----
-            _complete = Label(transform, 40, UiTheme.Highlight,
-                              new Vector2(0, -300), new Vector2(760, 60), centered: true);
+            _complete = Free(transform, 40, UiTheme.Highlight,
+                             new Vector2(0.5f, 0.5f), new Vector2(0.0f, 150.0f),
+                             new Vector2(760.0f, 60.0f));
+            _complete.alignment = TextAnchor.MiddleCenter;
             _complete.text = "LESSON COMPLETE";
             _complete.enabled = false;
 
-            BuildFooter();
+            // ⚠️⚠️ THE ROUTE CONTROLS ARE THE CARD'S LAST ROW, NOT A STRIP AT THE BOTTOM OF THE
+            // SCREEN. Bottom-centre belongs to the ability deck, and putting them there drew them
+            // straight over the Q / E / F tiles: 🧑, off the 4.69 player, *"the skills are covered
+            // there"*. The deck is the one HUD element a hero lesson needs the player to read, so
+            // a tutorial that hides it is worse than one with no footer at all.
+            //
+            // ⚠️ INSIDE THE CARD RATHER THAN FLOATING UNDER IT. The card's height is its
+            // content's now, so anything positioned relative to its bottom edge has to be chased
+            // every frame; a row in the same column cannot be in the wrong place by construction.
+            BuildFooter(panelGo.transform);
+        }
+
+        /// <summary>One row of the card, sized by the layout unless it says otherwise.</summary>
+        private static Transform Row(Transform parent, string name, float height)
+        {
+            var go = new GameObject(name, typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+
+            var box = go.AddComponent<LayoutElement>();
+            box.minHeight = height;
+            box.preferredHeight = height;
+            return go.transform;
+        }
+
+        /// <summary>
+        /// ⚠️ BOTH ENDS OF THE HEIGHT, ALWAYS. `LayoutUtility.GetPreferredHeight` is
+        /// `Max(minHeight, preferredHeight)`, so writing one of the two is how a box ends up a
+        /// size nobody asked for. That is the whole of the hero picker's dead band, recorded in
+        /// `docs/TODO.md` § 13.7, and it is the same class of mistake this card just made.
+        /// </summary>
+        private static void Box(Component on, float height)
+        {
+            var box = on.gameObject.AddComponent<LayoutElement>();
+            box.minHeight = height;
+            box.preferredHeight = height;
         }
 
         /// <summary>
         /// One pip per lesson, sized to fit whatever `GuidedTraining.LessonCount` is.
         ///
-        /// ⚠️ THE WIDTH IS SOLVED, NOT TYPED. A hard-coded pip width would overflow the card the
-        /// day a lesson is added, and lessons have been added twice already.
+        /// ⚠️ A HORIZONTAL LAYOUT RATHER THAN SOLVED OFFSETS, so a lesson added tomorrow
+        /// re-spaces the rail instead of overflowing the card.
         /// </summary>
-        private void BuildRail(Transform parent, Vector2 at, int count)
+        private void BuildRail(Transform parent, int count)
         {
-            if (count <= 0) return;
+            var railGo = new GameObject("RouteRail", typeof(RectTransform));
+            railGo.transform.SetParent(parent, false);
 
-            const float Gap = 4.0f;
-            float pip = (Inner - Gap * (count - 1)) / count;
+            var rail = railGo.AddComponent<HorizontalLayoutGroup>();
+            rail.childAlignment = TextAnchor.MiddleCenter;
+            rail.childControlWidth = true;
+            rail.childControlHeight = true;
+            rail.childForceExpandWidth = true;
+            rail.childForceExpandHeight = true;
+            rail.spacing = 4.0f;
+
+            var railBox = railGo.AddComponent<LayoutElement>();
+            railBox.minHeight = 7.0f;
+            railBox.preferredHeight = 7.0f;
 
             for (int i = 0; i < count; i++)
             {
-                var image = Plate(parent, $"Pip{i}",
-                                  new Vector2(at.x + i * (pip + Gap), at.y), new Vector2(pip, 6.0f),
-                                  RailDim, 2);
-                image.raycastTarget = false;
-                _pips.Add(image);
+                var pipGo = new GameObject($"Pip{i}");
+                pipGo.transform.SetParent(railGo.transform, false);
+
+                var pip = pipGo.AddComponent<Image>();
+                pip.sprite = GodotTheme.Plain(2);
+                pip.type = Image.Type.Sliced;
+                pip.color = RailDim;
+                pip.raycastTarget = false;
+                _pips.Add(pip);
             }
         }
 
         private static readonly Color RailDim = new Color(UiTheme.Cream.r, UiTheme.Cream.g,
                                                           UiTheme.Cream.b, 0.18f);
 
-        private void BuildFooter()
+        /// <summary>
+        /// The two route controls.
+        ///
+        /// ⚠️⚠️ NOT BOTTOM-CENTRE. That lane belongs to the ability deck, and putting this strip
+        /// there drew it straight over the Q / E / F tiles: 🧑, off the 4.69 player, *"the skills
+        /// are covered there"*. The deck is the one HUD element a hero lesson needs the player to
+        /// be able to read, so a tutorial that hides it is worse than one with no footer at all.
+        ///
+        /// ⚠️ TOP-LEFT, UNDER THE CARD, so every piece of tutorial furniture is in one corner and
+        /// the rest of the screen is the game. Anchored to the card's own edge rather than to a
+        /// screen offset, because the card's height is its content's now and a fixed offset would
+        /// drift the moment a lesson had a longer sentence.
+        /// </summary>
+        private void BuildFooter(Transform parent)
         {
             var footGo = new GameObject("RouteControls", typeof(RectTransform));
-            footGo.transform.SetParent(transform, false);
-
-            var rt = footGo.GetComponent<RectTransform>();
-            rt.anchorMin = new Vector2(0.5f, 0.0f);
-            rt.anchorMax = new Vector2(0.5f, 0.0f);
-            rt.pivot = new Vector2(0.5f, 0.0f);
-            rt.anchoredPosition = new Vector2(0.0f, 26.0f);
-            rt.sizeDelta = new Vector2(560.0f, 44.0f);
+            footGo.transform.SetParent(parent, false);
 
             var plate = footGo.AddComponent<Image>();
-            plate.sprite = GodotTheme.Box(UiTheme.WoodDark, UiTheme.WoodEdge, 3, 8);
+            plate.sprite = GodotTheme.Plain(6);
             plate.type = Image.Type.Sliced;
+            plate.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.55f);
             plate.raycastTarget = false;
 
             var layout = footGo.AddComponent<HorizontalLayoutGroup>();
-            layout.childAlignment = TextAnchor.MiddleCenter;
+            layout.childAlignment = TextAnchor.MiddleLeft;
             layout.childControlWidth = true;
             layout.childControlHeight = true;
             layout.childForceExpandWidth = false;
             layout.childForceExpandHeight = false;
             layout.spacing = 10.0f;
-            layout.padding = new RectOffset(16, 16, 6, 6);
+            layout.padding = new RectOffset(12, 12, 4, 4);
+
+            var box = footGo.AddComponent<LayoutElement>();
+            box.minHeight = 42.0f;
+            box.preferredHeight = 42.0f;
 
             KeyCap(footGo.transform, "N");
-            Chip(footGo.transform, "SKIP LESSON");
+            Chip(footGo.transform, "SKIP");
             Chip(footGo.transform, "·");
             KeyCap(footGo.transform, "BACKSPACE");
             Chip(footGo.transform, "QUIT TRAINING");
@@ -1007,53 +1267,65 @@ namespace TumbangPreso
             if (_completeLeft <= 0.0f) _complete.enabled = false;
         }
 
-        private static Image Plate(Transform parent, string name, Vector2 offset, Vector2 size,
-                                   Color colour, int radius)
-        {
-            var go = new GameObject(name);
-            go.transform.SetParent(parent, false);
-
-            var image = go.AddComponent<Image>();
-            image.sprite = GodotTheme.Plain(radius);
-            image.type = Image.Type.Sliced;
-            image.color = colour;
-
-            Place(image.rectTransform, offset, size);
-            return image;
-        }
-
-        private static Text Label(Transform parent, int size, Color colour, Vector2 offset,
-                                  Vector2 box, bool centered = false, bool fromBottom = false)
+        /// <summary>
+        /// A label that a layout group owns. No offsets, no box: the row it is in decides both.
+        ///
+        /// ⚠️ THIS REPLACED A VERSION THAT TOOK AN ANCHORED POSITION AND A `sizeDelta`, which is
+        /// what let the card grow a hole in the middle of it. A label positioned by hand inside
+        /// a layout is a second opinion about where it goes, and the layout does not know it has
+        /// been overruled.
+        /// </summary>
+        private static Text Label(Transform parent, int size, Color colour, TextAnchor align)
         {
             var go = new GameObject("TrainingText");
             go.transform.SetParent(parent, false);
+
             var text = go.AddComponent<Text>();
             text.font = MenuKit.Font;
             text.fontSize = size;
             text.color = colour;
-            text.alignment = centered ? TextAnchor.MiddleCenter : TextAnchor.UpperLeft;
+            text.alignment = align;
             text.raycastTarget = false;
+            text.horizontalOverflow = HorizontalWrapMode.Overflow;
+            text.verticalOverflow = VerticalWrapMode.Overflow;
+
+            var outline = go.AddComponent<Outline>();
+            outline.effectColor = UiTheme.Ink;
+            outline.effectDistance = new Vector2(3.0f, -3.0f);
+
+            return text;
+        }
+
+        /// <summary>
+        /// A label that answers to nobody, for the one piece of this screen that is not in the
+        /// card: the centre-screen LESSON COMPLETE flash.
+        /// </summary>
+        private static Text Free(Transform parent, int size, Color colour,
+                                 Vector2 anchor, Vector2 offset, Vector2 box)
+        {
+            var go = new GameObject("TrainingText");
+            go.transform.SetParent(parent, false);
+
+            var text = go.AddComponent<Text>();
+            text.font = MenuKit.Font;
+            text.fontSize = size;
+            text.color = colour;
+            text.alignment = TextAnchor.MiddleCenter;
+            text.raycastTarget = false;
+            text.horizontalOverflow = HorizontalWrapMode.Overflow;
+            text.verticalOverflow = VerticalWrapMode.Overflow;
 
             var outline = go.AddComponent<Outline>();
             outline.effectColor = UiTheme.Ink;
             outline.effectDistance = new Vector2(3.0f, -3.0f);
 
             var rt = text.rectTransform;
-            rt.anchorMin = fromBottom ? new Vector2(0.5f, 0.0f) : new Vector2(centered ? 0.5f : 0.0f, 1.0f);
-            rt.anchorMax = rt.anchorMin;
-            rt.pivot = centered ? new Vector2(0.5f, 0.5f) : new Vector2(0.0f, 1.0f);
+            rt.anchorMin = anchor;
+            rt.anchorMax = anchor;
+            rt.pivot = new Vector2(0.5f, 0.5f);
             rt.anchoredPosition = offset;
             rt.sizeDelta = box;
             return text;
-        }
-
-        private static void Place(RectTransform rt, Vector2 offset, Vector2 size)
-        {
-            rt.anchorMin = new Vector2(0.0f, 1.0f);
-            rt.anchorMax = new Vector2(0.0f, 1.0f);
-            rt.pivot = new Vector2(0.0f, 1.0f);
-            rt.anchoredPosition = offset;
-            rt.sizeDelta = size;
         }
     }
 

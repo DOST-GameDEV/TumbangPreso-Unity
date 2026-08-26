@@ -165,6 +165,16 @@ namespace TumbangPreso
                 // Only act when it is genuinely inside the footprint in XZ.
                 if (at.x < b.min.x || at.x > b.max.x || at.z < b.min.z || at.z > b.max.z) continue;
 
+                // ⚠️⚠️ NEVER OUT OF SOMEBODY'S HANDS. This runs on a 5 Hz poll and moves the
+                // tsinelas without asking anybody, so a player closing on one would have it
+                // teleport as they arrived, over and over, and read the whole thing as a pickup
+                // that does not work. That is the report this ejector was written to prevent,
+                // reintroduced by the ejector itself.
+                //
+                // ⚠️ THE GUARD IS THE PICKUP RADIUS, not a number of its own. If a body is close
+                // enough to grab it, the grab is the answer and this has nothing left to fix.
+                if (SomebodyIsReaching(at)) continue;
+
                 float outWest  = at.x - b.min.x;
                 float outEast  = b.max.x - at.x;
                 float outSouth = at.z - b.min.z;
@@ -190,6 +200,32 @@ namespace TumbangPreso
         /// before the player is close enough to have grabbed it anyway. Nothing here is worth a
         /// per-frame scan.</summary>
         private const float SweepInterval = 0.20f;
+
+        /// <summary>
+        /// Is any live body already within grabbing distance of this point?
+        ///
+        /// ⚠️ IT READS THE ROUND'S REGISTRY RATHER THAN SCANNING. `GameServices.Round.Players`
+        /// is at most four entries and is already maintained; a `FindObjectsByType` here would
+        /// be a second per-frame scan for a question the director can answer for free.
+        /// </summary>
+        private static bool SomebodyIsReaching(Vector3 at)
+        {
+            var round = GameServices.Round;
+            if (round == null) return false;
+
+            var players = round.Players;
+            if (players == null) return false;
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                var p = players[i];
+                if (p == null) continue;
+                if (Vector3.Distance(p.transform.position, at) <= Core.Balance.PickupRadius)
+                    return true;
+            }
+
+            return false;
+        }
 
         private static Slipper[] _slipperCache;
         private static float _slipperCacheAt = -99.0f;
