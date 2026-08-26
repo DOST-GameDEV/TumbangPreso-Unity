@@ -275,14 +275,14 @@ ARM_RIGHT = mirrored(ARM_LEFT, "arm-left", "arm-right")
 
 
 # ---------------------------------------------------------------------------
-# HEAD: FULL 1:1 CANONICAL HEAD (Y: 0.343 -> 0.725, |X|: 0.225) WITH WITCH HAT ON TOP (Y: 0.720 -> 1.075)
+# HEAD: FULL 1:1 CANONICAL HEAD (Y: 0.343 -> 0.695, |X|: 0.225) WITH SNUG WITCH HAT (Y: 0.660 -> 1.015)
 # ---------------------------------------------------------------------------
 HEAD = [
     # -----------------------------------------------------------------------
     # 1. 100% Solid Magenta Skull Enclosure (Full 1:1 scale matching Kenney head)
     # -----------------------------------------------------------------------
-    ("hair-skull-main",        "head", (-0.225, 0.343, -0.165), (0.225, 0.725, 0.175), HAIR_MAGENTA),
-    ("hair-forehead-brow",     "head", (-0.225, 0.520, -0.178), (0.225, 0.725, -0.120), HAIR_MAGENTA),
+    ("hair-skull-main",        "head", (-0.225, 0.343, -0.165), (0.225, 0.695, 0.175), HAIR_MAGENTA),
+    ("hair-forehead-brow",     "head", (-0.225, 0.520, -0.178), (0.225, 0.695, -0.120), HAIR_MAGENTA),
 
     # -----------------------------------------------------------------------
     # 2. Warm Peach Skin Face Opening (Width 0.29m, matching cast!)
@@ -299,98 +299,101 @@ HEAD = [
     ("eye-right",              "head", (-0.098, 0.435, -0.172), (-0.050, 0.505, -0.160), INK),
 
     # Playful Eyebrows (confident slight arch above eyes)
-    ("eyebrow-left",           "head", (0.045,  0.520, -0.172), (0.108, 0.545, -0.160), INK),
-    ("eyebrow-right",          "head", (-0.108, 0.520, -0.172), (-0.045, 0.545, -0.160), INK),
+    ("eyebrow-left",           "head", (0.045,  0.518, -0.172), (0.108, 0.542, -0.160), INK),
+    ("eyebrow-right",          "head", (-0.108, 0.518, -0.172), (-0.045, 0.542, -0.160), INK),
 
     # Expressive Witch Smirk / Smile
-    ("mouth-center",           "head", (-0.045, 0.365, -0.172), (0.050, 0.388, -0.160), INK),
-    ("mouth-smirk-corner-l",   "head", (0.045,  0.380, -0.172), (0.070, 0.410, -0.160), INK),
-    ("mouth-smirk-corner-r",   "head", (-0.058, 0.370, -0.172), (-0.038, 0.392, -0.160), INK),
+    ("mouth-center",           "head", (-0.045, 0.365, -0.172), (0.045, 0.388, -0.160), INK),
+    ("mouth-smirk-corner-l",   "head", (0.040,  0.378, -0.172), (0.068, 0.408, -0.160), INK),
+    ("mouth-smirk-corner-r",   "head", (-0.055, 0.370, -0.172), (-0.038, 0.390, -0.160), INK),
 
     # -----------------------------------------------------------------------
-    # 4. Front Bangs & Fringe (Framing forehead and dipping into face opening)
+    # 4. Front Bangs & Fringe (Framing forehead and dipping naturally into face opening)
     # -----------------------------------------------------------------------
     # Horizontal brow fringe
-    ("hair-bang-brow-base",    "head", (-0.145, 0.525, -0.182), (0.145, 0.620, -0.145), HAIR_MAGENTA),
+    ("hair-bang-brow-base",    "head", (-0.145, 0.525, -0.182), (0.145, 0.660, -0.145), HAIR_MAGENTA),
     # Left stepped fringe (-X)
     ("hair-bang-l-step",       "head", (-0.145, 0.485, -0.180), (-0.040, 0.540, -0.145), HAIR_MAGENTA),
-    ("hair-bang-l-outer",      "head", (-0.145, 0.450, -0.178), (-0.100, 0.495, -0.145), HAIR_MAGENTA),
+    ("hair-bang-l-outer",      "head", (-0.145, 0.450, -0.178), (-0.100, 0.520, -0.145), HAIR_MAGENTA),
     # Right fringe (+X / viewer's right): Distinct diagonal notched fringe dipping down!
-    ("hair-bang-r-notch",      "head", (0.010,  0.435, -0.184), (0.065,  0.535, -0.145), HAIR_MAGENTA),
-    ("hair-bang-r-step",       "head", (0.065,  0.480, -0.180), (0.145,  0.540, -0.145), HAIR_MAGENTA),
-    ("hair-bang-r-outer",      "head", (0.105,  0.450, -0.178), (0.145,  0.495, -0.145), HAIR_MAGENTA),
+    ("hair-bang-r-notch",      "head", (0.010,  0.430, -0.184), (0.065,  0.540, -0.145), HAIR_MAGENTA),
+    ("hair-bang-r-step",       "head", (0.060,  0.475, -0.180), (0.145,  0.540, -0.145), HAIR_MAGENTA),
+    ("hair-bang-r-outer",      "head", (0.105,  0.445, -0.178), (0.145,  0.510, -0.145), HAIR_MAGENTA),
 
     # -----------------------------------------------------------------------
     # 5. Cheek Framing Side Locks & Side Volume (Full 1:1 scale)
     # -----------------------------------------------------------------------
     # Left side (+X, viewer's right)
     ("hair-cheek-l",           "head", (0.145,  0.320, -0.178), (0.225, 0.600, -0.050), HAIR_MAGENTA),
-    ("hair-side-l-outer",      "head", (0.190,  0.315, -0.160), (0.245, 0.720, 0.165),  HAIR_MAGENTA),
+    ("hair-side-l-outer",      "head", (0.190,  0.315, -0.160), (0.245, 0.690, 0.165),  HAIR_MAGENTA),
     ("hair-side-l-highlight",  "head", (0.200,  0.360, -0.100), (0.248, 0.580, 0.030),  HAIR_HIGHLIGHT),
     ("hair-side-l-step2",      "head", (0.175,  0.335, -0.170), (0.225, 0.450, -0.080), HAIR_HIGHLIGHT),
 
     # Right side (-X, viewer's left)
     ("hair-cheek-r",           "head", (-0.225, 0.320, -0.178), (-0.145, 0.600, -0.050), HAIR_MAGENTA),
-    ("hair-side-r-outer",      "head", (-0.245, 0.315, -0.160), (-0.190, 0.720, 0.165),  HAIR_MAGENTA),
+    ("hair-side-r-outer",      "head", (-0.245, 0.315, -0.160), (-0.190, 0.690, 0.165),  HAIR_MAGENTA),
     ("hair-side-r-highlight",  "head", (-0.248, 0.360, -0.100), (-0.200, 0.580, 0.030),  HAIR_HIGHLIGHT),
     ("hair-side-r-step2",      "head", (-0.225, 0.335, -0.170), (-0.175, 0.450, -0.080), HAIR_HIGHLIGHT),
 
     # -----------------------------------------------------------------------
-    # 6. Back Hair Mane (Multi-tiered stepped 3D cascade down to Y=0.250)
+    # 6. Volumetric 5-Lock Stepped Hair Mane (Back & Side Cascade down to Y=0.250)
     # -----------------------------------------------------------------------
-    ("hair-back-tier1",        "head", (-0.225, 0.480, 0.130),  (0.225, 0.720, 0.195),  HAIR_MAGENTA),
-    ("hair-back-col-l",        "head", (0.075,  0.340, 0.140),  (0.210, 0.520, 0.200),  HAIR_MAGENTA),
-    ("hair-back-col-c",        "head", (-0.075, 0.320, 0.145),  (0.075, 0.520, 0.202),  HAIR_MAGENTA),
-    ("hair-back-col-r",        "head", (-0.210, 0.340, 0.140),  (-0.075, 0.520, 0.200), HAIR_MAGENTA),
-    ("hair-back-step-l",       "head", (0.055,  0.305, 0.150),  (0.150, 0.380, 0.204),  HAIR_HIGHLIGHT),
-    ("hair-back-step-r",       "head", (-0.150, 0.305, 0.150),  (-0.055, 0.380, 0.204), HAIR_HIGHLIGHT),
-    ("hair-back-tail-mid",     "head", (-0.055, 0.260, 0.150),  (0.055, 0.360, 0.205),  HAIR_MAGENTA),
-    ("hair-back-tail-tip",     "head", (-0.035, 0.250, 0.155),  (0.035, 0.295, 0.205),  HAIR_HIGHLIGHT),
+    ("hair-back-tier1",        "head", (-0.225, 0.480, 0.130),  (0.225, 0.690, 0.195),  HAIR_MAGENTA),
+    # 5 Cascading Vertical Locks
+    ("hair-lock-outer-l",      "head", (0.150,  0.360, 0.130),  (0.225, 0.560, 0.190),  HAIR_MAGENTA),
+    ("hair-lock-mid-l",        "head", (0.070,  0.310, 0.135),  (0.155, 0.520, 0.200),  HAIR_MAGENTA),
+    ("hair-lock-spine-c",      "head", (-0.055, 0.260, 0.140),  (0.055, 0.520, 0.208),  HAIR_MAGENTA),
+    ("hair-lock-mid-r",        "head", (-0.155, 0.310, 0.135),  (-0.070, 0.520, 0.200), HAIR_MAGENTA),
+    ("hair-lock-outer-r",      "head", (-0.225, 0.360, 0.130),  (-0.150, 0.560, 0.190), HAIR_MAGENTA),
+    # Stepped highlights on tips
+    ("hair-back-step-l",       "head", (0.055,  0.295, 0.150),  (0.145, 0.370, 0.204),  HAIR_HIGHLIGHT),
+    ("hair-back-step-r",       "head", (-0.145, 0.295, 0.150),  (-0.055, 0.370, 0.204), HAIR_HIGHLIGHT),
+    ("hair-back-tail-tip",     "head", (-0.035, 0.250, 0.155),  (0.035, 0.295, 0.208),  HAIR_HIGHLIGHT),
 
     # -----------------------------------------------------------------------
-    # 7. Pointed Witch Hat with Large Gold Buckle & 2 Wands (Sitting on Top Y >= 0.720)
+    # 7. Snug Pointed Witch Hat with Large Gold Buckle & 2 Wands (Y: 0.655 -> 1.015)
     # -----------------------------------------------------------------------
-    # Wide Octagonal Hat Brim (Y in [0.720, 0.760])
-    ("hat-brim-core",          "head", (-0.310, 0.720, -0.235), (0.310, 0.760, 0.235),  COAT_DARK),
-    ("hat-brim-fb",            "head", (-0.235, 0.720, -0.310), (0.235, 0.760, 0.310),  COAT_DARK),
-    ("hat-brim-c-fl",          "head", (0.180,  0.720, -0.285), (0.285, 0.760, -0.180), COAT_DARK),
-    ("hat-brim-c-fr",          "head", (-0.285, 0.720, -0.285), (-0.180, 0.760, -0.180), COAT_DARK),
-    ("hat-brim-c-bl",          "head", (0.180,  0.720, 0.180),  (0.285, 0.760, 0.285),  COAT_DARK),
-    ("hat-brim-c-br",          "head", (-0.285, 0.720, 0.180),  (-0.180, 0.760, 0.285), COAT_DARK),
+    # Wide Octagonal Hat Brim (Y in [0.655, 0.695])
+    ("hat-brim-core",          "head", (-0.310, 0.655, -0.235), (0.310, 0.695, 0.235),  COAT_DARK),
+    ("hat-brim-fb",            "head", (-0.235, 0.655, -0.310), (0.235, 0.695, 0.310),  COAT_DARK),
+    ("hat-brim-c-fl",          "head", (0.180,  0.655, -0.285), (0.285, 0.695, -0.180), COAT_DARK),
+    ("hat-brim-c-fr",          "head", (-0.285, 0.655, -0.285), (-0.180, 0.695, -0.180), COAT_DARK),
+    ("hat-brim-c-bl",          "head", (0.180,  0.655, 0.180),  (0.285, 0.695, 0.285),  COAT_DARK),
+    ("hat-brim-c-br",          "head", (-0.285, 0.655, 0.180),  (-0.180, 0.695, 0.285), COAT_DARK),
 
-    # Royal Purple Hat Ribbon Band (Y in [0.760, 0.835])
-    ("hat-band-core",          "head", (-0.215, 0.760, -0.215), (0.215, 0.835, 0.215),  CLOTH_PURPLE),
-    ("hat-band-front",         "head", (-0.205, 0.760, -0.230), (0.205, 0.835, -0.205), CLOTH_PURPLE),
-    ("hat-band-back",          "head", (-0.205, 0.760, 0.205),  (0.205, 0.835, 0.230),  CLOTH_PURPLE),
-    ("hat-band-left",          "head", (0.205,  0.760, -0.205), (0.230, 0.835, 0.205),  CLOTH_PURPLE),
-    ("hat-band-right",         "head", (-0.230, 0.760, -0.205), (-0.205, 0.835, 0.205), CLOTH_PURPLE),
+    # Royal Purple Hat Ribbon Band (Y in [0.695, 0.770])
+    ("hat-band-core",          "head", (-0.215, 0.695, -0.215), (0.215, 0.770, 0.215),  CLOTH_PURPLE),
+    ("hat-band-front",         "head", (-0.205, 0.695, -0.230), (0.205, 0.770, -0.205), CLOTH_PURPLE),
+    ("hat-band-back",          "head", (-0.205, 0.695, 0.205),  (0.205, 0.770, 0.230),  CLOTH_PURPLE),
+    ("hat-band-left",          "head", (0.205,  0.695, -0.205), (0.230, 0.770, 0.205),  CLOTH_PURPLE),
+    ("hat-band-right",         "head", (-0.230, 0.695, -0.205), (-0.205, 0.770, 0.205), CLOTH_PURPLE),
 
     # Large Square Gold Hat Buckle with Hollow Slot & Horizontal Prong (Center Front)
-    ("hat-buckle-frame",       "head", (-0.058, 0.765, -0.242), (0.058, 0.830, -0.222), GOLD),
-    ("hat-buckle-slot",        "head", (-0.032, 0.778, -0.245), (0.032, 0.818, -0.224), COAT_DARK),
-    ("hat-buckle-prong",       "head", (-0.032, 0.792, -0.248), (0.020, 0.806, -0.226), GOLD),
+    ("hat-buckle-frame",       "head", (-0.058, 0.700, -0.242), (0.058, 0.765, -0.222), GOLD),
+    ("hat-buckle-slot",        "head", (-0.032, 0.713, -0.245), (0.032, 0.753, -0.224), COAT_DARK),
+    ("hat-buckle-prong",       "head", (-0.032, 0.727, -0.248), (0.020, 0.741, -0.226), GOLD),
 
     # 2 Tucked Wands on Left Side (+X, character's left)
     # Forward Wand
-    ("wand1-wood-lo",          "head", (0.205,  0.770, -0.095), (0.235, 0.850, -0.065), WAND_WOOD),
-    ("wand1-wood-hi",          "head", (0.212,  0.850, -0.108), (0.242, 0.960, -0.075), WAND_WOOD),
-    ("wand1-wrap",             "head", (0.208,  0.800, -0.100), (0.238, 0.825, -0.070), WAND_BAND),
-    ("wand1-gem-base",         "head", (0.218,  0.960, -0.118), (0.255, 1.015, -0.078), LILAC_GEM),
-    ("wand1-gem-tip",          "head", (0.222,  1.015, -0.115), (0.250, 1.035, -0.082), LILAC_GEM),
+    ("wand1-wood-lo",          "head", (0.205,  0.705, -0.095), (0.235, 0.785, -0.065), WAND_WOOD),
+    ("wand1-wood-hi",          "head", (0.212,  0.785, -0.108), (0.242, 0.895, -0.075), WAND_WOOD),
+    ("wand1-wrap",             "head", (0.208,  0.735, -0.100), (0.238, 0.760, -0.070), WAND_BAND),
+    ("wand1-gem-base",         "head", (0.218,  0.895, -0.118), (0.255, 0.950, -0.078), LILAC_GEM),
+    ("wand1-gem-tip",          "head", (0.222,  0.950, -0.115), (0.250, 0.970, -0.082), LILAC_GEM),
 
     # Rear Wand
-    ("wand2-wood-lo",          "head", (0.205,  0.770, 0.020),  (0.235, 0.850, 0.050),  WAND_WOOD),
-    ("wand2-wood-hi",          "head", (0.215,  0.850, 0.032),  (0.245, 0.935, 0.062),  WAND_WOOD),
-    ("wand2-wrap",             "head", (0.210,  0.805, 0.025),  (0.240, 0.830, 0.055),  WAND_BAND),
-    ("wand2-gem-base",         "head", (0.222,  0.935, 0.038),  (0.258, 0.990, 0.076),  LILAC_GEM),
-    ("wand2-gem-tip",          "head", (0.226,  0.990, 0.042),  (0.254, 1.010, 0.070),  LILAC_GEM),
+    ("wand2-wood-lo",          "head", (0.205,  0.705, 0.020),  (0.235, 0.785, 0.050),  WAND_WOOD),
+    ("wand2-wood-hi",          "head", (0.215,  0.785, 0.032),  (0.245, 0.870, 0.062),  WAND_WOOD),
+    ("wand2-wrap",             "head", (0.210,  0.740, 0.025),  (0.240, 0.765, 0.055),  WAND_BAND),
+    ("wand2-gem-base",         "head", (0.222,  0.870, 0.038),  (0.258, 0.925, 0.076),  LILAC_GEM),
+    ("wand2-gem-tip",          "head", (0.226,  0.925, 0.042),  (0.254, 0.945, 0.070),  LILAC_GEM),
 
     # Stepped Cone Tiers (Swept back towards apex)
-    ("hat-cone-t1",            "head", (-0.178, 0.835, -0.178), (0.178, 0.895, 0.178),  COAT_DARK),
-    ("hat-cone-t2",            "head", (-0.145, 0.895, -0.115), (0.145, 0.955, 0.175),  COAT_DARK),
-    ("hat-cone-t3",            "head", (-0.105, 0.955, -0.055), (0.105, 1.010, 0.160),  COAT_DARK),
-    ("hat-cone-t4",            "head", (-0.060, 1.010, 0.010),  (0.060, 1.050, 0.125),  COAT_DARK),
-    ("hat-cone-tip",           "head", (-0.025, 1.050, 0.040),  (0.025, 1.075, 0.100),  COAT_DARK),
+    ("hat-cone-t1",            "head", (-0.178, 0.770, -0.178), (0.178, 0.835, 0.178),  COAT_DARK),
+    ("hat-cone-t2",            "head", (-0.145, 0.835, -0.115), (0.145, 0.895, 0.175),  COAT_DARK),
+    ("hat-cone-t3",            "head", (-0.105, 0.895, -0.055), (0.105, 0.950, 0.160),  COAT_DARK),
+    ("hat-cone-t4",            "head", (-0.060, 0.950, 0.010),  (0.060, 0.990, 0.125),  COAT_DARK),
+    ("hat-cone-tip",           "head", (-0.025, 0.990, 0.040),  (0.025, 1.015, 0.100),  COAT_DARK),
 ]
 
 
