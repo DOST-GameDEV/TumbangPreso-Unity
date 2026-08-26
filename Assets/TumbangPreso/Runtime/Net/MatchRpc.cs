@@ -33,10 +33,41 @@ namespace TumbangPreso.Net
         public static MatchRpc Instance { get; private set; }
 
         private NetworkManager _nm;
+        private readonly LobbySeatInfo[] _replicatedSeats = new LobbySeatInfo[Balance.PlayerCount];
+
+        public LobbySeatInfo GetSeatInfo(int slot)
+        {
+            if (slot < 0 || slot >= Balance.PlayerCount) return null;
+            if (NetAuthority.IsHost)
+            {
+                var lobby = NetSession.Instance?.Lobby;
+                var peer = lobby?.PeerInSeat(slot);
+                if (peer != null)
+                {
+                    return new LobbySeatInfo
+                    {
+                        Seat = slot,
+                        PeerId = peer.PeerId,
+                        Name = peer.Name,
+                        Occupied = true,
+                        Spectator = peer.Spectator,
+                        CharacterPick = peer.CharacterPick,
+                        CanPick = peer.CanPick,
+                        SlipperPick = peer.SlipperPick
+                    };
+                }
+                return new LobbySeatInfo { Seat = slot, Occupied = false };
+            }
+            return _replicatedSeats[slot] ?? new LobbySeatInfo { Seat = slot, Occupied = false };
+        }
 
         private void Awake()
         {
             Instance = this;
+            for (int i = 0; i < Balance.PlayerCount; i++)
+            {
+                _replicatedSeats[i] = new LobbySeatInfo { Seat = i, Occupied = false };
+            }
             DontDestroyOnLoad(gameObject);
         }
 
@@ -157,10 +188,10 @@ namespace TumbangPreso.Net
             if (lobby == null) return;
 
             var record = lobby.Admit(peerId, token, name);
-            if (charPick >= 0)
-            {
-                lobby.SetPicks(peerId, charPick, canPick, slipperPick);
-            }
+            int resolvedCharPick = charPick >= 0 ? charPick : 0;
+            int resolvedCanPick = canPick >= 0 ? canPick : 0;
+            int resolvedSlipperPick = slipperPick >= 0 ? slipperPick : 0;
+            lobby.SetPicks(peerId, resolvedCharPick, resolvedCanPick, resolvedSlipperPick);
 
             if (senderClientId != _nm.LocalClientId)
             {
@@ -710,6 +741,7 @@ namespace TumbangPreso.Net
         public static event Action<int> OnMapChanged;
         public static event Action<int> OnDifficultyChanged;
         public static event Action<int[]> OnLobbyPicksSynced;
+        public static event Action<LobbySeatInfo[]> OnLobbyRosterSynced;
         public static event Action OnMatchStarted;
 
         public void HostStartMatch()
@@ -807,14 +839,17 @@ namespace TumbangPreso.Net
             OnDifficultyChanged?.Invoke(diff);
         }
 
-        public void SelectLobbyPickServerRpc(int peerId, int character, int can, int slipper)
+        public void SelectLobbyPickServerRpc(int character, int can, int slipper)
         {
             if (NetAuthority.IsHost)
             {
                 var lobby = NetSession.Instance?.Lobby;
                 if (lobby != null)
                 {
-                    lobby.SetPicks(peerId, character, can, slipper);
+                    // ⚠️ HOST'S OWN PEER ID COMES FROM LOCAL CLIENT ID, NEVER FROM LOCAL SEAT.
+                    // LocalSlot is 0-3 (a seat) while _peers is keyed by transport client ID.
+                    int hostPeerId = _nm != null ? (int)_nm.LocalClientId : 0;
+                    lobby.SetPicks(hostPeerId, character, can, slipper);
                     BroadcastLobbyPicks();
                 }
                 return;
@@ -822,12 +857,15 @@ namespace TumbangPreso.Net
 
             if (_nm == null || _nm.CustomMessagingManager == null) return;
             using var writer = new FastBufferWriter(32, Allocator.Temp);
-            writer.WriteValueSafe(peerId);
+            writer.WriteValueSafe(0);
             writer.WriteValueSafe(character);
             writer.WriteValueSafe(can);
             writer.WriteValueSafe(slipper);
             _nm.CustomMessagingManager.SendNamedMessage("SelectLobbyPick", NetworkManager.ServerClientId, writer);
         }
+
+        public void SelectLobbyPickServerRpc(int peerId, int character, int can, int slipper)
+            => SelectLobbyPickServerRpc(character, can, slipper);
 
         private void OnSelectLobbyPickMsg(ulong senderClientId, FastBufferReader reader)
         {
@@ -851,34 +889,125 @@ namespace TumbangPreso.Net
             var lobby = NetSession.Instance?.Lobby;
             if (lobby == null) return;
 
-            var table = new int[Balance.PlayerCount * 4];
-            for (int i = 0; i < table.Length; i++) table[i] = -1;
-
-            foreach (var peer in lobby.Peers)
+            var seats = new LobbySeatInfo[Balance.PlayerCount];
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
             {
-                if (peer.Seat >= 0 && peer.Seat < Balance.PlayerCount)
+                var peer = lobby.PeerInSeat(slot);
+                if (peer != null)
                 {
-                    table[peer.Seat * 4] = peer.Seat;
-                    table[peer.Seat * 4 + 1] = peer.CharacterPick;
-                    table[peer.Seat * 4 + 2] = peer.CanPick;
-                    table[peer.Seat * 4 + 3] = peer.SlipperPick;
+                    seats[slot] = new LobbySeatInfo
+                    {
+                        Seat = slot,
+                        PeerId = peer.PeerId,
+                        Name = peer.Name ?? "",
+                        Occupied = true,
+                        Spectator = peer.Spectator,
+                        CharacterPick = peer.CharacterPick,
+                        CanPick = peer.CanPick,
+                        SlipperPick = peer.SlipperPick
+                    };
                 }
+                else
+                {
+                    seats[slot] = new LobbySeatInfo
+                    {
+                        Seat = slot,
+                        PeerId = -1,
+                        Name = "",
+                        Occupied = false,
+                        Spectator = false,
+                        CharacterPick = -1,
+                        CanPick = -1,
+                        SlipperPick = -1
+                    };
+                }
+                _replicatedSeats[slot] = seats[slot];
             }
 
             if (_nm != null && _nm.CustomMessagingManager != null)
             {
-                using var writer = new FastBufferWriter(128, Allocator.Temp);
-                writer.WriteValueSafe(table);
+                using var writer = new FastBufferWriter(512, Allocator.Temp);
+                writer.WriteValueSafe(Balance.PlayerCount);
+                for (int i = 0; i < Balance.PlayerCount; i++)
+                {
+                    var s = seats[i];
+                    writer.WriteValueSafe(s.Seat);
+                    writer.WriteValueSafe(s.PeerId);
+                    writer.WriteValueSafe(s.Name ?? "");
+                    writer.WriteValueSafe(s.Occupied);
+                    writer.WriteValueSafe(s.Spectator);
+                    writer.WriteValueSafe(s.CharacterPick);
+                    writer.WriteValueSafe(s.CanPick);
+                    writer.WriteValueSafe(s.SlipperPick);
+                }
                 _nm.CustomMessagingManager.SendNamedMessageToAll("SyncLobbyPicks", writer);
             }
 
+            var table = new int[Balance.PlayerCount * 4];
+            for (int i = 0; i < table.Length; i++) table[i] = -1;
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            {
+                if (seats[slot].Occupied)
+                {
+                    table[slot * 4] = slot;
+                    table[slot * 4 + 1] = seats[slot].CharacterPick;
+                    table[slot * 4 + 2] = seats[slot].CanPick;
+                    table[slot * 4 + 3] = seats[slot].SlipperPick;
+                }
+            }
+
             OnLobbyPicksSynced?.Invoke(table);
+            OnLobbyRosterSynced?.Invoke(seats);
         }
 
         private void OnSyncLobbyPicksMsg(ulong senderClientId, FastBufferReader reader)
         {
-            reader.ReadValueSafe(out int[] table);
+            reader.ReadValueSafe(out int count);
+            var seats = new LobbySeatInfo[Mathf.Max(count, Balance.PlayerCount)];
+            for (int i = 0; i < count; i++)
+            {
+                reader.ReadValueSafe(out int seat);
+                reader.ReadValueSafe(out int peerId);
+                reader.ReadValueSafe(out string name);
+                reader.ReadValueSafe(out bool occupied);
+                reader.ReadValueSafe(out bool spectator);
+                reader.ReadValueSafe(out int charPick);
+                reader.ReadValueSafe(out int canPick);
+                reader.ReadValueSafe(out int slipperPick);
+
+                var info = new LobbySeatInfo
+                {
+                    Seat = seat,
+                    PeerId = peerId,
+                    Name = name,
+                    Occupied = occupied,
+                    Spectator = spectator,
+                    CharacterPick = charPick,
+                    CanPick = canPick,
+                    SlipperPick = slipperPick
+                };
+                if (seat >= 0 && seat < _replicatedSeats.Length)
+                {
+                    _replicatedSeats[seat] = info;
+                }
+                if (i < seats.Length) seats[i] = info;
+            }
+
+            var table = new int[Balance.PlayerCount * 4];
+            for (int i = 0; i < table.Length; i++) table[i] = -1;
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            {
+                if (slot < _replicatedSeats.Length && _replicatedSeats[slot] != null && _replicatedSeats[slot].Occupied)
+                {
+                    table[slot * 4] = slot;
+                    table[slot * 4 + 1] = _replicatedSeats[slot].CharacterPick;
+                    table[slot * 4 + 2] = _replicatedSeats[slot].CanPick;
+                    table[slot * 4 + 3] = _replicatedSeats[slot].SlipperPick;
+                }
+            }
+
             OnLobbyPicksSynced?.Invoke(table);
+            OnLobbyRosterSynced?.Invoke(seats);
         }
 
         // -------------------------------------------------------------------
@@ -907,10 +1036,6 @@ namespace TumbangPreso.Net
                     {
                         var vis = who.GetComponent<Visual.CharacterVisual>();
                         vis?.ApplyModel(person.Model, person.Tint, person.Clips, person.Palette);
-                    }
-                    if (charIndex < Roster.People.Count)
-                    {
-                        who.PlayerName = Roster.People[charIndex].Name;
                     }
                 }
 

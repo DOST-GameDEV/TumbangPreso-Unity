@@ -301,7 +301,12 @@ namespace TumbangPreso
         {
             var go = new GameObject("Lata");
 
-            int pick = Settings.SettingsStore.Current.CanPick;
+            var net = Net.NetSession.Instance;
+            bool isNetworked = net != null && net.IsNetworked;
+            var defenderSeatInfo = isNetworked ? Net.MatchRpc.Instance?.GetSeatInfo(0) : null;
+            int pick = (isNetworked && defenderSeatInfo != null && defenderSeatInfo.CanPick >= 0)
+                ? defenderSeatInfo.CanPick
+                : Settings.SettingsStore.Current.CanPick;
             var art = _book != null ? _book.CanArt(pick) : null;
 
             if (art != null && art.Model != null)
@@ -343,11 +348,11 @@ namespace TumbangPreso
             bool isNetworked = net != null && net.IsNetworked;
             int humanSeat = HumanSeat;
             bool isLocalHuman = slot == humanSeat;
-            var peerRecord = isNetworked ? net.Lobby.PeerInSeat(slot) : null;
+            var seatInfo = isNetworked ? Net.MatchRpc.Instance?.GetSeatInfo(slot) : null;
 
             int pick = isLocalHuman
                 ? Settings.SettingsStore.Current.SlipperPick
-                : (peerRecord != null && peerRecord.SlipperPick >= 0 ? peerRecord.SlipperPick : slot);
+                : (seatInfo != null && seatInfo.SlipperPick >= 0 ? seatInfo.SlipperPick : slot);
 
             var art = _book != null ? _book.SlipperArt(pick) : null;
 
@@ -430,8 +435,8 @@ namespace TumbangPreso
             int humanSeat = HumanSeat;
             bool isLocalHuman = slot == humanSeat;
 
-            var peerRecord = isNetworked ? net.Lobby.PeerInSeat(slot) : null;
-            bool isHumanPlayer = isLocalHuman || (peerRecord != null && !peerRecord.Spectator);
+            var seatInfo = isNetworked ? Net.MatchRpc.Instance?.GetSeatInfo(slot) : null;
+            bool isHumanPlayer = isLocalHuman || (seatInfo != null && seatInfo.Occupied && !seatInfo.Spectator);
 
             // ⚠️ ONLY HUMAN PEERS ARE HUMANS; UNOCCUPIED SLOTS ARE BOTS.
             motor.IsBot = !isHumanPlayer;
@@ -443,11 +448,11 @@ namespace TumbangPreso
                     ? Settings.SettingsStore.Current.CharacterPick
                     : AiCharacterIndex(slot);
             }
-            else if (peerRecord != null)
+            else if (seatInfo != null && seatInfo.Occupied)
             {
-                motor.PlayerName = peerRecord.Name;
-                motor.CharacterIndex = peerRecord.CharacterPick >= 0
-                    ? peerRecord.CharacterPick
+                motor.PlayerName = seatInfo.Name;
+                motor.CharacterIndex = seatInfo.CharacterPick >= 0
+                    ? seatInfo.CharacterPick
                     : AiCharacterIndex(slot);
             }
             else
@@ -847,25 +852,28 @@ namespace TumbangPreso
         /// The pick is known to everybody, is stable for the whole match, and changes when the
         /// player changes theirs, which is what makes the rest of the cast reachable in play.
         /// </summary>
-        private int AiCharacterIndex(int slot)
+        public static int ResolveAiCharacterIndex(int slot, int humanPick = -1, GameMode mode = GameMode.Classic)
         {
-            var people = Roster.GetPeople(SceneFlow.SelectedMode);
+            var people = Roster.GetPeople(mode);
             int size = people.Count;
             if (size <= 0) return 0;
 
-            // The human's own pick is taken; a bot must not wear the player's face.
-            int human = HumanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
-
-            int rotation = human >= 0 ? human % AiPersonSpread.Length : 0;
+            int rotation = humanPick >= 0 ? humanPick % AiPersonSpread.Length : 0;
             int start = (AiPersonSpread[slot % AiPersonSpread.Length] + rotation) % size;
 
             for (int step = 0; step < size; step++)
             {
                 int candidate = (start + step) % size;
-                if (candidate != human) return candidate;
+                if (candidate != humanPick) return candidate;
             }
 
             return start;
+        }
+
+        private int AiCharacterIndex(int slot)
+        {
+            int human = HumanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
+            return ResolveAiCharacterIndex(slot, human, SceneFlow.SelectedMode);
         }
 
         private static readonly int[] AiPersonSpread = { 0, 3, 6, 9 };

@@ -825,5 +825,60 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(MidMatchRuling.Seat, lobby.RuleOnArrival("player2"),
                 "Ended match converts reclaim into normal seating");
         }
+
+        // -------------------------------------------------------------------
+        // PICKS AND SEAT ROSTER REPLICATION (N14)
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️ HOST IN A NON-ZERO SEAT MUST UPDATE ITS OWN PEER RECORD, NOT THE PEER HOLDING CLIENT ID = SEAT.
+        /// LocalSlot is a seat index (0-3), while _peers is keyed by transport client ID.
+        /// When host sits in seat 1, calling SetPicks with host's peer ID (0) updates the host's record
+        /// without touching peer 1's record.
+        /// </summary>
+        [Test]
+        public void HostInNonZeroSeatUpdatesItsOwnRecordWithoutTouchingOtherPeers()
+        {
+            var lobby = NewLobby();
+
+            // Peer 0 is Host (seated in seat 1)
+            var host = lobby.Admit(0, "host-token", "HostName");
+            host.Seat = 1;
+
+            // Peer 1 is Guest (seated in seat 0)
+            var guest = lobby.Admit(1, "guest-token", "GuestName");
+            guest.Seat = 0;
+            guest.CharacterPick = 0;
+
+            // Host changes character pick to index 3
+            lobby.SetPicks(0, 3, 1, 2);
+
+            Assert.AreEqual(3, host.CharacterPick, "Host's own peer record must update to pick 3");
+            Assert.AreEqual(1, host.CanPick);
+            Assert.AreEqual(2, host.SlipperPick);
+
+            Assert.AreEqual(0, guest.CharacterPick, "Guest (peer 1) pick must remain untouched");
+            Assert.AreEqual(3, lobby.PeerInSeat(1).CharacterPick, "Seat 1 (host's seat) must reflect pick 3");
+            Assert.AreEqual(0, lobby.PeerInSeat(0).CharacterPick, "Seat 0 (guest's seat) must reflect pick 0");
+        }
+
+        [Test]
+        public void SetPicksRejectsInvalidIndicesAndDefaultsToMinusOne()
+        {
+            var lobby = NewLobby();
+            var p = lobby.Admit(10, "token-p1", "PlayerOne");
+
+            // Valid pick
+            lobby.SetPicks(10, 1, 0, 2);
+            Assert.AreEqual(1, p.CharacterPick);
+            Assert.AreEqual(0, p.CanPick);
+            Assert.AreEqual(2, p.SlipperPick);
+
+            // Out-of-bounds pick validates to -1
+            lobby.SetPicks(10, 9999, -5, 9999);
+            Assert.AreEqual(-1, p.CharacterPick);
+            Assert.AreEqual(-1, p.CanPick);
+            Assert.AreEqual(-1, p.SlipperPick);
+        }
     }
 }

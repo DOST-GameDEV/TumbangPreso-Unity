@@ -624,7 +624,10 @@ namespace TumbangPreso.Net
                     MatchRpc.Instance?.Initialize(_nm);
                     SetStatus("connected");
                     var s = Settings.SettingsStore.Current;
-                    MatchRpc.Instance?.IdentifyServerRpc(NetIdentity.Token, s.PlayerName, s.CharacterPick, s.CanPick, s.SlipperPick);
+                    int charPick = s.CharacterPick >= 0 ? s.CharacterPick : 0;
+                    int canPick = s.CanPick >= 0 ? s.CanPick : 0;
+                    int slipperPick = s.SlipperPick >= 0 ? s.SlipperPick : 0;
+                    MatchRpc.Instance?.IdentifyServerRpc(NetIdentity.Token, s.PlayerName, charPick, canPick, slipperPick);
                 }
                 return;
             }
@@ -657,7 +660,10 @@ namespace TumbangPreso.Net
             // still arrive on the RPC.
             if (clientId == _nm.LocalClientId)
             {
-                Lobby.SetPicks((int)clientId, settings.CharacterPick, settings.CanPick, settings.SlipperPick);
+                int charPick = settings.CharacterPick >= 0 ? settings.CharacterPick : 0;
+                int canPick = settings.CanPick >= 0 ? settings.CanPick : 0;
+                int slipperPick = settings.SlipperPick >= 0 ? settings.SlipperPick : 0;
+                Lobby.SetPicks((int)clientId, charPick, canPick, slipperPick);
             }
 
             _beacon.Players = Lobby.PeerCount;
@@ -665,6 +671,7 @@ namespace TumbangPreso.Net
             {
                 _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(), Lobby.PeerCount, Lobby.MatchInProgress);
             }
+            MatchRpc.Instance?.BroadcastLobbyPicks();
         }
 
         private void OnClientDisconnected(ulong clientId)
@@ -681,6 +688,7 @@ namespace TumbangPreso.Net
                 {
                     _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(), Lobby.PeerCount, Lobby.MatchInProgress);
                 }
+                MatchRpc.Instance?.BroadcastLobbyPicks();
                 SetStatus($"{Lobby.PeerCount} connected");
                 return;
             }
