@@ -579,7 +579,16 @@ namespace TumbangPreso.UI
             string mapName = mapEntry.Name;
             string tagline = mapEntry.Tagline;
 
-            SetText("BannerLabel", isNetworked ? "LOBBY" : "SINGLE PLAYER");
+            // ⚠️⚠️ "PRACTICE MODE", AND IT HAS BEEN RENAMED ONCE ALREADY. This screen sets up a
+            // solo match against bots, with a BOTS difficulty row in the middle of it, and it was
+            // renamed away from "SINGLE PLAYER" for that reason. The 2026-08-25 merge that
+            // brought the network and UGS work across resolved this line back to the old string,
+            // and 🧑 spotted it in the build: *"this shit still says single player"*.
+            //
+            // ⚠️ NOT TO BE CONFUSED WITH `HeroKit.PracticeMode`, which is an unrelated internal
+            // flag for the between-round buffer where an ultimate is free. Same two words, two
+            // different things, and neither is wrong: do not merge them.
+            SetHeadline("BannerLabel", isNetworked ? "LOBBY" : "PRACTICE MODE", 66);
             SetText("MapValueLabel", mapName);
 
             SetText("ModeValueLabel", SceneFlow.SelectedMode == GameMode.HeroStrike ? "HERO STRIKE" : "CLASSIC");

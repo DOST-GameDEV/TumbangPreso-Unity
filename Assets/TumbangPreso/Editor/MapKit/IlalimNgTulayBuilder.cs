@@ -594,21 +594,35 @@ namespace TumbangPreso.EditorTools.MapKit
                 Object.DestroyImmediate(apron.GetComponent<Collider>());
             }
 
-            // The sub-base under the carriageway, so the asphalt tiles have mass under them and
-            // the street reads as cut into the ground rather than laid on top of it.
-            var subBase = Slab(road, "RoadSubBase",
-                               new Vector3(0.0f, (HazeTop + RoadTop) * 0.5f - 0.02f, 0.0f),
-                               new Vector3(RoadHalfX * 2.0f, RoadTileThickness + 0.04f, CorridorHalfZ * 2.0f),
-                               AsphaltAlbedo);
-            Object.DestroyImmediate(subBase.GetComponent<Collider>());
-
             // 3. Asphalt. Sunk by the tile's own thickness so its SURFACE is y = 0.
+            //
+            // ⚠️⚠️ THE TILES ARE LAID BEFORE THE SUB-BASE NOW, AND THAT ORDER IS THE FIX. The
+            // sub-base used to be built first, from typed-in arithmetic, and it landed with its
+            // top face at exactly y = 0.0: the same plane as the asphalt surface above it. Two
+            // coplanar opaque quads over the whole carriageway is textbook z-fighting, and it
+            // does not read as a rendering artefact to a player, it reads as the street being
+            // broken. 🧑: *"the floor bugs and looks like its phasing everytime i move"*, and
+            // the phasing IS the depth comparison flipping per pixel as the camera moves.
+            //
+            // ⚠️ IT WAS INVISIBLE BEFORE THE GRADE WAS FIXED, which is why it surfaced only now.
+            // At the old contrast every linear pixel below 0.0966 clipped to pure black, and the
+            // asphalt sat under that: the road was one flat black shape, so two black shapes
+            // fighting looked like one black shape. § 9.2 brightening the map is what exposed it.
+            float tileBottom = RoadTop - RoadTileThickness;
+
             for (float z = -CorridorHalfZ + 1.0f; z < CorridorHalfZ; z += 2.0f)
             {
                 for (float x = -RoadHalfX + 1.0f; x < RoadHalfX; x += 2.0f)
                 {
-                    InstantiateProp("env_road_tile", new Vector3(x, RoadTop - RoadTileThickness, z),
-                                    Quaternion.identity, road);
+                    var tile = InstantiateProp("env_road_tile", new Vector3(x, tileBottom, z),
+                                               Quaternion.identity, road);
+
+                    // ⚠️ MEASURED FROM THE FIRST TILE RATHER THAN ASSUMED FROM THE CONSTANT.
+                    // `RoadTileThickness` is what the tile is BELIEVED to be; `bounds.min.y` is
+                    // where the mesh actually ends, whatever its pivot happens to be. Solving the
+                    // sub-base against the real underside is what stops this from silently
+                    // becoming coplanar again the day the tile model is replaced.
+                    if (tile != null) tileBottom = Mathf.Min(tileBottom, RenderBounds(tile).min.y);
                 }
 
                 // ⚠️⚠️ THE KERB RUNS ALONG THE STREET, NOT ACROSS IT. `env_kerb_tile` is 2.0 m on
@@ -633,6 +647,25 @@ namespace TumbangPreso.EditorTools.MapKit
                     }
                 }
             }
+
+            // The sub-base under the carriageway, so the asphalt tiles have mass under them and
+            // the street reads as cut into the ground rather than laid on top of it.
+            //
+            // ⚠️⚠️ ITS TOP SITS BELOW THE TILES, NOT ON THEIR SURFACE. See the note above the
+            // asphalt loop: this used to be solved to y = 0.0, which is the driving surface
+            // itself. `SubBaseClearance` is the gap that keeps the two planes apart, and it is a
+            // whole centimetre rather than a float epsilon because the depth buffer's precision
+            // at this camera's far plane is what decides the fight, not the size of the number.
+            const float SubBaseClearance = 0.01f;
+            const float SubBaseThickness = 0.12f;
+
+            float subBaseTop = tileBottom - SubBaseClearance;
+
+            var subBase = Slab(road, "RoadSubBase",
+                               new Vector3(0.0f, subBaseTop - SubBaseThickness * 0.5f, 0.0f),
+                               new Vector3(RoadHalfX * 2.0f, SubBaseThickness, CorridorHalfZ * 2.0f),
+                               AsphaltAlbedo);
+            Object.DestroyImmediate(subBase.GetComponent<Collider>());
         }
 
         private static Transform Group(Transform parent, string name)

@@ -727,7 +727,22 @@ namespace TumbangPreso.Visual
 
             float target = 0.0f;
 
-            if (_motor.IsStunned)
+            // ⚠️⚠️ A FALL IS NOT A FREEZE, AND THIS IS WHY EVERY TRIP USED TO ICE THE BODY OVER.
+            // `CharacterMotor.ApplyTrip` calls `ApplyStagger` as well as setting `_tripLeft`,
+            // deliberately and correctly: a player on the floor must not be able to act. But
+            // `IsStunned` was the only thing this read, so tripping over a kerb rendered exactly
+            // like being tagged, and the body froze solid on the way down. 🧑: *"i dont want the
+            // effect to be ice too when i fell down it feels weird"*.
+            //
+            // ⚠️ THE FROST MEANS ONE SPECIFIC THING AND THAT IS THE WHOLE VALUE OF IT. Its own
+            // note above: the taya who spent their one scoring verb on a tag needs to SEE the
+            // attacker freeze, and the other two need to know that seat is out for five seconds.
+            // A trip is a 2.5 s stumble nobody scored for. Firing the same signal for both makes
+            // the signal mean "something happened to that player", which is not worth a channel.
+            //
+            // ⚠️ THE TRIP HAS ITS OWN READ ALREADY: the knockdown clip, the get-up clip, and the
+            // mash card `Hud.BuildGetUpCard` puts on screen. It does not need this one too.
+            if (_motor.IsStunned && !_motor.IsTripped)
             {
                 target = 1.0f;
 
