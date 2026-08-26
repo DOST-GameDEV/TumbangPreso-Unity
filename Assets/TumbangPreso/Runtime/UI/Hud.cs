@@ -288,7 +288,12 @@ namespace TumbangPreso.UI
         /// `horizontalOverflow = Overflow`, so an oversized string hangs out of the tile rather
         /// than wrapping or shrinking. See `PaintSkillCard`.
         /// </summary>
-        private const int RecastFontSize = 14;
+        /// <summary>⚠️ PUBLIC SO `HudOverflowProbe` CAN MEASURE "RECAST" AT THE SIZE IT IS
+        /// ACTUALLY DRAWN AT. The probe measures every label's worst string through the label
+        /// itself, and this is the one place in the HUD where the code changes the font size for
+        /// a particular string; measuring at the deck's 22 reports a 12-unit overflow that does
+        /// not exist. See `PaintSkillCard`, which sets this only when a card is recastable.</summary>
+        public const int RecastFontSize = 14;
 
         /// <summary>How long a successful cast lights its own tile. Seconds.</summary>
         private const float CastFlashSeconds = AbilityDeckHud.CastFlashSeconds;
@@ -1026,14 +1031,15 @@ namespace TumbangPreso.UI
 
             if (GameServices.Match.IsWarmupBuffer)
             {
-                _round.text = "WARMUP / PRACTICE BUFFER   ·   SCORES PAUSED";
+                _round.text = WarmupLine;
                 _timer.color = UiTheme.Highlight;
                 _urgent = -1;
                 if (_timerPressure != null) _timerPressure.enabled = false;
             }
             else
             {
-                _round.text = $"ROUND {round} / {GameServices.Match.TotalRounds}   ·   DEFENDER: {SeatName(GameServices.Match.DefenderSlot)}";
+                _round.text = RoundLine(round, GameServices.Match.TotalRounds,
+                                    SeatName(GameServices.Match.DefenderSlot));
 
                 if (_timerPressure != null)
                 {
@@ -2076,7 +2082,34 @@ namespace TumbangPreso.UI
             // border. 🧑: *"GOOD TEXT NOW ... js make box bigger"*.
             cardGroup.padding = new RectOffset(22, 22, 16, 16);
 
-            cardGo.AddComponent<LayoutElement>().preferredWidth = 240.0f;
+            // ⚠️⚠️ THE CARD IS SIZED TO THE WIDEST LINE IT CAN EVER HOLD, AND IT USED TO BE A
+            // FLAT 240 THAT DID NOT FIT ITS OWN CONTENT. `HudOverflowProbe`, the first run of it:
+            // `RoundLabel` needs **305 units for the live round line in a 240-unit box, so it
+            // hangs 65 units out**, at all nine resolutions, before a long name is anywhere near
+            // it. The worst string this card can hold is the round line with a
+            // `Balance.PlayerNameMax` name in it, and nobody had ever measured that against the
+            // plate it is drawn on.
+            //
+            // ⚠️ IT IS THE `WorstCaseNameWidth` AND `LataHintLines` IDIOM, WHICH IS THE ONE THIS
+            // FILE ALREADY USES TWICE. Measure the longest possible string THROUGH THE LABEL THAT
+            // WILL DRAW IT, and keep the authored number as a floor so the card can only ever get
+            // wider than the design, never narrower.
+            //
+            // ⚠️⚠️ AND THE FONT IS NOT THE LEVER, WHICH IS WHY THIS IS A WIDTH AND NOT A SIZE.
+            // `ui_theme.gd` records these sizes going 16/13, then 22/19, then 30/28, answered
+            // every time with *"text still small"*. `docs/TODO.md` § 18: size the box, or shorten
+            // the string. Never the font.
+            // ⚠️⚠️ THE WOODEN PLATE STAYS 240 AND IT IS THE COLUMN THAT GROWS. The first fix for
+            // the round-line overflow widened THIS, and it changed nothing, because `_round` is
+            // not in this card: the card holds the clock, and the round line and the pressure
+            // line are its SIBLINGS in `TopCentre`, drawn under the plate. Widening the plate
+            // moved the wood and left the text exactly as clipped as it was.
+            //
+            // ⚠️ AND THE PLATE MUST NOT GROW. It is the .tscn's authored 240 and it is the frame
+            // around the single most-read element on the screen; a 570-unit wood slab at the top
+            // centre is a different HUD. `group.childForceExpandWidth` is false, so a wider
+            // column leaves this child at its own preferred width, centred.
+            cardGo.AddComponent<LayoutElement>().preferredWidth = TopCentreFloor;
 
             // ⚠️ 44, NOT 48. `HUD.tscn` gives TimerLabel the `HudTimer` variation and
             // `ui_theme.gd` binds that to `FONT_SIZE_TIMER`, which is 44. `hud.gd` overrides the
@@ -2125,7 +2158,86 @@ namespace TumbangPreso.UI
                                       TextAnchor.MiddleCenter, 4);
             _timerPressure.gameObject.AddComponent<LayoutElement>().minHeight = 32.0f;
             _timerPressure.enabled = false;
+
+            // ⚠️⚠️ THE COLUMN IS SIZED TO THE WIDEST LINE IT CAN EVER HOLD, AND IT WAS A FLAT
+            // 240 THAT DID NOT FIT ITS OWN CONTENT. `HudOverflowProbe`, first run:
+            // `RoundLabel` needs **510 units for `ROUND 8 / 8   ·   DEFENDER: <14 characters>`
+            // in a 240-unit box, so it hangs 270 units out**, at all nine resolutions. The
+            // column is what clamps it: `group.childControlWidth` is true, so every child is
+            // given its preferred width capped by this rect, and the label's preferred width is
+            // whatever the string needs.
+            //
+            // ⚠️ IT MUST BE SET AFTER `_round` EXISTS, which is why it is down here rather than
+            // beside the `sizeDelta` above. Measuring a null label falls back to the floor and
+            // silently reproduces the bug.
+            //
+            // ⚠️ THE COLUMN IS CENTRE-ANCHORED, so growing it stays centred and cannot push
+            // anything off the screen; `HudOverflowProbe` asserts that separately.
+            rt.sizeDelta = new Vector2(TopCentreColumnWidth(_round), 0.0f);
         }
+
+        /// <summary>The warmup line, which is the longest fixed string this card ever shows.</summary>
+        public const string WarmupLine = "WARMUP / PRACTICE BUFFER   ·   SCORES PAUSED";
+
+        /// <summary>
+        /// The round line, in ONE place.
+        ///
+        /// ⚠️⚠️ IT IS A METHOD SO THE PROBE AND THE HUD CANNOT DISAGREE ABOUT THE FORMAT.
+        /// `LataHintLines` carries a warning that a line added to the method and not to the list
+        /// is an overflow again; this is the same hazard solved one level up, by there being no
+        /// list to keep in step. Whatever this returns is what gets drawn AND what gets measured.
+        /// </summary>
+        public static string RoundLine(int round, int total, string defender)
+            => $"ROUND {round} / {total}   ·   DEFENDER: {defender}";
+
+        /// <summary>
+        /// Every string the top-centre card can ever show, worst first.
+        ///
+        /// ⚠️ THE NAME IS `PlayerNameMax` "W"s, the same constant the name field clamps to and
+        /// the same worst glyph `WorstCaseNameWidth` uses. A card sized against the name that
+        /// happened to be in it when somebody looked is a card that overflows for somebody else.
+        /// </summary>
+        public static IEnumerable<string> TopCentreLines()
+        {
+            yield return WarmupLine;
+            yield return RoundLine(8, 8, new string('W', Balance.PlayerNameMax));
+        }
+
+        /// <summary>
+        /// How wide the top-centre COLUMN has to be, measured through the label that draws its
+        /// widest line.
+        ///
+        /// ⚠️ THE 240 STAYS AS A FLOOR. It is the .tscn's authored width and it is right for the
+        /// clock plate; this only ever widens past it, so nothing that already fits moves.
+        ///
+        /// ⚠️ IT IS THE `WorstCaseNameWidth` AND `WidestLineWidth` IDIOM, which this file already
+        /// uses twice: measure the longest possible string THROUGH THE LABEL THAT WILL DRAW IT,
+        /// same font, same size, same generator settings. Reading a raw font metric instead is
+        /// how a cell ends up a few pixels short of the string it was sized for.
+        /// </summary>
+        private static float TopCentreColumnWidth(Text probe)
+        {
+            if (probe == null) return TopCentreFloor;
+
+            string keep = probe.text;
+            float widest = 0.0f;
+
+            foreach (string line in TopCentreLines())
+            {
+                probe.text = line;
+                widest = Mathf.Max(widest, probe.preferredWidth);
+            }
+
+            probe.text = keep;
+
+            // ⚠️ 8, NOT THE CARD'S 44. The round line is a direct child of the column with no
+            // padding between it and the rect; the 22-a-side inset belongs to the wooden plate
+            // and applying it here would widen the column by a margin that does not exist.
+            return Mathf.Max(TopCentreFloor, Mathf.Ceil(widest) + 8.0f);
+        }
+
+        /// <summary>The .tscn's authored top-centre width, kept as the floor.</summary>
+        public const float TopCentreFloor = 240.0f;
 
         /// <summary>Bottom-right, at the .tscn's -396,-172 to -16,-64.</summary>
         private void BuildLataCard()
@@ -2159,7 +2271,13 @@ namespace TumbangPreso.UI
         /// ⚠️ Keep this in step with `UpdateLataCard`. A line added there and not here is a line
         /// that overflows again, which is exactly how this bug arrived.
         /// </summary>
-        private static readonly string[] LataHintLines =
+        /// ⚠️⚠️ PUBLIC SO `HudOverflowProbe` READS THIS ARRAY RATHER THAN A COPY OF IT.
+        /// The note above already warns that a line added to `UpdateLataCard` and not to this list
+        /// is an overflow again; a probe that carried its own transcription of the strings would be
+        /// a THIRD place to forget, and the one most likely to go stale because nothing fails when
+        /// it does. `docs/TODO.md` § 18 asks for the worst case to be fed to the probe, and the
+        /// worst case is whatever this array says it is today.
+        public static readonly string[] LataHintLines =
         {
             "TAYA MAY TAG",
             "ATTACKERS MAY RETRIEVE",

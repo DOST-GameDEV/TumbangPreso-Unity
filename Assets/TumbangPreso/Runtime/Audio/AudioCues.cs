@@ -43,6 +43,23 @@ namespace TumbangPreso.Audio
         public static readonly IReadOnlyDictionary<string, float> TrimDb =
             new Dictionary<string, float>
             {
+                // ⚠⚠ THE THREE ZONE ENDINGS SIT LOWEST IN THE WHOLE MIX, AND THAT IS THE
+                // POINT OF THEM. An expiry is INFORMATION, not an event: it has to be audible to
+                // somebody who has been watching that patch of ground and must never compete
+                // with whatever is being cast at the same moment. A cast and its own ending at
+                // the same trim would make a spent zone sound like a second ability.
+                { "sfx_ice_thaw",   -11.0f },
+                { "sfx_magma_cool", -11.0f },
+                { "sfx_void_close",  -9.0f },
+
+                // The three that replaced borrowed cues keep the weight of what they are: a
+                // wall landing and a wall failing are both events a player has to act on, and
+                // the sheet spreading is the quietest of the three because it is the least
+                // urgent thing to know about.
+                { "sfx_ice_form",    -5.0f },
+                { "sfx_barricade_raise", -3.0f },
+                { "sfx_ice_shatter", -3.0f },
+
                 { "ui_hover",       -8.0f },
                 { "land",           -6.0f },
                 { "grab",           -6.0f },
@@ -79,10 +96,19 @@ namespace TumbangPreso.Audio
         /// ⚠️ WHAT IS TRUE AS OF 2026-08-25: Hero Strike reached for these because it had
         /// nothing else, and it now has `sfx_quake_slam`, `sfx_thunder_impact`,
         /// `sfx_frost_nova`, `sfx_possess_enter`, `sfx_possess_exit` and `sfx_slipper_burst`.
-        /// `ability_bagsak_bomb` and `ability_flick_dash` are free again. `ability_shatter_trap`
-        /// is still live on the ice barricade, where it genuinely fits, so it is a survivor
-        /// rather than an orphan and this list is a history of where the files came from, not
-        /// a claim that none of them plays.
+        /// `ability_bagsak_bomb` and `ability_flick_dash` are free again.
+        ///
+        /// ⚠️⚠️ UPDATED 2026-08-26, AND THE OLD VERSION OF THIS PARAGRAPH WAS WRONG IN A WAY
+        /// WORTH RECORDING. It read that `ability_shatter_trap` *"is still live on the ice
+        /// barricade, where it genuinely fits"*. It was live on the barricade AND on the ice
+        /// sheet, so two different powers shared one cue, and it is the sound of something
+        /// BREAKING fired at the moment something is BUILT. Both now have their own
+        /// (`sfx_barricade_raise`, `sfx_ice_form`); `docs/TODO.md` § 20 has the account.
+        ///
+        /// ⚠️ WHAT IT STILL DOES IS THE SLIP: a player losing their footing on Cheska's sheet,
+        /// which is the one use of it that was ever the right shape. So it remains a survivor
+        /// rather than an orphan, on one call site instead of three, and this list is a history
+        /// of where the files came from rather than a claim that none of them plays.
         /// </summary>
         public static readonly IReadOnlyList<string> DeletedAbilityCues = new[]
         {
@@ -126,6 +152,23 @@ namespace TumbangPreso.Audio
             // makes these six and says what each one is shaped like and why.
             "sfx_quake_slam", "sfx_thunder_impact", "sfx_frost_nova",
             "sfx_possess_enter", "sfx_possess_exit", "sfx_slipper_burst",
+
+            // ⚠️⚠️ THE ZONE LIFECYCLE SET, AND REGISTERING IT IS THE HALF THAT IS EASY TO MISS.
+            // A .wav on disk is not a cue: `AudioDirector.PlayAtVaried` looks the id up in this
+            // registry and warns `no cue registered` if it is absent, which is a WARNING and not
+            // an exception, so the ability simply plays nothing and the game carries on. The
+            // note on `sfx_lrt_pass` above records the same thing costing two months of silence
+            // on the one recurring event on Ilalim ng Tulay. The PlayMode run is what caught
+            // these six, one line per cast.
+            //
+            // ⚠️ WHAT THEY REPLACE: `SpawnIceBarricade` and `SpawnIceSheet` BOTH opened on
+            // `ability_shatter_trap`, which is a cue for something BREAKING fired at the moment
+            // something is BUILT, and `IceBarricadeComponent.Shatter` played `slipper_land`, a
+            // rubber sandal hitting the road, for a wall of ice failing. The other three are
+            // endings: every hazard in `HeroHazards` ticked down and called `Destroy` in
+            // silence. `docs/TODO.md` § 20.
+            "sfx_ice_form", "sfx_barricade_raise", "sfx_ice_shatter",
+            "sfx_ice_thaw", "sfx_void_close", "sfx_magma_cool",
 
             // Hero Vocal Shouts & Grunts.
             "hero_dante_ult", "hero_dante_grunt",

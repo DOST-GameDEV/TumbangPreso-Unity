@@ -366,6 +366,608 @@ namespace TumbangPreso.Visual
         /// Sharing vertices to save memory would smooth-shade them straight back into the
         /// primitive sphere this whole section exists to get away from.
         /// </summary>
+        // -------------------------------------------------------------------
+        // § CONSTRUCTION: five ways to BUILD a shape, not five more outlines.
+        //
+        // ⚠️⚠️ EVERYTHING ABOVE THIS LINE IS ONE TECHNIQUE WEARING SEVEN OUTLINES, AND THAT IS
+        // THE FAULT THIS SECTION EXISTS TO FIX. 🧑, 2026-08-26, after playing the build: *"the
+        // problem i found out earlier that made all powers look ugly was that the same logic and
+        // code was used to generate all of them"*, and *"maybe use different techniques to make
+        // them if we can"*.
+        //
+        // ⚠️⚠️ HE IS DESCRIBING SOMETHING THE § 8 SILHOUETTE PASS DID NOT REACH, AND THE PASS
+        // ITSELF IS THE EVIDENCE. `Splat`, `Star`, `Streak` and `Crystal` are four different
+        // POLYGONS handed to ONE builder: `Fan` triangulates a rim of points around a centre
+        // vertex, `Lay` drops the result flat at y ≈ 0.01 with the Y scale left at 1, and
+        // `VfxMaterial.Ghost` paints it translucent. Change the vertex radii and you have a
+        // different outline; you do not have a different EFFECT. Measured off
+        // `Logs/shots-abilities/*_v11.png`, which is what made this legible: fire, ice, lightning
+        // and magma all render as a coloured plate lying on the road with a brighter plate under
+        // it and four or five cubes standing on top, because that is literally what each one is.
+        //
+        // ⚠️⚠️ SO THE CHANNEL THAT WAS FREE IS NOT OUTLINE ANY MORE, IT IS CONSTRUCTION.
+        // `Hero_Strike_Balance.md` § 8.2 lists four channels an effect has (silhouette, axis,
+        // motion, hue) and the honest reading of v11 is that all four are now spent while every
+        // effect is still assembled the same way. A fifth channel was sitting unused the whole
+        // time: HOW THE GEOMETRY IS MADE. A slab with walls, a field of broken plates, a swept
+        // ribbon, a branching tube and a dished funnel are not five outlines. They catch light
+        // differently, they read differently edge-on, and no two of them can be mistaken for one
+        // another even in grayscale, which is the test § 8.2 sets for silhouette and which a
+        // family of flat fans fails by construction.
+        //
+        // ⚠️ NONE OF THIS BUYS A SINGLE EXTRA SQUARE METRE. `docs/VISION.md` § 2 rule 3 is the
+        // whole argument for spending the budget here: *"the same silhouette at 2.2 m with a
+        // cracked edge, a rim, depth and particles reads as ice"*. Every shape below is still
+        // built at ONE UNIT OF RADIUS so `Lay` and every footprint in `Hero_Strike_Balance.md`
+        // § 1 keep working untouched, and the two that have real height say so in their name.
+        //
+        // ⚠️⚠️ AND THE WINDING TRAP IS SOLVED RATHER THAN DOCUMENTED THIS TIME. `Fan`'s note
+        // records a full capture pass lost to a fan wound the wrong way, where every mesh was
+        // culled from the only angle the game looks at it from and "invisible" read as "not
+        // spawned". Hand-winding five more builders is five more chances at that, so
+        // `FacetedOriented` fixes each triangle against a reference point instead: any face whose
+        // normal points back toward the inside of the form is flipped. A builder below can emit
+        // its triangles in whatever order is convenient and still cannot ship inside out.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// An extruded slab: a polygon with real THICKNESS and real walls, unit radius at the
+        /// foot and <paramref name="height"/> tall.
+        ///
+        /// ⚠️⚠️ THICKNESS IS THE ENTIRE POINT AND IT IS A FIRST-PERSON READ. A flat fan at
+        /// y = 0.01 has no silhouette at all from eye height: `AbilityShowcaseProbe` takes every
+        /// solo shot twice for exactly this reason, and in `ability_ice_sheet_eye_v11.png` the
+        /// sheet is a pale smear two pixels tall. A slab has an EDGE, and an edge is visible from
+        /// the angle a player actually runs at the hazard from.
+        ///
+        /// ⚠️ THE TOP IS SMALLER THAN THE FOOT, so the walls slope outward and catch the key
+        /// light at a different angle from the cap. That is what separates the three surfaces
+        /// from each other in a flat-lit toon frame; a straight extrusion reads as one colour and
+        /// throws the thickness away again.
+        ///
+        /// ⚠️ NO BOTTOM FACE. It sits on the road and the road is opaque. Emitting one doubles
+        /// the alpha of every translucent slab through its own floor, which is the same
+        /// double-darkening that made the fire trail's char read as salmon.
+        /// </summary>
+        public static Mesh Prism(int sides = 6, float height = 0.30f, float topScale = 0.82f,
+                                 float jitter = 0.0f, float twist = 0.0f, int seed = 0)
+        {
+            sides = Mathf.Max(3, sides);
+
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var foot = new Vector3[sides];
+            var cap = new Vector3[sides];
+
+            for (int i = 0; i < sides; i++)
+            {
+                float a = i / (float)sides * Mathf.PI * 2.0f;
+                float rough = 1.0f - Random.Range(0.0f, jitter);
+
+                // ⚠️⚠️ THE TWIST TURNS THE WHOLE FORM, IT DOES NOT TWIST IT, AND THE FIRST
+                // VERSION DID THE SECOND. Applying the offset to the cap only shears the prism:
+                // the top face ends up rotated against its own base, which at six sides is a 15
+                // degree disagreement and is plainly visible in `ability_ice_sheet_v13.png`,
+                // where the slab and its rim collar read as two hexagons at different angles.
+                //
+                // ⚠️ THE PARAMETER EXISTS TO MATCH `Crystal`, WHERE IT IS A ROTATION. Callers
+                // pass the same number to both so a rim lines up with the shape it rings; a
+                // parameter that means one thing in one builder and another in the next is how
+                // that stops being true without anybody editing a call site.
+                float a2 = a + twist;
+                var dir = new Vector3(Mathf.Cos(a2), 0.0f, Mathf.Sin(a2));
+
+                foot[i] = dir * rough;
+                cap[i] = dir * (rough * topScale) + Vector3.up * height;
+            }
+
+            var tris = new System.Collections.Generic.List<Vector3>(sides * 12);
+            var apex = new Vector3(0.0f, height, 0.0f);
+
+            for (int i = 0; i < sides; i++)
+            {
+                int j = (i + 1) % sides;
+
+                // Wall, two triangles.
+                tris.Add(foot[i]); tris.Add(cap[i]); tris.Add(cap[j]);
+                tris.Add(foot[i]); tris.Add(cap[j]); tris.Add(foot[j]);
+
+                // Cap, one triangle per side back to the centre.
+                tris.Add(cap[i]); tris.Add(apex); tris.Add(cap[j]);
+            }
+
+            Random.state = state;
+            return FacetedOriented(tris, "VfxPrism", new Vector3(0.0f, height * 0.5f, 0.0f));
+        }
+
+        /// <summary>
+        /// A ring with real walls: an annulus extruded to <paramref name="height"/>, open in the
+        /// middle, unit radius at the outer rim.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE `Prism` HAS A CAP AND I USED IT AS A RIM ANYWAY. Three effects
+        /// wanted "a collar around the edge" and got `Prism` at 0.92 of the top scale, which is a
+        /// FILLED polygon: the ice sheet, the void's event horizon and the fire mark each drew a
+        /// solid disc over the thing they were supposed to be ringing. It is unmistakable in
+        /// `ability_worstframe_v12.png`, where Nemu's void is a flat bright magenta plate: that
+        /// plate is its 12-sided "lip".
+        ///
+        /// ⚠️ A RIM IS NOT A SMALL DISC, IT IS A DIFFERENT SHAPE. The distinction matters here
+        /// more than it would elsewhere because `docs/VISION.md` § 2 is a budget on AREA: a ring
+        /// at 8 per cent thickness costs about a sixth of the painted floor its filled equivalent
+        /// does, at the same radius, carrying the same information about where the edge is.
+        ///
+        /// ⚠️ NO BOTTOM AND NO CAP. Same reason as `Prism`: it stands on something opaque, and a
+        /// face nobody can see still doubles the alpha of everything drawn through it.
+        /// </summary>
+        public static Mesh Collar(int sides = 12, float height = 0.10f, float innerRatio = 0.86f,
+                                  float jitter = 0.0f, float twist = 0.0f, int seed = 0)
+        {
+            sides = Mathf.Max(3, sides);
+            innerRatio = Mathf.Clamp(innerRatio, 0.05f, 0.98f);
+
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var outerFoot = new Vector3[sides];
+            var outerTop = new Vector3[sides];
+            var innerFoot = new Vector3[sides];
+            var innerTop = new Vector3[sides];
+
+            for (int i = 0; i < sides; i++)
+            {
+                float a = i / (float)sides * Mathf.PI * 2.0f + twist;
+                var dir = new Vector3(Mathf.Cos(a), 0.0f, Mathf.Sin(a));
+
+                float rough = 1.0f - Random.Range(0.0f, jitter);
+                var lift = Vector3.up * height;
+
+                outerFoot[i] = dir * rough;
+                outerTop[i] = dir * rough + lift;
+                innerFoot[i] = dir * (rough * innerRatio);
+                innerTop[i] = dir * (rough * innerRatio) + lift;
+            }
+
+            var tris = new System.Collections.Generic.List<Vector3>(sides * 18);
+
+            for (int i = 0; i < sides; i++)
+            {
+                int j = (i + 1) % sides;
+
+                // Outer wall.
+                tris.Add(outerFoot[i]); tris.Add(outerTop[i]); tris.Add(outerTop[j]);
+                tris.Add(outerFoot[i]); tris.Add(outerTop[j]); tris.Add(outerFoot[j]);
+
+                // Inner wall.
+                tris.Add(innerFoot[i]); tris.Add(innerTop[i]); tris.Add(innerTop[j]);
+                tris.Add(innerFoot[i]); tris.Add(innerTop[j]); tris.Add(innerFoot[j]);
+
+                // The band across the top.
+                tris.Add(innerTop[i]); tris.Add(outerTop[i]); tris.Add(outerTop[j]);
+                tris.Add(innerTop[i]); tris.Add(outerTop[j]); tris.Add(innerTop[j]);
+            }
+
+            Random.state = state;
+
+            // ⚠️ THE REFERENCE POINT IS THE RING'S OWN BAND, NOT THE CENTRE. A collar's inner
+            // wall has to face INWARD, so orienting everything away from the axis would turn it
+            // inside out. Sitting the reference under the band puts the top face up and lets each
+            // wall keep the side it was wound on.
+            return FacetedOriented(tris, "VfxCollar",
+                                   new Vector3(0.0f, height - 6.0f, 0.0f));
+        }
+
+        /// <summary>
+        /// Ground broken into separate PLATES with gaps between them, each sitting at its own
+        /// height and tilt. Unit radius, flat-ish, and deliberately not one surface.
+        ///
+        /// ⚠️⚠️ THIS IS WHAT `Splat` WAS PRETENDING TO BE. A ragged eleven-sided outline is still
+        /// one continuous plate of colour, so `SpawnCrackedLavaDecal` had to draw its cracks ON
+        /// TOP as seven separate cubes: the geometry said "intact disc" and the decoration argued
+        /// with it. Here the gaps are HOLES, so the road itself shows through between the pieces
+        /// and the cracks cost nothing because they are not drawn at all.
+        ///
+        /// ⚠️ EVERY PLATE GETS ITS OWN OUTER HEIGHT, WHICH IS WHAT MAKES IT LOOK BROKEN RATHER
+        /// THAN SLICED. Ground that has been hit does not stay level; a few millimetres of
+        /// disagreement per plate is enough for the light to break across them individually,
+        /// which is the same trick `Faceted` plays and the reason this game's forms read as cut.
+        ///
+        /// ⚠️ THE INNER RING STAYS LOW. A plate lifted at the middle is a tent; lifted at the rim
+        /// it is a slab that has been shoved up from underneath, which is what a stomp does.
+        /// </summary>
+        public static Mesh Wedges(int count = 7, float innerRatio = 0.16f, float gapDegrees = 7.0f,
+                                  float lift = 0.07f, float jitter = 0.20f, int seed = 0)
+        {
+            count = Mathf.Max(3, count);
+
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var tris = new System.Collections.Generic.List<Vector3>(count * 6);
+            float sector = 360.0f / count;
+            float half = Mathf.Max(0.0f, sector - gapDegrees) * 0.5f * Mathf.Deg2Rad;
+
+            for (int i = 0; i < count; i++)
+            {
+                // ⚠️⚠️ THE ANGULAR SPAN IS JITTERED, NOT ONLY THE RADIUS, AND WITHOUT THIS IT IS
+                // A PINWHEEL. `ability_lava_decal_v13.png` is the evidence: nine plates of
+                // identical width at identical spacing read as a black FLOWER, which is a
+                // manufactured object and the one thing broken ground must never look like.
+                // `Splat`'s note makes the opposite call for the opposite reason (moving its
+                // angles bunches vertices into slivers that alias); here the plates are separate
+                // pieces with gaps between them, so unequal widths cost nothing and are the
+                // entire difference between fractured and machined.
+                // ⚠️ THE ANGULAR WANDER IS A FRACTION OF THE GAP, NOT THE WHOLE GAP. At the
+                // full gap a plate can walk clear into its neighbour's lane, so plates cluster
+                // and overlap and the ring stops reading as a ring: on a rim it looks like
+                // litter thrown across the road rather than a dashed edge. A third of the gap is
+                // enough to kill the machined look `_v13` had and not enough to break the lane.
+                float mid = (i * sector + Random.Range(-gapDegrees, gapDegrees) * 0.35f) * Mathf.Deg2Rad;
+                float span = Random.Range(0.62f, 1.0f);
+                float outerR = 1.0f - Random.Range(0.0f, jitter);
+                float y = Random.Range(0.0f, lift);
+
+                // The inner corners sit almost on the road; the outer pair carry the lift, so
+                // each plate tips up along the direction the break travelled.
+                float h0 = half * span;
+
+                // ⚠️⚠️ THE INNER JITTER IS PROPORTIONALLY SMALL, AND AT 0.7 TO 1.3 IT WAS NOT.
+                // This is a multiplier on `innerRatio`, so its effect depends entirely on how
+                // thick the band is. On Dante's crust, where the inner ratio is 0.22, a 30 per
+                // cent swing is a few centimetres. On a RIM, where it is around 0.9, the same
+                // swing moves the inner edge between 0.63 and 1.0 of the radius: plates three
+                // times deeper than the band they belong to. `ability_seance_void_eye_v14.png`
+                // is what that looks like from a metre away, a ring of huge purple spikes thrown
+                // across the road around a telegraph that is supposed to be a dashed line.
+                var i0 = Ring(mid - h0, innerRatio * Random.Range(0.9f, 1.1f), 0.0f);
+                var i1 = Ring(mid + h0, innerRatio * Random.Range(0.9f, 1.1f), 0.0f);
+                var o0 = Ring(mid - h0, outerR, y);
+                var o1 = Ring(mid + h0, outerR * Random.Range(0.88f, 1.0f),
+                              y * Random.Range(0.55f, 1.0f));
+
+                tris.Add(i0); tris.Add(o0); tris.Add(o1);
+                tris.Add(i0); tris.Add(o1); tris.Add(i1);
+            }
+
+            Random.state = state;
+            return FacetedOriented(tris, "VfxWedges", new Vector3(0.0f, -10.0f, 0.0f));
+        }
+
+        /// <summary>
+        /// A flame: a tapering blade of triangular cross-section standing on the origin, unit
+        /// height, leaning and curling as it rises.
+        ///
+        /// ⚠️⚠️ FIRE IS THE ONE FICTION THAT DOES NOT LIE ON THE GROUND AND IT WAS BEING DRAWN AS
+        /// A PLATE. `ability_fire_trail_v11.png` and the six-drop corridor in
+        /// `ability_worstframe_v11.png` are the argument: a `Streak` fan scaled 1.28 along the run
+        /// renders as a flat salmon LOZENGE, and six of them in a row read as a row of leaves.
+        /// Nothing about it says heat, because the one direction heat has is the one direction a
+        /// ground decal cannot use.
+        ///
+        /// ⚠️ A TRIANGULAR CROSS-SECTION, NOT A CYLINDER. Three sides is the fewest that encloses
+        /// a volume, so every flame is nine faces and a corridor of them stays cheap, and the
+        /// sharp arris down each side is what reads as a tongue rather than as a rolled cone.
+        /// The same argument `Crystal`'s note makes about six sides against eleven.
+        ///
+        /// ⚠️ THE LEAN IS QUADRATIC IN HEIGHT AND THE TWIST IS LINEAR. A flame that leans from
+        /// its foot has been knocked over; one that stands and then bends near the tip is
+        /// burning. Curl rotates each cross-section as it climbs so the arris spirals, which
+        /// gives the silhouette a different edge from every viewing angle without a second mesh.
+        /// </summary>
+        public static Mesh Tongue(int segments = 5, float width = 0.34f, float lean = 0.28f,
+                                  float curl = 0.55f, float jitter = 0.18f, int seed = 0)
+        {
+            segments = Mathf.Max(2, segments);
+
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var rings = new Vector3[segments + 1][];
+
+            for (int s = 0; s <= segments; s++)
+            {
+                float t = s / (float)segments;
+
+                // Taper is fast at the top so the flame ends in a point rather than a stub.
+                float w = width * (1.0f - t) * (1.0f - t * 0.35f);
+                float y = t;
+                float x = lean * t * t;
+                float spin = curl * t * Mathf.PI * 2.0f;
+
+                var ring = new Vector3[3];
+                for (int k = 0; k < 3; k++)
+                {
+                    float a = k / 3.0f * Mathf.PI * 2.0f + spin;
+                    float rough = 1.0f - Random.Range(0.0f, jitter);
+                    ring[k] = new Vector3(x + Mathf.Cos(a) * w * rough, y, Mathf.Sin(a) * w * rough);
+                }
+
+                rings[s] = ring;
+            }
+
+            var tris = new System.Collections.Generic.List<Vector3>(segments * 18);
+
+            for (int s = 0; s < segments; s++)
+            {
+                for (int k = 0; k < 3; k++)
+                {
+                    int k2 = (k + 1) % 3;
+
+                    Vector3 a = rings[s][k], b = rings[s][k2];
+                    Vector3 c = rings[s + 1][k2], d = rings[s + 1][k];
+
+                    tris.Add(a); tris.Add(b); tris.Add(c);
+                    tris.Add(a); tris.Add(c); tris.Add(d);
+                }
+            }
+
+            Random.state = state;
+            return FacetedOriented(tris, "VfxTongue", new Vector3(lean * 0.4f, 0.5f, 0.0f));
+        }
+
+        /// <summary>
+        /// A branching bolt: a jagged tube walked from the origin to <paramref name="height"/>,
+        /// with forks that peel off and climb away. Unit height, thickness in world units.
+        ///
+        /// ⚠️⚠️ IT REPLACES A CHAIN OF STRETCHED CUBES. `ArcFlicker` builds four
+        /// `PrimitiveType.Cube`s and re-poses them four times a second, which is four renderers,
+        /// four materials and four colliders to strip per arc, and the joints between the legs
+        /// are visibly square because they ARE squares. One mesh is one renderer, the joints
+        /// share vertices, and the whole thing can be handed to `IVfxTimeline` and photographed.
+        ///
+        /// ⚠️ THE FORKS ARE THE READ, NOT THE JAG. A single jagged line is a crack; lightning is
+        /// recognisable because it SPLITS and the branches never rejoin. They start partway up
+        /// (never at the foot, which would read as a tripod) and they get thinner, because a
+        /// branch that matches the trunk reads as two bolts.
+        ///
+        /// ⚠️ SEEDED, SO A GIVEN ARC IS THE SAME SHAPE IN EVERY CAPTURE. `ArcFlicker` reshapes
+        /// from unseeded `Random.Range`, which is correct for something that flickers in play and
+        /// is exactly why the shock trail could never be compared between two render passes.
+        /// </summary>
+        public static Mesh Bolt(float height = 1.0f, int segments = 6, float jag = 0.14f,
+                                float thickness = 0.045f, int branches = 2, int seed = 0)
+        {
+            segments = Mathf.Max(2, segments);
+
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var tris = new System.Collections.Generic.List<Vector3>(segments * 18);
+
+            // The trunk. The sideways kick converges back toward the axis as it climbs, so the
+            // bolt tapers to where it was aimed instead of wandering off it.
+            var spine = new Vector3[segments + 1];
+            spine[0] = Vector3.zero;
+
+            for (int i = 1; i <= segments; i++)
+            {
+                float t = i / (float)segments;
+                float spread = jag * (1.0f - t * 0.7f);
+
+                spine[i] = new Vector3(Random.Range(-spread, spread),
+                                       height * t,
+                                       Random.Range(-spread, spread));
+            }
+
+            for (int i = 0; i < segments; i++)
+            {
+                float t = i / (float)segments;
+                Tube(tris, spine[i], spine[i + 1], thickness * (1.0f - t * 0.45f));
+            }
+
+            // The forks. Each leaves a joint in the upper two thirds of the trunk and climbs
+            // outward, at roughly half the thickness and never all the way to the top.
+            for (int b = 0; b < branches; b++)
+            {
+                int from = Random.Range(Mathf.Max(1, segments / 3), segments - 1);
+                Vector3 at = spine[from];
+
+                float ang = Random.Range(0.0f, Mathf.PI * 2.0f);
+                float reach = jag * Random.Range(2.2f, 4.0f);
+                float rise = height * Random.Range(0.16f, 0.34f);
+
+                var tip = at + new Vector3(Mathf.Cos(ang) * reach, rise, Mathf.Sin(ang) * reach);
+                var knee = Vector3.Lerp(at, tip, 0.55f)
+                           + new Vector3(Random.Range(-jag, jag), 0.0f, Random.Range(-jag, jag));
+
+                Tube(tris, at, knee, thickness * 0.6f);
+                Tube(tris, knee, tip, thickness * 0.4f);
+            }
+
+            Random.state = state;
+            return FacetedOriented(tris, "VfxBolt", new Vector3(0.0f, height * 0.5f, 0.0f));
+        }
+
+        /// <summary>
+        /// One triangular prism from <paramref name="a"/> to <paramref name="b"/>, appended to a
+        /// triangle list. Three sides for the reason `Tongue` gives: the fewest that encloses a
+        /// volume, and the arris is what makes a thin tube visible at all at this scale.
+        /// </summary>
+        private static void Tube(System.Collections.Generic.List<Vector3> tris,
+                                 Vector3 a, Vector3 b, float thickness)
+        {
+            Vector3 axis = b - a;
+            float len = axis.magnitude;
+            if (len < 0.0001f) return;
+
+            axis /= len;
+
+            // Any vector not parallel to the axis will do for the first perpendicular; up is
+            // wrong exactly when the segment is vertical, which is the common case here.
+            Vector3 seed = Mathf.Abs(axis.y) > 0.9f ? Vector3.forward : Vector3.up;
+            Vector3 u = Vector3.Normalize(Vector3.Cross(axis, seed)) * thickness;
+            Vector3 v = Vector3.Normalize(Vector3.Cross(axis, u)) * thickness;
+
+            var ring = new Vector3[3];
+            for (int k = 0; k < 3; k++)
+            {
+                float ang = k / 3.0f * Mathf.PI * 2.0f;
+                ring[k] = u * Mathf.Cos(ang) + v * Mathf.Sin(ang);
+            }
+
+            for (int k = 0; k < 3; k++)
+            {
+                int k2 = (k + 1) % 3;
+
+                Vector3 p0 = a + ring[k], p1 = a + ring[k2];
+                Vector3 p2 = b + ring[k2], p3 = b + ring[k];
+
+                tris.Add(p0); tris.Add(p1); tris.Add(p2);
+                tris.Add(p0); tris.Add(p2); tris.Add(p3);
+            }
+        }
+
+        /// <summary>
+        /// A dished surface that goes DOWN: unit radius at the lip, deepest at the centre.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE THE VOID WAS FOUR STACKED CYLINDERS AND RENDERED AS A PURPLE
+        /// PANCAKE. `ability_seance_void_v11.png` and the worst frame are unambiguous: a mouth, a
+        /// throat, a lip and a ground ring, each a `PrimitiveType.Cylinder` scaled flat, stack
+        /// into one lilac plate with a darker ellipse painted in the middle. Every one of the
+        /// four is a disc, so no amount of arranging them makes a hole; depth drawn as concentric
+        /// flat rings is a target, not a funnel.
+        ///
+        /// ⚠️ THE PROFILE IS A POWER CURVE AND THE EXPONENT IS THE WHOLE READ. At 1.0 this is a
+        /// straight cone, which is a hopper. Above 2 the wall is near vertical at the lip and
+        /// falls away fast in the middle, which is the shape of something being pulled in, and it
+        /// keeps almost all of the depth inside the inner half of the radius where it cannot cost
+        /// the footprint anything.
+        ///
+        /// ⚠️ THE LIP FLARES UP ABOVE THE ROAD. Without it the rim meets the street exactly
+        /// tangentially and z-fights along the whole circumference; a couple of centimetres of
+        /// flare also gives the eye the edge that says the hole has a near side and a far side.
+        ///
+        /// ⚠️ AND IT IS STILL ROUND, WHICH IS DELIBERATE. `Hero_Strike_Balance.md` § 8.4 argues
+        /// that a vortex genuinely IS radial and squaring it off would be a lie about where the
+        /// danger is, so it changes AXIS instead. This changes axis the rest of the way: not a
+        /// disc lifted off the floor, a surface that actually leaves it.
+        /// </summary>
+        public static Mesh Funnel(int rings = 5, int sectors = 12, float depth = 0.55f,
+                                  float lip = 0.08f, float power = 2.4f,
+                                  float jitter = 0.0f, int seed = 0)
+        {
+            rings = Mathf.Max(2, rings);
+            sectors = Mathf.Max(3, sectors);
+
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var grid = new Vector3[rings + 1, sectors];
+
+            for (int r = 0; r <= rings; r++)
+            {
+                float rad = r / (float)rings;
+                float y = -depth * Mathf.Pow(1.0f - rad, power);
+
+                // The flare is the last ring only, so the wall stays a wall and the rim is a rim.
+                if (r == rings) y += lip;
+
+                for (int s = 0; s < sectors; s++)
+                {
+                    float a = s / (float)sectors * Mathf.PI * 2.0f;
+                    float rough = 1.0f - Random.Range(0.0f, jitter);
+
+                    grid[r, s] = new Vector3(Mathf.Cos(a) * rad * rough, y, Mathf.Sin(a) * rad * rough);
+                }
+            }
+
+            var tris = new System.Collections.Generic.List<Vector3>(rings * sectors * 6);
+
+            for (int r = 0; r < rings; r++)
+            {
+                for (int s = 0; s < sectors; s++)
+                {
+                    int s2 = (s + 1) % sectors;
+
+                    Vector3 a = grid[r, s], b = grid[r, s2];
+                    Vector3 c = grid[r + 1, s2], d = grid[r + 1, s];
+
+                    // Ring 0 is the single deepest point repeated, so its quad degenerates.
+                    if (r > 0) { tris.Add(a); tris.Add(b); tris.Add(c); }
+                    tris.Add(a); tris.Add(c); tris.Add(d);
+                }
+            }
+
+            Random.state = state;
+            return FacetedOriented(tris, "VfxFunnel", new Vector3(0.0f, -depth - 10.0f, 0.0f));
+        }
+
+        private static Vector3 Ring(float angle, float radius, float y)
+        {
+            return new Vector3(Mathf.Cos(angle) * radius, y, Mathf.Sin(angle) * radius);
+        }
+
+        /// <summary>
+        /// `Faceted`, with every triangle turned to face AWAY from <paramref name="inside"/>.
+        ///
+        /// ⚠️⚠️ IT IS HOW THE FIVE BUILDERS ABOVE CANNOT SHIP INSIDE OUT, AND `Fan`'s note is the
+        /// reason it is worth a helper. Unity's front face is the one whose vertices read
+        /// CLOCKWISE from the front, which in this coordinate system means the front normal is
+        /// the right-handed `Cross(b - a, c - a)`; a fan generated counter-clockwise from above
+        /// therefore faces the ROAD, and a shape facing the road is not culled, not missing and
+        /// not broken in any inspector: it is simply not in the picture. That cost a full capture
+        /// pass once already.
+        ///
+        /// ⚠️ THE REFERENCE POINT IS PER SHAPE AND IT IS NOT ALWAYS THE CENTROID. A slab uses its
+        /// own middle; a ground surface uses a point far BELOW the road, because "outward" for
+        /// something the player looks down at means up. Passing the wrong one turns a shape
+        /// inside out just as thoroughly as hand-winding it wrong, so each caller states its own.
+        /// </summary>
+        private static Mesh FacetedOriented(System.Collections.Generic.List<Vector3> tris,
+                                            string name, Vector3 inside)
+        {
+            for (int i = 0; i + 2 < tris.Count; i += 3)
+            {
+                Vector3 a = tris[i], b = tris[i + 1], c = tris[i + 2];
+
+                Vector3 n = Vector3.Cross(b - a, c - a);
+                Vector3 mid = (a + b + c) * (1.0f / 3.0f);
+
+                if (Vector3.Dot(n, mid - inside) < 0.0f)
+                {
+                    tris[i + 1] = c;
+                    tris[i + 2] = b;
+                }
+            }
+
+            return Faceted(tris, name);
+        }
+
+        /// <summary>
+        /// Drops a shape with real HEIGHT onto a fresh child object, scaled on all three axes.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE `Lay` SCALES X AND Z AND LEAVES Y AT 1.0, AND THAT HAS ALREADY
+        /// SHIPPED A BUG. `Lay` is correct for a ground decal, where the mesh is flat and the Y
+        /// scale would multiply nothing; hand it one of the volumes and the shape keeps its full
+        /// unit height while its footprint shrinks. `docs/TODO.md` § 15.5 records the version of
+        /// this that reached a player: a `NovaShell`, which is a unit SPHERE, laid at a ground
+        /// ring's radius and drawn as a 2 m ball nobody could account for.
+        ///
+        /// ⚠️ <paramref name="heightScale"/> IS SEPARATE ON PURPOSE. A slab wants its footprint
+        /// from the ability's radius and its thickness from the fiction: an ice sheet that got
+        /// 2.3 m of radius does not want 2.3 m of height, it wants about 25 cm. Uniform scaling
+        /// is the default because it is what a volume normally means; the override is what stops
+        /// a caller reaching for `Lay` and reintroducing the fault above.
+        /// </summary>
+        public static GameObject Stand(Transform parent, string name, Mesh mesh,
+                                       float radius, float heightScale = -1.0f,
+                                       float lift = 0.0f, float yaw = 0.0f)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = new Vector3(0.0f, lift, 0.0f);
+            go.transform.localRotation = Quaternion.Euler(0.0f, yaw, 0.0f);
+            go.transform.localScale = new Vector3(radius,
+                                                  heightScale < 0.0f ? radius : heightScale,
+                                                  radius);
+
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            go.AddComponent<MeshRenderer>();
+
+            Own(go, mesh);
+            return go;
+        }
+
         private static Mesh Faceted(System.Collections.Generic.List<Vector3> tris, string name)
         {
             var verts = new Vector3[tris.Count];

@@ -90,7 +90,18 @@ namespace TumbangPreso.Abilities
             light.range = 5.0f;
             light.intensity = 2.5f;
 
-            GameServices.Audio?.PlayAt("ability_shatter_trap", position);
+            // ⚠️⚠️ A WALL GOING UP PLAYED THE SOUND OF SOMETHING BREAKING, AND SO DID THE
+            // SHEET. `ability_shatter_trap` was on BOTH of Cheska's ground powers, so two
+            // different abilities shared one cue and that cue is a shatter fired at the moment
+            // something is BUILT. This is the fault `tools/generate_ability_audio.py` was written
+            // for (`ability_bagsak_bomb` on four callers, `ability_flick_dash` on a lightning
+            // strike) surviving in the one kit that pass did not reach.
+            //
+            // ⚠️ `sfx_barricade_raise` ARRIVES AND STOPS, which is the gameplay half: three
+            // pillars are a solid object that is now in the way, and the hard lock at the end of
+            // the cue is the frame it becomes true. The sheet gets a rising shimmer instead,
+            // because a sheet spreads and a wall lands.
+            GameServices.Audio?.PlayAt("sfx_barricade_raise", position);
             ComicPopup.Spawn(position, "ICE WALL!", UiTheme.HeroIceBright, 1.2f);
 
             var comp = go.AddComponent<IceBarricadeComponent>();
@@ -142,8 +153,12 @@ namespace TumbangPreso.Abilities
                     Object.Destroy(shard, 1.2f);
                 }
 
+                // ⚠️⚠️ THIS PLAYED `slipper_land`: A RUBBER SANDAL HITTING THE ROAD, for a wall
+                // of ice failing and coming down in twelve pieces. It is the single worst cue
+                // mismatch left in the game and it is in the one place in Cheska's kit where ice
+                // genuinely does break.
                 ComicPopup.Freeze(transform.position);
-                GameServices.Audio?.PlayAt("slipper_land", transform.position);
+                GameServices.Audio?.PlayAt("sfx_ice_shatter", transform.position);
                 Object.Destroy(gameObject);
             }
         }
@@ -162,9 +177,27 @@ namespace TumbangPreso.Abilities
             // thing in this set that GREW rather than spread or was broken, so it is the one
             // shape that reads as ordered: hard straight edges and six corners, against Sean's
             // directional smear and Zack's discharge star.
-            var visual = VfxShapes.Lay(go.transform, "VisualOuter",
-                                       VfxShapes.Crystal(6, 0.26f),
-                                       radius, 0.01f);
+            // ⚠️⚠️ IT IS A SLAB WITH WALLS NOW, NOT A HEXAGON PAINTED ON THE ROAD.
+            // `ability_ice_sheet_v11.png` is what forced this: the outline work of § 8 landed and
+            // the sheet still renders as a pale blue plate with five cubes standing on it,
+            // because a `Crystal` handed to `Fan` and dropped by `Lay` at y = 0.01 IS a plate.
+            // 🧑 named the cause from play: *"the same logic and code was used to generate all of
+            // them"*. `VfxShapes.Prism` is the answer for this one: the same six-sided footprint,
+            // extruded, so the ice has a top face and six sloping walls that take the key light
+            // at three different angles.
+            //
+            // ⚠️ 0.26 m OF THICKNESS AND NOT MORE. It has to read from eye height and stay
+            // something a player can see ACROSS while deciding whether to cross it, which is the
+            // constraint the spikes below are already held to. A quarter of a metre is a kerb.
+            //
+            // ⚠️ `Stand`, NEVER `Lay`. `Lay` leaves the Y scale at 1.0, which is right for a flat
+            // fan and silently wrong for anything with height; `docs/TODO.md` § 15.5 records the
+            // 2 m ball that shipped from exactly that mistake.
+            int seed = Mathf.RoundToInt((position.x * 5.0f + position.z) * 733.0f);
+
+            var visual = VfxShapes.Stand(go.transform, "IceSlab",
+                                         VfxShapes.Prism(6, 1.0f, 0.80f, 0.0f, 0.26f, seed),
+                                         radius, heightScale: 0.26f, lift: 0.01f);
 
             // ⚠️⚠️ ALPHA 0.30, DOWN FROM 0.65, AND THIS DISC USED TO RENDER AS A HOLE OF PURE
             // WHITE. Measured off `Logs/shots-abilities/ability_ice_sheet_v1.png`: the whole
@@ -177,7 +210,13 @@ namespace TumbangPreso.Abilities
             // a value that the surface shader already clipped. This is the same fault, in the
             // same shape, as the sign emission that washed the PC Express fascia pink
             // (`docs/TODO.md` Closed, v16), and it was found the same way: by rendering it.
-            VfxMaterial.Ghost(visual.GetComponent<Renderer>(), new Color(0.3f, 0.85f, 1.0f, 0.30f), 0.12f);
+            // ⚠️ 0.42 AND LIGHTER, AFTER `ability_ice_sheet_v13.png` CAME BACK TEAL. The
+            // warning above is about a 0.65 alpha surface under a 2.5-intensity light clipping to
+            // pure white, and both halves of that pair are gone: the light is 0.9 now and sits
+            // 1.5 m up. What was left was the opposite fault, a thin blue wash over dark asphalt
+            // reading as a puddle of dishwater. The gate has the headroom to say so: this frame
+            // measures 1.9 per cent blown against a 12 per cent bound.
+            VfxMaterial.Ghost(visual.GetComponent<Renderer>(), new Color(0.55f, 0.92f, 1.0f, 0.42f), 0.10f);
 
             // ⚠️⚠️ THE INNER DISC AND THE FOUR SNOWFLAKE CROSSBARS ARE DELETED, AND THIS IS THE
             // ONE ABILITY THAT WAS BREAKING `docs/VISION.md` § 2 RULE 4 AGAINST ITSELF. Rule 4
@@ -197,9 +236,15 @@ namespace TumbangPreso.Abilities
 
             // The rim. A thin ring standing just proud of the floor, so the edge of the danger
             // is a LINE rather than the place a gradient gives up.
-            var rim = VfxShapes.Lay(go.transform, "FrostRim",
-                                    VfxShapes.Crystal(6, 0.26f),
-                                    radius * 1.07f, 0.05f);
+            // ⚠️⚠️ THE RIM IS A COLLAR AROUND THE SLAB, NOT A SECOND PLATE UNDER IT. It used
+            // to be another flat `Crystal` at 1.07 radius, so the sheet was two translucent
+            // discs stacked, which is the overlap `docs/VISION.md` § 2 rule 4 caps and which the
+            // note below this one already argued the effect down from five layers to three.
+            // A low prism ringing the slab does the same job with geometry the eye can resolve:
+            // the edge of the danger is a raised LINE at ankle height.
+            var rim = VfxShapes.Stand(go.transform, "FrostRim",
+                                      VfxShapes.Collar(6, 1.0f, 0.90f, 0.0f, 0.26f, seed + 1),
+                                      radius * 1.06f, heightScale: 0.11f, lift: 0.005f);
             VfxMaterial.Ghost(rim.GetComponent<Renderer>(), new Color(0.70f, 0.93f, 1.0f, 0.42f), 0.28f);
             VfxMaterial.StripCollider(rim);
 
@@ -226,11 +271,25 @@ namespace TumbangPreso.Abilities
                 float ang = s * 72.0f * Mathf.Deg2Rad + 0.4f;
                 float rr = radius * (s == 0 ? 0.0f : 0.34f);
 
-                var spike = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                spike.name = $"FrostSpike_{s}";
-                spike.transform.SetParent(go.transform, false);
+                // ⚠⚠ A TAPERED FIVE-SIDED SHARD, NOT A CUBE. The cubes are visible in
+                // `ability_ice_sheet_v11.png` and they read as five blue BOXES sitting on a
+                // plate, because that is what they are: `PrimitiveType.Cube` is the same
+                // primitive Dante's debris, Sean's embers and Nemu's void shards are made of, so
+                // four different fictions were sharing one lump of geometry. A `Prism` pulled in
+                // hard at the top is a spike, it is built from the same builder as the slab
+                // underneath it, and it costs one mesh.
+                float shardH = s == 0 ? 0.62f : Random.Range(0.34f, 0.48f);
+
+                var spike = VfxShapes.Stand(go.transform, $"FrostSpike_{s}",
+                                            VfxShapes.Prism(5, 1.0f, 0.16f,
+                                                            0.22f, 0.4f, seed + 7 + s),
+                                            0.17f, heightScale: shardH);
+                // ⚠️ THEY STAND ON THE SLAB, NOT IN IT. At 0.14 m the feet were buried inside a
+                // 0.26 m slab, and a solid shard seen THROUGH a translucent blue surface is
+                // darkened by it: `ability_ice_sheet_v12.png` renders five near-navy specks on
+                // bright cyan, which is the opposite of the contrast they exist for.
                 spike.transform.localPosition = new Vector3(Mathf.Cos(ang) * rr,
-                                                            0.16f,
+                                                            0.25f,
                                                             Mathf.Sin(ang) * rr);
                 spike.transform.localRotation = Quaternion.Euler(Random.Range(-14.0f, 14.0f),
                                                                  s * 72.0f,
@@ -240,10 +299,15 @@ namespace TumbangPreso.Abilities
                 // because it costs five renderers to draw nothing. Two and a half times the
                 // footprint and roughly double the height is what makes a silhouette at the
                 // 10 m the arena is actually read across, and they stay under knee height.
-                float h = s == 0 ? 0.62f : Random.Range(0.34f, 0.48f);
-                spike.transform.localScale = new Vector3(0.30f, h, 0.30f);
+                // ⚠️ 0.35 EMISSION, BECAUSE `Solid` IS SCENE-LIT AND HALF THE COURT IS IN
+                // SHADOW. In `ability_ice_sheet_v13.png` the shards read as dark slate cones on
+                // bright ice, which is the contrast backwards: they are the part that is supposed
+                // to catch the light. `VfxMaterial`'s own note makes this argument for the ghost
+                // material (*"a frost sheet shaded by the scene's key light goes dark on the
+                // shadowed half of the court, which is exactly where a player most needs to see
+                // it"*) and the solid path needs it just as much.
                 VfxMaterial.Solid(spike.GetComponent<Renderer>(),
-                                  new Color(0.62f, 0.86f, 0.98f), 0.10f);
+                                  new Color(0.72f, 0.92f, 1.0f), 0.35f);
                 VfxMaterial.StripCollider(spike);
             }
 
@@ -275,7 +339,9 @@ namespace TumbangPreso.Abilities
             // the dash trails drop thirty discs a dash and get nothing.
             AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.FrostMote, duration);
 
-            GameServices.Audio?.PlayAt("ability_shatter_trap", position);
+            // Ice SPREADING, not ice breaking. See the barricade's note above for what these
+            // two were sharing and why sharing it was backwards.
+            GameServices.Audio?.PlayAt("sfx_ice_form", position);
             ComicPopup.Spawn(position, "SLIP & SLIDE!", UiTheme.HeroIceBright, 1.15f);
 
             var comp = go.AddComponent<IceSheetComponent>();
@@ -308,6 +374,20 @@ namespace TumbangPreso.Abilities
 
                 if (_left <= 0.0f)
                 {
+                    // ⚠️⚠️ EVERY ZONE IN THIS FILE USED TO DIE IN SILENCE.
+                    // `Hero_Strike_Balance.md` § 8.5 item 2 argues that a player who cannot tell
+                    // a spent effect from a live one has lost a real gameplay read and that
+                    // fixing it is free. That argument was applied to the VISUALS (the rims
+                    // pulse, the auras thin) and never to the audio, which is the channel a
+                    // player still has while they are looking somewhere else. This is a slip
+                    // zone somebody is standing at the edge of deciding whether to cross; the
+                    // moment it stops being dangerous is worth a sound.
+                    //
+                    // ⚠️ AND IT IS THE TRAILS THAT GET NOTHING, DELIBERATELY. One dash drops up
+                    // to thirty marks and each lives 3 s, so trail expiry cues would be thirty
+                    // overlapping tails inside three seconds. Same measurement `AbilityVfx` uses
+                    // to keep emitters off trails. Singular zones only.
+                    GameServices.Audio?.PlayAt("sfx_ice_thaw", transform.position);
                     Object.Destroy(gameObject);
                     return;
                 }
@@ -377,16 +457,39 @@ namespace TumbangPreso.Abilities
             var visual = VfxShapes.Lay(go.transform, "ShockScorch",
                                        VfxShapes.Star(7, 0.40f, seed),
                                        radius * 0.72f, 0.015f);
-            VfxMaterial.Ghost(visual.GetComponent<Renderer>(), new Color(0.16f, 0.14f, 0.03f, 0.90f), 0.0f);
+            // Opaque, for the reason written up on the fire trail's char: a burnt mark does not
+            // show the road through it, and an opaque surface cannot lose a sort to the bright
+            // rim standing on it.
+            VfxMaterial.Solid(visual.GetComponent<Renderer>(), new Color(0.14f, 0.12f, 0.03f), 0.0f);
             VfxMaterial.StripCollider(visual);
 
+            // ⚠️⚠️ A BROKEN RIM, NOT A FULL BRIGHT PLATE, AND THE PLATE IS THE OTHER HALF OF
+            // THE CORRIDOR PROBLEM. This was a second `Star` fan at the FULL radius in near-white
+            // yellow at 0.55 alpha, drawn over the dark scorch. One of them is a hot discharge
+            // mark; six of them, which is what a 2.5 s sprint lays, is the yellow carpet
+            // `VISION.md` § 2 measures as 27.2 per cent of the box off a 6 s cooldown, and that
+            // is more floor than any ultimate in the game.
+            //
+            // ⚠️ THE DARK SCORCH ABOVE KEEPS THE STAR SILHOUETTE, so nothing about which ability
+            // this is changes: the outline work of `Hero_Strike_Balance.md` § 8.3 is carried by
+            // the mark, not by the glow. What goes is the bright FILL, replaced by twelve short
+            // plates at the rim. A player still sees a yellow discharge edge and the road
+            // underneath it survives.
+            //
+            // ⚠️ AND THE BRIGHTNESS MOVES TO THE ARC, WHICH IS WHERE IT BELONGS. `ArcFlicker`
+            // stands a live bolt at the anchor; that is a thing you can see is dangerous from the
+            // side, which a plate on the ground cannot be at eye height however bright it is.
             var ring = VfxShapes.Lay(go.transform, "ShockRing",
-                                     VfxShapes.Star(7, 0.40f, seed),
+                                     VfxShapes.Wedges(12, 0.78f, 9.0f, 0.0f, 0.10f, seed + 2),
                                      radius, 0.010f);
             // Same clipping fault and same fix as the fire trail's rim: 1.15 emission wrote
             // past white and `ability_shock_trail_v1.png` came back as one flat yellow coin with
             // the arc invisible on top of it.
-            VfxMaterial.Ghost(ring.GetComponent<Renderer>(), new Color(1.0f, 0.92f, 0.18f, 0.55f), 0.32f);
+            // ⚠️ DIMMED AGAIN AFTER THE CORRIDOR SHOT. `ability_corridors_v14.png` shows six of
+            // these along one dash and the rims read as a scatter of yellow confetti: at 0.55
+            // alpha and 0.32 emission a single rim is right and six overlapping ones are the
+            // carpet this pass exists to remove, one step less bright.
+            VfxMaterial.Ghost(ring.GetComponent<Renderer>(), new Color(1.0f, 0.90f, 0.20f, 0.40f), 0.22f);
 
             // ⚠️ NO `HazardRimLife` HERE EITHER, and for the same reason as the fire trail: this
             // is the other per-disc trail, and Zack's corridor is the widest in the game.
@@ -429,6 +532,36 @@ namespace TumbangPreso.Abilities
             return go;
         }
 
+        /// <summary>
+        /// Shrink a trail mark toward its own end, so a corridor of them reads back in time.
+        ///
+        /// ⚠️⚠️ IT IS WHAT MAKES SIX DROPS STOP LOOKING LIKE ONE DROP SIX TIMES. Every mark in a
+        /// dash is built from the same call with the same constants, seeded off its position, so
+        /// the only difference between them is a few degrees of outline. `ability_corridors_v13`
+        /// and `_v14` both show that: a row of identical marks, which is the repetition 🧑 has
+        /// reported three separate times. Age is the one axis that differs between them for free,
+        /// and using it means the corridor POINTS: the small end is where the caster started.
+        ///
+        /// ⚠️⚠️ A SHRINK IS NOT THE PULSE THIS FILE ALREADY REFUSED, AND THE DIFFERENCE MATTERS.
+        /// `SpawnFireTrail` records why `HazardRimLife` was taken off the trails: thirty rims
+        /// throbbing out of phase along a corridor is visual noise, and thirty per-frame MATERIAL
+        /// writes on top of it. This is monotone and it is one transform write: no oscillation,
+        /// nothing to fall out of phase with, no allocation, and it is information rather than
+        /// decoration. The pulse stays on the zones.
+        ///
+        /// ⚠️ IT SHRINKS THE MARK, NOT THE HAZARD. `Radius` is untouched and every component here
+        /// resolves contact against that field, so what a player is standing in is exactly what
+        /// `Hero_Strike_Balance.md` § 1 measures. A telegraph that lies is worse than no
+        /// telegraph, so this only ever draws the mark SMALLER than the danger, never larger.
+        /// </summary>
+        private static void Burn(Transform mark, float left, float duration)
+        {
+            if (mark == null || duration <= 0.0f) return;
+
+            float s = Mathf.Lerp(0.66f, 1.0f, Mathf.Clamp01(left / duration));
+            mark.localScale = new Vector3(s, s, s);
+        }
+
         public sealed class ShockTrailComponent : MonoBehaviour
         {
             public float Radius = 2.0f;
@@ -448,6 +581,8 @@ namespace TumbangPreso.Abilities
                     Object.Destroy(gameObject);
                     return;
                 }
+
+                Burn(transform, _left, Duration);
 
                 var round = GameServices.Round;
                 if (round == null) return;
@@ -557,20 +692,107 @@ namespace TumbangPreso.Abilities
             // ⚠️ THE PLATE ALSO GREW TO radius * 1.80 SO THE RIM BAND IS THINNER. At 1.55 the
             // gap to the 2.0 edge was a fat mustard donut and the mark read as a ring rather
             // than as burnt ground with a hot edge.
-            VfxMaterial.Ghost(visual.GetComponent<Renderer>(), new Color(0.17f, 0.07f, 0.03f, 0.92f), 0.0f);
+            // ⚠️⚠️ OPAQUE, AND THE ALPHA WAS NOT A LOOK, IT WAS A SORTING BUG. Read the note
+            // above: it argues at length for 0.93 alpha over any lower value, and it ends with
+            // *"A SCORCH IS OPAQUE ANYWAY. Burnt asphalt does not show the road through it."*
+            // That last line was right and the code stopped one step short of it.
+            //
+            // ⚠️⚠️ WHAT 0.92 ALPHA ACTUALLY COST: TWO COPLANAR TRANSLUCENT PLATES SORT
+            // ARBITRARILY, SO THE MARK RENDERED A DIFFERENT COLOUR PER DROP. Unity orders
+            // transparent renderers by the distance from the camera to each one's bounds centre.
+            // The char and the bright rim under it are concentric and 5 mm apart, so their
+            // centres are the same point to within rounding and the comparison is effectively a
+            // coin toss. `ability_worstframe_v11.png` is the proof and it had been on disk
+            // unexplained: six drops of ONE trail, alternating dark brown and bright salmon, from
+            // one call with one set of constants. Nothing was wrong with either colour.
+            //
+            // ⚠️ AN OPAQUE MATERIAL CANNOT LOSE THAT ARGUMENT, WHICH IS THE REAL FIX. It renders
+            // in the geometry queue and writes depth, so it occludes whatever is beneath it by
+            // construction rather than by winning a sort. The rule this file now follows: ground
+            // that has been BURNT or BROKEN is opaque, and only things you can genuinely see
+            // through are ghosted.
+            // ⚠️ BURNT ASPHALT, NOT A HOLE. At (0.15, 0.06, 0.03) and opaque this read as pure
+            // black in `ability_fire_trail_v13.png`, so the mark looked like a gap in the road
+            // with an orange ring round it. Scorched tarmac is a dark warm GREY; the road it sits
+            // on is already dark, so the mark only has to be darker than that, not absent.
+            VfxMaterial.Solid(visual.GetComponent<Renderer>(), new Color(0.25f, 0.19f, 0.16f), 0.0f);
             VfxMaterial.StripCollider(visual);
 
-            // The burning edge. Bright, thin, and OUTSIDE the char, so the mark has a hot
-            // perimeter and a cold middle exactly like a scorch does.
-            var edge = VfxShapes.Lay(go.transform, "FireEdge",
-                                     VfxShapes.Streak(0.60f, 12, seed + 1),
-                                     1.0f, 0.010f, yaw);
-            edge.transform.localScale = new Vector3(radius * 0.86f, 1.0f, radius * 1.66f);
+            // ⚠️⚠️ THE BRIGHT LOZENGE PLATE IS DELETED AND FLAMES REPLACE IT. THIS IS THE
+            // SINGLE UGLIEST OBJECT IN HERO STRIKE AND IT TOOK A CORRIDOR RENDER TO SEE IT.
+            // What stood here was a second `Streak` fan at `radius * 0.86` by `radius * 1.66`,
+            // full orange at 0.42 alpha, drawn UNDER the char. On its own it is a hot perimeter.
+            // Six of them in a row, which is what a dash actually lays, is
+            // `ability_worstframe_v11.png`: a chain of flat salmon LOZENGES down the middle of
+            // the street that reads as a row of leaves, and it is the widest painted thing in the
+            // game.
+            //
+            // ⚠️⚠️ THE FAULT IS THE AXIS, NOT THE COLOUR OR THE ALPHA, AND THAT IS WHY THREE
+            // EARLIER PASSES ON THIS EFFECT DID NOT FIX IT. The note above records darkening the
+            // colour twice and cutting the light twice against `_v1` through `_v3`. Every one of
+            // those was still a plate. Fire is the one fiction in the game that does not lie on
+            // the ground, and a ground decal cannot use the only direction it has.
+            //
+            // ⚠️ IT ALSO PAYS FOR ITSELF IN FOOTPRINT, WHICH IS THE OTHER HALF. `VISION.md` § 2
+            // measures Sean's and Zack's corridors as the two worst offenders in the game at 27.2
+            // per cent of the box, and the arithmetic there is per-disc area times the drop count.
+            // The plate was the largest disc in each drop, at 1.66 by 0.86 of the radius against
+            // the char's 1.28 by 0.62. Deleting it takes roughly 40 per cent of the painted area
+            // out of every drop Sean makes, and buys the budget the flames spend on detail, which
+            // is `VISION.md` § 2 rule 3 exactly.
+            //
+            // ⚠️ THREE, NOT FIVE, AND UNDER HALF A METRE. Six drops live at once during a dash,
+            // so anything on this object is multiplied by six before a second hero casts
+            // anything. Three tongues at 0.55 m are visible from eye height and still let a
+            // player see a body standing behind the mark, which is `ArcFlicker`'s knee-height
+            // ceiling applied to the other trail.
+            for (int t = 0; t < 3; t++)
+            {
+                // ⚠️ TALLER AND SPREAD ALONG THE RUN. The flames are meant to be the READ and at
+                // 0.38 m they were smaller than the rim around them, so the effect still resolved
+                // as a ring. They also sat in a circle, which fights the streak: a dash mark
+                // points, so the fire on it should be strung out along the direction of travel.
+                float ta = t * 120.0f + Random.Range(-24.0f, 24.0f);
+                float tr = radius * Random.Range(0.10f, 0.44f);
+                float th = Random.Range(0.52f, 0.78f);
+
+                var flame = VfxShapes.Stand(go.transform, $"FireTongue_{t}",
+                                            VfxShapes.Tongue(5, 0.34f,
+                                                             Random.Range(0.16f, 0.38f),
+                                                             Random.Range(0.35f, 0.75f),
+                                                             0.18f, seed + 11 + t),
+                                            radius * 0.30f, heightScale: th,
+                                            yaw: ta);
+                flame.transform.localPosition = new Vector3(
+                    Mathf.Cos(ta * Mathf.Deg2Rad) * tr * 0.55f,
+                    0.0f,
+                    Mathf.Sin(ta * Mathf.Deg2Rad) * tr * 1.45f);
+
+                // ⚠️ GHOSTED AND LOW-EMISSION, BECAUSE THREE OF THESE STACK ON EVERY DROP AND
+                // SIX DROPS OVERLAP. The rim notes in this file record 1.05 emission clipping a
+                // ring to a flat yellow donut; a flame is thin enough that it does not need the
+                // help, and `AbilityShowcaseProbe`'s 12 per cent gate is measured on frames where
+                // a whole corridor is live at once.
+                VfxMaterial.Ghost(flame.GetComponent<Renderer>(),
+                                  new Color(1.0f, Random.Range(0.42f, 0.66f), 0.10f, 0.72f), 0.20f);
+            }
+
+            // A thin hot lip at the very edge of the char, which is where a real fire is. It is
+            // what the deleted plate was FOR, at a fraction of the area: a RING rather than a
+            // disc, standing a few centimetres proud so it cannot argue with the char about
+            // sort order the way the plate did.
+            // ⚠️ THIN. At an 0.80 inner ratio this was a fat orange band that became the whole
+            // effect: `ability_fire_trail_v13.png` reads as an ORANGE RING, which is one more
+            // repeated outline and exactly the complaint this pass is answering. 0.90 is a lip.
+            var edge = VfxShapes.Stand(go.transform, "FireEdge",
+                                       VfxShapes.Collar(12, 1.0f, 0.90f, 0.14f, 0.0f, seed + 1),
+                                       1.0f, heightScale: 0.04f, lift: 0.012f, yaw: yaw);
+            edge.transform.localScale = new Vector3(radius * 0.64f, 0.04f, radius * 1.30f);
             // ⚠️ EMISSION 1.05 CLIPPED THE RIM TO A FLAT YELLOW DONUT. Measured off
             // `ability_fire_trail_v1.png`: the ring came back as one solid band with no shading
             // and no hue left in it, because anything over about 0.5 here writes past white
             // before `ColourGrade` ever sees the frame. 0.30 keeps it hot and keeps it ORANGE.
-            VfxMaterial.Ghost(edge.GetComponent<Renderer>(), new Color(1.0f, 0.36f, 0.05f, 0.42f), 0.22f);
+            VfxMaterial.Ghost(edge.GetComponent<Renderer>(), new Color(1.0f, 0.42f, 0.07f, 0.62f), 0.22f);
             VfxMaterial.StripCollider(edge);
 
             // ⚠️⚠️ NO `HazardRimLife` ON A TRAIL DISC, AND I PUT ONE HERE BEFORE REMOVING IT.
@@ -602,13 +824,17 @@ namespace TumbangPreso.Abilities
             // `docs/VISION.md` § 6: *"his UI art is the design system. Anything drawn in a
             // different visual language is the thing that looks broken, not the thing that
             // looks new."*
-            for (int f = 0; f < 5; f++)
+            // ⚠️ FIVE EMBERS DOWN TO TWO, BECAUSE THE TONGUES ABOVE NOW CARRY THE VERTICAL
+            // READ AND THE EMBERS WERE THE ONLY THING DOING IT BEFORE. Two is enough to say the
+            // mark is throwing sparks; five plus three flames plus a char plus a rim is
+            // `VISION.md` § 2 rule 4 broken on a single trail disc, six of which are live at once.
+            for (int f = 0; f < 2; f++)
             {
                 var ember = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 ember.name = $"Ember_{f}";
                 ember.transform.SetParent(go.transform, false);
 
-                float fa = f * 72.0f * Mathf.Deg2Rad + 0.5f;
+                float fa = f * 180.0f * Mathf.Deg2Rad + 0.5f;
                 float fr = radius * Random.Range(0.15f, 0.62f);
                 ember.transform.localPosition = new Vector3(Mathf.Cos(fa) * fr,
                                                             Random.Range(0.14f, 0.52f),
@@ -681,6 +907,8 @@ namespace TumbangPreso.Abilities
                     Object.Destroy(gameObject);
                     return;
                 }
+
+                Burn(transform, _left, Duration);
 
                 var round = GameServices.Round;
                 if (round == null) return;
@@ -924,10 +1152,49 @@ namespace TumbangPreso.Abilities
             // Zack's star at a glance.
             int seed = Mathf.RoundToInt((position.x * 3.0f + position.z) * 401.0f);
 
+            // ⚠️⚠️ DARK CRUST WITH REAL GAPS OVER A HOT BED, AND THE CRACKS ARE NOW HOLES RATHER
+            // THAN DECORATION. This effect is named `SpawnCrackedLavaDecal` and it was a single
+            // continuous `Splat` fan with seven cube "seams" laid on top of it: the geometry said
+            // intact plate and the decoration argued with it, which is why the seams read as
+            // orange STICKS in `ability_lava_decal_v11.png` rather than as light coming up
+            // through a break.
+            //
+            // ⚠️⚠️ TWO LAYERS IN THE RIGHT ORDER IS THE WHOLE TECHNIQUE. A hot plate underneath,
+            // then broken crust plates over it with gaps between them. The bright pixels are
+            // exactly the gaps, so heat is a small fraction of the footprint by CONSTRUCTION
+            // instead of by picking a dark colour and hoping, and every plate the crust does
+            // cover is genuinely dark. `docs/VISION.md` § 2 rule 3 asks for the budget to go on
+            // detail rather than area; this spends none of it on area at all.
+            //
+            // ⚠️ THE BED IS SMALLER THAN THE CRUST so no ring of raw glow escapes past the outer
+            // edge. Nine plates, not eleven sides: `VfxShapes.Wedges` counts PIECES where
+            // `Splat` counted corners, and nine pieces with a 9 degree gap is a fracture a player
+            // can resolve at 10 m.
+            // ⚠️⚠️ THE BED IS WELL INSIDE THE CRUST AND THE CRUST IS OPAQUE, AND THE FIRST
+            // ATTEMPT AT THIS GOT BOTH WRONG. In `ability_lava_decal_v12.png` the effect is a
+            // flat ORANGE octagon with a few dark chips around the outside, which is the exact
+            // inverse of what the two layers are for. Two causes, and the second is the
+            // interesting one:
+            //  * the bed was at 0.92 of the radius, so it very nearly reached the outer edge and
+            //    there was hardly any crust left to cover it;
+            //  * both layers were ghosted, and two coplanar translucent plates sort arbitrarily,
+            //    so the bright bed was drawn OVER the dark plates that are supposed to hide it.
+            //    The fire trail's char note has the full account: it is the same fault and it had
+            //    already produced a visible defect nobody had explained.
+            //
+            // ⚠️ SO THE CRUST IS OPAQUE. Burnt asphalt is opaque, an opaque surface writes depth,
+            // and depth cannot be out-sorted. The bright pixels are now exactly the gaps between
+            // the plates, which is what the whole two-layer idea was for.
+            var bed = VfxShapes.Lay(go.transform, "MagmaBed",
+                                    VfxShapes.Splat(11, 0.22f, seed + 3),
+                                    radius * 0.74f, 0.010f);
+            VfxMaterial.Ghost(bed.GetComponent<Renderer>(), new Color(1.0f, 0.34f, 0.04f, 0.90f), 0.30f);
+            VfxMaterial.StripCollider(bed);
+
             var outer = VfxShapes.Lay(go.transform, "CrackedAsphalt",
-                                      VfxShapes.Splat(11, 0.30f, seed),
-                                      radius, 0.015f);
-            VfxMaterial.Ghost(outer.GetComponent<Renderer>(), new Color(0.19f, 0.14f, 0.11f, 0.88f), 0.0f);
+                                      VfxShapes.Wedges(13, 0.22f, 4.0f, 0.075f, 0.26f, seed),
+                                      radius, 0.022f);
+            VfxMaterial.Solid(outer.GetComponent<Renderer>(), new Color(0.19f, 0.15f, 0.13f), 0.0f);
             VfxMaterial.StripCollider(outer);
 
             // ⚠️⚠️ THE CRACKS ARE CRACKS NOW, AND THIS EFFECT WAS CALLED `SpawnCrackedLavaDecal`
@@ -943,37 +1210,17 @@ namespace TumbangPreso.Abilities
             // detail instead of on area, and it costs the frame far less because most of it is
             // now dark.
             //
-            // Seven seams radiating from the centre at uneven angles and lengths. Uneven because
-            // a regular star reads as a manhole cover, which is a thing that is already on this
-            // map.
-            for (int c = 0; c < 7; c++)
-            {
-                float a = c * (360.0f / 7.0f) + Random.Range(-14.0f, 14.0f);
-                float len = radius * Random.Range(0.55f, 0.95f);
-
-                var seam = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                seam.name = $"MagmaSeam_{c}";
-                seam.transform.SetParent(go.transform, false);
-                seam.transform.localRotation = Quaternion.Euler(0.0f, a, 0.0f);
-                seam.transform.localPosition = Quaternion.Euler(0.0f, a, 0.0f)
-                                               * new Vector3(0.0f, 0.0f, len * 0.5f)
-                                               + new Vector3(0.0f, 0.03f, 0.0f);
-                seam.transform.localScale = new Vector3(Random.Range(0.09f, 0.17f), 0.02f, len);
-
-                VfxMaterial.Ghost(seam.GetComponent<Renderer>(),
-                                  new Color(1.0f, 0.34f, 0.04f, 0.90f), 0.38f);
-                VfxMaterial.StripCollider(seam);
-            }
-
-            // A small hot centre where the foot landed, rather than a disc covering the lot.
-            var core = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            core.name = "MagmaCore";
-            core.transform.SetParent(go.transform, false);
-            core.transform.localScale = new Vector3(radius * 0.42f, 0.025f, radius * 0.42f);
-            core.transform.localPosition = new Vector3(0, 0.02f, 0);
-            VfxMaterial.Ghost(core.GetComponent<Renderer>(),
-                              new Color(1.0f, 0.42f, 0.06f, 0.85f), 0.34f);
-            VfxMaterial.StripCollider(core);
+            // ⚠️⚠️ SEVEN CUBE SEAMS AND A CYLINDER CORE DELETED. The seams were the previous
+            // answer to the same complaint and they were drawing the cracks as OBJECTS: seven
+            // stretched `PrimitiveType.Cube`s standing on an unbroken plate, plus a `Cylinder`
+            // for a hot middle. Nine renderers, nine materials, nine colliders to strip, and it
+            // still read as a coin with sticks on it because the plate underneath was never
+            // actually broken. The gap between two `Wedges` plates is the crack, and it is free.
+            //
+            // ⚠️ THE CENTRE IS NOW THE BED SHOWING THROUGH `innerRatio`. `Wedges` leaves the
+            // inner 14 per cent of the radius open by construction, so the hot plate is visible
+            // in the middle exactly where the foot landed. That is what the deleted cylinder was
+            // for, and it costs nothing.
 
             // Lava pulse light. Raised and cut to a quarter, for the reason written up on the
             // ice sheet's light: at 4.0 sitting 0.8 m over its own decal it lit the decal.
@@ -986,8 +1233,46 @@ namespace TumbangPreso.Abilities
             light.range = radius * 2.4f;
             light.intensity = 1.0f;
 
-            Object.Destroy(go, duration);
+            // ⚠️ THIS ZONE HAD NO COMPONENT AT ALL, so there was nowhere to hang an ending on:
+            // `Object.Destroy(go, duration)` is a deletion, not an event. `ExpiryCue` is the
+            // smallest thing that turns one into the other, and it keeps the deletion in the
+            // same place rather than splitting the lifetime across two mechanisms.
+            var cue = go.AddComponent<ExpiryCue>();
+            cue.Cue = "sfx_magma_cool";
+            cue.Seconds = duration;
+
             return go;
+        }
+
+        /// <summary>
+        /// Counts a zone down, plays one cue as it goes, and takes the object with it.
+        ///
+        /// ⚠️ IT REPLACES AN `Object.Destroy(go, t)`, NOT A COMPONENT. Every other hazard here
+        /// already owns a `MonoBehaviour` that ticks `_left` and can therefore say something on
+        /// the way out; the cracked lava decal was pure decoration with a timed delete, which is
+        /// why it was the only zone with no possible ending. Adding the tick here rather than
+        /// giving it a full component keeps the difference honest: it still does nothing but
+        /// expire.
+        /// </summary>
+        public sealed class ExpiryCue : MonoBehaviour
+        {
+            public string Cue;
+            public float Seconds = 4.0f;
+
+            private float _left;
+
+            private void Start() => _left = Seconds;
+
+            private void Update()
+            {
+                _left -= Time.deltaTime;
+                if (_left > 0.0f) return;
+
+                if (!string.IsNullOrEmpty(Cue))
+                    GameServices.Audio?.PlayAt(Cue, transform.position);
+
+                Object.Destroy(gameObject);
+            }
         }
 
         // -------------------------------------------------------------------
@@ -1036,31 +1321,44 @@ namespace TumbangPreso.Abilities
             core.transform.SetParent(go.transform, false);
             core.transform.localPosition = new Vector3(0.0f, Hover, 0.0f);
 
-            // The mouth. Nearly black, and the one part that must never be bright.
-            var outer = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            outer.name = "VoidMouth";
-            outer.transform.SetParent(core.transform, false);
-            outer.transform.localScale = new Vector3(radius * 2.0f, 0.04f, radius * 2.0f);
-            outer.transform.localPosition = Vector3.zero;
-            VfxMaterial.Ghost(outer.GetComponent<Renderer>(), new Color(0.07f, 0.02f, 0.12f, 0.90f), 0.0f);
+            // ⚠️⚠️ ONE FUNNEL, NOT THREE STACKED DISCS, AND THE THREE DISCS ARE WHY THIS READ AS
+            // A PANCAKE. What stood here was a mouth, a throat and a lip, each a
+            // `PrimitiveType.Cylinder` scaled flat and offset a centimetre from the last. The
+            // comment they carried said *"two steps down reads as a funnel where one step reads
+            // as a lid"*, and `ability_seance_void_v11.png` says otherwise in one frame: three
+            // discs of decreasing size stack into ONE lilac plate with a darker ellipse painted
+            // in the middle. Concentric flat rings are a target, not a hole. No arrangement of
+            // discs is a funnel, because every one of them is parallel to the road.
+            //
+            // ⚠️⚠️ 🧑, 2026-08-26, naming the class this belongs to: *"the same logic and code was
+            // used to generate all of them"*. This is the purest case of it in the file. Four
+            // objects, four scaled cylinders, and the effect that is supposed to be a tear in the
+            // world was built out of exactly the primitive the § 8 silhouette pass was written to
+            // get rid of, in the one ability that never got the pass.
+            //
+            // `VfxShapes.Funnel` is a surface with a vertical PROFILE: unit radius at the lip,
+            // deepest at the centre, falling on a power curve so the wall is near vertical at the
+            // rim and most of the depth lives in the inner half. It is one mesh, one renderer and
+            // one draw where three stood, and it is the only thing in the frame the eye reads as
+            // going down.
+            //
+            // ⚠️ THE DEPTH IS TIED TO THE RADIUS BUT NOT EQUAL TO IT. At `radius * 0.40` a 2.8 m
+            // void is 0.62 m deep, which is under half the 1.35 m hover, so the bottom of the
+            // funnel stays clear of the road it is supposed to be floating above. Uniform scaling
+            // would put it through the street.
+            var outer = VfxShapes.Stand(core.transform, "VoidMouth",
+                                        VfxShapes.Funnel(5, 12, 0.55f, 0.08f, 2.4f),
+                                        radius, heightScale: radius * 0.40f);
+            VfxMaterial.Ghost(outer.GetComponent<Renderer>(), new Color(0.06f, 0.01f, 0.11f, 0.93f), 0.0f);
 
-            // The throat. Smaller and DARKER still, so the disc has depth rather than being one
-            // flat plate: two steps down reads as a funnel where one step reads as a lid.
-            var inner = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            inner.name = "VoidThroat";
-            inner.transform.SetParent(core.transform, false);
-            inner.transform.localScale = new Vector3(radius * 1.05f, 0.05f, radius * 1.05f);
-            inner.transform.localPosition = new Vector3(0, 0.01f, 0);
-            VfxMaterial.Ghost(inner.GetComponent<Renderer>(), new Color(0.02f, 0.00f, 0.05f, 0.96f), 0.0f);
-
-            // The event horizon: a thin bright ring at the LIP, which is the only lit part.
-            var lip = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            lip.name = "VoidLip";
-            lip.transform.SetParent(core.transform, false);
-            lip.transform.localScale = new Vector3(radius * 2.14f, 0.05f, radius * 2.14f);
-            lip.transform.localPosition = new Vector3(0, -0.01f, 0);
+            // The event horizon: a thin bright collar at the LIP, which is the only lit part.
+            // A `Prism` ring rather than a fourth disc, so the rim has a real edge standing proud
+            // of the mouth instead of another translucent plate blending into it.
+            var lip = VfxShapes.Stand(core.transform, "VoidLip",
+                                      VfxShapes.Collar(14, 1.0f, 0.945f, 0.0f, 0.0f, 3),
+                                      radius * 1.05f, heightScale: 0.10f, lift: -0.02f);
             VfxMaterial.Ghost(lip.GetComponent<Renderer>(),
-                              new Color(0.62f, 0.20f, 0.98f, 0.60f), 0.34f);
+                              new Color(0.62f, 0.20f, 0.98f, 0.60f), 0.30f);
             VfxMaterial.StripCollider(lip);
 
             // ⚠️⚠️ AND THE GROUND STILL HAS TO SAY WHERE THE DANGER IS, WHICH IS THE HALF A
@@ -1070,14 +1368,37 @@ namespace TumbangPreso.Abilities
             // see it. That is the exact fault `HeroAbility.TelegraphRadius` exists to stop: a
             // telegraph that lies is worse than no telegraph.
             //
-            // A faint ring at the real radius, on the road, under the hovering vortex.
-            var pull = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            pull.name = "VoidGroundPull";
-            pull.transform.SetParent(go.transform, false);
-            pull.transform.localScale = new Vector3(radius * 2.0f, 0.02f, radius * 2.0f);
-            pull.transform.localPosition = new Vector3(0, 0.015f, 0);
+            // ⚠️⚠️ A DASHED RING, NOT A FILLED DISC, AND THE FILLED DISC WAS THE SINGLE LARGEST
+            // PAINTED AREA IN THE GAME. This telegraph was a `Cylinder` at the FULL radius at
+            // 0.42 alpha, so a 2.8 m void laid a 24.6 m² violet plate on a 196 m² court: 12.5 per
+            // cent of the box for a marker whose entire job is to say where the edge is. It is
+            // most of the purple in `ability_worstframe_v11.png` and most of the reason the void
+            // reads as a puddle rather than as a hole.
+            //
+            // ⚠️ THE INFORMATION IS THE RADIUS, AND A RING CARRIES IT. `HeroAbility.TelegraphRadius`
+            // exists so a telegraph cannot lie about where the danger is, and the note above is
+            // right that a hovering effect must still mark the floor. None of that requires
+            // filling the circle in. Sixteen short plates at the rim say exactly the same thing
+            // over about a twelfth of the area, and a broken ring reads as a boundary rather than
+            // as a surface a player might think they can stand on.
+            //
+            // ⚠️⚠️ IT IS A CONTINUOUS RING, AND `Wedges` WAS THE WRONG BUILDER FOR IT. The
+            // fracture builder was the first answer here because it is cheap and it made the
+            // area small, which was the actual problem with the filled disc. But
+            // `ability_seance_void_eye_v15.png` shows what it costs at eye height: eighteen
+            // separate plates, each at its own angle and depth, read as PURPLE LITTER strewn
+            // across the road rather than as the edge of anything. A boundary has to be
+            // continuous to be read as a boundary, and Dante's crust wants the opposite because
+            // broken ground genuinely is in pieces. Same shape budget, right builder.
+            //
+            // ⚠️ 0.93 INNER RATIO IS A 7 PER CENT BAND: about 1.1 m² at a 2.8 m void, against the
+            // 24.6 m² the filled `Cylinder` painted. That is the whole point of the change and it
+            // is unaffected by which builder draws it.
+            var pull = VfxShapes.Lay(go.transform, "VoidGroundPull",
+                                     VfxShapes.Collar(24, 0.02f, 0.93f, 0.0f, 0.0f, 5),
+                                     radius, 0.015f);
             VfxMaterial.Ghost(pull.GetComponent<Renderer>(),
-                              new Color(0.34f, 0.10f, 0.62f, 0.42f), 0.16f);
+                              new Color(0.42f, 0.13f, 0.76f, 0.42f), 0.16f);
             VfxMaterial.StripCollider(pull);
 
             // ⚠️ THE SHARDS ARE THE PULL, AND THEY ARE WHAT THE OLD CORE ORB SHOULD HAVE BEEN.
@@ -1164,6 +1485,10 @@ namespace TumbangPreso.Abilities
                 _left -= Time.deltaTime;
                 if (_left <= 0.0f)
                 {
+                    // ⚠️ IT CUTS RATHER THAN FADES, which is the whole shape of the cue. A tail
+                    // that trails off says the danger is lessening; a hole in the world is either
+                    // there or it is not, and four players need to know which on one frame.
+                    GameServices.Audio?.PlayAt("sfx_void_close", transform.position);
                     Object.Destroy(gameObject);
                     return;
                 }

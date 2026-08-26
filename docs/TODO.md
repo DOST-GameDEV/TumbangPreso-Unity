@@ -1005,9 +1005,39 @@ walks straight back into that. **Size the box, or shorten the string. Never the 
   of them through the label that draws it (§ 9.5). ⚠️ **Keep that list in step with the method**:
   a line added to one and not the other is an overflow again.
 
+✅ **STEP 1 DONE 2026-08-26: `HudOverflowProbe` EXISTS AND RUNS IN THE DEFAULT PLAYMODE SET.**
+`Assets/TumbangPreso/Tests/PlayMode/HudOverflowProbe.cs`, writing `Logs/hud-overflow.txt`. It
+measures every `Text` the HUD builds, at all nine resolutions, substituting the worst-case string
+each label can hold, and it asserts two separate things:
+
+* the label fits its own box, for the labels whose box is FIXED (§ 18's own instruction:
+  *"Assert on the ones that are inside a fixed-width card; report the rest"*). Everything else is
+  printed, because `CrosshairLabel` is a 34 pt glyph centred in a 24 unit box ON PURPOSE and
+  asserting on it would fail for the design rather than for a fault;
+* **and the drawn string stays on the SCREEN**, which is the half § 9.5 actually was. A card
+  anchored to the right corner does not merely overflow its plate: what runs past it leaves the
+  display. ⚠️ The alignment decides which way a label spills and the calculation depends on it:
+  left-aligned grows right off its rect, right-aligned grows left, centred grows both ways at
+  half the rate. Assuming centred for everything reports a right-anchored card as fine, which is
+  exactly the bug.
+
+⚠️⚠️ **THE WORST-CASE LATA STRINGS COME FROM `Hud.LataHintLines` ITSELF, NOT FROM A COPY.** This
+entry warns that a line added to `UpdateLataCard` and not to that array is an overflow again; a
+probe carrying its own transcription would be a THIRD place to forget, and the one nothing fails
+over. The array is now `public` for that reason and for no other.
+
+⚠️ **WHAT THE PROBE DELIBERATELY DOES NOT DO, so nobody reads more into a green run than is
+there.** This entry asks for the HUD to be driven through every state it has. Forcing every
+hidden group active would run `Update` on components whose match state does not exist in a probe,
+and an unexpected error log is a PlayMode failure: it would go red for reasons unrelated to a
+string being too wide. It measures every label the HUD BUILDS instead, active or not, because a
+preferred width is a property of the font, the size and the string and does not depend on whether
+the object is switched on. **What that cannot see is a box whose width is computed by a layout
+group only while it is active**, and the report marks those lines `[hidden]`.
+
 **Needs, in order:**
 
-1. **A probe that FINDS them, before anything is fixed.** `HudOverflowProbe`: drive the HUD
+1. ✅ **A probe that FINDS them, before anything is fixed.** `HudOverflowProbe`: drive the HUD
    through every state it has (attacker, taya, lata up and down, tripped, stunned, the ready
    gate, the countdown, a toast, the hero deck, Street Hype, spectator), at the same nine
    resolutions `AspectRatioProbes` uses, and for every `Text` under the HUD canvas print the
@@ -1034,6 +1064,212 @@ documented as an exception rather than a pattern.
 `LataHintLines`, `PaintSkillCard`), `Assets/TumbangPreso/Runtime/UI/AbilityDeckHud.cs`,
 `Assets/TumbangPreso/Tests/PlayMode/HudLayoutProbe.cs` for the pattern of measuring live rects,
 and `Assets/TumbangPreso/Tests/PlayMode/AspectRatioProbes.cs` for the resolution list.
+
+---
+
+## 19 · The powers were fifteen poses sharing one construction, at every layer
+
+**Raised by 🧑 on 2026-08-26, from playing the build, and it is the sharpest diagnosis anybody
+has given this problem:** *"the problem i found out earlier that made all powers look ugly was
+that the same logic and code was used to generate all of them"*, then *"maybe use different
+techniques to make them if we can"*, *"make the particles better too"*, and *"thoroughly make
+all animations better and more fun"*.
+
+⚠️⚠️ **HE IS DESCRIBING SOMETHING § 8 AND `Hero_Strike_Balance.md` § 8 BOTH MISSED, AND THOSE
+TWO PASSES ARE THE EVIDENCE FOR IT.** § 8.2 lists four channels an effect has (silhouette, axis,
+motion, hue) and both passes spent all four. What neither one asked was **how the geometry is
+BUILT**, and the answer was: identically, everywhere, at three separate layers.
+
+* **Meshes.** `VfxShapes.Splat`, `Star`, `Streak` and `Crystal` are four different POLYGONS
+  handed to ONE builder. `Fan` triangulates a rim of points around a centre vertex, `Lay` drops
+  the result flat at y = 0.01 with the Y scale left at 1, and `VfxMaterial.Ghost` paints it
+  translucent. Measured off the `v11` set: fire, ice, lightning and magma each render as a
+  coloured plate on the road with a brighter plate under it and four or five cubes standing on
+  top, because that is literally what each one is.
+* **Particles.** All five auras set a lifetime, a speed, a size, a gravity, a rate, an emitter
+  shape and a gradient, and nothing else. `GetParticleMaterial` never assigns a texture and the
+  renderer defaults to a billboard, so **every mote, ember, spark and wisp in Hero Strike was an
+  untextured quad: a literal rectangle.** That is the same fault `SpawnFireTrail` already records
+  against its own embers and fixed there in 2026-08-25, in a file nobody re-checked.
+* **Animation.** Fifteen clips are keyed bespoke and interpolated identically.
+  `AnimationCurve.AddKey(time, value)` gives a key SMOOTH tangents, so every clip arrives at
+  every pose decelerating and leaves it accelerating. That is right for a walk cycle and wrong
+  for all fifteen of these, because every one of them is a strike and a strike is defined by the
+  moment it stops.
+
+✅ **DONE 2026-08-26. Five construction techniques, per-aura particle stacks, and an impact frame
+per clip.**
+
+### 19.1 The fifth channel: construction
+
+`Visual.VfxShapes` gains five builders that are not outlines, and each one goes to the fiction it
+belongs to. None of them buys a single extra square metre; every shape is still built at one unit
+of radius so `Lay` and every footprint in `Hero_Strike_Balance.md` § 1 keep working untouched.
+
+| Builder | What it makes | Who has it |
+|---|---|---|
+| `Prism` | an extruded slab with real walls | Cheska's sheet, its rim, its shards |
+| `Wedges` | ground broken into separate plates with gaps | Dante's crust |
+| `Tongue` | a leaning, curling flame of triangular section | Sean's trail |
+| `Bolt` | a branching tube walked from a to b | Zack's arc |
+| `Funnel` | a dished surface that goes DOWN | Nemu's void |
+| `Collar` | a real annulus with walls | every rim in the game |
+
+⚠️ **`FacetedOriented` is why five new builders did not cost a capture pass.** `Fan`'s note
+records one lost to a fan wound the wrong way, where every mesh was culled from the only angle
+the game looks at it from and "invisible" read as "not spawned". Each triangle is now turned
+against a per-shape reference point instead of hand-wound, so a builder can emit its triangles in
+whatever order is convenient and cannot ship inside out.
+
+⚠️ **`Stand` exists because `Lay` scales X and Z and leaves Y at 1.0**, which is right for a flat
+fan and silently wrong for anything with height. § 15.5 records the 2 m ball that shipped from
+exactly that mistake. Anything with real height uses `Stand`.
+
+### 19.2 Four defects the renders found on the way, and two are classes rather than instances
+
+**19.2a ⚠️⚠️ TWO COPLANAR TRANSLUCENT PLATES SORT ARBITRARILY, SO ONE CALL DREW A DIFFERENT
+COLOUR PER DROP.** Unity orders transparent renderers by the distance from the camera to each
+one's bounds centre. The fire trail's dark char and the bright plate under it are concentric and
+5 mm apart, so their centres are the same point to within rounding and the comparison is a coin
+toss. **`ability_worstframe_v11.png` had this on disk unexplained: six drops of ONE trail,
+alternating dark brown and bright salmon, from one call with one set of constants.** The same
+fault then reappeared the moment a hot bed was put under Dante's crust. Nothing was wrong with
+any of the colours.
+
+**The rule that replaces it: ground that has been BURNT or BROKEN is opaque, and only things you
+can genuinely see through are ghosted.** An opaque material renders in the geometry queue and
+writes depth, so it occludes what is beneath it by construction rather than by winning a sort.
+The fire char's own note had already reasoned its way to *"a scorch is opaque anyway"* and then
+set an alpha of 0.92.
+
+**19.2b ⚠️⚠️ `tools/generate_ability_audio.py` SEEDED FROM A POSITION IN A SORTED LIST, so
+adding a cue silently rewrote every existing one.** The comment beside it claimed *"regenerating
+one cue cannot change another"*, which was true only while nothing was ever added. Adding six
+cues inserted names ahead of five of the original seven alphabetically, every following index
+shifted, and one run rewrote all seven shipped sounds with different audio. **`git status` caught
+it, not listening.** The seed slot is now written down per cue and the original seven carry their
+old numbers, so they regenerate byte-identical.
+
+**19.2c `Prism`'s twist sheared the shape instead of turning it.** Applying the offset to the cap
+only rotates the top face against its own base, which at six sides is a 15 degree disagreement
+and is plainly visible in `ability_ice_sheet_v13.png` as two hexagons at different angles. The
+parameter exists to match `Crystal`, where it is a rotation.
+
+**19.2d `Wedges` at even spacing is a pinwheel, and its inner jitter is a multiplier.** Nine
+plates of identical width at identical spacing read as a black FLOWER
+(`ability_lava_decal_v13.png`), which is a manufactured object and the one thing broken ground
+must never look like. Separately, the inner-radius jitter is a multiplier on `innerRatio`, so a
+0.7 to 1.3 swing that is centimetres on Dante's 0.22 band throws plates three times deeper than
+the band on a 0.9 rim: `ability_seance_void_eye_v14.png` is a ring of huge purple spikes around a
+telegraph that is supposed to be a line.
+
+⚠️ **AND A RIM WANTS `Collar`, NOT `Wedges`.** A boundary has to be continuous to read as a
+boundary; broken ground wants the opposite because it genuinely is in pieces. Same area budget,
+different builder, and picking the wrong one is `ability_seance_void_eye_v15.png`.
+
+### 19.3 Footprint, which this pass also had to pay for
+
+`VISION.md` § 2 measures Sean's and Zack's corridors as the two worst offenders in the game at
+**27.2 per cent of the box off a 6 s cooldown**. Both were carrying a full-radius bright plate on
+top of a mark, and the plate was the largest disc in each drop.
+
+* **Sean's bright lozenge is deleted**, replaced by three `Tongue` flames and a thin `Collar`
+  lip. It was `radius * 1.66` by `radius * 0.86` against the char's `1.28` by `0.62`, so this is
+  roughly 40 per cent of the painted area out of every drop he makes.
+* **Zack's full-radius bright `Star` fill is replaced by twelve short rim plates.** The dark
+  scorch keeps the star silhouette, so which ability it is does not change; what goes is the
+  fill.
+* **Nemu's ground telegraph was a filled `Cylinder` at the FULL radius at 0.42 alpha**: a 2.8 m
+  void laid a **24.6 m² violet plate on a 196 m² court, 12.5 per cent of the box for a marker
+  whose entire job is to say where the edge is.** It is now a 7 per cent band, about 1.1 m².
+* **Trail marks shrink toward their own end** (`HeroHazards.Burn`), which is both the age read
+  and the thing that stops six drops looking like one drop six times. ⚠️ It shrinks the MARK and
+  never `Radius`, so what a player is standing in is exactly what § 1 measures.
+
+### 19.4 Particles: four meshes and a streak, and five different module stacks
+
+| Aura | Made of | The module that carries it |
+|---|---|---|
+| VoidWisp | a flat four-sided chip | `velocityOverLifetime` ORBITAL: a vortex's motes go around |
+| MagmaEmber | a square-section grain | shrink and slow tumble: rock cooling, and rock does not flicker |
+| ElectricSpark | a STRETCHED billboard | scaled along its own velocity, and deliberately no noise |
+| FireEmber | a square-section grain | strong `noise`: hot air does not travel where it was thrown |
+| FrostMote | a thin six-sided plate | fast spin plus `limitVelocityOverLifetime`: it settles |
+
+⚠️ **A mesh particle that does not tumble is a static block**, and rotation needs three axes
+turned on explicitly: the default rotates around the view axis only, which on a mesh reads as a
+spinning sign.
+
+### 19.5 Animation: an impact frame, opt in, one line per clip
+
+`ClipBuilder.PunchAt(t)` names the instant an ability LANDS, and three things follow: the pose
+BEFORE it leaves slowly (anticipation), the impact pose is arrived at accelerating, and the body
+**stops dead on it** rather than easing through. It is one line per clip because fifteen clips
+times seven bones times three axes is 315 curves and nothing applied per curve would ever be
+applied consistently.
+
+⚠️ **The tangents are WRITTEN, not smoothed.** `Keyframe(time, value, in, out)` is the
+constructor that leaves tangents alone; `AddKey` followed by editing `keys` does not, because a
+key added that way carries an AUTO tangent mode that recomputes and throws the edit away.
+
+⚠️ **The baseline is exactly the Catmull-Rom slope `AddKey` would have produced**, so a clip with
+no `PunchAt` animates as it did before. That matters because **three clips deliberately get
+nothing**: Zack's Bolt Sprint is a locomotion cycle with no instant at which anything lands,
+Zack's Static Charge is a vibration that is already all attack, and **Nemu's Ghost Step is a
+character decision** rather than a technical one. She is untaggable while it runs and the whole
+read is that the body stops being a body; every other hero gets a frame where the world stops and
+hers does not.
+
+**⚠️ What is still a human call:** whether the fifteen now feel like fifteen different events with
+a controller in hand. A still frame cannot answer it and neither can a probe.
+
+**Where.** `Assets/TumbangPreso/Runtime/Visual/VfxShapes.cs`,
+`Assets/TumbangPreso/Runtime/Visual/AbilityVfx.cs`,
+`Assets/TumbangPreso/Runtime/Visual/ArcFlicker.cs`,
+`Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.cs`,
+`Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs`.
+
+---
+
+## 20 · Cheska's kit played the wrong sounds, and every zone died in silence
+
+**Raised by 🧑 on 2026-08-26: *"maybe make the sfx better too and add sounds effects in places u
+think there should be"*.** Two separate faults, and the first is the exact one
+`tools/generate_ability_audio.py` was written to fix, surviving in the one kit that pass did not
+reach.
+
+✅ **DONE 2026-08-26.**
+
+**20.1 Three borrowed cues, one of them backwards.**
+
+* `SpawnIceBarricade` and `SpawnIceSheet` **both** opened on `ability_shatter_trap`, so two
+  different powers shared one cue **and that cue is the sound of something BREAKING, played at
+  the moment something is BUILT.**
+* `IceBarricadeComponent.Shatter` played **`slipper_land`: a rubber sandal hitting the road**,
+  for a wall of ice failing and coming down in twelve pieces. It is in the one place in her kit
+  where ice genuinely does break.
+
+Now `sfx_barricade_raise` (a grind that ARRIVES and locks, because three pillars are a solid
+object that is now in the way), `sfx_ice_form` (a rising shimmer, because a sheet spreads), and
+`sfx_ice_shatter` (one hard crack, then debris).
+
+**20.2 Every hazard ticked down and called `Destroy` without making a sound.**
+`Hero_Strike_Balance.md` § 8.5 item 2 argues that a player who cannot tell a spent effect from a
+live one has lost a real gameplay read and that fixing it is free. **That argument was applied to
+the visuals and never to the audio, which is the channel a player still has while they are
+looking somewhere else.** Added: `sfx_ice_thaw`, `sfx_void_close` (it CUTS rather than fades: a
+hole in the world is either there or it is not) and `sfx_magma_cool`.
+
+⚠️⚠️ **THE TRAILS DELIBERATELY GET NOTHING.** One dash drops up to thirty marks and each lives
+3 s, so trail expiry cues would be thirty overlapping tails inside three seconds. Same
+measurement `AbilityVfx` uses to keep emitters off trails; it applies harder to sound.
+
+⚠️ **The cracked lava decal had no component at all**, only `Object.Destroy(go, duration)`, which
+is a deletion and not an event. `HeroHazards.ExpiryCue` is the smallest thing that turns one into
+the other.
+
+**Where.** `tools/generate_ability_audio.py`,
+`Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs`.
 
 ---
 

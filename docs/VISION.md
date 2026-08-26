@@ -95,6 +95,16 @@ The working rules that came out of that:
 3. **Spend the budget on DETAIL, not on AREA.** A flat coloured plane at 40 per cent of the
    arena reads as a puddle. The same silhouette at 2.2 m with a cracked edge, a rim, depth and
    particles reads as ice.
+
+   ⚠️⚠️ **AND "DETAIL" MEANS HOW THE THING IS BUILT, NOT HOW MANY LAYERS ARE STACKED ON IT.**
+   This rule was followed for a year by adding a second translucent plate under the first, a
+   handful of `PrimitiveType.Cube`s on top, and a point light over the lot. That is what every
+   effect in the game was made of, and 🧑 named it from play on 2026-08-26: *"the same logic and
+   code was used to generate all of them"*. Stacking is not detail; it is more area in the same
+   place, and two coplanar translucent plates also sort arbitrarily, which shipped one trail
+   drawing a different colour per drop. **A slab with walls, a field of broken plates, a swept
+   flame, a branching tube and a dished funnel are five things. Five polygons handed to one
+   builder are one thing.** `docs/TODO.md` § 19 and `Hero_Strike_Balance.md` § 8.2.
 4. **Cap what can overlap.** Two translucent floor planes plus a disc plus a wall plus four
    popup labels is not four effects, it is one unreadable frame.
 5. **A screenshot taken mid-fight must still show the lata, the chalk and every player.** If

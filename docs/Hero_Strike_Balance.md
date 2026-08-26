@@ -713,6 +713,16 @@ new ability ships.
 | **Axis** | whether it is ground, air or body | any distance |
 | **Motion** | whether it is live or spent | mid distance |
 | **Hue** | WHOSE it is | close, and only if the palette has room |
+| **Construction** | what the thing is MADE of | close and mid, and it decides all of the above |
+
+⚠️⚠️ **THE FIFTH ROW WAS ADDED 2026-08-26 AND IT IS THE ONE THIS SECTION MISSED.** 🧑, after
+playing the build that came out of this very plan: *"the problem i found out earlier that made all
+powers look ugly was that the same logic and code was used to generate all of them"*. The four
+channels above were all spent, and every effect was still assembled the same way: a polygon handed
+to `VfxShapes.Fan`, dropped flat by `Lay`, painted by `VfxMaterial.Ghost`, with a few
+`PrimitiveType.Cube`s on top and a point light over it. **Change the vertex radii and you have a
+different outline; you do not have a different effect.** `docs/TODO.md` § 19 has the whole
+account, the five builders that answer it, and the four defects the renders found on the way.
 
 ⚠️ **Silhouette is the channel that was completely unused and it is the strongest one.** It
 survives being seen edge-on in first person, it costs nothing per frame because the shape is

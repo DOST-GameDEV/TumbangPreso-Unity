@@ -298,22 +298,266 @@ def synth_lrt_pass(duration=2.7):
     return out
 
 
+# =====================================================================
+# THE ZONE LIFECYCLE CUES, ADDED 2026-08-26.
+#
+# WHAT WAS WRONG:
+# Three of Cheska's four sounds were borrowed and one was borrowed BACKWARDS.
+# `SpawnIceBarricade` and `SpawnIceSheet` both opened on `ability_shatter_trap`, so two
+# different powers shared one cue and that cue is the sound of something BREAKING played at the
+# moment something is BUILT. Worse, `IceBarricadeComponent.Shatter`, which is the one place in
+# her kit where ice genuinely does break, played `slipper_land`: a rubber sandal hitting the
+# road. This is the same fault the header of this file already describes against
+# `ability_bagsak_bomb` and `ability_flick_dash`, in a place nobody checked when that was fixed.
+#
+# AND THE ZONES ALL DIED IN SILENCE. Every hazard here ticks down and calls `Destroy`, and not
+# one of them made a sound doing it. `Hero_Strike_Balance.md` section 8.5 item 2 argues that a
+# player being unable to tell a spent effect from a live one is a real gameplay read and that
+# fixing it is free; that argument was applied to the visuals and never to the audio, which is
+# the channel a player has even when they are looking somewhere else.
+#
+# ⚠️ THE TRAILS DELIBERATELY GET NOTHING. A dashing hero drops a mark every 0.10 to 0.30 s and
+# each lives 3 s, so a single dash would fire up to thirty expiry cues inside three seconds.
+# That is the same measurement `AbilityVfx` uses to keep emitters off trails, and it applies
+# harder to sound: thirty overlapping tails is a wash, not a read. Singular zones only.
+# =====================================================================
+
+
+def synth_ice_form(duration=1.1):
+    """
+    Cheska. Permafrost Sheet going down.
+
+    Ice GROWING: a chime that rises, over a bed of fine crackle that thickens rather than
+    fades. The inverse of `synth_frost_nova`, deliberately, because that one is ice breaking
+    outward and these two must not be confusable.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+    ticks = [(random.uniform(0.0, 0.85), random.uniform(3200.0, 9000.0)) for _ in range(90)]
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        # The chime climbs. Partials sharpen as the crystal sets.
+        val = 0.0
+        for idx, base in enumerate([620.0, 930.0, 1480.0, 2210.0]):
+            f = base * (0.74 + 0.34 * (1.0 - math.exp(-t * 3.4)))
+            val += math.sin(2.0 * math.pi * f * t) * envelope(t, 0.05, 1.9 + idx * 0.7) / (idx + 1.3)
+
+        # Crackle that BUILDS, which is what says the patch is spreading.
+        frost = 0.0
+        for start, f in ticks:
+            if start <= t < start + 0.045:
+                a = 1.0 - (t - start) / 0.045
+                frost += math.sin(2.0 * math.pi * f * (t - start)) * a * a
+        frost *= 0.055 * min(1.0, t / 0.55)
+
+        out[i] = math.tanh((val * 0.62 + frost) * 1.1)
+    return out
+
+
+def synth_barricade_raise(duration=1.0):
+    """
+    Cheska. Ice Barricade, three pillars coming up out of the road.
+
+    NOT the sheet: this is heavy and it ARRIVES. A low grinding rise, then a hard stop when the
+    pillars lock, because the wall is a solid object and the player needs to hear that it is
+    now in the way.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+    lock = 0.52
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        # The grind up. Frequency climbs while the wall is still moving, then holds.
+        rise = min(t, lock) / lock
+        grind = math.sin(2.0 * math.pi * (70.0 + 150.0 * rise) * t)
+        grind *= (0.35 + 0.65 * rise) * math.exp(-max(0.0, t - lock) * 7.0)
+
+        # Grit riding on the grind, gone the instant it locks.
+        grit = (random.uniform(-1.0, 1.0) * 0.16
+                * (1.0 - abs(rise - 0.6)) * (1.0 if t < lock else 0.0))
+
+        # The lock itself: a short hard knock with a crystalline tail.
+        knock = 0.0
+        if t >= lock:
+            k = t - lock
+            knock = (math.sin(2.0 * math.pi * 190.0 * k) * math.exp(-k * 26.0) * 0.9
+                     + math.sin(2.0 * math.pi * 1750.0 * k) * math.exp(-k * 9.0) * 0.25)
+
+        out[i] = math.tanh((grind * 0.6 + grit + knock) * 1.15)
+    return out
+
+
+def synth_ice_shatter(duration=1.2):
+    """
+    Cheska. The barricade breaking, which used to play `slipper_land`.
+
+    A single hard CRACK, then the wall coming down as pieces. The crack is most of it: a wall
+    failing is one event followed by debris, not a sustained noise.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+
+    # Debris starts after the crack, never with it.
+    pieces = [(random.uniform(0.06, 0.9), random.uniform(1400.0, 6400.0)) for _ in range(120)]
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        crack = (math.sin(2.0 * math.pi * 240.0 * t) * math.exp(-t * 30.0)
+                 + random.uniform(-1.0, 1.0) * math.exp(-t * 55.0) * 0.7)
+
+        glass = 0.0
+        for start, f in pieces:
+            if start <= t < start + 0.08:
+                a = 1.0 - (t - start) / 0.08
+                glass += math.sin(2.0 * math.pi * f * (t - start)) * a * a
+        glass *= 0.085
+
+        out[i] = math.tanh((crack * 0.9 + glass) * 1.2)
+    return out
+
+
+def synth_ice_thaw(duration=1.3):
+    """
+    Cheska. The sheet running out.
+
+    ⚠️ QUIET ON PURPOSE, AND THAT IS TRUE OF ALL THREE EXPIRY CUES. A zone ending is
+    information, not an event: it must be audible to somebody who has been watching the patch
+    and must not compete with whatever is being cast at that moment. Descending, so it cannot be
+    mistaken for the rising cue that opened it.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+    drips = [(random.uniform(0.15, 1.0), random.uniform(700.0, 2100.0)) for _ in range(14)]
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        val = 0.0
+        for idx, base in enumerate([1450.0, 1020.0, 720.0]):
+            f = base * (1.0 - 0.34 * (1.0 - math.exp(-t * 2.0)))
+            val += math.sin(2.0 * math.pi * f * t) * math.exp(-t * (1.8 + idx * 0.6)) / (idx + 1.6)
+
+        drip = 0.0
+        for start, f in drips:
+            if start <= t < start + 0.09:
+                k = t - start
+                drip += math.sin(2.0 * math.pi * f * (1.0 + k * 2.4) * k) * math.exp(-k * 26.0)
+        drip *= 0.18
+
+        out[i] = math.tanh((val * 0.30 + drip * 0.30) * 1.0)
+    return out
+
+
+def synth_void_close(duration=1.1):
+    """
+    Nemu. Seance Void collapsing.
+
+    ⚠️ IT IS `sfx_possess_enter` RUN BACKWARDS IN SHAPE RATHER THAN IN SAMPLES. The vortex
+    opens on a rising suck; it should close on a falling one that CUTS rather than fades, so the
+    end of the zone has an edge a player can act on. A tail that trails off says the danger is
+    lessening; a hole in the world is either there or it is not.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+    cut = 0.86
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        if t >= cut:
+            # Silence, hard. This is the read.
+            out[i] = 0.0
+            continue
+
+        k = t / cut
+
+        # A falling swept tone: the throat closing.
+        f = 420.0 * math.exp(-k * 2.4) + 46.0
+        body = math.sin(2.0 * math.pi * f * t)
+
+        # Air being pulled after it, thinning as the mouth narrows.
+        air = random.uniform(-1.0, 1.0) * 0.22 * (1.0 - k) * (1.0 - k)
+
+        # The very last of it tightens up rather than fading.
+        squeeze = math.sin(2.0 * math.pi * 1180.0 * t) * 0.14 * k * k
+
+        out[i] = math.tanh((body * 0.55 + air + squeeze) * (0.35 + 0.65 * (1.0 - k)) * 1.2)
+    return out
+
+
+def synth_magma_cool(duration=1.4):
+    """
+    Dante. The cracked ground going cold.
+
+    A sizzle that thins out, with the irregular TICK of contracting rock over it. The ticks are
+    what make it read as stone rather than as a fade-out on the sizzle.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+    ticks = [(random.uniform(0.1, 1.25), random.uniform(180.0, 620.0)) for _ in range(11)]
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        # Sizzle, band-limited by a slow wobble so it is not flat hiss.
+        sizzle = (random.uniform(-1.0, 1.0)
+                  * 0.30 * math.exp(-t * 1.9)
+                  * (0.7 + 0.3 * math.sin(2.0 * math.pi * 7.0 * t)))
+
+        tick = 0.0
+        for start, f in ticks:
+            if start <= t < start + 0.05:
+                k = t - start
+                tick += math.sin(2.0 * math.pi * f * k) * math.exp(-k * 40.0)
+        tick *= 0.34
+
+        out[i] = math.tanh((sizzle + tick) * 1.0)
+    return out
+
+
+# ⚠️⚠️ THE SEED SLOT IS WRITTEN DOWN PER CUE, AND IT USED TO BE THE POSITION IN A SORTED LIST.
+# The old `main` seeded with `0x7A4A + index * 977` where `index` came from enumerating
+# `sorted(GENERATORS.items())`, and the comment beside it claimed *"regenerating one cue cannot
+# change another"*. That was true only while nothing was ever added. Adding the six lifecycle
+# cues below inserted names ahead of five of the original seven alphabetically, every following
+# index shifted, and one run silently rewrote all seven shipped sounds with different audio.
+# `git status` is what caught it, not listening.
+#
+# ⚠️ THE SLOTS BELOW ARE THE ORIGINAL SEVEN'S OLD INDICES, so those files regenerate BYTE
+# IDENTICAL and the diff shows only what actually changed. New cues take the next free number.
+# NEVER renumber an existing row: the number IS the sound.
 GENERATORS = {
-    "sfx_quake_slam.wav": synth_quake_slam,
-    "sfx_thunder_impact.wav": synth_thunder_impact,
-    "sfx_frost_nova.wav": synth_frost_nova,
-    "sfx_possess_enter.wav": synth_possess_enter,
-    "sfx_possess_exit.wav": synth_possess_exit,
-    "sfx_slipper_burst.wav": synth_slipper_burst,
-    "sfx_lrt_pass.wav": synth_lrt_pass,
+    # (seed slot, synth). Slots 0 to 6 are the original payload set, in the alphabetical order
+    # that produced the audio currently in the repository.
+    "sfx_frost_nova.wav": (0, synth_frost_nova),
+    "sfx_lrt_pass.wav": (1, synth_lrt_pass),
+    "sfx_possess_enter.wav": (2, synth_possess_enter),
+    "sfx_possess_exit.wav": (3, synth_possess_exit),
+    "sfx_quake_slam.wav": (4, synth_quake_slam),
+    "sfx_slipper_burst.wav": (5, synth_slipper_burst),
+    "sfx_thunder_impact.wav": (6, synth_thunder_impact),
+
+    # The zone lifecycle set. See the block above these synths for what was wrong.
+    "sfx_ice_form.wav": (7, synth_ice_form),
+    "sfx_barricade_raise.wav": (8, synth_barricade_raise),
+    "sfx_ice_shatter.wav": (9, synth_ice_shatter),
+    "sfx_ice_thaw.wav": (10, synth_ice_thaw),
+    "sfx_void_close.wav": (11, synth_void_close),
+    "sfx_magma_cool.wav": (12, synth_magma_cool),
 }
 
 
 def main():
-    for index, (filename, fn) in enumerate(sorted(GENERATORS.items())):
-        # ⚠️ SEEDED PER FILE, so regenerating one cue cannot change another and a rerun with no
-        # source edit produces no diff at all.
-        random.seed(0x7A4A + index * 977)
+    for filename, (slot, fn) in sorted(GENERATORS.items()):
+        # ⚠️ SEEDED FROM THE CUE'S OWN WRITTEN-DOWN SLOT, never from its position in this table,
+        # so regenerating one cue cannot change another and a rerun with no source edit produces
+        # no diff at all. The table's note has what the position-based version cost.
+        random.seed(0x7A4A + slot * 977)
         samples = fn()
 
         for d in OUT_DIRS:

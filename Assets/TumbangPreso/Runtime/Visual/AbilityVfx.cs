@@ -225,6 +225,15 @@ namespace TumbangPreso.Visual
 
             col.color = grad;
 
+            // ⚠️⚠️ EVERYTHING ABOVE THIS LINE IS FIVE SETS OF NUMBERS ON THE SAME FIVE MODULES,
+            // AND THAT IS THE PARTICLE HALF OF THE FAULT 🧑 NAMED ON 2026-08-26: *"the same logic
+            // and code was used to generate all of them"*, *"make the particles better too"*.
+            // Read the switch as a table: every aura sets a lifetime, a speed, a size, a gravity,
+            // a rate, an emitter shape and a gradient, and NOTHING ELSE. Change the constants and
+            // you have differently coloured dots; you do not have differently made particles.
+            // `Construct` is where the five stop sharing a construction.
+            Construct(ps, pRenderer, aura);
+
             // ⚠️⚠️ THE AURA THINS AS IT DIES, AND UNTIL NOW IT DID NOT.
             // `docs/Hero_Strike_Balance.md` § 8.5 item 2: *"a spent effect and a live one look
             // identical, so a player cannot tell whether a patch of ice is about to expire. That
@@ -251,6 +260,209 @@ namespace TumbangPreso.Visual
 
             ps.Play();
             return go;
+        }
+
+        // -------------------------------------------------------------------
+        // § CONSTRUCTION: what each aura is actually MADE OF.
+        //
+        // ⚠️⚠️ THE DEFAULT PARTICLE IN THIS GAME IS A LITERAL SQUARE, AND ALL FIVE AURAS WERE
+        // ONE. `GetParticleMaterial` builds `Particles/Standard Unlit` and never assigns a
+        // texture, and the renderer's default mode is a camera-facing billboard, so every mote,
+        // ember, spark and wisp in Hero Strike is an untextured quad: a rectangle. This is the
+        // SAME fault, in the same shape, that `HeroHazards.SpawnFireTrail` already records
+        // against its embers, in a note that is worth quoting because it was written after
+        // rendering it: *"`ability_fire_trail_v1.png` is unambiguous about it: three flat
+        // rectangles standing on the mark, because a `Quad` with an untextured material IS a
+        // rectangle and nothing about facing the camera changes that."* That effect fixed itself
+        // by switching to cubes. The auras never got the same pass.
+        //
+        // ⚠️⚠️ SO FOUR OF THE FIVE BECOME MESH PARTICLES, WHICH IS ALSO THE RIGHT ANSWER RATHER
+        // THAN A CHEAP ONE. `docs/VISION.md` § 6: *"his UI art is the design system. Anything
+        // drawn in a different visual language is the thing that looks broken, not the thing that
+        // looks new."* This game is voxel and the whole cast is built from boxes, so a tumbling
+        // chip of geometry is IN the language and a soft photographic puff would not be. A soft
+        // puff also needs an alpha texture, which is an asset path none of this warrants.
+        //
+        // ⚠️ THE FIFTH IS STRETCHED ON PURPOSE. A spark is the one thing here that is genuinely
+        // a STREAK rather than an object, and stretch mode is the one case where an untextured
+        // quad is the correct primitive: scaled along its own velocity it is a line of light.
+        //
+        // ⚠️ AND THE MODULE STACKS ARE DELIBERATELY DIFFERENT, NOT JUST THE NUMBERS. Fire is
+        // turbulent and shrinks as it cools; a vortex's motes ORBIT, because that is what a
+        // vortex does and the void is the one aura whose fiction has a direction of travel;
+        // frost tumbles slowly and is dragged to a stop; sparks fly straight and die, so noise on
+        // them would read as smoke. Each of those is a different module doing the work, which is
+        // what makes them different in MOTION and not only in hue.
+        // -------------------------------------------------------------------
+
+        private static Mesh _chip, _grain, _flake;
+
+        /// <summary>
+        /// A flat four-sided chip: void debris and anything caught tumbling.
+        ///
+        /// ⚠️ BUILT FLAT IN THE MESH RATHER THAN SQUASHED BY THE EMITTER. `startSize` scales a
+        /// particle mesh uniformly on all three axes, so the only place a chip can be given its
+        /// proportions is here.
+        /// </summary>
+        private static Mesh Chip => _chip != null ? _chip
+            : (_chip = VfxShapes.Prism(4, 0.22f, 0.72f, 0.24f, 0.4f, 11));
+
+        /// <summary>A small square-section grain: embers and hot debris.</summary>
+        private static Mesh Grain => _grain != null ? _grain
+            : (_grain = VfxShapes.Prism(4, 0.9f, 0.86f, 0.18f, 0.0f, 12));
+
+        /// <summary>A thin six-sided plate: a snowflake, in the same faceted language as the ice.</summary>
+        private static Mesh Flake => _flake != null ? _flake
+            : (_flake = VfxShapes.Prism(6, 0.14f, 0.90f, 0.10f, 0.0f, 13));
+
+        /// <summary>
+        /// Give one aura the geometry and the module stack that belong to it.
+        ///
+        /// ⚠️ IT RUNS AFTER THE SWITCH ABOVE, NEVER INSTEAD OF IT. The constants there are tuned
+        /// and several carry their own reasoning; this adds the parts that were missing rather
+        /// than restating them, so a change to a lifetime or a rate stays in one place.
+        /// </summary>
+        private static void Construct(ParticleSystem ps, ParticleSystemRenderer pRenderer,
+                                      Aura aura)
+        {
+            if (ps == null || pRenderer == null) return;
+
+            var main = ps.main;
+            var size = ps.sizeOverLifetime;
+            var spin = ps.rotationOverLifetime;
+            var noise = ps.noise;
+            var orbit = ps.velocityOverLifetime;
+            var drag = ps.limitVelocityOverLifetime;
+
+            switch (aura)
+            {
+                case Aura.VoidWisp:
+                    // ⚠️ IT ORBITS, AND NO OTHER AURA DOES. Nemu's ultimate is a vortex and her
+                    // phase is the same fiction on a body: the motes should travel AROUND the
+                    // axis while falling in, which is one module and is the entire difference
+                    // between "purple dots" and "something is being pulled through".
+                    UseMesh(pRenderer, Chip);
+                    orbit.enabled = true;
+                    orbit.space = ParticleSystemSimulationSpace.Local;
+                    // ⚠⚠ ALL THREE ORBITAL AXES ARE SET, AND SETTING ONLY THE ONE THAT
+                    // MATTERS IS AN ENGINE ERROR: *Particle Orbital Velocity curves must all be
+                    // in the same mode*. `orbitalY` written as a two-constant range leaves X and
+                    // Z on their single-constant default and the module refuses the mix, once per
+                    // emitter per frame. It is a LOG error rather than an exception, so the
+                    // particles still played and only the PlayMode runner went red on it, which
+                    // is the same failure shape `Quiesce` was written for a few lines above.
+                    orbit.orbitalX = new ParticleSystem.MinMaxCurve(0.0f, 0.0f);
+                    orbit.orbitalY = new ParticleSystem.MinMaxCurve(1.4f, 2.6f);
+                    orbit.orbitalZ = new ParticleSystem.MinMaxCurve(0.0f, 0.0f);
+                    orbit.radial = new ParticleSystem.MinMaxCurve(-0.35f, -0.08f);
+
+                    Tumble(spin, 1.2f, 3.0f);
+
+                    // Grows as it detaches, then goes out. A wisp that only shrinks reads as a
+                    // spark; the swell at the start is what makes it read as something leaving.
+                    size.enabled = true;
+                    size.size = new ParticleSystem.MinMaxCurve(1.0f, new AnimationCurve(
+                        new Keyframe(0.0f, 0.45f), new Keyframe(0.35f, 1.0f),
+                        new Keyframe(1.0f, 0.15f)));
+                    break;
+
+                case Aura.MagmaEmber:
+                    // Cooling: it shrinks the whole way and tumbles slowly, because a lump of hot
+                    // rock is heavy and rock does not flicker.
+                    UseMesh(pRenderer, Grain);
+                    Tumble(spin, 0.4f, 1.1f);
+                    Shrink(size, 1.0f, 0.2f);
+
+                    noise.enabled = true;
+                    noise.strength = 0.22f;
+                    noise.frequency = 0.6f;
+                    noise.scrollSpeed = 0.3f;
+                    break;
+
+                case Aura.ElectricSpark:
+                    // ⚠️⚠️ THE ONE THAT STAYS A BILLBOARD, STRETCHED ALONG ITS OWN VELOCITY. A
+                    // spark is a streak of light rather than an object, so a quad scaled by speed
+                    // is the honest primitive and a tumbling mesh would be wrong: it would read
+                    // as shrapnel.
+                    //
+                    // ⚠️ AND NO NOISE. Everything else here gets turbulence; a spark that
+                    // wanders reads as smoke. It leaves in a straight line and dies, which is
+                    // what the 0.14 to 0.34 s lifetime above is already saying.
+                    pRenderer.renderMode = ParticleSystemRenderMode.Stretch;
+                    pRenderer.velocityScale = 0.09f;
+                    pRenderer.lengthScale = 2.6f;
+                    pRenderer.cameraVelocityScale = 0.0f;
+
+                    Shrink(size, 1.0f, 0.35f);
+                    break;
+
+                case Aura.FireEmber:
+                    // Turbulent and quick. The noise is the difference between a flame and a
+                    // fountain: hot air does not travel in the direction it was thrown.
+                    UseMesh(pRenderer, Grain);
+                    Tumble(spin, 0.9f, 2.4f);
+                    Shrink(size, 1.0f, 0.12f);
+
+                    noise.enabled = true;
+                    noise.strength = 0.55f;
+                    noise.frequency = 1.4f;
+                    noise.scrollSpeed = 0.9f;
+                    noise.damping = true;
+                    break;
+
+                default: // FrostMote
+                    // ⚠️ IT SPINS FAST AND IS DRAGGED TO A STOP, WHICH IS WHAT SETTLING LOOKS
+                    // LIKE. This is the only aura that is not on a body (it breathes off Cheska's
+                    // zone), so it is the only one whose particles should end up going nowhere.
+                    UseMesh(pRenderer, Flake);
+                    Tumble(spin, 1.8f, 3.4f);
+
+                    size.enabled = true;
+                    size.size = new ParticleSystem.MinMaxCurve(1.0f, new AnimationCurve(
+                        new Keyframe(0.0f, 0.7f), new Keyframe(0.3f, 1.0f),
+                        new Keyframe(1.0f, 0.55f)));
+
+                    drag.enabled = true;
+                    drag.limit = new ParticleSystem.MinMaxCurve(0.35f);
+                    drag.dampen = 0.35f;
+                    break;
+            }
+
+            // ⚠️ A MESH PARTICLE THAT DOES NOT TUMBLE IS A STATIC BLOCK, so every mesh case above
+            // sets rotation, and rotation needs three axes to be turned on HERE: the default
+            // rotates around the view axis only, which on a mesh reads as a spinning sign.
+            if (pRenderer.renderMode == ParticleSystemRenderMode.Mesh)
+            {
+                main.startRotation3D = true;
+                main.startRotationX = new ParticleSystem.MinMaxCurve(0.0f, Mathf.PI * 2.0f);
+                main.startRotationY = new ParticleSystem.MinMaxCurve(0.0f, Mathf.PI * 2.0f);
+                main.startRotationZ = new ParticleSystem.MinMaxCurve(0.0f, Mathf.PI * 2.0f);
+            }
+        }
+
+        private static void UseMesh(ParticleSystemRenderer pRenderer, Mesh mesh)
+        {
+            pRenderer.renderMode = ParticleSystemRenderMode.Mesh;
+            pRenderer.mesh = mesh;
+            pRenderer.alignment = ParticleSystemRenderSpace.World;
+        }
+
+        private static void Tumble(ParticleSystem.RotationOverLifetimeModule spin,
+                                   float low, float high)
+        {
+            spin.enabled = true;
+            spin.separateAxes = true;
+            spin.x = new ParticleSystem.MinMaxCurve(-low, high);
+            spin.y = new ParticleSystem.MinMaxCurve(-high, high);
+            spin.z = new ParticleSystem.MinMaxCurve(-high, low);
+        }
+
+        private static void Shrink(ParticleSystem.SizeOverLifetimeModule size,
+                                   float from, float to)
+        {
+            size.enabled = true;
+            size.size = new ParticleSystem.MinMaxCurve(1.0f,
+                AnimationCurve.EaseInOut(0.0f, from, 1.0f, to));
         }
 
         /// <summary>
