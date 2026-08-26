@@ -1572,9 +1572,21 @@ namespace TumbangPreso.Abilities
                 float ang = n * 60.0f * Mathf.Deg2Rad;
                 float dist = radius * 0.88f;
 
+                // ⚠️⚠️ THESE WERE FIVE-SIDED PRISMS AND THEY ARE THE CONES IN THE REPORTED
+                // FRAME. Off the played build, looking at this circle: *"the effects it has look
+                // like party shit haha"*, then *"i want sigils to come out of here not wtv effect
+                // that is / sigils glyphs ancient letters"*. Six magenta spikes standing round a
+                // ring is a birthday cake, and the note directly above this loop is about not
+                // sharing one lump of geometry between four fictions: a prism is that lump.
+                //
+                // ⚠️ THE MARKS AT THE COMPASS POINTS ARE THE ONE PLACE A CIRCLE LIKE THIS
+                // SHOULD CARRY WRITING. `VfxShapes.Sigil` already inscribes the rim; these are
+                // the six standing characters that make it a cast rather than a decal, and they
+                // are the same `Rune` builder the rising particles use, so the thing lifting off
+                // the circle is visibly the same script that is written on it.
                 var node = VfxShapes.Stand(go.transform, $"HexNode_{n}",
-                                           VfxShapes.Prism(5, 1.0f, 0.18f, 0.2f, 0.4f, 40 + n),
-                                           0.11f, heightScale: 0.34f);
+                                           VfxShapes.Rune(140 + n),
+                                           0.24f, heightScale: 0.40f);
                 node.transform.localPosition =
                     new Vector3(Mathf.Sin(ang) * dist, 0.16f, Mathf.Cos(ang) * dist);
                 node.transform.localRotation = Quaternion.Euler(0.0f, n * 60.0f, 0.0f);
@@ -1698,7 +1710,7 @@ namespace TumbangPreso.Abilities
             // star strokes already give the mark its radial structure. Eight more bars on top of
             // it is `VISION.md` § 2 rule 4 broken inside one effect.
 
-            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchSigil, duration);
+            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchEclipse, duration);
             Object.Destroy(go, duration);
             return go;
         }

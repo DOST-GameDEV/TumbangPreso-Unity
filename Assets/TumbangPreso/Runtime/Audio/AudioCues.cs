@@ -64,6 +64,13 @@ namespace TumbangPreso.Audio
                 // The affliction fires per victim per hex, so it is mixed as a status rather
                 // than as an event: four people standing in one circle must not stack into a wall.
                 { "sfx_hex_afflict", -10.0f },
+
+                // ⚠️⚠️ THE TRAIN BED HAD NO ROW AT ALL, SO IT PLAYED AT 0 dB. `TrimDb` falls
+                // back to 0.0 for any cue it does not list, which is the right default for a
+                // one-shot and completely wrong for a five-second sustained bed: it arrived
+                // louder than every ability payload in the game and was reported off the build as
+                // *"a loud wind soudn that plays randomly"*. It is a BACKGROUND, mixed like one.
+                { "sfx_lrt_rumble", -16.0f },
                 { "sfx_hex_cast",     -4.0f },
 
                 { "sfx_ice_form",    -5.0f },

@@ -1393,8 +1393,18 @@ namespace TumbangPreso.EditorTools.MapKit
             // and the fix would appear to work only until the 5 s initial delay elapsed.
             flyby.TrackY = rideY;
             flyby.Speed = 18.0f;
-            flyby.Interval = 24.0f;
-            flyby.InitialDelay = 5.0f;
+            // ⚠️⚠️ THESE TWO ARE THE LIVE VALUES AND THE FIELD DEFAULTS ARE NOT.
+            // `LrtTrainFlyby.Interval` is a public serialized field, so whatever this builder
+            // writes is baked into `IlalimNgTulay.unity` and the default in the class is dead
+            // text the moment the scene exists. Changing one without the other and rebuilding
+            // the scene is how a tuning change appears to do nothing.
+            //
+            // ⚠️ 78 AND 6, ON REPORT: *"i want train to play rarely / like maybe when they
+            // open the game"*. At 24 s a 90 s round carried three or four passes. Now a round
+            // opens with one, so the player learns the map has a train, and sees at most one
+            // more. See the notes on the fields themselves for the balance consequence.
+            flyby.Interval = 150.0f;
+            flyby.InitialDelay = 6.0f;
             flyby.OverheadHalfZ = WallHalfZ + TrainConsistHalfLength;
 
             AirborneByDesign.Attach(trainSystemGo, "The LRT-2 consist, riding the westbound rail " +

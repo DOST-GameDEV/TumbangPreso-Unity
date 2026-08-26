@@ -656,58 +656,67 @@ def synth_lrt_rumble(duration=2.0):
     """
     The LRT consist, as a SEAMLESS LOOP, for the source that rides the train.
 
-    WARN WARN IT EXISTS BECAUSE `sfx_lrt_pass` CANNOT BE LOOPED AND LOOPING IT WAS AUDIBLY WRONG.
-    That cue is a one-shot: it is 2.70 s long and it starts and ends on a SAMPLE VALUE OF ZERO,
-    because it was authored with a fade in and a fade out. The pass itself lasts 96 m / 18 m/s =
-    5.33 s, so a looping source playing it drops to silence at 2.70 s and swells again from
-    nothing, right as the train is overhead. The train would fade out while arriving.
+    ⚠️⚠️ IT EXISTS BECAUSE `sfx_lrt_pass` CANNOT BE LOOPED. That cue is a one-shot: 2.70 s,
+    beginning and ending on a sample value of ZERO because it was authored with a fade in and a
+    fade out. A pass lasts 5.33 s, so looping it dropped the train to silence at 2.70 s and
+    swelled it back from nothing while it was directly overhead.
 
-    WARN SO THIS ONE HAS NO ENVELOPE AT ALL, WHICH IS THE WHOLE DIFFERENCE. It is a steady bed
-    meant to be started, ridden and stopped, with the DISTANCE doing every bit of the shaping.
-    `LrtTrainFlyby` supplies that through linear rolloff and doppler; a bed with its own dynamics
-    would fight the falloff for control of the same impression.
+    ⚠️⚠️ AND THE FIRST VERSION OF THIS BED WAS WIND, NOT A TRAIN, WHICH IS A REAL REPORT
+    OFF THE PLAYED BUILD: *"theres a loud wind soudn that plays randomly, i think its the train,
+    i think ur train sfx is broken"*. It was built mostly out of broadband filtered noise at a
+    gain of 1.9, and broadband filtered noise IS wind: that is the standard way to synthesise it.
+    Nothing in it said "mechanical".
 
-    WARN THE NOISE IS MADE LOOP-SAFE BY FILTERING CIRCULARLY, not by crossfading the ends. Three
+    ⚠️ SO THE BALANCE IS INVERTED. What makes a train a train is PERIODICITY, not roar: a low
+    tonal floor from the traction motors and the regular knock of bogies over rail joints. The
+    noise is now a thin bed UNDER those rather than the substance of the cue, and the knocks
+    carry the character. Peak is normalised well down as well, because the old one clipped in at
+    0.88 of full scale and was then mixed at 0 dB (see `AudioCues.TrimDb`).
+
+    ⚠️ THE NOISE IS MADE LOOP-SAFE BY FILTERING CIRCULARLY, not by crossfading the ends. Three
     copies are concatenated, the filter is run across the lot, and the MIDDLE third is kept, so
-    the filter state at the last sample is exactly what it was at the first. A crossfade would
-    have left a 100 ms dip that is audible on a bed this steady and this quiet.
+    the filter state at the last sample is exactly what it was at the first.
 
-    WARN AND THE TONAL PARTS COMPLETE A WHOLE NUMBER OF CYCLES IN THE LOOP. Every frequency here
-    is a multiple of 1/duration, so each one arrives back at its starting phase exactly at the
-    seam. A 47 Hz hum in a 2.0 s loop would click every 2 s forever.
+    ⚠️ AND EVERY TONAL COMPONENT COMPLETES A WHOLE NUMBER OF CYCLES IN THE LOOP, so each one
+    arrives back at its starting phase at the seam. A 47 Hz hum in a 2.0 s loop clicks every 2 s
+    forever.
     """
     n = int(duration * SAMPLE_RATE)
     base = 1.0 / duration
 
-    # --- circularly filtered noise: the roar of steel on rail.
+    # --- circularly filtered noise, kept deliberately thin and dark.
     raw = [random.uniform(-1.0, 1.0) for _ in range(n)]
     tripled = raw + raw + raw
 
-    lp, bp = 0.0, 0.0
+    lp = 0.0
     out_lp = [0.0] * len(tripled)
-    out_bp = [0.0] * len(tripled)
-
     for i, x in enumerate(tripled):
-        lp += (x - lp) * 0.045          # body, a few hundred Hz
-        bp += (x - bp) * 0.35           # the hiss riding on top
+        # ⚠️ 0.012, DOWN FROM 0.045. A higher coefficient passes more of the mid band, which is
+        # exactly the region that reads as air moving. This is a dull roll under the tone.
+        lp += (x - lp) * 0.012
         out_lp[i] = lp
-        out_bp[i] = x - bp
 
     lo = out_lp[n:2 * n]
-    hi = out_bp[n:2 * n]
 
-    # --- the tonal floor. Multiples of `base`, so each closes its cycle at the seam.
     def bin_at(hz):
         return round(hz / base) * base
 
-    hums = [(bin_at(28.0), 0.55), (bin_at(43.0), 0.30), (bin_at(86.0), 0.16),
-            (bin_at(129.0), 0.09)]
+    # The traction floor. Low, tonal, and the thing the ear locks onto as machinery.
+    hums = [(bin_at(29.0), 1.00), (bin_at(58.0), 0.46), (bin_at(87.0), 0.22),
+            (bin_at(116.0), 0.11)]
 
-    # --- bogies over rail joints. Four evenly spaced knocks per loop, so the spacing survives
-    # the seam exactly the way the hums do.
-    knocks = [i * (duration / 4.0) for i in range(4)]
+    # ⚠️ EIGHT KNOCKS, NOT FOUR, AND IN UNEVEN PAIRS. Real stock runs two bogies per car, so
+    # joints arrive as a "da-dum" rather than as a metronome. Evenly spaced knocks read as a
+    # machine ticking; paired ones read as something long going past.
+    knocks = []
+    for i in range(4):
+        t0 = i * (duration / 4.0)
+        knocks.append(t0)
+        knocks.append(t0 + 0.085)
 
     out = [0.0] * n
+    peak = 0.0
+
     for i in range(n):
         t = i / SAMPLE_RATE
 
@@ -718,10 +727,22 @@ def synth_lrt_rumble(duration=2.0):
         knock = 0.0
         for start in knocks:
             d = t - start
-            if 0.0 <= d < 0.09:
-                knock += math.sin(2.0 * math.pi * 62.0 * d) * math.exp(-d * 34.0)
+            if 0.0 <= d < 0.11:
+                # Two partials so a joint is a THUD with a rim to it, not a sine blip.
+                knock += (math.sin(2.0 * math.pi * 68.0 * d)
+                          + math.sin(2.0 * math.pi * 154.0 * d) * 0.34) * math.exp(-d * 27.0)
 
-        out[i] = math.tanh((tone * 0.42 + lo[i] * 1.9 + hi[i] * 0.13 + knock * 0.5) * 1.1)
+        v = tone * 0.30 + lo[i] * 0.55 + knock * 0.42
+        out[i] = v
+        peak = max(peak, abs(v))
+
+    # ⚠️ NORMALISED TO 0.55, NOT LEFT AT WHATEVER THE SUM CAME TO. The previous bed peaked at
+    # 0.88 and was then mixed at 0 dB because nothing had given it a `TrimDb` row, so it arrived
+    # in the game louder than every ability payload in it. Normalising here means the mix trim
+    # is the only volume decision and it is made in one place.
+    if peak > 0.0:
+        scale = 0.55 / peak
+        out = [v * scale for v in out]
 
     return out
 

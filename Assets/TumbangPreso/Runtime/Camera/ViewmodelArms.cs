@@ -1167,16 +1167,7 @@ namespace TumbangPreso.CameraSystem
                     new Vector3(-0.132f, 0.49f, 0.00f), Quaternion.identity, robeGreen);
 
                 // 5. Modeled Hand & Knuckle Anatomy
-                AddBoxAccessory(arm, "RightKnucklePlate", new Vector3(0.280f, 0.055f, 0.032f),
-                    new Vector3(0.0f, 0.690f, 0.150f), Quaternion.identity, skinTone);
-                AddBoxAccessory(arm, "RightKnuckleIndent1", new Vector3(0.020f, 0.045f, 0.035f),
-                    new Vector3(-0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "RightKnuckleIndent2", new Vector3(0.020f, 0.045f, 0.035f),
-                    new Vector3(0.000f, 0.690f, 0.152f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "RightKnuckleIndent3", new Vector3(0.020f, 0.045f, 0.035f),
-                    new Vector3(0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "RightThumbKnuckle", new Vector3(0.040f, 0.080f, 0.032f),
-                    new Vector3(0.160f, 0.730f, 0.020f), Quaternion.identity, skinTone);
+                AddHandKnuckles(arm, isRight, 0.280f, skinTone, skinDark);
             }
             else
             {
@@ -1225,16 +1216,7 @@ namespace TumbangPreso.CameraSystem
                     new Vector3(-0.132f, 0.470f, 0.02f), Quaternion.identity, robeGreen);
 
                 // 3. Modeled Hand & Knuckle Anatomy
-                AddBoxAccessory(arm, "LeftKnucklePlate", new Vector3(0.280f, 0.055f, 0.032f),
-                    new Vector3(0.0f, 0.690f, 0.150f), Quaternion.identity, skinTone);
-                AddBoxAccessory(arm, "LeftKnuckleIndent1", new Vector3(0.020f, 0.045f, 0.035f),
-                    new Vector3(-0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "LeftKnuckleIndent2", new Vector3(0.020f, 0.045f, 0.035f),
-                    new Vector3(0.000f, 0.690f, 0.152f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "LeftKnuckleIndent3", new Vector3(0.020f, 0.045f, 0.035f),
-                    new Vector3(0.070f, 0.690f, 0.152f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "LeftThumbKnuckle", new Vector3(0.040f, 0.080f, 0.032f),
-                    new Vector3(-0.160f, 0.730f, 0.020f), Quaternion.identity, skinTone);
+                AddHandKnuckles(arm, isRight, 0.280f, skinTone, skinDark);
             }
         }
 
@@ -1326,15 +1308,16 @@ namespace TumbangPreso.CameraSystem
             handGo.transform.localRotation = Quaternion.identity;
             handGo.transform.localScale = Vector3.one;
 
-            // Perfectly proportioned palm, thumb, fingers, and shaded tips wrapping the held slipper at Y ~ 0.70-0.82
-            AddBoxAccessory(handGo.transform, "Palm", new Vector3(0.082f, 0.085f, 0.038f),
-                new Vector3(0.0f, 0.72f, 0.0f), Quaternion.identity, skinTone);
-            AddBoxAccessory(handGo.transform, "Thumb", new Vector3(0.028f, 0.055f, 0.026f),
-                new Vector3(isRight ? -0.046f : 0.046f, 0.75f, 0.015f), Quaternion.Euler(0, 0, isRight ? 24f : -24f), skinTone);
-            AddBoxAccessory(handGo.transform, "Fingers", new Vector3(0.076f, 0.075f, 0.032f),
-                new Vector3(0.0f, 0.78f, -0.005f), Quaternion.identity, skinTone);
-            AddBoxAccessory(handGo.transform, "FingertipShade", new Vector3(0.072f, 0.032f, 0.024f),
-                new Vector3(0.0f, 0.82f, 0.010f), Quaternion.Euler(-14f, 0, 0), skinDark);
+            // ⚠️⚠️ ONE BOX, FOR THE SAME REASON `AddHandKnuckles` IS ONE BOX. This was a palm, a
+            // thumb, a finger block and a shaded fingertip: four pieces of anatomy the voxel cast
+            // does not have. *"i dont want finger geometry at all on any of the fkn FPP shit /
+            // bcz our characters dont ahve fingers !"*, and `tools/build_person_voxel.py` agrees,
+            // emitting a single `hand-left` / `hand-right` box in `SKIN_LIT` and nothing else.
+            //
+            // ⚠️ IT KEEPS THE OLD BLOCK'S REACH, 0.70 to 0.82, so the hand still wraps the held
+            // tsinelas exactly where it did. The anatomy is gone; the placement is not.
+            AddBoxAccessory(handGo.transform, "Hand", new Vector3(0.086f, 0.120f, 0.042f),
+                new Vector3(0.0f, 0.760f, 0.0f), Quaternion.identity, skinTone);
         }
 
         private static void BuildPhaisterAccessories(Transform arm, bool isRight)
@@ -1373,29 +1356,11 @@ namespace TumbangPreso.CameraSystem
             // 5. Porcelain Skin Hand & Knuckle details (Y ~ 0.62 to 0.82)
             if (isRight)
             {
-                AddBoxAccessory(arm, "RightKnucklePlate", new Vector3(0.260f, 0.055f, 0.030f),
-                    new Vector3(0.0f, 0.690f, 0.148f), Quaternion.identity, skinTone);
-                AddBoxAccessory(arm, "RightKnuckleIndent1", new Vector3(0.020f, 0.045f, 0.034f),
-                    new Vector3(-0.065f, 0.690f, 0.150f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "RightKnuckleIndent2", new Vector3(0.020f, 0.045f, 0.034f),
-                    new Vector3(0.000f, 0.690f, 0.150f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "RightKnuckleIndent3", new Vector3(0.020f, 0.045f, 0.034f),
-                    new Vector3(0.065f, 0.690f, 0.150f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "RightThumbKnuckle", new Vector3(0.040f, 0.075f, 0.030f),
-                    new Vector3(0.150f, 0.725f, 0.020f), Quaternion.identity, skinTone);
+                AddHandKnuckles(arm, isRight, 0.260f, skinTone, skinDark);
             }
             else
             {
-                AddBoxAccessory(arm, "LeftKnucklePlate", new Vector3(0.260f, 0.055f, 0.030f),
-                    new Vector3(0.0f, 0.690f, 0.148f), Quaternion.identity, skinTone);
-                AddBoxAccessory(arm, "LeftKnuckleIndent1", new Vector3(0.020f, 0.045f, 0.034f),
-                    new Vector3(-0.065f, 0.690f, 0.150f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "LeftKnuckleIndent2", new Vector3(0.020f, 0.045f, 0.034f),
-                    new Vector3(0.000f, 0.690f, 0.150f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "LeftKnuckleIndent3", new Vector3(0.020f, 0.045f, 0.034f),
-                    new Vector3(0.065f, 0.690f, 0.150f), Quaternion.identity, skinDark);
-                AddBoxAccessory(arm, "LeftThumbKnuckle", new Vector3(0.040f, 0.075f, 0.030f),
-                    new Vector3(-0.150f, 0.725f, 0.020f), Quaternion.identity, skinTone);
+                AddHandKnuckles(arm, isRight, 0.260f, skinTone, skinDark);
             }
         }
 
@@ -1766,6 +1731,45 @@ namespace TumbangPreso.CameraSystem
         // -------------------------------------------------------------------
         // § PROCEDURAL GEOMETRY & ACCESSORY HELPERS
         // -------------------------------------------------------------------
+
+        /// <summary>
+        /// The hand: ONE box, in skin tone. No knuckles, no fingers, no thumb.
+        ///
+        /// ⚠️⚠️ THE CAST HAS NO FINGERS, SO THE VIEWMODEL MUST NOT EITHER. Stated plainly
+        /// after a first attempt added them: *"i dont want finger geometry at all on any of the
+        /// fkn FPP shit / bcz our characters dont ahve fingers !"*. He is right, and it is
+        /// checkable rather than a matter of taste: `tools/build_person_voxel.py` emits exactly
+        /// one box per hand, `hand-left` and `hand-right`, in `SKIN_LIT`. There is no finger,
+        /// knuckle or thumb geometry anywhere in the voxel cast.
+        ///
+        /// ⚠️⚠️ AND THAT MAKES DETAILED FPP HANDS A CONTINUITY BUG, NOT AN UPGRADE. These
+        /// arms are the SAME CHARACTER the other three players are looking at in third person.
+        /// Modelling fingers here means the person you are is built to a different standard from
+        /// the person everyone else sees, and the moment an emote swings the camera to third
+        /// (`CLAUDE.md` section 4: emotes swing to TPP and back) the hands change shape.
+        ///
+        /// ⚠️ WHAT WAS THERE BEFORE WAS WORSE THAN EITHER. A flat plate with three `KnuckleIndent`
+        /// boxes on it, each DEEPER than the plate (0.034 against 0.030) and 0.002 further
+        /// forward, so the grooves stood proud of the surface they were grooving. Reported as
+        /// *"wtf are those rectangles on his hand"*, which is exactly what they were.
+        ///
+        /// ⚠️ THE PROPORTIONS COME FROM THE VOXEL HAND RATHER THAN BEING PICKED.
+        /// `build_person_voxel.py` authors it 0.1496 wide, 0.1234 tall and 0.058 deep, so the
+        /// ratios are 1 : 0.825 : 0.388, and that is what is applied to whatever width the hero's
+        /// arm asks for. A hand invented at this end would drift from the models the first time
+        /// anybody retuned either.
+        /// </summary>
+        private static void AddHandKnuckles(Transform arm, bool isRight, float handWidth,
+                                            Color skinTone, Color skinDark)
+        {
+            // ⚠️ `skinDark` IS DELIBERATELY UNUSED AND THE PARAMETER STAYS. It shaded the three
+            // stripes; there is nothing left to shade, and the toon ramp gives the box its own
+            // banding for free. Keeping the signature means the four call sites did not each need
+            // editing again, and a hero that later wants a cuff colour has it to hand.
+            AddBoxAccessory(arm, (isRight ? "Right" : "Left") + "Hand",
+                new Vector3(handWidth, handWidth * 0.825f, handWidth * 0.388f),
+                new Vector3(0.0f, 0.735f, 0.040f), Quaternion.identity, skinTone);
+        }
 
         private static GameObject AddBoxAccessory(Transform parent, string name, Vector3 size,
             Vector3 pos, Quaternion rot, Color color, float emission = 0.0f, bool toon = true)

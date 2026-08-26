@@ -32,9 +32,9 @@ namespace TumbangPreso.Abilities
 
             public KulamHexSigilAbility()
                 : base("phaister_skill1", "KULAM HEX",
-                       "Cast an occult hex sigil on the court. Enemies entering the circle are hexed and staggered by dark witchcraft.",
+                       "Chalks a kulam circle on the road. Anyone who walks into it loses their footing.",
                        0.0f, SigilLifetime, AbilityGlyph.PhaisterHexSigil,
-                       summary: "Ground rune that staggers and disorients enemies.",
+                       summary: "A circle on the ground. Walk in and you stumble.",
                        telegraphRadius: HexRadius,
                        telegraphRange: 4.5f,
                        castAction: "hero-phaister-hex",
@@ -69,9 +69,9 @@ namespace TumbangPreso.Abilities
         {
             public ShadowPhaseBlinkAbility()
                 : base("phaister_skill2", "SHADOW BLINK",
-                       "Dissolve into purple witchfire and teleport forward, releasing a shockwave that staggers nearby opponents.",
+                       "Puts you a few steps ahead before anyone sees you move. Whoever you left standing there gets shoved back.",
                        36.0f, 0.4f, AbilityGlyph.PhaisterShadowBlink,
-                       summary: "Witchfire teleport and knockback shockwave.",
+                       summary: "Blink forward. Shoves whoever you left behind.",
                        castAction: "hero-phaister-blink",
                        viewmodelAction: "blink")
             {
@@ -93,7 +93,7 @@ namespace TumbangPreso.Abilities
                 Vector3 endPos = startPos + pushDir * 4.2f;
 
                 HeroHazards.SpawnShadowBlinkBurst(startPos, endPos);
-                AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.WitchSigil, 1.0f);
+                AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.WitchScatter, 1.0f);
                 ctx.Motor.ApplyImpulse(pushDir * 12.0f);
 
                 // Shockwave pulse around departure point
@@ -120,9 +120,9 @@ namespace TumbangPreso.Abilities
         {
             public GrandCovenEclipseAbility()
                 : base("phaister_ultimate", "GRAND COVEN",
-                       "Unleash a mystical eclipse vortex. Purple lightning strikes the court, all slippers ignite with witchfire, and the Taya is blinded by mystical shadow.",
+                       "Pulls an eclipse over the street. Every tsinelas catches witchfire, and the taya cannot see straight until it lifts.",
                        0.0f, 5.0f, AbilityGlyph.PhaisterEclipse,
-                       summary: "Arena-wide eclipse with lightning and witchfire.",
+                       summary: "Blacks out the street. The taya is blinded.",
                        castAction: "hero-phaister-eclipse",
                        viewmodelAction: "coven-eclipse")
             {
@@ -147,7 +147,7 @@ namespace TumbangPreso.Abilities
                 ComicPopup.Spawn(ctx.Position, "GRAND COVEN ECLIPSE!", UiTheme.HeroWitchBright, 2.0f);
 
                 HeroHazards.SpawnGrandCovenEclipse(ctx.Position, 5.0f, Duration);
-                AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.WitchSigil, Duration);
+                AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.WitchEclipse, Duration);
 
                 var kit = ctx.Motor.AbilitySystem?.Kit as PhaisterHeroKit;
                 if (kit != null) kit.IsWitchfireInfused = true;
@@ -162,7 +162,7 @@ namespace TumbangPreso.Abilities
                         if (p != null && p.PlayerSlot != mySlot)
                         {
                             p.ApplyStagger(0.50f);
-                            AbilityVfx.AttachAura(p.transform, AbilityVfx.Aura.WitchSigil, 2.5f);
+                            AbilityVfx.AttachAura(p.transform, AbilityVfx.Aura.WitchEclipse, 2.5f);
                             ComicPopup.Spawn(p.transform.position + Vector3.up * 1.3f, "CURSED!", UiTheme.HeroWitchBright, 1.2f);
                         }
                     }

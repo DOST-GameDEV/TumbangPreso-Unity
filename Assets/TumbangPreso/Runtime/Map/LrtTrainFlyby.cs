@@ -28,11 +28,34 @@ namespace TumbangPreso
     public sealed class LrtTrainFlyby : MonoBehaviour
     {
         [Header("Train Movement Settings")]
+        /// <summary>
+        /// ⚠️⚠️ 78, UP FROM 24, ON REPORT. *"i want train to play rarely / like maybe when
+        /// they open the game"*. At 24 s a 90 s round carried three or four passes, so the map's
+        /// signature event was arriving every twenty seconds and had stopped being an event.
+        ///
+        /// ⚠️ IT IS STILL LEARNABLE, WHICH IS THE PROPERTY THIS FILE'S HEADER PROTECTS: "every
+        /// player learns its period inside a single round". With `InitialDelay` below, a round
+        /// opens with a pass and then sees at most one more, so a player still meets it early
+        /// enough to learn that it exists and what it does.
+        ///
+        /// ⚠️ AND IT IS A BALANCE CHANGE, NOT ONLY A MOOD ONE. `OverheadPassWindow` gives Hero
+        /// Strike double cooldown rate while the consist is overhead, so this cuts the number of
+        /// overclock windows in a round from three or four to one or two. `docs/TODO.md` section 5
+        /// already records that the overclock window has never been measured against a match;
+        /// this makes measuring it more urgent rather than less.
+        /// </summary>
         [Tooltip("Seconds between train passes.")]
-        public float Interval = 24.0f;
+        public float Interval = 150.0f;
 
+        /// <summary>
+        /// ⚠️ THE FIRST PASS COMES EARLY ON PURPOSE, which is the other half of *"like maybe
+        /// when they open the game"*. A rare event that a player might never see in their first
+        /// match is not a rare event, it is a missing one. Opening with a pass teaches the map
+        /// has one; `Interval` then makes it something you wait for rather than something you
+        /// tune out.
+        /// </summary>
         [Tooltip("Initial delay before the first train pass.")]
-        public float InitialDelay = 5.0f;
+        public float InitialDelay = 6.0f;
 
         [Tooltip("Speed of the train crossing the viaduct (m/s).")]
         public float Speed = 18.0f;
@@ -187,7 +210,14 @@ namespace TumbangPreso
         // wall, loudest overhead, gone by the time the tail clears the boundary traffic.
         private const float RumbleMinDistance = 12.0f;
 
-        private const float RumbleMaxDistance = 70.0f;
+        /// ⚠️⚠️ 44, DOWN FROM 70, BECAUSE 70 MADE IT AUDIBLE FROM THE MOMENT IT SPAWNED.
+        /// The consist starts at z = -48 and the arena is centred on the origin, so at 70 m of
+        /// range the bed was already playing before the warning toast fired and kept playing
+        /// well after the tail had left. Combined with a bed that had no mix trim at all, that is
+        /// the *"loud wind soudn that plays randomly"* off the played build: not random, just
+        /// audible for the whole 5.3 s traverse at full level. At 44 the sound arrives with the
+        /// warning and leaves with the train.
+        private const float RumbleMaxDistance = 44.0f;
 
         /// <summary>
         /// How hard the street shakes directly under the consist.

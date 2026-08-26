@@ -240,7 +240,35 @@ namespace TumbangPreso
                 // the held state gives one edge every other frame; `Combat.MashRecover`'s rate
                 // cap then throws away everything above 10 Hz, so the bot is held to the same
                 // ceiling as a player rather than to the frame rate.
-                if (_motor.IsTripped) intent.Set(Verb.Jump, !intent.Pressed(Verb.Jump));
+                //
+                // ⚠⚠ THE STATE LIVES IN A FIELD, AND READING IT BACK OFF THE INTENT MEANT
+                // A TRIPPED BOT GOT EXACTLY ONE PRESS PER FALL. This line was
+                // `intent.Set(Verb.Jump, !intent.Pressed(Verb.Jump))`, and `ReleaseAll` three
+                // lines above calls `intent.Clear()`. So `Pressed(Jump)` was read from a table
+                // that had just been emptied: it answered false every single frame, the toggle
+                // set true every single frame, and the held state never alternated at all. After
+                // `CharacterMotor.FixedUpdate` took its first snapshot, `_heldPrev` contained
+                // Jump for the rest of the fall and `JustPressed` was false forever.
+                //
+                // ⚠ THE COMMENT ABOVE WAS ALREADY RIGHT ABOUT WHY, WHICH IS WHAT MAKES THIS
+                // WORTH SPELLING OUT. It says a held key fires once in a lifetime; the code then
+                // held the key. The bug was not a misunderstanding, it was reading the toggle
+                // out of the one object that gets wiped immediately beforehand.
+                //
+                // ⚠ `Tap` WOULD NOT HAVE WORKED EITHER, for the same reason: it alternates off
+                // `_pressed`, and `ReleaseAll` clears that too. A dedicated field is the only
+                // state on this path that survives the release.
+                //
+                // ⚠ WHAT IT COST: bots ate essentially the whole of every trip while a human
+                // mashed out in about 1.3 s. `BotBehaviourProbe` measures hazard penalties, so
+                // every trip-hazard number ever taken from it was measured against bots that
+                // could not answer a hazard. This comment's own note predicted that failure mode
+                // and the code underneath it had it.
+                if (_motor.IsTripped || _motor.StunElement != StunElement.None)
+                {
+                    _mashHeld = !_mashHeld;
+                    intent.Set(Verb.Jump, _mashHeld);
+                }
 
                 return;
             }
@@ -2224,6 +2252,17 @@ namespace TumbangPreso
         private readonly HashSet<Verb> _touched = new HashSet<Verb>();
 
         private readonly HashSet<Verb> _pressed = new HashSet<Verb>();
+
+        /// <summary>
+        /// The get-up / break-free mash toggle.
+        ///
+        /// ⚠️⚠️ IT IS A FIELD BECAUSE EVERY OTHER PIECE OF PRESS STATE ON THAT PATH IS WIPED
+        /// EVERY FRAME. `Update` calls `ReleaseAll` before it mashes, and that clears both
+        /// `InputIntent._held` and `_pressed`, so anything derived from either answers the same
+        /// thing on every frame and the alternation never happens. See the long note at the call
+        /// site for what that cost.
+        /// </summary>
+        private bool _mashHeld;
 
         private void Press(InputIntent intent, Verb verb, bool pressed)
         {

@@ -973,6 +973,116 @@ namespace TumbangPreso.Visual
             return FacetedOriented(tris, "VfxSigil", new Vector3(0.0f, -10.0f, 0.0f));
         }
 
+        /// <summary>
+        /// One small written GLYPH, standing upright, for a particle to be made of.
+        ///
+        /// ⚠️⚠️ THE WITCH'S PARTICLES WERE GENERIC CHIPS AND IT READ AS CONFETTI. Off the
+        /// played build: *"the effects it has look like party shit haha"*, and what he asked for
+        /// instead: *"i want sigils to come out of here not wtv effect that is / sigils glyphs
+        /// ancient letters"*, with a reference of letters lifting off a book, and the bound
+        /// *"i dont want english letters or in that color"*.
+        ///
+        /// ⚠️ SO THESE ARE INVENTED MARKS, NOT AN ALPHABET. Every glyph is 3 to 5 straight
+        /// strokes on a small grid, chosen from a seed: a stem, one or two arms, sometimes a
+        /// crossbar, sometimes a detached dot. That is enough for the eye to read "writing"
+        /// without any of them being a letter anybody can name, which is the whole point. Using
+        /// real characters would make it a language, and the wrong one.
+        ///
+        /// ⚠️ STRAIGHT STROKES ONLY, AND THAT IS THE HOUSE STYLE RATHER THAN A SHORTCUT. The
+        /// hex circle these rise out of is built from `Sigil`, which is `FlatBar` strokes and
+        /// two `FlatRing`s. A curved, calligraphic glyph beside it would look like a different
+        /// game. Same vocabulary, smaller.
+        ///
+        /// ⚠️ IT STANDS IN THE XY PLANE, NOT THE XZ PLANE LIKE THE GROUND ART. A particle mesh
+        /// is billboarded by rotation, not laid on the floor, so a glyph built flat would be
+        /// edge-on to the camera and invisible. This is the one shape in this file that is
+        /// authored upright, and it is why it does not go through `FacetedOriented` with a
+        /// downward reference point the way `Sigil` and `Wedges` do.
+        /// </summary>
+        public static Mesh Rune(int seed = 0, float bar = 0.13f)
+        {
+            var state = Random.state;
+            Random.InitState(seed);
+
+            var tris = new System.Collections.Generic.List<Vector3>(64);
+
+            // The stem. Every glyph has one, which is what makes a set of them look like one
+            // hand wrote them all.
+            float h = Random.Range(0.62f, 1.0f);
+            float lean = Random.Range(-0.16f, 0.16f);
+            UprightBar(tris, new Vector3(-lean, -h * 0.5f, 0.0f),
+                             new Vector3(lean, h * 0.5f, 0.0f), bar * 0.5f);
+
+            // One or two arms off the stem, at the angles a chisel makes.
+            int arms = Random.Range(1, 3);
+            for (int i = 0; i < arms; i++)
+            {
+                float at = Random.Range(-0.34f, 0.40f);
+                float len = Random.Range(0.28f, 0.52f);
+                float rise = Random.Range(0.18f, 0.46f) * (Random.value < 0.5f ? -1.0f : 1.0f);
+                float side = Random.value < 0.5f ? -1.0f : 1.0f;
+
+                var from = new Vector3(lean * (at * 2.0f), at * h, 0.0f);
+                UprightBar(tris, from, from + new Vector3(len * side, rise, 0.0f), bar * 0.42f);
+            }
+
+            // A crossbar on some of them, which is most of what separates a glyph from a twig.
+            if (Random.value < 0.55f)
+            {
+                float at = Random.Range(-0.22f, 0.28f) * h;
+                float w = Random.Range(0.24f, 0.44f);
+                UprightBar(tris, new Vector3(-w, at, 0.0f), new Vector3(w, at, 0.0f), bar * 0.38f);
+            }
+
+            // A detached mark. Rare, and it is the thing that makes a row of these look
+            // deliberate rather than procedural.
+            if (Random.value < 0.3f)
+            {
+                float dx = Random.Range(0.26f, 0.44f) * (Random.value < 0.5f ? -1.0f : 1.0f);
+                float dy = Random.Range(0.3f, 0.55f) * h;
+                UprightBar(tris, new Vector3(dx - bar * 0.5f, dy, 0.0f),
+                                 new Vector3(dx + bar * 0.5f, dy, 0.0f), bar * 0.5f);
+            }
+
+            Random.state = state;
+
+            var mesh = new Mesh { name = "VfxRune" + seed };
+            var verts = tris.ToArray();
+            var idx = new int[verts.Length];
+            for (int i = 0; i < idx.Length; i++) idx[i] = i;
+
+            mesh.SetVertices(new System.Collections.Generic.List<Vector3>(verts));
+            mesh.SetTriangles(idx, 0);
+
+            // ⚠️ FLAT FORWARD NORMALS, NOT `RecalculateNormals`. Every triangle here lies in
+            // the XY plane, so the recalculated normal is the same vector for all of them and
+            // the call is pure cost. Writing it directly also means a glyph lit from the front
+            // is lit evenly rather than picking up a gradient from winding order.
+            var normals = new Vector3[verts.Length];
+            for (int i = 0; i < normals.Length; i++) normals[i] = Vector3.back;
+            mesh.normals = normals;
+
+            mesh.RecalculateBounds();
+            return mesh;
+        }
+
+        /// <summary>A flat stroke from a to b in the XY plane, for <see cref="Rune"/>.</summary>
+        private static void UprightBar(System.Collections.Generic.List<Vector3> tris,
+                                       Vector3 a, Vector3 b, float halfWidth)
+        {
+            Vector3 along = b - a;
+            if (along.sqrMagnitude < 1e-8f) return;
+
+            along.Normalize();
+            var side = new Vector3(-along.y, along.x, 0.0f) * halfWidth;
+
+            Vector3 a0 = a - side, a1 = a + side;
+            Vector3 b0 = b - side, b1 = b + side;
+
+            tris.Add(a0); tris.Add(b0); tris.Add(b1);
+            tris.Add(a0); tris.Add(b1); tris.Add(a1);
+        }
+
         /// <summary>A flat annulus band in the XZ plane, as a strip of quads.</summary>
         private static void FlatRing(System.Collections.Generic.List<Vector3> tris,
                                      float rInner, float rOuter, int segments)

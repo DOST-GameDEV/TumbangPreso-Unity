@@ -106,6 +106,27 @@ namespace TumbangPreso.Visual
             /// gold, and it goes UP rather than down: Nemu is coming apart, Phaister is working.
             /// </summary>
             WitchSigil,
+
+            /// <summary>
+            /// Phaister blinking. The same script as <see cref="WitchSigil"/>, thrown OUTWARD.
+            ///
+            /// ⚠️⚠️ THREE WITCH AURAS RATHER THAN ONE, ON REPORT: *"i want the glyph effects
+            /// to be a bit diff tho"*. All three of her powers routed through one emitter, so her
+            /// hex, her blink and her ultimate emitted identical glyphs at identical speeds and
+            /// the kit read as one effect fired three times. Same alphabet, three different
+            /// hands: this one is a spell coming APART, so the glyphs are flung out fast, live
+            /// briefly and do not orbit at all.
+            /// </summary>
+            WitchScatter,
+
+            /// <summary>
+            /// Phaister's eclipse. The script falling INWARD and downward, slowly.
+            ///
+            /// ⚠️ IT IS THE ONLY ONE THAT FALLS. Her other two lift, because a cast rises off
+            /// its circle; an eclipse is something arriving from above, and reversing the
+            /// vertical is the cheapest way for the ultimate to not read as the skill again.
+            /// </summary>
+            WitchEclipse,
         }
 
         /// <summary>
@@ -232,6 +253,35 @@ namespace TumbangPreso.Visual
                     emission.rateOverTime = 28.0f;
                     shape.shapeType = ParticleSystemShapeType.Circle;
                     shape.radius = 1.6f;
+                    break;
+
+                case Aura.WitchScatter:
+                    // Short, fast, and gone: a blink is over before the player has read it, so
+                    // the glyphs are smaller and briefer than the hex's and there are more of
+                    // them at once.
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(0.35f, 0.7f);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(2.6f, 5.2f);
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.07f, 0.15f);
+                    main.gravityModifier = 0.35f;
+                    main.startColor = new ParticleSystem.MinMaxGradient(
+                        UiTheme.HeroWitchBright, new Color(1.0f, 0.85f, 0.25f, 1.0f));
+                    emission.rateOverTime = 90.0f;
+                    shape.shapeType = ParticleSystemShapeType.Sphere;
+                    shape.radius = 0.45f;
+                    break;
+
+                case Aura.WitchEclipse:
+                    // Large, slow and descending. `gravityModifier` is POSITIVE here and negative
+                    // on the other two, which is the whole separation.
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(2.2f, 3.6f);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(0.05f, 0.4f);
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.16f, 0.34f);
+                    main.gravityModifier = 0.12f;
+                    main.startColor = new ParticleSystem.MinMaxGradient(
+                        new Color(1.0f, 0.85f, 0.25f, 1.0f), UiTheme.HeroWitchBright);
+                    emission.rateOverTime = 16.0f;
+                    shape.shapeType = ParticleSystemShapeType.Circle;
+                    shape.radius = 3.4f;
                     grad.SetKeys(
                         new[] { new GradientColorKey(new Color(1.0f, 0.90f, 0.40f), 0.0f),
                                 new GradientColorKey(UiTheme.HeroWitchBright, 0.5f),
@@ -334,6 +384,47 @@ namespace TumbangPreso.Visual
         private static Mesh _chip, _grain, _flake;
 
         /// <summary>
+        /// Four written glyphs, for the witch. See <see cref="VfxShapes.Rune"/>.
+        ///
+        /// ⚠️⚠️ FOUR, BECAUSE THAT IS WHAT A PARTICLE RENDERER WILL HOLD. `SetMeshes` takes
+        /// up to four and picks between them per particle, which is the whole reason this reads
+        /// as writing rather than as one shape repeated: a single glyph emitted thirty times a
+        /// second is a logo, four of them is an alphabet. The seeds are fixed so the set is the
+        /// same in every match and in every render.
+        /// </summary>
+        private static Mesh[] _runes;
+
+        private static Mesh[] Runes
+        {
+            get
+            {
+                if (_runes != null && _runes[0] != null) return _runes;
+
+                _runes = new[]
+                {
+                    VfxShapes.Rune(11), VfxShapes.Rune(29),
+                    VfxShapes.Rune(47), VfxShapes.Rune(83),
+                };
+
+                return _runes;
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ THE RENDERER PICKS PER PARTICLE, so this is one call rather than four emitters.
+        /// `renderMode` has to be set to `Mesh` before `SetMeshes` or the meshes are stored and
+        /// never drawn, which looks exactly like an emitter with nothing in it.
+        /// </summary>
+        private static void UseMeshes(ParticleSystemRenderer pRenderer, Mesh[] meshes)
+        {
+            if (pRenderer == null || meshes == null || meshes.Length == 0) return;
+
+            pRenderer.renderMode = ParticleSystemRenderMode.Mesh;
+            pRenderer.SetMeshes(meshes, meshes.Length);
+            pRenderer.alignment = ParticleSystemRenderSpace.View;
+        }
+
+        /// <summary>
         /// A flat four-sided chip: void debris and anything caught tumbling.
         ///
         /// ⚠️ BUILT FLAT IN THE MESH RATHER THAN SQUASHED BY THE EMITTER. `startSize` scales a
@@ -407,7 +498,15 @@ namespace TumbangPreso.Visual
                     // to separate two auras that are both spirit-coloured motes on a body. Hers
                     // is a vortex pulling IN; this is a spell being wound OUT, so the sign of the
                     // orbital term and the sign of the radial term are both flipped.
-                    UseMesh(pRenderer, Chip);
+                    // ⚠️⚠️ GLYPHS, NOT CHIPS, AND THE CHIP IS WHAT MADE IT LOOK LIKE A
+                    // PARTY. Off the played build: *"the effects it has look like party shit
+                    // haha"*, and then the ask: *"i want sigils to come out of here not wtv
+                    // effect that is / sigils glyphs ancient letters"*. `Chip` is the generic
+                    // confetti flake three other auras use; a witch throwing coloured confetti
+                    // is a birthday, and the hex circle underneath is already drawn as
+                    // inscribed strokes, so the particles were contradicting their own source.
+                    UseMeshes(pRenderer, Runes);
+
                     orbit.enabled = true;
                     orbit.space = ParticleSystemSimulationSpace.Local;
                     orbit.orbitalX = new ParticleSystem.MinMaxCurve(0.0f, 0.0f);
@@ -415,8 +514,49 @@ namespace TumbangPreso.Visual
                     orbit.orbitalZ = new ParticleSystem.MinMaxCurve(0.0f, 0.0f);
                     orbit.radial = new ParticleSystem.MinMaxCurve(0.08f, 0.30f);
 
-                    Tumble(spin, 2.0f, 4.0f);
-                    Shrink(size, 1.0f, 0.3f);
+                    // ⚠️⚠️ THE TUMBLE IS CUT HARD, AND FOR A GLYPH THAT IS THE DIFFERENCE
+                    // BETWEEN WRITING AND LITTER. A chip is a scrap and spinning it freely reads
+                    // as debris; a letter that cartwheels is unreadable, and unreadable is
+                    // exactly what "party shit" means here. 2.0 to 4.0 rad/s was tuned for the
+                    // chip. At 0.25 to 0.7 a glyph drifts and lists slightly, so it stays legible
+                    // the whole way up and the eye keeps trying to read it, which is the effect.
+                    Tumble(spin, 0.25f, 0.7f);
+
+                    // ⚠️ THEY DO NOT SHRINK TO NOTHING. `Shrink(size, 1.0f, 0.3f)` faded the
+                    // chip out by scale, which on a glyph reads as it retreating rather than
+                    // dissolving. Holding most of the size and letting the colour gradient carry
+                    // the fade keeps the shape readable until it is gone.
+                    Shrink(size, 1.0f, 0.78f);
+                    break;
+
+                case Aura.WitchScatter:
+                    // ⚠️ NO ORBIT AT ALL, WHICH IS WHAT MAKES IT READ AS COMING APART. The hex
+                    // winds its glyphs out along a spiral because a spell is being written; a
+                    // blink is the writing being torn up, so they simply leave.
+                    UseMeshes(pRenderer, Runes);
+                    Tumble(spin, 1.1f, 2.4f);
+                    Shrink(size, 1.0f, 0.35f);
+
+                    drag.enabled = true;
+                    drag.dampen = 0.35f;
+                    drag.limit = new ParticleSystem.MinMaxCurve(1.4f);
+                    break;
+
+                case Aura.WitchEclipse:
+                    // ⚠️ IT ORBITS THE SAME WAY THE HEX DOES BUT AT A THIRD OF THE RATE, so the
+                    // ultimate reads as the same magic moving at the weight of something much
+                    // bigger. Reversing it would have made it Nemu's vortex, which section 21.5
+                    // spent a pass separating her from.
+                    UseMeshes(pRenderer, Runes);
+                    orbit.enabled = true;
+                    orbit.space = ParticleSystemSimulationSpace.Local;
+                    orbit.orbitalX = new ParticleSystem.MinMaxCurve(0.0f, 0.0f);
+                    orbit.orbitalY = new ParticleSystem.MinMaxCurve(-0.7f, -0.28f);
+                    orbit.orbitalZ = new ParticleSystem.MinMaxCurve(0.0f, 0.0f);
+                    orbit.radial = new ParticleSystem.MinMaxCurve(-0.12f, 0.06f);
+
+                    Tumble(spin, 0.12f, 0.4f);
+                    Shrink(size, 1.0f, 0.85f);
                     break;
 
                 case Aura.MagmaEmber:
