@@ -175,6 +175,29 @@ namespace TumbangPreso.Core
         ///
         /// ⚠️ IT CLAMPS AT `MinTripDown` RATHER THAN AT ZERO. Mashing cannot cancel a trip, it
         /// can only shorten it, so the hazard still costs a beat no matter how fast anybody is.
+        ///
+        /// ⚠️⚠️ AND A PRESS BELOW THE FLOOR IS REFUSED, NOT CLAMPED, WHICH IS THE WHOLE OF
+        /// *"IF I MASH, THE PROGRESS PAUSES"*. 🧑 reported that on 2026-08-26, it was answered by
+        /// moving `MinTripDown` from 0.90 to 0.35, and he reported it again off the very next
+        /// build. The real cause was one line and it was not a balance number.
+        ///
+        /// The clamp used to be unconditional: `reduced < MinTripDown ? MinTripDown : reduced`.
+        /// Once the fall is INSIDE the floor — the last 0.35 s, where the get-up clip is playing
+        /// and `_tripLeft` is bleeding to zero at real time — `tripLeft` is already below
+        /// `MinTripDown`, so `reduced` is negative, the clamp fires, and the function returns
+        /// **0.35: a LARGER number than it was given.** A player still hammering the key during
+        /// their own get-up therefore reset their fall to the floor on every accepted press, at
+        /// up to 10 Hz, and could not stand up for as long as they kept mashing. Mashing HARDER
+        /// made the fall LONGER, which is exactly the shape of what he described.
+        ///
+        /// `PlayModeTests.InputEdgeTests` found it in one run: 105 accepted presses against a
+        /// 2.50 s trip, 36.75 s of nominal recovery bought, and the body still on the floor at
+        /// 12.00 s.
+        ///
+        /// ⚠️ REFUSED RATHER THAN CLAMPED, so the press is also reported as `accepted: false` and
+        /// the HUD's press-pop does not fire on a press that bought nothing. `CanMashUp` already
+        /// stops the prompt ASKING at this point; this is the same rule stated where it is
+        /// enforced instead of where it is advertised.
         /// </summary>
         /// <param name="tripLeft">Seconds of trip remaining.</param>
         /// <param name="secondsSinceLastPress">Time since the last press that was ACCEPTED.</param>
@@ -183,6 +206,7 @@ namespace TumbangPreso.Core
         {
             accepted = false;
             if (tripLeft <= 0.0f) return tripLeft;
+            if (tripLeft <= Balance.MinTripDown) return tripLeft;
             if (secondsSinceLastPress < Balance.MashCooldown) return tripLeft;
 
             accepted = true;

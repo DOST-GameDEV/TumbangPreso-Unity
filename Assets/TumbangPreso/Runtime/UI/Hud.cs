@@ -99,6 +99,10 @@ namespace TumbangPreso.UI
         private Text _round;
         private Text _timerPressure;
 
+        /// <summary>The clock column, held so the guided route can take it off screen whole.
+        /// See <see cref="StripToTrainingChrome"/>.</summary>
+        private GameObject _topCentre;
+
         private Image _scoreboard;
         private Text _scoreTitle;
         private readonly Text[] _scoreNames = new Text[Balance.PlayerCount];
@@ -122,8 +126,10 @@ namespace TumbangPreso.UI
 
         private Image _getUpCard;
         private Text _getUpLabel;
+
+        /// <summary>The get-up meter. ⚠️ IT MEASURES PRESSES, NOT TIME. See
+        /// <see cref="UpdateGetUpPrompt"/> for why there is only one of these now.</summary>
         private Image _getUpFill;
-        private Image _getUpMashFill;
         private RectTransform _getUpBarRt;
 
         /// <summary>How long the get-up bar stays popped after an accepted press.
@@ -1078,6 +1084,8 @@ namespace TumbangPreso.UI
         /// </summary>
         private void UpdateScores()
         {
+            if (_trainingChrome) return;
+
             var m = GameServices.Match;
 
             // ⚠️⚠️ THE NAMES ARE PART OF THE STAMP, AND LEAVING THEM OUT WAS A REAL BUG. A seat
@@ -1101,6 +1109,20 @@ namespace TumbangPreso.UI
                 if (_scoreNames[i] == null) continue;
 
                 int slot = order[i];
+
+                // ⚠️⚠️ AN EMPTY CHAIR GETS NO ROW. With the practice lobby set to NONE only the
+                // human seat is built (`MatchInstaller`), and the board went on printing three
+                // rows reading "P2 ATTACKER 0" for bodies that are not in the street. The row is
+                // DISABLED rather than blanked, so the card shrinks to what is actually playing
+                // instead of leaving three bands of empty wood down the corner.
+                var occupant = GameServices.Round?.PlayerAt(slot);
+                var rowObject = _scoreRows[i] != null ? _scoreRows[i].gameObject : null;
+
+                if (rowObject != null && rowObject.activeSelf != (occupant != null))
+                    rowObject.SetActive(occupant != null);
+
+                if (occupant == null) continue;
+
                 bool isTaya = slot == m.DefenderSlot;
                 int scoreNow = m.ScoreFor(slot);
 
@@ -1176,7 +1198,9 @@ namespace TumbangPreso.UI
         {
             var lata = GameServices.Round.Lata;
 
-            if (lata == null || !GameServices.Round.RoundActive)
+            // ⚠️ THE GUIDED ROUTE HAS ITS OWN OBJECTIVE CARD AND DOES NOT WANT A SECOND ONE
+            // SHOUTING OVER IT. See StripToTrainingChrome.
+            if (_trainingChrome || lata == null || !GameServices.Round.RoundActive)
             {
                 _lataCard.gameObject.SetActive(false);
                 if (_lataAlert != null) _lataAlert.enabled = false;
@@ -1590,23 +1614,34 @@ namespace TumbangPreso.UI
                 _getUpLabel.color = buying ? UiTheme.Cream : UiTheme.Amber;
             }
 
-            // ⚠️⚠️ THE BAR SPANS THE WHOLE FALL, NOT THE MASHABLE PART OF IT. Filling only
-            // across `TripTotal` down to `MinTripDown` would slam to 100 per cent and then sit
-            // there for the 0.9 s floor, which reads as a bar that has finished while the player
-            // is demonstrably still down. Measuring against the full trip means the last stretch
-            // keeps moving on its own, so "about to be done" stays true right to the end.
-            float total = Mathf.Max(0.01f, _local.TripTotal);
-            _getUpFill.fillAmount = Mathf.Clamp01(1.0f - _local.TripLeft / total);
+            // ⚠️⚠️ THE BAR IS A MASH METER NOW, NOT A CLOCK, AND THAT INVERSION IS THE WHOLE
+            // FIX. 🧑, 2026-08-26, off the played build: *"progress bar increases on its own when
+            // u trip (not supposed to happen) and if i mash, the progress pauses (opposite of
+            // what i want)"*. He was reading it exactly right. This line used to be
+            // `1 - TripLeft / TripTotal`, which is ELAPSED TIME: it filled at the passive bleed
+            // whatever the player did, and a press only steepened a slope that was already
+            // moving. Two bars in two colours were added to explain that and it did not help,
+            // because the thing being explained was still a countdown.
+            //
+            // ⚠️ SO THE ONLY INPUT IS `MashRemoved`. It is written in exactly one place,
+            // `CharacterMotor.MashRecover`, and only by a press that `Combat.MashRecover`
+            // ACCEPTED. Nothing else in the game can move this bar by a pixel, which is the
+            // property he asked for stated as code rather than as a colour convention.
+            //
+            // ⚠️⚠️ THE DENOMINATOR IS THE WHOLE MASHABLE SLACK, `TripTotal - MinTripDown`, AND
+            // IT IS FIXED FOR THE FALL. It is 2.15 s on a 2.50 s trip. Dividing by what is
+            // CURRENTLY still buyable was the obvious alternative and it is wrong twice: it goes
+            // to zero when the passive bleed reaches the floor on its own, and it would let the
+            // bar creep as the denominator shrank, which is the exact behaviour being removed.
+            // Fixed means a player who reacts in 0.25 s and mashes cleanly reads about 91 per
+            // cent, and a player who never presses reads zero and stands up anyway. Both are
+            // true statements about who did the work.
+            float slack = Mathf.Max(0.01f, _local.TripTotal - Balance.MinTripDown);
+            _getUpFill.fillAmount = Mathf.Clamp01(_local.MashRemoved / slack);
 
             // Amber once the presses have done all they can, so the colour change and the
             // wording agree that the player has stopped being able to help.
             _getUpFill.color = buying ? UiTheme.Offense : UiTheme.Amber;
-
-            // ⚠️ THE GOLD SEGMENT IS WHAT THE PRESSES BOUGHT, MEASURED AGAINST THE SAME
-            // DENOMINATOR, so the two read as one bar with the player's share at the front
-            // rather than as two competing bars.
-            if (_getUpMashFill != null)
-                _getUpMashFill.fillAmount = Mathf.Clamp01(_local.MashRemoved / total);
 
             // ⚠️⚠️ THE POP IS THE ONLY THING THAT SEPARATES A DEAD PRESS FROM A REAL ONE.
             // `Combat.MashRecover` refuses a press inside `Balance.MashCooldown` and changes
@@ -1716,7 +1751,58 @@ namespace TumbangPreso.UI
             var indicatorGo = new GameObject("OffscreenIndicators");
             indicatorGo.transform.SetParent(transform, false);
             _indicators = indicatorGo.AddComponent<OffscreenIndicators>();
+
+            if (GameLaunch.GuidedTutorial) StripToTrainingChrome();
         }
+
+        /// <summary>
+        /// Takes the MATCH off a training run and leaves the CONTROLS.
+        ///
+        /// ⚠️⚠️ THE TUTORIAL IS NOT A MATCH WITH A CARD OVER IT. 🧑, 2026-08-26, off the played
+        /// build: *"why is there a timer and rounds too in tutorial"*, then *"make it an actual
+        /// dedicated tutorial not js a copy pasted shit from the game"*. He is describing exactly
+        /// what shipped: the guided route loads a real arena and installs the real HUD, so a
+        /// player learning to sprint was reading a 90 s clock that `RoundDirector` pins at 90 and
+        /// never moves, a line saying ROUND 1 / 8 of a match that will never reach round 2, a
+        /// scoreboard of four seats that are parked, and a lata alert firing over the objective
+        /// card. Four readouts that are all either frozen or false.
+        ///
+        /// ⚠️ WHAT STAYS IS EVERYTHING A LESSON TEACHES: the stamina and status stacks (the
+        /// sprint lesson is about the bar), the crosshair (the throw lesson aims with it), the
+        /// hero deck and the inspect tray (four lessons are the kit), the get-up card (the trip
+        /// lesson IS that card), the screen-edge arrows and the build stamp. Hiding those would
+        /// teach a HUD the player will never see again.
+        ///
+        /// ⚠️ IT DEACTIVATES RATHER THAN SKIPPING THE BUILD, and that is on purpose. Every
+        /// `Update*` method in this file reads a field this would otherwise leave null, and a
+        /// tutorial that crashed the HUD would be a worse answer to "it looks like the game" than
+        /// the one it replaces. Writing text into a disabled object costs nothing and renders
+        /// nothing.
+        ///
+        /// ⚠️⚠️ AND IT IS GATED ON `GameLaunch.GuidedTutorial`, WHICH IS FALSE FOR EVERY MATCH.
+        /// 🧑, in the same message: *"make sure this shit doesnt affect the actual game"*. The
+        /// flag is set by `ConvertedTutorialPanel` and cleared by `GuidedTraining` on the way out
+        /// and by `GameLaunch.Reset`, so no path into a real round can reach this method.
+        /// </summary>
+        private void StripToTrainingChrome()
+        {
+            // ⚠️⚠️ THE FLAG IS THE FIX; THE FOUR `SetActive` CALLS ARE ONLY THE FIRST FRAME.
+            // `UpdateLataCard` and `UpdateClassicDeck` both decide their own visibility EVERY
+            // frame and would have switched two of these straight back on, so a build-time
+            // deactivation on its own would have looked like it worked for exactly one frame.
+            _trainingChrome = true;
+
+            if (_topCentre != null) _topCentre.SetActive(false);
+            if (_scoreboard != null) _scoreboard.gameObject.SetActive(false);
+            if (_lataCard != null) _lataCard.gameObject.SetActive(false);
+            if (_classicDeck != null) _classicDeck.SetActive(false);
+            if (_lataAlert != null) _lataAlert.enabled = false;
+        }
+
+        /// <summary>True while this HUD is dressed for the guided route rather than for a match.
+        /// Set once, in <see cref="StripToTrainingChrome"/>, and read by the handful of update
+        /// methods that own their own visibility.</summary>
+        private bool _trainingChrome;
 
         /// <summary>
         /// Full-screen, behind everything, and never a raycast target.
@@ -1919,6 +2005,7 @@ namespace TumbangPreso.UI
         {
             var column = new GameObject("TopCentre");
             column.transform.SetParent(_root, false);
+            _topCentre = column;
 
             var group = column.AddComponent<VerticalLayoutGroup>();
             group.childControlHeight = true;
@@ -2136,26 +2223,9 @@ namespace TumbangPreso.UI
 
             MenuKit.Stretch(_getUpFill.rectTransform);
 
-            // ⚠️⚠️ A SECOND FILL, DRAWN OVER THE FIRST, AND IT IS THE PLAYER'S OWN SHARE.
-            // 🧑, 2026-08-26: the get-up *"automatically resolves without doing anything"*. One
-            // bar could not answer that, because it drew the passive bleed and the presses in
-            // the same colour: mashing well and doing nothing looked identical for the first
-            // second, and by the time they diverged the fall was over. This one measures
-            // `MashRemoved` only, so every accepted press visibly extends it and nothing else
-            // ever does.
-            var mashGo = new GameObject("GetUpBarMashFill");
-            mashGo.transform.SetParent(backGo.transform, false);
-
-            _getUpMashFill = mashGo.AddComponent<Image>();
-            _getUpMashFill.sprite = GodotTheme.Plain(3);
-            _getUpMashFill.type = Image.Type.Filled;
-            _getUpMashFill.fillMethod = Image.FillMethod.Horizontal;
-            _getUpMashFill.color = UiTheme.Highlight;
-            _getUpMashFill.raycastTarget = false;
-            _getUpMashFill.fillAmount = 0.0f;
-
-            MenuKit.Stretch(_getUpMashFill.rectTransform);
-
+            // ⚠️⚠️ THERE IS ONE FILL AND IT IS THE PLAYER'S. A second, time-driven fill used to
+            // sit under this one; both are gone in favour of a single meter that only a press
+            // can move. `UpdateGetUpPrompt` carries the whole reasoning and the quote.
             _getUpBarRt = backGo.GetComponent<RectTransform>();
 
             _getUpCard.gameObject.SetActive(false);
@@ -2685,7 +2755,7 @@ namespace TumbangPreso.UI
         {
             if (_classicDeck == null) return;
 
-            bool show = !_spectating && _local != null
+            bool show = !_trainingChrome && !_spectating && _local != null
                         && SceneFlow.SelectedMode == GameMode.Classic;
             if (_classicDeck.activeSelf != show) _classicDeck.SetActive(show);
             if (!show) return;
@@ -2930,14 +3000,98 @@ namespace TumbangPreso.UI
             if (act == null || act.bindings.Count == 0)
                 return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
 
-            // ⚠️ THE STATIC FORM, NOT THE EXTENSION. `InputBinding.ToHumanReadableString` is an
-            // extension method that only resolves with `using UnityEngine.InputSystem;` in
-            // scope, and this file deliberately does not carry one: it fully qualifies the two
-            // input types it touches so nothing else in a 2,500 line HUD picks up that
-            // namespace by accident. `InputControlPath.ToHumanReadableString` is the same
-            // implementation reached as a plain static.
+            // ⚠️⚠️ A COMPOSITE'S HEAD IS NOT A KEY, AND PRINTING IT IS HOW THE TUTORIAL CAME TO
+            // TEACH `[2DVECTOR(MODE:2)]`. 🧑, off the played build: *"wtf is 2d vector modee?"*.
+            // `Move` is a 2D Vector composite, so `bindings[0]` is the COMPOSITE HEAD: its
+            // `effectivePath` is the composite's own type string rather than a control path, and
+            // `ToHumanReadableString` faithfully rendered it. The four real keys are the PART
+            // bindings that follow it. Nothing was broken in the binding table; the reader was
+            // asking the wrong row for a key.
+            //
+            // ⚠️ AND IT IS FIXED HERE RATHER THAN AT THE ONE CALL SITE THAT SHOWED IT, because
+            // `docs/VISION.md` § 3 makes this function the single source of every key the game
+            // teaches: the deck, the inspect tray, the lata card, the get-up prompt and the
+            // training route all read it. A special case in the tutorial would leave the same
+            // string one composite away from every other screen.
+            if (act.bindings[0].isComposite) return CompositeLabel(act);
+
+            return SingleKeyLabel(act.bindings[0].effectivePath);
+        }
+
+        /// <summary>
+        /// The parts of a composite, in READING order rather than in binding order.
+        ///
+        /// ⚠️ WASD, NOT WSAD. The Input System stores a 2D Vector composite as up, down, left,
+        /// right, so joining the parts in the order they are declared spells the wrong word for
+        /// the most recognisable key cluster in PC gaming. Ordering up, left, down, right is the
+        /// shape of the keys on the board and is what every other game prints.
+        ///
+        /// ⚠️ IT FALLS BACK TO A SLASH-JOINED LIST rather than to a hard-coded "WASD", so a
+        /// player who rebinds the four to IJKL is taught IJKL. A screen that teaches the wrong
+        /// key is worse than one that teaches none (`docs/VISION.md` § 3).
+        /// </summary>
+        private static string CompositeLabel(UnityEngine.InputSystem.InputAction act)
+        {
+            string up = null, down = null, left = null, right = null;
+            var loose = new System.Collections.Generic.List<string>();
+
+            // Only the FIRST composite. An action may carry a keyboard composite and a gamepad
+            // stick, and a label that concatenated both would be longer than the card it sits on.
+            bool started = false;
+
+            foreach (var binding in act.bindings)
+            {
+                if (binding.isComposite)
+                {
+                    if (started) break;
+                    started = true;
+                    continue;
+                }
+
+                if (!started || !binding.isPartOfComposite) continue;
+
+                string label = SingleKeyLabel(binding.effectivePath);
+                if (string.IsNullOrEmpty(label)) continue;
+
+                string part = binding.name == null ? "" : binding.name.ToLowerInvariant();
+                if (part == "up") up = label;
+                else if (part == "down") down = label;
+                else if (part == "left") left = label;
+                else if (part == "right") right = label;
+                else loose.Add(label);
+            }
+
+            if (up != null && down != null && left != null && right != null)
+            {
+                // Single-character keys read as one cluster; anything longer needs separators or
+                // "UP ARROWLEFT ARROW" comes out as one word.
+                bool tight = up.Length == 1 && left.Length == 1 && down.Length == 1 && right.Length == 1;
+                string join = tight ? "" : "/";
+                return up + join + left + join + down + join + right;
+            }
+
+            foreach (var extra in loose)
+                if (up == null) up = extra;
+
+            return up ?? "";
+        }
+
+        /// <summary>
+        /// One control path as something a player can read off a card.
+        ///
+        /// ⚠️ THE STATIC FORM, NOT THE EXTENSION. `InputBinding.ToHumanReadableString` is an
+        /// extension method that only resolves with `using UnityEngine.InputSystem;` in scope,
+        /// and this file deliberately does not carry one: it fully qualifies the two input types
+        /// it touches so nothing else in a 2,500 line HUD picks up that namespace by accident.
+        /// `InputControlPath.ToHumanReadableString` is the same implementation reached as a
+        /// plain static.
+        /// </summary>
+        private static string SingleKeyLabel(string effectivePath)
+        {
+            if (string.IsNullOrEmpty(effectivePath)) return "";
+
             string key = UnityEngine.InputSystem.InputControlPath.ToHumanReadableString(
-                act.bindings[0].effectivePath,
+                effectivePath,
                 UnityEngine.InputSystem.InputControlPath.HumanReadableStringOptions.OmitDevice);
 
             if (string.IsNullOrEmpty(key)) return "";

@@ -638,15 +638,51 @@ namespace TumbangPreso
         }
     }
 
-    /// <summary>Objective card for guided training, deliberately separate from the normal HUD.</summary>
+    /// <summary>
+    /// The training screen. Deliberately separate from `Hud`, and now deliberately unlike it.
+    ///
+    /// ⚠️⚠️ 🧑, 2026-08-26: *"ui for it really sucks i think u can make it bettter"* and *"make
+    /// it an actual dedicated tutorial not js a copy pasted shit from the game"*. Three things
+    /// were wrong and only one of them was this class.
+    ///
+    /// 1. The MATCH was still on screen behind it: a frozen 90 s clock, ROUND 1 / 8, a
+    ///    scoreboard of parked seats and a lata alert firing over the card. That half is
+    ///    `Hud.StripToTrainingChrome` and `MatchInstaller`, not here.
+    /// 2. The keys were raw binding paths. `[2DVECTOR(MODE:2)]` is what `Hud.KeyLabel` returned
+    ///    for a composite action's head; fixed at the source, and the keys now draw as KEY CAPS
+    ///    rather than as bracketed words in a sentence, which is what every game that teaches a
+    ///    control does and what makes one scannable at a glance.
+    /// 3. The card itself was four labels and a hairline: no sense of where you were in the
+    ///    route, and one 8 px bar doing double duty as the lesson's progress and as the card's
+    ///    bottom border.
+    ///
+    /// ⚠️ THE ROUTE RAIL IS THE PART THAT MAKES IT A TUTORIAL RATHER THAN A PROMPT. Seventeen
+    /// pips, one per lesson, lit behind you and dim ahead: *"03 / 17"* is a fact you have to
+    /// read, and the rail is the same fact you can see. It also makes the length of the route
+    /// honest before a player commits to it.
+    ///
+    /// ⚠️ IT DRAWS IN THE GAME'S OWN LANGUAGE AND NOT A NEW ONE. Wood, amber, cream, ink
+    /// (`docs/VISION.md` § 6): anything here in a different visual language would be the thing
+    /// that looks broken, not the thing that looks new.
+    /// </summary>
     internal sealed class GuidedTrainingHud : MonoBehaviour
     {
+        private const float CardWidth = 690.0f;
+        private const float CardHeight = 274.0f;
+        private const float Pad = 26.0f;
+
+        /// <summary>Inner width available to anything inside the card.</summary>
+        private const float Inner = CardWidth - Pad * 2.0f;
+
         private Text _counter;
         private Text _title;
         private Text _body;
-        private Text _action;
         private Text _complete;
         private Image _fill;
+        private RectTransform _keyRow;
+        private readonly System.Collections.Generic.List<Image> _pips =
+            new System.Collections.Generic.List<Image>();
+
         private float _completeLeft;
 
         public static GuidedTrainingHud Build(Transform owner)
@@ -670,6 +706,12 @@ namespace TumbangPreso
             scaler.referenceResolution = new Vector2(1920.0f, 1080.0f);
             scaler.matchWidthOrHeight = 1.0f;
 
+            // ⚠️ THE SAME ASPECT GUARD THE REST OF THE GAME'S UI USES. Without it this canvas
+            // scales on its own terms and the card drifts against the HUD it sits beside on
+            // anything that is not 16:9, which is the whole class of fault `AspectRatioProbes`
+            // exists for.
+            AspectSafeCanvas.Apply(scaler);
+
             var panelGo = new GameObject("ObjectiveCard");
             panelGo.transform.SetParent(transform, false);
             var panel = panelGo.AddComponent<Image>();
@@ -683,53 +725,265 @@ namespace TumbangPreso
             rt.anchorMin = new Vector2(0.0f, 1.0f);
             rt.anchorMax = new Vector2(0.0f, 1.0f);
             rt.pivot = new Vector2(0.0f, 1.0f);
-            rt.anchoredPosition = new Vector2(32.0f, -32.0f);
-            rt.sizeDelta = new Vector2(650.0f, 228.0f);
+            rt.anchoredPosition = new Vector2(36.0f, -36.0f);
+            rt.sizeDelta = new Vector2(CardWidth, CardHeight);
+
+            // ---- header band: the word, and the count, on one line ----
+            var band = Plate(panelGo.transform, "HeaderBand",
+                             new Vector2(Pad, -Pad), new Vector2(Inner, 34.0f),
+                             new Color(UiTheme.Amber.r, UiTheme.Amber.g, UiTheme.Amber.b, 0.14f), 6);
+            band.raycastTarget = false;
+
+            Label(panelGo.transform, 19, UiTheme.Amber,
+                  new Vector2(Pad + 12.0f, -Pad - 4.0f), new Vector2(300.0f, 26.0f))
+                .text = "TRAINING";
 
             _counter = Label(panelGo.transform, 19, UiTheme.Highlight,
-                new Vector2(24, -18), new Vector2(600, 28));
-            _title = Label(panelGo.transform, 32, UiTheme.Cream,
-                new Vector2(24, -52), new Vector2(600, 48));
-            _body = Label(panelGo.transform, 21, UiTheme.CreamMuted,
-                new Vector2(24, -100), new Vector2(600, 70));
+                             new Vector2(Pad, -Pad - 4.0f), new Vector2(Inner - 12.0f, 26.0f));
+            _counter.alignment = TextAnchor.UpperRight;
+
+            // ---- the route rail ----
+            BuildRail(panelGo.transform, new Vector2(Pad, -Pad - 44.0f), GuidedTraining.LessonCount);
+
+            _title = Label(panelGo.transform, 34, UiTheme.Cream,
+                           new Vector2(Pad, -Pad - 60.0f), new Vector2(Inner, 46.0f));
+
+            _body = Label(panelGo.transform, 20, UiTheme.CreamMuted,
+                          new Vector2(Pad, -Pad - 108.0f), new Vector2(Inner, 62.0f));
             _body.horizontalOverflow = HorizontalWrapMode.Wrap;
             _body.verticalOverflow = VerticalWrapMode.Overflow;
-            _action = Label(panelGo.transform, 21, UiTheme.Offense,
-                new Vector2(24, -176), new Vector2(600, 34));
 
-            var barBack = new GameObject("ProgressBack");
-            barBack.transform.SetParent(panelGo.transform, false);
-            var back = barBack.AddComponent<Image>();
-            back.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.75f);
-            Place(back.rectTransform, new Vector2(24, -212), new Vector2(600, 8));
+            // ---- the key caps ----
+            var keyGo = new GameObject("KeyRow", typeof(RectTransform));
+            keyGo.transform.SetParent(panelGo.transform, false);
+            _keyRow = keyGo.GetComponent<RectTransform>();
+            Place(_keyRow, new Vector2(Pad, -Pad - 176.0f), new Vector2(Inner, 40.0f));
+
+            var keyLayout = keyGo.AddComponent<HorizontalLayoutGroup>();
+            keyLayout.childAlignment = TextAnchor.MiddleLeft;
+            keyLayout.childControlWidth = true;
+            keyLayout.childControlHeight = true;
+            keyLayout.childForceExpandWidth = false;
+            keyLayout.childForceExpandHeight = false;
+            keyLayout.spacing = 8.0f;
+
+            // ---- the lesson's own progress ----
+            var barBack = Plate(panelGo.transform, "ProgressBack",
+                                new Vector2(Pad, -Pad - 226.0f), new Vector2(Inner, 12.0f),
+                                new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.80f), 4);
+            barBack.raycastTarget = false;
 
             var fillGo = new GameObject("ProgressFill");
             fillGo.transform.SetParent(barBack.transform, false);
             _fill = fillGo.AddComponent<Image>();
+            _fill.sprite = GodotTheme.Plain(4);
             _fill.type = Image.Type.Filled;
             _fill.fillMethod = Image.FillMethod.Horizontal;
-            _fill.color = UiTheme.Highlight;
+            _fill.color = UiTheme.Offense;
+            _fill.raycastTarget = false;
             _fill.fillAmount = 0.0f;
             MenuKit.Stretch(_fill.rectTransform);
 
-            _complete = Label(transform, 38, UiTheme.Highlight,
-                new Vector2(0, -278), new Vector2(720, 60), centered: true);
+            // ---- centre flash and the two route controls ----
+            _complete = Label(transform, 40, UiTheme.Highlight,
+                              new Vector2(0, -300), new Vector2(760, 60), centered: true);
             _complete.text = "LESSON COMPLETE";
             _complete.enabled = false;
 
-            var footer = Label(transform, 18, UiTheme.CreamMuted,
-                new Vector2(0, 28), new Vector2(760, 30), centered: true, fromBottom: true);
-            footer.text = "[N] SKIP LESSON   ·   [BACKSPACE] EXIT TRAINING";
+            BuildFooter();
+        }
+
+        /// <summary>
+        /// One pip per lesson, sized to fit whatever `GuidedTraining.LessonCount` is.
+        ///
+        /// ⚠️ THE WIDTH IS SOLVED, NOT TYPED. A hard-coded pip width would overflow the card the
+        /// day a lesson is added, and lessons have been added twice already.
+        /// </summary>
+        private void BuildRail(Transform parent, Vector2 at, int count)
+        {
+            if (count <= 0) return;
+
+            const float Gap = 4.0f;
+            float pip = (Inner - Gap * (count - 1)) / count;
+
+            for (int i = 0; i < count; i++)
+            {
+                var image = Plate(parent, $"Pip{i}",
+                                  new Vector2(at.x + i * (pip + Gap), at.y), new Vector2(pip, 6.0f),
+                                  RailDim, 2);
+                image.raycastTarget = false;
+                _pips.Add(image);
+            }
+        }
+
+        private static readonly Color RailDim = new Color(UiTheme.Cream.r, UiTheme.Cream.g,
+                                                          UiTheme.Cream.b, 0.18f);
+
+        private void BuildFooter()
+        {
+            var footGo = new GameObject("RouteControls", typeof(RectTransform));
+            footGo.transform.SetParent(transform, false);
+
+            var rt = footGo.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0.5f, 0.0f);
+            rt.anchorMax = new Vector2(0.5f, 0.0f);
+            rt.pivot = new Vector2(0.5f, 0.0f);
+            rt.anchoredPosition = new Vector2(0.0f, 26.0f);
+            rt.sizeDelta = new Vector2(560.0f, 44.0f);
+
+            var plate = footGo.AddComponent<Image>();
+            plate.sprite = GodotTheme.Box(UiTheme.WoodDark, UiTheme.WoodEdge, 3, 8);
+            plate.type = Image.Type.Sliced;
+            plate.raycastTarget = false;
+
+            var layout = footGo.AddComponent<HorizontalLayoutGroup>();
+            layout.childAlignment = TextAnchor.MiddleCenter;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
+            layout.childForceExpandHeight = false;
+            layout.spacing = 10.0f;
+            layout.padding = new RectOffset(16, 16, 6, 6);
+
+            KeyCap(footGo.transform, "N");
+            Chip(footGo.transform, "SKIP LESSON");
+            Chip(footGo.transform, "·");
+            KeyCap(footGo.transform, "BACKSPACE");
+            Chip(footGo.transform, "QUIT TRAINING");
         }
 
         public void SetLesson(int lesson, int total, string title, string body, string action,
                               Color role)
         {
-            _counter.text = lesson >= total ? "TRAINING COMPLETE" : $"TRAINING  ·  {lesson + 1:00} / {total:00}";
+            _counter.text = lesson >= total
+                ? "COMPLETE"
+                : $"{lesson + 1:00} / {total:00}";
+
             _title.text = title;
             _body.text = body;
-            _action.text = action;
-            _action.color = role;
+
+            for (int i = 0; i < _pips.Count; i++)
+            {
+                if (_pips[i] == null) continue;
+                _pips[i].color = i < lesson ? UiTheme.Amber
+                               : i == lesson ? UiTheme.Highlight
+                               : RailDim;
+            }
+
+            RebuildKeys(action, role);
+        }
+
+        /// <summary>
+        /// Turns `"[LEFT SHIFT] + [WASD]"` into key caps and the words between them.
+        ///
+        /// ⚠️⚠️ THE BRACKETS ARE THE CONTRACT WITH `GuidedTraining.Key`, which is the only thing
+        /// that writes them. Anything inside a pair of square brackets is a CONTROL and gets a
+        /// cap; everything else is prose and stays prose. That keeps one line of lesson text
+        /// readable as a sentence in the source while drawing as something scannable on screen,
+        /// and it means a lesson that names two keys needs no new API.
+        ///
+        /// ⚠️ THE CAPS ARE REBUILT, NOT POOLED. This runs once per lesson, seventeen times in a
+        /// whole route, so a pool would be optimising a thing that happens less often than the
+        /// player blinks.
+        /// </summary>
+        private void RebuildKeys(string action, Color role)
+        {
+            if (_keyRow == null) return;
+
+            for (int i = _keyRow.childCount - 1; i >= 0; i--)
+                Destroy(_keyRow.GetChild(i).gameObject);
+
+            if (string.IsNullOrEmpty(action)) return;
+
+            int at = 0;
+            while (at < action.Length)
+            {
+                int open = action.IndexOf('[', at);
+
+                if (open < 0)
+                {
+                    AddWords(action.Substring(at), role);
+                    break;
+                }
+
+                if (open > at) AddWords(action.Substring(at, open - at), role);
+
+                int close = action.IndexOf(']', open + 1);
+                if (close < 0)
+                {
+                    AddWords(action.Substring(open), role);
+                    break;
+                }
+
+                string key = action.Substring(open + 1, close - open - 1).Trim();
+                if (key.Length > 0) KeyCap(_keyRow, key);
+
+                at = close + 1;
+            }
+        }
+
+        private void AddWords(string words, Color role)
+        {
+            string trimmed = words.Trim();
+            if (trimmed.Length == 0) return;
+            Chip(_keyRow, trimmed, role);
+        }
+
+        /// <summary>A control, drawn as a key on a keyboard rather than as a word in brackets.</summary>
+        private static void KeyCap(Transform parent, string key)
+        {
+            var go = new GameObject($"Key_{key}");
+            go.transform.SetParent(parent, false);
+
+            var plate = go.AddComponent<Image>();
+            plate.sprite = GodotTheme.Box(UiTheme.Cream, UiTheme.Amber, 3, 6);
+            plate.type = Image.Type.Sliced;
+            plate.raycastTarget = false;
+
+            var text = new GameObject("Cap");
+            text.transform.SetParent(go.transform, false);
+            var label = text.AddComponent<Text>();
+            label.font = MenuKit.Font;
+            label.fontSize = 20;
+            label.fontStyle = FontStyle.Bold;
+            label.color = UiTheme.Ink;
+            label.alignment = TextAnchor.MiddleCenter;
+            label.raycastTarget = false;
+            label.text = key;
+            MenuKit.Stretch(label.rectTransform);
+
+            // ⚠️ SIZED OFF THE STRING, NOT OFF A LAYOUT PASS. `BACKSPACE` and `Q` sit in the same
+            // row, and letting UGUI measure the text would make one cap a square and the other a
+            // sliver. 15 px per character with a 42 px floor keeps a single letter square and a
+            // word legible without either overrunning the card.
+            var box = go.AddComponent<LayoutElement>();
+            box.preferredWidth = Mathf.Max(42.0f, 15.0f * key.Length + 20.0f);
+            box.preferredHeight = 34.0f;
+            box.minHeight = 34.0f;
+        }
+
+        private static void Chip(Transform parent, string words, Color? colour = null)
+        {
+            var go = new GameObject("Words");
+            go.transform.SetParent(parent, false);
+
+            var label = go.AddComponent<Text>();
+            label.font = MenuKit.Font;
+            label.fontSize = 19;
+            label.color = colour ?? UiTheme.CreamMuted;
+            label.alignment = TextAnchor.MiddleCenter;
+            label.raycastTarget = false;
+            label.text = words;
+            label.horizontalOverflow = HorizontalWrapMode.Overflow;
+
+            var outline = go.AddComponent<Outline>();
+            outline.effectColor = UiTheme.Ink;
+            outline.effectDistance = new Vector2(2.0f, -2.0f);
+
+            var box = go.AddComponent<LayoutElement>();
+            box.preferredWidth = 10.5f * words.Length + 8.0f;
+            box.preferredHeight = 34.0f;
+            box.minHeight = 34.0f;
         }
 
         public void SetProgress(float ratio)
@@ -751,6 +1005,21 @@ namespace TumbangPreso
             float t = 1.0f - _completeLeft / 0.70f;
             _complete.rectTransform.localScale = Vector3.one * Mathf.Lerp(1.22f, 1.0f, t);
             if (_completeLeft <= 0.0f) _complete.enabled = false;
+        }
+
+        private static Image Plate(Transform parent, string name, Vector2 offset, Vector2 size,
+                                   Color colour, int radius)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+
+            var image = go.AddComponent<Image>();
+            image.sprite = GodotTheme.Plain(radius);
+            image.type = Image.Type.Sliced;
+            image.color = colour;
+
+            Place(image.rectTransform, offset, size);
+            return image;
         }
 
         private static Text Label(Transform parent, int size, Color colour, Vector2 offset,
@@ -788,10 +1057,35 @@ namespace TumbangPreso
         }
     }
 
-    /// <summary>A narrow, non-colliding beacon that points at the current lesson target.</summary>
+    /// <summary>
+    /// A low, non-colliding beacon that points at the current lesson target.
+    ///
+    /// ⚠️⚠️ IT USED TO BE A 5.2 m COLUMN AND THAT IS THE *"what are these big ass lines"* IN
+    /// THE PLAYED BUILD. A `PrimitiveType.Cylinder` is two units tall, so a local scale of 2.6
+    /// draws 5.2 m of pole, and the pulse on the parent took it to 5.7. This game is FPP for
+    /// every Person (`CLAUDE.md` § 4), the eye sits at about 1.6 m and a marker bound to a
+    /// tsinelas is met at three or four metres: the arithmetic puts the top of that pole
+    /// straight off the top of the frame, so the one thing the marker exists to point AT was
+    /// the thing it was standing in front of.
+    ///
+    /// ⚠️ IT IS A GROUND RING AND A SMALL FLOATING PIP NOW, AND NEITHER CROSSES THE HORIZON.
+    /// The ring says WHERE on a floor the player is already reading, and the pip bobbing under
+    /// eye height is what carries the eye to it from across the street.
+    /// </summary>
     internal sealed class TrainingMarker : MonoBehaviour
     {
+        /// <summary>Ring radius. Deliberately NOT `Balance.PickupRadius`: the ring is a "look
+        /// there", not a "stand here", and drawing it at the real pickup window would teach a
+        /// distance no lesson actually checks.</summary>
+        private const float RingRadius = 0.70f;
+
+        /// <summary>How high the pip floats. Under a 1.6 m eye height on purpose, so it is
+        /// always something the player looks slightly DOWN at rather than a shape crossing the
+        /// sky.</summary>
+        private const float PipHeight = 1.05f;
+
         private Transform _target;
+        private Transform _pip;
         private Light _light;
 
         public static TrainingMarker Build()
@@ -811,23 +1105,38 @@ namespace TumbangPreso
 
         private void BuildVisual()
         {
-            var shaft = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            shaft.name = "ObjectiveShaft";
-            shaft.transform.SetParent(transform, false);
-            shaft.transform.localPosition = new Vector3(0.0f, 2.6f, 0.0f);
-            shaft.transform.localScale = new Vector3(0.10f, 2.6f, 0.10f);
-            Visual.VfxMaterial.Ghost(shaft.GetComponent<Renderer>(),
-                new Color(UiTheme.Highlight.r, UiTheme.Highlight.g, UiTheme.Highlight.b, 0.24f),
-                1.7f);
-            Visual.VfxMaterial.StripCollider(shaft);
+            var ring = Visual.VfxShapes.Lay(transform, "ObjectiveRing",
+                                            Visual.VfxShapes.NovaShell(2, 22), RingRadius, 0.04f);
+            Visual.VfxMaterial.Ghost(ring.GetComponent<Renderer>(),
+                new Color(UiTheme.Highlight.r, UiTheme.Highlight.g, UiTheme.Highlight.b, 0.32f),
+                1.5f);
+            Visual.VfxMaterial.StripCollider(ring);
+
+            var pip = Visual.VfxShapes.Lay(transform, "ObjectivePip",
+                                           Visual.VfxShapes.Star(5, 0.44f), 0.24f, PipHeight);
+
+            // ⚠️ TIPPED UPRIGHT. `Lay` places a shape FLAT, which is right for the ring and
+            // wrong for the pip: a flat star seen from eye height is a line, which is the exact
+            // silhouette this whole change is removing.
+            pip.transform.localRotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
+            Visual.VfxMaterial.Ghost(pip.GetComponent<Renderer>(),
+                new Color(UiTheme.Highlight.r, UiTheme.Highlight.g, UiTheme.Highlight.b, 0.85f),
+                2.0f);
+            Visual.VfxMaterial.StripCollider(pip);
+            _pip = pip.transform;
 
             var lightGo = new GameObject("ObjectiveLight");
             lightGo.transform.SetParent(transform, false);
-            lightGo.transform.localPosition = new Vector3(0.0f, 0.8f, 0.0f);
+            lightGo.transform.localPosition = new Vector3(0.0f, 0.6f, 0.0f);
             _light = lightGo.AddComponent<Light>();
             _light.type = LightType.Point;
             _light.color = UiTheme.Highlight;
-            _light.range = 4.0f;
+
+            // ⚠️ 2.6 m OF RANGE AT 1.8 INTENSITY, DOWN FROM 4.0 AT 3.0. The old light washed a
+            // four metre bubble of road, which on Ilalim ng Tulay is most of a lane.
+            // `docs/VISION.md` § 2 rule 5 applies to a tutorial marker exactly as much as to an
+            // ultimate: if the frame stops showing the street, the thing lighting it is too big.
+            _light.range = 2.6f;
             _light.shadows = LightShadows.None;
         }
 
@@ -837,9 +1146,19 @@ namespace TumbangPreso
 
             Vector3 at = _target.position;
             transform.position = new Vector3(at.x, at.y + 0.03f, at.z);
-            float pulse = Mathf.Sin(Time.unscaledTime * 7.0f) * 0.5f + 0.5f;
-            transform.localScale = Vector3.one * Mathf.Lerp(0.92f, 1.10f, pulse);
-            if (_light != null) _light.intensity = Mathf.Lerp(1.4f, 3.0f, pulse);
+
+            float pulse = Mathf.Sin(Time.unscaledTime * 4.5f) * 0.5f + 0.5f;
+
+            // ⚠️ THE PULSE MOVES THE PIP, NOT THE ROOT. Scaling the root scaled the ring's
+            // radius with it, so the footprint drawn on the floor changed size seven times a
+            // second and read as a live ability zone rather than as a pointer.
+            if (_pip != null)
+            {
+                _pip.localPosition = new Vector3(0.0f, PipHeight + Mathf.Lerp(-0.06f, 0.10f, pulse), 0.0f);
+                _pip.localRotation = Quaternion.Euler(90.0f, Time.unscaledTime * 60.0f, 0.0f);
+            }
+
+            if (_light != null) _light.intensity = Mathf.Lerp(0.9f, 1.8f, pulse);
         }
     }
 }

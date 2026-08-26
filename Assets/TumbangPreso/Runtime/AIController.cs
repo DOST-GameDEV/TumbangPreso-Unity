@@ -36,14 +36,48 @@ namespace TumbangPreso
         public static Difficulty ActiveDifficulty = Difficulty.Normal;
 
         /// <summary>
+        /// The index that means "no bots at all", not "bots that play badly".
+        ///
+        /// ⚠️⚠️ IT IS APPENDED AFTER HARD RATHER THAN PREPENDED BEFORE EASY, AND THAT IS NOT A
+        /// TASTE CALL. `GameSettings.AiDifficulty` is a saved int, `MatchRpc` replicates the same
+        /// int to every peer in a lobby, and `Difficulty` in the core package is `(Difficulty)`
+        /// cast straight off it. Inserting a value at 0 would silently reinterpret every saved
+        /// setting and every in-flight lobby message by one tier. At the end, every existing
+        /// index keeps the meaning it has always had and there is nothing to migrate.
+        /// </summary>
+        public const int NoBotsIndex = 3;
+
+        /// <summary>
+        /// False while the practice lobby is set to NONE.
+        ///
+        /// 🧑, 2026-08-26: *"make it so that in practice mode theres an option to turn off all
+        /// bots ... just you there no bots"*.
+        ///
+        /// ⚠️ IT IS AN ABSENCE OF SEATS, NOT A PARKED BRAIN. `MatchInstaller` does not BUILD the
+        /// other three seats when this is false. Spawning four bodies and disabling three
+        /// controllers would leave three motionless characters standing on the attacker line,
+        /// still registered, still scored, still on the scoreboard, which is not what "no bots"
+        /// means to anybody looking at the street.
+        /// </summary>
+        public static bool BotsEnabled = true;
+
+        /// <summary>
         /// Godot's `AIController.apply_difficulty()`, called off the saved setting index.
         ///
         /// ⚠️ NOTHING CALLED THIS BEFORE, so the difficulty in the settings panel was saved,
         /// displayed, and then ignored — every bot in every match played at Normal. The
         /// index is clamped rather than trusted: it comes off disk.
+        ///
+        /// ⚠️ THE TIER STILL CLAMPS TO 0..2 WHEN THE INDEX IS `NoBotsIndex`. Nothing reads the
+        /// tier in that case, but leaving `ActiveDifficulty` holding a cast of 3 would put an
+        /// out-of-range enum into `AiTuning.For`, which is a crash waiting for the first line
+        /// that stops checking `BotsEnabled` first.
         /// </summary>
         public static void ApplyDifficulty(int savedIndex)
-            => ActiveDifficulty = (Difficulty)Mathf.Clamp(savedIndex, 0, 2);
+        {
+            BotsEnabled = savedIndex != NoBotsIndex;
+            ActiveDifficulty = (Difficulty)Mathf.Clamp(savedIndex, 0, 2);
+        }
 
         public static void ApplyDifficultyFromSettings()
             => ApplyDifficulty(Settings.SettingsStore.Current.AiDifficulty);

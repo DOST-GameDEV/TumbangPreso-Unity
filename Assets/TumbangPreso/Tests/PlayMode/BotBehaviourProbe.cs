@@ -94,13 +94,32 @@ namespace TumbangPreso.PlayTests
         /// </summary>
         private const string DefaultMap = "Eskinita";
 
-        [UnityTest]
+        [UnityTest, Timeout(MatchTimeoutMs)]
         public IEnumerator ClassicBotsPlayAWholeMatch()
         {
             yield return RunMatch(GameMode.Classic, DefaultMap);
         }
 
-        [UnityTest]
+        /// <summary>
+        /// ⚠️⚠️ THE 180 s DEFAULT IS NOT A BOUND ON THIS PROBE, IT IS A COIN FLIP, AND WHEN IT
+        /// LOSES IT TAKES OTHER TESTS DOWN WITH IT. Measured 2026-08-26 on an otherwise idle
+        /// machine: 174.2 s here and 170.2 s on the bridge, against NUnit's 180 s default. Both
+        /// pass alone and the bridge one timed out inside a full suite run on the same build.
+        ///
+        /// ⚠️ AND A TIMEOUT HERE IS NOT A LOCAL FAILURE. `CarryTests.TheViewmodelCarriesItsOwn
+        /// SlipperInFirstPerson` and `LandedHighlightTests.TurningTheHighlightOffUnlightsASlipper
+        /// AlreadyResting` both went red in that same run and both pass on their own: an aborted
+        /// match leaves a live arena and the `DontDestroyOnLoad` directors mid-round, and the next
+        /// test's slipper is teleported home under it. One flaky clock read as three bugs.
+        ///
+        /// ⚠️ 420 s IS A CEILING, NOT A BUDGET. The probe is a liveness floor and the whole match
+        /// is the measurement; this number exists so a busy machine cannot turn it red, not so a
+        /// slower one can be tolerated. If a run ever approaches it, the probe has stopped
+        /// stepping the world at the rate `RunMatch` sets and that is the bug.
+        /// </summary>
+        private const int MatchTimeoutMs = 420000;
+
+        [UnityTest, Timeout(MatchTimeoutMs)]
         public IEnumerator HeroStrikeBotsPlayAWholeMatchAndUseTheirKits()
         {
             yield return RunMatch(GameMode.HeroStrike, DefaultMap);
@@ -126,7 +145,7 @@ namespace TumbangPreso.PlayTests
         /// map that breaks the loop is caught. A difference in the counts between the two maps
         /// is noise until the probe steps the world by hand.
         /// </summary>
-        [UnityTest]
+        [UnityTest, Timeout(MatchTimeoutMs)]
         public IEnumerator HeroStrikeBotsPlayAWholeMatchUnderTheBridge()
         {
             yield return RunMatch(GameMode.HeroStrike, "IlalimNgTulay");

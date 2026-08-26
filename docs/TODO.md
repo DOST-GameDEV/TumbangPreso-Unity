@@ -530,6 +530,144 @@ megabytes.
 `Player.log` ends cleanly on `[Slice] round 2 begins, taya is seat 1` with no exception and no
 stack. It was closed.
 
+⚠️⚠️ **12.1 AND 12.2 WERE REPORTED AGAIN OFF THE VERY NEXT BUILD. See § 13.** Both fixes were
+argued from the source and neither was measured against a running game, and both were wrong in a
+way no amount of re-reading the arithmetic would have found. That is the whole lesson of § 13.
+
+---
+
+## 13 · Everything the 2026-08-26 evening build showed, and the pattern in it
+
+**Six reports in one sitting. ✅ ALL CLOSED. Three of them were things this file already claimed
+were fixed**, which is the part worth reading: each had been reasoned from the source, none had
+been measured, and each was wrong for a reason the source could not show.
+
+⚠️⚠️ **THE PATTERN: A FIX ARGUED FROM THE CODE IS A HYPOTHESIS, NOT A RESULT.** The hero picker's
+gap was "fixed" three times; the tsinelas ejector was written against a callback that could never
+fire; the trip loop was answered with two clocks when the fault was geometric. In every case a
+single probe run would have said so in seconds. `HeroPickerLayoutProbe` and
+`InputEdgeTests.MashingShortensAFallByWhatBalanceSays` exist so the next reader inherits the
+measurement rather than the argument.
+
+**13.1 ✅ The get-up bar was a countdown wearing a mash meter's clothes, and § 12.1 did not fix
+that.** 🧑: *"progress bar increases on its own when u trip (not supposed to happen) and if i
+mash, the progress pauses (opposite of what i want)"*. § 12.1 changed the ARITHMETIC of the fall
+and left the bar reading `1 - TripLeft / TripTotal`, which is elapsed time: it filled at the
+passive bleed whatever the player did. A second gold fill was added to explain that, and it did
+not help, because the thing being explained was still a clock.
+
+`Hud.UpdateGetUpPrompt` now draws **one** bar and its only input is `CharacterMotor.MashRemoved`,
+written in exactly one place by a press `Combat.MashRecover` accepted. Denominator is the fixed
+mashable slack, `TripTotal - MinTripDown` = **2.15 s**: react in 0.25 s and mash cleanly and it
+reads **91 per cent**; never press and it reads zero and you stand up anyway. Nothing but a press
+can move it by a pixel.
+
+⚠️⚠️ **AND THE OTHER HALF WAS A REAL DEFECT THAT NO AMOUNT OF READING FOUND: A PRESS BELOW THE
+FLOOR MADE THE FALL LONGER.** `Combat.MashRecover` clamped its result UP to `MinTripDown`
+unconditionally. Inside the floor — the last 0.35 s, the get-up clip, where `tripLeft` is already
+BELOW `MinTripDown` — `reduced` is negative, the clamp fires, and the function **returns a larger
+number than it was given**. A player still hammering the key during their own get-up reset the
+fall to the floor on every accepted press, at up to 10 Hz, and could not stand up for as long as
+they kept mashing. That is *"if i mash, the progress pauses"* literally, mechanically, and it
+survived the § 12.1 pass because that pass changed the CONSTANTS and this is a comparison.
+
+`InputEdgeTests.MashingShortensAFallByWhatBalanceSays` found it on its first run: **105 accepted
+presses against a 2.50 s trip, 36.75 s of nominal recovery bought, still on the floor at 12.00 s.**
+A press at or below the floor is now REFUSED rather than clamped, and reports `accepted: false` so
+the HUD does not pop for a press that bought nothing. Two Core tests hold it:
+`Mash_NeverLengthensAFall` asserts the property from seven starting points, and
+`Mash_IsRefusedOnceTheFloorIsReached` asserts the rule.
+
+⚠️ **The INPUT path was never broken, and that is now asserted rather than believed.** The same
+test first checks that one held Jump produces exactly one accepted press through the real physics
+step, then measures the ratio: an answered fall must be at least 1.6x shorter than an ignored one.
+The two are separate assertions on purpose, because a dead Jump edge and a mis-tuned constant both
+come back as "the fall was too long" and only one of them is a bug. The bound is a RATIO because
+both constants behind it are open balance questions.
+
+**13.2 ✅ `StreetTripHazard.EjectSlipper` was unreachable code, so § 12.2 shipped nothing.**
+🧑, reporting the same fault again: *"if slipper drops there i cant get it anymore i perma trip"*.
+A tsinelas in this game has **no `Collider` and no `Rigidbody`**: `MatchInstaller.BuildSlipper`
+strips the model's colliders and `Slipper.FixedUpdate` integrates the flight by writing
+`transform.position`, which is the same "contact resolves by distance, never by a trigger volume"
+rule the whole game is built on. Unity fires no trigger callback for a collider-less object, so
+`OnTriggerEnter` and `OnTriggerStay` were only ever going to deliver the PLAYER, whose
+`CharacterController` does generate them. The ejector read as correct and could not execute.
+
+It is a **poll** now: `SweepSlippers` at **5 Hz**, sharing one `FindObjectsByType` across the
+whole hazard field through a static cache. 0.20 s is 0.69 m of attacker travel, less than half
+`Balance.PickupRadius`, so the tsinelas is out before anyone could have reached it.
+
+**13.3 ✅ Trip spam: one trip per visit.** 🧑: *"sometimes i am trip spammed, the moment i get out
+of trip i trip again"*. Neither existing clock could answer this and both look like they should.
+`Balance.TripGraceAfterGetUp` is 1.20 s on the BODY and exists for the neighbouring hazard 2.6 m
+away; `StreetTripHazard.Cooldown` is 3.5 s per motor per hazard and starts when the trip BEGINS,
+so an unanswered 3.22 s fall plus 1.20 s of grace has already outlived it. The fault is
+geometric, not temporal: `ApplyTrip` zeroes the horizontal velocity, so the player gets up
+STANDING IN THE FOOTPRINT and the first step out clears `MinSpeedToTrip` from a standing start.
+A `_spent` set, cleared on `OnTriggerExit`, makes a hazard something you RUN ONTO.
+
+**13.4 ✅ The tutorial was a match with a card over it.** 🧑: *"why is there a timer and rounds too
+in tutorial"*, *"make it an actual dedicated tutorial not js a copy pasted shit from the game"*,
+*"ui for it really sucks"*, and *"make sure this shit doesnt affect the actual game"*.
+
+* `Hud.StripToTrainingChrome` takes the clock column, the ROUND x / 8 line, the scoreboard, the
+  lata card and the Street Hype deck off a guided run, and `MatchInstaller` skips `RoleSwapCard`
+  and `YouCard`. Everything a lesson TEACHES stays: stamina, crosshair, hero deck, inspect tray,
+  the get-up card. ⚠️ The flag is `GameLaunch.GuidedTutorial`, false on every path into a real
+  round, and two of those readouts decide their own visibility every frame, so deactivating them
+  at build time alone would have lasted exactly one frame.
+* `GuidedTrainingHud` is rebuilt: a route rail of one pip per lesson, and controls drawn as KEY
+  CAPS parsed out of the `[...]` tokens `GuidedTraining.Key` already writes.
+
+**13.5 ✅ `[2DVECTOR(MODE:2)]`.** 🧑: *"wtf is 2d vector modee?"*. `Hud.KeyLabel` read
+`act.bindings[0]`, which for a composite action is the composite HEAD: its `effectivePath` is the
+composite's type string, not a control path. Fixed at the source rather than at the one screen
+that showed it, because `docs/VISION.md` § 3 makes that function the single origin of every key
+the game teaches. Composites now render their PARTS in reading order, so `Move` prints **WASD**
+and not WSAD, and a rebind to IJKL prints IJKL.
+
+**13.6 ✅ The tutorial beacon was a 5.2 m pole.** 🧑: *"what are these big ass lines"*. A
+`PrimitiveType.Cylinder` is two units tall, so `localScale.y = 2.6` draws 5.2 m and the pulse took
+it to 5.7. In an FPP game with a 1.6 m eye height, a marker met at three metres put its own top
+off the top of the frame: the beacon was standing in front of the thing it was pointing at. It is
+a 0.70 m ground ring and a pip bobbing at 1.05 m now, with the point light cut from 4.0 m at 3.0
+to 2.6 m at 1.8.
+
+**13.7 ✅ The hero picker's dead band, fixed on the fourth attempt and the first measurement.**
+🧑: *"fix ui here, theres big open space"*, the same screenshot as 2026-08-25. `HeroPickerLayoutProbe`
+answered it in one run:
+
+```
+TaglineLabel  h=96  LE(on=True, min=96, pref=46, prio=1)
+```
+
+The preference had been 46 for a day. **`LayoutUtility.GetPreferredHeight` returns
+`Max(minHeight, preferredHeight)`**, and the 96 px floor comes straight from the .tscn's
+`custom_minimum_size.y` through `TscnUiImporter`, authored for a three-line Classic tagline in a
+panel that had no ability rows under it. Three passes wrote the preference and none wrote the
+floor. Both are written now, always, and they always agree. **Measured after: box 56 px around
+51 px of text, slack 5.** Forty pixels of wood returned to the ability rows, and the probe fails
+on any slack over 28.
+
+**13.8 ✅ NONE in the practice lobby, and nobody else in the street.** 🧑: *"add None as an option
+there and make it so that theres actually no bots ... just you there no bots"*. `MatchInstaller`
+does not BUILD the other three seats; disabling three `AIController`s would have left three
+parked bodies on the attacker line, still scored and still on the board. ⚠️ NONE is index **3**,
+appended after HARD rather than prepended before EASY, because `GameSettings.AiDifficulty` is a
+saved int that `MatchRpc` also replicates and `(Difficulty)` is cast straight off it. ⚠️ Offline
+only: a seat is what a peer joins. Three follow-on guards were needed and each is a real hole:
+`SliceRunner.EquipOwnedSlippers` maps tsinelas to attackers BY INDEX and would have handed slipper
+0 to a body that is not there, `RoundDirector.StepPassiveDefence` paid +10/s into an empty chair,
+and `Hud.UpdateScores` printed three rows for seats with nobody in them.
+
+⚠️ **The guided route keeps its cast whatever the lobby says.** It parks the other three itself
+and stands one up as the dummy the shove, punch and lunge lessons need.
+
+**Still open on this entry:** nothing, but the NONE path has been measured only by the checks and
+by reading. It wants one played round to confirm the empty street feels like a range rather than
+like a broken match.
+
 ---
 
 ## 1 · Peer rematch voting across the wire

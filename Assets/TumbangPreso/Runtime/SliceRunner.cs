@@ -172,9 +172,19 @@ namespace TumbangPreso
         {
             if (!NetAuthority.ShouldResolve()) return;
 
+            // ⚠️⚠️ ONLY SEATS THAT EXIST. With the practice lobby set to NONE the three bot seats
+            // are never built (`MatchInstaller`), and this list is what maps a tsinelas to an
+            // owner: counting a missing seat handed slipper 0 to a body that is not there, and
+            // the human, further down the list, got nothing. `owner == null` below would then
+            // skip the equip and the player would open every round empty-handed with no way to
+            // tell why. A full match is unaffected, because all three non-defender seats exist.
             var attackers = new List<int>();
             for (int slot = 0; slot < Balance.PlayerCount; slot++)
-                if (slot != defenderSlot) attackers.Add(slot);
+            {
+                if (slot == defenderSlot) continue;
+                if (GameServices.Round.PlayerAt(slot) == null) continue;
+                attackers.Add(slot);
+            }
 
             for (int index = 0; index < Slippers.Length; index++)
             {

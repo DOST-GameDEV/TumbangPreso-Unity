@@ -143,9 +143,39 @@ namespace TumbangPreso
             var slippers = new Slipper[Balance.PlayerCount];
             _seats = seats;
 
+            // ⚠️⚠️ NONE IN THE PRACTICE LOBBY MEANS THE OTHER THREE SEATS ARE NEVER BUILT. 🧑,
+            // 2026-08-26: *"just you there no bots"*. Building four bodies and disabling three
+            // `AIController`s would leave three characters standing on the attacker line, still
+            // registered, still on the scoreboard and still holding tsinelas, which is a
+            // different thing from an empty street.
+            //
+            // ⚠️ THE THREE GUARDS ARE NOT REDUNDANT. `AIController.BotsEnabled` is the setting.
+            // `human >= 0` is what makes this safe: with no human seat and no bots the arena
+            // would have nobody in it at all, which is the spectator and headless-probe path and
+            // must keep its four. `!isNetworked` keeps a lobby's seats real for the peers who
+            // may be sitting in them, which is the same bound `ConvertedMatchSetup` draws round
+            // the option in the first place.
+            int humanSeat = HumanSeat;
+            var liveNetwork = Net.NetSession.Instance;
+
+            // ⚠️ AND THE TUTORIAL KEEPS ITS CAST WHATEVER THE LOBBY SAYS. `GuidedTraining` parks
+            // the other three itself and stands one of them up as the dummy the shove, the punch
+            // and the lunge lessons are performed on; with no seats to park, the route stops at
+            // the first lesson that needs a body in front of you.
+            bool soloPractice = !AIController.BotsEnabled
+                                && !guided
+                                && humanSeat >= 0
+                                && (liveNetwork == null || !liveNetwork.IsNetworked);
+
             for (int slot = 0; slot < Balance.PlayerCount; slot++)
             {
-                seats[slot] = BuildSeat(slot);
+                // ⚠️ THE SLIPPERS ARE ALL STILL BUILT. `SliceRunner.EquipOwnedSlippers` hands
+                // ammunition out by matching slipper INDEX to the list of attackers, so a
+                // missing tsinelas would shift every owner along by one and leave the human
+                // empty-handed. It skips a seat that is not there instead; the spare tsinelas
+                // lie on their marks, which is exactly what the taya's disowned one already
+                // does in a full match.
+                if (!soloPractice || slot == humanSeat) seats[slot] = BuildSeat(slot);
                 slippers[slot] = BuildSlipper(slot);
             }
 
@@ -707,13 +737,27 @@ namespace TumbangPreso
                 GameServices.Match.MatchEnded += _wonVoice;
             }
 
-            // The intermission card, on the same terms: it listens for the round boundary.
-            var swapGo = new GameObject("RoleSwapCard");
-            swapGo.AddComponent<UI.RoleSwapCard>();
+            // ⚠️⚠️ THE TWO MATCH CARDS ARE NOT BUILT FOR THE GUIDED ROUTE. 🧑, 2026-08-26:
+            // *"make it an actual dedicated tutorial not js a copy pasted shit from the game"*.
+            // `RoleSwapCard` announces a taya rotation that never happens on a route that never
+            // leaves round one, and `YouCard` names the seat and role of a match that is not
+            // being played. Both are answered better by the objective card, which says what to
+            // do rather than who you are.
+            //
+            // ⚠️ THESE ARE SKIPPED RATHER THAN HIDDEN, unlike the four readouts inside the HUD:
+            // each is its own root object with no other caller, so there is no field left null
+            // and nothing downstream to guard. `Hud.StripToTrainingChrome` explains why the ones
+            // inside the HUD had to go the other way.
+            if (!GameLaunch.GuidedTutorial)
+            {
+                // The intermission card, on the same terms: it listens for the round boundary.
+                var swapGo = new GameObject("RoleSwapCard");
+                swapGo.AddComponent<UI.RoleSwapCard>();
 
-            // Which unit you are driving, and what it can do right now.
-            var youGo = new GameObject("YouCard");
-            youGo.AddComponent<UI.YouCard>().Bind(local);
+                // Which unit you are driving, and what it can do right now.
+                var youGo = new GameObject("YouCard");
+                youGo.AddComponent<UI.YouCard>().Bind(local);
+            }
 
             // ⚠️⚠️ THE EMOTE WHEEL FOLLOWS WHOEVER IS BEING DRIVEN, NOT THE SEAT THIS MATCH
             // OPENED ON. It captured `local` in a lambda, so after Tab handed the player a

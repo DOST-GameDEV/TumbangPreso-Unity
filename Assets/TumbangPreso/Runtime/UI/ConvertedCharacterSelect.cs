@@ -680,27 +680,48 @@ namespace TumbangPreso.UI
                 // names and description"*.
                 tagline.alignment = TextAnchor.UpperLeft;
 
-                // ⚠️⚠️ TWO COMPONENTS WERE FIGHTING OVER THIS LABEL'S HEIGHT AND NEITHER WON
-                // CLEANLY, WHICH IS WHY SETTING THE `LayoutElement` DID NOTHING VISIBLE. The
-                // scene puts a `ContentSizeFitter` on it with `m_VerticalFit: 2`
-                // (PreferredSize) AND a `LayoutElement` with a preferred height, on a child of
-                // the ConfigPanel's `VerticalLayoutGroup`. That is three things with an opinion
-                // about one number. Unity does not error on it, it just produces a height nobody
-                // asked for, and the leftover showed up as a band of empty wood between the
-                // description and the ability rows. 🧑: *"big empty space js move it up a bit"*.
+                // ⚠️⚠️ THE `minHeight` IS THE ONE THAT MATTERED, AND WRITING ONLY
+                // `preferredHeight` IS WHY THREE SEPARATE PASSES AT THIS GAP CHANGED NOTHING.
+                // 🧑 reported the same band of empty wood on 2026-08-25 and again on 2026-08-26
+                // (*"fix ui here, theres big open space"*) after it had been "fixed" by
+                // top-aligning the label, then by setting its preferred height, then by
+                // switching the `ContentSizeFitter`'s vertical axis off. All three were reasoned
+                // from the source and none of them was measured.
                 //
-                // ⚠️ THE FITTER IS TURNED OFF ON THE VERTICAL AXIS RATHER THAN THE ELEMENT BEING
-                // DELETED, because the horizontal fit is still doing useful work and because the
-                // `LayoutElement` is what the rest of this method already tunes. One owner.
+                // `HeroPickerLayoutProbe` measured it in one run:
+                //
+                //     TaglineLabel  h=96  LE(on=True, min=96, pref=46, prio=1)
+                //
+                // The preference WAS 46 and had been for a day. `LayoutUtility.GetPreferredHeight`
+                // returns `Max(minHeight, preferredHeight)`, so a 96 px FLOOR beats a 46 px
+                // preference every time, and the 50 px difference is the band.
+                //
+                // ⚠️ THE FLOOR COMES FROM THE .tscn AND NOT FROM THIS FILE. `TscnUiImporter`
+                // writes `custom_minimum_size.y` straight into `minHeight`, and the Godot scene
+                // authors this label at 96 for a THREE-line Classic tagline in a panel that had
+                // no ability rows under it. Nothing in the conversion is wrong; the number simply
+                // stopped being right when the hero variant of this screen was added.
+                //
+                // ⚠️ SO BOTH ARE WRITTEN, ALWAYS, AND THEY ALWAYS AGREE. One owner for one
+                // number, stated twice because Unity reads it twice.
+                float taglineBox = choosingHero ? HeroTaglineHeight(tagline) : 96.0f;
+
+                if (tagline.TryGetComponent<LayoutElement>(out var taglineLayout))
+                {
+                    taglineLayout.minHeight = taglineBox;
+                    taglineLayout.preferredHeight = taglineBox;
+
+                    // ⚠️ AND NO FLEXIBLE HEIGHT. Left at -1 the column may ask this label to
+                    // soak up the panel's spare 24 px, which would put the band straight back
+                    // in a form nothing in this method could see.
+                    taglineLayout.flexibleHeight = 0.0f;
+                }
+
+                // ⚠️ THE FITTER STAYS OFF ON THE VERTICAL AXIS. With the element now pinning
+                // both ends of the height, a self-controller sizing the same axis to the text
+                // would be a second answer to a settled question.
                 if (tagline.TryGetComponent<ContentSizeFitter>(out var taglineFitter))
                     taglineFitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
-
-                // Two lines at 18 pt with `lineSpacing` 1.0 measure about 44 px, so 46 holds
-                // them with a hairline of margin and hands the rest of the panel back to the
-                // rows. Classic keeps a taller box: its taglines run longer and it has no
-                // ability rows competing for the same height.
-                if (tagline.TryGetComponent<LayoutElement>(out var taglineLayout))
-                    taglineLayout.preferredHeight = choosingHero ? 46.0f : 96.0f;
             }
 
             RefreshTabs();
@@ -764,6 +785,33 @@ namespace TumbangPreso.UI
         /// stat nobody can predict from the lore is a random modifier, and a description nothing
         /// backs up is a lie the player finds out about in round 2.
         /// </summary>
+        /// <summary>
+        /// How tall a hero's two-line tagline box has to be.
+        ///
+        /// ⚠️ SOLVED FROM THE FONT SIZE AND THE LINE COUNT, NOT TYPED. Two of the three failed
+        /// attempts at this gap used a literal, and a literal goes stale the moment the font
+        /// size on the line above it changes, which it has done twice.
+        ///
+        /// ⚠️ 1.35 IS THE SAME FACTOR `TscnUiImporter` USES for a label's height floor, so the
+        /// two places in this project that turn a font size into a box height agree. It is
+        /// generous against the roughly 1.16 a Darumadrop line actually measures, which is what
+        /// pays for the descenders.
+        ///
+        /// ⚠️ AND THE LINE COUNT IS COUNTED, NOT ASSUMED. `TaglineFor` returns ROLE + newline +
+        /// sentence for every hero today; a third line added to one of them would otherwise be
+        /// clipped, and a clipped sentence is a worse fault than the gap this replaces.
+        /// </summary>
+        private static float HeroTaglineHeight(Text tagline)
+        {
+            int lines = 1;
+            string body = tagline.text ?? "";
+
+            for (int i = 0; i < body.Length; i++)
+                if (body[i] == '\n') lines++;
+
+            return Mathf.Ceil(tagline.fontSize * 1.35f) * lines + 6.0f;
+        }
+
         private static string TaglineFor(string id)
         {
             switch (id)

@@ -192,6 +192,12 @@ namespace TumbangPreso
         {
             if (Lata == null || !Lata.IsUpright) return;
 
+            // ⚠️ AN EMPTY CHAIR EARNS NOTHING. With the practice lobby set to NONE the taya seat
+            // may not exist at all, and paying +10/s into a slot with no body behind it puts a
+            // ghost at the top of the scoreboard for the whole round. The prize is for KEEPING
+            // the can standing, and nobody is keeping it.
+            if (PlayerAt(GameServices.Match.DefenderSlot) == null) return;
+
             // A camping taya must not earn +10 defence while paying only -5 for
             // camping. Once the grace period expires, can-ring income is suspended.
             if (IsTayaCampPenaltyActive)

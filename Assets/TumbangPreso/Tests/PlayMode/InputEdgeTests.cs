@@ -1,5 +1,6 @@
 using System.Collections;
 using NUnit.Framework;
+using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -245,6 +246,111 @@ namespace TumbangPreso.PlayTests
         /// is not this test's business: the human seat carries `PlayerInputReader`, every other
         /// carries `AIController`, and both write the whole table every Update.
         /// </summary>
+        /// <summary>
+        /// A mash press has to reach `CharacterMotor.MashRecover` through the ordinary physics
+        /// step, and answering a fall has to be worth what `Balance` says it is worth.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE *"mashing still broken"* WAS REPORTED AGAINST A BUILD WHOSE
+        /// ARITHMETIC WAS ALREADY CORRECT, and there was no way to tell a dead press from a
+        /// misread bar without one. The HUD side of that report is answered in
+        /// `Hud.UpdateGetUpPrompt`; this is the other half, and it is the half that can regress
+        /// silently. The mash rides `Verb.Jump` and is read in `FixedUpdate` before
+        /// `Intent.CommitFrame`, which is three ordering facts that a later refactor can break
+        /// without breaking anything a compiler would notice.
+        ///
+        /// ⚠️ IT PRESSES AT `Balance.MashCooldown`, NOT AS FAST AS THE LOOP WILL GO. The rate cap
+        /// lives in `Combat.MashRecover` and refuses anything faster, so a test that spammed
+        /// every step would measure the cap rather than the mash.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator MashingShortensAFallByWhatBalanceSays()
+        {
+            yield return LoadArena();
+
+            CharacterMotor faller = null;
+
+            foreach (var m in Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None))
+            {
+                if (!m.IsPerson) continue;
+                faller = m;
+                break;
+            }
+
+            Assert.IsNotNull(faller, "no Person in the arena to trip");
+            Silence(faller);
+
+            for (int i = 0; i < 10; i++) yield return new WaitForFixedUpdate();
+
+            const float Trip = 2.5f;
+
+            // ---- part one: does a press reach the motor at all? ----
+            //
+            // ⚠️⚠️ ASSERTED SEPARATELY FROM WHAT IT IS WORTH, BECAUSE THE TWO FAIL FOR
+            // COMPLETELY DIFFERENT REASONS. A dead Jump edge and a mis-tuned constant both come
+            // back as "the fall was too long"; only one of them is a bug. The first version of
+            // this test measured them together, went red, and could not say which.
+            faller.ClearTrip();
+            faller.ApplyTrip(Trip);
+
+            faller.Intent.Set(Verb.Jump, true);
+            yield return new WaitForFixedUpdate();
+            faller.Intent.Set(Verb.Jump, false);
+            yield return new WaitForFixedUpdate();
+
+            Assert.AreEqual(1, faller.MashPresses,
+                "a held Jump did not reach CharacterMotor.MashRecover through the physics step. " +
+                "The read is in FixedUpdate BEFORE Intent.CommitFrame; if the snapshot moves " +
+                "ahead of it, JustPressed is false for every verb the physics step resolves. " +
+                "See PlayerInputReader.Update.");
+
+            Assert.Greater(faller.MashRemoved, 0.0f,
+                "the press was counted but bought nothing, so Combat.MashRecover accepted it " +
+                "and then clamped it away. Check MinTripDown against the trip length.");
+
+            // ---- part two: what is answering a fall actually worth? ----
+            //
+            // ⚠️ THE RATE CAP IS LEFT TO DO ITS JOB. `Combat.MashRecover` refuses anything inside
+            // `Balance.MashCooldown` and changes nothing, so pressing on every physics step
+            // measures the cap rather than beating it, and it takes the input timing out of a
+            // question that is about the two balance constants.
+            faller.ClearTrip();
+            faller.ApplyTrip(Trip);
+
+            float ignored = 0.0f;
+            while (faller.IsTripped && ignored < 12.0f)
+            {
+                yield return new WaitForFixedUpdate();
+                ignored += Time.fixedDeltaTime;
+            }
+
+            Assert.False(faller.IsTripped, $"an unanswered {Trip:0.00} s fall never ended: it was " +
+                                           $"still running after {ignored:0.00} s");
+
+            faller.ClearTrip();
+            faller.ApplyTrip(Trip);
+
+            float mashed = 0.0f;
+            while (faller.IsTripped && mashed < 12.0f)
+            {
+                faller.MashRecover();
+                yield return new WaitForFixedUpdate();
+                mashed += Time.fixedDeltaTime;
+            }
+
+            Assert.False(faller.IsTripped,
+                $"a mashed fall never ended: still down after {mashed:0.00} s with " +
+                $"{faller.MashPresses} accepted presses");
+
+            // ⚠️ THE BOUND IS A RATIO, NOT A TIME. `TripPassiveDecayRate` and
+            // `MashRecoverPerPress` are both open balance numbers; what must never regress is
+            // that pressing is worth substantially more than waiting. The arithmetic on those
+            // two constants says 3.3x today, and 1.6x is a floor a real defect falls through
+            // while a tuning pass does not.
+            Assert.Greater(ignored / mashed, 1.6f,
+                $"mashing bought almost nothing: an ignored fall ran {ignored:0.00} s and a " +
+                $"mashed one {mashed:0.00} s over {faller.MashPresses} accepted presses.");
+        }
+
         private static void Silence(CharacterMotor motor)
         {
             var reader = motor.GetComponent<PlayerInputReader>();

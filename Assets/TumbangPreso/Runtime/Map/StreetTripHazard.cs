@@ -57,6 +57,31 @@ namespace TumbangPreso
 
         private readonly Dictionary<CharacterMotor, float> _cooldowns = new Dictionary<CharacterMotor, float>();
 
+        /// <summary>
+        /// Bodies this hazard has already felled and not yet seen leave.
+        ///
+        /// ⚠️⚠️ ONE TRIP PER VISIT, AND WITHOUT IT THE HAZARD IS A LOOP. 🧑, 2026-08-26, off the
+        /// played build: *"sometimes i am trip spammed, the moment i get out of trip i trip
+        /// again"*. The geometry says why and it is not bad luck. A trip drops the body ON the
+        /// hazard, `ApplyTrip` zeroes the horizontal velocity, so the player gets up STANDING IN
+        /// THE FOOTPRINT. `OnTriggerStay` then keeps calling this, and the first step out clears
+        /// `MinSpeedToTrip` of 1.0 m/s while still inside: felled again, from a standing start,
+        /// having done nothing wrong.
+        ///
+        /// ⚠️ `Balance.TripGraceAfterGetUp` COULD NOT ANSWER THIS AND IS NOT MEANT TO. It is 1.20
+        /// s on the BODY and it exists for the neighbouring hazard 2.6 m away, which is a
+        /// different fault with the same symptom. The body clears the grace and is still standing
+        /// in the same cord.
+        ///
+        /// ⚠️ AND `Cooldown` COULD NOT EITHER, though it looks like it should. It is 3.5 s keyed
+        /// per motor, started when the trip BEGINS: an unanswered fall runs 3.22 s and the grace
+        /// adds 1.20, so the cooldown has usually expired by the time the player can move.
+        ///
+        /// A hazard is something you RUN ONTO. Leaving the footprint and coming back is the
+        /// honest way to meet it twice, and that is what this set enforces.
+        /// </summary>
+        private readonly HashSet<CharacterMotor> _spent = new HashSet<CharacterMotor>();
+
         private void Awake()
         {
             var col = GetComponent<Collider>();
@@ -69,11 +94,13 @@ namespace TumbangPreso
         private void OnTriggerEnter(Collider other) => Touch(other);
         private void OnTriggerStay(Collider other) => Touch(other);
 
-        private void Touch(Collider other)
+        private void OnTriggerExit(Collider other)
         {
-            if (EjectSlipper(other)) return;
-            TryTrip(other);
+            var motor = other == null ? null : other.GetComponentInParent<CharacterMotor>();
+            if (motor != null) _spent.Remove(motor);
         }
+
+        private void Touch(Collider other) => TryTrip(other);
 
         /// <summary>
         /// A loose tsinelas that comes to rest inside this hazard is pushed back out of it.
@@ -95,43 +122,96 @@ namespace TumbangPreso
         ///
         /// ⚠️ AND ONLY WHILE IT IS LOOSE. A slipper in flight passes over these constantly; one
         /// being carried is attached to a body that has its own answer to this hazard.
+        ///
+        /// ⚠️⚠️ IT IS POLLED, AND IT USED TO HANG OFF `OnTriggerStay`, WHICH MEANT IT NEVER RAN
+        /// ONCE. This is the second time the same report has been closed: 🧑 raised it again off
+        /// the very next build, because the fix that shipped was unreachable code. A tsinelas in
+        /// this game has NO `Collider` and NO `Rigidbody` at all — `MatchInstaller.BuildSlipper`
+        /// strips the model's colliders and `Slipper.FixedUpdate` integrates the flight by
+        /// writing `transform.position` directly, which is the same "contact resolves by
+        /// distance, never by a trigger volume" rule the whole game is built on (`CLAUDE.md`
+        /// § 4). Unity fires no trigger callback for a collider-less object, so
+        /// `OnTriggerEnter` and `OnTriggerStay` were only ever going to deliver the PLAYER, whose
+        /// `CharacterController` does generate them. The old code read as correct and could not
+        /// execute.
+        ///
+        /// ⚠️ SO THE HAZARD ASKS, RATHER THAN WAITING TO BE TOLD, and the ask is shared. One
+        /// `FindObjectsByType` every `SweepInterval` serves every hazard on the map through
+        /// `_slipperCache`, because a HUD string rebuilt every frame has already cost this
+        /// project an eighth of a probe's frames (`CLAUDE.md` § 7.1) and four hazards each
+        /// scanning on their own would be the same mistake in a different file.
         /// </summary>
-        private bool EjectSlipper(Collider other)
+        private void SweepSlippers()
         {
-            var slipper = other.GetComponentInParent<Slipper>();
-            if (slipper == null) return false;
-            if (slipper.State != SlipperState.Loose) return true;
-
-            // Still moving: let it finish. Ejecting a slipper mid-bounce would fight the
-            // physics that is already carrying it out of here.
-            Vector3 flat = slipper.Velocity;
-            flat.y = 0.0f;
-            if (flat.magnitude > RestingSpeed) return true;
-
             var box = GetComponent<Collider>();
-            if (box == null) return true;
+            if (box == null) return;
 
             Bounds b = box.bounds;
-            Vector3 at = slipper.transform.position;
+            var slippers = CachedSlippers();
+            if (slippers == null) return;
 
-            // Only act when it is genuinely inside the footprint in XZ.
-            if (at.x < b.min.x || at.x > b.max.x || at.z < b.min.z || at.z > b.max.z) return true;
+            foreach (var slipper in slippers)
+            {
+                if (slipper == null || slipper.State != SlipperState.Loose) continue;
 
-            float outWest  = at.x - b.min.x;
-            float outEast  = b.max.x - at.x;
-            float outSouth = at.z - b.min.z;
-            float outNorth = b.max.z - at.z;
+                // Still moving: let it finish. Ejecting a slipper mid-bounce would fight the
+                // physics that is already carrying it out of here.
+                Vector3 flat = slipper.Velocity;
+                flat.y = 0.0f;
+                if (flat.magnitude > RestingSpeed) continue;
 
-            float best = Mathf.Min(Mathf.Min(outWest, outEast), Mathf.Min(outSouth, outNorth));
+                Vector3 at = slipper.transform.position;
 
-            Vector3 moved = at;
-            if (Mathf.Approximately(best, outWest))       moved.x = b.min.x - EjectMargin;
-            else if (Mathf.Approximately(best, outEast))  moved.x = b.max.x + EjectMargin;
-            else if (Mathf.Approximately(best, outSouth)) moved.z = b.min.z - EjectMargin;
-            else                                          moved.z = b.max.z + EjectMargin;
+                // Only act when it is genuinely inside the footprint in XZ.
+                if (at.x < b.min.x || at.x > b.max.x || at.z < b.min.z || at.z > b.max.z) continue;
 
-            slipper.transform.position = moved;
-            return true;
+                float outWest  = at.x - b.min.x;
+                float outEast  = b.max.x - at.x;
+                float outSouth = at.z - b.min.z;
+                float outNorth = b.max.z - at.z;
+
+                float best = Mathf.Min(Mathf.Min(outWest, outEast), Mathf.Min(outSouth, outNorth));
+
+                Vector3 moved = at;
+                if (Mathf.Approximately(best, outWest))       moved.x = b.min.x - EjectMargin;
+                else if (Mathf.Approximately(best, outEast))  moved.x = b.max.x + EjectMargin;
+                else if (Mathf.Approximately(best, outSouth)) moved.z = b.min.z - EjectMargin;
+                else                                          moved.z = b.max.z + EjectMargin;
+
+                slipper.transform.position = moved;
+            }
+        }
+
+        /// <summary>How often the hazard field looks for a swallowed tsinelas.
+        ///
+        /// ⚠️ 5 Hz IS A LATENCY BUDGET, NOT A GUESS. The worst case is a player already walking
+        /// at the slipper when it settles, and at the attacker's 3.45 m/s a 0.20 s wait is
+        /// 0.69 m of travel: less than half of `Balance.PickupRadius`, so the tsinelas is out
+        /// before the player is close enough to have grabbed it anyway. Nothing here is worth a
+        /// per-frame scan.</summary>
+        private const float SweepInterval = 0.20f;
+
+        private static Slipper[] _slipperCache;
+        private static float _slipperCacheAt = -99.0f;
+
+        private static Slipper[] CachedSlippers()
+        {
+            if (_slipperCache != null && Time.time - _slipperCacheAt < SweepInterval)
+                return _slipperCache;
+
+            _slipperCacheAt = Time.time;
+            _slipperCache = Object.FindObjectsByType<Slipper>(
+                FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            return _slipperCache;
+        }
+
+        private float _nextSweep;
+
+        private void Update()
+        {
+            if (Time.time < _nextSweep) return;
+            _nextSweep = Time.time + SweepInterval;
+            SweepSlippers();
         }
 
         private void TryTrip(Collider other)
@@ -151,6 +231,12 @@ namespace TumbangPreso
             // player back and forth.
             if (motor.IsTripImmune) return;
 
+            // ⚠️ ONE TRIP PER VISIT. See `_spent`: this is the half of *"trip spammed"* that
+            // neither the body's grace nor this hazard's own cooldown could reach, because both
+            // are clocks and the fault is geometric — the player is put down INSIDE the
+            // footprint and gets up there.
+            if (_spent.Contains(motor)) return;
+
             // Must have some horizontal movement speed or be sprinting/dashing
             Vector3 flatVel = motor.Velocity;
             flatVel.y = 0.0f;
@@ -160,6 +246,7 @@ namespace TumbangPreso
                 return;
 
             _cooldowns[motor] = Time.time + Cooldown;
+            _spent.Add(motor);
 
             // Apply trip and floor knockdown
             motor.ApplyTrip(TripDuration);

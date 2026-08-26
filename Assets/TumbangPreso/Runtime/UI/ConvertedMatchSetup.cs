@@ -45,14 +45,36 @@ namespace TumbangPreso.UI
 
         private const string YouMark = "◀ YOU";
 
-        private static readonly string[] Difficulties = { "EASY", "NORMAL", "HARD" };
+        /// <summary>
+        /// ⚠️⚠️ NONE IS LAST, AND IT IS AN ABSENCE RATHER THAN A TIER. 🧑, 2026-08-26: *"add
+        /// None as an option there and make it so that theres actually no bots ... just you
+        /// there no bots"*. The index is `AIController.NoBotsIndex`; its note explains why the
+        /// entry could not go at the front of this array.
+        ///
+        /// ⚠️ AND IT IS OFFLINE ONLY. See <see cref="DifficultyOptionCount"/>: three empty seats
+        /// in a networked lobby is a different feature with its own rules about who may join
+        /// them, and nobody has asked for it.
+        /// </summary>
+        private static readonly string[] Difficulties = { "EASY", "NORMAL", "HARD", "NONE" };
 
         private static readonly string[] DifficultyDetails =
         {
             "EASY Slower reactions and looser angles. Good for learning the throw arc.",
             "NORMAL The default, and the tier every balance number in this project was measured at. Reads your bearing, leads the lata, and blocks about 38% of what you throw.",
-            "HARD Snappier reads and tighter defense. Will punish greedy slipper retrievals."
+            "HARD Snappier reads and tighter defense. Will punish greedy slipper retrievals.",
+            "NONE An empty street. Nobody else spawns, so the lata, the tsinelas and the whole arena are yours to practise the throw and the retrieval run in."
         };
+
+        /// <summary>
+        /// How many entries of <see cref="Difficulties"/> this lobby may cycle through.
+        ///
+        /// ⚠️ A NETWORKED LOBBY STOPS AT HARD. NONE removes three seats from the match, and a
+        /// seat is what a peer joins: replicating "there are no seats" to a lobby somebody is
+        /// sitting in has no defined answer. Offline practice is the whole of what was asked
+        /// for, so that is the whole of what ships.
+        /// </summary>
+        private static int DifficultyOptionCount
+            => SceneFlow.Networked ? Difficulties.Length - 1 : Difficulties.Length;
 
         protected override void Wire()
         {
@@ -67,7 +89,7 @@ namespace TumbangPreso.UI
             }
 
             _map = Mathf.Max(0, Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap));
-            _difficulty = Mathf.Clamp(Settings.SettingsStore.Current.AiDifficulty, 0, 2);
+            _difficulty = Mathf.Clamp(Settings.SettingsStore.Current.AiDifficulty, 0, DifficultyOptionCount - 1);
 
             var previewNode = Node("MapPreview");
             if (previewNode != null) _preview = previewNode.GetComponent<MapPreviewSurface>();
@@ -390,7 +412,7 @@ namespace TumbangPreso.UI
         {
             if (!NetAuthority.IsHost && SceneFlow.Networked) return;
 
-            Cycle(ref _difficulty, Difficulties.Length, delta);
+            Cycle(ref _difficulty, DifficultyOptionCount, delta);
             if (NetAuthority.IsHost && SceneFlow.Networked)
             {
                 MatchRpc.Instance?.SelectDifficultyServerRpc(_difficulty);
@@ -405,7 +427,7 @@ namespace TumbangPreso.UI
 
         private void HandleDifficultySynced(int difficulty)
         {
-            _difficulty = Mathf.Clamp(difficulty, 0, Difficulties.Length - 1);
+            _difficulty = Mathf.Clamp(difficulty, 0, DifficultyOptionCount - 1);
             Refresh();
         }
 

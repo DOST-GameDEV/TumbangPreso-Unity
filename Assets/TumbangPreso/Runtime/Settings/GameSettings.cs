@@ -85,7 +85,12 @@ namespace TumbangPreso.Settings
         // MATCH
         // -------------------------------------------------------------------
 
-        /// <summary>0 easy, 1 normal, 2 hard. Normal by default.</summary>
+        /// <summary>0 easy, 1 normal, 2 hard, 3 none. Normal by default.
+        ///
+        /// ⚠️ 3 IS AN ABSENCE OF BOTS, NOT A FOURTH TIER, and it is at the END of the range on
+        /// purpose. See <see cref="AIController.NoBotsIndex"/>: this int is saved to disk and
+        /// replicated over the wire, so inserting a value ahead of the existing three would
+        /// re-read every saved setting one tier out.</summary>
         public int AiDifficulty = 1;
 
         // -------------------------------------------------------------------
@@ -188,7 +193,7 @@ namespace TumbangPreso.Settings
             SfxVolume = Mathf.Clamp01(SfxVolume);
             MusicVolume = Mathf.Clamp01(MusicVolume);
             MouseSensitivity = Mathf.Clamp(MouseSensitivity, 0.1f, 5.0f);
-            AiDifficulty = Mathf.Clamp(AiDifficulty, 0, 2);
+            AiDifficulty = Mathf.Clamp(AiDifficulty, 0, AIController.NoBotsIndex);
             SlipperHighlight = Mathf.Clamp(SlipperHighlight, 0, SlipperHighlights.All.Length - 1);
 
             if (string.IsNullOrEmpty(PlayerToken)) PlayerToken = MintToken();

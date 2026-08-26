@@ -272,7 +272,12 @@ namespace TumbangPreso.Tests
 
             Assert.AreEqual(1.0f, s.MasterVolume, 0.001f);
             Assert.AreEqual(0.0f, s.SfxVolume, 0.001f);
-            Assert.AreEqual(2, s.AiDifficulty);
+            // ⚠️ 3, NOT 2, SINCE 2026-08-26. `AIController.NoBotsIndex` is a fourth value on this
+            // int and it is an ABSENCE of bots rather than a fourth tier; it sits at the END of
+            // the range precisely so every saved and replicated value below it keeps the meaning
+            // it already had. Asserted against the constant rather than a literal so the two
+            // cannot drift.
+            Assert.AreEqual(AIController.NoBotsIndex, s.AiDifficulty);
             Assert.AreEqual(Balance.PlayerNameMax, s.PlayerName.Length);
             Assert.IsNotEmpty(s.PlayerToken, "a token must exist or reconnection cannot work");
         }

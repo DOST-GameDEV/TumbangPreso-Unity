@@ -306,6 +306,60 @@ namespace TumbangPreso.Core.Tests
         }
 
         /// <summary>
+        /// ⚠️⚠️ A PRESS CAN NEVER MAKE A FALL LONGER, AND FOR ONE DAY IT COULD.
+        ///
+        /// 🧑, 2026-08-26: *"if i mash, the progress pauses"*, reported twice, off two builds.
+        /// `Combat.MashRecover` clamped its result UP to `MinTripDown` unconditionally, so once
+        /// the fall was inside the floor — the last 0.35 s, the get-up animation, where
+        /// `tripLeft` is already below `MinTripDown` — an accepted press RETURNED A LARGER
+        /// NUMBER THAN IT WAS GIVEN and reset the fall to the floor. At the 10 Hz cap a player
+        /// still hammering the key held themselves on the tarmac indefinitely. Mashing harder
+        /// made the fall longer.
+        ///
+        /// ⚠️ THE PROPERTY IS ASSERTED, NOT THE FIX. "The result is never greater than the input,
+        /// from any starting point" is what must hold; the current implementation happens to
+        /// achieve it by refusing the press outright, and a later one may not.
+        /// </summary>
+        [Fact]
+        public void Mash_NeverLengthensAFall()
+        {
+            float[] starts =
+            {
+                2.5f, 1.0f, Balance.MinTripDown + 0.01f, Balance.MinTripDown,
+                Balance.MinTripDown * 0.5f, 0.05f, 0.001f
+            };
+
+            foreach (float start in starts)
+            {
+                float after = Combat.MashRecover(start, Balance.MashCooldown, out _);
+
+                Assert.True(after <= start + 0.0001f,
+                            $"a press against {start:F3} s of trip returned {after:F3} s, " +
+                            "which is a press that made the fall longer.");
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ AND THE FLOOR IS REACHED AND THEN HELD, NOT ORBITED. Once the fall is at or under
+        /// `MinTripDown` nothing a press does may move it at all: the remaining time is the
+        /// get-up clip, which `CharacterAnimator` time-scales to fit exactly, and shortening it
+        /// would stand a body up through the middle of its own animation.
+        /// </summary>
+        [Fact]
+        public void Mash_IsRefusedOnceTheFloorIsReached()
+        {
+            float atFloor = Combat.MashRecover(Balance.MinTripDown, 99.0f, out bool accepted);
+
+            Assert.False(accepted);
+            Assert.Equal(Balance.MinTripDown, atFloor, 3);
+
+            float inside = Combat.MashRecover(Balance.MinTripDown * 0.4f, 99.0f, out accepted);
+
+            Assert.False(accepted);
+            Assert.Equal(Balance.MinTripDown * 0.4f, inside, 3);
+        }
+
+        /// <summary>
         /// ⚠️⚠️ THE RATE CAP IS THE ANTI-TURBO BOUND. A press inside `MashCooldown` of the
         /// last accepted one changes nothing at all, so a macro or a turbo-fire mouse cannot
         /// take a trip below what a human burst reaches. `docs/VISION.md` § 4 aims the mode at
