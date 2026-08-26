@@ -167,6 +167,19 @@ namespace TumbangPreso
         // recede for free off the transform, and `dopplerLevel` does the pitch shift on the way
         // past, which is the half of "getting farther" that a volume ramp alone cannot fake.
         //
+        // ⚠️⚠️ AND IT PLAYS `sfx_lrt_rumble`, NOT `sfx_lrt_pass`, WHICH IS NOT A DETAIL.
+        // The first version of this looped `sfx_lrt_pass` and that was wrong in a way no amount
+        // of falloff tuning would have hidden: that cue is a ONE-SHOT, 2.70 s long, beginning and
+        // ending on a sample value of ZERO because it was authored with a fade in and a fade out.
+        // The pass lasts 5.33 s, so the loop dropped the train to silence at 2.70 s and swelled
+        // it back from nothing while it was directly overhead. `sfx_lrt_rumble` is a 2.0 s bed
+        // with no envelope at all, filtered circularly so its ends match, and every tonal
+        // component completes a whole number of cycles inside the loop. See the synth in
+        // `tools/generate_ability_audio.py` for the construction.
+        //
+        // ⚠️ `sfx_lrt_pass` KEEPS ITS OWN JOB, which is the distant announcement in `Announce`.
+        // It is a good one-shot; it was only ever a bad loop.
+        //
         // ⚠️ LINEAR ROLLOFF, NOT LOGARITHMIC, AND IT IS MEASURED FROM THE MAP. The guideway sits
         // 9.19 m up and the play area is 33 m of street; logarithmic falloff drops most of its
         // range inside the first few metres, so the consist would be at full volume across the
@@ -207,7 +220,7 @@ namespace TumbangPreso
             // `AudioCueCheck.CallSitePattern` is anchored on the literal `Audio.` receiver, so a
             // cue asked for through a local named anything else is a call site the check cannot
             // see, and it would then report `sfx_lrt_pass` as a file nothing plays.
-            if (!GameServices.Audio.TryGetClip("sfx_lrt_pass", out var clip, out float mix)) return;
+            if (!GameServices.Audio.TryGetClip("sfx_lrt_rumble", out var clip, out float mix)) return;
 
             var go = new GameObject("LrtRumble");
             go.transform.SetParent(transform, false);
@@ -304,12 +317,15 @@ namespace TumbangPreso
             // of, had no sound for its whole life. `AudioCueCheck` could not see it either,
             // because it compared DECLARED cues against files and never call sites against
             // declarations; it does now.
-            // ⚠️⚠️ THE ONE-SHOT THAT USED TO BE HERE IS GONE, AND IT IS NOW THE MOVING RUMBLE.
-            // It fired `sfx_lrt_pass` through `PlayAtVaried` at `transform.position`, which
-            // pins a pooled voice to the spot the nose held at that instant and plays it there
-            // while the consist travels the remaining 96 m away from it. Keeping it alongside
-            // the looping source would play the same clip twice, once travelling and once
-            // nailed to the south approach. See § THE PASS for the whole argument.
+            // ⚠️ THE DISTANT WARNING, AND IT IS A ONE-SHOT ON PURPOSE. This fires once, three
+            // seconds out, from where the consist is at that moment, and it is meant to be heard
+            // from the far end of the street: it is the "parating na" and nothing else. The
+            // travelling part of the sound is `sfx_lrt_rumble` on the moving source, which is a
+            // different cue doing a different job, so the two no longer double each other the
+            // way one clip played twice would have.
+            GameServices.Audio?.PlayAtVaried("sfx_lrt_pass", transform.position,
+                                             0.94f, 1.06f, 0.62f);
+
             if (Hud.Instance == null) return;
 
             Hud.Instance.ShowToast(SceneFlow.SelectedMode == GameMode.HeroStrike

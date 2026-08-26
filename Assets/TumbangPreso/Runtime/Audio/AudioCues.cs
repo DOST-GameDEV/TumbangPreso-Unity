@@ -185,6 +185,11 @@ namespace TumbangPreso.Audio
             // records, on the biggest moment in the newest kit. `docs/TODO.md` § 21.
             "sfx_eclipse_toll", "sfx_hex_cast", "sfx_hex_afflict",
 
+            // ⚠️ THE TRAIN IS TWO CUES, NOT ONE. `sfx_lrt_pass` is the distant one-shot
+            // warning; `sfx_lrt_rumble` is the seamless bed the moving source loops while the
+            // consist crosses. Looping the first one faded the train out while it arrived.
+            "sfx_lrt_rumble",
+
             // Hero Vocal Shouts & Grunts.
             "hero_dante_ult", "hero_dante_grunt",
             "hero_cheska_ult", "hero_cheska_grunt",

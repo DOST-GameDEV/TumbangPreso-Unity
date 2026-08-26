@@ -651,6 +651,81 @@ def synth_hex_afflict(duration=0.8):
     return out
 
 
+
+def synth_lrt_rumble(duration=2.0):
+    """
+    The LRT consist, as a SEAMLESS LOOP, for the source that rides the train.
+
+    WARN WARN IT EXISTS BECAUSE `sfx_lrt_pass` CANNOT BE LOOPED AND LOOPING IT WAS AUDIBLY WRONG.
+    That cue is a one-shot: it is 2.70 s long and it starts and ends on a SAMPLE VALUE OF ZERO,
+    because it was authored with a fade in and a fade out. The pass itself lasts 96 m / 18 m/s =
+    5.33 s, so a looping source playing it drops to silence at 2.70 s and swells again from
+    nothing, right as the train is overhead. The train would fade out while arriving.
+
+    WARN SO THIS ONE HAS NO ENVELOPE AT ALL, WHICH IS THE WHOLE DIFFERENCE. It is a steady bed
+    meant to be started, ridden and stopped, with the DISTANCE doing every bit of the shaping.
+    `LrtTrainFlyby` supplies that through linear rolloff and doppler; a bed with its own dynamics
+    would fight the falloff for control of the same impression.
+
+    WARN THE NOISE IS MADE LOOP-SAFE BY FILTERING CIRCULARLY, not by crossfading the ends. Three
+    copies are concatenated, the filter is run across the lot, and the MIDDLE third is kept, so
+    the filter state at the last sample is exactly what it was at the first. A crossfade would
+    have left a 100 ms dip that is audible on a bed this steady and this quiet.
+
+    WARN AND THE TONAL PARTS COMPLETE A WHOLE NUMBER OF CYCLES IN THE LOOP. Every frequency here
+    is a multiple of 1/duration, so each one arrives back at its starting phase exactly at the
+    seam. A 47 Hz hum in a 2.0 s loop would click every 2 s forever.
+    """
+    n = int(duration * SAMPLE_RATE)
+    base = 1.0 / duration
+
+    # --- circularly filtered noise: the roar of steel on rail.
+    raw = [random.uniform(-1.0, 1.0) for _ in range(n)]
+    tripled = raw + raw + raw
+
+    lp, bp = 0.0, 0.0
+    out_lp = [0.0] * len(tripled)
+    out_bp = [0.0] * len(tripled)
+
+    for i, x in enumerate(tripled):
+        lp += (x - lp) * 0.045          # body, a few hundred Hz
+        bp += (x - bp) * 0.35           # the hiss riding on top
+        out_lp[i] = lp
+        out_bp[i] = x - bp
+
+    lo = out_lp[n:2 * n]
+    hi = out_bp[n:2 * n]
+
+    # --- the tonal floor. Multiples of `base`, so each closes its cycle at the seam.
+    def bin_at(hz):
+        return round(hz / base) * base
+
+    hums = [(bin_at(28.0), 0.55), (bin_at(43.0), 0.30), (bin_at(86.0), 0.16),
+            (bin_at(129.0), 0.09)]
+
+    # --- bogies over rail joints. Four evenly spaced knocks per loop, so the spacing survives
+    # the seam exactly the way the hums do.
+    knocks = [i * (duration / 4.0) for i in range(4)]
+
+    out = [0.0] * n
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        tone = 0.0
+        for f, a in hums:
+            tone += math.sin(2.0 * math.pi * f * t) * a
+
+        knock = 0.0
+        for start in knocks:
+            d = t - start
+            if 0.0 <= d < 0.09:
+                knock += math.sin(2.0 * math.pi * 62.0 * d) * math.exp(-d * 34.0)
+
+        out[i] = math.tanh((tone * 0.42 + lo[i] * 1.9 + hi[i] * 0.13 + knock * 0.5) * 1.1)
+
+    return out
+
+
 GENERATORS = {
     # (seed slot, synth). Slots 0 to 6 are the original payload set, in the alphabetical order
     # that produced the audio currently in the repository.
@@ -674,6 +749,10 @@ GENERATORS = {
     "sfx_eclipse_toll.wav": (13, synth_eclipse_toll),
     "sfx_hex_cast.wav": (14, synth_hex_cast),
     "sfx_hex_afflict.wav": (15, synth_hex_afflict),
+
+    # The looping bed the LRT consist carries. See the synth for why `sfx_lrt_pass` could not
+    # simply be looped: it is a one-shot that begins and ends on silence.
+    "sfx_lrt_rumble.wav": (16, synth_lrt_rumble),
 }
 
 

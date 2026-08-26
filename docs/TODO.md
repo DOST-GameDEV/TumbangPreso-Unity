@@ -1609,6 +1609,17 @@ a fixed position**. The consist travels **96 m in 5.3 s at 18 m/s**, so a one-sh
 nose stayed where it was fired: the pass faded by the listener WALKING, never by the train
 leaving. There is no better clip that fixes a stationary emitter.
 
+⚠️⚠️ **AND THE FIRST FIX FOR IT WAS ITSELF WRONG, CAUGHT BEFORE THE BUILD.** It looped
+`sfx_lrt_pass`, which is a **one-shot**: 2.70 s long, beginning and ending on a sample value of
+**zero** because it was authored with a fade in and a fade out. The pass lasts 5.33 s, so the loop
+**dropped the train to silence at 2.70 s and swelled it back from nothing while it was directly
+overhead**. There is now a second cue, `sfx_lrt_rumble`: a 2.0 s bed with no envelope, its noise
+filtered **circularly** (three copies concatenated, filter run across, middle third kept) so the
+filter state matches at the seam, and every tonal component completing a whole number of cycles in
+the loop. Measured seam step **35** against a typical sample-to-sample step of **3,667**.
+`sfx_lrt_pass` keeps its own job as the distant warning; it was a good one-shot and only ever a
+bad loop.
+
 Now a looping source parented to the consist, linear rolloff **12 to 70 m** (logarithmic drops
 its range inside the first few metres and would be full volume across the whole arena), and
 `dopplerLevel` **2.2** because the true 5 per cent shift at 18 m/s is inaudible. Screen shake is
