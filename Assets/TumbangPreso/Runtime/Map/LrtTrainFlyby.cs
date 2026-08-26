@@ -153,7 +153,15 @@ namespace TumbangPreso
         /// </summary>
         private void Announce()
         {
-            GameServices.Audio?.PlayAtVaried("ui_move", transform.position, 0.72f, 0.80f, 0.55f);
+            // ⚠️⚠️ THIS READ `"ui_move"`, WHICH IS NOT A CUE AND NEVER WAS. There is no
+            // `ui_move.wav` anywhere in the project and no entry for it in `AudioCues.Live`, so
+            // every pass logged `[Audio] no cue registered for 'ui_move'` and played nothing.
+            // The map's signature 24 s event, the thing a player is meant to learn the period
+            // of, had no sound for its whole life. `AudioCueCheck` could not see it either,
+            // because it compared DECLARED cues against files and never call sites against
+            // declarations; it does now.
+            GameServices.Audio?.PlayAtVaried("sfx_lrt_pass", transform.position,
+                                             0.94f, 1.06f, 0.62f);
 
             if (Hud.Instance == null) return;
 

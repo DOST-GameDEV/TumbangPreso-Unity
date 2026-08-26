@@ -110,6 +110,12 @@ namespace TumbangPreso.Audio
             "sfx_explosion_heavy", "sfx_lightning_strike", "sfx_ice_freeze",
             "sfx_fire_whoosh", "sfx_ghost_teleport", "sfx_hitmarker", "sfx_super_ready",
 
+            // ⚠️ THE MAP EVENT. `LrtTrainFlyby` called `ui_move` for two months and there has
+            // never been a `ui_move.wav`, so every pass wrote `[Audio] no cue registered` to the
+            // log and the one recurring event on Ilalim ng Tulay was silent. It is 2.70 s long
+            // because `OverheadPassWindow.PassSeconds` is.
+            "sfx_lrt_pass",
+
             // ⚠️⚠️ THE PAYLOADS, WHICH ARE NOT THE CASTS. Every kit already fired its own
             // element on the CAST and then shared two leftovers for what actually happened:
             // `CreateExplosion` played `ability_bagsak_bomb` for a 2.2 m stomp, a 4.5 m

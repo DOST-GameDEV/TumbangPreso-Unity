@@ -128,3 +128,28 @@ and the two `Combat.LungeReach` and stamina tests are correct as written.
 of all points across a whole match. The nerf was compensated by the punch **in design**, and
 no probe has been run since to confirm it was compensated **in practice**. That is a `fair_probe`
 run on the Godot build, not a port task, and it is worth doing before nationals.
+
+---
+
+## 9 · A deliberate rule change, 2026-08-26: the throw no longer needs an upright lata
+
+⚠️⚠️ **THIS IS NOT A DRIFT AND IT IS RECORDED HERE BECAUSE `CLAUDE.md` § 5 SAYS TO.** The eight
+entries above are all one shape: prose that had gone stale against code nobody had changed on
+purpose. This is the opposite. The CODE changed, the prose was corrected in the same commit, and
+the reasoning is written into both, so that a future reader who finds `Design.md` § 2 listing
+three conditions where an older copy lists four knows which way the change ran.
+
+**What changed:** `ThrowRules.CanThrow` no longer refuses a throw because the lata is down.
+
+**Why:** 🧑, off the built player: *"my charge still pauses when lata is down"*, *"i dont want it
+to pause"*. Combined with the earlier decision that a down lata must not CANCEL a wind-up, the
+refusal left a player holding a fully wound arm that could be neither spent nor cleared.
+
+**Why it is safe:** a slipper reaching a downed lata cannot score, because `Lata.HostKnockDown`
+returns while `!_isUpright`. The reset channel is protected by `Balance.ThrowRestoreCooldown` and
+by the lata's `IsProtected` shield, both of which exist precisely because the removed clause did
+not cover a slipper that was already in the air.
+
+**Where it is asserted:** `Core.Tests.BalanceTests.CanThrow_RefusesOnEachConditionIndependently`
+now asserts the down-lata case is ALLOWED, with a note saying it is deliberate, and
+`MatchRunTests.ACanKnockdownDoesNotCancelAnExistingThrowCommitment` carries the same.

@@ -39,23 +39,52 @@ namespace TumbangPreso.PlayTests
     public class BotBehaviourProbe
     {
         /// <summary>
-        /// ⚠️ 6x, AND THE NUMBER IS A COMPROMISE THAT IS WORTH STATING. The AI decides in
-        /// `Update` on `Time.deltaTime`, so every extra multiple of time scale is a bot that
-        /// thinks less often per simulated second. At 12x a whole match ran in 34 seconds and
-        /// reported 3 throws; at 6x the same code reports several times that, and
-        /// `AiDiagnosticProbe` at 1x reports more again. None of those numbers is wrong: they
-        /// are the same bots at three different effective reaction rates. 6x keeps a four round
-        /// match inside a minute of wall clock while leaving the bots enough decisions that a
-        /// failure here is about them rather than about the harness, and every assertion below
-        /// is a FLOOR, so a slower reaction rate can only make it harder to pass.
+        /// How much game time one frame of this probe advances.
+        ///
+        /// ⚠️⚠️ THIS REPLACED `Time.timeScale = 6` AND THE DIFFERENCE IS THE WHOLE POINT OF THE
+        /// PROBE. Under a time scale the match was stepped in REAL time, so the number of frames
+        /// a match got depended on how fast the machine happened to run, and the AI decides in
+        /// `Update` on `Time.deltaTime`. Two runs of the SAME BUILD, with the SAME SEED, back to
+        /// back, measured **530 and then 83** unretrieved-slipper penalties. Every number this
+        /// probe printed was therefore a liveness signal and nothing more: `docs/TODO.md` § 10
+        /// recorded that it could not answer a comparison at all, and § 0 and § 5 were both
+        /// blocked on it, because "is this cooldown better than that one" is a comparison.
+        ///
+        /// `Time.captureDeltaTime` makes `Time.deltaTime` a constant, so a frame advances the
+        /// same slice of game time whatever the machine is doing. The wall clock stops being an
+        /// input to the result.
+        ///
+        /// ⚠️⚠️ 1/60 s, AND IT WAS MEASURED RATHER THAN REASONED. THE FIRST ATTEMPT USED 1/30
+        /// AND IT CHANGED THE BOTS. The old 6x run's `deltaTime` was estimated at about 0.033 s
+        /// from a wall clock, that estimate was wrong, and the run that proved it is worth
+        /// recording: at 1/30 a Classic match reported **9 throws, 0 tags and 673
+        /// unretrieved-slipper penalties**, against 47 throws, 52 tags and 0 penalties on the
+        /// same code the day before. The AI decides once per `Update` on `Time.deltaTime`, so
+        /// the step IS the reaction rate, and halving it does not halve the numbers: a bot that
+        /// re-decides half as often loses a 2.5 s charge to an interruption it would otherwise
+        /// have steered around, and the effects compound.
+        ///
+        /// 1/60 reproduces the shipped numbers. ⚠️ **THE STEP IS NOW A TUNING CONSTANT OF THE
+        /// AI, NOT A HARNESS DETAIL.** Changing it changes what the bots do, so treat it exactly
+        /// like `AiTuning`: if it moves, every recorded figure in `Logs/bot-behaviour-*.txt`
+        /// moves with it and none of them may be compared across the change.
+        ///
+        /// ⚠️ IT COSTS WALL CLOCK AND THAT IS THE PRICE OF A COMPARABLE NUMBER. A Classic match
+        /// is 4 rounds of 90 s, so 21600 frames; Hero Strike is 8 rounds, so 43200.
         /// </summary>
-        private const float MatchTimeScale = 6.0f;
+        private const float FixedStep = 1.0f / 60.0f;
 
         [TearDown]
         public void TearDown()
         {
             Hitstop.End();
             Time.timeScale = 1.0f;
+
+            // ⚠️⚠️ THIS MUST BE CLEARED OR IT LEAKS INTO EVERY TEST THAT RUNS AFTER THIS ONE.
+            // `Time.captureDeltaTime` is global and persists across scene loads, so a suite that
+            // ran this probe first would silently pin every later PlayMode test to 30 frames a
+            // second of game time regardless of what it was measuring.
+            Time.captureDeltaTime = 0.0f;
         }
 
         /// <summary>
@@ -118,24 +147,20 @@ namespace TumbangPreso.PlayTests
             bool previousAllBots = GameLaunch.AllBots;
             GameLaunch.AllBots = true;
 
-            // ⚠️ SEEDED, WHICH HELPS AND IS NOT ENOUGH. Personality rolls, loiter beats and
-            // the AI's tie-breaks all draw from `UnityEngine.Random`, so an unseeded run varies
-            // for one more reason than it has to.
+            // ⚠️ SEEDED. Personality rolls, loiter beats and the AI's tie-breaks all draw from
+            // `UnityEngine.Random`, so an unseeded run varies for one more reason than it has to.
             //
-            // ⚠⚠ BUT THE SEED DOES NOT MAKE THIS RUN DETERMINISTIC, AND BELIEVING IT DOES IS
-            // A TRAP. The match is stepped in real time at 6x in a headless editor, so the
-            // number of physics steps depends on how fast the machine happened to run, and the
-            // AI thinks in those steps. Two runs of the SAME BUILD, seeded, back to back,
-            // measured 530 and 83 unretrieved-slipper penalties. The seed removes one source of
-            // noise; the clock is the other and cannot be removed without rewriting the probe
-            // to step the world by hand.
-            //
-            // What follows from that is the shape of the assertions below: **the liveness
-            // FLOORS are the real test** (did the loop run at all) and the penalty CEILINGS are
-            // only there to catch a loop that is dead. A tight ceiling here fails on the dice.
+            // ✅ **AND THE SEED IS NOW ENOUGH, WHICH IT WAS NOT UNTIL 2026-08-26.** The note that
+            // stood here said the opposite in as many words: the match was stepped in real time
+            // at 6x, so the number of frames depended on the machine and two seeded runs of one
+            // build measured 530 and then 83 unretrieved-slipper penalties. `FixedStep` and
+            // `Time.captureDeltaTime` remove the clock as an input, so seed plus fixed step is a
+            // reproducible run. See `FixedStep`.
             //
             // ⚠️ THE SEED IS ARBITRARY AND MUST NOT BE TUNED TO MAKE A RUN PASS. If a real
-            // regression lands, change the CODE.
+            // regression lands, change the CODE. That was true when the numbers were noisy and
+            // it is more true now that they are not: a seed picked to make a red run green is a
+            // measurement of nothing.
             UnityEngine.Random.InitState(20260823);
 
             Hitstop.End();
@@ -173,10 +198,25 @@ namespace TumbangPreso.PlayTests
             var slipperWasLoose = new Dictionary<Slipper, bool>();
 
             runner.Begin();
-            Time.timeScale = MatchTimeScale;
 
-            // ⚠️ THE GUARD IS UNSCALED WALL CLOCK. A guard measured in scaled time cannot
-            // expire when the thing that has gone wrong is the clock itself.
+            // ⚠️⚠️ THE STEP IS SET AFTER THE SCENE HAS SETTLED, NOT BEFORE. The 25 warm-up
+            // frames above run at whatever rate the editor gives them, and pinning the step
+            // across a scene load makes the load itself take a fixed number of frames rather
+            // than as many as it needs.
+            Time.timeScale = 1.0f;
+            Time.captureDeltaTime = FixedStep;
+
+            // ⚠️ THE GUARD IS A FRAME COUNT NOW, NOT WALL CLOCK, AND THAT IS THE SAME CHANGE AS
+            // EVERYTHING ELSE HERE. A guard measured in seconds is a second way for the machine's
+            // speed to decide the result: on a slow run it would fire part-way through a match
+            // that was progressing perfectly well, and the failure would read as a dead loop.
+            // A frame budget expires at exactly the same point in the simulation every time.
+            //
+            // 90 s a round at `FixedStep` is 5400 frames, so a Hero Strike match is 43200 plus
+            // the between-round handoffs. 64000 leaves about 48 per cent of headroom over the
+            // longest legitimate match, which is a match that has genuinely stopped advancing.
+            const int frameBudget = 64000;
+            int frames = 0;
             float guard = 0.0f;
             float strayX = 0.0f;
             float strayZ = 0.0f;
@@ -184,8 +224,9 @@ namespace TumbangPreso.PlayTests
             float bodyZ = 0.0f;
             var escapes = new List<string>();
 
-            while (match.MatchInProgress && guard < 240.0f)
+            while (match.MatchInProgress && frames < frameBudget)
             {
+                frames++;
                 guard += Time.unscaledDeltaTime;
 
                 for (int i = 0; i < seats.Count; i++)
@@ -240,11 +281,18 @@ namespace TumbangPreso.PlayTests
                 yield return null;
             }
 
+            Time.captureDeltaTime = 0.0f;
             Time.timeScale = 1.0f;
 
             var log = new StringBuilder();
             log.AppendLine($"bot behaviour probe  ·  {mode}  ·  {map}");
-            log.AppendLine($"wall clock {guard:F1}s  ·  match in progress at exit: {match.MatchInProgress}");
+
+            // ⚠️ THE FRAME COUNT IS THE REPRODUCIBLE NUMBER AND THE WALL CLOCK IS NOT. Both are
+            // printed because the second one is how you notice the machine is struggling, but
+            // only the first should ever be compared between two runs.
+            log.AppendLine($"{frames} frames at {FixedStep * 1000.0f:F1} ms  ·  " +
+                           $"{frames * FixedStep:F1}s simulated  ·  {guard:F1}s wall clock  ·  " +
+                           $"match in progress at exit: {match.MatchInProgress}");
             log.AppendLine(tally.Describe());
             log.AppendLine($"furthest a body reached: x {bodyX:F2} of {AIController.PlayableHalfX:F1}  " +
                            $"z {bodyZ:F2} of {AIController.PlayableHalfZ:F1}");
@@ -262,7 +310,8 @@ namespace TumbangPreso.PlayTests
 
             // ---- THE MATCH ITSELF ------------------------------------------------------
             Assert.IsFalse(match.MatchInProgress,
-                $"{mode} on {map}: the match never ended inside {guard:F0}s of wall clock. See " +
+                $"{mode} on {map}: the match never ended inside {frames} frames " +
+                $"({frames * FixedStep:F0}s simulated). See " +
                 $"Logs/bot-behaviour-{mode}-{map}.txt.");
 
             for (int slot = 0; slot < Balance.PlayerCount; slot++)

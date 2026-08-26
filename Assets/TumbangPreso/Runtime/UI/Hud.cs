@@ -853,8 +853,20 @@ namespace TumbangPreso.UI
             UpdateGetUpPrompt();
 
             var carrier = _local.GetComponent<Carrier>();
-            bool live = GameServices.Round.CanThrow(_local);
-            _crosshair.enabled = live || (carrier != null && carrier.IsCharging);
+
+            // ⚠️⚠️ THE TAYA HAD NO CROSSHAIR AT ALL, AND THE TAYA IS THE SEAT THAT AIMS MOST.
+            // 🧑, 2026-08-26, from a defender's frame: *"theres no crosshair here, i want one
+            // here so that i can figure out where the fuck is the clickable place i need to aim
+            // camera at"*. This line read `CanThrow(_local)`, and `ThrowRules.CanThrow` returns
+            // false for a defender on its second line, so the crosshair was gated on the one
+            // verb the taya does not have. Everything the taya DOES have is aimed: the tag is a
+            // distance-and-facing check, the reset is a hold at the can, and the shove has an
+            // arc. Aiming with nothing at the centre of the screen is guesswork.
+            //
+            // ⚠️ IT IS ON FOR ANY LIVE ROUND NOW, not on a verb's legality. A crosshair that
+            // appears and disappears as you cross the throwing line is a second thing to read
+            // rather than a reference point, and the reference point is the whole job.
+            _crosshair.enabled = GameServices.Round.RoundActive;
 
             // R-28 — the two in-world markers that answer "what am I doing" take the LOCAL
             // player's role colour: the crosshair they aim with, and the edge arrow pointing at
@@ -894,6 +906,25 @@ namespace TumbangPreso.UI
                     {
                         _crosshair.text = "+\nPEKTUS 0%";
                     }
+                }
+            }
+            else if (_local.IsDefender)
+            {
+                // ⚠️ THE TAYA'S CROSSHAIR SAYS WHAT THE TAYA IS FOR. A bare plus on a seat that
+                // cannot throw is a dot with no meaning; these are the two verbs that are worth
+                // aiming, and which one is live is decided by the same state the rules read.
+                var lata = GameServices.Round.Lata;
+
+                if (lata != null && !lata.IsUpright)
+                {
+                    _crosshair.fontSize = 22;
+                    _crosshair.text = "+\nHOLD " + KeyLabel("Grab") + " AT THE LATA";
+                    _crosshair.color = UiTheme.Defense;
+                }
+                else
+                {
+                    _crosshair.fontSize = 34;
+                    _crosshair.text = "+";
                 }
             }
             else
@@ -1082,8 +1113,15 @@ namespace TumbangPreso.UI
 
                 _scoreNames[i].text = SeatName(slot);
                 bool isMine = slot == mine;
-                _scoreMarks[i].text = (isTaya ? "DEFENDER" : "ATTACKER")
-                    + (isMine ? "  ·  YOU" : "");
+                // ⚠️⚠️ NO "· YOU" SUFFIX. 🧑, 2026-08-26, off a gameplay frame:
+                // *"attacker dot you is ugly"*. He is right, and it was doing a job three other
+                // things on the same screen already do: the row plate is twice as opaque on your
+                // own row, the name is drawn in Cream instead of the role colour, and the card
+                // in the bottom-left corner names your seat outright. A fourth answer to "which
+                // one am I" that lengthens exactly one row and pushes its columns out of line is
+                // clutter, and this is the same argument that deleted the leading arrow on
+                // 2026-08-02: *"the arrow makes the names of the characters not aligned"*.
+                _scoreMarks[i].text = isTaya ? "DEFENDER" : "ATTACKER";
                 _scoreValues[i].text = scoreNow.ToString();
 
                 // ⚠️ NO LEADING BULLET — THE COLOUR IS THE MARK. 🧑 2026-08-02: *"the arrow
@@ -1093,9 +1131,14 @@ namespace TumbangPreso.UI
                 // same thing and costs no width.
                 Color colour = isTaya ? UiTheme.Defense : UiTheme.Offense;
 
-                _scoreNames[i].color = colour;
+                // ⚠️ YOUR OWN NAME IS CREAM, EVERYONE ELSE'S IS THEIR ROLE COLOUR. This is what
+                // replaces the "· YOU" suffix: it costs no width, moves no column, and is
+                // readable at a glance in a way a trailing word at the end of a line is not.
+                // The role is still carried by the plate, the rail and the DEFENDER/ATTACKER
+                // cell, so nothing is lost by spending the NAME's colour on identity instead.
+                _scoreNames[i].color = isMine ? UiTheme.Cream : colour;
                 _scoreMarks[i].color = colour;
-                _scoreValues[i].color = colour;
+                _scoreValues[i].color = isMine ? UiTheme.Cream : colour;
 
                 if (_scoreRoleRails[i] != null) _scoreRoleRails[i].color = colour;
                 if (_scoreRowPlates[i] != null)

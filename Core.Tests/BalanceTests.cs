@@ -359,7 +359,10 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(Balance.MinTripDown, Combat.FastestTripRecovery(2.5f), 3);
 
             // A trip already shorter than the floor is not lengthened by the rule.
-            Assert.Equal(0.4f, Combat.FastestTripRecovery(0.4f), 3);
+            // ⚠️ 0.20, NOT 0.40. `MinTripDown` came down to 0.35 on 2026-08-26, so 0.40 is
+            // above the floor now and this line was asserting the clamp rather than the
+            // pass-through it is named for.
+            Assert.Equal(0.2f, Combat.FastestTripRecovery(0.2f), 3);
         }
 
         /// <summary>
@@ -454,8 +457,16 @@ namespace TumbangPreso.Core.Tests
             var c = ok; c.RoundActive = false; Assert.False(ThrowRules.CanThrow(c));
             c = ok; c.IsDefender = true; Assert.False(ThrowRules.CanThrow(c));
             c = ok; c.HoldingSlipper = false; Assert.False(ThrowRules.CanThrow(c));
-            c = ok; c.LataUpright = false; Assert.False(ThrowRules.CanThrow(c));
             c = ok; c.ThrowCooldownLeft = 0.5f; Assert.False(ThrowRules.CanThrow(c));
+
+            // ⚠️⚠️ A DOWN LATA NO LONGER REFUSES THE THROW, AND THAT IS ASSERTED RATHER THAN
+            // MERELY NOT TESTED. Changed 2026-08-26 on 🧑's report that a charge held against a
+            // downed can could be neither spent nor cleared. The reason the clause existed,
+            // protecting the reset channel, is `ThrowCooldownLeft` on the line above and the
+            // lata's own protection shield, and a slipper that reaches a downed lata cannot
+            // score because `Lata.HostKnockDown` returns while it is not upright. If somebody
+            // re-adds the refusal, this line is what tells them it was deliberate.
+            c = ok; c.LataUpright = false; Assert.True(ThrowRules.CanThrow(c));
             c = ok; c.X = 0.0f; c.Z = 0.0f; Assert.False(ThrowRules.CanThrow(c)); // inside
         }
 

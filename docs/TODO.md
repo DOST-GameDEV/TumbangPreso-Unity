@@ -458,6 +458,78 @@ stale second answer to the question `Port_Ledger.md` answers and keeps current.
 Ilalim merge, put them back on `main`. Deleting them here cannot remove them there. **Open: one
 commit on `main` that deletes both.**
 
+## 12 · Everything 🧑 found playing the 2026-08-26 build ✅ ALL CLOSED SAME DAY
+
+**Reported from the built player in one sitting. Grouped because they came from one session, not
+because they share a cause.**
+
+**12.1 ✅ The fall resolved itself, and mashing hit a wall two thirds of the way through.**
+🧑: *"if i mash it, the progress pauses"*, and *"if i dont mash, i get up in 2 seconds wtf"*.
+Two symptoms, two separate causes, both arithmetic:
+
+* **The pause was `MinTripDown` = 0.90.** `Combat.MashRecover` clamps there, so a 2.50 s fall had
+  1.60 s a press could buy and **0.90 s, over a third of the event, in which every press was
+  refused**. A fast masher spent that third hammering a dead button while the bar crawled at the
+  passive rate. The floor was 0.90 because the note said the knockdown clip needed it; that
+  stopped being true when `StepTripPose` made the knockdown a separate held phase that ENDS at
+  the floor and time-scales the get-up to fill it. The only thing the floor must now cover is the
+  get-up animation, and every clip on every rig is **0.333 s**, so it is **0.35**. Presses count
+  for **86 per cent** of a fall instead of 64.
+* **Getting up early was the stagger.** `ApplyTrip` calls `ApplyStagger(duration)` once, with the
+  trip's STARTING length, so the stun ran down at real time while the trip ran down at
+  `TripPassiveDecayRate`. An unanswered fall lasted 3.22 s and control came back at 2.50: for the
+  last 0.72 s the body could walk, aim and throw while `IsTripped` was still true, the camera was
+  still in the fall view and the HUD still said GETTING UP. `CharacterMotor` now holds the
+  stagger to the trip with a `Max`, never an assignment, so a 5 s tag landing on a downed player
+  is not cut short to the remaining fall.
+
+**The numbers, solved together:** slack 2.15 s, `MashRecoverPerPress` **0.35**,
+`TripPassiveDecayRate` **0.75**. Answered perfectly: **0.96 s**, inside the 1 to 2 s asked for.
+Ignored: **3.22 s**. Answering a fall is worth **3.3x**.
+
+**12.2 ✅ A trip hazard could swallow a tsinelas for the rest of the round.**
+🧑: *"if slippers falls there i cant get close enough to get it back"*. Exact, and not bad luck:
+`Balance.PickupRadius` is **1.40 m** and the widest hazard footprint is **2.60 m**, so a slipper
+resting near the middle of one cannot be reached from outside it. Walking in costs a trip
+(`MinSpeedToTrip` is 1.0 m/s and there is no slow-walk binding) and the trip puts you back out.
+The slipper is then unrecoverable and its owner takes the unretrieved-tsinelas penalty every
+second for the rest of the round. `StreetTripHazard.EjectSlipper` pushes a **resting, loose**
+slipper out along its **shortest** exit. ⚠️ Shortest, not toward the can or the owner: a hazard
+that nudged ammunition somewhere useful would reward throwing into it.
+
+**12.3 ✅ A charge against a down lata could be neither spent nor cleared.**
+🧑: *"my charge still pauses when lata is down"*, *"i dont want it to pause"*. See
+`docs/Design.md` § 2 and `Design_Drift_Report.md` § 9: the upright-lata condition is removed, it
+is a deliberate rule change rather than a drift, and it is safe because a slipper reaching a
+downed lata cannot score and the reset channel is protected by two other mechanisms that exist
+precisely because this clause never covered an airborne slipper.
+
+**12.4 ✅ The taya had no crosshair.** See § 3, where the played frame that showed it is also the
+frame that answered the hero-accent question.
+
+**12.5 ✅ `ATTACKER  ·  YOU` on the scoreboard.** See § 3.
+
+**12.6 ✅ Three silent sounds, found in the player log rather than by playing.**
+`[Audio] no cue registered for 'ui_move'`, once every 24 s, all match: `LrtTrainFlyby` called a
+cue that has never existed, so **the map's signature recurring event has been silent for its
+whole life**. `AudioCueCheck` could not see it, because both of its directions started from the
+declared cue list and neither ever looked at a CALL SITE. Direction 3 does, and on the first run
+it found four more; two were the music bed being misread and are excluded by anchoring the
+pattern on `Audio`, and two were real: **every trip in the game** (`StreetTripHazard` fired
+`"shove"`, which is the input verb's name and not a cue) and **the bridge hoop bonus**
+(`"sfx_lata_hit"`, which has no file). `tools/generate_ability_audio.py` gained
+`sfx_lrt_pass`, built to `OverheadPassWindow.PassSeconds` = 2.70 s so the sound is exactly as
+long as the pass; the other two now use `hit_body` and `score_award`.
+
+⚠️ **`round_end` also logged an FMOD "File not found" twice per round end.** All 59 clips in
+`Resources/Sfx` shipped with `preloadAudioData: 0`, so each loads on first play and a cue fired
+twice in one frame can race its own load. They are preloaded now; the bank is a couple of
+megabytes.
+
+**12.7 ✅ It did not crash.** 🧑: *"the game i had just closed, idk if it crashed or u closed it"*.
+`Player.log` ends cleanly on `[Slice] round 2 begins, taya is seat 1` with no exception and no
+stack. It was closed.
+
 ---
 
 ## 1 · Peer rematch voting across the wire
@@ -562,9 +634,28 @@ have, so his accent is now jade (`#3fa65c`), the colour of the crust, while his 
 embers and magma core stay hot orange through `UiTheme.HeroMagmaCore`. It is defensible and it
 is a real change to a character's identity.
 
-**Needs:** a played Hero Strike round, four seats, and an answer to one question: can you still
-tell at a glance which player is the taya. If the answer is no the accents move again; if it is
-yes, this closes.
+✅ **ANSWERED 2026-08-26, FROM A PLAYED FRAME, AND THE ACCENTS ARE NOT THE PROBLEM.** 🧑 sent a
+gameplay screenshot from a defender's seat. Telling which player is the taya was never in doubt
+in it: the scoreboard row says **DEFENDER** in words, carries a Defence-blue rail and a row plate
+at twice the alpha of the others, and the card in the bottom-left corner reads
+`TAYA (DEFENDER) P2`. Four independent channels, only one of which is hue. The hero accents are
+25 degrees clear of both role hues and 30 degrees clear of each other by
+`HeroPresentationTests`, and nothing in the frame contradicted that.
+
+**What the same frame did show is a real fault, and it was the opposite one:** the local player
+had **no crosshair at all**. 🧑: *"theres no crosshair here, i want one here so that i can figure
+out where the fuck is the clickable place i need to aim camera at"*. `Hud` gated the crosshair on
+`GameServices.Round.CanThrow(_local)`, and `ThrowRules.CanThrow` returns false for a defender on
+its second line, so **the seat that aims most had the one aiming aid switched off**. Everything a
+taya does is aimed: the tag is a distance-and-facing check, the reset is a hold at the can, the
+shove has an arc. Fixed: the crosshair follows `RoundActive`, and the taya's reads
+`HOLD [key] AT THE LATA` while the can is down.
+
+**Also fixed from that frame:** the scoreboard's `ATTACKER  ·  YOU` suffix. 🧑: *"attacker dot
+you is ugly"*. It was a fourth answer to a question three other things on the same screen already
+answered, and it lengthened exactly one row so its columns fell out of line, which is the same
+argument that deleted the leading arrow on 2026-08-02. Your own row now spends its NAME and SCORE
+colour on Cream instead, which costs no width and moves no column.
 
 ---
 
@@ -741,15 +832,26 @@ Everything in this file that is still open and says "needs an A/B" is blocked on
  * **§ 5**, the overclock window at 1.0 against a flat saving.
  * The Ice Barricade duration, if § 2's premise ever comes back.
 
-**Needs:** a fixed-delta mode. Drive the match from a loop that advances physics and the AI by a
-constant `dt` rather than by wall clock, so two runs of one build produce identical numbers and a
-difference between two builds means something. `Time.captureDeltaTime` plus
-`Physics.Simulate` is the shape of it; the bots already read `InputIntent` and one physics step
-already serves human and AI alike (`CLAUDE.md` § 4), so nothing about the game has to change.
+✅ **DONE 2026-08-26. `BotBehaviourProbe.FixedStep` and `Time.captureDeltaTime` replace
+`Time.timeScale = 6`.** A frame advances the same slice of game time whatever the machine is
+doing, the guard is a frame budget rather than a wall clock, and the report prints frames and
+simulated seconds beside the wall clock so only the reproducible numbers get compared.
 
-**Done looks like:** the same seed run twice reports the same throws, retrievals, tags and
-penalties to the unit. Until then, ⚠️ **no number out of this probe may be reported as a
-comparison**, only as a liveness floor, which is what every assertion in it already is.
+⚠️⚠️ **AND THE FIRST VALUE WAS WRONG, WHICH IS THE MOST USEFUL THING THIS ENTRY NOW RECORDS.**
+1/30 s was chosen from a wall-clock estimate of what 6x had been producing. It was not the same:
+a Classic match at 1/30 reported **9 throws, 0 tags and 673 unretrieved-slipper penalties**
+against 47 throws, 52 tags and 0 penalties on the same code the day before. The AI decides once
+per `Update` on `Time.deltaTime`, so **the step IS the reaction rate**, and halving it does not
+halve the outcome: a bot that re-decides half as often loses a 2.5 s charge to an interruption it
+would otherwise have steered around, and the losses compound. 1/60 reproduces the shipped
+numbers.
+
+⚠️ **SO THE STEP IS A TUNING CONSTANT OF THE AI, NOT A HARNESS DETAIL.** Treat it like
+`AiTuning`: if it moves, every figure in `Logs/bot-behaviour-*.txt` moves with it and none may be
+compared across the change.
+
+**What this unblocks:** § 0 and § 5 can now be A/B'd, because two runs of one build are the same
+run. Neither sweep has been performed yet; the harness is what was missing and it is no longer.
 
 **Where.** `Assets/TumbangPreso/Tests/PlayMode/BotBehaviourProbe.cs`.
 
@@ -799,10 +901,21 @@ attribute in place still reported 60 tests including both of these. The exclusio
 the COMMAND, so the default PlayMode line in `CLAUDE.md` § 7 and `docs/TESTING.md` now carries
 `-testCategory "!WallClock"`, and running them is `-testCategory "WallClock"`.
 
-⚠️ **The one genuine lead in this entry is preserved and is still open.** The second failure
-printed `own=3 plan=Fetch ownerAct=True d3=1.10 grabbable=True`: a bot 1.10 m from a grabbable
-slipper it had already decided to fetch, still not holding it. If that reproduces at a normal
-frame rate it is a real retrieval bug. Nothing here has looked at it.
+✅ **AND THE ONE GENUINE LEAD IN THIS ENTRY IS CLOSED, 2026-08-26.** The second failure printed
+`own=3 plan=Fetch ownerAct=True d3=1.10 grabbable=True`: a bot 1.10 m from a grabbable slipper it
+had already decided to fetch, still not holding it.
+
+Reading the two constants side by side is what found it. `AIController.DoFetch` tapped Grab only
+within **`AiTuning.Reach` = 1.15 m**, a generic melee reach shared with the shove and the punch,
+while `Slipper.CanBeGrabbedBy` measures **`Balance.PickupRadius` = 1.40 m**. Between 1.15 and
+1.40 m the pickup was legal, the bot knew where the slipper was, its plan was Fetch, and it
+pressed nothing. `Goto` stops it at 0.86 m, but a bot is shoved, jostled and knocked back
+constantly, and any drift into that 0.25 m band left it standing beside its own ammunition doing
+nothing while the unretrieved-tsinelas penalty ticked.
+
+⚠️ **The fetch now reads the rule's own constant**, so a retune of the pickup radius cannot leave
+the AI reaching for the old one. ⚠️ The 1.10 m frame in the log is inside 1.15 and so is not
+itself this bug; it is what made somebody look.
 
 ⚠️ **The second failure is worth one look before deciding.** It printed
 `own=3 plan=Fetch ownerAct=True d3=1.10 grabbable=True`: a bot 1.10 m from a grabbable slipper
@@ -855,10 +968,18 @@ last five is its own Unity launch**. The launches, not the assertions, are the c
 **Done looks like:** a documented two-tier command list in `docs/TESTING.md`, and a full pass
 that is fewer than four Unity launches.
 
-✅ **Both halves are in place as of 2026-08-26.** A full pass is now **three** Unity launches
-(`Checks.RunAll`, EditMode, PlayMode) plus `dotnet test`, down from seven, and `docs/TESTING.md`
-carries the fast gate and the full gate as commands. **Item 2 is what remains**: nothing enforces
-which gate a given change pays for, and that is a habit rather than a script.
+✅ **ALL THREE ITEMS ARE DONE AS OF 2026-08-26.** A full pass is **three** Unity launches
+(`Checks.RunAll`, EditMode, PlayMode) plus `dotnet test`, down from seven.
+
+✅ **Item 2 is `tools/verify.sh`.** `./tools/verify.sh fast` for every change, `full` for
+anything touching gameplay and before every build, `wallclock` for the probes that are a report
+rather than a gate. It was prose in `docs/TESTING.md` until the script existed, and a rule that
+lives only in a document is a rule that is followed until somebody is in a hurry.
+
+⚠️ **It asserts on the XML and never on the exit code**, because a PlayMode crash, a genuine test
+failure and a run that wrote no XML at all are three different things that look identical from a
+shell. It prints a per-suite line and names every failing test, so a red run does not need a
+second command to be readable.
 
 ---
 

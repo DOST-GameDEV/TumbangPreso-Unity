@@ -80,7 +80,16 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(round.CanThrow(attacker), "the attacker did not begin in a legal throw state");
             lata.HostKnockDown(-1);
 
-            Assert.IsFalse(round.CanThrow(attacker), "a down lata still accepted a release");
+            // ⚠️⚠️ A DOWN LATA ACCEPTS THE RELEASE NOW, CHANGED 2026-08-26. This
+            // asserted the opposite, and the rule it guarded was removed on 🧑's
+            // report from the built player: *"my charge still pauses when lata is
+            // down"*, *"i dont want it to pause"*. An earlier pass had already
+            // stopped a down lata CANCELLING the wind-up, so refusing the release
+            // left a player holding a fully wound arm that could be neither spent
+            // nor cleared. `ThrowRules.CanThrow` has the reasoning and
+            // `Core.Tests` asserts the new rule; what this test is really for is
+            // the line above it, that the COMMITMENT survives the knockdown.
+            Assert.IsTrue(round.CanThrow(attacker), "a down lata must accept the release rather than freezing the arm");
             Assert.IsTrue(round.CanMaintainThrowCharge(attacker),
                 "the teammate's knockdown cancelled an existing throw animation and charge");
         }

@@ -841,7 +841,25 @@ namespace TumbangPreso
             // reads `JustPressed`, so holding produces exactly one edge in a lifetime and then
             // a bot that stands on its own slipper for the rest of the round. Tap alternates,
             // so an edge lands every other frame for as long as it is in range.
-            if (distance <= AiTuning.Reach) Tap(intent, Verb.Grab);
+            //
+            // ⚠️⚠️ THE RANGE IS `Balance.PickupRadius`, NOT `AiTuning.Reach`, AND THE DIFFERENCE
+            // WAS A BAND WHERE A BOT COULD GRAB AND WOULD NOT TRY. `Reach` is 1.15 m, a generic
+            // melee reach shared with the shove and the punch; `Slipper.CanBeGrabbedBy` measures
+            // `PickupRadius`, 1.40 m. So between 1.15 and 1.40 m the pickup was legal, the bot
+            // knew where the slipper was, its plan was Fetch, and it pressed nothing. `Goto`
+            // above stops it at 0.86 m, but a bot is jostled, shoved and knocked back
+            // constantly, and any drift into that 0.25 m band left it standing next to its own
+            // ammunition doing nothing.
+            //
+            // `docs/TODO.md` § 6 preserved one diagnostic line as the lead for this:
+            // `own=3 plan=Fetch ownerAct=True d3=1.10 grabbable=True`, a bot 1.10 m from a
+            // grabbable slipper it had already decided to fetch, still not holding it. 1.10 is
+            // inside `Reach`, so that particular frame is not this bug, but reading the two
+            // constants side by side to check is what found it.
+            //
+            // ⚠️ IT READS THE RULE'S OWN CONSTANT rather than a copy, so a retune of the pickup
+            // radius cannot leave the AI reaching for the old one.
+            if (distance <= Balance.PickupRadius) Tap(intent, Verb.Grab);
             else Press(intent, Verb.Grab, false);
         }
 

@@ -94,7 +94,11 @@ namespace TumbangPreso
         {
             _readyAt = Time.time + Cooldown;
 
-            GameServices.Audio?.PlayAtVaried("sfx_lata_hit", centre, 1.18f, 1.32f, 0.85f);
+            // ⚠️⚠️ THIS READ `"sfx_lata_hit"`, WHICH IS NOT A DECLARED CUE AND HAS NO
+            // FILE, so the hoop bonus has never made a sound. The event is a scoring
+            // award, the popup beside it says TRES!, and `score_award` is the cue this
+            // game already uses to say "you just earned something".
+            GameServices.Audio?.PlayAtVaried("score_award", centre, 1.18f, 1.32f, 0.85f);
             ComicPopup.Spawn(centre + Vector3.down * 0.5f, "TRES!", UiTheme.Highlight, 1.35f,
                              ComicPopup.Weight.Cast);
             ImpactBurst.SpawnAt(centre);

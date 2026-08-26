@@ -246,6 +246,58 @@ def synth_slipper_burst(duration=0.7):
     return out
 
 
+def synth_lrt_pass(duration=2.7):
+    """The LRT consist crossing the guideway overhead.
+
+    The map's signature event had NO SOUND AT ALL. `LrtTrainFlyby.Announce` called a cue named
+    `ui_move`, and there has never been a `ui_move.wav`: the player log answers every pass with
+    `[Audio] no cue registered for 'ui_move'`, once every 24 seconds, for the whole match. The
+    one recurring event on Ilalim ng Tulay, the thing a player is supposed to learn the period
+    of, was silent.
+
+    Built to the measured window rather than to taste: `OverheadPassWindow.PassSeconds` is
+    2.70 s, nose entering to tail leaving, so the sound is exactly as long as the thing it is
+    describing.
+
+    Three layers, because a train is not one noise:
+      * a low rumble that swells and falls, which is the mass passing over,
+      * rail clatter on the bogie period, which is what makes it a TRAIN and not wind,
+      * filtered noise that peaks with the rumble, which is the air it drags.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = []
+
+    # The three-car consist runs 15.6 m at 18 m/s; its bogies pass at a steady beat.
+    clatter_hz = 5.4
+    last = 0.0
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+        x = t / duration
+
+        # A smooth swell to the middle of the pass and back. Never a click at either end.
+        swell = math.sin(math.pi * x) ** 1.4
+
+        rumble = (math.sin(2.0 * math.pi * 41.0 * t)
+                  + 0.6 * math.sin(2.0 * math.pi * 27.0 * t + 0.7)
+                  + 0.35 * math.sin(2.0 * math.pi * 63.0 * t + 1.9))
+
+        # Rail joints: a short bright tick on each bogie beat.
+        beat = (t * clatter_hz) % 1.0
+        clatter = math.exp(-beat * 26.0) * math.sin(2.0 * math.pi * 1850.0 * t)
+        clatter += 0.5 * math.exp(-beat * 40.0) * math.sin(2.0 * math.pi * 3100.0 * t + 0.4)
+
+        # One-pole low pass on white noise, so the air reads as air rather than as hiss.
+        noise = random.uniform(-1.0, 1.0)
+        last += (noise - last) * 0.06
+        air = last
+
+        sample = swell * (0.52 * rumble * 0.33 + 0.22 * clatter + 0.30 * air)
+        out.append(max(-1.0, min(1.0, sample)))
+
+    return out
+
+
 GENERATORS = {
     "sfx_quake_slam.wav": synth_quake_slam,
     "sfx_thunder_impact.wav": synth_thunder_impact,
@@ -253,6 +305,7 @@ GENERATORS = {
     "sfx_possess_enter.wav": synth_possess_enter,
     "sfx_possess_exit.wav": synth_possess_exit,
     "sfx_slipper_burst.wav": synth_slipper_burst,
+    "sfx_lrt_pass.wav": synth_lrt_pass,
 }
 
 

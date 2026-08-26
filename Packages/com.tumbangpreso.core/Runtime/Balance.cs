@@ -452,8 +452,11 @@ namespace TumbangPreso.Core
         /// <summary>Seconds a single accepted press removes from a trip.
         ///
         /// ⚠ SOLVED, NOT PICKED. `StreetTripHazard` sets `TripDuration` to 2.50 s and
-        /// `MinTripDown` is 0.90 s, so a mash has 1.60 s to remove. At `MashCooldown` = 0.10 s a
-        /// player who mashes cleanly gets at most 16 presses into that window.
+        /// `MinTripDown` is 0.35 s, so a mash has **2.15 s** to remove, which is 6.1 presses at
+        /// this value: 0.61 s of mashing at the 10 Hz cap, for a fall of 0.96 s answered
+        /// perfectly. Raised from 0.20 with `MinTripDown` on 2026-08-26; at 0.20 the same slack
+        /// wanted 10.75 presses, which is 1.08 s of mashing and a 1.43 s fall, and it left the
+        /// per-press value doing the work the floor should have been doing.
         ///
         /// ⚠⚠ RAISED FROM 0.13 TO 0.20 ON 2026-08-25, AND THE OLD VALUE WAS SOLVED AGAINST THE
         /// WRONG QUANTITY. 0.13 was chosen so the saving "lands comfortably inside the fall",
@@ -469,7 +472,7 @@ namespace TumbangPreso.Core
         /// ⚠ THE FLOOR IS NOT THE LEVER AND MUST NOT BECOME ONE. `MinTripDown` is pinned at
         /// 0.90 by the knockdown clip, as its own note explains, so the only honest way to
         /// shorten a fall is to buy the slack faster.</summary>
-        public const float MashRecoverPerPress = 0.20f;
+        public const float MashRecoverPerPress = 0.35f;
 
         /// <summary>Shortest gap between two presses that both count.
         ///
@@ -481,16 +484,26 @@ namespace TumbangPreso.Core
 
         /// <summary>How long a trip lasts however hard it is answered.
         ///
-        /// ⚠ THE KNOCKDOWN CLIP HAS TO PLAY. `CharacterAnimator` switches from the knockdown to
-        /// the get-up at this value, so a floor below it would let a mash skip straight past the
-        /// fall and pop the body upright with no animation at all. It is also the length the
-        /// get-up clip is time-scaled to fill, so the get-up lands exactly as control returns.
+        /// ⚠ IT IS THE GET-UP ANIMATION'S LENGTH AND NOTHING ELSE, AND IT WAS 0.90 FOR A
+        /// REASON THAT STOPPED BEING TRUE. `CharacterAnimator` switches from the knockdown to
+        /// the get-up at this value and TIME-SCALES the get-up clip to fill it exactly, so the
+        /// get-up lands as control returns. The old note said 0.90 was "pinned by the knockdown
+        /// clip"; the knockdown is now a separate held phase that ENDS here, so the only thing
+        /// this has to be long enough for is the get-up itself. Every clip on every rig measures
+        /// **0.333 s**, so 0.35 plays it at 0.95x, which is its own speed.
+        ///
+        /// ⚠⚠ AND 0.90 WAS THE "PROGRESS PAUSES" BUG. 🧑, 2026-08-26, off the built player:
+        /// *"if i mash it, the progress pauses"*. It was not a rendering fault. `MashRecover`
+        /// clamps at this floor, so with 0.90 a fall of 2.50 s had only 1.60 s a press could buy
+        /// and **0.90 s, over a third of the whole event, in which every further press was
+        /// refused**. A fast masher spent that 0.90 s hammering a button that did nothing, with
+        /// the bar crawling at the passive rate. At 0.35 the un-mashable tail is the get-up
+        /// animation and nothing else: presses count for **86 per cent** of the fall.
         ///
         /// ⚠ THE SWITCH USED TO BE A SEPARATE 0.70 TYPED INTO `CharacterAnimator.Choose`, which
-        /// meant the last 0.20 s of a fall was a state with no name: the mash had already been
-        /// refused, the HUD had already said GETTING UP, and the body was still face down. One
-        /// number, one meaning.</summary>
-        public const float MinTripDown = 0.90f;
+        /// meant part of every fall was a state with no name: the mash refused, the HUD saying
+        /// GETTING UP, and the body still face down. One number, one meaning.</summary>
+        public const float MinTripDown = 0.35f;
 
         /// <summary>How fast a trip runs down on its own, as a multiple of real time, while
         /// there is still slack a mash could buy.
@@ -504,11 +517,17 @@ namespace TumbangPreso.Core
         /// you were supposed to press.
         ///
         /// ⚠ SOLVED AGAINST THE GAP, NOT PICKED FOR FEEL. The mashable slack is
-        /// `TripDuration` - `MinTripDown` = 1.60 s. At this rate a player who never presses
-        /// spends 1.60 / 0.60 = 2.67 s buying it, plus the 0.90 s floor, for **3.57 s** down. A
-        /// player who mashes cleanly still spends 8 presses at `MashCooldown` = 0.80 s, plus the
-        /// same floor, for **1.70 s**. So answering the fall now halves it, and the two outcomes
-        /// are 1.87 s apart rather than 0.80 s apart.
+        /// `TripDuration` - `MinTripDown` = 2.15 s. At this rate a player who never presses
+        /// spends 2.15 / 0.75 = 2.87 s buying it, plus the 0.35 s get-up, for **3.22 s** down. A
+        /// player who mashes cleanly spends 6.1 presses at `MashCooldown` = 0.61 s, plus the
+        /// same get-up, for **0.96 s**. Answering the fall is worth **3.3x**, and it is inside
+        /// the 1 to 2 s 🧑 asked a fall to last.
+        ///
+        /// ⚠⚠ THE PREVIOUS PAIR WAS 0.60 AND A 0.90 FLOOR, AND IT PRODUCED THE TWO THINGS HE
+        /// REPORTED OFF THE PLAYER. *"If i dont mash, i get up in 2 seconds"*: the fall lasted
+        /// 3.57 s but `ApplyTrip` staggered for only `TripDuration`, so control came back at
+        /// 2.50 s with a third of the fall still to run. `CharacterMotor` now holds the stagger
+        /// to the trip. *"If i mash it, the progress pauses"*: see `MinTripDown`.
         ///
         /// ⚠ IT IS NOT ZERO, AND THAT IS DELIBERATE. A trip that only ends when you press it
         /// away strands a player whose hands left the keyboard, and it hands a griefing tool to
@@ -517,7 +536,7 @@ namespace TumbangPreso.Core
         /// ⚠ IT APPLIES ONLY ABOVE `MinTripDown`. Below the floor nothing can be bought, the
         /// get-up clip is playing, and that stretch runs at real time so the animation and the
         /// clock agree.</summary>
-        public const float TripPassiveDecayRate = 0.60f;
+        public const float TripPassiveDecayRate = 0.75f;
 
         /// <summary>Seconds after a trip ends during which no hazard may start another one.
         ///

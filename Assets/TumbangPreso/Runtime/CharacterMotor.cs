@@ -838,6 +838,26 @@ namespace TumbangPreso
 
                 _tripLeft = Mathf.Max(0.0f, _tripLeft - Time.deltaTime * rate);
 
+                // ⚠️⚠️ THE STAGGER IS HELD TO THE TRIP, AND WITHOUT THIS LINE A PLAYER GETS UP
+                // BEFORE THE FALL ENDS. 🧑, 2026-08-26, off the built player: *"if i dont mash,
+                // i get up in 2 seconds wtf"*. He was right and the arithmetic says why.
+                // `ApplyTrip` calls `ApplyStagger(duration)` once, with the trip's STARTING
+                // length, and the stun then runs down at real time while the trip runs down at
+                // `Balance.TripPassiveDecayRate`. So an unanswered 2.50 s trip lasted 3.22 s
+                // while the stun expired at 2.50: for the last 0.72 s the body could walk, aim
+                // and throw while `IsTripped` was still true, the camera was still in the fall
+                // view and the HUD still said GETTING UP.
+                //
+                // ⚠️ IT IS `Max`, NEVER AN ASSIGNMENT. A tag landing on a player who is already
+                // on the floor must not have its 5 s stun cut short to the remaining trip, and
+                // `Combat.ApplyStagger`'s Max() rule is the entire bound on a stun chain in a
+                // 1-vs-3 game (`CLAUDE.md` § 4).
+                if (_stunLeft < _tripLeft)
+                {
+                    _stunLeft = _tripLeft;
+                    _stunTotal = Mathf.Max(_stunTotal, _stunLeft);
+                }
+
                 if (_tripLeft <= 0.0f)
                 {
                     _tripTotal = 0.0f;
