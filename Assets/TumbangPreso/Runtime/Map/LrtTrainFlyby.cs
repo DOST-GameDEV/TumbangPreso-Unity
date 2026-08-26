@@ -135,13 +135,157 @@ namespace TumbangPreso
                 ImpactBurst.SpawnAt(new Vector3(TrackX, TrackY - 0.5f, _currentZ));
             }
 
+            DriveRumble();
+
             if (_currentZ < EndZ) return;
 
             _isRunning = false;
             _windowOpen = false;
             OverheadPassWindow.SetOverhead(false);
             OverheadPassWindow.SetWarning(false);
+            StopRumble();
             transform.position = new Vector3(TrackX, TrackY, StartZ);
+        }
+
+        // ------------------------------------------------------------------ § THE PASS
+        //
+        // ⚠️⚠️ THE CONSIST NOW CARRIES ITS OWN MOVING SOURCE, AND BEFORE THIS THE SOUND NEVER
+        // MOVED AT ALL. 🧑 2026-08-26: *"pls make the sfx of the train passing by better ... make
+        // it feel like its getting farther and add sound or movement to screen to make it
+        // realistic? bcz usually when it passes by u feel the shaking"*.
+        //
+        // ⚠️ WHY THE OLD ONE COULD NOT DO IT, WHICH IS NOT THAT THE CLIP WAS WRONG. Both cues
+        // went through `AudioDirector.PlayAtVaried`, which parks a POOLED VOICE AT A FIXED
+        // POSITION and plays it there. That is the right call for an impact, which happens at a
+        // point and is over. The train travels from z = -48 to z = +48 while its sound is
+        // playing: 96 m in 5.3 s at 18 m/s. Fired once at the position the nose happened to hold
+        // at that instant, the sound stayed at that spot for the whole pass, so it faded by the
+        // listener WALKING, never by the train leaving. There is no amount of better clip that
+        // fixes a stationary emitter.
+        //
+        // ⚠️ SO: A LOOPING SOURCE PARENTED TO THE CONSIST. Unity then does the approach and the
+        // recede for free off the transform, and `dopplerLevel` does the pitch shift on the way
+        // past, which is the half of "getting farther" that a volume ramp alone cannot fake.
+        //
+        // ⚠️ LINEAR ROLLOFF, NOT LOGARITHMIC, AND IT IS MEASURED FROM THE MAP. The guideway sits
+        // 9.19 m up and the play area is 33 m of street; logarithmic falloff drops most of its
+        // range inside the first few metres, so the consist would be at full volume across the
+        // entire arena and then vanish. Linear from 12 to 70 spans the map: audible from the far
+        // wall, loudest overhead, gone by the time the tail clears the boundary traffic.
+        private const float RumbleMinDistance = 12.0f;
+
+        private const float RumbleMaxDistance = 70.0f;
+
+        /// <summary>
+        /// How hard the street shakes directly under the consist.
+        ///
+        /// ⚠️ 0.30, AGAINST `CameraRig.Shake`'s 0.35 DEFAULT AND THE 0.45x AN IMPACT GETS. A
+        /// train passing overhead is a rumble, not a hit: it lasts the whole 2.7 s window, and
+        /// anything near impact strength for that long is unplayable rather than atmospheric.
+        /// It is also scaled by distance below, so this is the value only for a player standing
+        /// directly beneath the guideway.
+        /// </summary>
+        private const float ShakePeak = 0.30f;
+
+        private AudioSource _rumble;
+        private bool _rumbleReady;
+
+        /// <summary>
+        /// ⚠️ BUILT ON FIRST USE, NOT IN `Start`. `GameServices.Audio` is installed by the match
+        /// bootstrap and this component lives on the map, so a `Start`-time lookup races it and
+        /// silently leaves the train mute for the whole session. Asking on the first pass is
+        /// 24 s later and cannot lose that race.
+        /// </summary>
+        private void EnsureRumble()
+        {
+            if (_rumbleReady) return;
+            _rumbleReady = true;
+
+            if (GameServices.Audio == null) return;
+
+            // ⚠️ CALLED ON `GameServices.Audio` RATHER THAN ON A LOCAL, DELIBERATELY.
+            // `AudioCueCheck.CallSitePattern` is anchored on the literal `Audio.` receiver, so a
+            // cue asked for through a local named anything else is a call site the check cannot
+            // see, and it would then report `sfx_lrt_pass` as a file nothing plays.
+            if (!GameServices.Audio.TryGetClip("sfx_lrt_pass", out var clip, out float mix)) return;
+
+            var go = new GameObject("LrtRumble");
+            go.transform.SetParent(transform, false);
+
+            _rumble = go.AddComponent<AudioSource>();
+            _rumble.clip = clip;
+            _rumble.loop = true;
+            _rumble.playOnAwake = false;
+            _rumble.spatialBlend = 1.0f;
+            _rumble.rolloffMode = AudioRolloffMode.Linear;
+            _rumble.minDistance = RumbleMinDistance;
+            _rumble.maxDistance = RumbleMaxDistance;
+
+            // ⚠️ ABOVE 1. The consist is the only thing in the game moving fast enough for
+            // doppler to be audible at all, and at 18 m/s the true shift is about 5 per cent,
+            // which nobody hears. This is the one place exaggerating it is honest: the effect
+            // being sold is "it went past me", not a physics reading.
+            _rumble.dopplerLevel = 2.2f;
+
+            _rumbleMix = mix;
+        }
+
+        private float _rumbleMix = 1.0f;
+
+        /// <summary>
+        /// The pass, every frame it is running: the rumble's level and the shake under it.
+        ///
+        /// ⚠️⚠️ BOTH ARE DRIVEN OFF THE SAME DISTANCE, so the loudest moment and the hardest
+        /// shake are the same moment by construction rather than by two timers agreeing. That is
+        /// the whole reason it reads as one heavy object rather than as a sound plus an effect.
+        /// </summary>
+        private void DriveRumble()
+        {
+            EnsureRumble();
+
+            var listener = UnityEngine.Camera.main;
+            if (listener == null) return;
+
+            float distance = Vector3.Distance(listener.transform.position, transform.position);
+
+            if (_rumble != null)
+            {
+                if (!_rumble.isPlaying) _rumble.Play();
+
+                // The player's slider is read every frame rather than cached, because it can be
+                // moved in the pause panel while a train is mid-pass.
+                float slider = GameServices.Audio != null ? GameServices.Audio.SfxVolume : 1.0f;
+                _rumble.volume = _rumbleMix * slider;
+            }
+
+            // ⚠️ THE SHAKE IS RE-ARMED EVERY FRAME RATHER THAN FIRED ONCE. `CameraRig.Shake`
+            // takes a `Max()` against what is already running and drains on a timer, so a single
+            // call at the start of a 2.7 s window would have decayed to nothing within a fifth
+            // of a second. Re-arming with a SHORT duration each frame is what makes it a
+            // sustained rumble whose strength tracks the consist instead of a one-off jolt.
+            if (distance > RumbleMaxDistance) return;
+
+            float nearness = 1.0f - Mathf.Clamp01((distance - RumbleMinDistance)
+                                                  / (RumbleMaxDistance - RumbleMinDistance));
+
+            // Squared, so the shake is genuinely local to the pass. Linear left the whole street
+            // trembling for the entire approach, which is the "screensaver" failure this file's
+            // header already argues against, moved into the camera.
+            float strength = ShakePeak * nearness * nearness;
+            if (strength < 0.01f) return;
+
+            var rig = listener.GetComponent<CameraSystem.CameraRig>();
+            rig?.Shake(strength, 0.12f);
+        }
+
+        /// <summary>
+        /// ⚠️ THE RUMBLE STOPS WITH THE CONSIST. It is a looping source on an object that gets
+        /// teleported back to `StartZ` and left there for the rest of the interval; leaving it
+        /// playing would put a train under the south wall for 24 s.
+        /// </summary>
+        private void StopRumble()
+        {
+            if (_rumble != null && _rumble.isPlaying) _rumble.Stop();
         }
 
         /// <summary>
@@ -160,9 +304,12 @@ namespace TumbangPreso
             // of, had no sound for its whole life. `AudioCueCheck` could not see it either,
             // because it compared DECLARED cues against files and never call sites against
             // declarations; it does now.
-            GameServices.Audio?.PlayAtVaried("sfx_lrt_pass", transform.position,
-                                             0.94f, 1.06f, 0.62f);
-
+            // ⚠️⚠️ THE ONE-SHOT THAT USED TO BE HERE IS GONE, AND IT IS NOW THE MOVING RUMBLE.
+            // It fired `sfx_lrt_pass` through `PlayAtVaried` at `transform.position`, which
+            // pins a pooled voice to the spot the nose held at that instant and plays it there
+            // while the consist travels the remaining 96 m away from it. Keeping it alongside
+            // the looping source would play the same clip twice, once travelling and once
+            // nailed to the south approach. See § THE PASS for the whole argument.
             if (Hud.Instance == null) return;
 
             Hud.Instance.ShowToast(SceneFlow.SelectedMode == GameMode.HeroStrike

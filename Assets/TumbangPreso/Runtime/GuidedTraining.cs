@@ -1211,18 +1211,69 @@ namespace TumbangPreso
             layout.childControlHeight = true;
             layout.childForceExpandWidth = false;
             layout.childForceExpandHeight = false;
-            layout.spacing = 10.0f;
+            // ⚠️⚠️ 30, AND THE OLD 10 IS THE ENTIRE BUG. 🧑 2026-08-26, with a crop of this bar:
+            // *"confusing to look at this tutorial ui, didnt know clicking n would let u skip it
+            // or backspace would let u quit"*.
+            //
+            // It read `[N] SKIP · [BACKSPACE] QUIT TRAINING` as five children of ONE row at a
+            // uniform 10 px gap, so the gap between a key and ITS OWN action was the same as the
+            // gap between the two unrelated pairs. Nothing in the spacing said which word went
+            // with which cap, and proximity is the only thing that ever says so. The two pairs
+            // are sub-rows now: 7 px inside a pair, 30 px between them, so the grouping is
+            // visible before a single word is read.
+            //
+            // ⚠️ AND THE ACTION IS NO LONGER THE QUIET HALF. `KeyCap` draws a cream plate with an
+            // amber border and ink lettering, which is the loudest thing in this bar, while the
+            // action word was `CreamMuted` — so the eye landed on the box, read "N" as the label
+            // of a button, and skipped the grey word that says what it does. The cap is the
+            // MODIFIER and the verb is the message; the verb gets full cream now.
+            layout.spacing = 30.0f;
             layout.padding = new RectOffset(12, 12, 4, 4);
 
             var box = footGo.AddComponent<LayoutElement>();
             box.minHeight = 42.0f;
             box.preferredHeight = 42.0f;
 
-            KeyCap(footGo.transform, "N");
-            Chip(footGo.transform, "SKIP");
-            Chip(footGo.transform, "·");
-            KeyCap(footGo.transform, "BACKSPACE");
-            Chip(footGo.transform, "QUIT TRAINING");
+            // ⚠️ "SKIP LESSON", NOT "SKIP". On its own "SKIP" reads as skipping the whole
+            // tutorial, which is what BACKSPACE does; naming the unit each key acts on is what
+            // separates them. The two verbs are now the difference between one step and the lot.
+            ControlPair(footGo.transform, SkipKeyLabel, "SKIP LESSON");
+            ControlPair(footGo.transform, QuitKeyLabel, "QUIT TRAINING");
+        }
+
+        /// <summary>
+        /// The label on the key that advances one lesson, and the one that leaves training.
+        ///
+        /// ⚠️⚠️ THEY ARE CONSTANTS SO THE BAR AND THE READER CANNOT DRIFT APART. `Update` reads
+        /// `keyboard.nKey` and `keyboard.backspaceKey` directly, and these two strings were typed
+        /// into `BuildFooter` by hand: two independent statements of the same fact, and
+        /// `docs/VISION.md` § 3 is blunt that a screen teaching the wrong key is worse than one
+        /// teaching none. These are hard-wired rather than rebindable on purpose (they are
+        /// tutorial chrome, not gameplay verbs), so the binding cannot be asked for its label the
+        /// way `Hud.KeyLabel` asks; naming them once is the next best guarantee.
+        /// </summary>
+        private const string SkipKeyLabel = "N";
+
+        private const string QuitKeyLabel = "BACKSPACE";
+
+        /// <summary>
+        /// One control: the key, then what it does, tight enough together to read as a unit.
+        /// </summary>
+        private static void ControlPair(Transform parent, string key, string action)
+        {
+            var pairGo = new GameObject($"Control_{key}", typeof(RectTransform));
+            pairGo.transform.SetParent(parent, false);
+
+            var row = pairGo.AddComponent<HorizontalLayoutGroup>();
+            row.childAlignment = TextAnchor.MiddleLeft;
+            row.childControlWidth = true;
+            row.childControlHeight = true;
+            row.childForceExpandWidth = false;
+            row.childForceExpandHeight = false;
+            row.spacing = 7.0f;
+
+            KeyCap(pairGo.transform, key);
+            Chip(pairGo.transform, action, UiTheme.Cream);
         }
 
         public void SetLesson(int lesson, int total, string title, string body, string action,

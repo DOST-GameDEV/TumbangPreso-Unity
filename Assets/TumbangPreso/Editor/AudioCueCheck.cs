@@ -45,8 +45,14 @@ namespace TumbangPreso.EditorTools
         /// `Play(""menu"", ...)` name TRACKS, which live in `AudioCues.Music` and are
         /// nowhere near `Live`. The first run of this check flagged all three as silent
         /// cues; they are neither silent nor cues.</summary>
+        /// ⚠️⚠️ `TryGetClip` IS A CONSUMER TOO, AND IT IS NOT A `Play` METHOD. It hands a caller
+        /// the clip so it can drive its own `AudioSource`, which is how the LRT consist carries a
+        /// moving, dopplered rumble instead of a one-shot pinned to the spot it was fired at
+        /// (`LrtTrainFlyby`, § THE PASS). Without it here, moving `sfx_lrt_pass` onto that path
+        /// would make this check report the file as one nothing plays, which is the exact
+        /// direction-3 hole the note above says it exists to close.
         private const string CallSitePattern =
-            @"Audio\??\.(?:PlayAtVaried|PlayAt2D|PlayAt|PlayUi|Play)\s*\(\s*""(?<cue>[a-zA-Z0-9_]+)""";
+            @"Audio\??\.(?:PlayAtVaried|PlayAt2D|PlayAt|PlayUi|TryGetClip|Play)\s*\(\s*""(?<cue>[a-zA-Z0-9_]+)""";
         private const string MusicDir = "Assets/TumbangPreso/Art/audio/music";
         private const string ResultPath = "Logs/audio-cue-check.txt";
 

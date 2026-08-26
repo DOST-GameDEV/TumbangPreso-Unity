@@ -62,7 +62,25 @@ namespace TumbangPreso
             // most of what "the defender feels overpowered" actually was. A stun you cannot
             // time is a stun you cannot play around. It was hard-coded to 0.0 here, so the row
             // appeared with no countdown and drew a full bar for its whole duration.
-            if (m.IsStunned)
+            // ⚠️⚠️ AN ELEMENT STUN HAS NO COUNTDOWN ROW, AND THAT IS A DELIBERATE EXCEPTION TO
+            // THE NOTE ABOVE RATHER THAN A REVERSAL OF IT. 🧑 2026-08-26, asking for the mash:
+            // *"maybe with this change u have to make sure the countdown for their stun is gone
+            // as well as the ui for the countdown"*.
+            //
+            // ⚠️ THE REASON IS THE SAME REASON THE TRIP HAS NO ROW EITHER, and it is the lesson
+            // `Balance.TripAutoRecoverSeconds` records at length: once a status is ended by
+            // PRESSES, a countdown beside it is a second, contradictory account of when it ends.
+            // He reported exactly that against the fall: *"u randomly get up after set amt of
+            // time, i dont have to actually mash it"*. A bar that drains on a clock next to a
+            // meter that fills on presses teaches the player to watch the clock and stop
+            // pressing. `Hud.BuildStunBreakCard` is the one readout for a mashable stun.
+            //
+            // ⚠️⚠️ THE TAG KEEPS ITS COUNTDOWN, WHICH IS WHY THIS IS GATED ON THE ELEMENT AND
+            // NOT ON `IsStunned`. `StunElement.None` cannot be mashed out of, so time really is
+            // the only thing that ends it, and the original request this row was built for still
+            // stands for that case: *"add visible UI timers for all stun durations and status
+            // effects so players clearly know when they can move or act again"*.
+            if (m.IsStunned && m.StunElement == StunElement.None)
                 into.Add(new StatusRow
                 {
                     Label = "STUNNED",

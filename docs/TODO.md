@@ -1462,6 +1462,271 @@ cent blown against the 12 per cent gate, and the worst frame unchanged at 4.1.
 
 ---
 
+## 22 · Everything the 4.71 player showed, and the two entries that were ticked but not wired
+
+**Reported by 🧑 on 2026-08-26 across a single play session, with screenshots. Nine separate
+faults, and the two most interesting are not in his list: they are entries in THIS file that
+say "done" against work that was only half landed.**
+
+⚠️⚠️ **THE PATTERN, WHICH IS WORTH MORE THAN ANY ONE FIX. Twice this session an entry recorded a
+defect as closed, the supporting asset existed, and the CALL SITE was never changed.** § 9.5 and
+§ 18 both describe the objective card being sized through `Hud.WidestLineWidth`; that function
+was written, `LataHintLines` was written, both were documented, and `grep WidestLineWidth`
+returned **the definition and the prose and no call site**. The card shipped at a flat 380 units
+against a 527-unit string. § 21.4 records Phaister's ultimate moving from `sfx_ghost_appear` to
+`sfx_eclipse_toll`; the cue was generated, mixed and registered, and `PhaisterHeroKit` still
+called `sfx_ghost_appear`, which has no file, so her ultimate was silent.
+
+**Both were verified by the half of the work that shows up in a file listing.** When closing an
+entry, grep for the call site, not for the asset.
+
+### 22.1 The stray IKE tsinelas, which was in every match of every round
+
+🧑, with it circled: *"thres this random Ike slipper that u cant pick up in the map, is that
+intentional? idc if it is pls remove it"*, and *"it's on ALL games"*.
+
+⚠️⚠️ **IT WAS NOT RANDOM AND IT WAS THE SAME MODEL EVERY TIME, WHICH IS THE TELL.**
+`SliceRunner.EquipOwnedSlippers` assigned ownership as
+`index < attackers.Count ? attackers[index] : -1`, and `attackers` is the three non-defender
+seats. Four slippers over three attackers means **index 3 always fell off the end**, every round,
+whoever was taya. `MatchInstaller.BuildSlipper` gives a non-local seat `pick = slot`, and roster
+entry 3 is **IKE** (`Roster.Slippers`). One specific model, on the ground, in every single match.
+
+⚠️ **A SECOND BUG WORE THE SAME CAUSE.** Ownership counted through the attacker list while
+`SlipperHome` and `BuildSlipper` both index by SEAT, so with seat 0 defending, seat 1 was handed
+slipper 0, the tsinelas built with seat 0's art. **A player who picked their slipper in the
+settings panel carried somebody else's for the whole match.** Owning by seat makes all three
+agree.
+
+⚠️ **THE TAYA'S TSINELAS NOW LEAVES THE ARENA, AND AN ABSENT SEAT'S DOES NOT.** `SoloPracticeTests`
+caught the difference immediately: with the practice lobby set to NONE the three bot seats are
+never built, so parking every ownerless tsinelas left the one human holding the only one in the
+arena and nothing to practise retrieving. A seat that EXISTS and is defending may not throw; a
+seat that does not exist has simply left its slippers in the street.
+
+### 22.2 Two strings drawn through each other, and the class behind it ✅
+
+🧑: *"theres many cases of text going on top of each other"*, with a frame at 00:14 showing
+`FINAL PUSH · ATTACK NOW` and `LATA IS BACK UP` in the same place.
+
+⚠️⚠️ **THE ARITHMETIC.** Everything in the top band uses a TOP pivot, so an offset is the row's
+top edge. `TopCentre` flows down from y = 28: clock card **28..124**, gap 4, `RoundLabel`
+**128..162**, gap 4, `TimerPressure` **166..198**. The toast was `Place`d at a literal **-160**
+with height 44, so it occupied **160..204 and swallowed `TimerPressure` whole.**
+
+⚠️⚠️ **NEITHER NUMBER WAS EVER WRONG. IT WAS TWO COORDINATE SCHEMES.** -160 is the .tscn's own
+offset and it was correct when the toast was the only thing under the clock. `TimerPressure` was
+added to the COLUMN later, and a layout group's height depends on which children are enabled, so
+**no literal can be safe: any fixed offset under a layout group is a guess about a number the
+layout owns.** The toast and the lata alert are rows of `TopCentre` now, which makes the overlap
+impossible rather than merely fixed.
+
+⚠️ **THE COLUMN IS MEASURED THROUGH THE ALERT'S OWN LABEL AS WELL AS THE ROUND LINE'S.**
+`childControlWidth` hands every child the column's width, and the alert is 42 pt against the
+round line's 20; running its strings through `_round` would be the same error wearing a
+measurement.
+
+### 22.3 The objective card overflowed the screen, and § 9.5 said it did not ✅
+
+The bottom-right card read `FETCH SLIPPER · -5 / SEC`, clipped at the display edge. **This is the
+exact string § 18 uses as its worked example of a fix that had already landed.**
+
+`BuildLataCard` passed a hard-coded `380.0f` and never called `WidestLineWidth`. The longest line
+it can hold needs about **527**, and because the card is pinned to the RIGHT screen corner the
+147 units of overflow left the display rather than merely the wood. `FitLataCard` now measures
+both rows through their own labels, keeps 380 as a floor, and re-fits on a canvas scale change
+for the reason `FitTopCentre` records: `preferredWidth` moves about **14 per cent** across the
+nine shipped resolutions for one unchanged string.
+
+### 22.4 No UI may stack, as a game feature rather than a probe ✅
+
+🧑: *"i want ut o make sure too that no Ui's stack on each otehr and if they do force one to go
+below it or smth"*, and, when a probe was offered: *"i dont want a probe for it i want it in th
+egame as a feature"*.
+
+`UI.HudDeclutter` runs in the player, in `LateUpdate`, and pushes a lower-priority element clear
+of a higher-priority one. Registration order is priority order.
+
+⚠️⚠️ **IT IS THE BACKSTOP, NOT THE FIRST ANSWER,** and he set that bound himself: *"make sure it
+dont break shit too / and touch shit that dont have the capability to stack on each other
+already"*. `Track` **refuses any element whose parent is a `LayoutGroup`** and logs, because a
+layout group already guarantees its children cannot stack and pushing one would fight the parent
+every rebuild. The corner cards are excluded too: they cannot reach each other at any shipped
+resolution. What is registered is the bottom-centre column and the two mash cards.
+
+⚠️ **AND IT FOUND A SECOND REAL COLLISION AT SOURCE.** `VulnerableWarning` sat at 84..124 and
+`InspectHint` at 78..96, both bottom-anchored, both live in-round: **12 units of shared band**
+between the line meaning "you are about to lose five seconds" and a tutorial aside. The warning
+moved to 112, structurally, rather than being left to the declutterer.
+
+⚠️ **NO `Canvas.ForceUpdateCanvases()`.** It was in the first draft and it is a full canvas
+rebuild every frame, which is the class of per-frame HUD cost `CLAUDE.md` § 7.1 records. It is
+not needed: this writes only `anchoredPosition`, never a size.
+
+### 22.5 The lata-down beacon, deleted rather than retuned ✅
+
+🧑: *"that red line, thats red beacon when lata is down, that looks bad ... the purpose of it is
+to put emphasis on lata being down but its shit"*, and the shape of the fix in the same message:
+*"without putting a fkn beacon on it or covering the lata completley with some effect"*.
+
+⚠️ **WHAT IT WAS MADE OF IS WHY IT LOOKED LIKE THAT.** A 4 m translucent `Cylinder`, a second
+translucent `Cylinder` flat under it, and a point light over the pair: the exact stack
+`docs/VISION.md` § 2 rule 3 names, and that § 19 spent a pass removing from the ability kits.
+Nothing had come back to the objective itself. **A 0.18 m tube seen from eye height across a
+14 m arena is foreshortened into a red line lying on the road**, which is what he photographed.
+
+⚠️⚠️ **AND THE GAME ALREADY SAID "LATA DOWN" SIX OTHER TIMES**: the world popup, the centre
+alert, the card title, the objective line, the score toast and the crosshair. The problem was
+never that the message was too quiet. **Emphasis is not repetition.**
+
+Replaced with two things built two different ways, per § 19: a **rim pulse on the can's own
+renderers** (no floor area at all, and it cannot cover the object because it IS the object's
+silhouette) and a **`VfxShapes.Collar`** at the foot, an annulus with an open middle. 0.95 m of
+radius is **1.4 per cent of the box**, against a skill's budgeted 3 to 8.
+
+### 22.6 The tag stopped being ice, and ice became Cheska's ✅
+
+🧑: *"freeze effects show up when u get tagged, this was an old stale version bcz back then we js
+put freeze effect on screen and on 3d model of chara when they get tagged. pls plan what to
+replace that with bcz it doesnt make sense anymore"*.
+
+⚠️ **IT WAS NEVER BADLY MADE, IT WAS OVERTAKEN.** The frost was asked for on 2026-08-06 and on
+that date it was unambiguous: nothing else in the game was cold. Hero Strike then shipped Cheska,
+whose entire kit is ice, and a frozen body had two possible causes. **The frost's own note argues
+that firing one signal for two causes makes it mean "something happened to that player", which is
+"not worth a channel"** — written about trips, and Cheska walked into it from the other side.
+
+A tag now drains colour toward Rec. 601 luminance with a **taya-blue rim**, which the frost never
+carried: the mark says WHO made it. `_FrostAmount` is kept and is now the ABILITY coat.
+
+### 22.7 The train never moved, because its sound never did ✅
+
+🧑: *"make it feel like its getting farther and add sound or movement to screen to make it
+realistic? bcz usually when it passes by u feel the shaking"*.
+
+⚠️ **NOT A CLIP PROBLEM.** Both cues went through `PlayAtVaried`, which parks a pooled voice **at
+a fixed position**. The consist travels **96 m in 5.3 s at 18 m/s**, so a one-shot fired at the
+nose stayed where it was fired: the pass faded by the listener WALKING, never by the train
+leaving. There is no better clip that fixes a stationary emitter.
+
+Now a looping source parented to the consist, linear rolloff **12 to 70 m** (logarithmic drops
+its range inside the first few metres and would be full volume across the whole arena), and
+`dopplerLevel` **2.2** because the true 5 per cent shift at 18 m/s is inaudible. Screen shake is
+re-armed every frame at a **squared** distance falloff so it is local to the pass, peaking at
+0.30 against `CameraRig.Shake`'s 0.35 default.
+
+### 22.8 The tutorial bar, where spacing destroyed the pairing ✅
+
+🧑: *"confusing to look at this tutorial ui, didnt know clicking n would let u skip it or
+backspace would let u quit"*.
+
+⚠️ **THE GAP BETWEEN A KEY AND ITS OWN ACTION WAS THE SAME AS THE GAP BETWEEN THE TWO PAIRS.**
+Five children of one row at a uniform 10 px, so nothing in the spacing said which word went with
+which cap, and proximity is the only thing that ever says so. Now sub-rows: **7 px inside a pair,
+30 px between them.** The action word also moved from `CreamMuted` to full cream, because
+`KeyCap` draws a bright plate and the eye was landing on the box and reading "N" as a button
+label. `SKIP` became `SKIP LESSON`, which is what separates it from BACKSPACE quitting the lot.
+
+### 22.9 The witch's voice, and the generator that was never committed ✅
+
+⚠️⚠️ **`tools/generate_hero_audio.py` DID NOT EXIST IN THE REPOSITORY AT ALL.** § 21.4 leaves her
+borrowed `hero_nemu_grunt` open on the grounds that the generator "is UNSEEDED, so touching it
+rewrites all seventeen existing voice files". `git log --all -- tools/generate_hero_audio.py`
+returns **nothing on any branch**. And `tools/generate_ability_audio.py` line 35 does
+`from generate_hero_audio import SAMPLE_RATE, write_wav`, so **the payload generator could not be
+run from a clean clone**: the import failed before it reached a synth.
+
+It is written now, seeded per cue from a written-down slot, and it **refuses to overwrite an
+existing file** unless given `--force` or `--only`, which permanently removes the hazard the
+entry was worried about. Verified two ways: a second `--force` run is byte-identical, and running
+`generate_ability_audio.py` afterwards rewrote **zero** ability files, which proves the recovered
+`write_wav` is byte-compatible with the original.
+
+Phaister has `hero_phaister_grunt` and `hero_phaister_ult` and no longer borrows Nemu's throat.
+The six ultimate voices were regenerated as vocalisations on request (*"maybe screams or laughter
+or something ominously sounding that is in chracter"*) through a glottal-pulse-and-formant model,
+one vowel shape per hero. **Hers is a laugh, and she is the only one who gets one**: five of the
+six ultimates are efforts, and a witch calling an eclipse is not exerting herself.
+
+⚠️ `sfx_ghost_teleport` **stays shared** between Nemu and Phaister deliberately. A blink IS the
+same physical event a phase is; what she needed was her own throat over it.
+
+### 22.10 `Checks.RunAll` had been red since the witch merge ✅
+
+`HeadlessCheck` asserted `HeroPeople.Count == 5` and `AllPeople.Count == 17`. § 21 merged Phaister
+as the **sixth** hero and updated `Roster` without updating the check that counts it, so every
+`Checks.RunAll` launch since has failed on two assertions. **It went unnoticed because the § 21
+verification pass quoted Core, EditMode, PlayMode and `AbilityShowcaseProbe` and never ran this.**
+The totals are derived from the two lists now rather than retyped.
+
+---
+
+## 23 · Ability stuns are now fought out of, not waited out
+
+**Asked for by 🧑 on 2026-08-26, in four messages:** *"for abilities that freeze or stun enmies /
+i want them to look frozen or have the element cover them when stunned"*, *"i want them to go to
+TPP and to have a button mashing thing to get unstunned or unfrozen (same as when u trip) but
+maybe diff UI and effect"*, *"maybe with this change u have to make sure the countdown for their
+stun is gone as well as the ui for the countdown"*, *"i want their ui to also have the frozen or
+stunned effect (depending on the element) / atleast until they button mash and then theyre out of
+it"*, and *"maybe chaneg the amt needed to be button mash for each skill? make it dependent on how
+hard the skill is supposed to hit"*.
+
+⚠️⚠️ **THE TAYA'S TAG IS DELIBERATELY EXCLUDED AND THAT IS THE LOAD-BEARING DECISION.**
+`Balance.TagStunTime` is 5.0 s and the tag is the ONE scoring verb a defender has
+(`docs/VISION.md` § 4). Letting an attacker hammer out of it would take the single thing the taya
+can do and halve it, in the mode aimed at a bracket. **A tag is answered by not being caught.**
+So the two statuses now read differently on purpose: a tag drains colour and cannot be fought, an
+ability stun coats you in the caster's element and can be. One is a rule, the other is a fight.
+
+⚠️⚠️ **MASHABILITY IS READ OFF THE ELEMENT, NEVER OFF THE DURATION.** `StunElement.None` is the
+tag. Guessing from the number would have made the tag escapable the moment somebody tuned an
+ability to 5 s.
+
+⚠️ **THE COST IS A PRESS COUNT PER ABILITY AND THE SECONDS ARE DERIVED**, which is what makes
+"how hard does this skill hit" a stable thing to tune: `perPress = (stunTotal - MinStunDown) /
+breakPresses`. A stun retuned from 3 s to 5 s still breaks in the number of presses its ability
+asked for. Shipped: Cheska's Glacial Nova **9**, Dante's Titan Fissure **8**, Zack's Thunderstrike
+**7**, Nemu's poltergeist **6**, Sean's burn **4**. Clamped to 3..14.
+
+⚠️ **A STAGGER SHORTER THAN `MinStunDown` IS FORCED BACK TO `None` INSIDE `ApplyStagger`.** Most
+kit calls are 0.2 to 0.5 s knockback hitches; at those lengths the card would appear reading
+BREAKING FREE, the camera would swing to TPP and back, and the body would flash a coat, several
+times a round. **The floor is the definition of a hold**, so kits do not each have to judge
+whether their number is big enough.
+
+⚠️ **THE FLOOR IS NOT CLEARED BY THE LAST PRESS.** Releasing the body when the meter fills would
+put a perfectly answered 3.0 s stun at **0.6 s** and refund the cooldown that bought it. The
+honest total is the mash plus the floor, about **1.7 s** against 3.0 unanswered, because the clock
+drains underneath the presses.
+
+⚠️ **THE CARD IS PIPS, NOT A BAR, AND THE TWO REQUESTS ANSWER EACH OTHER.** A bar hides how many
+presses are left because it is a ratio; one pip per required press shows the number, so the
+per-skill tuning is legible instead of secret. **The thing being tuned is the thing being
+displayed.**
+
+⚠️ **THE COUNTDOWN ROW IS GONE FOR ELEMENT STUNS ONLY.** `Balance.TripAutoRecoverSeconds` records
+the lesson: once a status is ended by presses, a countdown beside it is a second, contradictory
+account of when it ends, and he reported exactly that against the fall (*"u randomly get up after
+set amt of time, i dont have to actually mash it"*). **The tag keeps its countdown**, because time
+really is the only thing that ends it.
+
+**Still open:**
+
+* **Nothing here has been seen in motion.** The coats, the TPP swing and the pip card are all
+  argued from code and still frames. Same open judgement § 19 and § 21 end on.
+* **The press counts have not been measured against a match.** They are reasoned from
+  `Hero_Strike_Balance.md` § 1's weighting and want a `BotBehaviourProbe` sweep, remembering
+  § 16's noise floor: three runs an arm for anything worth 20 per cent.
+* **Phaister's eclipse curse staggers for 0.50 s**, below `MinStunDown`, so her ultimate does not
+  hold anybody and gets no coat. That is a balance question, not a bug, and it was left alone
+  rather than retuned unilaterally.
+* **Bots do not mash out of stuns.** `AIController` never presses Jump while held, so every bot
+  eats the full duration and a human does not. That is a real asymmetry against
+  `CLAUDE.md` § 4's "a bot presses the same buttons a human does".
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

@@ -589,5 +589,81 @@ namespace TumbangPreso.Core
         /// ⚠ IT LIVES ON THE MOTOR, NOT ON THE HAZARD, so every hazard present and future
         /// respects one window rather than each keeping its own.</summary>
         public const float TripGraceAfterGetUp = 1.20f;
+
+        // -------------------------------------------------------------------
+        // § MASHING OUT OF AN ABILITY STUN
+        //
+        // ⚠️⚠️ THIS APPLIES TO ABILITY STUNS ONLY AND DELIBERATELY NOT TO THE TAYA'S TAG.
+        // 🧑 2026-08-26: *"for abilities that freeze or stun enmies ... i want them to go to TPP
+        // and to have a button mashing thing to get unstunned or unfrozen (same as when u trip)
+        // but maybe diff UI and effect"*. The sentence names abilities, and the distinction is
+        // load-bearing rather than a narrow reading: `TagStunTime` is 5.0 s and the tag is the
+        // ONE scoring verb a defender has (`docs/VISION.md` § 4). Letting an attacker hammer out
+        // of it would take the single thing the taya can do and halve it, in the mode aimed at a
+        // bracket. A tag is answered by not being caught.
+        //
+        // ⚠️ SO THE TWO STATUSES NOW READ DIFFERENTLY ON PURPOSE, WHICH IS THE WHOLE POINT OF
+        // SPLITTING THEM. A tag drains the body's colour and cannot be fought (§ THE CAUGHT MARK
+        // in `Toon.shader`). An ability stun coats the body in the caster's ELEMENT and can be.
+        // One of them is a rule, the other is a fight.
+        //
+        // ⚠️ IT REUSES `MashCooldown`, NOT A SECOND RATE CAP. The 10 Hz anti-turbo bound is the
+        // reason the trip mash is fair against a macro, and there is no argument for a different
+        // ceiling here: it is the same hand on the same key.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// How many accepted presses break a stun, when the ability does not say otherwise.
+        ///
+        /// ⚠️⚠️ THE COST IS PER ABILITY, NOT ONE GLOBAL SLICE, AND THAT WAS ASKED FOR DIRECTLY.
+        /// 🧑 2026-08-26: *"maybe chaneg the amt needed to be button mash for each skill? make it
+        /// dependent on how hard the skill is supposed to hit"*. So the tuning knob is a PRESS
+        /// COUNT that each ability declares, and the seconds a press buys are DERIVED from it:
+        ///
+        ///     perPress = (stunTotal - MinStunDown) / breakPresses
+        ///
+        /// ⚠️ IT IS EXPRESSED AS PRESSES RATHER THAN AS SECONDS-PER-PRESS BECAUSE PRESSES ARE
+        /// THE THING BEING BALANCED. "Nemu's phase grab takes four presses, Cheska's nova takes
+        /// nine" is a sentence somebody can hold in their head and tune against. A table of
+        /// per-press durations says the same thing in units nobody experiences, and it silently
+        /// changes meaning whenever a stun's DURATION is retuned: the same 0.30 buys half as
+        /// much of a 6 s stun as of a 3 s one. Deriving from the total keeps a press count
+        /// meaning the same thing whatever the duration is.
+        ///
+        /// ⚠️ 6 IS THE MIDDLE OF THE RANGE, NOT A CEILING. `Hero_Strike_Balance.md` carries the
+        /// per-ability numbers; light staggers should sit at 3 or 4 and an ultimate's hold at 9
+        /// or more. This constant is only what an ability that never said gets.
+        /// </summary>
+        public const int StunBreakPressesDefault = 6;
+
+        /// <summary>
+        /// The bounds a per-ability press count is clamped into.
+        ///
+        /// ⚠️⚠️ THE FLOOR EXISTS SO A STUN CANNOT BE TAPPED OFF AND THE CEILING SO IT CANNOT
+        /// BECOME UNANSWERABLE. At the 10 Hz `MashCooldown`, 2 presses is 0.2 s of input, which
+        /// is inside the reaction time of noticing you were stunned at all: that is not a fight,
+        /// it is a formality. 14 presses is 1.4 s of sustained hammering, which is already longer
+        /// than the perfectly answered trip and is as far as this should ever go before the
+        /// honest answer is a longer `MinStunDown` instead.
+        ///
+        /// ⚠️ CLAMPED RATHER THAN ASSERTED, deliberately. A kit author typing 0 should get a
+        /// playable stun and a balance review, not a division by zero in the middle of a match.
+        /// </summary>
+        public const int StunBreakPressesMin = 3;
+
+        public const int StunBreakPressesMax = 14;
+
+        /// <summary>The shortest an ability stun can be made by mashing perfectly.
+        ///
+        /// ⚠⚠ IT IS A FLOOR AND IT IS WHAT KEEPS A COOLDOWN WORTH SPENDING. Without one, a
+        /// player with fast hands would clear a stun in three presses and every control ability
+        /// in Hero Strike would stop being a control ability. 1.20 s is long enough that the
+        /// caster still gets the opening they paid for and short enough that the victim is not
+        /// spectating. It is the same argument `MinTripDown` makes, at a higher number because
+        /// the thing being escaped cost somebody a cooldown.
+        ///
+        /// ⚠ AND IT IS ABOVE `Balance.MashCooldown` BY MORE THAN AN ORDER OF MAGNITUDE, so the
+        /// floor can never be reached by a single lucky press inside one frame's window.</summary>
+        public const float MinStunDown = 1.20f;
     }
 }

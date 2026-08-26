@@ -285,7 +285,10 @@ namespace TumbangPreso.Abilities
                                 directlyHit.Add(p.PlayerSlot);
                                 Vector3 launch = forward * 8.0f + Vector3.up * 10.0f;
                                 p.ApplyImpulse(launch);
-                                p.ApplyStagger(2.2f);
+                                // ⚠️ 8. An ultimate, one step under Cheska because the
+                                // fissure knocks down as well as holding, so the victim is
+                                // already paying twice.
+                                p.ApplyStagger(2.2f, StunElement.Stone, 8);
                                 DizzyStars.Attach(p.transform, 2.2f, UiTheme.HeroEarthBright);
                                 ComicPopup.Bonk(p.transform.position);
                                 Visual.HitFeel.Land(p, Visual.HitFeel.Weight.Ultimate,

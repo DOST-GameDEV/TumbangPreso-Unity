@@ -1040,7 +1040,11 @@ namespace TumbangPreso.Abilities
 
                     if (Vector3.Distance(transform.position, targetPos) < 0.9f)
                     {
-                        _target.ApplyStagger(1.8f);
+                        // ⚠️ 6, THE DEFAULT, AND DELIBERATELY UNREMARKABLE. The
+                        // poltergeist is the middle of the range this scale is measured
+                        // against: heavier than Sean shrugging off a burn, lighter than
+                        // standing inside a nova.
+                        _target.ApplyStagger(1.8f, StunElement.Void, 6);
                         _target.ApplyImpulse(Random.onUnitSphere * 4.0f);
                         DizzyStars.Attach(_target.transform, 1.8f, UiTheme.HeroSpiritBright);
                         ComicPopup.Boo(_target.transform.position);
@@ -2070,7 +2074,10 @@ namespace TumbangPreso.Abilities
                     diff.y = 0.0f;
                     if (diff.magnitude <= radius)
                     {
-                        p.ApplyStagger(2.0f);
+                        // ⚠️ 7. Zack's Thunderstrike is an ultimate, but a shock locks
+                        // rather than encases: it is the one element in `StunCoat` drawn almost
+                        // entirely on the rim, and the escape is priced to match.
+                        p.ApplyStagger(2.0f, StunElement.Shock, 7);
                         p.ApplyImpulse((diff.sqrMagnitude > 0.01f ? diff.normalized : Vector3.forward) * 12.0f + Vector3.up * 3.5f);
                         DizzyStars.Attach(p.transform, 2.0f, UiTheme.HeroElectricBright);
                     }
@@ -2093,6 +2100,31 @@ namespace TumbangPreso.Abilities
         /// ⚠️ THE DEFAULT IS `Fire` SO THE ENUM IS ADDITIVE. Every existing call keeps exactly
         /// the look it had unless it opts into another one.
         /// </summary>
+        /// <summary>
+        /// What an explosion of a given style leaves ON the people it catches.
+        ///
+        /// ⚠️⚠️ IT IS A MAP AND NOT A FIELD ON THE ENUM BECAUSE THE TWO ANSWER DIFFERENT
+        /// QUESTIONS. `ExplosionStyle` says how the blast is DRAWN; `StunElement` says how the
+        /// victim is drawn and whether they can fight out. They agree today for every style,
+        /// and the day a style wants a blast that leaves nothing behind, this is the one line
+        /// that changes rather than the enum every caller names.
+        /// </summary>
+        private static StunElement ElementForStyle(ExplosionStyle style)
+        {
+            switch (style)
+            {
+                case ExplosionStyle.Quake: return StunElement.Stone;
+                case ExplosionStyle.Frost: return StunElement.Ice;
+
+                // ⚠️ THE SLIPPER IS `None` ON PURPOSE. It is "the joke rather than an
+                // ultimate" in this enum's own words, and a thrown tsinelas that encased
+                // somebody would be the single least readable thing in the game.
+                case ExplosionStyle.Slipper: return StunElement.None;
+
+                default: return StunElement.Fire;
+            }
+        }
+
         public enum ExplosionStyle
         {
             /// <summary>Sean. A ball of flame, embers, a burnt splat on the road.</summary>
@@ -2343,7 +2375,16 @@ namespace TumbangPreso.Abilities
                     p.ApplyImpulse(push);
                     if (p.PlayerSlot != sourceSlot && stunTime > 0.0f)
                     {
-                        p.ApplyStagger(stunTime);
+                        // ⚠️ THE ELEMENT COMES FROM THE STYLE THE CALLER ALREADY PASSED,
+                        // which is why this needed no new parameter. `ExplosionStyle` is
+                        // already the caller saying what its blast is MADE OF, and that is
+                        // exactly the question `StunElement` asks. Reading it here means every
+                        // present and future explosion is wired the day it is written.
+                        //
+                        // ⚠️ AND A SUB-FLOOR `stunTime` IS FORCED BACK TO `None` INSIDE
+                        // `ApplyStagger`, so the small slipper blast does not dress as a hold.
+                        p.ApplyStagger(stunTime, ElementForStyle(style),
+                                       Balance.StunBreakPressesDefault);
                         DizzyStars.Attach(p.transform, stunTime, UiTheme.HeroFireBright);
                     }
                 }

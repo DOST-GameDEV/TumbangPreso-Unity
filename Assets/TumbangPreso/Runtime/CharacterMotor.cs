@@ -447,6 +447,15 @@ namespace TumbangPreso
             // added, so `InputMapAndAbilityTests`' one-control-one-action rule is untouched.
             if (_tripLeft > 0.0f && Intent.JustPressed(Verb.Jump)) MashRecover();
 
+            // ⚠️ THE SAME KEY ANSWERS AN ELEMENT STUN, AND THE ORDER MATTERS. A body that is
+            // both tripped and stunned is handled by the line above, which already clears both;
+            // `MashOutOfStun` returns early on a live trip rather than racing it, so one press
+            // can never be spent twice. Jump is meaningless while stunned for exactly the reason
+            // it is meaningless face down, so this takes nothing away and needs no teaching, and
+            // no new binding means `InputMapAndAbilityTests`' one-control-one-action rule is
+            // untouched.
+            if (_stunElement != StunElement.None && Intent.JustPressed(Verb.Jump)) MashOutOfStun();
+
             // ⚠️⚠️ THE INTENT SNAPSHOT IS TAKEN HERE, AT THE END OF THE AUTHORITATIVE STEP, AND
             // NOWHERE ELSE. `JustPressed` and `JustReleased` are a diff against it, so whoever
             // takes it decides which readers can still see a press edge. Both producers used to
@@ -733,6 +742,13 @@ namespace TumbangPreso
         {
             _stunLeft = 0.0f;
             _stunTotal = 0.0f;
+
+            // ⚠️ THE ELEMENT GOES WITH IT. Leaving it set holds the coat, the vignette and the
+            // TPP swing on a body that is free to move, and the next stun would inherit a
+            // press count from whatever last stunned this seat.
+            _stunElement = StunElement.None;
+            _stunBreakPresses = Balance.StunBreakPressesDefault;
+            _stunMashPresses = 0;
         }
 
         public void ClearTrip()
@@ -810,14 +826,121 @@ namespace TumbangPreso
         /// <summary>⚠️ Max(), NEVER additive. That is the entire bound on a stun chain in a
         /// 1-vs-3 game.</summary>
         public void ApplyStagger(float duration)
+            => ApplyStagger(duration, StunElement.None, Balance.StunBreakPressesDefault);
+
+        /// <summary>
+        /// § THE ELEMENT STUN. A stagger that names what did it and what it costs to break.
+        ///
+        /// ⚠️⚠️ THE ELEMENT IS WHAT MAKES THE STUN MASHABLE, NOT THE DURATION. 🧑 2026-08-26:
+        /// *"for abilities that freeze or stun enmies ... i want them to look frozen or have the
+        /// element cover them when stunned"* and *"a button mashing thing to get unstunned or
+        /// unfrozen (same as when u trip) but maybe diff UI and effect"*.
+        ///
+        /// `StunElement.None` is the taya's tag and anything else that is a RULE rather than a
+        /// fight, and it stays unmashable: `Balance.TagStunTime` is 5.0 s and the tag is the one
+        /// scoring verb a defender has. See § MASHING OUT OF AN ABILITY STUN in `Balance` for the
+        /// whole argument. Reading mashability off the duration instead would have made the tag
+        /// escapable the moment somebody tuned an ability to 5 s.
+        ///
+        /// ⚠️ THE STRONGER STUN WINS THE ELEMENT, not the most recent one. Two abilities landing
+        /// in the same window is a `Max()` on the duration already; letting the shorter one
+        /// repaint the body would show a victim coated in an element that is not what is holding
+        /// them. The press count travels with it for the same reason.
+        /// </summary>
+        public void ApplyStagger(float duration, StunElement element, int breakPresses)
         {
             if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+
+            // ⚠️⚠️ A STAGGER SHORTER THAN THE MASH FLOOR IS NOT A HOLD AND MUST NOT DRESS AS ONE.
+            // Most `ApplyStagger` calls in the kits are 0.2 to 0.5 s knockback hitches, and at
+            // those lengths `CanMashOutOfStun` is false the whole time: the break card would
+            // appear reading BREAKING FREE, the camera would swing to third person and back, and
+            // the body would flash an element coat, all inside a third of a second and several
+            // times a round. That is not feedback, it is strobing.
+            //
+            // ⚠️ SO THE FLOOR IS THE DEFINITION. `Balance.MinStunDown` is already the part of a
+            // stun a mash cannot buy; a stun that is entirely inside it has nothing to sell, so
+            // it is a stagger and it is drawn as one. Kits therefore do not each need to decide
+            // whether their number is big enough, which is a judgement that would drift the
+            // moment somebody retuned a duration.
+            if (duration <= Balance.MinStunDown) element = StunElement.None;
+
+            bool wins = duration >= _stunLeft;
 
             _stunLeft = Combat.ApplyStagger(_stunLeft, duration);
 
             // The bar's denominator follows the same Max: a short stun landing inside a longer
             // one must not rescale the bar and make the remaining time look like it grew.
             _stunTotal = Mathf.Max(_stunTotal, _stunLeft);
+
+            if (!wins) return;
+
+            _stunElement = element;
+            _stunBreakPresses = breakPresses;
+            _stunMashPresses = 0;
+        }
+
+        private StunElement _stunElement = StunElement.None;
+        private int _stunBreakPresses = Balance.StunBreakPressesDefault;
+        private int _stunMashPresses;
+        private float _lastStunMashTime = -99.0f;
+
+        /// <summary>What is holding this body, for the coat, the vignette and the card.</summary>
+        public StunElement StunElement => _stunElement;
+
+        /// <summary>Accepted presses against the current stun, so the card can show it filling.</summary>
+        public int StunMashPresses => _stunMashPresses;
+
+        /// <summary>How many presses this stun was declared to take.</summary>
+        public int StunBreakPresses => _stunBreakPresses;
+
+        /// <summary>
+        /// True while hammering buys something.
+        ///
+        /// ⚠️ IT GOES FALSE AT THE FLOOR, exactly as `CanMashUp` does, and for the reason that
+        /// property records: a prompt that keeps demanding presses it will not honour teaches
+        /// the player that mashing does not work.
+        /// </summary>
+        public bool CanMashOutOfStun
+            => _stunElement != StunElement.None && _stunLeft > Balance.MinStunDown;
+
+        /// <summary>
+        /// One press against an element stun.
+        ///
+        /// ⚠️ IT DOES NOT TOUCH `_tripLeft`, WHICH IS THE MIRROR OF THE TRAP `MashRecover`
+        /// CARRIES. There, shortening the trip without the stun left a player standing and
+        /// unable to act; here, shortening the stun without the trip would stand somebody up
+        /// mid-knockdown. A body that is BOTH tripped and element-stunned is answered by the
+        /// trip mash, which already clears both, so this returns early rather than racing it.
+        /// </summary>
+        public bool MashOutOfStun()
+        {
+            if (_stunElement == StunElement.None) return false;
+            if (_stunLeft <= 0.0f) return false;
+            if (_tripLeft > 0.0f) return false;
+
+            float since = Time.time - _lastStunMashTime;
+            float before = _stunLeft;
+            float after = Combat.MashOutOfStun(_stunLeft, _stunTotal, _stunBreakPresses,
+                                               since, out bool accepted);
+            if (!accepted) return false;
+
+            _lastStunMashTime = Time.time;
+            _stunMashPresses++;
+            _stunLeft = after;
+
+            // ⚠️⚠️ THE FLOOR IS LEFT TO RUN DOWN AND IS NOT CLEARED HERE. Releasing the body the
+            // moment the meter fills would put a perfectly answered 3.0 s stun at **0.6 s**, six
+            // presses at the 10 Hz cap and nothing else, which is not a control ability any more
+            // and refunds the cooldown that bought it. `MinStunDown` is the part of the stun the
+            // mash CANNOT buy, exactly as `MinTripDown` is for a fall, and the honest total is
+            // the mash plus the floor: about **1.7 s** against 3.0 unanswered, because the clock
+            // is draining underneath the presses the whole time.
+            //
+            // ⚠️ AND THAT LAST 1.2 s IS WHERE THE ELEMENT COMES OFF. It is the shatter, the same
+            // way `MinTripDown` is the get-up clip: a window with a name and a picture, not dead
+            // time. `CanMashOutOfStun` goes false at its start so the card stops asking.
+            return before - after > 0.0f;
         }
 
         public void ApplyImpulse(Vector3 impulse)
@@ -899,7 +1022,13 @@ namespace TumbangPreso
             if (_stunLeft <= 0.0f) return;
 
             _stunLeft = Mathf.Max(0.0f, _stunLeft - Time.deltaTime);
-            if (_stunLeft <= 0.0f) _stunTotal = 0.0f;
+
+            // ⚠️ THROUGH `ClearStun`, NOT BY ZEROING `_stunTotal` HERE. A stun now carries an
+            // element and a press count as well as a clock, and this line used to reset one of
+            // the three. The leftovers are invisible until the NEXT stun inherits them: a body
+            // tagged after being frozen would come up wearing ice and offering a mash prompt
+            // against the taya's tag, which is the one stun that must not be escapable.
+            if (_stunLeft <= 0.0f) ClearStun();
         }
     }
 }

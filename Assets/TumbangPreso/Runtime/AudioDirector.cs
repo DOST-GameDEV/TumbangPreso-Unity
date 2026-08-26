@@ -145,6 +145,47 @@ namespace TumbangPreso
             => PlayAtVaried(id, position, 1.0f, 1.0f, 1.0f);
 
         /// <summary>
+        /// The clip and its authored mix level, for a caller that has to drive its own
+        /// <see cref="AudioSource"/> rather than fire a one-shot.
+        ///
+        /// ⚠️⚠️ THIS EXISTS FOR SOUNDS THAT MOVE, AND THERE IS EXACTLY ONE SO FAR. `PlayAtVaried`
+        /// parks a pooled voice at a FIXED position and plays it there; that is right for an
+        /// impact, which happens at a point, and wrong for the LRT consist, which travels 96 m
+        /// across the map while its sound is playing. A one-shot fired at the train's position
+        /// when it entered stayed where it was fired, so the pass never got nearer or further
+        /// away. 🧑 2026-08-26: *"make it feel like its getting farther"*.
+        ///
+        /// ⚠️ THE MIX LEVEL COMES OUT WITH THE CLIP, AND THE CALLER MUST APPLY IT. Returning only
+        /// the clip would route a sound around the authored mix and the player's SFX slider,
+        /// which is the exact fault the note in `PlayAtVaried` records being fixed. Multiply by
+        /// this AND by <see cref="SfxVolume"/>.
+        /// </summary>
+        public bool TryGetClip(string id, out AudioClip clip, out float mixLevel)
+        {
+            clip = null;
+            mixLevel = 0.0f;
+
+            if (!_cues.TryGetValue(id, out var cue) || cue.Clip == null)
+            {
+                Debug.LogWarning($"[Audio] no cue registered for '{id}'.");
+                return false;
+            }
+
+            // ⚠️ IT COUNTS AS PLAYED. `WarnUnplayedCues` exists to catch a cue that is declared
+            // and never fired; a cue driven through here is fired, just not by this class, and
+            // leaving the flag alone would report the train's own sound as dead every run.
+            cue.EverPlayed = true;
+            _cues[id] = cue;
+
+            clip = cue.Clip;
+            mixLevel = cue.Volume;
+            return true;
+        }
+
+        /// <summary>The player's SFX slider, for a caller driving its own source.</summary>
+        public float SfxVolume => SfxScale();
+
+        /// <summary>
         /// Plays a world cue with a small pitch window. Repeated slippers, footsteps and
         /// impacts otherwise expose that they are the exact same recording within seconds.
         /// The volume multiplier is intentionally clamped: this is expression inside the

@@ -123,7 +123,12 @@ namespace TumbangPreso.Abilities
                             Vector3 hitForce = (diff.sqrMagnitude > 0.01f ? diff.normalized : ctx.Forward) * 15.0f;
                             hitForce.y = 4.5f;
                             p.ApplyImpulse(hitForce);
-                            p.ApplyStagger(1.5f);
+                            // ⚠️ 4, WHICH IS NEAR THE FLOOR ON PURPOSE. This is a SKILL on
+                            // a short cooldown, not an ultimate: it should interrupt a run and
+                            // be shrugged off, and a burn nobody can shake is a different
+                            // ability. The 1.5 s duration leaves only 0.3 s of mashable slack
+                            // above `Balance.MinStunDown`, so four presses is already brisk.
+                            p.ApplyStagger(1.5f, StunElement.Fire, 4);
                             // ⚠️ A DASH THROUGH THREE PLAYERS USED TO PRINT THREE "BAM!"s
                             // ON TOP OF ITS OWN "ROCKET!". The stars and the sound already
                             // confirm each hit.

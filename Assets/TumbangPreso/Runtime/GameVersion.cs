@@ -30,7 +30,7 @@ namespace TumbangPreso
         /// and must be folded into the theme when that lands.</summary>
         private const int CaptionSize = 14;
 
-        /// <summary>"v4.68" — what actually goes on screen.</summary>
+        /// <summary>"v4.72" is what goes on screen. Reads `bundleVersion`, so it cannot drift.</summary>
         public static string DisplayString => "v" + Value;
 
         /// <summary>

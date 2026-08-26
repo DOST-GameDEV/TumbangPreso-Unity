@@ -179,7 +179,12 @@ namespace TumbangPreso.Abilities
                         diff.y = 0.0f;
                         if (diff.magnitude <= 4.6f)
                         {
-                            p.ApplyStagger(2.5f);
+                            // ⚠️ 9 PRESSES, THE MOST IN THE GAME. Per-skill mash cost was
+                            // asked for as "dependent on how hard the skill is supposed to hit",
+                            // and this is an ULTIMATE that freezes everyone it catches. It is
+                            // also the one ability whose fiction and whose element are the same
+                            // word, so if any stun should read as being encased, it is this.
+                            p.ApplyStagger(2.5f, StunElement.Ice, 9);
                             p.ApplyImpulse(diff.normalized * 8.5f + Vector3.up * 2.5f);
                             // ⚠️⚠️ NO PER-VICTIM CALLOUT. Three frozen players used to mean
                             // three FREEZE callouts stacked on top of the nova's own, which is

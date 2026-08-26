@@ -30,7 +30,6 @@ namespace TumbangPreso
         private Vector3 _mark;
         private float _restoreProtectionLeft;
         private GameObject _downBeacon;
-        private Light _downBeaconLight;
         private GameObject _protectionShell;
 
         public int SkinIndex { get => _skinIndex; set => _skinIndex = value; }
@@ -322,49 +321,140 @@ namespace TumbangPreso
             BuildDownBeacon();
         }
 
+        /// <summary>
+        /// § THE DOWNED READ. What marks a toppled can, now that the beacon is gone.
+        ///
+        /// ⚠️⚠️ THERE WAS A RED BEACON HERE AND IT WAS DELETED ON REPORT. 🧑 2026-08-26, with the
+        /// frame: *"that red line, thats red beacon when lata is down, that looks bad ... the
+        /// purpose of it is to put emphasis on lata being down but its shit"*, and the shape of
+        /// the replacement in the same message: *"without putting a fkn beacon on it or covering
+        /// the lata completley with some effect"*.
+        ///
+        /// ⚠️ WHAT IT WAS MADE OF IS WHY IT LOOKED LIKE THAT. A 4 m translucent `Cylinder`, a
+        /// second translucent `Cylinder` lying flat under it, and a point light over the pair:
+        /// the exact stack `docs/VISION.md` § 2 rule 3 names as the thing every effect in this
+        /// game used to be, and that § 19 spent a pass removing from the ability kits. Nothing
+        /// had come back to the objective itself. A 0.18 m wide vertical tube seen from standing
+        /// eye height across a 14 m arena is foreshortened into a RED LINE lying on the road,
+        /// which is what he photographed: it did not read as a column of light from any angle a
+        /// player actually has.
+        ///
+        /// ⚠️⚠️ AND THE GAME ALREADY SAID "LATA DOWN" SIX OTHER TIMES. The world popup at the can
+        /// (`OnKnocked` below), the centre alert, the bottom-right card title, the objective
+        /// line under it, the score toast and the crosshair all fire off the same state. The
+        /// problem was never that the message was too quiet to hear; it was that the seventh
+        /// copy was a light in the middle of the arena. Emphasis is not repetition.
+        ///
+        /// ⚠️ SO THE CAN IS THE SIGNAL, NOT SOMETHING PARKED NEXT TO IT. Two parts, deliberately
+        /// built two different ways, per § 19's rule that construction is the channel:
+        ///
+        ///   * a RIM PULSE on the can's own renderers, which costs no floor area at all and
+        ///     cannot cover the object because it IS the object's silhouette. It reuses the
+        ///     `_RimStrength` / `_RimColor` path `Slipper` already drives for the landed
+        ///     highlight, so it is a property block on the existing mesh rather than new
+        ///     geometry;
+        ///   * a COLLAR at the foot, which is an annulus with an open middle, so the can stays
+        ///     visible through it. It is what finds the can when a body is standing in front of
+        ///     it. `VfxShapes.Collar`, the § 19 builder, not a flat cylinder.
+        ///
+        /// ⚠️ 0.95 m OF RADIUS IS 2.8 m², WHICH IS 1.4 PER CENT OF THE 196 m² BOX. The old flare
+        /// was 1.35 and solid. `docs/VISION.md` § 2 rule 1 puts a SKILL at 1.8 to 2.5 m; the
+        /// objective marker has no business being larger than a skill, and an annulus spends a
+        /// fraction of even this on actual pixels.
+        /// </summary>
         private void BuildDownBeacon()
         {
             if (_downBeacon != null) return;
 
-            _downBeacon = new GameObject("LataDownBeacon");
+            _downBeacon = new GameObject("LataDownMark");
             _downBeacon.transform.SetParent(transform, false);
 
-            var shaft = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            shaft.name = "DownShaft";
-            shaft.transform.SetParent(_downBeacon.transform, false);
-            shaft.transform.localPosition = new Vector3(0.0f, 2.0f, 0.0f);
-            shaft.transform.localScale = new Vector3(0.18f, 2.0f, 0.18f);
-            Visual.VfxMaterial.Ghost(shaft.GetComponent<Renderer>(),
-                new Color(UI.UiTheme.Danger.r, UI.UiTheme.Danger.g, UI.UiTheme.Danger.b, 0.18f),
-                1.3f);
-            Visual.VfxMaterial.StripCollider(shaft);
+            // ⚠️ `Lay`, NOT `Stand`. A collar is a flat annulus and `Lay` scales X and Z while
+            // leaving Y at 1.0, which is exactly right for a ring on the floor and exactly wrong
+            // for anything with height. The old shaft is the reason that distinction is worth
+            // restating here.
+            var collar = Visual.VfxShapes.Lay(_downBeacon.transform, "DownCollar",
+                                              Visual.VfxShapes.Collar(24, 0.10f, 0.88f),
+                                              DownCollarRadius, 0.02f);
 
-            var flare = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            flare.name = "DownFlare";
-            flare.transform.SetParent(_downBeacon.transform, false);
-            flare.transform.localPosition = new Vector3(0.0f, 0.04f, 0.0f);
-            flare.transform.localScale = new Vector3(1.35f, 0.018f, 1.35f);
-            Visual.VfxMaterial.Ghost(flare.GetComponent<Renderer>(),
-                new Color(UI.UiTheme.Danger.r, UI.UiTheme.Danger.g, UI.UiTheme.Danger.b, 0.38f),
-                1.7f);
-            Visual.VfxMaterial.StripCollider(flare);
+            Visual.VfxMaterial.Ghost(collar.GetComponent<Renderer>(),
+                new Color(UI.UiTheme.Danger.r, UI.UiTheme.Danger.g, UI.UiTheme.Danger.b, 0.55f),
+                1.6f);
+            Visual.VfxMaterial.StripCollider(collar);
 
-            var lightGo = new GameObject("DownLight");
-            lightGo.transform.SetParent(_downBeacon.transform, false);
-            lightGo.transform.localPosition = new Vector3(0.0f, 0.7f, 0.0f);
-            _downBeaconLight = lightGo.AddComponent<Light>();
-            _downBeaconLight.type = LightType.Point;
-            _downBeaconLight.color = UI.UiTheme.Danger;
-            _downBeaconLight.range = 4.5f;
-            _downBeaconLight.intensity = 2.2f;
-            _downBeaconLight.shadows = LightShadows.None;
+            _downCollar = collar.transform;
         }
+
+        /// <summary>The foot marker's radius. See the note on <see cref="BuildDownBeacon"/>.</summary>
+        private const float DownCollarRadius = 0.95f;
+
+        private Transform _downCollar;
+
+        /// <summary>
+        /// The pulse, driven every frame the can is down.
+        ///
+        /// ⚠️ ONE SINE, TWO CONSUMERS. The collar breathes on it and the rim brightens on it, so
+        /// the two halves are visibly the same heartbeat rather than two effects that happen to
+        /// both be red. Deriving them from one number is what makes them read as one object
+        /// rather than as a marker plus a glow.
+        /// </summary>
+        private void DriveDownPulse()
+        {
+            if (_downBeacon == null) return;
+
+            float beat = Mathf.Sin(Time.unscaledTime * 5.0f) * 0.5f + 0.5f;
+
+            if (_downCollar != null)
+            {
+                float r = DownCollarRadius * (1.0f + beat * 0.07f);
+                _downCollar.localScale = new Vector3(r, 1.0f, r);
+            }
+
+            SetRim(Mathf.Lerp(0.35f, 1.0f, beat));
+        }
+
+        /// <summary>
+        /// ⚠️ THROUGH A PROPERTY BLOCK, WHICH IS WHAT KEEPS IT PER-CAN. The lata's material is a
+        /// shared skin asset; writing the rim into the material would light every can in the
+        /// project including the one posing on a menu. `Slipper` drives the landed highlight the
+        /// same way and for the same reason.
+        /// </summary>
+        private void SetRim(float strength)
+        {
+            if (_renderers == null) CacheRenderers();
+            if (_renderers.Length == 0) return;
+
+            _rimBlock ??= new MaterialPropertyBlock();
+
+            foreach (var r in _renderers)
+            {
+                if (r == null) continue;
+                r.GetPropertyBlock(_rimBlock);
+                _rimBlock.SetFloat(RimStrengthId, strength);
+                _rimBlock.SetColor(RimColorId, UI.UiTheme.Danger);
+                r.SetPropertyBlock(_rimBlock);
+            }
+        }
+
+        private void CacheRenderers()
+            => _renderers = GetComponentsInChildren<Renderer>(true);
+
+        private Renderer[] _renderers;
+        private MaterialPropertyBlock _rimBlock;
+
+        private static readonly int RimStrengthId = Shader.PropertyToID("_RimStrength");
+        private static readonly int RimColorId = Shader.PropertyToID("_RimColor");
 
         private void ClearDownBeacon()
         {
             if (_downBeacon != null) Destroy(_downBeacon);
             _downBeacon = null;
-            _downBeaconLight = null;
+            _downCollar = null;
+
+            // ⚠️ THE RIM IS PUT BACK, AND FORGETTING THIS LEAVES THE CAN GLOWING RED ALL ROUND.
+            // The property block persists on the renderer; nothing resets it when the object
+            // that set it goes away.
+            SetRim(0.0f);
         }
 
         private void BuildProtectionShell()
@@ -415,13 +505,11 @@ namespace TumbangPreso
                 if (_restoreProtectionLeft <= 0.0f) ClearProtectionShell();
             }
 
-            if (_downBeacon != null)
-            {
-                float pulse = Mathf.Sin(Time.time * 7.0f) * 0.5f + 0.5f;
-                _downBeacon.transform.localScale = Vector3.one * Mathf.Lerp(0.92f, 1.08f, pulse);
-                if (_downBeaconLight != null)
-                    _downBeaconLight.intensity = Mathf.Lerp(1.5f, 3.2f, pulse);
-            }
+            // ⚠️ THE WHOLE MARKER NO LONGER SCALES, ONLY THE COLLAR DOES. Scaling the parent
+            // scaled the shaft's HEIGHT along with everything else, which is part of why the old
+            // beacon swept about so much. `DriveDownPulse` breathes the ring and the rim off one
+            // sine and leaves the marker's own transform alone.
+            DriveDownPulse();
         }
 
         /// <summary>

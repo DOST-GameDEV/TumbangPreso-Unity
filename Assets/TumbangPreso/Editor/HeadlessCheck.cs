@@ -47,8 +47,19 @@ namespace TumbangPreso.EditorTools
                 // The rules core has to be reachable from Unity, not just from dotnet test.
                 // If the local package or its asmdef is misconfigured, this is where it shows.
                 Check(ref failures, "classic roster size", Roster.ClassicPeople.Count == 12);
-                Check(ref failures, "hero roster size", Roster.HeroPeople.Count == 5);
-                Check(ref failures, "all roster size", Roster.AllPeople.Count == 17);
+                // ⚠️⚠️ SIX AND 18, AND THESE READ 5 AND 17 FROM THE WITCH MERGE UNTIL 2026-08-26.
+                // `docs/TODO.md` § 21 merged Phaister as the sixth hero and updated `Roster`
+                // without updating the check that counts it, so `Checks.RunAll` had been failing
+                // on every launch since. It went unnoticed because the § 21 verification pass
+                // quoted Core, EditMode, PlayMode and `AbilityShowcaseProbe` and never ran this.
+                //
+                // ⚠️ THE NUMBERS ARE DERIVED FROM THE TWO LISTS, NOT RETYPED. A seventh hero
+                // would break these again for no reason a reader could act on; what this check
+                // is actually for is proving the rules package is REACHABLE from Unity at all
+                // (see the note above), so it asserts the relationship rather than the totals.
+                Check(ref failures, "hero roster size", Roster.HeroPeople.Count == 6);
+                Check(ref failures, "all roster size",
+                      Roster.AllPeople.Count == Roster.ClassicPeople.Count + Roster.HeroPeople.Count);
                 Check(ref failures, "cans", Roster.Cans.Count == 4);
                 Check(ref failures, "slippers", Roster.Slippers.Count == 4);
 

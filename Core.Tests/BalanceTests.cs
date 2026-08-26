@@ -294,6 +294,113 @@ namespace TumbangPreso.Core.Tests
         /// zero the hazard would cost nothing to whoever reacts first, and a hazard that can be
         /// answered for free is a hazard nobody has to route around.
         /// </summary>
+        /// <summary>
+        /// § MASHING OUT OF AN ABILITY STUN. The three properties that make the escape fair,
+        /// asserted rather than playtested, which is why the rules layer is engine-free.
+        /// </summary>
+        [Fact]
+        public void StunMash_ShortensAnAbilityStunButNeverCancelsIt()
+        {
+            float left = 3.0f;
+            for (int i = 0; i < 200; i++)
+                left = Combat.MashOutOfStun(left, 3.0f, Balance.StunBreakPressesDefault,
+                                            Balance.MashCooldown, out _);
+
+            Assert.Equal(Balance.MinStunDown, left, 3);
+            Assert.True(left > 0.0f,
+                        "an ability stun that mashing can cancel outright is not a control " +
+                        "ability, and the cooldown that bought it is refunded for free.");
+        }
+
+        /// <summary>
+        /// ⚠️ THE SAME PROPERTY THE TRIP MASH HAD TO LEARN: a press may never LENGTHEN the thing
+        /// it is answering. `Mash_NeverLengthensAFall` records the day `MashRecover` clamped up
+        /// to its floor and a player hammering the key pinned themselves on the road. This is
+        /// the identical shape of function, so it gets the identical guard from the start.
+        /// </summary>
+        [Fact]
+        public void StunMash_NeverLengthensAStun()
+        {
+            float[] starts =
+            {
+                5.0f, 3.0f, 1.5f, Balance.MinStunDown + 0.01f, Balance.MinStunDown,
+                Balance.MinStunDown * 0.5f, 0.05f, 0.001f
+            };
+
+            foreach (float start in starts)
+            {
+                float after = Combat.MashOutOfStun(start, start, Balance.StunBreakPressesDefault,
+                                                   Balance.MashCooldown, out _);
+
+                Assert.True(after <= start + 0.0001f,
+                            $"a press against {start:F3} s of stun returned {after:F3} s, " +
+                            "which is a press that made the stun longer.");
+            }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE RATE CAP IS THE ANTI-TURBO BOUND AND IT HAS TO HOLD HERE TOO. A press inside
+        /// `MashCooldown` buys nothing, so a macro cannot beat a hand. Asserted separately from
+        /// the trip because these are two functions and a fix to one does not reach the other.
+        /// </summary>
+        [Fact]
+        public void StunMash_RefusesPressesInsideTheRateCap()
+        {
+            float left = 3.0f;
+            float after = Combat.MashOutOfStun(left, 3.0f, Balance.StunBreakPressesDefault,
+                                               Balance.MashCooldown * 0.5f, out bool accepted);
+
+            Assert.False(accepted);
+            Assert.Equal(left, after, 5);
+        }
+
+        /// <summary>
+        /// The bound a player actually experiences, written down so a change to either constant
+        /// has to restate what it costs. See § MASHING OUT OF AN ABILITY STUN in `Balance`.
+        /// </summary>
+        [Fact]
+        public void StunMash_ClosesTheSlackInAKnownNumberOfPresses()
+        {
+            const float duration = 3.0f;
+
+            // ⚠️⚠️ THE PRESS COUNT IS THE TUNABLE AND THE SECONDS FOLLOW FROM IT, which is the
+            // property worth pinning: a stun retuned to a different DURATION still breaks in the
+            // number of presses its ability asked for. 🧑 asked for the cost to be per skill and
+            // "dependent on how hard the skill is supposed to hit", and that only stays true if
+            // the count is what survives a duration change.
+            foreach (int declared in new[] { 3, 6, 9, 14 })
+            {
+                foreach (float total in new[] { 2.0f, 3.0f, 5.0f })
+                {
+                    float left = total;
+                    int presses = 0;
+
+                    while (presses < 100)
+                    {
+                        left = Combat.MashOutOfStun(left, total, declared,
+                                                    Balance.MashCooldown, out bool ok);
+                        if (!ok) break;
+                        presses++;
+                        if (left <= Balance.MinStunDown + 0.0001f) break;
+                    }
+
+                    Assert.Equal(declared, presses);
+                }
+            }
+
+            // A declared count outside the bounds is clamped rather than trusted.
+            Assert.Equal(Combat.StunMashPerPress(duration, Balance.StunBreakPressesMin),
+                         Combat.StunMashPerPress(duration, 0), 5);
+            Assert.Equal(Combat.StunMashPerPress(duration, Balance.StunBreakPressesMax),
+                         Combat.StunMashPerPress(duration, 999), 5);
+
+            // And the floor is what a perfect mash actually reaches.
+            Assert.Equal(Balance.MinStunDown, Combat.FastestStunRecovery(duration), 3);
+
+            // A stun already shorter than the floor is left alone rather than extended to it.
+            Assert.Equal(0.5f, Combat.FastestStunRecovery(0.5f), 3);
+        }
+
         [Fact]
         public void Mash_ShortensATripButNeverCancelsIt()
         {

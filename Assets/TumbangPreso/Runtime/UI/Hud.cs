@@ -141,6 +141,12 @@ namespace TumbangPreso.UI
         private const float MashPopSeconds = 0.14f;
         private string _getUpShown = "";
 
+        // § THE STUN BREAK CARD. See `BuildStunBreakCard` for why it is pips and not a bar.
+        private Image _stunCard;
+        private Text _stunLabel;
+        private readonly List<Image> _stunPips = new List<Image>();
+        private string _stunShown = "";
+
         private Text _countdown;
         private float _countdownPop;
         private RectTransform _countdownRt;
@@ -862,6 +868,7 @@ namespace TumbangPreso.UI
             UpdateFrost(dt);
             UpdateIndicators();
             UpdateGetUpPrompt();
+            UpdateStunBreakPrompt();
             UpdatePickupPrompt();
 
             var carrier = _local.GetComponent<Carrier>();
@@ -1218,6 +1225,12 @@ namespace TumbangPreso.UI
 
             _lataCard.gameObject.SetActive(true);
 
+            // ⚠️ RE-FIT HERE, NOT ONLY AT BUILD TIME. The card is built while the HUD is being
+            // constructed, which is exactly when `preferredWidth` is least trustworthy; this is
+            // the first frame the card is actually on screen with a settled canvas scale. The
+            // call is guarded and returns on a string comparison after the first pass.
+            FitLataCard();
+
             if (_lataUprightShown != (lata.IsUpright ? 1 : 0))
             {
                 _lataUprightShown = lata.IsUpright ? 1 : 0;
@@ -1507,6 +1520,15 @@ namespace TumbangPreso.UI
         private static readonly int FrostCoverageId = Shader.PropertyToID("_Coverage");
         private static readonly int FrostAspectId = Shader.PropertyToID("_Aspect");
 
+        /// <summary>§ THE CAUGHT MARK, screen half. See `BuildFrostVignette`.</summary>
+        private static readonly int FrostTintId = Shader.PropertyToID("_FrostTint");
+
+        private static readonly int CrackColourId = Shader.PropertyToID("_CrackColor");
+
+        /// <summary>Which element the vignette is currently painted for, so the colours are
+        /// written on a change rather than every frame of every stun.</summary>
+        private StunElement _vignetteElement = StunElement.None;
+
         private void UpdateFrost(float dt)
         {
             if (_frostVignette == null) return;
@@ -1535,6 +1557,36 @@ namespace TumbangPreso.UI
             if (!_frostVignette.enabled) return;
 
             _frostMaterial.SetFloat(FrostCoverageId, _frostCoverage);
+
+            // ⚠️⚠️ THE VIGNETTE IS THE ELEMENT'S COLOUR, AND THIS IS THE SECOND HALF OF THE
+            // REQUEST. 🧑 2026-08-26: *"i want their ui to also have the frozen or stunned effect
+            // (depending on the element) / atleast until they button mash and then theyre out of
+            // it"*. The body half is `CharacterVisual.ProcessFrost`; this is what the victim
+            // sees, and both read the SAME `StunCoat` row so the player being held and the
+            // players holding them are never told two different things.
+            //
+            // ⚠️ `StunElement.None` FALLS THROUGH TO THE CAUGHT COLOURS SET IN
+            // `BuildFrostVignette`, which is the tag. Ink with a `Defense` blue crack, matching
+            // the drain on the body. Only an ability repaints it.
+            var stunElement = _local != null ? _local.StunElement : StunElement.None;
+
+            if (stunElement != _vignetteElement)
+            {
+                _vignetteElement = stunElement;
+
+                if (stunElement == StunElement.None)
+                {
+                    _frostMaterial.SetColor(FrostTintId,
+                        new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 1.0f));
+                    _frostMaterial.SetColor(CrackColourId, UiTheme.Defense);
+                }
+                else
+                {
+                    var coat = Visual.StunCoat.For(stunElement);
+                    _frostMaterial.SetColor(FrostTintId, coat.Screen);
+                    _frostMaterial.SetColor(CrackColourId, coat.Rim);
+                }
+            }
 
             // ⚠️ THE SHADER CANNOT WORK THIS OUT FOR ITSELF. UV is 0..1 on both axes whatever
             // the window's shape, so without the real ratio the frost band is ~1.8x thicker in
@@ -1755,6 +1807,7 @@ namespace TumbangPreso.UI
             BuildClock();
             BuildLataCard();
             BuildGetUpCard();
+            BuildStunBreakCard();
             BuildStatusStacks();
             BuildHeroDeck();
             _inspect = AbilityInspectPanel.Create(_root);
@@ -1768,7 +1821,49 @@ namespace TumbangPreso.UI
             indicatorGo.transform.SetParent(transform, false);
             _indicators = indicatorGo.AddComponent<OffscreenIndicators>();
 
+            InstallDeclutter();
+
             if (GameLaunch.GuidedTutorial) StripToTrainingChrome();
+        }
+
+        /// <summary>
+        /// Register the elements that are positioned INDEPENDENTLY and can share a frame.
+        ///
+        /// ⚠️⚠️ THE LIST IS SHORT ON PURPOSE AND MOST OF THE HUD IS DELIBERATELY ABSENT.
+        /// He asked for that bound in the same breath as the feature: *"make sure it dont break
+        /// shit too / and touch shit that dont have the capability to stack on each other
+        /// already"*. Three groups are excluded and each for a stated reason:
+        ///
+        ///   * everything under `TopCentre` (the clock, the round line, the pressure line, the
+        ///     toast, the lata alert). They are rows of one `VerticalLayoutGroup` as of this
+        ///     session, so they cannot stack by construction. `HudDeclutter.Track` refuses them
+        ///     outright and logs if anybody adds one;
+        ///   * the corner cards (scoreboard, lata card, you-card, deck). They are anchored to
+        ///     four different screen corners and cannot reach each other at any shipped
+        ///     resolution. Registering them would spend work every frame proving that;
+        ///   * anything mutually exclusive with everything else, the countdown above all. It
+        ///     owns the middle of the screen for three seconds precisely because nothing is in
+        ///     play behind it.
+        ///
+        /// ⚠️ WHAT IS LEFT IS THE BOTTOM-CENTRE COLUMN AND THE TWO MASH CARDS, which are the
+        /// only absolutely placed elements in this HUD that genuinely contend. Order is priority:
+        /// the first never moves.
+        /// </summary>
+        private void InstallDeclutter()
+        {
+            var declutter = _root.gameObject.AddComponent<HudDeclutter>();
+
+            // The get-up card outranks everything below it: a player on the floor has one
+            // decision and this is it.
+            if (_getUpCard != null) declutter.Track(_getUpCard.rectTransform);
+            if (_stunCard != null) declutter.Track(_stunCard.rectTransform);
+
+            // ⚠️ THE VULNERABLE LINE OUTRANKS THE INSPECT HINT because one of them is worth
+            // five seconds and the other is a tutorial aside. If they ever meet again, the hint
+            // is the one that yields.
+            if (_vulnerable != null) declutter.Track(_vulnerable.rectTransform);
+            if (_readyPrompt != null) declutter.Track(_readyPrompt.rectTransform);
+            if (_inspectHint != null) declutter.Track(_inspectHint.rectTransform);
         }
 
         /// <summary>
@@ -1910,6 +2005,25 @@ namespace TumbangPreso.UI
             // HUD its own copy, so the coverage this canvas writes cannot leak into a second HUD
             // in a PlayMode test running beside it.
             _frostMaterial = new Material(shader) { hideFlags = HideFlags.DontSave };
+
+            // ⚠️⚠️ § THE CAUGHT MARK — THE SCREEN HALF, RECOLOURED OFF ICE ON 2026-08-26. The
+            // body half moved from `_FrostAmount` to `_CaughtAmount` (see `Toon.shader`) because
+            // Cheska's kit made a frozen body ambiguous, and the two halves have to agree or a
+            // tagged player watches an ICE vignette while everyone else watches them go grey.
+            //
+            // ⚠️ THE SHADER AND ITS CRACK PATTERN ARE KEPT ON PURPOSE, AND ONLY THE COLOUR
+            // MOVES. A pattern closing in from the edges of the screen is the right image for
+            // being held for five seconds; it was only ever ICE because it was tinted pale blue
+            // and called frost. In ink, with the taya's own `Defense` blue in the cracks, the
+            // same geometry reads as a grip rather than as rime, and it now matches the rim
+            // colour on the body so the victim and the spectators are told the same thing.
+            //
+            // ⚠️ SET HERE RATHER THAN AS SHADER DEFAULTS, because the defaults are what Cheska
+            // will want when her ice reaches for this shader. The tag is the caller that
+            // overrides; the asset stays icy.
+            _frostMaterial.SetColor(FrostTintId,
+                new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 1.0f));
+            _frostMaterial.SetColor(CrackColourId, UiTheme.Defense);
 
             _frostVignette = go.AddComponent<Image>();
             _frostVignette.material = _frostMaterial;
@@ -2218,13 +2332,20 @@ namespace TumbangPreso.UI
         /// how a cell ends up a few pixels short of the string it was sized for.
         /// </summary>
         private static float TopCentreColumnWidth(Text probe)
+            => TopCentreColumnWidth(probe, TopCentreLines());
+
+        /// <summary>
+        /// The same measurement against a caller's own line set, for a row in this column whose
+        /// strings and FONT SIZE are not the round line's. See the note in `FitTopCentre`.
+        /// </summary>
+        private static float TopCentreColumnWidth(Text probe, IEnumerable<string> lines)
         {
             if (probe == null) return TopCentreFloor;
 
             string keep = probe.text;
             float widest = 0.0f;
 
-            foreach (string line in TopCentreLines())
+            foreach (string line in lines)
             {
                 probe.text = line;
                 widest = Mathf.Max(widest, probe.preferredWidth);
@@ -2279,14 +2400,41 @@ namespace TumbangPreso.UI
             _fittedScale = scale;
 
             var rt = (RectTransform)_topCentre.transform;
-            rt.sizeDelta = new Vector2(TopCentreColumnWidth(_round), rt.sizeDelta.y);
+
+            // ⚠️⚠️ THE ALERT IS MEASURED THROUGH ITS OWN LABEL, AT 42 pt, AND THAT IS THE POINT
+            // OF MEASURING RATHER THAN GUESSING. `_lataAlert` became a row in this column (see
+            // `BuildFloatingText`) and `group.childControlWidth` hands every child the column's
+            // width, so a column sized only to the 20 pt round line would clamp a 42 pt string to
+            // roughly half what it needs. Running the alert's strings through `_round` would be
+            // the same error wearing a measurement: the width of a string is a property of the
+            // FONT SIZE, and these two rows do not share one.
+            float widest = TopCentreColumnWidth(_round);
+
+            if (_lataAlert != null)
+                widest = Mathf.Max(widest, TopCentreColumnWidth(_lataAlert, LataAlertLines));
+
+            rt.sizeDelta = new Vector2(widest, rt.sizeDelta.y);
         }
+
+        /// <summary>
+        /// Every string `UpdateLataCard` can put in the big centre alert.
+        ///
+        /// ⚠️ Keep this in step with `UpdateLataCard`, the same standing hazard `LataHintLines`
+        /// carries: a line added to the method and not to this list is a line the column was
+        /// never sized for.
+        /// </summary>
+        public static readonly string[] LataAlertLines =
+        {
+            "LATA DOWN",
+            "LATA DOWN  ·  RESET IT NOW",
+            "LATA DOWN  ·  RETRIEVE NOW",
+        };
 
         /// <summary>Bottom-right, at the .tscn's -396,-172 to -16,-64.</summary>
         private void BuildLataCard()
         {
             var card = WoodCard("LataCard", new Vector2(1.0f, 0.0f), new Vector2(-16, 64),
-                                380.0f, out _lataCard, sink: false);
+                                LataCardFloor, out _lataCard, sink: false);
 
             // ⚠️ 32 AND 34, FROM THE `HudCaption` AND `HudBody` VARIATIONS THE .tscn ASSIGNS
             // THESE TWO NODES. `ui_theme.gd`'s own note on those numbers is worth reading before
@@ -2302,7 +2450,75 @@ namespace TumbangPreso.UI
                                  TextAnchor.MiddleLeft);
             _lataHint.enabled = false;
 
+            // ⚠️⚠️ THIS CALL IS THE WHOLE OF § 9.5, AND UNTIL NOW NOTHING CALLED IT.
+            // `WidestLineWidth` was written, `LataHintLines` was written, both were documented in
+            // `docs/TODO.md` § 18 as the worked example of a card sized through its own label —
+            // and `BuildLataCard` still passed the authored `LataCardFloor` and stopped there.
+            // `grep WidestLineWidth` returned the definition and the prose and no call site. So
+            // the card shipped at a flat 380 while the longest line it can hold needs about 527,
+            // and because it is pinned to the RIGHT screen corner the 147 units of overflow went
+            // off the display rather than merely off the wood. 🧑 photographed it twice on
+            // 2026-08-26, reading `FETCH SLIPPER  ·  -5 / SEC`, which is the exact string § 18
+            // records as already fixed.
+            //
+            // ⚠️ THE TITLE ROW IS MEASURED TOO, NOT JUST THE HINT. They are two labels in one
+            // `WoodCard`, and a card sized to the wider of them is the only one that fits both.
+            // The title is the shorter today; measuring only the hint would make that an
+            // assumption nobody restates when a title gets longer.
+            FitLataCard();
+
             _lataCard.gameObject.SetActive(false);
+        }
+
+        /// <summary>Every string `UpdateLataCard` can put in the TITLE row. See
+        /// <see cref="LataHintLines"/> for the hint row and the reason both are lists.</summary>
+        public static readonly string[] LataTitleLines =
+        {
+            "LATA  ·  UPRIGHT",
+            "⚠  LATA DOWN  ⚠",
+        };
+
+        /// <summary>The authored width, which the fit below can only ever widen past.</summary>
+        public const float LataCardFloor = 380.0f;
+
+        private string _lataFittedLine;
+        private float _lataFittedScale = -1.0f;
+
+        /// <summary>
+        /// Size the lata card to the longest pair of lines it can ever hold.
+        ///
+        /// ⚠️⚠️ IT RE-MEASURES RATHER THAN MEASURING ONCE AT BUILD TIME, for the two reasons
+        /// `FitTopCentre` carries and which cost that fix a whole extra round trip: the font's
+        /// glyph metrics are not final while the HUD is still being constructed, so a cold
+        /// measurement lands far short; and `preferredWidth` comes from integer pixel metrics
+        /// divided by the canvas scale, so it moves about 14 per cent across the nine shipped
+        /// resolutions for one unchanged string.
+        ///
+        /// ⚠️ GUARDED, BECAUSE `UpdateLataCard` RUNS EVERY FRAME. Measuring thirteen strings
+        /// through two labels generates all their glyphs; doing that 60 times a second to get the
+        /// same answer is the per-frame HUD rebuild `CLAUDE.md` § 7.1 records costing the 6x
+        /// probe an eighth of its frames. The scale changes when the window moves monitors and
+        /// the line list never changes, so this runs about once a match.
+        /// </summary>
+        private void FitLataCard()
+        {
+            if (_lataCard == null || _lataHint == null || _lataLabel == null) return;
+
+            var canvas = _lataHint.canvas;
+            float scale = canvas != null ? canvas.scaleFactor : 1.0f;
+
+            // The sentinel is the hint label's own identity plus the scale, so the first call
+            // always measures and later ones only re-measure when the canvas rescales.
+            if (_lataFittedLine == "fitted" && Mathf.Approximately(scale, _lataFittedScale)) return;
+
+            _lataFittedLine = "fitted";
+            _lataFittedScale = scale;
+
+            float widest = Mathf.Max(WidestLineWidth(_lataHint, LataHintLines),
+                                     WidestLineWidth(_lataLabel, LataTitleLines));
+
+            var rt = _lataCard.rectTransform;
+            rt.sizeDelta = new Vector2(Mathf.Max(LataCardFloor, widest), rt.sizeDelta.y);
         }
 
         /// <summary>
@@ -2421,6 +2637,152 @@ namespace TumbangPreso.UI
             _getUpBarRt = backGo.GetComponent<RectTransform>();
 
             _getUpCard.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// § THE STUN BREAK CARD. What a player sees while an ability is holding them.
+        ///
+        /// ⚠️⚠️ IT IS PIPS, NOT A BAR, AND THAT IS THE WHOLE DESIGN RATHER THAN A RESKIN.
+        /// He asked on 2026-08-26 for the mash *"(same as when u trip) but maybe diff UI and
+        /// effect"*, and in the same breath for the cost to vary: *"maybe chaneg the amt needed
+        /// to be button mash for each skill? make it dependent on how hard the skill is supposed
+        /// to hit"*. Those two requests answer each other. A continuous bar deliberately HIDES
+        /// how many presses are left, because it is a ratio; one pip per required press shows the
+        /// number directly, so a player learns that one skill costs nine presses and another
+        /// costs four by being held by them, which is the only way anybody ever learns it.
+        ///
+        /// ⚠️ AND IT MAKES THE PER-SKILL TUNING LEGIBLE INSTEAD OF SECRET. `Balance`s
+        /// `StunBreakPressesDefault` note argues that presses are the right unit to balance in
+        /// because a person can hold them in their head. This is that argument carried through
+        /// to the screen: the thing being tuned is the thing being displayed.
+        ///
+        /// ⚠️⚠️ HIGHER THAN THE GET-UP CARD, AND THEY CAN BOTH BE ON SCREEN. A body that is
+        /// tripped AND element-stunned is possible, and `CharacterMotor.MashOutOfStun` refuses
+        /// while a trip is live so the get-up card is the one that matters then. Two cards at
+        /// one offset is the top-centre collision this same session had to fix (section 18 in
+        /// `docs/TODO.md`); 150 and 300 cannot overlap at these heights.
+        ///
+        /// ⚠️ THE PIP COUNT IS BUILT TO `Balance.StunBreakPressesMax` AND HIDDEN DOWN, never
+        /// rebuilt per stun. Instantiating fourteen images at the moment somebody is frozen is a
+        /// hitch on the exact frame the player most needs the screen to respond.
+        /// </summary>
+        private void BuildStunBreakCard()
+        {
+            var group = WoodCard("StunBreakCard", new Vector2(0.5f, 0.0f),
+                                 new Vector2(0.0f, 300.0f), 520.0f, out _stunCard,
+                                 sink: false, border: UiTheme.Highlight);
+
+            group.childAlignment = TextAnchor.MiddleCenter;
+
+            _stunLabel = HudLabel(group.transform, "StunBreakLabel", 30, UiTheme.Cream,
+                                  TextAnchor.MiddleCenter);
+            _stunLabel.text = "BREAK FREE";
+            _stunLabel.gameObject.AddComponent<LayoutElement>().minHeight = 40.0f;
+
+            var rowGo = new GameObject("StunPipRow", typeof(RectTransform));
+            rowGo.transform.SetParent(group.transform, false);
+
+            var row = rowGo.AddComponent<HorizontalLayoutGroup>();
+            row.childAlignment = TextAnchor.MiddleCenter;
+            row.childControlWidth = true;
+            row.childControlHeight = true;
+            row.childForceExpandWidth = false;
+            row.childForceExpandHeight = false;
+            row.spacing = 6.0f;
+
+            var rowBox = rowGo.AddComponent<LayoutElement>();
+            rowBox.minHeight = 26.0f;
+            rowBox.preferredHeight = 26.0f;
+
+            for (int i = 0; i < Balance.StunBreakPressesMax; i++)
+            {
+                var pipGo = new GameObject($"Pip{i}");
+                pipGo.transform.SetParent(rowGo.transform, false);
+
+                var pip = pipGo.AddComponent<Image>();
+                pip.sprite = GodotTheme.Plain(3);
+                pip.type = Image.Type.Sliced;
+                pip.raycastTarget = false;
+
+                var pipBox = pipGo.AddComponent<LayoutElement>();
+                pipBox.preferredWidth = 22.0f;
+                pipBox.minWidth = 22.0f;
+                pipBox.preferredHeight = 22.0f;
+                pipBox.minHeight = 22.0f;
+
+                _stunPips.Add(pip);
+            }
+
+            _stunCard.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// ⚠️ IT FOLLOWS `StunElement`, NOT `IsStunned`. The tayas tag is `StunElement.None`
+        /// and must not offer a prompt: it cannot be mashed out of, and a card asking for presses
+        /// it will not honour is the exact fault `CharacterMotor.CanMashUp`s own note records
+        /// teaching a player that mashing does not work. The tag keeps its countdown row in
+        /// `StatusStack` instead, which is the readout that suits a status only time can end.
+        /// </summary>
+        private void UpdateStunBreakPrompt()
+        {
+            if (_stunCard == null) return;
+
+            var element = _local != null ? _local.StunElement : StunElement.None;
+
+            if (_local == null || element == StunElement.None)
+            {
+                if (_stunCard.gameObject.activeSelf)
+                {
+                    _stunCard.gameObject.SetActive(false);
+                    _stunShown = "";
+                }
+                return;
+            }
+
+            if (!_stunCard.gameObject.activeSelf) _stunCard.gameObject.SetActive(true);
+
+            var coat = Visual.StunCoat.For(element);
+            bool buying = _local.CanMashOutOfStun;
+
+            // ⚠️ THE VERB IS THE ELEMENTS, WHICH IS WHY `StunCoat` CARRIES ONE. "BREAK FREE"
+            // over a body encased in ice says less than "SHATTER THE ICE", and the element is
+            // already being tracked through the stun for the coat, so naming it costs nothing.
+            string text = buying
+                ? coat.Verb + "  [" + KeyLabel("Jump") + "]"
+                : "BREAKING FREE";
+
+            // ⚠️ ONLY REBUILT WHEN IT CHANGES. A HUD string rebuilt every frame once cost the
+            // 6x behaviour probe an eighth of its frames (`CLAUDE.md` section 7.1), and this runs
+            // on every frame of every stun.
+            if (text != _stunShown)
+            {
+                _stunShown = text;
+                _stunLabel.text = text;
+                _stunLabel.color = buying ? UiTheme.Cream : UiTheme.Amber;
+            }
+
+            int need = Mathf.Clamp(_local.StunBreakPresses,
+                                   Balance.StunBreakPressesMin, Balance.StunBreakPressesMax);
+            int done = Mathf.Clamp(_local.StunMashPresses, 0, need);
+
+            for (int i = 0; i < _stunPips.Count; i++)
+            {
+                var pip = _stunPips[i];
+                if (pip == null) continue;
+
+                // Pips past what this stun costs are switched OFF, not dimmed. The row is meant
+                // to be counted at a glance, and fourteen shapes of which five matter is not a
+                // count, it is a puzzle.
+                bool used = i < need;
+                if (pip.gameObject.activeSelf != used) pip.gameObject.SetActive(used);
+                if (!used) continue;
+
+                // ⚠️ FILLED PIPS TAKE THE ELEMENTS RIM COLOUR, so the card and the body the
+                // player is now looking at in third person are obviously the same event.
+                pip.color = i < done
+                    ? coat.Rim
+                    : new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.55f);
+            }
         }
 
         private void BuildStatusStacks()
@@ -2545,16 +2907,44 @@ namespace TumbangPreso.UI
 
         private void BuildFloatingText()
         {
-            // Toast, top-centre under the clock, at the .tscn's +160.
-            _toast = HudLabel(_root, "ToastLabel", 28, UiTheme.Amber, TextAnchor.MiddleCenter);
-            Place(_toast.rectTransform, new Vector2(0.5f, 1.0f), new Vector2(0, -160),
-                  new Vector2(600, 44));
+            // ⚠️⚠️ THE TOAST AND THE ALERT ARE ROWS IN THE `TopCentre` COLUMN NOW, NOT LABELS
+            // PINNED AT AN OFFSET. 🧑 2026-08-26, with a screenshot of two strings drawn through
+            // each other: *"theres many cases of text going on top of each other"*.
+            //
+            // ⚠️ THE ARITHMETIC, BECAUSE IT IS THE WHOLE ARGUMENT. Everything here uses a TOP
+            // pivot, so an offset is the row's top edge and its extent is offset..offset+height.
+            // `TopCentre` flows down from y = 28: the clock card 28..124, a 4 gap, `RoundLabel`
+            // 128..162, a 4 gap, `TimerPressure` 166..198. The toast was `Place`d at a literal
+            // -160 with a height of 44, so it occupied **160..204 and swallowed `TimerPressure`
+            // whole**. At 00:14 on the reported frame that was "FINAL PUSH · ATTACK NOW" with
+            // "LATA IS BACK UP" printed straight over it.
+            //
+            // ⚠️⚠️ AND IT WAS NEVER A WRONG NUMBER, IT WAS TWO COORDINATE SCHEMES. -160 is the
+            // .tscn's own offset and it was correct when the toast was the only thing under the
+            // clock. `TimerPressure` was added to the COLUMN later, and the column's height
+            // depends on which of its children are enabled, so no literal can be safe: any fixed
+            // offset under a layout group is a guess about a number the layout owns. Making
+            // these rows in the same column is what makes the overlap impossible rather than
+            // merely fixed, which is the difference `docs/TODO.md` § 18 draws between an
+            // instance and a class.
+            //
+            // ⚠️ THE `LayoutElement`s ARE LOAD-BEARING AND SO IS THE FACT THAT THEY STAY ENABLED.
+            // Both labels are hidden with `Text.enabled = false`, never `SetActive`, so the
+            // `LayoutElement` beside them keeps reporting its height and the row keeps its slot
+            // while it is empty. That is deliberate: rows that collapse when they empty would
+            // make the alert jump 48 units up the screen every time a toast expires.
+            _toast = HudLabel(_topCentre.transform, "ToastLabel", 28, UiTheme.Amber,
+                              TextAnchor.MiddleCenter);
+            var toastBox = _toast.gameObject.AddComponent<LayoutElement>();
+            toastBox.minHeight = 44.0f;
+            toastBox.preferredHeight = 44.0f;
             _toast.enabled = false;
 
-            _lataAlert = HudLabel(_root, "LataDownAlert", 42, UiTheme.Danger,
+            _lataAlert = HudLabel(_topCentre.transform, "LataDownAlert", 42, UiTheme.Danger,
                                   TextAnchor.MiddleCenter, 10);
-            Place(_lataAlert.rectTransform, new Vector2(0.5f, 1.0f), new Vector2(0, -228),
-                  new Vector2(980, 70));
+            var alertBox = _lataAlert.gameObject.AddComponent<LayoutElement>();
+            alertBox.minHeight = 70.0f;
+            alertBox.preferredHeight = 70.0f;
             _lataAlert.enabled = false;
 
             // The countdown owns the middle of the screen for its three seconds, because
@@ -2615,7 +3005,22 @@ namespace TumbangPreso.UI
             // band.
             _vulnerable = HudLabel(_root, "VulnerableWarning", 22, UiTheme.Offense,
                                    TextAnchor.MiddleCenter);
-            Place(_vulnerable.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 84),
+            // ⚠️⚠️ 112, NOT 84, AND THE OLD NUMBER OVERLAPPED `InspectHint` EVERY ROUND OF
+            // HERO STRIKE. Both are bottom-anchored with a bottom pivot, so an offset is the
+            // BOTTOM edge: this line occupied 84..124 and the inspect hint occupies 78..96, so
+            // they shared 12 units of band, and both are live in-round. The hint is the quiet
+            // aside that names the ability-info key; this is the one line that means "you are
+            // about to lose five seconds". They were drawn through each other.
+            //
+            // ⚠️ THE STRUCTURAL FIX COMES FIRST AND `HudDeclutter` IS THE BACKSTOP. Moving the
+            // number is what actually separates them at every resolution; the declutterer exists
+            // for the case where a string grows into a neighbour at runtime, not as a licence to
+            // leave two elements authored on top of each other.
+            //
+            // ⚠️ IT STAYS INSIDE THE 64 px SAFE BAND, which is what the original note about
+            // this line's placement was protecting. 112 plus its 40 of height is 152 from the
+            // bottom edge, well clear of the deck at the foot of the screen.
+            Place(_vulnerable.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 112),
                   new Vector2(400, 40));
             _vulnerable.text = "YOU ARE VULNERABLE";
             _vulnerable.enabled = false;

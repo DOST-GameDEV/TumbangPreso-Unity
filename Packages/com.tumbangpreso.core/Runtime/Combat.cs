@@ -224,5 +224,69 @@ namespace TumbangPreso.Core
         /// </summary>
         public static float FastestTripRecovery(float duration) =>
             duration < Balance.MinTripDown ? duration : Balance.MinTripDown;
+
+        /// <summary>
+        /// One accepted press against an ABILITY stun. See § MASHING OUT OF AN ABILITY STUN in
+        /// `Balance` for why the taya's tag is excluded and why this is a separate function
+        /// rather than a parameter on <see cref="MashRecover"/>.
+        ///
+        /// ⚠️⚠️ THE CALLER DECIDES WHETHER A STUN IS MASHABLE, NOT THIS FUNCTION. It cannot see
+        /// where the stun came from, and guessing from the DURATION would be a rule that breaks
+        /// the day an ability stuns for 5.0 s. `CharacterMotor.MashOutOfStun` gates on the
+        /// element the stun was applied with, which is the only thing that actually knows.
+        ///
+        /// ⚠️ SAME SHAPE AND SAME RATE CAP AS THE TRIP, deliberately: a bot presses the same
+        /// buttons a human does, so both reach the ceiling through this function rather than
+        /// through an input-layer check only one of them passes through.
+        /// </summary>
+        public static float MashOutOfStun(float stunLeft, float stunTotal, int breakPresses,
+                                          float secondsSinceLastPress, out bool accepted)
+        {
+            accepted = false;
+            if (stunLeft <= 0.0f) return stunLeft;
+            if (stunLeft <= Balance.MinStunDown) return stunLeft;
+            if (secondsSinceLastPress < Balance.MashCooldown) return stunLeft;
+
+            accepted = true;
+
+            float reduced = stunLeft - StunMashPerPress(stunTotal, breakPresses);
+            return reduced < Balance.MinStunDown ? Balance.MinStunDown : reduced;
+        }
+
+        /// <summary>
+        /// Seconds one accepted press buys against a stun that STARTED at
+        /// <paramref name="stunTotal"/> and is meant to take <paramref name="breakPresses"/>
+        /// presses to break.
+        ///
+        /// ⚠️⚠️ DERIVED FROM THE PRESS COUNT, NOT TYPED IN, WHICH IS THE WHOLE DESIGN. See
+        /// § MASHING OUT OF AN ABILITY STUN in `Balance`: the tunable is how many presses a skill
+        /// is worth, and this converts that into the slice a press removes. A stun retuned from
+        /// 3 s to 5 s therefore still takes the same number of presses, which is the property
+        /// that makes "how hard does this skill hit" a stable thing to balance.
+        ///
+        /// ⚠️ THE PRESS COUNT IS CLAMPED HERE RATHER THAN AT EVERY CALL SITE, so a kit that
+        /// declares nonsense gets a playable stun instead of a divide by zero.
+        /// </summary>
+        public static float StunMashPerPress(float stunTotal, int breakPresses)
+        {
+            if (breakPresses < Balance.StunBreakPressesMin) breakPresses = Balance.StunBreakPressesMin;
+            if (breakPresses > Balance.StunBreakPressesMax) breakPresses = Balance.StunBreakPressesMax;
+
+            float slack = stunTotal - Balance.MinStunDown;
+
+            // A stun that is already at or under the floor has no slack to sell. Returning zero
+            // rather than a negative slice is what keeps `MashOutOfStun` from ever lengthening
+            // the thing it is answering, which is the property `StunMash_NeverLengthensAStun`
+            // exists to hold and which the trip mash had to learn the hard way.
+            return slack <= 0.0f ? 0.0f : slack / breakPresses;
+        }
+
+        /// <summary>
+        /// The shortest an ability stun of <paramref name="duration"/> can be made by mashing
+        /// perfectly. Exists so the bound can be asserted rather than playtested, which is the
+        /// same reason <see cref="FastestTripRecovery"/> does.
+        /// </summary>
+        public static float FastestStunRecovery(float duration) =>
+            duration < Balance.MinStunDown ? duration : Balance.MinStunDown;
     }
 }

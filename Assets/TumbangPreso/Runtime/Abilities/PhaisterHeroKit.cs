@@ -46,6 +46,12 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                // ⚠️ HER OWN CAST VOICE. This ability had none at all, so the only thing marking
+                // the cast was the sigil's own `sfx_hex_cast`; every other hero in the game
+                // grunts when they spend a skill. See `tools/generate_hero_audio.py` for why she
+                // had no voice to play until now.
+                GameServices.Audio?.PlayAt("hero_phaister_grunt", ctx.Position);
+
                 var forwardAim = ctx.Forward;
                 Vector3 targetPos = ctx.Position + forwardAim * 4.5f;
                 int slot = ctx.Motor != null ? ctx.Motor.PlayerSlot : -1;
@@ -73,6 +79,12 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                // ⚠️ `sfx_ghost_teleport` IS NEMU'S AND IS KEPT DELIBERATELY. § 21.4 took the
+                // borrowed cues off her sigil and her ultimate; this one stays because a blink
+                // IS the same physical event Nemu's phase is, and two heroes who share an
+                // element are allowed to share the sound of the one thing they both literally
+                // do. What she needed was her own THROAT over it, which is the line below.
+                GameServices.Audio?.PlayAt("hero_phaister_grunt", ctx.Position);
                 GameServices.Audio?.PlayAt("sfx_ghost_teleport", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "BLINK!", UiTheme.HeroWitchBright, 1.20f);
 
@@ -118,8 +130,20 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                GameServices.Audio?.PlayAt("hero_nemu_grunt", ctx.Position);
-                GameServices.Audio?.PlayAt("sfx_ghost_appear", ctx.Position);
+                // ⚠️⚠️ THIS LINE STILL CALLED `sfx_ghost_appear` UNTIL 2026-08-26, AND
+                // `docs/TODO.md` § 21.4 RECORDS IT AS ALREADY FIXED. The cue was made
+                // (`sfx_eclipse_toll`), given a mix level and registered, and the CALL SITE was
+                // never changed, so the biggest moment in the newest kit went on logging
+                // `no cue registered for 'sfx_ghost_appear'` and playing nothing. An entry
+                // ticked off against the half of the work that is visible in a file listing.
+                //
+                // ⚠️ AND SHE HAS HER OWN VOICE NOW. She was playing `hero_nemu_grunt`, which
+                // § 21.4 left open on the belief that the voice generator was present and
+                // unseeded; it was missing from the repository entirely. See
+                // `tools/generate_hero_audio.py`. Nemu is the one other spirit hero, so of every
+                // borrow available this was the one that blurred two characters together.
+                GameServices.Audio?.PlayAt("hero_phaister_ult", ctx.Position);
+                GameServices.Audio?.PlayAt("sfx_eclipse_toll", ctx.Position);
                 ComicPopup.Spawn(ctx.Position, "GRAND COVEN ECLIPSE!", UiTheme.HeroWitchBright, 2.0f);
 
                 HeroHazards.SpawnGrandCovenEclipse(ctx.Position, 5.0f, Duration);

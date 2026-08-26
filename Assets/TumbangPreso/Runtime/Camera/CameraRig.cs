@@ -953,7 +953,21 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void StepFallView()
         {
-            bool down = _character != null && _character.IsTripped;
+            // ⚠️⚠️ AN ELEMENT STUN EARNS THE CAMERA FOR THE SAME REASON A FALL DOES, and the
+            // rule quoted above is what admits it rather than a second exception. `docs/
+            // Hero_Strike_Balance.md` § 8.6: an event takes the camera when the body the player
+            // is driving changes, or WHEN THEY STOP DRIVING IT. Being frozen solid is the
+            // clearest case of the second there is. 🧑 2026-08-26: *"i want them to go to TPP
+            // and to have a button mashing thing to get unstunned or unfrozen (same as when u
+            // trip)"* — and "same as when u trip" is literally this function.
+            //
+            // ⚠️ `StunElement.None` IS EXCLUDED, WHICH KEEPS THE TAYA'S TAG IN FIRST PERSON.
+            // That is not an oversight: the tag cannot be mashed out of, so there is nothing for
+            // the player to DO with a third-person view of themselves, and swinging out for
+            // every tag in a 90 s round would take the camera off the player four or five times
+            // a match for no decision. Hero skills are refused by the same rule.
+            bool held = _character != null && _character.StunElement != StunElement.None;
+            bool down = _character != null && (_character.IsTripped || held);
             if (down == _fallView) return;
 
             // ⚠️ AN EMOTE ALREADY OWNS THE SWING, SO DO NOT TAKE IT FROM ONE. `EmotePlayer.Stop`
@@ -971,7 +985,12 @@ namespace TumbangPreso.CameraSystem
                 // ⚠️ AFTER, NEVER BEFORE. `BeginEmoteView` seeds the pitch from `_tppPitchDeg`,
                 // which is the standing shot; writing the fall angle first would be overwritten
                 // on the same line that opens the view.
-                _emotePitchDeg = FallPitchDeg;
+                //
+                // ⚠️⚠️ AND A HELD BODY IS STILL STANDING, SO IT KEEPS THE STANDING PITCH.
+                // `FallPitchDeg` looks DOWN at a body on the tarmac; using it for a stun would
+                // aim the camera at the road in front of a character who is upright, and the
+                // one thing the player needs to see is the element on their own body.
+                if (!held) _emotePitchDeg = FallPitchDeg;
             }
             else EndEmoteView();
         }

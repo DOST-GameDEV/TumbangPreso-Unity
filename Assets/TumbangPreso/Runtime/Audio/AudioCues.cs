@@ -192,6 +192,18 @@ namespace TumbangPreso.Audio
             "hero_zack_ult", "hero_zack_grunt",
             "hero_nemu_ult", "hero_nemu_grunt",
 
+            // ⚠️⚠️ THE SIXTH HERO'S OWN VOICE, AND SHE SHIPPED WITH NEMU'S. `docs/TODO.md`
+            // § 21.4 left this open because the generator that makes these was believed to be
+            // present and unseeded; it was in fact absent from the repository entirely, which
+            // also meant `tools/generate_ability_audio.py` could not import it and would not run
+            // from a clean clone. `tools/generate_hero_audio.py` now exists, is seeded per cue,
+            // and refuses to overwrite a shipped file unless asked.
+            //
+            // ⚠️ NEMU AND PHAISTER ARE THE ONLY PAIR SHARING AN ELEMENT (§ 21.5 makes the same
+            // point about her aura), so a borrowed voice blurred exactly the two characters
+            // least able to afford it.
+            "hero_phaister_ult", "hero_phaister_grunt",
+
             // The shove and the block, via aliases.
             "hit_body", "bump_swing",
 

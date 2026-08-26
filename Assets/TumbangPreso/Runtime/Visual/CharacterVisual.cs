@@ -54,9 +54,23 @@ namespace TumbangPreso.Visual
         private static readonly int FlashAmountId = Shader.PropertyToID("_FlashAmount");
 
         /// <summary>
-        /// § THE STUN FROST — the body half. See the block comment on <see cref="ProcessFrost"/>.
+        /// § THE CAUGHT MARK — the body half. See the block comment on <see cref="ProcessFrost"/>
+        /// for why a tag stopped being drawn as ice on 2026-08-26.
+        ///
+        /// ⚠️ `_FrostAmount` IS NO LONGER WRITTEN FROM HERE AND THE SHADER TERM STILL EXISTS.
+        /// Ice belongs to Cheska; see the note above `_FrostAmount` in `Toon.shader`.
         /// </summary>
+        private static readonly int CaughtAmountId = Shader.PropertyToID("_CaughtAmount");
+
+        /// <summary>§ THE ELEMENT STUN. The frost term is now the ABILITY coat, recoloured per
+        /// element from <see cref="StunCoat"/>; only the taya's tag uses the caught mark.</summary>
         private static readonly int FrostAmountId = Shader.PropertyToID("_FrostAmount");
+
+        private static readonly int FrostColorId = Shader.PropertyToID("_FrostColor");
+
+        private static readonly int FrostRimColorId = Shader.PropertyToID("_FrostRimColor");
+
+        private StunElement _stunElement = StunElement.None;
 
         public GhostPetCompanion Companion { get; private set; }
 
@@ -755,6 +769,17 @@ namespace TumbangPreso.Visual
 
             float rate = target > _frostLevel ? FrostRampIn : FrostRampOut;
             SetFrost(Mathf.MoveTowards(_frostLevel, target, dt / Mathf.Max(rate, 0.001f)));
+
+            // ⚠️⚠️ THE ELEMENT DECIDES WHICH OF THE TWO SHADER TERMS THIS LEVEL DRIVES, and it
+            // is one level either way because a body is only ever held by one thing at a time.
+            // `StunElement.None` is the taya's tag and goes to § THE CAUGHT MARK, which drains
+            // colour. Everything else is a hero ability and goes to the frost term, recoloured
+            // per element from `StunCoat`. See `Toon.shader` for why ice kept its own channel.
+            //
+            // ⚠️ THE OTHER TERM IS WRITTEN TO ZERO RATHER THAN LEFT ALONE. They are separate
+            // uniforms on one property block, so a seat tagged immediately after being frozen
+            // would otherwise wear both at once: a grey body with ice still on it.
+            _stunElement = _motor.StunElement;
         }
 
         /// <summary>
@@ -784,7 +809,18 @@ namespace TumbangPreso.Visual
                     foreach (int id in ColourIds) _block.SetColor(id, _tint);
 
                 _block.SetFloat(FlashAmountId, flash);
-                _block.SetFloat(FrostAmountId, _frostLevel);
+                // ⚠️ ONE LEVEL, ROUTED BY ELEMENT. See the note at the end of `ProcessFrost`.
+                bool ability = _stunElement != StunElement.None;
+
+                _block.SetFloat(CaughtAmountId, ability ? 0.0f : _frostLevel);
+                _block.SetFloat(FrostAmountId, ability ? _frostLevel : 0.0f);
+
+                if (ability)
+                {
+                    var coat = StunCoat.For(_stunElement);
+                    _block.SetColor(FrostColorId, coat.Body);
+                    _block.SetColor(FrostRimColorId, coat.Rim);
+                }
 
                 r.SetPropertyBlock(_block);
             }
