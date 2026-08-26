@@ -241,13 +241,37 @@ namespace TumbangPreso.Abilities
 
         /// <summary>
         /// How long a hold may last before the ability fires on its own. Seconds.
+        /// <b>Zero means it never fires on its own: only the release casts it.</b>
         ///
-        /// ⚠️ 1.10 s IS DERIVED, NOT PICKED. `HeroAbilitySystem.InputBufferWindow` is 0.30 s and
-        /// the reach below finishes growing at 0.55 s, so the ceiling is twice the time the aim
-        /// is still worth anything: long enough that a player turning to look behind them is
-        /// never cut off, short enough that holding it is not a stance.
+        /// ⚠️⚠️ IT IS ZERO ON THE ONE ABILITY THAT USES IT, AND THE CEILING IS GONE BECAUSE 🧑
+        /// ASKED FOR IT AFTER PLAYING IT. 2026-08-27: *"u cant control the E of phaister and it
+        /// autocasts after some seconds, i want it to cast only when i let go"*. The old
+        /// derivation for 1.10 s is kept below because the reasoning is still sound about what
+        /// it was solving; it was solving the wrong thing.
+        ///
+        /// ⚠️⚠️ AND REMOVING IT DOES NOT BREAK `docs/VISION.md` § 4's *"nothing may reward
+        /// waiting"*, WHICH IS THE OBJECTION THE CEILING EXISTED TO ANSWER. Read the section
+        /// note above: the ceiling was only ever ONE of four defences, and it is the weakest.
+        /// The load-bearing one is that <see cref="AimRampSeconds"/> stops the reach growing at
+        /// 0.55 s, so every second of hold after the first half second buys the player exactly
+        /// nothing. A hold that pays out nothing is not a reward for waiting, it is a player
+        /// standing still in a 14 m arena with a taya walking toward them.
+        ///
+        /// The other two defences are untouched and are what make that safe: the caster keeps
+        /// full movement while aiming (there is no root and no slow), and nothing about aiming
+        /// touches `RoundDirector`'s anti-camp or anti-stall clocks, so holding E in the taya's
+        /// circle accrues exactly the penalty standing there always did.
+        ///
+        /// ⚠️ THE ORIGINAL DERIVATION, KEPT: 1.10 s was `HeroAbilitySystem.InputBufferWindow`
+        /// (0.30 s) plus twice the ramp, *"long enough that a player turning to look behind them
+        /// is never cut off, short enough that holding it is not a stance"*. What play showed is
+        /// that a player turning to look behind them takes longer than 1.10 s often enough to
+        /// matter, and being cut off mid-turn is indistinguishable from the game misfiring.
         /// </summary>
         public float MaxAimSeconds { get; protected set; } = 1.10f;
+
+        /// <summary>True when only the release may cast this, with no ceiling at all.</summary>
+        public bool CastsOnReleaseOnly => HoldToAim && MaxAimSeconds <= 0.0f;
 
         /// <summary>Nearest the power can be aimed, in metres. The reach at zero hold.</summary>
         public float AimMinRange { get; protected set; }

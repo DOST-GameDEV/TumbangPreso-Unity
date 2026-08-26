@@ -264,6 +264,117 @@ namespace TumbangPreso.Core
         public const float LoiterRestMin = 1.1f;
         public const float LoiterRestMax = 2.8f;
 
+        // -------------------------------------------------------------------
+        // § HOW FAST A BODY MAY TURN, AND HOW OFTEN A BOT MAY CHANGE ITS MIND
+        //
+        // ⚠️⚠️ 🧑 2026-08-27, PLAYING THE 4.72 BUILD: *"ai movement is stupidly unrealistic,
+        // moving and looking back and forth unnaturally, like who does that, ppl have to flick
+        // their mouse to move, they can look straight behind them and turn in 0.1 seconds"*.
+        // He is describing two separate faults that compound, and both are measured below.
+        //
+        // ⚠️⚠️ THE FIRST IS THAT A BOT'S BODY HAD NO TURN RATE AT ALL. `CharacterMotor.Steer`
+        // ran `transform.rotation = Quaternion.LookRotation(wish)` for every movement-aimed
+        // unit, which is an INSTANT snap: a bot reversing its heading was facing the other way
+        // on the next frame, 180° in one 60th of a second. A human turns with the mouse and
+        // cannot do that. This is the cap that makes the two comparable.
+        //
+        // ⚠️⚠️ THE SECOND IS THAT THE HEADING ITSELF FLIPPED. `AIController.Drive` quantises to
+        // eight compass directions (`EightWayThreshold`), and the planner reruns every frame, so
+        // a wanted direction sitting near an octant boundary alternates between two neighbours
+        // frame after frame. With an instant snap on top, that is the "back and forth" exactly:
+        // the body was faithfully drawing a decision that was genuinely changing 60 times a
+        // second. Capping the turn alone would have hidden it; the commit window below is what
+        // stops it happening.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// How fast a movement-aimed body may turn, in degrees per second.
+        ///
+        /// ⚠️ 520°/s IS MEASURED AGAINST A HUMAN, NOT PICKED FOR FEEL. `CameraRig.StepLook`
+        /// turns the body by `Mouse X * BaseSensitivity * MouseSensitivity * 10`, and a
+        /// deliberate 180° flick on the shipped default sensitivity takes a player about 0.3 s
+        /// hand-to-screen. 520°/s puts a bot's half turn at 0.35 s, which is a shade slower than
+        /// a good player and far slower than the 0.016 s it used to be.
+        ///
+        /// ⚠️⚠️ AND IT MUST NOT GO MUCH LOWER, BECAUSE THREE VERBS FIRE ALONG THE FACING.
+        /// `CLAUDE.md` § 4 records that the punch, the lunge and the shove all aim off the body,
+        /// and `AIController.Facing` gates each of them on a cone. A bot that cannot bring its
+        /// nose round inside the tag window simply stops tagging, which is the failure mode
+        /// § 17 already measured from a different cause. 520 keeps the worst case (a full
+        /// reversal) inside `LungeHoldTime`.
+        /// </summary>
+        public const float BodyTurnDegPerSecond = 520.0f;
+
+        /// <summary>
+        /// How long a bot holds a chosen heading before it may pick a different one, in seconds.
+        ///
+        /// ⚠️ IT IS A COMMIT WINDOW, NOT A SMOOTHING FILTER, AND THAT DISTINCTION IS THE POINT.
+        /// Averaging the heading would produce a bot that walks the average of two octants,
+        /// which is a direction no keyboard can press and breaks the "a bot presses the same
+        /// buttons a human does" invariant in `CLAUDE.md` § 4. Committing means it picks one of
+        /// the eight, walks it for at least this long, and only then reconsiders: exactly what a
+        /// player does with a key.
+        ///
+        /// ⚠️ 0.18 s IS THREE FRAMES SHORT OF THE INPUT BUFFER. `HeroAbilitySystem
+        /// .InputBufferWindow` is 0.30 s, so a bot can still commit a heading and change it
+        /// again inside one buffered press; anything longer started to read as sluggish rather
+        /// than deliberate.
+        /// </summary>
+        public const float HeadingCommitSeconds = 0.18f;
+
+        /// <summary>
+        /// The heading change that breaks a commit early, in degrees.
+        ///
+        /// ⚠️ WITHOUT AN ESCAPE HATCH A COMMIT WINDOW IS A BUG. A bot that has just been shoved,
+        /// or whose target sprinted past it, must be allowed to abandon the heading it committed
+        /// to rather than walking it out. 90° is the threshold between "the plan moved" and "the
+        /// plan changed": a neighbouring octant is 45°, so this cannot be tripped by the
+        /// boundary flapping this window exists to absorb.
+        /// </summary>
+        public const float HeadingBreakDeg = 90.0f;
+
+        // -------------------------------------------------------------------
+        // § HOW OFTEN A BOT MAY SPEND A POWER
+        //
+        // ⚠️⚠️ 🧑, IN THE SAME MESSAGE: *"make sure ai doesnt just spam them all at the start"*,
+        // and *"im not sure if they even have proper ai logic for when to use skills"*. There IS
+        // per-hero logic (`AIController.StepHeroAbilities` gates every cast on a distance to the
+        // right target), and the second half of his sentence is what the first half is caused
+        // by: every one of those gates is satisfied at the same instant.
+        //
+        // ⚠️⚠️ A ROUND OPENS WITH ALL FOUR SEATS INSIDE EVERY RANGE IN THE TABLE. They spawn
+        // around one lata inside a 14 m box, so at t=0 a Dante is within 5.0 m of a target, a
+        // Zack within 8.0 and a Phaister within 8.5, and all three fire on the first frame the
+        // round goes live along with both of their skills. Nothing in the old code spaced two
+        // casts by so much as a frame.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// The shortest gap between any two ability presses by one bot, in seconds.
+        ///
+        /// ⚠️ IT IS PER BOT AND ACROSS ALL THREE SLOTS, WHICH IS WHAT MAKES IT A CADENCE RATHER
+        /// THAN A SECOND COOLDOWN. Per-slot spacing would still let a hero dump skill 1, skill 2
+        /// and the ultimate on one frame, which is the thing being reported. 1.6 s is long
+        /// enough that a human watching reads three separate decisions.
+        /// </summary>
+        public const float AbilityCadenceSeconds = 1.6f;
+
+        /// <summary>
+        /// How long after a round goes live before a bot may spend anything, in seconds.
+        ///
+        /// ⚠️⚠️ IT IS NOT POLITENESS, IT IS THE ONLY WAY A POWER CAN BE ANSWERED. A round opens
+        /// with everybody in range of everybody, so an ultimate cast on frame one lands before a
+        /// single player has moved and there is no counterplay to read: `docs/VISION.md` § 1.1
+        /// asks Hero Strike for *"combos, timing, counterplay, reading which ultimate is
+        /// banked"* and frame-one casting has none of the four.
+        ///
+        /// ⚠️ 2.5 s IS THE TIME TO CROSS THE BOX. A seat runs the 14 m arena in a little over
+        /// three seconds at the shipped speed, so this is roughly "wait until the opening
+        /// scatter has happened", after which the distance gates in `StepHeroAbilities` mean
+        /// something again because the seats are no longer all on top of each other.
+        /// </summary>
+        public const float AbilityOpeningDelaySeconds = 2.5f;
+
         /// <summary>
         /// The effective lunge cone for a tier, floored by <see cref="LungeConeFloor"/>.
         /// Astig's 28 survives; anything below 26 would be asking for an angle the eight-way

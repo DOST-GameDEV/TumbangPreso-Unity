@@ -256,7 +256,7 @@ namespace TumbangPreso.Tests
             AssertTelegraph("zack", 2, 0.0f, 0.0f);     // throw empower
             AssertTelegraph("zack", 3, 4.5f, 0.0f);     // CreateThunderstrike(pos, 4.5)
 
-            AssertTelegraph("phaister", 1, 2.4f, 4.5f); // Kulam Hex ward
+            AssertTelegraph("phaister", 1, 2.4f, 4.5f); // Hex ward
 
             // ⚠️ THE BLINK HAS A TELEGRAPH NOW BECAUSE IT IS AIMED. It was 0/0 while it was an
             // impulse fired on the press edge, which the reticle could never have drawn in time.

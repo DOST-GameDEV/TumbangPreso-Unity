@@ -41,7 +41,7 @@ namespace TumbangPreso
         /// <summary>Nemu. Phase and possession.</summary>
         Void,
 
-        /// <summary>Phaister. Kulam hex and the coven eclipse.</summary>
+        /// <summary>Phaister. Hex and the coven eclipse.</summary>
         Hex,
     }
 }

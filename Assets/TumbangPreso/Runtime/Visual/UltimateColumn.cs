@@ -28,7 +28,21 @@ namespace TumbangPreso.Visual
     /// </summary>
     public sealed class UltimateColumn : MonoBehaviour
     {
-        private const float Life = 0.9f;
+        /// <summary>
+        /// ⚠️⚠️ 0.9 s BECAME 2.2 s ON 2026-08-27 AND IT IS THE ONE NUMBER HERE THAT MAY GROW.
+        /// 🧑, on the whole ultimate presentation: *"their ults dont feel like ults nor do they
+        /// feel like hard shit that just hit, they all dont have impact"*. The column was raised
+        /// at the press and gone 0.5 s after the blast landed, so the telegraph it exists to be
+        /// (`Hero_Strike_Balance.md` § 4.3: *"the other three players get a beat to react"*) was
+        /// off screen before most of the arena had turned to look at it.
+        ///
+        /// ⚠️ THE HEIGHT AND THE RADIUS ARE NOT THE LEVERS AND MUST NOT BE TOUCHED FOR THIS. A
+        /// wider or brighter shaft is `docs/VISION.md` § 2's readability budget being spent, and
+        /// this thing stands exactly where the caster is: see the class note above on why it is
+        /// thin and ghosted. Time is the free axis, the same argument that put the event in the
+        /// sky rather than on the floor.
+        /// </summary>
+        private const float Life = 2.2f;
         private const float Height = 9.0f;
         private const float Radius = 0.55f;
 

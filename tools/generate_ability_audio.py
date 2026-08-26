@@ -845,13 +845,20 @@ def synth_stun_break(duration=0.7):
     return out
 
 
-def _rumble_tail(out, start, duration, cutoff_hz, level, seed_drift=0.0):
+def _rumble_tail(out, start, duration, cutoff_hz, level, seed_drift=0.0, decay=0.9):
     """
     A low bed made by integrating noise, which is what makes it a RUMBLE and not a hiss.
 
     ⚠️ ONE-POLE INTEGRATION RATHER THAN A FILTER SWEEP. Summing white noise with a leak is a
     brown-noise generator: energy falls at 6 dB per octave, so what survives is the bottom.
     A band-passed hiss sounds like wind through a gap; this sounds like mass moving.
+
+    ⚠️⚠️ `decay` IS THE AFTERMATH AND IT IS WHY THIS GREW A PARAMETER. It was a hard-coded
+    `exp(-c * 0.9)`, which is about a three-second bed: correct when a weather event lasted
+    2.65 s and wrong the moment `Visual.SkyEvent` started holding the sky for seven to ten.
+    🧑 2026-08-27: *"make the changes in lighting and color and the sfx to continue playing for
+    some time after too"*. The six weather beds pass a much slower value; every other caller
+    keeps 0.9 by omitting it, because a hazard's rumble should still be over in three seconds.
     """
     n = len(out)
     state = 0.0
@@ -869,12 +876,12 @@ def _rumble_tail(out, start, duration, cutoff_hz, level, seed_drift=0.0):
         state = state * leak + random.uniform(-1.0, 1.0) * (1.0 - leak)
 
         # A slow swell in and a long decay out, so the bed has a shape rather than a switch.
-        k = min(1.0, c / 0.35) * math.exp(-c * 0.9)
+        k = min(1.0, c / 0.35) * math.exp(-c * decay)
         wobble = 1.0 + seed_drift * math.sin(2.0 * math.pi * 0.7 * c)
         out[i] += state * level * k * wobble * 14.0
 
 
-def synth_sky_eclipse(duration=2.6):
+def synth_sky_eclipse(duration=7.6):
     """
     Phaister. The sky being pulled over.
 
@@ -902,11 +909,11 @@ def synth_sky_eclipse(duration=2.6):
 
         out[i] = voice + shimmer
 
-    _rumble_tail(out, 0.05, duration - 0.05, 55.0, 0.30, seed_drift=0.10)
+    _rumble_tail(out, 0.05, duration - 0.05, 55.0, 0.30, seed_drift=0.10, decay=0.30)
     return [math.tanh(v * 1.1) for v in out]
 
 
-def synth_sky_storm(duration=2.8):
+def synth_sky_storm(duration=8.2):
     """
     Zack. Thunder, and then the roll.
 
@@ -938,11 +945,11 @@ def synth_sky_storm(duration=2.8):
 
             out[i] += smooth * level * math.exp(-c * 3.2) * 2.4
 
-    _rumble_tail(out, 0.30, duration - 0.30, 70.0, 0.34, seed_drift=0.22)
+    _rumble_tail(out, 0.30, duration - 0.30, 70.0, 0.34, seed_drift=0.22, decay=0.26)
     return [math.tanh(v * 1.05) for v in out]
 
 
-def synth_sky_whiteout(duration=2.6):
+def synth_sky_whiteout(duration=7.4):
     """
     Cheska. A squall arriving.
 
@@ -965,21 +972,26 @@ def synth_sky_whiteout(duration=2.6):
         leak = math.exp(-2.0 * math.pi * cutoff / SAMPLE_RATE)
         smooth = smooth * leak + random.uniform(-1.0, 1.0) * (1.0 - leak)
 
-        body = smooth * 2.2 * k * math.exp(-max(0.0, t - 1.1) * 1.5)
+        # ⚠️ THE TWO DECAYS HERE ARE THIS CUE'S TAIL, BECAUSE IT HAS NO RUMBLE BED TO SLOW.
+        # The other five weather cues get their aftermath from `_rumble_tail(..., decay=)`; a
+        # whiteout is air rather than mass and deliberately has no low end to stretch (see the
+        # docstring), so the squall body and the whistle carry it themselves. 1.5 and 1.1 were
+        # right for a 2.6 s cue and left four seconds of silence at 7.4.
+        body = smooth * 2.2 * k * math.exp(-max(0.0, t - 1.1) * 0.34)
 
         # The whistle, late and detuned, so it reads as a gap in something rather than a tone.
         whistle = 0.0
         if t > 0.55:
             c = t - 0.55
             whistle = (math.sin(2.0 * math.pi * (1180.0 + 90.0 * math.sin(2.0 * math.pi * 1.7 * c)) * c)
-                       * 0.10 * math.exp(-c * 1.1))
+                       * 0.10 * math.exp(-c * 0.42))
 
         out[i] = math.tanh((body + whistle) * 1.0)
 
     return out
 
 
-def synth_sky_emberfall(duration=2.7):
+def synth_sky_emberfall(duration=7.6):
     """
     Sean. A firestorm drawing breath.
 
@@ -1006,11 +1018,11 @@ def synth_sky_emberfall(duration=2.7):
         swell = min(1.0, t / 0.45) * math.exp(-max(0.0, t - 0.9) * 1.2)
         out[i] = smooth * gust * swell * 2.6
 
-    _rumble_tail(out, 0.10, duration - 0.10, 62.0, 0.24, seed_drift=0.16)
+    _rumble_tail(out, 0.10, duration - 0.10, 62.0, 0.24, seed_drift=0.16, decay=0.30)
     return [math.tanh(v * 1.08) for v in out]
 
 
-def synth_sky_dustveil(duration=2.9):
+def synth_sky_dustveil(duration=8.4):
     """
     Dante. The street coming up off the ground.
 
@@ -1046,11 +1058,11 @@ def synth_sky_dustveil(duration=2.9):
 
         out[i] = v
 
-    _rumble_tail(out, 0.0, duration, 42.0, 0.46, seed_drift=0.28)
+    _rumble_tail(out, 0.0, duration, 42.0, 0.46, seed_drift=0.28, decay=0.24)
     return [math.tanh(v * 1.05) for v in out]
 
 
-def synth_sky_seance(duration=2.7):
+def synth_sky_seance(duration=7.6):
     """
     Nemu. The one that is not weather.
 
@@ -1079,14 +1091,27 @@ def synth_sky_seance(duration=2.7):
     # ⚠️ THE ENVELOPE IS APPLIED IN REVERSE, not the samples. Reversing the audio would reverse
     # the noise too, which sounds identical; reversing only the shape is what produces the
     # backwards-swell without touching the timbre.
+    # ⚠️⚠️ THE RELEASE AT THE VERY END IS NOT A TASTE CHANGE, IT IS THE PRICE OF THE LENGTH.
+    # This envelope peaks AT `duration` by construction, so the cue has always ended at full
+    # amplitude and `tools/audit_cue_audio.py` has always reported a seam near 0.65 for it. At
+    # 2.7 s that was a deliberate stab; at 7.6 s it is a seven-second crescendo terminated by a
+    # click, which is the one artefact `envelope`'s own note says nothing in this file may have.
+    # 0.22 s is long enough to remove the edge and far too short to soften the arrival.
+    release = 0.22
+
     out = [0.0] * n
     for i in range(n):
         t = i / SAMPLE_RATE
         back = t / duration
         shape = (back * back) * (0.35 + 0.65 * min(1.0, t / 0.4))
+
+        left = duration - t
+        if left < release:
+            shape *= left / release
+
         out[i] = math.tanh(body[i] * shape * 2.3)
 
-    _rumble_tail(out, 0.0, duration, 48.0, 0.16, seed_drift=0.34)
+    _rumble_tail(out, 0.0, duration, 48.0, 0.16, seed_drift=0.34, decay=0.28)
     return [math.tanh(v) for v in out]
 
 

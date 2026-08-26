@@ -299,10 +299,27 @@ cooldowns and extra steps. Cheska's sheet and Dante's stomp are meant to run out
 
 | Hero | Power | Cooldown | Why this length |
 |---|---|---|---|
-| Zack | Bolt Sprint | **30 s** | 3 casts a round. It is escape and chase, the thing Zack is for, so it is the shortest of the four |
-| Sean | Flame Rush | **34 s** | 2.6 casts. It is a dash that also knocks down, so it is worth more than Zack's |
-| Nemu | Ghost Step | **36 s** | 2.5 casts. Tag immunity is the strongest defensive verb in the game |
-| Dante | Demonic Carapace | **45 s** | 2 casts. Immunity to stun, shove and slip for 4 s is a free retrieval, and a free retrieval is a point |
+| Zack | Bolt Sprint | **46 s** | Escape and chase, the thing Zack is for, so it stays the shortest of the four |
+| Sean | Flame Rush | **50 s** | A dash that also knocks down, so it is worth more than Zack's |
+| Nemu | Kuro's Shadow | **52 s** | Tag immunity is the strongest defensive verb in the game |
+| Dante | Demonic Carapace | **62 s** | Immunity to stun, shove and slip for 4 s is a free retrieval, and a free retrieval is a point |
+
+⚠️⚠️ **THE BAND MOVED FROM 30 to 45 s TO 46 to 62 s ON 2026-08-27, ON INSTRUCTION, AND THE
+ORDER ABOVE IS UNCHANGED.** 🧑, having played the 4.72 build at the 30 to 45 numbers, twice in
+one message: *"make ability timers way longer too for all or just replace them with 1-2
+charges"*. Every cooldown was scaled by about 1.5, so the reasoning in the "why this length"
+column, which sets the ORDER, survives a change to the SCALE. Zack is still the floor and Dante
+still the ceiling. `InputMapAndAbilityTests.EveryShippedAbilityIsGatedByExactlyOneOfCooldownOrCharges`
+asserts the new band and carries both of 🧑's instructions in its note.
+
+⚠️ **AND THE CHARGE ABILITIES DID NOT MOVE, WHICH IS THE OTHER HALF OF HIS SENTENCE.** He offered
+*"or just replace them with 1-2 charges"* as the alternative to longer timers; the charge
+abilities are already at 1 or 2 per round with no recharge, so they were already the thing he was
+asking for. What changed instead is that a bot can no longer spend a whole kit on one frame:
+`AiTuning.AbilityCadenceSeconds` spaces any two casts by 1.6 s and
+`AiTuning.AbilityOpeningDelaySeconds` holds the first cast of a round for 2.5 s. That is the
+*"make sure ai doesnt just spam them all at the start"* half, and it is a separate defect from
+the cooldown lengths: see `docs/TODO.md` § 31.
 
 **Why cooldowns rather than charges for these four.** All four are the ability that gets you out
 of trouble. A player holding their last charge of an escape does not escape, they hoard, and the
@@ -589,11 +606,11 @@ reasoning, which is the repo's rule from `CLAUDE.md` § 3.
 
 | Hero | Skill 1 | Skill 2 | Ultimate cost |
 |---|---|---|---|
-| Sean | Flame Rush, **34 s cooldown** | Ignition Cannon, **2 charges**, +1 per lata knockdown | **130** |
-| Zack | Bolt Sprint, **30 s cooldown** | Static Charge, **2 charges**, +1 per lata knockdown | **150** |
-| Dante | Seismic Stomp, **2 charges**, no recharge | Demonic Carapace, **45 s cooldown** | **110** |
+| Sean | Flame Rush, **50 s cooldown** | Ignition Cannon, **2 charges**, +1 per lata knockdown | **130** |
+| Zack | Bolt Sprint, **46 s cooldown** | Static Charge, **2 charges**, +1 per lata knockdown | **150** |
+| Dante | Seismic Stomp, **2 charges**, no recharge | Demonic Carapace, **62 s cooldown** | **110** |
 | Cheska | Permafrost Sheet, **2 charges**, no recharge | Ice Barricade, **1 charge**, +1 per own retrieval | **140** |
-| Nemu | Ghost Step, **36 s cooldown** | Astral Projection, **2 charges**, no recharge | **90** |
+| Nemu | Kuro's Shadow, **52 s cooldown** | Ride Kuro, **2 charges**, no recharge | **90** |
 
 Ultimate points: lata knockdown **25**, tag **20**, own tsinelas retrieved **12** (new), legal
 throw **4** (down from 8), time passing **0** (deleted).

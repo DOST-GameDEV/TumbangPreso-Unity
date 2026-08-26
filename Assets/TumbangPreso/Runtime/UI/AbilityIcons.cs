@@ -94,7 +94,7 @@ namespace TumbangPreso.UI
         /// <summary>Nemu Ultimate: Seance Void (Gravitational swirling spiral vortex).</summary>
         NemuSeanceVoid,
 
-        /// <summary>Phaister Skill 1: Kulam Hex Sigil (Occult hexagonal magic circle rune).</summary>
+        /// <summary>Phaister Skill 1: Hex Sigil (Occult hexagonal magic circle rune).</summary>
         PhaisterHexSigil,
 
         /// <summary>Phaister Skill 2: Shadow Blink (Occult dimensional warp diamond with shadow streaks).</summary>

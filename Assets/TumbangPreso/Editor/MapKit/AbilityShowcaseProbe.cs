@@ -89,7 +89,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static bool _gateBlowout;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v27";
+        private const string Version = "v31";
 
         [MenuItem("Tumbang Preso/Capture Ability Showcase")]
         public static void RunFromMenu() => Execute();
@@ -148,7 +148,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 // rule the class note gives for spawning hazards rather than casting them. The
                 // ward without its standing marks and its light is not what a player ever sees.
                 Solo(spawned, "hex_ward",
-                     () => HeroHazards.SpawnKulamHexSigil(Vector3.zero, 2.4f, 60.0f, 5));
+                     () => HeroHazards.SpawnHexSigil(Vector3.zero, 2.4f, 60.0f, 5));
 
                 Solo(spawned, "blink_rift",
                      () => HeroHazards.SpawnShadowRift(Vector3.zero, Vector3.forward));

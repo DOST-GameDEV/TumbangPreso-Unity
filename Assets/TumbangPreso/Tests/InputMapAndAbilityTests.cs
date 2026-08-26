@@ -369,7 +369,7 @@ namespace TumbangPreso.Tests
         [Test]
         public void EveryShippedAbilityIsGatedByExactlyOneOfCooldownOrCharges()
         {
-            foreach (string hero in new[] { "sean", "zack", "dante", "cheska", "nemu" })
+            foreach (string hero in new[] { "sean", "zack", "dante", "cheska", "nemu", "phaister" })
             {
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
 
@@ -386,14 +386,23 @@ namespace TumbangPreso.Tests
                     }
                     else
                     {
-                        // ⚠️ 30 s IS THE FLOOR AND IT IS 🧑'S NUMBER, NOT AN INFERENCE.
-                        // 2026-08-25: *"make it long tho like 30seconds to 45 seconds"*. At the
-                        // old 6 to 9 s cooldowns four seats cast 44 to 56 times in a 90 s round,
-                        // one every 1.8 seconds, and nothing at that rate is a decision.
-                        Assert.GreaterOrEqual(skill.Cooldown, 30.0f,
-                            $"{hero}/{skill.Id} cools in {skill.Cooldown}s, under the 30s floor");
-                        Assert.LessOrEqual(skill.Cooldown, 45.0f,
-                            $"{hero}/{skill.Id} cools in {skill.Cooldown}s, over the 45s ceiling");
+                        // ⚠️⚠️ THE BAND MOVED TO 45 to 65 s ON 2026-08-27 AND THE OLD ONE IS KEPT
+                        // HERE BECAUSE IT WAS ALSO 🧑'S NUMBER. 2026-08-25 he asked for *"like
+                        // 30seconds to 45 seconds"*, which replaced 6 to 9 s cooldowns under
+                        // which four seats cast 44 to 56 times in a 90 s round. Having played
+                        // the 4.72 build at 30 to 45 he asked again, twice in one message:
+                        // *"make ability timers way longer too for all or just replace them with
+                        // 1-2 charges"*.
+                        //
+                        // ⚠️ THE ORDER INSIDE THE BAND IS UNCHANGED AND IS THE ARGUED PART.
+                        // `Hero_Strike_Balance.md` § 3.2: a power that ignores the game's central
+                        // risk waits longest. Dante's Carapace is still the ceiling and Zack's
+                        // Bolt Sprint still the floor; every cooldown was scaled by about 1.5 so
+                        // the reasoning that set the ORDER survives a change to the SCALE.
+                        Assert.GreaterOrEqual(skill.Cooldown, 45.0f,
+                            $"{hero}/{skill.Id} cools in {skill.Cooldown}s, under the 45s floor");
+                        Assert.LessOrEqual(skill.Cooldown, 65.0f,
+                            $"{hero}/{skill.Id} cools in {skill.Cooldown}s, over the 65s ceiling");
                     }
                 }
 

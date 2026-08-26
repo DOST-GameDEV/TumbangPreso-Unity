@@ -128,7 +128,7 @@ namespace TumbangPreso.Abilities
                 // the other half of the same rule.
                 : base("dante_skill2", "DEMONIC CARAPACE",
                        "Armours you for a few seconds. Nothing can stun, shove or slip you, so you can walk in and take what you need.",
-                       45.0f, 4.0f, TumbangPreso.UI.AbilityGlyph.DanteShield,
+                       62.0f, 4.0f, TumbangPreso.UI.AbilityGlyph.DanteShield,
                        summary: "Nothing stuns, shoves or slips you while it holds.",
                        castAction: "hero-dante-roar",
                        viewmodelAction: "carapace-guard")
@@ -138,7 +138,6 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 NetCue.Play("guard_block", ctx.Position);
-                ComicPopup.Spawn(ctx.Position, "CARAPACE!", UiTheme.HeroEarthBright, 1.25f);
 
                 // Clear any existing stuns immediately
                 ctx.Motor.ClearStun();
@@ -254,7 +253,6 @@ namespace TumbangPreso.Abilities
             {
                 NetCue.Play("hero_dante_ult", ctx.Position);
                 NetCue.Play("sfx_explosion_heavy", ctx.Position);
-                ComicPopup.Spawn(ctx.Position, "EARTHQUAKE!", UiTheme.HeroEarthBright, 1.5f);
                 HeroHazards.SpawnVolcanicRockDebris(ctx.Position, 14);
                 Visual.AbilityVfx.SpawnMagmaEruption(ctx.Position + ctx.Forward * 2.5f, 4.5f);
 

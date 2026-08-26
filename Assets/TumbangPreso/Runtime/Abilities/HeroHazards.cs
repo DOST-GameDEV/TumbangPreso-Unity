@@ -102,7 +102,6 @@ namespace TumbangPreso.Abilities
             // the cue is the frame it becomes true. The sheet gets a rising shimmer instead,
             // because a sheet spreads and a wall lands.
             GameServices.Audio?.PlayAt("sfx_barricade_raise", position);
-            ComicPopup.Spawn(position, "ICE WALL!", UiTheme.HeroIceBright, 1.2f);
 
             var comp = go.AddComponent<IceBarricadeComponent>();
             comp.Duration = duration;
@@ -348,7 +347,6 @@ namespace TumbangPreso.Abilities
             // Ice SPREADING, not ice breaking. See the barricade's note above for what these
             // two were sharing and why sharing it was backwards.
             GameServices.Audio?.PlayAt("sfx_ice_form", position);
-            ComicPopup.Spawn(position, "SLIP & SLIDE!", UiTheme.HeroIceBright, 1.15f);
 
             var comp = go.AddComponent<IceSheetComponent>();
             comp.Radius = radius;
@@ -995,7 +993,6 @@ namespace TumbangPreso.Abilities
             light.range = 5.5f;
             light.intensity = 3.0f;
 
-            ComicPopup.Boo(position);
 
             var comp = go.AddComponent<GhostPoltergeistComponent>();
             comp.Direction = direction.normalized;
@@ -1485,7 +1482,6 @@ namespace TumbangPreso.Abilities
             // is the rising, sucking shape written for her possession and it is the same gesture
             // a vortex makes: something being pulled through.
             GameServices.Audio?.PlayAt("sfx_possess_enter", position);
-            ComicPopup.Spawn(position, "VOID GALAXY!", UiTheme.HeroSpiritBright, 1.4f);
 
             HazardVolume.Attach(go, radius, ownerSlot);
 
@@ -1578,7 +1574,7 @@ namespace TumbangPreso.Abilities
         // § 19.1 added CONSTRUCTION to silhouette, axis, motion and hue, and construction is the
         // one nobody had spent here:
         //
-        //   Q  KULAM HEX    `VfxShapes.WardCircle`  rectilinear, dense, WRITTEN, and STATIC.
+        //   Q  HEX    `VfxShapes.WardCircle`  rectilinear, dense, WRITTEN, and STATIC.
         //   E  SHADOW BLINK `VfxShapes.Rift`        vertical, torn, no circle in it at all.
         //   R  GRAND COVEN  `VfxShapes.Corona`      overhead, and the middle is empty.
         //
@@ -1989,9 +1985,6 @@ namespace TumbangPreso.Abilities
             AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.MawIntake, duration);
 
             GameServices.Audio?.PlayAt("sfx_kuro_unbound", position);
-            ComicPopup.Spawn(position + Vector3.up * 1.4f,
-                             fromPet ? "KURO UNBOUND!" : "UNBOUND!",
-                             UiTheme.HeroSpiritBright, 1.6f);
 
             var anim = go.AddComponent<MawSwell>();
             anim.Rim = rim.transform;
@@ -2187,12 +2180,12 @@ namespace TumbangPreso.Abilities
         private static Color Alpha(Color c, float a) => new Color(c.r, c.g, c.b, a);
 
         /// <summary>
-        /// KULAM HEX. A ward chalked on the road: rings, a written band, nested squares.
+        /// HEX. A ward chalked on the road: rings, a written band, nested squares.
         /// </summary>
-        public static GameObject SpawnKulamHexSigil(Vector3 position, float radius = 2.4f,
+        public static GameObject SpawnHexSigil(Vector3 position, float radius = 2.4f,
                                                     float duration = 6.0f, int ownerSlot = -1)
         {
-            var go = new GameObject("KulamHexWardZone");
+            var go = new GameObject("HexWardZone");
             go.transform.position = position;
 
             // ⚠️⚠️ ONE MESH, NOT TWO STACKED ONES. What stood here was two `Sigil`s at different
@@ -2266,9 +2259,8 @@ namespace TumbangPreso.Abilities
             AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchSigil, duration);
 
             GameServices.Audio?.PlayAt("sfx_hex_cast", position);
-            ComicPopup.Spawn(position, "KULAM!", UiTheme.HeroWitchBright, 1.25f);
 
-            var comp = go.AddComponent<KulamHexSigilComponent>();
+            var comp = go.AddComponent<HexSigilComponent>();
             comp.Radius = radius;
             comp.Duration = duration;
             comp.OwnerSlot = ownerSlot;
@@ -2466,7 +2458,21 @@ namespace TumbangPreso.Abilities
             public Transform Tear;
             public Light Glow;
 
-            private const float Life = 0.52f;
+            /// <summary>
+            /// ⚠️⚠️ 0.52 s BECAME 1.30 s, AND THE OLD NUMBER IS WHY 🧑 SAW NOTHING. 2026-08-27,
+            /// on the blink: *"its js a shadow too"*. The tear is the ONLY thing the three
+            /// players she left behind ever see of this ability, and it existed for about
+            /// thirty frames: she was gone before anybody had finished turning toward the noise.
+            /// A mark that is not on screen long enough to be looked at cannot be told from a
+            /// shadow, whatever it is made of, and this one is a near-white rip with its own
+            /// light on it.
+            ///
+            /// ⚠️ IT IS STILL THE SHORTEST-LIVED THING IN HER KIT, WHICH IS CORRECT. The hex
+            /// ward stands for 6.0 s and the eclipse for 7.0; a tear in the world that healed as
+            /// slowly as a chalked circle would stop reading as a rip. Long enough to be seen,
+            /// short enough to still be sudden.
+            /// </summary>
+            private const float Life = 1.30f;
 
             /// <summary>Fraction of the life spent widening. The rest is the snap.</summary>
             private const float OpenFraction = 0.34f;
@@ -2554,8 +2560,13 @@ namespace TumbangPreso.Abilities
                 fall.Delay = i * 0.035f;
             }
 
+            // ⚠️ 0.75 s BECAME 1.55 s, FOR THE REASON `RiftOpen.Life` CARRIES. This is the half
+            // of the blink the ARRIVING player is looking straight at, and six falling runes that
+            // are gone in three quarters of a second read as a flicker rather than as writing.
+            // It outlives the tear at the departure by 0.25 s deliberately: the two ends are one
+            // gesture and it should finish where she finished, not where she started.
             AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchScatter, 0.34f);
-            Object.Destroy(go, 0.75f);
+            Object.Destroy(go, 1.55f);
             return go;
         }
 
@@ -2570,7 +2581,15 @@ namespace TumbangPreso.Abilities
         {
             public float Delay;
 
-            private const float Life = 0.40f;
+            /// <summary>
+            /// ⚠️ 0.40 s BECAME 1.15 s WITH THE PARENT'S LIFETIME. The last glyph starts at
+            /// `Delay` 0.175 s, so the whole set finished at 0.575 s inside a 0.75 s object: the
+            /// runes had faded out well before their own parent was destroyed and the arrival was
+            /// over almost before the teleport had registered. See `RiftOpen.Life` for the report
+            /// this answers. The parent now lives 1.55 s, which leaves the same small margin at
+            /// the end rather than a gap in the middle.
+            /// </summary>
+            private const float Life = 1.15f;
 
             private float _elapsed;
             private Vector3 _from;
@@ -2641,9 +2660,21 @@ namespace TumbangPreso.Abilities
             var go = new GameObject("GrandCovenEclipseEffect");
             go.transform.position = position;
 
-            // ⚠️⚠️ THE WEATHER IS THE ULTIMATE. Everything else here is the thing you look at
-            // once; this is what the other three players are still inside four seconds later.
-            Visual.SkyEvent.Play(Visual.SkyEvent.Look.Eclipse, duration);
+            // ⚠️⚠️ THE WEATHER USED TO BE PLAYED FROM HERE AND THAT CALL IS DELETED, BECAUSE IT
+            // WAS THE SECOND ONE AND IT WAS SHORTENING THE FIRST. `docs/TODO.md` § 26 moved the
+            // sky to `HeroAbilitySystem.PlayUltimatePresentation`, the single point every
+            // ultimate in the game passes through, precisely so there would be one place; this
+            // line survived that move and became a duplicate nobody noticed, because both calls
+            // asked for the same LOOK.
+            //
+            // ⚠️⚠️ THE WIND-UP IS WHAT MADE IT A BUG RATHER THAN A REDUNDANCY. `HeroAbility`
+            // roots the caster for `UltimateWindup` 0.4 s and runs `OnActivate` at the END of it,
+            // so the order is: the presentation starts the sky for its full length, and 0.4 s
+            // later THIS line restarted the same weather at the ability's own raw `duration`.
+            // `SkyEvent.Begin` zeroes `_elapsed` on every call ("a second cast should look like a
+            // second event"), so the eclipse cut its own sky short every single time it was cast.
+            // With `SkyEvent.SecondsFor` now adding a 3.20 s fall the gap is 3.2 s of weather,
+            // which is most of what 🧑 was reporting as *"u dont even notice it"*.
 
             // ⚠️ 11 M UP, WHICH IS ABOVE EVERYTHING AND UNDER THE GUIDEWAY. Ilalim ng Tulay has a
             // deck over the street, so an eclipse at 40 m would be behind the map on the one arena
@@ -2825,7 +2856,7 @@ namespace TumbangPreso.Abilities
             }
         }
 
-        public sealed class KulamHexSigilComponent : MonoBehaviour
+        public sealed class HexSigilComponent : MonoBehaviour
         {
             public float Radius = 2.4f;
             public float Duration = 6.0f;
@@ -2899,7 +2930,7 @@ namespace TumbangPreso.Abilities
         // `SpawnWitchSigil` sitting in the file that every witch effect is written in is a helper
         // the next hero power will be built out of, whatever any comment says.
         //
-        // What replaced them is above: `SpawnKulamHexSigil` on `VfxShapes.WardCircle`,
+        // What replaced them is above: `SpawnHexSigil` on `VfxShapes.WardCircle`,
         // `SpawnShadowRift` plus `SpawnShadowArrival` on `VfxShapes.Rift` and `Rune`, and
         // `SpawnGrandCovenEclipse` on `VfxShapes.Corona` and `Visual.SkyEvent`. `VfxShapes.Sigil`
         // itself survives in that file and is now used by nothing.

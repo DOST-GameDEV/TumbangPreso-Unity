@@ -281,6 +281,7 @@ namespace TumbangPreso
             // ⚠️ THE PLAN IS CHOSEN HERE AND THE VERB WORK BELOW OBEYS IT. Deciding inside
             // the verb code is what produced a bot that re-decided every frame.
             _stalkTime = Plan == AiPlan.Stalk ? _stalkTime + dt : 0.0f;
+            if (_headingCommitLeft > 0.0f) _headingCommitLeft -= dt;
             StepUnstick(dt);
             StepPlan(dt);
 
@@ -1592,8 +1593,53 @@ namespace TumbangPreso
             if (_unstickLeft > 0.0f)
                 flat = new Vector3(-flat.z * _unstickSign, 0.0f, flat.x * _unstickSign);
 
-            intent.Move = EightWay(flat);
+            intent.Move = CommitHeading(EightWay(flat));
             intent.Set(Verb.Sprint, sprint && MaySprint());
+        }
+
+        // -------------------------------------------------------------------
+        // § THE HEADING COMMIT
+        //
+        // ⚠️⚠️ WHY A BOT LOOKED LIKE IT WAS SHAKING ITS HEAD. `EightWay` snaps a wanted heading
+        // onto one of eight compass directions, and the planner reruns every single frame. A
+        // wanted direction that happens to sit near an octant boundary therefore alternates
+        // between two neighbours frame after frame, and `CharacterMotor.Steer` then pointed the
+        // BODY at whichever one won that frame. 🧑 2026-08-27: *"moving and looking back and
+        // forth unnaturally, like who does that"*.
+        //
+        // ⚠️⚠️ IT IS A COMMIT, NOT A SMOOTH. Averaging the two neighbours would give a heading
+        // between two octants, which is a direction no keyboard can produce, and `CLAUDE.md` § 4
+        // is explicit that *"a bot presses the same buttons a human does"*. Committing keeps the
+        // output on the eight and simply refuses to change it for `HeadingCommitSeconds`, which
+        // is what a player does: press a key, hold it, then press a different one.
+        //
+        // ⚠️ THE BREAK CLAUSE IS WHAT KEEPS IT FROM BEING A BUG. A bot that has been shoved, or
+        // whose target has run past it, must be able to abandon a committed heading rather than
+        // walking it out. A neighbouring octant is 45° and the break is 90°, so the boundary
+        // flapping this exists to absorb can never trip it.
+        // -------------------------------------------------------------------
+
+        private Vector2 _committedMove;
+        private float _headingCommitLeft;
+
+        private Vector2 CommitHeading(Vector2 wanted)
+        {
+            if (wanted.sqrMagnitude < 0.0001f)
+            {
+                _headingCommitLeft = 0.0f;
+                _committedMove = Vector2.zero;
+                return wanted;
+            }
+
+            if (_headingCommitLeft > 0.0f && _committedMove.sqrMagnitude > 0.0001f)
+            {
+                float turn = Vector2.Angle(_committedMove, wanted);
+                if (turn < AiTuning.HeadingBreakDeg) return _committedMove;
+            }
+
+            _committedMove = wanted;
+            _headingCommitLeft = AiTuning.HeadingCommitSeconds;
+            return wanted;
         }
 
         private void Stop(InputIntent intent)
@@ -2355,6 +2401,55 @@ namespace TumbangPreso
             var round = GameServices.Round;
             if (round == null || !round.RoundActive)
             {
+                // ⚠️ THE OPENING CLOCK RESTARTS WITH THE ROUND, NOT WITH THE MATCH. Every round
+                // begins with four seats stood around one lata, so every round needs the same
+                // scatter before a distance gate below means anything.
+                _roundLiveFor = 0.0f;
+                ReleaseUntouchedHeroButtons(intent);
+                return;
+            }
+
+            // -------------------------------------------------------------------
+            // § THE CADENCE GATE
+            //
+            // ⚠️⚠️ 🧑 2026-08-27: *"make sure ai doesnt just spam them all at the start"*, in the
+            // same breath as *"im not sure if they even have proper ai logic for when to use
+            // skills"*. There is logic: every branch below gates its cast on a distance to the
+            // correct target, and the branches are per hero. The problem is that **all of those
+            // gates are satisfied simultaneously at a round boundary**, because the seats spawn
+            // around one lata inside a 14 m box. At t = 0 a Dante is inside 5.0 m, a Zack inside
+            // 8.0 and a Phaister inside 8.5, so the ultimate, skill 1 and skill 2 all fired on
+            // the first live frame, for all four seats at once.
+            //
+            // ⚠️ SO THE FIX IS NOT MORE CONDITIONS ON EACH BRANCH, IT IS SPACING BETWEEN THEM.
+            // Tightening the distances would only move the pile-up; what was missing is that a
+            // bot had no notion of having just done something. `AbilityCadenceSeconds` is one
+            // clock for all three slots, which is what makes it a cadence rather than a second
+            // cooldown: per-slot spacing would still allow a whole kit on one frame.
+            //
+            // ⚠️⚠️ AND AN IN-PROGRESS HOLD IS EXEMPT, WHICH IS NOT A LOOPHOLE. Phaister's blink
+            // is the game's one hold-to-aim power and a bot holds the key across frames (see
+            // § HOLDING A HOLD-TO-AIM POWER). Closing the gate mid-hold would release the key
+            // early and pin every bot blink to the minimum range, which is the exact fault that
+            // section exists to prevent, reintroduced from a different direction.
+            // -------------------------------------------------------------------
+            _roundLiveFor += dt;
+            if (_abilityCadenceLeft > 0.0f) _abilityCadenceLeft -= dt;
+
+            // ⚠️ A RELEASED HOLD LEAVES ITS KEY IN THE TABLE WITH -1 IN IT (`HoldAim` writes
+            // -1.0 rather than removing the entry), so `_aimHeld.Count` latches true after the
+            // first blink of the match and would have held this gate open for the rest of it.
+            bool holding = false;
+            foreach (var held in _aimHeld.Values)
+            {
+                if (held >= 0.0f) { holding = true; break; }
+            }
+
+            bool mayOpen = _roundLiveFor >= AiTuning.AbilityOpeningDelaySeconds
+                           && _abilityCadenceLeft <= 0.0f;
+
+            if (!mayOpen && !holding)
+            {
                 ReleaseUntouchedHeroButtons(intent);
                 return;
             }
@@ -2493,8 +2588,26 @@ namespace TumbangPreso
                 }
             }
 
+            // ⚠️ THE CLOCK RESTARTS ON A TOUCH, NOT ON A CONFIRMED CAST, because this side has
+            // no way to know whether the press was answered: `HeroAbilitySystem` buffers a press
+            // for 0.30 s and may refuse it outright. Spacing what the bot ASKS for is the honest
+            // reading of "do not spam", and it also means a refused press costs the same beat a
+            // successful one does, which is what stops a bot mashing an empty meter.
+            if (_touched.Contains(Verb.Skill1) || _touched.Contains(Verb.Skill2)
+                || _touched.Contains(Verb.Ultimate))
+            {
+                _abilityCadenceLeft = AiTuning.AbilityCadenceSeconds;
+            }
+
             ReleaseUntouchedHeroButtons(intent);
         }
+
+        /// <summary>Seconds this bot must wait before asking for another power. See § THE
+        /// CADENCE GATE.</summary>
+        private float _abilityCadenceLeft;
+
+        /// <summary>How long the current round has been live, for the opening delay.</summary>
+        private float _roundLiveFor;
 
         private void ReleaseUntouchedHeroButtons(InputIntent intent)
         {

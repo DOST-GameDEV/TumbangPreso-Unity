@@ -166,7 +166,6 @@ namespace TumbangPreso.Abilities
                 // `sfx_frost_nova` descends and leads with shards. Cheska's three abilities
                 // fired one sound between them and the ultimate sounded like the skill.
                 NetCue.Play("sfx_frost_nova", ctx.Position);
-                ComicPopup.Spawn(ctx.Position, "BLIZZARD NOVA!", UiTheme.HeroIceBright, 1.5f);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.Stretch(0.35f);

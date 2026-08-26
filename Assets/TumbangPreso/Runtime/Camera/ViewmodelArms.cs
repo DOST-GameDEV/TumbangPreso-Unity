@@ -411,7 +411,7 @@ namespace TumbangPreso.CameraSystem
         // NOTHING for the entire sixth kit.
         // `HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions` is the test
         // that exists for exactly this and it went red the moment the branch merged:
-        // *"phaister: KULAM HEX ViewmodelAction 'cast-hex' is not supported by ViewmodelArms"*.
+        // *"phaister: HEX ViewmodelAction 'cast-hex' is not supported by ViewmodelArms"*.
         //
         // ⚠️ THE HAND IS THE WHOLE CHARACTER IN FIRST PERSON. Every other hero got three bespoke
         // arm clips because the caster's own screen shows nothing else: the sigil she draws is on

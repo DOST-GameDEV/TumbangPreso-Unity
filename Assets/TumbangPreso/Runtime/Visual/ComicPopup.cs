@@ -56,10 +56,35 @@ namespace TumbangPreso.Visual
             Score = 2,
         }
 
-        // ⚠️ THREE, NOT FOUR. Four 64 pt callouts stacked 0.48 m apart is taller than a player
+        // ⚠️⚠️ A CAST GETS NO WORD. THIS IS A RULE ABOUT WHAT MAY BE SPAWNED AT ALL, AND IT IS
+        // WRITTEN HERE BECAUSE THE CALL SITES IT DELETED WERE SPREAD ACROSS SIX KITS.
+        //
+        // 🧑 2026-08-27, playing the 4.72 player: *"maybe lessen the words//text that pop out
+        // too when shit happens?"*. Twenty-one of the fifty-five callouts in the game were a
+        // hero announcing their own press: BLINK!, IGNITE!, RAIL GRIND!, CARAPACE!, PHANTOM!,
+        // THUNDERSTRIKE!, BLIZZARD NOVA! and the rest. In Hero Strike four seats cast 44 to 56
+        // times in a 90 s round (`docs/TODO.md` § 19), so the single most frequent thing on
+        // screen was the game reading its own keypresses back to the player.
+        //
+        // ⚠️ THE TEST IS WHO LEARNS SOMETHING, AND A CASTER LEARNS NOTHING. They pressed the
+        // key, the deck tile greyed out, the viewmodel played and the effect is under their own
+        // feet: four confirmations before the word. What earns a callout is a state change the
+        // reader did NOT choose (TAGGED!, HEXED!, CURSED!, PHASE BROKEN!, FREEZE!) or something
+        // that moved the score. Those are kept in full.
+        //
+        // ⚠️⚠️ AND THE ULTIMATES LOST THEIR SHOUT ON PURPOSE, WHICH LOOKS LIKE THE OPPOSITE OF
+        // WHAT 🧑 ASKED FOR IN THE SAME MESSAGE (*"i want all ults to feel like they hit
+        // harder"*). It is not. The word was the weakest thing an ultimate had: it lasted 1.25 s
+        // and said what the player already knew. What replaced it is `Visual.SkyEvent` held for
+        // seconds rather than 2.2, an `UltimateColumn`, a coloured fill over the whole court and
+        // a sound tail that outlives the blast. `docs/TODO.md` § 31.
+        //
+        // ⚠️ TWO, NOT THREE. Three 64 pt callouts stacked 0.48 m apart is taller than a player
         // model and covers the lata behind them, which is the one thing on the court nobody can
-        // afford to lose track of.
-        private const int MaxLive = 3;
+        // afford to lose track of. It was three while every cast produced one; with the casts
+        // gone, two is enough to never drop a scoring callout and the stack no longer reaches
+        // head height.
+        private const int MaxLive = 2;
 
         /// <summary>
         /// The size the glyphs are rasterised at, in pixels, and the height the callout is

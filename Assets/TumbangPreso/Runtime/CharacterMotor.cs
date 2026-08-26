@@ -263,7 +263,7 @@ namespace TumbangPreso
         /// three verbs all derive their direction from the body (`-basis.z` in the .gd), so this
         /// is combat correctness rather than an animation nicety.
         /// </summary>
-        private Vector3 Steer(Vector2 axis)
+        private Vector3 Steer(Vector2 axis, float dt)
         {
             Vector3 wish = new Vector3(axis.x, 0.0f, axis.y);
             if (wish.sqrMagnitude > 1.0f) wish.Normalize();
@@ -278,7 +278,28 @@ namespace TumbangPreso
             }
 
             wish = wish.normalized;
-            transform.rotation = Quaternion.LookRotation(wish, Vector3.up);
+
+            // ⚠️⚠️ THE BODY TURNS AT A BOUNDED RATE. IT USED TO SNAP, AND THAT IS THE WHOLE OF
+            // 🧑'S 2026-08-27 REPORT: *"they can look straight behind them and turn in 0.1
+            // seconds"*. What stood here was a bare `Quaternion.LookRotation(wish)`, so a
+            // movement-aimed unit was facing its new heading on the very next frame: a full
+            // reversal took one 60th of a second, which no human with a mouse can do.
+            //
+            // ⚠️ THE MOVEMENT IS NOT RATE-LIMITED, ONLY THE FACING, and that is deliberate
+            // rather than an oversight. A keyboard player moves the instant they press a key and
+            // their body catches up; slewing the VELOCITY as well would make bots accelerate
+            // into corners differently from players and would change every pathing number in
+            // `AiTuning`. `wish` is returned unchanged, so the bot still walks where it decided
+            // to walk on the frame it decided.
+            //
+            // ⚠️ AND IT APPLIES TO EVERY MOVEMENT-AIMED UNIT, NOT ONLY TO BOTS. A human on a
+            // gamepad steers this way too (`MouseAimed` is false for them), and a turn cap that
+            // only bots obeyed would be a second movement model, which `CLAUDE.md` § 4 forbids
+            // in as many words: *"a bot presses the same buttons a human does"*.
+            float maxTurn = AiTuning.BodyTurnDegPerSecond * Mathf.Max(0.0f, dt);
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation, Quaternion.LookRotation(wish, Vector3.up), maxTurn);
+
             return wish;
         }
 
@@ -385,7 +406,7 @@ namespace TumbangPreso
 
             if (canSteer)
             {
-                Vector3 wish = Steer(axis);
+                Vector3 wish = Steer(axis, dt);
 
                 _velocity.x = wish.x * speed;
                 _velocity.z = wish.z * speed;

@@ -283,7 +283,28 @@ namespace TumbangPreso.Visual
         /// geometry outside the radius the bots path around and the telegraph promises, which is
         /// the fault `HeroAbility.TelegraphRadius` exists to stop. Big stops here.
         /// </summary>
-        private const float DevourScale = 7.0f;
+        /// <summary>
+        /// ⚠️⚠️ 7.0 BECAME 5.6, AND IT IS A READABILITY FIX RATHER THAN A NERF. Until 2026-08-27
+        /// the transformed pet was drawn at 22 per cent of his own value, which made him a hole
+        /// in a dark picture: 🧑 *"he can barely be seen"*. Raising that floor is the fix, and it
+        /// is what revealed that the SIZE had never actually been judged, because for the whole
+        /// life of the ultimate nobody had seen the silhouette it produced.
+        /// `ability_kuro_unbound_eye_v30.png` is the first frame in which he is visible, and at
+        /// 7.0 he fills the view from eye height and hides the arena behind him.
+        ///
+        /// ⚠️ WHICH `docs/VISION.md` § 2 RULE 5 FORBIDS IN AS MANY WORDS: a mid-fight frame must
+        /// still show the lata, the chalk and every player. 5.6 is still by a wide margin the
+        /// largest object any ability puts on the court, and he is now legible instead of being
+        /// an unlit wall. The impact 🧑 asked for is paid for by the value floor, the emission
+        /// and the horns, none of which cost a single square metre.
+        /// </summary>
+        private const float DevourScale = 5.6f;
+
+        /// <summary>
+        /// The body's current proportion change, so children can divide it back out.
+        /// One while he is not transformed. See `StepDevour` and `PoseDevourBody`.
+        /// </summary>
+        private Vector3 _devourStretch = Vector3.one;
 
         private float _devourTotal;
 
@@ -330,17 +351,56 @@ namespace TumbangPreso.Visual
             // creature that is exactly itself at five times the size reads as a toy held closer
             // to the camera. Narrowing him and stretching him along his own length gives him a
             // predator's proportions, which is a different animal at the same volume.
+            // ⚠️⚠️ THE THREE WERE 0.82 / 1.14 / 1.26 AND ARE 0.70 / 1.34 / 1.46. 🧑 2026-08-27,
+            // with a screenshot of the form: *"i think u should change his shape too during this
+            // form"*. The old set was a 14 per cent stretch, which is inside the range a viewer
+            // reads as perspective rather than as a different animal: at 7x scale across a 14 m
+            // court nobody can tell a 1.14 from a 1.0. These are large enough to be a shape.
+            //
+            // ⚠️ NARROW FIRST, THEN LONG, THEN TALL, WHICH IS THE ORDER THAT READS AS A PREDATOR.
+            // Volume is roughly preserved (0.70 x 1.34 x 1.46 = 1.37 against 1.18 before), so he
+            // is not simply bigger again: `DevourScale` already does bigger, and stacking more
+            // size on it is the thing the § THE OTHER THINGS THAT MAKE HIM SCARY note warns
+            // against.
+            // ⚠️⚠️ 0.70 / 1.34 / 1.46 CAME BACK TO 0.80 / 1.18 / 1.32, MEASURED OFF
+            // `ability_kuro_unbound_eye_v30.png`. The first set was chosen to be *"large enough
+            // to be a shape"* and it was, but combined with `DevourScale` it turned him into two
+            // enormous flat wedges that filled the frame from a player's eye height. Kuro is a
+            // boxy voxel ghost: stretching a box tall and narrow exaggerates the boxiness rather
+            // than making it a creature, which is the opposite of 🧑's *"make nemu' look better"*.
+            //
+            // ⚠️ THESE ARE STILL WELL ABOVE THE ORIGINAL 0.82 / 1.14 / 1.26, so the shape change
+            // he asked for is real; what came out is the part that was fighting the silhouette.
+            float narrow = Mathf.Lerp(1.0f, 0.80f, open);
+            float tall = Mathf.Lerp(1.0f, 1.18f, open);
+            float lengthen = Mathf.Lerp(1.0f, 1.32f, open);
+
+            // ⚠️ REMEMBERED FOR `PoseDevourBody`, WHICH HAS TO DIVIDE IT BACK OUT OF THE HORNS.
+            // They are children, so the body's stretch multiplies them too: without this a horn
+            // authored as a spike comes out 1.34 times longer and 0.70 times thinner than it was
+            // drawn, which is a different object at every point on the swell curve.
+            _devourStretch = new Vector3(narrow, tall, lengthen);
+
             transform.localScale = new Vector3(
-                _baseScale.x * grown * gulp * Mathf.Lerp(1.0f, 0.82f, open),
-                _baseScale.y * grown * gulp * Mathf.Lerp(1.0f, 1.14f, open),
-                _baseScale.z * grown * gulp * Mathf.Lerp(1.0f, 1.26f, open));
+                _baseScale.x * grown * gulp * narrow,
+                _baseScale.y * grown * gulp * tall,
+                _baseScale.z * grown * gulp * lengthen);
 
             // ⚠️ HE RIDES THE ROAD, AND THE LIFT GROWS WITH HIM. See `DevourLift`: the origin has
             // to climb as the body does or the jaw goes under the tarmac partway up the curve.
             // He also stops following Nemu for the duration, which is correct: the maw opens
             // where he was standing and the hazard is already registered at that point, so a pet
             // that kept trailing her would drag the mouth away from the damage.
-            transform.position = _devourGround + Vector3.up * (_originAboveFeet * grown);
+            //
+            // ⚠️⚠️ AND THE VERTICAL PROPORTION IS IN THE LIFT, NOT ONLY IN THE SCALE. `grown`
+            // alone was correct while the two matched; the moment the body is stretched to
+            // `tall` and the origin is not, the distance from the origin down to his feet grows
+            // by that factor and he sinks into the road by `_originAboveFeet * grown * (tall-1)`.
+            // At the old 1.14 that was 0.20 m and easy to miss; at 1.34 it is 0.48 m, which is
+            // his jaw in the tarmac. This is the same class of fault `DevourLift` records, where
+            // a factor that cancelled at one scale stopped cancelling at another, and it is
+            // exactly the kind only a render catches.
+            transform.position = _devourGround + Vector3.up * (_originAboveFeet * grown * tall);
 
             // ⚠️ A SLOW TURN, NOT A SPIN, AND AT A DIFFERENT RATE FROM THE SHELL AROUND HIM.
             // `HeroHazards.MawSwell` turns the shell at 22 degrees a second; a body inside it
@@ -405,15 +465,65 @@ namespace TumbangPreso.Visual
 
                 // They come out of him, so they scale from zero and only along their length at
                 // first: a horn that grows uniformly looks like a balloon.
+                //
+                // ⚠️⚠️ THE LENGTH WENT FROM 0.16 TO 0.30 AND IS THE ONLY PART OF "MORE IMPOSING"
+                // THAT COSTS NOTHING. 🧑 2026-08-27: *"i think u should change his shape too
+                // during this form"*. At 0.16 against a body scaled to `DevourScale` 7.0 the
+                // horns were about two per cent of his height, which is a texture rather than a
+                // silhouette: from across a 14 m arena he was a smooth dark egg. Doubling them
+                // changes his OUTLINE, which is the only thing readable at that distance and
+                // through the dark his own weather brings.
+                //
+                // ⚠️⚠️ AND 0.30 WAS TOO FAR. MEASURED OFF `ability_kuro_unbound_eye_v28.png`,
+                // WHICH IS THE ONLY REASON IT WAS CAUGHT. These are children of a body already at
+                // `PersonScale` 2.38 times `DevourScale` 7.0, so the parent is about 17x before
+                // the stretch and a local 0.30 is a **6.7 m spike over a 2.8 m maw**: three of
+                // them filled the frame and hid the pet they were supposed to be growing out of.
+                //
+                // ⚠️⚠️ THE LENGTH IS BACK AT 0.16, WHICH IS WHAT IT ALWAYS WAS, BECAUSE SIZE WAS
+                // NEVER THE REASON THEY COULD NOT BE SEEN. 🧑's *"he can barely be seen"* is a
+                // CONTRAST report, and the two fixes for it are the value floor and the emission
+                // below. Making them longer as well was solving the same complaint twice, and the
+                // second solution is the one that put a 6.7 m slab in front of the ultimate.
+                //
+                // ⚠️ THIS IS THE SAME CLASS OF FAULT `DevourLift` RECORDS, and it arrived the
+                // same way: a local number read as metres when the real parent carries two
+                // multipliers stacked on a voxel model authored in centimetres.
+                //
+                // ⚠️⚠️ AND THE BODY'S STRETCH IS DIVIDED BACK OUT. `_devourStretch` narrows the
+                // body to 0.70 and lengthens it to 1.34/1.46, and a child inherits all three: a
+                // horn would come out squashed on one axis and drawn out on another, which is
+                // what turned spikes into slabs in `ability_kuro_unbound_eye_v29.png`. Dividing
+                // means the horns keep the proportions they are built with while still growing
+                // with him through `grown`.
                 float grow = Mathf.Clamp01(k * 1.2f);
-                _horns[i].localScale = new Vector3(0.055f * grow, 0.16f * grow * grow,
-                                                   0.055f * grow);
+                var s = _devourStretch;
+                _horns[i].localScale = new Vector3(
+                    0.055f * grow / Mathf.Max(0.01f, s.x),
+                    0.16f * grow * grow / Mathf.Max(0.01f, s.y),
+                    0.055f * grow / Mathf.Max(0.01f, s.z));
             }
 
-            // ⚠️ VALUE, NOT HUE. He stays his own colour and goes almost black, which is what
-            // makes it read as the same animal in shadow rather than as a recoloured one. Hue
-            // is the channel this game cannot spare (`Hero_Strike_Balance.md` § 8.1) and Nemu
-            // already owns violet.
+            // ⚠️ VALUE, NOT HUE. He stays his own colour and goes dark, which is what makes it
+            // read as the same animal in shadow rather than as a recoloured one. Hue is the
+            // channel this game cannot spare (`Hero_Strike_Balance.md` § 8.1) and Nemu already
+            // owns violet.
+            //
+            // ⚠️⚠️ 0.22 BECAME 0.46, AND THE OLD VALUE WAS NOT WRONG SO MUCH AS UNMEASURED
+            // AGAINST THE OTHER HALF OF HIS OWN ULTIMATE. 🧑 2026-08-27, with a screenshot:
+            // *"make nemu' look better and more imposing, he can barely be seen"*. Two changes
+            // that were each correct alone landed in the same power and multiplied:
+            // `PoseDevourBody` takes him to 22 per cent of his own value, and `Visual.SkyEvent`'s
+            // `Seance` look simultaneously drops the whole street's ambient and pulls a violet
+            // sky over it. A dark violet animal at 22 per cent value, under a violet sky, at
+            // night, is a hole in the picture.
+            //
+            // ⚠️⚠️ SO THE VALUE FLOOR IS NOW SET AGAINST THE WEATHER HE BRINGS, NOT AGAINST THE
+            // DAYLIGHT STREET HE WAS TUNED IN. This is the same class of fault `docs/TODO.md`
+            // § 26 records for the sky itself, where every look had to be clamped net-darkening
+            // because a system that changes the global light can break an effect tuned without
+            // it. 0.46 still reads as "in shadow" against the untouched map and stays separable
+            // from the road under his own eclipse.
             for (int i = 0; i < _skin.Count; i++)
             {
                 if (_skin[i] == null) continue;
@@ -421,12 +531,30 @@ namespace TumbangPreso.Visual
                 var mat = _skin[i].material;
                 if (mat == null) continue;
 
-                Color to = _skinRest[i] * 0.22f;
+                Color to = _skinRest[i] * 0.46f;
                 to.a = _skinRest[i].a;
 
                 var now = Color.Lerp(_skinRest[i], to, k);
                 mat.color = now;
                 if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", now);
+
+                // ⚠️⚠️ AND HE LIGHTS HIMSELF, WHICH IS THE HALF THE VALUE FLOOR CANNOT DO. A
+                // darker body under a darker sky is a contrast problem, and raising the body's
+                // ALBEDO far enough to fix it would have made him pale rather than menacing.
+                // Emission is separate from albedo: it survives the ambient drop his own weather
+                // causes, so the silhouette holds at any light level without the skin reading
+                // lighter. It ramps with `k`, so the glow arrives with the transformation and
+                // unwinds with it on the flight home like every other channel here.
+                if (mat.HasProperty("_EmissionColor"))
+                {
+                    mat.EnableKeyword("_EMISSION");
+                    // ⚠️ 0.30 RATHER THAN 0.55. The first pass set the body and the horns hot
+                    // together and `ability_kuro_unbound_eye_v28.png` came back with both clipped
+                    // to near-white. The body is the larger surface of the two, so it is the one
+                    // that must stay clearly under 1: this is a lift off the floor of the value
+                    // range, not a light source.
+                    mat.SetColor("_EmissionColor", UI.UiTheme.HeroSpiritBright * (0.30f * k));
+                }
             }
         }
 
@@ -456,7 +584,36 @@ namespace TumbangPreso.Visual
                 horn.transform.localRotation = Quaternion.Euler(Mathf.Sin(a) * 34.0f, 0.0f,
                                                                 -Mathf.Cos(a) * 34.0f);
 
-                VfxMaterial.Solid(horn.GetComponent<Renderer>(), new Color(0.06f, 0.02f, 0.09f));
+                // ⚠️⚠️ THE HORNS CARRY THE EMISSION, THE BODY CARRIES THE VALUE, AND THAT SPLIT
+                // IS WHAT MAKES HIM READ AS LIT FROM INSIDE RATHER THAN AS A GLOWING BLOB. A
+                // near-black spike with a violet emission is an edge the eye finds instantly
+                // against a dark road; the same emission spread over the whole body would wash
+                // the proportions out and undo the narrowing above. `0.06, 0.02, 0.09` is kept
+                // as the albedo for exactly that reason: the horn itself is still almost black.
+                var hornRenderer = horn.GetComponent<Renderer>();
+                VfxMaterial.Solid(hornRenderer, new Color(0.06f, 0.02f, 0.09f));
+
+                // ⚠️⚠️ THE EMISSION IS SET HERE RATHER THAN THROUGH `VfxMaterial.Solid`'s
+                // `emission` PARAMETER, AND THAT IS NOT A STYLE CHOICE. That parameter computes
+                // `colour * emission`, so it can only ever glow the albedo it was given: asking
+                // a near-black horn for an emission of 0.85 returns a near-black glow, which is
+                // an invisible fix for a visibility bug. The whole point here is a DARK horn with
+                // a BRIGHT edge, which needs the two colours to be independent.
+                //
+                // ⚠️⚠️ 1.35 WAS FAR TOO HOT AND `ability_kuro_unbound_eye_v28.png` IS THE PROOF.
+                // An emission multiplier above 1 on a bright theme colour clips: the horns came
+                // back as flat near-white cutouts with no facets in them, which is the exact
+                // failure `docs/VISION.md` § 2 rule 5 and `AbilityShowcaseProbe`'s 12 per cent
+                // blowout bound exist to catch, arriving on an object too small to trip the
+                // frame-wide measurement. 0.30 is a lit EDGE rather than a lamp: the spikes stay
+                // dark violet, read against the road, and keep their geometry.
+                var hornMat = hornRenderer != null ? hornRenderer.sharedMaterial : null;
+                if (hornMat != null && hornMat.HasProperty("_EmissionColor"))
+                {
+                    hornMat.EnableKeyword("_EMISSION");
+                    hornMat.SetColor("_EmissionColor", UI.UiTheme.HeroSpiritBright * 0.30f);
+                    hornMat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
+                }
                 VfxMaterial.StripCollider(horn);
 
                 horn.transform.localScale = Vector3.zero;
@@ -752,8 +909,6 @@ namespace TumbangPreso.Visual
             if (_returnLeft > 0.0f) return;
 
             transform.localScale = _baseScale;
-            ComicPopup.Spawn(home + Vector3.up * 0.5f, "KURO!",
-                             UI.UiTheme.HeroSpiritBright, 0.9f);
         }
 
         private void Awake()
@@ -822,7 +977,6 @@ namespace TumbangPreso.Visual
             // `ability_flick_dash`, a dash sound from the deleted ability set, which announced
             // the single strangest thing Nemu can do as a footstep.
             GameServices.Audio?.PlayAt("sfx_possess_enter", transform.position);
-            ComicPopup.Spawn(transform.position, "KURO POSSESSED!", UI.UiTheme.HeroSpiritBright, 1.25f);
         }
 
         public void EndPossession(bool teleportNemu)
@@ -1193,18 +1347,56 @@ namespace TumbangPreso.Visual
                 ? _playerInput
                 : (_nemuMotor != null && _nemuMotor.Intent != null ? _nemuMotor.Intent.MoveAxis : Vector2.zero);
 
-            Vector3 camFwd = Camera.main != null ? Camera.main.transform.forward : (_nemuMotor != null ? _nemuMotor.transform.forward : transform.forward);
-            Vector3 camRight = Camera.main != null ? Camera.main.transform.right : (_nemuMotor != null ? _nemuMotor.transform.right : transform.right);
-            camFwd.y = 0.0f;
-            camRight.y = 0.0f;
+            // -------------------------------------------------------------------
+            // § WHY THE CAMERA USED TO SPIN, AND WHY THE BASIS IS THE PET'S OWN NOW
+            //
+            // ⚠️⚠️ 🧑 2026-08-27: *"nemu e is uncontrollable, the camera spins very fast and u
+            // cant see shit"*. It was a closed feedback loop with gain, and all three legs of it
+            // were separately reasonable:
+            //
+            //   1. `CameraRig.ApplyCompanionPossessionView` takes its yaw from the PET
+            //      (`companion.transform.eulerAngles.y`), because the eye rides behind him.
+            //   2. This method took its movement basis from `Camera.main.transform.forward`.
+            //   3. This method then turned the PET toward that movement direction.
+            //
+            // So pet yaw drove the camera, the camera drove the movement direction, and the
+            // movement direction drove the pet yaw. Holding W is stable because the three agree;
+            // holding A or D is not, because a strafe direction sits at an angle to the facing,
+            // the pet turns into it, the camera follows, and the strafe direction rotates again.
+            // The result accelerates and never stops while the key is down.
+            //
+            // ⚠️⚠️ THE FIX IS TO GIVE THE PLAYER THE YAW OUTRIGHT, NOT TO DAMP THE LOOP. Slowing
+            // leg 3 would only make it spin more slowly, and it would still be a body that steers
+            // itself while the player watches. `CameraRig.StepCompanionLook` was ALREADY routing
+            // the mouse onto this transform; leg 3 was overwriting it every frame in
+            // `LateUpdate`. Deleting leg 3 makes the possession behave like every other
+            // mouse-aimed body in the game: the mouse decides where you face, the keys decide
+            // where you go relative to that facing, and nothing turns you but you.
+            //
+            // ⚠️ AND THE BASIS IS TAKEN FROM THE PET RATHER THAN THE CAMERA SO THE LOOP CANNOT
+            // BE REOPENED. They are the same yaw today, but reading the camera would mean a
+            // future change to the mount (a shoulder offset, a leading look) silently steering
+            // the pet again. `CLAUDE.md` § 4's FPP note makes the same argument for the human
+            // body: the body's forward is already the view yaw.
+            // -------------------------------------------------------------------
+            Vector3 petFwd = transform.forward;
+            Vector3 petRight = transform.right;
+            petFwd.y = 0.0f;
+            petRight.y = 0.0f;
 
-            Vector3 moveDir = (camFwd.normalized * move.y + camRight.normalized * move.x);
-            float flySpeed = 12.5f;
+            Vector3 moveDir = (petFwd.normalized * move.y + petRight.normalized * move.x);
+
+            // ⚠️ 12.5 m/s WAS 2.7x A PLAYER'S 4.6 AND IT IS 1.7x NOW. A pet that outruns the
+            // whole cast by that much cannot be aimed inside a 14 m box: half a second of input
+            // crosses six metres, which is why it read as uncontrollable even with the spin
+            // fixed. He is still the fastest thing on the court, which is the point of riding
+            // him, and `Balance.Speed` is named here rather than copied so the two cannot drift.
+            const float FlySpeedScale = 1.7f;
+            float flySpeed = Core.Balance.Speed * FlySpeedScale;
 
             if (moveDir.sqrMagnitude > 0.01f)
             {
                 transform.position += moveDir.normalized * flySpeed * dt;
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveDir), dt * 14.0f);
             }
 
             // Floating bob & tilt

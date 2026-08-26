@@ -253,12 +253,24 @@ namespace TumbangPreso.Abilities
 
             // ⚠️ THE RELEASE IS CHECKED BEFORE THE CEILING, so a player who lets go on the exact
             // frame the cap lands gets one cast rather than two stamps a frame apart.
+            //
+            // ⚠️⚠️ AND AN ABILITY MAY DECLINE THE CEILING ENTIRELY. `HeroAbility.MaxAimSeconds`
+            // of 0 means "only the release casts this", which 🧑 asked for on the blink after
+            // playing it: *"u cant control the E of phaister and it autocasts after some
+            // seconds, i want it to cast only when i let go"*. See that property's note for why
+            // it does not reopen `docs/VISION.md` § 4: the reach stops growing at 0.55 s, so a
+            // longer hold pays out nothing, and the anti-camp clocks never stopped running.
             bool released = intent.JustReleased(verb);
-            bool capped = held >= ability.MaxAimSeconds;
+            bool capped = !ability.CastsOnReleaseOnly && held >= ability.MaxAimSeconds;
 
             if (!released && !capped) return;
 
-            ability.HeldSecondsOnCast = Mathf.Min(held, ability.MaxAimSeconds);
+            // ⚠️ THE CLAMP IS AGAINST THE RAMP WHEN THERE IS NO CEILING. Clamping to
+            // `MaxAimSeconds` would clamp to ZERO on a release-only power and hand every blink
+            // the minimum 2.0 m, which is the same fault § HOLDING A HOLD-TO-AIM POWER records
+            // against a bot's one-frame tap, arriving from the opposite direction.
+            float aimCap = ability.CastsOnReleaseOnly ? ability.AimRampSeconds : ability.MaxAimSeconds;
+            ability.HeldSecondsOnCast = Mathf.Min(held, aimCap);
             _heldSince[i] = -1.0f;
             bufferedAt = Time.time;
         }
@@ -466,10 +478,16 @@ namespace TumbangPreso.Abilities
             // somebody else's storm would be `docs/TODO.md` § 8 item 3's fault again, *"Sean's
             // Supernova was spawning Dante's magma ... two heroes reading as one is the most
             // expensive form of repetitive, because it costs a character."*
+            // ⚠️⚠️ THE LENGTH IS `SkyEvent.SecondsFor` NOW, NOT `Mathf.Max(2.2f, Duration)`.
+            // Four of the six ultimates carry a `Duration` of 0 because they are instantaneous
+            // blasts, so the old expression resolved to the 2.2 s floor for most of the roster
+            // and the whole event including both ramps was 2.65 s. 🧑 2026-08-27: *"dude the
+            // change in weather lasts liek 2 seconds,, u dont even notice it"*. That property
+            // carries the new arithmetic and why the aftermath lives in the FALL.
             var look = LookFor(Kit != null ? Kit.HeroId : null);
             if (look.HasValue && Kit != null && Kit.Ultimate != null)
             {
-                Visual.SkyEvent.Play(look.Value, Mathf.Max(2.2f, Kit.Ultimate.Duration));
+                Visual.SkyEvent.Play(look.Value, Visual.SkyEvent.SecondsFor(Kit.Ultimate.Duration));
             }
 
             var camera = UnityEngine.Camera.main;
@@ -481,12 +499,52 @@ namespace TumbangPreso.Abilities
             float falloff = isLocalHero ? 1.0f : Mathf.InverseLerp(22.0f, 5.0f, distance);
             if (falloff <= 0.01f) return;
 
+            // -------------------------------------------------------------------
+            // § THE WEIGHT OF THE PRESS
+            //
+            // ⚠️⚠️ 🧑 2026-08-27: *"i want all ults to feel like they hit harder ... their ults
+            // dont feel like ults nor do they feel like hard shit that just hit, they all dont
+            // have impact"*. Three numbers here were tuned when the ultimate's whole presentation
+            // was a flash and a 0.9 s column, and they are the ones that say "something enormous
+            // just happened" to a player who is LOOKING SOMEWHERE ELSE, which is most of the
+            // arena most of the time.
+            //
+            // ⚠️ THE SHAKE AND THE CHROMATIC ABERRATION SCALE WITH `falloff`, SO STRENGTHENING
+            // THEM DOES NOT MAKE A DISTANT ULTIMATE INTRUSIVE. `falloff` is already an inverse
+            // lerp from 22 m to 5 m for anyone who is not the caster, so these are multipliers on
+            // a curve that is zero across most of the map. What grew is the near field, which is
+            // where "that hit hard" is decided.
+            //
+            // ⚠️⚠️ AND NONE OF THIS TOUCHES BRIGHTNESS, WHICH IS THE ONE AXIS THAT IS SPOKEN FOR.
+            // `docs/TODO.md` § 8b measured Zack's Thunderstrike blowing **62.8 per cent** of a
+            // frame to white and `AbilityShowcaseProbe` now fails a run over 12. A shake, a
+            // chromatic split and a held frame all read as force while adding no luminance at
+            // all, which is exactly why they are the levers here and a flash is not.
+            // -------------------------------------------------------------------
             Vector3 away = camera.transform.position - _context.Position;
             if (away.sqrMagnitude < 0.01f) away = -_context.Forward;
-            rig?.ImpactPunch(away.normalized, 0.9f * falloff);
-            camera.GetComponent<Visual.ColourGrade>()?.PulseChromatic(0.75f * falloff, 0.32f);
 
-            if (isLocalHero) Hitstop.Trigger(0.045f, 0.12f);
+            // 0.9 -> 1.45. `ImpactPunch` drives both a 0.20 m directional shove of the eye and a
+            // `Shake` at 45 per cent of the strength, so this is the single number that carries
+            // most of the physicality.
+            rig?.ImpactPunch(away.normalized, 1.45f * falloff);
+
+            // 0.32 s -> 0.85 s, at a slightly higher peak. The old pulse was over before the
+            // wind-up finished, so the colour split never overlapped the thing it was reacting
+            // to. This one is still decaying while the blast lands.
+            camera.GetComponent<Visual.ColourGrade>()?.PulseChromatic(0.95f * falloff, 0.85f);
+
+            // ⚠️ THE SECOND SHAKE IS THE TAIL, AND IT IS A SEPARATE CALL BECAUSE `Shake` TAKES
+            // THE MAXIMUM OF WHAT IS ALREADY RUNNING. `ImpactPunch`'s own shake is a sharp 0.22 s
+            // hit; this is a longer, weaker rumble underneath it, so the ground is still unsettled
+            // a second later. One call cannot express both, and a single long hard shake would be
+            // unplayable rather than weighty.
+            rig?.Shake(0.30f * falloff, 1.10f);
+
+            // 0.045 / 0.12 -> 0.075 / 0.20. The held frame is the clearest "this is not a skill"
+            // signal the game has and it costs no light and no floor. It stays local-only: a hold
+            // on somebody else's screen is input lag, not impact.
+            if (isLocalHero) Hitstop.Trigger(0.075f, 0.20f);
         }
 
         /// <summary>

@@ -88,8 +88,58 @@ namespace TumbangPreso.Visual
         /// arrives and leaves at the same rate reads as a light switch. Arriving fast is the
         /// event; leaving slowly is the round settling back down, and it also means the last
         /// second of an ultimate is not spent watching the sky rather than the fight.
+        ///
+        /// ⚠️⚠️ 1.10 s BECAME 3.20 s ON 2026-08-27, AND THE FALL IS NOW THE LONGEST PHASE OF THE
+        /// WHOLE EVENT ON PURPOSE. 🧑, playing the 4.72 build: *"i want the ult weather changes
+        /// as well as customized light and aura to last a bit longer, (dude the change in weather
+        /// lasts liek 2 seconds,, u dont even notice it)"* and *"make the changes in lighting and
+        /// color and the sfx to continue playing for some time after too"*. The second sentence
+        /// is this constant exactly: the aftermath is not the hold, it is the fall, because an
+        /// ultimate that ENDS and leaves the street wrong for three more seconds is a thing that
+        /// happened to the arena rather than a filter that was switched on and off.
+        ///
+        /// ⚠️ AND THE FALL COSTS NOTHING IN READABILITY, WHICH IS WHY IT IS THE PART THAT GREW.
+        /// `k` is already decaying through it, so every frame of the fall is closer to the
+        /// untouched street than the one before: a long fall is a long return to normal, not a
+        /// long period of being unable to see. Extending the HOLD instead would have spent
+        /// `docs/VISION.md` § 2 rule 5's budget for the whole duration.
         /// </summary>
-        private const float FallSeconds = 1.10f;
+        private const float FallSeconds = 3.20f;
+
+        /// <summary>
+        /// The shortest a weather event may last, in seconds, whatever the ultimate's own
+        /// duration is.
+        ///
+        /// ⚠️⚠️ FOUR OF THE SIX ULTIMATES HAVE A `Duration` OF ZERO, WHICH IS WHY THE OLD FLOOR
+        /// WAS THE ONLY NUMBER THAT MATTERED. Cheska's nova, Dante's fissure, Nemu's Kuro
+        /// Unbound and Sean's supernova are instantaneous blasts, so `Mathf.Max(2.2f, Duration)`
+        /// resolved to 2.2 for all four and to 5.0 and 7.0 for the other two. At 2.2 the whole
+        /// event was 2.65 s including both ramps, which is 🧑's *"u dont even notice it"*
+        /// measured: about one second of the sky actually being the new colour.
+        ///
+        /// ⚠️ 7.0 s IS SET AGAINST THE ROUND, NOT AGAINST THE BLAST. A round is 90 s and a
+        /// player banks one or two ultimates in it, so the weather is on screen for under 8 per
+        /// cent of a round even at this length. It is long enough to be looked at, turned
+        /// toward, and played around, which is what `docs/VISION.md` § 1.1 asks an ultimate to
+        /// be: *"combos, timing, counterplay, reading which ultimate is banked"*.
+        /// </summary>
+        public const float MinimumSeconds = 7.0f;
+
+        /// <summary>
+        /// How long the sky should be turned for an ultimate of the given duration.
+        ///
+        /// ⚠️ IT IS HERE RATHER THAN AT THE CALL SITE SO THERE IS ONE ANSWER. It used to be
+        /// `Mathf.Max(2.2f, Kit.Ultimate.Duration)` written inline in
+        /// `HeroAbilitySystem.PlayUltimatePresentation`, which is the only caller today and was
+        /// therefore the only place the floor could be found.
+        ///
+        /// ⚠️⚠️ A LASTING ULTIMATE GETS WEATHER FOR ITS WHOLE LIFE PLUS THE AFTERMATH, WHICH IS
+        /// WHY THIS ADDS RATHER THAN TAKES A MAXIMUM. Zack's Thunderstrike runs 7.0 s; under the
+        /// old arithmetic its sky ENDED on the same frame the power did, so the one ultimate long
+        /// enough to be played around was also the one whose weather never outlived it.
+        /// </summary>
+        public static float SecondsFor(float abilityDuration)
+            => Mathf.Max(MinimumSeconds, abilityDuration + FallSeconds);
 
         private static SkyEvent _live;
 

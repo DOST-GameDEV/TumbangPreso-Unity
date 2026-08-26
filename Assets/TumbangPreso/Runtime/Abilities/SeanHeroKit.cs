@@ -60,7 +60,7 @@ namespace TumbangPreso.Abilities
                 // behind the whole retune and `docs/Hero_Strike_Balance.md` § 3.1 for the table.
                 : base("sean_skill1", "FLAME RUSH",
                        "Rushes you forward in a line of fire. Anyone you run through is knocked down, and the trail burns whoever follows.",
-                       34.0f, 0.6f, TumbangPreso.UI.AbilityGlyph.SeanRush,
+                       50.0f, 0.6f, TumbangPreso.UI.AbilityGlyph.SeanRush,
                        summary: "Rush forward. Knocks down who you hit, burns who follows.",
                        castAction: "hero-sean-dash",
                        viewmodelAction: "thrust-fire")
@@ -91,7 +91,6 @@ namespace TumbangPreso.Abilities
 
                 NetCue.Play("hero_sean_grunt", ctx.Position);
                 NetCue.Play("sfx_fire_whoosh", ctx.Position);
-                ComicPopup.Spawn(ctx.Position, "ROCKET!", UiTheme.HeroFireBright, 1.25f);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
@@ -196,7 +195,6 @@ namespace TumbangPreso.Abilities
                 _kit.IsIgnitionCannonActive = true;
                 Visual.AbilityVfx.AttachHandVfx(ctx.Motor.transform, Visual.AbilityVfx.Aura.FireEmber, Duration);
                 NetCue.Play("sfx_fire_whoosh", ctx.Position);
-                ComicPopup.Spawn(ctx.Position, "IGNITE!", UiTheme.HeroFireBright, 1.25f);
             }
 
             protected override void OnEnd(AbilityContext ctx)
@@ -240,7 +238,6 @@ namespace TumbangPreso.Abilities
                 ctx.Motor.ApplyImpulse(Vector3.up * 14.0f + ctx.Forward * 4.0f);
                 NetCue.Play("hero_sean_ult", ctx.Position);
                 NetCue.Play("sfx_fire_whoosh", ctx.Position);
-                ComicPopup.Spawn(ctx.Position, "BLAST OFF!", UiTheme.HeroFireBright, 1.3f);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)

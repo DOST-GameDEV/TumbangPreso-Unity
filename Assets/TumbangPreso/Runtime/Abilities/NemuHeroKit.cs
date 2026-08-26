@@ -51,7 +51,7 @@ namespace TumbangPreso.Abilities
                 // the glyph and one sentence, so the name is where this has to land.
                 : base("nemu_skill1", "KURO'S SHADOW",
                        "You step into Kuro's shadow: faster, and the taya cannot tag you. Picking up a tsinelas ends it early.",
-                       36.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.NemuPhase,
+                       52.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.NemuPhase,
                        summary: "Kuro's shadow: faster, untaggable until you grab one.",
                        castAction: "hero-nemu-ghoststep",
                        viewmodelAction: "ghost-step")
@@ -62,7 +62,6 @@ namespace TumbangPreso.Abilities
             {
                 NetCue.Play("hero_nemu_grunt", ctx.Position);
                 NetCue.Play("sfx_ghost_teleport", ctx.Position);
-                ComicPopup.Spawn(ctx.Position, "PHANTOM!", UiTheme.HeroSpiritBright, 1.25f);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.Stretch(0.3f);
@@ -146,7 +145,6 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 NetCue.Play("sfx_ghost_teleport", ctx.Position);
-                ComicPopup.Boo(ctx.Position);
 
                 var visual = ctx.Motor.GetComponent<Visual.CharacterVisual>();
                 if (visual != null && visual.Companion != null)

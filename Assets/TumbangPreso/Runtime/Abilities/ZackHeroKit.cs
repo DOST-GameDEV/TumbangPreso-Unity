@@ -97,7 +97,7 @@ namespace TumbangPreso.Abilities
                 // forbids anything that rewards waiting.
                 : base("zack_skill1", "BOLT SPRINT",
                        "Overcharges your skates. You move faster, and the trail you leave behind shocks anyone chasing you.",
-                       30.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.ZackSprint,
+                       46.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.ZackSprint,
                        summary: "Move faster, and shock whoever chases your trail.",
                        castAction: "hero-zack-sprint",
                        viewmodelAction: "sprint-electric")
@@ -117,7 +117,6 @@ namespace TumbangPreso.Abilities
 
                 NetCue.Play("hero_zack_grunt", ctx.Position);
                 NetCue.Play("sfx_lightning_strike", ctx.Position);
-                ComicPopup.Spawn(ctx.Position, "RAIL GRIND!", UiTheme.HeroElectricBright, 1.25f);
 
                 _wake.Clear();
                 _wake.Enqueue(ctx.Position);
@@ -211,7 +210,6 @@ namespace TumbangPreso.Abilities
                 _kit.IsOverchargeThrowActive = true;
                 Visual.AbilityVfx.AttachHandVfx(ctx.Motor.transform, Visual.AbilityVfx.Aura.ElectricSpark, Duration);
                 NetCue.Play("sfx_lightning_strike", ctx.Position);
-                ComicPopup.Spawn(ctx.Position, "OVERCHARGE!", UiTheme.HeroElectricBright, 1.25f);
 
                 // ⚠️⚠️ HIS MOTIF: THE CHARGE LOOKS FOR SOMEWHERE TO GO. `docs/TODO.md` § 27.2.
                 // Every other effect in this game is built from constants and a position; this
@@ -256,7 +254,6 @@ namespace TumbangPreso.Abilities
                 NetCue.Play("sfx_lightning_strike", ctx.Position);
                 HeroHazards.CreateThunderstrike(ctx.Position, 4.5f, ctx.Motor.PlayerSlot);
                 Visual.AbilityVfx.SpawnElectricArcs(ctx.Position, 4.5f);
-                ComicPopup.Spawn(ctx.Position, "THUNDERSTRIKE!", UiTheme.HeroElectricBright, 1.5f);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.Stretch(0.4f);

@@ -1377,7 +1377,7 @@ Every one of these was green on neither side alone and red the moment the branch
    244, and 305 to 320.** The first two are not colours a witch can have. She is now `e828c5`,
    hue 311, which sits furthest from its nearest neighbour inside that window at 36.2 degrees
    from Nemu and 39.1 from Sean. Saturation and value are the ones she shipped with.
-2. ⚠️⚠️ **`EveryHeroAbilityHasBespokeCastAndViewModelActions`: *"phaister: KULAM HEX
+2. ⚠️⚠️ **`EveryHeroAbilityHasBespokeCastAndViewModelActions`: *"phaister: HEX
    ViewmodelAction 'cast-hex' is not supported by ViewmodelArms"*.** All three of her powers
    named a viewmodel action and `PlayAction`'s chain had an arm for none of them, so the
    first-person arms did NOTHING for the entire sixth kit. The hand is the whole character in
@@ -1394,7 +1394,7 @@ SOLID, so `localScale = radius * 2.0` is a filled disc of that radius, not a rin
 
 | Effect | As merged | Painted | Now |
 |---|---|---|---|
-| Kulam Hex | two stacked discs at `r*2.0` and `r*1.25`, plus 3 spokes and 6 cubes | about **18 m²** of a 196 m² court for one SKILL | pentagram line art, about 1.4 m² |
+| Hex | two stacked discs at `r*2.0` and `r*1.25`, plus 3 spokes and 6 cubes | about **18 m²** of a 196 m² court for one SKILL | pentagram line art, about 1.4 m² |
 | Shadow Blink | two discs, 1.6 m and 1.2 m radius | 8 m² and 4.5 m², for marks living under half a second | two cast glyphs |
 | Grand Coven Eclipse | corona at `r*2.0` plus a dark core at `r*1.1` plus 8 cube beams 9 m long | **78.5 m², 40 per cent of the box, in one plate**, with 23.8 m² stacked on it | heptagram at the same 5 m reach, plus a 1.7 m moon |
 
@@ -1799,7 +1799,7 @@ argument.
 
 ✅ **DONE 2026-08-26. Three constructions, three motions, three places in space, three hues.**
 
-| | Q, KULAM HEX | E, SHADOW BLINK | R, GRAND COVEN |
+| | Q, HEX | E, SHADOW BLINK | R, GRAND COVEN |
 |---|---|---|---|
 | Built by | `VfxShapes.WardCircle` | `VfxShapes.Rift` + `Rune` | `VfxShapes.Corona` + `SkyEvent` |
 | Made of | rings, a written band, nested squares, medallions | two ragged edges and the threads between them | tapering teeth around an empty middle |
@@ -1992,6 +1992,13 @@ session's work on its own and it wants `NetAuthority`'s three-line pattern follo
 
 **Done looks like:** two peers, one Hero Strike match, and the same effect on both screens for
 every one of the eighteen powers.
+
+⚠️⚠️ **AND THERE IS A NUMBER ON IT NOW.** `tools/audit_ability_authority.py` (2026-08-27, § 31.11)
+walks the ability tree for every call that moves a body or writes score and reports whether a
+`NetAuthority.ShouldResolve()` gate is open at that brace depth, exactly as `audit_audio_reach.py`
+measures the audio half. It reports **39 effect call sites, 1 host-gated, 23 ungated on another
+body, 15 ungated on the caster**. The one gated call is Phaister's `Curse`. Run it for the
+worklist rather than re-deriving it: HOST-ONLY is the correct state for anything in that column.
 
 ### 25.2 Two cues added, and the bar they had to clear
 
@@ -2346,6 +2353,284 @@ and `sfx_sky_seance` **0.71**; both are one-shots and both would do exactly that
 machine, and this profile is `C:\\Users\\Matthew`. **The code is right and the note is a hard-coded
 path from the other laptop.** It matters because the § 2.2 build procedure tells you to check a
 folder that does not exist here, which reads as a build that never ran.
+
+---
+
+## 31 · Everything the 4.72 playtest reported, and the two faults it exposed
+
+**🧑 played the 4.72 player on 2026-08-27 and sent nine items with two screenshots.** They are
+listed here in his order, with what was actually wrong under each, because five of the nine had a
+cause that was not what the symptom looked like.
+
+### 31.1 The bots turned like nothing alive ✅
+
+*"ai movement is stupidly unrealistic, moving and looking back and forth unnaturally, like who
+does that, ppl have to flick their mouse to move, they can look straight behind them and turn in
+0.1 seconds"*.
+
+⚠️⚠️ **TWO SEPARATE FAULTS THAT COMPOUNDED, AND NEITHER IS IN THE AI'S DECISIONS.**
+
+1. **A bot's body had no turn rate at all.** `CharacterMotor.Steer` ran
+   `transform.rotation = Quaternion.LookRotation(wish)` for every movement-aimed unit. That is an
+   instant snap: a full reversal completed in one 60th of a second. `AiTuning.BodyTurnDegPerSecond`
+   is **520**, derived against a human's own flick through `CameraRig.StepLook` (about 0.3 s for
+   180 degrees on the shipped sensitivity), which puts a bot's half turn at **0.35 s**.
+2. **The heading itself flipped frame to frame.** `EightWay` snaps onto eight compass directions
+   and the planner reruns every frame, so a wanted direction near an octant boundary alternated
+   between two neighbours indefinitely. `AIController.CommitHeading` holds a chosen heading for
+   `AiTuning.HeadingCommitSeconds` **0.18 s** unless the wanted heading swings more than
+   `HeadingBreakDeg` **90 degrees**, which a 45-degree octant boundary cannot reach.
+
+⚠️ **THE COMMIT IS NOT A SMOOTHING FILTER AND MUST NOT BECOME ONE.** Averaging two octants gives a
+heading no keyboard can press, which breaks `CLAUDE.md` § 4's *"a bot presses the same buttons a
+human does"*. It commits to one of the eight and refuses to change; that is what a player does.
+
+⚠️ **AND THE TURN CAP APPLIES TO EVERY MOVEMENT-AIMED UNIT, NOT ONLY TO BOTS**, for the same
+reason. A gamepad human steers through the same branch.
+
+⚠️ **A FIELD NAME COLLIDED AND THE COMPILER CAUGHT IT, BUT ONLY JUST.** `AIController` already had
+`_commitLeft`, the PLAN commit clock driven by `_self.Hesitation`. The new one is
+`_headingCommitLeft`. The first draft also decremented the old field a second time, in a different
+method from the one that owns it, which would have halved every bot's hesitation window silently.
+
+**Not fixed, and it is the one thing here that was never broken:** *"im not sure if they even have
+proper ai logic for when to use skills"*. There is per-hero logic and it is in
+`AIController.StepHeroAbilities`; what was wrong is § 31.7.
+
+### 31.2 Phaister's blink fired itself ✅
+
+*"u cant control the E of phaister and it autocasts after some seconds, i want it to cast only
+when i let go"*. `AimByHolding(..., maxHoldSeconds: 1.10f)` fired at the ceiling. It is **0.0**
+now, and `HeroAbility.CastsOnReleaseOnly` is what that means.
+
+⚠️⚠️ **THIS DOES NOT REOPEN `docs/VISION.md` § 4's "NOTHING MAY REWARD WAITING", WHICH IS WHAT THE
+CEILING WAS FOR.** The ceiling was one of four defences and the weakest. The load-bearing one is
+that `AimRampSeconds` stops the reach growing at **0.55 s**, so every second of hold past the
+first half second pays out nothing at all. She is also not rooted while aiming and the anti-camp
+clocks never stop. A hold that buys nothing is not a reward, it is a player standing still.
+
+⚠️ **THE CLAMP HAD TO MOVE WITH IT.** `HeroAbilitySystem.Aim` clamped `HeldSecondsOnCast` to
+`MaxAimSeconds`; at 0 that would hand every blink the minimum 2.0 m, which is the same fault
+§ HOLDING A HOLD-TO-AIM POWER records against a bot's one-frame tap. It clamps to the ramp now.
+
+### 31.3 The blink was *"js a shadow"* ✅
+
+Both marks were too short-lived to be looked at. `RiftOpen.Life` **0.52 s to 1.30 s**,
+`SpawnShadowArrival`'s object **0.75 s to 1.55 s**, `GlyphSettle.Life` **0.40 s to 1.15 s** (its
+last glyph started at 0.175 s, so the runes finished at 0.575 s inside a 0.75 s object). Nothing
+about the geometry changed: it is a near-white two-sided rip with its own light, and it existed
+for about thirty frames.
+
+### 31.4 The eclipse *"feels like it does nothing"*, and it was a one-frame power ✅
+
+⚠️⚠️ **`Curse` RAN ONCE, INSIDE `OnActivate`.** Everything else the ultimate owned (the falling
+eclipse, the ground ring, the aura, the weather) then played for five seconds over an arena in
+which the power had already completely finished happening. A player who walked into the ring one
+frame after the cast walked through a light show. That is why the most expensive ability in the
+game at `UltimateCost` **115** read as a screensaver.
+
+**It is a zone now.** `Duration` **5.0 to 7.0 s**, and `OnTick` re-curses whoever is standing
+inside `Reach` every `RecurseEvery` **1.85 s**, from a `_centre` remembered at the cast so it
+cannot follow her.
+
+⚠️ **THE RE-CHECK IS DELIBERATELY SLOWER THAN THE HOLD IS LONG.** 1.85 s against a 1.60 s hold
+leaves a quarter-second window after every break in which a player who has mashed free can run.
+A re-check faster than the hold is an inescapable lock, and three people held forever by one
+press is a round that ends without being played.
+
+⚠️ **THE REACH IS UNCHANGED AT 5.0 m AND SHOULD STAY THERE.** It grew along the TIME axis, which
+is free; growing the footprint as well would spend `VISION.md` § 2's budget twice for one ability.
+
+**And it answers the role question directly:** a zone the taya cannot stand in is a hole opened in
+the defence, and the same zone centred on the lata by a DEFENDING Phaister makes the retrieval run
+impossible for its duration. One power, opposite uses, chosen by where she stands.
+
+### 31.5 Kuro Unbound could not be seen, and two correct changes collided ✅
+
+*"make nemu' look better and more imposing, he can barely be seen and i think u should change his
+shape too during this form"*, with a screenshot.
+
+⚠️⚠️ **`PoseDevourBody` TOOK HIM TO 22 PER CENT OF HIS OWN VALUE AND `Visual.SkyEvent`'s `Seance`
+LOOK SIMULTANEOUSLY DARKENED THE WHOLE STREET.** Each was right alone. A dark violet animal at 22
+per cent value, under a violet sky, at night, is a hole in the picture. The floor is **0.46** now
+and it is set against the weather he brings rather than against the daylight street it was tuned
+in. Same class as § 26's own clamp: a system that changes the global light can break an effect
+tuned without it.
+
+⚠️⚠️ **AND MAKING HIM VISIBLE IS WHAT REVEALED THAT HIS SIZE HAD NEVER BEEN JUDGED.**
+`ability_kuro_unbound_eye_v30.png` is the first frame in the ultimate's life in which he can be
+seen at all, and at `DevourScale` **7.0** he filled the view from eye height and hid the arena
+behind him, which `VISION.md` § 2 rule 5 forbids outright. **5.6** now. He is still by a wide
+margin the largest object any ability puts on the court.
+
+**The other three channels, all measured off renders rather than reasoned:**
+
+* **Emission, which is the half a value floor cannot do.** Body **0.30**, horns **0.30**, both
+  ramped by `k` so they unwind on the flight home like every other channel. It survives the
+  ambient drop his own weather causes, so the silhouette holds without the skin reading lighter.
+* **Proportion 0.80 / 1.18 / 1.32**, up from 0.82 / 1.14 / 1.26.
+* **The horns keep their 0.16 length** and now divide `_devourStretch` back out.
+
+⚠️⚠️ **THREE NUMBERS HERE WERE WRONG ON THE FIRST TRY AND EVERY ONE WAS CAUGHT BY A RENDER, NOT BY
+READING THE CODE.** Horn length 0.30 was a **6.7 m spike over a 2.8 m maw** (they are children of
+a body at `PersonScale` 2.38 times `DevourScale`, so a local length is not metres: the same trap
+`DevourLift` records); horn emission 1.35 clipped them to flat near-white cutouts with no facets;
+and the body stretch inherited by the horns turned spikes into slabs.
+
+⚠️ **AND THE LIFT NOW CARRIES THE VERTICAL PROPORTION.** `_originAboveFeet * grown` was correct
+only while the body and the origin scaled together. Stretching the body to `tall` without the lift
+sinks him by `_originAboveFeet * grown * (tall - 1)`, which is his jaw in the tarmac.
+
+**Open, and it is a human judgement:** whether the form now reads as *"better"*. It is legible and
+imposing; whether it is handsome is 🧑's call against `ability_kuro_unbound_eye_v31.png`.
+
+### 31.6 Riding Kuro spun the camera, and it was a feedback loop ✅
+
+*"nemu e is uncontrollable, the camera spins very fast and u cant see shit"*.
+
+⚠️⚠️ **A CLOSED LOOP WITH GAIN, WHOSE THREE LEGS WERE EACH REASONABLE.**
+
+1. `CameraRig.ApplyCompanionPossessionView` takes its yaw from the PET, because the eye rides him.
+2. `GhostPetCompanion.UpdatePossession` took its movement basis from `Camera.main.forward`.
+3. The same method then turned the PET toward that movement direction.
+
+Holding W is stable because all three agree. **Holding A or D is not**: a strafe sits at an angle
+to the facing, the pet turns into it, the camera follows, the strafe direction rotates again. It
+accelerates and never stops while the key is down.
+
+⚠️ **THE FIX IS TO DELETE LEG 3, NOT TO DAMP IT.** `CameraRig.StepCompanionLook` was *already*
+routing the mouse onto that transform; leg 3 overwrote it every frame in `LateUpdate`. The
+possession now behaves like every other mouse-aimed body in the game. The basis is read from the
+PET rather than from the camera so a future change to the mount cannot reopen it.
+
+⚠️ **AND THE FLY SPEED WAS 12.5 m/s AGAINST A PLAYER'S 4.6.** Half a second of input crossed six
+metres of a 14 m box, so it read as uncontrollable even with the spin gone. It is
+`Balance.Speed * 1.7` now, named rather than copied.
+
+### 31.7 Ability timers, and a bot that spent its whole kit on frame one ✅
+
+*"make ability timers way longer too for all or just replace them with 1-2 charges and make sure
+ai doesnt just spam them all at the start"*, sent twice in the same message.
+
+**Cooldowns scaled by about 1.5**, band 30 to 45 s becomes **46 to 62 s**: Zack 46, Sean 50, Nemu
+52, Phaister 52, Dante 62. The ORDER is unchanged and is the argued part
+(`Hero_Strike_Balance.md` § 3.1). The charge abilities were already at 1 or 2 per round.
+
+⚠️⚠️ **THE SPAM WAS A SEPARATE DEFECT AND LONGER COOLDOWNS WOULD NOT HAVE FIXED IT.** Every branch
+in `StepHeroAbilities` gates its cast on a distance to the correct target, and **all of those
+gates are satisfied simultaneously at a round boundary**, because four seats spawn around one lata
+inside a 14 m box. At t = 0 a Dante is inside 5.0 m, a Zack inside 8.0 and a Phaister inside 8.5,
+so the ultimate and both skills fired on the first live frame for all four seats.
+
+* `AiTuning.AbilityCadenceSeconds` **1.6 s**, one clock for all three slots, which is what makes
+  it a cadence rather than a second cooldown: per-slot spacing still allows a whole kit at once.
+* `AiTuning.AbilityOpeningDelaySeconds` **2.5 s**, roughly the time to cross the box, so the
+  distance gates mean something again once the opening scatter has happened.
+
+⚠️ **AN IN-PROGRESS HOLD IS EXEMPT.** Closing the gate mid-hold would release Phaister's blink
+early and pin every bot blink to the minimum range. ⚠️ **And `_aimHeld` keeps a released key in
+the table with -1 in it**, so the exemption tests the VALUES, not `Count`; testing `Count` latches
+the gate open for the rest of the match after the first blink.
+
+⚠️ **THE CADENCE RESTARTS ON A TOUCH, NOT ON A CONFIRMED CAST**, because this side cannot know
+whether the press was answered: `HeroAbilitySystem` buffers for 0.30 s and may refuse it. Spacing
+what the bot ASKS for is the honest reading, and it also means a refused press costs the same beat
+a successful one does, which is what stops a bot mashing an empty meter.
+
+### 31.8 Twenty-one callouts deleted, and the rule that replaces them ✅
+
+*"maybe lessen the words//text that pop out too when shit happens?"*. Twenty-one of the
+fifty-five callouts in the game were a hero announcing their own press. In Hero Strike four seats
+cast 44 to 56 times in a 90 s round (§ 19), so **the most frequent thing on screen was the game
+reading its own keypresses back to the player**.
+
+⚠️⚠️ **THE RULE IS WRITTEN INTO `ComicPopup`'s CLASS NOTE SO A NEW HERO CANNOT REINTRODUCE THEM:
+A CAST GETS NO WORD.** The test is who learns something, and a caster learns nothing: they pressed
+the key, the deck tile greyed out, the viewmodel played and the effect is under their own feet.
+Four confirmations before the word. What earns a callout is a state change the reader did NOT
+choose (TAGGED!, HEXED!, CURSED!, PHASE BROKEN!, FREEZE!) or something that moved the score, and
+those are all kept. `MaxLive` **3 to 2**.
+
+⚠️ **THE ULTIMATES LOST THEIR SHOUT ON PURPOSE**, which looks like the opposite of § 31.9 and is
+not: the word lasted 1.25 s and said what the player already knew. What replaced it is the sky
+held for seconds rather than 2.2, a 2.2 s column, and a sound tail that outlives the blast.
+
+### 31.9 The ultimates had no weight, and most of it was one arithmetic expression ✅
+
+*"i want all ults to feel like they hit harder ... the change in weather lasts liek 2 seconds,, u
+dont even notice it"*, and *"make the changes in lighting and color and the sfx to continue
+playing for some time after too"*.
+
+⚠️⚠️ **`Mathf.Max(2.2f, Kit.Ultimate.Duration)` WAS THE WHOLE PROBLEM. FOUR OF THE SIX ULTIMATES
+CARRY A `Duration` OF 0** because they are instantaneous blasts, so that expression resolved to
+the 2.2 s floor for most of the roster. With both ramps the entire weather event was **2.65 s**,
+of which about one second was the sky actually being the new colour. `SkyEvent.SecondsFor` is
+`Max(MinimumSeconds 7.0, duration + FallSeconds)`.
+
+⚠️⚠️ **THE AFTERMATH LIVES IN THE FALL, NOT IN THE HOLD, AND THAT IS WHY THE FALL IS NOW THE
+LONGEST PHASE.** `FallSeconds` **1.10 to 3.20 s**. `k` is already decaying through it, so every
+frame of the fall is closer to the untouched street than the one before: a long fall is a long
+return to normal, not a long period of being unable to see. Extending the HOLD would have spent
+rule 5's budget for the whole duration.
+
+⚠️⚠️ **AND THE ECLIPSE WAS CUTTING ITS OWN SKY SHORT EVERY SINGLE CAST.**
+`SpawnGrandCovenEclipse` still called `SkyEvent.Play` itself, left behind when § 26 moved the sky
+to the one point every ultimate passes through. Both calls asked for the same LOOK, so it read as
+a redundancy; the **wind-up** is what made it a bug. `HeroAbility` roots the caster for 0.4 s and
+runs `OnActivate` at the END of it, so the presentation started the sky for its full length and
+0.4 s later this line restarted the same weather at the ability's raw duration. `SkyEvent.Begin`
+zeroes `_elapsed` on every call. Deleted; `SkyEvent.Play` now has one runtime caller.
+
+**The rest of the weight, none of which costs any luminance** (§ 8b measured Thunderstrike blowing
+62.8 per cent of a frame to white, and the probe fails a run over 12):
+
+| | was | is |
+|---|---|---|
+| `UltimateColumn.Life` | 0.9 s | **2.2 s** |
+| `ImpactPunch` strength | 0.9 | **1.45** |
+| `PulseChromatic` | 0.75 for 0.32 s | **0.95 for 0.85 s** |
+| A second, longer rumble | none | **0.30 for 1.10 s** |
+| `Hitstop` (local caster only) | 0.045 / 0.12 | **0.075 / 0.20** |
+
+⚠️ **THE SIX WEATHER CUES WERE AUTHORED AT 2.6 to 2.9 s AGAINST THE 2.65 s EVENT.** They are
+**7.4 to 8.4 s** now. `_rumble_tail` grew a `decay` parameter for it; every other caller keeps
+0.9 by omitting it. `synth_sky_whiteout` has no rumble bed by design (it is air, not mass) so its
+own two decays carry the tail instead, and `synth_sky_seance` needed a 0.22 s release because its
+envelope peaks AT `duration` by construction: at 2.7 s that was a deliberate stab, at 7.6 s it is
+a seven-second crescendo terminated by a click.
+
+⚠️ **THE SEEDING HELD AND IT WAS CHECKED.** Exactly 12 files moved, which is the six cues in the
+two output directories. `tools/audit_cue_audio.py` reports all six clean on DC and seam.
+
+**Open: the per-hero creative revamp.** 🧑 also asked to *"give everyone more creative ults that
+have an impact that effects or is usable either in attacker/defender roles or both roles"*.
+Phaister's is done (§ 31.4) and every ultimate got the presentation above, but the other five
+kits keep their existing effects. **This is deliberately not done blind:** Dante already leaves
+earth pillars for 5.0 s and Nemu's maw runs 5.0 s, so two of the five already have the lasting
+half; Cheska's nova and Sean's supernova are the two that genuinely resolve in a frame. Any
+redesign is an unmeasured balance change of exactly the kind § 0 says wants a played build first.
+
+### 31.10 "kulam" is gone ✅
+
+*"kulam sounds so shit too replace it with hex, in everything"*. The ability is named **HEX**, and
+the four identifiers that carried the old word are now `SpawnHexSigil`, `HexSigilComponent`,
+`HexSigilAbility` and the `HexWardZone` object. Its callout was deleted outright by § 31.8. The
+cue files were already `sfx_hex_cast` and `sfx_hex_afflict`, and `StunElement.Hex` already
+existed, so nothing on the audio or stun side had to move. **`Id` is untouched at
+`phaister_skill1`**: ids are keys, and § 28's note on `nemu_ultimate` records why renaming one to
+match a label is how a rename becomes six silent lookup failures.
+
+### 31.11 What this session measured that nobody had asked for
+
+⚠️⚠️ **`tools/audit_ability_authority.py` PUTS A NUMBER ON § 25.1.** It is the sibling of
+`audit_audio_reach.py` and asks the other half of the same question: that one asks who HEARS an
+event, this asks who DECIDES it. Over the ability tree it reports **39 effect call sites, 1
+host-gated, 23 ungated on another body, 15 ungated on the caster.**
+
+The one gated call is Phaister's `Curse`. **So twenty-three places in the ability layer move a
+body the caster does not own, with no host gate anywhere in the path**, which is a sharper
+statement of § 25.1 than its own prose and a ready-made worklist. HOST-ONLY is the CORRECT state
+for anything in that column; a blank there is the defect.
 
 ---
 

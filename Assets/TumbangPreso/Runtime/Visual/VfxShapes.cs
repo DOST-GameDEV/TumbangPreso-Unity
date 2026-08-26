@@ -1123,7 +1123,7 @@ namespace TumbangPreso.Visual
         // fifth channel `docs/TODO.md` § 19.1 added and the only one that had never been spent
         // on her:
         //
-        //   Q, KULAM HEX     `WardCircle`  concentric rings, a dense rune band, nested rotated
+        //   Q, HEX     `WardCircle`  concentric rings, a dense rune band, nested rotated
         //                                  squares, radial dividers, medallions. Static.
         //   E, SHADOW BLINK  `Rift`        a torn VERTICAL sheet. No circle anywhere in it.
         //   R, GRAND COVEN   `Corona`      a ring of tapering teeth around an empty middle,
