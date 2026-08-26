@@ -630,6 +630,29 @@ that is fewer than four Unity launches.
 
 ## Closed
 
+- **Lobby client synchronization, pick normalization, and host non-zero seat picks.** ✅ 2026-08-26.
+  `LobbySession._peers` was only populated host-side on `Admit()`, leaving client `PeerCount` at 0
+  and `PeerInSeat(slot)` returning null. On clients, `MatchInstaller` fell back to building remote
+  seats as nameless default bots, and appearances snapped only when `ReadyGate` broadcast
+  `SyncPicksClientRpc` on countdown completion.
+
+  **The fix, in three parts:**
+  1. Authoritative seat roster (`LobbySeatInfo`): Host broadcasts the full seat roster
+     (`SyncLobbyPicks` carrying `Seat`, `PeerId`, `Name`, `Occupied`, `Spectator`, `CharacterPick`,
+     `CanPick`, `SlipperPick`). `MatchRpc` persists `_replicatedSeats` across scenes, and
+     `MatchInstaller` builds remote seats directly from the authoritative roster without querying
+     client `LobbySession`.
+  2. Host seat vs transport ID: `SelectLobbyPickServerRpc` previously used `LocalSlot` (0-3) as peer
+     ID, causing a host in seat 1+ to update whichever peer held client ID 1 and silently no-op on
+     its own record. Host now derives its transport client ID from `_nm.LocalClientId`.
+  3. Pick normalization and name integrity: Live on-screen picks are normalized
+     (`CharacterPick >= 0`) and published on lobby entry (`ConvertedMatchSetup.Wire` and mode cycle)
+     so default index 0 is known to peers before opening the picker. `SyncPicksClientRpc` no longer
+     clobbers `PlayerName` with `Roster.People[charIndex].Name`.
+  Verified by 122/122 EditMode tests including `HostInNonZeroSeatUpdatesItsOwnRecordWithoutTouchingOtherPeers`,
+  `SetPicksRejectsInvalidIndicesAndDefaultsToMinusOne`, and
+  `AuthoritativeRosterPreservesPeerNamesAndPicksWithoutClobbering`.
+
 - **Gameplay readability, spectator highlights, match length and guided training.** ✅ 2026-08-26.
   Throw commitments now survive a teammate knocking the lata down; a restored lata has a real
   1.25 s impact shield; a persistent world beacon, central alert and pulsing card make a down
