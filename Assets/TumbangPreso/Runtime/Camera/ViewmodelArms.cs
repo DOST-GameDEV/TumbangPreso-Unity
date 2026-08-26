@@ -1265,35 +1265,36 @@ namespace TumbangPreso.CameraSystem
         {
             var blackSleeve = new Color(0.094f, 0.086f, 0.133f, 1.0f); // COAT_DARK #181622
             var purpleBand = new Color(0.290f, 0.118f, 0.471f, 1.0f);  // CLOTH_PURPLE #4a1e78
+            var crimsonBand = new Color(0.549f, 0.078f, 0.141f, 1.0f); // CRIMSON #8c1424
             var goldStripe = new Color(0.973f, 0.722f, 0.141f, 1.0f);  // GOLD #f8b824
             var whiteCuff = Color.white;                                 // WHITE #ffffff
             var skinTone = SkinPhaister;                                 // SKIN #f4c098
             var skinDark = new Color(0.878f, 0.627f, 0.471f, 1.0f);     // SKIN_DARK #e0a078
 
-            // 1. Black coat upper sleeve (Y ~ 0.10 to 0.26)
-            AddBoxAccessory(arm, "BlackUpperSleeve", new Vector3(0.29f, 0.20f, 0.29f),
-                new Vector3(0.0f, 0.14f, 0.0f), Quaternion.identity, blackSleeve);
+            // 1. Black coat upper sleeve (Y ~ 0.05 to 0.22)
+            AddBoxAccessory(arm, "BlackUpperSleeve", new Vector3(0.29f, 0.22f, 0.29f),
+                new Vector3(0.0f, 0.11f, 0.0f), Quaternion.identity, blackSleeve);
 
-            // 2. Royal Purple Forearm Band (Y ~ 0.24 to 0.35)
-            AddBoxAccessory(arm, "PurpleSleeveBand", new Vector3(0.30f, 0.11f, 0.30f),
-                new Vector3(0.0f, 0.285f, 0.0f), Quaternion.identity, purpleBand);
+            // 2. Royal Purple Forearm Band (Y ~ 0.22 to 0.48)
+            AddBoxAccessory(arm, "PurpleSleeveBand", new Vector3(0.30f, 0.26f, 0.30f),
+                new Vector3(0.0f, 0.35f, 0.0f), Quaternion.identity, purpleBand);
 
             // Gold Cross Emblem on outer forearm
             float crossSign = isRight ? 1.0f : -1.0f;
             AddBoxAccessory(arm, "GoldSleeveCrossV", new Vector3(0.040f, 0.080f, 0.020f),
-                new Vector3(crossSign * 0.155f, 0.285f, 0.0f), Quaternion.identity, goldStripe);
+                new Vector3(crossSign * 0.155f, 0.35f, 0.0f), Quaternion.identity, goldStripe);
             AddBoxAccessory(arm, "GoldSleeveCrossH", new Vector3(0.040f, 0.025f, 0.070f),
-                new Vector3(crossSign * 0.155f, 0.285f, 0.0f), Quaternion.identity, goldStripe);
+                new Vector3(crossSign * 0.155f, 0.35f, 0.0f), Quaternion.identity, goldStripe);
 
-            // 3. Gold Stripe (Y ~ 0.34 to 0.37)
-            AddBoxAccessory(arm, "GoldSleeveStripe", new Vector3(0.305f, 0.03f, 0.305f),
-                new Vector3(0.0f, 0.355f, 0.0f), Quaternion.identity, goldStripe);
+            // 3. Crimson Red Sleeve Stripe (Y ~ 0.48 to 0.53)
+            AddBoxAccessory(arm, "CrimsonSleeveStripe", new Vector3(0.305f, 0.05f, 0.305f),
+                new Vector3(0.0f, 0.505f, 0.0f), Quaternion.identity, crimsonBand);
 
-            // 4. Crisp White Cuff Rim (Y ~ 0.37 to 0.42)
-            AddBoxAccessory(arm, "WhiteCuffRim", new Vector3(0.315f, 0.05f, 0.315f),
-                new Vector3(0.0f, 0.395f, 0.0f), Quaternion.identity, whiteCuff);
+            // 4. Crisp White Flared Cuff Rim (Y ~ 0.53 to 0.62, right at wrist)
+            AddBoxAccessory(arm, "WhiteCuffRim", new Vector3(0.320f, 0.09f, 0.320f),
+                new Vector3(0.0f, 0.575f, 0.0f), Quaternion.identity, whiteCuff);
 
-            // 5. Bare Porcelain Skin Forearm & Hand details
+            // 5. Porcelain Skin Hand & Knuckle details (Y ~ 0.62 to 0.82)
             if (isRight)
             {
                 AddBoxAccessory(arm, "RightKnuckleIndent1", new Vector3(0.020f, 0.045f, 0.035f),

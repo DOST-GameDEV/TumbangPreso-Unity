@@ -14,7 +14,7 @@ namespace TumbangPreso.EditorTools
 
         private static readonly string[] Characters =
         {
-            "sean", "zack", "dante", "cheska", "nemu",
+            "sean", "zack", "dante", "cheska", "nemu", "phaister",
             "bayan", "maring", "totoy", "inday", "kuya_boy", "ate_girlie",
             "tikboy", "bebang", "jun_jun", "lola_pacing", "mang_kanor", "aling_nena",
         };
