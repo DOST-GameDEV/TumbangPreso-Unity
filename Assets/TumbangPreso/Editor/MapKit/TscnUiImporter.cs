@@ -1237,6 +1237,31 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             var slider = go.AddComponent<Slider>();
 
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ THE WHOLE CONTROL IS A RAYCAST TARGET, AND WITHOUT THIS THE SLIDERS WERE
+            // BARELY DRAGGABLE. 🧑 2026-08-27, two reports that are one bug: *"sound and volume
+            // dont decrease theyre hard locked"* and *"awkward scrolling motion for settings
+            // (repeated problem)"*.
+            //
+            // ⚠️⚠️ THE SLIDER'S ROOT HAD NO GRAPHIC ON IT AT ALL. Unity's EventSystem raycasts to
+            // find a GRAPHIC and then walks UP the hierarchy for something that handles the drag,
+            // so the only parts of a slider that could start one were the 14 px `Background`
+            // strip and the 22 by 34 px `Handle`. Every other pixel of the row hit nothing, the
+            // event carried on up to the `ScrollRect` that these rows live in, and the list
+            // scrolled instead. That is both symptoms exactly: a slider that mostly refuses to
+            // move, and a panel that scrolls when you did not ask it to.
+            //
+            // ⚠️ IT IS INVISIBLE AND IT IS NOT DECORATION. Alpha 0 with `raycastTarget` true is
+            // the standard way to say "this rectangle belongs to this control"; anything visible
+            // here would draw a box behind every slider in the game.
+            //
+            // ⚠️ AND IT IS ADDED BEFORE THE CHILDREN so it sits at the BACK of the draw order.
+            // In front, it would swallow the handle's own hit test and the grab would stop
+            // working for the opposite reason.
+            var hit = go.AddComponent<Image>();
+            hit.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+            hit.raycastTarget = true;
+
             var bgGo = new GameObject("Background");
             bgGo.AddComponent<RectTransform>();
             bgGo.transform.SetParent(go.transform, false);

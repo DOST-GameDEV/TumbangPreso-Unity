@@ -683,6 +683,34 @@ namespace TumbangPreso
                 }
             }
 
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ A TSINELAS HAS A TERMINAL SPEED, AND THIS IS A GUARD RATHER THAN A CURE.
+            // 🧑 2026-08-27: *"appparently slippers randomly fly to sky too? idk how playtesters
+            // did that"*. The exact source is NOT identified and this does not claim to have
+            // found it; what it does is bound the symptom so a single bad frame cannot remove a
+            // slipper from the match.
+            //
+            // ⚠️ THERE ARE SEVERAL PLACES A LARGE VELOCITY CAN BE MANUFACTURED and none of them
+            // is obviously wrong on its own: `Deflect` off the lata multiplies the incoming speed
+            // by `LataRecoilScale`, so two recoils in quick succession compound; a
+            // `Vector3.Reflect` in `BounceOffObstacles` falls back to `-disp.normalized` which is
+            // ZERO if the slipper did not move that frame, and reflecting about a zero normal
+            // returns the velocity unchanged rather than reversing it; and `HeroHazards`
+            // teleports loose slippers every frame during Nemu's ultimate, which can drive one
+            // into a collider that then ejects it.
+            //
+            // ⚠️ 34 m/s IS ABOVE ANYTHING THE GAME CAN LEGITIMATELY PRODUCE. The hardest legal
+            // throw leaves the hand well under this, so a slipper that reaches it has been given
+            // energy by a defect. Clamping preserves the DIRECTION, so a hard throw still flies
+            // hard and only the impossible case is cut. **If this clamp ever fires in normal
+            // play the number is wrong; if the sky-launch stops being reported, the cause is
+            // still out there and is worth finding.** `docs/TODO.md` § 32.
+            const float TerminalSpeed = 34.0f;
+            if (_velocity.sqrMagnitude > TerminalSpeed * TerminalSpeed)
+            {
+                _velocity = _velocity.normalized * TerminalSpeed;
+            }
+
             Vector3 prevPos = transform.position;
             transform.position += _velocity * dt;
 

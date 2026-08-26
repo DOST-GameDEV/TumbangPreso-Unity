@@ -2634,6 +2634,105 @@ for anything in that column; a blank there is the defect.
 
 ---
 
+## 32 · The networking was broken by one unreplicated static, and four other faults on top of it
+
+**🧑 2026-08-27, after a LAN playtest:** *"can u refine netwrok of this game? both lan and online
+server? its heavily broken with other ppl not seeing the character"*, *"its so bad that in heroes
+gamemode, ffrequently they see the older version of the skin"*, *"apparently only host sees the
+skin of other players"*, and *"theres a lot of shit u dont see that ur supposed"*.
+
+### 32.1 ⚠️⚠️ THE GAME MODE WAS NEVER REPLICATED AT ALL ✅
+
+**`UI.SceneFlow.SelectedMode` is a plain static**, set by whoever last touched the toggle in
+`ConvertedMatchSetup`. The map is replicated (`SyncMap`), the difficulty is replicated
+(`SyncDiff`), the picks are replicated, the seats are replicated. **The mode is not, and it
+decides more than any of them.**
+
+A client whose own menu last said Classic, joining a Hero Strike match, **builds a different
+game**. `MatchInstaller` reads `SelectedMode` in three load-bearing places:
+
+* `_book.PersonArt(motor.CharacterIndex, SceneFlow.SelectedMode)` resolves the model against
+  `Roster.GetPeople(mode)`, which is **twelve street characters in Classic and five heroes in
+  Hero Strike**. A hero index looked up in the street cast is a different person, and past the
+  end of the list `RosterBook.Resolve` falls back to `art[0]`, so several seats collapse onto the
+  same wrong body. **That is "they see the older version of the skin" exactly: the Classic roster
+  IS the older one.**
+* `if (SceneFlow.SelectedMode == GameMode.HeroStrike)` gates installing `HeroAbilitySystem` at
+  all, so a client in the wrong mode gives all four seats no kit.
+* `CharacterMotor.Mode` feeds `Roster.GetPeople(Mode)` behind the nameplate, so the labels
+  disagree with the bodies.
+
+**Fixed** with `SelectMode` / `SyncMode`, on the same client-asks-host-decides-host-tells-everyone
+shape as `SelectMap`. ⚠️ **It is sent BEFORE `StartMatch` and before a late joiner's snapshot**,
+because `OnStartMatchMsg` calls `SceneFlow.StartMatch()` which builds every seat: a mode that
+arrives one message later arrives after the bodies exist. `ConvertedMatchSetup.OnModeCycle` now
+pushes it when the host cycles the toggle, which it never did while the map and difficulty cycles
+both sent theirs.
+
+### 32.2 `SyncPicksClientRpc` had three more faults, all invisible on the host ✅
+
+The host never runs the client half of this method, which is why every one of these reads as
+*"only host sees the skin of other players"*.
+
+1. **It resolved art against the wrong roster.** It called `book.PersonArt(charIndex)`, the
+   overload with no mode, which always uses `Roster.People`. `MatchInstaller` has always used the
+   mode-aware overload. Same fault as § 32.1 and it needed fixing in both places.
+2. **It only applied the model when the index CHANGED**
+   (`if (charIndex >= 0 && who.CharacterIndex != charIndex)`). A seat that already carried the
+   right NUMBER never got the right ART, which is the common case on a joining client: the seats
+   are built from the lobby table and then this sync arrives agreeing with it, so the one message
+   whose whole job is to fix the model decided there was nothing to do. **Applying art is
+   idempotent; skipping it is not.**
+3. **It dropped the pet.** `MatchInstaller` passes `art.PetModel` as a sixth argument; this passed
+   five. Every client rebuilt Nemu without Kuro, and her entire kit is him (§ 28), so on a client
+   she had three powers pointing at an object that did not exist.
+
+### 32.3 The settings sliders could barely be dragged, and it is the same bug as the scrolling ✅
+
+*"sound and volume dont decrease theyre hard locked"* and *"awkward scrolling motion for settings
+(repeated problem)"* are **one fault**. `TscnUiImporter.BuildSlider` gave the Slider's root
+GameObject **no Graphic at all**. Unity's EventSystem raycasts to find a graphic and then walks UP
+the hierarchy for a drag handler, so the only parts of a slider that could start a drag were the
+14 px `Background` strip and the 22 by 34 px `Handle`. Every other pixel of the row hit nothing,
+the event carried on up to the `ScrollRect` those rows live in, **and the list scrolled instead**.
+
+Fixed with a full-rect transparent raycast target on the root, added before the children so it
+sits behind them and cannot swallow the handle's own hit test.
+
+⚠️ **§ 15.8 fixed the scrolling twice already and this is why it kept coming back**: both previous
+passes treated it as a scrolling problem (a missing scrollbar, a wheel step of 45) and it was
+never only that.
+
+### 32.4 A slipper cannot exceed 34 m/s any more, and this is a GUARD not a cure ⚠️ OPEN
+
+*"appparently slippers randomly fly to sky too? idk how playtesters did that"*. **The source is
+not identified.** `Slipper.StepFlight` now clamps speed while preserving direction, so one bad
+frame cannot remove a slipper from the match, but the cause is still out there.
+
+**Three places can manufacture a large velocity and none is obviously wrong alone:**
+
+* `Deflect` off the lata passes `-_velocity.normalized * LataRecoilScale * _velocity.magnitude`,
+  so two recoils in quick succession compound.
+* `BounceOffObstacles` falls back to `normal = -disp.normalized`, which is **zero if the slipper
+  did not move that frame**, and `Vector3.Reflect` about a zero normal returns the velocity
+  unchanged rather than reversing it. The slipper is then also teleported to `closest.point`,
+  still travelling into the surface.
+* `HeroHazards.SeanceVoidComponent` teleports loose slippers every frame during Nemu's ultimate,
+  which can drive one into a collider that ejects it.
+
+**If the clamp ever fires in normal play the number is wrong. If the sky-launch stops being
+reported, the cause is still there.**
+
+### 32.5 What is still NOT replicated, and it is the biggest thing left
+
+⚠️⚠️ **§ 25.1 IS STILL OPEN AND IS NOW THE LARGEST KNOWN NETWORK GAP.** The ability layer has no
+RPC of any kind: `tools/audit_ability_authority.py` reports **39 effect call sites, 1 host-gated,
+23 ungated on another body**. A remote player's ultimate produces no VFX, no sound, no column and
+no sky on anybody else's screen, and twenty-three places move a body the caster does not own.
+Everything in this entry was upstream of that; none of it fixes it.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

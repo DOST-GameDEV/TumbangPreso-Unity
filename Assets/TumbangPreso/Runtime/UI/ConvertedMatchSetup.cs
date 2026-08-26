@@ -420,6 +420,17 @@ namespace TumbangPreso.UI
             var net = NetSession.Instance;
             if (net != null && net.IsNetworked)
             {
+                // ⚠️⚠️ THE MODE IS PUSHED TO THE LOBBY, AND UNTIL 2026-08-27 IT WAS NOT. The map
+                // cycle three methods above sends `SelectMapServerRpc` and the difficulty cycle
+                // below sends `SelectDifficultyServerRpc`; this one changed a static on the
+                // host's own machine and told nobody. Every joined peer then sat in a lobby
+                // reading the wrong mode, picked from the wrong roster, and built the wrong game
+                // when the match started. `MatchRpc`'s § THE GAME MODE note has what that cost.
+                //
+                // ⚠️ IT GOES BEFORE THE PICK, because changing mode re-bases `CharacterPick`
+                // against a different roster (the clamp directly above), so the pick being sent
+                // is only meaningful once the far end knows which list it indexes.
+                MatchRpc.Instance?.SelectModeServerRpc((int)SceneFlow.SelectedMode);
                 MatchRpc.Instance?.SelectLobbyPickServerRpc(s.CharacterPick, s.CanPick, s.SlipperPick);
             }
 

@@ -106,6 +106,8 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("BeginRematch", OnBeginRematchMsg);
             cm.RegisterNamedMessageHandler("SyncMap", OnSyncMapMsg);
             cm.RegisterNamedMessageHandler("SelectMap", OnSelectMapMsg);
+            cm.RegisterNamedMessageHandler("SyncMode", OnSyncModeMsg);
+            cm.RegisterNamedMessageHandler("SelectMode", OnSelectModeMsg);
             cm.RegisterNamedMessageHandler("SyncDiff", OnSyncDiffMsg);
             cm.RegisterNamedMessageHandler("SelectDiff", OnSelectDiffMsg);
             cm.RegisterNamedMessageHandler("SyncLobbyPicks", OnSyncLobbyPicksMsg);
@@ -208,6 +210,11 @@ namespace TumbangPreso.Net
             }
 
             NetSession.Instance?.SetStatus($"{lobby.PeerCount} connected, seat {record.Seat}");
+
+            // ⚠️ THE MODE IS THE FIRST THING A JOINER IS TOLD, for the reason `HostStartMatch`
+            // gives: everything below it is interpreted through the mode, and a late joiner may
+            // be about to build an arena from it.
+            SyncModeClientRpc((int)UI.SceneFlow.SelectedMode);
 
             HostLateJoin(peerId);
             BroadcastLobbyPicks();
@@ -876,6 +883,17 @@ namespace TumbangPreso.Net
         public void HostStartMatch()
         {
             if (!NetAuthority.IsHost) return;
+
+            // ⚠️⚠️ THE MODE GOES FIRST, BEFORE `StartMatch`, AND THE ORDER IS THE WHOLE POINT.
+            // `OnStartMatchMsg` calls `UI.SceneFlow.StartMatch()`, which loads the arena scene
+            // and builds every seat through `MatchInstaller`, and `MatchInstaller` reads
+            // `SceneFlow.SelectedMode` to choose the roster AND to decide whether to install a
+            // `HeroAbilitySystem` at all. A mode that arrives one message later arrives after the
+            // bodies exist, which is exactly the *"other ppl not seeing the character"* fault:
+            // the client builds the whole match in whatever mode its own menu happened to hold.
+            // See § THE GAME MODE, WHICH WAS NEVER REPLICATED AT ALL.
+            SyncModeClientRpc((int)UI.SceneFlow.SelectedMode);
+
             if (_nm != null && _nm.CustomMessagingManager != null)
             {
                 using var writer = new FastBufferWriter(16, Allocator.Temp);
@@ -927,6 +945,102 @@ namespace TumbangPreso.Net
         {
             reader.ReadValueSafe(out int mapIndex);
             OnMapChanged?.Invoke(mapIndex);
+        }
+
+        // -------------------------------------------------------------------
+        // § THE GAME MODE, WHICH WAS NEVER REPLICATED AT ALL
+        //
+        // ⚠️⚠️ THIS IS THE ROOT OF *"its heavily broken with other ppl not seeing the
+        // character"* (🧑, 2026-08-27) AND IT IS BIGGER THAN THE SKINS. `UI.SceneFlow.SelectedMode`
+        // is a plain static set by whoever last touched the mode toggle in `ConvertedMatchSetup`.
+        // The map is replicated (`SyncMap`), the difficulty is replicated (`SyncDiff`), the picks
+        // are replicated, the seats are replicated. **The mode is not, and it decides more than
+        // any of them.**
+        //
+        // ⚠️⚠️ A CLIENT WHOSE MENU LAST SAID CLASSIC, JOINING A HERO STRIKE MATCH, BUILDS A
+        // DIFFERENT GAME. `MatchInstaller` reads `SelectedMode` in at least three places:
+        //
+        //   * `_book.PersonArt(motor.CharacterIndex, SceneFlow.SelectedMode)` resolves the model
+        //     against `Roster.GetPeople(mode)`, which is the twelve street characters in Classic
+        //     and the five heroes in Hero Strike. **A hero index looked up in the street cast is
+        //     a different person**, and past the end of the list `Resolve` falls back to `art[0]`
+        //     so several seats collapse onto the same wrong body. That is *"they see the older
+        //     version of the skin"* precisely: the older roster.
+        //   * `if (SceneFlow.SelectedMode == GameMode.HeroStrike)` gates installing
+        //     `HeroAbilitySystem` at all, so a client in the wrong mode gives four seats no kit.
+        //   * `CharacterMotor.Mode` feeds `Roster.GetPeople(Mode)` for the nameplate, so the
+        //     labels disagree with the bodies.
+        //
+        // ⚠️ IT IS SENT THE SAME WAY THE MAP IS, AND DELIBERATELY NOT AS PART OF THE PICK TABLE.
+        // The mode has to be true BEFORE any seat is built, and the pick table arrives after the
+        // arena exists. Same shape as `SelectMap` so there is one idiom for "a lobby setting the
+        // host owns": client asks, host decides, host tells everybody.
+        // -------------------------------------------------------------------
+
+        public static event Action<int> OnModeChanged;
+
+        public void SelectModeServerRpc(int mode)
+        {
+            if (NetAuthority.IsHost)
+            {
+                SyncModeClientRpc(mode);
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(mode);
+            _nm.CustomMessagingManager.SendNamedMessage("SelectMode", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnSelectModeMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int mode);
+            SyncModeClientRpc(mode);
+        }
+
+        public void SyncModeClientRpc(int mode)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (_nm != null && _nm.CustomMessagingManager != null)
+            {
+                using var writer = new FastBufferWriter(16, Allocator.Temp);
+                writer.WriteValueSafe(mode);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("SyncMode", writer);
+            }
+            ApplyMode(mode);
+        }
+
+        private void OnSyncModeMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int mode);
+            ApplyMode(mode);
+        }
+
+        /// <summary>
+        /// ⚠️ IT WRITES `SceneFlow.SelectedMode` DIRECTLY RATHER THAN RAISING AN EVENT AND HOPING
+        /// SOMEBODY LISTENS. Every reader of the mode reads that static, so the static is the
+        /// thing that has to be right; the event is for screens that want to redraw.
+        /// </summary>
+        private static void ApplyMode(int mode)
+        {
+            var wanted = mode == (int)GameMode.HeroStrike ? GameMode.HeroStrike : GameMode.Classic;
+            UI.SceneFlow.SelectedMode = wanted;
+
+            // ⚠️ THE LIVE SEATS ARE CORRECTED TOO, because a mode message can arrive after the
+            // arena has been built: on a late join the host sends this from `HostSyncPeer` when
+            // the client already has four bodies standing in the street. `CharacterMotor.Mode`
+            // feeds the roster lookup behind the nameplate, so leaving it stale is a screen that
+            // disagrees with the models.
+            var round = GameServices.Round;
+            if (round != null)
+            {
+                foreach (var p in round.Players)
+                    if (p != null) p.Mode = wanted;
+            }
+
+            OnModeChanged?.Invoke(mode);
         }
 
         public void SelectDifficultyServerRpc(int difficulty)
@@ -1143,11 +1257,51 @@ namespace TumbangPreso.Net
         // PICKS SYNCHRONIZATION
         // -------------------------------------------------------------------
 
+        /// <summary>
+        /// Put every seat in the character its owner picked.
+        ///
+        /// ⚠️⚠️ THIS METHOD HAD THREE SEPARATE FAULTS AND TOGETHER THEY ARE
+        /// *"apparently only host sees the skin of other players"* AND *"in heroes gamemode,
+        /// frequently they see the older version of the skin"* (🧑, 2026-08-27). All three are
+        /// invisible on the host, because the host never runs the client half of this.
+        ///
+        /// ⚠️⚠️ 1. IT RESOLVED THE ART AGAINST THE WRONG ROSTER, AND THAT IS THE HERO STRIKE
+        /// BUG EXACTLY. `RosterBook` has two overloads: `PersonArt(index)` resolves against
+        /// `Roster.People`, which is the CLASSIC twelve, and `PersonArt(index, mode)` resolves
+        /// against `Roster.GetPeople(mode)`. This called the first one. In Hero Strike a
+        /// `CharacterIndex` is an index into the FIVE HEROES, so every client took a hero index,
+        /// looked it up in the street cast, and applied a completely different character's
+        /// model. `Roster.At` returns null past the end and `Resolve` then falls back to
+        /// `art[0]`, so out-of-range picks all collapsed onto the same wrong body. **That is
+        /// literally "the older version of the skin": it is the Classic roster, which is the
+        /// older one.** `MatchInstaller` line 494 has always used the mode-aware overload, which
+        /// is why a locally spawned seat looked right and a replicated one did not.
+        ///
+        /// ⚠️⚠️ 2. IT ONLY APPLIED THE MODEL WHEN THE INDEX CHANGED. The guard was
+        /// `who.CharacterIndex != charIndex`, so a seat that already carried the right NUMBER
+        /// was never given the right ART. That is the common case on a joining client: the seats
+        /// are built from whatever the lobby table said at spawn time and then this sync arrives
+        /// agreeing with it, so the one message whose whole job is to fix the model decided
+        /// there was nothing to do. Applying art is idempotent; skipping it is not.
+        ///
+        /// ⚠️⚠️ 3. IT DROPPED THE PET. `MatchInstaller` passes `art.PetModel` as a sixth
+        /// argument and this passed five, so every client rebuilt Nemu without Kuro. Her entire
+        /// kit is him (`docs/TODO.md` § 28), so on a client she was a hero with three powers that
+        /// referenced an object that was not there.
+        ///
+        /// ⚠️ THE MODE IS READ FROM `SceneFlow.SelectedMode`, WHICH IS REPLICATED AS OF THE SAME
+        /// SESSION AND WAS NOT BEFORE IT. See § THE GAME MODE, WHICH WAS NEVER REPLICATED AT ALL:
+        /// the host now sends it ahead of `StartMatch` and ahead of a late joiner's snapshot, so
+        /// both ends agree before any seat exists. Sending it again inside this table would be a
+        /// second source of truth for the same fact, and it would arrive too late to matter:
+        /// the seats are already built by the time a pick table is read.
+        /// </summary>
         public void SyncPicksClientRpc(int[] table)
         {
             if (table == null) return;
 
             var book = RosterBook.Load();
+            var mode = UI.SceneFlow.SelectedMode;
 
             for (int i = 0; i + 3 < table.Length; i += 4)
             {
@@ -1157,14 +1311,16 @@ namespace TumbangPreso.Net
                 var who = Unit(slot);
                 if (who == null) continue;
 
-                if (charIndex >= 0 && who.CharacterIndex != charIndex)
+                if (charIndex >= 0)
                 {
                     who.CharacterIndex = charIndex;
-                    var person = book != null ? book.PersonArt(charIndex) : null;
-                    if (person != null)
+
+                    var person = book != null ? book.PersonArt(charIndex, mode) : null;
+                    if (person != null && person.Model != null)
                     {
                         var vis = who.GetComponent<Visual.CharacterVisual>();
-                        vis?.ApplyModel(person.Model, person.Tint, person.Clips, person.Palette);
+                        vis?.ApplyModel(person.Model, person.Tint, person.Clips,
+                                        person.Palette, person.PetModel);
                     }
                 }
 
