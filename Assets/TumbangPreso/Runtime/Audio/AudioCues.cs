@@ -71,6 +71,24 @@ namespace TumbangPreso.Audio
                 // louder than every ability payload in the game and was reported off the build as
                 // *"a loud wind soudn that plays randomly"*. It is a BACKGROUND, mixed like one.
                 { "sfx_lrt_rumble", -16.0f },
+
+                // ⚠️⚠️ THE SIX ULTIMATE THEMES ARE BEDS, NOT EVENTS, AND ARE MIXED AS BEDS.
+                // `sfx_lrt_rumble` above records what happens to a sustained cue with no row:
+                // `TrimDb` falls back to 0.0, which is correct for a one-shot and completely
+                // wrong for a three-second sustain. These run UNDER a payload that is already
+                // the loudest thing in the game, so anything above about -14 turns the moment
+                // an ultimate lands into mush.
+                //
+                // ⚠️ PHAISTER'S SITS 2 dB HOTTER THAN THE OTHER FIVE, ON PURPOSE. Hers plays
+                // during the BUILD, before the payload arrives, so for its first second and a
+                // half it is not competing with anything: it is the only thing saying an
+                // ultimate is coming. The other five start on the same frame as their blast.
+                { "sfx_coven_summon",   -12.0f },
+                { "sfx_ult_theme_zack",   -14.0f },
+                { "sfx_ult_theme_cheska", -14.0f },
+                { "sfx_ult_theme_sean",   -14.0f },
+                { "sfx_ult_theme_dante",  -14.0f },
+                { "sfx_ult_theme_nemu",   -14.0f },
                 { "sfx_hex_cast",     -4.0f },
 
                 // ⚠️ THE BREAK IS MIXED LIKE A STATUS, NOT AN EVENT, for the same reason
@@ -235,6 +253,17 @@ namespace TumbangPreso.Audio
             //    in silence. The pips are on a card the player is not looking at while three
             //    people run at them.
             "sfx_blink_arrive", "sfx_stun_break",
+
+            // ⚠️ ONE THEME PER HERO, ADDED 2026-08-27. 🧑: *"they dont have enough auditory
+            // effects too. give everyone their own theme and dont generate it the same way bcz
+            // its gonna sound the same way"*. `tools/generate_ability_audio.py` carries the six
+            // and the block above them explains why each uses a DIFFERENT synthesis method:
+            // Karplus-Strong, granular, subtractive, an impulse train, ring modulation and an
+            // additive rising drone. Recolouring one recipe six times is the audio version of
+            // `docs/TODO.md` § 19's *"the same logic and code was used to generate all of them"*.
+            "sfx_coven_summon",
+            "sfx_ult_theme_zack", "sfx_ult_theme_cheska", "sfx_ult_theme_sean",
+            "sfx_ult_theme_dante", "sfx_ult_theme_nemu",
 
             // ⚠️ ONE WEATHER CUE PER ULTIMATE. 🧑 2026-08-26: *"add thunder shit and under sfx
             // when they ult and the sky changes to their theme"*, then *"add personalized sfx to

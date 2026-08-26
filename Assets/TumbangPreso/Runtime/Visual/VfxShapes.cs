@@ -1019,44 +1019,169 @@ namespace TumbangPreso.Visual
             var state = Random.state;
             Random.InitState(seed);
 
-            var tris = new System.Collections.Generic.List<Vector3>(64);
+            var tris = new System.Collections.Generic.List<Vector3>(96);
 
-            // The stem. Every glyph has one, which is what makes a set of them look like one
-            // hand wrote them all.
-            float h = Random.Range(0.62f, 1.0f);
-            float lean = Random.Range(-0.16f, 0.16f);
-            UprightBar(tris, new Vector3(-lean, -h * 0.5f, 0.0f),
-                             new Vector3(lean, h * 0.5f, 0.0f), bar * 0.5f);
+            // -------------------------------------------------------------------
+            // § WHY THIS IS AN ALPHABET NOW AND WAS A BUNDLE OF TWIGS BEFORE
+            //
+            // ⚠️⚠️ 🧑 2026-08-27, off a match screenshot of Phaister's ultimate: *"her current
+            // glyphs particle doesnt read as glyph's too, its just one repetitive glyph, wouldve
+            // been cool if there were less glyphs here BUt theyre all different like 20 or so"*.
+            // He sent three constructed alphabets as reference (Void Tongue, Blood Tongue, Unity
+            // Script, 26 letters each) and a page of gold script on black.
+            //
+            // ⚠️⚠️ THE OLD VERSION VARIED THE WRONG THINGS. It drew a stem and then jittered
+            // LENGTHS and ANGLES: `Random.Range` on an arm's reach, its rise and its side. Every
+            // output therefore had the same topology, a stick with one or two twigs on it, and
+            // differed only in proportion. At particle size, proportion is invisible and topology
+            // is all you can see, so thirty of them read as one shape thirty times. That is
+            // exactly what he is describing and it is the same class of fault as
+            // `docs/TODO.md` § 19.1: **the construction was shared, so the variation could not
+            // reach the part a player actually looks at.**
+            //
+            // ⚠️⚠️ WHAT THE REFERENCE ALPHABETS ACTUALLY DO is hold a STROKE VOCABULARY constant
+            // and vary the FORM: a stem plus a box, a stem plus a ring, a ladder of rungs, a
+            // fork, a bowl, a chevron. Those are different letters. A longer arm at a different
+            // angle is the same letter written sloppily. So this picks ONE body form from a
+            // closed set and builds it exactly, which is why two seeds now give two characters
+            // rather than two drafts of one.
+            //
+            // ⚠️ THE STEM STAYS ON ALMOST ALL OF THEM, DELIBERATELY. It is the shared hand: it is
+            // what makes twenty different forms read as twenty letters of ONE script rather than
+            // as twenty unrelated symbols. The reference sheets do the same thing.
+            // -------------------------------------------------------------------
 
-            // One or two arms off the stem, at the angles a chisel makes.
-            int arms = Random.Range(1, 3);
-            for (int i = 0; i < arms; i++)
+            float h = Random.Range(0.72f, 1.0f);
+            float lean = Random.Range(-0.10f, 0.10f);
+            float w = Random.Range(0.30f, 0.42f);
+
+            int form = Random.Range(0, 10);
+
+            // ⚠️ THE BOWL AND THE RING ARE THE TWO THAT REPLACE THE STEM RATHER THAN DRESSING IT,
+            // because a closed shape with a bar through it is a different letter from a closed
+            // shape beside one. Everything else keeps it.
+            bool stemmed = form != 6 && form != 8;
+
+            if (stemmed)
             {
-                float at = Random.Range(-0.34f, 0.40f);
-                float len = Random.Range(0.28f, 0.52f);
-                float rise = Random.Range(0.18f, 0.46f) * (Random.value < 0.5f ? -1.0f : 1.0f);
-                float side = Random.value < 0.5f ? -1.0f : 1.0f;
-
-                var from = new Vector3(lean * (at * 2.0f), at * h, 0.0f);
-                UprightBar(tris, from, from + new Vector3(len * side, rise, 0.0f), bar * 0.42f);
+                UprightBar(tris, new Vector3(-lean, -h * 0.5f, 0.0f),
+                                 new Vector3(lean, h * 0.5f, 0.0f), bar * 0.5f);
             }
 
-            // A crossbar on some of them, which is most of what separates a glyph from a twig.
-            if (Random.value < 0.55f)
+            switch (form)
             {
-                float at = Random.Range(-0.22f, 0.28f) * h;
-                float w = Random.Range(0.24f, 0.44f);
-                UprightBar(tris, new Vector3(-w, at, 0.0f), new Vector3(w, at, 0.0f), bar * 0.38f);
+                case 0: // LADDER. Two or three rungs, evenly spaced: the most legible form.
+                {
+                    int rungs = Random.Range(2, 4);
+                    for (int r = 0; r < rungs; r++)
+                    {
+                        float t = rungs == 1 ? 0.0f : r / (float)(rungs - 1) - 0.5f;
+                        float y = t * h * 0.72f;
+                        UprightBar(tris, new Vector3(-w, y, 0.0f), new Vector3(w, y, 0.0f),
+                                   bar * 0.36f);
+                    }
+                    break;
+                }
+
+                case 1: // BOX. A closed cell hung on the stem, one side only.
+                {
+                    float side = Random.value < 0.5f ? -1.0f : 1.0f;
+                    float top = h * 0.34f, bot = -h * 0.16f;
+                    float far = side * w * 1.15f;
+                    UprightBar(tris, new Vector3(0.0f, top, 0.0f), new Vector3(far, top, 0.0f), bar * 0.34f);
+                    UprightBar(tris, new Vector3(0.0f, bot, 0.0f), new Vector3(far, bot, 0.0f), bar * 0.34f);
+                    UprightBar(tris, new Vector3(far, bot, 0.0f), new Vector3(far, top, 0.0f), bar * 0.34f);
+                    break;
+                }
+
+                case 2: // FORK. Two arms from one point at the top, like a rune's antlers.
+                {
+                    float y = h * 0.16f;
+                    UprightBar(tris, new Vector3(0.0f, y, 0.0f),
+                                     new Vector3(-w, y + h * 0.34f, 0.0f), bar * 0.38f);
+                    UprightBar(tris, new Vector3(0.0f, y, 0.0f),
+                                     new Vector3(w, y + h * 0.34f, 0.0f), bar * 0.38f);
+                    break;
+                }
+
+                case 3: // CHEVRON STACK. Two nested arrowheads pointing the same way.
+                {
+                    float dir = Random.value < 0.5f ? -1.0f : 1.0f;
+                    for (int c = 0; c < 2; c++)
+                    {
+                        float y = -h * 0.18f + c * h * 0.30f;
+                        UprightBar(tris, new Vector3(-w * 0.9f, y, 0.0f),
+                                         new Vector3(0.0f, y + dir * h * 0.20f, 0.0f), bar * 0.34f);
+                        UprightBar(tris, new Vector3(0.0f, y + dir * h * 0.20f, 0.0f),
+                                         new Vector3(w * 0.9f, y, 0.0f), bar * 0.34f);
+                    }
+                    break;
+                }
+
+                case 4: // CROSS. One long crossbar plus a short one, at different heights.
+                {
+                    UprightBar(tris, new Vector3(-w * 1.1f, h * 0.10f, 0.0f),
+                                     new Vector3(w * 1.1f, h * 0.10f, 0.0f), bar * 0.40f);
+                    UprightBar(tris, new Vector3(-w * 0.5f, -h * 0.26f, 0.0f),
+                                     new Vector3(w * 0.5f, -h * 0.26f, 0.0f), bar * 0.34f);
+                    break;
+                }
+
+                case 5: // SLASH. A single diagonal through the stem, corner to corner.
+                {
+                    float dir = Random.value < 0.5f ? -1.0f : 1.0f;
+                    UprightBar(tris, new Vector3(-w * dir, -h * 0.34f, 0.0f),
+                                     new Vector3(w * dir, h * 0.34f, 0.0f), bar * 0.40f);
+                    break;
+                }
+
+                case 6: // RING. A closed polygon with a bar through it, and no stem.
+                {
+                    Polygon(tris, Random.Range(6, 9), w * 1.05f, 0.0f, bar * 0.32f);
+                    UprightBar(tris, new Vector3(0.0f, -h * 0.5f, 0.0f),
+                                     new Vector3(0.0f, -w * 1.05f, 0.0f), bar * 0.46f);
+                    break;
+                }
+
+                case 7: // BOWL. An open cup on the stem: three sides, opening upward.
+                {
+                    float y = -h * 0.30f;
+                    UprightBar(tris, new Vector3(-w, y + h * 0.30f, 0.0f), new Vector3(-w, y, 0.0f), bar * 0.34f);
+                    UprightBar(tris, new Vector3(-w, y, 0.0f), new Vector3(w, y, 0.0f), bar * 0.34f);
+                    UprightBar(tris, new Vector3(w, y, 0.0f), new Vector3(w, y + h * 0.30f, 0.0f), bar * 0.34f);
+                    break;
+                }
+
+                case 8: // TRIANGLE. A closed head standing on a short foot, and no stem.
+                {
+                    Polygon(tris, 3, w * 1.15f, Mathf.PI * 0.5f, bar * 0.34f);
+                    UprightBar(tris, new Vector3(0.0f, -w * 1.15f, 0.0f),
+                                     new Vector3(0.0f, -h * 0.52f, 0.0f), bar * 0.46f);
+                    break;
+                }
+
+                default: // HOOK. One arm turning back on itself at the top.
+                {
+                    float side = Random.value < 0.5f ? -1.0f : 1.0f;
+                    float y = h * 0.40f;
+                    UprightBar(tris, new Vector3(0.0f, y, 0.0f), new Vector3(side * w, y, 0.0f), bar * 0.38f);
+                    UprightBar(tris, new Vector3(side * w, y, 0.0f),
+                                     new Vector3(side * w, y - h * 0.26f, 0.0f), bar * 0.38f);
+                    break;
+                }
             }
 
-            // A detached mark. Rare, and it is the thing that makes a row of these look
-            // deliberate rather than procedural.
-            if (Random.value < 0.3f)
+            // ⚠️ THE DIACRITIC IS WHAT DOUBLES THE SET WITHOUT DOUBLING THE FORMS. Ten bodies with
+            // a mark that is present, absent, above or below is forty readable characters, which
+            // covers the *"like 20 or so"* he asked for with room to spare. It is detached, so it
+            // never changes the body it sits over.
+            int mark = Random.Range(0, 4);
+            if (mark > 0)
             {
-                float dx = Random.Range(0.26f, 0.44f) * (Random.value < 0.5f ? -1.0f : 1.0f);
-                float dy = Random.Range(0.3f, 0.55f) * h;
-                UprightBar(tris, new Vector3(dx - bar * 0.5f, dy, 0.0f),
-                                 new Vector3(dx + bar * 0.5f, dy, 0.0f), bar * 0.5f);
+                float dy = (mark == 1 ? 0.62f : mark == 2 ? -0.62f : 0.62f) * h;
+                float dx = mark == 3 ? w * 0.55f : 0.0f;
+                UprightBar(tris, new Vector3(dx - bar * 0.55f, dy, 0.0f),
+                                 new Vector3(dx + bar * 0.55f, dy, 0.0f), bar * 0.52f);
             }
 
             Random.state = state;

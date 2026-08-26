@@ -1498,6 +1498,18 @@ namespace TumbangPreso.Abilities
             public float Radius = 7.5f;
             public float Duration = 5.0f;
             public int OwnerSlot = -1;
+
+            /// <summary>
+            /// How hard a body is dragged toward the centre, in impulse per second.
+            ///
+            /// ⚠️ THE DEFAULT IS THE OLD CONSTANT, so `SpawnSeanceVoid` keeps exactly the
+            /// behaviour it was measured with. Only Kuro Unbound raises it: see § THE PULL.
+            /// </summary>
+            public float PullStrength = 4.0f;
+
+            /// <summary>How fast a loose tsinelas slides in, in metres per second.</summary>
+            public float SlipperPull = 5.5f;
+
             private float _left;
             private readonly Dictionary<int, float> _nextDrowseBySlot = new Dictionary<int, float>();
 
@@ -1522,7 +1534,28 @@ namespace TumbangPreso.Abilities
                 var round = GameServices.Round;
                 if (round == null) return;
 
-                // Slow enemy players and pull dropped slippers inward
+                // -------------------------------------------------------------------
+                // § THE PULL
+                //
+                // ⚠️⚠️ 🧑 2026-08-27: *"make kuro's pull stronger and longer ... make it pull
+                // everyone and everything (except for can and nemu)"*. At 4.0 the impulse was
+                // about **13 per cent of `Balance.Speed`**, so anybody walking out simply walked
+                // out and the drag was decorative. `PullStrength` is a field rather than a
+                // constant because the same component is Nemu's SKILL-tier Seance Void as well as
+                // her ULTIMATE, and an ultimate that pulls exactly as hard as a skill is the
+                // *"reads as a one time"* complaint in another costume.
+                //
+                // ⚠️⚠️ THE ONE THING IT MUST NEVER PULL IS THE LATA, AND THAT IS WHY THERE IS NO
+                // CODE HERE FOR IT. Dragging the objective is scoring: `CLAUDE.md` § 4 is that
+                // every point is awarded in ONE function, and a hazard that can walk the can into
+                // its own centre would knock it over on somebody's behalf every cast. Kuro pulls
+                // the PLAYERS and the TSINELAS, which is *"everyone and everything"* minus the
+                // two things 🧑 named.
+                //
+                // ⚠️ AND THE OWNER IS EXEMPT, which is the "except nemu" half. It is her power;
+                // being sucked into her own mouth would make casting it at her own feet a
+                // self-stun.
+                // -------------------------------------------------------------------
                 foreach (var p in round.Players)
                 {
                     if (p == null || p.PlayerSlot == OwnerSlot) continue;
@@ -1531,13 +1564,15 @@ namespace TumbangPreso.Abilities
                     diff.y = 0.0f;
                     if (diff.magnitude <= Radius)
                     {
-                        p.ApplyImpulse(diff.normalized * 4.0f * Time.deltaTime);
+                        p.ApplyImpulse(diff.normalized * PullStrength * Time.deltaTime);
                         if (CanPulse(_nextDrowseBySlot, p.PlayerSlot, 1.25f))
                             p.ApplyStagger(0.35f);
                     }
                 }
 
-                // Pull dropped slippers towards void center
+                // ⚠️ A HELD TSINELAS IS NOT PULLED AND DOES NOT NEED TO BE: it is in somebody's
+                // hand, and that somebody is being pulled by the loop above. Yanking it out of
+                // the carry would be a disarm, which is a verb this game does not have.
                 foreach (var s in Object.FindObjectsByType<Slipper>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                 {
                     if (s != null && s.State != SlipperState.Held)
@@ -1546,7 +1581,7 @@ namespace TumbangPreso.Abilities
                         sDiff.y = 0.0f;
                         if (sDiff.magnitude <= Radius && sDiff.magnitude > 0.5f)
                         {
-                            s.transform.position += sDiff.normalized * 5.5f * Time.deltaTime;
+                            s.transform.position += sDiff.normalized * SlipperPull * Time.deltaTime;
                         }
                     }
                 }
@@ -1723,6 +1758,155 @@ namespace TumbangPreso.Abilities
                               new Color(0.96f, 0.42f, 0.14f, 0.55f), 0.85f);
             VfxMaterial.StripCollider(fringe);
             return fringe;
+        }
+
+        /// <summary>
+        /// The scorched ground a Supernova leaves, and the half of that ultimate that lasts.
+        ///
+        /// ⚠️⚠️ 🧑 2026-08-27: *"give supernova an explosion effect and more of an impact in a
+        /// game it just reads as a one time down on laata and knockback"*. It already called
+        /// `CreateExplosion`, so the missing thing was never the blast: it was that **Sean's was
+        /// the only ultimate in the game that left nothing behind**. Dante's fissure stands earth
+        /// pillars for 5.0 s, Nemu's maw runs 5.0 s, Phaister's eclipse is a 7.0 s zone, Cheska
+        /// encases each victim for 2.5 s. Sean leapt, landed, and the court was exactly as it had
+        /// been one second later, which is precisely the *"one time"* he is describing.
+        ///
+        /// ⚠️⚠️ AND IT IS WHAT MAKES THE ULTIMATE WORTH PRESSING AS A TAYA. With the lata gate in
+        /// `CreateExplosion` a defending Sean no longer knocks his own can over, but that only
+        /// removes a reason NOT to cast it. Burning ground around the objective is a reason to:
+        /// the attackers' retrieval run has to cross it. Cast as an attacker, the same crater
+        /// denies the taya their guard position. One power, opposite uses, chosen by where you
+        /// land, which is the shape `docs/TODO.md` § 31.4 gave Phaister's eclipse.
+        ///
+        /// ⚠️ IT IS SEAN'S OWN CONSTRUCTION AND NOT HIS TRAIL'S. `SpawnFireTrail` drops discs on a
+        /// timer; this is one torn ring with the cinder motif inside it, so the two do not read as
+        /// the same power at two sizes. `docs/TODO.md` § 29's rule is about the SIGNATURE of an
+        /// effect, and a crater and a trail are different signatures. `VfxShapes.Cinder` recurring
+        /// is the point of a motif: it separates Sean from the other five, not from himself.
+        ///
+        /// ⚠️ THE RADIUS IS THE GAMEPLAY RADIUS. `HazardVolume` is attached at exactly this
+        /// number so the bots path around what it actually is, which is the bound
+        /// `AiTuning.HazardAvoidMaxRadius` exists to keep meaningful.
+        /// </summary>
+        public static GameObject SpawnSupernovaCrater(Vector3 position, float radius,
+                                                      float duration, int ownerSlot)
+        {
+            var go = new GameObject("SupernovaCrater");
+            go.transform.position = position;
+
+            // The rim. `Collar` is a continuous annulus, which § 19.2's rule asks for on anything
+            // that is a BOUNDARY: the edge of the burn is a boundary and has to be readable as
+            // one from any angle.
+            var rim = VfxShapes.Lay(go.transform, "CraterRim",
+                                    VfxShapes.Collar(44, 0.10f, 0.94f),
+                                    radius, 0.026f);
+            VfxMaterial.Ghost(rim.GetComponent<Renderer>(),
+                              new Color(1.00f, 0.46f, 0.12f, 0.72f), 1.05f);
+            VfxMaterial.StripCollider(rim);
+
+            // The burnt floor inside it, dark rather than bright: this is ash with heat under it.
+            // ⚠️ IT IS THE DIMMEST PART OF THE EFFECT ON PURPOSE. A bright plate at 5 m radius is
+            // the puddle `docs/VISION.md` § 2 rule 3 names; what says "burning" is the RIM and the
+            // cinders, both of which are thin.
+            var bed = VfxShapes.Lay(go.transform, "CraterBed",
+                                    VfxShapes.Splat(26, 0.30f, ownerSlot * 13 + 7),
+                                    radius * 0.92f, 0.012f);
+            VfxMaterial.Ghost(bed.GetComponent<Renderer>(),
+                              new Color(0.22f, 0.07f, 0.03f, 0.62f), 0.0f);
+            VfxMaterial.StripCollider(bed);
+
+            SpawnCinderFringe(go.transform, radius, ownerSlot * 31 + 5);
+
+            var light = new GameObject("CraterGlow");
+            light.transform.SetParent(go.transform, false);
+            light.transform.localPosition = new Vector3(0.0f, 0.9f, 0.0f);
+            var l = light.AddComponent<Light>();
+            l.type = LightType.Point;
+            l.color = new Color(1.00f, 0.52f, 0.20f);
+            l.range = radius * 2.4f;
+            l.intensity = 1.5f;
+            l.shadows = LightShadows.None;
+
+            HazardVolume.Attach(go, radius, ownerSlot);
+
+            var comp = go.AddComponent<SupernovaCraterComponent>();
+            comp.Radius = radius;
+            comp.Duration = duration;
+            comp.OwnerSlot = ownerSlot;
+            comp.Glow = l;
+
+            Object.Destroy(go, duration);
+            return go;
+        }
+
+        /// <summary>
+        /// The crater burning down, and singeing whoever stands in it.
+        ///
+        /// ⚠️⚠️ HOST-SIDE, LIKE EVERYTHING THAT TOUCHES A BODY. `tools/audit_ability_authority.py`
+        /// exists because 23 places in this tree did not do this (`docs/TODO.md` § 25.1 and
+        /// § 31.11); a new one must not be the 24th.
+        ///
+        /// ⚠️ IT STAGGERS ON A CADENCE RATHER THAN EVERY FRAME, for the reason `sfx_stun_break`'s
+        /// note gives about a cue at 10 Hz: a per-frame stagger is not a hazard, it is a hold, and
+        /// `CharacterMotor.ApplyStagger` overlaps via `Max()` so re-applying faster than the
+        /// stagger lasts is an inescapable lock.
+        /// </summary>
+        public sealed class SupernovaCraterComponent : MonoBehaviour
+        {
+            public float Radius = 4.8f;
+            public float Duration = 5.0f;
+            public int OwnerSlot = -1;
+            public Light Glow;
+
+            /// <summary>Seconds between singes. Longer than the stagger it applies.</summary>
+            private const float SingeEvery = 0.85f;
+
+            private const float SingeHold = 0.30f;
+
+            private float _left;
+            private float _next;
+            private float _glowRest = 1.5f;
+
+            private void Awake()
+            {
+                _left = Duration;
+                if (Glow != null) _glowRest = Glow.intensity;
+            }
+
+            private void Update()
+            {
+                float dt = Time.deltaTime;
+                _left -= dt;
+
+                // The heat going out of it, so the last second is visibly cooling rather than
+                // the whole thing vanishing on one frame.
+                if (Glow != null && Duration > 0.0f)
+                {
+                    float k = Mathf.Clamp01(_left / Duration);
+                    Glow.intensity = _glowRest * (0.25f + 0.75f * k)
+                                     * (1.0f + Mathf.Sin(Time.time * 7.3f) * 0.08f);
+                }
+
+                if (!NetAuthority.ShouldResolve()) return;
+
+                _next -= dt;
+                if (_next > 0.0f) return;
+                _next = SingeEvery;
+
+                var round = GameServices.Round;
+                if (round == null) return;
+
+                foreach (var p in round.Players)
+                {
+                    if (p == null || p.PlayerSlot == OwnerSlot) continue;
+
+                    Vector3 diff = p.transform.position - transform.position;
+                    diff.y = 0.0f;
+                    if (diff.magnitude > Radius) continue;
+
+                    p.ApplyStagger(SingeHold, StunElement.Fire, Balance.StunBreakPressesDefault);
+                }
+            }
         }
 
         /// <summary>
@@ -1995,6 +2179,17 @@ namespace TumbangPreso.Abilities
             comp.Radius = radius;
             comp.Duration = duration;
             comp.OwnerSlot = ownerSlot;
+
+            // ⚠️⚠️ THE ULTIMATE PULLS 3.5x AS HARD AS THE SKILL THAT SHARES THIS COMPONENT.
+            // 🧑 2026-08-27: *"make kuro's pull stronger and longer"*. At the shared default of
+            // 4.0 the drag was about 13 per cent of `Balance.Speed`, which anybody could simply
+            // walk out of: the most expensive thing Nemu can do was a visual with a slow on it.
+            // 14.0 is about 3.0 m/s of inward drag against a 4.6 m/s walk, so leaving is still
+            // possible and is now a decision rather than a formality. That bound is the whole
+            // design: `docs/VISION.md` § 4 forbids anything with no counterplay, and a pull the
+            // player cannot beat is a stun that lasts as long as the ultimate does.
+            comp.PullStrength = 14.0f;
+            comp.SlipperPull = 9.0f;
 
             HazardVolume.Attach(go, radius, ownerSlot);
             Object.Destroy(go, duration);
@@ -2735,15 +2930,67 @@ namespace TumbangPreso.Abilities
             light.intensity = 2.4f;
             light.shadows = LightShadows.None;
 
-            // The reach, on the ground, and nothing else on the ground. An annulus, because
-            // `docs/TODO.md` § 19.2's rule is that a BOUNDARY has to be continuous to read as
-            // one: `Wedges` is for ground that is genuinely in pieces.
+            // The reach, on the ground. An annulus, because `docs/TODO.md` § 19.2's rule is that
+            // a BOUNDARY has to be continuous to read as one: `Wedges` is for ground that is
+            // genuinely in pieces.
             var reach = VfxShapes.Lay(go.transform, "EclipseReach",
                                       VfxShapes.Collar(48, 0.06f, 0.965f),
                                       radius, 0.03f);
+            // ⚠️ PURPLE, NOT GOLD, WITH THE REST OF THE FLOOR. 🧑 2026-08-27: *"I DONT WANt GOLd
+            // on dark i WANT PURPE OR PINK GLYPHS/MAGIC SHIT like in gravity falls"*. The corona
+            // eleven metres up keeps its gold, so the sky and the ground are now different
+            // colours, which is what stops the whole ultimate reading as one wash.
             VfxMaterial.Ghost(reach.GetComponent<Renderer>(),
-                              new Color(1.00f, 0.80f, 0.30f, 0.66f), 0.55f);
+                              new Color(UiTheme.HeroWitchBright.r, UiTheme.HeroWitchBright.g,
+                                        UiTheme.HeroWitchBright.b, 0.70f), 0.75f);
             VfxMaterial.StripCollider(reach);
+
+            // -------------------------------------------------------------------
+            // § THE CIRCLE, WHICH IS WHAT HE ASKED FOR IN THE FIRST PLACE
+            //
+            // ⚠️⚠️ 🧑 2026-08-27: *"why dont i see a magic circle for phaister's ult? my idea for
+            // it was that it would look like a giant magic circle with glyphs and patterns and
+            // shit was cast on the whole battlefield for like 5 seconds"*. There was none: § 24
+            // rebuilt her kit so that the WARD is the circle (`VfxShapes.WardCircle`) and the
+            // ultimate is a CORONA hung eleven metres up, on the argument that three powers
+            // needed three constructions. That argument is still right and this does not undo it:
+            // the ultimate keeps its corona, its moon and its weather. What it was missing is the
+            // thing on the FLOOR that says how far a battlefield-wide spell reaches.
+            //
+            // ⚠️⚠️ AND A NEAR-ARENA CIRCLE IS AFFORDABLE ONLY BECAUSE IT IS LINE ART.
+            // `docs/VISION.md` § 2 rule 3 is the whole licence for this: *"spend the budget on
+            // DETAIL, not on AREA. A flat coloured plane at 40 per cent of the arena reads as a
+            // puddle"*. This paints almost no floor: rings, a written band and radial rules, with
+            // the road showing through everywhere between them. That is why the same footprint
+            // that would be forbidden as a disc is correct as an inscription.
+            //
+            // ⚠️ IT IS A DIFFERENT CIRCLE FROM THE WARD, NOT THE WARD MADE BIGGER, which is the
+            // trap § 21.2 records against her whole kit (*"her Q is just 2 stars on top of each
+            // other"*). The ward is a compact stamp with four rings and medallions; this is three
+            // widely spaced rules with a glyph ring standing on them, and it turns. Scaling the
+            // ward to 6.4 m would have been exactly the fault that pass existed to remove.
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ AND IT IS BUILT IN STAGES, IN FRONT OF THE PLAYER, WHICH IS THE HALF THAT IS
+            // NOT GEOMETRY. 🧑 2026-08-27: *"i just want it so that they see the stages of the
+            // giant magic circle being cast for phaister ... like they see the circles being
+            // constructed"*. An inscription that simply APPEARS is a decal; one that is drawn
+            // ring by ring is a spell being cast, and the 0.4 s `HeroAbility.UltimateWindup` plus
+            // the build below is the beat `Hero_Strike_Balance.md` § 4.3 asks an ultimate for:
+            // *"the other three players get a beat to react"*. They now get something to react TO
+            // rather than a flash and consequences.
+            //
+            // ⚠️ PURPLE, NOT GOLD, ON INSTRUCTION: *"or this but purple"*, against a reference
+            // sheet of a gold circle. The corona overhead stays gold (see its note: a corona is
+            // the colour of a sun's edge), so the two halves of the ultimate are no longer the
+            // same colour, which separates the sky from the floor at a glance.
+            var circle = new GameObject("CovenCircle");
+            circle.transform.SetParent(go.transform, false);
+
+            var build = circle.AddComponent<CovenCircleBuild>();
+            build.Duration = duration;
+            build.Radius = radius;
+            build.Accent = UiTheme.HeroWitchBright;
+            build.BuildRings();
 
             var anim = go.AddComponent<EclipseFall>();
             anim.Hung = hung.transform;
@@ -2756,6 +3003,471 @@ namespace TumbangPreso.Abilities
             AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchEclipse, duration);
             Object.Destroy(go, duration);
             return go;
+        }
+
+        // -------------------------------------------------------------------
+        // § THE COVEN CIRCLE, DRAWN IN STAGES
+        //
+        // ⚠️⚠️ 🧑 2026-08-27, having looked for it in a match and not found one: *"why dont i see
+        // a magic circle for phaister's ult? my idea for it was that it would look like a giant
+        // magic circle with glyphs and patterns and shit was cast on the whole battlefield"*,
+        // then, decisively: *"i just want it so that they see the stages of the giant magic
+        // circle being cast ... like they see the circles being constructed"*.
+        //
+        // ⚠️⚠️ THE STAGING IS THE FEATURE, NOT THE GEOMETRY. A finished inscription that appears
+        // on one frame is a decal, and the eye files it as scenery. The same rings drawn one
+        // after another over a second and a half are a SPELL BEING CAST, because a viewer reads
+        // sequence as intent. It is also the only ultimate telegraph in the game that occupies
+        // the whole build: `Hero_Strike_Balance.md` § 4.3 asks that *"the other three players get
+        // a beat to react"*, and until now that beat was a 0.4 s root with a column over it.
+        //
+        // ⚠️⚠️ PINK AND VIOLET, NOT GOLD, AND HE SAID SO TWICE. *"or this but purple"* against a
+        // gold reference sheet, and then *"I DONT WANt GOLd on dark i WANT PURPE OR PINK
+        // GLYPHS/MAGIC SHIT like in gravity falls"*. `UiTheme.HeroWitch` is #e828c5 and
+        // `HeroWitchBright` #f444d4, which are already her sigil colours, so this costs no new
+        // palette. The corona hung overhead stays gold on purpose: a corona is the colour of a
+        // sun's edge, and having the sky and the floor differ is what stops the ultimate reading
+        // as one flat wash of a single hue.
+        //
+        // ⚠️ AND THE GLYPHS FLOAT. *"i want them to be floating and shit"*. They rise out of the
+        // circle rather than lying in it, each one a different character now that
+        // `VfxShapes.Rune` is a real alphabet rather than a stem with twigs on it. Twenty of them,
+        // all distinct, which is the count he asked for: *"less glyphs ... BUt theyre all
+        // different like 20 or so"*.
+        //
+        // ⚠️ THE WHOLE THING IS LINE ART AND THAT IS WHAT MAKES A NEAR-ARENA FOOTPRINT LEGAL.
+        // `docs/VISION.md` § 2 rule 3: *"spend the budget on DETAIL, not on AREA"*. Almost all of
+        // the road inside this circle is still road.
+        // -------------------------------------------------------------------
+
+        public sealed class CovenCircleBuild : MonoBehaviour, Visual.IVfxTimeline
+        {
+            public float Duration = 7.0f;
+            public float Radius = 6.4f;
+            public Color Accent = Color.magenta;
+
+            /// <summary>How long the whole inscription takes to draw itself.</summary>
+            private const float BuildSeconds = 1.55f;
+
+            /// <summary>How long one layer takes to come in, once its turn arrives.</summary>
+            private const float LayerFade = 0.30f;
+
+            private readonly List<Transform> _layers = new List<Transform>();
+            private readonly List<Renderer> _inks = new List<Renderer>();
+            private readonly List<float> _alpha = new List<float>();
+            private readonly List<Transform> _floaters = new List<Transform>();
+            private readonly List<float> _floatPhase = new List<float>();
+            private readonly List<Quaternion> _floatRest = new List<Quaternion>();
+
+            private float _elapsed;
+
+            /// <summary>
+            /// Every ring, in the order they are drawn.
+            ///
+            /// ⚠️ THEY ARE SEPARATE OBJECTS RATHER THAN ONE MESH PRECISELY SO THEY CAN BE STAGED.
+            /// `VfxShapes.WardCircle` builds a complete inscription in one mesh, which is correct
+            /// for a stamp that appears at once (her Q) and useless here: a single renderer can
+            /// only fade as a whole. One object per stage is what buys the sequence.
+            /// </summary>
+            /// <summary>
+            /// The inscription, PLACED BY HAND.
+            ///
+            /// ⚠️⚠️ 🧑 2026-08-27, after two procedural attempts: *"the circle u gave her ult
+            /// looks so boring, give her something this complex ... and yes manually draw it
+            /// instead of using some for loop and shit to generate everything"*, and bluntly:
+            /// *"bcz ur script generates suck as fuckk"*. He is right and the reason is worth
+            /// stating precisely, because it is the same lesson as `docs/TODO.md` § 19 in a new
+            /// place.
+            ///
+            /// ⚠️⚠️ A `for` LOOP OVER `i / count * 2π` CAN ONLY EVER PRODUCE ROTATIONAL
+            /// SYMMETRY, AND ROTATIONAL SYMMETRY IS WHAT MAKES A THING LOOK MACHINE-MADE. Nine
+            /// identical medallions at nine even angles is a hubcap. Every reference inscription
+            /// he has sent is deliberately UNEVEN: medallions of four different sizes at four
+            /// different radii, two of them overlapping into a cluster, script that runs in arcs
+            /// rather than all the way round, and figures rotated off the axis. None of that is
+            /// expressible as a loop with an index in it, which is exactly why the loop version
+            /// read as boring however many rings were added to it.
+            ///
+            /// ⚠️ SO THE COMPOSITION IS A TABLE, AND THE TABLE IS THE ART. The loops that remain
+            /// draw ONE element from one row; they never decide where anything goes. If this needs
+            /// to be richer later, add rows.
+            /// </summary>
+            public void BuildRings()
+            {
+                var ink = Accent;
+                var pale = new Color(1.00f, 0.72f, 0.99f);
+                var deep = new Color(0.80f, 0.32f, 0.94f);
+
+                // -------------------------------------------------------------------
+                // THE CONCENTRIC RULES. Hand-picked radii, deliberately unevenly spaced: two
+                // tight pairs (a "band") and three lone rules. Even spacing reads as a target.
+                // -------------------------------------------------------------------
+                AddRing("Rule_00", VfxShapes.Collar(72, 0.05f, 0.992f), 1.000f, ink, 0.72f);
+                AddRing("Rule_01", VfxShapes.Collar(72, 0.05f, 0.990f), 0.958f, ink, 0.62f);
+                AddRing("Rule_02", VfxShapes.Collar(68, 0.05f, 0.988f), 0.742f, pale, 0.55f);
+                AddRing("Rule_03", VfxShapes.Collar(68, 0.05f, 0.986f), 0.706f, pale, 0.45f);
+                AddRing("Rule_04", VfxShapes.Collar(60, 0.05f, 0.984f), 0.512f, deep, 0.52f);
+                AddRing("Rule_05", VfxShapes.Collar(52, 0.05f, 0.972f), 0.238f, ink, 0.66f);
+                AddRing("Rule_06", VfxShapes.Collar(44, 0.05f, 0.955f), 0.150f, pale, 0.74f);
+
+                // Ticks, only in the outer band, and only across two thirds of it.
+                AddTickArc(30.0f, 200.0f, 26, 0.958f, 1.000f);
+                AddTickArc(240.0f, 350.0f, 16, 0.958f, 1.000f);
+
+                // -------------------------------------------------------------------
+                // THE SCRIPT. Arcs, not rings: three runs of writing at three radii, each
+                // starting and stopping somewhere chosen rather than wrapping all the way round.
+                // -------------------------------------------------------------------
+                AddScriptArc(18.0f, 168.0f, 17, 0.976f, 0.050f, 1401);
+                AddScriptArc(196.0f, 338.0f, 15, 0.976f, 0.050f, 1601);
+                AddScriptArc(104.0f, 286.0f, 14, 0.724f, 0.042f, 2203);
+                AddScriptArc(0.0f, 360.0f, 11, 0.194f, 0.028f, 3307);
+
+                // -------------------------------------------------------------------
+                // THE MEDALLIONS. Nine, and no two are the same: four sizes, four radii, four
+                // different figures inside them, plus one deliberate overlapping PAIR at 176°
+                // and 188° which is the single most "hand-drawn" thing in the whole composition.
+                // Angles in degrees, radius as a fraction of the rim, size as a fraction of it.
+                // -------------------------------------------------------------------
+                AddMedallion( 92.0f, 0.872f, 0.150f, 7, 3, ink);
+                AddMedallion(140.0f, 0.846f, 0.092f, 0, 0, pale);
+                AddMedallion(176.0f, 0.884f, 0.128f, 5, 2, ink);
+                AddMedallion(188.0f, 0.806f, 0.078f, 3, 1, deep);
+                AddMedallion(232.0f, 0.858f, 0.116f, 6, 2, pale);
+                AddMedallion(276.0f, 0.878f, 0.148f, 8, 3, ink);
+                AddMedallion(312.0f, 0.822f, 0.084f, 0, 0, deep);
+                AddMedallion(348.0f, 0.866f, 0.108f, 4, 1, pale);
+                AddMedallion( 40.0f, 0.836f, 0.096f, 3, 1, ink);
+
+                // -------------------------------------------------------------------
+                // THE SPOKES. Five, not nine, and at hand-picked angles that DO NOT all line up
+                // with medallions: three of them run to a medallion and two run into empty band,
+                // which is what stops the figure reading as a wheel.
+                // -------------------------------------------------------------------
+                AddSpoke( 92.0f, 0.238f, 0.720f, ink);
+                AddSpoke(176.0f, 0.238f, 0.756f, ink);
+                AddSpoke(276.0f, 0.238f, 0.730f, ink);
+                AddSpoke( 16.0f, 0.512f, 0.706f, deep);
+                AddSpoke(212.0f, 0.512f, 0.706f, deep);
+
+                // -------------------------------------------------------------------
+                // THE FIGURES. Three, at three scales, three point counts and three ROTATIONS,
+                // none of which is a multiple of another. A star repeated at three radii is the
+                // "one builder at three sizes" fault § 24 rebuilt her whole kit to remove.
+                // -------------------------------------------------------------------
+                AddFigure("Fig_Outer", VfxShapes.Sigil(8, 3, 0.018f, 0.90f, 0, 52, 617),
+                          0.672f, 14.0f, ink, 0.52f);
+                AddFigure("Fig_Mid", VfxShapes.Sigil(6, 2, 0.022f, 0.88f, 0, 44, 811),
+                          0.448f, -27.0f, deep, 0.58f);
+                AddFigure("Fig_Core", VfxShapes.Sigil(3, 1, 0.030f, 0.84f, 0, 36, 907),
+                          0.212f, 63.0f, pale, 0.64f);
+
+                AddFloatingGlyphs(24);
+            }
+
+            /// <summary>One medallion: a small ring with its own figure in it, or empty.</summary>
+            private void AddMedallion(float angleDeg, float at, float size,
+                                      int points, int skip, Color colour)
+            {
+                var holder = new GameObject("Medallion");
+                holder.transform.SetParent(transform, false);
+
+                float a = angleDeg * Mathf.Deg2Rad;
+                Vector3 where = transform.position
+                                + new Vector3(Mathf.Cos(a), 0.0f, Mathf.Sin(a)) * Radius * at
+                                + Vector3.up * 0.020f;
+
+                var ring = VfxShapes.Lay(holder.transform, "Ring",
+                                         VfxShapes.Collar(28, 0.05f, 0.90f),
+                                         Radius * size, 0.020f);
+                ring.transform.position = where;
+                Ink(ring, colour, 0.60f, 0.85f);
+
+                // ⚠️ AN EMPTY MEDALLION IS A DELIBERATE ROW, NOT A MISSING ONE. Two of the nine
+                // carry `points` 0. A composition in which every cell is filled is as mechanical
+                // as one in which every cell is identical; the reference has plain circles in it
+                // too, and they are what let the eye rest between the busy ones.
+                if (points < 3) { Register(holder.transform, null, 0.0f); return; }
+
+                var fig = VfxShapes.Lay(holder.transform, "Figure",
+                                        VfxShapes.Sigil(points, skip, 0.055f, 0.80f, 0, 26,
+                                                        700 + points * 31 + (int)angleDeg),
+                                        Radius * size * 0.78f, 0.021f);
+                fig.transform.position = where + Vector3.up * 0.001f;
+                Ink(fig, colour, 0.66f, 1.05f);
+
+                Register(holder.transform, null, 0.0f);
+            }
+
+            /// <summary>One radial rule, from one radius to another, at one angle.</summary>
+            private void AddSpoke(float angleDeg, float from, float to, Color colour)
+            {
+                var holder = new GameObject("Spoke");
+                holder.transform.SetParent(transform, false);
+
+                float a = angleDeg * Mathf.Deg2Rad;
+                var dir = new Vector3(Mathf.Cos(a), 0.0f, Mathf.Sin(a));
+
+                var bar = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                bar.name = "Bar";
+                bar.transform.SetParent(holder.transform, false);
+                bar.transform.position = transform.position
+                                         + dir * Radius * (from + to) * 0.5f
+                                         + Vector3.up * 0.0185f;
+                bar.transform.rotation = Quaternion.LookRotation(dir, Vector3.up);
+                bar.transform.localScale = new Vector3(0.035f, 0.004f, Radius * (to - from));
+
+                Ink(bar, colour, 0.40f, 0.80f);
+                Register(holder.transform, null, 0.0f);
+            }
+
+            /// <summary>One figure, laid flat and turned to its own angle.</summary>
+            private void AddFigure(string name, Mesh mesh, float scale, float turnDeg,
+                                   Color colour, float alpha)
+            {
+                var go = VfxShapes.Lay(transform, name, mesh, Radius * scale, 0.019f);
+                go.transform.localRotation = Quaternion.Euler(0.0f, turnDeg, 0.0f);
+                Ink(go, colour, alpha, 0.85f);
+                Register(go.transform, null, 0.0f);
+            }
+
+            /// <summary>Ticks across the band, over one arc only.</summary>
+            private void AddTickArc(float fromDeg, float toDeg, int count, float inner, float outer)
+            {
+                var holder = new GameObject("Ticks");
+                holder.transform.SetParent(transform, false);
+
+                for (int i = 0; i < count; i++)
+                {
+                    float f = count == 1 ? 0.0f : i / (float)(count - 1);
+                    float a = Mathf.Lerp(fromDeg, toDeg, f) * Mathf.Deg2Rad;
+                    var dir = new Vector3(Mathf.Cos(a), 0.0f, Mathf.Sin(a));
+
+                    var tick = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    tick.name = "Tick";
+                    tick.transform.SetParent(holder.transform, false);
+                    tick.transform.position = transform.position
+                                              + dir * Radius * (inner + outer) * 0.5f
+                                              + Vector3.up * 0.019f;
+                    tick.transform.rotation = Quaternion.LookRotation(dir, Vector3.up);
+                    tick.transform.localScale = new Vector3(0.042f, 0.004f,
+                                                            Radius * (outer - inner));
+                    Ink(tick, Accent, 0.52f, 0.75f);
+                }
+
+                Register(holder.transform, null, 0.0f);
+            }
+
+            /// <summary>
+            /// A run of writing along an arc, each character a different letter.
+            ///
+            /// ⚠️ IT IS AN ARC RATHER THAN A RING, WHICH IS THE WHOLE DIFFERENCE. Text that wraps
+            /// all the way round with no beginning is a pattern; text that starts somewhere and
+            /// stops somewhere is writing, and the reference has four separate runs of it at
+            /// different radii.
+            /// </summary>
+            private void AddScriptArc(float fromDeg, float toDeg, int count, float at,
+                                      float size, int seed)
+            {
+                var holder = new GameObject("Script");
+                holder.transform.SetParent(transform, false);
+
+                for (int i = 0; i < count; i++)
+                {
+                    float f = count == 1 ? 0.0f : i / (float)(count - 1);
+                    float deg = Mathf.Lerp(fromDeg, toDeg, f);
+                    float a = deg * Mathf.Deg2Rad;
+
+                    var go = VfxShapes.Lay(holder.transform, "Char",
+                                           VfxShapes.Rune(seed + i * 23),
+                                           Radius * size, 0.019f);
+
+                    go.transform.position = transform.position
+                                            + new Vector3(Mathf.Cos(a), 0.0f, Mathf.Sin(a))
+                                              * Radius * at
+                                            + Vector3.up * 0.019f;
+                    go.transform.rotation = Quaternion.Euler(90.0f, -deg + 90.0f, 0.0f);
+
+                    Ink(go, new Color(1.00f, 0.68f, 0.99f), 0.76f, 1.35f);
+                }
+
+                Register(holder.transform, null, 0.0f);
+            }
+
+            /// <summary>Colour one piece and record it so the whole figure can dim together.</summary>
+            private void Ink(GameObject go, Color colour, float alpha, float emission)
+            {
+                var r = go.GetComponent<Renderer>();
+                if (r == null) return;
+
+                VfxMaterial.Ghost(r, new Color(colour.r, colour.g, colour.b, alpha), emission);
+                VfxMaterial.StripCollider(go);
+                _inks.Add(r);
+                _alpha.Add(alpha);
+            }
+
+            private void AddRing(string name, Mesh mesh, float scale, Color colour, float alpha)
+            {
+                var go = VfxShapes.Lay(transform, name, mesh, Radius * scale, 0.018f);
+
+                var r = go.GetComponent<Renderer>();
+                VfxMaterial.Ghost(r, new Color(colour.r, colour.g, colour.b, alpha), 0.75f);
+                VfxMaterial.StripCollider(go);
+
+                Register(go.transform, r, alpha);
+            }
+
+            /// <summary>
+            /// ⚠️ EVERY ONE IS A DIFFERENT SEED AND THEREFORE A DIFFERENT LETTER, which only
+            /// became true when `VfxShapes.Rune` was rebuilt around a closed set of body FORMS.
+            /// Before that, twenty seeds gave twenty drafts of one character, which is precisely
+            /// what 🧑 reported.
+            /// </summary>
+            private void AddFloatingGlyphs(int count)
+            {
+                var holder = new GameObject("Glyphs");
+                holder.transform.SetParent(transform, false);
+
+                for (int i = 0; i < count; i++)
+                {
+                    float a = i / (float)count * Mathf.PI * 2.0f;
+                    float ring = Radius * (i % 2 == 0 ? 0.78f : 0.50f);
+
+                    var go = VfxShapes.Stand(holder.transform, "Glyph",
+                                             VfxShapes.TwoSided(VfxShapes.Rune(1300 + i * 37)),
+                                             0.34f, heightScale: 0.50f);
+
+                    go.transform.position = transform.position
+                                            + new Vector3(Mathf.Cos(a), 0.0f, Mathf.Sin(a)) * ring
+                                            + Vector3.up * 0.35f;
+                    go.transform.rotation = Quaternion.Euler(0.0f, -a * Mathf.Rad2Deg, 0.0f);
+
+                    // ⚠️⚠️ THEY CAME BACK BLACK IN `ability_coven_eclipse_v35.png` AND THAT IS THE
+                    // SAME FAULT AS KURO'S. `Ghost` at emission 1.15 still lets the LIT term
+                    // dominate on a mesh this thin, and these are upright slabs a few centimetres
+                    // wide seen edge-on under an eclipse that has just darkened the whole street.
+                    // Alpha 1.0 and a much hotter emission make them self-lit, which is the only
+                    // thing that survives their own weather. `docs/TODO.md` § 31.5 records the
+                    // identical mistake on the pet, three hours earlier in the same session.
+                    var r = go.GetComponent<Renderer>();
+                    VfxMaterial.Ghost(r, new Color(1.00f, 0.62f, 0.98f, 1.00f), 2.20f);
+                    VfxMaterial.StripCollider(go);
+
+                    _inks.Add(r);
+                    _alpha.Add(1.00f);
+                    _floaters.Add(go.transform);
+                    _floatPhase.Add(i * 0.7f);
+                    _floatRest.Add(go.transform.localRotation);
+                }
+
+                Register(holder.transform, null, 0.0f);
+            }
+
+            /// <summary>
+            /// ⚠️⚠️ THE BUILT SCALE IS REMEMBERED AND GROWN BACK TO, RATHER THAN GROWN TO ONE.
+            /// `VfxShapes.Lay` sizes a ring by WRITING ITS `localScale`, so a ring laid at 6.4 m
+            /// is an object whose local scale is 6.4. Animating it toward `Vector3.one` therefore
+            /// did not reveal it, it SHRANK it to a metre across:
+            /// `ability_coven_eclipse_v34.png` came back with a 12.8 m inscription drawn as a
+            /// 2 m doodle under the caster, while the medallions and glyphs (which are children
+            /// of unscaled holders and keep their own placement) sat correctly out at 6 m with
+            /// nothing joining them up.
+            /// </summary>
+            private readonly List<Vector3> _layerFull = new List<Vector3>();
+
+            private void Register(Transform layer, Renderer ink, float alpha)
+            {
+                _layers.Add(layer);
+                _layerFull.Add(layer.localScale);
+                layer.localScale = Vector3.zero;
+
+                if (ink != null)
+                {
+                    _inks.Add(ink);
+                    _alpha.Add(alpha);
+                }
+            }
+
+            public float LifeSeconds => Mathf.Max(0.3f, Duration);
+
+            private void Update() => StepTo(_elapsed + Time.deltaTime);
+
+            /// <summary>
+            /// ⚠️⚠️ AN `IVfxTimeline`, AND THE FIRST RENDER OF THIS EFFECT IS WHY.
+            /// `ability_coven_eclipse_eye_v32.png` came back with **no circle in it at all**:
+            /// `BuildRings` creates every layer at `localScale` zero and only `Update` grows
+            /// them, and `AbilityShowcaseProbe.Solo` does not run `Update` or call `StepAll`.
+            /// The probe photographed a finished, correct inscription in its rest pose, which is
+            /// invisible, and that reads as the feature being broken rather than as the capture
+            /// being wrong.
+            ///
+            /// ⚠️ THIS IS THE SAME TRAP `GhostPetCompanion.StepTo` EXISTS FOR and the one
+            /// `docs/TODO.md` records against Kuro twice. **Anything that is built by an
+            /// animation must be windable, or it cannot be reviewed against a picture**, and
+            /// `CLAUDE.md` § 6.1 requires every iteration to be reviewed against a picture.
+            /// </summary>
+            public void StepTo(float seconds)
+            {
+                _elapsed = seconds;
+
+                // ⚠️ THE LAYERS ARE SPACED ACROSS `BuildSeconds` RATHER THAN GIVEN A FIXED GAP,
+                // so adding a seventh ring re-times the whole sequence instead of making the
+                // build longer than the beat it is supposed to fit inside.
+                float step = _layers.Count > 0 ? BuildSeconds / _layers.Count : BuildSeconds;
+
+                for (int i = 0; i < _layers.Count; i++)
+                {
+                    if (_layers[i] == null) continue;
+
+                    float since = _elapsed - i * step;
+                    float k = Mathf.Clamp01(since / LayerFade);
+
+                    // Overshoot slightly and settle, so each ring lands rather than grows.
+                    float e = k < 1.0f ? 1.0f - Mathf.Pow(1.0f - k, 3.0f) : 1.0f;
+                    float pop = k < 1.0f ? 1.0f + Mathf.Sin(k * Mathf.PI) * 0.05f : 1.0f;
+
+                    _layers[i].localScale = _layerFull[i] * (e * pop);
+                }
+
+                // ⚠️ THE WHOLE INSCRIPTION TURNS, SLOWLY, AND ONLY AFTER IT IS FINISHED. Turning
+                // it while it is still being drawn would make the stages look like one object
+                // spinning up rather than like separate rings arriving.
+                //
+                // ⚠️⚠️ IT IS SET FROM `_elapsed` RATHER THAN ACCUMULATED WITH `Rotate`, so a
+                // wound frame lands where a played one would. An incremental `Rotate` is
+                // invisible to `StepTo`: the probe would jump straight to the end time and the
+                // object would still be at its birth angle, which is the same class of fault as
+                // the zero-scale one this method's note records.
+                float spin = _elapsed > BuildSeconds ? (_elapsed - BuildSeconds) * 6.0f : 0.0f;
+                transform.localRotation = Quaternion.Euler(0.0f, spin, 0.0f);
+
+                for (int i = 0; i < _floaters.Count; i++)
+                {
+                    if (_floaters[i] == null) continue;
+
+                    float t = _elapsed * 1.6f + _floatPhase[i];
+                    var p = _floaters[i].localPosition;
+                    p.y = 0.35f + Mathf.Sin(t) * 0.16f + Mathf.Min(_elapsed, 2.0f) * 0.18f;
+                    _floaters[i].localPosition = p;
+
+                    _floaters[i].localRotation = _floatRest[i]
+                        * Quaternion.Euler(0.0f, _elapsed * 22.0f, 0.0f);
+                }
+
+                // The last half second dims the ink so the circle does not simply vanish.
+                float left = Duration - _elapsed;
+                if (left >= 0.6f) return;
+
+                float fade = Mathf.Clamp01(left / 0.6f);
+                for (int i = 0; i < _inks.Count; i++)
+                {
+                    if (_inks[i] == null || _inks[i].sharedMaterial == null) continue;
+
+                    var c = _inks[i].sharedMaterial.color;
+                    c.a = _alpha[i] * fade;
+                    _inks[i].sharedMaterial.color = c;
+                }
+            }
         }
 
         /// <summary>
@@ -3375,12 +4087,39 @@ namespace TumbangPreso.Abilities
                 }
             }
 
-            // Also launch can if within explosion
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ A BLAST NEVER KNOCKS OVER ITS OWN CASTER'S OBJECTIVE, AND THAT ONE LINE IS
+            // WHAT MAKES THREE ULTIMATES USABLE IN BOTH ROLES.
+            //
+            // 🧑 2026-08-27, reading Sean's card in a match: *"this too it reads as unusable on
+            // defender"*, above *"Leap and crash down. Knocks the lata over on impact."* He is
+            // right, and it was not only the wording: the taya's whole job is that the lata stays
+            // up, so an ultimate whose headline effect is knocking it over is an ultimate a
+            // defending Sean must never press. `AIController.StepHeroAbilities` already encodes
+            // that as a special case (*"a defending Sean must never spend an ultimate knocking
+            // over their own objective"*), which is the tell: when the AI needs a rule to stop it
+            // using a power, the power is not finished.
+            //
+            // ⚠️ THE GATE IS THE CASTER'S ROLE, NOT THE HERO. Any explosion from any source now
+            // obeys it, so a future kit cannot reintroduce the same trap, and an ATTACKER's blast
+            // still knocks the can over exactly as before. What a defender gets instead is the
+            // half that was always role-neutral: everyone near it thrown clear, and whatever the
+            // caller leaves on the ground.
+            //
+            // ⚠️ A SEATLESS SOURCE (`sourceSlot` -1, which is a map hazard or a stray slipper)
+            // COUNTS AS AN ATTACKER, because nobody is defending on its behalf. That keeps
+            // `Slipper`'s own explosion and every environmental blast behaving as they always
+            // have.
+            // -------------------------------------------------------------------
             if (round.Lata != null)
             {
                 Vector3 canDiff = round.Lata.transform.position - center;
                 canDiff.y = 0.0f;
-                if (canDiff.magnitude <= radius)
+
+                var caster = sourceSlot >= 0 ? round.PlayerAt(sourceSlot) : null;
+                bool castersOwnCan = caster != null && caster.IsDefender;
+
+                if (canDiff.magnitude <= radius && !castersOwnCan)
                 {
                     round.Lata.HostKnockDown(sourceSlot);
                 }

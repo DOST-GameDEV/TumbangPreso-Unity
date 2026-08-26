@@ -269,7 +269,7 @@ namespace TumbangPreso.Tests
             // old ultimate staggered `round.Players` with no distance test at all, so there was
             // no radius to draw and nothing to position against. 5.0 is what `Curse` now tests
             // and what `SpawnGrandCovenEclipse` draws on the ground. `docs/TODO.md` § 24.
-            AssertTelegraph("phaister", 3, 5.0f, 0.0f); // curse reach, centred on the caster
+            AssertTelegraph("phaister", 3, 10.5f, 0.0f); // curse reach, centred on the caster
         }
 
         /// <summary>

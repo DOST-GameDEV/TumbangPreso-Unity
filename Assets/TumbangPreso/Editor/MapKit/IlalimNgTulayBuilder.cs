@@ -2085,28 +2085,31 @@ namespace TumbangPreso.EditorTools.MapKit
                              -9.2f, 7.8f, new Vector3(1.6f, 0.4f, 2.2f),
                              "BOX TRIP!", CardboardTan);
 
-            // 🧑, 2026-08-25: *"like maybe places u can trip on? then fall down animation
-            // plays and u have to spam a button to get back up"*. These two are the answer to the
-            // first half; `Combat.MashRecovery` is the answer to the second.
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ FOUR BECAME TWO ON 2026-08-27, AND THE TWO THAT WENT WERE THE TWO NEAREST THE
+            // CAN. 🧑, playing the 4.72 build: *"theres too many places where u can trip can we
+            // remove some? its annoying for everyone"*. That is the SECOND time this count has
+            // been cut for the same reported feeling (seven to four on 2026-08-26, see above),
+            // which is the tell that the count was never the real variable.
             //
-            // ⚠⚠ BOTH SIT ON SOMETHING `BuildRoadSurfaceDetail` ALREADY DREW, AND THAT IS THE
-            // RULE FOR ANY FUTURE ONE. A trigger volume on blank asphalt is an invisible tax:
-            // the player is knocked down by nothing and learns nothing they can use next lap.
-            // A loose lid sits on the manhole at (-4.60, 2.40) and the trench sits in the
-            // resurfaced patch at (4.60, -2.60), so both are legible from the taya's own eye
-            // height before anybody runs through them.
+            // ⚠️⚠️ WHAT MAKES A HAZARD ANNOYING IS NOT HOW MANY THERE ARE, IT IS WHETHER IT SITS
+            // ON THE MOVE THE GAME IS ABOUT. `TripHazard_LooseManhole` at (-4.60, 2.40) and
+            // `TripHazard_SunkenTrench` at (4.60, -2.60) stood **5.19 m and 5.30 m from the
+            // world origin**, which is the can. `CONFINEMENT_RADIUS` is 7.0, so both sat squarely
+            // inside the ring every single retrieval in the match runs through: not a risk
+            // attached to a choice, a toll on the only route. The note above this method already
+            // states the principle (*"a hazard there does not add risk to a choice, it taxes the
+            // one move the whole game is about"*) and then applies it only to a 1.40 m exclusion,
+            // which is far too small to mean it.
             //
-            // ⚠ AND BOTH CLEAR THE CAN. `MapGeometryCheck.CheckLataIsClear` refuses a trip
-            // hazard within 1.40 m of the world origin, because retrieval converges there and a
-            // hazard on that square metre taxes the one move the whole game is about rather than
-            // adding risk to a choice. These stand at 5.19 m and 5.30 m.
-            CreateTripHazard(hazardGroup.transform, "TripHazard_LooseManhole",
-                             -4.6f, 2.4f, new Vector3(1.5f, 0.4f, 1.5f),
-                             "KANAL!", PotholeGrey);
-
-            CreateTripHazard(hazardGroup.transform, "TripHazard_SunkenTrench",
-                             4.6f, -2.6f, new Vector3(2.1f, 0.4f, 2.6f),
-                             "TRENCH!", CordYellow);
+            // ⚠️ THE TWO THAT STAY ARE AT 8.55 m AND 12.06 m FROM THE CAN, both outside
+            // confinement entirely. You meet them running the long way round or cutting a wide
+            // corner, which is a decision, and never on a straight run for your tsinelas.
+            //
+            // ⚠️ IF A THIRD IS EVER WANTED, THE BOUND IS DISTANCE FROM THE ORIGIN AND NOT THE
+            // COUNT. Anything inside `Balance.ConfinementRadius` of the can is on the retrieval
+            // line by construction, whatever it is drawn as and however few of them there are.
+            // -------------------------------------------------------------------
         }
 
         private static void CreateTripHazard(Transform parent, string name, float x, float z,

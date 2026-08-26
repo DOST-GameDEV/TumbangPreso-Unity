@@ -310,13 +310,45 @@ namespace TumbangPreso.Abilities
             /// <summary>
             /// How far the curse reaches. The same number the ground ring draws.
             ///
-            /// ⚠️ 5.0 m IS UNCHANGED AND MUST STAY THAT WAY. It is 25 per cent of a 196 m² court
-            /// and `docs/VISION.md` § 2 rule 2 allows an ultimate to be big; what it does not
-            /// allow is this becoming big AND lasting. The power grew along the TIME axis, which
-            /// is free, exactly as § 26 argues for the sky. Growing both would be the readability
-            /// budget spent twice for one ability.
+            /// ⚠️⚠️ 5.0 m BECAME 9.0 m ON INSTRUCTION, AND IT IS THE ONE FOOTPRINT IN THIS GAME
+            /// THAT IS DELIBERATELY ALMOST THE WHOLE ARENA. 🧑 2026-08-27, watching it: *"i want
+            /// the circle there to be a bit bigger too, that is so easy to dodge bro"*, then
+            /// *"make it like very very big"*, then the design in his own words: *"that its
+            /// undodgable or hard to run away from bcz i want ppl to try to run from it"* and
+            /// *"make it liek really really big that they have to run the whole time its being
+            /// casted in order to dodge"*.
+            ///
+            /// ⚠️⚠️ IT IS NOT ACTUALLY UNDODGEABLE AND MUST NOT BECOME SO. `docs/VISION.md` § 4
+            /// forbids anything with no counterplay, and the counterplay here is the one he asked
+            /// for by name: **running**. The arena is a 14 by 14 square, so its corners are 9.9 m
+            /// from the centre. A 9.0 m circle centred on a caster standing in the middle leaves
+            /// only the corners safe, and `CovenCircleBuild` takes **1.55 s** to draw itself on
+            /// top of the 0.4 s wind-up. At `Balance.Speed` 4.6 m/s that is about 9 m of running,
+            /// which is exactly enough to reach a corner from the middle if you start moving the
+            /// moment the first ring lands and not if you hesitate. That is the whole power.
+            ///
+            /// ⚠️ WHICH IS WHY THE STAGED BUILD IS A BALANCE FEATURE AND NOT DECORATION. The
+            /// build time IS the dodge window. Shortening it, or drawing the circle instantly,
+            /// makes this the only genuinely unavoidable effect in the game.
+            ///
+            /// ⚠️ AND `docs/VISION.md` § 2 IS PAID BY IT BEING LINE ART. Rule 3 allows a big
+            /// footprint spent on DETAIL rather than AREA; almost all of the road inside this
+            /// circle is still road. Rule 2 allows one big ultimate at a time. It is the largest
+            /// thing in the game and it paints nearly none of the floor it covers.
             /// </summary>
-            private const float Reach = 5.0f;
+            /// ⚠️⚠️ AND THEN 9.0 BECAME 10.5 ON A SECOND PASS: *"make it even bigger after
+            /// okay"*. At 10.5 m the circle covers the entire 14 by 14 box **including its
+            /// corners**, which are 9.9 m from the middle. It is therefore genuinely
+            /// undodgeable-by-standing-still, which is what he asked for.
+            ///
+            /// ⚠️⚠️ IT IS STILL ESCAPABLE, AND THE THING THAT MAKES IT SO IS THAT IT IS CENTRED
+            /// ON HER RATHER THAN ON THE ARENA. A Phaister standing at (3, 3) leaves the far
+            /// corner at (-7, -7) fourteen metres away, comfortably outside. So the counterplay
+            /// `docs/VISION.md` § 4 requires is intact and is exactly the one he described:
+            /// *"i want ppl to try to run from it"*. You run AWAY FROM HER, and where she chose
+            /// to stand decides how far you have to go. A witch who walks to the middle before
+            /// casting covers everything and has spent her positioning to do it.
+            private const float Reach = 10.5f;
 
             /// <summary>
             /// See the class note. Must stay above `Balance.MinStunDown`.

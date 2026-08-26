@@ -641,34 +641,58 @@ namespace TumbangPreso.Visual
                         fill: new Color(0.72f, 0.36f, 0.92f), fillIntensity: 1.35f,
                         brightness: 0.86f, saturation: 0.92f);
 
-                // Zack. Not dark so much as WRONG-COLOURED and unsteady: a storm sky is bright
-                // and grey at once, which is why this is the only row with a flicker.
+                // Zack. A DAYLIGHT thunderstorm: bright, flat, overcast white-grey, with the
+                // lightning in the flicker rather than in the darkness.
+                //
+                // ⚠️⚠️ IT WAS A DUSK STORM AND 🧑 CALLED IT NIGHT ALONG WITH THE OTHER TWO.
+                // 2026-08-27: *"remove the night shit in dante's ult i think he should have a
+                // different weather as well as for zack and cheska, it doesnt have to be all
+                // night"*. `skyExposure` 0.42 and `sunScale` 0.46 put this halfway to an eclipse,
+                // so six weathers in a row read as one weather at six hues.
+                //
+                // ⚠️ WHAT MAKES IT A STORM IS THE FLAT GREY AND THE FLICKER, NOT THE DARKNESS.
+                // A real storm sky is often BRIGHTER than the ground under it, which is why the
+                // sun stays up here and the saturation comes down instead. The flicker is
+                // untouched: it is still the only row that has one, and it is now the only thing
+                // changing the light level, which is what lightning actually is.
                 case Look.Stormfront:
                     return new Profile(
-                        sky: new Color(0.30f, 0.34f, 0.42f),
-                        equator: new Color(0.26f, 0.29f, 0.36f),
-                        ground: new Color(0.12f, 0.14f, 0.18f),
-                        sunColour: new Color(0.66f, 0.74f, 0.92f), sunScale: 0.46f,
-                        fog: new Color(0.34f, 0.37f, 0.44f), fogFar: 0.60f,
-                        skyExposure: 0.42f, skyTint: new Color(0.40f, 0.44f, 0.52f),
-                        fill: new Color(0.72f, 0.86f, 1.00f), fillIntensity: 1.15f,
-                        brightness: 0.94f, saturation: 0.62f,
+                        sky: new Color(0.62f, 0.66f, 0.74f),
+                        equator: new Color(0.56f, 0.60f, 0.68f),
+                        ground: new Color(0.30f, 0.33f, 0.38f),
+                        sunColour: new Color(0.84f, 0.90f, 1.00f), sunScale: 0.78f,
+                        fog: new Color(0.60f, 0.64f, 0.72f), fogFar: 0.58f,
+                        skyExposure: 0.72f, skyTint: new Color(0.66f, 0.70f, 0.78f),
+                        fill: new Color(0.78f, 0.88f, 1.00f), fillIntensity: 1.05f,
+                        brightness: 1.00f, saturation: 0.52f,
                         flickerDepth: 0.30f);
 
-                // Cheska. The one that takes COLOUR rather than light: a squall closing in.
+                // Cheska. The one that takes COLOUR rather than light: a blizzard at noon.
                 // Saturation 0.34 is the strongest desaturation of the six and it is her whole
                 // read, because `docs/TODO.md` § 22.6 gave the colour drain to the TAG and she
                 // needs a cold that is not that one.
+                //
+                // ⚠️ IT WAS ALREADY THE BRIGHTEST OF THE SIX AND IT WAS STILL NOT BRIGHT ENOUGH
+                // TO READ AS DAY. Pushed to a full whiteout on 🧑's 2026-08-27 note (see
+                // `Stormfront`). A blizzard is the one weather that is genuinely brighter than
+                // the day it interrupts, because the snow throws the light back at you, so this
+                // is the row that should sit hardest against the clamp.
+                //
+                // ⚠️⚠️ AND THE CLAMP IS WHY THIS IS SAFE AT `brightness` 1.00.
+                // `ColourGrade.SetEventGrade` caps at exactly 1.0, so the brightest a weather can
+                // ever be is the untouched street: § 8b's Thunderstrike blowing 62.8 per cent of
+                // a frame to white cannot be reached from here however white the FOG goes. The
+                // whiteness is fog and saturation, which cost no luminance.
                 case Look.Whiteout:
                     return new Profile(
-                        sky: new Color(0.72f, 0.79f, 0.84f),
-                        equator: new Color(0.58f, 0.66f, 0.72f),
-                        ground: new Color(0.34f, 0.40f, 0.45f),
-                        sunColour: new Color(0.86f, 0.93f, 1.00f), sunScale: 0.58f,
-                        fog: new Color(0.80f, 0.86f, 0.90f), fogFar: 0.34f,
-                        skyExposure: 0.66f, skyTint: new Color(0.62f, 0.68f, 0.72f),
-                        fill: new Color(0.82f, 0.92f, 1.00f), fillIntensity: 0.90f,
-                        brightness: 0.96f, saturation: 0.34f);
+                        sky: new Color(0.86f, 0.91f, 0.95f),
+                        equator: new Color(0.78f, 0.85f, 0.90f),
+                        ground: new Color(0.55f, 0.61f, 0.66f),
+                        sunColour: new Color(0.92f, 0.97f, 1.00f), sunScale: 0.82f,
+                        fog: new Color(0.90f, 0.94f, 0.97f), fogFar: 0.30f,
+                        skyExposure: 0.86f, skyTint: new Color(0.80f, 0.86f, 0.90f),
+                        fill: new Color(0.88f, 0.95f, 1.00f), fillIntensity: 0.85f,
+                        brightness: 1.00f, saturation: 0.34f);
 
                 // Sean. Fire seen THROUGH something. The sun stays high but goes the colour of
                 // a sun behind smoke, which is hotter to look at than a brighter frame would be.
@@ -683,18 +707,32 @@ namespace TumbangPreso.Visual
                         fill: new Color(1.00f, 0.62f, 0.34f), fillIntensity: 1.25f,
                         brightness: 0.92f, saturation: 1.00f);
 
-                // Dante. Dust is the only one that is THICK: the fog comes closest of the six
-                // and the sky goes almost out, because what is overhead is the street itself.
+                // Dante. Dust is the only one that is THICK: the fog comes closest of the six,
+                // because what is between you and everything else is the street itself.
+                //
+                // ⚠️⚠️ THIS WAS THE DARKEST ROW AFTER THE ECLIPSE AND IT IS THE ONE 🧑 NAMED
+                // FIRST. 2026-08-27: *"remove the night shit in dante's ult"*. `skyExposure` 0.26
+                // and `sunScale` 0.40 made a dust storm into a brown night, which is also the
+                // least believable of the six: a dust cloud is lit, brilliantly, because it is
+                // suspended dirt with the sun full on it. Anyone who has seen one has seen an
+                // ORANGE DAY, not a dark one.
+                //
+                // ⚠️⚠️ AND THE THICKNESS IS THE FOG, WHICH IS EXACTLY WHY IT COST NOTHING TO FIX.
+                // `fogFar` 0.30 is the closest of the six and is untouched: that is what makes it
+                // read as thick, and it is a separate channel from how much light there is.
+                // Darkening was never doing any of the work. ⚠️ The NEAR plane is still not
+                // touched, per § 26's trap: pulling it in put fog 4.6 m inside a 14 m box and
+                // turned a capture into a flat brown wash.
                 case Look.Dustveil:
                     return new Profile(
-                        sky: new Color(0.36f, 0.28f, 0.16f),
-                        equator: new Color(0.32f, 0.25f, 0.15f),
-                        ground: new Color(0.16f, 0.12f, 0.07f),
-                        sunColour: new Color(0.86f, 0.68f, 0.40f), sunScale: 0.40f,
-                        fog: new Color(0.40f, 0.32f, 0.19f), fogFar: 0.30f,
-                        skyExposure: 0.26f, skyTint: new Color(0.44f, 0.35f, 0.20f),
-                        fill: new Color(1.00f, 0.80f, 0.52f), fillIntensity: 1.05f,
-                        brightness: 0.90f, saturation: 0.80f);
+                        sky: new Color(0.78f, 0.62f, 0.36f),
+                        equator: new Color(0.74f, 0.58f, 0.33f),
+                        ground: new Color(0.44f, 0.34f, 0.19f),
+                        sunColour: new Color(1.00f, 0.84f, 0.56f), sunScale: 0.80f,
+                        fog: new Color(0.80f, 0.64f, 0.38f), fogFar: 0.30f,
+                        skyExposure: 0.70f, skyTint: new Color(0.82f, 0.66f, 0.40f),
+                        fill: new Color(1.00f, 0.86f, 0.60f), fillIntensity: 1.00f,
+                        brightness: 1.00f, saturation: 0.88f);
 
                 // Nemu. The quietest of the six on purpose. Her whole character is that things
                 // stop being right rather than that something arrives, so the sun barely moves

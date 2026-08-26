@@ -409,6 +409,29 @@ namespace TumbangPreso.Abilities
         /// seconds would be a one-frame colour glitch, so the shortest weather is the length of a
         /// held breath and the four that run longer keep their own.
         /// </summary>
+        /// <summary>
+        /// Which sustained theme plays under this hero's ultimate, or null for a hero with none.
+        ///
+        /// ⚠️ IT RETURNS NULL RATHER THAN A DEFAULT, exactly as <see cref="LookFor"/> does, and
+        /// for the same reason: a hero with no row gets SILENCE, which is a missing feature and
+        /// reads as one. Giving them somebody else's theme is `docs/TODO.md` § 8 item 3's fault
+        /// (*"Sean's Supernova was spawning Dante's magma"*) in the other medium, and 🧑 has now
+        /// reported that class of thing twice.
+        /// </summary>
+        private static string ThemeFor(string heroId)
+        {
+            switch (heroId)
+            {
+                case "phaister": return "sfx_coven_summon";
+                case "zack": return "sfx_ult_theme_zack";
+                case "cheska": return "sfx_ult_theme_cheska";
+                case "sean": return "sfx_ult_theme_sean";
+                case "dante": return "sfx_ult_theme_dante";
+                case "nemu": return "sfx_ult_theme_nemu";
+                default: return null;
+            }
+        }
+
         private static Visual.SkyEvent.Look? LookFor(string heroId)
         {
             switch (heroId)
@@ -488,6 +511,28 @@ namespace TumbangPreso.Abilities
             if (look.HasValue && Kit != null && Kit.Ultimate != null)
             {
                 Visual.SkyEvent.Play(look.Value, Visual.SkyEvent.SecondsFor(Kit.Ultimate.Duration));
+            }
+
+            // ⚠️⚠️ AND THE HERO'S OWN THEME, WIRED HERE FOR THE REASON § 26 GIVES ABOUT THE SKY:
+            // one call, at the single point every ultimate in the game passes through, so a new
+            // hero cannot ship as the one whose ultimate is silent under the payload.
+            // 🧑 2026-08-27: *"they dont have enough auditory effects too. give everyone their own
+            // theme and dont generate it the same way bcz its gonna sound the same way"*.
+            //
+            // ⚠️⚠️ IT IS A BED UNDER THE PAYLOAD, NOT A REPLACEMENT FOR IT. `sfx_frost_nova`,
+            // `sfx_thunder_impact` and `sfx_explosion_heavy` still fire from the kits at the
+            // instant the blast lands and are untouched. What was missing is that an ultimate had
+            // ONE hit and then silence for the six seconds it was still happening in, which is the
+            // *"not enough auditory effects"* half of his sentence.
+            //
+            // ⚠️ NOT `NetCue`, FOR THE SAME REASON THE WEATHER IS NOT. The ability layer is not
+            // replicated at all (`docs/TODO.md` § 25.1), so this is local like everything else in
+            // this method; when that entry is closed the theme travels with the rest of the
+            // presentation rather than needing its own path.
+            string theme = ThemeFor(Kit != null ? Kit.HeroId : null);
+            if (!string.IsNullOrEmpty(theme))
+            {
+                GameServices.Audio?.PlayAt(theme, _context.Position);
             }
 
             var camera = UnityEngine.Camera.main;

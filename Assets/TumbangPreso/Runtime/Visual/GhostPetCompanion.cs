@@ -293,12 +293,25 @@ namespace TumbangPreso.Visual
         /// 7.0 he fills the view from eye height and hides the arena behind him.
         ///
         /// ⚠️ WHICH `docs/VISION.md` § 2 RULE 5 FORBIDS IN AS MANY WORDS: a mid-fight frame must
-        /// still show the lata, the chalk and every player. 5.6 is still by a wide margin the
-        /// largest object any ability puts on the court, and he is now legible instead of being
-        /// an unlit wall. The impact 🧑 asked for is paid for by the value floor, the emission
-        /// and the horns, none of which cost a single square metre.
+        /// still show the lata, the chalk and every player.
+        ///
+        /// ⚠️⚠️ AND THEN 🧑 OVERRULED THE REDUCTION IN THE SAME SESSION, WHICH IS WHY IT IS 7.4
+        /// AND NOT 5.6. Having seen it: *"he also looks weirdly small and not scary in the ult"*.
+        /// The 5.6 was measured against rule 5 and he is right that it reads as a shrink: the
+        /// frame that made 7.0 look enormous was `Solo`, photographed from two metres away with
+        /// nothing else in it, and a player meets this thing across a 14 m street. **A probe
+        /// framing is not a play framing, and where the two disagree about how big something
+        /// FEELS, he is the one holding the controller.**
+        ///
+        /// ⚠️ RULE 5 IS STILL PAID, BY THE MAW BEING A HOLE RATHER THAN A WALL. The bite, the
+        /// shell and the body are all near-black and unlit by construction, so what he occludes
+        /// he occludes as a silhouette against a lit street: the lata, the chalk and the other
+        /// players are still visible AROUND him. That is a different thing from Zack's old
+        /// Thunderstrike, which removed the picture by overexposing it (§ 8b, 62.8 per cent).
+        /// If this ever needs to come down again, take it out of the RADIUS in `NemuHeroKit`
+        /// rather than out of him: the footprint is the budgeted quantity, not the height.
         /// </summary>
-        private const float DevourScale = 5.6f;
+        private const float DevourScale = 7.4f;
 
         /// <summary>
         /// The body's current proportion change, so children can divide it back out.
@@ -646,6 +659,50 @@ namespace TumbangPreso.Visual
         private Quaternion _eyeLRestRot, _eyeRRestRot;
         private bool _faceFound;
 
+        // -------------------------------------------------------------------
+        // § THE TAIL, WHICH NEVER ACTUALLY MOVED
+        //
+        // ⚠️⚠️ 🧑 2026-08-27: *"i want nemu's tail to still be moving"*, and the word that
+        // matters is **still**. It was never animated at all. `tools/build_ghost_pet_voxel.py`
+        // emits five stacked wisps (`ghost-tail-tier1/2/3`, `ghost-tail-tip-wisp`,
+        // `ghost-tail-tip-glint`) and nothing in this file had ever touched them: what read as a
+        // moving tail was the WHOLE BODY bobbing and drifting in `LateUpdate`, with the tail
+        // riding along as rigid geometry.
+        //
+        // ⚠️⚠️ WHICH IS WHY IT STOPPED IN EXACTLY THE TWO STATES HE NOTICED. `LateUpdate` returns
+        // early into `StepDevour` while he is the maw and into `UpdatePossession` while he is
+        // being ridden, and both of those own the transform outright. The body stops bobbing, so
+        // the only thing that had ever moved the tail stops with it, and a floating spirit pet
+        // goes completely rigid at the two moments the player is staring straight at him.
+        //
+        // ⚠️ SO THE TAIL GETS ITS OWN MOTION, DRIVEN FROM ITS OWN CLOCK, AND IT RUNS IN EVERY
+        // STATE. `StepTail` is called from all three branches rather than from the follow branch
+        // only. It is local rotation on parts that are children of the body, so it composes with
+        // the swell, the gulp, the turn and the possession flight for free, exactly as
+        // § TEETH's note describes for the mouth.
+        //
+        // ⚠️ AND IT IS A TRAVELLING WAVE, NOT ONE SWING. Each tier lags the one above it by a
+        // fixed phase, so the motion runs DOWN the tail the way a real one whips rather than the
+        // whole stack swinging as a rigid flag. That phase offset is the entire difference
+        // between "a tail" and "a rotating object".
+        // -------------------------------------------------------------------
+
+        /// <summary>The tail wisps, nearest the body first. Empty until <see cref="FindFace"/>.</summary>
+        private readonly System.Collections.Generic.List<Transform> _tail =
+            new System.Collections.Generic.List<Transform>();
+
+        private readonly System.Collections.Generic.List<Quaternion> _tailRest =
+            new System.Collections.Generic.List<Quaternion>();
+
+        /// <summary>Degrees of sway at the first tier. Each tier further down gets more.</summary>
+        private const float TailSwayDeg = 7.0f;
+
+        /// <summary>Radians of phase each tier lags the one above it by.</summary>
+        private const float TailLag = 0.55f;
+
+        /// <summary>Sway cycles per second.</summary>
+        private const float TailRate = 2.3f;
+
         private void FindFace()
         {
             if (_faceFound) return;
@@ -662,7 +719,17 @@ namespace TumbangPreso.Visual
                 if (_mouth == null && n.Contains("mouth")) _mouth = child;
                 else if (_eyeL == null && n.Contains("eye-l")) _eyeL = child;
                 else if (_eyeR == null && n.Contains("eye-r")) _eyeR = child;
+                else if (n.Contains("tail")) _tail.Add(child);
             }
+
+            // ⚠️ SORTED BY HOW FAR DOWN THE MODEL THEY SIT, NOT BY THE ORDER THE HIERARCHY
+            // HAPPENS TO RETURN THEM. The wave below lags each tier against its INDEX, so an
+            // unsorted list would run the wave through the tail in whatever order the voxel
+            // builder emitted the cubes and the motion would scatter instead of travelling.
+            // Local Y is the honest key: the builder stacks the wisps downward from the body.
+            _tail.Sort((a, b) => b.localPosition.y.CompareTo(a.localPosition.y));
+
+            foreach (var t in _tail) _tailRest.Add(t.localRotation);
 
             if (_mouth != null) _mouthRest = _mouth.localScale;
 
@@ -676,6 +743,37 @@ namespace TumbangPreso.Visual
             {
                 _eyeRRest = _eyeR.localScale;
                 _eyeRRestRot = _eyeR.localRotation;
+            }
+        }
+
+        /// <summary>
+        /// The tail, swaying, in every state he can be in.
+        ///
+        /// ⚠️ IT TAKES THE TIME RATHER THAN READING IT, so the swell's `_timeOffset` is carried
+        /// through and two pets in one match are never in phase with each other.
+        ///
+        /// ⚠️⚠️ AND IT IS DRIVEN OFF `Time`, NOT OFF `dt` ACCUMULATED HERE. `LateUpdate` clamps
+        /// its own `dt` to 0.10 s to survive a frame spike, and a wave integrated from a clamped
+        /// step drifts out of time with the body's bob, which is computed from the clock. Sampling
+        /// the same clock keeps the tail and the float one motion.
+        /// </summary>
+        private void StepTail(float time)
+        {
+            FindFace();
+
+            for (int i = 0; i < _tail.Count; i++)
+            {
+                if (_tail[i] == null || i >= _tailRest.Count) continue;
+
+                // Each tier further from the body swings wider and later. Both are what make it
+                // read as one soft thing trailing rather than five cubes on a hinge.
+                float reach = 1.0f + i * 0.55f;
+                float phase = time * (Mathf.PI * 2.0f * TailRate) - i * TailLag;
+
+                float swing = Mathf.Sin(phase) * TailSwayDeg * reach;
+                float curl = Mathf.Cos(phase * 0.5f) * TailSwayDeg * 0.35f * reach;
+
+                _tail[i].localRotation = _tailRest[i] * Quaternion.Euler(curl, swing, 0.0f);
             }
         }
 
@@ -1039,6 +1137,14 @@ namespace TumbangPreso.Visual
             // because both of them own the transform outright for their duration. Letting the
             // follow run underneath would fight the arc every frame and produce a pet that
             // travels home in a straight line while pretending to arc.
+            // ⚠️⚠️ THE TAIL RUNS BEFORE THE BRANCHES AND OUTSIDE ALL OF THEM, WHICH IS THE WHOLE
+            // FIX. See § THE TAIL, WHICH NEVER ACTUALLY MOVED: every one of the three branches
+            // below returns, so anything living inside the follow path stops dead the moment he
+            // is ridden or devoured. Those are precisely the two states the player is looking
+            // straight at him in. It is local rotation on child transforms, so it composes with
+            // whatever the branch below then does to the body.
+            StepTail(time);
+
             if (_devourLeft > 0.0f)
             {
                 StepDevour(dt);

@@ -89,7 +89,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static bool _gateBlowout;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v31";
+        private const string Version = "v35";
 
         [MenuItem("Tumbang Preso/Capture Ability Showcase")]
         public static void RunFromMenu() => Execute();
@@ -428,6 +428,24 @@ namespace TumbangPreso.EditorTools.MapKit
 
             var go = make();
             if (go != null) live.Add(go);
+
+            // ⚠️⚠️ PERSISTENT ZONES ARE WOUND TOO NOW, AND THE NOTE THAT SAID THEY NEED NOT BE
+            // WAS TRUE WHEN IT WAS WRITTEN AND IS NOT ANY MORE. It read: *"the persistent zones
+            // `Solo` photographs are built at full size by their spawners and have nothing to
+            // step"*. `HeroHazards.CovenCircleBuild` broke that on 2026-08-27: it creates every
+            // ring at `localScale` zero and grows them in sequence, because 🧑 asked to *"see the
+            // stages of the giant magic circle being cast"*. Photographed unwound it is
+            // completely invisible, and `ability_coven_eclipse_eye_v32.png` is that frame: a
+            // correct, finished effect that looks like nothing was built at all.
+            //
+            // ⚠️ `EclipseFall` HAS THE SAME PROBLEM AND HAS HAD IT ALL ALONG. It is an
+            // `IVfxTimeline` that lowers the eclipse from the sky over 0.75 s, so every capture
+            // of that ability before today was taken on its birth frame with the moon still
+            // eleven metres up and out of shot.
+            //
+            // ⚠️ IT IS A NO-OP FOR ANYTHING WITH NOTHING TO STEP, which is every other zone here,
+            // so this is strictly more correct rather than a behaviour change for them.
+            Visual.VfxTimeline.StepAll(0.35f);
 
             // ⚠️ THE OVERHEAD FRAME IS THE ONE THAT SHOWS FOOTPRINT AND THE EYE FRAME IS THE ONE
             // THAT SHOWS WHETHER IT READS. Both are needed and they disagree constantly: a disc

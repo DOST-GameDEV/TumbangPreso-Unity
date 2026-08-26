@@ -531,6 +531,389 @@ def synth_magma_cool(duration=1.4):
 # ⚠️ THE SLOTS BELOW ARE THE ORIGINAL SEVEN'S OLD INDICES, so those files regenerate BYTE
 # IDENTICAL and the diff shows only what actually changed. New cues take the next free number.
 # NEVER renumber an existing row: the number IS the sound.
+# -------------------------------------------------------------------
+# THE SIX ULTIMATE THEMES, AND WHY NO TWO OF THEM SHARE A METHOD
+#
+# 🧑 2026-08-27: *"they dont have enough auditory effects too. give everyone their own theme
+# and dont generate it the same way bcz its gonna sound the same way"*.
+#
+# The second half of that sentence is the important one and it is a statement about SYNTHESIS,
+# not about parameters. Every payload cue above this block is built the same way: sum some
+# sines, multiply by `math.exp(-t * k)`, add filtered noise. Recolouring that recipe six times
+# gives six cues that differ in pitch and in nothing else, which is exactly the fault
+# `docs/TODO.md` section 19 records for the VISUALS (*"the same logic and code was used to
+# generate all of them"*). It is the same mistake in the other medium, and he caught it there
+# first.
+#
+# So each theme below uses a genuinely different technique:
+#
+#   Phaister  additive drone, rising tritone, accelerating tick   (synth_coven_summon)
+#   Zack      KARPLUS-STRONG plucked string, a physical model
+#   Cheska    GRANULAR cloud of windowed sine grains
+#   Sean      SUBTRACTIVE, a resonant band-pass sweeping on noise
+#   Dante     IMPULSE TRAIN through a comb, rhythmic rather than tonal
+#   Nemu      RING MODULATION under a reversed envelope
+#
+# ⚠️ THEY ARE THEMES, NOT PAYLOADS, AND BOTH PLAY. The payload cues (`sfx_frost_nova`,
+# `sfx_thunder_impact`, `sfx_explosion_heavy`) still fire at the moment the blast lands and are
+# unchanged. These sit UNDER them for the whole ultimate, which is the *"not enough auditory
+# effects"* half: an ultimate had one hit and then silence for the six seconds it was still
+# happening in.
+#
+# ⚠️ AND THEY ARE MIXED WELL DOWN. `AudioCues.TrimDb` carries the levels; a bed that
+# competes with its own payload turns the loudest moment in the game to mush.
+# -------------------------------------------------------------------
+
+
+def synth_ult_theme_zack(duration=3.0):
+    """
+    Zack. A struck cable, modelled rather than drawn.
+
+    ⚠⚠ KARPLUS-STRONG: a burst of noise pushed into a delay line that feeds back on itself
+    through a one-pole average. The delay length IS the pitch and the averaging is what makes
+    the top end die first, so the string is physically damped rather than enveloped. Nothing
+    else in this file has a feedback path at all, which is why it cannot be mistaken for the
+    others no matter how it is tuned.
+
+    ⚠ IT IS RE-STRUCK FIVE TIMES, ACCELERATING. A single pluck is a note; a cable being hit
+    repeatedly and faster is a thing under load about to let go.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+
+    # Two strings a fourth apart, so the pair beats without being a chord.
+    for base, level in ((78.0, 1.0), (104.0, 0.62)):
+        size = max(8, int(SAMPLE_RATE / base))
+        line = [0.0] * size
+        idx = 0
+
+        strikes = [0.02, 0.68, 1.22, 1.66, 2.00, 2.28]
+        nxt = 0
+
+        for i in range(n):
+            t = i / SAMPLE_RATE
+
+            if nxt < len(strikes) and t >= strikes[nxt]:
+                # Re-excite: noise into the line, louder each time.
+                amp = 0.5 + 0.1 * nxt
+                for k in range(size):
+                    line[k] += random.uniform(-1.0, 1.0) * amp
+                nxt += 1
+
+            cur = line[idx]
+            nxt_i = (idx + 1) % size
+
+            # ⚠️ 0.996 IS THE WHOLE INSTRUMENT. Below about 0.99 the string is a click; above
+            # 0.999 it rings for the whole cue and stops reading as a strike.
+            line[idx] = (cur + line[nxt_i]) * 0.5 * 0.996
+            idx = nxt_i
+
+            out[i] += cur * level * 0.30
+
+    # A mains-hum buzz under it, so it is electrical rather than a harp.
+    for i in range(n):
+        t = i / SAMPLE_RATE
+        u = t / duration
+        buzz = (math.sin(2.0 * math.pi * 60.0 * t)
+                + 0.5 * math.sin(2.0 * math.pi * 180.0 * t)) * 0.06 * (0.2 + 0.8 * u)
+        out[i] = math.tanh((out[i] + buzz) * 1.15)
+
+
+    # ⚠️ A RELEASE, BECAUSE THIS ONE IS STILL SOUNDING WHEN IT RUNS OUT OF SAMPLES.
+    # `tools/audit_cue_audio.py` measures the last sample as `seam`; anything far from zero is a
+    # click at the end of every playback. A decayed cue needs none of this, which is why only the
+    # three that are still ringing at `duration` carry it.
+    rel = int(0.075 * SAMPLE_RATE)
+    for i in range(max(0, n - rel), n):
+        out[i] *= (n - i) / float(rel)
+
+    return out
+
+
+def synth_ult_theme_cheska(duration=3.0):
+    """
+    Cheska. A cloud of ice, made of grains.
+
+    ⚠⚠ GRANULAR: six hundred windowed sine grains, each 18 to 55 ms, scattered across the
+    whole cue at inharmonic frequency ratios. There is no continuous oscillator anywhere in it.
+    That is what makes it sound like a MATERIAL rather than a note, and it is the one method
+    here whose character comes from statistics instead of from waveform.
+
+    ⚠ THE CLOUD DESCENDS AND THICKENS. Grain pitch falls with time while density rises, so
+    it settles rather than fading: ice closing over something. `sfx_frost_nova` is the shatter
+    and still plays on top; this is the air going cold before it.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+
+    grains = []
+    for _ in range(600):
+        at = random.uniform(0.0, duration * 0.92)
+        u = at / duration
+        # Inharmonic ratios: a bell-like set that never forms a chord.
+        f = random.choice([1.0, 1.41, 1.93, 2.37, 3.11, 4.02]) * random.uniform(520.0, 1650.0)
+        f *= (1.0 - 0.45 * u)
+        grains.append((at, random.uniform(0.018, 0.055), f, random.uniform(0.25, 1.0)))
+
+    for at, life, f, amp in grains:
+        start = int(at * SAMPLE_RATE)
+        count = int(life * SAMPLE_RATE)
+        for k in range(count):
+            i = start + k
+            if i >= n:
+                break
+            # Hann window, so no grain can click.
+            w = 0.5 - 0.5 * math.cos(2.0 * math.pi * k / count)
+            out[i] += math.sin(2.0 * math.pi * f * (k / SAMPLE_RATE)) * w * amp * 0.055
+
+    # A low shelf so the cloud has a floor to sit on.
+    for i in range(n):
+        t = i / SAMPLE_RATE
+        u = t / duration
+        floor = math.sin(2.0 * math.pi * 44.0 * t) * 0.16 * u
+        out[i] = math.tanh((out[i] + floor) * 1.25)
+
+    return out
+
+
+def synth_ult_theme_sean(duration=3.0):
+    """
+    Sean. A furnace door opening.
+
+    ⚠⚠ SUBTRACTIVE, AND THE ONLY CUE HERE BUILT ON A RESONANT TWO-POLE FILTER. White noise
+    through a band-pass whose centre sweeps up and whose Q rises with it, so the noise starts as
+    air and ends as a howl. The resonance is the instrument: at high Q the filter is nearly
+    self-oscillating, which is a roar no sum of sines produces.
+
+    ⚠ THE SWEEP TURNS AROUND. Up for two thirds, then down hard, which is a draught being
+    pulled in and then thrown back out. A monotonic sweep reads as a machine spooling up.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+
+    lp1 = 0.0
+    lp2 = 0.0
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+        u = t / duration
+
+        # Centre frequency: up to about 1.4 kHz at u=0.66, then back down.
+        if u < 0.66:
+            cut = 180.0 + 1250.0 * (u / 0.66) ** 1.6
+        else:
+            cut = 1430.0 - 1150.0 * ((u - 0.66) / 0.34) ** 1.2
+
+        q = 0.72 + 0.24 * math.sin(math.pi * u)
+        f = 2.0 * math.sin(math.pi * min(0.45, cut / SAMPLE_RATE))
+
+        x = random.uniform(-1.0, 1.0)
+        hp = x - lp2 - q * lp1
+        lp1 += f * hp
+        lp2 += f * lp1
+
+        # `lp1` is the band-pass tap; `lp2` is the low-pass one.
+        body = lp1 * 1.5
+
+        # A low boom underneath that arrives with the peak of the sweep.
+        boom = math.sin(2.0 * math.pi * (52.0 - 14.0 * u) * t) * 0.34 * math.sin(math.pi * u)
+
+        out[i] = math.tanh((body + boom) * 1.05)
+
+
+    # ⚠️ A RELEASE, BECAUSE THIS ONE IS STILL SOUNDING WHEN IT RUNS OUT OF SAMPLES.
+    # `tools/audit_cue_audio.py` measures the last sample as `seam`; anything far from zero is a
+    # click at the end of every playback. A decayed cue needs none of this, which is why only the
+    # three that are still ringing at `duration` carry it.
+    rel = int(0.075 * SAMPLE_RATE)
+    for i in range(max(0, n - rel), n):
+        out[i] *= (n - i) / float(rel)
+
+    return out
+
+
+def synth_ult_theme_dante(duration=3.0):
+    """
+    Dante. Something enormous walking.
+
+    ⚠⚠ AN IMPULSE TRAIN, NOT A TONE. Seven discrete strikes at a decelerating tempo, each
+    one a single-sample impulse rung through a short comb delay so it thumps and then slaps back
+    off the street. The cue has no sustained oscillator in it at all: everything you hear is the
+    room answering an impact, which is the opposite construction from Cheska's cloud and from
+    Zack's string.
+
+    ⚠ IT SLOWS DOWN RATHER THAN SPEEDING UP, which is what separates it from Phaister's
+    accelerating tick. Something heavy arriving takes longer between steps as it settles.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+
+    # Decelerating: gaps grow by about 18 per cent each step.
+    hits = []
+    at = 0.05
+    gap = 0.26
+    while at < duration - 0.2:
+        hits.append(at)
+        at += gap
+        gap *= 1.18
+
+    comb = int(SAMPLE_RATE * 0.021)
+    line = [0.0] * (comb + 1)
+    idx = 0
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+
+        x = 0.0
+        for h in hits:
+            d = t - h
+            if 0.0 <= d < 0.004:
+                x += (1.0 - d / 0.004) * 1.4
+
+        # Comb: the slap back off the road.
+        y = x + line[idx] * 0.62
+        line[idx] = y
+        idx = (idx + 1) % len(line)
+
+        # Sub, struck by the same impulses.
+        sub = 0.0
+        for h in hits:
+            d = t - h
+            if d >= 0.0:
+                sub += math.sin(2.0 * math.pi * (40.0 * math.exp(-d * 3.0) + 22.0) * d)                        * math.exp(-d * 4.5) * 0.5
+
+        # Rubble between the steps.
+        grit = random.uniform(-1.0, 1.0) * 0.05
+
+        out[i] = math.tanh((y * 0.5 + sub + grit) * 1.1)
+
+
+    # ⚠️ A RELEASE, BECAUSE THIS ONE IS STILL SOUNDING WHEN IT RUNS OUT OF SAMPLES.
+    # `tools/audit_cue_audio.py` measures the last sample as `seam`; anything far from zero is a
+    # click at the end of every playback. A decayed cue needs none of this, which is why only the
+    # three that are still ringing at `duration` carry it.
+    rel = int(0.075 * SAMPLE_RATE)
+    for i in range(max(0, n - rel), n):
+        out[i] *= (n - i) / float(rel)
+
+    return out
+
+
+def synth_ult_theme_nemu(duration=3.0):
+    """
+    Nemu. A sound that is wrong rather than loud.
+
+    ⚠⚠ RING MODULATION, WHICH IS THE ONE OPERATION IN THIS FILE THAT DESTROYS THE
+    FUNDAMENTAL. Multiplying two tones leaves only their sum and difference, so what comes out
+    has no root note in it and the ear cannot place what is making the sound. That is her whole
+    character (`docs/TODO.md` section 27.5: absence), and it is a MULTIPLICATION where every other
+    cue here is an addition.
+
+    ⚠ THE ENVELOPE IS REVERSED, as `synth_sky_seance` does, so it swells backwards into a
+    stop. Two heroes may share an element (section 21.5) as long as they do not share a method:
+    Phaister's theme is additive and rises to a peak, this is multiplicative and rises to a
+    silence.
+    """
+    n = int(duration * SAMPLE_RATE)
+    body = [0.0] * n
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+        u = t / duration
+
+        carrier = math.sin(2.0 * math.pi * 233.0 * t)
+        # The modulator drifts, so the sidebands slide and never settle.
+        mod = math.sin(2.0 * math.pi * (61.0 + 18.0 * math.sin(2.0 * math.pi * 0.31 * t)) * t)
+
+        ring = carrier * mod
+
+        # A second, slower ring pair an octave down for weight.
+        ring2 = (math.sin(2.0 * math.pi * 116.0 * t)
+                 * math.sin(2.0 * math.pi * 29.0 * t)) * 0.5
+
+        breath = random.uniform(-1.0, 1.0) * 0.05
+
+        body[i] = ring * 0.55 + ring2 + breath
+
+    out = [0.0] * n
+    for i in range(n):
+        t = i / SAMPLE_RATE
+        back = t / duration
+        shape = (back * back) * (0.30 + 0.70 * min(1.0, t / 0.5))
+        left = duration - t
+        if left < 0.20:
+            shape *= left / 0.20
+        out[i] = math.tanh(body[i] * shape * 2.0)
+
+    return out
+
+
+def synth_coven_summon(duration=2.9):
+    """
+    Phaister. The circle being drawn, and the thing that is coming to stand in it.
+
+    ⚠️⚠️ IT IS THE ONLY CUE IN THIS FILE THAT GETS LOUDER THE WHOLE WAY THROUGH, and that
+    is the entire brief. 🧑 2026-08-27: *"i just want it so that they see the stages of the giant
+    magic circle being cast for phaister and for it to play impending doom music"*. Every other
+    payload here is an EVENT: a strike, a shatter, a slam, all of which peak immediately and
+    decay. Dread is the opposite shape. Nothing about a falling envelope can say "something is
+    about to happen", so this rises from almost nothing and stops without resolving.
+
+    ⚠️ THREE VOICES A FIFTH APART, DETUNED, AND ONE OF THEM CLIMBS. A fixed drone is a hum; a
+    drone with one member sliding upward is a chord that never settles, which is the sound of a
+    thing being assembled. The tritone against the root is deliberate and is the reason it reads
+    as occult rather than as an engine spooling up.
+
+    ⚠️ AND THE PULSE ACCELERATES. It ticks at 2 Hz at the start and about 5 by the end, which
+    is a heartbeat going up. It is also what makes the STAGES audible: the ear counts the ticks
+    and hears the circle being built ring by ring even when the player is looking elsewhere.
+    """
+    n = int(duration * SAMPLE_RATE)
+    out = [0.0] * n
+
+    for i in range(n):
+        t = i / SAMPLE_RATE
+        u = t / duration
+
+        # The bed: a root, a fifth, and a tritone that slides up a semitone across the whole cue.
+        root = 58.0
+        slide = 1.0 + 0.06 * u
+        drone = (math.sin(2.0 * math.pi * root * t) * 0.42
+                 + math.sin(2.0 * math.pi * root * 1.4983 * t) * 0.26
+                 + math.sin(2.0 * math.pi * root * 1.414 * slide * t) * 0.20)
+
+        # A choir-ish upper pair, entering late and beating slowly against itself.
+        air = 0.0
+        if t > duration * 0.35:
+            c = t - duration * 0.35
+            air = (math.sin(2.0 * math.pi * 421.0 * t)
+                   + math.sin(2.0 * math.pi * 427.5 * t)) * 0.07 * min(1.0, c * 1.1)
+
+        # The accelerating tick. Phase is integrated so the rate can change without clicking.
+        rate = 2.0 + 3.0 * u
+        phase = (2.0 + 1.5 * u) * u * duration * math.pi
+        tick = 0.0
+        cyc = (phase / math.pi) % 1.0
+        if cyc < 0.06:
+            a = 1.0 - cyc / 0.06
+            tick = math.sin(2.0 * math.pi * 1900.0 * t) * a * a * 0.16
+
+        # Everything swells together. Quadratic, so most of the growth is in the last third.
+        swell = 0.12 + 0.88 * (u ** 2.0)
+
+        out[i] = math.tanh((drone + air + tick) * swell * 1.7)
+
+    _rumble_tail(out, 0.0, duration, 42.0, 0.22, seed_drift=0.18, decay=0.10)
+
+    # ⚠️ A SHORT RELEASE, BECAUSE THIS ENVELOPE PEAKS AT `duration` BY CONSTRUCTION and would
+    # otherwise end on a click, which is the fault `synth_sky_seance` had to be fixed for.
+    rel = int(0.10 * SAMPLE_RATE)
+    for i in range(max(0, n - rel), n):
+        out[i] *= (n - i) / float(rel)
+
+    return [math.tanh(v) for v in out]
+
+
 def synth_eclipse_toll(duration=2.2):
     """
     Phaister. Grand Coven Eclipse.
@@ -1236,6 +1619,18 @@ GENERATORS = {
     # Nemu's kit moving onto her pet. `docs/TODO.md` § 28.
     "sfx_kuro_unbound.wav": (25, synth_kuro_unbound),
     "sfx_kuro_return.wav": (26, synth_kuro_return),
+
+    # ⚠️ THE ONE CUE IN THE SET THAT RISES. Phaister's circle being drawn, asked for as
+    # *"impending doom music"*. See the synth for why a decaying envelope cannot say dread.
+    "sfx_coven_summon.wav": (27, synth_coven_summon),
+
+    # ⚠️ ONE THEME PER HERO, AND NO TWO BUILT THE SAME WAY. See the block above the synths for
+    # why the METHOD had to differ rather than the parameters.
+    "sfx_ult_theme_zack.wav": (28, synth_ult_theme_zack),
+    "sfx_ult_theme_cheska.wav": (29, synth_ult_theme_cheska),
+    "sfx_ult_theme_sean.wav": (30, synth_ult_theme_sean),
+    "sfx_ult_theme_dante.wav": (31, synth_ult_theme_dante),
+    "sfx_ult_theme_nemu.wav": (32, synth_ult_theme_nemu),
 }
 
 

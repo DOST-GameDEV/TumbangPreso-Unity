@@ -262,9 +262,21 @@ namespace TumbangPreso.Abilities
                 // three players see is the small thing that has been following her around all
                 // round becoming the thing that is eating them. A vortex spawned beside an
                 // unchanged pet would have been the old effect with a new name.
-                if (onPet) companion.Devour(5.0f);
+                // ⚠️⚠️ 2.8 m / 5.0 s BECAME 4.0 m / 7.0 s. 🧑 2026-08-27: *"make kuro's pull
+                // stronger and longer ... make it pull everyone and everything"*. The strength is
+                // in `SpawnKuroUnbound` (`PullStrength` 4.0 to 14.0); these two are the reach and
+                // the life. At 2.8 m the maw covered 4 per cent of the court, so *"everyone"* was
+                // usually nobody: an ultimate that pulls hard but cannot reach anybody is the
+                // same complaint one step further in.
+                //
+                // ⚠️ 4.0 m IS 5.1 PER CENT OF THE 196 m² BOX AND IT IS STILL UNDER PHAISTER'S
+                // ECLIPSE AT 5.0 m. `docs/VISION.md` § 2 rule 2 allows an ultimate to be big and
+                // rule 4 caps what may OVERLAP; this is one zone, it paints no bright floor (the
+                // bite is near-black by construction), and it is the only thing on the court while
+                // it runs.
+                if (onPet) companion.Devour(7.0f);
 
-                HeroHazards.SpawnKuroUnbound(at, 2.8f, 5.0f, ctx.Motor.PlayerSlot, onPet);
+                HeroHazards.SpawnKuroUnbound(at, 4.0f, 7.0f, ctx.Motor.PlayerSlot, onPet);
             }
         }
     }

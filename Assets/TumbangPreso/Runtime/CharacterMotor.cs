@@ -316,6 +316,31 @@ namespace TumbangPreso
             get
             {
                 if (_rig == null || !_rig.IsFollowing(this)) return false;
+
+                // ⚠️⚠️ A POSSESSED BODY IS NOT MOUSE-AIMED, AND LEAVING THIS OUT WALKED NEMU
+                // BACKWARDS. 🧑 2026-08-27: *"his character still moves backwards when i click
+                // E"*. The rig still FOLLOWS her while she is riding Kuro (it is her seat, it is
+                // just drawing from the pet's mount), so `IsFollowing` stays true and this
+                // answered "mouse". But `CameraRig.StepLook` is not running for her either:
+                // `StepCompanionLook` runs instead and yaws the PET, so her body's rotation is
+                // frozen at whatever it was when the possession began.
+                //
+                // ⚠️⚠️ AND HER BODY IS BEING DRIVEN BY AN AI IN THE MEANTIME.
+                // `GhostPetCompanion.BeginPossession` adds a temporary `AIController` so she is
+                // not a statue while the player is elsewhere, and an AI writes a WORLD-space
+                // heading (`AIController.Drive` through `EightWay`). With this returning true,
+                // `Steer` then ran `transform.TransformDirection` on it and re-interpreted that
+                // world heading as body-relative, rotating it by her frozen yaw. A bot asking to
+                // walk north walked whichever way her shoulders happened to be pointing, which
+                // is backwards as often as not.
+                //
+                // ⚠️ THE FIX IS HERE RATHER THAN IN `Steer` BECAUSE THE QUESTION IS THE ONE THIS
+                // PROPERTY ALREADY ASKS: is a local player aiming this body with the mouse right
+                // now. While she is possessing, nobody is.
+                var visual = GetComponent<Visual.CharacterVisual>();
+                if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
+                    return false;
+
                 return _rig.Aim == CameraSystem.AimSource.Mouse;
             }
         }

@@ -212,10 +212,21 @@ namespace TumbangPreso.Abilities
             private bool _smashed;
 
             public SupernovaSmashdownAbility()
+                // ⚠️⚠️ THE CARD USED TO SAY *"Knocks the lata over on impact"* AND 🧑 READ IT
+                // EXACTLY AS WRITTEN: *"this too it reads as unusable on defender"*. It was an
+                // honest description of an attacker-only power. Both halves are fixed rather than
+                // just the sentence: `HeroHazards.CreateExplosion` no longer knocks over the
+                // CASTER'S OWN objective, and the crater below is what the ultimate leaves for
+                // either role. The text now leads with what is true in both.
+                //
+                // ⚠️ DURATION 2.0 s TO 5.6 s, AND IT IS THE CRATER'S LIFE PLUS THE SLAM. The old
+                // 2.0 covered the leap and the landing and nothing else, which is why
+                // `SkyEvent.SecondsFor` gave it the bare floor. The ability now stays active for
+                // as long as the ground is burning, which is what `IsActive` should mean.
                 : base("sean_ultimate", "SUPERNOVA",
-                       "Launches you up and slams you back down. The blast knocks the lata over and everyone near it away.",
-                       0.0f, 2.0f, TumbangPreso.UI.AbilityGlyph.SeanSupernova,
-                       summary: "Leap and crash down. Knocks the lata over on impact.",
+                       "Launches you up and slams you back down. The blast throws everyone near it clear and leaves the road burning behind you.",
+                       0.0f, 5.6f, TumbangPreso.UI.AbilityGlyph.SeanSupernova,
+                       summary: "Leap and crash down. Leaves burning ground where you land.",
                        telegraphRadius: 4.8f, telegraphRange: 0.0f,
                        castAction: "hero-sean-supernova",
                        viewmodelAction: "supernova-slam")
@@ -264,8 +275,22 @@ namespace TumbangPreso.Abilities
                     if (squash != null) squash.Squash(0.4f);
 
                     NetCue.Play("sfx_explosion_heavy", ctx.Position);
-                    HeroHazards.CreateExplosion(ctx.Position, 4.8f, 16.0f, 2.2f, ctx.Motor.PlayerSlot, "SUPERNOVA!",
+
+                    // ⚠️ THE BLAST IS BIGGER AND THE COMIC TEXT IS GONE. 4.8 to 5.4 m, knockback
+                    // 16 to 22, hold 2.2 to 2.6: 🧑 asked for *"more of an impact"* and this is
+                    // the half that is a number rather than a picture. The word went with every
+                    // other cast callout in § 31.8; a blast this size does not need announcing.
+                    HeroHazards.CreateExplosion(ctx.Position, 5.4f, 22.0f, 2.6f,
+                        ctx.Motor.PlayerSlot, comicText: null,
                         style: HeroHazards.ExplosionStyle.Fire);
+
+                    // ⚠️⚠️ AND THE GROUND STAYS ON FIRE, WHICH IS THE PART THAT WAS MISSING.
+                    // `SpawnSupernovaCrater` carries why: Sean's was the only ultimate in the
+                    // game that left nothing behind, which is 🧑's *"it just reads as a one time
+                    // down on laata and knockback"* exactly. It is also what makes the power
+                    // worth pressing as a taya, now that the blast no longer topples his own can.
+                    HeroHazards.SpawnSupernovaCrater(ctx.Position, 5.4f, 5.0f,
+                                                     ctx.Motor.PlayerSlot);
 
                     // ⚠️⚠️ THIS WAS `SpawnMagmaEruption`, WHICH IS DANTE'S. Sean's whole identity
                     // is `HeroFire` and Dante's is `HeroMagmaCore`, and the biggest moment in
