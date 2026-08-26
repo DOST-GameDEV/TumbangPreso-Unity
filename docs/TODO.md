@@ -2393,9 +2393,11 @@ reason. A gamepad human steers through the same branch.
 `_headingCommitLeft`. The first draft also decremented the old field a second time, in a different
 method from the one that owns it, which would have halved every bot's hesitation window silently.
 
-**Not fixed, and it is the one thing here that was never broken:** *"im not sure if they even have
-proper ai logic for when to use skills"*. There is per-hero logic and it is in
-`AIController.StepHeroAbilities`; what was wrong is § 31.7.
+**Not fixed then, and § 33 is where it was:** *"im not sure if they even have proper ai logic for
+when to use skills"*. There is per-hero logic and it is in `AIController.StepHeroAbilities`. Half
+of what was wrong is § 31.7, the spam. ⚠️ **The other half is § 33.2 and it was worse: three kits
+gated their most expensive power on a distance more than twice the radius of the circle they
+actually cast**, so a correct cast by the old rule usually landed on nobody.
 
 ### 31.2 Phaister's blink fired itself ✅
 
@@ -2730,6 +2732,384 @@ RPC of any kind: `tools/audit_ability_authority.py` reports **39 effect call sit
 23 ungated on another body**. A remote player's ultimate produces no VFX, no sound, no column and
 no sky on anybody else's screen, and twenty-three places move a body the caster does not own.
 Everything in this entry was upstream of that; none of it fixes it.
+
+---
+
+## 33 · The bots picked a target by seat number, aimed powers at rings they do not cast, and had no keyboard between decisions
+
+**🧑 2026-08-27, on the 4.72 build:** *"they dont move like humans and just spam skills and always
+just target the human, they also dont seem smart with using their skills, the game feels
+overstimulating bcz all bots spam their skills at the start"*, and, asked what else was worth
+doing: *"find other shit to improve on ai to make it better and smarter and more human like"*.
+
+§ 31.1 and § 31.7 answered two of those clauses the same day (the turn rate and the heading
+commit; the cadence and the opening delay). **This entry is the other three, and each one turned
+out to be a different fault with a different cause.**
+
+### 33.1 ⚠️⚠️ "ALWAYS JUST TARGET THE HUMAN" WAS SEAT ORDER, AND NOTHING EVER READ A HUMAN ✅
+
+`AIController.TagTarget` was a `foreach` over `RoundDirector.Players` with a `return` in it: **the
+first taggable attacker in seat order**. Seat order is a fixed list, so it is a fixed priority.
+Whichever seat sits lowest in it was chased in every round it was not the taya, by every taya, for
+the whole match. A person who sits in one seat all night is therefore chased all night.
+
+⚠️⚠️ **THAT IS WHY NOBODY FOUND IT BY LOOKING FOR A HUMAN CHECK.** There is no human check
+anywhere in the AI and there never was. `IsHumanSlot` exists and this path does not call it. The
+selector had no idea a person was involved; it was singling somebody out by construction.
+
+⚠️⚠️ **AND IT DECIDED MORE THAN THE CHASE.** `StepHeroAbilities` asks the same function for a
+DEFENDING hero's target, so the same seat also ate every skill and every ultimate a defending hero
+spent. One line produced both halves of the report.
+
+**It is a score now**, on the shape `LiveThreat` has used for the neighbouring GUARD decision since
+the port. `AiTuning` carries the four weights and `TagTargetWeightTests` carries the relationships
+between them:
+
+| term | value | what it is for |
+|---|---|---|
+| `TagHelplessBonus` | **2.5** | already stunned or tripped: the only certain tag on the board |
+| `TagDepthWeight` | **0.22**/m | how far inside the chalk they are, which `IsTaggable` cannot say |
+| `TagDistanceWeight` | **0.08**/m | the same weight `LiveThreat` uses, so guard and chase agree |
+| `TagSwitchMargin` | **0.75** | what a rival must beat to take the chase off whoever has it |
+
+⚠️⚠️ **THE COMMIT TERM POINTS THE OPPOSITE WAY TO `LiveThreat`'S AND BOTH ARE RIGHT.** Guarding is
+a standing post, so its anti-fixation term is a PENALTY on whoever was guarded last and an equal
+rival pulls the taya round. Chasing is a pursuit, and a pursuit that changes target on a tie is a
+taya running down the middle of two attackers and catching neither. So this one is a BONUS on
+whoever is already being chased. Without it the score would be worse than seat order, not better:
+every term moves continuously while both bodies run.
+
+⚠️ **AND IT READS `At(who)`, THE OBSERVED POSITION.** A selector on the true position picks targets
+off information the body it steers has not been given yet.
+
+### 33.2 ⚠️⚠️ THREE KITS AIMED THEIR MOST EXPENSIVE POWER AT A CIRCLE THEY DO NOT CAST ✅
+
+*"they also dont seem smart with using their skills"*. Every branch in `StepHeroAbilities` gated
+its cast on **one distance to one target**, and a distance is not a question about what the cast
+would achieve. Asking the question properly is what exposed that the hand-picked distances were
+mostly wrong, and wrong in the direction that misses:
+
+| | telegraph | old gate | what that meant |
+|---|---|---|---|
+| Zack, Thunderstrike | 4.5 m **on Zack** | target within **8.0 m** | lightning on empty road, target watching from outside it |
+| Dante, Seismic Stomp | 2.2 m on his feet | target within **5.0 m** | more than twice the ring, so usually nobody |
+| Dante, Titan Fissure | 4.5 m, **2.2 m ahead** | target within **9.0 m**, any direction | half of every cast opened the ground behind his back |
+| Nemu, Seance Void | 2.8 m, 3.5 m ahead | hand-written **7.5 m at 4.5 m** | the PRE-§ 8 numbers, nearly three times the area |
+| Cheska, Permafrost | 2.3 m, **2.8 m ahead** | *"drop it while fleeing"* | frost laid across her own escape, never behind her |
+
+⚠️⚠️ **THE GATE IS THE ABILITY'S OWN TELEGRAPH NOW, NOT A NEW TABLE OF NUMBERS.**
+`HeroAbility.TelegraphRadius` and `TelegraphRange` already say where a power lands and how wide it
+is, they are already asserted against what `OnActivate` actually spawns
+(`TelegraphsMatchWhatTheAbilityActuallyPlaces`), and they are already the ring the PLAYER is shown.
+A bot aiming at the ring the player sees needs no second set of numbers, **and a new hero cannot
+ship with a wrong one here because it no longer has one here to get wrong.**
+
+Four questions replace the distance, in `AIController` § WOULD THIS CAST DO ANYTHING:
+
+* **`WouldCatch`** projects the footprint off the telegraph and asks whether anybody is under it,
+  with `AbilityVictimMargin` **0.9 m** of lead. ⚠️ That is HALF the 1.84 m a body crosses during
+  `UltimateWindup` 0.4 s, on purpose: a margin at the full crossing is a distance gate again.
+* **`stunPayload`** is `CLAUDE.md` § 4's *"stuns overlap via Max(), never additively"* read from
+  the other side. A freeze laid on somebody already frozen extends nothing, so for a stun power a
+  helpless body in the circle is **not** a victim. A power that shoves or launches counts
+  everybody, because moving a stunned body is one of the better things you can do with one.
+* **`WorthDenying`** refuses to lay ground denial on ground already denied
+  (`AbilityDenialOverlap` **0.6** of a radius) and requires the footprint to be somewhere the game
+  FORCES a body to walk: onto somebody, onto a loose tsinelas, or onto the lata. ⚠️⚠️ The
+  duplicate case costs twice: a second frost sheet on the first denies nothing new, spends a 46 to
+  62 s cooldown, and stacks two translucent plates in one place, which is `VISION.md` § 2 rule 4
+  and the § 19 sorting bug in one press.
+* **`SlotIsSpendable`** refuses to recast a power that is still running. `IsReady` only answers the
+  cooldown or the charge count, so a charge ability with a duration could be spent on top of
+  itself. ⚠️ The one exception is real: Nemu's poltergeist is the game's only `CanReactivate`
+  power and its second press is *"press again to follow him there"*.
+
+⚠️ **AND `targetDistance` READ THE TRUE POSITION UNTIL NOW.** It was the one place in the ability
+layer that saw through `Observe`'s reaction lag, so a bot answered a rival's step on the frame it
+happened while every other decision about the same body was `Me.React` behind. That is a power
+cast faster than a hand can move, and it reads as cheating rather than as skill.
+
+### 33.3 ⚠️ THE BOTS HAD NO KEYBOARD BETWEEN DECISIONS ✅
+
+*"they dont move like humans"*. With § 31.1's flicking gone, what was left was a machine walking
+perfect lines at one speed and never once looking up. Three things a person does, all of them
+expressed as keys because `CLAUDE.md` § 4 allows nothing else:
+
+* **The key change beat.** `KeyChangeBeatSeconds` **0.12 s** with **no movement key at all**, when
+  a committed heading is replaced by one more than `KeyChangeBeatDeg` **100°** away. ⚠️⚠️ A
+  keyboard cannot go from W to S without passing through nothing, and the bots had no gap: a
+  reversal was a frame in which the movement vector became its own negative at unchanged speed.
+  Capping the TURN made the body honest about which way it faced; it did not put the pause back.
+  ⚠️ 100° is above `HeadingBreakDeg` 90 so the octant flapping the commit window exists to absorb
+  can never charge one, and ⚠️ `_driving` goes back off during it or `StepUnstick` would read a
+  deliberate pause as being stuck.
+* **Sprint in bursts.** `SprintBurstMin/Max` **0.70 to 1.15 s** down, `SprintRestMin/Max`
+  **0.35 to 0.65 s** up, after `SprintCommitDelay` **0.15 s** of walking the new heading first.
+  ⚠️⚠️ The sprint was a STATE: `MaySprint` asks the stamina bar, so a bot held the key until the
+  bar bottomed out, limped through two seconds of fatigue at 0.75 speed, and did it again. **The
+  burst ceiling is under the 1.31 s of usable bar**, so it cannot empty it alone, and the whole
+  rest range sits under the whole burst range so a crossing is still mostly running whichever way
+  the dice fall. ⚠️ It probably makes bots FASTER over an arena crossing, because the fatigue
+  lockout it used to walk into cost more than a rest does.
+* **Glancing.** During a loiter rest, `GlanceChance` **0.45** to press toward the lata, the taya or
+  the nearest tsinelas for `GlanceSeconds` **0.09 s**. ⚠️⚠️ A movement-aimed body can only look by
+  walking: `CharacterMotor.Steer` does nothing on a frame with no key down, so a standing bot is
+  frozen facing wherever its last step pointed. A human on a gamepad has the identical constraint
+  and answers it the identical way. ⚠️ **The leash sizes the press, not the neck.** 0.18 s would
+  walk 0.83 m against `LoiterLeash` 0.45 and spend the rest of the beat walking home, which is the
+  pacing that leash was added to delete; 0.09 s travels 0.41 m and lands inside `LoiterStepMin`
+  0.07 to `LoiterStepMax` 0.13, so it is the shipped loiter step aimed at something worth watching.
+
+### 33.4 ⚠️⚠️ THE TAYA KEPT COMMITTING TO A CAMP IT COULD NOT WALK TO ✅
+
+Found while reading the file for § 33.2, not reported. `HasCoverPoint` answered **"any loose
+slipper exists anywhere"**, and `PlanDefender` chose `AiPlan.Cover` off it.
+
+⚠️⚠️ **THAT IS THE FAULT `TryInterceptPoint`'S OWN HEADER RECORDS, ONE SCREEN UP IN THE SAME
+FILE.** It reads *"SOMETHING IS IN FLIGHT IS NOT AN INTERCEPT"*: a plan chosen off a condition far
+weaker than the plan's own requirements, so the taya committed to a verb it could not execute.
+`TryCoverPoint` additionally requires the slipper to be **inside the box**, which the taya cannot
+leave, and a claimant with free hands who can act. Neither was tested, so one tsinelas on the
+pavement outside the chalk with everybody carrying put every camping taya into Cover, whereupon
+`DoCover` fell straight through to `DoGuard`.
+
+⚠️ **THE COST WAS NOT THE FALLTHROUGH, IT WAS THE FLIPPING.** A plan change costs
+`_self.Hesitation` and `StepPlan` clears the goal with it, so Cover and Guard traded places every
+time a slipper's state changed. It also made `Plan` LIE, which reaches past the taya:
+`AiDiagnosticProbe` prints it and four of the skill gates in `StepHeroAbilities` branch on it.
+
+**It is `TryCoverPoint(out _)` now**, exactly as `HasInterceptPoint` is `TryInterceptPoint(out _)`.
+⚠️ The unused `lata` parameter is kept to match that sibling; `PlanDefender` has already
+null-checked the can before it asks either of them.
+
+### 33.5 ⚠️⚠️ THE SHOVE NEVER ASKED WHICH WAY IT WOULD PUSH THEM ✅
+
+Also found by reading rather than reported. `SabotageTarget`'s header has said *"a rival worth
+shoving into the taya's reach"* since the port, and the code picked **the nearest rival in any
+direction** with the taya used only as a null check.
+
+⚠️⚠️ **`CombatVerbs.HostResolveShove` PUSHES ALONG `victim - shover`.** So which rival is worth a
+shove depends entirely on where the shover is standing relative to the taya, and that was the one
+thing not being computed. **Half of every sabotage was shoving somebody to SAFETY**, which is
+worse than not casting it at all: it costs a cooldown, 25 stamina, and it helps a rival.
+
+**It is scored now**: the push direction is dotted against the direction from the victim to the
+taya, anything that does not close on the taya is refused outright, and a rival with a tsinelas in
+hand is worth a point on top, because being taggable needs a slipper AND a body inside the chalk,
+so shoving an empty-handed rival at the taya sets up nothing.
+
+⚠️ **THE BAR IS "NOT COUNTERPRODUCTIVE", NOT A TIGHT CONE, AND THAT IS THE WHOLE TRADE.** `Spacing`
+is deliberately pushing the three attackers apart, so the opportunities are already rare: this
+function's own note records the willingness dial measuring **zero sabotages over a whole match**
+before the reach was scaled by it. A cone here would take it straight back to zero, and a dial
+that changes nothing is the defect that note exists about.
+
+### 33.6 What the probe measured, and the honest reading of it
+
+`BotBehaviourProbe`, **one seeded run an arm**, both maps, whole matches (Hero Strike 50,060
+frames / 834.3 s simulated, `match in progress at exit: False` on every arm). Three builds:
+`d8e0da6`, then § 33 alone, then § 33 with § 34.
+
+**Hero Strike on Eskinita**
+
+| | `d8e0da6` | § 33 | § 33 + § 34 |
+|---|---|---|---|
+| throws | 131 | 127 | **173** |
+| retrievals | 130 | 123 | **170** |
+| tags | 75 | 77 | **102** |
+| lata knocks | 76 | 70 | **91** |
+| lata restores | 89 | 85 | **108** |
+| unretrieved-slipper penalties | 102 | 113 | **0** |
+| skill uses | 38 | 19 | **34** |
+| ultimate uses | 26 | 28 | **37** |
+| seat travel, m | 565 / 1241 / 1222 / 1349 | 530 / 1133 / 1175 / 1153 | **1337 / 1372 / 1384 / 1317** |
+
+**Hero Strike on Ilalim ng Tulay**
+
+| | `d8e0da6` | § 33 | § 33 + § 34 |
+|---|---|---|---|
+| throws | 129 | 114 | **164** |
+| retrievals | 126 | 110 | **161** |
+| tags | 54 | 63 | **130** |
+| lata knocks | 75 | 66 | **83** |
+| unretrieved-slipper penalties | 161 | 278 | **97** |
+| skill uses | 31 | 21 | **30** |
+| ultimate uses | 24 | 25 | **39** |
+| seat travel, m | 593 / 1109 / 1288 / 1388 | 585 / 999 / 1044 / 1026 | **1248 / 1231 / 1263 / 1260** |
+
+**Classic on Eskinita**, § 33 against § 33 + § 34 (no `d8e0da6` Classic report survives to compare):
+throws **55 to 72**, retrievals **54 to 71**, tags **43 to 62**, knocks **31 to 37**, restores
+**37 to 44**, seat travel **224 / 523 / 556 / 498** to **549 / 546 / 578 / 540**.
+
+⚠⚠ **THE MIDDLE COLUMN IS THE ONE TO READ CAREFULLY AND IT IS THE LEAST IMPRESSIVE.** § 33 on
+its own moved every headline figure by less than § 16's noise floor, in both directions, which is
+what it should have done: none of it was meant to make bots busier. **The one number it moved past
+the floor is skill uses, 38 to 19 and 31 to 21**, and that is the whole intent of § 33.2. Roughly
+half of what those kits were casting was landing on nobody.
+
+✅ **THE THIRD COLUMN IS § 34 AND THE TRAVEL ROW IS NOT A NOISE QUESTION.** Seat 0 goes from 530
+to 1337 m on Eskinita and 585 to 1248 on Ilalim, and on all three arms the four seats close to
+inside 5 per cent of one another, which is what four bots running one brain with four personality
+rolls is supposed to look like.
+
+⚠⚠ **AND THE UNRETRIEVED-SLIPPER CLOCK IS THE CLEAREST SINGLE RESULT IN THIS FILE.** It goes to
+**ZERO** on Eskinita, from 102 and 113, across a whole eight-round match, and **278 to 97** on
+Ilalim. That penalty is charged once a second for as long as an attacker is short of its tsinelas,
+so it is a DURATION: with every seat able to walk where it decided to walk, nobody was still
+short of theirs when the fine started. Everything else follows from it. Throws and retrievals up
+about a third on both maps, tags up 36 per cent on Eskinita and **141 per cent on Ilalim**.
+
+⚠️ **THE SKILL FIGURE IS THE ONE WORTH NOT MISREADING.** 34 against 38, and 30 against 31, is not
+*"the gating did nothing"*: those casts come from four seats playing a third more game than the
+originals were, and each one had to pass a footprint test the originals never faced. The rate per
+unit of play is down and what a cast lands on is what went up. Ultimates rose anyway, 26 to 37 and
+24 to 39, which also answers the worry logged in § 33.8 about directional powers going uncast.
+
+⚠️ **ONE RUN AN ARM, SO § 16 SAYS TREAT THE SIZES AS INDICATIVE.** Its table puts a single run at
+about 20 per cent error on the mean and 40 per cent as the smallest resolvable effect. The throws,
+tags and penalty movements are at or past that boundary on both maps, which is as much as one run
+an arm can buy; the travel row needs no statistics at all, because it is one seat matching its
+siblings instead of halving them, on every map, in both modes.
+
+### 33.7 Two faults caught while writing this, both by a test rather than by a run
+
+⚠️ **`SprintRestMax` WAS 0.80 AGAINST A `SprintBurstMin` OF 0.70.** The average was fine and an
+unlucky pair of rolls gave a bot that walked more of a journey than it ran.
+`ACrossingIsStillMostlyRunning` asserts the whole ranges rather than the means, and it went red on
+the first run. 0.65 now.
+
+⚠️⚠️ **THE GLANCE USED `Vector3.zero` AS "NOTHING TO LOOK AT" AND THE LATA STANDS AT THE ORIGIN.**
+The arena is centred on the world origin, so the single most likely thing a bot in this game wants
+to watch was the one value the sentinel threw away. `TryGlanceAt` is an out parameter now. Same
+class as every sentinel bug: the sentinel was a legal value of the thing it was standing in for.
+
+### 33.8 Still open
+
+* ⚠️ **A DIRECTIONAL POWER IS HARDER FOR A BOT TO AIM THAN FOR A HUMAN, AND THAT ASYMMETRY IS NOW
+  LOAD-BEARING.** A bot is movement-aimed, so `transform.forward` is wherever it last walked; a
+  human Dante aims the fissure with the mouse while walking somewhere else. `WouldCatch` on a
+  power with a `TelegraphRange` therefore fires only when the bot happens to be pointing the right
+  way. For a taya this is fine, because `DoHunt` drives at the victim. **For an ATTACKER holding a
+  ready directional ultimate it could mean never casting it**, which would show up as ultimate uses
+  falling in `BotBehaviourProbe` rather than as anything visible in a round.
+
+  ✅ **MEASURED, AND IT IS NOT BITING TODAY.** Ultimate uses went **26 to 37** on Eskinita and
+  **24 to 39** on Ilalim, so the strictly tighter gate produced MORE casting rather than less
+  (§ 33.6). It is left open rather than closed because the probe seats only Dante among the
+  directional kits and one run an arm cannot resolve a small effect. ⚠️ **If it ever does bite,
+  the fix is a short aim step (walk at the target for a beat, then cast), NOT a facing written
+  directly**, which would be the second movement path § 4 forbids.
+* ⚠️⚠️ **§ 34 WAS FOUND BY READING THESE RUNS' OWN PER-SEAT COLUMN**, and it moved the numbers
+  in § 33.6 far more than anything in this entry did: one seat in four was being steered in a
+  rotated frame in every all-bots run this project has ever measured.
+* ⚠️ **THE PROBE ONLY EVER SEATS DANTE AND ZACK.** The cast is seeded, so all four seats come
+  up `dante / zack / dante / zack` on both maps and **four of the six kits are exercised by no
+  automated run at all**: Cheska, Sean, Nemu and Phaister. Every gate rewritten in § 33.2 for
+  those four is reasoned from their telegraphs and unmeasured in play. A probe arm that forces
+  the other cast would be worth more than another run of this one.
+* ⚠️ **Nothing here was A/B'd to § 16's standard.** § 33.6 has what was measured, one run an
+  arm, and how far to trust each row. An A/B on any single weight in this entry still costs three
+  runs an arm.
+
+---
+
+## 34 · Seat 0 was steered by a different movement model in every all-bots run, and it is § 11's second layer
+
+**Not reported. Found on 2026-08-27 by reading `seat N travelled` in the § 33 probe reports and
+asking why one column was always half the others.**
+
+| | seat 0 | the other three |
+|---|---|---|
+| Classic, Eskinita | **224.1 m**, score 1925 | 522.7 / 556.1 / 498.4, scores 2475 to 2950 |
+| Hero Strike, Eskinita (before § 33) | **564.9 m**, score 3480 | 1241.3 / 1221.9 / 1348.5 |
+| Hero Strike, Ilalim ng Tulay | **593.0 m**, score 3060 | 1109.4 / 1287.9 / 1388.2 |
+| Hero Strike, Eskinita (after § 33) | **530.0 m**, score 3360 | 1133.4 / 1175.0 / 1153.3 |
+
+**Roughly 45 per cent of the movement of a seat running the same brain, on both maps, in both
+modes, before and after the AI changes, and lowest score every time.** The personality roll does
+not explain it: seat 0 rolls Tempo 1.159 and Hesitation 0.230 against seat 1's 1.125 and 0.217,
+which is nothing like a factor of two.
+
+### 34.1 ⚠️⚠️ A FOLLOWED SEAT IS STEERED BY A DIFFERENT MOVEMENT MODEL, AND SEAT 0 WAS ALWAYS FOLLOWED ✅
+
+`MatchInstaller.BuildCameraAndHud` set `_spectating = GameLaunch.Spectator` and turned the
+gameplay rig off only on that. **`HumanSeat` answers -1 for THREE reasons**:
+`GameLaunch.Spectator`, `GameLaunch.AllBots`, and the serialised `_allBots`. So in an all-bots run
+the rig stayed **active**, kept **following** `seats[Mathf.Max(0, HumanSeat)]`, which that clamp
+makes seat 0, and kept **`AimSource.Mouse`** set on it.
+
+⚠️⚠️ **AND THAT CHANGES HOW THE BODY STEERS.** `CharacterMotor.MouseAimed` is
+`_rig.IsFollowing(this) && Aim == Mouse`, and the mouse-aimed branch of `Steer` runs
+`transform.TransformDirection(wish)` and **returns without rotating the body**. An `AIController`
+writes a WORLD-space heading through `EightWay`. So seat 0's heading was re-interpreted as
+body-relative and rotated by a yaw that never changed, for the whole match: a bot asking to walk
+north walked wherever its shoulders happened to be pointing.
+
+⚠️⚠️ **IT IS THE IDENTICAL FAULT `CharacterMotor.MouseAimed`'S OWN HEADER RECORDS FOR NEMU'S
+POSSESSION**, reached from a different direction. That header even spells out the mechanism, word
+for word, and the guard it added is specific to the pet, so it could not catch this one. Two
+sightings of one bug now: **any body an active mouse rig follows while an `AIController` drives it
+is being steered in the wrong frame.**
+
+⚠️ **§ 11 CLOSED THE FIRST LAYER OF THIS AND THIS IS THE SECOND.** `GameLaunch.AllBots` fixed seat
+1 getting a `PlayerInputReader` with nobody at the keyboard, and the seat the CAMERA was bolted to
+was left behind. `BotBehaviourProbe`'s travel floor is 150 m, which seat 0 cleared every time.
+
+**Fixed** with `bool nobodyIsDriving = HumanSeat < 0`, which covers all three reasons.
+
+✅ **AND THE FIX IS MEASURED, NOT ARGUED.** The same seeded runs, before and after the one line:
+
+| | seat 0 | seat 1 | seat 2 | seat 3 |
+|---|---|---|---|---|
+| Classic, Eskinita, before | **224.1 m** | 522.7 | 556.1 | 498.4 |
+| Classic, Eskinita, after | **548.7 m** | 546.0 | 578.4 | 540.4 |
+| Hero Strike, Eskinita, before | **530.0 m** | 1133.4 | 1175.0 | 1153.3 |
+| Hero Strike, Eskinita, after | **1336.5 m** | 1371.9 | 1383.8 | 1317.2 |
+| Hero Strike, Ilalim, before | **584.5 m** | 999.1 | 1043.8 | 1026.1 |
+| Hero Strike, Ilalim, after | **1247.8 m** | 1230.9 | 1263.2 | 1259.8 |
+
+**Seat 0 travels 2.1 to 2.5 times as far and the four seats now sit inside 5 per cent of each
+other on every arm**, which is what four bots running one brain with four personality rolls is
+supposed to look like.
+
+⚠️⚠️ **AND THE WHOLE MATCH GOT LIVELIER, WELL PAST WHAT A QUARTER OF THE SEATS EXPLAINS ON ITS
+OWN.** Classic throws **55 to 72** and tags **43 to 62**; Hero Strike on Eskinita throws **127 to
+173** and tags **77 to 102**; on Ilalim throws **114 to 164** and tags **63 to 130**. The sharpest
+single figure is the unretrieved-slipper clock, which is a DURATION rather than an event count:
+**113 to 0** on Eskinita and **278 to 97** on Ilalim. **A seat that cannot reliably walk where it
+decided to walk is not just a quiet seat; it is a seat the other three keep waiting for.** § 33.6
+has the full tables.
+
+⚠️ One run an arm, so § 16 says treat the sizes as indicative. The travel rows are the exception
+and are not a noise question: they are one seat matching its siblings instead of halving them, on
+both maps, in both modes.
+
+⚠️ **THE SPECTATOR CAMERA IS NOW BUILT FOR THE ALL-BOTS CASE TOO, AND THAT IS LOAD-BEARING RATHER
+THAN TIDY.** `Diagnostics/FrameCapProbe` measures the ACHIEVED frame rate from the shipped player
+under `-tp-botmatch`, and turning the gameplay rig off without putting a camera back would leave
+it rendering nothing and hitting any cap it was asked for. § 17 is an open investigation resting
+on exactly that number.
+
+### 34.2 What this invalidates, and it is not nothing
+
+⚠️⚠️ **EVERY PER-SEAT FIGURE IN EVERY `Logs/bot-behaviour-*.txt` IN THIS REPOSITORY WAS TAKEN WITH
+ONE SEAT IN FOUR STEERING IN A ROTATED FRAME.** Totals are diluted by roughly one eighth of the
+match (a quarter of the seats at about half effectiveness), and per-seat comparisons between seat
+0 and anybody else are meaningless. That includes the § 16 noise-floor sweep and the § 17 frame
+step table.
+
+⚠️ **§ 17'S OPEN QUESTION IS THE ONE MOST WORTH RE-ASKING.** It reports that a 20 per cent change
+in decision rate cost five sixths of the throws and all of the casting, and calls that *"far too
+steep to be a smooth sensitivity"*. One of the four seats being steered in the wrong frame is a
+new candidate for where the steepness comes from, and it was not on that entry's suspect list
+because nobody knew it was happening. **Re-run the frame step table before spending any more time
+on the `InputIntent` edge protocol.**
+
+⚠️ **THE NOISE FLOOR IS ALSO WORTH RE-MEASURING.** § 16 records eight matches spreading 58 to 100
+throws and lists the residual as unexplained. A seat whose effective heading depends on a yaw
+frozen at whatever the spawn happened to leave it at is a per-run variable nobody had accounted
+for. It may be part of the residual; it may be none of it. `TwoIdenticalMatchesLandInsideTheNoiseFloor`
+is the six-minute `WallClock` test that answers it.
 
 ---
 

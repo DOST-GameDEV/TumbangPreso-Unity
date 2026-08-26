@@ -649,13 +649,56 @@ namespace TumbangPreso
             // bot's yaw from the mouse while the spectator flew.
             _spectating = GameLaunch.Spectator;
 
-            if (_spectating)
+            // ⚠️⚠️ THE TEST IS "IS ANYBODY DRIVING A SEAT", NOT "DID SOMEBODY PRESS SPECTATE",
+            // AND THE GAP BETWEEN THOSE TWO CRIPPLED SEAT 0 IN EVERY ALL-BOTS RUN THIS PROJECT
+            // HAS EVER MEASURED. `HumanSeat` answers -1 for THREE reasons: `GameLaunch.Spectator`,
+            // `GameLaunch.AllBots`, and the serialised `_allBots`. This line tested only the
+            // first, so under AllBots the gameplay rig stayed ACTIVE, kept FOLLOWING
+            // `seats[Mathf.Max(0, HumanSeat)]` (which is seat 0 by that clamp), and kept
+            // `AimSource.Mouse` set on it.
+            //
+            // ⚠️⚠️ AND A FOLLOWED SEAT IS STEERED BY A DIFFERENT MOVEMENT MODEL.
+            // `CharacterMotor.MouseAimed` is `_rig.IsFollowing(this) && Aim == Mouse`, and the
+            // mouse-aimed branch of `Steer` runs `transform.TransformDirection(wish)` and then
+            // RETURNS WITHOUT ROTATING THE BODY. An `AIController` writes a WORLD-space heading
+            // through `EightWay`, so seat 0's heading was re-interpreted as body-relative and
+            // rotated by a yaw that never changed, for the whole match. A bot asking to walk
+            // north walked wherever its shoulders were pointing.
+            //
+            // ⚠️⚠️ THAT IS THE IDENTICAL FAULT `CharacterMotor.MouseAimed`'s OWN HEADER RECORDS
+            // FOR NEMU'S POSSESSION, reached from a different direction, and the guard there is
+            // specific to the pet so it could not catch this one.
+            //
+            // **Measured, and it is in every report in `Logs/`.** Seat 0 travelled 224 m against
+            // 522 / 556 / 498 in Classic, and 530 to 593 m against 1109 to 1388 in Hero Strike,
+            // on Eskinita and on Ilalim ng Tulay, before and after the AI changes of the same
+            // day. It scored lowest in all four. Roughly 45 per cent of the movement of a seat
+            // running the same brain.
+            //
+            // ⚠️ `docs/TODO.md` § 11 CLOSED THE FIRST LAYER OF THIS AND THIS IS THE SECOND.
+            // `GameLaunch.AllBots` fixed seat 1 getting a `PlayerInputReader` with nobody at the
+            // keyboard; the seat the CAMERA was bolted to was left behind, and the travel floor
+            // in `BotBehaviourProbe` (150 m) was set low enough not to notice.
+            //
+            // ⚠️ THE SPECTATOR CAMERA IS BUILT FOR BOTH CASES DELIBERATELY, and not only for
+            // tidiness: `Diagnostics/FrameCapProbe` measures the ACHIEVED frame rate from the
+            // shipped player under `-tp-botmatch`, and turning the gameplay rig off without
+            // putting a camera back would leave that probe rendering nothing and hitting any cap
+            // it was asked for. `docs/TODO.md` § 17 is an open investigation resting on that
+            // number.
+            bool nobodyIsDriving = HumanSeat < 0;
+
+            if (nobodyIsDriving)
             {
                 rig.SetActive(false);
 
-                var specGo = new GameObject("SpectatorCamera");
-                specGo.tag = "MainCamera";
-                specGo.AddComponent<CameraSystem.SpectatorCamera>();
+                if (UnityEngine.Object.FindFirstObjectByType<CameraSystem.SpectatorCamera>()
+                    == null)
+                {
+                    var specGo = new GameObject("SpectatorCamera");
+                    specGo.tag = "MainCamera";
+                    specGo.AddComponent<CameraSystem.SpectatorCamera>();
+                }
             }
 
             var hudGo = new GameObject("HUD");

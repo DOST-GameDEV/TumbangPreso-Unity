@@ -171,5 +171,63 @@ namespace TumbangPreso.Abilities
 
             return steer.sqrMagnitude > 0.0001f ? steer.normalized : dir;
         }
+
+        /// <summary>
+        /// Is a live hazard already centred on this patch of road?
+        ///
+        /// ⚠️⚠️ IT ASKS ABOUT CENTRES, NOT ABOUT COVERAGE, AND THAT IS THE RIGHT QUESTION FOR THE
+        /// ONE CALLER. `AIController` uses it to decide whether laying a ground-denial power here
+        /// would deny anything that is not already denied, and two discs of similar size whose
+        /// centres nearly coincide are one patch of road however their edges fall. Testing
+        /// coverage instead would answer yes for a bot standing at the rim of somebody else's
+        /// trail, which is not a reason to hold a 50 s cooldown.
+        ///
+        /// ⚠️ A HAZARD YOU OWN COUNTS. `TryFindBlocker` skips your own discs because you may walk
+        /// on your own fire; this is the opposite question. Your own sheet still denies the ground
+        /// it is sitting on, so dropping a second one on it is the waste this exists to catch.
+        /// </summary>
+        public static bool AnyCentredNear(Vector3 point, float within)
+        {
+            for (int i = 0; i < Live.Count; i++)
+            {
+                var v = Live[i];
+                if (v == null) continue;
+
+                Vector3 offset = v.transform.position - point;
+                offset.y = 0.0f;
+
+                if (offset.magnitude <= within) return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Is this point standing on dangerous ground right now?
+        ///
+        /// ⚠️ THE DISC'S OWN RADIUS IS IN THE TEST, which is what separates this from
+        /// <see cref="AnyCentredNear"/>. "Am I in it" has to scale with how big it is; "is one
+        /// already here" must not, or a single wide hazard would veto every denial power in the
+        /// arena.
+        ///
+        /// ⚠️ AND IT IGNORES OWNERSHIP DELIBERATELY. The caller is asking whether to spend a
+        /// power that makes it immune to being stunned, shoved or slipped, and a hero standing in
+        /// its own fire is not immune to anybody else's.
+        /// </summary>
+        public static bool CoversPoint(Vector3 point, float slack)
+        {
+            for (int i = 0; i < Live.Count; i++)
+            {
+                var v = Live[i];
+                if (v == null) continue;
+
+                Vector3 offset = v.transform.position - point;
+                offset.y = 0.0f;
+
+                if (offset.magnitude <= v.Radius + slack) return true;
+            }
+
+            return false;
+        }
     }
 }

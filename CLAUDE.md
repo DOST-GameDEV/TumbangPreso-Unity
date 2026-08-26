@@ -371,6 +371,16 @@ every file in a pre-existing output directory was freshly emitted.
   ⚠️ **Every report from before 2026-08-26 is three seats' worth**, because `GameLaunch.SoloSeat`
   defaults to 1 and that seat was a parked human until `GameLaunch.AllBots` landed. Do not compare
   an old report against a new one.
+  ⚠️⚠️ **AND EVERY REPORT FROM BEFORE 2026-08-27 HAS SEAT 0 STEERING IN A ROTATED FRAME**, which is
+  the second layer of that same fault and is `docs/TODO.md` § 34. `MatchInstaller` turned the
+  gameplay rig off on `GameLaunch.Spectator` alone, so under `AllBots` it stayed active, followed
+  seat 0 and kept `AimSource.Mouse`, which puts `CharacterMotor.Steer` on the branch that reads a
+  heading as body-relative and never rotates the body. **Seat 0 travelled 224 m against 522 to 556
+  for its siblings in Classic and 530 against 1133 to 1175 in Hero Strike; after the fix all four
+  seats sit inside 5 per cent of each other on every arm, and the whole match got livelier with
+  it**: Hero Strike throws 127 to 173, tags 77 to 102, and the unretrieved-slipper clock, which is
+  a duration rather than an event count, **113 to 0**. Per-seat columns in an older report are not
+  comparable, and neither is anything § 16 or § 17 measured.
 - `AiDiagnosticProbe` runs one round at 1x with every decision written out, for WHY rather
   than how much. ⚠️ **`[Category("WallClock")]`, excluded from the default PlayMode run.** See
   § 7's command and `docs/TODO.md` § 6.
