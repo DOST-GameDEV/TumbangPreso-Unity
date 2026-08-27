@@ -6472,6 +6472,117 @@ most of the match is filed somewhere else.
 
 ---
 
+## 63 · Walking into a utility pole blanks half the screen, and it now dithers away
+
+🧑, off the played build: a wooden utility pole filling the **entire left half of the screen**,
+view completely blocked, with a reference image of the screen-door stipple that games use for
+near-camera occluders.
+
+**Measured, so nobody has to re-derive it.** `env_post_electric.obj` is 7.2 m tall and 0.634 m
+across the timber, taken from the .obj's own vertices. `CameraRig` runs a 95 degree VERTICAL FOV
+in first person, about 125.4 degrees horizontal at 16:9, with the eye 1.25 m up and a 0.05 m near
+plane. The post therefore subtends, as a fraction of frame width:
+
+| eye to post surface | frame width covered |
+|---|---|
+| 2.00 m | 12.5 % |
+| 1.20 m | 18.8 % |
+| 0.60 m | 30.5 % |
+| 0.35 m | 40.4 % |
+| 0.20 m | 92.0 % |
+
+⚠️ **And nothing stops you reaching the bottom of that table.** The poles carry no collider on
+either map: `Eskinita.unity` has six colliders in total (four walls, the floor, the kill plane) and
+`IlalimNgTulayBuilder` never adds one to a kit prop. `MatchInstaller.StripColliders` exists to take
+colliders OFF, because every contact in this game is a host-side distance check. So the
+`CharacterController`'s 0.35 m radius is not a bound here: the eye goes inside the post.
+
+### 63.1 ✅ SHIPPED: a screen-door dissolve in the occluder's own fragment shader
+
+⚠️⚠️ **IT CANNOT BE A POST-PROCESS, AND THAT DECIDED EVERYTHING ELSE.** Fading an occluder means
+revealing what is BEHIND it, and a full-screen pass only ever has the composited frame: the pixels
+behind the pole were never rendered. The only place the geometry behind an occluder can still be
+drawn is the occluder's own fragment shader, discarding before it writes colour or depth.
+
+`Assets/TumbangPreso/Shaders/NearFade.shader`, `Runtime/Visual/NearFade.cs`, one call at the end of
+`EnvColourPass.Apply`, one line in `GameBuilder.EnsureRuntimeShaders`, `Tests/NearFadeTests.cs`.
+
+**The band, in radial metres from the eye to the FRAGMENT:** solid beyond **1.80 m**, gone under
+**0.35 m**, `smoothstep` between. Multiply the coverage above by the fraction still drawn and the
+product peaks at **13.6 %** and falls from there, so the post can never obscure more than about an
+eighth of the frame. 0.35 m is seven times the near plane, so the near plane never gets to slice a
+solid cross-section. The band is 1.45 m wide because `Balance.Speed` is 4.6 m/s and an attacker
+runs at 3.45, which puts the whole dissolve between 0.32 s and 0.42 s of walking.
+
+⚠️ **PER FRAGMENT, NOT PER OBJECT, AND A 7.2 m POLE IS WHY.** A per-object fade would dissolve the
+crossarm seven metres over your head at the same rate as the section in front of your face.
+
+⚠️ **RADIAL, NOT VIEW-SPACE Z, AND THE WIDE LENS IS WHY.** At the edge of a 125 degree frame a
+fragment's z is under half its true distance, so a z-driven band dissolves a pole 2 m off to your
+side while leaving one 1 m dead ahead solid. Exactly backwards.
+
+⚠️ **THE DITHER CELL IS 2 SCREEN PIXELS, NOT 1.** `PostAntiAlias` runs FXAA over both gameplay
+cameras and a one-pixel checker is below the scale its edge test resolves, so it smears into a flat
+haze and the effect reads as fog rather than as a screen door. At 2 the pattern's period is 8 px.
+
+**Scope: the named props only.** `NearFade.OccluderPrefixes` is `Poste` (Eskinita, 12 under
+`Dressing/Kable`) and `SidewalkPole` (Ilalim ng Tulay, 28), both counted off the shipped scenes.
+Putting the whole street on a new shader is the 2026-07-29 shape again and buys nothing: a house is
+8 m wide and its walls stop you. Trees were considered and left out because a 2.4 m canopy
+dissolving at head height removes a large part of the frame rather than a thin strip.
+
+### 63.2 ⚠️⚠️ OPEN, AND IT IS ONE LINE IN A FILE THIS WORK DID NOT OWN
+
+**`WorldOutline` will trace a pole's ink silhouette while the pole is dissolving.**
+
+`CameraRig` attaches `WorldOutline` and sets `PrototypeEnabled`, so the screen-space ink is live on
+the match camera. It reads `_CameraDepthNormalsTexture`, and in the built-in pipeline that texture
+is filled by Unity's `Internal-DepthNormalsTexture` REPLACEMENT shader, chosen by the object
+shader's `RenderType` tag. A replacement shader brings its own code, so **a `clip()` written in
+`NearFade.shader` is structurally invisible to it.** There are exactly two reachable behaviours:
+
+* **`RenderType = "Opaque"`**, which is what shipped. Ink and occlusion are correct at every
+  distance, and inside the 1.8 m band the outline traces a silhouette the prop no longer has.
+* **Any other tag value.** The prop leaves the depth-normals texture entirely, so it can never
+  ghost, but it loses its own ink permanently AND stops occluding the edges behind it, so rooflines
+  draw straight across a pole in a street where poles stand against facades.
+
+Opaque wins because its cost is bounded to the band and the other's is not.
+
+⚠️ **THE ACTUAL FIX IS IN `WorldOutline.IsToonSurface`.** It already answers "does this renderer
+draw its own ink, so keep the screen-space pass off it" by comparing `material.shader.name` against
+`TumbangPreso/Toon`. A prop on `NearFade.ShaderName` belongs in that same set for the inverted
+reason: it must NOT be inked, because its silhouette is a lie while it is dissolving. Widening that
+one comparison masks the ghost while KEEPING the prop in depth-normals, which is the behaviour both
+options above are trying to buy and neither can. `NearFade.ShaderName` is a public const so that
+line needs no second string literal.
+
+**Done looks like:** `WorldOutline.IsToonSurface` accepts both names, and a render taken from
+0.8 m off a `Poste_*` on Eskinita shows a stippled post with no ink around it and correct ink on
+the facade behind.
+
+### 63.3 What could NOT be verified without a Unity launch
+
+Everything below is authored and reasoned from source. **None of it has been compiled, rendered or
+played**, because the session that wrote it was not permitted to launch the editor.
+
+* **That the shader compiles at all**, and that a surface shader's `screenPos` gives the pixel
+  coordinates this assumes after the perspective divide.
+* **That the dissolved shading matches the solid one.** The lit half is
+  `#pragma surface surf Standard`, and the two shaders it replaces are Unity's `Standard` (the
+  `.obj` posts) and glTFast's `glTF/PbrMetallicRoughness` (the kit poles), whose property names were
+  read out of the package rather than guessed. The BRDF should be the same; only a render says so.
+* **Whether 1.80 m reads as too early.** The number comes from screen coverage, not from taste, and
+  taste is the half a render settles.
+* **Whether a 2 px cell survives FXAA as a clean grid.** The argument is sound and the measurement
+  is a screenshot with anti-aliasing ON.
+
+**First thing to look at:** a first-person render taken about 0.8 m from a `Poste_*` on Eskinita,
+with FXAA on. It answers the compile, the shading match, the stipple size and § 63.2's ghost in one
+picture.
+
+---
+
 ## Closed
 
 - **Lobby client synchronization, pick normalization, and host non-zero seat picks.** ✅ 2026-08-26.
