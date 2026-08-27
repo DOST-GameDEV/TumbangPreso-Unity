@@ -144,6 +144,15 @@ namespace TumbangPreso.Abilities
 
             public override bool CanReactivate => true;
 
+            /// <summary>
+            /// ⚠️ HOW MUCH LONGER KURO'S PROJECTED BODY LIVES THAN THE ABILITY THAT SPAWNED IT.
+            /// Half a second, and the only thing it has to be is greater than zero: it makes
+            /// `OnEnd` the thing that removes the ghost in every run, rather than a race between
+            /// two independent clocks that nothing was keeping in step. The old arrangement was
+            /// a 4.0 s ghost under a 6.0 s ability, which lost that race by two seconds.
+            /// </summary>
+            private const float ProjectionOutlivesAbilityBy = 0.5f;
+
             protected override void OnActivate(AbilityContext ctx)
             {
                 NetCue.Play("sfx_ghost_teleport", ctx.Position);
@@ -155,8 +164,13 @@ namespace TumbangPreso.Abilities
                 }
                 else
                 {
+                    // ⚠️ ITS LIFETIME IS THIS ABILITY'S, NOT A NUMBER OF ITS OWN. The margin
+                    // exists so `OnEnd` below always reaches the ghost before the ghost reaches
+                    // its own expiry: whichever of the two runs first decides whether Nemu gets
+                    // a trip home, and it has to be this one every time.
                     _projectedGhost = HeroHazards.SpawnGhostPoltergeist(
-                        ctx.Position, ctx.Forward, ctx.Motor.PlayerSlot);
+                        ctx.Position, ctx.Forward, ctx.Motor.PlayerSlot,
+                        Duration + ProjectionOutlivesAbilityBy);
                 }
             }
 

@@ -4368,6 +4368,105 @@ to a cue that does. Whichever it is, `RunAll` comes back OK for audio.
 
 ---
 
+## 48 · Kuro's projected body deleted itself mid-ability, and took Nemu's way home with it
+
+🧑, 2026-08-27, off a gameplay frame: *"dont make nemu pet aura disappear (purple light) until
+she comes back"*.
+
+He is describing the aura. The aura was the symptom.
+
+### 48.1 Two clocks that nothing kept in step
+
+Astral Projection (`NemuHeroKit.GhostlyPoltergeistAbility`) runs for **6.0 s** and ends by
+teleporting Nemu onto whatever body she projected. For a seat with a live
+`Visual.GhostPetCompanion` that body is Kuro and the possession path is correct. For a seat
+WITHOUT one, `HeroHazards.SpawnGhostPoltergeist` builds a stand-in, and that stand-in carried
+`private float _lifetime = 4.0f`.
+
+⚠️⚠️ **So the ghost destroyed itself two seconds before the ability that owned it ended.** The
+purple `GhostLight` went out, which is what is visible, and then `OnEnd` ran:
+
+```
+else if (_projectedGhost != null)   // null. Nothing happens at all.
+```
+
+**Nemu was never teleported.** She finished the cast standing exactly where she started, with no
+trip, no sound and no explanation, on every run that reached 4.0 s. The aura going out was the
+player watching the return anchor be deleted.
+
+### 48.2 And the faster path was worse
+
+The haunt branch called `Object.Destroy(gameObject)` the moment the ghost reached a victim. A
+ghost that found somebody **half a second** after being cast deleted itself, and Nemu's route home
+with it, five and a half seconds early.
+
+### 48.3 The fix, in the shape the repo already uses for this
+
+- `SpawnGhostPoltergeist` takes `lifetime` and the component exposes `Lifetime`. The literal is
+  gone from beside a duration it had to agree with, which is the same rule as
+  *never hard-code a distance beside a speed*.
+- `GhostlyPoltergeistAbility` passes `Duration + ProjectionOutlivesAbilityBy` (0.5 s). The only
+  property that margin needs is to be greater than zero: it makes `OnEnd` the thing that removes
+  the ghost in **every** run instead of a race between two clocks.
+- The haunt sets `_haunted` instead of destroying, lands once, and then holds station. The body
+  stays where the player just watched it connect, which is where they are looking anyway, and
+  stays the place Nemu returns to.
+
+⚠️ **The possession path was already correct and is untouched.** `GhostPetCompanion` builds
+`GhostPossessLight` in `BeginPossession` and destroys it in `EndPossession`, which runs after the
+teleport: the light is lit for exactly as long as she is away.
+
+### 48.4 Verified
+
+Core 69/69, EditMode 124/124, PlayMode 66/66. `InputMapAndAbilityTests` exercises the full
+reactivation lifecycle for every kit, including the EditMode branch of `OnEnd` that moves the
+transform directly.
+
+⚠️ **What is NOT verified is the 4.0 s case in a live match**, because the fallback path only
+runs for a seat with no companion and the probes give every Nemu one. If you see her fail to
+return in play, this entry is the first place to look and `_projectedGhost == null` is the thing
+to check.
+
+---
+
+## 49 · Seat 0 travels about half what seats 1 to 3 do, in Classic, every run
+
+**Found on 2026-08-27 while verifying § 48, not looked for.** `BotBehaviourProbe`'s
+`ClassicBotsPlayAWholeMatch` went red on the distance floor and passed on an immediate re-run
+with nothing changed, which is § 16's signature. It is not § 16.
+
+| Run | seat 0 | seat 1 | seat 2 | seat 3 |
+|---|---|---|---|---|
+| red | **140.1 m**, score 1050 | 418.2 m, 1955 | 408.6 m, 2015 | 394.1 m, 1860 |
+| green | **241.7 m**, score 1280 | 476.5 m, 2815 | 564.4 m, 3175 | 573.9 m, 2610 |
+
+⚠️⚠️ **SEAT 0 IS THE LOWEST ON BOTH AXES IN BOTH RUNS, BY ROUGHLY A FACTOR OF TWO.** That is not
+a noise floor; § 16's noise is a spread the seats share, and this is one seat apart from the
+other three in a fixed direction. The floor's own note at `BotBehaviourProbe.cs:655` says the
+observed Classic spread is **460 to 1190 m**, and seat 0 has now been seen at 140 and at 242,
+under the bottom of that range twice running.
+
+⚠️ **THE FLOOR IS THE SYMPTOM, NOT THE BUG, SO DO NOT LOWER IT.** 150 m was chosen to sit
+"comfortably under anything a playing bot does", and a seat that keeps arriving near it is
+telling us something about seat 0 rather than about the number.
+
+**Where to start.** Seat 0 is the taya in round 1 (`(round - 1) % 4`), and it is the seat
+`GameLaunch.SoloSeat` used to park a human on before `GameLaunch.AllBots` landed (§ 11). Both
+make seat 0 the one seat with a history of being special, and § 11's note is that every probe
+report from before 2026-08-26 was measuring a seat that could not play. The question is whether
+something still treats slot 0 differently: a spawn point, an input reader that is still bound, or
+an `AIController` that is added later on that seat than on the others.
+
+**Done looks like:** four seats whose travel figures are drawn from the same distribution across
+three runs, and a `ClassicBotsPlayAWholeMatch` that does not go red one run in three.
+
+⚠️ **Not caused by § 45 or § 48.** Both are Hero Strike and HUD work; this is Classic, which
+has no kits (`kits seen False` in the same report) and does not draw an ability deck. Two full
+PlayMode runs with § 45 alone were green, which is consistent with an intermittent that predates
+both.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

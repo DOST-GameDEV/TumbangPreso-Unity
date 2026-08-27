@@ -961,7 +961,27 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         // GHOST POLTERGEIST PROJECTILE (Nemu Skill 2 Autonomous Option)
         // -------------------------------------------------------------------
-        public static GameObject SpawnGhostPoltergeist(Vector3 position, Vector3 direction, int ownerSlot)
+        /// <summary>
+        /// Kuro's projected body, for the seat that has no live <see cref="Visual.GhostPetCompanion"/>
+        /// to possess.
+        ///
+        /// ⚠️⚠️ `lifetime` IS PASSED IN BECAUSE THIS OBJECT IS A HERO'S WAY HOME, NOT A HAZARD.
+        /// It was hard-coded at 4.0 s beside an ability whose duration is 6.0 s, so on this path
+        /// the ghost and its purple point light deleted themselves TWO SECONDS BEFORE the
+        /// ability ended. 🧑, 2026-08-27: *"dont make nemu pet aura disappear (purple light)
+        /// until she comes back"*.
+        ///
+        /// ⚠️⚠️ AND THE LIGHT GOING OUT WAS THE VISIBLE HALF OF A WORSE BUG.
+        /// `GhostlyPoltergeistAbility.OnEnd` teleports Nemu onto this object and does nothing at
+        /// all when it is already gone, so every one of those runs left her standing where she
+        /// cast from with no trip home and no explanation. The aura vanishing was the player
+        /// watching the return anchor be destroyed.
+        ///
+        /// ⚠️ THE CALLER PASSES ITS OWN `Duration` PLUS A MARGIN, so the ability always wins the
+        /// race to clean this up, and the number cannot drift the way a literal 4.0 did.
+        /// </summary>
+        public static GameObject SpawnGhostPoltergeist(Vector3 position, Vector3 direction, int ownerSlot,
+                                                       float lifetime)
         {
             var go = new GameObject("GhostPoltergeist");
             go.transform.position = position + Vector3.up * 1.0f;
@@ -1008,6 +1028,7 @@ namespace TumbangPreso.Abilities
             var comp = go.AddComponent<GhostPoltergeistComponent>();
             comp.Direction = direction.normalized;
             comp.OwnerSlot = ownerSlot;
+            comp.Lifetime = lifetime;
 
             return go;
         }
@@ -1016,17 +1037,30 @@ namespace TumbangPreso.Abilities
         {
             public Vector3 Direction;
             public int OwnerSlot;
-            private float _lifetime = 4.0f;
+
+            /// <summary>Seconds this body stays in the world, set by the caster. See
+            /// <see cref="SpawnGhostPoltergeist"/> for why it is not a literal here.</summary>
+            public float Lifetime = 4.0f;
+
             private CharacterMotor _target;
+
+            /// <summary>Set once the haunt has landed, so it lands once and the body stays.
+            /// See the branch that reads it.</summary>
+            private bool _haunted;
 
             private void Update()
             {
-                _lifetime -= Time.deltaTime;
-                if (_lifetime <= 0.0f)
+                Lifetime -= Time.deltaTime;
+                if (Lifetime <= 0.0f)
                 {
                     Object.Destroy(gameObject);
                     return;
                 }
+
+                // ⚠️ A HAUNTED GHOST HOLDS STATION AND STOPS LOOKING FOR WORK. Everything below
+                // is flight and hunting, and neither is wanted once the hit has landed: Nemu is
+                // still out, and this object is still the place she returns to.
+                if (_haunted) return;
 
                 if (_target == null)
                 {
@@ -1080,7 +1114,19 @@ namespace TumbangPreso.Abilities
                         // host gate three lines up, so three of the four players could not hear
                         // the poltergeist connect.
                         NetCue.Play("downed", transform.position);
-                        Object.Destroy(gameObject);
+
+                        // ⚠️⚠️ THE HAUNT NO LONGER DESTROYS THE BODY. This was the second of the
+                        // two ways the purple light could go out with Nemu still projected, and
+                        // by far the faster one: a ghost that found somebody half a second after
+                        // being cast deleted itself, and Nemu's only route home with it. It marks
+                        // itself spent and hangs where it landed for the rest of the ability,
+                        // which is also where a player who just watched it connect is looking.
+                        //
+                        // ⚠️ AND IT IS SET ON THE HOST SIDE OF THE GATE ABOVE, WHICH IS CORRECT.
+                        // A client that never resolves the hit never marks the body spent, and
+                        // never needed to: the body it is looking at is the host's, replicated,
+                        // and the host is the one that decides when the haunt has landed.
+                        _haunted = true;
                     }
                 }
             }
