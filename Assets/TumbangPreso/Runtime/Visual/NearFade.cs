@@ -76,7 +76,29 @@ namespace TumbangPreso.Visual
         /// twenty-eight, under the group of the same name. Both are the same object in the
         /// fiction and both are what the report was about.
         /// </summary>
-        public static readonly string[] OccluderPrefixes = { "Poste", "SidewalkPole" };
+        /// ⚠️⚠️ TREES ARE IN, AND THE ARGUMENT THAT KEPT THEM OUT DOES NOT SURVIVE THE FADE BEING
+        /// PER FRAGMENT. 🧑 2026-08-28, walking into a trunk that filled the screen: *"why doesnt
+        /// it work for trees then"*.
+        ///
+        /// The note above this list reasoned that a canopy is 2.4 m across, so dissolving a tree at
+        /// head height would remove a large part of the frame rather than a thin strip. That would
+        /// be true of a PER OBJECT fade. This one is per fragment, on radial distance to the eye:
+        /// `distance(IN.worldPos, _WorldSpaceCameraPos)` is evaluated for every pixel, and only
+        /// pixels inside 1.8 m dissolve at all.
+        ///
+        /// Standing at a trunk puts the eye at 1.25 m and the canopy overhead at three metres and
+        /// up, so the canopy is comfortably outside the band and stays solid. What dissolves is the
+        /// column of trunk actually pressed against the camera, which is exactly the thin strip the
+        /// original note wanted and thought it could not have. The concern was real and the
+        /// implementation had already answered it.
+        ///
+        /// ⚠️ `Puno` COVERS ESKINITA AND `PavementTree` COVERS ILALIM NG TULAY. Measured off the
+        /// shipped scenes: Eskinita has 33 nodes whose names begin `Puno`, in three families
+        /// (`Puno_*`, `PunoMalayoX_*`, `PunoMalayoZ_*`), all caught by the one stem. Ilalim names
+        /// its foliage `PavementTree*` instead, so both are listed rather than assuming one
+        /// convention. `EnvColourPass` recognises the same two words when it classifies foliage.
+        public static readonly string[] OccluderPrefixes =
+            { "Poste", "SidewalkPole", "Puno", "PavementTree" };
 
         /// <summary>
         /// ⚠️ THE BAND, IN RADIAL METRES FROM THE EYE TO THE FRAGMENT. The derivation is in
@@ -178,13 +200,43 @@ namespace TumbangPreso.Visual
             return changed;
         }
 
+        /// <summary>
+        /// ⚠️⚠️ EVERYTHING IN THE DRESSING IS AN OCCLUDER NOW, AND THE NAME LIST IS ONLY A FLOOR.
+        /// 🧑 2026-08-28: *"id prefer if anything i can clip into can be dithered"*, after the
+        /// prefix list covered posts, then posts and trees, and the next thing walked into was a
+        /// crate. A list that has to be extended every time the map gains a prop is a list that is
+        /// wrong on the day somebody adds one, and the player meets the omission before we do.
+        ///
+        /// ⚠️ WHAT MAKES THIS SAFE IS THAT THE SHADER, NOT THIS FUNCTION, DECIDES WHAT DISSOLVES.
+        /// The fade is per fragment on radial distance, so a surface only dissolves where it is
+        /// physically inside 1.8 m of the eye. Widening the set does not put stipple anywhere new
+        /// on a normal frame: the far side of the street is untouched because it is far away, not
+        /// because it was left off a list.
+        ///
+        /// ⚠️⚠️ AND THE GROUND IS EXCLUDED IN THE SHADER BY ITS NORMAL, WHICH IS THE ONLY REASON A
+        /// BLANKET RULE IS POSSIBLE AT ALL. The eye sits about 1.25 m up, so the road underfoot is
+        /// INSIDE the band and a naive blanket rule dissolves the floor and shows the skybox
+        /// through it. `NearFade.shader` refuses to fade any surface facing within about 57 degrees
+        /// of straight up. Do not widen this without that guard in place.
+        ///
+        /// ⚠️ THE PREFIXES ARE KEPT RATHER THAN DELETED. They document which props were the
+        /// original complaint, and `NearFadeTests` asserts the two named families still match, so a
+        /// future narrowing that breaks posts fails a test instead of shipping.
+        /// </summary>
         private static bool IsOccluder(string name)
         {
             foreach (string prefix in OccluderPrefixes)
                 if (name.StartsWith(prefix)) return true;
 
-            return false;
+            return MatchAllDressing;
         }
+
+        /// <summary>
+        /// Whether every dressing renderer is treated as an occluder. See <see cref="IsOccluder"/>.
+        /// Set false to fall back to the named prefixes alone, which is the narrow behaviour the
+        /// pass shipped with.
+        /// </summary>
+        public const bool MatchAllDressing = true;
 
         private static Shader FindShader()
         {
@@ -233,7 +285,16 @@ namespace TumbangPreso.Visual
                 // a near-fade material.
                 if (source.shader == shader) continue;
 
-                materials[i] = Build(source, shader);
+                // ⚠️⚠️ A NULL VARIANT MEANS "LEAVE THIS SURFACE ALONE", AND ASSIGNING IT WOULD BE
+                // WORSE THAN ANYTHING IT PREVENTS. `Build` returns null for a material this pass
+                // cannot reproduce, which since the occluder set widened to the whole dressing
+                // includes surfaces that are not lit geometry at all. Writing null into a material
+                // slot does not skip the renderer, it renders it with no material, which Unity
+                // draws as the magenta error shader.
+                var faded = Build(source, shader);
+                if (faded == null) continue;
+
+                materials[i] = faded;
                 touched = true;
             }
 
@@ -258,11 +319,30 @@ namespace TumbangPreso.Visual
                 break;
             }
 
+            // ⚠️⚠️ A SURFACE THIS PASS CANNOT REPRODUCE IS LEFT ALONE, NOT CONVERTED TO WHITE.
+            // While the occluder set was two name prefixes, every material it met was a Standard
+            // post, so an unknown shader meant a genuine gap in `ColourProperties` and a warning
+            // was the right answer. Widening to the whole dressing changed what "unknown" means:
+            // it now includes surfaces that are not lit geometry at all and never should have been
+            // taken. The mountain backdrop is `Unlit/Transparent`, and converting it turned a
+            // painted silhouette into a white rectangle across the sky.
+            //
+            // ⚠️ RETURNING NULL IS THE WHOLE FIX, and the caller must leave the renderer on its own
+            // material. Losing the dissolve on one surface is a small, local cost. Repainting a
+            // surface the wrong colour is a visible defect on every frame, whether or not anybody
+            // is standing near it.
+            //
+            // ⚠️ THE WARNING STAYS, DOWNGRADED TO A LOG, because it is still the thing to read when
+            // a prop that SHOULD dissolve does not. "Skipped, and here is the shader" is actionable;
+            // silence is not.
             if (!colour)
             {
-                Debug.LogWarning($"[NearFade] '{source.shader.name}' has no colour property this " +
-                                 "pass knows, so that surface renders white. Add the name to " +
-                                 "NearFade.ColourProperties.");
+                Debug.Log($"[NearFade] '{source.shader.name}' is not a lit surface this pass can " +
+                          "reproduce, so it keeps its own material and will not dissolve. Add the " +
+                          "name to NearFade.ColourProperties if it should.");
+
+                Object.Destroy(material);
+                return null;
             }
 
             foreach (string property in TextureProperties)
@@ -338,10 +418,20 @@ namespace TumbangPreso.Visual
         /// </summary>
         private static Color Copied(Color stored)
         {
-            if (QualitySettings.activeColorSpace != ColorSpace.Linear) return stored;
-
-            Color srgb = stored.gamma;
-            return new Color(srgb.r, srgb.g, srgb.b, stored.a);
+            // ⚠️⚠️ THE `.gamma` STEP WAS REMOVED, AND WIDENING THE PASS IS WHAT EXPOSED IT. The
+            // reasoning above was inherited from `EnvColourPass.Tinted`, where it is correct and
+            // measured. It does not transfer, because the two are not doing the same thing.
+            // `Tinted` MULTIPLIES in sRGB and hands the product to one conversion, reproducing what
+            // Godot does. This function only COPIES a value from one material to another, and both
+            // sides store it the same way, so there is nothing to undo and the extra conversion
+            // brightens the result instead.
+            //
+            // ⚠️ IT WAS INVISIBLE ON TWELVE BROWN POSTS AND OBVIOUS ON THE WHOLE STREET. With the
+            // occluder set at two name prefixes, the only surfaces going through here were the
+            // posts, and a slightly bright post has no reference to be judged against. The first
+            // frame rendered after widening to 495 renderers showed every facade `EnvColourPass`
+            // had just tinted come back pale, which is the signature of one conversion too many.
+            return stored;
         }
     }
 }
