@@ -171,6 +171,19 @@ namespace TumbangPreso.Visual
         [SerializeField] private Exclusion _exclusion = Exclusion.ToonSurfaces;
         [SerializeField] private LayerMask _excludedLayers;
         [SerializeField, Range(0.0f, 1.0f)] private float _maskStrength = 1.0f;
+        /// <summary>
+        /// Anything narrower than this on its smallest world axis is excluded from the outline.
+        /// See <see cref="IsTooThinToOutline"/> for why dashes are a rasterisation limit rather
+        /// than a tuning failure.
+        ///
+        /// ⚠️ 0.12 m SITS ABOVE THE WIRES AND BELOW EVERYTHING STRUCTURAL. The utility poles this
+        /// pass should still ink measure 0.634 m across (the dither work measured the post's half
+        /// width at 0.317 m off the `.obj` vertices), so they clear this by a factor of five. Cables,
+        /// washing lines and aerials are centimetres. Nothing in the arena sits between the two,
+        /// which is what makes a single threshold safe here rather than lucky.
+        /// </summary>
+        private const float ThinMetres = 0.12f;
+
         [SerializeField] private float _maskDepthTolerance = 0.0008f;
         [SerializeField] private float _rescanSeconds = 1.0f;
 
@@ -393,8 +406,57 @@ namespace TumbangPreso.Visual
                     ? (_excludedLayers.value & (1 << renderer.gameObject.layer)) != 0
                     : IsToonSurface(renderer);
 
+                if (!wanted) wanted = IsTooThinToOutline(renderer);
+
                 if (wanted) _excluded.Add(renderer);
             }
+        }
+
+        /// <summary>
+        /// § WHY THE WIRES CAME OUT AS DASHES, AND WHY NO AMOUNT OF TUNING FIXES IT.
+        ///
+        /// ⚠️⚠️ IT IS RASTERISATION, NOT THE EDGE TEST. This pass finds edges by comparing the
+        /// depth of neighbouring pixels in `_CameraDepthNormalsTexture`, and that buffer is filled
+        /// by rendering the scene once through a replacement shader. Rasterisation is BINARY per
+        /// pixel: a triangle writes to a pixel only when it covers that pixel's centre. An
+        /// overhead wire is a few centimetres thick and tens of metres away, so it is far thinner
+        /// than one pixel, and it covers some pixel centres while missing the ones between them.
+        ///
+        /// So the wire does not exist as a line in the depth buffer at all. It exists as a
+        /// scattering of pixels. The edge detector then does its job perfectly and finds edges
+        /// exactly where the wire landed, which is the choppy dotted look. The outline is
+        /// reporting the depth buffer honestly; the depth buffer is what lost the wire.
+        ///
+        /// ⚠️ AND THAT IS WHY SUPERSAMPLING DID NOT RESCUE IT. Evaluating the edge term at
+        /// sub-pixel positions re-reads the SAME texels in different combinations. A wire absent
+        /// from a pixel is absent from every sub-sample of that pixel. It softens the ends of each
+        /// dash and shortens the gaps; it cannot draw a line through data that was never captured.
+        /// The only real cure is rendering the depth prepass at higher resolution, which means a
+        /// second full rasterisation of roughly 450 renderers on a dressed street, and the whole
+        /// argument for this feature over the 2026-07-29 revert is that it does not do that.
+        ///
+        /// ⚠️⚠️ SO THE THIN THINGS ARE EXCLUDED INSTEAD, AND EXCLUSION IS THE HONEST ANSWER RATHER
+        /// THAN A WORKAROUND. A wire's ink was never going to be a clean line at this resolution.
+        /// Drawing nothing is better than drawing a dotted approximation of one, because the dots
+        /// read as a rendering fault and the absence reads as a choice. The poles the wires hang
+        /// from are thick and keep their outline, so the structure still reads.
+        ///
+        /// ⚠️ MEASURED ON THE SMALLEST BOUNDING AXIS, IN WORLD UNITS, NOT BY NAME. A name list
+        /// would need editing every time a map gained a cable, a washing line or an aerial, and
+        /// would be wrong on the other arena the day it shipped. "Thinner than
+        /// <see cref="ThinMetres"/> on its narrowest axis" is a property of the geometry, so it
+        /// classifies anything a future map adds without being told about it.
+        /// </summary>
+        private static bool IsTooThinToOutline(Renderer renderer)
+        {
+            var size = renderer.bounds.size;
+
+            // ⚠️ THE SMALLEST AXIS, AND ONLY THE SMALLEST. A wire is long and tall and hair-thin;
+            // testing the largest axis or the volume would call it big. What decides whether the
+            // rasteriser can hold on to it is its NARROWEST cross-section.
+            float thinnest = Mathf.Min(size.x, Mathf.Min(size.y, size.z));
+
+            return thinnest > 0.0f && thinnest < ThinMetres;
         }
 
         private static bool IsToonSurface(Renderer renderer)
