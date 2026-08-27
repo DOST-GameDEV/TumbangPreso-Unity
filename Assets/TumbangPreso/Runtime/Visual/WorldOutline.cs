@@ -121,6 +121,47 @@ namespace TumbangPreso.Visual
         [SerializeField, Range(0.0f, 8.0f)] private float _normalSensitivity = 1.6f;
         [SerializeField, Range(0.0f, 1.0f)] private float _normalBias = 0.18f;
 
+        // ------------------------------------------------------------------ § SUPERSAMPLING
+        //
+        // ⚠️⚠️ MSAA CANNOT ANTI-ALIAS THIS PASS, AND THAT WAS MEASURED BEFORE ANY OF THIS WAS
+        // WRITTEN. In play mode on 2026-08-28: quality level Ultra, `QualitySettings.antiAliasing`
+        // 4, `Camera.allowMSAA` true, and a render target requested with four samples really
+        // coming back with four. MSAA is on and it is working. It anti-aliases GEOMETRY during
+        // rasterisation, out of coverage samples taken per triangle, and this outline is painted
+        // by a fragment shader INTO AN IMAGE THAT HAS ALREADY BEEN RESOLVED. There were never any
+        // coverage samples for the ink. So every line it draws is hard-edged by construction,
+        // which is the stair-stepping, and a wire narrower than a pixel is detected at some pixels
+        // and not others, which is the dashing.
+        //
+        // ⚠️⚠️ THE FIX IS TO EVALUATE THE EDGE TERM AT N² SUB-PIXEL POSITIONS AND AVERAGE. That
+        // gives an edge covering half a pixel half-strength ink instead of all or nothing. What it
+        // costs and what it genuinely buys are written out in full in the § SUPERSAMPLING note in
+        // `WorldOutline.shader`; the two lines worth repeating here are:
+        //
+        //   * THE EDGE TERM GAINS RESOLUTION. It is a function of position, so asking it four
+        //     questions instead of one produces five ink levels instead of two.
+        //   * THE DEPTH DATA DOES NOT. `_CameraDepthNormalsTexture` is generated at camera
+        //     resolution and point filtered, so sub-pixel taps re-read the same texels in
+        //     different combinations. Geometry the prepass never rasterised is not recovered. The
+        //     dashed wires get softer and shorter gaps; they do not become solid lines. The only
+        //     thing that would fix them is rendering the prepass itself at 2x, which is a SECOND
+        //     full rasterisation of roughly 450 renderers on Eskinita, and this whole feature's
+        //     claim to being worth retrying after 2026-07-29 is that it costs one scene pass
+        //     rather than 450 extra draws. It was costed and rejected, not overlooked.
+        //
+        // ⚠️ THE DEFAULT IS 2, AND THE NUMBER COMES FROM WHAT THE REST OF THE FRAME ALREADY GETS.
+        // `QualitySettings.antiAliasing` is 4 on Ultra, so geometry edges in this game resolve
+        // from four coverage samples. Two sub-samples per axis is four sub-samples per pixel, so
+        // the ink resolves at the same granularity as the geometry it is drawn beside. Matching it
+        // is the point: ink noticeably coarser than the silhouette under it is what the report was
+        // about, and ink noticeably finer would be paying for a difference nobody can see.
+        //
+        // ⚠️ AND THE COST IS ONE NUMBER: the composite pass goes from 8 texture taps to 4·N² + 4,
+        // so 8 at 1, 20 at 2, 40 at 3. No extra full-screen pass, no extra render target, no extra
+        // memory of any kind. 1 restores the pre-2026-08-28 sampling exactly.
+        [Header("Anti-aliasing")]
+        [SerializeField, Range(1, 3)] private int _supersample = 2;
+
         // A negative value adopts `RenderSettings.fogStartDistance` and `fogEndDistance`.
         [Header("Distance")]
         [SerializeField] private float _fadeStart = -1.0f;
@@ -144,6 +185,20 @@ namespace TumbangPreso.Visual
         {
             _colour = colour;
             _opacity = Mathf.Clamp01(opacity);
+        }
+
+        /// <summary>
+        /// Sub-samples per axis for the edge term, 1 to 3. See the § SUPERSAMPLING note above for
+        /// where the default of 2 comes from and for what it does and does not fix.
+        ///
+        /// ⚠️ CLAMPED ON THE WAY IN AND AGAIN IN THE SHADER. A probe sweeping this looking for the
+        /// point of diminishing returns is exactly the caller that will try 0 or 8, and a zero
+        /// would divide by zero building the sub-sample grid.
+        /// </summary>
+        public int Supersample
+        {
+            get => _supersample;
+            set => _supersample = Mathf.Clamp(value, MinSupersample, MaxSupersample);
         }
 
         public void SetEdge(float thickness, float depthSensitivity, float normalSensitivity)
@@ -176,6 +231,17 @@ namespace TumbangPreso.Visual
         private static readonly int MaskStrengthId = Shader.PropertyToID("_MaskStrength");
         private static readonly int MaskToleranceId = Shader.PropertyToID("_MaskDepthTolerance");
         private static readonly int ViewRayId = Shader.PropertyToID("_ViewRay");
+        private static readonly int SupersampleId = Shader.PropertyToID("_Supersample");
+
+        /// <summary>1 is the pre-2026-08-28 sampling: one evaluation at the pixel centre.</summary>
+        private const int MinSupersample = 1;
+
+        // ⚠️ THE CEILING IS 3 AND IT IS A SHADER LIMIT AS WELL AS A TASTE ONE. The loop in pass 0
+        // carries `[unroll(3)]`, so 3 is what the compiler is told to unroll to; a larger value
+        // would still run, as a rolled loop, at 4·N² + 4 taps. It is capped here because 3 is
+        // already 40 taps for a difference that has to be looked for, and because a knob that can
+        // be dragged to 8 in an inspector will be.
+        private const int MaxSupersample = 3;
 
         /// <summary>Pass 0 in `WorldOutline.shader`. See the note there: blitting without a pass
         /// index runs the mask pass over the whole frame and paints it white.</summary>
@@ -481,6 +547,35 @@ namespace TumbangPreso.Visual
             _bufferAttached = false;
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE MASK STAYS AT CAMERA RESOLUTION, AND THAT IS A DECISION THE SUPERSAMPLING HAD
+        /// TO MAKE RATHER THAN A LINE NOBODY REVISITED.
+        ///
+        /// The obvious way to supersample this pass is to blit the composite into a 2x target and
+        /// downsample. That way is a trap, and this is where it springs: the mask is sized from
+        /// `_camera.pixelWidth/pixelHeight`, so a 2x composite would be reading a 1x mask, and the
+        /// exclusion would slide by half a pixel across the frame. The fix would then be to
+        /// allocate the mask at 2x as well, at four times the memory and four times the clear
+        /// every frame.
+        ///
+        /// ⚠️ SUB-SAMPLING INSIDE THE FRAGMENT AVOIDS THE QUESTION ENTIRELY. Nothing changed
+        /// resolution, so nothing can misalign: the edge taps and the mask taps are read in the
+        /// same normalised UV space, off targets of the same size, through the same
+        /// `UNITY_UV_STARTS_AT_TOP` flip, exactly as they were before.
+        ///
+        /// ⚠️ THE ONE THING THAT DID HAVE TO FOLLOW IS THE DILATION RADIUS, and it is in the
+        /// shader rather than here. The mask is max-sampled at the tap radius to cover the hull's
+        /// ink band, and the supersampled kernel reaches a further `centre/N` of a texel, a quarter
+        /// of a pixel at the default of 2. The shader adds that to the radius. Without it a ring
+        /// that thin around every character would have been outside the mask's reach and inside
+        /// the edge term's, which would have put back the faint second hairline the dilation exists
+        /// to remove, and only at supersample > 1.
+        ///
+        /// ⚠️ RAISING IT IS ALSO WORTH LESS THAN IT LOOKS, which is the other half of why it did
+        /// not happen. The mask is dilated with `max`, so its boundary is hardened again by the
+        /// dilation whatever resolution it was drawn at, and that boundary sits roughly one tap
+        /// radius outside the character, underneath the ink the hull has already drawn there.
+        /// </summary>
         private void EnsureMaskTexture()
         {
             int width = Mathf.Max(1, _camera.pixelWidth);
@@ -617,6 +712,15 @@ namespace TumbangPreso.Visual
             _material.SetFloat(DepthBiasId, _depthBias);
             _material.SetFloat(NormalSensitivityId, _normalSensitivity);
             _material.SetFloat(NormalBiasId, _normalBias);
+
+            // ⚠️ WRITTEN AS A FLOAT, AND THE SHADER ROUNDS IT BACK. A float uniform is the one
+            // kind every graphics API in this project's build set agrees about without a
+            // deprecation or a per-backend caveat, and the value is only ever 1, 2 or 3. The
+            // clamp is repeated here rather than trusted from the `[Range]` attribute, because
+            // the attribute constrains the inspector and does not constrain a value that arrives
+            // from an older serialised scene or from code.
+            _material.SetFloat(SupersampleId,
+                               Mathf.Clamp(_supersample, MinSupersample, MaxSupersample));
 
             ApplyFade();
             ApplyViewRay();
