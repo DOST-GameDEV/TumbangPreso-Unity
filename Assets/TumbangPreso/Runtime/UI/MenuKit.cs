@@ -72,6 +72,76 @@ namespace TumbangPreso.UI
             return canvas;
         }
 
+        /// <summary>
+        /// Gives a slider one hit area covering its whole rect, and returns it.
+        ///
+        /// ⚠️⚠️ THIS IS THE FIX FOR "I CANT CHANGE VOLUME WITH MY MOUSE", AND THE SLIDER WAS
+        /// NEVER RECEIVING A SINGLE POINTER EVENT. `TscnUiImporter.ClearStrayRaycastTargets`
+        /// mutes every graphic that is not the `targetGraphic` of a Selectable ON ITS OWN NODE.
+        /// A Button passes that test, because a Button's targetGraphic is the image beside it on
+        /// the same GameObject. A Slider does not: Unity puts a Slider's Background, Fill and
+        /// Handle on CHILD nodes, so all three were muted, the control was left with no raycast
+        /// target anywhere beneath it, and a press at its centre hit the card behind it. It drew
+        /// correctly, seeded correctly and reported its listener wired, which is why four
+        /// sliders shipped dead and read as "hardcoded".
+        ///
+        /// ⚠️ THE HIT AREA IS THE WHOLE CONTROL, NOT THE GROOVE. The converted groove is a
+        /// 14 px band centred in a 34 px row, so restoring the Background alone would have given
+        /// the player a 14 px tall target to hit; a settings row is aimed at with a mouse in one
+        /// pass and the rest of the row must count. It is a fully transparent Image: alpha plays
+        /// no part in a graphic raycast (`Image.alphaHitTestMinimumThreshold` is 0 by default),
+        /// so an invisible one takes the press and the Slider's own handler does the rest.
+        ///
+        /// ⚠️ FIRST SIBLING, so the artwork still draws over it, and no visual changes at all.
+        ///
+        /// ⚠️ AND IT IS IDEMPOTENT. This runs every time a panel wires itself, and a panel
+        /// that is closed and reopened must not grow a new pad each time.
+        /// </summary>
+        public static Graphic EnsureHitArea(Slider slider)
+        {
+            if (slider == null) return null;
+
+            // A graphic already on the slider's own node is the hit area by construction: the
+            // importer keeps that one, because it is the one node the raycast sweep can see.
+            var own = slider.GetComponent<Graphic>();
+
+            if (own != null)
+            {
+                own.raycastTarget = true;
+                return own;
+            }
+
+            var existing = slider.transform.Find(HitAreaName);
+
+            var go = existing != null
+                ? existing.gameObject
+                : new GameObject(HitAreaName, typeof(RectTransform));
+
+            if (existing == null)
+            {
+                go.transform.SetParent(slider.transform, false);
+                go.transform.SetAsFirstSibling();
+            }
+
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+
+            var pad = go.GetComponent<Image>();
+            if (pad == null) pad = go.AddComponent<Image>();
+
+            pad.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+            pad.raycastTarget = true;
+
+            return pad;
+        }
+
+        /// <summary>The name <see cref="EnsureHitArea"/> parks its pad under, so a reopened
+        /// panel finds the one it made last time instead of stacking another.</summary>
+        public const string HitAreaName = "HitArea";
+
         public static Image Backdrop(Transform parent, Color color)
         {
             var go = new GameObject("Backdrop");

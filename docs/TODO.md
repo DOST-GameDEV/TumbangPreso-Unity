@@ -4048,6 +4048,326 @@ Two things were wrong and both are fixed:
 
 ---
 
+## 44 · § 32.3's slider fix was muted by the sweep on the next line ✅ CLOSED 2026-08-27
+
+⚠⚠ **§ 32.3 IS TICKED AND THE SLIDERS WERE STILL DEAD, AND THE REASON IS WORTH MORE THAN THE
+BUG.** That entry is right about the cause and its fix is the right fix: `BuildSlider` gives the
+Slider's root a full-rect transparent raycast target. **`ClearStrayRaycastTargets` then turned it
+off, on the same import run, a few milliseconds later.** The sweep kept a graphic only when it
+WAS a Selectable's `targetGraphic`; the pad is on the slider's own node, so the question found
+the Slider and the answer was the Handle.
+
+**The evidence is in the regenerated asset.** `SettingsPanel.prefab` was reconverted with the pad
+in place and shipped **4 live raycast targets against 54 muted** — the same four Buttons as
+before the fix. Four pads made, four pads muted.
+
+⚠ **A ticked entry whose fix is cancelled downstream is worse than an open one**, because the
+next person reads it as done. This entry finishes it.
+
+The report that reopened it: the settings sliders are "hardcoded and broken", and the volume
+cannot be changed with the mouse. All four of them, on both the title screen's panel and the
+pause overlay, which instances the same converted panel.
+
+**They were not hardcoded and their listeners were wired.** They were receiving no pointer event
+at all, so a press at the centre of a volume row went through the slider and landed on the card
+behind it.
+
+### 44.1 The cause: one sweep that can only see a hit area on the control's own node
+
+`TscnUiImporter.ClearStrayRaycastTargets` inverts Unity's default and mutes every graphic that is
+not the `targetGraphic` of a Selectable, because a converted Godot scene is wall to wall
+`mouse_filter = 2` decoration and Unity's default is "eat every click". It decided that per
+graphic, by asking `graphic.GetComponent<Selectable>()`.
+
+⚠⚠ **That question only has the right answer when the hit area sits on the control's OWN node.**
+A Button passes: its `targetGraphic` is the Image beside it on the same GameObject. **A Slider
+does not.** Unity puts a Slider's Background, Fill and Handle on CHILD nodes, so all three
+answered "no Selectable here" and all three were muted. `SettingsPanel.prefab` shipped with **50
+graphics at `m_RaycastTarget: 0` against 4 at 1**, and every one of the four live ones is a
+Button.
+
+The sweep now collects the live set from the Selectables instead: each one's `targetGraphic`
+wherever it lives, plus the graphic on its own node.
+
+### 44.2 The hit area is the whole row, not the groove
+
+`BuildSlider` lays a transparent Image over the slider's own node, and `MenuKit.EnsureHitArea`
+does the same at runtime for the panels that are already committed as prefabs. Both are the
+control's full rect on purpose: the converted groove is a **14 px band centred in a 34 px row**,
+so restoring the Background alone would have handed the player a 14 px tall target. Alpha plays
+no part in a graphic raycast, so nothing about the drawing changes.
+
+⚠️ **The runtime repair is not belt and braces.** The converted panels are committed assets; a
+player running the shipped build never re-runs the importer, so the importer fix alone would have
+changed nothing until somebody reconverted the scenes.
+
+### 44.3 The second defect on the same row: a window resize per drag frame
+
+Every slider's callback called `SettingsStore.Current.Apply()`, and `GameSettings.Apply` is
+`ApplyDisplay` plus the AI difficulty. **`ApplyDisplay` is a `Screen.SetResolution`**, so dragging
+one volume slider across its groove fired a window resize on every frame of the drag. No slider on
+this panel feeds either system: the three volumes are read live off the store by the music bed,
+the announcer and the SFX bus, and the sensitivity is read live by `CameraRig` and
+`SpectatorCamera`. The call is gone.
+
+### 44.4 Why nothing caught it
+
+`UiClickProbe` is the only check in the project that can see this class of bug, and its comment
+said in as many words that it enumerated Buttons and Dropdowns alone and that sliders should be
+swept in **deliberately, not by accident.** It is widened to Sliders now, which is the regression
+test: it scrolls each one into view, raycasts its centre, and fails if the topmost hit is not the
+control or one of its own children.
+
+---
+
+## 45 · The in-match HUD had five ambient sines, three copies of "LATA DOWN" and twelve coloured cells
+
+🧑, 2026-08-27, off two gameplay frames of Ilalim ng Tulay in Hero Strike:
+
+> *"theres pulsing shit that feels weird to look at and unnecessary (huds and ui for the actual
+> game)"*
+>
+> *"repetitive lata down and theres too many animations happpening on screen (for the huds as
+> well as text) it can feel overstimulating TOO many diff colored shits for text too, try to
+> simplify hud and ui while playing but still let it show essential things like penalties,
+> score"*
+
+He also asked, of Nemu's deck tile: *"why does nemu have 2 charges if its just recast? should
+just show 1"*.
+
+### 45.1 What was actually moving, counted
+
+Every one of these ran off `Mathf.Sin(Time.unscaledTime * k)` and none of them was an event: they
+were **states drawn as motion**, so on a live round several were going at once, at different
+frequencies, out of phase with each other.
+
+| Widget | Rate | Amplitude | How much of a round it ran for |
+|---|---|---|---|
+| Timer card | 3 / 5 / 8 rad/s | 2.5 / 6.5 / 12 % | the last **30 s of 90**, always |
+| Pressure line under it | 6 rad/s | 5.5 % | the last 15 s, always |
+| Lata card | 7 rad/s | 10 % | every second the can is down |
+| Lata alert, centre screen | 8 rad/s | 9 % | every second the can is down |
+| Status stack row | 10 rad/s | 3.5 % | the last quarter of every timed effect |
+| Active skill rim | 7 rad/s | colour, 35 % toward white | the whole duration of the power |
+| Ultimate-ready rim | 4.5 rad/s | colour, 55 % toward white | every second it is up and unspent |
+
+Seven, and the deck's own comment claimed the ultimate breath was *"the only continuous motion
+the deck is allowed"*. It had not been that for a long time.
+
+**All seven are gone.** What is left on the in-match HUD is exactly three motions, and every one
+of them fires on an EDGE and returns to rest:
+
+- `ApplyPop`, 0.18 s, when a skill or the ultimate comes back up.
+- The score-row punch, 0.34 s, on a swing of 20 points or more.
+- The pip-grant flash, 0.45 s, when a charge is handed back by `Recharge`.
+
+⚠⚠ **The rule this settles: an EVENT gets the motion, a STATE gets a colour.** Anything that
+is true for tens of seconds at a time may not move, however gently, because the player cannot
+look away from the screen it is drawn on.
+
+⚠️ **Every removal PINS the transform rather than skipping the assignment.** Timer card, lata
+card, lata alert, pressure line and status rows are all built once and reused, so one left
+mid-sine would keep that scale for the rest of the match.
+
+### 45.2 "LATA DOWN" was on screen up to FOUR times at once
+
+The card title (as `⚠  LATA DOWN  ⚠`), the centre-screen alert (`LATA DOWN  ·  RETRIEVE NOW`),
+a 1.6 s toast fired from `MatchInstaller` on the same edge (`LATA DOWN  ·  RETRIEVE NOW` again),
+and the crosshair while a slipper was charging (`LATA DOWN\nHOLDING CHARGE`). Two of the four
+were animated, and all four sat within one glance of each other.
+
+⚠⚠ **The fourth was only found by PHOTOGRAPHING a live round, not by reading the HUD.** Three
+of them live in `Hud.cs` and were obvious side by side in one file; the toast is registered in
+`MatchInstaller.InstallHudSignals` and reads as an unremarkable event announcement until you see
+it land on top of the other three. `GameplayShots.ALiveRoundIsPhotographed` is what showed it.
+
+Split by sentence now, one surface each:
+
+- **Card**: the state. `LATA DOWN`, no glyphs.
+- **Alert**: the action only. `RESET IT NOW` / `RETRIEVE NOW`.
+- **Crosshair**: the throw. `HOLDING CHARGE`, which is the one thing neither of the others knows.
+- **Toast**: nothing. The 0.45 s `SetDownedFlash` on the same edge and the alert appearing are
+  the event; the words had three homes already. `LATA IS BACK UP` is kept, because when the can
+  comes up the card goes quiet and the alert vanishes, and a thing disappearing does not announce
+  itself.
+
+⚠️ **A FIFTH instance survives on purpose and is worth a decision.** `ComicPopup` throws a
+world-space "LATA DOWN!" above the can on the same edge, visible in
+`Logs/shots-play/round-eyes.png`. It is kept because 🧑 said *"the abilities and other effects
+are okay"* and because unlike the four HUD surfaces it is anchored to WHERE the can is, which is
+information none of the others carry. **If the words still feel repetitive in play, this is the
+one left to cut**, at `Lata.cs:262` where the popup string is chosen, rather than in the
+HUD.
+
+The pressure line lost its two earlier bands the same way: `PRESSURE BUILDING` at 30 s and
+`FINAL PUSH · ...` at 15 s said nothing the clock beside them did not, and rewrote themselves
+twice on the way down. One string, in the last ten seconds, that does not change while it is up.
+
+### 45.3 Twelve coloured cells became four
+
+The scoreboard painted **name, role word and score** of every row in that seat's role colour, so
+a four-seat board put up to three saturated hues across twelve pieces of text in one corner. The
+role colour is now spent on the **role word only**, which is the one cell where the colour is the
+content; the rail and the row plate underneath are untouched and still carry the role at a
+distance. Name and score are Cream on your own row and CreamMuted on the other three, so "which
+one am I" is carried by weight rather than by a second hue.
+
+Classic's deck lost the same class of thing: the Street Hype title swapped hue at tier 3 and the
+fill LERPED orange to yellow across its range, both changing continuously while hype drains. The
+tier NAME is in the same string and the bar's length is the number; neither needed a colour.
+
+### 45.4 Nemu's pips read as "the second one is the way home"
+
+Astral Projection is one press out and one press back, and the tile says `RECAST` for the whole
+six seconds it is out. The two charge dots above it were answering a different question at the
+same moment ("you get two of these a round"), and the two readings collided.
+
+**`PaintCharges` now hides the pip row while `skill.IsActive && skill.CanReactivate`.** Gated on
+`CanReactivate`, not on a hero id, so any future ability with a return press gets it for free.
+
+⚠⚠ **`MaxCharges` IS UNTOUCHED AT 2, AND 🧑 CONFIRMED THAT IS WHAT HE MEANT.** Asked on
+2026-08-27 whether the ask was the readout or the number, he answered **the display**. Every
+other hero's charge skill carries 2 (`CheskaHeroKit` skill1, `DanteHeroKit`, `PhaisterHeroKit`,
+`SeanHeroKit`, `ZackHeroKit`), and the free reactivation means Nemu's 2 buys two round trips
+rather than two casts, which is the same shape as the rest of the roster.
+
+⚠️ **So do not "fix" this later by cutting her to 1.** The confusion was two readings colliding
+in one tile, and the tile is what changed.
+
+### 45.5 What was deliberately kept
+
+Penalties, the score board, the round line, the clock and its colour bands, the status stack with
+its draining bars and tenths, the crosshair, the ability deck's three states, the ultimate's
+notched meter, the toast and the countdown. 🧑 asked for *"still let it show essential things
+like penalties, score"* and nothing in that list lost a fact; what came out was repetition,
+motion and hue, not information.
+
+In-world ability effects are **not** touched: *"the abilities and other effects are okay"*.
+`GroundReticle`'s aim breath stays.
+
+### 45.6 Verified
+
+Core **69/69**, EditMode **124/124**, PlayMode **66/66** (`!WallClock`), and `Checks.RunAll`.
+Fresh gameplay frames in `Logs/shots-play/` from `GameplayShots.ALiveRoundIsPhotographed`, copied
+versioned to `Logs/shots-hud/hud_calm_round_v2.png` and `hud_calm_taya_v2.png`. The v1 pair from
+the run BEFORE the toast fix is what showed the fourth "LATA DOWN"; the v2 pair is one alert, one
+card, one in-world popup.
+
+⚠⚠ **`Checks.RunAll` comes back FAILED on `headless` and `audio cues`, and both are § 21's,
+not this work's.** `HeadlessCheck` asserts `HeroPeople.Count == 5` and `AllPeople.Count == 17`
+against a roster that gained Phaister, and `AudioCueCheck` reports `PhaisterHeroKit` firing
+`sfx_ghost_appear`, which § 21 already records as arriving with no file and no registration.
+Neither reads a file this change touches. `ArenaCheck`, `MapGeometryCheck` and `SceneScriptCheck`
+are all OK.
+
+⚠️ **The first `RunAll` launch of the session came back exit 1 with a 2 KB log and no checks
+run at all**, because a previous Unity was still holding the project lock. That is § 7's
+lockfile trap and it looks exactly like a broken install. The second launch, after the processes
+had gone, ran everything.
+
+**Done looks like:** a gameplay frame where nothing is moving unless something just happened.
+
+---
+
+## 46 · Both intermission banners were drawn on top of something ✅ CLOSED 2026-08-27
+
+Reported off a Hero Strike frame of Ilalim ng Tulay: raise the practice line, lower the "open a
+gap with your powers" line because it covers things, and make that one go away after five to ten
+seconds because it is annoying.
+
+**All three are one fault repeated: the two banners were positioned against the screen edges
+rather than against what is already parked at those edges.** The arithmetic, because it is not
+close in either case.
+
+### 46.1 The practice line was inside the ability deck
+
+Both decks are bottom-anchored with a bottom pivot. The hero row spans **y 14 to 92**
+(`DeckBottomMargin` + `DeckHeight`); the Classic row spans **24 to 124**. `ReadyPromptPlate` was
+pinned at 92, so it drew from **92 to 126**: flush against the top edge of the hero deck, and
+**32 of its 34 px inside the Classic one**. `InspectHint` at 78 was fully buried by both, which
+means the one line in the game that names the inspect key has never been legible in Classic.
+
+They are stacked upward off the taller deck now, so one set of numbers is right in both modes:
+Classic's 124 is the floor, the hint takes 132 to 150, the prompt plate 156 to 190.
+
+### 46.2 The objective line was in the LATA DOWN band
+
+`ReadyObjective` at -206 with a top pivot spanned **206 to 244**. `LataDownAlert` is at -228 and
+70 tall, so it owns **228 to 298**, and `ToastLabel` owns 160 to 204. Three transient banners
+sharing one 140 px strip at the top of the frame. The objective moved to **-308**, which is 10 px
+of daylight below where LATA DOWN ends, still in the top third and nowhere near the countdown.
+
+### 46.3 It now retires itself after 7 seconds
+
+`Hud.ObjectiveVisibleSeconds`. The window is reset on the false-to-true edge of
+`ReadyGate.ReadyPromptChanged`, which fires once per phase transition rather than per frame, so
+the line gets its full seven seconds every time the gate opens.
+
+⚠ **The practice prompt deliberately does NOT expire with it.** "Press [R] when ready" is
+the only way out of the practice window, and a player who spends a minute in there must still be
+able to find the key. The coaching goes, the instruction stays.
+
+⚠ **The tick is its own method rather than a call back into `RefreshObjective`.** That
+method calls `GodotTheme.Box`, which allocates a sprite. `CLAUDE.md` § 7.1 records a HUD string
+rebuilt every frame costing the probe an eighth of its frames, and a sprite is worse than a
+string. `UpdateReadyObjective` flips two `enabled` flags.
+
+### 46.4 Found while measuring this, NOT fixed: "YOU ARE VULNERABLE" is behind the deck too
+
+`VulnerableWarning` is placed at y 84 and is 40 tall, so it draws from **84 to 124**. That is
+inside the hero deck (14 to 92) by 8 px and inside the Classic deck (24 to 124) **completely**.
+The one line that means "you are about to lose five seconds" is painted over by the Classic
+deck's wooden plate for its whole life.
+
+It is left alone here because it was not reported and because it is not obvious where it should
+go instead: 46.1 has just filled 132 to 190 with the practice stack, and the two are never on
+screen together, so it could take the same band. Done looks like the warning legible at both deck
+heights, with the numbers written down the way 46.1's are.
+
+---
+
+## 47 · `Checks.RunAll` has been red since the Phaister merge, in two places
+
+Found while verifying § 24 against `67f88aa`, which is the tip of `feat/ilalim-ng-tulay-map`.
+**Neither of these is caused by anything in § 24 and neither is fixed there**, because a HUD
+placement branch is the wrong place for a roster constant and a sound file. Both are two-line
+jobs for whoever picks them up.
+
+⚠⚠ **The point is not the two bugs, it is that the project's one-launch verification command
+has been failing and the failure has been carried.** `RunAll` prints
+`RESULT: FAILED. headless, audio cues.` at the end of every pass, so the next person to run it
+learns nothing from a red result.
+
+### 47.1 `HeadlessCheck` still counts five heroes
+
+`Assets/TumbangPreso/Editor/HeadlessCheck.cs:50-51` asserts `Roster.HeroPeople.Count == 5` and
+`Roster.AllPeople.Count == 17`. Phaister made them **6 and 18** (`Roster.cs:95` and `:109`), so
+both lines fail on every run.
+
+§ 21.1 item 3 caught exactly this in the EditMode suite and updated
+`GameMode_Rosters_AreDistinctAndCorrectSizes` to six, **and this second copy of the same
+assertion was missed.** § 21 also notes the docs still enumerate five heroes; that is prose, this
+is a red check.
+
+Done looks like: 5 becomes 6 and 17 becomes 18, left as typed literals rather than derived from
+`Roster` — § 21.1 already recorded the reasoning, which is that a hero appearing or disappearing
+is a product decision and should have to be typed.
+
+### 47.2 Phaister fires a cue that does not exist
+
+`AudioCueCheck`: *"UNDECLARED: PhaisterHeroKit.cs fires 'sfx_ghost_appear', which is in no cue
+list, so it plays silence."* 69 files on disk, 75 live cues declared, and this one reaches
+neither.
+
+⚠ **This is § 20 again, one hero later.** § 20 is "Cheska's kit played the wrong sounds, and
+every zone died in silence". The sixth kit arrived with the same class of hole, which suggests
+the check is doing its job and the merge checklist is not.
+
+Done looks like: either the cue is declared and a file exists for it, or the call site is changed
+to a cue that does. Whichever it is, `RunAll` comes back OK for audio.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

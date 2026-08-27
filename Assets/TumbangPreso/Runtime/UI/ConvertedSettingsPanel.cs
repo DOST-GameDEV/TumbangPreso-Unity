@@ -653,6 +653,13 @@ namespace TumbangPreso.UI
             var slider = t.GetComponent<Slider>();
             if (slider == null) return;
 
+            // ⚠⚠ WITHOUT THIS THE ROW IS DECORATION. The converted slider reaches us with every
+            // graphic under it muted, so it takes no pointer event at all. See
+            // MenuKit.EnsureHitArea for the whole story; it is repaired here rather than only in
+            // the importer because the converted prefabs are committed assets and a player
+            // running the shipped build never re-runs the converter.
+            MenuKit.EnsureHitArea(slider);
+
             slider.SetValueWithoutNotify(seed);
             SetText(labelNode, format(seed));
 
@@ -661,7 +668,14 @@ namespace TumbangPreso.UI
                 setter(v);
                 SetText(labelNode, format(v));
 
-                SettingsStore.Current.Apply();
+                // ⚠⚠ NO `Apply()` HERE, AND IT USED TO BE CALLED ON EVERY VALUE CHANGE.
+                // `GameSettings.Apply` is ApplyDisplay plus the AI difficulty, and ApplyDisplay
+                // is a `Screen.SetResolution`: dragging one volume slider across its groove fired
+                // a window resize on every frame of the drag, which stalls the drag it is
+                // reacting to. No slider on this panel feeds either system. The volumes are read
+                // live off the store by the music bed, the announcer and the SFX bus, and the
+                // sensitivity is read live by the camera, which is what makes a drag audible and
+                // visible immediately without pushing anything anywhere.
                 if (preview) MenuSfx.Click();
 
                 RefreshApplyState();
