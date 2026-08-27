@@ -5045,6 +5045,82 @@ verified at the seams; **the four-way lobby itself still wants a human on two ma
 
 ---
 
+## 53 · The corner stamp is the branch name ✅ CLOSED 2026-08-27
+
+🧑, 2026-08-27: *"for every branch made it would replace the version number on the bottom
+right corner with the branch name instead"*.
+
+⚠⚠ **THE LABEL EXISTS TO ANSWER "IS THIS THE BUILD I ASKED FOR", AND A VERSION NUMBER HAD
+STOPPED ANSWERING IT.** `bundleVersion` is bumped per change rather than per branch, so several
+branches in flight at once all read `v4.72` and the only way to tell which .exe was on the Desktop
+was to diff files. That is the same failure `GameVersion`'s own header records from the PGH project
+one level up: there the stale build was four days old, here it is the wrong branch entirely, and
+section 7 of `CLAUDE.md` already carries two separate incidents of a build being judged by the
+wrong evidence.
+
+**`main` keeps the number, and that is the rule rather than an exception to it.** A branch name
+means "work in flight"; a build off `main` is the game, and the number on it is what goes into a
+screenshot to a sponsor, which is what the stamp was for in the first place.
+
+### 53.1 How it works, and why none of it is a step anybody runs
+
+`GameBuilder.StampBuildBranch` writes the checked-out branch to
+`Assets/TumbangPreso/Resources/BuildBranch.txt` on **every** build, because a player has no git.
+`BuildBranch` reads it, `GameVersion.DisplayString` picks between the name and the number, and both
+corner labels, the HUD's code-built one and the `VersionStamp` baked into every converted menu
+scene, go through the one `GameVersion.ApplyTo`.
+
+⚠️ **In the editor git is read live and the file is ignored**, because a stamp left over from
+the last build is precisely the stale thing this is meant to prevent.
+
+⚠️ **The file is written even when the name is empty.** A build off `main` or a detached HEAD
+OVERWRITES the previous branch's stamp rather than inheriting it. Empty and missing both mean
+"show the version"; only one of them can be left lying around from three branches ago.
+
+⚠️ **It is gitignored.** It changes per build and per branch, so committing it is a one-line
+diff per build and a conflict per merge, over a file whose whole job is to be regenerated.
+
+### 53.2 ⚠⚠ EVERY SESSION HERE RUNS IN A WORKTREE, WHERE `.git` IS A FILE
+
+The naive `repoRoot/.git/HEAD` does not exist in a linked worktree: `.git` is a file reading
+`gitdir: <path>`, and the real HEAD is under it. A reader that does not follow the pointer reports
+"no git" on exactly the checkouts this stamp is for. `BuildBranch.GitDirFromPointer` follows it,
+absolute or relative, and `AWorktreePointerIsFollowedToTheRealGitDirectory` asserts both forms.
+
+⚠️ **And the whole ref path after `refs/heads/` is the name, slashes included.** Taking the last
+segment would print `hud-calm-down` for a branch that could equally have been `fix/hud-calm-down`
+or `claude/hud-calm-down`, which is the one thing this label exists to disambiguate. A detached
+HEAD is not a branch and falls back to the number rather than printing a sha.
+
+### 53.3 ⚠⚠ THE BRANCH NAME MUST NEVER REACH THE WIRE
+
+`Application.version` still carries the real version into the LAN beacon payload, the online lobby
+record and the connection-approval hello, and **those are compared between peers**: a name there
+would refuse two players built from the same commit on different branches, which is the exact
+failure `NetSession.ProtocolVersion`'s note describes as much worse than a clear mismatch.
+`BuildBranch` is the LABEL and nothing else. `TheBranchNameNeverReachesTheVersionTheWireCompares`
+asserts the separation so a later tidy-up cannot merge the two.
+
+### 53.4 ⚠️ THE BOX WAS SIZED FOR "v4.72" AND WOULD HAVE WRAPPED SILENTLY
+
+The authored rect is 132 px. `claude/multiplayer-lobby-switching-bugs-d1546c` is three times that,
+and legacy `Text` defaults to **Wrap**, so the overflow is invisible: the name folds onto a second
+line inside a 22 px box and the half you can read is the wrong half. `ApplyTo` switches to Overflow
+and widens to 440 px, growing leftward from a bottom-right pivot so a short string still sits in
+the same corner. **Third time an authored label in this project has been handed a longer string
+than its author measured**; `ConvertedScreen.SetHeadline` carries the other two.
+
+### 53.5 What was measured
+
+91 core, **156 EditMode** (four new: the two parsers, the detached-HEAD case, and the wire
+separation), **68 PlayMode**, all five editor checks, and the three audits unchanged at 44/0, 42/0
+and 0 ungated. ⚠️ **And it was photographed rather than described**: `UiRuntimeShots` captures
+`Logs/shots-runtime/branch_stamp_mainmenu_v1.png` (a converted menu, the `VersionStamp` path) and
+`branch_stamp_hud_v1.png` (a live match, the `AttachTo` path), both reading
+`fix/multiplayer-fpp-camera-inside-head` in the corner.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**
