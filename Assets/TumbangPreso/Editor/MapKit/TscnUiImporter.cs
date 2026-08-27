@@ -548,25 +548,40 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             int cleared = 0, kept = 0;
 
-            foreach (var graphic in root.GetComponentsInChildren<Graphic>(includeInactive: true))
-            {
-                // A Selectable receives through its own targetGraphic. Anything else on the
-                // control — its label, its icon, its shadow — must not.
-                var selectable = graphic.GetComponent<Selectable>();
+            // ⚠⚠ THE LIVE SET IS COLLECTED FROM THE SELECTABLES FIRST, AND IT USED TO BE
+            // DECIDED PER GRAPHIC BY ASKING `graphic.GetComponent<Selectable>()`. That question
+            // only has the right answer when a control's hit area sits on the control's OWN
+            // node, which is true of a Button and false of a Slider: Unity puts a Slider's
+            // Background, Fill and Handle on CHILD nodes, so every one of them answered "no
+            // Selectable here", every one was muted, and the four settings sliders shipped with
+            // no raycast target anywhere beneath them. They drew, they seeded, they wired their
+            // listener, and a press at their centre went straight through to the card behind.
+            // Walk the Selectables and ask what each one receives through instead.
+            var live = new HashSet<Graphic>();
 
-                if (selectable != null && selectable.targetGraphic == graphic)
-                {
-                    graphic.raycastTarget = true;
-                    kept++;
-                    continue;
-                }
+            foreach (var selectable in root.GetComponentsInChildren<Selectable>(includeInactive: true))
+            {
+                var own = selectable.GetComponent<Graphic>();
 
                 // ⚠️ A Selectable WITH NO targetGraphic STILL NEEDS ONE HIT AREA, or the control
                 // converts, skins, wires its listener and is simply not clickable. Give it the
                 // graphic on its own node rather than leaving it dead.
-                if (selectable != null && selectable.targetGraphic == null)
+                if (selectable.targetGraphic == null) selectable.targetGraphic = own;
+
+                if (selectable.targetGraphic != null) live.Add(selectable.targetGraphic);
+
+                // ⚠️ AND THE GRAPHIC ON THE CONTROL'S OWN NODE IS KEPT WHETHER OR NOT IT IS THE
+                // targetGraphic. For a Slider that graphic is the transparent pad `BuildSlider`
+                // lays over the whole row, which is the hit area; the targetGraphic stays the
+                // Handle, because that is the part that has a pressed colour.
+                if (own != null) live.Add(own);
+            }
+
+            foreach (var graphic in root.GetComponentsInChildren<Graphic>(includeInactive: true))
+            {
+                // Anything else on a control — its label, its icon, its shadow — must not receive.
+                if (live.Contains(graphic))
                 {
-                    selectable.targetGraphic = graphic;
                     graphic.raycastTarget = true;
                     kept++;
                     continue;
@@ -1236,6 +1251,17 @@ namespace TumbangPreso.EditorTools.MapKit
         private static void BuildSlider(GameObject go, TscnUi.NodeDef n)
         {
             var slider = go.AddComponent<Slider>();
+
+            // ⚠⚠ THE HIT AREA IS THE WHOLE ROW, AND IT IS A GRAPHIC ON THE SLIDER'S OWN NODE
+            // ON PURPOSE. `ClearStrayRaycastTargets` can only keep what it can attribute to a
+            // control, and the one node it can always attribute is the control's own. Leaning on
+            // the Background instead would also hand the player a 14 px tall target inside a
+            // 34 px row, because the groove is a centred band rather than the full control.
+            // Transparent, so nothing about the drawing changes: alpha plays no part in a
+            // graphic raycast.
+            var pad = go.AddComponent<Image>();
+            pad.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+            pad.raycastTarget = true;
 
             var bgGo = new GameObject("Background");
             bgGo.AddComponent<RectTransform>();

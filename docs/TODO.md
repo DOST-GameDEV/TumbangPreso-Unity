@@ -1462,6 +1462,64 @@ cent blown against the 12 per cent gate, and the worst frame unchanged at 4.1.
 
 ---
 
+## 22 · Every settings slider took no pointer event at all ✅ CLOSED 2026-08-27
+
+**The report: the settings sliders are "hardcoded and broken", and the volume cannot be changed
+with the mouse.** All four of them, on both the title screen's panel and the pause overlay, which
+instances the same converted panel.
+
+**They were not hardcoded and their listeners were wired.** They were receiving no pointer event
+at all, so a press at the centre of a volume row went through the slider and landed on the card
+behind it.
+
+### 22.1 The cause: one sweep that can only see a hit area on the control's own node
+
+`TscnUiImporter.ClearStrayRaycastTargets` inverts Unity's default and mutes every graphic that is
+not the `targetGraphic` of a Selectable, because a converted Godot scene is wall to wall
+`mouse_filter = 2` decoration and Unity's default is "eat every click". It decided that per
+graphic, by asking `graphic.GetComponent<Selectable>()`.
+
+⚠⚠ **That question only has the right answer when the hit area sits on the control's OWN node.**
+A Button passes: its `targetGraphic` is the Image beside it on the same GameObject. **A Slider
+does not.** Unity puts a Slider's Background, Fill and Handle on CHILD nodes, so all three
+answered "no Selectable here" and all three were muted. `SettingsPanel.prefab` shipped with **50
+graphics at `m_RaycastTarget: 0` against 4 at 1**, and every one of the four live ones is a
+Button.
+
+The sweep now collects the live set from the Selectables instead: each one's `targetGraphic`
+wherever it lives, plus the graphic on its own node.
+
+### 22.2 The hit area is the whole row, not the groove
+
+`BuildSlider` lays a transparent Image over the slider's own node, and `MenuKit.EnsureHitArea`
+does the same at runtime for the panels that are already committed as prefabs. Both are the
+control's full rect on purpose: the converted groove is a **14 px band centred in a 34 px row**,
+so restoring the Background alone would have handed the player a 14 px tall target. Alpha plays
+no part in a graphic raycast, so nothing about the drawing changes.
+
+⚠️ **The runtime repair is not belt and braces.** The converted panels are committed assets; a
+player running the shipped build never re-runs the importer, so the importer fix alone would have
+changed nothing until somebody reconverted the scenes.
+
+### 22.3 The second defect on the same row: a window resize per drag frame
+
+Every slider's callback called `SettingsStore.Current.Apply()`, and `GameSettings.Apply` is
+`ApplyDisplay` plus the AI difficulty. **`ApplyDisplay` is a `Screen.SetResolution`**, so dragging
+one volume slider across its groove fired a window resize on every frame of the drag. No slider on
+this panel feeds either system: the three volumes are read live off the store by the music bed,
+the announcer and the SFX bus, and the sensitivity is read live by `CameraRig` and
+`SpectatorCamera`. The call is gone.
+
+### 22.4 Why nothing caught it
+
+`UiClickProbe` is the only check in the project that can see this class of bug, and its comment
+said in as many words that it enumerated Buttons and Dropdowns alone and that sliders should be
+swept in **deliberately, not by accident.** It is widened to Sliders now, which is the regression
+test: it scrolls each one into view, raycasts its centre, and fails if the topmost hit is not the
+control or one of its own children.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**
