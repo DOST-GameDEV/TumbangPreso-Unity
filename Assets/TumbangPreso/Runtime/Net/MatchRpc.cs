@@ -34,7 +34,30 @@ namespace TumbangPreso.Net
 
         private NetworkManager _nm;
         private readonly LobbySeatInfo[] _replicatedSeats = new LobbySeatInfo[Balance.PlayerCount];
-        private bool _handlersRegistered;
+        /// <summary>
+        /// The messaging manager these handlers are registered ON, not merely whether they once
+        /// were.
+        ///
+        /// ⚠️⚠️ A BOOL HERE MEANT THE GAME COULD BE JOINED EXACTLY ONCE PER LAUNCH.
+        /// `NetworkManager.Shutdown` DESTROYS its `CustomMessagingManager`, and `StartClient`
+        /// builds a new one. Every handler registered on the old instance dies with it, but the
+        /// flag saying "registered" survived, so `RegisterHandlers` returned early on the second
+        /// session and this router registered **nothing at all**. A client would connect, be
+        /// seated by `NetSession`'s own low-level message, and then hear no `Seating`, no
+        /// `SyncWorld`, no `StartMatch` and no `SyncUnit` for the rest of the process.
+        ///
+        /// 🧑 2026-08-28, and it is as exact a description of a process-lifetime flag as anybody
+        /// could write: *"so i was able to start a game when i first opened and i could join as
+        /// non host"*, *"afterwards i couldnt"*, *"i could only join a game again after
+        /// restart"*.
+        ///
+        /// ⚠️ COMPARING THE INSTANCE IS SELF-HEALING, WHICH A RESET CALL WOULD NOT BE. Clearing a
+        /// flag from `Stop` works only while every teardown path remembers to call it, and
+        /// remembering is what failed here: `OnDestroy` unregisters, `Stop` did not, and NGO can
+        /// replace the manager without either being involved. Asking "is this the manager I
+        /// registered on" cannot be forgotten by a future caller.
+        /// </summary>
+        private Unity.Netcode.CustomMessagingManager _handlersOn;
         private bool _snapshotRequestStarted;
         private float _matchSyncLeft;
         private readonly Dictionary<int, double> _lastAcceptedMoveAt = new Dictionary<int, double>();
@@ -149,7 +172,8 @@ namespace TumbangPreso.Net
 
         private void RegisterHandlers()
         {
-            if (_handlersRegistered || _nm == null || _nm.CustomMessagingManager == null) return;
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            if (ReferenceEquals(_handlersOn, _nm.CustomMessagingManager)) return;
 
             var cm = _nm.CustomMessagingManager;
 
@@ -199,7 +223,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("PlayStyle", OnPlayStyleMsg);
             cm.RegisterNamedMessageHandler("Score", OnScoreMsg);
 
-            _handlersRegistered = true;
+            _handlersOn = cm;
         }
 
         private bool TrySenderSeat(ulong senderClientId, out int seat)
@@ -690,10 +714,27 @@ namespace TumbangPreso.Net
             if (lobby == null) return;
 
             var peer = lobby.PeerById(peerId);
-            if (peer == null || peer.Spectator || peer.Seat < 0) return;
+
+            // ⚠️⚠️ A REFUSED READY USED TO BE SILENT, AND SILENCE IS INDISTINGUISHABLE FROM A
+            // MESSAGE THAT NEVER ARRIVED. 🧑 2026-08-28: LAN plays, but over Relay the other
+            // devices sit on *"Ready! Waiting for other players..."* forever. From the client
+            // that is one symptom; from the host it is three different faults (the press never
+            // reached us, the peer is not in the lobby table, or it is in it without a chair)
+            // and nothing said which. The host's log now names it.
+            if (peer == null || peer.Spectator || peer.Seat < 0)
+            {
+                Debug.LogWarning($"[NetReady] refused peer {peerId}: " +
+                                 (peer == null ? "not in the lobby table"
+                                  : peer.Spectator ? "spectator"
+                                  : $"no seat (Seat={peer.Seat})"));
+                return;
+            }
 
             bool moved = ready ? _lobbyReady.Add(peerId) : _lobbyReady.Remove(peerId);
             if (!moved) return;
+
+            Debug.Log($"[NetReady] peer {peerId} seat {peer.Seat} ready={ready} " +
+                      $"-> {LobbyReadyCount()} of {LobbyExpectedReady()}");
 
             BroadcastReadyTally();
         }

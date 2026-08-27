@@ -736,6 +736,31 @@ namespace TumbangPreso
         {
             if (!_networkTargetKnown) return;
 
+            // ⚠️⚠️ A REPLICA IS GROUNDED UNLESS ITS VERTICAL VELOCITY SAYS OTHERWISE, AND
+            // WITHOUT THIS EVERY REMOTE BODY IN THE GAME WAS FROZEN IN THE FALLING POSE.
+            // `_grounded` is written only by `ApplyGravity` in the local simulation, and this
+            // branch returns before ever reaching it, so on a replica it stayed FALSE for the
+            // whole match. `Visual.CharacterAnimator.ClipFor` asks `IsGrounded` FIRST:
+            //
+            //     if (!_motor.IsGrounded) return _motor.Velocity.y > 0.5f ? Jump : Fall;
+            //
+            // so Walk, Sprint and Idle were unreachable for anybody you were not driving
+            // yourself. 🧑 2026-08-28, from the host's screen: *"the nonhosts that join can move
+            // and interact but theyre stuck at this pose, they cant do animations and shit"*.
+            //
+            // ⚠️ THE VELOCITY IS ALREADY REPLICATED, which is what makes this an inference and
+            // not a guess: `ApplyNetworkTransform` assigns `_velocity` from the wire, and the
+            // thresholds below are the animator's own (0.5 is its Jump cut). A body at the apex
+            // of a jump reads grounded for a frame or two, which is invisible at 50 Hz.
+            //
+            // ⚠️ THE HONEST FIX IS TO TRANSMIT IT, and it is written up rather than done here.
+            // The owner of a body knows its real `IsGrounded` and nobody else does: the HOST's
+            // copy of a client-driven body has the same stale false this fixes, so `SyncUnit`
+            // alone cannot carry the truth. It needs a bool on `SubmitMove` as well, which the
+            // host then relays. Two payloads and a protocol bump, mid-playtest, for a pose.
+            // `docs/TODO.md` § 64.
+            _grounded = _networkTargetVelocity.y > -0.5f && _networkTargetVelocity.y < 0.5f;
+
             // Lead by one render-sized beat so a 50 Hz stream does not look one packet behind.
             Vector3 target = _networkTargetPosition + _networkTargetVelocity * 0.02f;
             Vector3 position = Vector3.SmoothDamp(transform.position, target,
