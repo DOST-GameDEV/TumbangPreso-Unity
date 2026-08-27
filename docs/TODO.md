@@ -3309,6 +3309,77 @@ thirty seconds ago the moment a human touches the mouse is worse than not replay
 
 ---
 
+## 36 · The host never transmitted its own bodies, so a joiner saw three statues
+
+**🧑 2026-08-27, from a LAN test of the build BEFORE this session's fixes landed:**
+*"movements only existed in host's side and no one that joined could see movement and shi
+happening from them"*.
+
+### 36.1 ⚠️⚠️ ONE `if` WITH ONLY HALF OF ITS PAIR ✅
+
+`CharacterMotor.FixedUpdate` ended with this and nothing else:
+
+```csharp
+if (NetAuthority.ShouldRequest() && _playerSlot == NetAuthority.LocalSlot)
+    Net.MatchRpc.Instance?.SubmitMoveServerRpc(...);
+```
+
+`ShouldRequest()` is `IsNetworked && !IsHost`, so **on the host it is false, always.** A client
+submitted its own transform and the host relayed it, which is why a joiner could see OTHER
+JOINERS move. **Nothing ever transmitted the host's own player, and nothing ever transmitted a
+bot**, because bots are host-owned and have no client to ask on their behalf. In the usual test
+(one host, one joiner, two bots) a joiner saw one moving body and three statues.
+
+⚠️⚠️ **`NetAuthority`'S OWN HEADER PREDICTS THIS EXACT FAULT** in the paragraph above
+`ShouldRequest`: *"Any verb that calls ShouldResolve MUST also handle ShouldRequest. If a verb has
+one without the other, it is broken for somebody and probably silently."* It records the lunge
+shipping dead for three of four players for weeks from the same shape. **Movement had the REQUEST
+half and no host half at all**, which is that warning with the sides swapped, and it is the more
+expensive version: a dead verb is a verb nobody uses, a dead transform is the entire game not
+happening.
+
+⚠️ **AND IT IS INVISIBLE FROM THE HOST'S CHAIR**, which is where it gets tested. Same family as
+§ 32.2 (*"the host never runs the client half of this method"*) and § 35.1 (the host's kits were
+never rebuilt). **Three separate networking faults this month have had the property that the
+person running the lobby cannot see them.**
+
+**Fixed** in `CharacterMotor.StepNetworkTransform`: a client still submits only the body it drives,
+and the host now broadcasts every body IT drives on the same physics step.
+
+⚠️ **WHICH BODIES, AND THE TEST IS THE INPUT SOURCE RATHER THAN A PEER LIST.**
+`MatchInstaller.BuildSeat` gives the local human a `PlayerInputReader`, an unoccupied seat an
+`AIController`, and a REMOTE human's seat **neither**, because that body is moved by the transforms
+its owner submits. So "has one of the two" is exactly "the host simulated this body", it needs no
+lobby lookup, and it is right the instant `HostPeerLeft` drops an `AIController` onto a seat
+somebody just left.
+
+⚠️ **RE-BROADCASTING A REMOTE SEAT WOULD NOT BE HARMLESS**, which is why the predicate is not
+just "everything". The host's copy is up to one step behind whatever that client last sent, so
+echoing it back out puts a body driven at 50 Hz into a fight with a stale copy at 50 Hz. That is
+visible as a jitter on precisely the players who are playing well.
+
+⚠️ **THE CACHE IS INVALIDATED ON EVERY SEAT HANDOVER** (`CharacterMotor.ForgetInputSource`,
+called from `HostPeerLeft` and `HostLateJoin`). Miss one and the body either goes silent or starts
+double-talking. `HostLateJoin` invalidates rather than recomputes because `Destroy` is deferred to
+the end of the frame, so `GetComponent` would still find the `AIController` on that line.
+
+⚠️ **IT SENDS ON THE PHYSICS STEP.** `ApplyUnitMove` snaps rather than interpolating, so a
+slower host tick would make host-owned bodies visibly choppier than client-owned ones on the same
+screen, which reads as those specific players lagging. Four seats at about forty bytes on a 50 Hz
+step is roughly 8 KB/s downstream. **If that ever needs to come down, add interpolation on the
+receiving end first**; a lower send rate on its own just moves the ugliness.
+
+### 36.2 Still open, and it is the same shape
+
+⚠️⚠️ **§ 25.1 IS THE REMAINING HALF OF *"a lot of shit u dont see that ur supposed"*.** Bodies
+move on every screen now; **abilities still do not**. `tools/audit_ability_authority.py` reports
+**40 effect call sites, 2 host-gated, 23 ungated on another body**, and there is no cast rpc at
+all, so a remote player's skill or ultimate produces no VFX, no sound, no hazard and no sky on
+anybody else's screen. § 35.5 has the shape of the fix and the warning that its two halves must
+land together.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

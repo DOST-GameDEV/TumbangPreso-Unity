@@ -1638,6 +1638,16 @@ namespace TumbangPreso.Net
 
                     unit.IsBot = false;
                     unit.PlayerName = peerRecord.Name;
+
+                    // ⚠⚠ THE MIRROR OF `HostPeerLeft`'S CALL. The returning player drives this
+                    // body now, so the host must STOP broadcasting it or its own stale copy
+                    // fights the transforms that player is submitting at 50 Hz.
+                    //
+                    // ⚠️ `Destroy` IS DEFERRED TO THE END OF THE FRAME, so `GetComponent` would
+                    // still answer "there is an AIController here" if the cache were rebuilt on
+                    // this line. It is INVALIDATED here and rebuilt on the next physics step,
+                    // by which time the component is really gone.
+                    unit.ForgetInputSource();
                 }
             }
 
@@ -1739,6 +1749,12 @@ namespace TumbangPreso.Net
                         {
                             unit.gameObject.AddComponent<AIController>();
                         }
+
+                        // ⚠⚠ THE SEAT JUST CHANGED HANDS AND `CharacterMotor` CACHES WHO DRIVES IT.
+                        // Without this the host keeps treating the body as remote-driven and
+                        // never broadcasts its transform, so the bot that just took over is a
+                        // statue on every client's screen. See `StepNetworkTransform`.
+                        unit.ForgetInputSource();
                     }
                 }
             }

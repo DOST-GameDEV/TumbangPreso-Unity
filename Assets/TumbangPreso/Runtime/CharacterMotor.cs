@@ -516,11 +516,109 @@ namespace TumbangPreso
             // carry no physics step at all.
             Intent.CommitFrame();
 
-            if (NetAuthority.ShouldRequest() && _playerSlot == NetAuthority.LocalSlot)
-            {
-                Net.MatchRpc.Instance?.SubmitMoveServerRpc(_playerSlot, transform.position, transform.eulerAngles.y, _velocity);
-            }
+            StepNetworkTransform();
         }
+
+        // -------------------------------------------------------------------
+        // § TELLING EVERYBODY ELSE WHERE THIS BODY IS
+        //
+        // ⚠️⚠️ THE HOST NEVER SENT ITS OWN BODIES AND THAT IS THE WHOLE OF 🧑'S 2026-08-27
+        // REPORT: *"movements only existed in host's side and no one that joined could see
+        // movement and shi happening from them"*. This block was one `if`:
+        //
+        //     if (NetAuthority.ShouldRequest() && _playerSlot == NetAuthority.LocalSlot)
+        //         MatchRpc.Instance?.SubmitMoveServerRpc(...);
+        //
+        // `ShouldRequest()` is `IsNetworked && !IsHost`, so **on the host it is false, always.**
+        // A client submitted its own position and the host relayed it, so a joiner could see
+        // OTHER JOINERS move. Nothing ever transmitted the host's own player, and nothing ever
+        // transmitted a bot, because bots are host-owned and have no client to ask on their
+        // behalf. In the usual test (one host, one joiner, two bots) the joiner saw one moving
+        // body and three statues.
+        //
+        // ⚠️⚠️ `NetAuthority`'S OWN HEADER PREDICTS THIS EXACT FAULT, in the paragraph above
+        // `ShouldRequest`: *"Any verb that calls ShouldResolve MUST also handle ShouldRequest. If
+        // a verb has one without the other, it is broken for somebody and probably silently."*
+        // It records the lunge shipping dead for three of four players for weeks from the same
+        // shape. Movement had the REQUEST half and no host half at all, which is that warning
+        // with the sides swapped, and it is the more expensive version because a dead verb is a
+        // verb nobody uses and a dead transform is the entire game not happening.
+        //
+        // ⚠️ IT SENDS ON THE PHYSICS STEP, WHICH IS THE SAME CADENCE A CLIENT ALREADY SUBMITS AT.
+        // `ApplyUnitMove` snaps rather than interpolating, so a slower host tick would make
+        // host-owned bodies visibly choppier than client-owned ones on the same screen, which
+        // reads as those specific players lagging. Four seats at roughly forty bytes on a 50 Hz
+        // step is about 8 KB/s downstream, which is nothing on a LAN and acceptable on the relay.
+        // If that ever needs to come down, the answer is interpolation on the receiving end
+        // first, not a lower send rate on its own.
+        // -------------------------------------------------------------------
+
+        private void StepNetworkTransform()
+        {
+            if (!NetAuthority.IsNetworked) return;
+
+            // A client speaks only for the body it is actually driving.
+            if (NetAuthority.ShouldRequest())
+            {
+                if (_playerSlot == NetAuthority.LocalSlot)
+                    Net.MatchRpc.Instance?.SubmitMoveServerRpc(
+                        _playerSlot, transform.position, transform.eulerAngles.y, _velocity);
+
+                return;
+            }
+
+            if (!NetAuthority.IsHost) return;
+
+            // ⚠️⚠️ ONLY THE BODIES THE HOST ACTUALLY DRIVES, and the test is which input source
+            // is bolted to them rather than a lobby lookup. `MatchInstaller.BuildSeat` gives the
+            // local human a `PlayerInputReader`, gives an unoccupied seat an `AIController`, and
+            // gives a REMOTE human's seat neither, because that body is moved by the transforms
+            // its owner submits. So "has one of the two" is exactly "the host simulated this
+            // body", it needs no peer list, and it is right the instant `HostPeerLeft` drops an
+            // `AIController` onto a seat somebody just disconnected from.
+            //
+            // ⚠️ RE-BROADCASTING A REMOTE SEAT WOULD NOT BE HARMLESS. The host's copy of it is up
+            // to one step behind whatever that client last sent, so echoing it back out puts a
+            // body that is being driven at 50 Hz into a fight with a stale copy at 50 Hz, which
+            // is visible as a jitter on precisely the players who are playing well.
+            if (!HostDrivesThisBody()) return;
+
+            Net.MatchRpc.Instance?.SyncUnitTransformClientRpc(
+                _playerSlot, transform.position, transform.eulerAngles.y, _velocity);
+        }
+
+        /// <summary>
+        /// Is this body simulated here, rather than being a picture of somebody else's?
+        ///
+        /// ⚠️ THE LOOKUPS ARE CACHED BECAUSE THIS RUNS ON EVERY PHYSICS STEP FOR EVERY SEAT.
+        /// `GetComponent` four times a step is the shape of per-frame cost `CLAUDE.md` § 7.1
+        /// records a HUD string rebuild being caught for. `_inputSourceKnown` is reset by
+        /// <see cref="ForgetInputSource"/> whenever a seat changes hands, which is the only time
+        /// the answer can change.
+        /// </summary>
+        private bool HostDrivesThisBody()
+        {
+            if (!_inputSourceKnown)
+            {
+                _hostDriven = GetComponent<PlayerInputReader>() != null
+                              || GetComponent<AIController>() != null;
+                _inputSourceKnown = true;
+            }
+
+            return _hostDriven;
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ CALLED WHENEVER A SEAT CHANGES HANDS, and forgetting to call it is a body that
+        /// goes silent or starts double-talking. A peer disconnecting gains an `AIController`
+        /// (`MatchRpc.HostPeerLeft`) and a peer reclaiming its seat loses one
+        /// (`MatchRpc.HostLateJoin`); both change the answer above and neither is visible from
+        /// here.
+        /// </summary>
+        public void ForgetInputSource() => _inputSourceKnown = false;
+
+        private bool _inputSourceKnown;
+        private bool _hostDriven;
 
         private void ApplyGravity(float dt)
         {
