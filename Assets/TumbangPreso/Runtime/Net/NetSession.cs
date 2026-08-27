@@ -665,6 +665,12 @@ namespace TumbangPreso.Net
             Lobby.Reset();
             Lobby.IsDedicated = false;
             LocalSlot = 0;
+
+            // ⚠️ THE NEXT SESSION MUST RE-APPLY ITS SEAT EVEN IF IT IS THE SAME NUMBER. See
+            // ApplyAssignedSeat: without clearing this, hosting again after leaving a lobby
+            // where you sat in seat 0 would drop the host's own seat 0 as "no change" and the
+            // arena would never be told to wire anything up.
+            _seatApplied = false;
             IsRelay = false;
             RelayJoinCode = null;
             SetStatus("offline");
@@ -744,8 +750,20 @@ namespace TumbangPreso.Net
             _utp.MaxConnectAttempts = 12;
         }
 
+        /// <summary>
+        /// ⚠️⚠️ TRUE ONCE A SEAT HAS ACTUALLY BEEN APPLIED, AND IT IS WHAT MAKES THE TWO SEAT
+        /// PROTOCOLS IDEMPOTENT. `LocalSlot` alone cannot answer "has this been set yet", because
+        /// its own default is 0 and 0 is a real seat: without this flag the host's first
+        /// announcement of seat 0 looks like a no-op and is dropped. See
+        /// <see cref="ApplyAssignedSeat"/>.
+        /// </summary>
+        private bool _seatApplied;
+
         public void SetLocalSeating(int seat, bool spectator)
         {
+            if (_seatApplied && LocalSlot == seat && GameLaunch.Spectator == spectator) return;
+
+            _seatApplied = true;
             LocalSlot = seat;
             GameLaunch.Spectator = spectator;
             SetStatus($"seated in slot {seat} (spectator={spectator})");
@@ -910,12 +928,42 @@ namespace TumbangPreso.Net
         /// because deleting a seat path while two laptops are mid-test is how a working build
         /// becomes an unworking one.
         /// </summary>
+        /// ⚠️⚠️ AND IT IS IDEMPOTENT NOW, WHICH IS WHAT STOPPED THE JOIN FROM BOUNCING. Measured
+        /// on two real peers over a loopback transport, ONE join produced three seat
+        /// announcements and SIX `SeatingChanged` events:
+        ///
+        ///     [Net] connected as seat 2          <- this method, from tp.seat.assignment.v1
+        ///     [NetSeat] seat changed: ...        <- x2, from the duplicated raise below
+        ///     [Net] seated in slot 1             <- SetLocalSeating, from Seating
+        ///     [NetSeat] seat changed: ...
+        ///     [Net] connected as seat 2          <- this method AGAIN, same seat
+        ///     [NetSeat] seat changed: ... x2
+        ///     [Net] connected as seat 2          <- and again, seconds later
+        ///     [NetSeat] seat changed: ... x2
+        ///
+        /// Every one of those rebuilds the local seat: `MatchInstaller` moves the camera, the
+        /// HUD, the input reader and the `PlayerInputReader` onto the chair again. Doing that
+        /// six times for one join is what a joining player sees as the view snapping about. 🧑
+        /// 2026-08-28: *"when a non host player tries to join, it just bounces back and forth a
+        /// lot of times"*.
+        ///
+        /// ⚠️ THE RAISE WAS LITERALLY WRITTEN TWICE, and that is a plain duplicated line rather
+        /// than a race guard: the paragraph above it argues for raising the event HERE AS WELL AS
+        /// in `SetLocalSeating`, which is one raise, not two. Redundancy across the two protocols
+        /// is deliberate; redundancy inside one call is not.
+        ///
+        /// ⚠️ REPEATS ARE DROPPED RATHER THAN THE SECOND PROTOCOL BEING DELETED. Retiring one of
+        /// them is `docs/TODO.md` § 60 and is still the right end state; until then, making both
+        /// idempotent costs nothing and means whichever wins the race, the arena is rebuilt once.
         public void ApplyAssignedSeat(int seat)
         {
+            bool spectator = seat < 0;
+            if (_seatApplied && LocalSlot == seat && GameLaunch.Spectator == spectator) return;
+
+            _seatApplied = true;
             LocalSlot = seat;
-            GameLaunch.Spectator = seat < 0;
+            GameLaunch.Spectator = spectator;
             SetStatus(seat >= 0 ? $"connected as seat {seat + 1}" : "connected as spectator");
-            SeatingChanged?.Invoke();
             SeatingChanged?.Invoke();
         }
 
@@ -1021,6 +1069,7 @@ namespace TumbangPreso.Net
             _everConnected = false;
 
             LocalSlot = 0;
+            _seatApplied = false;
             IsRelay = false;
             RelayJoinCode = null;
             _helloByClient.Clear();
