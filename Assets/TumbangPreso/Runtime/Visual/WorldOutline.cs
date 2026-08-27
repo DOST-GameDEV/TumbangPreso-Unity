@@ -360,6 +360,25 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void OnPreRender()
         {
+            // ⚠️⚠️ THE DEPTH-NORMALS REQUEST IS REPEATED HERE BECAUSE `LateUpdate` DOES NOT RUN IN
+            // EDIT MODE, AND WITHOUT THIS THE WHOLE PASS IS A SILENT NO-OP IN EVERY PROBE. Unity
+            // does not tick `Update`/`LateUpdate` on a component outside play mode, but it DOES
+            // call `OnPreRender` and `OnRenderImage` for `Camera.Render()`. So an edit-mode
+            // capture reached the compositing code with `_CameraDepthNormalsTexture` never
+            // requested and therefore never generated: the edge test sampled an empty texture,
+            // found no edges, and blitted the frame through unchanged.
+            //
+            // ⚠️ MEASURED, NOT REASONED. `WorldOutlineProbe` rendered the same angle with the
+            // prototype off and on and the two PNGs came back visually identical, differing by
+            // about 30 bytes of compression noise. That is what sent me here. Requesting it from
+            // the callback that actually runs makes the pass work in a probe as well as in play,
+            // which is the difference between a feature that can be judged and one that cannot.
+            //
+            // `LateUpdate` is kept: it is what CLEARS the request when the prototype is switched
+            // off at runtime, and clearing on the render callback would fight the frame it is
+            // drawing.
+            RequestDepthNormals(Live);
+
             if (!Live || _exclusion == Exclusion.Overlap)
             {
                 DetachBuffer();
