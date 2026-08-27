@@ -25,6 +25,11 @@ Shader "TumbangPreso/ColourGrade"
         _Exposure ("Tonemap Exposure", Range(0, 4)) = 0
         _White ("Tonemap White", Range(0.5, 8)) = 1.9
         _Chromatic ("Impact Chromatic Split", Range(0, 1)) = 0
+
+        // 0 is the flat horizontal split this pass shipped with, 1 is the radial one. See the
+        // § THE SPLIT'S SHAPE note in the fragment. `Visual.ColourGrade` writes it off
+        // `Settings.RenderStyles.RadialSplit`, so it is 0 in the default Toon style.
+        _ChromaticRadial ("Chromatic Split Is Radial", Range(0, 1)) = 0
     }
 
     SubShader
@@ -45,6 +50,7 @@ Shader "TumbangPreso/ColourGrade"
             half _Exposure;
             half _White;
             half _Chromatic;
+            half _ChromaticRadial;
 
             // ⚠️⚠️ THE TONEMAP BELONGS TO THE FRAME, NOT TO A MATERIAL, AND HAVING IT ON THE
             // MATERIAL IS WHY THE SKY BLEW OUT. `Toon.shader` was carrying the ACES curve because
@@ -106,6 +112,38 @@ Shader "TumbangPreso/ColourGrade"
                 return saturate(mapped);
             }
 
+            // ⚠️⚠️ § THE SPLIT'S SHAPE. THE FLAT HORIZONTAL OFFSET IS A VHS ARTEFACT, NOT A LENS,
+            // and that only became a problem when the split stopped being transient.
+            //
+            // This pass shipped with `half2(_Chromatic * 0.006, 0)`: the same offset at every
+            // pixel of the frame, driven for about 0.4 s by a hit and about 0.85 s by an
+            // ultimate. Over that long it reads as an impact and the constant offset is fine.
+            // `Settings.RenderStyles`'s Chromatic row holds a split on for the whole match, and a
+            // constant offset held that long fringes the crosshair, the centre of the HUD and
+            // every piece of text the player is trying to read, none of which a real lens would
+            // touch. Refraction disperses by ANGLE from the optical axis, so the fringe is zero
+            // at the centre of the image and grows toward its edge.
+            //
+            // ⚠️ SO THE RADIAL PATH SCALES THE OFFSET BY THE VECTOR FROM THE FRAME CENTRE, and
+            // 0.012 is solved for rather than picked: at the left and right edges `d.x` is 0.5,
+            // so `0.012 * 0.5` is exactly the 0.006 the horizontal path uses everywhere. The
+            // edges therefore fringe by the same amount either way, the corners reach about
+            // 0.0085 (|d| is 0.707 there), and the centre is clean. Nothing had to be re-tuned
+            // against the impact peaks in `Visual.HitFeel` because the number they were tuned
+            // against is preserved at the edge.
+            //
+            // ⚠️ IT IS A `lerp` ON A UNIFORM RATHER THAN A BRANCH so both styles compile to one
+            // path and the pass cost does not depend on the setting. `_ChromaticRadial` is 0 in
+            // the Toon style, and at 0 this returns `half2(_Chromatic * 0.006, 0)` exactly, so
+            // the shipped impact effect is unchanged term for term.
+            half2 SplitOffset (half2 uv)
+            {
+                half2 flat_split = half2(_Chromatic * 0.006h, 0.0h);
+                half2 radial = (uv - 0.5h) * (_Chromatic * 0.012h);
+
+                return lerp(flat_split, radial, saturate(_ChromaticRadial));
+            }
+
             // ⚠️ TRANSCRIBED FROM GODOT'S `apply_bcs`, INCLUDING THE PART THAT LOOKS WRONG.
             // Godot desaturates toward the plain MEAN of the three channels, not toward a
             // luminance-weighted grey:
@@ -118,7 +156,7 @@ Shader "TumbangPreso/ColourGrade"
             // is the whole thing this pass exists to match.
             half4 frag (v2f_img i) : SV_Target
             {
-                half2 split = half2(_Chromatic * 0.006h, 0.0h);
+                half2 split = SplitOffset(i.uv);
                 half4 source = tex2D(_MainTex, i.uv);
                 source.r = tex2D(_MainTex, i.uv + split).r;
                 source.b = tex2D(_MainTex, i.uv - split).b;

@@ -137,6 +137,23 @@ Shader "TumbangPreso/Toon"
             float _OutlineWidth;
             fixed4 _OutlineColor;
 
+            // ⚠️⚠️ § THE RENDER STYLE. DECLARED HERE AND DELIBERATELY ABSENT FROM `Properties`,
+            // WHICH IS WHAT MAKES IT A GLOBAL. `Settings.RenderStyles`'s Chromatic row draws the
+            // game with no ink edge at all, and it reaches every surface through one
+            // `Shader.SetGlobalFloat` rather than by re-dressing thirty-odd call sites' worth of
+            // renderers or by keeping a second outline-free shader beside this one. A uniform
+            // listed in `Properties` becomes per-material state seeded from that block, which
+            // SHADOWS the global and would make the switch do nothing; left out, it resolves from
+            // the global table.
+            //
+            // ⚠️ 0 IS THE SHIPPED LOOK, AND THE SENSE IS INVERTED FOR THAT REASON. An unset
+            // global reads 0, and every editor probe in this project dresses models with
+            // `ToonSkin.Apply` and renders them without loading a settings file, so nothing on
+            // that path ever writes this. Naming it `_OutlineScale` with 1 meaning "draw" would
+            // have deleted the ink from every turnaround and lineup render in the repo.
+            // `ToonSkin.SetOutlinesSuppressed` is the only writer.
+            float _OutlineSuppress;
+
             struct appdata_outline
             {
                 float4 vertex : POSITION;
@@ -176,7 +193,34 @@ Shader "TumbangPreso/Toon"
                 // nothing at all.
                 float3 welded = dot(v.tangent.xyz, v.tangent.xyz) > 1e-8 ? v.tangent.xyz : v.normal;
 
-                float3 pushed = v.vertex.xyz + normalize(welded) * _OutlineWidth;
+                // See § THE RENDER STYLE above. 0 leaves the authored width exactly as it was.
+                float width = _OutlineWidth * (1.0 - saturate(_OutlineSuppress));
+
+                // ⚠️⚠️ A ZERO WIDTH IS COLLAPSED TO A DEGENERATE TRIANGLE RATHER THAN DRAWN, AND
+                // THAT IS NOT AN OPTIMISATION. `Cull Front` means this pass draws BACK faces; at
+                // width 0 the hull sits exactly on the surface, so on any piece of geometry whose
+                // front and back faces are COPLANAR (a zero-thickness sheet, a decal quad, a
+                // single-sided card) the ink and the lit pass land on the same depth and the
+                // result is z-fighting speckle in near black. On a closed mesh the back faces are
+                // simply behind and it would have been invisible, but this shader is worn by
+                // every prop the kits ship as well as by the cast, and "no outline" has to mean
+                // no outline on all of them.
+                //
+                // Three vertices at one clip position is a zero-area triangle, which every
+                // rasteriser in this project's build set discards before it ever shades a pixel.
+                // So the Chromatic style also stops paying for the hull's fill rate, and the pass
+                // costs one vertex shader that writes a constant.
+                //
+                // ⚠️ THE TEST IS `<= 0`, NOT `== 0`, so a material authored at a negative width
+                // takes this branch instead of inflating INWARDS and shading the model's interior.
+                if (width <= 0.0)
+                {
+                    o.pos = float4(0.0, 0.0, 0.0, 1.0);
+                    UNITY_TRANSFER_FOG(o, o.pos);
+                    return o;
+                }
+
+                float3 pushed = v.vertex.xyz + normalize(welded) * width;
 
                 o.pos = UnityObjectToClipPos(float4(pushed, 1.0));
                 UNITY_TRANSFER_FOG(o, o.pos);

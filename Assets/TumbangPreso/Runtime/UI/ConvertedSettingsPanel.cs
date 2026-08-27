@@ -58,11 +58,17 @@ namespace TumbangPreso.UI
             BuildRebindRows();
             BuildSlipperHighlightRow();
 
-            // ⚠️ AFTER THE HIGHLIGHT ROW, WHICH IS WHAT PUTS IT ABOVE IT. Both rows insert
+            // ⚠️ THE BUILD ORDER IS THE DISPLAY ORDER, REVERSED. All three picker rows insert
             // themselves directly under `FullscreenCheck`, so the one built LAST ends up nearest
-            // the box. Anti-aliasing is a display setting and belongs beside fullscreen; the
-            // slipper highlight is an accessibility colour and reads fine one row further down.
+            // the box and the first built ends up furthest from it. Top to bottom the screen
+            // therefore reads: fullscreen, render style, anti-aliasing, slipper highlight.
+            //
+            // Render style is nearest the box because it is the largest visual choice on the
+            // panel by a distance: it decides whether the game has ink outlines at all. Then
+            // anti-aliasing, which is also a display setting. The slipper highlight is an
+            // accessibility colour rather than a display mode and reads fine below both.
             BuildAntiAliasRow();
+            BuildRenderStyleRow();
             WireSliders();
             WireChecks();
             WireNameField();
@@ -441,6 +447,7 @@ namespace TumbangPreso.UI
 
         private Dropdown _highlight;
         private Dropdown _antiAlias;
+        private Dropdown _renderStyle;
 
         /// <summary>
         /// § THE LANDED HIGHLIGHT's colour picker, from `settings_panel.gd`.
@@ -501,6 +508,30 @@ namespace TumbangPreso.UI
 
             _antiAlias = BuildDropdownRow("AntiAliasRow", "Anti-Aliasing", options,
                                           SettingsStore.Current.AntiAliasMode, PickAntiAlias);
+        }
+
+        /// <summary>
+        /// The render style picker.
+        ///
+        /// ⚠️⚠️ IT IS ON THIS SCREEN SO THE TWO LOOKS CAN BE COMPARED WITHOUT A REBUILD. 🧑 wants
+        /// to judge a softer post-processed look with visible colour fringing against the ink
+        /// outlines the game ships with, and judging two looks means flipping between them on the
+        /// same frame rather than describing them. See <see cref="RenderStyles"/> for what each
+        /// row switches and why Toon is row 0 and the default.
+        ///
+        /// ⚠️ NO SWATCHES, for the same reason the anti-aliasing row has none: these are two
+        /// named looks, not colours, and the only thing a player needs to see is which one is on
+        /// and what else there is. The picture behind the panel is the swatch.
+        /// </summary>
+        private void BuildRenderStyleRow()
+        {
+            var options = new List<SwatchDropdown.Option>();
+
+            foreach (var entry in RenderStyles.All)
+                options.Add(new SwatchDropdown.Option(entry.Label, null));
+
+            _renderStyle = BuildDropdownRow("RenderStyleRow", "Render Style", options,
+                                            SettingsStore.Current.RenderStyle, PickRenderStyle);
         }
 
         /// <summary>
@@ -598,6 +629,26 @@ namespace TumbangPreso.UI
                 Mathf.Clamp(index, 0, AntiAliasModes.All.Length - 1);
 
             AntiAliasModes.Apply(SettingsStore.Current.AntiAliasMode);
+            RefreshApplyState();
+        }
+
+        /// <summary>
+        /// ⚠️ IT APPLIES ON THE PICK, for the reason <see cref="PickAntiAlias"/> gives at length
+        /// and with more force than anything else on this panel: the whole content of this
+        /// setting is what the screen looks like, and it exists so two looks can be COMPARED.
+        /// A style that only took effect on APPLY, or on the next match, would make the one
+        /// question it was added to answer impossible to ask.
+        ///
+        /// ⚠️ AND BACK STILL UNDOES IT. `SettingsStore.Restore` calls `GameSettings.Apply`, which
+        /// pushes the snapshot's index back through `RenderStyles.Apply`, and that re-writes the
+        /// `_OutlineSuppress` global as well as the two statics. Nothing here writes the disk.
+        /// </summary>
+        private void PickRenderStyle(int index)
+        {
+            SettingsStore.Current.RenderStyle =
+                Mathf.Clamp(index, 0, RenderStyles.All.Length - 1);
+
+            RenderStyles.Apply(SettingsStore.Current.RenderStyle);
             RefreshApplyState();
         }
 
@@ -914,6 +965,12 @@ namespace TumbangPreso.UI
             // the reverted state showing through the one place that has not been told.
             if (_antiAlias != null)
                 _antiAlias.SetValueWithoutNotify(SettingsStore.Current.AntiAliasMode);
+
+            // ⚠️ AND THE SAME FOR THE STYLE, which has the strongest claim of the three: a picker
+            // reading "Chromatic" over a frame that has just been given its ink outlines back is
+            // the discard looking like it failed.
+            if (_renderStyle != null)
+                _renderStyle.SetValueWithoutNotify(SettingsStore.Current.RenderStyle);
 
             _backArmed = false;
             SetButtonLabel(_back, "◀  BACK");
