@@ -448,17 +448,32 @@ namespace TumbangPreso.Net
         /// ⚠️ THE HOST'S OWN ID COMES FROM `NetAuthority.LocalPeerId`, never from `_nm`
         /// directly: `IsHost` is true offline too, where there is no `NetworkManager` to ask.
         /// </summary>
-        public void DeclareReadyServerRpc()
+        /// <returns>
+        /// False when the press could not be delivered, so the caller can hold it and try again.
+        ///
+        /// ⚠️⚠️ `IsListening` IS NOT `IsConnectedClient`, AND THE GAP BETWEEN THEM EATS A READY
+        /// PRESS. `NetAuthority.IsNetworked` reads `IsListening`, which goes true the instant
+        /// `StartClient` is called, well before connection approval finishes. Everything that
+        /// asks "am I networked" therefore answers yes during the join, and a `SendNamedMessage`
+        /// on that transport goes nowhere and reports nothing. A player who pressed R inside that
+        /// window had their vote vanish, watched the prompt clear, and had no way to tell that
+        /// nothing had been sent: `DeclareReady` is idempotent on the host, so a resend is free,
+        /// but nothing was resending.
+        /// </returns>
+        public bool DeclareReadyServerRpc()
         {
             if (NetAuthority.IsHost)
             {
                 FindFirstObjectByType<ReadyGate>()?.DeclareReady(NetAuthority.LocalPeerId);
-                return;
+                return true;
             }
 
-            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            if (_nm == null || _nm.CustomMessagingManager == null || !_nm.IsConnectedClient)
+                return false;
+
             using var writer = new FastBufferWriter(1, Allocator.Temp);
             _nm.CustomMessagingManager.SendNamedMessage("DeclareReady", NetworkManager.ServerClientId, writer);
+            return true;
         }
 
         private void OnDeclareReadyMsg(ulong senderClientId, FastBufferReader reader)
@@ -498,17 +513,21 @@ namespace TumbangPreso.Net
         // is a second thing to get wrong.
         // -------------------------------------------------------------------
 
-        public void VoteRematchServerRpc()
+        /// <returns>False when the vote could not be delivered. See `DeclareReadyServerRpc`.</returns>
+        public bool VoteRematchServerRpc()
         {
             if (NetAuthority.IsHost)
             {
                 FindFirstObjectByType<UI.MatchResult>()?.HostReceiveVote(NetAuthority.LocalPeerId);
-                return;
+                return true;
             }
 
-            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            if (_nm == null || _nm.CustomMessagingManager == null || !_nm.IsConnectedClient)
+                return false;
+
             using var writer = new FastBufferWriter(1, Allocator.Temp);
             _nm.CustomMessagingManager.SendNamedMessage("VoteRematch", NetworkManager.ServerClientId, writer);
+            return true;
         }
 
         private void OnVoteRematchMsg(ulong senderClientId, FastBufferReader reader)

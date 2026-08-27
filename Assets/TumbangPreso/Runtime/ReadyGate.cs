@@ -174,8 +174,28 @@ namespace TumbangPreso
             map?.Enable();
         }
 
+        /// <summary>
+        /// ⚠️⚠️ A READY PRESS IS HELD UNTIL IT IS ACTUALLY DELIVERED. `NetAuthority.IsNetworked`
+        /// is `NetworkManager.IsListening`, which goes true the moment `StartClient` is called
+        /// and not when the connection is approved, so a press made during the join window was
+        /// written to a transport with nowhere to send it. The prompt cleared, the gesture
+        /// played, and the host never heard about it. Nothing retried, so the player sat in a
+        /// lobby that was waiting for them.
+        ///
+        /// ⚠️ RESENDING IS FREE BECAUSE THE HOST'S SET IS IDEMPOTENT (`DeclareReady` above), so
+        /// the worst case of a retry that was not needed is one extra `Add` that changes nothing.
+        /// </summary>
+        private bool _readySendPending;
+
         private void Update()
         {
+            if (_readySendPending)
+            {
+                if (Net.MatchRpc.Instance != null &&
+                    Net.MatchRpc.Instance.DeclareReadyServerRpc())
+                    _readySendPending = false;
+            }
+
             if (_countingDown || !_awaitingLocalReady) return;
             if (_readyUp == null || !_readyUp.WasPressedThisFrame()) return;
 
@@ -185,7 +205,8 @@ namespace TumbangPreso
             // press IS the start.
             if (NetAuthority.IsNetworked)
             {
-                Net.MatchRpc.Instance?.DeclareReadyServerRpc();
+                _readySendPending = Net.MatchRpc.Instance == null ||
+                                    !Net.MatchRpc.Instance.DeclareReadyServerRpc();
             }
             else
             {

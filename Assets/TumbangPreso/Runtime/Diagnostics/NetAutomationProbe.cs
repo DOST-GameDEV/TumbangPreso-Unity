@@ -93,8 +93,17 @@ namespace TumbangPreso.Diagnostics
             _readyStableFor += Time.unscaledDeltaTime;
             if (_readyStableFor < SettleSeconds) return;
 
+            // ⚠️ A PRESS THAT WAS NOT DELIVERED IS NOT A PRESS. The client half of this ran
+            // before connection approval finished on the first two-process run of it, and logged
+            // a submission the host never received. `DeclareReadyServerRpc` reports delivery now,
+            // so the probe holds the press and tries again on the next tick.
+            if (MatchRpc.Instance == null || !MatchRpc.Instance.DeclareReadyServerRpc())
+            {
+                _readyStableFor = SettleSeconds;
+                return;
+            }
+
             _readySent = true;
-            MatchRpc.Instance?.DeclareReadyServerRpc();
 
             Debug.Log(NetAuthority.IsHost
                 ? $"[NetAuto] READY submitted with {playing} playing peers."

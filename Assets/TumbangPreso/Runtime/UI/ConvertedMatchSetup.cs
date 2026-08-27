@@ -353,8 +353,23 @@ namespace TumbangPreso.UI
 
             if (GameLaunch.Spectator) return;
 
+            // ⚠️⚠️ THE SCREEN DOES NOT CLAIM READY UNTIL THE HOST HAS ACTUALLY BEEN TOLD.
+            // `NetAuthority.IsNetworked` is true from `StartClient` onward rather than from
+            // connection approval, so a press made during the join window was written to a
+            // transport with nowhere to send it. This line flipped anyway and the label read
+            // "Ready! Waiting for other players..." to somebody the host was itself waiting for.
+            // `ReadyGate.Update` holds and resends the in-match press for the same reason.
+            bool delivered = MatchRpc.Instance != null &&
+                             MatchRpc.Instance.DeclareReadyServerRpc();
+
+            if (!delivered)
+            {
+                SetStatus("Still connecting. Press again in a moment.");
+                Refresh();
+                return;
+            }
+
             _localReady = !_localReady;
-            MatchRpc.Instance?.DeclareReadyServerRpc();
 
             if (_localReady)
             {

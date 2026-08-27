@@ -5046,6 +5046,135 @@ what every other peer draws that object from: a stale entry would be broadcast a
 
 ---
 
+## 53 · A joining client could not move, and the cause is that its keyboard was left on seat 0
+
+🧑 2026-08-27, on the shipped build and on a two-process run: *"why was everyone just stuck"*,
+*"there was zero movement for anyone"*, *"its been reported too by playtesters that multiplayer
+allowed for 0 movement whatsoever"*. This is that, and it is one component that never moved.
+
+### 53.1 ✅ FIXED: `MatchInstaller.RebindLocalSeat` moved everything except the input reader
+
+**The ordering that makes it bite every client.** `NetBootstrap` and the menus both call
+`StartClient` and then load the arena, so `MatchInstaller` builds its seats while
+`NetSession.LocalSlot` is still its **default 0**. `HumanSeat` therefore answers 0 on every
+joining client, and `BuildSeat(0)` bolts the `PlayerInputReader` to **seat 0**. The seat the peer
+is actually given gets no input source at all.
+
+**The correction was incomplete.** The host's `Seating` message lands in
+`MatchRpc.OnSeatingMsg`, which calls `MatchInstaller.RebindLocalSeat`. That moved the CAMERA, the
+HUD and the READY GATE onto the real seat and stopped there. So everything a joining player could
+SEE moved to seat 1 and everything they could DO stayed on seat 0.
+
+**What that produces is exactly the report:**
+
+* the camera watches seat 1, which has no input source on this machine, so it never moves and
+  never submits a transform. `HostLateJoin` has meanwhile destroyed the host's `AIController` on
+  that seat, correctly, so **nobody drives it and it is frozen on every screen**;
+* the keys drive seat 0, which the host owns and overwrites with `SyncUnit` every physics step,
+  so it twitches and snaps back;
+* `CharacterMotor.StepNetworkTransform` submits only `_playerSlot == NetAuthority.LocalSlot`,
+  which is now 1, so the body being driven is never sent upstream either.
+
+⚠️⚠️ **THERE ARE TWO SEAT-ASSIGNMENT PATHS AND ONLY THE OTHER ONE WAS COMPLETE.**
+`MatchRpc.ApplyRebindLocalSeat` (the `RebindSeat` message, sent on a late join or a reconnect)
+moves the reader, the YOU card, the pause watcher and the slipper owner glow, and even carries a
+note saying it owns the input. `RebindLocalSeat` is the FIRST-JOIN path and carried none of it.
+**Two routines for one job, one of them a subset, is how this survived**: whichever you read, it
+looked finished. A mid-match join worked, because that branch calls `SceneFlow.StartMatch()`
+AFTER `SetLocalSeating`, so the arena is built with the right seat in the first place. Only a
+normal pre-match join was broken, which is every ordinary game.
+
+⚠️ **AND THE HOST CANNOT SEE ANY OF IT**, which is § 38's whole thesis. On the host `LocalSlot`
+is 0 before the arena loads, so the rebind is a no-op there and its own player moves normally.
+
+**Fixed** by `MatchInstaller.RebindInputSource`, which moves the reader, takes any `AIController`
+off the seat that gains it, and disables before destroying so one keypress cannot drive two
+bodies for the remainder of the frame. `RebindLocalSeat` now also rebinds the YOU card, the pause
+watcher, the owner glow and the nameplate.
+
+### 53.2 ✅ FIXED: a spectator kept a player's body and a player's HUD
+
+Same function, second line. The guard read
+`if (_seats == null || seat < 0 || seat >= _seats.Length) return;` and **a spectator's seat IS
+-1**: `LobbySession.Admit` hands one out for a full lobby and for anybody who asked to watch. So
+the entire rebind was skipped for the case that needs it most, and a watcher arrived holding seat
+0's gameplay camera, seat 0's HUD and a `PlayerInputReader` their keyboard still drove.
+
+⚠️ **That is a watcher puppeting a player, not a cosmetic fault.** `CLAUDE.md` § 4 states the
+narrowing the whole spectator key set rests on: *"A spectator has no body, no seat and no
+`CharacterMotor`"*. Whichever seat the host gave away, the watcher was also driving seat 0.
+
+### 53.3 ✅ FIXED: `-tp-allbots` skipped the one seat this peer holds
+
+`HumanSeat` answers -1 under AllBots so no seat gets a reader, which is correct. But this peer's
+own chair is OCCUPIED in the lobby, by this peer, so `isHumanPlayer` was true for it and it fell
+through BOTH arms of `BuildSeat`: no reader, and no bot either. **A body with no input source.**
+
+⚠️ **Measured**: seat 0 travelled **0.0 m** on the host over a 150 s sample while seats 1, 2 and
+3 travelled 77.6, 56.0 and 45.0 m. Not "less", as §§ 34 and 49 record for the offline probe:
+nothing at all. **Every networked measurement this project has taken has been three seats' worth**,
+and the missing one is the seat the camera is pointed at. `CLAUDE.md` § 7.1 states the intended
+behaviour in as many words; it was true offline and false online.
+
+### 53.4 ✅ FIXED: the all-bots HUD disagreed with the all-bots camera
+
+🧑: *"for some reason im in spectator but im also defender"*, *"its so weird bcz spectator has
+skills and defender UI"*. `MatchInstaller` set `_spectating = GameLaunch.Spectator` while the
+camera below turns the gameplay rig off for `HumanSeat < 0`, which is THREE conditions. So an
+all-bots run flew the free camera over a HUD still wearing seat 0's clothes: a YOU card reading
+TAYA P1, a DEFENDER badge and a live ability deck nobody could press. `_spectating` is
+`HumanSeat < 0` now, so the two halves cannot disagree.
+
+⚠️⚠️ **THIS CHANGES WHAT `FrameCapProbe` RENDERS.** It sets `GameLaunch.AllBots = true`, so its
+runs now draw a stripped HUD with no YOU card and no role-swap card. **§ 17's achieved-frame-rate
+numbers from before 2026-08-27 are no longer comparable** and that investigation needs a fresh
+baseline before it quotes any of them again.
+
+### 53.5 ✅ FIXED: a ready press made during the join window vanished
+
+`NetAuthority.IsNetworked` reads `NetworkManager.IsListening`, which goes true the instant
+`StartClient` is called and **not** when connection approval finishes. Everything that asks "am I
+networked" answers yes during the join, and a `SendNamedMessage` on that transport goes nowhere
+and reports nothing. A player who pressed R in that window had their vote disappear while the
+lobby screen told them *"Ready! Waiting for other players..."* to somebody the host was itself
+waiting for.
+
+`DeclareReadyServerRpc` and `VoteRematchServerRpc` check `IsConnectedClient` and return whether
+they delivered. `ReadyGate` holds an undelivered press and resends it (free: the host's set is
+idempotent), `ConvertedMatchSetup` no longer claims ready until the host has been told, and
+`MatchResult` no longer deadens the REMATCH button on a vote that never left.
+
+### 53.6 The AI takeover and seat reclaim paths, audited against 🧑's spec
+
+Read end to end after the above, because three of the four faults were in the same seam.
+
+| Requirement | Where | State |
+|---|---|---|
+| A bot fills a seat nobody is in | `MatchInstaller.BuildSeat`, host only | ✅ |
+| A bot takes over when a player leaves | `NetSession.OnClientDisconnected` → `MatchRpc.HostPeerLeft` | ✅ sets `IsBot`, adds `AIController`, calls `ForgetInputSource` |
+| The seat is HELD, not freed, mid-match | `LobbySession.Depart` banks it against the peer's token | ✅ |
+| A joiner replaces the bot | `HandleIdentify` → `HostLateJoin` destroys the `AIController` | ✅ on a first join as well as a late one |
+| A REJOINER gets their own chair back | `LobbySession.ReclaimSeatFor(token)` | ✅ the new transport id is a fresh `_spawned` entry, and `HostPeerLeft` dropped the old one |
+| The joiner's own machine then drives it | `RebindLocalSeat` | ❌ **this was 53.1** |
+
+⚠️ **The last row is the one that was missing, and it is why the other five looked fine.** The
+host handed the seat over correctly every time; the arriving machine never picked it up.
+
+### 53.7 Still open
+
+* ⚠️⚠️ **NONE OF THIS HAS BEEN PLAYED BY TWO PEOPLE YET.** The diagnosis is from the source and
+  from a two-process run on one desktop; the fixes are unplayed. § 38.20's standing note applies.
+* **The root cause is still there and only its consequence is fixed.** A client builds its arena
+  before it has been told its seat, and `RebindLocalSeat` is a correction after the fact. **Done
+  looks like:** the client not loading the arena until `Seating` has landed, which removes the
+  guess instead of repairing it, and deletes the need for one of the two rebind routines.
+* **`NetStateReport` calls `Application.Quit()` after it writes**, so in a two-process run
+  whichever peer's window elapses first takes the other's connection with it and the second
+  report is never written. Give the client the SHORTER `-tp-netseconds` until that is changed.
+
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

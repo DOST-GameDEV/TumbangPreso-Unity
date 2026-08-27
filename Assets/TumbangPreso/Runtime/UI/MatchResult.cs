@@ -527,10 +527,20 @@ namespace TumbangPreso.UI
             // peer's and comes back in the broadcast tally. Counting it here as well would give
             // this screen a number the host does not have, and the first thing a player would
             // see is their own count disagreeing with everybody else's.
+            // ⚠️⚠️ THE BUTTON IS ONLY DEADENED ONCE THE VOTE HAS ACTUALLY LEFT. It was disabled
+            // first and the send attempted afterwards, so a vote that could not be delivered
+            // (the host gone, or the transport still finishing its handshake) left the player
+            // staring at a dead REMATCH button with no way to try again and no tally to explain
+            // it. `DeclareReadyServerRpc` reports delivery for the same reason and
+            // `ReadyGate.Update` resends off it.
+            if (Net.MatchRpc.Instance == null || !Net.MatchRpc.Instance.VoteRematchServerRpc())
+            {
+                ShowTally(_rematchVotes.Count, ExpectedVotes());
+                return;
+            }
+
             _rematch.interactable = false;
             ShowTally(_rematchVotes.Count, ExpectedVotes());
-
-            Net.MatchRpc.Instance?.VoteRematchServerRpc();
         }
 
         /// <summary>
