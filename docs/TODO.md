@@ -5787,6 +5787,122 @@ and 0 ungated. ⚠️ **And it was photographed rather than described**: `UiRunt
 
 ---
 
+## 62 · Losing the host left a client playing on alone, and § 60.1 did not fix the movement
+
+### 62.1 ✅ FIXED: a client whose host quits mid-match stayed in the arena
+
+🧑 2026-08-27: *"i closed server and i didnt get kicked out on non host accounts"*, and the
+client's `Player.log` carries the disconnect on the line where nothing happened:
+
+```
+[Net] disconnected: Disconnected due to host shutting down.
+```
+
+§ 59.2 added `NetSession.ClientDisconnected` and subscribed **`ConvertedMatchSetup`**, which is
+the LOBBY screen. **It does not exist in a match.** So the one place the event was handled was one
+of the four places a player can be when the host vanishes, and the other three (the arena, the
+character select, the result board) heard nothing.
+
+**Fixed** by moving the handler to `MatchRpc`, which is `DontDestroyOnLoad` and is therefore the
+one object that exists in every scene the player can be in. ⚠️ The lobby's copy is DELETED rather
+than kept: two owners for one job is the shape of §§ 53.1, 57.1 and 60, three times in one
+evening, and the second owner is always the one that is missing a case.
+
+⚠️ **The reason line itself now works.** `"Disconnected due to host shutting down."` is
+host-authored and unbracketed, so § 60.4's filter passes it through unchanged.
+
+### 62.2 ✅ FIXED: the client's seat wiring was CORRECT, and the gate was `RoundActive`
+
+§ 60.1 raised `SeatingChanged` from `ApplyAssignedSeat` so the arena would follow the seat, and the
+diagnostic added with it says the wiring is now right on the client:
+
+```
+[NetSeat] arena installed: LocalSlot=1 spectator=False host=False body=ok reader=True ai=False simulated=True
+```
+
+**`reader=True` and `simulated=True`.** The keyboard is bolted to the body the camera follows, and
+`CharacterMotor.FixedUpdate` is simulating it locally rather than treating it as a host-authored
+picture. ⚠️⚠️ **So "I cannot move" is NOT the input wiring, and §§ 53.1 and 60.1 were both real
+faults that were not this one.** The seat log is what proves it, which is the argument for having
+added it.
+
+**What has not been ruled out, in the order worth checking:**
+
+1. ⚠️⚠️ **THE HOST IS STILL BROADCASTING SEAT 1 AND SNAPPING IT BACK.** `HostLateJoin` destroys the
+   `AIController` on a joiner's seat so `CharacterMotor.HostDrivesThisBody` stops returning true
+   for it, and it opens with `if (!_spawned.Add(peerId)) return;`. **A peer whose id is already in
+   `_spawned` skips the whole method**, keeps the host's bot on its chair, and the host then
+   transmits its own copy at 50 Hz over whatever the client submits. The client would move locally
+   for one frame and be snapped back forever, which is exactly what it looks like. `_spawned` is
+   only cleared by `HostPeerLeft`, so a reconnect that reuses a client id, or a second `Identify`,
+   reaches it. **The host's `[NetSeat]` line settles this**: `s1:` reading `+ai` on the HOST is the
+   proof.
+2. **`AcceptMove` can deadlock inside its own leeway band.** It records
+   `_lastAcceptedMoveAt[slot]` only on ACCEPT, so after a rejection `dt` stops growing and the
+   allowance stops opening; and the correction it sends back is applied with
+   `reconcileLocal: true`, which `CharacterMotor.ApplyNetworkTransform` DISCARDS when the error is
+   under 1.25 m. A body 0.2 m out of sync is therefore refused by the host forever and never
+   corrected on the client. **Done looks like:** stamping the time on a rejection too, and forcing
+   the correction the host sends after refusing a move.
+3. The free-roam window itself. Every report so far has been a screenshot with
+   *"Practice freely, scores are paused. Press [R] when ready."* still on it, so the round had not
+   begun in any of them.
+
+✅ **IT WAS NONE OF THOSE THREE. IT WAS ITEM 3, THE FREE-ROAM WINDOW, AND IT IS A ONE-LINE
+ASYMMETRY.** `CharacterMotor` gates steering on `CanAct()`, which is `RoundActive && !IsStunned`,
+and **`CharacterMotor.RoundActive` DEFAULTS TO TRUE**. Nothing writes it until `BeginRound` or
+`EndRound`, and that default is exactly what makes the pre-round window work: the DIRECTOR says
+the round is not active, correctly, because nothing scores yet, while the four BODIES say they may
+act, so everybody walks around the arena they are about to play in.
+
+`RoundDirector.ApplySnapshot` stamped the director's `false` onto all four bodies, at 5 Hz, before
+the first round had ever begun. The host's bodies kept the default `true`. **So the host walked
+around the free-roam window and every client stood frozen**, camera still turning because that is
+local and ungated. Every screenshot of this bug has *"Practice freely, scores are paused"* on it.
+
+⚠️⚠️ **AND `[NetSeat]` IS WHAT SENT THIS LOOKING IN THE RIGHT PLACE.** `reader=True simulated=True`
+ruled out §§ 53.1 and 60.1 outright: the keyboard was on the right body and the motor was
+simulating it locally. Without that line the next move would have been a third guess at the input
+wiring, which is where the two previous fixes had already been spent.
+
+**Fixed** by stamping `RoundActive` onto bodies only once the match is actually running, which is
+exactly when the host writes it too. All four states agree now: before the match both sides leave
+the default true; in a round both are true; in an intermission `EndRound` sets the host's and this
+sets the client's; after the match `MatchEnded` reaches `EndRound` on both (§ 57.1).
+
+✅ **Item 1 is fixed anyway, on its own merits.** `HostLateJoin` opened with
+`if (!_spawned.Add(peerId)) return;`, and that set exists to send the world snapshot ONCE, which
+is a bandwidth question. Handing a chair over is a correctness one and was sharing the return, so
+a peer already in the set kept the host's bot on its seat and the host went on transmitting its
+copy over whatever that player submitted. `HostTakeSeatBackFromBot` runs unconditionally now and
+only the snapshot stays gated. It is reachable: `HandleIdentify` calls it on EVERY identify.
+
+⚠️ **Item 2 is still open.** `AcceptMove` records `_lastAcceptedMoveAt[slot]` only on ACCEPT, so
+after a rejection `dt` stops growing and the allowance stops opening, and the correction it sends
+back is applied with `reconcileLocal: true`, which `ApplyNetworkTransform` DISCARDS under 1.25 m.
+A body 0.2 m out of sync is refused by the host forever and never corrected on the client.
+**Done looks like:** stamping the time on a rejection too, and forcing the correction the host
+sends after refusing a move. Not reproduced, so not fixed blind.
+
+### 62.3 The seat log answers every seat now, not just the local one
+
+`MatchInstaller.LogSeatWiring` prints all four chairs, because the local one answers "can I move"
+and the other three answer "why is nobody else moving", which is the other half of every report so
+far and used to cost a second run:
+
+```
+[NetSeat] arena installed: LocalSlot=1 spectator=False host=False allBots=False | s0:-+sim | s1:reader+sim | s2:-+bot | s3:-+bot
+```
+
+**Read it as:** `reader` is a `PlayerInputReader`, `+ai` an `AIController`, `+sim`
+`IsLocallySimulated`, `+bot` the `IsBot` flag, and `MISSING` a seat the arena never built. On a
+HOST every seat it drives must show `+sim`; on a CLIENT exactly one seat may.
+
+⚠️⚠️ **`+ai` ON A JOINER'S SEAT, ON THE HOST, IS 62.2 ITEM 1 CONFIRMED.**
+
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

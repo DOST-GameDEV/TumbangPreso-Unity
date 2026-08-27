@@ -2402,7 +2402,7 @@ namespace TumbangPreso.Net
             bool wasRoundActive = GameServices.Round != null && GameServices.Round.RoundActive;
 
             GameServices.Match?.ApplySnapshot(scores, roundNumber, inProgress);
-            GameServices.Round?.ApplySnapshot(timeLeft, roundActive, defenderSlot);
+            GameServices.Round?.ApplySnapshot(timeLeft, roundActive, defenderSlot, inProgress);
 
             if (NetAuthority.IsHost) return;
 
@@ -2807,8 +2807,36 @@ namespace TumbangPreso.Net
         public void HostLateJoin(int peerId)
         {
             if (!NetAuthority.IsHost) return;
+
+            // ⚠️⚠️ THE SEAT HANDOVER IS NOT GATED BY `_spawned`, AND IT USED TO BE. That set
+            // exists to send the world snapshot ONCE, which is a bandwidth question. Handing a
+            // chair over is a correctness one, and it was sharing the same early return: a peer
+            // whose id was already in the set skipped the whole method, so the host kept its own
+            // `AIController` on that chair and went on transmitting its copy at 50 Hz over
+            // whatever the arriving player submitted. The client moves for one frame and is
+            // snapped back forever, which reads as a body that cannot move at all.
+            //
+            // ⚠️ IT IS REACHABLE. `HandleIdentify` calls this on EVERY identify, not only the
+            // first, and `_spawned` is cleared only by `HostPeerLeft`. A second identify from a
+            // live peer, or a reconnect that reuses a client id before the old one is retired,
+            // both land on it.
+            //
+            // ⚠️ AND THE HANDOVER IS IDEMPOTENT, which is what makes running it every time free:
+            // `Destroy` on a component that is already gone does not happen because of the null
+            // check, `IsBot = false` is a write of the same value, and `ForgetInputSource` only
+            // invalidates a cache. `docs/TODO.md` § 62.2.
+            HostTakeSeatBackFromBot(peerId);
+
             if (!_spawned.Add(peerId)) return;
 
+            HostSyncPeer(peerId);
+        }
+
+        /// <summary>
+        /// A peer has arrived and holds a chair: stop the host driving it. See `HostLateJoin`.
+        /// </summary>
+        private void HostTakeSeatBackFromBot(int peerId)
+        {
             var lobby = NetSession.Instance?.Lobby;
             var peerRecord = lobby?.PeerById(peerId);
             if (peerRecord != null && peerRecord.Seat >= 0)
@@ -2839,8 +2867,6 @@ namespace TumbangPreso.Net
                     unit.ForgetInputSource();
                 }
             }
-
-            HostSyncPeer(peerId);
         }
 
         /// <summary>
