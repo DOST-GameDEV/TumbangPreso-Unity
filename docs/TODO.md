@@ -5611,6 +5611,107 @@ now just redraws the tally.
 
 ---
 
+## 60 · The host announces a seat twice, by two protocols, and only one of them does the job
+
+🧑 2026-08-27, from the joining laptop, in the arena, with the free-roam prompt on screen:
+*"i can move camera and see updates but i cant move"*, and before that *"host can move but
+everyone else is stuck even bots"*.
+
+### 60.1 ✅ FIXED (the symptom): `ApplyAssignedSeat` told nobody
+
+**The evidence is one missing line in the client's `Player.log`:**
+
+```
+[Net] connecting to 192.168.1.144:8910
+[Net] connected
+[Net] connected as seat 2
+```
+
+`connected as seat 2` is `NetSession.ApplyAssignedSeat`. **`[Net] seated in slot 1
+(spectator=False)` is nowhere in the file**, and that is `NetSession.SetLocalSeating`. So the seat
+NUMBER was applied and the thing that announces it never ran.
+
+⚠️⚠️ **THERE ARE TWO SEAT PROTOCOLS AND THE HOST SENDS BOTH.**
+
+| | `tp.seat.assignment.v1` | `Seating` |
+|---|---|---|
+| Sent by | `NetSession.OnClientConnected` → `SendSeatAssignment` | `MatchRpc.HandleIdentify` |
+| Lands in | `OnSeatAssignmentMessage` → `ApplyAssignedSeat` | `OnSeatingMsg` → `SetLocalSeating` |
+| Sets `LocalSlot` | ✅ | ✅ |
+| Join code, leader, `MatchInProgress` | ❌ | ✅ |
+| Raises `SeatingChanged` | ❌ **(was)** | ✅ |
+| Rebinds camera, HUD, ready gate, **input reader** | ❌ | ✅ |
+
+The host admits the same peer **twice**, by two unrelated routes, and announces the result twice.
+Whichever message the client processes decides how much of the job gets done, and one of the two
+does almost none of it. **`LocalSlot` moves to the right chair while the arena is never told**, so
+the `PlayerInputReader` stays where `BuildSeat` put it and the player's keys drive nothing. That
+is § 53.1's fault one layer further down, reached by a different message.
+
+⚠️ **And it explains the earlier report too.** *"host can move but everyone else is stuck even
+bots"* was that same client, in the free-roam window, where the round has not begun: the host
+walks around because free-roam allows it, the bots stand still because `RoundActive` is false, and
+the client cannot press READY into a body it does not drive, so the countdown never starts and
+nothing ever moves. One fault, two descriptions.
+
+**Fixed** by raising `SeatingChanged` from `ApplyAssignedSeat` as well, so whichever message wins
+the race, `MatchInstaller.FollowLocalSeat` hears it and moves the reader.
+`RebindLocalSeat` is idempotent, so both winning costs nothing.
+
+### 60.2 ⚠️ OPEN: retire one of the two protocols
+
+60.1 makes both paths complete enough to play. **It does not make there be one path.** Two
+protocols for one fact, one a subset of the other, is precisely the shape of § 53.1
+(`RebindLocalSeat` versus `ApplyRebindLocalSeat`) and § 57.1, and it will produce a third bug.
+
+⚠️ **It was deliberately not done in this pass**, because deleting a seat path while two laptops
+are mid-test is how a working build becomes an unworking one.
+
+**Done looks like:** `NetSession.OnClientConnected` no longer admitting the peer or sending a seat
+at all, leaving `MatchRpc.HandleIdentify` as the single admission and the single announcement, and
+`tp.seat.assignment.v1`, `SendSeatAssignment`, `OnSeatAssignmentMessage` and `RegisterSeatHandler`
+deleted with it. ⚠️ **Check first what `OnClientConnected`'s `Lobby.Admit` is doing that
+`HandleIdentify`'s is not**, in particular the `replacedPeerId` disconnect of a stale transport,
+which only the `NetSession` copy performs.
+
+### 60.3 ✅ ADDED: one log line that names which of these it is
+
+*"i can move camera and see updates but i cant move"* is produced by at least three different
+faults and they are indistinguishable from a screenshot: the reader on the wrong seat,
+`LocalSlot` disagreeing with the body the camera follows, and `CharacterMotor.IsLocallySimulated`
+answering false so `FixedUpdate` treats this peer's own body as a host-authored picture.
+
+`MatchInstaller.LogSeatWiring` prints all of them, at arena install and on any seat change:
+
+```
+[NetSeat] arena installed: LocalSlot=1 spectator=False host=False body=ok reader=True ai=False simulated=True
+```
+
+⚠️ **Paste that line from the client when reporting a movement fault.** `reader=False` is § 53.1,
+`simulated=False` with a correct `LocalSlot` is the motor's gate, and `body=MISSING` is a seat the
+arena never built. It is two lines a match, not per frame.
+
+### 60.4 ✅ FIXED: leaving on purpose was reported as a failure
+
+🧑: *"this shit shows even if i close on my own"*, over
+`[Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was
+shutdown.` printed on a menu in the game's own font. That is § 59.2's reason line showing two
+things it should not:
+
+* **a disconnect we asked for.** `Shutdown` raises the same callback a refusal does, so pressing
+  BACK told the player why they had been thrown out of a lobby they had just chosen to leave.
+  `NetSession.Stop` sets a flag now and the handler stays quiet for it. ⚠️ `StartClient` calls
+  `Stop` first when a session is already live, so this also covers the disconnect a re-join makes
+  on its way out of the old connection.
+* **Netcode's own event envelope, which is not player-facing text.** It describes the mechanism
+  and never the cause. `PlayerFacingDisconnectReason` keeps what the HOST itself wrote,
+  `ApproveConnection`'s "Game version mismatch (network protocol 5)" and "Lobby is full", and
+  turns anything bracketed or empty into "Lost connection to the host." Those two host-authored
+  strings are the whole point of the mechanism: a version mismatch is a thing the player CAN fix.
+
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**
