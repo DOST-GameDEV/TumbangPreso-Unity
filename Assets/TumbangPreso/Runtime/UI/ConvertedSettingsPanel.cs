@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TumbangPreso.Core;
 using TumbangPreso.Settings;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -669,6 +670,24 @@ namespace TumbangPreso.UI
             slider.SetValueWithoutNotify(seed);
             SetText(labelNode, format(seed));
 
+            // ⚠️⚠️ THE CLICK PLAYS ON RELEASE, NOT ON EVERY VALUE CHANGE. `onValueChanged`
+            // fires once per frame of a drag, so playing MenuSfx.Click() straight from the
+            // listener turned one drag into dozens of overlapping clicks a second. The
+            // gate below tracks whether the pointer is currently down on the slider; while it
+            // is, a change only marks the sfx pending, and SliderCommitGate.Released fires it
+            // once when the drag ends. A keyboard nudge (no pointer ever down) still plays
+            // immediately, because it is already one discrete completed movement.
+            var gate = slider.GetComponent<SliderCommitGate>();
+            if (gate == null) gate = slider.gameObject.AddComponent<SliderCommitGate>();
+
+            bool pendingSfx = false;
+            gate.Released += () =>
+            {
+                if (!pendingSfx) return;
+                pendingSfx = false;
+                if (preview) MenuSfx.Click();
+            };
+
             slider.onValueChanged.AddListener(v =>
             {
                 setter(v);
@@ -682,10 +701,39 @@ namespace TumbangPreso.UI
                 // live off the store by the music bed, the announcer and the SFX bus, and the
                 // sensitivity is read live by the camera, which is what makes a drag audible and
                 // visible immediately without pushing anything anywhere.
-                if (preview) MenuSfx.Click();
+                if (preview)
+                {
+                    if (gate.IsPressed) pendingSfx = true;
+                    else MenuSfx.Click();
+                }
 
                 RefreshApplyState();
             });
+        }
+
+        /// <summary>
+        /// Tracks whether the pointer is currently held down on a slider, so its owner can defer
+        /// a "movement finished" action until <see cref="Released"/> fires instead of running it
+        /// on every intermediate value change of a drag.
+        /// </summary>
+        private sealed class SliderCommitGate : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IEndDragHandler
+        {
+            public bool IsPressed { get; private set; }
+            public event Action Released;
+
+            public void OnPointerDown(PointerEventData e) => IsPressed = true;
+
+            public void OnPointerUp(PointerEventData e)
+            {
+                IsPressed = false;
+                Released?.Invoke();
+            }
+
+            public void OnEndDrag(PointerEventData e)
+            {
+                IsPressed = false;
+                Released?.Invoke();
+            }
         }
 
         private void WireChecks()
