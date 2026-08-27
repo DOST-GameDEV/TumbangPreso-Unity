@@ -73,11 +73,51 @@ namespace TumbangPreso
             Scored?.Invoke(slot, e);
         }
 
+        /// <summary>
+        /// The replicated match, as the host last described it.
+        ///
+        /// ⚠️⚠️ THE END OF A MATCH IS AN EVENT ON A CLIENT TOO, AND IT WAS NOT ONE. This method
+        /// assigned the three fields and raised nothing, and it is the ONLY thing that moves them
+        /// on a peer that is not the host: `AdvanceRound` and `BeginIntermission` are the only
+        /// other writers and both are behind `SliceRunner`'s `NetAuthority.ShouldResolve()`. So
+        /// `MatchEnded` fired on exactly one machine in the room.
+        ///
+        /// **What that costs is the whole end of the game for everybody except the host.**
+        /// `UI.MatchResult` shows itself from `MatchEnded` and from nothing else, so a client
+        /// never saw the final standings; `SliceRunner.OnMatchEnded` never ran there, so the
+        /// round rules were never stopped; and the announcer's win line never played. Worst of
+        /// all, **REMATCH lives on that board**, so the entire peer rematch vote (`docs/TODO.md`
+        /// § 1) was unreachable for anyone but the host: a client had no button to press, and
+        /// `RematchTally` and `BeginRematch` arrived at a screen that was never raised.
+        ///
+        /// ⚠️ ONLY THE TRUE-TO-FALSE EDGE, AND ONLY HERE. A joining client is told `false` before
+        /// the match starts and `false` again after it ends, so raising the event on the VALUE
+        /// would show the result board to somebody who has just walked into a lobby.
+        ///
+        /// ⚠️⚠️ AND `RoundStarted` AND `IntermissionStarted` ARE DELIBERATELY NOT RAISED HERE,
+        /// WHICH IS THE HALF THAT LOOKS LIKE AN OVERSIGHT AND IS NOT. Both are wired to
+        /// `SliceRunner`, and both of its handlers MUTATE THE WORLD: `OnRoundStarted` calls
+        /// `ResetWorld`, which teleports all four bodies and hands out the tsinelas, and
+        /// `OnIntermission` additionally schedules `Advance`, which calls `AdvanceRound` and would
+        /// give every client its own second authority over the round number. Four peers each
+        /// advancing a match is four matches, which is `VISION.md` § 4's first rule. The
+        /// intermission CARD still needs a signal on a client and it needs a different one;
+        /// `docs/TODO.md` § 57 carries that as its own item rather than solving it by raising an
+        /// event that does six other things.
+        ///
+        /// ⚠️ THE HOST REACHES THIS TOO, through `MatchRpc.HostSyncPeer`, and it is a no-op there
+        /// by construction: it passes the host its own `MatchInProgress` back, so the edge cannot
+        /// fire.
+        /// </summary>
         public void ApplySnapshot(int[] scores, int roundNumber, bool inProgress)
         {
+            bool wasInProgress = MatchInProgress;
+
             _scores.SetAll(scores);
             RoundNumber = roundNumber;
             MatchInProgress = inProgress;
+
+            if (wasInProgress && !inProgress) MatchEnded?.Invoke(_scores.WinningSlot());
         }
 
         public void StartMatch()
