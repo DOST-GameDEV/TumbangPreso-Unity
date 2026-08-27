@@ -185,6 +185,27 @@ namespace TumbangPreso.EditorTools.MapKit
 
             bool changed = false;
 
+            // ⚠️⚠️ `npotScale = None`, AND WITHOUT IT UNITY SILENTLY CHANGES THE PICTURE'S SHAPE.
+            // `Mountain.png` is 3852 x 2000, so 1.926:1. The importer's default is `ToNearest`,
+            // which rounds a non-power-of-two texture to the nearest powers of two: 3852 goes UP
+            // to 4096 and 2000 goes UP to 2048, then `maxTextureSize: 2048` clamps the result to
+            // 2048 x 1024, which is exactly 2.000:1. The mountain arrives squashed by 4 per cent
+            // vertically and nothing anywhere says so.
+            //
+            // ⚠️ IT IS WORSE THAN A SILENT SQUASH, BECAUSE IT ALSO LIES TO THE CODE THAT SIZES THE
+            // QUAD. This file derives the quad's height from `texture.width / texture.height` so
+            // the billboard keeps the art's proportions, and that read returned 2.000 rather than
+            // 1.926: the quad was built correctly for a texture that had already been distorted.
+            // Two wrongs that cancel to a picture the artist did not draw.
+            //
+            // `None` imports at the source dimensions, and `maxTextureSize` then scales BOTH axes
+            // together, so 2048 x 1063 keeps 1.926 and the aspect read is honest.
+            if (importer.npotScale != TextureImporterNPOTScale.None)
+            {
+                importer.npotScale = TextureImporterNPOTScale.None;
+                changed = true;
+            }
+
             if (!importer.alphaIsTransparency) { importer.alphaIsTransparency = true; changed = true; }
             if (importer.wrapMode != TextureWrapMode.Clamp) { importer.wrapMode = TextureWrapMode.Clamp; changed = true; }
             if (!importer.mipmapEnabled) { importer.mipmapEnabled = true; changed = true; }

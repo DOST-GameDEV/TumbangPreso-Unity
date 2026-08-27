@@ -131,6 +131,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_39
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -349,6 +353,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_214
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -422,6 +430,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_216
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -530,6 +542,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_166
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -604,6 +620,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_62
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -677,6 +697,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_157
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -825,6 +849,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_60
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -1118,6 +1146,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_222
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -1266,6 +1298,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_49
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -1340,6 +1376,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_53
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -1413,6 +1453,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_106
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -1557,6 +1601,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_2
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -1780,6 +1828,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_35
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -1885,6 +1937,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_245
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -2069,7 +2125,7 @@ Transform:
   - {fileID: 2090624035}
   - {fileID: 688767846}
   - {fileID: 1768349996}
-  - {fileID: 576063955}
+  - {fileID: 1564089748}
   m_Father: {fileID: 685918122}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &114584996
@@ -2236,6 +2292,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_215
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -2310,6 +2370,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_77
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -2383,6 +2447,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_20
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -2510,6 +2578,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_180
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -2658,6 +2730,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_173
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -2881,6 +2957,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_227
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -2954,6 +3034,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_103
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -3091,6 +3175,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_10
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -3164,6 +3252,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_256
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -3312,6 +3404,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_43
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -3605,6 +3701,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_172
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -3753,6 +3853,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_233
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -3827,6 +3931,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_198
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -3900,6 +4008,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_176
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -4015,6 +4127,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_95
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -4088,6 +4204,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_42
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -4163,6 +4283,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_16
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -4236,6 +4360,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_79
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -4459,6 +4587,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_18
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -4607,6 +4739,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_126
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -4681,6 +4817,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_232
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -4754,6 +4894,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_211
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -4977,6 +5121,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_169
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -5050,6 +5198,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_234
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -5260,6 +5412,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_179
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -5557,6 +5713,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_202
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -5766,6 +5926,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_194
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -6355,6 +6519,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_228
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -6429,6 +6597,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_58
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -6502,6 +6674,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_13
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -6666,6 +6842,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_235
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -7152,6 +7332,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_230
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -7226,6 +7410,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_248
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -7299,6 +7487,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_221
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -7545,6 +7737,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_175
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -7618,6 +7814,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_85
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -7767,6 +7967,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_34
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -7840,6 +8044,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_101
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -8063,6 +8271,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_7
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -8206,6 +8418,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_115
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -8429,6 +8645,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_4
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -8577,6 +8797,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_116
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -8650,6 +8874,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_73
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -8830,6 +9058,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_253
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -8978,6 +9210,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_189
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -9051,6 +9287,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_75
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -9200,6 +9440,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_105
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -9273,6 +9517,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_140
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -9348,6 +9596,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_247
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -9421,6 +9673,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_203
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -9570,6 +9826,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_156
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -9643,6 +9903,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_37
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -9718,6 +9982,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_254
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -9792,6 +10060,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_208
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -9865,6 +10137,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_147
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -10286,6 +10562,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_231
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -10359,6 +10639,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_182
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -10434,6 +10718,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_149
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -10507,6 +10795,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_131
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -10694,6 +10986,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_224
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -10905,6 +11201,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_255
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -10978,6 +11278,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_148
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -11114,6 +11418,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_207
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -11263,6 +11571,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_251
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -11325,96 +11637,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
   m_PrefabInstance: {fileID: 573937067}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &576063954
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 576063955}
-  - component: {fileID: 576063957}
-  - component: {fileID: 576063956}
-  m_Layer: 0
-  m_Name: MountainBackdrop
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &576063955
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 576063954}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: 0, y: 34, z: 150}
-  m_LocalScale: {x: 260, y: 130, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 105730788}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &576063956
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 576063954}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: e76b4bfb7037775409fcde6f81703c0f, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 1
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &576063957
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 576063954}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1001 &581426427
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11426,6 +11648,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_114
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -11500,6 +11726,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_183
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -11929,6 +12159,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_117
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -12204,6 +12438,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_209
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -12352,6 +12590,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_112
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -12425,6 +12667,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_33
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -12648,6 +12894,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_139
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -12721,6 +12971,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_144
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -12796,6 +13050,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_90
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -12869,6 +13127,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_118
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -13049,6 +13311,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_137
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -13122,6 +13388,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_125
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -13271,6 +13541,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_188
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -13385,6 +13659,7 @@ Transform:
   - {fileID: 2141010411}
   - {fileID: 685918122}
   - {fileID: 1336626298}
+  - {fileID: 690617238}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &678445376
@@ -13398,6 +13673,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_217
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -13735,6 +14014,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_160
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -13797,6 +14080,96 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
   m_PrefabInstance: {fileID: 689356365}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &690617237
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 690617238}
+  - component: {fileID: 690617240}
+  - component: {fileID: 690617239}
+  m_Layer: 0
+  m_Name: AsphaltSurface
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &690617238
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690617237}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.101, z: 0}
+  m_LocalScale: {x: 76, y: 76, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 673378094}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &690617239
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690617237}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 95c325d60e9c2c541a89c7979874c25c, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &690617240
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690617237}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1001 &692290791
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13883,6 +14256,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_219
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -13956,6 +14333,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_94
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -14113,6 +14494,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_239
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -14186,6 +14571,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_23
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -14409,6 +14798,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_252
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -14482,6 +14875,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_213
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -14693,6 +15090,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_81
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -14767,6 +15168,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_91
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -14840,6 +15245,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_121
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -15035,6 +15444,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_55
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -15108,6 +15521,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_123
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -15327,6 +15744,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_154
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -15401,6 +15822,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_56
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -15474,6 +15899,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_69
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -15684,6 +16113,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_107
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -15977,6 +16410,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_150
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -16050,6 +16487,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_30
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -16186,6 +16627,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_223
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -16619,6 +17064,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_71
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -16692,6 +17141,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_165
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -16798,6 +17251,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_21
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -16943,6 +17400,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_218
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -17086,6 +17547,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_171
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -17234,6 +17699,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_59
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -17449,6 +17918,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_28
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -17523,6 +17996,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_15
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -17596,6 +18073,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_48
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -17818,6 +18299,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_11
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -18181,6 +18666,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_24
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -18387,6 +18876,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_243
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -18460,6 +18953,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_46
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -18757,6 +19254,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_14
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -18831,6 +19332,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_78
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -18904,6 +19409,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_161
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -19127,6 +19636,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_0
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -19345,6 +19858,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_135
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -19493,6 +20010,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_201
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -19640,6 +20161,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_240
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -19863,6 +20388,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_51
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -19936,6 +20465,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_212
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -20011,6 +20544,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_186
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -20085,6 +20622,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_167
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -20158,6 +20699,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_226
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -20307,6 +20852,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_3
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -20380,6 +20929,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_104
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -20525,6 +21078,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_6
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -20598,6 +21155,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_190
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -20809,6 +21370,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_241
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -20882,6 +21447,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_192
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -20957,6 +21526,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_229
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -21031,6 +21604,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_97
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -21104,6 +21681,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_155
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -21327,6 +21908,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_153
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -21549,6 +22134,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_65
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -21622,6 +22211,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_98
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -21890,6 +22483,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_244
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -22182,6 +22779,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_41
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -22503,6 +23104,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_225
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -22576,6 +23181,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_5
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -23017,6 +23626,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_127
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -23091,6 +23704,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_185
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -23164,6 +23781,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_220
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -23457,6 +24078,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_64
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -23605,6 +24230,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_206
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -23678,6 +24307,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_178
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -24049,6 +24682,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_84
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -24122,6 +24759,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_36
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -24197,6 +24838,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_193
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -24270,6 +24915,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_205
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -24345,6 +24994,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_145
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -24418,6 +25071,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_130
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -24493,6 +25150,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_141
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -24566,6 +25227,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_27
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -24774,6 +25439,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_142
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -24848,6 +25517,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_52
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -24921,6 +25594,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_110
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -25460,6 +26137,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_120
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -25640,6 +26321,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_109
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -25713,6 +26398,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_170
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -26084,6 +26773,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_111
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -26231,6 +26924,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_113
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -26528,6 +27225,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_86
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -26601,6 +27302,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_128
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -26750,6 +27455,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_9
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -26823,6 +27532,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_163
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -27017,6 +27730,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_151
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -27090,6 +27807,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -27165,6 +27886,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_164
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -27238,6 +27963,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_158
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -27313,6 +28042,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_136
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -27386,6 +28119,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_168
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -27535,6 +28272,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_66
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -27608,6 +28349,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_63
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -27683,6 +28428,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_8
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -27757,6 +28506,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_50
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -27830,6 +28583,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_133
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -27967,6 +28724,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_196
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -28040,6 +28801,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_12
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -28115,6 +28880,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_159
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -28188,6 +28957,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_162
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -28333,6 +29106,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_92
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -28406,6 +29183,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_143
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -28555,6 +29336,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_32
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -28617,6 +29402,96 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
   m_PrefabInstance: {fileID: 1555489606}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1564089747
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1564089748}
+  - component: {fileID: 1564089750}
+  - component: {fileID: 1564089749}
+  m_Layer: 0
+  m_Name: MountainBackdrop
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1564089748
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1564089747}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
+  m_LocalPosition: {x: 0, y: 34, z: 150}
+  m_LocalScale: {x: 260, y: 134.95117, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 105730788}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1564089749
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1564089747}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: e76b4bfb7037775409fcde6f81703c0f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1564089750
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1564089747}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1001 &1576193139
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28628,6 +29503,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_72
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -28755,6 +29634,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_29
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -29102,6 +29985,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_61
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -29250,6 +30137,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_87
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -29324,6 +30215,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_177
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -29397,6 +30292,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_102
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -30091,6 +30990,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_237
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -30313,6 +31216,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_129
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -30387,6 +31294,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_132
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -30460,6 +31371,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_199
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -30608,6 +31523,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_89
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -30831,6 +31750,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_45
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -30904,6 +31827,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_246
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -30979,6 +31906,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_181
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -31052,6 +31983,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_74
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -31127,6 +32062,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_44
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -31201,6 +32140,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_249
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -31274,6 +32217,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_68
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -31411,6 +32358,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_236
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -31484,6 +32435,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_26
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -31633,6 +32588,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_187
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -31780,6 +32739,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_54
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -32101,6 +33064,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_96
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -32174,6 +33141,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_76
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -32249,6 +33220,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_134
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -32323,6 +33298,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_184
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -32396,6 +33375,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_100
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -32693,6 +33676,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_93
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -32837,6 +33824,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_204
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -32910,6 +33901,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_22
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -32985,6 +33980,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_83
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -33058,6 +34057,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_67
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -33133,6 +34136,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_17
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -33206,6 +34213,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_19
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -33491,6 +34502,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_174
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -33564,6 +34579,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_122
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -33817,6 +34836,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_152
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -34116,6 +35139,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_80
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -34471,6 +35498,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_47
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -34618,6 +35649,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_138
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -34767,6 +35802,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_31
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -34840,6 +35879,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_99
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -34985,6 +36028,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_70
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -35059,6 +36106,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_82
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -35132,6 +36183,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_238
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -35565,6 +36620,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_57
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -35700,6 +36759,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_40
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -36016,6 +37079,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_191
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -36151,6 +37218,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_242
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -36460,6 +37531,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_108
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -36533,6 +37608,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_38
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -36682,6 +37761,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_195
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -36830,6 +37913,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_124
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -36904,6 +37991,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_25
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -36977,6 +38068,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_197
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -37200,6 +38295,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_146
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -37274,6 +38373,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_119
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -37347,6 +38450,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_200
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -37495,6 +38602,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_250
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -37845,6 +38956,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kalsada_88
       objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -37918,6 +39033,10 @@ PrefabInstance:
     - target: {fileID: -6330713384772213925, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_Name
       value: Kalsada_210
+      objectReference: {fileID: 0}
+    - target: {fileID: -2017049704211104016, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2355196655693711003, guid: 415ec6adde4219644b33d23b552e12fd, type: 3}
       propertyPath: m_LocalScale.x
