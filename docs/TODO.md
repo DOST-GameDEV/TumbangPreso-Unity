@@ -3272,6 +3272,20 @@ thirty seconds ago the moment a human touches the mouse is worse than not replay
 
 ### 35.5 Still open
 
+* ⚠️⚠️ **NOBODY HAS WATCHED THE AUTOPILOT, AND FOR THIS FEATURE THAT IS THE MEASUREMENT THAT
+  MATTERS.** 🧑 asked for it on the grounds that *"A LOT OF PPL WILL be watching how it moves"*, so
+  the acceptance test is how it LOOKS and `SpectatorDirectorTuningTests` cannot answer that: it
+  holds the relationships between the numbers (a shot is held long enough to read, a cut is
+  cheaper than crossing the court, the frame can hold a chase, the aim trails the body, a held
+  shot is never still) and nothing about whether the result is watchable.
+  `CLAUDE.md` § 6.1 is explicit that a change judged by eye needs a render attached, and this one
+  has none. **What to build:** a probe on the `BotBehaviourProbe` pattern that loads Eskinita
+  all-bots, adds a `SpectatorCamera` plus a `SpectatorDirector`, engages it, steps a whole round,
+  and writes a frame every few seconds. Four or five stills across one round would settle the
+  shot selection; the smoothness needs a person watching it live.
+* ⚠️ **THE HANDOVER HAS NOT BEEN FELT EITHER.** `ManualTakeover` uses a 0.01 mouse threshold
+  chosen against sensor jitter rather than measured on this machine. If it ever engages and hands
+  itself straight back, that number is why.
 * ⚠️⚠️ **§ 25.1 IS STILL THE LARGEST NETWORK GAP AND NOTHING HERE CLOSED IT.**
   `tools/audit_ability_authority.py` now reports **40 effect call sites, 2 host-gated, 23 ungated
   on another body, 15 ungated on the caster**. The ability layer still has no CAST rpc, so a
