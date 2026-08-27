@@ -282,6 +282,73 @@ namespace TumbangPreso.Tests
             Assert.IsNotEmpty(s.PlayerToken, "a token must exist or reconnection cannot work");
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE CLAMP IS WHAT MAKES ADDING A MODE SAFE, and this is the guard on it. The
+        /// index is written to `settings.json` and read back by a build whose
+        /// <see cref="AntiAliasModes.All"/> may have grown or lost a row, and an unclamped read
+        /// goes straight into `QualitySettings.antiAliasing`, which rejects anything that is not
+        /// 0, 2, 4 or 8. Same rule <see cref="GameSettings.AiDifficulty"/> and
+        /// <see cref="GameSettings.SlipperHighlight"/> already live under.
+        /// </summary>
+        [Test]
+        public void AntiAliasModeIsClampedIntoTheTable()
+        {
+            var high = new GameSettings { AntiAliasMode = 99 };
+            high.Validate();
+            Assert.AreEqual(AntiAliasModes.All.Length - 1, high.AntiAliasMode);
+
+            var low = new GameSettings { AntiAliasMode = -4 };
+            low.Validate();
+            Assert.AreEqual(AntiAliasModes.Off, low.AntiAliasMode);
+
+            // ⚠️ A SETTINGS FILE WRITTEN BEFORE THE FIELD EXISTED HAS TO LAND ON THE DEFAULT,
+            // not on 0. `JsonUtility` constructs the object before it overwrites the fields the
+            // file carries, so the field initialiser is what an older file inherits, and 0 is
+            // Off: every player upgrading would silently have anti-aliasing turned off.
+            var upgraded =
+                UnityEngine.JsonUtility.FromJson<GameSettings>("{\"MasterVolume\":0.5}");
+            Assert.AreEqual(AntiAliasModes.Default, upgraded.AntiAliasMode);
+        }
+
+        /// <summary>
+        /// ⚠️ EVERY MODE ABOVE OFF MUST CARRY FXAA, and it is asserted rather than trusted
+        /// because it is the only reason the setting is guaranteed to be visible at all. MSAA is
+        /// applied by the rasteriser into an intermediate render target both gameplay cameras
+        /// force into existence with their `OnRenderImage` passes, and whether that target is
+        /// allocated multisampled is an engine decision. A mode added later with MSAA alone
+        /// would be a row that does nothing on a machine that answers that decision the other
+        /// way, and nothing else in the project would catch it.
+        ///
+        /// ⚠️ AND THE SAMPLE COUNTS MUST BE VALUES `QualitySettings.antiAliasing` ACCEPTS. It
+        /// takes 0, 2, 4 or 8 and silently keeps its old value for anything else, so a typo here
+        /// would read back as the setting having no effect rather than as an error.
+        /// </summary>
+        [Test]
+        public void EveryAntiAliasModeAboveOffCarriesFxaa()
+        {
+            Assert.IsFalse(AntiAliasModes.All[AntiAliasModes.Off].Fxaa);
+            Assert.AreEqual(0, AntiAliasModes.All[AntiAliasModes.Off].Samples);
+
+            for (int i = 0; i < AntiAliasModes.All.Length; i++)
+            {
+                var entry = AntiAliasModes.All[i];
+
+                bool accepted = entry.Samples == 0 || entry.Samples == 2
+                             || entry.Samples == 4 || entry.Samples == 8;
+
+                Assert.IsTrue(accepted,
+                              $"'{entry.Label}' asks for {entry.Samples} samples, which " +
+                              "QualitySettings.antiAliasing does not accept.");
+
+                if (i == AntiAliasModes.Off) continue;
+
+                Assert.IsTrue(entry.Fxaa,
+                              $"'{entry.Label}' is MSAA only, so it renders identically to Off " +
+                              "on any machine where the post chain drops the multisampled " +
+                              "target. See the class comment on AntiAliasModes.");
+            }
+        }
+
         /// <summary>⚠️ -1 IS A REAL VALUE meaning "no pick" and must survive validation.</summary>
         [Test]
         public void NoPickSurvivesValidationAsMinusOne()
