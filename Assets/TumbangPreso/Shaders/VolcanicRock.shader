@@ -84,6 +84,12 @@ Shader "TumbangPreso/VolcanicRock"
 
         _EmissionColor ("Vein Emission", Color) = (1.0, 0.45, 0.10, 1.0)
 
+        // ⚠️ THE GAIN ON THE VEINS ALONE, NEVER ON THE SURFACE. It multiplies a mask that is
+        // already a thin network, so turning it up brightens the cracks and cannot brighten
+        // the rock between them. That is the only way to answer "glowier" without walking into
+        // `docs/VISION.md` § 2 rule 5, which is gated at 12 per cent of a frame blown to white.
+        _Glow ("Vein Glow", Range(0, 3)) = 1.0
+
         // How much of this surface is molten. 0.10 is a crust with hairline seams; 0.85 is the
         // hot bed with dark islands floating in it. Those two numbers are the whole difference
         // between the two layers of the decal and they use the same material otherwise.
@@ -195,6 +201,7 @@ Shader "TumbangPreso/VolcanicRock"
             float _PatternSpace;
             float _Cool;
             float _Seed;
+            float _Glow;
             float _ErodeFrom;
             float _ErodeDepth;
 
@@ -379,9 +386,19 @@ Shader "TumbangPreso/VolcanicRock"
                     // land where the mesh actually is.
                     float t = saturate((i.meshRadius - _ErodeFrom) / max(0.001, _ErodeDepth));
 
-                    // fbm tops out near 0.875, so the 1.15 puts a full bite just past the top of
-                    // its range: at t = 1 essentially everything goes, at t = 0 nothing does.
-                    float bite = fbm(p * (_NoiseScale * 2.2) + 31.7);
+                    // ⚠️⚠️ A FINE OCTAVE ON TOP, BECAUSE THREE OCTAVES OF VALUE NOISE GIVES A
+                    // SMOOTH WAVY BOUNDARY AND A BROKEN ROCK EDGE IS NOT WAVY, IT IS JAGGED.
+                    // 🧑 2026-08-28, off the in-game frame: *"need rougher edges"*. The fbm alone
+                    // carries the large shape of where the plate has gone; the single high
+                    // frequency sample is what puts centimetre-scale teeth on it, which is the
+                    // scale the eye actually reads as "rough" at the distance a player stands.
+                    //
+                    // fbm tops out near 0.875 and vnoise at 1.0, so the sum tops out near 0.91
+                    // and the 1.15 puts a full bite just past the top of its range: at t = 1
+                    // essentially everything goes, at t = 0 nothing does.
+                    float bite = fbm(p * (_NoiseScale * 2.2) + 31.7) * 0.72
+                               + vnoise(p * (_NoiseScale * 7.0) + 5.3) * 0.28;
+
                     clip(bite * 1.15 - t);
                 }
 
@@ -449,7 +466,10 @@ Shader "TumbangPreso/VolcanicRock"
                 float cut = lerp(0.92, 0.28, saturate(_Heat));
                 float w = max(_VeinWidth, 0.01);
 
-                float mask = smoothstep(cut, cut + w, vein * (0.65 + lowGround * 0.55));
+                // How molten this pixel wants to be: the ridge, deepened where the rock sits low.
+                float g = vein * (0.65 + lowGround * 0.55);
+
+                float mask = smoothstep(cut, cut + w, g);
 
                 // Breathing, so a live zone is never a still image. Amplitude is small because
                 // this is convection under rock, not a flame.
@@ -472,14 +492,32 @@ Shader "TumbangPreso/VolcanicRock"
                 // thresholded ridge, so the emissive set is a thin branching network and never
                 // the surface; there is no caller-facing parameter that can turn the whole plate
                 // into a light source.
-                float3 emit = _EmissionColor.rgb * mask * pulse * (1.0 - cooled);
+                // ⚠️⚠️ THE VEIN HAS A BRIGHTER CORE, AND THAT IS WHAT MAKES IT READ AS GLOWING
+                // RATHER THAN AS PAINTED ORANGE. 🧑 2026-08-28: *"there needs to be more and
+                // glowier lava"*. The obvious answer is to turn the whole emission up, and it is
+                // the wrong one twice over: it walks straight into `docs/VISION.md` § 2 rule 5,
+                // which `AbilityShowcaseProbe` gates at 12 per cent of a frame blown past
+                // 245/255, and a uniformly brighter band still reads FLAT because real glow is
+                // a gradient. `core` is a second, tighter threshold further inside the same
+                // vein, so the centre line runs hot toward yellow while the edges stay deep
+                // orange. Same footprint, more apparent light, and the blown pixels stay a thin
+                // spine rather than the whole network.
+                float core = smoothstep(cut + w * 0.5, cut + w * 1.7, g);
+
+                float3 emit = _EmissionColor.rgb * (mask * 0.75 + core * 1.35)
+                            * pulse * (1.0 - cooled) * _Glow;
 
                 float3 rgb = albedo + emit;
 
                 // A ceiling, not a normalisation. It costs nothing when the surface is behaving
                 // and it makes "an effect whited out the street" unreachable from this shader
                 // rather than merely unlikely, which is what a gate is for.
-                rgb = min(rgb, 1.35);
+                // ⚠️ RAISED FROM 1.35 WHEN THE VEIN CORE LANDED. A ceiling below the core's own
+                // peak clamps the gradient flat again, which is the thing the core exists to
+                // avoid: it would make a hot centre and a warm edge the same pixel. 1.9 leaves
+                // the spine room to run to white while the ceiling still makes "an effect whited
+                // out the street" unreachable from this shader rather than merely unlikely.
+                rgb = min(rgb, 1.9);
 
                 return float4(rgb, _Color.a);
             }

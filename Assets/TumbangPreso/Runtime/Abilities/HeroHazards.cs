@@ -4619,7 +4619,7 @@ namespace TumbangPreso.Abilities
                 // ⚠️ OBJECT SPACE, BECAUSE THESE TUMBLE. See `_PatternSpace`: a world-space grain
                 // would swim through a spinning body and read as a projector rather than as rock.
                 var look = VfxMaterial.VolcanicLook.Debris(Random.Range(0, 100000));
-                look.Heat = Random.Range(0.10f, 0.28f);
+                look.Heat = Random.Range(0.16f, 0.40f);
                 VfxMaterial.Volcanic(rock.GetComponent<Renderer>(), look);
 
                 var rb = rock.AddComponent<Rigidbody>();

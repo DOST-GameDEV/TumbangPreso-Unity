@@ -214,6 +214,15 @@ namespace TumbangPreso.Visual
             public Color Emission;
 
             public float Heat;
+
+            /// <summary>
+            /// Gain on the veins only. 🧑 2026-08-28: *"there needs to be more and glowier lava"*.
+            ///
+            /// ⚠️ IT CANNOT BRIGHTEN THE ROCK, WHICH IS WHY IT IS SAFE TO TURN UP. It multiplies
+            /// a mask that is already a thresholded network, so the extra light lands in the
+            /// cracks and nowhere else. `Heat` widens the network; this makes it burn harder.
+            /// </summary>
+            public float Glow;
             public float Grain;
             public float VeinScale;
             public float VeinWidth;
@@ -267,8 +276,9 @@ namespace TumbangPreso.Visual
                 Rock = new Color(0.27f, 0.23f, 0.20f),
                 Hot = UI.UiTheme.HeroMagmaCore,
                 Deep = new Color(0.50f, 0.08f, 0.02f),
-                Emission = new Color(0.90f, 0.36f, 0.07f),
-                Heat = 0.24f,
+                Emission = new Color(1.00f, 0.42f, 0.09f),
+                Heat = 0.42f,
+                Glow = 1.7f,
                 Grain = 3.6f,
                 VeinScale = 3.0f,
                 VeinWidth = 0.12f,
@@ -276,8 +286,8 @@ namespace TumbangPreso.Visual
                 ReliefStep = 0.055f,
                 Facets = 6.0f,
                 Flow = 0.045f,
-                ErodeFrom = 0.72f,
-                ErodeDepth = 0.28f,
+                ErodeFrom = 0.50f,
+                ErodeDepth = 0.58f,
                 ObjectSpace = false,
                 Transparent = false,
                 Alpha = 1.0f,
@@ -299,8 +309,9 @@ namespace TumbangPreso.Visual
                 Rock = new Color(0.30f, 0.14f, 0.08f),
                 Hot = UI.UiTheme.HeroMagmaCore,
                 Deep = new Color(0.62f, 0.11f, 0.02f),
-                Emission = new Color(0.85f, 0.31f, 0.05f),
-                Heat = 0.62f,
+                Emission = new Color(1.00f, 0.40f, 0.07f),
+                Heat = 0.80f,
+                Glow = 1.9f,
                 Grain = 3.0f,
                 VeinScale = 2.1f,
                 VeinWidth = 0.22f,
@@ -308,8 +319,8 @@ namespace TumbangPreso.Visual
                 ReliefStep = 0.075f,
                 Facets = 5.0f,
                 Flow = 0.075f,
-                ErodeFrom = 0.74f,
-                ErodeDepth = 0.26f,
+                ErodeFrom = 0.52f,
+                ErodeDepth = 0.62f,
                 ObjectSpace = false,
                 Transparent = true,
                 Alpha = 0.95f,
@@ -330,7 +341,8 @@ namespace TumbangPreso.Visual
                 Hot = new Color(0.85f, 0.42f, 0.16f),
                 Deep = new Color(0.42f, 0.14f, 0.05f),
                 Emission = new Color(0.70f, 0.28f, 0.06f),
-                Heat = 0.12f,
+                Heat = 0.16f,
+                Glow = 1.2f,
                 Grain = 3.4f,
                 VeinScale = 1.4f,
                 VeinWidth = 0.09f,
@@ -338,8 +350,8 @@ namespace TumbangPreso.Visual
                 ReliefStep = 0.040f,
                 Facets = 5.0f,
                 Flow = 0.02f,
-                ErodeFrom = 0.68f,
-                ErodeDepth = 0.32f,
+                ErodeFrom = 0.46f,
+                ErodeDepth = 0.70f,
                 ObjectSpace = false,
                 Transparent = false,
                 Alpha = 1.0f,
@@ -361,7 +373,8 @@ namespace TumbangPreso.Visual
                 Hot = UI.UiTheme.HeroMagmaCore,
                 Deep = new Color(0.55f, 0.09f, 0.02f),
                 Emission = new Color(0.90f, 0.36f, 0.07f),
-                Heat = 0.18f,
+                Heat = 0.26f,
+                Glow = 1.6f,
                 Grain = 7.5f,
                 VeinScale = 5.0f,
                 VeinWidth = 0.10f,
@@ -480,6 +493,7 @@ namespace TumbangPreso.Visual
             m.SetColor("_EmissionColor", look.Emission);
 
             m.SetFloat("_Heat", look.Heat);
+            m.SetFloat("_Glow", look.Glow <= 0.0f ? 1.0f : look.Glow);
             m.SetFloat("_NoiseScale", look.Grain);
             m.SetFloat("_VeinScale", look.VeinScale);
             m.SetFloat("_VeinWidth", look.VeinWidth);
