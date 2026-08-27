@@ -259,7 +259,21 @@ Shader "TumbangPreso/NearFade"
             // partially instead of flipping between solid and gone as the player circles it. Above
             // roughly 57 degrees from vertical the surface is treated as ground and is left alone
             // completely.
-            float upness = abs(normalize(IN.worldNormal).y);
+            // ⚠️⚠️ SIGNED, NOT `abs`, AND `abs` LEFT THE UNDERSIDE OF EVERY CANOPY SOLID.
+            // 🧑 2026-08-28: *"dither is not applied on the bottom of the tree leaf"*, standing
+            // inside a tree with the whole underside of it filling the frame.
+            //
+            // The guard exists to protect the GROUND, and a floor faces UP. Taking the absolute
+            // value protected anything horizontal in either direction, so a soffit, an awning and
+            // the underside of a leaf were all treated as floor and refused to fade. Those are
+            // precisely surfaces you can walk under and end up inside, and when you do they fill
+            // the view exactly the way a trunk does.
+            //
+            // ⚠️ A DOWN-FACING SURFACE CAN BE BETWEEN YOUR EYE AND THE STREET; AN UP-FACING ONE
+            // CANNOT. That asymmetry is the whole reason the sign matters. You stand ON things
+            // that face up, so dissolving one drops you through the world. You walk UNDER things
+            // that face down, so dissolving one is the same favour as dissolving a post.
+            float upness = normalize(IN.worldNormal).y;
             float faceable = 1.0 - smoothstep(0.45, 0.55, upness);
 
             visible = lerp(1.0, visible, faceable);

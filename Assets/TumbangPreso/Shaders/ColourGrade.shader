@@ -139,7 +139,28 @@ Shader "TumbangPreso/ColourGrade"
             half2 SplitOffset (half2 uv)
             {
                 half2 flat_split = half2(_Chromatic * 0.006h, 0.0h);
-                half2 radial = (uv - 0.5h) * (_Chromatic * 0.012h);
+
+                // ⚠️⚠️ THE FALLOFF IS SQUARED, NOT LINEAR, AND LINEAR IS WHY IT READ AS A
+                // WHOLE-SCREEN BLUR. 🧑 2026-08-28: *"the whole screen has chromatic aberration
+                // applied, when i only need it on the edges. thus making the whole screen seem
+                // blurry"*, and immediately after, *"theres white outlines on distant objects"*.
+                // Those are one fault, not two: a split offsets red one way and blue the other, so
+                // across any high-contrast boundary the two land apart and leave a pale fringe. Do
+                // it everywhere and every edge in the frame gets one, which reads as softness up
+                // close and as a white keyline on a distant roof against the sky.
+                //
+                // A linear `(uv - 0.5)` is already at HALF strength a quarter of the way out from
+                // the centre, so most of the frame was fringing. `dot(d, d) * 4` is 1 at the frame
+                // edge, so the edge is unchanged, but it falls off as the SQUARE toward the middle:
+                // half way out it is a quarter of the strength rather than a half, and the central
+                // area where the crosshair and the HUD live is effectively clean.
+                //
+                // ⚠️ THE `* 4` KEEPS THE EDGE WHERE IT WAS. `dot(d, d)` peaks at 0.25 on the left
+                // and right edges where `d.x` is 0.5, so without it the whole effect would be
+                // quartered and the number below would have to be re-derived to say the same thing.
+                half2 d = uv - 0.5h;
+                half falloff = saturate(dot(d, d) * 4.0h);
+                half2 radial = d * (_Chromatic * 0.012h) * falloff;
 
                 return lerp(flat_split, radial, saturate(_ChromaticRadial));
             }
