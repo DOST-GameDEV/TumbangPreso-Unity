@@ -118,7 +118,42 @@ namespace TumbangPreso.Settings
         /// hard to see without pixel-peeping two stills, and this game is played on whatever
         /// the school laptop is.
         /// </summary>
-        public const int Default = 3;
+        /// ⚠️⚠️ THE DEFAULT MOVED FROM MSAA 4x + FXAA TO FXAA ALONE, BECAUSE MSAA PUTS A WHITE
+        /// KEYLINE ROUND EVERY DISTANT SILHOUETTE ON THIS FRAME. 🧑 2026-08-28, having tested all
+        /// three: *"off and fxaa gets rid of the outlines. msaa brings it back"*. That isolates it
+        /// exactly, and the reasoning above about 2x versus 4x is still correct and still beside
+        /// the point.
+        ///
+        /// ⚠️ IT IS MSAA MEETING A TONEMAP, NOT MSAA BEING WRONG. Multisample resolve AVERAGES its
+        /// samples, and on this camera it does so in linear HDR, BEFORE `ColourGrade` runs its ACES
+        /// curve. That curve is compressive, so averaging and then tonemapping is not the same
+        /// operation as tonemapping and then averaging:
+        ///
+        ///     tonemap(mean(sky, roof))  is much brighter than  mean(tonemap(sky), tonemap(roof))
+        ///
+        /// At a roofline against the sky, half the samples carry a sky value well above 1.0 and
+        /// half carry a dark roof. Their mean lands high on the curve, where it is flat, so the
+        /// edge pixel resolves BRIGHTER than either surface it sits between. Every silhouette gets
+        /// a pale rim, which is exactly what was reported and only on the MSAA rows.
+        ///
+        /// ⚠️ AND THE TONEMAP CORRECTION MADE IT VISIBLE RATHER THAN CAUSING IT. While the
+        /// pre-scale was 0.552 nothing in the frame could exceed 0.648, so sky and roof were close
+        /// together and their mean was close to both. Lifting white to 0.90 spread them apart, and
+        /// the same latent fault became a line you can see. Reverting the tonemap would hide this
+        /// and re-darken the whole game; it is not the trade to make.
+        ///
+        /// ⚠️ THE REAL FIX IS A TONEMAPPED RESOLVE, AND THE BUILT-IN PIPELINE DOES NOT OFFER ONE.
+        /// Engines that want both apply a reversible tonemap before the resolve and undo it after,
+        /// so the average is taken in a perceptual space. That needs control of the resolve step,
+        /// which `OnRenderImage` does not have. The alternative, turning `allowHDR` off, would clamp
+        /// every value at 1.0 before `ColourGrade` ever saw it and leave the ACES curve nothing to
+        /// roll off, which is the tonemap deleted by another name.
+        ///
+        /// So FXAA alone is the default: it runs AFTER the tonemap on display-referred values,
+        /// which is the space its thresholds were designed for, and it cannot produce this artefact
+        /// at all. The MSAA rows are KEPT rather than deleted, because they are correct on a map
+        /// that grades nothing and a player who prefers geometric edges can still pick one.
+        public const int Default = 1;
 
         /// <summary>
         /// Whether the post filter should run this session.
