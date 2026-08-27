@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace TumbangPreso.Visual
 {
@@ -153,6 +154,40 @@ namespace TumbangPreso.Visual
         /// ⚠️ IT DOES NOT DESTROY ANYTHING. Ownership of a runtime mesh belongs to whoever
         /// created it; this only forgets that it was welded.
         /// </summary>
+        /// <summary>
+        /// § WHY THE HANDS TORE ONLY WHEN THE GAME WAS ENTERED THROUGH THE SPLASH SCREEN.
+        ///
+        /// ⚠️⚠️ `EntityId` IS UNIQUE AMONG LIVE OBJECTS, NOT UNIQUE FOREVER, AND THIS SET OUTLIVES
+        /// THE OBJECTS IT NAMES. 🧑 2026-08-28: *"it was working on the eskinita scene directly,
+        /// but when starting from the splashscreen scene its not"*, which is the shape of a static
+        /// that survives a scene load rather than of anything geometric.
+        ///
+        /// Loading Eskinita directly runs with this set empty, so every mesh is welded and every
+        /// border is closed. Reaching it through splash and menu destroys two scenes' worth of
+        /// meshes first, and Unity RECYCLES their ids. `ViewmodelArms` then builds its accessory
+        /// meshes fresh at runtime, one of them draws a recycled id that is already in this set,
+        /// `Weld` sees a hit and returns early, and that mesh keeps its raw split normals. Its
+        /// hull tears at every hard edge while its neighbours are fine, which is the inconsistent
+        /// border, and it lands on a different piece each run because id recycling is not stable.
+        ///
+        /// ⚠️ `Forget` ALONE COULD NOT COVER THIS AND IS STILL WORTH KEEPING. It is called where
+        /// this code destroys a mesh on purpose, which is the accessory teardown. A scene unload
+        /// destroys meshes without asking anybody, so there is no call site to hang it off. The
+        /// only sound rule is that an id from a previous scene means nothing in this one.
+        ///
+        /// ⚠️ CLEARING IS CHEAP AND RE-WELDING IS IDEMPOTENT. The weld is a pure function of the
+        /// mesh, so a mesh that survives the load is simply welded again to the identical answer,
+        /// once, at the cost of one pass over its vertices.
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void ForgetEverythingOnSceneLoad()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode) => Welded.Clear();
+
         public static void Forget(Mesh mesh)
         {
             if (mesh == null) return;
