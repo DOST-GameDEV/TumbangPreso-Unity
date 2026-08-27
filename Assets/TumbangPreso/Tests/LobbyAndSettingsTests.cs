@@ -1194,5 +1194,86 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(-1, p.CanPick);
             Assert.AreEqual(-1, p.SlipperPick);
         }
+
+        // ===================================================================
+        // ⚠️⚠️ THE JOIN ADDRESS, WHICH IS WHERE EVERY LAN JOIN DIED. `LanBeacon` advertises
+        // `ip:port`, the browser copies that string into the join box verbatim, and the box's own
+        // help text tells the player the port is optional and therefore allowed. Nothing parsed
+        // it, so the whole string went to `UnityTransport.SetConnectionData` as the HOSTNAME and
+        // the transport refused to start. Two machines that could see each other perfectly well
+        // could not join each other. `docs/TODO.md` § 59.
+        //
+        // ⚠️ THESE ARE ASSERTIONS RATHER THAN A PLAYED TEST BECAUSE THEY CAN BE. The failure was
+        // only ever visible with two machines on a network, and the rule it broke is a string
+        // split that runs in a microsecond.
+        // ===================================================================
+
+        [Test]
+        public void JoinAddressSplitsAPortOffTheEnd()
+        {
+            int port = LobbySession.DefaultPort;
+            Assert.AreEqual("192.168.1.144", NetSession.SplitHostPort("192.168.1.144:8910", ref port));
+            Assert.AreEqual(8910, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("192.168.1.144", NetSession.SplitHostPort("192.168.1.144:7777", ref port));
+            Assert.AreEqual(7777, port, "a port written by the player beats the default");
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("localhost", NetSession.SplitHostPort("  localhost:7000  ", ref port));
+            Assert.AreEqual(7000, port, "the field is not trimmed anywhere else");
+        }
+
+        [Test]
+        public void JoinAddressWithoutAPortKeepsTheCallersPort()
+        {
+            int port = 7777;
+            Assert.AreEqual("192.168.1.144", NetSession.SplitHostPort("192.168.1.144", ref port));
+            Assert.AreEqual(7777, port, "-tp-join 127.0.0.1 7777 must be unchanged");
+        }
+
+        /// <summary>
+        /// ⚠️ A BARE IPv6 LITERAL IS FULL OF COLONS AND IS A VALID ADDRESS ON ITS OWN. Splitting
+        /// on the last colon would turn `fe80::1` into a host of `fe80:` and a port of 1, which
+        /// is a worse failure than the one being fixed because it would look like it worked.
+        /// </summary>
+        [Test]
+        public void JoinAddressLeavesABareIpv6LiteralAlone()
+        {
+            int port = LobbySession.DefaultPort;
+            Assert.AreEqual("fe80::1", NetSession.SplitHostPort("fe80::1", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            // ⚠️ THE BRACKETS COME OFF EVEN WITH NO PORT, because they are join-address syntax
+            // and not part of the address: `UnityTransport.SetConnectionData` wants the literal.
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("::1", NetSession.SplitHostPort("[::1]", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("::1", NetSession.SplitHostPort("[::1]:7000", ref port),
+                            "brackets are what make an IPv6 port unambiguous");
+            Assert.AreEqual(7000, port);
+        }
+
+        /// <summary>⚠️ A TRAILING COLON, AN EMPTY HOST OR A NONSENSE PORT IS LEFT ALONE, so the
+        /// transport reports the real address the player typed rather than a guess this made
+        /// out of it.</summary>
+        [Test]
+        public void JoinAddressRefusesToGuessAtRubbish()
+        {
+            int port = LobbySession.DefaultPort;
+            Assert.AreEqual("192.168.1.144:", NetSession.SplitHostPort("192.168.1.144:", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual(":8910", NetSession.SplitHostPort(":8910", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("host:99999", NetSession.SplitHostPort("host:99999", ref port),
+                            "65535 is the ceiling");
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+        }
     }
 }

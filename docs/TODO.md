@@ -5495,6 +5495,97 @@ reason: Classic's whole bottom-of-screen identity was host-only until somebody l
 
 ---
 
+## 59 · Two machines could discover each other and could not join, and it is one missing string split
+
+🧑 2026-08-27, with both firewalls off and two laptops on one LAN: *"they are detected on lan and
+server but i cant join"*, *"both devices cannot reach each other"*, *"they can discover but they
+cant join"*. Reported with a screenshot of the join box reading
+`Could not reach 192.168.1.144:8910`, naming the exact machine that had just advertised itself.
+
+### 59.1 ✅ FIXED: nothing anywhere parsed `host:port`
+
+`NetSession.Configure` hands its argument straight to `UnityTransport.SetConnectionData`, which
+wants a bare address. **The join field is filled with `ip:port` from three directions:**
+
+* `LanBeacon` advertises `ip:port` and `ConvertedMultiplayerSetup.OnLanRowClicked` copies that
+  string into the box verbatim, so **clicking a discovered LAN game could never work**;
+* the online browser row does the same;
+* the box's own help text reads *"An online code, or a LAN address. Port defaults to 8910"*,
+  which tells a player the port is optional and therefore that writing it is allowed.
+
+The whole string then went in as the HOSTNAME. It is not an address and not a resolvable name, so
+the transport refused to start, `StartClient` returned false, and the screen printed
+`Could not reach 192.168.1.144:8910`.
+
+⚠️⚠️ **DISCOVERY AND JOINING NEVER SHARED A CODE PATH, WHICH IS WHY THIS SURVIVED.** Discovery is
+`LanBeacon` over UDP and it worked perfectly; joining is `UnityTransport` and it was handed a
+string only the beacon's own formatter had ever produced. Every test of the join path used
+`-tp-join 127.0.0.1 8910`, which passes the host and the port as **two arguments** and never
+exercises the one-string form a human uses.
+
+**Fixed** in `NetSession.StartClient`, which is the single door every caller goes through, so the
+menu, the CLI and the join-code resolver all benefit. `NetSession.SplitHostPort` is public and
+asserted in `LobbyAndSettingsTests`:
+
+* `192.168.1.144:8910` splits; `192.168.1.144` keeps the caller's port, so `-tp-join 127.0.0.1
+  7777` is unchanged;
+* the field is trimmed, because nothing else trims it;
+* ⚠️ **a bare IPv6 literal is left alone.** It is full of colons and is a valid address on its
+  own, so splitting on the last colon would turn `fe80::1` into a host of `fe80:` and a port of 1,
+  which is a worse failure than the one being fixed because it would look like it worked.
+  Bracketed IPv6 (`[::1]:7000`) is read, and the brackets come off even without a port because
+  they are join-address syntax rather than part of the address;
+* a trailing colon, an empty host or a port outside 1 to 65535 is left alone, so the transport
+  reports the address the player actually typed rather than a guess made out of it.
+
+### 59.2 ✅ FIXED: a refused join left the player in a lobby that said CONNECTED
+
+`ConvertedMultiplayerSetup.Join` navigates to the lobby the moment `StartClient` returns true, and
+**that only means the transport was told to start.** Approval has not happened yet and can still
+be refused, for a protocol mismatch or a full lobby. The refusal arrives at
+`NetSession.OnClientDisconnected` seconds later, on a screen that has already been left behind, so
+the reason was written to a status label nobody was looking at.
+
+🧑 sent the frame: a screen headed **LOBBY · CONNECTED** with `P1 · TAYA FIRST ◀ YOU` and every
+other chair drawn as **BOT**, because no roster or seating ever arrived, and READY answering
+*"Still connecting. Press again in a moment."* (§ 53.5's guard, correctly refusing to claim a
+readiness the host had never been told about).
+
+**Fixed** with `NetSession.ClientDisconnected` and `NetSession.LastDisconnectReason`. The lobby
+returns to the join screen, and the join screen prints the reason once and clears it, so a
+version mismatch says so instead of looking like a hang. ⚠️ A protocol mismatch is the likeliest
+cause whenever two machines were built from different commits, and it is the one thing in that
+list a player can actually fix.
+
+### 59.3 ✅ CHANGED ON REQUEST: READY no longer starts the match
+
+🧑: *"i also dont like that if u click ready it auto starts, i want to have to click start match
+to start it as host"*. § 55's gate called `HostStartMatch` itself once the tally was satisfied, so
+the last person to tick a box decided when four people were dropped into an arena and the host's
+own START button was decoration it could never reach. Readiness is now what the button says: an
+ANSWER, drawn on every screen by `ReadyTally`, that the host reads before choosing its moment.
+
+⚠️ **The host is not blocked on the tally either.** START stays live whatever it reads, because a
+lobby of one host and three bots is a legitimate match and waiting for a quorum of one would be a
+gate with nothing behind it.
+
+⚠️ **`HostPeerLeft` stopped starting matches too.** It called `HostStartMatch` when a departure
+satisfied the gate, which was right for a gate that started matches. A peer QUITTING the lobby and
+thereby dropping three other people into an arena is the same surprise from a worse direction; it
+now just redraws the tally.
+
+### 59.4 Still open
+
+* ⚠️ **`ProtocolVersion` is 5 and has moved three times today** (2→3 dropping the peer id from
+  `DeclareReady` and `VoteRematch`, 3→4 for the lobby gate's `ready` bool and `ReadyTally`, 4→5
+  for `Score`). **Both machines must be built from the same commit**, and 59.2 is what makes it
+  say so out loud instead of hanging.
+* **Nothing above has been played by two people.** 59.1 is the only one of the four whose failure
+  was reproduced first-hand, and it was reproduced by reading rather than by playing.
+
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**
