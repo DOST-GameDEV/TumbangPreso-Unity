@@ -81,6 +81,70 @@ namespace TumbangPreso.Core
         /// </summary>
         public readonly float[] SkillAppetite = new float[3];
 
+        /// <summary>
+        /// 0..1. How much this bot plays to the crowd: taunts, celebrations, idle emotes.
+        ///
+        /// ⚠️⚠️ A CELEBRATION IS A SELF-INFLICTED STUN, SO THE APPETITE FOR ONE IS A REAL
+        /// PERSONALITY AXIS AND NOT DECORATION. `EmotePlayer` refuses to play while a body
+        /// cannot act and cancels on the first movement key, so a bot that stops to dance has
+        /// genuinely stopped: it is out of position for as long as the clip runs. A lobby has
+        /// somebody who bows after every knockdown and somebody who never presses B once, and
+        /// the difference between them is a difference in what they are willing to pay for it.
+        ///
+        /// ⚠️ SEAT-SEEDED LIKE EVERY OTHER FIELD HERE, so "seat 3 is the show-off" is a
+        /// reproducible fact about a match rather than run-to-run noise the probe would inherit.
+        /// </summary>
+        public readonly float Showmanship;
+
+        /// <summary>
+        /// 0..1. How often this bot's feet leave the ground for no tactical reason at all.
+        ///
+        /// ⚠️⚠️ IT IS THE MOST HUMAN THING IN THIS FILE AND IT BUYS NOTHING. Jumping costs no
+        /// stamina and confers no advantage in this game, which is exactly why a person does it
+        /// while they wait: it is fidgeting with the one verb that is free. Bots walked at one
+        /// height for the entire port, and a body that never leaves the floor is the tell that
+        /// survives every other fix.
+        ///
+        /// ⚠️ THE ROLL IS THE HABIT, NOT THE PERMISSION. `AiTuning.HopIntervalMin` and the tier's
+        /// `Hops` decide how often the habit gets a chance; this decides whether this particular
+        /// bot has it at all. At the bottom of the range a seat essentially never hops.
+        /// </summary>
+        public readonly float Springiness;
+
+        /// <summary>
+        /// 0..1. How hard this bot is to distract. The inverse of how often its attention lapses.
+        ///
+        /// ⚠️⚠️ 🧑 2026-08-28: *"let it make mistakes bcz humans do mistakes sometimes"*. The tier's
+        /// `Mistake` was the only error model in the game and it reached exactly one decision:
+        /// the throw wind-up (`_blundering`). Nothing else a bot did could ever go wrong, so a
+        /// bot that was not currently charging a shot was playing perfectly.
+        ///
+        /// ⚠️⚠️ AND A LAPSE IS NOT A WRONG ANSWER, IT IS A LATE ONE. Deliberately choosing the
+        /// second-best plan reads as a broken bot, because the mistake is visible in the choice.
+        /// Attention that wanders for a beat is invisible in the choice and visible only in the
+        /// timing, which is what being outplayed by a person actually looks like. See
+        /// `AIController` § ATTENTION WANDERS.
+        /// </summary>
+        public readonly float Focus;
+
+        /// <summary>
+        /// 0..1, mapped onto the seats at read time. Which rival this bot takes personally.
+        ///
+        /// ⚠️⚠️ § 33.1 KILLED THE SEAT-ORDER SELECTOR AND FOUR IDENTICAL SCORERS STILL AGREE.
+        /// The chase is a score now rather than a `foreach` with a `return` in it, so nobody is
+        /// singled out by construction. But all four seats weigh the board with the same four
+        /// weights, so whoever the board favours is favoured by every bot at once, and a person
+        /// who plays differently from three bots (deeper into the chalk, holding a tsinelas
+        /// longer) is different in the terms the score reads. 🧑 2026-08-28: *"I dont want the
+        /// bots to only go after the human too (sometimes it only targets human)"*.
+        ///
+        /// ⚠️ A SMALL BIAS, NOT A TARGET. It is worth `AiTuning.TagRivalryWeight`, which is under
+        /// the helpless bonus and under a metre and a half of distance: it decides ties and near
+        /// ties and never overrules a tag that is actually available. Four bots that break ties
+        /// differently is the whole of the fix.
+        /// </summary>
+        public readonly float RivalPick;
+
         public AiPersonalityRoll(int seatSeed)
         {
             // ⚠️ A DETERMINISTIC HASH, NOT string.GetHashCode(). .NET's string hash is
@@ -102,11 +166,37 @@ namespace TumbangPreso.Core
             SkillAppetite[0] = Range(ref state, 0.0f, 1.0f);
             SkillAppetite[1] = Range(ref state, 0.0f, 1.0f);
             SkillAppetite[2] = Range(ref state, 0.0f, 1.0f);
+
+            // ⚠️⚠️ APPENDED BELOW EVERYTHING, FOR THE REASON `Patience` RECORDS ONE FIELD UP.
+            // `Range` advances one xorshift stream in declaration order, so a field inserted
+            // ABOVE any existing one silently re-rolls every personality in the game and
+            // invalidates every measurement ever taken against them. The four below are the
+            // 2026-08-28 humanising pass and they sit at the bottom for that reason alone.
+            Showmanship = Range(ref state, 0.0f, 1.0f);
+            Springiness = Range(ref state, 0.0f, 1.0f);
+            Focus = Range(ref state, 0.0f, 1.0f);
+            RivalPick = Range(ref state, 0.0f, 1.0f);
         }
 
         /// <summary>Eagerness for one slot, safe against an out-of-range index.</summary>
         public float AppetiteFor(int slot)
             => slot >= 0 && slot < SkillAppetite.Length ? SkillAppetite[slot] : 0.5f;
+
+        /// <summary>
+        /// Which of <paramref name="candidateCount"/> rivals this bot takes personally, or -1
+        /// when there are none.
+        ///
+        /// ⚠️ THE MAPPING LIVES HERE RATHER THAN AT THE CALL SITE so the seat that gets picked
+        /// is a property of the personality and not of whatever order the caller happened to
+        /// build its list in. The caller owns the list; this owns the choice.
+        /// </summary>
+        public int RivalIndex(int candidateCount)
+        {
+            if (candidateCount <= 0) return -1;
+
+            int index = (int)(RivalPick * candidateCount);
+            return index >= candidateCount ? candidateCount - 1 : index;
+        }
 
         private static uint Fnv1a(string s)
         {

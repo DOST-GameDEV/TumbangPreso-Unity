@@ -43,6 +43,7 @@ namespace TumbangPreso.Visual
         private static readonly int ExposureId = Shader.PropertyToID("_Exposure");
         private static readonly int WhiteId = Shader.PropertyToID("_White");
         private static readonly int ChromaticId = Shader.PropertyToID("_Chromatic");
+        private static readonly int ChromaticRadialId = Shader.PropertyToID("_ChromaticRadial");
 
         /// <summary>Short, bounded screen-space colour split for local ultimate impact.</summary>
         public void PulseChromatic(float strength, float duration)
@@ -62,6 +63,34 @@ namespace TumbangPreso.Visual
                 return _chromaticPeak * Mathf.Clamp01(left / Mathf.Max(_chromaticDuration, 0.05f));
             }
         }
+
+        // ------------------------------------------------------- § THE PERSISTENT COLOUR SPLIT
+        //
+        // ⚠️⚠️ THE STYLE'S SPLIT IS ADDED TO THE IMPACT'S, IT DOES NOT REPLACE IT, AND A `Max`
+        // WOULD HAVE BEEN THE OBVIOUS WRONG ANSWER. `Settings.RenderStyles`'s Chromatic row holds
+        // a base of 0.25 on for the whole match. The transient peaks it has to coexist with are
+        // `HitFeel.ChromaticPeak`, which is 0.10 / 0.22 / 0.35 / 0.55 by hit weight, and
+        // `HeroAbilitySystem`'s ultimate at 0.95.
+        //
+        // Under `Mathf.Max` the two lightest hits are SWALLOWED: max(0.25, 0.10) is 0.25, which is
+        // the frame not moving. The whole job of that pulse is to tell the player they were hit,
+        // and in Chromatic mode it would fire and show nothing. Under a sum every hit moves the
+        // frame by its own full peak whatever the base is, so the impact keeps the exact amplitude
+        // it was tuned at: 0.25 + 0.55 is 0.80 and still inside the range, and only an ultimate
+        // (0.25 + 0.95) saturates, which costs nothing because 0.95 was already within five per
+        // cent of the top.
+        //
+        // ⚠️ IT IS READ OFF A STATIC RATHER THAN OFF `SettingsStore.Current`, for the reason
+        // `AntiAliasModes.FxaaActive` records: this is inside `OnRenderImage`, on every camera,
+        // every frame, and `SettingsStore.Current` loads and validates the whole settings file the
+        // first time it is touched.
+        //
+        // ⚠️ AND IT IS ZERO IN THE DEFAULT STYLE, so `IsIdentity` below still returns true on a
+        // map that grades nothing and the pass is still skipped outright there. Chromatic mode
+        // un-skips that existing blit; it adds no new pass.
+
+        private float EffectiveChromatic =>
+            Mathf.Clamp01(Settings.RenderStyles.PersistentChromatic + CurrentChromatic);
 
         // ------------------------------------------------------------------ the event grade
         //
@@ -155,7 +184,7 @@ namespace TumbangPreso.Visual
             && Mathf.Approximately(_contrast, 1.0f)
             && Mathf.Approximately(_saturation * _eventSaturation, 1.0f)
             && _exposure <= 0.0f
-            && CurrentChromatic <= 0.0f;
+            && EffectiveChromatic <= 0.0f;
 
         /// <summary>
         /// ⚠️ A NO-OP GRADE STILL COSTS A FULL-SCREEN BLIT, so it is skipped outright. This runs
@@ -191,7 +220,14 @@ namespace TumbangPreso.Visual
             _material.SetFloat(SaturationId, _saturation * _eventSaturation);
             _material.SetFloat(ExposureId, _exposure);
             _material.SetFloat(WhiteId, _white);
-            _material.SetFloat(ChromaticId, CurrentChromatic);
+            _material.SetFloat(ChromaticId, EffectiveChromatic);
+
+            // ⚠️ THE SHAPE OF THE SPLIT IS THE STYLE'S, NOT THE PULSE'S, so a hit taken in
+            // Chromatic mode fringes radially like everything else in that frame: they are the
+            // same lens. In the default Toon style this writes 0 and the shader takes the same
+            // flat horizontal branch it always has, so the shipped impact effect is unchanged.
+            _material.SetFloat(ChromaticRadialId,
+                               Settings.RenderStyles.RadialSplit ? 1.0f : 0.0f);
 
             Graphics.Blit(source, destination, _material);
         }

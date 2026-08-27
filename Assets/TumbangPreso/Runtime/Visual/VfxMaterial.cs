@@ -176,6 +176,398 @@ namespace TumbangPreso.Visual
             VfxRenderTag.Attach(renderer.gameObject);
         }
 
+        // ===================================================================
+        // VOLCANIC ROCK
+        // ===================================================================
+
+        /// <summary>
+        /// Everything <see cref="Volcanic"/> needs to paint one piece of Dante's ground.
+        ///
+        /// ⚠️⚠️ IT IS A STRUCT WITH PRESETS BECAUSE THE FOUR PIECES DIFFER BY NUMBERS AND NOT BY
+        /// CODE, AND THAT IS THE WHOLE CLAIM THE SHADER MAKES. `docs/TODO.md` § 19 records the
+        /// opposite failure and it is the one worth not repeating: five effects went through one
+        /// builder and *"change the vertex radii and you have a different outline; you do not
+        /// have a different effect"*. Here the crust, the bed, the upheaval slabs and the
+        /// launched rocks are genuinely the same MATERIAL — they are all the same road, broken
+        /// up — so sharing one surface is the honest answer rather than the lazy one, and what
+        /// separates them is heat, grain and which space the pattern is locked to.
+        ///
+        /// ⚠️ A CALLER IS EXPECTED TO EDIT FIELDS AFTER TAKING A PRESET. The presets carry the
+        /// measured defaults; a site that wants hotter rock says so on the line that spawns it,
+        /// which keeps the number next to the thing it describes.
+        /// </summary>
+        public struct VolcanicLook
+        {
+            public Color Rock;
+            public Color Hot;
+            public Color Deep;
+            public Color Emission;
+
+            public float Heat;
+
+            /// <summary>
+            /// Gain on the veins only. 🧑 2026-08-28: *"there needs to be more and glowier lava"*.
+            ///
+            /// ⚠️ IT CANNOT BRIGHTEN THE ROCK, WHICH IS WHY IT IS SAFE TO TURN UP. It multiplies
+            /// a mask that is already a thresholded network, so the extra light lands in the
+            /// cracks and nowhere else. `Heat` widens the network; this makes it burn harder.
+            /// </summary>
+            public float Glow;
+            public float Grain;
+            public float VeinScale;
+            public float VeinWidth;
+            public float Relief;
+            public float ReliefStep;
+            public float Facets;
+            public float Flow;
+
+            /// <summary>
+            /// Where the silhouette starts crumbling, as a fraction of the mesh's own radius.
+            /// 1.5 leaves the outline exactly as the builder emitted it.
+            ///
+            /// ⚠️⚠️ IT IS THE ANSWER TO *"IDK ABOUT THE EFFECT BEING A FLAT PLANE WITH SHARP
+            /// EDGES AND CORNERS"*, 🧑 2026-08-28 off the v39 render, and it is a separate fault
+            /// from the flat SURFACE he reported the same day. The texture pass fixed what the
+            /// plates are made of and could not touch what shape they are cut to:
+            /// `VfxShapes.Wedges` and `VfxShapes.Upheaval` both end in dead straight lines
+            /// meeting at hard corners, which is the read of cut paper however good the grain on
+            /// it is.
+            ///
+            /// ⚠️ THE MESHES COULD NOT BE CHANGED, AND THAT IS WHY THIS IS A SHADER PARAMETER.
+            /// `Wedges` also builds Nemu's void band and `GroundReticle`'s crown, and `Upheaval`
+            /// is Dante's motif everywhere it appears; ragging either builder would rewrite three
+            /// effects to fix one. Defaulting to off means every existing caller is untouched.
+            /// </summary>
+            public float ErodeFrom;
+            public float ErodeDepth;
+
+            /// <summary>Cycles per metre of the edge wave, and the bite threshold of the second
+            /// cut. See the shader: coarse on purpose, because a fine field stipples.</summary>
+            public float ErodeScale;
+            public float ErodePits;
+
+            /// <summary>
+            /// ⚠️ TRUE FOR ANYTHING THAT MOVES. See the shader's `_PatternSpace` note: a world
+            /// space pattern is what makes nine crust plates read as one continuous piece of
+            /// rock, and it is exactly wrong on a rock that tumbles, where the grain would swim
+            /// through the body instead of belonging to it.
+            /// </summary>
+            public bool ObjectSpace;
+
+            /// <summary>
+            /// ⚠️ FALSE FOR GROUND, AND `docs/TODO.md` § 19.2a IS WHY. Ground that has been
+            /// burnt or broken is opaque: an opaque surface writes depth and therefore occludes
+            /// what is beneath it by construction, where two coplanar translucent plates sort
+            /// arbitrarily and one call drew a different colour per drop.
+            /// </summary>
+            public bool Transparent;
+
+            public float Alpha;
+            public int Seed;
+
+            /// <summary>Cooled basalt: nearly black, hairline seams, heavy grain.</summary>
+            public static VolcanicLook Crust(int seed) => new VolcanicLook
+            {
+                Rock = new Color(0.27f, 0.23f, 0.20f),
+                Hot = UI.UiTheme.HeroMagmaCore,
+                Deep = new Color(0.50f, 0.08f, 0.02f),
+                Emission = new Color(1.00f, 0.42f, 0.09f),
+                Heat = 0.42f,
+                Glow = 1.7f,
+                Grain = 3.6f,
+                VeinScale = 3.0f,
+                VeinWidth = 0.12f,
+                Relief = 1.15f,
+                ReliefStep = 0.055f,
+                Facets = 6.0f,
+                Flow = 0.045f,
+                ErodeFrom = 0.86f,
+                ErodeDepth = 0.15f,
+                ErodeScale = 2.4f,
+                ErodePits = 0.34f,
+                ObjectSpace = false,
+                Transparent = false,
+                Alpha = 1.0f,
+                Seed = seed,
+            };
+
+            /// <summary>
+            /// The hot plate under the crust: mostly molten, with dark islands left floating in
+            /// it.
+            ///
+            /// ⚠️ IT IS THE SAME SURFACE AT A DIFFERENT HEAT, NOT A DIFFERENT MATERIAL, WHICH IS
+            /// WHY THE TWO LAYERS NOW BELONG TO EACH OTHER. Before the shader, the bed was one
+            /// flat orange and the crust one flat brown, and nothing about either said they were
+            /// the same rock at two temperatures. They share a grain field now, so the islands
+            /// in the bed are made of visibly the same stone as the plates over it.
+            /// </summary>
+            public static VolcanicLook Bed(int seed) => new VolcanicLook
+            {
+                Rock = new Color(0.30f, 0.14f, 0.08f),
+                Hot = UI.UiTheme.HeroMagmaCore,
+                Deep = new Color(0.62f, 0.11f, 0.02f),
+                Emission = new Color(1.00f, 0.40f, 0.07f),
+                Heat = 0.80f,
+                Glow = 1.9f,
+                Grain = 3.0f,
+                VeinScale = 2.1f,
+                VeinWidth = 0.22f,
+                Relief = 0.70f,
+                ReliefStep = 0.075f,
+                Facets = 5.0f,
+                Flow = 0.075f,
+                ErodeFrom = 0.94f,
+                ErodeDepth = 0.09f,
+                ErodeScale = 2.0f,
+                ErodePits = 0.14f,
+                ObjectSpace = false,
+                Transparent = true,
+                Alpha = 0.95f,
+                Seed = seed,
+            };
+
+            /// <summary>
+            /// Road that was lifted rather than melted.
+            ///
+            /// ⚠️ NEARLY NO HEAT, AND THAT IS `SpawnUpheaval`'s OWN ARGUMENT KEPT. Its note says
+            /// the slabs are road-coloured rather than near-black *"because the whole claim of
+            /// the motif is that a player recognises it as the street"*. Glowing seams in them
+            /// would say the concrete was on fire, which is Sean's fiction and not Dante's.
+            /// </summary>
+            public static VolcanicLook Upheaval(int seed) => new VolcanicLook
+            {
+                Rock = new Color(0.44f, 0.40f, 0.36f),
+                Hot = new Color(0.85f, 0.42f, 0.16f),
+                Deep = new Color(0.42f, 0.14f, 0.05f),
+                Emission = new Color(0.70f, 0.28f, 0.06f),
+                Heat = 0.16f,
+                Glow = 1.2f,
+                Grain = 3.4f,
+                VeinScale = 1.4f,
+                VeinWidth = 0.09f,
+                Relief = 1.35f,
+                ReliefStep = 0.040f,
+                Facets = 5.0f,
+                Flow = 0.02f,
+                ErodeFrom = 0.84f,
+                ErodeDepth = 0.16f,
+                ErodeScale = 2.7f,
+                ErodePits = 0.30f,
+                ObjectSpace = false,
+                Transparent = false,
+                Alpha = 1.0f,
+                Seed = seed,
+            };
+
+            /// <summary>
+            /// A chunk thrown out of the hole.
+            ///
+            /// ⚠️ OBJECT SPACE AND A TIGHT GRAIN, because these are 0.25 to 0.55 m across and
+            /// tumbling. At the ground's grain a whole rock would fall inside one lump of the
+            /// noise field and come out a flat colour again, which is the exact fault being
+            /// fixed; the pattern has to be small enough that a body this size contains several
+            /// cycles of it.
+            /// </summary>
+            public static VolcanicLook Debris(int seed) => new VolcanicLook
+            {
+                Rock = new Color(0.22f, 0.18f, 0.15f),
+                Hot = UI.UiTheme.HeroMagmaCore,
+                Deep = new Color(0.55f, 0.09f, 0.02f),
+                Emission = new Color(0.90f, 0.36f, 0.07f),
+                Heat = 0.26f,
+                Glow = 1.6f,
+                Grain = 7.5f,
+                VeinScale = 5.0f,
+                VeinWidth = 0.10f,
+                Relief = 0.95f,
+                ReliefStep = 0.016f,
+                Facets = 4.0f,
+                Flow = 0.0f,
+                // ⚠️⚠️ EROSION IS OFF HERE, AND IT DELETED EVERY ROCK IN THE GAME WHEN IT WAS ON.
+                // `ability_quake_debris_v42.png` is eight launched rocks and it is a photograph
+                // of an empty street. The clip is keyed on the vertex's distance from the mesh
+                // origin, and EVERY VERTEX OF A `PrimitiveType.Cube` IS A CORNER: all twenty-four
+                // sit at 0.866, so the interpolated radius is 0.866 across every face, the whole
+                // body reads as "past the rim", and the entire rock is discarded.
+                //
+                // ⚠️ SO THE RULE IS THAT RADIAL EROSION NEEDS A MESH WITH AN INTERIOR. It works
+                // on `Wedges` and `Upheaval` because those have vertices at many radii and the
+                // fragment sees a real gradient across the plate. A convex primitive whose
+                // vertices are equidistant from its own centre has no gradient to erode along,
+                // and the clip is all-or-nothing. The debris does not need it anyway: what makes
+                // these read as chunks rather than dice is the unequal slab proportions above.
+                ErodeFrom = 1.5f,
+                ErodeDepth = 0.0f,
+                ObjectSpace = true,
+                Transparent = false,
+                Alpha = 1.0f,
+                Seed = seed,
+            };
+        }
+
+        private static Shader _volcanic;
+        private static bool _volcanicChecked;
+
+        /// <summary>
+        /// The one shader lookup, cached including the miss.
+        ///
+        /// ⚠️ THE MISS IS CACHED TOO, AND THAT IS NOT A MICRO-OPTIMISATION. `Shader.Find` walks
+        /// every loaded shader; Dante's stomp paints through here about twenty times per cast
+        /// (nine crust plates, six slabs, eight rocks and the bed), so a stripped build would
+        /// pay for twenty failed searches on every keypress rather than one.
+        /// </summary>
+        private static Shader VolcanicShader
+        {
+            get
+            {
+                if (_volcanicChecked) return _volcanic;
+                _volcanicChecked = true;
+
+                // ⚠️ THE SAME PROBE `Template` USES, FOR THE SAME REASON. This shader is written
+                // against the built-in pipeline, which is what this project actually renders on:
+                // the URP package is present with NO pipeline asset assigned. Under a scriptable
+                // pipeline it would have no matching subshader and draw as the error material,
+                // so the fall back to the flat painters is the correct answer there rather than
+                // a degraded one.
+                if (GraphicsSettings.currentRenderPipeline != null) return null;
+
+                _volcanic = Shader.Find("TumbangPreso/VolcanicRock");
+
+                if (_volcanic == null)
+                {
+                    Debug.LogWarning("[Vfx] TumbangPreso/VolcanicRock is missing; Dante's ground " +
+                                     "falls back to flat colour. Check GameBuilder.EnsureRuntimeShaders.");
+                }
+
+                return _volcanic;
+            }
+        }
+
+        /// <summary>
+        /// Paint a renderer as volcanic rock: dark grain with real relief, and magma showing in
+        /// the breaks.
+        ///
+        /// ⚠️⚠️ THIS IS THE ANSWER TO *"IT CURRENTLY LOOKS FLAT, LIKE NO TEXTURE ETC"*, 🧑
+        /// 2026-08-28. `Solid` and `Ghost` above put ONE constant colour on every pixel of a
+        /// mesh, so the § 19 construction pass gave Dante broken plates, a hot bed, leaning
+        /// slabs and launched rocks, and then painted all four of them the way a cylinder used
+        /// to be painted. Geometry was the only channel with anything in it.
+        ///
+        /// ⚠️ IT FALLS BACK RATHER THAN FAILING, AND THE FALLBACK IS EXACTLY WHAT SHIPPED
+        /// BEFORE. A missing shader gives flat rock, which is the old look, not a hole in the
+        /// street. The warning above is what says so; the picture on its own would be
+        /// indistinguishable from nobody having done the work.
+        /// </summary>
+        /// <returns>Whether the real shader was used, so a caller can tell the two apart.</returns>
+        public static bool Volcanic(Renderer renderer, VolcanicLook look, bool stripCollider = true)
+        {
+            if (renderer == null) return false;
+
+            var shader = VolcanicShader;
+
+            if (shader == null)
+            {
+                // ⚠️ THE BED IS THE ONLY TRANSLUCENT PIECE, so it is the only one that may go
+                // through `Ghost`; sending the crust there would put two coplanar translucent
+                // plates back on the road, which is § 19.2a's defect.
+                if (look.Transparent)
+                {
+                    Ghost(renderer, new Color(look.Hot.r, look.Hot.g, look.Hot.b, look.Alpha), 0.30f,
+                          stripCollider);
+                }
+                else
+                {
+                    Solid(renderer, look.Rock);
+                    if (stripCollider) StripCollider(renderer.gameObject);
+                }
+
+                return false;
+            }
+
+            var m = new Material(shader) { name = "HeroVfxVolcanic" };
+
+            var rock = new Color(look.Rock.r, look.Rock.g, look.Rock.b, look.Alpha);
+
+            m.SetColor("_Color", rock);
+            m.SetColor("_HotColor", look.Hot);
+            m.SetColor("_DeepColor", look.Deep);
+            m.SetColor("_EmissionColor", look.Emission);
+
+            m.SetFloat("_Heat", look.Heat);
+            m.SetFloat("_Glow", look.Glow <= 0.0f ? 1.0f : look.Glow);
+            m.SetFloat("_NoiseScale", look.Grain);
+            m.SetFloat("_VeinScale", look.VeinScale);
+            m.SetFloat("_VeinWidth", look.VeinWidth);
+            m.SetFloat("_Relief", look.Relief);
+            m.SetFloat("_ReliefStep", look.ReliefStep);
+            m.SetFloat("_Facets", look.Facets);
+            m.SetFloat("_Flow", look.Flow);
+            m.SetFloat("_PatternSpace", look.ObjectSpace ? 1.0f : 0.0f);
+            m.SetFloat("_Cool", 0.0f);
+            m.SetFloat("_Seed", look.Seed);
+
+            // ⚠️ A ZEROED STRUCT MEANS "ERODE EVERYTHING", WHICH IS THE ONE VALUE THIS FIELD
+            // MUST NOT DEFAULT TO. `ErodeFrom` is a fraction of the mesh radius and 0 would bite
+            // the shape away from its centre outward, so a caller who builds a `VolcanicLook`
+            // by hand rather than from a preset would get an invisible effect and no error.
+            // Reading 0 as "off" costs one line and makes the default safe.
+            m.SetFloat("_ErodeFrom", look.ErodeFrom <= 0.0f ? 1.5f : look.ErodeFrom);
+            m.SetFloat("_ErodeDepth", look.ErodeDepth);
+            m.SetFloat("_ErodeScale", look.ErodeScale <= 0.0f ? 2.2f : look.ErodeScale);
+            m.SetFloat("_ErodePits", look.ErodePits);
+
+            // ⚠️⚠️ THE BLEND STATE IS WRITTEN HERE FOR THE SAME REASON `ConfigureBuiltInFade`
+            // WRITES IT: nothing runs a material inspector in a player, so every flag the mode
+            // implies has to be set explicitly. The queue matters most. An opaque crust in the
+            // transparent queue would still be sorted against the bed by bounds centre, and the
+            // two are 12 mm apart, which is § 19.2a's coin toss all over again.
+            if (look.Transparent)
+            {
+                m.SetInt("_SrcBlend", (int)BlendMode.SrcAlpha);
+                m.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
+                m.SetInt("_ZWrite", 0);
+                m.renderQueue = (int)RenderQueue.Transparent;
+
+                // ⚠️⚠️ THE TAG IS OVERRIDDEN, NOT JUST THE QUEUE, AND WITHOUT THIS THE HOT BED
+                // WOULD ACQUIRE AN INK OUTLINE. A SubShader's `RenderType` is fixed at compile
+                // time and this one declares `Opaque`, but `_CameraDepthNormalsTexture` is
+                // filled by rendering the scene through a REPLACEMENT shader keyed on exactly
+                // that tag, and `WorldOutline` finds its edges in that buffer. So a translucent
+                // plate left tagged `Opaque` writes depth-normals it has no business writing and
+                // comes back with a black line drawn round it.
+                //
+                // ⚠️ IT IS ALSO WHAT `Standard` ITSELF DOES. Switching that shader to Fade in the
+                // inspector rewrites this tag along with the blend factors; `ConfigureBuiltInFade`
+                // above transcribes the blend half of that and never needed the tag half, because
+                // it is switching between two modes of a shader whose Transparent SubShader
+                // already carries it. This shader has one SubShader, so the override is the only
+                // way to say it.
+                m.SetOverrideTag("RenderType", "Transparent");
+            }
+            else
+            {
+                m.SetInt("_SrcBlend", (int)BlendMode.One);
+                m.SetInt("_DstBlend", (int)BlendMode.Zero);
+                m.SetInt("_ZWrite", 1);
+                m.renderQueue = (int)RenderQueue.Geometry;
+                m.SetOverrideTag("RenderType", "Opaque");
+            }
+
+            // ⚠️ TWO-SIDED. `VfxShapes.Fan`'s note records a whole capture pass lost to a mesh
+            // wound the wrong way, where "invisible" read as "not spawned". These are generated
+            // meshes with no thickness; culling buys nothing here and can only cost that.
+            m.SetInt("_Cull", (int)CullMode.Off);
+
+            renderer.sharedMaterial = m;
+
+            if (stripCollider) StripCollider(renderer.gameObject);
+
+            // Tagged AND owned, exactly as `Solid` is: this material was built for this one
+            // renderer, so it dies with it. See `VfxRenderTag.Own`.
+            VfxRenderTag.Own(renderer.gameObject, m);
+            return true;
+        }
+
         /// <summary>
         /// ⚠️ ONE PLACE, BECAUSE `Destroy` AND `DestroyImmediate` ARE NOT INTERCHANGEABLE AND
         /// THE ABILITY TESTS RUN OUTSIDE PLAY MODE. `Destroy` on a component in an EditMode test

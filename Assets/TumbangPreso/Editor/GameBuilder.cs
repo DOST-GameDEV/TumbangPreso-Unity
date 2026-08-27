@@ -293,6 +293,27 @@ namespace TumbangPreso.EditorTools
                 // was added to replace: so a build that strips this ships the bug back while
                 // the editor stays fixed.
                 "TumbangPreso/DownedVignette",
+
+                // ⚠️ THE NEAR-CAMERA DISSOLVE, AND ITS MISS PATH SHIPS THE ORIGINAL REPORT BACK.
+                // `NearFade.Install` reaches it through `Shader.Find` and nothing in any scene
+                // references it, which is exactly the case this list exists for. Stripped, the
+                // install warns and leaves every post on its solid material, so the .exe goes back
+                // to a utility pole filling half the screen while the editor keeps working. The
+                // warning is the editor-side guard; this line is the player-side one.
+                "TumbangPreso/NearFade",
+
+                // ⚠️ DANTE'S GROUND, AND THE FIRST SHADER ANY ABILITY HAS EVER HAD. `VfxMaterial
+                // .Volcanic` reaches it through `Shader.Find` and nothing in any scene references
+                // it, which is exactly the case this list exists for.
+                //
+                // ⚠️ ITS MISS PATH IS THE GENTLEST ON THIS LIST AND THAT IS THE DANGER. The
+                // painter falls back to `Solid` and `Ghost` on a miss, so a stripped build does
+                // not ship a magenta stomp: it ships the FLAT one, which is precisely the look
+                // 🧑 reported on 2026-08-28 and which this shader was written to answer. The
+                // editor would be fixed and the .exe would show the original complaint, and the
+                // only thing saying so would be one warning in a log nobody reads during a
+                // playtest. That is worse than pink, not better.
+                "TumbangPreso/VolcanicRock",
             };
 
             var settings = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/GraphicsSettings.asset");

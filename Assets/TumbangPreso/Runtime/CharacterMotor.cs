@@ -350,12 +350,67 @@ namespace TumbangPreso
             // gamepad steers this way too (`MouseAimed` is false for them), and a turn cap that
             // only bots obeyed would be a second movement model, which `CLAUDE.md` § 4 forbids
             // in as many words: *"a bot presses the same buttons a human does"*.
-            float maxTurn = AiTuning.BodyTurnDegPerSecond * Mathf.Max(0.0f, dt);
+            // ⚠️⚠️ THE RATE IS NOT CONSTANT ANY MORE, AND THAT IS § HOW A HAND MOVES A MOUSE IN
+            // `AiTuning`. What stood here was `BodyTurnDegPerSecond * dt`, a flat cap, so the
+            // body turned at exactly 520°/s from the first frame of a turn to the last and then
+            // stopped dead on the mark. It fixed the 2026-08-27 report (*"they can look straight
+            // behind them and turn in 0.1 seconds"*) and replaced it with a different tell:
+            // nothing physical moves at one speed with no ramp at either end. 🧑 2026-08-28:
+            // *"(make sure its head turns like how a human's camera/mouse turns)"*.
+            //
+            // ⚠️⚠️ THE WANTED SPEED SCALES WITH HOW FAR THERE IS TO GO, WHICH IS THE HALF THAT
+            // READS. A person makes a 15° correction slowly and a 170° check fast, so one rate is
+            // wrong at both ends: at 520 the small correction snaps and only the big check looks
+            // right. Dividing the remaining angle by `BodyTurnReachSeconds` gives a hand that
+            // wants to finish any turn in about the same time, which is what a wrist does.
+            //
+            // ⚠️ NOTHING GOT FASTER THAN IT WAS. A full 180° reversal wants 1000°/s at 0.18 s and
+            // clamps to the shipped `BodyTurnDegPerSecond` 520, so the longest turn in the game
+            // still runs at exactly the old cap. Only turns under about 94° behave differently,
+            // and those are the ones that used to snap.
+            //
+            // ⚠️ THE FLOOR IS NOT A START-FROM-ZERO. Accelerating from rest makes every SHORT
+            // press worthless, and the loiter glance is a 0.09 s press: from zero it would be
+            // worth about 12° and the look-around added on 2026-08-27 would quietly stop
+            // happening. `BodyTurnSettleDegPerSecond` is a hand that is already tensed.
+            //
+            // ⚠️ AND `RotateTowards` STILL CLAMPS AT THE TARGET, so there is no overshoot to
+            // correct and no settle wobble. The ease is in how the rate is reached, not in an
+            // oscillation around the mark.
+            float remaining = Quaternion.Angle(transform.rotation,
+                                               Quaternion.LookRotation(wish, Vector3.up));
+
+            float wantRate = Mathf.Clamp(remaining / AiTuning.BodyTurnReachSeconds,
+                                         AiTuning.BodyTurnSettleDegPerSecond,
+                                         AiTuning.BodyTurnDegPerSecond);
+
+            // ⚠️ THE RATE IS NEVER BELOW THE FLOOR WHILE A TURN IS RUNNING. Without this line a
+            // body that has been walking one heading sits at whatever rate it decayed to, and the
+            // first frame of a new turn inherits it: a bot that has stood still is slower to turn
+            // than one that has just turned, for no reason a player could ever read.
+            if (_turnRate < AiTuning.BodyTurnSettleDegPerSecond)
+                _turnRate = AiTuning.BodyTurnSettleDegPerSecond;
+
+            _turnRate = Mathf.MoveTowards(_turnRate, wantRate,
+                                          AiTuning.BodyTurnAccelDegPerSecond2 * Mathf.Max(0.0f, dt));
+
+            float maxTurn = _turnRate * Mathf.Max(0.0f, dt);
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation, Quaternion.LookRotation(wish, Vector3.up), maxTurn);
 
             return wish;
         }
+
+        /// <summary>
+        /// The body's current angular speed in degrees per second, carried between frames so a
+        /// turn can accelerate. See the note in <see cref="Steer"/>.
+        ///
+        /// ⚠️ IT IS DELIBERATELY NOT RESET WHEN THE BODY STOPS. A hand does not go rigid the
+        /// instant it stops moving the mouse, and resetting would make the first frame after a
+        /// pause the slowest frame of the next turn. The floor in `Steer` bounds it from below
+        /// and `MoveTowards` bounds it from above, so it cannot drift anywhere useless.
+        /// </summary>
+        private float _turnRate;
 
         /// <summary>
         /// True when a local player is steering this unit with the mouse, from

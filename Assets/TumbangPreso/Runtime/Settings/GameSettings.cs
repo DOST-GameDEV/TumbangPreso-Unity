@@ -66,6 +66,57 @@ namespace TumbangPreso.Settings
         public bool Fullscreen = true;
 
         /// <summary>
+        /// Which anti-aliasing mode to render at, as an index into
+        /// <see cref="AntiAliasModes.All"/>. 0 is Off.
+        ///
+        /// ⚠️⚠️ IT IS A SETTING RATHER THAN A CONSTANT BECAUSE THE QUALITY LEVELS ALREADY
+        /// DISAGREED AND NOTHING RECONCILED THEM. `QualitySettings.asset` carried MSAA on two of
+        /// its six levels and none on the other four, and every offscreen probe in the project
+        /// built its RenderTexture with 4 or 8 samples regardless. So the sample count a player
+        /// got depended on a quality level nothing in this game ever shows them, while every
+        /// image the project judged itself by was anti-aliased. One stored index, applied in one
+        /// place, is what makes the two answerable with the same question.
+        ///
+        /// ⚠️ STORED AS AN INT for the reason <see cref="AiDifficulty"/> and
+        /// <see cref="SlipperHighlight"/> both record: the settings file is read back by builds
+        /// whose list may have grown a row, and an int with a clamp survives that.
+        /// </summary>
+        public int AntiAliasMode = AntiAliasModes.Default;
+
+        /// <summary>
+        /// Whether the game waits for the display before showing a frame, as an index into
+        /// <see cref="VSyncModes.All"/>.
+        ///
+        /// ⚠️ STORED AS AN INT WITH A CLAMP, like every other mode index on this object, because a
+        /// settings file written by an older build is read back by a newer one whose list may have
+        /// grown a row. See <see cref="VSyncModes"/> for why the half-refresh row is the one worth
+        /// having and the one people leave out.
+        /// </summary>
+        public int VSyncMode = VSyncModes.Default;
+
+        /// <summary>
+        /// Which look the game is drawn in, as an index into <see cref="RenderStyles.All"/>.
+        /// 0 is Toon, the shipped ink look.
+        ///
+        /// ⚠️⚠️ IT IS THE ONE INDEX ON THIS CLASS WHOSE DEFAULT IS ROW 0, AND THAT IS SAFE HERE
+        /// FOR THE EXACT REASON IT IS UNSAFE EVERYWHERE ELSE. <see cref="AntiAliasMode"/> and
+        /// <see cref="SlipperHighlight"/> both default AWAY from their row 0, because
+        /// `JsonUtility` constructs the object before it overwrites the fields the file carries,
+        /// so an older `settings.json` inherits the field initialiser and a 0 there would silently
+        /// turn a feature off for everybody upgrading. Row 0 of the style table IS what those
+        /// older builds were already drawing, so the upgrade lands on no change at all.
+        ///
+        /// ⚠️ THE DEFAULT IS NOT A TASTE. Chromatic is an experiment being evaluated against the
+        /// shipped look, and a player who never opens this screen has to see the shipped look.
+        /// `RenderStyles.Default` carries the full reasoning and `LobbyAndSettingsTests` asserts
+        /// the upgrade path rather than trusting it.
+        ///
+        /// ⚠️ STORED AS AN INT with a clamp, for the reason <see cref="AiDifficulty"/> records:
+        /// the settings file is read back by builds whose list may have grown a row.
+        /// </summary>
+        public int RenderStyle = RenderStyles.Default;
+
+        /// <summary>
         /// Which colour § THE LANDED HIGHLIGHT lights a rested tsinelas in, as an index into
         /// <see cref="SlipperHighlights.All"/>. 0 is Off.
         ///
@@ -147,10 +198,25 @@ namespace TumbangPreso.Settings
         ///
         /// Volumes need no push: the music bed, the announcer and the SFX all read the
         /// sliders live, which is what makes dragging one audible immediately.
+        ///
+        /// ⚠️ ANTI-ALIASING IS PUSHED HERE FOR EXACTLY THE FULLSCREEN REASON. It is two engine
+        /// switches rather than a value something reads back (`QualitySettings.antiAliasing` and
+        /// the flag `Visual.PostAntiAlias` runs off), so a mode that is only stored is a mode
+        /// that survives a restart everywhere except in the picture.
+        ///
+        /// ⚠️ THE RENDER STYLE IS PUSHED HERE FOR THE SAME REASON AND ONE MORE. Two of its three
+        /// switches are statics that a render callback reads, and the third is a GLOBAL shader
+        /// float, which lives in the graphics device rather than in this object: nothing restores
+        /// it on its own, so a style that is only stored is a style that never reaches a single
+        /// pixel. This is also what makes the panel's BACK button undo a pick, since
+        /// `SettingsStore.Restore` re-applies the snapshot through here.
         /// </summary>
         public void Apply()
         {
             ApplyDisplay();
+            AntiAliasModes.Apply(AntiAliasMode);
+            VSyncModes.Apply(VSyncMode);
+            RenderStyles.Apply(RenderStyle);
             AIController.ApplyDifficulty(AiDifficulty);
         }
 
@@ -195,6 +261,9 @@ namespace TumbangPreso.Settings
             MouseSensitivity = Mathf.Clamp(MouseSensitivity, 0.1f, 5.0f);
             AiDifficulty = Mathf.Clamp(AiDifficulty, 0, AIController.NoBotsIndex);
             SlipperHighlight = Mathf.Clamp(SlipperHighlight, 0, SlipperHighlights.All.Length - 1);
+            AntiAliasMode = Mathf.Clamp(AntiAliasMode, 0, AntiAliasModes.All.Length - 1);
+            VSyncMode = Mathf.Clamp(VSyncMode, 0, VSyncModes.All.Length - 1);
+            RenderStyle = Mathf.Clamp(RenderStyle, 0, RenderStyles.All.Length - 1);
 
             if (string.IsNullOrEmpty(PlayerToken)) PlayerToken = MintToken();
         }

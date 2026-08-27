@@ -210,7 +210,8 @@ has been wrong repeatedly and expensively:
 
 - `dotnet test Core.Tests/...` for every balance number, in about a second.
 - `BotBehaviourProbe` runs a whole match in both modes and prints throws, retrievals, tags,
-  skills, ultimates and penalties, on Eskinita and on Ilalim ng Tulay. It is **seeded**; do not
+  skills, ultimates, penalties, emotes and hops, on Eskinita and on Ilalim ng Tulay. It is
+  **seeded**; do not
   change the seed to make a run pass. ⚠️ **Its numbers are LIVENESS FLOORS, never comparisons.**
   It is stepped at a fixed 1/60 s now, which removed most of the noise and not all of it: eight
   matches at the shipped settings spread from 58 to 100 throws. ⚠️⚠️ **`docs/TODO.md` § 10 claims

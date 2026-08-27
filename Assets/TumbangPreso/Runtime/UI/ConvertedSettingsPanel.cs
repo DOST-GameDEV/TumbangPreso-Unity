@@ -58,6 +58,19 @@ namespace TumbangPreso.UI
 
             BuildRebindRows();
             BuildSlipperHighlightRow();
+
+            // ⚠️ THE BUILD ORDER IS THE DISPLAY ORDER, REVERSED. All three picker rows insert
+            // themselves directly under `FullscreenCheck`, so the one built LAST ends up nearest
+            // the box and the first built ends up furthest from it. Top to bottom the screen
+            // therefore reads: fullscreen, render style, anti-aliasing, slipper highlight.
+            //
+            // Render style is nearest the box because it is the largest visual choice on the
+            // panel by a distance: it decides whether the game has ink outlines at all. Then
+            // anti-aliasing, which is also a display setting. The slipper highlight is an
+            // accessibility colour rather than a display mode and reads fine below both.
+            BuildAntiAliasRow();
+            BuildVSyncRow();
+            BuildRenderStyleRow();
             WireSliders();
             WireChecks();
             WireNameField();
@@ -435,6 +448,9 @@ namespace TumbangPreso.UI
         // --- The landed-highlight colour ---------------------------------------------
 
         private Dropdown _highlight;
+        private Dropdown _antiAlias;
+        private Dropdown _vsync;
+        private Dropdown _renderStyle;
 
         /// <summary>
         /// § THE LANDED HIGHLIGHT's colour picker, from `settings_panel.gd`.
@@ -453,6 +469,122 @@ namespace TumbangPreso.UI
         /// choice is made by eye. See `SwatchDropdown`.
         /// </summary>
         private void BuildSlipperHighlightRow()
+        {
+            var options = new List<SwatchDropdown.Option>();
+
+            foreach (var entry in SlipperHighlights.All)
+            {
+                // ⚠️ "Off" PASSES A NULL SWATCH rather than its stored colour. Row 0 holds black
+                // as a placeholder because the palette is an array and every row needs a value;
+                // drawing it would put a black chip beside "Off" that reads like a sixth colour.
+                bool hasColour = entry.Label != "Off";
+                options.Add(new SwatchDropdown.Option(
+                    entry.Label, hasColour ? entry.Colour : (Color?)null));
+            }
+
+            _highlight = BuildDropdownRow("SlipperHighlightRow", "Slipper Highlight", options,
+                                          SettingsStore.Current.SlipperHighlight,
+                                          PickSlipperHighlight);
+        }
+
+        /// <summary>
+        /// The anti-aliasing picker.
+        ///
+        /// ⚠️⚠️ IT IS ON THIS SCREEN AT ALL BECAUSE THE GAME HAD NO WAY TO ASK FOR IT. The
+        /// sample count a player rendered at came from whichever of the six quality levels the
+        /// platform default happened to select, four of the six carried none, and nothing in the
+        /// game ever showed a quality level or let anybody change one. See
+        /// <see cref="AntiAliasModes"/> for what was measured.
+        ///
+        /// ⚠️ AND IT IS A DROPDOWN WITH NO SWATCHES rather than the cycling button the first
+        /// version of the highlight row used. Same reasoning inverted: the highlight is a colour
+        /// and has to be shown, this is a list of five named modes and the only thing a player
+        /// needs to see is which one is on and what else there is. A null swatch on every row
+        /// hides the chip, which is the same path "Off" already takes.
+        /// </summary>
+        private void BuildAntiAliasRow()
+        {
+            var options = new List<SwatchDropdown.Option>();
+
+            foreach (var entry in AntiAliasModes.All)
+                options.Add(new SwatchDropdown.Option(entry.Label, null));
+
+            _antiAlias = BuildDropdownRow("AntiAliasRow", "Anti-Aliasing", options,
+                                          SettingsStore.Current.AntiAliasMode, PickAntiAlias);
+        }
+
+        /// <summary>
+        /// The vertical sync picker.
+        ///
+        /// ⚠️ IT APPLIES ON THE PICK, like anti-aliasing and the render style. Tearing and judder
+        /// are the entire content of this setting and neither can be judged from a label, so a
+        /// value that only took effect on APPLY would make the choice guesswork. `SettingsStore`'s
+        /// snapshot still restores it on Back, because `GameSettings.Apply` pushes the stored index
+        /// back through `VSyncModes.Apply`.
+        /// </summary>
+        private void BuildVSyncRow()
+        {
+            var options = new List<SwatchDropdown.Option>();
+
+            foreach (var entry in VSyncModes.All)
+                options.Add(new SwatchDropdown.Option(entry.Label, null));
+
+            _vsync = BuildDropdownRow("VSyncRow", "Vertical Sync", options,
+                                      SettingsStore.Current.VSyncMode, PickVSync);
+        }
+
+        private void PickVSync(int index)
+        {
+            SettingsStore.Current.VSyncMode =
+                Mathf.Clamp(index, 0, VSyncModes.All.Length - 1);
+
+            VSyncModes.Apply(SettingsStore.Current.VSyncMode);
+            RefreshApplyState();
+        }
+
+        /// <summary>
+        /// The render style picker.
+        ///
+        /// ⚠️⚠️ IT IS ON THIS SCREEN SO THE TWO LOOKS CAN BE COMPARED WITHOUT A REBUILD. 🧑 wants
+        /// to judge a softer post-processed look with visible colour fringing against the ink
+        /// outlines the game ships with, and judging two looks means flipping between them on the
+        /// same frame rather than describing them. See <see cref="RenderStyles"/> for what each
+        /// row switches and why Toon is row 0 and the default.
+        ///
+        /// ⚠️ NO SWATCHES, for the same reason the anti-aliasing row has none: these are two
+        /// named looks, not colours, and the only thing a player needs to see is which one is on
+        /// and what else there is. The picture behind the panel is the swatch.
+        /// </summary>
+        private void BuildRenderStyleRow()
+        {
+            var options = new List<SwatchDropdown.Option>();
+
+            foreach (var entry in RenderStyles.All)
+                options.Add(new SwatchDropdown.Option(entry.Label, null));
+
+            _renderStyle = BuildDropdownRow("RenderStyleRow", "Render Style", options,
+                                            SettingsStore.Current.RenderStyle, PickRenderStyle);
+        }
+
+        /// <summary>
+        /// The scaffolding both picker rows sit in.
+        ///
+        /// ⚠️ SHARED RATHER THAN COPIED, AND THE REASON IS THE COLUMN. `ActionLabelWidth` is what
+        /// lines a row's label up with the fifteen rebind rows above it, and
+        /// <see cref="HighlightControlSize"/> is what keeps the control the same width as the
+        /// one below. Two copies of this method are two places for one of those to be edited,
+        /// and a settings list where one row's control starts forty pixels further right than
+        /// its neighbour's has already been reported once on this panel.
+        ///
+        /// ⚠️ BUILT IN CODE AND PLACED NEXT TO THE FULLSCREEN BOX, rather than authored into
+        /// `SettingsPanel.unity`. The scene is a conversion of the .tscn and gets rebaked by
+        /// `TscnImporter`, so a row added to the asset by hand is a row that disappears the next
+        /// time somebody reimports the maps. Everything on this screen that the importer does
+        /// not own is built here, which is the same reason the rebind rows are.
+        /// </summary>
+        private Dropdown BuildDropdownRow(string rowName, string label,
+                                          IList<SwatchDropdown.Option> options,
+                                          int initial, Action<int> onChanged)
         {
             var anchor = Node("FullscreenCheck");
             if (anchor == null || anchor.parent == null) return;
@@ -519,6 +651,48 @@ namespace TumbangPreso.UI
                 Mathf.Clamp(index, 0, SlipperHighlights.All.Length - 1);
 
             SettingsStore.RaiseSlipperHighlightChanged();
+            RefreshApplyState();
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ IT APPLIES ON THE PICK RATHER THAN ON APPLY, AND THAT IS DELIBERATE ON A PANEL
+        /// WHERE MOST THINGS DO NOT. This is the same rule the volume sliders and the highlight
+        /// colour already follow: a setting whose whole content is how the screen looks has to
+        /// change the screen while the player is looking at it, or the control is a claim they
+        /// cannot check. This panel is reachable from the in-match pause menu, so on the pick
+        /// there is a real frame behind it to judge.
+        ///
+        /// ⚠️ AND BACK STILL UNDOES IT, which is the half that makes applying early safe.
+        /// `SettingsStore.Restore` calls `GameSettings.Apply`, and `Apply` pushes the mode back
+        /// through `AntiAliasModes.Apply`, so a discarded pick is off the screen as well as out
+        /// of the file. Nothing here writes the disk.
+        /// </summary>
+        private void PickAntiAlias(int index)
+        {
+            SettingsStore.Current.AntiAliasMode =
+                Mathf.Clamp(index, 0, AntiAliasModes.All.Length - 1);
+
+            AntiAliasModes.Apply(SettingsStore.Current.AntiAliasMode);
+            RefreshApplyState();
+        }
+
+        /// <summary>
+        /// ⚠️ IT APPLIES ON THE PICK, for the reason <see cref="PickAntiAlias"/> gives at length
+        /// and with more force than anything else on this panel: the whole content of this
+        /// setting is what the screen looks like, and it exists so two looks can be COMPARED.
+        /// A style that only took effect on APPLY, or on the next match, would make the one
+        /// question it was added to answer impossible to ask.
+        ///
+        /// ⚠️ AND BACK STILL UNDOES IT. `SettingsStore.Restore` calls `GameSettings.Apply`, which
+        /// pushes the snapshot's index back through `RenderStyles.Apply`, and that re-writes the
+        /// `_OutlineSuppress` global as well as the two statics. Nothing here writes the disk.
+        /// </summary>
+        private void PickRenderStyle(int index)
+        {
+            SettingsStore.Current.RenderStyle =
+                Mathf.Clamp(index, 0, RenderStyles.All.Length - 1);
+
+            RenderStyles.Apply(SettingsStore.Current.RenderStyle);
             RefreshApplyState();
         }
 
@@ -875,6 +1049,22 @@ namespace TumbangPreso.UI
             // edit and re-dirty the panel we are in the middle of cleaning up.
             if (_highlight != null)
                 _highlight.SetValueWithoutNotify(SettingsStore.Current.SlipperHighlight);
+
+            // ⚠️ THE SAME FOR THE ANTI-ALIASING FACE, and it has the stronger claim of the two:
+            // `Restore` re-applies the mode to the engine, so the frame behind this panel is
+            // already back to what it was. A picker still reading "Off" over a filtered frame is
+            // the reverted state showing through the one place that has not been told.
+            if (_vsync != null)
+                _vsync.SetValueWithoutNotify(SettingsStore.Current.VSyncMode);
+
+            if (_antiAlias != null)
+                _antiAlias.SetValueWithoutNotify(SettingsStore.Current.AntiAliasMode);
+
+            // ⚠️ AND THE SAME FOR THE STYLE, which has the strongest claim of the three: a picker
+            // reading "Chromatic" over a frame that has just been given its ink outlines back is
+            // the discard looking like it failed.
+            if (_renderStyle != null)
+                _renderStyle.SetValueWithoutNotify(SettingsStore.Current.RenderStyle);
 
             _backArmed = false;
             SetButtonLabel(_back, "◀  BACK");

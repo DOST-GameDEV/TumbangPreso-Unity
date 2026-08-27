@@ -579,6 +579,12 @@ namespace TumbangPreso.PlayTests
 
                 tally.SampleKits(seats);
 
+                // ⚠️ BOTH PER FRAME, AND `WatchFaces` IS IDEMPOTENT ON PURPOSE. The seats are
+                // rebuilt between rounds, so a one-time subscription outside this loop would hook
+                // the first round's bodies and count nothing for the seven after it.
+                tally.WatchFaces(seats);
+                tally.SampleFeet(seats);
+
                 yield return null;
             }
 
@@ -749,6 +755,39 @@ namespace TumbangPreso.PlayTests
                 "not reaching their tsinelas at all, which is the retrieval loop being dead " +
                 "rather than the bots being cautious.");
 
+            // ---- THE FACE AND THE FEET -------------------------------------------------
+            //
+            // ⚠️⚠️ THESE TWO FLOORS EXIST BECAUSE THE FEATURE THEY GUARD SHIPPED BROKEN AND
+            // NOTHING NOTICED FOR A WEEK. Bot emote code was written, merged and played, and it
+            // fired zero times: `AIController` runs at execution order -130 and writes a movement
+            // axis every frame, `EmotePlayer` runs at 0 and cancels on any non-zero axis, so
+            // every clip was cancelled by its own bot before a frame of it was drawn. Every
+            // number in this report was byte-identical on both sides of that fault.
+            //
+            // ⚠️ A FLOOR OF ZERO IS THE RIGHT SHAPE HERE, NOT A TUNED BAND. The failure mode is
+            // "this does not happen at all", not "this happens at the wrong rate", and a floor
+            // that tries to pin the rate would fail on the dice instead (see the long note on
+            // `deadLoopFloor` above for what that costs a reader).
+            Assert.Greater(tally.Emotes, 0,
+                $"{mode} on {map}: not one bot emoted in {totalRounds} rounds. Either the safety " +
+                "gate in AIController.SafeToEmote never opens, or the hold is being cancelled by " +
+                "the bot's own movement again, which is the fault the hold exists to fix.");
+
+            Assert.Greater(tally.Hops, 0,
+                $"{mode} on {map}: not one bot left the ground in {totalRounds} rounds. Bots walked " +
+                "at one height for the whole port before AIController section THE FEET LEAVE THE " +
+                "GROUND, and a body that never jumps is visible in a still frame.");
+
+            // ⚠️ AND A CEILING ON THE EMOTES, BECAUSE THE OTHER FAILURE IS A BOT THAT STOPS
+            // PLAYING TO DANCE. An emote is a self-inflicted stun: the hold is up to 2.3 s and
+            // the cooldown at least 9, so about nine per seat per round is the arithmetic
+            // ceiling if every roll wins and every moment is safe. Measured on 2026-08-28: 0.69
+            // per seat per round in Hero Strike, 0.38 in Classic. Four per seat per round is far
+            // above both and far below a bot that has stopped playing.
+            Assert.Less(tally.Emotes, 4 * Balance.PlayerCount * totalRounds,
+                $"{mode} on {map}: {tally.Emotes} emotes across the match. A bot standing still to " +
+                "celebrate this often is not expressive, it is out of position.");
+
             // ---- THE HERO KITS ---------------------------------------------------------
             if (mode != GameMode.HeroStrike) yield break;
 
@@ -784,6 +823,23 @@ namespace TumbangPreso.PlayTests
             public int Throws, Retrievals, LataRestores, SkillUses, UltimateUses;
             public bool SawAnyKit;
 
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ EMOTES AND HOPS ARE COUNTED BECAUSE THIS PROBE COULD NOT SEE EITHER OF THEM,
+            // AND THE THING IT COULD NOT SEE HAD BEEN BROKEN THE WHOLE TIME. Bot emote code
+            // shipped, fired never (`AIController` § THE FACE has the execution-order cause), and
+            // every number in this report was identical on both sides of that fault. A row here
+            // is the difference between "the celebration is tuned to be rare" and "the
+            // celebration does not exist", which is exactly the pair a reader cannot tell apart
+            // without one.
+            //
+            // ⚠️ HOPS ARE COUNTED OFF THE RESOLVED BODY, NOT OFF THE KEY. A tripped bot MASHES
+            // jump to get up (`AIController.Update`), and those presses are refused by
+            // `CanAct`: counting the key would report hundreds of hops per match, all of them
+            // fictional. A grounded body whose vertical velocity turns positive has actually
+            // left the ground and can have done it no other way.
+            // -------------------------------------------------------------------
+            public int Emotes, Hops;
+
             public Tally(GameMode mode) => _mode = mode;
 
             public void Subscribe(MatchDirector match, RoundDirector round)
@@ -807,6 +863,47 @@ namespace TumbangPreso.PlayTests
 
                 round.LataRestored += () => LataRestores++;
             }
+
+            /// <summary>
+            /// ⚠️ SUBSCRIBED PER SEAT AND SEPARATELY FROM `Subscribe`, because the seats do not
+            /// exist yet when the directors do. `MatchInstaller` builds the bodies after the
+            /// match, so hooking these in `Subscribe` would hook nothing and report a flat zero,
+            /// which is the exact failure mode this counter was added to detect.
+            /// </summary>
+            public void WatchFaces(List<CharacterMotor> seats)
+            {
+                foreach (var seat in seats)
+                {
+                    var face = seat != null ? seat.GetComponent<Social.EmotePlayer>() : null;
+                    if (face == null || !_watched.Add(face)) continue;
+
+                    face.EmoteStarted += _ => Emotes++;
+                }
+            }
+
+            private readonly HashSet<Social.EmotePlayer> _watched =
+                new HashSet<Social.EmotePlayer>();
+
+            /// <summary>
+            /// One count per take-off. ⚠️ THE PREVIOUS SAMPLE IS PER SEAT, so four bodies do not
+            /// share one edge detector and cancel each other's jumps out.
+            /// </summary>
+            public void SampleFeet(List<CharacterMotor> seats)
+            {
+                foreach (var seat in seats)
+                {
+                    if (seat == null) continue;
+
+                    _airborne.TryGetValue(seat, out bool wasUp);
+                    bool isUp = !seat.IsGrounded && seat.Velocity.y > 0.5f;
+
+                    if (isUp && !wasUp) Hops++;
+                    _airborne[seat] = isUp;
+                }
+            }
+
+            private readonly Dictionary<CharacterMotor, bool> _airborne =
+                new Dictionary<CharacterMotor, bool>();
 
             /// <summary>
             /// One count per FLIGHT, not one per frame and not one per slipper.
@@ -879,7 +976,8 @@ namespace TumbangPreso.PlayTests
                 => $"lata knocks {LataKnocks}  tags {Tags}  sabotages {Sabotages}\n" +
                    $"throws {Throws}  retrievals {Retrievals}  lata restores {LataRestores}\n" +
                    $"camp penalties {CampPenalties}  idle penalties {IdlePenalties}\n" +
-                   $"skill uses {SkillUses}  ultimate uses {UltimateUses}  kits seen {SawAnyKit}";
+                   $"skill uses {SkillUses}  ultimate uses {UltimateUses}  kits seen {SawAnyKit}\n" +
+                   $"emotes {Emotes}  hops {Hops}";
         }
     }
 }

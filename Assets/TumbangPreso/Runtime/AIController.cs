@@ -147,7 +147,10 @@ namespace TumbangPreso
             float held = (_gates.TryGetValue(key, out float h) ? h : 0.0f) + dt;
             _gates[key] = held;
 
-            return held >= Me.React * _self.Nerves;
+            // ⚠️ SCALED BY THE LAPSE. See § ATTENTION WANDERS: a reaction gate is the most
+            // honest place for inattention to land, because it is literally how long this bot
+            // needs to have seen something before it believes it.
+            return held >= Me.React * _self.Nerves * LapseScale;
         }
 
         /// <summary>
@@ -160,7 +163,11 @@ namespace TumbangPreso
 
             if (_thinkLeft > 0.0f || _commitLeft > 0.0f) return;
 
-            _thinkLeft = Me.Think * _self.Tempo;
+            // ⚠️ THE LAPSE IS ROLLED ONCE PER THINK TICK, HERE, so its rate cannot depend on
+            // the frame rate. `docs/TODO.md` § 17 is what happens when a bot number does.
+            RollLapse();
+
+            _thinkLeft = Me.Think * _self.Tempo * LapseScale;
 
             AiPlan chosen = _motor.IsDefender ? PlanDefender(dt) : PlanAttacker(dt);
             if (chosen == Plan) return;
@@ -219,54 +226,468 @@ namespace TumbangPreso
         private Carrier _carrier;
         private float _repathTimer;
         private Vector3 _goal;
-        private float _emoteCooldown;
 
         private void Awake()
         {
             _motor = GetComponent<CharacterMotor>();
             _carrier = GetComponent<Carrier>();
             _self = new AiPersonalityRoll(_motor.PlayerSlot);
+
+            // ⚠️ SEEDED HERE AS WELL AS IN `OnRoundStarted`. A bot spawned mid-round, or one in a
+            // probe that drives the round director directly and never raises `RoundStarted`, would
+            // otherwise measure its boredom against the world origin and decide it had walked
+            // eight metres before it had moved at all.
+            _boredAnchor = transform.position;
+
+            // ⚠️ AND THE FIRST ROUND'S APPETITE IS ROLLED HERE FOR THE SAME REASON. `AppetiteFor`
+            // falls back to the seat roll while this is unset, so the fallback is correct rather
+            // than merely safe, but a bot that never sees a `RoundStarted` should still get the
+            // per-round drift the shipped game gives it.
+            RollRoundAppetite();
         }
 
-        private void OnEnable()
+        private void OnEnable() => Subscribe();
+
+        private void OnDisable() => Unsubscribe();
+
+        // -------------------------------------------------------------------
+        // § WHAT THIS BOT IS LISTENING TO
+        //
+        // ⚠️⚠️ THE REFERENCES ARE STORED RATHER THAN RE-READ OFF `GameServices` AT UNHOOK TIME.
+        // `OnDisable` used to unsubscribe from `GameServices.Round`, which is whatever round
+        // director is live at that MOMENT, not necessarily the one the handler was added to. A
+        // seat disabled across a round rebuild therefore unhooked from the new director (a no-op)
+        // and left a dead handler on the old one.
+        //
+        // ⚠️⚠️ AND SUBSCRIBING IN `OnEnable` ALONE IS NOT ENOUGH, BECAUSE `MatchDirector` MAY NOT
+        // EXIST YET. `MatchInstaller` builds the seats and the directors in one pass, so a
+        // controller enabled early sees `GameServices.Match` null, silently subscribes to nothing,
+        // and never celebrates anything for the whole match. `Update` retries, which costs two
+        // null checks on a frame and removes an entire class of ordering bug.
+        // -------------------------------------------------------------------
+
+        private RoundDirector _hookedRound;
+        private MatchDirector _hookedMatch;
+
+        private void Subscribe()
         {
             var round = GameServices.Round;
-            if (round != null) round.Tagged += OnRoundTagged;
+            if (round != null && _hookedRound != round)
+            {
+                if (_hookedRound != null) _hookedRound.Tagged -= OnRoundTagged;
+                round.Tagged += OnRoundTagged;
+                _hookedRound = round;
+            }
+
+            var match = GameServices.Match;
+            if (match != null && _hookedMatch != match)
+            {
+                if (_hookedMatch != null)
+                {
+                    _hookedMatch.Scored -= OnScored;
+                    _hookedMatch.RoundStarted -= OnRoundStarted;
+                    _hookedMatch.IntermissionStarted -= OnIntermissionStarted;
+                    _hookedMatch.MatchEnded -= OnMatchEnded;
+                }
+
+                match.Scored += OnScored;
+                match.RoundStarted += OnRoundStarted;
+                match.IntermissionStarted += OnIntermissionStarted;
+                match.MatchEnded += OnMatchEnded;
+                _hookedMatch = match;
+            }
         }
 
-        private void OnDisable()
+        private void Unsubscribe()
         {
-            var round = GameServices.Round;
-            if (round != null) round.Tagged -= OnRoundTagged;
+            if (_hookedRound != null) _hookedRound.Tagged -= OnRoundTagged;
+
+            if (_hookedMatch != null)
+            {
+                _hookedMatch.Scored -= OnScored;
+                _hookedMatch.RoundStarted -= OnRoundStarted;
+                _hookedMatch.IntermissionStarted -= OnIntermissionStarted;
+                _hookedMatch.MatchEnded -= OnMatchEnded;
+            }
+
+            _hookedRound = null;
+            _hookedMatch = null;
         }
+
+        // -------------------------------------------------------------------
+        // § THE FACE
+        //
+        // ⚠️⚠️ 🧑 2026-08-28: *"make it randomly emote to taunt or when it does something cool"*.
+        // There WAS bot emote code before this and it fired essentially never, for a reason
+        // nothing in the file said out loud and no test could have caught: **a bot cancelled its
+        // own emote on the frame it started one.** `EmotePlayer.Update` stops an emote on any
+        // frame `intent.MoveAxis` is non-zero, this controller runs at `[DefaultExecutionOrder
+        // (-130)]` and writes that axis every single frame, and `EmotePlayer` runs at the default
+        // 0. `HostPlay` set `Current`, and forty milliseconds later the bot walked and cleared it.
+        // Nothing errored. Nobody reports an emote they never saw.
+        //
+        // ⚠️⚠️ SO THE FIX IS A HOLD, NOT A LONGER CLIP OR A TIMER. `CLAUDE.md` § 4 is explicit
+        // that emotes end ONLY by interruption and that there is no emote timer, and this does not
+        // add one: `_emoteHoldLeft` is how long the BOT keeps its hands off the movement keys,
+        // exactly as a player does when they choose to emote. The clip still ends the way every
+        // clip ends, by the bot going back to playing.
+        //
+        // ⚠️⚠️ AND AN EMOTE IS A SELF-INFLICTED STUN, WHICH IS WHY `SafeToEmote` IS STRICTER THAN
+        // THE TASTE. `EmotePlayer`'s own header says it: emotes are played standing still and the
+        // taya is one lunge away. A bot that celebrates inside the chalk holding a tsinelas is not
+        // expressive, it is throwing the round, and it would read as the bots being stupid rather
+        // than as the bots being people. The gate is re-asked EVERY FRAME of the hold, so a
+        // celebration that becomes dangerous is abandoned mid-clip, which is the most human thing
+        // in this section.
+        //
+        // ⚠️ IT GOES THROUGH `Request`, THE SAME ENTRY POINT THE EMOTE WHEEL USES
+        // (`MatchInstaller` wires `wheel.EmoteChosen` to it). `CLAUDE.md` § 4's *"a bot presses
+        // the same buttons a human does"* is a rule about there being no second path, and calling
+        // `HostPlay` directly, as the old code did, was one: it skipped the client-authority
+        // branch a human's press goes through.
+        // -------------------------------------------------------------------
+
+        /// <summary>Seconds this bot has left of deliberately standing still to emote.</summary>
+        private float _emoteHoldLeft;
+
+        /// <summary>Seconds before this bot will consider emoting again.</summary>
+        private float _emoteCooldown;
+
+        /// <summary>An emote this bot wants to play as soon as it is safe to, or null.</summary>
+        private string _wantedEmote;
+
+        /// <summary>How long that want has been waiting for a safe moment.</summary>
+        private float _wantedFor;
+
+        /// <summary>How long the current hold has been running, for the start grace below.</summary>
+        private float _emoteHeldFor;
+
+        /// <summary>
+        /// How long a hold waits before it will believe the clip is not playing, in seconds.
+        ///
+        /// ⚠️ IT IS A NETWORK ROUND TRIP, NOT A FEEL VALUE. See the note at its only use: on a
+        /// listen host the emote reaches `Play` through a broadcast Netcode delivers on its own
+        /// update, so `IsEmoting` lags the request by a frame or two. 0.25 s is comfortably more
+        /// than that and comfortably less than `EmoteHoldMin` 1.1, so a genuinely failed emote
+        /// still costs a quarter of a second of standing still and no more.
+        /// </summary>
+        private const float EmoteStartGrace = 0.25f;
+
+        /// <summary>
+        /// How long a want survives while the board refuses it, in seconds.
+        ///
+        /// ⚠️⚠️ A CELEBRATION THAT ARRIVES LATE IS WORSE THAN ONE THAT NEVER ARRIVES. Without an
+        /// expiry, a bot that knocks the lata over while being chased banks the want, and plays it
+        /// out twenty seconds later in the middle of an unrelated retrieval, celebrating something
+        /// nobody watching can still remember. Two and a half seconds is about as long as a
+        /// knockdown stays legible.
+        /// </summary>
+        private const float EmoteWantSeconds = 2.5f;
+
+        /// <summary>Celebration clips, for something that just went this bot's way.</summary>
+        private static readonly string[] CelebrationEmotes = { "dance", "crouch", "bow", "yes" };
+
+        /// <summary>Taunts, for a rival who can see it. ⚠️ `sit` is in here and not in the
+        /// celebrations on purpose: sitting down mid-round is directed AT somebody.</summary>
+        private static readonly string[] TauntEmotes = { "tpose", "sit", "dance", "bow" };
 
         private void OnRoundTagged(int defenderSlot, int attackerSlot)
         {
+            if (_motor == null) return;
+
             if (_motor.PlayerSlot == defenderSlot)
-            {
-                // Defender scores tag celebration
-                string[] emotes = { "yes", "dance", "bow", "crouch" };
-                TryTriggerEmote(emotes[UnityEngine.Random.Range(0, emotes.Length)], 0.85f);
-            }
+                WantEmote(CelebrationEmotes, AiTuning.EmoteCelebrateChance);
             else if (_motor.PlayerSlot == attackerSlot)
-            {
-                // Attacker tagged
-                TryTriggerEmote("no", 0.55f);
-            }
+                WantEmote("no", AiTuning.EmoteCelebrateChance * 0.6f);
         }
 
-        public void TryTriggerEmote(string emoteKey, float chance = 1.0f)
+        /// <summary>
+        /// Something scored. ⚠️ ONLY THE EVENTS A PERSON WOULD REACT TO, AND THE PENALTIES ARE
+        /// DELIBERATELY NOT AMONG THEM. `UnretrievedSlipperPenalty` fires once a SECOND for as
+        /// long as an attacker is short of its tsinelas, so wiring a sulk to it would ask a bot to
+        /// stop and stand still exactly while it is being fined for standing still, which is
+        /// `docs/VISION.md` § 4's *"nothing may reward waiting"* read backwards.
+        /// </summary>
+        private void OnScored(int slot, ScoreEvent e)
         {
-            if (_emoteCooldown > 0.0f) return;
-            if (UnityEngine.Random.value > chance) return;
+            if (_motor == null || slot != _motor.PlayerSlot) return;
 
-            var ep = GetComponent<Social.EmotePlayer>();
-            if (ep != null && ep.CanEmote())
+            if (e == ScoreEvent.LataKnocked || e == ScoreEvent.Tag || e == ScoreEvent.Sabotage)
+                WantEmote(CelebrationEmotes, AiTuning.EmoteCelebrateChance);
+        }
+
+        /// <summary>
+        /// A new round. ⚠️ EVERY PER-ROUND ACCUMULATOR IS CLEARED HERE IN ONE PLACE, because the
+        /// alternative is each of them separately noticing that the round changed and one of them
+        /// eventually not doing it.
+        /// </summary>
+        private void OnRoundStarted(int roundNumber, int defenderSlot)
+        {
+            _wantedEmote = null;
+            _emoteHoldLeft = 0.0f;
+            _boredFor = 0.0f;
+            _boredAnchor = transform.position;
+            _boredomSettleLeft = 0.0f;
+            _boredomShift = 0.0f;
+            _lapseLeft = 0.0f;
+
+            // ⚠️ THE GRUDGE IS RE-PICKED EACH ROUND BECAUSE THE CANDIDATE LIST CHANGES WITH THE
+            // TAYA. `MyRival` already refuses a defender, so leaving a stale one would simply
+            // stop the term firing for whichever round that seat defends; clearing it here means
+            // the pick is made fresh against the three seats that can actually be tagged.
+            _rival = null;
+
+            RollRoundAppetite();
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE INTERMISSION IS THE ONE MOMENT THAT IS SAFE BY CONSTRUCTION, and it is worth
+        /// spending on purpose. `RoundActive` is false, so nobody can be tagged, no ability can be
+        /// cast and no clock is running: `SafeToEmote` passes trivially and every bot that wants
+        /// to celebrate finally gets to. It is also when a human would, which is why the round
+        /// boundary in this game looks lifeless without it.
+        /// </summary>
+        private void OnIntermissionStarted(int nextRound, int nextDefenderSlot)
+            => WantEmote(CelebrationEmotes, AiTuning.EmoteCelebrateChance);
+
+        private void OnMatchEnded(int winningSlot)
+        {
+            if (_motor == null) return;
+
+            if (winningSlot == _motor.PlayerSlot)
+                WantEmote(CelebrationEmotes, 1.0f);
+            else
+                WantEmote("no", AiTuning.EmoteCelebrateChance);
+        }
+
+        /// <summary>
+        /// Ask for one of these clips, if this bot is the sort that would and the dice agree.
+        ///
+        /// ⚠️ THE CHANCE IS SCALED BY BOTH HALVES OF THE PERSONALITY. `AiPersonality.Flair` is the
+        /// tier (Normal is the peak, deliberately, see its note) and
+        /// `AiPersonalityRoll.Showmanship` is the seat. A quiet bot on Astig is close to silent
+        /// and a show-off on Normal celebrates most of what it earns, which is the spread a real
+        /// four-player lobby has.
+        /// </summary>
+        private void WantEmote(string[] pool, float chance)
+            => WantEmote(pool[UnityEngine.Random.Range(0, pool.Length)], chance);
+
+        private void WantEmote(string id, float chance)
+        {
+            if (_emoteCooldown > 0.0f || _emoteHoldLeft > 0.0f) return;
+            if (UnityEngine.Random.value > chance * Me.Flair * _self.Showmanship) return;
+
+            _wantedEmote = id;
+            _wantedFor = 0.0f;
+        }
+
+        /// <summary>
+        /// May this bot afford to stand still right now?
+        ///
+        /// ⚠️⚠️ EVERY CLAUSE HERE IS A WAY A CELEBRATION LOSES A ROUND, not a style preference.
+        /// Emoting is `EmotePlayer`'s own *"self-inflicted stun"*, and the bot is giving up its
+        /// movement keys for one to two seconds in a 14 m box.
+        /// </summary>
+        private bool SafeToEmote()
+        {
+            if (_motor == null || !_motor.CanAct()) return false;
+
+            var round = GameServices.Round;
+
+            // ⚠️⚠️ THE ROUND BEING OVER IS THE ONE UNCONDITIONAL YES, and it has to come before
+            // every other clause rather than after them. Between rounds there is no taya, no
+            // taggable state and no clock, so the checks below are all asking about a game that
+            // is not currently being played: `DefenderOf` returns null, `IsTaggable` is false, and
+            // a bot would pass anyway, but only by accident.
+            if (round == null || !round.RoundActive) return true;
+
+            // ⚠️ A CHARGE IN PROGRESS IS A SHOT ALREADY PAID FOR. `SpecialAbility` is held across
+            // frames during a wind-up and releasing it IS the throw, so an emote here does not
+            // delay a shot, it fires one in a direction nobody aimed.
+            if (Plan == AiPlan.Windup || _windup) return false;
+
+            // ⚠️ THE TAGGABLE STATE IS THE WHOLE GAME (`docs/VISION.md` § 0: *"the tension is the
+            // retrieval"*). Standing still while armed and inside the chalk is the single worst
+            // moment in a round to spend on a dance.
+            if (_motor.IsTaggable()) return false;
+            if (Confinement.IsInsideBox(transform.position.x, transform.position.z)) return false;
+
+            // ⚠️ AND THE TAYA HAS TO BE FAR ENOUGH AWAY TO BE ANSWERED. `EmoteSafeRadius` is about
+            // twice the longest tier lunge, so a defender has real ground to cross and the hold
+            // has time to be abandoned. An attacker holding a tsinelas is a threat to nobody, so
+            // only the defender is measured.
+            var taya = DefenderOf(round);
+            if (taya != null && Flat(transform.position, At(taya)) < AiTuning.EmoteSafeRadius)
+                return false;
+
+            // ⚠️ A TAYA ITSELF NEVER CELEBRATES MID-ROUND WITH SOMEBODY IN THE CHALK. The passive
+            // defence tick is the only score it earns by standing there, and `TayaCampPenalty`
+            // punishes standing in the wrong place; a taya that stops to dance while an attacker
+            // is retrieving has handed over the round.
+            //
+            // ⚠️⚠️ AND IT IS A PURE READ RATHER THAN A CALL TO `TagTarget`, WHICH IS THE TRAP
+            // `TryGlanceAt` ALREADY CARRIES A NOTE ABOUT. `TagTarget` WRITES `_lastTagTarget` as a
+            // side effect of being asked, and that field is the anti-fixation memory the whole
+            // chase commit rests on (§ 33.1). Asking it here, for something as incidental as
+            // whether this bot may dance, would let the social layer quietly re-decide who the
+            // taya is chasing, once per frame.
+            if (_motor.IsDefender && AnyTaggableAttacker(round)) return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Is anybody taggable right now? ⚠️ A PURE READ, DELIBERATELY NOT `TagTarget`. See the
+        /// clause in <see cref="SafeToEmote"/> that calls it for what asking the selector costs.
+        /// </summary>
+        private bool AnyTaggableAttacker(RoundDirector round)
+        {
+            if (round == null || round.Lata == null || !round.Lata.IsUpright) return false;
+
+            foreach (var who in round.Players)
             {
-                ep.HostPlay(emoteKey);
-                _emoteCooldown = UnityEngine.Random.Range(3.5f, 7.0f);
+                if (who == null || who == _motor || who.IsDefender) continue;
+                if (who.IsTaggable()) return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// The whole social layer for one frame. Returns true when this bot is standing still to
+        /// emote and the rest of `Update` must not run.
+        ///
+        /// ⚠️⚠️ IT RETURNS EARLY RATHER THAN SETTING A FLAG THE PLANNER READS, and that is
+        /// deliberate. `Act` writes a movement axis on every path it has, so any version of this
+        /// that lets the planner run has to be sure every one of thirteen `Do*` methods respects
+        /// the hold. One return is checkable; thirteen call sites are how the original emote code
+        /// got silently cancelled in the first place.
+        /// </summary>
+        private bool StepSocial(InputIntent intent, float dt)
+        {
+            if (_emoteCooldown > 0.0f) _emoteCooldown -= dt;
+
+            var emotes = Emotes;
+
+            // ⚠️ A HOLD ENDS WHEN THE CLIP DOES, NOT ONLY WHEN THE TIMER DOES. `EmotePlayer.Update`
+            // stops on `EmoteClipFinished`, so a short clip under a long hold would leave the bot
+            // standing still for nothing, which is the perma-waiting 🧑 has reported twice.
+            if (_emoteHoldLeft > 0.0f)
+            {
+                _emoteHoldLeft -= dt;
+                _emoteHeldFor += dt;
+
+                // ⚠️⚠️ THE CLIP IS NOT ASKED ABOUT FOR THE FIRST `EmoteStartGrace` SECONDS, AND A
+                // NETWORKED HOST IS WHY. In single player `Request` reaches `Play` on the same
+                // line and `IsEmoting` is true before this method returns. On a host it does not:
+                // `EmotePlayer.HostPlay` sends `RequestEmoteServerRpc`, which broadcasts
+                // `PlayEmote` with `SendNamedMessageToAll`, and Netcode delivers that on its own
+                // update rather than inside this call. So `IsEmoting` is false for a frame or two
+                // after the request, and without this grace the hold would end on the very next
+                // frame, the bot would walk, and the clip would be cancelled by the movement the
+                // instant it finally arrived. That is the original bug this whole section exists
+                // about, reintroduced through the wire instead of through the execution order.
+                bool clipShouldHaveStarted = _emoteHeldFor >= EmoteStartGrace;
+                bool stillPlaying = emotes != null && (emotes.IsEmoting || !clipShouldHaveStarted);
+
+                if (_emoteHoldLeft > 0.0f && stillPlaying && SafeToEmote())
+                {
+                    HoldStill(intent);
+                    return true;
+                }
+
+                // ⚠️ ABANDONED, INTERRUPTED OR FINISHED, THE EXIT IS THE SAME ONE: stop holding
+                // and let the ordinary planner write a movement key this frame, which is what
+                // ends the clip. `CLAUDE.md` § 4: emotes end only by interruption.
+                _emoteHoldLeft = 0.0f;
+                _emoteHeldFor = 0.0f;
+                _emoteCooldown = UnityEngine.Random.Range(AiTuning.EmoteCooldownMin,
+                                                          AiTuning.EmoteCooldownMax);
+                return false;
+            }
+
+            if (emotes == null) return false;
+
+            // ⚠️ AN IDLE TAUNT IS ROLLED HERE RATHER THAN INSIDE `Loiter`, WHERE IT USED TO LIVE.
+            // `Loiter` runs at up to one roll per frame from four different plans, so a chance
+            // written there is a chance per frame per plan and the real rate was unknowable from
+            // reading it. This asks once per frame, in one place, off one constant.
+            if (_wantedEmote == null && _emoteCooldown <= 0.0f && _arrived
+                && (Plan == AiPlan.Idle || Plan == AiPlan.Stalk
+                    || Plan == AiPlan.Guard || Plan == AiPlan.Cover))
+                WantEmote(TauntEmotes, AiTuning.EmoteTauntChance * dt);
+
+            if (_wantedEmote == null) return false;
+
+            _wantedFor += dt;
+
+            if (_wantedFor >= EmoteWantSeconds) { _wantedEmote = null; return false; }
+
+            if (!SafeToEmote() || !emotes.CanEmote()) return false;
+
+            // ⚠️⚠️ THE KEYS GO DOWN BEFORE THE REQUEST, NOT AFTER IT, AND THAT ORDER IS THE FIX.
+            // `EmotePlayer.Update` runs later this same frame and reads the axis this controller
+            // has already written; asking first and clearing the axis afterwards would leave one
+            // frame of movement under the new emote and cancel it immediately, which is exactly
+            // the bug this section exists about.
+            HoldStill(intent);
+
+            emotes.Request(_wantedEmote);
+            _wantedEmote = null;
+            _emoteHeldFor = 0.0f;
+            _emoteHoldLeft = UnityEngine.Random.Range(AiTuning.EmoteHoldMin, AiTuning.EmoteHoldMax);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Hands off every key, and every accumulator that would misread the pause.
+        ///
+        /// ⚠️⚠️ IT DOES NOT CALL `intent.Clear()`. That would wipe the hero keys too, and during a
+        /// possession the human is holding one of them to come home. See `AbilitiesEnabled`: it is
+        /// the same fault reached through a different door.
+        ///
+        /// ⚠️ AND `_driving` GOES OFF, for the reason `Drive`'s key-change beat does it:
+        /// `StepUnstick` reads that flag as *"this bot asked to move and did not"*, so leaving it
+        /// set through a deliberate stand accrues stuck time and fires a sidestep out of a
+        /// celebration.
+        /// </summary>
+        private void HoldStill(InputIntent intent)
+        {
+            intent.Move = Vector2.zero;
+            _driving = false;
+            _sprintAsked = false;
+            _glanceLeft = 0.0f;
+            _loiterDir = 0.0f;
+            _stuckTime = 0.0f;
+
+            Press(intent, Verb.Sprint, false);
+            Press(intent, Verb.Jump, false);
+            Press(intent, Verb.Grab, false);
+            Press(intent, Verb.Lunge, false);
+            Press(intent, Verb.SpecialAbility, false);
+
+            if (AbilitiesEnabled)
+            {
+                Press(intent, Verb.Skill1, false);
+                Press(intent, Verb.Skill2, false);
+                Press(intent, Verb.Ultimate, false);
             }
         }
+
+        /// <summary>⚠️ RE-ASKED WHILE NULL RATHER THAN CACHED IN `Awake`, for the reason
+        /// `EmotePlayer.Animator` carries its own note about: the model and everything on it is
+        /// instanced well after this component's Awake has run.</summary>
+        private Social.EmotePlayer Emotes
+        {
+            get
+            {
+                if (_emotes == null) _emotes = GetComponent<Social.EmotePlayer>();
+                return _emotes;
+            }
+        }
+
+        private Social.EmotePlayer _emotes;
 
         private void Update()
         {
@@ -322,7 +743,11 @@ namespace TumbangPreso
             }
 
             float dt = Time.deltaTime;
-            if (_emoteCooldown > 0.0f) _emoteCooldown -= dt;
+
+            // ⚠️ RETRIED EVERY FRAME BECAUSE `MatchDirector` MAY NOT HAVE EXISTED AT `OnEnable`.
+            // See § WHAT THIS BOT IS LISTENING TO: it is two null checks and it removes an
+            // ordering bug that would show up only as bots that never celebrate anything.
+            Subscribe();
 
             Observe(dt);
 
@@ -339,11 +764,29 @@ namespace TumbangPreso
             if (_keyGapLeft > 0.0f) _keyGapLeft -= dt;
             else if (_glanceLeft > 0.0f) _glanceLeft -= dt;
 
+            // ⚠️ THE LAPSE IS STEPPED BEFORE THE PLANNER, NOT AFTER IT, so a lapse that starts
+            // this frame slows THIS frame's think tick rather than the next one. See § ATTENTION
+            // WANDERS.
+            StepLapse(dt);
             StepSprintKey(dt);
             StepUnstick(dt);
+
+            // ⚠️⚠️ THE SOCIAL LAYER RUNS BEFORE THE PLANNER AND CAN TAKE THE WHOLE FRAME. A bot
+            // standing still to emote has genuinely stopped playing for a beat, and letting the
+            // planner run underneath it would write a movement key that cancels the clip on the
+            // frame it started. See § THE FACE for why that is not a hypothetical.
+            if (StepSocial(intent, dt)) return;
+
             StepPlan(dt);
+            StepBoredom(dt);
 
             Act(intent, dt);
+
+            // ⚠️ AFTER `Act`, WHICH OPENS BY CLEARING `_touched`. `StepHop` writes the jump key and
+            // nothing in `Act` touches it, so writing it beforehand would leave the press outside
+            // the touch sweep that decides what gets released.
+            StepHop(intent, dt);
+
             StepHeroAbilities(intent, dt);
 
             // ⚠️⚠️ NO COMMIT HERE ANY MORE, AND IT USED TO BE ON THIS LINE. The snapshot is taken
@@ -1193,6 +1636,24 @@ namespace TumbangPreso
 
                 if (who == _lastTagTarget) score += AiTuning.TagSwitchMargin;
 
+                // ⚠️⚠️ THE GRUDGE, AND IT IS THE RESIDUE OF § 33.1 RATHER THAN A REPEAT OF IT.
+                // That entry deleted the seat-order `foreach` that singled somebody out by
+                // construction, and 🧑 2026-08-28 reported the feeling again, softer: *"I dont
+                // want the bots to only go after the human too (sometimes it only targets
+                // human)"*. The cause this time is agreement, not order. Four bots score one
+                // board with one identical set of weights, so whoever the score favours is
+                // favoured by ALL of them at once, and a person plays differently from three bots
+                // in exactly the terms the score reads: they go deeper into the chalk, they hold a
+                // tsinelas longer, they get caught out. Nothing is targeting them; every bot is
+                // simply agreeing about them.
+                //
+                // ⚠️ SO THE FIX IS TO MAKE THE FOUR DISAGREE ON TIES, which is what a grudge is.
+                // `AiTuning.TagRivalryWeight` 0.45 sits under `TagSwitchMargin` 0.75 and a fifth
+                // of `TagHelplessBonus` 2.5, so it can never drag a taya off a chase it is winning
+                // and never beats a body already on the floor. It decides the close ones, and the
+                // close ones are all this ever was.
+                if (who == MyRival(round)) score += AiTuning.TagRivalryWeight;
+
                 if (score <= bestScore) continue;
 
                 bestScore = score;
@@ -1202,6 +1663,47 @@ namespace TumbangPreso
             _lastTagTarget = best;
             return best;
         }
+
+        /// <summary>
+        /// The rival this bot takes personally, or null.
+        ///
+        /// ⚠️⚠️ IT IS DERIVED FROM THE SEAT LIST AND CACHED PER ROUND, NOT PICKED PER CALL.
+        /// `TagTarget` runs every think tick and `LiveThreat` runs beside it, so a pick that
+        /// re-rolled would be a different grudge every tick, which is a random target selector
+        /// wearing a grudge's name. `AiPersonalityRoll.RivalPick` is seat-seeded, so this bot
+        /// dislikes the same seat all match and two runs of one match agree about it.
+        ///
+        /// ⚠️ THE CANDIDATE LIST EXCLUDES THIS BOT AND THE TAYA. The taya is not a tag target,
+        /// and a grudge against the seat currently defending would silently do nothing for a
+        /// quarter of the match.
+        /// </summary>
+        private CharacterMotor MyRival(RoundDirector round)
+        {
+            if (round == null) return null;
+
+            // ⚠️ THE CACHE IS INVALIDATED BY THE ANSWER GOING STALE, NOT BY A ROUND STAMP. The
+            // taya rotates every round and a grudge against the seat currently defending would
+            // silently do nothing, so "my rival is still an attacker" is the condition that
+            // actually matters. `OnRoundStarted` clears it as well, which covers the case where
+            // the same seat defends twice in a Hero Strike match.
+            if (_rival != null && _rival != _motor && !_rival.IsDefender) return _rival;
+
+            _rivalCandidates.Clear();
+
+            foreach (var who in round.Players)
+            {
+                if (who == null || who == _motor || who.IsDefender) continue;
+                _rivalCandidates.Add(who);
+            }
+
+            int pick = _self.RivalIndex(_rivalCandidates.Count);
+            _rival = pick >= 0 ? _rivalCandidates[pick] : null;
+
+            return _rival;
+        }
+
+        private readonly List<CharacterMotor> _rivalCandidates = new List<CharacterMotor>();
+        private CharacterMotor _rival;
 
         /// <summary>Whoever holds the taya role this round.</summary>
         private static CharacterMotor DefenderOf(RoundDirector round)
@@ -1407,7 +1909,10 @@ namespace TumbangPreso
             // slide-away pass ignored it and `BotMotionProbe` showed both stalkers finishing at
             // (7.32, 6.48) and (7.45, 7.48), a metre apart in the same corner: the pile-up this
             // whole section exists to stop, moved from the box to the ring.
-            float home = _self.HomeBearing;
+            // ⚠️ THROUGH THE PROPERTY, NOT THE RAW ROLL. § NOBODY STANDS THERE FOREVER adds a
+            // shift to this when a stand-off has gone on too long, and a reader that skipped it
+            // would keep walking a bored bot back to the corner it just left.
+            float home = HomeBearing;
             bearing = home + DeltaRadians(home, bearing) * AiTuning.StalkTowardOwnSlipper;
 
             var round = GameServices.Round;
@@ -2145,6 +2650,220 @@ namespace TumbangPreso
         }
 
         // -------------------------------------------------------------------
+        // § ATTENTION WANDERS
+        //
+        // ⚠️⚠️ 🧑 2026-08-28: *"let it make mistakes bcz humans do mistakes sometimes"*. Before
+        // this the tier's `Mistake` was the entire error model in the game and it was read in
+        // exactly ONE place, `DoWindup`'s `_blundering`: scatter doubled, the power margin was
+        // dropped to 1.0 and the lane check was skipped. So a bot could only ever err while
+        // charging a throw, which is a few seconds of an attacker's round and none at all of a
+        // taya's. Every chase, every fetch, every plan change and every cast was perfect.
+        //
+        // ⚠️⚠️ A LAPSE IS A LATE ANSWER AND NEVER A WRONG ONE, AND THAT IS THE WHOLE DESIGN.
+        // Choosing the second-best plan on purpose reads as a broken bot, because the error is
+        // visible in the decision and a watcher sees the body walk the wrong way for no reason.
+        // Slowing the decision is invisible in the choice and visible only in the timing: the bot
+        // does the right thing a beat after the moment for it, which is what being outplayed by a
+        // person actually looks like from the other side.
+        //
+        // ⚠️ IT SLOWS THE CLOCKS, IT NEVER FREEZES THE BODY. The bot keeps walking its last plan
+        // for the whole lapse and simply does not notice the board has moved. A lapse that stopped
+        // the legs would be the standing-around 🧑 has now reported twice.
+        //
+        // ⚠️ AND IT IS ROLLED PER THINK TICK RATHER THAN PER FRAME, so the rate does not silently
+        // depend on the frame rate. `docs/TODO.md` § 17 is what happens when a bot number does.
+        // -------------------------------------------------------------------
+
+        /// <summary>Seconds left of an attention lapse.</summary>
+        private float _lapseLeft;
+
+        /// <summary>What every reaction and think clock is multiplied by right now.</summary>
+        private float LapseScale => _lapseLeft > 0.0f ? AiTuning.LapseSlowdown : 1.0f;
+
+        private void StepLapse(float dt)
+        {
+            if (_lapseLeft > 0.0f) _lapseLeft = Mathf.Max(0.0f, _lapseLeft - dt);
+        }
+
+        /// <summary>
+        /// Rolled once per think tick. ⚠️ `Focus` IS THE PER-BOT HALF AND IT ONLY EVER REDUCES:
+        /// a bot at Focus 1.0 lapses at half the tier rate and one at 0.0 lapses at the full
+        /// rate, so the tier stays the ceiling and nobody is worse than their difficulty says.
+        /// </summary>
+        private void RollLapse()
+        {
+            if (_lapseLeft > 0.0f) return;
+
+            float chance = Me.Lapse * (1.0f - 0.5f * _self.Focus);
+            if (UnityEngine.Random.value < chance) _lapseLeft = AiTuning.LapseSeconds;
+        }
+
+        // -------------------------------------------------------------------
+        // § THE FEET LEAVE THE GROUND
+        //
+        // ⚠️⚠️ 🧑 2026-08-28: *"make it move around like a human, (jumping and sprinting and
+        // shit)"*. Sprinting was answered on 2026-08-27 by § THE SPRINT KEY. Jumping never was:
+        // before this, `Verb.Jump` appeared in this file exactly once, in `Update`'s mash that
+        // gets a tripped bot off the floor. In the whole history of this port **no bot has ever
+        // left the ground on purpose**, and a body that never jumps is the tell that survives
+        // every other fix, because it is visible in a still frame.
+        //
+        // ⚠️ IT BUYS NOTHING, WHICH IS EXACTLY WHY A PERSON DOES IT. `CharacterMotor.ApplyGravity`
+        // charges no stamina for a jump and no rule in the game rewards one, so hopping while you
+        // wait is fidgeting with the one verb that is free. That is the behaviour being copied,
+        // and it is why this is rolled off a habit rather than off an opportunity.
+        //
+        // ⚠️⚠️ AND IT IS REFUSED IN EVERY MOMENT WHERE A JUMP WOULD COST SOMETHING. A hop breaks
+        // the reset channel (`DoReset` holds Grab and `Lata` zeroes the channel the instant it
+        // goes false), it cancels an emote (`EmotePlayer` stops on `JustPressed(Jump)`), and a
+        // body in the air during a retrieval is a body that cannot change direction. The gate
+        // below is those three cases and nothing else.
+        // -------------------------------------------------------------------
+
+        /// <summary>Seconds until this bot's next chance at an idle hop.</summary>
+        private float _hopCountdown = 2.0f;
+
+        /// <summary>The held state of the jump key, alternated to make a real press edge.</summary>
+        private bool _hopHeld;
+
+        private void StepHop(InputIntent intent, float dt)
+        {
+            // ⚠️ THE KEY IS RELEASED FIRST AND RE-PRESSED BELOW, so a hop is exactly one frame of
+            // held jump. `CharacterMotor` reads `JustPressed`, which needs a false frame before
+            // every true one; a held key produces one jump in a lifetime.
+            if (_hopHeld)
+            {
+                _hopHeld = false;
+                Press(intent, Verb.Jump, false);
+                return;
+            }
+
+            _hopCountdown -= dt;
+            if (_hopCountdown > 0.0f) return;
+
+            _hopCountdown = UnityEngine.Random.Range(AiTuning.HopIntervalMin,
+                                                     AiTuning.HopIntervalMax);
+
+            if (!MayHop()) return;
+
+            if (UnityEngine.Random.value > AiTuning.HopChance * Me.Hops * _self.Springiness) return;
+
+            _hopHeld = true;
+            Press(intent, Verb.Jump, true);
+        }
+
+        /// <summary>
+        /// The three moments a hop costs something. ⚠️ EACH ONE IS A MECHANIC IT WOULD BREAK
+        /// RATHER THAN A JUDGEMENT ABOUT WHEN JUMPING LOOKS SILLY.
+        /// </summary>
+        private bool MayHop()
+        {
+            if (_motor == null || !_motor.CanAct()) return false;
+
+            // The reset channel is the one held button in the game, and a jump is a press edge
+            // on a different key in the same frame the emote layer reads as "acted".
+            if (Plan == AiPlan.Reset || Plan == AiPlan.Windup || _windup) return false;
+
+            // Mid-emote, a jump is the interruption that ends the clip.
+            if (_emoteHoldLeft > 0.0f) return false;
+
+            // ⚠️ AND NOT WHILE TAGGABLE. An airborne body cannot change direction, and the
+            // retrieval is the only window in which that matters (`docs/VISION.md` § 0).
+            if (_motor.IsTaggable()) return false;
+
+            return true;
+        }
+
+        // -------------------------------------------------------------------
+        // § NOBODY STANDS THERE FOREVER
+        //
+        // ⚠️⚠️ 🧑 2026-08-28: *"make sure they dont just stand around sometimes and perma wait or
+        // stay near eachother without doing anything"*. `Stalk`, `Cover` and `Guard` all end in
+        // `if (_arrived) Loiter(intent)`, and `Loiter` is a 0.45 m leash with rests of up to 2.8 s.
+        // So a bot whose plan is stable and whose board is not moving is genuinely stationary, for
+        // as long as that holds, and nothing in the file was measuring it.
+        //
+        // ⚠️⚠️ AND IT IS NOT THE LOITER'S JOB TO FIX. The loiter is a shuffle in place and it is
+        // correct: a bot waiting for an opening should look like it is waiting. What was missing
+        // is anything that notices the WAIT ITSELF has gone on too long and picks a different
+        // place to do it from, which is what a person does when a stand-off stops working.
+        //
+        // ⚠️ THE SHIFT IS A NEW BEARING, NOT A NEW PLAN. Overriding the plan would fight the
+        // planner and produce the flip-flopping `docs/TODO.md` § 33.4 records; moving this bot's
+        // home bearing changes where `Stalk` and `ThrowSpot` want to stand, and the existing
+        // machinery walks it there for the ordinary reasons.
+        // -------------------------------------------------------------------
+
+        /// <summary>Seconds this bot has gone without getting anywhere.</summary>
+        private float _boredFor;
+
+        /// <summary>Where this bot was when the boredom clock last reset.</summary>
+        private Vector3 _boredAnchor;
+
+        /// <summary>Seconds left before boredom may fire again.</summary>
+        private float _boredomSettleLeft;
+
+        /// <summary>Radians added to this bot's home bearing by boredom.</summary>
+        private float _boredomShift;
+
+        /// <summary>
+        /// This bot's working corner of the ring, including whatever boredom has added to it.
+        ///
+        /// ⚠️ EVERY READER OF `HomeBearing` GOES THROUGH THIS, which is the point: `DoStalk` and
+        /// `ThrowSpot` are the two places that decide where a waiting bot stands, and a shift
+        /// applied to one of them only would move a stalker without moving where it throws from.
+        /// </summary>
+        private float HomeBearing => _self.HomeBearing + _boredomShift;
+
+        private void StepBoredom(float dt)
+        {
+            if (_boredomSettleLeft > 0.0f)
+            {
+                _boredomSettleLeft = Mathf.Max(0.0f, _boredomSettleLeft - dt);
+                _boredAnchor = transform.position;
+                _boredFor = 0.0f;
+                return;
+            }
+
+            // ⚠️ MEASURED ON TRAVEL, NOT ON THE PLAN. A bot can hold one plan for a whole round
+            // and be playing perfectly (a taya guarding a can nobody is attacking is not bored),
+            // and it can change plan every tick while standing in one place. Distance covered is
+            // the only honest question, and `BoredomProgressMetres` sits above `LoiterLeash` so a
+            // shuffle inside the leash cannot reset the clock forever.
+            if (Flat(transform.position, _boredAnchor) >= AiTuning.BoredomProgressMetres)
+            {
+                _boredAnchor = transform.position;
+                _boredFor = 0.0f;
+                return;
+            }
+
+            // ⚠️ A ROUND THAT IS NOT RUNNING IS NOT A ROUND ANYBODY IS BORED IN. Between rounds
+            // every bot is standing about on purpose, and firing here would send four of them on
+            // a lap of the arena during the scoreboard.
+            var round = GameServices.Round;
+            if (round == null || !round.RoundActive) { _boredFor = 0.0f; return; }
+
+            _boredFor += dt;
+            if (_boredFor < AiTuning.BoredomSeconds) return;
+
+            // ⚠️⚠️ THE SIGN IS ROLLED, NOT ALTERNATED. Alternating would walk a bored bot back and
+            // forth between two marks forever, which is the pacing `LoiterLeash` exists to delete,
+            // arrived at from a new direction.
+            float away = UnityEngine.Random.value < 0.5f ? -1.0f : 1.0f;
+            _boredomShift += away * AiTuning.BoredomShiftRadians;
+
+            _boredFor = 0.0f;
+            _boredAnchor = transform.position;
+            _boredomSettleLeft = AiTuning.BoredomSettleSeconds;
+
+            // ⚠️ THE GOAL IS DROPPED SO THE NEXT TICK RECOMPUTES IT. Without this the bot keeps
+            // its old arrival and never walks to the mark the shift just chose.
+            _arrived = false;
+            _goalValid = false;
+            _goal = Vector3.zero;
+        }
+
+        // -------------------------------------------------------------------
         // § THE HEADING COMMIT
         //
         // ⚠️⚠️ WHY A BOT LOOKED LIKE IT WAS SHAKING ITS HEAD. `EightWay` snaps a wanted heading
@@ -2415,12 +3134,12 @@ namespace TumbangPreso
                         && TryGlanceAt(out _glanceAt))
                         _glanceLeft = AiTuning.GlanceSeconds;
 
-                    // Occasional friendly emote during calm loitering
-                    if (UnityEngine.Random.value < 0.15f)
-                    {
-                        string[] emotes = { "yes", "dance", "tpose", "bow", "crouch" };
-                        TryTriggerEmote(emotes[UnityEngine.Random.Range(0, emotes.Length)], 0.9f);
-                    }
+                    // ⚠️⚠️ THE IDLE EMOTE ROLL USED TO LIVE HERE AND IT HAS MOVED TO § THE FACE.
+                    // Four plans reach `Loiter` and it is re-entered every frame, so a `0.15f`
+                    // written on this line was a chance per frame per plan: unreadable from the
+                    // code, unmeasurable in a probe, and different for a stalker than for a
+                    // guard for no reason anybody chose. `StepSocial` asks once per frame in one
+                    // place, scaled by the tier and the personality.
                 }
             }
 
@@ -2451,7 +3170,21 @@ namespace TumbangPreso
 
             // Across the bearing out from the lata, so the shift never walks into or away from
             // the thing this bot is lined up on.
-            Drive(intent, new Vector3(-radial.z, 0.0f, radial.x) * _loiterDir, false, false);
+            Vector3 shuffle = new Vector3(-radial.z, 0.0f, radial.x) * _loiterDir;
+
+            // ⚠️⚠️ SEPARATION REACHES THE LOITER NOW, AND ITS ABSENCE HERE IS HALF OF 🧑'S
+            // 2026-08-28 REPORT: *"stay near eachother without doing anything"*. `Separation` was
+            // applied in `Goto` and nowhere else, so it governed bots that were TRAVELLING and had
+            // no effect at all on bots that had arrived. Two seats whose goals happened to be
+            // close stopped close, loitered close, and had nothing pushing them apart for as long
+            // as neither plan changed, which is exactly the case a person notices.
+            //
+            // ⚠️ AT `LoiterSeparationWeight` RATHER THAN THE TRAVELLING WEIGHT, because a loiter
+            // step is leashed to 0.45 m: a push at 0.65 would spend every shuffle fighting the
+            // leash and the pair would visibly vibrate apart instead of drifting.
+            shuffle += Separation() * AiTuning.LoiterSeparationWeight;
+
+            Drive(intent, shuffle, false, false);
         }
 
         /// <summary>
@@ -2563,7 +3296,7 @@ namespace TumbangPreso
 
                 // My own corner of the court, so the four of them do not all drift to the same
                 // side of the map over a round.
-                score += 0.5f * (1.0f - Mathf.Abs(AngleBetween(bearing, _self.HomeBearing))
+                score += 0.5f * (1.0f - Mathf.Abs(AngleBetween(bearing, HomeBearing))
                                         / Mathf.PI);
 
                 // And it has to be worth walking to.
@@ -2930,7 +3663,11 @@ namespace TumbangPreso
             var round = GameServices.Round;
             if (round == null) return;
 
-            float alpha = 1.0f - Mathf.Exp(-dt / Mathf.Max(Me.React, 0.02f));
+            // ⚠️ THE LAPSE REACHES THE BELIEF ITSELF, NOT ONLY THE DECISIONS TAKEN OFF IT.
+            // `Observe` is where a bot's picture of the arena lags reality; slowing it during a
+            // lapse is the difference between a bot that decides late and a bot that decides on
+            // time using a stale picture, and the second one is what looking away actually does.
+            float alpha = 1.0f - Mathf.Exp(-dt / Mathf.Max(Me.React * LapseScale, 0.02f));
 
             foreach (var who in round.Players)
             {
@@ -3694,7 +4431,10 @@ namespace TumbangPreso
                 // a use for one of their powers, *"bcz thats normal and human"*. A shy bot needs
                 // a longer unbroken reason, so a marginal window passes it by and a clear one
                 // still gets taken. Nothing rolls a die and refuses an opportunity it saw.
-                float eagerness = _self.AppetiteFor(SlotIndexOf(verb));
+                // ⚠️ THIS ROUND'S APPETITE, NOT THE SEAT'S. See `RollRoundAppetite`: the seat
+                // roll alone made "seat 2 hardly ever ults" true for all eight rounds of a Hero
+                // Strike match, which stops reading as a person and starts reading as a dead key.
+                float eagerness = AppetiteFor(SlotIndexOf(verb));
                 float appetiteScale = Mathf.Lerp(AiTuning.AppetiteWindowShy,
                                                  AiTuning.AppetiteWindowEager, eagerness);
 
@@ -3706,6 +4446,44 @@ namespace TumbangPreso
 
             _weighedFor += dt;
             return _weighedFor >= _weighWindow;
+        }
+
+        /// <summary>
+        /// How eager this bot is about one slot THIS ROUND.
+        ///
+        /// ⚠️⚠️ THE SEAT ROLL IS THE BASELINE AND THE ROUND DRIFTS AROUND IT.
+        /// `AiPersonalityRoll.SkillAppetite` exists so four bots are four players, and its own
+        /// note says a real lobby has *"somebody who never remembers they have an ultimate"*. But
+        /// it is rolled once per seat and read for the whole match, so a shy slot was shy in every
+        /// round of it: in Hero Strike that is eight rounds of one key never being pressed, which
+        /// a player reads as a bug rather than as a personality.
+        ///
+        /// ⚠️ IT STILL DOES NOT ROLL A REFUSAL. Everything `SkillAppetite` says about a long
+        /// conviction window beating a dice roll holds unchanged; this only makes how patient a
+        /// bot feels about one power a fact about a round instead of about a match.
+        /// </summary>
+        private float AppetiteFor(int slot)
+        {
+            if (slot < 0 || slot >= _roundAppetite.Length) return 0.5f;
+
+            // ⚠️ ZERO MEANS "NOT ROLLED YET", NOT "SHY". `OnRoundStarted` fills this, and a bot
+            // spawned mid-round or in a probe that drives the round directly would otherwise get
+            // the shyest possible reading of every slot for its first round.
+            return _appetiteRolled ? _roundAppetite[slot] : _self.AppetiteFor(slot);
+        }
+
+        private readonly float[] _roundAppetite = new float[3];
+        private bool _appetiteRolled;
+
+        private void RollRoundAppetite()
+        {
+            for (int i = 0; i < _roundAppetite.Length; i++)
+                _roundAppetite[i] = Mathf.Clamp01(
+                    _self.AppetiteFor(i)
+                    + UnityEngine.Random.Range(-AiTuning.AppetiteRoundSwing,
+                                                AiTuning.AppetiteRoundSwing));
+
+            _appetiteRolled = true;
         }
 
         /// <summary>The `AiPersonalityRoll.SkillAppetite` index for a hero key.</summary>
@@ -3804,6 +4582,11 @@ namespace TumbangPreso
             _sprintWantHeld = 0.0f;
             _sprintAsked = false;
             _glanceLeft = 0.0f;
+
+            // ⚠️ THE HOP TOGGLE RESETS TOO. It is press state that outlives `intent.Clear()` for
+            // exactly the reason `_mashHeld` is a field, and a bot stunned on the one frame its
+            // jump key was down would otherwise come back believing it still owed a release.
+            _hopHeld = false;
 
             // ⚠️ THE AIM HOLD RESETS HERE FOR THE SAME REASON THE LUNGE CHARGE DOES, one note
             // up. A bot stunned mid-aim otherwise resumes counting from wherever it stopped and

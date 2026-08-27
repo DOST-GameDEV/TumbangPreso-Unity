@@ -1272,17 +1272,32 @@ namespace TumbangPreso.Abilities
             // lean OUT from the rim, so they never stand in the middle a player walks through.
             SpawnUpheaval(go.transform, radius, seed + 29);
 
+            // ⚠️⚠️ BOTH LAYERS ARE `VolcanicRock` NOW, AND THAT IS THE 2026-08-28 REPORT. 🧑,
+            // looking at this exact effect: *"it currently looks flat, like no texture etc"*.
+            // Everything above this line was already true — a hot bed, real broken plates over
+            // it, gaps that are the cracks — and then `Ghost` painted the bed ONE orange and
+            // `Solid` painted the crust ONE brown, so the whole construction pass arrived at a
+            // surface with nothing in it. `VfxMaterial.Volcanic` gives both layers grain, self
+            // lit relief and molten veins that only show where the rock sits low.
+            //
+            // ⚠️ ONE MATERIAL AT TWO HEATS, NOT TWO MATERIALS. The bed and the crust are the
+            // same road at two temperatures, so they share a grain field and the dark islands
+            // left in the bed are visibly the same stone as the plates over them. Before this
+            // they were two unrelated flat colours that happened to be stacked.
+            //
+            // ⚠️ THE SEED IS THE OUTLINE'S SEED, so the surface and the silhouette are drawn
+            // from the same position. Two stomps in one round are different rock; one stomp is
+            // the same rock in every capture, which is what keeps the probe's renders
+            // comparable. `Hero_Strike_Balance.md` § 8.3.
             var bed = VfxShapes.Lay(go.transform, "MagmaBed",
                                     VfxShapes.Splat(11, 0.22f, seed + 3),
                                     radius * 0.74f, 0.010f);
-            VfxMaterial.Ghost(bed.GetComponent<Renderer>(), new Color(1.0f, 0.34f, 0.04f, 0.90f), 0.30f);
-            VfxMaterial.StripCollider(bed);
+            VfxMaterial.Volcanic(bed.GetComponent<Renderer>(), VfxMaterial.VolcanicLook.Bed(seed + 3));
 
             var outer = VfxShapes.Lay(go.transform, "CrackedAsphalt",
                                       VfxShapes.Wedges(13, 0.22f, 4.0f, 0.075f, 0.26f, seed),
                                       radius, 0.022f);
-            VfxMaterial.Solid(outer.GetComponent<Renderer>(), new Color(0.19f, 0.15f, 0.13f), 0.0f);
-            VfxMaterial.StripCollider(outer);
+            VfxMaterial.Volcanic(outer.GetComponent<Renderer>(), VfxMaterial.VolcanicLook.Crust(seed));
 
             // ⚠️⚠️ THE CRACKS ARE CRACKS NOW, AND THIS EFFECT WAS CALLED `SpawnCrackedLavaDecal`
             // WHILE DRAWING A SOLID DISC. `Logs/shots-abilities/ability_lava_decal_v2.png` shows
@@ -1309,16 +1324,57 @@ namespace TumbangPreso.Abilities
             // in the middle exactly where the foot landed. That is what the deleted cylinder was
             // for, and it costs nothing.
 
-            // Lava pulse light. Raised and cut to a quarter, for the reason written up on the
-            // ice sheet's light: at 4.0 sitting 0.8 m over its own decal it lit the decal.
+            // The lava's own light. It sits 1.6 m up rather than on the deck, which is the ice
+            // sheet's lesson: a light at 0.8 m over its own decal mostly lights the decal, and
+            // what is wanted is the spill AROUND it.
             var lightGo = new GameObject("LavaLight");
             lightGo.transform.SetParent(go.transform, false);
             lightGo.transform.localPosition = new Vector3(0, 1.6f, 0);
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
             light.color = UiTheme.HeroMagmaCore;
-            light.range = radius * 2.4f;
-            light.intensity = 1.0f;
+
+            // ⚠️⚠️ THIS LIGHT IS THE GLOW, AND AT 1.0 OVER 5.3 m IT WAS NOT DOING THE JOB.
+            // 🧑 2026-08-28: *"its emmissive but we dont have any bloom shader so it wont be
+            // glowwy unless theres a bloom shader OR light coming from the lava"*. There is no
+            // bloom pass in this project, so emission decides the colour of the pixels a vein
+            // already covers and nothing else: a 4 cm crack at full brightness is a thin bright
+            // line, never a glow. The spill onto the road, the slabs and the legs of whoever is
+            // standing in it is the entire effect, and it was set at a value chosen back when
+            // the decal underneath it was a flat plate that needed no help.
+            //
+            // ⚠️ IT IS STILL WELL UNDER THE ONE THAT BROKE RULE 5. Thunderstrike measured 62.8
+            // per cent of the frame blown at intensity 6.0 over a 17.5 m range in a 14 m box.
+            // This is 2.6 over 6.6 m, which is a pool of light inside the decal's own footprint
+            // rather than a flash across the court, and the probe measures it either way.
+            light.range = radius * 3.0f;
+            light.intensity = 2.6f;
+
+            // ⚠️⚠️ AND THE ROCK GOES OUT OVER THE ZONE'S LIFE. `Hero_Strike_Balance.md` § 8.5
+            // item 2: a spent effect and a live one looked identical, so a player crossing this
+            // had nothing to read but their own count. The veins narrow and then darken to a
+            // dull red; the crust keeps its scar, because what ends is the heat and not the
+            // damage. It holds at full for the first 45 per cent, so the decal never looks spent
+            // while it is the newest thing on the court.
+            var cooling = Visual.VolcanicCooling.Attach(go, duration, 0.45f);
+
+            // ⚠️ THE LIGHT GOES OUT ON THE SAME CURVE AS THE VEINS. Handing it over here rather
+            // than letting the component find one keeps it explicit that this zone's glow and
+            // this zone's heat are one quantity: a light still burning over rock that has
+            // visibly cooled is the kind of disagreement nobody notices in a still and everybody
+            // notices in play.
+            if (cooling != null)
+            {
+                cooling.Glow = light;
+
+                // ⚠️ THE SINK HAS TO CLEAR THE TALLEST PIECE, WHICH IS AN UPHEAVAL SLAB AND NOT
+                // THE DECAL. `SpawnUpheaval` stands its slabs through `Stand` at a height scale
+                // of `radius * 0.62` against a mesh rise of 0.72, so the tip reaches about
+                // `radius * 0.45`. Sinking by `radius * 0.75` puts the whole thing under the road
+                // with margin, and taking it from the radius means it stays correct for the 4.5 m
+                // ultimate as well as the 2.2 m stomp.
+                cooling.SinkDepth = radius * 0.75f;
+            }
 
             // ⚠️ THIS ZONE HAD NO COMPONENT AT ALL, so there was nowhere to hang an ending on:
             // `Object.Destroy(go, duration)` is a deletion, not an event. `ExpiryCue` is the
@@ -1780,7 +1836,13 @@ namespace TumbangPreso.Abilities
             // STANDING UP from eye height. A slab tipped 0.24 m is a plate on the road; the point
             // of the whole motif is that the material went somewhere.
             var raised = VfxShapes.Stand(parent, "Upheaval",
-                                         VfxShapes.Upheaval(6, 0.06f, 0.72f, seed),
+                                         // ⚠️ 0.09 OF A UNIT OF THICKNESS, MEASURED ALONG EACH
+                                         // SLAB'S OWN FACE. `Stand` scales X and Z by
+                                         // radius * 1.18 and Y by radius * 0.62, so on a 2.2 m
+                                         // stomp this is roughly 0.2 m of road: thick enough to
+                                         // read as a chunk from eye height, thin enough that it
+                                         // is still a slab of the street rather than a boulder.
+                                         VfxShapes.Upheaval(6, 0.06f, 0.72f, seed, 0.09f),
                                          radius * 1.18f,
                                          heightScale: radius * 0.62f,
                                          lift: 0.015f);
@@ -1792,8 +1854,17 @@ namespace TumbangPreso.Abilities
             // ⚠️ AND IT IS ROAD-COLOURED, NOT NEAR-BLACK. 0.26/0.21/0.18 read as a hole in the
             // frame at this size; concrete that has been lifted is still concrete, and the whole
             // claim of the motif is that a player recognises it as the street.
-            VfxMaterial.Solid(raised.GetComponent<Renderer>(), new Color(0.42f, 0.38f, 0.34f));
-            VfxMaterial.StripCollider(raised);
+            //
+            // ⚠️⚠️ AND IT IS ROAD-TEXTURED NOW, WHICH IS WHAT THE CLAIM ACTUALLY NEEDED. A slab
+            // of one flat grey is not recognisable as the street; it is recognisable as a
+            // polygon. `VolcanicLook.Upheaval` gives it a tight aggregate grain and lights it
+            // off its own gradient, so the piece reads as a torn-up chunk of road at eye height
+            // rather than as a grey wedge standing on the road.
+            //
+            // ⚠️ ITS HEAT IS ALMOST ZERO, DELIBERATELY. Glowing seams in these would say the
+            // concrete was on fire, which is Sean's fiction. Dante broke it; he did not light
+            // it, and `SpawnCrackedLavaDecal` already keeps that separation in its geometry.
+            VfxMaterial.Volcanic(raised.GetComponent<Renderer>(), VfxMaterial.VolcanicLook.Upheaval(seed));
             return raised;
         }
 
@@ -4531,29 +4602,77 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         // VOLCANIC ROCK DEBRIS (Dante Skills)
         // -------------------------------------------------------------------
-        public static void SpawnVolcanicRockDebris(Vector3 center, int count = 8)
+        public static void SpawnVolcanicRockDebris(Vector3 center, int count = 8, float radius = 2.2f)
         {
+            // ⚠️ SEEDED OFF POSITION AND RESTORED AFTERWARDS, WHICH IS `VfxShapes`' OWN PATTERN.
+            // Its note has the reasoning: two stomps in one round throw different rock, and any
+            // one stomp throws the same rock in every capture, which is what makes the probe's
+            // renders comparable version to version. The state is saved and put back because
+            // `Random` is global and every other system in the game draws from it.
+            var state = Random.state;
+            Random.InitState(Mathf.RoundToInt((center.x * 7.0f + center.z) * 313.0f));
+
             for (int i = 0; i < count; i++)
             {
                 var rock = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 rock.name = "VolcanicRock";
-                rock.transform.position = center + Vector3.up * 0.4f;
-                rock.transform.localScale = Vector3.one * Random.Range(0.25f, 0.55f);
+
+                // ⚠️⚠️ THEY COME OUT OF THE BREAK, NOT OUT OF ONE POINT. 🧑 2026-08-28 asked for
+                // *"rocks launching around it"* and every one of these used to spawn at the exact
+                // centre, so eight of them left the same pixel on the same frame and read as a
+                // fountain from a spout rather than as ground coming apart. Spread around the
+                // rim and thrown OUTWARD, the same eight rocks say the whole 2.2 m circle broke.
+                //
+                // ⚠️ THE ANGLES ARE UNEVEN. `docs/TODO.md` § 19.2d is about `Wedges` and the rule
+                // it names is general: even spacing is a manufactured object, and eight rocks at
+                // 45 degree intervals is a pinwheel leaving the ground. The jitter is most of a
+                // whole sector so no two gaps match.
+                float turn = (i + Random.Range(-0.34f, 0.34f)) / count * Mathf.PI * 2.0f;
+                Vector3 out3 = new Vector3(Mathf.Cos(turn), 0.0f, Mathf.Sin(turn));
+                float ring = radius * Random.Range(0.35f, 0.85f);
+
+                rock.transform.position = center + out3 * ring + Vector3.up * 0.25f;
+
+                // ⚠️ SLABS, NOT DICE. Broken road comes up in plates: an unequal box reads as a
+                // fragment of something that used to be flat, and a cube reads as a cube. It is
+                // also what makes the tumble legible, because a cube looks much the same at
+                // every angle it passes through.
+                float chunk = Random.Range(0.22f, 0.46f);
+                rock.transform.localScale = new Vector3(chunk * Random.Range(1.0f, 1.9f),
+                                                        chunk * Random.Range(0.35f, 0.7f),
+                                                        chunk * Random.Range(1.0f, 1.9f));
                 rock.transform.rotation = Random.rotation;
 
                 // ⚠️⚠️ FOURTEEN OF THESE COME OUT OF ONE ULTIMATE, EACH WITH A COLLIDER AND A
                 // RIGIDBODY, ALL SPAWNED ON TOP OF WHOEVER WAS JUST HIT. Decoration was doing
                 // physics to players. Rock is opaque and lit flat; only the collider goes.
-                VfxMaterial.Solid(rock.GetComponent<Renderer>(),
-                                  Random.value < 0.5f ? new Color(0.22f, 0.18f, 0.15f) : UiTheme.HeroMagmaCore);
-                VfxMaterial.StripCollider(rock);
+                //
+                // ⚠️⚠️ AND THE COIN FLIP BETWEEN "DARK" AND "MAGMA CORE" IS GONE. Half these
+                // rocks were painted flat `UiTheme.HeroMagmaCore`, so half of what Dante threw
+                // was a solid ORANGE box: the hero's identity hue, at full saturation, on eight
+                // objects moving fast through the middle of a 14 m court. `VolcanicLook.Debris`
+                // makes every one of them dark stone with heat showing in its own cracks, which
+                // is both what it should have looked like and a straight subtraction from
+                // `docs/VISION.md` § 2 rule 5's budget.
+                //
+                // ⚠️ OBJECT SPACE, BECAUSE THESE TUMBLE. See `_PatternSpace`: a world-space grain
+                // would swim through a spinning body and read as a projector rather than as rock.
+                var look = VfxMaterial.VolcanicLook.Debris(Random.Range(0, 100000));
+                look.Heat = Random.Range(0.16f, 0.40f);
+                VfxMaterial.Volcanic(rock.GetComponent<Renderer>(), look);
 
                 var rb = rock.AddComponent<Rigidbody>();
-                rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.8f) * Random.Range(6.0f, 13.0f);
+
+                // Thrown out and up, off the rim it came from, rather than in a random direction
+                // from the middle. The upward share still dominates so they arc rather than skid.
+                rb.linearVelocity = (out3 * Random.Range(1.6f, 3.4f) + Vector3.up * Random.Range(4.5f, 7.0f))
+                                    * Random.Range(1.15f, 1.7f);
                 rb.angularVelocity = Random.insideUnitSphere * 20.0f;
 
                 Object.Destroy(rock, 1.4f);
             }
+
+            Random.state = state;
         }
 
         /// <summary>

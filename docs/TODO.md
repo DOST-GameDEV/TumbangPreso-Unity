@@ -5978,6 +5978,329 @@ in `StepNetworkReplica` deleted rather than left as a second source.
 
 ---
 
+## 64 · The bots had no face, no feet, a perfect memory and one opinion
+
+**🧑 2026-08-28, a whole-session brief on the AI and nothing else:** *"try to thoroughly make AI
+better, like figure out all aspects of it to make it feel like a human/smarter/better"*, and then,
+itemised: *"make it randomly emote to taunt or when it does something cool"*; *"i want it so that
+it can sometimes chose to not use skill if opportunity doesnt arise like a human"*; *"I dont want
+the bots to only go after the human too (sometimes it only targets human)"*; *"let it make mistakes
+bcz humans do mistakes sometimes"*; *"make it move around like a human, (jumping and sprinting and
+shit)"*; *"(make sure its head turns like how a human's camera/mouse turns)"*; *"make sure they
+dont just stand around sometimes and perma wait or stay near eachother without doing anything"*;
+and the tier brief, *"OFC harder bots will be humanlike but less mistakes and shi but yea i want
+the most humanlike bots to be normal mode bots (middle tier difficulty)"*.
+
+§ 33 answered the 2026-08-27 version of four of these clauses. **This entry is what was left, and
+two of the six turned out to be defects rather than missing features.**
+
+### 64.1 ⚠️⚠️ THE BOTS HAD EMOTE CODE AND IT FIRED ZERO TIMES ✅
+
+*"make it randomly emote to taunt or when it does something cool"*. There WAS bot emote code:
+`AIController.TryTriggerEmote`, a celebration on `RoundDirector.Tagged`, an idle roll inside
+`Loiter`, and a third call site where `Lata` reached into the AI on a knockdown. None of it had
+ever produced a single visible emote.
+
+⚠️⚠️ **A BOT CANCELLED ITS OWN EMOTE ON THE FRAME IT STARTED ONE, AND NOTHING IN EITHER FILE SAID
+SO.** `EmotePlayer.Update` stops an emote on any frame `intent.MoveAxis` is non-zero, which is
+correct and deliberate (its header: an emote must be abortable instantly, because it is a
+self-inflicted stun). `AIController` is `[DefaultExecutionOrder(-130)]` and writes that axis every
+single frame. `EmotePlayer` runs at the default 0. So `HostPlay` set `Current`, and the same frame
+the bot walked and cleared it.
+
+⚠️ **NOTHING ERRORED, AND NOBODY REPORTS AN EMOTE THEY NEVER SAW.** `BotBehaviourProbe` counted
+throws, tags, skills and travel, and every one of those numbers was byte-identical on both sides of
+the fault. This is the class of bug § 7.1 says the probe harness exists for, and the probe could
+not see it because nothing counted the thing that was broken.
+
+**The fix is a HOLD, and it is not a timer on the clip.** `CLAUDE.md` § 4 is explicit that emotes
+end only by interruption and that there is no emote timer, and this adds none: `_emoteHoldLeft` is
+how long the BOT keeps its hands off the movement keys, which is exactly what a player does when
+they choose to emote. The clip still ends the way every clip ends, by the bot going back to
+playing. `AIController` § THE FACE.
+
+| | |
+|---|---|
+| `EmoteHoldMin/Max` | **1.1 to 2.3 s** of standing still, rolled |
+| `EmoteCooldownMin/Max` | **9 to 22 s** between one bot's emotes |
+| `EmoteSafeRadius` | **6.0 m**, about twice the longest tier lunge |
+| `EmoteCelebrateChance` | **0.55**, before `Flair` and `Showmanship` scale it |
+| `EmoteTauntChance` | **0.05 per second**, ⚠️ a RATE, multiplied by the frame time |
+| `EmoteStartGrace` | **0.25 s** before the hold will believe the clip failed |
+
+⚠️⚠️ **THE SAFETY GATE IS RE-ASKED EVERY FRAME OF THE HOLD, WHICH IS THE MOST HUMAN PART OF IT.**
+A celebration that becomes dangerous is abandoned mid-clip. `SafeToEmote` refuses a bot that is
+taggable, inside the chalk, mid-wind-up, within 6 m of the taya, or defending while anybody is
+taggable; between rounds it passes unconditionally, which is the one moment that is safe by
+construction and is where most of them actually land.
+
+⚠️ **THREE SECOND PATHS WERE DELETED RATHER THAN KEPT.** `Lata` no longer reaches into
+`AIController` on a knockdown (it skipped the safety gate entirely, so a bot could be told to dance
+inside the chalk with a taya on it, and a rules object had no business knowing what a bot is); the
+idle roll came out of `Loiter`, where four plans re-entered it every frame so a `0.15f` written on
+that line was a chance per frame per plan and the real rate was unknowable from reading it; and the
+request goes through `EmotePlayer.Request`, the entry the emote wheel uses, rather than `HostPlay`.
+
+⚠️ **THE START GRACE IS A NETWORK ROUND TRIP, NOT A FEEL VALUE.** In single player `Request`
+reaches `Play` on the same line. On a listen host it does not: `HostPlay` sends
+`RequestEmoteServerRpc`, which broadcasts `PlayEmote` with `SendNamedMessageToAll`, and Netcode
+delivers that on its own update. `IsEmoting` is false for a frame or two afterwards, so without the
+grace the hold would end immediately, the bot would walk, and the clip would be cancelled by the
+movement the instant it arrived: **the original bug, reintroduced through the wire instead of
+through the execution order.**
+
+### 64.2 ⚠️⚠️ SEPARATION WAS APPLIED IN `Goto` AND NOWHERE ELSE ✅
+
+*"stay near eachother without doing anything"*. `Separation()` is called from exactly one place,
+`Goto`, so it governed bots that were **travelling** and did nothing whatever for bots that had
+**arrived**. `Stalk`, `Cover` and `Guard` all end in `if (_arrived) Loiter(intent)`, and `Loiter`
+is a 0.45 m leash: two seats whose goals happened to be close stopped close, loitered close, and
+had no term pushing them apart for as long as neither plan changed.
+
+It reaches the loiter now at `LoiterSeparationWeight` **0.35**, deliberately under the travelling
+`SeparationWeight` 0.65. ⚠️ A push at the travelling weight would spend every shuffle fighting the
+0.45 m leash and the pair would visibly vibrate apart instead of drifting.
+
+### 64.3 ⚠️ NOTHING MEASURED HOW LONG A WAIT HAD BEEN GOING ON ✅
+
+*"dont just stand around sometimes and perma wait"*. The loiter is a shuffle in place and it is
+correct; a bot waiting for an opening should look like it is waiting. What was missing is anything
+noticing the WAIT ITSELF had stopped going anywhere.
+
+`BoredomSeconds` **6.5 s** without covering `BoredomProgressMetres` **1.25 m** shifts this bot's
+home bearing by `BoredomShiftRadians` **1.15**, then settles for `BoredomSettleSeconds` **4.0 s**.
+
+⚠️ **MEASURED ON TRAVEL, NEVER ON THE PLAN.** A taya guarding a can nobody is attacking is playing
+perfectly and holding one plan; a bot can also change plan every tick while standing still.
+Distance covered is the only honest question. ⚠️ **AND THE PROGRESS BAR SITS ABOVE `LoiterLeash`**
+0.45, or the shuffle would reset the clock forever, which is the exact stalemate this breaks.
+
+⚠️ **IT MOVES A BEARING, NOT A PLAN.** Overriding the plan would fight the planner and reproduce
+the flip-flopping § 33.4 records. `HomeBearing` is a property now and both readers go through it;
+a shift applied to `DoStalk` alone would move a stalker without moving where it throws from.
+
+### 64.4 ⚠️⚠️ THE TIER'S `Mistake` REACHED EXACTLY ONE DECISION ✅
+
+*"let it make mistakes bcz humans do mistakes sometimes"*. `Mistake` is read in one place,
+`DoWindup`'s `_blundering`: scatter doubles, the power margin drops to 1.0 and the lane check is
+skipped. **So a bot could only ever err while charging a throw**, which is a few seconds of an
+attacker's round and none at all of a taya's. Every chase, every fetch, every plan change and every
+cast was perfect.
+
+**A lapse is a LATE answer and never a wrong one**, and that distinction is the whole design.
+Choosing the second-best plan on purpose reads as a broken bot, because the error is visible in the
+decision and a watcher sees the body walk the wrong way for no reason. Slowing the decision is
+invisible in the choice and visible only in the timing, which is what being outplayed by a person
+looks like from the other side.
+
+`LapseSeconds` **0.42** (about one Normal think tick) at `LapseSlowdown` **2.4x**, rolled once per
+think tick at the tier's `Lapse` reduced by up to half by the bot's own `Focus`. It slows the think
+interval, every reaction gate, and `Observe`'s belief lag. ⚠️ **IT NEVER FREEZES THE BODY**: the bot
+keeps walking its last plan and simply does not notice the board has moved. A lapse that stopped
+the legs would be 64.3's own complaint, added deliberately.
+
+⚠️ **ROLLED PER THINK TICK, NOT PER FRAME**, so the rate cannot depend on the frame rate. § 17 is
+what happens when a bot number does.
+
+### 64.5 ⚠️ NO BOT HAD EVER LEFT THE GROUND ON PURPOSE ✅
+
+*"make it move around like a human, (jumping and sprinting and shit)"*. Sprinting was § 33.3.
+Jumping was not: before this, `Verb.Jump` appeared in `AIController` **exactly once**, in the mash
+that gets a tripped bot off the floor.
+
+⚠️ **IT BUYS NOTHING, WHICH IS EXACTLY WHY A PERSON DOES IT.** `CharacterMotor.ApplyGravity`
+charges no stamina for a jump and no rule rewards one, so hopping while you wait is fidgeting with
+the one verb that is free. `HopIntervalMin/Max` **2.6 to 11.0 s**, `HopChance` **0.55** scaled by
+the tier's `Hops` and the bot's `Springiness`. ⚠️ The interval range is wide on purpose: four bots
+hopping on a shared beat is worse than four that never hop, because it announces that one clock
+drives all of them.
+
+⚠️ **REFUSED IN THE THREE MOMENTS A HOP COSTS SOMETHING**, and each one is a mechanic rather than a
+judgement about when jumping looks silly: during `Reset` (the reset channel is the game's one held
+button and zeroes itself the instant it goes false), during a wind-up, during an emote (a jump is
+`EmotePlayer`'s own cancel condition), and while taggable (an airborne body cannot change
+direction, and the retrieval is the only window where that matters).
+
+### 64.6 ⚠️⚠️ THE BODY TURNED AT ONE SPEED FROM THE FIRST FRAME OF A TURN TO THE LAST ✅
+
+*"(make sure its head turns like how a human's camera/mouse turns)"*. § 31.1 capped the turn at
+`BodyTurnDegPerSecond` 520 and that fixed the reported fault (*"they can look straight behind them
+and turn in 0.1 seconds"*). It replaced it with a different tell: a **constant** rate, no ramp at
+either end, stopping dead on the mark. Nothing physical moves like that.
+
+⚠️⚠️ **AND THE SPEED SCALING WITH THE ANGLE IS THE HALF THAT READS.** A person makes a 15°
+correction slowly and a 170° check fast, so a single rate is wrong at both ends: at 520 the
+correction snaps and only the big check ever looked right.
+
+| | |
+|---|---|
+| `BodyTurnReachSeconds` | **0.18 s**, the time the hand wants any turn to take |
+| `BodyTurnSettleDegPerSecond` | **180**, the floor, a hand already tensed |
+| `BodyTurnAccelDegPerSecond2` | **3200**, floor to ceiling in about 0.11 s |
+| `BodyTurnDegPerSecond` | **520**, unchanged |
+
+⚠️ **NOTHING GOT FASTER.** A 180° reversal wants 1000°/s at 0.18 s and clamps to the shipped 520,
+so the longest turn in the game runs at exactly the old cap;
+`TheLongestTurnStillSaturatesTheShippedCeiling` asserts it. Only turns under about 94° behave
+differently, and those are the ones that used to snap.
+
+⚠️⚠️ **THE FLOOR IS NOT A START FROM ZERO, AND A GLANCE IS WHY.** Accelerating from rest makes
+every short press worthless, and `GlanceSeconds` is 0.09 s: from zero that is about **12°** and the
+look-around § 33.3 added would have quietly stopped happening. With the floor it is about **29°**,
+against 47 under the flat rate. ⚠️ `AGlanceTurnsALongWayWithoutFinishingAReversal` used to multiply
+`GlanceSeconds` by the CEILING, which is arithmetic that died with the flat rate; it computes the
+area under the ramp now, or it would have gone green while the feature was broken.
+
+⚠️ **IT IS IN THE MOTOR AND APPLIES TO GAMEPAD HUMANS TOO.** `CLAUDE.md` § 4 forbids a second
+movement model in as many words. Mouse-aimed players are untouched: `Steer` returns before this on
+their branch, because their hand IS the curve.
+
+### 64.7 ⚠️ FOUR IDENTICAL SCORERS AGREE, AND THAT IS THE RESIDUE OF § 33.1 ✅
+
+*"I dont want the bots to only go after the human too (sometimes it only targets human)"*. § 33.1
+deleted the seat-order `foreach` that singled somebody out **by construction**, and the feeling was
+reported again a build later, softer. The cause this time is **agreement, not order**: all four
+seats score one board with one identical set of weights, so whoever the score favours is favoured
+by every bot at once, and a person plays differently from three bots in exactly the terms the score
+reads (deeper into the chalk, holding a tsinelas longer, getting caught out).
+
+**So the fix is to make the four disagree on ties.** `AiPersonalityRoll.RivalPick` gives each seat a
+rolled favourite rival worth `TagRivalryWeight` **0.45**.
+
+⚠️⚠️ **THE SIZE IS THE WHOLE SAFETY ARGUMENT AND IT IS ASSERTED.** 0.45 sits under
+`TagSwitchMargin` 0.75, so a grudge can never drag a taya off a chase it is already winning (which
+would be § 33.1's taya running down the middle of two attackers and catching neither), and it is a
+fifth of `TagHelplessBonus` 2.5, so a body already on the floor is still chased first, every time.
+It decides ties and near ties, and the close ones are all this ever was.
+
+### 64.8 ⚠️ A SHY SLOT WAS SHY FOR EIGHT ROUNDS RUNNING ✅
+
+*"i want it so that it can sometimes chose to not use skill if opportunity doesnt arise like a
+human"*, which § 33.2 and `SkillAppetite` had already largely answered. The residue:
+`SkillAppetite` is rolled once per **seat** and read for the whole **match**, so "seat 2 hardly ever
+ults" was true in every round of a Hero Strike match. That stops reading as a person and starts
+reading as a dead key.
+
+`AppetiteRoundSwing` **0.35** drifts each slot's appetite around its seat baseline once per round.
+⚠️ **IT STILL DOES NOT ROLL A REFUSAL**: everything `SkillAppetite` says about a long conviction
+window beating a dice roll holds unchanged. It only makes how patient a bot feels about one power a
+fact about a round instead of about a match. ⚠️ Asserted under 0.5, because at or above that the
+drift is bigger than the roll it drifts around and the seat's personality stops existing.
+
+### 64.9 Normal is the most humanlike tier, and two of its rows are deliberately not monotonic
+
+*"i want the most humanlike bots to be normal mode bots (middle tier difficulty)"*.
+
+| | Bata | Normal | Astig |
+|---|---|---|---|
+| `Flair` (emote appetite) | 0.80 | **1.00** | 0.55 |
+| `Hops` (idle fidgeting) | 1.15 | **1.00** | 0.55 |
+| `Lapse` (per think tick) | 0.10 | 0.045 | 0.012 |
+| `Mistake` (unchanged) | 0.30 | 0.10 | 0.02 |
+
+⚠️⚠️ **`Flair` AND `Hops` PEAK IN THE MIDDLE AND `DifficultyIsMonotonicWhereItShouldBe`
+DELIBERATELY DOES NOT COVER THEM.** Every other row in the tier table is monotonic because every
+other row measures SKILL, and skill has an order. Sociability does not: a tournament player
+celebrates less than a casual one because a celebration costs position, and a child celebrates less
+than a casual one because they are still working out where to stand.
+`NormalIsTheMostHumanTierAndThatIsNotMonotonic` asserts the peak, so nobody later "fixes" the table
+to look consistent with its neighbours.
+
+⚠️ **`Lapse` IS AN ERROR ROW, SO IT IS MONOTONIC LIKE `Mistake`.** And it is not zero at Astig, for
+the reason `Mistake` is not zero there either: a bot that never looks away and never plays to the
+crowd reads as a cheat rather than as a hard opponent.
+
+### 64.10 What was measured, and the one number that was nearly misread
+
+⚠️⚠️ **THE FIRST READING OF THIS PASS LOOKED LIKE A 60 PER CENT COLLAPSE IN ULTIMATE USE, AND IT
+WAS A STALE BASELINE.** § 33.6's table reports 37 and 39 ultimates; this build reports 14 and 15,
+which is past § 16's smallest resolvable effect and reads as a serious regression. It is not.
+**§ 33.6 was measured on 2026-08-27, before §§ 36 to 63 landed, and § 41 changed the ultimate meter
+to count events.** `CLAUDE.md` § 7.1 says in as many words not to compare an old report against a
+new one, and this is what happens when you do.
+
+**So the arm below is a real A/B: `HEAD~1` of this branch against `HEAD`, both run today, one
+seeded run an arm.**
+
+**Hero Strike, Eskinita** (50,115 frames, 835.3 s simulated, `match in progress at exit: False`)
+
+| | baseline | this pass |
+|---|---|---|
+| throws | 180 | 178 |
+| retrievals | 177 | 172 |
+| tags | 117 | 113 |
+| lata knocks | 95 | 97 |
+| lata restores | 108 | 107 |
+| unretrieved penalties | 0 | 0 |
+| skill uses | 33 | 31 |
+| ultimate uses | 15 | 14 |
+| seat travel, m | 1394 / 1377 / 1301 / 1447 | 1391 / 1368 / 1359 / 1442 |
+
+**Hero Strike, Ilalim ng Tulay**
+
+| | baseline | this pass |
+|---|---|---|
+| throws | 163 | **178** |
+| retrievals | 157 | **175** |
+| tags | 101 | 101 |
+| lata knocks | 88 | 89 |
+| skill uses | 29 | 32 |
+| ultimate uses | 14 | 15 |
+| seat travel, m | 1407 / 1344 / 1279 / 1439 | 1343 / 1358 / 1392 / 1413 |
+
+**Classic, Eskinita**: knocks 40 to 45, tags 64 to 60, throws 84 to 88, retrievals 81 to 84,
+restores 47 to 50, travel 634 / 639 / 717 / 682 to 659 / 646 / 692 / 626.
+
+✅ **EVERY ROW IS INSIDE § 16's NOISE FLOOR, AND THAT IS THE RIGHT RESULT RATHER THAN A
+DISAPPOINTING ONE.** § 33.6 makes the identical point about its own middle column: none of this was
+meant to make bots busier. A pass about how bots READ that moved the throw count would be a pass
+that had changed the game underneath it. The Ilalim throws and retrievals are up about a tenth,
+which is inside the floor and in the good direction.
+
+### 64.11 ⚠️⚠️ THE PROBE NOW COUNTS THE TWO THINGS IT COULD NOT SEE ✅
+
+The whole of 64.1 is a feature that shipped, played, and did nothing, while every number in
+`BotBehaviourProbe` stayed byte-identical. That cannot be allowed to be true a second time.
+
+`Tally` counts **emotes** (off `EmotePlayer.EmoteStarted`, subscribed per seat inside the sample
+loop, because the seats are rebuilt between rounds) and **hops** (off the resolved body: grounded
+going false with an upward velocity).
+
+⚠️ **HOPS ARE COUNTED OFF THE BODY AND NEVER OFF THE KEY.** A tripped bot MASHES jump to get up and
+those presses are refused by `CanAct`; counting the key would report hundreds of fictional hops a
+match.
+
+Measured across two runs of this build:
+
+| | Classic / Eskinita | HS / Eskinita | HS / Ilalim |
+|---|---|---|---|
+| emotes | 6, 8 | 22, 12 | 18, 16 |
+| hops | 75, 92 | 234, 254 | 239, 248 |
+
+That is about **0.4 to 0.7 emotes per seat per round** and **one hop per seat every 13 seconds**.
+
+⚠️ **THE ASSERTION IS A FLOOR OF ZERO, NOT A BAND, AND THE 22-TO-12 SWING IS WHY.** The failure
+mode this guards is *"this does not happen at all"*, and a floor that tried to pin the rate would
+fail on the dice instead, which the long note on `deadLoopFloor` explains costs a reader more than
+no assertion at all. There is a ceiling as well, at four per seat per round: the other failure is a
+bot that stops playing to dance.
+
+### 64.12 Still open
+
+* ⚠️ **THE PROBE STILL ONLY EVER SEATS DANTE AND ZACK**, which § 33.8 already records. Nothing in
+  this entry is kit-specific, so it does not add to that debt, but the four unexercised kits are
+  still unexercised.
+* ⚠️ **THE HOP RATE IS MEASURED BUT NOT A/B'D FOR FEEL.** One hop per seat every 13 seconds is what
+  the shipped constants produce; whether that is the right amount is a human judgement and the
+  number is written down here so it can be moved against something.
+* ⚠️ **THE EMOTE COUNT SWINGS 22 TO 12 BETWEEN TWO RUNS OF ONE BUILD.** That is the safety gate
+  depending on the match state rather than an unseeded input, but it means the rate cannot be
+  tuned from one run. § 16's arithmetic applies: three runs an arm for anything worth 20 per cent.
+* ⚠️ **`Ilalim` REPORTED 2 UNRETRIEVED-SLIPPER PENALTY SECONDS AGAINST A BASELINE OF 0.** Two
+  seconds of fine across an 834 s match is nothing, and the ceiling is 1200, but emote holds and
+  boredom shifts are two new ways for a bot to not be walking toward its tsinelas. Worth a look if
+  that row ever climbs.
+
 ## 65 · Hosting or joining a SECOND time in one launch was refused, silently
 
 🧑 2026-08-28: *"it sometimes says failed to join online host via relay. it's consistent because
@@ -6634,6 +6957,599 @@ lives only in a document is a rule that is followed until somebody is in a hurry
 failure and a run that wrote no XML at all are three different things that look identical from a
 shell. It prints a per-suite line and names every failing test, so a red run does not need a
 second command to be readable.
+
+---
+
+## 58 · The ink outline tore open at every hard edge ✅ FIXED 2026-08-27
+
+🧑 2026-08-27: *"the issue is the outlines dont fully connect"*.
+
+**The outline is an inverted hull, and an inverted hull assumes ONE NORMAL PER POSITION.**
+`Toon.shader`'s OUTLINE Pass draws back faces pushed out along `v.normal`. That is correct only
+when every copy of a given corner agrees on which way "out" is. These rigs do not agree: a hard
+edge, a UV seam or a material split all force the importer to emit the same corner SEVERAL times,
+one per adjoining face, each carrying its own face normal. Pushing those copies along their own
+normals sends them to different points in space, so the shell parts company with itself and the
+border shows a gap.
+
+⚠️ **The gap is widest where the angle is sharpest**, which is why it read as "some parts are
+missing" rather than as a uniformly thin border. Two normals 90° apart separate by the full
+outline width; a shallow bend barely parts at all. On a Kenney mini that is the fingers, the jaw,
+the shoulders and the tops of the shoes, which is most of what the eye uses to read the pose.
+
+**The fix is a welded normal.** `Visual.OutlineNormals.Weld` averages every normal sharing a
+position and the Pass inflates along that average instead, so the copies all travel to the same
+point and the shell stays closed.
+
+⚠️⚠️ **It goes in the TANGENT channel, and a spare UV would have been wrong.** Unity skins
+POSITION, NORMAL and TANGENT for a `SkinnedMeshRenderer` and passes UVs through untouched, so a
+welded normal parked in UV3 would have stayed in bind pose and the border would have split open
+the moment a limb rotated. The toon shader samples no normal map and never writes `o.Normal`, so
+nothing reads a real tangent and the channel was free. **If a normal map is ever added to the toon
+shader this has to move**, and there is nowhere good left to put it.
+
+⚠️ **The weld hangs off `ToonSkin.Apply` rather than off the ten call sites.** That function is
+the one chokepoint every outlined surface in the game already passes through, so a renderer cannot
+acquire the toon shader and miss the weld. It caches per shared mesh, so twelve people wearing one
+rig cost one bake between them and a respawn costs a set lookup.
+
+⚠️ **The shader falls back to the raw normal when the tangent is zero.** A mesh imported without a
+CPU copy cannot be welded, and inflating along a zero vector would collapse the hull onto the model
+and delete the outline entirely. The fallback restores the pre-weld look for that mesh, which is a
+seam rather than nothing at all.
+
+⚠️⚠️ **THE PROPS WERE STILL TORN AFTER THE CHARACTERS WERE FIXED, AND ONLY THE TEST CAUGHT IT.**
+The `.glb` people arrive from glTFast with a CPU copy and welded immediately. The nine inked
+`.obj` props (four lata, four tsinelas, `viewmodel_arm`) were imported with Read/Write OFF, so
+`mesh.vertices` came back empty, `Weld` returned early and their borders kept the exact split the
+cast had just lost. **Nothing logged and nothing looked wrong in the inspector**, which is the
+whole reason `EveryOutlinedMeshIsReadableSoTheWeldCanRun` is written as a readability assertion
+rather than as a geometry one. `ModelImportSetup` now sets `isReadable` on them.
+
+⚠️⚠️ **AND THE FIRST-PERSON HANDS SURVIVED EVEN THAT, BECAUSE THE MESH IS DUPLICATED.** 🧑
+2026-08-27, after the cast and the props were both green: *"can you apply it also to the hands in
+first person view"*. They were genuinely still torn. `ViewmodelArms` builds both arms from
+`Resources.Load<Mesh>("Models/viewmodel_arm")`, which resolves to
+`Assets/TumbangPreso/Resources/Models/viewmodel_arm.obj`, a **second, byte-identical copy** of
+`Art/models/viewmodel_arm.obj`. The import fix and the test suite both walked `Art/models` only, so
+**both reported success against a file the game never loads** while the mesh on screen for the
+entire match kept its split border. `tsinelas_classic.obj` is duplicated the same way for the
+slipper held in first person.
+
+⚠️ **That is the sharpest version of the lesson in this whole entry.** A directory sweep proves
+that whatever is on disk in that directory is correct. It cannot notice that the asset the player
+actually looks at is somewhere else. `TheFirstPersonArmIsWeldedAtThePathViewmodelArmsActuallyLoads`
+therefore names the path literally, the way `ViewmodelArms` spells it, rather than globbing.
+
+⚠️ **The duplication itself is left alone on purpose.** Deduplicating a mesh that two loaders reach
+by two different mechanisms is a separate change with its own failure modes, and it is not worth
+bundling into an outline fix. It is written down here so the next person meets it deliberately.
+
+⚠️ **`env_` is deliberately excluded from that, and the reason is memory rather than style.**
+Readable means a second copy of the mesh in system RAM for the life of the process. The street
+never reaches `ToonSkin.Apply` at all after the 2026-07-29 world-toon revert, so it has no hull to
+weld and would be paying for a copy nothing reads.
+
+**Verified:** `OutlineWeldTests`, four tests. One asserts the rig meshes are readable at all,
+because a silent no-op on an unreadable mesh is the most likely way this regresses and it looks
+completely normal in the inspector. One asserts the closure property directly as geometry, that
+vertices sharing a position inflate the same way. One asserts the rigs still HAVE split normals,
+so the suite reports it if the premise ever stops holding. One names the first-person arm at the
+exact path `ViewmodelArms` loads, because a directory sweep cannot notice that the mesh on screen
+most of the match is filed somewhere else.
+
+---
+
+## 63 · The world outline was aliased because MSAA was never able to see it
+
+🧑 2026-08-28: the screen-space ink outline stair-steps, and thin geometry like the overhead
+wires breaks into dashes.
+
+**MSAA is on, MSAA is working, and MSAA cannot help.** Measured in play mode on 2026-08-28:
+quality level Ultra, `QualitySettings.antiAliasing` 4, `Camera.allowMSAA` true, and a render
+target requested with four samples really does come back holding four. But MSAA anti-aliases
+GEOMETRY during rasterisation, out of coverage samples taken per triangle, and this outline is
+painted by a fragment shader into an image that has **already been resolved**. There were never
+any coverage samples for the ink. Every line it draws is hard-edged by construction, and a wire
+narrower than a pixel is detected at some pixel centres and not others.
+
+**The fix, on `feat/outline-supersample`: manufacture the coverage.** `WorldOutline.shader`'s
+composite now evaluates the edge term at N x N sub-pixel positions inside each pixel and averages
+the answers, and both thresholds became `smoothstep` over exactly the interval the linear ramp
+already used, so `_DepthSensitivity`, `_NormalSensitivity` and both deadzones keep their meanings
+and need no retuning. `WorldOutline._supersample` is the knob, `[Range(1, 3)]`, **default 2**,
+because `QualitySettings.antiAliasing` is 4 and four sub-samples per pixel resolves the ink at the
+same granularity as the geometry it sits beside. 1 restores the previous sampling exactly.
+
+⚠️ **What it genuinely fixes and what it does not, because half of this is not fixable in screen
+space.** The edge TERM gains resolution: it is a function of position, so four evaluations give
+five ink levels instead of two, and the stair steps on wall and roof silhouettes go. The depth
+DATA does not: `_CameraDepthNormalsTexture` is generated at camera resolution and point filtered,
+so sub-pixel taps re-read the same texels in different combinations. **A wire the prepass
+rasteriser missed at a pixel is missing from every sub-sample of that pixel.** The dashes get
+softer ends and shorter gaps; they do not become solid lines.
+
+⚠️ **The thing that would fix the wires was costed and rejected rather than overlooked.** Genuinely
+finer depth means rendering the depth-normals prepass at 2x, through a second camera doing
+`RenderWithShader` with `Hidden/Internal-DepthNormalsTexture` into a target of four times the area:
+a SECOND full rasterisation of roughly 450 renderers on a dressed Eskinita, on top of the one this
+feature already added, on the machines whose 2026-07-29 report was *"severe lag on other PCs"*.
+The feature's whole claim to being worth retrying is that it costs one scene pass instead of 450
+extra draws. **If the wires are judged worth it, that is the upgrade, and it must be measured on a
+low-end machine before it ships, not after.**
+
+**Cost, in full.** Still one full-screen pass and zero extra render targets, so no extra memory of
+any kind. The composite's tap count goes from 8 to 4N² + 4: 8 at N = 1, **20 at N = 2**, 40 at
+N = 3. The mask is sampled once per pixel outside the loop rather than once per sub-sample, which
+is where the `+ 4` instead of `+ 4N²` comes from, and it is exact rather than an approximation
+because the mask multiplies the result: `mean(edge) x mask` and `mean(edge x mask)` are the same
+number.
+
+⚠️ **The exclusion mask stays at camera resolution, and that is the reason the fragment does the
+sub-sampling instead of a 2x blit.** Blitting the composite into a 2x target would have left the
+mask, which is allocated from `_camera.pixelWidth/pixelHeight`, at 1x, and the exclusion would have
+crept by half a pixel across the frame. Sub-sampling in the fragment means nothing changed
+resolution and nothing can misalign. **The one thing that did have to follow is the dilation
+radius:** the mask is max-sampled at the tap radius to cover the hull's ink band, and the widened
+kernel now reaches a further `centre/N` of a texel, a quarter of a pixel at N = 2. The shader adds
+that in. Without it a ring that thin around every character would have been inside the edge term's
+reach and outside the mask's, putting back the faint second hairline the dilation exists to remove,
+and only at N > 1.
+
+⚠️ **`ShadowsOnly` renderers are still skipped when the mask is built.** That is § 58's sibling fix
+on `integration/ui-batch-on-ilalim`, the one that stopped the local player's self-hidden head
+masking most of the screen. Nothing here touches it. Do not let a merge drop it.
+
+**Not yet verified:** this branch authored the change without launching Unity. What is still open
+is (a) that the shader compiles, in particular `#pragma target 3.0`, `[unroll(3)]` over a
+uniform bound and `tex2Dlod` on `_CameraDepthNormalsTexture`; (b) an A/B render at
+`Supersample` 1 against 2 on the same frame; (c) the frame cost of the extra 12 taps on a low-end
+machine. `WorldOutlineCoverageProbe` already renders on and off at 2.06:1 and prints ink percentage
+per cell, so it is the cheapest place to add a 1-against-2 arm.
+## 63 · Walking into a utility pole blanks half the screen, and it now dithers away
+
+🧑, off the played build: a wooden utility pole filling the **entire left half of the screen**,
+view completely blocked, with a reference image of the screen-door stipple that games use for
+near-camera occluders.
+
+**Measured, so nobody has to re-derive it.** `env_post_electric.obj` is 7.2 m tall and 0.634 m
+across the timber, taken from the .obj's own vertices. `CameraRig` runs a 95 degree VERTICAL FOV
+in first person, about 125.4 degrees horizontal at 16:9, with the eye 1.25 m up and a 0.05 m near
+plane. The post therefore subtends, as a fraction of frame width:
+
+| eye to post surface | frame width covered |
+|---|---|
+| 2.00 m | 12.5 % |
+| 1.20 m | 18.8 % |
+| 0.60 m | 30.5 % |
+| 0.35 m | 40.4 % |
+| 0.20 m | 92.0 % |
+
+⚠️ **And nothing stops you reaching the bottom of that table.** The poles carry no collider on
+either map: `Eskinita.unity` has six colliders in total (four walls, the floor, the kill plane) and
+`IlalimNgTulayBuilder` never adds one to a kit prop. `MatchInstaller.StripColliders` exists to take
+colliders OFF, because every contact in this game is a host-side distance check. So the
+`CharacterController`'s 0.35 m radius is not a bound here: the eye goes inside the post.
+
+### 63.1 ✅ SHIPPED: a screen-door dissolve in the occluder's own fragment shader
+
+⚠️⚠️ **IT CANNOT BE A POST-PROCESS, AND THAT DECIDED EVERYTHING ELSE.** Fading an occluder means
+revealing what is BEHIND it, and a full-screen pass only ever has the composited frame: the pixels
+behind the pole were never rendered. The only place the geometry behind an occluder can still be
+drawn is the occluder's own fragment shader, discarding before it writes colour or depth.
+
+`Assets/TumbangPreso/Shaders/NearFade.shader`, `Runtime/Visual/NearFade.cs`, one call at the end of
+`EnvColourPass.Apply`, one line in `GameBuilder.EnsureRuntimeShaders`, `Tests/NearFadeTests.cs`.
+
+**The band, in radial metres from the eye to the FRAGMENT:** solid beyond **1.80 m**, gone under
+**0.35 m**, `smoothstep` between. Multiply the coverage above by the fraction still drawn and the
+product peaks at **13.6 %** and falls from there, so the post can never obscure more than about an
+eighth of the frame. 0.35 m is seven times the near plane, so the near plane never gets to slice a
+solid cross-section. The band is 1.45 m wide because `Balance.Speed` is 4.6 m/s and an attacker
+runs at 3.45, which puts the whole dissolve between 0.32 s and 0.42 s of walking.
+
+⚠️ **PER FRAGMENT, NOT PER OBJECT, AND A 7.2 m POLE IS WHY.** A per-object fade would dissolve the
+crossarm seven metres over your head at the same rate as the section in front of your face.
+
+⚠️ **RADIAL, NOT VIEW-SPACE Z, AND THE WIDE LENS IS WHY.** At the edge of a 125 degree frame a
+fragment's z is under half its true distance, so a z-driven band dissolves a pole 2 m off to your
+side while leaving one 1 m dead ahead solid. Exactly backwards.
+
+⚠️ **THE DITHER CELL IS 2 SCREEN PIXELS, NOT 1.** `PostAntiAlias` runs FXAA over both gameplay
+cameras and a one-pixel checker is below the scale its edge test resolves, so it smears into a flat
+haze and the effect reads as fog rather than as a screen door. At 2 the pattern's period is 8 px.
+
+**Scope: the named props only.** `NearFade.OccluderPrefixes` is `Poste` (Eskinita, 12 under
+`Dressing/Kable`) and `SidewalkPole` (Ilalim ng Tulay, 28), both counted off the shipped scenes.
+Putting the whole street on a new shader is the 2026-07-29 shape again and buys nothing: a house is
+8 m wide and its walls stop you. Trees were considered and left out because a 2.4 m canopy
+dissolving at head height removes a large part of the frame rather than a thin strip.
+
+### 63.2 ⚠️⚠️ OPEN, AND IT IS ONE LINE IN A FILE THIS WORK DID NOT OWN
+
+**`WorldOutline` will trace a pole's ink silhouette while the pole is dissolving.**
+
+`CameraRig` attaches `WorldOutline` and sets `PrototypeEnabled`, so the screen-space ink is live on
+the match camera. It reads `_CameraDepthNormalsTexture`, and in the built-in pipeline that texture
+is filled by Unity's `Internal-DepthNormalsTexture` REPLACEMENT shader, chosen by the object
+shader's `RenderType` tag. A replacement shader brings its own code, so **a `clip()` written in
+`NearFade.shader` is structurally invisible to it.** There are exactly two reachable behaviours:
+
+* **`RenderType = "Opaque"`**, which is what shipped. Ink and occlusion are correct at every
+  distance, and inside the 1.8 m band the outline traces a silhouette the prop no longer has.
+* **Any other tag value.** The prop leaves the depth-normals texture entirely, so it can never
+  ghost, but it loses its own ink permanently AND stops occluding the edges behind it, so rooflines
+  draw straight across a pole in a street where poles stand against facades.
+
+Opaque wins because its cost is bounded to the band and the other's is not.
+
+⚠️ **THE ACTUAL FIX IS IN `WorldOutline.IsToonSurface`.** It already answers "does this renderer
+draw its own ink, so keep the screen-space pass off it" by comparing `material.shader.name` against
+`TumbangPreso/Toon`. A prop on `NearFade.ShaderName` belongs in that same set for the inverted
+reason: it must NOT be inked, because its silhouette is a lie while it is dissolving. Widening that
+one comparison masks the ghost while KEEPING the prop in depth-normals, which is the behaviour both
+options above are trying to buy and neither can. `NearFade.ShaderName` is a public const so that
+line needs no second string literal.
+
+**Done looks like:** `WorldOutline.IsToonSurface` accepts both names, and a render taken from
+0.8 m off a `Poste_*` on Eskinita shows a stippled post with no ink around it and correct ink on
+the facade behind.
+
+### 63.3 What could NOT be verified without a Unity launch
+
+Everything below is authored and reasoned from source. **None of it has been compiled, rendered or
+played**, because the session that wrote it was not permitted to launch the editor.
+
+* **That the shader compiles at all**, and that a surface shader's `screenPos` gives the pixel
+  coordinates this assumes after the perspective divide.
+* **That the dissolved shading matches the solid one.** The lit half is
+  `#pragma surface surf Standard`, and the two shaders it replaces are Unity's `Standard` (the
+  `.obj` posts) and glTFast's `glTF/PbrMetallicRoughness` (the kit poles), whose property names were
+  read out of the package rather than guessed. The BRDF should be the same; only a render says so.
+* **Whether 1.80 m reads as too early.** The number comes from screen coverage, not from taste, and
+  taste is the half a render settles.
+* **Whether a 2 px cell survives FXAA as a clean grid.** The argument is sound and the measurement
+  is a screenshot with anti-aliasing ON.
+
+**First thing to look at:** a first-person render taken about 0.8 m from a `Poste_*` on Eskinita,
+with FXAA on. It answers the compile, the shading match, the stipple size and § 63.2's ghost in one
+picture.
+
+---
+
+## 64 · The player can switch render styles, and the alternative is a chromatic look
+
+🧑 wants to look at a softer post-processed frame with visible colour fringing INSTEAD of the hard
+ink outlines, and wants to flip between the two from the settings panel while deciding. This is an
+A/B, not a replacement.
+
+⚠️⚠️ **TOON IS ROW 0, IT IS THE DEFAULT, AND EVERY SWITCH IN IT IS AN EXACT NO-OP.** `WorldOutline`
+already carries the rule this is an application of: *"a prototype that quietly becomes the look
+because it happened to be enabled on one camera in one scene is the failure mode to guard against"*.
+A player who never opens settings, and a player upgrading from a `settings.json` written before the
+field existed, both render exactly what this branch inherited.
+`LobbyAndSettingsTests.RenderStyleDefaultsToToonAndIsClampedIntoTheTable` and
+`ToonRowIsAnExactNoOpAndEveryOtherStyleChangesSomething` assert both halves rather than trusting
+them.
+
+### 64.1 What the two rows are
+
+`Assets/TumbangPreso/Runtime/Settings/RenderStyles.cs` is the table, built on the shape
+`AntiAliasModes` established: an entry struct, a stored int on `GameSettings` with a clamp in
+`Validate` and a push in `Apply`, and one dropdown row in `ConvertedSettingsPanel`.
+
+| | Toon (row 0) | Chromatic (row 1) |
+|---|---|---|
+| `Toon.shader` OUTLINE pass | draws | suppressed |
+| `Visual.WorldOutline` | live | gated off |
+| persistent colour split | 0.00 | 0.25, radial |
+
+### 64.2 The three switches, and why each is where it is
+
+* **The hull outline is suppressed by a GLOBAL shader float**, `_OutlineSuppress`, declared in
+  `Toon.shader`'s OUTLINE pass CGPROGRAM and deliberately **absent from its `Properties` block**,
+  which is what keeps it global rather than per-material. `ToonSkin.SetOutlinesSuppressed` is the
+  only writer.
+  ⚠️ **The two alternatives both break something `ToonSkin` had already fixed.** Swapping the
+  material for an outline-free shader fights the `(source material, quantised width)` cache and the
+  `Origin` map that make `Apply` idempotent, and would need the palette remap, the welded tangent
+  and the carried atlas re-derived on a second branch. Writing `_OutlineWidth` to zero on the cached
+  materials means re-dressing every renderer in the arena on a settings pick, across **more than
+  thirty `ToonSkin.Apply` call sites**, and DOUBLES the cache, because the width is part of its key.
+  ⚠️ **The sense is inverted (0 suppresses nothing) because an unset global reads 0**, and six
+  editor probes dress models and render them without ever loading a settings file. A flag named
+  `_OutlineScale` with 1 meaning "draw" would have silently deleted the ink from every turnaround,
+  lineup and showcase render in the repo.
+  ⚠️ **A zero width collapses the hull to a degenerate triangle rather than drawing it.** `Cull
+  Front` draws BACK faces; at width 0 they land on the surface, and on coplanar geometry (a
+  zero-thickness sheet, a card) that z-fights the lit pass as near-black speckle. Three vertices at
+  one clip position is a zero-area triangle, so the pass also stops paying its fill rate.
+* **The world outline is gated in `WorldOutline.Live`**, beside `_prototypeEnabled` rather than by
+  clearing it. `CameraRig.Awake` sets that flag true on every match camera it builds and would put
+  the outline back on the next scene load. `Live` also gates `LateUpdate`, so Chromatic mode drops
+  the depth-normals request and the exclusion-mask rescan too, not just the composite.
+* **The split is read by `ColourGrade` and ADDED to the impact pulse**, never max'd with it. See
+  § 64.3.
+
+### 64.3 The persistent split adds to the transient one, and a `Max` would have been wrong
+
+`Visual.HitFeel.ChromaticPeak` is **0.10 / 0.22 / 0.35 / 0.55** by hit weight and `HeroAbilitySystem`
+pulses an ultimate at **0.95**. Against a base of 0.25:
+
+* Under `Mathf.Max` the two lightest hits are **swallowed**: `max(0.25, 0.10)` is 0.25, the frame
+  does not move, and the feedback whose entire job is to say "you were hit" fires and shows nothing.
+* Under a **sum**, every hit moves the frame by its own full peak whatever the base is, so the pulse
+  keeps the amplitude it was tuned at. 0.25 + 0.55 is 0.80 and still in range; only an ultimate
+  saturates, and 0.95 was already within five per cent of the top.
+
+**0.25 is solved for, not picked.** The shader's constant is 0.006 in UV, which is 11.5 px of a
+1920-wide frame at amount 1. Radially that offset is reached at the left and right edges, about
+0.0085 at the corners and zero at the centre, so 0.25 is **about 2.9 px of fringe at the edges and
+4.1 px at the corners**, against the 6.6 px a heavy hit already puts across the whole frame.
+
+### 64.4 The split is now radial, and the impact path is untouched on Toon
+
+⚠️ **The shipped split is `half2(_Chromatic * 0.006, 0)`: the same offset at every pixel.** Held for
+0.4 s by a hit that is an impact artefact and is fine. Held for a whole match it fringes the
+crosshair, the centre of the HUD and every piece of text, which is exactly where a real lens fringes
+nothing: refraction disperses by angle from the optical axis.
+
+`ColourGrade.shader` now takes `_ChromaticRadial`, and **0.012 is solved for**: at the left and
+right edges `d.x` is 0.5, so `0.012 * 0.5` is exactly the 0.006 the flat path uses everywhere. It is
+a `lerp` on a uniform rather than a branch, and `RenderStyles.RadialSplit` is **false on row 0**, so
+in the default look the shader evaluates the identical horizontal term it always has.
+
+### 64.5 Cost
+
+**No new pass.** The split rides in `ColourGrade`'s existing full-screen blit and the suppression
+rides in `Toon.shader`'s existing OUTLINE pass.
+
+⚠️ **One honest caveat.** `ColourGrade.IsIdentity` skips its blit outright on a map that grades
+nothing, and **Bayan Plaza is such a map** (it has no `adjustment_enabled` line at all). A non-zero
+persistent split makes that frame non-identity, so Chromatic mode **un-skips an existing blit**
+there. It does not add one. Chromatic also stops paying for the inverted hull's fill rate and for
+`WorldOutline` entirely, so the net is very likely negative.
+
+### 64.6 What could NOT be verified without a Unity launch
+
+Authored and reasoned from source. **Nothing below has been compiled, rendered or played**, because
+the session that wrote it was not permitted to launch the editor.
+
+* **That both shaders compile**, in particular that a uniform declared in a CGPROGRAM and left out
+  of `Properties` resolves from `Shader.SetGlobalFloat` on every backend in this project's build set.
+  This is the single load-bearing assumption of the whole feature.
+* **That the degenerate-triangle early-out actually discards**, and that `UNITY_TRANSFER_FOG` on a
+  `(0,0,0,1)` clip position is harmless in every fog variant.
+* **Whether 0.25 is the right amount of fringe.** The number comes from pixel arithmetic, not from
+  taste, and taste is the half a render settles.
+* **Whether Chromatic reads as "softer and warmer" at all.** Only the outlines and the split are
+  implemented; **no grade change was made**, because `MapGrade` owns brightness, contrast and
+  saturation per map and a style that overrode them would fight Eskinita's authored 1.03 / 1.18. If
+  warmth is wanted it belongs as two more fields on `RenderStyles.Entry`, multiplied into
+  `ColourGrade` the way `SetEventGrade` already multiplies rather than replaces.
+
+**First thing to look at:** an in-game render of Eskinita on each style, same camera, same frame.
+It answers both compiles, whether the ink is genuinely gone rather than z-fighting, and whether the
+fringe at 0.25 is visible without being a glitch. After that, a render taken during an impact in
+Chromatic mode, which is the only thing that shows the sum and the radial profile behaving together.
+
+---
+
+## 65 · The white keyline round every silhouette, measured rather than argued
+
+🧑 2026-08-28, having tested all three rows: *"off and fxaa gets rid of the outlines. msaa brings
+it back"*. That isolates MSAA as **necessary**. It does not identify the mechanism, and § 64 shows
+why that matters: the chromatic split was blamed for *"white outlines on distant objects"* first,
+correctly for that build, and fixed. The report survived the fix.
+
+`Settings.AntiAliasModes` and `Visual.PostAntiAlias` both carry the diagnosis: multisample resolve
+AVERAGES its samples in linear HDR **before** `Visual.ColourGrade` runs its ACES curve, the curve is
+compressive, so `tonemap(mean(a, b))` is not `mean(tonemap(a), tonemap(b))`. The shipped mitigation
+is `PostAntiAlias.ApplyHdrForResolve`, which turns `allowHDR` off on the MSAA rows only.
+
+**Nobody had put a number on any of it.** This entry does, and the numbers change the conclusion in
+two places.
+
+### 65.1 The arithmetic on record undershot by 2x to 3x, and the two amplifiers are both measurable
+
+The estimate that opened this work used a sky of about **1.0 linear** against a roof of 0.3, took
+the 50/50 pixel, and got a difference of **0.06** of display luma. That is smaller than the reported
+artefact, which is what made the diagnosis worth checking rather than acting on. Both halves of that
+estimate are wrong, and both in the same direction.
+
+**Amplifier one: the sky is 2.0 to 3.2 linear, not 1.0.** `Sky.mat` is `Skybox/Panoramic` with
+`_Exposure` 1 and `_Tint` **(1, 1, 1)**. Every built-in Unity skybox shader multiplies by
+`unity_ColorSpaceDouble`, which is **4.59479** in linear colour space, and the shader's own neutral
+tint is (0.5, 0.5, 0.5) precisely so that the product lands near 1. This material is at double
+neutral. Measured off `Assets/TumbangPreso/Art/models/materials/sky_panorama.png` (2048x1024,
+`sRGBTexture: 1`), sampled on an 8 px grid:
+
+| band of the lat-long | mean linear luma | after x4.59479 | brightest texel, after x4.59479 |
+|---|---|---|---|
+| zenith, top 15 % | 0.179 | 0.82 | 3.82 |
+| upper, 15 to 35 % | 0.256 | 1.17 | 3.90 |
+| **just above the horizon, 35 to 50 %** | **0.436** | **2.00** | **3.18** |
+
+The band that matters is the third one, because a distant roofline is seen against the sky just
+above the horizon, not against the zenith.
+
+**Amplifier two: the worst pixel is not the 50/50 one, it is the one that is mostly ROOF.** The
+curve flattens fastest just as the mean climbs past 1.0, so the error peaks at LOW sky coverage.
+With sky 2.0 linear, roof 0.3 linear, `_Exposure` 0.92, `_White` 1.9 and the 1.96 pre-scale, so
+`tonemap(c) = saturate(ACES(1.8032 c))`, `tonemap(2.0) = 0.967` and `tonemap(0.3) = 0.642`:
+
+| sky samples of 4 | resolved then tonemapped | tonemapped then resolved | error |
+|---|---|---|---|
+| 3 of 4 | 0.950 | 0.886 | 0.064 |
+| 2 of 4 | 0.919 | 0.804 | **0.115** |
+| **1 of 4** | **0.855** | **0.723** | **0.132** |
+
+At a bright patch of sky (3.18 linear) the 1-of-4 pixel goes to **0.177**, about **45 levels of
+255**. So the predicted artefact is a pale band **on the dark object, one to two pixels inside its
+silhouette**, 0.13 to 0.18 of display luma, and that is a keyline rather than a soft edge. It also
+explains the shape of the complaint: a softened edge would read as blur, and what was reported is a
+line.
+
+⚠️ **This is arithmetic over measured inputs, not a rendered measurement.** It closes the gap that
+made the diagnosis doubtful; it does not by itself convict the resolve. § 65.2 is what settles it.
+
+### 65.2 `MsaaResolveProbe` is the measurement, and it is five arms in one frame
+
+`Assets/TumbangPreso/Tests/PlayMode/MsaaResolveProbe.cs`, `[Category("WallClock")]`. It loads
+Eskinita, pitches the rig camera to a fixed 12 degrees above the horizon so there is guaranteed
+skyline in frame, and renders the same instant five times:
+
+| arm | msaa | `allowHDR` | `WorldOutline` | what it is |
+|---|---|---|---|---|
+| A | 1 | on | on | the reference, i.e. AA Off |
+| B | 4 | on | on | the artefact, i.e. the game before the workaround |
+| C | 4 | **off** | on | what `integration/ui-batch-on-ilalim` ships today |
+| D | 1 | on | **off** | reference with the ink pass out of the way |
+| E | 4 | on | **off** | artefact with the ink pass out of the way |
+
+It writes all five plus four difference images to `Logs/shots-msaa/`, and prints, per comparison:
+max and mean luma increase, the count of pixels brighter by more than 0.02 / 0.04 / 0.10 / 0.20, an
+8x5 grid of where they are, and **the share of brightened pixels that sit within 2 px of both a
+bright and a dark pixel in the reference frame**.
+
+⚠️ **That last number is the whole test.** A resolve can only misbehave where the samples inside one
+pixel disagree, so if the brightening is genuinely the HDR resolve then almost all of it lands on
+high-contrast boundaries. **A low share means something is brightening flat surfaces and the
+diagnosis on record is wrong**, which is a more valuable answer than the fix would have been.
+
+Three construction notes, each of which was a way to get a wrong answer:
+
+* ⚠️⚠️ **Every arm writes into an identical ARGB32 sRGB destination.** The obvious build gives the
+  HDR arm an `ARGBHalf` target, and that is wrong: `ReadPixels` off a half-float target returns
+  LINEAR values and off an `ARGB32` target returns sRGB-ENCODED ones, so the arms would differ by a
+  transfer function everywhere and the difference image would mean nothing. HDR is varied with
+  `Camera.allowHDR` alone, which is what picks the format of the intermediate the scene is
+  rasterised into and resolved from.
+* ⚠️ **`allowHDR` is written one statement before `Render()`**, because `PostAntiAlias.LateUpdate`
+  owns that field and writes it every frame. A `[UnityTest]` coroutine resumes in the Update phase,
+  so LateUpdate has not run yet and the value holds for that render, then is taken back next frame
+  with no cleanup.
+* ⚠️ **MSAA is set on the descriptor AND on `QualitySettings` together.** A camera writing into a
+  `targetTexture` takes its sample count off that texture; one writing to the screen takes it off
+  `QualitySettings`. This camera is doing the first while carrying the image effects of the second,
+  and which governs has never been pinned down here, so the probe sets both and prints what the
+  target actually came back holding. If an arm reports 1 delivered sample the log says outright that
+  every number below it is measuring something else.
+
+**How to run it:**
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -projectPath . \
+  -testPlatform PlayMode -runTests -testCategory "WallClock" \
+  -testFilter "MsaaResolveProbe" -testResults Logs/msaa.xml -logFile Logs/msaa.log
+```
+
+⚠️ **No `-nographics`.** It crashes the editor rather than the tests, writes no `.xml`, and still
+exits 0. Assert on the `.xml`, and read the `=== MSAA RESOLVE ===` block out of `Logs/msaa.log`.
+
+⚠️ **`MsaaResolveProbe.Version` is a const, and it must be bumped before any run whose images will
+be looked at.** `CLAUDE.md` § 6.1: chat clients cache by filename, so overwriting a render leaves
+the previous one on screen and the whole review is conducted against an image that is no longer on
+disk.
+
+### 65.3 The shipped workaround's cost, in numbers rather than in "mild"
+
+`PostAntiAlias` says clamping at 1.0 costs the highlight roll-off and calls that mild on a flatly
+lit game. With the sky measured, the number is:
+
+* `tonemap(1.0) = 0.902`. Anything at or above 1.0 linear collapses to that.
+* The sky at **2.0 linear** rendered **0.967** under HDR and renders **0.902** clamped: **6.5 per
+  cent darker**. At a bright patch, 3.18 linear, it was 0.992: **9 per cent darker**.
+* Worse than the darkening: **the sky and a fully lit 1.0-linear white surface become the same
+  number**, where HDR separated them by 0.065 to 0.089. That is the roll-off doing its only job.
+* **Everything below 1.0 linear is bit-identical**, because the clamp does nothing there. The cast,
+  the street and every midtone are untouched. That half of the claim holds exactly.
+
+⚠️ **So the AA setting changes the exposure of the game**, and the FXAA rows and the MSAA rows are
+two slightly different pictures of the same scene. `MsaaResolveProbe` prints mean whole-frame luma
+per arm specifically to size this. If A minus C is large it is a defect of its own and belongs in
+this entry as its own item.
+
+### 65.4 ⚠️⚠️ THE WEIGHTED RESOLVE WAS NOT BUILT, AND THE REASON IS ARCHITECTURAL RATHER THAN HARD
+
+A Karis-style tonemapped resolve weights each sample by `1 / (1 + luma(sample))` before averaging
+and divides by the summed weights, so the mean is taken in a perceptually flatter space. The maths
+is four lines. **It cannot be reached from where this game's post chain stands, and finding out
+costs a rewrite rather than an experiment.**
+
+**The blocker, stated exactly.** In the built-in pipeline the engine resolves MSAA before
+`OnRenderImage` is ever called, so `source` has one sample and there is nothing to weight. Sample
+access requires the camera to render into a target THIS code allocated with `bindTextureMS = true`,
+sampled as `Texture2DMS<float4>`. But **a camera carrying any `OnRenderImage` component does not
+render into `camera.targetTexture`**: Unity allocates its own intermediate for the chain and blits
+into the target at the end. `Visual.WorldOutline`, `Visual.ColourGrade` and `Visual.PostAntiAlias`
+are all `OnRenderImage`, and `CameraRig.Awake` adds all three. So the scene camera would have to
+carry **none** of them, and the whole chain would have to move to a second composite camera.
+
+**And `WorldOutline` cannot follow, which is what makes this circular rather than merely large.** It
+needs `_CameraDepthNormalsTexture` from the camera that rasterised the scene, a `CommandBuffer` at
+`CameraEvent.BeforeImageEffectsOpaque` on that same camera to draw its exclusion mask, and view rays
+reconstructed from that camera's projection. A composite camera that culls nothing has none of
+those. Leaving the outline on the scene camera puts an `OnRenderImage` back on it, which is exactly
+what destroys the sample access. Getting out of that means re-authoring the outline as a
+`CommandBuffer` pass, which is a rewrite of a feature that landed two days ago and is still a
+prototype under review (§ 63).
+
+**Everything else that would also have to move:** `SpectatorCamera` builds the same chain and adds
+the replay capture on top; `AspectRatioProbes`, `GameplayShots` and `WorldOutlineCoverageProbe` all
+drive `cam.targetTexture` directly, which a scene camera that owns a multisampled bound target can
+no longer allow; and `PostAntiAlias.ReportOnce` filters on `targetTexture == null` to decide which
+camera is the screen, which stops being a valid question.
+
+**Cost, if it is ever built.** `bindTextureMS = true` means the multisampled surface stays resident
+and is read by a shader instead of being resolved on store, so at 1920x1080 in `ARGBHalf` the 4x
+surface (**66 MB**) and the resolve destination (**16 MB**) are both live, against one transient 4x
+surface today. The hardware resolve is fixed-function and effectively free; it is replaced by a
+full-screen pass doing **8.3 million half4 fetches per frame** at 4x, and 16.6 million at 8x. The
+shader needs `#pragma target 4.5`. That is not a real hardware objection on this project's build set
+(`GameBuilder` ships StandaloneWindows64 and StandaloneOSX only, and both D3D11 feature level 11 and
+Metal support `Texture2DMS`), so **do not reject it on hardware grounds**; reject it on the chain.
+
+⚠️ **What is NOT a cheaper way out, so nobody spends a session on it.**
+
+* **Lowering `Sky.mat`'s `_Tint` to Unity's neutral 0.5** halves the sky to about 1.0 linear and
+  reduces the 1-of-4 error from 0.132 to roughly 0.10. It is a real contributor and a **25 per cent
+  improvement, not a fix**, and it changes how the game looks. Worth knowing, not worth shipping as
+  a fix.
+* **Lowering `_White` to put the curve's white point back at 1.0 under the clamp** needs
+  `_White = 0.473`, which takes mid grey from 0.71 to 0.97. That is not restoring the roll-off, it
+  is cranking exposure until nothing has any.
+* **Moving the tonemap back into `Toon.shader`** is explicitly forbidden by that shader's own note
+  and by `ColourGrade`'s: the two would compound, and it would tonemap the cast while leaving the
+  sky, the street and the fog raw, which is the fault the pass was created to fix.
+
+**The recommendation:** keep `PostAntiAlias.ApplyHdrForResolve` as it is. It is scoped to the MSAA
+rows, its cost is now quantified in § 65.3 and is confined to values above 1.0 linear, and the
+default row is FXAA anyway, so the ordinary player never meets it. Revisit the weighted resolve only
+if `WorldOutline` is either accepted and re-authored as a command-buffer pass, or rejected and
+removed. Either outcome makes the composite-camera split tractable; while it stands as an
+`OnRenderImage` prototype, it does not.
+
+### 65.5 What could NOT be verified without a Unity launch
+
+Authored and reasoned from source. **The probe has never been run**, because the session that wrote
+it was not permitted to launch the editor.
+
+* **That `MsaaResolveProbe` compiles.** It is the only new file and it uses nothing exotic, but it
+  has not been through the compiler.
+* **That the five arms actually differ.** If `rt.antiAliasing` reports 1 on arms B, C and E then a
+  `targetTexture` render never gets MSAA in this configuration, the whole probe is measuring one
+  frame five times, and it has to be rebuilt against the screen path instead. The probe prints this
+  and says so in the log rather than passing quietly, but **it is the first thing to read**.
+* **That the forced pitch of -12 degrees actually finds a roofline** from wherever the scene parks
+  the rig. If the difference images are empty, check `A_off_hdr_v1.png` before concluding anything.
+* **Whether `WorldOutline` is a co-cause.** Arms D and E exist to answer it and nothing else here
+  assumes an answer.
+* **The 0.13 to 0.18 prediction itself.** § 65.1 is arithmetic over a measured texture and a
+  transcribed curve. The probe is what turns it into a measurement.
+
+**First thing to look at:** the `arm ... target delivered N` lines at the top of the probe's log
+block. Every other number in it is worthless if that reads 1 where 4 was asked for.
 
 ---
 

@@ -282,6 +282,192 @@ namespace TumbangPreso.Tests
             Assert.IsNotEmpty(s.PlayerToken, "a token must exist or reconnection cannot work");
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE CLAMP IS WHAT MAKES ADDING A MODE SAFE, and this is the guard on it. The
+        /// index is written to `settings.json` and read back by a build whose
+        /// <see cref="AntiAliasModes.All"/> may have grown or lost a row, and an unclamped read
+        /// goes straight into `QualitySettings.antiAliasing`, which rejects anything that is not
+        /// 0, 2, 4 or 8. Same rule <see cref="GameSettings.AiDifficulty"/> and
+        /// <see cref="GameSettings.SlipperHighlight"/> already live under.
+        /// </summary>
+        [Test]
+        public void AntiAliasModeIsClampedIntoTheTable()
+        {
+            var high = new GameSettings { AntiAliasMode = 99 };
+            high.Validate();
+            Assert.AreEqual(AntiAliasModes.All.Length - 1, high.AntiAliasMode);
+
+            var low = new GameSettings { AntiAliasMode = -4 };
+            low.Validate();
+            Assert.AreEqual(AntiAliasModes.Off, low.AntiAliasMode);
+
+            // ⚠️ A SETTINGS FILE WRITTEN BEFORE THE FIELD EXISTED HAS TO LAND ON THE DEFAULT,
+            // not on 0. `JsonUtility` constructs the object before it overwrites the fields the
+            // file carries, so the field initialiser is what an older file inherits, and 0 is
+            // Off: every player upgrading would silently have anti-aliasing turned off.
+            var upgraded =
+                UnityEngine.JsonUtility.FromJson<GameSettings>("{\"MasterVolume\":0.5}");
+            Assert.AreEqual(AntiAliasModes.Default, upgraded.AntiAliasMode);
+        }
+
+        /// <summary>
+        /// ⚠️ EVERY MODE ABOVE OFF MUST CARRY FXAA, and it is asserted rather than trusted
+        /// because it is the only reason the setting is guaranteed to be visible at all. MSAA is
+        /// applied by the rasteriser into an intermediate render target both gameplay cameras
+        /// force into existence with their `OnRenderImage` passes, and whether that target is
+        /// allocated multisampled is an engine decision. A mode added later with MSAA alone
+        /// would be a row that does nothing on a machine that answers that decision the other
+        /// way, and nothing else in the project would catch it.
+        ///
+        /// ⚠️ AND THE SAMPLE COUNTS MUST BE VALUES `QualitySettings.antiAliasing` ACCEPTS. It
+        /// takes 0, 2, 4 or 8 and silently keeps its old value for anything else, so a typo here
+        /// would read back as the setting having no effect rather than as an error.
+        /// </summary>
+        [Test]
+        public void EveryAntiAliasModeAboveOffCarriesFxaa()
+        {
+            Assert.IsFalse(AntiAliasModes.All[AntiAliasModes.Off].Fxaa);
+            Assert.AreEqual(0, AntiAliasModes.All[AntiAliasModes.Off].Samples);
+
+            for (int i = 0; i < AntiAliasModes.All.Length; i++)
+            {
+                var entry = AntiAliasModes.All[i];
+
+                bool accepted = entry.Samples == 0 || entry.Samples == 2
+                             || entry.Samples == 4 || entry.Samples == 8;
+
+                Assert.IsTrue(accepted,
+                              $"'{entry.Label}' asks for {entry.Samples} samples, which " +
+                              "QualitySettings.antiAliasing does not accept.");
+
+                if (i == AntiAliasModes.Off) continue;
+
+                Assert.IsTrue(entry.Fxaa,
+                              $"'{entry.Label}' is MSAA only, so it renders identically to Off " +
+                              "on any machine where the post chain drops the multisampled " +
+                              "target. See the class comment on AntiAliasModes.");
+            }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE DEFAULT RENDER STYLE IS THE WHOLE SAFETY OF THE FEATURE, AND THIS IS THE
+        /// GUARD ON IT. Chromatic is a prototype look being evaluated against the shipped one,
+        /// and the rule `Visual.WorldOutline`'s own toggle records applies to it: a prototype
+        /// that quietly becomes the look is the failure mode. A player who never opens the
+        /// settings panel, and a player upgrading from a `settings.json` written before this
+        /// field existed, must both get the ink outlines.
+        ///
+        /// ⚠️ THE UPGRADE HALF IS NOT REDUNDANT WITH THE DEFAULT HALF. `JsonUtility` constructs
+        /// the object before it overwrites the fields the file carries, so an absent field
+        /// inherits the initialiser; that lands on Toon today only because Toon is row 0. The day
+        /// somebody inserts a third style at the top of the table, both assertions below go red
+        /// together and say exactly what broke.
+        /// </summary>
+        [Test]
+        public void RenderStyleDefaultsToToonAndIsClampedIntoTheTable()
+        {
+            Assert.AreEqual(RenderStyles.Toon, RenderStyles.Default,
+                            "Chromatic is a prototype. The shipped ink look is the default.");
+
+            var fresh = new GameSettings();
+            fresh.Validate();
+            Assert.AreEqual(RenderStyles.Toon, fresh.RenderStyle);
+
+            var high = new GameSettings { RenderStyle = 99 };
+            high.Validate();
+            Assert.AreEqual(RenderStyles.All.Length - 1, high.RenderStyle);
+
+            var low = new GameSettings { RenderStyle = -4 };
+            low.Validate();
+            Assert.AreEqual(RenderStyles.Toon, low.RenderStyle);
+
+            var upgraded =
+                UnityEngine.JsonUtility.FromJson<GameSettings>("{\"MasterVolume\":0.5}");
+            Assert.AreEqual(RenderStyles.Toon, upgraded.RenderStyle,
+                            "a settings file written before the field existed must render " +
+                            "exactly what that build rendered.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ ROW 0 MUST BE AN EXACT NO-OP IN ALL THREE OF ITS SWITCHES, and it is asserted
+        /// rather than trusted because nothing else in the project can see it. Every one of them
+        /// is read inside a render callback (`Visual.WorldOutline.Live`,
+        /// `Visual.ColourGrade.EffectiveChromatic` and a global shader float the OUTLINE pass in
+        /// `Toon.shader` multiplies its width by), so a non-zero value on this row would change
+        /// the shipped look with no test, no probe and no compile error to say so.
+        ///
+        /// ⚠️ AND A STYLE WITHOUT INK MUST CARRY A SPLIT. A row that turned the outlines off and
+        /// added nothing would be a mode that reads as the renderer being broken rather than as a
+        /// look, which is the reachable-and-does-nothing failure the Godot board's rule forbids.
+        /// </summary>
+        [Test]
+        public void ToonRowIsAnExactNoOpAndEveryOtherStyleChangesSomething()
+        {
+            var toon = RenderStyles.All[RenderStyles.Toon];
+
+            Assert.IsTrue(toon.InkOutlines, "row 0 is the shipped ink look.");
+            Assert.AreEqual(0.0f, toon.Chromatic, 0.0001f,
+                            "any persistent split on row 0 changes the default frame.");
+            Assert.IsFalse(toon.RadialSplit,
+                           "row 0 must leave the shipped impact pulse on its horizontal path.");
+
+            for (int i = 0; i < RenderStyles.All.Length; i++)
+            {
+                var entry = RenderStyles.All[i];
+
+                Assert.IsTrue(entry.Chromatic >= 0.0f && entry.Chromatic <= 1.0f,
+                              $"'{entry.Label}' asks for a split of {entry.Chromatic}, and the " +
+                              "shader's range is 0 to 1.");
+
+                Assert.IsNotEmpty(entry.Label);
+
+                if (i == RenderStyles.Toon) continue;
+
+                Assert.IsTrue(entry.InkOutlines || entry.Chromatic > 0.0f,
+                              $"'{entry.Label}' removes the ink and adds nothing, so it reads " +
+                              "as a broken renderer rather than as a style.");
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ THE THREE STATICS ARE WHAT THE RENDER CALLBACKS ACTUALLY READ, so applying an index
+        /// has to move them. They are also the only state this feature has: there is no component
+        /// to inspect and no material to read back, which is why the round trip is asserted here.
+        ///
+        /// ⚠️ IT PUTS THE DEFAULT BACK AT THE END. These are process-wide statics and a suite that
+        /// left them on Chromatic would hand every test after it a different renderer.
+        /// </summary>
+        [Test]
+        public void ApplyingAStylePushesTheThreeSwitchesThatImplementIt()
+        {
+            try
+            {
+                RenderStyles.Apply(RenderStyles.Chromatic);
+
+                Assert.IsFalse(RenderStyles.InkOutlinesActive);
+                Assert.IsTrue(RenderStyles.PersistentChromatic > 0.0f);
+                Assert.IsTrue(RenderStyles.RadialSplit);
+                Assert.IsTrue(Visual.ToonSkin.OutlinesSuppressed);
+
+                // ⚠️ AN OUT-OF-RANGE INDEX MUST NOT THROW HERE EITHER. `Validate` clamps what is
+                // stored, and this clamps again, because `Apply` is also reachable from the
+                // settings panel's pick with whatever a dropdown handed it.
+                RenderStyles.Apply(4242);
+                Assert.AreEqual(RenderStyles.All[RenderStyles.All.Length - 1].Label,
+                                RenderStyles.LabelOf(4242));
+                Assert.AreEqual(RenderStyles.All[0].Label, RenderStyles.LabelOf(-9));
+            }
+            finally
+            {
+                RenderStyles.Apply(RenderStyles.Default);
+            }
+
+            Assert.IsTrue(RenderStyles.InkOutlinesActive);
+            Assert.AreEqual(0.0f, RenderStyles.PersistentChromatic, 0.0001f);
+            Assert.IsFalse(RenderStyles.RadialSplit);
+            Assert.IsFalse(Visual.ToonSkin.OutlinesSuppressed);
+        }
+
         /// <summary>⚠️ -1 IS A REAL VALUE meaning "no pick" and must survive validation.</summary>
         [Test]
         public void NoPickSurvivesValidationAsMinusOne()

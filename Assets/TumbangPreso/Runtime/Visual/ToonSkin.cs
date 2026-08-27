@@ -36,9 +36,24 @@ namespace TumbangPreso.Visual
         /// scaled by PERSON_SCALE 2.38, so the world width it renders at is this.</summary>
         public const float PersonOutlineWidth = 0.008f * 2.38f;
 
-        /// <summary>`person_outline.tres`: a very dark navy rather than pure black, so the
-        /// border sits in the same palette as the rest of the game.</summary>
-        public static readonly Color Ink = new Color(0.0156863f, 0.0313725f, 0.219608f, 1.0f);
+        /// <summary>
+        /// The ink every outline in the game is drawn in, characters, props and world alike.
+        ///
+        /// ⚠️⚠️ NEAR BLACK, AND THIS REPLACED `person_outline.tres`'s DARK NAVY ON REQUEST.
+        /// 🧑 2026-08-28: *"can you make the outline black or near black"*. The old value was
+        /// (0.0157, 0.0314, 0.2196), and its note argued that a very dark navy rather than pure
+        /// black keeps the border inside the game's palette. That reasoning was sound while the
+        /// tonemap was crushing everything: against a frame whose white could not exceed 0.648,
+        /// a navy edge and a black edge were nearly the same pixel. With the curve corrected the
+        /// frame is much brighter, and at that contrast the blue in the border became visible as
+        /// blue rather than reading as ink.
+        ///
+        /// ⚠️ NOT PURE BLACK, AND THE REMAINING TRACE IS DELIBERATE. (0.02, 0.02, 0.03) keeps a
+        /// hair more blue than red so the edge still sits in the same cool family as the rest of
+        /// the art, while being far too dark to name a colour. Pure zero is available if that is
+        /// wanted; this is one step short of it on purpose.
+        /// </summary>
+        public static readonly Color Ink = new Color(0.02f, 0.02f, 0.03f, 1.0f);
 
         private static readonly int ColorId = Shader.PropertyToID("_Color");
         private static readonly int UsePaletteId = Shader.PropertyToID("_UsePalette");
@@ -46,6 +61,66 @@ namespace TumbangPreso.Visual
         private static readonly int MainTexId = Shader.PropertyToID("_MainTex");
         private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
         private static readonly int OutlineWidthId = Shader.PropertyToID("_OutlineWidth");
+
+        // ------------------------------------------------------------------ § THE RENDER STYLE
+        //
+        // ⚠️⚠️ `_OutlineSuppress` IS A GLOBAL SHADER FLOAT AND IT IS DELIBERATELY NOT A MATERIAL
+        // PROPERTY AND NOT A SECOND SHADER. `Settings.RenderStyles`'s Chromatic row has to draw
+        // the whole game with no ink edge, and there are three ways to reach that. Two of them
+        // break something this file already fixed:
+        //
+        //  * SWAPPING THE MATERIAL for an outline-free shader fights everything below. The cache
+        //    is keyed on (source material, quantised width) and `Origin` maps a variant back to
+        //    what it was built from so `Apply` is idempotent; a second shader means a second
+        //    parallel set of both, and the palette remap, the welded tangent and the carried atlas
+        //    would each have to be re-derived on the other branch. See the notes on `Cache` and
+        //    `Origin` for what happens when that bookkeeping is fed its own output.
+        //  * WRITING `_OutlineWidth` TO ZERO ON EVERY CACHED MATERIAL means re-dressing every
+        //    renderer in the arena on a settings pick, and `Apply` is reached from more than
+        //    thirty call sites across `CharacterVisual`, `ViewmodelArms`, `MatchInstaller`,
+        //    `ModelPreview` and seven editor probes. It also doubles the cache, because the width
+        //    IS part of the key: flipping the style twice would build a second material for every
+        //    surface in the game and free none of them.
+        //
+        // A global uniform costs one multiply in the outline pass's vertex shader, reaches every
+        // material already built and every material built later, applies on the frame it is set,
+        // and needs no bookkeeping at all.
+        //
+        // ⚠️⚠️ IT IS DECLARED IN THE SHADER'S CGPROGRAM AND NOT IN ITS `Properties` BLOCK, AND
+        // THAT IS THE HALF THAT MAKES IT WORK. A uniform that appears in `Properties` becomes
+        // per-material state, every material gets its own copy seeded from the block's default,
+        // and the global is then shadowed and ignored. Left out of `Properties` it has no
+        // material-local value and resolves from the global table.
+        //
+        // ⚠️⚠️ AND THE SENSE IS INVERTED ON PURPOSE: 0 SUPPRESSES NOTHING. An unset global shader
+        // float reads as 0, and the editor probes are the reason that matters. `ModelSheet`,
+        // `PersonSwapProbe`, `ToonProbe`, `HeadToHeadProbe`, `InGameAngleProbe` and
+        // `IterationTurnaroundProbe` all dress models with `ToonSkin.Apply` and render them
+        // without any settings ever being loaded, so nothing in that path calls this method. Had
+        // the flag been named `_OutlineScale` with 1 meaning "draw", every turnaround, lineup and
+        // showcase render in this project would silently have lost its ink. This way the default
+        // IS the shipped look and only an explicit call can take it away.
+        private static readonly int OutlineSuppressId = Shader.PropertyToID("_OutlineSuppress");
+
+        /// <summary>
+        /// Whether the ink hull is currently being suppressed. Mirrors the global, for a probe or
+        /// a test that wants to assert the push happened without reading the GPU back.
+        /// </summary>
+        public static bool OutlinesSuppressed { get; private set; }
+
+        /// <summary>
+        /// Turn the inverted-hull ink edge off, or back on, for every surface in the game at once.
+        ///
+        /// ⚠️ CALLED FROM ONE PLACE, <see cref="Settings.RenderStyles.Apply"/>, which is itself
+        /// called from `GameSettings.Apply` and from the settings panel's pick. Do not call it
+        /// from a visual: the outline is a property of the chosen STYLE, and a component that
+        /// switched it for its own reasons would be switching it for the whole frame.
+        /// </summary>
+        public static void SetOutlinesSuppressed(bool suppressed)
+        {
+            OutlinesSuppressed = suppressed;
+            UnityEngine.Shader.SetGlobalFloat(OutlineSuppressId, suppressed ? 1.0f : 0.0f);
+        }
 
         /// <summary>
         /// The colour a source material might carry its albedo in.
@@ -264,6 +339,35 @@ namespace TumbangPreso.Visual
         private static float EffectiveScale(Renderer renderer)
         {
             Mesh mesh = null;
+
+            // ⚠️⚠️ A PLAIN MeshRenderer USES ITS TRANSFORM, AND THE BOUNDS RATIO IS ONLY FOR
+            // SKINNED ONES. THIS IS WHY THE FIRST-PERSON HANDS HAD AN INCONSISTENT BORDER.
+            // 🧑 2026-08-28: *"hand outline seems a little off too, in the sense that it's
+            // inconsistent"*.
+            //
+            // The ratio below divides `renderer.bounds` by `mesh.bounds`, and `renderer.bounds` is
+            // an AXIS-ALIGNED box in WORLD space. For anything rotated off the world axes that box
+            // is larger than the object actually is: a thin slab turned 45 degrees has an AABB
+            // wider than the slab by up to root two, and a compound rotation can do worse. The
+            // ratio therefore reads as SCALE what is really ROTATION, the measured scale comes out
+            // too big, `worldWidth / scale` comes out too small, and the hull is inflated less
+            // than it should be.
+            //
+            // ⚠️ THE VIEWMODEL IS THE WORST CASE IN THE GAME, WHICH IS WHY IT SHOWED THERE FIRST.
+            // `ViewmodelArms` hangs both arms off `RightPivot` and `LeftPivot`, each built from an
+            // explicit basis (`ToUnityRotation(bx, by, bz)`), and then hangs up to twenty
+            // accessory meshes off those. Every piece sits at a different compound rotation, so
+            // every piece got a different error, and the border came out a different thickness on
+            // each one. That reads exactly as "inconsistent" rather than as "too thin".
+            //
+            // ⚠️ THE RATIO IS STILL RIGHT FOR SKINNED MESHES AND MUST STAY. Its own note records
+            // why: a Kenney rig carries almost all of its scale on the SKELETON, so the renderer's
+            // transform reads 1 while the character stands 1.6 m tall. `lossyScale` would give
+            // every Person an outline four times too thick. A skinned renderer's bounds are also
+            // recomputed from the posed skeleton rather than from a rotated static box, so the
+            // rotation error that breaks the viewmodel does not arise there in the same way.
+            if (!(renderer is SkinnedMeshRenderer))
+                return MaxAxis(renderer.transform.lossyScale);
 
             if (renderer is SkinnedMeshRenderer skinned) mesh = skinned.sharedMesh;
             else
