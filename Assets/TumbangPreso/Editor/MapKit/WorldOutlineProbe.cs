@@ -27,6 +27,27 @@ namespace TumbangPreso.EditorTools.MapKit
     /// ⚠️⚠️ BUMP `Version` ON EVERY CAPTURE. `CLAUDE.md` § 6.1: chat clients cache by filename, so
     /// overwriting a render leaves the previous image on screen and the whole review is conducted
     /// against a picture that is no longer on disk.
+    ///
+    /// ⚠️⚠️⚠️ THIS PROBE CANNOT PHOTOGRAPH THE OUTLINE, AND FOUR CAPTURES WERE SPENT LEARNING IT.
+    /// `WorldOutline.OnRenderImage` NEVER FIRES HERE. Proven rather than assumed: a `Debug.Log` on
+    /// its first line produced no output across a whole run. Before that, three captures came back
+    /// with the prototype off and on visually identical, including one with a deliberately loud red
+    /// 4 px outline at maximum sensitivity that moved the PNG by 41 bytes.
+    ///
+    /// ⚠️⚠️ THE CAUSE IS `[ImageEffectOpaque]`, NOT A MISSING `[ExecuteAlways]`, AND THE DIFFERENCE
+    /// MATTERS BECAUSE THE OBVIOUS ANSWER IS THE WRONG ONE. Neither `WorldOutline` nor `ColourGrade`
+    /// carries `[ExecuteAlways]`, so "edit mode does not run render callbacks" would predict that
+    /// the GRADE never runs in a probe either. This repo's own record says otherwise:
+    /// `IlalimNgTulayShowcaseProbe` documents fifteen frames a set rendered through the wrong
+    /// exposure, which could not have happened if its `ColourGrade` were inert. So a plain
+    /// `OnRenderImage` does run under `Camera.Render()` in edit mode, and the one on the opaque
+    /// hook does not. The opaque stage is a slot inside the forward loop rather than a filter on
+    /// the finished frame, and this camera renders to a `targetTexture`.
+    ///
+    /// **So the honest way to judge this feature is to press Play**, where the full loop runs. This
+    /// probe is kept because the scene setup, the angles and the A/B structure are all correct, and
+    /// it will work the moment the pass stops depending on the opaque hook. Do not read its output
+    /// as evidence until then.
     /// </summary>
     public static class WorldOutlineProbe
     {
@@ -35,7 +56,10 @@ namespace TumbangPreso.EditorTools.MapKit
         private const int ShotHeight = 720;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v2";
+        private const string Version = "v3";
+
+        /// <summary>Diagnostic mode: see the note in Capture. Set false to judge the real look.</summary>
+        private const bool Loud = false;
 
         [MenuItem("Tumbang Preso/Capture World Outline A-B")]
         public static void RunFromMenu() => Execute();
@@ -104,6 +128,23 @@ namespace TumbangPreso.EditorTools.MapKit
             // itself to the opaque stage with `[ImageEffectOpaque]`, so this is belt and braces.
             var outline = camGo.AddComponent<WorldOutline>();
             outline.PrototypeEnabled = outlineOn;
+
+            // ⚠️⚠️ A DELIBERATELY LOUD SETTING, AND IT IS A DIAGNOSTIC RATHER THAN A PROPOSAL.
+            // The v1 and v2 captures came back with off and on visually identical, and there are
+            // two very different explanations for that: the pass runs and its edge term is below
+            // threshold everywhere, or the pass never executes at all. Subtle correct values
+            // cannot tell those apart. Bright red at maximum thickness and an extreme sensitivity
+            // can: if THIS does not appear, the composite is not reaching the screen and no amount
+            // of tuning is the answer.
+            //
+            // ⚠️ REVERT THIS BLOCK BEFORE JUDGING THE LOOK. Red is not the ink colour and 4.0 is
+            // not a shippable thickness. `ToonSkin.Ink` and the pass's own defaults are.
+            if (outlineOn && Loud)
+            {
+                outline.SetInk(new Color(1.0f, 0.0f, 0.0f, 1.0f), 1.0f);
+                outline.SetEdge(4.0f, 200.0f, 8.0f);
+                outline.SetExclusion(WorldOutline.Exclusion.Overlap, 0);
+            }
 
             camGo.AddComponent<ColourGrade>().AdoptFromScene();
 
