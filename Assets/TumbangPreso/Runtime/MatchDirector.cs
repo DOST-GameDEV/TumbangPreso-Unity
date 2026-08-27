@@ -71,7 +71,37 @@ namespace TumbangPreso
 
             _scores.Add(slot, e);
             Scored?.Invoke(slot, e);
+
+            // ⚠️⚠️ THE AWARD IS ANNOUNCED, NOT ONLY RECORDED, AND THAT IS THE HALF THAT WAS
+            // MISSING FROM EVERY CLIENT. The SCORE reaches a peer inside `SyncWorld` and the
+            // EVENT did not, so on a client the numbers rose silently up to 200 ms later with no
+            // sting, no `+100  LATA DOWN` toast and no scoreboard pulse: `Hud.OnScored` is what
+            // produces all three and it hangs off this event. In a game whose entire feedback
+            // loop is scoring, three of the four things that acknowledge a point were host-only.
+            //
+            // ⚠️ THE KIND TRAVELS, NOT THE DELTA, and that is why it needs a message rather than
+            // a diff of the replicated scores. The toast and the sting both read the
+            // `ScoreEvent` itself (`MatchRules.PointsFor` and the label), a delta does not carry
+            // it, and two awards inside one 200 ms window would collapse into one.
+            //
+            // ⚠️ IT IS STILL ONE FUNCTION. This line is INSIDE the host guard above, so the
+            // announcement cannot be made anywhere a point cannot be created. See this class's
+            // header: a point that can only be created in one function cannot be created on a
+            // client at all, and the same is now true of the noise it makes.
+            Net.MatchRpc.Instance?.BroadcastScore(slot, e);
         }
+
+        /// <summary>
+        /// A point the HOST awarded, replayed on this peer for its presentation only.
+        ///
+        /// ⚠️⚠️ IT DOES NOT TOUCH THE SCOREBOARD, AND THAT IS THE WHOLE POINT OF IT BEING A
+        /// SEPARATE METHOD. The totals arrive in `SyncWorld` and `ApplySnapshot` sets them from
+        /// the host's own numbers; adding here as well would make a client's board the sum of a
+        /// replicated total and its own arithmetic, which disagree at exactly the moments that
+        /// matter because a client cannot see the host's distance checks. This raises the EVENT
+        /// and nothing else.
+        /// </summary>
+        public void ApplyNetworkScoreEvent(int slot, ScoreEvent e) => Scored?.Invoke(slot, e);
 
         /// <summary>
         /// The replicated match, as the host last described it.

@@ -158,6 +158,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReqThrowCharge", OnReqThrowChargeMsg);
             cm.RegisterNamedMessageHandler("PlayAction", OnPlayActionMsg);
             cm.RegisterNamedMessageHandler("PlayStyle", OnPlayStyleMsg);
+            cm.RegisterNamedMessageHandler("Score", OnScoreMsg);
 
             _handlersRegistered = true;
         }
@@ -613,9 +614,20 @@ namespace TumbangPreso.Net
         // length: the empty chairs are played by bots and a bot cannot press a key. Spectators are
         // excluded on the same rule. It floors at one so a solo host still presses its own button.
         //
-        // ⚠️ AND THE HOST STARTS THE MATCH THE SAME WAY ITS OWN BUTTON DOES, through
-        // `HostStartMatch`, so there is exactly one path into an arena and the broadcast that
-        // carries every other peer in with it cannot be forgotten on one of them.
+        // ⚠️⚠️ READY DOES NOT START THE MATCH. THE HOST'S BUTTON DOES, AND ONLY IT.
+        // 🧑 2026-08-27: *"i also dont like that if u click ready it auto starts, i want to have
+        // to click start match to start it as host"*. The gate reached quorum and called
+        // `HostStartMatch` itself, so the last person to tick a box decided when four people
+        // were dropped into an arena, and the host's own START button became decoration it could
+        // never get to press. Readiness is now what it says on the button: an ANSWER, drawn on
+        // every screen by `ReadyTally`, that the host reads before choosing its moment.
+        //
+        // ⚠️ AND THE HOST IS NOT BLOCKED ON IT EITHER. START stays live whatever the tally says,
+        // because a lobby of one host and three bots is a legitimate match and waiting for a
+        // quorum of one would be a gate with nothing on the other side of it.
+        //
+        // ⚠️ THERE IS STILL EXACTLY ONE PATH INTO AN ARENA, `HostStartMatch`, so the broadcast
+        // that carries every other peer in with it cannot be forgotten on one of them.
         // -------------------------------------------------------------------
 
         /// <summary>Raised with (ready, expected) on every peer whenever the lobby tally moves.</summary>
@@ -645,8 +657,6 @@ namespace TumbangPreso.Net
             if (!moved) return;
 
             BroadcastReadyTally();
-
-            if (LobbyReadyCount() >= LobbyExpectedReady()) HostStartMatch();
         }
 
         /// <summary>
@@ -1647,6 +1657,59 @@ namespace TumbangPreso.Net
             _nm.CustomMessagingManager.SendNamedMessage("PlayStyle", clientId, writer);
         }
 
+        /// <summary>
+        /// A point was awarded. Broadcast so every peer can react to it.
+        ///
+        /// ⚠️⚠️ IT CARRIES THE KIND, NOT THE POINTS, AND NOT THE TOTAL. The totals are already
+        /// replicated by `SyncWorld` and `MatchDirector.ApplySnapshot` sets them from the host's
+        /// own numbers, so sending a value here would give a client two sources for one fact.
+        /// What a client could not obtain was WHICH EVENT happened, and both the toast and the
+        /// sting read exactly that: `MatchRules.PointsFor(e)` and the event's own label.
+        ///
+        /// ⚠️ BROADCAST RATHER THAN SENT TO THE SEAT, unlike `BroadcastStyle` directly above.
+        /// Street Hype is a personal quantity and `Hud.ApplyStyle` refuses a slot that is not the
+        /// local one; a score is the MATCH reacting. `Hud.OnScored` plays the sting for anybody's
+        /// award on purpose and only the TOAST is filtered to the local seat, which is the
+        /// original's rule and is written out at that call site.
+        ///
+        /// ⚠️ `DefenseTick` AND THE TWO PENALTIES ARE SENT TOO, at roughly one a second while
+        /// they apply. `Hud.OnScored` discards the first outright and gives the other two a sound
+        /// and no words, so this is a few bytes a second to keep the event faithful rather than
+        /// to teach the receiver a rule the sender should not be making for it.
+        /// </summary>
+        public void BroadcastScore(int slot, Core.ScoreEvent e)
+        {
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+            if (!ValidSlot(slot)) return;
+
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe((int)e);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("Score", writer);
+        }
+
+        private void OnScoreMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            // ⚠️ THE HOST IS ITS OWN CLIENT AND `SendNamedMessageToAll` LOOPS BACK TO IT. It
+            // raised `Scored` itself one line before sending; replaying it here would double
+            // every toast and every sting on the host. See § THE LOOPBACK.
+            if (NetAuthority.IsHost) return;
+            if (!FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out int rawEvent);
+
+            if (!ValidSlot(slot)) return;
+
+            // ⚠️ AN UNKNOWN EVENT IS DROPPED RATHER THAN CAST. A build that speaks a newer
+            // `ScoreEvent` should be refused by the protocol check long before this, but a cast
+            // of an out-of-range int would reach `MatchRules.PointsFor` as a value it has no case
+            // for and pay whatever its default is.
+            if (!System.Enum.IsDefined(typeof(Core.ScoreEvent), rawEvent)) return;
+
+            GameServices.Match?.ApplyNetworkScoreEvent(slot, (Core.ScoreEvent)rawEvent);
+        }
+
         private void OnPlayStyleMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (!FromHost(senderClientId)) return;
@@ -2325,12 +2388,66 @@ namespace TumbangPreso.Net
                                  pektusSpin, (SlipperAffinity)affinity, throwerSlot);
         }
 
+        /// <summary>
+        /// The replicated match and round, applied on this peer.
+        ///
+        /// ⚠️ IT IS AN APPLY, NOT A SEND, DESPITE THE NAME. `HostSyncPeer` calls it on the host
+        /// to refresh the host's own copy and then calls `BroadcastMatchState`, which is what
+        /// actually puts `SyncWorld` on the wire.
+        /// </summary>
         public void SyncWorldSnapshotClientRpc(int roundNumber, int defenderSlot,
                                                float timeLeft, int[] scores,
                                                bool inProgress, bool roundActive)
         {
+            bool wasRoundActive = GameServices.Round != null && GameServices.Round.RoundActive;
+
             GameServices.Match?.ApplySnapshot(scores, roundNumber, inProgress);
             GameServices.Round?.ApplySnapshot(timeLeft, roundActive, defenderSlot);
+
+            if (NetAuthority.IsHost) return;
+
+            ApplyNetworkRoundBoundary(wasRoundActive, roundActive, inProgress, roundNumber);
+        }
+
+        /// <summary>
+        /// Raise and lower the intermission card on a CLIENT, which never hears the event.
+        ///
+        /// ⚠️⚠️ `IntermissionStarted` IS HOST-ONLY AND MUST STAY THAT WAY. It is raised by
+        /// `MatchDirector.BeginIntermission`, which sits behind `SliceRunner`'s
+        /// `NetAuthority.ShouldResolve()`, and `SliceRunner` is itself wired to it:
+        /// `OnIntermission` calls `ResetWorld`, which teleports all four bodies and hands out the
+        /// tsinelas, and then schedules `Advance`, which calls `AdvanceRound`. Raising it on a
+        /// client would give every peer its own authority over the round number, and four peers
+        /// each advancing a match is four matches (`VISION.md` § 4). So the CARD gets a signal
+        /// and the runner does not.
+        ///
+        /// ⚠️ THE SIGNAL IS DERIVED RATHER THAN SENT, AND IT COSTS NO WIRE CHANGE. During the
+        /// host's intermission `RoundActive` is false while `MatchInProgress` is still true and
+        /// `RoundNumber` has not moved yet (`AdvanceRound` increments it when the buffer ends).
+        /// That combination happens at no other time: a match ENDING drops `inProgress` with it,
+        /// which is what the third argument rules out.
+        ///
+        /// ⚠️ AND IT IS AN EDGE, NOT A STATE. `SyncWorld` arrives at 5 Hz, so acting on the value
+        /// would re-raise the card ten times over one intermission and restart its timeline on
+        /// every packet.
+        /// </summary>
+        private static void ApplyNetworkRoundBoundary(bool wasRoundActive, bool roundActive,
+                                                      bool inProgress, int roundNumber)
+        {
+            var card = FindFirstObjectByType<UI.RoleSwapCard>();
+            if (card == null) return;
+
+            if (wasRoundActive && !roundActive && inProgress)
+            {
+                int next = roundNumber + 1;
+                card.ShowForShot(next, Core.MatchRules.DefenderSlotFor(next));
+                return;
+            }
+
+            // ⚠️ THE HOST HIDES THIS CARD FROM `RoundStarted`, which a client never gets either.
+            // Without this the card stays up over the whole of the next round, which is worse
+            // than never showing it: it is a full-screen panel over live play.
+            if (!wasRoundActive && roundActive) card.DismissAndPractice();
         }
 
         private void BroadcastMatchState()
@@ -2875,15 +2992,19 @@ namespace TumbangPreso.Net
 
             FindFirstObjectByType<ReadyGate>()?.OnPeerLeft(peerId);
 
-            // ⚠️ AND THE LOBBY TALLY IS RE-EVALUATED FOR THE SAME REASON, in the lobby only: in a
-            // match the pre-round gate on the line above owns this question. A peer leaving drops
-            // the expected count, so the three still sitting there can be left waiting on a gate
-            // that the departure has already satisfied.
+            // ⚠️ AND THE LOBBY TALLY IS REDRAWN, in the lobby only: in a match the pre-round gate
+            // on the line above owns this question. A peer leaving changes both halves of
+            // "n of m ready", so without this the remaining screens keep the departed peer in
+            // their denominator.
+            //
+            // ⚠️ IT NO LONGER STARTS THE MATCH. It used to, on the reasoning that a departure can
+            // satisfy a gate nobody else can now move; that reasoning belonged to a gate that
+            // started matches, and READY does not start matches any more. A peer quitting the
+            // lobby dropping three other people into an arena is the same surprise from a worse
+            // direction. See the LOBBY READY GATE section above.
             if (lobby != null && !lobby.MatchInProgress && FindFirstObjectByType<ReadyGate>() == null)
             {
-                int readyNow = LobbyReadyCount();
-                if (readyNow > 0 && readyNow >= LobbyExpectedReady()) HostStartMatch();
-                else BroadcastReadyTally();
+                BroadcastReadyTally();
             }
 
             // ⚠️ THE REMATCH VOTE HAS THE SAME HOLE AND IS CLOSED AT THE SAME PLACE. A peer that

@@ -47,6 +47,28 @@ namespace TumbangPreso.Net
         public event Action<string> StatusChanged;
 
         /// <summary>
+        /// Raised on a CLIENT when its connection ends, with the host's reason or "" if none.
+        ///
+        /// ⚠️⚠️ A REFUSED APPROVAL LEFT THE PLAYER SITTING IN A LOBBY THAT SAID CONNECTED.
+        /// `ConvertedMultiplayerSetup.Join` navigates to the lobby the moment `StartClient`
+        /// returns true, and that only means the TRANSPORT was told to start: approval has not
+        /// happened yet and can still be refused for a protocol mismatch or a full lobby. The
+        /// refusal arrives here, several seconds later, on a screen that has already been left
+        /// behind, so the reason was written to a status label nobody was looking at. 🧑
+        /// 2026-08-27, off two laptops: *"this is the one that joined its just stuck here"*, on a
+        /// lobby reading LOBBY · CONNECTED with every other seat drawn as a bot.
+        ///
+        /// ⚠️ THE REASON IS THE PAYLOAD BECAUSE IT IS THE ONLY ACTIONABLE PART. A version
+        /// mismatch is a thing the player can actually fix, and it is indistinguishable from a
+        /// host that vanished unless somebody prints it.
+        /// </summary>
+        public static event Action<string> ClientDisconnected;
+
+        /// <summary>Why the last client connection ended. Read once by the join screen, which
+        /// clears it, so a stale reason cannot be shown over a later successful join.</summary>
+        public static string LastDisconnectReason { get; set; } = "";
+
+        /// <summary>
         /// Raised on THIS process whenever its own seat or spectator flag changes.
         ///
         /// ⚠️⚠️ THE LOBBY SCREEN HAD NO WAY TO KNOW IT HAD BEEN SEATED. `LocalSlot` is written
@@ -77,8 +99,10 @@ namespace TumbangPreso.Net
         // ⚠️ 2 to 3 REMOVED THE PEER ID FROM `DeclareReady` AND `VoteRematch`; 3 to 4 GAVE
         // `DeclareReady` ITS `ready` BOOL AND ADDED `ReadyTally` FOR THE LOBBY GATE. Both landed
         // the same day from two branches, and a build carrying the first would misread the
-        // second's ready press as a peer id. One bump per incompatible shape, not per day.
-        public const int ProtocolVersion = 4;
+        // second's ready press as a peer id. 4 to 5 ADDED `Score`, which is what makes an award
+        // audible and visible on a peer that is not the host (`docs/TODO.md` § 57.3).
+        // One bump per incompatible shape, not per day.
+        public const int ProtocolVersion = 5;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =
@@ -314,9 +338,38 @@ namespace TumbangPreso.Net
 #endif
         }
 
+        /// <summary>
+        /// Connect to a host.
+        ///
+        /// ⚠️⚠️ IT SPLITS `host:port` HERE, AND NOTHING DID BEFORE, WHICH BROKE EVERY LAN JOIN
+        /// MADE BY CLICKING A DISCOVERED GAME. `Configure` hands its argument straight to
+        /// `UnityTransport.SetConnectionData`, which wants a bare address, and the join field is
+        /// filled with `192.168.1.144:8910` from three directions: `LanBeacon` advertises
+        /// `ip:port` and `ConvertedMultiplayerSetup.OnLanRowClicked` copies that string into the
+        /// box verbatim, the online browser does the same, and the field's own help text says
+        /// *"An online code, or a LAN address. Port defaults to 8910"*, which tells a player the
+        /// port is optional and therefore that writing it is allowed.
+        ///
+        /// The whole string then went in as the HOSTNAME. It is not an address and it is not a
+        /// resolvable name, so the transport refused to start, `StartClient` returned false and
+        /// the screen said **"Could not reach 192.168.1.144:8910"** while naming the machine it
+        /// had just been told about by that machine. 🧑 2026-08-27, with both firewalls off:
+        /// *"they are detected on lan and server but i cant join"*.
+        ///
+        /// ⚠️ THE EXPLICIT `port` ARGUMENT STILL WINS WHEN THE STRING CARRIES NONE, so
+        /// `-tp-join 127.0.0.1 7777` is unchanged. When the string carries one it is the more
+        /// specific of the two and takes precedence.
+        ///
+        /// ⚠️ ONE COLON ONLY, AND THE TAIL MUST PARSE AS A PORT. A bare IPv6 literal is full of
+        /// colons and is a valid address on its own; splitting on the last colon would turn
+        /// `fe80::1` into a host of `fe80:` and a port of `1`. Bracketed IPv6 with a port
+        /// (`[::1]:8910`) is handled separately for the same reason.
+        /// </summary>
         public bool StartClient(string address, int port = DefaultPort)
         {
             if (_nm != null && _nm.IsListening) Stop();
+
+            address = SplitHostPort(address, ref port);
 
             Configure(address, port);
             ConfigureClientHello();
@@ -503,6 +556,47 @@ namespace TumbangPreso.Net
         public void BrowseLan() => _beacon.StartListening();
 
         public System.Collections.Generic.IEnumerable<LanEntry> LanEntries => _beacon.Entries;
+
+        /// <summary>
+        /// Pull a trailing `:port` off an address, leaving a bare host the transport can use.
+        /// Returns the address unchanged when it carries no port. See <see cref="StartClient"/>.
+        /// </summary>
+        public static string SplitHostPort(string address, ref int port)
+        {
+            if (string.IsNullOrWhiteSpace(address)) return address;
+
+            address = address.Trim();
+
+            // `[::1]:8910` and `[::1]`. The brackets are what make an IPv6 port unambiguous, so
+            // they are the only shape in which one is read.
+            if (address.StartsWith("["))
+            {
+                int close = address.IndexOf(']');
+                if (close < 0) return address;
+
+                string inner = address.Substring(1, close - 1);
+                if (close + 2 < address.Length && address[close + 1] == ':' &&
+                    int.TryParse(address.Substring(close + 2), out int bracketed) &&
+                    bracketed > 0 && bracketed <= 65535)
+                    port = bracketed;
+
+                return inner;
+            }
+
+            // Exactly one colon is `host:port`. More than one is a bare IPv6 literal and is left
+            // alone; see the note on StartClient for why splitting it would corrupt it.
+            int first = address.IndexOf(':');
+            if (first < 0 || first != address.LastIndexOf(':')) return address;
+
+            string head = address.Substring(0, first);
+            string tail = address.Substring(first + 1);
+
+            if (head.Length == 0) return address;
+            if (!int.TryParse(tail, out int parsed) || parsed <= 0 || parsed > 65535) return address;
+
+            port = parsed;
+            return head;
+        }
 
         private void Configure(string address, int port)
         {
@@ -755,6 +849,9 @@ namespace TumbangPreso.Net
             // to act on, and a version mismatch in particular is a thing they CAN fix.
             string reason = _nm != null ? _nm.DisconnectReason : null;
             SetStatus(string.IsNullOrWhiteSpace(reason) ? "disconnected" : $"disconnected: {reason}");
+
+            LastDisconnectReason = reason ?? "";
+            ClientDisconnected?.Invoke(LastDisconnectReason);
 
             // A client that has lost the host is offline, and every gameplay path asks
             // NetAuthority rather than this class. Leaving the relay flags set made the next

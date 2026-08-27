@@ -124,7 +124,7 @@ namespace TumbangPreso.EditorTools
 
                 // ⚠️⚠️ THE INKED PROPS NEED A CPU COPY, AND WITHOUT IT THE OUTLINE FIX SILENTLY
                 // SKIPS THEM. `OutlineNormals.Weld` averages the normals sharing a position so the
-                // inverted hull stops tearing at hard edges (docs/TODO.md § 52), and it reads
+                // inverted hull stops tearing at hard edges (docs/TODO.md § 58), and it reads
                 // `mesh.vertices`. A mesh imported with Read/Write off has no CPU copy, so those
                 // come back empty, `Weld` returns early and the lata and tsinelas keep the split
                 // border the characters just lost. Measured: `OutlineWeldTests` failed on all nine
