@@ -49,6 +49,34 @@ namespace TumbangPreso.Visual
         /// </summary>
         public float HoldFraction = 0.45f;
 
+        /// <summary>
+        /// The light the lava casts, dimmed on the same curve as the veins.
+        ///
+        /// ⚠️⚠️ WITHOUT THIS THE MAGMA DOES NOT GLOW, IT IS ONLY BRIGHT, AND 🧑 CALLED THE
+        /// DISTINCTION EXACTLY ON 2026-08-28: *"is there glow light from the lava? its emmissive
+        /// but we dont have any bloom shader so it wont be glowwy unless theres a bloom shader
+        /// OR light coming from the lava"*. He is right on both halves. There is no bloom pass
+        /// anywhere in this project, and `ColourGrade` does keep an HDR target so a vein above
+        /// 1.0 rolls off through the tonemap rather than clipping, but a roll-off only decides
+        /// the colour of the pixels the vein already covers. Nothing SPREADS it. A 4 cm crack at
+        /// 1.9 is a thin bright line and the eye reads exactly that.
+        ///
+        /// ⚠️ SO THE GLOW IS A REAL LIGHT, WHICH IS THE CHEAPER OF HIS TWO OPTIONS AND THE MORE
+        /// HONEST ONE. A bloom pass is a full-screen post that would touch the stack
+        /// `PostAntiAlias` and `ColourGrade` own, and it would bloom every bright thing in the
+        /// game to fix one ability. A point light over the decal spills onto the road, the
+        /// upheaval slabs, the launched rock and the legs of anybody standing in it, which is
+        /// what a hole full of lava would actually do and what a screen-space blur cannot fake.
+        ///
+        /// ⚠️ AND IT MUST DIE WITH THE HEAT OR IT CONTRADICTS THE THING IT LIGHTS. The veins go
+        /// out on `_Cool` and a light still burning over cold rock would read as a bug. It is
+        /// the same curve, so the two cannot disagree.
+        /// </summary>
+        public Light Glow;
+
+        /// <summary>Intensity at full heat. Faded to zero by the end of the life.</summary>
+        public float GlowIntensity = 2.6f;
+
         private Renderer[] _renderers;
         private float _elapsed;
         private static readonly int CoolId = Shader.PropertyToID("_Cool");
@@ -100,6 +128,19 @@ namespace TumbangPreso.Visual
 
                 m.SetFloat(CoolId, cool);
             }
+
+            if (Glow == null) return;
+
+            // ⚠️ THE FLICKER IS TWO SINES AT UNRELATED RATES, NOT ONE. A single sine is a pulse
+            // and a pulse reads as a mechanism blinking; two that never line up read as
+            // convection, which is what is actually moving under a crust. The shader's own vein
+            // pulse runs at its own rate for the same reason, so the light and the surface are
+            // never caught agreeing and going flat together.
+            float flicker = 1.0f
+                          + Mathf.Sin(Time.time * 7.3f) * 0.06f
+                          + Mathf.Sin(Time.time * 11.9f) * 0.04f;
+
+            Glow.intensity = GlowIntensity * (1.0f - cool) * flicker;
         }
     }
 }

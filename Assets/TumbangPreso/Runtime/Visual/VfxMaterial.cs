@@ -251,6 +251,11 @@ namespace TumbangPreso.Visual
             public float ErodeFrom;
             public float ErodeDepth;
 
+            /// <summary>Cycles per metre of the edge wave, and the bite threshold of the second
+            /// cut. See the shader: coarse on purpose, because a fine field stipples.</summary>
+            public float ErodeScale;
+            public float ErodePits;
+
             /// <summary>
             /// ⚠️ TRUE FOR ANYTHING THAT MOVES. See the shader's `_PatternSpace` note: a world
             /// space pattern is what makes nine crust plates read as one continuous piece of
@@ -286,8 +291,10 @@ namespace TumbangPreso.Visual
                 ReliefStep = 0.055f,
                 Facets = 6.0f,
                 Flow = 0.045f,
-                ErodeFrom = 0.50f,
-                ErodeDepth = 0.58f,
+                ErodeFrom = 0.86f,
+                ErodeDepth = 0.15f,
+                ErodeScale = 2.4f,
+                ErodePits = 0.34f,
                 ObjectSpace = false,
                 Transparent = false,
                 Alpha = 1.0f,
@@ -319,8 +326,10 @@ namespace TumbangPreso.Visual
                 ReliefStep = 0.075f,
                 Facets = 5.0f,
                 Flow = 0.075f,
-                ErodeFrom = 0.52f,
-                ErodeDepth = 0.62f,
+                ErodeFrom = 0.94f,
+                ErodeDepth = 0.09f,
+                ErodeScale = 2.0f,
+                ErodePits = 0.14f,
                 ObjectSpace = false,
                 Transparent = true,
                 Alpha = 0.95f,
@@ -350,8 +359,10 @@ namespace TumbangPreso.Visual
                 ReliefStep = 0.040f,
                 Facets = 5.0f,
                 Flow = 0.02f,
-                ErodeFrom = 0.46f,
-                ErodeDepth = 0.70f,
+                ErodeFrom = 0.84f,
+                ErodeDepth = 0.16f,
+                ErodeScale = 2.7f,
+                ErodePits = 0.30f,
                 ObjectSpace = false,
                 Transparent = false,
                 Alpha = 1.0f,
@@ -512,6 +523,8 @@ namespace TumbangPreso.Visual
             // Reading 0 as "off" costs one line and makes the default safe.
             m.SetFloat("_ErodeFrom", look.ErodeFrom <= 0.0f ? 1.5f : look.ErodeFrom);
             m.SetFloat("_ErodeDepth", look.ErodeDepth);
+            m.SetFloat("_ErodeScale", look.ErodeScale <= 0.0f ? 2.2f : look.ErodeScale);
+            m.SetFloat("_ErodePits", look.ErodePits);
 
             // ⚠️⚠️ THE BLEND STATE IS WRITTEN HERE FOR THE SAME REASON `ConfigureBuiltInFade`
             // WRITES IT: nothing runs a material inspector in a player, so every flag the mode

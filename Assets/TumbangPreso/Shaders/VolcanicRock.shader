@@ -145,6 +145,16 @@ Shader "TumbangPreso/VolcanicRock"
         _ErodeFrom ("Rim Erosion Start (>=1.4 is off)", Range(0, 1.5)) = 1.5
         _ErodeDepth ("Rim Erosion Depth", Range(0, 1)) = 0.35
 
+        // ⚠️ THE EDGE WAVE HAS ITS OWN SCALE AND IS DELIBERATELY COARSE. Derived from
+        // `_NoiseScale` it inherited the ROCK GRAIN, which carries 3 cm detail, and eroding
+        // against 3 cm detail is a stipple rather than a tear. A torn plate waves at nearer
+        // half a metre. Cycles per metre.
+        _ErodeScale ("Edge Wave Scale (cycles/m)", Float) = 2.2
+
+        // How much of the plate the second cut bites out, as a threshold on a smooth field.
+        // This is the one that reaches the straight SIDE cuts a radial test cannot see.
+        _ErodePits ("Edge Bite Amount", Range(0, 0.6)) = 0.26
+
         // ⚠️ SEEDED, SO TWO STOMPS IN ONE ROUND ARE NOT THE SAME ROCK AND ONE STOMP IS THE SAME
         // ROCK IN EVERY CAPTURE. `Hero_Strike_Balance.md` § 8.3 records the rule and the reason:
         // an unseeded effect makes the probe's renders incomparable version to version. The
@@ -204,6 +214,8 @@ Shader "TumbangPreso/VolcanicRock"
             float _Glow;
             float _ErodeFrom;
             float _ErodeDepth;
+            float _ErodeScale;
+            float _ErodePits;
 
             struct appdata
             {
@@ -375,31 +387,55 @@ Shader "TumbangPreso/VolcanicRock"
                 // pitted, which is where rock actually breaks.
                 if (_ErodeFrom < 1.4)
                 {
-                    // ⚠️⚠️ `_ErodeDepth` IS THE WIDTH OF THE BAND, NOT A DISTANCE PAST THE UNIT
-                    // RADIUS, AND THE FIRST VERSION HAD IT THE SECOND WAY. That one computed the
-                    // band as `(1 + depth) - from`, which put full bite at a radius no vertex in
-                    // these meshes ever reaches: `Upheaval` tops out around 1.0 and `Wedges` at
-                    // exactly 1.0, so the strongest erosion any pixel saw was about half, and
-                    // `ability_lava_decal_v40.png` came back indistinguishable from v39 with the
-                    // straight cuts still on it. Naming the band directly means a preset can say
-                    // where the crumbling starts and how far it takes to finish, and both ends
-                    // land where the mesh actually is.
-                    float t = saturate((i.meshRadius - _ErodeFrom) / max(0.001, _ErodeDepth));
-
-                    // ⚠️⚠️ A FINE OCTAVE ON TOP, BECAUSE THREE OCTAVES OF VALUE NOISE GIVES A
-                    // SMOOTH WAVY BOUNDARY AND A BROKEN ROCK EDGE IS NOT WAVY, IT IS JAGGED.
-                    // 🧑 2026-08-28, off the in-game frame: *"need rougher edges"*. The fbm alone
-                    // carries the large shape of where the plate has gone; the single high
-                    // frequency sample is what puts centimetre-scale teeth on it, which is the
-                    // scale the eye actually reads as "rough" at the distance a player stands.
+                    // ⚠️⚠️ TWO HARD CUTS AGAINST SMOOTH FIELDS, WHICH IS A TORN EDGE. THE VERSION
+                    // BEFORE THIS WAS A DISSOLVE AND 🧑 NAMED THE DIFFERENCE EXACTLY: *"just need
+                    // a roughen/noisy wave.. not the dithering like the ashy part"*.
                     //
-                    // fbm tops out near 0.875 and vnoise at 1.0, so the sum tops out near 0.91
-                    // and the 1.15 puts a full bite just past the top of its range: at t = 1
-                    // essentially everything goes, at t = 0 nothing does.
-                    float bite = fbm(p * (_NoiseScale * 2.2) + 31.7) * 0.72
-                               + vnoise(p * (_NoiseScale * 7.0) + 5.3) * 0.28;
+                    // The dither came from two things working together. The threshold ramped
+                    // GRADUALLY across most of the plate, and the field it was compared against
+                    // carried a 4 cm octave, so through the whole transition zone neighbouring
+                    // pixels sat on opposite sides of the cut and flipped on and off
+                    // individually. That is a stipple by construction, and no amount of tuning
+                    // the amounts changes what it is.
+                    //
+                    // ⚠️ SO THE CUT IS BINARY AND THE FIELD IS SMOOTH, WHICH IS THE OPPOSITE
+                    // ARRANGEMENT. A hard `clip` against a low frequency field cannot speckle:
+                    // the field varies slowly, so the set it keeps is large and connected and
+                    // its boundary is a WAVE. The roughness is in the shape of the contour, not
+                    // in how many pixels near it survive.
+                    //
+                    // ⚠️ AND IT TAKES TWO, BECAUSE A PLATE HAS TWO KINDS OF EDGE. The first cut
+                    // displaces the outer rim in and out. That is the only edge a radial test
+                    // can reach, and the straight lines 🧑 is pointing at are the RADIAL CUTS
+                    // between one wedge and the next, which sit at constant angle and never move
+                    // when the radius wobbles. The second cut carves smooth-edged bites anywhere
+                    // on the plate, so where one lands on a side cut it takes a curved piece out
+                    // of it. Between them no straight line survives at any length.
+                    // ⚠️ `_ErodeFrom` IS NOW THE NOMINAL RIM AND `_ErodeDepth` IS HOW FAR IT
+                    // SWINGS EITHER SIDE OF IT. It has meant two other things on the way here: a
+                    // point where a gradual bite began, then the width of that bite's ramp. Both
+                    // described a DISSOLVE, which is the thing being replaced, so the parameter
+                    // now describes a displaced contour instead. A preset says where the edge
+                    // sits and how much it wanders.
 
-                    clip(bite * 1.15 - t);
+                    // ⚠️ TWO SMOOTH OCTAVES, ON THEIR OWN SCALE. The bite used to be derived from
+                    // `_NoiseScale`, which is the ROCK GRAIN and is deliberately fine: at 3.6
+                    // cycles per metre with three octaves it carries 3 cm detail, and eroding
+                    // against 3 cm detail is what stippled the edge. The wave a torn plate makes
+                    // is nearer half a metre, so it gets its own control.
+                    float wave = vnoise(p * _ErodeScale + 31.7) * 0.68
+                               + vnoise(p * _ErodeScale * 2.1 + 11.3) * 0.32;
+
+                    // Cut 1: the rim, displaced in and out around its nominal radius.
+                    float displaced = _ErodeFrom + (wave - 0.5) * 2.0 * _ErodeDepth;
+                    clip(displaced - i.meshRadius);
+
+                    // Cut 2: smooth bites taken anywhere, which is what reaches the side edges.
+                    // A second field so a bite is not locked to the rim's own wobble.
+                    float pit = vnoise(p * _ErodeScale * 1.35 + 61.4) * 0.70
+                              + vnoise(p * _ErodeScale * 3.10 + 7.9) * 0.30;
+
+                    clip(pit - _ErodePits);
                 }
 
                 // ⚠️ A TANGENT FRAME BUILT FROM THE NORMAL, SO ONE SHADER LIGHTS A FLAT GROUND

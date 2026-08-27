@@ -1324,16 +1324,31 @@ namespace TumbangPreso.Abilities
             // in the middle exactly where the foot landed. That is what the deleted cylinder was
             // for, and it costs nothing.
 
-            // Lava pulse light. Raised and cut to a quarter, for the reason written up on the
-            // ice sheet's light: at 4.0 sitting 0.8 m over its own decal it lit the decal.
+            // The lava's own light. It sits 1.6 m up rather than on the deck, which is the ice
+            // sheet's lesson: a light at 0.8 m over its own decal mostly lights the decal, and
+            // what is wanted is the spill AROUND it.
             var lightGo = new GameObject("LavaLight");
             lightGo.transform.SetParent(go.transform, false);
             lightGo.transform.localPosition = new Vector3(0, 1.6f, 0);
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
             light.color = UiTheme.HeroMagmaCore;
-            light.range = radius * 2.4f;
-            light.intensity = 1.0f;
+
+            // ⚠️⚠️ THIS LIGHT IS THE GLOW, AND AT 1.0 OVER 5.3 m IT WAS NOT DOING THE JOB.
+            // 🧑 2026-08-28: *"its emmissive but we dont have any bloom shader so it wont be
+            // glowwy unless theres a bloom shader OR light coming from the lava"*. There is no
+            // bloom pass in this project, so emission decides the colour of the pixels a vein
+            // already covers and nothing else: a 4 cm crack at full brightness is a thin bright
+            // line, never a glow. The spill onto the road, the slabs and the legs of whoever is
+            // standing in it is the entire effect, and it was set at a value chosen back when
+            // the decal underneath it was a flat plate that needed no help.
+            //
+            // ⚠️ IT IS STILL WELL UNDER THE ONE THAT BROKE RULE 5. Thunderstrike measured 62.8
+            // per cent of the frame blown at intensity 6.0 over a 17.5 m range in a 14 m box.
+            // This is 2.6 over 6.6 m, which is a pool of light inside the decal's own footprint
+            // rather than a flash across the court, and the probe measures it either way.
+            light.range = radius * 3.0f;
+            light.intensity = 2.6f;
 
             // ⚠️⚠️ AND THE ROCK GOES OUT OVER THE ZONE'S LIFE. `Hero_Strike_Balance.md` § 8.5
             // item 2: a spent effect and a live one looked identical, so a player crossing this
@@ -1341,7 +1356,14 @@ namespace TumbangPreso.Abilities
             // dull red; the crust keeps its scar, because what ends is the heat and not the
             // damage. It holds at full for the first 45 per cent, so the decal never looks spent
             // while it is the newest thing on the court.
-            Visual.VolcanicCooling.Attach(go, duration, 0.45f);
+            var cooling = Visual.VolcanicCooling.Attach(go, duration, 0.45f);
+
+            // ⚠️ THE LIGHT GOES OUT ON THE SAME CURVE AS THE VEINS. Handing it over here rather
+            // than letting the component find one keeps it explicit that this zone's glow and
+            // this zone's heat are one quantity: a light still burning over rock that has
+            // visibly cooled is the kind of disagreement nobody notices in a still and everybody
+            // notices in play.
+            if (cooling != null) cooling.Glow = light;
 
             // ⚠️ THIS ZONE HAD NO COMPONENT AT ALL, so there was nowhere to hang an ending on:
             // `Object.Destroy(go, duration)` is a deletion, not an event. `ExpiryCue` is the
