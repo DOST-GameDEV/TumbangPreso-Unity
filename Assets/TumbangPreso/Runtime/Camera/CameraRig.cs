@@ -281,6 +281,20 @@ namespace TumbangPreso.CameraSystem
             // resolves to an identity blit that looks like the feature was never added.
             _grade = gameObject.GetComponent<Visual.ColourGrade>();
             if (_grade == null) _grade = gameObject.AddComponent<Visual.ColourGrade>();
+
+            // ⚠️⚠️ AFTER THE GRADE, AND THE ORDER IS THE WHOLE POINT OF ADDING IT HERE RATHER
+            // THAN AUTHORING IT INTO A PREFAB. Unity runs image effects in COMPONENT ORDER, and
+            // `PostAntiAlias` thresholds luma against display-referred numbers, so it has to see
+            // a frame `ColourGrade` has already tonemapped out of HDR. Adding it on the line
+            // after the grade makes that true by construction on a rig that was built from a
+            // scene, on one built by `SceneBuilder`, and on one a probe assembles from nothing.
+            //
+            // ⚠️ AND IT IS ON THE GAMEPLAY RIG RATHER THAN WHEREVER `ColourGrade` IS. The
+            // character portrait and the map preview also carry the grade, and both render into
+            // a `targetTexture` that is already built with 4 samples; filtering those would
+            // soften a picture that is not aliased. See the class comment on `PostAntiAlias`.
+            if (gameObject.GetComponent<Visual.PostAntiAlias>() == null)
+                gameObject.AddComponent<Visual.PostAntiAlias>();
         }
 
         private Visual.ColourGrade _grade;

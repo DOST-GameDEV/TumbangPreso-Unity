@@ -279,6 +279,16 @@ namespace TumbangPreso.CameraSystem
             _grade = GetComponent<Visual.ColourGrade>();
             if (_grade == null) _grade = gameObject.AddComponent<Visual.ColourGrade>();
 
+            // ⚠️⚠️ BETWEEN THE GRADE AND THE REPLAY CAPTURE, AND BOTH SIDES OF THAT MATTER.
+            // Unity runs image effects in component order. It goes AFTER `ColourGrade` because
+            // it thresholds luma against display-referred numbers and needs a frame that has
+            // already been tonemapped out of HDR. It goes BEFORE `SpectatorReplayCapture`
+            // (added in `Start`, one method below) because the replay records the picture the
+            // spectator saw, and a recording of the pre-filter frame is a recording that is
+            // jagged in exactly the footage this camera exists to produce.
+            if (GetComponent<Visual.PostAntiAlias>() == null)
+                gameObject.AddComponent<Visual.PostAntiAlias>();
+
             BindActions();
 
             // Start above and behind the base circle, looking at it. The circle is at the
