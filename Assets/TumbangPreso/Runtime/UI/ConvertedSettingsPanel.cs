@@ -57,6 +57,12 @@ namespace TumbangPreso.UI
 
             BuildRebindRows();
             BuildSlipperHighlightRow();
+
+            // ⚠️ AFTER THE HIGHLIGHT ROW, WHICH IS WHAT PUTS IT ABOVE IT. Both rows insert
+            // themselves directly under `FullscreenCheck`, so the one built LAST ends up nearest
+            // the box. Anti-aliasing is a display setting and belongs beside fullscreen; the
+            // slipper highlight is an accessibility colour and reads fine one row further down.
+            BuildAntiAliasRow();
             WireSliders();
             WireChecks();
             WireNameField();
@@ -431,9 +437,10 @@ namespace TumbangPreso.UI
             }
         }
 
-        // --- The landed-highlight colour ---------------------------------------------
+        // --- The two picker rows -------------------------------------------------------
 
         private Dropdown _highlight;
+        private Dropdown _antiAlias;
 
         /// <summary>
         /// § THE LANDED HIGHLIGHT's colour picker, from `settings_panel.gd`.
@@ -453,10 +460,73 @@ namespace TumbangPreso.UI
         /// </summary>
         private void BuildSlipperHighlightRow()
         {
-            var anchor = Node("FullscreenCheck");
-            if (anchor == null || anchor.parent == null) return;
+            var options = new List<SwatchDropdown.Option>();
 
-            var rowGo = new GameObject("SlipperHighlightRow");
+            foreach (var entry in SlipperHighlights.All)
+            {
+                // ⚠️ "Off" PASSES A NULL SWATCH rather than its stored colour. Row 0 holds black
+                // as a placeholder because the palette is an array and every row needs a value;
+                // drawing it would put a black chip beside "Off" that reads like a sixth colour.
+                bool hasColour = entry.Label != "Off";
+                options.Add(new SwatchDropdown.Option(
+                    entry.Label, hasColour ? entry.Colour : (Color?)null));
+            }
+
+            _highlight = BuildDropdownRow("SlipperHighlightRow", "Slipper Highlight", options,
+                                          SettingsStore.Current.SlipperHighlight,
+                                          PickSlipperHighlight);
+        }
+
+        /// <summary>
+        /// The anti-aliasing picker.
+        ///
+        /// ⚠️⚠️ IT IS ON THIS SCREEN AT ALL BECAUSE THE GAME HAD NO WAY TO ASK FOR IT. The
+        /// sample count a player rendered at came from whichever of the six quality levels the
+        /// platform default happened to select, four of the six carried none, and nothing in the
+        /// game ever showed a quality level or let anybody change one. See
+        /// <see cref="AntiAliasModes"/> for what was measured.
+        ///
+        /// ⚠️ AND IT IS A DROPDOWN WITH NO SWATCHES rather than the cycling button the first
+        /// version of the highlight row used. Same reasoning inverted: the highlight is a colour
+        /// and has to be shown, this is a list of five named modes and the only thing a player
+        /// needs to see is which one is on and what else there is. A null swatch on every row
+        /// hides the chip, which is the same path "Off" already takes.
+        /// </summary>
+        private void BuildAntiAliasRow()
+        {
+            var options = new List<SwatchDropdown.Option>();
+
+            foreach (var entry in AntiAliasModes.All)
+                options.Add(new SwatchDropdown.Option(entry.Label, null));
+
+            _antiAlias = BuildDropdownRow("AntiAliasRow", "Anti-Aliasing", options,
+                                          SettingsStore.Current.AntiAliasMode, PickAntiAlias);
+        }
+
+        /// <summary>
+        /// The scaffolding both picker rows sit in.
+        ///
+        /// ⚠️ SHARED RATHER THAN COPIED, AND THE REASON IS THE COLUMN. `ActionLabelWidth` is what
+        /// lines a row's label up with the fifteen rebind rows above it, and
+        /// <see cref="HighlightControlSize"/> is what keeps the control the same width as the
+        /// one below. Two copies of this method are two places for one of those to be edited,
+        /// and a settings list where one row's control starts forty pixels further right than
+        /// its neighbour's has already been reported once on this panel.
+        ///
+        /// ⚠️ BUILT IN CODE AND PLACED NEXT TO THE FULLSCREEN BOX, rather than authored into
+        /// `SettingsPanel.unity`. The scene is a conversion of the .tscn and gets rebaked by
+        /// `TscnImporter`, so a row added to the asset by hand is a row that disappears the next
+        /// time somebody reimports the maps. Everything on this screen that the importer does
+        /// not own is built here, which is the same reason the rebind rows are.
+        /// </summary>
+        private Dropdown BuildDropdownRow(string rowName, string label,
+                                          IList<SwatchDropdown.Option> options,
+                                          int initial, Action<int> onChanged)
+        {
+            var anchor = Node("FullscreenCheck");
+            if (anchor == null || anchor.parent == null) return null;
+
+            var rowGo = new GameObject(rowName);
             rowGo.AddComponent<RectTransform>();
             rowGo.transform.SetParent(anchor.parent, false);
 
@@ -472,34 +542,22 @@ namespace TumbangPreso.UI
             row.childAlignment = TextAnchor.MiddleLeft;
             row.spacing = 0.0f;
 
-            var label = MenuKit.Styled(rowGo.transform, "MenuBody",
-                                       "Slipper Highlight", TextAnchor.MiddleLeft);
-            label.raycastTarget = false;
+            var text = MenuKit.Styled(rowGo.transform, "MenuBody", label, TextAnchor.MiddleLeft);
+            text.raycastTarget = false;
 
-            var labelElement = label.gameObject.AddComponent<LayoutElement>();
+            var labelElement = text.gameObject.AddComponent<LayoutElement>();
             labelElement.preferredWidth = ActionLabelWidth;
             labelElement.minHeight = HighlightControlSize.y;
 
-            var options = new System.Collections.Generic.List<SwatchDropdown.Option>();
+            var dropdown = SwatchDropdown.Build(rowGo.transform, options, initial,
+                                                HighlightControlSize, onChanged);
 
-            foreach (var entry in SlipperHighlights.All)
-            {
-                // ⚠️ "Off" PASSES A NULL SWATCH rather than its stored colour. Row 0 holds black
-                // as a placeholder because the palette is an array and every row needs a value;
-                // drawing it would put a black chip beside "Off" that reads like a sixth colour.
-                bool hasColour = entry.Label != "Off";
-                options.Add(new SwatchDropdown.Option(
-                    entry.Label, hasColour ? entry.Colour : (Color?)null));
-            }
-
-            _highlight = SwatchDropdown.Build(rowGo.transform, options,
-                                              SettingsStore.Current.SlipperHighlight,
-                                              HighlightControlSize, PickSlipperHighlight);
-
-            var element = _highlight.gameObject.AddComponent<LayoutElement>();
+            var element = dropdown.gameObject.AddComponent<LayoutElement>();
             element.preferredWidth = HighlightControlSize.x;
             element.preferredHeight = HighlightControlSize.y;
             element.flexibleWidth = 1.0f;
+
+            return dropdown;
         }
 
         /// <summary>⚠️ WIDER THAN A KEYCAP. This row carries a swatch, a label and a chevron
@@ -518,6 +576,28 @@ namespace TumbangPreso.UI
                 Mathf.Clamp(index, 0, SlipperHighlights.All.Length - 1);
 
             SettingsStore.RaiseSlipperHighlightChanged();
+            RefreshApplyState();
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ IT APPLIES ON THE PICK RATHER THAN ON APPLY, AND THAT IS DELIBERATE ON A PANEL
+        /// WHERE MOST THINGS DO NOT. This is the same rule the volume sliders and the highlight
+        /// colour already follow: a setting whose whole content is how the screen looks has to
+        /// change the screen while the player is looking at it, or the control is a claim they
+        /// cannot check. This panel is reachable from the in-match pause menu, so on the pick
+        /// there is a real frame behind it to judge.
+        ///
+        /// ⚠️ AND BACK STILL UNDOES IT, which is the half that makes applying early safe.
+        /// `SettingsStore.Restore` calls `GameSettings.Apply`, and `Apply` pushes the mode back
+        /// through `AntiAliasModes.Apply`, so a discarded pick is off the screen as well as out
+        /// of the file. Nothing here writes the disk.
+        /// </summary>
+        private void PickAntiAlias(int index)
+        {
+            SettingsStore.Current.AntiAliasMode =
+                Mathf.Clamp(index, 0, AntiAliasModes.All.Length - 1);
+
+            AntiAliasModes.Apply(SettingsStore.Current.AntiAliasMode);
             RefreshApplyState();
         }
 
@@ -821,6 +901,13 @@ namespace TumbangPreso.UI
             // edit and re-dirty the panel we are in the middle of cleaning up.
             if (_highlight != null)
                 _highlight.SetValueWithoutNotify(SettingsStore.Current.SlipperHighlight);
+
+            // ⚠️ THE SAME FOR THE ANTI-ALIASING FACE, and it has the stronger claim of the two:
+            // `Restore` re-applies the mode to the engine, so the frame behind this panel is
+            // already back to what it was. A picker still reading "Off" over a filtered frame is
+            // the reverted state showing through the one place that has not been told.
+            if (_antiAlias != null)
+                _antiAlias.SetValueWithoutNotify(SettingsStore.Current.AntiAliasMode);
 
             _backArmed = false;
             SetButtonLabel(_back, "◀  BACK");
