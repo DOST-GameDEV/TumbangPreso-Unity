@@ -128,6 +128,8 @@ namespace TumbangPreso.Visual
         {
             if (renderer == null) return;
 
+            Material owned = null;
+
             var template = Template;
             if (template != null)
             {
@@ -135,17 +137,22 @@ namespace TumbangPreso.Visual
                 m.SetColor("_BaseColor", colour);
                 m.SetColor("_EmissionColor", new Color(colour.r, colour.g, colour.b, 1.0f) * emission);
                 renderer.sharedMaterial = m;
+                owned = m;
             }
             else
             {
+                // ⚠️ NOT HANDED OVER. `.material` is a material the RENDERER made for itself and
+                // Unity frees it with the renderer; adding it to the tag would free it twice.
                 renderer.material.color = colour;
             }
 
             if (stripCollider) StripCollider(renderer.gameObject);
 
             // See VfxRenderTag: this is what keeps an effect parented to a prop from being
-            // read as part of that prop's model.
-            VfxRenderTag.Attach(renderer.gameObject);
+            // read as part of that prop's model, and it is also what frees the material above
+            // when the effect dies. See its `Own`.
+            if (owned != null) VfxRenderTag.Own(renderer.gameObject, owned);
+            else VfxRenderTag.Attach(renderer.gameObject);
         }
 
         /// <summary>
@@ -173,7 +180,10 @@ namespace TumbangPreso.Visual
             }
 
             renderer.sharedMaterial = m;
-            VfxRenderTag.Attach(renderer.gameObject);
+
+            // Tagged AND owned. See `VfxRenderTag.Own`: this material was built for this one
+            // renderer, so it has to die with it.
+            VfxRenderTag.Own(renderer.gameObject, m);
         }
 
         // ===================================================================

@@ -172,12 +172,36 @@ namespace TumbangPreso.Visual
         /// are one requirement, and there are five cameras in this game that mount this component
         /// (the match rig, the spectator, the character portrait, the map preview and the editor
         /// benches). A sixth added later gets it for free instead of being the one that forgets.
+        ///
+        /// ⚠️⚠️ AND `allowMSAA` IS ASSERTED BESIDE IT, WHICH IS AN ASSERTION RATHER THAN A FIX.
+        /// Every camera serialised into a scene in this project already reads `m_AllowMSAA: 1`
+        /// (checked across all 27 converted scenes), and a camera created with `AddComponent`
+        /// defaults to true, so nothing today is turning it off. What this covers is the pairing:
+        /// an image effect is the thing that forces a camera off the backbuffer and into an
+        /// intermediate render target, and `Camera.allowMSAA` is the flag that decides whether
+        /// that intermediate is allowed to be multisampled. The component that creates the
+        /// requirement is the right place to state it, exactly as `allowHDR` is above, and the
+        /// alternative is a camera added in a later session that grades correctly and quietly
+        /// renders without anti-aliasing.
+        ///
+        /// ⚠️ THE HDR LINE ABOVE IS ALSO THE RISK TO IT, AND THAT IS WORTH SAYING PLAINLY. An
+        /// HDR intermediate is a floating-point target; a multisampled floating-point target is
+        /// a heavier allocation and the engine is free to decline it. Whether MSAA survives this
+        /// camera stack is therefore not knowable from the settings, which is why
+        /// <see cref="PostAntiAlias.ReportOnce"/> reads the sample count off the target that was
+        /// actually delivered and why every anti-aliasing mode above Off also carries FXAA.
         /// </summary>
         private void Awake()
         {
-            var camera = GetComponent<Camera>();
-            if (camera != null) camera.allowHDR = true;
+            _camera = GetComponent<Camera>();
+
+            if (_camera == null) return;
+
+            _camera.allowHDR = true;
+            _camera.allowMSAA = true;
         }
+
+        private Camera _camera;
 
         private bool IsIdentity =>
             Mathf.Approximately(_brightness * _eventBrightness, 1.0f)
@@ -189,9 +213,19 @@ namespace TumbangPreso.Visual
         /// <summary>
         /// ⚠️ A NO-OP GRADE STILL COSTS A FULL-SCREEN BLIT, so it is skipped outright. This runs
         /// on the match camera every frame and Bayan Plaza grades nothing.
+        ///
+        /// ⚠️ THE ANTI-ALIASING REPORT IS TAKEN HERE AND NOT IN `PostAntiAlias`, EVEN THOUGH IT
+        /// BELONGS TO THAT FILE. Unity runs image effects in component order and this one is
+        /// added first on both gameplay cameras, so `source` here IS the target the camera
+        /// rendered into. By the time the chain reaches the filter, `source` is an intermediate
+        /// the engine allocated to pass one effect's output to the next and its sample count
+        /// says nothing about the rasteriser. The call latches after the first screen camera, so
+        /// putting it ahead of the identity return costs nothing on the frames after that.
         /// </summary>
         private void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
+            PostAntiAlias.ReportOnce(_camera, source);
+
             if (IsIdentity)
             {
                 Graphics.Blit(source, destination);

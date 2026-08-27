@@ -587,9 +587,9 @@ namespace TumbangPreso.UI
                                           int initial, Action<int> onChanged)
         {
             var anchor = Node("FullscreenCheck");
-            if (anchor == null || anchor.parent == null) return;
+            if (anchor == null || anchor.parent == null) return null;
 
-            var rowGo = new GameObject("SlipperHighlightRow");
+            var rowGo = new GameObject(rowName);
             rowGo.AddComponent<RectTransform>();
             rowGo.transform.SetParent(anchor.parent, false);
 
@@ -605,34 +605,22 @@ namespace TumbangPreso.UI
             row.childAlignment = TextAnchor.MiddleLeft;
             row.spacing = 0.0f;
 
-            var label = MenuKit.Styled(rowGo.transform, "MenuBody",
-                                       "Slipper Highlight", TextAnchor.MiddleLeft);
-            label.raycastTarget = false;
+            var text = MenuKit.Styled(rowGo.transform, "MenuBody", label, TextAnchor.MiddleLeft);
+            text.raycastTarget = false;
 
-            var labelElement = label.gameObject.AddComponent<LayoutElement>();
+            var labelElement = text.gameObject.AddComponent<LayoutElement>();
             labelElement.preferredWidth = ActionLabelWidth;
             labelElement.minHeight = HighlightControlSize.y;
 
-            var options = new System.Collections.Generic.List<SwatchDropdown.Option>();
+            var dropdown = SwatchDropdown.Build(rowGo.transform, options, initial,
+                                                HighlightControlSize, onChanged);
 
-            foreach (var entry in SlipperHighlights.All)
-            {
-                // ⚠️ "Off" PASSES A NULL SWATCH rather than its stored colour. Row 0 holds black
-                // as a placeholder because the palette is an array and every row needs a value;
-                // drawing it would put a black chip beside "Off" that reads like a sixth colour.
-                bool hasColour = entry.Label != "Off";
-                options.Add(new SwatchDropdown.Option(
-                    entry.Label, hasColour ? entry.Colour : (Color?)null));
-            }
-
-            _highlight = SwatchDropdown.Build(rowGo.transform, options,
-                                              SettingsStore.Current.SlipperHighlight,
-                                              HighlightControlSize, PickSlipperHighlight);
-
-            var element = _highlight.gameObject.AddComponent<LayoutElement>();
+            var element = dropdown.gameObject.AddComponent<LayoutElement>();
             element.preferredWidth = HighlightControlSize.x;
             element.preferredHeight = HighlightControlSize.y;
             element.flexibleWidth = 1.0f;
+
+            return dropdown;
         }
 
         /// <summary>⚠️ WIDER THAN A KEYCAP. This row carries a swatch, a label and a chevron

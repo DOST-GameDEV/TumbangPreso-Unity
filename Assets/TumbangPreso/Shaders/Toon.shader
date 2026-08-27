@@ -158,6 +158,18 @@ Shader "TumbangPreso/Toon"
             {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
+
+                // ⚠️⚠️ THE WELDED NORMAL, NOT A REAL TANGENT. `OutlineNormals.Weld` averages every
+                // normal sharing a position and parks the result here, because a hull inflated
+                // along the raw per-vertex normal TEARS OPEN at every hard edge: the importer
+                // emits a corner once per adjoining face and each copy pushes somewhere
+                // different. That is the "outlines dont fully connect" report of 2026-08-27.
+                //
+                // ⚠️ IT IS IN TANGENT RATHER THAN A UV BECAUSE OF SKINNING. Unity skins POSITION,
+                // NORMAL and TANGENT and passes UVs through raw, so a welded normal in UV3 would
+                // sit in bind pose and the border would split the moment an arm swung. See the
+                // class comment on `OutlineNormals` for why nothing else reads this channel.
+                float4 tangent : TANGENT;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 

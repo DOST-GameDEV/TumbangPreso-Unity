@@ -278,6 +278,27 @@ namespace TumbangPreso.EditorTools
                 // catches until the grade is being compared against the Godot build side by side.
                 "TumbangPreso/ColourGrade",
 
+                // ⚠️ THE WORLD OUTLINE PROTOTYPE, ADDED WHEN IT WAS SWITCHED ON. It was
+                // deliberately left OUT while it was inert, so a disabled prototype did not ship
+                // its variants into every build. `CameraRig` now attaches and enables it, so the
+                // reasoning inverted: reached through `Shader.Find`, it would be stripped, and the
+                // pass logs an error and draws nothing. The editor would show the outline and the
+                // .exe would not, which is the exact split rule 10 exists to prevent.
+                //
+                // ⚠️ IF THE PROTOTYPE IS REJECTED, DELETE THIS LINE WITH THE FEATURE. A shader
+                // listed here is compiled into every player whether or not anything draws it.
+                "TumbangPreso/WorldOutline",
+
+                // ⚠️ THE ANTI-ALIASING FILTER, AND ITS MISS PATH IS THE MOST DECEPTIVE ON THIS
+                // LIST. Every mode above Off in `Settings.AntiAliasModes` is "MSAA plus FXAA",
+                // so a build that strips this still anti-aliases: the MSAA half is a
+                // `QualitySettings` field that needs no shader and keeps working. What the
+                // player gets is the setting doing roughly half of what it says while the editor
+                // does all of it, which is far harder to notice than a control that does
+                // nothing. `PostAntiAlias` logs a warning on the miss for that reason; this line
+                // is what stops it being reached.
+                "TumbangPreso/Fxaa",
+
                 // ⚠️ § THE STUN FROST's SCREEN HALF, AND ITS MISS PATH IS THE QUIETEST OF THE
                 // THREE. `Hud.BuildFrostVignette` returns without building anything when the
                 // lookup fails, so a build that strips this has no frost at all and no error:

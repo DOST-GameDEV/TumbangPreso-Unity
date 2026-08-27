@@ -304,6 +304,42 @@ namespace TumbangPreso.CameraSystem
             // resolves to an identity blit that looks like the feature was never added.
             _grade = gameObject.GetComponent<Visual.ColourGrade>();
             if (_grade == null) _grade = gameObject.AddComponent<Visual.ColourGrade>();
+
+            // ⚠️⚠️ AFTER THE GRADE, AND THE ORDER IS THE WHOLE POINT OF ADDING IT HERE RATHER
+            // THAN AUTHORING IT INTO A PREFAB. Unity runs image effects in COMPONENT ORDER, and
+            // `PostAntiAlias` thresholds luma against display-referred numbers, so it has to see
+            // a frame `ColourGrade` has already tonemapped out of HDR. Adding it on the line
+            // after the grade makes that true by construction on a rig that was built from a
+            // scene, on one built by `SceneBuilder`, and on one a probe assembles from nothing.
+            //
+            // ⚠️ AND IT IS ON THE GAMEPLAY RIG RATHER THAN WHEREVER `ColourGrade` IS. The
+            // character portrait and the map preview also carry the grade, and both render into
+            // a `targetTexture` that is already built with 4 samples; filtering those would
+            // soften a picture that is not aliased. See the class comment on `PostAntiAlias`.
+            if (gameObject.GetComponent<Visual.PostAntiAlias>() == null)
+                gameObject.AddComponent<Visual.PostAntiAlias>();
+
+            // ⚠️⚠️ THE WORLD OUTLINE PROTOTYPE, AND IT IS ON SO IT CAN BE JUDGED. It shipped
+            // inert: nothing added the component and its own toggle defaulted false, which is a
+            // correct default for a retry of a reverted pass and also means there is nothing to
+            // look at. 🧑 2026-08-27: *"i dont see any world outlines"*. A prototype nobody can
+            // see cannot be accepted or rejected, so it is attached here and switched on.
+            //
+            // ⚠️ THIS IS THE 2026-07-29 REVERT BEING RETRIED, NOT IGNORED. That pass was pulled
+            // for banding on large flat surfaces and for the cost of an inverted hull on every
+            // mesh in a dressed street. Neither applies to this one: it is screen-space, so there
+            // is no second hull anywhere, and it draws ONLY an edge rather than putting the
+            // two-band toon ramp on the world. Those are the two failure modes, and this
+            // construction avoids both by being a different construction. If it is rejected
+            // again it has to be for a NEW reason, and that reason belongs in `docs/TODO.md`
+            // beside this one.
+            //
+            // ⚠️ TO TURN IT OFF, clear `Prototype Enabled` on the rig, or delete these three
+            // lines. A component left attached with the toggle off still pays one pass-through
+            // blit, so removing it is the way to pay nothing.
+            var worldOutline = gameObject.GetComponent<Visual.WorldOutline>();
+            if (worldOutline == null) worldOutline = gameObject.AddComponent<Visual.WorldOutline>();
+            worldOutline.PrototypeEnabled = true;
         }
 
         private Visual.ColourGrade _grade;
