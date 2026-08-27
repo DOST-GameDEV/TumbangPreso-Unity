@@ -529,8 +529,21 @@ namespace TumbangPreso.Net
             }
         }
 
+        /// <summary>
+        /// ⚠️⚠️ TRUE WHILE WE ARE THE ONES ENDING IT. `Shutdown` raises the same
+        /// `OnClientDisconnectCallback` a refusal does, so without this a player pressing BACK
+        /// was told why they had been thrown out of a lobby they had just chosen to leave. 🧑
+        /// 2026-08-27: *"this shit shows even if i close on my own"*, over
+        /// `[Disconnect Event][Client-0][TransportClientId-0][TransportShutdown]`.
+        ///
+        /// ⚠️ `StartClient` CALLS `Stop` FIRST when a session is already live, so this also covers
+        /// the disconnect that a re-join produces on the way out of the old connection.
+        /// </summary>
+        private bool _localShutdown;
+
         public void Stop()
         {
+            _localShutdown = true;
             _beacon.StopAll();
             if (Query != null) _ = Query.DeleteHostedLobbyAsync();
 
@@ -749,12 +762,39 @@ namespace TumbangPreso.Net
             _nm.CustomMessagingManager.SendNamedMessage(SeatAssignmentMessage, clientId, writer);
         }
 
-        /// <summary>Applies the host's authoritative seat on this process.</summary>
+        /// <summary>
+        /// Applies the host's authoritative seat on this process.
+        ///
+        /// ⚠️⚠️ THERE ARE TWO SEAT PROTOCOLS AND THIS IS THE ONE THAT DOES LESS, WHICH IS WHY A
+        /// CLIENT COULD END UP UNABLE TO MOVE. The host announces a seat TWICE by two unrelated
+        /// routes: `NetSession.OnClientConnected` admits the peer and sends its own
+        /// `tp.seat.assignment.v1`, which lands here; and `MatchRpc.HandleIdentify` admits the
+        /// same peer again and sends `Seating`, which lands in `OnSeatingMsg` and calls
+        /// `SetLocalSeating`. Only the second one carries the join code, the leader, whether a
+        /// match is in progress, and the `SeatingChanged` notification that makes the ARENA move
+        /// the camera, the HUD, the ready gate and the `PlayerInputReader` onto the new chair.
+        ///
+        /// 🧑 2026-08-27, from the joining laptop: *"i can move camera and see updates but i cant
+        /// move"*, and its `Player.log` reads `[Net] connected as seat 2` with **no**
+        /// `[Net] seated in slot 1` anywhere. That is this method having run and `SetLocalSeating`
+        /// having not: the seat number was applied and nothing was told about it.
+        ///
+        /// ⚠️ SO THIS RAISES `SeatingChanged` TOO. It is the same fix as `docs/TODO.md` § 53.1
+        /// one layer down: whichever of the two messages wins the race, the arena hears about it.
+        /// `MatchInstaller.FollowLocalSeat` is idempotent, so both winning costs nothing.
+        ///
+        /// ⚠️⚠️ AND THE DUPLICATION ITSELF IS THE REAL DEFECT, NOT THIS SYMPTOM. Two protocols
+        /// for one fact, one of them a subset of the other, is exactly the shape § 53.1 and
+        /// § 57.1 were. `docs/TODO.md` § 60 carries retiring one of them; it is not done here,
+        /// because deleting a seat path while two laptops are mid-test is how a working build
+        /// becomes an unworking one.
+        /// </summary>
         public void ApplyAssignedSeat(int seat)
         {
             LocalSlot = seat;
             GameLaunch.Spectator = seat < 0;
             SetStatus(seat >= 0 ? $"connected as seat {seat + 1}" : "connected as spectator");
+            SeatingChanged?.Invoke();
             SeatingChanged?.Invoke();
         }
 
@@ -850,17 +890,50 @@ namespace TumbangPreso.Net
             string reason = _nm != null ? _nm.DisconnectReason : null;
             SetStatus(string.IsNullOrWhiteSpace(reason) ? "disconnected" : $"disconnected: {reason}");
 
-            LastDisconnectReason = reason ?? "";
-            ClientDisconnected?.Invoke(LastDisconnectReason);
+            // ⚠️ A DISCONNECT WE ASKED FOR IS NOT AN EVENT ANYBODY NEEDS TELLING ABOUT. The
+            // player is already navigating; announcing it and dragging them to the join screen
+            // would fight the button they just pressed.
+            bool wasLocal = _localShutdown;
+            _localShutdown = false;
 
-            // A client that has lost the host is offline, and every gameplay path asks
-            // NetAuthority rather than this class. Leaving the relay flags set made the next
-            // join attempt reuse a dead allocation.
             LocalSlot = 0;
             IsRelay = false;
             RelayJoinCode = null;
             _helloByClient.Clear();
             Lobby.Reset();
+
+            if (wasLocal) return;
+
+            LastDisconnectReason = PlayerFacingDisconnectReason(reason);
+            ClientDisconnected?.Invoke(LastDisconnectReason);
+            return;
+        }
+
+        /// <summary>
+        /// The reason in words a player can act on, or "" when there is nothing worth saying.
+        ///
+        /// ⚠️⚠️ NETCODE'S OWN EVENT ENVELOPE IS NOT PLAYER-FACING TEXT.
+        /// `[Disconnect Event][Client-0][TransportClientId-0][TransportShutdown]
+        /// NetworkConnectionManager was shutdown. The transport was shutdown.` is a diagnostic,
+        /// and it was being printed on a menu in the game's own font. It also says nothing: it
+        /// describes the mechanism, never the cause.
+        ///
+        /// ⚠️ WHAT IS KEPT IS WHAT THE HOST ITSELF WROTE. `ApproveConnection` sets
+        /// `response.Reason` to "Game version mismatch (network protocol 5)" or "Lobby is full",
+        /// and NGO delivers exactly that string. Those two are the whole point of the mechanism:
+        /// a version mismatch is a thing the player CAN fix, and it is the likeliest failure
+        /// whenever two machines were built from different commits.
+        /// </summary>
+        private static string PlayerFacingDisconnectReason(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return "Lost connection to the host.";
+
+            raw = raw.Trim();
+
+            // Netcode wraps its own transport events in brackets. Nothing the host authors does.
+            if (raw.StartsWith("[")) return "Lost connection to the host.";
+
+            return raw;
         }
 
         public void SetStatus(string s)

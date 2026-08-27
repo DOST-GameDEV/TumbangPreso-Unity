@@ -87,6 +87,34 @@ namespace TumbangPreso
             if (net == null || !net.IsNetworked || _seats == null) return;
 
             RebindLocalSeat(net.LocalSlot, GameLaunch.Spectator);
+            LogSeatWiring("seat changed");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE FOUR VALUES THAT DECIDE WHETHER A CLIENT CAN MOVE, IN ONE LINE OF THE LOG.
+        /// *"i can move camera and see updates but i cant move"* is produced by at least three
+        /// different faults and they are indistinguishable from a screenshot: the reader bolted
+        /// to the wrong seat (§ 53.1), `LocalSlot` disagreeing with the body the camera follows,
+        /// and `CharacterMotor.IsLocallySimulated` answering false so `FixedUpdate` treats this
+        /// peer's own body as a host-authored picture. Printing them turns a round trip of
+        /// guessing into one line somebody can paste back.
+        ///
+        /// ⚠️ IT IS A `Debug.Log` ON A SEAT CHANGE AND AT INSTALL, NOT PER FRAME. Two events in a
+        /// match, on the one path where the answer can be wrong.
+        /// </summary>
+        private void LogSeatWiring(string why)
+        {
+            var net = Net.NetSession.Instance;
+            if (net == null || !net.IsNetworked || _seats == null) return;
+
+            int slot = net.LocalSlot;
+            var body = slot >= 0 && slot < _seats.Length ? _seats[slot] : null;
+
+            Debug.Log($"[NetSeat] {why}: LocalSlot={slot} spectator={GameLaunch.Spectator} " +
+                      $"host={NetAuthority.IsHost} body={(body == null ? "MISSING" : "ok")} " +
+                      $"reader={(body != null && body.GetComponent<PlayerInputReader>() != null)} " +
+                      $"ai={(body != null && body.GetComponent<AIController>() != null)} " +
+                      $"simulated={(body != null && body.IsLocallySimulated())}");
         }
 
         /// <summary>
@@ -290,6 +318,11 @@ namespace TumbangPreso
             if (UseReadyGate || guided) runner.ResetWorld(MatchRules.DefenderSlotFor(1));
 
             if (UseReadyGate && !guided) BuildReadyGate(seats[human], runner);
+
+            // ⚠️ PRINTED ONCE PER ARENA, because the seat may already be right by the time this
+            // runs and then no `SeatingChanged` ever fires to report it. A client that cannot
+            // move needs this line whether or not anything changed after the build.
+            LogSeatWiring("arena installed");
 
             // ⚠️⚠️ THE MATCH BED IS NOT STARTED HERE WHEN A READY GATE OWNS THE OPENING. It
             // starts on the first countdown tick instead — see `Hud.ShowCountdownTick`, which
