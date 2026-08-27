@@ -5955,6 +5955,17 @@ player on your screen has been standing in a fall pose for the entire life of th
 **Fixed** by deriving `_grounded` on a replica from the vertical velocity, which is already
 replicated, using the animator's own 0.5 threshold.
 
+⚠️⚠️ **THAT FIX HAD ITS OWN BUG, FOUND AND FIXED 2026-08-28: the window's lower bound was -0.5,
+and a standing body never transmits 0.** `ApplyGravity` holds a grounded, stationary unit at a
+constant -2.0 rather than 0 so `CharacterController.isGrounded` does not flicker, and that
+constant is exactly what gets replicated. A window of `(-0.5, 0.5)` sits entirely above it, so
+every idle body on every replica read `_grounded` as **false**, permanently, and played Fall (or,
+whenever a real jump's arc happened to line up, Jump) instead of Idle, Walk or Sprint. 🧑, from
+the host's screen watching bodies that were in fact standing still: *"you could see other players
+on what looks like a jumping emote"*. Fixed by widening the lower bound to the same constant
+(`CharacterMotor.GroundedRestVelocityY`) minus the existing 0.5 margin, so the two call sites
+that both care about "at rest" cannot drift apart again.
+
 ### 63.4 ⚠️ OPEN: transmit `IsGrounded` rather than inferring it
 
 63.3 is an inference and the owner of a body knows the truth. ⚠️ **`SyncUnit` alone cannot carry
