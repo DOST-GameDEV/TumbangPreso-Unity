@@ -1462,6 +1462,105 @@ cent blown against the 12 per cent gate, and the worst frame unchanged at 4.1.
 
 ---
 
+## 24 · Both intermission banners were drawn on top of something ✅ CLOSED 2026-08-27
+
+Reported off a Hero Strike frame of Ilalim ng Tulay: raise the practice line, lower the "open a
+gap with your powers" line because it covers things, and make that one go away after five to ten
+seconds because it is annoying.
+
+**All three are one fault repeated: the two banners were positioned against the screen edges
+rather than against what is already parked at those edges.** The arithmetic, because it is not
+close in either case.
+
+### 24.1 The practice line was inside the ability deck
+
+Both decks are bottom-anchored with a bottom pivot. The hero row spans **y 14 to 92**
+(`DeckBottomMargin` + `DeckHeight`); the Classic row spans **24 to 124**. `ReadyPromptPlate` was
+pinned at 92, so it drew from **92 to 126**: flush against the top edge of the hero deck, and
+**32 of its 34 px inside the Classic one**. `InspectHint` at 78 was fully buried by both, which
+means the one line in the game that names the inspect key has never been legible in Classic.
+
+They are stacked upward off the taller deck now, so one set of numbers is right in both modes:
+Classic's 124 is the floor, the hint takes 132 to 150, the prompt plate 156 to 190.
+
+### 24.2 The objective line was in the LATA DOWN band
+
+`ReadyObjective` at -206 with a top pivot spanned **206 to 244**. `LataDownAlert` is at -228 and
+70 tall, so it owns **228 to 298**, and `ToastLabel` owns 160 to 204. Three transient banners
+sharing one 140 px strip at the top of the frame. The objective moved to **-308**, which is 10 px
+of daylight below where LATA DOWN ends, still in the top third and nowhere near the countdown.
+
+### 24.3 It now retires itself after 7 seconds
+
+`Hud.ObjectiveVisibleSeconds`. The window is reset on the false-to-true edge of
+`ReadyGate.ReadyPromptChanged`, which fires once per phase transition rather than per frame, so
+the line gets its full seven seconds every time the gate opens.
+
+⚠ **The practice prompt deliberately does NOT expire with it.** "Press [R] when ready" is
+the only way out of the practice window, and a player who spends a minute in there must still be
+able to find the key. The coaching goes, the instruction stays.
+
+⚠ **The tick is its own method rather than a call back into `RefreshObjective`.** That
+method calls `GodotTheme.Box`, which allocates a sprite. `CLAUDE.md` § 7.1 records a HUD string
+rebuilt every frame costing the probe an eighth of its frames, and a sprite is worse than a
+string. `UpdateReadyObjective` flips two `enabled` flags.
+
+### 24.4 Found while measuring this, NOT fixed: "YOU ARE VULNERABLE" is behind the deck too
+
+`VulnerableWarning` is placed at y 84 and is 40 tall, so it draws from **84 to 124**. That is
+inside the hero deck (14 to 92) by 8 px and inside the Classic deck (24 to 124) **completely**.
+The one line that means "you are about to lose five seconds" is painted over by the Classic
+deck's wooden plate for its whole life.
+
+It is left alone here because it was not reported and because it is not obvious where it should
+go instead: 24.1 has just filled 132 to 190 with the practice stack, and the two are never on
+screen together, so it could take the same band. Done looks like the warning legible at both deck
+heights, with the numbers written down the way 24.1's are.
+
+---
+
+## 25 · `Checks.RunAll` has been red since the Phaister merge, in two places
+
+Found while verifying § 24 against `67f88aa`, which is the tip of `feat/ilalim-ng-tulay-map`.
+**Neither of these is caused by anything in § 24 and neither is fixed there**, because a HUD
+placement branch is the wrong place for a roster constant and a sound file. Both are two-line
+jobs for whoever picks them up.
+
+⚠⚠ **The point is not the two bugs, it is that the project's one-launch verification command
+has been failing and the failure has been carried.** `RunAll` prints
+`RESULT: FAILED. headless, audio cues.` at the end of every pass, so the next person to run it
+learns nothing from a red result.
+
+### 25.1 `HeadlessCheck` still counts five heroes
+
+`Assets/TumbangPreso/Editor/HeadlessCheck.cs:50-51` asserts `Roster.HeroPeople.Count == 5` and
+`Roster.AllPeople.Count == 17`. Phaister made them **6 and 18** (`Roster.cs:95` and `:109`), so
+both lines fail on every run.
+
+§ 21.1 item 3 caught exactly this in the EditMode suite and updated
+`GameMode_Rosters_AreDistinctAndCorrectSizes` to six, **and this second copy of the same
+assertion was missed.** § 21 also notes the docs still enumerate five heroes; that is prose, this
+is a red check.
+
+Done looks like: 5 becomes 6 and 17 becomes 18, left as typed literals rather than derived from
+`Roster` — § 21.1 already recorded the reasoning, which is that a hero appearing or disappearing
+is a product decision and should have to be typed.
+
+### 25.2 Phaister fires a cue that does not exist
+
+`AudioCueCheck`: *"UNDECLARED: PhaisterHeroKit.cs fires 'sfx_ghost_appear', which is in no cue
+list, so it plays silence."* 69 files on disk, 75 live cues declared, and this one reaches
+neither.
+
+⚠ **This is § 20 again, one hero later.** § 20 is "Cheska's kit played the wrong sounds, and
+every zone died in silence". The sixth kit arrived with the same class of hole, which suggests
+the check is doing its job and the merge checklist is not.
+
+Done looks like: either the cue is declared and a file exists for it, or the call site is changed
+to a cue that does. Whichever it is, `RunAll` comes back OK for audio.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**
