@@ -1363,7 +1363,18 @@ namespace TumbangPreso.Abilities
             // this zone's heat are one quantity: a light still burning over rock that has
             // visibly cooled is the kind of disagreement nobody notices in a still and everybody
             // notices in play.
-            if (cooling != null) cooling.Glow = light;
+            if (cooling != null)
+            {
+                cooling.Glow = light;
+
+                // ⚠️ THE SINK HAS TO CLEAR THE TALLEST PIECE, WHICH IS AN UPHEAVAL SLAB AND NOT
+                // THE DECAL. `SpawnUpheaval` stands its slabs through `Stand` at a height scale
+                // of `radius * 0.62` against a mesh rise of 0.72, so the tip reaches about
+                // `radius * 0.45`. Sinking by `radius * 0.75` puts the whole thing under the road
+                // with margin, and taking it from the radius means it stays correct for the 4.5 m
+                // ultimate as well as the 2.2 m stomp.
+                cooling.SinkDepth = radius * 0.75f;
+            }
 
             // ⚠️ THIS ZONE HAD NO COMPONENT AT ALL, so there was nowhere to hang an ending on:
             // `Object.Destroy(go, duration)` is a deletion, not an event. `ExpiryCue` is the
@@ -1825,7 +1836,13 @@ namespace TumbangPreso.Abilities
             // STANDING UP from eye height. A slab tipped 0.24 m is a plate on the road; the point
             // of the whole motif is that the material went somewhere.
             var raised = VfxShapes.Stand(parent, "Upheaval",
-                                         VfxShapes.Upheaval(6, 0.06f, 0.72f, seed),
+                                         // ⚠️ 0.09 OF A UNIT OF THICKNESS, MEASURED ALONG EACH
+                                         // SLAB'S OWN FACE. `Stand` scales X and Z by
+                                         // radius * 1.18 and Y by radius * 0.62, so on a 2.2 m
+                                         // stomp this is roughly 0.2 m of road: thick enough to
+                                         // read as a chunk from eye height, thin enough that it
+                                         // is still a slab of the street rather than a boulder.
+                                         VfxShapes.Upheaval(6, 0.06f, 0.72f, seed, 0.09f),
                                          radius * 1.18f,
                                          heightScale: radius * 0.62f,
                                          lift: 0.015f);
