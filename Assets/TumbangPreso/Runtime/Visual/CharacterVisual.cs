@@ -72,6 +72,9 @@ namespace TumbangPreso.Visual
 
         private StunElement _stunElement = StunElement.None;
 
+        public event System.Action ModelApplied;
+        public int ModelVersion { get; private set; }
+
         public GhostPetCompanion Companion { get; private set; }
 
         /// <summary>
@@ -296,6 +299,9 @@ namespace TumbangPreso.Visual
             var squash = GetComponent<CharacterSquashStretch>();
             if (squash == null) squash = gameObject.AddComponent<CharacterSquashStretch>();
             if (_instance != null) squash.BindModel(_instance.transform);
+
+            ModelVersion++;
+            ModelApplied?.Invoke();
         }
 
         /// <summary>

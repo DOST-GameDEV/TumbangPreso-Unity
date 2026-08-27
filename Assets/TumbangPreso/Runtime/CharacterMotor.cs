@@ -74,10 +74,47 @@ namespace TumbangPreso
         /// </summary>
         public string DisplayName()
         {
-            if (_isBot) return CharacterName().ToUpperInvariant();
-            if (_playerName != "") return _playerName.ToUpperInvariant();
-            return $"P{_playerSlot + 1}";
+            // ⚠️⚠️ THE ANSWER IS REMEMBERED, BECAUSE EVERY BRANCH OF IT ALLOCATES AND IT IS READ
+            // ONCE A FRAME PER BODY. `ToUpperInvariant` returns a new string every call, the
+            // seat fallback is an interpolation, and `CharacterName` walks the roster to get
+            // there. `Hud.UpdateScores` asks all four seats on every tick, the nameplate over
+            // each body asks again, and the YOU card asks a third time.
+            // `HudPerformanceProbe` is what put a number on it.
+            //
+            // ⚠️ THE INPUTS ARE COMPARED, NOT INVALIDATED FROM THE SETTERS, and that is the
+            // safer half of this. `_playerSlot`, `_characterIndex`, `_isBot` and `_playerName`
+            // are all `[SerializeField]` and all written from more than one place, including the
+            // inspector and the seat-rebind path; a cache cleared by hand in four setters is one
+            // future writer away from a body wearing somebody else's name. Reading the fields is
+            // free, and `Mode` is in the list because `CharacterName` looks the roster up per
+            // mode and the two rosters are different people.
+            if (_displayName == null ||
+                _displayNameBot != _isBot ||
+                _displayNameCharacter != _characterIndex ||
+                _displayNameSlot != _playerSlot ||
+                _displayNameMode != Mode ||
+                _displayNameFrom != _playerName)
+            {
+                _displayNameBot = _isBot;
+                _displayNameCharacter = _characterIndex;
+                _displayNameSlot = _playerSlot;
+                _displayNameMode = Mode;
+                _displayNameFrom = _playerName;
+
+                _displayName = _isBot ? CharacterName().ToUpperInvariant()
+                             : _playerName != "" ? _playerName.ToUpperInvariant()
+                             : $"P{_playerSlot + 1}";
+            }
+
+            return _displayName;
         }
+
+        private string _displayName;
+        private string _displayNameFrom;
+        private bool _displayNameBot;
+        private int _displayNameCharacter;
+        private int _displayNameSlot;
+        private GameMode _displayNameMode;
 
         /// <summary>Active game mode for trait lookups and ability kits.</summary>
         public GameMode Mode { get; set; } = GameMode.HeroStrike;

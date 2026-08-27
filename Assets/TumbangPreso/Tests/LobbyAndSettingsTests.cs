@@ -743,6 +743,147 @@ namespace TumbangPreso.Tests
         }
 
         // -------------------------------------------------------------------
+        // CHOOSING A CHAIR
+        //
+        // ⚠⚠ "A PLAYER CANNOT SWITCH FROM P1 TO P4" (2026-08-27). There was no rule to test,
+        // because there was no rule: the lobby's seat buttons wrote a static only the offline
+        // practice match reads. These are the rules the request now goes through.
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void APeerMovesToAnEmptyChairAndLeavesItsOldOneFree()
+        {
+            var lobby = NewLobby();
+            var a = lobby.Admit(10, "token-a", "Ana");
+            var b = lobby.Admit(11, "token-b", "Ben");
+
+            Assert.AreEqual(0, a.Seat);
+            Assert.AreEqual(1, b.Seat);
+
+            Assert.IsTrue(lobby.TryTakeSeat(10, 3), "seat 3 is empty and the match has not started");
+            Assert.AreEqual(3, a.Seat);
+            Assert.IsFalse(a.Spectator);
+
+            Assert.IsFalse(lobby.IsSeatOccupied(0), "the chair just vacated has to be free again");
+            Assert.AreEqual(2, lobby.OccupiedSeatCount());
+        }
+
+        [Test]
+        public void ASeatSomebodyElseIsSittingInIsRefused()
+        {
+            var lobby = NewLobby();
+            var a = lobby.Admit(10, "token-a", "Ana");
+            lobby.Admit(11, "token-b", "Ben");
+
+            Assert.IsFalse(lobby.TryTakeSeat(10, 1), "Ben is in seat 1");
+            Assert.AreEqual(0, a.Seat, "a refused move must not disturb the asker's own chair");
+        }
+
+        [Test]
+        public void AskingForTheChairYouAreAlreadyInChangesNothingAndSucceeds()
+        {
+            var lobby = NewLobby();
+            var a = lobby.Admit(10, "token-a", "Ana");
+
+            Assert.IsTrue(lobby.TryTakeSeat(10, 0));
+            Assert.AreEqual(0, a.Seat);
+        }
+
+        /// <summary>
+        /// ⚠️ A HELD SEAT IS NOT FREE. It belongs to somebody who dropped out of THIS match
+        /// and is waiting for their token, which is the promise `RuleOnArrival` branch 1 makes.
+        /// </summary>
+        [Test]
+        public void ASeatHeldForADroppedPlayerCannotBeTakenBySomebodyStillHere()
+        {
+            var lobby = NewLobby();
+            lobby.Admit(10, "token-a", "Ana");
+            lobby.Admit(11, "token-b", "Ben");
+
+            lobby.StartMatch();
+            lobby.Depart(11);                       // Ben drops; seat 1 is held for his token
+            lobby.EndMatch();                       // ...but EndMatch releases every hold
+
+            Assert.IsTrue(lobby.TryTakeSeat(10, 1), "a released hold is an ordinary empty chair");
+        }
+
+        [Test]
+        public void SeatChangesAreRefusedOnceTheMatchIsRunning()
+        {
+            var lobby = NewLobby();
+            var a = lobby.Admit(10, "token-a", "Ana");
+
+            lobby.StartMatch();
+
+            Assert.IsFalse(lobby.TryTakeSeat(10, 2), "a seat carries a score and a taya turn");
+            Assert.AreEqual(0, a.Seat);
+        }
+
+        [Test]
+        public void SpectatingReleasesTheChairAndSittingBackDownTakesOneAgain()
+        {
+            var lobby = NewLobby();
+            var a = lobby.Admit(10, "token-a", "Ana");
+            lobby.Admit(11, "token-b", "Ben");
+
+            Assert.IsTrue(lobby.TryTakeSeat(10, -1));
+            Assert.IsTrue(a.Spectator);
+            Assert.AreEqual(-1, a.Seat);
+            Assert.IsFalse(lobby.IsSeatOccupied(0), "a spectator holds no chair");
+            Assert.AreEqual(1, lobby.SeatedPeerCount());
+
+            Assert.IsTrue(lobby.TryTakeSeat(10, 0));
+            Assert.IsFalse(a.Spectator);
+            Assert.AreEqual(0, a.Seat);
+            Assert.AreEqual(2, lobby.SeatedPeerCount());
+        }
+
+        /// <summary>
+        /// ⚠️ A LEADER WHO CHOOSES TO SPECTATE MUST NOT KEEP THE MAP, THE MODE AND THE START
+        /// BUTTON. `ReassignLeader` already skips spectators, but it is only reached from
+        /// `Depart`, so nothing covered somebody leaving the table without leaving the lobby.
+        /// </summary>
+        [Test]
+        public void ALeaderThatStartsSpectatingHandsLeadershipOn()
+        {
+            var lobby = NewLobby();
+            lobby.Admit(10, "token-a", "Ana");
+            lobby.Admit(11, "token-b", "Ben");
+
+            Assert.IsTrue(lobby.IsLeader(10));
+
+            Assert.IsTrue(lobby.TryTakeSeat(10, -1));
+            Assert.IsFalse(lobby.IsLeader(10), "a peer with no chair cannot press start");
+            Assert.IsTrue(lobby.IsLeader(11));
+        }
+
+        [Test]
+        public void ADedicatedRefereeCannotTakeAChairByAsking()
+        {
+            var lobby = new LobbySession { IsDedicated = true };
+            lobby.OpenLobby(new System.Random(42));
+
+            var referee = lobby.Admit(1, "token-referee", "Referee");
+            Assert.AreEqual(-1, referee.Seat);
+
+            Assert.IsFalse(lobby.TryTakeSeat(1, 0), "the server referees, it does not play");
+            Assert.AreEqual(-1, referee.Seat);
+            Assert.IsFalse(lobby.IsSeatOccupied(0));
+        }
+
+        [Test]
+        public void ASeatOutsideTheFourIsRefusedRatherThanClamped()
+        {
+            var lobby = NewLobby();
+            var a = lobby.Admit(10, "token-a", "Ana");
+
+            Assert.IsFalse(lobby.TryTakeSeat(10, LobbySession.MaxPlayers));
+            Assert.IsFalse(lobby.TryTakeSeat(10, -2));
+            Assert.IsFalse(lobby.TryTakeSeat(999, 2), "a peer that is not here asks for nothing");
+            Assert.AreEqual(0, a.Seat);
+        }
+
+        // -------------------------------------------------------------------
         // SPAWNING, SEATING, AND WRITE PERMISSIONS (N6)
         // -------------------------------------------------------------------
 
@@ -1119,6 +1260,87 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(-1, p.CharacterPick);
             Assert.AreEqual(-1, p.CanPick);
             Assert.AreEqual(-1, p.SlipperPick);
+        }
+
+        // ===================================================================
+        // ⚠️⚠️ THE JOIN ADDRESS, WHICH IS WHERE EVERY LAN JOIN DIED. `LanBeacon` advertises
+        // `ip:port`, the browser copies that string into the join box verbatim, and the box's own
+        // help text tells the player the port is optional and therefore allowed. Nothing parsed
+        // it, so the whole string went to `UnityTransport.SetConnectionData` as the HOSTNAME and
+        // the transport refused to start. Two machines that could see each other perfectly well
+        // could not join each other. `docs/TODO.md` § 59.
+        //
+        // ⚠️ THESE ARE ASSERTIONS RATHER THAN A PLAYED TEST BECAUSE THEY CAN BE. The failure was
+        // only ever visible with two machines on a network, and the rule it broke is a string
+        // split that runs in a microsecond.
+        // ===================================================================
+
+        [Test]
+        public void JoinAddressSplitsAPortOffTheEnd()
+        {
+            int port = LobbySession.DefaultPort;
+            Assert.AreEqual("192.168.1.144", NetSession.SplitHostPort("192.168.1.144:8910", ref port));
+            Assert.AreEqual(8910, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("192.168.1.144", NetSession.SplitHostPort("192.168.1.144:7777", ref port));
+            Assert.AreEqual(7777, port, "a port written by the player beats the default");
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("localhost", NetSession.SplitHostPort("  localhost:7000  ", ref port));
+            Assert.AreEqual(7000, port, "the field is not trimmed anywhere else");
+        }
+
+        [Test]
+        public void JoinAddressWithoutAPortKeepsTheCallersPort()
+        {
+            int port = 7777;
+            Assert.AreEqual("192.168.1.144", NetSession.SplitHostPort("192.168.1.144", ref port));
+            Assert.AreEqual(7777, port, "-tp-join 127.0.0.1 7777 must be unchanged");
+        }
+
+        /// <summary>
+        /// ⚠️ A BARE IPv6 LITERAL IS FULL OF COLONS AND IS A VALID ADDRESS ON ITS OWN. Splitting
+        /// on the last colon would turn `fe80::1` into a host of `fe80:` and a port of 1, which
+        /// is a worse failure than the one being fixed because it would look like it worked.
+        /// </summary>
+        [Test]
+        public void JoinAddressLeavesABareIpv6LiteralAlone()
+        {
+            int port = LobbySession.DefaultPort;
+            Assert.AreEqual("fe80::1", NetSession.SplitHostPort("fe80::1", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            // ⚠️ THE BRACKETS COME OFF EVEN WITH NO PORT, because they are join-address syntax
+            // and not part of the address: `UnityTransport.SetConnectionData` wants the literal.
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("::1", NetSession.SplitHostPort("[::1]", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("::1", NetSession.SplitHostPort("[::1]:7000", ref port),
+                            "brackets are what make an IPv6 port unambiguous");
+            Assert.AreEqual(7000, port);
+        }
+
+        /// <summary>⚠️ A TRAILING COLON, AN EMPTY HOST OR A NONSENSE PORT IS LEFT ALONE, so the
+        /// transport reports the real address the player typed rather than a guess this made
+        /// out of it.</summary>
+        [Test]
+        public void JoinAddressRefusesToGuessAtRubbish()
+        {
+            int port = LobbySession.DefaultPort;
+            Assert.AreEqual("192.168.1.144:", NetSession.SplitHostPort("192.168.1.144:", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual(":8910", NetSession.SplitHostPort(":8910", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("host:99999", NetSession.SplitHostPort("host:99999", ref port),
+                            "65535 is the ceiling");
+            Assert.AreEqual(LobbySession.DefaultPort, port);
         }
     }
 }

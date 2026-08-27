@@ -518,7 +518,7 @@ namespace TumbangPreso.UI
             // Single player is a vote of one, so it starts immediately.
             if (!NetAuthority.IsNetworked)
             {
-                _rematchVotes.Add(0, NetAuthority.LocalSlot);
+                _rematchVotes.Add(0);
                 BeginRematchNow();
                 return;
             }
@@ -527,24 +527,33 @@ namespace TumbangPreso.UI
             // peer's and comes back in the broadcast tally. Counting it here as well would give
             // this screen a number the host does not have, and the first thing a player would
             // see is their own count disagreeing with everybody else's.
+            // ⚠️⚠️ THE BUTTON IS ONLY DEADENED ONCE THE VOTE HAS ACTUALLY LEFT. It was disabled
+            // first and the send attempted afterwards, so a vote that could not be delivered
+            // (the host gone, or the transport still finishing its handshake) left the player
+            // staring at a dead REMATCH button with no way to try again and no tally to explain
+            // it. `DeclareReadyServerRpc` reports delivery for the same reason and
+            // `ReadyGate.Update` resends off it.
+            if (Net.MatchRpc.Instance == null || !Net.MatchRpc.Instance.VoteRematchServerRpc())
+            {
+                ShowTally(_rematchVotes.Count, ExpectedVotes());
+                return;
+            }
+
             _rematch.interactable = false;
             ShowTally(_rematchVotes.Count, ExpectedVotes());
-
-            Net.MatchRpc.Instance?.VoteRematchServerRpc(NetAuthority.LocalSlot);
         }
 
         /// <summary>
         /// HOST ONLY. A peer voted.
         ///
-        /// ⚠️ THE HOST'S OWN VOTE ARRIVES HERE WITH A SENDER ID OF 0, exactly as it does in
-        /// `ReadyGate.DeclareReady`, and is resolved at the door for the same reason: a second
-        /// code path for the host is a path where the host can never satisfy its own gate.
+        /// ⚠️⚠️ THE ID IS A TRANSPORT PEER ID, NEVER A SEAT. NGO client id 0 is the host's
+        /// identity and must remain distinct from client 1 even when the host occupies seat 1.
         /// </summary>
         public void HostReceiveVote(int peerId)
         {
             if (!NetAuthority.IsHost) return;
 
-            if (!_rematchVotes.Add(peerId, NetAuthority.LocalSlot)) return;   // idempotent, like the ready set
+            if (!_rematchVotes.Add(peerId)) return;   // idempotent, like the ready set
 
             int expected = ExpectedVotes();
 
@@ -586,14 +595,26 @@ namespace TumbangPreso.UI
         /// <summary>Votes counted so far. Host-side; a test's window into the tally.</summary>
         public int VoteCount => _rematchVotes.Count;
 
+        /// <summary>Whether the real result board is currently accepting a rematch vote.</summary>
+        public bool IsVisible => _canvas != null && _canvas.gameObject.activeSelf;
+
+        /// <summary>The same action as the REMATCH button, exposed for the two-process driver.</summary>
+        public void RequestRematch() => OnRematchPressed();
+
         /// <summary>What the tally line currently reads, or "" when it is silent.</summary>
         public string TallyText => _rematchTally != null ? _rematchTally.text : "";
 
-        /// <summary>How many presses this rematch is waiting for.</summary>
+        /// <summary>
+        /// How many presses this rematch is waiting for.
+        ///
+        /// ⚠️ A PEER ID, NOT A SEAT, for the reason `ReadyGate.ExpectedReadyCount` spells out:
+        /// the argument is matched against `PeerRecord.PeerId` and a seat number that happens to
+        /// equal somebody else's client id forgives the wrong peer.
+        /// </summary>
         public int ExpectedVotes()
         {
             var lobby = Net.NetSession.Instance?.Lobby;
-            return lobby?.PlayingPeerCount(NetAuthority.LocalSlot) ?? 1;
+            return lobby?.PlayingPeerCount(NetAuthority.LocalPeerId) ?? 1;
         }
 
         /// <summary>

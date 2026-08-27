@@ -1097,28 +1097,27 @@ namespace TumbangPreso.Core.Tests
         // ⚠️⚠️ `docs/TODO.md` § 1 WARNS THAT THE WIRE HALF CANNOT BE FINISHED HONESTLY WITHOUT
         // TWO REAL PROCESSES ON A LAN, AND THAT IS STILL TRUE OF THE TRANSPORT. It is not true
         // of the rules the transport carries, and those are the parts that actually broke: the
-        // ready gate shipped with a host that could not satisfy its own gate because its press
-        // arrived with a sender id of 0. `Core.RematchVote` holds the same rules where they can
-        // be asserted rather than played.
+        // ready gate once confused a transport peer id with a seat id. `Core.RematchVote` holds
+        // the same rules where they can be asserted rather than played.
         // ===================================================================
 
         /// <summary>
-        /// ⚠️ THE HOST'S OWN PRESS ARRIVES AS PEER 0 AND MUST NOT BE A SECOND VOTER.
-        /// `ReadyGate.DeclareReady` carries this note for the same reason. Without the resolve
-        /// the host counts twice in a two-peer match, the gate opens on one press, and a rematch
-        /// starts that the other player never agreed to.
+        /// ⚠️ NGO PEER 0 IS A REAL VOTER AND MUST STAY DISTINCT FROM CLIENT 1. Mapping the host
+        /// to its seat number makes a host in seat 1 collide with client id 1 and strands the
+        /// gate one vote short forever.
         /// </summary>
         [Fact]
-        public void Rematch_TheHostsOwnPressIsResolvedToItsRealId()
+        public void Rematch_HostPeerZeroNeverCollidesWithClientOne()
         {
             var vote = new RematchVote();
 
-            Assert.True(vote.Add(0, hostPeerId: 1));
-            Assert.False(vote.Add(1, hostPeerId: 1));
+            Assert.True(vote.Add(0));
+            Assert.True(vote.Add(1));
 
-            Assert.Equal(1, vote.Count);
-            Assert.True(vote.HasVoted(0, hostPeerId: 1));
-            Assert.True(vote.HasVoted(1, hostPeerId: 1));
+            Assert.Equal(2, vote.Count);
+            Assert.True(vote.HasVoted(0));
+            Assert.True(vote.HasVoted(1));
+            Assert.True(vote.Satisfied(2));
         }
 
         /// <summary>⚠️ A SECOND PRESS FROM ONE PEER CHANGES NOTHING. It is a set, exactly as the
@@ -1128,9 +1127,9 @@ namespace TumbangPreso.Core.Tests
         {
             var vote = new RematchVote();
 
-            vote.Add(2, hostPeerId: 1);
-            vote.Add(2, hostPeerId: 1);
-            vote.Add(3, hostPeerId: 1);
+            vote.Add(2);
+            vote.Add(2);
+            vote.Add(3);
 
             Assert.Equal(2, vote.Count);
             Assert.False(vote.Satisfied(3));
@@ -1148,8 +1147,8 @@ namespace TumbangPreso.Core.Tests
         {
             var vote = new RematchVote();
 
-            vote.Add(1, hostPeerId: 1);
-            vote.Add(2, hostPeerId: 1);
+            vote.Add(1);
+            vote.Add(2);
             Assert.False(vote.Satisfied(3));
 
             // Peer 3 quits without voting. Two of two remaining have pressed.
@@ -1176,7 +1175,7 @@ namespace TumbangPreso.Core.Tests
             Assert.False(vote.Satisfied(0));
             Assert.False(vote.Satisfied(1));
 
-            vote.Add(1, hostPeerId: 1);
+            vote.Add(1);
             vote.Clear();
             Assert.False(vote.Satisfied(0));
         }

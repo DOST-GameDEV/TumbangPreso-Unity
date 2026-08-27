@@ -5,14 +5,10 @@ namespace TumbangPreso.Core
     /// <summary>
     /// Who has pressed REMATCH, and whether that is everybody.
     ///
-    /// ⚠️⚠️ IT IS ENGINE-FREE BECAUSE EVERY BUG THIS EVER HAD WAS A COUNTING BUG. `docs/TODO.md`
-    /// § 1 is the last PARTIAL row in the ledger and its warning is that the wire half cannot be
-    /// finished honestly without two real processes on a LAN. That is true of the TRANSPORT. It
-    /// is not true of the rules the transport carries, and those are the parts that went wrong
-    /// in the ready gate before they went wrong here: a host whose own press arrives with a
-    /// sender id of 0 and therefore never satisfies its own gate, a peer whose second press is
-    /// counted twice, and a peer that leaves mid-vote and strands everybody still watching.
-    /// Here they are assertions that run in a millisecond from a terminal.
+    /// ⚠️⚠️ IT IS ENGINE-FREE BECAUSE EVERY BUG THIS EVER HAD WAS A COUNTING BUG. The wire still
+    /// needs a two-process gameplay run, but the rules it carries can be asserted in a
+    /// millisecond: peer zero remains a real voter, a second press changes nothing, and a peer
+    /// that leaves mid-vote cannot strand everybody still watching.
     ///
     /// ⚠️ IT COUNTS PEERS, NEVER SEATS. Four seats are always filled; bot-filled ones cannot
     /// press a button. `ReadyGate` learned this and `MatchResult` copies it, which is why the
@@ -30,22 +26,16 @@ namespace TumbangPreso.Core
         /// <summary>
         /// Record a vote. Returns false when it changed nothing.
         ///
-        /// ⚠️⚠️ A SENDER ID OF 0 IS THE HOST, RESOLVED AT THE DOOR. `ReadyGate.DeclareReady`
-        /// carries the same line and the same note: in Godot the host's own press came through
-        /// with 0 rather than with its real id, and the fix has to be here rather than in a
-        /// second code path, or the host can never satisfy a gate it is itself part of.
+        /// ⚠️⚠️ NGO CLIENT ID 0 IS THE HOST'S REAL PEER ID. Do not remap it to a seat. Seats and
+        /// transport peers are different namespaces, and a host in seat 1 beside client 1 would
+        /// otherwise collapse two voters into one set entry and leave the gate permanently short.
         /// </summary>
-        public bool Add(int peerId, int hostPeerId)
-        {
-            if (peerId == 0) peerId = hostPeerId;
-            return _voters.Add(peerId);
-        }
+        public bool Add(int peerId) => _voters.Add(peerId);
 
         /// <summary>A peer disconnected. Returns false when it was not voting anyway.</summary>
         public bool Remove(int peerId) => _voters.Remove(peerId);
 
-        public bool HasVoted(int peerId, int hostPeerId)
-            => _voters.Contains(peerId == 0 ? hostPeerId : peerId);
+        public bool HasVoted(int peerId) => _voters.Contains(peerId);
 
         /// <summary>
         /// Is the gate open?

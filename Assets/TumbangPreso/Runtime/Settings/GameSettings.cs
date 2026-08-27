@@ -10,8 +10,8 @@ namespace TumbangPreso.Settings
     ///
     /// ⚠️⚠️ IT WRITES A JSON FILE, NOT PlayerPrefs, AND THE REASON IS THE DEDICATED SERVER.
     /// PlayerPrefs on Windows is the registry, on Linux it is a file under a config directory
-    /// that assumes a normal user home. The Singapore VPS runs a headless Linux server build,
-    /// often in a container, and anything that assumes a writable home or a display is a
+    /// that assumes a normal user home. A headless Linux server build often runs in a container,
+    /// and anything that assumes a writable home or a display is a
     /// failure that only ever appears in production. A JSON file next to the persistent data
     /// path is inspectable, diffable, and can simply fail to load without taking the server
     /// with it.

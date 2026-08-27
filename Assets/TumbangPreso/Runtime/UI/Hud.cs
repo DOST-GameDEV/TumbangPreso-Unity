@@ -1222,6 +1222,13 @@ namespace TumbangPreso.UI
             if (GameServices.Match.IsWarmupBuffer)
             {
                 _round.text = WarmupLine;
+
+                // ⚠️⚠️ THE ROUND-LINE CACHE IS DROPPED HERE, and forgetting this is how a guard
+                // like it turns into a stuck label. This branch writes the label itself, so the
+                // else branch's "nothing I read has moved" would otherwise be true on the frame
+                // the warm-up ends and `WARM UP` would stay on the screen for the whole round.
+                _roundLineReady = false;
+
                 FitTopCentre();
                 _timer.color = UiTheme.Highlight;
                 _urgent = -1;
@@ -1252,10 +1259,38 @@ namespace TumbangPreso.UI
 
                 _roundLineFullLeft = Mathf.Max(0.0f, _roundLineFullLeft - dt);
 
-                _round.text = _roundLineFullLeft > 0.0f
-                    ? RoundLine(round, GameServices.Match.TotalRounds,
-                                SeatName(GameServices.Match.DefenderSlot))
-                    : ShortRoundLine(round, GameServices.Match.TotalRounds);
+                // ⚠️⚠️ THE LINE IS FORMATTED WHEN IT CHANGES, NOT WHEN IT IS DRAWN. Both
+                // formatters are interpolated strings, so this built one or two strings plus
+                // their boxed arguments on EVERY frame of every round and then handed them to a
+                // `Text` setter that compares and usually discards them. `FitTopCentre` below
+                // already guards on the finished string, which is what made the waste invisible:
+                // the expensive half ran before the guard could refuse it. `HudPerformanceProbe`
+                // is the measurement, and `CLAUDE.md` section 7.1 records the last time a HUD
+                // string rebuilt every frame cost the behaviour probe an eighth of its frames.
+                //
+                // ⚠️ THE INPUTS ARE COMPARED, NOT THE OUTPUT. Comparing the finished string
+                // would mean building it first, which is the thing being removed. The defender's
+                // NAME is one of them because a seat can change hands without the round number
+                // moving, which is the same trap `UpdateScores` records above its own stamp.
+                bool namesTaya = _roundLineFullLeft > 0.0f;
+                int totalRounds = GameServices.Match.TotalRounds;
+                int defenderSlot = GameServices.Match.DefenderSlot;
+                string defenderName = namesTaya ? SeatName(defenderSlot) : null;
+
+                if (!_roundLineReady || namesTaya != _roundLineNamedTaya ||
+                    round != _roundLineRound || totalRounds != _roundLineTotal ||
+                    defenderName != _roundLineDefenderName)
+                {
+                    _roundLineReady = true;
+                    _roundLineNamedTaya = namesTaya;
+                    _roundLineRound = round;
+                    _roundLineTotal = totalRounds;
+                    _roundLineDefenderName = defenderName;
+
+                    _round.text = namesTaya
+                        ? RoundLine(round, totalRounds, defenderName)
+                        : ShortRoundLine(round, totalRounds);
+                }
 
                 FitTopCentre();
 
@@ -1306,7 +1341,12 @@ namespace TumbangPreso.UI
             return who != null ? who.DisplayName() : $"P{slot + 1}";
         }
 
-        private string _scoreStamp = "";
+        private readonly int[] _scoreStampScores = new int[Balance.PlayerCount];
+        private readonly string[] _scoreStampNames = new string[Balance.PlayerCount];
+        private readonly bool[] _scoreStampOccupied = new bool[Balance.PlayerCount];
+        private bool _scoreStampReady;
+        private int _scoreStampDefender = int.MinValue;
+        private int _scoreStampLocal = int.MinValue;
 
         /// <summary>
         /// ⚠️ SORTED BY SCORE, NOT BY SEAT, AND THE BADGE SAYS WHO IS DEFENDING. Both halves
@@ -1320,21 +1360,46 @@ namespace TumbangPreso.UI
 
             var m = GameServices.Match;
 
-            // ⚠️⚠️ THE NAMES ARE PART OF THE STAMP, AND LEAVING THEM OUT WAS A REAL BUG. A seat
-            // changing hands renames a row without touching a score, so a board keyed on scores
-            // alone went on showing the name of the human who left until somebody scored.
-            var sb = new System.Text.StringBuilder();
+            // ⚠️⚠️ COMPARE THE VALUES BEFORE FORMATTING ANYTHING. This used to allocate a new
+            // `StringBuilder` and a new stamp string on every frame, then compare that string and
+            // return. `HudPerformanceProbe` measured the stable HUD at 952 B/frame over the same
+            // frozen match with the HUD disabled, about 57 KB/s at 60 fps. A guard after the
+            // allocation is the allocation wearing a comment that says it is guarded.
+            //
+            // ⚠️ THE NAMES AND OCCUPANCY ARE STILL PART OF THE STAMP. Leaving either out is a
+            // real bug: a seat can change hands without changing a score, and a practice chair
+            // can disappear while its fallback name stays the same.
+            bool changed = !_scoreStampReady;
+
             for (int slot = 0; slot < Balance.PlayerCount; slot++)
-                sb.Append(m.ScoreFor(slot)).Append(':').Append(SeatName(slot)).Append('|');
+            {
+                int score = m.ScoreFor(slot);
+                var occupant = GameServices.Round?.PlayerAt(slot);
+                bool occupied = occupant != null;
+                string name = occupied ? occupant.DisplayName() : null;
 
-            sb.Append(m.DefenderSlot);
+                if (_scoreStampScores[slot] != score ||
+                    _scoreStampOccupied[slot] != occupied ||
+                    _scoreStampNames[slot] != name)
+                    changed = true;
 
-            string stamp = sb.ToString();
-            if (stamp == _scoreStamp) return;
-            _scoreStamp = stamp;
+                _scoreStampScores[slot] = score;
+                _scoreStampOccupied[slot] = occupied;
+                _scoreStampNames[slot] = name;
+            }
+
+            int localSlot = _local != null ? _local.PlayerSlot : -1;
+            if (_scoreStampDefender != m.DefenderSlot || _scoreStampLocal != localSlot)
+                changed = true;
+
+            _scoreStampDefender = m.DefenderSlot;
+            _scoreStampLocal = localSlot;
+            _scoreStampReady = true;
+
+            if (!changed) return;
 
             int[] order = m.Ranking();
-            int mine = _local != null ? _local.PlayerSlot : -1;
+            int mine = localSlot;
 
             for (int i = 0; i < _scoreNames.Length; i++)
             {
@@ -1428,6 +1493,12 @@ namespace TumbangPreso.UI
             {
                 var row = _scoreRows[i];
                 if (row == null) continue;
+
+                if (_scorePulses[i] <= 0.0f)
+                {
+                    if (row.localScale != Vector3.one) row.localScale = Vector3.one;
+                    continue;
+                }
 
                 _scorePulses[i] = Mathf.Max(0.0f, _scorePulses[i] - dt);
                 float ratio = Mathf.Clamp01(_scorePulses[i] / 0.34f);
@@ -2041,6 +2112,24 @@ namespace TumbangPreso.UI
         /// HUD already works out the local unit once a frame and a second scan would be a second
         /// answer to the same question.
         /// </summary>
+        /// <summary>
+        /// ⚠️⚠️ THE SLIPPER IS REMEMBERED, NOT RE-FOUND EVERY FRAME. This method ran
+        /// `FindObjectsByType<Slipper>` unconditionally on every HUD tick: a whole-scene type
+        /// scan plus a fresh `Slipper[]` per frame, for an answer that changes at most a handful
+        /// of times a round. It was the single largest managed allocation left on a stable HUD
+        /// frame. `UpdatePickupPrompt` already refused to pay this and rate-limits its own scan;
+        /// this row simply had not been looked at.
+        ///
+        /// ⚠️ IT IS A VALIDATED CACHE RATHER THAN A TIMER, so the arrow is never stale. A rate
+        /// limit would leave the arrow pointing at a slipper for up to its interval after the
+        /// slipper stopped being the right one, and this arrow is one of only two in-world
+        /// markers that answer "what am I doing" (`OffscreenIndicators`). The three things that
+        /// can invalidate it are all checked on the frame they happen: the object being
+        /// destroyed, the object being switched off (`FindObjectsInactive.Exclude` would have
+        /// skipped it), and the seat changing hands under this HUD.
+        /// </summary>
+        private Slipper _ownSlipper;
+
         private void UpdateIndicators()
         {
             if (_indicators == null) return;
@@ -2049,14 +2138,22 @@ namespace TumbangPreso.UI
 
             // Your own slipper is the one that answers to your seat. `OwnerSlot` is what makes
             // "yours" well-defined at all.
-            Transform mine = null;
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude,
-                                                         FindObjectsSortMode.None))
+            if (_ownSlipper == null ||
+                !_ownSlipper.gameObject.activeInHierarchy ||
+                _ownSlipper.OwnerSlot != _local.PlayerSlot)
             {
-                if (s.OwnerSlot != _local.PlayerSlot) continue;
-                mine = s.transform;
-                break;
+                _ownSlipper = null;
+
+                foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude,
+                                                             FindObjectsSortMode.None))
+                {
+                    if (s.OwnerSlot != _local.PlayerSlot) continue;
+                    _ownSlipper = s;
+                    break;
+                }
             }
+
+            Transform mine = _ownSlipper != null ? _ownSlipper.transform : null;
 
             var lata = GameServices.Round?.Lata;
             _indicators.UpdateArrows(_local, carrier, mine, lata != null ? lata.transform : null);
@@ -2611,6 +2708,14 @@ namespace TumbangPreso.UI
 
         private int _roundLineShown = -1;
         private float _roundLineFullLeft;
+
+        // ⚠️ THE INPUTS THE ROUND LINE IS BUILT FROM, so `UpdateTimer` can refuse to format it
+        // again on a frame where none of them moved. See the note at the assignment.
+        private bool _roundLineReady;
+        private bool _roundLineNamedTaya;
+        private int _roundLineRound = int.MinValue;
+        private int _roundLineTotal = int.MinValue;
+        private string _roundLineDefenderName;
 
         /// <summary>
         /// Every string the top-centre card can ever show, worst first.
@@ -4031,6 +4136,29 @@ namespace TumbangPreso.UI
         /// <summary>The key bound to an action, for anything outside this class that draws one.</summary>
         public static string KeyLabelFor(string action) => KeyLabel(action);
 
+        /// <summary>
+        /// ⚠️⚠️ THE ANSWER IS CACHED UNTIL A BINDING ACTUALLY MOVES, AND THAT IS A MEASUREMENT
+        /// RATHER THAN A TIDY-UP. Resolving one label is `FindActionMap`, `FindAction`,
+        /// `InputControlPath.ToHumanReadableString` and a `ToUpperInvariant`, the last two of
+        /// which allocate, and the prompts that name a key (get up, break the stun, pick up, the
+        /// inspect hint) called it on every frame they were on screen. `HudPerformanceProbe` is
+        /// how the cost is known.
+        ///
+        /// ⚠️ IT IS KEYED ON `Settings.Rebinding.Revision`, NOT ON A TIMER OR ON NOTHING.
+        /// `docs/VISION.md` section 3: *"Key labels come from the live binding, never from a
+        /// literal. A screen that teaches the wrong key is worse than one that teaches none."*
+        /// A cache that outlived a rebind would be that literal wearing a different name, so the
+        /// whole table is dropped on the frame any binding changes.
+        ///
+        /// ⚠️ AND THE ASSET-MISSING FALLBACK IS DELIBERATELY NOT CACHED. It is returned before
+        /// the bindings have been loaded at all, and caching it would pin `Q` onto a prompt for
+        /// the rest of the session on the strength of one early frame.
+        /// </summary>
+        private static readonly System.Collections.Generic.Dictionary<string, string> _keyLabels =
+            new System.Collections.Generic.Dictionary<string, string>();
+
+        private static int _keyLabelsRevision = -1;
+
         private static string KeyLabel(string action)
         {
             if (_bindingAsset == null)
@@ -4041,6 +4169,21 @@ namespace TumbangPreso.UI
 
             if (_bindingAsset == null) return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
 
+            if (_keyLabelsRevision != Settings.Rebinding.Revision)
+            {
+                _keyLabelsRevision = Settings.Rebinding.Revision;
+                _keyLabels.Clear();
+            }
+
+            if (_keyLabels.TryGetValue(action, out string cached)) return cached;
+
+            string resolved = ResolveKeyLabel(action);
+            _keyLabels[action] = resolved;
+            return resolved;
+        }
+
+        private static string ResolveKeyLabel(string action)
+        {
             var map = _bindingAsset.FindActionMap("Player");
             var act = map?.FindAction(action);
 
