@@ -20,6 +20,26 @@ namespace TumbangPreso.Visual
     {
         private static Material _lit;
 
+        /// <summary>
+        /// ⚠️ ONE BLOCK, REUSED, BECAUSE A MaterialPropertyBlock IS A WRITE BUFFER RATHER THAN A
+        /// STATE. `GetPropertyBlock` overwrites its whole contents from the renderer and
+        /// `SetPropertyBlock` copies it into the renderer, so nothing survives the call and there
+        /// is nothing for a second caller to disturb. `CharacterVisual` already holds one for the
+        /// same reason. A fresh one per call was allocating on a path that runs once per
+        /// accessory: `ViewmodelArms.ApplyCharacterStyle` dresses the two arms plus about nine
+        /// accessories between them on every character change, so eleven blocks a pick.
+        /// </summary>
+        private static readonly MaterialPropertyBlock Block = new MaterialPropertyBlock();
+
+        /// <summary>
+        /// ⚠️ BOTH SPELLINGS, FOR THE REASON `CharacterVisual.ColourIds` STATES AT LENGTH: a
+        /// block writes a NAMED property and is silently discarded when the shader has none by
+        /// that name. `_Color` is the built-in pipeline's albedo and `_BaseColor` is URP's, and
+        /// this project can be rendering on either.
+        /// </summary>
+        private static readonly int ColorId = Shader.PropertyToID("_Color");
+        private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+
         public static Material Lit
         {
             get
@@ -92,11 +112,17 @@ namespace TumbangPreso.Visual
                 renderer.sharedMaterials = slots;
             }
 
-            var block = new MaterialPropertyBlock();
-            renderer.GetPropertyBlock(block);
-            block.SetColor("_Color", tint);
-            block.SetColor("_BaseColor", tint);
-            renderer.SetPropertyBlock(block);
+            // ⚠️ CLEARED BEFORE IT IS FILLED, AND THAT IS THE PRICE OF SHARING ONE. Nothing here
+            // documents whether `GetPropertyBlock` empties its destination first, and a renderer
+            // that has no block at all may leave it exactly as it was. Both properties below are
+            // written unconditionally so today nothing could bleed, but a third property added on
+            // one branch and not another would carry the LAST renderer's value onto this one,
+            // which is a tint that follows an accessory around and is not traceable to this line.
+            Block.Clear();
+            renderer.GetPropertyBlock(Block);
+            Block.SetColor(ColorId, tint);
+            Block.SetColor(BaseColorId, tint);
+            renderer.SetPropertyBlock(Block);
         }
 
         /// <summary>How many surfaces this renderer's mesh actually has. 1 when there is no mesh
