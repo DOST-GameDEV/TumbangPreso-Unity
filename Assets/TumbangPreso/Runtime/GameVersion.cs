@@ -42,14 +42,23 @@ namespace TumbangPreso
         /// ⚠️ IT READS `bundleVersion` RATHER THAN A COPY, which is the original point of this
         /// class and is unchanged: there is still one number to bump and it is not in here.
         /// </summary>
-        public static string DisplayString
-        {
-            get
-            {
-                string branch = BuildBranch.Name;
-                return string.IsNullOrEmpty(branch) ? "v" + Value : branch;
-            }
-        }
+        /// <summary>
+        /// What the bottom-right corner reads.
+        ///
+        /// ⚠️⚠️ IT IS THE VERSION AGAIN, ON EVERY BRANCH. 🧑 2026-08-28, pointing at a corner
+        /// reading `integration/ui-batch-on-ilalim`: *"pls replace the version number to 1.00"*,
+        /// *"instead of this"*. The version is what goes in a screenshot to a sponsor and what a
+        /// player quotes in a report, and the game is at 1.00 now rather than mid-port.
+        ///
+        /// ⚠️ THE BRANCH MACHINERY IS KEPT, NOT DELETED, and this is the only line that decides.
+        /// `GameBuilder.StampBuildBranch` still writes `Resources/BuildBranch.txt` on every build
+        /// and `BuildBranch.Name` still reads it, so answering "which branch is this .exe" is one
+        /// line away whenever it is wanted again. The reason it existed is real and is recorded
+        /// in `CLAUDE.md` § 7: several branches in flight all read the same version, and the only
+        /// way to tell two .exe files apart was to diff them. **If that bites again, return this
+        /// to `BuildBranch.Name` rather than rebuilding the feature.**
+        /// </summary>
+        public static string DisplayString => "v" + Value;
 
         /// <summary>
         /// How wide the corner label has to be for what it is about to say.
@@ -90,7 +99,11 @@ namespace TumbangPreso
             label.alignment = TextAnchor.MiddleRight;
 
             var rect = label.rectTransform;
-            float width = string.IsNullOrEmpty(BuildBranch.Name) ? NumberWidth : BranchWidth;
+            // ⚠️ THE WIDE BOX IS KEPT FOR THE BRANCH CASE even though `DisplayString` does not
+            // use it today, because the sizing and the string must not be able to disagree: a
+            // label sized for `v1.00` silently WRAPS a branch name (legacy `Text` defaults to
+            // wrap), which is the trap `ConvertedScreen.SetHeadline` records for the third time.
+            float width = shown.Length <= 8 ? NumberWidth : BranchWidth;
             rect.sizeDelta = new Vector2(width, rect.sizeDelta.y);
         }
 

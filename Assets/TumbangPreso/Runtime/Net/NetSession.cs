@@ -107,7 +107,13 @@ namespace TumbangPreso.Net
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =
             new Dictionary<ulong, ConnectionHello>();
-        private bool _seatHandlerRegistered;
+        /// <summary>
+        /// ⚠️ THE MANAGER THIS IS REGISTERED ON, for the reason `MatchRpc._handlersOn` spells
+        /// out at length: `Shutdown` destroys the `CustomMessagingManager` and a bool saying
+        /// "already done" then refuses to register on its replacement, so the seat message
+        /// stopped arriving after the first session of a process.
+        /// </summary>
+        private Unity.Netcode.CustomMessagingManager _seatHandlerOn;
         private LanBeacon _beacon;
 #if MULTIPLAY_SDK
         private IServerQueryHandler _serverQueryHandler;
@@ -188,7 +194,7 @@ namespace TumbangPreso.Net
                 _nm.OnClientDisconnectCallback -= OnClientDisconnected;
                 _nm.ConnectionApprovalCallback -= ApproveConnection;
 
-                if (_seatHandlerRegistered && _nm.CustomMessagingManager != null)
+                if (_seatHandlerOn != null && _nm.CustomMessagingManager != null)
                     _nm.CustomMessagingManager.UnregisterNamedMessageHandler(SeatAssignmentMessage);
             }
 
@@ -237,6 +243,13 @@ namespace TumbangPreso.Net
             }
 
             bool ok = dedicated ? _nm.StartServer() : _nm.StartHost();
+
+            // ⚠️ ALL FOUR START PATHS REGISTER THE SEAT HANDLER, and this one was the last that
+            // did not. A listen host is its own client, so `SendSeatAssignment` applies its seat
+            // locally and it has never needed the message; that is an argument for it being
+            // harmless, not for it being absent. Four routes to one outcome differing in any
+            // detail is how `docs/TODO.md` sections 53.1, 57.1, 60, 62.1 and 63.1 each happened.
+            if (ok) RegisterSeatHandler();
             SetStatus(ok
                 ? $"hosting on {port}, join code {Lobby.JoinCode}"
                 : "failed to start hosting");
@@ -429,6 +442,13 @@ namespace TumbangPreso.Net
                 ConfigureClientHello();
 
                 bool ok = _nm.StartHost();
+
+                // ⚠️ THE RELAY HOST REGISTERS THE SEAT HANDLER TOO, exactly as `StartHost` does.
+                // A listen host is also its own client, so the message can reach it, and the two
+                // start paths differing at all is how one of them ends up missing a step nobody
+                // notices until a player is stuck. Same reasoning as `docs/TODO.md` § 60: two
+                // routes to one outcome, one of them a subset.
+                if (ok) RegisterSeatHandler();
                 SetStatus(ok
                     ? $"relay hosting active, code {Lobby.JoinCode} (relay {relayCode})"
                     : "failed to start relay host");
@@ -541,9 +561,25 @@ namespace TumbangPreso.Net
         /// </summary>
         private bool _localShutdown;
 
+        /// <summary>
+        /// ⚠️⚠️ TRUE ONLY ONCE THIS PEER HAS ACTUALLY BEEN LET IN, AND IT IS WHAT STOPS THE
+        /// DISCONNECT HANDLER FIRING DURING A JOIN. `OnClientDisconnectCallback` is raised for a
+        /// connection that never completed as readily as for one that was lost: a refused
+        /// approval, a retry inside `MaxConnectAttempts`, and a transport rebind all reach it
+        /// while the player is still on their way in. § 62.1 sends a disconnected peer back to
+        /// the join screen, and without this that navigation fired mid-handshake and bounced the
+        /// player out of the lobby they had just entered. 🧑 2026-08-28, one build after it
+        /// landed: *"oh shit now i cant join any game wtf"*.
+        ///
+        /// ⚠️ CLEARED ON THE WAY OUT AND ON THE WAY IN, so a second join starts from false and
+        /// cannot inherit the last session's answer.
+        /// </summary>
+        private bool _everConnected;
+
         public void Stop()
         {
             _localShutdown = true;
+            _everConnected = false;
             _beacon.StopAll();
             if (Query != null) _ = Query.DeleteHostedLobbyAsync();
 
@@ -734,11 +770,12 @@ namespace TumbangPreso.Net
 
         private void RegisterSeatHandler()
         {
-            if (_seatHandlerRegistered || _nm?.CustomMessagingManager == null) return;
+            if (_nm?.CustomMessagingManager == null) return;
+            if (ReferenceEquals(_seatHandlerOn, _nm.CustomMessagingManager)) return;
 
             _nm.CustomMessagingManager.RegisterNamedMessageHandler(
                 SeatAssignmentMessage, OnSeatAssignmentMessage);
-            _seatHandlerRegistered = true;
+            _seatHandlerOn = _nm.CustomMessagingManager;
         }
 
         private void OnSeatAssignmentMessage(ulong senderClientId, FastBufferReader reader)
@@ -806,6 +843,7 @@ namespace TumbangPreso.Net
             {
                 if (clientId == _nm.LocalClientId)
                 {
+                    _everConnected = true;
                     MatchRpc.Instance?.Initialize(_nm);
                     SetStatus("connected");
                     var s = Settings.SettingsStore.Current;
@@ -894,7 +932,9 @@ namespace TumbangPreso.Net
             // player is already navigating; announcing it and dragging them to the join screen
             // would fight the button they just pressed.
             bool wasLocal = _localShutdown;
+            bool wasConnected = _everConnected;
             _localShutdown = false;
+            _everConnected = false;
 
             LocalSlot = 0;
             IsRelay = false;
@@ -902,7 +942,10 @@ namespace TumbangPreso.Net
             _helloByClient.Clear();
             Lobby.Reset();
 
-            if (wasLocal) return;
+            // ⚠️ A CONNECTION THAT NEVER COMPLETED IS NOT A DISCONNECTION. The join screen is
+            // already showing the attempt and reports its own failure; navigating from here as
+            // well takes the player out of a lobby they are still arriving in.
+            if (wasLocal || !wasConnected) return;
 
             LastDisconnectReason = PlayerFacingDisconnectReason(reason);
             ClientDisconnected?.Invoke(LastDisconnectReason);
