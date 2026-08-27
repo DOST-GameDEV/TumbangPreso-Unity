@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -27,6 +28,22 @@ namespace TumbangPreso.EditorTools
     {
         private const string PersonDir = "Assets/TumbangPreso/Art/characters/persons";
         private const string PropDir = "Assets/TumbangPreso/Art/models";
+
+        /// <summary>
+        /// ⚠️⚠️ THE FIRST-PERSON HANDS LIVE HERE, NOT IN `PropDir`, AND MISSING THIS DIRECTORY IS
+        /// WHY THEY KEPT A TORN OUTLINE AFTER EVERYTHING ELSE WAS FIXED. `ViewmodelArms` builds
+        /// both arms from `Resources.Load&lt;Mesh&gt;("Models/viewmodel_arm")`, which resolves to
+        /// `Resources/Models/viewmodel_arm.obj` and NOT to the byte-identical copy in
+        /// `Art/models/`. Walking only `PropDir` set `isReadable` on the copy nothing loads, so
+        /// `OutlineNormals.Weld` still found no CPU copy on the mesh actually in front of the
+        /// camera and returned early. Reported 2026-08-27, after the cast was already fixed.
+        ///
+        /// ⚠️ `tsinelas_classic.obj` IS DUPLICATED HERE TOO, for the slipper held in first
+        /// person. Both files are byte-identical to their `Art/models/` twins. That duplication
+        /// is not this method's to resolve, but it IS the reason this directory has to be walked
+        /// separately rather than assumed to be covered.
+        /// </summary>
+        private const string ResourceModelDir = "Assets/TumbangPreso/Resources/Models";
 
         [MenuItem("Tumbang Preso/Fix Model Import Settings")]
         public static void RunFromMenu() => Execute();
@@ -79,7 +96,16 @@ namespace TumbangPreso.EditorTools
                 people++;
             }
 
-            foreach (var path in Directory.GetFiles(PropDir, "*.obj", SearchOption.AllDirectories))
+            var propPaths = Directory.GetFiles(PropDir, "*.obj", SearchOption.AllDirectories);
+
+            if (Directory.Exists(ResourceModelDir))
+            {
+                propPaths = propPaths
+                    .Concat(Directory.GetFiles(ResourceModelDir, "*.obj", SearchOption.AllDirectories))
+                    .ToArray();
+            }
+
+            foreach (var path in propPaths)
             {
                 var importer = AssetImporter.GetAtPath(path.Replace('\\', '/')) as ModelImporter;
                 if (importer == null) continue;

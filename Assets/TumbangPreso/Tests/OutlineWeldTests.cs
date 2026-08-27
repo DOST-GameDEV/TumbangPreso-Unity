@@ -28,6 +28,16 @@ namespace TumbangPreso.Tests
         private const string PropDir = "Assets/TumbangPreso/Art/models";
 
         /// <summary>
+        /// ⚠️⚠️ THE FIRST-PERSON HANDS ARE LOADED FROM HERE AND NOT FROM `PropDir`, WHICH IS HOW
+        /// THEY SURVIVED THE FIRST ROUND OF THIS FIX WITH A TORN OUTLINE. `ViewmodelArms` calls
+        /// `Resources.Load&lt;Mesh&gt;("Models/viewmodel_arm")`, and that resolves to the copy in
+        /// `Resources/Models/` rather than to the byte-identical file in `Art/models/`. The suite
+        /// passed while the arms in front of the camera were still unwelded, because it was
+        /// looking at the wrong copy of the same mesh. Reported 2026-08-27.
+        /// </summary>
+        private const string ResourceModelDir = "Assets/TumbangPreso/Resources/Models";
+
+        /// <summary>
         /// ⚠️ THE `env_` MODELS ARE EXCLUDED, AND THE EXCLUSION IS THE 2026-07-29 REVERT. The world
         /// toon pass shipped once, was played and was pulled for banding on large flat surfaces and
         /// for the cost of an inverted hull on every mesh in a dressed street. `EnvColourPass`
@@ -39,10 +49,21 @@ namespace TumbangPreso.Tests
         /// </summary>
         private static IEnumerable<string> Rigs =>
             Directory.GetFiles(PersonDir, "*.glb", SearchOption.AllDirectories)
-                     .Concat(Directory.GetFiles(PropDir, "*.obj", SearchOption.TopDirectoryOnly)
-                                      .Where(p => !Path.GetFileName(p).StartsWith("env_")))
+                     .Concat(Directory.GetFiles(PropDir, "*.obj", SearchOption.TopDirectoryOnly))
+                     .Concat(Directory.Exists(ResourceModelDir)
+                                 ? Directory.GetFiles(ResourceModelDir, "*.obj", SearchOption.AllDirectories)
+                                 : new string[0])
+                     .Where(p => !Path.GetFileName(p).StartsWith("env_"))
                      .Select(p => p.Replace('\\', '/'))
                      .OrderBy(p => p);
+
+        /// <summary>
+        /// ⚠️ NAMED EXPLICITLY RATHER THAN LEFT TO THE DIRECTORY SWEEP. A sweep proves whatever
+        /// happens to be on disk is welded; it cannot notice that the one mesh the player looks at
+        /// for the whole match is absent from it. This is the asset path `ViewmodelArms` actually
+        /// loads, spelled the way it spells it.
+        /// </summary>
+        private const string FirstPersonArm = ResourceModelDir + "/viewmodel_arm.obj";
 
         private static IEnumerable<Mesh> MeshesIn(string path) =>
             AssetDatabase.LoadAllAssetsAtPath(path).OfType<Mesh>();
@@ -125,6 +146,69 @@ namespace TumbangPreso.Tests
             }
 
             Assert.Greater(checkedMeshes, 0, "No readable rig meshes were checked.");
+        }
+
+        /// <summary>
+        /// § THE FIRST-PERSON HANDS, ASSERTED SEPARATELY BECAUSE THEY ARE THE MESH ON SCREEN MOST.
+        ///
+        /// 🧑 2026-08-27, after the cast and the props were already fixed: *"can you apply it also
+        /// to the hands in first person view"*. They were genuinely still broken, and the reason is
+        /// worth keeping: `ViewmodelArms` loads `Resources.Load&lt;Mesh&gt;("Models/viewmodel_arm")`,
+        /// which is a SECOND, byte-identical copy of `Art/models/viewmodel_arm.obj`. The import fix
+        /// and this suite both walked `Art/models` only, so both reported success against a file the
+        /// game never loads.
+        ///
+        /// ⚠️ THE PATH IS SPELLED OUT RATHER THAN GLOBBED, so that deleting or moving the asset
+        /// fails this test loudly instead of quietly shrinking a directory sweep to nothing.
+        /// </summary>
+        [Test]
+        public void TheFirstPersonArmIsWeldedAtThePathViewmodelArmsActuallyLoads()
+        {
+            Assert.IsTrue(File.Exists(FirstPersonArm),
+                $"{FirstPersonArm} is missing. ViewmodelArms loads it by " +
+                "Resources.Load<Mesh>(\"Models/viewmodel_arm\"), so if it moved, the first-person " +
+                "hands have no mesh and this suite can no longer see them.");
+
+            var meshes = MeshesIn(FirstPersonArm).ToList();
+
+            Assert.IsNotEmpty(meshes, $"{FirstPersonArm} imported no mesh.");
+
+            foreach (var mesh in meshes)
+            {
+                Assert.IsTrue(mesh.isReadable,
+                    $"The first-person arm mesh '{mesh.name}' has no CPU copy, so " +
+                    "OutlineNormals.Weld skips it and the hands keep a torn outline while every " +
+                    "other surface in the game is welded. Run ModelImportSetup.");
+
+                OutlineNormals.Weld(mesh);
+
+                var vertices = mesh.vertices;
+                var tangents = mesh.tangents;
+
+                Assert.AreEqual(vertices.Length, tangents.Length,
+                    $"The first-person arm '{mesh.name}' has no welded tangent channel.");
+
+                var seen = new Dictionary<(int, int, int), Vector3>();
+
+                for (int i = 0; i < vertices.Length; i++)
+                {
+                    var cell = (Mathf.RoundToInt(vertices[i].x * 10000.0f),
+                                Mathf.RoundToInt(vertices[i].y * 10000.0f),
+                                Mathf.RoundToInt(vertices[i].z * 10000.0f));
+
+                    var dir = new Vector3(tangents[i].x, tangents[i].y, tangents[i].z);
+
+                    if (seen.TryGetValue(cell, out var first))
+                    {
+                        Assert.Less(Vector3.Distance(first, dir), 1e-4f,
+                            $"The first-person arm tears open at vertex {i}.");
+                    }
+                    else
+                    {
+                        seen[cell] = dir;
+                    }
+                }
+            }
         }
 
         /// <summary>

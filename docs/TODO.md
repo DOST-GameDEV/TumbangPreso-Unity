@@ -5421,16 +5421,37 @@ cast had just lost. **Nothing logged and nothing looked wrong in the inspector**
 whole reason `EveryOutlinedMeshIsReadableSoTheWeldCanRun` is written as a readability assertion
 rather than as a geometry one. `ModelImportSetup` now sets `isReadable` on them.
 
+⚠️⚠️ **AND THE FIRST-PERSON HANDS SURVIVED EVEN THAT, BECAUSE THE MESH IS DUPLICATED.** 🧑
+2026-08-27, after the cast and the props were both green: *"can you apply it also to the hands in
+first person view"*. They were genuinely still torn. `ViewmodelArms` builds both arms from
+`Resources.Load<Mesh>("Models/viewmodel_arm")`, which resolves to
+`Assets/TumbangPreso/Resources/Models/viewmodel_arm.obj`, a **second, byte-identical copy** of
+`Art/models/viewmodel_arm.obj`. The import fix and the test suite both walked `Art/models` only, so
+**both reported success against a file the game never loads** while the mesh on screen for the
+entire match kept its split border. `tsinelas_classic.obj` is duplicated the same way for the
+slipper held in first person.
+
+⚠️ **That is the sharpest version of the lesson in this whole entry.** A directory sweep proves
+that whatever is on disk in that directory is correct. It cannot notice that the asset the player
+actually looks at is somewhere else. `TheFirstPersonArmIsWeldedAtThePathViewmodelArmsActuallyLoads`
+therefore names the path literally, the way `ViewmodelArms` spells it, rather than globbing.
+
+⚠️ **The duplication itself is left alone on purpose.** Deduplicating a mesh that two loaders reach
+by two different mechanisms is a separate change with its own failure modes, and it is not worth
+bundling into an outline fix. It is written down here so the next person meets it deliberately.
+
 ⚠️ **`env_` is deliberately excluded from that, and the reason is memory rather than style.**
 Readable means a second copy of the mesh in system RAM for the life of the process. The street
 never reaches `ToonSkin.Apply` at all after the 2026-07-29 world-toon revert, so it has no hull to
 weld and would be paying for a copy nothing reads.
 
-**Verified:** `OutlineWeldTests`, three tests. One asserts the rig meshes are readable at all,
+**Verified:** `OutlineWeldTests`, four tests. One asserts the rig meshes are readable at all,
 because a silent no-op on an unreadable mesh is the most likely way this regresses and it looks
 completely normal in the inspector. One asserts the closure property directly as geometry, that
 vertices sharing a position inflate the same way. One asserts the rigs still HAVE split normals,
-so the suite reports it if the premise ever stops holding.
+so the suite reports it if the premise ever stops holding. One names the first-person arm at the
+exact path `ViewmodelArms` loads, because a directory sweep cannot notice that the mesh on screen
+most of the match is filed somewhere else.
 
 ---
 
