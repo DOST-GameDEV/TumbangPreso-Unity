@@ -150,6 +150,22 @@ namespace TumbangPreso.UI
         private Image _readyPromptPlate;
         private Image _readyObjectivePlate;
 
+        /// <summary>How long the role objective stays up once the ready window opens.
+        ///
+        /// ⚠⚠ IT IS COACHING, AND COACHING HAS A SHELF LIFE. Reported as "kinda annoying":
+        /// it is one sentence a player reads once and then has to keep looking past for as long
+        /// as they want to practise, which is unbounded. Seven seconds is comfortably twice the
+        /// time it takes to read eight words and short enough to be gone before anybody starts
+        /// aiming.
+        ///
+        /// ⚠ THE PROMPT DOES NOT EXPIRE WITH IT. "Press [R] when ready" is the only way out
+        /// of the practice window, so a player who takes a minute over it must still be able to
+        /// find the key. One line goes, the instruction stays.</summary>
+        private const float ObjectiveVisibleSeconds = 7.0f;
+
+        private float _objectiveAge;
+        private bool _readyWindowOpen;
+
         private Image _dangerFlash;
         private bool _dangerHeld;
         private float _flashLeft;
@@ -347,6 +363,12 @@ namespace TumbangPreso.UI
         /// </summary>
         public void ShowReadyPrompt(bool show)
         {
+            // ⚠ RESET ON THE EDGE, NOT ON EVERY CALL. `ReadyGate` raises this once per phase
+            // transition (`Open`, `OpenNetworked`, and the countdown's close), so the objective
+            // gets its full window each time the gate opens and nothing restarts it in between.
+            if (show && !_readyWindowOpen) _objectiveAge = 0.0f;
+            _readyWindowOpen = show;
+
             if (_readyPrompt != null)
             {
                 // ⚠️ THE KEY IS READ, NOT SPELLED. A rebound ready key used to leave this
@@ -406,6 +428,17 @@ namespace TumbangPreso.UI
             // This is neutral coaching, not a role badge. Keep its rim in the HUD's quiet blue
             // so the orange accent remains reserved for live attacker and impact feedback.
             _readyObjective.color = UiTheme.Cream;
+
+            // ⚠ A REFRESH INSIDE A WINDOW THAT HAS ALREADY EXPIRED MUST NOT BRING IT BACK.
+            // Nothing calls this per frame today, but the whole point of the timer is that the
+            // line is gone for the rest of the practice window.
+            if (_objectiveAge >= ObjectiveVisibleSeconds)
+            {
+                _readyObjective.enabled = false;
+                if (_readyObjectivePlate != null) _readyObjectivePlate.enabled = false;
+                return;
+            }
+
             _readyObjective.enabled = true;
 
             if (_readyObjectivePlate != null)
@@ -414,6 +447,30 @@ namespace TumbangPreso.UI
                     UiTheme.HeroPlate, UiTheme.HeroRimLit, 2, 6);
                 _readyObjectivePlate.enabled = true;
             }
+        }
+
+        /// <summary>
+        /// Retires the role objective once it has had its <see cref="ObjectiveVisibleSeconds"/>.
+        ///
+        /// ⚠ IT DOES NOT REBUILD THE PLATE, AND THAT IS WHY IT IS NOT `RefreshObjective`.
+        /// That method calls `GodotTheme.Box`, which allocates a sprite; `CLAUDE.md` § 7.1
+        /// records a HUD string rebuilt every frame costing the probe an eighth of its frames,
+        /// and a sprite is worse than a string. This flips two `enabled` flags and returns.
+        ///
+        /// ⚠ GUARDED ON `enabled` RATHER THAN ON THE WINDOW ALONE, so a ready window that
+        /// opened before the local unit was bound (the objective is derived from the role, and
+        /// stays off until there is one) does not silently burn its seven seconds.
+        /// </summary>
+        private void UpdateReadyObjective(float dt)
+        {
+            if (!_readyWindowOpen || _readyObjective == null) return;
+            if (!_readyObjective.enabled) return;
+
+            _objectiveAge += dt;
+            if (_objectiveAge < ObjectiveVisibleSeconds) return;
+
+            _readyObjective.enabled = false;
+            if (_readyObjectivePlate != null) _readyObjectivePlate.enabled = false;
         }
 
         /// <summary>
@@ -651,6 +708,10 @@ namespace TumbangPreso.UI
             _readyObjective.enabled = false;
             if (_readyPromptPlate != null) _readyPromptPlate.enabled = false;
             if (_readyObjectivePlate != null) _readyObjectivePlate.enabled = false;
+
+            // ⚠ AND THE WINDOW IS CLOSED, not just the two labels hidden. A watcher's HUD
+            // has no ready phase to be timing.
+            _readyWindowOpen = false;
             _dangerFlash.enabled = false;
 
             // § THE STUN FROST rides along: it is a transient like the flash above, and a
@@ -863,6 +924,7 @@ namespace TumbangPreso.UI
             UpdateIndicators();
             UpdateGetUpPrompt();
             UpdatePickupPrompt();
+            UpdateReadyObjective(dt);
 
             var carrier = _local.GetComponent<Carrier>();
 
@@ -2577,12 +2639,26 @@ namespace TumbangPreso.UI
             // asphalt court with a white centre circle on it, and cream text with nothing behind
             // it is legible over exactly none of that. See the screenshot the redesign came
             // from: the objective line was unreadable at 32 pt in the brightest colour available.
-            _readyPromptPlate = BannerPlate("ReadyPromptPlate", new Vector2(0, 92),
+            // ⚠⚠ BOTH OF THESE SAT INSIDE THE ABILITY DECK, AND THE ARITHMETIC SAYS SO
+            // RATHER THAN THE SCREENSHOT. The decks are bottom-anchored with a bottom pivot, so
+            // the hero row spans y 14 to 92 (`DeckBottomMargin` + `DeckHeight`) and the Classic
+            // row spans 24 to 124. The prompt plate was pinned at 92 with a bottom pivot, which
+            // is 92 to 126: flush with the top edge of the hero deck and **32 of its 34 px
+            // inside the Classic one**. The inspect hint at 78 was fully buried by both.
+            //
+            // ⚠ STACKED UPWARD FROM THE TALLER DECK, so one set of numbers is correct in both
+            // modes. Classic's 124 is the floor; the hint takes 132 to 150 and the prompt plate
+            // 156 to 190, which leaves 8 px over the deck and 6 px between the two lines.
+            const float DeckCeiling = 124.0f;   // Classic's deck top, the taller of the two
+            const float HintY = DeckCeiling + 8.0f;
+            const float PromptY = HintY + 18.0f + 6.0f;   // the hint's own height, then a gap
+
+            _readyPromptPlate = BannerPlate("ReadyPromptPlate", new Vector2(0, PromptY),
                                             new Vector2(520, 34), UiTheme.HeroRim);
 
             _readyPrompt = HudLabel(_root, "ReadyPrompt", 17, UiTheme.Cream,
                                     TextAnchor.MiddleCenter);
-            Place(_readyPrompt.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 92),
+            Place(_readyPrompt.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, PromptY),
                   new Vector2(520, 30));
             _readyPrompt.text = "Walk around freely. Press [R] when you're ready to start the round.";
             _readyPrompt.enabled = false;
@@ -2592,18 +2668,29 @@ namespace TumbangPreso.UI
             // whatever key is actually bound.
             _inspectHint = HudLabel(_root, "InspectHint", 14,
                                     UiTheme.CreamMuted, TextAnchor.MiddleCenter, 2);
-            Place(_inspectHint.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 78),
+            Place(_inspectHint.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, HintY),
                   new Vector2(400, 18));
             _inspectHint.enabled = false;
 
-            _readyObjectivePlate = BannerPlate("ReadyObjectivePlate", new Vector2(0, -206),
+            // ⚠⚠ IT WAS DRAWN OVER THE TOP OF THE FRAME AND IT IS THE ONE LINE ON SCREEN
+            // WITH NOWHERE IT HAS TO BE. Reported off a Hero Strike frame of Ilalim ng Tulay:
+            // the banner covers things. At -206 with a top pivot it spanned 206 to 244, which
+            // lands it **inside the LATA DOWN band** (-228, 70 tall, so 228 to 298) and 2 px
+            // under the toast (160 to 204). Three transient banners in one 140 px strip.
+            //
+            // ⚠ PARKED CLEAR BELOW THE ALERT BAND RATHER THAN NUDGED. 298 is where LATA DOWN
+            // ends; 308 puts the objective's plate at 308 to 346 with 10 px of daylight, still
+            // in the top third and nowhere near the countdown at dead centre.
+            const float ObjectiveY = -308.0f;
+
+            _readyObjectivePlate = BannerPlate("ReadyObjectivePlate", new Vector2(0, ObjectiveY),
                                                new Vector2(620, 38), UiTheme.HeroRimLit,
                                                fromTop: true);
 
             _readyObjective = HudLabel(_root, "ReadyObjective", 20, UiTheme.Cream,
                                        TextAnchor.MiddleCenter);
-            Place(_readyObjective.rectTransform, new Vector2(0.5f, 1.0f), new Vector2(0, -206),
-                  new Vector2(900, 44));
+            Place(_readyObjective.rectTransform, new Vector2(0.5f, 1.0f),
+                  new Vector2(0, ObjectiveY), new Vector2(900, 44));
             _readyObjective.enabled = false;
 
             // ⚠️⚠️ THE VULNERABLE LINE IS OFF DEAD CENTRE, ON A PLAYTEST REPORT. 🧑 2026-08-02,
