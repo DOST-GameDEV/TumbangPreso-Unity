@@ -201,6 +201,24 @@ namespace TumbangPreso.Visual
             // already the right colour.
             Debug.Log($"[Env] repainted {painted} of {seen} renderers, {roofed} with a roof variant.");
 
+            // ⚠️⚠️ THE NEAR-CAMERA DISSOLVE IS DRIVEN FROM HERE, AND IT IS NOT A COLOUR JOB. See
+            // <see cref="NearFade"/> for the whole design; what belongs in THIS file is why the
+            // call sits in it. This pass is the one component both map builders attach to every
+            // map root (`IlalimNgTulayBuilder.Execute` and `TscnImporter`), and both showcase
+            // probes already drive `Apply()` by hand because `Start()` never runs in edit mode.
+            // So one line here reaches all three arenas and every render anybody has ever reviewed
+            // them from, with no new component in any `.unity` file. A component of its own would
+            // have to be added to three shipped scenes and would then be absent from every probe
+            // that did not know to look for it, which is the silent-miss shape this file already
+            // records twice.
+            //
+            // ⚠️ AFTER THE REPAINT, NOT BEFORE. `NearFade` COPIES the albedo and atlas off
+            // whatever the prop is wearing, so it has to run once the tint and the roof swap above
+            // have settled. Poles live in `Kable`, which is in none of the group lists, so nothing
+            // above touches them today; running second means that stays true if `Kable` is ever
+            // added to one.
+            NearFade.Install(root);
+
             CollectWind();
         }
 
