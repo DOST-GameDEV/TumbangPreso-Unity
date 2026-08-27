@@ -305,7 +305,30 @@ namespace TumbangPreso.Visual
             _depthNormalsRequested = want;
         }
 
-        private bool Live => _prototypeEnabled && !_missing && _opacity > 0.0f;
+        /// <summary>
+        /// ⚠️⚠️ THE RENDER STYLE IS A SECOND, INDEPENDENT VETO ON THIS PASS, AND IT IS CHECKED
+        /// HERE RATHER THAN BY CLEARING `PrototypeEnabled`. `Settings.RenderStyles`'s Chromatic
+        /// row draws the game with no ink edge anywhere, and the hull outline and this
+        /// screen-space one are one look: turning off the cast's border and leaving the street's
+        /// on would ink the buildings and not the people standing in front of them.
+        ///
+        /// It cannot be done by writing `PrototypeEnabled` false, because `CameraRig.Awake` sets
+        /// it TRUE on every match camera it builds and would put the outline back on the next
+        /// respawn or scene load. It also must not be, for a reason the toggle's own note gives:
+        /// that flag is the prototype's switch and is meant to be read as "is this prototype
+        /// being evaluated at all", which is a different question from "does the style the player
+        /// picked have ink in it". Two answers, two fields.
+        ///
+        /// ⚠️ READ EVERY FRAME OFF A STATIC, exactly as `Visual.PostAntiAlias` reads
+        /// `AntiAliasModes.FxaaActive`, which is what makes the settings pick change the frame
+        /// while the panel is still open. It gates `LateUpdate` as well as `OnRenderImage`, so
+        /// the Chromatic style also stops paying for the depth-normals request and the exclusion
+        /// mask rebuild rather than only for the composite.
+        /// </summary>
+        private bool Live => _prototypeEnabled
+                             && Settings.RenderStyles.InkOutlinesActive
+                             && !_missing
+                             && _opacity > 0.0f;
 
         private void LateUpdate() => RequestDepthNormals(Live);
 

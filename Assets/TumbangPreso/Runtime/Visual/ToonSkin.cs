@@ -62,6 +62,66 @@ namespace TumbangPreso.Visual
         private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
         private static readonly int OutlineWidthId = Shader.PropertyToID("_OutlineWidth");
 
+        // ------------------------------------------------------------------ § THE RENDER STYLE
+        //
+        // ⚠️⚠️ `_OutlineSuppress` IS A GLOBAL SHADER FLOAT AND IT IS DELIBERATELY NOT A MATERIAL
+        // PROPERTY AND NOT A SECOND SHADER. `Settings.RenderStyles`'s Chromatic row has to draw
+        // the whole game with no ink edge, and there are three ways to reach that. Two of them
+        // break something this file already fixed:
+        //
+        //  * SWAPPING THE MATERIAL for an outline-free shader fights everything below. The cache
+        //    is keyed on (source material, quantised width) and `Origin` maps a variant back to
+        //    what it was built from so `Apply` is idempotent; a second shader means a second
+        //    parallel set of both, and the palette remap, the welded tangent and the carried atlas
+        //    would each have to be re-derived on the other branch. See the notes on `Cache` and
+        //    `Origin` for what happens when that bookkeeping is fed its own output.
+        //  * WRITING `_OutlineWidth` TO ZERO ON EVERY CACHED MATERIAL means re-dressing every
+        //    renderer in the arena on a settings pick, and `Apply` is reached from more than
+        //    thirty call sites across `CharacterVisual`, `ViewmodelArms`, `MatchInstaller`,
+        //    `ModelPreview` and seven editor probes. It also doubles the cache, because the width
+        //    IS part of the key: flipping the style twice would build a second material for every
+        //    surface in the game and free none of them.
+        //
+        // A global uniform costs one multiply in the outline pass's vertex shader, reaches every
+        // material already built and every material built later, applies on the frame it is set,
+        // and needs no bookkeeping at all.
+        //
+        // ⚠️⚠️ IT IS DECLARED IN THE SHADER'S CGPROGRAM AND NOT IN ITS `Properties` BLOCK, AND
+        // THAT IS THE HALF THAT MAKES IT WORK. A uniform that appears in `Properties` becomes
+        // per-material state, every material gets its own copy seeded from the block's default,
+        // and the global is then shadowed and ignored. Left out of `Properties` it has no
+        // material-local value and resolves from the global table.
+        //
+        // ⚠️⚠️ AND THE SENSE IS INVERTED ON PURPOSE: 0 SUPPRESSES NOTHING. An unset global shader
+        // float reads as 0, and the editor probes are the reason that matters. `ModelSheet`,
+        // `PersonSwapProbe`, `ToonProbe`, `HeadToHeadProbe`, `InGameAngleProbe` and
+        // `IterationTurnaroundProbe` all dress models with `ToonSkin.Apply` and render them
+        // without any settings ever being loaded, so nothing in that path calls this method. Had
+        // the flag been named `_OutlineScale` with 1 meaning "draw", every turnaround, lineup and
+        // showcase render in this project would silently have lost its ink. This way the default
+        // IS the shipped look and only an explicit call can take it away.
+        private static readonly int OutlineSuppressId = Shader.PropertyToID("_OutlineSuppress");
+
+        /// <summary>
+        /// Whether the ink hull is currently being suppressed. Mirrors the global, for a probe or
+        /// a test that wants to assert the push happened without reading the GPU back.
+        /// </summary>
+        public static bool OutlinesSuppressed { get; private set; }
+
+        /// <summary>
+        /// Turn the inverted-hull ink edge off, or back on, for every surface in the game at once.
+        ///
+        /// ⚠️ CALLED FROM ONE PLACE, <see cref="Settings.RenderStyles.Apply"/>, which is itself
+        /// called from `GameSettings.Apply` and from the settings panel's pick. Do not call it
+        /// from a visual: the outline is a property of the chosen STYLE, and a component that
+        /// switched it for its own reasons would be switching it for the whole frame.
+        /// </summary>
+        public static void SetOutlinesSuppressed(bool suppressed)
+        {
+            OutlinesSuppressed = suppressed;
+            UnityEngine.Shader.SetGlobalFloat(OutlineSuppressId, suppressed ? 1.0f : 0.0f);
+        }
+
         /// <summary>
         /// The colour a source material might carry its albedo in.
         ///

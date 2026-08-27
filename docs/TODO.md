@@ -6713,6 +6713,124 @@ picture.
 
 ---
 
+## 64 · The player can switch render styles, and the alternative is a chromatic look
+
+🧑 wants to look at a softer post-processed frame with visible colour fringing INSTEAD of the hard
+ink outlines, and wants to flip between the two from the settings panel while deciding. This is an
+A/B, not a replacement.
+
+⚠️⚠️ **TOON IS ROW 0, IT IS THE DEFAULT, AND EVERY SWITCH IN IT IS AN EXACT NO-OP.** `WorldOutline`
+already carries the rule this is an application of: *"a prototype that quietly becomes the look
+because it happened to be enabled on one camera in one scene is the failure mode to guard against"*.
+A player who never opens settings, and a player upgrading from a `settings.json` written before the
+field existed, both render exactly what this branch inherited.
+`LobbyAndSettingsTests.RenderStyleDefaultsToToonAndIsClampedIntoTheTable` and
+`ToonRowIsAnExactNoOpAndEveryOtherStyleChangesSomething` assert both halves rather than trusting
+them.
+
+### 64.1 What the two rows are
+
+`Assets/TumbangPreso/Runtime/Settings/RenderStyles.cs` is the table, built on the shape
+`AntiAliasModes` established: an entry struct, a stored int on `GameSettings` with a clamp in
+`Validate` and a push in `Apply`, and one dropdown row in `ConvertedSettingsPanel`.
+
+| | Toon (row 0) | Chromatic (row 1) |
+|---|---|---|
+| `Toon.shader` OUTLINE pass | draws | suppressed |
+| `Visual.WorldOutline` | live | gated off |
+| persistent colour split | 0.00 | 0.25, radial |
+
+### 64.2 The three switches, and why each is where it is
+
+* **The hull outline is suppressed by a GLOBAL shader float**, `_OutlineSuppress`, declared in
+  `Toon.shader`'s OUTLINE pass CGPROGRAM and deliberately **absent from its `Properties` block**,
+  which is what keeps it global rather than per-material. `ToonSkin.SetOutlinesSuppressed` is the
+  only writer.
+  ⚠️ **The two alternatives both break something `ToonSkin` had already fixed.** Swapping the
+  material for an outline-free shader fights the `(source material, quantised width)` cache and the
+  `Origin` map that make `Apply` idempotent, and would need the palette remap, the welded tangent
+  and the carried atlas re-derived on a second branch. Writing `_OutlineWidth` to zero on the cached
+  materials means re-dressing every renderer in the arena on a settings pick, across **more than
+  thirty `ToonSkin.Apply` call sites**, and DOUBLES the cache, because the width is part of its key.
+  ⚠️ **The sense is inverted (0 suppresses nothing) because an unset global reads 0**, and six
+  editor probes dress models and render them without ever loading a settings file. A flag named
+  `_OutlineScale` with 1 meaning "draw" would have silently deleted the ink from every turnaround,
+  lineup and showcase render in the repo.
+  ⚠️ **A zero width collapses the hull to a degenerate triangle rather than drawing it.** `Cull
+  Front` draws BACK faces; at width 0 they land on the surface, and on coplanar geometry (a
+  zero-thickness sheet, a card) that z-fights the lit pass as near-black speckle. Three vertices at
+  one clip position is a zero-area triangle, so the pass also stops paying its fill rate.
+* **The world outline is gated in `WorldOutline.Live`**, beside `_prototypeEnabled` rather than by
+  clearing it. `CameraRig.Awake` sets that flag true on every match camera it builds and would put
+  the outline back on the next scene load. `Live` also gates `LateUpdate`, so Chromatic mode drops
+  the depth-normals request and the exclusion-mask rescan too, not just the composite.
+* **The split is read by `ColourGrade` and ADDED to the impact pulse**, never max'd with it. See
+  § 64.3.
+
+### 64.3 The persistent split adds to the transient one, and a `Max` would have been wrong
+
+`Visual.HitFeel.ChromaticPeak` is **0.10 / 0.22 / 0.35 / 0.55** by hit weight and `HeroAbilitySystem`
+pulses an ultimate at **0.95**. Against a base of 0.25:
+
+* Under `Mathf.Max` the two lightest hits are **swallowed**: `max(0.25, 0.10)` is 0.25, the frame
+  does not move, and the feedback whose entire job is to say "you were hit" fires and shows nothing.
+* Under a **sum**, every hit moves the frame by its own full peak whatever the base is, so the pulse
+  keeps the amplitude it was tuned at. 0.25 + 0.55 is 0.80 and still in range; only an ultimate
+  saturates, and 0.95 was already within five per cent of the top.
+
+**0.25 is solved for, not picked.** The shader's constant is 0.006 in UV, which is 11.5 px of a
+1920-wide frame at amount 1. Radially that offset is reached at the left and right edges, about
+0.0085 at the corners and zero at the centre, so 0.25 is **about 2.9 px of fringe at the edges and
+4.1 px at the corners**, against the 6.6 px a heavy hit already puts across the whole frame.
+
+### 64.4 The split is now radial, and the impact path is untouched on Toon
+
+⚠️ **The shipped split is `half2(_Chromatic * 0.006, 0)`: the same offset at every pixel.** Held for
+0.4 s by a hit that is an impact artefact and is fine. Held for a whole match it fringes the
+crosshair, the centre of the HUD and every piece of text, which is exactly where a real lens fringes
+nothing: refraction disperses by angle from the optical axis.
+
+`ColourGrade.shader` now takes `_ChromaticRadial`, and **0.012 is solved for**: at the left and
+right edges `d.x` is 0.5, so `0.012 * 0.5` is exactly the 0.006 the flat path uses everywhere. It is
+a `lerp` on a uniform rather than a branch, and `RenderStyles.RadialSplit` is **false on row 0**, so
+in the default look the shader evaluates the identical horizontal term it always has.
+
+### 64.5 Cost
+
+**No new pass.** The split rides in `ColourGrade`'s existing full-screen blit and the suppression
+rides in `Toon.shader`'s existing OUTLINE pass.
+
+⚠️ **One honest caveat.** `ColourGrade.IsIdentity` skips its blit outright on a map that grades
+nothing, and **Bayan Plaza is such a map** (it has no `adjustment_enabled` line at all). A non-zero
+persistent split makes that frame non-identity, so Chromatic mode **un-skips an existing blit**
+there. It does not add one. Chromatic also stops paying for the inverted hull's fill rate and for
+`WorldOutline` entirely, so the net is very likely negative.
+
+### 64.6 What could NOT be verified without a Unity launch
+
+Authored and reasoned from source. **Nothing below has been compiled, rendered or played**, because
+the session that wrote it was not permitted to launch the editor.
+
+* **That both shaders compile**, in particular that a uniform declared in a CGPROGRAM and left out
+  of `Properties` resolves from `Shader.SetGlobalFloat` on every backend in this project's build set.
+  This is the single load-bearing assumption of the whole feature.
+* **That the degenerate-triangle early-out actually discards**, and that `UNITY_TRANSFER_FOG` on a
+  `(0,0,0,1)` clip position is harmless in every fog variant.
+* **Whether 0.25 is the right amount of fringe.** The number comes from pixel arithmetic, not from
+  taste, and taste is the half a render settles.
+* **Whether Chromatic reads as "softer and warmer" at all.** Only the outlines and the split are
+  implemented; **no grade change was made**, because `MapGrade` owns brightness, contrast and
+  saturation per map and a style that overrode them would fight Eskinita's authored 1.03 / 1.18. If
+  warmth is wanted it belongs as two more fields on `RenderStyles.Entry`, multiplied into
+  `ColourGrade` the way `SetEventGrade` already multiplies rather than replaces.
+
+**First thing to look at:** an in-game render of Eskinita on each style, same camera, same frame.
+It answers both compiles, whether the ink is genuinely gone rather than z-fighting, and whether the
+fringe at 0.25 is visible without being a glitch. After that, a render taken during an impact in
+Chromatic mode, which is the only thing that shows the sum and the radial profile behaving together.
+
+---
+
 ## Closed
 
 - **Lobby client synchronization, pick normalization, and host non-zero seat picks.** ✅ 2026-08-26.
