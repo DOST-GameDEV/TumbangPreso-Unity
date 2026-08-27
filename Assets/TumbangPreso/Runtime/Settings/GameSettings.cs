@@ -84,6 +84,17 @@ namespace TumbangPreso.Settings
         public int AntiAliasMode = AntiAliasModes.Default;
 
         /// <summary>
+        /// Whether the game waits for the display before showing a frame, as an index into
+        /// <see cref="VSyncModes.All"/>.
+        ///
+        /// ⚠️ STORED AS AN INT WITH A CLAMP, like every other mode index on this object, because a
+        /// settings file written by an older build is read back by a newer one whose list may have
+        /// grown a row. See <see cref="VSyncModes"/> for why the half-refresh row is the one worth
+        /// having and the one people leave out.
+        /// </summary>
+        public int VSyncMode = VSyncModes.Default;
+
+        /// <summary>
         /// Which look the game is drawn in, as an index into <see cref="RenderStyles.All"/>.
         /// 0 is Toon, the shipped ink look.
         ///
@@ -204,6 +215,7 @@ namespace TumbangPreso.Settings
         {
             ApplyDisplay();
             AntiAliasModes.Apply(AntiAliasMode);
+            VSyncModes.Apply(VSyncMode);
             RenderStyles.Apply(RenderStyle);
             AIController.ApplyDifficulty(AiDifficulty);
         }
@@ -250,6 +262,7 @@ namespace TumbangPreso.Settings
             AiDifficulty = Mathf.Clamp(AiDifficulty, 0, AIController.NoBotsIndex);
             SlipperHighlight = Mathf.Clamp(SlipperHighlight, 0, SlipperHighlights.All.Length - 1);
             AntiAliasMode = Mathf.Clamp(AntiAliasMode, 0, AntiAliasModes.All.Length - 1);
+            VSyncMode = Mathf.Clamp(VSyncMode, 0, VSyncModes.All.Length - 1);
             RenderStyle = Mathf.Clamp(RenderStyle, 0, RenderStyles.All.Length - 1);
 
             if (string.IsNullOrEmpty(PlayerToken)) PlayerToken = MintToken();
