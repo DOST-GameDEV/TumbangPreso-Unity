@@ -116,7 +116,9 @@ namespace TumbangPreso.Net
 
             cm.RegisterNamedMessageHandler("Identify", OnIdentifyMsg);
             cm.RegisterNamedMessageHandler("Seating", OnSeatingMsg);
+            cm.RegisterNamedMessageHandler("ReqSeat", OnReqSeatMsg);
             cm.RegisterNamedMessageHandler("DeclareReady", OnDeclareReadyMsg);
+            cm.RegisterNamedMessageHandler("ReadyTally", OnReadyTallyMsg);
             cm.RegisterNamedMessageHandler("BeginCountdown", OnBeginCountdownMsg);
             cm.RegisterNamedMessageHandler("VoteRematch", OnVoteRematchMsg);
             cm.RegisterNamedMessageHandler("RematchTally", OnRematchTallyMsg);
@@ -334,16 +336,7 @@ namespace TumbangPreso.Net
             int resolvedSlipperPick = slipperPick >= 0 ? slipperPick : 0;
             lobby.SetPicks(peerId, resolvedCharPick, resolvedCanPick, resolvedSlipperPick);
 
-            if (senderClientId != _nm.LocalClientId)
-            {
-                using var writer = new FastBufferWriter(128, Allocator.Temp);
-                writer.WriteValueSafe(record.Seat);
-                writer.WriteValueSafe(record.Spectator);
-                writer.WriteValueSafe(lobby.LeaderPeerId);
-                writer.WriteValueSafe(lobby.MatchInProgress);
-                writer.WriteValueSafe(lobby.JoinCode ?? "");
-                _nm.CustomMessagingManager.SendNamedMessage("Seating", senderClientId, writer);
-            }
+            if (senderClientId != _nm.LocalClientId) SendSeating((int)senderClientId);
 
             NetSession.Instance?.SetStatus($"{lobby.PeerCount} connected, seat {record.Seat}");
 
@@ -352,10 +345,109 @@ namespace TumbangPreso.Net
             // be about to build an arena from it.
             SyncModeClientRpc((int)UI.SceneFlow.SelectedMode);
 
+            // ⚠⚠ AND THE MAP AND THE DIFFICULTY GO WITH IT, WHICH THEY NEVER DID. `SelectMap`
+            // and `SelectDiff` only ever travelled when the host CYCLED them, so a peer joining a
+            // lobby the host had already set up was told the mode and nothing else. Its lobby drew
+            // whatever map its own menu last held, and `SceneFlow.SelectedMap` is exactly what
+            // `SceneFlow.StartMatch` loads: a joiner who never saw the host touch the arrows
+            // loaded a DIFFERENT ARENA on start, which from the other side of the room reads as
+            // "it only started for the host".
+            SyncMapClientRpc(Mathf.Max(0, System.Array.IndexOf(UI.SceneFlow.Maps, UI.SceneFlow.SelectedMap)));
+            SyncDifficultyClientRpc(Settings.SettingsStore.Current.AiDifficulty);
+            BroadcastReadyTally();
+
             HostLateJoin(peerId);
             BroadcastLobbyPicks();
             BroadcastPicks();
             BroadcastWorldSnapshot();
+        }
+
+        /// <summary>
+        /// The host telling ONE peer which chair it holds, plus the lobby facts that travel with
+        /// it. The host applies its own locally rather than posting itself a packet.
+        /// </summary>
+        private void SendSeating(int peerId)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+
+            var lobby = NetSession.Instance?.Lobby;
+            var record = lobby?.PeerById(peerId);
+            if (record == null) return;
+
+            if ((ulong)peerId == _nm.LocalClientId)
+            {
+                NetSession.Instance?.SetLocalSeating(record.Seat, record.Spectator);
+                return;
+            }
+
+            using var writer = new FastBufferWriter(128, Allocator.Temp);
+            writer.WriteValueSafe(record.Seat);
+            writer.WriteValueSafe(record.Spectator);
+            writer.WriteValueSafe(lobby.LeaderPeerId);
+            writer.WriteValueSafe(lobby.MatchInProgress);
+            writer.WriteValueSafe(lobby.JoinCode ?? "");
+            _nm.CustomMessagingManager.SendNamedMessage("Seating", (ulong)peerId, writer);
+        }
+
+        // -------------------------------------------------------------------
+        // SECTION: CHOOSING A CHAIR
+        //
+        // ⚠⚠ THE LOBBY'S FOUR SEAT BUTTONS WERE NOT CONNECTED TO THE NETWORK AT ALL. They
+        // wrote `GameLaunch.SoloSeat`, which only the OFFLINE practice match reads, while the
+        // networked rows are drawn from `NetSession.LocalSlot`; and `RefreshSeats` then made every
+        // one of them non-interactable unless `NetAuthority.IsHost`. So a client could not press
+        // them at all, and the host pressing them moved a number nothing in a networked match ever
+        // looks at. 🧑, 2026-08-27: "a player cannot switch from p1 to p4".
+        //
+        // ⚠️ IT IS THE SAME IDIOM AS THE MAP AND THE MODE, deliberately: the client ASKS,
+        // `LobbySession.TryTakeSeat` decides, and the host tells the mover its new seat and tells
+        // everybody the new roster. A seat handed out by the peer that wants it is a peer that can
+        // sit down on top of somebody else.
+        // -------------------------------------------------------------------
+
+        /// <summary>Ask the host for <paramref name="seat"/>, or for -1 to spectate.</summary>
+        public void RequestSeatServerRpc(int seat)
+        {
+            if (NetAuthority.IsHost)
+            {
+                HostAssignSeat(_nm != null ? (int)_nm.LocalClientId : 0, seat);
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(seat);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqSeat", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqSeatMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            reader.ReadValueSafe(out int seat);
+
+            // ⚠️ THE PERSON COMES FROM THE SENDER'S TRANSPORT ID, NEVER FROM THE PAYLOAD. The
+            // message names a chair, not a player; a peer that could name the player could move
+            // somebody else out of theirs.
+            HostAssignSeat((int)senderClientId, seat);
+        }
+
+        private void HostAssignSeat(int peerId, int seat)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            var lobby = NetSession.Instance?.Lobby;
+            if (lobby == null || !lobby.TryTakeSeat(peerId, seat)) return;
+
+            // ⚠️ MOVING SEATS CLEARS YOUR READY. The arrangement you agreed to is not the one
+            // on screen any more, and a tick left standing would count towards a gate that has
+            // changed underneath it.
+            _lobbyReady.Remove(peerId);
+
+            SendSeating(peerId);
+            BroadcastLobbyPicks();
+            BroadcastReadyTally();
         }
 
         private void OnSeatingMsg(ulong senderClientId, FastBufferReader reader)
@@ -377,6 +469,15 @@ namespace TumbangPreso.Net
                 {
                     net.Lobby.SetJoinCode(joinCode);
                 }
+
+                // ⚠️ THE CLIENT'S COPY OF "IS A MATCH RUNNING" IS WRITTEN HERE AND WAS NOT
+                // WRITTEN ANYWHERE. The flag arrived on this message and was read for the scene
+                // load two lines below, then dropped, so a client's `LobbySession` said false for
+                // the whole of a running match. The lobby screen reads it to grey the seat rows
+                // out, which is the difference between a button that explains itself and one that
+                // silently does nothing when the host's `TryTakeSeat` refuses it.
+                net.Lobby.MatchInProgress = inProgress;
+
                 net.SetLocalSeating(seat, spectator);
             }
 
@@ -395,24 +496,147 @@ namespace TumbangPreso.Net
         // THE READY GATE
         // -------------------------------------------------------------------
 
-        public void DeclareReadyServerRpc(int peerId)
+        public void DeclareReadyServerRpc(int peerId) => DeclareReadyServerRpc(peerId, true);
+
+        /// <summary>
+        /// "I am ready", or "I am not any more". The in-match <see cref="ReadyGate"/> only ever
+        /// says true, because a pre-round press there starts a countdown that cannot be recalled;
+        /// the LOBBY button is a toggle and needs both.
+        /// </summary>
+        public void DeclareReadyServerRpc(int peerId, bool ready)
         {
             if (NetAuthority.IsHost)
             {
-                FindFirstObjectByType<ReadyGate>()?.DeclareReady(peerId);
+                HostDeclareReady(_nm != null ? (int)_nm.LocalClientId : peerId, ready);
                 return;
             }
 
             if (_nm == null || _nm.CustomMessagingManager == null) return;
             using var writer = new FastBufferWriter(16, Allocator.Temp);
             writer.WriteValueSafe(peerId);
+            writer.WriteValueSafe(ready);
             _nm.CustomMessagingManager.SendNamedMessage("DeclareReady", NetworkManager.ServerClientId, writer);
         }
 
         private void OnDeclareReadyMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (!NetAuthority.IsHost) return;
-            FindFirstObjectByType<ReadyGate>()?.DeclareReady((int)senderClientId);
+
+            // ⚠️ THE PEER ID IS READ AND THROWN AWAY. It is on the wire because the caller has
+            // one to hand, but the host resolves the sender at the door: a peer that could name
+            // itself could ready somebody else. It is READ rather than skipped so the writer and
+            // the reader stay the same length, which is the whole of what
+            // `tools/audit_wire_payloads.py` can check.
+            reader.ReadValueSafe(out int _claimed);
+            reader.ReadValueSafe(out bool ready);
+
+            HostDeclareReady((int)senderClientId, ready);
+        }
+
+        // -------------------------------------------------------------------
+        // SECTION: THE LOBBY READY GATE
+        //
+        // ⚠⚠ READY IN THE LOBBY WENT NOWHERE AND STARTING WAS THE HOST'S BUTTON ALONE.
+        // `DeclareReady` has always been routed to `FindFirstObjectByType<ReadyGate>()`, and
+        // `ReadyGate` is a component of the ARENA: in the `MatchSetup` scene there is no such
+        // object, so every READY press in the lobby, the host's included, resolved to a null and
+        // did nothing at all. The tally on screen was a local bool. 🧑, 2026-08-27: "when
+        // all player ready up and the game starts, it only starts for the host."
+        //
+        // ⚠️ IT COUNTS SEATED PEERS, NOT CHARACTERS, for the reason `ReadyGate` gives at
+        // length: the empty chairs are played by bots and a bot cannot press a key. Spectators are
+        // excluded on the same rule. It floors at one so a solo host still presses its own button.
+        //
+        // ⚠️ AND THE HOST STARTS THE MATCH THE SAME WAY ITS OWN BUTTON DOES, through
+        // `HostStartMatch`, so there is exactly one path into an arena and the broadcast that
+        // carries every other peer in with it cannot be forgotten on one of them.
+        // -------------------------------------------------------------------
+
+        /// <summary>Raised with (ready, expected) on every peer whenever the lobby tally moves.</summary>
+        public static event Action<int, int> OnLobbyReadyChanged;
+
+        private readonly HashSet<int> _lobbyReady = new HashSet<int>();
+
+        private void HostDeclareReady(int peerId, bool ready)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            // In a match the pre-round gate owns this press, and it runs its own countdown.
+            var gate = FindFirstObjectByType<ReadyGate>();
+            if (gate != null)
+            {
+                if (ready) gate.DeclareReady(peerId);
+                return;
+            }
+
+            var lobby = NetSession.Instance?.Lobby;
+            if (lobby == null) return;
+
+            var peer = lobby.PeerById(peerId);
+            if (peer == null || peer.Spectator || peer.Seat < 0) return;
+
+            bool moved = ready ? _lobbyReady.Add(peerId) : _lobbyReady.Remove(peerId);
+            if (!moved) return;
+
+            BroadcastReadyTally();
+
+            if (LobbyReadyCount() >= LobbyExpectedReady()) HostStartMatch();
+        }
+
+        /// <summary>
+        /// ⚠️ COUNTED AGAINST THE LIVE LOBBY RATHER THAN TRUSTED. A peer that readied and then
+        /// moved to a spectator slot is still in the set until something removes it, and a tally
+        /// that counts a press nobody can retract starts the match on three players' behalf.
+        /// </summary>
+        private int LobbyReadyCount()
+        {
+            var lobby = NetSession.Instance?.Lobby;
+            if (lobby == null) return 0;
+
+            int count = 0;
+            foreach (int peerId in _lobbyReady)
+            {
+                var peer = lobby.PeerById(peerId);
+                if (peer != null && !peer.Spectator && peer.Seat >= 0) count++;
+            }
+
+            return count;
+        }
+
+        private int LobbyExpectedReady()
+        {
+            var lobby = NetSession.Instance?.Lobby;
+            return lobby == null ? 1 : Mathf.Max(1, lobby.SeatedPeerCount());
+        }
+
+        public void BroadcastReadyTally()
+        {
+            if (!NetAuthority.IsHost) return;
+
+            int ready = LobbyReadyCount();
+            int expected = LobbyExpectedReady();
+
+            if (_nm != null && _nm.CustomMessagingManager != null)
+            {
+                using var writer = new FastBufferWriter(16, Allocator.Temp);
+                writer.WriteValueSafe(ready);
+                writer.WriteValueSafe(expected);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("ReadyTally", writer);
+            }
+
+            OnLobbyReadyChanged?.Invoke(ready, expected);
+        }
+
+        private void OnReadyTallyMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            // ⚠️ THE HOST IS ITS OWN CLIENT AND `SendNamedMessageToAll` LOOPS BACK TO IT. See
+            // the section on the loopback; the host raised the event itself one line earlier.
+            if (NetAuthority.IsHost) return;
+            if (!FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out int ready);
+            reader.ReadValueSafe(out int expected);
+            OnLobbyReadyChanged?.Invoke(ready, expected);
         }
 
         public void BeginCountdownClientRpc()
@@ -1422,6 +1646,16 @@ namespace TumbangPreso.Net
         public void HostStartMatch()
         {
             if (!NetAuthority.IsHost) return;
+
+            // ⚠⚠ THE LOBBY IS TOLD THE MATCH IS RUNNING, AND IT NEVER USED TO BE.
+            // `LobbySession.MatchInProgress` is the switch behind three separate rules: `Depart`
+            // only HOLDS a dropped player's chair while it is set, `RuleOnArrival` only answers
+            // Spectate rather than Refuse while it is set, and `TryTakeSeat` refuses a seat change
+            // once it is set. Left false, a player who dropped mid-match lost their seat and their
+            // score to the next arrival, and anyone joining a running match was turned away.
+            var lobby = NetSession.Instance?.Lobby;
+            lobby?.StartMatch();
+            _lobbyReady.Clear();
 
             // ⚠️⚠️ THE MODE GOES FIRST, BEFORE `StartMatch`, AND THE ORDER IS THE WHOLE POINT.
             // `OnStartMatchMsg` calls `UI.SceneFlow.StartMatch()`, which loads the arena scene
@@ -2526,6 +2760,11 @@ namespace TumbangPreso.Net
             _cueWindowCount.Remove((ulong)peerId);
             _lastSnapshotRequest.Remove((ulong)peerId);
 
+            // ⚠️ THE LOBBY TALLY HAS THE SAME HOLE `ReadyGate.OnPeerLeft` CLOSES. A peer that
+            // quits after readying drops the expected count, and with nobody re-evaluating the
+            // players still sitting there wait on a gate that is already satisfied.
+            _lobbyReady.Remove(peerId);
+
             var lobby = NetSession.Instance?.Lobby;
             if (lobby != null)
             {
@@ -2566,6 +2805,17 @@ namespace TumbangPreso.Net
             }
 
             FindFirstObjectByType<ReadyGate>()?.OnPeerLeft(peerId);
+
+            // ⚠️ AND THE LOBBY TALLY IS RE-EVALUATED FOR THE SAME REASON, in the lobby only: in a
+            // match the pre-round gate on the line above owns this question. A peer leaving drops
+            // the expected count, so the three still sitting there can be left waiting on a gate
+            // that the departure has already satisfied.
+            if (lobby != null && !lobby.MatchInProgress && FindFirstObjectByType<ReadyGate>() == null)
+            {
+                int readyNow = LobbyReadyCount();
+                if (readyNow > 0 && readyNow >= LobbyExpectedReady()) HostStartMatch();
+                else BroadcastReadyTally();
+            }
 
             // ⚠️ THE REMATCH VOTE HAS THE SAME HOLE AND IS CLOSED AT THE SAME PLACE. A peer that
             // quits from the result screen drops the expected count, and with nobody

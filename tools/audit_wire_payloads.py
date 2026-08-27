@@ -60,11 +60,15 @@ LOOPS = {
 # while every row says WHY, because the alternative is a place to hide a real mismatch.
 # -------------------------------------------------------------------
 ACCEPTED = {
-    "DeclareReady":
-        "the peer id is written and deliberately ignored: the host resolves the sender at the "
-        "door, because a peer that could name itself could ready somebody else",
+    # ⚠️ `DeclareReady` USED TO BE HERE AND NO LONGER NEEDS TO BE. It wrote a peer id the reader
+    # never consumed, because the host resolves the sender at the door: a peer that could name
+    # itself could ready somebody else. The lobby gate (docs/TODO.md § 52.2) gave the message a
+    # second field, and the reader now READS the peer id and throws it away rather than skipping
+    # it, so the two halves are the same length again and the rule needs no exception.
     "VoteRematch":
-        "same as DeclareReady, and for the same counting reason `docs/TODO.md` section 1 records",
+        "the peer id is written and deliberately ignored: the host resolves the sender at the "
+        "door, because a peer that could name itself could vote for somebody else. Same counting "
+        "reason `docs/TODO.md` section 1 records",
     "ReqSnapshot":
         "one placeholder byte, because the request carries no data and the sender id is the "
         "whole message",
