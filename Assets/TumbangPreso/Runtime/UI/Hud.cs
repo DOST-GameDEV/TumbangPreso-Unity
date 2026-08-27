@@ -956,7 +956,12 @@ namespace TumbangPreso.UI
 
                 if (lata != null && !lata.IsUpright)
                 {
-                    _crosshair.text = "LATA DOWN\nHOLDING CHARGE";
+                    // ⚠️ THE THIRD "LATA DOWN", AND THE ONE WITH THE LEAST CLAIM TO IT. See
+                    // `UpdateLataCard`: the card already carries the state and the alert already
+                    // carries the action, both within one glance of the reticle. What the
+                    // crosshair uniquely knows is that the slipper in hand is being wound up and
+                    // cannot legally be released yet, so that is all it says.
+                    _crosshair.text = "HOLDING CHARGE";
                     _crosshair.color = UiTheme.Offense;
                 }
                 else if (lata != null && lata.IsProtected)
@@ -1074,17 +1079,21 @@ namespace TumbangPreso.UI
                 }
             }
 
-            // Pressure grows in three readable bands. The clock gets physically harder to
-            // ignore without flashing role colours across the playfield.
-            float scale = 1.0f;
-            if (want == 1)
-                scale += (Mathf.Sin(Time.unscaledTime * 3.0f) * 0.5f + 0.5f) * 0.025f;
-            else if (want == 2)
-                scale += (Mathf.Sin(Time.unscaledTime * 5.0f) * 0.5f + 0.5f) * 0.065f;
-            else if (want == 3)
-                scale += (Mathf.Sin(Time.unscaledTime * 8.0f) * 0.5f + 0.5f) * 0.12f;
-
-            if (_timerCardRt != null) _timerCardRt.localScale = Vector3.one * scale;
+            // ⚠️⚠️ THE CLOCK DOES NOT BREATHE. 🧑, 2026-08-27, off a gameplay frame:
+            // *"theres pulsing shit that feels weird to look at and unnecessary"*, *"too many
+            // animations happening on screen"*. This card scaled on a sine for the last THIRTY
+            // seconds of every round, which is a third of a 90 s round: a permanent motion in
+            // the top centre of the screen, right where a player looks to read the clock, that
+            // says nothing the colour and the point size do not already say. The three pressure
+            // bands survive as colour (Amber, then Highlight) and as size (44 pt, then 52 pt
+            // under ten seconds), both of which are read at a glance and hold still while they
+            // are being read.
+            //
+            // ⚠️ THE SCALE IS PINNED, NOT LEFT ALONE. The card is built once and reused for the
+            // whole match, so one that happened to be mid-pulse would otherwise keep whatever
+            // scale the last sine left on it for the rest of the round.
+            if (_timerCardRt != null && _timerCardRt.localScale != Vector3.one)
+                _timerCardRt.localScale = Vector3.one;
 
             // ⚠️ maxi(round, 1). `MatchDirector.RoundNumber` is 0 until the match starts, and
             // the ready-up window happens BEFORE that: the HUD read "ROUND 0 / 4" over the first
@@ -1107,25 +1116,32 @@ namespace TumbangPreso.UI
 
                 if (_timerPressure != null)
                 {
-                    bool livePressure = GameServices.Round.RoundActive && want > 0;
+                    // ⚠️ `want >= 3`, NOT `want > 0`. See the block below: this line only
+                    // exists for the last ten seconds now.
+                    bool livePressure = GameServices.Round.RoundActive && want >= 3;
                     _timerPressure.enabled = livePressure;
 
                     if (livePressure)
                     {
-                        string action = _local == null
-                            ? "EVERY SECOND COUNTS"
-                            : _local.IsDefender ? "DEFEND THE LATA" : "ATTACK NOW";
+                        // ⚠️⚠️ ONE LINE, IN THE LAST TEN SECONDS ONLY, AND IT DOES NOT
+                        // CHANGE WHILE IT IS UP. This ran for thirty seconds and rewrote itself
+                        // twice on the way down ("PRESSURE BUILDING", then "FINAL PUSH · DEFEND
+                        // THE LATA", then "LAST 10 · DEFEND THE LATA"), in two colours, on a
+                        // sine, directly underneath a clock that was itself pulsing. Four moving
+                        // things stacked in one column is what 🧑 meant on 2026-08-27 by *"too
+                        // many animations happening on screen (for the huds as well as text)"*.
+                        //
+                        // ⚠️ "PRESSURE BUILDING" AND "FINAL PUSH" ARE DELETED, NOT MOVED. Neither
+                        // said anything the clock beside them did not, and a warning that fires
+                        // at thirty seconds of a ninety second round is not a warning.
+                        _timerPressure.text = _local == null
+                            ? "LAST 10"
+                            : _local.IsDefender ? "LAST 10  ·  DEFEND THE LATA"
+                                                : "LAST 10  ·  ATTACK NOW";
+                        _timerPressure.color = UiTheme.Highlight;
 
-                        _timerPressure.text = want == 1
-                            ? "PRESSURE BUILDING"
-                            : want == 2
-                                ? $"FINAL PUSH  ·  {action}"
-                                : $"LAST 10  ·  {action}";
-                        _timerPressure.color = want >= 3 ? UiTheme.Cream : UiTheme.Highlight;
-                        _timerPressure.rectTransform.localScale = Vector3.one
-                            * (1.0f + (want >= 2
-                                ? (Mathf.Sin(Time.unscaledTime * 6.0f) * 0.5f + 0.5f) * 0.055f
-                                : 0.0f));
+                        if (_timerPressure.rectTransform.localScale != Vector3.one)
+                            _timerPressure.rectTransform.localScale = Vector3.one;
                     }
                 }
             }
@@ -1229,9 +1245,26 @@ namespace TumbangPreso.UI
                 // readable at a glance in a way a trailing word at the end of a line is not.
                 // The role is still carried by the plate, the rail and the DEFENDER/ATTACKER
                 // cell, so nothing is lost by spending the NAME's colour on identity instead.
-                _scoreNames[i].color = isMine ? UiTheme.Cream : colour;
+                // ⚠️⚠️ THE ROLE COLOUR IS SPENT ON THE ROLE WORD AND NOWHERE ELSE. 🧑,
+                // 2026-08-27: *"TOO many diff colored shits for text"*. Every cell of every row
+                // used to be painted in that seat's role colour, so a four seat board put up to
+                // three saturated hues across twelve pieces of text in one corner and left the
+                // eye nothing to rest on. Name and score are Cream now; DEFENDER and ATTACKER
+                // keep the colour, because that is the one cell where the colour IS the content.
+                // The role rail and the row plate underneath are untouched and still carry the
+                // role at a distance, so no information leaves the card.
+                //
+                // ⚠️ AND "WHICH ONE AM I" IS NOW CARRIED BY WEIGHT RATHER THAN BY HUE. Your row
+                // stays full Cream while the other three drop to CreamMuted, which reads at a
+                // glance in exactly the way the old cream-against-role-colour trick did without
+                // spending a second colour to do it. The row plate is still twice as opaque on
+                // your own row (below) and the card in the bottom-left corner still names your
+                // seat outright, so this is the third of three answers rather than the only one.
+                Color textColour = isMine ? UiTheme.Cream : UiTheme.CreamMuted;
+
+                _scoreNames[i].color = textColour;
                 _scoreMarks[i].color = colour;
-                _scoreValues[i].color = isMine ? UiTheme.Cream : colour;
+                _scoreValues[i].color = textColour;
 
                 if (_scoreRoleRails[i] != null) _scoreRoleRails[i].color = colour;
                 if (_scoreRowPlates[i] != null)
@@ -1283,28 +1316,45 @@ namespace TumbangPreso.UI
             if (_lataUprightShown != (lata.IsUpright ? 1 : 0))
             {
                 _lataUprightShown = lata.IsUpright ? 1 : 0;
-                _lataLabel.text = lata.IsUpright ? "LATA  ·  UPRIGHT" : "⚠  LATA DOWN  ⚠";
+                _lataLabel.text = lata.IsUpright ? "LATA  ·  UPRIGHT" : "LATA DOWN";
                 _lataLabel.color = lata.IsUpright ? UiTheme.Defense : UiTheme.Offense;
             }
 
             bool down = !lata.IsUpright;
-            float canPulse = down
-                ? 1.0f + (Mathf.Sin(Time.unscaledTime * 7.0f) * 0.5f + 0.5f) * 0.10f
-                : 1.0f;
-            _lataCard.rectTransform.localScale = Vector3.one * canPulse;
+            // ⚠️⚠️ "LATA DOWN" IS PRINTED ONCE ON THE WHOLE SCREEN, AND IT IS PRINTED ON THE
+            // LABEL ABOVE. 🧑, 2026-08-27: *"repetitive lata down"*. A knocked can used to say
+            // so in THREE places at once: this card's title (with a warning glyph either side),
+            // the centre-screen alert below, and the crosshair while a slipper was charging.
+            // Three copies of one fact, two of them animated, is not three times the
+            // information; it is one fact and two thirds of a HUD spent repeating it.
+            //
+            // The split is STATE here, ACTION in `_lataAlert`, and THE THROW in the crosshair:
+            // this card owns the words, the alert owns what to do about it, and `Update`'s
+            // charging branch owns whether the slipper in hand can legally leave. Each surface
+            // says a different sentence.
+            //
+            // ⚠️⚠️ AND NEITHER THIS CARD NOR THE ALERT PULSES ANY MORE. The can spends a large
+            // part of a live round knocked over, so a scale sine on each of them was continuous
+            // motion rather than an event, at 7 and 8 rad/s, out of phase with each other and
+            // with the clock. The swing from Defense blue to Offense orange IS the event and it
+            // lands in a single frame.
+            if (_lataCard.rectTransform.localScale != Vector3.one)
+                _lataCard.rectTransform.localScale = Vector3.one;
 
             if (_lataAlert != null)
             {
                 _lataAlert.enabled = down;
                 if (down)
                 {
+                    // ⚠️ THE ACTION ONLY. The label on the card two lines up already said
+                    // "LATA DOWN"; prefixing it here as well put the same two words twice inside
+                    // one glance of each other.
                     _lataAlert.text = _local == null
-                        ? "LATA DOWN"
-                        : _local.IsDefender
-                            ? "LATA DOWN  ·  RESET IT NOW"
-                            : "LATA DOWN  ·  RETRIEVE NOW";
-                    _lataAlert.rectTransform.localScale = Vector3.one
-                        * (1.0f + (Mathf.Sin(Time.unscaledTime * 8.0f) * 0.5f + 0.5f) * 0.09f);
+                        ? "RETRIEVE OR RESET"
+                        : _local.IsDefender ? "RESET IT NOW" : "RETRIEVE NOW";
+
+                    if (_lataAlert.rectTransform.localScale != Vector3.one)
+                        _lataAlert.rectTransform.localScale = Vector3.one;
                 }
             }
 
@@ -1457,16 +1507,19 @@ namespace TumbangPreso.UI
                     ? Mathf.Clamp01(e.Remaining / Mathf.Max(0.01f, e.Total))
                     : 1.0f;
 
-                // The final quarter gives one restrained pulse. This is especially important
-                // for stun and vulnerability, where the end of the effect changes what the
-                // player can safely do before they have time to read the number again.
-                float ratio = e.Timed && e.Total > 0.0f
-                    ? Mathf.Clamp01(e.Remaining / e.Total)
-                    : 1.0f;
-                float pulse = ratio < 0.25f
-                    ? 1.0f + (Mathf.Sin(Time.unscaledTime * 10.0f) * 0.5f + 0.5f) * 0.035f
-                    : 1.0f;
-                w.Root.transform.localScale = Vector3.one * pulse;
+                // ⚠️⚠️ THE ROW DOES NOT PULSE IN ITS LAST QUARTER. The argument for it was
+                // that the end of a stun or a vulnerability changes what the player can safely
+                // do; the answer is that the row already carries a DRAINING BAR and a number
+                // counting down in tenths, both of which say the same thing continuously and
+                // precisely. A 3.5 per cent scale on top of them was the smallest of the five
+                // ambient sines this HUD was running and still one of the five. 🧑, 2026-08-27:
+                // *"too many animations happening on screen"*.
+                //
+                // ⚠️ PINNED RATHER THAN SKIPPED, because these row widgets are pooled and
+                // reused: one left mid-pulse would carry that scale into the next effect that
+                // happened to land in the same slot.
+                if (w.Root.transform.localScale != Vector3.one)
+                    w.Root.transform.localScale = Vector3.one;
             }
         }
 
@@ -3138,10 +3191,15 @@ namespace TumbangPreso.UI
 
             int tier = StreetTier(_streetHype);
             _classicTitle.text = $"STREET HYPE  ·  {StreetTierName(tier)}  ·  {Mathf.RoundToInt(_streetHype)}%";
-            _classicTitle.color = tier >= 3 ? UiTheme.Highlight : UiTheme.Amber;
+            // ⚠️⚠️ ONE COLOUR FOR THE TITLE AND ONE FOR THE BAR. Street hype drains on every
+            // frame of a live round, so a title that swapped hue at tier 3 and a fill that
+            // LERPED from orange to yellow across the range meant two things quietly changing
+            // colour at all times in the corner of a Classic match. The tier NAME ("MAINIT!",
+            // "ASTIG!") is the tier, in words, in the same string, and the bar's length is the
+            // number. Neither of them needed a colour to say it a second time.
+            _classicTitle.color = UiTheme.Amber;
             _classicFill.fillAmount = _streetHype / 100.0f;
-            _classicFill.color = Color.Lerp(UiTheme.Offense, UiTheme.Highlight,
-                                             _streetHype / 100.0f);
+            _classicFill.color = UiTheme.Highlight;
 
             _streetHypePunch = Mathf.Max(0.0f, _streetHypePunch - dt);
             float ratio = Mathf.Clamp01(_streetHypePunch / 0.38f);
@@ -3172,7 +3230,11 @@ namespace TumbangPreso.UI
         /// the state a player is in most of the time has to be the quietest thing on screen; a
         /// tile that says "READY" is shouting at somebody who already knew. Cooling dims the
         /// glyph to 20% and puts the seconds in the middle. Active keeps the glyph lit and
-        /// breathes the rim. `docs/Hero_Strike_UI.md` section 4 carries the table.
+        /// holds a brighter rim. `docs/Hero_Strike_UI.md` section 4 carries the table.
+        ///
+        /// ⚠️ THE ACTIVE AND ULTIMATE-READY RIMS USED TO BREATHE AND NO LONGER DO. See
+        /// `PaintSkillCard` and `PaintUltimateCard` for why: every ambient sine in this HUD
+        /// came out on 2026-08-27, and the states that had one now hold a colour instead.
         ///
         /// ⚠️ THE NUMBER AND THE METER SAY THE SAME THING ON PURPOSE. They are read at
         /// different distances: the meter is peripheral vision ("nearly back"), the number is a
@@ -3511,7 +3573,8 @@ namespace TumbangPreso.UI
         /// a player their skill had come back: the number simply stopped being drawn, on a tile
         /// they were not looking at, in the middle of a fight. A single 0.18 s scale to 1.12 on
         /// the frame the cooldown clears is enough to catch in peripheral vision and short
-        /// enough that it cannot be confused with the ultimate's slow breath.
+        /// enough that it cannot be confused with anything else in the deck. It is now one of
+        /// only two motions left on the whole in-match HUD, the other being the score row punch.
         ///
         /// ⚠️ AND THE POP FIRES ON THE EDGE, NOT ON THE STATE. `WasReady` is what makes it
         /// once rather than every frame the skill happens to be up, which would be a tile that
@@ -3579,12 +3642,20 @@ namespace TumbangPreso.UI
 
             if (skill.IsActive)
             {
-                float breath = Mathf.Sin(Time.time * 7.0f) * 0.5f + 0.5f;
                 // ⚠️⚠️ ACTIVE IS THE ONE STATE THAT GETS THE HERO ACCENT, AND THAT IS WHY THE
                 // ACCENT MEANS ANYTHING. Ready is a white rim, cooling is a dim one; colour is
                 // reserved for "this power is RUNNING RIGHT NOW", which is the only state with
                 // a clock on it that the player is inside rather than waiting on.
-                card.Rim.color = Color.Lerp(heroColor, Color.white, breath * 0.35f);
+                //
+                // ⚠️⚠️ AND IT IS A HELD COLOUR, NOT A BREATHING ONE. This ran a 7 rad/s sine
+                // through the rim for the whole duration of the power, on a tile that already
+                // has a draining bar and a counting number inside the same 60 px square. 🧑,
+                // 2026-08-27: *"the abilities and other effects are okay but theres pulsing shit
+                // that feels weird to look at"*. The fill under the glyph is the clock and it
+                // moves because it is measuring something; the rim only has to be unmistakably
+                // the accent, and a fixed lift toward white is brighter than the old sine's
+                // average was anyway.
+                card.Rim.color = Color.Lerp(heroColor, Color.white, 0.30f);
                 card.Glyph.color = UiTheme.HeroGlyphOn;
                 card.Key.color = UiTheme.Cream;
 
@@ -3705,6 +3776,31 @@ namespace TumbangPreso.UI
                 return;
             }
 
+            // ⚠️⚠️ A POWER THAT IS OUT AND WAITING TO BE RECALLED SHOWS NO CHARGE DOTS. 🧑,
+            // 2026-08-27, of Nemu: *"why does nemu have 2 charges if its just recast? should
+            // just show 1"*. Astral Projection is one press out and one press back, and the
+            // tile says RECAST for the whole six seconds it is out; the dots above it were
+            // answering a different question at the same time ("you have two of these a round")
+            // and the two readings collided into "the second dot is the way home". They are not
+            // the same quantity and they must not be legible at the same moment.
+            //
+            // ⚠️ SO THE ROW IS HIDDEN, NOT REBUILT AT ONE. The count is still MaxCharges and
+            // comes straight back the frame the power ends: what is suppressed is the reading,
+            // during the only window where it is ambiguous. Gated on `CanReactivate` rather
+            // than on a hero id, for the same reason the RECAST word is: any future ability
+            // with a return press gets this the day it is added.
+            //
+            // ⚠️ THIS IS A HUD CHANGE AND NOT A BALANCE ONE. `MaxCharges` is untouched at 2,
+            // which is what every other hero's charge skill carries.
+            if (skill.IsActive && skill.CanReactivate)
+            {
+                if (card.Pips != null)
+                    foreach (var p in card.Pips) if (p != null) p.enabled = false;
+
+                card.WasCharges = skill.ChargesRemaining;
+                return;
+            }
+
             if (card.Pips == null || card.PipCount != skill.MaxCharges)
                 BuildPips(card, skill.MaxCharges);
 
@@ -3722,8 +3818,13 @@ namespace TumbangPreso.UI
 
             if (card.PipGrantLeft > 0.0f) card.PipGrantLeft = Mathf.Max(0.0f, card.PipGrantLeft - dt);
 
+            // ⚠️ A SINGLE HALF SINE, NOT A STROBE. `PipGrantLeft * 28` put a little over two
+            // full cycles into the 0.45 s window and both ends of it landed mid-swing, so a
+            // charge handed back FLICKERED rather than flashed. `Sin(t * PI)` rises once and
+            // returns to exactly zero, which is the shape `ApplyPop` and the score punch already
+            // use: one grammar for "something just happened" across the whole HUD.
             float flash = card.PipGrantLeft > 0.0f
-                ? Mathf.Sin(card.PipGrantLeft * 28.0f) * 0.5f + 0.5f
+                ? Mathf.Sin((1.0f - card.PipGrantLeft / 0.45f) * Mathf.PI)
                 : 0.0f;
 
             for (int i = 0; i < card.Pips.Length; i++)
@@ -3902,11 +4003,19 @@ namespace TumbangPreso.UI
 
             if (ready)
             {
-                // ⚠️ A SLOW BREATH, NOT A FAST PULSE. 1.4 s is the only continuous motion the
-                // deck is allowed, and it has to be distinguishable from a skill's 0.18 s pop at
-                // a glance or neither of them means anything.
-                float breath = Mathf.Sin(Time.time * (Mathf.PI * 2.0f / 1.4f)) * 0.5f + 0.5f;
-                card.Rim.color = Color.Lerp(heroColor, Color.white, breath * 0.55f);
+                // ⚠️⚠️ READY IS THE BRIGHTEST RIM IN THE DECK, AND IT DOES NOT BREATHE. This
+                // ran a 1.4 s sine and defended itself as "the only continuous motion the deck
+                // is allowed"; it had stopped being that long before 2026-08-27, by which point
+                // the clock, the lata card, the lata alert, the pressure line and an active
+                // skill's rim were all moving beside it. With those five held still, the honest
+                // version of the same idea is a rim that is simply brighter than every other
+                // state, plus the 0.18 s pop `ApplyPop` already fires on the frame the ultimate
+                // comes up.
+                //
+                // ⚠️ 0.55 IS THE OLD SINE'S PEAK, NOT ITS AVERAGE. Ready is the one state in
+                // the deck worth interrupting a fight for, so it takes the top of the range it
+                // used to sweep rather than the middle of it.
+                card.Rim.color = Color.Lerp(heroColor, Color.white, 0.55f);
                 card.Glyph.color = UiTheme.HeroGlyphOn;
                 card.Key.color = UiTheme.Cream;
                 card.State.text = "";

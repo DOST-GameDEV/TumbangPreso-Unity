@@ -1520,6 +1520,155 @@ control or one of its own children.
 
 ---
 
+## 23 · The in-match HUD had five ambient sines, three copies of "LATA DOWN" and twelve coloured cells
+
+🧑, 2026-08-27, off two gameplay frames of Ilalim ng Tulay in Hero Strike:
+
+> *"theres pulsing shit that feels weird to look at and unnecessary (huds and ui for the actual
+> game)"*
+>
+> *"repetitive lata down and theres too many animations happpening on screen (for the huds as
+> well as text) it can feel overstimulating TOO many diff colored shits for text too, try to
+> simplify hud and ui while playing but still let it show essential things like penalties,
+> score"*
+
+He also asked, of Nemu's deck tile: *"why does nemu have 2 charges if its just recast? should
+just show 1"*.
+
+### 23.1 What was actually moving, counted
+
+Every one of these ran off `Mathf.Sin(Time.unscaledTime * k)` and none of them was an event: they
+were **states drawn as motion**, so on a live round several were going at once, at different
+frequencies, out of phase with each other.
+
+| Widget | Rate | Amplitude | How much of a round it ran for |
+|---|---|---|---|
+| Timer card | 3 / 5 / 8 rad/s | 2.5 / 6.5 / 12 % | the last **30 s of 90**, always |
+| Pressure line under it | 6 rad/s | 5.5 % | the last 15 s, always |
+| Lata card | 7 rad/s | 10 % | every second the can is down |
+| Lata alert, centre screen | 8 rad/s | 9 % | every second the can is down |
+| Status stack row | 10 rad/s | 3.5 % | the last quarter of every timed effect |
+| Active skill rim | 7 rad/s | colour, 35 % toward white | the whole duration of the power |
+| Ultimate-ready rim | 4.5 rad/s | colour, 55 % toward white | every second it is up and unspent |
+
+Seven, and the deck's own comment claimed the ultimate breath was *"the only continuous motion
+the deck is allowed"*. It had not been that for a long time.
+
+**All seven are gone.** What is left on the in-match HUD is exactly three motions, and every one
+of them fires on an EDGE and returns to rest:
+
+- `ApplyPop`, 0.18 s, when a skill or the ultimate comes back up.
+- The score-row punch, 0.34 s, on a swing of 20 points or more.
+- The pip-grant flash, 0.45 s, when a charge is handed back by `Recharge`.
+
+⚠⚠ **The rule this settles: an EVENT gets the motion, a STATE gets a colour.** Anything that
+is true for tens of seconds at a time may not move, however gently, because the player cannot
+look away from the screen it is drawn on.
+
+⚠️ **Every removal PINS the transform rather than skipping the assignment.** Timer card, lata
+card, lata alert, pressure line and status rows are all built once and reused, so one left
+mid-sine would keep that scale for the rest of the match.
+
+### 23.2 "LATA DOWN" was on screen up to FOUR times at once
+
+The card title (as `⚠  LATA DOWN  ⚠`), the centre-screen alert (`LATA DOWN  ·  RETRIEVE NOW`),
+a 1.6 s toast fired from `MatchInstaller` on the same edge (`LATA DOWN  ·  RETRIEVE NOW` again),
+and the crosshair while a slipper was charging (`LATA DOWN\nHOLDING CHARGE`). Two of the four
+were animated, and all four sat within one glance of each other.
+
+⚠⚠ **The fourth was only found by PHOTOGRAPHING a live round, not by reading the HUD.** Three
+of them live in `Hud.cs` and were obvious side by side in one file; the toast is registered in
+`MatchInstaller.InstallHudSignals` and reads as an unremarkable event announcement until you see
+it land on top of the other three. `GameplayShots.ALiveRoundIsPhotographed` is what showed it.
+
+Split by sentence now, one surface each:
+
+- **Card**: the state. `LATA DOWN`, no glyphs.
+- **Alert**: the action only. `RESET IT NOW` / `RETRIEVE NOW`.
+- **Crosshair**: the throw. `HOLDING CHARGE`, which is the one thing neither of the others knows.
+- **Toast**: nothing. The 0.45 s `SetDownedFlash` on the same edge and the alert appearing are
+  the event; the words had three homes already. `LATA IS BACK UP` is kept, because when the can
+  comes up the card goes quiet and the alert vanishes, and a thing disappearing does not announce
+  itself.
+
+⚠️ **A FIFTH instance survives on purpose and is worth a decision.** `ComicPopup` throws a
+world-space "LATA DOWN!" above the can on the same edge, visible in
+`Logs/shots-play/round-eyes.png`. It is kept because 🧑 said *"the abilities and other effects
+are okay"* and because unlike the four HUD surfaces it is anchored to WHERE the can is, which is
+information none of the others carry. **If the words still feel repetitive in play, this is the
+one left to cut**, at `Lata.cs:262` where the popup string is chosen, rather than in the
+HUD.
+
+The pressure line lost its two earlier bands the same way: `PRESSURE BUILDING` at 30 s and
+`FINAL PUSH · ...` at 15 s said nothing the clock beside them did not, and rewrote themselves
+twice on the way down. One string, in the last ten seconds, that does not change while it is up.
+
+### 23.3 Twelve coloured cells became four
+
+The scoreboard painted **name, role word and score** of every row in that seat's role colour, so
+a four-seat board put up to three saturated hues across twelve pieces of text in one corner. The
+role colour is now spent on the **role word only**, which is the one cell where the colour is the
+content; the rail and the row plate underneath are untouched and still carry the role at a
+distance. Name and score are Cream on your own row and CreamMuted on the other three, so "which
+one am I" is carried by weight rather than by a second hue.
+
+Classic's deck lost the same class of thing: the Street Hype title swapped hue at tier 3 and the
+fill LERPED orange to yellow across its range, both changing continuously while hype drains. The
+tier NAME is in the same string and the bar's length is the number; neither needed a colour.
+
+### 23.4 Nemu's pips read as "the second one is the way home"
+
+Astral Projection is one press out and one press back, and the tile says `RECAST` for the whole
+six seconds it is out. The two charge dots above it were answering a different question at the
+same moment ("you get two of these a round"), and the two readings collided.
+
+**`PaintCharges` now hides the pip row while `skill.IsActive && skill.CanReactivate`.** Gated on
+`CanReactivate`, not on a hero id, so any future ability with a return press gets it for free.
+
+⚠⚠ **`MaxCharges` IS UNTOUCHED AT 2, AND 🧑 CONFIRMED THAT IS WHAT HE MEANT.** Asked on
+2026-08-27 whether the ask was the readout or the number, he answered **the display**. Every
+other hero's charge skill carries 2 (`CheskaHeroKit` skill1, `DanteHeroKit`, `PhaisterHeroKit`,
+`SeanHeroKit`, `ZackHeroKit`), and the free reactivation means Nemu's 2 buys two round trips
+rather than two casts, which is the same shape as the rest of the roster.
+
+⚠️ **So do not "fix" this later by cutting her to 1.** The confusion was two readings colliding
+in one tile, and the tile is what changed.
+
+### 23.5 What was deliberately kept
+
+Penalties, the score board, the round line, the clock and its colour bands, the status stack with
+its draining bars and tenths, the crosshair, the ability deck's three states, the ultimate's
+notched meter, the toast and the countdown. 🧑 asked for *"still let it show essential things
+like penalties, score"* and nothing in that list lost a fact; what came out was repetition,
+motion and hue, not information.
+
+In-world ability effects are **not** touched: *"the abilities and other effects are okay"*.
+`GroundReticle`'s aim breath stays.
+
+### 23.6 Verified
+
+Core **69/69**, EditMode **124/124**, PlayMode **66/66** (`!WallClock`), and `Checks.RunAll`.
+Fresh gameplay frames in `Logs/shots-play/` from `GameplayShots.ALiveRoundIsPhotographed`, copied
+versioned to `Logs/shots-hud/hud_calm_round_v2.png` and `hud_calm_taya_v2.png`. The v1 pair from
+the run BEFORE the toast fix is what showed the fourth "LATA DOWN"; the v2 pair is one alert, one
+card, one in-world popup.
+
+⚠⚠ **`Checks.RunAll` comes back FAILED on `headless` and `audio cues`, and both are § 21's,
+not this work's.** `HeadlessCheck` asserts `HeroPeople.Count == 5` and `AllPeople.Count == 17`
+against a roster that gained Phaister, and `AudioCueCheck` reports `PhaisterHeroKit` firing
+`sfx_ghost_appear`, which § 21 already records as arriving with no file and no registration.
+Neither reads a file this change touches. `ArenaCheck`, `MapGeometryCheck` and `SceneScriptCheck`
+are all OK.
+
+⚠️ **The first `RunAll` launch of the session came back exit 1 with a 2 KB log and no checks
+run at all**, because a previous Unity was still holding the project lock. That is § 7's
+lockfile trap and it looks exactly like a broken install. The second launch, after the processes
+had gone, ran everything.
+
+**Done looks like:** a gameplay frame where nothing is moving unless something just happened.
+
+---
+
 ## 24 · Both intermission banners were drawn on top of something ✅ CLOSED 2026-08-27
 
 Reported off a Hero Strike frame of Ilalim ng Tulay: raise the practice line, lower the "open a
