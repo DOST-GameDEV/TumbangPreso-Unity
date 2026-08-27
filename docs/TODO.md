@@ -5375,6 +5375,86 @@ second command to be readable.
 
 ---
 
+## 52 · The ink outline tore open at every hard edge ✅ FIXED 2026-08-27
+
+🧑 2026-08-27: *"the issue is the outlines dont fully connect"*.
+
+**The outline is an inverted hull, and an inverted hull assumes ONE NORMAL PER POSITION.**
+`Toon.shader`'s OUTLINE Pass draws back faces pushed out along `v.normal`. That is correct only
+when every copy of a given corner agrees on which way "out" is. These rigs do not agree: a hard
+edge, a UV seam or a material split all force the importer to emit the same corner SEVERAL times,
+one per adjoining face, each carrying its own face normal. Pushing those copies along their own
+normals sends them to different points in space, so the shell parts company with itself and the
+border shows a gap.
+
+⚠️ **The gap is widest where the angle is sharpest**, which is why it read as "some parts are
+missing" rather than as a uniformly thin border. Two normals 90° apart separate by the full
+outline width; a shallow bend barely parts at all. On a Kenney mini that is the fingers, the jaw,
+the shoulders and the tops of the shoes, which is most of what the eye uses to read the pose.
+
+**The fix is a welded normal.** `Visual.OutlineNormals.Weld` averages every normal sharing a
+position and the Pass inflates along that average instead, so the copies all travel to the same
+point and the shell stays closed.
+
+⚠️⚠️ **It goes in the TANGENT channel, and a spare UV would have been wrong.** Unity skins
+POSITION, NORMAL and TANGENT for a `SkinnedMeshRenderer` and passes UVs through untouched, so a
+welded normal parked in UV3 would have stayed in bind pose and the border would have split open
+the moment a limb rotated. The toon shader samples no normal map and never writes `o.Normal`, so
+nothing reads a real tangent and the channel was free. **If a normal map is ever added to the toon
+shader this has to move**, and there is nowhere good left to put it.
+
+⚠️ **The weld hangs off `ToonSkin.Apply` rather than off the ten call sites.** That function is
+the one chokepoint every outlined surface in the game already passes through, so a renderer cannot
+acquire the toon shader and miss the weld. It caches per shared mesh, so twelve people wearing one
+rig cost one bake between them and a respawn costs a set lookup.
+
+⚠️ **The shader falls back to the raw normal when the tangent is zero.** A mesh imported without a
+CPU copy cannot be welded, and inflating along a zero vector would collapse the hull onto the model
+and delete the outline entirely. The fallback restores the pre-weld look for that mesh, which is a
+seam rather than nothing at all.
+
+⚠️⚠️ **THE PROPS WERE STILL TORN AFTER THE CHARACTERS WERE FIXED, AND ONLY THE TEST CAUGHT IT.**
+The `.glb` people arrive from glTFast with a CPU copy and welded immediately. The nine inked
+`.obj` props (four lata, four tsinelas, `viewmodel_arm`) were imported with Read/Write OFF, so
+`mesh.vertices` came back empty, `Weld` returned early and their borders kept the exact split the
+cast had just lost. **Nothing logged and nothing looked wrong in the inspector**, which is the
+whole reason `EveryOutlinedMeshIsReadableSoTheWeldCanRun` is written as a readability assertion
+rather than as a geometry one. `ModelImportSetup` now sets `isReadable` on them.
+
+⚠️⚠️ **AND THE FIRST-PERSON HANDS SURVIVED EVEN THAT, BECAUSE THE MESH IS DUPLICATED.** 🧑
+2026-08-27, after the cast and the props were both green: *"can you apply it also to the hands in
+first person view"*. They were genuinely still torn. `ViewmodelArms` builds both arms from
+`Resources.Load<Mesh>("Models/viewmodel_arm")`, which resolves to
+`Assets/TumbangPreso/Resources/Models/viewmodel_arm.obj`, a **second, byte-identical copy** of
+`Art/models/viewmodel_arm.obj`. The import fix and the test suite both walked `Art/models` only, so
+**both reported success against a file the game never loads** while the mesh on screen for the
+entire match kept its split border. `tsinelas_classic.obj` is duplicated the same way for the
+slipper held in first person.
+
+⚠️ **That is the sharpest version of the lesson in this whole entry.** A directory sweep proves
+that whatever is on disk in that directory is correct. It cannot notice that the asset the player
+actually looks at is somewhere else. `TheFirstPersonArmIsWeldedAtThePathViewmodelArmsActuallyLoads`
+therefore names the path literally, the way `ViewmodelArms` spells it, rather than globbing.
+
+⚠️ **The duplication itself is left alone on purpose.** Deduplicating a mesh that two loaders reach
+by two different mechanisms is a separate change with its own failure modes, and it is not worth
+bundling into an outline fix. It is written down here so the next person meets it deliberately.
+
+⚠️ **`env_` is deliberately excluded from that, and the reason is memory rather than style.**
+Readable means a second copy of the mesh in system RAM for the life of the process. The street
+never reaches `ToonSkin.Apply` at all after the 2026-07-29 world-toon revert, so it has no hull to
+weld and would be paying for a copy nothing reads.
+
+**Verified:** `OutlineWeldTests`, four tests. One asserts the rig meshes are readable at all,
+because a silent no-op on an unreadable mesh is the most likely way this regresses and it looks
+completely normal in the inspector. One asserts the closure property directly as geometry, that
+vertices sharing a position inflate the same way. One asserts the rigs still HAVE split normals,
+so the suite reports it if the premise ever stops holding. One names the first-person arm at the
+exact path `ViewmodelArms` loads, because a directory sweep cannot notice that the mesh on screen
+most of the match is filed somewhere else.
+
+---
+
 ## Closed
 
 - **Lobby client synchronization, pick normalization, and host non-zero seat picks.** ✅ 2026-08-26.

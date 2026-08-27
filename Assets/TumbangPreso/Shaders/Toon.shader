@@ -141,6 +141,18 @@ Shader "TumbangPreso/Toon"
             {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
+
+                // ⚠️⚠️ THE WELDED NORMAL, NOT A REAL TANGENT. `OutlineNormals.Weld` averages every
+                // normal sharing a position and parks the result here, because a hull inflated
+                // along the raw per-vertex normal TEARS OPEN at every hard edge: the importer
+                // emits a corner once per adjoining face and each copy pushes somewhere
+                // different. That is the "outlines dont fully connect" report of 2026-08-27.
+                //
+                // ⚠️ IT IS IN TANGENT RATHER THAN A UV BECAUSE OF SKINNING. Unity skins POSITION,
+                // NORMAL and TANGENT and passes UVs through raw, so a welded normal in UV3 would
+                // sit in bind pose and the border would split the moment an arm swung. See the
+                // class comment on `OutlineNormals` for why nothing else reads this channel.
+                float4 tangent : TANGENT;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
@@ -155,7 +167,16 @@ Shader "TumbangPreso/Toon"
                 UNITY_SETUP_INSTANCE_ID(v);
 
                 v2f_outline o;
-                float3 pushed = v.vertex.xyz + normalize(v.normal) * _OutlineWidth;
+
+                // ⚠️ THE FALLBACK IS LOAD-BEARING, NOT DEFENSIVE PADDING. A mesh that was never
+                // welded — Read/Write disabled at import, or a renderer that never went through
+                // `ToonSkin.Apply` — arrives with a zero tangent, and inflating along that would
+                // collapse the hull onto the model and delete the outline entirely. Dropping back
+                // to the raw normal restores the pre-weld look, which is a seam rather than
+                // nothing at all.
+                float3 welded = dot(v.tangent.xyz, v.tangent.xyz) > 1e-8 ? v.tangent.xyz : v.normal;
+
+                float3 pushed = v.vertex.xyz + normalize(welded) * _OutlineWidth;
 
                 o.pos = UnityObjectToClipPos(float4(pushed, 1.0));
                 UNITY_TRANSFER_FOG(o, o.pos);
