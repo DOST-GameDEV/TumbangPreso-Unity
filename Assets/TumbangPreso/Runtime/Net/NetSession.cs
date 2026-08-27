@@ -224,9 +224,75 @@ namespace TumbangPreso.Net
 
         // -------------------------------------------------------------------
 
-        public bool StartHost(int port = DefaultPort, bool dedicated = false)
+        /// <summary>
+        /// How many frames a previous session is given to finish shutting down. At 60 fps this
+        /// is a fifth of a second, which is far longer than the one frame NGO actually needs;
+        /// the bound exists so a transport wedged open can never hang the button that pressed it.
+        /// </summary>
+        private const int ShutdownWaitFrames = 12;
+
+        /// <summary>
+        /// Ends any live session and WAITS FOR IT TO ACTUALLY BE OVER before returning.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE `NetworkManager.Shutdown()` DOES NOT SHUT ANYTHING DOWN, AND
+        /// EVERY START PATH USED TO ASSUME IT DID. All four opened with the same two lines,
+        /// `if (_nm.IsListening) Stop();` followed immediately by a start, and NGO's `Shutdown`
+        /// only sets a flag: `ShutdownInternal` runs later, from the network update loop at
+        /// `PostLateUpdate`. `CanStart` refuses outright while `IsListening` is still true, so
+        /// the start in the SAME FRAME was rejected every time. Measured directly:
+        ///
+        ///     straight after Stop() (same frame): IsListening=True ShutdownInProgress=True
+        ///     SAME-FRAME restart returned False; status='failed to start hosting'
+        ///
+        /// So hosting or joining worked from a cold menu and failed whenever a session was
+        /// already live — backing out of a lobby and hosting again, or retrying a join. That is
+        /// exactly the reported shape: 🧑 2026-08-28, *"sometimes it says failed to join online
+        /// host via relay. it's consistent because sometimes i get it to work"*, and *"i cant
+        /// also seem to host in lan"*.
+        ///
+        /// ⚠️ THE RELAY PATHS WERE HIT LESS OFTEN, NOT EXEMPT. They happen to `await` a sign-in
+        /// and an allocation between the stop and the start, so a frame usually passes by luck.
+        /// A cached sign-in and a fast allocation can both continue synchronously, and then they
+        /// fail identically. One gate for all four rather than four paths with different odds.
+        ///
+        /// ⚠️ FRAMES, NOT `Task.Yield`. A yielded continuation can resume inside the same frame,
+        /// which is the very thing being waited out. `Awaitable.NextFrameAsync` is a real frame
+        /// boundary, and `ShutdownInternal` has run by the next frame's Update.
+        /// </summary>
+        private async Task EnsureStoppedAsync()
         {
-            if (_nm != null && _nm.IsListening) Stop();
+            if (_nm == null || !_nm.IsListening) return;
+
+            Stop();
+
+            for (int frame = 0; frame < ShutdownWaitFrames; frame++)
+            {
+                if (this == null) return;
+                if (_nm == null || !_nm.IsListening) return;
+
+                try
+                {
+                    await Awaitable.NextFrameAsync(destroyCancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    return;
+                }
+            }
+
+            // ⚠️ SAID OUT LOUD RATHER THAN RETRIED FOREVER. If the transport is still up after
+            // this long the start below will fail on its own and report why; a silent extra wait
+            // would just move the same failure somewhere harder to find.
+            if (_nm != null && _nm.IsListening)
+            {
+                Debug.LogWarning($"[Net] the previous session was still listening after " +
+                                 $"{ShutdownWaitFrames} frames; starting anyway.");
+            }
+        }
+
+        public async Task<bool> StartHostAsync(int port = DefaultPort, bool dedicated = false)
+        {
+            await EnsureStoppedAsync();
 
             Configure("0.0.0.0", port);
             ConfigureClientHello();
@@ -378,9 +444,9 @@ namespace TumbangPreso.Net
         /// `fe80::1` into a host of `fe80:` and a port of `1`. Bracketed IPv6 with a port
         /// (`[::1]:8910`) is handled separately for the same reason.
         /// </summary>
-        public bool StartClient(string address, int port = DefaultPort)
+        public async Task<bool> StartClientAsync(string address, int port = DefaultPort)
         {
-            if (_nm != null && _nm.IsListening) Stop();
+            await EnsureStoppedAsync();
 
             address = SplitHostPort(address, ref port);
 
@@ -407,7 +473,7 @@ namespace TumbangPreso.Net
         /// </summary>
         public async Task<bool> StartRelayHost(int maxConnections = LobbySession.MaxConnections)
         {
-            if (_nm != null && _nm.IsListening) Stop();
+            await EnsureStoppedAsync();
 
             SetStatus("signing in to online services...");
 
@@ -436,6 +502,7 @@ namespace TumbangPreso.Net
                 // shipped by com.unity.services.multiplayer, as an extension method.
                 var relayServerData = allocation.ToRelayServerData("dtls");
                 _utp.SetRelayServerData(relayServerData);
+                ConfigureTimeouts();
 
                 Lobby.IsDedicated = false;
                 Lobby.OpenLobby(new System.Random(Environment.TickCount));
@@ -497,7 +564,7 @@ namespace TumbangPreso.Net
         /// </summary>
         public async Task<bool> StartRelayClient(string relayJoinCode)
         {
-            if (_nm != null && _nm.IsListening) Stop();
+            await EnsureStoppedAsync();
 
             if (string.IsNullOrWhiteSpace(relayJoinCode))
             {
@@ -524,6 +591,7 @@ namespace TumbangPreso.Net
                 JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(relayJoinCode.Trim());
                 var relayServerData = joinAllocation.ToRelayServerData("dtls");
                 _utp.SetRelayServerData(relayServerData);
+                ConfigureTimeouts();
 
                 IsRelay = true;
                 RelayJoinCode = relayJoinCode.Trim();
@@ -650,11 +718,27 @@ namespace TumbangPreso.Net
         private void Configure(string address, int port)
         {
             _utp.SetConnectionData(address, (ushort)port);
+            ConfigureTimeouts();
+        }
 
-            // ⚠️ A GENEROUS TIMEOUT ON PURPOSE. This game is played on venue wifi and Philippine
-            // home connections, and a peer briefly stalling is normal. Dropping them fast means
-            // dropping them often, and a dropped seat costs the other three a real player for
-            // the rest of the match.
+        /// <summary>
+        /// The transport's patience, and nothing else.
+        ///
+        /// ⚠️ A GENEROUS TIMEOUT ON PURPOSE. This game is played on venue wifi and Philippine
+        /// home connections, and a peer briefly stalling is normal. Dropping them fast means
+        /// dropping them often, and a dropped seat costs the other three a real player for
+        /// the rest of the match.
+        ///
+        /// ⚠️⚠️ SPLIT OUT OF `Configure` BECAUSE THE RELAY PATHS COULD NOT CALL THAT AND SO GOT
+        /// NONE OF THIS. `Configure` opens with `SetConnectionData`, which resets the transport's
+        /// protocol to plain UnityTransport and would undo the `SetRelayServerData` the relay
+        /// paths had just done. So relay ran on whatever the last LAN attempt happened to leave
+        /// behind, or on UTP's own defaults in a process that had never touched LAN — a 1000 ms
+        /// connect timeout, on the one route in this game that goes through a datacentre rather
+        /// than across the room. The more latent path had the less patient settings.
+        /// </summary>
+        private void ConfigureTimeouts()
+        {
             _utp.DisconnectTimeoutMS = 30000;
             _utp.ConnectTimeoutMS = 2000;
             _utp.MaxConnectAttempts = 12;

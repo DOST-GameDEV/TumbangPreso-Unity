@@ -98,10 +98,10 @@ namespace TumbangPreso.Net
                 // ⚠️ ONE FRAME LATER, NOT NOW. `NetSession.Ensure` builds a GameObject, and
                 // BeforeSceneLoad runs before there is a scene to build it into: the object is
                 // created and then destroyed by the very first scene load.
-                Defer(() =>
+                Defer(async () =>
                 {
                     var net = NetSession.Ensure();
-                    bool ok = net.StartHost(port, isDedicated);
+                    bool ok = await net.StartHostAsync(port, isDedicated);
 
                     Debug.Log($"[NetBoot] host requested on {port} dedicated={isDedicated}: " +
                               (ok ? "listening" : "FAILED"));
@@ -120,10 +120,10 @@ namespace TumbangPreso.Net
             Requested = true;
             Application.runInBackground = true;
 
-            Defer(() =>
+            Defer(async () =>
             {
                 var net = NetSession.Ensure();
-                bool ok = net.StartClient(address, joinPort);
+                bool ok = await net.StartClientAsync(address, joinPort);
 
                 Debug.Log($"[NetBoot] join requested to {address}:{joinPort}: " +
                           (ok ? "connecting" : "FAILED"));

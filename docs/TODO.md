@@ -5978,6 +5978,74 @@ in `StepNetworkReplica` deleted rather than left as a second source.
 
 ---
 
+## 65 · Hosting or joining a SECOND time in one launch was refused, silently
+
+🧑 2026-08-28: *"it sometimes says failed to join online host via relay. it's consistent because
+sometimes i get it to work"*, and *"i cant also seem to host in lan. it just says starting lan
+session.."*.
+
+### 65.1 ✅ FIXED: `NetworkManager.Shutdown()` does not shut anything down
+
+**All four start paths in `NetSession` opened with the same two lines** — `if (_nm.IsListening)
+Stop();` and then a start on the very next statement. NGO's `Shutdown()` only sets a flag;
+`ShutdownInternal` runs later, from the network update loop at `PostLateUpdate`. `CanStart`
+refuses outright while `IsListening` is still true. **So the start in the same frame was rejected
+every single time.** Measured with a probe before the fix:
+
+```
+straight after Stop() (same frame): IsListening=True ShutdownInProgress=True
+SAME-FRAME restart returned False; status='failed to start hosting'
+```
+
+⚠️⚠️ **THE FIRST START OF A PROCESS ALWAYS WORKED, WHICH IS WHY THIS READ AS RANDOM.** Nothing
+was listening yet, so `Stop()` was never reached. It failed only once a session was already up:
+backing out of a lobby and hosting again, or retrying a join after one that did not take. That is
+exactly "sometimes I get it to work".
+
+⚠️ **The two relay paths were hit less often, not exempt.** They happen to `await` a sign-in and
+an allocation between the stop and the start, so a frame usually passes by luck; a cached sign-in
+and a fast allocation both continue synchronously and then they fail identically.
+
+**Fixed** with one shared `NetSession.EnsureStoppedAsync()` used by all four paths, which stops
+and then waits real frames (bounded at `ShutdownWaitFrames = 12`, and it warns rather than hanging
+if the transport is still up). `StartHost`/`StartClient` became `StartHostAsync`/`StartClientAsync`
+so the wait is expressible; `ConvertedMultiplayerSetup` and `NetBootstrap` await them.
+**Verified** by `SessionRestartTests`, which hosts twice without an intervening `Stop()` and
+asserts the second one; it fails against the old code and passes against the new.
+
+### 65.2 ✅ FIXED: the relay paths never got the transport's generous timeouts
+
+`Configure` set `ConnectTimeoutMS = 2000`, `MaxConnectAttempts = 12` and
+`DisconnectTimeoutMS = 30000`, with a comment about venue wifi and Philippine home connections.
+**Only the two LAN paths could call it**, because it opens with `SetConnectionData`, which resets
+the transport protocol to plain UnityTransport and would undo the `SetRelayServerData` the relay
+paths had just done. So relay ran on whatever the last LAN attempt left behind, or on UTP's own
+defaults in a process that had never touched LAN — a **1000 ms** connect timeout, on the one route
+in this game that goes through a datacentre rather than across the room. The more latent path had
+the less patient settings. Split into `ConfigureTimeouts()` and called from all four.
+
+### 65.3 ✅ FIXED: every failed start threw away the reason it had just worked out
+
+`NetSession` writes a precise status on the way out of each failure ("relay allocation failed:
+...", "invalid relay join code", "cannot go online: no network route", "failed to start hosting")
+and **every caller in `ConvertedMultiplayerSetup` overwrote it with one fixed sentence.** A dead
+join code, a rate-limited lookup, a refused port and a machine with no internet were all the same
+line on screen. `Reason(headline)` now appends the session's own status, which is the same fix
+that file's `LastDisconnectReason` block already made for disconnects.
+
+### 65.4 ⚠️ OPEN: the online browser can offer a lobby whose relay allocation is gone
+
+`ServerQuery.ResolveCodeAsync` returns `Found = true` off a UGS Lobby record, and the record
+outlives the allocation: a host that force-quits stops heartbeating but the row survives until the
+service expires it. `JoinAllocationAsync` then throws and the join fails for a lobby the browser
+had just listed as live. 65.3 makes it *say* so rather than fixing it. **Done looks like:** a
+failed `JoinAllocationAsync` deletes or hides the stale row, and the browser stops listing a lobby
+whose last heartbeat is older than the service's expiry.
+⚠️ `ResolveCodeAsync` returning `Found = true` with an EMPTY `RelayCode` is the same fault's other
+face and should be treated as not-found rather than handed to `StartRelayClient`.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**
