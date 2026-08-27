@@ -89,7 +89,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static bool _gateBlowout;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v36";
+        private const string Version = "v45";
 
         [MenuItem("Tumbang Preso/Capture Ability Showcase")]
         public static void RunFromMenu() => Execute();
@@ -280,6 +280,21 @@ namespace TumbangPreso.EditorTools.MapKit
                     Vector3.zero, 2.2f, null, HeroHazards.ExplosionStyle.Slipper));
 
                 Transient("blast_thunder", () => HeroHazards.CreateThunderstrike(Vector3.zero, 7.0f));
+
+                // ⚠️⚠️ THE LAUNCHED ROCK HAD NEVER BEEN PHOTOGRAPHED, BECAUSE IT IS THE ONE PIECE
+                // OF DANTE'S STOMP THAT IS SPAWNED BY THE KIT RATHER THAN BY A HAZARD. Every
+                // other frame in this probe calls a `HeroHazards` spawner directly, and
+                // `SpawnVolcanicRockDebris` is called from `DanteHeroKit.SeismicStompAbility`, so
+                // it fell through the one gap in the coverage. 🧑 asked for *"rocks launching
+                // around it"* on 2026-08-28 and the change that answered it could not be checked
+                // against anything.
+                //
+                // ⚠️ THEY ARE FROZEN AT SPAWN, AND THAT IS THE USEFUL FRAME ANYWAY. These carry
+                // `Rigidbody`s and nothing simulates physics in an edit-mode capture, so what
+                // this photographs is the instant they leave the ground: where they came out of
+                // the break and what they are made of. Both are exactly what changed. It cannot
+                // show the arc, and no still could.
+                Transient("quake_debris", () => HeroHazards.SpawnVolcanicRockDebris(Vector3.zero, 8, 2.2f));
 
                 // ---------------------------------------------------------------
                 // 5. THE SIX WEATHERS.

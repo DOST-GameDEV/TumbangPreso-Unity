@@ -69,7 +69,10 @@ namespace TumbangPreso.Abilities
 
                 // Cracked lava decal and volcanic debris, calibrated to the 2.2 m telegraph.
                 HeroHazards.SpawnCrackedLavaDecal(ctx.Position, 2.2f, 4.0f);
-                HeroHazards.SpawnVolcanicRockDebris(ctx.Position, 8);
+                // ⚠️ THE RADIUS IS THE TELEGRAPH'S. The rocks are thrown off the RIM of the break
+                // rather than out of a point at the centre, so this has to be the same 2.2 m the
+                // decal and the blast use or eight rocks would leave ground that showed nothing.
+                HeroHazards.SpawnVolcanicRockDebris(ctx.Position, 8, 2.2f);
                 Visual.AbilityVfx.SpawnMagmaEruption(ctx.Position, 2.2f);
 
                 // Explosion shockwave & comic floatie
@@ -254,7 +257,7 @@ namespace TumbangPreso.Abilities
             {
                 NetCue.Play("hero_dante_ult", ctx.Position);
                 NetCue.Play("sfx_explosion_heavy", ctx.Position);
-                HeroHazards.SpawnVolcanicRockDebris(ctx.Position, 14);
+                HeroHazards.SpawnVolcanicRockDebris(ctx.Position, 14, 4.5f);
                 Visual.AbilityVfx.SpawnMagmaEruption(ctx.Position + ctx.Forward * 2.5f, 4.5f);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
