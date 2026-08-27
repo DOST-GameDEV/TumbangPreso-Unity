@@ -361,7 +361,7 @@ namespace TumbangPreso.Net
         /// <summary>
         /// ⚠️⚠️ A DEDICATED SERVER IS A REFEREE AND MUST NEVER BE THE LEADER. It holds no seat,
         /// so a lobby whose leader is the server has nobody who can actually press start. This
-        /// is not a corner case: it is how the Singapore VPS runs, and it breaks in a way that
+        /// is not a corner case for the supported Linux server build, and it breaks in a way that
         /// is invisible when testing locally as a listen host.
         /// </summary>
         private void ClaimLeaderIfVacant(int peerId)

@@ -63,7 +63,7 @@ namespace TumbangPreso.Net
         /// join and "mostly work". That failure presents as wrong characters, missing powers,
         /// or a frozen body, which is much worse than a clear version-mismatch refusal.
         /// </summary>
-        public const int ProtocolVersion = 2;
+        public const int ProtocolVersion = 3;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =
@@ -78,6 +78,16 @@ namespace TumbangPreso.Net
         public bool IsHost => _nm == null || !_nm.IsListening || _nm.IsServer;
         public bool IsNetworked => _nm != null && _nm.IsListening;
         public int LocalSlot { get; private set; }
+
+        /// <summary>
+        /// ⚠️ THE TRANSPORT'S OWN ID, NEVER THE SEAT. NGO gives the listen host and a dedicated
+        /// referee `NetworkManager.ServerClientId`, which is 0, and that 0 is a real identity
+        /// rather than a placeholder: `LobbySession` keys `_peers` by it and the ready and
+        /// rematch gates count it. Offline there is no transport, and 0 is then the only peer
+        /// there is, so the same answer is correct for a different reason.
+        /// </summary>
+        public int LocalPeerId => _nm != null && _nm.IsListening ? (int)_nm.LocalClientId : 0;
+
         public bool IsSeatlessReferee => _nm != null && _nm.IsServer && !_nm.IsClient;
 
         public string Status { get; private set; } = "offline";
@@ -230,7 +240,7 @@ namespace TumbangPreso.Net
         /// </summary>
         // ⚠⚠ DEFERRED, 2026-08-20, NOT IN PROGRESS. This superseded the E.2 decision
         // (`Unity_UGS_Networking_Prompts.md`, 2026-08-19) that chose Multiplay Hosting over the
-        // Singapore VPS: com.unity.services.multiplay cannot be installed on Unity 6000.5 at all.
+        // retired Singapore VPS: com.unity.services.multiplay cannot be installed on Unity 6000.5 at all.
         // Every published version of it, 1.1.1 through 1.3.1, ships
         // Editor/Authoring/Assets/CreateMultiplayConfigMenu.cs, which calls EndNameEditAction.
         // Unity 6000.5 marks that obsolete as an ERROR rather than a warning, so the package's
@@ -253,15 +263,15 @@ namespace TumbangPreso.Net
         // MultiplayerServerService.CreateSessionAsync, which is Unity's actual replacement API but
         // exposes sessions rather than a ServerQueryHandler, so the SQP heartbeat in Update
         // becomes the service's job rather than ours. That port needs a real fleet to verify, so
-        // it is deliberately not guessed at here. The dedicated Linux server build is unaffected
-        // either way: it still serves clients today, it just does not register with a fleet.
+        // it is deliberately not guessed at here. The dedicated Linux server target can serve
+        // clients when explicitly launched, but no VPS deployment or fleet is active.
         public async Task StartMultiplayServerAsync(int port, string serverName = "Tumbang Preso Dedicated", string map = "Eskinita")
         {
 #if !MULTIPLAY_SDK
             Debug.LogWarning(
                 "[Net] Multiplay fleet registration skipped: com.unity.services.multiplay is not " +
-                "installed because it does not compile on Unity 6000.5. Dedicated hosting still " +
-                "serves clients, it just does not report itself to the fleet.");
+                "installed because it does not compile on Unity 6000.5. An explicitly launched " +
+                "dedicated host can accept direct clients, but it cannot report itself to a fleet.");
             SetStatus($"dedicated server on port {port} (fleet registration unavailable)");
             await Task.CompletedTask;
 #else

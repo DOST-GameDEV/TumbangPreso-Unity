@@ -49,9 +49,24 @@ namespace TumbangPreso
         public static int LocalSlot => Provider?.LocalSlot ?? 0;
 
         /// <summary>
-        /// ⚠️ A DEDICATED SERVER IS A REFEREE WITH NO SEAT, and that is not a corner case: it
-        /// is how the Singapore VPS runs. Anything that assumes the host is also a player
-        /// breaks there, and it breaks in a way nobody sees locally.
+        /// This peer's TRANSPORT identity, which is what the host counts and keys its tables by.
+        ///
+        /// ⚠️⚠️ A SEAT IS NOT A PEER ID AND THE TWO NAMESPACES OVERLAP, which is what makes
+        /// mixing them so expensive to find. Seats are 0-3 and always four of them, filled by
+        /// bots where nobody is sitting. Peer ids are handed out by the transport, the host is
+        /// always 0, and a spectator or a dedicated referee holds one without holding a seat.
+        /// A host in seat 1 beside a client whose peer id is 1 is the case that breaks: a set
+        /// keyed by "whichever of the two was to hand" collapses two peers into one entry, and
+        /// every gate that counts presses then waits forever for a press it already had.
+        /// `ReadyGate.DeclareReady`, `RematchVote.Add` and `LobbySession.PlayingPeerCount` all
+        /// want THIS, never `LocalSlot`.
+        /// </summary>
+        public static int LocalPeerId => Provider?.LocalPeerId ?? 0;
+
+        /// <summary>
+        /// ⚠️ A DEDICATED SERVER IS A REFEREE WITH NO SEAT, and that is not a corner case for
+        /// the supported Linux server build. The Unity game has no active VPS deployment, but
+        /// anything that assumes a launched server is also a player still breaks invisibly.
         /// </summary>
         public static bool IsSeatlessReferee => Provider?.IsSeatlessReferee ?? false;
 
@@ -87,6 +102,7 @@ namespace TumbangPreso
         bool IsHost { get; }
         bool IsNetworked { get; }
         int LocalSlot { get; }
+        int LocalPeerId { get; }
         bool IsSeatlessReferee { get; }
     }
 
@@ -99,6 +115,7 @@ namespace TumbangPreso
         public bool IsHost => true;
         public bool IsNetworked => false;
         public int LocalSlot => 0;
+        public int LocalPeerId => 0;
         public bool IsSeatlessReferee => false;
     }
 }

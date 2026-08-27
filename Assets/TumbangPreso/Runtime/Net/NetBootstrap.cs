@@ -14,15 +14,17 @@ namespace TumbangPreso.Net
     /// Both are one switch each. Everything the ledger lists as pending under `main.gd` is
     /// verifiable from here.
     ///
-    /// ⚠️ AND THE DEDICATED SERVER NEEDS THIS ANYWAY. The Singapore VPS runs a headless build
-    /// with no menus to click, so `-tp-dedicated` is not a test affordance; it is how that
-    /// build starts at all.
+    /// ⚠️ AND A DEDICATED SERVER NEEDS THIS ANYWAY. The Unity game has no active Vultr
+    /// deployment, but any explicitly launched headless build has no menus to click, so
+    /// `-tp-dedicated` is not only a test affordance; it is how that build starts at all.
     ///
     ///   TumbangPreso.exe -tp-host                  host on the default port, seat 0
     ///   TumbangPreso.exe -tp-host 7777             host on a chosen port
     ///   TumbangPreso.exe -tp-dedicated 7777        referee with no seat
     ///   TumbangPreso.exe -tp-join 127.0.0.1 7777   client
     ///   TumbangPreso.exe -tp-map Eskinita          which arena to open
+    ///   TumbangPreso.exe -tp-autostart 2           ready when two peers are seated
+    ///   TumbangPreso.exe -tp-autorematch           vote from the real result board
     ///   TumbangPreso.exe -logFile host.log         Unity's own, and it is REQUIRED for two
     ///                                              instances: both write to one Player.log
     ///                                              otherwise and the interleaving is unreadable

@@ -3789,6 +3789,13 @@ into `HostLateJoin` with a log line at each step. `Logs/` is not where the evide
 
 ### 38.20 Still open
 
+* ✅ **THE UNITY GAME DOES NOT USE THE OLD VULTR POOL.** The handoff for this pass called the
+  Singapore VPS at `139.180.212.110` live, but the Unity source says the opposite:
+  `ServerQuery` retired that pool and `ConvertedMultiplayerSetup` routes online hosting through
+  UGS Relay plus Lobby. `docs/Port_Plan.md` and `docs/Port_Ledger.md` now state the current path
+  explicitly and distinguish the optional Linux server build target from an active deployment.
+  Verified by a repository-wide search: the Unity runtime contains no Vultr endpoint or pool
+  query, and the only address reference is the retirement note in `ServerQuery`.
 * ⚠️⚠️ **TWO REAL MACHINES ON A LAN HAVE STILL NOT PLAYED THIS.** § 1's closing note has said so
   since 2026-08-26 and it is still true. Everything in this entry was found by reading the wire and
   by running two processes on one machine, which shares a clock, a filesystem and a loopback
@@ -4888,6 +4895,157 @@ intent and the body.
 
 ---
 
+## 52 · The ready and rematch gates counted a seat as a peer, and five guards allocated before they guarded
+
+Two halves of one session, 2026-08-27. The first is a networking fault that made a two-human
+match unstartable; the second is a measured allocation pass with a probe behind every number.
+
+### 52.1 ✅ FIXED: ready and rematch mixed transport peer ids with seat ids
+
+**The fault.** `ReadyGate.DeclareReady` and `Core.RematchVote.Add` both opened with
+`if (peerId == 0) peerId = hostPeerId;`. The belief behind it is recorded in § 1 above, in
+`RematchVote`'s header, in `MatchRpc`'s and in a `Core.Tests` case: that a sender id of 0 was a
+Godot placeholder the host had to translate into its own identity.
+
+**It is not a placeholder.** `NetworkManager.ServerClientId` is 0 and it is the host's real
+transport id, which is why `LobbySession` already keys `_peers` by it and why
+`SelectLobbyPickServerRpc` carries a ⚠️ note saying to take the host's peer id from
+`LocalClientId` and never from `LocalSlot`. Remapping 0 to a SEAT put two namespaces in one set:
+
+* a host sitting in **seat 1** wrote entry `1`;
+* the client whose transport id is **1** also wrote entry `1`;
+* the set held one entry for two peers, `ExpectedReadyCount` still wanted two, and **the ready
+  countdown never opened**. The rematch gate failed identically from the result board.
+
+**The fix is to stop naming yourself.** `DeclareReadyServerRpc` and `VoteRematchServerRpc` now
+carry **no payload at all**: the host reads the sender id NGO authenticated at the door, and its
+own press comes from `NetAuthority.LocalPeerId`. That is also the only value a client cannot lie
+about, so it closes the smaller hole on the same line: a peer that could name itself in the
+payload could ready somebody else. `RematchVote.Add(peerId)` lost its `hostPeerId` parameter,
+`HasVoted` with it, and `NetSession.ProtocolVersion` went **2 to 3** because the wire changed.
+
+**The same fault one call frame out, found while fixing it.** `LobbySession.PlayingPeerCount`
+takes a peer id (it compares against `PeerRecord.PeerId`) and all three callers,
+`ReadyGate.ExpectedReadyCount`, `MatchResult.ExpectedVotes` and the new `NetAutomationProbe`,
+were handing it `NetAuthority.LocalSlot`. So a host in seat 1 forgave a spectating client 1, and
+a spectating host in seat 1 was dropped from its own quorum. `NetAuthority.LocalPeerId` is new,
+is on `INetProvider` so `SoloProvider` answers it offline, and is what all three pass now.
+
+**Verified.** `Core` 91/91 with a rewritten case that asserts peer 0 and peer 1 are two voters;
+EditMode 143/143; PlayMode 68/68; all three wire audits clean (40 ability sites, 25 host-gated,
+**0 ungated on another body**; 40 request sites, **0 unreachable**; 42 payloads,
+**0 mismatched**). `audit_wire_payloads.py` lost its two `ACCEPTED` waivers, because
+`DeclareReady` and `VoteRematch` now genuinely write nothing and read nothing.
+
+### 52.2 The two-process driver, and the deadlock in its first shape
+
+`Assets/TumbangPreso/Runtime/Diagnostics/NetAutomationProbe.cs` presses the real controls so two
+built players can verify each other without a person driving two sets of menus.
+
+* `-tp-autostart 2` waits until the host can see two playing peers and then presses the same
+  `DeclareReadyServerRpc` a keyboard does.
+* `-tp-autorematch` presses `MatchResult.RequestRematch`, which is the REMATCH button's own
+  handler.
+
+⚠️⚠️ **ONLY THE HOST WAITS FOR THE PEER COUNT, AND THAT ASYMMETRY IS A FIX RATHER THAN A
+SHORTCUT.** `LobbySession` is filled by the connection-approval path, which runs on the server, so
+on a client the table is empty and `PlayingPeerCount` floors at 1 forever. Gating both processes
+on it deadlocked the run outright: the client waited for a second peer it can never see while the
+host waited for a press the client was never going to send. A client pressing early is safe
+because the host opens `AwaitingNetReady` in `MatchInstaller.BuildReadyGate` as it loads the
+arena, before any client finishes connecting, and `DeclareReady` is a set add.
+
+### 52.3 ✅ MEASURED: the stable HUD tick allocated 952 B/frame and now allocates 100
+
+`Assets/TumbangPreso/Tests/PlayMode/HudPerformanceProbe.cs` freezes gameplay with
+`Time.timeScale = 0` while leaving the HUD's unscaled tick live, then compares 180 live frames
+with `Hud.enabled` true against 180 with it false, off the engine's own `GC Allocated In Frame`
+counter. The difference is what the HUD costs on a frame where **nothing is happening**, which is
+exactly where a guard is supposed to pay nothing.
+
+| | HUD active | HUD off | **attributable** | at 60 fps |
+|---|---|---|---|---|
+| Before | 1938.58 B | 986.29 B | **952.29 B/frame** | 57,137 B/s |
+| After | 1164.04 B | 1063.84 B | **100.20 B/frame** | 6,012 B/s |
+
+**An 89.5 per cent reduction, and not one displayed string, number, timing, score or decision
+changed.** Evidence: `Logs/hud-perf-baseline4.xml` and `Logs/hud-frame-cost.txt`.
+
+⚠️⚠️ **THE PATTERN IN ALL FIVE IS THE SAME: THE EXPENSIVE HALF RAN BEFORE THE GUARD COULD
+REFUSE IT.** Four of the five already carried a comment saying the value was only written when it
+changed, and every one of those comments was telling the truth about the ASSIGNMENT and not about
+the work that produced the value.
+
+1. **`Hud.UpdateScores` built its change-stamp with a `StringBuilder`.** It appended four scores
+   and four names into a fresh string on every frame and then compared that string. It compares
+   primitive score, name and occupancy snapshots now. The occupancy flag is not decoration: the
+   old stamp could not tell an empty seat drawing its `P1` fallback from an occupant actually
+   called `P1`.
+2. **`Hud.UpdateTimer` formatted the round line on every frame.** Both `RoundLine` and
+   `ShortRoundLine` are interpolated strings, and `FitTopCentre` guards on the FINISHED string, so
+   the string had to exist before anything could decide it was unnecessary. The inputs are
+   compared now, the defender's NAME among them, because a seat can change hands without the
+   round number moving. ⚠️ The warm-up branch drops the cache, or `WARM UP` would stay on
+   screen for the whole round.
+3. **`Hud.UpdateIndicators` ran `FindObjectsByType<Slipper>` on every frame**, a whole-scene type
+   scan plus a fresh array, to find one object that changes a handful of times a round. It is a
+   validated cache now rather than a rate limit: the arrow is one of only two in-world markers
+   that answer "what am I doing", so it may not be stale for even a tenth of a second.
+   `UpdatePickupPrompt` had already refused to pay this; this row had simply never been looked at.
+4. **`Hud.KeyLabel` re-resolved a key label on every frame it was on screen.** One label is
+   `FindActionMap`, `FindAction`, `InputControlPath.ToHumanReadableString` and a
+   `ToUpperInvariant`, the last two of which allocate. It is cached against a new
+   `Settings.Rebinding.Revision`, bumped by the only three places a binding can change plus the
+   settings panel's own intermediate override. ⚠️ Keyed on a revision rather than a timer,
+   because `VISION.md` § 3 is explicit that a screen teaching the wrong key is worse than one
+   teaching none. The asset-missing fallback is deliberately not cached.
+5. **`CharacterMotor.DisplayName` allocated on every call**, via `ToUpperInvariant` or a seat
+   interpolation, and the scoreboard asks all four seats every frame while each nameplate and the
+   YOU card ask again. It compares its five inputs rather than being invalidated from the setters,
+   deliberately: `_playerSlot`, `_characterIndex`, `_isBot` and `_playerName` are all
+   `[SerializeField]` and written from several places including the seat-rebind path, and a cache
+   cleared by hand in four setters is one future writer away from a body wearing somebody else's
+   name. `MatchRpc.HostPeerLeft` flipping `IsBot` on a departed seat is exactly that case, and it
+   is why the comparison list includes `Mode`: the two rosters are different people.
+
+### 52.4 ✅ FIXED: the host re-scanned the whole scene for slippers 200 times a second
+
+`MatchRpc.FindSlipper` was a bare `FindObjectsByType<Slipper>`, and `MatchRpc.FixedUpdate` calls
+it for **all four seats on every physics step**. On a 50 Hz host that is 200 scene-wide type scans
+and 200 arrays per second, for four objects created once per match, on the one code path that
+only runs while somebody is actually connected. Same validated-cache shape as 52.3 item 3, and a
+miss refills the whole table so a fresh arena costs one scan rather than four. The sweep keeps the
+FIRST match per seat, which is what the loop it replaced returned.
+
+⚠️ **Validated per call rather than refreshed on a timer**, because `BroadcastSlipperState` is
+what every other peer draws that object from: a stale entry would be broadcast as truth.
+
+### 52.5 Found and NOT fixed
+
+* ⚠️⚠️ **`AIController` holds eleven `FindObjectsByType<Slipper>` calls in its decision
+  helpers**, at lines 465, 755, 916, 937, 1951, 2494, 2822, 2905, 3187, 3203 and 3770. They sit in
+  `RivalShotIsInbound`, `SlipperOwnedBy`, `MySlipper`, `TryInterceptPoint`, `ChooseSlipper`,
+  `TryGlanceAt`, `TryCoverPoint`, `NearestFlyingSlipper`, `WorthDenying`,
+  `AnyLooseSlipperInsideTheBox` and `HasRelevantVoidTarget`, several of which run more than once
+  per decision tick, for up to four bots. **Deliberately left alone here**: the fix is the same
+  shape as 52.3 item 3, but it is eleven sites inside the code that chooses what a bot does, and
+  § 16 says `BotBehaviourProbe` spreads about 20 per cent run to run, so at n = 1 it cannot prove
+  that changing the AI's lookups changed no decision. **Done looks like:** a `Slipper`-owned
+  static registry maintained in `OnEnable`/`OnDisable` so the query is a field read, plus three
+  runs an arm of `BotBehaviourProbe` on both modes showing throws, retrievals and tags inside
+  § 16's noise floor.
+* **The rest of the game allocates about 1,064 B/frame** on a frozen Hero Strike round with the
+  HUD disabled entirely (`hud-frame-cost.txt`, "HUD off average"). That is the floor every HUD
+  number above is measured against, it is ten times what the HUD now costs, and **nobody has ever
+  looked at what is in it.** `HudPerformanceProbe` already reports it on every run, so the next
+  pass starts with a number rather than with a search.
+* ⚠️⚠️ **TWO REAL MACHINES ON A LAN HAVE STILL NOT PLAYED THIS**, which is § 38.20's standing
+  note and is not closed by anything here. `NetAutomationProbe` runs two processes on one desktop,
+  which shares a clock, a filesystem and a loopback with itself.
+
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**
@@ -4912,8 +5070,12 @@ way to tell whether anybody agreed; `match_result.gd` draws the count for the sa
 
 ⚠️ **The rules are engine-free in `Core.RematchVote` and asserted in `Core.Tests`, not played.**
 Every bug this has ever had was a counting bug, and all five are the ready gate's own scars:
- * the host's press arrives with a sender id of **0** and is resolved at the door, or the host can
-   never satisfy a gate it is part of (and counts twice in a two-peer match);
+ * ⚠️⚠️ **this bullet used to say the opposite, and it was the fault § 52 fixed.** It read
+   *"the host's press arrives with a sender id of 0 and is resolved at the door, or the host can
+   never satisfy a gate it is part of"*. NGO client id **0 is the host's real transport
+   identity**, so resolving it to `LocalSlot` was not a fix, it was a collision: a host in seat 1
+   beside a client whose peer id is 1 collapsed into one set entry. **Peer 0 is a voter like any
+   other**;
  * a second press from one peer changes nothing, because it is a set;
  * it counts **peers, never seats** (`ReadyGate.ExpectedReadyCount`'s rule), since bot-filled
    seats cannot press a button and a gate waiting for four seats in a two-human match never

@@ -60,11 +60,6 @@ LOOPS = {
 # while every row says WHY, because the alternative is a place to hide a real mismatch.
 # -------------------------------------------------------------------
 ACCEPTED = {
-    "DeclareReady":
-        "the peer id is written and deliberately ignored: the host resolves the sender at the "
-        "door, because a peer that could name itself could ready somebody else",
-    "VoteRematch":
-        "same as DeclareReady, and for the same counting reason `docs/TODO.md` section 1 records",
     "ReqSnapshot":
         "one placeholder byte, because the request carries no data and the sender id is the "
         "whole message",

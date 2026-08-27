@@ -354,8 +354,7 @@ namespace TumbangPreso.UI
             if (GameLaunch.Spectator) return;
 
             _localReady = !_localReady;
-            int localPeerId = net.LocalSlot >= 0 ? net.LocalSlot : 0;
-            MatchRpc.Instance?.DeclareReadyServerRpc(localPeerId);
+            MatchRpc.Instance?.DeclareReadyServerRpc();
 
             if (_localReady)
             {
@@ -379,8 +378,7 @@ namespace TumbangPreso.UI
                 var readyGate = FindFirstObjectByType<ReadyGate>();
                 if (readyGate != null)
                 {
-                    int localPeerId = net.LocalSlot >= 0 ? net.LocalSlot : 0;
-                    readyGate.DeclareReady(localPeerId);
+                    MatchRpc.Instance?.DeclareReadyServerRpc();
                 }
                 else
                 {

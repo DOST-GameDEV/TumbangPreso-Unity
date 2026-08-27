@@ -248,12 +248,50 @@ namespace TumbangPreso.Net
             return round != null ? round.PlayerAt(slot) : null;
         }
 
+        /// <summary>
+        /// The slipper that answers to a seat.
+        ///
+        /// ⚠️⚠️ THE FOUR ARE REMEMBERED, BECAUSE `FixedUpdate` ASKS FOR ALL OF THEM ON EVERY
+        /// PHYSICS STEP. This was a whole-scene `FindObjectsByType<Slipper>` per call, so a host
+        /// paid four scene-wide type scans and four fresh arrays fifty times a second, for four
+        /// objects that are created once per match and then live for the whole of it. It is the
+        /// same shape of cost `CLAUDE.md` section 7.1 records a HUD string rebuild being caught
+        /// for, on the one code path that only ever runs while somebody is actually connected.
+        ///
+        /// ⚠️ THE CACHE IS VALIDATED PER CALL, NOT REFRESHED ON A TIMER. A rate limit would let
+        /// the host broadcast a stale slipper for up to its interval, and `BroadcastSlipperState`
+        /// is what every other peer draws that object from. The three things that can invalidate
+        /// an entry are checked on the frame they happen: the object being destroyed (Unity's own
+        /// null answers for that), the object being switched off, which is what
+        /// `FindObjectsInactive.Exclude` used to filter, and its owner changing.
+        ///
+        /// ⚠️ A MISS REFILLS THE WHOLE TABLE, so a fresh arena costs ONE scan rather than four.
+        /// The sweep keeps FIRST match per seat, which is what the loop it replaced returned.
+        /// </summary>
+        private static readonly Slipper[] _slippersByOwner = new Slipper[Balance.PlayerCount];
+
         private static Slipper FindSlipper(int ownerSlot)
         {
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
-                if (s.OwnerSlot == ownerSlot) return s;
+            if (ownerSlot >= 0 && ownerSlot < _slippersByOwner.Length)
+            {
+                var cached = _slippersByOwner[ownerSlot];
+                if (cached != null && cached.gameObject.activeInHierarchy &&
+                    cached.OwnerSlot == ownerSlot)
+                    return cached;
+            }
 
-            return null;
+            System.Array.Clear(_slippersByOwner, 0, _slippersByOwner.Length);
+
+            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            {
+                int owner = s.OwnerSlot;
+                if (owner < 0 || owner >= _slippersByOwner.Length) continue;
+                if (_slippersByOwner[owner] == null) _slippersByOwner[owner] = s;
+            }
+
+            return ownerSlot >= 0 && ownerSlot < _slippersByOwner.Length
+                ? _slippersByOwner[ownerSlot]
+                : null;
         }
 
         /// <summary>
@@ -395,17 +433,31 @@ namespace TumbangPreso.Net
         // THE READY GATE
         // -------------------------------------------------------------------
 
-        public void DeclareReadyServerRpc(int peerId)
+        /// <summary>
+        /// "I am ready", from whichever peer this is.
+        ///
+        /// ⚠️⚠️ IT CARRIES NO PAYLOAD ON PURPOSE, AND THAT IS THE FIX RATHER THAN A SAVING.
+        /// It used to write the peer id the caller had to hand, and every caller reached for
+        /// `NetAuthority.LocalSlot`, which is a SEAT. The host then keyed its ready set by a
+        /// seat from one peer and a transport id from another, so a host in seat 1 and a client
+        /// with id 1 shared one entry and the gate stayed a vote short for the whole lobby.
+        /// The sender is now whatever NGO authenticated at the door, which is also the only
+        /// value a client cannot lie about: a peer that could name itself could ready somebody
+        /// else. `ProtocolVersion` went to 3 for it.
+        ///
+        /// ⚠️ THE HOST'S OWN ID COMES FROM `NetAuthority.LocalPeerId`, never from `_nm`
+        /// directly: `IsHost` is true offline too, where there is no `NetworkManager` to ask.
+        /// </summary>
+        public void DeclareReadyServerRpc()
         {
             if (NetAuthority.IsHost)
             {
-                FindFirstObjectByType<ReadyGate>()?.DeclareReady(peerId);
+                FindFirstObjectByType<ReadyGate>()?.DeclareReady(NetAuthority.LocalPeerId);
                 return;
             }
 
             if (_nm == null || _nm.CustomMessagingManager == null) return;
-            using var writer = new FastBufferWriter(16, Allocator.Temp);
-            writer.WriteValueSafe(peerId);
+            using var writer = new FastBufferWriter(1, Allocator.Temp);
             _nm.CustomMessagingManager.SendNamedMessage("DeclareReady", NetworkManager.ServerClientId, writer);
         }
 
@@ -440,23 +492,22 @@ namespace TumbangPreso.Net
         // anybody else had. `match_result.gd` draws the tally for the same reason: waiting is
         // only tolerable when you can see what you are waiting for.
         //
-        // ⚠️ IT MIRRORS THE READY GATE ABOVE DELIBERATELY, down to resolving the host's own
-        // sender id of 0 at the door. The two are the same problem (count the PEERS, not the
+        // ⚠️ IT MIRRORS THE READY GATE ABOVE DELIBERATELY, down to taking the sender id NGO
+        // supplies at the door. The two are the same problem (count the PEERS, not the
         // characters, because bot-filled seats cannot press anything) and a second shape for it
         // is a second thing to get wrong.
         // -------------------------------------------------------------------
 
-        public void VoteRematchServerRpc(int peerId)
+        public void VoteRematchServerRpc()
         {
             if (NetAuthority.IsHost)
             {
-                FindFirstObjectByType<UI.MatchResult>()?.HostReceiveVote(peerId);
+                FindFirstObjectByType<UI.MatchResult>()?.HostReceiveVote(NetAuthority.LocalPeerId);
                 return;
             }
 
             if (_nm == null || _nm.CustomMessagingManager == null) return;
-            using var writer = new FastBufferWriter(16, Allocator.Temp);
-            writer.WriteValueSafe(peerId);
+            using var writer = new FastBufferWriter(1, Allocator.Temp);
             _nm.CustomMessagingManager.SendNamedMessage("VoteRematch", NetworkManager.ServerClientId, writer);
         }
 
