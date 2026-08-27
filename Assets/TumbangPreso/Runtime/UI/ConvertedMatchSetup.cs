@@ -384,8 +384,10 @@ namespace TumbangPreso.UI
                 }
                 else
                 {
+                    // ⚠️ NO SECOND `SceneFlow.StartMatch()` HERE. `HostStartMatch` fires
+                    // `OnMatchStarted`, which this screen answers with the load. Calling it again
+                    // on the next line queued a second load of the same arena in the same frame.
                     MatchRpc.Instance?.HostStartMatch();
-                    SceneFlow.StartMatch();
                 }
             }
         }

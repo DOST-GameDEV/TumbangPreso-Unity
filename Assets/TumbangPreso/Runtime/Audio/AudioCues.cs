@@ -65,15 +65,21 @@ namespace TumbangPreso.Audio
                 // than as an event: four people standing in one circle must not stack into a wall.
                 { "sfx_hex_afflict", -10.0f },
 
-                // ⚠️⚠️ THE TRAIN BED HAD NO ROW AT ALL, SO IT PLAYED AT 0 dB. `TrimDb` falls
-                // back to 0.0 for any cue it does not list, which is the right default for a
-                // one-shot and completely wrong for a five-second sustained bed: it arrived
-                // louder than every ability payload in the game and was reported off the build as
-                // *"a loud wind soudn that plays randomly"*. It is a BACKGROUND, mixed like one.
-                { "sfx_lrt_rumble", -16.0f },
+                // ⚠️⚠️ THE TRAIN IS ONE CUE NOW AND IT IS A REAL RECORDING, NOT A SYNTH.
+                // 🧑 2026-08-27: *"i keep reporting its broken and i give up on it ... replace
+                // train passing by sound and train sound as a whole with this"*, with a 10.55 s
+                // field recording. Both synthesised cues are gone: the distant one-shot warning
+                // AND the looping bed. One sound, on the moving source, for the whole pass.
+                //
+                // ⚠️ IT KEEPS THE BED'S MIX ROW RATHER THAN THE ONE-SHOT'S. It is 10.55 s of
+                // sustained noise, which is the shape the -16 was measured for: the bed shipped
+                // with NO row, fell back to 0.0 dB, and was reported off the build as *"a loud
+                // wind soudn that plays randomly"*. A long sound is mixed as a background
+                // whatever it is called.
+                { "sfx_lrt_pass", -16.0f },
 
                 // ⚠️⚠️ THE SIX ULTIMATE THEMES ARE BEDS, NOT EVENTS, AND ARE MIXED AS BEDS.
-                // `sfx_lrt_rumble` above records what happens to a sustained cue with no row:
+                // The train row above records what happens to a sustained cue with no row:
                 // `TrimDb` falls back to 0.0, which is correct for a one-shot and completely
                 // wrong for a three-second sustain. These run UNDER a payload that is already
                 // the loudest thing in the game, so anything above about -14 turns the moment
@@ -200,8 +206,13 @@ namespace TumbangPreso.Audio
 
             // ⚠️ THE MAP EVENT. `LrtTrainFlyby` called `ui_move` for two months and there has
             // never been a `ui_move.wav`, so every pass wrote `[Audio] no cue registered` to the
-            // log and the one recurring event on Ilalim ng Tulay was silent. It is 2.70 s long
-            // because `OverheadPassWindow.PassSeconds` is.
+            // log and the one recurring event on Ilalim ng Tulay was silent.
+            //
+            // ⚠️⚠️ IT IS A FIELD RECORDING NOW AND IT IS THE ONLY TRAIN CUE. 10.55 s, long
+            // enough to cover the 3.0 s warning plus the 5.33 s traverse without looping, played
+            // on the source parented to the consist so the approach and the recede come off the
+            // transform. See `LrtTrainFlyby` § THE PASS for why a moving emitter is the whole
+            // point and why `sfx_lrt_rumble` no longer exists.
             "sfx_lrt_pass",
 
             // ⚠️⚠️ THE PAYLOADS, WHICH ARE NOT THE CASTS. Every kit already fired its own
@@ -237,10 +248,16 @@ namespace TumbangPreso.Audio
             // records, on the biggest moment in the newest kit. `docs/TODO.md` § 21.
             "sfx_eclipse_toll", "sfx_hex_cast", "sfx_hex_afflict",
 
-            // ⚠️ THE TRAIN IS TWO CUES, NOT ONE. `sfx_lrt_pass` is the distant one-shot
-            // warning; `sfx_lrt_rumble` is the seamless bed the moving source loops while the
-            // consist crosses. Looping the first one faded the train out while it arrived.
-            "sfx_lrt_rumble",
+            // ⚠️⚠️ `sfx_lrt_rumble` IS DELETED, AND THE ENTRY ABOVE IT USED TO SAY "THE TRAIN IS
+            // TWO CUES, NOT ONE". It was: a distant synthesised one-shot for the warning and a
+            // seamless synthesised bed for the traverse, both built by
+            // `tools/generate_ability_audio.py`. 🧑 reported the result broken repeatedly and
+            // then closed it himself on 2026-08-27: *"i keep reporting its broken and i give up
+            // on it ... replace train passing by sound and train sound as a whole with this"*.
+            // A real recording is one sound, so splitting it across two cues would put the same
+            // 10.55 s of audio on screen twice, a few tenths apart, which is a flam. The synth
+            // that made both is removed from the generator so a regeneration cannot bring the
+            // old pair back over the recording.
 
             // ⚠️ THE 2026-08-26 SPARSE PASS, AND IT IS TWO CUES BECAUSE THE BAR IS TWO CUES
             // WIDE. 🧑: *"Find where a sound is missing, but keep it sparse. The bar is a player
@@ -358,6 +375,28 @@ namespace TumbangPreso.Audio
 
         /// <summary>Whether playing this cue should duck the music bed under it.</summary>
         public static bool DucksMusic(string cue) => cue != null && DuckTriggers.Contains(cue);
+
+        /// <summary>
+        /// Every name a caller may legitimately ask for: the live catalogue plus the six aliases.
+        ///
+        /// ⚠️ IT EXISTS BECAUSE OF THE WIRE, NOT BECAUSE OF THE MIXER. `MatchRpc`'s cue relay
+        /// takes a cue name off a client and fans it out to every peer, and a name is a string.
+        /// Without a catalogue check the host relays whatever arrives: an unknown id is a silent
+        /// miss on four machines, and a long one is a long string sent four more times. Locally a
+        /// bad cue name is a typo somebody hears once; across the wire it is somebody else's
+        /// input.
+        /// </summary>
+        private static readonly HashSet<string> KnownNames = BuildKnownNames();
+
+        private static HashSet<string> BuildKnownNames()
+        {
+            var set = new HashSet<string>(Live);
+            foreach (var kv in Aliases) set.Add(kv.Key);
+            foreach (var kv in Music) set.Add(kv.Key);
+            return set;
+        }
+
+        public static bool IsKnown(string cue) => !string.IsNullOrEmpty(cue) && KnownNames.Contains(cue);
 
         /// <summary>Resolve a cue name to the file stem that actually exists on disk.</summary>
         public static string FileStemFor(string cue)

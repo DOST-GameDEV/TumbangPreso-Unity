@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace TumbangPreso
@@ -39,6 +40,33 @@ namespace TumbangPreso
     /// </summary>
     public static class NetCue
     {
+        private static int _relaySuppressionDepth;
+
+        /// <summary>
+        /// A replicated copy plays the cue locally but must not send it back around the wire.
+        /// This scope also covers delayed wind-ups when HeroAbilitySystem ticks a remote kit.
+        /// Without it one cast becomes one cue per peer, each peer relays that copy again, and
+        /// a four-player ultimate is heard sixteen times.
+        /// </summary>
+        /// <summary>
+        /// ⚠️ IT RETURNS A STRUCT, NOT AN `IDisposable`, AND THAT IS A MEASUREMENT NOT A STYLE
+        /// CHOICE. This scope wraps `HeroKit.Tick`, which runs once per seat per frame on every
+        /// peer: four seats at 60 fps is 240 scopes a second, and a class here is 240 garbage
+        /// objects a second for the whole match. `using` on a struct with a concrete type binds
+        /// `Dispose` directly and boxes nothing. Assigning the result to an `IDisposable` local
+        /// would box it and put the allocation straight back.
+        /// </summary>
+        public static RelayScope SuppressRelay()
+        {
+            _relaySuppressionDepth++;
+            return default;
+        }
+
+        public readonly struct RelayScope : IDisposable
+        {
+            public void Dispose() => _relaySuppressionDepth = Math.Max(0, _relaySuppressionDepth - 1);
+        }
+
         /// <summary>Play a world cue here, and on every other peer.</summary>
         public static void Play(string id, Vector3 position)
         {
@@ -65,6 +93,7 @@ namespace TumbangPreso
         private static void Relay(string id, Vector3 position, float volumeScale)
         {
             if (!NetAuthority.IsNetworked) return;
+            if (_relaySuppressionDepth > 0) return;
             if (string.IsNullOrEmpty(id)) return;
 
             Net.MatchRpc.Instance?.BroadcastCue(id, position, volumeScale);

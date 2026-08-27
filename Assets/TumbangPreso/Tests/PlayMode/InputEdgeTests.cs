@@ -172,9 +172,24 @@ namespace TumbangPreso.PlayTests
                     "the taya must not be able to pick up ammunition: carrier.gd::_step_grab " +
                     "returns early on is_defender");
 
-            attacker.Intent.Set(Verb.Grab, true);
-
-            for (int i = 0; i < 20; i++) yield return new WaitForFixedUpdate();
+            // ⚠️⚠️ THE KEY IS RE-ASSERTED EVERY FRAME, BECAUSE THAT IS WHAT HOLDING ONE DOES.
+            // `PlayerInputReader.Update` writes the whole verb table on every frame a human is
+            // playing, and an `AIController` on a bot seat does the same. Setting the intent ONCE
+            // and expecting it to survive twenty fixed steps only worked while `Carrier` happened
+            // to run before whichever component owns that seat's intent, and Unity's order
+            // between two components at the same `DefaultExecutionOrder` is UNSPECIFIED. It broke
+            // the moment `AIController` and `PlayerInputReader` were given explicit orders on
+            // 2026-08-27 (`docs/TODO.md` § 42), which is the fix for Nemu's recast being erased
+            // by exactly this collision in the shipping game.
+            //
+            // ⚠️ IT IS STILL ONE PRESS EDGE. `JustPressed` is a diff against the snapshot
+            // `CharacterMotor` takes at the end of its own step, so a key held true every frame
+            // produces exactly one edge, which is what a player pressing E produces.
+            for (int i = 0; i < 20; i++)
+            {
+                attacker.Intent.Set(Verb.Grab, true);
+                yield return new WaitForFixedUpdate();
+            }
 
             attacker.Intent.Set(Verb.Grab, false);
 

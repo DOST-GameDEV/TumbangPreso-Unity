@@ -22,9 +22,40 @@ namespace TumbangPreso
     /// Every shortcut here is a temptation to break that. "Just call ResolveTag directly, it
     /// is only for the AI" is how a bot ends up tagging through a rule the human obeys.
     /// </summary>
+    // ⚠️⚠️ IT RUNS BEFORE `PlayerInputReader`, AND UNTIL 2026-08-27 NEITHER DECLARED AN ORDER AT
+    // ALL. Both write `CharacterMotor.Intent`, so with two writers and no order Unity picked one
+    // arbitrarily and the loser's presses were overwritten before the physics step read them.
+    // That is normally invisible because exactly one of the two is ever on a body, and there is
+    // exactly one place where BOTH are: `GhostPetCompanion.BeginPossession` adds a temporary AI
+    // to Nemu while the player drives Kuro. See `AbilitiesEnabled` below for what it cost.
+    [DefaultExecutionOrder(-130)]
     [RequireComponent(typeof(CharacterMotor))]
     public sealed class AIController : MonoBehaviour
     {
+        /// <summary>
+        /// Whether this controller is allowed to press the three hero keys.
+        ///
+        /// ⚠️⚠️ IT IS FALSE FOR EXACTLY ONE CONTROLLER: THE TEMPORARY ONE THAT DRIVES NEMU'S BODY
+        /// WHILE SHE IS RIDING KURO. 🧑 2026-08-27: *"nemu E recast doesnt work as intended,
+        /// she's supposed to teleport to where her ghost is when she recasts ... but right now
+        /// recasting just extends ghost form time"*, and *"u cant end ability early"*.
+        ///
+        /// ⚠️⚠️ THE RECAST WAS BEING WRITTEN AND THEN ERASED IN THE SAME FRAME.
+        /// `PlayerInputReader` deliberately keeps Skill2 live during a possession so the player
+        /// can come home (*"Allow skill2 recast to teleport and end possession"*), and this
+        /// controller writes all three hero keys every frame it runs. Two writers on one
+        /// `InputIntent`, in an undefined order, and the AI wrote `Skill2 = false` after the
+        /// player wrote `true` often enough that the return trip simply did not exist. The
+        /// possession then ran its full 6 s and ended on the timer, which is exactly the reported
+        /// *"recasting just extends ghost form time"*: nothing was extended, the press was eaten.
+        ///
+        /// ⚠️ THE FIX IS TO GIVE THE KEY ONE OWNER, NOT TO ORDER THE TWO WRITERS. The execution
+        /// order above is the belt; this is the braces, and it is the one that states the rule:
+        /// while a human is driving the pet, the human owns the hero keys and the AI owns the
+        /// legs. `CLAUDE.md` § 4's *"a bot presses the same buttons a human does"* is unharmed,
+        /// because this is one body with two drivers rather than a second path into the game.
+        /// </summary>
+        public bool AbilitiesEnabled { get; set; } = true;
         [SerializeField] private AiTier _tier = AiTier.Normal;
 
         /// <summary>
@@ -2899,6 +2930,11 @@ namespace TumbangPreso
 
         private void StepHeroAbilities(InputIntent intent, float dt)
         {
+            // ⚠️ IT RETURNS WITHOUT RELEASING, WHICH IS THE WHOLE POINT. `ReleaseUntouchedHero
+            // Buttons` writes `false` into every hero key this controller did not touch, and
+            // during a possession the player is holding one of them. See `AbilitiesEnabled`.
+            if (!AbilitiesEnabled) return;
+
             if (UI.SceneFlow.SelectedMode != GameMode.HeroStrike)
             {
                 ReleaseUntouchedHeroButtons(intent);
@@ -3243,7 +3279,25 @@ namespace TumbangPreso
             // was hit, which is a teleport nobody saw wind up.
             _aimHeld.Clear();
 
-            intent.Clear();
+            // ⚠️⚠️ A SUPPRESSED CONTROLLER CLEARS THE LEGS AND LEAVES THE HERO KEYS ALONE.
+            // `intent.Clear()` empties the whole table, and during a possession the player is
+            // holding Skill2 to come home: wiping it because NEMU'S BODY got stunned would strand
+            // the player inside the pet with no way back, which is the same fault
+            // `AbilitiesEnabled` exists for, reached through the stun branch instead.
+            if (AbilitiesEnabled)
+            {
+                intent.Clear();
+            }
+            else
+            {
+                intent.Move = Vector2.zero;
+                Press(intent, Verb.Sprint, false);
+                Press(intent, Verb.Jump, false);
+                Press(intent, Verb.Grab, false);
+                Press(intent, Verb.Lunge, false);
+                Press(intent, Verb.SpecialAbility, false);
+            }
+
             _pressed.Clear();
         }
 

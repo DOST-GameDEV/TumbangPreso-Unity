@@ -119,6 +119,13 @@ namespace TumbangPreso
         /// Kept separate from walk velocity so a knockback cannot be walked out of.</summary>
         private Vector3 _externalVelocity;
 
+        private bool _networkTargetKnown;
+        private Vector3 _networkTargetPosition;
+        private Vector3 _networkTargetVelocity;
+        private float _networkTargetYaw;
+        private Vector3 _networkSmoothVelocity;
+        private float _networkYawVelocity;
+
         private void Awake()
         {
             _cc = GetComponent<CharacterController>();
@@ -181,6 +188,7 @@ namespace TumbangPreso
 
         public void Teleport(Vector3 position)
         {
+            if (!MayMutateGameplayState()) return;
             // ⚠️⚠️ THE ARENA WALL IS ENFORCED HERE TOO, AND THIS IS THE PATH THAT ACTUALLY
             // BROKE IT. `Confine` holds a body that WALKS or is PUSHED at the edge, and a
             // teleport skips the whole movement step, so a caller handing this an arbitrary
@@ -219,9 +227,17 @@ namespace TumbangPreso
         // state and the copy nobody reads is the one that drifts.
         // -------------------------------------------------------------------
 
-        public void EnterSpeedZone(float multiplier) => Stamina.SpeedZones.Enter(multiplier);
+        public void EnterSpeedZone(float multiplier)
+        {
+            if (!MayMutateGameplayState()) return;
+            Stamina.SpeedZones.Enter(multiplier);
+        }
 
-        public void ExitSpeedZone(float multiplier) => Stamina.SpeedZones.Exit(multiplier);
+        public void ExitSpeedZone(float multiplier)
+        {
+            if (!MayMutateGameplayState()) return;
+            Stamina.SpeedZones.Exit(multiplier);
+        }
 
         /// <summary>The slow currently applied to this unit, 1.0 when clear.</summary>
         public float SpeedMultiplier => Stamina.SpeedZones.Value;
@@ -236,6 +252,7 @@ namespace TumbangPreso
         /// </summary>
         public void Respawn()
         {
+            if (!MayMutateGameplayState()) return;
             Teleport(SpawnPosition);
             // Godot reached the autoload directly (`AudioManager.play_at`). GameServices is
             // this port's stand-in for the nine autoloads, and it is null in a bare test
@@ -364,6 +381,16 @@ namespace TumbangPreso
 
             ResolveRig();
 
+            // A remote body is a host-authored picture, not a second simulation. Before this
+            // guard every client applied gravity and confinement to remote seats between
+            // snapshots, while the host applied the real movement. That made a correct stream
+            // visibly bob and fight itself, and it made bots look worse than human peers.
+            if (NetAuthority.IsNetworked && !IsLocallySimulated())
+            {
+                StepNetworkReplica(dt);
+                return;
+            }
+
             if (_spawnSettle > 0)
             {
                 _spawnSettle--;
@@ -491,7 +518,8 @@ namespace TumbangPreso
             // "hammer the jump key to get up" needs no teaching. It follows the pattern `Grab`
             // already uses: one control, one action, resolved by context. No new binding is
             // added, so `InputMapAndAbilityTests`' one-control-one-action rule is untouched.
-            if (_tripLeft > 0.0f && Intent.JustPressed(Verb.Jump)) MashRecover();
+            bool mashPressed = Intent.JustPressed(Verb.Jump);
+            if (_tripLeft > 0.0f && mashPressed) MashRecover();
 
             // ⚠️ THE SAME KEY ANSWERS AN ELEMENT STUN, AND THE ORDER MATTERS. A body that is
             // both tripped and stunned is handled by the line above, which already clears both;
@@ -500,7 +528,14 @@ namespace TumbangPreso
             // it is meaningless face down, so this takes nothing away and needs no teaching, and
             // no new binding means `InputMapAndAbilityTests`' one-control-one-action rule is
             // untouched.
-            if (_stunElement != StunElement.None && Intent.JustPressed(Verb.Jump)) MashOutOfStun();
+            if (_stunElement != StunElement.None && mashPressed) MashOutOfStun();
+
+            // The local press is predicted for immediate feedback, then the host applies the
+            // same rule to its authoritative stun/trip clock. Without this request a client
+            // could fill its own meter while the host still considered it fully stunned, and
+            // the next state packet put the whole bar back.
+            if (mashPressed && NetAuthority.ShouldRequest() && _playerSlot == NetAuthority.LocalSlot)
+                Net.MatchRpc.Instance?.RequestMashServerRpc(_playerSlot);
 
             // ⚠️⚠️ THE INTENT SNAPSHOT IS TAKEN HERE, AT THE END OF THE AUTHORITATIVE STEP, AND
             // NOWHERE ELSE. `JustPressed` and `JustReleased` are a diff against it, so whoever
@@ -616,6 +651,72 @@ namespace TumbangPreso
         /// here.
         /// </summary>
         public void ForgetInputSource() => _inputSourceKnown = false;
+
+        /// <summary>True when this process owns the simulation rather than displaying it.</summary>
+        public bool IsLocallySimulated()
+        {
+            if (!NetAuthority.IsNetworked) return true;
+            if (NetAuthority.IsHost) return HostDrivesThisBody();
+            return _playerSlot == NetAuthority.LocalSlot;
+        }
+
+        /// <summary>
+        /// Gameplay state belongs to the host. The owning client may predict changes to its own
+        /// body so input stays responsive; the continuous host state stream corrects it. An
+        /// observing client may never move or stun somebody else's body, even when a replicated
+        /// hazard happens to run there too.
+        /// </summary>
+        private bool MayMutateGameplayState()
+            => !NetAuthority.IsNetworked || NetAuthority.IsHost || _playerSlot == NetAuthority.LocalSlot;
+
+        /// <summary>
+        /// Queues a host transform. Remote seats smooth toward it; the owning client only
+        /// accepts a correction when prediction has drifted far enough to be visible.
+        /// </summary>
+        public void ApplyNetworkTransform(Vector3 position, float yaw, Vector3 velocity,
+                                          bool reconcileLocal, bool force = false)
+        {
+            _velocity = velocity;
+
+            float error = Vector3.Distance(transform.position, position);
+            if (reconcileLocal && error < 1.25f) return;
+
+            _networkTargetPosition = position;
+            _networkTargetYaw = yaw;
+            _networkTargetVelocity = velocity;
+
+            bool snap = force || !_networkTargetKnown || error > 3.0f;
+            _networkTargetKnown = true;
+
+            if (!snap) return;
+
+            SetNetworkPose(position, yaw);
+            _networkSmoothVelocity = Vector3.zero;
+            _networkYawVelocity = 0.0f;
+        }
+
+        private void StepNetworkReplica(float dt)
+        {
+            if (!_networkTargetKnown) return;
+
+            // Lead by one render-sized beat so a 50 Hz stream does not look one packet behind.
+            Vector3 target = _networkTargetPosition + _networkTargetVelocity * 0.02f;
+            Vector3 position = Vector3.SmoothDamp(transform.position, target,
+                                                   ref _networkSmoothVelocity, 0.055f,
+                                                   40.0f, dt);
+            float yaw = Mathf.SmoothDampAngle(transform.eulerAngles.y, _networkTargetYaw,
+                                              ref _networkYawVelocity, 0.045f,
+                                              1080.0f, dt);
+            SetNetworkPose(position, yaw);
+        }
+
+        private void SetNetworkPose(Vector3 position, float yaw)
+        {
+            bool enabled = _cc != null && _cc.enabled;
+            if (enabled) _cc.enabled = false;
+            transform.SetPositionAndRotation(position, Quaternion.Euler(0.0f, yaw, 0.0f));
+            if (enabled) _cc.enabled = true;
+        }
 
         private bool _inputSourceKnown;
         private bool _hostDriven;
@@ -884,6 +985,7 @@ namespace TumbangPreso
 
         public void ClearStun()
         {
+            if (!MayMutateGameplayState()) return;
             _stunLeft = 0.0f;
             _stunTotal = 0.0f;
 
@@ -897,6 +999,7 @@ namespace TumbangPreso
 
         public void ClearTrip()
         {
+            if (!MayMutateGameplayState()) return;
             _tripLeft = 0.0f;
             _tripTotal = 0.0f;
             _mashPresses = 0;
@@ -914,6 +1017,7 @@ namespace TumbangPreso
         /// </summary>
         public void ApplyTrip(float duration = 2.5f)
         {
+            if (!MayMutateGameplayState()) return;
             if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
 
             _tripLeft = Mathf.Max(_tripLeft, duration);
@@ -993,6 +1097,7 @@ namespace TumbangPreso
         /// </summary>
         public void ApplyStagger(float duration, StunElement element, int breakPresses)
         {
+            if (!MayMutateGameplayState()) return;
             if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
 
             // ⚠️⚠️ A STAGGER SHORTER THAN THE MASH FLOOR IS NOT A HOLD AND MUST NOT DRESS AS ONE.
@@ -1037,6 +1142,31 @@ namespace TumbangPreso
 
         /// <summary>How many presses this stun was declared to take.</summary>
         public int StunBreakPresses => _stunBreakPresses;
+
+        /// <summary>
+        /// Applies the host's live control state without replaying hits, sounds, score, or
+        /// teleports. This is used both continuously and by rejoin snapshots, so every field a
+        /// HUD or input gate reads is restored together.
+        /// </summary>
+        public void ApplyNetworkState(float stunLeft, float stunTotal, StunElement element,
+                                      int stunBreakPresses, int stunMashPresses,
+                                      float tripLeft, float tripTotal, int tripMashPresses,
+                                      float tripMashRemoved, float staminaCurrent,
+                                      float staminaIdle, float fatigueLeft)
+        {
+            _stunLeft = Mathf.Max(0.0f, stunLeft);
+            _stunTotal = Mathf.Max(_stunLeft, stunTotal);
+            _stunElement = _stunLeft > 0.0f ? element : StunElement.None;
+            _stunBreakPresses = Mathf.Clamp(stunBreakPresses, 1, 32);
+            _stunMashPresses = Mathf.Clamp(stunMashPresses, 0, _stunBreakPresses);
+
+            _tripLeft = Mathf.Max(0.0f, tripLeft);
+            _tripTotal = Mathf.Max(_tripLeft, tripTotal);
+            _mashPresses = Mathf.Max(0, tripMashPresses);
+            _mashRemoved = Mathf.Clamp(tripMashRemoved, 0.0f, _tripTotal);
+
+            Stamina?.ApplyNetworkSnapshot(staminaCurrent, staminaIdle, fatigueLeft);
+        }
 
         /// <summary>
         /// True while hammering buys something.
@@ -1106,6 +1236,7 @@ namespace TumbangPreso
 
         public void ApplyImpulse(Vector3 impulse)
         {
+            if (!MayMutateGameplayState()) return;
             _externalVelocity += impulse;
 
             float mag = _externalVelocity.magnitude;

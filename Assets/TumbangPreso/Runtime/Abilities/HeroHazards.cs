@@ -399,6 +399,7 @@ namespace TumbangPreso.Abilities
                 // Slow rotation on the ice zone
                 transform.Rotate(Vector3.up, 20.0f * Time.deltaTime);
 
+                if (!NetAuthority.ShouldResolve()) return;
                 var round = GameServices.Round;
                 if (round == null) return;
 
@@ -420,7 +421,15 @@ namespace TumbangPreso.Abilities
                             {
                                 _whoaCooldown = 1.2f;
                                 ComicPopup.Whoa(p.transform.position);
-                                GameServices.Audio?.PlayAt("ability_shatter_trap", p.transform.position);
+
+                                // ⚠️⚠️ `NetCue`, BECAUSE THIS LINE IS NOW BEHIND A HOST GATE.
+                                // Making the zone host-authoritative (`docs/TODO.md` § 38) put
+                                // every hazard's on-hit decision on one machine, which is right,
+                                // and silently made its SOUND host-only, which is not.
+                                // `tools/audit_audio_reach.py` reported all three the moment the
+                                // gates landed. Same split `Carrier.HostThrowAt` records: only
+                                // the host may DECIDE, and announcing is a separate job.
+                                NetCue.Play("ability_shatter_trap", p.transform.position);
                             }
                         }
                     }
@@ -588,6 +597,7 @@ namespace TumbangPreso.Abilities
 
                 Burn(transform, _left, Duration);
 
+                if (!NetAuthority.ShouldResolve()) return;
                 var round = GameServices.Round;
                 if (round == null) return;
 
@@ -925,6 +935,7 @@ namespace TumbangPreso.Abilities
 
                 Burn(transform, _left, Duration);
 
+                if (!NetAuthority.ShouldResolve()) return;
                 var round = GameServices.Round;
                 if (round == null) return;
 
@@ -1054,6 +1065,8 @@ namespace TumbangPreso.Abilities
 
                     if (Vector3.Distance(transform.position, targetPos) < 0.9f)
                     {
+                        if (!NetAuthority.ShouldResolve()) return;
+
                         // ⚠️ 6, THE DEFAULT, AND DELIBERATELY UNREMARKABLE. The
                         // poltergeist is the middle of the range this scale is measured
                         // against: heavier than Sean shrugging off a burn, lighter than
@@ -1062,7 +1075,11 @@ namespace TumbangPreso.Abilities
                         _target.ApplyImpulse(Random.onUnitSphere * 4.0f);
                         DizzyStars.Attach(_target.transform, 1.8f, UiTheme.HeroSpiritBright);
                         ComicPopup.Boo(_target.transform.position);
-                        GameServices.Audio?.PlayAt("downed", transform.position);
+
+                        // ⚠️ `NetCue` FOR THE REASON THE ICE SHEET RECORDS: this sits behind the
+                        // host gate three lines up, so three of the four players could not hear
+                        // the poltergeist connect.
+                        NetCue.Play("downed", transform.position);
                         Object.Destroy(gameObject);
                     }
                 }
@@ -1531,6 +1548,7 @@ namespace TumbangPreso.Abilities
                 // Rotate cosmic vortex discs
                 transform.Rotate(Vector3.up, 75.0f * Time.deltaTime);
 
+                if (!NetAuthority.ShouldResolve()) return;
                 var round = GameServices.Round;
                 if (round == null) return;
 
@@ -2411,6 +2429,14 @@ namespace TumbangPreso.Abilities
             VfxMaterial.Ghost(written.GetComponent<Renderer>(),
                               new Color(1.00f, 0.86f, 0.32f, 0.80f), 0.42f);
 
+            // ⚠️ THE WARD FOLLOWS THE ROAD TOO, and it is 4.8 m across, which is wider than the
+            // pavement it can be thrown onto. The ultimate's circle is where this was reported
+            // (🧑 2026-08-27: *"her magic circle doesnt draw over the sidewalk and thats weird
+            // af"*) but the fault is the whole class of flat ground art, and a ward chalked half
+            // onto a kerb is the same picture at a quarter of the size.
+            VfxShapes.DrapeToGround(ward);
+            VfxShapes.DrapeToGround(written);
+
             // ⚠️ THE PERIMETER MARKS ARE FOUR, NOT SIX, AND THEY STAND ON THE MEDALLIONS. Six at
             // 60 degrees lined up with nothing; the ward has four medallions at the compass
             // points and a standing character on each is the same glyph twice, once flat and once
@@ -2945,6 +2971,11 @@ namespace TumbangPreso.Abilities
                                         UiTheme.HeroWitchBright.b, 0.70f), 0.75f);
             VfxMaterial.StripCollider(reach);
 
+            // ⚠️ THE REACH IS A BOUNDARY, SO IT IS THE ONE PIECE THAT MUST NOT BREAK. It says how
+            // far the ultimate goes; a boundary that vanishes where it crosses the kerb tells a
+            // player the zone ends there, which is the opposite of true.
+            VfxShapes.DrapeToGround(reach);
+
             // -------------------------------------------------------------------
             // § THE CIRCLE, WHICH IS WHAT HE ASKED FOR IN THE FIRST PLACE
             //
@@ -3173,9 +3204,9 @@ namespace TumbangPreso.Abilities
                 holder.transform.SetParent(transform, false);
 
                 float a = angleDeg * Mathf.Deg2Rad;
-                Vector3 where = transform.position
+                Vector3 where = OnGround(transform.position
                                 + new Vector3(Mathf.Cos(a), 0.0f, Mathf.Sin(a)) * Radius * at
-                                + Vector3.up * 0.020f;
+                                + Vector3.up * 0.020f);
 
                 var ring = VfxShapes.Lay(holder.transform, "Ring",
                                          VfxShapes.Collar(28, 0.05f, 0.90f),
@@ -3211,9 +3242,9 @@ namespace TumbangPreso.Abilities
                 var bar = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 bar.name = "Bar";
                 bar.transform.SetParent(holder.transform, false);
-                bar.transform.position = transform.position
+                bar.transform.position = OnGround(transform.position
                                          + dir * Radius * (from + to) * 0.5f
-                                         + Vector3.up * 0.0185f;
+                                         + Vector3.up * 0.0185f);
                 bar.transform.rotation = Quaternion.LookRotation(dir, Vector3.up);
                 bar.transform.localScale = new Vector3(0.035f, 0.004f, Radius * (to - from));
 
@@ -3228,6 +3259,7 @@ namespace TumbangPreso.Abilities
                 var go = VfxShapes.Lay(transform, name, mesh, Radius * scale, 0.019f);
                 go.transform.localRotation = Quaternion.Euler(0.0f, turnDeg, 0.0f);
                 Ink(go, colour, alpha, 0.85f);
+                VfxShapes.DrapeToGround(go);
                 Register(go.transform, null, 0.0f);
             }
 
@@ -3246,9 +3278,9 @@ namespace TumbangPreso.Abilities
                     var tick = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     tick.name = "Tick";
                     tick.transform.SetParent(holder.transform, false);
-                    tick.transform.position = transform.position
+                    tick.transform.position = OnGround(transform.position
                                               + dir * Radius * (inner + outer) * 0.5f
-                                              + Vector3.up * 0.019f;
+                                              + Vector3.up * 0.019f);
                     tick.transform.rotation = Quaternion.LookRotation(dir, Vector3.up);
                     tick.transform.localScale = new Vector3(0.042f, 0.004f,
                                                             Radius * (outer - inner));
@@ -3282,16 +3314,35 @@ namespace TumbangPreso.Abilities
                                            VfxShapes.Rune(seed + i * 23),
                                            Radius * size, 0.019f);
 
-                    go.transform.position = transform.position
+                    go.transform.position = OnGround(transform.position
                                             + new Vector3(Mathf.Cos(a), 0.0f, Mathf.Sin(a))
                                               * Radius * at
-                                            + Vector3.up * 0.019f;
+                                            + Vector3.up * 0.019f);
                     go.transform.rotation = Quaternion.Euler(90.0f, -deg + 90.0f, 0.0f);
 
                     Ink(go, new Color(1.00f, 0.68f, 0.99f), 0.76f, 1.35f);
                 }
 
                 Register(holder.transform, null, 0.0f);
+            }
+
+            /// <summary>
+            /// Lifts one piece of the inscription onto whatever is actually under it.
+            ///
+            /// ⚠️⚠️ THE CIRCLE IS 12.8 M ACROSS AND THE STREET IS NOT FLAT. Every piece used to
+            /// be placed at the CASTER'S height, so on Ilalim ng Tulay everything past the kerb was
+            /// buried under the pavement and the inscription ended in a hard straight line. 🧑
+            /// 2026-08-27: *"her magic circle doesnt draw over the sidewalk and thats weird af"*.
+            ///
+            /// ⚠️ SNAPPED, NOT DRAPED, AND ONLY FOR THE SMALL PIECES. A medallion is 30 cm across
+            /// and a tick is 4 cm wide, so the ground under one is flat at its own scale and moving
+            /// it whole costs one ray. The RULES are metres across and cannot be snapped; they are
+            /// bent vertex by vertex in `AddRing`.
+            /// </summary>
+            private Vector3 OnGround(Vector3 flat)
+            {
+                flat.y = VfxShapes.GroundAt(flat, flat.y);
+                return flat;
             }
 
             /// <summary>Colour one piece and record it so the whole figure can dim together.</summary>
@@ -3313,6 +3364,13 @@ namespace TumbangPreso.Abilities
                 var r = go.GetComponent<Renderer>();
                 VfxMaterial.Ghost(r, new Color(colour.r, colour.g, colour.b, alpha), 0.75f);
                 VfxMaterial.StripCollider(go);
+
+                // ⚠️⚠️ THE RULES ARE THE THING THAT WAS VISIBLY CUT OFF, so they are the thing that
+                // is DRAPED rather than snapped. A 12.8 m ring crosses the kerb, so one height for
+                // the whole ring cannot be right anywhere: it has to bend. 🧑 2026-08-27:
+                // *"her magic circle doesnt draw over the sidewalk and thats weird af"*.
+                // `VfxShapes.DrapeToGround` has the diagnosis and why the two easy fixes are worse.
+                VfxShapes.DrapeToGround(go);
 
                 Register(go.transform, r, alpha);
             }
@@ -3337,9 +3395,9 @@ namespace TumbangPreso.Abilities
                                              VfxShapes.TwoSided(VfxShapes.Rune(1300 + i * 37)),
                                              0.34f, heightScale: 0.50f);
 
-                    go.transform.position = transform.position
+                    go.transform.position = OnGround(transform.position
                                             + new Vector3(Mathf.Cos(a), 0.0f, Mathf.Sin(a)) * ring
-                                            + Vector3.up * 0.35f;
+                                            + Vector3.up * 0.35f);
                     go.transform.rotation = Quaternion.Euler(0.0f, -a * Mathf.Rad2Deg, 0.0f);
 
                     // ⚠️⚠️ THEY CAME BACK BLACK IN `ability_coven_eclipse_v35.png` AND THAT IS THE
@@ -3590,6 +3648,7 @@ namespace TumbangPreso.Abilities
                 // Slow rotation on occult hex circle
                 transform.Rotate(Vector3.up, 18.0f * Time.deltaTime);
 
+                if (!NetAuthority.ShouldResolve()) return;
                 var round = GameServices.Round;
                 if (round == null) return;
 
@@ -3614,7 +3673,11 @@ namespace TumbangPreso.Abilities
                             // impact; a curse is not struck, it SETTLES. It also fires once per
                             // victim per 1.1 s, which is why it is mixed ten down: four people in
                             // one circle must not stack into a wall.
-                            GameServices.Audio?.PlayAt("sfx_hex_afflict", p.transform.position);
+                            //
+                            // ⚠️ `NetCue`, SAME AS THE OTHER TWO HAZARDS. It is behind the host
+                            // gate at the top of this Update, so on the wire it was a curse that
+                            // only the host could hear settling.
+                            NetCue.Play("sfx_hex_afflict", p.transform.position);
                         }
                     }
                 }
@@ -3760,6 +3823,7 @@ namespace TumbangPreso.Abilities
                 if (rig != null) rig.Shake(0.6f, 0.3f);
             }
 
+            if (!NetAuthority.ShouldResolve()) return;
             // Stagger and knock back enemies
             var round = GameServices.Round;
             if (round != null)
@@ -4051,6 +4115,7 @@ namespace TumbangPreso.Abilities
             // a live match always has a round.
             CreateExplosionVisual(center, radius, comicText, style, facing);
 
+            if (!NetAuthority.ShouldResolve()) return;
             var round = GameServices.Round;
             if (round == null) return;
 

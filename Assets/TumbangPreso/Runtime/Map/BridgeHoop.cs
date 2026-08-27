@@ -109,7 +109,9 @@ namespace TumbangPreso
             int slot = slipper.ThrowerSlot;
             if (slot < 0) return;
 
-            Hud.ReportStyle(slot, HypeReward, "TRES SA ILALIM");
+            // ⚠️ NOT RELAYED. Every peer runs this trigger from its own copy of the slipper, so
+            // the thrower's screen awards it directly; a relay on top would pay it twice.
+            Hud.ReportStyle(slot, HypeReward, "TRES SA ILALIM", relay: false);
         }
     }
 }

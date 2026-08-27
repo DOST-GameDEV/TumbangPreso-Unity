@@ -415,7 +415,21 @@ every file in a pre-existing output directory was freshly emitted.
   **fails a run where one blows more than 12 per cent of the frame to white**. That bound is
   `docs/VISION.md` § 2 rule 5 as a number, and the first run of it found Zack's ultimate at
   **62.8 per cent** against 8.3 for the worst of everything else.
-- `tools/` holds player-side capture scripts.
+- **Three `tools/` audits read the source as TEXT and answer questions no test can.** They need
+  `python` (not on PATH; `%LOCALAPPDATA%\Programs\Python\Python312\python.exe`) and they exit
+  non-zero, so they gate a verification pass:
+  - `audit_ability_authority.py` walks every ability call that moves a body or writes score and
+    reports whether a `NetAuthority.ShouldResolve()` gate is open at that brace depth. ⚠️ **Every
+    `other` row must read HOST-ONLY.** It is currently 40 sites, 25 gated, **0 ungated on another
+    body**; `docs/TODO.md` § 25.1 is the entry it was written for.
+  - `audit_request_call_sites.py` reports every wire entry point in `Runtime/Net/` that nothing
+    calls. ⚠️ **Tests deliberately do not count**: a test calling a request proves the method
+    works, not that the game reaches it. It found three dead protocols and one verb that had never
+    travelled at all (§ 38.5, § 38.3).
+  - `audit_wire_payloads.py` compares each named message's writer and reader field by field.
+    Netcode does not check that the two halves agree, and a field added to one is not an error, it
+    is silently misread bytes (§ 38.6).
+- `tools/` also holds player-side capture scripts.
 
 Three faults from one session that no amount of playing would have found: a HUD string rebuilt
 every frame cost the 6x probe an eighth of its frames and most of its physics steps; a slipper

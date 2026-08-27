@@ -1576,7 +1576,14 @@ GENERATORS = {
     # (seed slot, synth). Slots 0 to 6 are the original payload set, in the alphabetical order
     # that produced the audio currently in the repository.
     "sfx_frost_nova.wav": (0, synth_frost_nova),
-    "sfx_lrt_pass.wav": (1, synth_lrt_pass),
+    # ⚠️⚠️ `sfx_lrt_pass` AND `sfx_lrt_rumble` ARE NOT GENERATED ANY MORE. Seed slots 1 and
+    # 16 are retired rather than reused, so every other cue keeps the seed that produced the
+    # audio in the repository. 🧑 2026-08-27, after reporting the train broken repeatedly:
+    # "i keep reporting its broken and i give up on it ... replace train passing by sound and
+    # train sound as a whole with this", with a 10.55 s field recording. The train is a real
+    # recording now and there is exactly one of it. Leaving the synths registered here would
+    # mean the next full regeneration silently overwrote the recording with the synthesis it
+    # replaced, which is the worst kind of regression: it sounds like the bug coming back.
     "sfx_possess_enter.wav": (2, synth_possess_enter),
     "sfx_possess_exit.wav": (3, synth_possess_exit),
     "sfx_quake_slam.wav": (4, synth_quake_slam),
@@ -1595,10 +1602,6 @@ GENERATORS = {
     "sfx_eclipse_toll.wav": (13, synth_eclipse_toll),
     "sfx_hex_cast.wav": (14, synth_hex_cast),
     "sfx_hex_afflict.wav": (15, synth_hex_afflict),
-
-    # The looping bed the LRT consist carries. See the synth for why `sfx_lrt_pass` could not
-    # simply be looped: it is a one-shot that begins and ends on silence.
-    "sfx_lrt_rumble.wav": (16, synth_lrt_rumble),
 
     # The 2026-08-26 sparse pass. Two sounds, both for events a player could not otherwise be
     # sure had happened: the far end of a 5.5 m teleport, and the last press of a mash landing.

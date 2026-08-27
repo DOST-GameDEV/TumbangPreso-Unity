@@ -80,27 +80,67 @@ namespace TumbangPreso.Core
         // `docs/Hero_Strike_Balance.md` § 3.1 has both tables and the reasoning for each price.
         // ------------------------------------------------------------------
 
-        /// <summary>The objective. Unchanged; it was always the right size.</summary>
-        public const float UltimateChargeLataKnock = 25.0f;
+        // ⚠️⚠️ THE METER COUNTS EVENTS NOW, NOT POINTS. 🧑 2026-08-27: *"wtf how many points or
+        // charges to ult does downing can give? i want downing can and tayaing to only give one
+        // point for the charges"*, and then *"i wanted like 10-20 charges required on ult
+        // depending on impact"*. A knockdown used to be 25 and a tag 20 against costs of 90 to
+        // 150, so the only way to answer "how close am I" was to divide two numbers nothing on
+        // screen ever showed. **One knockdown is one charge. One tag is one charge.** An ultimate
+        // costs 10 to 20 of them, ranked by how much it swings a round.
+        //
+        // ⚠️⚠️ THIS IS A REAL PACING CHANGE AND NOT ONLY A RESCALE, SO HERE IS THE ARITHMETIC IT
+        // HAS TO BE JUDGED AGAINST. The old economy bought the most expensive ultimate for six
+        // knockdowns; the new one asks twenty. A live attacker earns roughly
+        //
+        //     1 to 2 knockdowns        1.0 to 2.0
+        //     3 to 4 retrievals        1.5 to 2.0
+        //     5 to 6 throws            0.8 to 0.9
+        //     ------------------------------------
+        //     about 4.3 charges per 90 s round
+        //
+        // so Nemu's 10 lands after about two and a half rounds and Zack's 20 after about four and
+        // a half. Over Hero Strike's eight rounds that is between one and three ultimates per
+        // seat per match, against roughly three to five before. **If a match measures fewer than
+        // one ultimate per seat, this is the number to move, and moving the COST is the honest
+        // lever rather than inflating what an act pays.** `BotBehaviourProbe` prints ultimates
+        // per match and `docs/TODO.md` § 38 carries the measurement.
+        //
+        // ⚠️ THE RATIOS BETWEEN THE FOUR EARNINGS ARE UNCHANGED, except the tag. Retrieval was
+        // 12/25 of a knockdown and is 0.5; a throw was 4/25 and is 0.15. The tag goes from 0.8 of
+        // a knockdown to a full 1.0 because he asked for both objectives to be worth one: a 25
+        // per cent raise to the taya's only source of charge, for one round in four.
 
-        /// <summary>The taya's only way to earn, so it stays close to the objective's value.</summary>
-        public const float UltimateChargeTag = 20.0f;
+        /// <summary>The objective. ONE CHARGE, and everything else is priced against it.</summary>
+        public const float UltimateChargeLataKnock = 1.0f;
 
         /// <summary>
-        /// ⚠️⚠️ NEW, AND IT PAYS THE ACT THE WHOLE GAME IS BUILT AROUND. `docs/VISION.md` § 0:
-        /// *"The tension is the retrieval, not the throw. Throwing is safe and free; going back
-        /// in for your tsinelas is the only moment you can be caught."* Until now the retrieval
-        /// earned NOTHING toward an ultimate and the safe act earned 8, which paid the two
-        /// halves of the game in exactly the wrong order.
+        /// The taya's only way to earn, and now worth exactly what the objective is.
+        ///
+        /// ⚠️ 1.0, UP FROM THE 0.8 A STRAIGHT RESCALE WOULD HAVE GIVEN. Asked for by name, and
+        /// defensible on its own: an attacker has three ways to earn charge and the defender has
+        /// this one, for one round in four.
         /// </summary>
-        public const float UltimateChargeOwnSlipperRetrieved = 12.0f;
+        public const float UltimateChargeTag = 1.0f;
 
         /// <summary>
-        /// ⚠️ HALVED FROM 8, for the reason above. A throw costs nothing and risks nothing, so
-        /// it is the one act that should pay least. It still pays something, because a round
-        /// where nobody throws is not a round.
+        /// ⚠️⚠️ IT PAYS THE ACT THE WHOLE GAME IS BUILT AROUND. `docs/VISION.md` § 0: *"The
+        /// tension is the retrieval, not the throw. Throwing is safe and free; going back in for
+        /// your tsinelas is the only moment you can be caught."* Until 2026-08-25 the retrieval
+        /// earned NOTHING toward an ultimate and the safe act earned 8, which paid the two halves
+        /// of the game in exactly the wrong order.
+        ///
+        /// ⚠️ HALF A KNOCKDOWN, which is what 12 against 25 was.
         /// </summary>
-        public const float UltimateChargeLegalThrow = 4.0f;
+        public const float UltimateChargeOwnSlipperRetrieved = 0.5f;
+
+        /// <summary>
+        /// ⚠️ THE SMALLEST EARNING IN THE GAME, for the reason above. A throw costs nothing and
+        /// risks nothing, so it is the one act that should pay least. It still pays something,
+        /// because a round where nobody throws is not a round.
+        ///
+        /// ⚠️ 0.15 OF A KNOCKDOWN, which is what 4 against 25 was.
+        /// </summary>
+        public const float UltimateChargeLegalThrow = 0.15f;
 
         // Pektus (Curve Spin) Throwing
         public const float PektusCurveStrength = 14.0f;

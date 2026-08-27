@@ -24,9 +24,10 @@ namespace TumbangPreso.Abilities
         /// into score without needing a follow-up. It has to be aimed and it can be walked out
         /// of, which is what keeps it under Thunderstrike's 150.
         ///
-        /// 130 is 5.2 lata knockdowns. `docs/Hero_Strike_Balance.md` § 3.1.
+        /// ⚠️ 15 CHARGES, WHICH IS 15 LATA KNOCKDOWNS. Was 130 against a knockdown worth 25,
+        /// which is 5.2. `docs/Hero_Strike_Balance.md` § 3.1.
         /// </summary>
-        public override float UltimateCost => 130.0f;
+        public override float UltimateCost => 15.0f;
 
         private sealed class RocketBurnDashAbility : HeroAbility
         {
@@ -106,6 +107,7 @@ namespace TumbangPreso.Abilities
                 }
 
                 // Hit check during dash
+                if (!NetAuthority.ShouldResolve()) return;
                 var round = ctx.Round;
                 if (round != null)
                 {

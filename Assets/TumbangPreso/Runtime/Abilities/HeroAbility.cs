@@ -207,6 +207,22 @@ namespace TumbangPreso.Abilities
 
         public bool HasTelegraph => TelegraphRadius > 0.0f;
 
+        /// <summary>
+        /// Whether the telegraph also stands a mark up at the destination.
+        ///
+        /// ⚠️⚠️ IT IS FOR POWERS THAT PUT **YOU** SOMEWHERE, NOT POWERS THAT LAND SOMEWHERE. 🧑
+        /// 2026-08-27, on Phaister's blink: *"to teleport u have to hold her E skill and all it
+        /// shows is a frigging shadow, it's very easy to miss and not in her theme at all"*. A
+        /// ring on the road is exactly right for a zone: you look down and read whether you are
+        /// inside it. It is exactly wrong for a teleport: the player is looking along the street
+        /// at head height, where a flat decal five metres away is a few pixels of smudge.
+        ///
+        /// ⚠️ IT IS A FLAG RATHER THAN A SECOND TELEGRAPH SYSTEM. `GroundReticle` owns the mark
+        /// and draws it in the hero's own accent, so a future dash or recall gets it by setting
+        /// one bool rather than by writing a second reticle that will drift from this one.
+        /// </summary>
+        public bool AimBeacon { get; protected set; }
+
         // ------------------------------------------------------------------ hold to aim
         //
         // ⚠️⚠️ 🧑 2026-08-26, ON THE BLINK: *"let her HOLD e to control where she will go and make

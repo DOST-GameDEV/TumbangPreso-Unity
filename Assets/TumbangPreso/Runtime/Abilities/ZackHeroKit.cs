@@ -24,12 +24,14 @@ namespace TumbangPreso.Abilities
         /// THAN ON DAMAGE. Thunderstrike stuns everyone within 4.5 m of Zack's own feet. It
         /// needs no aim, cannot miss, and there is nothing the victims can read in advance and
         /// act on, so it converts into value in every situation a player chooses to press it.
-        /// Compare Titan Fissure at 110, which whiffs completely if the court scatters.
+        /// Compare Titan Fissure at 12, which whiffs completely if the court scatters.
         ///
-        /// 150 against `Balance.UltimateChargeLataKnock` 25 is six knockdowns, or a strong round
-        /// of mixed play. `docs/Hero_Strike_Balance.md` § 3.1.
+        /// ⚠️ 20 CHARGES, THE CEILING OF THE RANGE, AND IT IS TWENTY LATA KNOCKDOWNS. Was 150
+        /// against a knockdown worth 25, which is six. 🧑 asked for 10 to 20 *"depending on
+        /// impact"* and this is the highest-impact power in the game.
+        /// `docs/Hero_Strike_Balance.md` § 3.1.
         /// </summary>
-        public override float UltimateCost => 150.0f;
+        public override float UltimateCost => 20.0f;
 
         private sealed class StaticRailGrindAbility : HeroAbility
         {

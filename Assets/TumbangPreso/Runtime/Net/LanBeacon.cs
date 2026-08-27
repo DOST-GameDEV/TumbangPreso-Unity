@@ -15,12 +15,40 @@ namespace TumbangPreso.Net
         public int Port;
         public string HostName;
         public string JoinCode;
+
+        /// <summary>Seats actually being played, spectators excluded. The number a player reads.</summary>
         public int Players;
+
+        /// <summary>Seat capacity, always 4. What <see cref="Players"/> is drawn against.</summary>
         public int MaxPlayers;
+
+        /// <summary>
+        /// Seats a newcomer cannot have: seated peers plus seats held for a dropped player.
+        ///
+        /// ⚠️⚠️ THIS IS WHY A SECOND COUNT EXISTS AT ALL. The beacon carried one number and it
+        /// was `LobbySession.PeerCount`, which counts CONNECTIONS. A lobby with two players and
+        /// six spectators advertised 8/4 and every browser filtered it out as full, while a
+        /// lobby holding a seat for somebody who had dropped advertised 3/4 and refused the next
+        /// person to press join. Joinability is decided by this field and readability by
+        /// <see cref="Players"/>; they are different questions and they had one answer.
+        /// </summary>
+        public int Occupied;
+
+        /// <summary>Every attached human, spectators included.</summary>
+        public int Connections;
+
+        /// <summary>Connection ceiling, 12. Larger than <see cref="MaxPlayers"/> on purpose.</summary>
+        public int MaxConnections;
+
         public bool InProgress;
         public float LastSeen;
 
-        public bool IsJoinable => !InProgress && Players < MaxPlayers;
+        /// <summary>A free CHAIR, and room on the wire for the socket that would take it.</summary>
+        public bool IsJoinable =>
+            !InProgress && Occupied < MaxPlayers && Connections < MaxConnections;
+
+        /// <summary>Room to attach and watch, even when every chair is taken.</summary>
+        public bool CanSpectate => Connections < MaxConnections;
     }
 
     /// <summary>
@@ -66,7 +94,10 @@ namespace TumbangPreso.Net
         public string JoinCode = "";
         public int Port = 8910;
         public int Players;
-        public int MaxPlayers = 4;
+        public int MaxPlayers = LobbySession.MaxPlayers;
+        public int Occupied;
+        public int Connections;
+        public int MaxConnections = LobbySession.MaxConnections;
         public bool InProgress;
 
         public IEnumerable<LanEntry> Entries => _seen.Values;
@@ -167,18 +198,36 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>
-        /// Constructs wire payload string: magic|port|players|max|inProgress|joinCode|hostName.
-        /// ⚠️ THE NAME GOES LAST because it is the only free-form field.
+        /// Constructs the wire payload:
+        /// `magic|port|seated|maxSeats|inProgress|joinCode|occupied|connections|maxConnections|hostName`.
+        ///
+        /// ⚠️ THE NAME GOES LAST because it is the only free-form field, and the new counts are
+        /// therefore inserted BEFORE it rather than appended. A parser that reads the name as
+        /// "everything after field 8" cannot be confused by a name containing the separator.
+        ///
+        /// ⚠️ THE OLD SEVEN-FIELD LAYOUT IS STILL READ, not still written. `TryParsePayload`
+        /// accepts it and fills the three new counts from the single old one, so a build from
+        /// before this change is listed rather than silently missing from the browser.
         /// </summary>
-        public static string BuildPayload(int port, int players, int maxPlayers, bool inProgress, string joinCode, string hostName)
+        public static string BuildPayload(int port, int seated, int maxPlayers, bool inProgress,
+                                          string joinCode, string hostName)
+            => BuildPayload(port, seated, maxPlayers, inProgress, joinCode, hostName,
+                            seated, seated, LobbySession.MaxConnections);
+
+        public static string BuildPayload(int port, int seated, int maxPlayers, bool inProgress,
+                                          string joinCode, string hostName,
+                                          int occupied, int connections, int maxConnections)
         {
             return string.Join("|",
                 Magic,
                 port.ToString(),
-                players.ToString(),
+                seated.ToString(),
                 maxPlayers.ToString(),
                 inProgress ? "1" : "0",
                 joinCode ?? "",
+                occupied.ToString(),
+                connections.ToString(),
+                maxConnections.ToString(),
                 hostName ?? "");
         }
 
@@ -186,7 +235,8 @@ namespace TumbangPreso.Net
         {
             if (_sender == null) return;
 
-            string payload = BuildPayload(Port, Players, MaxPlayers, InProgress, JoinCode, HostName);
+            string payload = BuildPayload(Port, Players, MaxPlayers, InProgress, JoinCode, HostName,
+                                          Occupied, Connections, MaxConnections);
             byte[] bytes = Encoding.UTF8.GetBytes(payload);
 
             var endpoints = GetBroadcastEndpoints();
@@ -309,10 +359,27 @@ namespace TumbangPreso.Net
             if (parts.Length < 7 || parts[0] != Magic) return false;
 
             if (!int.TryParse(parts[1], out int port) || port <= 0) return false;
-            if (!int.TryParse(parts[2], out int players)) players = 0;
-            if (!int.TryParse(parts[3], out int max)) max = 4;
+            if (!int.TryParse(parts[2], out int seated)) seated = 0;
+            if (!int.TryParse(parts[3], out int maxSeats)) maxSeats = LobbySession.MaxPlayers;
 
-            string name = parts[6];
+            bool extended = parts.Length >= 10;
+            int occupied = seated;
+            int connections = seated;
+            int maxConnections = LobbySession.MaxConnections;
+
+            if (extended)
+            {
+                if (!int.TryParse(parts[6], out occupied)) occupied = seated;
+                if (!int.TryParse(parts[7], out connections)) connections = seated;
+                if (!int.TryParse(parts[8], out maxConnections))
+                    maxConnections = LobbySession.MaxConnections;
+            }
+
+            // ⚠️ THE NAME IS EVERYTHING FROM ITS INDEX ONWARDS, not one field. A player name is
+            // the only value on this wire that a person types, and rejoining the remainder is
+            // what keeps a name containing the separator from truncating rather than corrupting.
+            int nameIndex = extended ? 9 : 6;
+            string name = string.Join("|", parts, nameIndex, parts.Length - nameIndex);
             if (name.Length > Core.Balance.PlayerNameMax)
                 name = name.Substring(0, Core.Balance.PlayerNameMax);
 
@@ -322,8 +389,11 @@ namespace TumbangPreso.Net
                 Port = port,
                 HostName = Settings.GameSettings.SanitiseName(name),
                 JoinCode = parts[5],
-                Players = Mathf.Clamp(players, 0, 64),
-                MaxPlayers = Mathf.Clamp(max, 1, 64),
+                Players = Mathf.Clamp(seated, 0, 64),
+                MaxPlayers = Mathf.Clamp(maxSeats, 1, 64),
+                Occupied = Mathf.Clamp(occupied, 0, 64),
+                Connections = Mathf.Clamp(connections, 0, 64),
+                MaxConnections = Mathf.Clamp(maxConnections, 1, 64),
                 InProgress = parts[4] == "1",
                 LastSeen = Time.unscaledTime,
             };
@@ -366,7 +436,9 @@ namespace TumbangPreso.Net
             var sb = new StringBuilder();
             foreach (var e in SortedEntries)
             {
-                sb.Append($"{e.Address}:{e.Port}:{e.HostName}:{e.JoinCode}:{e.Players}/{e.MaxPlayers}:{e.InProgress};");
+                sb.Append($"{e.Address}:{e.Port}:{e.HostName}:{e.JoinCode}:" +
+                          $"{e.Players}/{e.MaxPlayers}:{e.Occupied}:" +
+                          $"{e.Connections}/{e.MaxConnections}:{e.InProgress};");
             }
             return sb.ToString();
         }

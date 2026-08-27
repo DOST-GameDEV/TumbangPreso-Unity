@@ -25,10 +25,12 @@ namespace TumbangPreso.Abilities
         ///
         /// Under a single shared cost it was worth exactly what Thunderstrike was worth, so
         /// Nemu paid a round-ending price for a round-shaping power. At 90 she casts it most
-        /// rounds, which is what a setup tool should do. 90 is 3.6 lata knockdowns.
-        /// `docs/Hero_Strike_Balance.md` § 3.1.
+        /// rounds, which is what a setup tool should do.
+        ///
+        /// ⚠️ 10 CHARGES, THE FLOOR OF THE RANGE, WHICH IS 10 LATA KNOCKDOWNS. Was 90 against a
+        /// knockdown worth 25, which is 3.6. `docs/Hero_Strike_Balance.md` § 3.1.
         /// </summary>
-        public override float UltimateCost => 90.0f;
+        public override float UltimateCost => 10.0f;
 
         private sealed class PhantomPhaseAbility : HeroAbility
         {

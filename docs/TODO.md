@@ -1971,7 +1971,7 @@ is worse than either.
 explicit that its cue is *"on the player rather than at a world point"*; broadcasting it would
 play one player's mis-press in three other people's ears.
 
-### 25.1 The larger finding, which is not about audio ⚠️⚠️ OPEN
+### 25.1 The larger finding, which is not about audio ✅ CLOSED 2026-08-27, SEE § 38
 
 **The ability layer is not replicated at all.** `MatchRpc` has RPCs for movement, the punch, the
 lunge, the shove, the grab, the throw, the reset, emotes, the lata, slippers, seats, picks, maps
@@ -1992,6 +1992,16 @@ session's work on its own and it wants `NetAuthority`'s three-line pattern follo
 
 **Done looks like:** two peers, one Hero Strike match, and the same effect on both screens for
 every one of the eighteen powers.
+
+✅ **DONE 2026-08-27, exactly as this entry specified.** `ReqAbility` carries the CAST (seat, slot,
+position, facing, aim point, hold time), the host re-checks cooldown, charge, role and stun state
+and resolves with the same kit code the solo game runs, and `PlayAbility` makes every observer
+replay the presentation. `tools/audit_ability_authority.py` now reports **40 effect call sites, 25
+host-gated, 0 ungated on another body**, against the 23 this entry was written about. The 15 still
+listed as "ungated on the caster" are correct: the owner predicts its own body and
+`CharacterMotor.MayMutateGameplayState` is what stops an observer doing it for somebody else.
+⚠️ **§ 38 is the rest of the network pass** and § 38.15 is what is still open, which is two real
+machines on a LAN.
 
 ⚠️⚠️ **AND THERE IS A NUMBER ON IT NOW.** `tools/audit_ability_authority.py` (2026-08-27, § 31.11)
 walks the ability tree for every call that moves a body or writes score and reports whether a
@@ -2725,13 +2735,16 @@ frame cannot remove a slipper from the match, but the cause is still out there.
 **If the clamp ever fires in normal play the number is wrong. If the sky-launch stops being
 reported, the cause is still there.**
 
-### 32.5 What is still NOT replicated, and it is the biggest thing left
+### 32.5 What is still NOT replicated, and it is the biggest thing left ✅ CLOSED 2026-08-27
 
 ⚠️⚠️ **§ 25.1 IS STILL OPEN AND IS NOW THE LARGEST KNOWN NETWORK GAP.** The ability layer has no
 RPC of any kind: `tools/audit_ability_authority.py` reports **39 effect call sites, 1 host-gated,
 23 ungated on another body**. A remote player's ultimate produces no VFX, no sound, no column and
 no sky on anybody else's screen, and twenty-three places move a body the caster does not own.
 Everything in this entry was upstream of that; none of it fixes it.
+
+✅ **The ability layer is replicated as of 2026-08-27.** § 25.1 has the shape and § 38 has the rest
+of the pass, including the loopback fault behind four more of these.
 
 ---
 
@@ -3286,7 +3299,9 @@ thirty seconds ago the moment a human touches the mouse is worse than not replay
 * ⚠️ **THE HANDOVER HAS NOT BEEN FELT EITHER.** `ManualTakeover` uses a 0.01 mouse threshold
   chosen against sensor jitter rather than measured on this machine. If it ever engages and hands
   itself straight back, that number is why.
-* ⚠️⚠️ **§ 25.1 IS STILL THE LARGEST NETWORK GAP AND NOTHING HERE CLOSED IT.**
+* ✅ **§ 25.1 IS CLOSED AS OF 2026-08-27**, by `ReqAbility` / `PlayAbility` and the host gating
+  that took the audit to zero. The paragraph below is what it said while it was open.
+* ⚠️⚠️ **§ 25.1 WAS THE LARGEST NETWORK GAP.**
   `tools/audit_ability_authority.py` now reports **40 effect call sites, 2 host-gated, 23 ungated
   on another body, 15 ungated on the caster**. The ability layer still has no CAST rpc, so a
   remote player's skill or ultimate produces no VFX, no sound, no hazard and no sky on anybody
@@ -3295,12 +3310,24 @@ thirty seconds ago the moment a human touches the mouse is worse than not replay
   CAST (seat, ability slot, position, facing) and let every peer run its own presentation, with
   the host alone resolving effects on bodies, which is the architecture the rest of the game
   already uses.
-* ⚠️ **STAMINA, STUN AND TRIP ARE STILL NOT SNAPSHOTTED.** A rejoiner arrives with a full bar and
+* ✅ **STAMINA, STUN AND TRIP ARE STREAMED CONTINUOUSLY NOW**, not merely snapshotted:
+  `SyncUnit` carries stun, its element, its mash progress, trip, mash removal, stamina, idle
+  seconds and fatigue on every physics step, and `Stamina.ApplyNetworkSnapshot` re-enters the
+  fatigue speed zone rather than only writing its timer. The paragraph below is the original.
+* ⚠️ **STAMINA, STUN AND TRIP WERE NOT SNAPSHOTTED.** A rejoiner arrives with a full bar and
   no stun. Unlike a cooldown these self-correct in seconds, which is why they were left; if a
   reconnect ever needs to be exact, they are the next three fields on `SyncAbility`'s message.
-* ⚠️ **THE TOURNAMENT CLOCKS ARE NOT SNAPSHOTTED EITHER.** `RoundDirector`'s taya-camp timer and
+* ✅ **THE TOURNAMENT CLOCKS TRAVEL NOW**, on `SyncWorld` at 5 Hz, through
+  `RoundDirector.ApplyNetworkTournamentState`. Scoring stays host-only; this is so a rejoiner's
+  HUD stops under-reporting a penalty already running against them. The paragraph below is the
+  original.
+* ⚠️ **THE TOURNAMENT CLOCKS WERE NOT SNAPSHOTTED EITHER.** `RoundDirector`'s taya-camp timer and
   per-attacker idle timers live host-side and only the host scores, so this is cosmetic, but a
   rejoiner's HUD will under-report a penalty already running against them.
+* ✅ **THE SCROLLING IS MEASURED NOW AND THE WHEEL WAS THE PART THAT WAS BROKEN.** § 39 has the
+  cause, which is that a wheel event is delivered by raycast and most of the panel had no graphic
+  to hit. `SettingsWheelProbe` samples a 5 by 9 grid and asserts every point scrolls. The
+  paragraph below is the original.
 * ⚠️ **THE SCROLLING WAS NOT RE-MEASURED IN A PLAYER.** § 32.3 fixed the last known cause (a
   Slider root with no Graphic, so every drag fell through to the `ScrollRect`) and this session
   added **ten more rows** to the panel across two new groups, which makes the list longer than it
@@ -3369,7 +3396,7 @@ screen, which reads as those specific players lagging. Four seats at about forty
 step is roughly 8 KB/s downstream. **If that ever needs to come down, add interpolation on the
 receiving end first**; a lower send rate on its own just moves the ugliness.
 
-### 36.2 Still open, and it is the same shape
+### 36.2 Still open, and it is the same shape ✅ CLOSED 2026-08-27
 
 ⚠️⚠️ **§ 25.1 IS THE REMAINING HALF OF *"a lot of shit u dont see that ur supposed"*.** Bodies
 move on every screen now; **abilities still do not**. `tools/audit_ability_authority.py` reports
@@ -3377,6 +3404,647 @@ move on every screen now; **abilities still do not**. `tools/audit_ability_autho
 all, so a remote player's skill or ultimate produces no VFX, no sound, no hazard and no sky on
 anybody else's screen. § 35.5 has the shape of the fix and the warning that its two halves must
 land together.
+
+---
+
+## 37 · Two Phaister presentation faults from the 4.72 player ✅ CLOSED, SEE § 43
+
+**🧑 2026-08-27, with two screenshots:** *"her magic circle doesnt draw over the sidewalk and
+thats weird af"*, and, on Shadow Blink: *"to teleport u have to hold her E skill and all it shows
+is a frigging shadow, it's very easy to miss and not in her theme at all"*.
+
+Both were fixed in the same session they were reported. § 43 carries the diagnosis for each, and
+the first one turned out to be a class of fault rather than an instance: **every flat ground effect
+in the game is a plane at the caster's own height**, so all of them stop at a kerb.
+⚠️ **§ 43.3 is what is still open on them**, and it is renders rather than code.
+
+---
+
+## 38 · The network pass: eleven faults the host cannot see, and the loopback behind four of them
+
+**🧑 2026-08-27, across one session:** *"can u pls thoroughly fix network and make sure everything
+is heard and seen and experienced equally by everyone not just host"*, and *"when chat gpt started
+making fixes it found out that there were more bugs than we originally thought with network"*.
+
+§ 25.1, § 32, § 35 and § 36 are the same shape and this entry is the rest of it. Read § 36.1's
+closing line first: **three separate networking faults that month had the property that the person
+running the lobby cannot see them.** Eleven more did.
+
+### 38.1 ⚠️⚠️ `SendNamedMessageToAll` LOOPS BACK INTO THE HOST, AND ELEVEN HANDLERS DID NOT KNOW ✅
+
+The largest finding, and it is a property of the transport rather than of this game.
+`CustomMessageManager.SendNamedMessage(name, clientIds, ...)` contains:
+
+```csharp
+if (m_NetworkManager.IsHost)
+    for (var i = 0; i < clientIds.Count; ++i)
+        if (clientIds[i] == m_NetworkManager.LocalClientId)
+            InvokeNamedMessage(hash, m_NetworkManager.LocalClientId, ...);
+```
+
+A listen host is in its own `ConnectedClientsIds`, so **every broadcast the host sends is also
+delivered to the host, synchronously, inside the send call.** Parts of the game rely on that
+deliberately: `BeginCountdown`, `RematchTally`, `BeginRematch` and `PlayEmote` are how the host
+starts its own countdown, tally, rematch and emote. Eleven handlers did not know:
+`SyncUnit`, `SyncLata`, `SyncSlipper`, `SyncWorld`, `SyncAbility`, `SyncPicks`, `SyncMap`,
+`SyncMode`, `SyncDiff`, `SyncLobbyPicks` and `StartMatch`.
+
+Each applied the host's own snapshot back over the authoritative state it had produced one line
+earlier: the can re-placed from a packet, the round clock re-applied from itself, every seat's
+stun and stamina written back through the wire's precision, the pick table applied twice per
+broadcast. Idempotent by luck rather than by design, at 50 Hz, on the machine that is also
+simulating the match.
+
+**Fixed** with one guard, `if (NetAuthority.IsHost) return;`, on exactly those eleven. The four
+that WANT the loopback keep it and now say so in a comment.
+
+⚠️ **The sender check is a separate question and it was also missing.** `FromHost(senderClientId)`
+now gates every "play this" handler. It is not the last line of defence (Netcode refuses
+client-to-client named messages at the sender) and it is not a loopback guard either, because a
+listen host's own client id IS `ServerClientId`. It is what stops the next transport change from
+turning a presentation message into somebody else's input.
+
+### 38.2 ⚠️⚠️ THE HOST LOADED THE ARENA THREE TIMES ON EVERY NETWORKED START ✅
+
+The same loopback with a consequence rather than a redundancy. `MatchRpc.HostStartMatch`:
+
+1. broadcasts `StartMatch`, which loops back into `OnStartMatchMsg` on the host, which fires
+   `OnMatchStarted` **and** calls `SceneFlow.StartMatch()`;
+2. then fires `OnMatchStarted` itself, which `ConvertedMatchSetup.HandleMatchStarted` answers with
+   another `SceneFlow.StartMatch()`;
+3. and `ConvertedMatchSetup.OnStartPressed` called `SceneFlow.StartMatch()` on the line after
+   `HostStartMatch()`.
+
+`SceneManager.LoadScene` is deferred to the end of the frame, so three calls in one frame queue
+**three loads of the same arena**. Everything the first load installed (four seats, the lata, the
+ability systems, the camera rig) was torn down and rebuilt underneath whatever already held a
+reference to it.
+
+**Fixed** in three places and guarded in a fourth: the handler no longer runs on the host, the
+button no longer double-calls, and `SceneFlow.Go` latches on `(scene, Time.frameCount)`.
+⚠️ **The latch is scoped to one frame on purpose**, which is exactly the window the fault lives
+in, so it cannot get stuck and a rematch on the same map is unaffected.
+
+### 38.3 ⚠️⚠️ EMOTES HAVE NEVER TRAVELLED BETWEEN PEERS ✅
+
+`MatchRpc.RequestEmoteServerRpc` and a whole `PlayEmote` broadcast behind it, complete and
+correct, with **zero call sites**. `EmotePlayer.Request` had this where the call belonged:
+
+```csharp
+if (NetAuthority.ShouldResolve()) HostPlay(id);
+// Phase 5: else send the request to the host here.
+```
+
+A client's emote played on its own screen only, and the host's played on the host's only.
+⚠️ **Nobody reports this**, which is why it survived: an emote you cannot see is
+indistinguishable from one nobody pressed.
+
+**Fixed.** A client asks, the host validates with `CanEmote` and broadcasts, and the loopback is
+how the host plays its own. ⚠️ **It predicts nothing locally**, unlike a throw: an emote is cheap,
+`CanEmote` is a rule the host may legitimately refuse, and predicting it would start a dance the
+host then cancels with the camera swung to third person for the length of one.
+
+### 38.4 ⚠️⚠️ THE TAYA'S RESET WAS A LOCAL CHANNEL AND A ONE-BYTE REQUEST ✅
+
+The taya holds Grab inside the ring for `Lata.ResetChannelTime` to stand the can back up, and that
+hold is the whole counterplay. Both halves were wrong:
+
+* **`Carrier.StepDefender` called `Lata.HostRestore()` on whichever peer held the key.** On a
+  client the can stood up locally and the host's stream knocked it straight back down, so the
+  reset flickered and failed.
+* **`ReqReset` carried one slot and nothing else**, so the host restored the can the instant it
+  arrived: a client could send it with no hold at all, from anywhere on the map, as often as it
+  liked. It had no caller, so nothing exercised that either.
+
+**Fixed** with a three-phase channel. The owner sends START, CANCEL and COMPLETE; the host stamps
+its own clock at START, drops the channel **on its own physics step** the moment the defender
+leaves `Balance.InteractionRadius`, loses the role or is stunned, and refuses a COMPLETE that
+arrives early. ⚠️ **The host measures the duration rather than believing a reported one**: a number
+in a payload is a number the sender chose. ⚠️ **One physics step of slack** and not a frame more,
+because two processes step at different offsets and refusing that COMPLETE would fill the bar and
+do nothing, which is the worst of both.
+
+### 38.5 ⚠️⚠️ THREE VERBS HAD TWO PROTOCOLS EACH, AND THE DEAD ONE WAS THE ONE MAINTAINED ✅
+
+`LungeCharge` and `ShoveCharge` were host-only broadcasts of an animation flag with **no
+production call site anywhere in the tree since the day they were written**. `ReqBlink` was a
+bespoke request for ONE power, written while the ability layer had no cast replication at all;
+with § 25.1's general `ReqAbility` in place it was a second wire for a verb that already had one,
+and a peer on a build carrying both would double-resolve the shove on the host.
+
+All three deleted, along with `PhaisterHeroKit.ResolveBlinkShove`.
+
+⚠️⚠️ **`tools/audit_request_call_sites.py` IS WHAT FOUND THEM AND IS WHAT STOPS THE NEXT PAIR.**
+It walks every wire entry point in `Runtime/Net/` and reports whether anything calls it, splitting
+the two halves because they fail differently. A CLIENT half (`Request*`, `Submit*`, `Select*`,
+`Declare*`, `Vote*`) needs a caller OUTSIDE the network layer or the game never makes the request;
+a HOST half (`Broadcast*`, `Host*`, `*ClientRpc`) is usually driven from inside the router and
+needs one anywhere. ⚠️ **Tests do not count**, which is the point: a test calling a request proves
+the method works, not that the game reaches it, and both dead charge relays would have been
+"covered" by one. It reported three unreachable entry points when written and reports **zero** now.
+
+### 38.6 ⚠️⚠️ EVERY PAYLOAD IS NOW CHECKED FIELD BY FIELD, AND NOTHING CHECKED THEM BEFORE ✅
+
+`MatchRpc` speaks 41 named messages and every one is a hand-written pair: a run of
+`WriteValueSafe` and a run of `ReadValueSafe`. **Netcode does not check that the two agree.** A
+field added to one half does not fail; the reader consumes the same bytes in the wrong order and
+hands the game plausible garbage. `SyncWorld` grew a tournament-clock block during this very
+session, and had the reader not grown with it every client would have read the taya's camp timer
+out of the middle of the score array.
+
+`tools/audit_wire_payloads.py` prints each message's written and read field counts side by side,
+type-checks every field whose type is knowable from a literal or a cast, and exits 1 on a
+mismatch. ⚠️ **It is a COUNT and TYPE check, not a NAME check**: two floats swapped between the
+halves are invisible to it and are a real bug. What it closes is the class that has actually
+happened. Three deliberate asymmetries are listed with their reasons rather than silenced.
+
+Current state: **41 named messages, 0 mismatched.**
+
+### 38.7 ⚠️ A CLIENT'S LUNGE RESOLVED ITS OWN TAG ✅
+
+`CombatVerbs.SweepLungeTag` ran on whichever peer was lunging, every frame the dash was live, and
+called `RoundDirector.ResolveTag` directly: it staggered a body it does not own, respawned
+somebody on its own screen alone, and asked for a score the host had not awarded. `CLAUDE.md` § 4:
+**contact resolves by distance ON THE HOST.** The host runs the same sweep off `HostResolveLunge`
+from the position the client reported, and that is the result everybody sees.
+
+### 38.8 ⚠️ A HELD TSINELAS HAD TWO AUTHORS AND BUZZED BETWEEN THEM ✅
+
+`Carrier` parents a held slipper to the carry anchor every FixedUpdate on every peer, and the host
+streams `SyncSlipper` at the same 50 Hz. The packet put it where the host's hand was a step ago and
+the carry put it where this screen's hand is now. `Slipper.ApplySnapshotState` now writes the
+transform only when the state is not `Held`: **the state and the holder are authoritative; while
+it is in a hand the position is a consequence of them.**
+
+### 38.9 ⚠️ TWO REQUEST CHANNELS COULD BE FLOODED BY ANY CLIENT ✅
+
+`ReqCue` takes a cue NAME off a client and the host fans it out to every peer, which makes it the
+cheapest amplifier in the protocol: one client sending a cue every frame costs the host sixty
+messages a second times the peer count, on the audio thread, at whatever world position it chose.
+It is now validated against the cue catalogue (`AudioCues.IsKnown`, added for this), bounded in
+position and volume, and capped at **25 a second per peer**, which is far above anything play
+produces and far below anything that hurts.
+
+`ReqSnapshot` is worse per message, because `HostSyncPeer` ends in a full world broadcast to
+everybody: match state, the can, four slippers, four transforms and four ability kits. Capped at
+**twice a second per peer**, which is more than a cold rejoin needs.
+
+### 38.10 ⚠️⚠️ THE LAN BEACON HAD ONE NUMBER FOR THREE DIFFERENT QUESTIONS ✅
+
+`_beacon.Players = Lobby.PeerCount` counts CONNECTIONS. So:
+
+* a lobby with two players and six spectators advertised **8/4** and every browser struck it out
+  as full;
+* a lobby holding a seat for somebody who dropped mid-match advertised **3/4** and then refused
+  whoever pressed join.
+
+Both are "the server browser lies" and neither is fixable while the concepts share a field. The
+payload now carries **seated**, **occupied** (seated plus held), **connections**, and both
+capacities (4 seats, 12 sockets). `LanEntry.IsJoinable` asks for a free chair AND a free socket;
+`CanSpectate` asks only for the socket.
+
+⚠️ **The old seven-field payload is still READ, not still written**, so a build from before this
+is listed rather than silently missing. ⚠️ **And the host name is taken as everything from its
+index onwards**, because it is the only value on this wire a person types: a name containing the
+separator truncates rather than corrupting every field after it.
+
+⚠️ **The online browser had the same confusion with a different cause.** `UpdateHostedLobbyAsync`
+was handed `Lobby.PeerCount` as "occupied", so a lobby with spectators reported itself full to the
+UGS `AvailableSlots` filter. It is `OccupiedSeatCount()` now, and lobby capacity stays
+`MaxPlayers` (4) rather than the Relay allocation's `MaxConnections` (12).
+
+### 38.11 ⚠️⚠️ THE UGS LOBBY LOST THE UPDATE THAT MATTERED MOST ✅
+
+`NetSession` fires `Query.CreateHostedLobbyAsync` and does not await it, so `_activeHostLobbyId`
+is null for as long as UGS takes to answer. **Every `UpdateHostedLobbyAsync` in that window
+returned on its first line**, and the update that got dropped was usually the first player
+joining: the lobby then advertised 0 seated until somebody else connected, which in a two-player
+match is forever.
+
+The latest pending counts are now held and applied the moment creation settles. ⚠️ **The LATEST,
+not the first**, so a burst of joins and leaves during creation collapses into the truth at the
+end of it. ⚠️ **And `DeleteHostedLobbyAsync` waits for a creation in flight**: hosting online and
+backing out inside the round trip used to leave a live lobby with nobody behind it, which the
+browser advertised until the 30 second heartbeat expiry retired it.
+
+### 38.12 ⚠️⚠️ ONE `LobbySession` OUTLIVES EVERY SESSION AND NOTHING RESET IT ✅
+
+`NetSession` owns one `LobbySession` for the lifetime of the process. Host, quit to the menu, host
+again reached `OpenLobby` with the previous match's peer table, its leader id and
+`MatchInProgress` still set. A brand new lobby therefore believed it already had four players,
+obeyed a leader whose transport no longer exists (so nobody could change the map), and answered
+**Spectate** to the first person who tried to join it.
+
+`LobbySession.Reset` is new and is called from `OpenLobby` and from `NetSession.Stop`. ⚠️ **It is
+separate from `EndMatch`**, which ends a MATCH inside a lobby that keeps its peers, and the two
+must not be merged. `OpeningASecondLobbyForgetsTheFirstOneEntirely` asserts it.
+
+Two smaller things in the same file:
+
+* **`Admit` searched for the same token twice.** The second lookup ran after the first had already
+  found, copied and REMOVED that record, so it could never match. Two searches for one fact is how
+  one of them stops being exercised; the dead one is deleted.
+* **A seat that could not be found left `Seat == -1` with `Spectator` false**, which
+  `PlayingPeerCount` and the ready gate both read as a player, so the gate waited forever for a
+  press from somebody with no body to press it with.
+
+### 38.13 ⚠️ A REFUSED CONNECTION SAID "disconnected" AND NOTHING ELSE ✅
+
+The protocol-version check refuses a mismatched build at approval, and an approval refusal arrives
+on the client as an ordinary disconnect. A version mismatch, a full lobby and a host that vanished
+were all one word, and the version mismatch is the one a player can actually fix.
+`NetworkManager.DisconnectReason` is surfaced now, and a client that loses the host also clears
+its seat, its relay flags and its lobby state rather than carrying a dead allocation into the next
+join attempt.
+
+### 38.14 What the working tree already had, confirmed and finished
+
+Everything below arrived in the tree this session started from, uncompiled. Each is verified
+rather than re-derived, and the ones that needed finishing say so.
+
+| | what | state |
+|---|---|---|
+| 1 | The duplicate spawned `MatchRpc` prefab is gone; `Awake` refuses a second router | ✅ |
+| 2 | `ProtocolVersion` in the approval payload: refused clearly rather than joining wrong | ✅ plus § 38.13 |
+| 3 | Fast reconnect replaces AND disconnects the stale transport | ✅ the `Contains` overload it used did not compile; fixed |
+| 4 | `LobbySession.Depart` happens exactly once and returns the departed record | ✅ finished: the AI takeover reads the seat off the return value |
+| 5 | Leader sentinel `0` to `-1`, because NGO client id 0 is legal | ✅ three tests updated with it |
+| 6 | Sender-to-seat ownership, finite values, plausible poses, movement bounds and rate | ✅ |
+| 7 | Remote bodies stop simulating locally and smooth toward the host's transforms | ✅ |
+| 8 | Stun, trip, mash, stamina and fatigue stream authoritatively | ✅ |
+| 9 | Host-side mash request, so a client's prediction is not reset by the host | ✅ |
+| 10 | `ReqAbility` / `PlayAbility`: the general cast rpc § 25.1 asked for | ✅ |
+| 11 | Cue relay suppressed during replicated ability execution | ✅ and made allocation-free |
+| 12 | Every ability effect on another body host-gated | ✅ audit: **0 ungated on another body** |
+| 13 | Live host streams for lata, slippers, match state, scores and tournament clocks | ✅ |
+| 14 | Clients request pickup and throw rather than changing their own copy | ✅ |
+| 15 | One authoritative throw, keeping Pektus spin and the three kit modifiers | ✅ |
+| 16 | Throw wind-up and ordinary combat verbs replicated | ✅ |
+| 17 | Shove, punch and lunge routed through the host request methods | ✅ plus § 38.7 |
+
+⚠️ **`NetCue.SuppressRelay` allocated 240 objects a second.** It wraps `HeroKit.Tick`, which runs
+once per seat per frame on every peer, and it returned a class. It returns a struct now and the
+`using` binds `Dispose` directly rather than boxing it. Four seats at 60 fps for a whole match is
+not a tidiness note.
+
+⚠️ **Per-peer host bookkeeping is dropped when a peer leaves and per-seat bookkeeping when a chair
+changes hands.** Client ids are handed out monotonically rather than reused, so the rate-limit
+tables would otherwise grow by one entry per connection for the life of the lobby, and an arriving
+player would inherit a movement-rate window or a half-finished reset channel from the bot that was
+sitting there.
+
+### 38.15 ⚠️⚠️ STREET HYPE WAS DEAD ON EVERY CLIENT, AND CLASSIC IS THE MODE IT BELONGS TO ✅
+
+`Hud.ReportStyle` only fires for the LOCAL slot, and **every caller is host-side**:
+`Carrier.HostThrowAt`, `Lata.HostKnockDown`, the tag, the snatch and the reset all sit behind
+`NetAuthority.ShouldResolve()`. So on the host all four seats' events reached it and it drew the
+host's own; on a client not one of them ran at all.
+
+⚠️ **That is Classic's entire bottom-of-screen identity, missing.** `VISION.md` § 1.1 is explicit
+that Classic gets depth instead of powers and names Street Hype as the pattern: it *"names skilled
+curves, banks, close calls and blocks without changing a single point"*. A joiner was playing
+Classic with the one thing that makes it Classic switched off, and it cannot be reported as a bug
+because there is nothing on screen to say it should have moved.
+
+The host now relays the award to the seat's owner, **to that one peer rather than by broadcast**,
+because hype is a personal quantity and the other three screens would throw it away.
+⚠️ **Two callers pass `relay: false`**: the LRT flyby and the bridge hoop run on every peer from
+local state, so those award themselves and a relay on top would pay them twice.
+
+### 38.16 ⚠️ A CLIENT'S THROW HAD NO ARM, NO VIEW KICK AND NO HYPE UNTIL THE HOST ANSWERED ✅
+
+`Carrier.Release` on a client sent the request and did nothing else. The most frequent verb in the
+game gave its own player no feedback for a round trip.
+
+The PICTURE is predicted and the PHYSICS is not: the arm swings and the view kicks on the frame
+the key comes up, and `HostThrowAt` still decides where the tsinelas goes from the origin and aim
+point sent with the request. ⚠️ **The sound and the hype are deliberately NOT predicted**, because
+both already arrive by relay and a predicted copy would give that one player a flam and double
+hype. ⚠️ **And `Held` is not cleared optimistically**: with the wire correctly not writing a HELD
+slipper's position (§ 38.8), an empty local hand would leave the shoe hanging in the air for the
+round trip.
+
+The host also announces the release, so the other peers see the arm move: `BroadcastActionExceptOwner`
+skips the thrower, who has already played it.
+
+### 38.17 ⚠️ THE SEAT ROSTER WAS READ ONCE, WHEN THE ARENA WAS BUILT ✅
+
+`MatchInstaller.BuildSeat` takes each seat's name and human/bot flag from the replicated table at
+build time, and nothing re-read it. So on a client, somebody joining an empty seat mid-match stayed
+a nameless bot on three screens, and somebody dropping stayed a named human while a bot drove their
+body. The host sees neither, because `HostPeerLeft` and `HostLateJoin` fix its own copy directly.
+`SyncLobbyPicks` now re-applies the roster to live bodies, idempotently, skipping the local seat
+because `ApplyRebindLocalSeat` owns that one.
+
+### 38.18 ⚠️ THE PROP STREAM SENT 250 MESSAGES A SECOND FOR AN ARENA AT REST ✅
+
+The world tick is the physics step, so a can standing still and four tsinelas lying in the road
+cost five messages a step to every peer whether or not one of them had moved. Most of a round is
+exactly that. They are sent on CHANGE now, with a **twice a second keepalive**.
+
+⚠️ **The keepalive is not optional and it is what makes this safe.** A joiner who missed the one
+packet that said "the can went over" would believe it upright until it moved again, which on a can
+that has come to rest is the rest of the round. ⚠️ **And the unconditional senders stay**:
+`Carrier` calls `BroadcastSlipperState` on a grab and a throw and the reset calls
+`BroadcastLataState` on a restore, because those are EVENTS and an event may never wait for a poll
+to notice it.
+
+### 38.19 The two-process run, and what it proved ✅ / ⚠️
+
+Two real player processes off the Desktop build, 2026-08-27, using the new
+`NetStateReport` and `-tp-allbots` switches:
+
+```
+TumbangPreso.exe -tp-host 8910 -tp-profile nethost -tp-allbots -tp-map Eskinita                  -tp-netreport host.txt -tp-netseconds 40 -logFile host.log
+TumbangPreso.exe -tp-join 127.0.0.1 8910 -tp-profile netclient -tp-allbots -tp-map Eskinita                  -tp-netreport client.txt -tp-netseconds 28 -logFile client.log
+```
+
+✅ **What agreed, and every one of these has been a live bug at some point:** the mode
+(HeroStrike on both, § 32.1), the map, the protocol version, the character index of all four
+seats (0, 3, 0, 3 on both, § 32.2), the taya, all four slipper states and holders, the can, and
+the scores. The host seated itself at 0 and the joiner at 1, and neither log carries an error or
+an exception.
+
+✅ **AND THE JOINER SAW EVERY BODY MOVE**, which is § 36.1's exact failure: 8.4, 8.6 and 8.6 m
+travelled on the three bot seats against the host's own 2.4, 1.8 and 1.9 over a shorter sample.
+A client that saw statues would report zeroes.
+
+⚠️⚠️ **BUT THE MATCH NEVER STARTED, SO THIS PROVES CONNECTION AND NOT GAMEPLAY.** Both reports
+read `round 0` and `round active: False`, because nothing presses READY in a headless pair: the
+seats only wandered their spawn settle, no ability was cast, no tsinelas was thrown and no point
+was scored. **Everything this pass changed about throwing, casting, hype and the reset channel is
+still unproven between two processes.** The missing piece is an autostart switch that satisfies
+the ready gate host-side after a fixed delay; it is a small addition to `NetBootstrap` and it is
+the single most valuable thing left in this entry.
+
+⚠️ **ONE REAL DISAGREEMENT, AND IT IS A NEW BUG.** The host reports seat 1 as `bot: True` while
+the client reports it as `bot: False`. The joiner arrived AFTER the host had built its arena, and
+`MatchInstaller.BuildSeat` reads the seat table once at build time (§ 38.17). § 38.17 fixed this
+for CLIENTS, through `SyncLobbyPicks`, and the host's own copy is fixed by `HostLateJoin`, which
+clears `IsBot` and destroys the AI. One of the two did not happen here. **It is cosmetic today**,
+because the seat is driven by the transforms its owner submits either way and the flag only feeds
+the nameplate, but it is the same class as § 32.2 and it should be traced from `HandleIdentify`
+into `HostLateJoin` with a log line at each step. `Logs/` is not where the evidence is: it is
+`host.txt` beside the built player.
+
+### 38.20 Still open
+
+* ⚠️⚠️ **TWO REAL MACHINES ON A LAN HAVE STILL NOT PLAYED THIS.** § 1's closing note has said so
+  since 2026-08-26 and it is still true. Everything in this entry was found by reading the wire and
+  by running two processes on one machine, which shares a clock, a filesystem and a loopback
+  adapter with itself. The Relay path in particular is exercised only as far as allocation.
+* ⚠️ **The bot takeover on disconnect is now reachable and has not been WATCHED.** § 38.14 row 4
+  is what makes it possible; somebody still has to see a dropped seat keep playing.
+* ⚠️ **`ReqCue`'s 25 a second is a bound, not a measurement.** Nothing has counted the cues a real
+  fight produces.
+* ⚠️ **`audit_wire_payloads.py` cannot see two same-typed fields swapped between the halves.** The
+  only thing that would is naming the fields on both sides, and they are locals.
+
+---
+
+## 39 · The settings wheel, for the fourth time, and the cause the first three missed
+
+**🧑 2026-08-27:** *"the scroll in settings is still broken! yes u can scroll by holding scroll and
+yes i want to keep that feature but u cant scroll by using mouse scroll or laptop pad scroll!
+repeated complaint! it feels so clunky/doesnt work at all!!"*
+
+### 39.1 ⚠️⚠️ UNITY DELIVERS A WHEEL EVENT BY RAYCAST, AND A PANEL IS MOSTLY HOLES ✅
+
+§ 15.8 added a scrollbar and changed the wheel step from 45 to 24. § 32.3 gave the slider rows a
+hit rectangle. Both were real and neither is this.
+
+`StandaloneInputModule` takes `pointerCurrentRaycast.gameObject`, asks
+`GetEventHandler<IScrollHandler>` for the nearest ancestor that handles a scroll, and **when the
+raycast hits nothing there is no object to walk up from and the wheel is discarded.**
+`TscnUiImporter`'s `ScrollContainer` case adds a `ScrollRect` and a `RectMask2D` and **no
+graphic**, and the content is a layout group with no graphic either. So the only raycastable
+pixels in the whole list are the row widgets themselves: the gaps between rows, the padding down
+both edges, the strip beside the scrollbar and every part of the panel outside the viewport are
+holes.
+
+The wheel worked over a key cap and did nothing one pixel above it. That is not "broken", which is
+why it survived three passes, and it is exactly what *"clunky"* describes.
+
+**Fixed in two halves, because either alone leaves a dead region:**
+
+* an invisible full-rect raycast target at the BACK of the viewport, closing the gaps inside the
+  list. Same idiom § 32.3 used on the slider rows, and `SetAsFirstSibling` keeps it behind the
+  content so it can never swallow a click meant for a row;
+* `ScrollWheelRelay` on the panel root, which forwards `OnScroll` to the one `ScrollRect`, so the
+  wheel works over the heading, the margins and the button row too. ⚠️ **It forwards rather than
+  scrolling itself**, so the step, the clamping and the scrollbar stay owned by the `ScrollRect`
+  and cannot drift; and ⚠️ **it can never steal from an inner list**, because `IScrollHandler`
+  bubbles from the deepest handler outwards.
+
+### 39.2 ⚠️⚠️ NOTHING HAD EVER MEASURED THE WHEEL, WHICH IS WHY IT TOOK FOUR PASSES ✅
+
+`SettingsScrollProbe` checks the bar's geometry and that the list moves **when its normalised
+position is set**, which is not the thing a player does and passes cleanly on a panel the wheel
+cannot reach.
+
+`SettingsWheelProbe` is new and does the thing: it opens the panel, walks a **5 by 9 grid** of
+points across it, raycasts through the real `EventSystem` at each, resolves the scroll handler the
+way the input module does, dispatches a real scroll event, and asserts the content actually moved.
+⚠️ **It samples a grid rather than the centre**, because the fault was never "the wheel does
+nothing", it was "the wheel does nothing over about half the panel", and one sample in the middle
+of a key cap passes against the broken build. It writes `Logs/settings-wheel.txt` naming every
+dead point and what was under it.
+
+**Dragging the bar is untouched.** 🧑 asked for that to stay and it stays.
+
+---
+
+## 40 · The train is one field recording now, and it plays rarely
+
+**🧑 2026-08-27, handing over a 10.55 s clip:** *"can u also replace current train sound. i keep
+reporting its broken and i give up on it. replace train passing by sound and train sound as a
+whole with this. make it play very rarely"*.
+
+### 40.1 ⚠️⚠️ THE TRAIN HAD THREE SYNTHESISED SOUNDS AND THAT IS MOST OF THE PROBLEM ✅
+
+A distant one-shot warning (`sfx_lrt_pass`), a 2.0 s seamless bed looped on the moving source
+(`sfx_lrt_rumble`), and a borrowed `sfx_fire_whoosh` fired from a fixed point at z = -18. Three
+sounds for one object, two of them synthesised and one of them about fire.
+
+Now: **one recording, on the moving source, non-looping.** `sfx_lrt_rumble` and the whoosh are
+deleted, and `tools/generate_ability_audio.py` no longer registers either synth so a regeneration
+cannot overwrite the recording with the synthesis it replaced. ⚠️ **The retired seed slots are not
+reused**, so every other cue keeps the seed that produced the audio in the repository.
+
+⚠️⚠️ **THE CLIP IS TIME-ALIGNED TO THE PASS BY ARITHMETIC AND NEEDS NO OFFSET.** Measured on the
+recording, its loudest quarter-second is at **2.70 s** (RMS 0.234 against 0.10 for the carriage
+tail). The consist spawns at z = -48 and crosses at 18 m/s, so it is overhead at **48 / 18 =
+2.67 s** after the source starts. Starting the clip when the run starts puts the recording's own
+pass within **0.03 s** of the real one. If `Speed`, `StartZ` or the clip change, that is the sum
+to redo.
+
+⚠️ **The moving source is kept and is the point.** `LrtTrainFlyby` § THE PASS records why: a
+one-shot parked at a fixed position faded by the LISTENER walking, never by the train leaving.
+
+⚠️ **The mix row moved with the job.** `sfx_lrt_pass` inherits the bed's -16 dB rather than the
+one-shot's 0, because it is now 10.55 s of sustained noise and that is the shape the -16 was
+measured for. A long sound is mixed as a background whatever it is called.
+
+**Prepared as the project's other cues are:** decoded to 44.1 kHz mono, peak-normalised to 0.85
+(`AudioCues.HeadroomDb`'s convention), with 30 ms fades so the source cannot click.
+
+### 40.2 The interval, raised for the third time ✅
+
+24 to 78 to 150 to **300 s**, with the first pass at 20 s. A Classic match (4 x 90 s) sees the
+opener and about one more; a Hero Strike match (8 x 90 s) sees the opener and two.
+⚠️ **`InitialDelay` is what keeps it learnable at any interval**: the first pass is what teaches
+the map has one. ⚠️ **And it is a balance change**: `OverheadPassWindow` gives Hero Strike double
+cooldown rate while the consist is overhead, so a whole match now carries two or three of those
+windows. § 5 already records that the overclock window has never been measured against a match;
+this makes measuring it more urgent.
+
+---
+
+## 41 · The ultimate meter counts events now
+
+**🧑 2026-08-27:** *"wtf how many points or charges to ult does downing can give? i want downing
+can and tayaing to only give one point for the charges"*, and then *"i wanted like 10-20 charges
+required on ult depending on impact"*.
+
+A knockdown was 25 and a tag 20 against costs of 90 to 150, so the only way to answer "how close
+am I" was to divide two numbers nothing on screen ever showed. **One knockdown is one charge. One
+tag is one charge.** An ultimate costs 10 to 20 of them, ranked by impact:
+
+| Hero | Ultimate | Cost | was |
+|---|---|---|---|
+| Zack | Thunderstrike | **20** | 150 |
+| Cheska | Glacial Nova | **17** | 140 |
+| Sean | Supernova | **15** | 130 |
+| Phaister | Grand Coven | **13** | 115 |
+| Dante | Titan Fissure | **12** | 110 |
+| Nemu | Seance Void | **10** | 90 |
+
+Retrieval is 0.5 and a throw 0.15, which are exactly what 12 and 4 were against 25. The ONE
+deliberate change inside the rescale is the tag, from the 0.8 a straight division gives to a full
+1.0, because both objectives were asked to be worth one: a 25 per cent raise to the taya's only
+source of charge, for one round in four.
+
+⚠️⚠️ **IT IS A REAL PACING CHANGE AND THE ARITHMETIC IS WRITTEN NEXT TO IT.** The old economy
+bought the dearest ultimate for six knockdowns; this asks twenty. A live attacker earns about
+**4.3 charges a round** (1 to 2 knockdowns, 3 to 4 retrievals, 5 to 6 throws), so Nemu's 10 lands
+after about two and a half rounds and Zack's 20 after about four and a half: between one and three
+ultimates per seat per match, against roughly three to five before.
+
+⚠️ **If a match measures fewer than one ultimate per seat, the COST is the lever, not what an act
+pays.** The earn table is what makes the meter readable and inflating it undoes that.
+`BotBehaviourProbe` prints ultimates per match; `Hero_Strike_Balance.md` § 3.1 has the tables.
+
+⚠️ **Whole-number costs were tried and rejected.** Rounding the six to integers moves them by up to
+11 per cent and collapses Dante against Phaister, so a readability change would have silently
+re-tuned six ultimates.
+`InputMapAndAbilityTests.UltimateCostsAreRankedByHowMuchTheUltimateSwingsARound` asserts both the
+order and the 10-to-20 band.
+
+---
+
+## 42 · Nemu's ride home was being erased by her own body's bot
+
+**🧑 2026-08-27:** *"nemu E recast doesnt work as intended, she's supposed to teleport to where her
+ghost is when she recasts or when ability ends but right now recasting just extends ghost form
+time and that doesnt make sense, u cant end ability early and shi"*, and *"ALSO she is supposed to
+be controlled by a bot (her real body) but it doesnt work that way right now"*.
+
+### 42.1 ⚠️⚠️ TWO WRITERS ON ONE `InputIntent`, IN AN UNDEFINED ORDER ✅
+
+Both reports are one fault. `GhostPetCompanion.BeginPossession` adds a temporary `AIController` to
+Nemu's body so she is not a statue, and `PlayerInputReader` deliberately keeps Skill2 live during a
+possession so the player can come home. **Both write `CharacterMotor.Intent`, and neither component
+declared an execution order**, so Unity picked one arbitrarily: the AI wrote `Skill2 = false` after
+the player wrote `true` often enough that the return press simply did not exist. The possession
+then ran its full 6 s and ended on the timer, which reads exactly as *"recasting just extends ghost
+form time"*. Nothing was extended; the press was eaten.
+
+It is also why the bot takeover *"doesnt work that way"*: the AI was there and driving, and the
+thing it was visibly doing was cancelling her recast.
+
+**Fixed with a rule rather than a race.** `AIController.AbilitiesEnabled` is false for exactly one
+controller, the temporary one: **while a human is driving the pet, the human owns the hero keys
+and the bot owns the legs.** `CLAUDE.md` § 4's *"a bot presses the same buttons a human does"* is
+unharmed, because this is one body with two drivers rather than a second path into the game.
+
+⚠️ **The stun branch had the same hole.** `ReleaseAll` calls `intent.Clear()`, which empties the
+whole table, so Nemu's body being stunned would have stranded the player inside the pet with no way
+back. A suppressed controller now clears the legs and leaves the hero keys alone.
+
+⚠️ **And the order is declared anyway**, `AIController` at -130 and `PlayerInputReader` at -120, so
+the human's write lands last. The flag is the rule; the order is the belt.
+
+### 42.2 Still open
+
+* ⚠️ **The recast has not been felt in a build.** The teleport home, the early end and the bot
+  driving her body are all reachable now; whether the trip reads correctly at 6 s is a judgement.
+
+---
+
+## 43 · Two Phaister presentation faults, and a class of fault behind one of them
+
+**🧑 2026-08-27, with two screenshots:** *"her magic circle doesnt draw over the sidewalk and thats
+weird af"*, and, on Shadow Blink: *"to teleport u have to hold her E skill and all it shows is a
+frigging shadow, it's very easy to miss and not in her theme at all"*.
+
+### 43.1 ⚠️⚠️ EVERY GROUND EFFECT IS A FLAT PLANE AT THE CASTER'S HEIGHT ✅
+
+The screenshot is Ilalim ng Tulay at night. Grand Coven's 12.8 m inscription paints the road
+perfectly and then **ends in a hard straight line along the pavement edge**, rings and writing
+simply gone where the sidewalk begins.
+
+⚠️ **It is the depth buffer, not missing geometry.** `VfxShapes.Lay` puts the mesh a few
+centimetres above the cast point and the pavement stands about a quarter of a metre higher, so the
+far half of the inscription is UNDER the kerb and correctly occluded. Nothing was clipped; it was
+buried.
+
+⚠️⚠️ **AND THE TWO OBVIOUS FIXES ARE BOTH WORSE.** Raising the plane to clear the kerb makes it
+hover over the road, which is the one surface it must look painted on. Drawing it with the depth
+test off puts it over the PLAYERS, and `VISION.md` § 2 rule 5 is that a frame mid-fight must still
+show every player.
+
+**Fixed with draping.** `VfxShapes.DrapeToGround` pushes every vertex of a laid-flat mesh onto the
+surface under it, cast per vertex and cached on a 12 cm grid, once, at build time.
+⚠️ **`maxRise` is 0.60 m and that is what keeps it a GROUND effect**: it climbs any kerb, step or
+pavement in either arena and refuses everything taller, so a circle overlapping a wall is hidden by
+the wall exactly as a real inscription would be. The small pieces (medallions, ticks, script
+characters, spokes, floating glyphs) are SNAPPED whole rather than bent, because the ground under a
+30 cm medallion is flat at its own scale and that costs one ray instead of a dozen.
+
+Applied to the ultimate's rings, its reach collar and her HEX ward, which is 4.8 m across and can
+be thrown onto a pavement too. ⚠️ **It is a class of fault, not an instance**: every flat ground
+effect in the game has it, and `DrapeToGround` is the tool for the next one.
+
+### 43.2 ⚠️⚠️ THE AIM TELEGRAPH WAS THREE FLAT DISCS AT EMISSION 0.5 ✅
+
+*"all it shows is a frigging shadow"* is literally accurate. `GroundReticle` drew three
+`PrimitiveType.Cylinder` plates, ghosted, at emission 0.5, which on asphalt is a grey smear and on
+Ilalim ng Tulay, where the whole street is under a viaduct, is genuinely dark. It is also the
+construction § 19 named as the game's default mistake, made three times.
+
+Two things were wrong and both are fixed:
+
+* **Legibility, for every hero.** The ring is a real annulus with a tick crown at emission 1.40 and
+  alpha 0.95, and the interior wash drops from 0.22 to 0.12 so the telegraph tints the court
+  instead of covering it. ⚠️ **What carries a telegraph is its EDGE**, because the question a
+  player is asking is whether they are inside it. The tint emission goes from 0.50 to **1.60**, and
+  that single number is most of why the accent colour never reached the screen.
+* **Theme, for the blink.** `HeroAbility.AimBeacon` stands a mark up at the destination, and it is
+  a `Rift`, the same torn sheet `HeroHazards.SpawnShadowRift` tears at the place she LEAVES. The
+  aim mark, the departure and the arrival are now one visual idea rather than a grey decal followed
+  by two unrelated effects. ⚠️ **It is for powers that put YOU somewhere, not powers that LAND
+  somewhere**: a ring on the road is right for a zone and wrong for a teleport, because the player
+  is looking along the street at head height where a flat decal five metres away is a few pixels.
+
+### 43.3 Still open
+
+* ⚠️⚠️ **NEITHER HAS A RENDER ATTACHED, AND `CLAUDE.md` § 6.1 IS EXPLICIT ABOUT THAT.** Both are
+  changes judged by eye. `AbilityShowcaseProbe` will photograph the blink's transient and the
+  ultimate's circle; the draping in particular wants a shot taken ON Ilalim ng Tulay standing on
+  the kerb, because that is the only place the fault was visible.
+* ⚠️ **The reticle is brighter for every hero now**, which is a change to five kits made to answer
+  a report about one. `AbilityShowcaseProbe`'s 12 per cent white bound is the guard, and it has not
+  been re-run against a held telegraph.
 
 ---
 

@@ -25,8 +25,15 @@ namespace TumbangPreso.Abilities
         /// It stays a `const` because a dozen tests and the HUD arithmetic read it, and because
         /// a meter whose full scale varies per hero cannot be compared across the four cards on
         /// a spectator's screen.
+        ///
+        /// ⚠️⚠️ 20, DOWN FROM 100, BECAUSE THE METER COUNTS EVENTS NOW. One lata knockdown is
+        /// one charge (`Balance.UltimateChargeLataKnock`) and the dearest ultimate in the game
+        /// costs twenty of them, so full scale IS the ceiling of the cost range. 🧑 2026-08-27:
+        /// *"i want downing can and tayaing to only give one point for the charges"* and
+        /// *"i wanted like 10-20 charges required on ult depending on impact"*. `Balance`'s
+        /// ultimate economy block carries the rescale and the pacing arithmetic.
         /// </summary>
-        public const float UltimateMax = 100.0f;
+        public const float UltimateMax = 20.0f;
 
         /// <summary>
         /// What THIS hero's ultimate costs, in the same points <see cref="UltimateCharge"/> is

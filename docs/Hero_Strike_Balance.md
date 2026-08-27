@@ -334,26 +334,45 @@ of every 1.8. Each one is now worth watching, which is the whole point.
 Delete `UltimatePassiveChargePerSecond` outright. Retune the earn table and make the cost a
 per-kit value rather than a shared `const`:
 
-| Event | Now | Proposed | Why |
+⚠️⚠️ **THE METER COUNTS EVENTS AS OF 2026-08-27, AND THE TABLE BELOW IS IN CHARGES.** 🧑, after
+playing the 4.72 build: *"wtf how many points or charges to ult does downing can give? i want
+downing can and tayaing to only give one point for the charges"*, and then *"i wanted like 10-20
+charges required on ult depending on impact"*. The old scale answered "how close am I" only by
+dividing two numbers nothing on screen showed. **One knockdown is one charge.**
+
+| Event | 2026-08-25 | Now | Why |
 |---|---|---|---|
-| Knock the lata over | 25 | **25** | the objective. Unchanged |
-| Tag an attacker as taya | 20 | **20** | the taya's only way to earn. Unchanged |
-| **Retrieve your own tsinelas** | 0 | **12** | the act the game is about, currently worth nothing |
-| Legal throw released | 8 | **4** | `VISION.md` § 0: throwing is safe and free. Paying 8 for the safe act is backwards |
-| Time passing | 1.0/s | **0** | it is waiting, and § 4 forbids paying for waiting |
+| Knock the lata over | 25 | **1.0** | the objective, and the unit everything else is priced in |
+| Tag an attacker as taya | 20 | **1.0** | the taya's only way to earn. Raised from the 0.8 a straight rescale gives, on instruction |
+| Retrieve your own tsinelas | 12 | **0.5** | half an objective, exactly as 12 was half of 25 |
+| Legal throw released | 4 | **0.15** | `VISION.md` § 0: throwing is safe and free, so it pays least |
+| Time passing | 0 | **0** | it is waiting, and § 4 forbids paying for waiting |
 
-| Hero | Ultimate | Cost | In lata knocks | Why this cost |
+| Hero | Ultimate | Cost | 2026-08-25 | Why this cost |
 |---|---|---|---|---|
-| Zack | Thunderstrike | **150** | 6.0 | 4.5 m stun at your own feet, no aim, no counterplay. The most reliable ult in the game |
-| Cheska | Glacial Nova | **140** | 5.6 | freezes everyone near you AND clears every loose tsinelas. It is an escape and a reset in one |
-| Sean | Supernova | **130** | 5.2 | knocks the lata over itself, so it is an ultimate that pays a point directly |
-| Dante | Titan Fissure | **110** | 4.4 | needs facing and a 50 degree cone. Whiffs completely if they scatter |
-| Nemu | Seance Void | **90** | 3.6 | a zone that drags and slows. No burst, no knockdown, the least round-ending of the five |
+| Zack | Thunderstrike | **20** | 150 | 4.5 m stun at your own feet, no aim, no counterplay. The most reliable ult in the game, so it sits at the ceiling of the requested range |
+| Cheska | Glacial Nova | **17** | 140 | freezes everyone near you AND clears every loose tsinelas. It is an escape and a reset in one |
+| Sean | Supernova | **15** | 130 | knocks the lata over itself, so it is an ultimate that pays a point directly |
+| Phaister | Grand Coven | **13** | 115 | paints the street and afflicts inside it, but converts into score only through a follow-up |
+| Dante | Titan Fissure | **12** | 110 | needs facing and a 50 degree cone. Whiffs completely if they scatter |
+| Nemu | Seance Void | **10** | 90 | a zone that drags and slows. No burst, no knockdown, the least round-ending of the six, so it sits at the floor |
 
-A strong round is roughly 3 knocks, 4 retrievals and 6 throws, which is `75 + 48 + 24 = 147`
-points. So Nemu ultimates most rounds, Zack ultimates when the round went well, and a player
-having a bad round gets none. That is the shape Valorant has, and it is what makes an ultimate an
-event.
+⚠️⚠️ **THIS IS A REAL PACING CHANGE, NOT ONLY A RESCALE, AND THE ARITHMETIC BELOW IS WHAT IT
+HAS TO BE JUDGED AGAINST.** The 2026-08-25 economy bought the dearest ultimate for six
+knockdowns; 10 to 20 asks between ten and twenty. A live attacker earns roughly
+
+| per 90 s round | charges |
+|---|---|
+| 1 to 2 knockdowns | 1.0 to 2.0 |
+| 3 to 4 retrievals | 1.5 to 2.0 |
+| 5 to 6 throws | 0.8 to 0.9 |
+| **total** | **about 4.3** |
+
+so Nemu's 10 lands after about two and a half rounds and Zack's 20 after about four and a half.
+Over Hero Strike's eight rounds that is between one and three ultimates per seat per match,
+against roughly three to five before. **If a match measures fewer than one ultimate per seat,
+the COST is the lever, not what an act pays**: the earn table is what makes the meter readable
+and inflating it undoes that. `BotBehaviourProbe` prints ultimates per match.
 
 ⚠️ **The HUD needs a third widget and `VISION.md` § 3 already constrains two of them.** A
 cooldown drains a smooth bar, the ultimate fills a notched one, and neither may be reused for
@@ -378,7 +397,7 @@ drawn instead.
 
 **Ultimates that stay big and why.** Supernova 36.93 %, Glacial Nova 33.92 %, Thunderstrike
 32.46 % and Titan Fissure 32.46 % all stay. Rule 2 allows an ultimate to be big **one at a
-time**, and the charge economy in § 3.1 is what makes "one at a time" true: at 90 to 150 points
+time**, and the charge economy in § 3.1 is what makes "one at a time" true: at 10 to 20 charges
 with no passive drip, two ultimates inside the same second stop being a normal occurrence.
 
 **The worst frame after all of the above:**

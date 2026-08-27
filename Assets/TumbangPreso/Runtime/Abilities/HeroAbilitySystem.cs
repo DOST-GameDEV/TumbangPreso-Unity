@@ -153,7 +153,14 @@ namespace TumbangPreso.Abilities
             // the rules.
             Kit.PracticeMode = GameServices.Round == null || !GameServices.Round.RoundActive;
 
-            Kit.Tick(_context, dt);
+            if (NetAuthority.IsNetworked)
+            {
+                using (NetCue.SuppressRelay()) Kit.Tick(_context, dt);
+            }
+            else
+            {
+                Kit.Tick(_context, dt);
+            }
 
             var intent = _motor.Intent;
             if (intent == null)
@@ -315,12 +322,82 @@ namespace TumbangPreso.Abilities
 
         private HeroKit.CastOutcome Cast(Slot slot)
         {
+            HeroKit.CastOutcome outcome;
+            if (NetAuthority.IsNetworked)
+            {
+                using (NetCue.SuppressRelay()) outcome = CastWithContext(slot, _context);
+            }
+            else
+            {
+                outcome = CastWithContext(slot, _context);
+            }
+            if (outcome != HeroKit.CastOutcome.Cast || !NetAuthority.IsNetworked) return outcome;
+
+            var ability = AbilityFor(slot);
+            float held = ability != null ? ability.HeldSecondsOnCast : 0.0f;
+            Vector3 aimPoint = _context.AimPoint;
+
+            if (NetAuthority.IsHost)
+            {
+                Net.MatchRpc.Instance?.BroadcastAbilityCast(
+                    _motor.PlayerSlot, (int)slot, _context.Position, _context.Forward,
+                    aimPoint, held, exceptClientId: null);
+            }
+            else if (_motor.PlayerSlot == NetAuthority.LocalSlot)
+            {
+                Net.MatchRpc.Instance?.RequestAbilityCastServerRpc(
+                    _motor.PlayerSlot, (int)slot, _context.Position, _context.Forward,
+                    aimPoint, held);
+            }
+
+            return outcome;
+        }
+
+        private HeroKit.CastOutcome CastWithContext(Slot slot, AbilityContext context)
+        {
             switch (slot)
             {
-                case Slot.Skill1: return Kit.CastSkill1(_context);
-                case Slot.Skill2: return Kit.CastSkill2(_context);
-                default: return Kit.CastUltimate(_context);
+                case Slot.Skill1: return Kit.CastSkill1(context);
+                case Slot.Skill2: return Kit.CastSkill2(context);
+                default: return Kit.CastUltimate(context);
             }
+        }
+
+        /// <summary>
+        /// Runs a host-approved cast on the host's remote seat or on an observing client.
+        /// The caller decides whether normal eligibility must pass. Observers force the replay
+        /// if their cosmetic cooldown drifted, because a host-approved effect must never vanish
+        /// merely because one screen counted a timer a frame differently.
+        /// </summary>
+        public HeroKit.CastOutcome ApplyNetworkCast(Slot slot, Vector3 position,
+                                                    Vector3 forward, Vector3 aimPoint,
+                                                    float heldSeconds, bool authoritative)
+        {
+            if (Kit == null || _motor == null) return HeroKit.CastOutcome.Missing;
+
+            var ability = AbilityFor(slot);
+            if (ability == null) return HeroKit.CastOutcome.Missing;
+
+            ability.HeldSecondsOnCast = Mathf.Max(0.0f, heldSeconds);
+            var context = new AbilityContext(_motor, _carrier, _verbs,
+                                             position, forward, aimPoint);
+
+            HeroKit.CastOutcome outcome;
+            using (NetCue.SuppressRelay())
+            {
+                outcome = CastWithContext(slot, context);
+                if (!authoritative && outcome != HeroKit.CastOutcome.Cast)
+                {
+                    if (ability.IsActive && ability.CanReactivate)
+                        ability.Reactivate(context);
+                    else
+                        ability.Activate(context);
+                    outcome = HeroKit.CastOutcome.Cast;
+                }
+            }
+
+            if (outcome == HeroKit.CastOutcome.Cast) PlayCastConfirm(slot);
+            return outcome;
         }
 
         private void PlayCastConfirm(Slot slot)
@@ -637,6 +714,11 @@ namespace TumbangPreso.Abilities
                 ? ability.AimRangeFor(HeldSecondsFor(ability))
                 : ability.TelegraphRange;
 
+            // ⚠️ A DESTINATION YOU ARE GOING TO STAND IN GETS A STANDING MARK AS WELL AS A RING.
+            // See `GroundReticle.SetBeacon`: 🧑 2026-08-27, on the blink, *"all it shows is a
+            // frigging shadow, it's very easy to miss"*, and a decal on the road seen from head
+            // height at three metres is a smudge whatever colour it is.
+            _reticle.SetBeacon(ability.AimBeacon);
             _reticle.Show(AimPoint(ability, range), ability.TelegraphRadius, AccentColour());
             return true;
         }

@@ -1014,14 +1014,39 @@ namespace TumbangPreso.Core.Tests
             Assert.True(Balance.UltimateChargeLegalThrow > 0.0f);
 
             // ⚠️ THE WHOLE-ROUND BOUND, which is what the old assertion should have been. The
-            // cheapest ultimate in the game costs 90 (`NemuHeroKit.UltimateCost`). Nothing may
+            // cheapest ultimate in the game costs 10 (`NemuHeroKit.UltimateCost`). Nothing may
             // accrue on a timer, so a player who acts zero times must earn zero, and there is no
             // longer any per-second term for this to be written against. If a passive term is
             // ever reintroduced, 90 seconds of it must not approach the cheapest cost.
-            Assert.Equal(4.0f, Balance.UltimateChargeLegalThrow);
-            Assert.Equal(12.0f, Balance.UltimateChargeOwnSlipperRetrieved);
-            Assert.Equal(25.0f, Balance.UltimateChargeLataKnock);
-            Assert.Equal(20.0f, Balance.UltimateChargeTag);
+            //
+            // ⚠️⚠️ THE METER COUNTS EVENTS, AND THESE FOUR NUMBERS ARE THAT RULE. 🧑 2026-08-27:
+            // *"i want downing can and tayaing to only give one point for the charges"*. A
+            // knockdown was 25 and a tag 20 against costs of 90 to 150; both objectives are worth
+            // exactly one charge now and an ultimate costs 10 to 20. `Balance`'s ultimate economy
+            // block has the rescale, the one deliberate change inside it (the tag, from 0.8 of a
+            // knockdown to a full 1.0) and the pacing arithmetic.
+            Assert.Equal(0.15f, Balance.UltimateChargeLegalThrow);
+            Assert.Equal(0.5f, Balance.UltimateChargeOwnSlipperRetrieved);
+            Assert.Equal(1.0f, Balance.UltimateChargeLataKnock);
+            Assert.Equal(1.0f, Balance.UltimateChargeTag);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE OBJECTIVE IS THE UNIT OF THE METER, AND THAT IS THE POINT OF THE 2026-08-27
+        /// RESCALE. Every other earning is expressed as a fraction of one lata knockdown, so
+        /// "how close am I" is a count rather than a division nothing on screen shows you. If a
+        /// future pass wants a knockdown to be worth more than one, it wants a cheaper ultimate
+        /// instead: this is the anchor everything else is priced against.
+        /// </summary>
+        [Fact]
+        public void HeroUltimateEconomy_OneObjectiveIsOneCharge()
+        {
+            Assert.Equal(1.0f, Balance.UltimateChargeLataKnock);
+            Assert.Equal(Balance.UltimateChargeLataKnock, Balance.UltimateChargeTag);
+
+            // A fraction of the objective, both of them, and in the order VISION.md § 0 sets.
+            Assert.True(Balance.UltimateChargeOwnSlipperRetrieved < Balance.UltimateChargeLataKnock);
+            Assert.True(Balance.UltimateChargeLegalThrow < Balance.UltimateChargeOwnSlipperRetrieved);
         }
 
         [Fact]

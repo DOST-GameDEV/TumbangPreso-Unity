@@ -54,12 +54,21 @@ for dirpath, _, filenames in os.walk(ROOT):
         lines = open(path, encoding="utf-8", errors="replace").read().split("\n")
         depth = 0
         gates = []
+        pending_positive_gate = False
         for i, line in enumerate(lines):
             stripped = line.strip()
             is_comment = stripped.startswith("//") or stripped.startswith("///")
 
             if "ShouldResolve()" in line and "return" in line and not is_comment:
                 gates.append(depth)
+            elif "ShouldResolve()" in line and stripped.startswith("if") and not is_comment:
+                # Positive authority block: effects inside the following brace are host-only.
+                # The original audit only understood early returns and therefore reported a
+                # correctly wrapped `if (round != null && ShouldResolve())` as open.
+                if "{" in line:
+                    gates.append(depth + 1)
+                else:
+                    pending_positive_gate = True
 
             m = EFFECT.search(line)
             if m and not is_comment:
@@ -79,6 +88,9 @@ for dirpath, _, filenames in os.walk(ROOT):
                 ))
 
             depth += line.count("{") - line.count("}")
+            if pending_positive_gate and "{" in line:
+                gates.append(depth)
+                pending_positive_gate = False
             gates = [g for g in gates if g <= depth]
 
 # Ungated calls on somebody else's body first: that is the list to fix.

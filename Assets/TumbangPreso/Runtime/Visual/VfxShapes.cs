@@ -2294,6 +2294,122 @@ namespace TumbangPreso.Visual
             host.AddComponent<GeneratedMeshOwner>().Owned = mesh;
         }
 
+        // -------------------------------------------------------------------
+        // § DRAPING, WHICH IS WHAT MAKES A FLOOR EFFECT FOLLOW THE FLOOR
+        //
+        // ⚠️⚠️ EVERY GROUND EFFECT IN THIS GAME IS A FLAT PLANE AT THE CASTER'S OWN HEIGHT, AND
+        // ON A MAP WITH A KERB THAT IS VISIBLY WRONG. 🧑 2026-08-27, with a screenshot of
+        // Phaister's ultimate on Ilalim ng Tulay: *"her magic circle doesnt draw over the
+        // sidewalk and thats weird af"*. The circle painted the road perfectly and then ended in
+        // a hard straight line along the pavement edge, with the rings and the writing simply
+        // gone where the sidewalk begins.
+        //
+        // ⚠️ IT IS THE DEPTH BUFFER, NOT A MISSING PIECE OF GEOMETRY. `Lay` puts the mesh a few
+        // centimetres above the cast point, the pavement stands about a quarter of a metre
+        // higher, so the far half of the inscription is UNDER the kerb and correctly occluded.
+        // Nothing was clipped or culled; it is simply buried.
+        //
+        // ⚠️⚠️ AND THE TWO OBVIOUS FIXES ARE BOTH WORSE. Raising the whole plane to clear the
+        // kerb makes it hover over the road, which is the one surface it must look painted on.
+        // Drawing it with the depth test off puts it over the PLAYERS, and `docs/VISION.md` § 2
+        // rule 5 is that a frame mid-fight must still show every player. Draping is the only
+        // answer that keeps the ink on the ground everywhere.
+        //
+        // ⚠️ THE CAST IS PER VERTEX, CACHED ON A 12 CM GRID, AND IT HAPPENS ONCE. These meshes
+        // are built at cast time and never rebuilt, so the cost is one burst of a few hundred
+        // rays rather than anything per frame. The grid is what stops a 72-segment ring paying
+        // 144 of them when its neighbours share a height.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// Ground height under a point, or <paramref name="fallback"/> where there is none.
+        ///
+        /// ⚠️ FOR THE SMALL PIECES OF AN INSCRIPTION, where draping a two-triangle tick is more
+        /// arithmetic than moving it. A medallion is 30 cm across; the kerb under it is flat at
+        /// that scale, so snapping the whole piece is indistinguishable from bending it and costs
+        /// one ray instead of a dozen.
+        /// </summary>
+        public static float GroundAt(Vector3 at, float fallback, float maxRise = 0.60f)
+        {
+            float ground = GroundUnder(at, 4.0f, 6.0f);
+            if (float.IsNegativeInfinity(ground)) return fallback;
+
+            return fallback + Mathf.Clamp(ground - fallback, -maxRise, maxRise);
+        }
+
+        /// <summary>Ground height under a point, ignoring bodies, props and trigger volumes.</summary>
+        private static float GroundUnder(Vector3 at, float searchAbove, float searchBelow)
+        {
+            var from = new Vector3(at.x, at.y + searchAbove, at.z);
+            var hits = Physics.RaycastAll(from, Vector3.down, searchAbove + searchBelow, ~0,
+                                          QueryTriggerInteraction.Ignore);
+
+            float best = float.NegativeInfinity;
+            foreach (var hit in hits)
+            {
+                // ⚠️ THE SAME EXCLUSIONS `Slipper.GroundY` USES, AND FOR THE SAME REASON: a body
+                // is not the ground. Draping onto somebody standing in the circle would make the
+                // ink climb them, which is the fault this fixes with the sign flipped.
+                if (hit.collider.GetComponentInParent<CharacterMotor>() != null) continue;
+                if (hit.collider.GetComponentInParent<Slipper>() != null) continue;
+                if (hit.collider.GetComponentInParent<Lata>() != null) continue;
+
+                if (hit.point.y > best) best = hit.point.y;
+            }
+
+            return best;
+        }
+
+        /// <summary>
+        /// Pushes every vertex of a laid-flat mesh up or down onto the surface under it, so the
+        /// shape climbs a kerb instead of disappearing into it.
+        /// </summary>
+        /// <param name="maxRise">
+        /// ⚠️ THE CLAMP IS WHAT KEEPS THIS A GROUND EFFECT. Without it the ink would run up the
+        /// face of a building or a wall the moment the circle reached one, which is not what a
+        /// mark on the road does. 0.60 m climbs any kerb, step or pavement in either arena and
+        /// refuses everything taller, so a circle that overlaps a wall is hidden by the wall
+        /// exactly as a real inscription would be.
+        /// </param>
+        public static void DrapeToGround(GameObject go, float clearance = 0.035f,
+                                         float maxRise = 0.60f)
+        {
+            if (go == null) return;
+
+            var filter = go.GetComponent<MeshFilter>();
+            var mesh = filter != null ? filter.sharedMesh : null;
+            if (mesh == null || !mesh.isReadable) return;
+
+            var t = go.transform;
+            float scaleY = Mathf.Abs(t.lossyScale.y) < 0.0001f ? 1.0f : t.lossyScale.y;
+            float planeY = t.position.y;
+
+            var vertices = mesh.vertices;
+            var cache = new System.Collections.Generic.Dictionary<long, float>(vertices.Length);
+
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                Vector3 world = t.TransformPoint(vertices[i]);
+
+                long key = ((long)Mathf.RoundToInt(world.x * 8.0f) << 32)
+                           ^ (uint)Mathf.RoundToInt(world.z * 8.0f);
+
+                if (!cache.TryGetValue(key, out float ground))
+                {
+                    ground = GroundUnder(world, 4.0f, 6.0f);
+                    cache[key] = ground;
+                }
+
+                if (float.IsNegativeInfinity(ground)) continue;
+
+                float rise = Mathf.Clamp(ground + clearance - planeY, -maxRise, maxRise);
+                vertices[i].y += rise / scaleY;
+            }
+
+            mesh.vertices = vertices;
+            mesh.RecalculateBounds();
+        }
+
         /// <summary>Frees a generated mesh when the object that draws it goes away.</summary>
         [DisallowMultipleComponent]
         public sealed class GeneratedMeshOwner : MonoBehaviour

@@ -3428,7 +3428,38 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>Reports a local cosmetic style event; never awards score.</summary>
-        public static void ReportStyle(int slot, float amount, string callout)
+        /// <summary>
+        /// Award Street Hype to one seat, wherever that seat is being played.
+        ///
+        /// ⚠️⚠️ STREET HYPE WAS DEAD ON EVERY CLIENT AND THE HOST COULD NOT SEE IT. This only
+        /// fires for the LOCAL slot (below), and every caller is host-side: `Carrier.HostThrowAt`,
+        /// `Lata.HostKnockDown`, the tag, the sabotage and the reset all sit behind
+        /// `NetAuthority.ShouldResolve()`. So on the host all four seats' events reached it and it
+        /// drew the host's own; on a client not one of them ran at all, and the bar that is
+        /// Classic's whole bottom-of-screen identity (`docs/VISION.md` § 1.1) never moved.
+        ///
+        /// ⚠️ THE HOST RELAYS IT TO THE SEAT'S OWNER, which is the same split `NetCue` makes for
+        /// a sound: only the host may DECIDE that something stylish happened, and announcing it is
+        /// a separate job. It is sent to ONE peer rather than broadcast, because hype is a
+        /// personal quantity and three of the four screens have nothing to do with it.
+        /// </summary>
+        /// <param name="relay">
+        /// ⚠️⚠️ FALSE FOR AN EVENT EVERY PEER ALREADY DECIDES FOR ITSELF, AND GETTING THIS WRONG
+        /// PAYS THE HYPE TWICE. Most callers sit behind `NetAuthority.ShouldResolve()`, so the
+        /// host is the only machine that reaches them and the relay is the only way the award
+        /// arrives anywhere else. Two do not: the LRT flyby and the bridge hoop run on every peer
+        /// from local state, so those award themselves locally and must not also be relayed.
+        /// </param>
+        public static void ReportStyle(int slot, float amount, string callout, bool relay = true)
+        {
+            if (relay && NetAuthority.IsNetworked && NetAuthority.IsHost)
+                Net.MatchRpc.Instance?.BroadcastStyle(slot, amount, callout);
+
+            ApplyStyle(slot, amount, callout);
+        }
+
+        /// <summary>The local half, with no relay. Called directly by the wire.</summary>
+        public static void ApplyStyle(int slot, float amount, string callout)
         {
             if (Instance == null || SceneFlow.SelectedMode != GameMode.Classic
                 || Instance._local == null || Instance._local.PlayerSlot != slot)

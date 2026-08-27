@@ -81,14 +81,22 @@ namespace TumbangPreso.Tests
         {
             var kit = new ZackHeroKit();
 
-            kit.ApplyNetworkSnapshot(ultimateCharge: 61.5f,
+            // ⚠️ THE CHARGE IS EXPRESSED AGAINST THE KIT'S OWN COST RATHER THAN AS A LITERAL, and
+            // that is what this assertion learned on 2026-08-27. It banked a flat 61.5, which was
+            // a little over half of Zack's 150; the meter counts EVENTS now and his ultimate costs
+            // 20, so a literal silently became a full meter and `AddUltimateCharge`'s clamp made
+            // the test pass for the wrong reason. `Balance`'s ultimate economy block has the
+            // rescale. A snapshot value written as a fraction of the cost cannot go stale again.
+            float banked = kit.UltimateCost * 0.41f;
+
+            kit.ApplyNetworkSnapshot(ultimateCharge: banked,
                                      skill1Cooldown: 22.25f, skill1Charges: 0,
                                      skill2Cooldown: 0.0f, skill2Charges: 1,
                                      ultimateCooldown: 0.0f);
 
             Assert.AreEqual(22.25f, kit.Skill1.CooldownRemaining, 0.001f,
                 "a rejoining player refreshed a cooldown by dropping, which is the exploit");
-            Assert.AreEqual(61.5f, kit.UltimateCharge, 0.001f,
+            Assert.AreEqual(banked, kit.UltimateCharge, 0.001f,
                 "a rejoining player lost banked ultimate charge, which is the reported bug");
         }
 

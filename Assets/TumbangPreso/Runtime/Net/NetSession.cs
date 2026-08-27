@@ -52,16 +52,23 @@ namespace TumbangPreso.Net
         [Serializable]
         private sealed class ConnectionHello
         {
+            public int Protocol;
             public string Token;
             public string Name;
         }
+
+        /// <summary>
+        /// The custom-message schema spoken by this build. This is deliberately separate from
+        /// the marketing version: a peer with an older movement or ability payload cannot safely
+        /// join and "mostly work". That failure presents as wrong characters, missing powers,
+        /// or a frozen body, which is much worse than a clear version-mismatch refusal.
+        /// </summary>
+        public const int ProtocolVersion = 2;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =
             new Dictionary<ulong, ConnectionHello>();
         private bool _seatHandlerRegistered;
-        private GameObject _matchRpcPrefab;
-        private NetworkObject _matchRpcObject;
         private LanBeacon _beacon;
 #if MULTIPLAY_SDK
         private IServerQueryHandler _serverQueryHandler;
@@ -107,19 +114,6 @@ namespace TumbangPreso.Net
             // which scene a client is in. The symptom is a client stuck on a black screen while
             // the host plays on.
             _nm.NetworkConfig.EnableSceneManagement = false;
-
-            // MatchRpc is the one persistent NetworkObject carrying every authoritative
-            // gameplay request and snapshot. It used to have no prefab, scene instance, or
-            // spawn call anywhere, which made the entire RPC surface unreachable in builds.
-            _matchRpcPrefab = Resources.Load<GameObject>("Net/MatchRpc");
-            if (_matchRpcPrefab == null)
-            {
-                Debug.LogError("[Net] Missing Resources/Net/MatchRpc network prefab.");
-            }
-            else if (!_nm.NetworkConfig.Prefabs.Contains(_matchRpcPrefab))
-            {
-                _nm.AddNetworkPrefab(_matchRpcPrefab);
-            }
 
             _beacon = GetComponent<LanBeacon>();
             if (_beacon == null) _beacon = gameObject.AddComponent<LanBeacon>();
@@ -180,6 +174,7 @@ namespace TumbangPreso.Net
             if (_nm != null && _nm.IsListening) Stop();
 
             Configure("0.0.0.0", port);
+            ConfigureClientHello();
             IsRelay = false;
             RelayJoinCode = null;
 
@@ -199,21 +194,13 @@ namespace TumbangPreso.Net
 
             if (ok)
             {
-                var netObj = GetComponent<NetworkObject>();
-                if (netObj != null && !netObj.IsSpawned)
-                {
-                    netObj.Spawn();
-                }
-
                 LocalSlot = dedicated ? -1 : 0;
-                EnsureMatchRpcSpawned();
 
                 _beacon.HostName = Settings.SettingsStore.Current.PlayerName;
                 _beacon.JoinCode = Lobby.JoinCode;
                 _beacon.Port = port;
-                _beacon.MaxPlayers = LobbySession.MaxPlayers;
-                _beacon.Players = 1;
                 _beacon.InProgress = false;
+                PublishLobbyCounts();
                 _beacon.StartAdvertising();
 
                 if (dedicated)
@@ -361,6 +348,7 @@ namespace TumbangPreso.Net
 
                 Lobby.IsDedicated = false;
                 Lobby.OpenLobby(new System.Random(Environment.TickCount));
+                ConfigureClientHello();
 
                 bool ok = _nm.StartHost();
                 SetStatus(ok
@@ -369,20 +357,12 @@ namespace TumbangPreso.Net
 
                 if (ok)
                 {
-                    var netObj = GetComponent<NetworkObject>();
-                    if (netObj != null && !netObj.IsSpawned)
-                    {
-                        netObj.Spawn();
-                    }
-
                     LocalSlot = 0;
-                    EnsureMatchRpcSpawned();
                     _beacon.HostName = Settings.SettingsStore.Current.PlayerName;
                     _beacon.JoinCode = Lobby.JoinCode;
                     _beacon.Port = DefaultPort;
-                    _beacon.MaxPlayers = LobbySession.MaxPlayers;
-                    _beacon.Players = 1;
                     _beacon.InProgress = false;
+                    PublishLobbyCounts();
                     _beacon.StartAdvertising();
 
                     if (Query != null)
@@ -392,14 +372,22 @@ namespace TumbangPreso.Net
                             Lobby.JoinCode,
                             relayCode,
                             Lobby.SeatedPeerCount(),
-                            Lobby.PeerCount);
+                            Lobby.OccupiedSeatCount());
                     }
+                }
+
+                if (!ok)
+                {
+                    IsRelay = false;
+                    RelayJoinCode = null;
                 }
 
                 return ok;
             }
             catch (Exception e)
             {
+                IsRelay = false;
+                RelayJoinCode = null;
                 SetStatus($"relay allocation failed: {e.Message}");
                 NetIdentity.ReportServiceCallFailed("Relay allocation", e);
                 return false;
@@ -445,11 +433,18 @@ namespace TumbangPreso.Net
                 ConfigureClientHello();
                 bool ok = _nm.StartClient();
                 if (ok) RegisterSeatHandler();
+                else
+                {
+                    IsRelay = false;
+                    RelayJoinCode = null;
+                }
                 SetStatus(ok ? "connecting to relay host..." : "failed to start relay client");
                 return ok;
             }
             catch (Exception e)
             {
+                IsRelay = false;
+                RelayJoinCode = null;
                 SetStatus($"relay connection failed: {e.Message}");
                 NetIdentity.ReportServiceCallFailed("Relay join", e);
                 return false;
@@ -461,13 +456,19 @@ namespace TumbangPreso.Net
             _beacon.StopAll();
             if (Query != null) _ = Query.DeleteHostedLobbyAsync();
 
-            if (_matchRpcObject != null && _matchRpcObject.IsSpawned && _nm.IsServer)
-                _matchRpcObject.Despawn(destroy: true);
-            _matchRpcObject = null;
-
             if (_nm != null && _nm.IsListening) _nm.Shutdown();
 
+            _helloByClient.Clear();
+
+            // ⚠️⚠️ `EndMatch` IS NOT ENOUGH HERE AND THAT IS WHY `Reset` EXISTS. `NetSession`
+            // owns ONE `LobbySession` for the lifetime of the process, so host, quit to menu,
+            // host again used to reach `OpenLobby` with the previous session's peer table,
+            // its leader id and `MatchInProgress` still set. A brand new lobby then believed
+            // it already had four players, obeyed a leader whose transport was gone, and
+            // answered Spectate to the first person who tried to join it.
             Lobby.EndMatch();
+            Lobby.Reset();
+            Lobby.IsDedicated = false;
             LocalSlot = 0;
             IsRelay = false;
             RelayJoinCode = null;
@@ -503,15 +504,36 @@ namespace TumbangPreso.Net
             SetStatus($"{Lobby.PeerCount} connected");
         }
 
-        private void EnsureMatchRpcSpawned()
+        /// <summary>
+        /// Republishes the three counts every browser reads: how many chairs are being PLAYED,
+        /// how many are UNAVAILABLE (played plus held for a dropped peer), and how many sockets
+        /// are attached.
+        ///
+        /// ⚠️⚠️ ONE NUMBER USED TO SERVE ALL THREE AND IT WAS `Lobby.PeerCount`. That counts
+        /// connections, so two players and six spectators advertised 8/4 and the LAN browser
+        /// struck the lobby out as full; the other direction, a seat held for somebody who
+        /// dropped mid-match, advertised as free and then refused whoever pressed join. Both are
+        /// reports of "the server browser lies", and neither is fixable while the concepts share
+        /// a field. `LobbySession.OccupiedSeatCount` and `ConnectedHumanCount` are the two
+        /// missing questions.
+        /// </summary>
+        private void PublishLobbyCounts()
         {
-            if (_matchRpcObject != null || _matchRpcPrefab == null || !_nm.IsServer) return;
+            if (_beacon == null) return;
 
-            var instance = Instantiate(_matchRpcPrefab);
-            instance.name = "~MatchRpc";
-            DontDestroyOnLoad(instance);
-            _matchRpcObject = instance.GetComponent<NetworkObject>();
-            _matchRpcObject.Spawn(destroyWithScene: false);
+            _beacon.MaxPlayers = LobbySession.MaxPlayers;
+            _beacon.MaxConnections = LobbySession.MaxConnections;
+            _beacon.Players = Lobby.SeatedPeerCount();
+            _beacon.Occupied = Lobby.OccupiedSeatCount();
+            _beacon.Connections = Lobby.ConnectedHumanCount();
+            _beacon.InProgress = Lobby.MatchInProgress;
+
+            if (Query != null && IsRelay)
+            {
+                _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(),
+                                                 Lobby.OccupiedSeatCount(),
+                                                 Lobby.MatchInProgress);
+            }
         }
 
         /// <summary>
@@ -525,6 +547,7 @@ namespace TumbangPreso.Net
             var settings = Settings.SettingsStore.Current;
             var hello = new ConnectionHello
             {
+                Protocol = ProtocolVersion,
                 Token = NetIdentity.Token,
                 Name = string.IsNullOrWhiteSpace(settings.PlayerName) ? "Player" : settings.PlayerName.Trim()
             };
@@ -536,14 +559,19 @@ namespace TumbangPreso.Net
                                        NetworkManager.ConnectionApprovalResponse response)
         {
             var hello = DecodeHello(request.Payload);
-            _helloByClient[request.ClientNetworkId] = hello;
-
+            bool protocolMatches = hello != null && hello.Protocol == ProtocolVersion;
             bool hasCapacity = _nm == null ||
-                               _nm.ConnectedClientsIds.Count < LobbySession.MaxConnections;
-            response.Approved = hasCapacity;
+                               Math.Max(_nm.ConnectedClientsIds.Count, _helloByClient.Count)
+                               < LobbySession.MaxConnections;
+
+            response.Approved = protocolMatches && hasCapacity;
             response.CreatePlayerObject = false;
             response.Pending = false;
-            response.Reason = hasCapacity ? string.Empty : "Lobby is full";
+            response.Reason = !protocolMatches
+                ? $"Game version mismatch (network protocol {ProtocolVersion})"
+                : hasCapacity ? string.Empty : "Lobby is full";
+
+            if (response.Approved) _helloByClient[request.ClientNetworkId] = hello;
         }
 
         private static ConnectionHello DecodeHello(byte[] payload)
@@ -556,6 +584,8 @@ namespace TumbangPreso.Net
                     if (decoded != null && !string.IsNullOrWhiteSpace(decoded.Token))
                     {
                         decoded.Token = decoded.Token.Trim();
+                        if (decoded.Token.Length > 128)
+                            decoded.Token = decoded.Token.Substring(0, 128);
                         decoded.Name = string.IsNullOrWhiteSpace(decoded.Name) ? "Player" : decoded.Name.Trim();
                         return decoded;
                     }
@@ -566,13 +596,7 @@ namespace TumbangPreso.Net
                 Debug.LogWarning($"[Net] Ignoring malformed connection identity: {e.Message}");
             }
 
-            // Old clients can still connect, but deliberately do not gain a durable reclaim
-            // identity. This fallback is unique to this connection and cannot steal a held seat.
-            return new ConnectionHello
-            {
-                Token = $"legacy-{Guid.NewGuid():N}",
-                Name = "Player"
-            };
+            return null;
         }
 
         private void RegisterSeatHandler()
@@ -649,11 +673,25 @@ namespace TumbangPreso.Net
             }
             else if (!_helloByClient.TryGetValue(clientId, out hello))
             {
-                hello = DecodeHello(null);
+                Debug.LogWarning($"[Net] Connected client {clientId} has no approved identity; disconnecting.");
+                _nm.DisconnectClient(clientId, "Missing approved identity");
+                return;
             }
 
-            var record = Lobby.Admit((int)clientId, hello.Token, hello.Name);
+            var record = Lobby.Admit((int)clientId, hello.Token, hello.Name,
+                                     out int replacedPeerId);
             SendSeatAssignment(clientId, record.Seat);
+
+            // A relaunch can establish the new socket before the generous 30 second timeout
+            // retires the old one. The durable token has already moved the seat above, so the
+            // stale transport is now both unnecessary and dangerous: without disconnecting it,
+            // it can keep submitting movement and verbs for the same player.
+            if (replacedPeerId >= 0 && replacedPeerId != (int)clientId &&
+                _nm.ConnectedClients.ContainsKey((ulong)replacedPeerId))
+            {
+                _helloByClient.Remove((ulong)replacedPeerId);
+                _nm.DisconnectClient((ulong)replacedPeerId, "Replaced by reconnect");
+            }
 
             // ⚠️ THE HOST NEVER SENDS ITSELF AN IdentifyServerRpc, so its own character, can and
             // slipper picks reach the lobby from here or not at all. Every other seat's picks
@@ -666,34 +704,39 @@ namespace TumbangPreso.Net
                 Lobby.SetPicks((int)clientId, charPick, canPick, slipperPick);
             }
 
-            _beacon.Players = Lobby.PeerCount;
-            if (Query != null && IsRelay)
-            {
-                _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(), Lobby.PeerCount, Lobby.MatchInProgress);
-            }
+            PublishLobbyCounts();
             MatchRpc.Instance?.BroadcastLobbyPicks();
         }
 
         private void OnClientDisconnected(ulong clientId)
         {
-            if (IsHost)
+            if (IsHost && clientId != _nm.LocalClientId)
             {
                 // ⚠️ THE SEAT IS HELD, NOT FREED, so a reconnecting player gets their own chair
                 // back rather than finding a stranger in it holding their score.
-                Lobby.Depart((int)clientId);
                 MatchRpc.Instance?.HostPeerLeft((int)clientId);
                 _helloByClient.Remove(clientId);
-                _beacon.Players = Lobby.PeerCount;
-                if (Query != null && IsRelay)
-                {
-                    _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(), Lobby.PeerCount, Lobby.MatchInProgress);
-                }
+                PublishLobbyCounts();
                 MatchRpc.Instance?.BroadcastLobbyPicks();
                 SetStatus($"{Lobby.PeerCount} connected");
                 return;
             }
 
-            SetStatus("disconnected");
+            // ⚠️⚠️ THE REASON IS THE WHOLE POINT OF THIS BRANCH NOW. A refused approval arrives
+            // here as an ordinary disconnect, so a build-version mismatch, a full lobby and a
+            // host that vanished were all one word: "disconnected". The player then has nothing
+            // to act on, and a version mismatch in particular is a thing they CAN fix.
+            string reason = _nm != null ? _nm.DisconnectReason : null;
+            SetStatus(string.IsNullOrWhiteSpace(reason) ? "disconnected" : $"disconnected: {reason}");
+
+            // A client that has lost the host is offline, and every gameplay path asks
+            // NetAuthority rather than this class. Leaving the relay flags set made the next
+            // join attempt reuse a dead allocation.
+            LocalSlot = 0;
+            IsRelay = false;
+            RelayJoinCode = null;
+            _helloByClient.Clear();
+            Lobby.Reset();
         }
 
         public void SetStatus(string s)

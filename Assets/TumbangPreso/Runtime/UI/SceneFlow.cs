@@ -158,8 +158,29 @@ namespace TumbangPreso.UI
             // The symptom is a menu that responds at one twentieth speed and reads as a hang.
             Time.timeScale = 1.0f;
 
+            // ⚠️⚠️ ONE LOAD PER REQUEST, HOWEVER MANY CALLERS ASK. `SceneManager.LoadScene` is
+            // deferred to the end of the frame, so a second call before that point QUEUES A
+            // SECOND LOAD of the same scene: the arena builds, tears down and builds again, and
+            // everything installed by the first build (seats, the lata, the ability systems) is
+            // destroyed underneath whatever already holds a reference to it.
+            //
+            // ⚠️ AND THE NETWORKED START HAD EXACTLY THAT SHAPE. `MatchRpc.HostStartMatch` fires
+            // `OnMatchStarted`, `ConvertedMatchSetup` answers it with `StartMatch`, the
+            // `StartMatch` broadcast loops back to the host's own handler, and the button that
+            // began it all called `StartMatch` again on the next line. Fixing the callers is
+            // right and was done; the guard is what stops the fifth caller from re-finding this.
+            // ⚠️ THE LATCH IS SCOPED TO ONE FRAME, WHICH IS EXACTLY THE WINDOW THE FAULT LIVES
+            // IN, and it therefore cannot get stuck. A legitimate second load of the same scene
+            // on a later frame (a rematch on the same map) is unaffected.
+            if (_pendingScene == scene && _pendingFrame == Time.frameCount) return;
+            _pendingScene = scene;
+            _pendingFrame = Time.frameCount;
+
             SceneManager.LoadScene(scene);
         }
+
+        private static string _pendingScene;
+        private static int _pendingFrame = -1;
 
         public static void StartMatch()
         {

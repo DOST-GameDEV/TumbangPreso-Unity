@@ -414,6 +414,7 @@ namespace TumbangPreso
         /// </remarks>
         public bool HostGrab(CharacterMotor who)
         {
+            if (!NetAuthority.ShouldResolve()) return false;
             if (!CanBeGrabbedBy(who)) return false;
 
             ReleasePreviousHolder(who);
@@ -450,6 +451,7 @@ namespace TumbangPreso
         /// </summary>
         public bool HostForceEquip(CharacterMotor who)
         {
+            if (!NetAuthority.ShouldResolve()) return false;
             if (who == null || who.IsDefender) return false;
 
             ReleasePreviousHolder(who);
@@ -477,7 +479,16 @@ namespace TumbangPreso
         {
             ReleasePreviousHolder(holder);
 
-            transform.SetPositionAndRotation(position, rotation);
+            // ⚠️⚠️ A HELD SLIPPER IS PLACED BY THE HAND THAT HOLDS IT, NOT BY THE WIRE. `Carrier`
+            // parents the tsinelas to the carry anchor every FixedUpdate on every peer, and the
+            // host streams this snapshot at the same 50 Hz. Writing both meant two authors for
+            // one transform: the packet put it where the host's hand was a step ago, the carry
+            // put it where this screen's hand is now, and the shoe visibly buzzed between the two
+            // for as long as anybody held it. The STATE and the HOLDER are authoritative; while
+            // it is in a hand, the position is a consequence of them.
+            if (state != SlipperState.Held)
+                transform.SetPositionAndRotation(position, rotation);
+
             SetState(state);
             Holder = state == SlipperState.Held ? holder : null;
             _velocity = state == SlipperState.InFlight ? velocity : Vector3.zero;
@@ -502,6 +513,7 @@ namespace TumbangPreso
 
         public void HostThrow(CharacterMotor thrower, Vector3 origin, Vector3 velocity, SlipperAffinity affinity = SlipperAffinity.Normal, float pektusSpin = 0.0f)
         {
+            if (!NetAuthority.ShouldResolve()) return;
             SetState(SlipperState.InFlight);
             _throwerSlot = thrower != null ? thrower.PlayerSlot : -1;
             Affinity = affinity;
@@ -664,6 +676,7 @@ namespace TumbangPreso
         private void FixedUpdate()
         {
             if (State != SlipperState.InFlight) return;
+            if (!NetAuthority.ShouldResolve()) return;
 
             float dt = Time.fixedDeltaTime;
             _flightTime += dt;

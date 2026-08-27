@@ -21,10 +21,14 @@ namespace TumbangPreso.Abilities
         /// simultaneously an escape for a surrounded taya and a reset of the ammunition on the
         /// court. It goes off around the caster, so like Thunderstrike it cannot miss.
         ///
-        /// It sits under Zack's 150 only because the freeze is a stagger rather than a full
-        /// stun. 140 is 5.6 lata knockdowns. `docs/Hero_Strike_Balance.md` § 3.1.
+        /// It sits under Zack's 20 only because the freeze is a stagger rather than a full
+        /// stun.
+        ///
+        /// ⚠️ 17 CHARGES, WHICH IS 17 LATA KNOCKDOWNS. Was 140 against a knockdown worth 25,
+        /// which is 5.6. The meter counts events now and an ultimate costs 10 to 20 of them:
+        /// `Balance`'s ultimate economy block has the request and the pacing arithmetic.
         /// </summary>
-        public override float UltimateCost => 140.0f;
+        public override float UltimateCost => 17.0f;
 
         private sealed class PermafrostSheetAbility : HeroAbility
         {
@@ -178,7 +182,7 @@ namespace TumbangPreso.Abilities
                 }
 
                 var round = ctx.Round;
-                if (round != null)
+                if (round != null && NetAuthority.ShouldResolve())
                 {
                     // Freeze all nearby opponents (balanced ultimate radius)
                     foreach (var p in round.Players)

@@ -25,9 +25,10 @@ namespace TumbangPreso.Abilities
         /// Nova both go off around the caster and cannot miss. Paying less for a power you have
         /// to earn the position for is the right way round.
         ///
-        /// 110 is 4.4 lata knockdowns. `docs/Hero_Strike_Balance.md` § 3.1.
+        /// ⚠️ 12 CHARGES, WHICH IS 12 LATA KNOCKDOWNS. Was 110 against a knockdown worth 25,
+        /// which is 4.4. `docs/Hero_Strike_Balance.md` § 3.1 and `Balance`'s economy block.
         /// </summary>
-        public override float UltimateCost => 110.0f;
+        public override float UltimateCost => 12.0f;
 
         private sealed class SeismicStompAbility : HeroAbility
         {
@@ -81,7 +82,7 @@ namespace TumbangPreso.Abilities
                     style: HeroHazards.ExplosionStyle.Quake, facing: ctx.Forward);
 
                 var round = ctx.Round;
-                if (round != null)
+                if (round != null && NetAuthority.ShouldResolve())
                 {
                     // Repel slippers with extra force
                     foreach (var s in UnityEngine.Object.FindObjectsByType<Slipper>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
@@ -265,7 +266,7 @@ namespace TumbangPreso.Abilities
 
                 var round = ctx.Round;
                 var directlyHit = new HashSet<int>();
-                if (round != null)
+                if (round != null && NetAuthority.ShouldResolve())
                 {
                     foreach (var p in round.Players)
                     {

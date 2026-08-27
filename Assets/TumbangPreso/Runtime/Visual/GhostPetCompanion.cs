@@ -1062,9 +1062,19 @@ namespace TumbangPreso.Visual
                 l.intensity = 4.0f;
             }
 
+            // ⚠️⚠️ HER BODY IS DRIVEN BY A BOT WHILE SHE IS ELSEWHERE, AND IT MAY NOT PRESS HER
+            // HERO KEYS. 🧑 2026-08-27, two reports that are one fault: *"nemu E recast doesnt
+            // work as intended ... recasting just extends ghost form time"* and *"she is supposed
+            // to be controlled by a bot (her real body) but it doesnt work that way right now"*.
+            // The AI was being added correctly; what was wrong is that it then wrote all three
+            // hero keys into the SAME `InputIntent` the player is writing Skill2 into, in an
+            // undefined component order, so the return press was erased about as often as it
+            // survived. `AIController.AbilitiesEnabled` carries the reasoning: while a human is
+            // driving the pet, the human owns the hero keys and the bot owns the legs.
             if (_nemuMotor != null && _nemuMotor.GetComponent<AIController>() == null)
             {
                 _temporaryAi = _nemuMotor.gameObject.AddComponent<AIController>();
+                _temporaryAi.AbilitiesEnabled = false;
             }
 
             // ⚠️⚠️ THE SOUND HAS THE SAME SHAPE AS THE CAMERA MOVE, AND THAT IS THE FIX.

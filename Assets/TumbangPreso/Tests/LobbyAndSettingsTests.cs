@@ -413,10 +413,16 @@ namespace TumbangPreso.Tests
         [Test]
         public void LanEntrySortOrderPutsJoinableFirstThenFillThenName()
         {
-            var e1 = new LanEntry { HostName = "Alpha", Players = 1, MaxPlayers = 4, InProgress = true }; // in progress
-            var e2 = new LanEntry { HostName = "Beta", Players = 3, MaxPlayers = 4, InProgress = false };  // joinable, 3 players
-            var e3 = new LanEntry { HostName = "Charlie", Players = 1, MaxPlayers = 4, InProgress = false }; // joinable, 1 player
-            var e4 = new LanEntry { HostName = "Delta", Players = 4, MaxPlayers = 4, InProgress = false }; // full
+            // ⚠️⚠️ `Occupied` AND `Connections` ARE SET EXPLICITLY NOW, AND THAT IS THE 2026-08-27
+            // CHANGE. `IsJoinable` used to ask one question ("is `Players` under `MaxPlayers`")
+            // because the beacon carried one number for three different things. It now asks for a
+            // free CHAIR and a free SOCKET, so an entry built without them is a lobby with no
+            // capacity at all. `LanEntry.Occupied` carries what the single number cost: a lobby
+            // with two players and six spectators advertised 8/4 and every browser struck it out.
+            var e1 = Lan("Alpha", seated: 1, occupied: 1, inProgress: true);    // in progress
+            var e2 = Lan("Beta", seated: 3, occupied: 3, inProgress: false);    // joinable, 3 players
+            var e3 = Lan("Charlie", seated: 1, occupied: 1, inProgress: false); // joinable, 1 player
+            var e4 = Lan("Delta", seated: 4, occupied: 4, inProgress: false);   // full
 
             var list = new List<LanEntry> { e1, e2, e3, e4 };
             list.Sort((a, b) =>
@@ -434,9 +440,170 @@ namespace TumbangPreso.Tests
             Assert.IsTrue(list[3].InProgress, "in progress lobby should come last");
         }
 
+        private static LanEntry Lan(string name, int seated, int occupied, bool inProgress)
+            => new LanEntry
+            {
+                HostName = name,
+                Players = seated,
+                Occupied = occupied,
+                MaxPlayers = LobbySession.MaxPlayers,
+                Connections = occupied,
+                MaxConnections = LobbySession.MaxConnections,
+                InProgress = inProgress,
+            };
+
+        /// <summary>
+        /// ⚠️⚠️ THE BEACON CARRIED ONE COUNT FOR THREE QUESTIONS AND ALL THREE WERE WRONG SOMEWHERE.
+        /// 🧑 2026-08-27 asked for the network to work *"for everyone"*, and a browser that hides a
+        /// joinable lobby is that failing before anybody presses a key. `NetSession` was publishing
+        /// `LobbySession.PeerCount`, which counts CONNECTIONS: two players and six spectators
+        /// advertised 8 of 4 and every client filtered it out as full. The other direction is a
+        /// seat HELD for somebody who dropped mid-match, which is not free and used to advertise as
+        /// though it were.
+        /// </summary>
+        [Test]
+        public void JoinabilityAsksForAFreeChairAndAFreeSocketSeparately()
+        {
+            // Four chairs taken, sockets to spare: full to play, open to watch.
+            var full = Lan("Full", seated: 4, occupied: 4, inProgress: false);
+            Assert.IsFalse(full.IsJoinable, "every chair is taken");
+            Assert.IsTrue(full.CanSpectate, "there is still room on the wire");
+
+            // Two playing, six watching. Joinable, and the old single count said otherwise.
+            var busy = Lan("Busy", seated: 2, occupied: 2, inProgress: false);
+            busy.Connections = 8;
+            Assert.IsTrue(busy.IsJoinable,
+                "spectators are not players, and counting them as players hid the lobby");
+
+            // A seat held for a dropped player is not a free seat.
+            var held = Lan("Held", seated: 3, occupied: 4, inProgress: false);
+            Assert.IsFalse(held.IsJoinable,
+                "a held seat advertised as free is a join that gets refused");
+
+            // Every socket taken: nothing at all, not even watching.
+            var packed = Lan("Packed", seated: 2, occupied: 2, inProgress: false);
+            packed.Connections = LobbySession.MaxConnections;
+            Assert.IsFalse(packed.IsJoinable);
+            Assert.IsFalse(packed.CanSpectate);
+        }
+
+        /// <summary>
+        /// ⚠️ THE OLD SEVEN-FIELD PAYLOAD IS STILL READ, NOT STILL WRITTEN. A build from before
+        /// the counts were split still appears in the browser, with its one number standing in for
+        /// all three, rather than silently vanishing from the list.
+        /// </summary>
+        [Test]
+        public void TheBeaconStillReadsAPayloadFromBeforeTheCountsWereSplit()
+        {
+            string old = string.Join("|", LanBeacon.Magic, "8910", "2", "4", "0", "K7X9", "Old Build");
+
+            Assert.IsTrue(LanBeacon.TryParsePayload(old, "192.168.1.50", out var entry));
+            Assert.AreEqual(2, entry.Players);
+            Assert.AreEqual(2, entry.Occupied, "the one old count stands in for the occupancy");
+            Assert.AreEqual(LobbySession.MaxConnections, entry.MaxConnections);
+            Assert.AreEqual("Old Build", entry.HostName);
+            Assert.IsTrue(entry.IsJoinable);
+        }
+
+        /// <summary>
+        /// ⚠️ A PLAYER NAME IS THE ONLY VALUE ON THIS WIRE A PERSON TYPES, so the parser takes it
+        /// as everything from its index onwards. A name containing the separator truncates rather
+        /// than corrupting the fields after it, which is what reading one field would have done.
+        /// </summary>
+        [Test]
+        public void AHostNameContainingTheSeparatorSurvivesTheRoundTrip()
+        {
+            string payload = LanBeacon.BuildPayload(8910, 2, 4, false, "K7X9", "Ma|te", 2, 5, 12);
+
+            Assert.IsTrue(LanBeacon.TryParsePayload(payload, "10.0.0.9", out var entry));
+            Assert.AreEqual(2, entry.Players);
+            Assert.AreEqual(5, entry.Connections);
+            Assert.AreEqual(12, entry.MaxConnections);
+            Assert.AreEqual(Settings.GameSettings.SanitiseName("Ma|te"), entry.HostName);
+        }
+
         // -------------------------------------------------------------------
         // RELAY AND TRANSPORT CAPACITY (N3)
         // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ ONE `LobbySession` OUTLIVES EVERY SESSION, AND UNTIL 2026-08-27 NOTHING RESET IT.
+        /// `NetSession` owns exactly one for the lifetime of the process, so host, quit to the
+        /// menu, host again reached `OpenLobby` carrying the previous match's peer table, its
+        /// leader id and `MatchInProgress`. The new lobby then believed it already had four
+        /// players, obeyed a leader whose transport was gone, and answered Spectate to the first
+        /// person who tried to join it. `docs/TODO.md` § 38.11.
+        /// </summary>
+        [Test]
+        public void OpeningASecondLobbyForgetsTheFirstOneEntirely()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(11));
+
+            lobby.Admit(10, "a", "A");
+            lobby.Admit(11, "b", "B");
+            lobby.Admit(12, "c", "C");
+            lobby.Admit(13, "d", "D");
+            lobby.StartMatch();
+
+            Assert.AreEqual(4, lobby.SeatedPeerCount());
+            Assert.AreEqual(10, lobby.LeaderPeerId);
+            Assert.IsTrue(lobby.MatchInProgress);
+
+            lobby.OpenLobby(new System.Random(12));
+
+            Assert.AreEqual(0, lobby.PeerCount, "a new lobby cannot start with the old peers in it");
+            Assert.AreEqual(-1, lobby.LeaderPeerId, "a leader whose transport is gone cannot lead");
+            Assert.IsFalse(lobby.MatchInProgress, "a new lobby is not mid-match");
+            Assert.AreEqual(MidMatchRuling.Seat, lobby.RuleOnArrival("someone-new"),
+                "the first person to join a brand new lobby gets a seat, not a spectator slot");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THREE DIFFERENT COUNTS, AND THE BROWSERS WERE SHOWING ONE OF THEM FOR ALL THREE.
+        /// `PeerCount` is every connection, `SeatedPeerCount` is who is playing, and
+        /// `OccupiedSeatCount` is how many of the four chairs a newcomer cannot have, which
+        /// includes a seat HELD for somebody who dropped mid-match. `docs/TODO.md` § 38.9.
+        /// </summary>
+        [Test]
+        public void OccupiedCountsHeldSeatsAndSeatedCountsDoesNot()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(21));
+
+            lobby.Admit(10, "a", "A");
+            lobby.Admit(11, "b", "B");
+            lobby.StartMatch();
+
+            Assert.AreEqual(2, lobby.SeatedPeerCount());
+            Assert.AreEqual(2, lobby.OccupiedSeatCount());
+
+            lobby.Depart(11);
+
+            Assert.AreEqual(1, lobby.SeatedPeerCount(), "one person is playing");
+            Assert.AreEqual(2, lobby.OccupiedSeatCount(), "their chair is held, so it is not free");
+            Assert.AreEqual(1, lobby.ConnectedHumanCount());
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A SPECTATOR IS A SEAT OF -1 **AND** THE FLAG. A record with `Seat == -1` and
+        /// `Spectator` false is read as a player by `PlayingPeerCount` and by the ready gate,
+        /// which then waits forever for a press from somebody who has no body to press it with.
+        /// `FirstFreeSeat` can return -1 whenever its table disagrees with `FreeSeatCount`.
+        /// </summary>
+        [Test]
+        public void APeerWithNoSeatIsAlwaysMarkedASpectator()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(31));
+
+            for (int i = 0; i < LobbySession.MaxPlayers; i++) lobby.Admit(10 + i, "t" + i, "P" + i);
+
+            var overflow = lobby.Admit(99, "late", "Late");
+
+            Assert.AreEqual(-1, overflow.Seat);
+            Assert.IsTrue(overflow.Spectator, "no chair means a spectator, never a seatless player");
+        }
 
         [Test]
         public void MaxConnectionsExceedsMaxPlayersToAccommodateSpectators()
@@ -722,13 +889,19 @@ namespace TumbangPreso.Tests
             lobby.OpenLobby(new System.Random(1337));
 
             Assert.IsTrue(lobby.IsDedicated);
-            Assert.AreEqual(0, lobby.LeaderPeerId);
+
+            // ⚠️⚠️ -1, NOT 0, AND THE SENTINEL CHANGED ON 2026-08-27 BECAUSE 0 IS A REAL NETCODE
+            // CLIENT ID. `LeaderPeerId` used to mean both "nobody is leading" and "the listen host
+            // is leading", so the host could never satisfy `IsLeader` and a dedicated lobby could
+            // not tell an empty chair from client 0. A sentinel must not be a legal value of the
+            // thing it represents. `LobbySession.LeaderPeerId` carries the note.
+            Assert.AreEqual(-1, lobby.LeaderPeerId, "no leader is -1, because 0 is a real peer");
 
             // Server referee joins as peer 1
             var refPeer = lobby.Admit(1, "server-token", "DedicatedServer");
             Assert.AreEqual(-1, refPeer.Seat);
             Assert.IsTrue(refPeer.Spectator);
-            Assert.AreEqual(0, lobby.LeaderPeerId, "Dedicated referee must never be leader");
+            Assert.AreEqual(-1, lobby.LeaderPeerId, "Dedicated referee must never be leader");
             Assert.AreEqual(0, lobby.SeatedPeerCount());
 
             // First human player joins

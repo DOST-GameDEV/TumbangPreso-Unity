@@ -60,8 +60,24 @@ namespace TumbangPreso.Social
         {
             if (!Emotes.IsKnown(id) || !CanEmote()) return;
 
-            if (NetAuthority.ShouldResolve()) HostPlay(id);
-            // Phase 5: else send the request to the host here.
+            if (NetAuthority.ShouldResolve())
+            {
+                HostPlay(id);
+                return;
+            }
+
+            // ⚠️⚠️ THIS WAS A COMMENT SAYING "Phase 5: else send the request to the host here"
+            // AND NOTHING ELSE, SO EMOTES HAVE NEVER TRAVELLED. `MatchRpc` has carried
+            // `RequestEmoteServerRpc` and a `PlayEmote` broadcast the whole time and neither had
+            // a single caller: a client's emote played on its own screen only, and the host's
+            // played on the host's only. Nobody reports it because an emote you cannot see is
+            // indistinguishable from one nobody pressed.
+            //
+            // ⚠️ IT PLAYS NOTHING LOCALLY FIRST. Unlike a throw, an emote is cheap, has no
+            // aiming and no timing, and `CanEmote` is a rule the host may legitimately refuse.
+            // Predicting it would mean occasionally starting a dance the host then cancels, and
+            // the camera swings to third person for the duration of one.
+            Net.MatchRpc.Instance?.RequestEmoteServerRpc(_motor.PlayerSlot, id);
         }
 
         /// <summary>Host-side. Validates, then this is what gets broadcast.</summary>
@@ -69,6 +85,15 @@ namespace TumbangPreso.Social
         {
             if (!NetAuthority.ShouldResolve()) return;
             if (!Emotes.IsKnown(id) || !CanEmote()) return;
+
+            // ⚠️ THE BROADCAST IS THE HOST'S OWN PLAY PATH TOO. `PlayEmote` is sent with
+            // `SendNamedMessageToAll`, which Netcode loops back into the listen host's own
+            // handler, so calling `Play` here as well would start the clip twice on the host.
+            if (NetAuthority.IsNetworked)
+            {
+                Net.MatchRpc.Instance?.RequestEmoteServerRpc(_motor.PlayerSlot, id);
+                return;
+            }
 
             Play(id);
         }

@@ -16,9 +16,13 @@ namespace TumbangPreso
     ///
     /// What it does now, in three phases:
     ///
-    ///   WARNING  (3.0 s)  the toast, the rail hum, the shadow sweeping in from the south
+    ///   WARNING  (3.0 s)  the toast and the shadow sweeping in from the south
     ///   OVERHEAD (2.7 s)  the pass itself
     ///   idle     (rest)   back to `Interval`
+    ///
+    /// ⚠️ THE SOUND IS ONE FIELD RECORDING ON A MOVING SOURCE, and it starts when the consist
+    /// spawns rather than at the warning, because the recording carries its own approach. It
+    /// used to be three synthesised cues. See § THE PASS.
     ///
     /// ⚠️⚠️ AND THE TWO MODES ANSWER IT DIFFERENTLY. See `OverheadPassWindow`: Hero Strike gets
     /// double cooldown rate while the consist is over the street, Classic gets Street Hype and
@@ -29,23 +33,26 @@ namespace TumbangPreso
     {
         [Header("Train Movement Settings")]
         /// <summary>
-        /// ⚠️⚠️ 78, UP FROM 24, ON REPORT. *"i want train to play rarely / like maybe when
-        /// they open the game"*. At 24 s a 90 s round carried three or four passes, so the map's
-        /// signature event was arriving every twenty seconds and had stopped being an event.
+        /// ⚠️⚠️ 300, AND IT HAS BEEN RAISED THREE TIMES ON THE SAME COMPLAINT. It shipped at 24,
+        /// went to 78 and then 150 on *"i want train to play rarely / like maybe when they open
+        /// the game"*, and reaches 300 on 🧑 2026-08-27: *"make it play very rarely"*. At 24 s a
+        /// 90 s round carried three or four passes, so the map's signature event was arriving
+        /// every twenty seconds and had stopped being an event. At 300 a Classic match (4 x 90 s)
+        /// sees the opener and about one more; a Hero Strike match (8 x 90 s) sees the opener and
+        /// two.
         ///
         /// ⚠️ IT IS STILL LEARNABLE, WHICH IS THE PROPERTY THIS FILE'S HEADER PROTECTS: "every
-        /// player learns its period inside a single round". With `InitialDelay` below, a round
-        /// opens with a pass and then sees at most one more, so a player still meets it early
-        /// enough to learn that it exists and what it does.
+        /// player learns its period inside a single round". `InitialDelay` below is what keeps
+        /// that true at any interval: the FIRST pass is what teaches the map has one.
         ///
         /// ⚠️ AND IT IS A BALANCE CHANGE, NOT ONLY A MOOD ONE. `OverheadPassWindow` gives Hero
         /// Strike double cooldown rate while the consist is overhead, so this cuts the number of
-        /// overclock windows in a round from three or four to one or two. `docs/TODO.md` section 5
-        /// already records that the overclock window has never been measured against a match;
-        /// this makes measuring it more urgent rather than less.
+        /// overclock windows in a whole match to two or three. `docs/TODO.md` section 5 already
+        /// records that the overclock window has never been measured against a match; this makes
+        /// measuring it more urgent rather than less.
         /// </summary>
         [Tooltip("Seconds between train passes.")]
-        public float Interval = 150.0f;
+        public float Interval = 300.0f;
 
         /// <summary>
         /// ⚠️ THE FIRST PASS COMES EARLY ON PURPOSE, which is the other half of *"like maybe
@@ -55,7 +62,7 @@ namespace TumbangPreso
         /// tune out.
         /// </summary>
         [Tooltip("Initial delay before the first train pass.")]
-        public float InitialDelay = 6.0f;
+        public float InitialDelay = 20.0f;
 
         [Tooltip("Speed of the train crossing the viaduct (m/s).")]
         public float Speed = 18.0f;
@@ -151,10 +158,15 @@ namespace TumbangPreso
                 }
             }
 
+            // ⚠️⚠️ THE `sfx_fire_whoosh` THAT USED TO FIRE HERE IS GONE, AND IT WAS THE THIRD
+            // TRAIN SOUND. A fire cue, borrowed, played from a fixed point as the consist crossed
+            // z = -18, on top of a distant warning one-shot and a looping bed. Three sounds for
+            // one object, two of them synthesised and one of them about fire, is most of why 🧑
+            // reported this repeatedly and finally said *"i keep reporting its broken and i give
+            // up on it"*. The recording is the train; the burst stays because it is a picture.
             if (!_whooshPlayed && _currentZ >= -18.0f)
             {
                 _whooshPlayed = true;
-                GameServices.Audio?.PlayAtVaried("sfx_fire_whoosh", transform.position, 0.85f, 1.05f, 0.85f);
                 ImpactBurst.SpawnAt(new Vector3(TrackX, TrackY - 0.5f, _currentZ));
             }
 
@@ -190,18 +202,26 @@ namespace TumbangPreso
         // recede for free off the transform, and `dopplerLevel` does the pitch shift on the way
         // past, which is the half of "getting farther" that a volume ramp alone cannot fake.
         //
-        // ⚠️⚠️ AND IT PLAYS `sfx_lrt_rumble`, NOT `sfx_lrt_pass`, WHICH IS NOT A DETAIL.
-        // The first version of this looped `sfx_lrt_pass` and that was wrong in a way no amount
-        // of falloff tuning would have hidden: that cue is a ONE-SHOT, 2.70 s long, beginning and
-        // ending on a sample value of ZERO because it was authored with a fade in and a fade out.
-        // The pass lasts 5.33 s, so the loop dropped the train to silence at 2.70 s and swelled
-        // it back from nothing while it was directly overhead. `sfx_lrt_rumble` is a 2.0 s bed
-        // with no envelope at all, filtered circularly so its ends match, and every tonal
-        // component completes a whole number of cycles inside the loop. See the synth in
-        // `tools/generate_ability_audio.py` for the construction.
+        // ⚠️⚠️ IT PLAYS ONE CUE, ONCE, WITHOUT LOOPING, AND THAT IS THE 2026-08-27 CHANGE.
+        // 🧑: *"i keep reporting its broken and i give up on it ... replace train passing by
+        // sound and train sound as a whole with this"*, with a 10.55 s field recording. The train
+        // had THREE synthesised sounds: a distant one-shot warning (`sfx_lrt_pass`), a 2.0 s
+        // seamless bed looped on this source (`sfx_lrt_rumble`), and a borrowed `sfx_fire_whoosh`
+        // fired from a fixed point at z = -18. Two of the three are deleted and the third is
+        // replaced.
         //
-        // ⚠️ `sfx_lrt_pass` KEEPS ITS OWN JOB, which is the distant announcement in `Announce`.
-        // It is a good one-shot; it was only ever a bad loop.
+        // ⚠️⚠️ THE CLIP IS TIME-ALIGNED TO THE PASS BY ARITHMETIC, NOT BY EAR, AND IT NEEDS NO
+        // OFFSET. Measured on the recording, its loudest quarter-second is at **2.70 s** (RMS
+        // 0.234 against 0.10 for the carriage tail). The consist spawns at z = -48 and reaches
+        // the street at 18 m/s, so it is overhead at **48 / 18 = 2.67 s** after the source
+        // starts. Starting the clip when the run starts therefore puts the recording's own pass
+        // within 0.03 s of the real one. If `Speed`, `StartZ` or the clip ever change, this is
+        // the sum to redo.
+        //
+        // ⚠️ AND THE LOOP IS OFF. A 10.55 s clip outlasts the 5.33 s traverse, so there is
+        // nothing to loop; the previous note here records what looping an enveloped one-shot did
+        // (silence at 2.70 s, then a swell from nothing while the train was directly overhead)
+        // and turning the loop off is what makes that unreachable rather than merely unlikely.
         //
         // ⚠️ LINEAR ROLLOFF, NOT LOGARITHMIC, AND IT IS MEASURED FROM THE MAP. The guideway sits
         // 9.19 m up and the play area is 33 m of street; logarithmic falloff drops most of its
@@ -232,6 +252,7 @@ namespace TumbangPreso
 
         private AudioSource _rumble;
         private bool _rumbleReady;
+        private bool _rumbleStarted;
 
         /// <summary>
         /// ⚠️ BUILT ON FIRST USE, NOT IN `Start`. `GameServices.Audio` is installed by the match
@@ -250,14 +271,14 @@ namespace TumbangPreso
             // `AudioCueCheck.CallSitePattern` is anchored on the literal `Audio.` receiver, so a
             // cue asked for through a local named anything else is a call site the check cannot
             // see, and it would then report `sfx_lrt_pass` as a file nothing plays.
-            if (!GameServices.Audio.TryGetClip("sfx_lrt_rumble", out var clip, out float mix)) return;
+            if (!GameServices.Audio.TryGetClip("sfx_lrt_pass", out var clip, out float mix)) return;
 
             var go = new GameObject("LrtRumble");
             go.transform.SetParent(transform, false);
 
             _rumble = go.AddComponent<AudioSource>();
             _rumble.clip = clip;
-            _rumble.loop = true;
+            _rumble.loop = false;
             _rumble.playOnAwake = false;
             _rumble.spatialBlend = 1.0f;
             _rumble.rolloffMode = AudioRolloffMode.Linear;
@@ -293,7 +314,16 @@ namespace TumbangPreso
 
             if (_rumble != null)
             {
-                if (!_rumble.isPlaying) _rumble.Play();
+                // ⚠️ ONCE PER PASS, NOT "WHENEVER IT IS NOT PLAYING". With the old looping bed
+                // those were the same sentence. With a one-shot they are not: a clip that ended
+                // would be restarted on the next frame, which is the enveloped-loop fault the
+                // section header records, rebuilt out of a restart instead of a loop flag.
+                if (!_rumbleStarted)
+                {
+                    _rumbleStarted = true;
+                    _rumble.time = 0.0f;
+                    _rumble.Play();
+                }
 
                 // The player's slider is read every frame rather than cached, because it can be
                 // moved in the pause panel while a train is mid-pass.
@@ -328,6 +358,7 @@ namespace TumbangPreso
         /// </summary>
         private void StopRumble()
         {
+            _rumbleStarted = false;
             if (_rumble != null && _rumble.isPlaying) _rumble.Stop();
         }
 
@@ -347,15 +378,16 @@ namespace TumbangPreso
             // of, had no sound for its whole life. `AudioCueCheck` could not see it either,
             // because it compared DECLARED cues against files and never call sites against
             // declarations; it does now.
-            // ⚠️ THE DISTANT WARNING, AND IT IS A ONE-SHOT ON PURPOSE. This fires once, three
-            // seconds out, from where the consist is at that moment, and it is meant to be heard
-            // from the far end of the street: it is the "parating na" and nothing else. The
-            // travelling part of the sound is `sfx_lrt_rumble` on the moving source, which is a
-            // different cue doing a different job, so the two no longer double each other the
-            // way one clip played twice would have.
-            GameServices.Audio?.PlayAtVaried("sfx_lrt_pass", transform.position,
-                                             0.94f, 1.06f, 0.62f);
-
+            // ⚠️⚠️ THE DISTANT ONE-SHOT THAT USED TO FIRE HERE IS DELETED, AND THE ANNOUNCEMENT
+            // IS NOW THE RECORDING ITSELF. The old pair was a synthesised warning played from a
+            // fixed point plus a synthesised bed on the moving source; the note above §THE PASS
+            // argued they were "a different cue doing a different job". With ONE real recording
+            // that argument inverts: playing the same 10.55 s of audio twice, a few tenths apart,
+            // is a flam rather than an announcement. The recording has its own approach, and the
+            // consist is already 54 m out and audible when this fires.
+            //
+            // ⚠️ THE TOAST STAYS AND IS NOW THE ONLY THING THIS METHOD DOES. It is the readable
+            // half of the warning, and the Hero Strike overclock window hangs off it.
             if (Hud.Instance == null) return;
 
             Hud.Instance.ShowToast(SceneFlow.SelectedMode == GameMode.HeroStrike
@@ -385,7 +417,9 @@ namespace TumbangPreso
             foreach (var seat in round.Players)
             {
                 if (seat == null) continue;
-                Hud.ReportStyle(seat.PlayerSlot, 4.0f, "ILALIM NG TULAY");
+                // ⚠️ NOT RELAYED. The consist is simulated independently on every peer off the
+                // same `Interval`, so each screen reaches this line itself.
+                Hud.ReportStyle(seat.PlayerSlot, 4.0f, "ILALIM NG TULAY", relay: false);
             }
         }
     }

@@ -347,26 +347,50 @@ namespace TumbangPreso.Tests
             Assert.AreEqual("2 / 3 WANT A REMATCH", UI.MatchResult.TallyLine(2, 3));
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THIS TEST ASSERTED THE OPPOSITE UNTIL 2026-08-27, AND THE THING IT PROTECTED WAS
+        /// THE BUG. It required a spawnable `Net/MatchRpc` prefab carrying a `NetworkObject` and a
+        /// `MatchRpc`, and `NetSession` duly instantiated and spawned one on every host start.
+        ///
+        /// ⚠️⚠️ `MatchRpc` IS NOT A `NetworkBehaviour`. It is a plain `MonoBehaviour` already
+        /// sitting on `NetSession`, and everything it does travels through
+        /// `CustomMessagingManager`, whose handlers are registered against a NAME with exactly one
+        /// owner. So the spawned copy was a SECOND router: its `Awake` overwrote `MatchRpc.Instance`
+        /// with an object that had never been handed a `NetworkManager`, and every request the
+        /// game made afterwards went to a router with no transport. That is the *"heavily broken"*
+        /// in 🧑's report, upstream of everything § 32 found.
+        ///
+        /// The prefab, its meta and the whole `Resources/Net` folder are deleted. What this now
+        /// asserts is the shape that replaced it: **one router, on the session object, reachable
+        /// as a plain component**, and nothing spawnable that could become a second one.
+        /// `MatchRpc.Awake` refuses a second instance outright and says so in the log.
+        /// </summary>
         [Test]
-        public void MatchRpcNetworkPrefabExistsAndHasAStableSpawnHash()
+        public void TheRpcRouterIsAPlainComponentAndNothingCanSpawnASecondOne()
         {
-            var prefab = Resources.Load<GameObject>("Net/MatchRpc");
-            Assert.NotNull(prefab, "The persistent gameplay RPC prefab must ship in Resources");
+            Assert.IsNull(Resources.Load<GameObject>("Net/MatchRpc"),
+                "a spawnable MatchRpc prefab is a SECOND router: its Awake overwrites "
+                + "MatchRpc.Instance with an uninitialised copy and every request after that "
+                + "goes nowhere. docs/TODO.md section 38.14 row 1.");
 
-            Component networkObject = null;
-            Component matchRpc = null;
-            foreach (var component in prefab.GetComponents<Component>())
+            // ⚠️ THE TYPE IS INSPECTED, NOT INSTANTIATED. `MatchRpc.Awake` claims the static
+            // `Instance` or destroys itself, so building one here would either take the singleton
+            // away from a live session or come back already destroyed. The question is about the
+            // SHAPE of the class and reflection answers it without touching global state.
+            var type = typeof(Net.MatchRpc);
+
+            Assert.IsTrue(type.IsSubclassOf(typeof(MonoBehaviour)));
+
+            // ⚠️ THE BASE CHAIN IS WALKED BY NAME, NOT BY TYPE. This test assembly does not
+            // reference `Unity.Netcode`, and adding the reference just to name one class would
+            // pull the whole transport into a suite that must stay quick and engine-light.
+            for (var t = type; t != null; t = t.BaseType)
             {
-                if (component.GetType().Name == "NetworkObject") networkObject = component;
-                if (component.GetType().Name == "MatchRpc") matchRpc = component;
+                Assert.AreNotEqual("NetworkBehaviour", t.Name,
+                    "MatchRpc routes named messages by hand and must not become a "
+                    + "NetworkBehaviour: a NetworkBehaviour needs a spawned NetworkObject, which "
+                    + "is exactly the prefab this test used to require.");
             }
-
-            Assert.NotNull(networkObject);
-            Assert.NotNull(matchRpc);
-            var hashProperty = networkObject.GetType().GetProperty("PrefabIdHash");
-            Assert.NotNull(hashProperty);
-            Assert.Greater((uint)hashProperty.GetValue(networkObject), 0u,
-                "A zero prefab hash cannot be spawned on reconnecting clients");
         }
 
         /// <summary>

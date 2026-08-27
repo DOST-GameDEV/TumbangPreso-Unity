@@ -57,6 +57,19 @@ namespace TumbangPreso.Net
                 NetIdentity.SetProfile(profile);
             }
 
+            // ⚠️⚠️ `-tp-allbots` IS WHAT MAKES A TWO-PROCESS TEST MEAN ANYTHING. Without it
+            // nobody presses a key in either window, all four seats stand still, and two peers
+            // agreeing that nothing happened is not evidence of anything. With it every seat
+            // plays itself, so the distances, the casts and the props in `NetStateReport` are
+            // real numbers on both sides and a disagreement between the two files names the
+            // fault. `MatchInstaller` already answers this flag by giving the local seat an
+            // `AIController` like any unoccupied one; the seat still belongs to this peer, so a
+            // client still submits its own transforms exactly as a human would.
+            if (Has(args, "-tp-allbots") || Has(args, "-allbots"))
+            {
+                GameLaunch.AllBots = true;
+            }
+
             string map = Value(args, MapSwitch) ?? UI.SceneFlow.Eskinita;
 
             bool explicitJoin = !string.IsNullOrEmpty(Value(args, JoinSwitch));

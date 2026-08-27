@@ -103,6 +103,24 @@ namespace TumbangPreso
             }
         }
 
+        /// <summary>
+        /// Restores the tournament clocks a reconnecting HUD reads. Scoring remains host-only;
+        /// these values prevent a joiner from seeing a fresh warning meter while the host is
+        /// already charging a penalty against that seat.
+        /// </summary>
+        public void ApplyNetworkTournamentState(float tayaCampSeconds, float[] attackerIdleSeconds)
+        {
+            _tayaCampTimer = Mathf.Max(0.0f, tayaCampSeconds);
+
+            for (int slot = 0; slot < _attackerIdleTimer.Length; slot++)
+            {
+                float value = attackerIdleSeconds != null && slot < attackerIdleSeconds.Length
+                    ? attackerIdleSeconds[slot]
+                    : 0.0f;
+                _attackerIdleTimer[slot] = Mathf.Max(0.0f, value);
+            }
+        }
+
         public void BeginRound()
         {
             RoundActive = true;

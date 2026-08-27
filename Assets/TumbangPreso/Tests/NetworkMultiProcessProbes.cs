@@ -138,7 +138,9 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(-1, refPeer.Seat, "Dedicated referee must never hold a player seat");
             Assert.IsTrue(refPeer.Spectator);
             Assert.IsTrue(lobby.IsSeatlessReferee(1));
-            Assert.AreEqual(0, lobby.LeaderPeerId, "Dedicated referee must not be appointed leader");
+            // ⚠️ -1 IS "NOBODY", AND IT USED TO BE 0. See `LobbySession.LeaderPeerId`: netcode
+            // hands out client id 0, so the old sentinel was also a legal peer.
+            Assert.AreEqual(-1, lobby.LeaderPeerId, "Dedicated referee must not be appointed leader");
 
             // Client 1 (Human host/leader)
             var p1 = lobby.Admit(2, "human-p1", "Leader Player");

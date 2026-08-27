@@ -33,6 +33,12 @@ namespace TumbangPreso
     /// defender outright, so for the taya the same button is the punch. Nobody loses anything,
     /// and no frame has both branches live.
     /// </summary>
+    // ⚠️⚠️ IT RUNS AFTER `AIController`, AND THE ONE BODY THAT CARRIES BOTH IS WHY THAT IS
+    // WRITTEN DOWN. `GhostPetCompanion.BeginPossession` puts a temporary AI on Nemu while the
+    // player drives Kuro; both components write `CharacterMotor.Intent`, and with neither
+    // declaring an order Unity chose one arbitrarily. The human is the one whose press must
+    // survive, so the human writes last. See `AIController.AbilitiesEnabled` for the report.
+    [DefaultExecutionOrder(-120)]
     public sealed class PlayerInputReader : MonoBehaviour
     {
         [SerializeField] private InputActionAsset _actions;

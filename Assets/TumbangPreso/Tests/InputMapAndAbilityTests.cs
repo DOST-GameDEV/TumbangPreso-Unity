@@ -347,11 +347,20 @@ namespace TumbangPreso.Tests
             Assert.Greater(sean, dante, "Supernova must cost more than Titan Fissure");
             Assert.Greater(dante, nemu, "Titan Fissure must cost more than Seance Void");
 
-            // ⚠️ AND EVERY ONE MUST BE REACHABLE IN A ROUND. The best objective in the game pays
-            // `UltimateChargeLataKnock` 25, so a cost past 175 is more than seven knockdowns and
-            // the power would effectively not exist. This is the bound, not a target.
-            Assert.LessOrEqual(zack, Balance.UltimateChargeLataKnock * 7.0f,
-                "the most expensive ultimate is out of reach inside a single round");
+            // ⚠️⚠️ THE RANGE IS 10 TO 20 CHARGES AND IT WAS ASKED FOR IN THOSE WORDS. 🧑
+            // 2026-08-27: *"i wanted like 10-20 charges required on ult depending on impact"*,
+            // after *"i want downing can and tayaing to only give one point for the charges"*.
+            // One lata knockdown is one charge, so these bounds read directly as knockdowns and
+            // the assertion is the request rather than a derived proxy for it.
+            //
+            // ⚠️ THE OLD BOUND WAS "SEVEN KNOCKDOWNS", which the new pacing deliberately breaks:
+            // an ultimate is meant to take two to four rounds of objective play now rather than
+            // one strong round. `Balance`'s ultimate economy block carries the arithmetic and
+            // says plainly that the COST is the lever if a match measures too few ultimates.
+            Assert.LessOrEqual(zack, Balance.UltimateChargeLataKnock * 20.0f,
+                "no ultimate may cost more than twenty objectives");
+            Assert.GreaterOrEqual(nemu, Balance.UltimateChargeLataKnock * 10.0f,
+                "no ultimate may cost fewer than ten objectives");
 
             // And none may be so cheap it is spammable off throws alone.
             Assert.GreaterOrEqual(nemu, Balance.UltimateChargeLegalThrow * 15.0f,

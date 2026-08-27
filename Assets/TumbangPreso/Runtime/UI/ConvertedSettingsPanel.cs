@@ -119,7 +119,72 @@ namespace TumbangPreso.UI
                     scroll.viewport.gameObject.AddComponent<RectMask2D>();
             }
 
+            EnsureWheelReachesTheList(scroll);
+            ScrollWheelRelay.Install(gameObject, scroll);
+
             if (scroll.verticalScrollbar == null) BuildScrollbar(scroll);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE WHEEL, FOR THE FOURTH TIME, AND THIS IS THE CAUSE THE PREVIOUS THREE PASSES
+        /// MISSED. 🧑 2026-08-27: *"u can scroll by holding scroll and yes i want to keep that
+        /// feature but u cant scroll by using mouse scroll or laptop pad scroll ... repeated
+        /// complaint! it feels so clunky/doesnt work at all"*. § 15.8 added a scrollbar and
+        /// changed the wheel step, § 32.3 gave the slider rows a hit rectangle. Both were real
+        /// and neither is this.
+        ///
+        /// ⚠️⚠️ UNITY DELIVERS A WHEEL EVENT TO WHATEVER THE POINTER IS OVER, AND THEN WALKS UP
+        /// FROM IT. `StandaloneInputModule` takes `pointerCurrentRaycast.gameObject` and asks
+        /// `GetEventHandler&lt;IScrollHandler&gt;` for the nearest ancestor that handles a scroll.
+        /// **When the raycast hits nothing, there is no object to walk up from and the wheel is
+        /// simply discarded.** `TscnUiImporter`'s `ScrollContainer` case adds a `ScrollRect` and a
+        /// `RectMask2D` and NO GRAPHIC, and the content is a layout group with no graphic either,
+        /// so the only raycastable pixels in the whole list are the row widgets themselves.
+        ///
+        /// The gaps between rows, the padding down both edges and the strip beside the scrollbar
+        /// are all holes: the wheel works if the cursor happens to be over a key cap and does
+        /// nothing one pixel above it. That is not "broken", which is why it survived three
+        /// passes, and it is exactly what *"clunky"* describes.
+        ///
+        /// ⚠️ AN INVISIBLE FULL-RECT GRAPHIC AT THE BACK OF THE VIEWPORT IS THE FIX, and it is
+        /// the same idiom § 32.3 used on the slider rows for the same reason. Alpha 0 draws
+        /// nothing. `SetAsFirstSibling` keeps it behind the content, so it can never swallow a
+        /// click meant for a row.
+        /// </summary>
+        private static void EnsureWheelReachesTheList(ScrollRect scroll)
+        {
+            var viewport = scroll.viewport;
+            if (viewport == null) return;
+
+            var existing = viewport.GetComponent<Graphic>();
+            if (existing != null)
+            {
+                existing.raycastTarget = true;
+                return;
+            }
+
+            // ⚠️ ON A CHILD RATHER THAN ON THE VIEWPORT ITSELF. `RectMask2D` lives on the
+            // viewport here (the importer puts the mask on the scroll node, which is also the
+            // viewport), and a `Graphic` on the same object as the ScrollRect would also become
+            // the ScrollRect's own `targetGraphic` candidate for other tooling to trip over.
+            var backing = new GameObject("WheelCatcher", typeof(RectTransform), typeof(Image));
+            backing.transform.SetParent(viewport, false);
+            backing.transform.SetAsFirstSibling();
+
+            var rt = backing.GetComponent<RectTransform>();
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+
+            var image = backing.GetComponent<Image>();
+            image.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+            image.raycastTarget = true;
+
+            // ⚠️ IT MUST NOT BE LAID OUT. The viewport is also the content's parent here, and a
+            // full-rect child inside a layout group would be given a row of its own.
+            var element = backing.AddComponent<LayoutElement>();
+            element.ignoreLayout = true;
         }
 
         /// <summary>Two rows of the list per wheel notch. A row is

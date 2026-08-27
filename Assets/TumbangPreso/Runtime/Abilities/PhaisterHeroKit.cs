@@ -19,18 +19,20 @@ namespace TumbangPreso.Abilities
             Ultimate = new GrandCovenEclipseAbility();
         }
 
-        public override float UltimateCost => 115.0f;
-
         /// <summary>
-        /// The host's half of Shadow Blink's knockback, for <see cref="Net.MatchRpc"/>.
-        ///
-        /// ⚠️ IT IS ON THE KIT RATHER THAN THE ABILITY BECAUSE THE ABILITY IS PRIVATE, and it
-        /// should stay private: an ability is an instance owned by one hero's kit, and a network
-        /// message arriving for seat 2 has no instance to talk to. The resolution is stateless,
-        /// so a static entry point is the honest shape rather than a workaround.
+        /// ⚠️ 13 CHARGES, BETWEEN DANTE'S 12 AND SEAN'S 15. Grand Coven paints the street, slows
+        /// and afflicts inside it, and changes the sky, but like Titan Fissure it converts into
+        /// score only through a follow-up. Was 115 against a knockdown worth 25, which is 4.6.
+        /// `Balance`'s ultimate economy block has the request and the pacing arithmetic.
         /// </summary>
-        public static void ResolveBlinkShove(int casterSlot, Vector3 at, Vector3 facing)
-            => ShadowPhaseBlinkAbility.ResolveShove(casterSlot, at, facing);
+        public override float UltimateCost => 13.0f;
+
+        // ⚠️⚠️ `ResolveBlinkShove` IS DELETED AND SO IS THE `ReqBlink` MESSAGE BEHIND IT. This
+        // was the host's half of a bespoke request for ONE power, written while the ability
+        // layer had no cast replication at all. `MatchRpc`'s `ReqAbility` now carries every
+        // cast, the host runs the same kit code the solo game runs, and the knockback resolves
+        // inside `ShadowPhaseBlinkAbility.ResolveShove` on the host as a consequence of that.
+        // A verb wired twice is a verb wired once and maintained never.
 
         /// <summary>
         /// Skill 1: HEX (2 charges per round)
@@ -139,6 +141,15 @@ namespace TumbangPreso.Abilities
                 // nothing, and she is neither rooted nor exempt from the anti-camp clock while
                 // she aims.
                 AimByHolding(MinRange, MaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+
+                // ⚠️⚠️ THE ONLY POWER IN THE GAME THAT AIMS AT A PLACE YOU WILL BE STANDING, AND
+                // IT IS WHY `AimBeacon` EXISTS. 🧑 2026-08-27: *"to teleport u have to hold her E
+                // skill and all it shows is a frigging shadow, it's very easy to miss and not in
+                // her theme at all"*. The ring stays and gains a torn `Rift` standing in it, which
+                // is the same shape `HeroHazards.SpawnShadowRift` tears at the place she leaves:
+                // the aim mark, the departure and the arrival are now one visual idea rather than
+                // a grey decal followed by two unrelated effects.
+                AimBeacon = true;
             }
 
             protected override void OnActivate(AbilityContext ctx)
@@ -197,31 +208,34 @@ namespace TumbangPreso.Abilities
             /// `NetAuthority`'s own note records what the other shape costs: the lunge guarded
             /// its sweep with "if not networked or host" and had no else branch, so *"the verb
             /// was simply dead for three of the four players in every networked match, for
-            /// weeks"*. The request is `MatchRpc.RequestBlinkShoveServerRpc`.
+            /// weeks"*.
+            ///
+            /// ⚠️⚠️ THE REQUEST HALF IS NOW THE GENERAL ONE AND THIS METHOD SENDS NOTHING.
+            /// `MatchRpc.RequestAbilityCastServerRpc` replicates the CAST, the host re-runs this
+            /// very ability from the caster's reported pose, and the knockback happens on the
+            /// host as part of that. The bespoke `ReqBlink` message this used to send is deleted:
+            /// with a cast rpc in place it was a second wire for a verb that already had one, and
+            /// it double-resolved the shove on the host for a client that was on a build carrying
+            /// both.
             /// </summary>
             private static void HostShove(CharacterMotor caster, Vector3 at, Vector3 facing)
             {
                 if (caster == null) return;
 
-                if (!NetAuthority.ShouldResolve())
-                {
-                    Net.MatchRpc.Instance?.RequestBlinkShoveServerRpc(
-                        caster.PlayerSlot, at, facing);
-                    return;
-                }
-
                 ResolveShove(caster.PlayerSlot, at, facing);
             }
 
             /// <summary>
-            /// The host's half. Public so <see cref="Net.MatchRpc"/> can run it for a client.
+            /// The host's half.
             ///
-            /// ⚠️ IT TAKES A SLOT RATHER THAN A MOTOR, because the host is resolving a request
+            /// ⚠️ IT TAKES A SLOT RATHER THAN A MOTOR, because the host is resolving a cast
             /// about a seat and must look the body up itself. A client that could hand over a
             /// `CharacterMotor` reference would be a client naming its own victims.
             /// </summary>
             public static void ResolveShove(int casterSlot, Vector3 at, Vector3 facing)
             {
+                if (!NetAuthority.ShouldResolve()) return;
+
                 facing.y = 0.0f;
                 if (facing.sqrMagnitude < 0.0001f) facing = Vector3.forward;
                 facing.Normalize();
