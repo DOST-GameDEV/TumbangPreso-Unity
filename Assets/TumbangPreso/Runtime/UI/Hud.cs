@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TumbangPreso.Core;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace TumbangPreso.UI
@@ -816,14 +817,48 @@ namespace TumbangPreso.UI
             if (_canvas != null) _canvas.gameObject.SetActive(!on);
         }
 
+        /// <summary>
+        /// The two spectator toggles this HUD owns, resolved from the live map and cached.
+        ///
+        /// ⚠️ CACHED IN A DICTIONARY RATHER THAN TWO FIELDS because `Resources.Load` plus
+        /// `FindAction` on every frame of every HUD is exactly the shape of the per-frame cost
+        /// `CLAUDE.md` § 7.1 records a HUD string rebuild being caught for: it cost the 6x probe
+        /// an eighth of its frames.
+        /// </summary>
+        private readonly Dictionary<string, InputAction> _spectatorActions
+            = new Dictionary<string, InputAction>();
+
+        private InputAction SpectatorAction(string name)
+        {
+            if (_spectatorActions.TryGetValue(name, out var cached)) return cached;
+
+            var asset = Resources.Load<InputActionAsset>("TumbangPreso");
+            var map = asset != null ? asset.FindActionMap("Player", false) : null;
+            var action = map?.FindAction(name, false);
+
+            if (map != null && !map.enabled) map.Enable();
+
+            _spectatorActions[name] = action;
+            return action;
+        }
+
+        private static bool Fired(InputAction a) => a != null && a.WasPressedThisFrame();
+
         private void Update()
         {
             // ⚠️ READ BEFORE THE LOCAL-UNIT GUARD. A spectator has no character, so anything
             // below the guard never runs for them — and they are the only person this key is
             // for. The toggle also has to keep working while the canvas is hidden, which it
             // does because this is a component callback and not a UI event.
-            if (_spectating && Input.GetKeyDown(KeyCode.H)) SetCleanFeed(!_cleanFeed);
-            if (_spectating && Input.GetKeyDown(KeyCode.C)) SetSpectatorControlsVisible(!_spectatorControlsVisible);
+            // ⚠⚠ OFF THE BINDING, NOT OFF `KeyCode.H` AND `KeyCode.C`. Both were literals until
+            // 2026-08-27, and H was a literal for a key `CleanFeed` HAS ALWAYS OWNED in the input
+            // map: rebinding "Hide HUD" moved the action and left this reading the old key, so
+            // the panel and the game disagreed with no error anywhere. `docs/VISION.md` § 3 names
+            // this exact failure. C had the opposite problem and was worse: it was bound to
+            // nothing at all, so it could not be seen in the panel or changed.
+            if (_spectating && Fired(SpectatorAction("CleanFeed"))) SetCleanFeed(!_cleanFeed);
+            if (_spectating && Fired(SpectatorAction("SpectatorControls")))
+                SetSpectatorControlsVisible(!_spectatorControlsVisible);
 
             if (GameServices.Match == null || GameServices.Round == null) return;
 

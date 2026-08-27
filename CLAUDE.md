@@ -175,8 +175,19 @@ is the one nobody runs the tests against.
 - **Every impulse is derived from `Friction`** as `v²/(2·Friction)`. Write the distance you
   want and solve for the speed; never hard-code a distance beside a speed.
 - **Entry 0 of each prop list stays neutral.** It is what an unpicked prop wears.
-- **One control, one action, in the input map.** The panel refuses a key another action holds,
-  so shipped defaults that break that rule are a defect. `InputMapAndAbilityTests` asserts it.
+- **One control, one action, in the input map.** ⚠️ **Per CONTEXT, since 2026-08-27.** The panel
+  refuses a key another action *in the same context* holds, so shipped defaults that break that
+  rule are a defect. `InputMapAndAbilityTests` asserts it.
+  ⚠️⚠️ **THE SECOND CONTEXT IS SPECTATING AND IT IS A NARROWING OF THIS RULE, SO READ WHY BEFORE
+  WIDENING IT AGAIN.** Nine spectator controls (TAB, F, V, B, N, P, R, C and the new autopilot
+  key) were `Keyboard.current` reads outside the input asset entirely until then: not rebindable,
+  not visible in the panel, not checked by anything. Four of them reuse keys gameplay actions
+  hold. **A spectator has no body, no seat and no `CharacterMotor`**, so while watching every
+  gameplay action is inert and while playing none of the spectator set is reachable: they can
+  never both fire, which is the only thing this rule was ever protecting.
+  `Rebinding.SpectatorContext` names the set, `SpectatorBindingTests` asserts the narrowing from
+  both sides, and `docs/TODO.md` § 35.3 has the reasoning. **Two actions inside one context
+  sharing a key is still a defect.**
 
 ⚠️ **The camera is FPP *and* TPP. Do not "simplify" it to one.** A Person is always FPP, a
 Prop is always TPP, derived from `is_person` and asserted. Emotes swing to TPP and back,

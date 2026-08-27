@@ -3113,6 +3113,188 @@ is the six-minute `WallClock` test that answers it.
 
 ---
 
+## 35 · The spectator flies itself, every key is in the panel, and a reconnect stops refunding cooldowns
+
+**🧑 2026-08-27, four requests in one stretch**, after the § 33 AI work: *"try to improve network
+as well, try to fix lan and online servers ... make sure rejoin logic works and think of edge
+cases like u disconnect as taya, do u stay as taya or do u change role ... or if u retain ur skill
+cooldowns and charges and shi"*; *"pls make sure everything is rebindable in settings and actually
+works"*; *"make sure all keys are in settings and properly classified"*; *"add autopilot option in
+spectator that moves on its own naturally and looks good, assume A LOT OF PPL WILL be watching how
+it moves"*, with *"dont let autopilot spectator pause or replay thats for human only"*.
+
+### 35.1 ⚠️⚠️ A RECONNECT REFUNDED EVERY COOLDOWN AND CONFISCATED EVERY ULTIMATE ✅
+
+*"or if u retain ur skill cooldowns and charges and shi"*. **The answer was no.**
+
+`MatchRpc.BroadcastWorldSnapshot` sends the round number, the defender slot, the clock, the
+scores, the lata, every slipper, the picks and every unit transform. **It had never sent one byte
+of ability state.** A client that dropped and came back rebuilt its kit from the constructor:
+every cooldown zero, every charge full, the ultimate meter empty.
+
+⚠️⚠️ **BOTH DIRECTIONS ARE WRONG AND ONLY ONE IS OBVIOUS.** Reconnecting to refresh a 62 s
+cooldown is the cheat everybody thinks of first. The half that actually gets reported is the
+other: a player who had banked 115 charge toward an ultimate lost all of it to a dropped packet,
+which reads as the game stealing a round's work.
+
+⚠️⚠️ **AND THE HOST NEVER HAD IT, WHICH IS WHY IT SURVIVED THIS LONG.** The host's kits are
+continuous objects that were never rebuilt, so none of this is visible on one machine or to the
+person running the lobby. It is the same shape as § 32.2: *"the host never runs the client half of
+this method"*.
+
+**Fixed** with `SyncAbility`, a per-seat named message riding the existing world snapshot:
+ultimate charge, and a cooldown and charge count for each of the three slots.
+`HeroKit.ApplyNetworkSnapshot` and `HeroAbility.ApplyNetworkSnapshot` are the entry points and
+`AbilityRejoinStateTests` covers them.
+
+⚠️⚠️ **IT DELIBERATELY DOES NOT CARRY `DurationRemaining`, AND THAT IS A CORRECTNESS RULE.** A
+duration is not a number, it is a **grant that `OnEnd` has to take back**. `HeroAbility.Reset`'s
+own header records what zeroing one behind an ability's back costs: Demonic Carapace's stun
+immunity and Phantom Phase's tag immunity stay switched on with no timer left to switch them off.
+Writing a duration IN from the wire is that fault from the other direction, and it would ship a
+**permanently unstunnable rejoiner**. `ADurationIsNeverWrittenInFromTheWire` asserts it. A running
+duration expires by itself in seconds; a cooldown does not, which is the whole reason only one of
+the two is worth a packet.
+
+⚠️ **THE COUNT IS CLAMPED, NOT TRUSTED.** It arrives off the wire, and a stale or malformed packet
+must not be able to hand somebody more charges than the ability has.
+
+### 35.2 The rejoin edge cases, checked one by one. Three were already right ✅
+
+**These were asked as questions and the honest answer to most of them is that the existing code
+already does the right thing.** Written down so nobody has to re-derive it.
+
+| question | answer | why |
+|---|---|---|
+| Disconnect as taya, do you stay taya? | **Yes, and it is right.** | The role is DERIVED, `(round - 1) % 4`, and it belongs to the SEAT. `LobbySession.Depart` holds your seat by token while the match runs, `RuleOnArrival` returns `Reclaim` and `ReclaimSeatFor` gives you the same chair back. Same seat, same round, same role. |
+| What fills the seat while you are gone? | A bot. | `MatchRpc.HostPeerLeft` sets `IsBot` and adds an `AIController`, so a 1-vs-3 does not become a 0-vs-3 and the round stays playable. |
+| Rejoin after the round changed? | You get the CURRENT role, which may not be the one you left with. | `SendRebindLocalSeat` carries `match.DefenderSlot` and `ApplyRebindLocalSeat` writes `IsDefender` per seat off it; `RoundDirector.ApplySnapshot` does the same for everybody. That is correct: the taya rotates by round, not by person. |
+| Does input authority come back? | Yes. | `ApplyRebindLocalSeat` destroys the seat's `AIController`, adds a `PlayerInputReader`, and strips readers from every other seat. `HostLateJoin` destroys the host-side AI and clears `IsBot`. |
+| Do cooldowns and charges come back? | **They do now.** § 35.1. |
+
+⚠️ **THE ONE PLACE THE SEAT-HOLD CAN STILL SURPRISE SOMEBODY** is `LobbySession.StartMatch`, which
+clears `_heldSeats`. A held seat means *"somebody in THIS match left it"*, so it is deliberately
+not carried across a match boundary. Leaving during the result screen and coming back after a
+rematch starts is a new seat, by design.
+
+### 35.3 ⚠️⚠️ NINE SPECTATOR KEYS EXISTED AND NONE OF THEM WAS IN THE PANEL ✅
+
+*"make sure all keys are in settings and properly classified"*. Every action in
+`TumbangPreso.inputactions` was already covered by `Rebinding.RebindableActions`, so the asset
+side was complete. **The gap was keys read outside the asset entirely**: `SpectatorCamera` and
+`Hud` read `Keyboard.current` and `Input.GetKeyDown` directly for TAB, F, V, B, N, P, R and C.
+Nine controls a player can press, none of them visible in settings, none of them rebindable, and
+none of them checked by `FindDuplicateBindings`.
+
+**All nine are actions now**, in two new groups, **SPECTATOR CAMERA** and **BROADCAST GALLERY**,
+alongside the new `SpectatorAutopilot`.
+
+⚠️⚠️ **AND THAT REQUIRED REFINING `CLAUDE.md` § 4, WHICH IS THE MOST DANGEROUS KIND OF CHANGE TO
+MAKE.** The rule reads *"one control, one action, in the input map"*. The spectator set
+deliberately reuses TAB, F, B and R, which gameplay actions already hold, and giving them fresh
+non-clashing defaults would have moved four keys out from under every existing spectator to
+satisfy a rule about simultaneity that was never at risk. **A spectator has no body, no seat and
+no `CharacterMotor`**: while watching, every gameplay action is inert, and while playing none of
+the spectator set is reachable. The rule is now **one control, one action PER CONTEXT**, and
+`Rebinding.SpectatorContext` names the second context.
+
+⚠️ **THE NARROWING IS ASSERTED FROM BOTH SIDES** (`SpectatorBindingTests`), because if the reading
+is ever wrong it is wrong silently: two actions really would fire on one key and nothing would
+say so. `CleanFeed` is deliberately left in the player context, because it is a player action a
+spectator also uses and its H default clashes with nothing.
+
+⚠️⚠️ **TWO LITERALS WERE ALREADY LYING AND ONE HAD NO BINDING AT ALL.** `Hud.Update` read
+`KeyCode.H` for a key **`CleanFeed` has always owned in the input map**, so rebinding "Hide HUD"
+moved the action and left the HUD reading the old key with no error anywhere, which is exactly the
+failure `docs/VISION.md` § 3 names. `KeyCode.C` was worse: bound to nothing, so it could not be
+seen or changed. `SpectatorCamera.ControlsText` had the same problem at a larger scale, spelling
+out seven key names in a string literal that would have started lying the first time anybody
+opened the panel. All of them read the live binding now.
+
+⚠️ **F1 TO F4 AND THE THREE SPEED DIGITS STAY LITERAL, ON PURPOSE.** They are a positional set
+(POV of seat 1 to 4) and a numeric set (quarter, half, three-quarter speed). Splitting either into
+separate rebindable rows adds seven lines to the panel so somebody can move "2" to "5".
+`ControlsText` names them.
+
+### 35.4 The autopilot spectator ✅
+
+*"assume A LOT OF PPL WILL be watching how it moves so make sure it moves smooth and decides where
+to move camera properly"*. It is `CameraSystem.SpectatorDirector`.
+
+⚠️⚠️ **IT IS A NEW COMPONENT BECAUSE `SpectatorCamera`'S OWN HEADER DEMANDED ONE**, in a line
+written beside 🧑's **2026-07-31** instruction *"dont give spectator AI... spectator should only be
+controllable by a person"*: *"If a cinematic auto-cam is ever wanted it is a new component with a
+new name."* **The 2026-08-27 request supersedes the 2026-07-31 one**, and the header now says so
+in as many words, because that paragraph alone reads as forbidding a feature that ships. What the
+old instruction was protecting is intact: `SpectatorCamera` is still the only thing in the game
+that reads a spectator's hardware, and the director writes a **pose**, never an input.
+
+**How it decides.** `docs/VISION.md` § 0 says the tension is the retrieval, so an armed attacker
+inside the chalk is worth **6.0** and outranks everything; a body on the floor **2.6**; a hero
+mid-ultimate **5.0**; and the gap between the taya and a retriever is worth up to **3.0** more,
+because proximity between hunter and hunted IS the tension. The taya alone scores **0.6** and is
+almost never the subject: it is the SECONDARY in somebody else's frame, since a defender alone in
+shot is a person standing near a tin can.
+
+**How it moves**, and all three of these are why it does not look like a script:
+
+* ⚠️⚠️ **IT CUTS RATHER THAN WHIP-PANNING.** Past `CutDistance` **6.0 m**, under half the arena,
+  the pose is written outright and the springs are cleared. Flying the whole way arrives after the
+  moment it was sent for and sweeps the viewer past everything else on the way. **Clearing the
+  `SmoothDamp` velocities is half the fix**: a leftover velocity makes the camera drift off its
+  mark for half a second after a cut, which reads as the shot being wrong rather than as a cut.
+* ⚠️⚠️ **IT COMMITS TO A SUBJECT.** `SubjectSwitchMargin` **1.25** and `MinShotSeconds` **2.4**,
+  which is the same fix as `AiTuning.TagSwitchMargin` and `HeadingCommitSeconds` one layer down
+  and for the identical reason: every term moves continuously while four bodies run, so the leader
+  changes several times a second and a camera that followed it would point at the middle of the
+  court and shake.
+* ⚠️ **IT IS NEVER COMPLETELY STILL.** `DriftDegPerSecond` **3.4** keeps a slow orbit under every
+  held shot, because a locked-off camera on a quiet moment reads as a frozen game.
+
+Also: it aims `LeadSeconds` **0.42** ahead of the subject off `CharacterMotor.Velocity` (an
+operator tracking a runner is always slightly ahead; one exactly on them looks dragged), it pulls
+back with the spread of what it is framing so a chase keeps the chaser in shot, and it clamps to
+`AIController.PlayableHalfX/Z` plus a margin so it never solves for a bearing that puts it inside
+a house facade or a viaduct pillar.
+
+⚠️ **THE HUMAN TAKES THE WHEEL BY MOVING IT.** Any look, fly key or target key disengages on the
+spot. The mouse threshold is 0.01 rather than zero because a resting hand reports sensor jitter,
+and a zero test hands the camera back within a second of engaging every time.
+
+⚠️⚠️ **AND THE HARD PART OF *"dont let autopilot pause or replay"* IS NOT IN THE DIRECTOR.**
+Nothing in that file calls `ToggleBroadcastPause` or `StartReplay`. But **`SpectatorCamera` has
+replayed by itself since the highlight reel landed**: `StepPendingHighlight` starts one on a
+knockdown, a tag or a score play with nothing pressed at all. Engaging the autopilot without
+touching that would have produced a camera that flies itself AND replays itself, which is the
+thing the instruction forbids however little of it the director wrote. `Update` suppresses it
+while engaged, and **drops the queue rather than deferring it**, because replaying a play from
+thirty seconds ago the moment a human touches the mouse is worse than not replaying it.
+
+### 35.5 Still open
+
+* ⚠️⚠️ **§ 25.1 IS STILL THE LARGEST NETWORK GAP AND NOTHING HERE CLOSED IT.**
+  `tools/audit_ability_authority.py` now reports **40 effect call sites, 2 host-gated, 23 ungated
+  on another body, 15 ungated on the caster**. The ability layer still has no CAST rpc, so a
+  remote player's skill or ultimate produces no VFX, no sound, no hazard and no sky on anybody
+  else's screen. That is *"theres a lot of shit u dont see that ur supposed"* in one line, and
+  § 35.1 only fixed what a rejoiner's METERS say. **The shape of the fix is known**: replicate the
+  CAST (seat, ability slot, position, facing) and let every peer run its own presentation, with
+  the host alone resolving effects on bodies, which is the architecture the rest of the game
+  already uses.
+* ⚠️ **STAMINA, STUN AND TRIP ARE STILL NOT SNAPSHOTTED.** A rejoiner arrives with a full bar and
+  no stun. Unlike a cooldown these self-correct in seconds, which is why they were left; if a
+  reconnect ever needs to be exact, they are the next three fields on `SyncAbility`'s message.
+* ⚠️ **THE TOURNAMENT CLOCKS ARE NOT SNAPSHOTTED EITHER.** `RoundDirector`'s taya-camp timer and
+  per-attacker idle timers live host-side and only the host scores, so this is cosmetic, but a
+  rejoiner's HUD will under-report a penalty already running against them.
+* ⚠️ **THE SCROLLING WAS NOT RE-MEASURED IN A PLAYER.** § 32.3 fixed the last known cause (a
+  Slider root with no Graphic, so every drag fell through to the `ScrollRect`) and this session
+  added **ten more rows** to the panel across two new groups, which makes the list longer than it
+  has ever been. The configuration is right (`WheelStep` 24, a built scrollbar, inertia off,
+  clamped, `RectMask2D`, keyboard steps), and nobody has dragged it in a build since.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

@@ -144,6 +144,23 @@ namespace TumbangPreso
             if (chosen != AiPlan.Position) _goal = Vector3.zero;
         }
 
+        /// <summary>
+        /// How near the whistle a bot stops improving a shot and simply takes it, in seconds.
+        ///
+        /// ⚠️⚠️ IT IS THE FIRST TIME ANYTHING IN THIS FILE READS THE ROUND CLOCK. Every patience
+        /// bound in the wind-up is measured from when the charge STARTED, so a bot that began one
+        /// with four seconds left waited out its aim settle and its lane patience and was still
+        /// holding the button at the whistle: charge discarded, slipper still in hand, nothing
+        /// scored. `docs/VISION.md` § 4 asks Hero Strike for *"timing"*, and a player who cannot
+        /// tell the difference between eighty seconds left and two has none.
+        ///
+        /// ⚠️ 0.45 s IS THE INPUT BUFFER PLUS A PHYSICS STEP, NOT A FEEL VALUE.
+        /// `HeroAbilitySystem.InputBufferWindow` is 0.30 s and the throw resolves on the step
+        /// after the release, so a release later than this is one the round ends before it can
+        /// answer. Any larger and a bot starts throwing away good shots it had time to finish.
+        /// </summary>
+        private const float LastCallSeconds = 0.45f;
+
         /// <summary>Where you stand to throw: just outside the chalk.</summary>
         private const float ThrowStandoff = AiTuning.ThrowStandoff;
 
@@ -352,6 +369,19 @@ namespace TumbangPreso
 
             // Arrived on a throwing spot: plant and charge. Staying in Windup once entered is
             // deliberate — a bot that re-decides mid-charge never releases.
+            // ⚠️⚠️ WITH THE WHISTLE COMING, THE SHOT YOU HAVE BEATS THE SHOT YOU WANTED. Below
+            // this the bot stops walking to a better bearing and plants where it stands.
+            // `Position` is a walk to a scored throwing spot that can be several seconds away,
+            // and arriving at a perfect angle after the round has ended is worth exactly as much
+            // as never leaving. See `LastCallSeconds` for the release end of the same clock.
+            //
+            // ⚠️ IT IS THE FULL CHARGE PLUS THE LAST CALL, so a bot that plants on this frame can
+            // still reach the power it planned for. Anything shorter makes it plant and then
+            // release under-charged, which is a worse shot than the one it gave up walking to.
+            if (round.RoundActive
+                && round.TimeLeft <= Balance.ChargeFullTime + LastCallSeconds)
+                return AiPlan.Windup;
+
             if (Plan == AiPlan.Windup) return AiPlan.Windup;
             if (_arrived && (Plan == AiPlan.Position || Plan == AiPlan.Windup))
                 return AiPlan.Windup;
@@ -1201,6 +1231,27 @@ namespace TumbangPreso
             {
                 // Out of patience. Throw what we have: it may fall short, and a bot that lets
                 // go is still a bot playing the game.
+                ReleaseThrow(intent);
+                return;
+            }
+
+            // ⚠️⚠️ THE WHISTLE, AND NOTHING IN THIS FILE HAD EVER READ THE ROUND CLOCK. Every
+            // patience bound above is measured in seconds SINCE THE CHARGE STARTED, and not one
+            // of them knows how many seconds the round has left. A bot that began a wind-up with
+            // four seconds on the clock waited out `AimSettle`, waited out `LanePatience`, and
+            // was still holding the button when the round ended: the charge is discarded, the
+            // slipper stays in its hand, and the shot it spent the whole end of the round lining
+            // up scored nothing at all.
+            //
+            // ⚠️ A HELD THROW IS WORTH ZERO AND A LOOSE ONE IS NOT. Even a poor shot can knock
+            // the lata, and even a miss lands a tsinelas somewhere the next round starts from.
+            // There is no case in which holding it past the whistle is better than releasing.
+            //
+            // ⚠️ THE MARGIN IS THE BUFFER PLUS A FRAME, NOT A ROUND NUMBER. `HeroAbilitySystem
+            // .InputBufferWindow` is 0.30 s and the throw resolves on the physics step after the
+            // release, so anything under that is a release the round ends before it can answer.
+            if (round.RoundActive && round.TimeLeft <= LastCallSeconds)
+            {
                 ReleaseThrow(intent);
                 return;
             }

@@ -43,9 +43,51 @@ namespace TumbangPreso.Settings
             "Skill1", "Skill2", "Ultimate",
             "ReadyUp", "CleanFeed", "AbilityInfo",
             "EmoteWheel",
-            "SpectatorDown",
             "ToggleFullscreen",
+
+            // § SPECTATOR AND BROADCAST. See `SpectatorContext` for why these may share a key
+            // with a gameplay action and nothing else may.
+            "SpectatorAutopilot", "SpectatorCycleTarget", "SpectatorFreeFly", "SpectatorPov",
+            "SpectatorDown", "SpectatorMark", "SpectatorRecall",
+            "SpectatorPause", "SpectatorReplay", "SpectatorControls",
         };
+
+        /// <summary>
+        /// The actions that only exist while somebody is spectating.
+        ///
+        /// ⚠⚠ THIS SET IS WHAT LETS A SPECTATOR KEY SHARE A CONTROL WITH A GAMEPLAY ONE, AND
+        /// IT IS A REFINEMENT OF `CLAUDE.md` § 4'S RULE RATHER THAN A HOLE IN IT. That rule reads
+        /// *"one control, one action, in the input map"*, and what it protects against is a key
+        /// that does two things AT THE SAME TIME: the panel refuses such a binding, and a shipped
+        /// default that breaks it is a defect. **A spectator has no body, no seat and no
+        /// `CharacterMotor`.** While spectating, every gameplay action is inert; while playing,
+        /// none of these is reachable. The two sets can never both fire, so binding TAB to both
+        /// "hold for ability info" and "cycle spectator target" is not one key doing two things,
+        /// it is two mutually exclusive screens.
+        ///
+        /// ⚠⚠ AND THE ALTERNATIVE WAS WORSE. These nine keys were `Keyboard.current` reads
+        /// inside `SpectatorCamera` and `Hud` until 2026-08-27: not rebindable, not visible in the
+        /// panel, and not checked against anything. Giving them fresh non-clashing defaults would
+        /// have moved TAB, F, B and R for every existing spectator to satisfy a rule about
+        /// simultaneity that was never at risk. Naming the context is the honest fix.
+        ///
+        /// ⚠️ `CleanFeed` IS DELIBERATELY NOT IN HERE. Hiding the HUD is a PLAYER action that a
+        /// spectator also uses, it has always been in the map, and its H default clashes with
+        /// nothing.
+        /// </summary>
+        public static readonly string[] SpectatorContext =
+        {
+            "SpectatorAutopilot", "SpectatorCycleTarget", "SpectatorFreeFly", "SpectatorPov",
+            "SpectatorDown", "SpectatorMark", "SpectatorRecall",
+            "SpectatorPause", "SpectatorReplay", "SpectatorControls",
+        };
+
+        public static bool IsSpectatorAction(string action)
+            => System.Array.IndexOf(SpectatorContext, action) >= 0;
+
+        /// <summary>True when two actions can ever be pressed in the same screen.</summary>
+        public static bool ShareAContext(string a, string b)
+            => IsSpectatorAction(a) == IsSpectatorAction(b);
 
         /// <summary>
         /// Human-readable labels. Several are named for the JOB rather than the verb, because
@@ -79,8 +121,17 @@ namespace TumbangPreso.Settings
             { "CleanFeed", "Hide HUD" },
             { "AbilityInfo", "Hold: Ability Info" },
             { "EmoteWheel", "Emote Wheel" },
-            { "SpectatorDown", "Spectator Down" },
+            { "SpectatorDown", "Fly Down" },
             { "ToggleFullscreen", "Fullscreen" },
+            { "SpectatorAutopilot", "Autopilot On / Off" },
+            { "SpectatorCycleTarget", "Next Player" },
+            { "SpectatorFreeFly", "Free Flight" },
+            { "SpectatorPov", "Through Their Eyes" },
+            { "SpectatorMark", "Save Camera Mark" },
+            { "SpectatorRecall", "Recall Camera Mark" },
+            { "SpectatorPause", "Tactical Pause" },
+            { "SpectatorReplay", "Instant Replay" },
+            { "SpectatorControls", "Show Spectator Controls" },
         };
 
         public static string LabelFor(string action)
@@ -111,8 +162,13 @@ namespace TumbangPreso.Settings
             ("PLAYING THE GAME", new[] { "SpecialAbility", "Grab", "Lunge",
                                          "CurveLeft", "CurveRight" }),
             ("HERO POWERS", new[] { "Skill1", "Skill2", "Ultimate", "AbilityInfo" }),
-            ("ROUND AND SCREEN", new[] { "ReadyUp", "EmoteWheel", "CleanFeed", "SpectatorDown",
+            ("ROUND AND SCREEN", new[] { "ReadyUp", "EmoteWheel", "CleanFeed",
                                          "ToggleFullscreen" }),
+            ("SPECTATOR CAMERA", new[] { "SpectatorAutopilot", "SpectatorCycleTarget",
+                                         "SpectatorFreeFly", "SpectatorPov", "SpectatorDown",
+                                         "SpectatorMark", "SpectatorRecall" }),
+            ("BROADCAST GALLERY", new[] { "SpectatorPause", "SpectatorReplay",
+                                          "SpectatorControls" }),
         };
 
         /// <summary>
@@ -131,6 +187,12 @@ namespace TumbangPreso.Settings
                     return "One key can do several jobs, chosen by what is in front of you.";
                 case "HERO POWERS":
                     return "Hero Strike only. Classic has no powers.";
+                case "SPECTATOR CAMERA":
+                    // ⚠️ IT SAYS THE SHARING IS DELIBERATE, because a player who reads the panel
+                    // top to bottom will otherwise see TAB and F listed twice and report it.
+                    return "Watching only. These may share a key with a playing control.";
+                case "BROADCAST GALLERY":
+                    return "Watching only. Autopilot never uses these.";
                 default:
                     return null;
             }
@@ -203,9 +265,23 @@ namespace TumbangPreso.Settings
                 if (!list.Contains(action)) list.Add(action);
             }
 
+            // ⚠⚠ A CLASH IS TWO ACTIONS THAT CAN FIRE ON THE SAME SCREEN, NOT TWO ACTIONS ON
+            // THE SAME KEY. See `SpectatorContext`: a spectator has no body, so TAB meaning
+            // "ability info" while playing and "next player" while watching is two screens, not
+            // one key doing two things. Every pair inside one context is still a defect.
             foreach (var pair in owners)
-                if (pair.Value.Count > 1)
-                    clashes.Add(pair.Key + ": " + string.Join(", ", pair.Value));
+            {
+                var conflicting = new List<string>();
+
+                foreach (string owner in pair.Value)
+                    foreach (string other in pair.Value)
+                        if (owner != other && ShareAContext(owner, other)
+                            && !conflicting.Contains(owner))
+                            conflicting.Add(owner);
+
+                if (conflicting.Count > 1)
+                    clashes.Add(pair.Key + ": " + string.Join(", ", conflicting));
+            }
 
             clashes.Sort();
             return clashes;
@@ -236,6 +312,11 @@ namespace TumbangPreso.Settings
             foreach (string other in RebindableActions)
             {
                 if (other == action) continue;
+
+                // ⚠️ THE PANEL REFUSES A KEY ANOTHER action IN THE SAME CONTEXT HOLDS, and only
+                // that. Refusing across contexts would make half the spectator rows unbindable to
+                // the obvious key for no reason a player could ever work out from the screen.
+                if (!ShareAContext(action, other)) continue;
 
                 if (ResolveActionAndBindingIndex(asset, other, out var otherAction, out int otherIndex))
                 {

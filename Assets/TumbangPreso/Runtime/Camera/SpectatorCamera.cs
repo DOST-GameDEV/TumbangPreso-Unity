@@ -46,6 +46,24 @@ namespace TumbangPreso.CameraSystem
     /// above forbids.
     ///
     /// If a "cinematic auto-cam" is ever wanted it is a new component with a new name.
+    ///
+    /// ⚠️⚠️ **THAT AUTO-CAM WAS WANTED ON 2026-08-27 AND IT EXISTS: <see cref="SpectatorDirector"/>.**
+    /// 🧑: *"add autopilot option in spectator that moves on its own naturally and looks good"*.
+    /// **The 2026-07-31 instruction three paragraphs up is SUPERSEDED by the same person, and
+    /// this note is here because that paragraph on its own now reads as forbidding a feature
+    /// that ships.** Read them together: what was asked for then, and what is still true, is that
+    /// nothing may drive the spectator's INPUT except a person. That holds. The director writes a
+    /// POSE onto a transform; this class is still the only thing in the game that reads a
+    /// spectator's hardware, and there is still no `CharacterMotor` here for an `AIController` to
+    /// attach to. The line above was also right about the shape of the answer, so it was
+    /// followed to the letter: a new component, with a new name.
+    ///
+    /// ⚠️⚠️ AND THE AUTOPILOT MUST NEVER PAUSE OR REPLAY. 🧑, immediately after: *"dont let
+    /// autopilot spectator pause or replay thats for human only"*. The trap is that **this class
+    /// already replays by itself**: `StepPendingHighlight` starts one on a knockdown, a tag or a
+    /// score play with nothing pressed. `Update` suppresses that while the autopilot is engaged,
+    /// and that suppression is the load-bearing half of the promise, not the director's own
+    /// silence.
     /// </summary>
     public sealed class SpectatorCamera : MonoBehaviour
     {
@@ -300,6 +318,26 @@ namespace TumbangPreso.CameraSystem
             // which was deleted with Can-Dash and Flick Dash, and threw
             // "The InputMap action doesn't exist" every single frame a spectator was live.
             _down = map.FindAction("SpectatorDown", false);
+
+            // ⚠️ AN ACTION, NOT A `Keyboard.current` READ, AND THAT IS THE WHOLE POINT OF ADDING
+            // IT THIS WAY. 🧑 2026-08-27: *"make sure all keys are in settings and properly
+            // classified"*. Every other spectator key in this file is read off the hardware
+            // directly and therefore cannot be rebound or even SEEN in the settings panel; the
+            // autopilot toggle is the first one that can, and § SPECTATOR AND BROADCAST in
+            // `Settings.Rebinding` is where the rest followed it.
+            _autopilotToggle = map.FindAction("SpectatorAutopilot", false);
+
+            // § THE REST OF THE SPECTATOR SET, for the same reason. Every one of these was a
+            // `Keyboard.current` read until 2026-08-27, which meant the panel could not show it
+            // and `Rebinding.FindDuplicateBindings` could not check it.
+            _cycleTarget = map.FindAction("SpectatorCycleTarget", false);
+            _freeFly = map.FindAction("SpectatorFreeFly", false);
+            _povToggle = map.FindAction("SpectatorPov", false);
+            _mark = map.FindAction("SpectatorMark", false);
+            _recall = map.FindAction("SpectatorRecall", false);
+            _pauseKey = map.FindAction("SpectatorPause", false);
+            _replayKey = map.FindAction("SpectatorReplay", false);
+
             map.Enable();
         }
 
@@ -361,6 +399,8 @@ namespace TumbangPreso.CameraSystem
             // owner of the view.
             ReclaimView();
 
+            StepAutopilotKey();
+
             StepBroadcastKeys();
             if (_replaying)
             {
@@ -369,11 +409,41 @@ namespace TumbangPreso.CameraSystem
 
             RecordReplayFrame();
             PollHighlights();
-            StepPendingHighlight();
+
+            // ⚠️⚠️ THE AUTOPILOT NEVER REPLAYS, AND THIS IS THE LINE THAT MAKES THAT TRUE.
+            // 🧑 2026-08-27: *"dont let autopilot spectator pause or replay thats for human
+            // only"*. Nothing in `SpectatorDirector` calls `StartReplay`, but this class has
+            // started one BY ITSELF since the highlight reel landed: `StepPendingHighlight` fires
+            // on a knockdown, a tag or a score play with no key pressed at all. Engaging the
+            // autopilot without this would produce a camera that flies itself and replays itself,
+            // which is the thing the instruction forbids however little of it the director wrote.
+            //
+            // ⚠️ THE QUEUE IS DROPPED, NOT DEFERRED. Holding a pending highlight until the human
+            // takes back the wheel would replay a play from thirty seconds ago the moment they
+            // touched the mouse, which is worse than never replaying it.
+            if (AutopilotEngaged)
+            {
+                _pendingHighlight = null;
+                _pendingHighlightLeft = 0.0f;
+            }
+            else
+            {
+                StepPendingHighlight();
+            }
 
             // A replay is now a picture-in-picture recording. The operator keeps flying the
             // live camera and the match keeps advancing behind it instead of returning early
             // and freezing both the game and camera controls.
+
+            // ⚠⚠ THE HUMAN TAKES THE WHEEL BY MOVING IT, AND THAT IS CHECKED BEFORE ANY OF THE
+            // THREE STEPS BELOW RUN. A broadcast operator reaching for the mouse mid-play must
+            // not have to find a toggle first, and a camera that argues with its operator for
+            // even a few frames is worse than one that never offered to help.
+            if (AutopilotEngaged)
+            {
+                if (ManualTakeover()) _director.Engaged = false;
+                else return;   // `SpectatorDirector.LateUpdate` owns the pose this frame
+            }
 
             StepLook();
             StepWheel();
@@ -512,12 +582,12 @@ namespace TumbangPreso.CameraSystem
 
             if (_replaying)
             {
-                if (kb.rKey.wasPressedThisFrame || kb.escapeKey.wasPressedThisFrame)
+                if (Fired(_replayKey) || kb.escapeKey.wasPressedThisFrame)
                     EndReplay();
                 return;
             }
 
-            if (kb.bKey.wasPressedThisFrame)
+            if (Fired(_mark))
             {
                 _bookmarkPosition = transform.position;
                 _bookmarkRotation = transform.rotation;
@@ -526,7 +596,7 @@ namespace TumbangPreso.CameraSystem
                 UI.Hud.Instance?.ShowToast("CAMERA MARK SAVED  ·  [N] TO RECALL", 1.2f);
             }
 
-            if (kb.nKey.wasPressedThisFrame && _hasBookmark)
+            if (Fired(_recall) && _hasBookmark)
             {
                 _follow = null;
                 _followIndex = -1;
@@ -543,7 +613,11 @@ namespace TumbangPreso.CameraSystem
             if (kb.f3Key.wasPressedThisFrame) SelectPlayerPov(2);
             if (kb.f4Key.wasPressedThisFrame) SelectPlayerPov(3);
 
-            bool askedForTime = kb.pKey.wasPressedThisFrame
+            // ⚠️ THE THREE SPEED DIGITS STAY LITERAL AND THAT IS DELIBERATE. They are a
+            // NUMBERED SET (quarter, half, three quarter speed) the way F1 to F4 are a POSITIONAL
+            // set, and splitting either into separate rebindable rows would add seven lines to
+            // the settings panel to let somebody move "2" to "5". `ControlsText` names them.
+            bool askedForTime = Fired(_pauseKey)
                                 || kb.digit1Key.wasPressedThisFrame
                                 || kb.digit2Key.wasPressedThisFrame
                                 || kb.digit3Key.wasPressedThisFrame;
@@ -554,8 +628,8 @@ namespace TumbangPreso.CameraSystem
                 return;
             }
 
-            if (kb.pKey.wasPressedThisFrame) ToggleBroadcastPause();
-            if (kb.rKey.wasPressedThisFrame) StartReplay("LAST PLAY");
+            if (Fired(_pauseKey)) ToggleBroadcastPause();
+            if (Fired(_replayKey)) StartReplay("LAST PLAY");
             if (kb.digit1Key.wasPressedThisFrame) SetBroadcastScale(0.25f);
             if (kb.digit2Key.wasPressedThisFrame) SetBroadcastScale(0.50f);
             if (kb.digit3Key.wasPressedThisFrame) SetBroadcastScale(1.00f);
@@ -900,6 +974,114 @@ namespace TumbangPreso.CameraSystem
             _pitchDeg = euler.x > 180.0f ? euler.x - 360.0f : euler.x;
         }
 
+        // -------------------------------------------------------------------
+        // § THE AUTOPILOT HANDOVER
+        //
+        // ⚠️⚠️ EVERYTHING IN THIS SECTION IS POSE, NOT CONTROL. `SpectatorDirector` decides
+        // where the camera should be; this class remains the only thing in the game that reads
+        // the spectator's hardware, which is what keeps the 2026-07-31 instruction
+        // (*"spectator should only be controllable by a person"*) structurally true even though
+        // the 2026-08-27 request added a camera that flies itself. See that class's header.
+        // -------------------------------------------------------------------
+
+        private SpectatorDirector _director;
+
+        public bool AutopilotEngaged => _director != null && _director.Engaged;
+
+        /// <summary>
+        /// Writes a pose the director computed back into this class's own state.
+        ///
+        /// ⚠️⚠️ IT SETS `_targetPosition` AS WELL AS THE TRANSFORM, AND MISSING THAT IS A ONE
+        /// FRAME SNAP AT EVERY HANDOVER. `Update` eases `transform.position` toward
+        /// `_targetPosition` every frame it owns the camera, so a director that moved only the
+        /// transform would hand the human a camera that immediately flies back to wherever the
+        /// autopilot was engaged from. The angles are the same story for `StepLook`.
+        /// </summary>
+        public void AdoptPose(Vector3 position, float yawDeg, float pitchDeg)
+        {
+            _targetPosition = position;
+            _yawDeg = yawDeg;
+            _pitchDeg = Mathf.Clamp(pitchDeg, -PitchLimitDeg, PitchLimitDeg);
+        }
+
+        /// <summary>Take the angles that are actually on screen. See <see cref="AdoptPose"/>.</summary>
+        public void AdoptCurrentAngles()
+        {
+            SyncAnglesFromTransform();
+            _targetPosition = transform.position;
+        }
+
+        /// <summary>
+        /// Did the operator just ask for the camera back?
+        ///
+        /// ⚠️ THE MOUSE THRESHOLD IS NOT ZERO AND IT IS NOT TASTE. A mouse at rest still reports
+        /// single-count jitter on most sensors, and a zero test hands the camera back within a
+        /// second of engaging every single time, which reads as the feature not working. A tenth
+        /// of a degree of deliberate movement clears it and no resting hand does.
+        ///
+        /// ⚠️ THE BROADCAST KEYS ARE NOT IN HERE ON PURPOSE. Pause, replay, mark and recall are
+        /// the operator working the GALLERY, not the camera, and a director should not be thrown
+        /// out for calling a replay of the shot it just covered.
+        /// </summary>
+        private bool ManualTakeover()
+        {
+            if (Cursor.lockState == CursorLockMode.Locked)
+            {
+                float dx = Mathf.Abs(Input.GetAxisRaw("Mouse X"));
+                float dy = Mathf.Abs(Input.GetAxisRaw("Mouse Y"));
+                if (dx + dy > 0.01f) return true;
+            }
+
+            if (_move != null && _move.ReadValue<Vector2>().sqrMagnitude > 0.0001f) return true;
+            if (_jump != null && _jump.IsPressed()) return true;
+            if (_down != null && _down.IsPressed()) return true;
+
+            var kb = Keyboard.current;
+            if (kb != null && (kb.tabKey.wasPressedThisFrame || kb.fKey.wasPressedThisFrame
+                               || kb.vKey.wasPressedThisFrame))
+                return true;
+
+            if (Mouse.current != null
+                && Mathf.Abs(Mouse.current.scroll.ReadValue().y) > 0.01f) return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// The autopilot toggle, read every frame in both states.
+        ///
+        /// ⚠️ IT CANNOT LIVE IN `StepKeys`, which is one of the three steps the autopilot skips.
+        /// A toggle that only works while the feature is off is a feature that cannot be turned
+        /// off.
+        /// </summary>
+        private void StepAutopilotKey()
+        {
+            if (_director == null) _director = GetComponent<SpectatorDirector>();
+            if (_director == null) _director = gameObject.AddComponent<SpectatorDirector>();
+
+            if (_autopilotToggle != null && _autopilotToggle.WasPressedThisFrame())
+            {
+                _director.Toggle();
+                UI.Hud.Instance?.ShowToast(
+                    _director.Engaged ? "AUTOPILOT ON  ·  MOVE TO TAKE OVER" : "AUTOPILOT OFF",
+                    1.2f);
+            }
+        }
+
+        private InputAction _autopilotToggle;
+        private InputAction _cycleTarget, _freeFly, _povToggle, _mark, _recall;
+        private InputAction _pauseKey, _replayKey;
+
+        /// <summary>
+        /// True when an action exists and fired this frame.
+        ///
+        /// ⚠️ THE NULL CHECK IS NOT DEFENSIVE PADDING. `FindAction(..., false)` returns null
+        /// rather than throwing when an asset predates an action, and a spectator camera that
+        /// null-referenced every frame on somebody's older `TumbangPreso.inputactions` would take
+        /// the whole broadcast down rather than losing one key.
+        /// </summary>
+        private static bool Fired(InputAction a) => a != null && a.WasPressedThisFrame();
+
         /// <summary>
         /// Direct broadcast cut to a seat's eye line. Function keys avoid colliding with the
         /// number-row slow-motion controls and give an operator four predictable camera cuts
@@ -959,9 +1141,9 @@ namespace TumbangPreso.CameraSystem
             var kb = Keyboard.current;
             if (kb == null) return;
 
-            if (kb.tabKey.wasPressedThisFrame) CycleFollow();
+            if (Fired(_cycleTarget)) CycleFollow();
 
-            if (kb.fKey.wasPressedThisFrame)
+            if (Fired(_freeFly))
             {
                 _follow = null;
                 _followIndex = -1;
@@ -973,7 +1155,7 @@ namespace TumbangPreso.CameraSystem
 
             // A no-op in free flight rather than an error: there is no POV of nobody, and a
             // key that silently arms a mode you cannot see is worse than one that waits.
-            if (kb.vKey.wasPressedThisFrame && _follow != null) _pov = !_pov;
+            if (Fired(_povToggle) && _follow != null) _pov = !_pov;
         }
 
         private void ApplyRotation()
@@ -1020,9 +1202,32 @@ namespace TumbangPreso.CameraSystem
         /// <summary>The on-screen legend. Built by the match installer rather than here so
         /// the spectator stays a camera and nothing else — the same rule that keeps gameplay
         /// state out of it.</summary>
+        /// <summary>
+        /// The on-screen legend, built from the LIVE BINDINGS.
+        ///
+        /// ⚠⚠ IT WAS A STRING LITERAL NAMING TAB, V, F, R, P, B, N AND C, AND EVERY ONE OF
+        /// THOSE IS REBINDABLE AS OF 2026-08-27. `docs/VISION.md` § 3 is explicit about what that
+        /// costs: *"Key labels come from the live binding, never from a literal. A screen that
+        /// teaches the wrong key is worse than one that teaches none."* The literal was correct
+        /// on the day it was written and would have started lying the first time anybody opened
+        /// the settings panel.
+        ///
+        /// ⚠️ F1 TO F4 AND THE THREE SPEED DIGITS STAY SPELLED OUT, because they are a
+        /// positional and a numeric set rather than single actions. See `StepBroadcastKeys`.
+        /// </summary>
         public static string ControlsText()
-            => "SPECTATOR    WASD fly · F1-F4 player POV · TAB follow · V POV/chase · F free · WHEEL speed/zoom\n"
-             + "BROADCAST    AUTO highlights · R replay · P pause · 1/2/3 speed .25/.5/1x · B save cam · N recall · C controls";
+        {
+            var asset = Resources.Load<InputActionAsset>("TumbangPreso");
+
+            string Key(string action) => Settings.Rebinding.DisplayNameFor(asset, action).ToUpperInvariant();
+
+            return "SPECTATOR    WASD fly · F1-F4 player POV · " + Key("SpectatorCycleTarget")
+                 + " follow · " + Key("SpectatorPov") + " POV/chase · " + Key("SpectatorFreeFly")
+                 + " free · WHEEL speed/zoom · " + Key("SpectatorAutopilot") + " autopilot\n"
+                 + "BROADCAST    " + Key("SpectatorReplay") + " replay · " + Key("SpectatorPause")
+                 + " pause · 1/2/3 speed .25/.5/1x · " + Key("SpectatorMark") + " save cam · "
+                 + Key("SpectatorRecall") + " recall · " + Key("SpectatorControls") + " controls";
+        }
 
         /// <summary>
         /// ⚠️ §2.6 — WHAT THE CAMERA IS DOING RIGHT NOW, which the static legend cannot say.
@@ -1045,6 +1250,12 @@ namespace TumbangPreso.CameraSystem
                 broadcast = $"SLOW-MO {_selectedTimeScale:0.##}x  |  ";
             else if (NetAuthority.IsNetworked)
                 broadcast = "● LIVE NETWORK  |  ";
+
+            // ⚠️ THE AUTOPILOT ANNOUNCES ITSELF, AND IT HAS TO. A camera that moves on its own
+            // with nothing on screen saying so is indistinguishable from a camera somebody else
+            // is flying, which is the first thing an operator would report as a bug.
+            if (AutopilotEngaged)
+                return $"{broadcast}AUTOPILOT  ·  {_director.ShotName()}  ·  move to take over";
 
             if (_follow != null)
             {

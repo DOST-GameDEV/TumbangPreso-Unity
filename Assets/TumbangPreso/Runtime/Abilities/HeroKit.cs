@@ -102,6 +102,29 @@ namespace TumbangPreso.Abilities
         }
 
         /// <summary>
+        /// Everything about this kit that has to survive a reconnect, in the order it goes on
+        /// the wire. See <see cref="HeroAbility.ApplyNetworkSnapshot"/> for why durations are
+        /// not in it.
+        ///
+        /// ⚠️ SEVEN FLOATS AND TWO INTS PER SEAT, WHICH IS 36 BYTES FOR THE WHOLE MATCH. It rides
+        /// the existing world snapshot rather than getting a tick of its own: cooldowns are the
+        /// slowest-moving numbers in the game (46 to 62 s), so anything faster than "whenever the
+        /// world is resynced" would be spending bandwidth to be precise about a value that barely
+        /// changes between packets.
+        /// </summary>
+        public void ApplyNetworkSnapshot(float ultimateCharge,
+                                         float skill1Cooldown, int skill1Charges,
+                                         float skill2Cooldown, int skill2Charges,
+                                         float ultimateCooldown)
+        {
+            UltimateCharge = Mathf.Clamp(ultimateCharge, 0.0f, UltimateCost);
+
+            Skill1?.ApplyNetworkSnapshot(skill1Cooldown, skill1Charges);
+            Skill2?.ApplyNetworkSnapshot(skill2Cooldown, skill2Charges);
+            Ultimate?.ApplyNetworkSnapshot(ultimateCooldown, 0);
+        }
+
+        /// <summary>
         /// The match telling the kit that something happened which some abilities pay for.
         ///
         /// ⚠️⚠️ ROUTED THROUGH THE KIT RATHER THAN MATCHED BY ABILITY ID AT THE CALL SITE. A

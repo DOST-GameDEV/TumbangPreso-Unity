@@ -130,6 +130,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("PlayEmote", OnPlayEmoteMsg);
             cm.RegisterNamedMessageHandler("StartMatch", OnStartMatchMsg);
             cm.RegisterNamedMessageHandler("ReqSnapshot", OnReqSnapshotMsg);
+            cm.RegisterNamedMessageHandler("SyncAbility", OnSyncAbilityMsg);
             cm.RegisterNamedMessageHandler("RebindSeat", OnRebindSeatMsg);
             cm.RegisterNamedMessageHandler("ReqCue", OnReqCueMsg);
             cm.RegisterNamedMessageHandler("PlayCue", OnPlayCueMsg);
@@ -1490,8 +1491,91 @@ namespace TumbangPreso.Net
                 if (unit != null)
                 {
                     SyncUnitTransformClientRpc(slot, unit.transform.position, unit.transform.eulerAngles.y, unit.Velocity);
+                    BroadcastAbilityState(slot, unit);
                 }
             }
+        }
+
+        // -------------------------------------------------------------------
+        // § ABILITY STATE ACROSS A RECONNECT
+        //
+        // ⚠️⚠️ 🧑 2026-08-27: *"or if u retain ur skill cooldowns and charges and shi"*. Before
+        // this the answer was no. The world snapshot carried the round, the scores, the clock,
+        // the lata, the slippers, the picks and every unit transform, and **not one byte of
+        // ability state**, so a client that dropped and came back rebuilt its kit from the
+        // constructor: cooldowns zero, charges full, ultimate meter empty.
+        //
+        // ⚠️⚠️ AND IT CUTS BOTH WAYS. Reconnecting to refresh a 62 s cooldown is the cheat;
+        // losing 115 banked charge to a dropped packet is the bug that actually gets reported.
+        // The host never had either, because its own kits are continuous objects that were never
+        // rebuilt, which is exactly why this survived every single-machine test.
+        //
+        // ⚠️ IT IS A SEPARATE NAMED MESSAGE RATHER THAN MORE FIELDS ON `SyncWorld`, because
+        // `SyncWorld` is per-MATCH and this is per-SEAT. Widening it would have meant packing four
+        // seats' kits into one payload and unpacking them against a seat order the receiving side
+        // has to already agree about, which is the shape of bug § 32.2 records three of.
+        // -------------------------------------------------------------------
+
+        private void BroadcastAbilityState(int slot, CharacterMotor unit)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            var kit = unit != null && unit.AbilitySystem != null ? unit.AbilitySystem.Kit : null;
+            if (kit == null) return;
+
+            float s1Cd = kit.Skill1 != null ? kit.Skill1.CooldownRemaining : 0.0f;
+            int s1Ch = kit.Skill1 != null ? kit.Skill1.ChargesRemaining : 0;
+            float s2Cd = kit.Skill2 != null ? kit.Skill2.CooldownRemaining : 0.0f;
+            int s2Ch = kit.Skill2 != null ? kit.Skill2.ChargesRemaining : 0;
+            float ultCd = kit.Ultimate != null ? kit.Ultimate.CooldownRemaining : 0.0f;
+
+            SyncAbilityStateClientRpc(slot, kit.UltimateCharge, s1Cd, s1Ch, s2Cd, s2Ch, ultCd);
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(kit.UltimateCharge);
+            writer.WriteValueSafe(s1Cd);
+            writer.WriteValueSafe(s1Ch);
+            writer.WriteValueSafe(s2Cd);
+            writer.WriteValueSafe(s2Ch);
+            writer.WriteValueSafe(ultCd);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("SyncAbility", writer);
+        }
+
+        /// <summary>
+        /// ⚠️ THE HOST APPLIES NOTHING. Its kit is the authority and is already correct; letting
+        /// it write its own broadcast back over itself would round-trip every value through the
+        /// wire's precision for no reason, and would overwrite a cooldown that started in the
+        /// same frame the snapshot was built.
+        /// </summary>
+        public void SyncAbilityStateClientRpc(int slot, float ultimateCharge,
+                                              float skill1Cooldown, int skill1Charges,
+                                              float skill2Cooldown, int skill2Charges,
+                                              float ultimateCooldown)
+        {
+            if (NetAuthority.IsHost) return;
+
+            var unit = Unit(slot);
+            var kit = unit != null && unit.AbilitySystem != null ? unit.AbilitySystem.Kit : null;
+            if (kit == null) return;
+
+            kit.ApplyNetworkSnapshot(ultimateCharge, skill1Cooldown, skill1Charges,
+                                     skill2Cooldown, skill2Charges, ultimateCooldown);
+        }
+
+        private void OnSyncAbilityMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out float ultimateCharge);
+            reader.ReadValueSafe(out float s1Cd);
+            reader.ReadValueSafe(out int s1Ch);
+            reader.ReadValueSafe(out float s2Cd);
+            reader.ReadValueSafe(out int s2Ch);
+            reader.ReadValueSafe(out float ultCd);
+
+            SyncAbilityStateClientRpc(slot, ultimateCharge, s1Cd, s1Ch, s2Cd, s2Ch, ultCd);
         }
 
         private void OnSyncWorldMsg(ulong senderClientId, FastBufferReader reader)

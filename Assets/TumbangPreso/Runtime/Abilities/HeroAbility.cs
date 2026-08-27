@@ -358,6 +358,47 @@ namespace TumbangPreso.Abilities
             RechargedBy = rechargedBy;
         }
 
+        // -------------------------------------------------------------------
+        // § WHAT A REJOINING PLAYER GETS BACK
+        //
+        // ⚠️⚠️ 🧑 2026-08-27, ON THE NETWORKING: *"or if u retain ur skill cooldowns and charges
+        // and shi"*. The answer before this existed was NO, AND IT WAS AN EXPLOIT RATHER THAN A
+        // COSMETIC GAP. `MatchRpc.BroadcastWorldSnapshot` sends the round number, the defender
+        // slot, the clock, the scores, the lata, the slippers, the picks and the unit transforms.
+        // **It has never sent one byte of ability state**, so a client that dropped and came back
+        // rebuilt its kit from the constructor: every cooldown zero, every charge full, the
+        // ultimate meter empty.
+        //
+        // ⚠️⚠️ BOTH DIRECTIONS ARE WRONG AND ONLY ONE OF THEM IS OBVIOUS. Reconnecting to refresh
+        // a 62 s cooldown is the cheat everybody thinks of first. The one that actually gets
+        // reported is the other half: a player who had banked 115 charge toward an ultimate loses
+        // all of it to a dropped packet, which reads as the game stealing a round's work.
+        //
+        // ⚠️ AND THE HOST NEVER HAD THE BUG, WHICH IS WHY IT SURVIVED. The host's own kits are
+        // continuous objects that were never rebuilt, so nothing about this is visible in a
+        // single-machine test or to the person running the lobby.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// Overwrites this ability's live timers with the host's.
+        ///
+        /// ⚠️⚠️ IT DELIBERATELY DOES NOT TOUCH `DurationRemaining`, AND THAT IS A CORRECTNESS
+        /// RULE RATHER THAN AN OMISSION. A duration is not a number, it is a GRANT that `OnEnd`
+        /// has to take back: `Reset`'s own header records that zeroing one behind an ability's
+        /// back leaves Demonic Carapace's stun immunity and Phantom Phase's tag immunity switched
+        /// on with no timer left to switch them off. Writing a duration in from the wire would do
+        /// the same thing from a second direction, and a rejoiner would arrive permanently
+        /// unstunnable. A running duration expires on its own within seconds; a cooldown does
+        /// not, which is why only the cooldown is worth carrying across the wire at all.
+        /// </summary>
+        public void ApplyNetworkSnapshot(float cooldownRemaining, int chargesRemaining)
+        {
+            CooldownRemaining = Mathf.Max(0.0f, cooldownRemaining);
+
+            if (UsesCharges)
+                ChargesRemaining = Mathf.Clamp(chargesRemaining, 0, MaxCharges);
+        }
+
         /// <summary>
         /// Hands one charge back, up to the cap. Called by <see cref="HeroKit"/> when the match
         /// reports the event this ability is keyed to.
