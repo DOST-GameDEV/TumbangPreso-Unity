@@ -68,6 +68,7 @@ namespace TumbangPreso.UI
             // anti-aliasing, which is also a display setting. The slipper highlight is an
             // accessibility colour rather than a display mode and reads fine below both.
             BuildAntiAliasRow();
+            BuildVSyncRow();
             BuildRenderStyleRow();
             WireSliders();
             WireChecks();
@@ -447,6 +448,7 @@ namespace TumbangPreso.UI
 
         private Dropdown _highlight;
         private Dropdown _antiAlias;
+        private Dropdown _vsync;
         private Dropdown _renderStyle;
 
         /// <summary>
@@ -508,6 +510,35 @@ namespace TumbangPreso.UI
 
             _antiAlias = BuildDropdownRow("AntiAliasRow", "Anti-Aliasing", options,
                                           SettingsStore.Current.AntiAliasMode, PickAntiAlias);
+        }
+
+        /// <summary>
+        /// The vertical sync picker.
+        ///
+        /// ⚠️ IT APPLIES ON THE PICK, like anti-aliasing and the render style. Tearing and judder
+        /// are the entire content of this setting and neither can be judged from a label, so a
+        /// value that only took effect on APPLY would make the choice guesswork. `SettingsStore`'s
+        /// snapshot still restores it on Back, because `GameSettings.Apply` pushes the stored index
+        /// back through `VSyncModes.Apply`.
+        /// </summary>
+        private void BuildVSyncRow()
+        {
+            var options = new List<SwatchDropdown.Option>();
+
+            foreach (var entry in VSyncModes.All)
+                options.Add(new SwatchDropdown.Option(entry.Label, null));
+
+            _vsync = BuildDropdownRow("VSyncRow", "Vertical Sync", options,
+                                      SettingsStore.Current.VSyncMode, PickVSync);
+        }
+
+        private void PickVSync(int index)
+        {
+            SettingsStore.Current.VSyncMode =
+                Mathf.Clamp(index, 0, VSyncModes.All.Length - 1);
+
+            VSyncModes.Apply(SettingsStore.Current.VSyncMode);
+            RefreshApplyState();
         }
 
         /// <summary>
@@ -963,6 +994,9 @@ namespace TumbangPreso.UI
             // `Restore` re-applies the mode to the engine, so the frame behind this panel is
             // already back to what it was. A picker still reading "Off" over a filtered frame is
             // the reverted state showing through the one place that has not been told.
+            if (_vsync != null)
+                _vsync.SetValueWithoutNotify(SettingsStore.Current.VSyncMode);
+
             if (_antiAlias != null)
                 _antiAlias.SetValueWithoutNotify(SettingsStore.Current.AntiAliasMode);
 

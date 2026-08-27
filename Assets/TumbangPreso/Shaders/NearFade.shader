@@ -274,7 +274,29 @@ Shader "TumbangPreso/NearFade"
             // that face up, so dissolving one drops you through the world. You walk UNDER things
             // that face down, so dissolving one is the same favour as dissolving a post.
             float upness = normalize(IN.worldNormal).y;
-            float faceable = 1.0 - smoothstep(0.45, 0.55, upness);
+
+            // ⚠️⚠️ FACING UP IS NOT ENOUGH TO BE THE FLOOR: IT ALSO HAS TO BE BELOW YOUR FEET.
+            // 🧑 2026-08-28, looking down at a barrel whose sides had dissolved and whose lid had
+            // not. A drum lid, a table top and the top of a crate all face straight up and are all
+            // things you walk INTO rather than stand on, so an up-facing test alone protected them
+            // and left a floating disc where an object used to be, which looks far more broken than
+            // no dissolve at all.
+            //
+            // The rule the guard is really reaching for is "the surface I am standing on", and that
+            // has a second half: the ground is roughly a leg's length BELOW the eye. `CameraRig`
+            // puts the first-person eye near 1.25 m and the road sits at 0.10 m, so the floor is
+            // about 1.15 m down, while a barrel lid a player can see the top of is a few tens of
+            // centimetres down at most. Requiring both conditions separates them without knowing
+            // anything about either object.
+            //
+            // ⚠️ THE HEIGHT TEST IS RELATIVE TO THE CAMERA, NOT TO WORLD ZERO. A map with a raised
+            // pavement, a bridge deck or a slope has floor at many different world heights, and
+            // Ilalim ng Tulay has a viaduct over the street. What is constant is the player's own
+            // geometry: whatever you are standing on is a fixed distance beneath your eye.
+            float belowFeet = smoothstep(0.80, 1.10, _WorldSpaceCameraPos.y - IN.worldPos.y);
+            float isGround = smoothstep(0.45, 0.55, upness) * belowFeet;
+
+            float faceable = 1.0 - isGround;
 
             visible = lerp(1.0, visible, faceable);
 

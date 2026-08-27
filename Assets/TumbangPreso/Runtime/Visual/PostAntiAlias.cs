@@ -42,6 +42,56 @@ namespace TumbangPreso.Visual
 
         private void Awake() => _camera = GetComponent<Camera>();
 
+        /// <summary>
+        /// ⚠️⚠️ HDR IS TURNED OFF WHILE MSAA IS ON, AND THAT IS THE ONLY FIX AVAILABLE FOR THE
+        /// WHITE KEYLINE ROUND EVERY SILHOUETTE. 🧑 2026-08-28, after the default moved to FXAA:
+        /// *"msaa on: still has the white outline issue"*.
+        ///
+        /// Multisample resolve AVERAGES its samples. In HDR it averages linear values BEFORE
+        /// `ColourGrade` runs its ACES curve, and that curve is compressive, so
+        /// `tonemap(mean(sky, roof))` lands far brighter than `mean(tonemap(sky), tonemap(roof))`.
+        /// At a roofline half the samples carry a value well above 1.0, their mean sits high on the
+        /// flat part of the curve, and the edge pixel resolves brighter than either surface beside
+        /// it. Every silhouette gets a pale rim.
+        ///
+        /// ⚠️ CLAMPING AT 1.0 BEFORE THE RESOLVE REMOVES THE DISPARITY THAT CAUSES IT. With HDR
+        /// off, the sky sample is 1.0 rather than 4.0, so a half-covered edge pixel resolves to
+        /// something genuinely between its two neighbours, which is what a resolve is supposed to
+        /// produce.
+        ///
+        /// ⚠️⚠️ AND IT COSTS THE HIGHLIGHT ROLL-OFF, WHICH IS A REAL TRADE AND NOT A FREE WIN.
+        /// The ACES curve exists to compress values ABOVE 1.0 into the visible range; clamped
+        /// input gives it nothing above 1.0 to compress, so a surface at 1.0 and one at 4.0 both
+        /// arrive as 1.0 and map to 0.90 together. On this game that is mild, because it is flatly
+        /// lit and stylised rather than physically bright, and the curve still shapes everything
+        /// below 1.0. It would be unacceptable on a game with real speculars or a sun in frame.
+        ///
+        /// ⚠️ WHICH IS WHY IT IS SCOPED TO THE MSAA ROWS ONLY. Off and FXAA keep full HDR and the
+        /// tonemap it was corrected for; they cannot produce this artefact, because FXAA runs after
+        /// the curve on display-referred values. The player picking MSAA is choosing geometric edge
+        /// quality, and this is the cost of having it here.
+        ///
+        /// ⚠️ SET EVERY FRAME RATHER THAN ON THE PICK. `ColourGrade.Awake` writes `allowHDR = true`
+        /// unconditionally, and it is added by `CameraRig.Awake` on every match camera, so a value
+        /// written once at settings time is overwritten the next time a rig is built.
+        /// </summary>
+        private void ApplyHdrForResolve()
+        {
+            if (_camera == null) return;
+
+            bool wantHdr = AntiAliasModes.RequestedSamples <= 0;
+            if (_camera.allowHDR != wantHdr) _camera.allowHDR = wantHdr;
+        }
+
+        /// <summary>
+        /// ⚠️ IT HAS TO RUN BEFORE THE FRAME IS SET UP, NOT INSIDE IT. `allowHDR` decides the
+        /// FORMAT of the target the camera renders into, and by `OnRenderImage` that target has
+        /// already been allocated and drawn to, so writing it there applies to the NEXT frame and
+        /// leaves the current one resolving in the format it was trying to leave. `OnPreRender` is
+        /// no better for the same reason. `LateUpdate` is the last hook before rendering begins.
+        /// </summary>
+        private void LateUpdate() => ApplyHdrForResolve();
+
         private void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
             ReportOnce(_camera, source);
