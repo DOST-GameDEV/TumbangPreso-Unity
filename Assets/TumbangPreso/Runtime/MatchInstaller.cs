@@ -107,14 +107,30 @@ namespace TumbangPreso
             var net = Net.NetSession.Instance;
             if (net == null || !net.IsNetworked || _seats == null) return;
 
-            int slot = net.LocalSlot;
-            var body = slot >= 0 && slot < _seats.Length ? _seats[slot] : null;
+            // ⚠️ EVERY SEAT, NOT ONLY THE LOCAL ONE. The local seat answers "can I move"; the
+            // other three answer "why is nobody else moving", which is the other half of every
+            // report so far and used to need a second run to find out.
+            var line = new System.Text.StringBuilder();
+            line.Append("[NetSeat] ").Append(why)
+                .Append(": LocalSlot=").Append(net.LocalSlot)
+                .Append(" spectator=").Append(GameLaunch.Spectator)
+                .Append(" host=").Append(NetAuthority.IsHost)
+                .Append(" allBots=").Append(_allBots || GameLaunch.AllBots);
 
-            Debug.Log($"[NetSeat] {why}: LocalSlot={slot} spectator={GameLaunch.Spectator} " +
-                      $"host={NetAuthority.IsHost} body={(body == null ? "MISSING" : "ok")} " +
-                      $"reader={(body != null && body.GetComponent<PlayerInputReader>() != null)} " +
-                      $"ai={(body != null && body.GetComponent<AIController>() != null)} " +
-                      $"simulated={(body != null && body.IsLocallySimulated())}");
+            for (int slot = 0; slot < _seats.Length; slot++)
+            {
+                var body = _seats[slot];
+                line.Append(" | s").Append(slot).Append(':');
+
+                if (body == null) { line.Append("MISSING"); continue; }
+
+                line.Append(body.GetComponent<PlayerInputReader>() != null ? "reader" : "-")
+                    .Append(body.GetComponent<AIController>() != null ? "+ai" : "")
+                    .Append(body.IsLocallySimulated() ? "+sim" : "")
+                    .Append(body.IsBot ? "+bot" : "");
+            }
+
+            Debug.Log(line.ToString());
         }
 
         /// <summary>

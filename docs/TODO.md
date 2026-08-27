@@ -5709,6 +5709,162 @@ things it should not:
   turns anything bracketed or empty into "Lost connection to the host." Those two host-authored
   strings are the whole point of the mechanism: a version mismatch is a thing the player CAN fix.
 
+## 61 · The corner stamp is the branch name ✅ CLOSED 2026-08-27
+
+🧑, 2026-08-27: *"for every branch made it would replace the version number on the bottom
+right corner with the branch name instead"*.
+
+⚠⚠ **THE LABEL EXISTS TO ANSWER "IS THIS THE BUILD I ASKED FOR", AND A VERSION NUMBER HAD
+STOPPED ANSWERING IT.** `bundleVersion` is bumped per change rather than per branch, so several
+branches in flight at once all read `v4.72` and the only way to tell which .exe was on the Desktop
+was to diff files. That is the same failure `GameVersion`'s own header records from the PGH project
+one level up: there the stale build was four days old, here it is the wrong branch entirely, and
+section 7 of `CLAUDE.md` already carries two separate incidents of a build being judged by the
+wrong evidence.
+
+**`main` keeps the number, and that is the rule rather than an exception to it.** A branch name
+means "work in flight"; a build off `main` is the game, and the number on it is what goes into a
+screenshot to a sponsor, which is what the stamp was for in the first place.
+
+### 53.1 How it works, and why none of it is a step anybody runs
+
+`GameBuilder.StampBuildBranch` writes the checked-out branch to
+`Assets/TumbangPreso/Resources/BuildBranch.txt` on **every** build, because a player has no git.
+`BuildBranch` reads it, `GameVersion.DisplayString` picks between the name and the number, and both
+corner labels, the HUD's code-built one and the `VersionStamp` baked into every converted menu
+scene, go through the one `GameVersion.ApplyTo`.
+
+⚠️ **In the editor git is read live and the file is ignored**, because a stamp left over from
+the last build is precisely the stale thing this is meant to prevent.
+
+⚠️ **The file is written even when the name is empty.** A build off `main` or a detached HEAD
+OVERWRITES the previous branch's stamp rather than inheriting it. Empty and missing both mean
+"show the version"; only one of them can be left lying around from three branches ago.
+
+⚠️ **It is gitignored.** It changes per build and per branch, so committing it is a one-line
+diff per build and a conflict per merge, over a file whose whole job is to be regenerated.
+
+### 53.2 ⚠⚠ EVERY SESSION HERE RUNS IN A WORKTREE, WHERE `.git` IS A FILE
+
+The naive `repoRoot/.git/HEAD` does not exist in a linked worktree: `.git` is a file reading
+`gitdir: <path>`, and the real HEAD is under it. A reader that does not follow the pointer reports
+"no git" on exactly the checkouts this stamp is for. `BuildBranch.GitDirFromPointer` follows it,
+absolute or relative, and `AWorktreePointerIsFollowedToTheRealGitDirectory` asserts both forms.
+
+⚠️ **And the whole ref path after `refs/heads/` is the name, slashes included.** Taking the last
+segment would print `hud-calm-down` for a branch that could equally have been `fix/hud-calm-down`
+or `claude/hud-calm-down`, which is the one thing this label exists to disambiguate. A detached
+HEAD is not a branch and falls back to the number rather than printing a sha.
+
+### 53.3 ⚠⚠ THE BRANCH NAME MUST NEVER REACH THE WIRE
+
+`Application.version` still carries the real version into the LAN beacon payload, the online lobby
+record and the connection-approval hello, and **those are compared between peers**: a name there
+would refuse two players built from the same commit on different branches, which is the exact
+failure `NetSession.ProtocolVersion`'s note describes as much worse than a clear mismatch.
+`BuildBranch` is the LABEL and nothing else. `TheBranchNameNeverReachesTheVersionTheWireCompares`
+asserts the separation so a later tidy-up cannot merge the two.
+
+### 53.4 ⚠️ THE BOX WAS SIZED FOR "v4.72" AND WOULD HAVE WRAPPED SILENTLY
+
+The authored rect is 132 px. `claude/multiplayer-lobby-switching-bugs-d1546c` is three times that,
+and legacy `Text` defaults to **Wrap**, so the overflow is invisible: the name folds onto a second
+line inside a 22 px box and the half you can read is the wrong half. `ApplyTo` switches to Overflow
+and widens to 440 px, growing leftward from a bottom-right pivot so a short string still sits in
+the same corner. **Third time an authored label in this project has been handed a longer string
+than its author measured**; `ConvertedScreen.SetHeadline` carries the other two.
+
+### 53.5 What was measured
+
+91 core, **156 EditMode** (four new: the two parsers, the detached-HEAD case, and the wire
+separation), **68 PlayMode**, all five editor checks, and the three audits unchanged at 44/0, 42/0
+and 0 ungated. ⚠️ **And it was photographed rather than described**: `UiRuntimeShots` captures
+`Logs/shots-runtime/branch_stamp_mainmenu_v1.png` (a converted menu, the `VersionStamp` path) and
+`branch_stamp_hud_v1.png` (a live match, the `AttachTo` path), both reading
+`fix/multiplayer-fpp-camera-inside-head` in the corner.
+
+---
+
+## 62 · Losing the host left a client playing on alone, and § 60.1 did not fix the movement
+
+### 62.1 ✅ FIXED: a client whose host quits mid-match stayed in the arena
+
+🧑 2026-08-27: *"i closed server and i didnt get kicked out on non host accounts"*, and the
+client's `Player.log` carries the disconnect on the line where nothing happened:
+
+```
+[Net] disconnected: Disconnected due to host shutting down.
+```
+
+§ 59.2 added `NetSession.ClientDisconnected` and subscribed **`ConvertedMatchSetup`**, which is
+the LOBBY screen. **It does not exist in a match.** So the one place the event was handled was one
+of the four places a player can be when the host vanishes, and the other three (the arena, the
+character select, the result board) heard nothing.
+
+**Fixed** by moving the handler to `MatchRpc`, which is `DontDestroyOnLoad` and is therefore the
+one object that exists in every scene the player can be in. ⚠️ The lobby's copy is DELETED rather
+than kept: two owners for one job is the shape of §§ 53.1, 57.1 and 60, three times in one
+evening, and the second owner is always the one that is missing a case.
+
+⚠️ **The reason line itself now works.** `"Disconnected due to host shutting down."` is
+host-authored and unbracketed, so § 60.4's filter passes it through unchanged.
+
+### 62.2 ⚠️ OPEN: the client's seat wiring is CORRECT and it still could not move
+
+§ 60.1 raised `SeatingChanged` from `ApplyAssignedSeat` so the arena would follow the seat, and the
+diagnostic added with it says the wiring is now right on the client:
+
+```
+[NetSeat] arena installed: LocalSlot=1 spectator=False host=False body=ok reader=True ai=False simulated=True
+```
+
+**`reader=True` and `simulated=True`.** The keyboard is bolted to the body the camera follows, and
+`CharacterMotor.FixedUpdate` is simulating it locally rather than treating it as a host-authored
+picture. ⚠️⚠️ **So "I cannot move" is NOT the input wiring, and §§ 53.1 and 60.1 were both real
+faults that were not this one.** The seat log is what proves it, which is the argument for having
+added it.
+
+**What has not been ruled out, in the order worth checking:**
+
+1. ⚠️⚠️ **THE HOST IS STILL BROADCASTING SEAT 1 AND SNAPPING IT BACK.** `HostLateJoin` destroys the
+   `AIController` on a joiner's seat so `CharacterMotor.HostDrivesThisBody` stops returning true
+   for it, and it opens with `if (!_spawned.Add(peerId)) return;`. **A peer whose id is already in
+   `_spawned` skips the whole method**, keeps the host's bot on its chair, and the host then
+   transmits its own copy at 50 Hz over whatever the client submits. The client would move locally
+   for one frame and be snapped back forever, which is exactly what it looks like. `_spawned` is
+   only cleared by `HostPeerLeft`, so a reconnect that reuses a client id, or a second `Identify`,
+   reaches it. **The host's `[NetSeat]` line settles this**: `s1:` reading `+ai` on the HOST is the
+   proof.
+2. **`AcceptMove` can deadlock inside its own leeway band.** It records
+   `_lastAcceptedMoveAt[slot]` only on ACCEPT, so after a rejection `dt` stops growing and the
+   allowance stops opening; and the correction it sends back is applied with
+   `reconcileLocal: true`, which `CharacterMotor.ApplyNetworkTransform` DISCARDS when the error is
+   under 1.25 m. A body 0.2 m out of sync is therefore refused by the host forever and never
+   corrected on the client. **Done looks like:** stamping the time on a rejection too, and forcing
+   the correction the host sends after refusing a move.
+3. The free-roam window itself. Every report so far has been a screenshot with
+   *"Practice freely, scores are paused. Press [R] when ready."* still on it, so the round had not
+   begun in any of them.
+
+⚠️ **Do not fix any of these blind.** The host's log has never been read; both `Player.log` files
+on the machine that has been reporting are the CLIENT's, because the host is the other laptop.
+
+### 62.3 The seat log answers every seat now, not just the local one
+
+`MatchInstaller.LogSeatWiring` prints all four chairs, because the local one answers "can I move"
+and the other three answer "why is nobody else moving", which is the other half of every report so
+far and used to cost a second run:
+
+```
+[NetSeat] arena installed: LocalSlot=1 spectator=False host=False allBots=False | s0:-+sim | s1:reader+sim | s2:-+bot | s3:-+bot
+```
+
+**Read it as:** `reader` is a `PlayerInputReader`, `+ai` an `AIController`, `+sim`
+`IsLocallySimulated`, `+bot` the `IsBot` flag, and `MISSING` a seat the arena never built. On a
+HOST every seat it drives must show `+sim`; on a CLIENT exactly one seat may.
+
+⚠️⚠️ **`+ai` ON A JOINER'S SEAT, ON THE HOST, IS 62.2 ITEM 1 CONFIRMED.**
+
 
 ---
 

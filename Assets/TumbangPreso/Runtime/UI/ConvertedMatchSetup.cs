@@ -96,12 +96,6 @@ namespace TumbangPreso.UI
                 // screen. 🧑, 2026-08-27: "it also does not reflect when a person joins the
                 // lobby." Three separate facts move the seat rows and all three now say so.
                 net.SeatingChanged += HandleSeatingChanged;
-
-                // ⚠️⚠️ AND THE LOBBY LEAVES WHEN THE CONNECTION DOES. Without this a client whose
-                // approval was refused sat here forever on a screen headed LOBBY · CONNECTED,
-                // with the other three chairs drawn as bots because no roster ever arrived. See
-                // `NetSession.ClientDisconnected`.
-                NetSession.ClientDisconnected += HandleClientDisconnected;
             }
 
             _map = Mathf.Max(0, Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap));
@@ -501,19 +495,6 @@ namespace TumbangPreso.UI
 
         private void HandleSeatingChanged() => Refresh();
 
-        /// <summary>
-        /// ⚠️ THE HOST IS NOT SENT BACK BY THIS. `ClientDisconnected` is raised only on the
-        /// non-host branch of `NetSession.OnClientDisconnected`, but a listen host is also its
-        /// own client, so the guard is kept here as well rather than relying on one at a
-        /// distance: a host bounced out of its own lobby by a peer leaving would be absurd.
-        /// </summary>
-        private void HandleClientDisconnected(string reason)
-        {
-            if (NetAuthority.IsHost) return;
-
-            SceneFlow.Go(SceneFlow.MultiplayerSetup);
-        }
-
         private void HandleLobbyRosterSynced(LobbySeatInfo[] seats) => RefreshSeats();
 
         private void HandleModeSynced(int mode) => Refresh();
@@ -902,7 +883,6 @@ namespace TumbangPreso.UI
             MatchRpc.OnLobbyReadyChanged -= HandleLobbyReadyChanged;
             MatchRpc.OnModeChanged -= HandleModeSynced;
             MatchRpc.OnMatchStarted -= HandleMatchStarted;
-            NetSession.ClientDisconnected -= HandleClientDisconnected;
         }
     }
 }

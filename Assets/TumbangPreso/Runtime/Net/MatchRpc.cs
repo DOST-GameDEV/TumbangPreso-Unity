@@ -87,6 +87,37 @@ namespace TumbangPreso.Net
             DontDestroyOnLoad(gameObject);
         }
 
+        private void OnEnable() => NetSession.ClientDisconnected += HandleClientDisconnected;
+
+        private void OnDisable() => NetSession.ClientDisconnected -= HandleClientDisconnected;
+
+        /// <summary>
+        /// The host is gone. Leave, from wherever this peer happens to be.
+        ///
+        /// ⚠️⚠️ THIS USED TO LIVE ON THE LOBBY SCREEN, WHICH DOES NOT EXIST IN A MATCH. So a
+        /// client whose host quit mid-round stayed in the arena forever, driving a body nobody
+        /// was refereeing, with the disconnect sitting in the log and nothing acting on it. 🧑
+        /// 2026-08-27: *"i closed server and i didnt get kicked out on non host accounts"*, and
+        /// the client's `Player.log` carries `[Net] disconnected: Disconnected due to host
+        /// shutting down.` on the line where nothing happened.
+        ///
+        /// ⚠️ `MatchRpc` IS THE ONE OWNER BECAUSE IT IS THE ONE OBJECT THAT IS ALWAYS THERE. It
+        /// is `DontDestroyOnLoad`, so it survives every scene the player can be in when the host
+        /// vanishes: the lobby, the arena, the character select and the result board.
+        /// `ConvertedMatchSetup` had the only copy and it covered exactly one of those.
+        ///
+        /// ⚠️ THE HOST IS NOT SENT ANYWHERE. `ClientDisconnected` is raised only on the non-host
+        /// branch of `NetSession.OnClientDisconnected`, and the guard is repeated here rather
+        /// than relied on at a distance: a host bounced out of its own match by a peer leaving
+        /// would be the worst version of this bug rather than a fix for it.
+        /// </summary>
+        private void HandleClientDisconnected(string reason)
+        {
+            if (NetAuthority.IsHost) return;
+
+            UI.SceneFlow.Go(UI.SceneFlow.MultiplayerSetup);
+        }
+
         private void OnDestroy()
         {
             if (Instance == this) Instance = null;

@@ -332,6 +332,33 @@ before believing anything worse**, and check it whether or not a Unity process i
 
 ⚠️ **Bash heredocs are unreliable here.** Write the script to a file and run it.
 
+⚠⚠ **THE BOTTOM-RIGHT CORNER SHOWS THE BRANCH NAME, NOT THE VERSION, ON EVERY BRANCH BUT
+`main`.** 🧑, 2026-08-27: *"for every branch made it would replace the version number on the
+bottom right corner with the branch name instead"*. A build off
+`fix/multiplayer-fpp-camera-inside-head` reads exactly that in the corner of every screen and of
+the HUD; a build off `main` still reads `v4.72`.
+
+**It is automatic and there is nothing to do by hand.** `GameBuilder.StampBuildBranch` writes the
+checked-out branch into `Assets/TumbangPreso/Resources/BuildBranch.txt` on EVERY build, because a
+player has no git; `BuildBranch` reads it, `GameVersion.DisplayString` picks between the name and
+the number, and both corner labels go through `GameVersion.ApplyTo`. In the editor git is read
+live, so play mode shows the branch you are actually on rather than the last one you built.
+
+⚠️ **The stamp file is gitignored on purpose.** It changes on every build and per branch, so
+committing it is a one-line diff per build and a conflict per merge, over a file whose whole job
+is to be regenerated. Absent or empty both mean "show the version".
+
+⚠⚠ **DO NOT PUT THE BRANCH NAME ON THE WIRE.** `Application.version` still carries the real
+version into the LAN beacon payload, the online lobby record and the connection-approval hello,
+and those are compared between peers: a name there would refuse two players built from the same
+commit on different branches. `BuildBranch` is the LABEL and nothing else, and
+`TheBranchNameNeverReachesTheVersionTheWireCompares` asserts the separation.
+
+⚠️ **The label is sized against the string.** The authored rect is 132 px, which fits `v4.72`
+and cuts `claude/multiplayer-lobby-switching-bugs-d1546c` in half; legacy `Text` defaults to WRAP,
+so that overflow is silent. `ApplyTo` widens the box and switches to Overflow. This is the same
+trap `ConvertedScreen.SetHeadline` records, for the third time.
+
 ⚠️ **`GameBuilder.BuildWindows` targets THIS MACHINE'S DESKTOP, whatever it is.** It calls
 `Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)`, so it resolves per
 profile: `C:\Users\matth\Desktop` on one laptop and `C:\Users\Matthew\Desktop` on the other.
