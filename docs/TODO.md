@@ -5433,7 +5433,7 @@ what broadcasts `SyncWorld`, so a frozen host would never send the packet that s
 It is already guarded: *"SINGLE PLAYER PAUSES, NETWORKED DOES NOT. A networked peer that froze its
 own time would stop answering the host."* Do not remove that guard.
 
-### 57.2 ⚠️ OPEN: the intermission card never appears on a client
+### 57.2 ✅ FIXED: the intermission card never appeared on a client
 
 `IntermissionStarted` is raised only by `BeginIntermission`, host-only, so `UI.RoleSwapCard` never
 runs on a client and a joiner sees no end-of-round card, no rotation announcement and no
@@ -5447,14 +5447,24 @@ schedules `Advance`, which calls `AdvanceRound`. Raising either on a client woul
 its own second authority over the round number, and four peers each advancing a match is four
 matches, which `VISION.md` § 4 forbids in its first rule.
 
-**Done looks like:** the CARD getting a signal that is not the runner's. `RoleSwapCard` already
-has a public entry, `ShowForShot(nextRound, nextDefenderSlot)`, written for the capture pass and
-exactly the right shape. The signal itself can be derived on the client with no wire change, from
-`RoundNumber` increasing while `MatchInProgress` is still true, or carried explicitly by adding
-`IsWarmupBuffer` to the `SyncWorld` payload (a protocol bump, both halves, and the audit).
-**Whichever is chosen, it must not go through `MatchDirector.IntermissionStarted`.**
+✅ **FIXED the same session, and with no wire change.** `MatchRpc.ApplyNetworkRoundBoundary`
+derives the boundary from the snapshot the client already receives and drives the CARD directly
+through `RoleSwapCard.ShowForShot`, which was written for the capture pass and is exactly the
+right shape. The runner gets no signal at all, which is the point.
 
-### 57.3 ⚠️ OPEN: no score event reaches a client, so scoring is silent there
+⚠️ **The derivation:** during the host's intermission `RoundActive` is false while
+`MatchInProgress` is still true and `RoundNumber` has not moved yet, because `AdvanceRound`
+increments it when the buffer ends. That combination happens at no other time; a match ENDING
+drops `inProgress` with it, which is what rules it out.
+
+⚠️ **It acts on the EDGE, not the state.** `SyncWorld` arrives at 5 Hz, so acting on the value
+would re-raise the card ten times over one intermission and restart its timeline on every packet.
+
+⚠️ **And it hides the card on the way back in.** The host dismisses it from `RoundStarted`, which
+a client never gets either, so without the second edge the card would sit as a full-screen panel
+over the whole of the next round: worse than never showing it.
+
+### 57.3 ✅ FIXED: no score event reached a client, so scoring was silent there
 
 `MatchDirector.Scored` is raised only inside `AddScore`, which opens with
 `if (!NetAuthority.ShouldResolve()) return;`. There is **no score message on the wire** (44 named
@@ -5471,10 +5481,25 @@ is scoring, three of the four things that acknowledge a point are host-only.**
 the toast and the sting both need the `ScoreEvent` KIND (`MatchRules.PointsFor(e)` and the label),
 and a score delta does not carry it. Two events in one 200 ms window would also collapse into one.
 
-**Done looks like:** a host-to-all `Score` message carrying `(slot, ScoreEvent)`, sent from
-`AddScore` beside `Scored?.Invoke`, and raising `Scored` on the receiving peer. It is the shape
-`BroadcastStyle` already uses for Street Hype (§ 38.15), which was the same fault for the same
-reason: Classic's whole bottom-of-screen identity was host-only until somebody looked.
+✅ **FIXED the same session.** A host-to-all `Score` message carrying `(slot, ScoreEvent)`, sent
+from `AddScore` **inside the host guard** so the announcement cannot be made anywhere a point
+cannot be created, and raising `Scored` on the receiving peer through
+`MatchDirector.ApplyNetworkScoreEvent`. It is the shape `BroadcastStyle` already uses for Street
+Hype (§ 38.15), which was the same fault for the same reason: Classic's whole bottom-of-screen
+identity was host-only until somebody looked. `ProtocolVersion` went 4 to 5.
+
+⚠️ **`ApplyNetworkScoreEvent` DOES NOT TOUCH THE SCOREBOARD**, and that is the whole reason it is
+a separate method from `AddScore`. The totals arrive in `SyncWorld` and `ApplySnapshot` sets them
+from the host's own numbers; adding here as well would make a client's board the sum of a
+replicated total and its own arithmetic, which disagree at exactly the moments that matter.
+
+⚠️ **An unknown event is dropped rather than cast.** `Enum.IsDefined` gates it, because a cast of
+an out-of-range int would reach `MatchRules.PointsFor` as a value it has no case for.
+
+⚠️ **`DefenseTick` and the two penalties are broadcast too**, at roughly one a second while they
+apply. `Hud.OnScored` discards the first outright and gives the other two a sound and no words, so
+this is a few bytes a second to keep the event faithful rather than to teach the receiver a rule
+the sender should not be making for it.
 
 ### 57.4 Checked and NOT broken, so nobody re-derives it
 
