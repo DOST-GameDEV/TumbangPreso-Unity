@@ -351,7 +351,29 @@ namespace TumbangPreso.Net
                 _serverQueryHandler.UpdateServerCheck();
             }
 #endif
+
+            // Only while actually hosting. `IsHost` is deliberately true offline as well, which
+            // is right for the authority questions it answers and wrong here.
+            if (_nm == null || !_nm.IsListening || !_nm.IsServer) return;
+
+            RefreshBeaconCounts();
+
+            // ⚠️ THE UGS PUSH IS STILL EVENT-DRIVEN, AND ONLY ON A REAL EDGE. The relay lobby is
+            // a network call with its own coalescing; running it every frame would be a request
+            // per frame for a value that changes twice a match. The beacon above is four local
+            // field writes and needs no such gate.
+            if (Lobby.MatchInProgress == _publishedInProgress) return;
+
+            _publishedInProgress = Lobby.MatchInProgress;
+            PublishLobbyCounts();
         }
+
+        /// <summary>
+        /// The last <see cref="LobbySession.MatchInProgress"/> pushed to the relay lobby, so the
+        /// edge can be spotted without every caller that starts or ends a match remembering to
+        /// announce it. See <see cref="RefreshBeaconCounts"/>.
+        /// </summary>
+        private bool _publishedInProgress;
 
         /// <summary>
         /// Registers this process with the Multiplay fleet and starts answering SQP queries.
@@ -788,7 +810,20 @@ namespace TumbangPreso.Net
         /// a field. `LobbySession.OccupiedSeatCount` and `ConnectedHumanCount` are the two
         /// missing questions.
         /// </summary>
-        private void PublishLobbyCounts()
+        /// <summary>
+        /// The local half: four counts written onto the beacon, costing nothing and safe to run
+        /// every frame.
+        ///
+        /// ⚠️⚠️ SPLIT OUT OF <see cref="PublishLobbyCounts"/> BECAUSE `InProgress` DOES NOT
+        /// CHANGE ON A CONNECT OR A DISCONNECT, AND THOSE WERE THE ONLY THINGS THAT PUBLISHED.
+        /// A match starting is not either one, so the beacon went on advertising
+        /// `InProgress = false` for the whole match. The browser drew a running game as "IN THE
+        /// LOBBY", and worse, `LanEntry.IsJoinable` opens with `!InProgress`, so it offered JOIN
+        /// on it. That is the third instance of the fault this method's own note is about: the
+        /// server browser telling the truth requires the fields to be RE-READ, not merely to
+        /// exist.
+        /// </summary>
+        private void RefreshBeaconCounts()
         {
             if (_beacon == null) return;
 
@@ -798,6 +833,13 @@ namespace TumbangPreso.Net
             _beacon.Occupied = Lobby.OccupiedSeatCount();
             _beacon.Connections = Lobby.ConnectedHumanCount();
             _beacon.InProgress = Lobby.MatchInProgress;
+        }
+
+        private void PublishLobbyCounts()
+        {
+            if (_beacon == null) return;
+
+            RefreshBeaconCounts();
 
             if (Query != null && IsRelay)
             {

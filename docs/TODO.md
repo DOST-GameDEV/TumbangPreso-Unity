@@ -6478,6 +6478,62 @@ disconnect and is immediate; this is only the crash/kill path. **Done looks like
 heartbeat that fails faster than the transport timeout, or the pause-menu quit path being the one
 the game teaches, with the timeout left alone for genuine stalls.
 
+⚠️ **STILL OPEN ON PURPOSE AFTER THE HARRYDAKS PASS.** The takeover machinery in `HostPeerLeft`
+is correct; only its TRIGGER is late, and every way to make it fire sooner is a judgement about
+how long a stalled player on venue wifi keeps their chair. `_lastAcceptedMoveAt` already gives
+per-seat liveness at 50 Hz, so the mechanism is a few lines; the THRESHOLD is a design decision
+and picking one unattended would have silently traded this bug for bots stealing seats from
+lagging players, which § ConfigureTimeouts spends a paragraph arguing against. It needs a number
+from the team, not from a merge.
+
+---
+
+## 67 · What the HARRYDAKS merge was hiding, found by building it
+
+`HARRYDAKS` is `fix/join-bounce-and-rejoin` (which already contained every other `fix/*` branch
+and the `claude/*` one by ancestry) merged with `integration/ui-batch-on-ilalim` and `main`.
+
+### 67.1 ⚠️⚠️ A "RECORD ONLY" MERGE MAKES GIT DROP LATER WORK WITHOUT A CONFLICT
+
+`c1e0b80` on this line was a merge that kept *"this branch's StarRayX-excluded tree"* — it
+recorded `integration` as merged while deliberately taking none of its content. Git then treats
+that revert as this branch's OPINION. Anything `integration` had not touched AGAIN since is
+"unchanged on one side, deleted on the other", which resolves silently to deleted.
+
+**It cost 11 whole files and 12 files' worth of hunks, and only two of them ever raised a
+conflict.** `Fxaa.shader`, `WorldOutlineProbe.cs`, `OutlineWeldTests.cs` and five `.meta` files
+vanished with no marker at all; a lost `.meta` would have reassigned the shader's GUID and broken
+every material pointing at it. Inside files, `VfxRenderTag` was rolled back from `Own(go, mat)` to
+`Attach(go)` while its caller kept calling `Own`, and `ConvertedSettingsPanel` ended up with
+`integration`'s generic `BuildDropdownRow` SIGNATURE on top of the old hardcoded body.
+
+⚠️ **A FILE-LEVEL SUPERSET CHECK IS NOT ENOUGH, WHICH IS THE LESSON.** The tree passed "every
+path in both parents is present" and still did not compile. What actually settles it is
+`git diff <merged> <parent>` in BOTH directions, reading every hunk the merged tree is missing.
+
+### 67.2 ✅ FIXED: LAN discovery died on the first beacon it ever received
+
+See the commit; `LanBeacon.OnReceive` ran Unity calls on the socket thread and the throw landed
+before the `BeginReceive` re-arm, so discovery stopped permanently on packet one while the host
+went on advertising correctly. That is the whole of *"di pa siya gumagana rn pero nakakapag host
+na"*. ⚠️ **NO TEST COULD HAVE CAUGHT IT**: every `TryParsePayload` case calls it from the test
+thread, which is the main thread, where the illegal call is legal.
+
+### 67.3 ✅ FIXED: three shaders were reachable in the Editor and stripped from the build
+
+`TumbangPreso/WorldOutline`, `/VolcanicRock` and `/ButtonOutline` are reached only by
+`Shader.Find` and were not in `m_AlwaysIncludedShaders`. **All eight of this project's
+name-loaded shaders depend on that list — not one is referenced by a `.mat`, prefab or scene.**
+`PostAntiAlias.cs` states the rule; nothing enforced it. `tools/audit_shader_stripping.py` does
+now, and the Editor cannot reproduce the failure it guards.
+
+### 67.4 ✅ FIXED: the LAN beacon advertised `InProgress = false` for a whole match
+
+`PublishLobbyCounts` ran on connect and on disconnect only, and a match STARTING is neither, so
+the browser drew a running game as "IN THE LOBBY" and `LanEntry.IsJoinable` — which opens with
+`!InProgress` — offered JOIN on it. Split into `RefreshBeaconCounts` (four local writes, every
+frame while hosting) and the UGS push (still edge-triggered, because it is a network call).
+
 ---
 
 ## 1 · Peer rematch voting across the wire
