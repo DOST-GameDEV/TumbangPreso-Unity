@@ -6831,6 +6831,224 @@ Chromatic mode, which is the only thing that shows the sum and the radial profil
 
 ---
 
+## 65 · The white keyline round every silhouette, measured rather than argued
+
+🧑 2026-08-28, having tested all three rows: *"off and fxaa gets rid of the outlines. msaa brings
+it back"*. That isolates MSAA as **necessary**. It does not identify the mechanism, and § 64 shows
+why that matters: the chromatic split was blamed for *"white outlines on distant objects"* first,
+correctly for that build, and fixed. The report survived the fix.
+
+`Settings.AntiAliasModes` and `Visual.PostAntiAlias` both carry the diagnosis: multisample resolve
+AVERAGES its samples in linear HDR **before** `Visual.ColourGrade` runs its ACES curve, the curve is
+compressive, so `tonemap(mean(a, b))` is not `mean(tonemap(a), tonemap(b))`. The shipped mitigation
+is `PostAntiAlias.ApplyHdrForResolve`, which turns `allowHDR` off on the MSAA rows only.
+
+**Nobody had put a number on any of it.** This entry does, and the numbers change the conclusion in
+two places.
+
+### 65.1 The arithmetic on record undershot by 2x to 3x, and the two amplifiers are both measurable
+
+The estimate that opened this work used a sky of about **1.0 linear** against a roof of 0.3, took
+the 50/50 pixel, and got a difference of **0.06** of display luma. That is smaller than the reported
+artefact, which is what made the diagnosis worth checking rather than acting on. Both halves of that
+estimate are wrong, and both in the same direction.
+
+**Amplifier one: the sky is 2.0 to 3.2 linear, not 1.0.** `Sky.mat` is `Skybox/Panoramic` with
+`_Exposure` 1 and `_Tint` **(1, 1, 1)**. Every built-in Unity skybox shader multiplies by
+`unity_ColorSpaceDouble`, which is **4.59479** in linear colour space, and the shader's own neutral
+tint is (0.5, 0.5, 0.5) precisely so that the product lands near 1. This material is at double
+neutral. Measured off `Assets/TumbangPreso/Art/models/materials/sky_panorama.png` (2048x1024,
+`sRGBTexture: 1`), sampled on an 8 px grid:
+
+| band of the lat-long | mean linear luma | after x4.59479 | brightest texel, after x4.59479 |
+|---|---|---|---|
+| zenith, top 15 % | 0.179 | 0.82 | 3.82 |
+| upper, 15 to 35 % | 0.256 | 1.17 | 3.90 |
+| **just above the horizon, 35 to 50 %** | **0.436** | **2.00** | **3.18** |
+
+The band that matters is the third one, because a distant roofline is seen against the sky just
+above the horizon, not against the zenith.
+
+**Amplifier two: the worst pixel is not the 50/50 one, it is the one that is mostly ROOF.** The
+curve flattens fastest just as the mean climbs past 1.0, so the error peaks at LOW sky coverage.
+With sky 2.0 linear, roof 0.3 linear, `_Exposure` 0.92, `_White` 1.9 and the 1.96 pre-scale, so
+`tonemap(c) = saturate(ACES(1.8032 c))`, `tonemap(2.0) = 0.967` and `tonemap(0.3) = 0.642`:
+
+| sky samples of 4 | resolved then tonemapped | tonemapped then resolved | error |
+|---|---|---|---|
+| 3 of 4 | 0.950 | 0.886 | 0.064 |
+| 2 of 4 | 0.919 | 0.804 | **0.115** |
+| **1 of 4** | **0.855** | **0.723** | **0.132** |
+
+At a bright patch of sky (3.18 linear) the 1-of-4 pixel goes to **0.177**, about **45 levels of
+255**. So the predicted artefact is a pale band **on the dark object, one to two pixels inside its
+silhouette**, 0.13 to 0.18 of display luma, and that is a keyline rather than a soft edge. It also
+explains the shape of the complaint: a softened edge would read as blur, and what was reported is a
+line.
+
+⚠️ **This is arithmetic over measured inputs, not a rendered measurement.** It closes the gap that
+made the diagnosis doubtful; it does not by itself convict the resolve. § 65.2 is what settles it.
+
+### 65.2 `MsaaResolveProbe` is the measurement, and it is five arms in one frame
+
+`Assets/TumbangPreso/Tests/PlayMode/MsaaResolveProbe.cs`, `[Category("WallClock")]`. It loads
+Eskinita, pitches the rig camera to a fixed 12 degrees above the horizon so there is guaranteed
+skyline in frame, and renders the same instant five times:
+
+| arm | msaa | `allowHDR` | `WorldOutline` | what it is |
+|---|---|---|---|---|
+| A | 1 | on | on | the reference, i.e. AA Off |
+| B | 4 | on | on | the artefact, i.e. the game before the workaround |
+| C | 4 | **off** | on | what `integration/ui-batch-on-ilalim` ships today |
+| D | 1 | on | **off** | reference with the ink pass out of the way |
+| E | 4 | on | **off** | artefact with the ink pass out of the way |
+
+It writes all five plus four difference images to `Logs/shots-msaa/`, and prints, per comparison:
+max and mean luma increase, the count of pixels brighter by more than 0.02 / 0.04 / 0.10 / 0.20, an
+8x5 grid of where they are, and **the share of brightened pixels that sit within 2 px of both a
+bright and a dark pixel in the reference frame**.
+
+⚠️ **That last number is the whole test.** A resolve can only misbehave where the samples inside one
+pixel disagree, so if the brightening is genuinely the HDR resolve then almost all of it lands on
+high-contrast boundaries. **A low share means something is brightening flat surfaces and the
+diagnosis on record is wrong**, which is a more valuable answer than the fix would have been.
+
+Three construction notes, each of which was a way to get a wrong answer:
+
+* ⚠️⚠️ **Every arm writes into an identical ARGB32 sRGB destination.** The obvious build gives the
+  HDR arm an `ARGBHalf` target, and that is wrong: `ReadPixels` off a half-float target returns
+  LINEAR values and off an `ARGB32` target returns sRGB-ENCODED ones, so the arms would differ by a
+  transfer function everywhere and the difference image would mean nothing. HDR is varied with
+  `Camera.allowHDR` alone, which is what picks the format of the intermediate the scene is
+  rasterised into and resolved from.
+* ⚠️ **`allowHDR` is written one statement before `Render()`**, because `PostAntiAlias.LateUpdate`
+  owns that field and writes it every frame. A `[UnityTest]` coroutine resumes in the Update phase,
+  so LateUpdate has not run yet and the value holds for that render, then is taken back next frame
+  with no cleanup.
+* ⚠️ **MSAA is set on the descriptor AND on `QualitySettings` together.** A camera writing into a
+  `targetTexture` takes its sample count off that texture; one writing to the screen takes it off
+  `QualitySettings`. This camera is doing the first while carrying the image effects of the second,
+  and which governs has never been pinned down here, so the probe sets both and prints what the
+  target actually came back holding. If an arm reports 1 delivered sample the log says outright that
+  every number below it is measuring something else.
+
+**How to run it:**
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -projectPath . \
+  -testPlatform PlayMode -runTests -testCategory "WallClock" \
+  -testFilter "MsaaResolveProbe" -testResults Logs/msaa.xml -logFile Logs/msaa.log
+```
+
+⚠️ **No `-nographics`.** It crashes the editor rather than the tests, writes no `.xml`, and still
+exits 0. Assert on the `.xml`, and read the `=== MSAA RESOLVE ===` block out of `Logs/msaa.log`.
+
+⚠️ **`MsaaResolveProbe.Version` is a const, and it must be bumped before any run whose images will
+be looked at.** `CLAUDE.md` § 6.1: chat clients cache by filename, so overwriting a render leaves
+the previous one on screen and the whole review is conducted against an image that is no longer on
+disk.
+
+### 65.3 The shipped workaround's cost, in numbers rather than in "mild"
+
+`PostAntiAlias` says clamping at 1.0 costs the highlight roll-off and calls that mild on a flatly
+lit game. With the sky measured, the number is:
+
+* `tonemap(1.0) = 0.902`. Anything at or above 1.0 linear collapses to that.
+* The sky at **2.0 linear** rendered **0.967** under HDR and renders **0.902** clamped: **6.5 per
+  cent darker**. At a bright patch, 3.18 linear, it was 0.992: **9 per cent darker**.
+* Worse than the darkening: **the sky and a fully lit 1.0-linear white surface become the same
+  number**, where HDR separated them by 0.065 to 0.089. That is the roll-off doing its only job.
+* **Everything below 1.0 linear is bit-identical**, because the clamp does nothing there. The cast,
+  the street and every midtone are untouched. That half of the claim holds exactly.
+
+⚠️ **So the AA setting changes the exposure of the game**, and the FXAA rows and the MSAA rows are
+two slightly different pictures of the same scene. `MsaaResolveProbe` prints mean whole-frame luma
+per arm specifically to size this. If A minus C is large it is a defect of its own and belongs in
+this entry as its own item.
+
+### 65.4 ⚠️⚠️ THE WEIGHTED RESOLVE WAS NOT BUILT, AND THE REASON IS ARCHITECTURAL RATHER THAN HARD
+
+A Karis-style tonemapped resolve weights each sample by `1 / (1 + luma(sample))` before averaging
+and divides by the summed weights, so the mean is taken in a perceptually flatter space. The maths
+is four lines. **It cannot be reached from where this game's post chain stands, and finding out
+costs a rewrite rather than an experiment.**
+
+**The blocker, stated exactly.** In the built-in pipeline the engine resolves MSAA before
+`OnRenderImage` is ever called, so `source` has one sample and there is nothing to weight. Sample
+access requires the camera to render into a target THIS code allocated with `bindTextureMS = true`,
+sampled as `Texture2DMS<float4>`. But **a camera carrying any `OnRenderImage` component does not
+render into `camera.targetTexture`**: Unity allocates its own intermediate for the chain and blits
+into the target at the end. `Visual.WorldOutline`, `Visual.ColourGrade` and `Visual.PostAntiAlias`
+are all `OnRenderImage`, and `CameraRig.Awake` adds all three. So the scene camera would have to
+carry **none** of them, and the whole chain would have to move to a second composite camera.
+
+**And `WorldOutline` cannot follow, which is what makes this circular rather than merely large.** It
+needs `_CameraDepthNormalsTexture` from the camera that rasterised the scene, a `CommandBuffer` at
+`CameraEvent.BeforeImageEffectsOpaque` on that same camera to draw its exclusion mask, and view rays
+reconstructed from that camera's projection. A composite camera that culls nothing has none of
+those. Leaving the outline on the scene camera puts an `OnRenderImage` back on it, which is exactly
+what destroys the sample access. Getting out of that means re-authoring the outline as a
+`CommandBuffer` pass, which is a rewrite of a feature that landed two days ago and is still a
+prototype under review (§ 63).
+
+**Everything else that would also have to move:** `SpectatorCamera` builds the same chain and adds
+the replay capture on top; `AspectRatioProbes`, `GameplayShots` and `WorldOutlineCoverageProbe` all
+drive `cam.targetTexture` directly, which a scene camera that owns a multisampled bound target can
+no longer allow; and `PostAntiAlias.ReportOnce` filters on `targetTexture == null` to decide which
+camera is the screen, which stops being a valid question.
+
+**Cost, if it is ever built.** `bindTextureMS = true` means the multisampled surface stays resident
+and is read by a shader instead of being resolved on store, so at 1920x1080 in `ARGBHalf` the 4x
+surface (**66 MB**) and the resolve destination (**16 MB**) are both live, against one transient 4x
+surface today. The hardware resolve is fixed-function and effectively free; it is replaced by a
+full-screen pass doing **8.3 million half4 fetches per frame** at 4x, and 16.6 million at 8x. The
+shader needs `#pragma target 4.5`. That is not a real hardware objection on this project's build set
+(`GameBuilder` ships StandaloneWindows64 and StandaloneOSX only, and both D3D11 feature level 11 and
+Metal support `Texture2DMS`), so **do not reject it on hardware grounds**; reject it on the chain.
+
+⚠️ **What is NOT a cheaper way out, so nobody spends a session on it.**
+
+* **Lowering `Sky.mat`'s `_Tint` to Unity's neutral 0.5** halves the sky to about 1.0 linear and
+  reduces the 1-of-4 error from 0.132 to roughly 0.10. It is a real contributor and a **25 per cent
+  improvement, not a fix**, and it changes how the game looks. Worth knowing, not worth shipping as
+  a fix.
+* **Lowering `_White` to put the curve's white point back at 1.0 under the clamp** needs
+  `_White = 0.473`, which takes mid grey from 0.71 to 0.97. That is not restoring the roll-off, it
+  is cranking exposure until nothing has any.
+* **Moving the tonemap back into `Toon.shader`** is explicitly forbidden by that shader's own note
+  and by `ColourGrade`'s: the two would compound, and it would tonemap the cast while leaving the
+  sky, the street and the fog raw, which is the fault the pass was created to fix.
+
+**The recommendation:** keep `PostAntiAlias.ApplyHdrForResolve` as it is. It is scoped to the MSAA
+rows, its cost is now quantified in § 65.3 and is confined to values above 1.0 linear, and the
+default row is FXAA anyway, so the ordinary player never meets it. Revisit the weighted resolve only
+if `WorldOutline` is either accepted and re-authored as a command-buffer pass, or rejected and
+removed. Either outcome makes the composite-camera split tractable; while it stands as an
+`OnRenderImage` prototype, it does not.
+
+### 65.5 What could NOT be verified without a Unity launch
+
+Authored and reasoned from source. **The probe has never been run**, because the session that wrote
+it was not permitted to launch the editor.
+
+* **That `MsaaResolveProbe` compiles.** It is the only new file and it uses nothing exotic, but it
+  has not been through the compiler.
+* **That the five arms actually differ.** If `rt.antiAliasing` reports 1 on arms B, C and E then a
+  `targetTexture` render never gets MSAA in this configuration, the whole probe is measuring one
+  frame five times, and it has to be rebuilt against the screen path instead. The probe prints this
+  and says so in the log rather than passing quietly, but **it is the first thing to read**.
+* **That the forced pitch of -12 degrees actually finds a roofline** from wherever the scene parks
+  the rig. If the difference images are empty, check `A_off_hdr_v1.png` before concluding anything.
+* **Whether `WorldOutline` is a co-cause.** Arms D and E exist to answer it and nothing else here
+  assumes an answer.
+* **The 0.13 to 0.18 prediction itself.** § 65.1 is arithmetic over a measured texture and a
+  transcribed curve. The probe is what turns it into a measurement.
+
+**First thing to look at:** the `arm ... target delivered N` lines at the top of the probe's log
+block. Every other number in it is worthless if that reads 1 where 4 was asked for.
+
+---
+
 ## Closed
 
 - **Lobby client synchronization, pick normalization, and host non-zero seat picks.** ✅ 2026-08-26.
