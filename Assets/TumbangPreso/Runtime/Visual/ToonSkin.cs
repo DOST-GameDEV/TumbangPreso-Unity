@@ -119,6 +119,15 @@ namespace TumbangPreso.Visual
         {
             if (renderer == null || Shader == null) return;
 
+            // ⚠️ WELD BEFORE DRESSING. The outline Pass inflates along an averaged normal that
+            // `OutlineNormals` bakes into the tangent channel, and a renderer that reached the
+            // toon shader without it draws a border that splits at every hard edge. Doing it here
+            // rather than at each of the ten call sites is the point: this is the one function
+            // every outlined surface in the game already goes through, so nothing can acquire the
+            // shader and miss the weld. It self-caches per mesh, so the repeat calls that respawns
+            // and preview rebuilds make cost a set lookup.
+            OutlineNormals.Weld(renderer);
+
             float scale = Mathf.Max(0.0001f, EffectiveScale(renderer));
             float modelWidth = worldWidth / scale;
 
