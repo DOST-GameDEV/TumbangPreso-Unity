@@ -423,9 +423,26 @@ namespace TumbangPreso.Visual
             // ⚠️ PUT THE CAMERA'S TARGET BACK. A command buffer leaves whatever it last bound
             // bound, and this one binds a one-channel mask texture. Everything the camera draws
             // after this event, the image effect chain included, would land in it. This is the
-            // single most common way a `CameraEvent` buffer breaks a frame, and the symptom is
-            // a black screen rather than a wrong outline, so it is worth one line to rule out.
-            _maskBuffer.SetRenderTarget(BuiltinRenderTextureType.CameraTarget);
+            // single most common way a `CameraEvent` buffer breaks a frame.
+            //
+            // ⚠️⚠️ `CurrentActive`, NOT `CameraTarget`, AND GETTING THIS WRONG CLIPS THE OUTLINE TO
+            // A SUB-RECTANGLE OF THE SCREEN. 🧑 2026-08-28: *"the outline doesnt work for the whole
+            // screen theres something clipping it"*.
+            //
+            // A camera carrying ANY `OnRenderImage` does not draw into `CameraTarget`. It draws
+            // into an engine-allocated intermediate, and `ColourGrade` guarantees there is always
+            // one here. `CameraTarget` names the FINAL destination, the backbuffer or the camera's
+            // `targetTexture`. Binding it at `BeforeImageEffectsOpaque` therefore does not restore
+            // anything: it switches rendering away from the intermediate the frame is being built
+            // in, and it resets the VIEWPORT to the final target's dimensions. Whenever those two
+            // differ, and they differ whenever the game view is scaled or the intermediate is
+            // allocated at a different size for HDR or MSAA, everything drawn afterwards lands
+            // inside a rectangle the wrong size. The outline is what draws afterwards.
+            //
+            // `CurrentActive` means "whatever was bound before this buffer ran", which is the
+            // intermediate, at its own size, which is the actual restore this line was written to
+            // perform.
+            _maskBuffer.SetRenderTarget(BuiltinRenderTextureType.CurrentActive);
 
             if (!_bufferAttached)
             {
