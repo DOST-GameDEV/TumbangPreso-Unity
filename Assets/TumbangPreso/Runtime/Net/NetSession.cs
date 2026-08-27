@@ -46,6 +46,17 @@ namespace TumbangPreso.Net
 
         public event Action<string> StatusChanged;
 
+        /// <summary>
+        /// Raised on THIS process whenever its own seat or spectator flag changes.
+        ///
+        /// ⚠️⚠️ THE LOBBY SCREEN HAD NO WAY TO KNOW IT HAD BEEN SEATED. `LocalSlot` is written
+        /// from three places (the seat-assignment message, `Seating`, and a mid-match rebind) and
+        /// not one of them told anybody, so `ConvertedMatchSetup` drew the seat rows once at
+        /// `Start` and then only ever redrew them when a pick table happened to arrive. A joiner
+        /// seated in P2 kept the "◀ YOU" marker on P1 until something else moved.
+        /// </summary>
+        public event Action SeatingChanged;
+
         private NetworkManager _nm;
         private UnityTransport _utp;
 
@@ -497,6 +508,7 @@ namespace TumbangPreso.Net
             LocalSlot = seat;
             GameLaunch.Spectator = spectator;
             SetStatus($"seated in slot {seat} (spectator={spectator})");
+            SeatingChanged?.Invoke();
         }
 
         public void SetStatusForHost()
@@ -635,6 +647,7 @@ namespace TumbangPreso.Net
             LocalSlot = seat;
             GameLaunch.Spectator = seat < 0;
             SetStatus(seat >= 0 ? $"connected as seat {seat + 1}" : "connected as spectator");
+            SeatingChanged?.Invoke();
         }
 
         // -------------------------------------------------------------------
