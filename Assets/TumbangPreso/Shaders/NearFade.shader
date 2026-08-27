@@ -171,6 +171,16 @@ Shader "TumbangPreso/NearFade"
             // zero and every fragment would then read as being on top of the camera.
             float3 worldPos;
 
+            // ⚠️ THE GROUND GUARD READS THIS. See the `upness` note in `surf`: a blanket occluder
+            // rule dissolves the road underfoot without it, because the eye is 1.25 m up and the
+            // band is 1.8 m. Like `worldPos`, `worldNormal` is a name the generator recognises.
+            //
+            // ⚠️ NO `INTERNAL_DATA` IS NEEDED HERE AND ADDING IT WOULD BE WRONG. That macro is
+            // required only when the shader writes `o.Normal`, because the world normal then has to
+            // be reconstructed from the tangent basis. This one never writes `o.Normal`, so the
+            // interpolated vertex normal is the surface normal and arrives directly.
+            float3 worldNormal;
+
             // ⚠️⚠️ THE DITHER MUST BE INDEXED IN SCREEN SPACE OR IT IS NOT A SCREEN DOOR. Indexed
             // by UV or by object space the pattern is painted ON the surface, so it slides and
             // rotates with the prop as the player walks and reads as crawling noise. Anchored to
@@ -226,6 +236,33 @@ Shader "TumbangPreso/NearFade"
             // screen to read them as a pattern yet.
             float distanceToEye = distance(IN.worldPos, _WorldSpaceCameraPos);
             float visible = smoothstep(_NearFadeEnd, _NearFadeStart, distanceToEye);
+
+            // ⚠️⚠️ A NEAR-HORIZONTAL SURFACE NEVER DISSOLVES, AND WITHOUT THIS RULE WIDENING THE
+            // PASS DELETES THE GROUND YOU ARE STANDING ON. 🧑 2026-08-28: *"id prefer if anything
+            // i can clip into can be dithered"*.
+            //
+            // The fade is RADIAL: it measures straight-line distance from the eye, not distance
+            // along the view direction. `CameraRig` puts the first-person eye at about 1.25 m, so
+            // the road directly underfoot is 1.25 m away, which is well inside the 1.8 m band. The
+            // moment this shader is applied to anything you walk ON rather than INTO, the floor
+            // starts stippling away under your feet and you see the skybox through it. Restricting
+            // the name list hid that; a blanket rule cannot.
+            //
+            // ⚠️ THE TEST IS THE SURFACE NORMAL, NOT THE OBJECT'S NAME OR GROUP, because the thing
+            // that actually distinguishes them is geometric. An obstruction is something you walk
+            // INTO, and its surface faces you roughly horizontally: a trunk, a post, a wall, the
+            // side of a crate. A floor faces up and a soffit faces down, and neither can ever be
+            // between your eye and what you are trying to look at. Keying on the normal classifies
+            // a surface the map has never heard of, which is the whole point of widening this.
+            //
+            // ⚠️ 0.55 IS A BAND RATHER THAN A HARD PLANE, so a sloped roof or a kerb ramp fades
+            // partially instead of flipping between solid and gone as the player circles it. Above
+            // roughly 57 degrees from vertical the surface is treated as ground and is left alone
+            // completely.
+            float upness = abs(normalize(IN.worldNormal).y);
+            float faceable = 1.0 - smoothstep(0.45, 0.55, upness);
+
+            visible = lerp(1.0, visible, faceable);
 
             // ⚠️ THE `max` ON w GUARDS A DIVIDE BY ZERO ON THE CAMERA PLANE. A fragment exactly at
             // w = 0 is behind the eye and about to be clipped anyway, but NaN propagates into the
