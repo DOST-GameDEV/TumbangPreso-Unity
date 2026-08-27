@@ -5966,14 +5966,25 @@ on what looks like a jumping emote"*. Fixed by widening the lower bound to the s
 (`CharacterMotor.GroundedRestVelocityY`) minus the existing 0.5 margin, so the two call sites
 that both care about "at rest" cannot drift apart again.
 
-### 63.4 ⚠️ OPEN: transmit `IsGrounded` rather than inferring it
+### 63.4 ✅ FIXED: transmit `IsGrounded` rather than inferring it
 
 63.3 is an inference and the owner of a body knows the truth. ⚠️ **`SyncUnit` alone cannot carry
 it**: the HOST's copy of a client-driven body has the same stale `false`, because `ApplyUnitMove`
 does not run gravity either. It needs a bool on **`SubmitMove`** as well, which the host then
-relays in `SyncUnit`. Two payloads and a protocol bump. **Done looks like:** both fields added,
-both halves of both messages updated, `audit_wire_payloads.py` still balanced, and the inference
-in `StepNetworkReplica` deleted rather than left as a second source.
+relays in `SyncUnit`. Two payloads and a protocol bump.
+
+**Fixed**, and the inference is deleted rather than kept as a fallback. `SubmitMove` carries the
+owner's `IsGrounded`; `ApplyUnitMove` stores it onto the host's copy, which is what lets
+`SyncUnit` read `unit.IsGrounded` off the unit for every seat exactly as it already reads stun
+and stamina; `StepNetworkReplica` assigns it straight through. `audit_wire_payloads.py` reports
+`SubmitMove 5/5` and `SyncUnit 17/17`, 45 messages and 0 mismatched.
+
+⚠️⚠️ **THE INFERENCE WAS NOT MERELY IMPRECISE, IT WAS WRONG IN THE MIDDLE OF EVERY JUMP**, which
+is the one place it was load-bearing. The window read grounded for any vertical velocity in
+`(-2.5, 0.5)`, and a jump crosses that whole band going up AND coming down. The note claimed
+"a frame or two at the apex"; at `Balance.Gravity` it is about **0.12 s, six fixed steps, twice
+per jump**. Every remote jump therefore broke into Jump → a flicker of Idle or Walk at the top →
+Fall. 🧑 2026-08-28: *"joining players bug pag nag jjump"*, which is this.
 
 
 ---

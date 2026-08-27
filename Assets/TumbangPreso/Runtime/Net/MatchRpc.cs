@@ -900,11 +900,18 @@ namespace TumbangPreso.Net
         // MOVEMENT AND POSITION SYNCHRONIZATION
         // -------------------------------------------------------------------
 
-        public void SubmitMoveServerRpc(int slot, Vector3 pos, float yaw, Vector3 velocity)
+        /// <summary>
+        /// ⚠️ `grounded` IS THE OWNER'S OWN `IsGrounded` AND NOTHING ELSE CAN SUPPLY IT. The
+        /// host does not run gravity for a client-driven body, so its copy of that body's
+        /// `_grounded` is stale; without this field on THIS payload the relay below has nothing
+        /// truthful to send on. See `CharacterMotor.StepNetworkReplica`.
+        /// </summary>
+        public void SubmitMoveServerRpc(int slot, Vector3 pos, float yaw, Vector3 velocity,
+                                        bool grounded)
         {
             if (NetAuthority.IsHost)
             {
-                ApplyUnitMove(slot, pos, yaw, velocity);
+                ApplyUnitMove(slot, pos, yaw, velocity, grounded);
                 SyncUnitTransformClientRpc(slot, pos, yaw, velocity);
                 return;
             }
@@ -915,6 +922,7 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(pos);
             writer.WriteValueSafe(yaw);
             writer.WriteValueSafe(velocity);
+            writer.WriteValueSafe(grounded);
             _nm.CustomMessagingManager.SendNamedMessage("SubmitMove", NetworkManager.ServerClientId, writer);
         }
 
@@ -926,6 +934,7 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Vector3 pos);
             reader.ReadValueSafe(out float yaw);
             reader.ReadValueSafe(out Vector3 velocity);
+            reader.ReadValueSafe(out bool grounded);
 
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var unit)) return;
             if (!AcceptMove(slot, unit, pos, yaw, velocity))
@@ -935,16 +944,25 @@ namespace TumbangPreso.Net
                 return;
             }
 
-            ApplyUnitMove(slot, pos, yaw, velocity);
+            ApplyUnitMove(slot, pos, yaw, velocity, grounded);
             SyncUnitTransformClientRpc(slot, pos, yaw, velocity);
         }
 
-        private static void ApplyUnitMove(int slot, Vector3 pos, float yaw, Vector3 velocity)
+        /// <summary>
+        /// ⚠️ THIS IS WHAT MAKES THE RELAY HONEST. Storing the owner's `grounded` onto the host's
+        /// copy is what lets `SyncUnitTransformClientRpc` read `unit.IsGrounded` off the unit for
+        /// EVERY seat, host-driven and client-driven alike, exactly as it already reads stun and
+        /// stamina. Without this the relay would send the host's stale false back out to
+        /// everybody and the pose would be wrong on three screens instead of one.
+        /// </summary>
+        private static void ApplyUnitMove(int slot, Vector3 pos, float yaw, Vector3 velocity,
+                                          bool grounded)
         {
             var unit = Unit(slot);
             if (unit == null) return;
 
-            unit.ApplyNetworkTransform(pos, yaw, velocity, reconcileLocal: false, force: true);
+            unit.ApplyNetworkTransform(pos, yaw, velocity, grounded,
+                                       reconcileLocal: false, force: true);
         }
 
         public void SyncUnitTransformClientRpc(int slot, Vector3 pos, float yaw, Vector3 velocity)
@@ -960,6 +978,12 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(pos);
             writer.WriteValueSafe(yaw);
             writer.WriteValueSafe(velocity);
+
+            // ⚠️ READ OFF THE UNIT, LIKE EVERY OTHER FIELD BELOW, WHICH IS ONLY CORRECT BECAUSE
+            // `ApplyUnitMove` HAS ALREADY STORED THE OWNER'S VALUE. For a host-driven body this
+            // is the real simulated flag; for a client-driven one it is what that client last
+            // submitted. Inferring it from `velocity` on the receiving end is what this replaced.
+            writer.WriteValueSafe(unit.IsGrounded);
             writer.WriteValueSafe(unit.StunLeft);
             writer.WriteValueSafe(unit.StunTotal);
             writer.WriteValueSafe((int)unit.StunElement);
@@ -987,6 +1011,7 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Vector3 pos);
             reader.ReadValueSafe(out float yaw);
             reader.ReadValueSafe(out Vector3 velocity);
+            reader.ReadValueSafe(out bool grounded);
             reader.ReadValueSafe(out float stunLeft);
             reader.ReadValueSafe(out float stunTotal);
             reader.ReadValueSafe(out int stunElement);
@@ -1004,7 +1029,7 @@ namespace TumbangPreso.Net
             if (unit == null) return;
 
             bool local = slot == NetAuthority.LocalSlot;
-            unit.ApplyNetworkTransform(pos, yaw, velocity, reconcileLocal: local);
+            unit.ApplyNetworkTransform(pos, yaw, velocity, grounded, reconcileLocal: local);
             unit.ApplyNetworkState(stunLeft, stunTotal, (StunElement)stunElement,
                                    stunBreakPresses, stunMashPresses,
                                    tripLeft, tripTotal, tripMashPresses, tripMashRemoved,

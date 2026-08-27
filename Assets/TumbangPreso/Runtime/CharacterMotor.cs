@@ -157,6 +157,13 @@ namespace TumbangPreso
         private Vector3 _externalVelocity;
 
         private bool _networkTargetKnown;
+
+        /// <summary>
+        /// The owner's own `IsGrounded`, off the wire. See <see cref="StepNetworkReplica"/> for
+        /// why this is transmitted rather than worked out from the replicated velocity.
+        /// </summary>
+        private bool _networkGrounded;
+
         private Vector3 _networkTargetPosition;
         private Vector3 _networkTargetVelocity;
         private float _networkTargetYaw;
@@ -689,7 +696,8 @@ namespace TumbangPreso
             {
                 if (_playerSlot == NetAuthority.LocalSlot)
                     Net.MatchRpc.Instance?.SubmitMoveServerRpc(
-                        _playerSlot, transform.position, transform.eulerAngles.y, _velocity);
+                        _playerSlot, transform.position, transform.eulerAngles.y, _velocity,
+                        _grounded);
 
                 return;
             }
@@ -766,9 +774,15 @@ namespace TumbangPreso
         /// accepts a correction when prediction has drifted far enough to be visible.
         /// </summary>
         public void ApplyNetworkTransform(Vector3 position, float yaw, Vector3 velocity,
-                                          bool reconcileLocal, bool force = false)
+                                          bool grounded, bool reconcileLocal, bool force = false)
         {
             _velocity = velocity;
+
+            // ⚠️ ASSIGNED BEFORE THE RECONCILE RETURN BELOW, AND THAT ORDERING MATTERS. A body
+            // whose owner is predicting it skips the rest of this method whenever the error is
+            // small, which is most frames; the pose it keeps is its own, but the grounded bit is
+            // still the owner's truth and `StepNetworkReplica` never runs for it anyway.
+            _networkGrounded = grounded;
 
             float error = Vector3.Distance(transform.position, position);
             if (reconcileLocal && error < 1.25f) return;
@@ -791,11 +805,11 @@ namespace TumbangPreso
         {
             if (!_networkTargetKnown) return;
 
-            // ⚠️⚠️ A REPLICA IS GROUNDED UNLESS ITS VERTICAL VELOCITY SAYS OTHERWISE, AND
-            // WITHOUT THIS EVERY REMOTE BODY IN THE GAME WAS FROZEN IN THE FALLING POSE.
-            // `_grounded` is written only by `ApplyGravity` in the local simulation, and this
-            // branch returns before ever reaching it, so on a replica it stayed FALSE for the
-            // whole match. `Visual.CharacterAnimator.ClipFor` asks `IsGrounded` FIRST:
+            // ⚠️⚠️ TRANSMITTED, NOT INFERRED, AND THE INFERENCE IS GONE RATHER THAN KEPT AS A
+            // FALLBACK. `_grounded` is written only by `ApplyGravity` in the local simulation
+            // and this branch returns before ever reaching it, so on a replica it would other-
+            // wise stay FALSE for the whole match. `Visual.CharacterAnimator.ClipFor` asks
+            // `IsGrounded` FIRST:
             //
             //     if (!_motor.IsGrounded) return _motor.Velocity.y > 0.5f ? Jump : Fall;
             //
@@ -803,25 +817,19 @@ namespace TumbangPreso
             // yourself. 🧑 2026-08-28, from the host's screen: *"the nonhosts that join can move
             // and interact but theyre stuck at this pose, they cant do animations and shit"*.
             //
-            // ⚠️ THE VELOCITY IS ALREADY REPLICATED, which is what makes this an inference and
-            // not a guess: `ApplyNetworkTransform` assigns `_velocity` from the wire, and the
-            // thresholds below are the animator's own (0.5 is its Jump cut). A body at the apex
-            // of a jump reads grounded for a frame or two, which is invisible at 50 Hz.
+            // ⚠️⚠️ THE VELOCITY WINDOW THAT USED TO STAND HERE WAS WRONG IN THE MIDDLE OF A
+            // JUMP, WHICH IS THE ONE PLACE IT MATTERED. It read grounded for any vertical
+            // velocity in (-2.5, 0.5), and a jump passes through that whole band on the way up
+            // AND on the way down. At `Balance.Gravity` that is not "a frame or two at the
+            // apex" as the note claimed: it is about 0.12 s, six fixed steps, twice per jump.
+            // Every remote jump therefore broke into Jump, a flicker of Idle or Walk at the
+            // top, then Fall. 🧑 2026-08-28: *"joining players bug pag nag jjump"*.
             //
-            // ⚠️ THE HONEST FIX IS TO TRANSMIT IT, and it is written up rather than done here.
-            // The owner of a body knows its real `IsGrounded` and nobody else does: the HOST's
-            // copy of a client-driven body has the same stale false this fixes, so `SyncUnit`
-            // alone cannot carry the truth. It needs a bool on `SubmitMove` as well, which the
-            // host then relays. Two payloads and a protocol bump, mid-playtest, for a pose.
-            // `docs/TODO.md` § 64.
-            //
-            // ⚠️⚠️ THE LOWER BOUND IS `GroundedRestVelocityY`, NOT -0.5. A standing unit is
-            // never simulated at exactly 0: `ApplyGravity` holds it at that constant so
-            // `CharacterController.isGrounded` does not flicker, and that value is exactly
-            // what gets transmitted. A window that stopped at -0.5 excluded every idle body on
-            // every replica from ever reading grounded — see the note on the constant.
-            _grounded = _networkTargetVelocity.y > GroundedRestVelocityY - 0.5f
-                     && _networkTargetVelocity.y < 0.5f;
+            // The owner of a body is the only thing that knows the truth, so both payloads now
+            // carry it: a client puts its own `IsGrounded` on `SubmitMove`, the host stores that
+            // onto its copy, and `SyncUnit` relays `unit.IsGrounded` outward for every seat.
+            // `docs/TODO.md` § 63.4.
+            _grounded = _networkGrounded;
 
             // Lead by one render-sized beat so a 50 Hz stream does not look one packet behind.
             Vector3 target = _networkTargetPosition + _networkTargetVelocity * 0.02f;
