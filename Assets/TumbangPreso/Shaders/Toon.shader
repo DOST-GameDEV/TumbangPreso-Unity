@@ -102,7 +102,7 @@ Shader "TumbangPreso/Toon"
         _Exposure ("Tonemap Exposure", Range(0.1, 4)) = 0.92
         _White ("Tonemap White", Range(0.5, 8)) = 1.9
 
-        _OutlineColor ("Outline Colour", Color) = (0.0156863, 0.0313725, 0.219608, 1)
+        _OutlineColor ("Outline Colour", Color) = (0.02, 0.02, 0.03, 1)
         _OutlineWidth ("Outline Width", Range(0, 0.2)) = 0.008
     }
 
