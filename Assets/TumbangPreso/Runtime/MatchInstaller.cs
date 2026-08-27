@@ -684,9 +684,23 @@ namespace TumbangPreso
 
                     if (up) { hud.ShowToast("LATA IS BACK UP", 1.2f); return; }
 
-                    hud.ShowToast(local == null ? "LATA DOWN"
-                                  : local.IsDefender ? "LATA DOWN  ·  RESET IT"
-                                  : "LATA DOWN  ·  RETRIEVE NOW", 1.6f);
+                    // ⚠️⚠️ THE KNOCKDOWN GETS NO TOAST, AND IT IS THE ONLY EVENT HERE THAT DOES
+                    // NOT. 🧑, 2026-08-27: *"repetitive lata down"*. Every other toast on this
+                    // object announces something with no other home on screen. This one landed
+                    // on top of `Hud.UpdateLataCard`, which turns the corner card orange and
+                    // reads LATA DOWN, and raises the centre-screen alert reading RETRIEVE NOW
+                    // or RESET IT NOW, both of them in the same frame and both of them for as
+                    // long as the can is over. Three surfaces, two of them saying the same two
+                    // words, is what a gameplay frame actually looked like.
+                    //
+                    // ⚠️ AND THE EVENT IS STILL ANNOUNCED, TWICE. `SetDownedFlash` above fires
+                    // the 0.45 s screen flash on this exact edge, and the alert appearing IS an
+                    // edge the eye catches. What is deleted is the third copy of the words, not
+                    // the notification.
+                    //
+                    // ⚠️ "LATA IS BACK UP" STAYS, because nothing else on screen says it: the
+                    // card goes quiet and the alert disappears, and a thing vanishing is not a
+                    // thing announcing itself.
                 };
             }
 
