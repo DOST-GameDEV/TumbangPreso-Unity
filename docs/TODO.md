@@ -5809,7 +5809,7 @@ evening, and the second owner is always the one that is missing a case.
 ⚠️ **The reason line itself now works.** `"Disconnected due to host shutting down."` is
 host-authored and unbracketed, so § 60.4's filter passes it through unchanged.
 
-### 62.2 ⚠️ OPEN: the client's seat wiring is CORRECT and it still could not move
+### 62.2 ✅ FIXED: the client's seat wiring was CORRECT, and the gate was `RoundActive`
 
 § 60.1 raised `SeatingChanged` from `ApplyAssignedSeat` so the arena would follow the seat, and the
 diagnostic added with it says the wiring is now right on the client:
@@ -5846,8 +5846,41 @@ added it.
    *"Practice freely, scores are paused. Press [R] when ready."* still on it, so the round had not
    begun in any of them.
 
-⚠️ **Do not fix any of these blind.** The host's log has never been read; both `Player.log` files
-on the machine that has been reporting are the CLIENT's, because the host is the other laptop.
+✅ **IT WAS NONE OF THOSE THREE. IT WAS ITEM 3, THE FREE-ROAM WINDOW, AND IT IS A ONE-LINE
+ASYMMETRY.** `CharacterMotor` gates steering on `CanAct()`, which is `RoundActive && !IsStunned`,
+and **`CharacterMotor.RoundActive` DEFAULTS TO TRUE**. Nothing writes it until `BeginRound` or
+`EndRound`, and that default is exactly what makes the pre-round window work: the DIRECTOR says
+the round is not active, correctly, because nothing scores yet, while the four BODIES say they may
+act, so everybody walks around the arena they are about to play in.
+
+`RoundDirector.ApplySnapshot` stamped the director's `false` onto all four bodies, at 5 Hz, before
+the first round had ever begun. The host's bodies kept the default `true`. **So the host walked
+around the free-roam window and every client stood frozen**, camera still turning because that is
+local and ungated. Every screenshot of this bug has *"Practice freely, scores are paused"* on it.
+
+⚠️⚠️ **AND `[NetSeat]` IS WHAT SENT THIS LOOKING IN THE RIGHT PLACE.** `reader=True simulated=True`
+ruled out §§ 53.1 and 60.1 outright: the keyboard was on the right body and the motor was
+simulating it locally. Without that line the next move would have been a third guess at the input
+wiring, which is where the two previous fixes had already been spent.
+
+**Fixed** by stamping `RoundActive` onto bodies only once the match is actually running, which is
+exactly when the host writes it too. All four states agree now: before the match both sides leave
+the default true; in a round both are true; in an intermission `EndRound` sets the host's and this
+sets the client's; after the match `MatchEnded` reaches `EndRound` on both (§ 57.1).
+
+✅ **Item 1 is fixed anyway, on its own merits.** `HostLateJoin` opened with
+`if (!_spawned.Add(peerId)) return;`, and that set exists to send the world snapshot ONCE, which
+is a bandwidth question. Handing a chair over is a correctness one and was sharing the return, so
+a peer already in the set kept the host's bot on its seat and the host went on transmitting its
+copy over whatever that player submitted. `HostTakeSeatBackFromBot` runs unconditionally now and
+only the snapshot stays gated. It is reachable: `HandleIdentify` calls it on EVERY identify.
+
+⚠️ **Item 2 is still open.** `AcceptMove` records `_lastAcceptedMoveAt[slot]` only on ACCEPT, so
+after a rejection `dt` stops growing and the allowance stops opening, and the correction it sends
+back is applied with `reconcileLocal: true`, which `ApplyNetworkTransform` DISCARDS under 1.25 m.
+A body 0.2 m out of sync is refused by the host forever and never corrected on the client.
+**Done looks like:** stamping the time on a rejection too, and forcing the correction the host
+sends after refusing a move. Not reproduced, so not fixed blind.
 
 ### 62.3 The seat log answers every seat now, not just the local one
 
