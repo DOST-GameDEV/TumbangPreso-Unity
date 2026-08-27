@@ -104,11 +104,18 @@ namespace TumbangPreso.Visual
 
             // Sum every normal that lands on a given position, then hand each vertex the sum for
             // its own position. Two passes rather than an O(n²) neighbour search.
+            //
+            // ⚠️ THE CELL IS COMPUTED ONCE PER VERTEX AND KEPT, not recomputed in the second
+            // pass. Quantising is three `RoundToInt`s and a tuple, and the second pass was paying
+            // for all of it again on every vertex of every rig in the game to look up a key it
+            // had already built. The array costs 12 bytes a vertex for the length of one bake.
+            var cells = new (int, int, int)[vertices.Length];
             var sums = new Dictionary<(int, int, int), Vector3>(vertices.Length);
 
             for (int i = 0; i < vertices.Length; i++)
             {
                 var cell = Cell(vertices[i]);
+                cells[i] = cell;
                 sums.TryGetValue(cell, out var running);
                 sums[cell] = running + normals[i];
             }
@@ -117,7 +124,7 @@ namespace TumbangPreso.Visual
 
             for (int i = 0; i < vertices.Length; i++)
             {
-                var summed = sums[Cell(vertices[i])];
+                var summed = sums[cells[i]];
 
                 // ⚠️ A ZERO SUM IS REAL AND MUST FALL BACK. Two faces meeting at exactly 180°
                 // (a flat card, a zero-thickness fin) cancel to nothing, and normalising that
@@ -130,6 +137,27 @@ namespace TumbangPreso.Visual
             }
 
             mesh.tangents = tangents;
+        }
+
+        /// <summary>
+        /// Drop a mesh from the welded set, for a caller that is about to destroy it.
+        ///
+        /// ⚠️⚠️ AN ENTITY ID IS ONLY UNIQUE WHILE THE OBJECT IT NAMES IS ALIVE, AND EVERY
+        /// RUNTIME-BUILT MESH IN THIS GAME IS SHORT-LIVED. `ViewmodelArms` builds a fresh box or
+        /// cylinder for every accessory on every character change and throws the old set away, so
+        /// the set would otherwise accumulate one dead id per accessory for the whole session and
+        /// any id the engine handed out a second time would make `Weld` return early on a mesh it
+        /// had never seen. The symptom is the worst kind: an outline that tears on one arm, in
+        /// one session, after enough character switches, and nowhere else.
+        ///
+        /// ⚠️ IT DOES NOT DESTROY ANYTHING. Ownership of a runtime mesh belongs to whoever
+        /// created it; this only forgets that it was welded.
+        /// </summary>
+        public static void Forget(Mesh mesh)
+        {
+            if (mesh == null) return;
+
+            Welded.Remove(mesh.GetEntityId());
         }
 
         private static (int, int, int) Cell(Vector3 v) => (
