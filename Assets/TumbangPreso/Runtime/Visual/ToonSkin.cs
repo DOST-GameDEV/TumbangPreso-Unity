@@ -36,9 +36,24 @@ namespace TumbangPreso.Visual
         /// scaled by PERSON_SCALE 2.38, so the world width it renders at is this.</summary>
         public const float PersonOutlineWidth = 0.008f * 2.38f;
 
-        /// <summary>`person_outline.tres`: a very dark navy rather than pure black, so the
-        /// border sits in the same palette as the rest of the game.</summary>
-        public static readonly Color Ink = new Color(0.0156863f, 0.0313725f, 0.219608f, 1.0f);
+        /// <summary>
+        /// The ink every outline in the game is drawn in, characters, props and world alike.
+        ///
+        /// ⚠️⚠️ NEAR BLACK, AND THIS REPLACED `person_outline.tres`'s DARK NAVY ON REQUEST.
+        /// 🧑 2026-08-28: *"can you make the outline black or near black"*. The old value was
+        /// (0.0157, 0.0314, 0.2196), and its note argued that a very dark navy rather than pure
+        /// black keeps the border inside the game's palette. That reasoning was sound while the
+        /// tonemap was crushing everything: against a frame whose white could not exceed 0.648,
+        /// a navy edge and a black edge were nearly the same pixel. With the curve corrected the
+        /// frame is much brighter, and at that contrast the blue in the border became visible as
+        /// blue rather than reading as ink.
+        ///
+        /// ⚠️ NOT PURE BLACK, AND THE REMAINING TRACE IS DELIBERATE. (0.02, 0.02, 0.03) keeps a
+        /// hair more blue than red so the edge still sits in the same cool family as the rest of
+        /// the art, while being far too dark to name a colour. Pure zero is available if that is
+        /// wanted; this is one step short of it on purpose.
+        /// </summary>
+        public static readonly Color Ink = new Color(0.02f, 0.02f, 0.03f, 1.0f);
 
         private static readonly int ColorId = Shader.PropertyToID("_Color");
         private static readonly int UsePaletteId = Shader.PropertyToID("_UsePalette");

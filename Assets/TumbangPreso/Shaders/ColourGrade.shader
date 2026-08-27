@@ -71,7 +71,36 @@ Shader "TumbangPreso/ColourGrade"
 
                 // Narkowicz's ACES fit, scaled so the white point lands where Godot's does.
                 // Transcribed from Toon.shader, which is where it used to live.
-                half3 x = colour * 0.6h / max(0.001h, _White / 1.9h);
+                //
+                // ⚠️⚠️ THE PRE-SCALE IS 1.96, NOT 0.6, AND THE 0.6 IS WHY THE WHOLE GAME LOOKED
+                // DARK AND UNVIBRANT ON A MAP FULL OF COLOUR. 🧑 2026-08-28, three times.
+                //
+                // Work the old number through with the values both arenas actually ship
+                // (`_Exposure` 0.92, `_White` 1.9, so the divisor is 1.0):
+                //
+                //     x        = colour * 0.92 * 0.6 = colour * 0.552
+                //     mapped(0.5 linear)             = 0.409
+                //     mapped(1.0 linear)             = 0.648
+                //
+                // A FULLY LIT WHITE SURFACE RENDERED AT 65 PER CENT GREY. Nothing in the game
+                // could reach white, at any brightness, under any light, which is exactly what
+                // "dark and unvibrant" describes. It applies to every pixel, so a colourful map
+                // still read muted.
+                //
+                // ⚠️ THE FAULT IS A CONVENTION MISMATCH, NOT A WRONG EXPOSURE. Godot's ACES path
+                // multiplies by an exposure BIAS well above 1 before its curve, so the `0.92` the
+                // arenas author lands far brighter there. The port carried the exposure number
+                // across but not the scaling convention around it, and then stacked Narkowicz's
+                // own 0.6 on top, so the two engines disagreed by roughly 3.5x at the top end
+                // while both claiming "exposure 0.92". The authored 0.92 was never the problem
+                // and is deliberately left alone.
+                //
+                // ⚠️ 1.96 IS SOLVED FOR, NOT PICKED. Narkowicz returns 0.902 at x = 1.8, so
+                // holding white at about 0.90 needs `0.92 * K = 1.8`, giving K = 1.957. White now
+                // lands at 0.90 and mid grey at 0.71 instead of 0.41. It stays a ROLL-OFF rather
+                // than a clip: values above 1.0 still compress instead of flattening, which is the
+                // whole reason there is a tonemap here at all.
+                half3 x = colour * 1.96h / max(0.001h, _White / 1.9h);
                 half3 mapped = (x * (2.51h * x + 0.03h)) / (x * (2.43h * x + 0.59h) + 0.14h);
 
                 return saturate(mapped);

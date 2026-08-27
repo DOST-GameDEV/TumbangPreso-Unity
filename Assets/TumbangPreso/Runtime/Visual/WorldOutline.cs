@@ -81,7 +81,7 @@ namespace TumbangPreso.Visual
         [SerializeField] private bool _prototypeEnabled;
 
         [Header("Ink")]
-        [SerializeField] private Color _colour = new Color(0.0156863f, 0.0313725f, 0.219608f, 1.0f);
+        [SerializeField] private Color _colour = new Color(0.02f, 0.02f, 0.03f, 1.0f);
         [SerializeField, Range(0.0f, 1.0f)] private float _opacity = 1.0f;
 
         // ------------------------------------------------------------------ § THE FAR PLANE

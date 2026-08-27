@@ -43,7 +43,7 @@ Shader "TumbangPreso/WorldOutline"
         // writes it through `SetColor`, which applies the one sRGB to linear conversion Unity
         // applies to `_OutlineColor` on the toon material, so the two borders are the same
         // number in the frame rather than merely the same number in the inspector.
-        _OutlineColor ("Ink", Color) = (0.0156863, 0.0313725, 0.219608, 1)
+        _OutlineColor ("Ink", Color) = (0.02, 0.02, 0.03, 1)
 
         _Thickness ("Edge Thickness (pixels)", Range(0.5, 4)) = 1.0
         _Opacity ("Opacity", Range(0, 1)) = 1.0
