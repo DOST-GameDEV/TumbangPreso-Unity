@@ -1675,6 +1675,21 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
+        /// Two triangles across four corners, in order.
+        ///
+        /// ⚠️ THE WINDING HERE DOES NOT DECIDE WHICH WAY THE FACE POINTS. Every builder in this
+        /// file finishes through <see cref="FacetedOriented"/>, which turns each triangle against
+        /// a reference point afterwards, so a caller may list its corners in whichever order
+        /// reads clearly. That is the whole reason that helper exists; see its note.
+        /// </summary>
+        private static void Quad(System.Collections.Generic.List<Vector3> tris,
+                                 Vector3 a, Vector3 b, Vector3 c, Vector3 d)
+        {
+            tris.Add(a); tris.Add(b); tris.Add(c);
+            tris.Add(a); tris.Add(c); tris.Add(d);
+        }
+
+        /// <summary>
         /// `Faceted`, with every triangle turned to face AWAY from <paramref name="inside"/>.
         ///
         /// ⚠️⚠️ IT IS HOW THE FIVE BUILDERS ABOVE CANNOT SHIP INSIDE OUT, AND `Fan`'s note is the
@@ -1873,8 +1888,26 @@ namespace TumbangPreso.Visual
         /// player could stand in is a hole the bots will path into, and `MapGeometryCheck`
         /// refuses geometry that floats or buries. The read comes from the tipped slabs.
         /// </summary>
+        /// <param name="thickness">
+        /// How thick each slab is, in mesh units, measured along its own face normal. 0 keeps
+        /// the original single-quad plate.
+        ///
+        /// ⚠️⚠️ THESE WERE FLAT QUADS AND 🧑 SPOTTED IT FROM A ZOOMED FRAME ON 2026-08-28:
+        /// *"i thing the ashy grey rocks should be 3d prisms instead of flat planes"*. He is
+        /// right, and it is the one place in this effect where flat was actually a lie rather
+        /// than a simplification. The crust and the bed are GROUND, so a plate is honest for
+        /// them; these are the pieces that came UP, and the whole claim of the motif is that the
+        /// material went somewhere. A slab with no thickness is a piece of paper standing on
+        /// edge, and at eye height, which is where this effect is mostly seen, a leaning quad
+        /// turns edge-on and vanishes at exactly the angle it should be most solid.
+        ///
+        /// ⚠️ SAFE TO CHANGE BECAUSE THIS BUILDER IS NOT SHARED. `Wedges` draws Nemu's void band
+        /// and the ground reticle's crown as well as Dante's crust, so its geometry is off
+        /// limits; `Upheaval` is reached only by `HeroHazards.SpawnUpheaval`, which is reached
+        /// only by `SpawnCrackedLavaDecal`. Checked rather than assumed.
+        /// </param>
         public static Mesh Upheaval(int slabs = 8, float depth = 0.10f, float rise = 0.34f,
-                                    int seed = 0)
+                                    int seed = 0, float thickness = 0.0f)
         {
             slabs = Mathf.Clamp(slabs, 4, 16);
 
@@ -1935,8 +1968,45 @@ namespace TumbangPreso.Visual
                 Vector3 tipL = Ring(a - half * 0.7f, 0.62f + 0.34f * lean, rise * lean);
                 Vector3 tipR = Ring(a + half * 0.7f, 0.62f + 0.34f * lean, rise * lean);
 
-                tris.Add(hingeL); tris.Add(hingeR); tris.Add(tipR);
-                tris.Add(hingeL); tris.Add(tipR); tris.Add(tipL);
+                if (thickness <= 0.0f)
+                {
+                    tris.Add(hingeL); tris.Add(hingeR); tris.Add(tipR);
+                    tris.Add(hingeL); tris.Add(tipR); tris.Add(tipL);
+                    continue;
+                }
+
+                // ⚠️ THE SLAB IS EXTRUDED ALONG ITS OWN FACE NORMAL, NOT ALONG A WORLD AXIS.
+                // These lean by a per-slab amount, so a fixed offset would give an upright slab
+                // its full thickness and a flat one almost none, which is the same shape problem
+                // in a different disguise. Taking the normal from the quad the slab already
+                // describes means every one of them is the same slab of road seen at a
+                // different angle.
+                Vector3 face = Vector3.Cross(hingeR - hingeL, tipL - hingeL);
+
+                // A degenerate slab (zero width or zero lean) has no plane to extrude along.
+                // It cannot happen with the ranges above, but a mesh with NaNs in it is a black
+                // screen rather than a bad-looking rock, so it is worth the branch.
+                if (face.sqrMagnitude < 1e-8f)
+                {
+                    tris.Add(hingeL); tris.Add(hingeR); tris.Add(tipR);
+                    tris.Add(hingeL); tris.Add(tipR); tris.Add(tipL);
+                    continue;
+                }
+
+                Vector3 off = face.normalized * thickness;
+
+                Vector3 hingeL2 = hingeL + off, hingeR2 = hingeR + off;
+                Vector3 tipL2 = tipL + off, tipR2 = tipR + off;
+
+                // Front and back.
+                Quad(tris, hingeL, hingeR, tipR, tipL);
+                Quad(tris, hingeL2, hingeR2, tipR2, tipL2);
+
+                // The four walls that make it a solid rather than two plates.
+                Quad(tris, hingeL, hingeL2, tipL2, tipL);
+                Quad(tris, hingeR, hingeR2, tipR2, tipR);
+                Quad(tris, tipL, tipL2, tipR2, tipR);
+                Quad(tris, hingeL, hingeL2, hingeR2, hingeR);
             }
 
             Random.state = state;
