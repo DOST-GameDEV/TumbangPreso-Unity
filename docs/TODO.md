@@ -5392,6 +5392,109 @@ than from a search. Nothing here is speculation: each is a specific line that wa
 
 ---
 
+## 57 · The match ends on one machine, and three other events never reach a client at all
+
+A read of the client's whole event path, 2026-08-27, after §§ 52 to 56. **They are all the same
+shape and it is § 38's thesis again: the host cannot see any of them.** `MatchDirector` and
+`RoundDirector` raise their events from the methods that CHANGE the state, and every one of those
+methods is behind `SliceRunner`'s `NetAuthority.ShouldResolve()`. On a peer that is not the host
+the only thing that moves that state is `ApplySnapshot`, and `ApplySnapshot` raised nothing.
+
+### 57.1 ✅ FIXED: `MatchEnded` fired on exactly one machine in the room
+
+`MatchDirector.ApplySnapshot` assigned `_scores`, `RoundNumber` and `MatchInProgress` and raised
+no event. `AdvanceRound` and `BeginIntermission` are the only other writers and both are
+host-only, so on a client the match simply stopped being in progress and nothing noticed.
+
+**That is the whole end of the game, for everybody except the host:**
+
+* **`UI.MatchResult` shows itself from `MatchEnded` and from nothing else**, so a client never saw
+  the final standings. It stood in a dead arena.
+* ⚠️⚠️ **AND REMATCH LIVES ON THAT BOARD, SO THE ENTIRE PEER REMATCH VOTE WAS UNREACHABLE FOR
+  ANYONE BUT THE HOST.** § 1 has been open since 2026-08-25 and § 52 rewrote its counting rules;
+  none of it could ever have run, because a client had no button to press and `RematchTally` and
+  `BeginRematch` arrived at a screen that was never raised. `NetAutomationProbe`'s
+  `-tp-autorematch` waits on `MatchResult.IsVisible`, which on a client was false forever.
+* `SliceRunner.OnMatchEnded` never ran there, so the round rules were never stopped, and
+  `MatchInstaller`'s `_wonVoice` never played the announcer's win line.
+
+**Fixed** by raising `MatchEnded` on the **true-to-false edge** of `MatchInProgress` inside
+`ApplySnapshot`, off the replicated scores, so the winner is the host's answer rather than a
+client's arithmetic. The edge matters: a joining client is told `false` before a match starts and
+`false` again after one ends, so raising on the VALUE would show the result board to somebody who
+has just walked into a lobby.
+
+⚠️ **The host reaches `ApplySnapshot` too**, through `MatchRpc.HostSyncPeer`, and it is a no-op
+there by construction: it hands the host its own `MatchInProgress` back, so the edge cannot fire.
+
+⚠️ **And the final `inProgress = false` does travel, which this fix depends on.**
+`MatchResult.OnMatchWon` stops the clock with `Time.timeScale = 0`, and `MatchRpc.FixedUpdate` is
+what broadcasts `SyncWorld`, so a frozen host would never send the packet that says it is over.
+It is already guarded: *"SINGLE PLAYER PAUSES, NETWORKED DOES NOT. A networked peer that froze its
+own time would stop answering the host."* Do not remove that guard.
+
+### 57.2 ⚠️ OPEN: the intermission card never appears on a client
+
+`IntermissionStarted` is raised only by `BeginIntermission`, host-only, so `UI.RoleSwapCard` never
+runs on a client and a joiner sees no end-of-round card, no rotation announcement and no
+standings between rounds.
+
+⚠️⚠️ **AND IT CANNOT BE FIXED THE WAY 57.1 WAS, WHICH IS WHY IT IS ITS OWN ITEM RATHER THAN THE
+SECOND HALF OF THAT ONE.** `IntermissionStarted` and `RoundStarted` are both wired to
+`SliceRunner`, and **both of its handlers mutate the world**: `OnRoundStarted` calls `ResetWorld`,
+which teleports all four bodies and hands out the tsinelas, and `OnIntermission` additionally
+schedules `Advance`, which calls `AdvanceRound`. Raising either on a client would give every peer
+its own second authority over the round number, and four peers each advancing a match is four
+matches, which `VISION.md` § 4 forbids in its first rule.
+
+**Done looks like:** the CARD getting a signal that is not the runner's. `RoleSwapCard` already
+has a public entry, `ShowForShot(nextRound, nextDefenderSlot)`, written for the capture pass and
+exactly the right shape. The signal itself can be derived on the client with no wire change, from
+`RoundNumber` increasing while `MatchInProgress` is still true, or carried explicitly by adding
+`IsWarmupBuffer` to the `SyncWorld` payload (a protocol bump, both halves, and the audit).
+**Whichever is chosen, it must not go through `MatchDirector.IntermissionStarted`.**
+
+### 57.3 ⚠️ OPEN: no score event reaches a client, so scoring is silent there
+
+`MatchDirector.Scored` is raised only inside `AddScore`, which opens with
+`if (!NetAuthority.ShouldResolve()) return;`. There is **no score message on the wire** (44 named
+messages, and none of them is one). So on every client:
+
+* no `score_award` sting, on any award or penalty;
+* no `+100  LATA DOWN` toast, so a player is never told what they were paid for;
+* no scoreboard row pulse, because `Hud.OnScored` is what sets `_scorePulses`.
+
+The numbers simply appear, 200 ms later, via `SyncWorld`. **In a game whose entire feedback loop
+is scoring, three of the four things that acknowledge a point are host-only.**
+
+⚠️ **It cannot be recovered by diffing the replicated scores**, which is the obvious cheap fix:
+the toast and the sting both need the `ScoreEvent` KIND (`MatchRules.PointsFor(e)` and the label),
+and a score delta does not carry it. Two events in one 200 ms window would also collapse into one.
+
+**Done looks like:** a host-to-all `Score` message carrying `(slot, ScoreEvent)`, sent from
+`AddScore` beside `Scored?.Invoke`, and raising `Scored` on the receiving peer. It is the shape
+`BroadcastStyle` already uses for Street Hype (§ 38.15), which was the same fault for the same
+reason: Classic's whole bottom-of-screen identity was host-only until somebody looked.
+
+### 57.4 Checked and NOT broken, so nobody re-derives it
+
+* **The lata's knockdown and restoration DO reach clients.** `Lata.ApplySnapshotState` raises
+  `UprightChanged` itself, so the HUD's centre alert and card both fire on a joiner. It raises it
+  on every apply rather than on the edge, which is free: `Hud` guards on `_lataUprightShown`.
+* **Ability cooldowns and ultimate charge are replicated** by `SyncAbility` at 5 Hz, so the fact
+  that `HeroAbilitySystem.ResetKit` is only reached from `ResetWorld` (host-only) does not strand
+  a client's kit at a round boundary: it converges within 200 ms. ⚠️ The one part that does NOT
+  converge is `ClearBuffers`, so a key pressed in the last frames of a round can come out in the
+  next one on a client. The press still goes to the host as a request and is re-checked there, so
+  it is a presentation oddity rather than an authority hole. Not fixed.
+* **Street Hype reaches the one peer it belongs to** (`BroadcastStyle`, per-peer rather than
+  broadcast, because `Hud.ApplyStyle` refuses any slot that is not local).
+* **The prop stream already sends only what changed**, with a twice-a-second keepalive so a joiner
+  who missed the packet that said "the can went over" is wrong for at most half a second.
+
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**
