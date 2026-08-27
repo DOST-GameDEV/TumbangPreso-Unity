@@ -81,15 +81,13 @@ namespace TumbangPreso
         /// <summary>
         /// Any peer to the host: "I am ready."
         ///
-        /// ⚠️ THE HOST'S OWN PRESS ARRIVES HERE TOO, and in Godot it came through with a
-        /// sender id of 0 rather than the host's real id. Resolve it at the door rather than
-        /// adding a second code path, or the host can never satisfy its own gate.
+        /// ⚠️⚠️ THE ID IS A TRANSPORT PEER ID, NEVER A SEAT. NGO client id 0 is the host's real
+        /// identity. Remapping it to `LocalSlot` makes a host in seat 1 collide with client 1,
+        /// so two ready peers occupy one set entry and the countdown never opens.
         /// </summary>
         public void DeclareReady(int peerId)
         {
             if (!NetAuthority.IsHost || !AwaitingNetReady) return;
-
-            if (peerId == 0) peerId = NetAuthority.LocalSlot;
 
             if (!_netReady.Add(peerId)) return;   // idempotent
 
@@ -113,10 +111,19 @@ namespace TumbangPreso
             if (_netReady.Count >= ExpectedReadyCount()) BeginNetCountdown();
         }
 
+        /// <summary>
+        /// ⚠️⚠️ `PlayingPeerCount` WANTS A PEER ID AND WAS BEING HANDED A SEAT. Its argument is
+        /// only there so the local peer still counts while its own spectator flag is in flight,
+        /// and it compares that argument against `PeerRecord.PeerId`. Passing `LocalSlot` made
+        /// the comparison land on whichever CLIENT happened to share a number with this peer's
+        /// chair, so a host in seat 1 forgave a spectating client 1 and a spectating host in
+        /// seat 1 was itself dropped from its own quorum. Same fault class as the peer-versus-seat
+        /// collision in `DeclareReady` above, one call frame further out.
+        /// </summary>
         private int ExpectedReadyCount()
         {
             var lobby = Net.NetSession.Instance?.Lobby;
-            return lobby?.PlayingPeerCount(NetAuthority.LocalSlot) ?? 1;
+            return lobby?.PlayingPeerCount(NetAuthority.LocalPeerId) ?? 1;
         }
 
         private void RaiseNetReady()
@@ -167,8 +174,28 @@ namespace TumbangPreso
             map?.Enable();
         }
 
+        /// <summary>
+        /// ⚠️⚠️ A READY PRESS IS HELD UNTIL IT IS ACTUALLY DELIVERED. `NetAuthority.IsNetworked`
+        /// is `NetworkManager.IsListening`, which goes true the moment `StartClient` is called
+        /// and not when the connection is approved, so a press made during the join window was
+        /// written to a transport with nowhere to send it. The prompt cleared, the gesture
+        /// played, and the host never heard about it. Nothing retried, so the player sat in a
+        /// lobby that was waiting for them.
+        ///
+        /// ⚠️ RESENDING IS FREE BECAUSE THE HOST'S SET IS IDEMPOTENT (`DeclareReady` above), so
+        /// the worst case of a retry that was not needed is one extra `Add` that changes nothing.
+        /// </summary>
+        private bool _readySendPending;
+
         private void Update()
         {
+            if (_readySendPending)
+            {
+                if (Net.MatchRpc.Instance != null &&
+                    Net.MatchRpc.Instance.DeclareReadyServerRpc())
+                    _readySendPending = false;
+            }
+
             if (_countingDown || !_awaitingLocalReady) return;
             if (_readyUp == null || !_readyUp.WasPressedThisFrame()) return;
 
@@ -178,8 +205,8 @@ namespace TumbangPreso
             // press IS the start.
             if (NetAuthority.IsNetworked)
             {
-                if (NetAuthority.IsHost) DeclareReady(NetAuthority.LocalSlot);
-                else Net.MatchRpc.Instance?.DeclareReadyServerRpc(NetAuthority.LocalSlot);
+                _readySendPending = Net.MatchRpc.Instance == null ||
+                                    !Net.MatchRpc.Instance.DeclareReadyServerRpc();
             }
             else
             {

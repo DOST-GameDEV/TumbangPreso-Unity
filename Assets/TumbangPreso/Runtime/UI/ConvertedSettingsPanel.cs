@@ -644,6 +644,12 @@ namespace TumbangPreso.UI
                     // rather than leave two verbs sharing one key.
                     target.RemoveBindingOverride(targetIndex);
 
+                    // ⚠️ THE LINE ABOVE IS A BINDING CHANGE TOO, even though it is undoing one,
+                    // and `Rebinding.Revision` is what lets a screen cache a key label. The net
+                    // effect is zero only when `TryRebind` goes on to accept; on a refusal this
+                    // is the write that restores the original key.
+                    Rebinding.Invalidate();
+
                     string conflict = Rebinding.TryRebind(_actions, action, control);
 
                     if (conflict == null)

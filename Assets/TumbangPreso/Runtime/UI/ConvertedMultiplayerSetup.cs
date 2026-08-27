@@ -42,7 +42,24 @@ namespace TumbangPreso.UI
             _net = NetSession.Ensure();
 
             SetText("BannerLabel", "MULTIPLAYER");
-            SetStatus("");
+
+            // ⚠️⚠️ WHY THE LAST JOIN ENDED, SHOWN ON THE SCREEN THAT CAN ACT ON IT. A refused
+            // approval arrives seconds after `Join` has already navigated to the lobby, so the
+            // reason used to be written to a status label on a screen nobody was looking at and
+            // the player was returned here with a blank line and no idea what happened. A
+            // protocol mismatch in particular is a thing they CAN fix, and it is the likeliest
+            // one whenever two machines were built from different commits.
+            //
+            // ⚠️ READ ONCE AND CLEARED, so a stale reason cannot sit over a later good join.
+            if (!string.IsNullOrWhiteSpace(NetSession.LastDisconnectReason))
+            {
+                SetStatus(NetSession.LastDisconnectReason);
+                NetSession.LastDisconnectReason = "";
+            }
+            else
+            {
+                SetStatus("");
+            }
 
             OnClick("HostOnlineButton", async () =>
             {

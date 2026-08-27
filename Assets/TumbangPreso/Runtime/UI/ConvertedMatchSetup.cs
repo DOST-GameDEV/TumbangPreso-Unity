@@ -30,6 +30,8 @@ namespace TumbangPreso.UI
         private Transform _characterPanel;
         private Button _spectate;
         private bool _localReady;
+        private int _readyCount;
+        private int _readyExpected;
 
         private GameObject _addressRow;
         private Text _addressText;
@@ -86,6 +88,14 @@ namespace TumbangPreso.UI
             if (net != null)
             {
                 net.Lobby.JoinCodeChanged += HandleJoinCodeChanged;
+
+                // ⚠⚠ THE SCREEN HAD NO WAY OF HEARING THAT IT HAD BEEN SEATED, OR THAT ANYBODY
+                // ELSE HAD. It drew the four rows once from `Start` and then redrew them only when
+                // a pick table happened to arrive, so the local "YOU" marker sat on P1 until
+                // something unrelated moved and a peer joining an empty chair changed nothing on
+                // screen. 🧑, 2026-08-27: "it also does not reflect when a person joins the
+                // lobby." Three separate facts move the seat rows and all three now say so.
+                net.SeatingChanged += HandleSeatingChanged;
             }
 
             _map = Mathf.Max(0, Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap));
@@ -123,6 +133,9 @@ namespace TumbangPreso.UI
             MatchRpc.OnMapChanged += HandleMapSynced;
             MatchRpc.OnDifficultyChanged += HandleDifficultySynced;
             MatchRpc.OnLobbyPicksSynced += HandleLobbyPicksSynced;
+            MatchRpc.OnLobbyRosterSynced += HandleLobbyRosterSynced;
+            MatchRpc.OnLobbyReadyChanged += HandleLobbyReadyChanged;
+            MatchRpc.OnModeChanged += HandleModeSynced;
             MatchRpc.OnMatchStarted += HandleMatchStarted;
 
             var s = Settings.SettingsStore.Current;
@@ -353,9 +366,28 @@ namespace TumbangPreso.UI
 
             if (GameLaunch.Spectator) return;
 
-            _localReady = !_localReady;
-            int localPeerId = net.LocalSlot >= 0 ? net.LocalSlot : 0;
-            MatchRpc.Instance?.DeclareReadyServerRpc(localPeerId);
+            // ⚠️ THE PRESS CARRIES ITS STATE, because the button is a toggle and the message was
+            // not: un-readying sent a second "I am ready", which the host's set swallowed as a
+            // duplicate, so the tick could be turned off on this screen and nowhere else.
+            //
+            // ⚠️⚠️ AND THE SCREEN DOES NOT CLAIM READY UNTIL THE HOST HAS ACTUALLY BEEN TOLD.
+            // `NetAuthority.IsNetworked` is true from `StartClient` onward rather than from
+            // connection approval, so a press made during the join window was written to a
+            // transport with nowhere to send it. This line flipped anyway and the label read
+            // "Ready! Waiting for other players..." to somebody the host was itself waiting for.
+            // `ReadyGate.Update` holds and resends the in-match press for the same reason.
+            bool wanted = !_localReady;
+            bool delivered = MatchRpc.Instance != null &&
+                             MatchRpc.Instance.DeclareReadyServerRpc(wanted);
+
+            if (!delivered)
+            {
+                SetStatus("Still connecting. Press again in a moment.");
+                Refresh();
+                return;
+            }
+
+            _localReady = wanted;
 
             if (_localReady)
             {
@@ -379,8 +411,7 @@ namespace TumbangPreso.UI
                 var readyGate = FindFirstObjectByType<ReadyGate>();
                 if (readyGate != null)
                 {
-                    int localPeerId = net.LocalSlot >= 0 ? net.LocalSlot : 0;
-                    readyGate.DeclareReady(localPeerId);
+                    MatchRpc.Instance?.DeclareReadyServerRpc();
                 }
                 else
                 {
@@ -462,6 +493,40 @@ namespace TumbangPreso.UI
             Refresh();
         }
 
+        private void HandleSeatingChanged() => Refresh();
+
+        private void HandleLobbyRosterSynced(LobbySeatInfo[] seats) => RefreshSeats();
+
+        private void HandleModeSynced(int mode) => Refresh();
+
+        private void HandleLobbyReadyChanged(int ready, int expected)
+        {
+            _readyCount = ready;
+            _readyExpected = expected;
+
+            // ⚠️ THE LOCAL TICK FOLLOWS THE HOST'S TALLY RATHER THAN A LOCAL BOOL. The button
+            // used to toggle a field this screen owned, so a press the host refused (a spectator,
+            // a peer with no seat) still drew as READY on the one screen that mattered.
+            var net = NetSession.Instance;
+            RefreshReadyLabel(net != null && net.IsNetworked);
+            RefreshSeats();
+        }
+
+        private void RefreshReadyLabel(bool isNetworked)
+        {
+            if (!isNetworked) return;
+
+            var primNode = Node("PrimaryButton");
+            if (primNode == null) return;
+
+            string label = GameLaunch.Spectator
+                ? "SPECTATING"
+                : _localReady ? "WAITING" : "READY";
+
+            if (_readyExpected > 1) label += $"   {_readyCount}/{_readyExpected}";
+            SetText("PrimaryButton", label);
+        }
+
         private void HandleLobbyPicksSynced(int[] table)
         {
             if (table == null) return;
@@ -486,10 +551,21 @@ namespace TumbangPreso.UI
                 button.onClick.RemoveAllListeners();
                 button.onClick.AddListener(() =>
                 {
+                    MenuSfx.Click();
+
+                    var session = NetSession.Instance;
+                    if (session != null && session.IsNetworked)
+                    {
+                        // ⚠⚠ IT ASKS THE HOST. `GameLaunch.SoloSeat` is read by the OFFLINE
+                        // practice match and by nothing else, so writing it here was the whole of
+                        // what pressing a seat in a networked lobby did. See the CHOOSING A CHAIR
+                        // section of `MatchRpc` for what the request does instead.
+                        MatchRpc.Instance?.RequestSeatServerRpc(seat);
+                        return;
+                    }
+
                     GameLaunch.SoloSeat = seat;
                     GameLaunch.Spectator = false;
-
-                    MenuSfx.Click();
                     RefreshSeats();
                 });
             }
@@ -551,7 +627,25 @@ namespace TumbangPreso.UI
                 var node = Node($"SeatButton{seat}");
                 var button = node == null ? null : node.GetComponent<Button>();
 
-                if (button != null) button.interactable = !GameLaunch.Spectator && (!isNetworked || NetAuthority.IsHost);
+                // ⚠⚠ EVERY PEER MAY PRESS AN EMPTY CHAIR, NOT ONLY THE HOST. The old rule was
+                // `!isNetworked || NetAuthority.IsHost`, which left all four rows dead on every
+                // client. Seating is host-authoritative because the request is, not because the
+                // button is: `LobbySession.TryTakeSeat` is what refuses a taken chair, a held one
+                // or a move made after the match has started.
+                //
+                // ⚠️ A SPECTATOR MAY PRESS ONE TOO, because pressing a free seat is how you
+                // stop spectating. What nobody may press is a chair somebody else is in, or their
+                // own chair, which would be a request that changes nothing.
+                if (button != null)
+                {
+                    bool occupiedByOther = isNetworked
+                        ? (seatInfo != null && seatInfo.Occupied && !mine)
+                        : false;
+
+                    button.interactable = isNetworked
+                        ? (!mine && !occupiedByOther && !(net != null && net.Lobby.MatchInProgress))
+                        : !GameLaunch.Spectator;
+                }
             }
 
             RefreshSpectate();
@@ -559,6 +653,25 @@ namespace TumbangPreso.UI
 
         private void ToggleSpectate()
         {
+            var net = NetSession.Instance;
+            if (net != null && net.IsNetworked)
+            {
+                // ⚠️ SPECTATING IS A SEAT REQUEST FOR "NO SEAT". It used to flip a local
+                // static, so the host went on counting the spectator towards the ready gate and
+                // went on building them a body, and a spectator wanting to play again had no way
+                // back into a chair.
+                if (GameLaunch.Spectator)
+                {
+                    int free = net.Lobby.FirstFreeSeat();
+                    if (free >= 0) MatchRpc.Instance?.RequestSeatServerRpc(free);
+                }
+                else
+                {
+                    MatchRpc.Instance?.RequestSeatServerRpc(-1);
+                }
+                return;
+            }
+
             GameLaunch.Spectator = !GameLaunch.Spectator;
             RefreshSeats();
             Refresh();
@@ -709,7 +822,7 @@ namespace TumbangPreso.UI
                 var primNode = Node("PrimaryButton");
                 if (primNode != null)
                 {
-                    SetText("PrimaryButton", GameLaunch.Spectator ? "SPECTATING" : "READY");
+                    RefreshReadyLabel(true);
                     var btn = primNode.GetComponent<Button>();
                     if (btn != null) btn.interactable = !GameLaunch.Spectator;
                 }
@@ -760,11 +873,15 @@ namespace TumbangPreso.UI
             if (net != null)
             {
                 net.Lobby.JoinCodeChanged -= HandleJoinCodeChanged;
+                net.SeatingChanged -= HandleSeatingChanged;
             }
 
             MatchRpc.OnMapChanged -= HandleMapSynced;
             MatchRpc.OnDifficultyChanged -= HandleDifficultySynced;
             MatchRpc.OnLobbyPicksSynced -= HandleLobbyPicksSynced;
+            MatchRpc.OnLobbyRosterSynced -= HandleLobbyRosterSynced;
+            MatchRpc.OnLobbyReadyChanged -= HandleLobbyReadyChanged;
+            MatchRpc.OnModeChanged -= HandleModeSynced;
             MatchRpc.OnMatchStarted -= HandleMatchStarted;
         }
     }

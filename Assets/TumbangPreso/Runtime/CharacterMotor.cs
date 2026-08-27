@@ -74,10 +74,47 @@ namespace TumbangPreso
         /// </summary>
         public string DisplayName()
         {
-            if (_isBot) return CharacterName().ToUpperInvariant();
-            if (_playerName != "") return _playerName.ToUpperInvariant();
-            return $"P{_playerSlot + 1}";
+            // ⚠️⚠️ THE ANSWER IS REMEMBERED, BECAUSE EVERY BRANCH OF IT ALLOCATES AND IT IS READ
+            // ONCE A FRAME PER BODY. `ToUpperInvariant` returns a new string every call, the
+            // seat fallback is an interpolation, and `CharacterName` walks the roster to get
+            // there. `Hud.UpdateScores` asks all four seats on every tick, the nameplate over
+            // each body asks again, and the YOU card asks a third time.
+            // `HudPerformanceProbe` is what put a number on it.
+            //
+            // ⚠️ THE INPUTS ARE COMPARED, NOT INVALIDATED FROM THE SETTERS, and that is the
+            // safer half of this. `_playerSlot`, `_characterIndex`, `_isBot` and `_playerName`
+            // are all `[SerializeField]` and all written from more than one place, including the
+            // inspector and the seat-rebind path; a cache cleared by hand in four setters is one
+            // future writer away from a body wearing somebody else's name. Reading the fields is
+            // free, and `Mode` is in the list because `CharacterName` looks the roster up per
+            // mode and the two rosters are different people.
+            if (_displayName == null ||
+                _displayNameBot != _isBot ||
+                _displayNameCharacter != _characterIndex ||
+                _displayNameSlot != _playerSlot ||
+                _displayNameMode != Mode ||
+                _displayNameFrom != _playerName)
+            {
+                _displayNameBot = _isBot;
+                _displayNameCharacter = _characterIndex;
+                _displayNameSlot = _playerSlot;
+                _displayNameMode = Mode;
+                _displayNameFrom = _playerName;
+
+                _displayName = _isBot ? CharacterName().ToUpperInvariant()
+                             : _playerName != "" ? _playerName.ToUpperInvariant()
+                             : $"P{_playerSlot + 1}";
+            }
+
+            return _displayName;
         }
+
+        private string _displayName;
+        private string _displayNameFrom;
+        private bool _displayNameBot;
+        private int _displayNameCharacter;
+        private int _displayNameSlot;
+        private GameMode _displayNameMode;
 
         /// <summary>Active game mode for trait lookups and ability kits.</summary>
         public GameMode Mode { get; set; } = GameMode.HeroStrike;
@@ -698,6 +735,31 @@ namespace TumbangPreso
         private void StepNetworkReplica(float dt)
         {
             if (!_networkTargetKnown) return;
+
+            // ⚠️⚠️ A REPLICA IS GROUNDED UNLESS ITS VERTICAL VELOCITY SAYS OTHERWISE, AND
+            // WITHOUT THIS EVERY REMOTE BODY IN THE GAME WAS FROZEN IN THE FALLING POSE.
+            // `_grounded` is written only by `ApplyGravity` in the local simulation, and this
+            // branch returns before ever reaching it, so on a replica it stayed FALSE for the
+            // whole match. `Visual.CharacterAnimator.ClipFor` asks `IsGrounded` FIRST:
+            //
+            //     if (!_motor.IsGrounded) return _motor.Velocity.y > 0.5f ? Jump : Fall;
+            //
+            // so Walk, Sprint and Idle were unreachable for anybody you were not driving
+            // yourself. 🧑 2026-08-28, from the host's screen: *"the nonhosts that join can move
+            // and interact but theyre stuck at this pose, they cant do animations and shit"*.
+            //
+            // ⚠️ THE VELOCITY IS ALREADY REPLICATED, which is what makes this an inference and
+            // not a guess: `ApplyNetworkTransform` assigns `_velocity` from the wire, and the
+            // thresholds below are the animator's own (0.5 is its Jump cut). A body at the apex
+            // of a jump reads grounded for a frame or two, which is invisible at 50 Hz.
+            //
+            // ⚠️ THE HONEST FIX IS TO TRANSMIT IT, and it is written up rather than done here.
+            // The owner of a body knows its real `IsGrounded` and nobody else does: the HOST's
+            // copy of a client-driven body has the same stale false this fixes, so `SyncUnit`
+            // alone cannot carry the truth. It needs a bool on `SubmitMove` as well, which the
+            // host then relays. Two payloads and a protocol bump, mid-playtest, for a pose.
+            // `docs/TODO.md` § 64.
+            _grounded = _networkTargetVelocity.y > -0.5f && _networkTargetVelocity.y < 0.5f;
 
             // Lead by one render-sized beat so a 50 Hz stream does not look one packet behind.
             Vector3 target = _networkTargetPosition + _networkTargetVelocity * 0.02f;

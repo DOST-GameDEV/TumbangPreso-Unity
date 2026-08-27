@@ -59,12 +59,12 @@ LOOPS = {
 # ⚠️⚠️ ASYMMETRIES THAT ARE CORRECT, EACH WITH ITS REASON. A list like this is only honest
 # while every row says WHY, because the alternative is a place to hide a real mismatch.
 # -------------------------------------------------------------------
+# ⚠️⚠️ `DeclareReady` AND `VoteRematch` USED TO BE HERE AND NEITHER NEEDS TO BE. Both wrote a
+# peer id the reader threw away, because the host resolves the sender at the door: a peer that
+# could name itself could ready or vote for somebody else. The field is DELETED from both rather
+# than read and discarded, so there is no longer a value on the wire the host has to remember to
+# ignore, and remembering is exactly what failed the first time (`docs/TODO.md` section 52.1).
 ACCEPTED = {
-    "DeclareReady":
-        "the peer id is written and deliberately ignored: the host resolves the sender at the "
-        "door, because a peer that could name itself could ready somebody else",
-    "VoteRematch":
-        "same as DeclareReady, and for the same counting reason `docs/TODO.md` section 1 records",
     "ReqSnapshot":
         "one placeholder byte, because the request carries no data and the sender id is the "
         "whole message",

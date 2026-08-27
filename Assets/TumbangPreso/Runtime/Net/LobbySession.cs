@@ -356,12 +356,72 @@ namespace TumbangPreso.Net
 
         public bool IsSeatOccupied(int seat) => PeerInSeat(seat) != null || _heldSeats.ContainsKey(seat);
 
+        /// <summary>
+        /// A peer asking to move chairs, or asking to leave the table altogether.
+        /// <paramref name="seat"/> is 0..<see cref="MaxPlayers"/>-1 for a chair and -1 for
+        /// "spectate". Returns true when the lobby actually changed.
+        ///
+        /// ⚠️⚠️ SEAT CHOICE WAS A CLIENT-SIDE STATIC AND THEREFORE WAS NOT A FEATURE AT ALL.
+        /// The lobby's four seat buttons wrote `GameLaunch.SoloSeat`, which only the OFFLINE
+        /// practice match reads: in a networked lobby the row a player pressed was drawn from
+        /// `NetSession.LocalSlot`, nothing sent the choice anywhere, and the buttons were made
+        /// non-interactable for everybody except the host on top of that. 🧑, 2026-08-27: *"a
+        /// player cannot switch from p1 to p4"*. They could not switch to anything.
+        ///
+        /// ⚠️ IT IS A LOBBY MOVE AND IT IS REFUSED ONCE THE MATCH IS RUNNING. Seats carry a
+        /// score, a role in the taya rotation and a body standing in the street; swapping two of
+        /// them mid-round has no defined answer and nobody has asked for one. `MatchInProgress`
+        /// is the switch, the same one <see cref="RuleOnArrival"/> and <see cref="Depart"/> read.
+        ///
+        /// ⚠️ A HELD SEAT IS NOT FREE. It belongs to somebody who dropped out of THIS match and
+        /// is waiting for their token, which is the promise branch 1 of `RuleOnArrival` makes.
+        /// </summary>
+        public bool TryTakeSeat(int peerId, int seat)
+        {
+            if (!_peers.TryGetValue(peerId, out var record)) return false;
+
+            // A dedicated server referees. It holds no chair and may not take one.
+            if (IsSeatlessReferee(peerId)) return false;
+
+            if (MatchInProgress) return false;
+
+            if (seat < -1 || seat >= MaxPlayers) return false;
+
+            if (seat < 0)
+            {
+                if (record.Seat < 0 && record.Spectator) return true;
+
+                record.Seat = -1;
+                record.Spectator = true;
+
+                // ⚠️ A SPECTATOR CANNOT LEAD. `ReassignLeader` already skips them, but it is
+                // only reached from `Depart`, so a leader who chose to spectate would otherwise
+                // keep the map, the mode and the start button while holding no seat.
+                if (LeaderPeerId == peerId) ReassignLeader();
+                return true;
+            }
+
+            if (_heldSeats.ContainsKey(seat)) return false;
+
+            var sitting = PeerInSeat(seat);
+            if (sitting != null) return sitting.PeerId == peerId;   // already there: idempotent
+
+            record.Seat = seat;
+            record.Spectator = false;
+            if (!string.IsNullOrEmpty(record.Token)) _seenThisMatch.Add(record.Token);
+
+            // Somebody who was spectating and has just sat down is now electable, and on a
+            // lobby whose only seated peer left there may be no leader at all.
+            ClaimLeaderIfVacant(peerId);
+            return true;
+        }
+
         // -------------------------------------------------------------------
 
         /// <summary>
         /// ⚠️⚠️ A DEDICATED SERVER IS A REFEREE AND MUST NEVER BE THE LEADER. It holds no seat,
         /// so a lobby whose leader is the server has nobody who can actually press start. This
-        /// is not a corner case: it is how the Singapore VPS runs, and it breaks in a way that
+        /// is not a corner case for the supported Linux server build, and it breaks in a way that
         /// is invisible when testing locally as a listen host.
         /// </summary>
         private void ClaimLeaderIfVacant(int peerId)

@@ -168,6 +168,8 @@ namespace TumbangPreso.CameraSystem
 
         private bool _emoteView;
         private Social.EmotePlayer _emotes;
+        private Visual.CharacterVisual _visual;
+        private GameObject _hiddenModelInstance;
         private float _emoteYawDeg;
         private float _emotePitchDeg;
         private CameraMode _modeBeforeEmote = CameraMode.Fpp;
@@ -354,6 +356,7 @@ namespace TumbangPreso.CameraSystem
         public void Follow(CharacterMotor character, bool makeActive = true)
         {
             UnsubscribeEmotes();
+            UnsubscribeVisual();
 
             _emoteView = false;
 
@@ -370,6 +373,7 @@ namespace TumbangPreso.CameraSystem
             if (_character == null) return;
 
             SubscribeEmotes();
+            SubscribeVisual();
             BuildPivots();
             if (_arms != null && _character != null) _arms.MatchCharacter(_character);
             ApplyFppSelfHide();
@@ -408,6 +412,35 @@ namespace TumbangPreso.CameraSystem
             _emotes = null;
         }
 
+        private void SubscribeVisual()
+        {
+            if (_character == null) return;
+
+            _visual = _character.GetComponent<Visual.CharacterVisual>();
+            if (_visual == null) return;
+
+            _visual.ModelApplied += OnCharacterModelApplied;
+        }
+
+        private void UnsubscribeVisual()
+        {
+            if (_visual != null)
+            {
+                _visual.ModelApplied -= OnCharacterModelApplied;
+                _visual = null;
+            }
+        }
+
+        private void OnCharacterModelApplied()
+        {
+            if (_arms != null && _character != null) _arms.MatchCharacter(_character);
+
+            if (_active && _mode == CameraMode.Fpp && !_emoteView)
+            {
+                ApplyFppSelfHide();
+            }
+        }
+
         private void OnEmoteStarted(string id) => BeginEmoteView();
 
         /// ⚠️ AN EMOTE NEVER ENDS ON ITS OWN. 🧑 2026-08-15: *"the emotes only end when a
@@ -420,7 +453,11 @@ namespace TumbangPreso.CameraSystem
         /// person: one path returns the view and the other silently does not.
         private void OnEmoteStopped() => EndEmoteView();
 
-        private void OnDestroy() => UnsubscribeEmotes();
+        private void OnDestroy()
+        {
+            UnsubscribeEmotes();
+            UnsubscribeVisual();
+        }
 
         private void BuildPivots()
         {
@@ -490,6 +527,7 @@ namespace TumbangPreso.CameraSystem
             if (_character == null || !_active) return;
 
             ApplyLens();
+            ApplyFppSelfHideIfNeeded();
             ApplyCarriedSelfHide();
 
             // ⚠️ THE HITSTOP GATE SITS ABOVE EVERYTHING THAT WRITES THE TRANSFORM AND BELOW
@@ -759,11 +797,46 @@ namespace TumbangPreso.CameraSystem
         /// to the base circle. `r.enabled = false` takes the shadow with it, which is the other
         /// half of what was wrong here.
         /// </summary>
+        /// <summary>
+        /// ⚠️ SELF-HEALS ACROSS MODEL REBUILDS AND MULTIPLAYER SYNCS. When `SyncPicksClientRpc` or
+        /// a roster change rebuilds the model, the old renderers are destroyed and new ones are
+        /// instanced with ShadowCastingMode.On. Without this check or the event subscription, the
+        /// camera at eye height would sit inside the new head mesh.
+        /// </summary>
+        private void ApplyFppSelfHideIfNeeded()
+        {
+            if (!_active || _mode != CameraMode.Fpp || _emoteView || _character == null) return;
+
+            if (_visual == null)
+            {
+                SubscribeVisual();
+            }
+
+            var currentModel = _visual != null ? _visual.Model : null;
+            if (currentModel != _hiddenModelInstance)
+            {
+                ApplyFppSelfHide();
+                return;
+            }
+
+            for (int i = 0; i < _hiddenForFpp.Count; i++)
+            {
+                if (_hiddenForFpp[i] == null)
+                {
+                    ApplyFppSelfHide();
+                    return;
+                }
+            }
+        }
+
         private void ApplyFppSelfHide()
         {
             RestoreSelfHide();
 
             if (_character == null || _mode != CameraMode.Fpp) return;
+
+            var visual = _visual != null ? _visual : _character.GetComponent<Visual.CharacterVisual>();
+            _hiddenModelInstance = visual != null ? visual.Model : null;
 
             foreach (var r in _character.GetComponentsInChildren<Renderer>(true))
             {
@@ -796,6 +869,7 @@ namespace TumbangPreso.CameraSystem
 
             _hiddenForFpp.Clear();
             _selfShadowModes.Clear();
+            _hiddenModelInstance = null;
         }
 
         private readonly List<ShadowCastingMode> _selfShadowModes = new List<ShadowCastingMode>();
