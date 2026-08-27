@@ -124,10 +124,21 @@ namespace TumbangPreso
 
                 if (body == null) { line.Append("MISSING"); continue; }
 
-                line.Append(body.GetComponent<PlayerInputReader>() != null ? "reader" : "-")
+                var reader = body.GetComponent<PlayerInputReader>();
+
+                line.Append(reader == null ? "-" : reader.enabled ? "reader" : "reader(OFF)")
                     .Append(body.GetComponent<AIController>() != null ? "+ai" : "")
                     .Append(body.IsLocallySimulated() ? "+sim" : "")
-                    .Append(body.IsBot ? "+bot" : "");
+                    .Append(body.IsBot ? "+bot" : "")
+
+                    // ⚠️⚠️ THE GATE ITSELF, BECAUSE THE WIRING BEING RIGHT WAS NOT ENOUGH TWICE.
+                    // `CharacterMotor` steers only when `CanAct()` is true, and that is
+                    // `RoundActive && !IsStunned`. A seat can read `reader+sim` and still be
+                    // unable to move a centimetre, which is exactly what §§ 62.2 and 63 were:
+                    // the input was wired correctly and the body was forbidden to act. Printing
+                    // the answer beside the wiring is the difference between one run and three.
+                    .Append(body.RoundActive ? "+live" : "+FROZEN")
+                    .Append(body.CanAct() ? "+act" : "");
             }
 
             Debug.Log(line.ToString());

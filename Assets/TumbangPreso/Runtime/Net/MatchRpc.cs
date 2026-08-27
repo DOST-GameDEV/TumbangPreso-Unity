@@ -106,15 +106,23 @@ namespace TumbangPreso.Net
         /// vanishes: the lobby, the arena, the character select and the result board.
         /// `ConvertedMatchSetup` had the only copy and it covered exactly one of those.
         ///
-        /// ⚠️ THE HOST IS NOT SENT ANYWHERE. `ClientDisconnected` is raised only on the non-host
-        /// branch of `NetSession.OnClientDisconnected`, and the guard is repeated here rather
-        /// than relied on at a distance: a host bounced out of its own match by a peer leaving
-        /// would be the worst version of this bug rather than a fix for it.
+        /// ⚠️⚠️ THERE IS NO `IsHost` GUARD HERE AND ADDING ONE BREAKS IT, WHICH IS EXACTLY WHAT
+        /// HAPPENED. `NetSession.IsHost` is `_nm == null || !_nm.IsListening || _nm.IsServer`, so
+        /// **it answers TRUE the moment the transport stops listening**, which is precisely the
+        /// state a peer is in while it is being disconnected. The guard therefore fired on every
+        /// client it was meant to protect, and the handler did nothing at all: 🧑 2026-08-27,
+        /// *"when i quit as host i still stayed on the game as non host, it didnt close or
+        /// disconnect"*, with `[Net] disconnected: Disconnected due to host shutting down.` in
+        /// the client's log on the line where nothing happened.
+        ///
+        /// ⚠️ IT IS SAFE WITHOUT ONE. `NetSession.OnClientDisconnected` returns early for a host
+        /// watching somebody else leave, so this event is not raised there at all, and a host
+        /// ending its OWN session goes through `Stop`, which sets `_localShutdown` and suppresses
+        /// the event before it is raised. What is left is a peer that genuinely lost its session,
+        /// and sending that peer back to the join screen is right whichever role it held.
         /// </summary>
         private void HandleClientDisconnected(string reason)
         {
-            if (NetAuthority.IsHost) return;
-
             UI.SceneFlow.Go(UI.SceneFlow.MultiplayerSetup);
         }
 
@@ -3123,8 +3131,26 @@ namespace TumbangPreso.Net
                 if (unit == null) continue;
 
                 unit.IsDefender = unit.PlayerSlot == defenderSlot;
-                unit.RoundActive = roundActive;
 
+                // ⚠️⚠️ `RoundActive` IS NOT WRITTEN HERE ANY MORE, AND IT IS THE SECOND HALF OF
+                // THE BUG § 62.2 FIXED. `CharacterMotor.RoundActive` defaults to TRUE and that
+                // default is what makes the pre-round free-roam window work: the director says
+                // the round is not active, correctly, while the bodies say they may act, so
+                // everybody can walk around the arena they are about to play in. Steering is
+                // gated on `CanAct()`, which is `RoundActive && !IsStunned`, so a body with the
+                // flag off cannot move a centimetre.
+                //
+                // This line stamped the host's `roundActive` onto all four bodies with no regard
+                // for whether a match had started, and the log shows it running on a client
+                // immediately after the arena installs. § 62.2 fixed the OTHER writer,
+                // `RoundDirector.ApplySnapshot`, and the client still could not move: 🧑
+                // 2026-08-27, on the very next build, *"i can move as host now yes, but u cant
+                // move as non host again"*.
+                //
+                // ⚠️ ONE OWNER. `RoundDirector.ApplySnapshot` owns round state, arrives at 5 Hz,
+                // and carries the `matchInProgress` gate that makes it agree with the host. A
+                // second writer for one fact is what produced §§ 53.1, 57.1, 60 and 62.1 as well;
+                // this is the fifth time in one evening and the answer is the same every time.
                 var reader = unit.GetComponent<PlayerInputReader>();
                 if (unit.PlayerSlot == seat)
                 {
