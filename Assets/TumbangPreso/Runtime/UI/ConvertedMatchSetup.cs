@@ -162,6 +162,53 @@ namespace TumbangPreso.UI
             }
 
             Refresh();
+
+            RejoinRunningMatch();
+        }
+
+        /// <summary>
+        /// A client that lands on this screen while a match is already running belongs in the
+        /// ARENA, not here.
+        ///
+        /// ⚠️⚠️ THIS CLOSES THE HOLE A REJOINING PLAYER FELL INTO, AND THE HOLE IS A RACE THAT
+        /// NOTHING ELSE COULD CATCH. There were two independent ways into a running match and both
+        /// of them are one-shot:
+        ///
+        ///   * `ConvertedMultiplayerSetup.Join` calls `SceneFlow.Go(MatchSetup)` the moment the
+        ///     transport starts, and
+        ///   * `MatchRpc.OnSeatingMsg` calls `SceneFlow.StartMatch()` when the host's seating
+        ///     packet says a match is in progress.
+        ///
+        /// Both are `SceneManager.LoadScene` calls, both are deferred to the end of the frame, and
+        /// **the seating packet can arrive before the lobby scene has finished loading**. When it
+        /// does, the arena load is queued FIRST and the lobby load queued second, so the lobby
+        /// wins and the arena request is gone: `OnSeatingMsg` has already fired and will not fire
+        /// again. The player is left sitting in the lobby of a match that is running without them,
+        /// and no button on this screen leads in — START is host-only and the seat rows are greyed
+        /// out precisely because a match is in progress. 🧑 2026-08-28: *"you'll only get ported
+        /// back to the lobby with no way of joining back"*.
+        ///
+        /// ⚠️ SO THE DECISION IS MADE ON ARRIVAL AS WELL AS ON THE PACKET, and whichever happens
+        /// last is the one that works. `LobbySession.MatchInProgress` is written by
+        /// `OnSeatingMsg` before it navigates, so by the time this screen wires itself the flag is
+        /// already there to be read.
+        ///
+        /// ⚠️ THE HOST IS EXCLUDED. A host sits in this lobby legitimately between matches, and
+        /// its own `MatchInProgress` is true from `HostStartMatch` until the match ends; sending
+        /// it to the arena from here would fight the screen it just chose.
+        ///
+        /// ⚠️ AND A SPECTATOR GOES TOO. Somebody admitted to watch a running match has no seat,
+        /// but the thing they came to watch is in the arena.
+        /// </summary>
+        private void RejoinRunningMatch()
+        {
+            var net = NetSession.Instance;
+            if (net == null || !net.IsNetworked) return;
+            if (NetAuthority.IsHost) return;
+            if (!net.Lobby.MatchInProgress) return;
+
+            SetStatus("Rejoining the match in progress...");
+            SceneFlow.StartMatch();
         }
 
         private void BuildRightPanelNetwork()

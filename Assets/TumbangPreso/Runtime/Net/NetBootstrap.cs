@@ -106,7 +106,28 @@ namespace TumbangPreso.Net
                     Debug.Log($"[NetBoot] host requested on {port} dedicated={isDedicated}: " +
                               (ok ? "listening" : "FAILED"));
 
-                    if (ok) UI.SceneFlow.Go(map);
+                    if (!ok) return;
+
+                    // ⚠️⚠️ THE LOBBY IS TOLD THE MATCH IS RUNNING, BECAUSE THIS PATH SKIPS THE
+                    // SCREEN THAT NORMALLY SAYS SO. A host launched with `-tp-host` goes straight
+                    // into the arena on the line below and never passes through
+                    // `ConvertedMatchSetup`, so `MatchRpc.HostStartMatch` — the only other caller
+                    // of this — never runs. `LobbySession.MatchInProgress` then stayed FALSE for a
+                    // host that was visibly playing, and it is the switch behind three separate
+                    // rules: `Depart` only HOLDS a dropped player's seat while it is set, so a
+                    // player who quit lost their chair instead of leaving a bot in it;
+                    // `RuleOnArrival` answers Refuse rather than Spectate; and the `inProgress`
+                    // flag on the seating packet is what sends a joining client into the arena
+                    // rather than leaving it in the lobby.
+                    //
+                    // ⚠️ `Lobby.StartMatch()` RATHER THAN `MatchRpc.HostStartMatch()`. The latter
+                    // also broadcasts a StartMatch to every peer and fires `OnMatchStarted`, which
+                    // is right when a lobby full of people presses go and wrong here: there is
+                    // nobody connected yet, and this host is loading the arena on the next line by
+                    // itself.
+                    NetSession.Instance?.Lobby.StartMatch();
+
+                    UI.SceneFlow.Go(map);
                 });
 
                 return;

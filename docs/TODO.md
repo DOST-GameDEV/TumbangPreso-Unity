@@ -6046,6 +6046,106 @@ face and should be treated as not-found rather than handed to `StartRelayClient`
 
 ---
 
+## 66 · Joining bounced the view about, and rejoining a running match was impossible
+
+🧑 2026-08-28: *"when a non host player tries to join, it just bounces back and forth a lot of
+times"*, and *"the sequence should be like this: when a player quits, an ai automatically takes
+over. after rejoining, the player takes full control ... what happens when you try to rejoin is
+that you'll only get ported back to the lobby with no way of joining back"*.
+
+⚠️ **Measured on two REAL peers**, not reasoned about: a macOS player built with
+`GameBuilder.BuildMac`, run twice headlessly with `-tp-host` and `-tp-join` over loopback. That
+harness is the cheapest honest way to see any of this and is worth reaching for again.
+
+### 66.1 ✅ FIXED: one join applied the seat three times and rebuilt it six
+
+The seat is announced by **two protocols** (`tp.seat.assignment.v1` and `Seating`, `docs/TODO.md`
+§ 60), and neither application was idempotent. One join measured:
+
+```
+[Net] connected as seat 2          <- ApplyAssignedSeat
+[NetSeat] seat changed: ...        <- x2, the raise was written twice
+[Net] seated in slot 1             <- SetLocalSeating, same chair
+[NetSeat] seat changed: ...
+[Net] connected as seat 2          <- ApplyAssignedSeat AGAIN, same chair
+[NetSeat] seat changed: ... x2
+[Net] connected as seat 2          <- and again, seconds later
+[NetSeat] seat changed: ... x2
+```
+
+Every `SeatingChanged` makes `MatchInstaller` move the camera, the HUD, the input reader and the
+`PlayerInputReader` onto the chair again. Six of those for one join is the *"bounces back and
+forth"*. ⚠️ **The seat number was never wrong**, which is why nothing caught it: a test asserting
+`LocalSlot` passes against the bug. **The count is the assertion.**
+
+Two causes, both fixed: `ApplyAssignedSeat` raised `SeatingChanged` on two consecutive lines (a
+duplicated line, not a race guard — the paragraph above it argues for raising it here *as well as*
+in `SetLocalSeating`, which is one raise), and neither method checked whether anything had actually
+changed. Both now drop a repeat of the chair they already hold.
+
+⚠️⚠️ **`_seatApplied` IS A SEPARATE FLAG AND CANNOT BE FOLDED INTO `LocalSlot`.** `LocalSlot`
+defaults to **0** and 0 is a real seat, so "has a seat been applied yet" is unanswerable from the
+number alone: without the flag the host's own first announcement of seat 0 reads as a no-op, is
+dropped, and the arena is never wired up at all. `SeatAnnouncementTests` has a case for exactly
+that.
+
+**After the fix, remeasured on the same two peers: 1 application, 1 rebuild**, on both a first
+join and a rejoin.
+
+### 66.2 ✅ FIXED: the seating packet overtook the map and the mode
+
+`HandleIdentify` sent `Seating` **before** `SyncMode`, `SyncMap` and `SyncDiff`. `OnSeatingMsg` is
+not just a seat: when its `inProgress` flag is set it calls `UI.SceneFlow.StartMatch()`, which
+loads **`SceneFlow.SelectedMap`**. Arriving first, it fired on a rejoining player whose
+`SelectedMap` and `SelectedMode` were still whatever their own menu last held, so a player
+rejoining a Hero Strike match on Ilalim ng Tulay loaded Classic on Eskinita, alone, and the map
+that arrived one line later had nothing left to correct.
+
+⚠️ **Named messages are reliable-sequenced, so the order they are written in is the order they are
+processed in.** This is the same rule `HostStartMatch` already states three paragraphs of reasoning
+for; the mid-match path was the one place that broke it. The seat now goes last.
+
+### 66.3 ✅ FIXED: a rejoining client could be stranded in the lobby
+
+Two independent one-shot routes lead into a running match: `ConvertedMultiplayerSetup.Join` loads
+the lobby, and `OnSeatingMsg` loads the arena. Both are `SceneManager.LoadScene`, both are deferred
+to the end of the frame, and **the seating packet can arrive before the lobby scene has finished
+loading**. When it does the arena load is queued first and the lobby second, the lobby wins, and
+`OnSeatingMsg` has already fired and will not fire again. Nothing on that screen leads in: START is
+host-only and the seat rows are greyed out *because* a match is in progress. That is *"no way of
+joining back"*.
+
+**Fixed** by making the lobby self-correcting: `ConvertedMatchSetup.RejoinRunningMatch` runs on
+arrival and, for a non-host peer whose `LobbySession.MatchInProgress` is set, goes straight to the
+arena. Whichever of the two happens last now works. Spectators go too; the host is excluded,
+because it sits in this lobby legitimately between matches.
+
+### 66.4 ✅ FIXED: a `-tp-host` host never told its lobby the match had started
+
+`LobbySession.MatchInProgress` had exactly one caller, `MatchRpc.HostStartMatch`, reached from the
+lobby's START button. A host launched with `-tp-host` goes straight into the arena and never passes
+through that screen, so the flag stayed **false** for a host that was visibly playing. It is the
+switch behind three rules: `Depart` only HOLDS a dropped player's seat while it is set (so a player
+who quit lost their chair instead of leaving a bot in it), `RuleOnArrival` answers Refuse rather
+than Spectate, and the `inProgress` flag on the seating packet is what sends a joining client into
+the arena. `NetBootstrap` now calls `Lobby.StartMatch()` before loading the map.
+
+⚠️ `Lobby.StartMatch()` rather than `MatchRpc.HostStartMatch()`: the latter also broadcasts to every
+peer and fires `OnMatchStarted`, which is right when a lobby full of people presses go and wrong for
+a host that is alone and loading the arena itself on the next line.
+
+### 66.5 ⚠️ OPEN: the AI takeover is 30 seconds late on a hard quit
+
+`Configure`'s `DisconnectTimeoutMS = 30000` is deliberate (§ venue wifi), but it also means a player
+who force-quits leaves a **driverless body for a full 30 seconds** before `HostPeerLeft` runs and
+the bot takes the chair. Measured: the host logged nothing at all for 12 s after the client was
+killed, and `1 connected` only at ~30 s. A clean quit through the pause menu sends a real
+disconnect and is immediate; this is only the crash/kill path. **Done looks like:** either a
+heartbeat that fails faster than the transport timeout, or the pause-menu quit path being the one
+the game teaches, with the timeout left alone for genuine stalls.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

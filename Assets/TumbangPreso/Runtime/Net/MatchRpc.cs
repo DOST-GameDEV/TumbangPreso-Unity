@@ -438,10 +438,6 @@ namespace TumbangPreso.Net
             int resolvedSlipperPick = slipperPick >= 0 ? slipperPick : 0;
             lobby.SetPicks(peerId, resolvedCharPick, resolvedCanPick, resolvedSlipperPick);
 
-            if (senderClientId != _nm.LocalClientId) SendSeating((int)senderClientId);
-
-            NetSession.Instance?.SetStatus($"{lobby.PeerCount} connected, seat {record.Seat}");
-
             // ⚠️ THE MODE IS THE FIRST THING A JOINER IS TOLD, for the reason `HostStartMatch`
             // gives: everything below it is interpreted through the mode, and a late joiner may
             // be about to build an arena from it.
@@ -456,6 +452,23 @@ namespace TumbangPreso.Net
             // "it only started for the host".
             SyncMapClientRpc(Mathf.Max(0, System.Array.IndexOf(UI.SceneFlow.Maps, UI.SceneFlow.SelectedMap)));
             SyncDifficultyClientRpc(Settings.SettingsStore.Current.AiDifficulty);
+
+            // ⚠️⚠️ THE SEAT GOES **AFTER** THE MODE AND THE MAP, AND IT USED TO GO FIRST. This is
+            // the same ordering rule `HostStartMatch` states three paragraphs of reasoning for,
+            // and the mid-match path was the one place that broke it. `OnSeatingMsg` is not just a
+            // seat: when it carries `inProgress` it calls `UI.SceneFlow.StartMatch()`, which loads
+            // `SceneFlow.SelectedMap`. Sent first, it fired on a REJOINING player whose
+            // `SelectedMap` and `SelectedMode` were still whatever their own menu last held, so a
+            // player rejoining a Hero Strike match on Ilalim ng Tulay loaded Classic on Eskinita,
+            // alone, and the map that arrived one line later had nothing left to correct.
+            //
+            // ⚠️ THE SEND IS ORDERED, SO THE ORDER HERE IS THE ORDER THERE. Named messages go out
+            // on a reliable sequenced channel, which is exactly what makes writing them in the
+            // wrong order a real bug rather than a race that usually works.
+            if (senderClientId != _nm.LocalClientId) SendSeating((int)senderClientId);
+
+            NetSession.Instance?.SetStatus($"{lobby.PeerCount} connected, seat {record.Seat}");
+
             BroadcastReadyTally();
 
             HostLateJoin(peerId);
