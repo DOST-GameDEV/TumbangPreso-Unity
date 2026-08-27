@@ -413,6 +413,28 @@ namespace TumbangPreso.Visual
                 if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy)
                     continue;
 
+                // ⚠️⚠️ A RENDERER THAT IS NOT DRAWN TO THE SCREEN MUST NOT MASK THE SCREEN, AND
+                // SKIPPING THIS IS WHY THE OUTLINE APPEARED INSIDE A HEAD-SHAPED WINDOW.
+                // 🧑 2026-08-28: *"the edges of the outline shader clip to a character head shape
+                // (ours)"*.
+                //
+                // `CameraRig.ApplyFppSelfHide` hides the player's own body in first person by
+                // setting `ShadowCastingMode.ShadowsOnly` rather than by disabling the renderer,
+                // deliberately, so the player keeps their own ground shadow. `enabled` therefore
+                // stays TRUE on every part of the body the camera is sitting inside.
+                //
+                // `CommandBuffer.DrawRenderer` does not consult `shadowCastingMode`. It draws what
+                // it is told to draw. So the local player's head, which is invisible in the colour
+                // pass and roughly a metre from the near plane, was being painted into the
+                // exclusion mask at enormous screen size. Everything under it lost its outline, and
+                // the boundary of the surviving region was the silhouette of that head.
+                //
+                // ⚠️ THE TEST IS "IS IT DRAWN", NOT "IS IT MINE". Keying on the bound character
+                // would miss a body hidden by anything else and would need this pass to know about
+                // seats. Shadows-only already means "present for lighting, absent from the frame",
+                // and a surface absent from the frame has nothing to exclude.
+                if (renderer.shadowCastingMode == ShadowCastingMode.ShadowsOnly) continue;
+
                 var materials = renderer.sharedMaterials;
                 int submeshes = materials == null || materials.Length == 0 ? 1 : materials.Length;
 
