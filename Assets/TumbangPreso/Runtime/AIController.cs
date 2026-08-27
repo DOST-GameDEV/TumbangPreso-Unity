@@ -694,7 +694,8 @@ namespace TumbangPreso
             var round = GameServices.Round;
             if (round == null || taya == null || mine == null) return true;
 
-            float myOdds = RunOdds(At(taya), transform.position, mine.transform.position);
+            long myRank = RunRank(RunOdds(At(taya), transform.position, mine.transform.position),
+                                  _motor.PlayerSlot);
 
             foreach (var who in round.Players)
             {
@@ -711,15 +712,10 @@ namespace TumbangPreso
                 var theirs = SlipperOwnedBy(round, who.PlayerSlot);
                 if (theirs == null || theirs.State != SlipperState.Loose) continue;
 
-                float theirOdds = RunOdds(At(taya), At(who), theirs.transform.position);
+                long theirRank = RunRank(RunOdds(At(taya), At(who), theirs.transform.position),
+                                         who.PlayerSlot);
 
-                // ⚠️ STRICTLY BETTER, AND THE SEAT BREAKS AN EXACT TIE. Two bots that each yield
-                // to the other is a deadlock that lasts until the tournament clock breaks it, and
-                // a deadlock is worse than the pile-up this exists to stop.
-                if (theirOdds > myOdds + AiTuning.RunOddsMargin) return false;
-
-                if (Mathf.Abs(theirOdds - myOdds) <= AiTuning.RunOddsMargin
-                    && who.PlayerSlot < _motor.PlayerSlot) return false;
+                if (theirRank > myRank) return false;
             }
 
             return true;
@@ -730,6 +726,29 @@ namespace TumbangPreso
         /// </summary>
         private static float RunOdds(Vector3 tayaAt, Vector3 runnerAt, Vector3 slipperAt)
             => Flat(tayaAt, slipperAt) - Flat(runnerAt, slipperAt);
+
+        /// <summary>
+        /// One comparable number per candidate, so "who has the best run" is a TOTAL ORDER.
+        ///
+        /// ⚠️⚠️ THE PAIRWISE VERSION DEADLOCKED ALL THREE ATTACKERS AND `BotMotionProbe` CAUGHT
+        /// IT: seat 3 covered **0.94 m in six seconds** of a live round against a 1.0 m floor.
+        /// The first pass asked each rival "is theirs better by more than the margin, or inside
+        /// the margin with a lower seat", which is not transitive. Odds of 5.0 (seat 0), 5.5
+        /// (seat 1) and 6.1 (seat 2) at a 0.75 margin make **every one of the three yield**: seat
+        /// 0 loses outright to seat 2, seat 1 loses the tiebreak to seat 0, and seat 2 loses the
+        /// tiebreak to seat 1. Nobody runs until the tournament clock breaks it, which is a worse
+        /// failure than the pile-up the rule exists to stop.
+        ///
+        /// ⚠️ QUANTISING THE ODDS IS WHAT MAKES IT TOTAL. Rounding to whole margins turns "near
+        /// enough to tie" into an exact equality that the seat can then break, so at any instant
+        /// exactly one candidate holds the maximum and exactly one bot runs. A deadband applied
+        /// pairwise cannot do that, however it is written.
+        ///
+        /// ⚠️ THE SEAT IS SUBTRACTED, so a lower seat wins a tie. Any total order would do; the
+        /// only requirement is that all four bots compute the same one.
+        /// </summary>
+        private static long RunRank(float odds, int slot)
+            => (long)Mathf.Round(odds / AiTuning.RunOddsMargin) * 1000L - slot;
 
         private static Slipper SlipperOwnedBy(RoundDirector round, int slot)
         {
@@ -1211,6 +1230,15 @@ namespace TumbangPreso
             return v.sqrMagnitude > 1.0f ? v.normalized : v;
         }
 
+        /// <summary>
+        /// The short way from <paramref name="from"/> to <paramref name="to"/>, in radians.
+        ///
+        /// ⚠️ `Mathf.DeltaAngle` IS DEGREES-ONLY and every bearing in this file is radians out of
+        /// `Mathf.Atan2`. Converting at each call site is how one of them ends up not converting.
+        /// </summary>
+        private static float DeltaRadians(float from, float to)
+            => Mathf.DeltaAngle(from * Mathf.Rad2Deg, to * Mathf.Rad2Deg) * Mathf.Deg2Rad;
+
         private static float Flat(Vector3 a, Vector3 b)
         {
             a.y = 0.0f;
@@ -1350,6 +1378,65 @@ namespace TumbangPreso
             var mine = MySlipper();
             Vector3 anchor = mine != null ? mine.transform.position : Vector3.zero;
             float bearing = Mathf.Atan2(anchor.x, anchor.z);
+
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ A STALKER WORKS AROUND THE TAYA INSTEAD OF STANDING ON ITS MARK, AND
+            // `BotMotionProbe` IS WHAT SAID THE OLD VERSION DID NOT. The note above claims this
+            // plan *"keeps the bot MOVING"*; the report says otherwise, with two stalkers at
+            // `axis=(0.00, 0.00)` for five and a half of six seconds and **0.94 m travelled**
+            // against a 1.0 m floor. They arrived on the ring, and `Loiter` is a small shuffle
+            // with rest periods, so an arrived stalker is a statue with a twitch.
+            //
+            // ⚠️⚠️ IT IS ALSO THE WRONG PLAY, WHICH IS WHY THIS IS NOT A NUDGE TO THE LOITER.
+            // Waiting for an opening means waiting for the taya to be somewhere ELSE, and the
+            // taya moves. A human stalker slides around the box keeping the can between
+            // themselves and the defender; standing on the bearing of your own tsinelas is
+            // standing exactly where the taya is already looking, because that is the thing they
+            // are guarding.
+            //
+            // ⚠️ THE SHIFT SCALES WITH HOW CLOSE THE TAYA IS TO MY BEARING, so a stalker whose
+            // line is already clear does not walk away from it for no reason, and one who is
+            // staring down the defender slides the furthest. It tracks a moving taya every think
+            // tick, which is the motion the probe was looking for and is not a hack to produce
+            // it: `AiTuning.StalkYieldRadians` carries the number.
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ THE WAIT IS ANCHORED ON THIS BOT'S OWN CORNER, NOT ONLY ON ITS TSINELAS.
+            // `AiPersonalityRoll.HomeBearing` already exists for precisely this and says so:
+            // *"its favourite corner of the ring to work from, which is what stops three
+            // attackers converging on one bearing without any of them coordinating"*. The first
+            // slide-away pass ignored it and `BotMotionProbe` showed both stalkers finishing at
+            // (7.32, 6.48) and (7.45, 7.48), a metre apart in the same corner: the pile-up this
+            // whole section exists to stop, moved from the box to the ring.
+            float home = _self.HomeBearing;
+            bearing = home + DeltaRadians(home, bearing) * AiTuning.StalkTowardOwnSlipper;
+
+            var round = GameServices.Round;
+            var taya = round != null ? DefenderOf(round) : null;
+
+            if (taya != null)
+            {
+                Vector3 tayaAt = At(taya);
+                float tayaBearing = Mathf.Atan2(tayaAt.x, tayaAt.z);
+
+                float apart = DeltaRadians(bearing, tayaBearing);
+                float crowding = 1.0f - Mathf.Clamp01(Mathf.Abs(apart) / AiTuning.StalkClearRadians);
+
+                if (crowding > 0.0f)
+                {
+                    // ⚠️⚠️ THE SIDE IS CHOSEN OFF `HomeBearing`, WHICH DOES NOT MOVE, AND TAKING
+                    // IT OFF THE CURRENT TARGET INSTEAD IS WHAT SENT A STALKER ALL THE WAY ROUND
+                    // THE ARENA. The probe caught seat 2 travelling **16.35 m in six seconds**,
+                    // from x = -3.39 to x = +7.45. The sign came from the bot's own shifted
+                    // bearing, so every step it took changed the direction it wanted to step
+                    // next: a chattering sign, and the bot walked the whole ring chasing it.
+                    //
+                    // A fixed reference makes the target STABLE. It can still flip, but only if
+                    // the taya genuinely crosses this bot's home bearing, which is an event
+                    // rather than a feedback loop.
+                    float away = DeltaRadians(tayaBearing, home) >= 0.0f ? 1.0f : -1.0f;
+                    bearing += away * AiTuning.StalkYieldRadians * crowding;
+                }
+            }
 
             Goto(intent, RingPoint(bearing, Balance.ConfinementRadius + 0.6f),
                  AiTuning.ArriveSlop, false);

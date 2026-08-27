@@ -4808,10 +4808,24 @@ and did nothing about Q, then E, then the ultimate over six seconds.
 genuine combo still lands, it just has to be worth waiting out.
 
 **A bot may now finish a round without using a power.** `AiPersonalityRoll.SkillAppetite` is a
-per-seat, per-slot eagerness that scales the conviction window between 0.7x and 2.6x. ⚠️ **It
+per-seat, per-slot eagerness that scales the conviction window between 0.7x and 1.9x. ⚠️ **It
 lengthens the window, it does not roll a die and refuse a chance the bot saw** (which reads as
 broken): a shy bot wants a longer unbroken reason, so a marginal window passes it by and a clear
 one is still taken. Whether a slot goes unused is then decided by the BOARD.
+
+⚠️⚠️ **THE SHY END WAS 2.6 AND THAT OVERSHOT, MEASURED RATHER THAN FELT.** `BotBehaviourProbe`
+over a whole eight-round Hero Strike match on Eskinita:
+
+| | skills | ultimates | throws | knocks | tags |
+|---|---|---|---|---|---|
+| shy 2.6 | 27 | 15 | 205 | 88 | 118 |
+| **shy 1.9** | **34** | **17** | **209** | **104** | **120** |
+
+27 casts is 1.3 per seat per round. The complaint being answered was § 19's *"44 to 56 casts in a
+90 s round"*, and a thirtyfold cut lands in a mode whose whole reason to exist is the kits
+(`docs/VISION.md` § 1). At 1.9 the match is livelier on every axis and still nowhere near the
+pile-up. ⚠️ **Read § 16 before quoting either row as a comparison**: at n = 1 these are liveness
+floors, and the honest reading is the direction rather than the digits.
 
 ### 51.4 ✅ Two more events with two owners each
 
@@ -4825,6 +4839,52 @@ what is a HUD decision and is written down there.
 handler. The tag itself is `CombatVerbs` and `RoundDirector`, and neither was touched.
 
 **Do not add a toast to the installer. Wire the event and let the HUD say it.**
+
+### 51.5 ✅ Two faults the AI work introduced, both caught by PlayMode
+
+⚠️⚠️ **`IHaveTheBestRun` DEADLOCKED EVERY ATTACKER AND `BotMotionProbe` PRINTED IT.** Seat 3
+covered **0.94 m in six seconds** of a live round against a 1.0 m floor, with `plan=Stalk` and
+`axis=(0.00, 0.00)` on nearly every sample.
+
+The first pass compared pairwise: *is theirs better by more than the margin, or inside the margin
+with a lower seat*. **That is not transitive.** Odds of 5.0 (seat 0), 5.5 (seat 1) and 6.1
+(seat 2) at a 0.75 m margin make all three yield: seat 0 loses outright to seat 2, seat 1 loses
+the tiebreak to seat 0, and seat 2 loses the tiebreak to seat 1. Nobody runs until the tournament
+clock breaks it, which is a worse failure than the pile-up the rule exists to stop.
+
+`RunRank` quantises the odds to whole margins and subtracts the seat, so "who has the best run"
+is a **total order** and exactly one candidate holds the maximum at any instant. A deadband
+applied pairwise cannot give you that, however it is written.
+
+⚠️⚠️ **AND `AiPlan.Stalk` WAS A STATUE.** Its own comment claimed it *"keeps the bot MOVING"*;
+the probe disagreed. It walked to the ring point on the bearing of its own tsinelas, arrived, and
+`Loiter` is a small shuffle with rest periods. It is also the wrong place to wait: the bearing of
+your own shoe is the bearing the taya is already guarding.
+
+A stalker slides around the box away from the defender now, and 🧑's *"make sure ai actually
+moving and it moves like human"* is the standard it is measured against. Two things had to be
+right before it read as a person rather than as a pinball:
+
+* **The side is chosen off `AiPersonalityRoll.HomeBearing`, which does not move.** Taking it off
+  the bot's own current bearing meant every step changed the direction it wanted to step next: a
+  chattering sign, and the probe caught seat 2 walking **16.35 m in six seconds**, from x = -3.39
+  to x = +7.45, straight across the arena.
+* **The wait is anchored on that same corner, pulled 0.55 toward the shoe.** At a pure shoe
+  bearing both stalkers finished a metre apart in the same corner, which is the pile-up moved
+  from the box to the ring. `HomeBearing` already exists to stop exactly that and the first pass
+  ignored it.
+
+Measured after: the two attackers take opposite sides, **7.97 m and 10.29 m in six seconds**, and
+then hold their post with small adjustments.
+
+⚠️ **`AnyAttackerCanPickUpAnySlipper` was measuring how far a bot walked.** It drops a slipper at
+an attacker's feet and holds Grab for twenty steps, on a seat an `AIController` is also driving.
+Two faults in one: the bot's `Update` writes `Grab = false` on every frame its plan does not want
+it, and a walking bot carries the body out of `Balance.PickupRadius` while the loop runs, so the
+failure reads as *"the press never arrived"* when the press arrived at a character who had left.
+It passed for as long as the planner happened to choose `Fetch` for that seat. The test disables
+the seat's bot **before positioning anything** now. A test that drives an intent has to own the
+intent and the body.
 
 ---
 

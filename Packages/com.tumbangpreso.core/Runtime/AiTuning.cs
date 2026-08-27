@@ -414,15 +414,26 @@ namespace TumbangPreso.Core
         /// `AiPersonalityRoll.AppetiteFor`.
         ///
         /// ⚠️⚠️ 🧑 2026-08-27: *"i want it to be possible too for them to not use some skills at
-        /// all if they cant find opportunity bcz thats normal and human"*. A shy bot at 2.6x
-        /// wants roughly 0.65 to 2.2 s of an unbroken reason before it commits, which most
-        /// marginal windows in this game simply do not last. That is how a slot goes unused for a
-        /// whole round without anything ever rolling a die and refusing a chance it could see.
+        /// all if they cant find opportunity bcz thats normal and human"*. A shy bot wants a
+        /// noticeably longer unbroken reason before it commits, and most marginal windows in this
+        /// game do not last that long. That is how a slot goes unused for a whole round without
+        /// anything ever rolling a die and refusing a chance it could see.
+        ///
+        /// ⚠️⚠️ AND 2.6 WAS TOO FAR, MEASURED RATHER THAN FELT. `BotBehaviourProbe` on the first
+        /// pass: **27 skill uses and 15 ultimates across a whole eight-round Hero Strike match**,
+        /// which is 1.3 casts per seat per round. The complaint being answered was *"44 to 56
+        /// casts in a 90 s round"* (`docs/TODO.md` § 19) and a thirtyfold cut overshoots it into
+        /// a mode whose entire reason to exist is the kits (`docs/VISION.md` § 1). 1.9 keeps the
+        /// shy end shy and the reluctant slots genuinely reluctant.
+        ///
+        /// ⚠️ THE PROBE'S SKILL AND ULTIMATE COUNTS ARE THE MEASUREMENT FOR THIS PAIR. Do not
+        /// retune either number without re-running it, and read § 16 first: at n = 1 these are
+        /// liveness floors, not comparisons.
         /// </summary>
         public const float AppetiteWindowEager = 0.7f;
 
         /// <summary>What a reluctant bot multiplies its conviction window by.</summary>
-        public const float AppetiteWindowShy = 2.6f;
+        public const float AppetiteWindowShy = 1.9f;
 
         // -------------------------------------------------------------------
         // § NOT THE WHOLE KIT IN ONE BREATH
@@ -510,6 +521,45 @@ namespace TumbangPreso.Core
         /// will do, and the only requirement is that all four bots compute the SAME one.
         /// </summary>
         public const float RunOddsMargin = 0.75f;
+
+        // -------------------------------------------------------------------
+        // § WHERE A STALKER WAITS
+        //
+        // ⚠️⚠️ `AiPlan.Stalk` USED TO PARK ON THE BEARING OF ITS OWN TSINELAS, WHICH IS THE ONE
+        // BEARING THE TAYA IS ALREADY WATCHING. That is the thing they are guarding, so a bot
+        // waiting there is waiting in the worst place on the ring, and once it arrived it stopped
+        // moving at all: `BotMotionProbe` measured two stalkers at 0.94 m over six seconds
+        // against a 1.0 m floor, with `axis=(0.00, 0.00)` on nearly every sample.
+        //
+        // ⚠️ WAITING FOR AN OPENING MEANS WAITING FOR THE TAYA TO BE SOMEWHERE ELSE, and the taya
+        // moves. Sliding around the box away from them is both the correct play and, incidentally,
+        // the motion the probe was asking for.
+        // -------------------------------------------------------------------
+
+        /// <summary>How far around the ring a stalker slides away from the taya, in radians.</summary>
+        public const float StalkYieldRadians = 0.85f;
+
+        /// <summary>
+        /// How far apart, in radians, a stalker's bearing and the taya's have to be before the
+        /// stalker stops sliding at all.
+        ///
+        /// ⚠️ 1.20 rad IS ABOUT 69 DEGREES, roughly a quarter of the ring. Past that the taya
+        /// cannot cover both lines, so the stalker is already in a good place and walking further
+        /// would only lengthen its own run home.
+        /// </summary>
+        public const float StalkClearRadians = 1.20f;
+
+        /// <summary>
+        /// How far a stalker's waiting bearing is pulled from its own corner toward its tsinelas,
+        /// 0 for "stay in my corner" and 1 for "stand on my shoe's bearing".
+        ///
+        /// ⚠️⚠️ NEITHER END IS RIGHT ON ITS OWN. At 1 every attacker whose shoe landed near the
+        /// same place waits in the same place, which is what the first pass did and what
+        /// `AiPersonalityRoll.HomeBearing` was written to prevent. At 0 a bot waits somewhere it
+        /// likes and then has to cross the whole arena when the opening comes, which loses the
+        /// opening. 0.55 keeps the run home short and the four of them apart.
+        /// </summary>
+        public const float StalkTowardOwnSlipper = 0.55f;
 
         // -------------------------------------------------------------------
         // § WHEN A CHASE IS OVER

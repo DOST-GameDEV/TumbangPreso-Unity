@@ -837,8 +837,24 @@ namespace TumbangPreso.CameraSystem
 
             Color skinColor = SkinColorForCharacter(characterId);
 
-            bool isNemu = characterId == "nemu";
-            bool hasCustomArmMesh = isNemu || characterId == "sean";
+            // ⚠️⚠️ NEMU USES THE SHARED ARM MESH AGAIN, AND HIDING IT IS WHY HER HAND FLOATED.
+            // 🧑 2026-08-27: *"make it look liek her arms are a bit thhicker and come from inside
+            // her sleeves bcz it floating in ur pic"*. This read `isNemu || sean`, which switched
+            // `Models/viewmodel_arm` OFF for her, and it was correct for exactly as long as her
+            // sleeve was a hollow lofted tube with a visible interior lining: the shared arm
+            // would have poked through it. Her sleeve is boxes now, so the limb underneath is
+            // simply missing, and the sleeve and the hand were two objects with a gap between
+            // them and nothing joining them.
+            //
+            // ⚠️ SEAN IS THE ONLY REAL ENTRY. `CreateSeanMuscularArmMesh` replaces the shared
+            // mesh with a different SHAPE, which is what this flag is for. Nemu was on the list
+            // to hide a limb rather than to replace one.
+            //
+            // ⚠️ EVERY OTHER HERO ALREADY WORKS THIS WAY, and Cheska is the reference frame:
+            // shared arm at full section, tinted skin, with sleeve boxes stacked over its upper
+            // half. That is where "arms a bit thicker" comes from, because the shared mesh is
+            // the width the voxel cast's arms actually are.
+            bool hasCustomArmMesh = characterId == "sean";
 
             if (_rightArmRenderer != null)
             {
@@ -1246,7 +1262,6 @@ namespace TumbangPreso.CameraSystem
             var hoodieShadow = new Color(0.094f, 0.071f, 0.141f, 1.0f); // HOODIE_SHADOW #181224
             var lavenderTrim = new Color(0.667f, 0.361f, 0.941f, 1.0f); // LAVENDER_GLOW #aa5cf0
             var skinTone = SkinNemu;                                     // SKIN #e0af84
-            var skinDark = new Color(0.839f, 0.600f, 0.455f, 1.0f);     // SKIN_DARK #d69974
 
             // -------------------------------------------------------------------
             // ⚠️⚠️ THESE ARE BOXES NOW, AND THEY ARE BOXES BECAUSE HER MODEL IS.
@@ -1276,21 +1291,72 @@ namespace TumbangPreso.CameraSystem
             // Two thin bars cost four triangles and cannot be handed wrong.
             // -------------------------------------------------------------------
 
-            // 1. The sleeve: one plum box down the arm.
-            AddBoxAccessory(arm, "HoodieSleeve", new Vector3(0.300f, 0.560f, 0.290f),
-                new Vector3(0.0f, 0.320f, 0.0f), Quaternion.identity, hoodieDark);
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ AND THE ARM HAS TO COME OUT OF THE SLEEVE. 🧑 2026-08-27, at the box version:
+            // *"give some volume ot her sleeves and make it look liek her arms are a bit thhicker
+            // and come from inside her sleeves bcz it floating in ur pic"*.
+            //
+            // ⚠️⚠️ IT WAS FLOATING BECAUSE THERE WAS NO FOREARM AT ALL. `ApplyCharacterStyle`
+            // switches `_rightArmRenderer.enabled` OFF for Nemu (`hasCustomArmMesh`), on the
+            // assumption that her accessories draw the whole limb. They did not: the sleeve
+            // stopped at 0.65 and the hand block started at 0.70, so a small pale chip hung in
+            // the air five centimetres above a big plum box with nothing between them. No amount
+            // of resizing the two ends fixes a missing middle.
+            //
+            // ⚠️ THE FOREARM STARTS **INSIDE** THE CUFF, at 0.49 against a cuff that ends at
+            // 0.63. Butting it against the opening would leave a seam that reads as two objects
+            // touching; starting it 0.14 m up inside is what makes the arm read as EMERGING.
+            //
+            // ⚠️ AND THE OPENING IS THREE CONCENTRIC BOXES, WHICH IS HOW A VOXEL SLEEVE SHOWS A
+            // HOLE. Hem at 0.384 wide, the shadow lining at 0.330, the forearm at 0.150: the
+            // shadow reads as a dark ring around the wrist rather than as a cap over it. A single
+            // dark box at the mouth would just be a lid.
+            //
+            // ⚠️ THE VOLUME IS A STEP, NOT A LOFT. `docs/Voxel_Person_Guide.md` and
+            // `tools/build_person_voxel.py` are boxes, and the whole reason the previous version
+            // was thrown out is that it was a smooth 24-segment tube. An oversized hoodie is a
+            // narrow box with a wider box on the end of it.
+            // -------------------------------------------------------------------
 
-            // 2. The hem, a shade darker, where the sleeve ends and the hand starts.
-            AddBoxAccessory(arm, "HoodieHem", new Vector3(0.312f, 0.075f, 0.302f),
-                new Vector3(0.0f, 0.612f, 0.0f), Quaternion.identity, hoodieShadow);
+            // ⚠️⚠️ THE SLEEVE STARTS AT y = 0, NOT ABOVE IT, AND THE FIRST PASS AT 0.035 LEFT A
+            // CREAM SLIVER OF BARE ARM AT THE SHOULDER END OF THE FRAME. Cheska's sleeve is
+            // authored 0.00 to 0.32 for exactly this reason: `Models/viewmodel_arm` runs from the
+            // pivot, so anything that does not begin at the pivot shows the limb behind it.
 
-            // 3. The lavender bar down each side face. It stands 0.017 proud of the sleeve, which
-            //    is enough to never z-fight and little enough to still read as paint on cloth.
-            AddBoxAccessory(arm, "LavenderStripeA", new Vector3(0.034f, 0.520f, 0.150f),
-                new Vector3(0.150f, 0.320f, 0.0f), Quaternion.identity, lavenderTrim);
+            // 1. The upper sleeve, 0.345 across so it clears the shared arm mesh underneath
+            //    rather than sitting flush on it.
+            AddBoxAccessory(arm, "HoodieSleeve", new Vector3(0.345f, 0.395f, 0.335f),
+                new Vector3(0.0f, 0.1975f, 0.0f), Quaternion.identity, hoodieDark);
 
-            AddBoxAccessory(arm, "LavenderStripeB", new Vector3(0.034f, 0.520f, 0.150f),
-                new Vector3(-0.150f, 0.320f, 0.0f), Quaternion.identity, lavenderTrim);
+            // 2. The oversized drop at the wrist. This is the volume: one step out to 0.386.
+            AddBoxAccessory(arm, "HoodieCuff", new Vector3(0.386f, 0.170f, 0.374f),
+                new Vector3(0.0f, 0.480f, 0.0f), Quaternion.identity, hoodieDark);
+
+            // 3. The hem ring at the very end of the cuff, a shade darker and a shade wider.
+            AddBoxAccessory(arm, "HoodieHem", new Vector3(0.398f, 0.058f, 0.386f),
+                new Vector3(0.0f, 0.594f, 0.0f), Quaternion.identity, hoodieShadow);
+
+            // 4. The inside of the sleeve, seen as a dark ring around the wrist. It sits just
+            //    under the hem's top face and is WIDER than the arm and NARROWER than the hem, so
+            //    what reads is an opening with a limb coming out of it. A single dark box across
+            //    the whole mouth would be a lid.
+            AddBoxAccessory(arm, "HoodieMouth", new Vector3(0.340f, 0.040f, 0.328f),
+                new Vector3(0.0f, 0.601f, 0.0f), Quaternion.identity, hoodieShadow);
+
+            // 5. The lavender bar down each side face of the upper sleeve. It stands 0.018 proud,
+            //    which is enough to never z-fight and little enough to read as paint on cloth.
+            AddBoxAccessory(arm, "LavenderStripeA", new Vector3(0.036f, 0.355f, 0.175f),
+                new Vector3(0.172f, 0.1975f, 0.0f), Quaternion.identity, lavenderTrim);
+
+            AddBoxAccessory(arm, "LavenderStripeB", new Vector3(0.036f, 0.355f, 0.175f),
+                new Vector3(-0.172f, 0.1975f, 0.0f), Quaternion.identity, lavenderTrim);
+
+            // 6. ⚠️ NO FOREARM BOX. `Models/viewmodel_arm` is the forearm now and it is switched
+            //    back on for her in `ApplyCharacterStyle`. A hand-rolled box was tried first and
+            //    came out 0.150 across against a 0.372 cuff, which is a tab rather than an arm;
+            //    the shared mesh is the section the whole cast's arms are, which is what
+            //    *"a bit thhicker"* actually asks for. The sleeve ends at 0.605 and the hand
+            //    starts at 0.695, so there are nine centimetres of bare wrist between them.
 
             // 4. Cute Tucked Hand in exact Nemu Skin Tone (#e0af84 and #d69974)
             var handGo = new GameObject(AccessoryPrefix + "SpiritHand");
@@ -1307,7 +1373,13 @@ namespace TumbangPreso.CameraSystem
             //
             // ⚠️ IT KEEPS THE OLD BLOCK'S REACH, 0.70 to 0.82, so the hand still wraps the held
             // tsinelas exactly where it did. The anatomy is gone; the placement is not.
-            AddBoxAccessory(handGo.transform, "Hand", new Vector3(0.086f, 0.120f, 0.042f),
+            //
+            // ⚠️⚠️ THE REACH IS KEPT AND THE SECTION IS NOT, because 0.086 by 0.042 beside a
+            // 0.372 cuff is not a hand, it is a chip. That thinness is most of why the whole
+            // limb read as floating: the eye had a big box, a gap, and something too small to be
+            // attached to it. 0.170 by 0.160 is the section of the forearm it sits on, which is
+            // what `tools/build_person_voxel.py` emits: one `hand-right` box, no taper.
+            AddBoxAccessory(handGo.transform, "Hand", new Vector3(0.170f, 0.130f, 0.160f),
                 new Vector3(0.0f, 0.760f, 0.0f), Quaternion.identity, skinTone);
         }
 

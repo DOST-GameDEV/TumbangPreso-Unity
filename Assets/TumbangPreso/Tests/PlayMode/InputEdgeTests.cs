@@ -127,6 +127,29 @@ namespace TumbangPreso.PlayTests
 
             Assert.IsNotNull(attacker, "no attacker seat");
 
+            // ⚠️⚠️ THE SEAT'S BOT IS SWITCHED OFF BEFORE ANYTHING IS POSITIONED, AND "BEFORE" IS
+            // THE LOAD-BEARING WORD. This test is about the input path reaching `Carrier`, not
+            // about the planner, and it does two things a bot ruins:
+            //
+            //  * It drops a slipper at the attacker's feet and then holds Grab. A bot that is
+            //    walking carries the body out of `Balance.PickupRadius` while the loop runs, so
+            //    the failure reads as "the press never arrived" when the press arrived at a
+            //    character who had left. That is why this went red the day `DoStalk` started
+            //    sliding around the ring instead of standing still, and why it passed with an
+            //    earlier version of the same change: it was measuring how far the bot walked.
+            //  * Two writers on one `InputIntent`, which the note further down already records.
+            //    `AIController.Update` writes `Grab = false` on every frame its plan does not
+            //    want it, erasing the press this loop is asserting on.
+            //
+            // A test that drives an intent has to own that intent, and it has to own the body
+            // too. Same rule as `AIController.AbilitiesEnabled` (docs/TODO.md section 42).
+            var seatBot = attacker.GetComponent<AIController>();
+            if (seatBot != null) seatBot.enabled = false;
+
+            attacker.Intent.Clear();
+            attacker.Intent.CommitFrame();
+            for (int i = 0; i < 3; i++) yield return new WaitForFixedUpdate();
+
             // Somebody else's slipper, so the test is about eligibility rather than ownership.
             Slipper target = null;
 
@@ -185,6 +208,8 @@ namespace TumbangPreso.PlayTests
             // ⚠️ IT IS STILL ONE PRESS EDGE. `JustPressed` is a diff against the snapshot
             // `CharacterMotor` takes at the end of its own step, so a key held true every frame
             // produces exactly one edge, which is what a player pressing E produces.
+            //
+            // ⚠️ THE SEAT'S BOT IS ALREADY OFF, up where the attacker was chosen. See that note.
             for (int i = 0; i < 20; i++)
             {
                 attacker.Intent.Set(Verb.Grab, true);
@@ -192,6 +217,7 @@ namespace TumbangPreso.PlayTests
             }
 
             attacker.Intent.Set(Verb.Grab, false);
+            if (seatBot != null) seatBot.enabled = true;
 
             Assert.IsTrue(attacker.HoldingSlipper,
                 "the Grab press edge never reached Carrier: the attacker is standing on a " +
