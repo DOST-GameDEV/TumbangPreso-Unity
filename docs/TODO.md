@@ -6472,6 +6472,75 @@ most of the match is filed somewhere else.
 
 ---
 
+## 63 · The world outline was aliased because MSAA was never able to see it
+
+🧑 2026-08-28: the screen-space ink outline stair-steps, and thin geometry like the overhead
+wires breaks into dashes.
+
+**MSAA is on, MSAA is working, and MSAA cannot help.** Measured in play mode on 2026-08-28:
+quality level Ultra, `QualitySettings.antiAliasing` 4, `Camera.allowMSAA` true, and a render
+target requested with four samples really does come back holding four. But MSAA anti-aliases
+GEOMETRY during rasterisation, out of coverage samples taken per triangle, and this outline is
+painted by a fragment shader into an image that has **already been resolved**. There were never
+any coverage samples for the ink. Every line it draws is hard-edged by construction, and a wire
+narrower than a pixel is detected at some pixel centres and not others.
+
+**The fix, on `feat/outline-supersample`: manufacture the coverage.** `WorldOutline.shader`'s
+composite now evaluates the edge term at N x N sub-pixel positions inside each pixel and averages
+the answers, and both thresholds became `smoothstep` over exactly the interval the linear ramp
+already used, so `_DepthSensitivity`, `_NormalSensitivity` and both deadzones keep their meanings
+and need no retuning. `WorldOutline._supersample` is the knob, `[Range(1, 3)]`, **default 2**,
+because `QualitySettings.antiAliasing` is 4 and four sub-samples per pixel resolves the ink at the
+same granularity as the geometry it sits beside. 1 restores the previous sampling exactly.
+
+⚠️ **What it genuinely fixes and what it does not, because half of this is not fixable in screen
+space.** The edge TERM gains resolution: it is a function of position, so four evaluations give
+five ink levels instead of two, and the stair steps on wall and roof silhouettes go. The depth
+DATA does not: `_CameraDepthNormalsTexture` is generated at camera resolution and point filtered,
+so sub-pixel taps re-read the same texels in different combinations. **A wire the prepass
+rasteriser missed at a pixel is missing from every sub-sample of that pixel.** The dashes get
+softer ends and shorter gaps; they do not become solid lines.
+
+⚠️ **The thing that would fix the wires was costed and rejected rather than overlooked.** Genuinely
+finer depth means rendering the depth-normals prepass at 2x, through a second camera doing
+`RenderWithShader` with `Hidden/Internal-DepthNormalsTexture` into a target of four times the area:
+a SECOND full rasterisation of roughly 450 renderers on a dressed Eskinita, on top of the one this
+feature already added, on the machines whose 2026-07-29 report was *"severe lag on other PCs"*.
+The feature's whole claim to being worth retrying is that it costs one scene pass instead of 450
+extra draws. **If the wires are judged worth it, that is the upgrade, and it must be measured on a
+low-end machine before it ships, not after.**
+
+**Cost, in full.** Still one full-screen pass and zero extra render targets, so no extra memory of
+any kind. The composite's tap count goes from 8 to 4N² + 4: 8 at N = 1, **20 at N = 2**, 40 at
+N = 3. The mask is sampled once per pixel outside the loop rather than once per sub-sample, which
+is where the `+ 4` instead of `+ 4N²` comes from, and it is exact rather than an approximation
+because the mask multiplies the result: `mean(edge) x mask` and `mean(edge x mask)` are the same
+number.
+
+⚠️ **The exclusion mask stays at camera resolution, and that is the reason the fragment does the
+sub-sampling instead of a 2x blit.** Blitting the composite into a 2x target would have left the
+mask, which is allocated from `_camera.pixelWidth/pixelHeight`, at 1x, and the exclusion would have
+crept by half a pixel across the frame. Sub-sampling in the fragment means nothing changed
+resolution and nothing can misalign. **The one thing that did have to follow is the dilation
+radius:** the mask is max-sampled at the tap radius to cover the hull's ink band, and the widened
+kernel now reaches a further `centre/N` of a texel, a quarter of a pixel at N = 2. The shader adds
+that in. Without it a ring that thin around every character would have been inside the edge term's
+reach and outside the mask's, putting back the faint second hairline the dilation exists to remove,
+and only at N > 1.
+
+⚠️ **`ShadowsOnly` renderers are still skipped when the mask is built.** That is § 58's sibling fix
+on `integration/ui-batch-on-ilalim`, the one that stopped the local player's self-hidden head
+masking most of the screen. Nothing here touches it. Do not let a merge drop it.
+
+**Not yet verified:** this branch authored the change without launching Unity. What is still open
+is (a) that the shader compiles, in particular `#pragma target 3.0`, `[unroll(3)]` over a
+uniform bound and `tex2Dlod` on `_CameraDepthNormalsTexture`; (b) an A/B render at
+`Supersample` 1 against 2 on the same frame; (c) the frame cost of the extra 12 taps on a low-end
+machine. `WorldOutlineCoverageProbe` already renders on and off at 2.06:1 and prints ink percentage
+per cell, so it is the cheapest place to add a 1-against-2 arm.
+
+---
+
 ## Closed
 
 - **Lobby client synchronization, pick normalization, and host non-zero seat picks.** ✅ 2026-08-26.
