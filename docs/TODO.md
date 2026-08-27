@@ -5903,6 +5903,70 @@ HOST every seat it drives must show `+sim`; on a CLIENT exactly one seat may.
 
 ---
 
+## 63 · A game could be joined exactly once per launch, and remote bodies never animated
+
+### 63.1 ✅ FIXED: the message handlers registered once per PROCESS, not once per session
+
+🧑 2026-08-28, and it is as exact a description of a process-lifetime flag as anybody could
+write: *"so i was able to start a game when i first opened and i could join as non host"*,
+*"afterwards i couldnt"*, **"i could only join a game again after restart"**.
+
+`NetworkManager.Shutdown` **destroys** its `CustomMessagingManager`, and `StartClient` builds a
+new one. Every handler registered on the old instance dies with it. Both routers guarded
+registration with a plain bool that survived the shutdown:
+
+* `MatchRpc._handlersRegistered` gated all **44** named messages;
+* `NetSession._seatHandlerRegistered` gated `tp.seat.assignment.v1`.
+
+So the second session of a process registered **nothing at all**. A client would connect, be
+seated by the low-level seat message it also no longer received, and then hear no `Seating`, no
+`SyncWorld`, no `StartMatch` and no `SyncUnit` for the rest of the launch.
+
+**Fixed** by remembering the `CustomMessagingManager` the handlers are registered ON and
+re-registering whenever it is a different instance. ⚠️ **Comparing the instance is self-healing
+and a reset call would not be**: clearing a flag from `Stop` works only while every teardown path
+remembers to call it, and remembering is exactly what failed here. `OnDestroy` unregistered,
+`Stop` did not, and NGO can replace the manager without either being involved.
+
+### 63.2 ✅ FIXED: § 62.1's navigation fired during a join
+
+Sending a disconnected peer back to the join screen also fired for a connection that had never
+completed. `OnClientDisconnectCallback` is raised for a refused approval, for a retry inside
+`MaxConnectAttempts` and for a transport rebind, all while the player is still arriving, so
+pressing JOIN bounced straight back out. 🧑: *"oh shit now i cant join any game wtf"*.
+`NetSession._everConnected` gates it: a connection that never completed is not a disconnection.
+
+### 63.3 ✅ FIXED: every remote body was frozen in the falling pose
+
+🧑, from the host's screen: *"the nonhosts that join can move and interact but theyre stuck at
+this pose, they cant do animations and shit"*.
+
+`CharacterMotor._grounded` is written only by `ApplyGravity` in the local simulation, and
+`FixedUpdate` returns through `StepNetworkReplica` long before reaching it, so on a replica it
+stayed **false** for the whole match. `Visual.CharacterAnimator.ClipFor` asks `IsGrounded` FIRST:
+
+```
+if (!_motor.IsGrounded) return _motor.Velocity.y > 0.5f ? Jump : Fall;
+```
+
+so Walk, Sprint and Idle were unreachable for anybody you were not driving yourself. Every other
+player on your screen has been standing in a fall pose for the entire life of the netcode.
+
+**Fixed** by deriving `_grounded` on a replica from the vertical velocity, which is already
+replicated, using the animator's own 0.5 threshold.
+
+### 63.4 ⚠️ OPEN: transmit `IsGrounded` rather than inferring it
+
+63.3 is an inference and the owner of a body knows the truth. ⚠️ **`SyncUnit` alone cannot carry
+it**: the HOST's copy of a client-driven body has the same stale `false`, because `ApplyUnitMove`
+does not run gravity either. It needs a bool on **`SubmitMove`** as well, which the host then
+relays in `SyncUnit`. Two payloads and a protocol bump. **Done looks like:** both fields added,
+both halves of both messages updated, `audit_wire_payloads.py` still balanced, and the inference
+in `StepNetworkReplica` deleted rather than left as a second source.
+
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

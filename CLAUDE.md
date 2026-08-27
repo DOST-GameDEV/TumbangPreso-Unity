@@ -332,7 +332,18 @@ before believing anything worse**, and check it whether or not a Unity process i
 
 ⚠️ **Bash heredocs are unreliable here.** Write the script to a file and run it.
 
-⚠⚠ **THE BOTTOM-RIGHT CORNER SHOWS THE BRANCH NAME, NOT THE VERSION, ON EVERY BRANCH BUT
+⚠⚠ **REVERSED ON 2026-08-28: THE CORNER SHOWS THE VERSION AGAIN, ON EVERY BRANCH.** 🧑, pointing
+at a corner reading `integration/ui-batch-on-ilalim`: *"pls replace the version number to 1.00"*,
+*"instead of this"*. The game is at **1.00** now rather than mid-port, and the number is what goes
+into a screenshot to a sponsor and what a player quotes in a report. `GameVersion.DisplayString`
+is the ONE line that decides, and the machinery below is kept rather than deleted, so returning to
+the branch name is a one-line change. **The reason it was built is real, and the paragraph below
+is why: if two .exe files ever become indistinguishable again, put it back rather than rebuilding
+it.**
+
+The original rule, retained for that reason:
+
+⚠️ **THE BOTTOM-RIGHT CORNER SHOWED THE BRANCH NAME, NOT THE VERSION, ON EVERY BRANCH BUT
 `main`.** 🧑, 2026-08-27: *"for every branch made it would replace the version number on the
 bottom right corner with the branch name instead"*. A build off
 `fix/multiplayer-fpp-camera-inside-head` reads exactly that in the corner of every screen and of
