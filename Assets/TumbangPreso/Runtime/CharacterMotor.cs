@@ -759,7 +759,14 @@ namespace TumbangPreso
             // alone cannot carry the truth. It needs a bool on `SubmitMove` as well, which the
             // host then relays. Two payloads and a protocol bump, mid-playtest, for a pose.
             // `docs/TODO.md` § 64.
-            _grounded = _networkTargetVelocity.y > -0.5f && _networkTargetVelocity.y < 0.5f;
+            //
+            // ⚠️⚠️ THE LOWER BOUND IS `GroundedRestVelocityY`, NOT -0.5. A standing unit is
+            // never simulated at exactly 0: `ApplyGravity` holds it at that constant so
+            // `CharacterController.isGrounded` does not flicker, and that value is exactly
+            // what gets transmitted. A window that stopped at -0.5 excluded every idle body on
+            // every replica from ever reading grounded — see the note on the constant.
+            _grounded = _networkTargetVelocity.y > GroundedRestVelocityY - 0.5f
+                     && _networkTargetVelocity.y < 0.5f;
 
             // Lead by one render-sized beat so a 50 Hz stream does not look one packet behind.
             Vector3 target = _networkTargetPosition + _networkTargetVelocity * 0.02f;
@@ -783,6 +790,19 @@ namespace TumbangPreso
         private bool _inputSourceKnown;
         private bool _hostDriven;
 
+        /// <summary>
+        /// ⚠️⚠️ SHARED WITH `StepNetworkReplica`'S GROUNDED WINDOW, AND THAT SHARING IS THE
+        /// FIX. The window used to be a bare `(-0.5, 0.5)` around the animator's own Jump cut,
+        /// which forgot that a body resting on the ground never reports 0: it reports THIS. A
+        /// standing, idle unit therefore transmits -2.0 every frame, landed outside a window
+        /// that stopped at -0.5, and every replica read it as permanently airborne — Fall or,
+        /// once the apex of a real jump's arc happened to line up, Jump. 🧑, from the host's
+        /// screen, watching a body that was in fact standing still: "you could see other
+        /// players on what looks like a jumping emote." The window now spans this constant
+        /// with the same margin the Jump cut already had.
+        /// </summary>
+        private const float GroundedRestVelocityY = -2.0f;
+
         private void ApplyGravity(float dt)
         {
             if (_grounded && _velocity.y <= 0.0f)
@@ -791,7 +811,7 @@ namespace TumbangPreso
                 // resting at exactly 0 vertical velocity reports `isGrounded` false every
                 // other frame, which reads as a unit that cannot jump reliably and cannot
                 // be told apart from an input bug.
-                _velocity.y = -2.0f;
+                _velocity.y = GroundedRestVelocityY;
 
                 if (Intent.JustPressed(Verb.Jump) && CanAct())
                 {
