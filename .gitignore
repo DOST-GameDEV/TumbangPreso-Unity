@@ -91,3 +91,10 @@ __pycache__/
 # The PlayMode test runner drops a throwaway bootstrap scene at the Assets root.
 Assets/InitTestScene*.unity
 Assets/InitTestScene*.unity.meta
+
+# The branch stamp in the corner of every screen. GameBuilder writes it on every build from
+# whatever branch is checked out, so committing it would mean a one-line diff per build and a
+# merge conflict per branch, over a file whose whole job is to be regenerated. Absent, the
+# label falls back to the version number, which is the same thing an empty stamp means.
+Assets/TumbangPreso/Resources/BuildBranch.txt
+Assets/TumbangPreso/Resources/BuildBranch.txt.meta

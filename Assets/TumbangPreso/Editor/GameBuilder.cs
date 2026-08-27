@@ -205,6 +205,55 @@ namespace TumbangPreso.EditorTools
         /// render as the error material. It is the same class of bug as the stripped animation
         /// clips: correct in the editor, broken exclusively in the thing you hand somebody.
         /// </summary>
+        /// <summary>
+        /// Writes the branch this build came off into `Resources/BuildBranch.txt`, which is the
+        /// only way a player can know: there is no git inside a shipped .exe.
+        ///
+        /// ⚠⚠ IT RUNS ON EVERY BUILD AND IS NOT A THING ANYBODY HAS TO REMEMBER. The whole
+        /// value of the corner stamp is that it is true without effort; a step you run by hand
+        /// before a build is a step that is skipped on the build that mattered, which is exactly
+        /// the history `PurgeOutputDirectory` has and why that one moved into code too.
+        ///
+        /// ⚠️ THE FILE IS WRITTEN EVEN WHEN THE NAME IS EMPTY, so a build off `main` or a
+        /// detached HEAD OVERWRITES the previous branch's stamp instead of inheriting it. An
+        /// empty file means "show the version number" and a missing one would mean the same
+        /// thing, but only until a stale one from three branches ago is left lying beside it.
+        /// </summary>
+        private static void StampBuildBranch()
+        {
+            string root = Path.GetDirectoryName(Application.dataPath);
+            string branch = BuildBranch.FromGit(root) ?? "";
+
+            string dir = Path.Combine(Application.dataPath, "TumbangPreso/Resources");
+            string file = Path.Combine(dir, BuildBranch.ResourceName + ".txt");
+
+            try
+            {
+                Directory.CreateDirectory(dir);
+                File.WriteAllText(file, branch);
+
+                // The asset has to exist in the database before `BuildPipeline.BuildPlayer` walks
+                // Resources, or the player ships without it and silently falls back to the number.
+                AssetDatabase.ImportAsset("Assets/TumbangPreso/Resources/" +
+                                          BuildBranch.ResourceName + ".txt",
+                                          ImportAssetOptions.ForceUpdate);
+
+                // ⚠️ THE EDITOR'S OWN CACHE IS DROPPED TOO. `BuildBranch` memoises the name on
+                // first read, and this editor process may have read it on a different branch.
+                BuildBranch.Forget();
+
+                Debug.Log(string.IsNullOrEmpty(branch)
+                    ? "[Build] no branch name; the corner stamp will show the version."
+                    : $"[Build] corner stamp is the branch name: {branch}");
+            }
+            catch (Exception e)
+            {
+                // ⚠️ NOT FATAL. A stamp that cannot be written costs a label, and refusing to
+                // build over a cosmetic file would be a worse trade than shipping "v4.72".
+                Debug.LogWarning($"[Build] could not write the branch stamp: {e.Message}");
+            }
+        }
+
         private static void EnsureRuntimeShaders()
         {
             string[] wanted =
@@ -413,6 +462,7 @@ namespace TumbangPreso.EditorTools
             ConfigureSplash();
             ConfigureIcon();
             EnsureRuntimeShaders();
+            StampBuildBranch();
 
             // Ship at the monitor's native resolution in borderless fullscreen. Starting the
             // player in a fixed 1600x900 window made a normal build look like a test harness;
