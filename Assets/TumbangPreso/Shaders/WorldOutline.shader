@@ -65,6 +65,10 @@ Shader "TumbangPreso/WorldOutline"
         // xy = tan(halfFov) * aspect, tan(halfFov). Written from C#; used to rebuild the view
         // ray per pixel for the grazing-angle compensation.
         _ViewRay ("View Ray", Vector) = (1, 1, 0, 0)
+
+        // Sub-samples per axis for the edge term. 1 is the pre-2026-08-28 behaviour. See the
+        // long § SUPERSAMPLING note in pass 0.
+        _Supersample ("Edge Sub-samples Per Axis", Range(1, 3)) = 2
     }
 
     SubShader
@@ -88,6 +92,13 @@ Shader "TumbangPreso/WorldOutline"
             CGPROGRAM
             #pragma vertex vert_img
             #pragma fragment frag
+
+            // ⚠️ SHADER MODEL 3.0 IS FOR THE SUPERSAMPLE LOOP AND FOR `tex2Dlod`, and neither is
+            // optional. The edge term is evaluated inside a loop whose bound is a uniform, and
+            // `tex2Dlod` is what lets that loop sample without a gradient instruction. Every
+            // platform this project builds for is 3.0 or better; the built-in blit path defaults
+            // lower purely for history.
+            #pragma target 3.0
             #include "UnityCG.cginc"
 
             sampler2D _MainTex;
@@ -107,6 +118,7 @@ Shader "TumbangPreso/WorldOutline"
             float _FadeEnd;
             half _MaskStrength;
             float4 _ViewRay;
+            float _Supersample;
 
             // ⚠️ NOT NAMED `Sample`, AND `offset` BELOW IS NOT NAMED `step`. Both of those are
             // HLSL intrinsics or reserved in one of the compilers this project targets, and a
@@ -117,29 +129,33 @@ Shader "TumbangPreso/WorldOutline"
                 float3 normal;  // view space
             };
 
+            // ⚠️ `tex2Dlod` RATHER THAN `tex2D`, AND IT IS NOT A PERFORMANCE TWEAK. This is called
+            // from inside the supersample loop, and `tex2D` compiles to a gradient instruction
+            // that some compilers refuse inside a loop even when the bound is a uniform. The two
+            // are the SAME FETCH here: `_CameraDepthNormalsTexture` has no mip chain and is point
+            // filtered, so mip 0 is the only thing `tex2D` could ever have returned.
             DepthNormalSample Read (float2 uv)
             {
                 DepthNormalSample s;
-                DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture, uv), s.depth, s.normal);
+                DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture, float4(uv, 0.0, 0.0)),
+                                  s.depth, s.normal);
                 return s;
             }
 
-            half4 frag (v2f_img i) : SV_Target
+            // -----------------------------------------------------------------------------
+            // ONE SUB-SAMPLE OF THE EDGE TERM, at `duv`, with a Roberts radius of `offset`.
+            //
+            // ⚠️⚠️ THIS WAS THE ENTIRE BODY OF `frag` UNTIL 2026-08-28. It was split out so the
+            // composite can evaluate it at SEVERAL sub-pixel positions and average the answers.
+            // The § SUPERSAMPLING note on `frag` carries the reasoning and, more importantly,
+            // what that does and does not fix.
+            //
+            // It returns coverage in 0..1 with the distance fade applied and the exclusion mask
+            // deliberately NOT applied. The mask is the same number for every sub-sample of one
+            // output pixel, so it is sampled once outside the loop instead of N² times.
+            // -----------------------------------------------------------------------------
+            float EdgeAt (float2 duv, float2 offset)
             {
-                half4 source = tex2D(_MainTex, i.uv);
-
-                // ⚠️ THE DEPTH TEXTURE AND THE SOURCE FRAME DO NOT ALWAYS AGREE ON WHICH WAY UP
-                // THEY ARE. On a flipped-Y target the source arrives upside down relative to the
-                // depth-normals prepass, and the whole outline would land mirrored vertically:
-                // ink along the bottom of every roof and nothing along the top. This is the
-                // standard built-in-pipeline guard and it is a no-op when the two already agree.
-                // `_WorldOutlineMask` is rasterised the same way the prepass is, so it flips with
-                // it rather than with the source.
-                float2 duv = i.uv;
-                #if UNITY_UV_STARTS_AT_TOP
-                if (_MainTex_TexelSize.y < 0.0) duv.y = 1.0 - duv.y;
-                #endif
-
                 // ⚠️ A ROBERTS CROSS, NOT A SOBEL, AND THE REASON IS THE TAP COUNT. Roberts is
                 // four diagonal taps against Sobel's eight, and both of those numbers are
                 // multiplied by the depth-normals decode. Sobel's extra taps buy a smoother
@@ -154,8 +170,11 @@ Shader "TumbangPreso/WorldOutline"
                 // gap down the middle. If thick ink is ever wanted, the fix is a max-dilate of
                 // the edge term rather than a bigger radius here, and it costs another four
                 // taps. Left undone on purpose: the hull border it has to sit beside is thin.
-                float2 offset = _MainTex_TexelSize.xy * _Thickness;
-
+                //
+                // ⚠️ `offset` IS A PARAMETER NOW RATHER THAN A LOCAL. It used to be computed here
+                // from `_MainTex_TexelSize`. It is computed once in `frag` instead so that every
+                // sub-sample of one pixel uses the SAME radius, and so `frag` can work out how far
+                // the widened kernel actually reaches when it dilates the exclusion mask.
                 DepthNormalSample a = Read(duv + float2(-offset.x, -offset.y));
                 DepthNormalSample b = Read(duv + float2( offset.x,  offset.y));
                 DepthNormalSample c = Read(duv + float2(-offset.x,  offset.y));
@@ -166,7 +185,7 @@ Shader "TumbangPreso/WorldOutline"
                 // Everything past the far plane is sky. It has no geometry and no normal, and
                 // a building's silhouette AGAINST it still reads as an edge because the sky's
                 // depth of 1 is a huge step away from the building's.
-                if (nearest >= 0.9995) return source;
+                if (nearest >= 0.9995) return 0.0;
 
                 // ---------------------------------------------------------- the depth term
                 //
@@ -206,7 +225,35 @@ Shader "TumbangPreso/WorldOutline"
                                    min(saturate(dot(c.normal, -ray)), saturate(dot(d.normal, -ray))));
 
                 float tolerance = _DepthBias / max(facing, 0.05);
-                float depthEdge = saturate((relative - tolerance) * _DepthSensitivity);
+
+                // ⚠️⚠️ `smoothstep` RATHER THAN `saturate((x - bias) * sensitivity)`, AND THE
+                // RAMP IS THE SAME INTERVAL SO NOTHING NEEDS RETUNING. The old expression ramps
+                // LINEARLY from `tolerance` to `tolerance + 1/_DepthSensitivity` and clamps
+                // outside; `smoothstep` ramps over exactly that interval with a smooth shoulder at
+                // both ends. Same endpoints, same meaning for `_DepthSensitivity`, same value at
+                // 0 and at 1. Only the shape between them changed.
+                //
+                // ⚠️ IT IS PART OF THE ANTI-ALIASING RATHER THAN A COSMETIC CHOICE. Both ends of
+                // the linear ramp are CORNERS, and a corner in the transfer function is a visible
+                // contour in the image: it puts a hard boundary where the edge term crosses the
+                // threshold, which is one of the two ways this pass produced stair steps. The
+                // smooth shoulder removes the contour for nothing, on every sub-sample, before
+                // any supersampling is applied at all.
+                //
+                // ⚠️ AND IT DOES NOT RESCUE A SILHOUETTE, WHICH IS WHY IT IS NOT THE WHOLE FIX.
+                // At a real silhouette `relative` jumps from roughly 0 to an enormous number
+                // across one texel, so it clears the far end of the ramp in the same step it
+                // entered it. The shoulder helps the SHALLOW cases, the creases and the grazing
+                // surfaces where the term dwells near the threshold. Silhouettes are what the
+                // sub-sampling in `frag` is for.
+                //
+                // ⚠️ THE `max` GUARDS A SENSITIVITY OF ZERO. `saturate((x - t) * 0)` was 0
+                // everywhere; a zero-width smoothstep interval is a divide by zero. Clamping the
+                // sensitivity makes the interval 10,000 wide instead, which is 0 everywhere for
+                // any depth difference this game can produce.
+                float depthEdge = smoothstep(tolerance,
+                                             tolerance + 1.0 / max(_DepthSensitivity, 1e-4),
+                                             relative);
 
                 // ---------------------------------------------------------- the normals term
                 //
@@ -215,13 +262,22 @@ Shader "TumbangPreso/WorldOutline"
                 // nothing at all and the building loses the single line that makes it read as a
                 // box rather than a silhouette. The normal turns 90 degrees over one pixel there.
                 float normalDiff = (1.0 - dot(a.normal, b.normal)) + (1.0 - dot(c.normal, d.normal));
-                float normalEdge = saturate((normalDiff - _NormalBias) * _NormalSensitivity);
+
+                // ⚠️ SMOOTHED FOR THE SAME REASON AND OVER THE SAME INTERVAL as the depth term
+                // above, and this is the term that gains the most from it. The normals arrive
+                // through a spheremap transform into two 8-bit channels, so a crease sitting on
+                // the threshold flickers between frames on packing noise alone. A linear ramp
+                // turns that flicker into a hard on-off; a smooth one turns it into a wobble in
+                // intensity, which is far less visible on a moving limb or a distant roofline.
+                float normalEdge = smoothstep(_NormalBias,
+                                              _NormalBias + 1.0 / max(_NormalSensitivity, 1e-4),
+                                              normalDiff);
 
                 // ⚠️ COMBINED WITH `max`, NOT ADDED. A silhouette fires BOTH terms, and adding
                 // them would make the outer border of every object twice the strength of the
                 // creases inside it. Godot's hull draws one ink at one opacity everywhere.
                 float edge = max(depthEdge, normalEdge);
-                if (edge <= 0.0) return source;
+                if (edge <= 0.0) return 0.0;
 
                 // ---------------------------------------------------------- the distance fade
                 //
@@ -245,6 +301,114 @@ Shader "TumbangPreso/WorldOutline"
                 float span = max(_FadeEnd - _FadeStart, 0.001);
                 edge *= 1.0 - saturate((metres - _FadeStart) / span);
 
+                return edge;
+            }
+
+            // -----------------------------------------------------------------------------
+            // § SUPERSAMPLING, AND EXACTLY HOW MUCH OF THE ALIASING IT CAN HONESTLY REMOVE.
+            //
+            // ⚠️⚠️ MSAA CANNOT TOUCH THIS PASS, AND THAT IS MEASURED RATHER THAN ARGUED.
+            // Measured in play mode on 2026-08-28: the quality level is Ultra,
+            // `QualitySettings.antiAliasing` is 4, `camera.allowMSAA` is true, and a render target
+            // asked for with four samples really does come back holding four. MSAA is working. It
+            // simply cannot apply here: it anti-aliases GEOMETRY during rasterisation, out of
+            // coverage samples taken per triangle, and this outline is painted by a fragment
+            // shader into an image that has already been resolved. There were never any coverage
+            // samples for the ink. Every line it draws is hard-edged by construction, which is the
+            // stair-stepping, and a wire thinner than a pixel is detected at some pixels and not
+            // others, which is the dashing.
+            //
+            // ⚠️⚠️ SO COVERAGE HAS TO BE MANUFACTURED, AND THE HONEST WAY TO SAY WHAT THIS DOES
+            // IS TO SAY WHAT GAINS RESOLUTION AND WHAT DOES NOT.
+            //
+            //   * WHAT GAINS. The edge TERM. The Roberts cross is a function of position, and
+            //     evaluating it at N² positions inside one pixel and averaging turns a binary
+            //     answer into a coverage value with N² + 1 levels. At N = 2 a wall edge that
+            //     crosses a pixel diagonally now gets a quarter, a half or three quarters of the
+            //     ink instead of all of it or none of it. That is a real, visible removal of the
+            //     stair steps, and it needs no extra memory and no extra pass.
+            //
+            //   * WHAT DOES NOT. The DEPTH DATA. `_CameraDepthNormalsTexture` is generated by the
+            //     built-in pipeline at camera resolution and it is point filtered, so the taps at
+            //     sub-pixel positions read the same texels in different COMBINATIONS. They do not
+            //     read finer geometry, because finer geometry was never recorded. An overhead
+            //     wire that the prepass rasteriser missed at a given pixel is absent from every
+            //     sub-sample of that pixel. The dashes therefore get softer ends and shorter gaps
+            //     and they do not become a continuous line.
+            //
+            // ⚠️⚠️ THE ONE THING THAT WOULD FIX THE WIRES WAS COSTED AND REJECTED, AND THE REASON
+            // IS THE 2026-07-29 REVERT. Genuinely finer depth means rendering the depth-normals
+            // prepass at 2x: a second camera doing `RenderWithShader` with
+            // `Hidden/Internal-DepthNormalsTexture` into a target of four times the area. On a
+            // dressed Eskinita that is a SECOND full rasterisation of roughly 450 renderers, on
+            // top of the one this feature already added, on the machines whose report was *"severe
+            // lag on other PCs"*. The feature's whole claim to being worth retrying is that it
+            // costs one scene pass instead of 450 extra draws; spending a second scene pass on
+            // sub-pixel wires would throw that claim away for the least important half of the
+            // defect. It is written down here as the upgrade path, not taken.
+            //
+            // ⚠️ THE COST OF WHAT WAS TAKEN, IN FULL. Still ONE full-screen pass and ZERO extra
+            // render targets. The tap count of that pass goes from 8 to 4·N² + 4: 8 at N = 1,
+            // 20 at N = 2, 40 at N = 3. The mask is deliberately outside the loop, which is where
+            // the "+ 4" instead of "+ 4N²" comes from. Nothing else in the frame changes: the
+            // depth-normals prepass, the exclusion mask target and the mask draws are all
+            // untouched and all still at camera resolution.
+            //
+            // ⚠️⚠️ AND THE MASK CANNOT MISALIGN, BECAUSE NO RESOLUTION CHANGED ANYWHERE. This is
+            // the trap a 2x pass would have walked into: the exclusion mask is allocated from
+            // `_camera.pixelWidth/pixelHeight`, so evaluating the edge in a 2x target would have
+            // left the mask at 1x and the exclusion would have crept by half a pixel across the
+            // frame. Sub-sampling inside the fragment sidesteps it entirely. Every sample here,
+            // edge and mask alike, is taken in the SAME normalised UV space at the SAME
+            // resolution, through the same `UNITY_UV_STARTS_AT_TOP` flip.
+            // -----------------------------------------------------------------------------
+            half4 frag (v2f_img i) : SV_Target
+            {
+                half4 source = tex2D(_MainTex, i.uv);
+
+                // ⚠️ THE DEPTH TEXTURE AND THE SOURCE FRAME DO NOT ALWAYS AGREE ON WHICH WAY UP
+                // THEY ARE. On a flipped-Y target the source arrives upside down relative to the
+                // depth-normals prepass, and the whole outline would land mirrored vertically:
+                // ink along the bottom of every roof and nothing along the top. This is the
+                // standard built-in-pipeline guard and it is a no-op when the two already agree.
+                // `_WorldOutlineMask` is rasterised the same way the prepass is, so it flips with
+                // it rather than with the source.
+                float2 duv = i.uv;
+                #if UNITY_UV_STARTS_AT_TOP
+                if (_MainTex_TexelSize.y < 0.0) duv.y = 1.0 - duv.y;
+                #endif
+
+                float2 texel = _MainTex_TexelSize.xy;
+                float2 offset = texel * _Thickness;
+
+                // ⚠️ ROUNDED AND CLAMPED IN THE SHADER AS WELL AS IN C#. The uniform is a float
+                // because a float uniform is the one kind every graphics API in this project's
+                // build set agrees about; a material edited by hand in the inspector, or left
+                // over from an older serialisation, can arrive holding anything.
+                int n = (int)clamp(_Supersample + 0.5, 1.0, 3.0);
+                float inv = 1.0 / n;
+
+                // ⚠️ THE GRID IS CENTRED ON THE PIXEL, NOT ANCHORED TO ITS CORNER. `centre` is the
+                // index of the middle of the grid, so `(index - centre) * inv` runs symmetrically
+                // about zero: -0.25 and +0.25 of a texel at N = 2, and -1/3, 0, +1/3 at N = 3.
+                // Anchoring at a corner instead would bias every line in the frame half a pixel up
+                // and left, which reads as the outline having slipped off its geometry.
+                float centre = 0.5 * (n - 1);
+
+                float coverage = 0.0;
+
+                [unroll(3)] for (int sy = 0; sy < n; sy++)
+                {
+                    [unroll(3)] for (int sx = 0; sx < n; sx++)
+                    {
+                        float2 sub = duv + (float2(sx, sy) - centre) * inv * texel;
+                        coverage += EdgeAt(sub, offset);
+                    }
+                }
+
+                coverage *= inv * inv;
+                if (coverage <= 0.0) return source;
+
                 // ---------------------------------------------------------- the exclusion mask
                 //
                 // ⚠️⚠️ THIS IS WHAT KEEPS THE PASS OFF THE CAST, AND THE CAST IS WHY IT EXISTS.
@@ -253,20 +417,37 @@ Shader "TumbangPreso/WorldOutline"
                 // silhouette doubling is survivable and the CREASE lines this pass would draw
                 // across a character's chest and elbows are not.
                 //
-                // ⚠️ THE MASK IS SAMPLED AT THE SAME FOUR OFFSETS AS THE EDGE, AND TAKEN AS A
-                // MAX. That dilates it by exactly the tap radius, which is what covers the ink
-                // band the hull draws OUTSIDE the character's real silhouette. The mask pass
-                // draws the character's actual mesh, so an undilated mask would stop one hull
-                // width short and leave a hairline ringing every unit.
+                // ⚠️ SAMPLED FOUR TIMES AND TAKEN AS A MAX, WHICH DILATES IT BY THE TAP RADIUS.
+                // That is what covers the ink band the hull draws OUTSIDE the character's real
+                // silhouette. The mask pass draws the character's actual mesh, so an undilated
+                // mask would stop one hull width short and leave a hairline ringing every unit.
+                //
+                // ⚠️⚠️ AND THE RADIUS NOW INCLUDES THE SUB-SAMPLE SPREAD, WHICH IS THE ONE PLACE
+                // SUPERSAMPLING COULD HAVE BROKEN THE EXCLUSION. The furthest a tap can now land
+                // from the pixel centre is `offset` plus the distance to the outermost sub-sample,
+                // `centre/N` of a texel: a quarter of a pixel at N = 2, a third at N = 3. Dilating
+                // the mask by the OLD radius would have left a ring of pixels, that thin, where
+                // the edge term could still fire and the mask could not reach to cancel it. The
+                // symptom would have been a faint second hairline reappearing around every
+                // character, exactly the artefact the dilation exists to remove, and it would have
+                // shown up only at N > 1.
+                //
+                // ⚠️ ONCE PER PIXEL RATHER THAN ONCE PER SUB-SAMPLE, ON PURPOSE. The mask is the
+                // same texture read at the same place for all N² sub-samples, and it multiplies
+                // the result, so `mean(edge) · mask` and `mean(edge · mask)` are the same number.
+                // Sampling it inside the loop would cost 12 extra taps at N = 2 to compute it.
+                float2 reach = offset + texel * (centre * inv);
+
                 float mask = max(
-                    max(tex2D(_WorldOutlineMask, duv + float2(-offset.x, -offset.y)).r,
-                        tex2D(_WorldOutlineMask, duv + float2( offset.x,  offset.y)).r),
-                    max(tex2D(_WorldOutlineMask, duv + float2(-offset.x,  offset.y)).r,
-                        tex2D(_WorldOutlineMask, duv + float2( offset.x, -offset.y)).r));
+                    max(tex2D(_WorldOutlineMask, duv + float2(-reach.x, -reach.y)).r,
+                        tex2D(_WorldOutlineMask, duv + float2( reach.x,  reach.y)).r),
+                    max(tex2D(_WorldOutlineMask, duv + float2(-reach.x,  reach.y)).r,
+                        tex2D(_WorldOutlineMask, duv + float2( reach.x, -reach.y)).r));
 
-                edge *= 1.0 - saturate(mask * _MaskStrength);
+                coverage *= 1.0 - saturate(mask * _MaskStrength);
+                if (coverage <= 0.0) return source;
 
-                return half4(lerp(source.rgb, _OutlineColor.rgb, edge * _Opacity), source.a);
+                return half4(lerp(source.rgb, _OutlineColor.rgb, coverage * _Opacity), source.a);
             }
             ENDCG
         }
