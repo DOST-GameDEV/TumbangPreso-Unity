@@ -280,7 +280,12 @@ namespace TumbangPreso
                         {
                             _tayaCampTickAccum -= Balance.TournamentPenaltyInterval;
                             GameServices.Match.AddScore(defenderSlot, ScoreEvent.TayaCampPenalty);
-                            Visual.ComicPopup.Spawn(taya.transform.position + Vector3.up * 1.5f, "CAMPING! -5", UI.UiTheme.Defense, 1.0f);
+
+                            // ⚠️ NO WORD, FOR THE REASON SPELLED OUT ON THE SLIPPER PENALTY
+                            // BELOW. Same shape exactly: the lata card already reads `LEAVE CAN
+                            // RING 1.4s` and then `CAMPING · DEFENSE SCORE PAUSED` for as long as
+                            // the taya stays, so a callout once a second repeats a line that is
+                            // already on screen and cannot say anything new.
                             UI.Hud.Instance?.PopHitmarker(UI.UiTheme.Defense, "⚠️");
                         }
                     }
@@ -355,7 +360,26 @@ namespace TumbangPreso
                         {
                             _attackerIdleTickAccum[slot] -= Balance.TournamentPenaltyInterval;
                             GameServices.Match.AddScore(slot, ScoreEvent.UnretrievedSlipperPenalty);
-                            Visual.ComicPopup.Spawn(p.transform.position + Vector3.up * 1.5f, "FETCH SLIPPER! -5", UI.UiTheme.Offense, 1.0f);
+
+                            // ⚠️⚠️ NO WORD. THE OBJECTIVE CARD ALREADY SAYS IT, PERMANENTLY, AND
+                            // THIS FIRED ONCE A SECOND ON TOP OF IT. 🧑 2026-08-27 with a
+                            // screenshot of both at once: *"redundant as fuck -5a fetch slipper
+                            // pls figure out which stay"*. Three surfaces were reporting one
+                            // penalty every `TournamentPenaltyInterval`: this callout, a `-5
+                            // SLIPPER IDLE` toast from `Hud.OnScored`, and the lata card's second
+                            // line reading `FETCH SLIPPER · -5 / SECOND`.
+                            //
+                            // ⚠️ THE CARD LINE IS THE ONE THAT STAYS, AND IT IS NOT A TOSS-UP.
+                            // It is the only one of the three that is a STATE rather than an
+                            // event: it appears the moment the grace period lapses, says the rate
+                            // rather than one tick of it, and goes away when the player picks the
+                            // tsinelas up. A per-second flash cannot tell a player anything the
+                            // second one did not, and it repeats for as long as the mistake does.
+                            //
+                            // ⚠️ THE HITMARKER STAYS BECAUSE IT IS NOT A WORD. It is the one
+                            // non-text signal of the tick landing, which is what 🧑 asked to keep
+                            // in the same breath as cutting the text: *"js remove some of the
+                            // words that pop up"*.
                             UI.Hud.Instance?.PopHitmarker(UI.UiTheme.Offense, "⚠️");
                         }
                     }

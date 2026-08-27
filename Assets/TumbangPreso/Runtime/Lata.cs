@@ -486,9 +486,11 @@ namespace TumbangPreso
         {
             BuildProtectionShell();
             if (_protectionShell != null) _protectionShell.transform.localScale = Vector3.one * 0.92f;
-            Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f,
-                                    "PROTECTED!", UI.UiTheme.Defense, 0.9f,
-                                    Visual.ComicPopup.Weight.Cast);
+            // ⚠️ NO WORD. `PulseProtection` fires on every refresh of the throw-restore window,
+            // and the lata card carries `PROTECTED 1.2s` as a live countdown for the whole of it.
+            // The shell is the signal; the countdown is the number. A callout on top of both was
+            // the third copy of one fact, on a pulse.
+
         }
 
         private void StepStatePresentation()

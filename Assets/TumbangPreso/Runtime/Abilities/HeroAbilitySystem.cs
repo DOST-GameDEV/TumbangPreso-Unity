@@ -224,19 +224,54 @@ namespace TumbangPreso.Abilities
             return ability != null && ability.HoldToAim && _heldSince[(int)slot] >= 0.0f;
         }
 
+        // -------------------------------------------------------------------
+        // § THE PRESS EDGE IS THIS COMPONENT'S OWN
+        //
+        // ⚠️⚠️ `InputIntent.JustPressed` IS A DIFF AGAINST A SNAPSHOT TAKEN IN THE PHYSICS STEP,
+        // AND THIS METHOD RUNS IN `Update`. `CharacterMotor` calls `Intent.CommitFrame` at the
+        // end of its FixedUpdate and its own note says that is deliberate. Above 50 fps there
+        // are two or more Updates per FixedUpdate, so ONE physical key press reads as
+        // `JustPressed` on EVERY Update until the next physics step takes a snapshot.
+        //
+        // ⚠️⚠️ FOR AN ORDINARY ABILITY THAT IS A HARMLESS RE-BUFFER OF THE SAME PRESS. For the
+        // one `CanReactivate` power in the game it is the whole bug: `HeroKit.Fire` ACTIVATES on
+        // the first read and REACTIVATES on the second, so Nemu's poltergeist went out and came
+        // straight back inside a single click and nothing appeared to happen at all. 🧑
+        // 2026-08-27: *"her e is kind of bugged, sometimes it doesnt cast sometimes it does? idk
+        // why"*. **Sometimes is exactly right**: whether a FixedUpdate landed between two Updates
+        // is a function of the frame rate, so the identical click worked or did not depending on
+        // how busy the machine was.
+        //
+        // ⚠️ IT ALSO SHORTENED EVERY HOLD. `_heldSince` was rewritten on each Update the stale
+        // edge was still true, so a hold-to-aim power lost up to a physics step of reach.
+        //
+        // ⚠️ DO NOT "SIMPLIFY" THIS BACK TO `intent.JustPressed`. The snapshot belongs to the
+        // authoritative step and has to keep belonging to it; a consumer that runs on the RENDER
+        // frame needs a render-frame edge of its own. `HeroAbilitySystemEdgeTests` asserts one
+        // press produces one cast across several Updates with no physics step between them.
+        // -------------------------------------------------------------------
+
+        /// <summary>Was this slot's key down on the previous Update? One entry per slot.</summary>
+        private readonly bool[] _keyWasDown = { false, false, false };
+
         private void Aim(InputIntent intent, Verb verb, Slot slot, ref float bufferedAt)
         {
             var ability = AbilityFor(slot);
             int i = (int)slot;
 
+            bool down = intent.Pressed(verb);
+            bool justPressed = down && !_keyWasDown[i];
+            bool justReleased = !down && _keyWasDown[i];
+            _keyWasDown[i] = down;
+
             if (ability == null || !ability.HoldToAim)
             {
                 _heldSince[i] = -1.0f;
-                if (intent.JustPressed(verb)) bufferedAt = Time.time;
+                if (justPressed) bufferedAt = Time.time;
                 return;
             }
 
-            if (intent.JustPressed(verb))
+            if (justPressed)
             {
                 _heldSince[i] = Time.time;
                 return;
@@ -267,7 +302,7 @@ namespace TumbangPreso.Abilities
             // seconds, i want it to cast only when i let go"*. See that property's note for why
             // it does not reopen `docs/VISION.md` § 4: the reach stops growing at 0.55 s, so a
             // longer hold pays out nothing, and the anti-camp clocks never stopped running.
-            bool released = intent.JustReleased(verb);
+            bool released = justReleased;
             bool capped = !ability.CastsOnReleaseOnly && held >= ability.MaxAimSeconds;
 
             if (!released && !capped) return;
@@ -461,6 +496,10 @@ namespace TumbangPreso.Abilities
         }
 
         private Color AccentColour() => UI.UiTheme.ColorForHero(Kit != null ? Kit.HeroId : null);
+
+        /// <summary>The same hue at the value a ground telegraph needs. See
+        /// <see cref="UI.UiTheme.BrightForHero"/>.</summary>
+        private Color AccentBright() => UI.UiTheme.BrightForHero(Kit != null ? Kit.HeroId : null);
 
         /// <summary>
         /// Where a power's footprint goes, from the ability's own numbers.
@@ -718,8 +757,16 @@ namespace TumbangPreso.Abilities
             // See `GroundReticle.SetBeacon`: 🧑 2026-08-27, on the blink, *"all it shows is a
             // frigging shadow, it's very easy to miss"*, and a decal on the road seen from head
             // height at three metres is a smudge whatever colour it is.
+            // ⚠️⚠️ THE HELD RING TAKES THE HERO'S **BRIGHT** ACCENT, THE POST-CAST FLASH TAKES THE
+            // BASE ONE, AND THE SPLIT IS DELIBERATE. 🧑 2026-08-27, on the blink: *"I dont want
+            // Phaister's E HOLD for casting To just be a shadow, keep that outline and give it
+            // her color so that it could be seen more"*. The flash answers "where did that land"
+            // over a lit explosion; the held ring has to be read off bare asphalt under a
+            // viaduct, by one player, while they decide. Those are different legibility problems
+            // and the second one is the harder of the two. `UiTheme.BrightForHero` carries why a
+            // mid-value accent reads as a shadow on ghosted geometry.
             _reticle.SetBeacon(ability.AimBeacon);
-            _reticle.Show(AimPoint(ability, range), ability.TelegraphRadius, AccentColour());
+            _reticle.Show(AimPoint(ability, range), ability.TelegraphRadius, AccentBright());
             return true;
         }
 

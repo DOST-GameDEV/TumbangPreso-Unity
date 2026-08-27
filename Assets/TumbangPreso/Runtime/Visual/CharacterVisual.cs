@@ -280,12 +280,17 @@ namespace TumbangPreso.Visual
             if (anim == null) anim = gameObject.AddComponent<CharacterAnimator>();
             if (_instance != null) anim.Bind(_instance, clips);
 
-            // Subtle procedural secondary cloth physics for baggy streetwear sleeves
-            if (_instance != null && (petModel != null || (prefab != null && prefab.name.ToLower().Contains("nemu"))))
-            {
-                var clothingPhysics = _instance.AddComponent<BaggyClothingPhysics>();
-                clothingPhysics.Bind(_instance.transform);
-            }
+            // ⚠️⚠️ NO SECONDARY CLOTH SOLVER ON THE BODY EITHER. DELETED 2026-08-27 along with
+            // `BaggyClothingPhysics` and the first-person `ViewmodelClothPhysics`.
+            //
+            // 🧑, on Nemu: *"her sleeves are phasing and looks weird ... maybe js remove the
+            // physics on her sleeves bcz it looks so ugly, js show me cute blocky sleeves"*.
+            //
+            // ⚠️ THIS ONE POST-MULTIPLIED A ROTATION ONTO `arm-left` AND `arm-right` AFTER the
+            // animator had written them, up to 6 degrees. On a rig whose sleeve, lining and cuff
+            // are three separate boxes sharing a volume, rotating the arm bone under only one of
+            // the three sets is how a cuff ends up inside a forearm. The gain was a sway nobody
+            // asked for on a cast whose whole look is rigid voxels.
 
             // Procedural cartoon squash-and-stretch
             var squash = GetComponent<CharacterSquashStretch>();

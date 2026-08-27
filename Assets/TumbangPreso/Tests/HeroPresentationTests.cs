@@ -676,11 +676,23 @@ namespace TumbangPreso.Tests
 
         /// <summary>The short way round a 360 degree wheel.</summary>
         /// <summary>
-        /// ⚠️ NEMU VIEWMODEL ARMS MUST INSTANTIATE BESPOKE DRAPED HOODIE SLEEVES, INNER SHADOW CAVITY,
-        /// GLOWING CUFF RIM, DELICATE SPIRIT HANDS, AND DYNAMIC CLOTH PHYSICS SOLVER.
+        /// Nemu's viewmodel arms build the draped hoodie sleeve, the inner shadow cavity, the
+        /// glowing cuff rim and the tucked spirit hand, and NOTHING deforms any of them.
+        ///
+        /// ⚠️⚠️ THE CLOTH SOLVER THIS TEST USED TO REQUIRE IS DELETED, AND THE ASSERTION IS
+        /// INVERTED RATHER THAN REMOVED. 🧑 2026-08-27, in first person: *"her sleeves are phasing
+        /// and looks weird ... maybe js remove the physics on her sleeves bcz it looks so ugly, js
+        /// show me cute blocky sleeves"*. `ViewmodelClothPhysics` instanced the SLEEVE mesh and
+        /// moved its vertices while the lining and the cuff rim, which share that volume, stayed
+        /// put, so the outer shell walked through both on every step and every look. No damping
+        /// value fixes that: the surfaces are not solved together.
+        ///
+        /// ⚠️ SO THE TEST NOW ASSERTS THE ABSENCE. A deleted requirement that leaves no assertion
+        /// behind is a requirement that quietly comes back the next time somebody thinks secondary
+        /// motion would be nice, and the four pieces of geometry are still worth pinning.
         /// </summary>
         [Test]
-        public void Nemu_ViewmodelArms_CreatesBespokeDrapedHoodieSleevesAndClothPhysics()
+        public void Nemu_ViewmodelArms_CreatesBespokeDrapedHoodieSleevesWithNoClothSolver()
         {
             var vm = new GameObject("TestVM_NemuCloth").AddComponent<CameraSystem.ViewmodelArms>();
             vm.EnsureBuilt();
@@ -691,39 +703,45 @@ namespace TumbangPreso.Tests
             Assert.IsNotNull(rightArm, "RightPivot/Arm missing");
             Assert.IsNotNull(leftArm, "LeftPivot/Arm missing");
 
-            // Verify sleeve and cloth physics on right arm
             var rightSleeve = rightArm.Find("~HeroAccessory_HoodieSleeve");
             Assert.IsNotNull(rightSleeve, "Right hoodie sleeve missing");
-            var rightCloth = rightSleeve.GetComponent<CameraSystem.ViewmodelClothPhysics>();
-            Assert.IsNotNull(rightCloth, "Right hoodie sleeve is missing ViewmodelClothPhysics component");
-            Assert.IsTrue(rightCloth.HasDeformableMesh, "Right hoodie cloth physics failed to bind deformable mesh");
 
-            // Verify inner cavity and cuff rim
-            var rightInner = rightArm.Find("~HeroAccessory_HoodieInnerLining");
-            Assert.IsNotNull(rightInner, "Right hoodie inner shadow lining cavity missing");
-            var rightCuff = rightArm.Find("~HeroAccessory_HoodieCuffRim");
-            Assert.IsNotNull(rightCuff, "Right hoodie cuff rim band missing");
+            // The hem, and the lavender bar down each side face.
+            Assert.IsNotNull(rightArm.Find("~HeroAccessory_HoodieHem"),
+                             "Right hoodie hem missing");
+            Assert.IsNotNull(rightArm.Find("~HeroAccessory_LavenderStripeA"),
+                             "Right lavender side stripe missing");
+            Assert.IsNotNull(rightArm.Find("~HeroAccessory_LavenderStripeB"),
+                             "Left-facing lavender side stripe missing");
 
             // Verify spirit hand
             var rightHand = rightArm.Find("~HeroAccessory_SpiritHand");
             Assert.IsNotNull(rightHand, "Right spirit hand missing");
 
-            // Verify cloth physics simulation step and impulse recovery
-            vm.StepVisuals(0.016f);
-            Assert.IsFalse(float.IsNaN(rightCloth.ClothOffset.x), "Cloth offset produced NaN");
-            Assert.IsFalse(float.IsNaN(rightCloth.ClothAngle.x), "Cloth angle produced NaN");
+            // ⚠️⚠️ THE SLEEVE IS A BOX AND HAS TO STAY ONE. `Logs/model-ref-nemu.png` is the
+            // reference: her arms are straight plum boxes with a vertical lavender bar down the
+            // outer edge. The viewmodel carried three lofted 24-segment tubes that flared toward
+            // the cuff with a rim around the opening, which is a different garment in the right
+            // colours. A box mesh has 24 vertices; anything with hundreds is a loft again.
+            //
+            // ⚠️ IT ALSO CATCHES THE DELETED CLOTH SOLVER. That solver's first act was
+            // `Instantiate(sharedMesh)`, so a per-instance `_Deformed` copy is its signature.
+            var mf = rightSleeve.GetComponent<MeshFilter>();
+            Assert.IsNotNull(mf, "Right hoodie sleeve lost its MeshFilter");
+            Assert.IsFalse(mf.sharedMesh.name.Contains("Deformed"),
+                           "Something is instancing and deforming Nemu's sleeve mesh again. "
+                           + "See ViewmodelArms' Nemu block: the sleeve, the hem and the stripes "
+                           + "share a volume and only one of them would be moved.");
+            Assert.LessOrEqual(mf.sharedMesh.vertexCount, 32,
+                               "Nemu's sleeve is a lofted tube again. It is a box, like every "
+                               + "other hero's arm and like her own voxel model.");
 
-            // Test recoil impulse on action
+            // A throw still plays, and stepping the arms is still stable with no solver in them.
+            vm.StepVisuals(0.016f);
             Assert.IsTrue(vm.PlayAction("throw"));
-            vm.StepVisuals(0.016f);
-            Assert.AreNotEqual(Vector3.zero, rightCloth.ClothOffset + rightCloth.ClothAngle, "Throw action did not perturb cloth physics");
+            for (int i = 0; i < 60; i++) vm.StepVisuals(0.016f);
 
-            // Step forward in time and verify cloth recovers stably
-            for (int i = 0; i < 60; i++)
-            {
-                vm.StepVisuals(0.016f);
-            }
-            Assert.Less(rightCloth.ClothOffset.magnitude, 0.05f, "Cloth offset failed to damp back to rest");
+            Assert.IsFalse(float.IsNaN(rightArm.localPosition.x), "Arm pose produced NaN");
 
             Object.DestroyImmediate(vm.gameObject);
         }

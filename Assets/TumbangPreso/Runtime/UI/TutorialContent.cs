@@ -19,11 +19,71 @@ namespace TumbangPreso.UI
     /// </summary>
     public static class TutorialContent
     {
+        /// <summary>
+        /// One line of a page: a chip on the left, a sentence on the right.
+        ///
+        /// ⚠️⚠️ A CHIP THAT NAMES A KEY IS RESOLVED FROM THE LIVE BINDING, NOT TYPED. 🧑
+        /// 2026-08-27: *"make it so that tutorial shows the actual keys u rebinded to and arent
+        /// just hardcoded"*. Every chip on the three controls pages was a literal, so a player
+        /// who rebound anything was taught the defaults for the rest of the match.
+        ///
+        /// ⚠️⚠️ AND THE LITERALS WERE ALREADY WRONG BEFORE ANYBODY REBOUND ANYTHING. This file
+        /// said pickup was `E` and the taya's lunge was `E · hold`; the shipped map has `Grab` on
+        /// **X** and `Lunge` on the **right mouse button**, and has since the one-control-one-action
+        /// pass (`Rebinding`'s class note: E used to carry Grab, Lunge AND Skill1 at once). The
+        /// HOW TO PLAY screen, which exists to teach the controls, was naming a key that does
+        /// something else. That is the second, quieter half of what a hard-coded chip costs: a
+        /// literal cannot go stale loudly.
+        ///
+        /// ⚠️ RESOLVED AT DRAW TIME, NEVER AT STATIC INIT. These arrays are `static readonly`, so
+        /// baking a key into them would capture whatever the bindings were the first time
+        /// anything touched this class, which is before `Rebinding.Load` has necessarily run.
+        /// `ConvertedTutorialPanel` calls <see cref="ChipText"/> on every page turn.
+        /// </summary>
         public readonly struct Row
         {
-            public readonly string Chip;
-            public readonly string Body;
-            public Row(string chip, string body) { Chip = chip; Body = body; }
+            private readonly string _chip;
+            private readonly string _body;
+            private readonly string[] _actions;
+
+            /// <summary>A row that names no control: a heading, a number, a word.</summary>
+            public Row(string chip, string body)
+            {
+                _chip = chip;
+                _body = body;
+                _actions = null;
+            }
+
+            private Row(string chip, string body, string[] actions)
+            {
+                _chip = chip;
+                _body = body;
+                _actions = actions;
+            }
+
+            /// <summary>
+            /// A row whose chip, body or both name live controls. Both strings are
+            /// `string.Format` patterns over the SAME key list, so `{0}` means the same control
+            /// in either column and a row can name a key twice without repeating itself.
+            /// </summary>
+            public static Row Keyed(string chip, string body, params string[] actions)
+                => new Row(chip, body, actions);
+
+            /// <summary>What to draw on the left. Call this rather than reading a field.</summary>
+            public string ChipText() => Resolve(_chip);
+
+            /// <summary>What to draw on the right.</summary>
+            public string BodyText() => Resolve(_body);
+
+            private string Resolve(string pattern)
+            {
+                if (_actions == null || _actions.Length == 0) return pattern;
+
+                var keys = new object[_actions.Length];
+                for (int i = 0; i < _actions.Length; i++) keys[i] = Hud.KeyLabelFor(_actions[i]);
+
+                return string.Format(pattern, keys);
+            }
         }
 
         public readonly struct Page
@@ -134,10 +194,12 @@ namespace TumbangPreso.UI
 
             new Page("HOW A ROUND GOES", "", new[]
             {
-                new Row("1.  THROW", "You start holding your slipper. From outside the box, hold LEFT CLICK to charge and release."),
+                // ⚠️ THE KEYS IN THESE SENTENCES ARE LIVE TOO. A body that says "hold LEFT CLICK"
+                // beside a chip that says something else is the same defect one column across.
+                Row.Keyed("1.  THROW", "You start holding your slipper. From outside the box, hold {0} to charge and release.", "SpecialAbility"),
                 new Row("2.  IT LANDS", "Hit the lata and it goes over. If the taya blocks it, it drops right beside them."),
                 new Row("3.  RETRIEVE", "Walk in and pick it up. This is the risk, and the entire point of the game."),
-                new Row("4.  RESET", "The taya holds E by the lata for 1.5 seconds to stand it up. No throws for a moment after."),
+                Row.Keyed("4.  RESET", "The taya holds {0} by the lata for 1.5 seconds to stand it up. No throws for a moment after.", "Grab"),
             }),
 
             new Page("THE RISK", "", new[]
@@ -148,27 +210,53 @@ namespace TumbangPreso.UI
                 new Row("CROSSHAIR", "It only appears when a throw would be allowed. No crosshair means the throw is refused."),
             }),
 
+            // ⚠️⚠️ EVERY CHIP ON THE NEXT THREE PAGES IS A LIVE BINDING. See `Row`: they were
+            // literals, three of them named a key the shipped map does not use for that job, and
+            // a rebind was invisible to the one screen whose whole purpose is teaching controls.
+            //
+            // ⚠️ `Move` PRINTS THE WHOLE COMPOSITE. `Hud.KeyLabel` returns "WASD" in reading
+            // order for the four-part composite and falls back to a slash-joined list for a
+            // player who rebound them, which is why this row can be one chip rather than four.
+            //
+            // ⚠️ MOUSE LOOK AND ESC STAY LITERAL BECAUSE THEY ARE NOT IN THE MAP. Look is a raw
+            // device axis and pause is handled by `PauseWatcher`, so there is no action to ask
+            // and nothing a player can rebind. A chip resolved from a binding that does not exist
+            // would print "-", which is worse than the truth.
             new Page("CONTROLS  ·  MOVING", "", new[]
             {
-                new Row("W A S D", "Move."),
+                Row.Keyed("{0}", "Move.", "Move"),
                 new Row("MOUSE", "Look, and aim your throw at the point your crosshair is actually on."),
-                new Row("SHIFT", "Sprint, about 1.5 seconds' worth. Empty it completely and you are winded for 2 seconds."),
-                new Row("SPACE", "Jump."),
+                Row.Keyed("{0}", "Sprint, about 1.5 seconds' worth. Empty it completely and you are winded for 2 seconds.", "Sprint"),
+                Row.Keyed("{0}", "Jump.", "Jump"),
                 new Row("ESC", "Pause."),
             }),
 
             new Page("CONTROLS  ·  ATTACKER", "", new[]
             {
-                new Row("LEFT CLICK", "Hold to charge, release to throw. 2.5 seconds to full power; a tap still throws, weakly."),
-                new Row("E  ·  tap", "Pick up any loose slipper you are standing near, yours or not. You can carry one."),
-                new Row("E  ·  tap (nothing to grab)", "SHOVE a rival 2.5 metres back. If they are tagged after it, you are paid +50."),
+                Row.Keyed("{0}", "Hold to charge, release to throw. 2.5 seconds to full power; a tap still throws, weakly.", "SpecialAbility"),
+
+                // ⚠️ `Grab`, WHICH IS X. This row said E, which is `Skill2`. See the `Row` note.
+                Row.Keyed("{0}  ·  tap", "Pick up any loose slipper you are standing near, yours or not. You can carry one.", "Grab"),
+                Row.Keyed("{0}  ·  tap (nothing to grab)", "SHOVE a rival 2.5 metres back. If they are tagged after it, you are paid +50.", "Grab"),
+
+                // ⚠️⚠️ THE CURVE WAS NOT ON THIS PAGE AT ALL, WHICH IS WHY IT HAD TO BE DISCOVERED
+                // IN THE SETTINGS PANEL. It is the skill ceiling of the throw
+                // (`GAME_OVERVIEW.md` § 4.3) and the one control the HOW TO PLAY screen never
+                // mentioned. It moved to Z and C on 2026-08-27 (`Rebinding`), so a page that
+                // named the arrow keys would have been wrong from the day it was added.
+                Row.Keyed("{0} / {1}  ·  while charging",
+                          "PEKTUS. Bend the throw left or right in the air. The mouse wheel does it too.",
+                          "CurveLeft", "CurveRight"),
             }),
 
             new Page("CONTROLS  ·  TAYA", "", new[]
             {
-                new Row("LEFT CLICK", "PUNCH. An instant jab ahead, tagging any attacker in front of you holding a slipper."),
-                new Row("E  ·  hold", "LUNGE. Hold half a second, release to dash a metre and tag anyone in the path."),
-                new Row("E  ·  in the ring", "With the lata down, hold E to set it back up. Letting go loses all of it."),
+                Row.Keyed("{0}", "PUNCH. An instant jab ahead, tagging any attacker in front of you holding a slipper.", "SpecialAbility"),
+
+                // ⚠️ `Lunge`, WHICH IS THE RIGHT MOUSE BUTTON. This row said "E · hold", a key
+                // that has not been the lunge since the one-control-one-action pass.
+                Row.Keyed("{0}  ·  hold", "LUNGE. Hold half a second, release to dash a metre and tag anyone in the path.", "Lunge"),
+                Row.Keyed("{0}  ·  in the ring", "With the lata down, hold it to set the can back up. Letting go loses all of it.", "Grab"),
                 new Row("⚠  NO TAGS WHILE IT IS DOWN", "Neither verb can tag until the lata is standing. Reset first, then hunt."),
                 new Row("YOU ARE FASTER", "Both verbs aim where you FACE, and you only turn while walking — keep moving into them."),
             }),

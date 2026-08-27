@@ -98,7 +98,31 @@ namespace TumbangPreso.Visual
         // the emission did not: 0.5 of a colour under a dark map is that colour's shadow.
         // -------------------------------------------------------------------
 
-        private void Awake()
+        private bool _built;
+
+        /// <summary>
+        /// Build the geometry now rather than at <c>Awake</c>.
+        ///
+        /// ⚠️⚠️ AN EDITOR PROBE NEVER GETS AN `Awake`, AND WITHOUT THIS THE TELEGRAPH CANNOT BE
+        /// PHOTOGRAPHED AT ALL. Unity only runs `Awake` in play mode for a component without
+        /// `[ExecuteAlways]`, so `AddComponent<GroundReticle>()` in an edit-mode capture returns
+        /// an object with no rim, no crown, no fill and no beacon: the probe would frame an empty
+        /// patch of road and report success. `ViewmodelArms.EnsureBuilt` exists for the same
+        /// reason and this is the same shape.
+        ///
+        /// ⚠️ IDEMPOTENT, so `Awake` calling it in the game and a probe calling it first cannot
+        /// produce two sets of meshes.
+        /// </summary>
+        public void EnsureBuilt()
+        {
+            if (_built) return;
+            _built = true;
+            Build();
+        }
+
+        private void Awake() => EnsureBuilt();
+
+        private void Build()
         {
             // ⚠️ THE RIM AND THE CROWN ARE UNIT-RADIUS MESHES SCALED BY `Place`, and the fill is
             // still a primitive because a solid disc is genuinely what a wash wants. Three
@@ -156,9 +180,64 @@ namespace TumbangPreso.Visual
             return go;
         }
 
+        // -------------------------------------------------------------------
+        // § THE HELD RING IS PRIVATE TO WHOEVER IS AIMING IT
+        //
+        // ⚠️⚠️ 🧑 2026-08-27, on Phaister's blink: *"make sure only she can see it"*. An AIM is a
+        // decision that has not been made yet, and painting it on the road tells the other three
+        // players where somebody is about to teleport BEFORE they commit to it. That is strictly
+        // worse than no telegraph: it hands away the one thing a hold-to-aim power buys, which is
+        // that you can change your mind.
+        //
+        // ⚠️⚠️ AND IT IS ONLY THE HELD RING. `Flash` is the post-cast confirmation and stays
+        // visible to everybody, deliberately: by then the power has landed, and "where did that
+        // go off" is a question all four players need answered. The two halves of this class were
+        // always different features (see the class note); this is the first thing that treats
+        // them differently.
+        //
+        // ⚠️ ASKED OF THE CAMERA RIG RATHER THAN OF A NETWORK ROLE. `CameraRig.IsFollowing` is
+        // true for exactly the body being looked through, which is the correct answer offline,
+        // online, and after the debug switcher hands the player a different seat. A
+        // `NetAuthority.LocalSlot` test would be wrong in all three of the last cases.
+        // -------------------------------------------------------------------
+
+        private CameraSystem.CameraRig _rig;
+        private float _rigSearchAt = -100.0f;
+
+        /// <summary>Is the player looking through this reticle's owner right now?</summary>
+        private bool OwnerIsBeingDriven()
+        {
+            // No owner means a probe or a preview stage built this: draw, or a render pipeline
+            // test photographs an empty road.
+            if (_owner == null) return true;
+
+            // ⚠️ THE RIG IS RE-FOUND ON A CLOCK, NOT CACHED ONCE AND NOT SEARCHED EVERY FRAME.
+            // `MatchInstaller` can destroy and rebuild it at a round boundary, so a permanent
+            // cache goes stale; a `FindFirstObjectByType` per frame per character is the exact
+            // per-frame cost `CLAUDE.md` § 7.1 records the HUD being caught for.
+            if (_rig == null && Time.unscaledTime - _rigSearchAt > 0.5f)
+            {
+                _rigSearchAt = Time.unscaledTime;
+                _rig = FindFirstObjectByType<CameraSystem.CameraRig>();
+            }
+
+            // No rig at all is the spectator and the headless case. A spectator drives nobody,
+            // so nobody's aim is theirs to see.
+            return _rig != null && _rig.IsFollowing(_owner);
+        }
+
         /// <summary>Draw the ring under a held key. Called every frame it is held.</summary>
         public void Show(Vector3 worldPos, float radius, Color colour)
         {
+            if (!OwnerIsBeingDriven())
+            {
+                // ⚠️ THE FLASH IS LEFT ALONE. `Hide` already refuses to switch the object off
+                // while a confirmation is running, which is what keeps a bot's landed cast
+                // visible to the human watching it.
+                Hide();
+                return;
+            }
+
             _held = true;
             _radius = Mathf.Max(0.2f, radius);
             _colour = colour;

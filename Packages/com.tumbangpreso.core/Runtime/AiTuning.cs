@@ -365,7 +365,177 @@ namespace TumbangPreso.Core
         /// and the ultimate on one frame, which is the thing being reported. 1.6 s is long
         /// enough that a human watching reads three separate decisions.
         /// </summary>
-        public const float AbilityCadenceSeconds = 1.6f;
+        public const float AbilityCadenceSeconds = 2.0f;
+
+        /// <summary>
+        /// Extra seconds, rolled per cast, added on top of <see cref="AbilityCadenceSeconds"/>.
+        ///
+        /// ⚠️⚠️ A FIXED CADENCE MAKES FOUR BOTS METRONOMES THAT AGREE. Every seat spends its
+        /// first power at the opening gate, then every one of them is eligible again exactly
+        /// 1.6 s later, and the round audibly ticks. Rolling the gap means two bots that fired
+        /// together drift apart instead of staying locked, which is the whole of what "do not
+        /// spam them all at the same time" asks for once the opening is handled.
+        ///
+        /// ⚠️ 2.0 + 0..1.5 IS 2.0 TO 3.5 s, AND THE DELIBERATION BELOW SITS ON TOP OF IT.
+        /// A bot's real floor between two presses is therefore about 2.25 s and its ceiling about
+        /// 4.35 s, against 1.6 s flat before.
+        /// </summary>
+        public const float AbilityCadenceJitterSeconds = 1.5f;
+
+        // -------------------------------------------------------------------
+        // § PRETENDING TO THINK
+        //
+        // ⚠️⚠️ 🧑 2026-08-27: *"try to make it so that AI think or pretend to think when to use
+        // skills"*. The cadence above spaces presses; it does not make any single press look
+        // considered, because the frame a gate opens the bot casts. A human sees the opening,
+        // decides, and then presses, and the gap between the second and third of those is what
+        // reads as a decision having been made.
+        //
+        // ⚠️⚠️ SO IT IS A CONVICTION WINDOW, NOT A DELAY. `AIController.Consider` requires the
+        // SAME slot to still be worth casting for this long CONTINUOUSLY before it presses, and
+        // drops the whole thing the moment the reason stops holding. That is the difference
+        // between a bot that hesitates and a bot that is merely slow: a target who walks out of
+        // range during the window is not chased by a press that was already committed, and a bot
+        // never spends an ultimate on a spot somebody left half a second ago.
+        //
+        // ⚠️ AND IT IS SCALED BY `AiPersonalityRoll.Tempo` (0.85..1.20), so *"some players
+        // deliberate, some snap"* reaches the kit as well as the legs.
+        // -------------------------------------------------------------------
+
+        /// <summary>Shortest conviction window before a bot presses a hero key, in seconds.</summary>
+        public const float AbilityThinkMin = 0.25f;
+
+        /// <summary>Longest conviction window before a bot presses a hero key, in seconds.</summary>
+        public const float AbilityThinkMax = 0.85f;
+
+        /// <summary>
+        /// What an EAGER bot multiplies its conviction window by, against
+        /// <see cref="AppetiteWindowShy"/> for a reluctant one. Interpolated by
+        /// `AiPersonalityRoll.AppetiteFor`.
+        ///
+        /// ⚠️⚠️ 🧑 2026-08-27: *"i want it to be possible too for them to not use some skills at
+        /// all if they cant find opportunity bcz thats normal and human"*. A shy bot at 2.6x
+        /// wants roughly 0.65 to 2.2 s of an unbroken reason before it commits, which most
+        /// marginal windows in this game simply do not last. That is how a slot goes unused for a
+        /// whole round without anything ever rolling a die and refusing a chance it could see.
+        /// </summary>
+        public const float AppetiteWindowEager = 0.7f;
+
+        /// <summary>What a reluctant bot multiplies its conviction window by.</summary>
+        public const float AppetiteWindowShy = 2.6f;
+
+        // -------------------------------------------------------------------
+        // § NOT THE WHOLE KIT IN ONE BREATH
+        //
+        // ⚠️⚠️ 🧑 2026-08-27: *"bcz i dont want them to use all skills consecutively"*.
+        // `AbilityCadenceSeconds` spaces any two presses, so it already stops the frame-one dump,
+        // and it does NOT stop the thing being reported: Q, then E two seconds later, then the
+        // ultimate two seconds after that is a bot emptying its kit inside six seconds while
+        // obeying the cadence perfectly.
+        //
+        // ⚠️⚠️ THE FIX IS THAT A DIFFERENT SLOT COSTS MORE THAN THE SAME ONE. Casting a power
+        // again is one idea continued; casting a different power is a new idea, and a player who
+        // has just committed to something does not immediately commit to something else. Nothing
+        // here forbids a chain, it prices one: a genuine three-power combo still lands, it just
+        // has to be worth waiting out.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// The gap, in seconds, before a bot may press a DIFFERENT hero key from the last one it
+        /// used. Replaces <see cref="AbilityCadenceSeconds"/> for that case rather than adding
+        /// to it.
+        ///
+        /// ⚠️ 5.5 s PLUS THE SAME 0 TO 1.5 JITTER IS 5.5 TO 7.0, against a 90 s round. A bot can
+        /// still reach all three slots twice over in a round; what it cannot do is play them as
+        /// one burst.
+        /// </summary>
+        public const float AbilityChainSeconds = 5.5f;
+
+        // -------------------------------------------------------------------
+        // § WHEN AN ULTIMATE IS WORTH SPENDING
+        //
+        // ⚠️⚠️ 🧑 2026-08-27: *"Make sure u actually make ai better/ smarter with skill usage"*.
+        // The per-hero branches already ask whether a cast would LAND. What none of them asked is
+        // whether it is worth the meter, so a bot dumped its ultimate on the first single body
+        // that wandered into the circle, on the frame the meter filled, every time. Against a
+        // cost of 10 to 20 objective events (`HeroKit.UltimateCost`) that is the most expensive
+        // thing a bot owns being spent on the cheapest available target.
+        //
+        // ⚠️⚠️ AND IT IS ALSO HALF THE OVERSTIMULATION. An ultimate is the loudest thing on the
+        // screen: a sky event, a column, a floor fill and a sound tail (`docs/TODO.md` § 31). One
+        // per bot per meter fill, cast the instant it is available, is three or four of them in a
+        // round with nothing chosen about any of them.
+        //
+        // ⚠️ THE PATIENCE HAS TWO ESCAPES SO IT CAN NEVER BECOME HOARDING, which `docs/VISION.md`
+        // § 4 forbids outright: it expires, and it is ignored in the closing seconds of a round.
+        // A bot that waited for a two-body window and never got one still casts.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// How many bodies an ultimate wants under it before a bot will spend one early.
+        ///
+        /// ⚠️ TWO, WHICH IN A 1-VERSUS-3 GAME IS "MORE THAN THE OBVIOUS TARGET". Three would be
+        /// every attacker at once and would essentially never happen outside a spawn.
+        /// </summary>
+        public const int UltimateWantsVictims = 2;
+
+        /// <summary>
+        /// How long a bot will hold a ready ultimate waiting for that window, in seconds.
+        ///
+        /// ⚠️ 14 s OF A 90 s ROUND. Long enough that the wait is a visible decision and short
+        /// enough that a ready ultimate is always spent inside the round it was earned in.
+        /// </summary>
+        public const float UltimateHoldSeconds = 14.0f;
+
+        /// <summary>
+        /// Seconds left on the round clock after which a ready ultimate is spent on anything it
+        /// can catch.
+        ///
+        /// ⚠️ AN UNSPENT ULTIMATE AT THE WHISTLE IS WORTH NOTHING. The meter persists across the
+        /// round boundary (`HeroKit.ResetForRound`), but the ROLE does not: a taya who saved one
+        /// all round is an attacker next round with a power priced for defending.
+        /// </summary>
+        public const float UltimateDumpWindowSeconds = 12.0f;
+
+        /// <summary>
+        /// How much better another attacker's retrieval odds have to be, in metres of head start,
+        /// before this bot yields the box to them. See `AIController.IHaveTheBestRun`.
+        ///
+        /// ⚠️⚠️ IT IS A DEADBAND AND NOT A THRESHOLD. Without it two bots whose odds differ by a
+        /// centimetre swap the claim every think tick and neither ever runs. 0.75 m is about a
+        /// sixth of a second of travel at the attacker's 3.45 m/s, which is under the tick this
+        /// is evaluated on, so a claim cannot flap inside one decision.
+        ///
+        /// ⚠️ AND AN EXACT TIE INSIDE THE BAND IS BROKEN BY SEAT, deliberately: any total order
+        /// will do, and the only requirement is that all four bots compute the SAME one.
+        /// </summary>
+        public const float RunOddsMargin = 0.75f;
+
+        // -------------------------------------------------------------------
+        // § WHEN A CHASE IS OVER
+        //
+        // ⚠️⚠️ A TAYA THAT NEVER GIVES UP IS A TAYA THAT CAN BE WALKED AROUND THE MAP.
+        // `DoHunt` closes on its target every frame and `PlanDefender` re-picks a target every
+        // think tick, so nothing anywhere asked whether the chase was going anywhere. An
+        // attacker who is faster in a straight line, or who simply left the box, pulls the taya
+        // off the can for the rest of the round: the lata is undefended, the passive score stops,
+        // and the taya scores nothing either.
+        //
+        // ⚠️ THE TEST IS PROGRESS, NOT DISTANCE. A chase that is closing at any rate is working
+        // however far away it started, and a chase at three metres that has not closed in two
+        // seconds is not.
+        // -------------------------------------------------------------------
+
+        /// <summary>How long a taya will chase without closing before returning to the can.</summary>
+        public const float ChasePatienceSeconds = 2.0f;
+
+        /// <summary>
+        /// How much nearer the chase has to have got over that window to count as progress.
+        ///
+        /// ⚠️ 0.5 m OVER 2.0 s IS 0.25 m/s AGAINST A TAYA'S 4.6 m/s WALK. It is deliberately
+        /// almost nothing: this is meant to catch a chase going NOWHERE, not to judge a slow one.
+        /// </summary>
+        public const float ChaseProgressMetres = 0.5f;
 
         /// <summary>
         /// How long after a round goes live before a bot may spend anything, in seconds.
@@ -382,6 +552,23 @@ namespace TumbangPreso.Core
         /// something again because the seats are no longer all on top of each other.
         /// </summary>
         public const float AbilityOpeningDelaySeconds = 2.5f;
+
+        /// <summary>
+        /// How much LONGER than that one bot may wait, scaled by its own
+        /// `AiPersonalityRoll.Patience`, so the four seats do not all unlock on one frame.
+        ///
+        /// ⚠️⚠️ THE SHARED CONSTANT ABOVE DID NOT STAGGER ANYTHING, IT RESCHEDULED THE PILE-UP.
+        /// 🧑 2026-08-27, after it shipped: *"they all js spam it at the same time bru at thhe
+        /// start"*. Four seats reading one number reach it on the same frame, so the round opened
+        /// silent for 2.5 s and then fired four powers at once, which is a worse shape than the
+        /// frame-one dump because the silence before it makes the burst louder.
+        ///
+        /// ⚠️ 4.0 s SPREADS THE FOUR ACROSS 2.5 TO 6.5 s, which is most of the first third of a
+        /// 90 s round. It is deliberately wide: the point is that a player never sees two
+        /// openings land together, and a narrow window with four draws in it usually produces a
+        /// pair. Per SEAT and deterministic, so the spread is the same every run.
+        /// </summary>
+        public const float AbilityOpeningJitterSeconds = 4.0f;
 
 
         // -------------------------------------------------------------------

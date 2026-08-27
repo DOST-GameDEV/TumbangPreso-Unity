@@ -120,7 +120,21 @@ namespace TumbangPreso.UI
             // ⚠️ THE CLASS ROW IS THE ROLE ROW. It used to name which of three unit KINDS you
             // were driving; there is only one kind, and the thing a player needs telling is
             // which of the two JOBS they have this round — they are different games.
-            _class.text = isDefense ? "TAYA (DEFENDER)" : "ATTACKER";
+            //
+            // ⚠️⚠️ "TAYA", NOT "TAYA (DEFENDER)", AND THE GLOSS WAS COLLIDING WITH THE NAME.
+            // 🧑 2026-08-27 sent a screenshot reading `TAYA (DEFENDEDANTE`. The row is a
+            // `HorizontalLayoutGroup` with two `flexibleWidth: 1` children both set to
+            // `HorizontalWrapMode.Overflow`, so when the two strings do not fit the 336 px of
+            // content box they do not shrink, they draw straight over each other. "TAYA
+            // (DEFENDER)" at 32 pt is 15 characters before the name has had a single pixel.
+            //
+            // ⚠️ AND THE GLOSS IS TAUGHT ELSEWHERE, WHICH IS WHY IT IS THE HALF THAT GOES.
+            // `TutorialContent`'s premise strip puts TAYA over "guards it, alone" in the one
+            // place a player meets the word for the first time; every other HUD readout in the
+            // match already says the bare word (the round line, the scoreboard marker). This card
+            // was the only surface still carrying the translation, six minutes into a match, in
+            // the busiest corner of the screen.
+            _class.text = isDefense ? "TAYA" : "ATTACKER";
 
             // ⚠️ THE SCORE WAS REMOVED FROM THIS ROW. 🧑 2026-07-31: *"why are there points
             // here, it's already up top it feels redundant"*. The row says who you are instead,
@@ -321,6 +335,22 @@ namespace TumbangPreso.UI
             var canvasGo = new GameObject("YouCardCanvas");
             canvasGo.transform.SetParent(transform, false);
 
+            // ⚠️⚠️ THIS IS A ROOT CANVAS AND IT STAYS ONE. Parenting it under `Hud.CleanFeedRoot`
+            // the way `RoleSwapCard` does was tried on 2026-08-27 and reverted the same hour:
+            // a NESTED Canvas ignores its own `CanvasScaler`, so the card lost `AspectSafeCanvas`
+            // and its 380 x 132 rect stopped being anchored to a screen-sized parent.
+            // `HudOverflowProbe` caught it immediately, at all nine resolutions, with the
+            // identity row hanging 274 units off the RIGHT edge. That is `docs/TODO.md` § 18.1b's
+            // "converted between two different canvases" hazard arriving from the other side.
+            //
+            // ⚠️⚠️ SO THE HIDING IS EXPLICIT INSTEAD, AND IT HAS TO BE. 🧑 2026-08-27, watching a
+            // match: *"fix all these spectator hud problems wtf some shit dont hide"*, with this
+            // card and its stamina bar left in the corner of a spectator's screen. A root canvas
+            // is invisible to all three of the HUD's hiding paths, so all three now sweep for
+            // this component BY TYPE: `Hud.EnterSpectatorMode`, `Hud.SetCleanFeed`, and
+            // `MatchInstaller`, which does not build it for a watcher at all.
+            //
+            // **If you add another way to hide the HUD, add this card to it.**
             var canvas = canvasGo.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = 60;
@@ -389,6 +419,20 @@ namespace TumbangPreso.UI
             _detail = Label(identity.transform, "DetailLabel", 34, UiTheme.Offense,
                             TextAnchor.MiddleRight);
             _detail.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1.0f;
+
+            // ⚠️⚠️ THE NAME SHRINKS RATHER THAN OVERLAPPING THE ROLE, AND SHORTENING THE ROLE
+            // STRING ALONE WOULD NOT HAVE BEEN ENOUGH. Two `Overflow` labels in one layout row
+            // draw over each other whenever the pair is too wide, and the right-hand one is a
+            // PLAYER-TYPED name: `Balance.PlayerNameMax` allows more characters than 336 px of
+            // content box can hold at 34 pt however short the role word is. Best-fit makes the
+            // collision structurally impossible instead of arithmetically unlikely.
+            //
+            // ⚠️ THE FLOOR IS `MenuKit.MinReadableUnits`. Below that a label is a smudge on a 4:3
+            // panel (see that constant), so a name long enough to need smaller than 18 is left
+            // clipped by the row rather than shrunk into illegibility.
+            _detail.resizeTextForBestFit = true;
+            _detail.resizeTextMaxSize = 34;
+            _detail.resizeTextMinSize = MenuKit.MinReadableUnits;
 
             // `GuardDashSpacer`, 6 px, straight out of the .tscn. It separates the identity line
             // from the meters by more than the column's own spacing, so the card reads as a name

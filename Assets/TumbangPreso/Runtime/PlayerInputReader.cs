@@ -61,6 +61,11 @@ namespace TumbangPreso
         /// ⚠️ THE MOUSE WHEEL IS STILL READ DIRECTLY AND THAT IS NOT THE SAME FAULT. A scroll
         /// axis is not a button and there is nothing to rebind it to; it is the shortcut, and
         /// these two are the binding the panel teaches.
+        ///
+        /// ⚠️ THE DEFAULTS ARE Z AND C SINCE 2026-08-27, NOT THE ARROWS. 🧑: *"its so hard to
+        /// touch the arrow keys and some keyboards dont have it"*, and the curve has to be held
+        /// while the left hand is on WASD and the throw is charging. `Settings.Rebinding`'s class
+        /// note carries the reasoning and the one legal cross-context collision.
         /// </summary>
         private InputAction _curveLeft, _curveRight;
 

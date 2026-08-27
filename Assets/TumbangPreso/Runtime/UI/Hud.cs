@@ -589,7 +589,6 @@ namespace TumbangPreso.UI
 
             if (_roundHooked && GameServices.Round != null)
             {
-                GameServices.Round.LataRestored -= OnLataRestored;
                 GameServices.Round.Tagged -= OnTagged;
             }
 
@@ -609,12 +608,18 @@ namespace TumbangPreso.UI
         {
             if (_roundHooked || GameServices.Round == null) return;
 
-            GameServices.Round.LataRestored += OnLataRestored;
+            // ⚠️⚠️ `LataRestored` IS NOT SUBSCRIBED HERE, AND IT WAS. `MatchInstaller` already
+            // wires `lata.UprightChanged` and toasts "LATA IS BACK UP" from it, so the same
+            // string was being written by two owners on the same edge: one event, two
+            // subscriptions, two identical calls, and a toast timer restarted mid-fade.
+            //
+            // ⚠️ ONE OWNER, AND IT IS THE INSTALLER'S, because that lambda is where the whole
+            // knockdown-and-restore story is written down and reasoned about (its own ⚠️ note
+            // argues which half of the pair gets a toast at all). A second subscription in the
+            // HUD is invisible from there, which is exactly how it survived.
             GameServices.Round.Tagged += OnTagged;
             _roundHooked = true;
         }
-
-        private void OnLataRestored() => ShowToast("LATA IS BACK UP", 1.2f);
 
         /// <summary>
         /// ⚠️ IT SAYS SOMETHING DIFFERENT TO EACH OF THE TWO PEOPLE INVOLVED AND NOTHING TO THE
@@ -622,14 +627,23 @@ namespace TumbangPreso.UI
         /// scoring verb and the attacker's worst moment; a line that read the same on all four
         /// screens would be telling two bystanders about something that did not happen to them.
         /// </summary>
-        private void OnTagged(int defenderSlot, int victimSlot)
+        private void OnTagged(int _, int victimSlot)
         {
             if (_local == null) return;
 
+            // ⚠️⚠️ THE TAYA'S LINE IS GONE AND IT WAS RACING THE SCORE TOAST FOR THE SAME SLOT OF
+            // SCREEN. `MatchDirector.AddScore` fires `Scored` on the same frame this event does,
+            // and `OnScored` writes `+100 TAG` into the SAME label; whichever subscriber ran last
+            // won, so the taya read one of two strings depending on subscription order and never
+            // reliably read the name. Two toasts for one event, one of which is nondeterministic.
+            //
+            // ⚠️ THE VICTIM'S LINE STAYS, AND IT IS NOT THE SAME CASE. Being tagged pays the
+            // victim nothing, so `OnScored` says nothing to them at all: this is the only thing on
+            // their screen that explains why they are suddenly somewhere else and cannot move.
+            // The `TAGGED!` callout spawns at their own position, which in first person is inside
+            // their own head.
             if (_local.PlayerSlot == victimSlot)
                 ShowToast("TAGGED  ·  BACK TO THE SAFE ZONE", 2.0f);
-            else if (_local.PlayerSlot == defenderSlot)
-                ShowToast($"TAG  ·  {SeatName(victimSlot)}", 1.4f);
         }
 
         /// <summary>
@@ -641,6 +655,26 @@ namespace TumbangPreso.UI
         private void OnScored(int slot, ScoreEvent e)
         {
             if (e == ScoreEvent.DefenseTick) return;
+
+            // ⚠️⚠️ AND THE TWO TOURNAMENT PENALTIES ARE TICKS TOO, WHICH THE GUARD ABOVE MISSED.
+            // 🧑 2026-08-27, off a screenshot with `-5 SLIPPER IDLE` toasting over a card reading
+            // `FETCH SLIPPER · -5 / SECOND`: *"redundant as fuck ... pls figure out which stay"*.
+            //
+            // `TayaCampPenalty` and `UnretrievedSlipperPenalty` both fire once every
+            // `Balance.TournamentPenaltyInterval` for as long as the violation lasts, which is
+            // exactly the shape the `DefenseTick` guard was written for: *"a message that never
+            // leaves the screen and says nothing while it is there"*. The difference is that
+            // these two ALSO have a permanent line of their own on the lata card naming the rate,
+            // so the toast is not merely uninformative, it is the third copy.
+            //
+            // ⚠️ THE SOUND AND THE HITMARKER BOTH SURVIVE. `RoundDirector` still pops a marker on
+            // every tick and the award sting below still plays, so a player who is being
+            // penalised still hears and feels it once a second. What went is the reading.
+            if (e == ScoreEvent.TayaCampPenalty || e == ScoreEvent.UnretrievedSlipperPenalty)
+            {
+                GameServices.Audio?.PlayAtVaried("score_award", Vector3.zero, 0.78f, 0.86f, 0.65f);
+                return;
+            }
 
             // ⚠️⚠️ THE AWARD STING, WHICH SHIPPED AS A LIVE CUE WITH NO CALLER ANYWHERE. It is
             // `audio_manager.gd::_on_score_changed_audio`, and the DefenseTick guard above is
@@ -731,6 +765,28 @@ namespace TumbangPreso.UI
             if (_indicators != null) _indicators.gameObject.SetActive(false);
             if (_heroDeck != null) _heroDeck.SetActive(false);
             if (_classicDeck != null) _classicDeck.SetActive(false);
+
+            // ⚠️⚠️ THE TWO CARDS THAT ARE NOT CHILDREN OF THIS HUD, SWEPT BY TYPE. 🧑 2026-08-27:
+            // *"fix all these spectator hud problems wtf some shit dont hide"*, with a watcher's
+            // screen showing the YOU card and its stamina bar in the corner. `MatchInstaller`
+            // skips building both for a spectator now, which covers a session that STARTS as one;
+            // this covers the other entry, `MatchInstaller.Bind(seat, spectator: true)`, which
+            // hands an existing player the camera mid-match with both cards already standing.
+            //
+            // ⚠️ BY TYPE RATHER THAN THROUGH A FIELD, because this HUD does not own either object
+            // and giving it a reference to two things it did not create is a second lifetime to
+            // keep in step. They are one-per-scene by construction.
+            foreach (var card in FindObjectsByType<YouCard>(FindObjectsInactive.Include,
+                                                            FindObjectsSortMode.None))
+            {
+                card.gameObject.SetActive(false);
+            }
+
+            foreach (var card in FindObjectsByType<RoleSwapCard>(FindObjectsInactive.Include,
+                                                                 FindObjectsSortMode.None))
+            {
+                card.gameObject.SetActive(false);
+            }
 
             BuildSpectatorReadout();
         }
@@ -873,6 +929,27 @@ namespace TumbangPreso.UI
                          FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
                 plate.gameObject.SetActive(!on);
+            }
+
+            // ⚠️⚠️ AND THE YOU CARD, WHICH IS A ROOT CANVAS AND SO IS NOT UNDER `_canvas`. 🧑
+            // 2026-08-27: *"fix all these spectator hud problems wtf some shit dont hide"*.
+            // Pressing H left a wood card and a yellow stamina bar in the corner of a feed the
+            // whole point of which is that it is clean. `YouCard.Build` records why it cannot
+            // simply be reparented: a nested Canvas loses its own scaler and the card ends up off
+            // the right edge of the screen at every resolution.
+            //
+            // ⚠️ SWEPT BY TYPE, LIKE THE NAMEPLATES DIRECTLY ABOVE, AND FOR THE SAME REASON: this
+            // HUD does not own the object and holding a reference to something it did not create
+            // is a second lifetime to keep in step.
+            //
+            // ⚠️ `&& !_spectating`, SO TURNING THE FEED BACK ON DOES NOT UNDO THE SPECTATOR
+            // STRIP. `EnterSpectatorMode` switches this card off for good; without the guard, a
+            // watcher who pressed H twice would hand themselves a YOU card describing a body
+            // they are not driving.
+            foreach (var card in FindObjectsByType<YouCard>(
+                         FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                card.gameObject.SetActive(!on && !_spectating);
             }
 
             if (_canvas != null) _canvas.gameObject.SetActive(!on);
@@ -1152,8 +1229,34 @@ namespace TumbangPreso.UI
             }
             else
             {
-                _round.text = RoundLine(round, GameServices.Match.TotalRounds,
-                                    SeatName(GameServices.Match.DefenderSlot));
+                // ⚠️⚠️ THE DEFENDER'S NAME IS ON THIS LINE FOR THE OPENING OF A ROUND AND THEN
+                // COMES OFF. 🧑 2026-08-27: *"lessen the words showing up on screen, game feels
+                // overstimulating"*, and *"js remove some of the words that pop up bcz its so
+                // confusing to process when theres 5 words popping up at the same second"*.
+                //
+                // ⚠️ WHO THE TAYA IS, IS AN ANSWER TO A QUESTION THAT IS ONLY ASKED ONCE A ROUND.
+                // The role rotates at the boundary, so for the first few seconds it is the most
+                // important thing on the screen; ninety seconds later it is 24 characters of
+                // static text directly under a running clock, and the scoreboard on the left has
+                // been marking that seat the whole time anyway. Dropping to `ROUND 1 / 8` keeps
+                // the fact that never stops mattering and loses the one that stopped after six
+                // seconds.
+                //
+                // ⚠️ THE CARD IS STILL SIZED FOR THE LONG LINE. `TopCentreLines` measures the
+                // worst case, so the column does not resize under the player when this shortens.
+                if (round != _roundLineShown)
+                {
+                    _roundLineShown = round;
+                    _roundLineFullLeft = RoundLineNamesTayaFor;
+                }
+
+                _roundLineFullLeft = Mathf.Max(0.0f, _roundLineFullLeft - dt);
+
+                _round.text = _roundLineFullLeft > 0.0f
+                    ? RoundLine(round, GameServices.Match.TotalRounds,
+                                SeatName(GameServices.Match.DefenderSlot))
+                    : ShortRoundLine(round, GameServices.Match.TotalRounds);
+
                 FitTopCentre();
 
                 if (_timerPressure != null)
@@ -1337,6 +1440,21 @@ namespace TumbangPreso.UI
         private string _lataHintShown = "￿";
 
         /// <summary>
+        /// How long the centre-screen action line stays up after the can changes state.
+        ///
+        /// ⚠️ 2.2 s IS ONE READ AND A BEAT. It is long enough to catch out of the corner of an
+        /// eye while running, and short enough that it is gone before the player has finished
+        /// acting on it. Anything longer becomes the permanent banner this replaced.
+        /// </summary>
+        private const float LataAlertSeconds = 2.2f;
+
+        private float _lataAlertLeft;
+
+        /// <summary>Nullable so the FIRST pass counts as a change and the alert fires on a can
+        /// that is already down when the HUD wakes.</summary>
+        private bool? _lataDownShown;
+
+        /// <summary>
         /// `LataCard` is the one readout every player needs whatever their role: the throw is
         /// illegal while the lata is down, and the passive score only ticks while it is up.
         /// </summary>
@@ -1350,6 +1468,12 @@ namespace TumbangPreso.UI
             {
                 _lataCard.gameObject.SetActive(false);
                 if (_lataAlert != null) _lataAlert.enabled = false;
+
+                // ⚠️ THE EDGE IS FORGOTTEN WITH THE CARD, so a round that OPENS with the can
+                // already down still gets its one alert. Leaving the last state latched here
+                // would eat the first knockdown of every round after an intermission.
+                _lataAlertLeft = 0.0f;
+                _lataDownShown = null;
                 return;
             }
 
@@ -1389,14 +1513,25 @@ namespace TumbangPreso.UI
             if (_lataCard.rectTransform.localScale != Vector3.one)
                 _lataCard.rectTransform.localScale = Vector3.one;
 
+            // ⚠️⚠️ THE CENTRE ALERT IS AN EVENT NOW, NOT A STATE, AND THAT IS THE SINGLE BIGGEST
+            // WORD ON THE SCREEN GOING AWAY FOR MOST OF THE ROUND. 🧑 2026-08-27: *"lessen the
+            // words showing up on screen, game feels overstimulating"* and *"its so confusing to
+            // process when theres 5 words popping up at the same second"*.
+            //
+            // `down` is true for a large part of a live round, so `enabled = down` meant
+            // `RETRIEVE NOW` in 44 pt across the middle of the screen more or less permanently,
+            // over the exact patch of street the player is running through. A permanent
+            // instruction is not an instruction; it is background, and it crowds out every
+            // transient that actually needed reading.
+            //
+            // ⚠️ THE CARD KEEPS THE STATE. This class already splits them (STATE on the card,
+            // ACTION here); what was missing is that an ACTION only has to be said once, at the
+            // moment the situation changes. `AlertSeconds` is the moment.
             if (_lataAlert != null)
             {
-                _lataAlert.enabled = down;
-                if (down)
+                if (down && _lataDownShown != true)
                 {
-                    // ⚠️ THE ACTION ONLY. The label on the card two lines up already said
-                    // "LATA DOWN"; prefixing it here as well put the same two words twice inside
-                    // one glance of each other.
+                    _lataAlertLeft = LataAlertSeconds;
                     _lataAlert.text = _local == null
                         ? "RETRIEVE OR RESET"
                         : _local.IsDefender ? "RESET IT NOW" : "RETRIEVE NOW";
@@ -1404,7 +1539,14 @@ namespace TumbangPreso.UI
                     if (_lataAlert.rectTransform.localScale != Vector3.one)
                         _lataAlert.rectTransform.localScale = Vector3.one;
                 }
+
+                if (!down) _lataAlertLeft = 0.0f;
+                else _lataAlertLeft = Mathf.Max(0.0f, _lataAlertLeft - Time.unscaledDeltaTime);
+
+                _lataAlert.enabled = _lataAlertLeft > 0.0f;
             }
+
+            _lataDownShown = down;
 
             // The second line is what THIS player can do about it, which differs by role and is
             // the whole reason the card is not just a coloured light.
@@ -2455,6 +2597,20 @@ namespace TumbangPreso.UI
         /// </summary>
         public static string RoundLine(int round, int total, string defender)
             => $"ROUND {round} / {total}   ·   DEFENDER: {defender}";
+
+        /// <summary>
+        /// The same line once the opening seconds are over. See `UpdateTimer`.
+        ///
+        /// ⚠️ SAME PLACE AS THE LONG ONE, FOR THE SAME REASON: the probe measures whatever these
+        /// return, so a format invented at a call site is a format nothing checks the width of.
+        /// </summary>
+        public static string ShortRoundLine(int round, int total) => $"ROUND {round} / {total}";
+
+        /// <summary>How long the round line names the taya before shortening, in seconds.</summary>
+        private const float RoundLineNamesTayaFor = 6.0f;
+
+        private int _roundLineShown = -1;
+        private float _roundLineFullLeft;
 
         /// <summary>
         /// Every string the top-centre card can ever show, worst first.
@@ -4261,8 +4417,12 @@ namespace TumbangPreso.UI
             // than on a hero id, for the same reason the RECAST word is: any future ability
             // with a return press gets this the day it is added.
             //
-            // ⚠️ THIS IS A HUD CHANGE AND NOT A BALANCE ONE. `MaxCharges` is untouched at 2,
-            // which is what every other hero's charge skill carries.
+            // ⚠️⚠️ AND THE HUD HALF ALONE WAS NOT THE ANSWER. Hiding the row only while the
+            // power is out left TWO dots on the tile the rest of the round, which is the reading
+            // he objected to in the first place. `NemuHeroKit` carries one charge now, so this
+            // branch is the narrower thing it always should have been: it suppresses a row of
+            // ONE dot during the six seconds the tile says RECAST, so the tile never shows a
+            // spent-charge reading and a way-home reading in the same glance.
             if (skill.IsActive && skill.CanReactivate)
             {
                 if (card.Pips != null)

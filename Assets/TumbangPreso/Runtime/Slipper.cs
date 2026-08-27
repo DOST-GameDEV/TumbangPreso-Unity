@@ -523,10 +523,16 @@ namespace TumbangPreso
             _closestCanFlat = float.PositiveInfinity;
             _nearMissReported = false;
 
-            if (Mathf.Abs(PektusSpin) > 0.4f)
-            {
-                Visual.ComicPopup.Spawn(origin + Vector3.up * 0.4f, "PEKTUS!", UI.UiTheme.Highlight, 1.2f);
-            }
+            // ⚠️⚠️ NO `PEKTUS!` CALLOUT. `ComicPopup`'s own rule is *"A CAST GETS NO WORD"*, and
+            // this is the purest example of one: the player held the curve key, watched the arc
+            // bend, and the game shouted the name of the thing they had just done. It fired on
+            // EVERY spun throw, and Hero Strike measures 127 to 173 throws a match
+            // (`CLAUDE.md` § 7.1), so it was one of the most frequent strings in the game.
+            //
+            // ⚠️ THE CURVE STILL ANNOUNCES ITSELF, JUST NOT IN WORDS. `Carrier` prints PEKTUS
+            // CURVE on the charge meter while you are aiming it, the shoe visibly bends, and
+            // `BANK!` still fires when the spin actually banks off something, which is the part
+            // the thrower did NOT choose and could not see coming.
 
             if (thrower != null) thrower.HoldingSlipper = false;
 
@@ -565,7 +571,9 @@ namespace TumbangPreso
                 trail.startColor = mat.color;
                 trail.endColor = new Color(mat.color.r, mat.color.g, mat.color.b, 0.0f);
 
-                Visual.ComicPopup.Spawn(origin, "FIREBALL!", UI.UiTheme.HeroFireBright, 1.1f);
+                // ⚠️ NO WORD. Same rule as the pektus callout above: the thrower armed this on
+                // purpose one press ago, and the shoe is now trailing fire with a light on it.
+                // Four confirmations before the fifth one is text.
             }
             else if (Affinity == SlipperAffinity.ElectricZap)
             {
@@ -586,7 +594,7 @@ namespace TumbangPreso
                 trail.startColor = mat.color;
                 trail.endColor = new Color(mat.color.r, mat.color.g, mat.color.b, 0.0f);
 
-                Visual.ComicPopup.Spawn(origin, "OVERCHARGE!", UI.UiTheme.HeroElectricBright, 1.1f);
+                // ⚠️ NO WORD, for the reason on the fireball above.
             }
             else if (UI.SceneFlow.SelectedMode == GameMode.HeroStrike)
             {
@@ -808,8 +816,15 @@ namespace TumbangPreso
             if (_closestCanFlat > 1.35f || distance < _closestCanFlat + 0.12f) return;
 
             _nearMissReported = true;
-            Visual.ComicPopup.Spawn(lata.transform.position + Vector3.up * 0.9f,
-                                    "SABLAY!", UI.UiTheme.Highlight, 0.9f);
+
+            // ⚠️⚠️ NO `SABLAY!` CALLOUT. A near miss is the one event in the game the player is
+            // ALREADY looking directly at: they threw at the can, they are watching the shoe, and
+            // it went past. The word said nothing the frame did not, and it fired on a 1.35 m
+            // threshold, which in Hero Strike is most misses of most throws.
+            //
+            // ⚠️ THE CUE AND THE HYPE BOTH STAY. The whip-past sound is what sells the miss, and
+            // `ReportStyle` is Classic-only and pays 10 hype rather than printing anything on a
+            // Hero Strike screen.
             GameServices.Audio?.PlayAtVaried("slipper_bounce", lata.transform.position,
                                              1.08f, 1.18f, 0.55f);
             UI.Hud.ReportStyle(_throwerSlot, 10.0f, "SO CLOSE");

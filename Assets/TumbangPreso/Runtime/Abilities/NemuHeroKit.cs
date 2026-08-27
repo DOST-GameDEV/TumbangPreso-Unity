@@ -123,22 +123,32 @@ namespace TumbangPreso.Abilities
             private GameObject _projectedGhost;
 
             public GhostlyPoltergeistAbility()
-                // ⚠️⚠️ TWO CHARGES A ROUND AND NO RECHARGE. It puts a body on the court that
+                // ⚠️⚠️ ONE CHARGE A ROUND AND NO RECHARGE. It puts a body on the court that
                 // everyone else has to react to, which is the charge half of the split even
                 // though what it leaves is a pet rather than a zone: the test is whether the
                 // ability creates a thing the other three play around, and Kuro is exactly that.
                 //
+                // ⚠️⚠️ IT WAS TWO, AND THE SECOND PIP WAS TELLING THE PLAYER SOMETHING UNTRUE
+                // ABOUT WHAT THE KEY DOES. 🧑 2026-08-27: *"why does nemu have 2 charges if its
+                // just recast? should just show 1"*. This is the only power in the game where the
+                // SECOND press of the same key is part of the SAME cast, so a deck tile showing
+                // two pips reads as "you get two presses" when what you actually get is one trip
+                // out and one trip home. One pip and one trip is the honest version of the tile,
+                // and it is also the version the ability's own sentence already describes.
+                //
                 // ⚠️ THE REACTIVATION IS FREE AND MUST STAY FREE. `CanReactivate` returns the
                 // trip home, and `HeroKit.Fire` deliberately does not gate a reactivation on
                 // readiness. A charge is spent on the way OUT only, so a player can never be
-                // stranded in a possession with no charge left to come back with.
+                // stranded in a possession with no charge left to come back with. At one charge
+                // that is no longer a nicety, it is the only thing standing between the player
+                // and a permanent possession.
                 : base("nemu_skill2", "RIDE KURO",
                        "Sends Kuro out ahead and rides along in his body. Press again and yours follows him.",
                        0.0f, 6.0f, TumbangPreso.UI.AbilityGlyph.NemuAstralPet,
                        summary: "Drive Kuro. Press again to follow him there.",
                        castAction: "hero-nemu-project",
                        viewmodelAction: "project-spirit",
-                       charges: 2)
+                       charges: 1)
             {
             }
 

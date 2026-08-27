@@ -208,8 +208,24 @@ namespace TumbangPreso.Tests
 
             StringAssert.Contains("RawImage", spectator,
                 "the replay should display captured pixels without touching live state");
-            StringAssert.Contains("LIVE PLAY CONTINUES", spectator,
-                "the spectator must be told that the match is still running behind the replay");
+
+            // ⚠️⚠️ THIS USED TO PIN THE TOAST "LIVE PLAY CONTINUES", AND THE PREMISE UNDER IT IS
+            // GONE. The replay was a picture-in-picture in the top right, so the operator needed
+            // telling that the frame BEHIND it was still live. 🧑 2026-08-27: *"i alsoo really
+            // dont like that instant replay on the top right"* and *"i want it to cover whole
+            // screen if i click it"*. Nothing is behind it now, so a line saying the match
+            // continues would be describing something the viewer cannot see.
+            //
+            // ⚠️ WHAT REPLACED IT IS THE PROPERTY THAT ACTUALLY MATTERED. The assertions above
+            // already say the replay does not stop the clock; this says it cannot start ITSELF,
+            // which is the half 🧑 reported as *"why is instant replay just spam showing"*. It
+            // used to fire on every knockdown, tag and sabotage behind a 4 s floor.
+            StringAssert.DoesNotContain("AutoReplayCooldown", spectator,
+                "a self-starting replay is back. See the section THE REPLAY NEVER STARTS ITSELF "
+                + "ANY MORE: the only trigger may be the SpectatorReplay key.");
+            StringAssert.DoesNotContain("StepPendingHighlight", spectator,
+                "a self-starting replay is back. The highlight queue may name the last play, "
+                + "never start one.");
         }
 
         [Test]

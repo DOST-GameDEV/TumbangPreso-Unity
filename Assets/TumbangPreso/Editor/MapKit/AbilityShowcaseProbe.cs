@@ -89,7 +89,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static bool _gateBlowout;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v35";
+        private const string Version = "v36";
 
         [MenuItem("Tumbang Preso/Capture Ability Showcase")]
         public static void RunFromMenu() => Execute();
@@ -149,6 +149,16 @@ namespace TumbangPreso.EditorTools.MapKit
                 // ward without its standing marks and its light is not what a player ever sees.
                 Solo(spawned, "hex_ward",
                      () => HeroHazards.SpawnHexSigil(Vector3.zero, 2.4f, 60.0f, 5));
+
+                // ⚠️⚠️ THE THING A BLINK ACTUALLY SHOWS YOU IS THE AIM MARK, AND IT HAD NEVER
+                // BEEN PHOTOGRAPHED. Every other frame in this probe is what happens AFTER a
+                // cast; the blink is the one power in the game whose telegraph is on screen for
+                // the whole decision, and it is the half 🧑 has now complained about twice: *"all
+                // it shows is a frigging shadow, it's very easy to miss"* (2026-08-27), and then
+                // *"I dont want Phaister's E HOLD for casting To just be a shadow, keep that
+                // outline and give it her color so that it could be seen more"*. A change to it
+                // that ships without a picture cannot be judged, which is `CLAUDE.md` § 6.1.
+                Solo(spawned, "blink_aim_reticle", HeldBlinkReticle);
 
                 Solo(spawned, "blink_rift",
                      () => HeroHazards.SpawnShadowRift(Vector3.zero, Vector3.forward));
@@ -367,6 +377,37 @@ namespace TumbangPreso.EditorTools.MapKit
         /// </summary>
         private const string PetModelPath =
             "Assets/TumbangPreso/Art/models/kits/graveyard/character-ghost.glb";
+
+        /// <summary>
+        /// Phaister's hold-to-aim mark, exactly as `HeroAbilitySystem.Aiming` draws it.
+        ///
+        /// ⚠️⚠️ THE COLOUR COMES FROM `UiTheme.BrightForHero`, NOT FROM A LITERAL, and the radius
+        /// from `ShadowPhaseBlinkAbility`'s own `ArrivalMark`. A probe that types either number in
+        /// is photographing a picture the game never draws, which is the same fault the class note
+        /// records against binding the pet at scale 1.
+        ///
+        /// ⚠️ `EnsureBuilt`, BECAUSE AN EDIT-MODE CAPTURE GETS NO `Awake`. See that method: the
+        /// component would otherwise come back with no geometry at all and the frame would be an
+        /// empty road that the run reports as a success.
+        ///
+        /// ⚠️ NO OWNER, WHICH `GroundReticle.OwnerIsBeingDriven` READS AS "DRAW IT". The held ring
+        /// is private to the player aiming it in a match, and a probe has no player; the null
+        /// fallback is written down there for exactly this call.
+        /// </summary>
+        private static GameObject HeldBlinkReticle()
+        {
+            var go = new GameObject("~ProbeBlinkReticle");
+            var reticle = go.AddComponent<GroundReticle>();
+            reticle.EnsureBuilt();
+
+            var kit = new PhaisterHeroKit();
+            float radius = kit.Skill2 != null ? kit.Skill2.TelegraphRadius : 1.15f;
+
+            reticle.SetBeacon(true);
+            reticle.Show(Vector3.zero, radius, UI.UiTheme.BrightForHero(kit.HeroId));
+
+            return go;
+        }
 
         private static GameObject KuroUnbound(bool withPet)
         {

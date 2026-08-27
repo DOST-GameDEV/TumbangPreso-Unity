@@ -181,7 +181,22 @@ namespace TumbangPreso.Visual
             _ringBlock.SetColor("_BaseColor", new Color(_roleColor.r, _roleColor.g, _roleColor.b, 0.8f));
             _ringRenderer.SetPropertyBlock(_ringBlock);
 
-            _label.text = $"{_character.DisplayName()} · {(isDefense ? "TAYA" : "ATK")}";
+            // ⚠️⚠️ THE ROLE SUFFIX IS ONLY ON THE TAYA, AND "· ATK" IS DELETED. 🧑 2026-08-27:
+            // *"lessen the words showing up on screen, game feels overstimulating"*.
+            //
+            // ⚠️ THE SUFFIX WAS NEVER CARRYING ANY INFORMATION ON THREE OF THE FOUR PLATES. There
+            // is exactly ONE taya per round and everybody else is an attacker by definition, so
+            // "· ATK" is a word printed over three of the four bodies on the court to say "not
+            // the special one". The colour already says it, on the plate and on the ground ring
+            // under the same body, and `docs/VISION.md` § 3 puts the whole teaching load on the
+            // colour rule rather than on labels.
+            //
+            // ⚠️ THE TAYA KEEPS ITS WORD, DELIBERATELY. Which of the four is the taya is the one
+            // fact worth naming in the world, it changes every round, and a player who has just
+            // rotated needs to find them before the colour rule has re-registered.
+            _label.text = isDefense
+                ? $"{_character.DisplayName()} · TAYA"
+                : _character.DisplayName();
             _label.color = _roleColor;
         }
 

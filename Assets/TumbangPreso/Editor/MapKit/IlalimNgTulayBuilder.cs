@@ -1893,22 +1893,29 @@ namespace TumbangPreso.EditorTools.MapKit
 
             BuildRepairBladeSign(sign);
 
-            // ⚠ FITTED TO `Shophouse_W2`, NOT TYPED ONTO IT. See `FitToFacade`: this is the
-            // sign whose lettering ran off the end of its own wall and floated.
-            var partsWall = west.Count > 2 ? west[2] : null;
-            var partsPoint = new Vector3(ShopFaceX(partsWall, -1) + 0.03f, 3.55f, -1.2f);
-            var partsSize = new Vector2(4.60f, 0.92f);
-            FitToFacade(partsWall, ref partsPoint, ref partsSize);
-
-            StreetSignKit.PaintedWall(sign, "Sign_ComputerParts", partsPoint,
-                // ⚠ FADED DARK, NOT FADED PALE. The first pass painted this in `SunBleach`, a
-                // light warm grey, onto a cream facade: in `ilalim_corridor_v19.png` the whole
-                // word collapses into one pale smudge that reads as an untextured panel rather
-                // than as a sign. Sun-bleached paint on a light wall keeps its VALUE contrast
-                // and loses its saturation, which is the opposite of what was drawn.
-                -90.0f, partsSize, StreetSignKit.MuralInk,
-                new[] { "COMPUTER PARTS" },
-                "Sun-bleached paint on the west facade render. There is no plate to hold up.");
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ `Sign_ComputerParts` IS DELETED, AND THIS IS THE SECOND TIME IT WAS REPORTED
+            // AS FLOATING. 🧑 2026-08-25: *"floating texg here pls remove"*, answered by
+            // `FitToFacade`; 🧑 2026-08-27, with a screenshot of the same wall: *"flowing
+            // computer parts text pls remove"*.
+            //
+            // ⚠️⚠️ FITTING IT WAS THE WRONG FIX AND THE SECOND REPORT IS THE PROOF.
+            // `StreetSignKit.PaintedWall` draws LOOSE CAPITALS AND NO PLATE, by construction:
+            // its whole idea is paint straight onto a render, so every letter is its own piece of
+            // geometry standing a few centimetres off a wall with nothing behind it. On a
+            // stepped voxel facade under a viaduct, at any angle other than straight on, that
+            // reads as text hanging in the air whether or not it is inside the wall's bounds.
+            // Constraining the RECT never had anything to do with the thing being reported.
+            //
+            // ⚠️ THE STRIP LOSES NOTHING IT NEEDED. `Sign_PcRepair` (a projecting blade, four
+            // metres south) and PC Express's own fascia already say what this row of shops sells,
+            // and both are carried by real geometry. § 10.4's adjacency rule is unaffected: the
+            // blade and the hung LOAD panel either side of the gap are different systems.
+            //
+            // ⚠️ AND `PaintedWall` STAYS IN `StreetSignKit`. It is a sign SYSTEM, it is correct
+            // on a flat plastered wall, and deleting the only caller is not a reason to delete
+            // the tool. If it is used again, it wants a wall with no relief.
+            // -------------------------------------------------------------------
 
             // PC Express sits here, at z = 5.5. See the method note.
 
@@ -1947,8 +1954,23 @@ namespace TumbangPreso.EditorTools.MapKit
             // `detail-awning-wide` mounted at 2.45, so the canopy cut a diagonal across its top
             // right corner in `ilalim_street_life_v20.png` and ate two letters. A shop fascia
             // goes over its own awning.
+            //
+            // ⚠️⚠️ AND ITS WALL PLANE IS SOLVED FROM `Shophouse_E3`, NOT TYPED IN. 🧑 2026-08-27,
+            // with a screenshot: *"the pisonet sign"* is phasing. `10.94` was a literal, and
+            // `BuildSideFacade` gives every shophouse its own per-instance SETBACK (E3 is
+            // `building-j` at scale 5.60 with setback 0.00, and any of those three may be
+            // retuned), so a typed x is only correct until somebody moves the building. This is
+            // the exact drift `ShopFaceX` and `FitToFacade` were written for a wall away, on the
+            // west side, and the east side was left typed. Same fix, same two calls: take the
+            // face from the rendered bounds, then narrow the 3.45 m fascia to whatever the facade
+            // can actually hold so it cannot overhang into the gap before `Shophouse_E4`.
+            var pisonetWall = east.Count > 3 ? east[3] : null;
+            var pisonetPoint = new Vector3(ShopFaceX(pisonetWall, 1) - 0.06f, 3.42f, 3.45f);
+            var pisonetSize = new Vector2(3.45f, 0.84f);
+            FitToFacade(pisonetWall, ref pisonetPoint, ref pisonetSize);
+
             StreetSignKit.FramedFascia(sign, "Sign_Pisonet",
-                new Vector3(10.94f, 3.42f, 3.45f), 90.0f, new Vector2(3.45f, 0.84f),
+                pisonetPoint, 90.0f, pisonetSize,
                 StreetSignKit.SignCream, StreetSignKit.SignMaroon,
                 new[] { "PISONET", "P1  5 MIN" },
                 "Framed rate fascia bolted above the three pisonet terminals.");
@@ -2081,9 +2103,24 @@ namespace TumbangPreso.EditorTools.MapKit
                              8.4f, 1.6f, new Vector3(1.4f, 0.4f, 2.6f),
                              "CORD TRIP!", CordYellow);
 
-            CreateTripHazard(hazardGroup.transform, "TripHazard_GpuBoxDebris",
-                             -9.2f, 7.8f, new Vector3(1.6f, 0.4f, 2.2f),
-                             "BOX TRIP!", CardboardTan);
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ TWO BECAME ONE ON 2026-08-27, THE THIRD CUT FOR THE SAME REPORTED FEELING.
+            // 🧑: *"lessen trip areas in map, maybe js one is okay, its overstimulating to have
+            // allat"*. Seven to four, four to two, two to one. Three cuts is not somebody being
+            // fussy about a number; it is the map having one trip hazard's worth of design in it
+            // and the builder having authored several.
+            //
+            // ⚠️ THE CORD IS THE ONE THAT STAYS, AND IT IS NOT THE CLOSEST CALL. It is the only
+            // one attached to a business that is already on the street: three pisonet terminals,
+            // three chairs and a cable running to them, all authored by `BuildPisonetRow` before
+            // any hazard existed. `TripHazard_GpuBoxDebris` at (-9.2, 7.8) was cardboard drawn
+            // for the hazard's own sake, on a corner nothing else happens on, so removing it
+            // costs the map no fiction at all.
+            //
+            // ⚠️ AND THE DISTANCE RULE FROM THE NOTE BELOW STILL BINDS ANYTHING ADDED BACK. The
+            // cord stands 8.55 m from the can against a `CONFINEMENT_RADIUS` of 7.0, so it is met
+            // by cutting a wide corner and never on a straight run for a tsinelas.
+            // -------------------------------------------------------------------
 
             // -------------------------------------------------------------------
             // ⚠️⚠️ FOUR BECAME TWO ON 2026-08-27, AND THE TWO THAT WENT WERE THE TWO NEAREST THE
@@ -2110,6 +2147,77 @@ namespace TumbangPreso.EditorTools.MapKit
             // COUNT. Anything inside `Balance.ConfinementRadius` of the can is on the retrieval
             // line by construction, whatever it is drawn as and however few of them there are.
             // -------------------------------------------------------------------
+
+            BuildFormerHazardDressing(parent);
+        }
+
+        // -------------------------------------------------------------------
+        // § THE STREET KEEPS THE OBJECTS, IT JUST STOPS TRIPPING YOU OVER THEM
+        //
+        // ⚠️⚠️ 🧑 2026-08-27, immediately after the last cut: *"if u removed the trip shit can u
+        // atleast keep the models that was in play area before? js delete the trip mechanic on
+        // them, bcz i dontw ant play area to look empty"*. He is right, and the three cuts before
+        // this one all made the same mistake: they deleted the OBJECT to delete the RULE.
+        //
+        // ⚠️⚠️ THE MECHANIC AND THE PROP ARE NOT THE SAME THING AND SHOULD NEVER HAVE BEEN
+        // DELETED TOGETHER. An open manhole with its cast rim tipped up beside it, a resurfaced
+        // trench that settled, and a pile of dropped GPU boxes are all street. They are what
+        // Aurora Boulevard under the LRT actually looks like, they were drawn to the standard
+        // `docs/VISION.md` § 2 rule 3 asks for (a silhouette, not a coloured mat), and the ROAD
+        // is the one part of this map with nothing else on it. Taking them out to answer *"too
+        // many places where u can trip"* threw away eleven pieces of authored geometry to remove
+        // three trigger volumes.
+        //
+        // ⚠️ SO THIS BUILDS THE IDENTICAL VISUALS AND NOTHING ELSE. No `BoxCollider`, no
+        // `StreetTripHazard`, no entry in `Hazards`. `BuildTripHazardVisual` branches on the
+        // NAME, so each of these keeps the substring its artwork is selected by; that is the
+        // whole reason the visuals could be kept without being copied.
+        //
+        // ⚠️⚠️ AND NOTHING AVOIDS THEM ANY MORE, WHICH IS THE POINT. `AIController`'s hazard
+        // avoidance walks `StreetTripHazard` components, so a bot that used to path around the
+        // manhole now walks straight over it, exactly as a player does. A prop that still bent
+        // the bots' routes would be a hazard wearing a different name.
+        //
+        // ⚠️ THEY CARRY NO COLLIDER AT ALL, so `MapGeometryCheck`'s box-clearance rule has
+        // nothing to catch even though the manhole and the trench sit 5.19 m and 5.30 m from the
+        // can, inside `CONFINEMENT_RADIUS`. That is fine for paint and was NOT fine for a
+        // trigger; the distinction is the entire content of the note above.
+        // -------------------------------------------------------------------
+
+        private static void BuildFormerHazardDressing(Transform parent)
+        {
+            // ⚠️ UNDER `Kalat` (litter), NOT UNDER `Hazards`. Where a thing lives in the hierarchy
+            // is how the next reader learns what it is, and these are clutter now.
+            var group = new GameObject("FormerHazardProps");
+            group.transform.SetParent(Group(parent, "Kalat"), false);
+
+            // Cut as a hazard 2026-08-27 (see above). Kept as road.
+            CreateRoadDressing(group.transform, "Dressing_LooseManhole",
+                               -4.6f, 2.4f, new Vector3(1.8f, 0.4f, 1.8f), HazardLip);
+
+            CreateRoadDressing(group.transform, "Dressing_SunkenTrench",
+                               4.6f, -2.6f, new Vector3(2.4f, 0.4f, 1.5f), HazardLip);
+
+            // Cut as a hazard in the same pass that took the count to one. Kept as pavement clutter.
+            CreateRoadDressing(group.transform, "Dressing_GpuBoxDebris",
+                               -9.2f, 7.8f, new Vector3(1.6f, 0.4f, 2.2f), CardboardTan);
+        }
+
+        /// <summary>
+        /// One former hazard's artwork, with nothing that can trip anybody.
+        ///
+        /// ⚠️ IT SHARES `BuildTripHazardVisual` RATHER THAN COPYING IT. A second copy of eleven
+        /// slabs is a second thing to keep in step, and the day somebody retunes the manhole rim
+        /// only one of the two would move.
+        /// </summary>
+        private static void CreateRoadDressing(Transform parent, string name, float x, float z,
+                                               Vector3 size, Color colour)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = new Vector3(x, SurfaceTop(x), z);
+
+            BuildTripHazardVisual(go.transform, name, size, colour);
         }
 
         private static void CreateTripHazard(Transform parent, string name, float x, float z,

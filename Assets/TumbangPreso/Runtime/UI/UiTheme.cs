@@ -276,6 +276,48 @@ namespace TumbangPreso.UI
         public static readonly Color HeroMagmaCore = Hex("ff9a2e");
 
         /// <summary>Resolve primary element color for a given hero ID.</summary>
+        /// <summary>
+        /// The hero's accent at TELEGRAPH brightness, for anything drawn on the ground in the
+        /// world rather than on a UI panel.
+        ///
+        /// ⚠️⚠️ THE BASE ACCENTS ARE PICKED AGAINST CREAM UI, AND ILALIM NG TULAY IS A STREET
+        /// UNDER A VIADUCT. 🧑 2026-08-27, on Phaister's hold-to-aim: *"I dont want Phaister's E
+        /// HOLD for casting To just be a shadow, keep that outline and give it her color so that
+        /// it could be seen more"*. `HeroWitch` is `e828c5`, a saturated but MID-VALUE magenta;
+        /// ghosted geometry on a dark asphalt road is lit by its emission and almost nothing
+        /// else, so a mid-value colour there is that colour's silhouette. The `*Bright` set is
+        /// the same hue lifted to a value that survives the map, and it already exists because
+        /// every ability VFX in the game reaches for it for exactly this reason.
+        ///
+        /// ⚠️ IT FALLS BACK TO THE BASE ACCENT, so a hero without a bright variant is merely
+        /// dimmer rather than the wrong colour.
+        /// </summary>
+        public static Color BrightForHero(string heroId)
+        {
+            if (string.IsNullOrEmpty(heroId)) return HeroEarthBright;
+            switch (heroId.ToLowerInvariant())
+            {
+                case "sean":
+                case "kuya_boy":
+                case "iggy":
+                    return HeroFireBright;
+                case "cheska":
+                case "inday":
+                    return HeroIceBright;
+                case "zack":
+                    return HeroElectricBright;
+                case "nemu":
+                    return HeroSpiritBright;
+                case "phaister":
+                case "witch":
+                    return HeroWitchBright;
+                case "dante":
+                case "bayan":
+                default:
+                    return HeroEarthBright;
+            }
+        }
+
         public static Color ColorForHero(string heroId)
         {
             if (string.IsNullOrEmpty(heroId)) return HeroEarth;

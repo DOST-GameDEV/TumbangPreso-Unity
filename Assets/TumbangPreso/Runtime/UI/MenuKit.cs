@@ -138,6 +138,67 @@ namespace TumbangPreso.UI
             return pad;
         }
 
+        /// <summary>
+        /// The same fix for a converted CheckBox, and it is the same bug one control across.
+        ///
+        /// ⚠️⚠️ "INVERT Y AND FULLSCREEN ARE UNCLICKABLE", 🧑 2026-08-27 with a screenshot of both
+        /// rows. `TscnUiImporter.BuildCheckBox` puts the tick box on a CHILD node and points
+        /// `Toggle.targetGraphic` at it, exactly as Unity does for a Slider's handle, so the
+        /// Toggle's own GameObject carries no Graphic and the row has no hit area of its own.
+        ///
+        /// ⚠️⚠️ AND THE IMPORTER-SIDE FIX CANNOT REACH THE SHIPPED SCENES. `ClearStrayRaycastTargets`
+        /// keeps a Selectable's `targetGraphic` alive now, but that runs at IMPORT time and writes
+        /// a `.unity` asset; **running the player never re-runs the converter**, which is the
+        /// identical reason `ConvertedSettingsPanel` calls the Slider overload above at runtime
+        /// rather than trusting the bake. A row baked before that change is still muted on disk.
+        ///
+        /// ⚠️ AND THE WHOLE ROW BECOMES THE TARGET, NOT THE 30 px BOX. Restoring the box alone
+        /// would leave the player aiming at a 30 px square at the far left of a 380 px row while
+        /// the words next to it, which are what they are actually reading, do nothing. Every
+        /// other settings row is pressed anywhere along it.
+        /// </summary>
+        public static Graphic EnsureHitArea(Toggle toggle)
+        {
+            if (toggle == null) return null;
+
+            // ⚠️ THE TICK BOX IS UN-MUTED WHATEVER ELSE HAPPENS. It is the graphic Unity swaps
+            // the pressed and disabled colours on, so a muted one also loses the press tint.
+            if (toggle.targetGraphic != null) toggle.targetGraphic.raycastTarget = true;
+
+            var own = toggle.GetComponent<Graphic>();
+            if (own != null)
+            {
+                own.raycastTarget = true;
+                return own;
+            }
+
+            var existing = toggle.transform.Find(HitAreaName);
+
+            var go = existing != null
+                ? existing.gameObject
+                : new GameObject(HitAreaName, typeof(RectTransform));
+
+            if (existing == null)
+            {
+                go.transform.SetParent(toggle.transform, false);
+                go.transform.SetAsFirstSibling();
+            }
+
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+
+            var pad = go.GetComponent<Image>();
+            if (pad == null) pad = go.AddComponent<Image>();
+
+            pad.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+            pad.raycastTarget = true;
+
+            return pad;
+        }
+
         /// <summary>The name <see cref="EnsureHitArea"/> parks its pad under, so a reopened
         /// panel finds the one it made last time instead of stacking another.</summary>
         public const string HitAreaName = "HitArea";

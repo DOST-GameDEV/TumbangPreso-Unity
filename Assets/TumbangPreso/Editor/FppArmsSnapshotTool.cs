@@ -9,6 +9,15 @@ namespace TumbangPreso.EditorTools
     public static class FppArmsSnapshotTool
     {
         private const string OutDir = "Logs/shots-fpp";
+
+        /// <summary>
+        /// ⚠️⚠️ BUMP THIS EVERY CAPTURE. `CLAUDE.md` § 6.1: chat clients cache images by
+        /// filename, so overwriting a render leaves the previous one on screen and the whole
+        /// review is conducted against an image that is not on disk any more. This tool wrote
+        /// `fpp_nemu_showcase.png` unversioned for its whole life, which is why nobody could
+        /// review two iterations of an arm in one sitting.
+        /// </summary>
+        private const string Version = "v3";
         private const int Width = 1280;
         private const int Height = 720;
 
@@ -113,12 +122,12 @@ namespace TumbangPreso.EditorTools
                 arms.SetHolding(true);
                 arms.StepVisuals(0.016f, snap: true);
                 cam.Render();
-                SaveTexture(rt, Path.Combine(OutDir, $"fpp_{charId}_holding.png"));
+                SaveTexture(rt, Path.Combine(OutDir, $"fpp_{charId}_holding_{Version}.png"));
 
                 arms.SetHolding(false);
                 arms.StepVisuals(0.016f, snap: true);
                 cam.Render();
-                SaveTexture(rt, Path.Combine(OutDir, $"fpp_{charId}_empty.png"));
+                SaveTexture(rt, Path.Combine(OutDir, $"fpp_{charId}_empty_{Version}.png"));
 
                 // --- 2. Full Arm Showcase Inspect View (Showing sleeves, pauldron, markings, bracelets) ---
                 cam.transform.position = new Vector3(0.0f, 0.42f, -0.82f);
@@ -127,7 +136,7 @@ namespace TumbangPreso.EditorTools
                 arms.SetHolding(true);
                 arms.StepVisuals(0.016f, snap: true);
                 cam.Render();
-                SaveTexture(rt, Path.Combine(OutDir, $"fpp_{charId}_showcase.png"));
+                SaveTexture(rt, Path.Combine(OutDir, $"fpp_{charId}_showcase_{Version}.png"));
             }
 
             cam.targetTexture = null;

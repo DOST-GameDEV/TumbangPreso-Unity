@@ -68,26 +68,23 @@ namespace TumbangPreso
         /// including the live one, is simply never called.
         ///
         /// That is the whole of *"WHY TF is it just stuck here when round ends"*: one dead
-        /// delegate at the head of a list. Tagging would have been the next thing to go, for the
-        /// same reason on the same event, because `Tagged` carries a handler of exactly this
-        /// shape.
+        /// delegate at the head of a list.
+        ///
+        /// ⚠️ THERE WAS A THIRD, `_tagged`, AND IT IS GONE BECAUSE THE TOAST IT WROTE WAS A
+        /// SECOND COPY OF `Hud.OnTagged`'s. The hazard this section describes is unchanged and
+        /// applies to anything added here: hold it in a field, take it off in `OnDestroy`.
         /// </summary>
-        private System.Action<int, int> _tagged;
         private System.Action<int, int> _roundVoice;
         private System.Action<int> _wonVoice;
 
         private void OnDestroy()
         {
-            if (GameServices.Round != null && _tagged != null)
-                GameServices.Round.Tagged -= _tagged;
-
             if (GameServices.Match != null)
             {
                 if (_roundVoice != null) GameServices.Match.RoundStarted -= _roundVoice;
                 if (_wonVoice != null) GameServices.Match.MatchEnded -= _wonVoice;
             }
 
-            _tagged = null;
             _roundVoice = null;
             _wonVoice = null;
         }
@@ -759,22 +756,19 @@ namespace TumbangPreso
                 });
             }
 
-            if (GameServices.Round != null)
-            {
-                _tagged = (taya, victim) =>
-                {
-                    // ⚠️ THE HUD IS RE-CHECKED, NOT TRUSTED. See OnDestroy: this handler is on a
-                    // `DontDestroyOnLoad` director and the object it captured belongs to a scene.
-                    if (hud == null || local == null) return;
-
-                    if (local.PlayerSlot == victim)
-                        hud.ShowToast("TAGGED  ·  BACK TO THE SAFE ZONE", 2.0f);
-                    else if (local.PlayerSlot == taya)
-                        hud.ShowToast($"TAG  ·  {NameForSlot(victim)}", 1.4f);
-                };
-
-                GameServices.Round.Tagged += _tagged;
-            }
+            // ⚠️⚠️ THE TAG TOAST IS NOT WIRED HERE AND IT WAS, WORD FOR WORD, ALONGSIDE THE COPY
+            // IN `Hud.OnTagged`. Two subscribers to `RoundDirector.Tagged`, both writing the same
+            // two strings into the same label on the same frame, in whichever order Unity's
+            // delegate list happened to hold. `LataRestored` had the identical fault and both
+            // were found together on 2026-08-27 chasing 🧑's *"shows -5 slipper idle twice
+            // bruh"*: this codebase kept growing a second owner for one event.
+            //
+            // ⚠️ THE HUD IS THE OWNER, and it is the one that survived because the decision about
+            // WHO gets told what is a HUD decision and is written down there. `Hud.OnTagged`'s
+            // note explains why the taya's line was dropped and the victim's kept, which is
+            // exactly the reasoning that would have had to be duplicated here.
+            //
+            // **Do not add a toast to this installer. Wire the event and let the HUD say it.**
 
             // The match-end board. Present from the start and listening; it shows itself when
             // MatchEnded fires.
@@ -810,7 +804,21 @@ namespace TumbangPreso
             // each is its own root object with no other caller, so there is no field left null
             // and nothing downstream to guard. `Hud.StripToTrainingChrome` explains why the ones
             // inside the HUD had to go the other way.
-            if (!GameLaunch.GuidedTutorial)
+            // ⚠️⚠️ AND NEITHER IS BUILT FOR A SPECTATOR, WHICH IS THE OTHER HALF OF THE SAME
+            // ARGUMENT. 🧑 2026-08-27, with a screenshot of a watcher's screen: *"fix all these
+            // spectator hud problems wtf some shit dont hide"*. `YouCard` names the unit you are
+            // DRIVING and draws its stamina; a watcher drives nobody, so it was naming and
+            // metering whichever seat `local` happened to resolve to and reporting that seat's
+            // stamina as the viewer's own.
+            //
+            // ⚠️⚠️ AND IT COULD NOT BE HIDDEN AFTERWARDS EITHER. `YouCard.Build` makes its OWN
+            // root Canvas, so it is not under `Hud.CleanFeedRoot`: `Hud.EnterSpectatorMode` could
+            // not reach it, and neither could `SetCleanFeed`, which is why pressing H left a card
+            // and a yellow bar sitting in the corner of a supposedly clean feed. `RoleSwapCard`
+            // parents itself under the HUD for exactly this reason and says so in its own
+            // `Build`. Skipping the object outright is better than teaching a third path to hide
+            // it, and it is what the emote wheel below already does for a watcher.
+            if (!GameLaunch.GuidedTutorial && !_spectating)
             {
                 // The intermission card, on the same terms: it listens for the round boundary.
                 var swapGo = new GameObject("RoleSwapCard");

@@ -84,7 +84,7 @@ namespace TumbangPreso.UI
             // nothing to hang a chip on: it is naming things, not explaining a rule.
             if (_page == 0) { BuildPremiseStrip(rows); return; }
 
-            foreach (var row in page.Rows) Row(rows, row.Chip, row.Body);
+            foreach (var row in page.Rows) Row(rows, row.ChipText(), row.BodyText());
         }
 
         private readonly List<ModelPreview> _previews = new List<ModelPreview>();

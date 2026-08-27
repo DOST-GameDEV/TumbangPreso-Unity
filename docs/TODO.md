@@ -4467,6 +4467,367 @@ both.
 
 ---
 
+## 50 · Fourteen reports off the 4.73 player ✅ CLOSED 2026-08-27
+
+Everything 🧑 raised in one sitting after playing the `integration/ui-batch-on-ilalim` build.
+Grouped by what they turned out to be rather than by the order they arrived, because four of
+them are the same fault.
+
+### 50.1 ✅ One key press was casting an ability TWICE, and that is Nemu's E
+
+🧑: *"her e is kind of bugged, sometimes it doesnt cast sometimes it does? idk why"*.
+**Sometimes is exactly right and it is a frame-rate bug.**
+
+`InputIntent.JustPressed` is a diff against a snapshot taken by `CharacterMotor` **at the end of
+the physics step**, and `HeroAbilitySystem.Aim` runs in `Update`. Above 50 fps there are two or
+more Updates per FixedUpdate, so one physical press reads as `JustPressed` on every Update until
+the next physics step takes a snapshot.
+
+⚠️⚠️ **For twelve of the fifteen powers that is a harmless re-buffer of the same press. For the
+one `CanReactivate` power in the game it is the whole bug:** `HeroKit.Fire` ACTIVATES on the
+first read and REACTIVATES on the second, so Kuro went out and came straight home inside a single
+click and nothing appeared to happen. Whether a FixedUpdate landed between two Updates is a
+function of machine load, which is why the identical click worked or did not.
+
+`HeroAbilitySystem` keeps its own per-slot edge now (`_keyWasDown`). It also fixes the hold:
+`_heldSince` was being rewritten on every Update the stale edge was still true, so every
+hold-to-aim lost up to a physics step of reach.
+
+**Verified:** EditMode 143/143, and the possession is one press out, one press back at any frame
+rate because the edge no longer depends on one.
+
+### 50.2 ✅ Nemu's second skill shows one charge, because it has one
+
+🧑: *"why does nemu have 2 charges if its just recast? should just show 1"*. § 45 answered this
+in the HUD by hiding the pip row *while the power is out*, which left two pips on the tile for
+the rest of the round: the reading he objected to. `NemuHeroKit` carries `charges: 1` now. It is
+the only power in the game whose SECOND press of the same key is part of the same cast, so two
+pips were describing an allowance the ability does not have.
+
+⚠️ The reactivation is still free and `HeroKit.Fire` still does not gate it on readiness. At one
+charge that stopped being a nicety: it is the only thing between the player and a possession they
+cannot leave.
+
+### 50.3 ✅ Nemu's sleeves phase through themselves, in first person and in third
+
+🧑: *"the arms of Nemu her sleeves are phasing and looks weird ... maybe js remove the physics on
+her sleeves bcz it looks so ugly, js show me cute blocky sleeves"*.
+
+⚠️⚠️ **The fault was structural rather than a tuning value, and both solvers had it.**
+`ViewmodelClothPhysics` instanced the sleeve mesh and pushed every vertex by a weighted rotation
+plus an offset plus a sine ripple, up to 0.12 m and 35 degrees. `BuildNemuAccessories` builds the
+sleeve, the inner lining and the lavender cuff rim as **three separate meshes occupying the same
+volume**, and only ONE of them was being deformed. No damping ratio fixes that; the surfaces are
+not solved together and cannot be. `BaggyClothingPhysics` was the same shape on the body: it
+post-multiplied up to 6 degrees onto `arm-left` and `arm-right` after the animator had written
+them, under only one of the three sets.
+
+Both files are deleted, with `BaggyPhysicsProbe`. `HeroPresentationTests` asserts the ABSENCE
+now, by checking the sleeve still holds its shared mesh rather than an instanced `_Deformed` copy,
+so a solver reintroduced under another name fails a test.
+
+### 50.4 ✅ Invert Y and Fullscreen could not be clicked at all
+
+🧑, with a screenshot of both rows. Same bug as § 32.3's sliders, one control across:
+`TscnUiImporter.BuildCheckBox` puts the tick box on a CHILD node and points `Toggle.targetGraphic`
+at it, so the Toggle's own GameObject carries no `Graphic` and the row has no hit area.
+
+⚠️⚠️ **And the importer-side fix cannot reach a shipped scene.** `ClearStrayRaycastTargets` keeps
+a Selectable's `targetGraphic` alive, but that runs at IMPORT time and writes a `.unity` asset;
+**running the player never re-runs the converter**, which is why `ConvertedSettingsPanel` calls
+`MenuKit.EnsureHitArea` on the sliders at runtime. There is a `Toggle` overload now and the panel
+calls it. The hit area is the WHOLE ROW, not the 30 px box.
+
+### 50.5 ✅ Phaister's aim ring read as a shadow, and everybody could see it
+
+🧑: *"I dont want Phaister's E HOLD for casting To just be a shadow, keep that outline and give it
+her color so that it could be seen more, make sure only she can see it"*. Two things:
+
+* **Colour.** The held ring took `UiTheme.ColorForHero`, which is the accent picked against cream
+  UI. `HeroWitch` is `e828c5`: saturated, mid-VALUE. Ghosted geometry is lit by its emission and
+  almost nothing else, and Ilalim ng Tulay is a street under a viaduct, so a mid-value colour
+  there is that colour's silhouette. `UiTheme.BrightForHero` is new and the HELD ring takes it;
+  the post-cast `Flash` keeps the base accent, because it is read over a lit explosion rather
+  than off bare asphalt. `Logs/shots-abilities/ability_blink_aim_reticle_eye_v36.png` is the
+  frame, and it is the first time this telegraph has ever been photographed.
+* **Privacy.** An aim is a decision that has NOT been made yet, so painting it on the road told
+  the other three where somebody was about to teleport before they committed. That is strictly
+  worse than no telegraph: it gives away the one thing a hold-to-aim power buys. `GroundReticle`
+  asks `CameraRig.IsFollowing` and draws the held ring for the driven body only. **`Flash` is
+  deliberately unchanged and stays visible to everybody**: by then the power has landed and
+  "where did that go off" is a question all four players need answered.
+
+### 50.6 ✅ The AI thinks before it casts, and holds an ultimate for a better moment
+
+🧑: *"try to make it so that AI think or pretend to think when to use skills bcz they all js spam
+it at the same time bru at thhe start"*, then *"Make sure u actually make ai better/ smarter with
+skill usage"*. Three changes, and the second and third are the "smarter" half.
+
+1. **The opening gate is per seat.** § 31.7 added `AbilityOpeningDelaySeconds` 2.5, ONE constant
+   four bots share, so all four unlocked on the same frame and the frame-one dump became a
+   frame-150 dump. `AiPersonalityRoll.Patience` is a new deterministic per-seat roll and
+   `AbilityOpeningJitterSeconds` is 4.0, so the four openings spread across 2.5 to 6.5 s.
+2. **A conviction window.** `AIController.Consider` requires the SAME slot to still be worth
+   casting for 0.25 to 0.85 s CONTINUOUSLY (scaled by `Tempo`) before it presses, and drops the
+   whole thing the moment the reason stops holding. That is the difference between hesitating and
+   being slow: a target who steps out of a footprint mid-window is not chased by a press that was
+   already committed, and a bot can no longer weigh Skill1 then Skill2 and fire both.
+3. **The ultimate waits for a window.** Nothing used to ask whether a cast was worth the METER,
+   only whether it would land, so a bot spent its most expensive power on the first single body
+   to wander into the circle on the frame the meter filled. It wants
+   `AiTuning.UltimateWantsVictims` (2) under the footprint, with two unconditional escapes so it
+   can never become hoarding (`docs/VISION.md` § 4): 14 s of patience, or the last 12 s of the
+   round.
+
+Cadence is 2.0 s plus a rolled 0 to 1.5 rather than a flat 1.6, so two bots that fire together
+drift apart instead of staying locked.
+
+### 50.7 ✅ The pektus curve is Z and C
+
+🧑: *"rebind pektus to keyboard keys that are close to wasd bcz its so hard to touch the arrow
+keys and some keyboards dont have it"*. Both halves are real: the curve is held WHILE the throw
+charges on the left mouse button and WHILE moving on WASD, so it is the one input that must
+overlap the movement hand, and 60 per cent boards do not carry the arrows at all. `Grab` already
+holds X, so the bottom row reads curve-left, contextual, curve-right.
+
+⚠️ C is also `SpectatorControls`, which `Rebinding.FindDuplicateBindings` allows because they are
+in different contexts (§ 35.3). Both rows stay rebindable in PLAYING THE GAME.
+
+### 50.8 ✅ The tutorial taught keys that were not bound, in two different ways
+
+🧑: *"make it so that tutorial shows the actual keys u rebinded to and arent just hardcoded"*.
+
+⚠️⚠️ **And the literals were already wrong before anybody rebound anything.** `TutorialContent`
+said pickup was `E` and the taya's lunge was `E · hold`; the shipped map has `Grab` on **X** and
+`Lunge` on the **right mouse button**, and has since the one-control-one-action pass. The HOW TO
+PLAY screen, which exists to teach the controls, was naming a key that does something else. That
+is the quieter half of what a hard-coded chip costs: a literal cannot go stale loudly.
+
+`TutorialContent.Row.Keyed` resolves chips AND bodies from the live map at draw time, and the
+pektus curve is on that page now for the first time. Mouse look and ESC stay literal on purpose:
+neither is in the input map, so there is nothing to ask and nothing to rebind.
+
+### 50.9 ✅ The instant replay was starting itself, in a box, forever
+
+🧑: *"why is instant replay just spam showing"*, *"i alsoo really dont like that instant replay on
+the top right"*, *"i want it to cover whole screen if i click it and i dont want it to just loop
+every second"*.
+
+⚠️⚠️ **It was never looping.** `StepReplay` plays the clip once and ends. It fired on EVERY
+scoring event behind a 4.0 s floor, and Hero Strike scores constantly: a knockdown, a tag and a
+sabotage are three triggers, and `PollHighlights` added a fourth by watching the lata on top of
+the `Scored` event reporting the same knockdown.
+
+The self-start is **deleted**, not suppressed. `AutopilotSuppressesAutoReplay` had already
+established that a camera must not replay by itself; the same argument (*"thats for human only"*)
+applies to a human flying it by hand. The highlight reason survives as a LABEL so a manual replay
+is titled `INSTANT REPLAY · TAG`. The overlay is full screen with an `AspectRatioFitter`, because
+nothing is behind it to keep framing any more.
+
+⚠️ `DeadFeatureAudit` used to pin the toast `LIVE PLAY CONTINUES`; the premise under that
+assertion is gone, and it now greps for the two names of the self-start instead.
+
+### 50.10 ✅ Spectator HUD: the YOU card did not hide, from any of three paths
+
+🧑: *"fix all these spectator hud problems wtf some shit dont hide"*, with a card and a stamina
+bar in the corner of a watcher's screen. `YouCard.Build` makes its own ROOT canvas, so
+`Hud.SetCleanFeed` (which disables `_canvas`), `Hud.EnterSpectatorMode` (which strips the HUD's
+own children) and `MatchHost.EnterSpectatorMode` (which deactivates the HUD object) all missed it.
+
+⚠️⚠️ **Reparenting it under the HUD was tried and reverted the same hour.** A NESTED Canvas
+ignores its own `CanvasScaler`, so the card lost `AspectSafeCanvas` and its fixed 380 x 132 rect
+stopped being anchored to a screen-sized parent: `HudOverflowProbe` found the identity row
+**274 units off the right edge at all nine resolutions**. That is § 18.1b's two-canvas hazard from
+the other direction. All three paths sweep for the component by type instead, and
+`MatchInstaller` does not build it for a watcher at all. **A fourth way to hide the HUD has to
+add this card to it.**
+
+`RoleSwapCard` genuinely is nested and its canvas RectTransform is stretched to its parent now; a
+child Canvas's rect is not driven the way a root one's is, and that card only survived because
+its backdrop and its column are both stretched or centred.
+
+### 50.11 ✅ The YOU card's identity row drew over itself
+
+🧑, with a screenshot reading `TAYA (DEFENDEDANTE`. The row is a `HorizontalLayoutGroup` with two
+`flexibleWidth: 1` children both on `HorizontalWrapMode.Overflow`, so a pair too wide for the
+336 px content box does not shrink, it overlaps. Two fixes, because shortening the string alone
+would only have made the collision rarer:
+
+* The gloss is gone. `TAYA`, not `TAYA (DEFENDER)`. `TutorialContent`'s premise strip is where a
+  player meets the word, and every other in-match readout already says the bare one.
+* The name is `resizeTextForBestFit` down to `MenuKit.MinReadableUnits`, so a long PLAYER-TYPED
+  name shrinks rather than colliding. `Balance.PlayerNameMax` allows more characters than the row
+  can hold at 34 pt however short the role word is.
+
+### 50.12 ✅ One trip hazard on Ilalim ng Tulay, down from two
+
+🧑: *"lessen trip areas in map, maybe js one is okay, its overstimulating to have allat"*. Seven
+to four (2026-08-26), four to two (§ 45), two to one. Three cuts for the same reported feeling is
+the tell that the map had one hazard's worth of design in it.
+
+The cord stays because it is the only one attached to a business that is already on the street:
+`BuildPisonetRow` authors three terminals, three chairs and a cable running to them.
+`TripHazard_GpuBoxDebris` was cardboard drawn for the hazard's own sake, on a corner nothing else
+happens on. The distance rule from § 45 still binds anything added back: the cord is 8.55 m from
+the can against a `CONFINEMENT_RADIUS` of 7.0.
+
+### 50.13 ✅ The floating COMPUTER PARTS text is deleted, and fitting it was the wrong fix
+
+🧑: *"flowing computer parts text pls remove"*, with a screenshot of the same wall he reported on
+2026-08-25 (*"floating texg here pls remove"*), which was answered by `FitToFacade`.
+
+⚠️⚠️ **The second report is the proof that constraining the rect never addressed it.**
+`StreetSignKit.PaintedWall` draws LOOSE CAPITALS AND NO PLATE by construction: every letter is its
+own geometry standing a few centimetres off a wall with nothing behind it. On a stepped voxel
+facade under a viaduct, at any angle but straight on, that reads as text hanging in the air
+whether or not it is inside the wall's bounds. `Sign_PcRepair` and PC Express's own fascia already
+say what that row sells, and both are carried by real geometry. `PaintedWall` stays in the kit; it
+is correct on a flat plastered wall.
+
+**And the pisonet fascia's wall plane is solved from `Shophouse_E3` now** (🧑: *"as well as the
+pisonet sign"*). `10.94` was a literal, and `BuildSideFacade` gives every shophouse a
+per-instance setback, so a typed x is only correct until somebody moves the building. Same two
+calls the west side has had since 2026-08-25: `ShopFaceX` then `FitToFacade`.
+`Logs/shots-ilalim/ilalim_street_life_v23.png` is the frame.
+
+### 50.14 ✅ The overstimulation pass: nine words deleted, none of them an effect
+
+🧑, three times in one sitting: *"lessen the words showing up on screen, game feels
+overstimulating"*, *"do not touch effect and abilities"*, *"js remove some of the words that pop
+up bcz its so confusing to process when theres 5 words popping up at the same second"*, and
+*"only touches AI, HUD AND UI"*. Nothing below changes a particle, a light, a sound or a number.
+
+⚠️⚠️ **The rule the cuts follow, so it is not decided case by case: a surface may say a thing
+once. A repeat is either the same fact on a second surface, or the same fact again on a clock.**
+
+| What | Was | Now |
+|---|---|---|
+| Slipper-idle penalty | a world callout, a `-5 SLIPPER IDLE` toast AND the lata card line, **every second** | the card line, which is the only STATE of the three |
+| Taya camping penalty | identical shape, also every second | the card line |
+| `RETRIEVE NOW` centre alert | `enabled = !upright`, so up for most of a live round in 42 pt | 2.2 s on the knockdown edge |
+| Round line | `ROUND 1 / 8 · DEFENDER: DANTE` for 90 s | names the taya for 6 s, then `ROUND 1 / 8` |
+| Nameplates | `· ATK` over three of the four bodies | the taya's word only; the other three are attackers by definition |
+| `PEKTUS!` / `FIREBALL!` / `OVERCHARGE!` | one per throw, 127 to 173 throws a match | nothing. `ComicPopup`'s own rule is A CAST GETS NO WORD |
+| `SABLAY!` near miss | on a 1.35 m threshold, so most misses | nothing. The player is looking straight at it |
+| `PROTECTED!` | on every pulse, beside a live countdown saying the same | nothing |
+| `LATA IS BACK UP` | subscribed **twice**, in `Hud` and in `MatchInstaller` | one owner |
+| `TAG · <name>` | raced `+100 TAG` for the same label on the same frame | the score toast, which is deterministic |
+
+⚠️ **The hitmarkers, the cues and the award sting all survive.** A player being penalised still
+hears and feels it once a second; what went is the reading. That is the distinction he drew:
+*"do not touch effect and abilities ... js remove some of the words"*.
+
+⚠️ **Two toasts that look like candidates and are not.** The victim's `TAGGED · BACK TO THE SAFE
+ZONE` is the only thing on their screen explaining why they cannot move (the `TAGGED!` callout
+spawns inside their own head in first person), and `OUT OF BOUNDS` explains a teleport that has no
+animation and no sound.
+
+---
+
+## 51 · The four follow-ups off § 50 ✅ CLOSED 2026-08-27
+
+Raised while § 50 was still being verified, so they are their own entry rather than more
+sub-sections of it.
+
+### 51.1 ✅ Nemu's first-person sleeve is her sleeve now, not just a still one
+
+🧑, after the cloth solver came out: *"did u replace nemu's sleeves with something that looks
+like sleeves of her 3d model?"*, having asked for *"cute blocky sleeves"*.
+
+⚠️⚠️ **Deleting the solver stopped the phasing and left the wrong SHAPE standing.** The
+viewmodel carried three lofted 24-segment tubes that flared toward the cuff with a lavender RIM
+around the opening. `Logs/model-ref-nemu.png` disagrees on every point: her arms are **straight
+plum boxes**, they do not flare, and the lavender is a **vertical bar down the outer edge**. It
+was a different garment in the right two colours.
+
+⚠️ **In first person the sleeve is most of the screen**, so it is the piece of her a player looks
+at longest and the one that most has to be her. It is `AddBoxAccessory` calls now, the same
+construction Cheska's and Phaister's arms already use; Nemu was the only hero carrying bespoke
+lofted geometry and three mesh builders. The stripe is on BOTH side faces because
+`RightBasisX` and `LeftBasisX` are rotated frames rather than mirrored scales, so a single
+stripe would be correct on one arm and inside the other.
+
+`HeroPresentationTests` pins the vertex count at 32 or under, so a loft cannot come back
+quietly. `Logs/shots-fpp/fpp_nemu_holding_v3.png` is the frame; that tool versions its
+filenames now, which it never did.
+
+### 51.2 ✅ The road keeps the props, it just stops tripping you over them
+
+🧑: *"if u removed the trip shit can u atleast keep the models that was in play area before? js
+delete the trip mechanic on them, bcz i dontw ant play area to look empty"*. He is right, and all
+three earlier cuts made the same mistake: **they deleted the OBJECT to delete the RULE.**
+
+The open manhole with its rim tipped up, the settled trench and the dropped GPU boxes are eleven
+pieces of authored geometry drawn to `docs/VISION.md` § 2 rule 3, on the one part of this map
+with nothing else on it. `BuildFormerHazardDressing` rebuilds all three through the SAME
+`BuildTripHazardVisual` the hazards used, with no `BoxCollider`, no `StreetTripHazard` and a home
+under `Kalat` rather than `Hazards`.
+
+⚠️ **Nothing avoids them any more, and that is the point.** The bots' hazard avoidance walks
+`StreetTripHazard` components, so a bot now walks over the manhole exactly as a player does. A
+prop that still bent bot routes would be a hazard wearing a different name.
+
+### 51.3 ✅ Four real changes to how a bot decides, not four constants
+
+🧑: *"i asked u to thoroughly improve ai logic not just adjust some values"*, and then
+*"i dont want them to use all skills consecutively"* and *"i want it to be possible too for them
+to not use some skills at all if they cant find opportunity bcz thats normal and human"*.
+
+**One runner at a time.** `FetchIsSafe` asks *"is the box safe for me"*, and every one of its
+escapes is a fact about the WORLD rather than the asker: the can is down, the taya spent their
+lunge, the taya is far from the shoe. Three attackers therefore agreed, entered the chalk
+together, and handed the taya the easiest round of their life. It is also not how the game is
+played: `docs/VISION.md` § 0 says *"the tension is the retrieval"*, and a retrieval is tense
+because ONE person is exposed. `IHaveTheBestRun` compares head starts (`taya-to-shoe` minus
+`me-to-shoe`) and yields to a clearly better-placed rival. **Derived, with no shared state**:
+every bot runs the identical comparison over the identical board, exactly as `ClaimSlack`
+already does, so there is no channel between bots that a human is not on.
+
+**A taya gives up a chase that is going nowhere.** `DoHunt` closed every frame and nothing asked
+whether it was working, so an attacker who was simply faster could walk the taya to the far end
+of Aurora Boulevard with the can undefended and the passive score stopped.
+`ChaseIsGoingSomewhere` measures against the CLOSEST the chase has ever been, not last tick, so a
+quarry who jinks does not read as progress. A helpless quarry is never abandoned.
+
+**Nobody throws at a can that is already going over.** Four seats had no notion of each other, so
+a knockdown was routinely followed by one or two more releases inside the same second:
+`CanThrow` refused them the moment it landed, and those bots spent a full charge and their
+tsinelas for nothing. `RivalShotIsInbound` walks the arc with the same gravity and step
+`TryInterceptPoint` uses and asks the game's own knockdown window,
+`SlipperHitRadius + LataHitMargin`. It only ever delays; the bot keeps working its angle.
+
+**Sean's and Zack's throw buffs need a shot to buff.** These two were the one place a bot spent a
+power with no opportunity test at all: *"holding a tsinelas and the throw is legal"* is true of
+almost every second an attacker is alive, so both armed on cooldown rather than on a chance.
+`ArmingThisShotIsWorthIt` wants the bot planted or on its mark, a clear lane by `LaneBlocked`,
+and no rival shoe inbound.
+
+**And the kit is no longer played as one burst.** `AbilityCadenceSeconds` spaced any two presses
+and did nothing about Q, then E, then the ultimate over six seconds.
+`AbilityChainSeconds` (5.5 s plus jitter) prices a DIFFERENT slot higher than the same one: a
+genuine combo still lands, it just has to be worth waiting out.
+
+**A bot may now finish a round without using a power.** `AiPersonalityRoll.SkillAppetite` is a
+per-seat, per-slot eagerness that scales the conviction window between 0.7x and 2.6x. ⚠️ **It
+lengthens the window, it does not roll a die and refuse a chance the bot saw** (which reads as
+broken): a shy bot wants a longer unbroken reason, so a marginal window passes it by and a clear
+one is still taken. Whether a slot goes unused is then decided by the BOARD.
+
+### 51.4 ✅ Two more events with two owners each
+
+Found chasing 🧑's *"shows -5 slipper idle twice bruh"*. `RoundDirector.Tagged` had subscribers
+in BOTH `Hud` and `MatchInstaller`, writing the same two strings into the same label on the same
+frame, in whichever order Unity's delegate list happened to hold. `LataRestored` had it too.
+Both installer copies are deleted; the HUD is the owner, because the decision about who gets told
+what is a HUD decision and is written down there.
+
+⚠️ **`MatchInstaller._tagged` going away does not touch tagging.** That field held a TOAST
+handler. The tag itself is `CombatVerbs` and `RoundDirector`, and neither was touched.
+
+**Do not add a toast to the installer. Wire the event and let the HUD say it.**
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

@@ -59,11 +59,12 @@ namespace TumbangPreso.CameraSystem
     /// followed to the letter: a new component, with a new name.
     ///
     /// ⚠️⚠️ AND THE AUTOPILOT MUST NEVER PAUSE OR REPLAY. 🧑, immediately after: *"dont let
-    /// autopilot spectator pause or replay thats for human only"*. The trap is that **this class
-    /// already replays by itself**: `StepPendingHighlight` starts one on a knockdown, a tag or a
-    /// score play with nothing pressed. `Update` suppresses that while the autopilot is engaged,
-    /// and that suppression is the load-bearing half of the promise, not the director's own
-    /// silence.
+    /// autopilot spectator pause or replay thats for human only"*. This class USED to replay by
+    /// itself on a knockdown, a tag or a score play, and `Update` suppressed that while the
+    /// autopilot was engaged. **The self-replay is deleted outright as of 2026-08-27**, so the
+    /// promise no longer rests on a suppression that a later branch could forget: a replay has
+    /// one trigger, the `SpectatorReplay` key, and the autopilot has no hands. See § THE REPLAY
+    /// NEVER STARTS ITSELF ANY MORE.
     /// </summary>
     public sealed class SpectatorCamera : MonoBehaviour
     {
@@ -205,8 +206,9 @@ namespace TumbangPreso.CameraSystem
         private const int ReplayFrameCapacity = 70;
         private const int ReplayWidth = 854;
         private const int ReplayHeight = 480;
-        private const float HighlightPostRoll = 1.0f;
-        private const float AutoReplayCooldown = 4.0f;
+        // ⚠️ THE ROLL-IN DELAY AND THE FLOOR BETWEEN TWO SELF-STARTED REPLAYS ARE BOTH DELETED,
+        // because nothing starts a replay but a key now. `DeadFeatureAudit` greps this file for
+        // their names, so do not reintroduce either one even as a comment.
 
         private sealed class ReplayFrame
         {
@@ -225,8 +227,7 @@ namespace TumbangPreso.CameraSystem
         private Text _replayLabel;
 
         private string _pendingHighlight;
-        private float _pendingHighlightLeft;
-        private float _lastAutoReplayAt = -100.0f;
+        private float _pendingHighlightAt = -100.0f;
         private bool _lataStateKnown;
         private bool _lastLataUpright;
         private bool _scoreStateKnown;
@@ -408,32 +409,17 @@ namespace TumbangPreso.CameraSystem
             }
 
             RecordReplayFrame();
+
+            // ⚠️⚠️ THIS ONLY RECORDS WHAT THE LAST NOTABLE PLAY WAS, AND SINCE 2026-08-27 IT
+            // CANNOT START ANYTHING. See § THE REPLAY NEVER STARTS ITSELF ANY MORE. The autopilot
+            // suppression that used to live here is gone with the thing it was suppressing: a
+            // replay now has exactly one trigger, which is a human pressing the key, and the
+            // autopilot has no hands.
             PollHighlights();
 
-            // ⚠️⚠️ THE AUTOPILOT NEVER REPLAYS, AND THIS IS THE LINE THAT MAKES THAT TRUE.
-            // 🧑 2026-08-27: *"dont let autopilot spectator pause or replay thats for human
-            // only"*. Nothing in `SpectatorDirector` calls `StartReplay`, but this class has
-            // started one BY ITSELF since the highlight reel landed: `StepPendingHighlight` fires
-            // on a knockdown, a tag or a score play with no key pressed at all. Engaging the
-            // autopilot without this would produce a camera that flies itself and replays itself,
-            // which is the thing the instruction forbids however little of it the director wrote.
-            //
-            // ⚠️ THE QUEUE IS DROPPED, NOT DEFERRED. Holding a pending highlight until the human
-            // takes back the wheel would replay a play from thirty seconds ago the moment they
-            // touched the mouse, which is worse than never replaying it.
-            if (AutopilotEngaged)
-            {
-                _pendingHighlight = null;
-                _pendingHighlightLeft = 0.0f;
-            }
-            else
-            {
-                StepPendingHighlight();
-            }
-
-            // A replay is now a picture-in-picture recording. The operator keeps flying the
-            // live camera and the match keeps advancing behind it instead of returning early
-            // and freezing both the game and camera controls.
+            // The replay covers the screen while it runs. The match keeps advancing behind it
+            // and the operator keeps the wheel, rather than the camera returning early and
+            // freezing both the game and the controls.
 
             // ⚠⚠ THE HUMAN TAKES THE WHEEL BY MOVING IT, AND THAT IS CHECKED BEFORE ANY OF THE
             // THREE STEPS BELOW RUN. A broadcast operator reaching for the mouse mid-play must
@@ -629,7 +615,10 @@ namespace TumbangPreso.CameraSystem
             }
 
             if (Fired(_pauseKey)) ToggleBroadcastPause();
-            if (Fired(_replayKey)) StartReplay("LAST PLAY");
+            // ⚠️ THE ONE AND ONLY TRIGGER. See § THE REPLAY NEVER STARTS ITSELF ANY MORE. The
+            // reason is looked up rather than passed so the clip is titled after the play it
+            // actually contains.
+            if (Fired(_replayKey)) StartReplay(RecentHighlightReason());
             if (kb.digit1Key.wasPressedThisFrame) SetBroadcastScale(0.25f);
             if (kb.digit2Key.wasPressedThisFrame) SetBroadcastScale(0.50f);
             if (kb.digit3Key.wasPressedThisFrame) SetBroadcastScale(1.00f);
@@ -746,7 +735,9 @@ namespace TumbangPreso.CameraSystem
             if (_replayImage != null && _replayClip.Count > 0)
                 _replayImage.texture = _replayClip[0].Image;
 
-            UI.Hud.Instance?.ShowToast("INSTANT REPLAY  ·  LIVE PLAY CONTINUES", 1.4f);
+            // ⚠️ NO TOAST. The overlay now covers the screen and titles itself in 30 pt across the
+            // top; a line underneath it saying the same words is the redundancy 🧑 asked to be rid
+            // of across the whole HUD on 2026-08-27.
         }
 
         private void StepReplay()
@@ -807,9 +798,16 @@ namespace TumbangPreso.CameraSystem
             panel.type = Image.Type.Sliced;
             panel.raycastTarget = false;
 
+            // ⚠️⚠️ THE WHOLE SCREEN, NOT A CORNER BOX. 🧑 2026-08-27: *"i alsoo really dont like
+            // that instant replay on the top right"* and *"i want it to cover whole screen if i
+            // click it"*. A picture-in-picture was the right shape for something that opened by
+            // itself while the operator was still framing a live shot; now that a replay only
+            // exists because a human asked for it, the live shot is not what they are watching.
+            // A 45 per cent box in the corner was also the worst of both: too small to read a
+            // play in and big enough to ruin the frame behind it.
             var panelRt = panel.rectTransform;
-            panelRt.anchorMin = new Vector2(0.54f, 0.51f);
-            panelRt.anchorMax = new Vector2(0.985f, 0.965f);
+            panelRt.anchorMin = Vector2.zero;
+            panelRt.anchorMax = Vector2.one;
             panelRt.offsetMin = Vector2.zero;
             panelRt.offsetMax = Vector2.zero;
 
@@ -824,13 +822,23 @@ namespace TumbangPreso.CameraSystem
             imageRt.anchorMin = Vector2.zero;
             imageRt.anchorMax = Vector2.one;
             imageRt.offsetMin = new Vector2(10.0f, 10.0f);
-            imageRt.offsetMax = new Vector2(-10.0f, -52.0f);
+            imageRt.offsetMax = new Vector2(-10.0f, -62.0f);
+
+            // ⚠️⚠️ THE CLIP KEEPS ITS OWN ASPECT INSIDE THAT RECT. The buffer is captured at a
+            // fixed 854 x 480, and stretching 16:9 frames to fill an arbitrary window distorts
+            // every body in the shot; a 4:3 or ultrawide panel would make the replay visibly a
+            // different game from the live view it is covering. `FitInParent` letterboxes instead,
+            // which is what every broadcast replay does and what the corner box got for free by
+            // being authored at 16:9.
+            var fit = imageGo.AddComponent<AspectRatioFitter>();
+            fit.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+            fit.aspectRatio = ReplayWidth / (float)ReplayHeight;
 
             var labelGo = new GameObject("ReplayLabel");
             labelGo.transform.SetParent(panelGo.transform, false);
             _replayLabel = labelGo.AddComponent<Text>();
             _replayLabel.font = UI.MenuKit.Font;
-            _replayLabel.fontSize = 24;
+            _replayLabel.fontSize = 30;
             _replayLabel.alignment = TextAnchor.MiddleLeft;
             _replayLabel.color = UI.UiTheme.Highlight;
             _replayLabel.raycastTarget = false;
@@ -844,8 +852,8 @@ namespace TumbangPreso.CameraSystem
             labelRt.anchorMin = new Vector2(0.0f, 1.0f);
             labelRt.anchorMax = new Vector2(1.0f, 1.0f);
             labelRt.pivot = new Vector2(0.5f, 1.0f);
-            labelRt.offsetMin = new Vector2(18.0f, -48.0f);
-            labelRt.offsetMax = new Vector2(-18.0f, -8.0f);
+            labelRt.offsetMin = new Vector2(24.0f, -56.0f);
+            labelRt.offsetMax = new Vector2(-24.0f, -10.0f);
 
             _replayCanvas.enabled = false;
         }
@@ -928,29 +936,53 @@ namespace TumbangPreso.CameraSystem
             }
         }
 
+        // -------------------------------------------------------------------
+        // § THE REPLAY NEVER STARTS ITSELF ANY MORE
+        //
+        // ⚠️⚠️ 🧑 2026-08-27, with two screenshots: *"why is instant replay just spam showing"*,
+        // *"i alsoo really dont like that instant replay on the top right"*, and *"i want it to
+        // cover whole screen if i click it and i dont want it to just loop every second"*.
+        //
+        // ⚠️⚠️ IT WAS NEVER LOOPING. `StepReplay` plays the clip once and ends. What produced the
+        // "every second" reading is that it fired on EVERY scoring event with a 4.0 s floor
+        // between them, and Hero Strike scores constantly: a knockdown, a tag and a sabotage are
+        // three separate triggers, and `PollHighlights` adds a fourth by watching the lata on top
+        // of the `Scored` event that already reports the same knockdown. In an 8-round match
+        // that is a picture-in-picture window opening again about as fast as the cooldown allows,
+        // forever, in the corner of the shot the operator is trying to frame.
+        //
+        // ⚠️⚠️ AND A REPLAY THAT ARRIVES UNINVITED IS THE WRONG FEATURE ANYWAY. The whole value
+        // of an instant replay is that a human decided the last five seconds were worth seeing
+        // again. `SpectatorReplay` is a bound, rebindable key; that press is the trigger now, and
+        // it is the only one. This also finishes what `AutopilotSuppressesAutoReplay` started:
+        // that suppressed self-replay for the AUTOPILOT only, and the same argument (*"thats for
+        // human only"*) applies just as well to a human flying the camera by hand.
+        //
+        // ⚠️ THE HIGHLIGHT REASONS SURVIVE AS A LABEL, NOT AS A TRIGGER. `PollHighlights` still
+        // records what the last notable play was, so a manual replay is titled `INSTANT REPLAY ·
+        // TAG` rather than `LAST PLAY`. Naming what you are about to watch costs nothing and is
+        // the only part of the highlight reel that was ever earning its place.
+        // -------------------------------------------------------------------
+
         private void QueueHighlight(string reason)
         {
-            if (Time.unscaledTime - _lastAutoReplayAt < AutoReplayCooldown) return;
-
             _pendingHighlight = reason;
-            _pendingHighlightLeft = HighlightPostRoll;
+            _pendingHighlightAt = Time.unscaledTime;
         }
 
-        private void StepPendingHighlight()
+        /// <summary>
+        /// The last notable play, if it is recent enough to still be inside the replay buffer.
+        ///
+        /// ⚠️ IT EXPIRES WITH THE BUFFER. `ReplaySeconds` is what a manual press actually gets to
+        /// show, so a reason older than that would title the clip after a play that is no longer
+        /// in it. Past that it falls back to LAST PLAY, which is honest.
+        /// </summary>
+        private string RecentHighlightReason()
         {
-            if (string.IsNullOrEmpty(_pendingHighlight)) return;
-            if (_replaying) return;
-
-            _pendingHighlightLeft -= Time.unscaledDeltaTime;
-            if (_pendingHighlightLeft > 0.0f) return;
-
-            string reason = _pendingHighlight;
-            _pendingHighlight = null;
-
-            if (_replayFrames.Count < 12) return;
-
-            _lastAutoReplayAt = Time.unscaledTime;
-            StartReplay(reason);
+            if (string.IsNullOrEmpty(_pendingHighlight)) return "LAST PLAY";
+            return Time.unscaledTime - _pendingHighlightAt <= ReplaySeconds
+                ? _pendingHighlight
+                : "LAST PLAY";
         }
 
         private void DestroyFrame(ReplayFrame frame)

@@ -705,6 +705,13 @@ namespace TumbangPreso.UI
             var toggle = t.GetComponent<Toggle>();
             if (toggle == null) return;
 
+            // ⚠️⚠️ THE HIT AREA, FOR THE SAME REASON THE SLIDERS GET ONE HERE AND NOT IN THE
+            // IMPORTER. Both boxes on this panel converted, skinned, seeded and wired their
+            // listener, and neither could be pressed: a Toggle's tick box is on a child node, so
+            // the shipped scene has no raycast target under the row at all. See
+            // `MenuKit.EnsureHitArea(Toggle)`. Runtime, because the player never re-runs the bake.
+            MenuKit.EnsureHitArea(toggle);
+
             // ⚠️ SEEDED WITHOUT NOTIFYING, like the sliders: assigning `isOn` emits the change,
             // and a fullscreen toggle that fires on every open flips the window mode for free.
             toggle.SetIsOnWithoutNotify(seed);

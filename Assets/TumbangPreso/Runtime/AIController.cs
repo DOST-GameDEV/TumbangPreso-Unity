@@ -381,7 +381,12 @@ namespace TumbangPreso
                 // instead of chasing something that has not landed.
                 if (mine == null || mine.State == SlipperState.InFlight) return AiPlan.Position;
 
-                return FetchIsSafe(mine, taya) ? AiPlan.Fetch : AiPlan.Stalk;
+                // ⚠️⚠️ AND SOMEBODY ELSE MAY HAVE THE BETTER RUN. See `IHaveTheBestRun`: three
+                // attackers who each decide the box is safe all enter it together, which is the
+                // one thing a taya cannot lose to and the three of them cannot win.
+                if (!FetchIsSafe(mine, taya) || !IHaveTheBestRun(mine, taya)) return AiPlan.Stalk;
+
+                return AiPlan.Fetch;
             }
 
             // ⚠️ ARMED AND INSIDE THE BOX IS THE ONE TAGGABLE STATE. Getting out beats
@@ -413,11 +418,75 @@ namespace TumbangPreso
                 && round.TimeLeft <= Balance.ChargeFullTime + LastCallSeconds)
                 return AiPlan.Windup;
 
+            // ⚠️⚠️ A CHARGE ALREADY RUNNING IS NEVER RECONSIDERED, AND THAT ORDER IS LOAD-BEARING.
+            // The comment above says it: a bot that re-decides mid-charge never releases. So the
+            // inbound check below sits AFTER this line and can only stop a charge being STARTED.
             if (Plan == AiPlan.Windup) return AiPlan.Windup;
-            if (_arrived && (Plan == AiPlan.Position || Plan == AiPlan.Windup))
-                return AiPlan.Windup;
+
+            // ⚠️⚠️ DO NOT THROW AT A CAN SOMEBODY ELSE IS ABOUT TO KNOCK OVER. See
+            // `RivalShotIsInbound`: `RoundDirector.CanThrow` refuses a throw while the lata is
+            // down, so a second shoe released into a live arc is a 2.5 s charge, a tsinelas out
+            // of your hand and a retrieval run you now have to make, bought for nothing.
+            if (RivalShotIsInbound(lata)) return AiPlan.Position;
+
+            if (_arrived && Plan == AiPlan.Position) return AiPlan.Windup;
 
             return AiPlan.Position;
+        }
+
+        // -------------------------------------------------------------------
+        // § SOMEBODY ELSE'S SHOE IS ALREADY IN THE AIR
+        //
+        // ⚠️⚠️ FOUR SEATS THROWING AT ONE CAN HAD NO NOTION OF EACH OTHER AT ALL. Every attacker
+        // decided independently, so a knockdown was routinely followed by one or two more
+        // releases inside the same second: the can was already going over, `CanThrow` refused
+        // them the moment it landed, and those bots spent a full charge and their tsinelas to
+        // score nothing and then had to go back into the box for it.
+        //
+        // ⚠️⚠️ IT IS ALSO MOST OF WHAT A KNOCKDOWN LOOKS LIKE ON SCREEN. Three arcs, three
+        // impacts and three sets of debris inside a second is the pile-up 🧑 reported as the game
+        // being overwhelming, and it is the AI half of it rather than the effects half.
+        //
+        // ⚠️ IT ASKS THE SAME QUESTION THE FLIGHT WILL. The arc is walked with the same gravity
+        // and the same step `TryInterceptPoint` uses, so the answer cannot drift from what
+        // actually happens; a bearing test would call a shoe sailing two metres over the can a
+        // hit.
+        //
+        // ⚠️ AND IT ONLY DELAYS. `PlanAttacker` returns `Position`, so the bot keeps working its
+        // angle and charges the moment the arc has resolved, one way or the other.
+        // -------------------------------------------------------------------
+
+        private bool RivalShotIsInbound(Lata lata)
+        {
+            if (lata == null) return false;
+
+            Vector3 can = lata.transform.position;
+
+            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            {
+                if (s == null || s.State != SlipperState.InFlight) continue;
+                if (s.OwnerSlot == _motor.PlayerSlot) continue;
+
+                Vector3 p = s.transform.position;
+                Vector3 v = s.Velocity;
+
+                for (float t = 0.0f; t < AiTuning.InterceptHorizon; t += AiTuning.InterceptStep)
+                {
+                    Vector3 at = p + v * t + Vector3.down * (0.5f * Balance.Gravity * t * t);
+
+                    // Below the road means the arc is over and it missed.
+                    if (at.y < can.y - 0.20f) break;
+
+                    // ⚠️ `SlipperHitRadius + LataHitMargin` IS THE GAME'S OWN KNOCKDOWN WINDOW,
+                    // not a number picked here. `Balance.LataHitMargin`'s note calls it *"the
+                    // number that decides every knockdown in the game"*, and it was three
+                    // different numbers in three files once; this must never become the fourth.
+                    if (Flat(at, can) <= Balance.SlipperHitRadius + Balance.LataHitMargin)
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -446,10 +515,76 @@ namespace TumbangPreso
                 _gates["incoming"] = 0.0f;
             }
 
-            if (TagTarget() != null) return AiPlan.Hunt;
+            var quarry = TagTarget();
+
+            // ⚠️⚠️ AND THE CHASE HAS TO BE GOING SOMEWHERE. See § WHEN A CHASE IS OVER: nothing
+            // used to ask, so a taya could be walked to the far end of Aurora Boulevard by an
+            // attacker who was simply faster, leaving the can unguarded and the passive score
+            // stopped for the rest of the round.
+            if (quarry != null && ChaseIsGoingSomewhere(quarry, dt)) return AiPlan.Hunt;
+
             if (Me.Camp > 0.0f && HasCoverPoint(lata)) return AiPlan.Cover;
 
             return AiPlan.Guard;
+        }
+
+        // -------------------------------------------------------------------
+        // § WHEN A CHASE IS OVER
+        //
+        // ⚠️⚠️ THE GIVE-UP IS PER QUARRY AND IT RESETS ON A NEW ONE, so abandoning one attacker
+        // does not make the taya passive: the next body to step into the chalk is a fresh chase
+        // with a full window. What it stops is the SAME chase running all round.
+        //
+        // ⚠️⚠️ AND A CHASE THAT WAS GIVEN UP CAN BE RESUMED, WHICH IS WHY THIS FORGETS RATHER
+        // THAN BLACKLISTS. `Guard` posts between the can and the live threat, so a taya that
+        // stops chasing walks back toward the objective and is usually CLOSER to the same
+        // attacker's next approach than it was when it gave up. Blacklisting them would hand
+        // that attacker a free retrieval, which is the opposite of the intent.
+        //
+        // ⚠️ MEASURED AGAINST THE OBSERVED POSITION like every other read of a rival here, so a
+        // taya cannot judge its own progress off information its hands have not been given.
+        // -------------------------------------------------------------------
+
+        private CharacterMotor _chasing;
+        private float _chaseBestDistance = float.MaxValue;
+        private float _chaseStaleFor;
+
+        private bool ChaseIsGoingSomewhere(CharacterMotor quarry, float dt)
+        {
+            float now = Flat(transform.position, At(quarry));
+
+            if (_chasing != quarry)
+            {
+                _chasing = quarry;
+                _chaseBestDistance = now;
+                _chaseStaleFor = 0.0f;
+                return true;
+            }
+
+            // ⚠️ THE BEST DISTANCE EVER REACHED, NOT LAST TICK'S. Comparing against the previous
+            // sample makes a quarry who jinks look like progress every time they turn round;
+            // comparing against the closest this chase has ever been asks the only question that
+            // matters, which is whether it is getting anywhere overall.
+            if (now <= _chaseBestDistance - AiTuning.ChaseProgressMetres)
+            {
+                _chaseBestDistance = now;
+                _chaseStaleFor = 0.0f;
+                return true;
+            }
+
+            _chaseStaleFor += dt;
+
+            // ⚠️ A HELPLESS QUARRY IS NEVER ABANDONED. Somebody stunned or face down cannot run,
+            // so a chase that is not closing on them is a pathing problem rather than a losing
+            // race, and giving up would walk away from a free tag.
+            if (quarry.IsStunned || quarry.IsTripped) return true;
+
+            if (_chaseStaleFor < AiTuning.ChasePatienceSeconds) return true;
+
+            _chasing = null;
+            _chaseBestDistance = float.MaxValue;
+            _chaseStaleFor = 0.0f;
+            return false;
         }
 
         private bool _arrived;
@@ -518,6 +653,92 @@ namespace TumbangPreso
         /// The bound is a tier property, so a cautious bot waits longer than a reckless one.
         /// **Do not remove the first branch to make bots "smarter".**
         /// </summary>
+        // -------------------------------------------------------------------
+        // § ONE RUNNER AT A TIME
+        //
+        // ⚠️⚠️ `FetchIsSafe` ASKS "IS THE BOX SAFE FOR ME", AND THREE ATTACKERS ASKING IT AT THE
+        // SAME MOMENT ALL GET THE SAME ANSWER. Every one of its escapes is a fact about the
+        // WORLD rather than about the asker: the can is down, the taya spent their lunge, the
+        // taya is far from the shoe. So the three of them agree, enter the chalk together, and
+        // hand the taya the easiest round of their life while the screen fills with bodies.
+        //
+        // ⚠️⚠️ WHICH IS ALSO NOT HOW THE GAME IS PLAYED. `docs/VISION.md` § 0: *"The tension is
+        // the retrieval, not the throw."* A retrieval is tense because ONE person is exposed and
+        // the others are waiting for the taya to commit to them. Three simultaneous runs is not
+        // three times the tension, it is none: the taya cannot cover three lines, so nobody made
+        // a decision and the outcome is whoever the selector happened to pick.
+        //
+        // ⚠️⚠️ IT IS DERIVED, NOT NEGOTIATED, WHICH IS WHY THERE IS NO SHARED STATE ANYWHERE.
+        // Every bot runs the identical comparison over the identical world and reaches the
+        // identical answer, exactly as `ClaimSlack` already does for "only the nearest attacker
+        // goes for a loose slipper". A claim held in a static would be a channel between bots
+        // that a human is not on, and `CLAUDE.md` § 4's *"a bot presses the same buttons a human
+        // does"* is about there being no second path. Reading the board is not a second path: a
+        // human can see the same three bodies.
+        //
+        // ⚠️ AND IT IS ONLY EVER A DELAY. Everything that overrides caution overrides this too,
+        // by construction: `FetchIsSafe` is asked FIRST, so a bot on the tournament clock, or one
+        // that has stalled long enough, or one running at a downed can, never reaches this
+        // question at all.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// Among the attackers who could go right now, do I have the best odds?
+        ///
+        /// The margin is how much further the taya has to come than I do. It is the honest
+        /// question a player asks looking at the box: can I get there and out before they can
+        /// get across.
+        /// </summary>
+        private bool IHaveTheBestRun(Slipper mine, CharacterMotor taya)
+        {
+            var round = GameServices.Round;
+            if (round == null || taya == null || mine == null) return true;
+
+            float myOdds = RunOdds(At(taya), transform.position, mine.transform.position);
+
+            foreach (var who in round.Players)
+            {
+                if (who == null || who == _motor || who.IsDefender) continue;
+
+                // Somebody already holding a tsinelas is not competing for the box, they are
+                // trying to leave it.
+                if (who.HoldingSlipper) continue;
+
+                // ⚠️ A RIVAL WHO CANNOT MOVE IS NOT A RIVAL. Yielding to a stunned attacker
+                // would stall the whole round behind somebody lying on the tarmac.
+                if (!who.CanAct()) continue;
+
+                var theirs = SlipperOwnedBy(round, who.PlayerSlot);
+                if (theirs == null || theirs.State != SlipperState.Loose) continue;
+
+                float theirOdds = RunOdds(At(taya), At(who), theirs.transform.position);
+
+                // ⚠️ STRICTLY BETTER, AND THE SEAT BREAKS AN EXACT TIE. Two bots that each yield
+                // to the other is a deadlock that lasts until the tournament clock breaks it, and
+                // a deadlock is worse than the pile-up this exists to stop.
+                if (theirOdds > myOdds + AiTuning.RunOddsMargin) return false;
+
+                if (Mathf.Abs(theirOdds - myOdds) <= AiTuning.RunOddsMargin
+                    && who.PlayerSlot < _motor.PlayerSlot) return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// How much of a head start a runner has on the taya, in metres. Higher is safer.
+        /// </summary>
+        private static float RunOdds(Vector3 tayaAt, Vector3 runnerAt, Vector3 slipperAt)
+            => Flat(tayaAt, slipperAt) - Flat(runnerAt, slipperAt);
+
+        private static Slipper SlipperOwnedBy(RoundDirector round, int slot)
+        {
+            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+                if (s != null && s.OwnerSlot == slot) return s;
+
+            return null;
+        }
+
         private bool FetchIsSafe(Slipper mine, CharacterMotor taya)
         {
             if (Me.FetchCaution <= 0.0f || taya == null) return true;
@@ -2956,6 +3177,7 @@ namespace TumbangPreso
                 // begins with four seats stood around one lata, so every round needs the same
                 // scatter before a distance gate below means anything.
                 _roundLiveFor = 0.0f;
+                ForgetWhatWasBeingWeighed();
                 ReleaseUntouchedHeroButtons(intent);
                 return;
             }
@@ -2996,14 +3218,35 @@ namespace TumbangPreso
                 if (held >= 0.0f) { holding = true; break; }
             }
 
-            bool mayOpen = _roundLiveFor >= AiTuning.AbilityOpeningDelaySeconds
-                           && _abilityCadenceLeft <= 0.0f;
+            // ⚠️⚠️ THE OPENING GATE IS PER SEAT NOW, NOT ONE CONSTANT FOUR BOTS SHARE. See
+            // `AiTuning.AbilityOpeningJitterSeconds`: a single number means all four unlock on
+            // the same frame, so the 2.5 s delay turned a frame-one dump into a frame-150 dump
+            // and 🧑 reported the identical feeling a build later. `Patience` is rolled off the
+            // SEAT, so the spread is the same on every run and the probe still compares.
+            float openAt = AiTuning.AbilityOpeningDelaySeconds
+                           + _self.Patience * AiTuning.AbilityOpeningJitterSeconds;
+
+            // ⚠️ ABOVE THE GATE, BECAUSE IT MEASURES HOW LONG THE ULTIMATE HAS BEEN READY AND NOT
+            // HOW LONG THIS BOT HAS BEEN ALLOWED TO CAST. Ticking it below would stop the clock
+            // for every cadence window, so `UltimateHoldSeconds` would mean a different amount of
+            // real time depending on how busy the bot's kit was. See § IS THE ULTIMATE WORTH
+            // SPENDING YET.
+            _ultimateReadyFor = kit.IsUltimateReady ? _ultimateReadyFor + dt : 0.0f;
+
+            bool mayOpen = _roundLiveFor >= openAt && _abilityCadenceLeft <= 0.0f;
 
             if (!mayOpen && !holding)
             {
+                // ⚠️ A CLOSED GATE FORGETS WHATEVER IT WAS WEIGHING. Carrying a conviction window
+                // across the gate would mean a bot arrives at the opening with a decision already
+                // made about a board that has moved, which is the thing `Consider` exists to
+                // prevent one layer down.
+                ForgetWhatWasBeingWeighed();
                 ReleaseUntouchedHeroButtons(intent);
                 return;
             }
+
+            _weighedThisFrame = false;
 
             Vector3 myPos = transform.position;
             CharacterMotor target = _motor.IsDefender ? TagTarget() : DefenderOf(round);
@@ -3024,7 +3267,36 @@ namespace TumbangPreso
             // GATED. Every branch here now asks the ability where its own circle lands and
             // whether anybody is standing there. See § WOULD THIS CAST DO ANYTHING for the three
             // kits whose hand-picked distance made a correct cast miss by construction.
+            // -------------------------------------------------------------------
+            // § IS THE ULTIMATE WORTH SPENDING YET
+            //
+            // ⚠️⚠️ THE BRANCHES BELOW ASK WHETHER A CAST WOULD LAND. THIS ASKS WHETHER IT IS WORTH
+            // THE METER, WHICH NOTHING USED TO ASK AT ALL. See `AiTuning.UltimateWantsVictims`: a
+            // bot spent its most expensive power on the first single body to wander into the
+            // circle, on the frame the meter filled, and every seat did it every time.
+            //
+            // ⚠️ MEASURED WITH THE ABILITY'S OWN FOOTPRINT, so a kit that aims in front of itself
+            // is counted in front of itself. `stunPayload: false` deliberately: this is a
+            // "is anybody there" count for a decision about VALUE, and the per-kit branch below
+            // still applies the correct stun rule to the cast itself.
+            //
+            // ⚠️ AND IT ONLY EVER MAKES A BOT WAIT. Both escapes below are unconditional, so a
+            // window that never comes still ends in a cast.
+            bool ultimateWorthIt = false;
+
             if (kit.IsUltimateReady && kit.Ultimate != null)
+            {
+                int underIt = VictimsUnder(FootprintOf(kit.Ultimate),
+                                           kit.Ultimate.TelegraphRadius + AiTuning.AbilityVictimMargin,
+                                           stunPayload: false);
+
+                ultimateWorthIt =
+                    underIt >= AiTuning.UltimateWantsVictims
+                    || _ultimateReadyFor >= AiTuning.UltimateHoldSeconds
+                    || round.TimeLeft <= AiTuning.UltimateDumpWindowSeconds;
+            }
+
+            if (kit.IsUltimateReady && kit.Ultimate != null && ultimateWorthIt)
             {
                 if (kit is Abilities.DanteHeroKit)
                 {
@@ -3034,13 +3306,13 @@ namespace TumbangPreso
                     // a body already down is still worth catching.
                     bool safeForOwnCan = !_motor.IsDefender || lataDistance > 10.0f;
                     if (safeForOwnCan && WouldCatch(kit.Ultimate, stunPayload: false))
-                        Tap(intent, Verb.Ultimate);
+                        Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.CheskaHeroKit)
                 {
                     // Glacial Shatter freezes what it catches, so somebody already frozen is
                     // not a reason to spend it.
-                    if (WouldCatch(kit.Ultimate, stunPayload: true)) Tap(intent, Verb.Ultimate);
+                    if (WouldCatch(kit.Ultimate, stunPayload: true)) Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.SeanHeroKit)
                 {
@@ -3056,14 +3328,14 @@ namespace TumbangPreso
 
                     if (meteorTheCan
                         || (safeForOwnCan && WouldCatch(kit.Ultimate, stunPayload: false)))
-                        Tap(intent, Verb.Ultimate);
+                        Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.ZackHeroKit)
                 {
                     // ⚠️⚠️ THUNDERSTRIKE LANDS ON ZACK. Its telegraph is 4.5 m at range 0, and
                     // the old gate fired it at a target up to 8.0 m away, which is a lightning
                     // strike on an empty piece of road with the target watching from outside it.
-                    if (WouldCatch(kit.Ultimate, stunPayload: true)) Tap(intent, Verb.Ultimate);
+                    if (WouldCatch(kit.Ultimate, stunPayload: true)) Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.NemuHeroKit)
                 {
@@ -3076,7 +3348,7 @@ namespace TumbangPreso
 
                     if (HasRelevantVoidTarget(voidCentre, voidReach)
                         || VictimsUnder(voidCentre, voidReach, stunPayload: false) > 0)
-                        Tap(intent, Verb.Ultimate);
+                        Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.PhaisterHeroKit)
                 {
@@ -3097,7 +3369,7 @@ namespace TumbangPreso
                                       && AnyLooseSlipperInsideTheBox();
 
                     if (overTheCan || WouldCatch(kit.Ultimate, stunPayload: true))
-                        Tap(intent, Verb.Ultimate);
+                        Consider(intent, Verb.Ultimate, dt);
                 }
             }
 
@@ -3106,14 +3378,14 @@ namespace TumbangPreso
                 if (kit is Abilities.DanteHeroKit)
                 {
                     // Seismic Stomp is a 2.2 m ring around his own feet. It was cast at 5.0 m.
-                    if (WouldCatch(kit.Skill1, stunPayload: false)) Tap(intent, Verb.Skill1);
+                    if (WouldCatch(kit.Skill1, stunPayload: false)) Consider(intent, Verb.Skill1, dt);
                 }
                 else if (kit is Abilities.CheskaHeroKit)
                 {
                     // ⚠️ THE OLD GATE WAS "DROP IT WHILE FLEEING", AND THE SHEET DOES NOT LAND
                     // BEHIND HER. Its telegraph is 2.8 m in FRONT, so a bot fleeing laid frost
                     // across its own escape and nowhere near whoever was chasing it.
-                    if (WorthDenying(kit.Skill1)) Tap(intent, Verb.Skill1);
+                    if (WorthDenying(kit.Skill1)) Consider(intent, Verb.Skill1, dt);
                 }
                 else if (kit is Abilities.SeanHeroKit)
                 {
@@ -3121,11 +3393,11 @@ namespace TumbangPreso
                     // journey, or for somebody standing in the line of it.
                     if (WorthTravelling()
                         || (target != null && targetDistance <= 5.0f && Facing(target, 40.0f)))
-                        Tap(intent, Verb.Skill1);
+                        Consider(intent, Verb.Skill1, dt);
                 }
                 else if (kit is Abilities.ZackHeroKit)
                 {
-                    if (WorthTravelling()) Tap(intent, Verb.Skill1);
+                    if (WorthTravelling()) Consider(intent, Verb.Skill1, dt);
                 }
                 else if (kit is Abilities.NemuHeroKit)
                 {
@@ -3138,14 +3410,14 @@ namespace TumbangPreso
                         && targetDistance <= 6.0f;
                     bool phaseDefence = _motor.IsDefender && targetDistance <= 4.0f;
 
-                    if (phaseApproach || phaseDefence) Tap(intent, Verb.Skill1);
+                    if (phaseApproach || phaseDefence) Consider(intent, Verb.Skill1, dt);
                 }
                 else if (kit is Abilities.PhaisterHeroKit)
                 {
                     // ⚠️ THE HEX IS A CIRCLE ON THE FLOOR 4.5 m AHEAD, and the old 6.5 m gate to
                     // a target said nothing about where it would land or whether one was already
                     // lying there. Two sigils on one another is the § 19 stacking exactly.
-                    if (WorthDenying(kit.Skill1)) Tap(intent, Verb.Skill1);
+                    if (WorthDenying(kit.Skill1)) Consider(intent, Verb.Skill1, dt);
                 }
             }
 
@@ -3159,25 +3431,27 @@ namespace TumbangPreso
                     bool aboutToBeCaught = _motor.IsTaggable() && targetDistance <= 4.5f;
                     bool onBadGround = Abilities.HazardMap.CoversPoint(myPos, 1.0f);
 
-                    if (aboutToBeCaught || onBadGround) Tap(intent, Verb.Skill2);
+                    if (aboutToBeCaught || onBadGround) Consider(intent, Verb.Skill2, dt);
                 }
                 else if (kit is Abilities.CheskaHeroKit)
                 {
                     if (WorthDenying(kit.Skill2)
                         && (!_motor.IsDefender || lataDistance > Balance.TayaCampRadius))
-                        Tap(intent, Verb.Skill2);
+                        Consider(intent, Verb.Skill2, dt);
                 }
-                else if (kit is Abilities.SeanHeroKit)
+                else if (kit is Abilities.SeanHeroKit || kit is Abilities.ZackHeroKit)
                 {
-                    // ⚠️ IT ARMS THE NEXT THROW, so it wants a slipper in hand and a legal throw
-                    // to spend it on. `SlotIsSpendable` is what stops it being armed twice.
-                    if (_motor.HoldingSlipper && round.CanThrow(_motor))
-                        Tap(intent, Verb.Skill2);
-                }
-                else if (kit is Abilities.ZackHeroKit)
-                {
-                    if (_motor.HoldingSlipper && round.CanThrow(_motor))
-                        Tap(intent, Verb.Skill2);
+                    // ⚠️⚠️ THESE TWO WERE THE ONE PLACE A BOT SPENT A POWER WITH NO OPPORTUNITY
+                    // TEST AT ALL, AND THEY ARE WHY 🧑 SAW THE SAME SKILLS EVERY ROUND. The gate
+                    // was *"holding a tsinelas and the throw is legal"*, which is true of almost
+                    // every second an attacker is alive, so both heroes armed a shot on cooldown
+                    // rather than on a chance. `ArmingThisShotIsWorthIt` asks the question the
+                    // ability is FOR: is there a shot to arm.
+                    //
+                    // ⚠️ `SlotIsSpendable` is still what stops it being armed twice.
+                    if (_motor.HoldingSlipper && round.CanThrow(_motor)
+                        && ArmingThisShotIsWorthIt(round))
+                        Consider(intent, Verb.Skill2, dt);
                 }
                 else if (kit is Abilities.NemuHeroKit)
                 {
@@ -3185,7 +3459,7 @@ namespace TumbangPreso
                     // recast and `SlotIsSpendable` lets it through while the first is running.
                     if (_driving && (Plan == AiPlan.Fetch || Plan == AiPlan.Stalk
                                      || targetDistance <= 6.0f))
-                        Tap(intent, Verb.Skill2);
+                        Consider(intent, Verb.Skill2, dt);
                 }
                 else if (kit is Abilities.PhaisterHeroKit)
                 {
@@ -3199,8 +3473,14 @@ namespace TumbangPreso
                     // point she LEAVES, so the question is whether anybody is near her now.
                     bool shoveOnDeparture = targetDistance <= 3.0f;
 
+                    // ⚠️ THE CONVICTION WINDOW IS IN FRONT OF THE HOLD, NOT INSTEAD OF IT.
+                    // `Consider` answers "have I wanted this long enough to commit"; `HoldAim`
+                    // then runs every frame after that, exactly as before, so the aim ramp is
+                    // untouched. Wiring the two the other way round would make the deliberation
+                    // part of the hold and pin every bot blink to the minimum range again.
                     if (_driving && (Plan == AiPlan.Withdraw || shoveOnDeparture
-                                     || targetDistance <= 5.5f))
+                                     || targetDistance <= 5.5f)
+                        && Weighed(Verb.Skill2, dt))
                         HoldAim(intent, Verb.Skill2, kit.Skill2, dt);
                 }
             }
@@ -3210,11 +3490,40 @@ namespace TumbangPreso
             // for 0.30 s and may refuse it outright. Spacing what the bot ASKS for is the honest
             // reading of "do not spam", and it also means a refused press costs the same beat a
             // successful one does, which is what stops a bot mashing an empty meter.
-            if (_touched.Contains(Verb.Skill1) || _touched.Contains(Verb.Skill2)
-                || _touched.Contains(Verb.Ultimate))
+            Verb? justPressed = _touched.Contains(Verb.Skill1) ? Verb.Skill1
+                              : _touched.Contains(Verb.Skill2) ? Verb.Skill2
+                              : _touched.Contains(Verb.Ultimate) ? (Verb?)Verb.Ultimate
+                              : null;
+
+            if (justPressed.HasValue)
             {
-                _abilityCadenceLeft = AiTuning.AbilityCadenceSeconds;
+                // ⚠️⚠️ A DIFFERENT SLOT COSTS MORE THAN THE SAME ONE. See § NOT THE WHOLE KIT IN
+                // ONE BREATH: the flat cadence stops a frame-one dump and does nothing at all
+                // about Q, then E, then the ultimate over six seconds, which is what 🧑 meant by
+                // *"i dont want them to use all skills consecutively"*.
+                //
+                // ⚠️ THE COMPARISON IS AGAINST THE LAST SLOT ACTUALLY PRESSED, so the first cast
+                // of a round pays the ordinary cadence (`_lastSlotPressed` starts null and the
+                // `??` makes that a match).
+                bool sameIdea = justPressed == (_lastSlotPressed ?? justPressed);
+
+                // ⚠️ ROLLED, NOT FIXED. See `AiTuning.AbilityCadenceJitterSeconds`: four bots on
+                // one constant are four metronomes that agree, and two that fire together stay
+                // locked together for the rest of the round.
+                _abilityCadenceLeft =
+                    (sameIdea ? AiTuning.AbilityCadenceSeconds : AiTuning.AbilityChainSeconds)
+                    + UnityEngine.Random.Range(0.0f, AiTuning.AbilityCadenceJitterSeconds);
+
+                _lastSlotPressed = justPressed;
+
+                // The decision has been taken. Start the next one from nothing.
+                ForgetWhatWasBeingWeighed();
             }
+
+            // ⚠️ NOTHING WORTH CASTING THIS FRAME MEANS THE HALF-FORMED DECISION IS DROPPED. A
+            // conviction window that survived the reason going away would be a delay rather than
+            // a decision: the bot would press at a target who had already walked out of it.
+            if (!_weighedThisFrame) ForgetWhatWasBeingWeighed();
 
             ReleaseUntouchedHeroButtons(intent);
         }
@@ -3225,6 +3534,142 @@ namespace TumbangPreso
 
         /// <summary>How long the current round has been live, for the opening delay.</summary>
         private float _roundLiveFor;
+
+        /// <summary>How long this bot's ultimate has been ready and unspent. See § IS THE
+        /// ULTIMATE WORTH SPENDING YET.</summary>
+        private float _ultimateReadyFor;
+
+        /// <summary>The last hero key this bot actually pressed, for the chain gap. See § NOT
+        /// THE WHOLE KIT IN ONE BREATH.</summary>
+        private Verb? _lastSlotPressed;
+
+        // -------------------------------------------------------------------
+        // § PRETENDING TO THINK
+        //
+        // ⚠️⚠️ 🧑 2026-08-27: *"try to make it so that AI think or pretend to think when to use
+        // skills"*, and later, *"Make sure u actually make ai better/ smarter with skill usage"*.
+        // Both halves are answered by the same three lines, which is the point: a bot that has to
+        // hold a reason before it acts is BOTH slower to fire and harder to bait.
+        //
+        // ⚠️⚠️ THE WINDOW IS CONTINUOUS AND IT IS PER SLOT. `Consider` is only reached on a frame
+        // the branch's own conditions hold, so the accumulator only advances while the reason is
+        // still true, and switching slots restarts it from zero with a fresh roll. Three
+        // consequences, and the second and third are the "smarter" part:
+        //
+        //  1. A press looks decided rather than reflexive, which is the reported feeling.
+        //  2. A target who steps out of a footprint during the window is not chased by a cast
+        //     that was already committed. The old code fired on the first frame the distance
+        //     check passed, which on a rival sprinting past is a single frame of coincidence.
+        //  3. A bot cannot flip between two slots and fire both: weighing Skill1 for 0.4 s and
+        //     then Skill2 for 0.4 s spends nothing, where before it would have spent both.
+        //
+        // ⚠️ IT IS NOT A COOLDOWN AND MUST NOT BECOME ONE. `AbilityCadenceSeconds` is the spacing
+        // between casts; this is the pause before ONE cast, and it is spent while the bot is
+        // already looking at the thing it is about to do.
+        // -------------------------------------------------------------------
+
+        /// <summary>Which hero key this bot is currently weighing, or null for none.</summary>
+        private Verb? _weighing;
+
+        /// <summary>How long it has been weighing that one, continuously.</summary>
+        private float _weighedFor;
+
+        /// <summary>The window this particular decision has to clear, rolled when it starts.</summary>
+        private float _weighWindow;
+
+        /// <summary>Did any branch ask about a slot this frame? See the note above.</summary>
+        private bool _weighedThisFrame;
+
+        private void ForgetWhatWasBeingWeighed()
+        {
+            _weighing = null;
+            _weighedFor = 0.0f;
+        }
+
+        /// <summary>
+        /// Has this bot wanted <paramref name="verb"/> for long enough to commit to it?
+        ///
+        /// ⚠️ IT ROLLS A NEW WINDOW EVERY TIME THE SUBJECT CHANGES, so a bot is not predictably
+        /// half a second late on everything. Scaled by `AiPersonalityRoll.Tempo`, which is the
+        /// same 0.85..1.20 that already decides how fast this bot re-plans.
+        /// </summary>
+        private bool Weighed(Verb verb, float dt)
+        {
+            _weighedThisFrame = true;
+
+            if (_weighing != verb)
+            {
+                _weighing = verb;
+                _weighedFor = 0.0f;
+
+                // ⚠️⚠️ SCALED BY THIS BOT'S APPETITE FOR THIS PARTICULAR SLOT. See
+                // `AiPersonalityRoll.SkillAppetite`: 🧑 asked for bots that may simply never find
+                // a use for one of their powers, *"bcz thats normal and human"*. A shy bot needs
+                // a longer unbroken reason, so a marginal window passes it by and a clear one
+                // still gets taken. Nothing rolls a die and refuses an opportunity it saw.
+                float eagerness = _self.AppetiteFor(SlotIndexOf(verb));
+                float appetiteScale = Mathf.Lerp(AiTuning.AppetiteWindowShy,
+                                                 AiTuning.AppetiteWindowEager, eagerness);
+
+                _weighWindow = UnityEngine.Random.Range(AiTuning.AbilityThinkMin,
+                                                        AiTuning.AbilityThinkMax)
+                               * _self.Tempo * appetiteScale;
+                return false;
+            }
+
+            _weighedFor += dt;
+            return _weighedFor >= _weighWindow;
+        }
+
+        /// <summary>The `AiPersonalityRoll.SkillAppetite` index for a hero key.</summary>
+        private static int SlotIndexOf(Verb verb)
+            => verb == Verb.Skill1 ? 0 : verb == Verb.Skill2 ? 1 : 2;
+
+        /// <summary>
+        /// Is there a shot worth arming right now? For Sean's and Zack's throw buffs.
+        ///
+        /// ⚠️⚠️ THE POWER BUFFS THE NEXT RELEASE, SO THE OPPORTUNITY IS THE RELEASE AND NOT THE
+        /// SLIPPER. Arming while walking to a bearing five seconds away spends a charge on a
+        /// throw that may never happen: the bot can be tagged, shoved, tripped, or the can can
+        /// go over to somebody else's shoe first, and `HeroAbility` has no way to hand it back.
+        ///
+        /// Three conditions, and each one removes a way the arm gets wasted:
+        ///  * **The bot is about to shoot.** Planted and charging, or standing on its mark. Both
+        ///    are one press from a release.
+        ///  * **The lane is clear.** `LaneBlocked` walks the arc the shoe will actually fly and
+        ///    asks what it will hit, so an armed throw into somebody's back is not an
+        ///    opportunity, it is the buff landing on a body instead of the can.
+        ///  * **Nobody else's shoe is already inbound.** The same reasoning as
+        ///    `RivalShotIsInbound`, one layer earlier: a can that is going over does not need
+        ///    a second, buffed tsinelas thrown at it.
+        ///
+        /// ⚠️ IT MAY LEGITIMATELY NEVER BE TRUE IN A ROUND, which is the point. 🧑 2026-08-27:
+        /// *"i want it to be possible too for them to not use some skills at all if they cant
+        /// find opportunity bcz thats normal and human"*.
+        /// </summary>
+        private bool ArmingThisShotIsWorthIt(RoundDirector round)
+        {
+            if (round == null) return false;
+
+            bool aboutToShoot = Plan == AiPlan.Windup || (Plan == AiPlan.Position && _arrived);
+            if (!aboutToShoot) return false;
+
+            var lata = round.Lata;
+            if (lata == null) return false;
+
+            if (RivalShotIsInbound(lata)) return false;
+
+            // ⚠️ AT FULL POWER, BECAUSE THAT IS WHAT AN ARMED SHOT IS FOR. Asking about a weak
+            // throw would refuse the arm on a lane the real shot clears comfortably.
+            return !LaneBlocked(transform.position, lata.transform.position, 1.0f);
+        }
+
+        /// <summary>Press <paramref name="verb"/>, but only once it has been wanted long
+        /// enough. The drop-in replacement for `Tap` inside `StepHeroAbilities`.</summary>
+        private void Consider(InputIntent intent, Verb verb, float dt)
+        {
+            if (Weighed(verb, dt)) Tap(intent, verb);
+        }
 
         private void ReleaseUntouchedHeroButtons(InputIntent intent)
         {

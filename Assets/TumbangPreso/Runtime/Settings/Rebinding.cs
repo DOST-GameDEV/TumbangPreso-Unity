@@ -31,6 +31,23 @@ namespace TumbangPreso.Settings
     /// Every action now holds exactly ONE control and no control appears twice. The hero deck
     /// uses Q, E and F as a compact combat cluster; contextual pickup / shove / reset uses X.
     /// `SettingsPanelTests` asserts it, so the collisions cannot come back quietly.
+    ///
+    /// ⚠️⚠️ THE PEKTUS CURVE IS Z AND C, NOT THE ARROW KEYS, SINCE 2026-08-27. 🧑: *"rebind pektus
+    /// to keyboard keys that are close to wasd bcz its so hard to touch the arrow keys and some
+    /// keyboards dont have it"*. Both halves of that are real. The curve is held WHILE the throw
+    /// charges on the left mouse button and WHILE the player is moving on WASD, so it is the one
+    /// input that must overlap the movement hand, and the arrow cluster is the furthest point on
+    /// the board from it. Sixty per cent boards do not carry the arrows at all.
+    ///
+    /// ⚠️ Z AND C, WITH X BETWEEN THEM, AND THE SHAPE IS THE REASON. `Grab` already holds X, so
+    /// the bottom row reads curve-left, contextual, curve-right under a hand that never leaves
+    /// WASD, and left and right map to left and right on the keyboard.
+    ///
+    /// ⚠️ C IS ALSO `SpectatorControls`, WHICH IS LEGAL RATHER THAN AN OVERSIGHT. See
+    /// `SpectatorContext`: a spectator has no body, so no throw can be curving while that key
+    /// means "show the overlay". `FindDuplicateBindings` checks per context and passes. Both
+    /// curve rows stay in the panel under PLAYING THE GAME and stay rebindable, and every screen
+    /// that teaches them reads the live binding through `Hud.KeyLabel`.
     /// </summary>
     public static class Rebinding
     {

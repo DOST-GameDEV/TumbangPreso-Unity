@@ -453,7 +453,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0004-4000-8000-000000000101",
-                    "path": "<Keyboard>/leftArrow",
+                    "path": "<Keyboard>/z",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -464,7 +464,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0004-4000-8000-000000000102",
-                    "path": "<Keyboard>/rightArrow",
+                    "path": "<Keyboard>/c",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",

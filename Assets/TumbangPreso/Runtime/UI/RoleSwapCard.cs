@@ -248,8 +248,26 @@ namespace TumbangPreso.UI
             var hud = UnityEngine.Object.FindFirstObjectByType<Hud>();
             canvasGo.transform.SetParent(hud != null ? hud.CleanFeedRoot : transform, false);
 
+            // ⚠️ THE NESTED CANVAS IS STRETCHED TO ITS PARENT. A child Canvas's RectTransform is
+            // NOT driven the way a root one's is, so a fresh GameObject arrives here 0 by 0 at
+            // the parent's centre and everything under it is laid out against nothing. This card
+            // survived that because its backdrop and its column are both stretched or centred;
+            // `YouCard` tried the same parenting on 2026-08-27, is anchored bottom-left with a
+            // fixed rect, and `HudOverflowProbe` found it 274 units off the right edge.
+            var canvasRt = canvasGo.AddComponent<RectTransform>();
+            canvasRt.anchorMin = Vector2.zero;
+            canvasRt.anchorMax = Vector2.one;
+            canvasRt.offsetMin = Vector2.zero;
+            canvasRt.offsetMax = Vector2.zero;
+
             _canvas = canvasGo.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+            // ⚠️ `overrideSorting`, BECAUSE THIS IS A NESTED CANVAS. The note above says a nested
+            // Canvas "keeps its own sortingOrder", and that is only true once it is told to
+            // override the parent's: without this the 90 is ignored and the intermission card
+            // draws in hierarchy order under the HUD's own rows.
+            _canvas.overrideSorting = true;
             _canvas.sortingOrder = 90;
 
             var scaler = canvasGo.AddComponent<CanvasScaler>();

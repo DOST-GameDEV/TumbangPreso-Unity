@@ -34,7 +34,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private const int ShotHeight = 720;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v23";
+        private const string Version = "v24";
 
         [MenuItem("Tumbang Preso/Capture Ilalim Ng Tulay Showcase")]
         public static void RunFromMenu() => Execute();

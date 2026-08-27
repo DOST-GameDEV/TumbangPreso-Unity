@@ -146,8 +146,27 @@ namespace TumbangPreso.CameraSystem
         private Transform _heldSlipper;
         private Renderer _heldRenderer;
 
-        private ViewmodelClothPhysics _rightClothPhysics;
-        private ViewmodelClothPhysics _leftClothPhysics;
+        // -------------------------------------------------------------------
+        // ⚠️⚠️ THE SLEEVES HAVE NO CLOTH SOLVER ANY MORE AND MUST NOT GET ONE BACK.
+        // DELETED 2026-08-27 with `ViewmodelClothPhysics`.
+        //
+        // 🧑, on Nemu in first person: *"the arms of Nemu her sleeves are phasing and looks weird
+        // ... maybe js remove the physics on her sleeves bcz it looks so ugly, js show me cute
+        // blocky sleeves"*.
+        //
+        // ⚠️ THE FAULT WAS STRUCTURAL, NOT A TUNING VALUE. The solver moved VERTICES: it
+        // instanced the sleeve mesh and pushed every vertex by a weighted rotation plus an
+        // offset plus a sine ripple, up to 0.12 m and 35 degrees. The sleeve, the inner lining
+        // and the lavender cuff rim are three separate meshes occupying the same volume, and only
+        // ONE of them was being deformed, so the outer shell walked through the lining and the
+        // cuff on every step and every look. No damping ratio fixes that; the two surfaces are
+        // not solved together and cannot be.
+        //
+        // ⚠️ AND THE CAST IS VOXEL ART. `tools/build_person_voxel.py` emits boxes; a rippling
+        // sleeve is fighting the whole look to add motion the silhouette is deliberately without.
+        // A blocky sleeve that rides the arm bone is the art, not a limitation of it.
+        // -------------------------------------------------------------------
+
         private CharacterMotor _characterMotor;
 
         private Quaternion _rightRest;
@@ -520,42 +539,9 @@ namespace TumbangPreso.CameraSystem
 
             _clipTime = 0.0f;
 
-            if (_rightClothPhysics != null)
-            {
-                if (clip == "throw")
-                {
-                    _rightClothPhysics.AddImpulse(new Vector3(0.15f, 0.40f, -0.65f));
-                    _rightClothPhysics.AddAngularImpulse(new Vector3(-45.0f, 15.0f, -30.0f));
-                }
-                else if (clip == "slam" || clip == "supernova-slam" || clip == "fissure-slam")
-                {
-                    _rightClothPhysics.AddImpulse(new Vector3(0.0f, -0.75f, -0.40f));
-                    _rightClothPhysics.AddAngularImpulse(new Vector3(55.0f, 0.0f, 0.0f));
-                }
-                else if (clip == "ghost-step" || clip == "sprint-electric")
-                {
-                    _rightClothPhysics.AddImpulse(new Vector3(-0.35f, 0.20f, -0.45f));
-                    _rightClothPhysics.AddAngularImpulse(new Vector3(-25.0f, 35.0f, -40.0f));
-                }
-                else if (clip == "project-spirit" || clip == "nova-burst")
-                {
-                    _rightClothPhysics.AddImpulse(new Vector3(0.10f, 0.35f, 0.50f));
-                    _rightClothPhysics.AddAngularImpulse(new Vector3(30.0f, -20.0f, 25.0f));
-                }
-                else if (clip == "seance-channel" || clip == "ignite" || clip == "overcharge"
-                         || clip == "cast-hex" || clip == "coven-eclipse")
-                {
-                    _rightClothPhysics.AddImpulse(new Vector3(0.0f, 0.25f, 0.0f));
-                    _rightClothPhysics.AddAngularImpulse(new Vector3(20.0f, 25.0f, -20.0f));
-                }
-                else if (clip == "blink")
-                {
-                    // ⚠️ THE SLEEVE GOES THE OTHER WAY FROM THE HAND, because the body arrives
-                    // before the cloth does. It is the same reason `ghost-step` pulls backward.
-                    _rightClothPhysics.AddImpulse(new Vector3(-0.45f, 0.30f, -0.55f));
-                    _rightClothPhysics.AddAngularImpulse(new Vector3(-40.0f, 45.0f, -35.0f));
-                }
-            }
+            // ⚠️ THE PER-CLIP SLEEVE IMPULSES WENT WITH THE SOLVER. See the field block at the
+            // top of this class: they fed `ViewmodelClothPhysics`, and the recoil they added was
+            // paid for by the outer sleeve walking through its own lining on every cast.
 
             return _clip != null;
         }
@@ -833,9 +819,6 @@ namespace TumbangPreso.CameraSystem
 
         private void ApplyCharacterStyle(string characterId)
         {
-            _rightClothPhysics = null;
-            _leftClothPhysics = null;
-
             ClearAccessories(_rightArm);
             ClearAccessories(_leftArm);
 
@@ -1265,56 +1248,49 @@ namespace TumbangPreso.CameraSystem
             var skinTone = SkinNemu;                                     // SKIN #e0af84
             var skinDark = new Color(0.839f, 0.600f, 0.455f, 1.0f);     // SKIN_DARK #d69974
 
-            // 1. Oversized Stepped Boxy Streetwear Hoodie Sleeve Outer Shell
-            var sleeveMesh = CreateHoodieDrapedSleeveMesh(isRight);
-            var sleeveGo = new GameObject(AccessoryPrefix + "HoodieSleeve");
-            sleeveGo.transform.SetParent(arm, false);
-            sleeveGo.transform.localPosition = Vector3.zero;
-            sleeveGo.transform.localRotation = Quaternion.identity;
-            sleeveGo.transform.localScale = Vector3.one;
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ THESE ARE BOXES NOW, AND THEY ARE BOXES BECAUSE HER MODEL IS.
+            //
+            // 🧑 2026-08-27, after the cloth solver came out: *"did u replace nemu's sleeves with
+            // something that looks like sleeves of her 3d model?"*, having asked for *"cute
+            // blocky sleeves"*. Deleting the solver stopped the phasing and left the wrong SHAPE
+            // standing: three lofted 24-segment tubes that flared toward the cuff with a lavender
+            // RIM around the opening.
+            //
+            // ⚠️⚠️ `Logs/model-ref-nemu.png` IS THE ANSWER AND IT DISAGREES ON EVERY POINT.
+            // Her arms are straight plum boxes, they do not flare, and the lavender is a VERTICAL
+            // BAR DOWN THE OUTER EDGE rather than a band around the wrist. The viewmodel was a
+            // different garment in the same two colours: correct palette, invented silhouette.
+            // In first person the sleeve is most of the screen, so it is the piece of her that a
+            // player looks at longest and the one that most has to be her.
+            //
+            // ⚠️ SAME CONSTRUCTION AS EVERY OTHER HERO'S ARM NOW. Cheska and Phaister are stacked
+            // `AddBoxAccessory` calls; Nemu was the only one carrying bespoke lofted geometry, a
+            // vertex solver and three mesh builders to be an outlier. `tools/build_person_voxel.py`
+            // emits boxes, `docs/Voxel_Person_Guide.md` is about boxes, and the toon shader's ink
+            // outline is at its best on a hard edge.
+            //
+            // ⚠️ THE STRIPE IS ON BOTH SIDE FACES ON PURPOSE. `RightBasisX` and `LeftBasisX` are
+            // rotated frames rather than mirrored scales, so "outer" is not the same local sign
+            // on the two arms and a single stripe would be correct on one and inside the other.
+            // Two thin bars cost four triangles and cannot be handed wrong.
+            // -------------------------------------------------------------------
 
-            var mf = sleeveGo.AddComponent<MeshFilter>();
-            mf.sharedMesh = sleeveMesh;
-            var mr = sleeveGo.AddComponent<MeshRenderer>();
-            Visual.MaterialKit.Dress(mr, hoodieDark);
-            Visual.ToonSkin.Apply(mr, Visual.ToonSkin.PersonOutlineWidth);
+            // 1. The sleeve: one plum box down the arm.
+            AddBoxAccessory(arm, "HoodieSleeve", new Vector3(0.300f, 0.560f, 0.290f),
+                new Vector3(0.0f, 0.320f, 0.0f), Quaternion.identity, hoodieDark);
 
-            // Bind dynamic cloth physics solver to sleeve
-            var clothPhys = sleeveGo.AddComponent<ViewmodelClothPhysics>();
-            clothPhys.BindMesh(mf, isRight, weightBoost: 1.0f);
-            if (parent != null)
-            {
-                if (isRight) parent._rightClothPhysics = clothPhys;
-                else parent._leftClothPhysics = clothPhys;
-            }
+            // 2. The hem, a shade darker, where the sleeve ends and the hand starts.
+            AddBoxAccessory(arm, "HoodieHem", new Vector3(0.312f, 0.075f, 0.302f),
+                new Vector3(0.0f, 0.612f, 0.0f), Quaternion.identity, hoodieShadow);
 
-            // 2. Hollow Interior Sleeve Cavity Lining
-            var innerMesh = CreateHoodieInnerLiningMesh(isRight);
-            var innerGo = new GameObject(AccessoryPrefix + "HoodieInnerLining");
-            innerGo.transform.SetParent(arm, false);
-            innerGo.transform.localPosition = Vector3.zero;
-            innerGo.transform.localRotation = Quaternion.identity;
-            innerGo.transform.localScale = Vector3.one;
+            // 3. The lavender bar down each side face. It stands 0.017 proud of the sleeve, which
+            //    is enough to never z-fight and little enough to still read as paint on cloth.
+            AddBoxAccessory(arm, "LavenderStripeA", new Vector3(0.034f, 0.520f, 0.150f),
+                new Vector3(0.150f, 0.320f, 0.0f), Quaternion.identity, lavenderTrim);
 
-            var innerMf = innerGo.AddComponent<MeshFilter>();
-            innerMf.sharedMesh = innerMesh;
-            var innerMr = innerGo.AddComponent<MeshRenderer>();
-            Visual.MaterialKit.Dress(innerMr, hoodieShadow);
-            Visual.ToonSkin.Apply(innerMr, Visual.ToonSkin.PersonOutlineWidth);
-
-            // 3. Crisp Lavender Flared Cuff Border Band
-            var cuffMesh = CreateHoodieCuffRimMesh(isRight);
-            var cuffGo = new GameObject(AccessoryPrefix + "HoodieCuffRim");
-            cuffGo.transform.SetParent(arm, false);
-            cuffGo.transform.localPosition = Vector3.zero;
-            cuffGo.transform.localRotation = Quaternion.identity;
-            cuffGo.transform.localScale = Vector3.one;
-
-            var cuffMf = cuffGo.AddComponent<MeshFilter>();
-            cuffMf.sharedMesh = cuffMesh;
-            var cuffMr = cuffGo.AddComponent<MeshRenderer>();
-            Visual.MaterialKit.Dress(cuffMr, lavenderTrim);
-            Visual.ToonSkin.Apply(cuffMr, Visual.ToonSkin.PersonOutlineWidth);
+            AddBoxAccessory(arm, "LavenderStripeB", new Vector3(0.034f, 0.520f, 0.150f),
+                new Vector3(-0.150f, 0.320f, 0.0f), Quaternion.identity, lavenderTrim);
 
             // 4. Cute Tucked Hand in exact Nemu Skin Tone (#e0af84 and #d69974)
             var handGo = new GameObject(AccessoryPrefix + "SpiritHand");
@@ -1377,215 +1353,6 @@ namespace TumbangPreso.CameraSystem
             {
                 AddHandKnuckles(arm, isRight, 0.260f, skinTone, skinDark);
             }
-        }
-
-        private static Vector3 RoundedBoxOffset(float angle, float rx, float rz, float power = 0.5f)
-        {
-            float cos = Mathf.Cos(angle);
-            float sin = Mathf.Sin(angle);
-            float x = Mathf.Sign(cos) * Mathf.Pow(Mathf.Abs(cos), power) * rx;
-            float z = Mathf.Sign(sin) * Mathf.Pow(Mathf.Abs(sin), power) * rz;
-            return new Vector3(x, 0.0f, z);
-        }
-
-        private static Mesh CreateHoodieDrapedSleeveMesh(bool isRight)
-        {
-            var mesh = new Mesh { name = "Nemu_HoodieSleeve" };
-            const int radialSegments = 24;
-            int ringCount = 8;
-
-            // Stepped streetwear hoodie progression (shoulder -> mid-sleeve drop -> flared cuff)
-            float[] ySteps       = { 0.04f, 0.20f, 0.22f, 0.42f, 0.44f, 0.58f, 0.67f, 0.70f };
-            float[] rxSteps      = { 0.100f, 0.115f, 0.135f, 0.150f, 0.170f, 0.188f, 0.198f, 0.202f };
-            float[] rzSteps      = { 0.080f, 0.090f, 0.105f, 0.115f, 0.130f, 0.142f, 0.152f, 0.155f };
-            float[] drapeOffsetZ = { 0.000f, -0.005f, -0.012f, -0.020f, -0.028f, -0.036f, -0.042f, -0.045f };
-
-            var vertices = new Vector3[ringCount * radialSegments];
-            var normals = new Vector3[ringCount * radialSegments];
-            var uvs = new Vector2[ringCount * radialSegments];
-
-            for (int ring = 0; ring < ringCount; ring++)
-            {
-                float y = ySteps[ring];
-                float rx = rxSteps[ring];
-                float rz = rzSteps[ring];
-                float dz = drapeOffsetZ[ring];
-                float ringProgress = (float)ring / (ringCount - 1);
-
-                for (int i = 0; i < radialSegments; i++)
-                {
-                    float angle = (float)i / radialSegments * Mathf.PI * 2.0f;
-                    Vector3 boxPt = RoundedBoxOffset(angle, rx, rz, 0.50f);
-
-                    int idx = ring * radialSegments + i;
-                    vertices[idx] = new Vector3(boxPt.x, y, boxPt.z + dz);
-                    normals[idx] = new Vector3(Mathf.Cos(angle), 0.10f, Mathf.Sin(angle)).normalized;
-                    uvs[idx] = new Vector2((float)i / radialSegments, ringProgress);
-                }
-            }
-
-            int triCount = (ringCount - 1) * radialSegments * 6;
-            var triangles = new int[triCount];
-            int t = 0;
-
-            for (int ring = 0; ring < ringCount - 1; ring++)
-            {
-                for (int i = 0; i < radialSegments; i++)
-                {
-                    int next = (i + 1) % radialSegments;
-                    int b1 = ring * radialSegments + i;
-                    int b2 = ring * radialSegments + next;
-                    int t1 = (ring + 1) * radialSegments + i;
-                    int t2 = (ring + 1) * radialSegments + next;
-
-                    triangles[t++] = b1;
-                    triangles[t++] = t1;
-                    triangles[t++] = b2;
-
-                    triangles[t++] = b2;
-                    triangles[t++] = t1;
-                    triangles[t++] = t2;
-                }
-            }
-
-            mesh.vertices = vertices;
-            mesh.normals = normals;
-            mesh.uv = uvs;
-            mesh.triangles = triangles;
-            mesh.RecalculateBounds();
-            mesh.RecalculateNormals();
-            return mesh;
-        }
-
-        private static Mesh CreateHoodieInnerLiningMesh(bool isRight)
-        {
-            var mesh = new Mesh { name = "Nemu_HoodieInnerLining" };
-            const int radialSegments = 24;
-            int ringCount = 3;
-
-            float[] ySteps       = { 0.69f, 0.58f, 0.46f };
-            float[] rxSteps      = { 0.192f, 0.175f, 0.150f };
-            float[] rzSteps      = { 0.146f, 0.130f, 0.112f };
-            float[] drapeOffsetZ = { -0.043f, -0.035f, -0.026f };
-
-            var vertices = new Vector3[ringCount * radialSegments];
-            var normals = new Vector3[ringCount * radialSegments];
-            var uvs = new Vector2[ringCount * radialSegments];
-
-            for (int ring = 0; ring < ringCount; ring++)
-            {
-                float y = ySteps[ring];
-                float rx = rxSteps[ring];
-                float rz = rzSteps[ring];
-                float dz = drapeOffsetZ[ring];
-
-                for (int i = 0; i < radialSegments; i++)
-                {
-                    float angle = (float)i / radialSegments * Mathf.PI * 2.0f;
-                    Vector3 boxPt = RoundedBoxOffset(angle, rx, rz, 0.50f);
-
-                    int idx = ring * radialSegments + i;
-                    vertices[idx] = new Vector3(boxPt.x, y, boxPt.z + dz);
-                    normals[idx] = -new Vector3(Mathf.Cos(angle), -0.10f, Mathf.Sin(angle)).normalized;
-                    uvs[idx] = new Vector2((float)i / radialSegments, (float)ring / (ringCount - 1));
-                }
-            }
-
-            int triCount = (ringCount - 1) * radialSegments * 6;
-            var triangles = new int[triCount];
-            int t = 0;
-
-            // Inverted winding so normals face inside the sleeve cavity
-            for (int ring = 0; ring < ringCount - 1; ring++)
-            {
-                for (int i = 0; i < radialSegments; i++)
-                {
-                    int next = (i + 1) % radialSegments;
-                    int b1 = ring * radialSegments + i;
-                    int b2 = ring * radialSegments + next;
-                    int t1 = (ring + 1) * radialSegments + i;
-                    int t2 = (ring + 1) * radialSegments + next;
-
-                    triangles[t++] = b1;
-                    triangles[t++] = b2;
-                    triangles[t++] = t1;
-
-                    triangles[t++] = b2;
-                    triangles[t++] = t2;
-                    triangles[t++] = t1;
-                }
-            }
-
-            mesh.vertices = vertices;
-            mesh.normals = normals;
-            mesh.uv = uvs;
-            mesh.triangles = triangles;
-            mesh.RecalculateBounds();
-            return mesh;
-        }
-
-        private static Mesh CreateHoodieCuffRimMesh(bool isRight)
-        {
-            var mesh = new Mesh { name = "Nemu_HoodieCuffRim" };
-            const int radialSegments = 24;
-            int ringCount = 2;
-
-            float[] ySteps       = { 0.67f, 0.71f };
-            float[] rxSteps      = { 0.201f, 0.205f };
-            float[] rzSteps      = { 0.155f, 0.159f };
-            float[] drapeOffsetZ = { -0.042f, -0.045f };
-
-            var vertices = new Vector3[ringCount * radialSegments];
-            var normals = new Vector3[ringCount * radialSegments];
-            var uvs = new Vector2[ringCount * radialSegments];
-
-            for (int ring = 0; ring < ringCount; ring++)
-            {
-                float y = ySteps[ring];
-                float rx = rxSteps[ring];
-                float rz = rzSteps[ring];
-                float dz = drapeOffsetZ[ring];
-
-                for (int i = 0; i < radialSegments; i++)
-                {
-                    float angle = (float)i / radialSegments * Mathf.PI * 2.0f;
-                    Vector3 boxPt = RoundedBoxOffset(angle, rx, rz, 0.50f);
-
-                    int idx = ring * radialSegments + i;
-                    vertices[idx] = new Vector3(boxPt.x, y, boxPt.z + dz);
-                    normals[idx] = new Vector3(Mathf.Cos(angle), 0.10f, Mathf.Sin(angle)).normalized;
-                    uvs[idx] = new Vector2((float)i / radialSegments, (float)ring);
-                }
-            }
-
-            int triCount = radialSegments * 6;
-            var triangles = new int[triCount];
-            int t = 0;
-
-            for (int i = 0; i < radialSegments; i++)
-            {
-                int next = (i + 1) % radialSegments;
-                int b1 = i;
-                int b2 = next;
-                int t1 = radialSegments + i;
-                int t2 = radialSegments + next;
-
-                triangles[t++] = b1;
-                triangles[t++] = t1;
-                triangles[t++] = b2;
-
-                triangles[t++] = b2;
-                triangles[t++] = t1;
-                triangles[t++] = t2;
-            }
-
-            mesh.vertices = vertices;
-            mesh.normals = normals;
-            mesh.uv = uvs;
-            mesh.triangles = triangles;
-            mesh.RecalculateBounds();
-            mesh.RecalculateNormals();
-            return mesh;
         }
 
         // -------------------------------------------------------------------
@@ -1972,30 +1739,6 @@ namespace TumbangPreso.CameraSystem
             // § THE ACTION CLIPS, stepped before the pose below so a throw reads over whatever
             // the pivot is doing rather than under it.
             StepAction(dt);
-
-            // Step dynamic cloth physics for baggy sleeves (Nemu / baggy clothing)
-            Vector3 worldVel = _characterMotor != null ? _characterMotor.Velocity : Vector3.zero;
-            Vector2 lookDelta = Vector2.zero;
-            if (Application.isPlaying)
-            {
-                lookDelta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
-            }
-            float vertAccel = 0.0f;
-            if (_characterMotor != null && !_characterMotor.IsGrounded)
-            {
-                vertAccel = -9.81f;
-            }
-
-            if (snap)
-            {
-                if (_rightClothPhysics != null) _rightClothPhysics.ResetPose();
-                if (_leftClothPhysics != null) _leftClothPhysics.ResetPose();
-            }
-            else
-            {
-                if (_rightClothPhysics != null) _rightClothPhysics.StepSimulation(dt, worldVel, lookDelta, vertAccel);
-                if (_leftClothPhysics != null) _leftClothPhysics.StepSimulation(dt, worldVel, lookDelta, vertAccel);
-            }
 
             float t = Mathf.Sin(_phase / IdlePeriod * Mathf.PI * 2.0f);
 

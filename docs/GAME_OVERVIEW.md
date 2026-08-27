@@ -89,7 +89,7 @@ Eight verbs, shared by both modes, and one contextual key that does three jobs.
 | Throw / Punch | Left mouse | attacker: hold to charge, release to throw. taya: a stationary tag |
 | Pick up / Shove / Reset | X | contextual, see below |
 | Lunge tag | Right mouse | the taya's dash tag: hold to charge, release to sweep |
-| Curve left / right | Left / Right arrow, or the mouse wheel | bends a charged throw (*pektus*) |
+| Curve left / right | Z / C, or the mouse wheel | bends a charged throw (*pektus*) |
 | Emote wheel | (bound in settings) | local flourish; ends only when interrupted |
 
 **The contextual key is one control doing three jobs**, chosen by the world rather than by a
