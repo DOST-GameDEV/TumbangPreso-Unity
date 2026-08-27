@@ -404,7 +404,7 @@ every file in a pre-existing output directory was freshly emitted.
 
 - `Core.Tests` asserts every balance number in about a second.
 - `BotBehaviourProbe` runs a whole match in both modes and prints throws, retrievals, tags,
-  skills, ultimates and penalties, on Eskinita and on Ilalim ng Tulay. ⚠️ **It is seeded. Do not
+  skills, ultimates, penalties, EMOTES and HOPS, on Eskinita and on Ilalim ng Tulay. ⚠️ **It is seeded. Do not
   change the seed to make a run pass**; if a run goes red, change the code.
   ⚠️⚠️ **AND ITS NUMBERS ARE LIVENESS FLOORS, NEVER COMPARISONS AT n = 1.** It is stepped at a
   fixed 1/60 s now rather than at a 6x time scale, and that removed most of the noise and not all

@@ -5965,6 +5965,332 @@ in `StepNetworkReplica` deleted rather than left as a second source.
 
 ---
 
+## 64 · The bots had no face, no feet, a perfect memory and one opinion
+
+**🧑 2026-08-28, a whole-session brief on the AI and nothing else:** *"try to thoroughly make AI
+better, like figure out all aspects of it to make it feel like a human/smarter/better"*, and then,
+itemised: *"make it randomly emote to taunt or when it does something cool"*; *"i want it so that
+it can sometimes chose to not use skill if opportunity doesnt arise like a human"*; *"I dont want
+the bots to only go after the human too (sometimes it only targets human)"*; *"let it make mistakes
+bcz humans do mistakes sometimes"*; *"make it move around like a human, (jumping and sprinting and
+shit)"*; *"(make sure its head turns like how a human's camera/mouse turns)"*; *"make sure they
+dont just stand around sometimes and perma wait or stay near eachother without doing anything"*;
+and the tier brief, *"OFC harder bots will be humanlike but less mistakes and shi but yea i want
+the most humanlike bots to be normal mode bots (middle tier difficulty)"*.
+
+§ 33 answered the 2026-08-27 version of four of these clauses. **This entry is what was left, and
+two of the six turned out to be defects rather than missing features.**
+
+### 64.1 ⚠️⚠️ THE BOTS HAD EMOTE CODE AND IT FIRED ZERO TIMES ✅
+
+*"make it randomly emote to taunt or when it does something cool"*. There WAS bot emote code:
+`AIController.TryTriggerEmote`, a celebration on `RoundDirector.Tagged`, an idle roll inside
+`Loiter`, and a third call site where `Lata` reached into the AI on a knockdown. None of it had
+ever produced a single visible emote.
+
+⚠️⚠️ **A BOT CANCELLED ITS OWN EMOTE ON THE FRAME IT STARTED ONE, AND NOTHING IN EITHER FILE SAID
+SO.** `EmotePlayer.Update` stops an emote on any frame `intent.MoveAxis` is non-zero, which is
+correct and deliberate (its header: an emote must be abortable instantly, because it is a
+self-inflicted stun). `AIController` is `[DefaultExecutionOrder(-130)]` and writes that axis every
+single frame. `EmotePlayer` runs at the default 0. So `HostPlay` set `Current`, and the same frame
+the bot walked and cleared it.
+
+⚠️ **NOTHING ERRORED, AND NOBODY REPORTS AN EMOTE THEY NEVER SAW.** `BotBehaviourProbe` counted
+throws, tags, skills and travel, and every one of those numbers was byte-identical on both sides of
+the fault. This is the class of bug § 7.1 says the probe harness exists for, and the probe could
+not see it because nothing counted the thing that was broken.
+
+**The fix is a HOLD, and it is not a timer on the clip.** `CLAUDE.md` § 4 is explicit that emotes
+end only by interruption and that there is no emote timer, and this adds none: `_emoteHoldLeft` is
+how long the BOT keeps its hands off the movement keys, which is exactly what a player does when
+they choose to emote. The clip still ends the way every clip ends, by the bot going back to
+playing. `AIController` § THE FACE.
+
+| | |
+|---|---|
+| `EmoteHoldMin/Max` | **1.1 to 2.3 s** of standing still, rolled |
+| `EmoteCooldownMin/Max` | **9 to 22 s** between one bot's emotes |
+| `EmoteSafeRadius` | **6.0 m**, about twice the longest tier lunge |
+| `EmoteCelebrateChance` | **0.55**, before `Flair` and `Showmanship` scale it |
+| `EmoteTauntChance` | **0.05 per second**, ⚠️ a RATE, multiplied by the frame time |
+| `EmoteStartGrace` | **0.25 s** before the hold will believe the clip failed |
+
+⚠️⚠️ **THE SAFETY GATE IS RE-ASKED EVERY FRAME OF THE HOLD, WHICH IS THE MOST HUMAN PART OF IT.**
+A celebration that becomes dangerous is abandoned mid-clip. `SafeToEmote` refuses a bot that is
+taggable, inside the chalk, mid-wind-up, within 6 m of the taya, or defending while anybody is
+taggable; between rounds it passes unconditionally, which is the one moment that is safe by
+construction and is where most of them actually land.
+
+⚠️ **THREE SECOND PATHS WERE DELETED RATHER THAN KEPT.** `Lata` no longer reaches into
+`AIController` on a knockdown (it skipped the safety gate entirely, so a bot could be told to dance
+inside the chalk with a taya on it, and a rules object had no business knowing what a bot is); the
+idle roll came out of `Loiter`, where four plans re-entered it every frame so a `0.15f` written on
+that line was a chance per frame per plan and the real rate was unknowable from reading it; and the
+request goes through `EmotePlayer.Request`, the entry the emote wheel uses, rather than `HostPlay`.
+
+⚠️ **THE START GRACE IS A NETWORK ROUND TRIP, NOT A FEEL VALUE.** In single player `Request`
+reaches `Play` on the same line. On a listen host it does not: `HostPlay` sends
+`RequestEmoteServerRpc`, which broadcasts `PlayEmote` with `SendNamedMessageToAll`, and Netcode
+delivers that on its own update. `IsEmoting` is false for a frame or two afterwards, so without the
+grace the hold would end immediately, the bot would walk, and the clip would be cancelled by the
+movement the instant it arrived: **the original bug, reintroduced through the wire instead of
+through the execution order.**
+
+### 64.2 ⚠️⚠️ SEPARATION WAS APPLIED IN `Goto` AND NOWHERE ELSE ✅
+
+*"stay near eachother without doing anything"*. `Separation()` is called from exactly one place,
+`Goto`, so it governed bots that were **travelling** and did nothing whatever for bots that had
+**arrived**. `Stalk`, `Cover` and `Guard` all end in `if (_arrived) Loiter(intent)`, and `Loiter`
+is a 0.45 m leash: two seats whose goals happened to be close stopped close, loitered close, and
+had no term pushing them apart for as long as neither plan changed.
+
+It reaches the loiter now at `LoiterSeparationWeight` **0.35**, deliberately under the travelling
+`SeparationWeight` 0.65. ⚠️ A push at the travelling weight would spend every shuffle fighting the
+0.45 m leash and the pair would visibly vibrate apart instead of drifting.
+
+### 64.3 ⚠️ NOTHING MEASURED HOW LONG A WAIT HAD BEEN GOING ON ✅
+
+*"dont just stand around sometimes and perma wait"*. The loiter is a shuffle in place and it is
+correct; a bot waiting for an opening should look like it is waiting. What was missing is anything
+noticing the WAIT ITSELF had stopped going anywhere.
+
+`BoredomSeconds` **6.5 s** without covering `BoredomProgressMetres` **1.25 m** shifts this bot's
+home bearing by `BoredomShiftRadians` **1.15**, then settles for `BoredomSettleSeconds` **4.0 s**.
+
+⚠️ **MEASURED ON TRAVEL, NEVER ON THE PLAN.** A taya guarding a can nobody is attacking is playing
+perfectly and holding one plan; a bot can also change plan every tick while standing still.
+Distance covered is the only honest question. ⚠️ **AND THE PROGRESS BAR SITS ABOVE `LoiterLeash`**
+0.45, or the shuffle would reset the clock forever, which is the exact stalemate this breaks.
+
+⚠️ **IT MOVES A BEARING, NOT A PLAN.** Overriding the plan would fight the planner and reproduce
+the flip-flopping § 33.4 records. `HomeBearing` is a property now and both readers go through it;
+a shift applied to `DoStalk` alone would move a stalker without moving where it throws from.
+
+### 64.4 ⚠️⚠️ THE TIER'S `Mistake` REACHED EXACTLY ONE DECISION ✅
+
+*"let it make mistakes bcz humans do mistakes sometimes"*. `Mistake` is read in one place,
+`DoWindup`'s `_blundering`: scatter doubles, the power margin drops to 1.0 and the lane check is
+skipped. **So a bot could only ever err while charging a throw**, which is a few seconds of an
+attacker's round and none at all of a taya's. Every chase, every fetch, every plan change and every
+cast was perfect.
+
+**A lapse is a LATE answer and never a wrong one**, and that distinction is the whole design.
+Choosing the second-best plan on purpose reads as a broken bot, because the error is visible in the
+decision and a watcher sees the body walk the wrong way for no reason. Slowing the decision is
+invisible in the choice and visible only in the timing, which is what being outplayed by a person
+looks like from the other side.
+
+`LapseSeconds` **0.42** (about one Normal think tick) at `LapseSlowdown` **2.4x**, rolled once per
+think tick at the tier's `Lapse` reduced by up to half by the bot's own `Focus`. It slows the think
+interval, every reaction gate, and `Observe`'s belief lag. ⚠️ **IT NEVER FREEZES THE BODY**: the bot
+keeps walking its last plan and simply does not notice the board has moved. A lapse that stopped
+the legs would be 64.3's own complaint, added deliberately.
+
+⚠️ **ROLLED PER THINK TICK, NOT PER FRAME**, so the rate cannot depend on the frame rate. § 17 is
+what happens when a bot number does.
+
+### 64.5 ⚠️ NO BOT HAD EVER LEFT THE GROUND ON PURPOSE ✅
+
+*"make it move around like a human, (jumping and sprinting and shit)"*. Sprinting was § 33.3.
+Jumping was not: before this, `Verb.Jump` appeared in `AIController` **exactly once**, in the mash
+that gets a tripped bot off the floor.
+
+⚠️ **IT BUYS NOTHING, WHICH IS EXACTLY WHY A PERSON DOES IT.** `CharacterMotor.ApplyGravity`
+charges no stamina for a jump and no rule rewards one, so hopping while you wait is fidgeting with
+the one verb that is free. `HopIntervalMin/Max` **2.6 to 11.0 s**, `HopChance` **0.55** scaled by
+the tier's `Hops` and the bot's `Springiness`. ⚠️ The interval range is wide on purpose: four bots
+hopping on a shared beat is worse than four that never hop, because it announces that one clock
+drives all of them.
+
+⚠️ **REFUSED IN THE THREE MOMENTS A HOP COSTS SOMETHING**, and each one is a mechanic rather than a
+judgement about when jumping looks silly: during `Reset` (the reset channel is the game's one held
+button and zeroes itself the instant it goes false), during a wind-up, during an emote (a jump is
+`EmotePlayer`'s own cancel condition), and while taggable (an airborne body cannot change
+direction, and the retrieval is the only window where that matters).
+
+### 64.6 ⚠️⚠️ THE BODY TURNED AT ONE SPEED FROM THE FIRST FRAME OF A TURN TO THE LAST ✅
+
+*"(make sure its head turns like how a human's camera/mouse turns)"*. § 31.1 capped the turn at
+`BodyTurnDegPerSecond` 520 and that fixed the reported fault (*"they can look straight behind them
+and turn in 0.1 seconds"*). It replaced it with a different tell: a **constant** rate, no ramp at
+either end, stopping dead on the mark. Nothing physical moves like that.
+
+⚠️⚠️ **AND THE SPEED SCALING WITH THE ANGLE IS THE HALF THAT READS.** A person makes a 15°
+correction slowly and a 170° check fast, so a single rate is wrong at both ends: at 520 the
+correction snaps and only the big check ever looked right.
+
+| | |
+|---|---|
+| `BodyTurnReachSeconds` | **0.18 s**, the time the hand wants any turn to take |
+| `BodyTurnSettleDegPerSecond` | **180**, the floor, a hand already tensed |
+| `BodyTurnAccelDegPerSecond2` | **3200**, floor to ceiling in about 0.11 s |
+| `BodyTurnDegPerSecond` | **520**, unchanged |
+
+⚠️ **NOTHING GOT FASTER.** A 180° reversal wants 1000°/s at 0.18 s and clamps to the shipped 520,
+so the longest turn in the game runs at exactly the old cap;
+`TheLongestTurnStillSaturatesTheShippedCeiling` asserts it. Only turns under about 94° behave
+differently, and those are the ones that used to snap.
+
+⚠️⚠️ **THE FLOOR IS NOT A START FROM ZERO, AND A GLANCE IS WHY.** Accelerating from rest makes
+every short press worthless, and `GlanceSeconds` is 0.09 s: from zero that is about **12°** and the
+look-around § 33.3 added would have quietly stopped happening. With the floor it is about **29°**,
+against 47 under the flat rate. ⚠️ `AGlanceTurnsALongWayWithoutFinishingAReversal` used to multiply
+`GlanceSeconds` by the CEILING, which is arithmetic that died with the flat rate; it computes the
+area under the ramp now, or it would have gone green while the feature was broken.
+
+⚠️ **IT IS IN THE MOTOR AND APPLIES TO GAMEPAD HUMANS TOO.** `CLAUDE.md` § 4 forbids a second
+movement model in as many words. Mouse-aimed players are untouched: `Steer` returns before this on
+their branch, because their hand IS the curve.
+
+### 64.7 ⚠️ FOUR IDENTICAL SCORERS AGREE, AND THAT IS THE RESIDUE OF § 33.1 ✅
+
+*"I dont want the bots to only go after the human too (sometimes it only targets human)"*. § 33.1
+deleted the seat-order `foreach` that singled somebody out **by construction**, and the feeling was
+reported again a build later, softer. The cause this time is **agreement, not order**: all four
+seats score one board with one identical set of weights, so whoever the score favours is favoured
+by every bot at once, and a person plays differently from three bots in exactly the terms the score
+reads (deeper into the chalk, holding a tsinelas longer, getting caught out).
+
+**So the fix is to make the four disagree on ties.** `AiPersonalityRoll.RivalPick` gives each seat a
+rolled favourite rival worth `TagRivalryWeight` **0.45**.
+
+⚠️⚠️ **THE SIZE IS THE WHOLE SAFETY ARGUMENT AND IT IS ASSERTED.** 0.45 sits under
+`TagSwitchMargin` 0.75, so a grudge can never drag a taya off a chase it is already winning (which
+would be § 33.1's taya running down the middle of two attackers and catching neither), and it is a
+fifth of `TagHelplessBonus` 2.5, so a body already on the floor is still chased first, every time.
+It decides ties and near ties, and the close ones are all this ever was.
+
+### 64.8 ⚠️ A SHY SLOT WAS SHY FOR EIGHT ROUNDS RUNNING ✅
+
+*"i want it so that it can sometimes chose to not use skill if opportunity doesnt arise like a
+human"*, which § 33.2 and `SkillAppetite` had already largely answered. The residue:
+`SkillAppetite` is rolled once per **seat** and read for the whole **match**, so "seat 2 hardly ever
+ults" was true in every round of a Hero Strike match. That stops reading as a person and starts
+reading as a dead key.
+
+`AppetiteRoundSwing` **0.35** drifts each slot's appetite around its seat baseline once per round.
+⚠️ **IT STILL DOES NOT ROLL A REFUSAL**: everything `SkillAppetite` says about a long conviction
+window beating a dice roll holds unchanged. It only makes how patient a bot feels about one power a
+fact about a round instead of about a match. ⚠️ Asserted under 0.5, because at or above that the
+drift is bigger than the roll it drifts around and the seat's personality stops existing.
+
+### 64.9 Normal is the most humanlike tier, and two of its rows are deliberately not monotonic
+
+*"i want the most humanlike bots to be normal mode bots (middle tier difficulty)"*.
+
+| | Bata | Normal | Astig |
+|---|---|---|---|
+| `Flair` (emote appetite) | 0.80 | **1.00** | 0.55 |
+| `Hops` (idle fidgeting) | 1.15 | **1.00** | 0.55 |
+| `Lapse` (per think tick) | 0.10 | 0.045 | 0.012 |
+| `Mistake` (unchanged) | 0.30 | 0.10 | 0.02 |
+
+⚠️⚠️ **`Flair` AND `Hops` PEAK IN THE MIDDLE AND `DifficultyIsMonotonicWhereItShouldBe`
+DELIBERATELY DOES NOT COVER THEM.** Every other row in the tier table is monotonic because every
+other row measures SKILL, and skill has an order. Sociability does not: a tournament player
+celebrates less than a casual one because a celebration costs position, and a child celebrates less
+than a casual one because they are still working out where to stand.
+`NormalIsTheMostHumanTierAndThatIsNotMonotonic` asserts the peak, so nobody later "fixes" the table
+to look consistent with its neighbours.
+
+⚠️ **`Lapse` IS AN ERROR ROW, SO IT IS MONOTONIC LIKE `Mistake`.** And it is not zero at Astig, for
+the reason `Mistake` is not zero there either: a bot that never looks away and never plays to the
+crowd reads as a cheat rather than as a hard opponent.
+
+### 64.10 What was measured, and the one number that was nearly misread
+
+⚠️⚠️ **THE FIRST READING OF THIS PASS LOOKED LIKE A 60 PER CENT COLLAPSE IN ULTIMATE USE, AND IT
+WAS A STALE BASELINE.** § 33.6's table reports 37 and 39 ultimates; this build reports 14 and 15,
+which is past § 16's smallest resolvable effect and reads as a serious regression. It is not.
+**§ 33.6 was measured on 2026-08-27, before §§ 36 to 63 landed, and § 41 changed the ultimate meter
+to count events.** `CLAUDE.md` § 7.1 says in as many words not to compare an old report against a
+new one, and this is what happens when you do.
+
+**So the arm below is a real A/B: `HEAD~1` of this branch against `HEAD`, both run today, one
+seeded run an arm.**
+
+**Hero Strike, Eskinita** (50,115 frames, 835.3 s simulated, `match in progress at exit: False`)
+
+| | baseline | this pass |
+|---|---|---|
+| throws | 180 | 178 |
+| retrievals | 177 | 172 |
+| tags | 117 | 113 |
+| lata knocks | 95 | 97 |
+| lata restores | 108 | 107 |
+| unretrieved penalties | 0 | 0 |
+| skill uses | 33 | 31 |
+| ultimate uses | 15 | 14 |
+| seat travel, m | 1394 / 1377 / 1301 / 1447 | 1391 / 1368 / 1359 / 1442 |
+
+**Hero Strike, Ilalim ng Tulay**
+
+| | baseline | this pass |
+|---|---|---|
+| throws | 163 | **178** |
+| retrievals | 157 | **175** |
+| tags | 101 | 101 |
+| lata knocks | 88 | 89 |
+| skill uses | 29 | 32 |
+| ultimate uses | 14 | 15 |
+| seat travel, m | 1407 / 1344 / 1279 / 1439 | 1343 / 1358 / 1392 / 1413 |
+
+**Classic, Eskinita**: knocks 40 to 45, tags 64 to 60, throws 84 to 88, retrievals 81 to 84,
+restores 47 to 50, travel 634 / 639 / 717 / 682 to 659 / 646 / 692 / 626.
+
+✅ **EVERY ROW IS INSIDE § 16's NOISE FLOOR, AND THAT IS THE RIGHT RESULT RATHER THAN A
+DISAPPOINTING ONE.** § 33.6 makes the identical point about its own middle column: none of this was
+meant to make bots busier. A pass about how bots READ that moved the throw count would be a pass
+that had changed the game underneath it. The Ilalim throws and retrievals are up about a tenth,
+which is inside the floor and in the good direction.
+
+### 64.11 ⚠️⚠️ THE PROBE NOW COUNTS THE TWO THINGS IT COULD NOT SEE ✅
+
+The whole of 64.1 is a feature that shipped, played, and did nothing, while every number in
+`BotBehaviourProbe` stayed byte-identical. That cannot be allowed to be true a second time.
+
+`Tally` counts **emotes** (off `EmotePlayer.EmoteStarted`, subscribed per seat inside the sample
+loop, because the seats are rebuilt between rounds) and **hops** (off the resolved body: grounded
+going false with an upward velocity).
+
+⚠️ **HOPS ARE COUNTED OFF THE BODY AND NEVER OFF THE KEY.** A tripped bot MASHES jump to get up and
+those presses are refused by `CanAct`; counting the key would report hundreds of fictional hops a
+match.
+
+Measured across two runs of this build:
+
+| | Classic / Eskinita | HS / Eskinita | HS / Ilalim |
+|---|---|---|---|
+| emotes | 6, 8 | 22, 12 | 18, 16 |
+| hops | 75, 92 | 234, 254 | 239, 248 |
+
+That is about **0.4 to 0.7 emotes per seat per round** and **one hop per seat every 13 seconds**.
+
+⚠️ **THE ASSERTION IS A FLOOR OF ZERO, NOT A BAND, AND THE 22-TO-12 SWING IS WHY.** The failure
+mode this guards is *"this does not happen at all"*, and a floor that tried to pin the rate would
+fail on the dice instead, which the long note on `deadLoopFloor` explains costs a reader more than
+no assertion at all. There is a ceiling as well, at four per seat per round: the other failure is a
+bot that stops playing to dance.
+
+### 64.12 Still open
+
+* ⚠️ **THE PROBE STILL ONLY EVER SEATS DANTE AND ZACK**, which § 33.8 already records. Nothing in
+  this entry is kit-specific, so it does not add to that debt, but the four unexercised kits are
+  still unexercised.
+* ⚠️ **THE HOP RATE IS MEASURED BUT NOT A/B'D FOR FEEL.** One hop per seat every 13 seconds is what
+  the shipped constants produce; whether that is the right amount is a human judgement and the
+  number is written down here so it can be moved against something.
+* ⚠️ **THE EMOTE COUNT SWINGS 22 TO 12 BETWEEN TWO RUNS OF ONE BUILD.** That is the safety gate
+  depending on the match state rather than an unseeded input, but it means the rate cannot be
+  tuned from one run. § 16's arithmetic applies: three runs an arm for anything worth 20 per cent.
+* ⚠️ **`Ilalim` REPORTED 2 UNRETRIEVED-SLIPPER PENALTY SECONDS AGAINST A BASELINE OF 0.** Two
+  seconds of fine across an 834 s match is nothing, and the ceiling is 1200, but emote holds and
+  boredom shifts are two new ways for a bot to not be walking toward its tsinelas. Worth a look if
+  that row ever climbs.
+
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

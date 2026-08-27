@@ -185,17 +185,19 @@ namespace TumbangPreso
             GameServices.Match.AddScore(throwerSlot, ScoreEvent.LataKnocked);
             UI.Hud.ReportStyle(throwerSlot, 42.0f, "TUMBA!");
 
+            // ⚠️⚠️ THE CAN USED TO REACH INTO `AIController` AND START AN EMOTE FROM HERE, AND
+            // THAT CALL IS GONE ON PURPOSE. It was a second path into the celebration: it skipped
+            // the safety gate entirely, so a bot could be told to stand still and dance while it
+            // was inside the chalk with a taya on it. `AIController` § THE FACE listens to
+            // `MatchDirector.Scored` instead, which is the event the line above has just raised,
+            // so the same celebration still happens off the same knockdown and now goes through
+            // the one gate that knows whether standing still is affordable.
+            //
+            // ⚠️ AND THE CAN HAS NO BUSINESS KNOWING WHAT A BOT IS. Everything else on this path
+            // is scoring and physics; a `GetComponent<AIController>` here is the kind of reach
+            // that makes a rules object depend on the AI layer.
             var throwerMotor = GameServices.Round.PlayerAt(throwerSlot);
-            if (throwerMotor != null)
-            {
-                throwerMotor.AbilitySystem?.OnLataKnocked();
-                var ai = throwerMotor.GetComponent<AIController>();
-                if (ai != null)
-                {
-                    string[] celebEmotes = { "dance", "yes", "tpose", "crouch" };
-                    ai.TryTriggerEmote(celebEmotes[UnityEngine.Random.Range(0, celebEmotes.Length)], 0.9f);
-                }
-            }
+            throwerMotor?.AbilitySystem?.OnLataKnocked();
         }
 
         /// <summary>
