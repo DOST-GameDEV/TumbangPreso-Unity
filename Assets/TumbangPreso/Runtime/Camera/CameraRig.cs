@@ -136,6 +136,27 @@ namespace TumbangPreso.CameraSystem
         public const float TppFieldOfView = 70.0f;
 
         /// <summary>
+        /// How many degrees the first-person lens widens while the stamina model is actually
+        /// granting a sprint. See the § THE SPRINT KICK note in <see cref="ApplyLens"/>.
+        ///
+        /// ⚠️ 7 DEGREES ON A 95 DEGREE LENS, WHICH IS DELIBERATELY MODEST BECAUSE THE BASE IS
+        /// ALREADY VERY WIDE. The usual sprint kick in a first-person game is around a tenth of the
+        /// base FOV, but those games start near 60 to 70 degrees. This one transcribes Godot's
+        /// `fov = 95.0`, which is already past the angle where straight lines start bending at the
+        /// frame edge, so the same proportional kick would land at 105 and push the periphery into
+        /// obvious distortion. 7 is a little over 7 per cent: enough to feel the frame open, small
+        /// enough that a wall at the edge does not visibly shear as it arrives.
+        /// </summary>
+        public const float SprintFieldOfViewKick = 7.0f;
+
+        /// <summary>
+        /// How fast the lens converges on its target, in reciprocal seconds. At 8 the kick is
+        /// roughly nine tenths applied after 0.29 s, which is about the time it takes to reach
+        /// sprint speed from standing, so the picture and the acceleration arrive together.
+        /// </summary>
+        public const float SprintLensRate = 8.0f;
+
+        /// <summary>
         /// The spring arm's standoff. ⚠️ DELIBERATELY LARGER THAN THE NEAR PLANE (0.15 against
         /// 0.05): the arm stops that far short of whatever it hit, and a margin under the near
         /// plane lets the wall clip through the camera exactly when the arm bottoms out.
@@ -339,7 +360,57 @@ namespace TumbangPreso.CameraSystem
             if (_camera == null) return;
 
             float want = _mode == CameraMode.Fpp && !_emoteView ? FppFieldOfView : TppFieldOfView;
-            if (!Mathf.Approximately(_camera.fieldOfView, want)) _camera.fieldOfView = want;
+
+            // ------------------------------------------------------------------ § THE SPRINT KICK
+            //
+            // ⚠️ THE LENS WIDENS WHILE SPRINTING, AND IT IS FEEDBACK RATHER THAN DECORATION. This
+            // game's sprint is metered by a stamina bar the player is meant to spend deliberately,
+            // and until now the only thing that said "you are sprinting" was the bar itself, which
+            // is in the corner of the screen and not where anybody is looking while running from a
+            // taya. Widening the lens puts that on the whole frame: the edges pull outward, the
+            // ground moves faster past the periphery, and it reads as effort without costing a
+            // single pixel of HUD.
+            //
+            // ⚠️ FPP ONLY. In third person the camera is orbiting the body rather than sitting in
+            // its head, so a lens change reads as the camera moving rather than as the character
+            // running, and the emote swing already animates the same value. `_emoteView` is folded
+            // into `want` above, so this rides on top of whichever lens that chose and is simply
+            // zero for every case that is not a first-person body.
+            //
+            // ⚠️ IT ASKS THE STAMINA MODEL, NOT THE BUTTON. `Intent.Pressed(Verb.Sprint)` is true
+            // whenever the key is down, including while fatigued, while standing still and while
+            // the seat cannot act, and a lens that widens when the character is NOT accelerating is
+            // worse than no lens change at all. `Stamina.IsSprinting` is the flag the same model
+            // sets when it actually grants the multiplier, so the picture and the physics agree by
+            // construction. See `CharacterMotor.FixedUpdate`, which reads the multiplier off the
+            // same call that sets it.
+            bool sprinting = _mode == CameraMode.Fpp
+                             && !_emoteView
+                             && _character != null
+                             && _character.Stamina != null
+                             && _character.Stamina.IsSprinting;
+
+            want += sprinting ? SprintFieldOfViewKick : 0.0f;
+
+            // ⚠️⚠️ SMOOTHED, AND A SNAP HERE IS THE ONE THING THAT WOULD MAKE THIS UNPLEASANT.
+            // Sprint can start and stop on consecutive frames when the bar bottoms out or the
+            // player taps the key, and an instant 7 degree jump on a 95 degree lens is a visible
+            // lurch that reads as a bug. Exponentially approaching the target means a tap produces
+            // a small nudge and a held sprint produces the full widening.
+            //
+            // ⚠️ FRAME-RATE INDEPENDENT ON PURPOSE. A plain `Lerp(current, want, k)` converges at a
+            // rate that depends on how fast the machine is drawing, so the same sprint would feel
+            // different on two PCs. `1 - exp(-rate * dt)` is the same curve in seconds whatever the
+            // frame rate, which matters here because the arena is played on machines that were
+            // reported lagging.
+            //
+            // ⚠️ AND IT USES UNSCALED TIME. `Time.timeScale` goes to zero for the pause menu and
+            // the broadcast pause, and a lens caught mid-transition would freeze part way and then
+            // finish when the game resumed. The camera is not part of the simulation.
+            float blend = 1.0f - Mathf.Exp(-SprintLensRate * Time.unscaledDeltaTime);
+            float lens = Mathf.Lerp(_camera.fieldOfView, want, blend);
+
+            if (!Mathf.Approximately(_camera.fieldOfView, lens)) _camera.fieldOfView = lens;
         }
 
         /// <summary>
