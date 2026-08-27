@@ -344,6 +344,35 @@ namespace TumbangPreso.Visual
         {
             Mesh mesh = null;
 
+            // ⚠️⚠️ A PLAIN MeshRenderer USES ITS TRANSFORM, AND THE BOUNDS RATIO IS ONLY FOR
+            // SKINNED ONES. THIS IS WHY THE FIRST-PERSON HANDS HAD AN INCONSISTENT BORDER.
+            // 🧑 2026-08-28: *"hand outline seems a little off too, in the sense that it's
+            // inconsistent"*.
+            //
+            // The ratio below divides `renderer.bounds` by `mesh.bounds`, and `renderer.bounds` is
+            // an AXIS-ALIGNED box in WORLD space. For anything rotated off the world axes that box
+            // is larger than the object actually is: a thin slab turned 45 degrees has an AABB
+            // wider than the slab by up to root two, and a compound rotation can do worse. The
+            // ratio therefore reads as SCALE what is really ROTATION, the measured scale comes out
+            // too big, `worldWidth / scale` comes out too small, and the hull is inflated less
+            // than it should be.
+            //
+            // ⚠️ THE VIEWMODEL IS THE WORST CASE IN THE GAME, WHICH IS WHY IT SHOWED THERE FIRST.
+            // `ViewmodelArms` hangs both arms off `RightPivot` and `LeftPivot`, each built from an
+            // explicit basis (`ToUnityRotation(bx, by, bz)`), and then hangs up to twenty
+            // accessory meshes off those. Every piece sits at a different compound rotation, so
+            // every piece got a different error, and the border came out a different thickness on
+            // each one. That reads exactly as "inconsistent" rather than as "too thin".
+            //
+            // ⚠️ THE RATIO IS STILL RIGHT FOR SKINNED MESHES AND MUST STAY. Its own note records
+            // why: a Kenney rig carries almost all of its scale on the SKELETON, so the renderer's
+            // transform reads 1 while the character stands 1.6 m tall. `lossyScale` would give
+            // every Person an outline four times too thick. A skinned renderer's bounds are also
+            // recomputed from the posed skeleton rather than from a rotated static box, so the
+            // rotation error that breaks the viewmodel does not arise there in the same way.
+            if (!(renderer is SkinnedMeshRenderer))
+                return MaxAxis(renderer.transform.lossyScale);
+
             if (renderer is SkinnedMeshRenderer skinned) mesh = skinned.sharedMesh;
             else
             {
