@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -86,6 +87,27 @@ namespace TumbangPreso.Net
         private string _lastSignature = "";
         private float _nextBeacon;
 
+        /// <summary>
+        /// Packets parsed on the socket thread, waiting for <see cref="Update"/> to take them.
+        ///
+        /// ⚠️⚠️ THIS QUEUE IS WHY LAN DISCOVERY WORKS AT ALL, AND IT IS NOT AN OPTIMISATION.
+        /// `BeginReceive` calls <see cref="OnReceive"/> on a THREAD POOL thread. The old code
+        /// wrote straight into `_seen` and then raised <see cref="EntriesChanged"/> from there,
+        /// which lands in `ConvertedMultiplayerSetup.RefreshLanBrowser` — `Text`, `SetActive`,
+        /// `rectTransform`. Every one of those throws off the main thread. So did the
+        /// `Time.unscaledTime` that used to stamp `LastSeen` inside `TryParsePayload`.
+        ///
+        /// ⚠️ THE THROW HAPPENED BEFORE THE RE-ARM, so the socket was never handed back to
+        /// `BeginReceive` and discovery stopped DEAD on the very first beacon received. The host
+        /// kept advertising perfectly, which is exactly the reported shape: hosting works, and
+        /// nothing ever appears in the browser.
+        ///
+        /// ⚠️ THE TESTS COULD NOT SEE IT. Every `TryParsePayload` case calls it from the test
+        /// thread, which IS Unity's main thread, so the Unity call inside it was legal there and
+        /// the parser looked correct in isolation. It was only ever wrong on the socket thread.
+        /// </summary>
+        private readonly ConcurrentQueue<LanEntry> _inbox = new ConcurrentQueue<LanEntry>();
+
         public bool Advertising { get; private set; }
         public bool Listening { get; private set; }
 
@@ -153,11 +175,17 @@ namespace TumbangPreso.Net
                 _listener.Client.SetSocketOption(SocketOptionLevel.Socket,
                                                  SocketOptionName.ReuseAddress, true);
                 _listener.Client.Bind(new IPEndPoint(IPAddress.Any, DiscoveryPort));
-                _listener.BeginReceive(OnReceive, null);
+
+                // ⚠️ THE FLAG IS SET BEFORE THE FIRST `BeginReceive`, NOT AFTER IT. A beacon that
+                // arrives between the two runs `OnReceive` with `Listening` still false, and the
+                // re-arm at the end of it is skipped, so discovery dies on the first packet of a
+                // busy network. Setting it first costs nothing: the failure path below clears it.
                 Listening = true;
+                _listener.BeginReceive(OnReceive, null);
             }
             catch (Exception e)
             {
+                Listening = false;
                 Debug.LogWarning($"[Lan] could not listen on {DiscoveryPort}: {e.Message}");
             }
         }
@@ -172,6 +200,11 @@ namespace TumbangPreso.Net
 
             _sender = null;
             _listener = null;
+
+            // ⚠️ Anything the socket thread queued but Update() never took would otherwise be
+            // drained into a FRESH browse session and shown as live hosts that were last seen
+            // before the previous session was torn down.
+            while (_inbox.TryDequeue(out _)) { }
 
             lock (_seen)
             {
@@ -194,6 +227,7 @@ namespace TumbangPreso.Net
                 Broadcast();
             }
 
+            DrainInbox();
             Expire();
         }
 
@@ -316,35 +350,76 @@ namespace TumbangPreso.Net
             return new IPAddress(broadcastBytes);
         }
 
+        /// <summary>
+        /// Socket-thread half of discovery: parse, queue, re-arm. Touches NOTHING owned by Unity.
+        ///
+        /// ⚠️⚠️ THE RE-ARM IS IN A `finally`, AND THAT IS THE WHOLE POINT. It used to sit at the
+        /// end of the `try`, so ANY throw above it — a Unity call, a malformed packet, another
+        /// program on port 8911 — consumed the pending receive and never asked for another one.
+        /// One bad datagram permanently ended discovery for the rest of the process, and the only
+        /// evidence was a single warning line. A parse failure must cost one packet, not the
+        /// socket.
+        /// </summary>
         private void OnReceive(IAsyncResult ar)
         {
-            if (_listener == null) return;
+            var listener = _listener;
+            if (listener == null) return;
 
             try
             {
                 var from = new IPEndPoint(IPAddress.Any, 0);
-                byte[] data = _listener.EndReceive(ar, ref from);
+                byte[] data = listener.EndReceive(ar, ref from);
 
                 if (TryParsePayload(Encoding.UTF8.GetString(data), from.Address.ToString(), out var entry))
                 {
-                    string key = $"{entry.Address}:{entry.Port}";
-                    lock (_seen)
-                    {
-                        _seen[key] = entry;
-                    }
-                    RaiseIfChanged();
+                    // Handed to Update(); see _inbox. LastSeen is stamped there, on the main thread.
+                    _inbox.Enqueue(entry);
                 }
-
-                if (Listening) _listener.BeginReceive(OnReceive, null);
             }
             catch (ObjectDisposedException)
             {
-                // Socket closed during shutdown.
+                // Socket closed during shutdown. Do not re-arm; there is nothing to re-arm onto.
+                return;
             }
             catch (Exception e)
             {
                 Debug.LogWarning($"[Lan] receive failed: {e.Message}");
             }
+
+            try
+            {
+                if (Listening) listener.BeginReceive(OnReceive, null);
+            }
+            catch (ObjectDisposedException)
+            {
+                // Raced with StopAll.
+            }
+            catch (Exception e)
+            {
+                Listening = false;
+                Debug.LogWarning($"[Lan] could not re-arm the discovery socket: {e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Main-thread half: drains what the socket thread parsed and stamps it with the clock.
+        /// </summary>
+        private void DrainInbox()
+        {
+            bool touched = false;
+
+            while (_inbox.TryDequeue(out var entry))
+            {
+                entry.LastSeen = Time.unscaledTime;
+                string key = $"{entry.Address}:{entry.Port}";
+                lock (_seen)
+                {
+                    _seen[key] = entry;
+                }
+                touched = true;
+            }
+
+            if (touched) RaiseIfChanged();
         }
 
         /// <summary>
@@ -395,7 +470,12 @@ namespace TumbangPreso.Net
                 Connections = Mathf.Clamp(connections, 0, 64),
                 MaxConnections = Mathf.Clamp(maxConnections, 1, 64),
                 InProgress = parts[4] == "1",
-                LastSeen = Time.unscaledTime,
+
+                // ⚠️ NOT STAMPED HERE. This runs on the socket thread and `Time.unscaledTime` is
+                // a Unity call that throws off the main thread; `DrainInbox` stamps it instead.
+                // Leaving the field at 0 is safe because an entry only reaches `_seen` through
+                // that drain, and `Expire` only ever reads what the drain has written.
+                LastSeen = 0f,
             };
 
             return true;
