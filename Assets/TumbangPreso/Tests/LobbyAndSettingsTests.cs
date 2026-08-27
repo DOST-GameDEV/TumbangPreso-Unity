@@ -676,6 +676,77 @@ namespace TumbangPreso.Tests
         }
 
         // -------------------------------------------------------------------
+        // THE CORNER STAMP
+        //
+        // 🧑, 2026-08-27: *"for every branch made it would replace the version number on
+        // the bottom right corner with the branch name instead"*. `BuildBranch` is the rule and
+        // these are the two bits of git it has to read correctly. Both are string parsing, which
+        // is why they are pure static methods rather than something that needs a repository.
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void TheWholeRefPathAfterRefsHeadsIsTheBranchName()
+        {
+            Assert.AreEqual("main", BuildBranch.BranchFromHead("ref: refs/heads/main\n"));
+
+            // ⚠️ SLASHES AND ALL. Taking the last segment would print `hud-calm-down` for a
+            // branch that could equally have been `fix/hud-calm-down` or `claude/hud-calm-down`,
+            // which is the one thing this label exists to disambiguate.
+            Assert.AreEqual("fix/multiplayer-fpp-camera-inside-head",
+                            BuildBranch.BranchFromHead("ref: refs/heads/fix/multiplayer-fpp-camera-inside-head"));
+            Assert.AreEqual("claude/multiplayer-lobby-switching-bugs-d1546c",
+                            BuildBranch.BranchFromHead("ref: refs/heads/claude/multiplayer-lobby-switching-bugs-d1546c\r\n"));
+        }
+
+        /// <summary>
+        /// ⚠️ A DETACHED HEAD IS NOT A BRANCH AND MUST NOT BE PRINTED AS ONE. HEAD holds a
+        /// bare sha, and returning it would put a hex string in the corner of every screen.
+        /// </summary>
+        [Test]
+        public void ADetachedHeadHasNoBranchName()
+        {
+            Assert.IsNull(BuildBranch.BranchFromHead("9cabdfae0f3a1b2c3d4e5f60718293a4b5c6d7e8"));
+            Assert.IsNull(BuildBranch.BranchFromHead(""));
+            Assert.IsNull(BuildBranch.BranchFromHead(null));
+
+            // A tag or a remote ref is not a local branch either.
+            Assert.IsNull(BuildBranch.BranchFromHead("ref: refs/remotes/origin/main"));
+        }
+
+        /// <summary>
+        /// ⚠⚠ EVERY SESSION IN THIS PROJECT RUNS IN A WORKTREE, WHERE `.git` IS A FILE. The
+        /// naive `repoRoot/.git/HEAD` does not exist there, so a reader that does not follow the
+        /// pointer reports "no git" on exactly the checkouts this stamp is for.
+        /// </summary>
+        [Test]
+        public void AWorktreePointerIsFollowedToTheRealGitDirectory()
+        {
+            Assert.AreEqual(@"C:/repo/.git/worktrees/thing",
+                            BuildBranch.GitDirFromPointer("gitdir: C:/repo/.git/worktrees/thing\n"));
+
+            // Git writes a relative pointer when the worktree and the repository share a parent.
+            Assert.AreEqual("../.git/worktrees/thing",
+                            BuildBranch.GitDirFromPointer("gitdir: ../.git/worktrees/thing"));
+
+            // An ordinary checkout has a `.git` DIRECTORY, so nothing to follow.
+            Assert.IsNull(BuildBranch.GitDirFromPointer("ref: refs/heads/main"));
+            Assert.IsNull(BuildBranch.GitDirFromPointer(""));
+        }
+
+        /// <summary>
+        /// ⚠️ THE STAMP IS THE LABEL AND NOTHING ELSE. `Application.version` still carries the
+        /// real version everywhere it means something to a machine: the LAN beacon payload, the
+        /// online lobby record and the approval hello all read it, and a branch name on that wire
+        /// would refuse two peers built from the same commit on different branches.
+        /// </summary>
+        [Test]
+        public void TheBranchNameNeverReachesTheVersionTheWireCompares()
+        {
+            Assert.AreEqual(UnityEngine.Application.version, GameVersion.Value);
+            StringAssert.DoesNotContain("/", GameVersion.Value);
+        }
+
+        // -------------------------------------------------------------------
         // CHOOSING A CHAIR
         //
         // ⚠⚠ "A PLAYER CANNOT SWITCH FROM P1 TO P4" (2026-08-27). There was no rule to test,
@@ -1193,6 +1264,87 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(-1, p.CharacterPick);
             Assert.AreEqual(-1, p.CanPick);
             Assert.AreEqual(-1, p.SlipperPick);
+        }
+
+        // ===================================================================
+        // ⚠️⚠️ THE JOIN ADDRESS, WHICH IS WHERE EVERY LAN JOIN DIED. `LanBeacon` advertises
+        // `ip:port`, the browser copies that string into the join box verbatim, and the box's own
+        // help text tells the player the port is optional and therefore allowed. Nothing parsed
+        // it, so the whole string went to `UnityTransport.SetConnectionData` as the HOSTNAME and
+        // the transport refused to start. Two machines that could see each other perfectly well
+        // could not join each other. `docs/TODO.md` § 59.
+        //
+        // ⚠️ THESE ARE ASSERTIONS RATHER THAN A PLAYED TEST BECAUSE THEY CAN BE. The failure was
+        // only ever visible with two machines on a network, and the rule it broke is a string
+        // split that runs in a microsecond.
+        // ===================================================================
+
+        [Test]
+        public void JoinAddressSplitsAPortOffTheEnd()
+        {
+            int port = LobbySession.DefaultPort;
+            Assert.AreEqual("192.168.1.144", NetSession.SplitHostPort("192.168.1.144:8910", ref port));
+            Assert.AreEqual(8910, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("192.168.1.144", NetSession.SplitHostPort("192.168.1.144:7777", ref port));
+            Assert.AreEqual(7777, port, "a port written by the player beats the default");
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("localhost", NetSession.SplitHostPort("  localhost:7000  ", ref port));
+            Assert.AreEqual(7000, port, "the field is not trimmed anywhere else");
+        }
+
+        [Test]
+        public void JoinAddressWithoutAPortKeepsTheCallersPort()
+        {
+            int port = 7777;
+            Assert.AreEqual("192.168.1.144", NetSession.SplitHostPort("192.168.1.144", ref port));
+            Assert.AreEqual(7777, port, "-tp-join 127.0.0.1 7777 must be unchanged");
+        }
+
+        /// <summary>
+        /// ⚠️ A BARE IPv6 LITERAL IS FULL OF COLONS AND IS A VALID ADDRESS ON ITS OWN. Splitting
+        /// on the last colon would turn `fe80::1` into a host of `fe80:` and a port of 1, which
+        /// is a worse failure than the one being fixed because it would look like it worked.
+        /// </summary>
+        [Test]
+        public void JoinAddressLeavesABareIpv6LiteralAlone()
+        {
+            int port = LobbySession.DefaultPort;
+            Assert.AreEqual("fe80::1", NetSession.SplitHostPort("fe80::1", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            // ⚠️ THE BRACKETS COME OFF EVEN WITH NO PORT, because they are join-address syntax
+            // and not part of the address: `UnityTransport.SetConnectionData` wants the literal.
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("::1", NetSession.SplitHostPort("[::1]", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("::1", NetSession.SplitHostPort("[::1]:7000", ref port),
+                            "brackets are what make an IPv6 port unambiguous");
+            Assert.AreEqual(7000, port);
+        }
+
+        /// <summary>⚠️ A TRAILING COLON, AN EMPTY HOST OR A NONSENSE PORT IS LEFT ALONE, so the
+        /// transport reports the real address the player typed rather than a guess this made
+        /// out of it.</summary>
+        [Test]
+        public void JoinAddressRefusesToGuessAtRubbish()
+        {
+            int port = LobbySession.DefaultPort;
+            Assert.AreEqual("192.168.1.144:", NetSession.SplitHostPort("192.168.1.144:", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual(":8910", NetSession.SplitHostPort(":8910", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("host:99999", NetSession.SplitHostPort("host:99999", ref port),
+                            "65535 is the ceiling");
+            Assert.AreEqual(LobbySession.DefaultPort, port);
         }
     }
 }

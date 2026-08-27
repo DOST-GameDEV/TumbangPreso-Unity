@@ -47,6 +47,28 @@ namespace TumbangPreso.Net
         public event Action<string> StatusChanged;
 
         /// <summary>
+        /// Raised on a CLIENT when its connection ends, with the host's reason or "" if none.
+        ///
+        /// ⚠️⚠️ A REFUSED APPROVAL LEFT THE PLAYER SITTING IN A LOBBY THAT SAID CONNECTED.
+        /// `ConvertedMultiplayerSetup.Join` navigates to the lobby the moment `StartClient`
+        /// returns true, and that only means the TRANSPORT was told to start: approval has not
+        /// happened yet and can still be refused for a protocol mismatch or a full lobby. The
+        /// refusal arrives here, several seconds later, on a screen that has already been left
+        /// behind, so the reason was written to a status label nobody was looking at. 🧑
+        /// 2026-08-27, off two laptops: *"this is the one that joined its just stuck here"*, on a
+        /// lobby reading LOBBY · CONNECTED with every other seat drawn as a bot.
+        ///
+        /// ⚠️ THE REASON IS THE PAYLOAD BECAUSE IT IS THE ONLY ACTIONABLE PART. A version
+        /// mismatch is a thing the player can actually fix, and it is indistinguishable from a
+        /// host that vanished unless somebody prints it.
+        /// </summary>
+        public static event Action<string> ClientDisconnected;
+
+        /// <summary>Why the last client connection ended. Read once by the join screen, which
+        /// clears it, so a stale reason cannot be shown over a later successful join.</summary>
+        public static string LastDisconnectReason { get; set; } = "";
+
+        /// <summary>
         /// Raised on THIS process whenever its own seat or spectator flag changes.
         ///
         /// ⚠️⚠️ THE LOBBY SCREEN HAD NO WAY TO KNOW IT HAD BEEN SEATED. `LocalSlot` is written
@@ -74,7 +96,13 @@ namespace TumbangPreso.Net
         /// join and "mostly work". That failure presents as wrong characters, missing powers,
         /// or a frozen body, which is much worse than a clear version-mismatch refusal.
         /// </summary>
-        public const int ProtocolVersion = 2;
+        // ⚠️ 2 to 3 REMOVED THE PEER ID FROM `DeclareReady` AND `VoteRematch`; 3 to 4 GAVE
+        // `DeclareReady` ITS `ready` BOOL AND ADDED `ReadyTally` FOR THE LOBBY GATE. Both landed
+        // the same day from two branches, and a build carrying the first would misread the
+        // second's ready press as a peer id. 4 to 5 ADDED `Score`, which is what makes an award
+        // audible and visible on a peer that is not the host (`docs/TODO.md` § 57.3).
+        // One bump per incompatible shape, not per day.
+        public const int ProtocolVersion = 5;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =
@@ -89,6 +117,16 @@ namespace TumbangPreso.Net
         public bool IsHost => _nm == null || !_nm.IsListening || _nm.IsServer;
         public bool IsNetworked => _nm != null && _nm.IsListening;
         public int LocalSlot { get; private set; }
+
+        /// <summary>
+        /// ⚠️ THE TRANSPORT'S OWN ID, NEVER THE SEAT. NGO gives the listen host and a dedicated
+        /// referee `NetworkManager.ServerClientId`, which is 0, and that 0 is a real identity
+        /// rather than a placeholder: `LobbySession` keys `_peers` by it and the ready and
+        /// rematch gates count it. Offline there is no transport, and 0 is then the only peer
+        /// there is, so the same answer is correct for a different reason.
+        /// </summary>
+        public int LocalPeerId => _nm != null && _nm.IsListening ? (int)_nm.LocalClientId : 0;
+
         public bool IsSeatlessReferee => _nm != null && _nm.IsServer && !_nm.IsClient;
 
         public string Status { get; private set; } = "offline";
@@ -241,7 +279,7 @@ namespace TumbangPreso.Net
         /// </summary>
         // ⚠⚠ DEFERRED, 2026-08-20, NOT IN PROGRESS. This superseded the E.2 decision
         // (`Unity_UGS_Networking_Prompts.md`, 2026-08-19) that chose Multiplay Hosting over the
-        // Singapore VPS: com.unity.services.multiplay cannot be installed on Unity 6000.5 at all.
+        // retired Singapore VPS: com.unity.services.multiplay cannot be installed on Unity 6000.5 at all.
         // Every published version of it, 1.1.1 through 1.3.1, ships
         // Editor/Authoring/Assets/CreateMultiplayConfigMenu.cs, which calls EndNameEditAction.
         // Unity 6000.5 marks that obsolete as an ERROR rather than a warning, so the package's
@@ -264,15 +302,15 @@ namespace TumbangPreso.Net
         // MultiplayerServerService.CreateSessionAsync, which is Unity's actual replacement API but
         // exposes sessions rather than a ServerQueryHandler, so the SQP heartbeat in Update
         // becomes the service's job rather than ours. That port needs a real fleet to verify, so
-        // it is deliberately not guessed at here. The dedicated Linux server build is unaffected
-        // either way: it still serves clients today, it just does not register with a fleet.
+        // it is deliberately not guessed at here. The dedicated Linux server target can serve
+        // clients when explicitly launched, but no VPS deployment or fleet is active.
         public async Task StartMultiplayServerAsync(int port, string serverName = "Tumbang Preso Dedicated", string map = "Eskinita")
         {
 #if !MULTIPLAY_SDK
             Debug.LogWarning(
                 "[Net] Multiplay fleet registration skipped: com.unity.services.multiplay is not " +
-                "installed because it does not compile on Unity 6000.5. Dedicated hosting still " +
-                "serves clients, it just does not report itself to the fleet.");
+                "installed because it does not compile on Unity 6000.5. An explicitly launched " +
+                "dedicated host can accept direct clients, but it cannot report itself to a fleet.");
             SetStatus($"dedicated server on port {port} (fleet registration unavailable)");
             await Task.CompletedTask;
 #else
@@ -300,9 +338,38 @@ namespace TumbangPreso.Net
 #endif
         }
 
+        /// <summary>
+        /// Connect to a host.
+        ///
+        /// ⚠️⚠️ IT SPLITS `host:port` HERE, AND NOTHING DID BEFORE, WHICH BROKE EVERY LAN JOIN
+        /// MADE BY CLICKING A DISCOVERED GAME. `Configure` hands its argument straight to
+        /// `UnityTransport.SetConnectionData`, which wants a bare address, and the join field is
+        /// filled with `192.168.1.144:8910` from three directions: `LanBeacon` advertises
+        /// `ip:port` and `ConvertedMultiplayerSetup.OnLanRowClicked` copies that string into the
+        /// box verbatim, the online browser does the same, and the field's own help text says
+        /// *"An online code, or a LAN address. Port defaults to 8910"*, which tells a player the
+        /// port is optional and therefore that writing it is allowed.
+        ///
+        /// The whole string then went in as the HOSTNAME. It is not an address and it is not a
+        /// resolvable name, so the transport refused to start, `StartClient` returned false and
+        /// the screen said **"Could not reach 192.168.1.144:8910"** while naming the machine it
+        /// had just been told about by that machine. 🧑 2026-08-27, with both firewalls off:
+        /// *"they are detected on lan and server but i cant join"*.
+        ///
+        /// ⚠️ THE EXPLICIT `port` ARGUMENT STILL WINS WHEN THE STRING CARRIES NONE, so
+        /// `-tp-join 127.0.0.1 7777` is unchanged. When the string carries one it is the more
+        /// specific of the two and takes precedence.
+        ///
+        /// ⚠️ ONE COLON ONLY, AND THE TAIL MUST PARSE AS A PORT. A bare IPv6 literal is full of
+        /// colons and is a valid address on its own; splitting on the last colon would turn
+        /// `fe80::1` into a host of `fe80:` and a port of `1`. Bracketed IPv6 with a port
+        /// (`[::1]:8910`) is handled separately for the same reason.
+        /// </summary>
         public bool StartClient(string address, int port = DefaultPort)
         {
             if (_nm != null && _nm.IsListening) Stop();
+
+            address = SplitHostPort(address, ref port);
 
             Configure(address, port);
             ConfigureClientHello();
@@ -462,8 +529,21 @@ namespace TumbangPreso.Net
             }
         }
 
+        /// <summary>
+        /// ⚠️⚠️ TRUE WHILE WE ARE THE ONES ENDING IT. `Shutdown` raises the same
+        /// `OnClientDisconnectCallback` a refusal does, so without this a player pressing BACK
+        /// was told why they had been thrown out of a lobby they had just chosen to leave. 🧑
+        /// 2026-08-27: *"this shit shows even if i close on my own"*, over
+        /// `[Disconnect Event][Client-0][TransportClientId-0][TransportShutdown]`.
+        ///
+        /// ⚠️ `StartClient` CALLS `Stop` FIRST when a session is already live, so this also covers
+        /// the disconnect that a re-join produces on the way out of the old connection.
+        /// </summary>
+        private bool _localShutdown;
+
         public void Stop()
         {
+            _localShutdown = true;
             _beacon.StopAll();
             if (Query != null) _ = Query.DeleteHostedLobbyAsync();
 
@@ -489,6 +569,47 @@ namespace TumbangPreso.Net
         public void BrowseLan() => _beacon.StartListening();
 
         public System.Collections.Generic.IEnumerable<LanEntry> LanEntries => _beacon.Entries;
+
+        /// <summary>
+        /// Pull a trailing `:port` off an address, leaving a bare host the transport can use.
+        /// Returns the address unchanged when it carries no port. See <see cref="StartClient"/>.
+        /// </summary>
+        public static string SplitHostPort(string address, ref int port)
+        {
+            if (string.IsNullOrWhiteSpace(address)) return address;
+
+            address = address.Trim();
+
+            // `[::1]:8910` and `[::1]`. The brackets are what make an IPv6 port unambiguous, so
+            // they are the only shape in which one is read.
+            if (address.StartsWith("["))
+            {
+                int close = address.IndexOf(']');
+                if (close < 0) return address;
+
+                string inner = address.Substring(1, close - 1);
+                if (close + 2 < address.Length && address[close + 1] == ':' &&
+                    int.TryParse(address.Substring(close + 2), out int bracketed) &&
+                    bracketed > 0 && bracketed <= 65535)
+                    port = bracketed;
+
+                return inner;
+            }
+
+            // Exactly one colon is `host:port`. More than one is a bare IPv6 literal and is left
+            // alone; see the note on StartClient for why splitting it would corrupt it.
+            int first = address.IndexOf(':');
+            if (first < 0 || first != address.LastIndexOf(':')) return address;
+
+            string head = address.Substring(0, first);
+            string tail = address.Substring(first + 1);
+
+            if (head.Length == 0) return address;
+            if (!int.TryParse(tail, out int parsed) || parsed <= 0 || parsed > 65535) return address;
+
+            port = parsed;
+            return head;
+        }
 
         private void Configure(string address, int port)
         {
@@ -641,12 +762,39 @@ namespace TumbangPreso.Net
             _nm.CustomMessagingManager.SendNamedMessage(SeatAssignmentMessage, clientId, writer);
         }
 
-        /// <summary>Applies the host's authoritative seat on this process.</summary>
+        /// <summary>
+        /// Applies the host's authoritative seat on this process.
+        ///
+        /// ⚠️⚠️ THERE ARE TWO SEAT PROTOCOLS AND THIS IS THE ONE THAT DOES LESS, WHICH IS WHY A
+        /// CLIENT COULD END UP UNABLE TO MOVE. The host announces a seat TWICE by two unrelated
+        /// routes: `NetSession.OnClientConnected` admits the peer and sends its own
+        /// `tp.seat.assignment.v1`, which lands here; and `MatchRpc.HandleIdentify` admits the
+        /// same peer again and sends `Seating`, which lands in `OnSeatingMsg` and calls
+        /// `SetLocalSeating`. Only the second one carries the join code, the leader, whether a
+        /// match is in progress, and the `SeatingChanged` notification that makes the ARENA move
+        /// the camera, the HUD, the ready gate and the `PlayerInputReader` onto the new chair.
+        ///
+        /// 🧑 2026-08-27, from the joining laptop: *"i can move camera and see updates but i cant
+        /// move"*, and its `Player.log` reads `[Net] connected as seat 2` with **no**
+        /// `[Net] seated in slot 1` anywhere. That is this method having run and `SetLocalSeating`
+        /// having not: the seat number was applied and nothing was told about it.
+        ///
+        /// ⚠️ SO THIS RAISES `SeatingChanged` TOO. It is the same fix as `docs/TODO.md` § 53.1
+        /// one layer down: whichever of the two messages wins the race, the arena hears about it.
+        /// `MatchInstaller.FollowLocalSeat` is idempotent, so both winning costs nothing.
+        ///
+        /// ⚠️⚠️ AND THE DUPLICATION ITSELF IS THE REAL DEFECT, NOT THIS SYMPTOM. Two protocols
+        /// for one fact, one of them a subset of the other, is exactly the shape § 53.1 and
+        /// § 57.1 were. `docs/TODO.md` § 60 carries retiring one of them; it is not done here,
+        /// because deleting a seat path while two laptops are mid-test is how a working build
+        /// becomes an unworking one.
+        /// </summary>
         public void ApplyAssignedSeat(int seat)
         {
             LocalSlot = seat;
             GameLaunch.Spectator = seat < 0;
             SetStatus(seat >= 0 ? $"connected as seat {seat + 1}" : "connected as spectator");
+            SeatingChanged?.Invoke();
             SeatingChanged?.Invoke();
         }
 
@@ -742,14 +890,50 @@ namespace TumbangPreso.Net
             string reason = _nm != null ? _nm.DisconnectReason : null;
             SetStatus(string.IsNullOrWhiteSpace(reason) ? "disconnected" : $"disconnected: {reason}");
 
-            // A client that has lost the host is offline, and every gameplay path asks
-            // NetAuthority rather than this class. Leaving the relay flags set made the next
-            // join attempt reuse a dead allocation.
+            // ⚠️ A DISCONNECT WE ASKED FOR IS NOT AN EVENT ANYBODY NEEDS TELLING ABOUT. The
+            // player is already navigating; announcing it and dragging them to the join screen
+            // would fight the button they just pressed.
+            bool wasLocal = _localShutdown;
+            _localShutdown = false;
+
             LocalSlot = 0;
             IsRelay = false;
             RelayJoinCode = null;
             _helloByClient.Clear();
             Lobby.Reset();
+
+            if (wasLocal) return;
+
+            LastDisconnectReason = PlayerFacingDisconnectReason(reason);
+            ClientDisconnected?.Invoke(LastDisconnectReason);
+            return;
+        }
+
+        /// <summary>
+        /// The reason in words a player can act on, or "" when there is nothing worth saying.
+        ///
+        /// ⚠️⚠️ NETCODE'S OWN EVENT ENVELOPE IS NOT PLAYER-FACING TEXT.
+        /// `[Disconnect Event][Client-0][TransportClientId-0][TransportShutdown]
+        /// NetworkConnectionManager was shutdown. The transport was shutdown.` is a diagnostic,
+        /// and it was being printed on a menu in the game's own font. It also says nothing: it
+        /// describes the mechanism, never the cause.
+        ///
+        /// ⚠️ WHAT IS KEPT IS WHAT THE HOST ITSELF WROTE. `ApproveConnection` sets
+        /// `response.Reason` to "Game version mismatch (network protocol 5)" or "Lobby is full",
+        /// and NGO delivers exactly that string. Those two are the whole point of the mechanism:
+        /// a version mismatch is a thing the player CAN fix, and it is the likeliest failure
+        /// whenever two machines were built from different commits.
+        /// </summary>
+        private static string PlayerFacingDisconnectReason(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return "Lost connection to the host.";
+
+            raw = raw.Trim();
+
+            // Netcode wraps its own transport events in brackets. Nothing the host authors does.
+            if (raw.StartsWith("[")) return "Lost connection to the host.";
+
+            return raw;
         }
 
         public void SetStatus(string s)

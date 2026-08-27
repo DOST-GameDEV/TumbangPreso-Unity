@@ -96,6 +96,12 @@ namespace TumbangPreso.UI
                 // screen. 🧑, 2026-08-27: "it also does not reflect when a person joins the
                 // lobby." Three separate facts move the seat rows and all three now say so.
                 net.SeatingChanged += HandleSeatingChanged;
+
+                // ⚠️⚠️ AND THE LOBBY LEAVES WHEN THE CONNECTION DOES. Without this a client whose
+                // approval was refused sat here forever on a screen headed LOBBY · CONNECTED,
+                // with the other three chairs drawn as bots because no roster ever arrived. See
+                // `NetSession.ClientDisconnected`.
+                NetSession.ClientDisconnected += HandleClientDisconnected;
             }
 
             _map = Mathf.Max(0, Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap));
@@ -366,13 +372,28 @@ namespace TumbangPreso.UI
 
             if (GameLaunch.Spectator) return;
 
-            _localReady = !_localReady;
-            int localPeerId = net.LocalSlot >= 0 ? net.LocalSlot : 0;
-
-            // ⚠️ THE PRESS CARRIES ITS STATE NOW. The button is a toggle and the message was
+            // ⚠️ THE PRESS CARRIES ITS STATE, because the button is a toggle and the message was
             // not: un-readying sent a second "I am ready", which the host's set swallowed as a
             // duplicate, so the tick could be turned off on this screen and nowhere else.
-            MatchRpc.Instance?.DeclareReadyServerRpc(localPeerId, _localReady);
+            //
+            // ⚠️⚠️ AND THE SCREEN DOES NOT CLAIM READY UNTIL THE HOST HAS ACTUALLY BEEN TOLD.
+            // `NetAuthority.IsNetworked` is true from `StartClient` onward rather than from
+            // connection approval, so a press made during the join window was written to a
+            // transport with nowhere to send it. This line flipped anyway and the label read
+            // "Ready! Waiting for other players..." to somebody the host was itself waiting for.
+            // `ReadyGate.Update` holds and resends the in-match press for the same reason.
+            bool wanted = !_localReady;
+            bool delivered = MatchRpc.Instance != null &&
+                             MatchRpc.Instance.DeclareReadyServerRpc(wanted);
+
+            if (!delivered)
+            {
+                SetStatus("Still connecting. Press again in a moment.");
+                Refresh();
+                return;
+            }
+
+            _localReady = wanted;
 
             if (_localReady)
             {
@@ -396,8 +417,7 @@ namespace TumbangPreso.UI
                 var readyGate = FindFirstObjectByType<ReadyGate>();
                 if (readyGate != null)
                 {
-                    int localPeerId = net.LocalSlot >= 0 ? net.LocalSlot : 0;
-                    readyGate.DeclareReady(localPeerId);
+                    MatchRpc.Instance?.DeclareReadyServerRpc();
                 }
                 else
                 {
@@ -480,6 +500,19 @@ namespace TumbangPreso.UI
         }
 
         private void HandleSeatingChanged() => Refresh();
+
+        /// <summary>
+        /// ⚠️ THE HOST IS NOT SENT BACK BY THIS. `ClientDisconnected` is raised only on the
+        /// non-host branch of `NetSession.OnClientDisconnected`, but a listen host is also its
+        /// own client, so the guard is kept here as well rather than relying on one at a
+        /// distance: a host bounced out of its own lobby by a peer leaving would be absurd.
+        /// </summary>
+        private void HandleClientDisconnected(string reason)
+        {
+            if (NetAuthority.IsHost) return;
+
+            SceneFlow.Go(SceneFlow.MultiplayerSetup);
+        }
 
         private void HandleLobbyRosterSynced(LobbySeatInfo[] seats) => RefreshSeats();
 
@@ -869,6 +902,7 @@ namespace TumbangPreso.UI
             MatchRpc.OnLobbyReadyChanged -= HandleLobbyReadyChanged;
             MatchRpc.OnModeChanged -= HandleModeSynced;
             MatchRpc.OnMatchStarted -= HandleMatchStarted;
+            NetSession.ClientDisconnected -= HandleClientDisconnected;
         }
     }
 }

@@ -322,6 +322,26 @@ namespace TumbangPreso.Settings
         /// <summary>
         /// Rebind <paramref name="action"/> to <paramref name="control"/>.
         /// </summary>
+        /// <summary>
+        /// Bumped whenever anything in this class changes what a key is bound to.
+        ///
+        /// ⚠️⚠️ IT EXISTS SO A READER CAN CACHE A KEY LABEL WITHOUT GOING STALE. Resolving one
+        /// costs a map lookup, an action lookup, `InputControlPath.ToHumanReadableString` and an
+        /// upper-casing, and `Hud.KeyLabel` was paying all four on every frame of every prompt
+        /// that names a key. Caching it is only safe if there is one number that changes the
+        /// moment a binding does, and `docs/VISION.md` section 3 is why it has to be exact: a
+        /// screen that teaches the wrong key is worse than one that teaches none.
+        ///
+        /// ⚠️ EVERY MUTATION GOES THROUGH THIS FILE, WHICH IS WHAT MAKES ONE COUNTER ENOUGH.
+        /// `TryRebind`, `ResetAll` and `Load` are the three, and `ConvertedSettingsPanel` calls
+        /// `Invalidate` for the override its rebind operation applies and then removes before
+        /// the conflict check runs.
+        /// </summary>
+        public static int Revision { get; private set; }
+
+        /// <summary>Tell every cached key label that it is out of date.</summary>
+        public static void Invalidate() => Revision++;
+
         public static string TryRebind(InputActionAsset asset, string action, InputControl control)
         {
             string path = control.path;
@@ -346,6 +366,7 @@ namespace TumbangPreso.Settings
                 return LabelFor(action);
 
             target.ApplyBindingOverride(index, path);
+            Invalidate();
             Save(asset);
             return null;
         }
@@ -356,6 +377,7 @@ namespace TumbangPreso.Settings
             if (asset == null) return;
 
             asset.RemoveAllBindingOverrides();
+            Invalidate();
             PlayerPrefs.DeleteKey(OverridesKey);
             PlayerPrefs.Save();
         }
@@ -379,6 +401,7 @@ namespace TumbangPreso.Settings
 
             string json = PlayerPrefs.GetString(OverridesKey, "");
             if (!string.IsNullOrEmpty(json)) asset.LoadBindingOverridesFromJson(json);
+            Invalidate();
         }
 
         private static InputAction Find(InputActionAsset asset, string action)

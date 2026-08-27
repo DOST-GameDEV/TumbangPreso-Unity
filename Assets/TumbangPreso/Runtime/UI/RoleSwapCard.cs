@@ -123,7 +123,14 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// Raise the card exactly as an intermission would, for a capture pass.
+        /// Raise the card exactly as an intermission would, without the event.
+        ///
+        /// ⚠️ TWO CALLERS AND NEITHER IS THE HOST'S NORMAL PATH. It was written for the capture
+        /// pass, and `MatchRpc.SyncWorldSnapshotClientRpc` now uses it for a CLIENT, which never
+        /// receives `IntermissionStarted` at all: that event is raised only by
+        /// `MatchDirector.BeginIntermission`, which is host-only, and it cannot simply be raised
+        /// on a client because `SliceRunner` is wired to it and would teleport every body and
+        /// schedule its own `AdvanceRound`. `docs/TODO.md` § 57.2 has the reasoning.
         /// </summary>
         public void ShowForShot(int nextRound, int nextDefenderSlot)
             => OnIntermissionStarted(nextRound, nextDefenderSlot);
