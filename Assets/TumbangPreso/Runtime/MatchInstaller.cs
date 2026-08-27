@@ -56,6 +56,40 @@ namespace TumbangPreso
         private CharacterMotor[] _seats;
 
         /// <summary>
+        /// ⚠️⚠️ THE ARENA FOLLOWS THE SEAT FROM WHEREVER IT CHANGES, NOT FROM ONE MESSAGE.
+        /// `NetSession.LocalSlot` is written from three places (the seat-assignment message,
+        /// `Seating`, and a mid-match rebind) and the arena only ever heard about ONE of them:
+        /// `MatchRpc.OnSeatingMsg` calls `RebindLocalSeat` if a `MatchInstaller` happens to exist
+        /// at that moment. Whether it does is a race between the transport and a scene load, and
+        /// the losing side of that race is a player whose camera, HUD and KEYBOARD are all on
+        /// somebody else's chair (`docs/TODO.md` § 53.1).
+        ///
+        /// ⚠️ SUBSCRIBING IS THE GENERAL FORM OF THAT FIX rather than a second special case.
+        /// `SeatingChanged` fires on every write, so the arena cannot miss one however the seat
+        /// came to move, and `RebindLocalSeat` is idempotent: rebinding to the seat already held
+        /// re-finds the same reader and returns without touching it.
+        /// </summary>
+        private void OnEnable()
+        {
+            var net = Net.NetSession.Instance;
+            if (net != null) net.SeatingChanged += FollowLocalSeat;
+        }
+
+        private void OnDisable()
+        {
+            var net = Net.NetSession.Instance;
+            if (net != null) net.SeatingChanged -= FollowLocalSeat;
+        }
+
+        private void FollowLocalSeat()
+        {
+            var net = Net.NetSession.Instance;
+            if (net == null || !net.IsNetworked || _seats == null) return;
+
+            RebindLocalSeat(net.LocalSlot, GameLaunch.Spectator);
+        }
+
+        /// <summary>
         /// § THE HANDLERS THIS INSTALLER PUTS ON THE `DontDestroyOnLoad` DIRECTORS.
         ///
         /// ⚠️⚠️ THEY HAVE TO BE HELD SO THEY CAN BE TAKEN OFF AGAIN, AND THE FAULT THAT MAKES

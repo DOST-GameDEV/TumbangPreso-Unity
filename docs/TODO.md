@@ -5175,6 +5175,223 @@ host handed the seat over correctly every time; the arriving machine never picke
 
 ---
 
+## 54 · Which of the two lobby fixes was kept, and why
+
+Two sessions worked the same evening from the same base, `6ecabb86`, and both landed on the
+lobby. **§ 55 below is the other one's work and it is kept nearly whole**, because its diagnosis
+was the better one: READY in the lobby resolved to a `FindFirstObjectByType<ReadyGate>()` that
+only exists inside the ARENA, so every press on that screen, the host's included, hit a null.
+It answers that with a real host-side set, a `ReadyTally` broadcast so every screen can draw the
+count, and an auto-start through `HostStartMatch` so there is exactly one path into an arena.
+
+**Two things from § 52 were kept over it, and both are about the same field:**
+
+1. **`DeclareReady` carries no peer id at all.** § 55's version keeps the field on the wire and
+   READS it into a discard, to keep the writer and the reader the same length for
+   `tools/audit_wire_payloads.py`. That is honest and it is still a value the host has to
+   remember to ignore, and remembering is exactly what failed the first time: every caller
+   reached for `NetAuthority.LocalSlot`, which is a SEAT, and the host keyed its set by a seat
+   from one peer and a transport id from another. **A field that cannot be trusted should not be
+   sent.** The message is now one `bool`, the sender is NGO's authenticated id, and the audit
+   needs no waiver for it or for `VoteRematch`.
+2. **The press reports whether it was delivered.** § 53.5's finding, which § 55 does not cover:
+   `IsListening` goes true at `StartClient` and not at approval, so a press made during the join
+   window went to a transport with nowhere to send it and said nothing.
+
+**Everything else in § 55 is kept as written**, including the toggle (the button is a toggle and
+the message was not, so un-readying was swallowed as a duplicate), counting the set against the
+live lobby rather than trusting it, and the `FromHost` sender check on the tally.
+
+## 55 · The lobby was a picture of a lobby ✅ CLOSED 2026-08-27
+
+🧑, 2026-08-27, three reports in one line: *"in a multiplayer lobby, a player cannot switch
+from p1 to p4"*, *"it also does not reflect when a person joins the lobby"*, and *"when all player
+ready up and the game starts, it only starts for the host"*.
+
+⚠⚠ **ALL THREE ARE THE SAME SHAPE AND IT IS THE SHAPE SECTION 36.1 NAMED: the person running
+the lobby cannot see it.** Every one of these is a control or a display that works on the host's
+screen, or works on nobody's, and none of them had a wire message behind it at all. Section 38
+went through `MatchRpc` verb by verb and found eleven faults; it never looked at the screen the
+players sit on before any of those verbs exist.
+
+### 52.1 ⚠⚠ THE SEAT BUTTONS WERE NEVER CONNECTED TO THE NETWORK ✅
+
+`ConvertedMatchSetup.WireSeats` did this on a press:
+
+```csharp
+GameLaunch.SoloSeat = seat;
+GameLaunch.Spectator = false;
+```
+
+`GameLaunch.SoloSeat` is read by `MatchInstaller.HumanSeat` **for the offline practice match and
+by nothing else**: two lines above it, `if (net != null && net.IsNetworked) return net.LocalSlot;`
+takes the networked answer from the transport instead. So in a lobby the press wrote a number
+nobody reads, and `RefreshSeats` redrew the rows from `LocalSlot`, which had not moved. There was
+no request, no host rule and no reply: **seat choice did not exist as a feature.**
+
+⚠️ **And on top of that the buttons were dead for everyone except the host.**
+`button.interactable = !GameLaunch.Spectator && (!isNetworked || NetAuthority.IsHost)`, so the
+one peer whose press would have been meaningless was also the only peer allowed to make it.
+
+**Fixed** with the same idiom the map and the mode already use, client asks and host decides:
+`ReqSeat` carries a chair number (-1 means spectate), `LobbySession.TryTakeSeat` is the rule, and
+the host answers the mover with the existing `Seating` message and everybody with
+`BroadcastLobbyPicks`. ⚠️ **The person comes from the sender's transport id, never from the
+payload**: the message names a chair, not a player, or a peer could move somebody else out of
+theirs.
+
+The rules, each with a test in `LobbyAndSettingsTests`:
+
+| rule | why |
+|---|---|
+| a chair somebody else is in is refused | two players in one seat is one body |
+| a HELD chair is refused | it belongs to somebody who dropped out of THIS match, which is the promise `RuleOnArrival` branch 1 makes |
+| any change is refused once `MatchInProgress` | a seat carries a score, a body and a turn in the taya rotation |
+| the dedicated server is refused | it referees; section 38 already had it seatless everywhere else |
+| asking for the chair you are in succeeds and changes nothing | a request is allowed to be idempotent |
+| a LEADER who starts spectating hands leadership on | `ReassignLeader` already skips spectators but is only reached from `Depart`, so nothing covered leaving the table without leaving the lobby |
+
+⚠️ **SPECTATE goes down the same wire.** It used to flip `GameLaunch.Spectator` locally, so the
+host went on counting that peer towards the ready gate and went on building it a body, and a
+spectator who wanted to play again had no way back into a chair. It is `ReqSeat(-1)` now, and
+pressing a free seat is how you stop.
+
+### 52.2 ⚠⚠ READY IN THE LOBBY WAS ROUTED TO AN OBJECT THAT IS NOT IN THE LOBBY SCENE ✅
+
+`MatchRpc.DeclareReadyServerRpc` and `OnDeclareReadyMsg` both did
+`FindFirstObjectByType<ReadyGate>()?.DeclareReady(...)`, and **`ReadyGate` is a component of the
+ARENA**. In `MatchSetup` that find returns null. Every READY press in the lobby, the host's
+included, resolved to a null and did nothing: the tick on screen was a local `bool` this screen
+owned and told nobody about. Nothing counted, nothing started, and the only way into a match was
+the host's own START button, which is the report.
+
+**Fixed** with a lobby-side tally in `MatchRpc`. ⚠️ **It counts SEATED PEERS, not characters**,
+for the reason `ReadyGate` gives at length: the empty chairs are played by bots and a bot cannot
+press a key. Spectators are excluded on the same rule and the count floors at one, so a solo host
+still presses its own button. ⚠️ **And it starts through `HostStartMatch`, the same path the
+button uses**, so there is exactly one way into an arena and the broadcast that carries the other
+peers in with it cannot be forgotten on one of them.
+
+Three holes closed with it:
+
+* **The press had no state.** The button is a toggle and the message was not, so un-readying sent
+  a second "I am ready", which the host's set swallowed as a duplicate. `DeclareReady` carries a
+  bool now; the peer id stays on the wire and is read and discarded, because the host resolves the
+  sender at the door.
+* **A peer leaving did not re-evaluate the gate**, which is the hole `ReadyGate.OnPeerLeft` and
+  `MatchResult.OnPeerLeft` already close for the other two tallies. `HostPeerLeft` now does it for
+  this one, in the lobby only.
+* **Moving seats leaves your ready standing.** It clears it: the arrangement you agreed to is not
+  the one on screen any more.
+
+### 52.3 ⚠⚠ THE MAP WAS NEVER SENT TO A JOINER, SO A CLIENT STARTED A DIFFERENT ARENA ✅
+
+The second half of "it only starts for the host", and the worse half. `SelectMap` and `SelectDiff`
+only ever travelled when the host **cycled** them. A peer joining a lobby the host had already set
+up was told the mode (section 38 added that) and nothing else, so its lobby drew whatever map its
+own menu last held. `SceneFlow.SelectedMap` is exactly what `SceneFlow.StartMatch` loads.
+
+⚠️ **A joiner who never saw the host touch the arrows loaded a different street.** `SyncMap`
+and `SyncDiff` are sent from `HandleIdentify` now, beside the mode, and for the same reason the
+mode's own note gives: everything below them is interpreted through them, and a joiner may be
+about to build an arena from them.
+
+### 52.4 ⚠️ THE LOBBY REDREW ITSELF ON ONE EVENT AND THREE THINGS MOVE IT ✅
+
+`ConvertedMatchSetup` subscribed to `OnLobbyPicksSynced` and to nothing else, so the seat rows
+were redrawn only when a pick table happened to arrive. The local seat changing (`LocalSlot` is
+written from three places and not one of them told anybody), the mode arriving, and the ready
+tally moving all changed the screen and said nothing. `NetSession.SeatingChanged` is new;
+`OnLobbyRosterSynced`, `OnModeChanged` and the new `OnLobbyReadyChanged` are now all answered.
+
+⚠️ **`MatchInProgress` is written on the client too.** It arrived on the `Seating` message, was
+read for the scene-load branch two lines further down and then dropped, so a client's
+`LobbySession` said false for the whole of a running match. The lobby reads it to grey the seat
+rows out, which is the difference between a button that explains itself and one that silently does
+nothing when the host refuses it.
+
+⚠️ **And `HostStartMatch` now tells the lobby the match is running**, which it never did.
+`MatchInProgress` is the switch behind three separate rules: `Depart` only HOLDS a dropped
+player's chair while it is set, `RuleOnArrival` only answers Spectate rather than Refuse while it
+is set, and 52.1's seat change is refused once it is set. Left false, a player who dropped
+mid-match lost their seat and their score to the next arrival, and anybody joining a running match
+was turned away outright. That is section 35's whole reconnection story silently switched off.
+
+### 52.5 ⚠️ `AnyAttackerCanPickUpAnySlipper` SILENCED ONE OF THE TWO PRODUCERS ✅
+
+Found by this work rather than reported: the PlayMode suite went red on a test nothing here
+touches, and it is an order-dependent flake that has been latent since the test was written.
+
+`MatchInstaller.HumanSeat` gives ONE seat a `PlayerInputReader` instead of an `AIController`, and
+its offline default is `GameLaunch.SoloSeat`, which is **1**. The test picks its attacker as the
+first non-defender `CharacterMotor` that `FindObjectsByType(FindObjectsSortMode.None)` hands back,
+and that order is **explicitly unsorted**. When it handed back seat 1, the test disabled an
+`AIController` that was not there, left `PlayerInputReader.Update` writing `Grab = false` over the
+press on every frame, and failed with *"the Grab press edge never reached Carrier"* against a
+pickup that works perfectly in the player.
+
+⚠️ **It is the same fault the sibling test three methods up records having lived with "for the
+whole of its first life", and `Silence` is the helper that already existed for it.** It turns off
+both producers. The test calls it now, and restores both afterwards.
+
+⚠️ **It passes on its own and fails after `BotBehaviourProbe` has run**, which is why it read
+as "the lobby change broke the arena": what actually moved was which body the unsorted find
+returned first. Measured both ways before touching it, the whole suite on the pristine tree and
+the whole suite with the lobby work, which is the only way to tell a flake from a regression.
+
+### 52.6 What was measured
+
+* `dotnet test`: **91 core tests**, green.
+* EditMode: **152**, green, including **eight new seat-change tests**.
+* PlayMode: **67**, green, `-testCategory "!WallClock"`.
+* `Checks.RunAll`: all five green in one launch.
+* `tools/audit_wire_payloads.py`: **44 named messages, 0 mismatched** (was 41; `ReqSeat` and
+  `ReadyTally` are new and `DeclareReady` is symmetric now rather than an accepted asymmetry).
+* `tools/audit_request_call_sites.py`: **42 wire entry points, 0 unreachable.**
+* `tools/audit_ability_authority.py`: **40 sites, 25 gated, 0 ungated on another body.**
+
+⚠⚠ **NONE OF IT IS A TWO-MACHINE TEST, AND THAT IS THE ONE THING STILL OPEN HERE.** The rules
+are asserted against `LobbySession`, which is transport agnostic on purpose, and the wire halves
+are checked field by field by the audit. What no automated check in this repo can currently do is
+put two processes in one lobby and press the buttons: `NetBootstrap` drops both straight into an
+arena and skips `MatchSetup` entirely. Everything in 52.1 to 52.4 is reasoned from the source and
+verified at the seams; **the four-way lobby itself still wants a human on two machines.**
+
+---
+
+## 56 · What the merged network pass still leaves open
+
+Written after §§ 52, 53 and 55 landed together, so the next session starts from a list rather
+than from a search. Nothing here is speculation: each is a specific line that was read.
+
+* ⚠️⚠️ **NONE OF THIS HAS BEEN PLAYED BY TWO PEOPLE.** Every diagnosis in §§ 52, 53 and 55 came
+  from the source and from two processes on one desktop, which share a clock, a filesystem and a
+  loopback. § 38.20's standing note is still the honest state of the network.
+* **`MatchRpc.SendSeating`'s local branch does less than its remote one.** For a remote peer it
+  sends `Seating`, and `OnSeatingMsg` calls `SetLocalSeating` AND then either
+  `SceneFlow.StartMatch()` or `MatchInstaller.RebindLocalSeat`. For the host it calls
+  `SetLocalSeating` and stops. It is unreachable today because `LobbySession.TryTakeSeat` refuses
+  every seat change while `MatchInProgress`, so the host can only move seats in the lobby where
+  there is no arena to rebind. **It is the same subset-of-the-other-path shape as § 53.1** and it
+  becomes a live fault the day mid-match seat changes are allowed. **Done looks like:** the host
+  branch running the same two lines the message handler does.
+* **The client still builds its arena before it has been told its seat, and § 53.1 repairs the
+  guess rather than removing it.** `NetBootstrap` and the menus both call `StartClient` and then
+  load the map. **Done looks like:** the client not loading the arena until `Seating` has landed,
+  which deletes the need for one of the two rebind routines.
+* **`NetStateReport` calls `Application.Quit()` after it writes**, so in a two-process run
+  whichever peer's window elapses first takes the other's connection with it and the second
+  report is never written. Give the client the SHORTER `-tp-netseconds` until that changes.
+* **`ProtocolVersion` moved twice in one day**, 2 to 3 for dropping the peer id from
+  `DeclareReady` and `VoteRematch`, and 3 to 4 for the lobby gate's `ready` bool and the new
+  `ReadyTally`. Any player built between those two points speaks a 3 that is not this 3.
+* **The AI's eleven `FindObjectsByType<Slipper>` calls are still there** (§ 52.5). They run on
+  the HOST, for up to four bots, several times per decision tick, so they are a networked cost as
+  well as an offline one: the host's frame rate is every peer's tick rate.
+
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

@@ -143,11 +143,27 @@ namespace TumbangPreso.PlayTests
             //
             // A test that drives an intent has to own that intent, and it has to own the body
             // too. Same rule as `AIController.AbilitiesEnabled` (docs/TODO.md section 42).
+            // ⚠️⚠️ AND IT IS `Silence`, NOT "TURN THE BOT OFF", BECAUSE A SEAT HAS TWO POSSIBLE
+            // PRODUCERS AND THIS LINE ONLY EVER SILENCED ONE OF THEM. `MatchInstaller.HumanSeat`
+            // gives ONE seat a `PlayerInputReader` instead of an `AIController`, and its default
+            // is `GameLaunch.SoloSeat`, which is 1. The attacker chosen above is simply the first
+            // non-defender `CharacterMotor` that `FindObjectsByType(FindObjectsSortMode.None)`
+            // hands back, and that order is explicitly unsorted: when it happened to hand back
+            // seat 1, this test silenced an `AIController` that was not there, left
+            // `PlayerInputReader.Update` writing `Grab = false` over the press every frame, and
+            // failed with "the Grab press edge never reached Carrier" against a pickup that works
+            // perfectly in the player. It is the same fault the sibling test three methods up
+            // records having lived with "for the whole of its first life", and the same fault the
+            // block comment above this one describes for the bot. `Silence` is the helper that
+            // already existed for it and it turns off BOTH.
+            //
+            // ⚠️ IT SURFACED AS AN ORDER-DEPENDENT FLAKE rather than a hard failure, which is why
+            // it survived: `AnyAttackerCanPickUpAnySlipper` passes on its own and fails after
+            // `BotBehaviourProbe` has run, because what actually moved was which body the
+            // unsorted find returned first.
             var seatBot = attacker.GetComponent<AIController>();
-            if (seatBot != null) seatBot.enabled = false;
-
-            attacker.Intent.Clear();
-            attacker.Intent.CommitFrame();
+            var seatReader = attacker.GetComponent<PlayerInputReader>();
+            Silence(attacker);
             for (int i = 0; i < 3; i++) yield return new WaitForFixedUpdate();
 
             // Somebody else's slipper, so the test is about eligibility rather than ownership.
@@ -218,6 +234,7 @@ namespace TumbangPreso.PlayTests
 
             attacker.Intent.Set(Verb.Grab, false);
             if (seatBot != null) seatBot.enabled = true;
+            if (seatReader != null) seatReader.enabled = true;
 
             Assert.IsTrue(attacker.HoldingSlipper,
                 "the Grab press edge never reached Carrier: the attacker is standing on a " +
