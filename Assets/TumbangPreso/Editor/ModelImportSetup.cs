@@ -96,6 +96,24 @@ namespace TumbangPreso.EditorTools
                 }
                 if (importer.addCollider) { importer.addCollider = false; changed = true; }
 
+                // ⚠️⚠️ THE INKED PROPS NEED A CPU COPY, AND WITHOUT IT THE OUTLINE FIX SILENTLY
+                // SKIPS THEM. `OutlineNormals.Weld` averages the normals sharing a position so the
+                // inverted hull stops tearing at hard edges (docs/TODO.md § 52), and it reads
+                // `mesh.vertices`. A mesh imported with Read/Write off has no CPU copy, so those
+                // come back empty, `Weld` returns early and the lata and tsinelas keep the split
+                // border the characters just lost. Measured: `OutlineWeldTests` failed on all nine
+                // of these and on none of the `.glb` people, which arrive readable from glTFast.
+                //
+                // ⚠️ `env_` IS DELIBERATELY EXCLUDED, and the exclusion is a memory decision rather
+                // than a stylistic one. Readable means a second copy of the mesh in system RAM for
+                // the life of the process. The street never reaches `ToonSkin.Apply` at all (the
+                // world toon pass was reverted on 2026-07-29, see `EnvColourPass`), so it has no
+                // hull to weld and would be paying for a copy nothing reads. Only the four lata,
+                // the four tsinelas and the first-person arm wear ink.
+                bool inked = !Path.GetFileName(path).StartsWith("env_");
+
+                if (inked && !importer.isReadable) { importer.isReadable = true; changed = true; }
+
                 if (!changed) continue;
 
                 importer.SaveAndReimport();
