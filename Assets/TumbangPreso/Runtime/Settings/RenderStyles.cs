@@ -77,7 +77,7 @@ namespace TumbangPreso.Settings
         public static readonly Entry[] All =
         {
             new Entry("Toon (Ink Outlines)", true,  0.00f, false),
-            new Entry("Chromatic",           false, 0.25f, true),
+            new Entry("Chromatic",           false, 0.14f, true),
         };
 
         /// <summary>Row 0. Today's look, unchanged.</summary>
