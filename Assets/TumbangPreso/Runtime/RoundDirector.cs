@@ -89,16 +89,52 @@ namespace TumbangPreso
         /// state: a player who disconnected as an attacker may be the current taya when they
         /// return.
         /// </summary>
-        public void ApplySnapshot(float timeLeft, bool roundActive, int defenderSlot)
+        public void ApplySnapshot(float timeLeft, bool roundActive, int defenderSlot,
+                                  bool matchInProgress = true)
         {
             TimeLeft = Mathf.Clamp(timeLeft, 0.0f, Balance.RoundTime);
             RoundActive = roundActive;
+
+            // ⚠️⚠️ THE FREE-ROAM WINDOW IS WHY THIS IS NOT SIMPLY `= roundActive`, AND STAMPING
+            // IT WAS WHY A CLIENT COULD NOT MOVE AT ALL.
+            //
+            // `CharacterMotor.RoundActive` DEFAULTS TO TRUE and nothing writes it until
+            // `BeginRound` or `EndRound`. That default is what makes the pre-round window work:
+            // the director says the round is not active (correctly, nothing scores yet) while the
+            // four bodies say they may act, so everybody can walk around the arena they are about
+            // to play in. `CharacterMotor` gates steering on `CanAct()`, which is
+            // `RoundActive && !IsStunned`, so a body with the flag off cannot move a centimetre.
+            //
+            // A CLIENT replicates this snapshot at 5 Hz, and it was stamping the DIRECTOR's false
+            // onto all four bodies before the first round had ever begun. The host's bodies kept
+            // the default true. **So the host walked around the free-roam window and every client
+            // stood frozen**, with the camera still turning because that is local and ungated.
+            // 🧑 2026-08-27: *"host can move but everyone else is stuck even bots"* and *"i can
+            // move camera and see updates but i cant move"*, both with
+            // "Practice freely, scores are paused" still on screen.
+            //
+            // ⚠️⚠️ AND `[NetSeat]` SAID THE WIRING WAS FINE, WHICH IS WHAT SENT THIS LOOKING HERE.
+            // `reader=True simulated=True` ruled out §§ 53.1 and 60.1 outright: the keyboard was
+            // on the right body and the motor was simulating it. The gate was somewhere else.
+            //
+            // ⚠️ SO IT IS ONLY STAMPED ONCE A MATCH IS ACTUALLY RUNNING, which is exactly when the
+            // host writes it too. The four states all agree now: before the match, both sides
+            // leave the default true and everybody can free-roam; in a round, both are true;
+            // during an intermission `EndRound` set the host's bodies false and this sets the
+            // client's; after the match, `MatchEnded` reaches `EndRound` on both (§ 57.1).
+            if (matchInProgress)
+            {
+                foreach (var player in _players)
+                {
+                    if (player == null) continue;
+                    player.RoundActive = roundActive;
+                }
+            }
 
             foreach (var player in _players)
             {
                 if (player == null) continue;
                 player.IsDefender = player.PlayerSlot == defenderSlot;
-                player.RoundActive = roundActive;
                 player.GetComponentInChildren<Visual.CharacterNameplate>()?.Refresh();
             }
         }
