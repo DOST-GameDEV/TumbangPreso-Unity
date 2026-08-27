@@ -96,6 +96,41 @@ namespace TumbangPreso.Visual
         private static readonly Dictionary<(Material, int), Material> Cache =
             new Dictionary<(Material, int), Material>();
 
+        /// <summary>
+        /// Which source material each cached variant was derived FROM, so `Apply` is idempotent.
+        ///
+        /// ⚠️⚠️ `Apply` READS ITS SOURCES OUT OF `renderer.sharedMaterials` AND THEN WRITES ITS
+        /// ANSWER BACK INTO THE SAME SLOTS, so calling it twice on one renderer feeds it its own
+        /// output. That is a key the cache has never seen: it misses, builds a variant OF a
+        /// variant, stores that under the new key and hands it over. A third call keys off the
+        /// second, and so on. Nothing bounds it, and nothing frees any of them.
+        ///
+        /// ⚠️ THE CHAIN IS NOT REACHABLE FROM ANY CALL SITE TODAY, AND THAT IS AN ACCIDENT RATHER
+        /// THAN A GUARANTEE, WHICH IS WHY IT IS WORTH CLOSING. Read off every call site:
+        /// `CharacterVisual`, `ModelPreview`, `MatchInstaller` and the probes each dress a FRESH
+        /// instance, and every `ViewmodelArms` site calls `MaterialKit.Dress` first, which resets
+        /// the slot to the shared lit material before this ever sees it. So each of them happens
+        /// to hand over a stable source. `MatchSkin` is the one that does not: it copies the
+        /// WORLD slipper's material, which is already a toon variant, so it was building a copy
+        /// of a material the cache already held, one per tsinelas skin. Bounded, but pointless.
+        /// The trap is that "re-dress this renderer" is an obvious thing to write and the next
+        /// person to write it without a `Dress` in front of it gets the unbounded version.
+        ///
+        /// ⚠️ RESOLVING BACK TO THE ORIGIN REPRODUCES THE OLD LOOK EXACTLY, which is what makes
+        /// this safe rather than merely cheaper. `TumbangPreso/Toon` declares `_Color` and
+        /// `_MainTex` and no `_BaseColor`, and those are the second entry of `SourceColours` and
+        /// the second of `SourceTextures`, so a variant built from a variant read back the same
+        /// albedo and the same atlas the original carried. The palette and the outline width were
+        /// already re-derived from the arguments rather than from the source. A copy of a variant
+        /// was therefore identical to the variant, down to every property this file writes.
+        ///
+        /// ⚠️ ONE HOP IS ENOUGH BECAUSE THE VALUE STORED IS ALWAYS ALREADY RESOLVED. `Variant` is
+        /// only ever handed a source that has been through this map, so no entry can point at
+        /// another entry's key.
+        /// </summary>
+        private static readonly Dictionary<Material, Material> Origin =
+            new Dictionary<Material, Material>();
+
         public static void Apply(GameObject model, float worldWidth) => Apply(model, worldWidth, null);
 
         /// <summary>
@@ -140,11 +175,26 @@ namespace TumbangPreso.Visual
             if (sources == null || sources.Length == 0) return;
 
             var dressed = new Material[sources.Length];
+            bool changed = false;
 
             for (int i = 0; i < sources.Length; i++)
-                dressed[i] = Variant(sources[i], key, modelWidth, palette);
+            {
+                // ⚠️ A SLOT THAT IS ALREADY ONE OF OURS IS RESOLVED BACK TO WHAT IT WAS MADE
+                // FROM. See the note on `Origin`: without this the renderer's current dressing
+                // becomes the next call's source and the cache grows one material per call.
+                var source = sources[i];
+                if (source != null && Origin.TryGetValue(source, out var origin)) source = origin;
 
-            renderer.sharedMaterials = dressed;
+                dressed[i] = Variant(source, key, modelWidth, palette);
+                changed |= dressed[i] != sources[i];
+            }
+
+            // ⚠️ THE WRITE IS SKIPPED WHEN NOTHING MOVED. Assigning `sharedMaterials` marshals a
+            // fresh array into the native renderer and dirties whatever batching it was in, and
+            // with the resolution above a repeat call on an unchanged renderer now produces the
+            // identical set it is already wearing. Re-dressing on every carry-skin poll and every
+            // character rebuild is common; paying for it is not.
+            if (changed) renderer.sharedMaterials = dressed;
         }
 
         /// <summary>
@@ -258,6 +308,11 @@ namespace TumbangPreso.Visual
             material.SetFloat(OutlineWidthId, modelWidth);
 
             Cache[(source, key)] = material;
+
+            // See `Origin`. Recorded so the next `Apply` on a renderer wearing this can find its
+            // way back to `source` instead of treating this as a new source of its own.
+            if (source != null) Origin[material] = source;
+
             return material;
         }
 

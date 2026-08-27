@@ -879,17 +879,55 @@ namespace TumbangPreso.CameraSystem
             if (_leftArm != null) BuildArmAccessories(_leftArm, characterId, isRight: false, parent: this);
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE MESH GOES WITH THE GameObject, AND IT USED NOT TO. Every accessory under an
+        /// arm carries a mesh this file BUILT. `CreateBoxMesh`, `CreateCylinderMesh` and
+        /// `CreateSeanMuscularArmMesh` all return `new Mesh`, and a mesh assigned to
+        /// `sharedMesh` is not owned by the renderer holding it, so destroying the object left
+        /// the mesh alive with nothing pointing at it. Nothing ever collected them: `Mesh` is a
+        /// native object and the managed wrapper going out of scope does not free it.
+        ///
+        /// It leaked on a path the player walks constantly. `ApplyCharacterStyle` clears and
+        /// rebuilds BOTH arms on every character change. Counted from this file: 89 accessory
+        /// calls spread over the 20 builders, so an average pick builds about four and a half
+        /// meshes per arm and strands nine of them, and the roster is eighteen deep.
+        ///
+        /// ⚠️ THE WHOLE SUBTREE, NOT THE DIRECT CHILD. Nemu's `SpiritHand` is an accessory whose
+        /// own hand box is a child of it, so walking one level would have missed exactly the
+        /// nested cases.
+        ///
+        /// ⚠️ AND THE WELD IS FORGOTTEN FIRST. `OutlineNormals` keys its "already done" set on
+        /// the entity id, which stops being unique the moment the object behind it dies. See
+        /// `OutlineNormals.Forget`.
+        ///
+        /// ⚠️ NOTHING ELSE UNDER AN ARM IS TOUCHED. `Arm` and `HeldSlipper` carry meshes loaded
+        /// from `Resources` and are not accessories, so the prefix test is what keeps this from
+        /// destroying an imported asset. Do not widen it.
+        /// </summary>
         private static void ClearAccessories(Transform arm)
         {
             if (arm == null) return;
             for (int i = arm.childCount - 1; i >= 0; i--)
             {
                 var child = arm.GetChild(i);
-                if (child != null && child.name.StartsWith(AccessoryPrefix))
+                if (child == null || !child.name.StartsWith(AccessoryPrefix)) continue;
+
+                foreach (var filter in child.GetComponentsInChildren<MeshFilter>(true))
                 {
-                    if (Application.isPlaying) Object.Destroy(child.gameObject);
-                    else Object.DestroyImmediate(child.gameObject);
+                    if (filter == null) continue;
+
+                    var mesh = filter.sharedMesh;
+                    if (mesh == null) continue;
+
+                    filter.sharedMesh = null;
+                    Visual.OutlineNormals.Forget(mesh);
+
+                    if (Application.isPlaying) Object.Destroy(mesh);
+                    else Object.DestroyImmediate(mesh);
                 }
+
+                if (Application.isPlaying) Object.Destroy(child.gameObject);
+                else Object.DestroyImmediate(child.gameObject);
             }
         }
 
