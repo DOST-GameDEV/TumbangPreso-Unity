@@ -52,8 +52,30 @@ namespace TumbangPreso.Core
             if (!c.RoundActive) return false;
             if (c.IsDefender) return false;
             if (!c.HoldingSlipper) return false;
-            if (!c.LataUpright) return false;
             if (c.ThrowCooldownLeft > 0.0f) return false;
+
+            // ⚠️⚠️ `LataUpright` USED TO REFUSE THE THROW HERE AND IT NO LONGER DOES, 2026-08-26.
+            // 🧑, off the built player, twice: *"my charge still pauses when lata is down"*,
+            // *"i dont want it to pause"*. The refusal produced the worst possible shape of that
+            // rule: an earlier pass had already stopped the down lata CANCELLING a wind-up,
+            // because *"snapping every charged arm to idle on that frame made the shared
+            // knockdown feel like an animation error"*, so the charge was maintained and the
+            // release was then rejected. The player held a fully wound arm, pressed the button,
+            // and nothing happened, with no way to spend or clear the commitment.
+            //
+            // ⚠️ NOTHING IS LOST BY ALLOWING IT, AND THAT IS WHY THIS IS SAFE RATHER THAN A
+            // BALANCE CHANGE. A slipper that reaches a lata already on its side cannot score:
+            // `Lata.HostKnockDown` returns on its second line while `!_isUpright`. The reason
+            // the clause was written, protecting the reset channel from a shot banked on its
+            // last frame, is condition 4 above (`ThrowCooldownLeft`, `Balance.ThrowRestoreCooldown`)
+            // and the lata's own `IsProtected` shield, both of which are untouched and both of
+            // which were added specifically because this clause did NOT cover an airborne
+            // slipper.
+            //
+            // ⚠️ `LataUpright` STAYS ON THE CONTEXT. It is read by the HUD to say what is
+            // happening and by `CanMaintainThrowCharge`, and a struct field is not the rule.
+            // `docs/Design.md` § 2 condition 2 is corrected and `Design_Drift_Report.md` records
+            // this as a deliberate rule change rather than a ninth drift.
 
             // Outside the box. The negation of IsInsideBox, so the boundary case cannot
             // be decided differently in the two places.

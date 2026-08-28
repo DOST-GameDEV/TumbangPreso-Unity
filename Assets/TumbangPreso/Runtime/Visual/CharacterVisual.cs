@@ -54,9 +54,28 @@ namespace TumbangPreso.Visual
         private static readonly int FlashAmountId = Shader.PropertyToID("_FlashAmount");
 
         /// <summary>
-        /// § THE STUN FROST — the body half. See the block comment on <see cref="ProcessFrost"/>.
+        /// § THE CAUGHT MARK — the body half. See the block comment on <see cref="ProcessFrost"/>
+        /// for why a tag stopped being drawn as ice on 2026-08-26.
+        ///
+        /// ⚠️ `_FrostAmount` IS NO LONGER WRITTEN FROM HERE AND THE SHADER TERM STILL EXISTS.
+        /// Ice belongs to Cheska; see the note above `_FrostAmount` in `Toon.shader`.
         /// </summary>
+        private static readonly int CaughtAmountId = Shader.PropertyToID("_CaughtAmount");
+
+        /// <summary>§ THE ELEMENT STUN. The frost term is now the ABILITY coat, recoloured per
+        /// element from <see cref="StunCoat"/>; only the taya's tag uses the caught mark.</summary>
         private static readonly int FrostAmountId = Shader.PropertyToID("_FrostAmount");
+
+        private static readonly int FrostColorId = Shader.PropertyToID("_FrostColor");
+
+        private static readonly int FrostRimColorId = Shader.PropertyToID("_FrostRimColor");
+
+        private StunElement _stunElement = StunElement.None;
+
+        public event System.Action ModelApplied;
+        public int ModelVersion { get; private set; }
+
+        public GhostPetCompanion Companion { get; private set; }
 
         /// <summary>
         /// ⚠️⚠️ THE KENNEY RIG IS AUTHORED ~0.67 UNITS TALL AND NOTHING HERE WAS SCALING IT.
@@ -128,16 +147,25 @@ namespace TumbangPreso.Visual
         private Color _tint = Color.white;
         private float _flashLeft;
         private GameObject _instance;
+        private GameObject _petInstance;
 
         /// <summary>The instanced rig, or null before a model has been applied. Read-only:
         /// <see cref="ApplyModel"/> is the one writer, and the facing correction lives on this
         /// transform rather than on the seat.</summary>
         public GameObject Model => _instance;
 
+        /// <summary>The instanced companion pet, or null if this character has none.</summary>
+        public GameObject Pet => _petInstance;
+
         private void Awake()
         {
             _block = new MaterialPropertyBlock();
             if (_modelRoot == null) _modelRoot = transform;
+        }
+
+        private void OnDestroy()
+        {
+            if (_petInstance != null) Destroy(_petInstance);
         }
 
         /// <summary>
@@ -170,16 +198,20 @@ namespace TumbangPreso.Visual
         /// stripped from the build and the character never moves.
         /// </summary>
         public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips)
-            => ApplyModel(prefab, tint, clips, null);
+            => ApplyModel(prefab, tint, clips, null, null);
+
+        public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips, Color[] palette)
+            => ApplyModel(prefab, tint, clips, palette, null);
 
         /// <summary>
         /// ⚠️ THE PALETTE TRAVELS WITH THE MODEL TOO. The twelve people share twelve rigs and
         /// differ only by which sixteen colours their atlas is remapped to; a seat handed the
         /// model and no palette is a character wearing somebody else's clothes.
         /// </summary>
-        public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips, Color[] palette)
+        public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips, Color[] palette, GameObject petModel)
         {
             if (_instance != null) Destroy(_instance);
+            if (_petInstance != null) Destroy(_petInstance);
 
             _tint = tint;
 
@@ -228,6 +260,19 @@ namespace TumbangPreso.Visual
                                              : ToonSkin.PropOutlineWidth, palette);
 
             AlignToCapsuleFloor();
+
+            if (petModel != null)
+            {
+                var petParent = _modelRoot != null && _modelRoot.parent != null ? _modelRoot.parent : transform;
+                _petInstance = Instantiate(petModel, petParent);
+                _petInstance.transform.localScale = Vector3.one * PersonScale;
+                var companion = _petInstance.AddComponent<GhostPetCompanion>();
+                companion.Bind(_instance != null ? _instance.transform : transform, new Vector3(-0.52f, 0.50f, -0.05f), PersonScale);
+                Companion = companion;
+                ToonSkin.Apply(_petInstance, person ? ToonSkin.PersonOutlineWidth : ToonSkin.PropOutlineWidth, palette);
+                _renderers.AddRange(_petInstance.GetComponentsInChildren<Renderer>(includeInactive: true));
+            }
+
             BuildHandAnchor();
             PushColour();
 
@@ -237,6 +282,26 @@ namespace TumbangPreso.Visual
             var anim = GetComponent<CharacterAnimator>();
             if (anim == null) anim = gameObject.AddComponent<CharacterAnimator>();
             if (_instance != null) anim.Bind(_instance, clips);
+
+            // ⚠️⚠️ NO SECONDARY CLOTH SOLVER ON THE BODY EITHER. DELETED 2026-08-27 along with
+            // `BaggyClothingPhysics` and the first-person `ViewmodelClothPhysics`.
+            //
+            // 🧑, on Nemu: *"her sleeves are phasing and looks weird ... maybe js remove the
+            // physics on her sleeves bcz it looks so ugly, js show me cute blocky sleeves"*.
+            //
+            // ⚠️ THIS ONE POST-MULTIPLIED A ROTATION ONTO `arm-left` AND `arm-right` AFTER the
+            // animator had written them, up to 6 degrees. On a rig whose sleeve, lining and cuff
+            // are three separate boxes sharing a volume, rotating the arm bone under only one of
+            // the three sets is how a cuff ends up inside a forearm. The gain was a sway nobody
+            // asked for on a cast whose whole look is rigid voxels.
+
+            // Procedural cartoon squash-and-stretch
+            var squash = GetComponent<CharacterSquashStretch>();
+            if (squash == null) squash = gameObject.AddComponent<CharacterSquashStretch>();
+            if (_instance != null) squash.BindModel(_instance.transform);
+
+            ModelVersion++;
+            ModelApplied?.Invoke();
         }
 
         /// <summary>
@@ -687,7 +752,22 @@ namespace TumbangPreso.Visual
 
             float target = 0.0f;
 
-            if (_motor.IsStunned)
+            // ⚠️⚠️ A FALL IS NOT A FREEZE, AND THIS IS WHY EVERY TRIP USED TO ICE THE BODY OVER.
+            // `CharacterMotor.ApplyTrip` calls `ApplyStagger` as well as setting `_tripLeft`,
+            // deliberately and correctly: a player on the floor must not be able to act. But
+            // `IsStunned` was the only thing this read, so tripping over a kerb rendered exactly
+            // like being tagged, and the body froze solid on the way down. 🧑: *"i dont want the
+            // effect to be ice too when i fell down it feels weird"*.
+            //
+            // ⚠️ THE FROST MEANS ONE SPECIFIC THING AND THAT IS THE WHOLE VALUE OF IT. Its own
+            // note above: the taya who spent their one scoring verb on a tag needs to SEE the
+            // attacker freeze, and the other two need to know that seat is out for five seconds.
+            // A trip is a 2.5 s stumble nobody scored for. Firing the same signal for both makes
+            // the signal mean "something happened to that player", which is not worth a channel.
+            //
+            // ⚠️ THE TRIP HAS ITS OWN READ ALREADY: the knockdown clip, the get-up clip, and the
+            // mash card `Hud.BuildGetUpCard` puts on screen. It does not need this one too.
+            if (_motor.IsStunned && !_motor.IsTripped)
             {
                 target = 1.0f;
 
@@ -700,6 +780,17 @@ namespace TumbangPreso.Visual
 
             float rate = target > _frostLevel ? FrostRampIn : FrostRampOut;
             SetFrost(Mathf.MoveTowards(_frostLevel, target, dt / Mathf.Max(rate, 0.001f)));
+
+            // ⚠️⚠️ THE ELEMENT DECIDES WHICH OF THE TWO SHADER TERMS THIS LEVEL DRIVES, and it
+            // is one level either way because a body is only ever held by one thing at a time.
+            // `StunElement.None` is the taya's tag and goes to § THE CAUGHT MARK, which drains
+            // colour. Everything else is a hero ability and goes to the frost term, recoloured
+            // per element from `StunCoat`. See `Toon.shader` for why ice kept its own channel.
+            //
+            // ⚠️ THE OTHER TERM IS WRITTEN TO ZERO RATHER THAN LEFT ALONE. They are separate
+            // uniforms on one property block, so a seat tagged immediately after being frozen
+            // would otherwise wear both at once: a grey body with ice still on it.
+            _stunElement = _motor.StunElement;
         }
 
         /// <summary>
@@ -729,7 +820,18 @@ namespace TumbangPreso.Visual
                     foreach (int id in ColourIds) _block.SetColor(id, _tint);
 
                 _block.SetFloat(FlashAmountId, flash);
-                _block.SetFloat(FrostAmountId, _frostLevel);
+                // ⚠️ ONE LEVEL, ROUTED BY ELEMENT. See the note at the end of `ProcessFrost`.
+                bool ability = _stunElement != StunElement.None;
+
+                _block.SetFloat(CaughtAmountId, ability ? 0.0f : _frostLevel);
+                _block.SetFloat(FrostAmountId, ability ? _frostLevel : 0.0f);
+
+                if (ability)
+                {
+                    var coat = StunCoat.For(_stunElement);
+                    _block.SetColor(FrostColorId, coat.Body);
+                    _block.SetColor(FrostRimColorId, coat.Rim);
+                }
 
                 r.SetPropertyBlock(_block);
             }

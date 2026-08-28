@@ -58,6 +58,13 @@ namespace TumbangPreso
             if (TimeScale > 1.0f) Time.timeScale = TimeScale;
 
             Running = true;
+
+            // ⚠️ THE ONE PLACE THE ULTIMATE BANK IS EMPTIED. Charge carries across the four
+            // rounds of a match on purpose; it must not carry into the NEXT match, and this
+            // component is reachable more than once in a session.
+            foreach (var seat in Seats)
+                seat?.GetComponent<Abilities.HeroAbilitySystem>()?.ResetKitForMatch();
+
             GameServices.Match.StartMatch();
         }
 
@@ -165,19 +172,62 @@ namespace TumbangPreso
         {
             if (!NetAuthority.ShouldResolve()) return;
 
-            var attackers = new List<int>();
-            for (int slot = 0; slot < Balance.PlayerCount; slot++)
-                if (slot != defenderSlot) attackers.Add(slot);
-
+            // ⚠️⚠️ ONLY SEATS THAT EXIST. With the practice lobby set to NONE the three bot seats
+            // are never built (`MatchInstaller`), so a tsinelas can be indexed to a body that is
+            // not there. That used to be handled by building a list of live attackers and
+            // counting through it, which is the very thing that shifted every owner by one; the
+            // `seated` check below is the same guard done per seat, where it cannot renumber
+            // anybody. A full match is unaffected, because all three non-defender seats exist.
             for (int index = 0; index < Slippers.Length; index++)
             {
                 var slipper = Slippers[index];
                 if (slipper == null) continue;
 
-                // A slipper with no attacker to own it is DISOWNED rather than left holding last
-                // round's slot: a stale owner is worse than none, because every gate that reads
-                // the field would then refuse everybody.
-                slipper.OwnerSlot = index < attackers.Count ? attackers[index] : -1;
+                // ⚠️⚠️ A TSINELAS BELONGS TO THE SEAT WITH ITS INDEX, NOT TO THE Nth ATTACKER,
+                // AND THE OLD LINE HERE PUT ONE UNOWNED IKE SLIPPER IN THE ROAD IN EVERY ROUND
+                // OF EVERY MATCH. 🧑 2026-08-26, with it circled in a screenshot: *"thres this
+                // random Ike slipper that u cant pick up in the map ... it's on ALL games"*.
+                //
+                // It was `index < attackers.Count ? attackers[index] : -1`, and `attackers` is
+                // the three non-defender seats. Four slippers over three attackers means index 3
+                // ALWAYS fell off the end and was disowned, every round, whoever was taya. And
+                // `MatchInstaller.BuildSlipper` gives a non-local seat `pick = slot`, so slipper
+                // 3 always wore roster entry 3, which is IKE (`Roster.Slippers`). One specific
+                // model, on the ground, in every single match: not random at all.
+                //
+                // ⚠️ THE INDEX SHIFT WAS A SECOND BUG WEARING THE SAME CAUSE. Ownership counted
+                // through the attacker list while `SlipperHome` and `BuildSlipper` both index by
+                // SEAT, so with seat 0 defending, seat 1 was handed slipper 0 — the tsinelas
+                // built with seat 0's art. A player who picked their slipper in the settings
+                // panel was carrying somebody else's for the whole match. Owning by seat makes
+                // all three agree.
+                //
+                // ⚠️ THE TAYA'S OWN TSINELAS IS NOW THE DISOWNED ONE, which is what the rules
+                // already say happens: `EquipOwnedSlippers`' summary is "OWNERSHIP IS ASSIGNED
+                // EXPLICITLY, in SEAT ORDER, skipping the taya", and this is the line finally
+                // doing that. A disowned slipper is parked below, not left lying on a mark.
+                bool seated = GameServices.Round.PlayerAt(index) != null;
+                slipper.OwnerSlot = index != defenderSlot && seated ? index : -1;
+
+                // ⚠️⚠️ THE TAYA'S SLIPPER LEAVES THE ARENA RATHER THAN LYING IN IT. Three
+                // attackers throw three tsinelas; a fourth on the floor is ammunition the round
+                // does not have and an object the player walks to and cannot use. Deactivating
+                // is what takes it out of `Carrier.TryPickup`, which searches with the default
+                // `FindObjectsInactive.Exclude`, and out of the render at the same time.
+                //
+                // ⚠️⚠️ BUT ONLY THE TAYA'S, AND AN ABSENT SEAT'S SPARE STAYS ON THE GROUND.
+                // `SoloPracticeTests` caught this immediately: with the practice lobby set to
+                // NONE the three bot seats are never built, so parking every ownerless tsinelas
+                // left the one human holding the only one in the arena and nothing at all to
+                // practise retrieving. The two cases look identical through `OwnerSlot` and are
+                // opposite in intent. A seat that EXISTS and is defending may not throw, so its
+                // tsinelas is deliberately out of play; a seat that does not exist has simply
+                // left its slippers in the street, which is what an empty practice lobby is.
+                //
+                // ⚠️ IT IS RE-ENABLED IN `ResetWorld`, NOT HERE, because roles rotate: the seat
+                // that sits out this round throws next round, and a slipper switched off for
+                // good would leave that attacker empty-handed.
+                slipper.gameObject.SetActive(!(seated && index == defenderSlot));
 
                 if (slipper.OwnerSlot < 0) continue;
 
@@ -189,8 +239,14 @@ namespace TumbangPreso
             }
         }
 
-        private void OnIntermission(int nextRound, int nextDefenderSlot) =>
-            Invoke(nameof(Advance), Balance.IntermissionDuration);
+        private void OnIntermission(int nextRound, int nextDefenderSlot)
+        {
+            ResetWorld(nextDefenderSlot);
+            EquipOwnedSlippers(nextDefenderSlot);
+
+            CancelInvoke(nameof(Advance));
+            Invoke(nameof(Advance), Balance.WarmupBufferDuration);
+        }
 
         private void Advance() => GameServices.Match.AdvanceRound();
 
@@ -225,6 +281,13 @@ namespace TumbangPreso
                 m.IsDefender = slot == defenderSlot;
                 m.HoldingSlipper = false;
                 m.Stamina.RefillAndClearFatigue();
+
+                // ⚠⚠ THE HERO KIT RESETS WITH THE BODY. Ultimate charge, cooldowns and
+                // anything still running are cleared here, at the one place every round
+                // boundary already passes through. `HeroKit.Tick` trickles passive charge every
+                // frame including practice time, and nothing called `ResetKit` before this, so
+                // charge banked before the whistle survived into the next round.
+                m.GetComponent<Abilities.HeroAbilitySystem>()?.ResetKit();
 
                 // ⚠️ THE SPAWN IS RECORDED, NOT JUST USED. The kill plane returns whoever falls
                 // off the world to their OWN spawn, and it has no other way to know where that
@@ -261,6 +324,12 @@ namespace TumbangPreso
                 if (plate != null) { plate.ApplySizing(); plate.Refresh(); }
             }
 
+            // ⚠️ THE HAZARD MAP IS EMPTIED WITH THE ROUND. Hazard objects are destroyed at a
+            // round boundary and each unregisters itself in OnDisable, but a teardown that skips
+            // OnDisable would leave the bots steering around patches of empty road for the rest
+            // of the match. Clearing here costs nothing and cannot go stale.
+            Abilities.HazardMap.Clear();
+
             if (Lata != null)
             {
                 // The lata wears whichever seat currently DEFENDS. That rotation is what makes
@@ -273,6 +342,15 @@ namespace TumbangPreso
             for (int slot = 0; slot < Slippers.Length; slot++)
             {
                 if (Slippers[slot] == null) continue;
+
+                // ⚠️ EVERY TSINELAS COMES BACK ON BEFORE IT IS PLACED. `EquipOwnedSlippers`
+                // switches the taya's off for the round it is not being thrown, and the taya
+                // rotates: the seat that sat out this round is an attacker in the next one, and
+                // a slipper left deactivated would open that round with nothing in their hand.
+                // Turning them all on here and letting the equip pass switch one back off keeps
+                // the rule in ONE place rather than two that have to agree.
+                if (!Slippers[slot].gameObject.activeSelf) Slippers[slot].gameObject.SetActive(true);
+
                 Slippers[slot].transform.position = SlipperHome(slot);
             }
         }

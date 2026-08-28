@@ -74,10 +74,54 @@ namespace TumbangPreso
         /// </summary>
         public string DisplayName()
         {
-            if (_isBot) return CharacterName().ToUpperInvariant();
-            if (_playerName != "") return _playerName.ToUpperInvariant();
-            return $"P{_playerSlot + 1}";
+            // ⚠️⚠️ THE ANSWER IS REMEMBERED, BECAUSE EVERY BRANCH OF IT ALLOCATES AND IT IS READ
+            // ONCE A FRAME PER BODY. `ToUpperInvariant` returns a new string every call, the
+            // seat fallback is an interpolation, and `CharacterName` walks the roster to get
+            // there. `Hud.UpdateScores` asks all four seats on every tick, the nameplate over
+            // each body asks again, and the YOU card asks a third time.
+            // `HudPerformanceProbe` is what put a number on it.
+            //
+            // ⚠️ THE INPUTS ARE COMPARED, NOT INVALIDATED FROM THE SETTERS, and that is the
+            // safer half of this. `_playerSlot`, `_characterIndex`, `_isBot` and `_playerName`
+            // are all `[SerializeField]` and all written from more than one place, including the
+            // inspector and the seat-rebind path; a cache cleared by hand in four setters is one
+            // future writer away from a body wearing somebody else's name. Reading the fields is
+            // free, and `Mode` is in the list because `CharacterName` looks the roster up per
+            // mode and the two rosters are different people.
+            if (_displayName == null ||
+                _displayNameBot != _isBot ||
+                _displayNameCharacter != _characterIndex ||
+                _displayNameSlot != _playerSlot ||
+                _displayNameMode != Mode ||
+                _displayNameFrom != _playerName)
+            {
+                _displayNameBot = _isBot;
+                _displayNameCharacter = _characterIndex;
+                _displayNameSlot = _playerSlot;
+                _displayNameMode = Mode;
+                _displayNameFrom = _playerName;
+
+                _displayName = _isBot ? CharacterName().ToUpperInvariant()
+                             : _playerName != "" ? _playerName.ToUpperInvariant()
+                             : $"P{_playerSlot + 1}";
+            }
+
+            return _displayName;
         }
+
+        private string _displayName;
+        private string _displayNameFrom;
+        private bool _displayNameBot;
+        private int _displayNameCharacter;
+        private int _displayNameSlot;
+        private GameMode _displayNameMode;
+
+        /// <summary>Active game mode for trait lookups and ability kits.</summary>
+        public GameMode Mode { get; set; } = GameMode.HeroStrike;
+
+        private Abilities.HeroAbilitySystem _abilitySystem;
+        public Abilities.HeroAbilitySystem AbilitySystem =>
+            _abilitySystem != null ? _abilitySystem : (_abilitySystem = GetComponent<Abilities.HeroAbilitySystem>());
 
         /// <summary>The roster pick's name, falling back to the seat number.
         /// CharacterIndex is -1 until a pick arrives.</summary>
@@ -86,9 +130,10 @@ namespace TumbangPreso
             // ⚠️ THE CORE ROSTER, NOT RosterBook. RosterBook maps an index to a model; the
             // NAME is balance-layer data and lives in the engine-free package, so a headless
             // test can assert a legend without loading a single asset.
-            if (_characterIndex < 0 || _characterIndex >= Roster.People.Count)
+            var list = Roster.GetPeople(Mode);
+            if (_characterIndex < 0 || _characterIndex >= list.Count)
                 return $"P{_playerSlot + 1}";
-            return Roster.People[_characterIndex].Name;
+            return list[_characterIndex].Name;
         }
 
         public InputIntent Intent { get; } = new InputIntent();
@@ -110,6 +155,20 @@ namespace TumbangPreso
         /// <summary>The push a shove, a block or a tag applied, decaying against Friction.
         /// Kept separate from walk velocity so a knockback cannot be walked out of.</summary>
         private Vector3 _externalVelocity;
+
+        private bool _networkTargetKnown;
+
+        /// <summary>
+        /// The owner's own `IsGrounded`, off the wire. See <see cref="StepNetworkReplica"/> for
+        /// why this is transmitted rather than worked out from the replicated velocity.
+        /// </summary>
+        private bool _networkGrounded;
+
+        private Vector3 _networkTargetPosition;
+        private Vector3 _networkTargetVelocity;
+        private float _networkTargetYaw;
+        private Vector3 _networkSmoothVelocity;
+        private float _networkYawVelocity;
 
         private void Awake()
         {
@@ -173,6 +232,27 @@ namespace TumbangPreso
 
         public void Teleport(Vector3 position)
         {
+            if (!MayMutateGameplayState()) return;
+            // ⚠️⚠️ THE ARENA WALL IS ENFORCED HERE TOO, AND THIS IS THE PATH THAT ACTUALLY
+            // BROKE IT. `Confine` holds a body that WALKS or is PUSHED at the edge, and a
+            // teleport skips the whole movement step, so a caller handing this an arbitrary
+            // point put a player outside the world with nothing to pull them back. Nemu owns
+            // both such callers: PHANTOM PHASE ends by blinking to wherever the projected
+            // ghost drifted to, and the pet's `EndPossession` teleports Nemu onto the pet.
+            // Neither destination is bounded by anything.
+            //
+            // ⚠️ MEASURED 2026-08-23, and it read as an AI fault rather than an ability one.
+            // A whole Hero Strike match reported a seat 45.8 m out on X against a half width of
+            // 8.6, holding its tsinelas the entire way; it then threw from out there and spent
+            // the rest of the round unable to fetch, because a bot clamps its GOAL to the
+            // playable rectangle and so cannot follow itself out. Clamping at the one function
+            // every teleport already goes through fixes both callers and every future one.
+            //
+            // ⚠️ THE SPAWN MARKS AND THE TAG SAFE ZONE ARE ALL WELL INSIDE THIS, so nothing that
+            // was already correct moves by a millimetre.
+            position.x = Mathf.Clamp(position.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
+            position.z = Mathf.Clamp(position.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+
             _cc.enabled = false;      // CharacterController fights direct transform writes
             transform.position = position;
             _cc.enabled = true;
@@ -191,9 +271,17 @@ namespace TumbangPreso
         // state and the copy nobody reads is the one that drifts.
         // -------------------------------------------------------------------
 
-        public void EnterSpeedZone(float multiplier) => Stamina.SpeedZones.Enter(multiplier);
+        public void EnterSpeedZone(float multiplier)
+        {
+            if (!MayMutateGameplayState()) return;
+            Stamina.SpeedZones.Enter(multiplier);
+        }
 
-        public void ExitSpeedZone(float multiplier) => Stamina.SpeedZones.Exit(multiplier);
+        public void ExitSpeedZone(float multiplier)
+        {
+            if (!MayMutateGameplayState()) return;
+            Stamina.SpeedZones.Exit(multiplier);
+        }
 
         /// <summary>The slow currently applied to this unit, 1.0 when clear.</summary>
         public float SpeedMultiplier => Stamina.SpeedZones.Value;
@@ -208,6 +296,7 @@ namespace TumbangPreso
         /// </summary>
         public void Respawn()
         {
+            if (!MayMutateGameplayState()) return;
             Teleport(SpawnPosition);
             // Godot reached the autoload directly (`AudioManager.play_at`). GameServices is
             // this port's stand-in for the nine autoloads, and it is null in a bare test
@@ -235,7 +324,7 @@ namespace TumbangPreso
         /// three verbs all derive their direction from the body (`-basis.z` in the .gd), so this
         /// is combat correctness rather than an animation nicety.
         /// </summary>
-        private Vector3 Steer(Vector2 axis)
+        private Vector3 Steer(Vector2 axis, float dt)
         {
             Vector3 wish = new Vector3(axis.x, 0.0f, axis.y);
             if (wish.sqrMagnitude > 1.0f) wish.Normalize();
@@ -250,9 +339,85 @@ namespace TumbangPreso
             }
 
             wish = wish.normalized;
-            transform.rotation = Quaternion.LookRotation(wish, Vector3.up);
+
+            // ⚠️⚠️ THE BODY TURNS AT A BOUNDED RATE. IT USED TO SNAP, AND THAT IS THE WHOLE OF
+            // 🧑'S 2026-08-27 REPORT: *"they can look straight behind them and turn in 0.1
+            // seconds"*. What stood here was a bare `Quaternion.LookRotation(wish)`, so a
+            // movement-aimed unit was facing its new heading on the very next frame: a full
+            // reversal took one 60th of a second, which no human with a mouse can do.
+            //
+            // ⚠️ THE MOVEMENT IS NOT RATE-LIMITED, ONLY THE FACING, and that is deliberate
+            // rather than an oversight. A keyboard player moves the instant they press a key and
+            // their body catches up; slewing the VELOCITY as well would make bots accelerate
+            // into corners differently from players and would change every pathing number in
+            // `AiTuning`. `wish` is returned unchanged, so the bot still walks where it decided
+            // to walk on the frame it decided.
+            //
+            // ⚠️ AND IT APPLIES TO EVERY MOVEMENT-AIMED UNIT, NOT ONLY TO BOTS. A human on a
+            // gamepad steers this way too (`MouseAimed` is false for them), and a turn cap that
+            // only bots obeyed would be a second movement model, which `CLAUDE.md` § 4 forbids
+            // in as many words: *"a bot presses the same buttons a human does"*.
+            // ⚠️⚠️ THE RATE IS NOT CONSTANT ANY MORE, AND THAT IS § HOW A HAND MOVES A MOUSE IN
+            // `AiTuning`. What stood here was `BodyTurnDegPerSecond * dt`, a flat cap, so the
+            // body turned at exactly 520°/s from the first frame of a turn to the last and then
+            // stopped dead on the mark. It fixed the 2026-08-27 report (*"they can look straight
+            // behind them and turn in 0.1 seconds"*) and replaced it with a different tell:
+            // nothing physical moves at one speed with no ramp at either end. 🧑 2026-08-28:
+            // *"(make sure its head turns like how a human's camera/mouse turns)"*.
+            //
+            // ⚠️⚠️ THE WANTED SPEED SCALES WITH HOW FAR THERE IS TO GO, WHICH IS THE HALF THAT
+            // READS. A person makes a 15° correction slowly and a 170° check fast, so one rate is
+            // wrong at both ends: at 520 the small correction snaps and only the big check looks
+            // right. Dividing the remaining angle by `BodyTurnReachSeconds` gives a hand that
+            // wants to finish any turn in about the same time, which is what a wrist does.
+            //
+            // ⚠️ NOTHING GOT FASTER THAN IT WAS. A full 180° reversal wants 1000°/s at 0.18 s and
+            // clamps to the shipped `BodyTurnDegPerSecond` 520, so the longest turn in the game
+            // still runs at exactly the old cap. Only turns under about 94° behave differently,
+            // and those are the ones that used to snap.
+            //
+            // ⚠️ THE FLOOR IS NOT A START-FROM-ZERO. Accelerating from rest makes every SHORT
+            // press worthless, and the loiter glance is a 0.09 s press: from zero it would be
+            // worth about 12° and the look-around added on 2026-08-27 would quietly stop
+            // happening. `BodyTurnSettleDegPerSecond` is a hand that is already tensed.
+            //
+            // ⚠️ AND `RotateTowards` STILL CLAMPS AT THE TARGET, so there is no overshoot to
+            // correct and no settle wobble. The ease is in how the rate is reached, not in an
+            // oscillation around the mark.
+            float remaining = Quaternion.Angle(transform.rotation,
+                                               Quaternion.LookRotation(wish, Vector3.up));
+
+            float wantRate = Mathf.Clamp(remaining / AiTuning.BodyTurnReachSeconds,
+                                         AiTuning.BodyTurnSettleDegPerSecond,
+                                         AiTuning.BodyTurnDegPerSecond);
+
+            // ⚠️ THE RATE IS NEVER BELOW THE FLOOR WHILE A TURN IS RUNNING. Without this line a
+            // body that has been walking one heading sits at whatever rate it decayed to, and the
+            // first frame of a new turn inherits it: a bot that has stood still is slower to turn
+            // than one that has just turned, for no reason a player could ever read.
+            if (_turnRate < AiTuning.BodyTurnSettleDegPerSecond)
+                _turnRate = AiTuning.BodyTurnSettleDegPerSecond;
+
+            _turnRate = Mathf.MoveTowards(_turnRate, wantRate,
+                                          AiTuning.BodyTurnAccelDegPerSecond2 * Mathf.Max(0.0f, dt));
+
+            float maxTurn = _turnRate * Mathf.Max(0.0f, dt);
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation, Quaternion.LookRotation(wish, Vector3.up), maxTurn);
+
             return wish;
         }
+
+        /// <summary>
+        /// The body's current angular speed in degrees per second, carried between frames so a
+        /// turn can accelerate. See the note in <see cref="Steer"/>.
+        ///
+        /// ⚠️ IT IS DELIBERATELY NOT RESET WHEN THE BODY STOPS. A hand does not go rigid the
+        /// instant it stops moving the mouse, and resetting would make the first frame after a
+        /// pause the slowest frame of the next turn. The floor in `Steer` bounds it from below
+        /// and `MoveTowards` bounds it from above, so it cannot drift anywhere useless.
+        /// </summary>
+        private float _turnRate;
 
         /// <summary>
         /// True when a local player is steering this unit with the mouse, from
@@ -267,6 +432,31 @@ namespace TumbangPreso
             get
             {
                 if (_rig == null || !_rig.IsFollowing(this)) return false;
+
+                // ⚠️⚠️ A POSSESSED BODY IS NOT MOUSE-AIMED, AND LEAVING THIS OUT WALKED NEMU
+                // BACKWARDS. 🧑 2026-08-27: *"his character still moves backwards when i click
+                // E"*. The rig still FOLLOWS her while she is riding Kuro (it is her seat, it is
+                // just drawing from the pet's mount), so `IsFollowing` stays true and this
+                // answered "mouse". But `CameraRig.StepLook` is not running for her either:
+                // `StepCompanionLook` runs instead and yaws the PET, so her body's rotation is
+                // frozen at whatever it was when the possession began.
+                //
+                // ⚠️⚠️ AND HER BODY IS BEING DRIVEN BY AN AI IN THE MEANTIME.
+                // `GhostPetCompanion.BeginPossession` adds a temporary `AIController` so she is
+                // not a statue while the player is elsewhere, and an AI writes a WORLD-space
+                // heading (`AIController.Drive` through `EightWay`). With this returning true,
+                // `Steer` then ran `transform.TransformDirection` on it and re-interpreted that
+                // world heading as body-relative, rotating it by her frozen yaw. A bot asking to
+                // walk north walked whichever way her shoulders happened to be pointing, which
+                // is backwards as often as not.
+                //
+                // ⚠️ THE FIX IS HERE RATHER THAN IN `Steer` BECAUSE THE QUESTION IS THE ONE THIS
+                // PROPERTY ALREADY ASKS: is a local player aiming this body with the mouse right
+                // now. While she is possessing, nobody is.
+                var visual = GetComponent<Visual.CharacterVisual>();
+                if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
+                    return false;
+
                 return _rig.Aim == CameraSystem.AimSource.Mouse;
             }
         }
@@ -289,6 +479,16 @@ namespace TumbangPreso
             float dt = Time.fixedDeltaTime;
 
             ResolveRig();
+
+            // A remote body is a host-authored picture, not a second simulation. Before this
+            // guard every client applied gravity and confinement to remote seats between
+            // snapshots, while the host applied the real movement. That made a correct stream
+            // visibly bob and fight itself, and it made bots look worse than human peers.
+            if (NetAuthority.IsNetworked && !IsLocallySimulated())
+            {
+                StepNetworkReplica(dt);
+                return;
+            }
 
             if (_spawnSettle > 0)
             {
@@ -351,13 +551,13 @@ namespace TumbangPreso
 
             float speed = Balance.Speed
                           * Stamina.RoleSpeedScale(_isDefender)
-                          * Roster.PersonSpeedScale(_characterIndex)
+                          * Roster.PersonSpeedScale(_characterIndex, Mode)
                           * sprint
                           * Stamina.SpeedZones.Value;
 
             if (canSteer)
             {
-                Vector3 wish = Steer(axis);
+                Vector3 wish = Steer(axis, dt);
 
                 _velocity.x = wish.x * speed;
                 _velocity.z = wish.z * speed;
@@ -394,7 +594,15 @@ namespace TumbangPreso
             // silent, or a unit stepping off a kerb thumps like one that fell off a roof —
             // and on uneven ground the grounded flag flickers, so every step would thud.
             if (_grounded && wasAirborne && _fallSpeed > Balance.LandSfxMinSpeed)
-                GameServices.Audio?.PlayAt("land", transform.position);
+            {
+                float weight = Mathf.InverseLerp(Balance.LandSfxMinSpeed,
+                                                 Balance.MaxFallSpeed, _fallSpeed);
+                GameServices.Audio?.PlayAtVaried("land", transform.position,
+                                                 0.86f, 1.04f,
+                                                 Mathf.Lerp(0.65f, 1.0f, weight));
+                GetComponentInChildren<Visual.CharacterSquashStretch>()?
+                    .Squash(Mathf.Lerp(0.12f, 0.30f, weight));
+            }
 
             // Tracked on the way down, because by the time the capsule is grounded the
             // vertical velocity has already been zeroed.
@@ -402,6 +610,31 @@ namespace TumbangPreso
 
             ShedCharacterPerch();
             Confine();
+
+            // ⚠⚠ THE MASH IS READ HERE, BEFORE `CommitFrame`, AND IT IS THE JUMP KEY ON
+            // PURPOSE. Jump is the one verb that is meaningless while a body is face down on the
+            // tarmac, so nothing is taken away by giving it a second job in that state, and
+            // "hammer the jump key to get up" needs no teaching. It follows the pattern `Grab`
+            // already uses: one control, one action, resolved by context. No new binding is
+            // added, so `InputMapAndAbilityTests`' one-control-one-action rule is untouched.
+            bool mashPressed = Intent.JustPressed(Verb.Jump);
+            if (_tripLeft > 0.0f && mashPressed) MashRecover();
+
+            // ⚠️ THE SAME KEY ANSWERS AN ELEMENT STUN, AND THE ORDER MATTERS. A body that is
+            // both tripped and stunned is handled by the line above, which already clears both;
+            // `MashOutOfStun` returns early on a live trip rather than racing it, so one press
+            // can never be spent twice. Jump is meaningless while stunned for exactly the reason
+            // it is meaningless face down, so this takes nothing away and needs no teaching, and
+            // no new binding means `InputMapAndAbilityTests`' one-control-one-action rule is
+            // untouched.
+            if (_stunElement != StunElement.None && mashPressed) MashOutOfStun();
+
+            // The local press is predicted for immediate feedback, then the host applies the
+            // same rule to its authoritative stun/trip clock. Without this request a client
+            // could fill its own meter while the host still considered it fully stunned, and
+            // the next state packet put the whole bar back.
+            if (mashPressed && NetAuthority.ShouldRequest() && _playerSlot == NetAuthority.LocalSlot)
+                Net.MatchRpc.Instance?.RequestMashServerRpc(_playerSlot);
 
             // ⚠️⚠️ THE INTENT SNAPSHOT IS TAKEN HERE, AT THE END OF THE AUTHORITATIVE STEP, AND
             // NOWHERE ELSE. `JustPressed` and `JustReleased` are a diff against it, so whoever
@@ -417,11 +650,221 @@ namespace TumbangPreso
             // carry no physics step at all.
             Intent.CommitFrame();
 
-            if (NetAuthority.ShouldRequest() && _playerSlot == NetAuthority.LocalSlot)
-            {
-                Net.MatchRpc.Instance?.SubmitMoveServerRpc(_playerSlot, transform.position, transform.eulerAngles.y, _velocity);
-            }
+            StepNetworkTransform();
         }
+
+        // -------------------------------------------------------------------
+        // § TELLING EVERYBODY ELSE WHERE THIS BODY IS
+        //
+        // ⚠️⚠️ THE HOST NEVER SENT ITS OWN BODIES AND THAT IS THE WHOLE OF 🧑'S 2026-08-27
+        // REPORT: *"movements only existed in host's side and no one that joined could see
+        // movement and shi happening from them"*. This block was one `if`:
+        //
+        //     if (NetAuthority.ShouldRequest() && _playerSlot == NetAuthority.LocalSlot)
+        //         MatchRpc.Instance?.SubmitMoveServerRpc(...);
+        //
+        // `ShouldRequest()` is `IsNetworked && !IsHost`, so **on the host it is false, always.**
+        // A client submitted its own position and the host relayed it, so a joiner could see
+        // OTHER JOINERS move. Nothing ever transmitted the host's own player, and nothing ever
+        // transmitted a bot, because bots are host-owned and have no client to ask on their
+        // behalf. In the usual test (one host, one joiner, two bots) the joiner saw one moving
+        // body and three statues.
+        //
+        // ⚠️⚠️ `NetAuthority`'S OWN HEADER PREDICTS THIS EXACT FAULT, in the paragraph above
+        // `ShouldRequest`: *"Any verb that calls ShouldResolve MUST also handle ShouldRequest. If
+        // a verb has one without the other, it is broken for somebody and probably silently."*
+        // It records the lunge shipping dead for three of four players for weeks from the same
+        // shape. Movement had the REQUEST half and no host half at all, which is that warning
+        // with the sides swapped, and it is the more expensive version because a dead verb is a
+        // verb nobody uses and a dead transform is the entire game not happening.
+        //
+        // ⚠️ IT SENDS ON THE PHYSICS STEP, WHICH IS THE SAME CADENCE A CLIENT ALREADY SUBMITS AT.
+        // `ApplyUnitMove` snaps rather than interpolating, so a slower host tick would make
+        // host-owned bodies visibly choppier than client-owned ones on the same screen, which
+        // reads as those specific players lagging. Four seats at roughly forty bytes on a 50 Hz
+        // step is about 8 KB/s downstream, which is nothing on a LAN and acceptable on the relay.
+        // If that ever needs to come down, the answer is interpolation on the receiving end
+        // first, not a lower send rate on its own.
+        // -------------------------------------------------------------------
+
+        private void StepNetworkTransform()
+        {
+            if (!NetAuthority.IsNetworked) return;
+
+            // A client speaks only for the body it is actually driving.
+            if (NetAuthority.ShouldRequest())
+            {
+                if (_playerSlot == NetAuthority.LocalSlot)
+                    Net.MatchRpc.Instance?.SubmitMoveServerRpc(
+                        _playerSlot, transform.position, transform.eulerAngles.y, _velocity,
+                        _grounded);
+
+                return;
+            }
+
+            if (!NetAuthority.IsHost) return;
+
+            // ⚠️⚠️ ONLY THE BODIES THE HOST ACTUALLY DRIVES, and the test is which input source
+            // is bolted to them rather than a lobby lookup. `MatchInstaller.BuildSeat` gives the
+            // local human a `PlayerInputReader`, gives an unoccupied seat an `AIController`, and
+            // gives a REMOTE human's seat neither, because that body is moved by the transforms
+            // its owner submits. So "has one of the two" is exactly "the host simulated this
+            // body", it needs no peer list, and it is right the instant `HostPeerLeft` drops an
+            // `AIController` onto a seat somebody just disconnected from.
+            //
+            // ⚠️ RE-BROADCASTING A REMOTE SEAT WOULD NOT BE HARMLESS. The host's copy of it is up
+            // to one step behind whatever that client last sent, so echoing it back out puts a
+            // body that is being driven at 50 Hz into a fight with a stale copy at 50 Hz, which
+            // is visible as a jitter on precisely the players who are playing well.
+            if (!HostDrivesThisBody()) return;
+
+            Net.MatchRpc.Instance?.SyncUnitTransformClientRpc(
+                _playerSlot, transform.position, transform.eulerAngles.y, _velocity);
+        }
+
+        /// <summary>
+        /// Is this body simulated here, rather than being a picture of somebody else's?
+        ///
+        /// ⚠️ THE LOOKUPS ARE CACHED BECAUSE THIS RUNS ON EVERY PHYSICS STEP FOR EVERY SEAT.
+        /// `GetComponent` four times a step is the shape of per-frame cost `CLAUDE.md` § 7.1
+        /// records a HUD string rebuild being caught for. `_inputSourceKnown` is reset by
+        /// <see cref="ForgetInputSource"/> whenever a seat changes hands, which is the only time
+        /// the answer can change.
+        /// </summary>
+        private bool HostDrivesThisBody()
+        {
+            if (!_inputSourceKnown)
+            {
+                _hostDriven = GetComponent<PlayerInputReader>() != null
+                              || GetComponent<AIController>() != null;
+                _inputSourceKnown = true;
+            }
+
+            return _hostDriven;
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ CALLED WHENEVER A SEAT CHANGES HANDS, and forgetting to call it is a body that
+        /// goes silent or starts double-talking. A peer disconnecting gains an `AIController`
+        /// (`MatchRpc.HostPeerLeft`) and a peer reclaiming its seat loses one
+        /// (`MatchRpc.HostLateJoin`); both change the answer above and neither is visible from
+        /// here.
+        /// </summary>
+        public void ForgetInputSource() => _inputSourceKnown = false;
+
+        /// <summary>True when this process owns the simulation rather than displaying it.</summary>
+        public bool IsLocallySimulated()
+        {
+            if (!NetAuthority.IsNetworked) return true;
+            if (NetAuthority.IsHost) return HostDrivesThisBody();
+            return _playerSlot == NetAuthority.LocalSlot;
+        }
+
+        /// <summary>
+        /// Gameplay state belongs to the host. The owning client may predict changes to its own
+        /// body so input stays responsive; the continuous host state stream corrects it. An
+        /// observing client may never move or stun somebody else's body, even when a replicated
+        /// hazard happens to run there too.
+        /// </summary>
+        private bool MayMutateGameplayState()
+            => !NetAuthority.IsNetworked || NetAuthority.IsHost || _playerSlot == NetAuthority.LocalSlot;
+
+        /// <summary>
+        /// Queues a host transform. Remote seats smooth toward it; the owning client only
+        /// accepts a correction when prediction has drifted far enough to be visible.
+        /// </summary>
+        public void ApplyNetworkTransform(Vector3 position, float yaw, Vector3 velocity,
+                                          bool grounded, bool reconcileLocal, bool force = false)
+        {
+            _velocity = velocity;
+
+            // ⚠️ ASSIGNED BEFORE THE RECONCILE RETURN BELOW, AND THAT ORDERING MATTERS. A body
+            // whose owner is predicting it skips the rest of this method whenever the error is
+            // small, which is most frames; the pose it keeps is its own, but the grounded bit is
+            // still the owner's truth and `StepNetworkReplica` never runs for it anyway.
+            _networkGrounded = grounded;
+
+            float error = Vector3.Distance(transform.position, position);
+            if (reconcileLocal && error < 1.25f) return;
+
+            _networkTargetPosition = position;
+            _networkTargetYaw = yaw;
+            _networkTargetVelocity = velocity;
+
+            bool snap = force || !_networkTargetKnown || error > 3.0f;
+            _networkTargetKnown = true;
+
+            if (!snap) return;
+
+            SetNetworkPose(position, yaw);
+            _networkSmoothVelocity = Vector3.zero;
+            _networkYawVelocity = 0.0f;
+        }
+
+        private void StepNetworkReplica(float dt)
+        {
+            if (!_networkTargetKnown) return;
+
+            // ⚠️⚠️ TRANSMITTED, NOT INFERRED, AND THE INFERENCE IS GONE RATHER THAN KEPT AS A
+            // FALLBACK. `_grounded` is written only by `ApplyGravity` in the local simulation
+            // and this branch returns before ever reaching it, so on a replica it would other-
+            // wise stay FALSE for the whole match. `Visual.CharacterAnimator.ClipFor` asks
+            // `IsGrounded` FIRST:
+            //
+            //     if (!_motor.IsGrounded) return _motor.Velocity.y > 0.5f ? Jump : Fall;
+            //
+            // so Walk, Sprint and Idle were unreachable for anybody you were not driving
+            // yourself. 🧑 2026-08-28, from the host's screen: *"the nonhosts that join can move
+            // and interact but theyre stuck at this pose, they cant do animations and shit"*.
+            //
+            // ⚠️⚠️ THE VELOCITY WINDOW THAT USED TO STAND HERE WAS WRONG IN THE MIDDLE OF A
+            // JUMP, WHICH IS THE ONE PLACE IT MATTERED. It read grounded for any vertical
+            // velocity in (-2.5, 0.5), and a jump passes through that whole band on the way up
+            // AND on the way down. At `Balance.Gravity` that is not "a frame or two at the
+            // apex" as the note claimed: it is about 0.12 s, six fixed steps, twice per jump.
+            // Every remote jump therefore broke into Jump, a flicker of Idle or Walk at the
+            // top, then Fall. 🧑 2026-08-28: *"joining players bug pag nag jjump"*.
+            //
+            // The owner of a body is the only thing that knows the truth, so both payloads now
+            // carry it: a client puts its own `IsGrounded` on `SubmitMove`, the host stores that
+            // onto its copy, and `SyncUnit` relays `unit.IsGrounded` outward for every seat.
+            // `docs/TODO.md` § 63.4.
+            _grounded = _networkGrounded;
+
+            // Lead by one render-sized beat so a 50 Hz stream does not look one packet behind.
+            Vector3 target = _networkTargetPosition + _networkTargetVelocity * 0.02f;
+            Vector3 position = Vector3.SmoothDamp(transform.position, target,
+                                                   ref _networkSmoothVelocity, 0.055f,
+                                                   40.0f, dt);
+            float yaw = Mathf.SmoothDampAngle(transform.eulerAngles.y, _networkTargetYaw,
+                                              ref _networkYawVelocity, 0.045f,
+                                              1080.0f, dt);
+            SetNetworkPose(position, yaw);
+        }
+
+        private void SetNetworkPose(Vector3 position, float yaw)
+        {
+            bool enabled = _cc != null && _cc.enabled;
+            if (enabled) _cc.enabled = false;
+            transform.SetPositionAndRotation(position, Quaternion.Euler(0.0f, yaw, 0.0f));
+            if (enabled) _cc.enabled = true;
+        }
+
+        private bool _inputSourceKnown;
+        private bool _hostDriven;
+
+        /// <summary>
+        /// ⚠️⚠️ SHARED WITH `StepNetworkReplica`'S GROUNDED WINDOW, AND THAT SHARING IS THE
+        /// FIX. The window used to be a bare `(-0.5, 0.5)` around the animator's own Jump cut,
+        /// which forgot that a body resting on the ground never reports 0: it reports THIS. A
+        /// standing, idle unit therefore transmits -2.0 every frame, landed outside a window
+        /// that stopped at -0.5, and every replica read it as permanently airborne — Fall or,
+        /// once the apex of a real jump's arc happened to line up, Jump. 🧑, from the host's
+        /// screen, watching a body that was in fact standing still: "you could see other
+        /// players on what looks like a jumping emote." The window now spans this constant
+        /// with the same margin the Jump cut already had.
+        /// </summary>
+        private const float GroundedRestVelocityY = -2.0f;
 
         private void ApplyGravity(float dt)
         {
@@ -431,12 +874,14 @@ namespace TumbangPreso
                 // resting at exactly 0 vertical velocity reports `isGrounded` false every
                 // other frame, which reads as a unit that cannot jump reliably and cannot
                 // be told apart from an input bug.
-                _velocity.y = -2.0f;
+                _velocity.y = GroundedRestVelocityY;
 
                 if (Intent.JustPressed(Verb.Jump) && CanAct())
                 {
                     _velocity.y = Balance.JumpVelocity;
-                    GameServices.Audio?.PlayAt("jump", transform.position);
+                    GameServices.Audio?.PlayAtVaried("jump", transform.position,
+                                                     0.96f, 1.08f, 0.9f);
+                    GetComponentInChildren<Visual.CharacterSquashStretch>()?.Stretch(0.20f);
                 }
             }
             else
@@ -496,17 +941,53 @@ namespace TumbangPreso
         /// </summary>
         private void Confine()
         {
-            if (!Confinement.IsConfined(RoundActive, _isDefender)) return;
-
             Vector3 p = transform.position;
             float x = p.x, z = p.z;
-            Confinement.ClampToBox(ref x, ref z);
 
-            if (x != p.x || z != p.z)
+            if (Confinement.IsConfined(RoundActive, _isDefender))
+                Confinement.ClampToBox(ref x, ref z);
+
+            // ⚠️⚠️ AND NOBODY LEAVES THE ARENA AT ALL, ROLE OR NO ROLE. The chalk box above is a
+            // RULE and applies to the taya only; this is the WALL and applies to everybody. The
+            // port had the wall for the tsinelas and not for the people: `Slipper.BounceOffBounds`
+            // has bounced off `PlayableHalfX/Z` since it was written, while a body could walk or
+            // be launched straight through the same line into empty space.
+            //
+            // ⚠️ MEASURED, AND IT IS NOT A CORNER CASE. `AiDiagnosticProbe` on 2026-08-23 caught
+            // seat 3 at z = 18.73 against a half depth of 13.0, eight seconds into a Hero Strike
+            // round, still holding its tsinelas. It threw from out there, the slipper landed at
+            // (62.7, 38.4), and the owner then spent the rest of the round in FETCH walking into
+            // the edge of the world at a goal it clamps but a body it did not. The whole-match
+            // probe reported that as 121 unretrieved-slipper penalties and a seat travelling
+            // 2,359 m: the AI looked broken and was in fact the only thing behaving.
+            //
+            // ⚠️ HERO STRIKE IS WHERE IT SURFACES BUT IT IS NOT A HERO BUG. Its kits apply far
+            // more knockback than Classic's do, so they find the missing wall first. A human
+            // shoved off the same edge in Classic has always had the same hole to fall into.
+            x = Mathf.Clamp(x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
+            z = Mathf.Clamp(z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+
+            if (x == p.x && z == p.z) return;
+
+            _cc.enabled = false;
+            transform.position = new Vector3(x, p.y, z);
+            _cc.enabled = true;
+
+            // ⚠️ THE PUSH THAT REACHED THE WALL IS SPENT AT THE WALL. Without this the body is
+            // clamped back every step while the impulse still points outwards, so a knockback
+            // into the edge reads as being pinned there for its whole duration instead of
+            // stopping against it. Only the component INTO the wall is removed: a knockback
+            // along the edge still slides.
+            if (x != p.x)
             {
-                _cc.enabled = false;
-                transform.position = new Vector3(x, p.y, z);
-                _cc.enabled = true;
+                _externalVelocity.x = 0.0f;
+                _velocity.x = 0.0f;
+            }
+
+            if (z != p.z)
+            {
+                _externalVelocity.z = 0.0f;
+                _velocity.z = 0.0f;
             }
         }
 
@@ -561,12 +1042,15 @@ namespace TumbangPreso
         public bool IsTaggable()
         {
             if (_isDefender || !RoundActive) return false;
+            if (AbilitySystem != null && AbilitySystem.IsImmuneToTags) return false;
             if (!HoldingSlipper) return false;
             return IsInsideBox();
         }
 
         private float _stunLeft;
         private float _stunTotal;
+        private float _tripLeft;
+        private float _tripTotal;
 
         /// <summary>Seconds of stun left, so the HUD can print the number the player needs.</summary>
         public float StunLeft => _stunLeft;
@@ -575,19 +1059,329 @@ namespace TumbangPreso
         /// raw number. Reset with the stun, never accumulated.</summary>
         public float StunTotal => _stunTotal;
 
+        /// <summary>True while the character has tripped and is grounded on the floor.</summary>
+        public bool IsTripped => _tripLeft > 0.0f;
+        public float TripLeft => _tripLeft;
+        public float TripTotal => _tripTotal;
+
+        private float _lastMashTime = -99.0f;
+
+        /// <summary>Real seconds since this fall began, and the ONLY clock left in a trip.
+        /// It drives nothing but <see cref="Balance.TripAutoRecoverSeconds"/>: the fall itself
+        /// no longer runs down with time.</summary>
+        private float _tripElapsed;
+
+        private int _mashPresses;
+        private float _mashRemoved;
+        private float _tripImmuneUntil = -99.0f;
+
+        /// <summary>Accepted presses in the current fall, so the HUD can show it filling.</summary>
+        public int MashPresses => _mashPresses;
+
+        /// <summary>Seconds of the current fall that PRESSES have bought.
+        ///
+        /// ⚠️⚠️ IT IS THE GATE, NOT A READOUT, AS OF 2026-08-26. Reaching the mashable slack
+        /// (`TripTotal` - `Balance.MinTripDown`) is the only thing that puts a player back on
+        /// their feet inside `Balance.TripAutoRecoverSeconds`, and the HUD's one bar is this
+        /// number over that slack. So the bar filling and the body standing are the same event,
+        /// which is what 🧑 asked for after three passes that retuned a decay rate instead:
+        /// *"i want it so that i can only get up when ive reached the end of the mashing shit
+        /// bcz sometimes i get up with it still at middle or when i only clicked once"*.
+        ///
+        /// ⚠️ THE STRANDING GUARD CREDITS THE REST OF THE SLACK HERE RATHER THAN BYPASSING IT,
+        /// so the invariant holds with no exception: nobody ever stands up with the bar
+        /// part-full.</summary>
+        public float MashRemoved => _mashRemoved;
+
+        /// <summary>When the last ACCEPTED press landed, so the HUD can pop on it.
+        ///
+        /// ⚠️ A REJECTED PRESS IS A DEAD PRESS, NEVER A PENALTY, and the screen has to say so.
+        /// `Combat.MashRecover` returns `accepted: false` inside `Balance.MashCooldown` and
+        /// changes nothing, but with no feedback either way a player mashing above 10 Hz sees
+        /// most of their presses do nothing and reads the rate cap as being punished for
+        /// mashing. Popping on the accepted ones makes the cap legible as a rhythm.</summary>
+        public float LastMashAcceptedTime => _lastMashTime;
+
+        /// <summary>
+        /// True while no hazard may trip this body, because it has only just got up.
+        ///
+        /// ⚠️⚠️ THE MASH IS THE JUMP KEY, SO GETTING UP ENDS WITH A JUMP, EVERY TIME. The
+        /// presses that free a player do not stop the instant `_tripLeft` reaches zero: the next
+        /// one is a real jump, it carries the body well past `StreetTripHazard.MinSpeedToTrip`,
+        /// and it happens while they are still standing on the hazard. The hazard's own
+        /// `Cooldown` is per hazard and cannot see a neighbour, so on Ilalim ng Tulay a pair of
+        /// hazards a few metres apart passed a player back and forth indefinitely. 🧑 reported
+        /// it as not being able to get up at all.
+        ///
+        /// ⚠️ IT IS ONE WINDOW ON THE BODY, NOT A LONGER COOLDOWN ON EACH HAZARD, so a hazard
+        /// added later inherits it without being told about it.
+        /// </summary>
+        public bool IsTripImmune => Time.time < _tripImmuneUntil;
+
+        /// <summary>
+        /// True while the player should be told to mash.
+        ///
+        /// ⚠️ IT GOES FALSE AT THE FLOOR RATHER THAN AT THE END OF THE TRIP. Once
+        /// `Balance.MinTripDown` is reached nothing further can be bought, and a prompt that
+        /// keeps asking for presses it will not honour teaches the player that mashing does not
+        /// work, which is the opposite of the intent.
+        /// </summary>
+        public bool CanMashUp => _tripLeft > Balance.MinTripDown;
+
+        public void ClearStun()
+        {
+            if (!MayMutateGameplayState()) return;
+            _stunLeft = 0.0f;
+            _stunTotal = 0.0f;
+
+            // ⚠️ THE ELEMENT GOES WITH IT. Leaving it set holds the coat, the vignette and the
+            // TPP swing on a body that is free to move, and the next stun would inherit a
+            // press count from whatever last stunned this seat.
+            _stunElement = StunElement.None;
+            _stunBreakPresses = Balance.StunBreakPressesDefault;
+            _stunMashPresses = 0;
+        }
+
+        public void ClearTrip()
+        {
+            if (!MayMutateGameplayState()) return;
+            _tripLeft = 0.0f;
+            _tripTotal = 0.0f;
+            _mashPresses = 0;
+            _mashRemoved = 0.0f;
+            _tripElapsed = 0.0f;
+
+            // ⚠️ NO GRACE FROM HERE. `ClearTrip` is the round and seat reset path, not the
+            // player answering a fall, and handing a fresh round a window of hazard immunity
+            // would be a rule nobody asked for.
+        }
+
+        /// <summary>
+        /// Trips the character, making them tumble flat onto the ground for a duration (e.g. 2.5s)
+        /// before rising back up.
+        /// </summary>
+        public void ApplyTrip(float duration = 2.5f)
+        {
+            if (!MayMutateGameplayState()) return;
+            if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+
+            _tripLeft = Mathf.Max(_tripLeft, duration);
+            _tripTotal = Mathf.Max(_tripTotal, _tripLeft);
+            ApplyStagger(duration);
+            _velocity.x = 0.0f;
+            _velocity.z = 0.0f;
+
+            // A new fall is a new mash. Carrying the count over would let a second trip start
+            // with its prompt already full.
+            _mashPresses = 0;
+            _mashRemoved = 0.0f;
+            _lastMashTime = -99.0f;
+            _tripElapsed = 0.0f;
+        }
+
+        /// <summary>
+        /// One mash press against the current fall.
+        ///
+        /// 🧑, 2026-08-25: *"then fall down animation plays and u have to spam a button to
+        /// get back up"*.
+        ///
+        /// ⚠⚠️ THE STUN COMES DOWN WITH THE TRIP, AND FORGETTING THAT IS THE WHOLE BUG
+        /// WAITING TO HAPPEN HERE. `ApplyTrip` sets BOTH `_tripLeft` and, through
+        /// `ApplyStagger`, `_stunLeft` to the same duration. Shortening only the trip stands the
+        /// body up on schedule and leaves it unable to move, sprint, throw or grab for the rest
+        /// of the original 2.5 s: the player mashes, watches themselves get up, and then watches
+        /// themselves stand there, which reads as the mash having broken the character.
+        ///
+        /// ⚠️ THE RATE CAP LIVES IN `Combat.MashRecover`, NOT HERE. A bot presses the same
+        /// buttons a human does, so both reach the cap through the same function rather than
+        /// through an input-layer check only one of them passes through.
+        /// </summary>
+        public bool MashRecover()
+        {
+            if (_tripLeft <= 0.0f) return false;
+
+            float since = Time.time - _lastMashTime;
+            float before = _tripLeft;
+            float after = Combat.MashRecover(_tripLeft, since, out bool accepted);
+            if (!accepted) return false;
+
+            _lastMashTime = Time.time;
+            _mashPresses++;
+
+            float removed = before - after;
+            _tripLeft = after;
+            _mashRemoved += removed;
+            _stunLeft = Mathf.Max(0.0f, _stunLeft - removed);
+
+            return removed > 0.0f;
+        }
+
         /// <summary>⚠️ Max(), NEVER additive. That is the entire bound on a stun chain in a
         /// 1-vs-3 game.</summary>
         public void ApplyStagger(float duration)
+            => ApplyStagger(duration, StunElement.None, Balance.StunBreakPressesDefault);
+
+        /// <summary>
+        /// § THE ELEMENT STUN. A stagger that names what did it and what it costs to break.
+        ///
+        /// ⚠️⚠️ THE ELEMENT IS WHAT MAKES THE STUN MASHABLE, NOT THE DURATION. 🧑 2026-08-26:
+        /// *"for abilities that freeze or stun enmies ... i want them to look frozen or have the
+        /// element cover them when stunned"* and *"a button mashing thing to get unstunned or
+        /// unfrozen (same as when u trip) but maybe diff UI and effect"*.
+        ///
+        /// `StunElement.None` is the taya's tag and anything else that is a RULE rather than a
+        /// fight, and it stays unmashable: `Balance.TagStunTime` is 5.0 s and the tag is the one
+        /// scoring verb a defender has. See § MASHING OUT OF AN ABILITY STUN in `Balance` for the
+        /// whole argument. Reading mashability off the duration instead would have made the tag
+        /// escapable the moment somebody tuned an ability to 5 s.
+        ///
+        /// ⚠️ THE STRONGER STUN WINS THE ELEMENT, not the most recent one. Two abilities landing
+        /// in the same window is a `Max()` on the duration already; letting the shorter one
+        /// repaint the body would show a victim coated in an element that is not what is holding
+        /// them. The press count travels with it for the same reason.
+        /// </summary>
+        public void ApplyStagger(float duration, StunElement element, int breakPresses)
         {
+            if (!MayMutateGameplayState()) return;
+            if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+
+            // ⚠️⚠️ A STAGGER SHORTER THAN THE MASH FLOOR IS NOT A HOLD AND MUST NOT DRESS AS ONE.
+            // Most `ApplyStagger` calls in the kits are 0.2 to 0.5 s knockback hitches, and at
+            // those lengths `CanMashOutOfStun` is false the whole time: the break card would
+            // appear reading BREAKING FREE, the camera would swing to third person and back, and
+            // the body would flash an element coat, all inside a third of a second and several
+            // times a round. That is not feedback, it is strobing.
+            //
+            // ⚠️ SO THE FLOOR IS THE DEFINITION. `Balance.MinStunDown` is already the part of a
+            // stun a mash cannot buy; a stun that is entirely inside it has nothing to sell, so
+            // it is a stagger and it is drawn as one. Kits therefore do not each need to decide
+            // whether their number is big enough, which is a judgement that would drift the
+            // moment somebody retuned a duration.
+            if (duration <= Balance.MinStunDown) element = StunElement.None;
+
+            bool wins = duration >= _stunLeft;
+
             _stunLeft = Combat.ApplyStagger(_stunLeft, duration);
 
             // The bar's denominator follows the same Max: a short stun landing inside a longer
             // one must not rescale the bar and make the remaining time look like it grew.
             _stunTotal = Mathf.Max(_stunTotal, _stunLeft);
+
+            if (!wins) return;
+
+            _stunElement = element;
+            _stunBreakPresses = breakPresses;
+            _stunMashPresses = 0;
+        }
+
+        private StunElement _stunElement = StunElement.None;
+        private int _stunBreakPresses = Balance.StunBreakPressesDefault;
+        private int _stunMashPresses;
+        private float _lastStunMashTime = -99.0f;
+
+        /// <summary>What is holding this body, for the coat, the vignette and the card.</summary>
+        public StunElement StunElement => _stunElement;
+
+        /// <summary>Accepted presses against the current stun, so the card can show it filling.</summary>
+        public int StunMashPresses => _stunMashPresses;
+
+        /// <summary>How many presses this stun was declared to take.</summary>
+        public int StunBreakPresses => _stunBreakPresses;
+
+        /// <summary>
+        /// Applies the host's live control state without replaying hits, sounds, score, or
+        /// teleports. This is used both continuously and by rejoin snapshots, so every field a
+        /// HUD or input gate reads is restored together.
+        /// </summary>
+        public void ApplyNetworkState(float stunLeft, float stunTotal, StunElement element,
+                                      int stunBreakPresses, int stunMashPresses,
+                                      float tripLeft, float tripTotal, int tripMashPresses,
+                                      float tripMashRemoved, float staminaCurrent,
+                                      float staminaIdle, float fatigueLeft)
+        {
+            _stunLeft = Mathf.Max(0.0f, stunLeft);
+            _stunTotal = Mathf.Max(_stunLeft, stunTotal);
+            _stunElement = _stunLeft > 0.0f ? element : StunElement.None;
+            _stunBreakPresses = Mathf.Clamp(stunBreakPresses, 1, 32);
+            _stunMashPresses = Mathf.Clamp(stunMashPresses, 0, _stunBreakPresses);
+
+            _tripLeft = Mathf.Max(0.0f, tripLeft);
+            _tripTotal = Mathf.Max(_tripLeft, tripTotal);
+            _mashPresses = Mathf.Max(0, tripMashPresses);
+            _mashRemoved = Mathf.Clamp(tripMashRemoved, 0.0f, _tripTotal);
+
+            Stamina?.ApplyNetworkSnapshot(staminaCurrent, staminaIdle, fatigueLeft);
+        }
+
+        /// <summary>
+        /// True while hammering buys something.
+        ///
+        /// ⚠️ IT GOES FALSE AT THE FLOOR, exactly as `CanMashUp` does, and for the reason that
+        /// property records: a prompt that keeps demanding presses it will not honour teaches
+        /// the player that mashing does not work.
+        /// </summary>
+        public bool CanMashOutOfStun
+            => _stunElement != StunElement.None && _stunLeft > Balance.MinStunDown;
+
+        /// <summary>
+        /// One press against an element stun.
+        ///
+        /// ⚠️ IT DOES NOT TOUCH `_tripLeft`, WHICH IS THE MIRROR OF THE TRAP `MashRecover`
+        /// CARRIES. There, shortening the trip without the stun left a player standing and
+        /// unable to act; here, shortening the stun without the trip would stand somebody up
+        /// mid-knockdown. A body that is BOTH tripped and element-stunned is answered by the
+        /// trip mash, which already clears both, so this returns early rather than racing it.
+        /// </summary>
+        public bool MashOutOfStun()
+        {
+            if (_stunElement == StunElement.None) return false;
+            if (_stunLeft <= 0.0f) return false;
+            if (_tripLeft > 0.0f) return false;
+
+            float since = Time.time - _lastStunMashTime;
+            float before = _stunLeft;
+            float after = Combat.MashOutOfStun(_stunLeft, _stunTotal, _stunBreakPresses,
+                                               since, out bool accepted);
+            if (!accepted) return false;
+
+            _lastStunMashTime = Time.time;
+            _stunMashPresses++;
+            _stunLeft = after;
+
+            // ⚠️⚠️ IT FIRES ON THE PRESS THAT REACHES THE FLOOR, NOT ON EVERY PRESS. `docs/TODO.md`
+            // § 23 ended the mash silently, so the only confirmation that the last press was the
+            // one that worked was a card the player is not looking at. One cue per BREAK is the
+            // sparse answer; one per press would be a cue at up to 10 Hz, which is the buzzsaw
+            // case `AudioCues.HeadroomDb` exists to keep out.
+            //
+            // ⚠️ AND `MinStunDown` IS THE TEST, NOT ZERO. The floor is deliberately left to run
+            // down (see the note below), so the moment the fight is WON is the moment the meter
+            // can buy nothing more, which is exactly when `CanMashOutOfStun` goes false and the
+            // card stops asking. Waiting for the stun to expire would put the sound on the clock
+            // rather than on the player.
+            if (after <= Balance.MinStunDown && before > Balance.MinStunDown)
+            {
+                GameServices.Audio?.PlayAtVaried("sfx_stun_break", transform.position,
+                                                 0.94f, 1.06f, 1.0f);
+            }
+
+            // ⚠️⚠️ THE FLOOR IS LEFT TO RUN DOWN AND IS NOT CLEARED HERE. Releasing the body the
+            // moment the meter fills would put a perfectly answered 3.0 s stun at **0.6 s**, six
+            // presses at the 10 Hz cap and nothing else, which is not a control ability any more
+            // and refunds the cooldown that bought it. `MinStunDown` is the part of the stun the
+            // mash CANNOT buy, exactly as `MinTripDown` is for a fall, and the honest total is
+            // the mash plus the floor: about **1.7 s** against 3.0 unanswered, because the clock
+            // is draining underneath the presses the whole time.
+            //
+            // ⚠️ AND THAT LAST 1.2 s IS WHERE THE ELEMENT COMES OFF. It is the shatter, the same
+            // way `MinTripDown` is the get-up clip: a window with a name and a picture, not dead
+            // time. `CanMashOutOfStun` goes false at its start so the card stops asking.
+            return before - after > 0.0f;
         }
 
         public void ApplyImpulse(Vector3 impulse)
         {
+            if (!MayMutateGameplayState()) return;
             _externalVelocity += impulse;
 
             float mag = _externalVelocity.magnitude;
@@ -600,10 +1394,78 @@ namespace TumbangPreso
 
         private void Update()
         {
+            if (_tripLeft > 0.0f)
+            {
+                // ⚠️⚠️ ABOVE THE FLOOR NOTHING RUNS DOWN ON ITS OWN. THAT IS THE WHOLE RULE.
+                // 🧑, 2026-08-26, off the 4.70 player: *"u randomly get up after set amt of
+                // time, i dont have to actually mash it"*, and *"i want it so that i can only
+                // get up when ive reached the end of the mashing shit bcz sometimes i get up
+                // with it still at middle or when i only clicked once"*. Three previous passes
+                // answered that by retuning a decay RATE (docs/TODO.md §§ 12.1, 13.1, 14.1) and
+                // every one of them left the property he is describing in place: while a rate
+                // above zero exists, TIME ends the fall and the meter is a decoration on a
+                // countdown. `Balance.TripPassiveDecayRate` is deleted; see
+                // `Balance.TripAutoRecoverSeconds` for the whole argument.
+                //
+                // Below `MinTripDown` the get-up clip is playing, nothing can be bought, and
+                // this runs at real time so the animation and the clock agree.
+                if (_tripLeft <= Balance.MinTripDown)
+                    _tripLeft = Mathf.Max(0.0f, _tripLeft - Time.deltaTime);
+
+                // ⚠️⚠️ THE STRANDING GUARD, AND IT FILLS THE METER ON ITS WAY OUT. A fall that
+                // only a press can clear strands a player whose hands left the keyboard, so
+                // `Balance.TripAutoRecoverSeconds` releases one that nobody answered. Crediting
+                // the remaining slack to `_mashRemoved` is not cosmetic: the bar is the gate
+                // now, and standing up with it part-full is the exact frame he photographed.
+                _tripElapsed += Time.deltaTime;
+
+                if (_tripLeft > Balance.MinTripDown && _tripElapsed >= Balance.TripAutoRecoverSeconds)
+                {
+                    _mashRemoved += _tripLeft - Balance.MinTripDown;
+                    _tripLeft = Balance.MinTripDown;
+                }
+
+                // ⚠️⚠️ THE STAGGER IS HELD TO THE TRIP, AND WITHOUT THIS LINE A PLAYER GETS UP
+                // BEFORE THE FALL ENDS. 🧑, 2026-08-26, off the built player: *"if i dont mash,
+                // i get up in 2 seconds wtf"*. He was right and the arithmetic says why.
+                // `ApplyTrip` calls `ApplyStagger(duration)` once, with the trip's STARTING
+                // length, and the stun then ran down at real time while the trip ran down more
+                // slowly, so an unanswered 2.50 s trip lasted 3.22 s while the stun expired at
+                // 2.50: for the last 0.72 s the body could walk, aim and throw while `IsTripped`
+                // was still true, the camera was still in the fall view and the HUD still said
+                // GETTING UP. The gap is wider now, not narrower: an unanswered fall holds at
+                // `Balance.TripAutoRecoverSeconds`, twice the stun it was staggered with.
+                //
+                // ⚠️ IT IS `Max`, NEVER AN ASSIGNMENT. A tag landing on a player who is already
+                // on the floor must not have its 5 s stun cut short to the remaining trip, and
+                // `Combat.ApplyStagger`'s Max() rule is the entire bound on a stun chain in a
+                // 1-vs-3 game (`CLAUDE.md` § 4).
+                if (_stunLeft < _tripLeft)
+                {
+                    _stunLeft = _tripLeft;
+                    _stunTotal = Mathf.Max(_stunTotal, _stunLeft);
+                }
+
+                if (_tripLeft <= 0.0f)
+                {
+                    _tripTotal = 0.0f;
+
+                    // ⚠️ THE GRACE IS OPENED HERE, AT THE ONE PLACE A FALL ACTUALLY ENDS, so it
+                    // covers a fall that was mashed away and a fall that timed out alike.
+                    _tripImmuneUntil = Time.time + Balance.TripGraceAfterGetUp;
+                }
+            }
+
             if (_stunLeft <= 0.0f) return;
 
             _stunLeft = Mathf.Max(0.0f, _stunLeft - Time.deltaTime);
-            if (_stunLeft <= 0.0f) _stunTotal = 0.0f;
+
+            // ⚠️ THROUGH `ClearStun`, NOT BY ZEROING `_stunTotal` HERE. A stun now carries an
+            // element and a press count as well as a clock, and this line used to reset one of
+            // the three. The leftovers are invisible until the NEXT stun inherits them: a body
+            // tagged after being frozen would come up wearing ice and offering a mash prompt
+            // against the taya's tag, which is the one stun that must not be escapable.
+            if (_stunLeft <= 0.0f) ClearStun();
         }
     }
 }

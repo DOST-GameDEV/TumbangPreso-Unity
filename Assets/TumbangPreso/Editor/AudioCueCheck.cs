@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using TumbangPreso.Audio;
 using UnityEditor;
 using UnityEngine;
@@ -31,6 +32,41 @@ namespace TumbangPreso.EditorTools
     public static class AudioCueCheck
     {
         private const string SfxDir = "Assets/TumbangPreso/Art/audio/sfx";
+        private const string RuntimeRoot = "Assets/TumbangPreso/Runtime";
+
+        /// <summary>Every way the runtime asks for a cue by name.
+        /// ⚠️ KEEP IT IN STEP WITH `AudioManager`'s PUBLIC SURFACE. A play method added
+        /// later and not added here is a call site this check cannot see, which is exactly
+        /// the hole direction 3 exists to close. The longer names come first so the
+        /// alternation cannot match `Play` inside `PlayAtVaried`.
+        ///
+        /// ⚠️⚠️ IT IS ANCHORED ON `Audio`, AND WITHOUT THAT IT REPORTS THE MUSIC BED AS
+        /// A MISSING SOUND EFFECT. `GameServices.Music.Play(""match"", ...)` and
+        /// `Play(""menu"", ...)` name TRACKS, which live in `AudioCues.Music` and are
+        /// nowhere near `Live`. The first run of this check flagged all three as silent
+        /// cues; they are neither silent nor cues.</summary>
+        /// ⚠️⚠️ `TryGetClip` IS A CONSUMER TOO, AND IT IS NOT A `Play` METHOD. It hands a caller
+        /// the clip so it can drive its own `AudioSource`, which is how the LRT consist carries a
+        /// moving, dopplered rumble instead of a one-shot pinned to the spot it was fired at
+        /// (`LrtTrainFlyby`, § THE PASS). Without it here, moving `sfx_lrt_pass` onto that path
+        /// would make this check report the file as one nothing plays, which is the exact
+        /// direction-3 hole the note above says it exists to close.
+        /// ⚠️⚠️ `NetCue` IS A SECOND PLAY SURFACE AND THIS CHECK WAS BLIND TO IT THE MOMENT IT
+        /// LANDED. The note above predicted exactly this (*"a play method added later and not
+        /// added here is a call site this check cannot see"*) and it came true within the hour:
+        /// `TumbangPreso.NetCue` was added on 2026-08-26 so a world sound reaches every peer
+        /// (`docs/TODO.md` § 25), five Phaister call sites moved onto it, and the first run of
+        /// this check afterwards reported **"cues fired in code that nothing declares: none"**
+        /// while being unable to see any of them. A typo behind `NetCue` would have been the
+        /// `sfx_ghost_appear` fault again, with the check green, which is the whole reason
+        /// direction 3 exists.
+        ///
+        /// ⚠️ ANCHORED ON `Audio` OR ON `NetCue`, NOT ON A BARE `Play`. Dropping the anchor would
+        /// match `Music.Play("match")`, `EmotePlayer.Play(id)` and every other `Play` in the tree,
+        /// and the note above records the music beds being reported as silent sound effects the
+        /// first time that was tried.
+        private const string CallSitePattern =
+            @"(?:Audio\??\.|NetCue\.)(?:PlayAtVaried|PlayAt2D|PlayAt|PlayUi|PlayVaried|TryGetClip|Play)\s*\(\s*""(?<cue>[a-zA-Z0-9_]+)""";
         private const string MusicDir = "Assets/TumbangPreso/Art/audio/music";
         private const string ResultPath = "Logs/audio-cue-check.txt";
 
@@ -39,7 +75,9 @@ namespace TumbangPreso.EditorTools
 
         public static void Run() => EditorApplication.Exit(Execute() ? 0 : 1);
 
-        private static bool Execute()
+        /// <summary>⚠️ PUBLIC SO `Checks` CAN RUN IT WITHOUT A SECOND UNITY LAUNCH. See that
+        /// class: the launches, not the assertions, are what a verification pass costs.</summary>
+        public static bool Execute()
         {
             var sb = new StringBuilder();
             int problems = 0;
@@ -68,6 +106,49 @@ namespace TumbangPreso.EditorTools
                 problems++;
             }
             if (problems == 0) sb.AppendLine("  none");
+
+            // ⚠️⚠️ DIRECTION 3, ADDED 2026-08-26: A CUE THE CODE FIRES THAT NOTHING
+            // DECLARES. This check had two directions and both started from `AudioCues.Live`,
+            // so it could only answer questions about cues somebody had remembered to
+            // declare. `LrtTrainFlyby` called `PlayAtVaried(""ui_move"", ...)` for the map's
+            // signature 24 s event; there is no `ui_move` in `Live` and no `ui_move.wav`
+            // anywhere, so every pass wrote `[Audio] no cue registered for 'ui_move'` into
+            // the player log and played silence, in every build, for the whole life of the
+            // map, with this check green. A typo in a string literal is the easiest way to
+            // ship a silent feature and it was the one direction nothing looked at.
+            //
+            // ⚠️ IT READS THE RUNTIME AS TEXT, the same idiom `SceneScriptCheck` and
+            // `MapGradeSanityTests` use and for the same reason: the call sites are string
+            // literals and there is nothing to reflect over. Only literals are checked; a
+            // cue built from a variable cannot be resolved here, and every one in the tree
+            // today is a literal.
+            sb.AppendLine();
+            sb.AppendLine("-- cues fired in code that nothing declares --");
+            int undeclared = 0;
+
+            // ⚠️ A SET, NOT `IReadOnlyList.Contains`. `AudioCues.Live` is a list, and calling
+            // Contains on it inside a per-file loop is a linear scan of ~90 strings for every
+            // call site in the runtime. It also binds to the wrong overload outright: the
+            // MemoryExtensions span extension wins and demands a StringComparison.
+            var declared = new HashSet<string>(AudioCues.Live, StringComparer.Ordinal);
+
+            foreach (string file in Directory.GetFiles(RuntimeRoot, "*.cs",
+                                                       SearchOption.AllDirectories))
+            {
+                string text = File.ReadAllText(file);
+
+                foreach (Match m in Regex.Matches(text, CallSitePattern))
+                {
+                    string cue = m.Groups["cue"].Value;
+                    if (declared.Contains(cue)) continue;
+
+                    sb.AppendLine($"  UNDECLARED: {Path.GetFileName(file)} fires '{cue}', " +
+                                  "which is in no cue list, so it plays silence.");
+                    undeclared++;
+                    problems++;
+                }
+            }
+            if (undeclared == 0) sb.AppendLine("  none");
 
             // Direction 2: a file no cue can reach. The silent failure.
             sb.AppendLine();

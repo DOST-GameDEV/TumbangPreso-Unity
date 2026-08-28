@@ -42,26 +42,43 @@ namespace TumbangPreso.UI
             _net = NetSession.Ensure();
 
             SetText("BannerLabel", "MULTIPLAYER");
-            SetStatus("");
+
+            // ⚠️⚠️ WHY THE LAST JOIN ENDED, SHOWN ON THE SCREEN THAT CAN ACT ON IT. A refused
+            // approval arrives seconds after `Join` has already navigated to the lobby, so the
+            // reason used to be written to a status label on a screen nobody was looking at and
+            // the player was returned here with a blank line and no idea what happened. A
+            // protocol mismatch in particular is a thing they CAN fix, and it is the likeliest
+            // one whenever two machines were built from different commits.
+            //
+            // ⚠️ READ ONCE AND CLEARED, so a stale reason cannot sit over a later good join.
+            if (!string.IsNullOrWhiteSpace(NetSession.LastDisconnectReason))
+            {
+                SetStatus(NetSession.LastDisconnectReason);
+                NetSession.LastDisconnectReason = "";
+            }
+            else
+            {
+                SetStatus("");
+            }
 
             OnClick("HostOnlineButton", async () =>
             {
                 SetStatus("Allocating online session...");
                 bool ok = await _net.StartRelayHost();
                 if (ok) SceneFlow.Go(SceneFlow.MatchSetup);
-                else SetStatus("Failed to allocate online Relay session. Check internet connection.");
+                else SetStatus(Reason("Failed to allocate online Relay session. Check internet connection."));
             });
 
-            OnClick("HostButton", () =>
+            OnClick("HostButton", async () =>
             {
                 SetStatus("Starting LAN session...");
-                if (_net.StartHost())
+                if (await _net.StartHostAsync())
                 {
                     SceneFlow.Go(SceneFlow.MatchSetup);
                 }
                 else
                 {
-                    SetStatus("Failed to open LAN host port. It may already be in use.");
+                    SetStatus(Reason("Failed to open LAN host port. It may already be in use."));
                 }
             });
 
@@ -98,6 +115,29 @@ namespace TumbangPreso.UI
 
             RefreshLanBrowser();
             RefreshOnlineBrowser();
+        }
+
+        /// <summary>
+        /// Pairs the headline the player understands with the detail the session already worked
+        /// out.
+        ///
+        /// ⚠️⚠️ EVERY FAILED START USED TO THROW THE REAL REASON AWAY. `NetSession` writes a
+        /// precise status on the way out of each failure ("relay allocation failed: ...",
+        /// "invalid relay join code", "cannot go online: no network route", "failed to start
+        /// hosting"), and every caller here overwrote it with one fixed sentence. So a dead join
+        /// code, a rate-limited lookup, a refused port and a machine with no internet were all
+        /// the same line on screen, which is what makes an intermittent failure impossible for
+        /// the player to describe or for the next session to reproduce. 🧑 2026-08-28: *"it
+        /// sometimes says failed to join online host via relay ... sometimes i get it to work"*.
+        ///
+        /// ⚠️ THE HEADLINE STAYS FIRST. This is the same fix `Wire`'s `LastDisconnectReason`
+        /// block already made for disconnects, in the same file, for the same reason.
+        /// </summary>
+        private string Reason(string headline)
+        {
+            string detail = _net != null ? _net.Status : null;
+            if (string.IsNullOrWhiteSpace(detail)) return headline;
+            return $"{headline}  ({detail})";
         }
 
         private void SetStatus(string msg)
@@ -451,9 +491,9 @@ namespace TumbangPreso.UI
             if (addr.Contains(".") || addr.Contains(":") || addr.Equals("localhost", StringComparison.OrdinalIgnoreCase))
             {
                 SetStatus($"Connecting to {addr}...");
-                bool ok = _net.StartClient(addr);
+                bool ok = await _net.StartClientAsync(addr);
                 if (ok) SceneFlow.Go(SceneFlow.MatchSetup);
-                else SetStatus($"Could not reach {addr}.");
+                else SetStatus(Reason($"Could not reach {addr}."));
                 return;
             }
 
@@ -471,9 +511,9 @@ namespace TumbangPreso.UI
                     {
                         SetStatus($"Joining LAN host {match.HostName} ({match.Address}:{match.Port})...");
                         _net.Lobby.SetJoinCode(code);
-                        bool ok = _net.StartClient(match.Address, match.Port);
+                        bool ok = await _net.StartClientAsync(match.Address, match.Port);
                         if (ok) SceneFlow.Go(SceneFlow.MatchSetup);
-                        else SetStatus($"Failed to connect to LAN host at {match.Address}:{match.Port}.");
+                        else SetStatus(Reason($"Failed to connect to LAN host at {match.Address}:{match.Port}."));
                     }
                     else
                     {
@@ -481,7 +521,7 @@ namespace TumbangPreso.UI
                         _net.Lobby.SetJoinCode(code);
                         bool ok = await _net.StartRelayClient(match.RelayCode);
                         if (ok) SceneFlow.Go(SceneFlow.MatchSetup);
-                        else SetStatus("Failed to join online host via Relay.");
+                        else SetStatus(Reason("Failed to join online host via Relay."));
                     }
                     return;
                 }

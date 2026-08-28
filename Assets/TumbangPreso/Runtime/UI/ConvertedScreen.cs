@@ -56,6 +56,19 @@ namespace TumbangPreso.UI
             // in the base class means a screen added later cannot forget.
             CursorMode.Release();
 
+            // Legacy Text is rasterised into the Canvas at its final transform. Allowing
+            // fractional canvas pixels softens every Darumadrop edge, especially after a
+            // fullscreen resolution change. Godot snaps this UI to physical pixels; do the
+            // same for every converted screen from the shared base so one panel cannot regress.
+            var canvas = GetComponentInParent<Canvas>();
+            if (canvas != null) canvas.pixelPerfect = true;
+
+            // ⚠️ THE SCALER IS FIXED HERE RATHER THAN IN THE IMPORTER because the converted
+            // screens are committed scene assets: their CanvasScaler was serialised by an
+            // importer run that has already happened, so an importer-only change reaches
+            // nothing that ships. See AspectSafeCanvas for what match-on-height cropped.
+            AspectSafeCanvas.ApplyToParentOf(this);
+
             Index(transform);
             Wire();
         }
@@ -183,10 +196,35 @@ namespace TumbangPreso.UI
 
             btn.onClick.AddListener(action);
 
+            // ⚠️⚠️ A BACK BUTTON SAYS `ui_back`, THE SAME AS ESCAPE DOES. `Update` above plays
+            // `MenuSfx.Back()` when Escape reaches `Cancel`, and until this line every BACK button
+            // in the game played a plain click from `GodotButton.OnPointerDown`: the two ways of
+            // leaving one screen answered with two different sounds for one action. The shipped
+            // `ui_back.wav` and its own mix entry exist because backing out is meant to be
+            // audibly distinct from choosing something.
+            //
+            // ⚠️ IT IS SET ON THE CONTROL RATHER THAN PLAYED HERE, so the sound still lands on the
+            // frame the button sinks rather than a frame later on the release. See
+            // `GodotButton.PressCue`.
+            bool backwards = nodeName.EndsWith("BackButton", System.StringComparison.Ordinal);
+            string cue = backwards ? "ui_back" : "ui_click";
+
+            var skin = t.GetComponent<GodotButton>();
+            if (skin != null) skin.PressCue = cue;
+
             // ⚠️ EVERY BUTTON MAKES A SOUND. The Godot build wires ui_click and ui_hover on the
             // theme, so silence here is not "no sound designed yet", it is a regression against
             // a game that already had it.
-            btn.onClick.AddListener(() => GameServices.Audio?.PlayAt("ui_click", Vector3.zero));
+            //
+            // ⚠️⚠️ THROUGH `MenuSfx`, AND WITH THE SAME CUE THE CONTROL ITSELF PLAYS. That pairing
+            // is the fix for a click that fired up to THREE TIMES PER PRESS: the control plays one
+            // on pointer down, this plays one on the click it raises, and several handlers play a
+            // third, and they summed to about +9.5 dB of the same 40 ms recording. `MenuSfx.Play`
+            // allows one of each cue per frame and a press is one frame, so naming the SAME cue in
+            // both places is what makes them collapse rather than stack. Naming a different one
+            // here would defeat the guard by construction. `MenuSfx`'s header has the full
+            // account.
+            btn.onClick.AddListener(() => MenuSfx.Play(cue));
         }
 
         protected void SetText(string nodeName, string value)
@@ -196,6 +234,56 @@ namespace TumbangPreso.UI
 
             var text = t.GetComponent<Text>() ?? t.GetComponentInChildren<Text>();
             if (text != null) text.text = value;
+        }
+
+        /// <summary>
+        /// Writes a headline and shrinks it until it fits the box it was authored in.
+        ///
+        /// ⚠️⚠️ THE CONVERTED BANNERS OVERFLOW AND CANNOT TELL YOU THEY HAVE. Every one of them
+        /// carries `m_HorizontalOverflow: 1`, which is `Overflow`: the string neither wraps nor
+        /// shrinks, it simply draws past the edge of its plate. On `CharacterSelect` the ribbon
+        /// is 614 px, the label box inside it is 424, and the font is 66 pt, so "SINGLE PLAYER"
+        /// lands about right and "CHOOSE YOUR HERO" runs a good hundred pixels out of the
+        /// yellow. 🧑: *"choose your hero overfills the box too"*.
+        ///
+        /// ⚠️ THIS IS THE THIRD TIME THE SAME SETTING HAS DONE THE SAME THING in one session:
+        /// the objective card's "-5 / SECOND" ran off the screen edge, the deck tile's "RECAST"
+        /// would have hung out of a 60 px tile, and now the banner. `Overflow` is the default
+        /// these screens were converted with, so assume any authored label can overflow and size
+        /// it against the string rather than trusting the author's font choice.
+        ///
+        /// ⚠️ IT SHRINKS RATHER THAN WRAPS. The ribbon is 101 px tall and holds one line by
+        /// design; wrapping "CHOOSE YOUR HERO" would put a second line outside the plate, which
+        /// trades an overflow sideways for an overflow downwards.
+        ///
+        /// ⚠️ AND IT ONLY EVER SHRINKS, never grows. Raising a short headline to fill the plate
+        /// would make the banner change size from screen to screen, and the ribbon is a fixed
+        /// piece of art that the rest of the layout is positioned against.
+        /// </summary>
+        protected void SetHeadline(string nodeName, string value, int authoredSize)
+        {
+            var node = Node(nodeName);
+            if (node == null) return;
+
+            var text = node.GetComponent<Text>() ?? node.GetComponentInChildren<Text>();
+            if (text == null) return;
+
+            text.text = value;
+            text.fontSize = authoredSize;
+
+            var rect = text.rectTransform;
+            float room = rect.rect.width;
+
+            // A rect that has not been laid out yet reports 0 and would drive the font to its
+            // floor. Leaving it at the authored size is the safe answer: it is what shipped.
+            if (room <= 1.0f) return;
+
+            // ⚠️ MEASURED THROUGH THIS LABEL, not a spare font metric, for the reason
+            // `Hud.WorstCaseNameWidth` gives: `preferredWidth` is what this exact component will
+            // lay out to, same font, same generator settings.
+            const int floorSize = 24;
+            while (text.fontSize > floorSize && text.preferredWidth > room)
+                text.fontSize -= 2;
         }
     }
 }

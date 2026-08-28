@@ -12,21 +12,62 @@ namespace TumbangPreso
     /// other cannot. Adding a `Keyboard.current` read anywhere else quietly reintroduces the
     /// divergence the whole indirection exists to prevent.
     ///
-    /// ⚠️ E IS CONTEXTUAL AND THAT IS RESOLVED DOWNSTREAM, NOT HERE. E is bound to BOTH
-    /// `Grab` and `Lunge`, and left-click to both `Grab` and `SpecialAbility`, exactly as the
-    /// Godot input map has it. This class reports both as held and lets the carrier take
-    /// first refusal: tap with a slipper at your feet is a pickup, tap with nothing grabbable
-    /// is a shove, hold as the taya in the lata's ring is the reset channel, and only a press
-    /// nothing consumed reaches the lunge. Resolving it here would need this class to know
-    /// the world state, which is how one keybind becomes three.
+    /// ⚠⚠ ONE CONTROL, ONE ACTION, SINCE 2026-08-23. The map used to bind E to `Grab`,
+    /// `Lunge` AND `Skill1`, left click to `Grab` AND `SpecialAbility`, and Q to
+    /// `SpecialAbility` AND `Skill2`, following the Godot map and then stacking the hero keys
+    /// on top of it. Whichever consumer ran first won the press, so throw did not feel like it
+    /// was on left click even though it was bound there, and a hero's first skill came out of
+    /// the pickup key. The full table is in `Settings.Rebinding` and a test asserts no control
+    /// is shared. Hero powers now use the adjacent Q, E and F cluster, while the contextual
+    /// pickup key uses X so the HUD prompts and shipped controls agree without a collision.
+    ///
+    /// ⚠️ GRAB IS STILL CONTEXTUAL, AND THAT IS RESOLVED DOWNSTREAM, NOT HERE. One key, one
+    /// action, but that action does several jobs depending on the world: tap with a slipper at
+    /// your feet is a pickup, tap with nothing grabbable is a shove, hold as the taya in the
+    /// lata's ring is the reset channel. The carrier takes first refusal and only a press it
+    /// did not consume reaches the shove. Resolving it here would need this class to know the
+    /// world state, which is how one keybind becomes three.
+    ///
+    /// ⚠️ THE TWO ROLES SHARE `SpecialAbility` DELIBERATELY, and that is a role split, not
+    /// a collision. Left click charges the throw for an attacker; `can_throw()` refuses a
+    /// defender outright, so for the taya the same button is the punch. Nobody loses anything,
+    /// and no frame has both branches live.
     /// </summary>
+    // ⚠️⚠️ IT RUNS AFTER `AIController`, AND THE ONE BODY THAT CARRIES BOTH IS WHY THAT IS
+    // WRITTEN DOWN. `GhostPetCompanion.BeginPossession` puts a temporary AI on Nemu while the
+    // player drives Kuro; both components write `CharacterMotor.Intent`, and with neither
+    // declaring an order Unity chose one arbitrarily. The human is the one whose press must
+    // survive, so the human writes last. See `AIController.AbilitiesEnabled` for the report.
+    [DefaultExecutionOrder(-120)]
     public sealed class PlayerInputReader : MonoBehaviour
     {
         [SerializeField] private InputActionAsset _actions;
         [SerializeField] private CharacterMotor _motor;
         [SerializeField] private Camera _aimCamera;
 
-        private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote;
+        private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote, _skill1, _skill2, _ultimate;
+
+        /// <summary>
+        /// The pektus curve, left and right.
+        ///
+        /// ⚠️⚠️ THEY WERE `Keyboard.current.leftArrowKey` READ INLINE, WHICH BREAKS THE ONE
+        /// RULE THIS CLASS EXISTS FOR. `CLAUDE.md` § 4: *"One control, one action, in the input
+        /// map."* A hardware read that never passes through an `InputAction` cannot be rebound,
+        /// cannot be shown in the settings panel, and cannot be printed by `Hud.KeyLabel`, so the
+        /// tutorial's pektus lesson had to name the arrow keys in a hard-coded string while every
+        /// other lesson drew the live binding. 🧑, 2026-08-26: *"im not sure as well if pektus
+        /// controls are in settings"*. They were not.
+        ///
+        /// ⚠️ THE MOUSE WHEEL IS STILL READ DIRECTLY AND THAT IS NOT THE SAME FAULT. A scroll
+        /// axis is not a button and there is nothing to rebind it to; it is the shortcut, and
+        /// these two are the binding the panel teaches.
+        ///
+        /// ⚠️ THE DEFAULTS ARE Z AND C SINCE 2026-08-27, NOT THE ARROWS. 🧑: *"its so hard to
+        /// touch the arrow keys and some keyboards dont have it"*, and the curve has to be held
+        /// while the left hand is on WASD and the throw is charging. `Settings.Rebinding`'s class
+        /// note carries the reasoning and the one legal cross-context collision.
+        /// </summary>
+        private InputAction _curveLeft, _curveRight;
 
         private void Awake()
         {
@@ -67,15 +108,55 @@ namespace TumbangPreso
             _grab = map.FindAction("Grab", true);
             _lunge = map.FindAction("Lunge", true);
             _emote = map.FindAction("EmoteWheel", true);
+            _skill1 = map.FindAction("Skill1", false);
+            _skill2 = map.FindAction("Skill2", false);
+            _ultimate = map.FindAction("Ultimate", false);
+            _curveLeft = map.FindAction("CurveLeft", false);
+            _curveRight = map.FindAction("CurveRight", false);
 
             map.Enable();
         }
+
+        private float _currentPektusSpin;
 
         private void Update()
         {
             if (_motor == null) return;
 
             var intent = _motor.Intent;
+
+            // ⚠️⚠️ A CHAT FIELD WITH THE KEYBOARD MUST NOT ALSO DRIVE THE BODY, AND "just stop
+            // reading" IS THE WRONG FIX. `InputIntent.Parked`'s own note says why: a verb held
+            // across the boundary stays held forever, so a player who was sprinting when they hit
+            // ENTER would keep sprinting into a wall for the whole message. `Clear` releases
+            // everything and `CommitFrame` publishes that release, so the frame chat opens is the
+            // frame every key comes up.
+            //
+            // ⚠️ IT DOES NOT TOUCH `Parked`. That field already has writers in `PausePanel`,
+            // `GuidedTraining`, `CharacterMotor` and `DebugPlayerSwitcher`, and adding a fifth
+            // that clears it on a different schedule is exactly `docs/TODO.md` § 42.1: two writers
+            // on one `InputIntent` in an undefined order. Closing chat would have un-parked a
+            // paused game.
+            //
+            // ⚠️ AND CHAT IS THE THIRD INPUT CONTEXT, per `CLAUDE.md` § 4. A player who is typing
+            // has no verbs and a player who has verbs is not typing, so the two sets can never
+            // both fire, which is the same narrowing `Rebinding.SpectatorContext` records.
+            if (UI.LobbyChat.AnyTyping)
+            {
+                intent.Clear();
+                intent.CommitFrame();
+                return;
+            }
+
+            var visual = _motor.GetComponent<Visual.CharacterVisual>();
+            if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
+            {
+                // Human controls Kuro the companion pet
+                visual.Companion.SetPlayerInput(_move.ReadValue<Vector2>());
+                // Allow skill2 recast to teleport and end possession
+                if (_skill2 != null) intent.Set(Verb.Skill2, _skill2.IsPressed());
+                return;
+            }
 
             intent.Move = _move.ReadValue<Vector2>();
             intent.Set(Verb.Sprint, _sprint.IsPressed());
@@ -84,7 +165,34 @@ namespace TumbangPreso
             intent.Set(Verb.Grab, _grab.IsPressed());
             intent.Set(Verb.Lunge, _lunge.IsPressed());
             intent.Set(Verb.EmoteWheel, _emote.IsPressed());
+            if (_skill1 != null) intent.Set(Verb.Skill1, _skill1.IsPressed());
+            if (_skill2 != null) intent.Set(Verb.Skill2, _skill2.IsPressed());
+            if (_ultimate != null) intent.Set(Verb.Ultimate, _ultimate.IsPressed());
 
+            // Pektus (Curve Spin) control: Independent of WASD movement!
+            // Controlled via Mouse Wheel Up/Down (or Left/Right arrow keys) while charging throw.
+            if (_special.IsPressed())
+            {
+                if (Mouse.current != null)
+                {
+                    float scrollY = Mouse.current.scroll.ReadValue().y;
+                    if (scrollY > 0.1f) _currentPektusSpin = Mathf.Clamp(_currentPektusSpin + 0.35f, -1.0f, 1.0f);
+                    else if (scrollY < -0.1f) _currentPektusSpin = Mathf.Clamp(_currentPektusSpin - 0.35f, -1.0f, 1.0f);
+                }
+
+                // ⚠️ THROUGH THE MAP, SO THE PANEL CAN REBIND THEM. See `_curveLeft`.
+                if (_curveLeft != null && _curveLeft.IsPressed())
+                    _currentPektusSpin = Mathf.Clamp(_currentPektusSpin - Time.deltaTime * 2.5f, -1.0f, 1.0f);
+
+                if (_curveRight != null && _curveRight.IsPressed())
+                    _currentPektusSpin = Mathf.Clamp(_currentPektusSpin + Time.deltaTime * 2.5f, -1.0f, 1.0f);
+            }
+            else
+            {
+                _currentPektusSpin = 0.0f;
+            }
+
+            intent.SpinInput = _currentPektusSpin;
             intent.AimPoint = ReadAimPoint();
 
             // ⚠️⚠️ THE COMMIT DOES NOT HAPPEN HERE, AND DOING IT HERE IS WHY JUMP AND GRAB DID

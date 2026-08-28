@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
+using Unity.Collections;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
@@ -43,8 +46,83 @@ namespace TumbangPreso.Net
 
         public event Action<string> StatusChanged;
 
+        /// <summary>
+        /// Raised on a CLIENT when its connection ends, with the host's reason or "" if none.
+        ///
+        /// ⚠️⚠️ A REFUSED APPROVAL LEFT THE PLAYER SITTING IN A LOBBY THAT SAID CONNECTED.
+        /// `ConvertedMultiplayerSetup.Join` navigates to the lobby the moment `StartClient`
+        /// returns true, and that only means the TRANSPORT was told to start: approval has not
+        /// happened yet and can still be refused for a protocol mismatch or a full lobby. The
+        /// refusal arrives here, several seconds later, on a screen that has already been left
+        /// behind, so the reason was written to a status label nobody was looking at. 🧑
+        /// 2026-08-27, off two laptops: *"this is the one that joined its just stuck here"*, on a
+        /// lobby reading LOBBY · CONNECTED with every other seat drawn as a bot.
+        ///
+        /// ⚠️ THE REASON IS THE PAYLOAD BECAUSE IT IS THE ONLY ACTIONABLE PART. A version
+        /// mismatch is a thing the player can actually fix, and it is indistinguishable from a
+        /// host that vanished unless somebody prints it.
+        /// </summary>
+        public static event Action<string> ClientDisconnected;
+
+        /// <summary>Why the last client connection ended. Read once by the join screen, which
+        /// clears it, so a stale reason cannot be shown over a later successful join.</summary>
+        public static string LastDisconnectReason { get; set; } = "";
+
+        /// <summary>
+        /// Raised on THIS process whenever its own seat or spectator flag changes.
+        ///
+        /// ⚠️⚠️ THE LOBBY SCREEN HAD NO WAY TO KNOW IT HAD BEEN SEATED. `LocalSlot` is written
+        /// from three places (the seat-assignment message, `Seating`, and a mid-match rebind) and
+        /// not one of them told anybody, so `ConvertedMatchSetup` drew the seat rows once at
+        /// `Start` and then only ever redrew them when a pick table happened to arrive. A joiner
+        /// seated in P2 kept the "◀ YOU" marker on P1 until something else moved.
+        /// </summary>
+        public event Action SeatingChanged;
+
         private NetworkManager _nm;
         private UnityTransport _utp;
+
+        [Serializable]
+        private sealed class ConnectionHello
+        {
+            public int Protocol;
+            public string Token;
+            public string Name;
+        }
+
+        /// <summary>
+        /// The custom-message schema spoken by this build. This is deliberately separate from
+        /// the marketing version: a peer with an older movement or ability payload cannot safely
+        /// join and "mostly work". That failure presents as wrong characters, missing powers,
+        /// or a frozen body, which is much worse than a clear version-mismatch refusal.
+        /// </summary>
+        // ⚠️ 2 to 3 REMOVED THE PEER ID FROM `DeclareReady` AND `VoteRematch`; 3 to 4 GAVE
+        // `DeclareReady` ITS `ready` BOOL AND ADDED `ReadyTally` FOR THE LOBBY GATE. Both landed
+        // the same day from two branches, and a build carrying the first would misread the
+        // second's ready press as a peer id. 4 to 5 ADDED `Score`, which is what makes an award
+        // audible and visible on a peer that is not the host (`docs/TODO.md` § 57.3).
+        // One bump per incompatible shape, not per day.
+        //
+        // ⚠️⚠️ 5 to 6 ADDED `Chat` AND `ChatLine`, AND IT IS THE ONLY BUMP THE WHOLE PUBG LOBBY
+        // BATCH COSTS. 🧑 2026-08-28: *"yea maybe add a chat to our game too that works in lobby
+        // and ingame"*. Everything else in that batch (the lobby landing straight from
+        // MULTIPLAYER, the auto-host, the in-lobby join panel, the cast standing in the arena,
+        // the START/READY split) is drawn from state that was ALREADY replicated, which is why
+        // `docs/TODO.md` § 68.2 held every bump until this one message so there is exactly one.
+        // Both machines must be rebuilt from this branch or they refuse each other at approval,
+        // by design; § 59.2 is what makes the refusal say so instead of hanging.
+        public const int ProtocolVersion = 6;
+
+        private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
+        private readonly Dictionary<ulong, ConnectionHello> _helloByClient =
+            new Dictionary<ulong, ConnectionHello>();
+        /// <summary>
+        /// ⚠️ THE MANAGER THIS IS REGISTERED ON, for the reason `MatchRpc._handlersOn` spells
+        /// out at length: `Shutdown` destroys the `CustomMessagingManager` and a bool saying
+        /// "already done" then refuses to register on its replacement, so the seat message
+        /// stopped arriving after the first session of a process.
+        /// </summary>
+        private Unity.Netcode.CustomMessagingManager _seatHandlerOn;
         private LanBeacon _beacon;
 #if MULTIPLAY_SDK
         private IServerQueryHandler _serverQueryHandler;
@@ -54,6 +132,16 @@ namespace TumbangPreso.Net
         public bool IsHost => _nm == null || !_nm.IsListening || _nm.IsServer;
         public bool IsNetworked => _nm != null && _nm.IsListening;
         public int LocalSlot { get; private set; }
+
+        /// <summary>
+        /// ⚠️ THE TRANSPORT'S OWN ID, NEVER THE SEAT. NGO gives the listen host and a dedicated
+        /// referee `NetworkManager.ServerClientId`, which is 0, and that 0 is a real identity
+        /// rather than a placeholder: `LobbySession` keys `_peers` by it and the ready and
+        /// rematch gates count it. Offline there is no transport, and 0 is then the only peer
+        /// there is, so the same answer is correct for a different reason.
+        /// </summary>
+        public int LocalPeerId => _nm != null && _nm.IsListening ? (int)_nm.LocalClientId : 0;
+
         public bool IsSeatlessReferee => _nm != null && _nm.IsServer && !_nm.IsClient;
 
         public string Status { get; private set; } = "offline";
@@ -83,6 +171,7 @@ namespace TumbangPreso.Net
 
             _nm.NetworkConfig ??= new NetworkConfig();
             _nm.NetworkConfig.NetworkTransport = _utp;
+            _nm.NetworkConfig.ConnectionApproval = true;
 
             // ⚠️ SCENE MANAGEMENT OFF. The game loads its own scenes through SceneFlow, and
             // letting the netcode also drive scene loads means two systems racing to decide
@@ -103,6 +192,7 @@ namespace TumbangPreso.Net
 
             _nm.OnClientConnectedCallback += OnClientConnected;
             _nm.OnClientDisconnectCallback += OnClientDisconnected;
+            _nm.ConnectionApprovalCallback += ApproveConnection;
         }
 
         private void OnDestroy()
@@ -111,6 +201,10 @@ namespace TumbangPreso.Net
             {
                 _nm.OnClientConnectedCallback -= OnClientConnected;
                 _nm.OnClientDisconnectCallback -= OnClientDisconnected;
+                _nm.ConnectionApprovalCallback -= ApproveConnection;
+
+                if (_seatHandlerOn != null && _nm.CustomMessagingManager != null)
+                    _nm.CustomMessagingManager.UnregisterNamedMessageHandler(SeatAssignmentMessage);
             }
 
             if (Instance == this)
@@ -139,11 +233,78 @@ namespace TumbangPreso.Net
 
         // -------------------------------------------------------------------
 
-        public bool StartHost(int port = DefaultPort, bool dedicated = false)
+        /// <summary>
+        /// How many frames a previous session is given to finish shutting down. At 60 fps this
+        /// is a fifth of a second, which is far longer than the one frame NGO actually needs;
+        /// the bound exists so a transport wedged open can never hang the button that pressed it.
+        /// </summary>
+        private const int ShutdownWaitFrames = 12;
+
+        /// <summary>
+        /// Ends any live session and WAITS FOR IT TO ACTUALLY BE OVER before returning.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE `NetworkManager.Shutdown()` DOES NOT SHUT ANYTHING DOWN, AND
+        /// EVERY START PATH USED TO ASSUME IT DID. All four opened with the same two lines,
+        /// `if (_nm.IsListening) Stop();` followed immediately by a start, and NGO's `Shutdown`
+        /// only sets a flag: `ShutdownInternal` runs later, from the network update loop at
+        /// `PostLateUpdate`. `CanStart` refuses outright while `IsListening` is still true, so
+        /// the start in the SAME FRAME was rejected every time. Measured directly:
+        ///
+        ///     straight after Stop() (same frame): IsListening=True ShutdownInProgress=True
+        ///     SAME-FRAME restart returned False; status='failed to start hosting'
+        ///
+        /// So hosting or joining worked from a cold menu and failed whenever a session was
+        /// already live — backing out of a lobby and hosting again, or retrying a join. That is
+        /// exactly the reported shape: 🧑 2026-08-28, *"sometimes it says failed to join online
+        /// host via relay. it's consistent because sometimes i get it to work"*, and *"i cant
+        /// also seem to host in lan"*.
+        ///
+        /// ⚠️ THE RELAY PATHS WERE HIT LESS OFTEN, NOT EXEMPT. They happen to `await` a sign-in
+        /// and an allocation between the stop and the start, so a frame usually passes by luck.
+        /// A cached sign-in and a fast allocation can both continue synchronously, and then they
+        /// fail identically. One gate for all four rather than four paths with different odds.
+        ///
+        /// ⚠️ FRAMES, NOT `Task.Yield`. A yielded continuation can resume inside the same frame,
+        /// which is the very thing being waited out. `Awaitable.NextFrameAsync` is a real frame
+        /// boundary, and `ShutdownInternal` has run by the next frame's Update.
+        /// </summary>
+        private async Task EnsureStoppedAsync()
         {
-            if (_nm != null && _nm.IsListening) Stop();
+            if (_nm == null || !_nm.IsListening) return;
+
+            Stop();
+
+            for (int frame = 0; frame < ShutdownWaitFrames; frame++)
+            {
+                if (this == null) return;
+                if (_nm == null || !_nm.IsListening) return;
+
+                try
+                {
+                    await Awaitable.NextFrameAsync(destroyCancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    return;
+                }
+            }
+
+            // ⚠️ SAID OUT LOUD RATHER THAN RETRIED FOREVER. If the transport is still up after
+            // this long the start below will fail on its own and report why; a silent extra wait
+            // would just move the same failure somewhere harder to find.
+            if (_nm != null && _nm.IsListening)
+            {
+                Debug.LogWarning($"[Net] the previous session was still listening after " +
+                                 $"{ShutdownWaitFrames} frames; starting anyway.");
+            }
+        }
+
+        public async Task<bool> StartHostAsync(int port = DefaultPort, bool dedicated = false)
+        {
+            await EnsureStoppedAsync();
 
             Configure("0.0.0.0", port);
+            ConfigureClientHello();
             IsRelay = false;
             RelayJoinCode = null;
 
@@ -157,26 +318,26 @@ namespace TumbangPreso.Net
             }
 
             bool ok = dedicated ? _nm.StartServer() : _nm.StartHost();
+
+            // ⚠️ ALL FOUR START PATHS REGISTER THE SEAT HANDLER, and this one was the last that
+            // did not. A listen host is its own client, so `SendSeatAssignment` applies its seat
+            // locally and it has never needed the message; that is an argument for it being
+            // harmless, not for it being absent. Four routes to one outcome differing in any
+            // detail is how `docs/TODO.md` sections 53.1, 57.1, 60, 62.1 and 63.1 each happened.
+            if (ok) RegisterSeatHandler();
             SetStatus(ok
                 ? $"hosting on {port}, join code {Lobby.JoinCode}"
                 : "failed to start hosting");
 
             if (ok)
             {
-                var netObj = GetComponent<NetworkObject>();
-                if (netObj != null && !netObj.IsSpawned)
-                {
-                    netObj.Spawn();
-                }
-
                 LocalSlot = dedicated ? -1 : 0;
 
                 _beacon.HostName = Settings.SettingsStore.Current.PlayerName;
                 _beacon.JoinCode = Lobby.JoinCode;
                 _beacon.Port = port;
-                _beacon.MaxPlayers = LobbySession.MaxPlayers;
-                _beacon.Players = 1;
                 _beacon.InProgress = false;
+                PublishLobbyCounts();
                 _beacon.StartAdvertising();
 
                 if (dedicated)
@@ -199,14 +360,36 @@ namespace TumbangPreso.Net
                 _serverQueryHandler.UpdateServerCheck();
             }
 #endif
+
+            // Only while actually hosting. `IsHost` is deliberately true offline as well, which
+            // is right for the authority questions it answers and wrong here.
+            if (_nm == null || !_nm.IsListening || !_nm.IsServer) return;
+
+            RefreshBeaconCounts();
+
+            // ⚠️ THE UGS PUSH IS STILL EVENT-DRIVEN, AND ONLY ON A REAL EDGE. The relay lobby is
+            // a network call with its own coalescing; running it every frame would be a request
+            // per frame for a value that changes twice a match. The beacon above is four local
+            // field writes and needs no such gate.
+            if (Lobby.MatchInProgress == _publishedInProgress) return;
+
+            _publishedInProgress = Lobby.MatchInProgress;
+            PublishLobbyCounts();
         }
+
+        /// <summary>
+        /// The last <see cref="LobbySession.MatchInProgress"/> pushed to the relay lobby, so the
+        /// edge can be spotted without every caller that starts or ends a match remembering to
+        /// announce it. See <see cref="RefreshBeaconCounts"/>.
+        /// </summary>
+        private bool _publishedInProgress;
 
         /// <summary>
         /// Registers this process with the Multiplay fleet and starts answering SQP queries.
         /// </summary>
         // ⚠⚠ DEFERRED, 2026-08-20, NOT IN PROGRESS. This superseded the E.2 decision
         // (`Unity_UGS_Networking_Prompts.md`, 2026-08-19) that chose Multiplay Hosting over the
-        // Singapore VPS: com.unity.services.multiplay cannot be installed on Unity 6000.5 at all.
+        // retired Singapore VPS: com.unity.services.multiplay cannot be installed on Unity 6000.5 at all.
         // Every published version of it, 1.1.1 through 1.3.1, ships
         // Editor/Authoring/Assets/CreateMultiplayConfigMenu.cs, which calls EndNameEditAction.
         // Unity 6000.5 marks that obsolete as an ERROR rather than a warning, so the package's
@@ -229,15 +412,15 @@ namespace TumbangPreso.Net
         // MultiplayerServerService.CreateSessionAsync, which is Unity's actual replacement API but
         // exposes sessions rather than a ServerQueryHandler, so the SQP heartbeat in Update
         // becomes the service's job rather than ours. That port needs a real fleet to verify, so
-        // it is deliberately not guessed at here. The dedicated Linux server build is unaffected
-        // either way: it still serves clients today, it just does not register with a fleet.
+        // it is deliberately not guessed at here. The dedicated Linux server target can serve
+        // clients when explicitly launched, but no VPS deployment or fleet is active.
         public async Task StartMultiplayServerAsync(int port, string serverName = "Tumbang Preso Dedicated", string map = "Eskinita")
         {
 #if !MULTIPLAY_SDK
             Debug.LogWarning(
                 "[Net] Multiplay fleet registration skipped: com.unity.services.multiplay is not " +
-                "installed because it does not compile on Unity 6000.5. Dedicated hosting still " +
-                "serves clients, it just does not report itself to the fleet.");
+                "installed because it does not compile on Unity 6000.5. An explicitly launched " +
+                "dedicated host can accept direct clients, but it cannot report itself to a fleet.");
             SetStatus($"dedicated server on port {port} (fleet registration unavailable)");
             await Task.CompletedTask;
 #else
@@ -265,15 +448,46 @@ namespace TumbangPreso.Net
 #endif
         }
 
-        public bool StartClient(string address, int port = DefaultPort)
+        /// <summary>
+        /// Connect to a host.
+        ///
+        /// ⚠️⚠️ IT SPLITS `host:port` HERE, AND NOTHING DID BEFORE, WHICH BROKE EVERY LAN JOIN
+        /// MADE BY CLICKING A DISCOVERED GAME. `Configure` hands its argument straight to
+        /// `UnityTransport.SetConnectionData`, which wants a bare address, and the join field is
+        /// filled with `192.168.1.144:8910` from three directions: `LanBeacon` advertises
+        /// `ip:port` and `ConvertedMultiplayerSetup.OnLanRowClicked` copies that string into the
+        /// box verbatim, the online browser does the same, and the field's own help text says
+        /// *"An online code, or a LAN address. Port defaults to 8910"*, which tells a player the
+        /// port is optional and therefore that writing it is allowed.
+        ///
+        /// The whole string then went in as the HOSTNAME. It is not an address and it is not a
+        /// resolvable name, so the transport refused to start, `StartClient` returned false and
+        /// the screen said **"Could not reach 192.168.1.144:8910"** while naming the machine it
+        /// had just been told about by that machine. 🧑 2026-08-27, with both firewalls off:
+        /// *"they are detected on lan and server but i cant join"*.
+        ///
+        /// ⚠️ THE EXPLICIT `port` ARGUMENT STILL WINS WHEN THE STRING CARRIES NONE, so
+        /// `-tp-join 127.0.0.1 7777` is unchanged. When the string carries one it is the more
+        /// specific of the two and takes precedence.
+        ///
+        /// ⚠️ ONE COLON ONLY, AND THE TAIL MUST PARSE AS A PORT. A bare IPv6 literal is full of
+        /// colons and is a valid address on its own; splitting on the last colon would turn
+        /// `fe80::1` into a host of `fe80:` and a port of `1`. Bracketed IPv6 with a port
+        /// (`[::1]:8910`) is handled separately for the same reason.
+        /// </summary>
+        public async Task<bool> StartClientAsync(string address, int port = DefaultPort)
         {
-            if (_nm != null && _nm.IsListening) Stop();
+            await EnsureStoppedAsync();
+
+            address = SplitHostPort(address, ref port);
 
             Configure(address, port);
+            ConfigureClientHello();
             IsRelay = false;
             RelayJoinCode = null;
 
             bool ok = _nm.StartClient();
+            if (ok) RegisterSeatHandler();
             SetStatus(ok ? $"connecting to {address}:{port}" : "failed to connect");
             return ok;
         }
@@ -290,7 +504,7 @@ namespace TumbangPreso.Net
         /// </summary>
         public async Task<bool> StartRelayHost(int maxConnections = LobbySession.MaxConnections)
         {
-            if (_nm != null && _nm.IsListening) Stop();
+            await EnsureStoppedAsync();
 
             SetStatus("signing in to online services...");
 
@@ -319,30 +533,32 @@ namespace TumbangPreso.Net
                 // shipped by com.unity.services.multiplayer, as an extension method.
                 var relayServerData = allocation.ToRelayServerData("dtls");
                 _utp.SetRelayServerData(relayServerData);
+                ConfigureTimeouts();
 
                 Lobby.IsDedicated = false;
                 Lobby.OpenLobby(new System.Random(Environment.TickCount));
+                ConfigureClientHello();
 
                 bool ok = _nm.StartHost();
+
+                // ⚠️ THE RELAY HOST REGISTERS THE SEAT HANDLER TOO, exactly as `StartHost` does.
+                // A listen host is also its own client, so the message can reach it, and the two
+                // start paths differing at all is how one of them ends up missing a step nobody
+                // notices until a player is stuck. Same reasoning as `docs/TODO.md` § 60: two
+                // routes to one outcome, one of them a subset.
+                if (ok) RegisterSeatHandler();
                 SetStatus(ok
                     ? $"relay hosting active, code {Lobby.JoinCode} (relay {relayCode})"
                     : "failed to start relay host");
 
                 if (ok)
                 {
-                    var netObj = GetComponent<NetworkObject>();
-                    if (netObj != null && !netObj.IsSpawned)
-                    {
-                        netObj.Spawn();
-                    }
-
                     LocalSlot = 0;
                     _beacon.HostName = Settings.SettingsStore.Current.PlayerName;
                     _beacon.JoinCode = Lobby.JoinCode;
                     _beacon.Port = DefaultPort;
-                    _beacon.MaxPlayers = LobbySession.MaxPlayers;
-                    _beacon.Players = 1;
                     _beacon.InProgress = false;
+                    PublishLobbyCounts();
                     _beacon.StartAdvertising();
 
                     if (Query != null)
@@ -352,14 +568,22 @@ namespace TumbangPreso.Net
                             Lobby.JoinCode,
                             relayCode,
                             Lobby.SeatedPeerCount(),
-                            Lobby.PeerCount);
+                            Lobby.OccupiedSeatCount());
                     }
+                }
+
+                if (!ok)
+                {
+                    IsRelay = false;
+                    RelayJoinCode = null;
                 }
 
                 return ok;
             }
             catch (Exception e)
             {
+                IsRelay = false;
+                RelayJoinCode = null;
                 SetStatus($"relay allocation failed: {e.Message}");
                 NetIdentity.ReportServiceCallFailed("Relay allocation", e);
                 return false;
@@ -371,7 +595,7 @@ namespace TumbangPreso.Net
         /// </summary>
         public async Task<bool> StartRelayClient(string relayJoinCode)
         {
-            if (_nm != null && _nm.IsListening) Stop();
+            await EnsureStoppedAsync();
 
             if (string.IsNullOrWhiteSpace(relayJoinCode))
             {
@@ -398,31 +622,86 @@ namespace TumbangPreso.Net
                 JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(relayJoinCode.Trim());
                 var relayServerData = joinAllocation.ToRelayServerData("dtls");
                 _utp.SetRelayServerData(relayServerData);
+                ConfigureTimeouts();
 
                 IsRelay = true;
                 RelayJoinCode = relayJoinCode.Trim();
 
+                ConfigureClientHello();
                 bool ok = _nm.StartClient();
+                if (ok) RegisterSeatHandler();
+                else
+                {
+                    IsRelay = false;
+                    RelayJoinCode = null;
+                }
                 SetStatus(ok ? "connecting to relay host..." : "failed to start relay client");
                 return ok;
             }
             catch (Exception e)
             {
+                IsRelay = false;
+                RelayJoinCode = null;
                 SetStatus($"relay connection failed: {e.Message}");
                 NetIdentity.ReportServiceCallFailed("Relay join", e);
                 return false;
             }
         }
 
+        /// <summary>
+        /// ⚠️⚠️ TRUE WHILE WE ARE THE ONES ENDING IT. `Shutdown` raises the same
+        /// `OnClientDisconnectCallback` a refusal does, so without this a player pressing BACK
+        /// was told why they had been thrown out of a lobby they had just chosen to leave. 🧑
+        /// 2026-08-27: *"this shit shows even if i close on my own"*, over
+        /// `[Disconnect Event][Client-0][TransportClientId-0][TransportShutdown]`.
+        ///
+        /// ⚠️ `StartClient` CALLS `Stop` FIRST when a session is already live, so this also covers
+        /// the disconnect that a re-join produces on the way out of the old connection.
+        /// </summary>
+        private bool _localShutdown;
+
+        /// <summary>
+        /// ⚠️⚠️ TRUE ONLY ONCE THIS PEER HAS ACTUALLY BEEN LET IN, AND IT IS WHAT STOPS THE
+        /// DISCONNECT HANDLER FIRING DURING A JOIN. `OnClientDisconnectCallback` is raised for a
+        /// connection that never completed as readily as for one that was lost: a refused
+        /// approval, a retry inside `MaxConnectAttempts`, and a transport rebind all reach it
+        /// while the player is still on their way in. § 62.1 sends a disconnected peer back to
+        /// the join screen, and without this that navigation fired mid-handshake and bounced the
+        /// player out of the lobby they had just entered. 🧑 2026-08-28, one build after it
+        /// landed: *"oh shit now i cant join any game wtf"*.
+        ///
+        /// ⚠️ CLEARED ON THE WAY OUT AND ON THE WAY IN, so a second join starts from false and
+        /// cannot inherit the last session's answer.
+        /// </summary>
+        private bool _everConnected;
+
         public void Stop()
         {
+            _localShutdown = true;
+            _everConnected = false;
             _beacon.StopAll();
             if (Query != null) _ = Query.DeleteHostedLobbyAsync();
 
             if (_nm != null && _nm.IsListening) _nm.Shutdown();
 
+            _helloByClient.Clear();
+
+            // ⚠️⚠️ `EndMatch` IS NOT ENOUGH HERE AND THAT IS WHY `Reset` EXISTS. `NetSession`
+            // owns ONE `LobbySession` for the lifetime of the process, so host, quit to menu,
+            // host again used to reach `OpenLobby` with the previous session's peer table,
+            // its leader id and `MatchInProgress` still set. A brand new lobby then believed
+            // it already had four players, obeyed a leader whose transport was gone, and
+            // answered Spectate to the first person who tried to join it.
             Lobby.EndMatch();
+            Lobby.Reset();
+            Lobby.IsDedicated = false;
             LocalSlot = 0;
+
+            // ⚠️ THE NEXT SESSION MUST RE-APPLY ITS SEAT EVEN IF IT IS THE SAME NUMBER. See
+            // ApplyAssignedSeat: without clearing this, hosting again after leaving a lobby
+            // where you sat in seat 0 would drop the host's own seat 0 as "no change" and the
+            // arena would never be told to wire anything up.
+            _seatApplied = false;
             IsRelay = false;
             RelayJoinCode = null;
             SetStatus("offline");
@@ -432,29 +711,311 @@ namespace TumbangPreso.Net
 
         public System.Collections.Generic.IEnumerable<LanEntry> LanEntries => _beacon.Entries;
 
+        /// <summary>
+        /// Pull a trailing `:port` off an address, leaving a bare host the transport can use.
+        /// Returns the address unchanged when it carries no port. See <see cref="StartClient"/>.
+        /// </summary>
+        public static string SplitHostPort(string address, ref int port)
+        {
+            if (string.IsNullOrWhiteSpace(address)) return address;
+
+            address = address.Trim();
+
+            // `[::1]:8910` and `[::1]`. The brackets are what make an IPv6 port unambiguous, so
+            // they are the only shape in which one is read.
+            if (address.StartsWith("["))
+            {
+                int close = address.IndexOf(']');
+                if (close < 0) return address;
+
+                string inner = address.Substring(1, close - 1);
+                if (close + 2 < address.Length && address[close + 1] == ':' &&
+                    int.TryParse(address.Substring(close + 2), out int bracketed) &&
+                    bracketed > 0 && bracketed <= 65535)
+                    port = bracketed;
+
+                return inner;
+            }
+
+            // Exactly one colon is `host:port`. More than one is a bare IPv6 literal and is left
+            // alone; see the note on StartClient for why splitting it would corrupt it.
+            int first = address.IndexOf(':');
+            if (first < 0 || first != address.LastIndexOf(':')) return address;
+
+            string head = address.Substring(0, first);
+            string tail = address.Substring(first + 1);
+
+            if (head.Length == 0) return address;
+            if (!int.TryParse(tail, out int parsed) || parsed <= 0 || parsed > 65535) return address;
+
+            port = parsed;
+            return head;
+        }
+
         private void Configure(string address, int port)
         {
             _utp.SetConnectionData(address, (ushort)port);
+            ConfigureTimeouts();
+        }
 
-            // ⚠️ A GENEROUS TIMEOUT ON PURPOSE. This game is played on venue wifi and Philippine
-            // home connections, and a peer briefly stalling is normal. Dropping them fast means
-            // dropping them often, and a dropped seat costs the other three a real player for
-            // the rest of the match.
+        /// <summary>
+        /// The transport's patience, and nothing else.
+        ///
+        /// ⚠️ A GENEROUS TIMEOUT ON PURPOSE. This game is played on venue wifi and Philippine
+        /// home connections, and a peer briefly stalling is normal. Dropping them fast means
+        /// dropping them often, and a dropped seat costs the other three a real player for
+        /// the rest of the match.
+        ///
+        /// ⚠️⚠️ SPLIT OUT OF `Configure` BECAUSE THE RELAY PATHS COULD NOT CALL THAT AND SO GOT
+        /// NONE OF THIS. `Configure` opens with `SetConnectionData`, which resets the transport's
+        /// protocol to plain UnityTransport and would undo the `SetRelayServerData` the relay
+        /// paths had just done. So relay ran on whatever the last LAN attempt happened to leave
+        /// behind, or on UTP's own defaults in a process that had never touched LAN — a 1000 ms
+        /// connect timeout, on the one route in this game that goes through a datacentre rather
+        /// than across the room. The more latent path had the less patient settings.
+        /// </summary>
+        private void ConfigureTimeouts()
+        {
             _utp.DisconnectTimeoutMS = 30000;
             _utp.ConnectTimeoutMS = 2000;
             _utp.MaxConnectAttempts = 12;
         }
 
+        /// <summary>
+        /// ⚠️⚠️ TRUE ONCE A SEAT HAS ACTUALLY BEEN APPLIED, AND IT IS WHAT MAKES THE TWO SEAT
+        /// PROTOCOLS IDEMPOTENT. `LocalSlot` alone cannot answer "has this been set yet", because
+        /// its own default is 0 and 0 is a real seat: without this flag the host's first
+        /// announcement of seat 0 looks like a no-op and is dropped. See
+        /// <see cref="ApplyAssignedSeat"/>.
+        /// </summary>
+        private bool _seatApplied;
+
         public void SetLocalSeating(int seat, bool spectator)
         {
+            if (_seatApplied && LocalSlot == seat && GameLaunch.Spectator == spectator) return;
+
+            _seatApplied = true;
             LocalSlot = seat;
             GameLaunch.Spectator = spectator;
             SetStatus($"seated in slot {seat} (spectator={spectator})");
+            SeatingChanged?.Invoke();
         }
 
         public void SetStatusForHost()
         {
             SetStatus($"{Lobby.PeerCount} connected");
+        }
+
+        /// <summary>
+        /// Republishes the three counts every browser reads: how many chairs are being PLAYED,
+        /// how many are UNAVAILABLE (played plus held for a dropped peer), and how many sockets
+        /// are attached.
+        ///
+        /// ⚠️⚠️ ONE NUMBER USED TO SERVE ALL THREE AND IT WAS `Lobby.PeerCount`. That counts
+        /// connections, so two players and six spectators advertised 8/4 and the LAN browser
+        /// struck the lobby out as full; the other direction, a seat held for somebody who
+        /// dropped mid-match, advertised as free and then refused whoever pressed join. Both are
+        /// reports of "the server browser lies", and neither is fixable while the concepts share
+        /// a field. `LobbySession.OccupiedSeatCount` and `ConnectedHumanCount` are the two
+        /// missing questions.
+        /// </summary>
+        /// <summary>
+        /// The local half: four counts written onto the beacon, costing nothing and safe to run
+        /// every frame.
+        ///
+        /// ⚠️⚠️ SPLIT OUT OF <see cref="PublishLobbyCounts"/> BECAUSE `InProgress` DOES NOT
+        /// CHANGE ON A CONNECT OR A DISCONNECT, AND THOSE WERE THE ONLY THINGS THAT PUBLISHED.
+        /// A match starting is not either one, so the beacon went on advertising
+        /// `InProgress = false` for the whole match. The browser drew a running game as "IN THE
+        /// LOBBY", and worse, `LanEntry.IsJoinable` opens with `!InProgress`, so it offered JOIN
+        /// on it. That is the third instance of the fault this method's own note is about: the
+        /// server browser telling the truth requires the fields to be RE-READ, not merely to
+        /// exist.
+        /// </summary>
+        private void RefreshBeaconCounts()
+        {
+            if (_beacon == null) return;
+
+            _beacon.MaxPlayers = LobbySession.MaxPlayers;
+            _beacon.MaxConnections = LobbySession.MaxConnections;
+            _beacon.Players = Lobby.SeatedPeerCount();
+            _beacon.Occupied = Lobby.OccupiedSeatCount();
+            _beacon.Connections = Lobby.ConnectedHumanCount();
+            _beacon.InProgress = Lobby.MatchInProgress;
+        }
+
+        private void PublishLobbyCounts()
+        {
+            if (_beacon == null) return;
+
+            RefreshBeaconCounts();
+
+            if (Query != null && IsRelay)
+            {
+                _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(),
+                                                 Lobby.OccupiedSeatCount(),
+                                                 Lobby.MatchInProgress);
+            }
+        }
+
+        /// <summary>
+        /// Put the player's durable reconnect identity into Netcode's approval payload. A
+        /// NetworkClientId belongs to one transport connection and necessarily changes after a
+        /// disconnect; using it as identity is what made a returning defender reappear in the
+        /// attacker's old seat.
+        /// </summary>
+        private void ConfigureClientHello()
+        {
+            var settings = Settings.SettingsStore.Current;
+            var hello = new ConnectionHello
+            {
+                Protocol = ProtocolVersion,
+                Token = NetIdentity.Token,
+                Name = string.IsNullOrWhiteSpace(settings.PlayerName) ? "Player" : settings.PlayerName.Trim()
+            };
+
+            _nm.NetworkConfig.ConnectionData = Encoding.UTF8.GetBytes(JsonUtility.ToJson(hello));
+        }
+
+        private void ApproveConnection(NetworkManager.ConnectionApprovalRequest request,
+                                       NetworkManager.ConnectionApprovalResponse response)
+        {
+            var hello = DecodeHello(request.Payload);
+            bool protocolMatches = hello != null && hello.Protocol == ProtocolVersion;
+            bool hasCapacity = _nm == null ||
+                               Math.Max(_nm.ConnectedClientsIds.Count, _helloByClient.Count)
+                               < LobbySession.MaxConnections;
+
+            response.Approved = protocolMatches && hasCapacity;
+            response.CreatePlayerObject = false;
+            response.Pending = false;
+            response.Reason = !protocolMatches
+                ? $"Game version mismatch (network protocol {ProtocolVersion})"
+                : hasCapacity ? string.Empty : "Lobby is full";
+
+            if (response.Approved) _helloByClient[request.ClientNetworkId] = hello;
+        }
+
+        private static ConnectionHello DecodeHello(byte[] payload)
+        {
+            try
+            {
+                if (payload != null && payload.Length > 0)
+                {
+                    var decoded = JsonUtility.FromJson<ConnectionHello>(Encoding.UTF8.GetString(payload));
+                    if (decoded != null && !string.IsNullOrWhiteSpace(decoded.Token))
+                    {
+                        decoded.Token = decoded.Token.Trim();
+                        if (decoded.Token.Length > 128)
+                            decoded.Token = decoded.Token.Substring(0, 128);
+                        decoded.Name = string.IsNullOrWhiteSpace(decoded.Name) ? "Player" : decoded.Name.Trim();
+                        return decoded;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Net] Ignoring malformed connection identity: {e.Message}");
+            }
+
+            return null;
+        }
+
+        private void RegisterSeatHandler()
+        {
+            if (_nm?.CustomMessagingManager == null) return;
+            if (ReferenceEquals(_seatHandlerOn, _nm.CustomMessagingManager)) return;
+
+            _nm.CustomMessagingManager.RegisterNamedMessageHandler(
+                SeatAssignmentMessage, OnSeatAssignmentMessage);
+            _seatHandlerOn = _nm.CustomMessagingManager;
+        }
+
+        private void OnSeatAssignmentMessage(ulong senderClientId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int seat);
+            ApplyAssignedSeat(seat);
+        }
+
+        private void SendSeatAssignment(ulong clientId, int seat)
+        {
+            if (_nm == null) return;
+
+            if (_nm.IsClient && clientId == _nm.LocalClientId)
+            {
+                ApplyAssignedSeat(seat);
+                return;
+            }
+
+            using var writer = new FastBufferWriter(sizeof(int), Allocator.Temp);
+            writer.WriteValueSafe(seat);
+            _nm.CustomMessagingManager.SendNamedMessage(SeatAssignmentMessage, clientId, writer);
+        }
+
+        /// <summary>
+        /// Applies the host's authoritative seat on this process.
+        ///
+        /// ⚠️⚠️ THERE ARE TWO SEAT PROTOCOLS AND THIS IS THE ONE THAT DOES LESS, WHICH IS WHY A
+        /// CLIENT COULD END UP UNABLE TO MOVE. The host announces a seat TWICE by two unrelated
+        /// routes: `NetSession.OnClientConnected` admits the peer and sends its own
+        /// `tp.seat.assignment.v1`, which lands here; and `MatchRpc.HandleIdentify` admits the
+        /// same peer again and sends `Seating`, which lands in `OnSeatingMsg` and calls
+        /// `SetLocalSeating`. Only the second one carries the join code, the leader, whether a
+        /// match is in progress, and the `SeatingChanged` notification that makes the ARENA move
+        /// the camera, the HUD, the ready gate and the `PlayerInputReader` onto the new chair.
+        ///
+        /// 🧑 2026-08-27, from the joining laptop: *"i can move camera and see updates but i cant
+        /// move"*, and its `Player.log` reads `[Net] connected as seat 2` with **no**
+        /// `[Net] seated in slot 1` anywhere. That is this method having run and `SetLocalSeating`
+        /// having not: the seat number was applied and nothing was told about it.
+        ///
+        /// ⚠️ SO THIS RAISES `SeatingChanged` TOO. It is the same fix as `docs/TODO.md` § 53.1
+        /// one layer down: whichever of the two messages wins the race, the arena hears about it.
+        /// `MatchInstaller.FollowLocalSeat` is idempotent, so both winning costs nothing.
+        ///
+        /// ⚠️⚠️ AND THE DUPLICATION ITSELF IS THE REAL DEFECT, NOT THIS SYMPTOM. Two protocols
+        /// for one fact, one of them a subset of the other, is exactly the shape § 53.1 and
+        /// § 57.1 were. `docs/TODO.md` § 60 carries retiring one of them; it is not done here,
+        /// because deleting a seat path while two laptops are mid-test is how a working build
+        /// becomes an unworking one.
+        /// </summary>
+        /// ⚠️⚠️ AND IT IS IDEMPOTENT NOW, WHICH IS WHAT STOPPED THE JOIN FROM BOUNCING. Measured
+        /// on two real peers over a loopback transport, ONE join produced three seat
+        /// announcements and SIX `SeatingChanged` events:
+        ///
+        ///     [Net] connected as seat 2          <- this method, from tp.seat.assignment.v1
+        ///     [NetSeat] seat changed: ...        <- x2, from the duplicated raise below
+        ///     [Net] seated in slot 1             <- SetLocalSeating, from Seating
+        ///     [NetSeat] seat changed: ...
+        ///     [Net] connected as seat 2          <- this method AGAIN, same seat
+        ///     [NetSeat] seat changed: ... x2
+        ///     [Net] connected as seat 2          <- and again, seconds later
+        ///     [NetSeat] seat changed: ... x2
+        ///
+        /// Every one of those rebuilds the local seat: `MatchInstaller` moves the camera, the
+        /// HUD, the input reader and the `PlayerInputReader` onto the chair again. Doing that
+        /// six times for one join is what a joining player sees as the view snapping about. 🧑
+        /// 2026-08-28: *"when a non host player tries to join, it just bounces back and forth a
+        /// lot of times"*.
+        ///
+        /// ⚠️ THE RAISE WAS LITERALLY WRITTEN TWICE, and that is a plain duplicated line rather
+        /// than a race guard: the paragraph above it argues for raising the event HERE AS WELL AS
+        /// in `SetLocalSeating`, which is one raise, not two. Redundancy across the two protocols
+        /// is deliberate; redundancy inside one call is not.
+        ///
+        /// ⚠️ REPEATS ARE DROPPED RATHER THAN THE SECOND PROTOCOL BEING DELETED. Retiring one of
+        /// them is `docs/TODO.md` § 60 and is still the right end state; until then, making both
+        /// idempotent costs nothing and means whichever wins the race, the arena is rebuilt once.
+        public void ApplyAssignedSeat(int seat)
+        {
+            bool spectator = seat < 0;
+            if (_seatApplied && LocalSlot == seat && GameLaunch.Spectator == spectator) return;
+
+            _seatApplied = true;
+            LocalSlot = seat;
+            GameLaunch.Spectator = spectator;
+            SetStatus(seat >= 0 ? $"connected as seat {seat + 1}" : "connected as spectator");
+            SeatingChanged?.Invoke();
         }
 
         // -------------------------------------------------------------------
@@ -465,51 +1026,141 @@ namespace TumbangPreso.Net
             {
                 if (clientId == _nm.LocalClientId)
                 {
+                    _everConnected = true;
                     MatchRpc.Instance?.Initialize(_nm);
                     SetStatus("connected");
                     var s = Settings.SettingsStore.Current;
-                    MatchRpc.Instance?.IdentifyServerRpc(NetIdentity.Token, s.PlayerName, s.CharacterPick, s.CanPick, s.SlipperPick);
+                    int charPick = s.CharacterPick >= 0 ? s.CharacterPick : 0;
+                    int canPick = s.CanPick >= 0 ? s.CanPick : 0;
+                    int slipperPick = s.SlipperPick >= 0 ? s.SlipperPick : 0;
+                    MatchRpc.Instance?.IdentifyServerRpc(NetIdentity.Token, s.PlayerName, charPick, canPick, slipperPick);
                 }
                 return;
             }
 
             MatchRpc.Instance?.Initialize(_nm);
 
-            // ⚠️ THE HOST SEATS THEM, AND THE HOST DECIDES.
+            // ⚠️ THE HOST SEATS THEM, AND THE HOST DECIDES. A client sends its token and name;
+            // where it sits is not up to it. See LobbySession.RuleOnArrival for why the branch
+            // order matters: a returning player outranks a newcomer for their own seat.
+            var settings = Settings.SettingsStore.Current;
+            ConnectionHello hello;
             if (clientId == _nm.LocalClientId)
             {
-                var s = Settings.SettingsStore.Current;
-                var record = Lobby.Admit((int)clientId, NetIdentity.Token, s.PlayerName);
-                Lobby.SetPicks((int)clientId, s.CharacterPick, s.CanPick, s.SlipperPick);
-                LocalSlot = record.Seat;
-                SetStatus($"{Lobby.PeerCount} connected, seat {record.Seat}");
+                hello = new ConnectionHello
+                {
+                    Token = NetIdentity.Token,
+                    Name = settings.PlayerName
+                };
+            }
+            else if (!_helloByClient.TryGetValue(clientId, out hello))
+            {
+                Debug.LogWarning($"[Net] Connected client {clientId} has no approved identity; disconnecting.");
+                _nm.DisconnectClient(clientId, "Missing approved identity");
+                return;
             }
 
-            _beacon.Players = Lobby.PeerCount;
-            if (Query != null && IsRelay)
+            var record = Lobby.Admit((int)clientId, hello.Token, hello.Name,
+                                     out int replacedPeerId);
+            SendSeatAssignment(clientId, record.Seat);
+
+            // A relaunch can establish the new socket before the generous 30 second timeout
+            // retires the old one. The durable token has already moved the seat above, so the
+            // stale transport is now both unnecessary and dangerous: without disconnecting it,
+            // it can keep submitting movement and verbs for the same player.
+            if (replacedPeerId >= 0 && replacedPeerId != (int)clientId &&
+                _nm.ConnectedClients.ContainsKey((ulong)replacedPeerId))
             {
-                _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(), Lobby.PeerCount, Lobby.MatchInProgress);
+                _helloByClient.Remove((ulong)replacedPeerId);
+                _nm.DisconnectClient((ulong)replacedPeerId, "Replaced by reconnect");
             }
+
+            // ⚠️ THE HOST NEVER SENDS ITSELF AN IdentifyServerRpc, so its own character, can and
+            // slipper picks reach the lobby from here or not at all. Every other seat's picks
+            // still arrive on the RPC.
+            if (clientId == _nm.LocalClientId)
+            {
+                int charPick = settings.CharacterPick >= 0 ? settings.CharacterPick : 0;
+                int canPick = settings.CanPick >= 0 ? settings.CanPick : 0;
+                int slipperPick = settings.SlipperPick >= 0 ? settings.SlipperPick : 0;
+                Lobby.SetPicks((int)clientId, charPick, canPick, slipperPick);
+            }
+
+            PublishLobbyCounts();
+            MatchRpc.Instance?.BroadcastLobbyPicks();
         }
 
         private void OnClientDisconnected(ulong clientId)
         {
-            if (IsHost)
+            if (IsHost && clientId != _nm.LocalClientId)
             {
                 // ⚠️ THE SEAT IS HELD, NOT FREED, so a reconnecting player gets their own chair
                 // back rather than finding a stranger in it holding their score.
-                Lobby.Depart((int)clientId);
                 MatchRpc.Instance?.HostPeerLeft((int)clientId);
-                _beacon.Players = Lobby.PeerCount;
-                if (Query != null && IsRelay)
-                {
-                    _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(), Lobby.PeerCount, Lobby.MatchInProgress);
-                }
+                _helloByClient.Remove(clientId);
+                PublishLobbyCounts();
+                MatchRpc.Instance?.BroadcastLobbyPicks();
                 SetStatus($"{Lobby.PeerCount} connected");
                 return;
             }
 
-            SetStatus("disconnected");
+            // ⚠️⚠️ THE REASON IS THE WHOLE POINT OF THIS BRANCH NOW. A refused approval arrives
+            // here as an ordinary disconnect, so a build-version mismatch, a full lobby and a
+            // host that vanished were all one word: "disconnected". The player then has nothing
+            // to act on, and a version mismatch in particular is a thing they CAN fix.
+            string reason = _nm != null ? _nm.DisconnectReason : null;
+            SetStatus(string.IsNullOrWhiteSpace(reason) ? "disconnected" : $"disconnected: {reason}");
+
+            // ⚠️ A DISCONNECT WE ASKED FOR IS NOT AN EVENT ANYBODY NEEDS TELLING ABOUT. The
+            // player is already navigating; announcing it and dragging them to the join screen
+            // would fight the button they just pressed.
+            bool wasLocal = _localShutdown;
+            bool wasConnected = _everConnected;
+            _localShutdown = false;
+            _everConnected = false;
+
+            LocalSlot = 0;
+            _seatApplied = false;
+            IsRelay = false;
+            RelayJoinCode = null;
+            _helloByClient.Clear();
+            Lobby.Reset();
+
+            // ⚠️ A CONNECTION THAT NEVER COMPLETED IS NOT A DISCONNECTION. The join screen is
+            // already showing the attempt and reports its own failure; navigating from here as
+            // well takes the player out of a lobby they are still arriving in.
+            if (wasLocal || !wasConnected) return;
+
+            LastDisconnectReason = PlayerFacingDisconnectReason(reason);
+            ClientDisconnected?.Invoke(LastDisconnectReason);
+            return;
+        }
+
+        /// <summary>
+        /// The reason in words a player can act on, or "" when there is nothing worth saying.
+        ///
+        /// ⚠️⚠️ NETCODE'S OWN EVENT ENVELOPE IS NOT PLAYER-FACING TEXT.
+        /// `[Disconnect Event][Client-0][TransportClientId-0][TransportShutdown]
+        /// NetworkConnectionManager was shutdown. The transport was shutdown.` is a diagnostic,
+        /// and it was being printed on a menu in the game's own font. It also says nothing: it
+        /// describes the mechanism, never the cause.
+        ///
+        /// ⚠️ WHAT IS KEPT IS WHAT THE HOST ITSELF WROTE. `ApproveConnection` sets
+        /// `response.Reason` to "Game version mismatch (network protocol 5)" or "Lobby is full",
+        /// and NGO delivers exactly that string. Those two are the whole point of the mechanism:
+        /// a version mismatch is a thing the player CAN fix, and it is the likeliest failure
+        /// whenever two machines were built from different commits.
+        /// </summary>
+        private static string PlayerFacingDisconnectReason(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return "Lost connection to the host.";
+
+            raw = raw.Trim();
+
+            // Netcode wraps its own transport events in brackets. Nothing the host authors does.
+            if (raw.StartsWith("[")) return "Lost connection to the host.";
+
+            return raw;
         }
 
         public void SetStatus(string s)

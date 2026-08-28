@@ -160,7 +160,18 @@ namespace TumbangPreso
             // its one call site — see its note. The arms carry no `shove` clip, so this resolves
             // to the procedural kick, which is exactly what the .gd does for it.
             Animator?.PlayAction("shove");
-            GameServices.Audio?.PlayAt("bump_swing", transform.position);
+            NetCue.Play("bump_swing", transform.position);
+
+            if (NetAuthority.ShouldRequest())
+            {
+                _shoveCooldown = Balance.ShoveCooldown;
+                Net.MatchRpc.Instance?.RequestShoveServerRpc(
+                    _motor.PlayerSlot, transform.position, transform.forward);
+                return;
+            }
+
+            if (NetAuthority.IsNetworked)
+                Net.MatchRpc.Instance?.BroadcastAction(_motor.PlayerSlot, "shove");
 
             var victim = FindInCone(Balance.ShoveRange, Balance.ShoveArcDeg, requireTaggable: false);
             if (victim == null)
@@ -190,6 +201,16 @@ namespace TumbangPreso
             // the first-person kick with it.
             Animator?.PlayAction("punch");
 
+            if (NetAuthority.ShouldRequest())
+            {
+                Net.MatchRpc.Instance?.RequestPunchServerRpc(
+                    _motor.PlayerSlot, transform.position, transform.forward);
+                return;
+            }
+
+            if (NetAuthority.IsNetworked)
+                Net.MatchRpc.Instance?.BroadcastAction(_motor.PlayerSlot, "punch");
+
             var victim = FindInCone(Balance.PunchRange, Balance.PunchArcDeg, requireTaggable: true);
             if (victim != null) GameServices.Round?.ResolveTag(_motor, victim);
         }
@@ -202,8 +223,11 @@ namespace TumbangPreso
         /// </summary>
         private void StepLunge(float dt)
         {
-            // While the reset channel runs, the lunge charge is cancelled. Both are E held as
-            // the taya, and resetting the can must never fire a lunge out of it.
+            // While the reset channel runs, the lunge charge is cancelled. They are separate
+            // keys now (E channels, right click lunges), so this is no longer a shared-key
+            // problem, but it stays: a taya who starts a lunge with one hand while righting the
+            // can with the other should still finish the can, and this is what makes the
+            // channel uninterruptible from their own inputs.
             if (_carrier != null && _carrier.ChannelRatio > 0.0f)
             {
                 _lungeCharging = false;
@@ -249,6 +273,16 @@ namespace TumbangPreso
             Vector3 forward = transform.forward;
             forward.y = 0.0f;
             _motor.ApplyImpulse(forward.normalized * Balance.LungeSpeed * power);
+
+            if (NetAuthority.ShouldRequest())
+            {
+                Net.MatchRpc.Instance?.RequestLungeServerRpc(
+                    _motor.PlayerSlot, _lungeFrom, forward, power);
+            }
+            else if (NetAuthority.IsNetworked)
+            {
+                Net.MatchRpc.Instance?.BroadcastAction(_motor.PlayerSlot, "lunge");
+            }
         }
 
         /// <summary>
@@ -260,6 +294,15 @@ namespace TumbangPreso
         /// </summary>
         private void SweepLungeTag()
         {
+            // ⚠️⚠️ A TAG IS A DECISION AND ONLY THE HOST MAKES DECISIONS. The sweep ran on
+            // whichever peer was lunging, so a client's dash called `RoundDirector.ResolveTag`
+            // locally: it staggered a body it does not own, respawned somebody on its own screen
+            // alone, and asked for a score the host had not awarded. The host runs this same
+            // sweep off `HostResolveLunge`, from the position the client reported, and its result
+            // is the one everybody sees. `CLAUDE.md` § 4: contact resolves by distance ON THE
+            // HOST.
+            if (!NetAuthority.ShouldResolve()) return;
+
             var round = GameServices.Round;
             if (round == null || round.Lata == null || !round.Lata.IsUpright) return;
 
@@ -292,23 +335,29 @@ namespace TumbangPreso
         // -------------------------------------------------------------------
 
         /// <summary>The taya's jab. Instant, no charge, more reach than the lunge.</summary>
-        public void HostResolvePunch(Vector3 from, Vector3 facing)
+        public bool HostResolvePunch(Vector3 from, Vector3 facing)
         {
-            if (!NetAuthority.ShouldResolve()) return;
+            if (!NetAuthority.ShouldResolve() || _punchCooldown > 0.0f ||
+                !_motor.IsDefender || !_motor.CanAct()) return false;
+
+            _punchCooldown = Balance.PunchCooldown;
+            Animator?.PlayAction("punch");
 
             var victim = FindInCone(from, facing, Balance.PunchRange, Balance.PunchArcDeg,
                                     requireTaggable: true);
 
             if (victim != null) GameServices.Round?.ResolveTag(_motor, victim);
+            return true;
         }
 
         /// <summary>
         /// The taya's dash. ⚠️ THE IMPULSE IS APPLIED HOST-SIDE AND THE SWEEP FOLLOWS IT, so a
         /// lunge cannot tag from a position the dash never actually reached.
         /// </summary>
-        public void HostResolveLunge(Vector3 from, Vector3 facing, float power)
+        public bool HostResolveLunge(Vector3 from, Vector3 facing, float power)
         {
-            if (!NetAuthority.ShouldResolve()) return;
+            if (!NetAuthority.ShouldResolve() || _lungeCooldown > 0.0f ||
+                !_motor.IsDefender || !_motor.CanAct()) return false;
 
             _lungeCooldown = Balance.LungeCooldown;
             _lungeActiveLeft = Balance.LungeActiveTime;
@@ -317,12 +366,18 @@ namespace TumbangPreso
             Vector3 flat = facing;
             flat.y = 0.0f;
             _motor.ApplyImpulse(flat.normalized * Balance.LungeSpeed * power);
+            Animator?.PlayAction("lunge");
+            return true;
         }
 
         /// <summary>An attacker shoving a rival, resolved from the sender's own frame.</summary>
-        public void HostResolveShove(Vector3 from, Vector3 facing)
+        public bool HostResolveShove(Vector3 from, Vector3 facing)
         {
-            if (!NetAuthority.ShouldResolve()) return;
+            if (!NetAuthority.ShouldResolve() || _shoveCooldown > 0.0f ||
+                _motor.IsDefender || !_motor.CanAct() || _motor.Stamina.IsFatigued ||
+                !_motor.Stamina.Spend(Balance.ShoveStaminaCost)) return false;
+
+            Animator?.PlayAction("shove");
 
             var victim = FindInCone(from, facing, Balance.ShoveRange, Balance.ShoveArcDeg,
                                     requireTaggable: false);
@@ -330,10 +385,11 @@ namespace TumbangPreso
             if (victim == null)
             {
                 _shoveCooldown = Balance.ShoveMissCooldown;
-                return;
+                return true;
             }
 
             ApplyShoveTo(victim);
+            return true;
         }
 
         /// <summary>The push itself, shared by the local and networked paths.</summary>
@@ -342,12 +398,14 @@ namespace TumbangPreso
             Vector3 push = victim.transform.position - transform.position;
             push.y = 0.0f;
             push = push.normalized * Balance.ShoveSpeed
-                   * Roster.PersonPowerScale(_motor.CharacterIndex)
-                   / Roster.PersonGritScale(victim.CharacterIndex);
+                   * Roster.PersonPowerScale(_motor.CharacterIndex, _motor.Mode)
+                   / Roster.PersonGritScale(victim.CharacterIndex, victim.Mode);
             push.y = Balance.ShoveLift;
 
             victim.ApplyImpulse(push);
             victim.ApplyStagger(Balance.ShoveStun);
+            Visual.DizzyStars.Attach(victim.transform, Balance.ShoveStun);
+            Visual.ComicPopup.Bonk(victim.transform.position);
 
             GameServices.Round?.NoteShove(victim.PlayerSlot, _motor.PlayerSlot);
             _shoveCooldown = Balance.ShoveCooldown;

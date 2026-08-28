@@ -33,12 +33,91 @@ namespace TumbangPreso.Visual
         [SerializeField] private float _white = 1.9f;
 
         private Material _material;
+        private float _chromaticPeak;
+        private float _chromaticUntil;
+        private float _chromaticDuration;
 
         private static readonly int BrightnessId = Shader.PropertyToID("_Brightness");
         private static readonly int ContrastId = Shader.PropertyToID("_Contrast");
         private static readonly int SaturationId = Shader.PropertyToID("_Saturation");
         private static readonly int ExposureId = Shader.PropertyToID("_Exposure");
         private static readonly int WhiteId = Shader.PropertyToID("_White");
+        private static readonly int ChromaticId = Shader.PropertyToID("_Chromatic");
+        private static readonly int ChromaticRadialId = Shader.PropertyToID("_ChromaticRadial");
+
+        /// <summary>Short, bounded screen-space colour split for local ultimate impact.</summary>
+        public void PulseChromatic(float strength, float duration)
+        {
+            if (Time.unscaledTime >= _chromaticUntil) _chromaticPeak = 0.0f;
+            _chromaticPeak = Mathf.Max(_chromaticPeak, Mathf.Clamp01(strength));
+            _chromaticDuration = Mathf.Max(0.05f, duration);
+            _chromaticUntil = Mathf.Max(_chromaticUntil, Time.unscaledTime + _chromaticDuration);
+        }
+
+        private float CurrentChromatic
+        {
+            get
+            {
+                float left = _chromaticUntil - Time.unscaledTime;
+                if (left <= 0.0f) return 0.0f;
+                return _chromaticPeak * Mathf.Clamp01(left / Mathf.Max(_chromaticDuration, 0.05f));
+            }
+        }
+
+        // ------------------------------------------------------- § THE PERSISTENT COLOUR SPLIT
+        //
+        // ⚠️⚠️ THE STYLE'S SPLIT IS ADDED TO THE IMPACT'S, IT DOES NOT REPLACE IT, AND A `Max`
+        // WOULD HAVE BEEN THE OBVIOUS WRONG ANSWER. `Settings.RenderStyles`'s Chromatic row holds
+        // a base of 0.25 on for the whole match. The transient peaks it has to coexist with are
+        // `HitFeel.ChromaticPeak`, which is 0.10 / 0.22 / 0.35 / 0.55 by hit weight, and
+        // `HeroAbilitySystem`'s ultimate at 0.95.
+        //
+        // Under `Mathf.Max` the two lightest hits are SWALLOWED: max(0.25, 0.10) is 0.25, which is
+        // the frame not moving. The whole job of that pulse is to tell the player they were hit,
+        // and in Chromatic mode it would fire and show nothing. Under a sum every hit moves the
+        // frame by its own full peak whatever the base is, so the impact keeps the exact amplitude
+        // it was tuned at: 0.25 + 0.55 is 0.80 and still inside the range, and only an ultimate
+        // (0.25 + 0.95) saturates, which costs nothing because 0.95 was already within five per
+        // cent of the top.
+        //
+        // ⚠️ IT IS READ OFF A STATIC RATHER THAN OFF `SettingsStore.Current`, for the reason
+        // `AntiAliasModes.FxaaActive` records: this is inside `OnRenderImage`, on every camera,
+        // every frame, and `SettingsStore.Current` loads and validates the whole settings file the
+        // first time it is touched.
+        //
+        // ⚠️ AND IT IS ZERO IN THE DEFAULT STYLE, so `IsIdentity` below still returns true on a
+        // map that grades nothing and the pass is still skipped outright there. Chromatic mode
+        // un-skips that existing blit; it adds no new pass.
+
+        private float EffectiveChromatic =>
+            Mathf.Clamp01(Settings.RenderStyles.PersistentChromatic + CurrentChromatic);
+
+        // ------------------------------------------------------------------ the event grade
+        //
+        // ⚠️⚠️ IT MULTIPLIES THE MAP'S GRADE RATHER THAN REPLACING IT, AND THAT IS THE WHOLE
+        // REASON IT IS A SECOND PAIR OF FIELDS INSTEAD OF A CALL TO `Set`. `AdoptFromScene`
+        // writes the numbers off the loaded map's `MapGrade`, and Eskinita's saturation of 1.18
+        // is a real part of how that street looks. A `Visual.SkyEvent` that called `Set` to
+        // desaturate for five seconds would have to remember and restore five values, and would
+        // silently overwrite a map that had been regraded in the meantime. A multiplier composes
+        // with whatever the map says and returns to a clean 1.0.
+        //
+        // ⚠️ AND IT IS DRIVEN FROM OUTSIDE RATHER THAN TICKED HERE. The event owns the curve; it
+        // already has to blend ambient, fog, the sun and the skybox on the same clock, and a
+        // second opinion about how far through it is would show up as the frame and the world
+        // disagreeing for a frame or two at each end.
+
+        private float _eventBrightness = 1.0f;
+        private float _eventSaturation = 1.0f;
+
+        /// <summary>
+        /// A whole-frame multiplier for the length of one <see cref="SkyEvent"/>. 1, 1 is off.
+        /// </summary>
+        public void SetEventGrade(float brightness, float saturation)
+        {
+            _eventBrightness = Mathf.Clamp(brightness, 0.15f, 1.0f);
+            _eventSaturation = Mathf.Clamp(saturation, 0.0f, 1.0f);
+        }
 
         public void Set(float brightness, float contrast, float saturation,
                         float exposure, float white)
@@ -93,25 +172,60 @@ namespace TumbangPreso.Visual
         /// are one requirement, and there are five cameras in this game that mount this component
         /// (the match rig, the spectator, the character portrait, the map preview and the editor
         /// benches). A sixth added later gets it for free instead of being the one that forgets.
+        ///
+        /// ⚠️⚠️ AND `allowMSAA` IS ASSERTED BESIDE IT, WHICH IS AN ASSERTION RATHER THAN A FIX.
+        /// Every camera serialised into a scene in this project already reads `m_AllowMSAA: 1`
+        /// (checked across all 27 converted scenes), and a camera created with `AddComponent`
+        /// defaults to true, so nothing today is turning it off. What this covers is the pairing:
+        /// an image effect is the thing that forces a camera off the backbuffer and into an
+        /// intermediate render target, and `Camera.allowMSAA` is the flag that decides whether
+        /// that intermediate is allowed to be multisampled. The component that creates the
+        /// requirement is the right place to state it, exactly as `allowHDR` is above, and the
+        /// alternative is a camera added in a later session that grades correctly and quietly
+        /// renders without anti-aliasing.
+        ///
+        /// ⚠️ THE HDR LINE ABOVE IS ALSO THE RISK TO IT, AND THAT IS WORTH SAYING PLAINLY. An
+        /// HDR intermediate is a floating-point target; a multisampled floating-point target is
+        /// a heavier allocation and the engine is free to decline it. Whether MSAA survives this
+        /// camera stack is therefore not knowable from the settings, which is why
+        /// <see cref="PostAntiAlias.ReportOnce"/> reads the sample count off the target that was
+        /// actually delivered and why every anti-aliasing mode above Off also carries FXAA.
         /// </summary>
         private void Awake()
         {
-            var camera = GetComponent<Camera>();
-            if (camera != null) camera.allowHDR = true;
+            _camera = GetComponent<Camera>();
+
+            if (_camera == null) return;
+
+            _camera.allowHDR = true;
+            _camera.allowMSAA = true;
         }
 
+        private Camera _camera;
+
         private bool IsIdentity =>
-            Mathf.Approximately(_brightness, 1.0f)
+            Mathf.Approximately(_brightness * _eventBrightness, 1.0f)
             && Mathf.Approximately(_contrast, 1.0f)
-            && Mathf.Approximately(_saturation, 1.0f)
-            && _exposure <= 0.0f;
+            && Mathf.Approximately(_saturation * _eventSaturation, 1.0f)
+            && _exposure <= 0.0f
+            && EffectiveChromatic <= 0.0f;
 
         /// <summary>
         /// ⚠️ A NO-OP GRADE STILL COSTS A FULL-SCREEN BLIT, so it is skipped outright. This runs
         /// on the match camera every frame and Bayan Plaza grades nothing.
+        ///
+        /// ⚠️ THE ANTI-ALIASING REPORT IS TAKEN HERE AND NOT IN `PostAntiAlias`, EVEN THOUGH IT
+        /// BELONGS TO THAT FILE. Unity runs image effects in component order and this one is
+        /// added first on both gameplay cameras, so `source` here IS the target the camera
+        /// rendered into. By the time the chain reaches the filter, `source` is an intermediate
+        /// the engine allocated to pass one effect's output to the next and its sample count
+        /// says nothing about the rasteriser. The call latches after the first screen camera, so
+        /// putting it ahead of the identity return costs nothing on the frames after that.
         /// </summary>
         private void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
+            PostAntiAlias.ReportOnce(_camera, source);
+
             if (IsIdentity)
             {
                 Graphics.Blit(source, destination);
@@ -135,11 +249,19 @@ namespace TumbangPreso.Visual
                 _material = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
             }
 
-            _material.SetFloat(BrightnessId, _brightness);
+            _material.SetFloat(BrightnessId, _brightness * _eventBrightness);
             _material.SetFloat(ContrastId, _contrast);
-            _material.SetFloat(SaturationId, _saturation);
+            _material.SetFloat(SaturationId, _saturation * _eventSaturation);
             _material.SetFloat(ExposureId, _exposure);
             _material.SetFloat(WhiteId, _white);
+            _material.SetFloat(ChromaticId, EffectiveChromatic);
+
+            // ⚠️ THE SHAPE OF THE SPLIT IS THE STYLE'S, NOT THE PULSE'S, so a hit taken in
+            // Chromatic mode fringes radially like everything else in that frame: they are the
+            // same lens. In the default Toon style this writes 0 and the shader takes the same
+            // flat horizontal branch it always has, so the shipped impact effect is unchanged.
+            _material.SetFloat(ChromaticRadialId,
+                               Settings.RenderStyles.RadialSplit ? 1.0f : 0.0f);
 
             Graphics.Blit(source, destination, _material);
         }

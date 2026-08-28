@@ -1,5 +1,6 @@
 using System.Collections;
 using NUnit.Framework;
+using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -126,6 +127,45 @@ namespace TumbangPreso.PlayTests
 
             Assert.IsNotNull(attacker, "no attacker seat");
 
+            // ⚠️⚠️ THE SEAT'S BOT IS SWITCHED OFF BEFORE ANYTHING IS POSITIONED, AND "BEFORE" IS
+            // THE LOAD-BEARING WORD. This test is about the input path reaching `Carrier`, not
+            // about the planner, and it does two things a bot ruins:
+            //
+            //  * It drops a slipper at the attacker's feet and then holds Grab. A bot that is
+            //    walking carries the body out of `Balance.PickupRadius` while the loop runs, so
+            //    the failure reads as "the press never arrived" when the press arrived at a
+            //    character who had left. That is why this went red the day `DoStalk` started
+            //    sliding around the ring instead of standing still, and why it passed with an
+            //    earlier version of the same change: it was measuring how far the bot walked.
+            //  * Two writers on one `InputIntent`, which the note further down already records.
+            //    `AIController.Update` writes `Grab = false` on every frame its plan does not
+            //    want it, erasing the press this loop is asserting on.
+            //
+            // A test that drives an intent has to own that intent, and it has to own the body
+            // too. Same rule as `AIController.AbilitiesEnabled` (docs/TODO.md section 42).
+            // ⚠️⚠️ AND IT IS `Silence`, NOT "TURN THE BOT OFF", BECAUSE A SEAT HAS TWO POSSIBLE
+            // PRODUCERS AND THIS LINE ONLY EVER SILENCED ONE OF THEM. `MatchInstaller.HumanSeat`
+            // gives ONE seat a `PlayerInputReader` instead of an `AIController`, and its default
+            // is `GameLaunch.SoloSeat`, which is 1. The attacker chosen above is simply the first
+            // non-defender `CharacterMotor` that `FindObjectsByType(FindObjectsSortMode.None)`
+            // hands back, and that order is explicitly unsorted: when it happened to hand back
+            // seat 1, this test silenced an `AIController` that was not there, left
+            // `PlayerInputReader.Update` writing `Grab = false` over the press every frame, and
+            // failed with "the Grab press edge never reached Carrier" against a pickup that works
+            // perfectly in the player. It is the same fault the sibling test three methods up
+            // records having lived with "for the whole of its first life", and the same fault the
+            // block comment above this one describes for the bot. `Silence` is the helper that
+            // already existed for it and it turns off BOTH.
+            //
+            // ⚠️ IT SURFACED AS AN ORDER-DEPENDENT FLAKE rather than a hard failure, which is why
+            // it survived: `AnyAttackerCanPickUpAnySlipper` passes on its own and fails after
+            // `BotBehaviourProbe` has run, because what actually moved was which body the
+            // unsorted find returned first.
+            var seatBot = attacker.GetComponent<AIController>();
+            var seatReader = attacker.GetComponent<PlayerInputReader>();
+            Silence(attacker);
+            for (int i = 0; i < 3; i++) yield return new WaitForFixedUpdate();
+
             // Somebody else's slipper, so the test is about eligibility rather than ownership.
             Slipper target = null;
 
@@ -171,11 +211,30 @@ namespace TumbangPreso.PlayTests
                     "the taya must not be able to pick up ammunition: carrier.gd::_step_grab " +
                     "returns early on is_defender");
 
-            attacker.Intent.Set(Verb.Grab, true);
-
-            for (int i = 0; i < 20; i++) yield return new WaitForFixedUpdate();
+            // ⚠️⚠️ THE KEY IS RE-ASSERTED EVERY FRAME, BECAUSE THAT IS WHAT HOLDING ONE DOES.
+            // `PlayerInputReader.Update` writes the whole verb table on every frame a human is
+            // playing, and an `AIController` on a bot seat does the same. Setting the intent ONCE
+            // and expecting it to survive twenty fixed steps only worked while `Carrier` happened
+            // to run before whichever component owns that seat's intent, and Unity's order
+            // between two components at the same `DefaultExecutionOrder` is UNSPECIFIED. It broke
+            // the moment `AIController` and `PlayerInputReader` were given explicit orders on
+            // 2026-08-27 (`docs/TODO.md` § 42), which is the fix for Nemu's recast being erased
+            // by exactly this collision in the shipping game.
+            //
+            // ⚠️ IT IS STILL ONE PRESS EDGE. `JustPressed` is a diff against the snapshot
+            // `CharacterMotor` takes at the end of its own step, so a key held true every frame
+            // produces exactly one edge, which is what a player pressing E produces.
+            //
+            // ⚠️ THE SEAT'S BOT IS ALREADY OFF, up where the attacker was chosen. See that note.
+            for (int i = 0; i < 20; i++)
+            {
+                attacker.Intent.Set(Verb.Grab, true);
+                yield return new WaitForFixedUpdate();
+            }
 
             attacker.Intent.Set(Verb.Grab, false);
+            if (seatBot != null) seatBot.enabled = true;
+            if (seatReader != null) seatReader.enabled = true;
 
             Assert.IsTrue(attacker.HoldingSlipper,
                 "the Grab press edge never reached Carrier: the attacker is standing on a " +
@@ -245,6 +304,133 @@ namespace TumbangPreso.PlayTests
         /// is not this test's business: the human seat carries `PlayerInputReader`, every other
         /// carries `AIController`, and both write the whole table every Update.
         /// </summary>
+        /// <summary>
+        /// A mash press has to reach `CharacterMotor.MashRecover` through the ordinary physics
+        /// step, and answering a fall has to be worth what `Balance` says it is worth.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE *"mashing still broken"* WAS REPORTED AGAINST A BUILD WHOSE
+        /// ARITHMETIC WAS ALREADY CORRECT, and there was no way to tell a dead press from a
+        /// misread bar without one. The HUD side of that report is answered in
+        /// `Hud.UpdateGetUpPrompt`; this is the other half, and it is the half that can regress
+        /// silently. The mash rides `Verb.Jump` and is read in `FixedUpdate` before
+        /// `Intent.CommitFrame`, which is three ordering facts that a later refactor can break
+        /// without breaking anything a compiler would notice.
+        ///
+        /// ⚠️ IT PRESSES AT `Balance.MashCooldown`, NOT AS FAST AS THE LOOP WILL GO. The rate cap
+        /// lives in `Combat.MashRecover` and refuses anything faster, so a test that spammed
+        /// every step would measure the cap rather than the mash.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator MashingShortensAFallByWhatBalanceSays()
+        {
+            yield return LoadArena();
+
+            CharacterMotor faller = null;
+
+            foreach (var m in Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None))
+            {
+                if (!m.IsPerson) continue;
+                faller = m;
+                break;
+            }
+
+            Assert.IsNotNull(faller, "no Person in the arena to trip");
+            Silence(faller);
+
+            for (int i = 0; i < 10; i++) yield return new WaitForFixedUpdate();
+
+            const float Trip = 2.5f;
+
+            // ---- part one: does a press reach the motor at all? ----
+            //
+            // ⚠️⚠️ ASSERTED SEPARATELY FROM WHAT IT IS WORTH, BECAUSE THE TWO FAIL FOR
+            // COMPLETELY DIFFERENT REASONS. A dead Jump edge and a mis-tuned constant both come
+            // back as "the fall was too long"; only one of them is a bug. The first version of
+            // this test measured them together, went red, and could not say which.
+            faller.ClearTrip();
+            faller.ApplyTrip(Trip);
+
+            faller.Intent.Set(Verb.Jump, true);
+            yield return new WaitForFixedUpdate();
+            faller.Intent.Set(Verb.Jump, false);
+            yield return new WaitForFixedUpdate();
+
+            Assert.AreEqual(1, faller.MashPresses,
+                "a held Jump did not reach CharacterMotor.MashRecover through the physics step. " +
+                "The read is in FixedUpdate BEFORE Intent.CommitFrame; if the snapshot moves " +
+                "ahead of it, JustPressed is false for every verb the physics step resolves. " +
+                "See PlayerInputReader.Update.");
+
+            Assert.Greater(faller.MashRemoved, 0.0f,
+                "the press was counted but bought nothing, so Combat.MashRecover accepted it " +
+                "and then clamped it away. Check MinTripDown against the trip length.");
+
+            // ---- part two: what is answering a fall actually worth? ----
+            //
+            // ⚠️ THE RATE CAP IS LEFT TO DO ITS JOB. `Combat.MashRecover` refuses anything inside
+            // `Balance.MashCooldown` and changes nothing, so pressing on every physics step
+            // measures the cap rather than beating it, and it takes the input timing out of a
+            // question that is about the two balance constants.
+            faller.ClearTrip();
+            faller.ApplyTrip(Trip);
+
+            float ignored = 0.0f;
+            while (faller.IsTripped && ignored < 12.0f)
+            {
+                yield return new WaitForFixedUpdate();
+                ignored += Time.fixedDeltaTime;
+            }
+
+            Assert.False(faller.IsTripped, $"an unanswered {Trip:0.00} s fall never ended: it was " +
+                                           $"still running after {ignored:0.00} s");
+
+            // ⚠️⚠️ AND IT LASTED THE GUARD, NOT A DECAY. Nothing bleeds a fall away any more, so
+            // an unanswered one has to sit at its starting length until
+            // `Balance.TripAutoRecoverSeconds` releases it. A shorter reading here means some
+            // clock has been reintroduced above `MinTripDown`, which is the defect this whole
+            // rework removes.
+            Assert.Greater(ignored, Balance.TripAutoRecoverSeconds * 0.9f,
+                $"an unanswered fall ended after {ignored:0.00} s, well inside the " +
+                $"{Balance.TripAutoRecoverSeconds:0.00} s guard: something is still running the " +
+                "trip down on its own.");
+
+            // ⚠️⚠️ THE BAR IS THE GATE, SO IT MUST READ FULL AT THE MOMENT OF STANDING, INCLUDING
+            // ON THE PATH NOBODY PRESSED. 🧑: *"sometimes i get up with it still at middle or
+            // when i only clicked once"*. `Hud.UpdateGetUpPrompt` draws `MashRemoved` over the
+            // mashable slack, so this is that frame measured rather than looked at.
+            float slack = Trip - Balance.MinTripDown;
+            Assert.GreaterOrEqual(faller.MashRemoved, slack - 0.01f,
+                $"the fall ended with the get-up meter at {faller.MashRemoved / slack:P0}, which is " +
+                "the exact frame the report was about.");
+
+            faller.ClearTrip();
+            faller.ApplyTrip(Trip);
+
+            float mashed = 0.0f;
+            while (faller.IsTripped && mashed < 12.0f)
+            {
+                faller.MashRecover();
+                yield return new WaitForFixedUpdate();
+                mashed += Time.fixedDeltaTime;
+            }
+
+            Assert.False(faller.IsTripped,
+                $"a mashed fall never ended: still down after {mashed:0.00} s with " +
+                $"{faller.MashPresses} accepted presses");
+
+            Assert.GreaterOrEqual(faller.MashRemoved, slack - 0.01f,
+                $"a mashed fall ended with the meter at {faller.MashRemoved / slack:P0}.");
+
+            // ⚠️ THE BOUND IS A RATIO, NOT A TIME. `TripAutoRecoverSeconds` and
+            // `MashRecoverPerPress` are both open balance numbers; what must never regress is
+            // that pressing is worth substantially more than waiting. The arithmetic on those
+            // two constants says 4.0x today, and 1.6x is a floor a real defect falls through
+            // while a tuning pass does not.
+            Assert.Greater(ignored / mashed, 1.6f,
+                $"mashing bought almost nothing: an ignored fall ran {ignored:0.00} s and a " +
+                $"mashed one {mashed:0.00} s over {faller.MashPresses} accepted presses.");
+        }
+
         private static void Silence(CharacterMotor motor)
         {
             var reader = motor.GetComponent<PlayerInputReader>();
@@ -263,6 +449,13 @@ namespace TumbangPreso.PlayTests
 
             foreach (var r in root.GetComponentsInChildren<Renderer>(true))
             {
+                // ⚠️ AN EFFECT PARENTED TO A PROP IS NOT PART OF THE PROP. The lata's
+                // restore-protection shell is a transparent sphere under the can, and a toon
+                // shader would draw an ink outline round it and make it a solid object: the one
+                // thing it must not be. `VfxRenderTag` is attached by `VfxMaterial` itself, so
+                // this exempts every effect written later without anybody editing this test.
+                if (r.GetComponent<Visual.VfxRenderTag>() != null) continue;
+
                 var material = r.sharedMaterial;
                 if (material == null || material.shader == null) continue;
 

@@ -8,10 +8,13 @@ namespace TumbangPreso
     {
         Sprint,
         Jump,
-        SpecialAbility, // LMB / Q. Throw charge for an attacker, punch for the taya.
-        Grab,           // E / LMB. Contextual: pickup, shove, or the lata reset channel.
-        Lunge,          // E / RMB.
-        EmoteWheel,
+        SpecialAbility, // Left click. Throw charge for an attacker, punch for the taya.
+        Grab,           // E. Contextual: pickup, shove, or the lata reset channel.
+        Lunge,          // Right click. The taya's dash tag.
+        EmoteWheel,     // B
+        Skill1,         // Hero Skill 1. Q
+        Skill2,         // Hero Skill 2. E
+        Ultimate,       // Hero Ultimate. F
     }
 
     /// <summary>
@@ -40,6 +43,9 @@ namespace TumbangPreso
         private readonly HashSet<Verb> _heldPrev = new HashSet<Verb>();
 
         public Vector2 Move { get; set; }
+
+        /// <summary>Lateral throw spin for Pektus curve shots (-1.0 left to +1.0 right).</summary>
+        public float SpinInput { get; set; }
 
         /// <summary>Where this unit is aiming, in world space. AI writes it directly;
         /// a human's comes from the camera ray.</summary>
@@ -86,12 +92,44 @@ namespace TumbangPreso
         {
             _held.Clear();
             Move = Vector2.zero;
+            SpinInput = 0.0f;
             HasAimPoint = false;
         }
 
-        public bool Pressed(Verb v) => !Parked && _held.Contains(v);
-        public bool JustPressed(Verb v) => !Parked && _held.Contains(v) && !_heldPrev.Contains(v);
-        public bool JustReleased(Verb v) => !Parked && !_held.Contains(v) && _heldPrev.Contains(v);
+        /// <summary>
+        /// The verbs this unit is currently allowed to use, or null for "all of them".
+        ///
+        /// ⚠️⚠️ IT EXISTS FOR THE GUIDED ROUTE AND NOTHING ELSE, AND IT DEFAULTS TO NULL SO
+        /// EVERY MATCH IS UNTOUCHED. 🧑, 2026-08-26: *"i dont want there to be bots and other
+        /// shit like skills or throwing until the tutorial wants u to actually do it bcz its
+        /// confusing that i can do a lot of shit, theres a tendency to not follow and focus on
+        /// tutorial"*. A tutorial that hands a player nine verbs on lesson one is not teaching
+        /// an order, it is presenting a menu.
+        ///
+        /// ⚠️ IT FILTERS HERE RATHER THAN AT THE CONSUMERS, for the same reason `Parked` does:
+        /// there are a dozen readers of this table across the carrier, the verbs, the motor and
+        /// the ability system, and a rule enforced at each of them is a rule that is missing from
+        /// whichever one gets written next. One table, one gate.
+        ///
+        /// ⚠️ AND IT IS A LOCK, NOT A REBIND. The key still exists and still says what it does;
+        /// pressing it simply resolves to nothing until the route has taught it. Rebinding or
+        /// disabling actions would fight `Settings.Rebinding` and would show the player a
+        /// different control scheme from the one they will play with.
+        /// </summary>
+        private HashSet<Verb> _allowed;
+
+        /// <summary>Restricts this unit to the given verbs. Null clears the restriction.</summary>
+        public void AllowOnly(HashSet<Verb> verbs) => _allowed = verbs;
+
+        private bool Locked(Verb v) => _allowed != null && !_allowed.Contains(v);
+
+        public bool Pressed(Verb v) => !Parked && !Locked(v) && _held.Contains(v);
+
+        public bool JustPressed(Verb v)
+            => !Parked && !Locked(v) && _held.Contains(v) && !_heldPrev.Contains(v);
+
+        public bool JustReleased(Verb v)
+            => !Parked && !Locked(v) && !_held.Contains(v) && _heldPrev.Contains(v);
 
         public Vector2 MoveAxis => Parked ? Vector2.zero : Move;
     }

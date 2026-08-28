@@ -272,9 +272,200 @@ namespace TumbangPreso.Tests
 
             Assert.AreEqual(1.0f, s.MasterVolume, 0.001f);
             Assert.AreEqual(0.0f, s.SfxVolume, 0.001f);
-            Assert.AreEqual(2, s.AiDifficulty);
+            // ⚠️ 3, NOT 2, SINCE 2026-08-26. `AIController.NoBotsIndex` is a fourth value on this
+            // int and it is an ABSENCE of bots rather than a fourth tier; it sits at the END of
+            // the range precisely so every saved and replicated value below it keeps the meaning
+            // it already had. Asserted against the constant rather than a literal so the two
+            // cannot drift.
+            Assert.AreEqual(AIController.NoBotsIndex, s.AiDifficulty);
             Assert.AreEqual(Balance.PlayerNameMax, s.PlayerName.Length);
             Assert.IsNotEmpty(s.PlayerToken, "a token must exist or reconnection cannot work");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE CLAMP IS WHAT MAKES ADDING A MODE SAFE, and this is the guard on it. The
+        /// index is written to `settings.json` and read back by a build whose
+        /// <see cref="AntiAliasModes.All"/> may have grown or lost a row, and an unclamped read
+        /// goes straight into `QualitySettings.antiAliasing`, which rejects anything that is not
+        /// 0, 2, 4 or 8. Same rule <see cref="GameSettings.AiDifficulty"/> and
+        /// <see cref="GameSettings.SlipperHighlight"/> already live under.
+        /// </summary>
+        [Test]
+        public void AntiAliasModeIsClampedIntoTheTable()
+        {
+            var high = new GameSettings { AntiAliasMode = 99 };
+            high.Validate();
+            Assert.AreEqual(AntiAliasModes.All.Length - 1, high.AntiAliasMode);
+
+            var low = new GameSettings { AntiAliasMode = -4 };
+            low.Validate();
+            Assert.AreEqual(AntiAliasModes.Off, low.AntiAliasMode);
+
+            // ⚠️ A SETTINGS FILE WRITTEN BEFORE THE FIELD EXISTED HAS TO LAND ON THE DEFAULT,
+            // not on 0. `JsonUtility` constructs the object before it overwrites the fields the
+            // file carries, so the field initialiser is what an older file inherits, and 0 is
+            // Off: every player upgrading would silently have anti-aliasing turned off.
+            var upgraded =
+                UnityEngine.JsonUtility.FromJson<GameSettings>("{\"MasterVolume\":0.5}");
+            Assert.AreEqual(AntiAliasModes.Default, upgraded.AntiAliasMode);
+        }
+
+        /// <summary>
+        /// ⚠️ EVERY MODE ABOVE OFF MUST CARRY FXAA, and it is asserted rather than trusted
+        /// because it is the only reason the setting is guaranteed to be visible at all. MSAA is
+        /// applied by the rasteriser into an intermediate render target both gameplay cameras
+        /// force into existence with their `OnRenderImage` passes, and whether that target is
+        /// allocated multisampled is an engine decision. A mode added later with MSAA alone
+        /// would be a row that does nothing on a machine that answers that decision the other
+        /// way, and nothing else in the project would catch it.
+        ///
+        /// ⚠️ AND THE SAMPLE COUNTS MUST BE VALUES `QualitySettings.antiAliasing` ACCEPTS. It
+        /// takes 0, 2, 4 or 8 and silently keeps its old value for anything else, so a typo here
+        /// would read back as the setting having no effect rather than as an error.
+        /// </summary>
+        [Test]
+        public void EveryAntiAliasModeAboveOffCarriesFxaa()
+        {
+            Assert.IsFalse(AntiAliasModes.All[AntiAliasModes.Off].Fxaa);
+            Assert.AreEqual(0, AntiAliasModes.All[AntiAliasModes.Off].Samples);
+
+            for (int i = 0; i < AntiAliasModes.All.Length; i++)
+            {
+                var entry = AntiAliasModes.All[i];
+
+                bool accepted = entry.Samples == 0 || entry.Samples == 2
+                             || entry.Samples == 4 || entry.Samples == 8;
+
+                Assert.IsTrue(accepted,
+                              $"'{entry.Label}' asks for {entry.Samples} samples, which " +
+                              "QualitySettings.antiAliasing does not accept.");
+
+                if (i == AntiAliasModes.Off) continue;
+
+                Assert.IsTrue(entry.Fxaa,
+                              $"'{entry.Label}' is MSAA only, so it renders identically to Off " +
+                              "on any machine where the post chain drops the multisampled " +
+                              "target. See the class comment on AntiAliasModes.");
+            }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE DEFAULT RENDER STYLE IS THE WHOLE SAFETY OF THE FEATURE, AND THIS IS THE
+        /// GUARD ON IT. Chromatic is a prototype look being evaluated against the shipped one,
+        /// and the rule `Visual.WorldOutline`'s own toggle records applies to it: a prototype
+        /// that quietly becomes the look is the failure mode. A player who never opens the
+        /// settings panel, and a player upgrading from a `settings.json` written before this
+        /// field existed, must both get the ink outlines.
+        ///
+        /// ⚠️ THE UPGRADE HALF IS NOT REDUNDANT WITH THE DEFAULT HALF. `JsonUtility` constructs
+        /// the object before it overwrites the fields the file carries, so an absent field
+        /// inherits the initialiser; that lands on Toon today only because Toon is row 0. The day
+        /// somebody inserts a third style at the top of the table, both assertions below go red
+        /// together and say exactly what broke.
+        /// </summary>
+        [Test]
+        public void RenderStyleDefaultsToToonAndIsClampedIntoTheTable()
+        {
+            Assert.AreEqual(RenderStyles.Toon, RenderStyles.Default,
+                            "Chromatic is a prototype. The shipped ink look is the default.");
+
+            var fresh = new GameSettings();
+            fresh.Validate();
+            Assert.AreEqual(RenderStyles.Toon, fresh.RenderStyle);
+
+            var high = new GameSettings { RenderStyle = 99 };
+            high.Validate();
+            Assert.AreEqual(RenderStyles.All.Length - 1, high.RenderStyle);
+
+            var low = new GameSettings { RenderStyle = -4 };
+            low.Validate();
+            Assert.AreEqual(RenderStyles.Toon, low.RenderStyle);
+
+            var upgraded =
+                UnityEngine.JsonUtility.FromJson<GameSettings>("{\"MasterVolume\":0.5}");
+            Assert.AreEqual(RenderStyles.Toon, upgraded.RenderStyle,
+                            "a settings file written before the field existed must render " +
+                            "exactly what that build rendered.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ ROW 0 MUST BE AN EXACT NO-OP IN ALL THREE OF ITS SWITCHES, and it is asserted
+        /// rather than trusted because nothing else in the project can see it. Every one of them
+        /// is read inside a render callback (`Visual.WorldOutline.Live`,
+        /// `Visual.ColourGrade.EffectiveChromatic` and a global shader float the OUTLINE pass in
+        /// `Toon.shader` multiplies its width by), so a non-zero value on this row would change
+        /// the shipped look with no test, no probe and no compile error to say so.
+        ///
+        /// ⚠️ AND A STYLE WITHOUT INK MUST CARRY A SPLIT. A row that turned the outlines off and
+        /// added nothing would be a mode that reads as the renderer being broken rather than as a
+        /// look, which is the reachable-and-does-nothing failure the Godot board's rule forbids.
+        /// </summary>
+        [Test]
+        public void ToonRowIsAnExactNoOpAndEveryOtherStyleChangesSomething()
+        {
+            var toon = RenderStyles.All[RenderStyles.Toon];
+
+            Assert.IsTrue(toon.InkOutlines, "row 0 is the shipped ink look.");
+            Assert.AreEqual(0.0f, toon.Chromatic, 0.0001f,
+                            "any persistent split on row 0 changes the default frame.");
+            Assert.IsFalse(toon.RadialSplit,
+                           "row 0 must leave the shipped impact pulse on its horizontal path.");
+
+            for (int i = 0; i < RenderStyles.All.Length; i++)
+            {
+                var entry = RenderStyles.All[i];
+
+                Assert.IsTrue(entry.Chromatic >= 0.0f && entry.Chromatic <= 1.0f,
+                              $"'{entry.Label}' asks for a split of {entry.Chromatic}, and the " +
+                              "shader's range is 0 to 1.");
+
+                Assert.IsNotEmpty(entry.Label);
+
+                if (i == RenderStyles.Toon) continue;
+
+                Assert.IsTrue(entry.InkOutlines || entry.Chromatic > 0.0f,
+                              $"'{entry.Label}' removes the ink and adds nothing, so it reads " +
+                              "as a broken renderer rather than as a style.");
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ THE THREE STATICS ARE WHAT THE RENDER CALLBACKS ACTUALLY READ, so applying an index
+        /// has to move them. They are also the only state this feature has: there is no component
+        /// to inspect and no material to read back, which is why the round trip is asserted here.
+        ///
+        /// ⚠️ IT PUTS THE DEFAULT BACK AT THE END. These are process-wide statics and a suite that
+        /// left them on Chromatic would hand every test after it a different renderer.
+        /// </summary>
+        [Test]
+        public void ApplyingAStylePushesTheThreeSwitchesThatImplementIt()
+        {
+            try
+            {
+                RenderStyles.Apply(RenderStyles.Chromatic);
+
+                Assert.IsFalse(RenderStyles.InkOutlinesActive);
+                Assert.IsTrue(RenderStyles.PersistentChromatic > 0.0f);
+                Assert.IsTrue(RenderStyles.RadialSplit);
+                Assert.IsTrue(Visual.ToonSkin.OutlinesSuppressed);
+
+                // ⚠️ AN OUT-OF-RANGE INDEX MUST NOT THROW HERE EITHER. `Validate` clamps what is
+                // stored, and this clamps again, because `Apply` is also reachable from the
+                // settings panel's pick with whatever a dropdown handed it.
+                RenderStyles.Apply(4242);
+                Assert.AreEqual(RenderStyles.All[RenderStyles.All.Length - 1].Label,
+                                RenderStyles.LabelOf(4242));
+                Assert.AreEqual(RenderStyles.All[0].Label, RenderStyles.LabelOf(-9));
+            }
+            finally
+            {
+                RenderStyles.Apply(RenderStyles.Default);
+            }
+
+            Assert.IsTrue(RenderStyles.InkOutlinesActive);
+            Assert.AreEqual(0.0f, RenderStyles.PersistentChromatic, 0.0001f);
+            Assert.IsFalse(RenderStyles.RadialSplit);
+            Assert.IsFalse(Visual.ToonSkin.OutlinesSuppressed);
         }
 
         /// <summary>⚠️ -1 IS A REAL VALUE meaning "no pick" and must survive validation.</summary>
@@ -408,10 +599,16 @@ namespace TumbangPreso.Tests
         [Test]
         public void LanEntrySortOrderPutsJoinableFirstThenFillThenName()
         {
-            var e1 = new LanEntry { HostName = "Alpha", Players = 1, MaxPlayers = 4, InProgress = true }; // in progress
-            var e2 = new LanEntry { HostName = "Beta", Players = 3, MaxPlayers = 4, InProgress = false };  // joinable, 3 players
-            var e3 = new LanEntry { HostName = "Charlie", Players = 1, MaxPlayers = 4, InProgress = false }; // joinable, 1 player
-            var e4 = new LanEntry { HostName = "Delta", Players = 4, MaxPlayers = 4, InProgress = false }; // full
+            // ⚠️⚠️ `Occupied` AND `Connections` ARE SET EXPLICITLY NOW, AND THAT IS THE 2026-08-27
+            // CHANGE. `IsJoinable` used to ask one question ("is `Players` under `MaxPlayers`")
+            // because the beacon carried one number for three different things. It now asks for a
+            // free CHAIR and a free SOCKET, so an entry built without them is a lobby with no
+            // capacity at all. `LanEntry.Occupied` carries what the single number cost: a lobby
+            // with two players and six spectators advertised 8/4 and every browser struck it out.
+            var e1 = Lan("Alpha", seated: 1, occupied: 1, inProgress: true);    // in progress
+            var e2 = Lan("Beta", seated: 3, occupied: 3, inProgress: false);    // joinable, 3 players
+            var e3 = Lan("Charlie", seated: 1, occupied: 1, inProgress: false); // joinable, 1 player
+            var e4 = Lan("Delta", seated: 4, occupied: 4, inProgress: false);   // full
 
             var list = new List<LanEntry> { e1, e2, e3, e4 };
             list.Sort((a, b) =>
@@ -429,9 +626,170 @@ namespace TumbangPreso.Tests
             Assert.IsTrue(list[3].InProgress, "in progress lobby should come last");
         }
 
+        private static LanEntry Lan(string name, int seated, int occupied, bool inProgress)
+            => new LanEntry
+            {
+                HostName = name,
+                Players = seated,
+                Occupied = occupied,
+                MaxPlayers = LobbySession.MaxPlayers,
+                Connections = occupied,
+                MaxConnections = LobbySession.MaxConnections,
+                InProgress = inProgress,
+            };
+
+        /// <summary>
+        /// ⚠️⚠️ THE BEACON CARRIED ONE COUNT FOR THREE QUESTIONS AND ALL THREE WERE WRONG SOMEWHERE.
+        /// 🧑 2026-08-27 asked for the network to work *"for everyone"*, and a browser that hides a
+        /// joinable lobby is that failing before anybody presses a key. `NetSession` was publishing
+        /// `LobbySession.PeerCount`, which counts CONNECTIONS: two players and six spectators
+        /// advertised 8 of 4 and every client filtered it out as full. The other direction is a
+        /// seat HELD for somebody who dropped mid-match, which is not free and used to advertise as
+        /// though it were.
+        /// </summary>
+        [Test]
+        public void JoinabilityAsksForAFreeChairAndAFreeSocketSeparately()
+        {
+            // Four chairs taken, sockets to spare: full to play, open to watch.
+            var full = Lan("Full", seated: 4, occupied: 4, inProgress: false);
+            Assert.IsFalse(full.IsJoinable, "every chair is taken");
+            Assert.IsTrue(full.CanSpectate, "there is still room on the wire");
+
+            // Two playing, six watching. Joinable, and the old single count said otherwise.
+            var busy = Lan("Busy", seated: 2, occupied: 2, inProgress: false);
+            busy.Connections = 8;
+            Assert.IsTrue(busy.IsJoinable,
+                "spectators are not players, and counting them as players hid the lobby");
+
+            // A seat held for a dropped player is not a free seat.
+            var held = Lan("Held", seated: 3, occupied: 4, inProgress: false);
+            Assert.IsFalse(held.IsJoinable,
+                "a held seat advertised as free is a join that gets refused");
+
+            // Every socket taken: nothing at all, not even watching.
+            var packed = Lan("Packed", seated: 2, occupied: 2, inProgress: false);
+            packed.Connections = LobbySession.MaxConnections;
+            Assert.IsFalse(packed.IsJoinable);
+            Assert.IsFalse(packed.CanSpectate);
+        }
+
+        /// <summary>
+        /// ⚠️ THE OLD SEVEN-FIELD PAYLOAD IS STILL READ, NOT STILL WRITTEN. A build from before
+        /// the counts were split still appears in the browser, with its one number standing in for
+        /// all three, rather than silently vanishing from the list.
+        /// </summary>
+        [Test]
+        public void TheBeaconStillReadsAPayloadFromBeforeTheCountsWereSplit()
+        {
+            string old = string.Join("|", LanBeacon.Magic, "8910", "2", "4", "0", "K7X9", "Old Build");
+
+            Assert.IsTrue(LanBeacon.TryParsePayload(old, "192.168.1.50", out var entry));
+            Assert.AreEqual(2, entry.Players);
+            Assert.AreEqual(2, entry.Occupied, "the one old count stands in for the occupancy");
+            Assert.AreEqual(LobbySession.MaxConnections, entry.MaxConnections);
+            Assert.AreEqual("Old Build", entry.HostName);
+            Assert.IsTrue(entry.IsJoinable);
+        }
+
+        /// <summary>
+        /// ⚠️ A PLAYER NAME IS THE ONLY VALUE ON THIS WIRE A PERSON TYPES, so the parser takes it
+        /// as everything from its index onwards. A name containing the separator truncates rather
+        /// than corrupting the fields after it, which is what reading one field would have done.
+        /// </summary>
+        [Test]
+        public void AHostNameContainingTheSeparatorSurvivesTheRoundTrip()
+        {
+            string payload = LanBeacon.BuildPayload(8910, 2, 4, false, "K7X9", "Ma|te", 2, 5, 12);
+
+            Assert.IsTrue(LanBeacon.TryParsePayload(payload, "10.0.0.9", out var entry));
+            Assert.AreEqual(2, entry.Players);
+            Assert.AreEqual(5, entry.Connections);
+            Assert.AreEqual(12, entry.MaxConnections);
+            Assert.AreEqual(Settings.GameSettings.SanitiseName("Ma|te"), entry.HostName);
+        }
+
         // -------------------------------------------------------------------
         // RELAY AND TRANSPORT CAPACITY (N3)
         // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ ONE `LobbySession` OUTLIVES EVERY SESSION, AND UNTIL 2026-08-27 NOTHING RESET IT.
+        /// `NetSession` owns exactly one for the lifetime of the process, so host, quit to the
+        /// menu, host again reached `OpenLobby` carrying the previous match's peer table, its
+        /// leader id and `MatchInProgress`. The new lobby then believed it already had four
+        /// players, obeyed a leader whose transport was gone, and answered Spectate to the first
+        /// person who tried to join it. `docs/TODO.md` § 38.11.
+        /// </summary>
+        [Test]
+        public void OpeningASecondLobbyForgetsTheFirstOneEntirely()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(11));
+
+            lobby.Admit(10, "a", "A");
+            lobby.Admit(11, "b", "B");
+            lobby.Admit(12, "c", "C");
+            lobby.Admit(13, "d", "D");
+            lobby.StartMatch();
+
+            Assert.AreEqual(4, lobby.SeatedPeerCount());
+            Assert.AreEqual(10, lobby.LeaderPeerId);
+            Assert.IsTrue(lobby.MatchInProgress);
+
+            lobby.OpenLobby(new System.Random(12));
+
+            Assert.AreEqual(0, lobby.PeerCount, "a new lobby cannot start with the old peers in it");
+            Assert.AreEqual(-1, lobby.LeaderPeerId, "a leader whose transport is gone cannot lead");
+            Assert.IsFalse(lobby.MatchInProgress, "a new lobby is not mid-match");
+            Assert.AreEqual(MidMatchRuling.Seat, lobby.RuleOnArrival("someone-new"),
+                "the first person to join a brand new lobby gets a seat, not a spectator slot");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THREE DIFFERENT COUNTS, AND THE BROWSERS WERE SHOWING ONE OF THEM FOR ALL THREE.
+        /// `PeerCount` is every connection, `SeatedPeerCount` is who is playing, and
+        /// `OccupiedSeatCount` is how many of the four chairs a newcomer cannot have, which
+        /// includes a seat HELD for somebody who dropped mid-match. `docs/TODO.md` § 38.9.
+        /// </summary>
+        [Test]
+        public void OccupiedCountsHeldSeatsAndSeatedCountsDoesNot()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(21));
+
+            lobby.Admit(10, "a", "A");
+            lobby.Admit(11, "b", "B");
+            lobby.StartMatch();
+
+            Assert.AreEqual(2, lobby.SeatedPeerCount());
+            Assert.AreEqual(2, lobby.OccupiedSeatCount());
+
+            lobby.Depart(11);
+
+            Assert.AreEqual(1, lobby.SeatedPeerCount(), "one person is playing");
+            Assert.AreEqual(2, lobby.OccupiedSeatCount(), "their chair is held, so it is not free");
+            Assert.AreEqual(1, lobby.ConnectedHumanCount());
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A SPECTATOR IS A SEAT OF -1 **AND** THE FLAG. A record with `Seat == -1` and
+        /// `Spectator` false is read as a player by `PlayingPeerCount` and by the ready gate,
+        /// which then waits forever for a press from somebody who has no body to press it with.
+        /// `FirstFreeSeat` can return -1 whenever its table disagrees with `FreeSeatCount`.
+        /// </summary>
+        [Test]
+        public void APeerWithNoSeatIsAlwaysMarkedASpectator()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(31));
+
+            for (int i = 0; i < LobbySession.MaxPlayers; i++) lobby.Admit(10 + i, "t" + i, "P" + i);
+
+            var overflow = lobby.Admit(99, "late", "Late");
+
+            Assert.AreEqual(-1, overflow.Seat);
+            Assert.IsTrue(overflow.Spectator, "no chair means a spectator, never a seatless player");
+        }
 
         [Test]
         public void MaxConnectionsExceedsMaxPlayersToAccommodateSpectators()
@@ -504,6 +862,218 @@ namespace TumbangPreso.Tests
         }
 
         // -------------------------------------------------------------------
+        // THE CORNER STAMP
+        //
+        // 🧑, 2026-08-27: *"for every branch made it would replace the version number on
+        // the bottom right corner with the branch name instead"*. `BuildBranch` is the rule and
+        // these are the two bits of git it has to read correctly. Both are string parsing, which
+        // is why they are pure static methods rather than something that needs a repository.
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void TheWholeRefPathAfterRefsHeadsIsTheBranchName()
+        {
+            Assert.AreEqual("main", BuildBranch.BranchFromHead("ref: refs/heads/main\n"));
+
+            // ⚠️ SLASHES AND ALL. Taking the last segment would print `hud-calm-down` for a
+            // branch that could equally have been `fix/hud-calm-down` or `claude/hud-calm-down`,
+            // which is the one thing this label exists to disambiguate.
+            Assert.AreEqual("fix/multiplayer-fpp-camera-inside-head",
+                            BuildBranch.BranchFromHead("ref: refs/heads/fix/multiplayer-fpp-camera-inside-head"));
+            Assert.AreEqual("claude/multiplayer-lobby-switching-bugs-d1546c",
+                            BuildBranch.BranchFromHead("ref: refs/heads/claude/multiplayer-lobby-switching-bugs-d1546c\r\n"));
+        }
+
+        /// <summary>
+        /// ⚠️ A DETACHED HEAD IS NOT A BRANCH AND MUST NOT BE PRINTED AS ONE. HEAD holds a
+        /// bare sha, and returning it would put a hex string in the corner of every screen.
+        /// </summary>
+        [Test]
+        public void ADetachedHeadHasNoBranchName()
+        {
+            Assert.IsNull(BuildBranch.BranchFromHead("9cabdfae0f3a1b2c3d4e5f60718293a4b5c6d7e8"));
+            Assert.IsNull(BuildBranch.BranchFromHead(""));
+            Assert.IsNull(BuildBranch.BranchFromHead(null));
+
+            // A tag or a remote ref is not a local branch either.
+            Assert.IsNull(BuildBranch.BranchFromHead("ref: refs/remotes/origin/main"));
+        }
+
+        /// <summary>
+        /// ⚠⚠ EVERY SESSION IN THIS PROJECT RUNS IN A WORKTREE, WHERE `.git` IS A FILE. The
+        /// naive `repoRoot/.git/HEAD` does not exist there, so a reader that does not follow the
+        /// pointer reports "no git" on exactly the checkouts this stamp is for.
+        /// </summary>
+        [Test]
+        public void AWorktreePointerIsFollowedToTheRealGitDirectory()
+        {
+            Assert.AreEqual(@"C:/repo/.git/worktrees/thing",
+                            BuildBranch.GitDirFromPointer("gitdir: C:/repo/.git/worktrees/thing\n"));
+
+            // Git writes a relative pointer when the worktree and the repository share a parent.
+            Assert.AreEqual("../.git/worktrees/thing",
+                            BuildBranch.GitDirFromPointer("gitdir: ../.git/worktrees/thing"));
+
+            // An ordinary checkout has a `.git` DIRECTORY, so nothing to follow.
+            Assert.IsNull(BuildBranch.GitDirFromPointer("ref: refs/heads/main"));
+            Assert.IsNull(BuildBranch.GitDirFromPointer(""));
+        }
+
+        /// <summary>
+        /// ⚠️ THE STAMP IS THE LABEL AND NOTHING ELSE. `Application.version` still carries the
+        /// real version everywhere it means something to a machine: the LAN beacon payload, the
+        /// online lobby record and the approval hello all read it, and a branch name on that wire
+        /// would refuse two peers built from the same commit on different branches.
+        /// </summary>
+        [Test]
+        public void TheBranchNameNeverReachesTheVersionTheWireCompares()
+        {
+            Assert.AreEqual(UnityEngine.Application.version, GameVersion.Value);
+            StringAssert.DoesNotContain("/", GameVersion.Value);
+        }
+
+        // -------------------------------------------------------------------
+        // CHOOSING A CHAIR
+        //
+        // ⚠⚠ "A PLAYER CANNOT SWITCH FROM P1 TO P4" (2026-08-27). There was no rule to test,
+        // because there was no rule: the lobby's seat buttons wrote a static only the offline
+        // practice match reads. These are the rules the request now goes through.
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void APeerMovesToAnEmptyChairAndLeavesItsOldOneFree()
+        {
+            var lobby = NewLobby();
+            var a = lobby.Admit(10, "token-a", "Ana");
+            var b = lobby.Admit(11, "token-b", "Ben");
+
+            Assert.AreEqual(0, a.Seat);
+            Assert.AreEqual(1, b.Seat);
+
+            Assert.IsTrue(lobby.TryTakeSeat(10, 3), "seat 3 is empty and the match has not started");
+            Assert.AreEqual(3, a.Seat);
+            Assert.IsFalse(a.Spectator);
+
+            Assert.IsFalse(lobby.IsSeatOccupied(0), "the chair just vacated has to be free again");
+            Assert.AreEqual(2, lobby.OccupiedSeatCount());
+        }
+
+        [Test]
+        public void ASeatSomebodyElseIsSittingInIsRefused()
+        {
+            var lobby = NewLobby();
+            var a = lobby.Admit(10, "token-a", "Ana");
+            lobby.Admit(11, "token-b", "Ben");
+
+            Assert.IsFalse(lobby.TryTakeSeat(10, 1), "Ben is in seat 1");
+            Assert.AreEqual(0, a.Seat, "a refused move must not disturb the asker's own chair");
+        }
+
+        [Test]
+        public void AskingForTheChairYouAreAlreadyInChangesNothingAndSucceeds()
+        {
+            var lobby = NewLobby();
+            var a = lobby.Admit(10, "token-a", "Ana");
+
+            Assert.IsTrue(lobby.TryTakeSeat(10, 0));
+            Assert.AreEqual(0, a.Seat);
+        }
+
+        /// <summary>
+        /// ⚠️ A HELD SEAT IS NOT FREE. It belongs to somebody who dropped out of THIS match
+        /// and is waiting for their token, which is the promise `RuleOnArrival` branch 1 makes.
+        /// </summary>
+        [Test]
+        public void ASeatHeldForADroppedPlayerCannotBeTakenBySomebodyStillHere()
+        {
+            var lobby = NewLobby();
+            lobby.Admit(10, "token-a", "Ana");
+            lobby.Admit(11, "token-b", "Ben");
+
+            lobby.StartMatch();
+            lobby.Depart(11);                       // Ben drops; seat 1 is held for his token
+            lobby.EndMatch();                       // ...but EndMatch releases every hold
+
+            Assert.IsTrue(lobby.TryTakeSeat(10, 1), "a released hold is an ordinary empty chair");
+        }
+
+        [Test]
+        public void SeatChangesAreRefusedOnceTheMatchIsRunning()
+        {
+            var lobby = NewLobby();
+            var a = lobby.Admit(10, "token-a", "Ana");
+
+            lobby.StartMatch();
+
+            Assert.IsFalse(lobby.TryTakeSeat(10, 2), "a seat carries a score and a taya turn");
+            Assert.AreEqual(0, a.Seat);
+        }
+
+        [Test]
+        public void SpectatingReleasesTheChairAndSittingBackDownTakesOneAgain()
+        {
+            var lobby = NewLobby();
+            var a = lobby.Admit(10, "token-a", "Ana");
+            lobby.Admit(11, "token-b", "Ben");
+
+            Assert.IsTrue(lobby.TryTakeSeat(10, -1));
+            Assert.IsTrue(a.Spectator);
+            Assert.AreEqual(-1, a.Seat);
+            Assert.IsFalse(lobby.IsSeatOccupied(0), "a spectator holds no chair");
+            Assert.AreEqual(1, lobby.SeatedPeerCount());
+
+            Assert.IsTrue(lobby.TryTakeSeat(10, 0));
+            Assert.IsFalse(a.Spectator);
+            Assert.AreEqual(0, a.Seat);
+            Assert.AreEqual(2, lobby.SeatedPeerCount());
+        }
+
+        /// <summary>
+        /// ⚠️ A LEADER WHO CHOOSES TO SPECTATE MUST NOT KEEP THE MAP, THE MODE AND THE START
+        /// BUTTON. `ReassignLeader` already skips spectators, but it is only reached from
+        /// `Depart`, so nothing covered somebody leaving the table without leaving the lobby.
+        /// </summary>
+        [Test]
+        public void ALeaderThatStartsSpectatingHandsLeadershipOn()
+        {
+            var lobby = NewLobby();
+            lobby.Admit(10, "token-a", "Ana");
+            lobby.Admit(11, "token-b", "Ben");
+
+            Assert.IsTrue(lobby.IsLeader(10));
+
+            Assert.IsTrue(lobby.TryTakeSeat(10, -1));
+            Assert.IsFalse(lobby.IsLeader(10), "a peer with no chair cannot press start");
+            Assert.IsTrue(lobby.IsLeader(11));
+        }
+
+        [Test]
+        public void ADedicatedRefereeCannotTakeAChairByAsking()
+        {
+            var lobby = new LobbySession { IsDedicated = true };
+            lobby.OpenLobby(new System.Random(42));
+
+            var referee = lobby.Admit(1, "token-referee", "Referee");
+            Assert.AreEqual(-1, referee.Seat);
+
+            Assert.IsFalse(lobby.TryTakeSeat(1, 0), "the server referees, it does not play");
+            Assert.AreEqual(-1, referee.Seat);
+            Assert.IsFalse(lobby.IsSeatOccupied(0));
+        }
+
+        [Test]
+        public void ASeatOutsideTheFourIsRefusedRatherThanClamped()
+        {
+            var lobby = NewLobby();
+            var a = lobby.Admit(10, "token-a", "Ana");
+
+            Assert.IsFalse(lobby.TryTakeSeat(10, LobbySession.MaxPlayers));
+            Assert.IsFalse(lobby.TryTakeSeat(10, -2));
+            Assert.IsFalse(lobby.TryTakeSeat(999, 2), "a peer that is not here asks for nothing");
+            Assert.AreEqual(0, a.Seat);
+        }
+
+        // -------------------------------------------------------------------
         // SPAWNING, SEATING, AND WRITE PERMISSIONS (N6)
         // -------------------------------------------------------------------
 
@@ -573,6 +1143,30 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(1, lobby.PlayingPeerCount(0), "Empty lobby must floor at 1 so gate does not auto-satisfy");
         }
 
+        [Test]
+        public void LobbyReadyTallyExcludesTheHostWhoHasStartInsteadOfReady()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(42));
+
+            lobby.Admit(10, "host-token", "Host");
+            lobby.Admit(20, "guest-a", "Guest A");
+            lobby.Admit(30, "guest-b", "Guest B");
+            lobby.Admit(40, "guest-c", "Guest C");
+
+            Assert.AreEqual(3, lobby.ReadyVoterCount(10),
+                "three guests should produce a 0/3..3/3 tally, never an impossible 3/4.");
+            Assert.IsFalse(lobby.IsReadyVoter(10, 10), "the host has START MATCH, not READY.");
+            Assert.IsTrue(lobby.IsReadyVoter(20, 10));
+
+            var spectator = lobby.PeerById(40);
+            spectator.Spectator = true;
+            spectator.Seat = -1;
+
+            Assert.AreEqual(2, lobby.ReadyVoterCount(10));
+            Assert.IsFalse(lobby.IsReadyVoter(40, 10), "spectators do not ready a character.");
+        }
+
         // -------------------------------------------------------------------
         // REPLICATION AND LATE JOIN (N8)
         // -------------------------------------------------------------------
@@ -628,6 +1222,59 @@ namespace TumbangPreso.Tests
         }
 
         [Test]
+        public void ReconnectLookupUsesPeerIdWhileCurrentRoleComesFromRound()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(42));
+
+            lobby.Admit(101, "token-host", "Host");
+            var original = lobby.Admit(202, "token-returning", "Returning");
+            Assert.AreEqual(1, original.Seat);
+
+            lobby.StartMatch();
+            lobby.Depart(202);
+
+            // A transport reconnect always gets a new peer id, while the durable token must
+            // reclaim the same seat. Peer ids are deliberately much larger than seat indices
+            // so accidentally calling PeerInSeat(peerId) cannot pass this regression test.
+            var rejoined = lobby.Admit(904, "token-returning", "Returning");
+            Assert.AreEqual(1, rejoined.Seat);
+            Assert.AreSame(rejoined, lobby.PeerById(904));
+            Assert.IsNull(lobby.PeerInSeat(904));
+
+            // By round two that stable seat is now the defender. Reconnect restores the seat;
+            // live role must be derived from authoritative round state, never cached from the
+            // role the peer held when it disconnected.
+            Assert.AreEqual(rejoined.Seat, MatchRules.DefenderSlotFor(2));
+        }
+
+        [Test]
+        public void FastReconnectReplacesStillConnectedTransportWithoutChangingSeat()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(42));
+            lobby.Admit(101, "host-token", "Host");
+            var firstConnection = lobby.Admit(202, "durable-token", "Player");
+            firstConnection.CharacterPick = 4;
+            firstConnection.SlipperPick = 2;
+
+            // The new socket arrives before Depart(202), exactly what happens when the old
+            // socket is waiting out the venue-friendly disconnect timeout.
+            var replacement = lobby.Admit(904, "durable-token", "Player");
+
+            Assert.AreEqual(1, replacement.Seat);
+            Assert.AreEqual(4, replacement.CharacterPick);
+            Assert.AreEqual(2, replacement.SlipperPick);
+            Assert.IsNull(lobby.PeerById(202));
+            Assert.AreSame(replacement, lobby.PeerById(904));
+            Assert.AreEqual(2, lobby.PeerCount);
+
+            // A late disconnect callback from the superseded socket must be harmless.
+            lobby.Depart(202);
+            Assert.AreSame(replacement, lobby.PeerInSeat(1));
+        }
+
+        [Test]
         public void ArrivalRulingOrdersReclaimBeforeFreeSeatAndSpectate()
         {
             var lobby = new LobbySession();
@@ -664,13 +1311,19 @@ namespace TumbangPreso.Tests
             lobby.OpenLobby(new System.Random(1337));
 
             Assert.IsTrue(lobby.IsDedicated);
-            Assert.AreEqual(0, lobby.LeaderPeerId);
+
+            // ⚠️⚠️ -1, NOT 0, AND THE SENTINEL CHANGED ON 2026-08-27 BECAUSE 0 IS A REAL NETCODE
+            // CLIENT ID. `LeaderPeerId` used to mean both "nobody is leading" and "the listen host
+            // is leading", so the host could never satisfy `IsLeader` and a dedicated lobby could
+            // not tell an empty chair from client 0. A sentinel must not be a legal value of the
+            // thing it represents. `LobbySession.LeaderPeerId` carries the note.
+            Assert.AreEqual(-1, lobby.LeaderPeerId, "no leader is -1, because 0 is a real peer");
 
             // Server referee joins as peer 1
             var refPeer = lobby.Admit(1, "server-token", "DedicatedServer");
             Assert.AreEqual(-1, refPeer.Seat);
             Assert.IsTrue(refPeer.Spectator);
-            Assert.AreEqual(0, lobby.LeaderPeerId, "Dedicated referee must never be leader");
+            Assert.AreEqual(-1, lobby.LeaderPeerId, "Dedicated referee must never be leader");
             Assert.AreEqual(0, lobby.SeatedPeerCount());
 
             // First human player joins
@@ -766,6 +1419,142 @@ namespace TumbangPreso.Tests
             lobby.EndMatch();
             Assert.AreEqual(MidMatchRuling.Seat, lobby.RuleOnArrival("player2"),
                 "Ended match converts reclaim into normal seating");
+        }
+
+        // -------------------------------------------------------------------
+        // PICKS AND SEAT ROSTER REPLICATION (N14)
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️ HOST IN A NON-ZERO SEAT MUST UPDATE ITS OWN PEER RECORD, NOT THE PEER HOLDING CLIENT ID = SEAT.
+        /// LocalSlot is a seat index (0-3), while _peers is keyed by transport client ID.
+        /// When host sits in seat 1, calling SetPicks with host's peer ID (0) updates the host's record
+        /// without touching peer 1's record.
+        /// </summary>
+        [Test]
+        public void HostInNonZeroSeatUpdatesItsOwnRecordWithoutTouchingOtherPeers()
+        {
+            var lobby = NewLobby();
+
+            // Peer 0 is Host (seated in seat 1)
+            var host = lobby.Admit(0, "host-token", "HostName");
+            host.Seat = 1;
+
+            // Peer 1 is Guest (seated in seat 0)
+            var guest = lobby.Admit(1, "guest-token", "GuestName");
+            guest.Seat = 0;
+            guest.CharacterPick = 0;
+
+            // Host changes character pick to index 3
+            lobby.SetPicks(0, 3, 1, 2);
+
+            Assert.AreEqual(3, host.CharacterPick, "Host's own peer record must update to pick 3");
+            Assert.AreEqual(1, host.CanPick);
+            Assert.AreEqual(2, host.SlipperPick);
+
+            Assert.AreEqual(0, guest.CharacterPick, "Guest (peer 1) pick must remain untouched");
+            Assert.AreEqual(3, lobby.PeerInSeat(1).CharacterPick, "Seat 1 (host's seat) must reflect pick 3");
+            Assert.AreEqual(0, lobby.PeerInSeat(0).CharacterPick, "Seat 0 (guest's seat) must reflect pick 0");
+        }
+
+        [Test]
+        public void SetPicksRejectsInvalidIndicesAndDefaultsToMinusOne()
+        {
+            var lobby = NewLobby();
+            var p = lobby.Admit(10, "token-p1", "PlayerOne");
+
+            // Valid pick
+            lobby.SetPicks(10, 1, 0, 2);
+            Assert.AreEqual(1, p.CharacterPick);
+            Assert.AreEqual(0, p.CanPick);
+            Assert.AreEqual(2, p.SlipperPick);
+
+            // Out-of-bounds pick validates to -1
+            lobby.SetPicks(10, 9999, -5, 9999);
+            Assert.AreEqual(-1, p.CharacterPick);
+            Assert.AreEqual(-1, p.CanPick);
+            Assert.AreEqual(-1, p.SlipperPick);
+        }
+
+        // ===================================================================
+        // ⚠️⚠️ THE JOIN ADDRESS, WHICH IS WHERE EVERY LAN JOIN DIED. `LanBeacon` advertises
+        // `ip:port`, the browser copies that string into the join box verbatim, and the box's own
+        // help text tells the player the port is optional and therefore allowed. Nothing parsed
+        // it, so the whole string went to `UnityTransport.SetConnectionData` as the HOSTNAME and
+        // the transport refused to start. Two machines that could see each other perfectly well
+        // could not join each other. `docs/TODO.md` § 59.
+        //
+        // ⚠️ THESE ARE ASSERTIONS RATHER THAN A PLAYED TEST BECAUSE THEY CAN BE. The failure was
+        // only ever visible with two machines on a network, and the rule it broke is a string
+        // split that runs in a microsecond.
+        // ===================================================================
+
+        [Test]
+        public void JoinAddressSplitsAPortOffTheEnd()
+        {
+            int port = LobbySession.DefaultPort;
+            Assert.AreEqual("192.168.1.144", NetSession.SplitHostPort("192.168.1.144:8910", ref port));
+            Assert.AreEqual(8910, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("192.168.1.144", NetSession.SplitHostPort("192.168.1.144:7777", ref port));
+            Assert.AreEqual(7777, port, "a port written by the player beats the default");
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("localhost", NetSession.SplitHostPort("  localhost:7000  ", ref port));
+            Assert.AreEqual(7000, port, "the field is not trimmed anywhere else");
+        }
+
+        [Test]
+        public void JoinAddressWithoutAPortKeepsTheCallersPort()
+        {
+            int port = 7777;
+            Assert.AreEqual("192.168.1.144", NetSession.SplitHostPort("192.168.1.144", ref port));
+            Assert.AreEqual(7777, port, "-tp-join 127.0.0.1 7777 must be unchanged");
+        }
+
+        /// <summary>
+        /// ⚠️ A BARE IPv6 LITERAL IS FULL OF COLONS AND IS A VALID ADDRESS ON ITS OWN. Splitting
+        /// on the last colon would turn `fe80::1` into a host of `fe80:` and a port of 1, which
+        /// is a worse failure than the one being fixed because it would look like it worked.
+        /// </summary>
+        [Test]
+        public void JoinAddressLeavesABareIpv6LiteralAlone()
+        {
+            int port = LobbySession.DefaultPort;
+            Assert.AreEqual("fe80::1", NetSession.SplitHostPort("fe80::1", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            // ⚠️ THE BRACKETS COME OFF EVEN WITH NO PORT, because they are join-address syntax
+            // and not part of the address: `UnityTransport.SetConnectionData` wants the literal.
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("::1", NetSession.SplitHostPort("[::1]", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("::1", NetSession.SplitHostPort("[::1]:7000", ref port),
+                            "brackets are what make an IPv6 port unambiguous");
+            Assert.AreEqual(7000, port);
+        }
+
+        /// <summary>⚠️ A TRAILING COLON, AN EMPTY HOST OR A NONSENSE PORT IS LEFT ALONE, so the
+        /// transport reports the real address the player typed rather than a guess this made
+        /// out of it.</summary>
+        [Test]
+        public void JoinAddressRefusesToGuessAtRubbish()
+        {
+            int port = LobbySession.DefaultPort;
+            Assert.AreEqual("192.168.1.144:", NetSession.SplitHostPort("192.168.1.144:", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual(":8910", NetSession.SplitHostPort(":8910", ref port));
+            Assert.AreEqual(LobbySession.DefaultPort, port);
+
+            port = LobbySession.DefaultPort;
+            Assert.AreEqual("host:99999", NetSession.SplitHostPort("host:99999", ref port),
+                            "65535 is the ceiling");
+            Assert.AreEqual(LobbySession.DefaultPort, port);
         }
     }
 }

@@ -5,7 +5,8 @@ using UnityEngine;
 namespace TumbangPreso
 {
     /// <summary>
-    /// The match: four rounds, four players, one taya per round.
+    /// The match: four Classic rounds or eight Hero Strike rounds, four players, one taya per
+    /// round. Hero Strike therefore runs two complete role rotations.
     ///
     /// ⚠️⚠️ EVERY POINT IN THE GAME IS AWARDED THROUGH AddScore, AND ONLY ON THE HOST. The
     /// predecessor spread its win conditions across four files and the recurring bug class
@@ -24,7 +25,9 @@ namespace TumbangPreso
 
         public int RoundNumber { get; private set; }
         public int DefenderSlot => MatchRules.DefenderSlotFor(RoundNumber);
+        public int TotalRounds => MatchRules.RoundCountFor(UI.SceneFlow.SelectedMode);
         public bool MatchInProgress { get; private set; }
+        public bool IsWarmupBuffer { get; set; }
 
         public int ScoreFor(int slot) => _scores[slot];
 
@@ -63,17 +66,88 @@ namespace TumbangPreso
         public void AddScore(int slot, ScoreEvent e)
         {
             if (!MatchInProgress) return;
+            if (IsWarmupBuffer) return;
             if (!NetAuthority.ShouldResolve()) return;
 
             _scores.Add(slot, e);
             Scored?.Invoke(slot, e);
+
+            // ⚠️⚠️ THE AWARD IS ANNOUNCED, NOT ONLY RECORDED, AND THAT IS THE HALF THAT WAS
+            // MISSING FROM EVERY CLIENT. The SCORE reaches a peer inside `SyncWorld` and the
+            // EVENT did not, so on a client the numbers rose silently up to 200 ms later with no
+            // sting, no `+100  LATA DOWN` toast and no scoreboard pulse: `Hud.OnScored` is what
+            // produces all three and it hangs off this event. In a game whose entire feedback
+            // loop is scoring, three of the four things that acknowledge a point were host-only.
+            //
+            // ⚠️ THE KIND TRAVELS, NOT THE DELTA, and that is why it needs a message rather than
+            // a diff of the replicated scores. The toast and the sting both read the
+            // `ScoreEvent` itself (`MatchRules.PointsFor` and the label), a delta does not carry
+            // it, and two awards inside one 200 ms window would collapse into one.
+            //
+            // ⚠️ IT IS STILL ONE FUNCTION. This line is INSIDE the host guard above, so the
+            // announcement cannot be made anywhere a point cannot be created. See this class's
+            // header: a point that can only be created in one function cannot be created on a
+            // client at all, and the same is now true of the noise it makes.
+            Net.MatchRpc.Instance?.BroadcastScore(slot, e);
         }
 
+        /// <summary>
+        /// A point the HOST awarded, replayed on this peer for its presentation only.
+        ///
+        /// ⚠️⚠️ IT DOES NOT TOUCH THE SCOREBOARD, AND THAT IS THE WHOLE POINT OF IT BEING A
+        /// SEPARATE METHOD. The totals arrive in `SyncWorld` and `ApplySnapshot` sets them from
+        /// the host's own numbers; adding here as well would make a client's board the sum of a
+        /// replicated total and its own arithmetic, which disagree at exactly the moments that
+        /// matter because a client cannot see the host's distance checks. This raises the EVENT
+        /// and nothing else.
+        /// </summary>
+        public void ApplyNetworkScoreEvent(int slot, ScoreEvent e) => Scored?.Invoke(slot, e);
+
+        /// <summary>
+        /// The replicated match, as the host last described it.
+        ///
+        /// ⚠️⚠️ THE END OF A MATCH IS AN EVENT ON A CLIENT TOO, AND IT WAS NOT ONE. This method
+        /// assigned the three fields and raised nothing, and it is the ONLY thing that moves them
+        /// on a peer that is not the host: `AdvanceRound` and `BeginIntermission` are the only
+        /// other writers and both are behind `SliceRunner`'s `NetAuthority.ShouldResolve()`. So
+        /// `MatchEnded` fired on exactly one machine in the room.
+        ///
+        /// **What that costs is the whole end of the game for everybody except the host.**
+        /// `UI.MatchResult` shows itself from `MatchEnded` and from nothing else, so a client
+        /// never saw the final standings; `SliceRunner.OnMatchEnded` never ran there, so the
+        /// round rules were never stopped; and the announcer's win line never played. Worst of
+        /// all, **REMATCH lives on that board**, so the entire peer rematch vote (`docs/TODO.md`
+        /// § 1) was unreachable for anyone but the host: a client had no button to press, and
+        /// `RematchTally` and `BeginRematch` arrived at a screen that was never raised.
+        ///
+        /// ⚠️ ONLY THE TRUE-TO-FALSE EDGE, AND ONLY HERE. A joining client is told `false` before
+        /// the match starts and `false` again after it ends, so raising the event on the VALUE
+        /// would show the result board to somebody who has just walked into a lobby.
+        ///
+        /// ⚠️⚠️ AND `RoundStarted` AND `IntermissionStarted` ARE DELIBERATELY NOT RAISED HERE,
+        /// WHICH IS THE HALF THAT LOOKS LIKE AN OVERSIGHT AND IS NOT. Both are wired to
+        /// `SliceRunner`, and both of its handlers MUTATE THE WORLD: `OnRoundStarted` calls
+        /// `ResetWorld`, which teleports all four bodies and hands out the tsinelas, and
+        /// `OnIntermission` additionally schedules `Advance`, which calls `AdvanceRound` and would
+        /// give every client its own second authority over the round number. Four peers each
+        /// advancing a match is four matches, which is `VISION.md` § 4's first rule. The
+        /// intermission CARD still needs a signal on a client and it needs a different one;
+        /// `docs/TODO.md` § 57 carries that as its own item rather than solving it by raising an
+        /// event that does six other things.
+        ///
+        /// ⚠️ THE HOST REACHES THIS TOO, through `MatchRpc.HostSyncPeer`, and it is a no-op there
+        /// by construction: it passes the host its own `MatchInProgress` back, so the edge cannot
+        /// fire.
+        /// </summary>
         public void ApplySnapshot(int[] scores, int roundNumber, bool inProgress)
         {
+            bool wasInProgress = MatchInProgress;
+
             _scores.SetAll(scores);
             RoundNumber = roundNumber;
             MatchInProgress = inProgress;
+
+            if (wasInProgress && !inProgress) MatchEnded?.Invoke(_scores.WinningSlot());
         }
 
         public void StartMatch()
@@ -81,52 +155,24 @@ namespace TumbangPreso
             _scores.Reset();
             RoundNumber = 0;
             MatchInProgress = true;
+            IsWarmupBuffer = false;
             AdvanceRound();
         }
 
-        /// <summary>
-        /// Wipe the board without starting anything. This is `match_manager.gd::reset()`, which
-        /// the port never carried across.
-        ///
-        /// ⚠️⚠️ THE .gd FIXED THIS AS **B-14** AND ITS NOTE IS THE WHOLE DIAGNOSIS: *"nothing
-        /// reset this autoload between matches, so a second match resumed the first one's score
-        /// and round number. Called both when returning to the main menu and defensively at the
-        /// top of `main.gd::_ready()` every time Main.tscn loads fresh."* Unity's `GameServices`
-        /// is `DontDestroyOnLoad`, which reproduces an autoload's lifetime exactly — including
-        /// the bug it had to be given a `reset()` for.
-        ///
-        /// ⚠️⚠️ THE FREE-ROAM WINDOW HAPPENS BEFORE `StartMatch`, AND UNTIL THIS EXISTED IT SHOWED
-        /// THE PREVIOUS MATCH'S SCOREBOARD. `GameServices` is `DontDestroyOnLoad`, so this
-        /// director outlives every scene change; `SliceRunner.Begin` — which is what calls
-        /// `StartMatch` and clears the round — does not run until the 3 · 2 · 1 finishes. So a
-        /// player who finished one match and started another spent the whole ready phase looking
-        /// at the last match's final scores and "ROUND 6 / 6", with the LATA card up because the
-        /// old round was still flagged active, and watched all of it snap to zero on "GO!".
-        /// Caught in `Logs/shots-runtime/Eskinita.png`, where a freshly-loaded arena opens on four
-        /// seats holding 900 points each.
-        ///
-        /// ⚠️ IT FIRES NOTHING, AND THAT IS THE POINT. `StartMatch` raises `RoundStarted`, which
-        /// begins round 1 underneath the countdown — the exact fault `SliceRunner.AutoStart` was
-        /// turned off to prevent. This only makes the HUD tell the truth while the player walks
-        /// around; `StartMatch` still owns the beginning of the match and is idempotent over this.
-        /// </summary>
         public void ResetForNewMatch()
         {
             _scores.Reset();
             RoundNumber = 0;
             MatchInProgress = false;
+            IsWarmupBuffer = false;
         }
 
-        /// <summary>
-        /// ⚠️ THE ROLE IS DERIVED FROM RoundNumber, NEVER ACCUMULATED. Incrementing the
-        /// round is the whole of the rotation: there is no separate taya counter that could
-        /// disagree with it, and nothing to resynchronise if a peer misses a call.
-        /// </summary>
         public void AdvanceRound()
         {
             RoundNumber++;
+            IsWarmupBuffer = false;
 
-            if (RoundNumber > Balance.Rounds)
+            if (RoundNumber > TotalRounds)
             {
                 MatchInProgress = false;
                 MatchEnded?.Invoke(_scores.WinningSlot());
@@ -136,20 +182,18 @@ namespace TumbangPreso
             RoundStarted?.Invoke(RoundNumber, DefenderSlot);
         }
 
-        /// <summary>
-        /// ⚠️ SCORES PERSIST ACROSS THE BOUNDARY AND THERE IS NO PER-ROUND WINNER. Only the
-        /// taya role rotates; the running totals are the whole game.
-        /// </summary>
         public void BeginIntermission()
         {
             int next = RoundNumber + 1;
-            if (next > Balance.Rounds)
+            if (next > TotalRounds)
             {
                 MatchInProgress = false;
+                IsWarmupBuffer = false;
                 MatchEnded?.Invoke(_scores.WinningSlot());
                 return;
             }
 
+            IsWarmupBuffer = true;
             IntermissionStarted?.Invoke(next, MatchRules.DefenderSlotFor(next));
         }
     }

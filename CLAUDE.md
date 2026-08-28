@@ -1,279 +1,280 @@
 # CLAUDE.md
 
-Context and rules for this repository. Read this before touching anything.
+The rules of this repository. Read this first, every session.
+
+**Read order: this file, then [`docs/VISION.md`](docs/VISION.md), then
+[`docs/TODO.md`](docs/TODO.md).** Everything else is reference;
+[`docs/README.md`](docs/README.md) indexes it.
+
+Every ⚠️ below replaced something that actually went wrong. None of them are style
+preferences. If one looks removable, read the sentence after it.
 
 ---
 
-## 1 · Commits
+## 1 · What this repository is
 
-⚠️ **NEVER add a `Co-Authored-By: Claude` trailer, or any co-author trailer at all.** This is
-sole-authored work and it is entered in a competition. The same rule holds on the Godot
-repo, where it is stated in ten places. Do not add one "just this once" and do not add one
-because a default template suggests it.
-
-Do not mention Claude, Anthropic, or any AI tooling in commit messages, code comments, the
-README, or anything else in this repository.
-
-**Never commit a handoff prompt as a file.** If a session needs to hand off, the handoff goes
-in the chat reply to be copy-pasted. A stale one committed to a repo has already had to be
-deleted once on another project.
-
-## 2 · What this repository is
-
-The **Unity 6 port** of Tumbang Preso, 1st place at the Gear Up NCR Esports Game Dev
+The **Unity 6 build** of Tumbang Preso, 1st place at the Gear Up NCR Esports Game Dev
 Challenge and NCR's entry at the nationals in General Santos City.
 
-The Godot 4.7 original is at
-[DOST-GameDev](https://github.com/DOST-GameDEV/DOST-GameDev) and **remains the running
-game** until this port reaches parity. It is the reference for every behaviour question.
+⚠️⚠️ **THIS REPO IS THE GAME. THE GODOT REPO IS FROZEN REFERENCE FOR THE OLD VERSION.**
+[DOST-GameDev](https://github.com/DOST-GameDEV/DOST-GameDev) may be read, quoted, ported from
+and cited. **Never edit it, commit to it, or copy one of its files over the equivalent here.**
+Where the two disagree about anything, including a design document, **this repo is current.**
+Several sessions have re-derived this relationship and got it backwards.
 
-Read [`docs/Port_Plan.md`](docs/Port_Plan.md) before starting work. It carries the phase
-order, the exit criteria, and the reasoning behind both.
+⚠️ **The concrete trap:** `Design.md`, `Art_Direction.md` and `HUMAN.md` exist in both
+repos. **The live ones are the copies in `docs/` HERE.** They were carried over from the Godot
+repo and used to sit in a `docs/godot/` folder under a rule saying to edit them THERE and copy
+them here; that rule inverted the day this repo became the game, and the folder name was then
+telling every reader the opposite of the truth. Flattened into `docs/` on 2026-08-23.
 
-## 3 · The rule that matters most
+⚠️⚠️ **THE GAME IS TWO MODES AND BOTH SHIP.** Classic is the street game with no powers, for
+players who want less happening on screen. Hero Strike adds five heroes with two skills and an
+ultimate each, and exists to raise the ceiling for competitive play. **Neither is a variant of
+the other.** `docs/VISION.md` § 1 has the reasoning and the rules that follow.
 
-**`Packages/com.tumbangpreso.core/` must never acquire a `UnityEngine` reference.**
+⚠️ **`Port_Ledger.md` § 12 records an ability layer being DELETED, and that is not this.** The
+deleted one was eight verbs bolted onto the single game. Hero Strike is a separate mode.
 
-It holds the match rules, scoring, trait tables, the stamina model, throw legality and the
-combat geometry: every number in the game that was arrived at by measurement rather than by
-taste. Keeping it engine-free is what lets those numbers be asserted in under a second by
-`dotnet test` instead of playtested for an afternoon, and it is the entire verification
-strategy for the port.
+---
 
-The asmdef enforces it with `"noEngineReferences": true`, so a violation is a compile error.
-**Do not add an exception.**
+## 2 · How a session runs
 
-⚠️ **The source lives in the package, and `Core/TumbangPreso.Core.csproj` compiles those same
-files in place.** One copy, two toolchains. Never "fix" this by copying the files: two copies
-of the balance layer is exactly the failure the structure prevents, because the copy that
-drifts is the one nobody runs the tests against.
+### 2.1 Do the work. Do not narrate it.
 
-```bash
-dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj
-```
+⚠️⚠️ **DO NOT WRITE STATUS REPORTS. THAT IS WHAT STOPPING *IS*.** A turn ends the moment prose
+is written instead of another tool call, so every "here is where things stand" summary IS the
+stop. 🧑, after it happened repeatedly: *"i do not want to have to ask u to continue"*, *"why
+do u even keep stopping"*, *"dont write a report then"*.
 
-## 3a · The camera is FPP *and* TPP. Do not "simplify" it to one.
+No mid-task progress summaries. Not "what is done so far", not "what is left", not "landed X,
+next is Y". Report once, at the end.
 
-An earlier session recorded "the game is first person, third person was a mistake."
-**That note was wrong.** Acting on it would delete three shipped features. From
-`scripts/systems/camera_rig.gd` in the Godot repo:
+⚠️⚠️ **NEVER CITE CAPACITY.** Not "context limits", not "what I can hold in one stretch". Do
+not raise the subject at all. It was once claimed at well under half the window, so it was not
+even true. It reads as an excuse for quitting on work that was explicitly asked for.
 
-- **A Person is always FPP, a Prop (Can/Slipper) is always TPP** (`camera_rig.gd:5`).
-  The mode is derived from `is_character.is_person` and asserted. Nothing else writes it.
-- **Emotes swing to TPP and back** (`camera_rig.gd:425`). The emote camera *orbits*
-  the body, it never steers it, and the swing is local-only — the emote replicates,
-  the camera does not.
-- ~~A carried slipper's rig follows the carrier in TPP~~ — ⚠️ **VESTIGIAL.** I claimed this
-  was live on 2026-08-15 and it is not: `camera_rig.gd:750` declares its `carrier` as null
-  and never assigns it, so the whole branch is unreachable. It predates §12 deleting
-  playable props. Do not port it unless playable props return.
-- **Spectator is a fourth rig entirely** — `spectator_camera.gd`, free/follow/POV,
-  with its own controls (`Tab` cycle, `V` POV, wheel distance, `spectator_down`).
+Also do not stop to ask whether to continue work already asked for, or for permission for a
+step a standing instruction already covers (pushing, in particular).
 
-The genuine earlier mistake was narrower and worth remembering: an *overhead follow*
-camera got built that corresponded to none of these four. Read `camera_rig.gd:21`
-before touching the baked transforms in `CameraRig.tscn`.
+**The only legitimate stops:** the work is genuinely finished, or something is truly blocked.
+When blocked, finish everything that is NOT blocked first, then ask ONE specific question.
 
-## 0 · DO NOT WRITE STATUS REPORTS. THAT IS WHAT STOPPING *IS*.
+⚠️ **Do not editorialise about deadlines or whether something is achievable.** This team built
+the whole game, which won its regional, in under two weeks.
 
-🧑 2026-08-15, after it happened repeatedly: *"i do not want to have to ask u to continue"*,
-*"why do u even keep stopping"*, *"dont write a report then"*.
+⚠️ **Do not hand work back that you could do yourself.** Scenes can be built from code
+(`Assets/TumbangPreso/Editor/SceneBuilder.cs`), matches can be run and measured headlessly,
+and compilation, tests, probes, renders and builds all run from the command line. Hand back
+only a human judgement ("does this FEEL right", "is this the art we want") or a credential.
 
-**The mechanism, so it cannot be rationalised again:** a turn ends the moment prose is
-written instead of another tool call. So every "here's where things stand" summary IS the
-stop. Nothing external interrupts the work — it is chosen, every time, by deciding to
-summarise instead of continuing.
+### 2.2 The shape of a session: WORK → BUILD → HANDOFF
 
-Therefore: **do not write progress summaries mid-task.** Not "what's done so far", not
-"what's left", not "landed X, next is Y". Keep calling tools until the work is actually
-finished. Report once, at the end, when every row in `docs/Port_Ledger.md` reads CONVERTED.
+🧑 2026-08-16: *"ALL TASKS I ASK -> build -> handoff"*, and, watching a build start with six
+items still open: *"ur supposed to build only when ur done with everything"*.
 
-⚠️ AND NEVER CITE CAPACITY. "Context limits", "what I can hold in one stretch" — one of
-those was claimed at well under half the window, so it was not even true. It reads as an
-excuse for quitting on work that was explicitly asked for. Do not raise the subject.
+1. **Do ALL the work** and verify it yourself: `dotnet test`, EditMode, PlayMode, and the
+   probes for anything a screenshot would settle.
+2. **Build the .exe to the Desktop.** ⚠️⚠️ **DELETE THE PREVIOUS BUILD FIRST, EVERY TIME.**
+   Not only when asked for a "clean rebuild", not only when a timestamp looks wrong: **every
+   build deletes the old output folder before it writes the new one.** An incremental rebuild
+   once kept a corrupted `level1` and cost an hour, and Unity will rewrite `TumbangPreso_Data`
+   while reusing the byte-identical launcher, so the finished .exe still carries the OLD
+   creation timestamp and looks stale. `GameBuilder.PurgeOutputDirectory` now does this in code
+   rather than trusting anyone to remember it, and it refuses to delete a path that is not
+   obviously a previous player. § 7 has the procedure for the manual case.
+3. **Write the handoff in the chat reply.** Never as a file. See § 2.4.
 
-The only legitimate stop is: the work is genuinely done, or something is blocked and every
-unblocked part is already finished — then ask ONE specific question.
+⚠️⚠️ **"TASK" MEANS THE WHOLE REQUEST, NOT EACH ITEM IN IT.** A build is a claim that there is
+something worth looking at. If any item he raised is still unfinished, keep working: do not
+build, and do not come back.
 
-## 0a · DO NOT STOP MID-TASK. EVER. AND NEVER BLAME CONTEXT.
+⚠️ **PUSH AUTOMATICALLY. FINISHED MEANS PUSHED.** Committed and waiting is not done. Every
+batch that compiles and passes goes up without being asked.
 
-This is the single most repeated complaint in this project's history and it has cost more
-of his time than any bug in it.
+### 2.3 `docs/TODO.md` is the shared worklist. Tick it and add to it.
 
-**Never stop, pause, or wind down a turn because of "context limits", "what I can hold in
-one stretch", or any other capacity story.** Do not raise the subject at all. It is not a
-reason, it reads as an excuse, and on 2026-08-15 it was raised at well under half the
-window — so the claim was not even true. Keep converting, keep verifying, keep pushing.
+⚠️⚠️ **EVERY SESSION READS IT, EVERY SESSION UPDATES IT, IN THE SAME COMMIT AS THE WORK.** It
+is how work survives being handed between sessions and tools. Specifically:
 
-Also do not stop to:
+- **Check it before inventing a task.** The thing you are about to do may already be written
+  up with its cause and its acceptance test.
+- **Tick items off as you finish them.** Move them to **Closed** with one line on how it was
+  verified, not just "done".
+- **Add anything you find and do not fix.** A bug noticed and not written down is a bug
+  rediscovered from scratch by somebody else in three weeks. Give it the same shape as the
+  other entries: what is wrong, where it lives, what done looks like.
+- **Keep the numbers.** An entry that says "40% of the arena" beats one that says "too big",
+  because the next person can act on the first without re-measuring.
 
-- ask whether to continue work he has already asked for
-- deliver a status report as a substitute for the next conversion
-- request permission for a step already covered by a standing instruction
-  (pushing, in particular — see §1a)
+### 2.4 The handoff contract
 
-The only legitimate reasons to stop are: the work is genuinely finished (every row in
-`docs/Port_Ledger.md` reads CONVERTED), or something is actually blocked and no other
-part of the task can proceed without an answer only he can give. In the blocked case,
-finish everything that is NOT blocked first, then ask one specific question.
+⚠️⚠️ **NEVER COMMIT A HANDOFF PROMPT AS A FILE.** It goes in the chat reply, to be
+copy-pasted. A stale one committed to a repo has already had to be deleted twice.
 
-If a turn does end, it ends having just committed and pushed working code, not having
-just explained why more was not attempted.
+⚠️⚠️ **AND EVERY HANDOFF MUST POINT THE NEXT SESSION AT THE RULES.** A handoff that only
+describes the work produces a session that starts editing without knowing the repo is live,
+that both modes ship, or that pushing is automatic. **Open every handoff with this, adapted:**
 
-## 1b · WORK → BUILD → HANDOFF, and BUILD MEANS *EVERYTHING* IS DONE
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`. They carry the rules of
+> the repo, what the game is for, and what is open. Do not skip them because this prompt
+> summarises the task; the summary is not the rules.
 
-🧑 2026-08-16: *"ALL TASKS I ASK -> build -> handoff"*.
-🧑 2026-08-16, later the same day, watching a build start with six items still open:
-*"yo why r u building are u done"*, *"ur supposed to build only when ur done with
-everything"*, *"make sure everythings finished when u come back to me"*.
+Then the rest: repo and branch, the exact HEAD, current test and build state, what changed and
+what was measured, and what to pick up next **with a pointer to its `docs/TODO.md` entry
+rather than a copy of it.** Copies go stale; the file does not.
 
-The shape of a session is:
+---
 
-1. **Do ALL the work** and verify it yourself — `dotnet test`, EditMode, PlayMode, and the
-   player probes in `tools/` for anything a screenshot would show.
-2. **Build the .exe to the Desktop**, having deleted the previous output folder first.
-   An incremental rebuild once kept a corrupted `level1` and cost an hour chasing a fix
-   that had already landed.
-3. **Write the handoff in the chat reply** — never as a file in the repo (§1). It names
-   what changed, what was measured, and what the next session should pick up.
+## 3 · Writing, commits and comments
 
-⚠️⚠️ **"TASK" MEANS THE WHOLE REQUEST, NOT EACH ITEM IN IT.** The first reading of this
-rule was one build per item of work, and it produced a build while six reported bugs were
-still open. A build is a claim that there is something worth looking at; handing one over
-mid-list wastes exactly the time §3b exists to protect. **If any item he raised is still
-unfinished, keep working — do not build, and do not come back.**
+⚠️ **NEVER add a `Co-Authored-By` trailer, of any kind.** This is sole-authored work entered
+in a competition. Not "just this once", not because a template suggests it.
 
-⚠️ This does NOT loosen §3b. The .exe is still the LAST step. What changed is only that
-finishing now always includes producing one, rather than leaving him to build it himself.
+⚠️ **Never mention Claude, Anthropic, or any AI tooling** in commit messages, code comments,
+the README, or anything else in this repository.
 
-## 1a · Push automatically. Finished means pushed.
+⚠️ **No em dashes anywhere.** Rewrite the sentence rather than swapping the character in.
 
-Committed and waiting is not done. Every batch that compiles and passes goes up without
-being asked. He has said this repeatedly and it is in his global memory too.
+⚠️ **PowerShell here-strings break on embedded double quotes** when passed to `git commit -m`.
+Write the message to a file and use `git commit -F`.
 
-## 3aa · Emotes end ONLY by interruption
+**Comment the WHY, at length, in ⚠️-marked notes above the thing.** Record deletions and the
+reasoning, not just the change. A number that was measured says so, and says what it was
+measured against. This is the Godot codebase's discipline and it is why this port was
+tractable.
 
-🧑 2026-08-15: *"the emotes only end when a user does smth to interrupt it like move or
-attack or etc — it doesnt end on its own"*.
+---
 
-There is no emote timer and no clip-finished stop. `EmotePlayer.Stop()` is reached by
-movement, a verb, or the unit losing the right to act, and that is the single path the
-camera's `EndEmoteView` hangs off. Do not add a duration. If a clip-finished path is
-ever wanted, route it through `Stop()` rather than restoring the camera from a second
-place — one path returning the view and the other not is how a rig gets stuck in TPP.
-
-## 3b · Build the .exe ONLY when the port is done, and put it on the Desktop
-
-**Do not hand him a build to test before the play path matches his Godot game.** Three
-separate builds were handed over unfinished in earlier sessions and every one of them
-wasted his time; he has said so at least six times. An .exe is the LAST step, not a
-progress report.
-
-When it is genuinely done — every row in `docs/Port_Ledger.md` reading CONVERTED — build
-it to the Desktop:
-
-```bash
-"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -quit -projectPath . -executeMethod TumbangPreso.EditorTools.GameBuilder.BuildWindows -logFile Logs/build.log
-```
-
-`GameBuilder.BuildWindows` already targets `C:\Users\matth\Desktop`. Verify the .exe
-exists and report its path; do not claim a build that was never written.
-
-## 3b2 · The port ledger is the definition of done
-
-`docs/Port_Ledger.md` lists **every** Godot script and scene with a CONVERTED /
-PARTIAL / MISSING status, measured from both trees rather than remembered. 45
-gameplay scripts, 31,314 lines, 27 scenes, 14 input actions, 9 autoloads.
-
-Update the row when you finish something. Do not report the port as done, or as
-"mostly done", while any row reads MISSING. Small files are not optional: a
-26-line `kill_plane.gd` is still a feature the player meets.
-
-## 4 · Design.md is the balance source of truth, and it has drifted
-
-`docs/Design.md` in the **Godot** repo is the balance source of truth for both projects. It
-opens with: *a number in the code must match a number here, or one of the two is a bug.*
-
-⚠️ **Four numbers currently disagree, and in every case the code is the newer half.** They are
-listed in `docs/Port_Plan.md` §7.1. **Port from the GDScript, never from the prose**, and if
-you find a fifth, add it there rather than silently picking a side.
-
-The most serious is the **lunge**: `LUNGE_SPEED` 7.746 gives 2.30 m of reach, while Design.md
-reports 3.20 m as measured. That is the taya's primary scoring verb, and it is unresolved.
-
-## 4a · The art AND the animations in this repo are placeholder
-
-Everything under `Assets/TumbangPreso/Art/` was carried over from the Godot build so the game
-can RUN during the port. **All of it is being replaced with the team's own work: models,
-textures and animations alike.** Do not polish, retopologise, or build finished materials for a
-mesh that is scheduled to go.
-
-The 32 animation clips currently driving the characters ship inside the CC0 rigs and are
-**also placeholder**. `CharacterAnimator` therefore invests in the MECHANISM rather than the
-clips: it reads clip names off the asset instead of assuming them, and it chooses a state from
-the MOTOR rather than from input, so a stunned player cannot walk and a bot animates through
-the same path a human does. Swap the clips and that all still holds.
-
-⚠️ **When the new animations land, revisit `ModelImportSetup`.** The rigs are imported as
-**Generic** on purpose, because these clips ship with their own rig and are authored against
-it, so humanoid retargeting would re-solve poses that are already correct and add foot sliding
-for no gain. If animations start coming from a library instead (Mixamo or similar), **Humanoid
-becomes the right answer** and that is the single biggest thing Unity buys over Godot here.
-
-⚠️ **The IKE slipper carries the real Nike wordmark as geometry, and replacing the mesh is the
-only thing that resolves it.** It is first in the queue. `docs/Port_Plan.md` §8 has the full
-order and, more importantly, the list of properties a replacement must preserve, because
-several props were tuned against the exact shape that was drawn.
-
-## 5 · Architectural invariants, each learned the hard way
+## 4 · Architecture invariants
 
 Do not "improve" any of these. Every one replaced something that failed in play or in a probe.
 
-- **Contact resolves by DISTANCE on the host, never by a trigger volume.** A `hit_probe`
-  measured 16 of 36 overlaps failing to land, split by target. This also keeps the most
-  correctness-critical code free of any physics-engine dependency, which is most of why this
-  port is tractable.
+⚠️⚠️ **`Packages/com.tumbangpreso.core/` must never acquire a `UnityEngine` reference.** It
+holds the match rules, scoring, trait tables, the stamina model, throw legality and the combat
+geometry: every number arrived at by measurement rather than taste. Engine-free is what lets
+them be asserted in a second instead of playtested for an afternoon. The asmdef enforces it
+with `noEngineReferences`; do not add an exception.
+
+⚠️ **The source lives in the package and `Core/TumbangPreso.Core.csproj` compiles those same
+files in place.** One copy, two toolchains. Never "fix" this by copying: the copy that drifts
+is the one nobody runs the tests against.
+
+- **Contact resolves by DISTANCE on the host, never by a trigger volume.** 16 of 36 overlaps
+  were measured failing to land. It also keeps the correctness-critical code free of the
+  physics engine.
 - **Every point is awarded in ONE function**, host-side (`MatchDirector.AddScore`). A point
   that can only be created in one place cannot be created on a client at all.
-- **The taya role is DERIVED**, `(round - 1) % 4`, never accumulated. "Everyone defends
-  exactly once, clockwise" is true by construction, not by bookkeeping.
+- **The taya role is DERIVED**, `(round - 1) % 4`, never accumulated.
 - **The box is a SQUARE, not a circle**, and X and Z clamp independently. They disagree by
-  2.9 m on the diagonal at the current radius, which is exactly where a taya moves to cover a
-  corner. Making either the test or the clamp radial cost a whole session once.
+  2.9 m on the diagonal, which is exactly where a taya moves to cover a corner.
 - **A bot presses the same buttons a human does** (`InputIntent`). One physics step serves
   both. Never let AI call a gameplay method directly.
 - **Stuns overlap via `Max()`, never additively.** That is the entire bound on a stun chain in
   a 1-vs-3 game.
 - **Every impulse is derived from `Friction`** as `v²/(2·Friction)`. Write the distance you
   want and solve for the speed; never hard-code a distance beside a speed.
-- **Entry 0 of each prop list stays neutral.** It is what an unpicked prop wears, so a
-  non-neutral row silently retunes every AI seat and every peer that never opened the
-  character screen.
+- **Entry 0 of each prop list stays neutral.** It is what an unpicked prop wears.
+- **One control, one action, in the input map.** ⚠️ **Per CONTEXT, since 2026-08-27.** The panel
+  refuses a key another action *in the same context* holds, so shipped defaults that break that
+  rule are a defect. `InputMapAndAbilityTests` asserts it.
+  ⚠️⚠️ **THE SECOND CONTEXT IS SPECTATING AND IT IS A NARROWING OF THIS RULE, SO READ WHY BEFORE
+  WIDENING IT AGAIN.** Nine spectator controls (TAB, F, V, B, N, P, R, C and the new autopilot
+  key) were `Keyboard.current` reads outside the input asset entirely until then: not rebindable,
+  not visible in the panel, not checked by anything. Four of them reuse keys gameplay actions
+  hold. **A spectator has no body, no seat and no `CharacterMotor`**, so while watching every
+  gameplay action is inert and while playing none of the spectator set is reachable: they can
+  never both fire, which is the only thing this rule was ever protecting.
+  `Rebinding.SpectatorContext` names the set, `SpectatorBindingTests` asserts the narrowing from
+  both sides, and `docs/TODO.md` § 35.3 has the reasoning. **Two actions inside one context
+  sharing a key is still a defect.**
 
-## 6 · This machine
+⚠️ **The camera is FPP *and* TPP. Do not "simplify" it to one.** A Person is always FPP, a
+Prop is always TPP, derived from `is_person` and asserted. Emotes swing to TPP and back,
+orbiting the body, local-only. Spectator is a fourth rig entirely (`spectator_camera.gd`:
+free, follow, POV). An earlier session recorded "third person was a mistake"; **that note was
+wrong** and acting on it would delete three shipped features. The genuine earlier mistake was
+narrower: an *overhead follow* camera that matched none of the four.
+
+⚠️ **Emotes end ONLY by interruption.** 🧑: *"it doesnt end on its own"*. There is no emote
+timer and no clip-finished stop. `EmotePlayer.Stop()` is reached by movement, a verb, or
+losing the right to act, and that is the single path the camera's `EndEmoteView` hangs off. If
+a clip-finished path is ever wanted, route it through `Stop()`.
+
+---
+
+## 5 · Design.md and the ledger
+
+**`docs/Design.md` is the balance source of truth.** It opens with: *a number in the
+code must match a number here, or one of the two is a bug.*
+
+✅ The eight places it had drifted are corrected as of 2026-08-23, and every one was stale
+prose rather than a code defect. `docs/Design_Drift_Report.md` holds the evidence.
+
+⚠️ **The habit that produced the drift has not changed: port from the GDScript and from
+`Balance.cs`, never from the prose.** If you find a ninth disagreement, fix the prose, note it
+in the drift report, and say so in the commit rather than silently picking a side.
+
+⚠️ **`Design.md` describes Classic only.** Hero Strike, the ability kits and the ultimate
+charge have no entry in it; its § 13 lists what it does not govern and points at the files
+that do.
+
+**`docs/Port_Ledger.md` is the definition of done** for the port: every Godot script and scene
+with a CONVERTED / PARTIAL / MISSING status, measured from both trees. Update the row when you
+finish something. Do not report the port as done while any row reads MISSING. A 26-line
+`kill_plane.gd` is still a feature the player meets.
+
+---
+
+## 6 · Art, models and iteration
+
+⚠️ **The art is the team's own work and is being built character by character.** The voxel
+cast is authored here (`tools/build_person_voxel.py`, `docs/Voxel_Person_Guide.md`), and
+`docs/Port_Plan.md` § 8 carries the replacement queue and what each replacement must preserve.
+Ask which pieces are final before treating any of it as disposable.
+
+⚠️ **When new animations land, revisit `ModelImportSetup`.** The rigs are imported as
+**Generic** on purpose, because the current clips ship with their own rig; humanoid
+retargeting would re-solve poses that are already correct. If clips start coming from a
+library instead (Mixamo or similar), **Humanoid becomes the right answer**, and that is the
+single biggest thing Unity buys over Godot here.
+
+⚠️ **The IKE slipper carries the real Nike wordmark as geometry.** First in the replacement
+queue; `docs/Port_Plan.md` § 8 lists the properties a replacement must preserve.
+
+### 6.1 Every model iteration gets a picture, and every picture gets a new filename
+
+⚠️⚠️ **SHOW, DO NOT DESCRIBE. A model change with no render attached cannot be judged**, and
+describing a mesh in prose is the slowest possible way to be told it is wrong.
+
+- **Render after every iteration**, through the in-engine probe pipeline. Never an external
+  renderer or a software OpenGL preview: the toon shader, the ink outline and Unity's linear
+  colour conversion are the look, and anything outside the engine misses all three.
+- **The two canonical outputs** are the **4-angle turnaround** and the **cast lineup**, which
+  is what shows the character next to the rest of the roster. Orbit renders are deprecated.
+- ⚠️⚠️ **VERSION THE FILENAME EVERY TIME: `zack_hair_v1.png`, `zack_hair_v2.png`.** Chat
+  clients cache images by filename, so overwriting a render leaves the previous one on screen
+  and the whole review is conducted against an image that no longer exists on disk. This has
+  happened and it wastes a full round trip.
+- **Force-reimport sub-assets before rendering.** Rebuilding a pet or accessory `.glb` from
+  Python changes the file on disk while Unity keeps the old one in memory; the render then
+  shows geometry that is no longer there.
+
+`docs/CANONICAL_RENDERING_PIPELINE.md` has the exact commands and five recorded pitfalls.
+⚠️ **That document is written for Antigravity and its "MANDATE FOR ALL AGENTS" heading is that
+tool's, not this one's.** Its render pipeline is correct and worth following; where anything
+in it disagrees with this file, this file wins here.
+
+---
+
+## 7 · This machine
 
 | | |
 |---|---|
 | Unity | `C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe` |
-| Modules | Windows Standalone, WebGL, **Linux Dedicated Server** (the Singapore VPS build) |
+| Modules | Windows Standalone, WebGL, Linux Dedicated Server |
 | dotnet | `C:\Program Files\dotnet\dotnet.exe`, SDK 9.0.317 |
 | RAM | 16 GB. It read 8 GB until a boot-time cap was cleared, so re-check before blaming Unity |
-
-⚠️ **`Unity.exe -batchmode -quit` exits before compiling scripts.** It stops after package
-registration and still returns exit code 0, so it looks like a clean build and proves nothing.
-Use `-executeMethod` or `-runTests` when you need an actual compile.
-
-⚠️ **Launch Unity with `Start-Process -Wait -PassThru`, not the `&` call operator.** With `&`,
-`$LASTEXITCODE` comes back empty and the log file is sometimes never created at all, which is
-indistinguishable from a run that failed. `Start-Process` returns a real `ExitCode`.
-
-⚠️ **Unity leaves child processes holding the project lock after it exits.**
-`Unity.ILPP.Runner`, `UnityPackageManager` and `UnityShaderCompiler` can outlive the editor,
-and while they do, the next launch silently does nothing: no log, no error, no exit code. If a
-run produces no log at all, check `Temp/UnityLockfile` and kill the stragglers rather than
-assuming the command was wrong.
-
-Working commands:
 
 ```bash
 dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj
@@ -283,53 +284,193 @@ dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj
 "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -nographics -projectPath . -testPlatform EditMode -testResults Logs/tests.xml -logFile Logs/tests.log
 ```
 
-⚠️⚠️ **PlayMode has NO `-nographics`, and adding it CRASHES the editor**, not the tests:
-
 ```bash
-"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testResults Logs/play.xml -logFile Logs/play.log
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock" -testResults Logs/play.xml -logFile Logs/play.log
 ```
 
-With `-nographics` Unity selects `NullGfxDevice`, and the first frame that renders an offscreen
-camera dies inside it: the stack is `RenderOffscreenCameras → RenderShadowMaps → ShadowMapJob →
-GfxDevice::DrawSharedGeometryJobs`. This project has several such cameras (`ModelPreview`,
-`MapPreviewSurface`, `UiRuntimeShots`), so the run dies about 360 log lines in, writes NO
-`.xml`, and **still exits 0** — indistinguishable from a pass unless the result file is checked.
-Verified 2026-08-16; the earlier handoff's command carried the flag and this is what it did.
+⚠️⚠️ **`-testCategory "!WallClock"` IS PART OF THE COMMAND, NOT AN OPTIMISATION.**
+`AiDiagnosticProbe` runs a round at 1x for about 80 real seconds by design, so its result depends
+on how busy the machine is: it has failed at 21.6 s, 29.9 s and 37.6 s against a 20.0 s bound and
+passed on immediate re-runs with nothing changed. `docs/TODO.md` § 6 carries the decision.
+⚠️ `[Explicit]` does NOT do this in batch mode; it was tried and the tests still ran.
+Run them on purpose with `-testCategory "WallClock"`.
 
-⚠️ **Always assert on the `.xml`, never on the exit code.** Both the crash above and a genuine
+**All five editor checks, in one launch:**
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -projectPath . -executeMethod TumbangPreso.EditorTools.Checks.RunAll -logFile Logs/checks.log
+```
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -quit -projectPath . -executeMethod TumbangPreso.EditorTools.GameBuilder.BuildWindows -logFile Logs/build.log
+```
+
+⚠️⚠️ **PlayMode has NO `-nographics`, and adding it CRASHES the editor**, not the tests. Unity
+selects `NullGfxDevice` and the first offscreen camera dies inside it. The run writes NO `.xml`
+and **still exits 0**.
+
+⚠️⚠️ **Always assert on the `.xml`, never on the exit code.** Both that crash and a genuine
 failure come back as 0.
 
-⚠️ **PowerShell here-strings break on embedded double quotes** when passed to `git commit -m`.
-The message gets split and the remainder is parsed as pathspecs. **Write the message to a file
-and use `git commit -F`.**
+⚠️ **`-batchmode -quit` exits before compiling scripts** and still returns 0. Use
+`-executeMethod` or `-runTests` when you need an actual compile.
 
-⚠️ **Bash heredocs are unreliable on this machine.** Write the script to a file and run it.
+⚠️ **Launch Unity with `Start-Process -Wait -PassThru`**, not `&`. With `&`, `$LASTEXITCODE`
+comes back empty and the log file is sometimes never created, which is indistinguishable from
+a failed run.
 
-## 6a · Do the work, do not manage the timeline
+⚠️⚠️ **Unity leaves child processes holding the project lock after it exits, AND A STALE
+`Temp/UnityLockfile` LOOKS EXACTLY LIKE A BROKEN INSTALL.** `Unity.ILPP.Runner`,
+`UnityPackageManager` and `UnityShaderCompiler` can outlive the editor, and while they do the
+next launch silently does nothing: no log, no error, no exit code.
 
-**Do not editorialise about deadlines, scope, or whether something is achievable.** This team
-built the entire game, which won its regional, in under two weeks. Estimates and warnings about
-what "realistically" fits are not useful here and have already been wrong once.
+**On 2026-08-26 a stale lockfile with no Unity process alive made the package manager answer
+`path ... Received undefined` on every launch, including against an empty project.** The session
+before it concluded Unity was broken machine-wide, gave up on EditMode, PlayMode and every build,
+and handed that on as a blocker. `rm Temp/UnityLockfile` fixed it outright. **Check that file
+before believing anything worse**, and check it whether or not a Unity process is running.
 
-**Do not stop to ask for a test until everything you can do yourself is done.** Almost
-everything is doable headlessly and the reflex to hand work back is usually laziness dressed as
-caution:
+⚠️ **Bash heredocs are unreliable here.** Write the script to a file and run it.
 
-- Unity **scenes can be built from code** (`EditorSceneManager` + `-executeMethod`). See
-  `Assets/TumbangPreso/Editor/SceneBuilder.cs`. Do not claim a scene needs the GUI.
-- Matches can be **run and measured** in headless Play Mode tests.
-- Compilation, tests, probes and builds all run from the command line.
+⚠⚠ **REVERSED ON 2026-08-28: THE CORNER SHOWS THE VERSION AGAIN, ON EVERY BRANCH.** 🧑, pointing
+at a corner reading `integration/ui-batch-on-ilalim`: *"pls replace the version number to 1.00"*,
+*"instead of this"*. The game is at **1.00** now rather than mid-port, and the number is what goes
+into a screenshot to a sponsor and what a player quotes in a report. `GameVersion.DisplayString`
+is the ONE line that decides, and the machinery below is kept rather than deleted, so returning to
+the branch name is a one-line change. **The reason it was built is real, and the paragraph below
+is why: if two .exe files ever become indistinguishable again, put it back rather than rebuilding
+it.**
 
-Hand something back only when it genuinely requires a human judgement (does this FEEL right,
-is this the art we want) or a credential. Everything else: just do it, verify it yourself, and
-report what the measurement said.
+The original rule, retained for that reason:
 
-## 7 · Writing style
+⚠️ **THE BOTTOM-RIGHT CORNER SHOWED THE BRANCH NAME, NOT THE VERSION, ON EVERY BRANCH BUT
+`main`.** 🧑, 2026-08-27: *"for every branch made it would replace the version number on the
+bottom right corner with the branch name instead"*. A build off
+`fix/multiplayer-fpp-camera-inside-head` reads exactly that in the corner of every screen and of
+the HUD; a build off `main` still reads `v4.72`.
 
-**No em dashes anywhere**, in code comments, docs, or commit messages. Rewrite the sentence
-rather than swapping the character in. This holds in the Godot repo too, where the roster file
-states it explicitly.
+**It is automatic and there is nothing to do by hand.** `GameBuilder.StampBuildBranch` writes the
+checked-out branch into `Assets/TumbangPreso/Resources/BuildBranch.txt` on EVERY build, because a
+player has no git; `BuildBranch` reads it, `GameVersion.DisplayString` picks between the name and
+the number, and both corner labels go through `GameVersion.ApplyTo`. In the editor git is read
+live, so play mode shows the branch you are actually on rather than the last one you built.
 
-Match the Godot codebase's commenting discipline: it documents **why**, at length, in
-⚠️-marked comments above the thing. Record deletions and the reasoning, not just the change. A
-number that was measured says so, and says what it measured against.
+⚠️ **The stamp file is gitignored on purpose.** It changes on every build and per branch, so
+committing it is a one-line diff per build and a conflict per merge, over a file whose whole job
+is to be regenerated. Absent or empty both mean "show the version".
+
+⚠⚠ **DO NOT PUT THE BRANCH NAME ON THE WIRE.** `Application.version` still carries the real
+version into the LAN beacon payload, the online lobby record and the connection-approval hello,
+and those are compared between peers: a name there would refuse two players built from the same
+commit on different branches. `BuildBranch` is the LABEL and nothing else, and
+`TheBranchNameNeverReachesTheVersionTheWireCompares` asserts the separation.
+
+⚠️ **The label is sized against the string.** The authored rect is 132 px, which fits `v4.72`
+and cuts `claude/multiplayer-lobby-switching-bugs-d1546c` in half; legacy `Text` defaults to WRAP,
+so that overflow is silent. `ApplyTo` widens the box and switches to Overflow. This is the same
+trap `ConvertedScreen.SetHeadline` records, for the third time.
+
+⚠️ **`GameBuilder.BuildWindows` targets THIS MACHINE'S DESKTOP, whatever it is.** It calls
+`Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)`, so it resolves per
+profile: `C:\Users\matth\Desktop` on one laptop and `C:\Users\Matthew\Desktop` on the other.
+⚠️⚠️ **THIS LINE USED TO NAME ONE OF THEM AS A CONSTANT**, which sent a session on the
+other machine to check a folder that does not exist and reads exactly like a build that never
+ran. Verify the .exe exists and report its path; do not claim a build that was never written.
+
+⚠️⚠️ **A successful incremental Windows build is not the same as a clean rebuild.** Unity can
+rewrite `TumbangPreso_Data`, Burst output and DLLs while reusing the byte-identical launcher
+`TumbangPreso.exe`; Explorer then keeps the executable's old creation/modified timestamp. This
+caused a build completed at 15:03 to look like the 14:34 player was still being shipped.
+
+✅ **`GameBuilder.PurgeOutputDirectory` now deletes the output folder on EVERY build**, so the
+old-folder half of this is automatic and step 2 below is only needed when you want the previous
+player kept. The build **fails** rather than half-overwriting if the folder is locked, which is
+almost always the game still being open.
+
+When the user asks to **rebuild**, **clean rebuild**, or questions the output timestamp:
+
+1. Ensure no `TumbangPreso` or Unity process is using the output. This is the one step still on
+   you: a running game holds the folder and the build will refuse it.
+2. To KEEP the old player, move `Desktop\TumbangPreso-Unity` to a clearly named backup first.
+   Otherwise the build deletes it.
+3. Run `GameBuilder.BuildWindows`. It writes into a now-missing directory by construction.
+4. Verify the new `TumbangPreso.exe` **and** `TumbangPreso_Data` files have timestamps from the
+   current run, then launch that exact executable. Keep the backup until the new player passes.
+
+The build log's `SUCCEEDED` line proves Unity completed a player build; it does **not** prove that
+every file in a pre-existing output directory was freshly emitted.
+
+### 7.1 Verify by measuring
+
+- `Core.Tests` asserts every balance number in about a second.
+- `BotBehaviourProbe` runs a whole match in both modes and prints throws, retrievals, tags,
+  skills, ultimates, penalties, EMOTES and HOPS, on Eskinita and on Ilalim ng Tulay. ⚠️ **It is seeded. Do not
+  change the seed to make a run pass**; if a run goes red, change the code.
+  ⚠️⚠️ **AND ITS NUMBERS ARE LIVENESS FLOORS, NEVER COMPARISONS AT n = 1.** It is stepped at a
+  fixed 1/60 s now rather than at a 6x time scale, and that removed most of the noise and not all
+  of it: eight matches at the shipped settings spread from **58 to 100 throws**, about 20 per
+  cent, and two runs of one build with one seed are still not identical.
+  ⚠️⚠️ **`docs/TODO.md` § 10 SAYS THIS WAS SOLVED AND § 16 IS THE MEASUREMENT THAT SAYS IT WAS
+  NOT.** § 10 was closed on the ARGUMENT that a fixed step removes the clock; the first sweep to
+  run one configuration twice got 43 throws and then 83. Read § 16 before quoting any number this
+  probe prints as a comparison: it carries the noise floor and the arithmetic for how many runs an
+  arm an A/B has to buy (three for anything worth 20 per cent).
+  ⚠️ **`TwoIdenticalMatchesLandInsideTheNoiseFloor` is how you ask whether it is still honest**,
+  six minutes, `WallClock`. Run it after touching anything the bots read.
+  ⚠️ **Every report from before 2026-08-26 is three seats' worth**, because `GameLaunch.SoloSeat`
+  defaults to 1 and that seat was a parked human until `GameLaunch.AllBots` landed. Do not compare
+  an old report against a new one.
+  ⚠️⚠️ **AND EVERY REPORT FROM BEFORE 2026-08-27 HAS SEAT 0 STEERING IN A ROTATED FRAME**, which is
+  the second layer of that same fault and is `docs/TODO.md` § 34. `MatchInstaller` turned the
+  gameplay rig off on `GameLaunch.Spectator` alone, so under `AllBots` it stayed active, followed
+  seat 0 and kept `AimSource.Mouse`, which puts `CharacterMotor.Steer` on the branch that reads a
+  heading as body-relative and never rotates the body. **Seat 0 travelled 224 m against 522 to 556
+  for its siblings in Classic and 530 against 1133 to 1175 in Hero Strike; after the fix all four
+  seats sit inside 5 per cent of each other on every arm, and the whole match got livelier with
+  it**: Hero Strike throws 127 to 173, tags 77 to 102, and the unretrieved-slipper clock, which is
+  a duration rather than an event count, **113 to 0**. Per-seat columns in an older report are not
+  comparable, and neither is anything § 16 or § 17 measured.
+- `AiDiagnosticProbe` runs one round at 1x with every decision written out, for WHY rather
+  than how much. ⚠️ **`[Category("WallClock")]`, excluded from the default PlayMode run.** See
+  § 7's command and `docs/TODO.md` § 6.
+- `AspectRatioProbes` drives real layout through nine resolutions.
+- `SceneScriptCheck` refuses a build scene holding a component the PLAYER cannot bind to a
+  script. ⚠️⚠️ **It is the only check that can see this class of bug, because every other one
+  runs in the editor and the editor resolves the broken reference by class name.** A shipped
+  build crashed on the Ilalim ng Tulay map select with all of Core, EditMode, PlayMode,
+  Headless, Arena, Audio and MapGeometry green. It reads scenes as TEXT on purpose: opening the
+  scene is what hides the fault. `GameBuilder` runs it before every build.
+- `MapGeometryCheck` refuses an arena whose props float, whose props are buried, whose floor
+  has holes, or whose furniture stands inside the defender's box. ⚠️ **It found six faults on a
+  map whose four showcase renders had already been signed off**, including both pavements
+  floating 0.15 m over open air. A render only shows the angles somebody chose.
+- `Checks.RunAll` runs `HeadlessCheck`, `ArenaCheck`, `MapGeometryCheck`, `AudioCueCheck` and
+  `SceneScriptCheck` in ONE editor launch, and runs all five even after one fails. ⚠️ **The
+  launches are the cost of a verification pass, not the assertions.** A full pass is three Unity
+  launches plus `dotnet test`; it used to be seven. `GameBuilder` still runs `SceneScriptCheck`
+  itself, deliberately: a build-time gate must not depend on somebody having run this first.
+- `AbilityShowcaseProbe` photographs the ability TRANSIENTS as well as the persistent zones, and
+  **fails a run where one blows more than 12 per cent of the frame to white**. That bound is
+  `docs/VISION.md` § 2 rule 5 as a number, and the first run of it found Zack's ultimate at
+  **62.8 per cent** against 8.3 for the worst of everything else.
+- **Three `tools/` audits read the source as TEXT and answer questions no test can.** They need
+  `python` (not on PATH; `%LOCALAPPDATA%\Programs\Python\Python312\python.exe`) and they exit
+  non-zero, so they gate a verification pass:
+  - `audit_ability_authority.py` walks every ability call that moves a body or writes score and
+    reports whether a `NetAuthority.ShouldResolve()` gate is open at that brace depth. ⚠️ **Every
+    `other` row must read HOST-ONLY.** It is currently 40 sites, 25 gated, **0 ungated on another
+    body**; `docs/TODO.md` § 25.1 is the entry it was written for.
+  - `audit_request_call_sites.py` reports every wire entry point in `Runtime/Net/` that nothing
+    calls. ⚠️ **Tests deliberately do not count**: a test calling a request proves the method
+    works, not that the game reaches it. It found three dead protocols and one verb that had never
+    travelled at all (§ 38.5, § 38.3).
+  - `audit_wire_payloads.py` compares each named message's writer and reader field by field.
+    Netcode does not check that the two halves agree, and a field added to one is not an error, it
+    is silently misread bytes (§ 38.6).
+- `tools/` also holds player-side capture scripts.
+
+Three faults from one session that no amount of playing would have found: a HUD string rebuilt
+every frame cost the 6x probe an eighth of its frames and most of its physics steps; a slipper
+came to rest 0.7 m outside the arena wall because the bounce only ran while in flight; and the
+probe itself was unseeded, so the same build measured 110 and then 467 penalties on
+consecutive runs.

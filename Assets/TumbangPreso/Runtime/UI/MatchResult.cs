@@ -20,12 +20,26 @@ namespace TumbangPreso.UI
 
         private Canvas _canvas;
         private Text _message;
+        private Text _broadcastLine;
+
+        /// <summary>
+        /// "2 / 3 WANT A REMATCH", under the button.
+        ///
+        /// ⚠️⚠️ IT IS ITS OWN LABEL AND NOT THE BROADCAST LINE. The first version of the tally
+        /// wrote into `_broadcastLine`, which already carries
+        /// "HERO STRIKE · FINAL STANDINGS · 8 ROUNDS", so the moment anybody pressed rematch the
+        /// mode and the round count were deleted from a screen whose whole job is the final
+        /// standings. Two facts, two labels.
+        /// </summary>
+        private Text _rematchTally;
         private readonly List<Text[]> _rows = new List<Text[]>();
         private Button _rematch;
         private Button _menu;
 
-        /// <summary>Seats that have voted for a rematch.</summary>
-        private readonly HashSet<int> _rematchVotes = new HashSet<int>();
+        /// <summary>Peers that have voted for a rematch. ⚠️ The rules live in
+        /// `Core.RematchVote`, engine-free, because every bug this has ever had was a counting
+        /// bug and counting can be asserted in a millisecond.</summary>
+        private readonly Core.RematchVote _rematchVotes = new Core.RematchVote();
 
         /// <summary>
         /// ⚠️⚠️ EVERY PLAYING PEER VOTES ON A REMATCH, NOT ONLY THE HOST. 🧑 2026-08-01:
@@ -34,8 +48,19 @@ namespace TumbangPreso.UI
         /// all check the rematch goes on"*, and separately *"spectator shouldnt see rematch
         /// button js scoreboard."*
         ///
-        /// The vote collection itself needs peer identity and is pending netcode; the button
-        /// is hidden for a spectator here, which is the half that does not need the wire.
+        /// ✅ THE WIRE HALF LANDED 2026-08-26. `MatchRpc` carries a three-message vote
+        /// (`VoteRematch` peer to host, `RematchTally` host to all, `BeginRematch` host to all)
+        /// and the button is still hidden for a spectator here, which is the half that never
+        /// needed the wire.
+        ///
+        /// ⚠️⚠️ THE TALLY IS BROADCAST, NOT INFERRED. Without it a peer who has voted sees a
+        /// pressed button and nothing else, cannot tell whether anybody agreed, and reads the
+        /// wait as the button being broken. `match_result.gd` draws the count for exactly that
+        /// reason.
+        ///
+        /// ⚠️ IT COUNTS PEERS, NEVER CHARACTERS, which is `ReadyGate.ExpectedReadyCount`'s rule
+        /// and the same one for the same reason: a bot-filled seat cannot press a button, so a
+        /// gate that waits for four SEATS in a two-human match never opens.
         /// </summary>
         public bool IsSpectator { get; set; }
 
@@ -58,7 +83,30 @@ namespace TumbangPreso.UI
         private void OnDisable()
         {
             if (GameServices.Match != null) GameServices.Match.MatchEnded -= OnMatchWon;
+
+            // ⚠⚠ WHOEVER STOPPED TIME RESTORES IT, ON EVERY PATH INCLUDING DEATH. This
+            // board was the second class in the project to stop the clock from an instance and
+            // restore it only from a button, which is the exact lifetime fault `Hitstop`'s own
+            // header documents at length. Destroy this object while the board is up, which a
+            // scene unload, a host tearing the match down or a probe ending a run all do, and
+            // `Time.timeScale` stayed 0 for the rest of the process, so the MENUS the player
+            // returned to were frozen and nothing said why.
+            RestoreTime();
         }
+
+        private void OnDestroy() => RestoreTime();
+
+        /// <summary>Undoes this board's own pause, and only its own.</summary>
+        private void RestoreTime()
+        {
+            if (!_stoppedTime) return;
+
+            _stoppedTime = false;
+            Time.timeScale = 1.0f;
+        }
+
+        /// <summary>True while THIS board is the reason the match clock is stopped.</summary>
+        private bool _stoppedTime;
 
         /// <summary>Shown when the match ends. -1 is a genuine draw, not an error.</summary>
         public void OnMatchWon(int winningSlot)
@@ -77,10 +125,24 @@ namespace TumbangPreso.UI
                 _message.color = UiTheme.Cream;
             }
 
+            string mode = SceneFlow.SelectedMode == Core.GameMode.HeroStrike
+                ? "HERO STRIKE"
+                : "CLASSIC";
+            int rounds = Core.MatchRules.RoundCountFor(SceneFlow.SelectedMode);
+            _broadcastLine.text = $"{mode}  ·  FINAL STANDINGS  ·  {rounds} ROUNDS";
+            _broadcastLine.color = SceneFlow.SelectedMode == Core.GameMode.HeroStrike
+                ? UiTheme.Highlight
+                : UiTheme.Amber;
+
             RenderStandings(winningSlot);
 
             _rematchVotes.Clear();
             _rematch.gameObject.SetActive(!IsSpectator);
+            _rematch.interactable = true;
+
+            // ⚠️ THE TALLY STARTS EMPTY RATHER THAN AT "0 / n". A count nobody has contributed
+            // to yet is not information, and the line is shared with the broadcast message.
+            ShowTally(0, 1);
 
             // The cursor has been locked for the whole match; the board is the first thing
             // since the menu that wants a pointer.
@@ -89,7 +151,11 @@ namespace TumbangPreso.UI
 
             // ⚠️ SINGLE PLAYER PAUSES, NETWORKED DOES NOT. A networked peer that froze its own
             // time would stop answering the host.
-            if (!NetAuthority.IsNetworked) Time.timeScale = 0.0f;
+            if (!NetAuthority.IsNetworked)
+            {
+                Time.timeScale = 0.0f;
+                _stoppedTime = true;
+            }
         }
 
         /// <summary>
@@ -169,6 +235,7 @@ namespace TumbangPreso.UI
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
+            AspectSafeCanvas.Apply(scaler);
             canvasGo.AddComponent<GraphicRaycaster>();
 
             // ⚠️ THE BACKDROP IS THE INK NAVY AT 0.72, NOT BLACK AT 0.55. `MatchResult.tscn`
@@ -192,7 +259,11 @@ namespace TumbangPreso.UI
             _message = CardLabel(card, "MessageLabel", 34, UiTheme.Cream, 76,
                                  TextAnchor.MiddleCenter);
 
-            Spacer(card, 16.0f);
+            _broadcastLine = CardLabel(card, "BroadcastLine", 18, UiTheme.Amber, 30,
+                                       TextAnchor.MiddleCenter);
+            _broadcastLine.text = "FINAL STANDINGS";
+
+            Spacer(card, 10.0f);
 
             var standings = SubStack(card, "Standings", 10.0f);
 
@@ -205,6 +276,15 @@ namespace TumbangPreso.UI
             // VBox. Two 280-wide buttons in a row do not fit a 600-wide card at all, which is
             // the kind of thing an oversized card hides.
             _rematch = StackedButton(card, "REMATCH", OnRematchPressed);
+
+            // ⚠️ UNDER THE BUTTON IT DESCRIBES, at the broadcast line's size rather than the
+            // button's. It is a status, not a second call to action, and 🧑's note on the
+            // Ilalim ng Tulay objective card applies here too: `HudLabel` does not wrap, so this
+            // sits on a card the standings have already made wide enough for it.
+            _rematchTally = CardLabel(card, "RematchTally", 18, UiTheme.Highlight, 24,
+                                      TextAnchor.MiddleCenter);
+            _rematchTally.text = "";
+
             _menu = StackedButton(card, "MAIN MENU", OnMenuPressed);
         }
 
@@ -433,25 +513,151 @@ namespace TumbangPreso.UI
             // ⚠️ THE SCOREBOARD MUST NOT DISAPPEAR ON THE PRESS. 🧑: *"when rematch happens the
             // UI for the scoreboard doesnt dissappear"* — it stays up until the rematch is
             // actually agreed and the next round starts.
-            _rematchVotes.Add(0);
-            Time.timeScale = 1.0f;
+            RestoreTime();
 
-            // Single player is a vote of one, so it starts immediately. The networked path
-            // waits for every playing peer and is pending netcode.
-            if (!NetAuthority.IsNetworked) BeginRematchNow();
+            // Single player is a vote of one, so it starts immediately.
+            if (!NetAuthority.IsNetworked)
+            {
+                _rematchVotes.Add(0);
+                BeginRematchNow();
+                return;
+            }
+
+            // ⚠️⚠️ THE LOCAL PRESS IS NOT COUNTED LOCALLY. It goes to the host like every other
+            // peer's and comes back in the broadcast tally. Counting it here as well would give
+            // this screen a number the host does not have, and the first thing a player would
+            // see is their own count disagreeing with everybody else's.
+            // ⚠️⚠️ THE BUTTON IS ONLY DEADENED ONCE THE VOTE HAS ACTUALLY LEFT. It was disabled
+            // first and the send attempted afterwards, so a vote that could not be delivered
+            // (the host gone, or the transport still finishing its handshake) left the player
+            // staring at a dead REMATCH button with no way to try again and no tally to explain
+            // it. `DeclareReadyServerRpc` reports delivery for the same reason and
+            // `ReadyGate.Update` resends off it.
+            if (Net.MatchRpc.Instance == null || !Net.MatchRpc.Instance.VoteRematchServerRpc())
+            {
+                ShowTally(_rematchVotes.Count, ExpectedVotes());
+                return;
+            }
+
+            _rematch.interactable = false;
+            ShowTally(_rematchVotes.Count, ExpectedVotes());
         }
+
+        /// <summary>
+        /// HOST ONLY. A peer voted.
+        ///
+        /// ⚠️⚠️ THE ID IS A TRANSPORT PEER ID, NEVER A SEAT. NGO client id 0 is the host's
+        /// identity and must remain distinct from client 1 even when the host occupies seat 1.
+        /// </summary>
+        public void HostReceiveVote(int peerId)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            if (!_rematchVotes.Add(peerId)) return;   // idempotent, like the ready set
+
+            int expected = ExpectedVotes();
+
+            Net.MatchRpc.Instance?.RematchTallyClientRpc(_rematchVotes.Count, expected);
+            ShowTally(_rematchVotes.Count, expected);
+
+            if (_rematchVotes.Satisfied(expected))
+            {
+                Net.MatchRpc.Instance?.BeginRematchClientRpc();
+                BeginRematchLocally();
+            }
+        }
+
+        /// <summary>
+        /// HOST ONLY. A peer disconnected while the vote was open.
+        ///
+        /// ⚠️ RE-CHECKED ON A LEAVE, NOT ONLY ON A PRESS, and this is `ReadyGate.OnPeerLeft`'s
+        /// note verbatim because it is the same failure: the last player anybody was waiting for
+        /// closing the game leaves the rest sitting on a gate that is already satisfied.
+        /// </summary>
+        public void OnPeerLeft(int peerId)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (!_canvas.gameObject.activeSelf) return;
+
+            _rematchVotes.Remove(peerId);
+
+            int expected = ExpectedVotes();
+            Net.MatchRpc.Instance?.RematchTallyClientRpc(_rematchVotes.Count, expected);
+            ShowTally(_rematchVotes.Count, expected);
+
+            if (_rematchVotes.Satisfied(expected))
+            {
+                Net.MatchRpc.Instance?.BeginRematchClientRpc();
+                BeginRematchLocally();
+            }
+        }
+
+        /// <summary>Votes counted so far. Host-side; a test's window into the tally.</summary>
+        public int VoteCount => _rematchVotes.Count;
+
+        /// <summary>Whether the real result board is currently accepting a rematch vote.</summary>
+        public bool IsVisible => _canvas != null && _canvas.gameObject.activeSelf;
+
+        /// <summary>The same action as the REMATCH button, exposed for the two-process driver.</summary>
+        public void RequestRematch() => OnRematchPressed();
+
+        /// <summary>What the tally line currently reads, or "" when it is silent.</summary>
+        public string TallyText => _rematchTally != null ? _rematchTally.text : "";
+
+        /// <summary>
+        /// How many presses this rematch is waiting for.
+        ///
+        /// ⚠️ A PEER ID, NOT A SEAT, for the reason `ReadyGate.ExpectedReadyCount` spells out:
+        /// the argument is matched against `PeerRecord.PeerId` and a seat number that happens to
+        /// equal somebody else's client id forgives the wrong peer.
+        /// </summary>
+        public int ExpectedVotes()
+        {
+            var lobby = Net.NetSession.Instance?.Lobby;
+            return lobby?.PlayingPeerCount(NetAuthority.LocalPeerId) ?? 1;
+        }
+
+        /// <summary>
+        /// What the tally reads.
+        ///
+        /// ⚠️ PURE AND STATIC SO IT CAN BE ASSERTED WITHOUT BUILDING THE SCREEN. `Awake` builds
+        /// a Canvas, a theme and eight labels, none of which a test of a sentence needs, and a
+        /// test that has to stand a whole UI up to check a string is a test nobody runs.
+        ///
+        /// ⚠️ BLANK IN SINGLE PLAYER. "1 / 1 WANT A REMATCH" is a sentence about nobody, printed
+        /// under a button that has already started the match.
+        /// </summary>
+        public static string TallyLine(int votes, int expected)
+            => expected <= 1 ? "" : $"{votes} / {expected} WANT A REMATCH";
+
+        /// <summary>Draw "2 / 3 WANT A REMATCH" on whichever peer this is.</summary>
+        public void ShowTally(int votes, int expected)
+        {
+            if (_rematchTally == null) return;
+            _rematchTally.text = TallyLine(votes, expected);
+        }
+
+        /// <summary>Every playing peer agreed, or this is single player. Start.</summary>
+        public void BeginRematchLocally() => BeginRematchNow();
 
         private void BeginRematchNow()
         {
             _canvas.gameObject.SetActive(false);
+            _rematch.interactable = true;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            GameServices.Match?.StartMatch();
+
+            // ⚠️ ONLY THE HOST STARTS THE MATCH. Every peer hides its own board and unlocks its
+            // own cursor, which is local presentation, but `StartMatch` writes match state and
+            // `CLAUDE.md` § 4 keeps that on the host: four peers each starting a match is four
+            // matches. Clients arrive through the host's own round start.
+            if (!NetAuthority.IsNetworked || NetAuthority.IsHost)
+                GameServices.Match?.StartMatch();
         }
 
         private void OnMenuPressed()
         {
-            Time.timeScale = 1.0f;
+            RestoreTime();
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             SceneFlow.Go(SceneFlow.MainMenu);

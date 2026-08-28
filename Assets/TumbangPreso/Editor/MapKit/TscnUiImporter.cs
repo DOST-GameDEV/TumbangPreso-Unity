@@ -108,7 +108,10 @@ namespace TumbangPreso.EditorTools.MapKit
                 // children and opened in place, exactly as `main_menu.gd` does it. Converting
                 // them as standalone scenes as well is how a build ends up with two settings
                 // panels, one of which nothing can reach.
-                "SettingsPanel", "Tutorial", "CreditsPanel", "CharacterSelect",
+                // ⚠️ `Tutorial` LEFT THIS LIST BECAUSE THE PANEL LEFT THE GAME. Its .tscn is still
+                // in the frozen Godot repo, so naming it here would re-import a screen with no
+                // behaviour left to bind to it and `SceneScriptCheck` would refuse the build.
+                "SettingsPanel", "CreditsPanel", "CharacterSelect",
             };
 
             foreach (var path in Directory.GetFiles(SourceDir, "*.tscn"))
@@ -181,6 +184,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var canvasGo = new GameObject($"{screenName}Canvas");
             var canvas = canvasGo.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.pixelPerfect = true;
 
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -190,6 +194,12 @@ namespace TumbangPreso.EditorTools.MapKit
             // menus are anchored from the left edge; matching on width instead crops the arrow
             // buttons off the side on anything wider than 16:9.
             scaler.matchWidthOrHeight = 1.0f;
+
+            // ⚠️ AND EXPAND ON TOP OF IT, which is match-on-height at 16:9 and wider and stops
+            // being a crop at 16:10 and 4:3. See TumbangPreso.UI.AspectSafeCanvas for the
+            // arithmetic; ConvertedScreen applies the same rule at runtime for the screens that
+            // were imported before this line existed.
+            UI.AspectSafeCanvas.Apply(scaler);
 
             canvasGo.AddComponent<GraphicRaycaster>();
             EnsureEventSystem();
@@ -541,25 +551,40 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             int cleared = 0, kept = 0;
 
-            foreach (var graphic in root.GetComponentsInChildren<Graphic>(includeInactive: true))
-            {
-                // A Selectable receives through its own targetGraphic. Anything else on the
-                // control — its label, its icon, its shadow — must not.
-                var selectable = graphic.GetComponent<Selectable>();
+            // ⚠⚠ THE LIVE SET IS COLLECTED FROM THE SELECTABLES FIRST, AND IT USED TO BE
+            // DECIDED PER GRAPHIC BY ASKING `graphic.GetComponent<Selectable>()`. That question
+            // only has the right answer when a control's hit area sits on the control's OWN
+            // node, which is true of a Button and false of a Slider: Unity puts a Slider's
+            // Background, Fill and Handle on CHILD nodes, so every one of them answered "no
+            // Selectable here", every one was muted, and the four settings sliders shipped with
+            // no raycast target anywhere beneath them. They drew, they seeded, they wired their
+            // listener, and a press at their centre went straight through to the card behind.
+            // Walk the Selectables and ask what each one receives through instead.
+            var live = new HashSet<Graphic>();
 
-                if (selectable != null && selectable.targetGraphic == graphic)
-                {
-                    graphic.raycastTarget = true;
-                    kept++;
-                    continue;
-                }
+            foreach (var selectable in root.GetComponentsInChildren<Selectable>(includeInactive: true))
+            {
+                var own = selectable.GetComponent<Graphic>();
 
                 // ⚠️ A Selectable WITH NO targetGraphic STILL NEEDS ONE HIT AREA, or the control
                 // converts, skins, wires its listener and is simply not clickable. Give it the
                 // graphic on its own node rather than leaving it dead.
-                if (selectable != null && selectable.targetGraphic == null)
+                if (selectable.targetGraphic == null) selectable.targetGraphic = own;
+
+                if (selectable.targetGraphic != null) live.Add(selectable.targetGraphic);
+
+                // ⚠️ AND THE GRAPHIC ON THE CONTROL'S OWN NODE IS KEPT WHETHER OR NOT IT IS THE
+                // targetGraphic. For a Slider that graphic is the transparent pad `BuildSlider`
+                // lays over the whole row, which is the hit area; the targetGraphic stays the
+                // Handle, because that is the part that has a pressed colour.
+                if (own != null) live.Add(own);
+            }
+
+            foreach (var graphic in root.GetComponentsInChildren<Graphic>(includeInactive: true))
+            {
+                // Anything else on a control — its label, its icon, its shadow — must not receive.
+                if (live.Contains(graphic))
                 {
-                    selectable.targetGraphic = graphic;
                     graphic.raycastTarget = true;
                     kept++;
                     continue;
@@ -1230,6 +1255,39 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             var slider = go.AddComponent<Slider>();
 
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ THE WHOLE CONTROL IS A RAYCAST TARGET, AND WITHOUT THIS THE SLIDERS WERE
+            // BARELY DRAGGABLE. 🧑 2026-08-27, two reports that are one bug: *"sound and volume
+            // dont decrease theyre hard locked"* and *"awkward scrolling motion for settings
+            // (repeated problem)"*.
+            //
+            // ⚠️⚠️ THE SLIDER'S ROOT HAD NO GRAPHIC ON IT AT ALL. Unity's EventSystem raycasts to
+            // find a GRAPHIC and then walks UP the hierarchy for something that handles the drag,
+            // so the only parts of a slider that could start one were the 14 px `Background`
+            // strip and the 22 by 34 px `Handle`. Every other pixel of the row hit nothing, the
+            // event carried on up to the `ScrollRect` that these rows live in, and the list
+            // scrolled instead. That is both symptoms exactly: a slider that mostly refuses to
+            // move, and a panel that scrolls when you did not ask it to.
+            //
+            // ⚠️ IT IS INVISIBLE AND IT IS NOT DECORATION. Alpha 0 with `raycastTarget` true is
+            // the standard way to say "this rectangle belongs to this control"; anything visible
+            // here would draw a box behind every slider in the game.
+            //
+            // ⚠️ AND IT IS ADDED BEFORE THE CHILDREN so it sits at the BACK of the draw order.
+            // In front, it would swallow the handle's own hit test and the grab would stop
+            // working for the opposite reason.
+            var hit = go.AddComponent<Image>();
+            hit.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+            hit.raycastTarget = true;
+            // ⚠⚠ AND IT ONLY SURVIVES BECAUSE `ClearStrayRaycastTargets` WAS FIXED IN THE SAME
+            // BATCH. That sweep asked `graphic.GetComponent<Selectable>()` and kept a graphic
+            // only when it WAS the Selectable's `targetGraphic`. This pad is on the slider's own
+            // node, so the question found the Slider, but the answer was the Handle: the pad was
+            // muted a few milliseconds after it was made, on the same run. `SettingsPanel.prefab`
+            // regenerated with the pad in place still shipped **4 live raycast targets and 54
+            // muted**, the same four Buttons as before. The sweep now collects the live set from
+            // the Selectables instead.
+
             var bgGo = new GameObject("Background");
             bgGo.AddComponent<RectTransform>();
             bgGo.transform.SetParent(go.transform, false);
@@ -1723,8 +1781,8 @@ namespace TumbangPreso.EditorTools.MapKit
         /// <summary>
         /// Binds the behaviour for a sub-scene instanced INTO a screen.
         ///
-        /// ⚠️⚠️ THESE ARE WHERE HALF THE FRONT END LIVES. MainMenu instances SettingsPanel,
-        /// Tutorial and CreditsPanel as hidden children and MatchSetup instances the whole
+        /// ⚠️⚠️ THESE ARE WHERE HALF THE FRONT END LIVES. MainMenu instances SettingsPanel
+        /// and CreditsPanel as hidden children and MatchSetup instances the whole
         /// character screen; the Godot scripts show them in place rather than switching scene.
         /// Without a behaviour on each, the panels convert perfectly and do nothing at all,
         /// which is what pushed the last pass into hand-drawing replacements in C#.
@@ -1742,10 +1800,9 @@ namespace TumbangPreso.EditorTools.MapKit
                         ExportPanelPrefab(go, "SettingsPanel");
                         break;
 
-                    case "TutorialPanel":
-                        Bind<ConvertedTutorialPanel>(go);
-                        break;
-
+                    // ⚠️ `TutorialPanel` HAD A CASE HERE AND THE PANEL IS DELETED. The six-page
+                    // reference card was replaced by the playable route on 2026-08-28; see
+                    // `ConvertedMainMenu.Wire`. Re-adding a bind for it would need the class back.
                     case "CreditsPanel":
                         Bind<ConvertedCreditsPanel>(go);
                         break;

@@ -1,5 +1,15 @@
 namespace TumbangPreso.Core
 {
+    /// <summary>The two distinct match play modes.</summary>
+    public enum GameMode
+    {
+        /// <summary>Classic Tumbang Preso with traditional 12-character Kenney street roster.</summary>
+        Classic,
+
+        /// <summary>Action-packed Hero Strike mode with the 5 superpowered heroes and abilities.</summary>
+        HeroStrike
+    }
+
     /// <summary>The four ways a point can be created. There are no others.</summary>
     public enum ScoreEvent
     {
@@ -14,6 +24,12 @@ namespace TumbangPreso.Core
 
         /// <summary>Per second the lata is upright. To the Defender.</summary>
         DefenseTick,
+
+        /// <summary>Penalty for Taya camping inside can ring without engaging.</summary>
+        TayaCampPenalty,
+
+        /// <summary>Penalty for Attacker failing to retrieve loose slipper.</summary>
+        UnretrievedSlipperPenalty,
     }
 
     /// <summary>
@@ -24,11 +40,15 @@ namespace TumbangPreso.Core
     /// mutating counter has no way to state the invariant it is supposed to keep, and it
     /// desyncs the moment one peer misses one call. "Everyone defends exactly once,
     /// clockwise" is true here BY CONSTRUCTION. The 2v2 format this replaced needed a
-    /// whole paired-set system to reach the same property; four players and four rounds
-    /// get it for free.
+    /// whole paired-set system to reach the same property. Classic gets one complete rotation
+    /// in four rounds; Hero Strike gets two complete rotations in eight.
     /// </summary>
     public static class MatchRules
     {
+        /// <summary>The shipped match length for the selected first-class mode.</summary>
+        public static int RoundCountFor(GameMode mode)
+            => mode == GameMode.HeroStrike ? Balance.HeroStrikeRounds : Balance.Rounds;
+
         /// <summary>
         /// Which slot is the taya in a given round. Rounds are 1-based.
         ///
@@ -51,9 +71,45 @@ namespace TumbangPreso.Core
                 case ScoreEvent.Tag: return Balance.ScoreTag;
                 case ScoreEvent.Sabotage: return Balance.ScoreSabotage;
                 case ScoreEvent.DefenseTick: return Balance.ScoreDefensePerTick;
+                case ScoreEvent.TayaCampPenalty: return Balance.ScoreTayaCampPenalty;
+                case ScoreEvent.UnretrievedSlipperPenalty: return Balance.ScoreUnretrievedPenalty;
                 default: return 0;
             }
         }
+    }
+
+    /// <summary>
+    /// Pure tournament anti-stall rules shared by runtime code, bots, HUD, and tests.
+    /// The separate clear radius gives the can ring hysteresis so stepping across one
+    /// razor-thin boundary cannot flicker or erase a nearly-earned warning.
+    /// </summary>
+    public static class TournamentRules
+    {
+        public static bool IsTayaCamping(bool wasInsideCampZone, float distanceFromCan)
+        {
+            float radius = wasInsideCampZone
+                ? Balance.TayaCampClearRadius
+                : Balance.TayaCampRadius;
+            return distanceFromCan <= radius;
+        }
+
+        public static float StepViolationTimer(float current, bool violating, float dt)
+        {
+            if (!violating) return 0.0f;
+            return System.Math.Max(0.0f, current) + System.Math.Max(0.0f, dt);
+        }
+
+        public static bool IsCampWarning(float seconds)
+            => seconds >= Balance.TayaCampWarningTime;
+
+        public static bool IsCampPenalty(float seconds)
+            => seconds >= Balance.TayaCampGracePeriod;
+
+        public static bool IsSlipperWarning(float seconds)
+            => seconds >= Balance.SlipperUnretrievedWarningTime;
+
+        public static bool IsSlipperPenalty(float seconds)
+            => seconds >= Balance.SlipperUnretrievedGracePeriod;
     }
 
     /// <summary>
@@ -77,7 +133,7 @@ namespace TumbangPreso.Core
         public void Add(int slot, ScoreEvent e)
         {
             if (slot < 0 || slot >= _scores.Length) return;
-            _scores[slot] += MatchRules.PointsFor(e);
+            _scores[slot] = System.Math.Max(0, _scores[slot] + MatchRules.PointsFor(e));
         }
 
         public void Set(int slot, int score)

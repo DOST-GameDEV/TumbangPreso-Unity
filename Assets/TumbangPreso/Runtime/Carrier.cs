@@ -1,3 +1,5 @@
+using System;
+using TumbangPreso.Abilities;
 using TumbangPreso.Core;
 using UnityEngine;
 
@@ -124,6 +126,9 @@ namespace TumbangPreso
         public float ChargeRatio => ThrowRules.ChargeRatio(_charge);
         public float ChannelRatio { get; private set; }
 
+        private float _pektusSpin;
+        public float CurrentPektusSpin => _charging ? _pektusSpin : 0.0f;
+
         /// <summary>True while this unit is winding a throw up. Read by the aim arc and by the
         /// YOU card's charge meter.</summary>
         public bool IsCharging => _charging;
@@ -197,31 +202,74 @@ namespace TumbangPreso
 
             what.HostGrab(_motor);
             NotifyHolding(what);
+            Net.MatchRpc.Instance?.BroadcastSlipperState(what);
         }
 
         /// <summary>
         /// HOST-SIDE throw from an explicit origin and aim point, so a networked throw leaves
         /// along the line the CLIENT was aiming rather than the one the host sees a frame later.
         /// </summary>
-        public void HostThrowAt(Vector3 origin, Vector3 aimPoint, float charge)
+        public void HostThrowAt(Vector3 origin, Vector3 aimPoint, float charge, float spin = 0.0f)
         {
             if (!NetAuthority.ShouldResolve() || Held == null) return;
 
-            Vector3 aim = aimPoint - origin;
-            aim.y = 0.0f;
-            if (aim.sqrMagnitude < 0.01f) aim = transform.forward;
-
-            // The same 45 degree launch every range bound in the game is solved against.
-            Vector3 dir = (aim.normalized + Vector3.up).normalized;
-
-            GameServices.Audio?.PlayAt("throw_release", origin);
+            // ⚠️⚠️ `NetCue`, NOT `GameServices.Audio`, AND THIS LINE IS WHY THAT CLASS EXISTS.
+            // It sits inside `HostThrowAt`, which opens with `if (!NetAuthority.ShouldResolve())
+            // return;`, so on a client it is never reached: **no peer but the host has ever
+            // heard a throw leave a hand in a networked match**, and the throw is the most
+            // frequent verb in the game. Found by `tools/audit_audio_reach.py`, which walks every
+            // audio call in the runtime tree and reports the ones behind an open authority gate.
+            //
+            // ⚠️ THE GATE IS CORRECT AND STAYS. Only the host may DECIDE a throw happened. What
+            // was wrong is that deciding and announcing were one line; `NetCue` separates them,
+            // which is the shape `NetAuthority`'s class note already describes for every verb.
+            NetCue.PlayVaried("throw_release", origin, 0.94f, 1.07f, 0.95f);
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
+            GetComponentInChildren<Visual.CharacterSquashStretch>()?.DashStretch(transform.forward, 0.14f);
+            UI.Hud.ReportStyle(_motor.PlayerSlot,
+                               5.0f + Mathf.Abs(spin) * 7.0f,
+                               Mathf.Abs(spin) >= 0.4f ? "PEKTUS CURVE" : "LET FLY");
 
-            Held.HostThrow(_motor, origin, Held.LaunchVelocity(dir, Mathf.Clamp01(charge)));
+            var ability = _motor.AbilitySystem;
+            ability?.OnThrowReleased();
+
+            Vector3 velocity = Held.LaunchVelocityTo(origin, aimPoint, Mathf.Clamp01(charge));
+            SlipperAffinity affinity = SlipperAffinity.Normal;
+
+            if (ability != null && ability.Kit is ZackHeroKit zack &&
+                (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
+            {
+                velocity *= 1.6f;
+                affinity = SlipperAffinity.ElectricZap;
+                zack.IsOverchargeThrowActive = false;
+            }
+            else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
+            {
+                velocity *= 1.3f;
+                affinity = SlipperAffinity.FireExplosive;
+                sean.IsIgnitionCannonActive = false;
+            }
+            else if (ability != null && ability.Kit is PhaisterHeroKit phaister &&
+                     (phaister.IsWitchfireInfused || phaister.IsEclipseActive))
+            {
+                velocity *= 1.35f;
+                phaister.IsWitchfireInfused = false;
+            }
+
+            var thrown = Held;
+            thrown.HostThrow(_motor, origin, velocity, affinity, spin);
 
             Held = null;
             _motor.HoldingSlipper = false;
             _charge = 0.0f;
+            _pektusSpin = 0.0f;
+
+            // ⚠️ THE ARM SWINGS ON EVERY SCREEN. `PlayAction` above runs on the host only, and the
+            // owning client predicts its own; without this the other two peers saw a tsinelas
+            // leave a body that never moved. `BroadcastAction` skips the host itself, and the
+            // thrower is excluded by `PredictThrowPresentation` having already played it.
+            Net.MatchRpc.Instance?.BroadcastActionExceptOwner(_motor.PlayerSlot, "throw");
+            Net.MatchRpc.Instance?.BroadcastSlipperState(thrown);
         }
 
         /// <summary>
@@ -243,11 +291,31 @@ namespace TumbangPreso
 
             if (what == null) return;
 
-            GameServices.Audio?.PlayAt("pickup", transform.position);
+            GameServices.Audio?.PlayAtVaried("pickup", transform.position, 0.96f, 1.08f, 0.9f);
 
             // Reaching down for a loose tsinelas — the literal clip for the job, and it now
             // reaches the first-person arm through the same call. See CharacterAnimator.PlayAction.
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("grab");
+            GetComponentInChildren<Visual.CharacterSquashStretch>()?.Squash(0.13f);
+            UI.Hud.ReportStyle(_motor.PlayerSlot, 14.0f, "SNATCH!");
+
+            // ⚠️⚠️ THE RETRIEVAL PAYS THE HERO ECONOMY, AND IT IS WIRED HERE BECAUSE THIS IS THE
+            // ONE FUNNEL EVERY PICKUP GOES THROUGH. `HostPickUp`, the proximity grab and
+            // `Slipper.HostGrab` all arrive here, and the guard above makes it idempotent, so a
+            // reward placed here is paid exactly once per pickup and cannot be paid twice by the
+            // double call the guard exists for.
+            //
+            // `docs/VISION.md` § 0: *"The tension is the retrieval, not the throw. Throwing is
+            // safe and free; going back in for your tsinelas is the only moment you can be
+            // caught."* The ultimate economy paid 8 for the throw and nothing at all for this
+            // until 2026-08-25, which is the two halves of the game rewarded in exactly the
+            // wrong order. `docs/Hero_Strike_Balance.md` § 3.1.
+            //
+            // ⚠️ ONLY YOUR OWN TSINELAS COUNTS. Picking up somebody else's is a denial play and
+            // a fine one, but it is not the run this game is built around and it carries none of
+            // the same risk. `OwnerSlot` is authoritative; a slipper nobody owns pays nothing.
+            if (what.OwnerSlot == _motor.PlayerSlot)
+                _motor.AbilitySystem?.OnOwnSlipperRetrieved();
 
             _throwLockLeft = what.ThrowLock;
         }
@@ -420,6 +488,8 @@ namespace TumbangPreso
             bool canThrow = GameServices.Round != null
                             && GameServices.Round.CanThrow(_motor)
                             && _throwLockLeft <= 0.0f;
+            bool canMaintainCharge = GameServices.Round != null
+                                     && GameServices.Round.CanMaintainThrowCharge(_motor);
 
             // ⚠️⚠️ `Pressed`, NOT `JustPressed`, TO START A CHARGE, AND THAT IS MEASURED. The
             // .gd records it: `input_probe` drove a synthetic press that lasted one frame and
@@ -445,19 +515,24 @@ namespace TumbangPreso
             if (intent.Pressed(Verb.SpecialAbility))
             {
                 _charge = Mathf.Min(_charge + dt, Balance.ChargeFullTime);
+                _pektusSpin = Mathf.Clamp(intent.SpinInput, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
 
-                // ⚠️ STEPPING OUT OF LEGALITY MID-CHARGE CANCELS IT RATHER THAN BANKING IT.
-                // Walking into the box while charging must not launch on release: the crosshair
-                // has already greyed out, and firing anyway is the rules disagreeing with the UI.
-                if (!canThrow) CancelCharge();
+                // Walking into the box, losing the slipper or ending the round cancels the
+                // commitment. The lata going down does not. That state is often caused by a
+                // teammate during somebody else's wind-up, and snapping every charged arm to
+                // idle on that frame made the shared knockdown feel like an animation error.
+                // Release legality is still checked below, so holding the pose cannot bank an
+                // illegal shot inside the box or launch through restoration protection.
+                if (!canMaintainCharge) CancelCharge();
                 return;
             }
 
             // Released.
             float power = ChargeRatio;
+            float spin = _pektusSpin;
             CancelCharge();
 
-            if (canThrow) Release(power);
+            if (canThrow) Release(power, spin);
         }
 
         /// <summary>
@@ -471,6 +546,7 @@ namespace TumbangPreso
 
             _charging = false;
             _charge = 0.0f;
+            _pektusSpin = 0.0f;
             BroadcastCharge(false);
         }
 
@@ -479,7 +555,15 @@ namespace TumbangPreso
         /// local game this is simply the same clock; the shape is kept so the networked half
         /// has one place to become an RPC.
         /// </summary>
-        private void BroadcastCharge(bool active) => _observedCharge = active ? 0.0f : -1.0f;
+        private void BroadcastCharge(bool active)
+        {
+            ApplyObservedCharge(active);
+            if (NetAuthority.IsNetworked)
+                Net.MatchRpc.Instance?.SetThrowCharge(_motor.PlayerSlot, active);
+        }
+
+        /// <summary>Applies another peer's visible throw wind-up without touching local input.</summary>
+        public void ApplyObservedCharge(bool active) => _observedCharge = active ? 0.0f : -1.0f;
 
         private bool TryPickup()
         {
@@ -501,6 +585,13 @@ namespace TumbangPreso
             }
 
             if (best == null) return false;
+
+            if (NetAuthority.ShouldRequest())
+            {
+                Net.MatchRpc.Instance?.RequestGrabServerRpc(_motor.PlayerSlot, best.OwnerSlot);
+                return true;
+            }
+
             if (!best.HostGrab(_motor)) return false;
 
             NotifyHolding(best);
@@ -565,29 +656,69 @@ namespace TumbangPreso
         {
             if (Held == null) return Vector3.zero;
 
-            // ⚠️⚠️ SOLVED THROUGH THE AIM POINT, NOT LOBBED AT 45 DEGREES. See
-            // `Slipper.SolveArc`: the fixed 45 threw the same towering arc at every range and
-            // ignored the vertical half of where the player was pointing entirely.
-            return Held.LaunchVelocityTo(ThrowOrigin(), AimPoint(), ChargeRatio);
+            Vector3 vel = Held.LaunchVelocityTo(ThrowOrigin(), AimPoint(), ChargeRatio);
+            var ability = _motor.AbilitySystem;
+            if (ability != null && ability.Kit is ZackHeroKit zack && (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
+            {
+                vel *= 1.6f;
+            }
+            else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
+            {
+                vel *= 1.3f;
+            }
+            else if (ability != null && ability.Kit is PhaisterHeroKit phaister && (phaister.IsWitchfireInfused || phaister.IsEclipseActive))
+            {
+                vel *= 1.35f;
+            }
+            return vel;
         }
 
-        private void Release(float power)
+        private void Release(float power, float spin = 0.0f)
         {
             if (Held == null) return;
 
             Vector3 origin = ThrowOrigin();
+            Vector3 aimPoint = AimPoint();
 
-            GameServices.Audio?.PlayAt("throw_release", origin);
+            if (NetAuthority.ShouldRequest())
+            {
+                // ⚠️⚠️ THE PICTURE IS PREDICTED AND THE PHYSICS IS NOT, WHICH IS THE WHOLE SPLIT.
+                // A client's throw used to send the request and do nothing else, so the arm did
+                // not swing, the view did not kick and the hype did not move until the host's
+                // answer came back. Everything below is presentation on the thrower's own screen
+                // and cannot change where the tsinelas goes: `HostThrowAt` still decides that,
+                // from the origin and aim point sent with the request.
+                //
+                // ⚠️ IT DOES NOT CLEAR `Held`. Optimistically emptying the hand would stop the
+                // local carry moving the shoe while the wire, correctly, does not write a HELD
+                // slipper's position either (see `Slipper.ApplySnapshotState`), so the tsinelas
+                // would hang in the air for a round trip. It leaves the hand when the host says
+                // it is in flight, which on a LAN is a frame or two.
+                PredictThrowPresentation(origin, spin);
+
+                Net.MatchRpc.Instance?.RequestThrowServerRpc(
+                    _motor.PlayerSlot, origin, aimPoint, power, spin);
+                return;
+            }
+
+            HostThrowAt(origin, aimPoint, power, spin);
+        }
+
+        /// <summary>
+        /// What the thrower sees on the frame they let go, on a peer that does not resolve the
+        /// throw.
+        ///
+        /// ⚠️ NO SOUND AND NO HYPE HERE, AND BOTH OMISSIONS ARE DELIBERATE. `HostThrowAt` plays
+        /// `throw_release` through `NetCue`, which reaches this peer anyway, and awards the hype
+        /// through `Hud.ReportStyle`, which the host now relays to the seat's owner. Predicting
+        /// either would give this one player the sound twice a few tens of milliseconds apart and
+        /// the hype twice at full value. What cannot arrive late is the ANIMATION, because the
+        /// arm is the feedback that the press registered.
+        /// </summary>
+        private void PredictThrowPresentation(Vector3 origin, float spin)
+        {
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
-
-            // ⚠️ THE SAME SOLVE THE PREVIEW DREW. The dotted line and the flight are one line
-            // only while both come out of `LaunchVelocityTo`; two call sites building a
-            // direction by hand is exactly how they drift.
-            Held.HostThrow(_motor, origin, Held.LaunchVelocityTo(origin, AimPoint(), power));
-
-            Held = null;
-            _motor.HoldingSlipper = false;
-            _charge = 0.0f;
+            GetComponentInChildren<Visual.CharacterSquashStretch>()?.DashStretch(transform.forward, 0.14f);
         }
 
         // -------------------------------------------------------------------
@@ -611,6 +742,7 @@ namespace TumbangPreso
                 // ⚠️ LETTING GO ZEROES THE CHANNEL. It does not pause and it does not decay:
                 // a partial reset that survives being interrupted would let the taya nibble
                 // at it between throws, which is exactly the pressure the channel creates.
+                if (_channel > 0.0f) ReportResetPhase(Net.MatchRpc.ResetPhase.Cancel);
                 _channel = 0.0f;
                 ChannelRatio = 0.0f;
                 return;
@@ -627,17 +759,47 @@ namespace TumbangPreso
             // ⚠️ AND NO CUE HERE. `Lata.SetUpright` owns the channel's sound off the can's own
             // state; a `PlayAt` on this frame would be a second source for the same event.
             if (_channel <= 0.0f)
+            {
                 GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("grab");
+                ReportResetPhase(Net.MatchRpc.ResetPhase.Start);
+            }
 
             _channel += dt;
             ChannelRatio = Mathf.Clamp01(_channel / lata.ResetChannelTime);
 
-            if (_channel >= lata.ResetChannelTime)
+            if (_channel < lata.ResetChannelTime) return;
+
+            // ⚠️⚠️ THE CLIENT SHOWS ITS OWN BAR AND THE HOST STANDS THE CAN UP, AND THAT SPLIT IS
+            // THE WHOLE POINT. Before this the channel ran entirely locally and called
+            // `Lata.HostRestore` from whichever peer was holding the key, so a client righted the
+            // can on its own screen, the host's stream knocked it straight back down, and the taya
+            // saw the reset flicker and fail. The bar is prediction; the restore is a decision, and
+            // only one process makes decisions.
+            GetComponentInChildren<Visual.CharacterSquashStretch>()?.Stretch(0.18f);
+            _channel = 0.0f;
+            ChannelRatio = 0.0f;
+
+            if (NetAuthority.ShouldRequest())
             {
-                lata.HostRestore();
-                _channel = 0.0f;
-                ChannelRatio = 0.0f;
+                ReportResetPhase(Net.MatchRpc.ResetPhase.Complete);
+                return;
             }
+
+            lata.HostRestore();
+            UI.Hud.ReportStyle(_motor.PlayerSlot, 24.0f, "BANGON!");
+            Net.MatchRpc.Instance?.BroadcastLataState();
+        }
+
+        /// <summary>
+        /// Tells the host where this seat's channel has got to. Silent offline and on the host,
+        /// which resolve the channel directly.
+        /// </summary>
+        private void ReportResetPhase(Net.MatchRpc.ResetPhase phase)
+        {
+            if (!NetAuthority.ShouldRequest()) return;
+            if (_motor.PlayerSlot != NetAuthority.LocalSlot) return;
+
+            Net.MatchRpc.Instance?.RequestLataResetServerRpc(_motor.PlayerSlot, phase);
         }
 
         private void CancelAll()

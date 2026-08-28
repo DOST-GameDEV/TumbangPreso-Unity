@@ -149,6 +149,22 @@ namespace TumbangPreso.UI
                 case "WoodPrimaryButton":
                     return Wood(UiTheme.MenuGreen, UiTheme.MenuGreenLit, UiTheme.Ink, UiTheme.Ink);
 
+                // ⚠️⚠️ AMBER IS THE SELECTED-TAB COLOUR AND IT IS NOT A SECOND "GO" BUTTON.
+                // `WoodPrimaryButton` is green and means ACT: it is START MATCH and READY. A tab
+                // is not an action, it is a statement about where you already are, and painting
+                // it green put two "press me" buttons on one screen with the more important one
+                // further from the hand. Amber is already this UI's attention colour (the round
+                // clock, every caption, the map name) and it is in `UiTheme`, so this introduces
+                // no colour: `Art_Direction.md` § 1 requires that the palette file is the only
+                // place a colour is named, and the hero layer once drifted a whole slate-blue
+                // palette in by naming seventeen of them inline.
+                //
+                // ⚠️ THE INK GOES DARK ON IT. Cream on amber is a two-stop contrast and reads as
+                // a smudge at tab size; `UiTheme.Ink` on amber is what every yellow plate in this
+                // game already does, including the banner this tab bar sits beside.
+                case "WoodAmberButton":
+                    return Wood(UiTheme.Amber, UiTheme.Highlight, UiTheme.Ink, UiTheme.Ink);
+
                 case "WoodDangerButton":
                     // Not DANGER: that hue means downed / out of bounds, and a button is not a state.
                     return Wood(UiTheme.MenuRed, UiTheme.MenuRedLit, UiTheme.Cream, UiTheme.Ink);
@@ -209,7 +225,8 @@ namespace TumbangPreso.UI
 
         public static bool IsButtonVariation(string variation) =>
             variation == "WoodButton" || variation == "WoodPrimaryButton" ||
-            variation == "WoodDangerButton" || variation == "PrimaryButton" ||
+            variation == "WoodDangerButton" || variation == "WoodAmberButton" ||
+            variation == "PrimaryButton" ||
             variation == "DangerButton";
 
         // --- Panel variations ----------------------------------------------------------
@@ -427,8 +444,8 @@ namespace TumbangPreso.UI
 
             // Buttons: four states each.
             foreach (var variation in new[]
-                     { "WoodButton", "WoodPrimaryButton", "WoodDangerButton", "Button",
-                       "PrimaryButton" })
+                     { "WoodButton", "WoodPrimaryButton", "WoodDangerButton", "WoodAmberButton",
+                       "Button", "PrimaryButton" })
             {
                 var style = ForButton(variation);
 

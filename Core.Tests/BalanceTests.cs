@@ -282,6 +282,318 @@ namespace TumbangPreso.Core.Tests
         }
 
         // ===================================================================
+        // GETTING BACK UP
+        //
+        // 🧑, 2026-08-25: *"then fall down animation plays and u have to spam a button to
+        // get back up"*. These four assert the bound rather than the feel: what a mash is worth,
+        // what it cannot do, and that hardware cannot beat a hand.
+        // ===================================================================
+
+        /// <summary>
+        /// ⚠️ A MASH SHORTENS A TRIP, IT DOES NOT CANCEL ONE. If a press could take the fall to
+        /// zero the hazard would cost nothing to whoever reacts first, and a hazard that can be
+        /// answered for free is a hazard nobody has to route around.
+        /// </summary>
+        /// <summary>
+        /// § MASHING OUT OF AN ABILITY STUN. The three properties that make the escape fair,
+        /// asserted rather than playtested, which is why the rules layer is engine-free.
+        /// </summary>
+        [Fact]
+        public void StunMash_ShortensAnAbilityStunButNeverCancelsIt()
+        {
+            float left = 3.0f;
+            for (int i = 0; i < 200; i++)
+                left = Combat.MashOutOfStun(left, 3.0f, Balance.StunBreakPressesDefault,
+                                            Balance.MashCooldown, out _);
+
+            Assert.Equal(Balance.MinStunDown, left, 3);
+            Assert.True(left > 0.0f,
+                        "an ability stun that mashing can cancel outright is not a control " +
+                        "ability, and the cooldown that bought it is refunded for free.");
+        }
+
+        /// <summary>
+        /// ⚠️ THE SAME PROPERTY THE TRIP MASH HAD TO LEARN: a press may never LENGTHEN the thing
+        /// it is answering. `Mash_NeverLengthensAFall` records the day `MashRecover` clamped up
+        /// to its floor and a player hammering the key pinned themselves on the road. This is
+        /// the identical shape of function, so it gets the identical guard from the start.
+        /// </summary>
+        [Fact]
+        public void StunMash_NeverLengthensAStun()
+        {
+            float[] starts =
+            {
+                5.0f, 3.0f, 1.5f, Balance.MinStunDown + 0.01f, Balance.MinStunDown,
+                Balance.MinStunDown * 0.5f, 0.05f, 0.001f
+            };
+
+            foreach (float start in starts)
+            {
+                float after = Combat.MashOutOfStun(start, start, Balance.StunBreakPressesDefault,
+                                                   Balance.MashCooldown, out _);
+
+                Assert.True(after <= start + 0.0001f,
+                            $"a press against {start:F3} s of stun returned {after:F3} s, " +
+                            "which is a press that made the stun longer.");
+            }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE RATE CAP IS THE ANTI-TURBO BOUND AND IT HAS TO HOLD HERE TOO. A press inside
+        /// `MashCooldown` buys nothing, so a macro cannot beat a hand. Asserted separately from
+        /// the trip because these are two functions and a fix to one does not reach the other.
+        /// </summary>
+        [Fact]
+        public void StunMash_RefusesPressesInsideTheRateCap()
+        {
+            float left = 3.0f;
+            float after = Combat.MashOutOfStun(left, 3.0f, Balance.StunBreakPressesDefault,
+                                               Balance.MashCooldown * 0.5f, out bool accepted);
+
+            Assert.False(accepted);
+            Assert.Equal(left, after, 5);
+        }
+
+        /// <summary>
+        /// The bound a player actually experiences, written down so a change to either constant
+        /// has to restate what it costs. See § MASHING OUT OF AN ABILITY STUN in `Balance`.
+        /// </summary>
+        [Fact]
+        public void StunMash_ClosesTheSlackInAKnownNumberOfPresses()
+        {
+            const float duration = 3.0f;
+
+            // ⚠️⚠️ THE PRESS COUNT IS THE TUNABLE AND THE SECONDS FOLLOW FROM IT, which is the
+            // property worth pinning: a stun retuned to a different DURATION still breaks in the
+            // number of presses its ability asked for. 🧑 asked for the cost to be per skill and
+            // "dependent on how hard the skill is supposed to hit", and that only stays true if
+            // the count is what survives a duration change.
+            foreach (int declared in new[] { 3, 6, 9, 14 })
+            {
+                foreach (float total in new[] { 2.0f, 3.0f, 5.0f })
+                {
+                    float left = total;
+                    int presses = 0;
+
+                    while (presses < 100)
+                    {
+                        left = Combat.MashOutOfStun(left, total, declared,
+                                                    Balance.MashCooldown, out bool ok);
+                        if (!ok) break;
+                        presses++;
+                        if (left <= Balance.MinStunDown + 0.0001f) break;
+                    }
+
+                    Assert.Equal(declared, presses);
+                }
+            }
+
+            // A declared count outside the bounds is clamped rather than trusted.
+            Assert.Equal(Combat.StunMashPerPress(duration, Balance.StunBreakPressesMin),
+                         Combat.StunMashPerPress(duration, 0), 5);
+            Assert.Equal(Combat.StunMashPerPress(duration, Balance.StunBreakPressesMax),
+                         Combat.StunMashPerPress(duration, 999), 5);
+
+            // And the floor is what a perfect mash actually reaches.
+            Assert.Equal(Balance.MinStunDown, Combat.FastestStunRecovery(duration), 3);
+
+            // A stun already shorter than the floor is left alone rather than extended to it.
+            Assert.Equal(0.5f, Combat.FastestStunRecovery(0.5f), 3);
+        }
+
+        [Fact]
+        public void Mash_ShortensATripButNeverCancelsIt()
+        {
+            float left = 2.5f;
+            for (int i = 0; i < 200; i++)
+                left = Combat.MashRecover(left, Balance.MashCooldown, out _);
+
+            Assert.Equal(Balance.MinTripDown, left, 3);
+            Assert.True(left > 0.0f);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A PRESS CAN NEVER MAKE A FALL LONGER, AND FOR ONE DAY IT COULD.
+        ///
+        /// 🧑, 2026-08-26: *"if i mash, the progress pauses"*, reported twice, off two builds.
+        /// `Combat.MashRecover` clamped its result UP to `MinTripDown` unconditionally, so once
+        /// the fall was inside the floor — the last 0.35 s, the get-up animation, where
+        /// `tripLeft` is already below `MinTripDown` — an accepted press RETURNED A LARGER
+        /// NUMBER THAN IT WAS GIVEN and reset the fall to the floor. At the 10 Hz cap a player
+        /// still hammering the key held themselves on the tarmac indefinitely. Mashing harder
+        /// made the fall longer.
+        ///
+        /// ⚠️ THE PROPERTY IS ASSERTED, NOT THE FIX. "The result is never greater than the input,
+        /// from any starting point" is what must hold; the current implementation happens to
+        /// achieve it by refusing the press outright, and a later one may not.
+        /// </summary>
+        [Fact]
+        public void Mash_NeverLengthensAFall()
+        {
+            float[] starts =
+            {
+                2.5f, 1.0f, Balance.MinTripDown + 0.01f, Balance.MinTripDown,
+                Balance.MinTripDown * 0.5f, 0.05f, 0.001f
+            };
+
+            foreach (float start in starts)
+            {
+                float after = Combat.MashRecover(start, Balance.MashCooldown, out _);
+
+                Assert.True(after <= start + 0.0001f,
+                            $"a press against {start:F3} s of trip returned {after:F3} s, " +
+                            "which is a press that made the fall longer.");
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ AND THE FLOOR IS REACHED AND THEN HELD, NOT ORBITED. Once the fall is at or under
+        /// `MinTripDown` nothing a press does may move it at all: the remaining time is the
+        /// get-up clip, which `CharacterAnimator` time-scales to fit exactly, and shortening it
+        /// would stand a body up through the middle of its own animation.
+        /// </summary>
+        [Fact]
+        public void Mash_IsRefusedOnceTheFloorIsReached()
+        {
+            float atFloor = Combat.MashRecover(Balance.MinTripDown, 99.0f, out bool accepted);
+
+            Assert.False(accepted);
+            Assert.Equal(Balance.MinTripDown, atFloor, 3);
+
+            float inside = Combat.MashRecover(Balance.MinTripDown * 0.4f, 99.0f, out accepted);
+
+            Assert.False(accepted);
+            Assert.Equal(Balance.MinTripDown * 0.4f, inside, 3);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE RATE CAP IS THE ANTI-TURBO BOUND. A press inside `MashCooldown` of the
+        /// last accepted one changes nothing at all, so a macro or a turbo-fire mouse cannot
+        /// take a trip below what a human burst reaches. `docs/VISION.md` § 4 aims the mode at
+        /// a bracket, and a status that is answered by hardware does not belong in one.
+        /// </summary>
+        [Fact]
+        public void Mash_IgnoresPressesInsideTheRateCap()
+        {
+            float left = Combat.MashRecover(2.5f, Balance.MashCooldown * 0.5f, out bool accepted);
+
+            Assert.False(accepted);
+            Assert.Equal(2.5f, left, 3);
+
+            left = Combat.MashRecover(2.5f, Balance.MashCooldown, out accepted);
+            Assert.True(accepted);
+            Assert.Equal(2.5f - Balance.MashRecoverPerPress, left, 3);
+        }
+
+        /// <summary>
+        /// ⚠️ THE SAVING HAS TO FIT INSIDE THE FALL, OR THE CAP IS THE REAL RULE AND THE
+        /// PER-PRESS VALUE IS DECORATION. `StreetTripHazard` trips for 2.50 s and the floor is
+        /// 0.90 s, so 1.60 s has to be removable at 0.13 s a press and no faster than 10 Hz:
+        /// 12.3 presses over 1.23 s, comfortably inside the 2.50 s the player is down for.
+        /// </summary>
+        [Fact]
+        public void Mash_CanReachTheFloorWithinTheFallItself()
+        {
+            const float trip = 2.5f;
+            float removable = trip - Balance.MinTripDown;
+            float presses = removable / Balance.MashRecoverPerPress;
+            float secondsOfMashing = presses * Balance.MashCooldown;
+
+            Assert.True(secondsOfMashing < trip,
+                        $"{presses:F1} presses need {secondsOfMashing:F2} s of a {trip:F2} s fall.");
+        }
+
+        /// <summary>
+        /// ⚠️ THE FLOOR MUST LEAVE THE KNOCKDOWN CLIP TIME TO PLAY.
+        ///
+        /// ⚠️⚠️ AND THE SEPARATE 0.70 THIS TEST USED TO TRANSCRIBE IS GONE. `CharacterAnimator`
+        /// switched from the knockdown clip to the get-up at a hardcoded 0.70 while the mash
+        /// floor and the HUD both used `MinTripDown` = 0.90, so for 0.20 s of every fall the
+        /// player was refused a press, told GETTING UP, and left face down. `StepTripPose` now
+        /// switches at `MinTripDown` itself, which is why there is no second number left to
+        /// compare against here: one number, one meaning.
+        /// </summary>
+        [Fact]
+        public void Mash_LeavesTheKnockdownClipTimeToPlay()
+        {
+            Assert.True(Balance.MinTripDown > 0.0f);
+            Assert.Equal(Balance.MinTripDown, Combat.FastestTripRecovery(2.5f), 3);
+
+            // A trip already shorter than the floor is not lengthened by the rule.
+            // ⚠️ 0.20, NOT 0.40. `MinTripDown` came down to 0.35 on 2026-08-26, so 0.40 is
+            // above the floor now and this line was asserting the clamp rather than the
+            // pass-through it is named for.
+            Assert.Equal(0.2f, Combat.FastestTripRecovery(0.2f), 3);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE MASH IS THE ONLY WAY UP INSIDE THE WINDOW, AND THAT IS A PROPERTY OF THE
+        /// NUMBERS RATHER THAN OF THE MOTOR. 🧑, 2026-08-26, off the 4.70 player: *"u randomly
+        /// get up after set amt of time, i dont have to actually mash it"*. Three passes before
+        /// this one answered that complaint by retuning a decay RATE, and each left the thing he
+        /// was describing in place. `Balance.TripPassiveDecayRate` is deleted; what is left is a
+        /// count of presses and a stranding guard far enough out that waiting is never the
+        /// better play.
+        /// </summary>
+        [Fact]
+        public void Trip_OnlyPressesEndAFallInsideTheGuard()
+        {
+            const float trip = 2.5f;
+            float slack = trip - Balance.MinTripDown;
+
+            int presses = (int)System.Math.Ceiling(slack / Balance.MashRecoverPerPress);
+            float mashWindow = presses * Balance.MashCooldown;
+            float mashed = mashWindow + Balance.MinTripDown;
+
+            Assert.True(mashed <= 2.0f,
+                        $"a perfectly answered fall is {mashed:F2} s, outside the 1-2 s asked for.");
+
+            // ⚠️ THE GUARD IS A STRANDING GUARD, NOT A SECOND WAY UP. If it were close to the
+            // answered time, "wait it out" would be a strategy again and the meter would be back
+            // to decorating a countdown.
+            Assert.True(Balance.TripAutoRecoverSeconds >= mashed * 3.0f,
+                        $"waiting costs {Balance.TripAutoRecoverSeconds:F2} s against {mashed:F2} s " +
+                        "answered, which is close enough that not pressing is playable.");
+
+            // ⚠️ AND IT STILL ENDS. A fall only a press can clear strands a player whose hands
+            // left the keyboard and hands a griefing tool to anything that can re-apply one.
+            Assert.True(Balance.TripAutoRecoverSeconds > 0.0f);
+            Assert.True(Balance.TripAutoRecoverSeconds <= 6.0f,
+                        $"an unanswered fall lasts {Balance.TripAutoRecoverSeconds:F2} s, which is "
+                        + "long enough to read as being stuck rather than as being punished.");
+
+            // ⚠️ THE MASH IS STILL A BURST, NOT A TAP. § 14.1 shipped 0.22 because at 0.35 two
+            // presses plus the bleed were enough; with the bleed gone the press count IS the
+            // fall, so it has to stay a number you feel.
+            Assert.True(presses >= 8,
+                        $"the slack is {presses} presses, which is a tap rather than a mash.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE GRACE HAS TO OUTLAST THE HAZARD YOU ARE STANDING ON. The mash is bound to
+        /// Jump, so a fall ends with a jump by construction, and a jump clears
+        /// `StreetTripHazard.MinSpeedToTrip` (1.0 m/s) while the body is still on the thing that
+        /// felled it. `TripGraceAfterGetUp` has to carry an attacker clear of the widest hazard
+        /// footprint on the map, which is the sunken trench at 2.60 m.
+        /// </summary>
+        [Fact]
+        public void Trip_GraceCarriesAPlayerClearOfTheHazardThatFelledThem()
+        {
+            const float widestHazardFootprint = 2.6f;
+
+            float attackerSpeed = Balance.Speed * Balance.AttackerSpeedScale;
+            float carried = attackerSpeed * Balance.TripGraceAfterGetUp;
+
+            Assert.True(carried > widestHazardFootprint,
+                        $"the grace carries {carried:F2} m, which does not clear a " +
+                        $"{widestHazardFootprint:F2} m hazard.");
+
+            // ⚠️ AND IT IS SHORTER THAN THE FALL IT FOLLOWS, so it cannot become a window in
+            // which a player is immune to the map while doing something else.
+            Assert.True(Balance.TripGraceAfterGetUp < 2.5f);
+        }
+
+        // ===================================================================
         // THE THROW AND THE HIT WINDOW
         // ===================================================================
 
@@ -314,8 +626,16 @@ namespace TumbangPreso.Core.Tests
             var c = ok; c.RoundActive = false; Assert.False(ThrowRules.CanThrow(c));
             c = ok; c.IsDefender = true; Assert.False(ThrowRules.CanThrow(c));
             c = ok; c.HoldingSlipper = false; Assert.False(ThrowRules.CanThrow(c));
-            c = ok; c.LataUpright = false; Assert.False(ThrowRules.CanThrow(c));
             c = ok; c.ThrowCooldownLeft = 0.5f; Assert.False(ThrowRules.CanThrow(c));
+
+            // ⚠️⚠️ A DOWN LATA NO LONGER REFUSES THE THROW, AND THAT IS ASSERTED RATHER THAN
+            // MERELY NOT TESTED. Changed 2026-08-26 on 🧑's report that a charge held against a
+            // downed can could be neither spent nor cleared. The reason the clause existed,
+            // protecting the reset channel, is `ThrowCooldownLeft` on the line above and the
+            // lata's own protection shield, and a slipper that reaches a downed lata cannot
+            // score because `Lata.HostKnockDown` returns while it is not upright. If somebody
+            // re-adds the refusal, this line is what tells them it was deliberate.
+            c = ok; c.LataUpright = false; Assert.True(ThrowRules.CanThrow(c));
             c = ok; c.X = 0.0f; c.Z = 0.0f; Assert.False(ThrowRules.CanThrow(c)); // inside
         }
 
@@ -435,6 +755,19 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(3, MatchRules.DefenderSlotFor(4));
         }
 
+        [Fact]
+        public void MatchLengthFollowsTheSelectedMode()
+        {
+            Assert.Equal(4, MatchRules.RoundCountFor(GameMode.Classic));
+            Assert.Equal(8, MatchRules.RoundCountFor(GameMode.HeroStrike));
+
+            var defended = new int[Balance.PlayerCount];
+            for (int round = 1; round <= MatchRules.RoundCountFor(GameMode.HeroStrike); round++)
+                defended[MatchRules.DefenderSlotFor(round)]++;
+
+            foreach (int turns in defended) Assert.Equal(2, turns);
+        }
+
         /// <summary>Defensive against a caller passing round 0 or negative.</summary>
         [Fact]
         public void DefenderSlot_ClampsRoundToAtLeastOne()
@@ -497,14 +830,24 @@ namespace TumbangPreso.Core.Tests
         /// the select screen because the meters look correct on both.
         /// </summary>
         [Fact]
-        public void AllTwelvePersonRows_AreDistinct()
+        public void AllPersonRows_AreDistinct()
         {
-            Assert.Equal(12, Roster.People.Count);
+            Assert.Equal(12, Roster.ClassicPeople.Count);
+            Assert.Equal(6, Roster.HeroPeople.Count);
+            Assert.Equal(18, Roster.AllPeople.Count);
 
-            var seen = new HashSet<string>();
-            foreach (var e in Roster.People)
-                Assert.True(seen.Add($"{e.Bilis}/{e.Lakas}/{e.Tatag}"),
-                    $"{e.Name} duplicates another row: two characters playing as one");
+            var seenClassic = new HashSet<string>();
+            foreach (var e in Roster.ClassicPeople)
+                Assert.True(seenClassic.Add($"{e.Bilis}/{e.Lakas}/{e.Tatag}"),
+                    $"{e.Name} duplicates another classic row: two characters playing as one");
+
+            var seenHeroes = new HashSet<string>();
+            foreach (var e in Roster.HeroPeople)
+                Assert.True(seenHeroes.Add($"{e.Bilis}/{e.Lakas}/{e.Tatag}"),
+                    $"{e.Name} duplicates another hero row: two characters playing as one");
+
+            Assert.Equal(Roster.ClassicPeople, Roster.GetPeople(GameMode.Classic));
+            Assert.Equal(Roster.HeroPeople, Roster.GetPeople(GameMode.HeroStrike));
         }
 
         /// <summary>
@@ -619,6 +962,121 @@ namespace TumbangPreso.Core.Tests
                     $"{e.Name} is {e.Name.Length} chars and would be clipped on a card");
         }
 
+        [Fact]
+        public void TournamentPenalties_ValuesAreNegativeAndConsistent()
+        {
+            Assert.Equal(-5, Balance.ScoreTayaCampPenalty);
+            Assert.Equal(-5, Balance.ScoreUnretrievedPenalty);
+            Assert.Equal(-5, MatchRules.PointsFor(ScoreEvent.TayaCampPenalty));
+            Assert.Equal(-5, MatchRules.PointsFor(ScoreEvent.UnretrievedSlipperPenalty));
+            Assert.Equal(5.0f, Balance.TayaCampGracePeriod);
+            Assert.True(Balance.TayaCampWarningTime < Balance.TayaCampGracePeriod);
+            Assert.True(Balance.TayaCampClearRadius > Balance.TayaCampRadius);
+            Assert.True(Balance.SlipperUnretrievedWarningTime < Balance.SlipperUnretrievedGracePeriod);
+            Assert.Equal(10.0f, Balance.SlipperUnretrievedGracePeriod);
+        }
+
+        [Fact]
+        public void TournamentCamping_UsesHysteresisAndDeterministicReset()
+        {
+            Assert.True(TournamentRules.IsTayaCamping(false, Balance.TayaCampRadius));
+            Assert.True(TournamentRules.IsTayaCamping(true, Balance.TayaCampRadius + 0.3f));
+            Assert.False(TournamentRules.IsTayaCamping(true, Balance.TayaCampClearRadius + 0.01f));
+
+            float timer = TournamentRules.StepViolationTimer(4.9f, true, 0.2f);
+            Assert.True(TournamentRules.IsCampPenalty(timer));
+            Assert.Equal(0.0f, TournamentRules.StepViolationTimer(timer, false, 0.1f));
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THIS TEST USED TO PASS WHILE THE THING IT IS NAMED FOR WAS FALSE. It compared
+        /// each objective against ten seconds of passive charge and found 25 > 10 and 20 > 10,
+        /// which is true and proves nothing: the quantity that mattered was passive charge
+        /// against the WHOLE ROUND. At 1.0/s over 90 s that was 90 of the 100 needed, so waiting
+        /// was worth nine tenths of an ultimate and "favors objectives over waiting" was exactly
+        /// backwards.
+        ///
+        /// The passive trickle is deleted. This now asserts the shape that replaced it, which
+        /// cannot be satisfied by a bad constant the way a 10-second window could.
+        /// </summary>
+        [Fact]
+        public void HeroUltimateEconomy_FavorsObjectivesOverWaiting()
+        {
+            // The risky act must out-earn the safe one. VISION.md § 0: throwing is safe and
+            // free, and the retrieval is the only moment you can be caught.
+            Assert.True(Balance.UltimateChargeOwnSlipperRetrieved > Balance.UltimateChargeLegalThrow);
+
+            // The objective must out-earn both.
+            Assert.True(Balance.UltimateChargeLataKnock > Balance.UltimateChargeOwnSlipperRetrieved);
+            Assert.True(Balance.UltimateChargeTag > Balance.UltimateChargeOwnSlipperRetrieved);
+
+            // Everything still pays something. A round where nobody throws is not a round.
+            Assert.True(Balance.UltimateChargeLegalThrow > 0.0f);
+
+            // ⚠️ THE WHOLE-ROUND BOUND, which is what the old assertion should have been. The
+            // cheapest ultimate in the game costs 10 (`NemuHeroKit.UltimateCost`). Nothing may
+            // accrue on a timer, so a player who acts zero times must earn zero, and there is no
+            // longer any per-second term for this to be written against. If a passive term is
+            // ever reintroduced, 90 seconds of it must not approach the cheapest cost.
+            //
+            // ⚠️⚠️ THE METER COUNTS EVENTS, AND THESE FOUR NUMBERS ARE THAT RULE. 🧑 2026-08-27:
+            // *"i want downing can and tayaing to only give one point for the charges"*. A
+            // knockdown was 25 and a tag 20 against costs of 90 to 150; both objectives are worth
+            // exactly one charge now and an ultimate costs 10 to 20. `Balance`'s ultimate economy
+            // block has the rescale, the one deliberate change inside it (the tag, from 0.8 of a
+            // knockdown to a full 1.0) and the pacing arithmetic.
+            Assert.Equal(0.15f, Balance.UltimateChargeLegalThrow);
+            Assert.Equal(0.5f, Balance.UltimateChargeOwnSlipperRetrieved);
+            Assert.Equal(1.0f, Balance.UltimateChargeLataKnock);
+            Assert.Equal(1.0f, Balance.UltimateChargeTag);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE OBJECTIVE IS THE UNIT OF THE METER, AND THAT IS THE POINT OF THE 2026-08-27
+        /// RESCALE. Every other earning is expressed as a fraction of one lata knockdown, so
+        /// "how close am I" is a count rather than a division nothing on screen shows you. If a
+        /// future pass wants a knockdown to be worth more than one, it wants a cheaper ultimate
+        /// instead: this is the anchor everything else is priced against.
+        /// </summary>
+        [Fact]
+        public void HeroUltimateEconomy_OneObjectiveIsOneCharge()
+        {
+            Assert.Equal(1.0f, Balance.UltimateChargeLataKnock);
+            Assert.Equal(Balance.UltimateChargeLataKnock, Balance.UltimateChargeTag);
+
+            // A fraction of the objective, both of them, and in the order VISION.md § 0 sets.
+            Assert.True(Balance.UltimateChargeOwnSlipperRetrieved < Balance.UltimateChargeLataKnock);
+            Assert.True(Balance.UltimateChargeLegalThrow < Balance.UltimateChargeOwnSlipperRetrieved);
+        }
+
+        [Fact]
+        public void Scoreboard_PenaltiesClampAtZero()
+        {
+            var board = new Scoreboard();
+            board.Add(0, ScoreEvent.TayaCampPenalty);
+            Assert.Equal(0, board[0]); // should clamp at zero, not go negative
+
+            board.Set(0, 10);
+            board.Add(0, ScoreEvent.TayaCampPenalty);
+            Assert.Equal(5, board[0]);
+
+            board.Add(0, ScoreEvent.UnretrievedSlipperPenalty);
+            Assert.Equal(0, board[0]);
+        }
+
+        [Fact]
+        public void Pektus_CurveConstantsAreValid()
+        {
+            Assert.True(Balance.PektusCurveStrength > 0.0f);
+            Assert.True(Balance.MaxPektusSpin >= 1.0f);
+            Assert.True(Balance.SlipperMaxRestReach > 0.0f);
+            Assert.True(Balance.SlipperMaxRestReach < Balance.PickupRadius,
+                "a slipper resting at the full pickup radius above the feet can only be " +
+                "reached from exactly underneath it, so the out-of-play cutoff must be lower");
+            Assert.True(Balance.PektusBankRestitution > Balance.BounceRestitution);
+            Assert.Equal(1, Balance.MaxScoringBanks);
+        }
+
         // ===================================================================
         // helpers
         // ===================================================================
@@ -631,6 +1089,95 @@ namespace TumbangPreso.Core.Tests
             while (!s.IsFatigued && guard++ < 2000)
                 s.Step(dt, moving: true, sprintHeld: true);
             return s;
+        }
+
+        // ===================================================================
+        // THE REMATCH VOTE
+        //
+        // ⚠️⚠️ `docs/TODO.md` § 1 WARNS THAT THE WIRE HALF CANNOT BE FINISHED HONESTLY WITHOUT
+        // TWO REAL PROCESSES ON A LAN, AND THAT IS STILL TRUE OF THE TRANSPORT. It is not true
+        // of the rules the transport carries, and those are the parts that actually broke: the
+        // ready gate once confused a transport peer id with a seat id. `Core.RematchVote` holds
+        // the same rules where they can be asserted rather than played.
+        // ===================================================================
+
+        /// <summary>
+        /// ⚠️ NGO PEER 0 IS A REAL VOTER AND MUST STAY DISTINCT FROM CLIENT 1. Mapping the host
+        /// to its seat number makes a host in seat 1 collide with client id 1 and strands the
+        /// gate one vote short forever.
+        /// </summary>
+        [Fact]
+        public void Rematch_HostPeerZeroNeverCollidesWithClientOne()
+        {
+            var vote = new RematchVote();
+
+            Assert.True(vote.Add(0));
+            Assert.True(vote.Add(1));
+
+            Assert.Equal(2, vote.Count);
+            Assert.True(vote.HasVoted(0));
+            Assert.True(vote.HasVoted(1));
+            Assert.True(vote.Satisfied(2));
+        }
+
+        /// <summary>⚠️ A SECOND PRESS FROM ONE PEER CHANGES NOTHING. It is a set, exactly as the
+        /// ready gate is, so a player leaning on the button cannot open a gate alone.</summary>
+        [Fact]
+        public void Rematch_APeerCannotVoteTwice()
+        {
+            var vote = new RematchVote();
+
+            vote.Add(2);
+            vote.Add(2);
+            vote.Add(3);
+
+            Assert.Equal(2, vote.Count);
+            Assert.False(vote.Satisfied(3));
+            Assert.True(vote.Satisfied(2));
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A PEER THAT LEAVES MID-VOTE MUST NOT STRAND THE REST, and this is the failure
+        /// `ReadyGate.OnPeerLeft` was written for: the expected count drops when somebody quits,
+        /// and if nobody re-evaluates, the players still watching wait forever on a gate that is
+        /// already satisfied.
+        /// </summary>
+        [Fact]
+        public void Rematch_ALeavingPeerReleasesTheGate()
+        {
+            var vote = new RematchVote();
+
+            vote.Add(1);
+            vote.Add(2);
+            Assert.False(vote.Satisfied(3));
+
+            // Peer 3 quits without voting. Two of two remaining have pressed.
+            Assert.False(vote.Remove(3));
+            Assert.True(vote.Satisfied(2));
+
+            // And a peer that HAD voted takes its vote with it.
+            Assert.True(vote.Remove(2));
+            Assert.Equal(1, vote.Count);
+            Assert.False(vote.Satisfied(2));
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ AN EMPTY LOBBY MUST NOT START A MATCH. `Count >= expected` alone is true at
+        /// 0 >= 0, so a lobby that empties out entirely would have begun a rematch that nobody
+        /// asked for. The floor is the whole reason `Satisfied` exists rather than the caller
+        /// comparing two numbers.
+        /// </summary>
+        [Fact]
+        public void Rematch_NobodyVotingNeverStartsAMatch()
+        {
+            var vote = new RematchVote();
+
+            Assert.False(vote.Satisfied(0));
+            Assert.False(vote.Satisfied(1));
+
+            vote.Add(1);
+            vote.Clear();
+            Assert.False(vote.Satisfied(0));
         }
 
         private static int IndexOf(IReadOnlyList<RosterEntry> entries, string id)

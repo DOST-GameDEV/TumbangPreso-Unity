@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TumbangPreso.Abilities;
 using TumbangPreso.Core;
 using UnityEngine;
 
@@ -61,7 +62,25 @@ namespace TumbangPreso
             // most of what "the defender feels overpowered" actually was. A stun you cannot
             // time is a stun you cannot play around. It was hard-coded to 0.0 here, so the row
             // appeared with no countdown and drew a full bar for its whole duration.
-            if (m.IsStunned)
+            // ⚠️⚠️ AN ELEMENT STUN HAS NO COUNTDOWN ROW, AND THAT IS A DELIBERATE EXCEPTION TO
+            // THE NOTE ABOVE RATHER THAN A REVERSAL OF IT. 🧑 2026-08-26, asking for the mash:
+            // *"maybe with this change u have to make sure the countdown for their stun is gone
+            // as well as the ui for the countdown"*.
+            //
+            // ⚠️ THE REASON IS THE SAME REASON THE TRIP HAS NO ROW EITHER, and it is the lesson
+            // `Balance.TripAutoRecoverSeconds` records at length: once a status is ended by
+            // PRESSES, a countdown beside it is a second, contradictory account of when it ends.
+            // He reported exactly that against the fall: *"u randomly get up after set amt of
+            // time, i dont have to actually mash it"*. A bar that drains on a clock next to a
+            // meter that fills on presses teaches the player to watch the clock and stop
+            // pressing. `Hud.BuildStunBreakCard` is the one readout for a mashable stun.
+            //
+            // ⚠️⚠️ THE TAG KEEPS ITS COUNTDOWN, WHICH IS WHY THIS IS GATED ON THE ELEMENT AND
+            // NOT ON `IsStunned`. `StunElement.None` cannot be mashed out of, so time really is
+            // the only thing that ends it, and the original request this row was built for still
+            // stands for that case: *"add visible UI timers for all stun durations and status
+            // effects so players clearly know when they can move or act again"*.
+            if (m.IsStunned && m.StunElement == StunElement.None)
                 into.Add(new StatusRow
                 {
                     Label = "STUNNED",
@@ -122,6 +141,69 @@ namespace TumbangPreso
                         Label = "PUNCH CD",
                         Remaining = verbs.PunchCooldownLeft,
                         Total = Balance.PunchCooldown,
+                        Timed = true,
+                    });
+            }
+
+            var abilitySystem = m.AbilitySystem;
+            if (abilitySystem != null && abilitySystem.Kit != null)
+            {
+                var kit = abilitySystem.Kit;
+
+                // Active Buffs
+                if (kit.Skill1 != null && kit.Skill1.IsActive)
+                    into.Add(new StatusRow
+                    {
+                        Label = kit.Skill1.Name,
+                        Remaining = kit.Skill1.DurationRemaining,
+                        Total = kit.Skill1.Duration,
+                        Timed = true,
+                    });
+
+                if (kit.Skill2 != null && kit.Skill2.IsActive)
+                    into.Add(new StatusRow
+                    {
+                        Label = kit.Skill2.Name,
+                        Remaining = kit.Skill2.DurationRemaining,
+                        Total = kit.Skill2.Duration,
+                        Timed = true,
+                    });
+
+                if (kit.Ultimate != null && kit.Ultimate.IsActive)
+                    into.Add(new StatusRow
+                    {
+                        Label = kit.Ultimate.Name,
+                        Remaining = kit.Ultimate.DurationRemaining,
+                        Total = kit.Ultimate.Duration,
+                        Timed = true,
+                    });
+
+                // Specific kit states
+                if (kit is ZackHeroKit zack && zack.IsOverchargeThrowActive)
+                    into.Add(new StatusRow { Label = "OVERCHARGE", Timed = false });
+
+                if (kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
+                    into.Add(new StatusRow { Label = "IGNITION", Timed = false });
+
+                if (kit is PhaisterHeroKit phaister && phaister.IsWitchfireInfused)
+                    into.Add(new StatusRow { Label = "WITCHFIRE", Timed = false });
+
+                // Ability Cooldowns (suffixed with " CD" to route to right-hand stack)
+                if (kit.Skill1 != null && kit.Skill1.CooldownRemaining > 0.0f)
+                    into.Add(new StatusRow
+                    {
+                        Label = $"{kit.Skill1.Name} CD",
+                        Remaining = kit.Skill1.CooldownRemaining,
+                        Total = kit.Skill1.Cooldown,
+                        Timed = true,
+                    });
+
+                if (kit.Skill2 != null && kit.Skill2.CooldownRemaining > 0.0f)
+                    into.Add(new StatusRow
+                    {
+                        Label = $"{kit.Skill2.Name} CD",
+                        Remaining = kit.Skill2.CooldownRemaining,
+                        Total = kit.Skill2.Cooldown,
                         Timed = true,
                     });
             }

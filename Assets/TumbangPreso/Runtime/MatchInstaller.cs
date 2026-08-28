@@ -1,4 +1,5 @@
 using TumbangPreso.Core;
+using TumbangPreso.UI;
 using UnityEngine;
 
 namespace TumbangPreso
@@ -36,7 +37,10 @@ namespace TumbangPreso
         {
             get
             {
-                if (_allBots || GameLaunch.Spectator) return -1;
+                // ⚠️ `GameLaunch.AllBots` IS THE ONE A HEADLESS CALLER CAN SET. `_allBots` is a
+                // serialised field authored per scene, so a probe that loads a scene cannot
+                // reach it before this runs. See that switch's note for what it was hiding.
+                if (_allBots || GameLaunch.AllBots || GameLaunch.Spectator) return -1;
                 var net = Net.NetSession.Instance;
                 if (net != null && net.IsNetworked)
                 {
@@ -52,6 +56,95 @@ namespace TumbangPreso
         private CharacterMotor[] _seats;
 
         /// <summary>
+        /// ⚠️⚠️ THE ARENA FOLLOWS THE SEAT FROM WHEREVER IT CHANGES, NOT FROM ONE MESSAGE.
+        /// `NetSession.LocalSlot` is written from three places (the seat-assignment message,
+        /// `Seating`, and a mid-match rebind) and the arena only ever heard about ONE of them:
+        /// `MatchRpc.OnSeatingMsg` calls `RebindLocalSeat` if a `MatchInstaller` happens to exist
+        /// at that moment. Whether it does is a race between the transport and a scene load, and
+        /// the losing side of that race is a player whose camera, HUD and KEYBOARD are all on
+        /// somebody else's chair (`docs/TODO.md` § 53.1).
+        ///
+        /// ⚠️ SUBSCRIBING IS THE GENERAL FORM OF THAT FIX rather than a second special case.
+        /// `SeatingChanged` fires on every write, so the arena cannot miss one however the seat
+        /// came to move, and `RebindLocalSeat` is idempotent: rebinding to the seat already held
+        /// re-finds the same reader and returns without touching it.
+        /// </summary>
+        private void OnEnable()
+        {
+            var net = Net.NetSession.Instance;
+            if (net != null) net.SeatingChanged += FollowLocalSeat;
+        }
+
+        private void OnDisable()
+        {
+            var net = Net.NetSession.Instance;
+            if (net != null) net.SeatingChanged -= FollowLocalSeat;
+        }
+
+        private void FollowLocalSeat()
+        {
+            var net = Net.NetSession.Instance;
+            if (net == null || !net.IsNetworked || _seats == null) return;
+
+            RebindLocalSeat(net.LocalSlot, GameLaunch.Spectator);
+            LogSeatWiring("seat changed");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE FOUR VALUES THAT DECIDE WHETHER A CLIENT CAN MOVE, IN ONE LINE OF THE LOG.
+        /// *"i can move camera and see updates but i cant move"* is produced by at least three
+        /// different faults and they are indistinguishable from a screenshot: the reader bolted
+        /// to the wrong seat (§ 53.1), `LocalSlot` disagreeing with the body the camera follows,
+        /// and `CharacterMotor.IsLocallySimulated` answering false so `FixedUpdate` treats this
+        /// peer's own body as a host-authored picture. Printing them turns a round trip of
+        /// guessing into one line somebody can paste back.
+        ///
+        /// ⚠️ IT IS A `Debug.Log` ON A SEAT CHANGE AND AT INSTALL, NOT PER FRAME. Two events in a
+        /// match, on the one path where the answer can be wrong.
+        /// </summary>
+        private void LogSeatWiring(string why)
+        {
+            var net = Net.NetSession.Instance;
+            if (net == null || !net.IsNetworked || _seats == null) return;
+
+            // ⚠️ EVERY SEAT, NOT ONLY THE LOCAL ONE. The local seat answers "can I move"; the
+            // other three answer "why is nobody else moving", which is the other half of every
+            // report so far and used to need a second run to find out.
+            var line = new System.Text.StringBuilder();
+            line.Append("[NetSeat] ").Append(why)
+                .Append(": LocalSlot=").Append(net.LocalSlot)
+                .Append(" spectator=").Append(GameLaunch.Spectator)
+                .Append(" host=").Append(NetAuthority.IsHost)
+                .Append(" allBots=").Append(_allBots || GameLaunch.AllBots);
+
+            for (int slot = 0; slot < _seats.Length; slot++)
+            {
+                var body = _seats[slot];
+                line.Append(" | s").Append(slot).Append(':');
+
+                if (body == null) { line.Append("MISSING"); continue; }
+
+                var reader = body.GetComponent<PlayerInputReader>();
+
+                line.Append(reader == null ? "-" : reader.enabled ? "reader" : "reader(OFF)")
+                    .Append(body.GetComponent<AIController>() != null ? "+ai" : "")
+                    .Append(body.IsLocallySimulated() ? "+sim" : "")
+                    .Append(body.IsBot ? "+bot" : "")
+
+                    // ⚠️⚠️ THE GATE ITSELF, BECAUSE THE WIRING BEING RIGHT WAS NOT ENOUGH TWICE.
+                    // `CharacterMotor` steers only when `CanAct()` is true, and that is
+                    // `RoundActive && !IsStunned`. A seat can read `reader+sim` and still be
+                    // unable to move a centimetre, which is exactly what §§ 62.2 and 63 were:
+                    // the input was wired correctly and the body was forbidden to act. Printing
+                    // the answer beside the wiring is the difference between one run and three.
+                    .Append(body.RoundActive ? "+live" : "+FROZEN")
+                    .Append(body.CanAct() ? "+act" : "");
+            }
+
+            Debug.Log(line.ToString());
+        }
+
+        /// <summary>
         /// § THE HANDLERS THIS INSTALLER PUTS ON THE `DontDestroyOnLoad` DIRECTORS.
         ///
         /// ⚠️⚠️ THEY HAVE TO BE HELD SO THEY CAN BE TAKEN OFF AGAIN, AND THE FAULT THAT MAKES
@@ -64,26 +157,23 @@ namespace TumbangPreso
         /// including the live one, is simply never called.
         ///
         /// That is the whole of *"WHY TF is it just stuck here when round ends"*: one dead
-        /// delegate at the head of a list. Tagging would have been the next thing to go, for the
-        /// same reason on the same event, because `Tagged` carries a handler of exactly this
-        /// shape.
+        /// delegate at the head of a list.
+        ///
+        /// ⚠️ THERE WAS A THIRD, `_tagged`, AND IT IS GONE BECAUSE THE TOAST IT WROTE WAS A
+        /// SECOND COPY OF `Hud.OnTagged`'s. The hazard this section describes is unchanged and
+        /// applies to anything added here: hold it in a field, take it off in `OnDestroy`.
         /// </summary>
-        private System.Action<int, int> _tagged;
         private System.Action<int, int> _roundVoice;
         private System.Action<int> _wonVoice;
 
         private void OnDestroy()
         {
-            if (GameServices.Round != null && _tagged != null)
-                GameServices.Round.Tagged -= _tagged;
-
             if (GameServices.Match != null)
             {
                 if (_roundVoice != null) GameServices.Match.RoundStarted -= _roundVoice;
                 if (_wonVoice != null) GameServices.Match.MatchEnded -= _wonVoice;
             }
 
-            _tagged = null;
             _roundVoice = null;
             _wonVoice = null;
         }
@@ -107,20 +197,71 @@ namespace TumbangPreso
             }
 
             _book = RosterBook.Load();
+            bool guided = GameLaunch.GuidedTutorial;
 
             // ⚠️ THE SAVED DIFFICULTY WAS BEING IGNORED. It is written by the settings panel
             // and was never read back, so every bot played at Normal no matter what the
             // player chose. Applied once here, before any seat is built.
             AIController.ApplyDifficultyFromSettings();
 
+            var bounds = GameObject.Find("Bounds");
+            if (bounds != null)
+            {
+                float maxX = 8.6f;
+                float maxZ = 13.0f;
+                foreach (var col in bounds.GetComponentsInChildren<BoxCollider>())
+                {
+                    Vector3 c = col.transform.position + col.center;
+                    if (Mathf.Abs(c.x) > 1.0f) maxX = Mathf.Max(maxX, Mathf.Abs(c.x));
+                    if (Mathf.Abs(c.z) > 1.0f) maxZ = Mathf.Max(maxZ, Mathf.Abs(c.z));
+                }
+                AIController.PlayableHalfX = maxX;
+                AIController.PlayableHalfZ = maxZ;
+            }
+            else
+            {
+                AIController.PlayableHalfX = 8.6f;
+                AIController.PlayableHalfZ = 13.0f;
+            }
+
             var lata = BuildLata();
             var seats = new CharacterMotor[Balance.PlayerCount];
             var slippers = new Slipper[Balance.PlayerCount];
             _seats = seats;
 
+            // ⚠️⚠️ NONE IN THE PRACTICE LOBBY MEANS THE OTHER THREE SEATS ARE NEVER BUILT. 🧑,
+            // 2026-08-26: *"just you there no bots"*. Building four bodies and disabling three
+            // `AIController`s would leave three characters standing on the attacker line, still
+            // registered, still on the scoreboard and still holding tsinelas, which is a
+            // different thing from an empty street.
+            //
+            // ⚠️ THE THREE GUARDS ARE NOT REDUNDANT. `AIController.BotsEnabled` is the setting.
+            // `human >= 0` is what makes this safe: with no human seat and no bots the arena
+            // would have nobody in it at all, which is the spectator and headless-probe path and
+            // must keep its four. `!isNetworked` keeps a lobby's seats real for the peers who
+            // may be sitting in them, which is the same bound `ConvertedMatchSetup` draws round
+            // the option in the first place.
+            int humanSeat = HumanSeat;
+            var liveNetwork = Net.NetSession.Instance;
+
+            // ⚠️ AND THE TUTORIAL KEEPS ITS CAST WHATEVER THE LOBBY SAYS. `GuidedTraining` parks
+            // the other three itself and stands one of them up as the dummy the shove, the punch
+            // and the lunge lessons are performed on; with no seats to park, the route stops at
+            // the first lesson that needs a body in front of you.
+            bool soloPractice = !AIController.BotsEnabled
+                                && !guided
+                                && humanSeat >= 0
+                                && (liveNetwork == null || !liveNetwork.IsNetworked);
+
             for (int slot = 0; slot < Balance.PlayerCount; slot++)
             {
-                seats[slot] = BuildSeat(slot);
+                // ⚠️ THE SLIPPERS ARE ALL STILL BUILT. `SliceRunner.EquipOwnedSlippers` hands
+                // ammunition out by matching slipper INDEX to the list of attackers, so a
+                // missing tsinelas would shift every owner along by one and leave the human
+                // empty-handed. It skips a seat that is not there instead; the spare tsinelas
+                // lie on their marks, which is exactly what the taya's disowned one already
+                // does in a full match.
+                if (!soloPractice || slot == humanSeat) seats[slot] = BuildSeat(slot);
                 slippers[slot] = BuildSlipper(slot);
             }
 
@@ -158,7 +299,7 @@ namespace TumbangPreso
             // begins under the countdown and the free-roam window never happens. A headless
             // probe has nobody to press R, which is what UseReadyGate is for — leave it true
             // for anything a human will look at.
-            runner.AutoStart = !UseReadyGate;
+            runner.AutoStart = !UseReadyGate && !guided;
 
             // ⚠️⚠️ THE BOARD IS WIPED HERE, NOT AT `StartMatch`, BECAUSE THE PLAYER LOOKS AT IT
             // FIRST. `GameServices` is `DontDestroyOnLoad`, so the match and round directors
@@ -201,9 +342,14 @@ namespace TumbangPreso
             // Placing them only in `OnRoundStarted` left all four stacked on the world origin
             // underneath the countdown, so the opening shot was an empty street — which is
             // exactly what the report's screenshot of the Unity build shows.
-            if (UseReadyGate) runner.ResetWorld(MatchRules.DefenderSlotFor(1));
+            if (UseReadyGate || guided) runner.ResetWorld(MatchRules.DefenderSlotFor(1));
 
-            if (UseReadyGate) BuildReadyGate(seats[human], runner);
+            if (UseReadyGate && !guided) BuildReadyGate(seats[human], runner);
+
+            // ⚠️ PRINTED ONCE PER ARENA, because the seat may already be right by the time this
+            // runs and then no `SeatingChanged` ever fires to report it. A client that cannot
+            // move needs this line whether or not anything changed after the build.
+            LogSeatWiring("arena installed");
 
             // ⚠️⚠️ THE MATCH BED IS NOT STARTED HERE WHEN A READY GATE OWNS THE OPENING. It
             // starts on the first countdown tick instead — see `Hud.ShowCountdownTick`, which
@@ -218,8 +364,22 @@ namespace TumbangPreso
             // and it enters the actual game"*, and `audio_manager.gd::_poll_scene_state()`
             // already answers it on the "match" branch with `stop_music_now()` rather than a
             // fade, under 🧑's *"pls js abruptly cut it"*.
-            if (UseReadyGate) GameServices.Music?.StopNow();
+            if (UseReadyGate && !guided) GameServices.Music?.StopNow();
             else GameServices.Music?.Play("match", GameServices.MatchTrack);
+
+            // Scene management is intentionally game-owned rather than Netcode-owned. Tell
+            // the host only after every local seat, prop, camera and HUD target exists; this
+            // closes the cold-rejoin race where the connection-time snapshot arrived while
+            // the client was still loading the arena and therefore had nothing to apply to.
+            var liveNet = Net.NetSession.Instance;
+            if (liveNet != null && liveNet.IsNetworked && !liveNet.IsHost)
+                Net.MatchRpc.Instance?.RequestWorldSnapshot();
+
+            if (guided)
+            {
+                var training = gameObject.AddComponent<GuidedTraining>();
+                training.Configure(seats[human], lata, seats, slippers, runner);
+            }
         }
 
         /// <summary>
@@ -232,7 +392,12 @@ namespace TumbangPreso
         {
             var go = new GameObject("Lata");
 
-            int pick = Settings.SettingsStore.Current.CanPick;
+            var net = Net.NetSession.Instance;
+            bool isNetworked = net != null && net.IsNetworked;
+            var defenderSeatInfo = isNetworked ? Net.MatchRpc.Instance?.GetSeatInfo(0) : null;
+            int pick = (isNetworked && defenderSeatInfo != null && defenderSeatInfo.CanPick >= 0)
+                ? defenderSeatInfo.CanPick
+                : Settings.SettingsStore.Current.CanPick;
             var art = _book != null ? _book.CanArt(pick) : null;
 
             if (art != null && art.Model != null)
@@ -274,11 +439,11 @@ namespace TumbangPreso
             bool isNetworked = net != null && net.IsNetworked;
             int humanSeat = HumanSeat;
             bool isLocalHuman = slot == humanSeat;
-            var peerRecord = isNetworked ? net.Lobby.PeerInSeat(slot) : null;
+            var seatInfo = isNetworked ? Net.MatchRpc.Instance?.GetSeatInfo(slot) : null;
 
             int pick = isLocalHuman
                 ? Settings.SettingsStore.Current.SlipperPick
-                : (peerRecord != null && peerRecord.SlipperPick >= 0 ? peerRecord.SlipperPick : slot);
+                : (seatInfo != null && seatInfo.SlipperPick >= 0 ? seatInfo.SlipperPick : slot);
 
             var art = _book != null ? _book.SlipperArt(pick) : null;
 
@@ -354,14 +519,15 @@ namespace TumbangPreso
 
             var motor = go.AddComponent<CharacterMotor>();
             motor.PlayerSlot = slot;
+            motor.Mode = SceneFlow.SelectedMode;
 
             var net = Net.NetSession.Instance;
             bool isNetworked = net != null && net.IsNetworked;
             int humanSeat = HumanSeat;
             bool isLocalHuman = slot == humanSeat;
 
-            var peerRecord = isNetworked ? net.Lobby.PeerInSeat(slot) : null;
-            bool isHumanPlayer = isLocalHuman || (peerRecord != null && !peerRecord.Spectator);
+            var seatInfo = isNetworked ? Net.MatchRpc.Instance?.GetSeatInfo(slot) : null;
+            bool isHumanPlayer = isLocalHuman || (seatInfo != null && seatInfo.Occupied && !seatInfo.Spectator);
 
             // ⚠️ ONLY HUMAN PEERS ARE HUMANS; UNOCCUPIED SLOTS ARE BOTS.
             motor.IsBot = !isHumanPlayer;
@@ -373,11 +539,11 @@ namespace TumbangPreso
                     ? Settings.SettingsStore.Current.CharacterPick
                     : AiCharacterIndex(slot);
             }
-            else if (peerRecord != null)
+            else if (seatInfo != null && seatInfo.Occupied)
             {
-                motor.PlayerName = peerRecord.Name;
-                motor.CharacterIndex = peerRecord.CharacterPick >= 0
-                    ? peerRecord.CharacterPick
+                motor.PlayerName = seatInfo.Name;
+                motor.CharacterIndex = seatInfo.CharacterPick >= 0
+                    ? seatInfo.CharacterPick
                     : AiCharacterIndex(slot);
             }
             else
@@ -389,6 +555,16 @@ namespace TumbangPreso
             go.AddComponent<Carrier>();
             go.AddComponent<CombatVerbs>();
             go.AddComponent<Social.EmotePlayer>();
+
+            if (SceneFlow.SelectedMode == GameMode.HeroStrike)
+            {
+                var abilities = go.AddComponent<Abilities.HeroAbilitySystem>();
+                var heroPeople = Roster.GetPeople(GameMode.HeroStrike);
+                string heroId = (motor.CharacterIndex >= 0 && motor.CharacterIndex < heroPeople.Count)
+                    ? heroPeople[motor.CharacterIndex].Id
+                    : "dante";
+                abilities.BindHero(heroId);
+            }
 
             // The role ring and floating tag. Parented under the seat so it inherits position
             // but sizes itself off the capsule.
@@ -406,11 +582,11 @@ namespace TumbangPreso
             // moved the CharacterController along with the mesh. See SetModelRoot.
             visual.SetModelRoot(visualRoot.transform);
 
-            var art = _book != null ? _book.PersonArt(motor.CharacterIndex) : null;
+            var art = _book != null ? _book.PersonArt(motor.CharacterIndex, SceneFlow.SelectedMode) : null;
 
             if (art != null && art.Model != null)
             {
-                visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette);
+                visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
 
                 // Strip from the whole seat, because the visual parents the model under the
                 // seat root rather than under visualRoot. The CharacterController survives by
@@ -427,9 +603,48 @@ namespace TumbangPreso
                 Destroy(caps.GetComponent<Collider>());
             }
 
+            // ⚠️⚠️ ALLBOTS HAS TO REACH THE SEAT THIS PEER HOLDS, AND IN A NETWORKED MATCH IT
+            // REACHED EVERY SEAT EXCEPT THAT ONE. `CLAUDE.md` section 7.1 states the intended
+            // behaviour in as many words: *"MatchInstaller already answers this flag by giving
+            // the local seat an AIController like any unoccupied one; the seat still belongs to
+            // this peer, so a client still submits its own transforms exactly as a human would."*
+            // That was true offline and false online, and the difference is `isHumanPlayer`.
+            //
+            // `HumanSeat` answers -1 under AllBots, so `isLocalHuman` is false for every seat and
+            // no seat gets a `PlayerInputReader`, which is correct. But this peer's own chair is
+            // OCCUPIED in the lobby, by this peer, so `isHumanPlayer` is true for it and it fell
+            // through BOTH arms: no reader, and no bot either. **A body with no input source at
+            // all.** The seat a remote peer holds is supposed to land there, because that body is
+            // moved by the transforms its owner submits; the seat THIS peer holds has no such
+            // owner once the human has been taken out of it.
+            //
+            // ⚠️⚠️ MEASURED IN A TWO-PROCESS RUN ON 2026-08-27: seat 0 travelled **0.0 m** on the
+            // host over a 150 s sample while seats 1, 2 and 3 travelled 77.6, 56.0 and 45.0 m.
+            // Not "less", as `docs/TODO.md` sections 34 and 49 recorded for the offline probe:
+            // nothing at all. Every networked measurement this project has taken has been three
+            // seats' worth, and the fourth was the one being watched through the camera.
+            //
+            // ⚠️ IT CANNOT REACH A REAL MATCH. `GameLaunch.AllBots` is written in exactly one
+            // place, `NetBootstrap`, off `-tp-allbots` or `-allbots`, and `_allBots` is a
+            // per-scene authored field. A player who never passes the switch never sees this arm.
+            bool botTakesThisPeersSeat = (_allBots || GameLaunch.AllBots)
+                                         && !GameLaunch.Spectator
+                                         && isNetworked
+                                         && net != null
+                                         && !net.IsSeatlessReferee
+                                         && net.LocalSlot == slot;
+
             if (isLocalHuman)
             {
                 go.AddComponent<PlayerInputReader>();
+            }
+            else if (botTakesThisPeersSeat)
+            {
+                // ⚠️ `IsBot` IS LEFT ALONE ON PURPOSE. A peer really does hold this chair, and
+                // `MatchRpc.HostPeerLeft` is the one place that flips the flag, on an actual
+                // departure. Flipping it here would rename the seat in the report and on the
+                // nameplate to a roster name for a player who is still connected.
+                go.AddComponent<AIController>();
             }
             else if (!isHumanPlayer && (!isNetworked || NetAuthority.IsHost))
             {
@@ -447,10 +662,70 @@ namespace TumbangPreso
         /// gate would hold the round open forever.</summary>
         public bool UseReadyGate = true;
 
+        /// <summary>
+        /// This peer has been told which chair it is in. Move everything that was pointed at the
+        /// seat we GUESSED onto the seat we were GIVEN.
+        ///
+        /// ⚠️⚠️ THERE ARE TWO SEAT-ASSIGNMENT PATHS AND THIS ONE WAS A SUBSET OF THE OTHER.
+        /// `MatchRpc.OnSeatingMsg` (the normal first join) lands here;
+        /// `MatchRpc.ApplyRebindLocalSeat` (the `RebindSeat` message, sent on a late join or a
+        /// reconnect) does the same job independently. That one moved the input source, the YOU
+        /// card, the pause watcher and the slipper glow. This one moved the camera, the HUD and
+        /// the ready gate and stopped, so **everything a joining player could SEE moved to their
+        /// real seat and everything they could DO stayed on seat 0.** Two routines for one job,
+        /// one of them incomplete, is how that survived: whichever you read, it looked finished.
+        ///
+        /// ⚠️ THE GUESS IS NOT AVOIDABLE HERE, WHICH IS WHY THE CORRECTION HAS TO BE COMPLETE.
+        /// `NetBootstrap` calls `StartClient` and then `SceneFlow.Go(map)` on the same frame, so
+        /// the arena is built while `NetSession.LocalSlot` is still its default 0. `BuildSeat`
+        /// therefore bolts the reader to seat 0 on every client, every time, and this is the
+        /// only thing that takes it off again.
+        /// </summary>
         public void RebindLocalSeat(int seat, bool spectator)
         {
-            _spectating = spectator;
-            if (_seats == null || seat < 0 || seat >= _seats.Length) return;
+            if (_seats == null) return;
+
+            // ⚠️⚠️ A SPECTATOR USED TO FALL OUT OF THIS FUNCTION ON ITS SECOND LINE AND KEEP A
+            // PLAYER'S BODY. The guard was `if (_seats == null || seat < 0 || ...) return;` and
+            // a spectator's seat IS -1: `LobbySession.Admit` hands one out for a full lobby and
+            // for anybody who asked to watch. So the whole rebind was skipped for exactly the
+            // case that needs it most. The arena had already been built with `HumanSeat` reading
+            // 0, so a watcher arrived holding seat 0's gameplay camera, seat 0's HUD, and a
+            // `PlayerInputReader` bolted to seat 0 that their keyboard still drove.
+            //
+            // ⚠️ THAT IS A WATCHER PUPPETING A PLAYER, NOT A COSMETIC FAULT. `SpectatorCamera`'s
+            // whole contract is that it writes no gameplay state, and `CLAUDE.md` section 4 makes
+            // the same promise from the other side: *"A spectator has no body, no seat and no
+            // CharacterMotor"*, which is the narrowing the entire spectator key set rests on.
+            // Whichever seat the host gave away, the watcher was also driving seat 0.
+            bool watching = spectator || seat < 0 || seat >= _seats.Length;
+            _spectating = watching;
+
+            if (watching)
+            {
+                RebindInputSource(-1, true);
+
+                var watchRig = UnityEngine.Object.FindFirstObjectByType<CameraSystem.CameraRig>();
+                if (watchRig != null) watchRig.SetActive(false);
+
+                if (UnityEngine.Object.FindFirstObjectByType<CameraSystem.SpectatorCamera>() == null)
+                {
+                    var watchGo = new GameObject("SpectatorCamera");
+                    watchGo.tag = "MainCamera";
+                    watchGo.AddComponent<CameraSystem.SpectatorCamera>();
+                }
+
+                UnityEngine.Object.FindFirstObjectByType<UI.Hud>()?.EnterSpectatorMode();
+
+                // ⚠️ AND THE YOU CARD GOES, because it is a root Canvas of its own and so is not
+                // under `Hud.CleanFeedRoot`: `EnterSpectatorMode` cannot reach it. This is the
+                // same object `Build` skips for a watcher and the same one 🧑 caught still
+                // sitting in the corner of a spectator's screen on 2026-08-27.
+                var watchCard = UnityEngine.Object.FindFirstObjectByType<UI.YouCard>();
+                if (watchCard != null) watchCard.gameObject.SetActive(false);
+
+                return;
+            }
 
             var local = _seats[seat];
             if (local == null) return;
@@ -458,35 +733,139 @@ namespace TumbangPreso
             var rig = UnityEngine.Object.FindFirstObjectByType<CameraSystem.CameraRig>();
             if (rig != null)
             {
-                if (spectator)
-                {
-                    rig.SetActive(false);
-                    if (UnityEngine.Object.FindFirstObjectByType<CameraSystem.SpectatorCamera>() == null)
-                    {
-                        var specGo = new GameObject("SpectatorCamera");
-                        specGo.tag = "MainCamera";
-                        specGo.AddComponent<CameraSystem.SpectatorCamera>();
-                    }
-                }
-                else
-                {
-                    rig.SetActive(true);
-                    rig.Follow(local);
-                    rig.SetAimSource(CameraSystem.AimSource.Mouse);
-                }
+                rig.SetActive(true);
+                rig.Follow(local);
+                rig.SetAimSource(CameraSystem.AimSource.Mouse);
             }
 
-            var hud = UnityEngine.Object.FindFirstObjectByType<UI.Hud>();
-            if (hud != null)
-            {
-                hud.Bind(local);
-                if (spectator) hud.EnterSpectatorMode();
-            }
+            // ⚠️ A REBIND CAN ALSO ARRIVE AFTER A SPECTATOR WINDOW, so the watcher camera is put
+            // away rather than left running beside the rig. Two enabled cameras render over each
+            // other, which reads as a graphics bug rather than a seating one.
+            var stale = UnityEngine.Object.FindFirstObjectByType<CameraSystem.SpectatorCamera>();
+            if (stale != null) stale.enabled = false;
+
+            UnityEngine.Object.FindFirstObjectByType<UI.Hud>()?.Bind(local);
 
             var gate = UnityEngine.Object.FindFirstObjectByType<ReadyGate>();
             if (gate != null)
             {
                 gate.Open(local);
+            }
+
+            RebindInputSource(seat, spectator);
+
+            // ⚠️ THE YOU CARD AND THE PAUSE WATCHER WERE BOUND TO THE GUESSED SEAT TOO. The card
+            // is the only place a player's own name, role and stamina appear to them, so on a
+            // joining client it described somebody else's body; `PauseWatcher.Local` is what the
+            // pause menu acts on. `ApplyRebindLocalSeat` already rebinds both, and this routine
+            // is the other half of the same job.
+            var youCard = UnityEngine.Object.FindFirstObjectByType<UI.YouCard>();
+            if (youCard != null)
+            {
+                youCard.Bind(local);
+                youCard.Refresh();
+            }
+
+            var pause = UnityEngine.Object.FindFirstObjectByType<PauseWatcher>();
+            if (pause != null) pause.Local = local;
+
+            // ⚠️ AND THE OWNER GLOW, because "which tsinelas is mine" is the one question the
+            // whole retrieval loop turns on (`VISION.md` section 0). Lit on the wrong slipper it
+            // is worse than not lit at all.
+            foreach (var slipper in UnityEngine.Object.FindObjectsByType<Slipper>(
+                         FindObjectsSortMode.None))
+                slipper.SetOwnerGlow(slipper.OwnerSlot == seat);
+
+            local.GetComponentInChildren<Visual.CharacterNameplate>()?.Refresh();
+        }
+
+        /// <summary>
+        /// Move the KEYBOARD to the seat this peer was actually given.
+        ///
+        /// ⚠️⚠️ THIS IS WHY A CLIENT COULD NOT MOVE, AND IT IS THE "0 MOVEMENT WHATSOEVER"
+        /// PLAYTESTERS REPORTED. `RebindLocalSeat` rebound the camera, the HUD and the ready
+        /// gate and stopped there, but the thing that reads WASD is a `PlayerInputReader`
+        /// COMPONENT bolted to one body in `BuildSeat`, and nothing ever moved it.
+        ///
+        /// The ordering is what makes it bite every joining client rather than an edge case.
+        /// `NetBootstrap` calls `StartClient` and then `SceneFlow.Go(map)` on the same frame, so
+        /// the arena builds while `NetSession.LocalSlot` is still its default **0**. `HumanSeat`
+        /// therefore answers 0, `BuildSeat(0)` bolts the reader to SEAT 0, and the seat this peer
+        /// is really given gets nothing at all. The host's `RebindSeat` message arrives later and
+        /// moved everything the player can SEE onto seat 1 while leaving everything the player
+        /// can DO on seat 0.
+        ///
+        /// What that produces on screen is exactly the report: the camera watches seat 1, which
+        /// has no input source on this machine and so never moves and never submits a transform;
+        /// and the keys drive seat 0, which the HOST owns and overwrites with `SyncUnit` on every
+        /// physics step. Both bodies look frozen and the keyboard appears dead.
+        ///
+        /// ⚠️⚠️ AND THE HOST CANNOT SEE ANY OF IT, which is `docs/TODO.md` section 38's whole
+        /// thesis. On the host `LocalSlot` is 0 before the arena loads, so the rebind is a no-op
+        /// there and its own player moves normally. Every fault in sections 32, 35, 36 and 38 has
+        /// this shape.
+        ///
+        /// ⚠️ A VACATED SEAT IS NOT LEFT BARE ON THE HOST. The host simulates every body it owns,
+        /// and `CharacterMotor.HostDrivesThisBody` decides that by asking which input source is
+        /// bolted on, so a host seat with neither a reader nor an `AIController` stops being
+        /// broadcast and turns into a statue on every other screen. On a CLIENT the opposite is
+        /// correct and the seat is left bare on purpose: those bodies are pictures of transforms
+        /// their owner submits.
+        ///
+        /// ⚠️ `ForgetInputSource` ON BOTH ENDS OF THE MOVE. That cache is the one thing that
+        /// decides whether the host transmits a body, and it is invalidated rather than rebuilt
+        /// here because `Destroy` is deferred to the end of the frame: asking `GetComponent` on
+        /// this line would still find the component that is about to go.
+        /// </summary>
+        private void RebindInputSource(int seat, bool spectator)
+        {
+            if (_seats == null) return;
+
+            bool nobodyDrives = spectator || _allBots || GameLaunch.AllBots || GameLaunch.Spectator;
+
+            for (int slot = 0; slot < _seats.Length; slot++)
+            {
+                var body = _seats[slot];
+                if (body == null) continue;
+
+                bool shouldDrive = !nobodyDrives && slot == seat;
+                var reader = body.GetComponent<PlayerInputReader>();
+
+                if (shouldDrive)
+                {
+                    // ⚠️ THE BOT COMES OFF FIRST. `ApplyRebindLocalSeat` does the same and for the
+                    // same reason: an `AIController` and a `PlayerInputReader` on one body both
+                    // write `InputIntent` every step, so the player and the bot fight over the
+                    // same character and the result reads as unresponsive controls rather than as
+                    // two drivers.
+                    var ai = body.GetComponent<AIController>();
+                    if (ai != null)
+                    {
+                        ai.enabled = false;
+                        Destroy(ai);
+                        body.ForgetInputSource();
+                    }
+
+                    if (reader != null) continue;
+
+                    body.gameObject.AddComponent<PlayerInputReader>();
+                    body.ForgetInputSource();
+                    continue;
+                }
+
+                if (reader == null) continue;
+
+                // ⚠️ DISABLED FIRST, THEN DESTROYED. `Destroy` is deferred to the end of the
+                // frame, so without this the seat being left and the seat being taken would both
+                // write `InputIntent` for the rest of the current frame and one keypress would
+                // drive two bodies. `MatchRpc.ApplyRebindLocalSeat` carries the same pair.
+                reader.enabled = false;
+                Destroy(reader);
+
+                if (NetAuthority.IsHost && body.GetComponent<AIController>() == null)
+                    body.gameObject.AddComponent<AIController>();
+
+                body.ForgetInputSource();
             }
         }
 
@@ -562,15 +941,79 @@ namespace TumbangPreso
             // ⚠️ THE GAMEPLAY RIG IS TURNED OFF RATHER THAN LEFT RUNNING BESIDE IT. Two enabled
             // cameras render over each other, and the FPP rig would keep writing the followed
             // bot's yaw from the mouse while the spectator flew.
-            _spectating = GameLaunch.Spectator;
+            // ⚠️⚠️ THE HUD FOLLOWS THE CAMERA, NOT THE SWITCH THAT ASKED FOR IT. This read
+            // `GameLaunch.Spectator` alone while the camera below turns the gameplay rig off for
+            // `HumanSeat < 0`, which is THREE conditions: Spectator, `GameLaunch.AllBots` and the
+            // authored `_allBots`. So an all-bots run flew the free spectator camera while the
+            // HUD underneath it still wore seat 0's clothes: a YOU card reading TAYA P1, a
+            // DEFENDER badge on the scoreboard and a live hero ability deck with cooldowns,
+            // over a viewpoint that belongs to nobody and cannot press any of it.
+            //
+            // 🧑 2026-08-27, off exactly that frame: *"for some reason im in spectator but im
+            // also defender"*, *"its so weird bcz spectator has skills and defender UI"*. He was
+            // reading it correctly; the two halves genuinely disagreed.
+            //
+            // ⚠️ `EnterSpectatorMode` STRIPS RATHER THAN HIDES, which is why this is the right
+            // answer and not just a smaller one. It KEEPS the clock, the round line, the
+            // scoreboard and the lata card, because those are facts about the MATCH and are
+            // exactly what somebody watching an all-bots run is watching for. What goes is the
+            // half that is addressed to a body this viewpoint does not have.
+            //
+            // ⚠️ IT CANNOT REACH A REAL MATCH. Both extra conditions are diagnostic:
+            // `GameLaunch.AllBots` is written only by `NetBootstrap` off `-tp-allbots`, and
+            // `_allBots` is authored per scene.
+            _spectating = HumanSeat < 0;
 
-            if (_spectating)
+            // ⚠️⚠️ THE TEST IS "IS ANYBODY DRIVING A SEAT", NOT "DID SOMEBODY PRESS SPECTATE",
+            // AND THE GAP BETWEEN THOSE TWO CRIPPLED SEAT 0 IN EVERY ALL-BOTS RUN THIS PROJECT
+            // HAS EVER MEASURED. `HumanSeat` answers -1 for THREE reasons: `GameLaunch.Spectator`,
+            // `GameLaunch.AllBots`, and the serialised `_allBots`. This line tested only the
+            // first, so under AllBots the gameplay rig stayed ACTIVE, kept FOLLOWING
+            // `seats[Mathf.Max(0, HumanSeat)]` (which is seat 0 by that clamp), and kept
+            // `AimSource.Mouse` set on it.
+            //
+            // ⚠️⚠️ AND A FOLLOWED SEAT IS STEERED BY A DIFFERENT MOVEMENT MODEL.
+            // `CharacterMotor.MouseAimed` is `_rig.IsFollowing(this) && Aim == Mouse`, and the
+            // mouse-aimed branch of `Steer` runs `transform.TransformDirection(wish)` and then
+            // RETURNS WITHOUT ROTATING THE BODY. An `AIController` writes a WORLD-space heading
+            // through `EightWay`, so seat 0's heading was re-interpreted as body-relative and
+            // rotated by a yaw that never changed, for the whole match. A bot asking to walk
+            // north walked wherever its shoulders were pointing.
+            //
+            // ⚠️⚠️ THAT IS THE IDENTICAL FAULT `CharacterMotor.MouseAimed`'s OWN HEADER RECORDS
+            // FOR NEMU'S POSSESSION, reached from a different direction, and the guard there is
+            // specific to the pet so it could not catch this one.
+            //
+            // **Measured, and it is in every report in `Logs/`.** Seat 0 travelled 224 m against
+            // 522 / 556 / 498 in Classic, and 530 to 593 m against 1109 to 1388 in Hero Strike,
+            // on Eskinita and on Ilalim ng Tulay, before and after the AI changes of the same
+            // day. It scored lowest in all four. Roughly 45 per cent of the movement of a seat
+            // running the same brain.
+            //
+            // ⚠️ `docs/TODO.md` § 11 CLOSED THE FIRST LAYER OF THIS AND THIS IS THE SECOND.
+            // `GameLaunch.AllBots` fixed seat 1 getting a `PlayerInputReader` with nobody at the
+            // keyboard; the seat the CAMERA was bolted to was left behind, and the travel floor
+            // in `BotBehaviourProbe` (150 m) was set low enough not to notice.
+            //
+            // ⚠️ THE SPECTATOR CAMERA IS BUILT FOR BOTH CASES DELIBERATELY, and not only for
+            // tidiness: `Diagnostics/FrameCapProbe` measures the ACHIEVED frame rate from the
+            // shipped player under `-tp-botmatch`, and turning the gameplay rig off without
+            // putting a camera back would leave that probe rendering nothing and hitting any cap
+            // it was asked for. `docs/TODO.md` § 17 is an open investigation resting on that
+            // number.
+            bool nobodyIsDriving = HumanSeat < 0;
+
+            if (nobodyIsDriving)
             {
                 rig.SetActive(false);
 
-                var specGo = new GameObject("SpectatorCamera");
-                specGo.tag = "MainCamera";
-                specGo.AddComponent<CameraSystem.SpectatorCamera>();
+                if (UnityEngine.Object.FindFirstObjectByType<CameraSystem.SpectatorCamera>()
+                    == null)
+                {
+                    var specGo = new GameObject("SpectatorCamera");
+                    specGo.tag = "MainCamera";
+                    specGo.AddComponent<CameraSystem.SpectatorCamera>();
+                }
             }
 
             var hudGo = new GameObject("HUD");
@@ -599,8 +1042,23 @@ namespace TumbangPreso
 
                     if (up) { hud.ShowToast("LATA IS BACK UP", 1.2f); return; }
 
-                    hud.ShowToast(local.IsDefender ? "LATA DOWN  ·  RESET IT"
-                                                   : "LATA DOWN", 1.6f);
+                    // ⚠️⚠️ THE KNOCKDOWN GETS NO TOAST, AND IT IS THE ONLY EVENT HERE THAT DOES
+                    // NOT. 🧑, 2026-08-27: *"repetitive lata down"*. Every other toast on this
+                    // object announces something with no other home on screen. This one landed
+                    // on top of `Hud.UpdateLataCard`, which turns the corner card orange and
+                    // reads LATA DOWN, and raises the centre-screen alert reading RETRIEVE NOW
+                    // or RESET IT NOW, both of them in the same frame and both of them for as
+                    // long as the can is over. Three surfaces, two of them saying the same two
+                    // words, is what a gameplay frame actually looked like.
+                    //
+                    // ⚠️ AND THE EVENT IS STILL ANNOUNCED, TWICE. `SetDownedFlash` above fires
+                    // the 0.45 s screen flash on this exact edge, and the alert appearing IS an
+                    // edge the eye catches. What is deleted is the third copy of the words, not
+                    // the notification.
+                    //
+                    // ⚠️ "LATA IS BACK UP" STAYS, because nothing else on screen says it: the
+                    // card goes quiet and the alert disappears, and a thing vanishing is not a
+                    // thing announcing itself.
                 };
             }
 
@@ -616,22 +1074,19 @@ namespace TumbangPreso
                 });
             }
 
-            if (GameServices.Round != null)
-            {
-                _tagged = (taya, victim) =>
-                {
-                    // ⚠️ THE HUD IS RE-CHECKED, NOT TRUSTED. See OnDestroy: this handler is on a
-                    // `DontDestroyOnLoad` director and the object it captured belongs to a scene.
-                    if (hud == null || local == null) return;
-
-                    if (local.PlayerSlot == victim)
-                        hud.ShowToast("TAGGED  ·  BACK TO THE SAFE ZONE", 2.0f);
-                    else if (local.PlayerSlot == taya)
-                        hud.ShowToast($"TAG  ·  {NameForSlot(victim)}", 1.4f);
-                };
-
-                GameServices.Round.Tagged += _tagged;
-            }
+            // ⚠️⚠️ THE TAG TOAST IS NOT WIRED HERE AND IT WAS, WORD FOR WORD, ALONGSIDE THE COPY
+            // IN `Hud.OnTagged`. Two subscribers to `RoundDirector.Tagged`, both writing the same
+            // two strings into the same label on the same frame, in whichever order Unity's
+            // delegate list happened to hold. `LataRestored` had the identical fault and both
+            // were found together on 2026-08-27 chasing 🧑's *"shows -5 slipper idle twice
+            // bruh"*: this codebase kept growing a second owner for one event.
+            //
+            // ⚠️ THE HUD IS THE OWNER, and it is the one that survived because the decision about
+            // WHO gets told what is a HUD decision and is written down there. `Hud.OnTagged`'s
+            // note explains why the taya's line was dropped and the victim's kept, which is
+            // exactly the reasoning that would have had to be duplicated here.
+            //
+            // **Do not add a toast to this installer. Wire the event and let the HUD say it.**
 
             // The match-end board. Present from the start and listening; it shows itself when
             // MatchEnded fires.
@@ -656,13 +1111,41 @@ namespace TumbangPreso
                 GameServices.Match.MatchEnded += _wonVoice;
             }
 
-            // The intermission card, on the same terms: it listens for the round boundary.
-            var swapGo = new GameObject("RoleSwapCard");
-            swapGo.AddComponent<UI.RoleSwapCard>();
+            // ⚠️⚠️ THE TWO MATCH CARDS ARE NOT BUILT FOR THE GUIDED ROUTE. 🧑, 2026-08-26:
+            // *"make it an actual dedicated tutorial not js a copy pasted shit from the game"*.
+            // `RoleSwapCard` announces a taya rotation that never happens on a route that never
+            // leaves round one, and `YouCard` names the seat and role of a match that is not
+            // being played. Both are answered better by the objective card, which says what to
+            // do rather than who you are.
+            //
+            // ⚠️ THESE ARE SKIPPED RATHER THAN HIDDEN, unlike the four readouts inside the HUD:
+            // each is its own root object with no other caller, so there is no field left null
+            // and nothing downstream to guard. `Hud.StripToTrainingChrome` explains why the ones
+            // inside the HUD had to go the other way.
+            // ⚠️⚠️ AND NEITHER IS BUILT FOR A SPECTATOR, WHICH IS THE OTHER HALF OF THE SAME
+            // ARGUMENT. 🧑 2026-08-27, with a screenshot of a watcher's screen: *"fix all these
+            // spectator hud problems wtf some shit dont hide"*. `YouCard` names the unit you are
+            // DRIVING and draws its stamina; a watcher drives nobody, so it was naming and
+            // metering whichever seat `local` happened to resolve to and reporting that seat's
+            // stamina as the viewer's own.
+            //
+            // ⚠️⚠️ AND IT COULD NOT BE HIDDEN AFTERWARDS EITHER. `YouCard.Build` makes its OWN
+            // root Canvas, so it is not under `Hud.CleanFeedRoot`: `Hud.EnterSpectatorMode` could
+            // not reach it, and neither could `SetCleanFeed`, which is why pressing H left a card
+            // and a yellow bar sitting in the corner of a supposedly clean feed. `RoleSwapCard`
+            // parents itself under the HUD for exactly this reason and says so in its own
+            // `Build`. Skipping the object outright is better than teaching a third path to hide
+            // it, and it is what the emote wheel below already does for a watcher.
+            if (!GameLaunch.GuidedTutorial && !_spectating)
+            {
+                // The intermission card, on the same terms: it listens for the round boundary.
+                var swapGo = new GameObject("RoleSwapCard");
+                swapGo.AddComponent<UI.RoleSwapCard>();
 
-            // Which unit you are driving, and what it can do right now.
-            var youGo = new GameObject("YouCard");
-            youGo.AddComponent<UI.YouCard>().Bind(local);
+                // Which unit you are driving, and what it can do right now.
+                var youGo = new GameObject("YouCard");
+                youGo.AddComponent<UI.YouCard>().Bind(local);
+            }
 
             // ⚠️⚠️ THE EMOTE WHEEL FOLLOWS WHOEVER IS BEING DRIVEN, NOT THE SEAT THIS MATCH
             // OPENED ON. It captured `local` in a lambda, so after Tab handed the player a
@@ -752,24 +1235,28 @@ namespace TumbangPreso
         /// The pick is known to everybody, is stable for the whole match, and changes when the
         /// player changes theirs, which is what makes the rest of the cast reachable in play.
         /// </summary>
-        private int AiCharacterIndex(int slot)
+        public static int ResolveAiCharacterIndex(int slot, int humanPick = -1, GameMode mode = GameMode.Classic)
         {
-            int size = Roster.People.Count;
+            var people = Roster.GetPeople(mode);
+            int size = people.Count;
             if (size <= 0) return 0;
 
-            // The human's own pick is taken; a bot must not wear the player's face.
-            int human = HumanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
-
-            int rotation = human >= 0 ? human % AiPersonSpread.Length : 0;
+            int rotation = humanPick >= 0 ? humanPick % AiPersonSpread.Length : 0;
             int start = (AiPersonSpread[slot % AiPersonSpread.Length] + rotation) % size;
 
             for (int step = 0; step < size; step++)
             {
                 int candidate = (start + step) % size;
-                if (candidate != human) return candidate;
+                if (candidate != humanPick) return candidate;
             }
 
             return start;
+        }
+
+        private int AiCharacterIndex(int slot)
+        {
+            int human = HumanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
+            return ResolveAiCharacterIndex(slot, human, SceneFlow.SelectedMode);
         }
 
         private static readonly int[] AiPersonSpread = { 0, 3, 6, 9 };

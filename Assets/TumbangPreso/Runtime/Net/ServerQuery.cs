@@ -83,6 +83,18 @@ namespace TumbangPreso.Net
         private string _activeHostLobbyId;
         private bool _queryInFlight;
 
+        // ⚠️⚠️ LOBBY CREATION IS A NETWORK ROUND TRIP AND PLAYERS ARRIVE DURING IT. `NetSession`
+        // fires `CreateHostedLobbyAsync` and does not await it, so `_activeHostLobbyId` is null
+        // for as long as UGS takes to answer. Every `UpdateHostedLobbyAsync` in that window used
+        // to return on its first line, and the update that got dropped was usually the one that
+        // mattered: the first player joining. The lobby then advertised 0 seated until somebody
+        // else connected, which on a two-player match is forever.
+        private bool _hasPendingCounts;
+        private int _pendingSeated;
+        private int _pendingOccupied;
+        private bool _pendingInProgress;
+        private bool _creatingLobby;
+
         public IEnumerable<Entry> Servers => _seen.Values;
 
         public void StartBrowsing()
@@ -316,6 +328,7 @@ namespace TumbangPreso.Net
         /// </summary>
         public async Task<string> CreateHostedLobbyAsync(string hostName, string joinCode, string relayCode, int seated, int occupied)
         {
+            _creatingLobby = true;
             try
             {
                 bool authOk = await NetIdentity.EnsureSignedInAsync();
@@ -337,16 +350,33 @@ namespace TumbangPreso.Net
                     }
                 };
 
+                // ⚠️ CAPACITY IS THE SEAT COUNT, NOT THE CONNECTION COUNT, AND THE TWO ARE
+                // DELIBERATELY DIFFERENT NUMBERS. The Relay allocation is sized at
+                // `MaxConnections` (12) so spectators can attend a full match; a UGS lobby whose
+                // `MaxPlayers` was also 12 would advertise "2/12" in the browser and would keep
+                // answering the AvailableSlots filter long after all four chairs were taken.
                 Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, LobbySession.MaxPlayers, options);
                 _activeHostLobbyId = lobby.Id;
                 _sinceHeartbeat = 0.0f;
                 Debug.Log($"[Query] Created UGS Lobby {lobby.Id} with JoinCode {joinCode}");
+
+                // Anything that happened while the round trip was in flight is applied now.
+                if (_hasPendingCounts)
+                {
+                    _hasPendingCounts = false;
+                    await UpdateHostedLobbyAsync(_pendingSeated, _pendingOccupied, _pendingInProgress);
+                }
+
                 return lobby.Id;
             }
             catch (Exception e)
             {
                 NetIdentity.ReportServiceCallFailed("Lobby creation", e);
                 return null;
+            }
+            finally
+            {
+                _creatingLobby = false;
             }
         }
 
@@ -355,7 +385,19 @@ namespace TumbangPreso.Net
         /// </summary>
         public async Task UpdateHostedLobbyAsync(int seated, int occupied, bool inProgress)
         {
-            if (string.IsNullOrEmpty(_activeHostLobbyId)) return;
+            if (string.IsNullOrEmpty(_activeHostLobbyId))
+            {
+                // Remember the LATEST state rather than the first one, so a burst of joins and
+                // leaves during creation collapses into the truth at the end of it.
+                if (_creatingLobby)
+                {
+                    _hasPendingCounts = true;
+                    _pendingSeated = seated;
+                    _pendingOccupied = occupied;
+                    _pendingInProgress = inProgress;
+                }
+                return;
+            }
 
             try
             {
@@ -396,10 +438,18 @@ namespace TumbangPreso.Net
         /// </summary>
         public async Task DeleteHostedLobbyAsync()
         {
+            // ⚠️ A LOBBY CAN BE CREATED AFTER THE PLAYER HAS ALREADY QUIT. Hosting online and
+            // backing out again inside the creation round trip used to leave a live lobby with
+            // nobody behind it, which the browser then advertised until the 30 second heartbeat
+            // expiry retired it. Waiting for the creation to settle is what makes the delete
+            // reach the id that is about to exist.
+            while (_creatingLobby) await Task.Yield();
+
             if (string.IsNullOrEmpty(_activeHostLobbyId)) return;
 
             string id = _activeHostLobbyId;
             _activeHostLobbyId = null;
+            _hasPendingCounts = false;
 
             try
             {

@@ -3,6 +3,7 @@ using NUnit.Framework;
 using TumbangPreso;
 using TumbangPreso.Core;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
 namespace TumbangPreso.PlayTests
@@ -24,11 +25,150 @@ namespace TumbangPreso.PlayTests
     {
         private GameObject _root;
 
-        [TearDown]
-        public void TearDown()
+        [UnityTest]
+        public IEnumerator RestoredLataRejectsAnAlreadyAirborneFollowUpDuringProtection()
+        {
+            _root = new GameObject("RestoreProtectionWorld");
+            var lata = _root.AddComponent<Lata>();
+            yield return null;
+
+            lata.HostKnockDown(-1);
+            Assert.IsFalse(lata.IsUpright, "the setup knockdown did not take");
+
+            lata.HostRestore();
+            Assert.IsTrue(lata.IsUpright);
+            Assert.IsTrue(lata.IsProtected,
+                "restoring the lata did not open its visible protection window");
+
+            lata.HostKnockDown(-1);
+            Assert.IsTrue(lata.IsUpright,
+                "an impact already in flight knocked the lata down through restore protection");
+
+            yield return new WaitForSeconds(Balance.ThrowRestoreCooldown + 0.1f);
+            Assert.IsFalse(lata.IsProtected, "restore protection never expired");
+
+            lata.HostKnockDown(-1);
+            Assert.IsFalse(lata.IsUpright,
+                "the lata stayed invulnerable after the authored protection window");
+        }
+
+        [UnityTest]
+        public IEnumerator ACanKnockdownDoesNotCancelAnExistingThrowCommitment()
+        {
+            _root = new GameObject("ChargeContinuityWorld");
+
+            var roundGo = new GameObject("Round");
+            roundGo.transform.SetParent(_root.transform, false);
+            var round = roundGo.AddComponent<RoundDirector>();
+
+            var lataGo = new GameObject("Lata");
+            lataGo.transform.SetParent(_root.transform, false);
+            var lata = lataGo.AddComponent<Lata>();
+            round.Lata = lata;
+
+            var attackerGo = new GameObject("Attacker");
+            attackerGo.transform.SetParent(_root.transform, false);
+            attackerGo.transform.position = new Vector3(Balance.ConfinementRadius + 1.0f, 0.0f, 0.0f);
+            attackerGo.AddComponent<CharacterController>();
+            var attacker = attackerGo.AddComponent<CharacterMotor>();
+            attacker.IsDefender = false;
+            attacker.HoldingSlipper = true;
+            round.Register(attacker);
+            round.BeginRound();
+            yield return null;
+
+            Assert.IsTrue(round.CanThrow(attacker), "the attacker did not begin in a legal throw state");
+            lata.HostKnockDown(-1);
+
+            // ⚠️⚠️ A DOWN LATA ACCEPTS THE RELEASE NOW, CHANGED 2026-08-26. This
+            // asserted the opposite, and the rule it guarded was removed on 🧑's
+            // report from the built player: *"my charge still pauses when lata is
+            // down"*, *"i dont want it to pause"*. An earlier pass had already
+            // stopped a down lata CANCELLING the wind-up, so refusing the release
+            // left a player holding a fully wound arm that could be neither spent
+            // nor cleared. `ThrowRules.CanThrow` has the reasoning and
+            // `Core.Tests` asserts the new rule; what this test is really for is
+            // the line above it, that the COMMITMENT survives the knockdown.
+            Assert.IsTrue(round.CanThrow(attacker), "a down lata must accept the release rather than freezing the arm");
+            Assert.IsTrue(round.CanMaintainThrowCharge(attacker),
+                "the teammate's knockdown cancelled an existing throw animation and charge");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE CLOCK IS RECLAIMED BEFORE EVERY TEST, NOT ONLY AFTER ONE. Nothing in this
+        /// class is the only thing in the run: the scene-heavy suites load a whole arena and
+        /// leave it loaded, and anything in there that stops time and dies without restoring it
+        /// hands the next test a `Time.timeScale` of 0. Every test below waits on
+        /// `WaitForFixedUpdate`, and at a scale of 0 that yield never resumes, so the failure
+        /// arrives as "sprinting never reached fatigue" against a stamina model that is
+        /// perfectly correct. It failed exactly once, only in a full 48-test run, and passed
+        /// every time the class was run alone: that shape IS cross-test state and nothing else.
+        ///
+        /// ⚠️ THE OWNERSHIP WAS ALSO REPAIRED AT THE SOURCE rather than only papered over here.
+        /// `MatchResult` stopped the clock from an instance and restored it only from a button,
+        /// the same lifetime fault `Hitstop`'s header documents; it now restores on OnDisable
+        /// and OnDestroy. This setup stays because a guard that only holds while every writer
+        /// is well behaved is not a guard.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator SetUp()
+        {
+            Hitstop.End();
+            Time.timeScale = 1.0f;
+
+            // ⚠️⚠️ AND THE ARENA THE LAST SUITE LOADED IS UNLOADED, WHICH IS THE OTHER HALF.
+            // This class builds its own world instead of loading a scene, and the header above
+            // explains why. What it does NOT do is unload whatever scene is already open, so a
+            // run that reaches here after `BotBehaviourProbe`, `HudLayoutProbe` or
+            // `GameplayShots` builds four fresh seats INSIDE a live Eskinita: the previous
+            // match's bots are still thinking, its hero hazards are still pulsing, and both can
+            // shove and stun a body this suite is trying to measure. A stunned unit does not
+            // steer, and `Stamina.Step` is handed `moving = false` while it cannot, so the
+            // sprint test's bar drains in fits and reports 4.54 s against a model that is
+            // exactly right. It failed that way once in a 48 test run and passed every time the
+            // class was run alone, which is the signature of a neighbour rather than a bug.
+            // ⚠️ A UNIQUE NAME PER TEST. `CreateScene` throws on a name that is already loaded,
+            // and the teardown below deliberately refuses to unload the last remaining scene,
+            // so the previous test's room can still be open when this one starts.
+            var clean = SceneManager.CreateScene($"MatchRunTestWorld{++_worldCount}");
+            SceneManager.SetActiveScene(clean);
+
+            for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
+            {
+                var scene = SceneManager.GetSceneAt(i);
+                if (!scene.isLoaded || scene == clean) continue;
+
+                // ⚠️ NEVER THE RUNNER'S OWN SCENE. Unloading that takes the test framework's
+                // objects with it and the run dies rather than fails.
+                if (scene.name.Contains("InitTestScene")) continue;
+
+                var unload = SceneManager.UnloadSceneAsync(scene);
+                while (unload != null && !unload.isDone) yield return null;
+            }
+
+            _clean = clean;
+            yield return null;
+        }
+
+        private Scene _clean;
+        private static int _worldCount;
+
+        [UnityTearDown]
+        public IEnumerator TearDown()
         {
             if (_root != null) Object.DestroyImmediate(_root);
+            Hitstop.End();
             Time.timeScale = 1.0f;
+
+            // The scene this test built in goes with it, so the next one starts from the same
+            // empty room rather than from whatever this one left lying about.
+            if (_clean.IsValid() && _clean.isLoaded && SceneManager.sceneCount > 1)
+            {
+                var unload = SceneManager.UnloadSceneAsync(_clean);
+                while (unload != null && !unload.isDone) yield return null;
+            }
+
+            yield return null;
         }
 
         /// <summary>
@@ -150,7 +290,7 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>
-        /// ⚠️ THE WHOLE MATCH MUST ADVANCE THROUGH ALL FOUR ROUNDS AND ROTATE THE TAYA. Run at
+        /// ⚠️ THE WHOLE MATCH MUST ADVANCE THROUGH EVERY ROUND IN THE SELECTED MODE AND ROTATE THE TAYA. Run at
         /// a high time scale so a six minute match fits in a test. This is the closest thing to
         /// "the game works" that can be asserted without a human.
         /// </summary>

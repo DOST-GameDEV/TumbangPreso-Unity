@@ -163,5 +163,130 @@ namespace TumbangPreso.Core
         /// </summary>
         public static float ResetChannelFor(int canIndex) =>
             Balance.ResetChannelTime / Roster.CanResetScale(canIndex);
+
+        /// <summary>
+        /// One mash press against a trip. Returns what is left of the fall.
+        ///
+        /// ⚠️⚠️ THE COOLDOWN IS CHECKED HERE RATHER THAN AT THE CALL SITE, so a bot and a
+        /// human are held to the same press rate by the same code. `docs/VISION.md` § 4: a bot
+        /// presses the same buttons a human does, and there is no second path where either can
+        /// do something the other cannot. A rate check living in the input layer would be
+        /// exactly that second path.
+        ///
+        /// ⚠️ IT CLAMPS AT `MinTripDown` RATHER THAN AT ZERO. Mashing cannot cancel a trip, it
+        /// can only shorten it, so the hazard still costs a beat no matter how fast anybody is.
+        ///
+        /// ⚠️⚠️ AND A PRESS BELOW THE FLOOR IS REFUSED, NOT CLAMPED, WHICH IS THE WHOLE OF
+        /// *"IF I MASH, THE PROGRESS PAUSES"*. 🧑 reported that on 2026-08-26, it was answered by
+        /// moving `MinTripDown` from 0.90 to 0.35, and he reported it again off the very next
+        /// build. The real cause was one line and it was not a balance number.
+        ///
+        /// The clamp used to be unconditional: `reduced < MinTripDown ? MinTripDown : reduced`.
+        /// Once the fall is INSIDE the floor — the last 0.35 s, where the get-up clip is playing
+        /// and `_tripLeft` is bleeding to zero at real time — `tripLeft` is already below
+        /// `MinTripDown`, so `reduced` is negative, the clamp fires, and the function returns
+        /// **0.35: a LARGER number than it was given.** A player still hammering the key during
+        /// their own get-up therefore reset their fall to the floor on every accepted press, at
+        /// up to 10 Hz, and could not stand up for as long as they kept mashing. Mashing HARDER
+        /// made the fall LONGER, which is exactly the shape of what he described.
+        ///
+        /// `PlayModeTests.InputEdgeTests` found it in one run: 105 accepted presses against a
+        /// 2.50 s trip, 36.75 s of nominal recovery bought, and the body still on the floor at
+        /// 12.00 s.
+        ///
+        /// ⚠️ REFUSED RATHER THAN CLAMPED, so the press is also reported as `accepted: false` and
+        /// the HUD's press-pop does not fire on a press that bought nothing. `CanMashUp` already
+        /// stops the prompt ASKING at this point; this is the same rule stated where it is
+        /// enforced instead of where it is advertised.
+        /// </summary>
+        /// <param name="tripLeft">Seconds of trip remaining.</param>
+        /// <param name="secondsSinceLastPress">Time since the last press that was ACCEPTED.</param>
+        /// <param name="accepted">True when this press counted against the rate cap.</param>
+        public static float MashRecover(float tripLeft, float secondsSinceLastPress, out bool accepted)
+        {
+            accepted = false;
+            if (tripLeft <= 0.0f) return tripLeft;
+            if (tripLeft <= Balance.MinTripDown) return tripLeft;
+            if (secondsSinceLastPress < Balance.MashCooldown) return tripLeft;
+
+            accepted = true;
+
+            float reduced = tripLeft - Balance.MashRecoverPerPress;
+            return reduced < Balance.MinTripDown ? Balance.MinTripDown : reduced;
+        }
+
+        /// <summary>
+        /// The shortest a trip of <paramref name="duration"/> can be made by mashing perfectly.
+        ///
+        /// ⚠️ IT EXISTS SO THE BOUND CAN BE ASSERTED RATHER THAN PLAYTESTED. Every balance
+        /// number in this repository is measured, and "how much does the mash actually buy" is
+        /// the only question worth asking about this one.
+        /// </summary>
+        public static float FastestTripRecovery(float duration) =>
+            duration < Balance.MinTripDown ? duration : Balance.MinTripDown;
+
+        /// <summary>
+        /// One accepted press against an ABILITY stun. See § MASHING OUT OF AN ABILITY STUN in
+        /// `Balance` for why the taya's tag is excluded and why this is a separate function
+        /// rather than a parameter on <see cref="MashRecover"/>.
+        ///
+        /// ⚠️⚠️ THE CALLER DECIDES WHETHER A STUN IS MASHABLE, NOT THIS FUNCTION. It cannot see
+        /// where the stun came from, and guessing from the DURATION would be a rule that breaks
+        /// the day an ability stuns for 5.0 s. `CharacterMotor.MashOutOfStun` gates on the
+        /// element the stun was applied with, which is the only thing that actually knows.
+        ///
+        /// ⚠️ SAME SHAPE AND SAME RATE CAP AS THE TRIP, deliberately: a bot presses the same
+        /// buttons a human does, so both reach the ceiling through this function rather than
+        /// through an input-layer check only one of them passes through.
+        /// </summary>
+        public static float MashOutOfStun(float stunLeft, float stunTotal, int breakPresses,
+                                          float secondsSinceLastPress, out bool accepted)
+        {
+            accepted = false;
+            if (stunLeft <= 0.0f) return stunLeft;
+            if (stunLeft <= Balance.MinStunDown) return stunLeft;
+            if (secondsSinceLastPress < Balance.MashCooldown) return stunLeft;
+
+            accepted = true;
+
+            float reduced = stunLeft - StunMashPerPress(stunTotal, breakPresses);
+            return reduced < Balance.MinStunDown ? Balance.MinStunDown : reduced;
+        }
+
+        /// <summary>
+        /// Seconds one accepted press buys against a stun that STARTED at
+        /// <paramref name="stunTotal"/> and is meant to take <paramref name="breakPresses"/>
+        /// presses to break.
+        ///
+        /// ⚠️⚠️ DERIVED FROM THE PRESS COUNT, NOT TYPED IN, WHICH IS THE WHOLE DESIGN. See
+        /// § MASHING OUT OF AN ABILITY STUN in `Balance`: the tunable is how many presses a skill
+        /// is worth, and this converts that into the slice a press removes. A stun retuned from
+        /// 3 s to 5 s therefore still takes the same number of presses, which is the property
+        /// that makes "how hard does this skill hit" a stable thing to balance.
+        ///
+        /// ⚠️ THE PRESS COUNT IS CLAMPED HERE RATHER THAN AT EVERY CALL SITE, so a kit that
+        /// declares nonsense gets a playable stun instead of a divide by zero.
+        /// </summary>
+        public static float StunMashPerPress(float stunTotal, int breakPresses)
+        {
+            if (breakPresses < Balance.StunBreakPressesMin) breakPresses = Balance.StunBreakPressesMin;
+            if (breakPresses > Balance.StunBreakPressesMax) breakPresses = Balance.StunBreakPressesMax;
+
+            float slack = stunTotal - Balance.MinStunDown;
+
+            // A stun that is already at or under the floor has no slack to sell. Returning zero
+            // rather than a negative slice is what keeps `MashOutOfStun` from ever lengthening
+            // the thing it is answering, which is the property `StunMash_NeverLengthensAStun`
+            // exists to hold and which the trip mash had to learn the hard way.
+            return slack <= 0.0f ? 0.0f : slack / breakPresses;
+        }
+
+        /// <summary>
+        /// The shortest an ability stun of <paramref name="duration"/> can be made by mashing
+        /// perfectly. Exists so the bound can be asserted rather than playtested, which is the
+        /// same reason <see cref="FastestTripRecovery"/> does.
+        /// </summary>
+        public static float FastestStunRecovery(float duration) =>
+            duration < Balance.MinStunDown ? duration : Balance.MinStunDown;
     }
 }

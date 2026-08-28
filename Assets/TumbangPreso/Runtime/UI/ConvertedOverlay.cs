@@ -85,7 +85,12 @@ namespace TumbangPreso.UI
             skin.Variation = "WoodSlot";
 
             var slotElement = slotGo.AddComponent<LayoutElement>();
-            slotElement.preferredWidth = TutorialContent.ChipWidth;
+            // ⚠️ THE WIDTH MOVED HOME WHEN THE TUTORIAL PANEL WAS DELETED. It was
+            // `TutorialContent.ChipWidth`, and `CreditsContent` carried a copy of the same 330
+            // because `credits_panel.gd` copies `tutorial.gd`'s. With the tutorial gone the credits
+            // panel is the only overlay left that draws a chip row, so it owns the number now
+            // rather than a second copy being left behind pointing at a deleted file.
+            slotElement.preferredWidth = CreditsContent.ChipWidth;
             slotElement.flexibleWidth = 0.0f;
 
             var chipText = MenuKit.Styled(slotGo.transform, "MenuValue", chip, TextAnchor.MiddleCenter);

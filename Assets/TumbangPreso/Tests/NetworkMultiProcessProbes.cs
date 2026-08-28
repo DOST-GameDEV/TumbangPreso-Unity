@@ -138,7 +138,9 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(-1, refPeer.Seat, "Dedicated referee must never hold a player seat");
             Assert.IsTrue(refPeer.Spectator);
             Assert.IsTrue(lobby.IsSeatlessReferee(1));
-            Assert.AreEqual(0, lobby.LeaderPeerId, "Dedicated referee must not be appointed leader");
+            // ⚠️ -1 IS "NOBODY", AND IT USED TO BE 0. See `LobbySession.LeaderPeerId`: netcode
+            // hands out client id 0, so the old sentinel was also a legal peer.
+            Assert.AreEqual(-1, lobby.LeaderPeerId, "Dedicated referee must not be appointed leader");
 
             // Client 1 (Human host/leader)
             var p1 = lobby.Admit(2, "human-p1", "Leader Player");
@@ -257,6 +259,108 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(0, clientScores[2]);
             Assert.AreEqual(0, clientScores[3]);
             Assert.AreEqual(scores.Total, clientScores.Total);
+        }
+
+        // -------------------------------------------------------------------
+        // 6. LOBBY ROSTER & PICK SYNCHRONIZATION PROBES (N5, N8, N14)
+        // -------------------------------------------------------------------
+
+        [Test]
+        public void AuthoritativeRosterPreservesPeerNamesAndPicksWithoutClobbering()
+        {
+            // Host simulation with host seated in seat 1 and guest in seat 0
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(123));
+
+            var host = lobby.Admit(0, "token-host", "HostPlayer");
+            host.Seat = 1;
+            lobby.SetPicks(0, 2, 1, 0); // Host picks: character 2, can 1, slipper 0
+
+            var guest = lobby.Admit(1, "token-guest", "GuestPlayer");
+            guest.Seat = 0;
+            lobby.SetPicks(1, 0, 2, 1); // Guest picks: character 0, can 2, slipper 1
+
+            // Build authoritative seat table as host would broadcast
+            var hostSeats = new LobbySeatInfo[Balance.PlayerCount];
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            {
+                var peer = lobby.PeerInSeat(slot);
+                if (peer != null)
+                {
+                    hostSeats[slot] = new LobbySeatInfo
+                    {
+                        Seat = slot,
+                        PeerId = peer.PeerId,
+                        Name = peer.Name,
+                        Occupied = true,
+                        Spectator = peer.Spectator,
+                        CharacterPick = peer.CharacterPick,
+                        CanPick = peer.CanPick,
+                        SlipperPick = peer.SlipperPick
+                    };
+                }
+                else
+                {
+                    hostSeats[slot] = new LobbySeatInfo
+                    {
+                        Seat = slot,
+                        PeerId = -1,
+                        Name = "",
+                        Occupied = false,
+                        Spectator = false,
+                        CharacterPick = -1,
+                        CanPick = -1,
+                        SlipperPick = -1
+                    };
+                }
+            }
+
+            // Verify seat 0 (guest)
+            Assert.IsTrue(hostSeats[0].Occupied);
+            Assert.AreEqual("GuestPlayer", hostSeats[0].Name);
+            Assert.AreEqual(0, hostSeats[0].CharacterPick);
+            Assert.AreEqual(2, hostSeats[0].CanPick);
+            Assert.AreEqual(1, hostSeats[0].SlipperPick);
+
+            // Verify seat 1 (host)
+            Assert.IsTrue(hostSeats[1].Occupied);
+            Assert.AreEqual("HostPlayer", hostSeats[1].Name);
+            Assert.AreEqual(2, hostSeats[1].CharacterPick);
+            Assert.AreEqual(1, hostSeats[1].CanPick);
+            Assert.AreEqual(0, hostSeats[1].SlipperPick);
+
+            // Verify empty seats (bots)
+            Assert.IsFalse(hostSeats[2].Occupied);
+            Assert.IsEmpty(hostSeats[2].Name);
+            Assert.IsFalse(hostSeats[3].Occupied);
+
+            // Simulate client-side MatchInstaller resolving seats from authoritative roster
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            {
+                var seatInfo = hostSeats[slot];
+                bool isHuman = seatInfo.Occupied && !seatInfo.Spectator;
+                string expectedName = isHuman ? seatInfo.Name : "";
+                int expectedPick = isHuman && seatInfo.CharacterPick >= 0 ? seatInfo.CharacterPick : MatchInstaller.ResolveAiCharacterIndex(slot);
+
+                if (slot == 0)
+                {
+                    Assert.IsTrue(isHuman);
+                    Assert.AreEqual("GuestPlayer", expectedName);
+                    Assert.AreEqual(0, expectedPick);
+                }
+                else if (slot == 1)
+                {
+                    Assert.IsTrue(isHuman);
+                    Assert.AreEqual("HostPlayer", expectedName);
+                    Assert.AreEqual(2, expectedPick);
+                }
+                else
+                {
+                    Assert.IsFalse(isHuman, $"Seat {slot} should be classified as bot");
+                    Assert.IsEmpty(expectedName);
+                    Assert.AreEqual(MatchInstaller.ResolveAiCharacterIndex(slot), expectedPick);
+                }
+            }
         }
     }
 }

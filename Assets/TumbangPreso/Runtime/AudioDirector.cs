@@ -142,6 +142,57 @@ namespace TumbangPreso
         }
 
         public void PlayAt(string id, Vector3 position)
+            => PlayAtVaried(id, position, 1.0f, 1.0f, 1.0f);
+
+        /// <summary>
+        /// The clip and its authored mix level, for a caller that has to drive its own
+        /// <see cref="AudioSource"/> rather than fire a one-shot.
+        ///
+        /// ⚠️⚠️ THIS EXISTS FOR SOUNDS THAT MOVE, AND THERE IS EXACTLY ONE SO FAR. `PlayAtVaried`
+        /// parks a pooled voice at a FIXED position and plays it there; that is right for an
+        /// impact, which happens at a point, and wrong for the LRT consist, which travels 96 m
+        /// across the map while its sound is playing. A one-shot fired at the train's position
+        /// when it entered stayed where it was fired, so the pass never got nearer or further
+        /// away. 🧑 2026-08-26: *"make it feel like its getting farther"*.
+        ///
+        /// ⚠️ THE MIX LEVEL COMES OUT WITH THE CLIP, AND THE CALLER MUST APPLY IT. Returning only
+        /// the clip would route a sound around the authored mix and the player's SFX slider,
+        /// which is the exact fault the note in `PlayAtVaried` records being fixed. Multiply by
+        /// this AND by <see cref="SfxVolume"/>.
+        /// </summary>
+        public bool TryGetClip(string id, out AudioClip clip, out float mixLevel)
+        {
+            clip = null;
+            mixLevel = 0.0f;
+
+            if (!_cues.TryGetValue(id, out var cue) || cue.Clip == null)
+            {
+                Debug.LogWarning($"[Audio] no cue registered for '{id}'.");
+                return false;
+            }
+
+            // ⚠️ IT COUNTS AS PLAYED. `WarnUnplayedCues` exists to catch a cue that is declared
+            // and never fired; a cue driven through here is fired, just not by this class, and
+            // leaving the flag alone would report the train's own sound as dead every run.
+            cue.EverPlayed = true;
+            _cues[id] = cue;
+
+            clip = cue.Clip;
+            mixLevel = cue.Volume;
+            return true;
+        }
+
+        /// <summary>The player's SFX slider, for a caller driving its own source.</summary>
+        public float SfxVolume => SfxScale();
+
+        /// <summary>
+        /// Plays a world cue with a small pitch window. Repeated slippers, footsteps and
+        /// impacts otherwise expose that they are the exact same recording within seconds.
+        /// The volume multiplier is intentionally clamped: this is expression inside the
+        /// authored mix, not a route around its headroom.
+        /// </summary>
+        public void PlayAtVaried(string id, Vector3 position, float pitchMin = 0.94f,
+                                 float pitchMax = 1.06f, float volumeScale = 1.0f)
         {
             if (!_cues.TryGetValue(id, out var cue))
             {
@@ -160,8 +211,90 @@ namespace TumbangPreso
 
             voice.transform.position = position;
             voice.clip = cue.Clip;
-            voice.volume = cue.Volume * SfxScale();
+            voice.pitch = Random.Range(Mathf.Min(pitchMin, pitchMax),
+                                       Mathf.Max(pitchMin, pitchMax));
+            voice.volume = cue.Volume * SfxScale() * Mathf.Clamp(volumeScale, 0.0f, 1.25f);
             voice.Play();
+
+            DuckIfAnnouncement(id);
+        }
+
+        /// <summary>
+        /// ⚠️ THE LIFT IS POLLED, NOT EVENT-DRIVEN, and that is the cheaper correct answer.
+        /// The round clock has no "fifteen seconds left" event to subscribe to, and adding one
+        /// would put an audio concern into the rules layer. `SetLift` is idempotent, so calling
+        /// it every frame with the same answer costs a comparison.
+        /// </summary>
+        private void Update() => UpdateMusicLift();
+
+        /// <summary>
+        /// Two restrained layers for the few match-defining impacts. The low-pitched layer
+        /// supplies weight while the primary keeps the event recognisable. A very short music
+        /// duck makes room for the transient without making the whole mix louder.
+        /// </summary>
+        public void PlayImpact(string primary, string weightLayer, Vector3 position,
+                               float energy = 1.0f)
+        {
+            energy = Mathf.Clamp01(energy);
+            PlayAtVaried(primary, position, 0.96f, 1.04f, Mathf.Lerp(0.82f, 1.0f, energy));
+
+            if (!string.IsNullOrEmpty(weightLayer) && weightLayer != primary)
+                PlayAtVaried(weightLayer, position, 0.72f, 0.84f,
+                             Mathf.Lerp(0.28f, 0.52f, energy));
+
+            GameServices.Music?.Duck(Mathf.Lerp(-2.5f, -5.0f, energy),
+                                     Mathf.Lerp(0.10f, 0.20f, energy));
+        }
+
+        /// <summary>
+        /// Duck the bed if this cue is one of the announcements that should push it down.
+        ///
+        /// ⚠️ CALLED FROM THE PLAY PATH, NOT FROM THE CALLERS. See `AudioCues.DuckTriggers`:
+        /// the whole value of the table is that the countdown, the round end and the score
+        /// award do not each have to remember to duck.
+        /// </summary>
+        private static void DuckIfAnnouncement(string cue)
+        {
+            if (!Audio.AudioCues.DucksMusic(cue)) return;
+
+            GameServices.Music?.Duck(Audio.AudioCues.MusicDuckDb, Audio.AudioCues.MusicDuckHold);
+        }
+
+        /// <summary>
+        /// § THE INTENSITY LIFT, driven from the round clock.
+        ///
+        /// ⚠️⚠️ THE AUDIO ASKS THE ROUND, IT DOES NOT KEEP ITS OWN CLOCK. That is the same rule
+        /// the HUD follows and for the same reason: a second opinion about how long is left will
+        /// eventually disagree with the scoreboard, and the player believes the scoreboard.
+        ///
+        /// ⚠️ AND IT IS GATED ON THE ROUND BEING LIVE. Without that, the bed lifts during the
+        /// between-round buffer, when `TimeLeft` is sitting at whatever the last round ended on.
+        /// </summary>
+        private void UpdateMusicLift()
+        {
+            var music = GameServices.Music;
+            if (music == null) return;
+
+            var round = GameServices.Round;
+
+            float pressure = 0.0f;
+
+            if (round != null && round.RoundActive && round.TimeLeft > 0.0f
+                && round.TimeLeft <= Audio.MusicDirector.PressureSecondsLeft)
+            {
+                float left = round.TimeLeft;
+                float final = Audio.MusicDirector.LiftSecondsLeft;
+                float start = Audio.MusicDirector.PressureSecondsLeft;
+
+                // The first fifteen seconds build to 45 percent, then the last fifteen carry
+                // the decisive rise. Both are gain on the already-playing source, so the music
+                // never cuts or restarts under the clock.
+                pressure = left > final
+                    ? Mathf.Lerp(0.0f, 0.45f, (start - left) / Mathf.Max(0.01f, start - final))
+                    : Mathf.Lerp(0.45f, 1.0f, (final - left) / Mathf.Max(0.01f, final));
+            }
+
+            music.SetPressure(pressure);
         }
 
         /// <summary>
@@ -205,6 +338,10 @@ namespace TumbangPreso
                 // the call site already had.
                 made.spatialBlend = 1.0f;
                 made.playOnAwake = false;
+                made.dopplerLevel = 0.0f;
+                made.rolloffMode = AudioRolloffMode.Linear;
+                made.minDistance = 2.0f;
+                made.maxDistance = 32.0f;
 
                 _voices.Add(made);
                 return made;

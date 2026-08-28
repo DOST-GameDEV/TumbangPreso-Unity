@@ -70,7 +70,8 @@ namespace TumbangPreso.PlayTests
             Assert.Greater(visual.FrostLevel, 0.9f,
                 $"the body never iced over: frost reached {visual.FrostLevel:0.000} while the " +
                 $"motor reported {victim.StunLeft:0.00} s of stun left. The driver is " +
-                "CharacterVisual.ProcessFrost and the uniform is _FrostAmount on TumbangPreso/Toon.");
+                "CharacterVisual.ProcessFrost and the uniform is _CaughtAmount on TumbangPreso/Toon. " +
+                "It was _FrostAmount until 2026-08-26; see the note above that property.");
 
             // ⚠️ ASSERTED THROUGH THE REAL STUN EXPIRING, not by zeroing the level by hand. The
             // thaw is the half a player actually reads as "I am about to get control back", and

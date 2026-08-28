@@ -83,7 +83,32 @@ namespace TumbangPreso.Core
         public bool IsSprinting => _isSprinting;
         public bool IsFatigued => _fatigueLeft > 0.0f;
         public float FatigueLeft => _fatigueLeft;
+        public float IdleSeconds => _idle;
         public SpeedZoneStack SpeedZones => _speedZones;
+
+        /// <summary>
+        /// Applies the host's resource state to a joining or live client.
+        ///
+        /// ⚠️ FATIGUE IS ALSO A SPEED-ZONE ENTRY. Replacing only the timer leaves either a
+        /// ghost 0.75 multiplier after fatigue ended or a full-speed body while it is active.
+        /// Remove the old entry first, write the state, then add exactly one new entry.
+        /// Other ability and map speed zones stay untouched.
+        /// </summary>
+        public void ApplyNetworkSnapshot(float current, float idle, float fatigueLeft)
+        {
+            bool wasFatigued = _fatigueLeft > 0.0f;
+            bool willBeFatigued = fatigueLeft > 0.0f;
+
+            if (wasFatigued && !willBeFatigued)
+                _speedZones.Exit(Balance.FatigueSpeedScale);
+            else if (!wasFatigued && willBeFatigued)
+                _speedZones.Enter(Balance.FatigueSpeedScale);
+
+            _current = System.Math.Clamp(current, 0.0f, Balance.StaminaMax);
+            _idle = System.Math.Max(0.0f, idle);
+            _fatigueLeft = System.Math.Clamp(fatigueLeft, 0.0f, Balance.FatigueTime);
+            _isSprinting = false;
+        }
 
         /// <summary>
         /// One physics step. Returns the speed multiplier the SPRINT contributes, which

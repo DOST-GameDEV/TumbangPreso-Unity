@@ -36,22 +36,23 @@ Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Uni
 
 ---
 
-### Step 3: Render Turnarounds & Animation Verification Sheets
+### Step 3: Render Turnarounds & Cast Lineup (`PersonSwapProbe`)
 
-#### A. Single Character Turnaround & 32 Animation Suite (`PersonSwapProbe`)
-Use this to render the active master character across all 4 angles (`Front`, `3/4 View`, `Side`, `Back`) and verify all 32 animations:
+The canonical rendering norm in this repository produces **two standard visual outputs**:
+1. **4-Angle Turnaround** (`Logs/person-swap-turnaround.png`): Front, 3/4, Side, and Back views of the character.
+2. **Cast Lineup** (`Logs/cast_lineup.png`): Side-by-side roster lineup showing the character relative to the rest of the cast.
+
+> [!IMPORTANT]
+> **NO ORBIT RENDERS**: Orbit angle probes (`InGameAngleProbe` / `8angle_orbit`) are deprecated and removed. All model inspections and review audits must use the **4-angle turnaround** and/or **cast lineup** only.
+
+Execute the canonical probe pipeline in Unity batchmode:
 ```powershell
 Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe" -ArgumentList "-batchmode -quit -projectPath . -executeMethod TumbangPreso.EditorTools.PersonSwapProbe.Run -logFile Logs/swap.log" -Wait
 ```
 *Outputs Generated in `Logs/`:*
 - `Logs/person-swap-turnaround.png` (4-angle full body turnaround)
+- `Logs/cast_lineup.png` (full cast comparative lineup)
 - `Logs/person-swap-probe.png` (32 animation clips test sheet)
-
-#### B. Side-by-Side Comparison Lineups (`IterationTurnaroundProbe`)
-Use this when presenting multiple design variants (hair volume, hats, skin tones) side-by-side:
-```powershell
-Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe" -ArgumentList "-batchmode -quit -projectPath . -executeMethod TumbangPreso.EditorTools.IterationTurnaroundProbe.Run -logFile Logs/iterations.log" -Wait
-```
 
 ---
 
@@ -76,4 +77,41 @@ Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Uni
 # 2. Compile standalone Windows player to Desktop:
 Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe" -ArgumentList "-batchmode -quit -nographics -projectPath . -executeMethod TumbangPreso.EditorTools.GameBuilder.BuildWindows -logFile Logs/build.log" -Wait
 ```
-*Output Target:* `C:\Users\matth\Desktop\TumbangPreso-Unity\TumbangPreso.exe`
+*Output Target:* `<Desktop>\TumbangPreso-Unity\TumbangPreso.exe`
+
+⚠️ **The desktop is RESOLVED, not typed.** `GameBuilder` calls
+`Environment.GetFolderPath(SpecialFolder.DesktopDirectory)`, so the player lands on whichever
+machine's desktop ran the build. This line used to read `C:\Users\matth\Desktop\...`, which is
+one particular checkout and sent a session looking for a build on a path that does not exist
+here. Two other documents quoted the same stale user directory and both were deleted on
+2026-08-26; `docs/README.md` records why.
+
+---
+
+## 4. Character-Specific Pipeline Log & Known Pitfalls (Nemu & Companions)
+
+### Pitfall 1: Unity AssetDatabase Caching on Companion Prefabs / Sub-Assets
+- **Symptom**: Rebuilding a companion pet or accessory (e.g. `pet-nemu-ghost.glb`) via Python modifies the file on disk, but batchmode Unity renders still show the old orientation or outdated geometry.
+- **Root Cause**: `PersonSwapProbe.Run()` was only calling `AssetDatabase.ImportAsset(NewModel)` (reimporting `team-nemu.glb`), while `pet-nemu-ghost.glb` remained cached in Unity's internal asset memory.
+- **Solution**: Explicitly call `AssetDatabase.ImportAsset("Assets/.../pets/pet-nemu-ghost.glb", ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport)` before capturing turnarounds and lineup renders.
+
+### Pitfall 2: Web UI Image URL Cache Collisions
+- **Symptom**: Agent regenerates an updated render on disk, but the user's chat interface continues to display the old cached image from earlier in the session.
+- **Root Cause**: Web browsers cache image URLs by filename (`reference_comparison.png`, `turnaround_before_after.png`). Overwriting the file on disk does not invalidate browser-side HTTP/file caches.
+- **Solution**: Every new visual comparison presented to the user must use a unique timestamped or versioned filename (e.g. `ref_comparison_v1787314037.png`, `turnaround_comparison_v1787314037.png`).
+
+### Pitfall 3: Companion Pet Coordinate System & Local Rotation
+- **Symptom**: The companion pet floats with its face pointing backwards away from the camera in Front view, while showing its eyes in Back view.
+- **Root Cause**: In `pet-nemu-ghost.glb`, the mesh was authored facing `-Z` (standard glTF rig convention). When parented to `model.transform` (which has `PersonModelYaw = 180°` applied), a `localRotation` of `Quaternion.identity` points the pet's `-Z` toward the model's `-Z` (Nemu's back).
+- **Solution**: Set `pet.transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f)` when parented to `model.transform`, aligning the pet's face (+Z model space) with Nemu's forward gaze across all turnaround angles.
+
+### Pitfall 4: Flared Bell Sleeve Z-Depth Causing Hand Anchor Failure
+- **Symptom**: `PersonSwapProbe` fails `CheckHandAnchor` with `"FAIL: the shoe would be buried in the hand or floating above it"`.
+- **Root Cause**: `PalmCentre` dynamically picks the limb axis using `max(size.x, size.y, size.z)`. Deep flared sleeve cuffs with large Z-depth caused `size.z` to exceed `size.x`. The probe then assumed the arm was pointing along Z (forward), taking the front rim of the sleeve cuff as the "palm" and computing an incorrect anchor offset.
+- **Solution**: Author the arm boxes such that the horizontal reach span along X strictly exceeds the cuff depth along Z (`size.x > size.z`), ensuring `PalmCentre` correctly identifies the X axis and measures the true palm vertices.
+
+### Pitfall 5: Inverted-Hull Toon Outline Occluding Sub-Centimeter Decals
+- **Symptom**: Tiny decal boxes (e.g. pet eyes, blush, teeth) vanish or appear completely black/dark purple in Unity renders.
+- **Root Cause**: `ToonSkin.Apply` extrudes geometry along vertex normals by `PersonOutlineWidth` (~8 to 12 mm). If decal boxes are only 2 to 4 mm proud of the underlying body box, the extruded outline hull completely envelopes the decal.
+- **Solution**: Voxel decal boxes on small meshes must be authored at least 8 to 12 mm proud of the base geometry to remain crisp and visible above the toon ink outline.
+

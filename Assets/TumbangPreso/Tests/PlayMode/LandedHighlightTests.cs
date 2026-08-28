@@ -38,7 +38,15 @@ namespace TumbangPreso.PlayTests
 
             // Blue, the shipped default. Set explicitly so a stale settings.json on whatever
             // machine runs this cannot turn the feature off and pass the test by accident.
+            //
+            // ⚠⚠ AND THE CHANGE IS RAISED, NOT ONLY WRITTEN. Setting the field alone leaves
+            // every listener on whatever it last cached, so if anything earlier in the suite
+            // turned the highlight OFF and raised it, this test ran against an off feature and
+            // failed with "not lit at the landed rim strength" while the feature was working
+            // perfectly. It passed in isolation and failed in a full run, which is the signature
+            // of exactly this.
             SettingsStore.Current.SlipperHighlight = SlipperHighlights.Default;
+            SettingsStore.RaiseSlipperHighlightChanged();
 
             var slipper = Object.FindFirstObjectByType<Slipper>();
             Assert.IsNotNull(slipper, "the match built no slipper to test");
@@ -46,9 +54,11 @@ namespace TumbangPreso.PlayTests
             var renderer = slipper.GetComponentInChildren<Renderer>();
             Assert.IsNotNull(renderer, "the slipper has no renderer, so nothing can light");
 
-            // Straight up over the arena, so it falls and lands on the road rather than being
-            // caught by a body or the can on the way.
-            slipper.HostThrow(null, new Vector3(0.0f, 5.0f, 0.0f), new Vector3(0.0f, 0.5f, 0.0f));
+            var lata = Object.FindFirstObjectByType<Lata>();
+            Assert.IsNotNull(lata, "the arena has no lata to measure the floor from");
+
+            Vector3 target = lata.transform.position + new Vector3(1.5f, 0.0f, 2.0f);
+            slipper.HostThrow(null, target + Vector3.up * 1.5f, Vector3.zero);
             Assert.AreEqual(SlipperState.InFlight, slipper.State, "the throw did not take");
 
             // 5 m of fall is well under a second; 400 frames is a generous cap that still fails
@@ -88,7 +98,9 @@ namespace TumbangPreso.PlayTests
 
             for (int i = 0; i < 20; i++) yield return null;
 
+            // Raised as well as written, for the reason the test above records.
             SettingsStore.Current.SlipperHighlight = SlipperHighlights.Default;
+            SettingsStore.RaiseSlipperHighlightChanged();
 
             var slipper = Object.FindFirstObjectByType<Slipper>();
             Assert.IsNotNull(slipper);
@@ -96,7 +108,14 @@ namespace TumbangPreso.PlayTests
             var renderer = slipper.GetComponentInChildren<Renderer>();
             Assert.IsNotNull(renderer);
 
-            slipper.HostThrow(null, new Vector3(0.0f, 5.0f, 0.0f), new Vector3(0.0f, 0.5f, 0.0f));
+            var lata = Object.FindFirstObjectByType<Lata>();
+            Assert.IsNotNull(lata, "the arena has no lata to measure the floor from");
+
+            Vector3 target = lata.transform.position + new Vector3(1.5f, 0.0f, 2.0f);
+            slipper.HostThrow(null, target + Vector3.up * 1.5f, Vector3.zero);
+
+            Assert.AreEqual(SlipperState.InFlight, slipper.State, "the throw did not take");
+
             for (int i = 0; i < 400 && slipper.State != SlipperState.Loose; i++)
                 yield return new WaitForFixedUpdate();
             Assert.AreEqual(SlipperState.Loose, slipper.State,
@@ -104,7 +123,9 @@ namespace TumbangPreso.PlayTests
 
             var block = new MaterialPropertyBlock();
             renderer.GetPropertyBlock(block);
-            Assert.Greater(block.GetFloat(RimStrengthId), 0.0f, "it was not lit to begin with");
+            Assert.Greater(block.GetFloat(RimStrengthId), 0.0f,
+                $"it was not lit to begin with. state={slipper.State} " +
+                $"pos={slipper.transform.position} setting={SettingsStore.Current.SlipperHighlight}");
 
             // What the settings row does when the player cycles to Off.
             SettingsStore.Current.SlipperHighlight = SlipperHighlights.Off;

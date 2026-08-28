@@ -1,5 +1,13 @@
 # Port Plan — Tumbang Preso, Godot 4.7 → Unity 6
 
+## Current Unity hosting state
+
+⚠️⚠️ **THE UNITY GAME DOES NOT USE THE OLD VULTR SERVER POOL.** The Singapore VPS at
+`139.180.212.110` and its ports `8910-8917` belong to the frozen Godot deployment. Unity online
+play is peer-hosted through UGS Relay and discovered through UGS Lobby. LAN play connects
+directly through Unity Transport. A Linux dedicated-server build target exists, but no Vultr
+deployment or Multiplay fleet is active for this Unity game.
+
 **Status:** Phases 0 to 2 done. Phase 3 code complete, feel unverified. Written 2026-08-15.
 **Source of truth for the port:** the GDScript in `DOST-GameDev`, not `docs/Design.md`. See §7.1.
 
@@ -37,7 +45,9 @@ Measured on `main` @ `bc4d710`, 2026-08-15.
 | Autoload singletons | 9 | 9 |
 | Existing C# | none | none |
 
-Export targets today: Windows Desktop, macOS, **Linux Server** (the Singapore VPS build).
+At the time of this source measurement, the Godot game exported Windows Desktop, macOS and a
+**Linux Server** build used by the old Singapore VPS. That is historical source inventory, not
+the current Unity hosting path described above.
 
 **Assets carry over. The 100 scene trees and all 47 netcode files do not.**
 
@@ -88,8 +98,9 @@ Each phase has an exit criterion. Do not start the next one until it is met.
 - Modules at install time: **Windows Build Support (IL2CPP)**, **Linux Dedicated Server
   Build Support**, Mac Build Support if macOS is still a target
 
-⚠️ **Linux Dedicated Server Build Support is the one that gets skipped.** It is what the
-Singapore VPS build needs, and adding it later means a second multi-GB module download.
+⚠️ **Linux Dedicated Server Build Support is the one that gets skipped.** It is required for
+the optional standalone Unity server build, even though no VPS or fleet deployment is active,
+and adding it later means a second multi-GB module download.
 
 **Exit:** `dotnet --version` responds, and Unity opens an empty URP project.
 
@@ -123,7 +134,7 @@ PUNCH  range 1.7 · arc 75° · cd 0.9
 THROW  charge 2.5 · min power 0.35 · lock 1.25 · pickup 1.4 · launch 18.5 · hit radius 0.23
 LATA   interaction 1.6 · reset channel 1.5 · tilt 88° · topple 0.22 · HIT_MARGIN 0.30
 SCORE  knockdown 100 · tag 100 · sabotage 50 · defense 10/s · tag stun 5.0
-MATCH  4 rounds · 4 players · 90 s · intermission 3.0 · throw restore cd 1.25
+MATCH  Classic 4 rounds · Hero Strike 8 rounds · 4 players · 90 s · intermission 3.0 · throw restore cd 1.25
 TRAITS speed ±5% · power ±7% · grit ±7%, on 1..5 with 3 neutral
 ```
 
@@ -230,9 +241,8 @@ attributes across all gameplay verbs.
   (`NetSession.StartMultiplayServerAsync`) rather than deleted, and comes back the moment either
   Unity ships a compiling `multiplay` build, or the fleet path is re-ported onto
   `MultiplayerServerService.CreateSessionAsync` against a real fleet to verify it. The dedicated
-  Linux server build is unaffected: it still serves clients today, it just does not register
-  itself with a fleet, which is exactly the capability the Singapore VPS option would need back
-  if that is chosen instead.
+  Linux server build target is unaffected: it can serve clients when launched explicitly, but
+  it is not deployed to Vultr and does not register itself with a fleet.
 - **Online discovery (UGS Lobby):** Replaces the raw UDP pool browse in `ServerQuery`. Live
   lobbies publish custom data using the game's 4-character confusable-free join codes.
   `ServerQuery` retains its LAN-first code resolution order (checking `LanBeacon` before UGS
@@ -372,7 +382,7 @@ into something a CI run answers:
 | lunge reach | 3.20 m, **identical** against a stationary and a 3.45 m/s crossing target |
 | trajectory preview vs flight | 0.000 m miss on TSINELAS / PANTULOG / IKE, 0.263 m on CROCS |
 | hit window per can | BOYBEN 0.493 m, PASIP 0.579 m |
-| defender rotation | every slot defends exactly once across 4 rounds |
+| defender rotation | every slot defends once in Classic and twice in Hero Strike |
 | passive defence share | ≤ 50% of all points under a `turtle` taya |
 | roster distinctness | all 12 person rows differ |
 
@@ -380,7 +390,13 @@ into something a CI run answers:
 
 ## 7 · Decisions and open questions
 
-### 7.1 ✅ RESOLVED. `Design.md` drifted in four places, and all four are stale prose.
+### 7.1 ✅ RESOLVED, AND THE PROSE IS NOW FIXED. `Design.md` drifted in four places, and all four were stale prose.
+
+⚠️ **Corrected in `docs/Design.md` on 2026-08-23**, together with four more stale
+passages found in the same pass (the chalk literal, the box half-width, the shortest legal
+throw, the spawn ring). **That file, in this repo, is the live design document.** The Godot
+repo's `docs/Design.md` is frozen at 2026-08-02 and must not be synced back over it. See
+`CLAUDE.md` § 2 and § 4.
 
 **Investigated 2026-08-15 against the Godot repo's git history. Full evidence in
 [`Design_Drift_Report.md`](Design_Drift_Report.md).**

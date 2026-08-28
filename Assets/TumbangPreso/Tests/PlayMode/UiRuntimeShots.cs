@@ -58,11 +58,17 @@ namespace TumbangPreso.PlayTests
 
             yield return Shoot("MainMenu");
             yield return Overlay("SettingsPanel");
-            yield return Overlay("TutorialPanel");
+
+            // ⚠️ NO `TutorialPanel` SHOT: the panel was deleted on 2026-08-28 and TUTORIAL enters
+            // the playable route directly. `Arena("Eskinita")` below photographs what replaced it.
             yield return Overlay("CreditsPanel");
 
             yield return Shoot("ModeSelect");
             yield return Shoot("MatchSetup");
+
+            // Photograph the information-dense hero variant. Classic uses the same shell with
+            // simpler trait meters, so the hero picker is the stronger layout stress test.
+            SceneFlow.SelectedMode = Core.GameMode.HeroStrike;
             yield return Overlay("CharacterSelectPanel");
             yield return Shoot("MultiplayerSetup");
             yield return Shoot("MatchResult");
@@ -251,6 +257,111 @@ namespace TumbangPreso.PlayTests
             Object.DestroyImmediate(rt);
 
             Debug.Log($"[Shot] wrote {OutDir}/{name}.png");
+        }
+
+        /// <summary>
+        /// The MULTIPLAYER lobby, which `EveryScreenBootsAndDraws` cannot photograph.
+        ///
+        /// ⚠️⚠️ `Shoot("MatchSetup")` PHOTOGRAPHS THE PRACTICE SCREEN, NOT THE LOBBY, AND THEY ARE
+        /// NOW TWO DIFFERENT PICTURES. One scene draws both: offline it is a map picker with a
+        /// bots row and the wide 22 m shot of an empty street, and in multiplayer it is a room
+        /// with four people standing in it at 32 degrees from 7 m. `SceneFlow.Networked` is the
+        /// only thing that decides, and the other test never sets it, so every capture of this
+        /// screen ever taken has been of the half that has no cast.
+        ///
+        /// ⚠️ IT AUTO-HOSTS ON LOAD, WHICH MEANS THIS TEST BINDS A PORT. That is the feature: the
+        /// lobby opens a LAN room on arrival, and a capture of it not having done so would be a
+        /// picture of the fallback state. It fails soft when the port is taken (see
+        /// `ConvertedMatchSetup.AutoHost`), so a machine already running the game gets the
+        /// not-connected lobby photographed instead of a hang.
+        ///
+        /// ⚠️ THE FILENAMES CARRY A VERSION, per `CLAUDE.md` § 6.1: chat clients cache by name, so
+        /// overwriting a shot leaves the previous one on screen and the whole review is conducted
+        /// against an image that is no longer on disk. Bump `ShotVersion` on every iteration.
+        /// </summary>
+        private const string ShotVersion = "v43";
+
+        [UnityTest]
+        public IEnumerator TheLobbyDraws()
+        {
+            Directory.CreateDirectory(OutDir);
+
+            bool previousNetworked = SceneFlow.Networked;
+            var previousMode = SceneFlow.SelectedMode;
+
+            SceneFlow.Networked = true;
+
+            var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
+            while (load != null && !load.isDone) yield return null;
+
+            // ⚠️ LONGER THAN `Shoot`'S 1.6 s, AND THE EXTRA IS NOT PADDING. Three things have to
+            // finish that no other screen waits on: the transport handshake the auto-host starts,
+            // the ADDITIVE load of a dressed arena into the preview surface, and the cast being
+            // adopted into it once `MapShown` fires. A capture before that is a photograph of an
+            // empty street with the chrome over it, which is indistinguishable from the cast
+            // being broken.
+            yield return new WaitForSecondsRealtime(4.0f);
+
+            var nameField = Find("PlayerNameEdit")?.GetComponent<InputField>();
+            Assert.IsNotNull(nameField, "the lobby must expose its editable player name.");
+            Assert.AreEqual(Core.Balance.PlayerNameMax, nameField.characterLimit,
+                "the lobby name field must enforce the same hard cap as Settings and the wire.");
+
+            yield return Capture($"Lobby-{ShotVersion}");
+
+            // Both drawers are part of the requested composition checkpoint. Photographing only
+            // the clean collapsed state previously let clipped rows and merged network actions
+            // survive review unnoticed.
+            // ⚠️ BY THE TOGGLE'S OWN NAME, NOT BY ITS HOST'S. It used to look up `SettingsDrawer`
+            // and take the first `Button` under it, which stopped finding anything the moment the
+            // left-hand furniture became one rail (`LobbyChrome.BuildLeftRail`): the host is
+            // `LobbyLeftRail` now and its first button would be whichever the layout ordered first.
+            // The failure was silent, because the shot is taken inside an `if`.
+            var settingsToggle = Find("SettingsDrawerToggle")?.GetComponent<Button>();
+            Assert.IsNotNull(settingsToggle,
+                "the match-settings drawer has no toggle to open, so the open state cannot be "
+                + "photographed. See LobbyChrome.BuildLeftRail.");
+
+            if (settingsToggle != null)
+            {
+                settingsToggle.onClick.Invoke();
+                yield return new WaitForSecondsRealtime(0.25f);
+                yield return Capture($"LobbySettings-{ShotVersion}");
+                settingsToggle.onClick.Invoke();
+            }
+
+            var lobbyToggle = Find("LobbyDrawerToggle")?.GetComponent<Button>();
+            if (lobbyToggle != null)
+            {
+                lobbyToggle.onClick.Invoke();
+                yield return new WaitForSecondsRealtime(0.25f);
+                yield return Capture($"LobbyServers-{ShotVersion}");
+                lobbyToggle.onClick.Invoke();
+            }
+
+            // The join card over the top of it, which is the other half of this screen.
+            var open = Find("OpenJoinButton");
+            var panel = Find("LobbyJoinPanel");
+
+            if (open != null && panel != null)
+            {
+                panel.SetActive(true);
+
+                yield return new WaitForSecondsRealtime(0.6f);
+                yield return Capture($"LobbyJoin-{ShotVersion}");
+
+                panel.SetActive(false);
+            }
+            else
+            {
+                Debug.LogWarning("[Shot] the lobby has no join card to photograph.");
+            }
+
+            SceneFlow.Networked = previousNetworked;
+            SceneFlow.SelectedMode = previousMode;
+
+            var session = Net.NetSession.Instance;
+            if (session != null) session.Stop();
         }
 
         private static IEnumerator Shoot(string scene)

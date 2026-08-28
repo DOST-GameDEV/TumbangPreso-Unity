@@ -10,8 +10,8 @@ namespace TumbangPreso.Settings
     ///
     /// ⚠️⚠️ IT WRITES A JSON FILE, NOT PlayerPrefs, AND THE REASON IS THE DEDICATED SERVER.
     /// PlayerPrefs on Windows is the registry, on Linux it is a file under a config directory
-    /// that assumes a normal user home. The Singapore VPS runs a headless Linux server build,
-    /// often in a container, and anything that assumes a writable home or a display is a
+    /// that assumes a normal user home. A headless Linux server build often runs in a container,
+    /// and anything that assumes a writable home or a display is a
     /// failure that only ever appears in production. A JSON file next to the persistent data
     /// path is inspectable, diffable, and can simply fail to load without taking the server
     /// with it.
@@ -66,6 +66,57 @@ namespace TumbangPreso.Settings
         public bool Fullscreen = true;
 
         /// <summary>
+        /// Which anti-aliasing mode to render at, as an index into
+        /// <see cref="AntiAliasModes.All"/>. 0 is Off.
+        ///
+        /// ⚠️⚠️ IT IS A SETTING RATHER THAN A CONSTANT BECAUSE THE QUALITY LEVELS ALREADY
+        /// DISAGREED AND NOTHING RECONCILED THEM. `QualitySettings.asset` carried MSAA on two of
+        /// its six levels and none on the other four, and every offscreen probe in the project
+        /// built its RenderTexture with 4 or 8 samples regardless. So the sample count a player
+        /// got depended on a quality level nothing in this game ever shows them, while every
+        /// image the project judged itself by was anti-aliased. One stored index, applied in one
+        /// place, is what makes the two answerable with the same question.
+        ///
+        /// ⚠️ STORED AS AN INT for the reason <see cref="AiDifficulty"/> and
+        /// <see cref="SlipperHighlight"/> both record: the settings file is read back by builds
+        /// whose list may have grown a row, and an int with a clamp survives that.
+        /// </summary>
+        public int AntiAliasMode = AntiAliasModes.Default;
+
+        /// <summary>
+        /// Whether the game waits for the display before showing a frame, as an index into
+        /// <see cref="VSyncModes.All"/>.
+        ///
+        /// ⚠️ STORED AS AN INT WITH A CLAMP, like every other mode index on this object, because a
+        /// settings file written by an older build is read back by a newer one whose list may have
+        /// grown a row. See <see cref="VSyncModes"/> for why the half-refresh row is the one worth
+        /// having and the one people leave out.
+        /// </summary>
+        public int VSyncMode = VSyncModes.Default;
+
+        /// <summary>
+        /// Which look the game is drawn in, as an index into <see cref="RenderStyles.All"/>.
+        /// 0 is Toon, the shipped ink look.
+        ///
+        /// ⚠️⚠️ IT IS THE ONE INDEX ON THIS CLASS WHOSE DEFAULT IS ROW 0, AND THAT IS SAFE HERE
+        /// FOR THE EXACT REASON IT IS UNSAFE EVERYWHERE ELSE. <see cref="AntiAliasMode"/> and
+        /// <see cref="SlipperHighlight"/> both default AWAY from their row 0, because
+        /// `JsonUtility` constructs the object before it overwrites the fields the file carries,
+        /// so an older `settings.json` inherits the field initialiser and a 0 there would silently
+        /// turn a feature off for everybody upgrading. Row 0 of the style table IS what those
+        /// older builds were already drawing, so the upgrade lands on no change at all.
+        ///
+        /// ⚠️ THE DEFAULT IS NOT A TASTE. Chromatic is an experiment being evaluated against the
+        /// shipped look, and a player who never opens this screen has to see the shipped look.
+        /// `RenderStyles.Default` carries the full reasoning and `LobbyAndSettingsTests` asserts
+        /// the upgrade path rather than trusting it.
+        ///
+        /// ⚠️ STORED AS AN INT with a clamp, for the reason <see cref="AiDifficulty"/> records:
+        /// the settings file is read back by builds whose list may have grown a row.
+        /// </summary>
+        public int RenderStyle = RenderStyles.Default;
+
+        /// <summary>
         /// Which colour § THE LANDED HIGHLIGHT lights a rested tsinelas in, as an index into
         /// <see cref="SlipperHighlights.All"/>. 0 is Off.
         ///
@@ -85,7 +136,12 @@ namespace TumbangPreso.Settings
         // MATCH
         // -------------------------------------------------------------------
 
-        /// <summary>0 easy, 1 normal, 2 hard. Normal by default.</summary>
+        /// <summary>0 easy, 1 normal, 2 hard, 3 none. Normal by default.
+        ///
+        /// ⚠️ 3 IS AN ABSENCE OF BOTS, NOT A FOURTH TIER, and it is at the END of the range on
+        /// purpose. See <see cref="AIController.NoBotsIndex"/>: this int is saved to disk and
+        /// replicated over the wire, so inserting a value ahead of the existing three would
+        /// re-read every saved setting one tier out.</summary>
         public int AiDifficulty = 1;
 
         // -------------------------------------------------------------------
@@ -142,11 +198,57 @@ namespace TumbangPreso.Settings
         ///
         /// Volumes need no push: the music bed, the announcer and the SFX all read the
         /// sliders live, which is what makes dragging one audible immediately.
+        ///
+        /// ⚠️ ANTI-ALIASING IS PUSHED HERE FOR EXACTLY THE FULLSCREEN REASON. It is two engine
+        /// switches rather than a value something reads back (`QualitySettings.antiAliasing` and
+        /// the flag `Visual.PostAntiAlias` runs off), so a mode that is only stored is a mode
+        /// that survives a restart everywhere except in the picture.
+        ///
+        /// ⚠️ THE RENDER STYLE IS PUSHED HERE FOR THE SAME REASON AND ONE MORE. Two of its three
+        /// switches are statics that a render callback reads, and the third is a GLOBAL shader
+        /// float, which lives in the graphics device rather than in this object: nothing restores
+        /// it on its own, so a style that is only stored is a style that never reaches a single
+        /// pixel. This is also what makes the panel's BACK button undo a pick, since
+        /// `SettingsStore.Restore` re-applies the snapshot through here.
         /// </summary>
         public void Apply()
         {
-            Screen.fullScreen = Fullscreen;
+            ApplyDisplay();
+            AntiAliasModes.Apply(AntiAliasMode);
+            VSyncModes.Apply(VSyncMode);
+            RenderStyles.Apply(RenderStyle);
             AIController.ApplyDifficulty(AiDifficulty);
+        }
+
+        /// <summary>
+        /// Applies the display preference without carrying a small window's backbuffer into
+        /// fullscreen. Borderless fullscreen uses the desktop resolution, so both the 3D view
+        /// and screen-space UI remain pixel sharp on the player's monitor.
+        /// </summary>
+        public void ApplyDisplay()
+        {
+            if (Application.isBatchMode) return;
+
+            if (Fullscreen)
+            {
+                int width = Display.main != null && Display.main.systemWidth > 0
+                    ? Display.main.systemWidth
+                    : Screen.currentResolution.width;
+                int height = Display.main != null && Display.main.systemHeight > 0
+                    ? Display.main.systemHeight
+                    : Screen.currentResolution.height;
+
+                Screen.SetResolution(width, height, FullScreenMode.FullScreenWindow);
+                return;
+            }
+
+            // Keep windowed mode comfortably inside a 1080p desktop while preserving the
+            // game's authored 16:9 layout. Do not reuse a 4K fullscreen size for a window.
+            const int preferredWidth = 1600;
+            const int preferredHeight = 900;
+            int windowWidth = Mathf.Min(preferredWidth, Screen.currentResolution.width);
+            int windowHeight = Mathf.Min(preferredHeight, Screen.currentResolution.height);
+            Screen.SetResolution(windowWidth, windowHeight, FullScreenMode.Windowed);
         }
 
         public void Validate()
@@ -157,8 +259,11 @@ namespace TumbangPreso.Settings
             SfxVolume = Mathf.Clamp01(SfxVolume);
             MusicVolume = Mathf.Clamp01(MusicVolume);
             MouseSensitivity = Mathf.Clamp(MouseSensitivity, 0.1f, 5.0f);
-            AiDifficulty = Mathf.Clamp(AiDifficulty, 0, 2);
+            AiDifficulty = Mathf.Clamp(AiDifficulty, 0, AIController.NoBotsIndex);
             SlipperHighlight = Mathf.Clamp(SlipperHighlight, 0, SlipperHighlights.All.Length - 1);
+            AntiAliasMode = Mathf.Clamp(AntiAliasMode, 0, AntiAliasModes.All.Length - 1);
+            VSyncMode = Mathf.Clamp(VSyncMode, 0, VSyncModes.All.Length - 1);
+            RenderStyle = Mathf.Clamp(RenderStyle, 0, RenderStyles.All.Length - 1);
 
             if (string.IsNullOrEmpty(PlayerToken)) PlayerToken = MintToken();
         }
@@ -234,7 +339,13 @@ namespace TumbangPreso.Settings
                 Debug.LogWarning($"[Settings] could not read {Path}, using defaults: {e.Message}");
             }
 
+            bool mintedIdentity = string.IsNullOrEmpty(_current.PlayerToken);
             _current.Validate();
+
+            // Validate mints the reconnect identity, but an identity that only lives in RAM
+            // changes on every cold launch. Persist it immediately instead of waiting for the
+            // player to happen to open and save a settings screen.
+            if (mintedIdentity) Save();
 
             // ⚠️ VALIDATE THEN APPLY, IN THAT ORDER. Applying an unclamped value read off disk
             // would push a nonsense difficulty index straight into the AI.

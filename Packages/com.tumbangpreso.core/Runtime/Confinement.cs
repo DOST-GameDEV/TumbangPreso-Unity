@@ -32,6 +32,10 @@ namespace TumbangPreso.Core
             return (ax > az ? ax : az) < radius;
         }
 
+        /// <summary>True while this position is in the safe zone outside the danger box.</summary>
+        public static bool IsInsideSafeZone(float x, float z, float radius = Balance.ConfinementRadius)
+            => !IsInsideBox(x, z, radius);
+
         /// <summary>
         /// Clamp a Defender back into the box. X and Z independently: that is what makes
         /// it a square.

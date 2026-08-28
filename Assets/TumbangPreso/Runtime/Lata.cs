@@ -28,9 +28,14 @@ namespace TumbangPreso
         private bool _isUpright = true;
         private float _toppleTimer;
         private Vector3 _mark;
+        private float _restoreProtectionLeft;
+        private GameObject _downBeacon;
+        private GameObject _protectionShell;
 
         public int SkinIndex { get => _skinIndex; set => _skinIndex = value; }
         public bool IsUpright => _isUpright;
+        public bool IsProtected => _restoreProtectionLeft > 0.0f;
+        public float ProtectionLeft => Mathf.Max(0.0f, _restoreProtectionLeft);
 
         /// <summary>The scoring window for the CURRENT can skin, divided by its STANCE.</summary>
         public float HitWindow => ThrowRules.HitWindow(_skinIndex);
@@ -107,12 +112,50 @@ namespace TumbangPreso
             return ThrowRules.Connects(Vector3.Distance(a, b), _skinIndex);
         }
 
+        /// <summary>
+        /// Applies a host snapshot without playing knockdown/restoration feedback. Rejoin is
+        /// observation of an existing state, not a new can event.
+        /// </summary>
+        public void ApplySnapshotState(Vector3 position, Quaternion rotation,
+                                       bool isUpright, int skinIndex)
+        {
+            bool restoredOnThisPeer = !_isUpright && isUpright;
+            transform.SetPositionAndRotation(position, rotation);
+            _skinIndex = skinIndex;
+            _isUpright = isUpright;
+            if (restoredOnThisPeer) _restoreProtectionLeft = Balance.ThrowRestoreCooldown;
+            else if (!isUpright) _restoreProtectionLeft = 0.0f;
+            _toppleTimer = 0.0f;
+            _toppleAngle = isUpright ? 0.0f : rotation.eulerAngles.x;
+            _rollAngleDeg = isUpright ? 0.0f : rotation.eulerAngles.y;
+            _lastRollPosition = position;
+            RefreshStatePresentation();
+            UprightChanged?.Invoke(isUpright);
+        }
+
         /// <summary>Host-side. Knock it over and pay the thrower.</summary>
         public void HostKnockDown(int throwerSlot)
         {
             if (!NetAuthority.ShouldResolve()) return;
             if (!_isUpright) return;
 
+            // A reset must create a real safe beat, not only refuse newly launched throws.
+            // A slipper that was already airborne when the channel completed can otherwise
+            // knock the lata down on the very next physics frame. It still bounces off the can,
+            // but no state change or score is created during the visible shield window.
+            if (IsProtected)
+            {
+                PulseProtection();
+                // ⚠️⚠️ `NetCue`: THIS IS INSIDE `HostKnockDown` AND WAS HOST-ONLY. The sound of
+                // the OBJECTIVE going over is the single most important event in a round, and
+                // three of the four players could not hear it. See `Carrier.HostThrowAt` for the
+                // audit that found both and why the authority gate itself is not the problem.
+                NetCue.PlayVaried("lata_seal", transform.position,
+                                                 1.05f, 1.12f, 0.55f);
+                return;
+            }
+
+            Hitstop.Trigger(0.045f, 0.10f);
             SetUpright(false);
             _toppleTimer = Balance.ToppleTime;
 
@@ -140,6 +183,21 @@ namespace TumbangPreso
             if (GameServices.Match != null && throwerSlot == GameServices.Match.DefenderSlot) return;
 
             GameServices.Match.AddScore(throwerSlot, ScoreEvent.LataKnocked);
+            UI.Hud.ReportStyle(throwerSlot, 42.0f, "TUMBA!");
+
+            // ⚠️⚠️ THE CAN USED TO REACH INTO `AIController` AND START AN EMOTE FROM HERE, AND
+            // THAT CALL IS GONE ON PURPOSE. It was a second path into the celebration: it skipped
+            // the safety gate entirely, so a bot could be told to stand still and dance while it
+            // was inside the chalk with a taya on it. `AIController` § THE FACE listens to
+            // `MatchDirector.Scored` instead, which is the event the line above has just raised,
+            // so the same celebration still happens off the same knockdown and now goes through
+            // the one gate that knows whether standing still is affordable.
+            //
+            // ⚠️ AND THE CAN HAS NO BUSINESS KNOWING WHAT A BOT IS. Everything else on this path
+            // is scoring and physics; a `GetComponent<AIController>` here is the kind of reach
+            // that makes a rules object depend on the AI layer.
+            var throwerMotor = GameServices.Round.PlayerAt(throwerSlot);
+            throwerMotor?.AbilitySystem?.OnLataKnocked();
         }
 
         /// <summary>
@@ -162,6 +220,7 @@ namespace TumbangPreso
             _toppleTimer = 0.0f;
             _lastRollPosition = _mark;
 
+            _restoreProtectionLeft = Balance.ThrowRestoreCooldown;
             SetUpright(true);
 
             // ⚠️ NO CUE HERE EITHER. `SetUpright(true)` above already sounds the restore; see
@@ -189,11 +248,39 @@ namespace TumbangPreso
             // taya's longest commitment in the game was the cue that means "starting". It is also
             // why `reset_complete` and `reset_channel_complete` both shipped as live cues with
             // zero call sites anywhere in the port.
-            GameServices.Audio?.PlayAt(value ? "reset_complete" : "can_knockdown",
-                                       transform.position);
+            if (value)
+                GameServices.Audio?.PlayImpact("reset_complete", "lata_seal",
+                                               transform.position, 0.72f);
+            else
+                GameServices.Audio?.PlayImpact("can_knockdown", "lata_impact",
+                                               transform.position, 1.0f);
 
-            if (value) GameServices.Voice?.OnLataRestored();
-            else GameServices.Voice?.OnLataKnocked();
+            if (value)
+            {
+                GameServices.Voice?.OnLataRestored();
+                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, "RESTORED!", UI.UiTheme.Defense, 1.2f);
+            }
+            else
+            {
+                GameServices.Voice?.OnLataKnocked();
+                string callout = UI.SceneFlow.SelectedMode == GameMode.Classic
+                    ? "TUMBA!" : "LATA DOWN!";
+                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, callout, UI.UiTheme.Offense, 1.4f);
+                UI.Hud.TriggerHitmarker(UI.UiTheme.Offense, "💥");
+                Visual.ImpactBurst.SpawnAt(transform.position);
+                Abilities.HeroHazards.SpawnConfettiShower(transform.position, 24);
+                if (UnityEngine.Camera.main != null)
+                {
+                    var rig = UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>();
+                    if (rig != null)
+                    {
+                        Vector3 away = UnityEngine.Camera.main.transform.position - transform.position;
+                        rig.ImpactPunch(away.sqrMagnitude > 0.01f ? away.normalized : Vector3.back, 0.8f);
+                    }
+                }
+            }
+
+            RefreshStatePresentation();
 
             UprightChanged?.Invoke(value);
         }
@@ -208,6 +295,8 @@ namespace TumbangPreso
         /// </summary>
         private void Update()
         {
+            StepStatePresentation();
+
             if (_isUpright || _toppleTimer <= 0.0f) return;
 
             _toppleTimer = Mathf.Max(0.0f, _toppleTimer - Time.deltaTime);
@@ -215,6 +304,220 @@ namespace TumbangPreso
 
             _toppleAngle = Mathf.Lerp(0.0f, Balance.DownedTiltDeg, t);
             ApplyTilt(_toppleAngle);
+        }
+
+        /// <summary>
+        /// The lata is the objective, so its state must still read when the HUD is hidden or the
+        /// player is watching the fight instead of the bottom-right card. A narrow vertical
+        /// beacon marks DOWN without spending more floor area, while the short restoration
+        /// protection gets a compact shell whose lifetime is the actual gameplay timer.
+        /// </summary>
+        private void RefreshStatePresentation()
+        {
+            if (_isUpright)
+            {
+                ClearDownBeacon();
+                if (IsProtected) BuildProtectionShell();
+                else ClearProtectionShell();
+                return;
+            }
+
+            _restoreProtectionLeft = 0.0f;
+            ClearProtectionShell();
+            BuildDownBeacon();
+        }
+
+        /// <summary>
+        /// § THE DOWNED READ. What marks a toppled can, now that the beacon is gone.
+        ///
+        /// ⚠️⚠️ THERE WAS A RED BEACON HERE AND IT WAS DELETED ON REPORT. 🧑 2026-08-26, with the
+        /// frame: *"that red line, thats red beacon when lata is down, that looks bad ... the
+        /// purpose of it is to put emphasis on lata being down but its shit"*, and the shape of
+        /// the replacement in the same message: *"without putting a fkn beacon on it or covering
+        /// the lata completley with some effect"*.
+        ///
+        /// ⚠️ WHAT IT WAS MADE OF IS WHY IT LOOKED LIKE THAT. A 4 m translucent `Cylinder`, a
+        /// second translucent `Cylinder` lying flat under it, and a point light over the pair:
+        /// the exact stack `docs/VISION.md` § 2 rule 3 names as the thing every effect in this
+        /// game used to be, and that § 19 spent a pass removing from the ability kits. Nothing
+        /// had come back to the objective itself. A 0.18 m wide vertical tube seen from standing
+        /// eye height across a 14 m arena is foreshortened into a RED LINE lying on the road,
+        /// which is what he photographed: it did not read as a column of light from any angle a
+        /// player actually has.
+        ///
+        /// ⚠️⚠️ AND THE GAME ALREADY SAID "LATA DOWN" SIX OTHER TIMES. The world popup at the can
+        /// (`OnKnocked` below), the centre alert, the bottom-right card title, the objective
+        /// line under it, the score toast and the crosshair all fire off the same state. The
+        /// problem was never that the message was too quiet to hear; it was that the seventh
+        /// copy was a light in the middle of the arena. Emphasis is not repetition.
+        ///
+        /// ⚠️ SO THE CAN IS THE SIGNAL, NOT SOMETHING PARKED NEXT TO IT. Two parts, deliberately
+        /// built two different ways, per § 19's rule that construction is the channel:
+        ///
+        ///   * a RIM PULSE on the can's own renderers, which costs no floor area at all and
+        ///     cannot cover the object because it IS the object's silhouette. It reuses the
+        ///     `_RimStrength` / `_RimColor` path `Slipper` already drives for the landed
+        ///     highlight, so it is a property block on the existing mesh rather than new
+        ///     geometry;
+        ///   * a COLLAR at the foot, which is an annulus with an open middle, so the can stays
+        ///     visible through it. It is what finds the can when a body is standing in front of
+        ///     it. `VfxShapes.Collar`, the § 19 builder, not a flat cylinder.
+        ///
+        /// ⚠️ 0.95 m OF RADIUS IS 2.8 m², WHICH IS 1.4 PER CENT OF THE 196 m² BOX. The old flare
+        /// was 1.35 and solid. `docs/VISION.md` § 2 rule 1 puts a SKILL at 1.8 to 2.5 m; the
+        /// objective marker has no business being larger than a skill, and an annulus spends a
+        /// fraction of even this on actual pixels.
+        /// </summary>
+        private void BuildDownBeacon()
+        {
+            if (_downBeacon != null) return;
+
+            _downBeacon = new GameObject("LataDownMark");
+            _downBeacon.transform.SetParent(transform, false);
+
+            // ⚠️ `Lay`, NOT `Stand`. A collar is a flat annulus and `Lay` scales X and Z while
+            // leaving Y at 1.0, which is exactly right for a ring on the floor and exactly wrong
+            // for anything with height. The old shaft is the reason that distinction is worth
+            // restating here.
+            var collar = Visual.VfxShapes.Lay(_downBeacon.transform, "DownCollar",
+                                              Visual.VfxShapes.Collar(24, 0.10f, 0.88f),
+                                              DownCollarRadius, 0.02f);
+
+            Visual.VfxMaterial.Ghost(collar.GetComponent<Renderer>(),
+                new Color(UI.UiTheme.Danger.r, UI.UiTheme.Danger.g, UI.UiTheme.Danger.b, 0.55f),
+                1.6f);
+            Visual.VfxMaterial.StripCollider(collar);
+
+            _downCollar = collar.transform;
+        }
+
+        /// <summary>The foot marker's radius. See the note on <see cref="BuildDownBeacon"/>.</summary>
+        private const float DownCollarRadius = 0.95f;
+
+        private Transform _downCollar;
+
+        /// <summary>
+        /// The pulse, driven every frame the can is down.
+        ///
+        /// ⚠️ ONE SINE, TWO CONSUMERS. The collar breathes on it and the rim brightens on it, so
+        /// the two halves are visibly the same heartbeat rather than two effects that happen to
+        /// both be red. Deriving them from one number is what makes them read as one object
+        /// rather than as a marker plus a glow.
+        /// </summary>
+        private void DriveDownPulse()
+        {
+            if (_downBeacon == null) return;
+
+            float beat = Mathf.Sin(Time.unscaledTime * 5.0f) * 0.5f + 0.5f;
+
+            if (_downCollar != null)
+            {
+                float r = DownCollarRadius * (1.0f + beat * 0.07f);
+                _downCollar.localScale = new Vector3(r, 1.0f, r);
+            }
+
+            SetRim(Mathf.Lerp(0.35f, 1.0f, beat));
+        }
+
+        /// <summary>
+        /// ⚠️ THROUGH A PROPERTY BLOCK, WHICH IS WHAT KEEPS IT PER-CAN. The lata's material is a
+        /// shared skin asset; writing the rim into the material would light every can in the
+        /// project including the one posing on a menu. `Slipper` drives the landed highlight the
+        /// same way and for the same reason.
+        /// </summary>
+        private void SetRim(float strength)
+        {
+            if (_renderers == null) CacheRenderers();
+            if (_renderers.Length == 0) return;
+
+            _rimBlock ??= new MaterialPropertyBlock();
+
+            foreach (var r in _renderers)
+            {
+                if (r == null) continue;
+                r.GetPropertyBlock(_rimBlock);
+                _rimBlock.SetFloat(RimStrengthId, strength);
+                _rimBlock.SetColor(RimColorId, UI.UiTheme.Danger);
+                r.SetPropertyBlock(_rimBlock);
+            }
+        }
+
+        private void CacheRenderers()
+            => _renderers = GetComponentsInChildren<Renderer>(true);
+
+        private Renderer[] _renderers;
+        private MaterialPropertyBlock _rimBlock;
+
+        private static readonly int RimStrengthId = Shader.PropertyToID("_RimStrength");
+        private static readonly int RimColorId = Shader.PropertyToID("_RimColor");
+
+        private void ClearDownBeacon()
+        {
+            if (_downBeacon != null) Destroy(_downBeacon);
+            _downBeacon = null;
+            _downCollar = null;
+
+            // ⚠️ THE RIM IS PUT BACK, AND FORGETTING THIS LEAVES THE CAN GLOWING RED ALL ROUND.
+            // The property block persists on the renderer; nothing resets it when the object
+            // that set it goes away.
+            SetRim(0.0f);
+        }
+
+        private void BuildProtectionShell()
+        {
+            if (_protectionShell != null) return;
+
+            _protectionShell = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            _protectionShell.name = "LataRestoreShield";
+            _protectionShell.transform.SetParent(transform, false);
+            _protectionShell.transform.localPosition = new Vector3(0.0f, 0.22f, 0.0f);
+            _protectionShell.transform.localScale = Vector3.one * 0.72f;
+            Visual.VfxMaterial.Ghost(_protectionShell.GetComponent<Renderer>(),
+                new Color(UI.UiTheme.Defense.r, UI.UiTheme.Defense.g, UI.UiTheme.Defense.b, 0.28f),
+                2.0f);
+            Visual.VfxMaterial.StripCollider(_protectionShell);
+        }
+
+        private void ClearProtectionShell()
+        {
+            if (_protectionShell != null) Destroy(_protectionShell);
+            _protectionShell = null;
+        }
+
+        private void PulseProtection()
+        {
+            BuildProtectionShell();
+            if (_protectionShell != null) _protectionShell.transform.localScale = Vector3.one * 0.92f;
+            // ⚠️ NO WORD. `PulseProtection` fires on every refresh of the throw-restore window,
+            // and the lata card carries `PROTECTED 1.2s` as a live countdown for the whole of it.
+            // The shell is the signal; the countdown is the number. A callout on top of both was
+            // the third copy of one fact, on a pulse.
+
+        }
+
+        private void StepStatePresentation()
+        {
+            if (_restoreProtectionLeft > 0.0f)
+            {
+                _restoreProtectionLeft = Mathf.Max(0.0f, _restoreProtectionLeft - Time.deltaTime);
+                BuildProtectionShell();
+
+                if (_protectionShell != null)
+                {
+                    float pulse = 0.72f + (Mathf.Sin(Time.time * 18.0f) * 0.5f + 0.5f) * 0.10f;
+                    _protectionShell.transform.localScale = Vector3.one * pulse;
+                    _protectionShell.transform.Rotate(0.0f, 120.0f * Time.deltaTime, 0.0f,
+                                                       Space.Self);
+                }
+
+                if (_restoreProtectionLeft <= 0.0f) ClearProtectionShell();
+            }
+
+            // ⚠️ THE WHOLE MARKER NO LONGER SCALES, ONLY THE COLLAR DOES. Scaling the parent
+            // scaled the shaft's HEIGHT along with everything else, which is part of why the old
+            // beacon swept about so much. `DriveDownPulse` breathes the ring and the rim off one
+            // sine and leaves the marker's own transform alone.
+            DriveDownPulse();
         }
 
         /// <summary>

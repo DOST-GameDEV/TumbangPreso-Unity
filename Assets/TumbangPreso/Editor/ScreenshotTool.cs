@@ -48,7 +48,6 @@ namespace TumbangPreso.EditorTools
         private static readonly (string Scene, string Node)[] Overlays =
         {
             ("Assets/TumbangPreso/Scenes/Ui/MainMenu.unity", "SettingsPanel"),
-            ("Assets/TumbangPreso/Scenes/Ui/MainMenu.unity", "TutorialPanel"),
             ("Assets/TumbangPreso/Scenes/Ui/MainMenu.unity", "CreditsPanel"),
             ("Assets/TumbangPreso/Scenes/Ui/MatchSetup.unity", "CharacterSelectPanel"),
         };

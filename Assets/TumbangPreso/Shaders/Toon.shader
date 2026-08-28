@@ -50,9 +50,40 @@ Shader "TumbangPreso/Toon"
         // alike, and `CharacterVisual` already drives it through a MaterialPropertyBlock, which
         // IS per-renderer. So the duplication problem the Godot side had to solve by hand does
         // not exist here, and `_collect_frost_material` has no counterpart on purpose.
+        // ⚠️⚠️ NOTHING DRIVES THIS ANY MORE AND IT IS KEPT ON PURPOSE. See § THE CAUGHT MARK
+        // below. The tag stopped writing frost on 2026-08-26; this term stays because ICE is
+        // Cheska's, and the one effect in the game that should tint a body pale blue is the
+        // hero whose whole kit is ice. It is the channel her Permafrost Sheet and Glacial Nova
+        // should reach for when they get a body treatment, rather than a sixth one being added.
+        // Deleting it would mean rewriting it when she needs it.
         _FrostAmount ("Frost Amount", Range(0, 1)) = 0
         _FrostColor ("Frost Colour", Color) = (0.62, 0.87, 0.95, 1)
         _FrostRimColor ("Frost Rim Colour", Color) = (0.85, 0.98, 1, 1)
+
+        // ⚠️⚠️ § THE CAUGHT MARK — what a TAG looks like, and it is not ice. 🧑 2026-08-26:
+        // *"freeze effects show up when u get tagged, this was an old stale version bcz back
+        // then we js put freeze effect on screen and on 3d model of chara when they get tagged.
+        // pls plan what to replace that with bcz it doesnt make sense anymore"*.
+        //
+        // ⚠️ WHY IT STOPPED MAKING SENSE, WHICH IS NOT THAT IT WAS EVER BADLY MADE. The frost
+        // was asked for on 2026-08-06 and on that date it was unambiguous: nothing else in the
+        // game was cold. Hero Strike then shipped Cheska, whose entire kit is ice (Permafrost
+        // Sheet, Glacial Nova, Ice Barricade), and a frozen body now had two possible causes.
+        // The frost's own note argues that firing one signal for two causes makes it mean
+        // "something happened to that player", which is "not worth a channel" — it was written
+        // about trips, and Cheska walked into the same trap from the other side.
+        //
+        // ⚠️⚠️ SO THE TAG DRAINS COLOUR INSTEAD OF ADDING ONE, AND THAT IS THE WHOLE IDEA. Ice
+        // is something applied TO a body; being caught is a body going OUT OF PLAY. Desaturating
+        // toward the body's own luminance reads as inactive in every game that has ever done it,
+        // costs no new hue, and cannot collide with any element a hero might be made of, because
+        // it is the ABSENCE of one. The character the player picked still reads underneath.
+        //
+        // ⚠️ THE RIM IS THE TAYA'S COLOUR, WHICH THE FROST NEVER CARRIED. A tag is the one
+        // scoring verb the defender has; the mark now says WHO made it. `UiTheme.Defense` blue
+        // against a grey body cannot be read as anything else on this palette.
+        _CaughtAmount ("Caught Amount", Range(0, 1)) = 0
+        _CaughtRimColor ("Caught Rim Colour", Color) = (0.42, 0.68, 1, 1)
 
         // ⚠️ RIM DEFAULTS TO ZERO AND IS ENABLED PER MATERIAL. The Can's colour is
         // load-bearing (orange is always offence, blue is always defence), and a rim term that
@@ -71,7 +102,7 @@ Shader "TumbangPreso/Toon"
         _Exposure ("Tonemap Exposure", Range(0.1, 4)) = 0.92
         _White ("Tonemap White", Range(0.5, 8)) = 1.9
 
-        _OutlineColor ("Outline Colour", Color) = (0.0156863, 0.0313725, 0.219608, 1)
+        _OutlineColor ("Outline Colour", Color) = (0.02, 0.02, 0.03, 1)
         _OutlineWidth ("Outline Width", Range(0, 0.2)) = 0.008
     }
 
@@ -106,10 +137,39 @@ Shader "TumbangPreso/Toon"
             float _OutlineWidth;
             fixed4 _OutlineColor;
 
+            // ⚠️⚠️ § THE RENDER STYLE. DECLARED HERE AND DELIBERATELY ABSENT FROM `Properties`,
+            // WHICH IS WHAT MAKES IT A GLOBAL. `Settings.RenderStyles`'s Chromatic row draws the
+            // game with no ink edge at all, and it reaches every surface through one
+            // `Shader.SetGlobalFloat` rather than by re-dressing thirty-odd call sites' worth of
+            // renderers or by keeping a second outline-free shader beside this one. A uniform
+            // listed in `Properties` becomes per-material state seeded from that block, which
+            // SHADOWS the global and would make the switch do nothing; left out, it resolves from
+            // the global table.
+            //
+            // ⚠️ 0 IS THE SHIPPED LOOK, AND THE SENSE IS INVERTED FOR THAT REASON. An unset
+            // global reads 0, and every editor probe in this project dresses models with
+            // `ToonSkin.Apply` and renders them without loading a settings file, so nothing on
+            // that path ever writes this. Naming it `_OutlineScale` with 1 meaning "draw" would
+            // have deleted the ink from every turnaround and lineup render in the repo.
+            // `ToonSkin.SetOutlinesSuppressed` is the only writer.
+            float _OutlineSuppress;
+
             struct appdata_outline
             {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
+
+                // ⚠️⚠️ THE WELDED NORMAL, NOT A REAL TANGENT. `OutlineNormals.Weld` averages every
+                // normal sharing a position and parks the result here, because a hull inflated
+                // along the raw per-vertex normal TEARS OPEN at every hard edge: the importer
+                // emits a corner once per adjoining face and each copy pushes somewhere
+                // different. That is the "outlines dont fully connect" report of 2026-08-27.
+                //
+                // ⚠️ IT IS IN TANGENT RATHER THAN A UV BECAUSE OF SKINNING. Unity skins POSITION,
+                // NORMAL and TANGENT and passes UVs through raw, so a welded normal in UV3 would
+                // sit in bind pose and the border would split the moment an arm swung. See the
+                // class comment on `OutlineNormals` for why nothing else reads this channel.
+                float4 tangent : TANGENT;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
@@ -124,7 +184,43 @@ Shader "TumbangPreso/Toon"
                 UNITY_SETUP_INSTANCE_ID(v);
 
                 v2f_outline o;
-                float3 pushed = v.vertex.xyz + normalize(v.normal) * _OutlineWidth;
+
+                // ⚠️ THE FALLBACK IS LOAD-BEARING, NOT DEFENSIVE PADDING. A mesh that was never
+                // welded — Read/Write disabled at import, or a renderer that never went through
+                // `ToonSkin.Apply` — arrives with a zero tangent, and inflating along that would
+                // collapse the hull onto the model and delete the outline entirely. Dropping back
+                // to the raw normal restores the pre-weld look, which is a seam rather than
+                // nothing at all.
+                float3 welded = dot(v.tangent.xyz, v.tangent.xyz) > 1e-8 ? v.tangent.xyz : v.normal;
+
+                // See § THE RENDER STYLE above. 0 leaves the authored width exactly as it was.
+                float width = _OutlineWidth * (1.0 - saturate(_OutlineSuppress));
+
+                // ⚠️⚠️ A ZERO WIDTH IS COLLAPSED TO A DEGENERATE TRIANGLE RATHER THAN DRAWN, AND
+                // THAT IS NOT AN OPTIMISATION. `Cull Front` means this pass draws BACK faces; at
+                // width 0 the hull sits exactly on the surface, so on any piece of geometry whose
+                // front and back faces are COPLANAR (a zero-thickness sheet, a decal quad, a
+                // single-sided card) the ink and the lit pass land on the same depth and the
+                // result is z-fighting speckle in near black. On a closed mesh the back faces are
+                // simply behind and it would have been invisible, but this shader is worn by
+                // every prop the kits ship as well as by the cast, and "no outline" has to mean
+                // no outline on all of them.
+                //
+                // Three vertices at one clip position is a zero-area triangle, which every
+                // rasteriser in this project's build set discards before it ever shades a pixel.
+                // So the Chromatic style also stops paying for the hull's fill rate, and the pass
+                // costs one vertex shader that writes a constant.
+                //
+                // ⚠️ THE TEST IS `<= 0`, NOT `== 0`, so a material authored at a negative width
+                // takes this branch instead of inflating INWARDS and shading the model's interior.
+                if (width <= 0.0)
+                {
+                    o.pos = float4(0.0, 0.0, 0.0, 1.0);
+                    UNITY_TRANSFER_FOG(o, o.pos);
+                    return o;
+                }
+
+                float3 pushed = v.vertex.xyz + normalize(welded) * width;
 
                 o.pos = UnityObjectToClipPos(float4(pushed, 1.0));
                 UNITY_TRANSFER_FOG(o, o.pos);
@@ -192,6 +288,8 @@ Shader "TumbangPreso/Toon"
         half _FrostAmount;
         fixed4 _FrostColor;
         fixed4 _FrostRimColor;
+        half _CaughtAmount;
+        fixed4 _CaughtRimColor;
         fixed4 _RimColor;
         half _RimStrength;
         half _RimPower;
@@ -236,6 +334,13 @@ Shader "TumbangPreso/Toon"
             float2 uv_MainTex;
             float3 viewDir;
             float3 worldNormal;
+
+            // ⚠️ ADDED FOR § THE CAUGHT MARK'S HELD BAND, and it must be WORLD space. A band
+            // driven off object space would ride the body and sit still as the character moves,
+            // which reads as a texture rather than as something being done to them. `worldPos`
+            // is a name Unity's surface shader generator recognises and fills in; spelling it
+            // anything else silently leaves it at zero.
+            float3 worldPos;
         };
 
         /// Two bands and no specular response, which is the whole look: the albedo stays close
@@ -333,6 +438,48 @@ Shader "TumbangPreso/Toon"
                 // slick where cloth is not. `LightingToon` above has no specular term at all,
                 // by design, so `o.Specular`/`o.Gloss` are read by nothing here. Writing them
                 // would be dead code that looks like a working feature.
+            }
+
+            // § THE CAUGHT MARK. See the property block at the top for why a tag is no longer
+            // drawn as ice. Applied after the palette for the same reason the frost is: the
+            // player chose this character's colours and a status must sit ON them.
+            if (_CaughtAmount > 0.0)
+            {
+                // ⚠️⚠️ REC. 601 LUMINANCE, THE SAME WEIGHTS `AbilityShowcaseProbe` GATES ON.
+                // Not a flat average of the channels: an unweighted grey turns this cast's
+                // ambers muddy and its blues almost black, because the eye is far more
+                // sensitive to green than to either. Using the coefficients the rest of the
+                // project already measures with keeps one definition of brightness in the game.
+                half lum = dot(base, half3(0.299h, 0.587h, 0.114h));
+
+                // ⚠️ 0.85, AND IT IS DELIBERATELY HARSHER THAN THE FROST'S 0.68. Ice is
+                // something on a body that is still playing; caught means this seat cannot act
+                // for five seconds, which is the single most important fact on the screen for
+                // the other three players. A trace of the original hue survives so the
+                // character is still identifiable, and nothing more.
+                //
+                // ⚠️ AND IT DARKENS AS WELL AS DESATURATING. Pure greyscale at full value still
+                // reads as a lit, active body; dropping it to 0.72 is what makes it read as
+                // switched off rather than merely colourless.
+                base = lerp(base, half3(lum, lum, lum) * 0.72h, _CaughtAmount * 0.85h);
+
+                // ⚠️⚠️ A HELD BAND, NOT A SETTLE FROM ABOVE, AND THE DIFFERENCE IS THE POINT.
+                // The frost above uses `worldNormal.y` so it accumulates on upward faces like
+                // real rime. Reusing that here would make a drained body still MOVE like ice.
+                // This is a horizontal band sliding slowly down the body in world space, which
+                // is a scan rather than a snowfall: it says the seat is locked and being held,
+                // and it is a different construction rather than the same one recoloured.
+                // `docs/VISION.md` § 2 rule 3: how a thing is BUILT is the channel.
+                half band = saturate(1.0h - abs(frac(IN.worldPos.y * 1.6h - _Time.y * 0.5h) - 0.5h) * 4.0h);
+
+                // The taya's colour, on the silhouette. The two-band toon ramp flattens the
+                // interior, so an edge term is what keeps a desaturated body from dissolving
+                // into a grey street.
+                half caughtRim = pow(1.0h - saturate(dot(normalize(IN.viewDir),
+                                                         normalize(IN.worldNormal))), 2.2h);
+
+                base = lerp(base, _CaughtRimColor.rgb,
+                            saturate(caughtRim + band * 0.35h) * _CaughtAmount * 0.9h);
             }
 
             // ⚠️ THE FLASH GOES ON TOP OF THE FROST, not under it. A stunned attacker can still

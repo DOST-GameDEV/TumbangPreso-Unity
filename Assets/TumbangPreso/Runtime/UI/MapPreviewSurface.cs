@@ -67,9 +67,49 @@ namespace TumbangPreso.UI
         /// Person, so the shot is framed on the fight rather than on the road.</summary>
         public const float LookHeight = 1.6f;
 
+        /// <summary>
+        /// What the LOBBY camera aims at, and it is lower than the map shot's on purpose.
+        ///
+        /// ⚠️⚠️ AIMING LOWER PUSHES THE SUBJECT HIGHER UP THE FRAME, WHICH IS THE WHOLE POINT.
+        /// `Logs/shots-runtime/Lobby-v2.png` has the cast correctly sized and standing dead centre
+        /// vertically, so their legs are behind the two corner panels and the line reads as four
+        /// floating torsos. The furniture is at the BOTTOM of the screen, so the cast has to be
+        /// above the middle, and moving the aim point down the body is what does that without
+        /// changing how big they are.
+        ///
+        /// ⚠️ IT WENT BACK UP TO 1.15 WHEN THE FURNITURE LEFT THE BOTTOM OF THE SCREEN. While both
+        /// columns sat in the bottom corners the cast had to be lifted clear of them, and 0.70 did
+        /// that. With the settings under the banner and the lobby card top-right there is nothing
+        /// down there to clear, and lifting a much larger cast now pushes its feet off the top of
+        /// the road: 1.15 is roughly the waist, which centres the bodies in the frame.
+        /// </summary>
+        public const float LobbyLookHeight = 1.15f;
+
         /// <summary>From `MatchSetup.tscn`'s Camera3D. The one property of that node that IS
         /// read, because `_apply_camera` writes position and basis but never the FOV.</summary>
         private const float FieldOfView = 58.0f;
+
+        /// <summary>
+        /// The LOBBY shot's field of view, which is narrower than the map shot's on purpose.
+        ///
+        /// ⚠️⚠️ A CLOSE SHOT AT 58 DEGREES DISTORTS THE PEOPLE ON THE ENDS OF THE LINE, and
+        /// solving the framing by moving the camera alone cannot avoid it. 58 vertical on 16:9 is
+        /// about 89 degrees horizontal; framing four characters to fill half the height at that
+        /// angle puts the camera around 3 m away, which leaves the outer two at 34 degrees off
+        /// axis and visibly stretched, widest at the shoulders, exactly the sort of thing
+        /// `ModelPreview`'s own header records being reported as *"model isnt movable and its
+        /// stretched"*.
+        ///
+        /// At 32 degrees the same framing sits about 7 m back and the outer characters are 17
+        /// degrees off axis. It is also the reason the arena behind them still reads: a longer
+        /// lens keeps more of the street at a usable size instead of hurling it toward the
+        /// vanishing point.
+        ///
+        /// ⚠️ THE MAP SHOT KEEPS 58, which is the value `MatchSetup.tscn`'s own Camera3D carries
+        /// and the one every map's `Distance` and `Height` were tuned against. Changing it would
+        /// silently re-frame all three arenas on the practice screen.
+        /// </summary>
+        private const float LobbyFieldOfView = 32.0f;
 
         /// <summary>Half the screen is enough behind a scrim, and it halves the cost.</summary>
         private const int Width = 960;
@@ -104,6 +144,76 @@ namespace TumbangPreso.UI
         private Camera _camera;
         private string _showing;
         private bool _busy;
+
+        /// <summary>
+        /// The camera that photographs the arena, for anything that has to project a world point
+        /// into this surface's rect.
+        ///
+        /// ⚠️ IT IS NULL UNTIL THE FIRST SWAP COMPLETES. `EnsureCamera` runs at the END of
+        /// `Swap`, after the scene load, so a caller that reads this from its own `Start` gets
+        /// nothing. Wait for <see cref="MapShown"/>.
+        /// </summary>
+        public Camera Camera => _camera;
+
+        /// <summary>Where the play area is, in world space: the average of the map's spawn
+        /// markers. See <see cref="AimAt"/>.</summary>
+        public Vector3 Pivot => _pivot;
+
+        /// <summary>The map currently in the surface, or null before the first swap.</summary>
+        public string Showing => _showing;
+
+        /// <summary>The tuned angle, without the sway. A caller placing something in front of
+        /// the camera wants the shot's yaw, not this frame's wobble.</summary>
+        public float Yaw => _yaw;
+
+        /// <summary>
+        /// Raised when a map has finished loading and the camera exists, with the map's id.
+        ///
+        /// ⚠️⚠️ NOTHING ELSE CAN TELL. `Show` starts a coroutine and returns immediately, so a
+        /// caller that loads a map and then places something into it on the next line places it
+        /// into a scene that is not there yet. That is a silent no-op followed by a cast standing
+        /// at the world origin, inside the menu camera's view, which is the exact class of fault
+        /// `PreviewLayer`'s note describes as "the grey band across every menu".
+        /// </summary>
+        public event System.Action<string> MapShown;
+
+        /// <summary>
+        /// Swaps between the MAP shot (wide, high, for picking an arena) and the LOBBY shot
+        /// (close, low, for looking at four people). See <see cref="SceneFlow.MapEntry"/>.
+        ///
+        /// ⚠️ IT RE-AIMS IMMEDIATELY RATHER THAN WAITING FOR THE NEXT SWAP, because the lobby
+        /// turns it on after the first map is already showing and the practice screen turns it
+        /// off on a screen the player is looking at.
+        /// </summary>
+        public bool LobbyShot
+        {
+            get => _lobbyShot;
+            set
+            {
+                if (_lobbyShot == value) return;
+
+                _lobbyShot = value;
+
+                // ⚠️ THE PRACTICE SCREEN GETS THE WHOLE STREET BACK. See `ClearSightlines`: what
+                // it hides is hidden so a FACE can be seen, and the map shot has no faces in it,
+                // so a pillar left switched off there is a hole in the arena being chosen.
+                if (!_lobbyShot) ClearSightlines(null);
+
+                if (_showing != null) AimAt(_showing);
+
+                if (_camera != null)
+                {
+                    // ⚠️ THE LENS AS WELL AS THE POSITION. `EnsureCamera` sets the FOV and only
+                    // runs on a map swap, so flipping this on a screen that is already showing a
+                    // map moved the camera and left it on the wide lens: the four-person framing
+                    // measured for 32 degrees, rendered at 58.
+                    _camera.fieldOfView = _lobbyShot ? LobbyFieldOfView : FieldOfView;
+                    ApplyCamera();
+                }
+            }
+        }
+
+        private bool _lobbyShot;
 
         private Vector3 _pivot;
         private float _yaw = DefaultYaw;
@@ -198,6 +308,232 @@ namespace TumbangPreso.UI
             _surface.color = Color.white;
 
             _busy = false;
+
+            // ⚠️ LAST, AFTER THE CAMERA AND THE ENVIRONMENT. A listener's whole reason to exist
+            // is to put something INTO this map, and the two things it needs (a camera to be
+            // framed by and a scene to be parented into) are both set up above.
+            MapShown?.Invoke(map);
+        }
+
+        /// <summary>
+        /// Moves a GameObject into the arena currently on screen, on the preview layer, so it is
+        /// lit by that map's sun, fogged by its fog and graded by its grade.
+        ///
+        /// ⚠️⚠️ THIS IS WHY THE LOBBY CAST IS NOT A SECOND RENDER TEXTURE. Compositing four
+        /// `ModelPreview` rigs over this surface would be four cameras and four targets, each lit
+        /// by its own private key light and none of them by anything the map knows about: the
+        /// characters would sit ON the picture rather than IN it. Parenting into the arena costs
+        /// nothing extra to draw and gets the map's whole lighting environment for free.
+        ///
+        /// ⚠️ THE LAYER IS SET AFTER THE REPARENT, NOT BEFORE. `SetLayerRecursively` walks the
+        /// subtree it is given, and a model instantiated under a different parent may have had
+        /// children added since; doing it here means a caller cannot forget, and forgetting is
+        /// what puts geometry in front of every menu (see <see cref="PreviewLayer"/>).
+        ///
+        /// ⚠️ IT RETURNS FALSE RATHER THAN THROWING WHEN THE MAP IS NOT LOADED YET. `Show` is a
+        /// coroutine; a caller that has not waited for <see cref="MapShown"/> gets an honest no.
+        /// </summary>
+        public bool Adopt(GameObject go)
+        {
+            if (go == null) return false;
+            if (_showing == null) return false;
+            if (!_cache.TryGetValue(_showing, out var scene)) return false;
+            if (!scene.IsValid() || !scene.isLoaded) return false;
+
+            SceneManager.MoveGameObjectToScene(go, scene);
+            SetLayerRecursively(go.transform, PreviewLayer);
+
+            // ⚠️ REMEMBERED SO `ClearSightlines` CANNOT HIDE THE CAST. Everything adopted lands in
+            // the SAME scene as the arena, so a sweep over that scene's renderers sees the four
+            // bodies as scenery, and a character standing in front of another character is exactly
+            // the shape the sweep is looking for. Without this the arc's inner two would delete
+            // the outer two.
+            // ⚠️ ONCE PER OBJECT. `LobbyCast.HandleMapShown` re-adopts the SAME root on every map
+            // swap (`Park` deactivates the outgoing arena's roots and the cast is one of them), so
+            // appending unconditionally would grow this list forever and invalidate the occluder
+            // cache on every cycle for no change at all.
+            _adopted.RemoveAll(o => o == null);
+            if (!_adopted.Contains(go)) _adopted.Add(go);
+
+            return true;
+        }
+
+        /// <summary>Every object handed to <see cref="Adopt"/>, so the occluder sweep can tell the
+        /// cast from the street.</summary>
+        private readonly System.Collections.Generic.List<GameObject> _adopted =
+            new System.Collections.Generic.List<GameObject>();
+
+        /// <summary>Renderers currently switched off because they stood in front of somebody. They
+        /// are switched back on before every sweep and whenever the lobby shot is turned off.
+        /// </summary>
+        private readonly System.Collections.Generic.List<Renderer> _hidden =
+            new System.Collections.Generic.List<Renderer>();
+
+        /// <summary>
+        /// How much of the arena may be between the camera and a face before it is put away.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE ILALIM NG TULAY IS A ROW OF VIADUCT PILLARS AND THE LOBBY
+        /// CAMERA STANDS AMONG THEM. 🧑 2026-08-28: *"Also sometimes the pillars in the ilalim ng
+        /// tulay map block the camera of lobby"*. The lobby shot is 12.6 m from the play area at a
+        /// 32 degree lens, which puts the camera inside the colonnade rather than outside it, and
+        /// `SwayDegrees` 7 over 26 s walks it slowly across the gaps: the fault is intermittent by
+        /// construction, which is exactly why "sometimes" is the word in the report and why no
+        /// still render was ever going to settle it.
+        ///
+        /// ⚠️ AND MOVING THE CAMERA IS NOT THE FIX, WHICH IS WHY THIS IS GEOMETRY AND NOT A NUMBER.
+        /// A per-map lobby yaw could be aimed down a clear lane for the sway's centre and would
+        /// still swing into a pillar at the ends of it; widening the shot to clear them would undo
+        /// `LobbyFieldOfView`'s whole finding about the outer two characters distorting. The thing
+        /// that is actually wrong is that a two-metre column of concrete is between the player and
+        /// a face, and the answer is to take it out of the way for as long as it is.
+        ///
+        /// ⚠️ IT IS THE LOBBY SHOT ONLY. The practice screen is a picture OF THE MAP: hiding a
+        /// pillar there would be hiding the thing being chosen.
+        /// </summary>
+        private const float OccluderClearance = 0.8f;
+
+        /// <summary>
+        /// The largest thing that may be treated as an occluder, in metres of bounding diagonal.
+        ///
+        /// ⚠️⚠️ WITHOUT A CAP THIS SWEEP HIDES THE ROAD. The arena floor is one slab tens of metres
+        /// across whose AABB the camera sits inside, so a ray from the camera to a character's
+        /// chest enters it immediately and reports a hit at t near zero: the cast would be left
+        /// standing on nothing over a skybox. A viaduct pillar is about 1 x 1 x 8, a utility pole
+        /// thinner than that, and a jeepney about 6 long: 14 clears every one of them and refuses
+        /// every slab, facade and hoarding in the three arenas.
+        /// </summary>
+        private const float MaxOccluderSpan = 14.0f;
+
+        /// <summary>
+        /// Puts away anything standing between the camera and the people it is looking at.
+        ///
+        /// See <see cref="OccluderClearance"/> for why this exists rather than a camera angle.
+        ///
+        /// ⚠️ THE PREVIOUS SWEEP IS UNDONE FIRST, EVERY TIME, AND THAT IS WHAT MAKES IT SAFE TO
+        /// RUN CONTINUOUSLY. The camera sways, so the set of things in the way changes frame to
+        /// frame; a sweep that only ever hid would strip the street one pillar at a time until
+        /// there was nothing left of it.
+        ///
+        /// ⚠️ RENDERERS ARE DISABLED, NOT GAMEOBJECTS. Deactivating a GameObject in the cached
+        /// arena fights `Park`/`Unpark`, which own the active flag of every root and use it to
+        /// decide which map is lighting the world; disabling a `Renderer` touches nothing they
+        /// read.
+        /// </summary>
+        public void ClearSightlines(System.Collections.Generic.IReadOnlyList<Vector3> subjects)
+        {
+            bool wanted = _lobbyShot && _camera != null && subjects != null && subjects.Count > 0;
+
+            // ⚠️⚠️ THE SWEEP IS RATE LIMITED AND THE CALLER IS `LobbyCast.Place`, WHICH RUNS EVERY
+            // FRAME BECAUSE THE CAMERA SWAYS. A dressed street is hundreds of renderers and each
+            // one is tested against eight rays, which is a few hundred microseconds of pure
+            // arithmetic at 60 Hz for a picture that moves 7 degrees over 26 seconds. Six sweeps a
+            // second is four times faster than anything in the shot can change.
+            //
+            // ⚠️ THE GUARD IS ABOVE THE RESTORE ON PURPOSE. Returning early leaves the previous
+            // sweep's set exactly as it was, which is the correct answer for a frame nobody
+            // measured; restoring first and then returning would flash every hidden pillar back on
+            // for one frame out of every ten.
+            if (wanted && Time.unscaledTime - _lastSweep < SweepInterval) return;
+            _lastSweep = Time.unscaledTime;
+
+            foreach (var r in _hidden)
+                if (r != null) r.enabled = true;
+
+            _hidden.Clear();
+
+            if (!wanted) return;
+            if (_showing == null) return;
+            if (!_cache.TryGetValue(_showing, out var scene)) return;
+            if (!scene.IsValid() || !scene.isLoaded) return;
+
+            Vector3 eye = _camera.transform.position;
+
+            foreach (var renderer in Occluders(scene))
+            {
+                if (renderer == null || !renderer.enabled) continue;
+                if (!renderer.gameObject.activeInHierarchy) continue;
+
+                var bounds = renderer.bounds;
+
+                // Big things are the street itself. See MaxOccluderSpan.
+                if (bounds.size.magnitude > MaxOccluderSpan) continue;
+                if (bounds.Contains(eye)) continue;
+
+                if (!Blocks(eye, bounds, subjects)) continue;
+
+                renderer.enabled = false;
+                _hidden.Add(renderer);
+            }
+        }
+
+        private const float SweepInterval = 0.16f;
+        private float _lastSweep = -1.0f;
+
+        private readonly System.Collections.Generic.List<Renderer> _occluders =
+            new System.Collections.Generic.List<Renderer>();
+
+        private string _occludersFor;
+        private int _occludersAdopted = -1;
+
+        /// <summary>
+        /// Every renderer in the arena that is NOT part of the cast, gathered once per map.
+        ///
+        /// ⚠️ CACHED, BECAUSE `GetComponentsInChildren` ALLOCATES AN ARRAY PER ROOT PER CALL. At
+        /// six sweeps a second over a dressed street that is a steady drip into the collector for
+        /// a set of objects that does not change: an arena is loaded once and kept (see the
+        /// caching remark on this class), and the only thing that joins it afterwards is the cast.
+        /// The adopted count is therefore the whole invalidation rule.
+        /// </summary>
+        private System.Collections.Generic.List<Renderer> Occluders(Scene scene)
+        {
+            if (_occludersFor == _showing && _occludersAdopted == _adopted.Count) return _occluders;
+
+            _occluders.Clear();
+            _occludersFor = _showing;
+            _occludersAdopted = _adopted.Count;
+
+            foreach (var root in scene.GetRootGameObjects())
+            {
+                if (IsAdopted(root)) continue;
+
+                _occluders.AddRange(root.GetComponentsInChildren<Renderer>(true));
+            }
+
+            return _occluders;
+        }
+
+        /// <summary>
+        /// ⚠️ RAY VERSUS AABB, AND THE HIT HAS TO BE IN FRONT OF THE PERSON RATHER THAN JUST ON THE
+        /// LINE. `Bounds.IntersectRay` reports a hit anywhere along an infinite ray, so without the
+        /// distance test every building BEHIND the cast would count as standing in front of it.
+        /// </summary>
+        private static bool Blocks(Vector3 eye, Bounds bounds,
+                                   System.Collections.Generic.IReadOnlyList<Vector3> subjects)
+        {
+            foreach (var subject in subjects)
+            {
+                Vector3 to = subject - eye;
+                float distance = to.magnitude;
+
+                if (distance <= OccluderClearance) continue;
+
+                var ray = new Ray(eye, to / distance);
+
+                if (!bounds.IntersectRay(ray, out float hit)) continue;
+                if (hit >= distance - OccluderClearance) continue;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool IsAdopted(GameObject root)
+        {
+            foreach (var go in _adopted)
+                if (go != null && (go == root || go.transform.IsChildOf(root.transform))) return true;
+
+            return false;
         }
 
         /// <summary>
@@ -250,8 +586,12 @@ namespace TumbangPreso.UI
 
             var entry = SceneFlow.PreviewFor(map);
             _yaw = entry.Yaw;
-            _distance = entry.Distance;
-            _height = entry.Height;
+
+            // ⚠️ THE LOBBY IS A DIFFERENT SHOT OF THE SAME SET, AND IT SHARES THE YAW ON PURPOSE.
+            // See `MapEntry.LobbyDistance`: the angle is a judgement about which way to look down
+            // the street and does not change with range; only how close and how high do.
+            _distance = _lobbyShot ? entry.LobbyDistance : entry.Distance;
+            _height = _lobbyShot ? entry.LobbyHeight : entry.Height;
 
             if (!_cache.TryGetValue(map, out var scene) || !scene.IsValid()) return;
 
@@ -518,7 +858,7 @@ namespace TumbangPreso.UI
                 go.transform.SetParent(null, true);
             }
 
-            _camera.fieldOfView = FieldOfView;
+            _camera.fieldOfView = _lobbyShot ? LobbyFieldOfView : FieldOfView;
             _camera.targetTexture = _target;
             _camera.clearFlags = CameraClearFlags.Skybox;
             _camera.depth = -10;
@@ -571,7 +911,9 @@ namespace TumbangPreso.UI
             var offset = new Vector3(Mathf.Sin(a) * _distance, 0.0f, -Mathf.Cos(a) * _distance);
 
             _camera.transform.position = _pivot + offset + new Vector3(0.0f, _height, 0.0f);
-            _camera.transform.LookAt(_pivot + new Vector3(0.0f, LookHeight, 0.0f));
+
+            float look = _lobbyShot ? LobbyLookHeight : LookHeight;
+            _camera.transform.LookAt(_pivot + new Vector3(0.0f, look, 0.0f));
         }
 
         private void OnDestroy()

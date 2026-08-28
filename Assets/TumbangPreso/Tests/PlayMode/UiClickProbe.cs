@@ -33,10 +33,14 @@ namespace TumbangPreso.PlayTests
         private const string OutPath = "Logs/ui-clicks.txt";
 
         /// <summary>
-        /// ⚠️ SCENES ONLY. `SettingsPanel`, `CreditsPanel`, `TutorialPanel` and
-        /// `CharacterSelectPanel` are OVERLAYS that live inside these screens rather than
-        /// scenes of their own, so asking the build settings for them reports four false
-        /// failures. They are opened in place below.
+        /// ⚠️ SCENES ONLY. `SettingsPanel`, `CreditsPanel` and `CharacterSelectPanel` are
+        /// OVERLAYS that live inside these screens rather than scenes of their own, so asking the
+        /// build settings for them reports three false failures. They are opened in place below.
+        ///
+        /// ⚠️ `ModeSelect` AND `MultiplayerSetup` ARE STILL PROBED THOUGH NOTHING NAVIGATES TO
+        /// THEM. Both are the kept fallbacks of `docs/TODO.md` § 68.3, and a fallback nobody
+        /// checks is not a fallback; the whole value of keeping them is that the revert is one
+        /// line rather than a repair.
         /// </summary>
         private static readonly string[] Screens =
         {
@@ -47,7 +51,11 @@ namespace TumbangPreso.PlayTests
         private static readonly (string Screen, string Node)[] Overlays =
         {
             ("MainMenu", "SettingsPanel"),
-            ("MainMenu", "TutorialPanel"),
+
+            // ⚠️ `TutorialPanel` IS GONE FROM THE SCENE, NOT MERELY UNLINKED. The six-page
+            // reference card was deleted on 2026-08-28 and TUTORIAL now enters the playable
+            // route directly; see `ConvertedMainMenu.Wire`. Probing for it would report a
+            // missing overlay on every run.
             ("MainMenu", "CreditsPanel"),
             ("MatchSetup", "CharacterSelectPanel"),
         };
@@ -206,12 +214,21 @@ namespace TumbangPreso.PlayTests
                 // control with a history of being unreachable would have been the one no longer
                 // checked.
                 //
-                // ⚠️ IT IS A DENYLIST OF TWO RATHER THAN EVERY Selectable ON PURPOSE. Toggles,
-                // sliders and input fields are also Selectables, and several of them sit below
-                // the fold on this same screen; sweeping them all in is a bigger claim than this
-                // probe has ever made and would fail on controls nobody has reported. Widen it
-                // deliberately, not by accident.
-                if (!(button is Button) && !(button is Dropdown)) continue;
+                // ⚠⚠ AND SLIDERS, WIDENED DELIBERATELY AFTER ALL FOUR OF THEM SHIPPED DEAD.
+                // The report was that the settings sliders were "hardcoded and broken" and that
+                // the volume could not be changed with the mouse. They were not hardcoded:
+                // `ClearStrayRaycastTargets` muted every graphic under them, because a Slider
+                // keeps its Background, Fill and Handle on CHILD nodes and the sweep only
+                // recognised a hit area on the control's own node. This probe is the only check
+                // in the project that could have seen it, and it was the one class of Selectable
+                // on the screen it did not enumerate.
+                //
+                // ⚠️ IT IS A DENYLIST RATHER THAN EVERY Selectable ON PURPOSE. Toggles and input
+                // fields are also Selectables, and several of them sit below the fold on this
+                // same screen; sweeping them all in is a bigger claim than this probe has ever
+                // made and would fail on controls nobody has reported. Widen it deliberately,
+                // not by accident.
+                if (!(button is Button) && !(button is Dropdown) && !(button is Slider)) continue;
 
                 var rect = button.transform as RectTransform;
                 if (rect == null) continue;

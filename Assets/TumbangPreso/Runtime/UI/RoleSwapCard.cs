@@ -43,9 +43,11 @@ namespace TumbangPreso.UI
         private static readonly Vector2 Centre = new Vector2(0.5f, 0.5f);
 
         private Canvas _canvas;
-        private Text _title, _headline, _tayaName, _attackerNames, _fight;
+        private Text _title, _headline, _tayaName, _attackerNames, _fight, _bufferPrompt;
         private CanvasGroup _swapPanel, _standingsPanel;
         private readonly List<Text[]> _rows = new List<Text[]>();
+        private float _bufferRemaining;
+        private bool _isBufferActive;
 
         private void Awake()
         {
@@ -67,6 +69,31 @@ namespace TumbangPreso.UI
             GameServices.Match.RoundStarted -= OnRoundStarted;
         }
 
+        private void Update()
+        {
+            if (_isBufferActive && _canvas != null && _canvas.gameObject.activeSelf)
+            {
+                _bufferRemaining = Mathf.Max(0.0f, _bufferRemaining - Time.deltaTime);
+                if (_bufferPrompt != null)
+                {
+                    _bufferPrompt.text = $"WARMUP / PRACTICE BUFFER: {Mathf.CeilToInt(_bufferRemaining)}s\n[SPACE] / [CLICK] TO DISMISS SCORES & PRACTICE NOW";
+                }
+
+                if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(0))
+                {
+                    DismissAndPractice();
+                }
+            }
+        }
+
+        public void DismissAndPractice()
+        {
+            if (_canvas != null)
+            {
+                _canvas.gameObject.SetActive(false);
+            }
+        }
+
         private void OnIntermissionStarted(int nextRound, int nextDefenderSlot)
         {
             _title.text = $"END OF ROUND {Mathf.Max(1, nextRound - 1)}";
@@ -86,17 +113,9 @@ namespace TumbangPreso.UI
             _swapPanel.alpha = 0.0f;
             _standingsPanel.alpha = 0.0f;
 
-            // ⚠️⚠️ THE CARD HAS A STING AND NOTHING WAS PLAYING IT. 🧑 on this build, about the
-            // round-end screen: *"theres also music for it and animation"*. The animation was
-            // ported (see RunTimeline); the sound was not. `round_end` ships as a live cue with
-            // a mix level and had ZERO call sites in the whole port, which is precisely the
-            // failure `AudioDirector`'s header is written around: a registered cue nobody fires.
-            // `hud.gd::_on_round_intermission_audio` is the one caller in the original.
-            //
-            // ⚠️ AND IT IS `round_end`, NOT A WIN/LOSE PAIR. The .gd is explicit about why:
-            // there is no per-round winner. A round ends, the scores persist, the taya rotates,
-            // so playing `round_win`/`round_lose` here would tell every player they had won or
-            // lost something that did not happen. Those two cues stay uncalled ON PURPOSE.
+            _bufferRemaining = Core.Balance.WarmupBufferDuration;
+            _isBufferActive = true;
+
             GameServices.Audio?.PlayAt("round_end", Vector3.zero);
 
             StopAllCoroutines();
@@ -104,11 +123,14 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// Raise the card exactly as an intermission would, for a capture pass.
+        /// Raise the card exactly as an intermission would, without the event.
         ///
-        /// ⚠️ IT GOES THROUGH THE SAME HANDLER THE EVENT DOES rather than filling the labels by
-        /// hand, so a shot of this screen is a shot of the screen a player gets. A probe that
-        /// pokes text into the fields photographs the probe.
+        /// ⚠️ TWO CALLERS AND NEITHER IS THE HOST'S NORMAL PATH. It was written for the capture
+        /// pass, and `MatchRpc.SyncWorldSnapshotClientRpc` now uses it for a CLIENT, which never
+        /// receives `IntermissionStarted` at all: that event is raised only by
+        /// `MatchDirector.BeginIntermission`, which is host-only, and it cannot simply be raised
+        /// on a client because `SliceRunner` is wired to it and would teleport every body and
+        /// schedule its own `AdvanceRound`. `docs/TODO.md` § 57.2 has the reasoning.
         /// </summary>
         public void ShowForShot(int nextRound, int nextDefenderSlot)
             => OnIntermissionStarted(nextRound, nextDefenderSlot);
@@ -118,12 +140,15 @@ namespace TumbangPreso.UI
             yield return new WaitForSeconds(RevealDelay);
             yield return StartCoroutine(RevealPanels());
 
-            yield return new WaitForSeconds(FightDelay);
+            // Hold warmup buffer for remaining duration minus the final fight cue (1.5s)
+            float waitTime = Mathf.Max(1.0f, Core.Balance.WarmupBufferDuration - RevealDelay - RevealFade - 1.5f);
+            yield return new WaitForSeconds(waitTime);
 
+            _isBufferActive = false;
             _fight.text = $"ROUND {nextRound} — FIGHT!";
             _fight.enabled = true;
 
-            yield return new WaitForSeconds(FightHold);
+            yield return new WaitForSeconds(1.5f);
             _fight.enabled = false;
         }
 
@@ -230,13 +255,32 @@ namespace TumbangPreso.UI
             var hud = UnityEngine.Object.FindFirstObjectByType<Hud>();
             canvasGo.transform.SetParent(hud != null ? hud.CleanFeedRoot : transform, false);
 
+            // ⚠️ THE NESTED CANVAS IS STRETCHED TO ITS PARENT. A child Canvas's RectTransform is
+            // NOT driven the way a root one's is, so a fresh GameObject arrives here 0 by 0 at
+            // the parent's centre and everything under it is laid out against nothing. This card
+            // survived that because its backdrop and its column are both stretched or centred;
+            // `YouCard` tried the same parenting on 2026-08-27, is anchored bottom-left with a
+            // fixed rect, and `HudOverflowProbe` found it 274 units off the right edge.
+            var canvasRt = canvasGo.AddComponent<RectTransform>();
+            canvasRt.anchorMin = Vector2.zero;
+            canvasRt.anchorMax = Vector2.one;
+            canvasRt.offsetMin = Vector2.zero;
+            canvasRt.offsetMax = Vector2.zero;
+
             _canvas = canvasGo.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+            // ⚠️ `overrideSorting`, BECAUSE THIS IS A NESTED CANVAS. The note above says a nested
+            // Canvas "keeps its own sortingOrder", and that is only true once it is told to
+            // override the parent's: without this the 90 is ignored and the intermission card
+            // draws in hierarchy order under the HUD's own rows.
+            _canvas.overrideSorting = true;
             _canvas.sortingOrder = 90;
 
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
+            AspectSafeCanvas.Apply(scaler);
 
             // ⚠️ THE BACKDROP IS DEEP NAVY AT 0.82, NOT BLACK AT 0.45. `RoleSwapCard.tscn`
             // authors `Color(0.015686, 0.031373, 0.219608, 0.82)` — the same ink the outlines
@@ -277,6 +321,8 @@ namespace TumbangPreso.UI
             // ⚠️ THE ROW COUNT COMES FROM `PlayerCount`, so a card built for four seats is not a
             // card that assumes four seats.
             for (int i = 0; i < Core.Balance.PlayerCount; i++) _rows.Add(BuildStandingsRow(standings));
+
+            _bufferPrompt = ColumnLabel(column, "BufferPrompt", 24, UiTheme.Amber, 52);
 
             _fight = MenuKit.Label(canvasGo.transform, "", 48, UiTheme.Amber,
                 Centre, Vector2.zero, new Vector2(1200, 100));

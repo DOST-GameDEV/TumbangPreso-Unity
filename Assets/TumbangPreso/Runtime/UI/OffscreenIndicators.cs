@@ -54,6 +54,7 @@ namespace TumbangPreso.UI
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
+            AspectSafeCanvas.Apply(scaler);
 
             _canvasRect = canvasGo.GetComponent<RectTransform>();
 

@@ -31,19 +31,55 @@ namespace TumbangPreso
         private static float _until;
         private static float _restoreScale = 1.0f;
 
+        /// <summary>
+        /// The clock this freeze is measured against.
+        ///
+        /// ⚠️⚠️ IT IS REAL TIME IN THE GAME AND CAPTURED TIME UNDER A CAPTURE, AND THAT
+        /// SECOND CASE IS THE ONLY REASON THIS IS NOT JUST `Time.unscaledTime`.
+        /// `Time.captureDeltaTime` is what `BotBehaviourProbe` sets to make a match advance the
+        /// same slice of game time every frame, and it does NOT pin `Time.unscaledTime`, which
+        /// keeps running at whatever speed the machine renders. So a hitstop measured in
+        /// unscaled time lasts a number of FRAMES that depends on the machine, while
+        /// `Time.timeScale` is 0.05 for all of them: the wall clock gets back into the
+        /// simulation through the one door the fixed step did not close.
+        ///
+        /// ⚠️⚠️ AND IT WAS MEASURED, NOT SUSPECTED. `docs/TODO.md` § 10 recorded the probe
+        /// as deterministic on 2026-08-26 without ever running the same match twice. The first
+        /// sweep that did (§ 5) ran the shipped overclock rate at the start and the end of one
+        /// session and got **18 skills, 6 ultimates, 43 throws and 822 idle penalties** against
+        /// **37, 19, 83 and 464**: the same build, the same seed, the same fixed step, twice as
+        /// much game in the second run.
+        ///
+        /// ⚠️ A CAPTURE IS NEVER SET BY THE GAME. `Time.captureDeltaTime` defaults to 0 and
+        /// only a probe writes it, so every shipped path takes the `unscaledDeltaTime` branch
+        /// and behaves exactly as before.
+        /// </summary>
+        private static float _clock;
+
+        private static void Advance()
+        {
+            _clock += Time.captureDeltaTime > 0.0f ? Time.captureDeltaTime
+                                                   : Time.unscaledDeltaTime;
+        }
+
         public static bool Active => _active;
 
         /// <summary>Freeze. Re-entrant calls during a freeze are ignored rather than
         /// extending it — three attackers landing hits together must not stack into a stall.</summary>
         public static void Trigger()
+            => Trigger(Balance.HitstopDuration, Balance.HitstopTimeScale);
+
+        /// <summary>Tiered micro-hitstop for can hits and ultimates. Values are bounded so
+        /// presentation can never become a gameplay-length freeze.</summary>
+        public static void Trigger(float duration, float timeScale)
         {
             if (_active) return;
 
             _active = true;
             _restoreScale = Time.timeScale;
-            _until = Time.unscaledTime + Balance.HitstopDuration;
+            _until = _clock + Mathf.Clamp(duration, 0.02f, 0.08f);
 
-            Time.timeScale = Balance.HitstopTimeScale;
+            Time.timeScale = Mathf.Clamp(timeScale, 0.03f, 0.35f);
         }
 
         /// <summary>
@@ -53,7 +89,12 @@ namespace TumbangPreso
         /// </summary>
         public static void Step()
         {
-            if (!_active || Time.unscaledTime < _until) return;
+            // ⚠️ THE CLOCK ADVANCES EVEN WHEN NOTHING IS FROZEN, because `Trigger` reads it to
+            // set a deadline and a clock that only ran during a freeze would hand out deadlines
+            // in the past.
+            Advance();
+
+            if (!_active || _clock < _until) return;
 
             End();
         }

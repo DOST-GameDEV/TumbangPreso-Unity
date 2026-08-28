@@ -19,10 +19,19 @@ namespace TumbangPreso.Core
         // MATCH STRUCTURE — match_manager.gd, round_manager.gd
         // -------------------------------------------------------------------
 
+        /// <summary>Classic keeps the one-defence-turn street format.</summary>
         public const int Rounds = 4;
+
+        /// <summary>
+        /// Hero Strike runs two complete role rotations. Eight rounds gives every seat the
+        /// attacker and defender matchup twice, which is the requested competitive format,
+        /// while Classic remains the shorter four-round street game.
+        /// </summary>
+        public const int HeroStrikeRounds = 8;
         public const int PlayerCount = 4;
         public const float RoundTime = 90.0f;
         public const float IntermissionDuration = 3.0f;
+        public const float WarmupBufferDuration = 15.0f;
 
         // -------------------------------------------------------------------
         // SCORING — round_manager.gd
@@ -40,6 +49,116 @@ namespace TumbangPreso.Core
         public const float TagStunTime = 5.0f;
         public const float SabotageWindow = 2.5f;
         public const float ThrowRestoreCooldown = 1.25f;
+
+        // Tournament Anti-Camping & Anti-Stall Penalties
+        public const float TayaCampRadius = 2.2f;
+        public const float TayaCampClearRadius = 2.8f;
+        public const float TayaCampWarningTime = 3.0f;
+        public const float TayaCampGracePeriod = 5.0f;
+        public const int ScoreTayaCampPenalty = -5;
+
+        public const float SlipperUnretrievedWarningTime = 7.0f;
+        public const float SlipperUnretrievedGracePeriod = 10.0f;
+        public const int ScoreUnretrievedPenalty = -5;
+        public const float TournamentPenaltyInterval = 1.0f;
+
+        // ------------------------------------------------------------------
+        // Hero Strike ultimate economy. EVERY POINT IS EARNED BY AN ACT.
+        //
+        // ⚠️⚠️ `UltimatePassiveChargePerSecond` WAS DELETED ON 2026-08-25 AND MUST NOT COME
+        // BACK. It was 1.0/s against a max of 100, so a player who did nothing at all reached
+        // **90 of the 100 in a 90 s round**: the meter was a 100 second clock wearing an
+        // economy's clothes, and objective play was a bonus on top of a gift.
+        //
+        // `docs/VISION.md` § 4 lists **"Nothing may reward waiting"** as a competitive
+        // requirement and names the ultimate charge in the same breath, so the trickle was
+        // against the mode's own stated rules the whole time. 🧑 2026-08-25: *"make it so that
+        // ult has to be charged and isnt cooldown gated"*.
+        //
+        // ⚠️ THE COST IS PER HERO NOW, at `HeroKit.UltimateCost`, and ranges 90 to 150 against
+        // these earnings. `HeroKit.UltimateMax` 100 is only the meter's full scale.
+        // `docs/Hero_Strike_Balance.md` § 3.1 has both tables and the reasoning for each price.
+        // ------------------------------------------------------------------
+
+        // ⚠️⚠️ THE METER COUNTS EVENTS NOW, NOT POINTS. 🧑 2026-08-27: *"wtf how many points or
+        // charges to ult does downing can give? i want downing can and tayaing to only give one
+        // point for the charges"*, and then *"i wanted like 10-20 charges required on ult
+        // depending on impact"*. A knockdown used to be 25 and a tag 20 against costs of 90 to
+        // 150, so the only way to answer "how close am I" was to divide two numbers nothing on
+        // screen ever showed. **One knockdown is one charge. One tag is one charge.** An ultimate
+        // costs 10 to 20 of them, ranked by how much it swings a round.
+        //
+        // ⚠️⚠️ THIS IS A REAL PACING CHANGE AND NOT ONLY A RESCALE, SO HERE IS THE ARITHMETIC IT
+        // HAS TO BE JUDGED AGAINST. The old economy bought the most expensive ultimate for six
+        // knockdowns; the new one asks twenty. A live attacker earns roughly
+        //
+        //     1 to 2 knockdowns        1.0 to 2.0
+        //     3 to 4 retrievals        1.5 to 2.0
+        //     5 to 6 throws            0.8 to 0.9
+        //     ------------------------------------
+        //     about 4.3 charges per 90 s round
+        //
+        // so Nemu's 10 lands after about two and a half rounds and Zack's 20 after about four and
+        // a half. Over Hero Strike's eight rounds that is between one and three ultimates per
+        // seat per match, against roughly three to five before. **If a match measures fewer than
+        // one ultimate per seat, this is the number to move, and moving the COST is the honest
+        // lever rather than inflating what an act pays.** `BotBehaviourProbe` prints ultimates
+        // per match and `docs/TODO.md` § 38 carries the measurement.
+        //
+        // ⚠️ THE RATIOS BETWEEN THE FOUR EARNINGS ARE UNCHANGED, except the tag. Retrieval was
+        // 12/25 of a knockdown and is 0.5; a throw was 4/25 and is 0.15. The tag goes from 0.8 of
+        // a knockdown to a full 1.0 because he asked for both objectives to be worth one: a 25
+        // per cent raise to the taya's only source of charge, for one round in four.
+
+        /// <summary>The objective. ONE CHARGE, and everything else is priced against it.</summary>
+        public const float UltimateChargeLataKnock = 1.0f;
+
+        /// <summary>
+        /// The taya's only way to earn, and now worth exactly what the objective is.
+        ///
+        /// ⚠️ 1.0, UP FROM THE 0.8 A STRAIGHT RESCALE WOULD HAVE GIVEN. Asked for by name, and
+        /// defensible on its own: an attacker has three ways to earn charge and the defender has
+        /// this one, for one round in four.
+        /// </summary>
+        public const float UltimateChargeTag = 1.0f;
+
+        /// <summary>
+        /// ⚠️⚠️ IT PAYS THE ACT THE WHOLE GAME IS BUILT AROUND. `docs/VISION.md` § 0: *"The
+        /// tension is the retrieval, not the throw. Throwing is safe and free; going back in for
+        /// your tsinelas is the only moment you can be caught."* Until 2026-08-25 the retrieval
+        /// earned NOTHING toward an ultimate and the safe act earned 8, which paid the two halves
+        /// of the game in exactly the wrong order.
+        ///
+        /// ⚠️ HALF A KNOCKDOWN, which is what 12 against 25 was.
+        /// </summary>
+        public const float UltimateChargeOwnSlipperRetrieved = 0.5f;
+
+        /// <summary>
+        /// ⚠️ THE SMALLEST EARNING IN THE GAME, for the reason above. A throw costs nothing and
+        /// risks nothing, so it is the one act that should pay least. It still pays something,
+        /// because a round where nobody throws is not a round.
+        ///
+        /// ⚠️ 0.15 OF A KNOCKDOWN, which is what 4 against 25 was.
+        /// </summary>
+        public const float UltimateChargeLegalThrow = 0.15f;
+
+        // Pektus (Curve Spin) Throwing
+        public const float PektusCurveStrength = 14.0f;
+        public const float MaxPektusSpin = 1.0f;
+        /// <summary>
+        /// How far above a body's feet a resting tsinelas may sit and still be picked up.
+        ///
+        /// ⚠️ IT IS UNDER PickupRadius ON PURPOSE. `Slipper.CanBeGrabbedBy` measures a 3D
+        /// distance from the grabber's transform, which is at their feet, so a slipper this
+        /// high has already spent almost the whole 1.4 m budget on height alone and can only
+        /// be reached by standing exactly underneath it. Anything higher is out of play, and
+        /// a piece of ammunition that is out of play has to be given back rather than lost.
+        /// </summary>
+        public const float SlipperMaxRestReach = 1.2f;
+
+        public const float PektusBankSpinThreshold = 0.55f;
+        public const float PektusBankRestitution = 0.62f;
+        public const int MaxScoringBanks = 1;
 
         // -------------------------------------------------------------------
         // MOVEMENT AND THE ARENA — character_base.gd
@@ -159,12 +278,50 @@ namespace TumbangPreso.Core
         public const float ChargeFullTime = 2.5f;
         public const float ChargeMinPower = 0.35f;
         public const float ThrowLockTime = 1.25f;
-        public const float PickupRadius = 1.4f;
+        /// <summary>How close a body's FEET have to be to a resting tsinelas to pick it up.
+        ///
+        /// ⚠️⚠️ 1.75, UP FROM 1.40 ON 2026-08-26. 🧑, off the 4.69 player: *"cant pick up any
+        /// slipper"*, in every mode. The mechanism was not broken — `SoloPracticeTests` puts a
+        /// loose tsinelas at a seat's own feet and the grab connects — so what he was reporting
+        /// is REACH, and the geometry says he is right. This is a 3D distance measured from the
+        /// motor's transform, which sits at the SOLE OF THE FOOT, while the camera is at about
+        /// 1.6 m and pitched down. At 1.40 m a tsinelas that is legally grabbable sits near the
+        /// BOTTOM EDGE of the frame; anything the player can see at the crosshair is three or
+        /// four metres out and refuses silently.
+        ///
+        /// ⚠️ 1.75 IS BOUNDED BY THE HAZARD ARITHMETIC AND NOT BY FEEL. `docs/TODO.md` § 12.2
+        /// turns on this radius being SMALLER than the widest trip-hazard footprint of 2.60 m,
+        /// which is what makes a swallowed tsinelas unreachable and the ejector necessary. 1.75
+        /// keeps that true with 0.85 m to spare, so nothing in that entry changes.
+        ///
+        /// ⚠️ AND THE REAL FIX IS THE PROMPT, NOT THE NUMBER. `Hud.UpdatePickupPrompt` now says
+        /// when a tsinelas is in reach, because a silent refusal is indistinguishable from a
+        /// broken key and that is exactly how this was reported.</summary>
+        public const float PickupRadius = 1.75f;
         public const float MuzzleForward = 0.15f;
 
         public const float LaunchSpeed = 18.5f;
         public const float SlipperHitRadius = 0.23f;
         public const float MaxFlightTime = 6.0f;
+
+        /// <summary>
+        /// The total time a tsinelas may spend off the ground, deflections included.
+        ///
+        /// ⚠️⚠️ `MaxFlightTime` CANNOT DO THIS JOB, BECAUSE A DEFLECT RESETS IT. Bouncing off a
+        /// body or off the can restarts the per-arc clock on purpose: the new arc genuinely is
+        /// a new flight and deserves its own budget. The consequence nobody wrote down is that a
+        /// slipper which deflects again before that budget runs out never runs it out at all. A
+        /// tsinelas falling onto somebody standing still gets lifted by `DeflectLift`, comes
+        /// straight back down onto them, and hovers there for the rest of the round. Its owner
+        /// is then fined -5 a second under the anti-stall rule for failing to fetch a slipper
+        /// that is not on the ground to be fetched.
+        ///
+        /// ⚠️ IT IS THE SAME 6 SECONDS AS THE PER-ARC CAP RATHER THAN A MULTIPLE. Real throws
+        /// resolve in about a second and a half, so six seconds of accumulated air is already
+        /// far beyond anything the game asks for; a larger number would only mean a longer
+        /// stall before the same recovery.
+        /// </summary>
+        public const float MaxAirborneTime = 6.0f;
         public const float ThrowerIgnoreTime = 0.25f;
 
         /// <summary>
@@ -330,5 +487,223 @@ namespace TumbangPreso.Core
 
         /// <summary>How often a networked slipper's transform is sent.</summary>
         public const float SlipperSyncInterval = 0.25f;
+
+        // -------------------------------------------------------------------
+        // GETTING BACK UP
+        //
+        // 🧑, 2026-08-25, on the street trip hazards: *"like maybe places u can trip on?
+        // then fall down animation plays and u have to spam a button to get back up"*.
+        //
+        // ⚠⚠ A TRIP WAS THE ONLY DEAD TIME IN THE GAME A PLAYER COULD NOT ANSWER. The knockdown
+        // and the get-up already shipped: `StreetTripHazard` calls `CharacterMotor.ApplyTrip`,
+        // `CharacterAnimator` plays the knockdown while `TripLeft > 0.7` and the get-up under it,
+        // and the stagger runs for the same span. Then the timer ran down on its own and no
+        // input touched it, so 2.5 s on the floor was 2.5 s of watching. Every other status in
+        // this game is either short, self-inflicted or answered by a decision.
+        //
+        // ⚠⚠ IT IS A FLOOR, NOT A RACE, AND THAT IS THE WHOLE BALANCE OF IT. Rewarding raw
+        // press rate would hand the round to whoever owns a mouse with a turbo switch, and
+        // `docs/VISION.md` § 4 aims Hero Strike at a bracket. So: presses are RATE-CAPPED, each
+        // one buys a fixed slice, and no amount of mashing takes the fall below `MinTripDown`.
+        // The gap a mash can close is therefore bounded and knowable: from 2.50 s down to 0.90 s.
+        // -------------------------------------------------------------------
+
+        /// <summary>Seconds a single accepted press removes from a trip.
+        ///
+        /// ⚠ SOLVED, NOT PICKED. `StreetTripHazard` sets `TripDuration` to 2.50 s and
+        /// `MinTripDown` is 0.35 s, so a mash has **2.15 s** to remove, which is 6.1 presses at
+        /// this value: 0.61 s of mashing at the 10 Hz cap, for a fall of 0.96 s answered
+        /// perfectly. Raised from 0.20 with `MinTripDown` on 2026-08-26; at 0.20 the same slack
+        /// wanted 10.75 presses, which is 1.08 s of mashing and a 1.43 s fall, and it left the
+        /// per-press value doing the work the floor should have been doing.
+        ///
+        /// ⚠⚠ RAISED FROM 0.13 TO 0.20 ON 2026-08-25, AND THE OLD VALUE WAS SOLVED AGAINST THE
+        /// WRONG QUANTITY. 0.13 was chosen so the saving "lands comfortably inside the fall",
+        /// which it did: 1.60 / 0.13 = 12.3 presses at 0.10 s is 1.23 s of mashing. But what the
+        /// player experiences is not the mashing window, it is the WHOLE TIME ON THE FLOOR, and
+        /// that is the mash plus the floor: 1.23 + 0.90 = **2.13 s**. 🧑 asked for a fall you can
+        /// answer "in 1-2 seconds", and 2.13 is outside that.
+        ///
+        /// 0.20 s takes the same 1.60 s off in 8 presses, which is 0.80 s of mashing, for a total
+        /// of 0.80 + 0.90 = **1.70 s** on the floor. Still eight real presses, so it remains a
+        /// burst rather than two taps, and the anti-turbo bound in `MashCooldown` is untouched.
+        ///
+        /// ⚠ THE FLOOR IS NOT THE LEVER AND MUST NOT BECOME ONE. `MinTripDown` is pinned at
+        /// 0.90 by the knockdown clip, as its own note explains, so the only honest way to
+        /// shorten a fall is to buy the slack faster.</summary>
+        /// ⚠️⚠️ 0.22, DOWN FROM 0.35 ON 2026-08-26, BECAUSE 0.35 MADE THE MASH A TAP. 🧑, off
+        /// the 4.69 player: *"mash is weird now, I js have to click it twice to get up im not fr
+        /// mashing"*. He was measuring correctly and the arithmetic agrees: at 0.35 the 2.15 s
+        /// slack was 6.1 presses, and two of them plus a second and a half of passive bleed had
+        /// him up. A six-press burst is short enough that the passive rate is doing most of the
+        /// work in any real fall, which is the same complaint as *"it automatically resolves"*
+        /// wearing different clothes.
+        ///
+        /// At 0.22 the slack is **9.8 presses**, which is 0.98 s of hammering at the 10 Hz cap
+        /// and 1.33 s on the floor in total. That is a burst you have to commit to, it is inside
+        /// the 1 to 2 s he asked a fall to last, and two taps now buy 20 per cent of the meter
+        /// rather than a third of it.
+        public const float MashRecoverPerPress = 0.22f;
+
+        /// <summary>Shortest gap between two presses that both count.
+        ///
+        /// ⚠ THIS IS THE ANTI-TURBO BOUND AND IT IS THE REASON THE MASH IS FAIR. 10 Hz is
+        /// comfortably above what a human sustains on a burst and comfortably below what a macro
+        /// or a turbo-fire mouse does, so the ceiling is reachable by hand and cannot be beaten
+        /// by hardware.</summary>
+        public const float MashCooldown = 0.10f;
+
+        /// <summary>How long a trip lasts however hard it is answered.
+        ///
+        /// ⚠ IT IS THE GET-UP ANIMATION'S LENGTH AND NOTHING ELSE, AND IT WAS 0.90 FOR A
+        /// REASON THAT STOPPED BEING TRUE. `CharacterAnimator` switches from the knockdown to
+        /// the get-up at this value and TIME-SCALES the get-up clip to fill it exactly, so the
+        /// get-up lands as control returns. The old note said 0.90 was "pinned by the knockdown
+        /// clip"; the knockdown is now a separate held phase that ENDS here, so the only thing
+        /// this has to be long enough for is the get-up itself. Every clip on every rig measures
+        /// **0.333 s**, so 0.35 plays it at 0.95x, which is its own speed.
+        ///
+        /// ⚠⚠ AND 0.90 WAS THE "PROGRESS PAUSES" BUG. 🧑, 2026-08-26, off the built player:
+        /// *"if i mash it, the progress pauses"*. It was not a rendering fault. `MashRecover`
+        /// clamps at this floor, so with 0.90 a fall of 2.50 s had only 1.60 s a press could buy
+        /// and **0.90 s, over a third of the whole event, in which every further press was
+        /// refused**. A fast masher spent that 0.90 s hammering a button that did nothing, with
+        /// the bar crawling at the passive rate. At 0.35 the un-mashable tail is the get-up
+        /// animation and nothing else: presses count for **86 per cent** of the fall.
+        ///
+        /// ⚠ THE SWITCH USED TO BE A SEPARATE 0.70 TYPED INTO `CharacterAnimator.Choose`, which
+        /// meant part of every fall was a state with no name: the mash refused, the HUD saying
+        /// GETTING UP, and the body still face down. One number, one meaning.</summary>
+        public const float MinTripDown = 0.35f;
+
+        /// <summary>How long a fall may last with NOBODY pressing anything, after which the
+        /// body is released whatever the mash meter says.
+        ///
+        /// ⚠️⚠️ IT REPLACES `TripPassiveDecayRate`, WHICH WAS DELETED ON 2026-08-26, AND THE
+        /// DELETION IS THE FIX. That constant bled the fall away on its own at 0.60x, so a
+        /// player who pressed nothing still stood up in 3.93 s and the get-up meter was not the
+        /// thing that ended the fall. 🧑, off the 4.70 player: *"u randomly get up after set amt
+        /// of time, i dont have to actually mash it"* and *"i want it so that i can only get up
+        /// when ive reached the end of the mashing shit bcz sometimes i get up with it still at
+        /// middle or when i only clicked once"*. Both sentences describe a clock, and no value
+        /// of a decay RATE can answer them: while a rate above zero exists, time alone ends the
+        /// fall and the meter is decoration on a countdown. The three previous passes at this
+        /// (§ 12.1, § 13.1, § 14.1 in `docs/TODO.md`) each retuned the rate and each left that
+        /// property standing.
+        ///
+        /// ⚠️⚠️ SO THE RULE IS NOW ONE SENTENCE: **above `MinTripDown` only an accepted press
+        /// moves the fall.** The meter is the gate rather than a readout, and
+        /// `CharacterMotor.MashRemoved` reaching the mashable slack is the ONLY thing that puts
+        /// a player on their feet inside this window.
+        ///
+        /// ⚠️ THIS IS A STRANDING GUARD, NOT A SECOND WAY UP, and it is set far enough out that
+        /// it can never be the better option. A perfectly answered fall is 1.33 s; this is 5.0,
+        /// which is **3.8x** that and **5.1x** the 0.98 s mash window. Nobody waits five seconds
+        /// on the road to save ten presses. What it does buy is the property the old note on
+        /// `TripPassiveDecayRate` was right about: a trip that ONLY a press can clear strands a
+        /// player whose hands left the keyboard, and hands a griefing tool to anything that can
+        /// re-apply one.
+        ///
+        /// ⚠️⚠️ AND WHEN IT FIRES IT FILLS THE METER. `CharacterMotor` credits the whole slack
+        /// to `MashRemoved` on the way out, so the invariant a player can see holds without
+        /// exception: **you never stand up with the bar part-full.** Without that line this
+        /// constant would reintroduce, once every five seconds, the exact frame he photographed.
+        /// </summary>
+        public const float TripAutoRecoverSeconds = 5.0f;
+
+        /// <summary>Seconds after a trip ends during which no hazard may start another one.
+        ///
+        /// ⚠⚠ WITHOUT IT THE MASH IS A TRAP AND THE HAZARD FIELD IS A LOOP. The mash is bound
+        /// to Jump (`CharacterMotor`), so the instant `_tripLeft` reaches 0 the same hammering
+        /// becomes real jumps. A jump gives the body well over `StreetTripHazard`'s
+        /// `MinSpeedToTrip` of 1.0 m/s while it is still standing on or beside the hazard, and
+        /// the hazard trips it again. `StreetTripHazard`'s own `Cooldown` cannot answer this
+        /// because it is PER HAZARD: a neighbouring one re-trips with no wait at all, which on
+        /// Ilalim ng Tulay meant two hazards 2.6 m apart could pass a player back and forth.
+        ///
+        /// ⚠ SOLVED AGAINST THE FOOTPRINT, NOT PICKED. An attacker moves at
+        /// `Speed` * `AttackerSpeedScale` = 3.45 m/s, so 1.20 s carries them 4.14 m. The largest
+        /// hazard footprint on the map is 2.60 m, so the grace covers walking clear of the thing
+        /// that felled you from its centre, with margin.
+        ///
+        /// ⚠ IT LIVES ON THE MOTOR, NOT ON THE HAZARD, so every hazard present and future
+        /// respects one window rather than each keeping its own.</summary>
+        public const float TripGraceAfterGetUp = 1.20f;
+
+        // -------------------------------------------------------------------
+        // § MASHING OUT OF AN ABILITY STUN
+        //
+        // ⚠️⚠️ THIS APPLIES TO ABILITY STUNS ONLY AND DELIBERATELY NOT TO THE TAYA'S TAG.
+        // 🧑 2026-08-26: *"for abilities that freeze or stun enmies ... i want them to go to TPP
+        // and to have a button mashing thing to get unstunned or unfrozen (same as when u trip)
+        // but maybe diff UI and effect"*. The sentence names abilities, and the distinction is
+        // load-bearing rather than a narrow reading: `TagStunTime` is 5.0 s and the tag is the
+        // ONE scoring verb a defender has (`docs/VISION.md` § 4). Letting an attacker hammer out
+        // of it would take the single thing the taya can do and halve it, in the mode aimed at a
+        // bracket. A tag is answered by not being caught.
+        //
+        // ⚠️ SO THE TWO STATUSES NOW READ DIFFERENTLY ON PURPOSE, WHICH IS THE WHOLE POINT OF
+        // SPLITTING THEM. A tag drains the body's colour and cannot be fought (§ THE CAUGHT MARK
+        // in `Toon.shader`). An ability stun coats the body in the caster's ELEMENT and can be.
+        // One of them is a rule, the other is a fight.
+        //
+        // ⚠️ IT REUSES `MashCooldown`, NOT A SECOND RATE CAP. The 10 Hz anti-turbo bound is the
+        // reason the trip mash is fair against a macro, and there is no argument for a different
+        // ceiling here: it is the same hand on the same key.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// How many accepted presses break a stun, when the ability does not say otherwise.
+        ///
+        /// ⚠️⚠️ THE COST IS PER ABILITY, NOT ONE GLOBAL SLICE, AND THAT WAS ASKED FOR DIRECTLY.
+        /// 🧑 2026-08-26: *"maybe chaneg the amt needed to be button mash for each skill? make it
+        /// dependent on how hard the skill is supposed to hit"*. So the tuning knob is a PRESS
+        /// COUNT that each ability declares, and the seconds a press buys are DERIVED from it:
+        ///
+        ///     perPress = (stunTotal - MinStunDown) / breakPresses
+        ///
+        /// ⚠️ IT IS EXPRESSED AS PRESSES RATHER THAN AS SECONDS-PER-PRESS BECAUSE PRESSES ARE
+        /// THE THING BEING BALANCED. "Nemu's phase grab takes four presses, Cheska's nova takes
+        /// nine" is a sentence somebody can hold in their head and tune against. A table of
+        /// per-press durations says the same thing in units nobody experiences, and it silently
+        /// changes meaning whenever a stun's DURATION is retuned: the same 0.30 buys half as
+        /// much of a 6 s stun as of a 3 s one. Deriving from the total keeps a press count
+        /// meaning the same thing whatever the duration is.
+        ///
+        /// ⚠️ 6 IS THE MIDDLE OF THE RANGE, NOT A CEILING. `Hero_Strike_Balance.md` carries the
+        /// per-ability numbers; light staggers should sit at 3 or 4 and an ultimate's hold at 9
+        /// or more. This constant is only what an ability that never said gets.
+        /// </summary>
+        public const int StunBreakPressesDefault = 6;
+
+        /// <summary>
+        /// The bounds a per-ability press count is clamped into.
+        ///
+        /// ⚠️⚠️ THE FLOOR EXISTS SO A STUN CANNOT BE TAPPED OFF AND THE CEILING SO IT CANNOT
+        /// BECOME UNANSWERABLE. At the 10 Hz `MashCooldown`, 2 presses is 0.2 s of input, which
+        /// is inside the reaction time of noticing you were stunned at all: that is not a fight,
+        /// it is a formality. 14 presses is 1.4 s of sustained hammering, which is already longer
+        /// than the perfectly answered trip and is as far as this should ever go before the
+        /// honest answer is a longer `MinStunDown` instead.
+        ///
+        /// ⚠️ CLAMPED RATHER THAN ASSERTED, deliberately. A kit author typing 0 should get a
+        /// playable stun and a balance review, not a division by zero in the middle of a match.
+        /// </summary>
+        public const int StunBreakPressesMin = 3;
+
+        public const int StunBreakPressesMax = 14;
+
+        /// <summary>The shortest an ability stun can be made by mashing perfectly.
+        ///
+        /// ⚠⚠ IT IS A FLOOR AND IT IS WHAT KEEPS A COOLDOWN WORTH SPENDING. Without one, a
+        /// player with fast hands would clear a stun in three presses and every control ability
+        /// in Hero Strike would stop being a control ability. 1.20 s is long enough that the
+        /// caster still gets the opening they paid for and short enough that the victim is not
+        /// spectating. It is the same argument `MinTripDown` makes, at a higher number because
+        /// the thing being escaped cost somebody a cooldown.
+        ///
+        /// ⚠ AND IT IS ABOVE `Balance.MashCooldown` BY MORE THAN AN ORDER OF MAGNITUDE, so the
+        /// floor can never be reached by a single lucky press inside one frame's window.</summary>
+        public const float MinStunDown = 1.20f;
     }
 }
