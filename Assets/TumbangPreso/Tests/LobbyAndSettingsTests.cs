@@ -708,6 +708,49 @@ namespace TumbangPreso.Tests
         }
 
         /// <summary>
+        /// ⚠️⚠️ A VOLUME SLIDER MUST DO SOMETHING AUDIBLE IN ITS TOP HALF. 🧑 2026-08-29: *"audio
+        /// in settings is also broken, even when i lower its still very very loud"*. The wiring
+        /// was correct and the CURVE was not: amplitude is not loudness, so half the groove was
+        /// -6 dB and the shipped default of 0.8 was -1.9 dB, which is inaudible as a change.
+        /// </summary>
+        [Test]
+        public void HalfTheVolumeSliderIsAboutHalfTheLoudnessRatherThanSixDecibels()
+        {
+            // The ends are fixed points: full is full, and off is silent. Anything else would
+            // make this a retune of the game's loudness rather than a fix to the control.
+            Assert.AreEqual(1.0f, Settings.GameSettings.Gain(1.0f), 0.0001f);
+            Assert.AreEqual(0.0f, Settings.GameSettings.Gain(0.0f), 0.0001f);
+
+            Assert.AreEqual(0.25f, Settings.GameSettings.Gain(0.5f), 0.0001f,
+                "half the knob should be a quarter of the amplitude, which is about half as loud");
+
+            // Monotonic, so dragging down never gets louder.
+            float previous = -1.0f;
+            for (int i = 0; i <= 20; i++)
+            {
+                float g = Settings.GameSettings.Gain(i / 20.0f);
+                Assert.Greater(g, previous);
+                previous = g;
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ THE TWO FADERS CURVE SEPARATELY AND THEN MULTIPLY, which is what a mixer does.
+        /// Curving their product would make each fader's feel depend on where the other sits.
+        /// </summary>
+        [Test]
+        public void TheSfxFaderSitsUnderTheMasterFader()
+        {
+            var s = new Settings.GameSettings { MasterVolume = 0.5f, SfxVolume = 0.5f };
+
+            Assert.AreEqual(0.0625f, s.SfxGain, 0.0001f);
+
+            s.MasterVolume = 0.0f;
+            Assert.AreEqual(0.0f, s.SfxGain, 0.0001f,
+                "master at zero must silence the sfx bus whatever the sfx fader says");
+        }
+
+        /// <summary>
         /// ⚠️⚠️ THE BEACON ID IS WHAT STOPS A HOST FINDING ITSELF, so it has to survive the round
         /// trip intact. 🧑 2026-08-29: *"na kikita sarili sa lobby (join a game)"*. A host
         /// broadcasts to every interface and its own listener is bound to `IPAddress.Any`, so it

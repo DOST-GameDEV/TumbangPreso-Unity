@@ -121,7 +121,7 @@ namespace TumbangPreso.UI
             {
                 var s = Settings.SettingsStore.Current;
                 AudioSource.PlayClipAtPoint(_sting, Vector3.zero,
-                                            Mathf.Clamp01(s.MasterVolume * s.SfxVolume));
+                                            Mathf.Clamp01(s.SfxGain));
             }
 
             if (_clip != null)

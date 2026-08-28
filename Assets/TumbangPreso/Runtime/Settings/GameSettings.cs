@@ -46,11 +46,62 @@ namespace TumbangPreso.Settings
         // AUDIO
         // -------------------------------------------------------------------
 
+        /// <summary>
+        /// Where the three sliders sit, 0 to 1. ⚠️ THIS IS THE KNOB POSITION, NOT A GAIN. Read
+        /// <see cref="MasterGain"/> before multiplying any of these into an `AudioSource.volume`.
+        /// </summary>
         public float MasterVolume = DefaultVolume;
         public float SfxVolume = DefaultVolume;
         public float MusicVolume = DefaultVolume;
 
         public const float DefaultVolume = 0.8f;
+
+        /// <summary>
+        /// Turns a slider POSITION into an amplitude.
+        ///
+        /// ⚠️⚠️ A VOLUME SLIDER WIRED STRAIGHT TO AMPLITUDE FEELS BROKEN, AND THAT IS 🧑
+        /// 2026-08-29: *"audio in settings is also broken, even when i lower its still very very
+        /// loud"*. Nothing was broken in the wiring: the slider is authored 0 to 1, the setter
+        /// writes on every value change, and every one of the five places that plays a sound
+        /// reads the value live. The fault is the CURVE. Amplitude is not loudness. Half the
+        /// slider is half the amplitude, which is -6 dB, which a listener hears as "slightly
+        /// quieter"; the default sits at 0.8, which is -1.9 dB, so the top third of the groove
+        /// does almost nothing audible and the whole control reads as inert.
+        ///
+        /// ⚠️ SQUARING IS THE FIX AND IT IS THE STANDARD ONE. Perceived loudness goes
+        /// roughly as amplitude to the 0.6, so squaring the position lands close to
+        /// proportional: the knob at 0.5 is a quarter of the amplitude (-12 dB, about half as
+        /// loud), at 0.2 it is 0.04 (-28 dB, nearly silent), and at 1.0 it is still exactly 1.0,
+        /// so nothing gets QUIETER at full than it was before this change. The default 0.8 moves
+        /// from -1.9 dB to -3.9 dB, which is the only thing anybody will notice on an untouched
+        /// install, and it is the direction that makes the rest of the groove usable.
+        ///
+        /// ⚠️ ONE CONVERSION, READ BY ALL FIVE PLAYERS. `AudioDirector`, `VoiceDirector`,
+        /// `MusicDirector`, `BootSting` and `SplashScreen` each multiplied the raw fields
+        /// together in their own line. Five copies of a curve is five places for the next one to
+        /// be missed, and the boot sting and the splash are exactly the two that play before a
+        /// player can reach the settings panel to turn them down.
+        /// </summary>
+        public static float Gain(float sliderPosition)
+        {
+            float p = Mathf.Clamp01(sliderPosition);
+            return p * p;
+        }
+
+        /// <summary>The master fader's amplitude. See <see cref="Gain"/>.</summary>
+        public float MasterGain => Gain(MasterVolume);
+
+        /// <summary>
+        /// What a sound effect is multiplied by: the sfx fader under the master fader.
+        ///
+        /// ⚠️ THE TWO FADERS ARE CURVED SEPARATELY AND THEN MULTIPLIED, which is what a mixer
+        /// does. Curving their product instead would make each fader's feel depend on where the
+        /// other one happens to sit.
+        /// </summary>
+        public float SfxGain => Gain(SfxVolume) * Gain(MasterVolume);
+
+        /// <summary>The music bed's amplitude, on the same rule as <see cref="SfxGain"/>.</summary>
+        public float MusicGain => Gain(MusicVolume) * Gain(MasterVolume);
 
         // -------------------------------------------------------------------
         // CAMERA

@@ -577,6 +577,22 @@ namespace TumbangPreso.UI
                 }
 
                 MenuKit.FitBlock(line, LineHeight * 2.0f);
+
+                // ⚠️⚠️ AND IT IS CLIPPED TO WHAT IT WAS JUST FITTED TO. 🧑 2026-08-29: *"nag
+                // ooverflow yung text sa lobby chat"*. `MenuKit.FitBlock` sets
+                // `verticalOverflow = Overflow` and then SHRINKS the type until the block fits
+                // the cap it was given, which works right up until the font hits
+                // `MenuKit.MinReadableUnits` 18 and cannot go lower. `MatchRpc.MaxChatLength` is
+                // 120 characters, and 120 characters at 18 units in a 560 px panel is three
+                // lines against a two-line slot: the `LayoutElement` then claims 52 px while the
+                // label DRAWS 78, and legacy `Text` on Overflow happily paints the remainder
+                // outside the plate, over the START button underneath it.
+                //
+                // ⚠️ CLIPPED RATHER THAN GROWN, because the plate is a fixed size by design and
+                // the lobby deliberately shows only `LobbyVisibleLines` of the log. Nothing is
+                // lost: the whole line is in the scrollable history behind the click, which is
+                // on `Overflow` inside a viewport and is the right place for it.
+                line.verticalOverflow = VerticalWrapMode.Truncate;
             }
         }
 

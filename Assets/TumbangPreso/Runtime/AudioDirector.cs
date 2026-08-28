@@ -357,8 +357,9 @@ namespace TumbangPreso
         /// rather than after a scene change.</summary>
         private static float SfxScale()
         {
-            var s = Settings.SettingsStore.Current;
-            return s.SfxVolume * s.MasterVolume;
+            // ⚠️ `SfxGain`, NOT the two raw fields multiplied. See `GameSettings.Gain`: a
+            // slider wired straight to amplitude reads as inert over its top third.
+            return Settings.SettingsStore.Current.SfxGain;
         }
 
         /// <summary>Call from a probe at the end of a match run.</summary>

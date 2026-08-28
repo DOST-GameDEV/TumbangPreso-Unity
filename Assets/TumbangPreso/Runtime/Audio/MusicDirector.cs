@@ -244,7 +244,7 @@ namespace TumbangPreso.Audio
             // `volume` from the lift routine. This method is the one place a music level is
             // computed and `Apply` runs every frame; anything that writes the source directly is
             // overwritten on the next tick, which is how the duck was nearly lost once already.
-            return BedLevel * s.MusicVolume * s.MasterVolume * _duckScale * _liftScale;
+            return BedLevel * s.MusicGain * _duckScale * _liftScale;
         }
 
         private void Update()

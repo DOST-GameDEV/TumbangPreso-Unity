@@ -112,13 +112,14 @@ namespace TumbangPreso.UI
             headerHlg.childForceExpandWidth = false;
             Height(headerRow, 26);
 
-            _title = Label(headerRow.transform, "Title", 22, UiTheme.Amber, TextAnchor.MiddleLeft);
+            _title = Label(headerRow.transform, "Title", 24, UiTheme.Amber, TextAnchor.MiddleLeft);
             _title.fontStyle = FontStyle.Bold;
             _title.text = "HERO POWERS";
             var titleLe = _title.gameObject.AddComponent<LayoutElement>();
             titleLe.flexibleWidth = 1.0f;
 
-            _hint = Label(headerRow.transform, "Hint", 15, UiTheme.CreamMuted, TextAnchor.MiddleRight);
+            _hint = Label(headerRow.transform, "Hint", MenuKit.MinReadableUnits, UiTheme.Cream,
+                          TextAnchor.MiddleRight);
             _hint.text = "HOLD [TAB] TO INSPECT";
             var hintLe = _hint.gameObject.AddComponent<LayoutElement>();
             hintLe.minWidth = 220;
@@ -213,7 +214,8 @@ namespace TumbangPreso.UI
             chipRt.anchoredPosition = new Vector2(-1, 1);
             chipRt.sizeDelta = new Vector2(24, 18);
 
-            card.Key = Label(chipGo.transform, "Key", 15, UiTheme.Cream, TextAnchor.MiddleCenter);
+            card.Key = Label(chipGo.transform, "Key", MenuKit.MinReadableUnits, UiTheme.Cream,
+                             TextAnchor.MiddleCenter);
             card.Key.fontStyle = FontStyle.Bold;
             MenuKit.Stretch(card.Key.rectTransform);
 
@@ -229,7 +231,7 @@ namespace TumbangPreso.UI
             var nameStackLe = nameStack.AddComponent<LayoutElement>();
             nameStackLe.flexibleWidth = 1.0f;
 
-            card.Name = Label(nameStack.transform, "Name", 19, UiTheme.Cream, TextAnchor.MiddleLeft);
+            card.Name = Label(nameStack.transform, "Name", 21, UiTheme.Cream, TextAnchor.MiddleLeft);
             card.Name.fontStyle = FontStyle.Bold;
             Height(card.Name.gameObject, 22);
 
@@ -243,23 +245,47 @@ namespace TumbangPreso.UI
             metaHlg.spacing = 6.0f;
             Height(metaRow, 18);
 
-            card.Kind = Label(metaRow.transform, "Kind", 14, UiTheme.Amber, TextAnchor.MiddleLeft);
+            card.Kind = Label(metaRow.transform, "Kind", MenuKit.MinReadableUnits, UiTheme.Amber,
+                              TextAnchor.MiddleLeft);
             card.Kind.fontStyle = FontStyle.Bold;
 
-            card.Meta = Label(metaRow.transform, "Meta", 14, UiTheme.Highlight, TextAnchor.MiddleLeft);
+            card.Meta = Label(metaRow.transform, "Meta", MenuKit.MinReadableUnits, UiTheme.Highlight,
+                              TextAnchor.MiddleLeft);
             card.Meta.fontStyle = FontStyle.Bold;
 
+            // ⚠️⚠️ EVERY LABEL ON THIS PANEL IS AT `MenuKit.MinReadableUnits` OR ABOVE AS OF
+            // 2026-08-29, AND FIVE OF THEM WERE BELOW IT. 🧑: *"mahirap basahin yung text sa
+            // skill description"*. The body was 15 units, the kind and the cooldown 14, the key
+            // chip and the header hint 15, against a floor of 18 that `AspectRatioProbes`
+            // already asserts for exactly this reason and that `LobbyChrome.BuildIdentity`'s note
+            // cites by name when it rejected a 14-unit caption for being unreadable.
+            //
+            // ⚠️⚠️ AND THIS PANEL IS THE WORST PLACE IN THE GAME TO HAVE BEEN UNDER IT.
+            // `docs/VISION.md` § 3 gives the ability text exactly three homes: LEARN on character
+            // select, RECALL behind the hold key, PLAY on the deck. The deck deliberately carries
+            // no sentences at all, so this tray is where a player is meant to actually READ what
+            // a power does. Prose nobody can read at the one place it is allowed to be prose
+            // makes the whole three-layer answer fail at its middle layer.
+            //
+            // ⚠️ THE HINT ALSO CAME OFF `CreamMuted`. Muted is for a label whose job is to be
+            // ignorable; this one tells you which key you are holding to keep the panel open.
+            //
+            // ⚠️ `minHeight` MOVED WITH THE TYPE, 90 to 108. The note below says the card is tall
+            // enough for four lines AT THIS SIZE, which stopped being true the moment the size
+            // changed: four lines of 15 is 90 and four of 18 is 108. A floor left behind is how
+            // an `Overflow` label starts drawing over the card under it.
             // Description body with generous padding and clean font
             // ⚠️⚠️ THE TRAY IS THE ONE PLACE THAT DOES NOT TRUNCATE. It exists to hold the
             // sentences the deck deliberately refuses to carry, so cutting them off here would
             // leave the full text nowhere in the game at all. `Overflow` rather than
             // `Truncate`, and the card is tall enough for four lines at this size.
-            card.Body = Label(go.transform, "Body", 15, UiTheme.Cream, TextAnchor.UpperLeft);
+            card.Body = Label(go.transform, "Body", MenuKit.MinReadableUnits, UiTheme.Cream,
+                              TextAnchor.UpperLeft);
             card.Body.horizontalOverflow = HorizontalWrapMode.Wrap;
             card.Body.verticalOverflow = VerticalWrapMode.Overflow;
             var bodyLe = card.Body.gameObject.AddComponent<LayoutElement>();
             bodyLe.flexibleHeight = 1.0f;
-            bodyLe.minHeight = 90;
+            bodyLe.minHeight = 108;
 
             return card;
         }

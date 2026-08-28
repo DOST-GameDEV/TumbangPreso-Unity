@@ -163,7 +163,7 @@ namespace TumbangPreso.Audio
         private static float VoiceVolume()
         {
             var s = Settings.SettingsStore.Current;
-            return Mathf.Pow(10.0f, TrimDb / 20.0f) * s.SfxVolume * s.MasterVolume;
+            return Mathf.Pow(10.0f, TrimDb / 20.0f) * s.SfxGain;
         }
 
         private void Update()

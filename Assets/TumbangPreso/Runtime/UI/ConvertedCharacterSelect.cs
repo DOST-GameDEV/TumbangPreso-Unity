@@ -311,7 +311,7 @@ namespace TumbangPreso.UI
             if (_tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike)
             {
                 if (rows.TryGetComponent<LayoutElement>(out var heroRowsLayout))
-                    heroRowsLayout.preferredHeight = 214.0f;
+                    heroRowsLayout.preferredHeight = 289.0f;
                 RefreshHeroLoadout(rows, entry.Id);
                 return;
             }
@@ -403,7 +403,7 @@ namespace TumbangPreso.UI
                 // The budget, and it balances exactly: 26 header + 20 description + 3 spacing +
                 // 10 padding = 59, inside 61 with two pixels spare.
                 var rowLe = rowGo.AddComponent<LayoutElement>();
-                rowLe.preferredHeight = 61.0f;
+                rowLe.preferredHeight = 86.0f;
                 rowLe.minHeight = rowLe.preferredHeight;
 
                 // ---- header: glyph, key, name, timing ----
@@ -453,7 +453,7 @@ namespace TumbangPreso.UI
                 keyLabel.raycastTarget = false;
                 MenuKit.Stretch(keyLabel.rectTransform);
 
-                var nameLbl = MenuKit.Label(header.transform, item.ability.Name, 16,
+                var nameLbl = MenuKit.Label(header.transform, item.ability.Name, MenuKit.MinReadableUnits,
                     accent,
                     Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
                 nameLbl.fontStyle = FontStyle.Bold;
@@ -515,19 +515,29 @@ namespace TumbangPreso.UI
                 // and cant be seent"*. This line is the only place the picker explains what a
                 // power actually DOES, and it was the least legible text on the screen: the
                 // smallest size in the panel, at `CreamMuted`, over a dark plate. Muted grey is
+                // ⚠️⚠️ AT `MenuKit.MinReadableUnits`, LIKE THE INSPECT TRAY, AND IT WAS UNDER IT.
+                // 🧑 2026-08-29: *"mahirap basahin yung text sa skill description"*. This is the
+                // LEARN layer of `docs/VISION.md` § 3 and the tray is the RECALL layer; both
+                // carried the same sentence at 15 units against a floor of 18, so the complaint
+                // was true of the ability text everywhere it appears rather than of one screen.
+                //
+                // ⚠️ THE ROW AND ITS CONTAINER BOTH GREW, and the note below is the reason they
+                // had to: 20 px held one line of 15 and holds none of 18. Two lines of 18 is 44,
+                // the row goes 61 to 86, and three hero rows take the block from 214 to 289.
+                // `HeroPickerLayoutProbe` is what checks the plate can still hold it.
                 // for text the reader may skip, and a player choosing a hero for the first time
                 // cannot skip this one.
                 //
                 // ⚠️ THE ROW GREW WITH IT. A taller line inside a `preferredHeight` that did not
                 // move would push the description into the plate's bottom border, which is the
                 // fault this was supposed to fix wearing a different hat.
-                var descLbl = MenuKit.Label(rowGo.transform, item.ability.Summary, 15,
+                var descLbl = MenuKit.Label(rowGo.transform, item.ability.Summary, MenuKit.MinReadableUnits,
                     UiTheme.Cream, Vector2.zero, Vector2.zero, Vector2.zero,
                     TextAnchor.UpperLeft);
                 descLbl.raycastTarget = false;
                 descLbl.horizontalOverflow = HorizontalWrapMode.Wrap;
                 descLbl.verticalOverflow = VerticalWrapMode.Overflow;
-                descLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = 20.0f;
+                descLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = 44.0f;
             }
 
             // The key chips already communicate Q, E and F. A fourth instruction line below

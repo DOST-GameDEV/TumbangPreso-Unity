@@ -1325,6 +1325,13 @@ namespace TumbangPreso.UI
 
             if (GameLaunch.Spectator) return;
 
+            // ⚠️ A GUEST IN THE LOBBY PRESSES NOTHING HERE. The button is drawn as WAITING FOR
+            // HOST and is not interactable, so this is unreachable from the UI; the guard is kept
+            // anyway because `RefreshActionButtons` deciding a control is dead and the handler
+            // agreeing are two different claims. This file's own note on the leader arrows says
+            // never to replace a guard with a greyed button.
+            if (IsLobby && !NetAuthority.IsHost) return;
+
             // ⚠️ THE PRESS CARRIES ITS STATE, because the button is a toggle and the message was
             // not: un-readying sent a second "I am ready", which the host's set swallowed as a
             // duplicate, so the tick could be turned off on this screen and nowhere else.
@@ -2188,10 +2195,13 @@ namespace TumbangPreso.UI
             bool live = IsLive;
             bool host = NetAuthority.IsHost;
 
-            // Only guests press READY: the host has START MATCH in the same slot. Showing the
-            // host inside the denominator produced the permanent 3/4 state when all three guests
-            // had readied, even though the host had no READY button to supply the fourth vote.
-            string tally = _readyExpected > 0 ? $"   {_readyCount}/{_readyExpected}" : "";
+            // ⚠️⚠️ NO READY TALLY ON EITHER BUTTON SINCE 2026-08-29. 🧑: *"si host lang nakakapag
+            // start ng game, yung other players hindi na need mag ready"*. Nothing counts those
+            // votes any more, so drawing "1/3" beside START MATCH described a gate that does not
+            // exist and read as three seats still owing something before the host could press it.
+            // `_readyCount` and `_readyExpected` are still written by `HandleLobbyReadyChanged`,
+            // because the host still broadcasts them and the in-match `ReadyGate` runs on the
+            // same message; they are simply not drawn where they would mean a requirement.
 
             if (IsLobby && live && host)
             {
@@ -2203,7 +2213,7 @@ namespace TumbangPreso.UI
                                            (NetSession.Instance != null &&
                                             NetSession.Instance.Lobby.OccupiedSeatCount() >= Balance.PlayerCount);
                     SetText("StartButton", fullWithoutBots
-                        ? $"START MATCH{tally}"
+                        ? "START MATCH"
                         : "WAITING FOR 4 PLAYERS");
                     var btn = startNode.GetComponent<Button>();
                     if (btn != null) btn.interactable = fullWithoutBots;
@@ -2233,12 +2243,23 @@ namespace TumbangPreso.UI
                 return;
             }
 
-            string label = GameLaunch.Spectator
-                ? "SPECTATING"
-                : _localReady ? "CANCEL READY" : "READY";
+            // ⚠️⚠️ A GUEST HAS NO READY BUTTON. READY had already stopped STARTING anything
+            // (`MatchRpc.HostPeerLeft` records the gate being taken off it), so what was left was
+            // a button three players had to press for a tally nothing read: a ceremony that could
+            // only fail, because a lobby where one person forgets to press it looks identical to
+            // a lobby waiting on a fourth player who never joined.
+            //
+            // ⚠️ RELABELLED RATHER THAN HIDDEN. It is the only control in this slot, and an empty
+            // slot where three of the four players read the game's state looks like a screen that
+            // failed to build. Saying who everybody is waiting for is the useful thing left.
+            //
+            // ⚠️ THE READY WIRE IS NOT DELETED. `DeclareReadyServerRpc`, `BroadcastReadyTally`
+            // and `ReadyGate` are what the PRE-ROUND gate inside a match runs on, which is a
+            // different gate with a different job. Only the LOBBY stops asking.
+            string label = GameLaunch.Spectator ? "SPECTATING" : "WAITING FOR HOST";
 
-            SetText("PrimaryButton", $"{label}{tally}");
-            if (prim != null) prim.interactable = !GameLaunch.Spectator;
+            SetText("PrimaryButton", label);
+            if (prim != null) prim.interactable = false;
         }
 
         /// <summary>

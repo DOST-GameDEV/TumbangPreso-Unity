@@ -276,6 +276,48 @@ namespace TumbangPreso.UI
         /// A wood-faced button, with the five StyleBox states, the sink on press, and the two
         /// sounds. Identical to what the converter produces for a `WoodButton`.
         /// </summary>
+        /// <summary>Room left either side of a button's label, so the words never touch the
+        /// wooden border.</summary>
+        public const float ButtonLabelPadding = 14.0f;
+
+        /// <summary>
+        /// How large a button's label should be, given the theme's size and the box it sits in.
+        ///
+        /// ⚠️⚠️ THE THEME'S `FontSizeButton` IS ONE NUMBER FOR EVERY BUTTON IN THE GAME, AND
+        /// THAT IS WHAT READS AS UNBALANCED. 🧑 2026-08-29: *"and laki ng join at spectate button
+        /// tas ang liit naman ng mga text hindi balanced"*. A 40 px chip and a 940 px browser row
+        /// both got 18 units, so the small controls looked right and every large one looked like
+        /// a big empty plank with a caption in the middle of it. The complaint is not that the
+        /// type is too small OR that the boxes are too big; it is that the two do not move
+        /// together, and only one of them was ever a variable.
+        ///
+        /// ⚠️ IT ONLY EVER GROWS. `Mathf.Max` against the theme size means no button anywhere
+        /// gets SMALLER type than it has today, so this cannot regress a screen nobody reported.
+        /// The floor is `MinReadableUnits` by construction because `FontSizeButton` is 18, which
+        /// is that constant.
+        ///
+        /// ⚠️ 0.42 IS THE CAP HEIGHT A BUTTON LABEL WANTS, not a number picked to taste: the
+        /// theme's own 18 units in the 40 px chips this game already ships is 0.45, and the
+        /// 28-unit heading in a 64 px header row is 0.44. Applying the ratio the small controls
+        /// already have to the large ones is what makes them one family. A 48 px row goes 18 to
+        /// 20, and a 64 px button goes 18 to 26.
+        /// </summary>
+        public static int BalancedButtonUnits(int themeUnits, float boxHeight)
+        {
+            if (boxHeight <= 1.0f) return themeUnits;
+
+            int wanted = Mathf.RoundToInt(boxHeight * 0.42f);
+            return Mathf.Max(themeUnits, Mathf.Min(wanted, MaxButtonUnits));
+        }
+
+        /// <summary>
+        /// ⚠️ A CEILING, BECAUSE A FULL-WIDTH BAR IS NOT A HEADLINE. Some lobby rows are 80 px
+        /// tall to give a wooden plate presence, and 34-unit type in one would compete with the
+        /// screen's actual heading. `GodotTheme.FontSizeHeading` is 28 and a button is never
+        /// more important than a heading.
+        /// </summary>
+        public const int MaxButtonUnits = 28;
+
         public static Button WoodButton(Transform parent, string text, Vector2 anchor,
                                         Vector2 offset, Vector2 size, Action onClick,
                                         string variation = "WoodButton")
@@ -291,9 +333,15 @@ namespace TumbangPreso.UI
 
             var style = GodotTheme.ForButton(variation);
 
-            var label = Label(go.transform, text, style.FontSize, style.Ink,
-                              new Vector2(0.5f, 0.5f), Vector2.zero, size);
+            var label = Label(go.transform, text, BalancedButtonUnits(style.FontSize, size.y),
+                              style.Ink, new Vector2(0.5f, 0.5f), Vector2.zero, size);
             label.raycastTarget = false;
+
+            // ⚠️ AND THEN SHRUNK BACK IF THE WORDS ARE LONGER THAN THE BOX IS WIDE. Scaling type
+            // to a button's HEIGHT says nothing about its WIDTH, and BACK TO LOBBY in a narrow
+            // box would simply be bigger and clipped. `Fit` stops at `MinReadableUnits`, so the
+            // two rules compose: fill the box when there is room, never go below the floor.
+            if (size.x > 1.0f) Fit(label, size.x - (ButtonLabelPadding * 2.0f));
 
             // ⚠️ RE-APPLIED AFTER THE VARIATION IS SET. AddComponent runs OnEnable immediately,
             // which skins the button with the field's DEFAULT variation; assigning the real one
