@@ -271,6 +271,15 @@ namespace TumbangPreso.EditorTools
                 // and are correct in the editor.
                 "TumbangPreso/Toon",
 
+                // ⚠️ ITS BLEND-MODE TWIN, ADDED 2026-08-28 WITH THE FUZZY SLIPPER. Reached the
+                // same way, through `Shader.Find` in `ToonSkin.TransparentShader`, so it is
+                // stripped by the same rule if it is not named here. Its miss path falls back to
+                // the opaque `TumbangPreso/Toon`, which means a stripped build does not go
+                // magenta: the fur just renders solid again, exactly the bug this shader was
+                // written to fix, and only in the player. That is the worst possible failure to
+                // debug, which is why this line exists rather than being trusted to the fallback.
+                "TumbangPreso/ToonTransparent",
+
                 // ⚠️ THE COLOUR GRADE, FOR THE SAME REASON AND WITH A WORSE FAILURE. `ColourGrade`
                 // reaches it through `Shader.Find` too, and its miss path blits the frame through
                 // untouched. So a build that strips this looks merely a little flatter than the

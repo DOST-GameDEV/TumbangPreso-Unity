@@ -125,9 +125,17 @@ namespace TumbangPreso.Net
         // merged because the roster they widen is a different one, and a future reader
         // bisecting a mismatch needs to know which table grew.
         //
-        // ⚠️ 9 to 10 APPENDS PANGBANYO AS SLIPPER INDEX 10. It is the shoe that used to be
-        // PANTULOG, and appending it rather than renaming PANTULOG in place is what keeps
-        // every already-built peer's `slipper_index` of 2 pointing at the same seat.
+        // ⚠️ 9 to 10 IS THE ART SWAP, AND IT IS A BUMP FOR A REASON THE OTHERS ARE NOT.
+        // The slipper list is still ten entries and no index moved, so nothing here is
+        // strictly unreadable by a peer on 9. What changed is which SHOE two of those indices
+        // resolve to: PANTULOG at 2 became the fuzzy house slipper, and PAMBAHAY at 6 became
+        // the rubber bathroom slide with that shoe's stats rather than the flip-flop's.
+        //
+        // ⚠️ A STAT CHANGE IS NOT A WIRE CHANGE, BUT AN UNMATCHED PAIR OF BUILDS IS STILL A
+        // BUG. Two peers on either side of this would each apply their OWN table to the same
+        // `slipper_index`, so one player's PAMBAHAY throws 4/2/4 and the other's throws
+        // 3/2/4 in the same match, and every prediction between them drifts with no error
+        // anywhere. Refusing at approval is the cheaper failure.
         public const int ProtocolVersion = 10;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";

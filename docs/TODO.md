@@ -7571,7 +7571,54 @@ that index crosses the wire, so renaming it would have made every already-built 
 slipper took over index 2's MODEL; the rubber bathroom slide it displaced was APPENDED as
 PANGBANYO at index 10. `ProtocolVersion` 9 to 10 for it.
 
-### 70.11 STILL OPEN: two visible brands on shipped meshes
+### 70.11 ⚠️⚠️ THE FUZZ AND THE IKE SPECKLE, AND THREE WRONG DIAGNOSES BETWEEN THEM ✅ FIXED
+
+🧑 2026-08-28: *"wtf is this can u fix the shaders"*, over black tearing on the fuzzy house
+slipper and black-and-white speckle on IKE. Two different faults that looked like one.
+
+**The fuzz.** Its `Fuzz` material is `alphaMode: BLEND` and the fur is alpha-mapped cards. On
+an opaque shader every transparent texel rendered solid, and the inverted hull drew an ink
+edge round each card's rectangle. ⚠️ **An alpha CLIP was tried and was worse in a more
+insidious way**: a fur alpha map is mostly soft gradient, so 0.5 removed the fuzz entirely and
+0.15 left a fringe. 🧑: *"pantulog isnt a pink clean slipper"*, *"it has fuzz"*, and then the
+instruction that settled it: *"instead of cleaving my model's shit js create independent
+shaders for shit with fuzz or detailed shit"*. `TumbangPreso/ToonTransparent` blends, discards
+nothing, and carries no outline pass; the opaque `Shoe` submesh underneath still gives the
+prop its ink edge. `TumbangPreso/Toon` has no clip and no cutoff, so every other surface in
+the game renders bit-identically.
+
+**IKE.** ⚠️ **Called z-fighting, then interpenetration, and it was neither.** The decal was
+lifted 0.8 mm along its normals: no change. The burial depth was then measured by ray-casting
+every decal vertex against the body, and **0 of 925 are inside it**. The swoosh sits entirely
+clear and always did. The cause is the ink hull: `modelWidth` is derived from the WHOLE
+model's bounds, 0.012 m for a 0.432 m shoe, and it was handed to a decal whose strokes are a
+few millimetres across, so the hull was far larger than the shape it outlined and the ink
+covered it. Only slot 0 gets an outline now; every later submesh is detail on a shape that is
+already outlined.
+
+⚠️ **`ToonTransparent` is in `GameBuilder`'s keep-list and that line is load-bearing.** It is
+reached only through `Shader.Find`, and its fallback is the opaque shader, so a stripped build
+renders the fur solid again: the exact bug it was written to fix, in the player only.
+
+### 70.12 Ilalim ng Tulay read hazy after the tonemap fix, and it was two more settings ✅ FIXED
+
+🧑: *"have u fixed the weird dull ass lighting for ilalim ng tulay map"*. The tonemap
+correction was necessary and not sufficient. Two things about this map's Environment are
+unlike either other arena:
+
+⚠️ **It was the only map on `Trilight` with a cool near-white sky.** Measured off the three
+scene files: Eskinita is Flat (0.934, 0.830, 0.700), Bayan Plaza is Flat (0.688, 0.707,
+0.742). This one put **0.98 of blue** on every upward-facing surface and **0.45** on every
+vertical one, and `TumbangPreso/Toon` has no `noambient`, so that lands on top of the lit
+colour after the tonemap and outside the palette remap. High key, low contrast, no hue: dull.
+Trilight is KEPT, because this is the one arena under a solid deck and that variation is real
+information about the space. What changed is the spread: sky down and warmed, equator up.
+
+⚠️ **And it is the only map with fog on, starting at 22.5 m.** An arena is 14 m across, so the
+far side of the pitch was already inside a near-white ramp. Moved to 40 m. The fog is not
+removed: its original job, hiding the seam where the backdrop plate ends, is real.
+
+### 70.13 STILL OPEN: two visible brands on shipped meshes
 
 ⚠️ **Two shipped sources carry a visible brand and a decision is owed on each.** The clog
 that shipped has `CROCS` raised in geometry on its strap, as its own `text_blackPhong` material,
@@ -7579,7 +7626,7 @@ so it can be recoloured or dropped in one line without touching the mesh. The ch
 maker's tab. `CLAUDE.md` § 3 and the no-vendor-names rule both point at removing them before this
 goes in front of a national panel.
 
-### 70.12 Done looks like
+### 70.14 Done looks like
 
 ✅ `RosterBook` validates at 18 people, 6 cans, 11 slippers. ✅ Core 111/111.
 ✅ `Checks.RunAll` green, all five in one launch. ✅ `tools/build_lata.py --verify` green.
