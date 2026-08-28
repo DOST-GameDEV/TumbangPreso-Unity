@@ -371,19 +371,51 @@ namespace TumbangPreso.EditorTools.MapKit
             sun.shadowNormalBias = 0.4f;
 
             RenderSettings.sun = sun;
+            // ⚠️⚠️ WARMED AND EVENED OUT ON 2026-08-28. 🧑, off the built player: *"have u
+            // fixed the weird dull ass lighting for ilalim ng tulay map"*. The tonemap
+            // correction in `ColourGrade.shader` took this map from washed out to correct
+            // exposure and it still read hazy, because two things about this map's own
+            // Environment are unlike either other arena and neither was the tonemap.
+            //
+            // ⚠️ THIS WAS THE ONLY MAP ON `Trilight` WITH A COOL NEAR-WHITE SKY. Measured off
+            // the three scene files: Eskinita is Flat (0.934, 0.830, 0.700) and Bayan Plaza is
+            // Flat (0.688, 0.707, 0.742), both warm or neutral. This one put 0.98 of BLUE on
+            // every upward-facing surface and only 0.45 on every vertical one, and
+            // `TumbangPreso/Toon` is a surface shader with no `noambient`, so that lands on
+            // top of the lit colour AFTER the tonemap and outside the palette remap. A cast
+            // wearing a blue-white wash on its shoulders over a dark equator on its front is
+            // exactly "dull": high key, low contrast, no hue left.
+            //
+            // ⚠️ TRILIGHT IS KEPT RATHER THAN FLATTENED, and that is deliberate. This is the
+            // one arena under a solid deck, so the difference between what the sky reaches and
+            // what it does not is real information about the space. What changes is the SPREAD:
+            // the sky comes down and warms toward Eskinita's hue, and the equator comes up so
+            // vertical faces are no longer half the brightness of horizontal ones.
             RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.85f, 0.90f, 0.98f);
-            RenderSettings.ambientEquatorColor = new Color(0.40f, 0.45f, 0.52f);
-            RenderSettings.ambientGroundColor = new Color(0.165f, 0.208f, 0.294f);
+            RenderSettings.ambientSkyColor = new Color(0.78f, 0.76f, 0.72f);
+            RenderSettings.ambientEquatorColor = new Color(0.60f, 0.58f, 0.56f);
+            RenderSettings.ambientGroundColor = new Color(0.24f, 0.24f, 0.26f);
 
             // ⚠️ FOG CARRIES THE LAST 40 M, WHICH THE BACKDROP GEOMETRY CANNOT. The far plate
             // stops the map ending in sky; fog stops the far plate ending in a hard line. It
             // starts past the south wall so nothing inside the walls is ever tinted by it.
+            // ⚠️⚠️ THE FOG STARTS FURTHER OUT NOW, AND IT IS THE OTHER HALF OF THE HAZE.
+            // This is the only map in the game with fog on at all, and it began at
+            // `WallHalfZ + 6`, which is 22.5 m. An arena is 14 m across, so the far side of
+            // the pitch and every shopfront along it were already inside a near-white fog
+            // ramp: not thick, but enough to lift the whole mid-distance toward the fog colour
+            // and pull the contrast out of it.
+            //
+            // ⚠️ THE FOG IS NOT REMOVED, BECAUSE ITS ORIGINAL JOB IS REAL. The note it replaces
+            // is correct: the far backdrop plate stops the map ending in sky, and fog stops the
+            // plate ending in a hard line. Deleting it puts that seam back. 40 m clears the
+            // playable street and every building the player can read, and still closes the last
+            // stretch before the plate.
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.Linear;
-            RenderSettings.fogColor = new Color(0.855f, 0.855f, 0.845f);
-            RenderSettings.fogStartDistance = WallHalfZ + 6.0f;
-            RenderSettings.fogEndDistance = 110.0f;
+            RenderSettings.fogColor = new Color(0.780f, 0.775f, 0.760f);
+            RenderSettings.fogStartDistance = 40.0f;
+            RenderSettings.fogEndDistance = 120.0f;
 
             // The old panorama blows out to white at every street opening. The committed warm
             // Kenney panorama carries an actual cloud horizon, so the corridor ends in Manila

@@ -434,22 +434,33 @@ namespace TumbangPreso.Visual
             // transparent", and two of the three do not set `_Mode` at all. All three move
             // the queue: 2450 is AlphaTest and 3000 is Transparent, so anything at or above
             // the first has real detail in its alpha whichever importer claimed the file.
-            if (!transparent)
-            {
-                material.SetFloat(OutlineWidthId, modelWidth);
-            }
+            material.SetFloat(OutlineWidthId, transparent ? 0.0f : modelWidth);
 
-            // ⚠️ THE DEPTH BIAS IS FOR A SUBMESH DRAWN OVER ANOTHER ONE, and the IKE swoosh is
-            // the case that needed it: SVG-derived flat geometry laid on the upper, a
-            // 925-vertex island sharing no vertices with the 33,108-vertex body and marked
-            // doubleSided, so it z-fights itself and reads as moving speckle. Slot 0 is the
-            // base surface and never takes a bias; a later slot is an overlay by construction.
-            // On a submesh that is NOT coplanar with anything this changes nothing visible,
-            // which is why it can be applied by position rather than by detection.
-            if (slot > 0 && !transparent)
+            // ⚠️⚠️ A SUBMESH DRAWN OVER ANOTHER ONE GETS NO INK HULL OF ITS OWN, AND THIS IS
+            // WHAT THE IKE SPECKLE ACTUALLY WAS. 🧑 2026-08-28: *"wtf is this can u fix the
+            // shaders"*, over black-and-white jagged noise where the swoosh sits.
+            //
+            // ⚠️ TWO WRONG DIAGNOSES CAME FIRST AND BOTH WERE DISPROVED BY MEASURING, which is
+            // the only reason this one is trustworthy. It was called z-fighting, so the decal
+            // was lifted 0.8 mm along its normals: no change. It was then called
+            // interpolation, so the burial depth was measured by ray-casting every decal
+            // vertex against the body: **0 of 925 are inside it**. The swoosh sits entirely
+            // clear of the upper and always did.
+            //
+            // The hull is the answer. `modelWidth` is derived from the WHOLE MODEL's bounds,
+            // 0.012 m of world-space ink for a 0.432 m shoe, and it is then handed to every
+            // material on it including a decal whose strokes are a few millimetres across.
+            // Inflating that swoosh by 12 mm in every direction produces a hull far larger
+            // than the shape it is supposed to outline, so the ink covers the decal and only
+            // fragments show through. That is the speckle, and it is why it is shaped like the
+            // logo.
+            //
+            // ⚠️ SLOT 0 IS THE ONLY THING THAT NEEDS AN OUTLINE. It is the base surface and it
+            // carries the silhouette for the whole prop; every later slot is detail sitting on
+            // top of a shape that is already outlined. Nothing loses an edge here.
+            if (slot > 0)
             {
-                material.SetFloat(ZOffsetFactorId, -1.0f);
-                material.SetFloat(ZOffsetUnitsId, -1.0f);
+                material.SetFloat(OutlineWidthId, 0.0f);
             }
 
             Cache[(source, key)] = material;
