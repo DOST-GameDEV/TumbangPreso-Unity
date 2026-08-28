@@ -226,6 +226,219 @@ cause would surface on the next field somebody adds.
 
 ---
 
+## 73 · The rest of the 2026-08-29 batch: feel, audio, and the casts nobody could tell apart
+
+### 73.1 · The volume faders were wired correctly and felt broken ✅ CLOSED 2026-08-29
+
+🧑: *"audio in settings is also broken, even when i lower its still very very loud"*.
+
+Nothing was broken in the wiring. The sliders are authored 0 to 1, the setter writes on every
+value change, and all five things that play a sound read the value live. The fault is the
+CURVE: amplitude is not loudness. Half the groove is -6 dB, which reads as "slightly quieter",
+and the shipped default of 0.8 is -1.9 dB, so the top third of every fader did nothing audible.
+
+`GameSettings.Gain` squares the slider position, which lands close to proportional: 0.5 becomes
+a quarter of the amplitude, 0.2 becomes 0.04, and 1.0 is still exactly 1.0, so nothing is
+quieter at full than it was. ⚠️ The conversion lives in ONE place and `AudioDirector`,
+`VoiceDirector`, `MusicDirector`, `BootSting` and `SplashScreen` read it, because five copies
+of a curve is five places to miss the next one, and the sting and the splash are precisely the
+two that play before a player can reach the panel to turn them down.
+
+**Verified:** `LobbyAndSettingsTests`, two cases: the curve is monotonic with fixed ends, and
+the two faders multiply after being curved separately rather than before.
+
+### 73.2 · Nobody readies in the lobby any more ✅ CLOSED 2026-08-29
+
+🧑: *"si host lang nakakapag start ng game, yung other players hindi na need mag ready"*.
+
+READY had already stopped STARTING anything (`MatchRpc.HostPeerLeft` records the gate coming
+off it), so what was left was a button three players had to press for a tally nothing read: a
+ceremony that could only fail, because a lobby where one person forgets is indistinguishable
+from a lobby waiting on a fourth player who never joined. The guest button reads WAITING FOR
+HOST and the host's START MATCH no longer carries a count of a gate that does not exist.
+
+⚠️ The ready WIRE is untouched. `DeclareReadyServerRpc`, `BroadcastReadyTally` and `ReadyGate`
+are what the PRE-ROUND gate inside a match runs on, which is a different gate with a different
+job. Only the lobby stops asking. Matthew's four-player gate on the host button is kept.
+
+### 73.3 · The ability text was under the floor the project already asserts ✅ CLOSED 2026-08-29
+
+🧑: *"mahirap basahin yung text sa skill description"*.
+
+`AbilityInspectPanel` had its body at 15 units, the kind and cooldown at 14, the key chip and
+header hint at 15, against `MenuKit.MinReadableUnits` 18 that `AspectRatioProbes` enforces and
+that `LobbyChrome.BuildIdentity` cites by name when it rejected a 14-unit caption.
+
+⚠️⚠️ That tray is the worst place in the game to be under it. `VISION.md` § 3 gives ability
+text three homes and the deck deliberately carries no sentences, so the tray is where a player
+is meant to actually READ what a power does; prose nobody can read at the one place it is
+allowed to be prose fails the middle layer of that whole answer. Character select carried the
+same sentence at 15, so the complaint was true of the ability text everywhere it appears.
+
+⚠️ Both rows GREW with the type rather than being left to overflow: four lines of 18 is 108
+against 90, and the hero block goes 214 to 289. `HeroPickerLayoutProbe` and `AspectRatioProbes`
+check the plates still hold it.
+
+### 73.4 · Wood buttons size their label to their box ✅ CLOSED 2026-08-29
+
+🧑: *"and laki ng join at spectate button tas ang liit naman ng mga text hindi balanced"*.
+
+`GodotTheme.FontSizeButton` is one number for every button in the game, so a 40 px chip and a
+940 px browser row both got 18 units and every large control read as a big empty plank with a
+caption in the middle. The complaint is not that the type is too small OR that the boxes are
+too big; it is that only one of the two was ever a variable.
+
+`MenuKit.BalancedButtonUnits` applies the ratio the small controls already have. ⚠️ It only
+ever GROWS, so no button anywhere gets smaller type than it had, and the label is fitted back
+to the box WIDTH afterwards so a long caption in a narrow box shrinks to the floor rather than
+being clipped.
+
+### 73.5 · The lobby chat drew outside its plate ✅ CLOSED 2026-08-29
+
+🧑: *"nag ooverflow yung text sa lobby chat"*.
+
+`MenuKit.FitBlock` sets `verticalOverflow = Overflow` and shrinks the type until the block fits
+its cap, which works right up until the font hits `MinReadableUnits` and cannot go lower.
+`MatchRpc.MaxChatLength` is 120, and 120 characters at 18 units in a 560 px panel is three lines
+against a two-line slot: the `LayoutElement` claimed 52 px while the label DREW 78 and painted
+the remainder over the START button underneath.
+
+⚠️ Clipped rather than grown, because the plate is a fixed size by design and the lobby shows
+`LobbyVisibleLines` deliberately. Nothing is lost: the whole line is in the scrollable log.
+
+### 73.6 · Six ultimates were one nod of the head ✅ CLOSED 2026-08-29
+
+🧑: *"make sure theres an animation for all interactions like pushing tayaing or skill casting,
+make the animations appropriate for skills and what theyre doing btw dont js spam the same
+animation"*, and *"make sure everyone sees this not just host or client"*.
+
+⚠️⚠️ `ActionClips` READS as eighteen distinct hero casts and PLAYED nothing of the sort. Entry
+zero of every hero chain is a `hero-*` clip; the CC0 rig carries 43 named clips and not one is
+a cast, so `Play` falls straight through to entry one. Entry one was `emote-yes` for Supernova,
+Thunderstrike, Titan Fissure, Glacial Nova, Devouring Seance and Grand Coven alike, and
+`attack-melee-right` covered four more skills. **The first slot being correct is what hid it.**
+
+Entry one is now chosen for the MOTION, under three rules: no hero repeats a clip inside its
+own kit, no two ultimates share one at all, and where two heroes do share, the thing they are
+doing is the same thing. Thirteen usable clips against eighteen casts makes some sharing
+arithmetic; sharing it between a dash and a dash rather than between six ultimates is the whole
+difference. The shove and the punch are told apart too: both played `attack-melee-right`, so a
+push that moves you and a jab that tags you were one gesture, and reading which is coming is
+the counterplay.
+
+**And the reach-down was relayed once for a hold that repeats.** `Carrier.StepDefender`
+re-fires the gesture every `ViewmodelArms.GrabSeconds` across a 1.5 s channel, and that repeat
+was purely LOCAL: `ResetPhase.Start` is sent once, so the taya saw themselves reaching over and
+over while the other three saw one reach and a statue for 1.1 s. ⚠️ The host relays it on its
+own clock in `HostStepResetChannels` rather than through a new wire phase, because adding a
+`Repeat` to `ResetPhase` is a protocol bump and § 59.4 is what one costs.
+
+**Verified:** four tests in `HeroPresentationTests`. ⚠️ They resolve against the rig's real
+clip inventory (`RigClips`) rather than a fixed chain depth, because the base verbs name a real
+clip at entry zero and the hero casts never do; the first version assumed one depth for both
+and reported the shove as playing its own fallback. **When the team's own cast animations land,
+add their names to `RigClips` and these tests start measuring the real casts with no other
+change.**
+
+### 73.7 · The intermission can be skipped by agreement ✅ CLOSED 2026-08-29
+
+🧑: *"vote to skip buffer time"*.
+
+15 s runs between every round, so a four round Classic match spends 45 s with nobody playing.
+The buffer is not padding, the role swap has to be read and the next taya has to find their
+mark, but that job is finished the moment everybody has understood it and how long that takes
+is the players' answer rather than a constant's.
+
+⚠️ It is a VOTE and UNANIMOUS rather than a majority. Ending the intermission early takes
+reading time from whoever has not finished reading, and the person who most needs it is the one
+who just became the taya, who is exactly who a majority can outvote. The clock stays as the
+backstop, so a player who never presses anything loses nothing.
+
+⚠️⚠️ It counts PEERS, never characters, which is the trap `ReadyGate`'s header records from the
+other side: every match has four bodies because empty seats are bot-filled and a bot cannot
+press a key. It reuses READY rather than inventing a key, and the two can never fire together.
+
+⚠️ The decision lives on `MatchDirector` because there are TWO runners and one rule:
+`SliceRunner` schedules the advance with `WarmupBufferDuration` and `MatchBootstrap` with
+`IntermissionDuration`, both on their own `Invoke`. Putting the skip in either would give the
+shipped arena a feature the other path silently lacks, which is what `SliceRunner`'s own header
+forbids. Each runner cancels its own pending `Invoke`, or the original timer fires later and
+advances a second round nobody played.
+
+### 73.8 · The three source audits are green again ✅ CLOSED 2026-08-29
+
+`CLAUDE.md` § 7.1 requires `audit_ability_authority.py` to report **0 ungated on another body**,
+and this batch's hazard work took it to 7 before taking it back to 0.
+
+⚠️⚠️ FIVE OF THE SEVEN WERE REAL AND TWO WERE FORMATTING, AND TELLING THEM APART IS THE POINT.
+Letting a peer predict a pull or a slow on its own body genuinely writes to a `CharacterMotor`
+that is not `ctx.Motor`, so the audit was right to raise it. The fix is not to exempt them: it
+is to write the invariant out inline as
+`if (NetAuthority.ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)`, which says "the
+host may move anybody, anybody may move themselves" and is exactly the permission being taken.
+A hoisted `bool resolves` is invisible to the audit, and so is a braceless one-liner or a
+condition wrapped onto a second line, which is what the last two were.
+
+`audit_wire_payloads.py` also caught the new `SkipBuffer` message writing one field and reading
+none. It was a placeholder byte, and the audit is right that one written and none read is
+indistinguishable from a field somebody forgot to parse. The message carries no payload now;
+`StartMatch` is the precedent.
+
+### 73.9 · bundleVersion is 1.0.0 ✅ CLOSED 2026-08-29
+
+🧑: *"pls update version number 1.0.0 when u finish"*. `GameVersion.Value` reads
+`Application.version`, so the corner label and the wire both follow with no other change.
+
+---
+
+## 74 · Zack's shock trail has the hazard bug that was fixed everywhere else ⚠️ OPEN
+
+`ShockTrailComponent.Update` opens with `if (!NetAuthority.ShouldResolve()) return;`, which is
+the exact shape § 71 removed from Nemu's void and Cheska's ice: the effect runs on the host
+alone, and a client's own body is moved only by the host's position stream, which
+`ApplyNetworkTransform` filters below 1.25 m. Anything continuous is therefore invisible to
+three of the four players.
+
+⚠️ IT WAS LEFT ALONE ON PURPOSE. Nobody has reported it, and retuning an ability that was not
+in the batch is how a fix becomes a regression somebody else has to find. It is written down
+rather than done so the next session does not have to rediscover the shape.
+
+**Done looks like:** the same treatment the other two got, and `audit_ability_authority.py`
+still reporting 0 ungated on another body afterwards.
+
+---
+
+## 75 · The slipper throw wind-up, and what was actually checked ⚠️ OPEN, NEEDS ONE ANSWER
+
+🧑 2026-08-29: *"no wind up charger for slipper throw"*.
+
+Every part of the wind-up was traced and every part is present and wired:
+
+- **The charge itself.** `Carrier.StepAttacker` starts `_charging` on the press, accumulates to
+  `Balance.ChargeFullTime`, and throws on release at `ThrowRules.PowerFor`.
+- **The first-person arm.** `CameraRig.ApplyFpp` reads `Carrier.ObservedChargePower` and calls
+  `ViewmodelArms.SetCharge`, which cocks the arm back by `WindupRad` 0.62 rad.
+- **The third-person body.** `CharacterAnimator.StepChargePose` writes the same 0.62 rad onto
+  the `arm-right` bone, and all 25 person rigs carry that bone (checked in the `.glb`).
+- **The observed value is set locally**, not only over the wire: `BroadcastCharge` calls
+  `ApplyObservedCharge` before it sends, so it runs offline too.
+- **The meter.** `YouCard` fills `_chargeFill` from `Carrier.ChargeRatio`.
+- **The trajectory preview.** `MatchInstaller` line 797 attaches one per seat, so the § 12
+  fault where it was never instantiated is closed.
+
+So the report is real and none of the obvious mechanisms is missing, which means it is asking
+for something that is not there rather than something that broke. The three readings, and they
+want different work:
+
+1. **A minimum wind-up before a throw may leave the hand.** Today a tap throws instantly at
+   `Balance.ChargeMinPower`, so a quick throw has no visible commitment at all. This is a
+   BALANCE change and `docs/Design.md` governs it.
+2. **A charge meter somewhere other than the YOU card**, which is small and at the edge.
+3. **A stronger read on the arm**, that is, 0.62 rad is not enough to see.
+
+**Done looks like:** ask which, then do it. Do not guess: (1) changes a number `Design.md`
+owns, and shipping the wrong one of these is a retune that has to be undone.
+
 ## 0 · Hero Strike is being reworked, and the plan is its own file
 
 **Numbered 0 rather than 1 on purpose: every other entry here keeps the number it already had,

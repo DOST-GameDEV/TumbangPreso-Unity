@@ -411,7 +411,14 @@ namespace TumbangPreso.Abilities
                 foreach (var p in round.Players)
                 {
                     if (p == null || !_chilled.Contains(p.PlayerSlot)) continue;
-                    p.ExitSpeedZone(ChillMultiplier);
+
+                    // Same rule as the entry: see the note in `Update`. ⚠️ BRACED, because
+                    // `tools/audit_ability_authority.py` tracks the gate by brace depth and reads
+                    // a braceless one-liner as ungated.
+                    if (NetAuthority.ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)
+                    {
+                        p.ExitSpeedZone(ChillMultiplier);
+                    }
                 }
 
                 _chilled.Clear();
@@ -487,15 +494,28 @@ namespace TumbangPreso.Abilities
                     // the ice twice would be permanently slowed with nothing on screen to explain
                     // it. Entering once on the frame you cross in, and exiting once on the frame
                     // you cross out or the ice thaws, is what makes it balanced by construction.
-                    if (inside && !chilled)
+                    // ⚠️⚠️ THE CONDITION IS THE INVARIANT, WRITTEN OUT. "The host may move
+                    // anybody; anybody may move themselves" is exactly what a peer predicting its
+                    // own body is allowed to do, and saying it here rather than hoisting a bool
+                    // is what keeps `tools/audit_ability_authority.py` able to read it: that
+                    // audit reports every effect on ANOTHER body that is not inside a
+                    // `ShouldResolve()` gate, `CLAUDE.md` § 7.1 requires the count to be zero,
+                    // and a hoisted flag is invisible to it. The runtime guard inside
+                    // `CharacterMotor.ApplyImpulse` and `EnterSpeedZone` refuses a body this peer
+                    // does not own regardless, so this is belt and braces rather than the only
+                    // thing standing between a client and somebody else's body.
+                    if (NetAuthority.ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)
                     {
-                        p.EnterSpeedZone(ChillMultiplier);
-                        _chilled.Add(p.PlayerSlot);
-                    }
-                    else if (!inside && chilled)
-                    {
-                        p.ExitSpeedZone(ChillMultiplier);
-                        _chilled.Remove(p.PlayerSlot);
+                        if (inside && !chilled)
+                        {
+                            p.EnterSpeedZone(ChillMultiplier);
+                            _chilled.Add(p.PlayerSlot);
+                        }
+                        else if (!inside && chilled)
+                        {
+                            p.ExitSpeedZone(ChillMultiplier);
+                            _chilled.Remove(p.PlayerSlot);
+                        }
                     }
 
                     if (inside)
@@ -505,7 +525,12 @@ namespace TumbangPreso.Abilities
                         if (p.Velocity.sqrMagnitude > 0.1f)
                         {
                             Vector3 slip = p.Velocity.normalized * 5.5f * Time.deltaTime;
-                            p.ApplyImpulse(slip);
+
+                            if (NetAuthority.ShouldResolve() ||
+                                p.PlayerSlot == NetAuthority.LocalSlot)
+                            {
+                                p.ApplyImpulse(slip);
+                            }
 
                             // ⚠️ THE POPUP AND THE CUE ARE ANNOUNCEMENTS AND STAY HOST-ONLY, so
                             // four machines do not each raise their own copy of one event.
@@ -1847,7 +1872,19 @@ namespace TumbangPreso.Abilities
                     // 4.6. With `CentreBite` the middle nets far more and is simply not
                     // survivable, which is 🧑 2026-08-29: *"actually pull everything to the middle
                     // of ult"*.
-                    p.ApplyImpulse(diff.normalized * PullStrength * bite * Time.deltaTime);
+                    // ⚠️⚠️ THE CONDITION IS THE INVARIANT, WRITTEN OUT. "The host may move anybody;
+                    // anybody may move themselves" is exactly what a peer predicting its own body
+                    // is allowed to do, and saying it inline rather than hoisting a bool is what
+                    // keeps `tools/audit_ability_authority.py` able to read it: that audit reports
+                    // every effect on ANOTHER body not inside a `ShouldResolve()` gate,
+                    // `CLAUDE.md` § 7.1 requires the count to be zero, and a hoisted flag is
+                    // invisible to it. `CharacterMotor.ApplyImpulse` refuses a body this peer does
+                    // not own regardless, so this is belt and braces rather than the only thing
+                    // between a client and somebody else's body.
+                    if (NetAuthority.ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)
+                    {
+                        p.ApplyImpulse(diff.normalized * PullStrength * bite * Time.deltaTime);
+                    }
 
                     // -------------------------------------------------------------------
                     // § THE LIFT
@@ -1878,15 +1915,25 @@ namespace TumbangPreso.Abilities
                         float climb = Mathf.Clamp((wantedHeight - above) * LiftSpring,
                                                   0.0f, Balance.MaxKnockbackLift);
 
-                        if (climb > 0.05f) p.ApplyImpulse(Vector3.up * climb);
+                        // ⚠️ THE GATE IS ON ONE LINE, and the height test is nested inside it
+                        // rather than joined to it. `audit_ability_authority.py` looks for a line
+                        // that STARTS with `if` and mentions `ShouldResolve()`; a condition
+                        // wrapped onto a second line reads to it as no gate at all.
+                        if (NetAuthority.ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)
+                        {
+                            if (climb > 0.05f) p.ApplyImpulse(Vector3.up * climb);
+                        }
                     }
 
                     // ⚠️ THE STAGGER IS A DECISION AND STAYS HOST-ONLY. Predicting a stagger on
                     // your own body would flinch you on a frame the host never agreed to, and
                     // `StunElement`/`ApplyStagger` is exactly the class of state `CLAUDE.md` § 4
                     // keeps on one machine.
-                    if (resolves && CanPulse(_nextDrowseBySlot, p.PlayerSlot, 1.25f))
+                    if (NetAuthority.ShouldResolve() &&
+                        CanPulse(_nextDrowseBySlot, p.PlayerSlot, 1.25f))
+                    {
                         p.ApplyStagger(0.35f);
+                    }
                 }
 
                 // ⚠️ THE TSINELAS ARE HOST-ONLY AND THE BODIES ARE NOT, and the asymmetry is the

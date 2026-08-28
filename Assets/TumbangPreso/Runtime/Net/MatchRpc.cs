@@ -3411,8 +3411,13 @@ namespace TumbangPreso.Net
 
             if (_nm == null || !_nm.IsListening || _nm.CustomMessagingManager == null) return false;
 
+            // ⚠️ NO PAYLOAD AT ALL. The vote carries no data and the voter is `senderClientId`,
+            // which the transport supplies and the sender cannot type. A placeholder byte here
+            // made `tools/audit_wire_payloads.py` report a writer/reader mismatch, correctly:
+            // one field written and none read is exactly the shape of a field somebody forgot to
+            // parse, and the audit cannot tell a deliberate filler from that. `StartMatch` is the
+            // precedent for a genuinely empty message.
             using var writer = new FastBufferWriter(8, Allocator.Temp);
-            writer.WriteValueSafe(0);
             _nm.CustomMessagingManager.SendNamedMessage("SkipBuffer", NetworkManager.ServerClientId, writer);
             return true;
         }
