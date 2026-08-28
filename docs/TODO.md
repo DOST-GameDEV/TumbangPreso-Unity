@@ -7231,6 +7231,72 @@ arriving on the other machine's plate, in both directions, host and client.
 ---
 
 
+### 68.19 The picker was bleeding, the chat still grew, and the roster had four slippers
+
+Four things off one report, 🧑 2026-08-28: *"ui hella broken when i click character changer in
+lobby"*, *"thoroughly overhaul and make the TSINELAS Model better because it looks so ugly"*,
+*"add new slipper, alpombra"*, and *"chat lowk buns, it justt extends to 3 chats and u cant see
+past that"*.
+
+**1 · The character picker is an overlay now, not another piece of lobby furniture.** The lobby
+builds its tabs, drawers and chat AT RUNTIME, after the authored `CharacterSelectPanel` exists, so
+hierarchy order alone drew every one of them over the picker's backdrop: the screen you opened was
+the picker with the lobby printed through it. `EnsureCharacterOverlayIsolation` gives the panel its
+own `Canvas` with `overrideSorting` and `sortingOrder` 100, its own `GraphicRaycaster`, and a rect
+stretched to the full screen; opening it also closes the join panel and moves it last among its
+siblings, which keeps the rule true for any future decoration that does not make its own canvas.
+
+**2 · The chat panel is a fixed two-line box with a door in it.** 🧑: *"i want u to not make the
+chat extend anymore bcz theres empty sapce, js keep it at tthe size i sent and u can see other
+chats by clicking it"*. ⚠⚠ **This supersedes § 68.18's growing-log bullets.** That pass made the
+lobby log open on a click and on an arrival and then GROW through the seat rail one line at a
+time, and it still discarded everything past the sixth message, so it was both in the way and
+lossy. The panel is `LobbyVisibleLines` 2 rows plus its field, always that size. Clicking it opens
+`LobbyChatLog`: a centred, scrollable log of the last `MaxHistory` 100 lines, parented to the ROOT
+canvas at `sortingOrder` 90, dismissed by CLOSE, by Escape, or by clicking the shaded backdrop
+(*"it clsoes when u click out"*). `LobbyLogLife` and the auto-open are gone with the growth they
+served: the two compact rows are always drawn, so an arriving line is already on screen and
+covering the cast to announce it would say nothing new. `FieldHeight` stays 56 and § 68.18's
+`Debug.Log` receipt on every arrival stays exactly as it was.
+
+Two traps paid for inside that overlay and both are silent failures:
+* ⚠⚠ **The text component IS the scroll content, not a child of it.** A `ContentSizeFitter`
+  measures the `ILayoutElement`s on its OWN object; an empty `RectTransform` with a `Text` child
+  reports a preferred height of zero, so the content stays 0 px tall, the `ScrollRect` finds
+  nothing to scroll, and the log opens showing one screenful with the wheel dead.
+* ⚠ **`RectMask2D`, not `Mask`.** `Mask` needs the graphic to BE the mask, which would have thrown
+  away the wooden inset the viewport draws.
+
+**3 · The slipper roster is nine, and every new row is a licensed source model.** `TSINELAS` itself
+is rebuilt: the drawing-derived mesh is still deleted (§ `Art_Direction.md` 4a) and entry 0 is now a
+sourced, cleaned flip-flop. `SPARTAN`, `ALPOMBRA`, `PAMBAHAY`, `HEELS` and `SANDALS` join it, each
+with its own three-stat FLIGHT / IMPACT / RECOVERY row, its own character-select description and
+its own mesh. `tools/build_slipper_roster.py` is the Blender pass that produced them: one shoe per
+prop, isolated where the source was a pair, normalised to the game's 0.432 m, recoloured to the
+role-safe palette. Sources and their licences sit together in `Art/models/kits/footwear` with
+`NEW_SLIPPER_LICENSES.txt`, which is the attribution compliance and must not be deleted.
+
+⚠⚠ **THE ROSTER IS APPEND-ONLY AND THAT IS WHY THIS BUMPS THE PROTOCOL, 6 → 7.** A slipper pick
+crosses the wire as an INDEX. Inserting a row above an existing one would make two peers render
+different footwear for the same pick with nothing to report, and a build that knows nine rows must
+not be told about a pick by a build that knows four. `TSINELAS` stays index 0 because every -1
+fallback resolves to it and its row stays neutral. `HeadlessCheck` counts nine and
+`ChatAndLobbyChromeTests` holds the version number beside it.
+
+**4 · Nemu's kit reads as Nemu's, not as Kuro's.** 🧑: *"also fix nemu's character skill
+descriptioins, make it sound cooler bcz it's all just Kuro's shit"*. GHOST STEP → PHANTOM VEIL,
+KURO PROJECTION → ASTRAL HIJACK, SEANCE VOID → DEVOURING SEANCE, with the character blurb rewritten
+to match. Names and copy only; no ability numbers moved, so `Balance` and every ability test are
+untouched.
+
+⚠ **What this pass did NOT do:** nobody has PLAYED the nine-slipper roster or the new log yet, and
+the two-process run of § 68.14 step 7 still has not happened. The stats above are authored, not
+measured; the first thing to check when the roster is played is whether `HEELS` at IMPACT 5 /
+RECOVERY 1 is a real trade or just the best slipper.
+
+---
+
+
 ## 69 · The game has no chat, in the lobby or in a match ⚠️ OPEN, PLANNED 2026-08-28
 
 🧑, 2026-08-28: *"yea maybe add a chat to our game too that works in lobby and ingame"*.

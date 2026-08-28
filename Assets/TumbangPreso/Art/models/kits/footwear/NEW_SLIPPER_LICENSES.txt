@@ -1,0 +1,39 @@
+TUMBANG PRESO NEW SLIPPER SOURCES
+
+The processed game-ready models are modified, recoloured, single-shoe derivatives of the
+sources listed below. The original source GLBs are kept beside this file.
+
+TSINELAS and PAMBAHAY
+"flip flops" by Tiff Eidmann
+https://poly.pizza/m/aVbWCpQLno8
+Creative Commons Attribution 3.0
+https://creativecommons.org/licenses/by/3.0/
+
+SPARTAN
+"Flip flops" by Poly by Google
+https://poly.pizza/m/aIMn3mC1FJ-
+Creative Commons Attribution 3.0
+https://creativecommons.org/licenses/by/3.0/
+
+ALPOMBRA
+"Slippers" by Isa Lousberg
+https://poly.pizza/m/XV1WqNYen3
+CC0 1.0 Universal
+https://creativecommons.org/publicdomain/zero/1.0/
+
+HEELS
+"Stiletto" by jeremy
+https://poly.pizza/m/bn9fdr4k-FU
+Creative Commons Attribution 3.0
+https://creativecommons.org/licenses/by/3.0/
+
+SANDALS
+"Sandal" by jeremy
+https://poly.pizza/m/4_4lQugjiRa
+Creative Commons Attribution 3.0
+https://creativecommons.org/licenses/by/3.0/
+
+Changes by the Tumbang Preso project: isolated one shoe where a source contained a pair,
+normalised each prop to the game's 0.432 m gameplay length, seated and centred the mesh,
+recoloured it to the game's role-safe palette, and added a narrow bevel for the in-engine toon
+key light. No source trademarks or text are retained.

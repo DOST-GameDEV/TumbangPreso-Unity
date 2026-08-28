@@ -45,16 +45,14 @@ namespace TumbangPreso.Abilities
                 //
                 // ⚠️ A COOLDOWN AND NOT CHARGES: it moves and protects her own body and puts
                 // nothing on the floor. `HeroAbility.MaxCharges` carries the rule.
-                // ⚠️ THE PET IS NAMED IN ALL THREE OF HER POWERS NOW. 🧑 2026-08-26: *"use her
-                // pet name in new skill name and skill descriptions"*, and it is the right call
-                // for the same reason her ultimate moved onto Kuro: the character IS the pair,
-                // and a kit that only mentions him in one of three tiles reads as one hero with
-                // an accessory. `docs/VISION.md` § 3 puts the whole teaching load on the name,
-                // the glyph and one sentence, so the name is where this has to land.
-                : base("nemu_skill1", "KURO'S SHADOW",
-                       "You step into Kuro's shadow: faster, and the taya cannot tag you. Picking up a tsinelas ends it early.",
+                // ⚠️ NEMU IS THE SUBJECT OF HER OWN KIT. Kuro still carries the projection and
+                // the ultimate's landing point, but repeating his name in every title made the
+                // hero read like an accessory to her pet. This tile teaches the actual verb:
+                // Nemu phases, surges and denies a tag.
+                : base("nemu_skill1", "PHANTOM VEIL",
+                       "Slip beyond the taya's reach: surge forward, move faster, and become untouchable until you reclaim a tsinelas.",
                        52.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.NemuPhase,
-                       summary: "Kuro's shadow: faster, untaggable until you grab one.",
+                       summary: "Phase forward, outrun pursuit, and deny the next tag.",
                        castAction: "hero-nemu-ghoststep",
                        viewmodelAction: "ghost-step")
             {
@@ -142,10 +140,10 @@ namespace TumbangPreso.Abilities
                 // stranded in a possession with no charge left to come back with. At one charge
                 // that is no longer a nicety, it is the only thing standing between the player
                 // and a permanent possession.
-                : base("nemu_skill2", "RIDE KURO",
-                       "Sends Kuro out ahead and rides along in his body. Press again and yours follows him.",
+                : base("nemu_skill2", "ASTRAL HIJACK",
+                       "Possess your familiar and scout the street in spirit form. Press again to pull Nemu through the veil.",
                        0.0f, 6.0f, TumbangPreso.UI.AbilityGlyph.NemuAstralPet,
-                       summary: "Drive Kuro. Press again to follow him there.",
+                       summary: "Possess your familiar; recast to teleport to it.",
                        castAction: "hero-nemu-project",
                        viewmodelAction: "project-spirit",
                        charges: 1)
@@ -211,7 +209,7 @@ namespace TumbangPreso.Abilities
         }
 
         /// <summary>
-        /// Ultimate: KURO UNBOUND. The pet stops being a pet.
+        /// Ultimate: DEVOURING SEANCE. The familiar becomes the ritual's mouth.
         ///
         /// ⚠️⚠️ IT WAS A VORTEX THAT APPEARED OUT OF NOTHING AND 🧑 CALLED IT: *"her black hole
         /// dont make sense lowkey? maybe just make nemu's pet the black whole and make it look
@@ -246,10 +244,10 @@ namespace TumbangPreso.Abilities
             private const float FallbackRange = 3.5f;
 
             public NightmareSeanceVoidAbility()
-                : base("nemu_ultimate", "KURO UNBOUND",
-                       "Unbinds Kuro. Your pet swells into a devouring maw where it stands and drags players and loose tsinelas into it.",
+                : base("nemu_ultimate", "DEVOURING SEANCE",
+                       "Tear open a hungry spirit maw at your familiar's position, dragging players and loose tsinelas into the ritual.",
                        0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.NemuSeanceVoid,
-                       summary: "Kuro swells and devours where he stands.",
+                       summary: "Open a consuming seance where your familiar stands.",
                        // ⚠️⚠️ 2.8 m, DOWN FROM 3.2, AND THE 0.4 m BUYS THE BOTS BACK.
                        // `AiTuning.HazardAvoidMaxRadius` is 3.0 and this was the ONE registered
                        // hazard in the game above it, so it was the one thing the bots were

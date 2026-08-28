@@ -214,6 +214,7 @@ namespace TumbangPreso.UI
             BuildCast(previewNode);
 
             _characterPanel = Node("CharacterSelectPanel");
+            EnsureCharacterOverlayIsolation();
 
             OnClick("MapPrevButton", () => OnMapCycle(-1));
             OnClick("MapNextButton", () => OnMapCycle(1));
@@ -1725,6 +1726,14 @@ namespace TumbangPreso.UI
                 return;
             }
 
+            if (_joinPanel != null && _joinPanel.IsOpen) _joinPanel.Close();
+
+            // ⚠️ THE PICKER IS A PAGE-SIZED OVERLAY, NOT ANOTHER PIECE OF LOBBY FURNITURE.
+            // Runtime-built tabs, drawers and chat are created after the authored panel, so
+            // hierarchy order alone drew them over its blue backdrop. The isolated canvas below
+            // owns the render order; moving this sibling as well keeps the rule true for any
+            // future decoration that does not create its own canvas.
+            _characterPanel.SetAsLastSibling();
             _characterPanel.gameObject.SetActive(true);
 
             var select = _characterPanel.GetComponent<ConvertedCharacterSelect>();
@@ -1732,6 +1741,28 @@ namespace TumbangPreso.UI
 
             select.Closed -= OnCharacterChosen;
             select.Closed += OnCharacterChosen;
+        }
+
+        private void EnsureCharacterOverlayIsolation()
+        {
+            if (_characterPanel == null) return;
+
+            var canvas = _characterPanel.GetComponent<Canvas>();
+            if (canvas == null) canvas = _characterPanel.gameObject.AddComponent<Canvas>();
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 100;
+
+            if (_characterPanel.GetComponent<GraphicRaycaster>() == null)
+                _characterPanel.gameObject.AddComponent<GraphicRaycaster>();
+
+            var rect = _characterPanel as RectTransform;
+            if (rect != null)
+            {
+                rect.anchorMin = Vector2.zero;
+                rect.anchorMax = Vector2.one;
+                rect.offsetMin = Vector2.zero;
+                rect.offsetMax = Vector2.zero;
+            }
         }
 
         private void OnCharacterChosen()

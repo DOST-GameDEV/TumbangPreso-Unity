@@ -63,7 +63,7 @@ generator, give it paths nothing else writes.
 |---|---|---|
 | The four **cans** (`lata_*.obj`) + the viewmodel arm + the whole `env_kit` | `tools/models/generate_all.gd` | `godot --headless -s tools/models/generate_all.gd` |
 | The four **can textures** (`textures/lata_*.png`) | `tools/models/build_prop_textures.py` | `python tools/models/build_prop_textures.py` (needs Pillow) |
-| The four **slippers** (`tsinelas_*.obj`) + their textures | `tools/models/build_footwear.py` | `python tools/models/build_footwear.py` |
+| The nine **slipper skins** (`tsinelas_*`) | sourced GLBs plus `tools/build_slipper_roster.py` | Blender batch mode, see the script header |
 | The twelve **Person palettes** (`person_*.tres`) | `tools/models/generate_person_palettes.py` | `python …` |
 | Both **maps** | `tools/maps/build_*.py` | `python …` |
 
@@ -72,7 +72,7 @@ generator, give it paths nothing else writes.
 Everything in the world is CC0 Kenney (City/Suburban, Fantasy Town, Mini Forest, Food,
 Furniture, Car) plus the project's own generated `env_kit` decals.
 
-### 4a · The four slippers — SOURCED MODELS, NOT THE DRAWINGS
+### 4a · The slipper roster — SOURCED MODELS, NOT THE DRAWINGS
 
 ⚠️ **THE DRAWING-DERIVED SLIPPERS ARE DELETED AND MUST NOT BE REBUILT.** 🧑
 2026-08-01, shown the old drawing sheets: *"yo thats old stale stuff · dont"*, and
@@ -90,12 +90,17 @@ project's own original mesh:
 
 | Roster id | Mesh | Origin |
 |---|---|---|
-| `tsinelas` | `tsinelas_classic.obj` | this project's own, restored from git |
+| `tsinelas` | `tsinelas_tsinelas.glb` | Tiff Eidmann, CC-BY-3.0, rebuilt 2026-08-28 |
 | `crocs` | `tsinelas_crocs.obj` | sourced, CC-BY — see §4b |
 | `pantulog` | `tsinelas_pantulog.obj` | sourced, CC-BY — see §4b |
 | `sike` | `tsinelas_sike.obj` | sourced, CC-BY — see §4b |
+| `spartan` | `tsinelas_spartan.glb` | Poly by Google, CC-BY-3.0 |
+| `alpombra` | `tsinelas_alpombra.glb` | Isa Lousberg, CC0-1.0 |
+| `pambahay` | `tsinelas_pambahay.glb` | Tiff Eidmann, CC-BY-3.0 |
+| `heels` | `tsinelas_heels.glb` | jeremy, CC-BY-3.0 |
+| `sandals` | `tsinelas_sandals.glb` | jeremy, CC-BY-3.0 |
 
-All four are normalised to **0.432 m** toe-to-heel and centred on their volume
+All nine are normalised to **0.432 m** toe-to-heel and centred on their volume
 centroid, so `Slipper.HIT_RADIUS` and the two-axis spin hold for every skin.
 `tools/models/skin_probe.gd` gates all eight prop skins; `tools/models/charprop_probe.tscn`
 gates that the CHARACTER screen previews each one's own mesh rather than a shared one.
@@ -123,8 +128,9 @@ reaches it. Left in place, unreferenced; delete it when something else touches t
 
 ## 4b · Third-party assets and credit — **read before shipping**
 
-Everything in this table is **CC-BY-4.0**: free to use commercially, and the
-author **must be credited**. Each `.glb` ships with its own `*_LICENSE.txt`
+The original four sourced models are **CC-BY-4.0**. The five sources added on
+2026-08-28 are CC-BY-3.0 or CC0 and are recorded in `NEW_SLIPPER_LICENSES.txt`.
+Attribution licences require the author to be credited. Each source ships with a licence file
 beside it in `assets/models/kits/footwear/`, exactly as delivered — do not delete
 those files, they are the licence compliance.
 

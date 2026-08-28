@@ -36,56 +36,48 @@ namespace TumbangPreso.UI
     public sealed class LobbyChat : MonoBehaviour, UnityEngine.EventSystems.IPointerClickHandler
     {
         /// <summary>
-        /// How long the lobby log stays open after a line arrives, when nobody is typing.
+        /// ⚠️⚠️ THE LOBBY CHAT NEVER GROWS, AND CLICKING IT OPENS THE WHOLE LOG. 🧑 2026-08-28:
+        /// *"i want u to not make the chat extend anymore bcz theres empty sapce, js keep it at
+        /// tthe size i sent and u can see other chats by clicking it"*, after *"chat lowk buns, it
+        /// justt extends to 3 chats and u cant see past that"*. Two rules come out of that and
+        /// both are load-bearing:
         ///
-        /// ⚠️⚠️ THE LOG IS CLOSED BY DEFAULT IN THE LOBBY NOW. 🧑 2026-08-28: *"make it so that if
-        /// u clcik chat u see like the logs for it and who sent but it clsoes when u click out"*,
-        /// after *"big empty sapce here for lobby and say something"*. An always-open six-row log
-        /// is a wooden panel with nothing in it for the whole of a lobby where nobody talks, which
-        /// is most lobbies, and it sits over the fourth character.
+        /// 1. The panel is a FIXED two-line box plus its field. A panel that grew a line at a time
+        ///    walked up through the seat rail and still threw away everything past the sixth
+        ///    message, so it was both in the way and lossy.
+        /// 2. The panel is a DOOR. Clicking it opens a centred, scrollable log of the last
+        ///    <see cref="MaxHistory"/> lines, which is the only place the older messages exist.
         ///
-        /// ⚠️⚠️ BUT A LINE ARRIVING OPENS IT ANYWAY, AND THAT IS NOT SCOPE CREEP. A log that only
-        /// opens when you click it means a message sent while you were looking at the cast is a
-        /// message you never see: the panel would be silent about the one thing it exists for.
-        /// So an arrival opens it for <see cref="LobbyLogLife"/> and it closes itself again, which
-        /// is the same shape the MATCH log already has (`MatchLineLife`) for the same reason.
-        /// Focus overrides the timer: while you are typing it stays open however long you take.
+        /// ⚠️ AND NOTHING AUTO-OPENS THAT OVERLAY. The two compact rows are always drawn, so an
+        /// arriving line is already on screen; popping a page-sized panel over the lobby for it
+        /// would cover the cast to say something the rail underneath is already saying.
         /// </summary>
-        public const float LobbyLogLife = 9.0f;
+        public const int LobbyVisibleLines = 2;
 
-        /// <summary>True while the lobby log is showing its rows. See <see cref="LobbyLogLife"/>.
-        /// </summary>
-        private bool _logOpen;
-        private float _logOpenedAt = -999.0f;
+        /// <summary>How many lines the scrollable lobby log keeps.</summary>
+        public const int MaxHistory = 100;
 
-        /// <summary>
-        /// Whether the rows should be drawn at all right now.
-        ///
-        /// ⚠️ THE MATCH IS ALWAYS "OPEN" AND ITS ROWS FADE INSTEAD. Two different rules for two
-        /// different screens, decided by the one flag this class already branches on: in a match
-        /// the log is a transient overlay that must not grow, and in the lobby it is furniture
-        /// that must not sit there empty.
-        /// </summary>
-        private bool LogVisible => _inMatch || _logOpen || Typing;
+        /// <summary>What the log says before anybody has said anything.</summary>
+        public const string EmptyLog = "No messages yet.";
 
         /// <summary>
-        /// ⚠️ CLICKING THE PANEL FOCUSES THE FIELD RATHER THAN DOING NOTHING. The plate eats
-        /// clicks by design (see `Construct`), so without this a press anywhere on the chat that
-        /// missed the field itself was swallowed and read as the control being dead. It is also
-        /// what makes "click chat" mean the whole panel rather than one 56 px strip of it.
+        /// ⚠️ CLICKING THE PANEL OPENS THE LOG **AND** FOCUSES THE FIELD. The plate eats clicks by
+        /// design (see `Construct`), so without this a press anywhere on the chat that missed the
+        /// field itself was swallowed and read as the control being dead. Focusing as well is what
+        /// makes reading the log and answering it one press instead of two, and the overlay is
+        /// centred while the field is bottom-left, so both are visible at once.
         /// </summary>
         public void OnPointerClick(UnityEngine.EventSystems.PointerEventData e)
         {
             if (_inMatch || _field == null) return;
 
-            _logOpen = true;
-            _logOpenedAt = Time.unscaledTime;
-
+            OpenHistory();
             _field.ActivateInputField();
-            SetLines();
         }
 
-        /// <summary>How many lines the log keeps.</summary>
+        /// <summary>How many lines the MATCH log keeps. The lobby draws
+        /// <see cref="LobbyVisibleLines"/> of them and keeps the rest in the scrollable log.
+        /// </summary>
         public const int MaxLines = 6;
 
         /// <summary>Seconds a line stays at full strength in a match before it fades.</summary>
@@ -111,8 +103,12 @@ namespace TumbangPreso.UI
         private RectTransform _rect;
         private InputField _field;
         private GameObject _fieldRow;
+        private GameObject _historyPanel;
+        private Text _historyText;
+        private ScrollRect _historyScroll;
         private readonly List<Text> _lines = new List<Text>();
         private readonly List<float> _stamps = new List<float>();
+        private readonly List<string> _history = new List<string>();
 
         /// <summary>
         /// True while the player is typing, so the gameplay input reader can stand down.
@@ -162,8 +158,12 @@ namespace TumbangPreso.UI
             rect.anchorMax = new Vector2(0.0f, 0.0f);
             rect.pivot = new Vector2(0.0f, 0.0f);
             rect.anchoredPosition = new Vector2(48.0f, 48.0f);
+            // ⚠️ THE ROW SPACING IS IN THIS SUM. `column.spacing` is 4 and the padding is 10 top
+            // and bottom, so two rows cost (26 + 4) x 2, not 26 x 2, and leaving the spacing out
+            // clipped the top row by exactly the gaps it forgot.
             rect.sizeDelta = new Vector2(PanelWidth,
-                                         (LineHeight * MaxLines) + FieldHeight + 24.0f);
+                                         ((LineHeight + 4.0f) * (_inMatch ? MaxLines : LobbyVisibleLines)) +
+                                         FieldHeight + 20.0f);
 
             _rect = rect;
 
@@ -176,9 +176,12 @@ namespace TumbangPreso.UI
             // ⚠️ THE PIVOT IS THE BOTTOM-LEFT (set above), so the panel GROWS UPWARD as lines
             // arrive and the entry field never moves under the player's cursor. With a centred
             // pivot the field would drift down half a line per message.
-            var fitter = gameObject.AddComponent<ContentSizeFitter>();
-            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            if (_inMatch)
+            {
+                var fitter = gameObject.AddComponent<ContentSizeFitter>();
+                fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+                fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            }
 
             var column = gameObject.AddComponent<VerticalLayoutGroup>();
             column.spacing = 4;
@@ -246,6 +249,11 @@ namespace TumbangPreso.UI
                 // you can click THROUGH into the seat rows behind it is a panel that steals half
                 // its own presses and mis-seats somebody.
                 plate.raycastTarget = true;
+
+                // ⚠️ THE PRESS IS HANDLED BY `OnPointerClick` AND NOT BY A `Button` ON THIS SAME
+                // OBJECT. Both would fire for one click, so the log would open and the field would
+                // be focused twice; one handler that does both in order is the whole behaviour.
+                BuildHistoryPanel();
             }
 
             SetLines();
@@ -365,9 +373,18 @@ namespace TumbangPreso.UI
 
         private void OnEnable() => MatchRpc.OnChatLine += Add;
 
+        private void OnDestroy()
+        {
+            // ⚠️ THE OVERLAY IS NOT A CHILD OF THIS COMPONENT (see `BuildHistoryPanel`), so
+            // destroying the chat does not destroy it. Left behind, it is a wooden log panel
+            // floating over the next screen with nothing driving it.
+            if (_historyPanel != null) Destroy(_historyPanel);
+        }
+
         private void OnDisable()
         {
             MatchRpc.OnChatLine -= Add;
+            CloseHistory();
 
             // See AnyTyping: a chat that goes away while focused must not leave the flag set.
             AnyTyping = false;
@@ -393,20 +410,15 @@ namespace TumbangPreso.UI
 
             if (!_inMatch)
             {
-                // ⚠️ THE CLOSE IS POLLED BECAUSE "CLICKING OUT" IS NOT AN EVENT THIS COMPONENT
-                // RECEIVES. An `InputField` losing focus to a click somewhere else on the canvas
-                // raises nothing here (`onEndEdit` fires on submit and on deselect, but not when
-                // the player never typed), so the only honest test is whether it still HAS focus.
-                // `Typing` is that test, and it is the same one the input reader already asks.
-                bool open = _logOpen && (Typing ||
-                                         Time.unscaledTime - _logOpenedAt < LobbyLogLife);
-
-                if (open != _logOpen)
+                // ⚠️ ESCAPE CLOSES THE LOG BEFORE `ConvertedScreen` READS IT. That component
+                // also reads Escape and backs out of the lobby, so one press has to mean the
+                // innermost open thing: with the log up it closes the log, and only after that
+                // does it leave the screen. `CLOSE` on the overlay is the same call.
+                if (_historyPanel != null && _historyPanel.activeSelf &&
+                    Input.GetKeyDown(KeyCode.Escape))
                 {
-                    _logOpen = open;
-                    SetLines();
+                    _historyPanel.SetActive(false);
                 }
-
                 return;
             }
 
@@ -495,6 +507,16 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Push(string line)
         {
+            _history.Add(line);
+            if (_history.Count > MaxHistory) _history.RemoveAt(0);
+
+            if (!_inMatch)
+            {
+                SetLines();
+                RefreshHistoryPanel();
+                return;
+            }
+
             for (int i = 0; i < _lines.Count - 1; i++)
             {
                 _lines[i].text = _lines[i + 1].text;
@@ -504,21 +526,22 @@ namespace TumbangPreso.UI
             _lines[_lines.Count - 1].text = line;
             _stamps[_stamps.Count - 1] = Time.unscaledTime;
 
-            // ⚠️ AN ARRIVING LINE OPENS THE LOBBY LOG. See `LobbyLogLife`: a log that only ever
-            // opened on a click would be silent about the one thing it exists for, because the
-            // message you most need to see is the one that arrives while you are looking at the
-            // cast. It closes itself again unless somebody is typing.
-            if (!_inMatch)
-            {
-                _logOpen = true;
-                _logOpenedAt = Time.unscaledTime;
-            }
-
             SetLines();
         }
 
         private void SetLines()
         {
+            if (!_inMatch)
+            {
+                int first = Mathf.Max(0, _history.Count - LobbyVisibleLines);
+                int target = MaxLines - Mathf.Min(LobbyVisibleLines, _history.Count);
+
+                for (int i = 0; i < _lines.Count; i++)
+                {
+                    _lines[i].text = i < target ? "" : _history[first + i - target];
+                }
+            }
+
             foreach (var line in _lines)
             {
                 var element = line.GetComponent<LayoutElement>();
@@ -536,10 +559,10 @@ namespace TumbangPreso.UI
                 // `preferredHeight` against the rect, and a rect on a deactivated object has not
                 // been through a layout pass: fitting first measures a line that is not there yet
                 // and leaves the type wherever it started.
-                // ⚠️ A ROW IS DRAWN ONLY IF IT HAS SOMETHING TO SAY **AND** THE LOG IS OPEN. See
-                // `LobbyLogLife`: in the lobby the panel is the entry field until somebody clicks
-                // it or a message arrives.
-                bool has = !string.IsNullOrEmpty(line.text) && LogVisible;
+                // ⚠️ A ROW IS DRAWN ONLY IF IT HAS SOMETHING TO SAY. In the lobby that is the
+                // last two lines and nothing else (see `LobbyVisibleLines`); the older ones are
+                // in the scrollable log behind the click.
+                bool has = !string.IsNullOrEmpty(line.text);
 
                 if (line.gameObject.activeSelf != has) line.gameObject.SetActive(has);
 
@@ -555,6 +578,175 @@ namespace TumbangPreso.UI
 
                 MenuKit.FitBlock(line, LineHeight * 2.0f);
             }
+        }
+
+        /// <summary>
+        /// The scrollable log behind the click.
+        ///
+        /// ⚠️⚠️ IT HANGS OFF THE ROOT CANVAS, NOT OFF THE CHAT PANEL'S PARENT. The chat lives in
+        /// whatever container the lobby put it in, and a 780 x 560 box centred inside a bottom-left
+        /// strip is centred on the strip, not on the screen. Parenting to the root canvas and
+        /// giving it its own sorting canvas is the same rule `ConvertedMatchSetup` applies to the
+        /// character picker: a page-sized overlay owns its own render order rather than borrowing
+        /// the hierarchy's.
+        ///
+        /// ⚠️ AND IT SORTS BELOW THE CHARACTER PICKER (100) ON PURPOSE. Both are lobby overlays,
+        /// and the picker is the one that must never be drawn through.
+        /// </summary>
+        private void BuildHistoryPanel()
+        {
+            var canvas = GetComponentInParent<Canvas>();
+            Transform root = canvas != null ? canvas.rootCanvas.transform : (_rect != null ? _rect.parent : null);
+            if (root == null) return;
+
+            _historyPanel = new GameObject("LobbyChatLog");
+            _historyPanel.transform.SetParent(root, false);
+
+            var layer = _historyPanel.AddComponent<RectTransform>();
+            MenuKit.Stretch(layer, 0.0f);
+
+            var ownCanvas = _historyPanel.AddComponent<Canvas>();
+            ownCanvas.overrideSorting = true;
+            ownCanvas.sortingOrder = 90;
+            _historyPanel.AddComponent<GraphicRaycaster>();
+
+            // ⚠️ THE BACKDROP IS WHAT MAKES "CLICK OUT" CLOSE IT. 🧑 2026-08-28: *"it clsoes when u
+            // click out"*. A click on empty road is not an event any of this receives, so the
+            // overlay supplies the surface that hears it. It is nearly transparent rather than
+            // invisible because a full-screen raycast target that draws nothing is the control
+            // that eats a press and gets reported as a dead button.
+            var backdrop = new GameObject("Backdrop");
+            backdrop.transform.SetParent(_historyPanel.transform, false);
+            var shade = backdrop.AddComponent<Image>();
+            shade.color = new Color(0.0f, 0.0f, 0.0f, 0.55f);
+            shade.raycastTarget = true;
+            MenuKit.Stretch(shade.rectTransform, 0.0f);
+            var dismiss = backdrop.AddComponent<Button>();
+            dismiss.targetGraphic = shade;
+            dismiss.transition = Selectable.Transition.None;
+            dismiss.onClick.AddListener(CloseHistory);
+
+            var box = new GameObject("Panel");
+            box.transform.SetParent(_historyPanel.transform, false);
+            var plate = box.AddComponent<Image>();
+            plate.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
+            plate.type = Image.Type.Sliced;
+            plate.color = Color.white;
+            plate.raycastTarget = true;
+
+            var panelRect = plate.rectTransform;
+            panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+            panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+            panelRect.pivot = new Vector2(0.5f, 0.5f);
+            panelRect.anchoredPosition = Vector2.zero;
+            panelRect.sizeDelta = new Vector2(780.0f, 560.0f);
+
+            var title = MenuKit.Label(box.transform, "LOBBY CHAT", 30, UiTheme.Cream,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleLeft);
+            var titleRect = title.rectTransform;
+            titleRect.anchorMin = new Vector2(0.0f, 1.0f);
+            titleRect.anchorMax = new Vector2(1.0f, 1.0f);
+            titleRect.pivot = new Vector2(0.5f, 1.0f);
+            titleRect.offsetMin = new Vector2(24.0f, -66.0f);
+            titleRect.offsetMax = new Vector2(-170.0f, -14.0f);
+            title.raycastTarget = false;
+
+            var close = MenuKit.WoodButton(box.transform, "CLOSE", Vector2.one,
+                                           Vector2.zero, new Vector2(132.0f, 46.0f),
+                                           CloseHistory);
+            var closeRect = close.transform as RectTransform;
+            closeRect.pivot = Vector2.one;
+            closeRect.anchoredPosition = new Vector2(-18.0f, -14.0f);
+
+            var viewportGo = new GameObject("Viewport");
+            viewportGo.transform.SetParent(box.transform, false);
+            var viewportImage = viewportGo.AddComponent<Image>();
+            viewportImage.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
+            viewportImage.type = Image.Type.Sliced;
+            viewportImage.color = Color.white;
+            var viewportRect = viewportImage.rectTransform;
+            viewportRect.anchorMin = Vector2.zero;
+            viewportRect.anchorMax = Vector2.one;
+            viewportRect.offsetMin = new Vector2(22.0f, 22.0f);
+            viewportRect.offsetMax = new Vector2(-22.0f, -78.0f);
+
+            // ⚠️ `RectMask2D` AND NOT `Mask`. `Mask` needs a stencil pass and a graphic that is
+            // itself the mask, which would have thrown away the wooden inset this viewport draws.
+            viewportGo.AddComponent<RectMask2D>();
+
+            // ⚠️⚠️ THE TEXT IS ON THE CONTENT OBJECT ITSELF, NOT A CHILD OF IT. A
+            // `ContentSizeFitter` measures the `ILayoutElement`s on ITS OWN object, and an empty
+            // `RectTransform` with a `Text` child reports a preferred height of zero: the content
+            // stays 0 px tall, the `ScrollRect` sees nothing to scroll, and the log opens showing
+            // one screenful with the scroll wheel dead. One object carries both.
+            var contentGo = new GameObject("ChatHistory");
+            contentGo.transform.SetParent(viewportGo.transform, false);
+
+            _historyText = contentGo.AddComponent<Text>();
+            _historyText.font = MenuKit.Font;
+            _historyText.fontSize = 22;
+            _historyText.color = UiTheme.Cream;
+            _historyText.alignment = TextAnchor.UpperLeft;
+            _historyText.alignByGeometry = true;
+            _historyText.horizontalOverflow = HorizontalWrapMode.Wrap;
+            _historyText.verticalOverflow = VerticalWrapMode.Overflow;
+            _historyText.raycastTarget = false;
+            _historyText.text = EmptyLog;
+
+            var contentRect = _historyText.rectTransform;
+            contentRect.anchorMin = new Vector2(0.0f, 1.0f);
+            contentRect.anchorMax = new Vector2(1.0f, 1.0f);
+            contentRect.pivot = new Vector2(0.5f, 1.0f);
+            contentRect.offsetMin = new Vector2(18.0f, 0.0f);
+            contentRect.offsetMax = new Vector2(-18.0f, 0.0f);
+
+            var fitter = contentGo.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            _historyScroll = box.AddComponent<ScrollRect>();
+            _historyScroll.viewport = viewportRect;
+            _historyScroll.content = contentRect;
+            _historyScroll.horizontal = false;
+            _historyScroll.vertical = true;
+            _historyScroll.movementType = ScrollRect.MovementType.Clamped;
+            _historyScroll.scrollSensitivity = 28.0f;
+
+            _historyPanel.SetActive(false);
+        }
+
+        private void CloseHistory()
+        {
+            if (_historyPanel != null) _historyPanel.SetActive(false);
+        }
+
+        /// <summary>
+        /// ⚠️ IT OPENS ON THE NEWEST LINE, WHICH IS `verticalNormalizedPosition` 0. A hundred-line
+        /// log that opens at the top opens on whatever was said when the lobby filled, and the
+        /// player has to drag to reach the message they clicked it for.
+        ///
+        /// ⚠️ AND `ForceUpdateCanvases` RUNS BETWEEN THE FILL AND THE SCROLL. The fitter has not
+        /// re-measured the new text yet at that point, so the scroll would be normalised against
+        /// the PREVIOUS content height and land short.
+        /// </summary>
+        private void OpenHistory()
+        {
+            if (_historyPanel == null) return;
+
+            RefreshHistoryPanel();
+            _historyPanel.SetActive(true);
+            _historyPanel.transform.SetAsLastSibling();
+
+            Canvas.ForceUpdateCanvases();
+            if (_historyScroll != null) _historyScroll.verticalNormalizedPosition = 0.0f;
+        }
+
+        private void RefreshHistoryPanel()
+        {
+            if (_historyText == null) return;
+
+            _historyText.text = _history.Count == 0 ? EmptyLog : string.Join("\n", _history);
         }
 
         /// <summary>

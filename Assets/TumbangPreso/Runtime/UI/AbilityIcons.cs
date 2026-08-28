@@ -202,9 +202,9 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.ZackSprint: return "BOLT SPRINT";
                 case AbilityGlyph.ZackOvercharge: return "STATIC THROW";
                 case AbilityGlyph.ZackThunderstrike: return "THUNDERSTRIKE";
-                case AbilityGlyph.NemuPhase: return "GHOST STEP";
-                case AbilityGlyph.NemuAstralPet: return "KURO PROJECTION";
-                case AbilityGlyph.NemuSeanceVoid: return "SEANCE VOID";
+                case AbilityGlyph.NemuPhase: return "PHANTOM VEIL";
+                case AbilityGlyph.NemuAstralPet: return "ASTRAL HIJACK";
+                case AbilityGlyph.NemuSeanceVoid: return "DEVOURING SEANCE";
                 case AbilityGlyph.PhaisterHexSigil: return "HEX SIGIL";
                 case AbilityGlyph.PhaisterShadowBlink: return "BLINK";
                 case AbilityGlyph.PhaisterEclipse: return "ECLIPSE";

@@ -121,9 +121,10 @@ namespace TumbangPreso.Tests
         [Test]
         public void TheProtocolCarriesTheChatBump()
         {
-            Assert.AreEqual(6, NetSession.ProtocolVersion,
-                "chat added `Chat` and `ChatLine`, which is protocol 6. If a message was added " +
-                "or removed since, bump this and the constant together and say so in the commit.");
+            Assert.AreEqual(7, NetSession.ProtocolVersion,
+                "the expanded append-only slipper roster changes the meaning of replicated pick " +
+                "indices and therefore requires protocol 7. If a message or roster index was " +
+                "added or removed since, bump this and the constant together.");
         }
     }
 }
