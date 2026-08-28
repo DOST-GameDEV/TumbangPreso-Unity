@@ -7167,11 +7167,69 @@ width is zero, and `Street` had only ever hidden it by `Narrow` writing a width 
 `audit_request_call_sites.py` 43 entry points 0 unreachable. Renders at
 `Logs/shots-runtime/Lobby-v41.png` and `LobbySettings-v41.png`.
 
+#### 68.18.10 ✅ THE CHAT IS PROVEN, ON TWO REAL PROCESSES
+
+🧑: *"does say something even work? can u even chat with people?"*. Fair question, because nothing
+on either end said so: the send side printed `sent=True`, which only proves a message reached the
+transport, and the receiving end drew a label and logged nothing. A run where the host relayed
+correctly and a run where it dropped everything produced identical logs on both machines.
+`LobbyChat.Add` logs the receipt now, for the reason `ConvertedScreen.WireOne` gives about menu
+presses: in a shipped .exe a line in `Player.log` is the only way to tell "it never arrived" from
+"it arrived and the panel did not draw it".
+
+Two built players, one machine, `-tp-lobby` on 8910 and 8911, B joining A with
+`-tp-lobbyjoin 127.0.0.1:8910 -tp-lobbychat hello_from_B`:
+
+```
+A (host)    [Net] 2 connected, seat 1
+            [Chat] received from 'Matthew': hello_from_B
+B (client)  [LobbyAuto] join result True
+            [Net] connected as seat 2
+            [LobbyAuto] chat 'hello_from_B' sent=True
+            [Chat] received from 'Matthew': hello_from_B
+```
+
+**Both legs are in those six lines.** Client to host is B's send arriving on A. Host to client is B
+receiving its OWN line back, which only reaches it through `HostRelayChat`'s
+`SendNamedMessageToAll("ChatLine")`: `OnChatLineMsg` refuses the host, so A's copy comes from the
+local `OnChatLine?.Invoke` beside it and B's comes off the wire. It also incidentally proves the
+name work of § 68.18.5, because the line is attributed to `Matthew` rather than to `P2` or
+`SOMEBODY`, which means `LobbySession.PeerById` had the real name at relay time.
+
+⚠️ **This does NOT close § 68.14 step 7.** It closes 7.9 for the lobby. Host to leave to join in one
+launch, the LAN/online toggle, a joiner's cast wearing the right character, the ready ticks, the
+rejoin path and chat IN THE ARENA are all still unexercised, and the join here was driven by
+`NetAutomationProbe` on one machine rather than by two people on two.
+
+#### 68.18.11 The lobby log opens on demand
+
+🧑: *"big empty sapce here for lobby and say something"*, then *"make it so that if u clcik chat u
+see like the logs for it and who sent but it clsoes when u click out"*.
+
+* ⚠️⚠️ **An empty log row is DEACTIVATED, not set to zero height.** Zeroing it was the obvious fix
+  and it did half the job: a `VerticalLayoutGroup` puts its `spacing` between every pair of ACTIVE
+  children whatever their heights are, so six zero-height rows still contributed six 4 px gaps.
+  With 20 px of padding the idle panel was 44 px of nothing above a 44 px field.
+* The lobby log is **closed by default** and opens on a click anywhere on the panel. The plate eats
+  clicks by design, so `OnPointerClick` focuses the field rather than swallowing the press, which
+  is also what makes "click chat" mean the whole panel rather than one 56 px strip of it.
+* It closes when the field loses focus, **polled rather than evented**: an `InputField` losing
+  focus to a click elsewhere on the canvas raises nothing here, so the only honest test is whether
+  it still HAS focus. `Typing` is that test and the input reader already asks it.
+* ⚠️ **An arriving line opens it anyway**, for `LobbyLogLife` 9 s. A log that only opened on a click
+  would be silent about the one thing it exists for, because the message you most need to see is
+  the one that arrives while you are looking at the cast. Focus overrides the timer, so a long
+  message is never cut off mid-typing. This is the same shape the MATCH log already has.
+* `FieldHeight` 44 → 56, so with the rows away the field IS the panel: at that moment the control
+  is an invitation to type and it should look like one.
+
+
 ⚠️⚠️ **§ 68.14 STEP 7, THE TWO-PROCESS RUN, IS STILL THE THING THAT HAS NOT HAPPENED**, and this
 pass adds one item to it: **the name published after connecting** (§ 68.18.5) has to be seen
 arriving on the other machine's plate, in both directions, host and client.
 
 ---
+
 
 ## 69 · The game has no chat, in the lobby or in a match ⚠️ OPEN, PLANNED 2026-08-28
 

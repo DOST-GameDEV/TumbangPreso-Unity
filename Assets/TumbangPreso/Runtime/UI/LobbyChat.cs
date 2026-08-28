@@ -33,8 +33,58 @@ namespace TumbangPreso.UI
     /// wraps what arrives. Neither alone is enough: the cap bounds characters and the wrap bounds
     /// height.
     /// </summary>
-    public sealed class LobbyChat : MonoBehaviour
+    public sealed class LobbyChat : MonoBehaviour, UnityEngine.EventSystems.IPointerClickHandler
     {
+        /// <summary>
+        /// How long the lobby log stays open after a line arrives, when nobody is typing.
+        ///
+        /// ⚠️⚠️ THE LOG IS CLOSED BY DEFAULT IN THE LOBBY NOW. 🧑 2026-08-28: *"make it so that if
+        /// u clcik chat u see like the logs for it and who sent but it clsoes when u click out"*,
+        /// after *"big empty sapce here for lobby and say something"*. An always-open six-row log
+        /// is a wooden panel with nothing in it for the whole of a lobby where nobody talks, which
+        /// is most lobbies, and it sits over the fourth character.
+        ///
+        /// ⚠️⚠️ BUT A LINE ARRIVING OPENS IT ANYWAY, AND THAT IS NOT SCOPE CREEP. A log that only
+        /// opens when you click it means a message sent while you were looking at the cast is a
+        /// message you never see: the panel would be silent about the one thing it exists for.
+        /// So an arrival opens it for <see cref="LobbyLogLife"/> and it closes itself again, which
+        /// is the same shape the MATCH log already has (`MatchLineLife`) for the same reason.
+        /// Focus overrides the timer: while you are typing it stays open however long you take.
+        /// </summary>
+        public const float LobbyLogLife = 9.0f;
+
+        /// <summary>True while the lobby log is showing its rows. See <see cref="LobbyLogLife"/>.
+        /// </summary>
+        private bool _logOpen;
+        private float _logOpenedAt = -999.0f;
+
+        /// <summary>
+        /// Whether the rows should be drawn at all right now.
+        ///
+        /// ⚠️ THE MATCH IS ALWAYS "OPEN" AND ITS ROWS FADE INSTEAD. Two different rules for two
+        /// different screens, decided by the one flag this class already branches on: in a match
+        /// the log is a transient overlay that must not grow, and in the lobby it is furniture
+        /// that must not sit there empty.
+        /// </summary>
+        private bool LogVisible => _inMatch || _logOpen || Typing;
+
+        /// <summary>
+        /// ⚠️ CLICKING THE PANEL FOCUSES THE FIELD RATHER THAN DOING NOTHING. The plate eats
+        /// clicks by design (see `Construct`), so without this a press anywhere on the chat that
+        /// missed the field itself was swallowed and read as the control being dead. It is also
+        /// what makes "click chat" mean the whole panel rather than one 56 px strip of it.
+        /// </summary>
+        public void OnPointerClick(UnityEngine.EventSystems.PointerEventData e)
+        {
+            if (_inMatch || _field == null) return;
+
+            _logOpen = true;
+            _logOpenedAt = Time.unscaledTime;
+
+            _field.ActivateInputField();
+            SetLines();
+        }
+
         /// <summary>How many lines the log keeps.</summary>
         public const int MaxLines = 6;
 
@@ -44,7 +94,17 @@ namespace TumbangPreso.UI
 
         private const float PanelWidth = 560.0f;
         public const float LineHeight = 26.0f;
-        public const float FieldHeight = 44.0f;
+        /// <summary>
+        /// The entry field.
+        ///
+        /// ⚠️ IT GREW FROM 44 TO FILL THE PLATE RATHER THAN THE PLATE SHRINKING ONTO IT. 🧑
+        /// 2026-08-28: *"extend say something to compensate for empty sapce"*. With the empty log
+        /// rows deactivated (see `SetLines`) an idle chat panel is padding plus this and nothing
+        /// else, so a short field left a wooden border with a thin slot in it. At 56 the field IS
+        /// the panel when nobody has said anything, which is what the control actually is at that
+        /// moment: an invitation to type.
+        /// </summary>
+        public const float FieldHeight = 56.0f;
         private const int LineSize = 19;
 
         private bool _inMatch;
@@ -331,7 +391,24 @@ namespace TumbangPreso.UI
             // click without telling anybody.
             AnyTyping = Typing;
 
-            if (!_inMatch) return;
+            if (!_inMatch)
+            {
+                // ⚠️ THE CLOSE IS POLLED BECAUSE "CLICKING OUT" IS NOT AN EVENT THIS COMPONENT
+                // RECEIVES. An `InputField` losing focus to a click somewhere else on the canvas
+                // raises nothing here (`onEndEdit` fires on submit and on deselect, but not when
+                // the player never typed), so the only honest test is whether it still HAS focus.
+                // `Typing` is that test, and it is the same one the input reader already asks.
+                bool open = _logOpen && (Typing ||
+                                         Time.unscaledTime - _logOpenedAt < LobbyLogLife);
+
+                if (open != _logOpen)
+                {
+                    _logOpen = open;
+                    SetLines();
+                }
+
+                return;
+            }
 
             if (Typing)
             {
@@ -391,8 +468,20 @@ namespace TumbangPreso.UI
             _field.ActivateInputField();
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE RECEIPT IS LOGGED, AND WITHOUT IT THE TWO-PROCESS RUN COULD NOT ANSWER THE
+        /// QUESTION IT EXISTS FOR. 🧑 2026-08-28: *"does say something even work? can u even chat
+        /// with people?"*. The send side already prints `[LobbyAuto] chat ... sent=True`, which
+        /// only proves a message reached the transport; the receiving end drew a label and said
+        /// nothing, so a run where the host relayed nothing and a run where it relayed correctly
+        /// produced identical logs on both machines. This is the same argument
+        /// `ConvertedScreen.WireOne` makes for logging every menu press: in a shipped .exe a line
+        /// in `Player.log` is the only way to tell "it never arrived" from "it arrived and the
+        /// panel did not draw it".
+        /// </summary>
         private void Add(string who, string what)
         {
+            Debug.Log($"[Chat] received from '{who}': {what}");
             Push($"{who}:  {what}");
         }
 
@@ -415,6 +504,16 @@ namespace TumbangPreso.UI
             _lines[_lines.Count - 1].text = line;
             _stamps[_stamps.Count - 1] = Time.unscaledTime;
 
+            // ⚠️ AN ARRIVING LINE OPENS THE LOBBY LOG. See `LobbyLogLife`: a log that only ever
+            // opened on a click would be silent about the one thing it exists for, because the
+            // message you most need to see is the one that arrives while you are looking at the
+            // cast. It closes itself again unless somebody is typing.
+            if (!_inMatch)
+            {
+                _logOpen = true;
+                _logOpenedAt = Time.unscaledTime;
+            }
+
             SetLines();
         }
 
@@ -424,23 +523,35 @@ namespace TumbangPreso.UI
             {
                 var element = line.GetComponent<LayoutElement>();
 
-                // ⚠️ AN EMPTY SLOT TAKES NO ROOM. See the fitter in `Construct`: this is the half
-                // that makes the panel collapse, and without it the fitter measures six reserved
-                // rows and the box is full height with nothing in it.
-                if (string.IsNullOrEmpty(line.text))
-                {
-                    if (element != null)
-                    {
-                        element.minHeight = 0.0f;
-                        element.preferredHeight = 0.0f;
-                    }
+                // ⚠️⚠️ AN EMPTY SLOT IS DEACTIVATED, NOT SET TO ZERO HEIGHT, AND THE DIFFERENCE IS
+                // THE PANEL'S OWN SPACING. 🧑 2026-08-28, of the lobby chat: *"big empty sapce here
+                // for lobby and say something"*. Zeroing the height was the obvious fix and it
+                // only did half the job: a `VerticalLayoutGroup` puts its `spacing` between every
+                // pair of ACTIVE children whatever their heights are, so six zero-height rows
+                // still contributed six 4 px gaps, and with 20 px of padding the empty panel was
+                // 44 px of nothing above a 44 px field. A layout group skips an inactive child
+                // entirely, gap included.
+                //
+                // ⚠️ AND THE FIT RUNS AFTER THE ACTIVATION, not before. `MenuKit.FitBlock` measures
+                // `preferredHeight` against the rect, and a rect on a deactivated object has not
+                // been through a layout pass: fitting first measures a line that is not there yet
+                // and leaves the type wherever it started.
+                // ⚠️ A ROW IS DRAWN ONLY IF IT HAS SOMETHING TO SAY **AND** THE LOG IS OPEN. See
+                // `LobbyLogLife`: in the lobby the panel is the entry field until somebody clicks
+                // it or a message arrives.
+                bool has = !string.IsNullOrEmpty(line.text) && LogVisible;
 
-                    continue;
-                }
+                if (line.gameObject.activeSelf != has) line.gameObject.SetActive(has);
+
+                if (!has) continue;
 
                 line.color = UiTheme.Cream;
 
-                if (element != null) element.minHeight = LineHeight;
+                if (element != null)
+                {
+                    element.minHeight = LineHeight;
+                    element.preferredHeight = LineHeight;
+                }
 
                 MenuKit.FitBlock(line, LineHeight * 2.0f);
             }
