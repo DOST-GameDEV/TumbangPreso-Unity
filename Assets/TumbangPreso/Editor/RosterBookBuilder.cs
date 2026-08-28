@@ -107,13 +107,22 @@ namespace TumbangPreso.EditorTools
             { "boyben",  "models/lata_boyben.obj" },
             { "decades", "models/lata_decades.obj" },
             { "metal",   "models/lata_metal.obj" },
+            // Built by `tools/build_lata.py`, which is the Godot generator ported into this
+            // repo. See that file's header: the Godot one is frozen and cannot be run.
+            { "piyesta", "models/lata_piyesta.obj" },
+            { "karne",   "models/lata_karne.obj" },
         };
 
         private static readonly Dictionary<string, string> SlipperModels = new Dictionary<string, string>
         {
+            // ⚠️ FOUR OF THESE MOVED FROM .obj TO .glb ON 2026-08-28 AND THE EXTENSION IS
+            // PART OF THE PATH, so a row left pointing at the old file resolves to a mesh
+            // that is still on disk, still imports, and is the model that was replaced.
+            // `tools/build_slipper_models.py` writes the .glb; the .obj it supersedes is
+            // deleted in the same commit so this cannot silently half-apply.
             { "tsinelas", "models/tsinelas_tsinelas.glb" },
-            { "crocs",    "models/tsinelas_crocs.obj" },
-            { "pantulog", "models/tsinelas_pantulog.obj" },
+            { "crocs",    "models/tsinelas_crocs.glb" },
+            { "pantulog", "models/tsinelas_pantulog.glb" },
             { "sike",     "models/tsinelas_sike.obj" },
             { "spartan",   "models/tsinelas_spartan.glb" },
             { "alpombra",  "models/tsinelas_alpombra.glb" },

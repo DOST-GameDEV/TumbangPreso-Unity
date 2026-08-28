@@ -7356,6 +7356,205 @@ EditMode test on the host-side clamp and rate limit.
 
 ---
 
+## 70 · The prop art was replaced wholesale, and IKE was never a bad model ⚠️ PARTLY OPEN 2026-08-28
+
+🧑, 2026-08-28: *"ur work is to pull models from the internet and replace ugly models we have"*,
+then item by item across the session: IKE, TSINELAS, CROCS, PANTULOG, SPARTAN, ALPOMBRA, HEELS,
+SANDALS, a LOAFERS entry that does not exist yet, and two new cans.
+
+### 70.1 ⚠️⚠️ IKE WAS NOT AN UGLY MODEL, IT WAS A BLACK ONE, AND THE MESH IS FINE ✅ FIXED
+
+🧑: *"IKE got corrupted pls fix"*, and then, when it was queued for replacement, *"i didnt want
+u o replace ike br"*, *"js fix it"*.
+
+`sike_sandals.glb` ships `baseColorFactor [0,0,0,1]` on both body materials and carries **no
+textures at all**, so the converter faithfully wrote `Kd 0 0 0` into `tsinelas_sike.mtl`. A
+pure-black albedo returns nothing under the toon key light: every curve on the upper resolves to
+the same value and the shoe renders as a flat silhouette with the white swoosh floating on it.
+
+**The geometry was never the problem** and the first read of this was wrong. Measured:
+**33,856 unique positions of 34,033, zero degenerate faces**, normals and UVs present on every
+vertex. The 177 duplicates are ordinary seam splits.
+
+Fixed by taking the body to `Kd 0.105 0.115 0.145` with real specular. It still reads as a black
+sneaker; it now has a toe box, a footbed and a strap. The `.obj` header was rewritten in the same
+commit purely to change its content hash, because **Unity watches the `.obj` and not the `.mtl`**,
+so a material-only edit is not reimported.
+
+⚠️ `tools/models/glb_tool.py` NO LONGER EXISTS IN EITHER REPO, so the "DO NOT EDIT BY HAND"
+header on that `.mtl` was pointing at a generator nobody can run. It says so now.
+
+⚠️ **This does not close `CLAUDE.md` § 6's note that IKE carries the real Nike wordmark as
+geometry.** That is a trademark question, not a rendering one, and it is still first in the
+replacement queue in `Port_Plan.md` § 8. It was raised again this session and 🧑 chose to keep
+the model.
+
+### 70.2 The four replaced slippers, and the pipeline that is deliberately not the old one ✅ DONE
+
+| | source | tris | licence |
+|---|---|---|---|
+| TSINELAS | Flip Flops, Remie07 | 51,936 | CC-BY |
+| PANTULOG | worn rubber bathroom slide | 4,500 | CC-BY |
+| ALPOMBRA | fashion block-heel mule | 44,408 | CC-BY |
+| CROCS | [XYZ School] HW6 Sabo, andrew.rudik | 23,120 | CC-BY |
+
+`tools/build_slipper_models.py`, and it exists **beside** `build_slipper_roster.py` rather than
+replacing it. The old script recolours every material to a flat two-colour palette, bevels the
+silhouette, and squashes Z independently of X and Y to fit a 0.160 m cap. Those four are what
+made the shipped roster read as blobs, and 🧑 asked for the new sources untouched: *"no need to
+compress them okay"*, *"js put them as is"*. PAMBAHAY still comes from the old flip-flop source
+and still wants the old treatment, so both scripts stay.
+
+⚠️ **Three edits are forced by the runtime and cannot be skipped**, which is the whole content of
+the new script:
+
+1. **One shoe, not a pair.** `Balance.SlipperHitRadius` is a fixed 0.23 m and every contact is a
+   host-side distance check, so a prop twice as wide as its hit radius reads as a slipper passing
+   through the lata without knocking it down.
+2. **Uniform scale to 0.432 m.** `MatchInstaller.BuildSlipper` instantiates the model with no
+   rescale, so the mesh's own units ARE the gameplay size.
+3. **Centred on XY, seated on Z = 0**, matching all nine shipped slippers (measured: every one has
+   `min.y == 0.0000` in glTF space).
+
+### 70.3 ⚠️ TWO SPLIT BUGS THAT A RENDER CAUGHT AND A CODE READ DID NOT
+
+**The pair split guessed wrong on the clog.** 🧑, off the render: *"yo what sup with crocs why is
+there 2"*. The heel strap of the right shoe sits closer to the left shoe's centroid than to its
+own, so 2-means claimed it and the prop shipped with a floating fragment of the other foot. Fixed
+by preferring the source's own `sabo_L_` / `Sabo_R_` object names. **Prefer names over clustering
+wherever a source labels its sides.**
+
+**Scaling off the axis-aligned bounding box undersized the flip-flop.** That source lays its shoe
+at roughly 40 degrees to the world axes, so the box's diagonal was being divided rather than the
+shoe's length, and the first build came out 0.352 x 0.432 with the shoe itself well under
+0.432 m. `align_to_x` now turns each shoe onto its own principal axis first.
+
+⚠️ **+X is the convention and it is not arbitrary.** `Slipper.CarryRotation` is a quarter turn
+about Y whose note records what happens without it, "the slipper lies across the palm sideways",
+and that rotation takes +X to forward. Measured on the shipped roster: PAMBAHAY, SPARTAN and
+HEELS are all 0.432 m along glTF X. **SANDALS is the one that is not**, and it is on the
+replacement list below, so fix it there rather than special-casing it.
+
+### 70.4 The two new cans, and the generator that had to be ported to add them ✅ DONE
+
+PIYESTA (Bel Monte fruit cocktail) and KARNE NORTE (Purofoods corned beef), both from labels 🧑
+supplied at 1774 x 887, resampled to the 1024 x 512 every wrap uses.
+
+⚠️⚠️ **THE CAN GENERATOR LIVED ONLY IN THE FROZEN GODOT REPO**, as `tools/models/generate_all.gd`
+plus `obj_writer.gd`, and that repo must not be run or edited. A fifth can could not be added
+without it. Ported to `tools/build_lata.py`.
+
+⚠️ **The port is proved by regenerating the four shipped cans, not by reading it.** `--verify`
+rebuilds PASIP, BOYBEN, DECADES and KALAWANG in memory and compares line by line. It found a real
+bug on the first pass: the metal can's rib loop had been written with three profile points per rib
+instead of two, giving **2,315 lines against 1,811**. Nobody comparing the two loops by eye saw it.
+
+⚠️ **The comparison is within 2e-5, not byte for byte, and that is Godot's number type rather than
+sloppiness.** `Vector2` and `Vector3` are `real_t`, which is 32-bit float in a standard build, so
+every profile point was rounded to single precision before `_fmt` saw it. Line counts, `f` lines
+and every integer still have to match exactly. Worst float delta measured: **1.0e-5**, one unit in
+the last printed digit, on all four.
+
+⚠️ **A silhouette nobody else has is a gameplay requirement on a can**, per the generator's own
+note: a label is a texture read and dies at arena distance under the toon bands. PASIP necks in at
+both ends, BOYBEN has a proud lid lip, DECADES is double-rimmed, the bare tin is ribbed. **PIYESTA
+is the widest in the set with one deep seam ring at a third height; KARNE is the only tapered one.**
+
+Stats read off the meshes the way the first four were retuned: PIYESTA 3/2/5 (widest and full of
+syrup, so nothing tips it and it swallows the hit), KARNE 4/4/1 (a cone carries its mass high over
+a narrow top, so it goes over easily, but it is dense and small).
+
+### 70.5 The rusty can's white seam was in the texture ✅ FIXED
+
+🧑: *"theres like a white line in between the rusty can and i think its bcz theres a white line in
+the picture for it"*. He was right. `lata_metal.png` and `lata_pasip.png` carry a pure-white matte
+one pixel wide on the left and right and several rows deep top and bottom. The label wraps
+cylindrically, so column 0 and column 1023 land next to each other on the mesh and the two white
+columns read as **one bright seam running the full height of the can**. Not a shader or a UV fault.
+
+`tools/strip_texture_border.py` clamps the matte away rather than cropping it, because rescaling
+would shift every UV by a fraction of a texel.
+
+⚠️ **A matte is recognised by being COLOURLESS, not by being pure white.** The first pass tested
+luma >= 240 and left a cream band on the metal can's bottom edge: the export mattes to an off-white
+of luma 219 to 237 and only the extreme rows reach 240. Every matte line measured is flat grey
+(saturation 0.00 to 0.09) while the rust label runs 0.25 to 0.56.
+
+Measured after: metal clamped left 1, right 1, top 8, bottom 5; pasip left 1, top 22, bottom 15.
+BOYBEN and DECADES have no matte and are untouched, which the tool reports rather than assumes.
+
+### 70.6 ⚠️⚠️ THE CAST WENT PALE EVERYWHERE, AND IT IS ONE CONSTANT FROM THIS MORNING ✅ FIXED
+
+🧑, 2026-08-28: *"theres also this shader bug"*, *"everyone in ilalim ng tulay map is pale af"*,
+*"this is also the same for character select, everyone is pale af in character select"*.
+
+**Both screens is the tell.** `ModelPreview` puts its own `ColourGrade` on its own camera, so the
+character portrait and the arena run the same curve, and only a value inside that shader can be
+wrong on both at once. Nothing about Ilalim ng Tulay was at fault, and the first two hypotheses
+here (its `Trilight` ambient, and its being the only map with fog on) were both wrong.
+
+`98e9682a` took the tonemap pre-scale from **0.6 to 1.96** the same day, to fix a real and
+opposite complaint that the game was dark and unvibrant. It overshot.
+
+⚠️ **The symptom is lost SEPARATION, not brightness, which is why solving for the white point
+produced it.** Narkowicz flattens hard past x = 1, so pushing white to 0.90 drags every lit
+midtone into the shoulder. Taking a surface from linear 0.5 to 0.7, the band a toon character's
+two shading steps live in once the additive ambient is on top:
+
+| K | 0.5 → | 0.7 → | separation |
+|---|---|---|---|
+| 0.60 | 0.418 | 0.524 | 0.106, and the whole frame too dark |
+| 1.96 | 0.787 | 0.853 | 0.066, and every colour reads as white |
+| **1.25** | **0.669** | **0.759** | **0.090** |
+
+1.96 kept 62 per cent of the separation while being 88 per cent brighter at mid grey. **That is
+what "pale" is**: a cast whose skin, shirt and shorts differ by two thirds of what they used to,
+sitting where the curve has nothing left to give. 1.25 recovers 85 per cent and still lands mid
+grey at 0.67 against the old 0.42.
+
+### 70.7 ⚠️ `ProtocolVersion` 7 → 8, and a roster that only GROWS still breaks the wire
+
+No message changed shape, which is exactly why the bump is needed. `can_index` travels as a bare
+int, so a peer on 7 reading a `can_index` of 4 or 5 does not error, it indexes past the end of a
+four-entry table, and the lookup clamps rather than throwing. The visible result is two players
+looking at different cans in the same match with nothing in either log.
+
+Nothing else on the wire needed changing: `LobbySession.SetPicks` already validates against
+`Roster.Cans.Count` and `Roster.Slippers.Count`, and the select screen enumerates the lists
+directly, so both new cans appear with no UI edit.
+
+### 70.8 STILL OPEN: four slippers waiting on a download, and one new roster entry
+
+⚠️ **Sketchfab will not serve a model without a logged-in account**, so these cannot be fetched
+from here. All four are CC-BY, downloadable, and picked against the same silhouette rule as the
+cans. Format wanted is glTF Binary.
+
+| slot | model | tris | why |
+|---|---|---|---|
+| SPARTAN | Worn Flip Flop, inciprocal | 14,884 | thick worn thong, the literal Spartan read |
+| HEELS | Plateau Sandal Heels, hiirusama | 28,432 | single shoe already, unbranded |
+| SANDALS | Chappal, Amad Junaid | 16,592 | strappy leather slide, and it fixes 70.3's odd axis |
+| LOAFERS | Shoes Loafers (A6-2), eeelabvisual | 3,660 | **new entry, index 9**, the school shoe |
+
+⚠️ **LOAFERS moves `ProtocolVersion` again, 8 → 9**, and it must be appended, never inserted.
+It also needs a row in `Roster.Slippers`, a description in `ConvertedCharacterSelect`, and a line
+in `RosterBookBuilder.SlipperModels`.
+
+⚠️ **Two of the chosen sources carry a visible brand and a decision is owed on each.** The clog
+that shipped has `CROCS` raised in geometry on its strap, as its own `text_blackPhong` material,
+so it can be recoloured or dropped in one line without touching the mesh. The chappal has a small
+maker's tab. `CLAUDE.md` § 3 and the no-vendor-names rule both point at removing them before this
+goes in front of a national panel.
+
+### 70.9 Done looks like
+
+`RosterBook` validating at 6 cans and 10 slippers, `tools/build_lata.py --verify` green, a model
+sheet showing every new prop under the toon shader rather than a Blender render, and a two-machine
+run proving a can index above 3 crosses the wire.
+
+---
+
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**

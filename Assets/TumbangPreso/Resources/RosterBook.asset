@@ -36,6 +36,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ce0626ac5db14f2409ddadc10dd61d76, type: 2}
   - {fileID: 11400000, guid: f7c836899f2e4dd4088301d107fd4c4d, type: 2}
   - {fileID: 11400000, guid: 05399450c0840484c937b3f4f06864ca, type: 2}
+  - {fileID: 11400000, guid: 746d1c77a5f8d3243a3723859834fd38, type: 2}
+  - {fileID: 11400000, guid: f6a0503fae2e6424d84db804cee3719c, type: 2}
   Slippers:
   - {fileID: 11400000, guid: e1ab1c92842b6234eb30daa34eb3ab3f, type: 2}
   - {fileID: 11400000, guid: 15dd4080da6950a41ab6fd5dc27bce9a, type: 2}

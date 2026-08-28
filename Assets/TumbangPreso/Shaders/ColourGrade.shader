@@ -106,7 +106,35 @@ Shader "TumbangPreso/ColourGrade"
                 // lands at 0.90 and mid grey at 0.71 instead of 0.41. It stays a ROLL-OFF rather
                 // than a clip: values above 1.0 still compress instead of flattening, which is the
                 // whole reason there is a tonemap here at all.
-                half3 x = colour * 1.96h / max(0.001h, _White / 1.9h);
+                //
+                // ⚠️⚠️ AND 1.96 OVERSHOT, SO THE SHIPPED VALUE IS 1.25. 🧑 2026-08-28, off the
+                // build carrying 1.96: *"everyone in ilalim ng tulay map is pale af"*, *"this is
+                // also the same for character select, everyone is pale af"*. Both screens, which
+                // is the tell: `ModelPreview` puts a `ColourGrade` on its own camera, so the
+                // character portrait and the arena run the SAME curve and only a value in here
+                // can be wrong on both at once. Nothing about the map was at fault.
+                //
+                // ⚠️ THE SYMPTOM IS LOST SEPARATION, NOT BRIGHTNESS, WHICH IS WHY SOLVING FOR
+                // THE WHITE POINT PRODUCED IT. Narkowicz flattens hard past x = 1, so pushing
+                // white up to 0.90 drags every lit midtone into the shoulder with it. Taking a
+                // surface from linear 0.5 to 0.7, which is the band a toon character's two
+                // shading steps live in once the additive ambient is on top:
+                //
+                //     K = 0.60   0.418 -> 0.524    0.106 apart, and the whole frame too dark
+                //     K = 1.96   0.787 -> 0.853    0.066 apart, and every colour reads as white
+                //     K = 1.25   0.669 -> 0.759    0.090 apart
+                //
+                // ⚠️ 1.96 KEPT 62 PER CENT OF THE SEPARATION 0.60 HAD while being 88 per cent
+                // brighter at mid grey. That is what "pale" is: a cast whose skin, shirt and
+                // shorts differ by two thirds of what they used to, sitting near the top of the
+                // range where the curve has nothing left to give. 1.25 recovers 85 per cent of
+                // the old separation and still lands mid grey at 0.67 against the old 0.42, so
+                // the "dark and unvibrant" report this value was raised to fix does not return.
+                //
+                // White lands at 0.837 rather than 0.90. A fully lit white surface reaching 84
+                // per cent is a roll-off doing its job; reaching 65 per cent, which is what 0.60
+                // gave, was the actual defect.
+                half3 x = colour * 1.25h / max(0.001h, _White / 1.9h);
                 half3 mapped = (x * (2.51h * x + 0.03h)) / (x * (2.43h * x + 0.59h) + 0.14h);
 
                 return saturate(mapped);

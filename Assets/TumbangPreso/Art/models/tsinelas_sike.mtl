@@ -1,13 +1,26 @@
-# Converted from sike_sandals.glb by tools/models/glb_tool.py - DO NOT EDIT BY HAND.
+# Originally converted from sike_sandals.glb by tools/models/glb_tool.py.
+# ⚠️ THAT TOOL NO LONGER EXISTS IN THE REPO, so this file is now maintained by hand.
+# Re-running the converter would reintroduce the bug below; edit here instead.
+#
+# ⚠️ m2 IS THE SHOE BODY AND ITS Kd MUST NOT GO BACK TO 0 0 0.
+# The source GLB ships baseColorFactor [0,0,0,1] on both body materials and carries no
+# textures at all, so the converter faithfully wrote pure black. A pure-black albedo
+# returns nothing under the toon key light: every curve on the upper resolves to the same
+# value and the shoe renders as a flat silhouette with the m3 swoosh floating on top.
+# That is the "IKE is corrupted" report. The mesh itself is clean (33,856 unique
+# positions, 0 degenerate faces, normals and UVs present) so the geometry needs nothing.
+#
+# 0.105/0.115/0.145 is the darkest the body can sit and still separate the toe box from
+# the midsole at gameplay distance. It still reads as a black sneaker.
 newmtl m2
-Kd 0.00000 0.00000 0.00000
-Ks 0.00000 0.00000 0.00000
-Ns 1000.00000
+Kd 0.10500 0.11500 0.14500
+Ks 0.18000 0.18000 0.20000
+Ns 48.00000
 d 1.00000
-illum 1
+illum 2
 newmtl m3
-Kd 1.00000 1.00000 1.00000
-Ks 0.00000 0.00000 0.00000
-Ns 1000.00000
+Kd 0.94000 0.94000 0.93000
+Ks 0.08000 0.08000 0.08000
+Ns 24.00000
 d 1.00000
-illum 1
+illum 2

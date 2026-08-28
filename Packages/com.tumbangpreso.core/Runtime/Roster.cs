@@ -155,6 +155,17 @@ namespace TumbangPreso.Core
             new RosterEntry("boyben",  "BOYBEN",        1,    3,    5),
             new RosterEntry("decades", "DECADES TUNA",  4,    1,    4),
             new RosterEntry("metal",   "KALAWANG",      2,    5,    3),
+            // ⚠️ APPEND ONLY, for the same reason the slippers below are. `can_index`
+            // crosses the wire as a bare int, so inserting above an existing row makes two
+            // peers render a different can for the same pick with no error anywhere.
+            //
+            // Both rows are read off the mesh, the way the four above were retuned. PIYESTA
+            // is the widest can in the set and full of syrup, so nothing tips it and it
+            // absorbs the throw rather than returning it. KARNE is the only tapered one:
+            // a cone carries its mass high over a narrow top, so it goes over easily, but
+            // it is dense enough to punish the slipper and small enough to stand up fast.
+            new RosterEntry("piyesta", "PIYESTA",       3,    2,    5),
+            new RosterEntry("karne",   "KARNE NORTE",   4,    4,    1),
         };
 
         /// <summary>

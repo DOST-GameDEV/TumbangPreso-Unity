@@ -1,5 +1,5 @@
-# Converted from sike_sandals.glb by tools/models/glb_tool.py - DO NOT EDIT BY HAND.
-# Geometry is carried through unchanged; only scale, yaw and origin move.
+# Converted from sike_sandals.glb. Geometry is original and correct; do not regenerate.
+# The body colour lives in tsinelas_sike.mtl and is maintained by hand. See the note there.
 mtllib tsinelas_sike.mtl
 o tsinelas_sike
 v -0.02301 0.07296 0.03570

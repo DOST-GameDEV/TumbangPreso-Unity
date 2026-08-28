@@ -24,16 +24,30 @@ TARGET_LENGTH = 0.432
 MAX_HEIGHT = 0.160
 
 
+# ⚠️⚠️ TSINELAS AND ALPOMBRA WERE DELETED FROM THIS TABLE ON 2026-08-28, AND LEAVING THEM
+# WOULD HAVE BEEN A LIVE BUG RATHER THAN CLUTTER. Both are now built by
+# `tools/build_slipper_models.py` from new CC-BY sources, into the SAME
+# `tsinelas_<id>.glb` filenames this script writes. Every run of this one would have
+# silently overwritten them with the flat recoloured versions they replaced.
+#
+# ⚠️ THIS EXACT FAULT ALREADY HAPPENED ONCE, IN THE GODOT REPO, and its post-mortem is
+# still in `tools/models/generate_all.gd`: four procedural slippers were left in a
+# generator that still called them, they overwrote the sourced CROCS and SIKE on the
+# next unrelated run, and 🧑 found it on the character screen with *"nigag what is this
+# these are not the models we used"*. The finding recorded there is the rule here:
+# TWO GENERATORS MUST NEVER SHARE AN OUTPUT PATH.
+#
+# ⚠️ THE THREE ROWS BELOW ARE STILL LIVE AND THIS SCRIPT IS NOT DEAD CODE. PAMBAHAY has
+# no replacement and still wants the old flat treatment. SPARTAN and HEELS are queued
+# for replacement in `docs/TODO.md` § 70.8 but nothing has been downloaded for them yet,
+# so this is what currently builds them. Delete a row the moment its replacement lands,
+# in the same commit, not afterwards.
 RECIPES = (
     # id, source, object-name fragments, optional (axis, keep-positive), colours
-    ("tsinelas", "source_tsinelas_flip_flops.glb", ("group1977808981",), None,
-     ((0.12, 0.10, 0.08, 1.0), (0.74, 0.59, 0.27, 1.0))),
     ("pambahay", "source_tsinelas_flip_flops.glb", ("group1162052169",), None,
      ((0.18, 0.10, 0.20, 1.0), (0.73, 0.38, 0.56, 1.0))),
     ("spartan", "source_spartan_flip_flops.glb", ("Box003", "Line005"), None,
      ((0.055, 0.048, 0.045, 1.0), (0.70, 0.055, 0.075, 1.0))),
-    ("alpombra", "source_alpombra_slippers.glb", ("slippers",), (0, True),
-     ((0.45, 0.19, 0.28, 1.0), (0.83, 0.67, 0.55, 1.0))),
     ("heels", "source_heels_stiletto.glb", ("Stillettos",), (1, False),
      ((0.085, 0.065, 0.075, 1.0), (0.62, 0.10, 0.22, 1.0))),
     ("sandals", "source_sandals.glb", ("Sandal",), None,

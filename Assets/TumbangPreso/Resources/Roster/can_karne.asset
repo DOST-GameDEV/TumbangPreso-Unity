@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd6025c7ab6554d458e7834add491ac2, type: 3}
-  m_Name: slipper_crocs
+  m_Name: can_karne
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
-  Id: crocs
-  Model: {fileID: 1948226748658532997, guid: 26a98e04c8e8f90458f7b64009131608, type: 3}
+  Id: karne
+  Model: {fileID: 919132149155446097, guid: cead951ca00f5f64cbec12799ff1df8c, type: 3}
   PetModel: {fileID: 0}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}

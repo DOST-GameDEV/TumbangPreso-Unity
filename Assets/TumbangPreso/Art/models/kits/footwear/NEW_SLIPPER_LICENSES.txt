@@ -1,9 +1,47 @@
-TUMBANG PRESO NEW SLIPPER SOURCES
+TUMBANG PRESO SLIPPER SOURCES
 
-The processed game-ready models are modified, recoloured, single-shoe derivatives of the
-sources listed below. The original source GLBs are kept beside this file.
+Every processed prop under Art/models is a derivative of one of the source files kept
+beside this note. Two pipelines write them and they are NOT interchangeable:
 
-TSINELAS and PAMBAHAY
+  tools/build_slipper_models.py   the "src_" sources. Geometry, materials and textures
+                                  go through UNTOUCHED. Only the pair split, a uniform
+                                  scale to the game's 0.432 m and the seating move.
+  tools/build_slipper_roster.py   the "source_" sources. The older pass, which also
+                                  recolours to a flat palette and bevels the silhouette.
+
+Delete a source the moment nothing builds from it. Both scripts write to the same
+tsinelas_<id>.glb names, so a stale recipe silently overwrites the other one's output.
+
+
+CURRENT SOURCES
+===============
+
+TSINELAS
+"Flip Flops" by Remie07
+https://sketchfab.com/3d-models/flip-flops-ac0eaae976a545caa52908e977f59ae0
+Creative Commons Attribution 4.0
+https://creativecommons.org/licenses/by/4.0/
+
+PANTULOG
+Worn rubber slide, downloaded 2026-08-28
+Creative Commons Attribution 4.0
+https://creativecommons.org/licenses/by/4.0/
+
+ALPOMBRA
+Fashion block-heel mule, downloaded 2026-08-28
+Creative Commons Attribution 4.0
+https://creativecommons.org/licenses/by/4.0/
+
+CROCS
+"[XYZ School] HW6-Detailing 1/3. Sabo. Rubber clog" by andrew.rudik
+https://sketchfab.com/3d-models/xyz-school-hw6-detailing-13-sabo-rubber-clog-371be8dd8a1e482681ece999c20b60bd
+Creative Commons Attribution 4.0
+https://creativecommons.org/licenses/by/4.0/
+NOTE: this mesh carries a raised CROCS wordmark on the heel strap, as its own
+"text_blackPhong" material. It can be recoloured or dropped without touching the mesh.
+See docs/TODO.md section 70.8.
+
+PAMBAHAY
 "flip flops" by Tiff Eidmann
 https://poly.pizza/m/aVbWCpQLno8
 Creative Commons Attribution 3.0
@@ -14,12 +52,6 @@ SPARTAN
 https://poly.pizza/m/aIMn3mC1FJ-
 Creative Commons Attribution 3.0
 https://creativecommons.org/licenses/by/3.0/
-
-ALPOMBRA
-"Slippers" by Isa Lousberg
-https://poly.pizza/m/XV1WqNYen3
-CC0 1.0 Universal
-https://creativecommons.org/publicdomain/zero/1.0/
 
 HEELS
 "Stiletto" by jeremy
@@ -33,7 +65,27 @@ https://poly.pizza/m/4_4lQugjiRa
 Creative Commons Attribution 3.0
 https://creativecommons.org/licenses/by/3.0/
 
-Changes by the Tumbang Preso project: isolated one shoe where a source contained a pair,
-normalised each prop to the game's 0.432 m gameplay length, seated and centred the mesh,
-recoloured it to the game's role-safe palette, and added a narrow bevel for the in-engine toon
-key light. No source trademarks or text are retained.
+IKE
+sike_sandals.glb, retained as-is. Only its material was corrected; see the note in
+Art/models/tsinelas_sike.mtl.
+NOTE: this mesh carries the real Nike swoosh and wordmark as geometry. CLAUDE.md
+section 6 has it first in the replacement queue for that reason.
+
+
+REMOVED 2026-08-28
+==================
+
+The Poly-era sources for TSINELAS, PANTULOG, CROCS and ALPOMBRA were deleted with the
+props built from them. Recoverable from git history if a replacement is ever rejected.
+
+
+CHANGES BY THIS PROJECT
+=======================
+
+Old pass: isolated one shoe where a source contained a pair, normalised each prop to the
+game's 0.432 m gameplay length, seated and centred the mesh, recoloured it to the game's
+role-safe palette, and added a narrow bevel for the in-engine toon key light.
+
+New pass: isolated one shoe, turned it onto its own long axis to point down +X, scaled
+it uniformly to 0.432 m, and seated it. No recolour, no bevel, no decimation. Original
+materials and textures are carried through.

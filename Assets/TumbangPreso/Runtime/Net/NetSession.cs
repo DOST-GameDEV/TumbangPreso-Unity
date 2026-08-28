@@ -111,7 +111,15 @@ namespace TumbangPreso.Net
         // `docs/TODO.md` § 68.2 held every bump until this one message so there is exactly one.
         // Both machines must be rebuilt from this branch or they refuse each other at approval,
         // by design; § 59.2 is what makes the refusal say so instead of hanging.
-        public const int ProtocolVersion = 7;
+        //
+        // ⚠️⚠️ 6 to 7 OPENED THE SLIPPER ROSTER TO NINE, AND 7 to 8 ADDS THE FIFTH AND SIXTH
+        // CAN. No message changed shape either time, which is exactly why both need the bump:
+        // `can_index` and `slipper_index` travel as bare ints and mean nothing on their own,
+        // so a peer on 7 reading a `can_index` of 4 or 5 does not error, it indexes past the
+        // end of a four-entry table. `Roster.CanArt` clamps rather than throwing, so the
+        // visible result is two players looking at different cans in the same match with
+        // nothing in either log. A roster that only GROWS still breaks the wire.
+        public const int ProtocolVersion = 8;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =

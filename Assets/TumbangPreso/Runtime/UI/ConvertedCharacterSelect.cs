@@ -844,13 +844,15 @@ namespace TumbangPreso.UI
                 case "boyben": return "Leftover fence paint, half set solid. Nothing on the mark stands its ground like it does, but righting it is a proper job.";
                 case "decades": return "Flakes in oil from Aling Nena's. Squat and low, so tipping it is the hard part, and setting it back up is barely a motion.";
                 case "metal": return "No label left, just ribs and rust. Heavy for its size, it sends the tsinelas across the street, and it is slow to stand back up.";
+                case "piyesta": return "Fruit cocktail, saved for handaan and opened early anyway. The widest can on the mark and still full of syrup, so it plants itself and swallows the hit whole.";
+                case "karne": return "Corned beef, the tin that tapers. Top-heavy over a narrow lid so it tips at the first excuse, but it is packed solid and it kicks the tsinelas back at you.";
 
-                case "tsinelas": return "The street-game original, rebuilt with a proper layered sole and a clean Y-strap. Balanced in flight, impact and recovery.";
-                case "crocs": return "Holes in the top, strap at the back. Heavy and it does not fly straight, but whoever body-blocks it knows all about it.";
-                case "pantulog": return "Lola's house slipper, worn soft. No weight behind it at all, but it is ready again before the taya has turned around.";
+                case "tsinelas": return "The street-game original. Thick layered sole, printed Y-strap, worn down at the heel. Balanced in flight, impact and recovery.";
+                case "crocs": return "Holes in the top, strap swung round the back. Heavy and it does not fly straight, but whoever body-blocks it knows all about it.";
+                case "pantulog": return "The banyo pair, scuffed white and moulded with somebody's toes. No weight behind it at all, but it is ready again before the taya has turned around.";
                 case "sike": return "Definitely not the real brand. Light, loud, and the quickest thing off a hand on this street.";
                 case "spartan": return "Black rubber and a red Y-strap, straight from the kanto. Hits harder than the basic pair, but takes longer to settle back into your hand.";
-                case "alpombra": return "Soft house slippers with almost no sting. They drop early, land quietly, and recover before the taya can turn.";
+                case "alpombra": return "Somebody's good pair, block heel and a stoned buckle, borrowed off the rack by the door. It drops early and lands quiet, and it is back in your hand before the taya turns.";
                 case "pambahay": return "The loud spare pair beside the door. Light on the throw, quick through the air, and always ready for another round.";
                 case "heels": return "Completely impractical and brutally effective. Short-ranged, slow to recover, and the last thing anyone wants to body-block.";
                 case "sandals": return "Strapped down and built for walking. Fast and steady through the air, but not made for rapid-fire throws.";
