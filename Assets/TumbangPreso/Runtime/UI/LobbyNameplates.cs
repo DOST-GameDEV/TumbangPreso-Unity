@@ -45,6 +45,11 @@ namespace TumbangPreso.UI
         private const float TagHeight = 26.0f;
         private const int TagSize = 18;
 
+        /// <summary>The ready mark above the plate. Square, so it reads as a badge rather than as
+        /// another label.</summary>
+        private const float TickSize = 34.0f;
+        private const int TickFont = 22;
+
         private RectTransform _surfaceRect;
         private MapPreviewSurface _surface;
         private LobbyCast _cast;
@@ -72,6 +77,18 @@ namespace TumbangPreso.UI
         private readonly Text[] _names = new Text[Balance.PlayerCount];
         private readonly RectTransform[] _tags = new RectTransform[Balance.PlayerCount];
         private readonly Text[] _tagLabels = new Text[Balance.PlayerCount];
+
+        /// <summary>
+        /// The ready tick, which is its own mark ABOVE the plate rather than part of the name.
+        ///
+        /// ⚠️⚠️ IT WAS APPENDED TO THE NAME AND THAT IS WHY THE PLATE JUMPED WIDER THE MOMENT
+        /// SOMEBODY READIED. The plate is sized from the measured string, so "✓" on the end
+        /// of it added about 30 px to a box floating over a character's head: every ready press
+        /// nudged the plate sideways under its own name. Above the plate the mark has its own
+        /// space, it is the same size for a short name and a long one, and it is the thing the
+        /// eye is scanning for when four people are getting ready.
+        /// </summary>
+        private readonly GameObject[] _ticks = new GameObject[Balance.PlayerCount];
         private readonly bool[] _shown = new bool[Balance.PlayerCount];
 
         public static LobbyNameplates Attach(RectTransform surfaceRect, MapPreviewSurface surface,
@@ -165,6 +182,34 @@ namespace TumbangPreso.UI
                 tagLabel.raycastTarget = false;
                 MenuKit.Stretch(tagLabel.rectTransform, 0.0f);
 
+                // ⚠️ A CHILD OF THE PLATE, ANCHORED TO ITS TOP EDGE, so it follows the plate
+                // without the projection having to place two things per seat. Pivot at the bottom
+                // means it grows upward off the plate rather than into it.
+                var tick = new GameObject($"Tick{seat}");
+                tick.transform.SetParent(plate.transform, false);
+
+                var tickFill = tick.AddComponent<Image>();
+                tickFill.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.Amber);
+                tickFill.type = Image.Type.Sliced;
+                tickFill.color = Color.white;
+                tickFill.raycastTarget = false;
+
+                var tickRect = tickFill.rectTransform;
+                tickRect.anchorMin = new Vector2(0.5f, 1.0f);
+                tickRect.anchorMax = new Vector2(0.5f, 1.0f);
+                tickRect.pivot = new Vector2(0.5f, 0.0f);
+                tickRect.anchoredPosition = new Vector2(0.0f, 6.0f);
+                tickRect.sizeDelta = new Vector2(TickSize, TickSize);
+
+                var tickMark = MenuKit.Label(tick.transform, "✓", TickFont, UiTheme.Amber,
+                                             Vector2.zero, Vector2.zero, Vector2.zero,
+                                             TextAnchor.MiddleCenter);
+                tickMark.raycastTarget = false;
+                MenuKit.Stretch(tickMark.rectTransform, 0.0f);
+
+                _ticks[seat] = tick;
+                tick.SetActive(false);
+
                 _plates[seat] = plateRect;
                 _plateFills[seat] = fill;
                 _names[seat] = name;
@@ -195,11 +240,11 @@ namespace TumbangPreso.UI
 
             if (!_shown[seat]) return;
 
-            // ⚠️ THE TICK IS PART OF THE STRING RATHER THAN A SECOND GRAPHIC, so it is measured
-            // and fitted along with the name instead of being a sprite that can overhang a plate
-            // sized for text alone.
-            string label = ready ? $"{displayName}   ✓" : displayName;
-            if (you) label = $"{label}   ◀";
+            // ⚠️ THE TICK IS NO LONGER PART OF THE STRING. See `_ticks`: appending it made the
+            // plate resize itself every time somebody readied.
+            if (_ticks[seat] != null) _ticks[seat].SetActive(ready);
+
+            string label = you ? $"{displayName}   ◀" : displayName;
 
             var text = _names[seat];
             text.text = label;

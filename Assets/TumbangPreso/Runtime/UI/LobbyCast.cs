@@ -61,7 +61,7 @@ namespace TumbangPreso.UI
         /// panels by about 36 px at the FEET only. The panels start at y 425 and the heads are
         /// above that, which is why that overlap is acceptable and a wider one would not be.
         /// </summary>
-        public const float Spacing = 1.45f;
+        public const float Spacing = 1.70f;
 
         /// <summary>
         /// How far the whole line is pushed along the camera's right, in metres.
@@ -91,21 +91,65 @@ namespace TumbangPreso.UI
         /// map cycle and every seat change, so the line would visibly shuffle every time somebody
         /// pressed an arrow. It also keeps the shot reproducible for a render.
         /// </summary>
-        private static readonly float[] DepthStagger = { 0.00f, -0.28f, 0.18f, -0.12f };
+        /// <summary>
+        /// How far back each standing spot sits, in metres, by position in the line.
+        ///
+        /// ⚠️⚠️ IT IS AN ARC NOW, NOT A JITTER, AND THAT IS WHAT MAKES FOUR PEOPLE READ AS A
+        /// GROUP. A straight rank of four reads as a character-select grid however carefully the
+        /// depths are jittered, because every body is the same size and the same distance from its
+        /// neighbours. Pushing the OUTER two back and leaving the inner two forward gives the line
+        /// a shallow curve that opens toward the camera: the outer bodies come out slightly
+        /// smaller and slightly overlapped, which is what a photograph of four people standing
+        /// together actually looks like.
+        ///
+        /// ⚠️ THE CURVE IS COMPUTED, NOT TABULATED. `ArcDepth * n * n` with `n` running -1 to
+        /// 1 across the line is one number to tune instead of four to keep consistent, and it
+        /// stays correct if the cast ever stops being exactly four.
+        ///
+        /// ⚠️ AND THE OUTER TWO TURN INWARD. A body pushed back but still square to the camera
+        /// reads as standing behind the line rather than as part of it; turning it toward the
+        /// centre by `ArcTurn` closes the group. Past about 16 degrees a voxel person stops
+        /// reading as facing you at all, which is the bound this sits under.
+        /// </summary>
+        public const float ArcDepth = 1.15f;
+        public const float ArcTurn = 13.0f;
 
         /// <summary>
-        /// How far each seat is turned off square, in degrees, by seat index.
+        /// The pose each standing spot holds, most-wanted first.
         ///
-        /// ⚠️ SAME REASONING AS THE STAGGER, AND SMALL ON PURPOSE. Past about 12 degrees a voxel
-        /// person stops reading as facing you and starts reading as facing the person beside them,
-        /// and the point of this screen is that you can see who everybody is.
+        /// ⚠️⚠️ FOUR BODIES PLAYING ONE CLIP READ AS ONE CHARACTER COPIED FOUR TIMES, and a
+        /// phase offset does not fix it: they are still doing the same thing a beat apart. These
+        /// are four different clips out of the set the rigs already ship, so the group has somebody
+        /// giving a thumbs up, somebody holding a tsinelas, somebody waving off and the local
+        /// player standing normally.
+        ///
+        /// ⚠️ EVERY ROW ENDS IN `idle`, WHICH IS THE FALLBACK CHAIN `CharacterAnimator` USES
+        /// AND FOR THE SAME REASON: a rig that spells a clip differently, or a future character
+        /// that ships without one of these, must still animate rather than dropping to its bind
+        /// pose, which on these rigs is arms straight out.
+        ///
+        /// ⚠️ THE LOCAL PLAYER GETS THE PLAIN IDLE, deliberately. Their own body is the one
+        /// they look at to judge their character pick, and a pose that hides the silhouette makes
+        /// that harder. It is also the middle of the line, so it is the one doing the least.
         /// </summary>
-        private static readonly float[] TurnStagger = { -6.0f, 7.0f, -9.0f, 5.0f };
+        private static readonly string[][] Poses =
+        {
+            new[] { "emote-yes", "interact-right", "idle" },
+            new[] { "idle", "static" },
+            new[] { "holding-right", "interact-right", "idle" },
+            new[] { "emote-no", "interact-left", "idle" },
+        };
+
+
 
         /// <summary>`character_visual.gd` resolves a pose through a chain, and so does
         /// `ModelPreview.PlayIdle`. Same list, same reason: a rig that spells it differently must
         /// still animate rather than falling to a bind pose, which on these rigs is arms out.</summary>
         private static readonly string[] IdleNames = { "idle", "static" };
+
+        /// <summary>Which clip each seat is currently holding, so a rebuild is only needed when the
+        /// pose actually changes.</summary>
+        private readonly int[] _posedAs = new int[Balance.PlayerCount];
 
         private MapPreviewSurface _surface;
 
@@ -180,6 +224,11 @@ namespace TumbangPreso.UI
             if (_localSeat == seat) return;
 
             _localSeat = seat;
+
+            // ⚠️ THE POSES ARE RE-PICKED, NOT JUST THE POSITIONS. Rotating the line moves every
+            // body to a different standing spot, and the spot is what decides the pose.
+            for (int i = 0; i < _posedAs.Length; i++) _posedAs[i] = -1;
+
             Place();
         }
 
@@ -272,7 +321,13 @@ namespace TumbangPreso.UI
                 // both must produce a visible unit.
                 if (pick < 0 || people == null || pick >= people.Count) pick = 0;
 
-                if (!modeChanged && _built[seat] == pick && _bodies[seat] != null) continue;
+                // ⚠️ THE POSE IS PART OF WHAT "unchanged" MEANS. A seat keeps its character
+                // when the line rotates around a new local player, but its POSE comes from where
+                // it now stands, so skipping the rebuild on the character alone left two
+                // neighbours doing the same thing.
+                bool posed = _posedAs[seat] == DisplaySlot(seat);
+
+                if (!modeChanged && posed && _built[seat] == pick && _bodies[seat] != null) continue;
 
                 Build(seat, pick, book, mode);
             }
@@ -308,7 +363,8 @@ namespace TumbangPreso.UI
             foreach (var animator in body.GetComponentsInChildren<Animator>(true))
                 animator.enabled = false;
 
-            _idles[seat] = PickIdle(art.Clips);
+            _idles[seat] = PickPose(art.Clips, DisplaySlot(seat));
+            _posedAs[seat] = DisplaySlot(seat);
             _bodies[seat] = body;
             _built[seat] = pick;
 
@@ -353,24 +409,38 @@ namespace TumbangPreso.UI
             return body.transform.position.y - bounds.min.y;
         }
 
-        private static AnimationClip PickIdle(AnimationClip[] clips)
+        private static AnimationClip PickPose(AnimationClip[] clips, int slot)
         {
             if (clips == null || clips.Length == 0) return null;
 
+            var wanted = Poses[((slot % Poses.Length) + Poses.Length) % Poses.Length];
+
+            foreach (string want in wanted)
+            {
+                var hit = Named(clips, want);
+                if (hit != null) return hit;
+            }
+
             foreach (string want in IdleNames)
             {
-                foreach (var clip in clips)
-                {
-                    if (clip == null) continue;
-                    if (!string.Equals(clip.name, want, System.StringComparison.OrdinalIgnoreCase))
-                        continue;
-
-                    return clip;
-                }
+                var hit = Named(clips, want);
+                if (hit != null) return hit;
             }
 
             // Better a wrong pose than a T-pose. `ModelPreview.PlayIdle` says why.
             return clips[0];
+        }
+
+        private static AnimationClip Named(AnimationClip[] clips, string want)
+        {
+            foreach (var clip in clips)
+            {
+                if (clip == null) continue;
+                if (string.Equals(clip.name, want, System.StringComparison.OrdinalIgnoreCase))
+                    return clip;
+            }
+
+            return null;
         }
 
         private static void SetLayer(Transform t, int layer)
@@ -433,13 +503,17 @@ namespace TumbangPreso.UI
 
                 int slot = DisplaySlot(seat);
 
+                // -1 at the left end of the line, +1 at the right, 0 in the middle.
+                float n = _bodies.Length > 1
+                    ? (slot / (float)(_bodies.Length - 1)) * 2.0f - 1.0f
+                    : 0.0f;
+
                 float lateral = (slot - (_bodies.Length - 1) * 0.5f) * Spacing;
 
-                // ⚠️ THE STAGGER IS INDEXED BY THE DISPLAY SLOT, NOT BY THE SEAT. It exists to
-                // break up a straight line of four, which is a property of WHERE somebody stands,
-                // not of which chair they hold: keyed by seat, the pattern would rotate with the
-                // line and two neighbours could end up at the same depth.
-                float depth = DepthStagger[slot % DepthStagger.Length];
+                // ⚠️ THE ARC IS INDEXED BY THE DISPLAY SLOT, NOT BY THE SEAT. It is a property
+                // of WHERE somebody stands, not of which chair they hold: keyed by seat, the curve
+                // would rotate with the line and the person in the middle could end up at the back.
+                float depth = ArcDepth * n * n;
 
                 Vector3 spot = pivot + (right * (lateral + LateralOffset)) + (forward * depth);
 
@@ -450,7 +524,7 @@ namespace TumbangPreso.UI
 
                 body.transform.position = spot;
                 body.transform.rotation = Quaternion.LookRotation(-forward, Vector3.up)
-                                          * Quaternion.Euler(0.0f, TurnStagger[slot % TurnStagger.Length], 0.0f);
+                                          * Quaternion.Euler(0.0f, -n * ArcTurn, 0.0f);
             }
 
             _placed = true;

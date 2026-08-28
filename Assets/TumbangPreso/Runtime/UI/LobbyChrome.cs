@@ -121,7 +121,18 @@ namespace TumbangPreso.UI
         /// to y 184. 208 clears it with a 24 px gap and still leaves the settings block well above
         /// the cast's heads.
         /// </summary>
-        private const float TopStackY = 208.0f;
+        /// <summary>The compact settings drawer begins just below the banner.</summary>
+        private const float SettingsY = 112.0f;
+        private const float SettingsWidth = 620.0f;
+        private const float SettingsCollapsedWidth = 460.0f;
+        private const float SettingsHeaderHeight = 56.0f;
+        private const float SettingsBodyHeight = 430.0f;
+
+        /// <summary>How far below the top edge the lobby card sits.</summary>
+        private const float CardY = 26.0f;
+
+        /// <summary>START and BACK stay clear of the banner and the collapsed settings summary.</summary>
+        private const float ActionStackY = 470.0f;
 
         private const float TabHeight = 52.0f;
         private const float TabWidth = 260.0f;
@@ -139,9 +150,117 @@ namespace TumbangPreso.UI
             if (root == null || find == null) return null;
 
             SoftenScrim(root, find);
-            MoveColumns(find);
+            var lobbyDrawer = MoveColumns(find);
+            EnlargePrimaryActions(find);
+            BuildIdentity(root, find);
 
-            return BuildTabs(root, find, isLobby, onTab);
+            var tabs = BuildTabs(root, find, isLobby, onTab);
+            tabs.LobbyDrawer = lobbyDrawer;
+            tabs.SetActive(isLobby);
+            return tabs;
+        }
+
+        /// <summary>Makes START MATCH and READY read as the lobby's primary action instead of as
+        /// another ordinary row. Both exist because the same screen serves multiplayer and
+        /// practice; only the active one is visible.</summary>
+        private static void EnlargePrimaryActions(Func<string, Transform> find)
+        {
+            foreach (string name in new[] { "StartButton", "PrimaryButton" })
+            {
+                var node = find(name);
+                if (node == null) continue;
+
+                var element = node.GetComponent<LayoutElement>();
+                if (element == null) element = node.gameObject.AddComponent<LayoutElement>();
+                element.minHeight = 116.0f;
+                element.preferredHeight = 116.0f;
+                element.flexibleHeight = 0.0f;
+
+                var label = node.GetComponentInChildren<Text>();
+                if (label != null) label.fontSize = Mathf.Max(label.fontSize, 42);
+            }
+        }
+
+        /// <summary>Shows the active local profile in the lobby without duplicating the editable
+        /// field from Settings. The lobby is where other players see this name, so hiding it only
+        /// in Settings makes identity feel accidental.</summary>
+        private static void BuildIdentity(Transform root, Func<string, Transform> find)
+        {
+            var banner = find("Banner");
+            Transform parent = banner != null ? banner.parent : root;
+
+            string playerName = Settings.SettingsStore.Current.PlayerName;
+            if (string.IsNullOrWhiteSpace(playerName)) playerName = "Player";
+            else playerName = playerName.Trim();
+
+            var chip = new GameObject("LobbyIdentity");
+            chip.transform.SetParent(parent, false);
+
+            var image = chip.AddComponent<Image>();
+            image.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
+            image.type = Image.Type.Sliced;
+            image.color = Color.white;
+            image.raycastTarget = false;
+
+            var rect = image.rectTransform;
+            rect.anchorMin = Vector2.one;
+            rect.anchorMax = Vector2.one;
+            rect.pivot = Vector2.one;
+            rect.anchoredPosition = new Vector2(-48.0f, -34.0f);
+            rect.sizeDelta = new Vector2(420.0f, 56.0f);
+
+            var caption = MenuKit.Label(chip.transform, "PLAYER NAME", 14, UiTheme.Amber,
+                                        Vector2.zero, Vector2.zero, Vector2.zero,
+                                        TextAnchor.MiddleCenter);
+            caption.raycastTarget = false;
+            caption.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+            caption.rectTransform.anchorMax = new Vector2(0.38f, 1.0f);
+            caption.rectTransform.offsetMin = new Vector2(12.0f, 0.0f);
+            caption.rectTransform.offsetMax = Vector2.zero;
+
+            var fieldGo = new GameObject("PlayerNameEdit");
+            fieldGo.transform.SetParent(chip.transform, false);
+            var fieldImage = fieldGo.AddComponent<Image>();
+            fieldImage.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
+            fieldImage.type = Image.Type.Sliced;
+            fieldImage.color = Color.white;
+
+            var fieldRect = fieldImage.rectTransform;
+            fieldRect.anchorMin = new Vector2(0.38f, 0.0f);
+            fieldRect.anchorMax = Vector2.one;
+            fieldRect.offsetMin = new Vector2(4.0f, 7.0f);
+            fieldRect.offsetMax = new Vector2(-8.0f, -7.0f);
+
+            var placeholder = MenuKit.Label(fieldGo.transform, "CLICK TO SET NAME  ✎", 17,
+                                            UiTheme.CreamMuted, Vector2.zero, Vector2.zero,
+                                            Vector2.zero, TextAnchor.MiddleLeft);
+            placeholder.raycastTarget = false;
+            MenuKit.Stretch(placeholder.rectTransform, 12.0f);
+
+            var typed = MenuKit.Label(fieldGo.transform, playerName, 20, UiTheme.Cream,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleLeft);
+            typed.raycastTarget = false;
+            typed.supportRichText = false;
+            MenuKit.Stretch(typed.rectTransform, 12.0f);
+
+            var field = fieldGo.AddComponent<InputField>();
+            field.targetGraphic = fieldImage;
+            field.placeholder = placeholder;
+            field.textComponent = typed;
+            field.text = playerName == "Player" &&
+                         string.IsNullOrWhiteSpace(Settings.SettingsStore.Current.PlayerName)
+                ? ""
+                : playerName;
+            field.characterLimit = Core.Balance.PlayerNameMax;
+            field.lineType = InputField.LineType.SingleLine;
+            field.onEndEdit.AddListener(raw =>
+            {
+                string clean = Settings.GameSettings.SanitiseName(raw);
+                Settings.SettingsStore.Current.PlayerName = clean;
+                Settings.SettingsStore.Save();
+                field.SetTextWithoutNotify(clean);
+            });
         }
 
         /// <summary>
@@ -157,6 +276,7 @@ namespace TumbangPreso.UI
         {
             public Button Practice;
             public Button Multiplayer;
+            public GameObject LobbyDrawer;
 
             /// <summary>
             /// ⚠️ THE VARIATION IS SWAPPED AND RE-APPLIED, NOT THE IMAGE COLOUR. `GodotButton`
@@ -169,6 +289,7 @@ namespace TumbangPreso.UI
             {
                 Paint(Practice, !lobby);
                 Paint(Multiplayer, lobby);
+                if (LobbyDrawer != null) LobbyDrawer.SetActive(lobby);
             }
 
             private static void Paint(Button button, bool active)
@@ -320,7 +441,7 @@ namespace TumbangPreso.UI
         /// makes a column as tall as the rows inside it, and anchoring the pivot to the BOTTOM is
         /// what makes it grow upward from the corner instead of down off the screen.
         /// </summary>
-        private static void MoveColumns(Func<string, Transform> find)
+        private static GameObject MoveColumns(Func<string, Transform> find)
         {
             var columns = find("Columns");
             var left = find("LeftColumn");
@@ -330,7 +451,7 @@ namespace TumbangPreso.UI
             {
                 Debug.LogWarning("[LobbyChrome] the authored columns are missing; " +
                                  "keeping the Classic arrangement.");
-                return;
+                return null;
             }
 
             var group = columns.GetComponent<LayoutGroup>();
@@ -339,16 +460,75 @@ namespace TumbangPreso.UI
             var columnsRect = columns as RectTransform;
             if (columnsRect != null) MenuKit.Stretch(columnsRect, 0.0f);
 
-            Corner(left as RectTransform, LeftWidth, toLeft: true, toTop: false);
+            // ⚠️⚠️ THE ACTION STACK GOES UP TOO. START, the status line and BACK were the last
+            // thing left in the bottom half, and leaving them there meant the middle was clear and
+            // the bottom-left was not, which is the same complaint one corner over. Everything the
+            // player operates lives in the top band now, and everything below it is the room.
+            Corner(left as RectTransform, LeftWidth, toLeft: true, toTop: true);
+
+            if (left is RectTransform leftRect)
+                leftRect.anchoredPosition = new Vector2(EdgeMargin, -ActionStackY);
 
             // ⚠️ THE LOBBY CARD GOES TOP-RIGHT, OPPOSITE THE SETTINGS. Once `LiftSettings` moved
             // the four cyclers under the banner and the `P1..P4` rows were removed, the right card
             // was a short block floating alone in the bottom corner with a screen of empty road
             // above it. Both blocks of INFORMATION now sit along the top and the bottom belongs to
             // the two things you ACT with: START and the chat.
+            // ⚠️ THE LOBBY CARD HUGS THE TOP EDGE, level with the tabs rather than level with
+            // the settings. It is the shortest block on the screen and it was leaving a band of
+            // empty road above it.
             Corner(right as RectTransform, RightWidth, toLeft: false, toTop: true);
 
+            GameObject lobbyDrawer = null;
+            if (right is RectTransform rightRect)
+            {
+                rightRect.anchoredPosition = new Vector2(-EdgeMargin, -(CardY + 68.0f));
+                lobbyDrawer = BuildLobbyDrawer(rightRect);
+            }
+
             LiftSettings(find, left);
+            return lobbyDrawer;
+        }
+
+        /// <summary>Keeps network mechanics available without permanently covering the fourth
+        /// character. The card opens on demand; chat follows the bottom edge of whichever state
+        /// is visible.</summary>
+        private static GameObject BuildLobbyDrawer(RectTransform details)
+        {
+            if (details == null || details.parent == null) return null;
+
+            var toggle = MenuKit.WoodButton(details.parent, "LOBBY & SERVERS  ▼", Vector2.one,
+                                            new Vector2(-EdgeMargin, -CardY),
+                                            new Vector2(RightWidth, 58.0f), null,
+                                            "WoodAmberButton");
+            toggle.name = "LobbyDrawerToggle";
+            toggle.transform.localScale = new Vector3(RightScale, RightScale, 1.0f);
+
+            var toggleRect = toggle.transform as RectTransform;
+            if (toggleRect != null)
+            {
+                toggleRect.anchorMin = Vector2.one;
+                toggleRect.anchorMax = Vector2.one;
+                toggleRect.pivot = Vector2.one;
+            }
+
+            var label = toggle.GetComponentInChildren<Text>();
+            details.gameObject.SetActive(false);
+            bool open = false;
+
+            toggle.onClick.AddListener(() =>
+            {
+                open = !open;
+                details.gameObject.SetActive(open);
+                if (label != null)
+                    label.text = open ? "CLOSE LOBBY DETAILS  ▲" : "LOBBY & SERVERS  ▼";
+
+                var canvas = details.GetComponentInParent<Canvas>();
+                var chat = canvas != null ? canvas.GetComponentInChildren<LobbyChat>(true) : null;
+                chat?.PlaceBelowTopRight(144.0f, open ? 548.0f : 300.0f, 392.0f);
+            });
+
+            return toggle.gameObject;
         }
 
         /// <summary>
@@ -375,20 +555,22 @@ namespace TumbangPreso.UI
             var config = find("ConfigPanel");
             if (config == null || leftColumn == null) return;
 
-            var host = new GameObject("SettingsStack");
+            var host = new GameObject("SettingsDrawer");
             host.transform.SetParent(leftColumn.parent, false);
 
             var rect = host.AddComponent<RectTransform>();
             rect.anchorMin = new Vector2(0.0f, 1.0f);
             rect.anchorMax = new Vector2(0.0f, 1.0f);
             rect.pivot = new Vector2(0.0f, 1.0f);
-            rect.anchoredPosition = new Vector2(EdgeMargin, -TopStackY);
-            rect.sizeDelta = new Vector2(LeftWidth, 100.0f);
-            rect.localScale = new Vector3(LeftScale, LeftScale, 1.0f);
+            rect.anchoredPosition = new Vector2(EdgeMargin, -SettingsY);
+            rect.sizeDelta = new Vector2(SettingsWidth, 100.0f);
 
             var layout = host.AddComponent<VerticalLayoutGroup>();
-            layout.spacing = 10;
-            layout.childControlWidth = true;
+            layout.spacing = 6;
+            // The closed rail is deliberately narrower than the expanded controls. Let each
+            // child keep its own width so opening the drawer can grow right temporarily without
+            // making the always-visible header cover the first character.
+            layout.childControlWidth = false;
             layout.childControlHeight = true;
             layout.childForceExpandWidth = true;
             layout.childForceExpandHeight = false;
@@ -398,14 +580,138 @@ namespace TumbangPreso.UI
             fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-            // ⚠️ ORDER MATTERS AND IT IS THE AUTHORED ONE: the panel then its caption. Reparenting
-            // in the other order would put the map's description above the map row.
-            config.SetParent(host.transform, false);
+            // The drawer header is the only furniture visible until the player asks to edit the
+            // match. This follows the lobby hierarchy in the reference: cast first, settings on
+            // demand, primary action always available.
+            var toggle = MenuKit.WoodButton(host.transform, "MATCH SETTINGS  ▼", Vector2.zero,
+                                            Vector2.zero,
+                                            new Vector2(SettingsCollapsedWidth, SettingsHeaderHeight), null,
+                                            "WoodAmberButton");
+            var toggleElement = toggle.gameObject.AddComponent<LayoutElement>();
+            toggleElement.minHeight = SettingsHeaderHeight;
+            toggleElement.preferredHeight = SettingsHeaderHeight;
+
+            var summary = MenuKit.Label(host.transform, "", 18, UiTheme.CreamMuted,
+                                        Vector2.zero, Vector2.zero,
+                                        new Vector2(SettingsCollapsedWidth, 28.0f),
+                                        TextAnchor.MiddleLeft);
+            summary.raycastTarget = false;
+            var summaryElement = summary.gameObject.AddComponent<LayoutElement>();
+            summaryElement.minHeight = 28.0f;
+            summaryElement.preferredHeight = 28.0f;
+
+            var body = new GameObject("SettingsBody");
+            body.transform.SetParent(host.transform, false);
+            var bodyImage = body.AddComponent<Image>();
+            bodyImage.rectTransform.sizeDelta = new Vector2(SettingsWidth, SettingsBodyHeight);
+            bodyImage.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
+            bodyImage.type = Image.Type.Sliced;
+            bodyImage.color = Color.white;
+
+            var bodyElement = body.AddComponent<LayoutElement>();
+            bodyElement.minHeight = SettingsBodyHeight;
+            bodyElement.preferredHeight = SettingsBodyHeight;
+
+            var bodyLayout = body.AddComponent<VerticalLayoutGroup>();
+            bodyLayout.padding = new RectOffset(18, 18, 16, 16);
+            bodyLayout.spacing = 8;
+            bodyLayout.childControlWidth = true;
+            bodyLayout.childControlHeight = true;
+            bodyLayout.childForceExpandWidth = true;
+            bodyLayout.childForceExpandHeight = false;
+
+            // Use the authored rows and their wired buttons, but not ConfigPanel's oversized
+            // 634x540 face. The face is what made a few controls read as a giant opaque card.
+            var rows = Descend(config, "Rows");
+            if (rows != null)
+            {
+                rows.SetParent(body.transform, false);
+                var rowsElement = rows.GetComponent<LayoutElement>();
+                if (rowsElement == null) rowsElement = rows.gameObject.AddComponent<LayoutElement>();
+                rowsElement.minHeight = 338.0f;
+                rowsElement.preferredHeight = 338.0f;
+                rowsElement.flexibleHeight = 0.0f;
+                Narrow(rows as RectTransform, SettingsWidth - 36.0f);
+            }
 
             var detail = find("DetailBox");
-            if (detail != null) detail.SetParent(host.transform, false);
+            if (detail != null)
+            {
+                detail.SetParent(body.transform, false);
+                var detailElement = detail.GetComponent<LayoutElement>();
+                if (detailElement == null)
+                    detailElement = detail.gameObject.AddComponent<LayoutElement>();
+                detailElement.minHeight = 44.0f;
+                detailElement.preferredHeight = 44.0f;
+            }
 
-            Narrow(rect, LeftWidth);
+            config.gameObject.SetActive(false);
+
+            Func<string, string> value = name =>
+            {
+                var node = find(name);
+                var label = node != null ? node.GetComponent<Text>() : null;
+                if (label == null && node != null) label = node.GetComponentInChildren<Text>();
+                return label != null ? label.text.Trim() : "?";
+            };
+
+            Action refreshSummary = () =>
+            {
+                summary.text = $"{value("MapValueLabel")}  •  {value("ModeValueLabel")}  •  " +
+                               $"{value("DifficultyValueLabel")}";
+                MenuKit.Fit(summary, SettingsCollapsedWidth - 18.0f, 13);
+            };
+
+            var toggleLabel = toggle.GetComponentInChildren<Text>();
+            bool open = false;
+            body.SetActive(false);
+            refreshSummary();
+
+            toggle.onClick.AddListener(() =>
+            {
+                open = !open;
+                body.SetActive(open);
+                summary.gameObject.SetActive(!open);
+                if (toggleLabel != null)
+                    toggleLabel.text = open ? "CLOSE MATCH SETTINGS  ▲" : "MATCH SETTINGS  ▼";
+                if (!open) refreshSummary();
+            });
+        }
+
+        /// <summary>
+        /// Swaps a converted row between stacked and side by side.
+        ///
+        /// ⚠️⚠️ THE COMPONENT IS REPLACED, BECAUSE A LAYOUT GROUP'S ORIENTATION IS ITS TYPE.
+        /// `HorizontalLayoutGroup` and `VerticalLayoutGroup` are two classes with no shared switch,
+        /// so turning a row is destroy-and-add, and the authored spacing, padding and alignment are
+        /// carried across by hand rather than re-picked: they are what makes the row look like the
+        /// rest of this UI.
+        ///
+        /// ⚠️ `DestroyImmediate`, NOT `Destroy`. `Destroy` defers to the end of the frame, so
+        /// the new group would spend this frame fighting the old one over the same children and
+        /// the layout that lands is whichever ran last. This is a controlled one-shot at screen
+        /// build, which is the case `DestroyImmediate` is for.
+        /// </summary>
+        /// <summary>
+        /// The first descendant of <paramref name="root"/> with this name.
+        ///
+        /// ⚠️ SCOPED TO A SUBTREE ON PURPOSE. `ConvertedScreen.Node` searches the whole screen
+        /// and `MatchSetup` carries two `Rows`, two `Face`s, two `Shadow`s and four `Label`s;
+        /// which one you get is tree order, which is not a thing a reader can see. Everything this
+        /// class reaches for inside a panel is found from that panel.
+        /// </summary>
+        private static Transform Descend(Transform root, string name)
+        {
+            if (root == null) return null;
+            if (root.name == name) return root;
+
+            for (int i = 0; i < root.childCount; i++)
+            {
+                var hit = Descend(root.GetChild(i), name);
+                if (hit != null) return hit;
+            }
+
+            return null;
         }
 
         private static void Corner(RectTransform column, float width, bool toLeft, bool toTop)
@@ -418,7 +724,7 @@ namespace TumbangPreso.UI
             column.anchorMax = new Vector2(toLeft ? 0.0f : 1.0f, y);
             column.pivot = new Vector2(toLeft ? 0.0f : 1.0f, y);
             column.anchoredPosition = new Vector2(toLeft ? EdgeMargin : -EdgeMargin,
-                                                  toTop ? -TopStackY : BottomMargin);
+                                                  toTop ? -SettingsY : BottomMargin);
             column.sizeDelta = new Vector2(width, column.sizeDelta.y);
 
             // ⚠️⚠️ THE SIZE IS SET **AND** THE COLUMN IS SCALED, AND THE SCALE IS THE HALF THAT
@@ -520,7 +826,12 @@ namespace TumbangPreso.UI
         {
             if (find == null) return;
 
-            foreach (string name in new[] { "LeftColumn", "RightColumn", "ConfigPanel", "SeatPanel" })
+            // `find` is ConvertedScreen.Node, whose index contains only nodes imported from the
+            // authored scene. SettingsStrip is created by Apply at runtime, so asking that index
+            // for it emits a missing-node error and aborts PlayMode screenshot tests. Its child
+            // ConfigPanel is indexed and reports the same final bounds after reparenting.
+            foreach (string name in new[] { "LeftColumn", "RightColumn", "ConfigPanel", "SeatPanel",
+                                            "StartButton" })
             {
                 var node = find(name) as RectTransform;
                 if (node == null) continue;

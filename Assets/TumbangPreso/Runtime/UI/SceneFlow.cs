@@ -71,21 +71,25 @@ namespace TumbangPreso.UI
             /// header already gives: `tools/maps/build_*.py` emit the arenas WHOLESALE, so a
             /// camera placed in one by hand survives exactly until the next layout run.
             ///
-            /// ⚠️⚠️ 15.0 AND 3.6 WERE MEASURED OFF A RENDER, NOT PICKED, AND THE ARITHMETIC ALONE
-            /// GOT IT WRONG TWICE. The first pass used 9.2 and 2.9 and `Lobby-v1.png` showed the
-            /// outer two of the four outside the frame; the second used 12.6 and `Lobby-v6.png`
-            /// showed the local player's own body behind the config panel. At 15.0, with
-            /// `MapPreviewSurface.LobbyFieldOfView` 32, the visible frame is about 7.6 m tall and
-            /// 14.5 m wide, which is about 133 px per metre: four bodies at `LobbyCast.Spacing`
-            /// 1.45, offset by `LobbyCast.LateralOffset`, land in the 625 px gap between the two
-            /// corner panels with only their feet overlapping, and a nameplate over each head.
+            /// ⚠️⚠️ THE DISTANCE CAME DOWN FROM 15.0 TO 9.6 AND THE REASON IS THE FRAME, NOT THE
+            /// CAST. Every earlier value was chosen to squeeze four bodies into the GAP between
+            /// two tall corner panels, so as the panels moved the number chased them: 9.2, then
+            /// 12.6, then 13.2, then 14.2, then 15.0. Once both panels went to the TOP of the
+            /// screen that constraint stopped existing and the answer it had produced was plainly
+            /// wrong: `Lobby-v13.png` is four small figures in the upper middle with the bottom
+            /// 40 per cent of the frame bare road. 🧑: *"do u not see the huge negative space"*.
+            ///
+            /// At 9.6, with `MapPreviewSurface.LobbyFieldOfView` 32, the frame is about 4.9 m tall
+            /// and 9.8 m wide, which is 196 px per metre: a 2.4 m character stands 470 px, more
+            /// than double what it was, and four at `LobbyCast.Spacing` 1.45 span about 1030 px of
+            /// the 1920. The cast is the picture now rather than something in it.
             /// </summary>
             public readonly float LobbyDistance;
             public readonly float LobbyHeight;
 
             public MapEntry(string id, string name, string tagline,
                             float yaw, float distance, float height,
-                            float lobbyDistance = 15.0f, float lobbyHeight = 3.6f)
+                            float lobbyDistance = 9.6f, float lobbyHeight = 2.9f)
             {
                 Id = id;
                 Name = name;

@@ -77,11 +77,13 @@ namespace TumbangPreso.UI
         /// above the middle, and moving the aim point down the body is what does that without
         /// changing how big they are.
         ///
-        /// 0.85 is roughly a standing character's knee at `Visual.CharacterVisual.PersonScale`,
-        /// which lifts the line about 10 per cent of the frame: measured, feet from y 810 to about
-        /// y 700 at 1080p, clear of the panels' top edge.
+        /// ⚠️ IT WENT BACK UP TO 1.15 WHEN THE FURNITURE LEFT THE BOTTOM OF THE SCREEN. While both
+        /// columns sat in the bottom corners the cast had to be lifted clear of them, and 0.70 did
+        /// that. With the settings under the banner and the lobby card top-right there is nothing
+        /// down there to clear, and lifting a much larger cast now pushes its feet off the top of
+        /// the road: 1.15 is roughly the waist, which centres the bodies in the frame.
         /// </summary>
-        public const float LobbyLookHeight = 0.70f;
+        public const float LobbyLookHeight = 1.15f;
 
         /// <summary>From `MatchSetup.tscn`'s Camera3D. The one property of that node that IS
         /// read, because `_apply_camera` writes position and basis but never the FOV.</summary>

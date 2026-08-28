@@ -253,6 +253,19 @@ namespace TumbangPreso.UI
             _rect.sizeDelta = new Vector2(width, _rect.sizeDelta.y);
         }
 
+        /// <summary>Places lobby chat directly below the raised lobby card. A top-right pivot
+        /// makes new lines grow down the social rail instead of back upward over the card.</summary>
+        public void PlaceBelowTopRight(float rightMargin, float top, float width)
+        {
+            if (_rect == null) return;
+
+            _rect.anchorMin = Vector2.one;
+            _rect.anchorMax = Vector2.one;
+            _rect.pivot = Vector2.one;
+            _rect.anchoredPosition = new Vector2(-rightMargin, -top);
+            _rect.sizeDelta = new Vector2(width, _rect.sizeDelta.y);
+        }
+
         private static void Inset(RectTransform rt)
         {
             rt.anchorMin = Vector2.zero;

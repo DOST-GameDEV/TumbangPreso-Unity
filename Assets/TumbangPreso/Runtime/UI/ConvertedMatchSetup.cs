@@ -339,7 +339,7 @@ namespace TumbangPreso.UI
                 // overwrite it, so a refused port, a dead adapter and a wedged previous session
                 // all read identically. `ConvertedMultiplayerSetup.Reason` records what that cost.
                 string detail = string.IsNullOrWhiteSpace(net.Status) ? "" : $"  ({net.Status})";
-                SetStatus($"Could not open a lobby on port {port}. " +
+                SetAlert($"Could not open a lobby on port {port}. " +
                           $"Another copy of the game may already have it. Press JOIN to enter " +
                           $"somebody else's instead.{detail}");
 
@@ -491,6 +491,9 @@ namespace TumbangPreso.UI
 
             int insertIndex = headerRow.transform.GetSiblingIndex() + 1;
 
+            var shareHeading = MiniSection(rows, "SHARE THIS LOBBY");
+            shareHeading.SetSiblingIndex(insertIndex++);
+
             // 2. Address Row (placed directly in rows container below headerRow)
             _addressRow = new GameObject("AddressRow");
             _addressRow.transform.SetParent(rows, false);
@@ -623,15 +626,37 @@ namespace TumbangPreso.UI
             var canvas = GetComponentInParent<Canvas>();
             if (canvas == null) return;
 
+            // ⚠️⚠️ DISCOVERY STARTS WITH THE LOBBY, NOT WITH THE PANEL. It used to begin when
+            // the join card was opened, so the count on the JOIN button was always zero until
+            // somebody had already pressed it, and the answer to "are there games on my network"
+            // was hidden behind the question. `BrowseLan` only opens a listen socket and
+            // `StartBrowsing` only polls, so running them for the life of the lobby costs a
+            // socket and a timer.
+            net.BrowseLan();
+            net.Query?.StartBrowsing();
+
             _joinPanel = LobbyJoinPanel.Build(canvas.transform, net);
             _joinPanel.Status += SetStatus;
             _joinPanel.Joined += HandleJoinedInPlace;
+            _joinPanel.Opened += () =>
+            {
+                if (_chat != null) _chat.gameObject.SetActive(false);
+                if (_tabs?.LobbyDrawer != null) _tabs.LobbyDrawer.SetActive(false);
+            };
+            _joinPanel.Closed += () =>
+            {
+                if (_chat != null) _chat.gameObject.SetActive(IsLobby);
+                if (_tabs?.LobbyDrawer != null) _tabs.LobbyDrawer.SetActive(IsLobby);
+            };
 
             if (_codeRow == null || _codeRow.transform.parent == null) return;
 
+            var actionHeading = MiniSection(_codeRow.transform.parent, "FIND OR HOST A GAME");
+            actionHeading.SetSiblingIndex(_codeRow.transform.GetSiblingIndex() + 1);
+
             var row = new GameObject("LobbyEntryRow");
             row.transform.SetParent(_codeRow.transform.parent, false);
-            row.transform.SetSiblingIndex(_codeRow.transform.GetSiblingIndex() + 1);
+            row.transform.SetSiblingIndex(actionHeading.GetSiblingIndex() + 1);
 
             var layout = row.AddComponent<HorizontalLayoutGroup>();
             layout.spacing = 10;
@@ -651,13 +676,30 @@ namespace TumbangPreso.UI
             _joinButton.name = "OpenJoinButton";
             _joinButton.gameObject.AddComponent<LayoutElement>().minHeight = 44;
 
-            _onlineButton = MenuKit.WoodButton(row.transform, "GO ONLINE", Vector2.zero,
+            _onlineButton = MenuKit.WoodButton(row.transform, "START SERVER", Vector2.zero,
                                                Vector2.zero, new Vector2(0.0f, 44.0f),
                                                ToggleOnline);
             _onlineButton.name = "GoOnlineButton";
             _onlineButton.gameObject.AddComponent<LayoutElement>().minHeight = 44;
 
             _lobbyEntryRow = row;
+        }
+
+        private static Transform MiniSection(Transform parent, string text)
+        {
+            var holder = new GameObject($"Section_{text}");
+            holder.transform.SetParent(parent, false);
+            var element = holder.AddComponent<LayoutElement>();
+            element.minHeight = 28.0f;
+            element.preferredHeight = 28.0f;
+            element.flexibleHeight = 0.0f;
+
+            var label = MenuKit.Label(holder.transform, text, 17, UiTheme.Amber,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleLeft);
+            label.raycastTarget = false;
+            MenuKit.Stretch(label.rectTransform, 2.0f);
+            return holder.transform;
         }
 
         /// <summary>
@@ -905,12 +947,9 @@ namespace TumbangPreso.UI
             _chat = LobbyChat.Attach(canvas.transform, inMatch: false);
             if (_chat == null) return;
 
-            // ⚠️ CENTRED IN THE BAND BELOW BOTH COLUMNS, measured off the renders: the config
-            // column's plate ends around y 945 and the seat column's around y 940, so the strip
-            // under them is the only place on this screen where a panel covers nothing. Centring
-            // it on the gap between the columns rather than on the screen keeps it under the cast
-            // instead of under the START button.
-            _chat.PlaceAt(new Vector2(610.0f, 34.0f), 700.0f);
+            // The lobby card and chat are one social rail. The values are measured from the
+            // 1920x1080 runtime shot after LobbyChrome raises and scales RightColumn.
+            _chat.PlaceBelowTopRight(144.0f, 300.0f, 392.0f);
             _chat.gameObject.SetActive(IsLobby);
         }
 
@@ -1004,13 +1043,18 @@ namespace TumbangPreso.UI
 
                 if (this == null) return;
 
-                SetStatus(ok
-                          ? (goingOnline
-                             ? "Your room is online. Read the code out to anybody, anywhere."
-                             : "Your room is back on your own network.")
-                          : ReasonFor(net, goingOnline
-                                      ? "Could not open an online room."
-                                      : "Could not reopen a room on your network."));
+                if (ok)
+                {
+                    SetStatus(goingOnline
+                              ? "Your room is online. Read the code out to anybody, anywhere."
+                              : "Your room is back on your own network.");
+                }
+                else
+                {
+                    SetAlert(ReasonFor(net, goingOnline
+                                       ? "Could not open an online room."
+                                       : "Could not reopen a room on your network."));
+                }
             }
             finally
             {
@@ -1043,8 +1087,30 @@ namespace TumbangPreso.UI
                 // switch is already in flight.
                 _joinButton.interactable = !_switchingHost;
 
+                // ⚠️⚠️ THE BUTTON CARRIES THE DISCOVERY COUNT, because otherwise nothing on this
+                // screen says whether the LAN browser is even running. The old `MultiplayerSetup`
+                // put "GAMES ON YOUR LAN - searching..." on its own button for exactly that
+                // reason, and folding the browser into a panel behind one press hid it: a player
+                // with a friend hosting two metres away had no way to tell the difference between
+                // "nothing found" and "not looking".
                 var label = _joinButton.GetComponentInChildren<Text>();
-                if (label != null) label.text = live && !host ? "LEAVE AND JOIN ANOTHER" : "JOIN A GAME";
+
+                if (label != null)
+                {
+                    int found = 0;
+
+                    var beacon = NetSession.Instance?.Beacon;
+                    if (beacon != null) found += beacon.SortedEntries.Count;
+
+                    var query = NetSession.Instance?.Query;
+                    if (query?.Servers != null)
+                    {
+                        foreach (var unused in query.Servers) found++;
+                    }
+
+                    string verb = live && !host ? "LEAVE AND JOIN" : "JOIN A GAME";
+                    label.text = found > 0 ? $"{verb}   ({found})" : verb;
+                }
             }
 
             if (_onlineButton != null)
@@ -1055,11 +1121,14 @@ namespace TumbangPreso.UI
                 var net = NetSession.Instance;
                 var label = _onlineButton.GetComponentInChildren<Text>();
 
+                // ⚠️ "START SERVER" RATHER THAN "GO ONLINE", on request. The button hosts this
+                // lobby through Relay so anybody can reach it, and "go online" reads like a
+                // connectivity toggle rather than like the thing it does, which is put a server up.
                 if (label != null)
                 {
                     label.text = _switchingHost
                         ? "SWITCHING..."
-                        : (net != null && net.IsRelay ? "GO BACK TO LAN" : "GO ONLINE");
+                        : (net != null && net.IsRelay ? "STOP SERVER" : "START SERVER");
                 }
             }
         }
@@ -1089,18 +1158,34 @@ namespace TumbangPreso.UI
             if (targetText != null) targetText.text = originalText;
         }
 
-        private void SetStatus(string message)
+        /// <summary>
+        /// The line under the action button.
+        ///
+        /// ⚠️⚠️ CREAM FOR NEWS, `Impact` FOR TROUBLE, AND IT USED TO BE PINK FOR BOTH. Every
+        /// message this screen writes went out in `UiTheme.Impact`, which the palette names as
+        /// "hits, focus, emphasis": saturated pink on painted brown, at 20 units, under a large
+        /// amber button. Measured off the renders it is the least readable text on the screen, and
+        /// it was carrying "Lobby open. Share the code" as loudly as it would carry a refused
+        /// port, so neither one read as more urgent than the other.
+        ///
+        /// ⚠️ THE ALERT COLOUR IS KEPT RATHER THAN DROPPED. A failed host, a refused join and a
+        /// dropped connection are the three things on this screen a player has to act on, and
+        /// they are exactly what pink is for. What was wrong was using it for everything.
+        /// </summary>
+        private void SetStatus(string message) => WriteStatus(message, alert: false);
+
+        private void SetAlert(string message) => WriteStatus(message, alert: true);
+
+        private void WriteStatus(string message, bool alert)
         {
             var label = Node("StatusLabel");
-            if (label != null)
-            {
-                var text = label.GetComponent<Text>();
-                if (text != null)
-                {
-                    text.color = UiTheme.Impact;
-                    text.text = message;
-                }
-            }
+            if (label == null) return;
+
+            var text = label.GetComponent<Text>();
+            if (text == null) return;
+
+            text.color = alert ? UiTheme.Impact : UiTheme.Cream;
+            text.text = message;
         }
 
         private void HandleMatchStarted()
@@ -1279,9 +1364,9 @@ namespace TumbangPreso.UI
 
             NetSession.LastDisconnectReason = "";
 
-            SetStatus(string.IsNullOrWhiteSpace(detail)
-                      ? "The connection to the host ended. Press JOIN to try again."
-                      : detail);
+            SetAlert(string.IsNullOrWhiteSpace(detail)
+                     ? "The connection to the host ended. Press JOIN to try again."
+                     : detail);
 
             _localReady = false;
             _readyCount = 0;
@@ -1641,6 +1726,13 @@ namespace TumbangPreso.UI
             RefreshSeats();
             RefreshCast();
 
+            // ⚠️ AFTER THE HINT IS WRITTEN, NOT BEFORE. This rewrites `SeatHint` to describe the
+            // control that is actually on screen, and it used to run only from
+            // `ApplyCastVisibility`: `Refresh` then wrote the row wording back over it on the very
+            // next call, so `Logs/shots-runtime/Lobby-v13.png` tells the player to click a free
+            // SEAT on a screen that has no seat rows.
+            RefreshSeatRowVisibility();
+
             _fitFrames = FitPasses;
         }
 
@@ -1946,4 +2038,3 @@ namespace TumbangPreso.UI
         }
     }
 }
-

@@ -41,16 +41,20 @@ namespace TumbangPreso.UI
     {
         /// <summary>How many rows each browser draws. Four is what the old screen drew and it is
         /// the number that fits the card without scrolling.</summary>
-        private const int RowCount = 4;
+        private const int RowCount = 2;
 
         private const float CardWidth = 940.0f;
-        private const float CardHeight = 700.0f;
-        private const float RowHeight = 56.0f;
-        private const float Pad = 26.0f;
+        private const float CardHeight = 520.0f;
+        private const float RowHeight = 48.0f;
+        private const float Pad = 22.0f;
 
         /// <summary>Raised after a join has actually connected. The lobby redraws; it does not
         /// reload. See the header.</summary>
         public event Action Joined;
+
+        /// <summary>Lets the owning lobby suspend furniture that lives on a later canvas layer.</summary>
+        public event Action Opened;
+        public event Action Closed;
 
         /// <summary>Raised with a line for the lobby's own status label, so this panel never
         /// owns a second place that reports network failures.</summary>
@@ -95,7 +99,14 @@ namespace TumbangPreso.UI
 
         private void Construct()
         {
-            var card = gameObject.AddComponent<Image>();
+            var scrim = gameObject.AddComponent<Image>();
+            scrim.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.68f);
+            scrim.raycastTarget = true;
+            MenuKit.Stretch(scrim.rectTransform, 0.0f);
+
+            var cardGo = new GameObject("JoinCard");
+            cardGo.transform.SetParent(transform, false);
+            var card = cardGo.AddComponent<Image>();
             card.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
             card.type = Image.Type.Sliced;
             card.color = Color.white;
@@ -103,10 +114,10 @@ namespace TumbangPreso.UI
                           new Vector2(CardWidth, CardHeight));
 
             var column = new GameObject("Column");
-            column.transform.SetParent(transform, false);
+            column.transform.SetParent(cardGo.transform, false);
 
             var layout = column.AddComponent<VerticalLayoutGroup>();
-            layout.spacing = 12;
+            layout.spacing = 8;
             layout.padding = new RectOffset((int)Pad, (int)Pad, (int)Pad, (int)Pad);
             layout.childControlWidth = true;
 
@@ -118,24 +129,27 @@ namespace TumbangPreso.UI
             layout.childControlHeight = true;
             layout.childForceExpandWidth = true;
             layout.childForceExpandHeight = false;
+            layout.childAlignment = TextAnchor.UpperCenter;
             MenuKit.Stretch(column.GetComponent<RectTransform>(), 0);
 
-            Heading(column.transform, "JOIN A GAME", 40, UiTheme.Amber, 46);
+            Heading(column.transform, "JOIN A GAME", 34, UiTheme.Amber, 40);
 
             var hint = Heading(column.transform,
                                "Type a four-character code or an address, or pick a game below.",
-                               20, UiTheme.CreamMuted, 28);
+                               18, UiTheme.CreamMuted, 24);
             hint.alignment = TextAnchor.MiddleLeft;
 
             BuildEntryRow(column.transform);
 
-            _lanTitle = Heading(column.transform, "ON YOUR NETWORK", 24, UiTheme.Cream, 32);
+            _lanTitle = Heading(column.transform, "ON YOUR NETWORK", 20, UiTheme.Cream, 26);
             _lanTitle.alignment = TextAnchor.MiddleLeft;
-            BuildRows(column.transform, _lanRows, _lanRowLabels, OnLanRowClicked);
+            BuildRows(column.transform, _lanRows, _lanRowLabels, OnLanRowClicked,
+                      "SEARCHING FOR LAN GAMES…");
 
-            _onlineTitle = Heading(column.transform, "ONLINE", 24, UiTheme.Cream, 32);
+            _onlineTitle = Heading(column.transform, "ONLINE", 20, UiTheme.Cream, 26);
             _onlineTitle.alignment = TextAnchor.MiddleLeft;
-            BuildRows(column.transform, _onlineRows, _onlineRowLabels, OnOnlineRowClicked);
+            BuildRows(column.transform, _onlineRows, _onlineRowLabels, OnOnlineRowClicked,
+                      "CHECKING ONLINE SERVERS…");
 
             BuildFooter(column.transform);
         }
@@ -148,6 +162,7 @@ namespace TumbangPreso.UI
             var element = holder.AddComponent<LayoutElement>();
             element.minHeight = height;
             element.preferredHeight = height;
+            element.flexibleHeight = 0.0f;
 
             var label = MenuKit.Label(holder.transform, text, size, colour,
                                       Vector2.zero, Vector2.zero, Vector2.zero,
@@ -168,11 +183,12 @@ namespace TumbangPreso.UI
             layout.childControlWidth = true;
             layout.childControlHeight = true;
             layout.childForceExpandWidth = false;
-            layout.childForceExpandHeight = true;
+            layout.childForceExpandHeight = false;
 
             var element = row.AddComponent<LayoutElement>();
             element.minHeight = RowHeight;
             element.preferredHeight = RowHeight;
+            element.flexibleHeight = 0.0f;
 
             // ---- the field ------------------------------------------------------------
             var fieldGo = new GameObject("JoinAddressEdit");
@@ -186,14 +202,16 @@ namespace TumbangPreso.UI
             var fieldElement = fieldGo.AddComponent<LayoutElement>();
             fieldElement.flexibleWidth = 1;
             fieldElement.minHeight = RowHeight;
+            fieldElement.preferredHeight = RowHeight;
+            fieldElement.flexibleHeight = 0.0f;
 
-            var placeholder = MenuKit.Label(fieldGo.transform, "CODE OR ADDRESS", 22,
+            var placeholder = MenuKit.Label(fieldGo.transform, "JOIN CODE OR IP ADDRESS", 20,
                                             UiTheme.CreamMuted, Vector2.zero, Vector2.zero,
                                             Vector2.zero, TextAnchor.MiddleLeft);
             placeholder.raycastTarget = false;
             Inset(placeholder.rectTransform);
 
-            var typed = MenuKit.Label(fieldGo.transform, "", 22, UiTheme.Cream,
+            var typed = MenuKit.Label(fieldGo.transform, "", 20, UiTheme.Cream,
                                       Vector2.zero, Vector2.zero, Vector2.zero,
                                       TextAnchor.MiddleLeft);
             typed.raycastTarget = false;
@@ -216,18 +234,20 @@ namespace TumbangPreso.UI
 
             // ---- the button -----------------------------------------------------------
             var join = MenuKit.WoodButton(row.transform, "JOIN", Vector2.zero, Vector2.zero,
-                                          new Vector2(160.0f, RowHeight), Join,
-                                          "WoodPrimaryButton");
+                                          new Vector2(140.0f, RowHeight), Join,
+                                          "WoodAmberButton");
             join.name = "JoinButton";
 
             var joinElement = join.gameObject.AddComponent<LayoutElement>();
-            joinElement.preferredWidth = 160.0f;
-            joinElement.minWidth = 160.0f;
+            joinElement.preferredWidth = 140.0f;
+            joinElement.minWidth = 140.0f;
             joinElement.minHeight = RowHeight;
+            joinElement.preferredHeight = RowHeight;
+            joinElement.flexibleHeight = 0.0f;
         }
 
         private void BuildRows(Transform parent, List<Button> rows, List<Text> labels,
-                               Action<int> onClick)
+                               Action<int> onClick, string firstPlaceholder)
         {
             for (int i = 0; i < RowCount; i++)
             {
@@ -240,16 +260,19 @@ namespace TumbangPreso.UI
                 var element = button.gameObject.AddComponent<LayoutElement>();
                 element.minHeight = RowHeight;
                 element.preferredHeight = RowHeight;
+                element.flexibleHeight = 0.0f;
 
                 var label = button.GetComponentInChildren<Text>();
                 if (label != null)
                 {
                     label.alignment = TextAnchor.MiddleLeft;
                     label.fontSize = 20;
+                    label.text = i == 0 ? firstPlaceholder : "AVAILABLE GAMES APPEAR HERE";
+                    label.color = UiTheme.CreamMuted;
                     Inset(label.rectTransform);
                 }
 
-                button.gameObject.SetActive(false);
+                button.interactable = false;
 
                 rows.Add(button);
                 labels.Add(label);
@@ -258,6 +281,11 @@ namespace TumbangPreso.UI
 
         private void BuildFooter(Transform parent)
         {
+            var spacer = new GameObject("FooterSpacer");
+            spacer.transform.SetParent(parent, false);
+            var spacerElement = spacer.AddComponent<LayoutElement>();
+            spacerElement.flexibleHeight = 1.0f;
+
             var row = new GameObject("FooterRow");
             row.transform.SetParent(parent, false);
 
@@ -266,16 +294,20 @@ namespace TumbangPreso.UI
             layout.childControlWidth = true;
             layout.childControlHeight = true;
             layout.childForceExpandWidth = true;
-            layout.childForceExpandHeight = true;
+            layout.childForceExpandHeight = false;
 
             var element = row.AddComponent<LayoutElement>();
             element.minHeight = RowHeight;
             element.preferredHeight = RowHeight;
+            element.flexibleHeight = 0.0f;
 
             var close = MenuKit.WoodButton(row.transform, "BACK TO LOBBY", Vector2.zero,
                                            Vector2.zero, new Vector2(0.0f, RowHeight), Close);
             close.name = "CloseJoinButton";
-            close.gameObject.AddComponent<LayoutElement>().minHeight = RowHeight;
+            var closeElement = close.gameObject.AddComponent<LayoutElement>();
+            closeElement.minHeight = RowHeight;
+            closeElement.preferredHeight = RowHeight;
+            closeElement.flexibleHeight = 0.0f;
         }
 
         /// <summary>
@@ -314,6 +346,7 @@ namespace TumbangPreso.UI
 
         private void OnEnable()
         {
+            Opened?.Invoke();
             if (_net == null) return;
 
             if (_net.Beacon != null) _net.Beacon.EntriesChanged += Refresh;
@@ -322,6 +355,7 @@ namespace TumbangPreso.UI
 
         private void OnDisable()
         {
+            Closed?.Invoke();
             if (_net == null) return;
 
             if (_net.Beacon != null) _net.Beacon.EntriesChanged -= Refresh;
@@ -348,7 +382,10 @@ namespace TumbangPreso.UI
             {
                 if (i >= lan.Count)
                 {
-                    _lanRows[i].gameObject.SetActive(false);
+                    if (i == 0)
+                        DrawEmpty(_lanRows[i], _lanRowLabels[i], "SEARCHING FOR LAN GAMES…");
+                    else
+                        _lanRows[i].gameObject.SetActive(false);
                     continue;
                 }
 
@@ -373,7 +410,10 @@ namespace TumbangPreso.UI
             {
                 if (i >= online.Count)
                 {
-                    _onlineRows[i].gameObject.SetActive(false);
+                    if (i == 0)
+                        DrawEmpty(_onlineRows[i], _onlineRowLabels[i], "CHECKING ONLINE SERVERS…");
+                    else
+                        _onlineRows[i].gameObject.SetActive(false);
                     continue;
                 }
 
@@ -397,16 +437,25 @@ namespace TumbangPreso.UI
         private static void Draw(Button row, Text label, string text)
         {
             row.gameObject.SetActive(true);
+            row.interactable = true;
 
             if (label == null) return;
 
             label.text = text;
+            label.color = UiTheme.Cream;
             label.fontSize = 20;
 
             float room = label.rectTransform.rect.width;
             if (room <= 1.0f) room = CardWidth - (Pad * 2.0f) - 36.0f;
 
             MenuKit.Fit(label, room);
+        }
+
+        private static void DrawEmpty(Button row, Text label, string text)
+        {
+            Draw(row, label, text);
+            row.interactable = false;
+            if (label != null) label.color = UiTheme.CreamMuted;
         }
 
         // ------------------------------------------------------------------------------
