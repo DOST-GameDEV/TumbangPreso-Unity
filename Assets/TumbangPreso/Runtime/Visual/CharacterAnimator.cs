@@ -760,10 +760,35 @@ namespace TumbangPreso.Visual
         /// than of behaviour. Zeroing the speed one frame short of the end holds the pose for
         /// as long as the state that asked for it lasts.
         /// </summary>
+        /// <summary>
+        /// Runs the end of whatever is on the front input: a non-looping clip freezes on its last
+        /// pose, a looping one wraps back to its start.
+        ///
+        /// ⚠️⚠️ THE WRAP IS DONE HERE BECAUSE `SetDuration` DOES NOT DO IT, AND THAT IS 🧑
+        /// 2026-08-29: *"sa dance emote dalawang swings lang sya and nag stostop na sya
+        /// sumayaw"*. `Play` asks for a loop with `playable.SetDuration(double.MaxValue)`, and
+        /// that is a statement about when the PLAYABLE is finished, not about what the CLIP does
+        /// when it runs off its own end. An `AnimationClipPlayable` past `clip.length` holds the
+        /// final pose unless the clip asset itself is marked Loop Time in the importer, so an
+        /// infinite duration on an unlooped clip buys a pose that never ends rather than a groove
+        /// that never ends. `EmoteLoops` said `{ "dance", true }` and the dance still played
+        /// once and froze, which is why reading that table was not enough to find this: both
+        /// halves looked correct and the disagreement was between them.
+        ///
+        /// ⚠️ WRAPPED HERE RATHER THAN FIXED IN THE IMPORTER, DELIBERATELY. `CLAUDE.md` § 4a:
+        /// every clip in the project is placeholder and the team's own animations are coming.
+        /// An import setting is a property of THIS asset that the replacement arrives without,
+        /// so the loop would break again on the commit that swaps the art, silently, and the
+        /// report would come back a second time. This holds whatever the clips are, which is the
+        /// same reason `CharacterAnimator` reads clip names off the asset instead of assuming
+        /// them.
+        ///
+        /// ⚠️ IT IS A NO-OP ON A CLIP THAT ALREADY LOOPS. `GetTime` accumulates past the clip's
+        /// length whether or not the clip wraps visually, so on a properly imported locomotion
+        /// clip this rewrites the time to the phase it was already showing.
+        /// </summary>
         private void HoldLastFrame()
         {
-            if (!_holdAtEnd) return;
-
             var front = Front();
             if (!front.IsValid()) return;
 
@@ -771,6 +796,18 @@ namespace TumbangPreso.Visual
                 ? front.GetAnimationClip().length
                 : 0.0;
             if (length <= 0.0) return;
+
+            if (!_holdAtEnd)
+            {
+                double time = front.GetTime();
+
+                // ⚠️ THE REMAINDER, NOT ZERO. Snapping to 0 on the frame the clip runs out
+                // throws away however far past the seam this frame's delta carried it, which at
+                // 30 fps is a third of the frames landing on the downbeat twice.
+                if (time >= length) front.SetTime(time % length);
+
+                return;
+            }
 
             if (front.GetTime() >= length - 0.001)
             {

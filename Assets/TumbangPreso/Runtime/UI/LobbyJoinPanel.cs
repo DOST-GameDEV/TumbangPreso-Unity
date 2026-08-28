@@ -398,7 +398,25 @@ namespace TumbangPreso.UI
                      $"{entry.HostName}   ·   {entry.Players}/{entry.MaxPlayers}   ·   {state}   ·   {address}");
             }
 
-            var online = _net?.Query?.Servers?.ToList() ?? new List<ServerQuery.Entry>();
+            // ⚠️⚠️ OUR OWN LOBBY IS NOT A GAME WE CAN JOIN. 🧑 2026-08-29:
+            // *"na kikita sarili sa lobby (join a game)"*. The LAN half is filtered at the source
+            // by `LanBeacon.IsOurOwn`, which can compare a per-process id; the ONLINE half has no
+            // such id on the wire, but it does not need one, because a relay lobby IS its join
+            // code. If we are hosting and a listed code is the code we are advertising, that row
+            // is this process.
+            //
+            // ⚠️ THE HOST GATE IS PART OF THE TEST, not a shortcut past it. A CLIENT holds the
+            // host's join code in the same field once it has joined, and filtering on the code
+            // alone would then hide the lobby that client is sitting in from its own browser
+            // while it is still perfectly able to see everybody else's.
+            string ownCode = _net != null && _net.IsNetworked && _net.IsHost
+                ? (_net.Lobby?.JoinCode ?? "")
+                : "";
+
+            var online = (_net?.Query?.Servers ?? Enumerable.Empty<ServerQuery.Entry>())
+                .Where(e => string.IsNullOrEmpty(ownCode)
+                            || !string.Equals(e.JoinCode, ownCode, StringComparison.OrdinalIgnoreCase))
+                .ToList();
 
             _onlineTitle.text = online.Count > 0
                 ? $"ONLINE  ·  {online.Count}"

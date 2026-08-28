@@ -117,14 +117,27 @@ namespace TumbangPreso.Tests
         /// both machines must be rebuilt from the same commit or they refuse each other at
         /// approval. This is a tripwire rather than a truth: if somebody adds a message and
         /// forgets the bump, the number here stops matching what they wrote and this fails.
+        ///
+        /// ⚠️⚠️ IT WENT STALE AT 7 WHILE THE CONSTANT REACHED 10, AND A TRIPWIRE NOBODY RE-ARMS
+        /// IS A TRIPWIRE THAT ONLY EVER REPORTS ITSELF. The constant was last moved by `886a981`
+        /// ("Land the last four slippers"); this assertion was last written by `ed082c8`, three
+        /// bumps earlier. Every EditMode run since has been one test red for a reason that was
+        /// true and finished, which is the state that teaches a reader to skim past the failure
+        /// list — and this suite's whole value is that the list is normally empty.
+        ///
+        /// ⚠️ THE LAN BEACON'S WIRE CHANGE ON 2026-08-29 DELIBERATELY DID **NOT** MOVE THIS.
+        /// `LanBeacon` versions its own payload with its own magic (`MagicV2`) and still parses
+        /// v1, so an old build is discovered rather than refused. `ProtocolVersion` gates the
+        /// netcode HELLO at approval and costs both machines a rebuild off the same commit
+        /// (§ 59.4); spending that on a discovery format that is explicitly backward compatible
+        /// would refuse peers who have no reason to be refused.
         /// </summary>
         [Test]
         public void TheProtocolCarriesTheChatBump()
         {
-            Assert.AreEqual(7, NetSession.ProtocolVersion,
-                "the expanded append-only slipper roster changes the meaning of replicated pick " +
-                "indices and therefore requires protocol 7. If a message or roster index was " +
-                "added or removed since, bump this and the constant together.");
+            Assert.AreEqual(10, NetSession.ProtocolVersion,
+                "a message or a replicated roster index has been added or removed. Bump this " +
+                "number and `NetSession.ProtocolVersion` together, in the same commit.");
         }
     }
 }

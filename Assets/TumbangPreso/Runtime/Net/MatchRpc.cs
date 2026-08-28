@@ -151,7 +151,39 @@ namespace TumbangPreso.Net
         /// </summary>
         private void HandleClientDisconnected(string reason)
         {
-            UI.SceneFlow.Go(UI.SceneFlow.MultiplayerSetup);
+            // ⚠️⚠️ THE LOBBY, NOT `MultiplayerSetup`, AND THIS LINE IS THE WHOLE OF 🧑 2026-08-29:
+            // *"sometimes ppl go back to Old ui when they disconnect, they shoudl stay in lobby
+            // screen but js get kicked out of current lobby and go back to their own"*.
+            //
+            // `MultiplayerSetup` is the retired pre-lobby form. `SceneFlow.MultiplayerSetup`'s
+            // own note says nothing has navigated to it since § 68.5 and that it is kept only so
+            // the redesign can be reverted in one line: this was the last caller, and it was
+            // dropping a disconnected player into a screen that is no longer part of the game.
+            // It read as "sometimes" because it is a race. `ConvertedMatchSetup` subscribes to
+            // the SAME event and handles it correctly in place, so which of the two a player got
+            // depended on handler order and on whether the lobby screen happened to be loaded.
+            //
+            // ⚠️ ALREADY ON THE LOBBY MEANS DO NOTHING, and that is not an optimisation. The
+            // lobby's own handler shows the reason, clears the ready tally and opens the join
+            // panel; reloading the scene from here would destroy the alert it had just written
+            // and hand the player a silent screen instead of the one actionable line they get
+            // (a protocol mismatch is a thing they can fix). Two owners, one event, and the one
+            // that is on screen wins.
+            //
+            // ⚠️ `Networked` IS SET SO THE LOBBY COMES UP AS A LOBBY. `ConvertedMatchSetup`
+            // derives `IsLobby` from it, and arriving with it false would land the player on the
+            // PRACTICE tab with no chat, no seats and no way back to multiplayer except the tab
+            // bar. `NetSession.OnClientDisconnected` has already called `Lobby.Reset()` by the
+            // time this runs, so what they arrive in is their OWN empty lobby, which is exactly
+            // what was asked for.
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
+                == UI.SceneFlow.MatchSetup)
+            {
+                return;
+            }
+
+            UI.SceneFlow.Networked = true;
+            UI.SceneFlow.Go(UI.SceneFlow.MatchSetup);
         }
 
         private void OnDestroy()

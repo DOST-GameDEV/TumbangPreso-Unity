@@ -44,6 +44,26 @@ namespace TumbangPreso.Net
         public bool InProgress;
         public float LastSeen;
 
+        /// <summary>
+        /// Who sent this advertisement, as a per-PROCESS id rather than a per-machine one.
+        ///
+        /// ⚠️⚠️ IT EXISTS SO A HOST STOPS FINDING ITSELF IN ITS OWN BROWSER. 🧑 2026-08-29:
+        /// *"na kikita sarili sa lobby (join a game)"*. A host broadcasts to 255.255.255.255 and
+        /// to every interface's directed broadcast, and its own listener is bound to
+        /// `IPAddress.Any` on the same port, so it receives every packet it sends. The row looked
+        /// exactly like a real game because it WAS one, which is why nothing about it read as a
+        /// bug until somebody pressed join on it.
+        ///
+        /// ⚠️ ADDRESS AND PORT CANNOT ANSWER THIS. `remoteAddress` for our own packet is whichever
+        /// local interface the OS looped it back through, which is not knowable in advance, and
+        /// on a machine with a virtual adapter it is routinely not the address we would guess.
+        /// An id we minted and can compare exactly is the only reliable form of the question.
+        ///
+        /// ⚠️ AND PER PROCESS, NOT PER MACHINE. Two builds running side by side on one PC for a
+        /// two-window test are two different games and each must still see the other.
+        /// </summary>
+        public string BeaconId;
+
         /// <summary>A free CHAIR, and room on the wire for the socket that would take it.</summary>
         public bool IsJoinable =>
             !InProgress && Occupied < MaxPlayers && Connections < MaxConnections;
@@ -76,6 +96,22 @@ namespace TumbangPreso.Net
     {
         public const int DiscoveryPort = 8911;
         public const string Magic = "tumbang-preso-lan";
+
+        /// <summary>
+        /// The layout that carries <see cref="LanEntry.BeaconId"/>.
+        ///
+        /// ⚠️⚠️ A NEW MAGIC RATHER THAN A NEW FIELD COUNT, BECAUSE THE NAME IS THE LAST FIELD AND
+        /// IT MAY CONTAIN THE SEPARATOR. `TryParsePayload` reads the host name as "everything
+        /// from index N onwards" precisely so a player called `A|B` truncates nothing, and that
+        /// is exactly what makes `parts.Length` useless as a version discriminator: a v1 packet
+        /// from a player with one pipe in their name has the same field count as a v2 packet.
+        /// The magic is field 0, is never free-form, and settles it in one comparison.
+        ///
+        /// ⚠️ v1 IS STILL READ. A build from before this change advertises the old magic and is
+        /// listed rather than silently missing from the browser, with an empty id: see
+        /// <see cref="IsOurOwn"/> for why an empty id can never match ours.
+        /// </summary>
+        public const string MagicV2 = "tumbang-preso-lan2";
         public const float BeaconInterval = 1.0f;
         public const float EntryTimeout = 4.0f;
 
@@ -115,6 +151,17 @@ namespace TumbangPreso.Net
         public string HostName = "";
         public string JoinCode = "";
         public int Port = 8910;
+
+        /// <summary>
+        /// This process's beacon id, minted once at load and never reused.
+        ///
+        /// ⚠️ A GUID RATHER THAN `NetIdentity.Token`. The token is the player's PERSISTENT
+        /// identity, kept across launches so a reconnecting peer gets its seat back; two windows
+        /// of the same build on one machine would share it, and the second window would then
+        /// filter the first one out of its browser as itself. This has to be per process and
+        /// nothing else in the project already is.
+        /// </summary>
+        public static readonly string ProcessBeaconId = Guid.NewGuid().ToString("N").Substring(0, 12);
         public int Players;
         public int MaxPlayers = LobbySession.MaxPlayers;
         public int Occupied;
@@ -251,9 +298,24 @@ namespace TumbangPreso.Net
         public static string BuildPayload(int port, int seated, int maxPlayers, bool inProgress,
                                           string joinCode, string hostName,
                                           int occupied, int connections, int maxConnections)
+            => BuildPayload(port, seated, maxPlayers, inProgress, joinCode, hostName,
+                            occupied, connections, maxConnections, ProcessBeaconId);
+
+        /// <summary>
+        /// The v2 layout:
+        /// `magicV2|port|seated|maxSeats|inProgress|joinCode|occupied|connections|maxConnections|beaconId|hostName`.
+        ///
+        /// ⚠️ THE ID GOES BEFORE THE NAME, like every other field, for the reason the note above
+        /// gives: the name is the only free-form value on this wire and it is therefore the only
+        /// one that may hold the separator, so it has to stay last.
+        /// </summary>
+        public static string BuildPayload(int port, int seated, int maxPlayers, bool inProgress,
+                                          string joinCode, string hostName,
+                                          int occupied, int connections, int maxConnections,
+                                          string beaconId)
         {
             return string.Join("|",
-                Magic,
+                MagicV2,
                 port.ToString(),
                 seated.ToString(),
                 maxPlayers.ToString(),
@@ -262,6 +324,7 @@ namespace TumbangPreso.Net
                 occupied.ToString(),
                 connections.ToString(),
                 maxConnections.ToString(),
+                beaconId ?? "",
                 hostName ?? "");
         }
 
@@ -410,6 +473,14 @@ namespace TumbangPreso.Net
 
             while (_inbox.TryDequeue(out var entry))
             {
+                // ⚠️⚠️ OUR OWN ADVERTISEMENT IS DROPPED HERE, AND THAT IS WHY THIS FILTER IS ON
+                // THE MAIN THREAD RATHER THAN IN `TryParsePayload`. The parser is a pure function
+                // over a payload and a remote address, it runs on the socket thread, and it is
+                // exercised directly by the tests; asking it about `this` beacon's live state
+                // would make it neither pure nor testable. The drain is the first point that has
+                // both the parsed entry and the component that sent it.
+                if (IsOurOwn(entry)) continue;
+
                 entry.LastSeen = Time.unscaledTime;
                 string key = $"{entry.Address}:{entry.Port}";
                 lock (_seen)
@@ -423,6 +494,32 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>
+        /// Is this entry the packet we just sent, come back to us?
+        ///
+        /// ⚠️⚠️ THIS IS THE WHOLE OF 🧑 2026-08-29's *"na kikita sarili sa lobby (join a game)"*.
+        /// A host sends to `IPAddress.Broadcast` and to every interface's directed broadcast, and
+        /// its own listener is bound to `IPAddress.Any` on the same port, so it hears itself on
+        /// every interval. The row was indistinguishable from a real game because it was one, and
+        /// pressing JOIN on it asks the transport to connect to a server this process already is.
+        ///
+        /// ⚠️ GATED ON `Advertising`, so a machine that is only BROWSING filters nothing. Without
+        /// that gate a client would compare against an id it never broadcasts, which is harmless
+        /// but says something untrue about what this method is for.
+        ///
+        /// ⚠️ AN EMPTY ID NEVER MATCHES. A v1 host on the network advertises no id at all, and
+        /// `ProcessBeaconId` is a 12-character GUID slice that is never empty, so an old build is
+        /// listed rather than mistaken for us. That is the correct failure direction: showing one
+        /// row too many is a nuisance and hiding a real host is a game nobody can join.
+        /// </summary>
+        private bool IsOurOwn(LanEntry entry)
+        {
+            if (!Advertising) return false;
+            if (string.IsNullOrEmpty(entry.BeaconId)) return false;
+
+            return entry.BeaconId == ProcessBeaconId;
+        }
+
+        /// <summary>
         /// Validates unauthenticated network payload safely without throwing.
         /// </summary>
         public static bool TryParsePayload(string payload, string remoteAddress, out LanEntry entry)
@@ -431,7 +528,12 @@ namespace TumbangPreso.Net
             if (string.IsNullOrEmpty(payload)) return false;
 
             string[] parts = payload.Split('|');
-            if (parts.Length < 7 || parts[0] != Magic) return false;
+            if (parts.Length < 7) return false;
+
+            // ⚠️ THE VERSION IS FIELD 0 AND NOTHING ELSE. See `MagicV2` for why the field count
+            // cannot be asked this question.
+            bool v2 = parts[0] == MagicV2;
+            if (!v2 && parts[0] != Magic) return false;
 
             if (!int.TryParse(parts[1], out int port) || port <= 0) return false;
             if (!int.TryParse(parts[2], out int seated)) seated = 0;
@@ -453,7 +555,10 @@ namespace TumbangPreso.Net
             // ⚠️ THE NAME IS EVERYTHING FROM ITS INDEX ONWARDS, not one field. A player name is
             // the only value on this wire that a person types, and rejoining the remainder is
             // what keeps a name containing the separator from truncating rather than corrupting.
-            int nameIndex = extended ? 9 : 6;
+            // v2 spends one more field on the beacon id, so the name starts one later.
+            string beaconId = v2 && parts.Length >= 11 ? parts[9] : "";
+
+            int nameIndex = v2 && parts.Length >= 11 ? 10 : extended ? 9 : 6;
             string name = string.Join("|", parts, nameIndex, parts.Length - nameIndex);
             if (name.Length > Core.Balance.PlayerNameMax)
                 name = name.Substring(0, Core.Balance.PlayerNameMax);
@@ -470,6 +575,7 @@ namespace TumbangPreso.Net
                 Connections = Mathf.Clamp(connections, 0, 64),
                 MaxConnections = Mathf.Clamp(maxConnections, 1, 64),
                 InProgress = parts[4] == "1",
+                BeaconId = beaconId,
 
                 // ⚠️ NOT STAMPED HERE. This runs on the socket thread and `Time.unscaledTime` is
                 // a Unity call that throws off the main thread; `DrainInbox` stamps it instead.

@@ -692,6 +692,59 @@ namespace TumbangPreso.Tests
         }
 
         /// <summary>
+        /// ⚠️⚠️ THE BEACON ID IS WHAT STOPS A HOST FINDING ITSELF, so it has to survive the round
+        /// trip intact. 🧑 2026-08-29: *"na kikita sarili sa lobby (join a game)"*. A host
+        /// broadcasts to every interface and its own listener is bound to `IPAddress.Any`, so it
+        /// receives every packet it sends; `LanBeacon.IsOurOwn` drops those by comparing this
+        /// field, and it can only do that if the parser gives back exactly what the builder put in.
+        /// </summary>
+        [Test]
+        public void TheBeaconIdSurvivesTheRoundTrip()
+        {
+            string payload = LanBeacon.BuildPayload(8910, 2, 4, false, "K7X9", "Host",
+                                                    2, 5, 12, "abc123def456");
+
+            Assert.IsTrue(LanBeacon.TryParsePayload(payload, "10.0.0.9", out var entry));
+            Assert.AreEqual("abc123def456", entry.BeaconId);
+            Assert.AreEqual("Host", entry.HostName, "the id must not be read as part of the name");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ AN OLD BUILD IS LISTED, NOT MISTAKEN FOR US. It advertises the v1 magic and no id
+        /// at all, and `IsOurOwn` refuses to match an empty one. That is the correct direction to
+        /// fail in: one row too many in the browser is a nuisance, and a real host filtered out of
+        /// it is a game nobody on the network can join.
+        /// </summary>
+        [Test]
+        public void APayloadFromBeforeTheBeaconIdCarriesNoneAndIsStillListed()
+        {
+            string old = string.Join("|", LanBeacon.Magic, "8910", "2", "4", "0", "K7X9",
+                                     "2", "5", "12", "Old Build");
+
+            Assert.IsTrue(LanBeacon.TryParsePayload(old, "192.168.1.50", out var entry));
+            Assert.AreEqual("", entry.BeaconId);
+            Assert.AreEqual("Old Build", entry.HostName);
+            Assert.AreEqual(5, entry.Connections, "the v1 extended counts still read where they were");
+        }
+
+        /// <summary>
+        /// ⚠️ THE VERSION IS FIELD 0, NOT THE FIELD COUNT, and this is the case that decides it.
+        /// A v1 host whose player typed one separator into their name produces eleven fields,
+        /// which is exactly the length of a v2 payload. Discriminating on the count would read
+        /// that player's name as a beacon id and shift the whole name one field left.
+        /// </summary>
+        [Test]
+        public void AV1NameWithASeparatorIsNotMistakenForAV2BeaconId()
+        {
+            string old = string.Join("|", LanBeacon.Magic, "8910", "2", "4", "0", "K7X9",
+                                     "2", "5", "12", "Ma", "te");
+
+            Assert.IsTrue(LanBeacon.TryParsePayload(old, "192.168.1.50", out var entry));
+            Assert.AreEqual("", entry.BeaconId);
+            Assert.AreEqual(Settings.GameSettings.SanitiseName("Ma|te"), entry.HostName);
+        }
+
+        /// <summary>
         /// ⚠️ A PLAYER NAME IS THE ONLY VALUE ON THIS WIRE A PERSON TYPES, so the parser takes it
         /// as everything from its index onwards. A name containing the separator truncates rather
         /// than corrupting the fields after it, which is what reading one field would have done.
