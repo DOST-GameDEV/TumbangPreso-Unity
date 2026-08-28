@@ -27,7 +27,7 @@ aimed at different people.
 | | **CLASSIC** | **HERO STRIKE** |
 |---|---|---|
 | For | People who want the street game. Less happening on screen. | Competitive and esports play. |
-| Roster | The twelve street characters | The five heroes |
+| Roster | The twelve street characters | The six heroes |
 | Powers | None, and that is the feature | Two skills and an ultimate each |
 | Verbs | Move, sprint, jump, throw, grab, shove, lunge, punch | The same, plus the kit |
 | Governed by | `docs/Design.md` | `Design.md` § 13 points at the files |

@@ -636,7 +636,10 @@ measurement on the board was taken against this window and still is.
 `scenes/objects/Lata.tscn`, which is 🎨 `build model`'s row.
 
 ⚠️⚠️ **THE SCORING WINDOW IS SKIN-INDEPENDENT EXCEPT THROUGH A DECLARED STAT, AND THE
-COLLIDER IS NOT.** The four cans measure **0.108 to 0.143** in radius — a 32% spread.
+COLLIDER IS NOT.** The six cans measure **0.108 to 0.156** in radius — a 45% spread.
+⚠️ **That was 0.108 to 0.143 and 32% until 2026-08-28**, when PIYESTA (0.156) and KARNE
+NORTE (0.148) were added as the two widest in the set. The argument below does not change
+and the spread it is arguing about got half again as wide, which strengthens it.
 Deriving the scoring window from that geometry would make the prettiest can quietly the
 hardest to hit with nothing on screen saying so. A competitive difference between
 cosmetic picks has to be **declared**, and the CHARACTER screen's STANCE meter declares it:
@@ -998,7 +1001,7 @@ still applies to it.
 | System | Where the numbers actually live |
 |---|---|
 | Mode split, rosters per mode | `Core/MatchRules.cs`, `Core/Roster.cs` (`ClassicPeople`, `HeroPeople`) |
-| Ability kits, five heroes, two skills and one ultimate each | `Assets/TumbangPreso/Runtime/Abilities/*HeroKit.cs` |
+| Ability kits, six heroes, two skills and one ultimate each | `Assets/TumbangPreso/Runtime/Abilities/*HeroKit.cs` |
 | **What those kit numbers were measured against, and why** | **[`docs/Hero_Strike_Balance.md`](Hero_Strike_Balance.md)**. § 1 is the per-ability floor footprint table against the `VISION.md` § 2 readability budget; § 2 is the cooldown and ultimate economy as shipped |
 | Ultimate economy | `Core/Balance.cs`: `UltimatePassiveChargePerSecond` 1.0/s, `UltimateChargeLataKnock` 25, `UltimateChargeTag` 20, `UltimateChargeLegalThrow` 8, against `HeroKit.UltimateMax` 100. ⚠️ **The passive drip alone delivers 90 of the 100 in a 90 s round**, so the meter is currently a timer rather than an economy, and that conflicts with `VISION.md` § 4's "nothing may reward waiting". Measured and written up in `Hero_Strike_Balance.md` § 2.1 |
 | Hazard volumes the skills leave behind | `Runtime/Abilities/HeroHazards.cs`, measured in `Hero_Strike_Balance.md` § 1 |

@@ -1,7 +1,7 @@
 # docs: what each file is, and when to read it
 
 ⚠️ **This index exists because the project gets handed between sessions and tools, and a
-folder of thirteen documents with no map is a folder nobody reads.** If you add a document,
+folder of eighteen documents with no map is a folder nobody reads.** If you add a document,
 add its row here in the same commit.
 
 ---
@@ -13,8 +13,9 @@ add its row here in the same commit.
 | [`../CLAUDE.md`](../CLAUDE.md) | **First, always.** The rules of the repository: which git repo is live, the engine-free core rule, the build and test commands, the traps on this machine. |
 | [`VISION.md`](VISION.md) | **What the game is FOR.** The two modes and why both ship, the readability budget, how a player is meant to learn a power, what is settled. Read before making a design call. |
 | [`TODO.md`](TODO.md) | **What is actually open.** What is wrong, where it lives, what done looks like. Check before inventing a task; update in the same commit as the work. |
-| [`GAME_OVERVIEW.md`](GAME_OVERVIEW.md) | **The whole game in one file, for a reader rather than for an editor.** Every mode, rule, verb and number a player can feel, all fifteen hero powers, the twelve street characters, the five heroes, the four lata and the four tsinelas with their trait rows. ⚠️ **It is a map, not a source of truth**: `Design.md` and `Balance.cs` win over it, and where it disagrees with them it is the file to fix. |
+| [`GAME_OVERVIEW.md`](GAME_OVERVIEW.md) | **The whole game in one file, for a reader rather than for an editor.** Every mode, rule, verb and number a player can feel, all eighteen hero powers, the twelve street characters, the six heroes, the six lata and the ten tsinelas with their trait rows. ⚠️ **It is a map, not a source of truth**: `Design.md` and `Balance.cs` win over it, and where it disagrees with them it is the file to fix. |
 | [`Design.md`](Design.md) | **The balance source of truth.** Every number that decides the game, and why. § 13 lists what it does NOT govern. ⚠️ **This copy is the live one**; the Godot repo's is the frozen 2026-08-02 original. |
+| [`Hero_Strike_UI.md`](Hero_Strike_UI.md) | **What Hero Strike puts on screen and what it deliberately does not.** The ability bar, the charge readout and the cooldown language, measured against the same `VISION.md` § 2 readability budget the abilities themselves are. |
 | [`Hero_Strike_Balance.md`](Hero_Strike_Balance.md) | **What `Design.md` § 13 hands off.** § 1 is the per-ability floor footprint table, measured against the `VISION.md` § 2 readability budget, and it is the only place that table has ever existed. § 2 is the cooldown and ultimate economy as shipped. §§ 3 and 4 are the rework proposal and are **not built**. |
 | [`Art_Direction.md`](Art_Direction.md) | **The colour law, the scale and height laws, arena geometry, and which tool produces which asset.** § 1 is the one that never bends: **orange is OFFENSE, blue is DEFENCE**, and nothing else in the frame may sit near those hues. Read before adding anything the player looks at. |
 | [`HUMAN.md`](HUMAN.md) | **The standing instructions in his own words**, which is the record of what has already been asked for and what has already been rejected. Check it before proposing something that sounds new. |
@@ -39,6 +40,12 @@ add its row here in the same commit.
 | File | What it is |
 |---|---|
 | [`TESTING.md`](TESTING.md) | How to run each suite, what each probe measures, and what a failure means. |
+
+## Onboarding a player
+
+| File | What it is |
+|---|---|
+| [`Guided_Training.md`](Guided_Training.md) | The guided training flow: what a first-time player is taught, in what order, and what is deliberately left for them to find. |
 
 ## Art and characters
 

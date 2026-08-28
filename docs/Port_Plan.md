@@ -509,7 +509,7 @@ The art can change freely. These properties cannot, because gameplay is measured
 | Must hold | Why |
 |---|---|
 | **Index order in every roster list** | `character_index`, `can_index` and `slipper_index` cross the wire as bare ints. Append only; never reorder or delete, or two peers on different builds render different people |
-| **The lata silhouettes stay distinguishable at arena distance** | The four cans are told apart by SHAPE, not colour, and each one's STANCE/RESET/REBOUND row was tuned *against the mesh that was drawn*. A new can with a different profile needs its row re-derived, not copied |
+| **The lata silhouettes stay distinguishable at arena distance** | The six cans are told apart by SHAPE, not colour, and each one's STANCE/RESET/REBOUND row was tuned *against the mesh that was drawn*. A new can with a different profile needs its row re-derived, not copied |
 | **Can body radius stays roughly 0.108 to 0.143** | The collider is fitted from the mesh bounds at runtime, but the hit WINDOW is skin-independent except through STANCE. A wildly different radius changes how the two relate |
 | **A slipper's rest height** | CROCS already misses the trajectory preview by 0.263 m purely because it rests 0.161 m off the ground against the others' 0.034 to 0.056. Taller props make that worse |
 | **Character capsule proportions** | The 1.25 eye height, the 1.6 capsule and the viewmodel arms belong to the Person ROLE, not to any model, and the visual aligns by MEASURING the instanced mesh. A new rig must not assume a different scale |

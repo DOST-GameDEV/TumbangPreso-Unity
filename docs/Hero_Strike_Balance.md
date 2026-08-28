@@ -168,7 +168,7 @@ That is also a direct conflict with `VISION.md` § 4, which lists **"Nothing may
 as a competitive requirement and names the ultimate charge specifically. The passive drip is
 waiting, paid.
 
-`UltimateMax` is additionally a `const` shared by all five heroes, so a Thunderstrike that stuns
+`UltimateMax` is additionally a `const` shared by all six heroes, so a Thunderstrike that stuns
 everyone within 4.5 m on demand costs exactly what a Seance Void costs.
 
 ---
