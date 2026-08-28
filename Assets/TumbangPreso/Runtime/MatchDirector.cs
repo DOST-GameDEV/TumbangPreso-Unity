@@ -194,7 +194,42 @@ namespace TumbangPreso
             }
 
             IsWarmupBuffer = true;
+            SkipRequested = false;
             IntermissionStarted?.Invoke(next, MatchRules.DefenderSlotFor(next));
+        }
+
+        // -------------------------------------------------------------------
+        // § SKIPPING THE BUFFER
+        //
+        // ⚠️⚠️ THE DECISION LIVES HERE BECAUSE THERE ARE TWO RUNNERS AND ONLY ONE RULE. 🧑
+        // 2026-08-29: *"vote to skip buffer time"*. `SliceRunner` schedules the advance with
+        // `Balance.WarmupBufferDuration` and `MatchBootstrap` with `Balance.IntermissionDuration`,
+        // and both are `Invoke` calls on their own component. Putting the skip in either one
+        // would give the shipped arena a feature the other path silently lacks, which is exactly
+        // what `SliceRunner`'s own header forbids: *"it must not acquire rules of its own"*.
+        // The director raises the event; each runner cancels its own pending `Invoke` and
+        // advances, which is the one thing each of them genuinely owns.
+        //
+        // ⚠️ WHO MAY CALL IT IS NOT DECIDED HERE. `BufferSkipVote` counts the votes and only the
+        // host calls this, for the same reason `AdvanceRound` is host-only: a round boundary is
+        // a decision, and `CLAUDE.md` § 4 keeps decisions on one machine.
+        // -------------------------------------------------------------------
+
+        /// <summary>Raised when the intermission should end early. See the section note.</summary>
+        public event Action BufferSkipRequested;
+
+        /// <summary>
+        /// True once the buffer has been skipped, so a second vote arriving a frame later cannot
+        /// advance the round twice. Cleared by <see cref="BeginIntermission"/>.
+        /// </summary>
+        public bool SkipRequested { get; private set; }
+
+        public void SkipBuffer()
+        {
+            if (!IsWarmupBuffer || SkipRequested) return;
+
+            SkipRequested = true;
+            BufferSkipRequested?.Invoke();
         }
     }
 }

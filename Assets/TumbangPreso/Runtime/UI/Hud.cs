@@ -1221,7 +1221,16 @@ namespace TumbangPreso.UI
 
             if (GameServices.Match.IsWarmupBuffer)
             {
-                _round.text = WarmupLine;
+                // ⚠️ THE SKIP TALLY RIDES THE LINE THAT IS ALREADY THERE rather than adding a
+                // widget. `docs/TODO.md` § 45 took five ambient sines and three copies of "LATA
+                // DOWN" off this HUD; a new box for two numbers that live for fifteen seconds
+                // would be putting one of them straight back. See `BufferSkipVote`.
+                _round.text = BufferSkipVote.Showing && BufferSkipVote.VotesNeeded > 1
+                    ? $"{WarmupLine}   ·   [{KeyLabel("ReadyUp")}] SKIP  " +
+                      $"{BufferSkipVote.Votes}/{BufferSkipVote.VotesNeeded}"
+                    : BufferSkipVote.Showing
+                        ? $"{WarmupLine}   ·   [{KeyLabel("ReadyUp")}] SKIP"
+                        : WarmupLine;
 
                 // ⚠️⚠️ THE ROUND-LINE CACHE IS DROPPED HERE, and forgetting this is how a guard
                 // like it turns into a stuck label. This branch writes the label itself, so the

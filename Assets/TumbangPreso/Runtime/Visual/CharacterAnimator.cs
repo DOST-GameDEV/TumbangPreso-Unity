@@ -115,6 +115,12 @@ namespace TumbangPreso.Visual
         };
 
         /// <summary>
+        /// The action table, for the tests that assert what a player will actually see. See the
+        /// § THE HERO CASTS note inside it for why the SECOND entry is the one that ships.
+        /// </summary>
+        public static IReadOnlyDictionary<string, string[]> ActionChains => ActionClips;
+
+        /// <summary>
         /// The gameplay verbs' reads.
         ///
         /// ⚠️⚠️ LUNGE AND PUNCH HAVE THEIR OWN CLIPS AND MUST KEEP THEM. Both used to play the
@@ -130,36 +136,67 @@ namespace TumbangPreso.Visual
         private static readonly Dictionary<string, string[]> ActionClips = new Dictionary<string, string[]>
         {
             { "throw", new[] { Throwing, PickUp, Interact } },
-            { "shove", new[] { "attack-melee-right", "attack-kick-right", Interact } },
+
+            // ⚠️ THE SHOVE LEADS WITH THE OFF ARM AND THE PUNCH WITH THE STRONG ONE, so the two
+            // are told apart from behind. They both played `attack-melee-right` and were one
+            // gesture: a push that moves somebody and a jab that tags them are different
+            // commitments and an opponent has to be able to read which is coming.
+            { "shove", new[] { "attack-melee-left", "attack-melee-right", Interact } },
             { "ready", new[] { "emote-yes", Interact } },
             { "grab", new[] { PickUp, Interact, "interact-left" } },
             { "lunge", new[] { "attack-kick-right", "attack-melee-right", Interact } },
-            { "punch", new[] { "attack-melee-right", "attack-kick-right", Interact } },
+            { "punch", new[] { "attack-melee-right", "attack-kick-left", Interact } },
 
-            // Hero ability action fallback chains
+            // -------------------------------------------------------------------
+            // § THE HERO CASTS
+            //
+            // ⚠️⚠️ EVERY `hero-*` CLIP IN THE FIRST SLOT IS ASPIRATIONAL AND NONE OF THEM EXISTS
+            // TODAY, WHICH MAKES THE SECOND SLOT THE ONE THAT SHIPS. The CC0 rig carries exactly
+            // 43 named clips and not one is a hero cast; `Play` falls to the next name in the
+            // chain, so what a player actually sees is entry two, every time, on every hero.
+            //
+            // ⚠️⚠️ AND ENTRY TWO USED TO BE `emote-yes` FOR ALL SIX ULTIMATES. 🧑 2026-08-29:
+            // *"make sure theres an animation for all interactions like pushing tayaing or skill
+            // casting, make the animations appropriate for skills and what theyre doing btw dont
+            // js spam the same animation"*. Supernova, Thunderstrike, Titan Fissure, Glacial
+            // Nova, Devouring Seance and Grand Coven were one nod of the head between them, and
+            // `attack-melee-right` covered four more skills on top. The first slot being right
+            // is what hid it: the table READS as eighteen distinct casts.
+            //
+            // ⚠️ SO THE SECOND SLOT IS CHOSEN FOR THE MOTION, not to fill the row. The rule
+            // applied: no hero repeats a clip inside its own kit, no two ULTIMATES share one at
+            // all, and where two heroes do share, the thing they are doing is the same thing (two
+            // dashes, two casts thrown from the hand). Thirteen usable clips against eighteen
+            // casts means some sharing is arithmetic; sharing it between a dash and a dash rather
+            // than between six ultimates is the whole difference.
+            //
+            // ⚠️ THE FIRST SLOT STAYS. When the team's own cast animations land they drop in by
+            // name with no code change, which is the entire reason these are chains.
+            // -------------------------------------------------------------------
+
             { "hero-sean-dash", new[] { "hero-sean-dash", "attack-kick-right", Sprint } },
             { "hero-sean-ignite", new[] { "hero-sean-ignite", "attack-melee-right", Interact } },
-            { "hero-sean-supernova", new[] { "hero-sean-supernova", "attack-melee-right", Jump } },
+            { "hero-sean-supernova", new[] { "hero-sean-supernova", Jump, "attack-melee-right" } },
 
             { "hero-zack-sprint", new[] { "hero-zack-sprint", Sprint, "attack-kick-right" } },
-            { "hero-zack-charge", new[] { "hero-zack-charge", "attack-melee-right", Interact } },
-            { "hero-zack-summon", new[] { "hero-zack-summon", "emote-yes", Interact } },
+            { "hero-zack-charge", new[] { "hero-zack-charge", "emote-no", "attack-melee-right" } },
+            { "hero-zack-summon", new[] { "hero-zack-summon", "holding-both-shoot", Jump } },
 
-            { "hero-dante-stomp", new[] { "hero-dante-stomp", "attack-kick-right", PickUp } },
-            { "hero-dante-roar", new[] { "hero-dante-roar", "emote-yes", "attack-melee-right" } },
-            { "hero-dante-fissure", new[] { "hero-dante-fissure", "attack-melee-right", PickUp } },
+            { "hero-dante-stomp", new[] { "hero-dante-stomp", PickUp, "attack-kick-right" } },
+            { "hero-dante-roar", new[] { "hero-dante-roar", "attack-melee-left", "emote-yes" } },
+            { "hero-dante-fissure", new[] { "hero-dante-fissure", "attack-kick-left", PickUp } },
 
             { "hero-cheska-frostwave", new[] { "hero-cheska-frostwave", "interact-right", "attack-melee-right" } },
             { "hero-cheska-raise", new[] { "hero-cheska-raise", PickUp, Interact } },
-            { "hero-cheska-nova", new[] { "hero-cheska-nova", "emote-yes", Interact } },
+            { "hero-cheska-nova", new[] { "hero-cheska-nova", "holding-left-shoot", Jump } },
 
             { "hero-nemu-ghoststep", new[] { "hero-nemu-ghoststep", Sprint, Walk } },
-            { "hero-nemu-project", new[] { "hero-nemu-project", "interact-right", "attack-melee-right" } },
+            { "hero-nemu-project", new[] { "hero-nemu-project", "interact-left", "attack-melee-left" } },
             { "hero-nemu-seance", new[] { "hero-nemu-seance", "emote-yes", Interact } },
 
             { "hero-phaister-hex", new[] { "hero-phaister-hex", "interact-right", "attack-melee-right" } },
             { "hero-phaister-blink", new[] { "hero-phaister-blink", "attack-kick-right", Sprint } },
-            { "hero-phaister-eclipse", new[] { "hero-phaister-eclipse", "emote-yes", Interact } },
+            { "hero-phaister-eclipse", new[] { "hero-phaister-eclipse", Crouch, "holding-both" } },
         };
 
         [SerializeField] private float _blend = 0.12f;

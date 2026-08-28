@@ -1013,6 +1013,11 @@ namespace TumbangPreso
 
         private void BuildReadyGate(CharacterMotor local, SliceRunner runner)
         {
+            // ⚠️ ONE PER MATCH, ON THE SAME OBJECT AS THE RUNNER AND THE GATE. `MatchRpc` finds
+            // it with `FindFirstObjectByType`, so a second copy would take half the votes and
+            // neither would reach the total. See `BufferSkipVote`.
+            gameObject.AddComponent<BufferSkipVote>();
+
             var gate = gameObject.AddComponent<ReadyGate>();
 
             gate.RoundShouldBegin += runner.Begin;

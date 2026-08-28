@@ -288,6 +288,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("PlayEmote", OnPlayEmoteMsg);
             cm.RegisterNamedMessageHandler("StartMatch", OnStartMatchMsg);
             cm.RegisterNamedMessageHandler("ReqSnapshot", OnReqSnapshotMsg);
+            cm.RegisterNamedMessageHandler("SkipBuffer", OnSkipBufferMsg);
             cm.RegisterNamedMessageHandler("SyncAbility", OnSyncAbilityMsg);
             cm.RegisterNamedMessageHandler("RebindSeat", OnRebindSeatMsg);
             cm.RegisterNamedMessageHandler("ReqCue", OnReqCueMsg);
@@ -1599,6 +1600,9 @@ namespace TumbangPreso.Net
         /// than at COMPLETE time. Without this a defender could open a channel legitimately, walk
         /// out of the ring, and still land the reset a second later.
         /// </summary>
+        /// <summary>When each open reset channel last had its reach-down relayed to the peers.</summary>
+        private readonly Dictionary<int, float> _lastResetGestureRelay = new Dictionary<int, float>();
+
         private void HostStepResetChannels()
         {
             if (_resetChannelStart.Count == 0) return;
@@ -1606,12 +1610,47 @@ namespace TumbangPreso.Net
             List<int> dead = null;
             foreach (var kv in _resetChannelStart)
             {
-                if (HostMayChannelReset(kv.Key)) continue;
-                (dead ??= new List<int>()).Add(kv.Key);
+                if (!HostMayChannelReset(kv.Key))
+                {
+                    (dead ??= new List<int>()).Add(kv.Key);
+                    continue;
+                }
+
+                // ⚠️⚠️ THE REACH-DOWN IS RELAYED FOR THE WHOLE HOLD, NOT ONCE AT THE START. 🧑
+                // 2026-08-29, of the animation work: *"make sure everyone sees this not just host
+                // or client"*. `Carrier.StepDefender` re-fires the gesture every
+                // `ViewmodelArms.GrabSeconds` because the channel runs for
+                // `Balance.ResetChannelTime`, 1.5 s, and one 0.40 s reach leaves two thirds of
+                // the longest hold in the game with nothing moving in it. That repeat was purely
+                // LOCAL: `ResetPhase.Start` is sent once, so the taya saw themselves reaching
+                // over and over while the other three saw one reach and then a statue for 1.1 s.
+                //
+                // ⚠️ RELAYED FROM THE HOST ON ITS OWN CLOCK RATHER THAN BY A NEW WIRE PHASE.
+                // Adding a `Repeat` to `ResetPhase` would be a protocol change, and § 59.4 is
+                // what a protocol bump costs: both machines rebuilt off the same commit or they
+                // refuse each other at approval. The host already knows the channel is open and
+                // already ticks every physics step, so it can produce the repeat without anybody
+                // sending anything new.
+                //
+                // ⚠️ AND IT SKIPS THE OWNER, like the `Start` relay above it, because that peer
+                // is the one already playing it locally on its own timer.
+                float now = Time.time;
+                float last = _lastResetGestureRelay.TryGetValue(kv.Key, out float t) ? t : kv.Value;
+
+                if (now - last >= CameraSystem.ViewmodelArms.GrabSeconds)
+                {
+                    _lastResetGestureRelay[kv.Key] = now;
+                    BroadcastActionExceptOwner(kv.Key, "grab");
+                }
             }
 
             if (dead == null) return;
-            foreach (int slot in dead) _resetChannelStart.Remove(slot);
+
+            foreach (int slot in dead)
+            {
+                _resetChannelStart.Remove(slot);
+                _lastResetGestureRelay.Remove(slot);
+            }
         }
 
         public void RequestEmoteServerRpc(int slot, string id)
@@ -3354,9 +3393,51 @@ namespace TumbangPreso.Net
             BroadcastWorldSnapshot();
         }
 
+        /// <summary>
+        /// One player saying they are done reading the role swap. See `BufferSkipVote`.
+        ///
+        /// ⚠️ IT RETURNS WHETHER THE VOTE REACHED THE WIRE, like `DeclareReadyServerRpc` and for
+        /// the same reason: `IsListening` is true from `StartClient` and not from approval, so a
+        /// press made during the join window has nowhere to go and the caller has to know that
+        /// rather than believe it voted.
+        /// </summary>
+        public bool RequestSkipBufferServerRpc()
+        {
+            if (NetAuthority.IsHost)
+            {
+                FindFirstObjectByType<BufferSkipVote>()?.HostCastVote(NetAuthority.LocalPeerId);
+                return true;
+            }
+
+            if (_nm == null || !_nm.IsListening || _nm.CustomMessagingManager == null) return false;
+
+            using var writer = new FastBufferWriter(8, Allocator.Temp);
+            writer.WriteValueSafe(0);
+            _nm.CustomMessagingManager.SendNamedMessage("SkipBuffer", NetworkManager.ServerClientId, writer);
+            return true;
+        }
+
+        /// <summary>
+        /// ⚠️ THE VOTER IS THE SENDER, NEVER A NUMBER IN THE PAYLOAD. A claimed peer id on this
+        /// message would let one client vote on everybody else's behalf and end the intermission
+        /// alone. `senderClientId` comes from the transport and cannot be typed by the sender,
+        /// which is the same rule `SenderOwnsClaimedSeat` applies to every other request here.
+        /// </summary>
+        private void OnSkipBufferMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            FindFirstObjectByType<BufferSkipVote>()?.HostCastVote((int)senderClientId);
+        }
+
         public void HostPeerLeft(int peerId)
         {
             if (!NetAuthority.IsHost) return;
+
+            // ⚠️ THE SKIP VOTE HAS THE SAME HOLE AS THE READY GATE AND THE REMATCH VOTE: a peer
+            // that quits mid-buffer drops the denominator, and with nobody re-evaluating the
+            // players still waiting sit on a gate that is already satisfied.
+            FindFirstObjectByType<BufferSkipVote>()?.OnPeerLeft(peerId);
 
             _spawned.Remove(peerId);
 
