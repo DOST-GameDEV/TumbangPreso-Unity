@@ -439,6 +439,46 @@ want different work:
 **Done looks like:** ask which, then do it. Do not guess: (1) changes a number `Design.md`
 owns, and shipping the wrong one of these is a retune that has to be undone.
 
+## 76 · Holding the pickup key does not right the can in the tutorial ⚠️ OPEN
+
+🧑 2026-08-29: *"in tutorial holding 'x' doesn't reset the can"*.
+
+**Not reproduced headlessly, and every gate on the path was traced and passes.** Written down
+in full because ruling these out is most of the work, and the next session should start after
+this list rather than at the top of it.
+
+The path is `Carrier.Update` to `StepDefender`, and it needs all of the following. Each was
+checked against the tutorial's own setup in `GuidedTraining`:
+
+| gate | where | why it passes in training |
+|---|---|---|
+| `_motor.CanAct()` | `Carrier.Update` | `CanAct` is `RoundActive && !IsStunned`. `ApplyRoles` calls `Round.ApplySnapshot(RoundTime, true, slot)`, and that `true` IS `roundActive`. |
+| `_motor.IsDefender` | `Carrier.Update` | `Lesson.DefenderReset` opens with `BecomeDefender()`, which is `ApplyRoles(_local.PlayerSlot)`. |
+| `lata != null` | `StepDefender` | Reads `GameServices.Round.Lata`, which `MatchInstaller` sets at build. Training runs through the same installer. |
+| `!lata.IsUpright` | `StepDefender` | `ArmDefenderReset` restores, waits `ThrowRestoreCooldown + 0.08`, then `HostKnockDown(-1)`. |
+| `HostKnockDown` not refused | `Lata` | It returns early while `IsProtected`. `_restoreProtectionLeft` ticks down in `StepStatePresentation`, which `Update` calls UNCONDITIONALLY, so the window really has expired by then. |
+| `intent.Pressed(Verb.Grab)` | `StepDefender` | X is bound to `Grab` in the input asset. |
+| `Verb.Grab` unlocked | `InputIntent.Locked` | `ApplyVerbLock` is CUMULATIVE and `Lesson.Retrieve` teaches `Grab` several lessons earlier, so it is in `_unlocked` by then. |
+| `inRing` | `StepDefender` | Flat distance to the lata under `Balance.InteractionRadius`. |
+
+⚠️ The one that cannot be checked by reading is `inRing`. `HostKnockDown` topples AND ROLLS the
+can (`_rollAngleDeg`, `_lastRollPosition`), so where it comes to rest is a physical outcome
+rather than a constant, and the lesson's marker binds to `_lata.transform` so a player follows
+it. If the roll can leave the can somewhere the player cannot get inside `InteractionRadius` of,
+that is the bug and none of the above would show it.
+
+**Done looks like:** a PlayMode test that enters `Lesson.DefenderReset` through
+`GuidedTraining`, holds `Verb.Grab` on a driven `InputIntent` for `Balance.ResetChannelTime`,
+and asserts `Lata.IsUpright`. That test is the deliverable even if it passes, because it turns
+this entry from a report into a measurement. ⚠️ Drive the INTENT rather than synthesising a key
+press: `InputIntent` is the seam the bots already use and it needs no input system at all.
+
+⚠️ Do not "fix" this by widening `Balance.InteractionRadius`. That constant is shared with the
+live game and `docs/Design.md` owns it; if the roll is the cause, the fix is where the can comes
+to rest, not how far a taya can reach.
+
+---
+
 ## 0 · Hero Strike is being reworked, and the plan is its own file
 
 **Numbered 0 rather than 1 on purpose: every other entry here keeps the number it already had,
