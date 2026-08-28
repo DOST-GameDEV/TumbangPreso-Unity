@@ -305,6 +305,20 @@ namespace TumbangPreso.UI
             _camera.backgroundColor = new Color(0, 0, 0, 0);
             _camera.cullingMask = 1 << PreviewLayer;
             _camera.fieldOfView = FieldOfView;
+            // ⚠️⚠️ THE FAR PLANE IS SET, AND LEAVING IT AT UNITY'S DEFAULT 1000 WAS A REAL BUG.
+            // A perspective depth buffer is hyperbolic: precision is concentrated against the
+            // near plane and falls away with distance, and what governs how much is left at the
+            // subject is the near/far RATIO. 0.05 against 1000 is 20,000:1, and this camera is
+            // photographing a 0.43 m prop from about a metre. Coincident faces on the IKE
+            // swoosh z-fought here and nowhere else because of it, and the model sheet, which
+            // shoots orthographic onto a linear buffer, showed the same mesh clean.
+            //
+            // ⚠️ THE FAR PLANE IS SET IN `ApplyCamera` RATHER THAN HERE, because it has to
+            // track the orbit. A constant was tried and it is a clipping bug waiting to
+            // happen: `_frameDistance` is derived from the subject's bounds, so it is a
+            // different number for a slipper and for a Person at PERSON_SCALE, and `ZoomMax`
+            // then multiplies it by 2.2. Any constant small enough to help the precision is
+            // small enough to cut a large model in half at full zoom out.
             _camera.nearClipPlane = 0.05f;
 
             // ⚠️⚠️ THE PORTRAIT NEEDS ITS OWN GRADE NOW THAT `Toon.shader` NO LONGER TONEMAPS.
@@ -821,6 +835,22 @@ namespace TumbangPreso.UI
             float distance = _frameDistance * _userZoom;
             float yaw = CameraYawDegrees + _userYaw;
             float pitch = Mathf.Clamp(_framePitch + _userPitch, OrbitPitchMin, OrbitPitchMax);
+
+            // ⚠️⚠️ THE FAR PLANE FOLLOWS THE ORBIT, AND THIS IS THE IKE SWOOSH FIX. Unity's
+            // default far is 1000, which against this camera's 0.05 near is a 20,000:1 ratio.
+            // A perspective depth buffer is hyperbolic, so almost all of its precision sits
+            // against the near plane and there is nearly none left where the subject actually
+            // is. Coincident faces on the IKE decal z-fought here and nowhere else: 🧑, off the
+            // player, *"shaders still broken on ike"*, after the same mesh had rendered clean
+            // in `ModelSheet`, which shoots ORTHOGRAPHIC onto a LINEAR buffer.
+            //
+            // ⚠️ DERIVED, NOT CONSTANT. Twice the orbit distance clears the subject and
+            // everything behind it whatever the subject is, and the `+ 1` covers the sideways
+            // `offset` below and the bounds of a model whose centre is not its pivot. At the
+            // default 4 m orbit this is 9 against 0.05, a 180:1 ratio: a hundredfold more
+            // precision at the subject than 1000 gave, and it cannot clip because it is a
+            // function of where the camera actually is.
+            _camera.farClipPlane = distance * 2.0f + 1.0f;
 
             var rot = Quaternion.Euler(pitch, yaw, 0.0f);
 

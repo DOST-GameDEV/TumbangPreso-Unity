@@ -461,6 +461,27 @@ namespace TumbangPreso.Visual
             if (slot > 0)
             {
                 material.SetFloat(OutlineWidthId, 0.0f);
+
+                // ⚠️⚠️ AND A DEPTH BIAS, WHICH IS A SECOND FAULT ON THE SAME SUBMESH AND NOT A
+                // BELT-AND-BRACES REPEAT OF THE LINE ABOVE. Suppressing the hull stopped the ink
+                // covering the swoosh; it did nothing about the swoosh fighting ITSELF. That
+                // material is `doubleSided` on near-zero-thickness geometry, so its front and
+                // back faces land on the same depth and resolve per pixel per frame.
+                //
+                // ⚠️ IT SHOWS ON THE CHARACTER SCREEN AND NOT IN `ModelSheet`, WHICH IS WHY THE
+                // FIRST FIX WAS SIGNED OFF ON A CLEAN RENDER AND THE BUILD WAS STILL WRONG. 🧑,
+                // off the player: *"shaders still broken on ike"*. `ModelSheet` shoots
+                // ORTHOGRAPHIC, near 0.1 far 60, and an orthographic depth buffer is linear, so
+                // precision is uniform and coincident faces resolve the same way every frame.
+                // `ModelPreview` is PERSPECTIVE at near 0.05 against Unity's default far of
+                // 1000, a 20,000:1 ratio, and a perspective buffer is hyperbolic: almost all of
+                // its precision sits against the near plane and there is nearly none left where
+                // the model actually is. Same geometry, same shader, different buffer.
+                //
+                // ⚠️ SO A RENDER FROM ONE CAMERA IS NOT EVIDENCE ABOUT ANOTHER. Depth artefacts
+                // have to be checked on the screen that shows them.
+                material.SetFloat(ZOffsetFactorId, -1.0f);
+                material.SetFloat(ZOffsetUnitsId, -1.0f);
             }
 
             Cache[(source, key)] = material;
