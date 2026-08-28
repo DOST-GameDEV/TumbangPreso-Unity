@@ -135,11 +135,9 @@ namespace TumbangPreso.Tests
             foreach (string path in Directory.GetFiles(RuntimeRoot, "*.cs",
                                                        SearchOption.AllDirectories))
             {
-                string text = File.ReadAllText(path);
-
-                // The rig DECLARES it; anything else that names it is a second driver.
+                // The rig DECLARES it; anything else that CALLS it is a second driver.
                 if (Path.GetFileName(path) == "CameraRig.cs") continue;
-                if (!text.Contains("PlayViewmodelAction")) continue;
+                if (!CallsViewmodelAction(File.ReadAllText(path))) continue;
 
                 callers.Add(Path.GetFileName(path));
             }
@@ -152,6 +150,37 @@ namespace TumbangPreso.Tests
             Assert.AreEqual("CharacterAnimator.cs", callers[0],
                 "the single caller should be CharacterAnimator.PlayAction, matching "
                 + "character_visual.gd::play_action. Found: " + callers[0]);
+        }
+
+        /// <summary>
+        /// Does this file CALL the rig's viewmodel entry point, as opposed to merely naming it?
+        ///
+        /// ⚠️⚠️ IT USED TO BE A BARE `text.Contains`, AND THAT COUNTS A COMMENT AS A CALLER. The
+        /// assertion above is about CALL SITES, which is what its own header says and what the
+        /// invariant is: one path from a verb to both views. A substring scan cannot tell a call
+        /// from a mention, so the moment a file EXPLAINED the invariant by name it was counted as
+        /// breaking it. That is backwards in a codebase whose commenting discipline is to name
+        /// the exact thing being described, and it fired on 2026-08-28 against two comments that
+        /// added no code path at all.
+        ///
+        /// ⚠️ IT IS A TIGHTENING, NOT A LOOSENING. Requiring the open bracket AND skipping
+        /// comment lines still catches a real second caller: there is no way to invoke a method
+        /// in C# without naming it and opening a bracket, and no way to hide one inside a `//`
+        /// line, because a commented-out call does not run.
+        /// </summary>
+        private static bool CallsViewmodelAction(string text)
+        {
+            foreach (string line in text.Split('\n'))
+            {
+                string trimmed = line.TrimStart();
+
+                // `///` is caught by this too, being a `//` prefix.
+                if (trimmed.StartsWith("//") || trimmed.StartsWith("*")) continue;
+
+                if (line.Contains("PlayViewmodelAction(")) return true;
+            }
+
+            return false;
         }
 
         [Test]

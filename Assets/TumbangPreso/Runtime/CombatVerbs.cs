@@ -157,9 +157,17 @@ namespace TumbangPreso
             // it connects gives the other three players no warning it happened, and a miss
             // looks identical to not having pressed anything.
             // § THE VIEWMODEL RIDES ALONG. `PlayAction` drives the first-person arm too, from
-            // its one call site — see its note. The arms carry no `shove` clip, so this resolves
-            // to the procedural kick, which is exactly what the .gd does for it.
+            // its one call site. See its note.
+            //
+            // ⚠️⚠️ THE KICK IS ASKED FOR EXPLICITLY NOW, AND IT HAS TO BE. The arms used to carry
+            // no `shove` clip, so `PlayViewmodelAction` fell through to its procedural kick and
+            // this line got the view shake for free. They carry one as of 2026-08-28, and that
+            // fallback is documented to retire the moment a clip with the name exists, so the
+            // free kick went with it: the shove would have gained an arm and quietly lost its
+            // weight on the same commit. `ReleaseLunge` has always asked outright, at 1.4,
+            // because a dash is meant to hit the camera harder than a push.
             Animator?.PlayAction("shove");
+            Rig?.ViewmodelKick(Vector3.forward);
             NetCue.Play("bump_swing", transform.position);
 
             if (NetAuthority.ShouldRequest())
@@ -197,9 +205,15 @@ namespace TumbangPreso
 
             _punchCooldown = Balance.PunchCooldown;
 
-            // Same rule as the shove: the jab reads on the swing, and `PlayAction` now carries
-            // the first-person kick with it.
+            // Same rule as the shove: the jab reads on the swing, in both views, and it asks for
+            // its own view kick rather than relying on the fallback the new `punch` clip has now
+            // retired. See the note on the shove.
+            //
+            // ⚠️ AT THE DEFAULT STRENGTH, NOT THE LUNGE'S 1.4. The taya carries two tag verbs and
+            // the whole reason to have both is that they feel different: the jab is cheap,
+            // instant and close, the dash is a commitment. One shake for both flattens that.
             Animator?.PlayAction("punch");
+            Rig?.ViewmodelKick(Vector3.forward);
 
             if (NetAuthority.ShouldRequest())
             {

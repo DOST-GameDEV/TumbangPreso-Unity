@@ -521,7 +521,13 @@ namespace TumbangPreso
             // Being stunned stops you ACTING; it does not exempt you from the world. A shove
             // that could not push a stunned body is a shove that cannot combo into a tag,
             // which is the interaction `IsTaggable`'s own header exists to protect.
-            bool canSteer = CanAct();
+            // ⚠️⚠️ IT ASKS `CanMove()`, NOT `CanAct()`, AND THAT ONE WORD IS 🧑's *"cant move
+            // during buffer time"*. See CanMove: `Balance.WarmupBufferDuration` is FIFTEEN
+            // SECONDS and the HUD spends all of it saying "WARMUP / PRACTICE BUFFER · SCORES
+            // PAUSED", which is an invitation to practise. `EndRound` had cleared `RoundActive`
+            // on every body before that window opened, so what the player actually got was
+            // fifteen seconds of standing still reading an offer they could not take.
+            bool canSteer = CanMove();
 
             Vector2 axis = canSteer ? Intent.MoveAxis : Vector2.zero;
             bool moving = axis.sqrMagnitude > 0.0001f;
@@ -876,7 +882,10 @@ namespace TumbangPreso
                 // be told apart from an input bug.
                 _velocity.y = GroundedRestVelocityY;
 
-                if (Intent.JustPressed(Verb.Jump) && CanAct())
+                // ⚠️ `CanMove()`, FOR THE REASON THE STEER GATE GIVES. Walking and jumping are
+                // one permission: gating them differently is how you get a player who can hop
+                // through the warmup buffer but not walk across it.
+                if (Intent.JustPressed(Verb.Jump) && CanMove())
                 {
                     _velocity.y = Balance.JumpVelocity;
                     GameServices.Audio?.PlayAtVaried("jump", transform.position,
@@ -997,6 +1006,37 @@ namespace TumbangPreso
         // -------------------------------------------------------------------
 
         public bool CanAct() => RoundActive && !IsStunned;
+
+        /// <summary>
+        /// May this body WALK right now? A different question from <see cref="CanAct"/>, and
+        /// keeping the two apart is 🧑 2026-08-28: *"cant move during buffer time"*.
+        ///
+        /// ⚠️⚠️ THE ROUND IS NOT PART OF IT, AND PUTTING IT BACK RE-BREAKS THE WARMUP.
+        /// `RoundDirector.EndRound` clears `RoundActive` on every seat and the next round is
+        /// `Balance.WarmupBufferDuration` away, which is 15 s. `SliceRunner.OnIntermission`
+        /// spends that window putting everyone on their new marks with their tsinelas already in
+        /// hand, `MatchDirector.IsWarmupBuffer` suspends scoring for it, and `Hud.WarmupLine`
+        /// prints "WARMUP / PRACTICE BUFFER · SCORES PAUSED" across the top. Every part of that
+        /// is built to be practised in, and a movement gate reading `RoundActive` froze the whole
+        /// cast for all fifteen seconds of it, four times a match.
+        ///
+        /// `character_base.gd:932` gates the same code on `state != State.NORMAL` and on nothing
+        /// else. The round is a rule about SCORING, not about legs.
+        ///
+        /// ⚠️ NOTHING IS SCOREABLE IN THE WINDOW REGARDLESS, so this cannot leak points.
+        /// `IsTaggable` and `CanThrow` still read `RoundActive` and still refuse, `AddScore`
+        /// returns early on `IsWarmupBuffer`, and `OnRoundStarted` calls `ResetWorld` again on
+        /// the whistle, so wandering during the buffer cannot buy position either: whoever walks
+        /// off is teleported back to their mark before the round begins.
+        ///
+        /// ⚠️ AND THE END OF THE MATCH IS STILL A HARD STOP, through a different mechanism.
+        /// `FreezeForMatchEnd` parks `InputIntent`, which zeroes `MoveAxis` for a bot and a human
+        /// alike. That is the .gd's own `_on_match_won_freeze_physics` and it is the right home
+        /// for a stop meant to be permanent. See `SliceRunner.OnMatchEnded`, which had been
+        /// leaning on `RoundActive` for it and now calls the freeze outright.
+        /// </summary>
+        public bool CanMove() => !IsStunned;
+
         public bool IsStunned => _stunLeft > 0.0f;
         public bool HoldingSlipper { get; set; }
 

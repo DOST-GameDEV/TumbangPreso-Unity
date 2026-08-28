@@ -122,6 +122,13 @@ namespace TumbangPreso
         private float _throwLockLeft;
         private float _channel;
 
+        /// <summary>The channel time the reset gesture was last fired at, so the read repeats on
+        /// its own length instead of once per press. See <see cref="StepDefender"/>.
+        /// ⚠️ IT NEEDS NO RESET OF ITS OWN: the opening frame is detected from `_channel` being
+        /// zero and rewrites this on the way past, so a stale value cannot survive a press.
+        /// </summary>
+        private float _lastResetGesture;
+
         public Slipper Held { get; private set; }
         public float ChargeRatio => ThrowRules.ChargeRatio(_charge);
         public float ChannelRatio { get; private set; }
@@ -753,16 +760,44 @@ namespace TumbangPreso
             // *"make sure my arm moves or does an animation when i interact with objects like in
             // the real game — raise can, tag someone"*. Raising the can is this.
             //
-            // ⚠️ ON THE OPENING FRAME ONLY, or the clip restarts every frame of a 1.5 s hold and
-            // the arm never leaves the first pose.
+            // ⚠️ NOT EVERY FRAME, or the clip restarts before it has moved and the arm never
+            // leaves its first pose. That is the trap this branch has always guarded against.
             //
-            // ⚠️ AND NO CUE HERE. `Lata.SetUpright` owns the channel's sound off the can's own
-            // state; a `PlayAt` on this frame would be a second source for the same event.
-            if (_channel <= 0.0f)
+            // ⚠️⚠️ BUT ONCE PER PRESS WAS TOO FEW, AND THAT IS THE OTHER HALF OF 🧑's *"no
+            // animation when ... raising lata"*. The gesture runs `ViewmodelArms.GrabSeconds`,
+            // 0.40 s, and the channel is held for `Lata.ResetChannelTime`, so the arm reached
+            // down once, came home, and then stood perfectly still for the rest of the hold while
+            // the meter filled and the can stayed on its side. Re-firing on the read's own length
+            // makes it a repeated reach, which is what righting a can looks like, and it goes
+            // through the one call site so both views get it rather than the viewmodel being
+            // posed behind the body's back.
+            //
+            // ⚠️⚠️ THE REPEAT IS GATED ON BOTH CLIPS, and either alone re-opens the trap from the
+            // other side. The body's read is a one-shot whose length comes off the rig, so waiting
+            // only on `IsPlayingAction` would restart the arm every frame on a rig with no
+            // `pick-up`: `PlayOneShot` returns silently on a missing clip and the timer never
+            // starts. Waiting only on the arm's length would cut a longer body clip off
+            // part-played. Both means the read repeats at the pace of whichever view is slower.
+            //
+            // ⚠️ `ReportResetPhase(Start)` STAYS ON THE OPENING FRAME ALONE. It is a network
+            // event announcing that a channel began, not a cosmetic one, and firing it four times
+            // for one hold would tell every peer the reset restarted three times.
+            var anim = GetComponentInChildren<Visual.CharacterAnimator>();
+
+            bool opening = _channel <= 0.0f;
+            bool bodyFinished = anim == null || !anim.IsPlayingAction;
+            bool armFinished = _channel - _lastResetGesture >= CameraSystem.ViewmodelArms.GrabSeconds;
+
+            if (opening || (bodyFinished && armFinished))
             {
-                GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("grab");
-                ReportResetPhase(Net.MatchRpc.ResetPhase.Start);
+                _lastResetGesture = _channel;
+                anim?.PlayAction("grab");
             }
+
+            // ⚠️ AND NO CUE HERE. `Lata.SetUpright` owns the channel's sound off the can's own
+            // state; a `PlayAt` on this frame would be a second source for the same event, which
+            // matters more now that the read above fires more than once.
+            if (opening) ReportResetPhase(Net.MatchRpc.ResetPhase.Start);
 
             _channel += dt;
             ChannelRatio = Mathf.Clamp01(_channel / lata.ResetChannelTime);

@@ -2239,8 +2239,13 @@ namespace TumbangPreso.UI
             BuildFloatingText();
             BuildCrosshair();
 
-            // Its own object, deliberately: the arrows are positioned from screen centre in raw
-            // pixels, and putting them under the scaled HUD canvas would move them.
+            // Its own canvas, deliberately: the arrows are placed by projecting a world point and
+            // pushing it to whichever edge it leaves through, which is a different frame of
+            // reference from every anchored card above and should not inherit their layout. It
+            // carries the same 1920x1080 aspect-safe scaler, so it stays the same size as the
+            // rest of the interface. ⚠️ THE PLACEMENT MATHS IS IN CANVAS UNITS, NOT PIXELS: this
+            // comment used to claim raw pixels, and `OffscreenIndicators.UpdateOne` half believed
+            // it, which is the bug fixed there.
             var indicatorGo = new GameObject("OffscreenIndicators");
             indicatorGo.transform.SetParent(transform, false);
             _indicators = indicatorGo.AddComponent<OffscreenIndicators>();

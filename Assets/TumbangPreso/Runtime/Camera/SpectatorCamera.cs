@@ -799,6 +799,17 @@ namespace TumbangPreso.CameraSystem
             scaler.referenceResolution = new Vector2(1920.0f, 1080.0f);
             scaler.matchWidthOrHeight = 1.0f;
 
+            // ⚠️⚠️ THE ONE CANVAS IN THE GAME THAT WAS STILL MISSING THE ASPECT RULE.
+            // `AspectSafeCanvas` opens by calling itself *"one rule for every canvas in the
+            // game"*, and every other screen-space canvas here routes through it: the HUD, the
+            // menus, the result board, the role-swap card, the splash, the you-card, the arrows
+            // and every imported screen via `ConvertedScreen`. This one was built with a bare
+            // `matchWidthOrHeight = 1.0`, which is match-on-HEIGHT, so on anything narrower than
+            // 16:9 the spectator's picture-in-picture was cropped off the side of the display.
+            // `ComicPopup` is the only other holdout and it is correctly exempt: it is a WORLD
+            // canvas on `ConstantPixelSize`, which `Apply` no-ops on by design.
+            UI.AspectSafeCanvas.Apply(scaler);
+
             var panelGo = new GameObject("ReplayPictureInPicture");
             panelGo.transform.SetParent(canvasGo.transform, false);
             var panel = panelGo.AddComponent<Image>();

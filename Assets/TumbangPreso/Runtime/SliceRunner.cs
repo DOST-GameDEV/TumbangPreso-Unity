@@ -255,6 +255,27 @@ namespace TumbangPreso
             GameServices.Round.EndRound();
             Running = false;
 
+            // ⚠️⚠️ THE CAST FREEZES WHEN THE MATCH IS WON, AND THIS RUNNER NEVER DID IT.
+            // `MatchBootstrap.OnMatchEnded` has carried `main.gd::_on_match_won_freeze_physics`
+            // since it was written, but the arena runs on THIS component, and it was getting the
+            // same effect for free from `EndRound` clearing `RoundActive`, which the movement
+            // gate used to read. It does not any more (see `CharacterMotor.CanMove`, and 🧑's
+            // *"cant move during buffer time"*), so without this the winner and three bots would
+            // carry on playing underneath the result board: exactly the failure `MatchBootstrap`
+            // describes in its own note.
+            //
+            // ⚠️ THE WARMUP BUFFER IS DELIBERATELY NOT THIS. Between rounds the game continues
+            // and the player is invited to practise; only the end of the match is final, and only
+            // the end of the match parks the input.
+            if (Seats != null)
+            {
+                foreach (var seat in Seats)
+                {
+                    if (seat == null) continue;
+                    seat.FreezeForMatchEnd();
+                }
+            }
+
             // ⚠️ END THE FREEZE BEFORE RESTORING THE SCALE, or the restore writes 1.0 and the
             // freeze's own restore then writes 0.05 back over it a few frames later.
             Hitstop.End();
@@ -281,6 +302,12 @@ namespace TumbangPreso
                 m.IsDefender = slot == defenderSlot;
                 m.HoldingSlipper = false;
                 m.Stamina.RefillAndClearFatigue();
+
+                // ⚠️ THE MATCH-END PARK IS LIFTED HERE, and it is the other half of the freeze
+                // added in `OnMatchEnded`. `Intent.Parked` is permanent by design, so a second
+                // match played on seats that were not rebuilt would open with four bodies that
+                // read input and ignore it. A round must never begin parked.
+                m.Intent.Parked = false;
 
                 // ⚠⚠ THE HERO KIT RESETS WITH THE BODY. Ultimate charge, cooldowns and
                 // anything still running are cleared here, at the one place every round

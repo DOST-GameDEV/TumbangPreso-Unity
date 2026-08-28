@@ -175,8 +175,30 @@ namespace TumbangPreso.UI
             if (dir.magnitude < 0.01f) dir = Vector2.up;   // dead centre behind: pick an edge
             dir.Normalize();
 
-            // Push out to whichever screen edge is hit first, inside the margin.
-            Vector2 half = centre - Vector2.one * EdgeMargin;
+            // ⚠️⚠️ THE PUSH IS IN CANVAS UNITS, NOT PIXELS, AND MIXING THEM PUT THE ARROWS IN
+            // THE WRONG PLACE AT EVERY RESOLUTION BUT ONE. Everything above this line is in real
+            // screen pixels, because that is what `WorldToScreenPoint` returns.
+            // `anchoredPosition` is not: this canvas runs a `CanvasScaler` against a 1920x1080
+            // reference, so a half-extent taken from `Screen.width/height` only equals the
+            // canvas's own at exactly that size.
+            //
+            // The error is proportional and it goes both ways. In a 1280x720 window the old
+            // maths pushed to 600 units where the canvas edge is 920, so both arrows hovered two
+            // thirds of the way out and read as floating markers rather than as edge pointers.
+            // Wider than 1920 it overshot and pushed them off the frame entirely, so the arrow
+            // went missing exactly when the target was furthest away, which is when it is the
+            // only thing telling you where your tsinelas went.
+            //
+            // ⚠️ `AspectSafeCanvas` MAKES THIS WORSE RATHER THAN BETTER, which is why it is
+            // worth fixing now. `ScreenMatchMode.Expand` deliberately lets the canvas grow WIDER
+            // than 1920 reference units on anything narrower than 16:9, so the gap between the
+            // pixel number and the canvas number is no longer even a fixed ratio.
+            //
+            // ⚠️ `dir` NEEDS NO CONVERSION. A `CanvasScaler` applies ONE uniform scale to both
+            // axes, so a normalised direction is the same vector in pixels and in canvas units.
+            // Only the magnitude has to change frame of reference.
+            Vector2 canvas = _canvasRect != null ? _canvasRect.rect.size : viewport;
+            Vector2 half = canvas * 0.5f - Vector2.one * EdgeMargin;
             float scaleX = Mathf.Abs(dir.x) > 0.0001f ? half.x / Mathf.Abs(dir.x) : float.MaxValue;
             float scaleY = Mathf.Abs(dir.y) > 0.0001f ? half.y / Mathf.Abs(dir.y) : float.MaxValue;
             float t = Mathf.Min(scaleX, scaleY);

@@ -660,6 +660,12 @@ namespace TumbangPreso.Visual
             if (_graph.IsValid()) _graph.Play();
         }
 
+        /// <summary>True while a one-shot still owns the body. Read by callers that want to
+        /// REPEAT a read over a hold that outlasts it, without cutting the previous one off
+        /// part-played. See `Carrier.StepDefender`, where the reset channel runs far longer than
+        /// the gesture that announces it.</summary>
+        public bool IsPlayingAction => _oneShotLeft > 0.0f;
+
         /// <summary>A non-looping action that owns the body until it finishes.</summary>
         public void PlayOneShot(string clipName)
         {
@@ -832,11 +838,34 @@ namespace TumbangPreso.Visual
 
             // Retire whatever was on input 0 and slide the current clip down to it, so the
             // mixer always crossfades from what you were doing to what you are doing now.
+            //
+            // ⚠️⚠️ THE OUTGOING PLAYABLE IS CAPTURED BEFORE THE DISCONNECT, AND READING IT AFTER
+            // WAS THE BUG. `PlayableGraph.Disconnect` sets that input to `Playable.Null`, so the
+            // old line (disconnect, then `ConnectInput(0, _mixer.GetInput(1), 0)`) connected
+            // NOTHING to input 0 on every single clip change. Nothing threw and nothing logged,
+            // because connecting an invalid source is a silent no-op.
+            //
+            // What it cost is the whole crossfade. An `AnimationMixerPlayable` whose weights sum
+            // below one fills the remainder from the stream's DEFAULT values, which is the rig's
+            // bind pose, so for the first `_blend` seconds of every transition the body was being
+            // blended out of a T-pose rather than out of the clip it was actually in. On
+            // locomotion that is a twitch you could mistake for footwork. On a ONE-SHOT it is the
+            // reported bug: a jab or a kick is about a third of a second, so the blend-in is most
+            // of the clip and the verb reads as a snap and a shrug rather than as a swing.
+            // 🧑 2026-08-28: *"no animation when tagging"*.
+            //
+            // ⚠️ AND THE RETIRED PLAYABLE IS DESTROYED, WHICH IT ALSO WAS NOT. The old code
+            // destroyed input 0 and then never connected anything there, so the clip LEAVING
+            // input 1 was disconnected and abandoned: one orphaned `AnimationClipPlayable` per
+            // clip change, for the life of the graph. A match makes hundreds per character.
+            var outgoing = _mixer.GetInput(1);
+
             if (_mixer.GetInput(0).IsValid()) _mixer.GetInput(0).Destroy();
-            if (_mixer.GetInput(1).IsValid())
+
+            if (outgoing.IsValid())
             {
                 _graph.Disconnect(_mixer, 1);
-                _mixer.ConnectInput(0, _mixer.GetInput(1), 0);
+                _mixer.ConnectInput(0, outgoing, 0);
             }
 
             var playable = AnimationClipPlayable.Create(_graph, clip);

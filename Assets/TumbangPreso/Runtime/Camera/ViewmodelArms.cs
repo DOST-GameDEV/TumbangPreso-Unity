@@ -217,9 +217,27 @@ namespace TumbangPreso.CameraSystem
 
             filter.sharedMesh = source.sharedMesh;
 
+            // ⚠️⚠️ ONE MATERIAL PER SUBMESH, AND `sharedMaterial` ASSIGNS AN ARRAY OF LENGTH ONE.
+            // A renderer draws submesh `i` with `sharedMaterials[i]` and silently DOES NOT DRAW
+            // anything past the end of that array, which is the exact fault `MaterialKit.Dress`
+            // was written for and this is the one place that never went through it. The viewmodel
+            // copy of a multi-surface skin therefore rendered its FIRST surface and nothing else,
+            // in the player's own hand, for as long as they carried it.
+            //
+            // It splits the tsinelas roster rather than breaking all of it, which is why 🧑
+            // reported it as *"some slippers have broken shaders"* rather than as a dead shader:
+            // the single-`usemtl` skins were always fine, while `tsinelas_classic` is five
+            // surfaces and `tsinelas_sike` is two whose first one is the black `m2`. Holding a
+            // sike put a solid black slab in frame with the rest of the shoe missing.
+            //
+            // ⚠️ THE COUNT COMES FROM THE MESH, NOT FROM THE SOURCE ARRAY. The world slipper is a
+            // separate object with its own history, and a short array there would carry the same
+            // fault across rather than correct it. Padding with the last entry is the honest
+            // degrade: a surface drawn in a neighbouring material is visible and wrong, where a
+            // surface not drawn at all is invisible and reads as missing geometry.
             var sourceRenderer = source.GetComponent<Renderer>();
             if (_heldRenderer != null && sourceRenderer != null)
-                _heldRenderer.sharedMaterial = sourceRenderer.sharedMaterial;
+                CopySurfaces(sourceRenderer, _heldRenderer, source.sharedMesh.subMeshCount);
 
             // The mesh changed, so the length-normalising scale has to be recomputed.
             NormaliseHeldSize();
@@ -230,6 +248,24 @@ namespace TumbangPreso.CameraSystem
             // fistful-sized copy in the viewmodel. Re-deriving it here is what keeps the border
             // the same thickness in both views.
             Visual.ToonSkin.Apply(_heldRenderer, Visual.ToonSkin.PropOutlineWidth);
+        }
+
+        /// <summary>Give <paramref name="to"/> one material per submesh, taken from
+        /// <paramref name="from"/> and padded with its last entry. See the note at the call
+        /// site for why a bare `sharedMaterial` assignment loses every surface but the first.
+        /// </summary>
+        private static void CopySurfaces(Renderer from, Renderer to, int surfaces)
+        {
+            var sources = from.sharedMaterials;
+            if (sources == null || sources.Length == 0) return;
+
+            surfaces = Mathf.Max(1, surfaces);
+
+            var slots = new Material[surfaces];
+            for (int i = 0; i < surfaces; i++)
+                slots[i] = sources[Mathf.Min(i, sources.Length - 1)];
+
+            to.sharedMaterials = slots;
         }
 
         /// <summary>
@@ -294,6 +330,94 @@ namespace TumbangPreso.CameraSystem
             new Key(0.20f,  0.85f, -0.15f, 0.0f),
             new Key(0.38f,  0.00f,  0.00f, 0.0f),
         };
+
+        // -------------------------------------------------------------------
+        // § THE FOUR BASE VERBS, WHICH HAD NO ARM WHILE ALL EIGHTEEN HERO POWERS DID.
+        //
+        // ⚠️⚠️ `grab`, `punch`, `lunge` AND `shove` REACHED `PlayAction` AND RESOLVED TO null,
+        // so `CameraRig.PlayViewmodelAction` fell through to its procedural camera kick and the
+        // first-person hand did not move for any of them. 🧑 2026-08-28: *"no animation when
+        // tagging / raising lata"*. Both halves of that report are in this list: the taya's tag
+        // is `punch` and `lunge`, and righting the can is `grab`.
+        //
+        // ⚠️ THE GAP IS THE EXACT ONE `HeroPresentationTests` ALREADY GUARDS FOR THE KITS.
+        // `EveryHeroAbilityHasBespokeCastAndViewModelActions` went red the moment Phaister
+        // shipped without arms and the block below it records why that mattered. Nothing applied
+        // the same standard to the verbs every character has in every mode, so the four that are
+        // ALWAYS available were the four with nothing authored. `grab` is the sharpest case: the
+        // header on this whole section still says the .tscn ships *"`throw` and `grab`"*, and the
+        // grab keyframes had been dropped from the table at some point without the header moving.
+        //
+        // ⚠️ THE SIGN CONVENTION IS THE MEASURED CLIPS', NOT A NEW ONE, AND IT IS THE OPPOSITE OF
+        // WHAT IT LOOKS LIKE. These keys are GODOT space and go through `ToUnityLocal`, which
+        // negates x, while `SetCharge` writes the cock-back straight into UNITY space as
+        // `+WindupRad`. So:
+        //
+        //     godot +x  ->  unity -x  ->  the hand drives FORWARD and DOWN
+        //     godot -x  ->  unity +x  ->  the hand COCKS BACK and UP
+        //
+        // `ThrustClip` directly above is the check: it cocks to -0.65 and then drives to +0.85,
+        // which is a thrust and not a backhand. `WindupRad`'s own note names the bug from getting
+        // it backwards, B-131, *"the hand dropping instead of cocking"*.
+        //
+        // ⚠️ AND EACH IS SHORTER THAN ITS VERB'S COOLDOWN. The arm must be home before the same
+        // verb can fire again, or a player on cooldown sees the clip restart from a pose it never
+        // left. Punch 0.34 against `PunchCooldown`, lunge 0.62 against `LungeCooldown`, shove
+        // 0.40 against `ShoveMissCooldown`, grab 0.40 against a channel that re-fires it.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// Righting the lata, and picking a tsinelas up. One reach-down gesture serves both
+        /// because they are the same movement, which is what the .tscn's own `grab` was.
+        /// </summary>
+        private static readonly Key[] GrabClip =
+        {
+            new Key(0.00f, 0.00f,  0.00f, 0.0f),
+            new Key(0.18f, 0.46f, -0.14f, 0.0f),
+            new Key(0.40f, 0.00f,  0.00f, 0.0f),
+        };
+
+        /// <summary>The taya's jab: a short cock back and a hard straight thrust, inward toward
+        /// the crosshair. It leads with the ARM, which is what tells it apart from the lunge at a
+        /// glance.</summary>
+        private static readonly Key[] PunchClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f, 0.0f),
+            new Key(0.06f, -0.18f,  0.04f, 0.0f),
+            new Key(0.16f,  0.62f, -0.10f, 0.0f),
+            new Key(0.34f,  0.00f,  0.00f, 0.0f),
+        };
+
+        /// <summary>
+        /// The taya's dash tag. ⚠️ IT REACHES AND HOLDS WHERE THE PUNCH SNAPS BACK, and that is a
+        /// gameplay read rather than a flourish: the sweep stays live for
+        /// <c>Balance.LungeActiveTime</c> after the dash starts, so an arm that is still out is
+        /// telling the truth about a tag that can still land. No cock-back either, because the
+        /// commitment was already paid during the charge that `SetCharge` posed.
+        /// </summary>
+        private static readonly Key[] LungeClip =
+        {
+            new Key(0.00f, 0.00f,  0.00f, 0.0f),
+            new Key(0.10f, 0.70f, -0.18f, 0.0f),
+            new Key(0.38f, 0.58f, -0.16f, 0.0f),
+            new Key(0.62f, 0.00f,  0.00f, 0.0f),
+        };
+
+        /// <summary>The attacker's shove. Pushes OUTWARD as well as forward, where the punch and
+        /// the lunge go inward, so it does not read as a weak jab: a shove moves a body sideways
+        /// and the arm should say so.</summary>
+        private static readonly Key[] ShoveClip =
+        {
+            new Key(0.00f,  0.00f, 0.00f, 0.0f),
+            new Key(0.08f, -0.22f, 0.10f, 0.0f),
+            new Key(0.20f,  0.50f, 0.16f, 0.0f),
+            new Key(0.40f,  0.00f, 0.00f, 0.0f),
+        };
+
+        /// <summary>How long <see cref="GrabClip"/> runs. Read by the reset channel, which is
+        /// held far longer than the gesture and has to re-fire it rather than dip once and stand
+        /// still. See <c>Carrier.StepDefender</c>.</summary>
+        public const float GrabSeconds = 0.40f;
 
         // § BESPOKE HERO ACTION CLIPS
         private static readonly Key[] ThrustFireClip =
@@ -515,6 +639,10 @@ namespace TumbangPreso.CameraSystem
         public bool PlayAction(string clip)
         {
             _clip = clip == "throw" ? ThrowClip
+                  : clip == "grab" ? GrabClip
+                  : clip == "punch" ? PunchClip
+                  : clip == "lunge" ? LungeClip
+                  : clip == "shove" ? ShoveClip
                   : clip == "slam" ? SlamClip
                   : clip == "cast" || clip == "thrust" || clip == "dash" ? ThrustClip
                   : clip == "thrust-fire" ? ThrustFireClip
