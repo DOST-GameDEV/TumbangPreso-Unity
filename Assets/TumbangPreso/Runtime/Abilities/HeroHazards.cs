@@ -366,10 +366,56 @@ namespace TumbangPreso.Abilities
             public float Radius = 4.5f;
             public float Duration = 5.0f;
             public int OwnerSlot = -1;
+
+            /// <summary>
+            /// What the ice does to your top speed while you are standing on it.
+            ///
+            /// ⚠️ 0.55 IS A REAL COST AND STILL LETS YOU WALK OUT, which is the shape every
+            /// hazard in this game is tuned to: `docs/VISION.md` § 4 says nothing may reward
+            /// waiting, and a slow you cannot escape is a stun wearing a slow's name. At 0.55 a
+            /// 4.5 m sheet takes about 1.6 s to cross instead of 0.9, so it costs an attacker
+            /// most of a second on the run back in, which IS the tension the whole game is about.
+            /// </summary>
+            public float ChillMultiplier = 0.55f;
+
             private float _left;
             private float _whoaCooldown;
 
+            /// <summary>
+            /// Whose speed this sheet is currently holding down.
+            ///
+            /// ⚠️⚠️ IT EXISTS BECAUSE `SpeedZones` IS A STACK AND AN UNPAIRED `Enter` NEVER COMES
+            /// BACK. A player slowed on the frame they stepped on and never released would carry
+            /// 0.55 of their speed for the rest of the match, with nothing on screen saying why,
+            /// and the second sheet they crossed would take them to 0.30. Enter once on the frame
+            /// you cross in, exit once on the frame you cross out, and exit whatever is left in
+            /// `OnDestroy`.
+            /// </summary>
+            private readonly HashSet<int> _chilled = new HashSet<int>();
+
             private void Start() => _left = Duration;
+
+            /// <summary>
+            /// ⚠️⚠️ THE ICE THAWING MUST GIVE BACK EVERY SLOW IT IS STILL HOLDING, and this is
+            /// the half that is easy to forget because it is invisible when it is missing: the
+            /// zone disappears, the player keeps walking, and they are simply slower than
+            /// everybody else for the rest of the round. `Duration` runs out while somebody is
+            /// standing on it more often than not, so this is the COMMON path rather than an
+            /// edge case.
+            /// </summary>
+            private void OnDestroy()
+            {
+                var round = GameServices.Round;
+                if (round == null) { _chilled.Clear(); return; }
+
+                foreach (var p in round.Players)
+                {
+                    if (p == null || !_chilled.Contains(p.PlayerSlot)) continue;
+                    p.ExitSpeedZone(ChillMultiplier);
+                }
+
+                _chilled.Clear();
+            }
 
             private void Update()
             {
@@ -399,9 +445,31 @@ namespace TumbangPreso.Abilities
                 // Slow rotation on the ice zone
                 transform.Rotate(Vector3.up, 20.0f * Time.deltaTime);
 
-                if (!NetAuthority.ShouldResolve()) return;
+                // ⚠️⚠️ IT SLOWS YOU NOW, AND UNTIL 2026-08-29 IT DID NOTHING A PLAYER COULD NAME.
+                // 🧑: *"make cheska q ice slow ppl or have impact bcz it doesnt feel lke
+                // anything"*. Every word of that was accurate. The zone's whole effect was a
+                // 5.5 impulse along the direction you were ALREADY travelling, which is an
+                // overshoot, not a slow: it made you slightly harder to stop and did not cost you
+                // a step. There is a real slow mechanism in this project (`EnterSpeedZone`, a
+                // stack living in `Stamina`, used by `HazardZone` and the boost pads) and the ice
+                // was the one hazard that never reached for it.
+                //
+                // ⚠️⚠️ AND THE WHOLE THING RAN BEHIND `NetAuthority.ShouldResolve()`, SO THREE OF
+                // THE FOUR PLAYERS FELT NOTHING WHATEVER. A client's own body is moved by the
+                // host's position stream, and `CharacterMotor.ApplyNetworkTransform` ignores a
+                // correction under 1.25 m while the owner is predicting. A slow is a continuous
+                // difference that never reaches 1.25 m in a single step, so it was filtered out
+                // completely on every peer that was not the host. Same shape as Nemu's pull below.
+                //
+                // ⚠️ A PEER SLOWING ITS OWN BODY IS PREDICTION, NOT AUTHORITY. `EnterSpeedZone`
+                // and `ApplyImpulse` both refuse a body this peer does not own, so this loop is
+                // safe to run everywhere: the host applies it to all four, each client to exactly
+                // its own, and the two agree. What stays behind the gate is everything that is a
+                // DECISION rather than a movement.
                 var round = GameServices.Round;
                 if (round == null) return;
+
+                bool resolves = NetAuthority.ShouldResolve();
 
                 foreach (var p in round.Players)
                 {
@@ -409,15 +477,39 @@ namespace TumbangPreso.Abilities
 
                     Vector3 diff = p.transform.position - transform.position;
                     diff.y = 0.0f;
-                    if (diff.magnitude <= Radius)
+
+                    bool inside = diff.magnitude <= Radius;
+                    bool chilled = _chilled.Contains(p.PlayerSlot);
+
+                    // ⚠️⚠️ ENTER AND EXIT ARE PAIRED THROUGH A SET, AND THE SET IS THE WHOLE
+                    // CORRECTNESS ARGUMENT. `SpeedZones` is a STACK: one `Enter` needs exactly one
+                    // `Exit` or the multiplier never comes back, and a player who walked through
+                    // the ice twice would be permanently slowed with nothing on screen to explain
+                    // it. Entering once on the frame you cross in, and exiting once on the frame
+                    // you cross out or the ice thaws, is what makes it balanced by construction.
+                    if (inside && !chilled)
                     {
-                        // Apply friction loss & cartoon uncontrollable slip in velocity direction
+                        p.EnterSpeedZone(ChillMultiplier);
+                        _chilled.Add(p.PlayerSlot);
+                    }
+                    else if (!inside && chilled)
+                    {
+                        p.ExitSpeedZone(ChillMultiplier);
+                        _chilled.Remove(p.PlayerSlot);
+                    }
+
+                    if (inside)
+                    {
+                        // The cartoon overshoot is kept ON TOP of the slow: the slow is what
+                        // costs you, the slide is what tells you why.
                         if (p.Velocity.sqrMagnitude > 0.1f)
                         {
                             Vector3 slip = p.Velocity.normalized * 5.5f * Time.deltaTime;
                             p.ApplyImpulse(slip);
 
-                            if (_whoaCooldown <= 0.0f)
+                            // ⚠️ THE POPUP AND THE CUE ARE ANNOUNCEMENTS AND STAY HOST-ONLY, so
+                            // four machines do not each raise their own copy of one event.
+                            if (resolves && _whoaCooldown <= 0.0f)
                             {
                                 _whoaCooldown = 1.2f;
                                 ComicPopup.Whoa(p.transform.position);
@@ -1626,6 +1718,33 @@ namespace TumbangPreso.Abilities
             /// </summary>
             public float PullStrength = 4.0f;
 
+            /// <summary>
+            /// How much harder the very centre pulls than the rim.
+            ///
+            /// ⚠️ IT IS A MULTIPLIER ON TOP OF `PullStrength` RATHER THAN A SECOND STRENGTH, so
+            /// the rim of every zone using this component keeps the force it was tuned with and
+            /// only the inside gains. Nemu's SKILL-tier Seance Void and her ULTIMATE share this
+            /// class, and a skill that suddenly funnelled like an ultimate would be the
+            /// *"reads as a one time"* complaint in another costume.
+            /// </summary>
+            public float CentreBite = 2.2f;
+
+            /// <summary>
+            /// How far off the ground the very centre of the vortex holds a body.
+            ///
+            /// ⚠️ IT TAPERS TO NOTHING AT THE RIM, so walking past the edge of a void does not
+            /// bounce you. Only being properly inside it takes your feet away.
+            ///
+            /// ⚠️ 0 ON EVERY ZONE THAT IS NOT AN ULTIMATE. This component is Nemu's SKILL-tier
+            /// Seance Void as well, and a skill that lifts people off the floor is an ultimate.
+            /// `SpawnKuroUnbound` is the only thing that sets it.
+            /// </summary>
+            public float LiftHeight;
+
+            /// <summary>How hard the servo chases <see cref="LiftHeight"/>. See the note at the
+            /// call site for why this is a velocity rather than an acceleration.</summary>
+            public float LiftSpring = 5.0f;
+
             /// <summary>How fast a loose tsinelas slides in, in metres per second.</summary>
             public float SlipperPull = 5.5f;
 
@@ -1650,9 +1769,24 @@ namespace TumbangPreso.Abilities
                 // Rotate cosmic vortex discs
                 transform.Rotate(Vector3.up, 75.0f * Time.deltaTime);
 
-                if (!NetAuthority.ShouldResolve()) return;
+                // ⚠️⚠️ THIS USED TO BE `if (!NetAuthority.ShouldResolve()) return;` AND THAT IS
+                // WHY THREE OF THE FOUR PLAYERS FELT NOTHING. 🧑 2026-08-29: *"walang higop ss ni
+                // Nemu"*, and then *"MAKE NEEMUS PULL REALLY GOOD LIKE ACTUALLY FEELABLE BY
+                // EVERYONE, make it pull tsinelas humans (not can tho)"*. The drag ran on the
+                // host alone, so a client's own body was moved only by the host's position
+                // stream, and `CharacterMotor.ApplyNetworkTransform` ignores a correction under
+                // 1.25 m while the owner is predicting. A suction is a continuous nudge that
+                // never reaches 1.25 m in one step, so for every peer that was not the host it
+                // was filtered out completely: not weak, ABSENT. Same shape as Cheska's ice.
+                //
+                // ⚠️ A PEER PULLING ITS OWN BODY IS PREDICTION, NOT AUTHORITY, the same
+                // permission the movement keys already have. `CharacterMotor.ApplyImpulse`
+                // refuses any body this peer does not own, so the loop below is safe everywhere:
+                // the host moves all four, each client moves exactly its own, and they agree.
                 var round = GameServices.Round;
                 if (round == null) return;
+
+                bool resolves = NetAuthority.ShouldResolve();
 
                 // -------------------------------------------------------------------
                 // § THE PULL
@@ -1682,13 +1816,87 @@ namespace TumbangPreso.Abilities
 
                     Vector3 diff = transform.position - p.transform.position;
                     diff.y = 0.0f;
-                    if (diff.magnitude <= Radius)
+
+                    float distance = diff.magnitude;
+                    if (distance > Radius || distance <= 0.001f) continue;
+
+                    // ⚠️⚠️ IT PULLS HARDER THE CLOSER YOU ARE, AND A FLAT IMPULSE IS WHY IT NEVER
+                    // READ AS SUCTION. A constant drag across the whole disc is a headwind: you
+                    // lean into it and walk out at a slightly reduced speed, which is the same
+                    // sensation anywhere in the zone and tells you nothing about where the danger
+                    // is. A funnel accelerates as it closes, so the rim is escapable and the
+                    // middle is not, and the player learns the shape of the thing by being in it.
+                    // `CentreBite` is the multiplier at the very middle and it falls to 1.0 at
+                    // the rim, so the rim behaves exactly as it did and only the inside changes.
+                    float closeness = 1.0f - (distance / Radius);
+                    float bite = Mathf.Lerp(1.0f, CentreBite, closeness);
+
+                    // ⚠️⚠️ THE PULL HAS TO BEAT `Balance.Friction`, AND THIS IS THE ARITHMETIC
+                    // THAT EXPLAINS WHY 14 FELT LIKE NOTHING EVEN ON THE HOST.
+                    // `CharacterMotor` decays `_externalVelocity` by `Friction` (30.0) every
+                    // second, and this adds `PullStrength` per second to it. The net is
+                    // `(PullStrength - Friction)`, so anything at or below 30 accumulates
+                    // EXACTLY ZERO inward speed no matter how long you stand in it. The old 14
+                    // was not a weak pull, it was arithmetically no pull at all, and the earlier
+                    // note calling it "13 per cent of Balance.Speed" was measuring the impulse
+                    // rather than what survived the decay.
+                    //
+                    // ⚠️ SO THE NUMBER IS AN ACCELERATION ABOVE FRICTION, not a speed. At the rim
+                    // `PullStrength` 62 nets 32 m/s², which saturates `Balance.MaxKnockbackSpeed`
+                    // 16 in half a second and comfortably beats walking out at `Balance.Speed`
+                    // 4.6. With `CentreBite` the middle nets far more and is simply not
+                    // survivable, which is 🧑 2026-08-29: *"actually pull everything to the middle
+                    // of ult"*.
+                    p.ApplyImpulse(diff.normalized * PullStrength * bite * Time.deltaTime);
+
+                    // -------------------------------------------------------------------
+                    // § THE LIFT
+                    //
+                    // ⚠️⚠️ 🧑 2026-08-29: *"make it even stronger i want ppl floating in air"*.
+                    // The void takes them off the ground now, hardest at the centre and not at
+                    // all at the rim, so being caught reads as being swallowed rather than as
+                    // being slowed down.
+                    //
+                    // ⚠️⚠️ THE LIFT IS NOT SCALED BY `Time.deltaTime` AND THE HORIZONTAL PULL IS,
+                    // WHICH LOOKS LIKE A BUG AND IS THE OPPOSITE. `CharacterMotor.ApplyImpulse`
+                    // treats the two axes differently on purpose: the horizontal component is
+                    // ADDED to `_externalVelocity`, so it is an acceleration and needs dt, while
+                    // a positive y ASSIGNS `_velocity.y` outright, so it is a velocity and must
+                    // not be. Scaling it by dt would set a vertical speed of a few centimetres a
+                    // second and read as the floor being sticky.
+                    //
+                    // ⚠️ IT IS A SERVO AGAINST A TARGET HEIGHT RATHER THAN A CONSTANT CLIMB. A
+                    // fixed upward velocity would fly them out of the world; this pushes up only
+                    // while they are below the height the vortex wants them at, so gravity pulls
+                    // them back a little, the servo catches them, and the result is a bob. That
+                    // bob is what "floating" looks like, and it costs nothing to get right.
+                    float wantedHeight = LiftHeight * closeness;
+                    float above = p.transform.position.y - transform.position.y;
+
+                    if (wantedHeight > 0.05f && above < wantedHeight)
                     {
-                        p.ApplyImpulse(diff.normalized * PullStrength * Time.deltaTime);
-                        if (CanPulse(_nextDrowseBySlot, p.PlayerSlot, 1.25f))
-                            p.ApplyStagger(0.35f);
+                        float climb = Mathf.Clamp((wantedHeight - above) * LiftSpring,
+                                                  0.0f, Balance.MaxKnockbackLift);
+
+                        if (climb > 0.05f) p.ApplyImpulse(Vector3.up * climb);
                     }
+
+                    // ⚠️ THE STAGGER IS A DECISION AND STAYS HOST-ONLY. Predicting a stagger on
+                    // your own body would flinch you on a frame the host never agreed to, and
+                    // `StunElement`/`ApplyStagger` is exactly the class of state `CLAUDE.md` § 4
+                    // keeps on one machine.
+                    if (resolves && CanPulse(_nextDrowseBySlot, p.PlayerSlot, 1.25f))
+                        p.ApplyStagger(0.35f);
                 }
+
+                // ⚠️ THE TSINELAS ARE HOST-ONLY AND THE BODIES ARE NOT, and the asymmetry is the
+                // authority rather than an oversight. A slipper is a shared object whose position
+                // the host streams to everybody (`BroadcastSlipperState`); a client shoving one
+                // locally would be overwritten by the next snapshot and would buzz between the
+                // two, which is the exact fault `Slipper.ApplySnapshotState`'s note records about
+                // a HELD shoe having two authors. Your own body is yours to predict; a tsinelas
+                // lying in the street is not.
+                if (!resolves) return;
 
                 // ⚠️ A HELD TSINELAS IS NOT PULLED AND DOES NOT NEED TO BE: it is in somebody's
                 // hand, and that somebody is being pulled by the loop above. Yanking it out of
@@ -1699,9 +1907,16 @@ namespace TumbangPreso.Abilities
                     {
                         Vector3 sDiff = transform.position - s.transform.position;
                         sDiff.y = 0.0f;
-                        if (sDiff.magnitude <= Radius && sDiff.magnitude > 0.5f)
+                        // ⚠️ THE DEAD ZONE IS 0.12 m, DOWN FROM 0.5. 🧑 asked for everything to be
+                        // pulled *"to the middle"*, and half a metre of slack meant a ring of
+                        // tsinelas parked around the eye of a vortex rather than in it. It is not
+                        // zero because a shoe exactly on the centre has no direction to be pushed
+                        // in and `normalized` of a zero vector is a zero vector.
+                        if (sDiff.magnitude <= Radius && sDiff.magnitude > 0.12f)
                         {
-                            s.transform.position += sDiff.normalized * SlipperPull * Time.deltaTime;
+                            float reach = Mathf.Min(SlipperPull * Time.deltaTime,
+                                                    sDiff.magnitude - 0.12f);
+                            s.transform.position += sDiff.normalized * reach;
                         }
                     }
                 }
@@ -2323,7 +2538,30 @@ namespace TumbangPreso.Abilities
             // possible and is now a decision rather than a formality. That bound is the whole
             // design: `docs/VISION.md` § 4 forbids anything with no counterplay, and a pull the
             // player cannot beat is a stun that lasts as long as the ultimate does.
-            comp.PullStrength = 14.0f;
+            // ⚠️⚠️ 14.0 TO 30.0, AND THE HONEST REASON IS THAT 14 WAS NEVER THE NUMBER ANYBODY
+            // ACTUALLY FELT. 🧑 2026-08-29: *"walang higop ss ni Nemu"*, *"make nemu ult pull
+            // stronger"*, *"MAKE NEEMUS PULL REALLY GOOD LIKE ACTUALLY FEELABLE BY EVERYONE"*.
+            // The drag was host-only until this batch, so on three machines out of four the
+            // strength was irrelevant: it was multiplying an effect that never ran. Raising it
+            // without fixing that would have been tuning a number nobody was reading.
+            //
+            // ⚠️ WITH `CentreBite` 2.2 THE MIDDLE PULLS AT 66, which is comfortably more than
+            // `Balance.Speed`, so the very centre is genuinely inescapable and the rim at 30 is
+            // a hard fight you can still win. That gradient is the point: an ultimate you can
+            // stroll out of anywhere is decoration, and one you cannot escape anywhere is a stun
+            // with a 7 second duration, which `docs/VISION.md` § 4 rules out.
+            //
+            // ⚠️ AND IT STILL PULLS NOBODY IT SHOULD NOT. The owner is exempt, and the lata is
+            // not touched by any of this: see the note in the component, which is the whole
+            // reason there is no code for it there.
+            comp.PullStrength = 62.0f;
+
+            // The tsinelas get dragged properly too, which is the *"pull tsinelas humans"* half.
+            // 5.5 m/s was slower than a walk, so a shoe sitting inside the void barely crept.
+            comp.SlipperPull = 16.0f;
+
+            // The centre takes them off their feet. See `LiftHeight`.
+            comp.LiftHeight = 2.4f;
             comp.SlipperPull = 9.0f;
 
             HazardVolume.Attach(go, radius, ownerSlot);

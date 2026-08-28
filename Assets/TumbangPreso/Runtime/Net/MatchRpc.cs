@@ -3092,8 +3092,26 @@ namespace TumbangPreso.Net
             var kit = unit != null && unit.AbilitySystem != null ? unit.AbilitySystem.Kit : null;
             if (kit == null) return;
 
+            // ⚠️⚠️ THE OWNER'S OWN COOLDOWNS MAY BE RAISED BY THIS AND NOT LOWERED, WHILE A
+            // ROUND IS LIVE. That is the spammable-teleport fix; `HeroAbility
+            // .ApplyNetworkSnapshot` carries the whole chain, and the short version is that a
+            // host which REFUSED a cast reports the state it actually has, which is no cooldown,
+            // and assigning that over the cooldown the owner just spent predicting hands the
+            // ability straight back.
+            //
+            // ⚠️⚠️ AND IT IS GATED ON THE ROUND BEING LIVE, WHICH IS NOT A DETAIL. `SliceRunner
+            // .ResetWorld` calls `ResetKit` on every seat at a round boundary, and that is a
+            // legitimate clearing that MUST reach the owner or it starts the next round holding
+            // a cooldown nothing will ever tick away. The intermission is exactly when the round
+            // clock is stopped, so asking the round is asking the right question rather than
+            // special-casing the reset. A reconnecting client is covered too: its kit is rebuilt
+            // at zero, so raising it to the host's value is what the rule already does.
+            bool mine = slot == NetAuthority.LocalSlot;
+            bool roundLive = GameServices.Round != null && GameServices.Round.RoundActive;
+
             kit.ApplyNetworkSnapshot(ultimateCharge, skill1Cooldown, skill1Charges,
-                                     skill2Cooldown, skill2Charges, ultimateCooldown);
+                                     skill2Cooldown, skill2Charges, ultimateCooldown,
+                                     mayLower: !mine || !roundLive);
         }
 
         private void OnSyncAbilityMsg(ulong senderClientId, FastBufferReader reader)

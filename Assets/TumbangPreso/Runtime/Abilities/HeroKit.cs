@@ -119,16 +119,23 @@ namespace TumbangPreso.Abilities
         /// world is resynced" would be spending bandwidth to be precise about a value that barely
         /// changes between packets.
         /// </summary>
+        /// <summary>
+        /// ⚠️ `mayLower` IS FALSE ONLY FOR THE SEAT THIS PEER DRIVES, AND ONLY MID-ROUND. See
+        /// <see cref="HeroAbility.ApplyNetworkSnapshot"/> for the whole chain; the short version
+        /// is that a host which REFUSED a cast reports the state it has, which is no cooldown at
+        /// all, and assigning that over the owner's spent cooldown hands them the ability back.
+        /// </summary>
         public void ApplyNetworkSnapshot(float ultimateCharge,
                                          float skill1Cooldown, int skill1Charges,
                                          float skill2Cooldown, int skill2Charges,
-                                         float ultimateCooldown)
+                                         float ultimateCooldown,
+                                         bool mayLower = true)
         {
             UltimateCharge = Mathf.Clamp(ultimateCharge, 0.0f, UltimateCost);
 
-            Skill1?.ApplyNetworkSnapshot(skill1Cooldown, skill1Charges);
-            Skill2?.ApplyNetworkSnapshot(skill2Cooldown, skill2Charges);
-            Ultimate?.ApplyNetworkSnapshot(ultimateCooldown, 0);
+            Skill1?.ApplyNetworkSnapshot(skill1Cooldown, skill1Charges, mayLower);
+            Skill2?.ApplyNetworkSnapshot(skill2Cooldown, skill2Charges, mayLower);
+            Ultimate?.ApplyNetworkSnapshot(ultimateCooldown, 0, mayLower);
         }
 
         /// <summary>

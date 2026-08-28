@@ -407,12 +407,49 @@ namespace TumbangPreso.Abilities
         /// unstunnable. A running duration expires on its own within seconds; a cooldown does
         /// not, which is why only the cooldown is worth carrying across the wire at all.
         /// </summary>
-        public void ApplyNetworkSnapshot(float cooldownRemaining, int chargesRemaining)
+        public void ApplyNetworkSnapshot(float cooldownRemaining, int chargesRemaining,
+                                         bool mayLower = true)
         {
-            CooldownRemaining = Mathf.Max(0.0f, cooldownRemaining);
+            // ⚠️⚠️ `mayLower` IS WHAT STOPS AN ABILITY BEING SPAMMED ON A LOSSY LINK, and it is
+            // false for exactly one peer: the one that owns this seat, while a round is live.
+            // 🧑 2026-08-29, of Phaister: *"si phaister need ayusin yung 2nd ability kasi
+            // spammable teleport (lan problem)"*, and later *"phaister ability works right
+            // everywhere else except for lan"*, *"its spammable in lan, weirdly"*.
+            //
+            // The chain, and none of it is Phaister-specific:
+            //
+            //   1. A client casts. `HeroAbilitySystem.Cast` predicts locally, which spends the
+            //      cooldown on the client, and sends `RequestAbilityCast`.
+            //   2. The host checks `PlausibleIntentPose`: is the pose the client claims within
+            //      `IntentPoseLeeway` 2.25 m of the host's own copy of that body? If not, the
+            //      request is DROPPED. Silently, and correctly as far as that guard goes.
+            //   3. Because it dropped, the host never ran `Activate`, so the host's copy of that
+            //      kit still reads a cooldown of ZERO.
+            //   4. The next `BroadcastAbilityState` sends that zero to everyone, and the OWNER
+            //      assigned it straight over the cooldown it had just spent. Ready again, one
+            //      snapshot later, for as long as the player kept pressing.
+            //
+            // ⚠️ AND THAT IS WHY IT WAS LAN-ONLY, WHICH IS THE PART THAT LOOKS IMPOSSIBLE.
+            // Nothing here branches on the transport. Step 2 fails when the host's copy of a
+            // moving body is more than 2.25 m stale, which is 375 ms at a sprint, and until this
+            // batch `SyncUnit` and `SubmitMove` went out `ReliableSequenced`: one lost packet
+            // head-of-line blocked the whole pose stream and delivered the backlog in a burst.
+            // Hamachi has real loss and a smaller MTU, so the LAN sessions produced those stalls
+            // and the relay sessions did not. `MatchRpc.PoseDelivery` attacks the same root from
+            // the transport end; this is the half that holds even when a packet does go missing.
+            //
+            // ⚠️ THE HOST CAN STILL MAKE AN ABILITY UNAVAILABLE, which is the direction authority
+            // actually needs. It may raise a cooldown on anybody at any time. What it may no
+            // longer do is hand the owner a cast back by reporting a state it reached by refusing
+            // to act.
+            float wanted = Mathf.Max(0.0f, cooldownRemaining);
+            CooldownRemaining = mayLower ? wanted : Mathf.Max(CooldownRemaining, wanted);
 
             if (UsesCharges)
-                ChargesRemaining = Mathf.Clamp(chargesRemaining, 0, MaxCharges);
+            {
+                int clamped = Mathf.Clamp(chargesRemaining, 0, MaxCharges);
+                ChargesRemaining = mayLower ? clamped : Mathf.Min(ChargesRemaining, clamped);
+            }
         }
 
         /// <summary>
