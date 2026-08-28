@@ -44,12 +44,30 @@ namespace TumbangPreso.UI
         /// <summary>
         /// Metres between neighbours in the line.
         ///
-        /// ⚠️ MEASURED AGAINST THE LENS, NOT PICKED. At `MapPreviewSurface.LobbyFieldOfView` 32
-        /// and its lobby distance, the visible width is about 6.7 m; four bodies at 1.40 span
-        /// 4.20, which is 63 per cent of frame with a real margin at both ends. Widening this
-        /// without moving the camera walks the outer two off the sides.
+        /// ⚠️⚠️ MEASURED AGAINST THE GAP IN THE FURNITURE, NOT AGAINST THE FRAME. The frame is
+        /// 1920 px and the band between the two corner panels is 625 (see `LateralOffset`), so
+        /// the number that matters is how wide four bodies are, not how wide the screen is. At
+        /// `MapPreviewSurface.LobbyFieldOfView` 32 and `MapEntry.LobbyDistance` 13.2 the scale is
+        /// about 143 px per metre, so 1.20 puts the outermost centres 515 px apart and the whole
+        /// line, bodies included, at about 640: it fits the gap with a few pixels either side.
+        /// 1.75 was the first pass, measured against the frame, and it put the local player's own
+        /// character behind the config panel.
         /// </summary>
-        public const float Spacing = 1.40f;
+        public const float Spacing = 1.20f;
+
+        /// <summary>
+        /// How far the whole line is pushed along the camera's right, in metres.
+        ///
+        /// ⚠️⚠️ THE CLEAR BAND IS NOT CENTRED ON THE SCREEN, SO THE CAST MUST NOT BE EITHER.
+        /// Measured off `Logs/shots-runtime/Lobby-v6.png`: after `LobbyChrome` scales them, the
+        /// config column ends at x 720 and the seat column begins at x 1345, so the gap between
+        /// the furniture runs 720 to 1345 and its centre is x 1032, not x 960. A line centred on
+        /// the frame put the LEFTMOST character, which is the local player's own body, entirely
+        /// behind the config panel: the one seat whose occupant is definitely looking for it.
+        ///
+        /// 0.62 m is 89 px at this framing, which clears the config panel's edge with a margin.
+        /// </summary>
+        public const float LateralOffset = 0.62f;
 
         /// <summary>
         /// How far each seat is pushed toward or away from the camera, in metres, by seat index.
@@ -95,6 +113,26 @@ namespace TumbangPreso.UI
 
         private readonly GameObject[] _bodies = new GameObject[Balance.PlayerCount];
         private readonly AnimationClip[] _idles = new AnimationClip[Balance.PlayerCount];
+
+        /// <summary>
+        /// How far above its own transform origin each body's FEET are, in metres.
+        ///
+        /// ⚠️⚠️ THE RIGS ARE NOT AUTHORED WITH THEIR ORIGIN AT THE SOLE, AND ASSUMING THEY WERE
+        /// BURIED THE WHOLE CAST TO MID-THIGH. `Logs/shots-runtime/Lobby-v7.png` is four
+        /// characters standing in the road up to their pockets, which reads as a physics or a
+        /// z-fighting fault and is neither: `spot.y = pivot.y` puts the ORIGIN on the ground, and
+        /// on these `.glb` rigs the origin is nearer the middle of the body than the bottom of it.
+        ///
+        /// ⚠️ IT IS MEASURED PER RIG RATHER THAN ASSUMED CONSTANT. The twelve street characters
+        /// and the five heroes are different heights and several wear hats; one number would bury
+        /// some and float others. `LobbyNameplates` measures the top of the head the same way and
+        /// for the same reason.
+        ///
+        /// ⚠️ AND IT IS MEASURED ONCE, AT BUILD, IN THE IDLE POSE. Doing it every frame would walk
+        /// the character up and down as the animation breathes, which is a worse artefact than
+        /// the one it fixes.
+        /// </summary>
+        private readonly float[] _footLift = new float[Balance.PlayerCount];
 
         /// <summary>What each seat is currently WEARING, so an unchanged seat is not rebuilt.
         /// -1 means nothing is standing there.</summary>
@@ -227,6 +265,42 @@ namespace TumbangPreso.UI
             // ⚠️ RE-LAYERED AFTER THE INSTANTIATE, because the prefab arrives on whatever layer it
             // was authored on and `Adopt` only ran over the root that existed at the time.
             SetLayer(body.transform, MapPreviewSurface.PreviewLayer);
+
+            _footLift[seat] = MeasureFootLift(body, _idles[seat]);
+        }
+
+        /// <summary>
+        /// How far to lift this body so its soles sit on the floor rather than its origin. See
+        /// <see cref="_footLift"/>.
+        /// </summary>
+        private static float MeasureFootLift(GameObject body, AnimationClip idle)
+        {
+            if (body == null) return 0.0f;
+
+            // The pose has to be the one it will STAND in, or the lift is measured off a bind pose
+            // whose legs are somewhere else.
+            if (idle != null) idle.SampleAnimation(body, 0.0f);
+
+            bool any = false;
+            Bounds bounds = default;
+
+            foreach (var r in body.GetComponentsInChildren<Renderer>())
+            {
+                if (r == null) continue;
+
+                if (!any)
+                {
+                    bounds = r.bounds;
+                    any = true;
+                    continue;
+                }
+
+                bounds.Encapsulate(r.bounds);
+            }
+
+            if (!any) return 0.0f;
+
+            return body.transform.position.y - bounds.min.y;
         }
 
         private static AnimationClip PickIdle(AnimationClip[] clips)
@@ -290,12 +364,18 @@ namespace TumbangPreso.UI
 
             Vector3 right = Vector3.Cross(Vector3.up, forward);
 
-            // ⚠️ THE MODEL'S FRONT IS ITS LOCAL -Z, WHICH IS THE GODOT HANDEDNESS SURVIVING THE
-            // CONVERSION, and it is the whole of why `ModelPreview.FacingYaw` is 180 rather than
-            // 0. `LookRotation` aligns local +Z, so pointing +Z along `forward` (away from the
-            // camera) is what turns the FRONT toward it. Getting this backwards photographs the
-            // back of four heads, which is the fault that header describes on the one screen
-            // whose entire job is "who is this".
+            // ⚠️⚠️ `-forward`, AND THE FIRST RENDER OF THIS SCREEN PHOTOGRAPHED FOUR BACKS.
+            // `ModelPreview.FacingYaw` is 180 because its camera sits on +Z and the subject has to
+            // be spun to meet it, and reading that note as "the model's front is its local -Z"
+            // is the wrong inference: measured off `Logs/shots-runtime/Lobby-v1.png`, these rigs
+            // face their local +Z. `LookRotation` aligns local +Z with what it is given, so the
+            // direction to point along is the one from the subject TOWARD the camera, which is
+            // `-forward`. Pointing it along `forward` turns every character away.
+            //
+            // ⚠️ THIS IS EXACTLY THE FAULT `ModelPreview`'S HEADER DESCRIBES, on the one screen
+            // whose entire job is "who is this, what do they look like", so it is worth being able
+            // to check: if a future change makes the cast show its backs again, this sign is the
+            // first thing to try and a render is the only way to tell.
             for (int seat = 0; seat < _bodies.Length; seat++)
             {
                 var body = _bodies[seat];
@@ -304,11 +384,15 @@ namespace TumbangPreso.UI
                 float lateral = (seat - (_bodies.Length - 1) * 0.5f) * Spacing;
                 float depth = DepthStagger[seat % DepthStagger.Length];
 
-                Vector3 spot = pivot + (right * lateral) + (forward * depth);
-                spot.y = pivot.y;
+                Vector3 spot = pivot + (right * (lateral + LateralOffset)) + (forward * depth);
+
+                // ⚠️ THE FLOOR IS THE PIVOT'S HEIGHT PLUS THIS RIG'S OWN FOOT LIFT. See
+                // `_footLift`: putting the ORIGIN on the ground buried every character to the
+                // thigh, and the amount differs per rig.
+                spot.y = pivot.y + _footLift[seat];
 
                 body.transform.position = spot;
-                body.transform.rotation = Quaternion.LookRotation(forward, Vector3.up)
+                body.transform.rotation = Quaternion.LookRotation(-forward, Vector3.up)
                                           * Quaternion.Euler(0.0f, TurnStagger[seat % TurnStagger.Length], 0.0f);
             }
 

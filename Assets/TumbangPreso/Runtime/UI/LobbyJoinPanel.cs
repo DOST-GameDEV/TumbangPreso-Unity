@@ -109,7 +109,13 @@ namespace TumbangPreso.UI
             layout.spacing = 12;
             layout.padding = new RectOffset((int)Pad, (int)Pad, (int)Pad, (int)Pad);
             layout.childControlWidth = true;
-            layout.childControlHeight = false;
+
+            // ⚠️ TRUE, SO `LayoutElement.preferredHeight` IS ACTUALLY READ. A `VerticalLayoutGroup`
+            // with height control OFF leaves each child at its own `sizeDelta.y`, which is 0 for a
+            // GameObject built from code: the section headings here were 0 px tall and only drew
+            // at all because a legacy `Text` set to `Overflow` renders outside its rect. See
+            // `LobbyChat.Construct`, where the same setting made an entire panel invisible.
+            layout.childControlHeight = true;
             layout.childForceExpandWidth = true;
             layout.childForceExpandHeight = false;
             MenuKit.Stretch(column.GetComponent<RectTransform>(), 0);

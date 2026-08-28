@@ -67,6 +67,22 @@ namespace TumbangPreso.UI
         /// Person, so the shot is framed on the fight rather than on the road.</summary>
         public const float LookHeight = 1.6f;
 
+        /// <summary>
+        /// What the LOBBY camera aims at, and it is lower than the map shot's on purpose.
+        ///
+        /// ⚠️⚠️ AIMING LOWER PUSHES THE SUBJECT HIGHER UP THE FRAME, WHICH IS THE WHOLE POINT.
+        /// `Logs/shots-runtime/Lobby-v2.png` has the cast correctly sized and standing dead centre
+        /// vertically, so their legs are behind the two corner panels and the line reads as four
+        /// floating torsos. The furniture is at the BOTTOM of the screen, so the cast has to be
+        /// above the middle, and moving the aim point down the body is what does that without
+        /// changing how big they are.
+        ///
+        /// 0.85 is roughly a standing character's knee at `Visual.CharacterVisual.PersonScale`,
+        /// which lifts the line about 10 per cent of the frame: measured, feet from y 810 to about
+        /// y 700 at 1080p, clear of the panels' top edge.
+        /// </summary>
+        public const float LobbyLookHeight = 0.85f;
+
         /// <summary>From `MatchSetup.tscn`'s Camera3D. The one property of that node that IS
         /// read, because `_apply_camera` writes position and basis but never the FOV.</summary>
         private const float FieldOfView = 58.0f;
@@ -698,7 +714,9 @@ namespace TumbangPreso.UI
             var offset = new Vector3(Mathf.Sin(a) * _distance, 0.0f, -Mathf.Cos(a) * _distance);
 
             _camera.transform.position = _pivot + offset + new Vector3(0.0f, _height, 0.0f);
-            _camera.transform.LookAt(_pivot + new Vector3(0.0f, LookHeight, 0.0f));
+
+            float look = _lobbyShot ? LobbyLookHeight : LookHeight;
+            _camera.transform.LookAt(_pivot + new Vector3(0.0f, look, 0.0f));
         }
 
         private void OnDestroy()

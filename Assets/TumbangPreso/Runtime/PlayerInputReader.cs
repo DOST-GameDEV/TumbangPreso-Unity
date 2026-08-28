@@ -125,6 +125,29 @@ namespace TumbangPreso
 
             var intent = _motor.Intent;
 
+            // ⚠️⚠️ A CHAT FIELD WITH THE KEYBOARD MUST NOT ALSO DRIVE THE BODY, AND "just stop
+            // reading" IS THE WRONG FIX. `InputIntent.Parked`'s own note says why: a verb held
+            // across the boundary stays held forever, so a player who was sprinting when they hit
+            // ENTER would keep sprinting into a wall for the whole message. `Clear` releases
+            // everything and `CommitFrame` publishes that release, so the frame chat opens is the
+            // frame every key comes up.
+            //
+            // ⚠️ IT DOES NOT TOUCH `Parked`. That field already has writers in `PausePanel`,
+            // `GuidedTraining`, `CharacterMotor` and `DebugPlayerSwitcher`, and adding a fifth
+            // that clears it on a different schedule is exactly `docs/TODO.md` § 42.1: two writers
+            // on one `InputIntent` in an undefined order. Closing chat would have un-parked a
+            // paused game.
+            //
+            // ⚠️ AND CHAT IS THE THIRD INPUT CONTEXT, per `CLAUDE.md` § 4. A player who is typing
+            // has no verbs and a player who has verbs is not typing, so the two sets can never
+            // both fire, which is the same narrowing `Rebinding.SpectatorContext` records.
+            if (UI.LobbyChat.AnyTyping)
+            {
+                intent.Clear();
+                intent.CommitFrame();
+                return;
+            }
+
             var visual = _motor.GetComponent<Visual.CharacterVisual>();
             if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
             {

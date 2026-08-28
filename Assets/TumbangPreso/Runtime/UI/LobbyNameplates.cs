@@ -226,9 +226,16 @@ namespace TumbangPreso.UI
 
                 _plates[seat].gameObject.SetActive(true);
 
+                // ⚠️⚠️ THE VIEWPORT MAPS STRAIGHT ONTO THE RECT'S SIZE, WITH NO `rect.xMin`, AND
+                // ADDING ONE PUT EVERY PLATE IN THE BOTTOM-LEFT CORNER OF THE SCREEN. A plate is
+                // anchored at (0,0), so its `anchoredPosition` is ALREADY measured from the
+                // parent's bottom-left; `rect.xMin` on a stretched rect whose pivot is centred is
+                // minus half the width, so adding it subtracted half a screen twice over. It read
+                // as four stray "BOT" chips stacked over the BACK button, which looks like a
+                // layout bug in the chrome rather than a projection one.
                 _plates[seat].anchoredPosition = new Vector2(
-                    rect.xMin + (viewport.x * rect.width),
-                    rect.yMin + (viewport.y * rect.height));
+                    viewport.x * rect.width,
+                    viewport.y * rect.height);
             }
         }
     }

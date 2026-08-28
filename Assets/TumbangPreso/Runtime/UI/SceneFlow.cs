@@ -70,13 +70,22 @@ namespace TumbangPreso.UI
             /// ⚠️ AND IT LIVES HERE RATHER THAN IN THE MAP SCENE, for the reason this struct's
             /// header already gives: `tools/maps/build_*.py` emit the arenas WHOLESALE, so a
             /// camera placed in one by hand survives exactly until the next layout run.
+            ///
+            /// ⚠️⚠️ 13.2 AND 3.4 WERE MEASURED OFF A RENDER, NOT PICKED, AND THE ARITHMETIC ALONE
+            /// GOT IT WRONG TWICE. The first pass used 9.2 and 2.9 and `Lobby-v1.png` showed the
+            /// outer two of the four outside the frame; the second used 12.6 and `Lobby-v6.png`
+            /// showed the local player's own body behind the config panel. At 13.2, with
+            /// `MapPreviewSurface.LobbyFieldOfView` 32, the visible frame is about 7.6 m tall and
+            /// 13.5 m wide, which is about 143 px per metre: four bodies at `LobbyCast.Spacing`
+            /// 1.20, offset by `LobbyCast.LateralOffset`, land inside the 625 px gap between the
+            /// two corner panels with room for a nameplate over each head.
             /// </summary>
             public readonly float LobbyDistance;
             public readonly float LobbyHeight;
 
             public MapEntry(string id, string name, string tagline,
                             float yaw, float distance, float height,
-                            float lobbyDistance = 9.2f, float lobbyHeight = 2.9f)
+                            float lobbyDistance = 13.2f, float lobbyHeight = 3.4f)
             {
                 Id = id;
                 Name = name;

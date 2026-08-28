@@ -102,7 +102,16 @@ namespace TumbangPreso.Net
         // second's ready press as a peer id. 4 to 5 ADDED `Score`, which is what makes an award
         // audible and visible on a peer that is not the host (`docs/TODO.md` § 57.3).
         // One bump per incompatible shape, not per day.
-        public const int ProtocolVersion = 5;
+        //
+        // ⚠️⚠️ 5 to 6 ADDED `Chat` AND `ChatLine`, AND IT IS THE ONLY BUMP THE WHOLE PUBG LOBBY
+        // BATCH COSTS. 🧑 2026-08-28: *"yea maybe add a chat to our game too that works in lobby
+        // and ingame"*. Everything else in that batch (the lobby landing straight from
+        // MULTIPLAYER, the auto-host, the in-lobby join panel, the cast standing in the arena,
+        // the START/READY split) is drawn from state that was ALREADY replicated, which is why
+        // `docs/TODO.md` § 68.2 held every bump until this one message so there is exactly one.
+        // Both machines must be rebuilt from this branch or they refuse each other at approval,
+        // by design; § 59.2 is what makes the refusal say so instead of hanging.
+        public const int ProtocolVersion = 6;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =

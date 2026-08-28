@@ -6882,6 +6882,72 @@ named inline; this is the same trap on a different screen.
 6. § 69's chat, and the single protocol bump.
 7. The full verification pass in § 68.14.
 
+### 68.17 What landed on the `PUBG` branch, and the five things the renders found
+
+Steps 1 to 5 of § 68.15 are in. Every number below was MEASURED off a capture rather than
+argued, which is the only reason any of them is right: five of the six were wrong on the first
+pass and none of the six would have been caught by a test.
+
+**The files.** `LobbyChrome.cs` (the `Street` arrangement and the tabs), `LobbyCast.cs` (the four
+bodies), `LobbyNameplates.cs` (the plates over them), `LobbyJoinPanel.cs` (host, join, both
+browsers), `LobbyChat.cs` (§ 69, used by the lobby AND the arena). `ConvertedMatchSetup` gained
+the state machine and nothing else; `MapPreviewSurface` gained `Adopt`, `MapShown` and the lobby
+shot; `MenuKit` gained `Fit`, `FitBox` and `FitBlock`.
+
+**⚠️⚠️ THE CAST FACED THE WRONG WAY, AND THE NOTE THAT SAYS SO IS MISLEADING.**
+`ModelPreview.FacingYaw` is 180 with a header about Godot's handedness, and reading it as "the
+model's front is its local -Z" is the wrong inference. `Lobby-v1.png` is four backs.
+`LookRotation` aligns local **+Z**, and these rigs face **+Z**, so the direction to point along is
+`-forward` (subject toward camera). One sign, and no test in this repo can see it.
+
+**⚠️⚠️ A RECT HANDED TO A LAYOUT GROUP IS A REQUEST, NOT AN INSTRUCTION, AND THAT COST THREE
+RENDERS.** `LeftColumn` was set to 580 and `ReportColumns` measured it at 580, and the panel
+inside it drew **820**. Three separate things get to overrule the width: the authored
+`VerticalLayoutGroup` ships with `childControlWidth` OFF so it positions children without sizing
+them, a child's `LayoutElement.minWidth` outranks the group even once control is on, and a child's
+own `ContentSizeFitter` rewrites the rect after the group has finished. `Narrow` answers all
+three. **`localScale` is what actually settled it**, because nothing in Unity's layout reads it,
+and it shrinks the panel WITH its type and its borders, which a width alone does not.
+`LeftScale` 0.72 and `RightScale` 0.86 open the middle band from 320 px to about 800.
+
+**⚠️⚠️ THE FIT PASS HAS TO RUN MORE THAN ONCE.** `Lobby-v2.png` still reads `LOBBY · YOU ARE
+HOSTIN` under the SPECTATE button after a fit pass that had already run and reported success: the
+widths it measured came from a chain of layout groups that had not converged, so it measured
+against a width nothing would ever have and concluded the string fitted. It now repeats for
+`FitPasses` frames and forces a real `LayoutRebuilder` pass first, because
+`Canvas.ForceUpdateCanvases` flushes the canvas and does not run the layout system.
+
+**⚠️ THE NAMEPLATES WERE ALL IN THE BOTTOM-LEFT CORNER**, drawn as four stray `BOT` chips over the
+BACK button, which reads as a chrome bug rather than a projection one. A plate is anchored at
+(0,0), so its `anchoredPosition` is already measured from the parent's bottom-left; adding
+`rect.xMin`, which on a centred-pivot stretched rect is minus half the width, subtracted half a
+screen twice.
+
+**⚠️ THE LOBBY SHOT NEEDED ITS OWN LENS, NOT JUST ITS OWN DISTANCE.** Framing four people to fill
+half the height at the map shot's 58 degrees puts the camera about 3 m away and leaves the outer
+two at 34 degrees off axis, visibly stretched. `LobbyFieldOfView` 32 puts the same framing about
+7 m back at 17 degrees off axis, and keeps more of the street readable behind them.
+`LobbyDistance` 12.6 and `LobbyHeight` 3.4 with `LobbyLookHeight` 0.85: aiming LOWER is what
+lifts the cast clear of the corner furniture without changing how big they are.
+
+**⚠️ THE ACTIVE TAB IS AMBER, NOT GREEN.** `WoodPrimaryButton` is green and means ACT (START
+MATCH, READY); a tab is not an action, it is a statement about where you already are, and painting
+it green put two "press me" buttons on one screen with the more important one further from the
+hand. `WoodAmberButton` is new in `GodotTheme` and introduces no colour: amber is already this
+UI's attention colour and is in `UiTheme`.
+
+**What is verified.** `dotnet test` 111 green. `Checks.RunAll` all five green.
+`audit_wire_payloads.py` 47 named messages, 0 mismatched, `Chat` and `ChatLine` among them.
+`audit_request_call_sites.py` 43 entry points, 0 unreachable. `audit_ability_authority.py` 40
+sites, 0 ungated on another body. `TheLobbyDraws` passes and writes
+`Logs/shots-runtime/Lobby-v*.png`.
+
+**⚠️ WHAT IS NOT VERIFIED IS THE ONLY THING THAT MATTERS: § 68.14 STEP 7, THE TWO-PROCESS RUN.**
+Every fault this batch could still hold is on the far side of a second machine: host to leave to
+join in one launch (§ 68.6), the LAN/online toggle, a joiner's cast wearing the right character,
+the ready ticks moving on somebody else's screen, and chat in both directions. **Nothing here has
+been played by two people.**
+
 ---
 
 ## 69 · The game has no chat, in the lobby or in a match ⚠️ OPEN, PLANNED 2026-08-28

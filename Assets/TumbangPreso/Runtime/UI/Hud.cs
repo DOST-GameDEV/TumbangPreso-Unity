@@ -2163,6 +2163,39 @@ namespace TumbangPreso.UI
         // BUILD. The arrangement and every offset are `HUD.tscn`'s.
         // -------------------------------------------------------------------
 
+        /// <summary>
+        /// In-match chat, which is the same component the lobby draws.
+        ///
+        /// 🧑 2026-08-28: *"a chat to our game too that works in lobby and ingame"*.
+        ///
+        /// ⚠️⚠️ NETWORKED MATCHES ONLY. A solo practice match against three bots has nobody to
+        /// talk to, so a chat box there is a control that cannot do anything, and it would sit
+        /// over the bottom-left of a screen that `docs/TODO.md` § 45 spent a whole pass making
+        /// quieter. `NetAuthority.IsNetworked` is the test and it is asked once, at build, because
+        /// a match cannot become networked halfway through.
+        ///
+        /// ⚠️ IT IS BUILT FIRST SO EVERYTHING ELSE DRAWS OVER IT. The ability deck and the status
+        /// stacks own the bottom of the screen and are what a player is reading during a fight;
+        /// chat is the thing that may be occluded, not the other way round. `docs/TODO.md` § 46
+        /// is two entries about a banner drawn on top of something, both from getting this order
+        /// wrong.
+        /// </summary>
+        private void BuildChat()
+        {
+            if (!NetAuthority.IsNetworked) return;
+
+            _chat = LobbyChat.Attach(_root, inMatch: true);
+
+            // ⚠️ ABOVE THE DECK, NOT IN THE CORNER. The bottom-left corner of a match is the
+            // ability deck and the status stacks, and `docs/TODO.md` § 46 is two entries about a
+            // banner drawn on top of something plus a third, § 46.4, that was found and NOT fixed
+            // ("YOU ARE VULNERABLE" is behind the deck too). 240 px clears the deck's authored
+            // height with room for the log's six lines to grow upward.
+            _chat?.PlaceAt(new Vector2(40.0f, 240.0f), 560.0f);
+        }
+
+        private LobbyChat _chat;
+
         private void Build()
         {
             var canvasGo = new GameObject("HudCanvas");
@@ -2189,6 +2222,8 @@ namespace TumbangPreso.UI
             // screenshot or a clip of a bug is only actionable if it says which build it came
             // from, and the frames people send are gameplay frames.
             GameVersion.AttachTo(_root, over3d: true);
+
+            BuildChat();
 
             BuildDangerFlash();
             BuildFrostVignette();

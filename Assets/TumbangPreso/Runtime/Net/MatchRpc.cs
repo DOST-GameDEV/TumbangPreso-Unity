@@ -85,7 +85,12 @@ namespace TumbangPreso.Net
                         Spectator = peer.Spectator,
                         CharacterPick = peer.CharacterPick,
                         CanPick = peer.CanPick,
-                        SlipperPick = peer.SlipperPick
+                        SlipperPick = peer.SlipperPick,
+
+                        // ⚠️ THE HOST ANSWERS ITS OWN QUESTION FROM ITS OWN SET, so the lobby
+                        // draws the same tick on the host's screen that the broadcast puts on
+                        // everybody else's. See `LobbySeatInfo.Ready`.
+                        Ready = _lobbyReady.Contains(peer.PeerId),
                     };
                 }
                 return new LobbySeatInfo { Seat = slot, Occupied = false };
@@ -222,6 +227,8 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("PlayAction", OnPlayActionMsg);
             cm.RegisterNamedMessageHandler("PlayStyle", OnPlayStyleMsg);
             cm.RegisterNamedMessageHandler("Score", OnScoreMsg);
+            cm.RegisterNamedMessageHandler("Chat", OnChatMsg);
+            cm.RegisterNamedMessageHandler("ChatLine", OnChatLineMsg);
 
             _handlersOn = cm;
         }
@@ -750,6 +757,13 @@ namespace TumbangPreso.Net
                       $"-> {LobbyReadyCount()} of {LobbyExpectedReady()}");
 
             BroadcastReadyTally();
+
+            // ⚠️⚠️ THE ROSTER GOES OUT TOO, BECAUSE THE TICK LIVES ON IT. `ReadyTally` carries the
+            // COUNT and `SyncLobbyPicks` carries the per-seat `Ready` the nameplates draw; without
+            // this line the number under the button moved and not one tick over anybody's head
+            // did, which is the same "works on the host's screen or nobody's" shape
+            // `docs/TODO.md` § 55 is a whole section about.
+            BroadcastLobbyPicks();
         }
 
         /// <summary>
@@ -806,6 +820,160 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int ready);
             reader.ReadValueSafe(out int expected);
             OnLobbyReadyChanged?.Invoke(ready, expected);
+        }
+
+        // -------------------------------------------------------------------
+        // SECTION: CHAT
+        //
+        // 🧑 2026-08-28: *"yea maybe add a chat to our game too that works in lobby and ingame"*.
+        // Four people in a lobby had no way to say anything to each other, and four people in a
+        // match had no way to call a play. Emotes travel (§ 38.3) and are not the same thing.
+        //
+        // ⚠️⚠️ THIS IS THE ONE THING IN THE WHOLE PUBG BATCH THAT MOVES `ProtocolVersion`, 5 to 6,
+        // so both machines must be rebuilt from this branch or they refuse each other at approval.
+        // `docs/TODO.md` § 59.4 records what a bump costs and § 68.2 records why every other part
+        // of this work was deliberately built without one. Bump it ONCE, here.
+        //
+        // ⚠️⚠️ THE SENDER IS NGO'S AUTHENTICATED CLIENT ID AND THE NAME IS LOOKED UP HOST-SIDE.
+        // The peer never writes who it is. § 54 settled this for `DeclareReady` after the opposite
+        // shipped: a field the host has to remember to ignore is a field that gets trusted, and
+        // there every caller reached for `NetAuthority.LocalSlot`, which is a SEAT, so the host
+        // keyed its set by a seat from one peer and a transport id from another. A chat line is
+        // the one message in this game where a spoofable name is not merely a bug.
+        //
+        // ⚠️ AND THE HOST CLAMPS BOTH LENGTH AND RATE. § 38.9 found two request channels any
+        // client could flood; a text channel is the obvious third, and it is the only one whose
+        // payload is variable-length. Both limits are enforced HERE, on the authority, not in the
+        // UI, because the UI is the half an attacker does not run.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// The longest line the host will relay, in characters.
+        ///
+        /// ⚠️ 120 IS A WIRE BOUND AND A LAYOUT BOUND AT ONCE. `LobbyChat` draws about 64
+        /// characters per line at its authored size, so this is under two wrapped lines in the log
+        /// and cannot push the panel past the height it was given.
+        /// </summary>
+        public const int MaxChatLength = 120;
+
+        /// <summary>Seconds a peer must wait between lines. See the flood note above.</summary>
+        public const float MinChatInterval = 0.6f;
+
+        /// <summary>Raised on every peer with (who, what) when a line is relayed.</summary>
+        public static event Action<string, string> OnChatLine;
+
+        private readonly Dictionary<int, float> _lastChatAt = new Dictionary<int, float>();
+
+        /// <summary>
+        /// Says something. Returns false when there was nowhere to send it, which the caller draws
+        /// rather than swallowing.
+        ///
+        /// ⚠️ SAME `IsConnectedClient` TEST `DeclareReadyServerRpc` USES, and for the reason its
+        /// header gives at length: `IsListening` goes true at `StartClient`, well before approval,
+        /// so a line typed during the join window would go to a transport with nowhere to send it
+        /// and report nothing.
+        /// </summary>
+        public bool SendChatServerRpc(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return false;
+
+            if (NetAuthority.IsHost)
+            {
+                HostRelayChat(NetAuthority.LocalPeerId, text);
+                return true;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null || !_nm.IsConnectedClient)
+                return false;
+
+            string trimmed = ClampChatLine(text);
+
+            // ⚠️ SIZED FROM THE STRING RATHER THAN A FIXED 16 LIKE THE FLAG MESSAGES ABOVE.
+            // `FastBufferWriter` does not grow past its capacity; a 120-character line is up to
+            // 480 bytes as UTF-32-safe UTF-8 plus a four-byte length prefix, and writing past the
+            // end of a Temp buffer is not a clean failure.
+            using var writer = new FastBufferWriter(FastBufferWriter.GetWriteSize(trimmed) + 8,
+                                                    Allocator.Temp);
+            writer.WriteValueSafe(trimmed);
+            _nm.CustomMessagingManager.SendNamedMessage("Chat", NetworkManager.ServerClientId, writer);
+            return true;
+        }
+
+        private void OnChatMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            reader.ReadValueSafe(out string text);
+            HostRelayChat((int)senderClientId, text);
+        }
+
+        /// <summary>
+        /// ⚠️ THE NAME COMES OUT OF THE LOBBY, NOT OFF THE WIRE. A spectator has no seat and still
+        /// has a name, which is why this reads `PeerRecord` rather than resolving a seat: a
+        /// spectator who cannot speak is a person sitting in the room being ignored, and they are
+        /// usually the one who knows why the last round went wrong.
+        /// </summary>
+        private void HostRelayChat(int peerId, string text)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (string.IsNullOrWhiteSpace(text)) return;
+
+            float now = Time.unscaledTime;
+
+            if (_lastChatAt.TryGetValue(peerId, out float last) && now - last < MinChatInterval)
+                return;
+
+            _lastChatAt[peerId] = now;
+
+            var peer = NetSession.Instance?.Lobby?.PeerById(peerId);
+
+            string who = peer != null && !string.IsNullOrWhiteSpace(peer.Name)
+                ? peer.Name
+                : (peer != null && peer.Seat >= 0 ? $"P{peer.Seat + 1}" : "SOMEBODY");
+
+            string line = ClampChatLine(text);
+
+            if (_nm != null && _nm.CustomMessagingManager != null)
+            {
+                using var writer = new FastBufferWriter(
+                    FastBufferWriter.GetWriteSize(who) + FastBufferWriter.GetWriteSize(line) + 16,
+                    Allocator.Temp);
+
+                writer.WriteValueSafe(who);
+                writer.WriteValueSafe(line);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("ChatLine", writer);
+            }
+
+            // ⚠️ THE HOST RAISES ITS OWN. `SendNamedMessageToAll` loops back into the host (§ 38.1),
+            // and `OnChatLineMsg` refuses the host for that reason, so without this line the one
+            // person who cannot leave the lobby is the one person who cannot see it.
+            OnChatLine?.Invoke(who, line);
+        }
+
+        private void OnChatLineMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost) return;
+            if (!FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out string who);
+            reader.ReadValueSafe(out string line);
+
+            OnChatLine?.Invoke(who, line);
+        }
+
+        /// <summary>
+        /// ⚠️ NEWLINES AND CARRIAGE RETURNS ARE STRIPPED, NOT JUST THE LENGTH CAPPED. A legacy
+        /// `Text` honours a `\n`, so one pasted line could otherwise be twenty rows tall and push
+        /// every other message out of the log: a length cap alone bounds the CHARACTERS and not
+        /// the HEIGHT, and height is what the panel has a fixed amount of.
+        /// </summary>
+        public static string ClampChatLine(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return "";
+
+            string flat = text.Replace('\r', ' ').Replace('\n', ' ').Trim();
+
+            return flat.Length <= MaxChatLength ? flat : flat.Substring(0, MaxChatLength);
         }
 
         public void BeginCountdownClientRpc()
@@ -2197,7 +2365,8 @@ namespace TumbangPreso.Net
                         Spectator = peer.Spectator,
                         CharacterPick = peer.CharacterPick,
                         CanPick = peer.CanPick,
-                        SlipperPick = peer.SlipperPick
+                        SlipperPick = peer.SlipperPick,
+                        Ready = _lobbyReady.Contains(peer.PeerId),
                     };
                 }
                 else
@@ -2211,7 +2380,8 @@ namespace TumbangPreso.Net
                         Spectator = false,
                         CharacterPick = -1,
                         CanPick = -1,
-                        SlipperPick = -1
+                        SlipperPick = -1,
+                        Ready = false,
                     };
                 }
                 _replicatedSeats[slot] = seats[slot];
@@ -2232,6 +2402,7 @@ namespace TumbangPreso.Net
                     writer.WriteValueSafe(s.CharacterPick);
                     writer.WriteValueSafe(s.CanPick);
                     writer.WriteValueSafe(s.SlipperPick);
+                    writer.WriteValueSafe(s.Ready);
                 }
                 _nm.CustomMessagingManager.SendNamedMessageToAll("SyncLobbyPicks", writer);
             }
@@ -2273,6 +2444,7 @@ namespace TumbangPreso.Net
                 reader.ReadValueSafe(out int charPick);
                 reader.ReadValueSafe(out int canPick);
                 reader.ReadValueSafe(out int slipperPick);
+                reader.ReadValueSafe(out bool ready);
 
                 var info = new LobbySeatInfo
                 {
@@ -2283,7 +2455,8 @@ namespace TumbangPreso.Net
                     Spectator = spectator,
                     CharacterPick = charPick,
                     CanPick = canPick,
-                    SlipperPick = slipperPick
+                    SlipperPick = slipperPick,
+                    Ready = ready,
                 };
                 if (seat >= 0 && seat < _replicatedSeats.Length)
                 {

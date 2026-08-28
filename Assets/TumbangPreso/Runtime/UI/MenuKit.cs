@@ -393,6 +393,59 @@ namespace TumbangPreso.UI
         public static bool FitBox(Text label)
             => label == null || Fit(label, label.rectTransform.rect.width);
 
+        /// <summary>
+        /// The other half of the problem: a paragraph, which should WRAP and then be given as much
+        /// height as the wrapping needs.
+        ///
+        /// ⚠️⚠️ `Fit` IS WRONG FOR PROSE AND WOULD SHRINK IT TO NOTHING. A hint line is 140
+        /// characters; fitting that on ONE line inside a 500 px box would drive the type to the
+        /// readable floor and still overflow, and it would be the wrong answer anyway, because a
+        /// paragraph is supposed to be several lines. What it actually needs is the opposite of
+        /// what a headline needs: wrap on, and then a box tall enough for the result.
+        ///
+        /// ⚠️⚠️ AND THE HEIGHT HAS TO REACH THE LAYOUT GROUP, NOT THE RECT. Inside a
+        /// `VerticalLayoutGroup` the parent drives every child's rect during the layout pass, so
+        /// setting `sizeDelta` here is overwritten within the frame. `LayoutElement.preferredHeight`
+        /// is the only channel a child has to ask for room. Without it, `SeatHint` wrapped to three
+        /// lines inside a box the group had sized for two and the last line was drawn under the
+        /// seat rows: measured off `Logs/shots-runtime/Lobby-v1.png`, where the word "others" is
+        /// half behind P1.
+        ///
+        /// ⚠️ IT IS CALLED AFTER A LAYOUT PASS. `preferredHeight` depends on the WIDTH the group
+        /// gave the label, which is zero until the group has run at least once. See
+        /// `ConvertedMatchSetup.FitEverything`.
+        /// </summary>
+        public static void FitBlock(Text label, float maxHeight = 0.0f)
+        {
+            if (label == null) return;
+
+            label.horizontalOverflow = HorizontalWrapMode.Wrap;
+            label.verticalOverflow = VerticalWrapMode.Overflow;
+
+            float room = label.rectTransform.rect.width;
+            if (room <= 1.0f) return;
+
+            float wanted = label.preferredHeight;
+
+            // ⚠️ SHRINK ONLY WHEN A CAP IS GIVEN AND THE PROSE BLOWS PAST IT. A caller with a
+            // fixed slot (a nameplate, a row) has nowhere to grow into; one inside a vertical
+            // group does, and shrinking its type there would be solving a problem it does not
+            // have.
+            if (maxHeight > 1.0f)
+            {
+                while (label.fontSize > MinReadableUnits && label.preferredHeight > maxHeight)
+                    label.fontSize -= 1;
+
+                wanted = Mathf.Min(label.preferredHeight, maxHeight);
+            }
+
+            var element = label.GetComponent<LayoutElement>();
+            if (element == null) element = label.gameObject.AddComponent<LayoutElement>();
+
+            element.preferredHeight = wanted;
+            element.minHeight = wanted;
+        }
+
         public static void Place(RectTransform rt, Vector2 anchor, Vector2 offset, Vector2 size)
         {
             rt.anchorMin = anchor;

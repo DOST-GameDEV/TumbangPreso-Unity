@@ -85,6 +85,13 @@ namespace TumbangPreso.UI
         private LobbyCast _cast;
         private LobbyNameplates _nameplates;
 
+        /// <summary>The PRACTICE / MULTIPLAYER tabs, owned here rather than by the static that
+        /// built them. See <see cref="LobbyChrome.Tabs"/>.</summary>
+        private LobbyChrome.Tabs _tabs;
+
+        /// <summary>The lobby's chat log and entry field. See <see cref="LobbyChat"/>.</summary>
+        private LobbyChat _chat;
+
         /// <summary>
         /// What each seat is wearing, rebuilt on every refresh and handed to the cast.
         ///
@@ -235,6 +242,19 @@ namespace TumbangPreso.UI
             BuildLobbyEntryControls(net);
             WireSeats();
 
+            // ⚠️ LAST OF THE BUILD STEPS, because it REARRANGES what the steps above created:
+            // the entry row goes into the right column's list and the tabs are measured against a
+            // banner that has to exist. Applying the chrome first would move an empty column and
+            // then have rows added back into it at the authored anchors.
+            _tabs = LobbyChrome.Apply(transform, Node, IsLobby, SelectTab);
+
+            BuildChat();
+
+            // ⚠️ MEASURED, NOT ASSUMED. See `LobbyChrome.ReportColumns`: three renders in a row
+            // disagreed with the arithmetic and a screenshot could not say which of the three
+            // possible causes it was.
+            LobbyChrome.ReportColumns(Node);
+
             MatchRpc.OnMapChanged += HandleMapSynced;
             MatchRpc.OnDifficultyChanged += HandleDifficultySynced;
             MatchRpc.OnLobbyPicksSynced += HandleLobbyPicksSynced;
@@ -304,7 +324,7 @@ namespace TumbangPreso.UI
 
             if (ok)
             {
-                SetStatus("Your lobby is open. Read the code out, or press JOIN to enter somebody else's.");
+                SetStatus("Lobby open. Share the code, or press JOIN.");
             }
             else
             {
@@ -539,7 +559,13 @@ namespace TumbangPreso.UI
         /// </summary>
         private void BuildLobbyEntryControls(NetSession net)
         {
-            if (!IsLobby || net == null) return;
+            // ⚠️ BUILT ON BOTH TABS AND HIDDEN ON ONE, for the same reason `BuildCast` is: the
+            // tabs switch in place, so a control that only exists when the screen was ENTERED as a
+            // lobby is missing for anybody who arrives on practice and switches. `net` is ensured
+            // by `Wire` on the lobby path and may legitimately be null on the practice one, so the
+            // panel is built against `NetSession.Ensure()` rather than refused.
+            if (net == null) net = NetSession.Ensure();
+            if (net == null) return;
 
             var canvas = GetComponentInParent<Canvas>();
             if (canvas == null) return;
@@ -595,10 +621,12 @@ namespace TumbangPreso.UI
         {
             if (_preview == null || previewNode == null) return;
 
-            _preview.LobbyShot = IsLobby;
-
-            if (!IsLobby) return;
-
+            // ⚠️⚠️ BUILT ON BOTH TABS AND HIDDEN ON ONE, RATHER THAN BUILT ONLY WHEN NEEDED. The
+            // `PRACTICE` and `MULTIPLAYER` tabs switch IN PLACE with no scene load, so a cast that
+            // only exists when the screen was entered as a lobby would be missing for anybody who
+            // arrived on practice and switched. Building it once and calling `SetVisible` makes
+            // the tab a display change rather than a construction step, which is the difference
+            // between a tab that responds and a tab that stutters.
             _cast = LobbyCast.Attach(_preview);
 
             var rect = previewNode as RectTransform;
@@ -606,6 +634,77 @@ namespace TumbangPreso.UI
             {
                 _nameplates = LobbyNameplates.Attach(rect, _preview, _cast);
             }
+
+            ApplyCastVisibility();
+        }
+
+        /// <summary>
+        /// ⚠️ THE PRACTICE SCREEN GETS THE MAP SHOT AND NO CAST, AND THAT IS NOT AN OVERSIGHT.
+        /// Offline this screen is a MAP PICKER with a bots row in it: the thing being chosen is
+        /// the arena, so the wide shot from 22 m that every map's `Distance` and `Height` were
+        /// tuned for is the correct picture, and four motionless strangers standing in the middle
+        /// of it would be four seats nobody is sitting in. The lobby is the screen where who is
+        /// here is the question.
+        /// </summary>
+        private void ApplyCastVisibility()
+        {
+            if (_preview != null) _preview.LobbyShot = IsLobby;
+            if (_cast != null) _cast.SetVisible(IsLobby);
+
+            if (_nameplates != null) _nameplates.gameObject.SetActive(IsLobby);
+            if (_chat != null) _chat.gameObject.SetActive(IsLobby);
+        }
+
+        /// <summary>
+        /// The `PRACTICE` and `MULTIPLAYER` tabs, which change what this screen IS without
+        /// changing which scene is loaded.
+        ///
+        /// ⚠️⚠️ NO `SceneFlow.Go`. Reloading `MatchSetup` to switch tab would unload the map
+        /// preview's cached arenas, release both render textures and destroy the cast, so the
+        /// first tab press would cost a full additive arena load and the screen would flash. The
+        /// one-load-per-frame latch would not deduplicate it either: that latch is scoped to a
+        /// single frame on purpose.
+        ///
+        /// ⚠️⚠️ AND LEAVING MULTIPLAYER STOPS THE TRANSPORT. A lobby left listening behind a
+        /// player who switched to practice keeps port 8910, keeps beaconing on the LAN and goes on
+        /// appearing in other people's browsers as a joinable game that nobody is in. That is the
+        /// same leak `Cancel` closes for Escape.
+        /// </summary>
+        private void SelectTab(bool lobby)
+        {
+            if (lobby == IsLobby) return;
+
+            MenuSfx.Click();
+
+            var net = NetSession.Instance;
+
+            SceneFlow.Networked = lobby;
+
+            if (!lobby)
+            {
+                if (net != null && net.IsNetworked) net.Stop();
+
+                _localReady = false;
+                _readyCount = 0;
+                _readyExpected = 0;
+
+                if (_joinPanel != null) _joinPanel.Close();
+
+                SetStatus("");
+            }
+
+            // ⚠️ THE BOTS ROW IS RE-CLAMPED, because `DifficultyOptionCount` drops NONE in a
+            // networked lobby: three empty seats is a different feature with its own rules about
+            // who may sit in them. Switching to MULTIPLAYER while NONE was selected would
+            // otherwise leave an index one past the end of the list the row can cycle.
+            _difficulty = Mathf.Clamp(_difficulty, 0, DifficultyOptionCount - 1);
+
+            ApplyCastVisibility();
+            _tabs?.SetActive(lobby);
+
+            Refresh();
+
+            if (lobby) AutoHost();
         }
 
         /// <summary>
@@ -666,13 +765,43 @@ namespace TumbangPreso.UI
                         ? (string.IsNullOrEmpty(info?.Name) ? $"PLAYER {seat + 1}" : info.Name)
                         : "BOT";
 
+                // ⚠️ THE TICK IS THE HOST'S ANSWER FOR EVERY SEAT NOW, AND THE LOCAL SEAT IS
+                // STILL ALLOWED TO BE AHEAD OF IT. `LobbySeatInfo.Ready` travels with the roster,
+                // so a remote player's tick is honest; the `|| (mine && _localReady)` is the same
+                // optimism `RefreshSeats` applies to the local pick, and for the same reason: a
+                // press is applied here immediately and only reaches the table after a round trip
+                // to the host, and the one person watching for it is the one who pressed it.
+                bool ready = (info != null && info.Ready) || (mine && _localReady);
+
                 _nameplates.SetSeat(seat, who,
-                                    ready: mine && _localReady,
+                                    ready: ready,
                                     taya: seat == defender,
                                     you: mine);
             }
 
             _cast.Show(_castPicks, SceneFlow.SelectedMode);
+        }
+
+        /// <summary>
+        /// The lobby's chat, sat between the two columns rather than on top of either.
+        ///
+        /// ⚠️ NOT IN THE BOTTOM-LEFT DEFAULT, which is where `LobbyChrome` has just put the config
+        /// column and the START button. `LeftWidth` plus two margins is where the clear band
+        /// begins, and the right column's left edge is where it ends.
+        ///
+        /// ⚠️ HIDDEN ON THE PRACTICE TAB. There is nobody to talk to in a solo match against bots,
+        /// and a chat box on that screen is a control that cannot do anything.
+        /// </summary>
+        private void BuildChat()
+        {
+            var canvas = GetComponentInParent<Canvas>();
+            if (canvas == null) return;
+
+            _chat = LobbyChat.Attach(canvas.transform, inMatch: false);
+            if (_chat == null) return;
+
+            _chat.PlaceAt(new Vector2(676.0f, 40.0f), 620.0f);
+            _chat.gameObject.SetActive(IsLobby);
         }
 
         private void OpenJoinPanel()
@@ -1313,11 +1442,14 @@ namespace TumbangPreso.UI
             if (IsLobby && isNetworked)
             {
                 SetText("SeatHeading", NetAuthority.IsHost ? "LOBBY  ·  YOU ARE HOSTING" : "LOBBY  ·  CONNECTED");
+                // ⚠️ SHORT ENOUGH TO FIT THE SLOT THE LAYOUT GIVES IT. The first version of these
+                // two ran to three wrapped lines in a box the vertical group had sized for two,
+                // and the third line was drawn underneath the seat rows. `FitEverything` now asks
+                // the group for the height as well, but a hint that needs three lines of a
+                // four-line panel is a hint nobody reads: the fix is both.
                 SetText("SeatHint", NetAuthority.IsHost
-                        ? "You pick the map and the mode for everyone. Click a free seat to move. "
-                          + "Empty seats are played by bots. Read the code out to the others."
-                        : "The lobby leader picks the map and the mode. Click a free seat to move. "
-                          + "Empty seats are played by bots. Press READY when you are.");
+                        ? "You pick the map and the mode. Click a free seat to move. Empty seats are bots."
+                        : "The leader picks the map and the mode. Click a free seat to move.");
 
                 // Network rows
                 if (_addressRow != null)
@@ -1340,8 +1472,7 @@ namespace TumbangPreso.UI
                 // the join panel is open in the refused case. Nothing here may touch the wire.
                 SetText("SeatHeading", "LOBBY  ·  NOT CONNECTED");
                 SetText("SeatHint",
-                        "Opening a room on your network. If it does not open, press JOIN and "
-                        + "enter somebody else's game with their code or address.");
+                        "Opening a room on your network. If it does not, press JOIN.");
 
                 if (_addressRow != null) _addressRow.SetActive(false);
                 if (_codeRow != null) _codeRow.SetActive(false);
@@ -1362,6 +1493,131 @@ namespace TumbangPreso.UI
             RefreshEntryControls();
             RefreshSeats();
             RefreshCast();
+
+            _fitFrames = FitPasses;
+        }
+
+        /// <summary>
+        /// Set by every `Refresh`, cleared by the fit pass one frame later.
+        ///
+        /// ⚠️⚠️ THE FIT CANNOT HAPPEN INSIDE `Refresh` AND THAT IS NOT A STYLE CHOICE. Every
+        /// measurement it makes reads `rect.width` or `preferredHeight`, and both are meaningless
+        /// until the layout groups have run: a label inside a `VerticalLayoutGroup` has NO WIDTH
+        /// in the frame it was written to, so fitting there measures against zero and returns
+        /// without doing anything. That is the silent-failure half of this problem, and it is why
+        /// `MenuKit.Fit` returns early on a zero rect rather than driving the font to its floor.
+        /// </summary>
+        private int _fitFrames;
+
+        /// <summary>
+        /// How many frames after a refresh the fit pass repeats.
+        ///
+        /// ⚠️⚠️ ONE PASS WAS NOT ENOUGH AND THE RENDER PROVED IT. `Logs/shots-runtime/Lobby-v2.png`
+        /// still reads `LOBBY · YOU ARE HOSTIN` with the SPECTATE button over the last letters,
+        /// after a fit pass that had already run and reported success. The reason is that the fit
+        /// runs one frame after the refresh and the WIDTHS it measures are produced by a chain of
+        /// layout groups: `ContentSizeFitter` on the column resolves from the rows, which resolve
+        /// from their own children, and Unity settles that over more than one frame. A pass made
+        /// against a rect that has not converged measures a width nothing will ever have, finds
+        /// the string fits it, and leaves the label alone.
+        ///
+        /// ⚠️ THREE IS A BOUND, NOT A GUESS AT THE CONVERGENCE TIME. Each pass only ever SHRINKS
+        /// type, so a later pass can correct an earlier one's optimism and none of them can undo
+        /// a correct fit. This is the same shape as `AspectRatioProbes` waiting three frames for
+        /// the same chain, and its note gives the same three reasons.
+        /// </summary>
+        private const int FitPasses = 3;
+
+        /// <summary>
+        /// ⚠️⚠️ ONE PASS THAT ASKS EVERY STRING ON THIS SCREEN WHETHER IT FITS, BECAUSE ASKING
+        /// PER LABEL HAS FAILED FOUR TIMES. 🧑 2026-08-28, twice in one session: *"make sure ur
+        /// shti doesnt have iverfkiw"*, *"make sure ui and hud doesnt overflow"*. The recorded
+        /// history is in `ConvertedScreen.SetHeadline` (the objective card, the deck tile and the
+        /// character ribbon, all in one session), `GameVersion.ApplyTo` (a branch name cut in
+        /// half by a 132 px box) and `docs/TODO.md` § 18. Every one was fixed where it was found
+        /// and the next one appeared somewhere else, because the cause is not any single label:
+        /// it is that legacy `Text` fails SILENTLY in both directions, wrapping out of a box that
+        /// has no second line or drawing straight past the edge.
+        ///
+        /// Two kinds of string, two treatments, and telling them apart is the whole job:
+        ///
+        ///   * A LINE (a value, a button caption, a heading) must stay on one line, so it shrinks
+        ///     until it fits, down to `MenuKit.MinReadableUnits` and no further.
+        ///   * A BLOCK (a hint, a status line) is supposed to wrap, so it wraps and then ASKS ITS
+        ///     LAYOUT GROUP FOR THE HEIGHT the wrapping needs.
+        ///
+        /// ⚠️ IT RUNS IN `LateUpdate` AFTER A REFRESH, not every frame. The measurements are only
+        /// valid after the layout pass, and doing it unconditionally would re-measure a dozen
+        /// labels at 60 Hz for a screen where nothing has changed.
+        /// </summary>
+        private void LateUpdate()
+        {
+            if (_fitFrames <= 0) return;
+
+            _fitFrames--;
+            FitEverything();
+        }
+
+        private void FitEverything()
+        {
+            // ⚠️⚠️ A REBUILD, NOT JUST `ForceUpdateCanvases`. That call flushes the CANVAS, which
+            // is the batching and the vertex data; it does NOT run the layout system, so a rect
+            // whose size is owed to a `ContentSizeFitter` two levels up still reports the value it
+            // had before the refresh. Measuring against that is how a label is told it fits a box
+            // it has never been in.
+            var canvas = GetComponentInParent<Canvas>();
+            var canvasRect = canvas == null ? null : canvas.transform as RectTransform;
+
+            if (canvasRect != null) LayoutRebuilder.ForceRebuildLayoutImmediate(canvasRect);
+
+            Canvas.ForceUpdateCanvases();
+
+            foreach (string node in FitAsLine) FitLine(node);
+            foreach (string node in FitAsBlock) FitParagraph(node);
+
+            // ⚠️ THE SEAT ROWS CARRY A PLAYER NAME TYPED ON ANOTHER MACHINE, which is the widest
+            // arbitrary string this screen can be handed and the only one an attacker-shaped
+            // accident can make 64 characters long.
+            for (int seat = 0; seat < Balance.PlayerCount; seat++) FitLine($"SeatButton{seat}");
+        }
+
+        /// <summary>Single-line controls: shrink to fit, never wrap.</summary>
+        private static readonly string[] FitAsLine =
+        {
+            "MapValueLabel", "ModeValueLabel", "DifficultyValueLabel",
+            "CharacterButton", "PrimaryButton", "StartButton", "SeatHeading",
+        };
+
+        /// <summary>Prose: wrap, then take the height the wrapping needs.</summary>
+        private static readonly string[] FitAsBlock =
+        {
+            "SeatHint", "StatusLabel", "DetailLabel",
+        };
+
+        private void FitLine(string nodeName)
+        {
+            var node = Node(nodeName);
+            if (node == null) return;
+
+            var text = node.GetComponent<Text>() ?? node.GetComponentInChildren<Text>();
+            if (text == null) return;
+
+            // ⚠️ MEASURED AGAINST THE LABEL'S OWN RECT, WHICH ON A WOOD BUTTON IS ALREADY INSET
+            // FROM THE PLATE. The converter gives every button caption a rect 48 px narrower than
+            // its face, so measuring against the BUTTON would let a caption run under its own
+            // border and still report as fitting.
+            MenuKit.FitBox(text);
+        }
+
+        private void FitParagraph(string nodeName)
+        {
+            var node = Node(nodeName);
+            if (node == null) return;
+
+            var text = node.GetComponent<Text>() ?? node.GetComponentInChildren<Text>();
+            if (text == null) return;
+
+            MenuKit.FitBlock(text);
         }
 
         /// <summary>
