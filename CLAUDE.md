@@ -29,7 +29,7 @@ them here; that rule inverted the day this repo became the game, and the folder 
 telling every reader the opposite of the truth. Flattened into `docs/` on 2026-08-23.
 
 ⚠️⚠️ **THE GAME IS TWO MODES AND BOTH SHIP.** Classic is the street game with no powers, for
-players who want less happening on screen. Hero Strike adds five heroes with two skills and an
+players who want less happening on screen. Hero Strike adds six heroes with two skills and an
 ultimate each, and exists to raise the ceiling for competitive play. **Neither is a variant of
 the other.** `docs/VISION.md` § 1 has the reasoning and the rules that follow.
 

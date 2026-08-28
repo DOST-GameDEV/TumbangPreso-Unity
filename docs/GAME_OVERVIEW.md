@@ -35,7 +35,7 @@ caught. `VISION.md` § 0 states it as the sentence every rule protects.
 | Players | 4, free for all | 4, free for all |
 | Rounds | **4**, one full rotation | **8**, two full rotations |
 | Round length | 90 s | 90 s |
-| Roster | the twelve street characters | the five heroes |
+| Roster | the twelve street characters | the six heroes |
 | Powers | **none, and that is the feature** | two skills and an ultimate each |
 | Governed by | `Design.md` | `Design.md` § 13 points at the files |
 
@@ -172,7 +172,7 @@ Three maps ship:
 
 ## 6 · Hero Strike
 
-Five heroes, each with two skills and an ultimate. Everything in § 4 still applies: the kit is
+Six heroes, each with two skills and an ultimate. Everything in § 4 still applies: the kit is
 added to the street game, not a replacement for it.
 
 ### 6.1 How a power is paid for
@@ -312,7 +312,7 @@ older build and entry 0 all play the same game.
 ⚠️ **No character has all three.** Every row spends what it takes somewhere else, and the two 5-5
 rows (BEBANG, BERTO, LOLA PACING) all pay for it in BILIS.
 
-### The five heroes, for Hero Strike
+### The six heroes, for Hero Strike
 
 | Hero | BILIS | LAKAS | TATAG | Element | Ultimate cost |
 |---|---|---|---|---|---|
@@ -343,7 +343,7 @@ correct answer.
 * **REBOUND** is how far it throws back the tsinelas that hit it.
 * **STANCE** divides the hit margin, so a high-stance can refuses glancing knockdowns.
 
-### The four tsinelas
+### The ten tsinelas
 
 | Tsinelas | FLIGHT | IMPACT | RECOVERY | What it does |
 |---|---|---|---|---|

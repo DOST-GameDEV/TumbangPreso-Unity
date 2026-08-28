@@ -61,9 +61,23 @@ generator, give it paths nothing else writes.
 
 | Asset | Produced by | Run it with |
 |---|---|---|
-| The four **cans** (`lata_*.obj`) + the viewmodel arm + the whole `env_kit` | `tools/models/generate_all.gd` | `godot --headless -s tools/models/generate_all.gd` |
-| The four **can textures** (`textures/lata_*.png`) | `tools/models/build_prop_textures.py` | `python tools/models/build_prop_textures.py` (needs Pillow) |
-| The nine **slipper skins** (`tsinelas_*`) | sourced GLBs plus `tools/build_slipper_roster.py` | Blender batch mode, see the script header |
+| The six **cans** (`lata_*.obj`) | `tools/build_lata.py` | `python tools/build_lata.py` |
+| The viewmodel arm + the whole `env_kit` | `tools/models/generate_all.gd` (GODOT REPO, FROZEN) | see below |
+| The four ORIGINAL **can textures** (`textures/lata_*.png`) | `tools/models/build_prop_textures.py` | `python …` (needs Pillow) |
+| Any **can texture**, matte removed | `tools/strip_texture_border.py` | `python tools/strip_texture_border.py <png…>` |
+| The ten **slipper skins** (`tsinelas_*`) | sourced GLBs plus `tools/build_slipper_models.py` | Blender batch mode, see the script header |
+| A **prop already in the repo**, put into the carry frame | `tools/normalise_obj_prop.py` | `python tools/normalise_obj_prop.py <obj>` |
+
+⚠️⚠️ **`tools/build_slipper_roster.py` AND `tools/models/glb_tool.py` NO LONGER EXIST.** The
+first was deleted on 2026-08-28 once its last row, PAMBAHAY, took a new source; leaving it
+would have meant two generators writing the same `tsinelas_<id>.glb` filenames, which is the
+fault `generate_all.gd`'s own header records costing a session. The second was already gone
+before that, which is why `tsinelas_sike.mtl` is maintained by hand and says so.
+
+⚠️ **`generate_all.gd` lives in the FROZEN Godot repo and must not be run or edited.** That is
+why the can builder was ported to `tools/build_lata.py` rather than invoked: a fifth can could
+not otherwise be added. That port is proved by `--verify`, which rebuilds all four original
+cans and compares them line by line against the files in this repo.
 | The twelve **Person palettes** (`person_*.tres`) | `tools/models/generate_person_palettes.py` | `python …` |
 | Both **maps** | `tools/maps/build_*.py` | `python …` |
 
@@ -168,7 +182,15 @@ This law used to read *"Flat colour, no textures, no UVs"* without exception, an
 it still governs the environment and the characters. The lata and the tsinelas
 are now textured, on a direct human ruling: they drew four cans by hand — three
 carrying readable parody wordmarks (PASIP, BOYBEN, DECADES TUNA) — and
-supplied flattened 360° label wraps for the purpose. 🧑: *"you can use the
+supplied flattened 360° label wraps for the purpose.
+
+⚠️ **Two more arrived on 2026-08-28 and they came the same way**: PIYESTA (Bel Monte
+fruit cocktail) and KARNE NORTE (Purofoods corned beef), supplied as flattened wraps at
+1774 x 887 and resampled to the 1024 x 512 every other label uses. Both carry parody
+wordmarks in the same spirit as the first three. **A new can needs a SILHOUETTE nobody
+else has**, not just a new label, because a label is a texture read and dies at arena
+distance under the toon bands: PIYESTA is the widest in the set with a deep seam ring at
+a third height, KARNE is the only tapered one. 🧑: *"you can use the
 flattened art for textures bcz its easier that way, you cant redraw this too
 bro"*. Stripped to a flat `Kd`, a Pasip and a Decades are the same grey cylinder
 and all of the Filipino specificity is gone with the label.
