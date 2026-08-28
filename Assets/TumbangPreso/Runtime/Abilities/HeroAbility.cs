@@ -572,6 +572,51 @@ namespace TumbangPreso.Abilities
             EndEarly(ctx);
         }
 
+        /// <summary>
+        /// Takes back a cast this peer PREDICTED and the host then refused.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE THE HOST USED TO REFUSE SILENTLY AND THE OWNER PAID FOR IT.
+        /// `HeroAbilitySystem.Cast` runs the kit locally before it asks, so by the time
+        /// `MatchRpc.OnReqAbilityMsg` drops the request on `PlausibleIntentPose` the client has
+        /// already spent the cooldown, played the confirm and drawn the effect. Nothing came
+        /// back, so the player was charged a full cooldown for an ability that never happened on
+        /// the machine that decides what happened. `ApplyNetworkSnapshot`'s `mayLower` guard, which
+        /// is `docs/TODO.md` § 71's Phaister fix, is what stops the host handing the cast straight
+        /// BACK a snapshot later, and it is deliberately one-directional: it closed the spam and
+        /// it made the silent refusal permanent instead of self-healing. This is the other
+        /// direction, and it is the one the owner actually needs.
+        ///
+        /// ⚠️⚠️ IT IS NOT `Reset()`. Reset zeroes `DurationRemaining` behind the ability's back,
+        /// and `ResetForRound`'s note records at length what that leaks: Demonic Carapace's stun
+        /// immunity and Phantom Phase's tag immunity are GRANTS handed out in `OnActivate` and
+        /// taken back in `OnEnd`, so dropping the timer without running `OnEnd` leaves a client
+        /// permanently unstunnable off a refused cast. `EndEarly` is the path that ends a live
+        /// effect properly and is a no-op when nothing is running.
+        ///
+        /// ⚠️⚠️ AND THE WIND-UP HAS TO COME OFF FIRST, FOR THE REASON `Reset` GIVES. A refusal can
+        /// land during the wind-up beat, when `OnActivate` has NOT run yet and the caster is
+        /// rooted in a speed zone that only `ReleaseRoot` can exit. Zeroing `WindupRemaining`
+        /// without releasing would strand the player at `RootSpeed` for the rest of the match with
+        /// nothing left to let them go, which is the worst outcome in this file.
+        ///
+        /// ⚠️ THE REFUND IS THE EXACT INVERSE OF WHAT `Activate` SPENT, and it is written as the
+        /// same branch so the two cannot drift: a charge ability spends a charge and nothing else,
+        /// so it gets the charge back and its cooldown is not touched.
+        ///
+        /// ⚠️ THE CAP IS REAL. `GrantCharge` clamps to `MaxCharges` and this goes through it, so a
+        /// duplicated or replayed refusal cannot mint charges.
+        /// </summary>
+        public void RollBackPredictedCast(AbilityContext ctx)
+        {
+            ReleaseRoot();
+            WindupRemaining = 0.0f;
+
+            EndEarly(ctx);
+
+            if (UsesCharges) GrantCharge();
+            else CooldownRemaining = 0.0f;
+        }
+
         public void EndEarly(AbilityContext ctx)
         {
             if (DurationRemaining > 0.0f)

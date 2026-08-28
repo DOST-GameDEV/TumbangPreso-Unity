@@ -92,6 +92,14 @@ in `Start` on every peer, so a client has had the right numbers all along and ne
 **Verified:** `ArenaBoundsProbe`, and by the arithmetic above. ⚠️ The two-machine case has NOT
 been re-run on Hamachi; that needs two people and is the acceptance test.
 
+⚠⚠ **THE TRANSPORT HALF WAS APPLIED TO THE BOTS AND NOT TO THE SLIPPERS, AND THE PARAGRAPH
+ABOVE IS WHY IT LOOKED FINISHED.** The rule it states, that everything except the two pose streams
+is an EVENT, is true of a grab and of a throw and is NOT true of this file's own
+`BroadcastSlipperStateIfChanged`, which is a position stream wearing the `SyncSlipper` name and
+fired 50 times a second at `ReliableSequenced` for any shoe in flight. So the tsinelas half of
+🧑's report kept its transport cause for a day after the bots lost theirs.
+**§ 77.1 is the fix and the arithmetic.**
+
 ### 71.4 · Every arena was measured with Eskinita's walls ✅ CLOSED 2026-08-29
 
 🧑: *"out of bounds sa ilalim ng tulay map"*, *"ilalim ng tulay map appears to have broken
@@ -214,8 +222,16 @@ What has been ruled out, and how:
 ⚠️ The probes run a lobby with `SceneFlow.Networked` false, which IS the singleplayer case both
 name-field reports name, so that is not the gap either.
 
-**What has not been ruled out:** a live NETWORKED lobby (the probes never host or join), and a
-built player as opposed to the editor. `LobbyChat`'s `OnPointerClick` exists because a press
+**What has not been ruled out:** ✅ **the live NETWORKED lobby is ruled out as of § 77.4.**
+`NetworkedLobbyTypingProbe` starts a real host through `NetSession.StartHostAsync`, sets
+`SceneFlow.Networked`, and runs `LobbyTypingProbe.Check` itself rather than a copy of it, so the
+two probes differ in exactly one thing. It passes, and it logs an inventory naming every
+`InputField` and whether `LobbyChat` was live while it passed, because a pass with no chat in the
+scene would rule out nothing.
+
+⚠⚠ **SO ONE SUSPECT IS LEFT AND IT IS THE BUILT PLAYER AS OPPOSED TO THE EDITOR**, which is
+the only item on this list no probe in this repository can reach. Everything else named here has
+now been driven. `LobbyChat`'s `OnPointerClick` exists because a press
 that missed its field was being swallowed by a plate, which is evidence this class of failure is
 real on this screen even though neither probe can currently produce it.
 
@@ -391,7 +407,7 @@ indistinguishable from a field somebody forgot to parse. The message carries no 
 
 ---
 
-## 74 · Zack's shock trail has the hazard bug that was fixed everywhere else ⚠️ OPEN
+## 74 · Zack's shock trail has the hazard bug that was fixed everywhere else ✅ CLOSED 2026-08-29
 
 `ShockTrailComponent.Update` opens with `if (!NetAuthority.ShouldResolve()) return;`, which is
 the exact shape § 71 removed from Nemu's void and Cheska's ice: the effect runs on the host
@@ -405,6 +421,11 @@ rather than done so the next session does not have to rediscover the shape.
 
 **Done looks like:** the same treatment the other two got, and `audit_ability_authority.py`
 still reporting 0 ungated on another body afterwards.
+
+✅ **DONE IN § 77.3, AS NETWORK WORK RATHER THAN AS A RETUNE, AND NO NUMBER CHANGED.** The owner's
+boost runs wherever the peer owns that body; the stagger and its two flourishes stay host-only. The
+audit reports **0 ungated on another body** and it caught the first draft of the change doing the
+opposite, which § 77.3 records.
 
 ---
 
@@ -439,9 +460,27 @@ want different work:
 **Done looks like:** ask which, then do it. Do not guess: (1) changes a number `Design.md`
 owns, and shipping the wrong one of these is a retune that has to be undone.
 
-## 76 · Holding the pickup key does not right the can in the tutorial ⚠️ OPEN
+## 76 · Holding the pickup key does not right the can in the tutorial ✅ CLOSED 2026-08-29
 
-🧑 2026-08-29: *"in tutorial holding 'x' doesn't reset the can"*.
+🧑 2026-08-29: *"in tutorial holding 'x' doesn't reset the can"*, and then, on the build
+carrying the batch below: **the tutorial can-reset is fixed.**
+
+⚠⚠ **CLOSED ON THE PLAYER'S REPORT, NOT ON A MEASUREMENT, AND THAT DISTINCTION IS THE
+WHOLE VALUE OF THIS LINE.** Nothing in this session reproduced it and nothing in this session
+targeted it: the eight gates below were traced and every one passed, so no code on that path was
+changed. It is therefore fixed by something else in the batch rather than by a fix aimed at it,
+and **which** something is not known. The two candidates are both in this file: § 71.4 remeasured
+every arena's bounds from the wall FACES rather than their centres, which moves where a knocked
+can may come to rest, and § 71.3 clamped replica props to those same bounds. The one gate below
+that a source read explicitly could not settle is `inRing`, which is a question about **where the
+can rolls to**, and both of those entries changed exactly that.
+
+⚠️ **SO THE TEST IN "DONE LOOKS LIKE" IS STILL WORTH WRITING, AND IT IS NOW THE ONLY THING
+THAT WOULD TELL ANYBODY WHY THIS STOPPED HAPPENING.** A report closing a bug nobody deliberately
+fixed is a bug that can come back on the commit that retunes the arena, with nothing anywhere to
+catch it. It is left below rather than deleted with the entry.
+
+The trace is kept in full for that reason.
 
 **Not reproduced headlessly, and every gate on the path was traced and passes.** Written down
 in full because ruling these out is most of the work, and the next session should start after
@@ -476,6 +515,207 @@ press: `InputIntent` is the seam the bots already use and it needs no input syst
 ⚠️ Do not "fix" this by widening `Balance.InteractionRadius`. That constant is shared with the
 live game and `docs/Design.md` owns it; if the roll is the cause, the fix is where the can comes
 to rest, not how far a taya can reach.
+
+---
+
+## 77 · The network deep-dive: the half of § 71.3 that was never applied, and a refusal that was never sent ✅ CLOSED 2026-08-29
+
+Picked up from the § 71.3 handoff, which asked for four things: verify § 71.3 landed, answer the
+silent `PlausibleIntentPose` drop, build § 72's probe against a live lobby, and do § 74. All four
+are below. ⚠️ **The one thing that could not be done on this machine is the acceptance test**, and
+it is unchanged: see § 77.5.
+
+**Verifying § 71.3 landed, which was item 1:** it did, both halves. `MatchRpc.PoseDelivery` is
+`UnreliableSequenced` and is passed by `SyncUnit` and `SubmitMove`; `CharacterMotor.SetNetworkPose`
+and `Slipper.ApplySnapshotState` both clamp replicas to `AIController.PlayableHalfX/Z`. What the
+verification found is that the transport half was applied to one of the two objects the report
+named, which is § 77.1.
+
+### 77.1 ⚠️⚠️ THE SLIPPER STREAM WAS STILL RELIABLE AT 50 Hz, WHICH IS THE TSINELAS HALF OF THE ORIGINAL REPORT ✅
+
+🧑 2026-08-29 said *"the bots **and slippers** were going out of map"*. § 71.3 fixed the bots.
+
+`MatchRpc.PoseDelivery` moved `SyncUnit` and `SubmitMove` to `UnreliableSequenced` and left every
+other message reliable, on a rule stated in its own header: *"the slipper's state changes and the
+lata going over are EVENTS: each one happens once and nothing later repeats it"*. **That sentence
+is true of a grab and of a throw and it is not true of `BroadcastSlipperStateIfChanged`**, which is
+a POSITION stream carrying the same message name. It fires from `FixedUpdate` whenever the shoe has
+moved more than `PropMoveEpsilon`, 1 cm, and a tsinelas in flight moves roughly 0.3 m per step:
+
+| | before | after |
+|---|---|---|
+| a slipper in flight | 50 reliable `SyncSlipper`/s | 50 unreliable `SlipperPose`/s, plus 2 reliable `SyncSlipper`/s |
+| a slipper at rest | 2 reliable `SyncSlipper`/s | 2 reliable `SyncSlipper`/s, unchanged |
+| a grab or a throw | reliable `SyncSlipper` | reliable `SyncSlipper`, unchanged |
+
+So the exact failure `PoseDelivery`'s own header calls *"actively worse"* was left in place for the
+second of the two objects the report named. One lost packet head-of-line blocked the shoe's backlog
+and delivered it in a burst, and ⚠️ **`Slipper.ApplySnapshotState` writes the arriving position
+straight onto the transform with no correction filter at all**, so unlike a body there is not even
+`ApplyNetworkTransform`'s smoothing between the burst and the screen. § 71.3's clamp is what kept
+the shoe inside the walls; it never stopped it teleporting along them.
+
+⚠️⚠️ **THE FIX IS A SPLIT INTO TWO MESSAGES, NOT A FLIP OF THE MESSAGE.** `SyncSlipper` is
+genuinely two things at once: its position fully replaces itself every step and can afford to be
+lost, while its state, holder, affinity and thrower are the events § 71.3 was right to protect. So
+**`SyncSlipper` keeps every field and stays reliable**, and a new **`SlipperPose`** carries an
+owner, a position, a rotation and a velocity on `PoseDelivery`. `SyncLata` and a new **`LataPose`**
+are the same split, because a struck can ROLLS and `IsUpright` going over is what scores.
+
+⚠⚠ **THE FIRST DRAFT SENT ONE MESSAGE ON TWO CHANNELS DEPENDING ON WHAT HAD CHANGED, AND
+THAT IS WRONG IN A WAY WORTH WRITING DOWN, because it looks strictly cheaper and it is not.** Two
+channels have NO ordering between them: `UnreliableSequenced` drops an old packet only against
+others on its OWN channel. A pose sent one step BEFORE a throw can therefore arrive one step AFTER
+the reliable throw packet, and because that pose carried the whole payload it would put the
+tsinelas back into the hand it had just left, re-run `ReleasePreviousHolder` and `NotifyEquipped`
+for a grab that had already ended, and correct itself 20 ms later. **That is § 38.8's two-authors
+buzz arriving by a new road**, and trading § 71.3's burst for it would have been a lateral move. A
+message that carries no state cannot do it, which is why the split is by PAYLOAD rather than by a
+delivery flag, and why `Slipper.ApplySnapshotPose` and `Lata.ApplySnapshotPose` are new methods
+that touch a transform and refuse to touch anything else.
+
+⚠️ **THE HALF-SECOND KEEPALIVE IS WHAT MAKES THIS SAFE RATHER THAN ONLY CHEAPER**, and it was
+already there for the § 38.18 rate limit. Every discrete field is re-sent reliably twice a second
+whether or not it changed, so a peer that missed the reliable edge AND the unreliable poses either
+side of it is corrected within `PropKeepaliveSeconds`.
+
+⚠️ **AFFINITY AND `ThrowerSlot` JOINED THE WATCHED SET.** Both already travelled and neither is
+derivable from a position; while every packet went reliably it did not matter which fields a
+re-send was for. Deciding the channel by what changed makes the question live, so the set has to be
+the whole discrete payload rather than the two fields that happened to be tracked for the rate
+limit.
+
+⚠️ **The unconditional senders are untouched.** `Carrier` calls `BroadcastSlipperState` on a grab
+and on a throw and the reset channel calls `BroadcastLataState` on a restore. Those take the
+reliable default and this change cannot reach them.
+
+⚠️⚠️ **AND A CARRIED SHOE WAS COSTING FIFTY POSE PACKETS A SECOND THAT THE RECEIVER THREW AWAY**,
+found while writing the split. `ApplySnapshotState` has always refused to write a position while
+the state is `Held`, because `Carrier` parents the tsinelas to the carry anchor on every peer and
+the hand is its only author (§ 38.8). The host sent one anyway, every step, for every held slipper.
+A tsinelas is in somebody's hand for a large part of a round and there are four of them, so **this
+is § 38.18's finding one object further in**, and it gets the same answer: the pose is not sent
+while the shoe is carried. Picking it up and throwing it are discrete changes and still go
+reliably the instant they happen.
+
+⚠️⚠️ **THE ONE ARTIFACT THIS LEAVES, WRITTEN DOWN RATHER THAN GUESSED AT.** Splitting by payload
+removes the corruption but not the ordering: a pose sent while a shoe was in flight can still
+arrive after the reliable packet that says it has landed, and move a resting tsinelas by one
+step's travel. It then stays there until the next keepalive, so the bound is **0.5 s and about
+0.3 m**, position only, with no state, holder or score involved. The grab-to-throw transition
+cannot produce it at all, because a carried shoe now sends no poses.
+
+⚠️ **IT IS NOT FIXED, AND THE FIX IS KNOWN IF IT IS EVER SEEN:** stamp `SlipperPose` with the
+host's `Time.fixedTime` and have `Slipper.ApplySnapshotPose` refuse a stamp older than the last
+one it applied. That was deliberately not built here, because it is a wire change justified by an
+artifact nobody has observed, on a path this machine cannot measure at all (§ 77.5), and § 71.3 is
+the entry that records what reasoning about this stream without two machines is worth. **Look for
+it on the two-machine run**: a tsinelas that settles, twitches once and settles again.
+
+**Verified:** EditMode 200, PlayMode 87, and `audit_wire_payloads.py` reads 51 named messages with
+**0 mismatched**, which is the check that matters here: `SlipperPose` at 4 fields and `LataPose` at
+2 agree between writer and reader, and no field or field order moved on `SyncSlipper` or `SyncLata`.
+`audit_request_call_sites.py` reads 47 entry points, 0 unreachable, which is what says the two new
+senders are actually reached.
+
+### 77.2 ⚠️⚠️ A REFUSED CAST IS ANSWERED NOW, WHERE IT USED TO BE DROPPED IN SILENCE ✅
+
+This is the handoff's second item, and § 71's `PlausibleIntentPose` note names it exactly: a silent
+drop is still wrong, because the client predicted a cast the host refused.
+
+`HeroAbilitySystem.Cast` runs the kit LOCALLY and then asks, so by the time
+`MatchRpc.OnReqAbilityMsg` refuses, the owner has already spent the cooldown, played the confirm
+and drawn the effect. Every refusal in that handler was a bare `return`.
+
+⚠️⚠️ **AND THE ONE THING THAT USED TO PAPER OVER IT WAS CORRECTLY REMOVED THIS WEEK, WHICH IS WHY
+THIS BECAME URGENT RATHER THAN COSMETIC.** Until § 71 the owner's cooldown was assigned straight
+from the host's 5 Hz `SyncAbility`, so a refused cast healed itself: the host's copy still read
+zero, the client took that zero, the ability came back. **That is the Phaister spammable-teleport
+bug**, and `HeroAbility.ApplyNetworkSnapshot`'s `mayLower` guard closed it by making the owner's
+cooldown raise-only. Closing it converted a self-healing divergence into a permanent one. The host
+may still take an ability away at any moment, which is the direction authority needs; what it could
+not do was give one back after refusing to act, and a refusal is precisely when it must.
+
+**The shape:** a new `CastDenied` named message, host to the one peer that asked, carrying the seat
+and the ability slot and no reason code. `HeroAbilitySystem.RollBackPredictedCast` answers it.
+
+⚠️⚠️ **THE ROLLBACK IS NOT `Reset()`, FOR THE REASON `ResetForRound` ALREADY RECORDS.** Reset zeroes
+`DurationRemaining` behind the ability's back, and Demonic Carapace's stun immunity and Phantom
+Phase's tag immunity are GRANTS handed out in `OnActivate` and taken back in `OnEnd`: dropping the
+timer without running `OnEnd` would leave a client permanently unstunnable off a refused cast.
+`HeroAbility.RollBackPredictedCast` releases the wind-up root FIRST, because a refusal can land mid
+wind-up when the caster is rooted in a speed zone that only `ReleaseRoot` can exit, then calls
+`EndEarly`, then refunds the exact resource `Activate` spent, through `GrantCharge` so the cap
+still holds.
+
+⚠️ **It answers with the refusal the player already knows**: the same quiet `ui_error` and the same
+deck flash a cooldown press gets. The player does not need to be told the difference between "the
+host said no" and "it was not ready"; they need the power back and one beat saying it did not fire.
+
+⚠️⚠️ **A REQUEST THAT FAILS `SenderOwnsClaimedSeat` IS STILL DROPPED IN SILENCE, DELIBERATELY.**
+That message is malformed or hostile rather than refused, the host cannot know what the sender
+predicted, and answering it would be the host taking direction about which kit to touch from an
+unverified claim. Everything below that line answers.
+
+⚠️ **`ProtocolVersion` 10 to 11**, and `TheProtocolCarriesEveryRosterBump` moved with it in the same
+commit. It is a bump for adding a NAME to the wire: a peer on 10 has no handler for the reply, and
+the failure would be quiet rather than loud, which is exactly what makes it worth refusing at
+approval. A 10 client would sit on a cooldown it can no longer get back, because the `mayLower`
+guard above is raise-only. ⚠️ **§ 77.1 ADDS TWO MORE NAMES IN THE SAME BUMP**, `SlipperPose` and `LataPose`. No existing
+field or field order moved, so a peer on 10 would still read `SyncSlipper` correctly; it would
+simply never hear the stream between the reliable edges and would see a tsinelas move twice a
+second. One bump covers all three names.
+
+### 77.3 ⚠️ ZACK'S SHOCK TRAIL, WHICH IS § 74 ✅
+
+`ShockTrailComponent.Update` opened with `if (!NetAuthority.ShouldResolve()) return;`, the exact
+shape § 71 removed from Nemu's void and Cheska's ice. **Zack's own turbo boost is 6.0 scaled by
+`Time.deltaTime`, about 0.1 m in a frame**, and `ApplyNetworkTransform` ignores a correction under
+1.25 m while the owner is predicting, so on every peer that was not the host it was not weak, it
+was ABSENT. A dash that pays out only for whoever happens to be hosting is not a balanced ability.
+
+The owner's boost now runs wherever the peer owns that body, which is "the host may move anybody;
+anybody may move themselves". The stagger, the popup and the stars stay host-only, because a
+stagger is a DECISION about another body and the two flourishes are announcements. ⚠️ **No number
+changed.**
+
+⚠️⚠️ **AND THE AUDIT CAUGHT THE FIRST DRAFT OF THIS, WHICH IS WORTH RECORDING.** Writing the
+stagger gate as a hoisted `bool resolves` took `audit_ability_authority.py` from **0 ungated on
+another body to 1** on the same edit: it reads brace depth for a literal `ShouldResolve()` and a
+local bool is invisible to it. Cheska's ice carries a note saying exactly this and it was still
+worth re-learning. The gate is written out at the call site and the count is back to 0.
+
+### 77.4 § 72's probe now hosts, which was the last thing it had never done ✅ BUILT, ⚠️ STILL GREEN
+
+`NetworkedLobbyTypingProbe` is § 72's *"a probe that reproduces it"*, built as asked. It starts a
+real host through `NetSession.StartHostAsync`, sets `SceneFlow.Networked`, loads `MatchSetup`, and
+then runs **`LobbyTypingProbe.Check` itself rather than a copy of it**, so the two probes differ in
+exactly one thing: whether a host is listening. That check was made `internal` rather than
+duplicated, for the reason `CLAUDE.md` § 4 gives about the core sources compiling in place.
+
+⚠️ **IT PASSES, SO IT DOES NOT REPRODUCE THE REPORT.** That is a result rather than a failure:
+§ 72's closing line named the live networked lobby as one of exactly two things never driven, and
+this retires it. It also writes an INVENTORY into `Logs/lobby-typing-networked.txt` whether or not
+anything fails, naming every `InputField` and whether `LobbyChat` was present and active, because a
+pass with no chat in the scene rules out nothing while a pass with the chat live rules out § 72's
+leading suspect.
+
+⚠️⚠️ **SO § 72 STAYS OPEN AND ITS REMAINING SUSPECT IS NOW A BUILT PLAYER AS OPPOSED TO THE
+EDITOR**, which is the one item on its list that no probe in this repository can reach.
+
+### 77.5 What is still not measured
+
+⚠️⚠️ **THE TWO-MACHINE ACCEPTANCE TEST HAS STILL NOT BEEN RUN, AND EVERYTHING ABOVE IS SOURCE AND
+ARITHMETIC.** § 71.3's closing note, § 38.20's standing note and § 56's first bullet all say the
+same thing and all three are still true. This session ran on one machine. **Both § 71.3 and § 77.1
+need two peers on a LAN, ideally over Hamachi, watched from the NON-HOST seat**, and that is the
+acceptance test for the whole out-of-bounds report.
+
+⚠️ **`CastDenied` has never travelled between two processes either.** The refusal path is reached
+only when the host refuses a client's cast, and no test in this repository has one peer predicting
+against another peer's kit. **Done looks like:** a two-process run that forces a refusal, which a
+stale pose induces most easily by holding back the client's `SubmitMove`, and asserts that the
+owner's cooldown comes back.
 
 ---
 

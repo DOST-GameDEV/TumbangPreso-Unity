@@ -101,7 +101,15 @@ namespace TumbangPreso.PlayTests
             Assert.IsEmpty(broken, "fields a player cannot type into:\n" + string.Join("\n", broken));
         }
 
-        private static IEnumerator Check(string where, StringBuilder report, List<string> broken)
+        /// <summary>
+        /// ⚠️ `internal` SO `NetworkedLobbyTypingProbe` RUNS THIS EXACT CODE RATHER THAN A COPY
+        /// OF IT. The two probes differ in ONE thing, whether a real host is listening while the
+        /// lobby is up, and that difference is only readable if everything else is identical.
+        /// A second copy of the check is a second thing that can drift, and then a disagreement
+        /// between the two probes stops meaning anything. `CLAUDE.md` § 4 makes the same argument
+        /// about the core sources compiling in place rather than being copied.
+        /// </summary>
+        internal static IEnumerator Check(string where, StringBuilder report, List<string> broken)
         {
             var system = EventSystem.current;
 
@@ -184,7 +192,7 @@ namespace TumbangPreso.PlayTests
             }
         }
 
-        private static GameObject FindByName(string name)
+        internal static GameObject FindByName(string name)
         {
             foreach (var root in SceneManager.GetActiveScene().GetRootGameObjects())
             {

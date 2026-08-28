@@ -276,6 +276,8 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("SyncWorld", OnSyncWorldMsg);
             cm.RegisterNamedMessageHandler("SyncLata", OnSyncLataMsg);
             cm.RegisterNamedMessageHandler("SyncSlipper", OnSyncSlipperMsg);
+            cm.RegisterNamedMessageHandler("LataPose", OnLataPoseMsg);
+            cm.RegisterNamedMessageHandler("SlipperPose", OnSlipperPoseMsg);
             cm.RegisterNamedMessageHandler("SubmitMove", OnSubmitMoveMsg);
             cm.RegisterNamedMessageHandler("SyncUnit", OnSyncUnitMsg);
             cm.RegisterNamedMessageHandler("ReqPunch", OnReqPunchMsg);
@@ -295,6 +297,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("PlayCue", OnPlayCueMsg);
             cm.RegisterNamedMessageHandler("ReqAbility", OnReqAbilityMsg);
             cm.RegisterNamedMessageHandler("PlayAbility", OnPlayAbilityMsg);
+            cm.RegisterNamedMessageHandler("CastDenied", OnCastDeniedMsg);
             cm.RegisterNamedMessageHandler("ReqMash", OnReqMashMsg);
             cm.RegisterNamedMessageHandler("ThrowCharge", OnThrowChargeMsg);
             cm.RegisterNamedMessageHandler("ReqThrowCharge", OnReqThrowChargeMsg);
@@ -1897,17 +1900,40 @@ namespace TumbangPreso.Net
 
             if (abilitySlot < 0 || abilitySlot > 2) return;
             if (!SenderOwnsClaimedSeat(senderClientId, claimedSlot, out var unit)) return;
+
+            // ⚠️⚠️ FROM HERE DOWN EVERY REFUSAL ANSWERS THE SENDER. Above this line the message is
+            // malformed or is claiming a seat it does not hold, and the host cannot know what the
+            // sender predicted; below it the sender is the verified owner of a seat that really
+            // did predict this cast, so a silent `return` is the host charging a player for an
+            // ability it then declined to run. See the § note above `HostDenyAbilityCast`.
             if (!PlausibleIntentPose(unit, position) || !Finite(forward) ||
-                !Finite(aimPoint) || !Finite(heldSeconds)) return;
+                !Finite(aimPoint) || !Finite(heldSeconds))
+            {
+                HostDenyAbilityCast(senderClientId, claimedSlot, abilitySlot);
+                return;
+            }
 
             heldSeconds = Mathf.Clamp(heldSeconds, 0.0f, 30.0f);
             var system = unit.AbilitySystem;
-            if (system == null) return;
+            if (system == null)
+            {
+                HostDenyAbilityCast(senderClientId, claimedSlot, abilitySlot);
+                return;
+            }
 
             var slot = (Abilities.HeroAbilitySystem.Slot)abilitySlot;
             var outcome = system.ApplyNetworkCast(slot, position, forward, aimPoint,
                                                   heldSeconds, authoritative: true);
-            if (outcome != Abilities.HeroKit.CastOutcome.Cast) return;
+            if (outcome != Abilities.HeroKit.CastOutcome.Cast)
+            {
+                // ⚠️ `Missing` IS REFUSED LIKE THE REST AND THAT IS DELIBERATE. A hero with no
+                // second skill cannot have predicted one, so this is unreachable for that reason;
+                // if it ever becomes reachable, the client having spent nothing means the refund
+                // is a no-op rather than a gift. Refusing everything that is not `Cast` keeps the
+                // rule "the host answers every request it did not run" true without a list.
+                HostDenyAbilityCast(senderClientId, claimedSlot, abilitySlot);
+                return;
+            }
 
             BroadcastAbilityCast(claimedSlot, abilitySlot, position, forward,
                                  aimPoint, heldSeconds, senderClientId);
@@ -1955,6 +1981,77 @@ namespace TumbangPreso.Net
             Unit(slot)?.AbilitySystem?.ApplyNetworkCast(
                 (Abilities.HeroAbilitySystem.Slot)abilitySlot,
                 position, forward, aimPoint, heldSeconds, authoritative: false);
+        }
+
+        // -------------------------------------------------------------------
+        // § THE REFUSAL, WHICH IS THE OTHER HALF OF A PREDICTED CAST
+        //
+        // ⚠️⚠️ A CLIENT PREDICTS EVERY CAST AND THE HOST USED TO REFUSE IN SILENCE.
+        // `HeroAbilitySystem.Cast` runs the kit locally FIRST and then asks, so by the time
+        // `OnReqAbilityMsg` drops a request the owner has already spent the cooldown, played the
+        // confirm and drawn the effect. Every refusal in that handler was a bare `return`. The
+        // client was then running a match the host was not refereeing, and nothing anywhere would
+        // ever tell it so.
+        //
+        // ⚠️⚠️ AND THE ONE FIX THAT USED TO PAPER OVER IT WAS CORRECTLY REMOVED, WHICH IS WHY THIS
+        // IS NEEDED NOW. Until `docs/TODO.md` § 71 the owner's cooldown was simply assigned from
+        // the host's 5 Hz `SyncAbility`, so a refused cast healed itself: the host's copy still
+        // read zero, the client took that zero, and the ability came back. That is the Phaister
+        // *"spammable teleport (lan problem)"* bug, and `HeroAbility.ApplyNetworkSnapshot`'s
+        // `mayLower` guard closed it by making the owner's cooldown raise-only. Closing it turned
+        // a self-healing divergence into a permanent one: correct, and half a fix. The host may
+        // still take an ability away at any time. What it could not do was give one back after
+        // refusing to act, and a refusal is exactly when it must.
+        //
+        // ⚠️ IT IS SENT ONLY TO THE PEER THAT ASKED. Nobody else predicted anything, so nobody
+        // else has anything to take back, and a broadcast would invite three other kits to roll
+        // back a cast they never made.
+        //
+        // ⚠️ IT CARRIES NO REASON, ON PURPOSE. Six guards refuse for six reasons and the player
+        // needs one outcome from all of them: the power back, and one beat that says it did not
+        // go off. A reason code on the wire is a thing to keep in step for no gameplay gain.
+        //
+        // ⚠️⚠️ IT IS NOT SENT WHEN THE SENDER DOES NOT OWN THE SEAT IT CLAIMS. That request is
+        // malformed or hostile rather than refused, this peer cannot know what the sender
+        // actually predicted, and answering it would be the host taking direction about which kit
+        // to touch from an unverified claim. `SenderOwnsClaimedSeat` stays a bare return.
+        // -------------------------------------------------------------------
+
+        /// <summary>Tells one client the cast it predicted was refused, so it can take it back.</summary>
+        public void HostDenyAbilityCast(ulong clientId, int slot, int abilitySlot)
+        {
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+
+            // ⚠️ THE HOST NEVER DENIES ITSELF. Its own casts never travel as a request at all;
+            // `RequestAbilityCastServerRpc` resolves them in its `IsHost` branch, so a refusal
+            // there is just the kit saying no locally, which the deck already answers.
+            if (clientId == _nm.LocalClientId) return;
+
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(abilitySlot);
+            _nm.CustomMessagingManager.SendNamedMessage("CastDenied", clientId, writer);
+        }
+
+        private void OnCastDeniedMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            // ⚠️ THE HOST IS ITS OWN CLIENT AND ONLY THE HOST MAY REFUSE. The first half keeps a
+            // listen host out of a path that would roll back authoritative state; the second is
+            // the rule every "play this" handler in this file carries (`FromHost`).
+            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out int abilitySlot);
+
+            if (!ValidSlot(slot) || abilitySlot < 0 || abilitySlot > 2) return;
+
+            // ⚠️ ONLY THIS PEER'S OWN SEAT. `RollBackPredictedCast` checks the same thing from
+            // the other end; a refusal naming somebody else's seat is a message this peer has no
+            // business acting on, and the other three kits are replicas that never predicted.
+            if (slot != NetAuthority.LocalSlot) return;
+
+            Unit(slot)?.AbilitySystem?.RollBackPredictedCast(
+                (Abilities.HeroAbilitySystem.Slot)abilitySlot);
         }
 
         /// <summary>One client mash press; the host decides which active state it answers.</summary>
@@ -2919,6 +3016,65 @@ namespace TumbangPreso.Net
         /// <summary>How far a prop must move before it is worth a packet. One centimetre.</summary>
         private const float PropMoveEpsilon = 0.01f;
 
+        // -------------------------------------------------------------------
+        // § THE PROP STREAM IS A POSE STREAM TOO, AND `PoseDelivery`'S NOTE MISSED IT
+        //
+        // ⚠️⚠️ 🧑 2026-08-29 SAID *"the bots AND SLIPPERS were going out of map"*, AND ONLY THE
+        // BOTS HALF WAS FIXED. `docs/TODO.md` § 71.3 moved `SyncUnit` and `SubmitMove` to
+        // `PoseDelivery` and left everything else reliable on a stated rule: *"the slipper's
+        // state changes and the lata going over are EVENTS: each one happens once and nothing
+        // later repeats it"*. That sentence is true of a grab and of a throw. It is NOT true of
+        // this file's own `BroadcastSlipperStateIfChanged`, which is a POSITION stream wearing
+        // the same message name: it fires on `FixedUpdate` whenever the shoe has moved more than
+        // `PropMoveEpsilon`, and a tsinelas in flight moves about 0.3 m per step. A thrown
+        // slipper was therefore 50 reliable messages a second, per slipper, which is the exact
+        // shape `PoseDelivery`'s own header calls *"actively worse"*.
+        //
+        // ⚠️⚠️ SO THE TSINELAS HALF OF THE REPORT HAD ITS TRANSPORT CAUSE LEFT IN PLACE. One lost
+        // packet head-of-line blocked the shoe's whole backlog and delivered it at once, and
+        // `Slipper.ApplySnapshotState` writes the arriving position straight onto the transform
+        // with no correction filter of any kind, so a burst is not smoothed there the way
+        // `ApplyNetworkTransform` at least tries to smooth a body. The § 71.3 clamp is what kept
+        // it inside the walls; it did not stop the shoe teleporting along them.
+        //
+        // ⚠️⚠️ AND THE ANSWER IS NOT TO FLIP THE MESSAGE, IT IS TO SPLIT IT IN TWO. `SyncSlipper`
+        // is genuinely two things at once. Its position fully replaces itself every step and can
+        // afford to be lost; its STATE, its HOLDER, its affinity and its thrower are the events
+        // § 71.3 was protecting, and a dropped one is a shoe stuck in the wrong hand for the rest
+        // of the round. So `SyncSlipper` keeps every field and stays reliable, and a new
+        // `SlipperPose` carries a position and nothing else on `PoseDelivery`.
+        //
+        // ⚠️⚠️ THE FIRST DRAFT OF THIS SENT THE SAME MESSAGE ON TWO DIFFERENT CHANNELS DEPENDING
+        // ON WHAT HAD CHANGED, AND THAT WAS WRONG IN A WAY WORTH RECORDING, because it looks
+        // strictly cheaper and it is not. Two channels have NO ordering between them: only
+        // `UnreliableSequenced` drops an old packet, and only against others on its own channel.
+        // A pose sent one step BEFORE a throw could therefore arrive one step AFTER the reliable
+        // throw packet, and since that pose carried the whole payload it would put the tsinelas
+        // back into the hand it had just left, re-run `ReleasePreviousHolder` and `NotifyEquipped`
+        // for a grab that had already ended, and correct itself 20 ms later. That is § 38.8's
+        // two-authors buzz arriving by a new road. **A message that carries no state cannot do
+        // it**, which is why the split is by PAYLOAD and not by delivery flag.
+        //
+        // ⚠️ THE KEEPALIVE IS WHAT MAKES THIS SAFE RATHER THAN MERELY CHEAPER, and it was already
+        // here for a different reason. Every discrete field is re-sent reliably twice a second
+        // whether or not it changed, so even a peer that missed the reliable edge AND the two
+        // unreliable poses either side of it is corrected within `PropKeepaliveSeconds`.
+        //
+        // ⚠️ THE LATA IS THE SAME SPLIT FOR THE SAME REASON. A can that has been hit ROLLS, and
+        // a roll is a pose stream; `IsUpright` going over is the event that scores. Position-only
+        // packets go unreliable, the upright bit and the skin never do.
+        //
+        // ⚠️ THE UNCONDITIONAL SENDERS ARE UNTOUCHED AND STAY RELIABLE. `Carrier` calls
+        // `BroadcastSlipperState` directly on a grab and on a throw and the reset channel calls
+        // `BroadcastLataState` on a restore. Those are pure events with no stream behind them, so
+        // they take the default and this change cannot reach them.
+        // -------------------------------------------------------------------
+
+        // ⚠️ THERE IS NO `PropEventDelivery` CONSTANT. `SyncSlipper` and `SyncLata` take
+        // `SendNamedMessageToAll`'s reliable DEFAULT exactly as they always have, so no event
+        // caller had to change and none can be broken by forgetting an argument. Only the two new
+        // pose messages name a delivery, and they name `PoseDelivery`.
+
         private Vector3 _lastLataPosition = new Vector3(float.NaN, float.NaN, float.NaN);
         private bool _lastLataUpright;
         private float _lataKeepaliveLeft;
@@ -2926,6 +3082,8 @@ namespace TumbangPreso.Net
         private readonly Dictionary<int, Vector3> _lastSlipperPosition = new Dictionary<int, Vector3>();
         private readonly Dictionary<int, int> _lastSlipperState = new Dictionary<int, int>();
         private readonly Dictionary<int, int> _lastSlipperHolder = new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _lastSlipperAffinity = new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _lastSlipperThrower = new Dictionary<int, int>();
         private readonly Dictionary<int, float> _slipperKeepaliveLeft = new Dictionary<int, float>();
 
         private void BroadcastLataStateIfChanged()
@@ -2938,13 +3096,19 @@ namespace TumbangPreso.Net
             bool moved = (lata.transform.position - _lastLataPosition).sqrMagnitude
                          > PropMoveEpsilon * PropMoveEpsilon;
 
-            if (!moved && lata.IsUpright == _lastLataUpright && _lataKeepaliveLeft > 0.0f) return;
+            bool toppled = lata.IsUpright != _lastLataUpright;
+            bool keepalive = _lataKeepaliveLeft <= 0.0f;
+
+            if (!moved && !toppled && !keepalive) return;
 
             _lastLataPosition = lata.transform.position;
             _lastLataUpright = lata.IsUpright;
             _lataKeepaliveLeft = PropKeepaliveSeconds;
 
-            BroadcastLataState();
+            // ⚠️ A ROLL IS A POSE AND TRAVELS AS ONE; GOING OVER IS THE EVENT THAT SCORES AND
+            // TRAVELS AS THE FULL RELIABLE SNAPSHOT. See the § note above.
+            if (toppled || keepalive) BroadcastLataState();
+            else BroadcastLataPose();
         }
 
         private void BroadcastSlipperStateIfChanged(Slipper slipper)
@@ -2955,18 +3119,46 @@ namespace TumbangPreso.Net
             int state = (int)slipper.State;
             int holder = slipper.Holder != null ? slipper.Holder.PlayerSlot : -1;
 
+            // ⚠️ AFFINITY AND THROWER JOIN STATE AND HOLDER AS DISCRETE FIELDS, AND THEY WERE NOT
+            // WATCHED BEFORE. Both already travel in the payload and neither is derivable from a
+            // position: `Affinity` is what makes a pektus curve read as one, and `ThrowerSlot` is
+            // who a bank is credited to. While every packet went reliably it did not matter which
+            // fields a re-send was for, because none could be lost. Deciding the channel by what
+            // changed makes the question live, so the set has to be the whole discrete payload
+            // rather than the two fields somebody happened to be tracking for the rate limit.
+            int affinity = (int)slipper.Affinity;
+            int thrower = slipper.ThrowerSlot;
+
             float left = _slipperKeepaliveLeft.TryGetValue(owner, out float k) ? k : 0.0f;
             left -= Time.fixedDeltaTime;
 
-            bool moved = !_lastSlipperPosition.TryGetValue(owner, out var previous)
-                         || (slipper.transform.position - previous).sqrMagnitude
-                            > PropMoveEpsilon * PropMoveEpsilon;
+            // ⚠️⚠️ A CARRIED SHOE IS NOT WORTH A SINGLE POSE PACKET, AND IT WAS COSTING FIFTY A
+            // SECOND. `Slipper.ApplySnapshotPose` returns immediately while the state is `Held`,
+            // because `Carrier` parents the tsinelas to the carry anchor on every peer and the
+            // hand is its only author (the § 38.8 buzz). So every one of those packets was sent,
+            // routed, and discarded on arrival by design. A tsinelas is in somebody's hand for a
+            // large part of a round and there are four of them: this is § 38.18's finding again,
+            // one object further in, and it is the same answer, do not send what nobody applies.
+            //
+            // ⚠️ THE DISCRETE HALF IS UNAFFECTED. Picking it up and throwing it are state changes
+            // and still go reliably the moment they happen, and the keepalive still re-sends the
+            // holder twice a second, so a peer that missed the grab is corrected on the same
+            // half-second bound as everything else.
+            bool carried = slipper.State == SlipperState.Held;
 
-            bool changed = moved
-                           || !_lastSlipperState.TryGetValue(owner, out int lastState) || lastState != state
-                           || !_lastSlipperHolder.TryGetValue(owner, out int lastHolder) || lastHolder != holder;
+            bool moved = !carried
+                         && (!_lastSlipperPosition.TryGetValue(owner, out var previous)
+                             || (slipper.transform.position - previous).sqrMagnitude
+                                > PropMoveEpsilon * PropMoveEpsilon);
 
-            if (!changed && left > 0.0f)
+            bool discrete = !_lastSlipperState.TryGetValue(owner, out int lastState) || lastState != state
+                            || !_lastSlipperHolder.TryGetValue(owner, out int lastHolder) || lastHolder != holder
+                            || !_lastSlipperAffinity.TryGetValue(owner, out int lastAff) || lastAff != affinity
+                            || !_lastSlipperThrower.TryGetValue(owner, out int lastThr) || lastThr != thrower;
+
+            bool keepalive = left <= 0.0f;
+
+            if (!moved && !discrete && !keepalive)
             {
                 _slipperKeepaliveLeft[owner] = left;
                 return;
@@ -2975,12 +3167,24 @@ namespace TumbangPreso.Net
             _lastSlipperPosition[owner] = slipper.transform.position;
             _lastSlipperState[owner] = state;
             _lastSlipperHolder[owner] = holder;
+            _lastSlipperAffinity[owner] = affinity;
+            _lastSlipperThrower[owner] = thrower;
             _slipperKeepaliveLeft[owner] = PropKeepaliveSeconds;
 
-            BroadcastSlipperState(slipper);
+            // ⚠️⚠️ THIS BRANCH IS THE TSINELAS HALF OF 🧑'S *"the bots and slippers were going
+            // out of map"*, AND IT IS THE HALF § 71.3 DID NOT FIX. A shoe in flight moves every
+            // step, so before this it was 50 guaranteed-delivery messages a second carrying a
+            // position the next one replaces. See the § note above.
+            if (discrete || keepalive) BroadcastSlipperState(slipper);
+            else BroadcastSlipperPose(slipper);
         }
 
-        /// <summary>Sends the authoritative can immediately, outside the fixed world tick.</summary>
+        /// <summary>
+        /// Sends the whole authoritative can, reliably, immediately and outside the world tick.
+        ///
+        /// ⚠️ EVERY FIELD, EVERY TIME, ON THE RELIABLE DEFAULT. This is the EVENT half of the
+        /// split described above; `BroadcastLataPose` is the stream half.
+        /// </summary>
         public void BroadcastLataState()
         {
             if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
@@ -2995,7 +3199,26 @@ namespace TumbangPreso.Net
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncLata", writer);
         }
 
-        /// <summary>Sends one authoritative slipper immediately and on the fixed world tick.</summary>
+        /// <summary>The rolling can, and nothing else about it.</summary>
+        public void BroadcastLataPose()
+        {
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+            var lata = GameServices.Round?.Lata;
+            if (lata == null) return;
+
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(lata.transform.position);
+            writer.WriteValueSafe(lata.transform.rotation);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("LataPose", writer, PoseDelivery);
+        }
+
+        /// <summary>
+        /// Sends one whole authoritative slipper, reliably, immediately and on the world tick.
+        ///
+        /// ⚠️ EVERY FIELD, EVERY TIME, ON THE RELIABLE DEFAULT. `Carrier` calls this on a grab and
+        /// on a throw and both are events. This is the EVENT half of the split described above;
+        /// `BroadcastSlipperPose` is the stream half.
+        /// </summary>
         public void BroadcastSlipperState(Slipper slipper)
         {
             if (!NetAuthority.IsHost || slipper == null ||
@@ -3014,6 +3237,21 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe((int)slipper.Affinity);
             writer.WriteValueSafe(slipper.ThrowerSlot);
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncSlipper", writer);
+        }
+
+        /// <summary>One slipper's flight path, and nothing else about it.</summary>
+        public void BroadcastSlipperPose(Slipper slipper)
+        {
+            if (!NetAuthority.IsHost || slipper == null ||
+                _nm == null || _nm.CustomMessagingManager == null)
+                return;
+
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(slipper.OwnerSlot);
+            writer.WriteValueSafe(slipper.transform.position);
+            writer.WriteValueSafe(slipper.transform.rotation);
+            writer.WriteValueSafe(slipper.Velocity);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("SlipperPose", writer, PoseDelivery);
         }
 
         public void BroadcastWorldSnapshot()
@@ -3232,6 +3470,34 @@ namespace TumbangPreso.Net
 
             SyncSlipperClientRpc(ownerSlot, holderSlot, pos, rot, state, velocity, pektusSpin,
                                  affinity, throwerSlot);
+        }
+
+        // ⚠️ BOTH POSE HANDLERS APPLY A POSITION AND REFUSE TO TOUCH ANYTHING ELSE, which is what
+        // makes them safe to receive out of order with respect to the reliable channel. See the
+        // § note above `BroadcastLataStateIfChanged` and `Slipper.ApplySnapshotPose`.
+
+        private void OnLataPoseMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost) return;
+
+            reader.ReadValueSafe(out Vector3 pos);
+            reader.ReadValueSafe(out Quaternion rot);
+
+            GameServices.Round?.Lata?.ApplySnapshotPose(pos, rot);
+        }
+
+        private void OnSlipperPoseMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost) return;
+
+            reader.ReadValueSafe(out int ownerSlot);
+            reader.ReadValueSafe(out Vector3 pos);
+            reader.ReadValueSafe(out Quaternion rot);
+            reader.ReadValueSafe(out Vector3 velocity);
+
+            if (!ValidSlot(ownerSlot)) return;
+
+            FindSlipper(ownerSlot)?.ApplySnapshotPose(pos, rot, velocity);
         }
 
         // -------------------------------------------------------------------

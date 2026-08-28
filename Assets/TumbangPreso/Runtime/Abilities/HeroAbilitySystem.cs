@@ -475,6 +475,56 @@ namespace TumbangPreso.Abilities
             _reticle.Flash(TelegraphCentre(ability), ability.TelegraphRadius, AccentColour(), 0.35f);
         }
 
+        /// <summary>
+        /// The host refused a cast this peer had already predicted. Take it back.
+        ///
+        /// ⚠️⚠️ THE SILENT DROP IS THE BUG THIS CLOSES, NOT THE DROP ITSELF. `MatchRpc
+        /// .OnReqAbilityMsg` has six ways to refuse a request and every one of them was a bare
+        /// `return`: the wrong seat, a non-finite number, no kit, an ability slot out of range,
+        /// the host's own `ApplyNetworkCast` saying no, and `PlausibleIntentPose` saying the pose
+        /// the client claims is more than `IntentPoseLeeway` from the host's copy of that body.
+        /// The guards are right. Refusing without telling anybody is what left the client running
+        /// a match the host was not refereeing: it had spent the cooldown, drawn the effect and
+        /// heard the confirm for something that, on the machine that decides, did not happen.
+        ///
+        /// ⚠️⚠️ AND `PlausibleIntentPose` IS NOT A RARE PATH. `docs/TODO.md` § 71.3 measured why:
+        /// 2.25 m of leeway is 375 ms at a sprint, and while the pose stream went out reliably a
+        /// single lost packet head-of-line blocked it for longer than that. The transport half of
+        /// that entry should make this uncommon. Uncommon is not the same as correct, and a
+        /// player who loses an ultimate to one dropped packet has lost the round it was banked
+        /// for.
+        ///
+        /// ⚠️ IT ANSWERS WITH THE REFUSAL THE PLAYER ALREADY KNOWS. `PlayRefusal` is the same
+        /// quiet `ui_error` a cooldown press gets, and `_answer` is set to `Cooling` so the deck
+        /// flashes the tile exactly as it does for any other refused press. The player does not
+        /// need to be told the difference between "the host said no" and "it was not ready"; they
+        /// need the power back and one unmistakable beat saying it did not go off.
+        ///
+        /// ⚠️ ONLY THE OWNER MAY RUN THIS, AND THE WIRE ENFORCES IT FROM THE OTHER END TOO.
+        /// `OnCastDeniedMsg` refuses anything that is not the host speaking and refuses a slot
+        /// that is not this peer's own; the guard here is the second half of that pair, so a
+        /// future caller cannot roll back somebody else's kit.
+        /// </summary>
+        public void RollBackPredictedCast(Slot slot)
+        {
+            if (Kit == null || _motor == null) return;
+            if (NetAuthority.IsHost) return;
+            if (_motor.PlayerSlot != NetAuthority.LocalSlot) return;
+
+            var ability = AbilityFor(slot);
+            if (ability == null) return;
+
+            // ⚠️ THE ROLLBACK RUNS UNDER `SuppressRelay` LIKE EVERY OTHER NETWORKED KIT CALL IN
+            // THIS FILE. `EndEarly` reaches `OnEnd`, and some `OnEnd` bodies play a cue; relaying
+            // those outward would have a client asking the host to announce the end of an effect
+            // the host never started.
+            using (NetCue.SuppressRelay()) ability.RollBackPredictedCast(_context);
+
+            _answer[(int)slot] = HeroKit.CastOutcome.Cooling;
+            _answeredAt[(int)slot] = Time.time;
+            PlayRefusal();
+        }
+
         private void PlayRefusal()
         {
             // ⚠️ QUIET, AND ON THE PLAYER RATHER THAN AT A WORLD POINT. This fires on a mash, so

@@ -136,7 +136,23 @@ namespace TumbangPreso.Net
         // `slipper_index`, so one player's PAMBAHAY throws 4/2/4 and the other's throws
         // 3/2/4 in the same match, and every prediction between them drifts with no error
         // anywhere. Refusing at approval is the cheaper failure.
-        public const int ProtocolVersion = 10;
+        // ⚠️⚠️ 10 to 11 ADDS `CastDenied`, AND IT IS A BUMP FOR THE OPPOSITE REASON TO 9 to 10.
+        // That one changed no message at all and bumped because a shared table had been re-pointed.
+        // This one adds a NAME to the wire: the host now answers a refused `ReqAbility` instead of
+        // dropping it, and a peer built on 10 has no handler registered for the reply.
+        //
+        // ⚠️ THE FAILURE WOULD BE QUIET RATHER THAN LOUD, WHICH IS WHY IT IS WORTH THE BUMP.
+        // Netcode logs an unregistered named message and carries on, so a mixed pair would play:
+        // the 11 host would refuse a cast and believe it had said so, and the 10 client would sit
+        // on a cooldown it can no longer get back, because `HeroAbility.ApplyNetworkSnapshot` is
+        // raise-only for the owner while a round is live. That is a player quietly losing an
+        // ultimate, in a build that otherwise looks fine. Refusing at approval is cheaper.
+        //
+        // ⚠️ THE PROP STREAM'S DELIVERY SPLIT IN THE SAME BATCH IS NOT PART OF THIS. `SyncSlipper`
+        // and `SyncLata` kept every field and every field order; only the channel some of their
+        // packets travel on changed, and delivery is not in the payload. It is recorded here
+        // rather than given its own number because it needs none.
+        public const int ProtocolVersion = 11;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =

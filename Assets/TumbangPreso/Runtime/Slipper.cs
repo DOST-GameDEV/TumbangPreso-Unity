@@ -533,6 +533,54 @@ namespace TumbangPreso
             }
         }
 
+        /// <summary>
+        /// Moves a replica along the host's path WITHOUT touching what it is or who has it.
+        ///
+        /// ⚠️⚠️ THIS EXISTS SO THE POSE MAY TRAVEL ON A DIFFERENT CHANNEL FROM THE STATE, AND
+        /// THAT IS THE WHOLE REASON IT IS A SEPARATE METHOD RATHER THAN A FLAG ON
+        /// `ApplySnapshotState`. `MatchRpc` sends a shoe in flight fifty times a second, which
+        /// must be unreliable or one lost packet head-of-line blocks the stream and delivers a
+        /// burst (`MatchRpc.PoseDelivery`, `docs/TODO.md` § 71.3 and § 77.1). Its state, holder,
+        /// affinity and thrower are events and must be reliable. Two channels for one object have
+        /// no ordering between them, so if the unreliable packets also CARRIED the state, a pose
+        /// sent a step before a throw could arrive a step after it and put the tsinelas back in
+        /// the hand it had just left. Carrying no state at all is what makes that unthinkable
+        /// rather than unlikely.
+        ///
+        /// ⚠️ WHAT THAT STILL LEAVES, SO NOBODY REDISCOVERS IT: carrying no state removes the
+        /// CORRUPTION, not the ordering. A pose sent while the shoe was in flight can still arrive
+        /// after the reliable packet that says it has landed and move a resting tsinelas by one
+        /// step's travel, until the next keepalive corrects it. The bound is 0.5 s and about
+        /// 0.3 m, position only. The fix if it is ever seen is a `Time.fixedTime` stamp on the
+        /// message and a refusal here of anything older than the last applied; it was not built
+        /// because no two-machine run has ever watched this stream. `docs/TODO.md` § 77.1.
+        ///
+        /// ⚠️ A HELD SHOE IS PLACED BY THE HAND AND NEVER BY THE WIRE, which is the same rule
+        /// `ApplySnapshotState` states at length: `Carrier` parents it to the carry anchor on
+        /// every peer, and writing a position underneath that is the two-author buzz of § 38.8.
+        ///
+        /// ⚠️ THE WALLS AND THE LID APPLY HERE TOO, and they are the same numbers the host bounces
+        /// and rests against, so this can only refuse a position the host would have refused. It
+        /// is the § 71.3 clamp, on the path that now carries most of the packets.
+        /// </summary>
+        public void ApplySnapshotPose(Vector3 position, Quaternion rotation, Vector3 velocity)
+        {
+            if (State == SlipperState.Held) return;
+
+            position.x = ClampToPlayableAxis(position.x, AIController.PlayableHalfX);
+            position.z = ClampToPlayableAxis(position.z, AIController.PlayableHalfZ);
+
+            float ceiling = AIController.PlayableCeilingY - Balance.SlipperHitRadius;
+            if (position.y > ceiling) position.y = ceiling;
+
+            transform.SetPositionAndRotation(position, rotation);
+
+            // ⚠️ THE VELOCITY IS THE SMOOTHING HINT AND ONLY MEANS ANYTHING IN FLIGHT. A loose
+            // shoe has none, and writing one would give a resting tsinelas a drift this peer has
+            // no authority to invent.
+            if (State == SlipperState.InFlight) _velocity = velocity;
+        }
+
         public void HostThrow(CharacterMotor thrower, Vector3 origin, Vector3 velocity, SlipperAffinity affinity = SlipperAffinity.Normal, float pektusSpin = 0.0f)
         {
             if (!NetAuthority.ShouldResolve()) return;

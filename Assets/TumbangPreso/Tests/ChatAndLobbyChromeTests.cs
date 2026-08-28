@@ -135,7 +135,7 @@ namespace TumbangPreso.Tests
         [Test]
         public void TheProtocolCarriesEveryRosterBump()
         {
-            Assert.AreEqual(10, NetSession.ProtocolVersion,
+            Assert.AreEqual(11, NetSession.ProtocolVersion,
                 "a message or a replicated roster index has been added or removed. Bump this " +
                 "number and `NetSession.ProtocolVersion` together, in the same commit.");
         }

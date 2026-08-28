@@ -133,6 +133,27 @@ namespace TumbangPreso
             UprightChanged?.Invoke(isUpright);
         }
 
+        /// <summary>
+        /// Moves a replica can along the host's path WITHOUT touching whether it is standing.
+        ///
+        /// ⚠️⚠️ THE ROLL IS A STREAM AND GOING OVER IS AN EVENT, AND THEY TRAVEL SEPARATELY NOW.
+        /// A struck can rolls for a second or so, which is a position that fully replaces itself
+        /// every step and can afford to lose a packet; `_isUpright` is what scores and may never
+        /// lose one. `Slipper.ApplySnapshotPose` carries the full reasoning, including why the
+        /// unreliable half must carry no state at all rather than state the receiver ignores.
+        ///
+        /// ⚠️ IT DELIBERATELY DOES NOT TOUCH `_toppleAngle`, `_rollAngleDeg` OR THE PROTECTION
+        /// WINDOW. Those are consequences of the state change that `ApplySnapshotState` sets when
+        /// the event arrives, and re-deriving them from a rotation fifty times a second would let
+        /// a pose packet restart a restore-protection window the host has already spent.
+        /// `_lastRollPosition` moves with the transform because it is the roll's own trail.
+        /// </summary>
+        public void ApplySnapshotPose(Vector3 position, Quaternion rotation)
+        {
+            transform.SetPositionAndRotation(position, rotation);
+            _lastRollPosition = position;
+        }
+
         /// <summary>Host-side. Knock it over and pay the thrower.</summary>
         public void HostKnockDown(int throwerSlot)
         {

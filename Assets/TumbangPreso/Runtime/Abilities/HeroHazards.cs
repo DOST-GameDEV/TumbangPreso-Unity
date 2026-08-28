@@ -714,10 +714,33 @@ namespace TumbangPreso.Abilities
 
                 Burn(transform, _left, Duration);
 
-                if (!NetAuthority.ShouldResolve()) return;
+                // ⚠️⚠️ THIS USED TO BE `if (!NetAuthority.ShouldResolve()) return;` AND ZACK'S OWN
+                // BOOST WAS THEREFORE INVISIBLE TO HIM ON EVERY MACHINE BUT THE HOST. Same shape
+                // as Cheska's ice above and Nemu's void below, and `docs/TODO.md` § 74 is the
+                // entry that carried it: a client's own body is moved only by the host's position
+                // stream, and `CharacterMotor.ApplyNetworkTransform` ignores a correction under
+                // 1.25 m while the owner is predicting. The turbo is 6.0 scaled by `Time.deltaTime`,
+                // which is about 0.1 m in a frame, so it never reached the threshold in a single
+                // step and was filtered out completely: not weak on three of the four screens,
+                // ABSENT. A dash that pays out only for whoever happens to be hosting is not a
+                // balanced ability.
+                //
+                // ⚠️ IT WAS LEFT ALONE ON PURPOSE UNTIL NOW, and § 74 says why: nobody had
+                // reported it, and retuning an ability that was not in the batch is how a fix
+                // becomes a regression. It is done here as network work rather than as a retune,
+                // and no number in it changed.
+                //
+                // ⚠️ A PEER MOVING ITS OWN BODY IS PREDICTION, NOT AUTHORITY. `ApplyImpulse`
+                // refuses a body this peer does not own, so the owner branch is safe everywhere:
+                // the host applies it to all four, each client to exactly its own, and the two
+                // agree. What stays behind the gate is everything that is a DECISION.
                 var round = GameServices.Round;
                 if (round == null) return;
 
+                // ⚠️ NO HOISTED `resolves` HERE, UNLIKE THE ICE AND THE VOID. Both of those need
+                // one for a popup and a cue that sit outside an effect call; this loop's only
+                // host-gated line is the stagger itself, so the gate is written at that line and
+                // a local would be both unused and unreadable to the authority audit.
                 foreach (var p in round.Players)
                 {
                     if (p == null) continue;
@@ -728,13 +751,43 @@ namespace TumbangPreso.Abilities
                         if (p.PlayerSlot == OwnerSlot)
                         {
                             // Turbo speed boost to Zack
-                            p.ApplyImpulse(p.transform.forward * 6.0f * Time.deltaTime);
+                            //
+                            // ⚠️⚠️ THE CONDITION IS THE INVARIANT, WRITTEN OUT RATHER THAN
+                            // HOISTED. "The host may move anybody; anybody may move themselves"
+                            // is what a peer predicting its own body is allowed to do, and
+                            // `tools/audit_ability_authority.py` reads this literally: it reports
+                            // every effect on ANOTHER body that is not inside a `ShouldResolve()`
+                            // gate, `CLAUDE.md` § 7.1 requires that count to be zero, and a
+                            // hoisted flag is invisible to it. Cheska's ice carries the same note
+                            // for the same reason.
+                            if (NetAuthority.ShouldResolve() ||
+                                p.PlayerSlot == NetAuthority.LocalSlot)
+                            {
+                                p.ApplyImpulse(p.transform.forward * 6.0f * Time.deltaTime);
+                            }
                         }
                         else
                         {
                             // Discrete pulses keep the trail threatening without turning
                             // every rendered frame into a permanent action lock.
-                            if (CanPulse(_nextStaggerBySlot, p.PlayerSlot, 1.1f))
+                            //
+                            // ⚠️⚠️ THE STAGGER STAYS HOST-ONLY AND SO DOES ITS FLAVOUR. A stagger
+                            // is a DECISION about somebody else's body, which is the half of this
+                            // loop that authority actually governs, and `CanPulse` is rate state
+                            // that only means anything on the machine keeping it. The popup and
+                            // the stars ride behind that decision deliberately: they are
+                            // announcements, and four machines each raising their own copy of one
+                            // event is the fault `docs/TODO.md` § 38.1 records eleven times.
+                            //
+                            // ⚠️⚠️ WRITTEN OUT RATHER THAN AS THE HOISTED `resolves`, AND THE
+                            // AUDIT IS WHY. The first draft of this change said `resolves &&` here
+                            // and `tools/audit_ability_authority.py` went from 0 ungated on
+                            // another body to 1 on the same commit: it reads the brace depth for a
+                            // literal `ShouldResolve()` and a local bool is invisible to it. That
+                            // is the audit doing its job, and the fix is to say the invariant
+                            // rather than to widen the audit.
+                            if (NetAuthority.ShouldResolve() &&
+                                CanPulse(_nextStaggerBySlot, p.PlayerSlot, 1.1f))
                             {
                                 p.ApplyStagger(0.25f);
                                 ComicPopup.Zap(p.transform.position);   // Flavour: culled past 15 m
