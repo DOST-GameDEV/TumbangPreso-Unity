@@ -6536,6 +6536,413 @@ frame while hosting) and the UGS push (still edge-triggered, because it is a net
 
 ---
 
+## 68 · The lobby is a form, and it should be a room ⚠️ OPEN, PLANNED 2026-08-28
+
+🧑, 2026-08-28, with a PUBG lobby screenshot beside a capture of ours: *"i want our boring ass
+lobby to look like this"*, *"i want multiplayer to go straight to lobby and thats where u can
+join"*, *"all the shit like map mode bots character join yk everything is togglable"*, *"its okay
+if character select still makes u go to a dif screen. i dont want character select to be
+touched"*, *"make sure u dont break lobby"*, *"dont delete old huds and ui tho keep them incase ur
+shit turns ugly"*, *"organize everything and make sure theres no redudnant shit"*, *"make sure
+shit works like end to end"*.
+
+**The reference is the LAYOUT, never the skin.** PUBG's lobby is grey military chrome and this
+game's brand is painted wood, cream and amber (`UiTheme`, and `Art_Direction.md` § 1 says the
+palette file is the only place a colour is named). What is borrowed is the ARRANGEMENT: the room
+is the picture, the cast stands in it, the controls are small furniture pushed to the edges.
+
+### 68.0 The four decisions, taken 2026-08-28 before any code
+
+Asked and answered rather than assumed, because each one changes what gets built:
+
+| Question | Answer |
+|---|---|
+| Network state on arriving at the lobby | **Auto-host on LAN.** § 68.5 |
+| Which of the two references | **Hybrid**: PUBG Mobile's chrome, PC PUBG's four-person line-up. § 68.7 |
+| Chat | **Lobby AND in-match, on this branch.** § 69, and it is the only wire change |
+| Nav bar | **`PRACTICE ǀ MULTIPLAYER` tabs.** § 68.7 |
+
+### 68.1 What the two screens actually are today
+
+`ConvertedMatchSetup` is ALREADY both screens. It draws `PRACTICE MODE` offline and `LOBBY`
+when `NetSession.IsNetworked`, off one `isNetworked` branch in `Refresh()`. Nothing has to be
+invented to make multiplayer land here; the screen has been the lobby since § 55.
+
+What lives on the OTHER screen, `ConvertedMultiplayerSetup`, is only the four ways IN: host
+online (Relay), host LAN, a join address/code field, and the two browsers (`LanBeacon` and
+`ServerQuery`). Those are the only things that have to move.
+
+⚠️ **THE FOUR SELECTORS ALREADY REPLICATE AND THE READY TALLY ALREADY ARRIVES.** Map
+(`SelectMapServerRpc`), mode (`SelectModeServerRpc`), difficulty (`SelectDifficultyServerRpc`),
+picks (`SelectLobbyPickServerRpc`), the seat table (`LobbySeatInfo`, which carries `Name`,
+`Occupied` and `CharacterPick`) and the ready tally (`OnLobbyReadyChanged`) are all on the wire
+already. **The lobby redesign is therefore a pure client-side reskin.**
+
+### 68.2 ⚠️⚠️ THE LOBBY WORK ADDS NO WIRE CHANGE. CHAT IS THE ONLY ONE, AND IT BUMPS THE PROTOCOL
+
+Everything the new lobby draws is already replicated (§ 68.1), so § 68's own work moves
+`NetSession.ProtocolVersion` not at all. **§ 69's chat does**, 5 → 6, because a chat line is a
+named message that has never existed.
+
+⚠️ **THAT MEANS BOTH LAPTOPS MUST BE REBUILT FROM THIS BRANCH.** § 59.4 records what a bump
+costs: a peer on a different protocol is REFUSED at approval, by design, because a build that
+"mostly works" presents as wrong characters and frozen bodies. § 59.2 is what makes the refusal
+say so out loud instead of hanging. **Land and verify § 68 with the protocol still at 5, bump it
+once in § 69, and never twice.**
+
+⚠️ If a step in § 68 seems to need a new field, that step is wrong.
+`tools/audit_wire_payloads.py` is the check, and `audit_request_call_sites.py` catches the other
+half (a protocol added and never called).
+
+### 68.3 ⚠️⚠️ THE OLD CHROME IS KEPT AND SWITCHABLE, NOT DELETED
+
+🧑: *"dont delete old huds and ui tho keep them incase ur shit turns ugly"*.
+
+`LobbyStyle` is one enum with two values, read once in `ConvertedMatchSetup.Wire()`:
+
+* `Classic`, the authored converted panels exactly as they are today. Nothing new is drawn.
+* `Street`, the new arrangement. Default.
+
+⚠️ **THE OLD NODES ARE DEACTIVATED, NEVER DESTROYED**, and the new chrome is BUILT FROM CODE in
+`Wire()` the way `BuildRightPanelNetwork` already builds the address and code rows. So
+`MatchSetup.unity` barely changes on disk, `Classic` is a working screen at every commit, and
+reverting is a one-line default rather than git archaeology.
+
+⚠️ **`MultiplayerSetup.unity` AND `ConvertedMultiplayerSetup.cs` STAY ON DISK AND STAY IN THE
+BUILD ORDER.** They cost one scene entry and they are the fallback if the in-lobby join panel
+turns out worse. Only the LINK from `ConvertedModeSelect` is removed. `UiClickProbe`,
+`ScreenshotTool` and `UiRuntimeShots` keep passing because the scene still exists.
+
+### 68.4 ⚠️⚠️ RE-SKIN, DO NOT RENAME
+
+`ConvertedScreen` finds every control by the name Godot gave it and `Node()` logs an error on a
+miss. `SeatButton0..3`, `PrimaryButton`, `StartButton`, `BackButton`, `MapValueLabel`,
+`ModeValueLabel`, `DifficultyValueLabel`, `CharacterButton`, `BannerLabel`, `DetailLabel`,
+`SeatHeading`, `SeatHint`, `StatusLabel`, `MapPreview` and `CharacterSelectPanel` keep their
+names and their handlers. **Renaming one is how this breaks silently**, and it is the exact
+failure that class header exists to describe.
+
+### 68.5 The navigation change, and the third lobby state it creates
+
+`ConvertedModeSelect` sends MULTIPLAYER to `SceneFlow.MultiplayerSetup`. It goes to
+`SceneFlow.MatchSetup` with `Networked = true`, **and the lobby auto-hosts on LAN the moment it
+arrives.**
+
+That gives the screen a state it has never had: networked, but no transport yet. Today
+`IsNetworked` is false until somebody hosts or joins and the screen reads that as practice.
+
+| State | Headline | Selector rows | Join panel |
+|---|---|---|---|
+| Practice (offline) | `PRACTICE MODE` | all live | hidden |
+| Lobby, host bind failed | `LOBBY` + the reason | live, local only | OPEN |
+| Lobby, hosting | `LOBBY · YOU ARE HOSTING` | live, replicated | available |
+| Lobby, connected | `LOBBY · CONNECTED` | greyed, host picks | LEAVE |
+
+⚠️⚠️ **A REFUSED PORT BIND MUST FALL BACK, NEVER HARD-FAIL.** Auto-hosting binds 8910 the moment
+somebody presses MULTIPLAYER, and the usual reason it is already bound is the player's own second
+copy of the game. The screen drops to row 2 with `NetSession.Status` on the status label and the
+join panel already open, so the path OUT is on screen rather than being an error message. That is
+`ConvertedMultiplayerSetup.Reason()`'s finding applied one screen earlier.
+
+### 68.6 ⚠️⚠️ HOST → LEAVE → JOIN IN ONE LAUNCH IS THE PATH THIS FEATURE LIVES OR DIES ON
+
+Auto-hosting means joining somebody else is STOPPING a host and STARTING a client in the same
+process. That is § 65.1's fault (`NetworkManager.Shutdown()` does not shut anything down; a
+second host or join in one launch was refused, silently) and § 63.1's (handlers registered once
+per process, not once per session). **Both are fixed. Neither has ever been exercised in this
+order.** § 68.14's two-process run exists for this and nothing else.
+
+### 68.7 The arrangement: PUBG Mobile's chrome, PC PUBG's line-up
+
+Hybrid, as decided. The bottom nav from the mobile shot is DROPPED rather than invented: its
+tabs are RANK / SEASON / WORKSHOP / MISSIONS / INVENTORY and this game has none of them. The two
+tabs that are real go along the top.
+
+| Reference | Here | Built from |
+|---|---|---|
+| Full-bleed 3D scene | The chosen arena, live, still swaying | `MapPreviewSurface`, already shipped |
+| Four players standing in it (pic 1) | The four seats as their picked characters | NEW, § 68.8 |
+| Names + ready ticks over their heads | Same, plus a `TAYA FIRST` tag | NEW, § 68.9 |
+| Top nav (pic 1) | `PRACTICE ǀ MULTIPLAYER` tabs | `MenuKit`, wood |
+| Player card top-left (pic 3) | Name, avatar, the character you picked | `MenuKit` |
+| Stacked selectors bottom-left | MAP / MODE / BOTS / CHARACTER | The existing selectors, restyled |
+| Big yellow START bottom-left (pic 3) | `PrimaryButton` / `StartButton`, amber | Existing nodes, restyled |
+| Bottom-right LEAVE + ticks + cog | LEAVE / SPECTATE / settings | Existing `BackButton`, `SpectateButton` |
+| Party code / region | Join code + address + JOIN | Lifted, § 68.11 |
+| (none) | Chat, bottom-left above START | § 69 |
+
+⚠️⚠️ **THE TABS SWITCH IN PLACE, WITH NO SCENE CHANGE.** `PRACTICE` stops the transport and
+clears `SceneFlow.Networked`; `MULTIPLAYER` sets it and auto-hosts. Both then re-run the same
+`Refresh()`. A scene reload here would tear down the cast, the cached arenas and both render
+textures the screen just built, and `SceneFlow.Go`'s one-load-per-frame latch will not save a
+same-scene reload because it is scoped to a single frame on purpose.
+
+⚠️ **THE PANELS GET SMALLER, THEY DO NOT GET TRANSPARENT.** `UiTheme.HeroPlate`'s note is
+explicit that translucent near-black is COMBAT chrome, where the court behind it is the subject,
+and that menu chrome is FURNITURE and may be opaque. The room becomes the picture by pushing
+opaque wooden furniture to the EDGES, which is what both references actually do. A translucent
+wood panel is the "brown shit" 🧑 already rejected once.
+
+⚠️ **THE SCRIM CHANGES SHAPE, NOT STRENGTH.** `Scrim` currently flattens the whole backdrop. It
+becomes a top and bottom gradient so the middle of the room is clean and the text still reads.
+
+### 68.8 The cast, which is the whole feature and the only real engineering
+
+Four characters standing on the map, lit by the map's own sun and graded by the map's own
+`MapGrade`.
+
+⚠️⚠️ **THEY GO INSIDE THE PREVIEW ARENA, NOT INTO A SECOND RENDER TEXTURE.** `ModelPreview` draws
+ONE subject on layer 30 with its own lights and its own camera; four of those composited over the
+map would be four cameras, four targets and four subjects lit by nothing the map knows about,
+which is the pasted-on look. `MapPreviewSurface` already loads the arena, strips the match out of
+it, confines it to layer 29, copies the arena's ambient, fog, sky and colour grade, **and already
+finds the map's `SpawnPoints` because it averages them for its camera pivot.** The cast stands on
+those same markers.
+
+Shape of the work:
+
+* `MapPreviewSurface` grows `ShowCast(...)`. Models are parented into the cached arena scene
+  **AFTER `StripMatchObjects`**, because that method destroys every `CharacterMotor` GameObject it can
+  reach, and although a plain roster prefab has no motor, ordering it wrongly is a silent
+  deletion of the cast. They are then re-layered to 29 with the existing `SetLayerRecursively`.
+* Art comes from `RosterBook.PersonArt(index, mode)` → `.Model`, `.Clips`, `.Palette`, exactly as
+  `ConvertedCharacterSelect` resolves it. ⚠️ Rigs are imported **Generic**, so
+  `ModelPreview.EnsureAvatar` is required or every model stands in its bind pose, arms out. That
+  is `ModelPreview`'s own recorded fault 4, and it also wrecks any framing measured off the
+  silhouette.
+* A seat's character is `LobbySeatInfo.CharacterPick` when occupied and the roster default when
+  it is a bot. ⚠️ `RosterBook`'s header: a missing entry must render SOMEBODY, never nothing.
+* Scale is `ModelPreview.PreviewScale` 2.38, which is the match's own PERSON_SCALE. Previewing at
+  native scale frames a doll.
+* Framing: the registry's per-map `Yaw`/`Distance`/`Height` were tuned for an EMPTY street
+  (Eskinita 0/22/16). A four-person line-up needs its own shot, so one `LobbyFraming` joins the
+  three existing fields on `MapEntry`. ⚠️ It goes in the registry and not in the map scene, for
+  the reason that struct's own note gives: `tools/maps/build_*.py` emit the map scenes
+  WHOLESALE, so a camera placed by hand survives exactly until the next layout run.
+* ⚠️ The sway stays. `SwayDegrees` 7 over `SwayPeriod` 26 is what stops the shot being a
+  photograph, and it is a sway rather than an orbit so the camera never swings behind the facades.
+
+### 68.9 Nameplates
+
+A name, a ready tick and a `TAYA FIRST` tag floating over each character. UI, not world geometry:
+projected with the preview camera's `WorldToViewportPoint` and mapped into the `MapPreview`
+RawImage rect.
+
+⚠️ **THEY ARE NOT TINTED WITH `Offense` OR `Defense`.** Those two colours mean "attacker" and
+"defender", and `UiTheme.ForRole`'s note is explicit that the taya ROTATES every round, so a
+fixed per-seat colour tells the player the wrong thing three rounds out of four. Cream for names,
+Amber for the taya tag, nothing else.
+
+⚠️ **EVERY PLATE IS SIZED AGAINST ITS STRING.** Legacy `Text` defaults to WRAP and the converted
+labels ship `Overflow`, so a long player name either wraps out of its plate or draws straight past
+it. `ConvertedScreen.SetHeadline` records this happening three times in one session and
+`GameVersion.ApplyTo` records the fourth. A player name is arbitrary text from another machine,
+which makes this the worst case in the game, not the mildest.
+
+⚠️ **`raycastTarget = false` ON EVERY DECORATIVE GRAPHIC**, or `UiClickProbe` reports the controls
+underneath as unreachable and it will be right.
+
+### 68.10 Everything togglable, and the greying that is missing today
+
+MAP, MODE, BOTS, CHARACTER, seat, SPECTATE, READY, START, the `PRACTICE ǀ MULTIPLAYER` tabs, and
+the LAN/ONLINE choice in the join panel.
+
+⚠️ **A NON-HOST'S CYCLE BUTTONS SILENTLY DO NOTHING TODAY.** `OnMapCycle`, `OnModeCycle` and
+`OnDifficultyCycle` all open with `if (!NetAuthority.IsHost && SceneFlow.Networked) return;`,
+which is correct authority and a bad control: the button lights, clicks, plays its sound and
+changes nothing, which is indistinguishable from broken. They get `interactable = false` and a
+line saying the leader picks. **This is a live defect being fixed in passing, not a new feature.**
+
+⚠️ **BOTS STOPS AT HARD IN A NETWORKED LOBBY**, and that is `DifficultyOptionCount`'s existing
+rule rather than an oversight: `NONE` removes three seats, and a seat is what a peer joins.
+
+⚠️⚠️ **THE BIG AMBER BUTTON IS `START MATCH` FOR THE HOST AND `READY` FOR EVERYONE ELSE.** 🧑,
+2026-08-28: *"start should be ready for everyone else except for host"*. One button in one place,
+two labels, decided by `NetAuthority.IsHost`. **That is a layout change, not a behaviour change:**
+§ 59.3 already made readiness an ANSWER the host reads rather than a trigger, on request (*"i
+also dont like that if u click ready it auto starts"*), and the host's START is already live
+whatever the tally reads, because a host plus three bots is a legitimate match.
+
+⚠️ **SO `StartButton` AND `PrimaryButton` STOP BEING TWO CONTROLS ON SCREEN AT ONCE.** Today the
+host sees both: `PrimaryButton` reads READY and `StartButton` is shown host-only right beside it.
+In `Street` exactly one of them is visible per peer. ⚠️ **Both nodes stay in the scene and keep
+their handlers** (§ 68.4); the one that is not this peer's is deactivated, not rewired, so
+`OnPrimaryPressed` and `OnStartPressed` keep the meanings § 54 and § 59.3 settled.
+
+⚠️ **CHARACTER STILL OPENS THE EXISTING PANEL IN PLACE.** 🧑: *"i dont want character select to be
+touched"*. `ConvertedCharacterSelect.cs` and `CharacterSelect.unity` are not edited, and
+`OpenCharacterSelect` keeps revealing `CharacterSelectPanel` as a child of this scene. § 68.13.
+
+### 68.11 The join panel, lifted rather than rewritten
+
+`ConvertedMultiplayerSetup`'s LAN browser, online browser, address/code field and Relay host
+button move into a `LobbyJoinPanel` opened from the lobby. The logic is transcribed, not
+redesigned: `Reason()` (which stopped four different failures reading as one sentence),
+`LastDisconnectReason` (read once and cleared), the `host:port` split from § 59.1, and the code
+lookup through `ServerQuery.ResolveCodeAsync`.
+
+⚠️⚠️ **ONLINE IS A FIRST-CLASS LOBBY, NOT A LEFTOVER OF THE OLD SCREEN.** 🧑: *"make sure u can do
+online server lobby too"*. Auto-hosting on LAN (§ 68.5) is the LANDING state and not the only
+one. The lobby carries a `LAN ǀ ONLINE` toggle beside the join code:
+
+* **LAN → ONLINE** stops the local host and calls `NetSession.StartRelayHost()`, then redraws in
+  place. The join code row swaps from `address + code` to the Relay code, and `ServerQuery`
+  publishes the lobby to the online pool so it shows up in other players' browsers.
+* **ONLINE → LAN** is the same move back.
+* **Joining** is symmetric and already is: `ResolveCodeAsync` returns `IsLan`, and the panel takes
+  `StartClientAsync` or `StartRelayClient` off that flag. A four-character code works for both, so
+  a player reading a code out loud never has to know which kind of lobby they are in.
+
+⚠️ **A TOGGLE IS A SECOND HOST → LEAVE → HOST IN ONE LAUNCH**, which is § 65.1 again, from a
+third direction. It is on the two-process list (§ 68.14 step 7).
+
+⚠️ **AND ONLINE HAS ONE OPEN FAULT ALREADY: § 65.4**, the online browser can offer a lobby whose
+Relay allocation is gone. Moving the browser does not fix it and must not hide it; the failure
+has to reach the status label through `Reason()` like every other one.
+
+⚠️⚠️ **`SceneFlow.Go(MatchSetup)` AFTER A SUCCESSFUL JOIN BECOMES A REFRESH IN PLACE.** The player
+is already on that scene. Reloading would destroy the cast, the cached arenas and the render
+textures, and the one-load-per-frame latch does not cover it.
+
+⚠️⚠️ **AND THE REJOIN PATH MUST STILL FIRE.** `RejoinRunningMatch` runs inside `Wire()` and reads
+`Lobby.MatchInProgress` on arrival; joining in place never re-runs `Wire()`. Its header records
+what that hole costs: *"you'll only get ported back to the lobby with no way of joining back"*.
+Whatever replaces the navigation has to ask the same question again at the same moment.
+
+### 68.12 Organisation, so nothing lives in two places
+
+🧑: *"organize everything and make sure theres no redudnant shit and that everything is easy to
+find"*.
+
+| File | Owns | Knows about |
+|---|---|---|
+| `ConvertedMatchSetup.cs` | The state machine and the wiring | Everything below |
+| `LobbyChrome.cs` (new) | Building the `Street` furniture and the tabs | `MenuKit`, `UiTheme` |
+| `LobbyCast.cs` (new) | The four models and their nameplates | `RosterBook`, `MapPreviewSurface` |
+| `LobbyJoinPanel.cs` (new) | Hosting, joining, both browsers | `NetSession` |
+| `LobbyChat.cs` (new, § 69) | The chat log and entry field | `MatchRpc` |
+| `MapPreviewSurface.cs` | The room. Grows `ShowCast` + lobby framing | The arena scenes |
+| `ConvertedMultiplayerSetup.cs` | Nothing. Unreferenced, kept as the fallback | (nothing) |
+
+⚠️ **ONE COLOUR SOURCE AND ONE CONTROL BUILDER.** Every colour from `UiTheme`, every control
+through `MenuKit`/`GodotTheme` so `GodotButton` variations keep applying. `UiTheme`'s header
+records the whole hero layer drifting into a slate-blue palette because seventeen colours were
+named inline; this is the same trap on a different screen.
+
+### 68.13 What must NOT be touched
+
+* `ConvertedCharacterSelect.cs`, `CharacterSelect.unity`, by request. `ModelPreviewTests` and
+  `HeroPickerLayoutProbe` passing unchanged is the proof.
+* `Packages/com.tumbangpreso.core/`, engine-free, and no rule changes here.
+* `MatchRpc` payloads, until § 69 and then exactly once.
+* `ConvertedMultiplayerSetup.cs`, `MultiplayerSetup.unity`, kept per § 68.3.
+* `GameVersion` / `BuildBranch`. The corner reads `1.00` on every branch as of 2026-08-28.
+
+### 68.14 Done looks like
+
+1. `dotnet test Core.Tests` green.
+2. EditMode green, `LobbyAndSettingsTests` included, plus a new test asserting that BOTH
+   `Classic` and `Street` resolve every node `ConvertedMatchSetup` reaches by name. That test is
+   what makes § 68.4 an assertion instead of a warning.
+3. PlayMode green (no `-nographics`, it crashes the editor; assert on the `.xml`, never the exit
+   code, because both a crash and a failure come back as 0): `UiClickProbe` finds every new
+   control reachable, `AspectRatioProbes` clears nine resolutions, `HeroPickerLayoutProbe` and
+   `ModelPreviewTests` still pass.
+4. `Checks.RunAll` green, `SceneScriptCheck` above all: it is the only check that can see a scene
+   holding a component the PLAYER cannot bind, and a shipped build once crashed on the map select
+   with every other check green.
+5. `tools/audit_wire_payloads.py` and `audit_request_call_sites.py` exit zero: § 68 adds no
+   protocol, § 69 adds exactly one and it is called.
+6. `UiRuntimeShots` captures of the lobby in BOTH styles, versioned filenames per `CLAUDE.md`
+   § 6.1, so `Classic` and `Street` can be compared side by side rather than described.
+7. ⚠️⚠️ **THE TWO-PROCESS RUN, AND IT IS THE ACCEPTANCE TEST.** § 38.19's driver, in this exact
+   order, because the order is what is untested:
+   1. A presses MULTIPLAYER, lands hosting, shows a join code.
+   2. B presses MULTIPLAYER, lands hosting its OWN lobby.
+   3. B opens JOIN, sees A on the LAN browser, joins. **This is the host → leave → join of
+      § 68.6.**
+   4. A's cast grows a second body wearing B's character, with B's name over it.
+   5. B changes character; A sees the model change. B readies; A's tally moves.
+   6. A starts; both land in the same arena on the same map in the same mode.
+   7. B quits to the lobby and joins A AGAIN in the same launch (§ 65.1).
+   8. B rejoins while the match is still running (§ 68.11's `RejoinRunningMatch`).
+   9. Chat carries in both directions in the lobby and in the arena (§ 69).
+8. Clean Windows build, previous output deleted first, timestamps verified on BOTH
+   `TumbangPreso.exe` and `TumbangPreso_Data`. A `SUCCEEDED` line does not prove the launcher
+   was re-emitted.
+
+### 68.15 Order of work, so the screen is never half-broken
+
+1. Navigation, auto-host, and the four lobby states. **No visual change at all.** Verify joining
+   works from the lobby before anything is made pretty.
+2. `LobbyJoinPanel`, lifted.
+3. The cast in the backdrop.
+4. The `Street` chrome and the tabs, behind the `LobbyStyle` switch.
+5. Nameplates.
+6. § 69's chat, and the single protocol bump.
+7. The full verification pass in § 68.14.
+
+---
+
+## 69 · The game has no chat, in the lobby or in a match ⚠️ OPEN, PLANNED 2026-08-28
+
+🧑, 2026-08-28: *"yea maybe add a chat to our game too that works in lobby and ingame"*.
+
+Four people in a lobby have no way to say anything to each other, and four people in a match have
+no way to call a play. Emotes exist (§ 38.3 put them on the wire) and they are not the same thing.
+
+### 69.1 ⚠️⚠️ THIS IS THE ONE THING IN BOTH SECTIONS THAT MOVES `ProtocolVersion`, 5 → 6
+
+A chat line is a named message that has never existed, so both machines must be rebuilt from this
+branch or they refuse each other at approval. § 68.2 has the full reasoning. **Bump it once, in
+this section, after § 68 has been verified at 5.**
+
+### 69.2 Shape
+
+* One named message, host-relayed: sender's seat, and the text. ⚠️ **The sender is NGO's
+  authenticated client id, never a seat carried in the payload.** § 54 records exactly this: a
+  field the host has to remember to ignore is a field that gets trusted, and `DeclareReady` was
+  cut down to a single `bool` for it.
+* ⚠️ **The host clamps length and rate.** § 38.9 found two request channels any client could
+  flood; a text channel is the obvious third. A cap on characters and a minimum interval per
+  peer, enforced host-side, not client-side.
+* ⚠️ **The name is the one already in `LobbySeatInfo`**, not a second name field. There is exactly
+  one identity per peer and it crossed the wire before this.
+* `tools/audit_wire_payloads.py` must show the writer and the reader agreeing field for field:
+  § 38.6 exists because netcode does not check that and a mismatch is silently misread bytes.
+
+### 69.3 In the lobby
+
+Bottom-left above the START button, in the wood set. Always visible, last few lines, entry field
+below. No key needed to focus it: the lobby has no gameplay to steal a keystroke from.
+
+### 69.4 In the match, where the rules are different
+
+⚠️⚠️ **A CHAT FIELD THAT SWALLOWS MOVEMENT KEYS IS A WEAPON.** Enter opens it, Enter sends and
+closes it, Escape cancels, and while it is open the gameplay input map is suspended.
+
+⚠️ **THE INPUT MAP RULE APPLIES.** `CLAUDE.md` § 4: one control, one action, PER CONTEXT, and
+`InputMapAndAbilityTests` asserts it. Chat is a THIRD context after gameplay and spectating, and
+it is a narrowing of the same kind § 35.3 records: a player typing has no verbs, so its keys can
+never collide with theirs. It goes in the input asset and in the rebinding panel like every other
+key. It does not become a ninth `Keyboard.current` read outside the asset.
+
+⚠️ **THE LOG FADES, THE HUD DOES NOT GROW.** `VISION.md` § 2 rule 5: a screenshot mid-fight must
+still show the lata, the chalk and every player. Chat lines retire after a few seconds like
+§ 46.3's banner rather than accumulating, and they sit clear of the ability deck, which is where
+§ 46.1 and § 46.4 both found something drawn on top of something else.
+
+⚠️ **A SPECTATOR CAN READ AND SEND.** They have no body and no seat, and their name is still in
+the roster.
+
+### 69.5 Done looks like
+
+The two-process run of § 68.14 step 7.9, both directions, in the lobby and in the arena, plus
+`audit_wire_payloads.py` and `audit_request_call_sites.py` green on the new message, plus an
+EditMode test on the host-side clamp and rate limit.
+
+---
+
 ## 1 · Peer rematch voting across the wire
 
 **The last genuine PARTIAL row in the ledger, and the only one.**
