@@ -60,8 +60,27 @@ namespace TumbangPreso.EditorTools
                 Check(ref failures, "hero roster size", Roster.HeroPeople.Count == 6);
                 Check(ref failures, "all roster size",
                       Roster.AllPeople.Count == Roster.ClassicPeople.Count + Roster.HeroPeople.Count);
-                Check(ref failures, "cans", Roster.Cans.Count == 4);
-                Check(ref failures, "slippers", Roster.Slippers.Count == 9);
+                // ⚠️⚠️ THESE TWO WERE `== 4` AND `== 9` AND THEY BROKE THE MOMENT A CAN WAS
+                // ADDED, WHICH IS THE THIRD TIME THIS FILE HAS DONE IT. The note above already
+                // records the hero count doing exactly this in § 21 and already says the numbers
+                // should be derived rather than retyped; the two lines below were the ones that
+                // had not been converted yet. Adding PIYESTA and KARNE NORTE on 2026-08-28 turned
+                // `Checks.RunAll` red on a roster that was entirely correct.
+                //
+                // ⚠️ BOTH LISTS ARE APPEND-ONLY AND WILL KEEP GROWING. `Roster.Slippers` is
+                // already carrying a tenth entry in `docs/TODO.md` § 70.8. A literal here is a
+                // guaranteed future false failure, and a false failure in a five-check gate is
+                // worse than no check: it trains the next reader to skim past a red line.
+                //
+                // ⚠️ WHAT THIS CHECK IS ACTUALLY FOR IS PROVING THE RULES PACKAGE IS REACHABLE
+                // FROM UNITY AT ALL, per the note above. So it asserts the invariants that hold
+                // at any size: the lists exist, entry 0 is present because every -1 fallback
+                // resolves to it, and no row carries trait points outside the table's own range.
+                // Roster.cs's own note is that entry 0 stays neutral, and TraitMin/TraitMax are
+                // what the AI's range equation is solved against.
+                Check(ref failures, "cans", Roster.Cans.Count > 0 && AllTraitsInRange(Roster.Cans));
+                Check(ref failures, "slippers",
+                      Roster.Slippers.Count > 0 && AllTraitsInRange(Roster.Slippers));
 
                 Check(ref failures, "neutral is exactly 1.0",
                     Mathf.Approximately(Roster.TraitScale(3, Balance.TraitSpeedPerPoint), 1.0f));
@@ -112,6 +131,24 @@ namespace TumbangPreso.EditorTools
         {
             Report.AppendLine(ok ? $"ok   : {what}" : $"FAIL : {what}");
             if (!ok) failures++;
+        }
+
+        /// <summary>
+        /// Every row's trait points sit inside the table's own declared range.
+        ///
+        /// ⚠️ THIS REPLACED A HARD-CODED COUNT, AND IT CATCHES MORE THAN THE COUNT DID.
+        /// `Roster.TraitScale` clamps out-of-range points silently, so a row typed as 6 or 0
+        /// plays as 5 or 1 with nothing said anywhere. A list length never caught that.
+        /// </summary>
+        private static bool AllTraitsInRange(System.Collections.Generic.IReadOnlyList<RosterEntry> rows)
+        {
+            foreach (var row in rows)
+            {
+                if (row.Bilis < Roster.TraitMin || row.Bilis > Roster.TraitMax) return false;
+                if (row.Lakas < Roster.TraitMin || row.Lakas > Roster.TraitMax) return false;
+                if (row.Tatag < Roster.TraitMin || row.Tatag > Roster.TraitMax) return false;
+            }
+            return true;
         }
     }
 }
