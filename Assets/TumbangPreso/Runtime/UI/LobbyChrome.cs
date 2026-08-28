@@ -68,6 +68,7 @@ namespace TumbangPreso.UI
         private const float RightWidth = 500.0f;
         private const float EdgeMargin = 48.0f;
         private const float BottomMargin = 40.0f;
+        private const float TopRailOffset = 112.0f;
 
         /// <summary>
         /// How much the two authored columns shrink in the `Street` arrangement.
@@ -113,26 +114,25 @@ namespace TumbangPreso.UI
         private const float TopBandAlpha = 0.52f;
         private const float BottomBandAlpha = 0.30f;
 
-        /// <summary>
-        /// How far below the top the settings stack begins.
-        ///
-        /// ⚠️ MEASURED AGAINST THE BANNER, NOT GUESSED. `MatchSetup.tscn` puts the `Banner` at
-        /// 648x144 anchored top-left with an anchored y of -112, so its plate runs from about y 40
-        /// to y 184. 208 clears it with a 24 px gap and still leaves the settings block well above
-        /// the cast's heads.
-        /// </summary>
-        /// <summary>The compact settings drawer begins just below the banner.</summary>
-        private const float SettingsY = 112.0f;
-        private const float SettingsWidth = 620.0f;
+        /// <summary>The compact settings drawer is the first item in the bottom-left rail.</summary>
+        private const float SettingsWidth = 750.0f;
         private const float SettingsCollapsedWidth = 460.0f;
         private const float SettingsHeaderHeight = 56.0f;
         private const float SettingsBodyHeight = 430.0f;
 
-        /// <summary>How far below the top edge the lobby card sits.</summary>
-        private const float CardY = 26.0f;
-
-        /// <summary>START and BACK stay clear of the banner and the collapsed settings summary.</summary>
-        private const float ActionStackY = 470.0f;
+        private const float SocialRailRight = 48.0f;
+        // RightColumn lives under the converted Columns container while chat is a direct canvas
+        // child. Its inherited authored offset requires a 47-unit overshoot to share chat's
+        // visible 48 px right edge.
+        private const float SocialFurnitureRight = -47.0f;
+        private const float SocialRailBottom = 40.0f;
+        private const float SocialRailWidth = 392.0f;
+        private const float SocialToggleBottom = 60.0f;
+        private const float SocialDetailsBottom = 142.0f;
+        // The drawer's authored left padding is 67 units wider than the action stack's. Offset
+        // its host so the visible MATCH SETTINGS button, START MATCH and BACK share one centre.
+        private const float SettingsRailLeft = 88.0f;
+        private const float SettingsRailBottom = 200.0f;
 
         private const float TabHeight = 52.0f;
         private const float TabWidth = 260.0f;
@@ -150,6 +150,7 @@ namespace TumbangPreso.UI
             if (root == null || find == null) return null;
 
             SoftenScrim(root, find);
+            CompactBanner(find);
             var lobbyDrawer = MoveColumns(find);
             EnlargePrimaryActions(find);
             BuildIdentity(root, find);
@@ -175,9 +176,29 @@ namespace TumbangPreso.UI
                 element.minHeight = 116.0f;
                 element.preferredHeight = 116.0f;
                 element.flexibleHeight = 0.0f;
+                element.minWidth = LeftWidth;
+                element.preferredWidth = LeftWidth;
+                element.flexibleWidth = 0.0f;
 
                 var label = node.GetComponentInChildren<Text>();
-                if (label != null) label.fontSize = Mathf.Max(label.fontSize, 42);
+                if (label != null)
+                {
+                    // The converted label's rect is driven by the old column layout and can
+                    // collapse to zero when either new drawer rebuilds Columns. Keep the authored
+                    // button and skin, but replace that fragile text child with one whose anchors
+                    // belong to the button itself.
+                    string text = label.text;
+                    label.gameObject.SetActive(false);
+
+                    var stable = MenuKit.Label(node, text, 42, UiTheme.Cream,
+                                               Vector2.zero, Vector2.zero, Vector2.zero,
+                                               TextAnchor.MiddleCenter);
+                    stable.name = "ActionRailLabel";
+                    stable.raycastTarget = false;
+                    stable.horizontalOverflow = HorizontalWrapMode.Overflow;
+                    MenuKit.Stretch(stable.rectTransform, 12.0f);
+                    MenuKit.Fit(stable, LeftWidth - 48.0f, 24);
+                }
             }
         }
 
@@ -207,15 +228,15 @@ namespace TumbangPreso.UI
             rect.anchorMax = Vector2.one;
             rect.pivot = Vector2.one;
             rect.anchoredPosition = new Vector2(-48.0f, -34.0f);
-            rect.sizeDelta = new Vector2(420.0f, 56.0f);
+            rect.sizeDelta = new Vector2(420.0f, 52.0f);
 
             var caption = MenuKit.Label(chip.transform, "PLAYER NAME", 14, UiTheme.Amber,
                                         Vector2.zero, Vector2.zero, Vector2.zero,
                                         TextAnchor.MiddleCenter);
             caption.raycastTarget = false;
             caption.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
-            caption.rectTransform.anchorMax = new Vector2(0.38f, 1.0f);
-            caption.rectTransform.offsetMin = new Vector2(12.0f, 0.0f);
+            caption.rectTransform.anchorMax = new Vector2(0.31f, 1.0f);
+            caption.rectTransform.offsetMin = new Vector2(10.0f, 0.0f);
             caption.rectTransform.offsetMax = Vector2.zero;
 
             var fieldGo = new GameObject("PlayerNameEdit");
@@ -226,23 +247,26 @@ namespace TumbangPreso.UI
             fieldImage.color = Color.white;
 
             var fieldRect = fieldImage.rectTransform;
-            fieldRect.anchorMin = new Vector2(0.38f, 0.0f);
+            fieldRect.anchorMin = new Vector2(0.31f, 0.0f);
             fieldRect.anchorMax = Vector2.one;
-            fieldRect.offsetMin = new Vector2(4.0f, 7.0f);
-            fieldRect.offsetMax = new Vector2(-8.0f, -7.0f);
+            fieldRect.offsetMin = new Vector2(2.0f, 6.0f);
+            fieldRect.offsetMax = new Vector2(-6.0f, -6.0f);
 
-            var placeholder = MenuKit.Label(fieldGo.transform, "CLICK TO SET NAME  ✎", 17,
+            var placeholder = MenuKit.Label(fieldGo.transform, "SET NAME  ✎", 17,
                                             UiTheme.CreamMuted, Vector2.zero, Vector2.zero,
                                             Vector2.zero, TextAnchor.MiddleLeft);
             placeholder.raycastTarget = false;
-            MenuKit.Stretch(placeholder.rectTransform, 12.0f);
+            MenuKit.Stretch(placeholder.rectTransform, 10.0f);
 
             var typed = MenuKit.Label(fieldGo.transform, playerName, 20, UiTheme.Cream,
                                       Vector2.zero, Vector2.zero, Vector2.zero,
                                       TextAnchor.MiddleLeft);
             typed.raycastTarget = false;
             typed.supportRichText = false;
-            MenuKit.Stretch(typed.rectTransform, 12.0f);
+            typed.resizeTextForBestFit = true;
+            typed.resizeTextMinSize = 13;
+            typed.resizeTextMaxSize = 20;
+            MenuKit.Stretch(typed.rectTransform, 10.0f);
 
             var field = fieldGo.AddComponent<InputField>();
             field.targetGraphic = fieldImage;
@@ -261,6 +285,20 @@ namespace TumbangPreso.UI
                 Settings.SettingsStore.Save();
                 field.SetTextWithoutNotify(clean);
             });
+        }
+
+        /// <summary>Keeps the screen title inside the top navigation rail instead of letting the
+        /// converted banner occupy the whole upper-left quadrant.</summary>
+        private static void CompactBanner(Func<string, Transform> find)
+        {
+            var banner = find("Banner") as RectTransform;
+            if (banner == null) return;
+
+            banner.anchorMin = new Vector2(0.0f, 1.0f);
+            banner.anchorMax = new Vector2(0.0f, 1.0f);
+            banner.pivot = new Vector2(0.0f, 1.0f);
+            banner.anchoredPosition = new Vector2(0.0f, -40.0f);
+            banner.sizeDelta = new Vector2(520.0f, 112.0f);
         }
 
         /// <summary>
@@ -460,29 +498,18 @@ namespace TumbangPreso.UI
             var columnsRect = columns as RectTransform;
             if (columnsRect != null) MenuKit.Stretch(columnsRect, 0.0f);
 
-            // ⚠️⚠️ THE ACTION STACK GOES UP TOO. START, the status line and BACK were the last
-            // thing left in the bottom half, and leaving them there meant the middle was clear and
-            // the bottom-left was not, which is the same complaint one corner over. Everything the
-            // player operates lives in the top band now, and everything below it is the room.
-            Corner(left as RectTransform, LeftWidth, toLeft: true, toTop: true);
+            // Settings, START/READY, status and BACK are one bottom-left rail. The column grows
+            // upward when settings open, so the primary action never floats midway down the room.
+            Corner(left as RectTransform, LeftWidth, toLeft: true, toTop: false);
 
-            if (left is RectTransform leftRect)
-                leftRect.anchoredPosition = new Vector2(EdgeMargin, -ActionStackY);
-
-            // ⚠️ THE LOBBY CARD GOES TOP-RIGHT, OPPOSITE THE SETTINGS. Once `LiftSettings` moved
-            // the four cyclers under the banner and the `P1..P4` rows were removed, the right card
-            // was a short block floating alone in the bottom corner with a screen of empty road
-            // above it. Both blocks of INFORMATION now sit along the top and the bottom belongs to
-            // the two things you ACT with: START and the chat.
-            // ⚠️ THE LOBBY CARD HUGS THE TOP EDGE, level with the tabs rather than level with
-            // the settings. It is the shortest block on the screen and it was leaving a band of
-            // empty road above it.
-            Corner(right as RectTransform, RightWidth, toLeft: false, toTop: true);
+            // The social controls mirror that rail on the right. Details are hidden by default;
+            // when requested they grow upward from the rail rather than sitting over a face.
+            Corner(right as RectTransform, RightWidth, toLeft: false, toTop: false);
 
             GameObject lobbyDrawer = null;
             if (right is RectTransform rightRect)
             {
-                rightRect.anchoredPosition = new Vector2(-EdgeMargin, -(CardY + 68.0f));
+                rightRect.anchoredPosition = new Vector2(-SocialFurnitureRight, SocialDetailsBottom);
                 lobbyDrawer = BuildLobbyDrawer(rightRect);
             }
 
@@ -497,8 +524,21 @@ namespace TumbangPreso.UI
         {
             if (details == null || details.parent == null) return null;
 
-            var toggle = MenuKit.WoodButton(details.parent, "LOBBY & SERVERS  ▼", Vector2.one,
-                                            new Vector2(-EdgeMargin, -CardY),
+            // The authored social card reserves room for rows removed by the lobby redesign.
+            // Fit the live share/action content so opening it does not needlessly cover P4.
+            var seatPanel = Descend(details, "SeatPanel");
+            if (seatPanel != null)
+            {
+                var panelElement = seatPanel.GetComponent<LayoutElement>();
+                if (panelElement == null)
+                    panelElement = seatPanel.gameObject.AddComponent<LayoutElement>();
+                panelElement.minHeight = 410.0f;
+                panelElement.preferredHeight = 410.0f;
+                panelElement.flexibleHeight = 0.0f;
+            }
+
+            var toggle = MenuKit.WoodButton(details.parent, "LOBBY & SERVERS  ▼", Vector2.zero,
+                                            new Vector2(-SocialFurnitureRight, SocialToggleBottom),
                                             new Vector2(RightWidth, 58.0f), null,
                                             "WoodAmberButton");
             toggle.name = "LobbyDrawerToggle";
@@ -507,9 +547,11 @@ namespace TumbangPreso.UI
             var toggleRect = toggle.transform as RectTransform;
             if (toggleRect != null)
             {
-                toggleRect.anchorMin = Vector2.one;
-                toggleRect.anchorMax = Vector2.one;
-                toggleRect.pivot = Vector2.one;
+                toggleRect.anchorMin = new Vector2(1.0f, 0.0f);
+                toggleRect.anchorMax = new Vector2(1.0f, 0.0f);
+                toggleRect.pivot = new Vector2(1.0f, 0.0f);
+                toggleRect.anchoredPosition = new Vector2(-SocialFurnitureRight,
+                                                          SocialToggleBottom);
             }
 
             var label = toggle.GetComponentInChildren<Text>();
@@ -525,15 +567,15 @@ namespace TumbangPreso.UI
 
                 var canvas = details.GetComponentInParent<Canvas>();
                 var chat = canvas != null ? canvas.GetComponentInChildren<LobbyChat>(true) : null;
-                chat?.PlaceBelowTopRight(144.0f, open ? 548.0f : 300.0f, 392.0f);
+                chat?.PlaceBottomRight(SocialRailRight, SocialRailBottom, SocialRailWidth);
             });
 
             return toggle.gameObject;
         }
 
         /// <summary>
-        /// Moves the MAP / MODE / BOTS / CHARACTER block up under the banner, and leaves the
-        /// action buttons in the bottom corner.
+        /// Makes MAP / MODE / BOTS / CHARACTER an on-demand drawer immediately above the
+        /// bottom-left START/READY rail.
         ///
         /// ⚠️⚠️ THE LEFT COLUMN WAS TWO DIFFERENT THINGS IN ONE STACK. 🧑 2026-08-28, pointing at
         /// the settings block sitting above START: *"maybe put this right below lobby? looks ugly
@@ -557,12 +599,13 @@ namespace TumbangPreso.UI
 
             var host = new GameObject("SettingsDrawer");
             host.transform.SetParent(leftColumn.parent, false);
+            host.transform.localScale = new Vector3(LeftScale, LeftScale, 1.0f);
 
             var rect = host.AddComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.0f, 1.0f);
-            rect.anchorMax = new Vector2(0.0f, 1.0f);
-            rect.pivot = new Vector2(0.0f, 1.0f);
-            rect.anchoredPosition = new Vector2(EdgeMargin, -SettingsY);
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.zero;
+            rect.pivot = Vector2.zero;
+            rect.anchoredPosition = new Vector2(SettingsRailLeft, SettingsRailBottom);
             rect.sizeDelta = new Vector2(SettingsWidth, 100.0f);
 
             var layout = host.AddComponent<VerticalLayoutGroup>();
@@ -675,7 +718,28 @@ namespace TumbangPreso.UI
                 if (toggleLabel != null)
                     toggleLabel.text = open ? "CLOSE MATCH SETTINGS  ▲" : "MATCH SETTINGS  ▼";
                 if (!open) refreshSummary();
+
+                // Activating the wider drawer rebuilds the converted Columns layout. On some
+                // frames Unity keeps the START plate at full width but collapses its child Text
+                // to zero, leaving one letter visible. Flush that rebuild, then restore the
+                // label's stretch anchors in the final layout.
+                Canvas.ForceUpdateCanvases();
+                RepairActionLabels(find);
             });
+        }
+
+        private static void RepairActionLabels(Func<string, Transform> find)
+        {
+            foreach (string name in new[] { "StartButton", "PrimaryButton" })
+            {
+                var node = find(name);
+                var stable = Descend(node, "ActionRailLabel");
+                var label = stable != null ? stable.GetComponent<Text>() : null;
+                if (label == null) continue;
+
+                MenuKit.Stretch(label.rectTransform, 12.0f);
+                MenuKit.Fit(label, LeftWidth - 48.0f, 24);
+            }
         }
 
         /// <summary>
@@ -724,7 +788,7 @@ namespace TumbangPreso.UI
             column.anchorMax = new Vector2(toLeft ? 0.0f : 1.0f, y);
             column.pivot = new Vector2(toLeft ? 0.0f : 1.0f, y);
             column.anchoredPosition = new Vector2(toLeft ? EdgeMargin : -EdgeMargin,
-                                                  toTop ? -SettingsY : BottomMargin);
+                                                  toTop ? -TopRailOffset : BottomMargin);
             column.sizeDelta = new Vector2(width, column.sizeDelta.y);
 
             // ⚠️⚠️ THE SIZE IS SET **AND** THE COLUMN IS SCALED, AND THE SCALE IS THE HALF THAT

@@ -266,6 +266,19 @@ namespace TumbangPreso.UI
             _rect.sizeDelta = new Vector2(width, _rect.sizeDelta.y);
         }
 
+        /// <summary>Anchors the lobby field to the bottom-right social rail. New chat lines grow
+        /// upward, keeping the entry field in a stable place and the cast's upper bodies clear.</summary>
+        public void PlaceBottomRight(float rightMargin, float bottom, float width)
+        {
+            if (_rect == null) return;
+
+            _rect.anchorMin = new Vector2(1.0f, 0.0f);
+            _rect.anchorMax = new Vector2(1.0f, 0.0f);
+            _rect.pivot = new Vector2(1.0f, 0.0f);
+            _rect.anchoredPosition = new Vector2(-rightMargin, bottom);
+            _rect.sizeDelta = new Vector2(width, _rect.sizeDelta.y);
+        }
+
         private static void Inset(RectTransform rt)
         {
             rt.anchorMin = Vector2.zero;

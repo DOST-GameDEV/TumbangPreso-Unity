@@ -693,9 +693,10 @@ namespace TumbangPreso.Net
         // did nothing at all. The tally on screen was a local bool. 🧑, 2026-08-27: "when
         // all player ready up and the game starts, it only starts for the host."
         //
-        // ⚠️ IT COUNTS SEATED PEERS, NOT CHARACTERS, for the reason `ReadyGate` gives at
+        // ⚠️ IT COUNTS SEATED GUESTS, NOT CHARACTERS, for the reason `ReadyGate` gives at
         // length: the empty chairs are played by bots and a bot cannot press a key. Spectators are
-        // excluded on the same rule. It floors at one so a solo host still presses its own button.
+        // excluded on the same rule, and so is the host because the host sees START rather than
+        // READY. A host plus three ready guests is therefore 3/3, not an impossible 3/4.
         //
         // ⚠️⚠️ READY DOES NOT START THE MATCH. THE HOST'S BUTTON DOES, AND ONLY IT.
         // 🧑 2026-08-27: *"i also dont like that if u click ready it auto starts, i want to have
@@ -779,8 +780,7 @@ namespace TumbangPreso.Net
             int count = 0;
             foreach (int peerId in _lobbyReady)
             {
-                var peer = lobby.PeerById(peerId);
-                if (peer != null && !peer.Spectator && peer.Seat >= 0) count++;
+                if (lobby.IsReadyVoter(peerId, NetAuthority.LocalPeerId)) count++;
             }
 
             return count;
@@ -789,7 +789,7 @@ namespace TumbangPreso.Net
         private int LobbyExpectedReady()
         {
             var lobby = NetSession.Instance?.Lobby;
-            return lobby == null ? 1 : Mathf.Max(1, lobby.SeatedPeerCount());
+            return lobby == null ? 0 : lobby.ReadyVoterCount(NetAuthority.LocalPeerId);
         }
 
         public void BroadcastReadyTally()

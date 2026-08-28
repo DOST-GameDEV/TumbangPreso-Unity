@@ -949,7 +949,7 @@ namespace TumbangPreso.UI
 
             // The lobby card and chat are one social rail. The values are measured from the
             // 1920x1080 runtime shot after LobbyChrome raises and scales RightColumn.
-            _chat.PlaceBelowTopRight(144.0f, 300.0f, 392.0f);
+            _chat.PlaceBottomRight(48.0f, 40.0f, 392.0f);
             _chat.gameObject.SetActive(IsLobby);
         }
 
@@ -1646,7 +1646,8 @@ namespace TumbangPreso.UI
             // SECOND OF EVERY MULTIPLAYER SESSION. The transport is not up yet while the auto-host
             // is starting, so the old test drew the multiplayer lobby as PRACTICE MODE for the
             // length of the handshake and permanently if the port bind was refused. See `IsLobby`.
-            SetHeadline("BannerLabel", IsLobby ? "LOBBY" : "PRACTICE MODE", 66);
+            SetHeadline("BannerLabel", IsLobby ? "LOBBY" : "PRACTICE MODE",
+                        LobbyChrome.Style == LobbyStyle.Street ? 52 : 66);
             SetText("MapValueLabel", mapName);
 
             SetText("ModeValueLabel", SceneFlow.SelectedMode == GameMode.HeroStrike ? "HERO STRIKE" : "CLASSIC");
@@ -1916,7 +1917,10 @@ namespace TumbangPreso.UI
             bool live = IsLive;
             bool host = NetAuthority.IsHost;
 
-            string tally = _readyExpected > 1 ? $"   {_readyCount}/{_readyExpected}" : "";
+            // Only guests press READY: the host has START MATCH in the same slot. Showing the
+            // host inside the denominator produced the permanent 3/4 state when all three guests
+            // had readied, even though the host had no READY button to supply the fourth vote.
+            string tally = _readyExpected > 0 ? $"   {_readyCount}/{_readyExpected}" : "";
 
             if (IsLobby && live && host)
             {
@@ -1955,7 +1959,7 @@ namespace TumbangPreso.UI
 
             string label = GameLaunch.Spectator
                 ? "SPECTATING"
-                : _localReady ? "WAITING" : "READY";
+                : _localReady ? "CANCEL READY" : "READY";
 
             SetText("PrimaryButton", $"{label}{tally}");
             if (prim != null) prim.interactable = !GameLaunch.Spectator;

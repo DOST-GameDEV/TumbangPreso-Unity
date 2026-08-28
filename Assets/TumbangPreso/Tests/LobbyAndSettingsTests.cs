@@ -1143,6 +1143,30 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(1, lobby.PlayingPeerCount(0), "Empty lobby must floor at 1 so gate does not auto-satisfy");
         }
 
+        [Test]
+        public void LobbyReadyTallyExcludesTheHostWhoHasStartInsteadOfReady()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(42));
+
+            lobby.Admit(10, "host-token", "Host");
+            lobby.Admit(20, "guest-a", "Guest A");
+            lobby.Admit(30, "guest-b", "Guest B");
+            lobby.Admit(40, "guest-c", "Guest C");
+
+            Assert.AreEqual(3, lobby.ReadyVoterCount(10),
+                "three guests should produce a 0/3..3/3 tally, never an impossible 3/4.");
+            Assert.IsFalse(lobby.IsReadyVoter(10, 10), "the host has START MATCH, not READY.");
+            Assert.IsTrue(lobby.IsReadyVoter(20, 10));
+
+            var spectator = lobby.PeerById(40);
+            spectator.Spectator = true;
+            spectator.Seat = -1;
+
+            Assert.AreEqual(2, lobby.ReadyVoterCount(10));
+            Assert.IsFalse(lobby.IsReadyVoter(40, 10), "spectators do not ready a character.");
+        }
+
         // -------------------------------------------------------------------
         // REPLICATION AND LATE JOIN (N8)
         // -------------------------------------------------------------------

@@ -501,6 +501,32 @@ namespace TumbangPreso.Net
 
         public int SeatedPeerCount() => SeatedPeerIds().Count;
 
+        /// <summary>How many seated guests can answer the host's READY question. The host is
+        /// excluded because its action is START MATCH, not READY; including it creates an
+        /// impossible 3/4 tally when three guests have all readied.</summary>
+        public int ReadyVoterCount(int hostPeerId)
+        {
+            int count = 0;
+
+            foreach (var p in _peers.Values)
+            {
+                if (p.PeerId == hostPeerId) continue;
+                if (IsSeatlessReferee(p.PeerId) || p.Spectator || p.Seat < 0) continue;
+                count++;
+            }
+
+            return count;
+        }
+
+        public bool IsReadyVoter(int peerId, int hostPeerId)
+        {
+            if (peerId == hostPeerId) return false;
+
+            var peer = PeerById(peerId);
+            return peer != null && !IsSeatlessReferee(peerId) &&
+                   !peer.Spectator && peer.Seat >= 0;
+        }
+
         /// <summary>
         /// How many of the four chairs are unavailable to a newcomer: seated peers plus seats
         /// being HELD for somebody who dropped mid-match.

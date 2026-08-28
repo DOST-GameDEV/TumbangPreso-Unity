@@ -277,7 +277,7 @@ namespace TumbangPreso.PlayTests
         /// overwriting a shot leaves the previous one on screen and the whole review is conducted
         /// against an image that is no longer on disk. Bump `ShotVersion` on every iteration.
         /// </summary>
-        private const string ShotVersion = "v26";
+        private const string ShotVersion = "v34";
 
         [UnityTest]
         public IEnumerator TheLobbyDraws()
@@ -300,7 +300,33 @@ namespace TumbangPreso.PlayTests
             // being broken.
             yield return new WaitForSecondsRealtime(4.0f);
 
+            var nameField = Find("PlayerNameEdit")?.GetComponent<InputField>();
+            Assert.IsNotNull(nameField, "the lobby must expose its editable player name.");
+            Assert.AreEqual(Core.Balance.PlayerNameMax, nameField.characterLimit,
+                "the lobby name field must enforce the same hard cap as Settings and the wire.");
+
             yield return Capture($"Lobby-{ShotVersion}");
+
+            // Both drawers are part of the requested composition checkpoint. Photographing only
+            // the clean collapsed state previously let clipped rows and merged network actions
+            // survive review unnoticed.
+            var settingsToggle = Find("SettingsDrawer")?.GetComponentInChildren<Button>();
+            if (settingsToggle != null)
+            {
+                settingsToggle.onClick.Invoke();
+                yield return new WaitForSecondsRealtime(0.25f);
+                yield return Capture($"LobbySettings-{ShotVersion}");
+                settingsToggle.onClick.Invoke();
+            }
+
+            var lobbyToggle = Find("LobbyDrawerToggle")?.GetComponent<Button>();
+            if (lobbyToggle != null)
+            {
+                lobbyToggle.onClick.Invoke();
+                yield return new WaitForSecondsRealtime(0.25f);
+                yield return Capture($"LobbyServers-{ShotVersion}");
+                lobbyToggle.onClick.Invoke();
+            }
 
             // The join card over the top of it, which is the other half of this screen.
             var open = Find("OpenJoinButton");
