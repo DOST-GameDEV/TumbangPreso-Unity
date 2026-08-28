@@ -129,6 +129,8 @@ namespace TumbangPreso.EditorTools
             { "pambahay",  "models/tsinelas_pambahay.glb" },
             { "heels",     "models/tsinelas_heels.glb" },
             { "sandals",   "models/tsinelas_sandals.glb" },
+            { "loafers",   "models/tsinelas_loafers.glb" },
+            { "pangbanyo", "models/tsinelas_pangbanyo.glb" },
         };
 
         [MenuItem("Tumbang Preso/Build Roster Book")]

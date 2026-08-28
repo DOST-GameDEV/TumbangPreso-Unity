@@ -7356,7 +7356,7 @@ EditMode test on the host-side clamp and rate limit.
 
 ---
 
-## 70 · The prop art was replaced wholesale, and IKE was never a bad model ⚠️ PARTLY OPEN 2026-08-28
+## 70 · The prop art was replaced wholesale, and IKE was never a bad model ✅ MOSTLY DONE 2026-08-28
 
 🧑, 2026-08-28: *"ur work is to pull models from the internet and replace ugly models we have"*,
 then item by item across the session: IKE, TSINELAS, CROCS, PANTULOG, SPARTAN, ALPOMBRA, HEELS,
@@ -7523,34 +7523,70 @@ Nothing else on the wire needed changing: `LobbySession.SetPicks` already valida
 `Roster.Cans.Count` and `Roster.Slippers.Count`, and the select screen enumerates the lists
 directly, so both new cans appear with no UI edit.
 
-### 70.8 STILL OPEN: four slippers waiting on a download, and one new roster entry
+### 70.8 The last four landed, and PANTULOG changed hands ✅ DONE
 
-⚠️ **Sketchfab will not serve a model without a logged-in account**, so these cannot be fetched
-from here. All four are CC-BY, downloadable, and picked against the same silhouette rule as the
-cans. Format wanted is glTF Binary.
+SPARTAN (Worn Flip Flop, inciprocal, 14,884 tri), HEELS (Plateau Sandal Heels, hiirusama,
+28,432), SANDALS (Chappal, Amad Junaid, 16,592) and LOAFERS (Shoes Loafers A6-2,
+eeelabvisual, 1,656 after the split). All CC-BY. 🧑 downloaded them: Sketchfab answers 401
+to an unauthenticated download and there is no way round that from here.
 
-| slot | model | tris | why |
-|---|---|---|---|
-| SPARTAN | Worn Flip Flop, inciprocal | 14,884 | thick worn thong, the literal Spartan read |
-| HEELS | Plateau Sandal Heels, hiirusama | 28,432 | single shoe already, unbranded |
-| SANDALS | Chappal, Amad Junaid | 16,592 | strappy leather slide, and it fixes 70.3's odd axis |
-| LOAFERS | Shoes Loafers (A6-2), eeelabvisual | 3,660 | **new entry, index 9**, the school shoe |
+⚠️⚠️ **TWO OF THEM CAME OUT STANDING ON END, AND `align_to_x` COULD NOT SEE IT.** That
+function only ever corrected YAW, on the unstated assumption that every source already had
+its sole in the ground plane. The heel and the loafer are both photographed on a shop
+display, pitched back on a slanted shelf, so they are rotated about a horizontal axis too.
+The build's own height warning caught it, reporting a 0.432 m loafer as **0.361 m tall**
+when a loafer is about 0.10. `level()` now runs first and takes all three axes off the
+vertex covariance: longest to X, shortest to Z, and the sign of "up" decided by which half
+carries the larger ground footprint, because a shoe spreads at the sole and narrows through
+the upper. Getting that sign backwards puts every slipper in the game sole-up in the hand.
 
-⚠️ **LOAFERS moves `ProtocolVersion` again, 8 → 9**, and it must be appended, never inserted.
-It also needs a row in `Roster.Slippers`, a description in `ConvertedCharacterSelect`, and a line
-in `RosterBookBuilder.SlipperModels`.
+⚠️ **THE LOAFER SOURCE IS A SHOP DISPLAY, NOT A PAIR OF SHOES.** Five objects, four of them
+a pillar, a booth panel and a wooden shelf between z 27 and z 135 with the shoes at z 143 to
+172. Importing it whole would have put a shop fitting in somebody's hand. The recipe format
+grew a name filter that runs BEFORE the pair split so both stages could apply; neither alone
+would have produced a shoe.
 
-⚠️ **Two of the chosen sources carry a visible brand and a decision is owed on each.** The clog
+### 70.9 ⚠️ IKE WAS THE ONE PROP NOT IN THE CARRY FRAME, AND MEASURING ALL ELEVEN FOUND IT
+
+Not reported, and not visible in any single render. Every other slipper is 0.432 m along
+glTF X and seated on y = 0. IKE measured **0.184 x 0.104 x 0.432 with its long axis on Z and
+its lowest vertex at y = -0.0269**. `Slipper.CarryRotation` is a quarter turn about Y that
+takes +X to forward, so a prop whose length runs down Z is carried ACROSS the palm rather
+than along it, and an origin inside the mesh hangs it 27 mm through the hand.
+
+Fixed by `tools/normalise_obj_prop.py`, which rewrites only the `v` and `vn` lines so the
+mesh, the materials and the hand-maintained `.mtl` all survive byte for byte. It had to be a
+separate tool: 🧑 said *"js fix it"* about IKE, and `build_slipper_models.py` would have
+rebuilt it as a `.glb` and thrown the material note away with it. Idempotent, and verified by
+running it twice.
+
+### 70.10 PANTULOG changed shoes and the old one was appended, not renamed
+
+🧑: *"the current pantulog should be renamed to another slipper, keep the currentpantulog js
+give it a diff name"*, *"this one should be pantulog"*, *"call it Pangbanyo"*.
+
+⚠️⚠️ **THE ID DID NOT MOVE AND THAT IS THE WHOLE POINT.** PANTULOG is slipper index 2 and
+that index crosses the wire, so renaming it would have made every already-built peer's
+`slipper_index` of 2 resolve to a different shoe with no error anywhere. The fuzzy house
+slipper took over index 2's MODEL; the rubber bathroom slide it displaced was APPENDED as
+PANGBANYO at index 10. `ProtocolVersion` 9 to 10 for it.
+
+### 70.11 STILL OPEN: two visible brands on shipped meshes
+
+⚠️ **Two shipped sources carry a visible brand and a decision is owed on each.** The clog
 that shipped has `CROCS` raised in geometry on its strap, as its own `text_blackPhong` material,
 so it can be recoloured or dropped in one line without touching the mesh. The chappal has a small
 maker's tab. `CLAUDE.md` § 3 and the no-vendor-names rule both point at removing them before this
 goes in front of a national panel.
 
-### 70.9 Done looks like
+### 70.12 Done looks like
 
-`RosterBook` validating at 6 cans and 10 slippers, `tools/build_lata.py --verify` green, a model
-sheet showing every new prop under the toon shader rather than a Blender render, and a two-machine
-run proving a can index above 3 crosses the wire.
+✅ `RosterBook` validates at 18 people, 6 cans, 11 slippers. ✅ Core 111/111.
+✅ `Checks.RunAll` green, all five in one launch. ✅ `tools/build_lata.py --verify` green.
+✅ Every prop measured at 0.432 m along X, seated on y = 0 and centred, IKE included.
+⚠️ STILL OWED: a two-machine run proving a can index above 3 and a slipper index above 8
+actually cross the wire. `ProtocolVersion` is 10 and both machines need rebuilding from this
+branch or they refuse each other at approval, by design.
 
 ---
 

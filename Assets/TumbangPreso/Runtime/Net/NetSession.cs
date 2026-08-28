@@ -119,7 +119,16 @@ namespace TumbangPreso.Net
         // end of a four-entry table. `Roster.CanArt` clamps rather than throwing, so the
         // visible result is two players looking at different cans in the same match with
         // nothing in either log. A roster that only GROWS still breaks the wire.
-        public const int ProtocolVersion = 8;
+        //
+        // ⚠️ 8 to 9 APPENDS LOAFERS AS SLIPPER INDEX 9, in the same batch and for exactly the
+        // same reason. Both bumps landed on 2026-08-28; they are listed apart rather than
+        // merged because the roster they widen is a different one, and a future reader
+        // bisecting a mismatch needs to know which table grew.
+        //
+        // ⚠️ 9 to 10 APPENDS PANGBANYO AS SLIPPER INDEX 10. It is the shoe that used to be
+        // PANTULOG, and appending it rather than renaming PANTULOG in place is what keeps
+        // every already-built peer's `slipper_index` of 2 pointing at the same seat.
+        public const int ProtocolVersion = 10;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =
