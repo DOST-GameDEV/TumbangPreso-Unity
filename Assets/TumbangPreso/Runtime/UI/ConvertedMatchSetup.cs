@@ -119,9 +119,9 @@ namespace TumbangPreso.UI
         /// there no bots"*. The index is `AIController.NoBotsIndex`; its note explains why the
         /// entry could not go at the front of this array.
         ///
-        /// ⚠️ AND IT IS OFFLINE ONLY. See <see cref="DifficultyOptionCount"/>: three empty seats
-        /// in a networked lobby is a different feature with its own rules about who may join
-        /// them, and nobody has asked for it.
+        /// NONE is also available to a multiplayer host. Because the match rules require four
+        /// rotating seats, switching fillers off requires all four seats to be occupied before
+        /// START MATCH becomes available. Empty lobby rows remain joinable and read OPEN.
         /// </summary>
         private static readonly string[] Difficulties = { "EASY", "NORMAL", "HARD", "NONE" };
 
@@ -130,19 +130,13 @@ namespace TumbangPreso.UI
             "EASY Slower reactions and looser angles. Good for learning the throw arc.",
             "NORMAL The default, and the tier every balance number in this project was measured at. Reads your bearing, leads the lata, and blocks about 38% of what you throw.",
             "HARD Snappier reads and tighter defense. Will punish greedy slipper retrievals.",
-            "NONE An empty street. Nobody else spawns, so the lata, the tsinelas and the whole arena are yours to practise the throw and the retrieval run in."
+            "NONE No filler bots. Practice starts alone; multiplayer waits until all four human seats are filled."
         };
 
         /// <summary>
         /// How many entries of <see cref="Difficulties"/> this lobby may cycle through.
-        ///
-        /// ⚠️ A NETWORKED LOBBY STOPS AT HARD. NONE removes three seats from the match, and a
-        /// seat is what a peer joins: replicating "there are no seats" to a lobby somebody is
-        /// sitting in has no defined answer. Offline practice is the whole of what was asked
-        /// for, so that is the whole of what ships.
         /// </summary>
-        private static int DifficultyOptionCount
-            => SceneFlow.Networked ? Difficulties.Length - 1 : Difficulties.Length;
+        private static int DifficultyOptionCount => Difficulties.Length;
 
         /// <summary>
         /// ⚠️⚠️ "THIS IS THE MULTIPLAYER LOBBY" AND "A TRANSPORT IS UP" ARE TWO DIFFERENT
@@ -207,6 +201,7 @@ namespace TumbangPreso.UI
 
             _map = Mathf.Max(0, Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap));
             _difficulty = Mathf.Clamp(Settings.SettingsStore.Current.AiDifficulty, 0, DifficultyOptionCount - 1);
+            AIController.ApplyDifficulty(_difficulty);
 
             var previewNode = Node("MapPreview");
             if (previewNode != null) _preview = previewNode.GetComponent<MapPreviewSurface>();
@@ -857,10 +852,6 @@ namespace TumbangPreso.UI
                 SetStatus("");
             }
 
-            // ⚠️ THE BOTS ROW IS RE-CLAMPED, because `DifficultyOptionCount` drops NONE in a
-            // networked lobby: three empty seats is a different feature with its own rules about
-            // who may sit in them. Switching to MULTIPLAYER while NONE was selected would
-            // otherwise leave an index one past the end of the list the row can cycle.
             _difficulty = Mathf.Clamp(_difficulty, 0, DifficultyOptionCount - 1);
 
             ApplyCastVisibility();
@@ -938,7 +929,9 @@ namespace TumbangPreso.UI
                 // literal `Player`, which `PlayerLabel` already treats as anonymous for everybody
                 // else; four plates reading `Player` is the exact fault that method's header
                 // records. Somebody who has not set a name is still unambiguously themselves.
-                string who = mine ? LocalName() : occupied ? PlayerLabel(info, seat) : "BOT";
+                string who = mine ? LocalName()
+                    : occupied ? PlayerLabel(info, seat)
+                    : AIController.BotsEnabled ? "BOT" : "OPEN";
 
                 // ⚠️ THE TICK IS THE HOST'S ANSWER FOR EVERY SEAT NOW, AND THE LOCAL SEAT IS
                 // STILL ALLOWED TO BE AHEAD OF IT. `LobbySeatInfo.Ready` travels with the roster,
@@ -1374,6 +1367,14 @@ namespace TumbangPreso.UI
             var net = NetSession.Instance;
             if (net != null && net.IsNetworked && NetAuthority.IsHost)
             {
+                if (!AIController.BotsEnabled &&
+                    net.Lobby.OccupiedSeatCount() < Balance.PlayerCount)
+                {
+                    SetAlert("Bots are off. Fill all four player seats before starting.");
+                    Refresh();
+                    return;
+                }
+
                 var readyGate = FindFirstObjectByType<ReadyGate>();
                 if (readyGate != null)
                 {
@@ -1441,6 +1442,7 @@ namespace TumbangPreso.UI
             if (!NetAuthority.IsHost && SceneFlow.Networked) return;
 
             Cycle(ref _difficulty, DifficultyOptionCount, delta);
+            AIController.ApplyDifficulty(_difficulty);
             if (NetAuthority.IsHost && SceneFlow.Networked)
             {
                 MatchRpc.Instance?.SelectDifficultyServerRpc(_difficulty);
@@ -1456,6 +1458,7 @@ namespace TumbangPreso.UI
         private void HandleDifficultySynced(int difficulty)
         {
             _difficulty = Mathf.Clamp(difficulty, 0, DifficultyOptionCount - 1);
+            AIController.ApplyDifficulty(_difficulty);
             Refresh();
         }
 
@@ -1624,12 +1627,14 @@ namespace TumbangPreso.UI
                     }
                     else
                     {
-                        seatText = $"{SeatName(seat)}   · BOT";
+                        seatText = $"{SeatName(seat)}   · " +
+                                   (AIController.BotsEnabled ? "BOT" : "OPEN");
                     }
                 }
                 else
                 {
-                    seatText = $"{SeatName(seat)}   · BOT";
+                    seatText = $"{SeatName(seat)}   · " +
+                               (AIController.BotsEnabled ? "BOT" : "OPEN");
                 }
 
                 SetText($"SeatButton{seat}", seatText);
@@ -1846,7 +1851,9 @@ namespace TumbangPreso.UI
                 // the group for the height as well, but a hint that needs three lines of a
                 // four-line panel is a hint nobody reads: the fix is both.
                 SetText("SeatHint", NetAuthority.IsHost
-                        ? "You pick the map and the mode. Click a free seat to move. Empty seats are bots."
+                        ? (AIController.BotsEnabled
+                            ? "You pick the map and the mode. Click a free seat to move. Empty seats are bots."
+                            : "Bots are off. Fill all four seats with players before starting.")
                         : "The leader picks the map and the mode. Click a free seat to move.");
 
                 // Network rows
@@ -2172,9 +2179,14 @@ namespace TumbangPreso.UI
                 if (startNode != null)
                 {
                     startNode.gameObject.SetActive(true);
-                    SetText("StartButton", $"START MATCH{tally}");
+                    bool fullWithoutBots = AIController.BotsEnabled ||
+                                           (NetSession.Instance != null &&
+                                            NetSession.Instance.Lobby.OccupiedSeatCount() >= Balance.PlayerCount);
+                    SetText("StartButton", fullWithoutBots
+                        ? $"START MATCH{tally}"
+                        : "WAITING FOR 4 PLAYERS");
                     var btn = startNode.GetComponent<Button>();
-                    if (btn != null) btn.interactable = true;
+                    if (btn != null) btn.interactable = fullWithoutBots;
                 }
                 return;
             }

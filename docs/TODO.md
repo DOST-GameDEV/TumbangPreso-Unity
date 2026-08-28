@@ -8724,6 +8724,17 @@ block. Every other number in it is worthless if that reads 1 where 4 was asked f
 
 ## Closed
 
+- **Bot targeting, backwards throws, multiplayer bot control and the taya cooldown label.**
+  ✅ 2026-08-29. Defender bots now distribute focus windows evenly across every eligible
+  attacker before selecting anyone twice, with no host, remote-human or bot identity term.
+  Tactical scoring only breaks ties among equally served targets. Planted throwers turn through
+  the shared input and bounded motor yaw, and cannot release outside a 12 degree facing cone.
+  Multiplayer hosts can select NONE; empty chairs read OPEN and the fixed four-seat rules refuse
+  to start until four people are seated. Disconnects do not install replacement AI while that
+  option is active. The short taya jab now reports TAG CD instead of PUNCH CD. Verified by 111
+  Core tests and 191 EditMode tests; the PlayMode pass compiled and entered the seeded match
+  probes before it was stopped at the user's request to push immediately.
+
 - **Lobby client synchronization, pick normalization, and host non-zero seat picks.** ✅ 2026-08-26.
   `LobbySession._peers` was only populated host-side on `Admit()`, leaving client `PeerCount` at 0
   and `PeerInSeat(slot)` returning null. On clients, `MatchInstaller` fell back to building remote

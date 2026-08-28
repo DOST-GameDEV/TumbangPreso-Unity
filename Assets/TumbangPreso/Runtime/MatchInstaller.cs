@@ -646,7 +646,8 @@ namespace TumbangPreso
                 // nameplate to a roster name for a player who is still connected.
                 go.AddComponent<AIController>();
             }
-            else if (!isHumanPlayer && (!isNetworked || NetAuthority.IsHost))
+            else if (AIController.BotsEnabled && !isHumanPlayer &&
+                     (!isNetworked || NetAuthority.IsHost))
             {
                 // Unoccupied seats run AI on the host only
                 go.AddComponent<AIController>();
@@ -862,7 +863,8 @@ namespace TumbangPreso
                 reader.enabled = false;
                 Destroy(reader);
 
-                if (NetAuthority.IsHost && body.GetComponent<AIController>() == null)
+                if (AIController.BotsEnabled && NetAuthority.IsHost &&
+                    body.GetComponent<AIController>() == null)
                     body.gameObject.AddComponent<AIController>();
 
                 body.ForgetInputSource();

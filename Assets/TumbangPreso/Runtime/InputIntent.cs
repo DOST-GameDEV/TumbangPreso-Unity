@@ -68,6 +68,17 @@ namespace TumbangPreso
         public bool HasAimPoint { get; private set; }
 
         /// <summary>
+        /// Turn the body toward <see cref="AimPoint"/> even when no movement key is held.
+        ///
+        /// Bots use this while charging a throw. The throw solver has always aimed the
+        /// tsinelas at the lata, but a movement-aimed body only changed yaw while walking, so
+        /// a bot that arrived with its back to the can could release a correct backwards shot.
+        /// Keeping the request in the shared intent preserves the one-input-path rule and lets
+        /// the ordinary motor apply the same bounded turn used for movement.
+        /// </summary>
+        public bool FaceAimPoint { get; set; }
+
+        /// <summary>
         /// ⚠️ PARKED INPUT IS NOT THE SAME AS NO INPUT. A unit whose input is parked (a
         /// menu is open, the round is over, they are mid-emote) must report everything
         /// released rather than simply stop updating, or a verb held across the boundary
@@ -94,6 +105,14 @@ namespace TumbangPreso
             Move = Vector2.zero;
             SpinInput = 0.0f;
             HasAimPoint = false;
+            FaceAimPoint = false;
+        }
+
+        /// <summary>Clears producer-owned aiming state without releasing held verbs.</summary>
+        public void ClearAim()
+        {
+            HasAimPoint = false;
+            FaceAimPoint = false;
         }
 
         /// <summary>

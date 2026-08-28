@@ -329,16 +329,31 @@ namespace TumbangPreso
             Vector3 wish = new Vector3(axis.x, 0.0f, axis.y);
             if (wish.sqrMagnitude > 1.0f) wish.Normalize();
 
-            if (wish.sqrMagnitude < 0.0001f) return Vector3.zero;
-
             if (MouseAimed)
             {
+                if (wish.sqrMagnitude < 0.0001f) return Vector3.zero;
                 wish = transform.TransformDirection(wish);
                 wish.y = 0.0f;
                 return wish.normalized;
             }
 
-            wish = wish.normalized;
+            Vector3 movement = wish.sqrMagnitude < 0.0001f ? Vector3.zero : wish.normalized;
+            Vector3 facing = movement;
+
+            // A movement-aimed body normally turns from its movement keys. A bot holding a
+            // throw has deliberately planted its feet, so the same rule otherwise leaves its
+            // yaw frozen at the direction of its last step while the ballistic aim moves to the
+            // lata. FaceAimPoint is an input request rather than an AI-only transform write: the
+            // motor still owns the turn speed and the bot still uses the same physical body.
+            if (Intent.FaceAimPoint && Intent.HasAimPoint)
+            {
+                facing = Intent.AimPoint - transform.position;
+                facing.y = 0.0f;
+                if (facing.sqrMagnitude > 0.0001f) facing.Normalize();
+                else facing = movement;
+            }
+
+            if (facing.sqrMagnitude < 0.0001f) return movement;
 
             // ⚠️⚠️ THE BODY TURNS AT A BOUNDED RATE. IT USED TO SNAP, AND THAT IS THE WHOLE OF
             // 🧑'S 2026-08-27 REPORT: *"they can look straight behind them and turn in 0.1
@@ -385,7 +400,7 @@ namespace TumbangPreso
             // correct and no settle wobble. The ease is in how the rate is reached, not in an
             // oscillation around the mark.
             float remaining = Quaternion.Angle(transform.rotation,
-                                               Quaternion.LookRotation(wish, Vector3.up));
+                                               Quaternion.LookRotation(facing, Vector3.up));
 
             float wantRate = Mathf.Clamp(remaining / AiTuning.BodyTurnReachSeconds,
                                          AiTuning.BodyTurnSettleDegPerSecond,
@@ -403,9 +418,9 @@ namespace TumbangPreso
 
             float maxTurn = _turnRate * Mathf.Max(0.0f, dt);
             transform.rotation = Quaternion.RotateTowards(
-                transform.rotation, Quaternion.LookRotation(wish, Vector3.up), maxTurn);
+                transform.rotation, Quaternion.LookRotation(facing, Vector3.up), maxTurn);
 
-            return wish;
+            return movement;
         }
 
         /// <summary>

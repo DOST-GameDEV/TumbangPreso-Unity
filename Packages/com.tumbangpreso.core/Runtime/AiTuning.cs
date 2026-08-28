@@ -1034,6 +1034,14 @@ namespace TumbangPreso.Core
         /// </summary>
         public const float BodyTurnAccelDegPerSecond2 = 3200.0f;
 
+        /// <summary>
+        /// Maximum visible body-to-shot error before a bot may release a throw.
+        /// Twelve degrees allows a natural final correction without accepting a sideways or
+        /// backwards release. The trajectory still uses the exact aim point; this only gates
+        /// when the input button may come up.
+        /// </summary>
+        public const float ThrowFacingConeDeg = 12.0f;
+
         // -------------------------------------------------------------------
         // § ATTENTION WANDERS
         //

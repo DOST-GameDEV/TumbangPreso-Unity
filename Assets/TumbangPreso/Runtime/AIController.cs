@@ -430,12 +430,10 @@ namespace TumbangPreso
             _boredomSettleLeft = 0.0f;
             _boredomShift = 0.0f;
             _lapseLeft = 0.0f;
-
-            // ⚠️ THE GRUDGE IS RE-PICKED EACH ROUND BECAUSE THE CANDIDATE LIST CHANGES WITH THE
-            // TAYA. `MyRival` already refuses a defender, so leaving a stale one would simply
-            // stop the term firing for whichever round that seat defends; clearing it here means
-            // the pick is made fresh against the three seats that can actually be tagged.
-            _rival = null;
+            _lastTagTarget = null;
+            _tagFocusUntil = 0.0f;
+            System.Array.Clear(_tagAssignments, 0, _tagAssignments.Length);
+            _tagTieCursor = (roundNumber + _motor.PlayerSlot) % Balance.PlayerCount;
 
             RollRoundAppetite();
         }
@@ -1563,34 +1561,18 @@ namespace TumbangPreso
         private bool HasCoverPoint(Lata lata) => TryCoverPoint(out _);
 
         /// <summary>
-        /// The attacker this taya should be chasing.
+        /// The attacker this taya should chase.
         ///
-        /// ⚠️⚠️ IT USED TO RETURN THE FIRST TAGGABLE ATTACKER IN `round.Players` ORDER, AND THAT
-        /// IS 🧑'S *"they ... always just target the human"* IN ONE LINE. Seat order is a fixed
-        /// list, so it is a fixed priority: whichever seat sits lowest in it was chased in every
-        /// round it was not the taya, by every taya, for the whole match. Nothing here ever read
-        /// whether a seat held a person, which is exactly why nobody found it by reading the code
-        /// looking for a human check. A person who sits in one seat all night was singled out by
-        /// a selector that had no idea they existed.
+        /// Target identity is deliberately absent from the decision. A host, a remote human and
+        /// a bot all enter the same candidate list and receive the same score. The selector also
+        /// keeps a per-round assignment count. It only scores candidates with the fewest prior
+        /// focus windows, so every continuously eligible attacker gets a turn before anybody is
+        /// selected twice. Tactical scoring still decides which equally served attacker is the
+        /// best play, and a short focus window prevents indecisive frame-to-frame switching.
         ///
-        /// ⚠️⚠️ AND IT DECIDED MORE THAN THE CHASE. `StepHeroAbilities` asks this same function
-        /// for a DEFENDING hero's target, so the lowest seat also ate every skill and every
-        /// ultimate a defending hero spent all match. One `foreach` with a `return` in it
-        /// produced both halves of the report.
-        ///
-        /// ⚠️ THE ANSWER IS A SCORE, NOT A SHUFFLE. Picking at random would break the fixation
-        /// and would also throw away the reason to chase anybody, which is that a tag is actually
-        /// available. `LiveThreat` has scored the neighbouring GUARD decision this way since the
-        /// port, and its own header records this identical fault being found there once already,
-        /// from a playtest that read *"the defender ai only attack him"*. The two selectors look
-        /// nothing alike in the file, which is why fixing one did not fix the other.
-        ///
-        /// ⚠️⚠️ THE COMMIT TERM POINTS THE OPPOSITE WAY TO `LiveThreat`'S AND BOTH ARE RIGHT.
-        /// Guarding is a standing post, so an equal rival should pull the taya round and its
-        /// anti-fixation term is a PENALTY on whoever was guarded last. Chasing is a pursuit, and
-        /// a pursuit that changes target on a tie is a taya running down the middle of two
-        /// attackers and catching neither. So this one is a BONUS on whoever is already being
-        /// chased, worth `AiTuning.TagSwitchMargin`, and a switch has to be earned.
+        /// This replaces the old permanent rivalry bonus. A seat-seeded grudge was not a human
+        /// check, but it was still identity bias, and over a round it could make one player feel
+        /// singled out for reasons no action in the arena explained.
         /// </summary>
         private CharacterMotor TagTarget()
         {
@@ -1603,14 +1585,52 @@ namespace TumbangPreso
             // every tag verb opens with "a tag requires the can standing" and returns early,
             // so a bot hunting with the can down is spending the round on a verb that cannot
             // fire. Reset first, then hunt.
-            if (round.Lata == null || !round.Lata.IsUpright) { _lastTagTarget = null; return null; }
+            if (round.Lata == null || !round.Lata.IsUpright)
+            {
+                _lastTagTarget = null;
+                _tagFocusUntil = 0.0f;
+                return null;
+            }
 
-            CharacterMotor best = null;
-            float bestScore = float.NegativeInfinity;
-
+            _tagCandidates.Clear();
             foreach (var who in round.Players)
             {
                 if (who == null || who == _motor || who.IsDefender || !who.IsTaggable()) continue;
+                _tagCandidates.Add(who);
+            }
+
+            if (_tagCandidates.Count == 0)
+            {
+                _lastTagTarget = null;
+                _tagFocusUntil = 0.0f;
+                return null;
+            }
+
+            if (_lastTagTarget != null && Time.time < _tagFocusUntil &&
+                _tagCandidates.Contains(_lastTagTarget))
+                return _lastTagTarget;
+
+            int leastAssignments = int.MaxValue;
+            foreach (var who in _tagCandidates)
+            {
+                int slot = who.PlayerSlot;
+                int count = slot >= 0 && slot < _tagAssignments.Length
+                    ? _tagAssignments[slot]
+                    : 0;
+                if (count < leastAssignments) leastAssignments = count;
+            }
+
+            CharacterMotor best = null;
+            float bestScore = float.NegativeInfinity;
+            int bestTieDistance = int.MaxValue;
+
+            foreach (var who in _tagCandidates)
+            {
+                int slot = who.PlayerSlot;
+                int assignments = slot >= 0 && slot < _tagAssignments.Length
+                    ? _tagAssignments[slot]
+                    : 0;
+                if (assignments != leastAssignments) continue;
 
                 float score = 0.0f;
 
@@ -1634,76 +1654,31 @@ namespace TumbangPreso
                 // information the body it is steering has not been given yet.
                 score -= AiTuning.TagDistanceWeight * Flat(transform.position, At(who));
 
-                if (who == _lastTagTarget) score += AiTuning.TagSwitchMargin;
-
-                // ⚠️⚠️ THE GRUDGE, AND IT IS THE RESIDUE OF § 33.1 RATHER THAN A REPEAT OF IT.
-                // That entry deleted the seat-order `foreach` that singled somebody out by
-                // construction, and 🧑 2026-08-28 reported the feeling again, softer: *"I dont
-                // want the bots to only go after the human too (sometimes it only targets
-                // human)"*. The cause this time is agreement, not order. Four bots score one
-                // board with one identical set of weights, so whoever the score favours is
-                // favoured by ALL of them at once, and a person plays differently from three bots
-                // in exactly the terms the score reads: they go deeper into the chalk, they hold a
-                // tsinelas longer, they get caught out. Nothing is targeting them; every bot is
-                // simply agreeing about them.
-                //
-                // ⚠️ SO THE FIX IS TO MAKE THE FOUR DISAGREE ON TIES, which is what a grudge is.
-                // `AiTuning.TagRivalryWeight` 0.45 sits under `TagSwitchMargin` 0.75 and a fifth
-                // of `TagHelplessBonus` 2.5, so it can never drag a taya off a chase it is winning
-                // and never beats a body already on the floor. It decides the close ones, and the
-                // close ones are all this ever was.
-                if (who == MyRival(round)) score += AiTuning.TagRivalryWeight;
-
-                if (score <= bestScore) continue;
+                int tieDistance = (slot - _tagTieCursor + Balance.PlayerCount) % Balance.PlayerCount;
+                if (score < bestScore ||
+                    (Mathf.Approximately(score, bestScore) && tieDistance >= bestTieDistance))
+                    continue;
 
                 bestScore = score;
+                bestTieDistance = tieDistance;
                 best = who;
             }
 
             _lastTagTarget = best;
+            if (best != null)
+            {
+                int slot = best.PlayerSlot;
+                if (slot >= 0 && slot < _tagAssignments.Length) _tagAssignments[slot]++;
+                _tagTieCursor = (slot + 1 + Balance.PlayerCount) % Balance.PlayerCount;
+                _tagFocusUntil = Time.time + Mathf.Lerp(3.5f, 5.0f, _self.Focus);
+            }
             return best;
         }
 
-        /// <summary>
-        /// The rival this bot takes personally, or null.
-        ///
-        /// ⚠️⚠️ IT IS DERIVED FROM THE SEAT LIST AND CACHED PER ROUND, NOT PICKED PER CALL.
-        /// `TagTarget` runs every think tick and `LiveThreat` runs beside it, so a pick that
-        /// re-rolled would be a different grudge every tick, which is a random target selector
-        /// wearing a grudge's name. `AiPersonalityRoll.RivalPick` is seat-seeded, so this bot
-        /// dislikes the same seat all match and two runs of one match agree about it.
-        ///
-        /// ⚠️ THE CANDIDATE LIST EXCLUDES THIS BOT AND THE TAYA. The taya is not a tag target,
-        /// and a grudge against the seat currently defending would silently do nothing for a
-        /// quarter of the match.
-        /// </summary>
-        private CharacterMotor MyRival(RoundDirector round)
-        {
-            if (round == null) return null;
-
-            // ⚠️ THE CACHE IS INVALIDATED BY THE ANSWER GOING STALE, NOT BY A ROUND STAMP. The
-            // taya rotates every round and a grudge against the seat currently defending would
-            // silently do nothing, so "my rival is still an attacker" is the condition that
-            // actually matters. `OnRoundStarted` clears it as well, which covers the case where
-            // the same seat defends twice in a Hero Strike match.
-            if (_rival != null && _rival != _motor && !_rival.IsDefender) return _rival;
-
-            _rivalCandidates.Clear();
-
-            foreach (var who in round.Players)
-            {
-                if (who == null || who == _motor || who.IsDefender) continue;
-                _rivalCandidates.Add(who);
-            }
-
-            int pick = _self.RivalIndex(_rivalCandidates.Count);
-            _rival = pick >= 0 ? _rivalCandidates[pick] : null;
-
-            return _rival;
-        }
-
-        private readonly List<CharacterMotor> _rivalCandidates = new List<CharacterMotor>();
-        private CharacterMotor _rival;
+        private readonly List<CharacterMotor> _tagCandidates = new List<CharacterMotor>();
+        private readonly int[] _tagAssignments = new int[Balance.PlayerCount];
+        private float _tagFocusUntil;
+        private int _tagTieCursor;
 
         /// <summary>Whoever holds the taya role this round.</summary>
         private static CharacterMotor DefenderOf(RoundDirector round)
@@ -1783,6 +1758,7 @@ namespace TumbangPreso
             // across frames on purpose, which is what the touch sweep at the bottom is for.
             intent.Move = Vector2.zero;
             intent.Set(Verb.Sprint, false);
+            intent.ClearAim();
             if (Plan != AiPlan.Windup) intent.SpinInput = 0.0f;
 
             switch (Plan)
@@ -2066,10 +2042,17 @@ namespace TumbangPreso
             Vector3 origin = _carrier.ThrowOrigin();
             _windupSpin = ChoosePektusSpin(origin, target, _windupPower);
             intent.AimPoint = CompensatedPektusAim(origin, target, _windupPower, _windupSpin);
+            intent.FaceAimPoint = true;
             intent.SpinInput = _windupSpin;
 
             float power = _carrier.ChargeRatio;
             Press(intent, Verb.SpecialAbility, true);
+
+            // A solved trajectory is not permission to throw through the bot's own back. The
+            // body now turns toward AimPoint through CharacterMotor, at the same bounded rate as
+            // every other turn. Keep holding until the visible model has caught up with the
+            // shot. This gate intentionally also covers the timeout and last-call branches.
+            if (!FacingPoint(intent.AimPoint, AiTuning.ThrowFacingConeDeg)) return;
 
             if (_windupTime >= AiTuning.WindupTimeout)
             {
@@ -3468,6 +3451,19 @@ namespace TumbangPreso
 
             if (forward.magnitude < 0.01f || toward.magnitude < 0.01f) return false;
 
+            return Vector3.Angle(forward.normalized, toward.normalized) <= cone;
+        }
+
+        /// <summary>Is the visible body facing a world-space aim point?</summary>
+        private bool FacingPoint(Vector3 point, float cone)
+        {
+            Vector3 forward = transform.forward;
+            forward.y = 0.0f;
+
+            Vector3 toward = point - transform.position;
+            toward.y = 0.0f;
+
+            if (forward.sqrMagnitude < 0.0001f || toward.sqrMagnitude < 0.0001f) return false;
             return Vector3.Angle(forward.normalized, toward.normalized) <= cone;
         }
 

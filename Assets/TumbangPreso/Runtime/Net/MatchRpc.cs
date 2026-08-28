@@ -2104,6 +2104,18 @@ namespace TumbangPreso.Net
             // once it is set. Left false, a player who dropped mid-match lost their seat and their
             // score to the next arrival, and anyone joining a running match was turned away.
             var lobby = NetSession.Instance?.Lobby;
+
+            // The rules rotate one taya across four fixed seats. With filler bots disabled an
+            // empty chair cannot defend its round, so the host must wait for four people rather
+            // than starting a match with an inert body. The lobby button carries the same gate;
+            // this check is the authoritative backstop for every other caller.
+            if (!AIController.BotsEnabled &&
+                (lobby == null || lobby.OccupiedSeatCount() < Balance.PlayerCount))
+            {
+                Debug.LogWarning("[Lobby] start refused: bots are off and not all four seats are occupied.");
+                return;
+            }
+
             lobby?.StartMatch();
             _lobbyReady.Clear();
 
@@ -3324,10 +3336,19 @@ namespace TumbangPreso.Net
                     var unit = Unit(seat);
                     if (unit != null)
                     {
-                        unit.IsBot = true;
-                        if (unit.GetComponent<AIController>() == null)
+                        if (AIController.BotsEnabled)
                         {
-                            unit.gameObject.AddComponent<AIController>();
+                            unit.IsBot = true;
+                            if (unit.GetComponent<AIController>() == null)
+                                unit.gameObject.AddComponent<AIController>();
+                        }
+                        else
+                        {
+                            // Bots-off lobbies reserve the chair for reconnection but do not
+                            // install a replacement driver. Release any last remote input so the
+                            // disconnected body cannot keep walking on a stale held key.
+                            unit.Intent.Clear();
+                            unit.Intent.CommitFrame();
                         }
 
                         // ⚠⚠ THE SEAT JUST CHANGED HANDS AND `CharacterMotor` CACHES WHO DRIVES IT.

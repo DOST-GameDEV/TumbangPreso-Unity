@@ -133,7 +133,7 @@ namespace TumbangPreso.Tests
         /// would refuse peers who have no reason to be refused.
         /// </summary>
         [Test]
-        public void TheProtocolCarriesTheChatBump()
+        public void TheProtocolCarriesEveryRosterBump()
         {
             Assert.AreEqual(10, NetSession.ProtocolVersion,
                 "a message or a replicated roster index has been added or removed. Bump this " +

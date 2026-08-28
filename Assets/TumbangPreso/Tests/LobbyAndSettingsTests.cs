@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using NUnit.Framework;
 using TumbangPreso.Core;
 using TumbangPreso.Net;
@@ -24,6 +25,21 @@ namespace TumbangPreso.Tests
             var lobby = new LobbySession { IsDedicated = dedicated };
             lobby.OpenLobby(new Random(12345));
             return lobby;
+        }
+
+        [Test]
+        public void MultiplayerLobbyIncludesTheNoBotsOption()
+        {
+            bool previous = UI.SceneFlow.Networked;
+            UI.SceneFlow.Networked = true;
+
+            var count = typeof(UI.ConvertedMatchSetup).GetProperty(
+                "DifficultyOptionCount", BindingFlags.Static | BindingFlags.NonPublic);
+
+            Assert.IsNotNull(count);
+            Assert.AreEqual(AIController.NoBotsIndex + 1, (int)count.GetValue(null));
+
+            UI.SceneFlow.Networked = previous;
         }
 
         // -------------------------------------------------------------------

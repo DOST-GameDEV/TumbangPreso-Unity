@@ -1,4 +1,6 @@
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Reflection;
 using TumbangPreso.Core;
 using UnityEngine;
 
@@ -56,6 +58,47 @@ namespace TumbangPreso.Tests
             Assert.IsFalse(i.Pressed(Verb.Sprint));
             Assert.IsFalse(i.JustPressed(Verb.Sprint));
             Assert.AreEqual(Vector2.zero, i.MoveAxis);
+        }
+
+        [Test]
+        public void Intent_ClearsBotFacingWithoutReleasingACharge()
+        {
+            var i = new InputIntent();
+            i.Set(Verb.SpecialAbility, true);
+            i.AimPoint = Vector3.forward * 10.0f;
+            i.FaceAimPoint = true;
+
+            i.ClearAim();
+
+            Assert.IsFalse(i.HasAimPoint);
+            Assert.IsFalse(i.FaceAimPoint);
+            Assert.IsTrue(i.Pressed(Verb.SpecialAbility),
+                "clearing last frame's aim must not release a held throw");
+        }
+
+        [Test]
+        public void TayaJabReportsTagCooldownInsteadOfPunchCooldown()
+        {
+            var go = new GameObject("CooldownLabelTaya", typeof(CharacterController));
+            var motor = go.AddComponent<CharacterMotor>();
+            typeof(CharacterMotor).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic)
+                ?.Invoke(motor, null);
+            motor.IsDefender = true;
+            var carrier = go.AddComponent<Carrier>();
+            var verbs = go.AddComponent<CombatVerbs>();
+
+            var cooldown = typeof(CombatVerbs).GetField(
+                "_punchCooldown", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(cooldown);
+            cooldown.SetValue(verbs, 1.0f);
+
+            var rows = new List<StatusRow>();
+            StatusStack.Collect(motor, carrier, verbs, rows);
+
+            Assert.IsTrue(rows.Exists(row => row.Label == "TAG CD"));
+            Assert.IsFalse(rows.Exists(row => row.Label == "PUNCH CD"));
+
+            Object.DestroyImmediate(go);
         }
 
         // -------------------------------------------------------------------
