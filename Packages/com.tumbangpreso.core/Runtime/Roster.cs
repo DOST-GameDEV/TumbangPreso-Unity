@@ -158,7 +158,7 @@ namespace TumbangPreso.Core
         };
 
         /// <summary>
-        /// The four slippers. FLIGHT / IMPACT / RECOVERY.
+        /// The slipper skins. FLIGHT / IMPACT / RECOVERY.
         ///
         /// ⚠️ ENTRY 0 STAYS NEUTRAL ON PURPOSE. TSINELAS is what an unpicked slipper and
         /// every -1 fallback resolve to, so giving it a non-neutral row would silently
@@ -178,6 +178,13 @@ namespace TumbangPreso.Core
             new RosterEntry("crocs",    "CROCS",     2,    5,    2),
             new RosterEntry("pantulog", "PANTULOG",  3,    1,    5),
             new RosterEntry("sike",     "IKE",       4,    2,    3),
+            // ⚠️ APPEND ONLY. These indices cross the wire. Inserting above an existing row
+            // would make two peers render different footwear for the same pick with no error.
+            new RosterEntry("spartan",   "SPARTAN",    3,    4,    2),
+            new RosterEntry("alpombra",  "ALPOMBRA",   2,    1,    5),
+            new RosterEntry("pambahay",  "PAMBAHAY",   4,    2,    4),
+            new RosterEntry("heels",     "HEELS",      2,    5,    1),
+            new RosterEntry("sandals",   "SANDALS",    4,    3,    2),
         };
 
         /// <summary>

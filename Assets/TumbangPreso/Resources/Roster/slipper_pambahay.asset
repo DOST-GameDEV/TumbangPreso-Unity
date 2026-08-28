@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd6025c7ab6554d458e7834add491ac2, type: 3}
-  m_Name: slipper_tsinelas
+  m_Name: slipper_pambahay
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
-  Id: tsinelas
-  Model: {fileID: 7774194470673759462, guid: fcf28f3c23042f04c8d747024be46ed1, type: 3}
+  Id: pambahay
+  Model: {fileID: 1531262524955079186, guid: f93b72d157974274c834caeaa5a5d3f1, type: 3}
   PetModel: {fileID: 0}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}

@@ -821,7 +821,7 @@ namespace TumbangPreso.UI
                 case "cheska": return "ICE CONTROLLER\nCreate slip zones and barricades, then lock the lane with Glacial Nova.";
                 case "sean": return "FIRE BRAWLER\nRush the lane, blast open space, and finish with Supernova.";
                 case "zack": return "LIGHTNING SKIRMISHER\nSprint through fights, build charge, and call down Thunderstrike.";
-                case "nemu": return "SPIRIT TRICKSTER\nPhase through danger, project Kuro, and pull enemies into the void.";
+                case "nemu": return "SPIRIT TRICKSTER\nSlip beyond reach, possess the street, and turn a seance into a trap.";
                 case "phaister": return "STREET WITCH\nCurse the ground, blink out of trouble, and black out the whole street.";
 
                 // Classic Roster
@@ -845,10 +845,15 @@ namespace TumbangPreso.UI
                 case "decades": return "Flakes in oil from Aling Nena's. Squat and low, so tipping it is the hard part, and setting it back up is barely a motion.";
                 case "metal": return "No label left, just ribs and rust. Heavy for its size, it sends the tsinelas across the street, and it is slow to stand back up.";
 
-                case "tsinelas": return "Plain rubber, one peso of it. Every child on this street has thrown a pair, and it does everything well enough.";
+                case "tsinelas": return "The street-game original, rebuilt with a proper layered sole and a clean Y-strap. Balanced in flight, impact and recovery.";
                 case "crocs": return "Holes in the top, strap at the back. Heavy and it does not fly straight, but whoever body-blocks it knows all about it.";
                 case "pantulog": return "Lola's house slipper, worn soft. No weight behind it at all, but it is ready again before the taya has turned around.";
                 case "sike": return "Definitely not the real brand. Light, loud, and the quickest thing off a hand on this street.";
+                case "spartan": return "Black rubber and a red Y-strap, straight from the kanto. Hits harder than the basic pair, but takes longer to settle back into your hand.";
+                case "alpombra": return "Soft house slippers with almost no sting. They drop early, land quietly, and recover before the taya can turn.";
+                case "pambahay": return "The loud spare pair beside the door. Light on the throw, quick through the air, and always ready for another round.";
+                case "heels": return "Completely impractical and brutally effective. Short-ranged, slow to recover, and the last thing anyone wants to body-block.";
+                case "sandals": return "Strapped down and built for walking. Fast and steady through the air, but not made for rapid-fire throws.";
 
                 default: return "";
             }

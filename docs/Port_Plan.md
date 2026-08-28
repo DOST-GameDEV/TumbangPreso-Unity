@@ -518,7 +518,7 @@ The art can change freely. These properties cannot, because gameplay is measured
 ### 8.3 Order to replace in
 
 1. **IKE**, for the wordmark. It is the only item with a reason beyond preference.
-2. **The four lata and four tsinelas.** Small, high-visibility, already drawn by the team once,
+2. **The four lata and the tsinelas roster.** Small, high-visibility, already drawn by the team once,
    and each is a single prop with no rig.
 3. **The twelve people.** Largest job by far, because it is twelve rigs plus animation
    retargeting. Unity's Humanoid retargeting is the reason this got easier in the port: with a

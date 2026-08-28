@@ -111,10 +111,15 @@ namespace TumbangPreso.EditorTools
 
         private static readonly Dictionary<string, string> SlipperModels = new Dictionary<string, string>
         {
-            { "tsinelas", "models/tsinelas_classic.obj" },
+            { "tsinelas", "models/tsinelas_tsinelas.glb" },
             { "crocs",    "models/tsinelas_crocs.obj" },
             { "pantulog", "models/tsinelas_pantulog.obj" },
             { "sike",     "models/tsinelas_sike.obj" },
+            { "spartan",   "models/tsinelas_spartan.glb" },
+            { "alpombra",  "models/tsinelas_alpombra.glb" },
+            { "pambahay",  "models/tsinelas_pambahay.glb" },
+            { "heels",     "models/tsinelas_heels.glb" },
+            { "sandals",   "models/tsinelas_sandals.glb" },
         };
 
         [MenuItem("Tumbang Preso/Build Roster Book")]

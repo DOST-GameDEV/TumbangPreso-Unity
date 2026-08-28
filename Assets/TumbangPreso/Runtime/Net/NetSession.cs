@@ -111,7 +111,7 @@ namespace TumbangPreso.Net
         // `docs/TODO.md` § 68.2 held every bump until this one message so there is exactly one.
         // Both machines must be rebuilt from this branch or they refuse each other at approval,
         // by design; § 59.2 is what makes the refusal say so instead of hanging.
-        public const int ProtocolVersion = 6;
+        public const int ProtocolVersion = 7;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =

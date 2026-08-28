@@ -61,7 +61,7 @@ namespace TumbangPreso.EditorTools
                 Check(ref failures, "all roster size",
                       Roster.AllPeople.Count == Roster.ClassicPeople.Count + Roster.HeroPeople.Count);
                 Check(ref failures, "cans", Roster.Cans.Count == 4);
-                Check(ref failures, "slippers", Roster.Slippers.Count == 4);
+                Check(ref failures, "slippers", Roster.Slippers.Count == 9);
 
                 Check(ref failures, "neutral is exactly 1.0",
                     Mathf.Approximately(Roster.TraitScale(3, Balance.TraitSpeedPerPoint), 1.0f));
