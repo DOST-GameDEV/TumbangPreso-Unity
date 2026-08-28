@@ -829,13 +829,28 @@ namespace TumbangPreso.Visual
             var front = Front();
             if (!front.IsValid()) return;
 
-            double length = front.GetAnimationClip() != null
-                ? front.GetAnimationClip().length
-                : 0.0;
+            var clip = front.GetAnimationClip();
+            double length = clip != null ? clip.length : 0.0;
             if (length <= 0.0) return;
 
             if (!_holdAtEnd)
             {
+                // ⚠️⚠️ ONLY A CLIP THAT DOES NOT LOOP ITSELF, AND THE FIRST VERSION OF THIS DID
+                // IT TO EVERYTHING. `CarryTests` caught it: a held tsinelas drifted 0.063 m from
+                // the hand against a 0.050 bound while its carrier walked. Rewriting the time on
+                // a clip that ALREADY wraps sends it back exactly one cycle, and a walk cycle
+                // whose first and last frames are not identical pops the hand by that seam on the
+                // frame it happens. The locomotion clips are imported with Loop Time and need no
+                // help; the emotes are the ones that do not.
+                //
+                // ⚠️ `clip.isLooping` IS THE IMPORT SETTING, which is exactly the question being
+                // asked: "does this asset wrap on its own, or do I have to". It is the one place
+                // in this class that reads an import flag, and it reads it to decide whether to
+                // COMPENSATE for it rather than to depend on it, so the note in `HoldLastFrame`'s
+                // header about the art being replaced still holds. A replacement clip that
+                // arrives unlooped gets the wrap; one that arrives looped does not need it.
+                if (clip.isLooping) return;
+
                 double time = front.GetTime();
 
                 // ⚠️ THE REMAINDER, NOT ZERO. Snapping to 0 on the frame the clip runs out

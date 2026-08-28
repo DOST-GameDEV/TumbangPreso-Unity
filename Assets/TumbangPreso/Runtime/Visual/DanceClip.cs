@@ -96,12 +96,22 @@ namespace TumbangPreso.Visual
                 // refuses a legacy clip outright.
                 legacy = false,
 
-                // ⚠️ NOT `wrapMode = Loop` EITHER, AND THAT IS DELIBERATE ON A CLIP MEANT TO
-                // REPEAT. Every imported clip on this rig is authored non-looping and the emote
-                // system replays the looping ones itself, from `EmoteLoops`. A clip that
-                // carried its own loop would repeat correctly while quietly bypassing the one
-                // mechanism every other emote goes through, leaving the next person to edit
-                // `EmoteLoops` with one emote it does not govern.
+                // ⚠️⚠️ THIS LINE IS INERT AND THE COMMENT THAT USED TO SIT ON IT SAID THE
+                // OPPOSITE OF WHAT IT DOES. It read "NOT `wrapMode = Loop` EITHER, AND THAT IS
+                // DELIBERATE" directly above `wrapMode = WrapMode.Loop`, so a previous edit
+                // changed the value and left the reasoning, which is the exact disagreement
+                // `CLAUDE.md` § 5 exists to catch.
+                //
+                // ⚠️ `wrapMode` ONLY GOVERNS A `legacy` CLIP, and this one is not legacy because
+                // `AnimationClipPlayable` refuses those outright. What the playable actually
+                // reads is `clip.isLooping`, which comes from the import settings and is FALSE
+                // for a clip built at runtime; there is no runtime API to set it.
+                //
+                // ⚠️ SO THE REPLAY IS THE EMOTE SYSTEM'S JOB, exactly as the old note claimed it
+                // should be, and as of 2026-08-29 it finally is. `EmoteLoops` says
+                // `{ "dance", true }` and `CharacterAnimator.HoldLastFrame` wraps the playable's
+                // time for any clip that does not loop on its own. Before that the table said
+                // loop, this line said loop, and the dance still played once and froze.
                 wrapMode = WrapMode.Loop,
             };
 
