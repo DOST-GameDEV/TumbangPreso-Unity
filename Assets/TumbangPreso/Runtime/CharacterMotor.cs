@@ -863,8 +863,36 @@ namespace TumbangPreso
             SetNetworkPose(position, yaw);
         }
 
+        /// <summary>
+        /// Puts a replica where the host says it is.
+        ///
+        /// ⚠️⚠️ THE ARENA WALLS APPLY TO A PICTURE OF A BODY EXACTLY AS THEY DO TO A BODY, AND
+        /// UNTIL 2026-08-29 THEY DID NOT. 🧑, of a LAN match: *"if u werent host, the bots and
+        /// slippers were going out of map"*. Only the non-host saw it, and that is the whole
+        /// tell: the host SIMULATES these bodies and its simulation is clamped twice, at
+        /// `MoveStep` and at the confinement. A client does neither. It writes whatever arrived
+        /// straight onto the transform, so the walls existed on exactly one machine in the match.
+        ///
+        /// ⚠️ IT IS THE SAME PAIR OF NUMBERS THE HOST CLAMPS TO, so this can never disagree with
+        /// the host about a position the host considers legal: it can only refuse one the host
+        /// would have refused too. That is what makes it safe to apply to a stream this peer has
+        /// no authority over. `MatchInstaller.MeasurePlayableBounds` runs in `Start` on every
+        /// peer, so a client has had the right numbers all along and simply never used them.
+        ///
+        /// ⚠️ Y IS NOT CLAMPED. Jumps, falls, the kill plane and Ilalim ng Tulay's viaduct all
+        /// live on that axis and none of them is a wall.
+        ///
+        /// ⚠️ THIS IS THE SECOND HALF OF A TWO-PART FIX AND IT IS THE HALF THAT CANNOT REGRESS.
+        /// `MatchRpc.PoseDelivery` stops the reliable-channel bursts that made a replica jump far
+        /// enough for `ApplyNetworkTransform` to treat it as a correction and snap; this makes the
+        /// destination legal whatever the transport does. Either alone leaves the other's failure
+        /// reachable.
+        /// </summary>
         private void SetNetworkPose(Vector3 position, float yaw)
         {
+            position.x = Mathf.Clamp(position.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
+            position.z = Mathf.Clamp(position.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+
             bool enabled = _cc != null && _cc.enabled;
             if (enabled) _cc.enabled = false;
             transform.SetPositionAndRotation(position, Quaternion.Euler(0.0f, yaw, 0.0f));

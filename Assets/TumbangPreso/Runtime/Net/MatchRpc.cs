@@ -115,6 +115,47 @@ namespace TumbangPreso.Net
             DontDestroyOnLoad(gameObject);
         }
 
+        /// <summary>
+        /// How the two POSITION streams are sent, and the only two messages in this file that do
+        /// not go reliably.
+        ///
+        /// ⚠️⚠️ THE DEFAULT IS `ReliableSequenced` AND IT WAS BEING TAKEN, WHICH IS THE WHOLE OF
+        /// 🧑 2026-08-29: *"idk if its bcz we are using hamachi or its genuinely broken but the
+        /// bots go out of bounds and lan is highly buggy ... for online servers it isnt like
+        /// that"*. `SendNamedMessageToAll` has a `NetworkDelivery` parameter with a default, and
+        /// every call in this file omitted it, so `SyncUnit` went out reliably at one message per
+        /// body per fixed step: four seats at 50 Hz is 200 guaranteed-delivery messages a second
+        /// carrying nothing but a pose that the next one replaces.
+        ///
+        /// ⚠️⚠️ RELIABLE IS NOT "THE SAME BUT SAFER" FOR A SNAPSHOT STREAM, IT IS ACTIVELY WORSE,
+        /// and head-of-line blocking is why. A sequenced channel may not deliver message N+1
+        /// until N has arrived, so ONE lost packet holds up every pose behind it until the
+        /// retransmit lands, and then the whole backlog arrives at once. On the receiving end
+        /// that is a body frozen for a beat and then moved a long way in one step, and
+        /// `CharacterMotor.ApplyNetworkTransform` treats a jump over 3 m as a correction and
+        /// SNAPS: through a wall, through the chalk, wherever the straight line goes. That is
+        /// "the bots go out of bounds" exactly, and the same burst at smaller amplitudes is the
+        /// jitter reported beside it. Retransmitting a pose that has already been superseded is
+        /// spending the link to deliver something the receiver will discard.
+        ///
+        /// ⚠️ WHICH IS ALSO WHY LAN WAS THE HALF THAT BROKE. Nothing here is LAN-specific; a
+        /// reliable stream at this rate simply needs a link with very little loss to look fine,
+        /// and Hamachi is a VPN with a smaller MTU and real packet loss. The relay path was not
+        /// better designed, it was luckier.
+        ///
+        /// ⚠️ SEQUENCED RATHER THAN BARE UNRELIABLE, so an older pose that overtakes a newer one
+        /// is DROPPED instead of applied. Both messages carry a complete state rather than a
+        /// delta, so a lost one costs 20 ms of smoothing and nothing else, but an out-of-order
+        /// one applied would drag the body backwards.
+        ///
+        /// ⚠️⚠️ AND EVERY OTHER MESSAGE IN THIS FILE STAYS RELIABLE. Chat, seating, the start
+        /// whistle, the ready tally, the slipper's state changes and the lata going over are
+        /// EVENTS: each one happens once and nothing later repeats it, so a dropped one is a
+        /// point never scored or a match that never begins. Only a stream that fully replaces
+        /// itself every step can afford to lose a packet, and exactly two of them do.
+        /// </summary>
+        private const NetworkDelivery PoseDelivery = NetworkDelivery.UnreliableSequenced;
+
         private void OnEnable() => NetSession.ClientDisconnected += HandleClientDisconnected;
 
         private void OnDisable() => NetSession.ClientDisconnected -= HandleClientDisconnected;
@@ -1123,7 +1164,8 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(yaw);
             writer.WriteValueSafe(velocity);
             writer.WriteValueSafe(grounded);
-            _nm.CustomMessagingManager.SendNamedMessage("SubmitMove", NetworkManager.ServerClientId, writer);
+            _nm.CustomMessagingManager.SendNamedMessage("SubmitMove", NetworkManager.ServerClientId,
+                                                        writer, PoseDelivery);
         }
 
         private void OnSubmitMoveMsg(ulong senderClientId, FastBufferReader reader)
@@ -1196,7 +1238,7 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(unit.Stamina.Current);
             writer.WriteValueSafe(unit.Stamina.IdleSeconds);
             writer.WriteValueSafe(unit.Stamina.FatigueLeft);
-            _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer, PoseDelivery);
         }
 
         private void OnSyncUnitMsg(ulong senderClientId, FastBufferReader reader)

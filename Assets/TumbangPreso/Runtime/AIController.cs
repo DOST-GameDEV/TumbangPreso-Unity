@@ -2504,6 +2504,17 @@ namespace TumbangPreso
         public static float PlayableHalfX = 8.6f;
         public static float PlayableHalfZ = 13.0f;
 
+        /// <summary>
+        /// The lowest wall top, which is the height a tsinelas may not be thrown over.
+        ///
+        /// ⚠️ IT BOUNDS THE TSINELAS AND NOT THE BODY. Nothing a player can do gets a character
+        /// near it: `Balance.JumpVelocity` against `Balance.Gravity` is a fraction of a wall, and
+        /// the abilities that move a body vertically all land it again. A throw is the only thing
+        /// in the game with the speed to leave over the top, which is why this is read by
+        /// `Slipper` alone.
+        /// </summary>
+        public static float PlayableCeilingY = 12.0f;
+
         private Vector3 RingPoint(float radius)
         {
             // The square ring, matching the confinement shape rather than a circle.

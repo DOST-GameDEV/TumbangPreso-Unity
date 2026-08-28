@@ -187,6 +187,164 @@ namespace TumbangPreso
         /// </summary>
         public static bool PreviewOnly;
 
+        /// <summary>Eskinita's house facades, and the fallback when a map ships no `Bounds`.</summary>
+        public const float DefaultHalfX = 8.6f;
+        public const float DefaultHalfZ = 13.0f;
+
+        /// <summary>Eskinita's wall tops, and the fallback when a map ships no `Bounds`.</summary>
+        public const float DefaultCeilingY = 12.0f;
+
+        /// <summary>
+        /// No arena gets a lid lower than this, however short its walls are.
+        ///
+        /// ⚠️⚠️ THE WALL TOPS ALONE WOULD HAVE GIVEN ILALIM NG TULAY A 6 m CEILING, and 🧑 asked
+        /// for the opposite: *"give reasonable high ceilings in all maps"*. Its walls are 3.0 in
+        /// half height because it is a road under a viaduct rather than a street of houses, so
+        /// taking the wall top literally would have made the one map with the lowest scenery also
+        /// the one map where a normal lob hits an invisible roof. A lid is there to stop a
+        /// tsinelas LEAVING, not to flatten the arc of a throw.
+        ///
+        /// ⚠️ 12 m IS THE OTHER TWO ARENAS' OWN WALL TOPS, so this is not a number picked to feel
+        /// right: it is the height the game already plays under on Eskinita and Bayan Plaza,
+        /// applied to the map that would otherwise be the exception. Nothing a player throws
+        /// reaches it in normal play; what reaches it is a full-power throw aimed at the sky,
+        /// which is exactly the shot that used to leave the map.
+        /// </summary>
+        public const float MinimumCeilingY = 12.0f;
+
+        /// <summary>
+        /// The inward face of one wall box, on the axis it actually walls off, or a negative
+        /// number when the collider is not a wall this measurement can use.
+        ///
+        /// ⚠️⚠️ THE FACE, NOT THE CENTRE, AND READING THE CENTRE IS HALF OF WHY BODIES LEFT THE
+        /// MAP. The old measurement took `col.transform.position + col.center`, which is the
+        /// middle of the wall, so every limit was too generous by half that wall's thickness.
+        /// `AIController.PlayableHalfX`'s own note says in capitals that it is THE WALL FACES;
+        /// the code under it had been measuring centres, and a doc and a number that disagree is
+        /// the shape of fault this repo's rules exist to stop.
+        ///
+        /// ⚠️ WHICH AXIS A BOX WALLS OFF IS DECIDED BY WHICH WAY IT IS THIN. A wall is long along
+        /// the edge it runs down and thin across it, so the thin axis is the one it stops you on.
+        /// Asking the collider's world AABB rather than its local size is what makes this survive
+        /// a wall that is rotated or scaled by its parent, and the arenas are emitted wholesale by
+        /// `tools/maps/build_*.py`, so nothing about their transforms is hand-kept.
+        ///
+        /// ⚠️ COLLIDERS ACROSS THE MIDDLE ARE IGNORED, which is the 1.0 m test the old code had
+        /// and the one thing about it worth keeping: a bridge pier or a kerb sitting near the
+        /// origin is an obstacle inside the arena, not the edge of it, and `BounceOffObstacles`
+        /// is what handles those.
+        /// </summary>
+        /// <summary>
+        /// How tall a box under `Bounds` has to be before it counts as a wall.
+        ///
+        /// ⚠️⚠️ WITHOUT THIS, ILALIM NG TULAY MEASURES 6.65 AND THE ARENA IS THE ROAD ONLY. That
+        /// map parents its GROUND under `Bounds`: the ground plate, `PavementWest` and
+        /// `PavementEast`, and `KerbWest` and `KerbEast`. Every one of them is 0.25 m in half
+        /// height and enormous in Z, so "thin across one axis" is true of a kerb exactly as it is
+        /// true of a wall, and the tightest of them is a 0.18 m kerb at x = 6.83. Clamping the
+        /// arena to that is not a wall, it is the edge of the tarmac: the pavement either side is
+        /// floor the game is meant to be played on, and both maps' probes photograph bodies
+        /// standing on it.
+        ///
+        /// ⚠️ TALLNESS IS WHAT SEPARATES THEM, NOT NAMES. Matching on "Wall" in the node name
+        /// would work today and break the first time `tools/maps/build_*.py` renames anything, and
+        /// those scripts emit the arenas WHOLESALE. What is actually true of a wall is that a body
+        /// cannot get over it: `cc.stepOffset` is 0.3 and the capsule is 1.6 tall, so 0.5 m of
+        /// half height is comfortably above anything a player steps onto and comfortably below
+        /// every real wall in the three arenas (Eskinita and Bayan Plaza are 6.0, Ilalim is 3.0).
+        /// </summary>
+        public const float MinimumWallHalfHeight = 0.5f;
+
+        /// <summary>
+        /// The top of a wall box, which is the arena's ceiling on that side.
+        ///
+        /// ⚠️ IT IS THE SAME BOXES THE SIDES ARE MEASURED FROM, so a map cannot acquire a ceiling
+        /// that disagrees with its walls. Ilalim ng Tulay's walls are 3.0 in half height against
+        /// Eskinita's 6.0, and that difference is real: one is a road under a viaduct.
+        /// </summary>
+        public static float WallTop(Bounds box) => box.center.y + box.extents.y;
+
+        public static float WallFace(Bounds box, out bool constrainsX)
+        {
+            constrainsX = box.extents.x < box.extents.z;
+
+            // A kerb, a pavement and the ground plate are all thin across one axis. Only a wall
+            // is also tall. See MinimumWallHalfHeight.
+            if (box.extents.y < MinimumWallHalfHeight) return -1.0f;
+
+            float centre = constrainsX ? box.center.x : box.center.z;
+            float extent = constrainsX ? box.extents.x : box.extents.z;
+            float face = Mathf.Abs(centre) - extent;
+
+            return face > 1.0f ? face : -1.0f;
+        }
+
+        /// <summary>
+        /// Measures the arena the round is about to be played in, and writes the one pair of
+        /// numbers that clamps every body and every tsinelas in it.
+        ///
+        /// ⚠️⚠️ THE TIGHTEST WALL, NOT THE FARTHEST, AND THE OLD `Mathf.Max` IS THE OTHER HALF OF
+        /// 🧑 2026-08-29's *"out of bounds sa ilalim ng tulay map"*. Seeding with Eskinita's 8.6
+        /// and 13.0 and then taking the maximum means a map can only ever be measured LARGER than
+        /// Eskinita: an arena that is genuinely narrower keeps Eskinita's walls, and everything
+        /// the numbers clamp is free to walk to a place that map has no floor for. Ilalim ng Tulay
+        /// is a road under a viaduct and is narrower across than a street of houses, so it got
+        /// the one shape of arena this arithmetic cannot express.
+        ///
+        /// ⚠️ AND THE MAXIMUM WAS WRONG ON ITS OWN TERMS EVEN WITHOUT THE SEED. Taking the
+        /// farthest wall on an axis applies the far side's distance to BOTH sides, so any arena
+        /// that is not symmetric lets a body through the near wall by the difference. The minimum
+        /// is the only answer that is safe on both sides of a symmetric clamp, and the clamp is
+        /// symmetric everywhere it is read: `CharacterMotor` twice, `AIController.ClampToPlayable`
+        /// and `Slipper.BounceOffBounds`.
+        ///
+        /// ⚠️ ONE NUMBER FOR PEOPLE, BOTS AND TSINELAS, which is what makes 🧑's *"make sure it
+        /// doesnt go past the bounds humans are allowed to go"* true by construction rather than
+        /// by three clamps being kept in step. There is no second bound to forget.
+        /// </summary>
+        public static void MeasurePlayableBounds()
+        {
+            var bounds = GameObject.Find("Bounds");
+
+            float halfX = float.PositiveInfinity;
+            float halfZ = float.PositiveInfinity;
+            float ceiling = float.PositiveInfinity;
+
+            if (bounds != null)
+            {
+                foreach (var col in bounds.GetComponentsInChildren<BoxCollider>())
+                {
+                    float face = WallFace(col.bounds, out bool constrainsX);
+                    if (face < 0.0f) continue;
+
+                    if (constrainsX) halfX = Mathf.Min(halfX, face);
+                    else halfZ = Mathf.Min(halfZ, face);
+
+                    // ⚠️ THE LOWEST WALL TOP, because that is the one a tsinelas can be thrown
+                    // over. A ceiling set from the tallest would leave the shortest side open,
+                    // which is the only side anybody would find.
+                    ceiling = Mathf.Min(ceiling, WallTop(col.bounds));
+                }
+            }
+
+            // ⚠️ A MAP THAT WALLS ONE AXIS AND NOT THE OTHER KEEPS THE DEFAULT ON THE OTHER,
+            // rather than inheriting an infinity that would clamp nothing at all. Each axis
+            // falls back on its own, because they are measured from different colliders.
+            AIController.PlayableHalfX = float.IsInfinity(halfX) ? DefaultHalfX : halfX;
+            AIController.PlayableHalfZ = float.IsInfinity(halfZ) ? DefaultHalfZ : halfZ;
+
+            // ⚠️⚠️ THE ARENA HAS A LID NOW, AND IT DID NOT. 🧑 2026-08-29: *"make sure theres
+            // invisible bounds in the sky as well as those walls that return the slippers or make
+            // them bounce"*. `BounceOffBounds` walled X and Z and left Y open, so a tsinelas
+            // thrown hard and high went straight over the top of a 6 m wall and came down outside
+            // the arena, where the resting clamp then dragged it back to a wall it had never
+            // touched. A shoe that leaves the map is an attacker deleted from the round, which is
+            // the same cost the resting clamp's own note describes at length.
+            AIController.PlayableCeilingY = float.IsInfinity(ceiling)
+                ? DefaultCeilingY
+                : Mathf.Max(ceiling, MinimumCeilingY);
+        }
+
         private void Start()
         {
             // The arena was loaded to be looked at, not played. See PreviewOnly.
@@ -204,25 +362,7 @@ namespace TumbangPreso
             // player chose. Applied once here, before any seat is built.
             AIController.ApplyDifficultyFromSettings();
 
-            var bounds = GameObject.Find("Bounds");
-            if (bounds != null)
-            {
-                float maxX = 8.6f;
-                float maxZ = 13.0f;
-                foreach (var col in bounds.GetComponentsInChildren<BoxCollider>())
-                {
-                    Vector3 c = col.transform.position + col.center;
-                    if (Mathf.Abs(c.x) > 1.0f) maxX = Mathf.Max(maxX, Mathf.Abs(c.x));
-                    if (Mathf.Abs(c.z) > 1.0f) maxZ = Mathf.Max(maxZ, Mathf.Abs(c.z));
-                }
-                AIController.PlayableHalfX = maxX;
-                AIController.PlayableHalfZ = maxZ;
-            }
-            else
-            {
-                AIController.PlayableHalfX = 8.6f;
-                AIController.PlayableHalfZ = 13.0f;
-            }
+            MeasurePlayableBounds();
 
             var lata = BuildLata();
             var seats = new CharacterMotor[Balance.PlayerCount];

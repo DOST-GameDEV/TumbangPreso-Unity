@@ -11,6 +11,221 @@ against the readability budget in its § 2.
 
 ---
 
+## 71 · The 2026-08-29 report, and the two faults only a non-host could see
+
+Reported in one batch. This entry carries the ones that are closed; § 72 carries the one that
+is not.
+
+### 71.1 · A host saw its own game in JOIN A GAME ✅ CLOSED 2026-08-29
+
+🧑: *"na kikita sarili sa lobby (join a game)"*.
+
+A host broadcasts to `255.255.255.255` and to every interface's directed broadcast, and its own
+listener is bound to `IPAddress.Any` on the same port, so it receives every packet it sends.
+The row was indistinguishable from a real game because it WAS one, and pressing JOIN asked the
+transport to connect to a server this process already is.
+
+⚠️ Address and port cannot answer "is this me". The loopback arrives on whichever interface the
+OS routed it through, and on a machine with a virtual adapter (Hamachi, Radmin, WSL, all named
+in `LanBeacon`'s own header) that is routinely not the one you would guess. `LanBeacon` now
+mints a per-PROCESS id, puts it on the wire, and drops what matches its own. Per process rather
+than per machine: two windows side by side for a two-window test are two games and each must
+still see the other.
+
+The payload is a new magic (`MagicV2`) rather than a longer one, because the host name is last
+precisely so it may contain the separator, which makes `parts.Length` useless as a version
+discriminator. v1 is still parsed, so an old build is listed rather than vanishing.
+
+The ONLINE half needs no id: a relay lobby IS its join code. That filter is gated on being the
+host, or a client would hide the lobby it is sitting in from its own browser.
+
+**Verified:** `LobbyAndSettingsTests`, three new cases covering the round trip, a v1 payload,
+and a v1 name containing the separator that has the same field count as a v2 payload.
+
+### 71.2 · The dance emote did two swings and froze ✅ CLOSED 2026-08-29
+
+🧑: *"sa dance emote dalawang swings lang sya and nag stostop na sya sumayaw"*.
+
+`EmoteLoops` said `{ "dance", true }` and `CharacterAnimator.Play` asked for it with
+`playable.SetDuration(double.MaxValue)`. Both were correct, and the disagreement was between
+them: an infinite DURATION says when the PLAYABLE is finished, not what the CLIP does past its
+own end. An `AnimationClipPlayable` past `clip.length` holds its final pose unless the clip
+asset is marked Loop Time in the importer, so an infinite duration on an unlooped clip buys a
+pose that never ends rather than a groove that never ends.
+
+⚠️ Fixed by wrapping the playable's time in `HoldLastFrame`, next to the hold it is the other
+half of, and NOT in the importer. `CLAUDE.md` § 6 says every clip here is placeholder and the
+team's own are coming; an import setting is a property of the asset that the replacement
+arrives without, so the loop would have broken again on the commit that swaps the art. It is a
+no-op on a clip that already loops.
+
+### 71.3 · Bots and slippers left the map, on LAN, for everybody except the host ✅ CLOSED 2026-08-29
+
+🧑: *"idk if its bcz we are using hamachi or its genuinely broken but the bots go out of bounds
+and lan is highly buggy ... for online servers it isnt like that"*, and then the detail that
+settles it: *"its js taht we witnessed in lan that if u werent host, the bots and slippers were
+going out of map"*.
+
+Two independent causes, and either alone leaves the other's failure reachable.
+
+**The transport.** `CustomMessagingManager.SendNamedMessageToAll` takes a `NetworkDelivery` with
+a default of `ReliableSequenced`, and every call in `MatchRpc` omitted it. `SyncUnit` therefore
+went out reliably at one message per body per fixed step: four seats at 50 Hz is 200
+guaranteed-delivery messages a second carrying nothing but a pose the next one replaces.
+
+⚠️⚠️ Reliable is not "the same but safer" for a snapshot stream, it is actively worse. A
+sequenced channel may not deliver N+1 until N has arrived, so one lost packet holds up every
+pose behind it and the whole backlog then lands at once. On the receiving end that is a body
+frozen for a beat and then moved a long way in one step, and `ApplyNetworkTransform` treats a
+jump over 3 m as a correction and SNAPS: through a wall, through the chalk, wherever the
+straight line goes. Nothing about this was LAN-specific; a reliable stream at that rate simply
+needs a link with very little loss to look fine, and the relay path was not better designed, it
+was luckier. `SyncUnit` and `SubmitMove` are `UnreliableSequenced` now, and every other message
+in the file stays reliable, because the rest are EVENTS that happen once and are never repeated.
+
+**The walls existed on one machine.** The host simulates these bodies and its simulation is
+clamped twice; a client writes whatever arrived straight onto the transform. `SetNetworkPose`
+and `Slipper.ApplySnapshotState` now clamp to the same numbers the host clamps to, so a replica
+can only ever refuse a position the host would also have refused. `MeasurePlayableBounds` runs
+in `Start` on every peer, so a client has had the right numbers all along and never used them.
+
+**Verified:** `ArenaBoundsProbe`, and by the arithmetic above. ⚠️ The two-machine case has NOT
+been re-run on Hamachi; that needs two people and is the acceptance test.
+
+### 71.4 · Every arena was measured with Eskinita's walls ✅ CLOSED 2026-08-29
+
+🧑: *"out of bounds sa ilalim ng tulay map"*, *"ilalim ng tulay map appears to have broken
+boundary logic"*, and *"refine out of bounds logic for all maps ... make sure it doesnt go past
+the bounds humans are allowed to go"*.
+
+`MatchInstaller` seeded the search with Eskinita's 8.6 and 13.0 and took `Mathf.Max` over the
+wall colliders, reading each one's CENTRE. Three faults in four lines:
+
+1. **The centre, not the face.** `AIController.PlayableHalfX`'s own note says in capitals that
+   it is THE WALL FACES; the code under it measured centres, so every limit was too generous by
+   half a wall on every map. Eskinita's walls are centred at 8.6 and 0.5 thick: the face is
+   **8.10**, and the game had been using 8.6.
+2. **The maximum, seeded.** A map could only ever measure LARGER than Eskinita, and taking the
+   farthest wall applies the far side's distance to both sides of a symmetric clamp.
+3. **A kerb is not a wall.** Ilalim ng Tulay parents its GROUND under `Bounds`: the ground
+   plate, both pavements and both kerbs, every one of them 0.25 m in half height and enormous in
+   Z. "Thin across one axis" is as true of a kerb as of a wall, and the tightest is a 0.18 m
+   kerb at x = 6.83. Clamping there fences the round onto the tarmac while the pavement either
+   side is floor the game is played on.
+
+Tallness separates them, not names: `tools/maps/build_*.py` emit the arenas wholesale, so
+matching on "Wall" in a node name works until the next layout run. `cc.stepOffset` is 0.3 and
+the capsule is 1.6, so `MinimumWallHalfHeight` 0.5 sits above anything a player steps onto and
+below every real wall in the three arenas.
+
+Measured, through the shipped path:
+
+| arena | halfX | halfZ | ceiling | was |
+|---|---|---|---|---|
+| Eskinita | 8.10 | 17.50 | 12.00 | 8.60 x 18.00 |
+| Bayan Plaza | 12.50 | 12.50 | 12.00 | 13.00 x 13.00 |
+| Ilalim ng Tulay | 11.00 | 16.50 | 12.00 | 11.20 x 16.70 |
+
+⚠️ ONE pair of numbers clamps people, bots and tsinelas alike (`CharacterMotor` twice,
+`AIController.ClampToPlayable`, `Slipper`), which is what makes "it doesnt go past the bounds
+humans are allowed to go" true by construction rather than by three clamps being kept in step.
+
+**Verified:** `ArenaBoundsProbe`, which measures every arena through `MeasurePlayableBounds`
+itself and asserts relations rather than transcribed numbers, because the maps are emitted
+wholesale. It also fails a run in which all three arenas measure identically, which is the
+shape a measurement that cannot shrink has.
+
+### 71.5 · The arena had no lid ✅ CLOSED 2026-08-29
+
+🧑: *"make sure theres invisible bounds in the sky as well as those walls that return the
+slippers or make them bounce"*, and *"give reasonable high ceilings in all maps"*.
+
+`BounceOffBounds` walled X and Z and left Y open, so a hard throw aimed high went over the top
+of a 6 m wall and the RESTING clamp then dragged it back to an edge it had never touched: the
+shoe teleported to a wall out of open air, which reads as the throw being eaten. A tsinelas
+nobody can retrieve is an attacker deleted from the round.
+
+The lid is measured off the same wall boxes the sides are, taking the LOWEST wall top because
+that is the one a throw can clear, and then floored at `MinimumCeilingY` 12.0. Ilalim ng
+Tulay's walls are 3.0 in half height, so its own wall tops would have put an invisible roof at
+6 m over the one map with the lowest scenery; 12 m is the other two arenas' own wall tops, so
+the floor is the height the game already plays under rather than a number picked to feel right.
+
+### 71.6 · A disconnect dropped you into the retired pre-lobby screen ✅ CLOSED 2026-08-29
+
+🧑: *"sometimes ppl go back to Old ui when they disconnect, they shoudl stay in lobby screen but
+js get kicked out of current lobby and go back to their own"*, and *"if host leaves, nonhosts in
+lobby should auto leave that lobby as well"*.
+
+`MatchRpc.HandleClientDisconnected` sent every dropped peer to `MultiplayerSetup`, whose own
+note in `SceneFlow` records that nothing has navigated there since § 68.5 and that it is kept
+only so the redesign can be reverted in one line. It read as "sometimes" because
+`ConvertedMatchSetup` subscribes to the SAME event and handles it correctly in place, so which
+of the two a player got depended on handler order and on whether the lobby was loaded.
+
+Already on the lobby now means do nothing, which is not an optimisation: the lobby's handler
+writes the one actionable line a player can act on (a protocol mismatch is a thing they can
+fix), and reloading the scene would destroy it. From anywhere else it lands on the lobby with
+`SceneFlow.Networked` set, so a player arrives in their own empty lobby rather than on the
+practice tab. And the lobby's handler now calls `NetSession.Stop`, so the client actually LEAVES
+rather than sitting in the shape of a lobby with nothing behind it.
+
+### 71.7 · The protocol tripwire had been red for three bumps ✅ CLOSED 2026-08-29
+
+`ChatAndLobbyChromeTests.TheProtocolCarriesTheChatBump` asserted 7 while
+`NetSession.ProtocolVersion` reached 10. The constant was last moved by `886a981`; the
+assertion was last written by `ed082c8`, three bumps earlier. Every EditMode run since has been
+one test red for a reason that was true and finished, which is the state that teaches a reader
+to skim the failure list.
+
+⚠️ The beacon's wire change in § 71.1 deliberately does NOT move `ProtocolVersion`. That
+constant gates the netcode hello at approval and costs both machines a rebuild off the same
+commit (§ 59.4); `LanBeacon` versions its own payload and still parses v1, so spending a
+protocol bump on a backward-compatible discovery change would refuse peers who have no reason
+to be refused.
+
+---
+
+## 72 · Two lobby controls reported dead that every headless check says are alive ⚠️ OPEN
+
+🧑 2026-08-29: *"sa lobby hindi nagana yung player name, hindi makapag input ng name
+(singleplayer)"*, *"hindi maka input ng code and lobby code sa lobby"*, and, confirming the
+first: *"apparently u cant set ur name in singleplayer too"*.
+
+**Both reproduce for the player and neither reproduces headlessly.** Written down rather than
+guessed at, because the obvious fix was tried first and came back green.
+
+What has been ruled out, and how:
+
+- **Something covering the control.** `UiClickProbe` was widened to enumerate `InputField`,
+  which its own note asked to be done deliberately rather than by accident, and the lobby's
+  join card was added to its overlay list (it is built from code and parked inactive, so
+  nothing in the suite had ever opened it). `PlayerNameEdit` and `JoinAddressEdit` both report
+  `ok`: the topmost raycast hit at each field's centre is the field itself.
+- **The click not taking the caret, or losing it.** `LobbyTypingProbe` is new and walks the next
+  two steps of the same press: pointer-down and click through the EventSystem, then the
+  selection re-read ten frames later. Both fields take the selection and keep it.
+- **Legacy input being switched off.** `activeInputHandler` is 2, which is Both, and the
+  `MatchSetup` scene's EventSystem carries a `StandaloneInputModule`.
+- **The lobby chat stealing focus.** `LobbyChat` calls `ActivateInputField` from three places,
+  but the only one reachable without typing in the chat first is gated on Return, and its
+  `Update` returns early in the lobby before reaching it.
+
+⚠️ The probes run a lobby with `SceneFlow.Networked` false, which IS the singleplayer case both
+name-field reports name, so that is not the gap either.
+
+**What has not been ruled out:** a live NETWORKED lobby (the probes never host or join), and a
+built player as opposed to the editor. `LobbyChat`'s `OnPointerClick` exists because a press
+that missed its field was being swallowed by a plate, which is evidence this class of failure is
+real on this screen even though neither probe can currently produce it.
+
+**Done looks like:** a probe that reproduces it, then a fix. ⚠️ Do not "fix" this blind by
+adding an `ActivateInputField` to both fields. That is the workaround `LobbyChat` already
+carries, it would make the report go away without anybody knowing what was wrong, and the same
+cause would surface on the next field somebody adds.
+
+---
+
 ## 0 · Hero Strike is being reworked, and the plan is its own file
 
 **Numbered 0 rather than 1 on purpose: every other entry here keeps the number it already had,

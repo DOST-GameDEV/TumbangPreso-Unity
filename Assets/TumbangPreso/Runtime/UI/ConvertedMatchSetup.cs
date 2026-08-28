@@ -1503,6 +1503,26 @@ namespace TumbangPreso.UI
             _readyCount = 0;
             _readyExpected = 0;
 
+            // ⚠️⚠️ THE SESSION IS STOPPED, NOT JUST REPORTED. 🧑 2026-08-29: *"if host leaves,
+            // nonhosts in lobby should auto leave that lobby as well"*. `NetSession
+            // .OnClientDisconnected` clears the lobby MODEL before raising this, so the seats and
+            // the peer table are already gone, but the transport is not: `_nm` has been shut down
+            // under us and `NetSession` still holds a session object that reports itself as
+            // having been networked. What the player was left in was the shape of a lobby with
+            // nothing behind it, and the next HOST or JOIN had to reconcile that rather than
+            // start clean.
+            //
+            // ⚠️ IT IS SAFE TO CALL WITH THE TRANSPORT ALREADY DOWN. `Stop` guards its shutdown
+            // with `_nm.IsListening` and everything after it is bookkeeping that is idempotent:
+            // `Lobby.Reset`, the seat latch, the relay fields. This is the same call BACK and
+            // Escape already make on the way out of a lobby, which is exactly the state being
+            // reproduced here, and the player is now in their OWN empty lobby.
+            //
+            // ⚠️ AFTER THE ALERT, NOT BEFORE. `Stop` writes "offline" over the session status,
+            // and `SetAlert` above is the one line that says WHY the lobby emptied.
+            var net = NetSession.Instance;
+            if (net != null) net.Stop();
+
             OpenJoinPanel();
             Refresh();
         }

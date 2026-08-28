@@ -487,7 +487,29 @@ namespace TumbangPreso
             // for as long as anybody held it. The STATE and the HOLDER are authoritative; while
             // it is in a hand, the position is a consequence of them.
             if (state != SlipperState.Held)
+            {
+                // ⚠️⚠️ THE WALLS APPLY TO THE REPLICA TOO, AND THIS IS THE TSINELAS HALF OF 🧑
+                // 2026-08-29's *"if u werent host, the bots and slippers were going out of
+                // map"*. Only the non-host saw it because only the host runs `BounceOffBounds`
+                // and the resting clamp: `FixedUpdate` returns immediately on a peer that is not
+                // simulating, so on a client the arena had no edges at all and a shoe went
+                // wherever the last packet said.
+                //
+                // ⚠️ THE SAME LIMITS THE HOST BOUNCES AND RESTS AGAINST, margin included, so this
+                // can only ever refuse a position the host would also have refused. A tsinelas
+                // that came to rest outside the wall is an attacker deleted from the round, which
+                // is what the note on the resting clamp already says at length.
+                position.x = ClampToPlayableAxis(position.x, AIController.PlayableHalfX);
+                position.z = ClampToPlayableAxis(position.z, AIController.PlayableHalfZ);
+
+                // ⚠️ THE LID IS CLAMPED ON THE REPLICA TOO, and only downward: a client must not
+                // draw a tsinelas above a ceiling the host bounced it off, but it must not push
+                // one UP off the ground either, so this is a ceiling rather than an axis clamp.
+                float ceiling = AIController.PlayableCeilingY - Balance.SlipperHitRadius;
+                if (position.y > ceiling) position.y = ceiling;
+
                 transform.SetPositionAndRotation(position, rotation);
+            }
 
             SetState(state);
             Holder = state == SlipperState.Held ? holder : null;
@@ -958,6 +980,19 @@ namespace TumbangPreso
                 _throwerSlot = -1;
         }
 
+        /// <summary>
+        /// One axis of the wall the tsinelas is allowed to reach, margin included.
+        ///
+        /// ⚠️ IT IS SHARED BY THE BOUNCE, THE RESTING PLACE AND THE REPLICA so the three cannot
+        /// drift. All three had the same two lines written out separately, which is how the
+        /// replica came to be missing them entirely.
+        /// </summary>
+        private static float ClampToPlayableAxis(float value, float half)
+        {
+            float limit = half - Balance.SlipperHitRadius;
+            return limit > 0.0f ? Mathf.Clamp(value, -limit, limit) : value;
+        }
+
         private void BounceOffBounds()
         {
             float limitX = AIController.PlayableHalfX - Balance.SlipperHitRadius;
@@ -981,6 +1016,26 @@ namespace TumbangPreso
             {
                 p.z = Mathf.Sign(p.z) * limitZ;
                 _velocity.z = -Mathf.Sign(p.z) * Mathf.Abs(_velocity.z) * restitution;
+                bounced = true;
+            }
+
+            // ⚠️⚠️ AND THE SKY IS A WALL TOO, WHICH IT WAS NOT UNTIL 2026-08-29. 🧑: *"make sure
+            // theres invisible bounds in the sky as well as those walls that return the slippers
+            // or make them bounce"*. X and Z were walled and Y was open, so a hard throw aimed
+            // high went over the top of a 6 m wall, and the RESTING clamp then dragged it back to
+            // an edge it had never touched: the shoe teleported to a wall from open air, which
+            // reads as the throw being eaten. A tsinelas nobody can retrieve is an attacker
+            // deleted from the round.
+            //
+            // ⚠️ IT IS A CEILING AND NOT A FLOOR. Nothing here touches downward travel: the
+            // ground, the kill plane and the resting height own that, and reflecting upward off
+            // a low Y would turn every landing into a bounce.
+            float ceiling = AIController.PlayableCeilingY - Balance.SlipperHitRadius;
+
+            if (p.y > ceiling)
+            {
+                p.y = ceiling;
+                _velocity.y = -Mathf.Abs(_velocity.y) * restitution;
                 bounced = true;
             }
 
