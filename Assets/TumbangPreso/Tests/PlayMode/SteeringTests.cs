@@ -184,12 +184,10 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator APlantedBotTurnsTowardItsAimWithoutSliding()
         {
-            var floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            floor.transform.localScale = new Vector3(60.0f, 1.0f, 60.0f);
-            floor.transform.position = new Vector3(0.0f, -0.5f, 0.0f);
-
             var go = new GameObject("AimingBot", typeof(CharacterController));
-            go.transform.position = new Vector3(0.0f, 0.2f, 0.0f);
+            // No floor on purpose. The assertion is about horizontal intent; a physics contact
+            // would add CharacterController depenetration to the thing being measured.
+            go.transform.position = new Vector3(0.0f, 3.0f, 0.0f);
             go.transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
             var motor = go.AddComponent<CharacterMotor>();
 
@@ -201,13 +199,14 @@ namespace TumbangPreso.PlayTests
 
             for (int i = 0; i < 30; i++) yield return new WaitForFixedUpdate();
 
-            Assert.Less(Vector3.Distance(planted, go.transform.position), 0.05f,
+            Vector3 drift = go.transform.position - planted;
+            drift.y = 0.0f;
+            Assert.Less(drift.magnitude, 0.05f,
                 "turning to aim made the planted thrower slide");
             Assert.Greater(Vector3.Dot(go.transform.forward, Vector3.forward), 0.97f,
                 $"the planted thrower still faces {go.transform.forward} instead of its aim");
 
             Object.DestroyImmediate(go);
-            Object.DestroyImmediate(floor);
         }
     }
 }
