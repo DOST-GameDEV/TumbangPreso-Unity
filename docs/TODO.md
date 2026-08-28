@@ -6950,6 +6950,229 @@ been played by two people.**
 
 ---
 
+### 68.18 The second pass, 2026-08-28: navigation, the settings panel, and one rail per side
+
+🧑, off the 4.7x player: *"Rewire clicking play from main menu to directly the lobby bcz we dont
+need single player multiplayer selection anymroe as practice is bascally singleplayer already"*,
+*"match settings look ugly"*, *"also maybe plan out where to put ui for char select, remove it in
+match settings"*, *"pic 3 doesnt have animations or move but everyone else does in here"*, *"Also
+rewire tutorial from main menu to the start training already, the text based tutorial is stale and
+should be deleted and completley replaced by game tutorial"*, *"Pic 4 fix player name"*, *"Also
+sometimes the pillars in the ilalim ng tulay map block the camera of lobby"*, *"put BACK somewhere
+else, it looks ugly that its right below start match, it fucks up the visual hierarchy"*, *"also
+remove this lobby thing bcz we all know this is lobby already"*, *"make sure all buttons work and
+shit works right ennd to end"*, then, mid-pass: *"make these huds or ui look good bruh its so weird
+to look at as none of them have visual harmony or shit"*, *"make sure all sfx play the right way"*,
+*"i want thgis to say my name instead of YOU"*, *"i want u to make sure that everyone can see the
+names in multiplayer (lan or server)"*, *"do u not feel weird that theres b ig ass empty space left
+and right"*.
+
+#### 68.18.1 Navigation: two screens left the path, and one panel was deleted
+
+* PLAY goes straight to `MatchSetup` with `Networked = true`, so the landing state is the lobby
+  auto-hosting on LAN. `ModeSelect` is unreferenced and **kept on disk and in the build order**,
+  per § 68.3, alongside `MultiplayerSetup`. `SceneFlow.ModeSelect`'s own note carries the reasoning
+  and `UiClickProbe` still probes both, because a fallback nobody checks is not a fallback.
+* `MatchSetup`'s `CancelTarget` and BACK both go to `MainMenu` now. They have to agree or one of
+  them is a step the other does not take.
+* **The text tutorial is DELETED**, and it is the one place this batch departs from § 68.3's
+  keep-the-old-chrome rule: that rule protects a REPLACEMENT that might turn out worse, and this
+  was a deletion asked for by name with a shipped, played replacement. Gone:
+  `ConvertedTutorialPanel.cs`, `TutorialContent.cs`, `Scenes/Ui/Tutorial.unity` and the
+  `TutorialPanel` node inside `MainMenu.unity` (27 GameObjects, removed through the scene API).
+  ⚠️ **The node had to go with the script.** A `MonoBehaviour` whose `m_Script` guid resolves to
+  nothing is a yellow warning in the editor and a **refused build** under `SceneScriptCheck`, which
+  is the only gate that can see it (`CLAUDE.md` § 7.1).
+* The route moved to `SceneFlow.StartTraining`, because it was a private static on the deleted
+  panel. `TUTORIAL` on the title screen enters it directly. `TutorialContent.ChipWidth` moved to
+  `CreditsContent`, which is the only overlay left that draws a chip row.
+* `DeadFeatureAudit` now asserts both halves: `SceneFlow` still arms `GuidedTutorial`, and the menu
+  still reaches `StartTraining`. Either alone is silent.
+
+#### 68.18.2 ⚠️⚠️ THE MATCH SETTINGS PANEL WAS UGLY FOR ONE MEASURABLE REASON
+
+In `MatchSetup.unity` every caption is authored at **52 units** and every value at **34**, so the
+word `MAP:` was drawn half again as large as the map's name. The label shouted and the thing it
+labelled whispered. The rebuilt row inverts that (caption 22 amber, value 26 cream) and adds the
+half nobody sees: **a fixed caption column**. `MAP:`, `MODE:` and `BOTS:` are three different
+widths, so the authored `HorizontalLayoutGroup` started each stepper at a different x and nothing
+in the panel lined up vertically.
+
+* Every authored node is **restyled, never rebuilt** (§ 68.4). The arrows keep their
+  `TextureButtonFeedback`, the values keep their `GodotOutline`, all of them keep their wiring.
+* The colon is dropped, which is worth 54 px: the caption column has to hold the longest caption,
+  and `BOTS` is 54 px narrower than `BOTS:`.
+* CHARACTER left the panel entirely. See § 68.18.4.
+
+#### 68.18.3 ⚠️⚠️ ONE RAIL PER SIDE, AND THAT IS A STRUCTURAL FIX RATHER THAN BETTER NUMBERS
+
+Measured off `Logs/shots-runtime/Lobby-v35.png`, the bottom-left had **three left edges and three
+widths**: the MATCH SETTINGS pill at x=75 running 300 px, its summary at x=60, START MATCH at x=55
+running 380. The cause was that the left side was TWO hosts (`LeftColumn` at one anchor, a
+`SettingsDrawer` beside it at another) at two different scales. **Two containers cannot share an
+edge by arithmetic.** There is one `VerticalLayoutGroup` per side now and the group gives every
+child the rail's width by construction.
+
+* `LeftScale` 0.66 is **deleted**. It made every number on that side a lie: a 56 px header drew at
+  37 and an 18 unit caption rendered at 12. The rail is authored at its real size.
+* `LeftWidth` came down 560 → **460**, and the 100 px came out of the caption column rather than
+  out of the type. At 460: 96 caption + 14 gap + a stepper of 20 padding, two 42 px arrows, two
+  6 px gaps, leaving **214 px** for a value against `ILALIM NG TULAY` measuring about 195.
+* The right-hand furniture **left `Columns` entirely**. `Columns` is a child of `Body`, a
+  full-screen `VerticalLayoutGroup`: disabling the group ON `Columns` never stopped `Body` driving
+  `Columns` itself, so "48 px in from my parent's right edge" was 48 px in from a moving rect. The
+  old code compensated with a `-47` constant; `Lobby-v36.png` still had the pill 145 px from the
+  edge against the chat's 48.
+* ⚠️ **The lobby drawer stacks off `LobbyChat.PanelHeight`, not off its capacity.** The chat
+  reserves six line slots and then collapses onto its content, so an empty log is about 65 px and
+  the capacity expression gives 224. It is re-asked every frame because the chat grows as lines
+  arrive; the guard makes that free.
+* One harmony set decides every edge: `EdgeMargin` 48, `BottomMargin` 40, `TopMargin` 34,
+  `RailSpacing` 12, `HeaderHeight` 56 (BACK and both tabs), `ToggleHeight` 52 (both drawers),
+  `ActionHeight` 104.
+* The three selector values are fitted **as a set**, to the largest size all three accept, and
+  **reset to `ValueSize` on every pass**. Fitting them individually is why `Lobby-v35.png` has
+  `ESKINITA` and `HARD` at full size and `HERO STRIKE` visibly smaller; `MenuKit.Fit` only shrinks,
+  so a pass that measured a half-built rect pinned the type small permanently.
+* The closed drawer's summary was **composed once inside `LobbyChrome.Apply`**, which runs before
+  the screen's first `Refresh`, so it shipped the authored placeholder: `Lobby-v35.png` reads
+  `ESKINITA · CAPTURE · NORMAL` on a lobby set to Hero Strike, and `CAPTURE` is not a mode this
+  game has. It hangs off `Refresh` now.
+* BACK moved to the top-left corner the banner vacated, and the banner is `SetActive(false)` in
+  `Street` (not destroyed: `Refresh` still writes `BannerLabel`, and `Classic` keeps the pennant).
+* The status line under START MATCH is **hidden unless it is an alert**. The four messages a player
+  has to act on (refused port, dropped connection, relay refused, still connecting) still open it.
+
+#### 68.18.4 The player card, and where character select went
+
+CHARACTER left the match settings for a reason that is **authority, not tidiness**: MAP, MODE and
+BOTS are greyed on every client by `RefreshLeaderControls`, so keeping CHARACTER as the fourth row
+of a panel that greys out told three players in every four-player lobby that they could not pick a
+fighter. It is the one choice on this screen that is always yours.
+
+* The authored `CharacterButton` is **reparented**, keeping its name, its `Button`, its
+  `GodotButton` skin and its handler. `OpenCharacterSelect` is untouched and still reveals
+  `CharacterSelectPanel` in place. § 68.13 holds.
+* The button gained two lines (character at 24, loadout at 18) because one line of
+  `CHESKA · KALAWANG · CROCS ▸` at 24 units drew the name you chose at the same size as the slipper
+  you did not think about.
+* ⚠️ **`›` (U+203A), not `▸` (U+25B8) or `▶` (U+25B6), and `EDIT`, not `✎`.** Checked against
+  Darumadrop One's own cmap: 525 glyphs, and it has none of `✎`, `✓`, `◀`, `▶` or `▸`. Unity's
+  dynamic-font fallback draws them from a system font at a different weight and baseline.
+* `CardWidth` is **330 and deliberately not `RightRailWidth` 392**. Matching the chat looked like
+  the harmonious answer and left a visible hole: the gap is between the end of a short left-aligned
+  string and an affordance pinned to the right edge, so only the width closes it. **The shared axis
+  is the right edge, not the width.** 330 is measured against the worst case in the roster:
+  `LOLA PACING` (11 chars, ~154 px at 24 against 244) and `DECADES TUNA  ·  TSINELAS` (25 chars,
+  ~225 px at 18 against 244), not against `CHESKA`.
+
+#### 68.18.5 The names, on every machine
+
+* The local nameplate carried the pronoun `YOU`, so the three other people in the lobby saw
+  `Matthew` over that body and its owner did not. It carries the name now; the `◀` marker still
+  says which one is yours, and an unset name falls back to `YOU` rather than to the literal
+  `Player` that `PlayerLabel`'s header already records four seats sharing.
+* ⚠️⚠️ **A name edited in the lobby never travelled.** `NetSession.OnClientConnected` sends
+  `IdentifyServerRpc(token, PlayerName, ...)` ONCE, on the frame the transport comes up, which was
+  the whole story while the only editable field was in Settings on the title screen. The lobby card
+  is editable while connected. `PublishName` re-sends `Identify` on commit: `LobbySession.Admit` is
+  idempotent for a peer re-identifying under the same durable token (it copies the seat, the
+  spectator flag and all three picks across and takes only the new name), which is the
+  fast-reconnect path exercised on every relaunch. ⚠️ **No new message, so `ProtocolVersion` stays
+  at 6** (§ 68.2, § 69.1).
+* Every box that can hold a name already grows-then-fits: the plates size from the measured string
+  up to a 420 px cap then shrink the type, the card's field is best-fit 13..20, and the seat rows
+  go through `FitLine`. `Balance.PlayerNameMax` is 14.
+
+#### 68.18.6 The cast's third character did not move, and no test could see it
+
+🧑, with it circled: *"pic 3 doesnt have animations or move but everyone else does in here"*.
+`LobbyCast.Poses` slot 2 asked for `holding-right`, which is a **carry POSE, not a performance**:
+the rig's six `holding-*` clips are what the arm does while a tsinelas is in it, sampled by
+`CharacterAnimator` as a state. It is a real clip on all twelve rigs, it has a length,
+`SampleAnimation` succeeds, and it returns the same frame at every phase.
+
+⚠️ **`PickPose` resolves by NAME, and a name that resolves is indistinguishable from a name that
+animates.** So the pick is measured: `LobbyCast.MotionOf` samples the clip five times across its
+length and takes the largest distance any transform travels. A hold measures 0.0 and a breathing
+idle measures centimetres; `MotionFloor` is 1 cm. The table now asks for `interact-right` (the
+pick-up reach, a real animation) and the check is the floor under it. Five samples rather than two,
+because a clip whose first and last keys match is ordinary (`DanceClip` is built that way).
+
+#### 68.18.7 The Ilalim ng Tulay pillars, and why a camera angle was not the fix
+
+The lobby shot is 12.6 m out at a 32 degree lens, which puts the camera **inside the colonnade**
+rather than outside it, and `SwayDegrees` 7 over 26 s walks it across the gaps: intermittent by
+construction, which is why *"sometimes"* is the word in the report and why no still render was ever
+going to settle it.
+
+A per-map lobby yaw aimed down a clear lane would still swing into a pillar at the ends of the
+sway, and widening the shot would undo `LobbyFieldOfView`'s finding about the outer two characters
+distorting. What is actually wrong is that concrete is between the player and a face, so
+`MapPreviewSurface.ClearSightlines` takes it out of the way for as long as it is: a ray from the
+camera to each body's **head and chest** (two points, because a pillar is tall and thin and one
+sample at chest height clears while the same pillar is still across the face) against every
+renderer's AABB.
+
+* ⚠️ `MaxOccluderSpan` 14 m, or **the sweep hides the road**: the floor slab's AABB contains the
+  camera, so a ray enters it at t≈0. A viaduct pillar is about 1x1x8 and a jeepney 6 long.
+* ⚠️ The hit must be in FRONT of the person: `Bounds.IntersectRay` reports a hit anywhere along an
+  infinite ray, so without the distance test every building behind the cast would count.
+* ⚠️ Adopted objects are excluded, or the arc's inner two characters delete the outer two: the cast
+  is adopted into the SAME scene as the arena.
+* ⚠️ **Renderers are disabled, not GameObjects**, which would fight `Park`/`Unpark` over the active
+  flag they use to decide which map lights the world. The previous sweep is undone first, every
+  time, or the street is stripped one pillar at a time. Rate limited to 6 sweeps a second, and the
+  renderer list is cached per map because `GetComponentsInChildren` allocates per root per call.
+* It is the LOBBY shot only. The practice screen is a picture OF the map; hiding a pillar there
+  hides the thing being chosen.
+
+#### 68.18.8 ⚠️⚠️ ONE PRESS WAS FIRING THE CLICK UP TO THREE TIMES
+
+🧑: *"make sure all sfx play the right way"*. The UI click is added in three independent layers,
+each individually correct and none aware of the others:
+
+1. the CONTROL on pointer down (`GodotButton`, `ArrowButtonView`, `TextureButtonFeedback`);
+2. the WIRING on click (`ConvertedScreen.WireOne`, so a screen cannot forget);
+3. the HANDLER (`Cycle`, `TakeSeat`, `SelectTab`, both COPY buttons).
+
+A map arrow has all three. `AudioDirector.PlayAtVaried` has **no dedupe** and `PlayAt` pins the
+pitch at 1.0, so three copies of one 40 ms recording start in the same frame at the same position
+and sum to about **+9.5 dB**, undecorrelated. It read as a clipped clack on the arrows and a doubled
+one on every wood button, next to a clean single click on the runtime-built controls that only have
+layer 1.
+
+⚠️ **The fix is in `MenuSfx`, not at the call sites.** Deleting two of three layers is a nine-file
+edit that leaves the rule written down nowhere and regresses to SILENCE the first time somebody
+removes the wrong one. **One press is one sound** is a property of the sound layer: all three may
+ask, and the first ask per cue per frame plays. Per cue, because a frame may legitimately carry a
+click and an error. Per frame rather than per time window, because a time window would also swallow
+a genuine fast second press on a map arrow.
+
+Also: **a BACK button plays `ui_back` now**, the same as Escape always has. `ui_back.wav` and its
+own mix entry exist because backing out is meant to be audibly distinct, and every BACK button in
+the game was playing a plain click. `GodotButton.PressCue` is the field, `ConvertedScreen.WireOne`
+sets it, and the wiring names the SAME cue the control does so the frame guard collapses them.
+`DeadFeatureAudit.EveryMenuSoundGoesThroughTheOncePerFrameGuard` is the tripwire.
+
+#### 68.18.9 What is verified, and what still is not
+
+`dotnet test` 111 green. EditMode **188/188**. PlayMode `UiRuntimeShots`, `LobbyStyleProbe` and
+`UiClickProbe` all green, which means every node the screen reaches by name resolves under BOTH
+styles and BOTH tabs and no label draws outside its box in any of the four arms.
+⚠️ `LobbyStyleProbe` caught one live defect in passing: `MiniSection`'s headings drew `SHARE THIS
+LOBBY` in a **4 px box** in `Classic`, because the holder has no layout group so its preferred
+width is zero, and `Street` had only ever hidden it by `Narrow` writing a width onto the column.
+`Checks.RunAll` five green. `audit_wire_payloads.py` 47 named messages 0 mismatched;
+`audit_request_call_sites.py` 43 entry points 0 unreachable. Renders at
+`Logs/shots-runtime/Lobby-v41.png` and `LobbySettings-v41.png`.
+
+⚠️⚠️ **§ 68.14 STEP 7, THE TWO-PROCESS RUN, IS STILL THE THING THAT HAS NOT HAPPENED**, and this
+pass adds one item to it: **the name published after connecting** (§ 68.18.5) has to be seen
+arriving on the other machine's plate, in both directions, host and client.
+
+---
+
 ## 69 · The game has no chat, in the lobby or in a match ⚠️ OPEN, PLANNED 2026-08-28
 
 🧑, 2026-08-28: *"yea maybe add a chat to our game too that works in lobby and ingame"*.

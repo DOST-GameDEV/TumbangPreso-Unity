@@ -21,8 +21,27 @@ namespace TumbangPreso.UI
         // Scenes/Ui, the button that leads to it dies silently in a build.
         public const string Splash = "SplashScreen";
         public const string MainMenu = "MainMenu";
+
+        /// <summary>
+        /// ⚠️⚠️ NOTHING NAVIGATES HERE ANY MORE, AND THE SCENE IS KEPT ANYWAY. 🧑 2026-08-28:
+        /// *"Rewire clicking play from main menu to directly the lobby bcz we dont need single
+        /// player multiplayer selection anymroe as practice is bascally singleplayer already"*.
+        /// PLAY goes straight to <see cref="MatchSetup"/>, whose `PRACTICE ǀ MULTIPLAYER` tabs are
+        /// the same choice made in place with the arena already on screen, so the intermediate
+        /// screen was one press that changed nothing the next screen could not undo.
+        ///
+        /// ⚠️ IT STAYS ON DISK AND IN THE BUILD ORDER, which is the rule `docs/TODO.md` § 68.3
+        /// applied to `MultiplayerSetup` when the same thing happened to it: 🧑, of the lobby
+        /// redesign, *"dont delete old huds and ui tho keep them incase ur shit turns ugly"*.
+        /// Restoring the old flow is one line in `ConvertedMainMenu`, and `UiClickProbe`,
+        /// `ScreenshotTool` and `UiRuntimeShots` keep passing because the scene still exists.
+        /// </summary>
         public const string ModeSelect = "ModeSelect";
+
         public const string MatchSetup = "MatchSetup";
+
+        /// <summary>Unreferenced since `docs/TODO.md` § 68.5, kept for the same reason
+        /// <see cref="ModeSelect"/> is.</summary>
         public const string MultiplayerSetup = "MultiplayerSetup";
         public const string CharacterSelect = "CharacterSelect";
         public const string MatchResult = "MatchResult";
@@ -223,6 +242,47 @@ namespace TumbangPreso.UI
         public static void StartMatch()
         {
             Go(SelectedMap);
+        }
+
+        /// <summary>
+        /// Drops the player straight into the playable training route.
+        ///
+        /// ⚠️⚠️ IT LIVES HERE BECAUSE THE TEXT TUTORIAL THAT USED TO OWN IT IS GONE. 🧑
+        /// 2026-08-28: *"rewire tutorial from main menu to the start training already, the text
+        /// based tutorial is stale and should be deleted and completley replaced by game
+        /// tutorial"*. `ConvertedTutorialPanel.StartTraining` was a private static on a six-page
+        /// reference panel, so deleting the panel would have deleted the only way into
+        /// `GuidedTraining` with it. The route is a NAVIGATION fact, which is what this file is
+        /// for, and putting it here is also what stops the next screen that wants to offer
+        /// training from copying six lines of launch state and getting one of them wrong.
+        ///
+        /// ⚠️ EVERY FIELD BELOW IS LOAD-BEARING AND `GameLaunch.Reset()` COMES FIRST. The launch
+        /// block is read once by `MatchInstaller` and then cleared, so a training run entered
+        /// after a networked match would otherwise inherit that match's pending action and try to
+        /// join something. `GuidedTutorial` is the only flag `MatchBootstrap` reads to install
+        /// the route at all.
+        ///
+        /// ⚠️ ESKINITA AND SEAT 1, DELIBERATELY. The lessons are measured against that street's
+        /// geometry (`GuidedTraining` places its dummy and its marker from the confinement box),
+        /// and seat 1 is an ATTACKER on round one, which is the half of the game the route opens
+        /// with. Starting the player as the taya would teach the defence before the throw.
+        ///
+        /// ⚠️ AND HERO STRIKE, because six of the seventeen lessons are ability lessons. Classic
+        /// has no kit, so the route would silently skip a third of itself.
+        /// </summary>
+        public static void StartTraining()
+        {
+            GameLaunch.Reset();
+            GameLaunch.GuidedTutorial = true;
+            GameLaunch.PendingAction = "local";
+            GameLaunch.SelectedMap = "eskinita";
+            GameLaunch.SoloSeat = 1;
+
+            Networked = false;
+            SelectedMap = Eskinita;
+            SelectedMode = GameMode.HeroStrike;
+
+            Go(Eskinita);
         }
 
         public static void Quit()

@@ -33,10 +33,14 @@ namespace TumbangPreso.PlayTests
         private const string OutPath = "Logs/ui-clicks.txt";
 
         /// <summary>
-        /// ⚠️ SCENES ONLY. `SettingsPanel`, `CreditsPanel`, `TutorialPanel` and
-        /// `CharacterSelectPanel` are OVERLAYS that live inside these screens rather than
-        /// scenes of their own, so asking the build settings for them reports four false
-        /// failures. They are opened in place below.
+        /// ⚠️ SCENES ONLY. `SettingsPanel`, `CreditsPanel` and `CharacterSelectPanel` are
+        /// OVERLAYS that live inside these screens rather than scenes of their own, so asking the
+        /// build settings for them reports three false failures. They are opened in place below.
+        ///
+        /// ⚠️ `ModeSelect` AND `MultiplayerSetup` ARE STILL PROBED THOUGH NOTHING NAVIGATES TO
+        /// THEM. Both are the kept fallbacks of `docs/TODO.md` § 68.3, and a fallback nobody
+        /// checks is not a fallback; the whole value of keeping them is that the revert is one
+        /// line rather than a repair.
         /// </summary>
         private static readonly string[] Screens =
         {
@@ -47,7 +51,11 @@ namespace TumbangPreso.PlayTests
         private static readonly (string Screen, string Node)[] Overlays =
         {
             ("MainMenu", "SettingsPanel"),
-            ("MainMenu", "TutorialPanel"),
+
+            // ⚠️ `TutorialPanel` IS GONE FROM THE SCENE, NOT MERELY UNLINKED. The six-page
+            // reference card was deleted on 2026-08-28 and TUTORIAL now enters the playable
+            // route directly; see `ConvertedMainMenu.Wire`. Probing for it would report a
+            // missing overlay on every run.
             ("MainMenu", "CreditsPanel"),
             ("MatchSetup", "CharacterSelectPanel"),
         };

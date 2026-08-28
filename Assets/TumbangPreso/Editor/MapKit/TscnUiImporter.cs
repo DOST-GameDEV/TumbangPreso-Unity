@@ -108,7 +108,10 @@ namespace TumbangPreso.EditorTools.MapKit
                 // children and opened in place, exactly as `main_menu.gd` does it. Converting
                 // them as standalone scenes as well is how a build ends up with two settings
                 // panels, one of which nothing can reach.
-                "SettingsPanel", "Tutorial", "CreditsPanel", "CharacterSelect",
+                // ⚠️ `Tutorial` LEFT THIS LIST BECAUSE THE PANEL LEFT THE GAME. Its .tscn is still
+                // in the frozen Godot repo, so naming it here would re-import a screen with no
+                // behaviour left to bind to it and `SceneScriptCheck` would refuse the build.
+                "SettingsPanel", "CreditsPanel", "CharacterSelect",
             };
 
             foreach (var path in Directory.GetFiles(SourceDir, "*.tscn"))
@@ -1778,8 +1781,8 @@ namespace TumbangPreso.EditorTools.MapKit
         /// <summary>
         /// Binds the behaviour for a sub-scene instanced INTO a screen.
         ///
-        /// ⚠️⚠️ THESE ARE WHERE HALF THE FRONT END LIVES. MainMenu instances SettingsPanel,
-        /// Tutorial and CreditsPanel as hidden children and MatchSetup instances the whole
+        /// ⚠️⚠️ THESE ARE WHERE HALF THE FRONT END LIVES. MainMenu instances SettingsPanel
+        /// and CreditsPanel as hidden children and MatchSetup instances the whole
         /// character screen; the Godot scripts show them in place rather than switching scene.
         /// Without a behaviour on each, the panels convert perfectly and do nothing at all,
         /// which is what pushed the last pass into hand-drawing replacements in C#.
@@ -1797,10 +1800,9 @@ namespace TumbangPreso.EditorTools.MapKit
                         ExportPanelPrefab(go, "SettingsPanel");
                         break;
 
-                    case "TutorialPanel":
-                        Bind<ConvertedTutorialPanel>(go);
-                        break;
-
+                    // ⚠️ `TutorialPanel` HAD A CASE HERE AND THE PANEL IS DELETED. The six-page
+                    // reference card was replaced by the playable route on 2026-08-28; see
+                    // `ConvertedMainMenu.Wire`. Re-adding a bind for it would need the class back.
                     case "CreditsPanel":
                         Bind<ConvertedCreditsPanel>(go);
                         break;

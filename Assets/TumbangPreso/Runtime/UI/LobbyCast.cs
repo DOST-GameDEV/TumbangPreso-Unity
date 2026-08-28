@@ -136,7 +136,26 @@ namespace TumbangPreso.UI
         {
             new[] { "emote-yes", "interact-right", "idle" },
             new[] { "idle", "static" },
-            new[] { "holding-right", "interact-right", "idle" },
+
+            // ⚠️⚠️ `holding-right` WAS FIRST HERE AND IT IS A HOLD, NOT A LOOP. 🧑 2026-08-28, with
+            // the third character in the line circled in red: *"pic 3 doesnt have animations or
+            // move but everyone else does in here"*. The rig's clip set is locomotion, combat,
+            // wheelchair, sit/crouch/die/pick-up and exactly two gestures, and the six `holding-*`
+            // entries are CARRY POSES: what the arm does while a tsinelas is in it, sampled by
+            // `CharacterAnimator` as a state rather than played as a performance. Standing still
+            // and sampling one at a moving phase produces the same frame every frame, which beside
+            // three characters who are visibly breathing reads as one broken model.
+            //
+            // ⚠️ `interact-right` IS A REACH AND IT MOVES. It is what `CharacterAnimator` plays for
+            // the pick-up verb, so it is a real animation with a beginning and an end, and it gives
+            // this spot something to do that the other three are not doing.
+            //
+            // ⚠️ AND THE FALLBACK IS NOT THE ONLY GUARD. Naming a moving clip here fixes THIS
+            // line-up; `MotionOf` below refuses a still clip whatever it is called, so a future
+            // roster whose rig spells `interact-right` differently cannot reintroduce the fault
+            // silently. Both are wanted: the table is the intent, the check is the floor.
+            new[] { "interact-right", "emote-yes", "idle" },
+
             new[] { "emote-no", "interact-left", "idle" },
         };
 
@@ -363,7 +382,7 @@ namespace TumbangPreso.UI
             foreach (var animator in body.GetComponentsInChildren<Animator>(true))
                 animator.enabled = false;
 
-            _idles[seat] = PickPose(art.Clips, DisplaySlot(seat));
+            _idles[seat] = LivePose(body, art.Clips, DisplaySlot(seat));
             _posedAs[seat] = DisplaySlot(seat);
             _bodies[seat] = body;
             _built[seat] = pick;
@@ -407,6 +426,107 @@ namespace TumbangPreso.UI
             if (!any) return 0.0f;
 
             return body.transform.position.y - bounds.min.y;
+        }
+
+        /// <summary>
+        /// The clip this standing spot wants, unless it turns out not to move.
+        ///
+        /// ⚠️⚠️ A POSE THAT DOES NOT MOVE IS THE FAULT 🧑 REPORTED, AND NOTHING IN THIS PROJECT
+        /// COULD SEE IT. 2026-08-28, third character circled: *"pic 3 doesnt have animations or
+        /// move but everyone else does in here"*. `PickPose` resolves by NAME, and a name that
+        /// resolves is indistinguishable from a name that animates: `holding-right` is a real clip
+        /// on every one of the twelve rigs, it has a length, `SampleAnimation` succeeds, and the
+        /// result is the same frame at every phase because the clip is a carry POSE rather than a
+        /// performance. A compile cannot see it, no test asserts on motion, and in a still render
+        /// it looks exactly like a character who happens to be between beats.
+        ///
+        /// So the pick is MEASURED rather than trusted: sample the clip across its own length and
+        /// take the largest distance any transform in the rig travels. A hold gives zero.
+        ///
+        /// ⚠️ IT FALLS BACK THROUGH THE IDLE CHAIN AND THEN GIVES UP RATHER THAN RETURNING NULL. A
+        /// still character is a cosmetic fault; a null here is the rig's BIND POSE, which on these
+        /// models is arms straight out. `ModelPreview.PlayIdle` records why that trade is always
+        /// made in this direction.
+        ///
+        /// ⚠️ AND IT RUNS ONCE PER BODY BUILD, WHICH IS THE SAME MOMENT `MeasureFootLift` ALREADY
+        /// SAMPLES THE CLIP. `Show` skips an unchanged seat, so this is not per frame and not per
+        /// refresh: it is per character change, four times at most on arrival.
+        /// </summary>
+        private static AnimationClip LivePose(GameObject body, AnimationClip[] clips, int slot)
+        {
+            var wanted = PickPose(clips, slot);
+            if (wanted == null) return null;
+            if (MotionOf(body, wanted) >= MotionFloor) return wanted;
+
+            Debug.LogWarning($"[LobbyCast] '{wanted.name}' does not move; the lobby needs a clip " +
+                             "that does. Falling back to the idle chain.");
+
+            foreach (string name in IdleNames)
+            {
+                var hit = Named(clips, name);
+                if (hit == null || hit == wanted) continue;
+                if (MotionOf(body, hit) >= MotionFloor) return hit;
+            }
+
+            return wanted;
+        }
+
+        /// <summary>
+        /// Metres of travel that count as "this clip is an animation".
+        ///
+        /// ⚠️ A HOLD MEASURES EXACTLY 0.0 AND A BREATHING IDLE MEASURES CENTIMETRES, so anything
+        /// between the two separates them. 1 cm is picked to be unambiguous rather than tight: the
+        /// bodies are built at `ModelPreview.PreviewScale` 2.38, so a 4 mm head bob at authored
+        /// scale is already 1 cm here, and nothing in the shipped set sits in that gap.
+        /// </summary>
+        private const float MotionFloor = 0.01f;
+
+        /// <summary>
+        /// The largest distance any transform in this rig moves over the clip.
+        ///
+        /// ⚠️ SAMPLED, NOT READ OFF THE CURVES. `AnimationUtility` can enumerate a clip's bindings
+        /// and it lives in `UnityEditor`, so it is unavailable in a player and this would become a
+        /// check that only ever ran on the machine it was written on. `SampleAnimation` is what
+        /// the lobby itself uses to draw these bodies, so measuring through it measures the thing
+        /// that actually happens.
+        ///
+        /// ⚠️ FIVE SAMPLES, NOT TWO. A clip whose first and last keys are the same pose is
+        /// ordinary (`DanceClip` is built that way on purpose, so a loop has no seam), and two
+        /// samples at 0 and at the end would call it still.
+        ///
+        /// ⚠️ AND THE POSE IS PUT BACK. This walks the rig through a clip on a body the caller is
+        /// about to measure the feet of; leaving it on an arbitrary frame would hand
+        /// `MeasureFootLift` a pose the character never stands in.
+        /// </summary>
+        public static float MotionOf(GameObject body, AnimationClip clip)
+        {
+            if (body == null || clip == null) return 0.0f;
+
+            var bones = body.GetComponentsInChildren<Transform>(true);
+            if (bones.Length == 0) return 0.0f;
+
+            const int samples = 5;
+            float length = Mathf.Max(0.0f, clip.length);
+
+            var first = new Vector3[bones.Length];
+            float travel = 0.0f;
+
+            for (int s = 0; s < samples; s++)
+            {
+                clip.SampleAnimation(body, length * (s / (float)(samples - 1)));
+
+                for (int b = 0; b < bones.Length; b++)
+                {
+                    if (bones[b] == null) continue;
+
+                    if (s == 0) { first[b] = bones[b].position; continue; }
+
+                    travel = Mathf.Max(travel, (bones[b].position - first[b]).magnitude);
+                }
+            }
+
+            clip.SampleAnimation(body, 0.0f);
+            return travel;
         }
 
         private static AnimationClip PickPose(AnimationClip[] clips, int slot)
@@ -528,6 +648,53 @@ namespace TumbangPreso.UI
             }
 
             _placed = true;
+
+            ClearTheView();
+        }
+
+        /// <summary>
+        /// Where the camera has to be able to see each body, for
+        /// <see cref="MapPreviewSurface.ClearSightlines"/>.
+        ///
+        /// ⚠️⚠️ TWO POINTS PER BODY, AND ONE WOULD MISS THE FAULT THAT WAS REPORTED. 🧑
+        /// 2026-08-28: *"Also sometimes the pillars in the ilalim ng tulay map block the camera of
+        /// lobby"*. A viaduct pillar is a tall thin column, so a single sample at chest height is
+        /// cleared the moment the sway takes the ray past its edge while the same pillar is still
+        /// across the face six inches higher. Head and chest is what the player is actually looking
+        /// at: the character's identity is in the top half of it.
+        ///
+        /// ⚠️ THE HEAD POINT IS THE MEASURED ONE, NOT A CONSTANT. `TryHeadPoint` reads the
+        /// renderers, for the reason its own note gives: the twelve street characters and the five
+        /// heroes are different heights and several wear hats.
+        ///
+        /// ⚠️ AND THE LIST IS REUSED. `Place` runs EVERY frame because the camera sways, so
+        /// allocating eight `Vector3`s and a list per frame is the shape `docs/TODO.md` § 52.3
+        /// measured costing 952 bytes a frame on the HUD.
+        /// </summary>
+        private readonly System.Collections.Generic.List<Vector3> _sightlines =
+            new System.Collections.Generic.List<Vector3>(Balance.PlayerCount * 2);
+
+        private void ClearTheView()
+        {
+            if (_surface == null) return;
+
+            _sightlines.Clear();
+
+            for (int seat = 0; seat < _bodies.Length; seat++)
+            {
+                var body = _bodies[seat];
+                if (body == null) continue;
+
+                if (!TryHeadPoint(seat, out Vector3 head)) continue;
+
+                _sightlines.Add(head - new Vector3(0.0f, HeadRoom, 0.0f));
+
+                // Roughly the chest: the head point is the top of the silhouette, and these rigs
+                // stand about 2.4 m at `ModelPreview.PreviewScale`.
+                _sightlines.Add(head - new Vector3(0.0f, HeadRoom + 0.9f, 0.0f));
+            }
+
+            _surface.ClearSightlines(_sightlines);
         }
 
         /// <summary>

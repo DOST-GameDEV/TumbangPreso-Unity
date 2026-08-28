@@ -133,13 +133,28 @@ namespace TumbangPreso.UI
             Refresh();
         }
 
+        /// <summary>
+        /// Which cue this button's press makes.
+        ///
+        /// ⚠️⚠️ BACK SOUNDED LIKE A CLICK AND ESCAPE SOUNDED LIKE A BACK, FOR THE SAME ACTION.
+        /// `ConvertedScreen.Update` has always played `ui_back` on Escape, and every BACK BUTTON
+        /// in the game played `ui_click` from the line below, so the two ways of leaving a screen
+        /// answered differently. `ui_back` exists as a shipped file and a mixed cue precisely
+        /// because going backwards is supposed to be audibly different from choosing something.
+        ///
+        /// ⚠️ IT IS A FIELD ON THE CONTROL RATHER THAN A NAME TEST IN HERE. `ConvertedScreen`
+        /// knows the node's Godot name and this class does not, and sniffing for "Back" in a
+        /// component would make the sound depend on a string a designer is free to change.
+        /// </summary>
+        public string PressCue = "ui_click";
+
         public void OnPointerDown(PointerEventData e)
         {
             _held = true;
             Refresh();
             // On the press, not the release: the click should land on the frame the finger goes
             // down, which is the frame the button visibly sinks.
-            if (Application.isPlaying && Interactable) MenuSfx.Click();
+            if (Application.isPlaying && Interactable) MenuSfx.Play(PressCue);
         }
 
         public void OnPointerUp(PointerEventData e)

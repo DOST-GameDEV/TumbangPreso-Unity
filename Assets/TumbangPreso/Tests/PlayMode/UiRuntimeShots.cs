@@ -58,7 +58,9 @@ namespace TumbangPreso.PlayTests
 
             yield return Shoot("MainMenu");
             yield return Overlay("SettingsPanel");
-            yield return Overlay("TutorialPanel");
+
+            // ⚠️ NO `TutorialPanel` SHOT: the panel was deleted on 2026-08-28 and TUTORIAL enters
+            // the playable route directly. `Arena("Eskinita")` below photographs what replaced it.
             yield return Overlay("CreditsPanel");
 
             yield return Shoot("ModeSelect");
@@ -277,7 +279,7 @@ namespace TumbangPreso.PlayTests
         /// overwriting a shot leaves the previous one on screen and the whole review is conducted
         /// against an image that is no longer on disk. Bump `ShotVersion` on every iteration.
         /// </summary>
-        private const string ShotVersion = "v34";
+        private const string ShotVersion = "v42";
 
         [UnityTest]
         public IEnumerator TheLobbyDraws()
@@ -310,7 +312,16 @@ namespace TumbangPreso.PlayTests
             // Both drawers are part of the requested composition checkpoint. Photographing only
             // the clean collapsed state previously let clipped rows and merged network actions
             // survive review unnoticed.
-            var settingsToggle = Find("SettingsDrawer")?.GetComponentInChildren<Button>();
+            // ⚠️ BY THE TOGGLE'S OWN NAME, NOT BY ITS HOST'S. It used to look up `SettingsDrawer`
+            // and take the first `Button` under it, which stopped finding anything the moment the
+            // left-hand furniture became one rail (`LobbyChrome.BuildLeftRail`): the host is
+            // `LobbyLeftRail` now and its first button would be whichever the layout ordered first.
+            // The failure was silent, because the shot is taken inside an `if`.
+            var settingsToggle = Find("SettingsDrawerToggle")?.GetComponent<Button>();
+            Assert.IsNotNull(settingsToggle,
+                "the match-settings drawer has no toggle to open, so the open state cannot be "
+                + "photographed. See LobbyChrome.BuildLeftRail.");
+
             if (settingsToggle != null)
             {
                 settingsToggle.onClick.Invoke();

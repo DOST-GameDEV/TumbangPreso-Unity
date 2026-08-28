@@ -4,7 +4,20 @@ using UnityEngine.UI;
 
 namespace TumbangPreso.UI
 {
-    /// <summary>Ported from `mode_select.gd`.</summary>
+    /// <summary>
+    /// Ported from `mode_select.gd`.
+    ///
+    /// ⚠️⚠️ NOTHING NAVIGATES TO THIS SCREEN ANY MORE, AND IT IS KEPT WORKING ANYWAY. 🧑
+    /// 2026-08-28: *"Rewire clicking play from main menu to directly the lobby bcz we dont need
+    /// single player multiplayer selection anymroe as practice is bascally singleplayer already"*.
+    /// `ConvertedMainMenu`'s PLAY goes straight to the lobby; the `PRACTICE ǀ MULTIPLAYER` tabs
+    /// there are the same choice, made in place, with the arena already drawn behind it.
+    ///
+    /// ⚠️ IT IS THE FALLBACK, PER `docs/TODO.md` § 68.3, and the scene stays in the build order so
+    /// `UiClickProbe`, `ScreenshotTool` and `UiRuntimeShots` keep photographing it. Restoring the
+    /// old flow is one line in `ConvertedMainMenu`. Both buttons below still do exactly what they
+    /// did, so a restore is a navigation change and not a repair.
+    /// </summary>
     public sealed class ConvertedModeSelect : ConvertedScreen
     {
         /// <summary>`mode_select.gd` backs out to the title on Escape.</summary>

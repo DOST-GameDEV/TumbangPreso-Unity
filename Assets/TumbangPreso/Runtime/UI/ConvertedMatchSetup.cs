@@ -21,7 +21,14 @@ namespace TumbangPreso.UI
         private int _map;
         private int _difficulty = 1;
 
-        protected override string CancelTarget => SceneFlow.ModeSelect;
+        /// <summary>
+        /// ⚠️⚠️ THE TITLE, NOT THE MODE PICKER, SINCE 2026-08-28. `ConvertedMainMenu`'s PLAY lands
+        /// here directly now, so `ModeSelect` is no longer on the way in and backing out to it
+        /// would drop the player on a screen they never passed through, one press away from the
+        /// title they were actually trying to reach. See that scene constant's note in
+        /// `SceneFlow` for why it is kept on disk regardless.
+        /// </summary>
+        protected override string CancelTarget => SceneFlow.MainMenu;
 
         /// <summary>
         /// ⚠️ ESCAPE CLOSES THE JOIN CARD FIRST AND LEAVES THE LOBBY SECOND. `ConvertedScreen`
@@ -85,9 +92,10 @@ namespace TumbangPreso.UI
         private LobbyCast _cast;
         private LobbyNameplates _nameplates;
 
-        /// <summary>The PRACTICE / MULTIPLAYER tabs, owned here rather than by the static that
-        /// built them. See <see cref="LobbyChrome.Tabs"/>.</summary>
-        private LobbyChrome.Tabs _tabs;
+        /// <summary>The `Street` chrome this screen has to keep talking to: the two tabs, the
+        /// lobby drawer and the player card's character block. Owned here rather than by the
+        /// static that built them. See <see cref="LobbyChrome.Parts"/>.</summary>
+        private LobbyChrome.Parts _chrome;
 
         /// <summary>The lobby's chat log and entry field. See <see cref="LobbyChat"/>.</summary>
         private LobbyChat _chat;
@@ -232,7 +240,10 @@ namespace TumbangPreso.UI
                 }
 
                 if (net != null && net.IsNetworked) net.Stop();
-                SceneFlow.Go(SceneFlow.ModeSelect);
+
+                // ⚠️ THE TITLE, matching `CancelTarget` above. BACK and Escape have to agree or
+                // one of them is a step the other does not take.
+                SceneFlow.Go(SceneFlow.MainMenu);
             });
 
             var modeRow = Node("ModeRow");
@@ -246,7 +257,15 @@ namespace TumbangPreso.UI
             // the entry row goes into the right column's list and the tabs are measured against a
             // banner that has to exist. Applying the chrome first would move an empty column and
             // then have rows added back into it at the authored anchors.
-            _tabs = LobbyChrome.Apply(transform, Node, IsLobby, SelectTab);
+            _chrome = LobbyChrome.Apply(transform, Node, IsLobby, SelectTab);
+
+            // ⚠️⚠️ A NAME TYPED IN THE LOBBY HAS TO REACH THE OTHER THREE MACHINES, AND NOTHING
+            // CARRIED IT. `NetSession.ConfigureClientHello` sends `Settings.PlayerName` at
+            // CONNECTION time and never again, so editing the card after joining changed the name
+            // on this screen and on no other: the plate over your own body in somebody else's
+            // lobby still read `PLAYER 3`. `PublishName` is the push, and it hangs off the field's
+            // own commit rather than off a redraw, because a redraw is not what changed the name.
+            if (_chrome != null) _chrome.NameCommitted = PublishName;
 
             BuildChat();
 
@@ -641,12 +660,12 @@ namespace TumbangPreso.UI
             _joinPanel.Opened += () =>
             {
                 if (_chat != null) _chat.gameObject.SetActive(false);
-                if (_tabs?.LobbyDrawer != null) _tabs.LobbyDrawer.SetActive(false);
+                if (_chrome?.LobbyDrawer != null) _chrome.LobbyDrawer.SetActive(false);
             };
             _joinPanel.Closed += () =>
             {
                 if (_chat != null) _chat.gameObject.SetActive(IsLobby);
-                if (_tabs?.LobbyDrawer != null) _tabs.LobbyDrawer.SetActive(IsLobby);
+                if (_chrome?.LobbyDrawer != null) _chrome.LobbyDrawer.SetActive(IsLobby);
             };
 
             if (_codeRow == null || _codeRow.transform.parent == null) return;
@@ -693,6 +712,16 @@ namespace TumbangPreso.UI
             element.minHeight = 28.0f;
             element.preferredHeight = 28.0f;
             element.flexibleHeight = 0.0f;
+
+            // ⚠️⚠️ WITHOUT A WIDTH THIS HEADING DREW IN A 4 px BOX, AND ONLY IN `Classic`.
+            // `LobbyStyleProbe` measured `SHARE THIS LOBBY` needing 117 px in 4. The parent
+            // `Rows` group runs `childControlWidth` ON with `childForceExpandWidth` OFF, so a
+            // child is given its PREFERRED width; this holder has no layout group of its own, so
+            // its preferred width is zero and the stretched label inside it inherits eight pixels
+            // minus its own inset. `Street` never showed it because `LobbyChrome.Narrow` writes a
+            // width onto every child of the column it touches, which is exactly the kind of
+            // accidental cover the probe exists to strip away.
+            element.flexibleWidth = 1.0f;
 
             var label = MenuKit.Label(holder.transform, text, 17, UiTheme.Amber,
                                       Vector2.zero, Vector2.zero, Vector2.zero,
@@ -834,7 +863,7 @@ namespace TumbangPreso.UI
             _difficulty = Mathf.Clamp(_difficulty, 0, DifficultyOptionCount - 1);
 
             ApplyCastVisibility();
-            _tabs?.SetActive(lobby);
+            _chrome?.SetActive(lobby);
 
             Refresh();
 
@@ -893,7 +922,22 @@ namespace TumbangPreso.UI
 
                 if (_nameplates == null) continue;
 
-                string who = mine ? "YOU" : occupied ? PlayerLabel(info, seat) : "BOT";
+                // ⚠️⚠️ YOUR OWN PLATE CARRIES YOUR OWN NAME NOW. 🧑 2026-08-28, pointing at the
+                // plate over his character: *"i want thgis to say my name instead of YOU"*, and
+                // *"i want both non host and client to see it whether im host or client"*. The
+                // plate is the one place on this screen your name is meant to be readable, and it
+                // was the one place it was replaced by a pronoun: the three other people in the
+                // lobby saw `Matthew` over that body and the person it belonged to saw `YOU`.
+                //
+                // ⚠️ THE `◀` MARKER STILL SAYS WHICH ONE IS YOURS. `LobbyNameplates.SetSeat`
+                // appends it off the `you` flag, so nothing is lost by putting the name back: the
+                // plate reads `Matthew   ◀` rather than trading identity for identification.
+                //
+                // ⚠️ AND IT FALLS BACK TO `YOU`, NOT TO `Player`. An unset name is the default
+                // literal `Player`, which `PlayerLabel` already treats as anonymous for everybody
+                // else; four plates reading `Player` is the exact fault that method's header
+                // records. Somebody who has not set a name is still unambiguously themselves.
+                string who = mine ? LocalName() : occupied ? PlayerLabel(info, seat) : "BOT";
 
                 // ⚠️ THE TICK IS THE HOST'S ANSWER FOR EVERY SEAT NOW, AND THE LOCAL SEAT IS
                 // STILL ALLOWED TO BE AHEAD OF IT. `LobbySeatInfo.Ready` travels with the roster,
@@ -949,8 +993,14 @@ namespace TumbangPreso.UI
 
             // The lobby card and chat are one social rail. The values are measured from the
             // 1920x1080 runtime shot after LobbyChrome raises and scales RightColumn.
-            _chat.PlaceBottomRight(48.0f, 40.0f, 392.0f);
+            // ⚠️ THE SAME MARGIN AND WIDTH THE REST OF THE RIGHT-HAND SIDE USES. See
+            // `LobbyChrome`'s harmony block: the player card, the lobby drawer and this share one
+            // edge and one width, which is the difference between a column and three boxes.
+            _chat.PlaceBottomRight(48.0f, 40.0f, 460.0f);
             _chat.gameObject.SetActive(IsLobby);
+
+            // The drawer above it has to know how tall this ended up. See `LateUpdate`.
+            _chrome?.StackRight(_chat.PanelHeight);
         }
 
         /// <summary>
@@ -967,6 +1017,32 @@ namespace TumbangPreso.UI
         /// ⚠️ IT IS COMPARED CASE-INSENSITIVELY AND TRIMMED, because the fallback is written in
         /// one place and typed in another, and "player" from a settings file should not defeat it.
         /// </summary>
+        /// <summary>
+        /// This machine's own player name, or `YOU` when it has never been set.
+        ///
+        /// ⚠️ IT IS SANITISED THROUGH THE SAME FUNCTION THE WIRE USES. `LobbySession.Admit` runs
+        /// `GameSettings.SanitiseName` on arrival, so a name drawn here from raw settings could
+        /// differ from the one every other machine sees for the same player. One function, one
+        /// answer.
+        ///
+        /// ⚠️ AND `Player` COUNTS AS UNSET, case-insensitively, for the reason
+        /// <see cref="PlayerLabel"/> gives at length: it is the literal
+        /// `NetSession.ConfigureClientHello` falls back to, so it is what everybody is called
+        /// until somebody edits the field.
+        /// </summary>
+        private static string LocalName()
+        {
+            string name = Settings.GameSettings.SanitiseName(
+                Settings.SettingsStore.Current.PlayerName);
+
+            name = string.IsNullOrWhiteSpace(name) ? "" : name.Trim();
+
+            bool anonymous = name.Length == 0 ||
+                             string.Equals(name, "Player", StringComparison.OrdinalIgnoreCase);
+
+            return anonymous ? "YOU" : name;
+        }
+
         private static string PlayerLabel(LobbySeatInfo info, int seat)
         {
             string name = info == null ? null : info.Name;
@@ -976,6 +1052,44 @@ namespace TumbangPreso.UI
                              string.Equals(name, "Player", StringComparison.OrdinalIgnoreCase);
 
             return anonymous ? $"PLAYER {seat + 1}" : name;
+        }
+
+        /// <summary>
+        /// Pushes a name typed in the player card to the host, so the other three machines see it.
+        ///
+        /// ⚠️⚠️ THE NAME ONLY EVER TRAVELLED AT CONNECTION TIME, AND THE CARD MADE THAT A DEFECT.
+        /// `NetSession.OnClientConnected` sends `IdentifyServerRpc(token, PlayerName, ...)` once,
+        /// on the frame the transport comes up. Before this branch the only place a name could be
+        /// edited was the SETTINGS panel on the title screen, which is before any transport
+        /// exists, so "sent once, at connection" was the whole story. The lobby card is editable
+        /// while connected, so without this the name changed on this screen and nowhere else: your
+        /// own nameplate over your own body in somebody else's lobby went on reading `PLAYER 3`.
+        ///
+        /// ⚠️⚠️ IT REUSES `Identify` RATHER THAN ADDING A RENAME MESSAGE, AND THAT IS DELIBERATE.
+        /// `docs/TODO.md` § 68.2 holds this whole batch to exactly ONE protocol bump and § 69
+        /// spent it on chat; a second would refuse two peers built from the same commit (§ 59.4).
+        /// `LobbySession.Admit` is idempotent for a peer re-identifying under the SAME durable
+        /// token: it finds the existing record, copies the seat, the spectator flag and all three
+        /// picks across, and takes only the new name. That is the fast-reconnect path, which is
+        /// exercised on every relaunch, so this is a well-travelled road rather than a new one.
+        ///
+        /// ⚠️ THE PICKS ARE RE-SENT FROM SETTINGS, NOT LEFT OUT. `IdentifyServerRpc` writes all
+        /// three, and passing -1 would have `HandleIdentify` resolve them to 0: renaming yourself
+        /// would silently reset your character to the first of the roster.
+        /// </summary>
+        private void PublishName()
+        {
+            Refresh();
+
+            var net = NetSession.Instance;
+            if (net == null || !net.IsNetworked) return;
+
+            var s = Settings.SettingsStore.Current;
+
+            MatchRpc.Instance?.IdentifyServerRpc(NetIdentity.Token, s.PlayerName,
+                                                 Mathf.Max(0, s.CharacterPick),
+                                                 Mathf.Max(0, s.CanPick),
+                                                 Mathf.Max(0, s.SlipperPick));
         }
 
         private void OpenJoinPanel()
@@ -1186,6 +1300,19 @@ namespace TumbangPreso.UI
 
             text.color = alert ? UiTheme.Impact : UiTheme.Cream;
             text.text = message;
+
+            // ⚠️⚠️ IN `Street` THE LINE ONLY EXISTS WHEN THERE IS SOMETHING WRONG. 🧑 2026-08-28:
+            // *"remove undertext for start match"*. `Lobby open. Share the code, or press JOIN.`
+            // sat under the primary action permanently, describing a state three other controls on
+            // the same screen already show. What it must NOT lose is the four messages a player has
+            // to act on: a refused port, a dropped connection, a relay room that would not open and
+            // "still connecting". Those come through `SetAlert`, and they open it.
+            //
+            // ⚠️ AND A BLANK ALERT STILL CLOSES IT. `HandleClientDisconnected` and `ToggleOnline`
+            // both clear the line on the way past; a label showing an empty string would leave a
+            // 56 px gap under START MATCH that nothing explains.
+            if (LobbyChrome.Style == LobbyStyle.Street)
+                label.gameObject.SetActive(alert && !string.IsNullOrWhiteSpace(message));
         }
 
         private void HandleMatchStarted()
@@ -1669,7 +1796,14 @@ namespace TumbangPreso.UI
             string can = Roster.At(Roster.Cans, s.CanPick)?.Name ?? "PASIP";
             string slipper = Roster.At(Roster.Slippers, s.SlipperPick)?.Name ?? "TSINELAS";
 
-            SetText("CharacterButton", $"{person} · {can} · {slipper}  ▸");
+            // ⚠️⚠️ TWO LINES IN `Street`, ONE IN `Classic`, AND THE DIFFERENCE IS WHERE THE BUTTON
+            // IS. In the player card it is a 430 px block with room for the character's name at 32
+            // units and the loadout under it at 18; in the authored row it is a single caption in
+            // a 24-unit box, which is what the one-line string was written for. See
+            // `LobbyChrome.BuildCharacterButton` for why the split is the point of the redesign
+            // rather than a formatting preference.
+            if (_chrome != null) _chrome.SetLoadout(person, $"{can}  ·  {slipper}");
+            else SetText("CharacterButton", $"{person} · {can} · {slipper}  ›");
 
             // Heading & hints
             if (IsLobby && isNetworked)
@@ -1734,6 +1868,12 @@ namespace TumbangPreso.UI
             // SEAT on a screen that has no seat rows.
             RefreshSeatRowVisibility();
 
+            // ⚠️ AFTER THE THREE VALUE LABELS ARE WRITTEN, WHICH IS THE BUG IT FIXES. See
+            // `LobbyChrome.Parts.RefreshSummary`: the closed drawer's one line was composed once
+            // inside `LobbyChrome.Apply`, which runs before this method has ever run, so it shipped
+            // `CAPTURE` from the authored placeholder on a screen set to Hero Strike.
+            _chrome?.RefreshSummary?.Invoke();
+
             _fitFrames = FitPasses;
         }
 
@@ -1792,6 +1932,14 @@ namespace TumbangPreso.UI
         /// </summary>
         private void LateUpdate()
         {
+            // ⚠️⚠️ THE RIGHT-HAND RAIL IS RE-STACKED EVERY FRAME AND IT IS FREE. The chat panel
+            // collapses onto its content and GROWS AS LINES ARRIVE, so the LOBBY & SERVERS pill
+            // above it cannot be placed once: `LobbyChat.PanelHeight`'s note records what
+            // positioning it off the capacity instead of the panel produced, which is a pill
+            // floating in the middle of the frame with 160 px of road under it. `StackRight`
+            // returns immediately when the height has not moved.
+            if (_chrome != null && _chat != null) _chrome.StackRight(_chat.PanelHeight);
+
             if (_fitFrames <= 0) return;
 
             _fitFrames--;
@@ -1815,18 +1963,83 @@ namespace TumbangPreso.UI
             foreach (string node in FitAsLine) FitLine(node);
             foreach (string node in FitAsBlock) FitParagraph(node);
 
+            FitSelectorValuesTogether();
+
             // ⚠️ THE SEAT ROWS CARRY A PLAYER NAME TYPED ON ANOTHER MACHINE, which is the widest
             // arbitrary string this screen can be handed and the only one an attacker-shaped
             // accident can make 64 characters long.
             for (int seat = 0; seat < Balance.PlayerCount; seat++) FitLine($"SeatButton{seat}");
         }
 
-        /// <summary>Single-line controls: shrink to fit, never wrap.</summary>
+        /// <summary>Single-line controls: shrink to fit, never wrap.
+        ///
+        /// ⚠️⚠️ THE THREE SELECTOR VALUES ARE NOT IN THIS LIST, AND THAT IS DELIBERATE. See
+        /// <see cref="FitSelectorValuesTogether"/>: fitting them one at a time is what produced
+        /// three rows of one control at three different type sizes.</summary>
         private static readonly string[] FitAsLine =
         {
-            "MapValueLabel", "ModeValueLabel", "DifficultyValueLabel",
             "CharacterButton", "PrimaryButton", "StartButton", "SeatHeading",
         };
+
+        /// <summary>The three match-settings values, which are fitted as a set.</summary>
+        private static readonly string[] SelectorValues =
+        {
+            "MapValueLabel", "ModeValueLabel", "DifficultyValueLabel",
+        };
+
+        /// <summary>
+        /// Fits MAP, MODE and BOTS to ONE size: the largest that fits all three.
+        ///
+        /// ⚠️⚠️ FITTING THEM INDIVIDUALLY IS WHY `Lobby-v35.png` HAS THREE ROWS OF ONE CONTROL AT
+        /// THREE DIFFERENT TYPE SIZES. `ESKINITA` and `HARD` drew at full size and `HERO STRIKE`,
+        /// eleven characters against their eight and four, was shrunk on its own. Each row was
+        /// individually correct and the panel was visibly wrong, which is exactly the complaint 🧑
+        /// made of the whole screen: *"none of them have visual harmony or shit"*. A stepper is
+        /// ONE control repeated three times, so its type is one size.
+        ///
+        /// ⚠️⚠️ AND IT RESETS TO <see cref="LobbyChrome.ValueSize"/> ON EVERY PASS RATHER THAN
+        /// SHRINKING FROM WHERE IT LEFT OFF. `MenuKit.Fit` only ever shrinks, by design, and the
+        /// fit runs `FitPasses` times against a layout chain that has not converged: a pass that
+        /// measured a half-built rect would otherwise pin the type small permanently, which is the
+        /// second half of what made `HERO STRIKE` tiny. Resetting means a later, better-measured
+        /// pass can undo an earlier one's pessimism.
+        ///
+        /// ⚠️ AND A ROW WHOSE RECT HAS NOT RESOLVED IS SKIPPED, NOT MEASURED AS ZERO. The drawer
+        /// is closed most of the time, so most passes see three rects of no width; treating that
+        /// as "nothing fits" would drive all three to the floor.
+        /// </summary>
+        private void FitSelectorValuesTogether()
+        {
+            int size = LobbyChrome.ValueSize;
+            bool any = false;
+
+            foreach (string name in SelectorValues)
+            {
+                var node = Node(name);
+                var text = node == null ? null : node.GetComponent<Text>();
+                if (text == null) continue;
+
+                float room = text.rectTransform.rect.width;
+                if (room <= 1.0f) continue;
+
+                any = true;
+                text.fontSize = LobbyChrome.ValueSize;
+
+                while (text.fontSize > MenuKit.MinReadableUnits && text.preferredWidth > room)
+                    text.fontSize -= 1;
+
+                size = Mathf.Min(size, text.fontSize);
+            }
+
+            if (!any) return;
+
+            foreach (string name in SelectorValues)
+            {
+                var node = Node(name);
+                var text = node == null ? null : node.GetComponent<Text>();
+                if (text != null) text.fontSize = size;
+            }
+        }
 
         /// <summary>Prose: wrap, then take the height the wrapping needs.</summary>
         private static readonly string[] FitAsBlock =

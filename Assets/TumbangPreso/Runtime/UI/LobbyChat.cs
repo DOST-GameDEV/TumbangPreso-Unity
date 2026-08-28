@@ -43,8 +43,8 @@ namespace TumbangPreso.UI
         public const float MatchFadeTime = 1.4f;
 
         private const float PanelWidth = 560.0f;
-        private const float LineHeight = 26.0f;
-        private const float FieldHeight = 44.0f;
+        public const float LineHeight = 26.0f;
+        public const float FieldHeight = 44.0f;
         private const int LineSize = 19;
 
         private bool _inMatch;
@@ -268,6 +268,22 @@ namespace TumbangPreso.UI
 
         /// <summary>Anchors the lobby field to the bottom-right social rail. New chat lines grow
         /// upward, keeping the entry field in a stable place and the cast's upper bodies clear.</summary>
+        /// <summary>
+        /// How tall the panel actually is right now.
+        ///
+        /// ⚠️⚠️ IT IS NOT `(LineHeight * MaxLines) + FieldHeight + 24`, WHICH IS WHAT THE FIRST
+        /// ATTEMPT AT STACKING THE LOBBY DRAWER ABOVE IT ASSUMED. That expression is the CAPACITY;
+        /// the `ContentSizeFitter` in `Construct` collapses the panel onto whatever lines are
+        /// actually in it, so an empty chat is about 65 px and the capacity is 224.
+        /// `Logs/shots-runtime/Lobby-v36.png` has the LOBBY & SERVERS pill floating in the middle
+        /// of the frame over the fourth character, 160 px of nothing above a chat box, because it
+        /// was positioned off the number rather than off the panel.
+        ///
+        /// ⚠️ AND IT CHANGES AS LINES ARRIVE, so a caller stacking against it has to re-read it
+        /// rather than measure once. See `ConvertedMatchSetup.LateUpdate`.
+        /// </summary>
+        public float PanelHeight => _rect != null ? _rect.rect.height : 0.0f;
+
         public void PlaceBottomRight(float rightMargin, float bottom, float width)
         {
             if (_rect == null) return;

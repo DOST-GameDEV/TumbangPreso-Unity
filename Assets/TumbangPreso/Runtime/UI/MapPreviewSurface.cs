@@ -194,6 +194,11 @@ namespace TumbangPreso.UI
 
                 _lobbyShot = value;
 
+                // ⚠️ THE PRACTICE SCREEN GETS THE WHOLE STREET BACK. See `ClearSightlines`: what
+                // it hides is hidden so a FACE can be seen, and the map shot has no faces in it,
+                // so a pillar left switched off there is a hole in the arena being chosen.
+                if (!_lobbyShot) ClearSightlines(null);
+
                 if (_showing != null) AimAt(_showing);
 
                 if (_camera != null)
@@ -338,7 +343,197 @@ namespace TumbangPreso.UI
             SceneManager.MoveGameObjectToScene(go, scene);
             SetLayerRecursively(go.transform, PreviewLayer);
 
+            // ⚠️ REMEMBERED SO `ClearSightlines` CANNOT HIDE THE CAST. Everything adopted lands in
+            // the SAME scene as the arena, so a sweep over that scene's renderers sees the four
+            // bodies as scenery, and a character standing in front of another character is exactly
+            // the shape the sweep is looking for. Without this the arc's inner two would delete
+            // the outer two.
+            // ⚠️ ONCE PER OBJECT. `LobbyCast.HandleMapShown` re-adopts the SAME root on every map
+            // swap (`Park` deactivates the outgoing arena's roots and the cast is one of them), so
+            // appending unconditionally would grow this list forever and invalidate the occluder
+            // cache on every cycle for no change at all.
+            _adopted.RemoveAll(o => o == null);
+            if (!_adopted.Contains(go)) _adopted.Add(go);
+
             return true;
+        }
+
+        /// <summary>Every object handed to <see cref="Adopt"/>, so the occluder sweep can tell the
+        /// cast from the street.</summary>
+        private readonly System.Collections.Generic.List<GameObject> _adopted =
+            new System.Collections.Generic.List<GameObject>();
+
+        /// <summary>Renderers currently switched off because they stood in front of somebody. They
+        /// are switched back on before every sweep and whenever the lobby shot is turned off.
+        /// </summary>
+        private readonly System.Collections.Generic.List<Renderer> _hidden =
+            new System.Collections.Generic.List<Renderer>();
+
+        /// <summary>
+        /// How much of the arena may be between the camera and a face before it is put away.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE ILALIM NG TULAY IS A ROW OF VIADUCT PILLARS AND THE LOBBY
+        /// CAMERA STANDS AMONG THEM. 🧑 2026-08-28: *"Also sometimes the pillars in the ilalim ng
+        /// tulay map block the camera of lobby"*. The lobby shot is 12.6 m from the play area at a
+        /// 32 degree lens, which puts the camera inside the colonnade rather than outside it, and
+        /// `SwayDegrees` 7 over 26 s walks it slowly across the gaps: the fault is intermittent by
+        /// construction, which is exactly why "sometimes" is the word in the report and why no
+        /// still render was ever going to settle it.
+        ///
+        /// ⚠️ AND MOVING THE CAMERA IS NOT THE FIX, WHICH IS WHY THIS IS GEOMETRY AND NOT A NUMBER.
+        /// A per-map lobby yaw could be aimed down a clear lane for the sway's centre and would
+        /// still swing into a pillar at the ends of it; widening the shot to clear them would undo
+        /// `LobbyFieldOfView`'s whole finding about the outer two characters distorting. The thing
+        /// that is actually wrong is that a two-metre column of concrete is between the player and
+        /// a face, and the answer is to take it out of the way for as long as it is.
+        ///
+        /// ⚠️ IT IS THE LOBBY SHOT ONLY. The practice screen is a picture OF THE MAP: hiding a
+        /// pillar there would be hiding the thing being chosen.
+        /// </summary>
+        private const float OccluderClearance = 0.8f;
+
+        /// <summary>
+        /// The largest thing that may be treated as an occluder, in metres of bounding diagonal.
+        ///
+        /// ⚠️⚠️ WITHOUT A CAP THIS SWEEP HIDES THE ROAD. The arena floor is one slab tens of metres
+        /// across whose AABB the camera sits inside, so a ray from the camera to a character's
+        /// chest enters it immediately and reports a hit at t near zero: the cast would be left
+        /// standing on nothing over a skybox. A viaduct pillar is about 1 x 1 x 8, a utility pole
+        /// thinner than that, and a jeepney about 6 long: 14 clears every one of them and refuses
+        /// every slab, facade and hoarding in the three arenas.
+        /// </summary>
+        private const float MaxOccluderSpan = 14.0f;
+
+        /// <summary>
+        /// Puts away anything standing between the camera and the people it is looking at.
+        ///
+        /// See <see cref="OccluderClearance"/> for why this exists rather than a camera angle.
+        ///
+        /// ⚠️ THE PREVIOUS SWEEP IS UNDONE FIRST, EVERY TIME, AND THAT IS WHAT MAKES IT SAFE TO
+        /// RUN CONTINUOUSLY. The camera sways, so the set of things in the way changes frame to
+        /// frame; a sweep that only ever hid would strip the street one pillar at a time until
+        /// there was nothing left of it.
+        ///
+        /// ⚠️ RENDERERS ARE DISABLED, NOT GAMEOBJECTS. Deactivating a GameObject in the cached
+        /// arena fights `Park`/`Unpark`, which own the active flag of every root and use it to
+        /// decide which map is lighting the world; disabling a `Renderer` touches nothing they
+        /// read.
+        /// </summary>
+        public void ClearSightlines(System.Collections.Generic.IReadOnlyList<Vector3> subjects)
+        {
+            bool wanted = _lobbyShot && _camera != null && subjects != null && subjects.Count > 0;
+
+            // ⚠️⚠️ THE SWEEP IS RATE LIMITED AND THE CALLER IS `LobbyCast.Place`, WHICH RUNS EVERY
+            // FRAME BECAUSE THE CAMERA SWAYS. A dressed street is hundreds of renderers and each
+            // one is tested against eight rays, which is a few hundred microseconds of pure
+            // arithmetic at 60 Hz for a picture that moves 7 degrees over 26 seconds. Six sweeps a
+            // second is four times faster than anything in the shot can change.
+            //
+            // ⚠️ THE GUARD IS ABOVE THE RESTORE ON PURPOSE. Returning early leaves the previous
+            // sweep's set exactly as it was, which is the correct answer for a frame nobody
+            // measured; restoring first and then returning would flash every hidden pillar back on
+            // for one frame out of every ten.
+            if (wanted && Time.unscaledTime - _lastSweep < SweepInterval) return;
+            _lastSweep = Time.unscaledTime;
+
+            foreach (var r in _hidden)
+                if (r != null) r.enabled = true;
+
+            _hidden.Clear();
+
+            if (!wanted) return;
+            if (_showing == null) return;
+            if (!_cache.TryGetValue(_showing, out var scene)) return;
+            if (!scene.IsValid() || !scene.isLoaded) return;
+
+            Vector3 eye = _camera.transform.position;
+
+            foreach (var renderer in Occluders(scene))
+            {
+                if (renderer == null || !renderer.enabled) continue;
+                if (!renderer.gameObject.activeInHierarchy) continue;
+
+                var bounds = renderer.bounds;
+
+                // Big things are the street itself. See MaxOccluderSpan.
+                if (bounds.size.magnitude > MaxOccluderSpan) continue;
+                if (bounds.Contains(eye)) continue;
+
+                if (!Blocks(eye, bounds, subjects)) continue;
+
+                renderer.enabled = false;
+                _hidden.Add(renderer);
+            }
+        }
+
+        private const float SweepInterval = 0.16f;
+        private float _lastSweep = -1.0f;
+
+        private readonly System.Collections.Generic.List<Renderer> _occluders =
+            new System.Collections.Generic.List<Renderer>();
+
+        private string _occludersFor;
+        private int _occludersAdopted = -1;
+
+        /// <summary>
+        /// Every renderer in the arena that is NOT part of the cast, gathered once per map.
+        ///
+        /// ⚠️ CACHED, BECAUSE `GetComponentsInChildren` ALLOCATES AN ARRAY PER ROOT PER CALL. At
+        /// six sweeps a second over a dressed street that is a steady drip into the collector for
+        /// a set of objects that does not change: an arena is loaded once and kept (see the
+        /// caching remark on this class), and the only thing that joins it afterwards is the cast.
+        /// The adopted count is therefore the whole invalidation rule.
+        /// </summary>
+        private System.Collections.Generic.List<Renderer> Occluders(Scene scene)
+        {
+            if (_occludersFor == _showing && _occludersAdopted == _adopted.Count) return _occluders;
+
+            _occluders.Clear();
+            _occludersFor = _showing;
+            _occludersAdopted = _adopted.Count;
+
+            foreach (var root in scene.GetRootGameObjects())
+            {
+                if (IsAdopted(root)) continue;
+
+                _occluders.AddRange(root.GetComponentsInChildren<Renderer>(true));
+            }
+
+            return _occluders;
+        }
+
+        /// <summary>
+        /// ⚠️ RAY VERSUS AABB, AND THE HIT HAS TO BE IN FRONT OF THE PERSON RATHER THAN JUST ON THE
+        /// LINE. `Bounds.IntersectRay` reports a hit anywhere along an infinite ray, so without the
+        /// distance test every building BEHIND the cast would count as standing in front of it.
+        /// </summary>
+        private static bool Blocks(Vector3 eye, Bounds bounds,
+                                   System.Collections.Generic.IReadOnlyList<Vector3> subjects)
+        {
+            foreach (var subject in subjects)
+            {
+                Vector3 to = subject - eye;
+                float distance = to.magnitude;
+
+                if (distance <= OccluderClearance) continue;
+
+                var ray = new Ray(eye, to / distance);
+
+                if (!bounds.IntersectRay(ray, out float hit)) continue;
+                if (hit >= distance - OccluderClearance) continue;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool IsAdopted(GameObject root)
+        {
+            foreach (var go in _adopted)
+                if (go != null && (go == root || go.transform.IsChildOf(root.transform))) return true;
+
+            return false;
         }
 
         /// <summary>

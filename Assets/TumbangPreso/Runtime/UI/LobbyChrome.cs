@@ -64,11 +64,131 @@ namespace TumbangPreso.UI
         /// Narrowing them to 580 and 500 gives the middle 840 px, which is what four bodies at
         /// `LobbyCast.Spacing` 1.75 occupy at the lobby framing.
         /// </summary>
-        private const float LeftWidth = 580.0f;
-        private const float RightWidth = 500.0f;
+        private const float RightWidth = 590.0f;
+
+        // -------------------------------------------------------------------------------------
+        // ⚠️⚠️ THE HARMONY SET. EVERY EDGE, GAP AND HEIGHT ON THIS SCREEN COMES FROM HERE.
+        //
+        // 🧑 2026-08-28, with the bottom band cropped out of `Lobby-v35.png`: *"make these huds or
+        // ui look good bruh its so weird to look at as none of them have visual harmony or shit"*.
+        // He was right and the crop proves it. Measured off that image, the bottom-left rail alone
+        // had THREE different left edges and THREE different widths: the MATCH SETTINGS pill
+        // started at x=75 and ran 300 px, its summary line started at x=60, and START MATCH
+        // started at x=55 and ran 380. On the right the LOBBY & SERVERS pill and the chat box
+        // below it shared neither a width nor a right edge. Nothing lined up with anything.
+        //
+        // The cause was structural rather than a set of wrong numbers: the left side was TWO
+        // separate hosts (the authored `LeftColumn` at one anchor and a `SettingsDrawer` built
+        // beside it at another), each scaled by a different factor, each sizing its own children.
+        // Two containers cannot share an edge by arithmetic; they share one by being one
+        // container. So there is one rail per side now, everything is a child of it, and the
+        // group gives every child the same width.
+        //
+        // ⚠️ AND THE SCALES ARE GONE FROM THE LEFT. `LeftScale` 0.66 existed to squeeze an
+        // authored 820 px panel into the corner, and it made every number on that side a lie:
+        // a 56 px header drew at 37, an 18 unit caption rendered at 12, and no value here could be
+        // compared against any value anywhere else in the UI. The rail is authored at its real
+        // size in the canvas's own 1920x1080 space. `RightScale` stays, for the reason at its own
+        // note.
+        // -------------------------------------------------------------------------------------
+
+        /// <summary>The margin every edge-anchored thing uses, left and right.</summary>
         private const float EdgeMargin = 48.0f;
+
+        /// <summary>The line both bottom rails sit on.</summary>
         private const float BottomMargin = 40.0f;
-        private const float TopRailOffset = 112.0f;
+
+        /// <summary>The line BACK, both tabs and the player card all hang from.</summary>
+        private const float TopMargin = 34.0f;
+
+        /// <summary>The one gap. Between any two stacked pieces of furniture, on either side.
+        /// </summary>
+        private const float RailSpacing = 12.0f;
+
+        /// <summary>
+        /// The bottom-left rail: settings, the primary action, and the status line.
+        ///
+        /// ⚠️⚠️ IT CAME DOWN FROM 560 AND THE 100 px CAME OUT OF THE CAPTION COLUMN, NOT OUT OF
+        /// THE TYPE. 🧑 2026-08-28, of the rail: *"do u not feel weird that theres b ig ass empty
+        /// space left and right"*. At 560 the words MATCH SETTINGS sat in the middle of a pill with
+        /// about 150 px of bare wood either side of them, and START MATCH the same. The rail was
+        /// that wide because a selector row was, and a selector row was that wide because
+        /// `SettingsCaptionWidth` was 150: it had to hold `BOTS:` at <see cref="CaptionSize"/>,
+        /// which needs about 66. Dropping the colon (see `DressSelectorRow`) and sizing the column
+        /// to the word took it to 96 and the rail with it.
+        ///
+        /// The arithmetic at 460: 96 caption + 14 gap + a stepper of 20 padding, two
+        /// <see cref="SettingsArrowSize"/> 42 arrows, two 6 px gaps and the value. That leaves
+        /// **214 px** for the value, against `ILALIM NG TULAY` measuring about 195 at
+        /// <see cref="ValueSize"/> 26, plus 32 of panel padding.
+        ///
+        /// ⚠️ IT IS ALSO THE WIDTH OF START MATCH, THE SUMMARY AND THE STATUS LINE, because that
+        /// is what "one rail" means. The old layout sized each of those to itself.
+        /// </summary>
+        private const float LeftWidth = 460.0f;
+
+        /// <summary>
+        /// The bottom-right rail: the lobby drawer and the chat.
+        ///
+        /// ⚠️⚠️ IT IS <see cref="LeftWidth"/> NOW, NOT THE CHAT'S OWN 392. 🧑 2026-08-28: *"align
+        /// the yellow thing with match settings"*. The two drawer toggles are the same kind of
+        /// control and were 460 and 392, so the bottom of the screen had two widths in it for no
+        /// reason a player could see. One number means the two rails mirror rather than merely
+        /// share a margin, and it costs the chat nothing: a wider log fits more of a line.
+        ///
+        /// ⚠️ THE CHAT IS TOLD, NOT ASKED. `ConvertedMatchSetup.BuildChat` passes this to
+        /// `LobbyChat.PlaceBottomRight`; `LobbyChat`'s own `PanelWidth` is the fallback for the
+        /// in-match instance, which has no rail to belong to.
+        /// </summary>
+        private const float RightRailWidth = LeftWidth;
+
+        /// <summary>One height for BACK and for each tab, so the top of the screen is one band.
+        /// </summary>
+        private const float HeaderHeight = 56.0f;
+
+        /// <summary>One height for both drawer toggles: MATCH SETTINGS and LOBBY & SERVERS.
+        /// </summary>
+        private const float ToggleHeight = 52.0f;
+
+        /// <summary>START MATCH and READY. Taller than everything else on purpose: it is the one
+        /// control on this screen that ends the screen.</summary>
+        private const float ActionHeight = 104.0f;
+
+        /// <summary>
+        /// The caption under MATCH SETTINGS: `ESKINITA · HERO STRIKE · HARD`.
+        ///
+        /// ⚠️ SMALLER THAN `MenuKit.MinReadableUnits`, AND IT IS THE ONE PLACE THAT IS ALLOWED.
+        /// 🧑 2026-08-28: *"make font size here smaller"*. The floor exists so a sentence does not
+        /// become texture; this is not a sentence, it is three words the drawer directly under it
+        /// restates at <see cref="ValueSize"/> 26 the moment it is opened. Nothing on this screen
+        /// is only knowable from this line.
+        ///
+        /// ⚠️ AND THE GAP TO THE BUTTON IS <see cref="HeaderGap"/> 2, NOT `RailSpacing` 12,
+        /// because it is a caption ON that button rather than a neighbour of it.
+        /// </summary>
+        private const int SummarySize = 16;
+        private const float SummaryHeight = 22.0f;
+        private const float HeaderGap = 2.0f;
+
+        /// <summary>
+        /// Where the bottom edge of BOTH drawer toggles sits.
+        ///
+        /// ⚠️⚠️ THE TWO YELLOW PILLS ARE ONE ROW, ON REQUEST. 🧑 2026-08-28: *"align the yellow
+        /// thing with match settings use same font size too"*. They are the same KIND of control
+        /// (open a drawer), so they get one width, one height, one type size and one baseline.
+        /// Before this the left one was 460 wide at 26 units and the right one 392 at the wood
+        /// variation's authored size, sitting 63 px lower.
+        ///
+        /// Counted up the left rail from the floor: <see cref="BottomMargin"/> 40, START MATCH at
+        /// <see cref="ActionHeight"/> 104, one <see cref="RailSpacing"/> 12, then the summary and
+        /// its 2 px gap inside the header block.
+        ///
+        /// ⚠️ THE RIGHT ONE TAKES THE HIGHER OF THIS AND THE CHAT'S TOP. See
+        /// <see cref="Parts.StackRight"/>: the chat grows upward as lines arrive, so a fixed
+        /// baseline would be overlapped by the sixth message.
+        /// </summary>
+        private static float ToggleBaseline => BottomMargin + ActionHeight + RailSpacing
+                                               + SummaryHeight + HeaderGap;
 
         /// <summary>
         /// How much the two authored columns shrink in the `Street` arrangement.
@@ -95,7 +215,17 @@ namespace TumbangPreso.UI
         /// checks the authored number and cannot see a scaled parent, so this is the one place
         /// that bound has to be respected by hand.
         /// </summary>
-        private const float LeftScale = 0.66f;
+        /// <summary>
+        /// ⚠️⚠️ ONLY THE RIGHT COLUMN IS SCALED NOW, AND ONLY BECAUSE ITS CONTENT IS AUTHORED.
+        /// The lobby drawer is the seat panel with the address row, the code row and the two entry
+        /// buttons built into it by `ConvertedMatchSetup.BuildRightPanelNetwork`, all of it sized
+        /// against a 500 px column; rebuilding that at a real size is a different job from this
+        /// one. 502 x 0.78 is 392, which is <see cref="RightRailWidth"/> exactly, so it shares the
+        /// chat's width and right edge while keeping the tuned look inside it.
+        ///
+        /// ⚠️ THE LEFT SCALE IS DELETED. See the harmony block above: it made every number on that
+        /// side a lie, and the rail is authored at its real size instead.
+        /// </summary>
         private const float RightScale = 0.78f;
 
         /// <summary>How tall the gradient bands are, as a fraction of the screen.</summary>
@@ -114,27 +244,181 @@ namespace TumbangPreso.UI
         private const float TopBandAlpha = 0.52f;
         private const float BottomBandAlpha = 0.30f;
 
-        /// <summary>The compact settings drawer is the first item in the bottom-left rail.</summary>
-        private const float SettingsWidth = 750.0f;
-        private const float SettingsCollapsedWidth = 460.0f;
-        private const float SettingsHeaderHeight = 56.0f;
-        private const float SettingsBodyHeight = 430.0f;
+        /// <summary>
+        /// How tall the opened settings card is.
+        ///
+        /// ⚠️⚠️ IT CAME DOWN FROM 430 WHEN THE FOURTH ROW LEFT. The card held MAP, MODE, BOTS and
+        /// CHARACTER; CHARACTER is now part of the player card (see <see cref="BuildIdentity"/>),
+        /// so what is left is three cyclers and the map's detail line. Leaving the old height
+        /// would have opened a drawer with 90 px of bare wood under the last row, which reads as
+        /// a row that failed to draw rather than as spacing.
+        ///
+        /// 3 rows x <see cref="SettingsRowHeight"/> + 2 gaps x 8 + the detail box + 36 of padding
+        /// is 3 x 64 + 16 + 56 + 36 = 300.
+        /// </summary>
+        private const float SettingsBodyHeight = 300.0f;
 
-        private const float SocialRailRight = 48.0f;
-        // RightColumn lives under the converted Columns container while chat is a direct canvas
-        // child. Its inherited authored offset requires a 47-unit overshoot to share chat's
-        // visible 48 px right edge.
-        private const float SocialFurnitureRight = -47.0f;
-        private const float SocialRailBottom = 40.0f;
-        private const float SocialRailWidth = 392.0f;
-        private const float SocialToggleBottom = 60.0f;
-        private const float SocialDetailsBottom = 142.0f;
-        // The drawer's authored left padding is 67 units wider than the action stack's. Offset
-        // its host so the visible MATCH SETTINGS button, START MATCH and BACK share one centre.
-        private const float SettingsRailLeft = 88.0f;
-        private const float SettingsRailBottom = 200.0f;
+        /// <summary>
+        /// One selector row: caption on the left, stepper on the right.
+        ///
+        /// ⚠️⚠️ THE AUTHORED ROWS WERE THE UGLY PART AND THE CAUSE IS ONE NUMBER. 🧑 2026-08-28:
+        /// *"match settings look ugly"*, *"revamp UI for match settings bcz its really ugly and
+        /// doesnt look good like that"*. In `MatchSetup.unity` every caption (`MapCaption`,
+        /// `ModeCaption`, `DifficultyCaption`, `FighterCaption`) is authored at **52 units** and
+        /// every value (`MapValueLabel` and its two siblings) at **34**, so the word MAP: is drawn
+        /// half again as large as the map's actual name. The label shouted and the thing it
+        /// labelled whispered, which is the whole reason the panel read as a form.
+        ///
+        /// The rebuilt row inverts that: <see cref="CaptionSize"/> 22 amber for the caption,
+        /// <see cref="ValueSize"/> 26 cream for the value. It also fixes the caption COLUMN, which
+        /// the authored `HorizontalLayoutGroup` never did: MAP:, MODE: and BOTS: are three
+        /// different widths, so the three steppers each started at a different x and nothing in
+        /// the panel lined up vertically.
+        /// </summary>
+        private const float SettingsRowHeight = 64.0f;
+        private const float SettingsCaptionWidth = 96.0f;
+        private const float SettingsArrowSize = 42.0f;
+        private const int CaptionSize = 22;
+        internal const int ValueSize = 26;
+        private const float SettingsDetailHeight = 56.0f;
 
-        private const float TabHeight = 52.0f;
+        /// <summary>
+        /// BACK, in the top-left corner the banner used to fill.
+        ///
+        /// ⚠️⚠️ IT WAS DIRECTLY UNDER START MATCH AND THAT IS A HIERARCHY FAULT, NOT A SPACING
+        /// ONE. 🧑 2026-08-28: *"put BACK somewhere else, it looks ugly that its right below start
+        /// match, it fucks up the visual hierarchy"*. The authored column stacks CONFIG, START,
+        /// STATUS, a spacer and BACK, so the screen's single most important control and its single
+        /// least important one shared an edge, the same width and the same corner. The eye reads a
+        /// stack as a list of equals.
+        ///
+        /// ⚠️ TOP-LEFT IS FREE BECAUSE THE BANNER LEFT. See <see cref="HideBanner"/>. Putting BACK
+        /// there is also where every other screen in this game keeps it in the reader's memory:
+        /// `CharacterSelect` and both overlays anchor theirs to the top-left of their card.
+        ///
+        /// ⚠️ AND IT IS SMALL AND UNSCALED. The bottom-left rail is drawn at
+        /// <see cref="LeftScale"/> 0.66; BACK sits outside that rail now, so it keeps its authored
+        /// type at a size chosen against the string rather than inheriting a shrink meant for a
+        /// panel of cyclers.
+        /// </summary>
+        private const float BackWidth = 208.0f;
+
+        /// <summary>
+        /// The player card: who you are, and who you are playing as.
+        ///
+        /// ⚠️⚠️ CHARACTER LEFT THE MATCH SETTINGS ON PURPOSE AND THE REASON IS AUTHORITY, NOT
+        /// TIDINESS. 🧑 2026-08-28: *"also maybe plan out where to put ui for char select, remove
+        /// it in match settings"*, and *"make a better button for character select and u figrue
+        /// out where to place it"*. MAP, MODE and BOTS are the LEADER'S controls: on a client all
+        /// three are greyed by `RefreshLeaderControls` because only the host may change them. Your
+        /// CHARACTER is the one choice on this screen that is always yours, whoever is hosting, so
+        /// keeping it as the fourth row of a panel that greys out told three players in every
+        /// four-player lobby that they could not pick a fighter.
+        ///
+        /// ⚠️ IT IS THE SAME PANEL IT ALWAYS OPENED. 🧑: *"I want it to lead to the same screen as
+        /// before"*. `OpenCharacterSelect` is untouched and still reveals `CharacterSelectPanel`
+        /// in place; the authored `CharacterButton` node is REPARENTED here, keeping its name, its
+        /// `Button`, its `GodotButton` skin and its handler. `docs/TODO.md` § 68.13 forbids
+        /// touching `ConvertedCharacterSelect.cs` or `CharacterSelect.unity` and neither is.
+        ///
+        /// ⚠️ NAME AND CHARACTER SIT TOGETHER BECAUSE THEY ARE ONE FACT. They are the two things
+        /// the other three people in the room see about you, and they are what the nameplate over
+        /// your body in the arena behind this card is drawn from. Splitting them put half your
+        /// identity in a corner and half in a drawer.
+        /// </summary>
+        /// <summary>
+        /// The player card matches the right-hand rail rather than choosing its own width.
+        ///
+        /// ⚠️ 392 IS <see cref="RightRailWidth"/>, WHICH IS THE CHAT'S. The card is the top of the
+        /// right-hand side and the chat is the bottom of it; giving them one width and one right
+        /// edge is what makes that side read as a column instead of as three unrelated boxes.
+        /// </summary>
+        /// <summary>
+        /// The player card's width.
+        ///
+        /// ⚠️⚠️ IT IS 330 AND NOT <see cref="RightRailWidth"/> 392, AND THAT IS A CORRECTION.
+        /// Matching the chat's width looked like the harmonious answer and produced a card with a
+        /// visible hole in it: 🧑 2026-08-28, twice, *"theres big empty space from cheska and my
+        /// name to > and edit, tighten it"* and, of the first attempt, *"i asked u to tighten this
+        /// and make stuff smaller, hhave you?"*. The first pass took the space out of the PADDING,
+        /// which was not where it was. The gap is between the END OF A SHORT LEFT-ALIGNED STRING
+        /// and an affordance pinned to the right edge, so the only thing that closes it is the
+        /// distance between those two, which is the width.
+        ///
+        /// ⚠️ THE SHARED AXIS IS THE RIGHT EDGE, NOT THE WIDTH, AND THAT IS THE HONEST RULE. A
+        /// chat log is sized by how much text fits on a line; a player card is sized by the two
+        /// names in it. Forcing one number on both is how the card ended up 60 px wider than
+        /// anything it contains. Everything on this side still starts at <see cref="EdgeMargin"/>
+        /// from the right, which is the alignment a reader actually sees.
+        ///
+        /// ⚠️ AND 330 IS MEASURED AGAINST THE WORST CASE IN THE ROSTER, NOT AGAINST `CHESKA`.
+        /// Inside the padding there are 302 px. The longest character name is `LOLA PACING`, 11
+        /// characters, about 154 px at <see cref="CardCharacterSize"/> against the 244 the row
+        /// gives it. The longest loadout line is `DECADES TUNA  ·  TSINELAS`, 25 characters and
+        /// about 225 px at <see cref="MenuKit.MinReadableUnits"/>, which is the tightest of the
+        /// three and still clears. A player name is capped at `Balance.PlayerNameMax` 14, about
+        /// 154 px at <see cref="CardNameSize"/> against 238, and the field is best-fit down to 14
+        /// units on top of that because a name is the one string here typed by a human.
+        /// </summary>
+        private const float CardWidth = 330.0f;
+
+        /// <summary>
+        /// The card's own paddings and heights, tightened once against a render.
+        ///
+        /// ⚠️⚠️ THE FIRST VERSION WAS FULL OF AIR AND 🧑 CALLED IT: *"theres big empty space from
+        /// cheska and my name to > and edit, tighten it"*, *"make font smaaller for Cheska it looks
+        /// ugly lowkey"*. Measured off `Logs/shots-runtime/Lobby-v36.png`: the name row reserved
+        /// **72 px** on the right for the word EDIT, which needs 40 at
+        /// <see cref="MenuKit.MinReadableUnits"/>, and the character row reserved 68 for a chevron
+        /// needing 22. Between the two of them the card threw away 78 px of its 392 to gutters
+        /// nothing was in, and CHESKA at 32 units in a row 82 px tall left a band of bare wood
+        /// under it.
+        ///
+        /// ⚠️ THE CARD KEEPS ITS WIDTH THOUGH, AND THAT IS DELIBERATE. It is
+        /// <see cref="RightRailWidth"/>, the chat's, so the top and bottom of the right-hand side
+        /// share one edge and one width. The dead space is taken out of the PADDING, not out of
+        /// the alignment that the rest of this pass exists to establish.
+        ///
+        /// ⚠️ AND THE GUTTERS ARE STILL BIGGER THAN THE GLYPHS THEY HOLD. `EDIT` is 40 px and gets
+        /// 56; `›` is 22 and gets 52. A gutter cut to the exact measurement is a gutter that
+        /// overlaps the first time somebody picks a longer character name, which is the failure
+        /// this file already records four times.
+        /// </summary>
+        private const float CardPadding = 14.0f;
+        private const float CardCaptionHeight = 20.0f;
+        private const float CardFieldHeight = 44.0f;
+        private const float CardCharacterHeight = 66.0f;
+        private const float CardEditGutter = 52.0f;
+        private const float CardChevronGutter = 46.0f;
+
+        /// <summary>
+        /// Type in the player card.
+        ///
+        /// ⚠️ CHESKA CAME DOWN FROM 32 TO 24 ACROSS TWO PASSES, ON REQUEST BOTH TIMES: *"make font
+        /// smaaller for Cheska it looks ugly lowkey"*, then *"i asked u to tighten this and make
+        /// stuff smaller, hhave you?"*. It sits just under <see cref="ValueSize"/> 26, which is
+        /// what the match-settings values are drawn at, because the character is a smaller claim
+        /// than the map: the row under it has to carry a can and a slipper as well.
+        ///
+        /// ⚠️ AND IT IS ABOVE `MenuKit.MinReadableUnits` 18 WITH ROOM TO SHRINK. `Parts.SetLoadout`
+        /// fits it against the real string, so a longer roster name than `LOLA PACING` costs type
+        /// size rather than running out of the card.
+        /// </summary>
+        private const int CardNameSize = 20;
+        private const int CardCharacterSize = 24;
+
+        /// <summary>
+        /// Where each piece of the right-hand rail sits, all measured up from
+        /// <see cref="BottomMargin"/> with one <see cref="RailSpacing"/> between them.
+        ///
+        /// ⚠️ COMPUTED, NOT TABULATED, AND THE PREVIOUS THREE LITERALS ARE WHY. They were 60 and
+        /// 142 against a chat at 40, and none of the three knew how tall the chat actually was:
+        /// the numbers happened to clear it and would have stopped the moment `LobbyChat.MaxLines`
+        /// changed. Stacking them off the real height is one expression that cannot drift.
+        /// </summary>
+        private static float SocialToggleBottom => ToggleBaseline;
+        private static float SocialDetailsBottom => SocialToggleBottom + ToggleHeight + RailSpacing;
+
         private const float TabWidth = 260.0f;
 
         /// <summary>
@@ -143,22 +427,29 @@ namespace TumbangPreso.UI
         /// <param name="root">The screen's own transform, already indexed by the caller.</param>
         /// <param name="find">How to reach a node by its Godot name.</param>
         /// <param name="onTab">Raised with the chosen tab: false for practice, true for lobby.</param>
-        public static Tabs Apply(Transform root, Func<string, Transform> find,
-                                 bool isLobby, Action<bool> onTab)
+        public static Parts Apply(Transform root, Func<string, Transform> find,
+                                  bool isLobby, Action<bool> onTab)
         {
             if (Style != LobbyStyle.Street) return null;
             if (root == null || find == null) return null;
 
             SoftenScrim(root, find);
-            CompactBanner(find);
-            var lobbyDrawer = MoveColumns(find);
-            EnlargePrimaryActions(find);
-            BuildIdentity(root, find);
+            HideBanner(find);
 
-            var tabs = BuildTabs(root, find, isLobby, onTab);
-            tabs.LobbyDrawer = lobbyDrawer;
-            tabs.SetActive(isLobby);
-            return tabs;
+            var parts = new Parts();
+
+            parts.LobbyDrawer = MoveColumns(root, find, parts);
+            EnlargePrimaryActions(find);
+
+            // ⚠️ AFTER `MoveColumns`, WHICH IS WHAT PUTS THE AUTHORED ROWS WHERE THIS CAN REACH
+            // THEM. The character button is lifted out of the settings drawer's row list, and
+            // `LiftSettings` has to have built that list first or this pulls a node out of a
+            // parent that is about to be reparented underneath it.
+            BuildIdentity(root, find, parts);
+
+            BuildTabs(root, find, isLobby, onTab, parts);
+            parts.SetActive(isLobby);
+            return parts;
         }
 
         /// <summary>Makes START MATCH and READY read as the lobby's primary action instead of as
@@ -173,8 +464,8 @@ namespace TumbangPreso.UI
 
                 var element = node.GetComponent<LayoutElement>();
                 if (element == null) element = node.gameObject.AddComponent<LayoutElement>();
-                element.minHeight = 116.0f;
-                element.preferredHeight = 116.0f;
+                element.minHeight = ActionHeight;
+                element.preferredHeight = ActionHeight;
                 element.flexibleHeight = 0.0f;
                 element.minWidth = LeftWidth;
                 element.preferredWidth = LeftWidth;
@@ -202,10 +493,31 @@ namespace TumbangPreso.UI
             }
         }
 
-        /// <summary>Shows the active local profile in the lobby without duplicating the editable
-        /// field from Settings. The lobby is where other players see this name, so hiding it only
-        /// in Settings makes identity feel accidental.</summary>
-        private static void BuildIdentity(Transform root, Func<string, Transform> find)
+        /// <summary>
+        /// The player card: your name, and the fighter you are taking in.
+        ///
+        /// See <see cref="CardWidth"/> for why CHARACTER lives here rather than in the match
+        /// settings, and why the two halves belong in one card.
+        ///
+        /// ⚠️⚠️ THE OLD CHIP PUT THE CAPTION AND THE FIELD SIDE BY SIDE IN A 52 px PILL AND IT
+        /// READ AS ONE BROKEN LABEL. 🧑 2026-08-28, pointing at it: *"Pic 4 fix player name"*. The
+        /// caption took the left 31 per cent of a 420 px box, which is 130 px, and the words
+        /// PLAYER NAME need about 100 at the 14 units it was set to: below `MenuKit.
+        /// MinReadableUnits` 18, which is the floor `AspectRatioProbes` asserts for exactly this
+        /// reason. What was left for the actual field was 280 px carrying a placeholder, a caret
+        /// and up to `Balance.PlayerNameMax` characters, and the two ran into each other.
+        ///
+        /// Stacking them is the fix: the caption gets a whole line at a readable size, and the
+        /// field gets the whole width. It is also what makes room for the character block, which
+        /// could not have gone anywhere near a control that was already overfull.
+        ///
+        /// ⚠️ THE PENCIL IS GONE. `Darumadrop One` has no glyph at U+270E (checked against the
+        /// font's own cmap: 525 glyphs, no `✎`, no `✓`, no `◀`), so it was drawn by whatever
+        /// system font Unity's dynamic-font fallback picked, at a different weight and a different
+        /// baseline from every other character beside it. `EDIT` is four letters the game's own
+        /// font actually has.
+        /// </summary>
+        private static void BuildIdentity(Transform root, Func<string, Transform> find, Parts parts)
         {
             var banner = find("Banner");
             Transform parent = banner != null ? banner.parent : root;
@@ -214,10 +526,10 @@ namespace TumbangPreso.UI
             if (string.IsNullOrWhiteSpace(playerName)) playerName = "Player";
             else playerName = playerName.Trim();
 
-            var chip = new GameObject("LobbyIdentity");
-            chip.transform.SetParent(parent, false);
+            var card = new GameObject("LobbyIdentity");
+            card.transform.SetParent(parent, false);
 
-            var image = chip.AddComponent<Image>();
+            var image = card.AddComponent<Image>();
             image.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
             image.type = Image.Type.Sliced;
             image.color = Color.white;
@@ -227,46 +539,99 @@ namespace TumbangPreso.UI
             rect.anchorMin = Vector2.one;
             rect.anchorMax = Vector2.one;
             rect.pivot = Vector2.one;
-            rect.anchoredPosition = new Vector2(-48.0f, -34.0f);
-            rect.sizeDelta = new Vector2(420.0f, 52.0f);
+            rect.anchoredPosition = new Vector2(-EdgeMargin, -TopMargin);
+            rect.sizeDelta = new Vector2(CardWidth, 100.0f);
 
-            var caption = MenuKit.Label(chip.transform, "PLAYER NAME", 14, UiTheme.Amber,
-                                        Vector2.zero, Vector2.zero, Vector2.zero,
-                                        TextAnchor.MiddleCenter);
-            caption.raycastTarget = false;
-            caption.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
-            caption.rectTransform.anchorMax = new Vector2(0.31f, 1.0f);
-            caption.rectTransform.offsetMin = new Vector2(10.0f, 0.0f);
-            caption.rectTransform.offsetMax = Vector2.zero;
+            var column = card.AddComponent<VerticalLayoutGroup>();
+            column.padding = new RectOffset((int)CardPadding, (int)CardPadding, 12, 14);
+            column.spacing = 3;
+            column.childControlWidth = true;
+            column.childControlHeight = true;
+            column.childForceExpandWidth = true;
+            column.childForceExpandHeight = false;
+            column.childAlignment = TextAnchor.UpperLeft;
 
+            // ⚠️ THE CARD SIZES ITSELF TO WHAT IS IN IT. The character block's height depends on
+            // whether the loadout line has anything to say, and a fixed height would either clip
+            // it or leave a strip of bare wood under it.
+            var fitter = card.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            CardCaption(card.transform, "PLAYER NAME");
+            BuildNameField(card.transform, playerName, parts);
+
+            CardCaption(card.transform, "PLAYING AS");
+            BuildCharacterButton(card.transform, find, parts);
+        }
+
+        /// <summary>One amber caption line inside the player card. ⚠️ AT
+        /// <see cref="CaptionSize"/> AND NOT BELOW: `MenuKit.MinReadableUnits` is 18 and the chip
+        /// this replaced ran its caption at 14.</summary>
+        private static void CardCaption(Transform parent, string words)
+        {
+            var label = MenuKit.Label(parent, words, MenuKit.MinReadableUnits, UiTheme.Amber,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.LowerLeft);
+            label.name = $"Caption_{words}";
+            label.raycastTarget = false;
+
+            var element = label.gameObject.AddComponent<LayoutElement>();
+            element.minHeight = CardCaptionHeight;
+            element.preferredHeight = CardCaptionHeight;
+            element.flexibleHeight = 0.0f;
+        }
+
+        private static void BuildNameField(Transform parent, string playerName, Parts parts)
+        {
             var fieldGo = new GameObject("PlayerNameEdit");
-            fieldGo.transform.SetParent(chip.transform, false);
+            fieldGo.transform.SetParent(parent, false);
+
             var fieldImage = fieldGo.AddComponent<Image>();
             fieldImage.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
             fieldImage.type = Image.Type.Sliced;
             fieldImage.color = Color.white;
 
-            var fieldRect = fieldImage.rectTransform;
-            fieldRect.anchorMin = new Vector2(0.31f, 0.0f);
-            fieldRect.anchorMax = Vector2.one;
-            fieldRect.offsetMin = new Vector2(2.0f, 6.0f);
-            fieldRect.offsetMax = new Vector2(-6.0f, -6.0f);
+            var element = fieldGo.AddComponent<LayoutElement>();
+            element.minHeight = CardFieldHeight;
+            element.preferredHeight = CardFieldHeight;
+            element.flexibleHeight = 0.0f;
 
-            var placeholder = MenuKit.Label(fieldGo.transform, "SET NAME  ✎", 17,
+            // The affordance sits at the right end of the field, out of the way of the name. It
+            // is decorative: the field itself takes the click, over its whole width.
+            var hint = MenuKit.Label(fieldGo.transform, "EDIT", MenuKit.MinReadableUnits,
+                                     UiTheme.Amber, Vector2.zero, Vector2.zero, Vector2.zero,
+                                     TextAnchor.MiddleRight);
+            hint.name = "PlayerNameEditHint";
+            hint.raycastTarget = false;
+            MenuKit.Stretch(hint.rectTransform, 0.0f);
+            hint.rectTransform.offsetMin = new Vector2(0.0f, 0.0f);
+            hint.rectTransform.offsetMax = new Vector2(-12.0f, 0.0f);
+
+            var placeholder = MenuKit.Label(fieldGo.transform, "TAP TO SET YOUR NAME", MenuKit.MinReadableUnits,
                                             UiTheme.CreamMuted, Vector2.zero, Vector2.zero,
                                             Vector2.zero, TextAnchor.MiddleLeft);
             placeholder.raycastTarget = false;
-            MenuKit.Stretch(placeholder.rectTransform, 10.0f);
+            MenuKit.Stretch(placeholder.rectTransform, 0.0f);
+            placeholder.rectTransform.offsetMin = new Vector2(14.0f, 0.0f);
+            placeholder.rectTransform.offsetMax = new Vector2(-CardEditGutter, 0.0f);
+            MenuKit.Fit(placeholder, CardWidth - (CardPadding * 2.0f) - CardEditGutter);
 
-            var typed = MenuKit.Label(fieldGo.transform, playerName, 20, UiTheme.Cream,
+            var typed = MenuKit.Label(fieldGo.transform, playerName, CardNameSize, UiTheme.Cream,
                                       Vector2.zero, Vector2.zero, Vector2.zero,
                                       TextAnchor.MiddleLeft);
             typed.raycastTarget = false;
             typed.supportRichText = false;
+
+            // ⚠️ BEST-FIT RATHER THAN A ONE-SHOT `Fit`, BECAUSE THE STRING CHANGES UNDER IT. A
+            // name is typed a character at a time and `FitEverything` does not run per keystroke,
+            // so a fitted size measured against "Ma" is still in force at "Matthew Labrador".
             typed.resizeTextForBestFit = true;
             typed.resizeTextMinSize = 13;
-            typed.resizeTextMaxSize = 20;
-            MenuKit.Stretch(typed.rectTransform, 10.0f);
+            typed.resizeTextMaxSize = CardNameSize;
+            MenuKit.Stretch(typed.rectTransform, 0.0f);
+            typed.rectTransform.offsetMin = new Vector2(14.0f, 0.0f);
+            typed.rectTransform.offsetMax = new Vector2(-CardEditGutter, 0.0f);
 
             var field = fieldGo.AddComponent<InputField>();
             field.targetGraphic = fieldImage;
@@ -284,37 +649,267 @@ namespace TumbangPreso.UI
                 Settings.SettingsStore.Current.PlayerName = clean;
                 Settings.SettingsStore.Save();
                 field.SetTextWithoutNotify(clean);
+                parts.NameCommitted?.Invoke();
             });
         }
 
-        /// <summary>Keeps the screen title inside the top navigation rail instead of letting the
-        /// converted banner occupy the whole upper-left quadrant.</summary>
-        private static void CompactBanner(Func<string, Transform> find)
+        /// <summary>
+        /// Lifts the authored `CharacterButton` into the player card and gives it two lines.
+        ///
+        /// ⚠️⚠️ THE NODE IS MOVED, NOT REPLACED, AND THAT IS WHAT KEEPS IT WIRED.
+        /// `ConvertedMatchSetup.Wire` calls `OnClick("CharacterButton", OpenCharacterSelect)`
+        /// BEFORE the chrome runs, and `ConvertedScreen` holds `Transform` references from its own
+        /// index: reparenting one does not change what `Node("CharacterButton")` returns, and
+        /// rebuilding it would leave a handler attached to a button nobody can see. That is
+        /// `docs/TODO.md` § 68.4's rule, and it is why this reads as a repositioning.
+        ///
+        /// ⚠️⚠️ THE AUTHORED `Label` IS DEACTIVATED AND TWO STABLE ONES REPLACE IT, which is
+        /// `EnlargePrimaryActions`' finding applied a second time: that child's rect is driven by
+        /// the layout chain the button just left, and it collapses to zero width on the frame
+        /// either drawer rebuilds. The pair is also the point of the redesign. One line of
+        /// `CHESKA · KALAWANG · CROCS ▸` at 24 units in a 370 px box is 27 characters that
+        /// `MenuKit.Fit` has to grind down toward its floor, and what it produces is a caption
+        /// where the character's NAME, which is the thing you chose, is the same size as the
+        /// slipper you did not think about.
+        ///
+        /// ⚠️ `›` RATHER THAN `▸`. Neither `▸` (U+25B8) nor `▶` (U+25B6) is in Darumadrop One;
+        /// `›` (U+203A) is. See <see cref="BuildIdentity"/>'s note on the font's cmap.
+        /// </summary>
+        private static void BuildCharacterButton(Transform parent, Func<string, Transform> find,
+                                                 Parts parts)
         {
-            var banner = find("Banner") as RectTransform;
-            if (banner == null) return;
+            var node = find("CharacterButton") as RectTransform;
+            if (node == null) return;
 
-            banner.anchorMin = new Vector2(0.0f, 1.0f);
-            banner.anchorMax = new Vector2(0.0f, 1.0f);
-            banner.pivot = new Vector2(0.0f, 1.0f);
-            banner.anchoredPosition = new Vector2(0.0f, -40.0f);
-            banner.sizeDelta = new Vector2(520.0f, 112.0f);
+            // ⚠️ THE ROW IT CAME OUT OF GOES WITH IT. `FighterRow` is a caption plus this button;
+            // left behind it would draw the word CHARACTER: over an empty stretch of the settings
+            // drawer. Deactivated rather than destroyed, per § 68.4: `Classic` still uses it.
+            var fighterRow = node.parent;
+            node.SetParent(parent, false);
+            if (fighterRow != null && fighterRow.name == "FighterRow")
+                fighterRow.gameObject.SetActive(false);
+
+            var element = node.GetComponent<LayoutElement>();
+            if (element == null) element = node.gameObject.AddComponent<LayoutElement>();
+            element.minHeight = CardCharacterHeight;
+            element.preferredHeight = CardCharacterHeight;
+            element.flexibleHeight = 0.0f;
+            element.minWidth = 0.0f;
+            element.preferredWidth = -1.0f;
+            element.flexibleWidth = 1.0f;
+
+            var authored = node.GetComponentInChildren<Text>(true);
+            if (authored != null && authored.name == "Label") authored.gameObject.SetActive(false);
+
+            var name = MenuKit.Label(node, "", CardCharacterSize, UiTheme.Cream,
+                                     Vector2.zero, Vector2.zero, Vector2.zero,
+                                     TextAnchor.MiddleLeft);
+            name.name = "CharacterName";
+            name.raycastTarget = false;
+            name.horizontalOverflow = HorizontalWrapMode.Overflow;
+            name.rectTransform.anchorMin = new Vector2(0.0f, 0.46f);
+            name.rectTransform.anchorMax = Vector2.one;
+            name.rectTransform.offsetMin = new Vector2(18.0f, 0.0f);
+            name.rectTransform.offsetMax = new Vector2(-CardChevronGutter, -4.0f);
+
+            var loadout = MenuKit.Label(node, "", MenuKit.MinReadableUnits, UiTheme.CreamMuted,
+                                        Vector2.zero, Vector2.zero, Vector2.zero,
+                                        TextAnchor.MiddleLeft);
+            loadout.name = "CharacterLoadout";
+            loadout.raycastTarget = false;
+            loadout.horizontalOverflow = HorizontalWrapMode.Overflow;
+            loadout.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+            loadout.rectTransform.anchorMax = new Vector2(1.0f, 0.46f);
+            loadout.rectTransform.offsetMin = new Vector2(18.0f, 6.0f);
+            loadout.rectTransform.offsetMax = new Vector2(-CardChevronGutter, 0.0f);
+
+            var chevron = MenuKit.Label(node, "›", 30, UiTheme.Amber,
+                                        Vector2.zero, Vector2.zero, Vector2.zero,
+                                        TextAnchor.MiddleRight);
+            chevron.name = "CharacterChevron";
+            chevron.raycastTarget = false;
+            MenuKit.Stretch(chevron.rectTransform, 0.0f);
+            chevron.rectTransform.offsetMax = new Vector2(-18.0f, 0.0f);
+
+            parts.CharacterName = name;
+            parts.CharacterLoadout = loadout;
         }
 
         /// <summary>
-        /// The two tab buttons, handed back to the screen that owns them.
+        /// ⚠️⚠️ THE BANNER IS HIDDEN IN `Street`, NOT SHRUNK. 🧑 2026-08-28, pointing at the yellow
+        /// LOBBY pennant: *"also remove this lobby thing bcz we all know this is lobby already"*.
+        /// It is a 648x144 piece of art whose only content is a word the `MULTIPLAYER` tab
+        /// directly under it already says, and it sat in the one corner nothing else could use.
+        /// BACK moves into the space it leaves (see <see cref="BackWidth"/>).
         ///
-        /// ⚠️⚠️ THEY ARE NOT KEPT IN A STATIC. `LobbyChrome` is a static helper and a static field
-        /// holding a scene object survives the scene that made it: a second load of `MatchSetup`
-        /// would find a reference to a destroyed button that still answers a C# `!= null` check
-        /// only until Unity's overload runs, and the tab would look wired and do nothing. The
-        /// screen holds these for exactly as long as it exists.
+        /// ⚠️ `SetActive(false)`, NOT DESTROYED, AND `BannerLabel` IS STILL WRITTEN.
+        /// `ConvertedScreen` indexes every node in `Start` before `Wire` runs, so the transform
+        /// stays resolvable and `Refresh`'s `SetHeadline("BannerLabel", ...)` keeps working rather
+        /// than logging a missing node on every redraw. `Classic` never calls this and keeps the
+        /// pennant, which is the whole point of that style existing.
         /// </summary>
-        public sealed class Tabs
+        private static void HideBanner(Func<string, Transform> find)
+        {
+            var banner = find("Banner");
+            if (banner == null) return;
+
+            banner.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// Moves BACK out of the bottom-left action stack and into the top-left corner.
+        ///
+        /// See <see cref="BackWidth"/> for why. ⚠️ IT RUNS BEFORE `Corner`, because `Narrow`
+        /// rewrites the `sizeDelta` of every child of the column it is given, and a BACK button
+        /// still in that column would be stretched to <see cref="LeftWidth"/> on its way out.
+        /// </summary>
+        private static void LiftBack(Transform root, Func<string, Transform> find,
+                                     Transform leftColumn)
+        {
+            var back = Descend(leftColumn, "BackButton") as RectTransform;
+            if (back == null) return;
+
+            var banner = find("Banner");
+            Transform parent = banner != null ? banner.parent : root;
+
+            back.SetParent(parent, false);
+
+            back.anchorMin = new Vector2(0.0f, 1.0f);
+            back.anchorMax = new Vector2(0.0f, 1.0f);
+            back.pivot = new Vector2(0.0f, 1.0f);
+            back.anchoredPosition = new Vector2(EdgeMargin, -TopMargin);
+            back.sizeDelta = new Vector2(BackWidth, HeaderHeight);
+
+            // ⚠️ THE LAYOUT ELEMENT GOES DEAD. It carried the minimums the old column sized it
+            // against, and a `LayoutElement` on a node with no layout group parent is inert but
+            // misleading; `ignoreLayout` says out loud that nothing above drives this rect now.
+            var element = back.GetComponent<LayoutElement>();
+            if (element != null) element.ignoreLayout = true;
+
+            var label = back.GetComponentInChildren<Text>();
+            if (label != null)
+            {
+                label.fontSize = 24;
+                MenuKit.Fit(label, BackWidth - 48.0f);
+            }
+
+            // The spacer existed only to push BACK to the bottom of the stack it has just left.
+            var spacer = Descend(leftColumn, "Spacer");
+            if (spacer != null) spacer.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// Every piece of `Street` chrome the screen has to talk to after it is built, handed back
+        /// to the screen that owns it.
+        ///
+        /// ⚠️⚠️ NONE OF THIS IS KEPT IN A STATIC. `LobbyChrome` is a static helper and a static
+        /// field holding a scene object survives the scene that made it: a second load of
+        /// `MatchSetup` would find a reference to a destroyed button that still answers a C#
+        /// `!= null` check only until Unity's overload runs, and the tab would look wired and do
+        /// nothing. The screen holds these for exactly as long as it exists.
+        ///
+        /// ⚠️ IT WAS CALLED `Tabs` AND IT STOPPED BEING ONLY THAT when the player card gained the
+        /// character button, whose two labels the screen has to write on every refresh. A class
+        /// named for one of the four things it carries is how the next reader concludes the other
+        /// three are incidental.
+        /// </summary>
+        public sealed class Parts
         {
             public Button Practice;
             public Button Multiplayer;
             public GameObject LobbyDrawer;
+
+            /// <summary>The big line on the character button: who you are playing.</summary>
+            public Text CharacterName;
+
+            /// <summary>The small line under it: the can and the slipper.</summary>
+            public Text CharacterLoadout;
+
+            /// <summary>Raised when the player finishes editing their name in the card, so the
+            /// screen can push it to the lobby rather than waiting for the next redraw.</summary>
+            public Action NameCommitted;
+
+            /// <summary>
+            /// Rewrites the closed drawer's one-line summary from the three value labels.
+            ///
+            /// ⚠️⚠️ IT WAS BUILT ONCE AND THEN ONLY UPDATED ON CLOSE, SO IT SHIPPED THE AUTHORED
+            /// PLACEHOLDERS. `Logs/shots-runtime/Lobby-v35.png` reads `ESKINITA · CAPTURE ·
+            /// NORMAL` on a lobby whose settings are Hero Strike and HARD, because `CAPTURE` is
+            /// the string `MatchSetup.unity` ships in `ModeValueLabel` and this summary was
+            /// composed inside `LobbyChrome.Apply`, which `ConvertedMatchSetup.Wire` runs BEFORE
+            /// its first `Refresh`. A player who never opened the drawer was told the wrong mode
+            /// for the whole session, and `CAPTURE` is not even a mode this game has: it is a
+            /// leftover from the deleted 2v2 design, so it reads as a third mode nobody can find.
+            ///
+            /// ⚠️ IT HANGS OFF `Refresh` NOW, WHICH IS WHAT ACTUALLY CHANGES THE VALUES. Map,
+            /// mode and difficulty all move through `Refresh`, whether from an arrow on this
+            /// machine or a `SyncMap` from the host, and the summary is a view of them.
+            /// </summary>
+            public Action RefreshSummary;
+
+            /// <summary>The two pieces of right-hand furniture that have to sit above the chat.
+            /// See <see cref="StackRight"/>.</summary>
+            public RectTransform LobbyToggleRect;
+            public RectTransform LobbyDetailsRect;
+
+            private float _stackedFor = -1.0f;
+
+            /// <summary>
+            /// Stacks LOBBY & SERVERS, and the card above it, on top of the chat.
+            ///
+            /// ⚠️⚠️ AGAINST THE CHAT'S MEASURED HEIGHT, NOT ITS CAPACITY, AND THAT DISTINCTION IS
+            /// THE WHOLE BUG. `LobbyChat` reserves six line slots and then collapses onto whatever
+            /// is in them, so an empty log is about 65 px and the arithmetic said 224.
+            /// `Logs/shots-runtime/Lobby-v36.png` has the pill floating over the fourth character
+            /// with 160 px of bare road under it. `LobbyChat.PanelHeight` is the real number.
+            ///
+            /// ⚠️ AND IT IS RE-ASKED, BECAUSE THE CHAT GROWS AS LINES ARRIVE. A single placement at
+            /// build time is correct for exactly as long as nobody says anything. The guard makes
+            /// re-asking every frame free.
+            /// </summary>
+            public void StackRight(float chatHeight)
+            {
+                if (Mathf.Approximately(_stackedFor, chatHeight)) return;
+                _stackedFor = chatHeight;
+
+                // ⚠️ THE HIGHER OF THE TWO. `ToggleBaseline` puts this pill on the same line as
+                // MATCH SETTINGS, which is what was asked for and what is true of an empty chat;
+                // the second term is what stops the sixth chat line growing up underneath it.
+                float toggleBottom = Mathf.Max(ToggleBaseline,
+                                               BottomMargin + chatHeight + RailSpacing);
+
+                if (LobbyToggleRect != null)
+                    LobbyToggleRect.anchoredPosition = new Vector2(-EdgeMargin, toggleBottom);
+
+                if (LobbyDetailsRect != null)
+                    LobbyDetailsRect.anchoredPosition =
+                        new Vector2(-EdgeMargin, toggleBottom + ToggleHeight + RailSpacing);
+            }
+
+            /// <summary>
+            /// Writes the character block.
+            ///
+            /// ⚠️ THE NAME IS FITTED AND THE LOADOUT IS NOT ALLOWED TO GROW INTO IT. Both are
+            /// `Overflow` labels in a fixed 430 px card, and a hero name plus a can plus a slipper
+            /// is three arbitrary roster strings: `ConvertedScreen.SetHeadline` records this
+            /// project shipping that overflow four separate times.
+            /// </summary>
+            public void SetLoadout(string character, string loadout)
+            {
+                if (CharacterName != null)
+                {
+                    CharacterName.text = character;
+                    CharacterName.fontSize = CardCharacterSize;
+                    MenuKit.Fit(CharacterName, CardWidth - (CardPadding * 2.0f) - CardChevronGutter);
+                }
+
+                if (CharacterLoadout != null)
+                {
+                    CharacterLoadout.text = loadout;
+                    CharacterLoadout.fontSize = MenuKit.MinReadableUnits;
+                    MenuKit.Fit(CharacterLoadout, CardWidth - (CardPadding * 2.0f) - CardChevronGutter);
+                }
+            }
 
             /// <summary>
             /// ⚠️ THE VARIATION IS SWAPPED AND RE-APPLIED, NOT THE IMAGE COLOUR. `GodotButton`
@@ -479,7 +1074,8 @@ namespace TumbangPreso.UI
         /// makes a column as tall as the rows inside it, and anchoring the pivot to the BOTTOM is
         /// what makes it grow upward from the corner instead of down off the screen.
         /// </summary>
-        private static GameObject MoveColumns(Func<string, Transform> find)
+        private static GameObject MoveColumns(Transform root, Func<string, Transform> find,
+                                              Parts parts)
         {
             var columns = find("Columns");
             var left = find("LeftColumn");
@@ -498,31 +1094,46 @@ namespace TumbangPreso.UI
             var columnsRect = columns as RectTransform;
             if (columnsRect != null) MenuKit.Stretch(columnsRect, 0.0f);
 
-            // Settings, START/READY, status and BACK are one bottom-left rail. The column grows
-            // upward when settings open, so the primary action never floats midway down the room.
-            Corner(left as RectTransform, LeftWidth, toLeft: true, toTop: false);
+            LiftBack(root, find, left);
 
-            // The social controls mirror that rail on the right. Details are hidden by default;
-            // when requested they grow upward from the rail rather than sitting over a face.
-            Corner(right as RectTransform, RightWidth, toLeft: false, toTop: false);
+            var banner = find("Banner");
+            Transform canvasRoot = banner != null ? banner.parent : root;
 
             GameObject lobbyDrawer = null;
+
             if (right is RectTransform rightRect)
             {
-                rightRect.anchoredPosition = new Vector2(-SocialFurnitureRight, SocialDetailsBottom);
-                lobbyDrawer = BuildLobbyDrawer(rightRect);
+                // ⚠️⚠️ THE RIGHT-HAND FURNITURE LEAVES `Columns` ENTIRELY, AND THAT IS WHY ITS
+                // RIGHT MARGIN USED TO NEED A -47 FUDGE. `Columns` is a child of `Body`, which is a
+                // full-screen `VerticalLayoutGroup`: disabling the group ON `Columns` stops it
+                // driving its own children, and does nothing about `Body` driving `Columns` itself.
+                // So an anchor of "48 px in from my parent's right edge" was 48 px in from a rect
+                // somebody else was still moving, and `Logs/shots-runtime/Lobby-v36.png` has the
+                // LOBBY & SERVERS pill about 145 px from the screen edge against the chat's 48.
+                // A constant that compensates for a layout group is a constant that is wrong the
+                // next time anything above it changes; reparenting to the canvas removes the
+                // argument instead of settling it.
+                rightRect.SetParent(canvasRoot, false);
+
+                // The authored column keeps its scale so its contents stay the size they were
+                // tuned at. See `RightScale`.
+                Corner(rightRect, RightWidth, toLeft: false, toTop: false);
+                rightRect.anchoredPosition = new Vector2(-EdgeMargin, SocialDetailsBottom);
+
+                lobbyDrawer = BuildLobbyDrawer(canvasRoot, rightRect, parts);
             }
 
-            LiftSettings(find, left);
+            BuildLeftRail(root, find, left, parts);
             return lobbyDrawer;
         }
 
         /// <summary>Keeps network mechanics available without permanently covering the fourth
         /// character. The card opens on demand; chat follows the bottom edge of whichever state
         /// is visible.</summary>
-        private static GameObject BuildLobbyDrawer(RectTransform details)
+        private static GameObject BuildLobbyDrawer(Transform canvasRoot, RectTransform details,
+                                                   Parts parts)
         {
-            if (details == null || details.parent == null) return null;
+            if (details == null || canvasRoot == null) return null;
 
             // The authored social card reserves room for rows removed by the lobby redesign.
             // Fit the live share/action content so opening it does not needlessly cover P4.
@@ -537,12 +1148,26 @@ namespace TumbangPreso.UI
                 panelElement.flexibleHeight = 0.0f;
             }
 
-            var toggle = MenuKit.WoodButton(details.parent, "LOBBY & SERVERS  ▼", Vector2.zero,
-                                            new Vector2(-SocialFurnitureRight, SocialToggleBottom),
-                                            new Vector2(RightWidth, 58.0f), null,
-                                            "WoodAmberButton");
+            // ⚠️⚠️ UNSCALED, AND THE SAME SIZE AND TYPE AS MATCH SETTINGS. 🧑 2026-08-28: *"align
+            // the yellow thing with match settings use same font size too"*, *"tighten lobby and
+            // servers so muc yellow empty space"*. It used to be authored at `RightWidth` and drawn
+            // at `RightScale` so it matched the CARD it opens; that made it 392 wide against the
+            // left toggle's 460, at the wood variation's authored type against the left one's 26,
+            // sitting 63 px lower. Two controls that do the same thing looked like two different
+            // controls. The card behind it keeps its scale, because its contents are authored; the
+            // pill has nothing in it but a word.
+            var toggle = MenuKit.WoodButton(canvasRoot, "LOBBY & SERVERS  ▼", Vector2.zero,
+                                            Vector2.zero,
+                                            new Vector2(RightRailWidth, ToggleHeight),
+                                            null, "WoodAmberButton");
             toggle.name = "LobbyDrawerToggle";
-            toggle.transform.localScale = new Vector3(RightScale, RightScale, 1.0f);
+
+            var toggleCaption = toggle.GetComponentInChildren<Text>();
+            if (toggleCaption != null)
+            {
+                toggleCaption.fontSize = 26;
+                MenuKit.Fit(toggleCaption, RightRailWidth - 48.0f);
+            }
 
             var toggleRect = toggle.transform as RectTransform;
             if (toggleRect != null)
@@ -550,9 +1175,11 @@ namespace TumbangPreso.UI
                 toggleRect.anchorMin = new Vector2(1.0f, 0.0f);
                 toggleRect.anchorMax = new Vector2(1.0f, 0.0f);
                 toggleRect.pivot = new Vector2(1.0f, 0.0f);
-                toggleRect.anchoredPosition = new Vector2(-SocialFurnitureRight,
-                                                          SocialToggleBottom);
+                toggleRect.anchoredPosition = new Vector2(-EdgeMargin, SocialToggleBottom);
             }
+
+            parts.LobbyToggleRect = toggleRect;
+            parts.LobbyDetailsRect = details;
 
             var label = toggle.GetComponentInChildren<Text>();
             details.gameObject.SetActive(false);
@@ -564,10 +1191,6 @@ namespace TumbangPreso.UI
                 details.gameObject.SetActive(open);
                 if (label != null)
                     label.text = open ? "CLOSE LOBBY DETAILS  ▲" : "LOBBY & SERVERS  ▼";
-
-                var canvas = details.GetComponentInParent<Canvas>();
-                var chat = canvas != null ? canvas.GetComponentInChildren<LobbyChat>(true) : null;
-                chat?.PlaceBottomRight(SocialRailRight, SocialRailBottom, SocialRailWidth);
             });
 
             return toggle.gameObject;
@@ -592,32 +1215,68 @@ namespace TumbangPreso.UI
         /// the MAP row, not a status line; leaving it at the bottom would strand it under a START
         /// button describing a map picker that is no longer next to it.
         /// </summary>
-        private static void LiftSettings(Func<string, Transform> find, Transform leftColumn)
+        private static void BuildLeftRail(Transform root, Func<string, Transform> find,
+                                          Transform leftColumn, Parts parts)
         {
             var config = find("ConfigPanel");
             if (config == null || leftColumn == null) return;
 
-            var host = new GameObject("SettingsDrawer");
-            host.transform.SetParent(leftColumn.parent, false);
-            host.transform.localScale = new Vector3(LeftScale, LeftScale, 1.0f);
+            var banner = find("Banner");
+            Transform canvasRoot = banner != null ? banner.parent : root;
+
+            // ⚠️⚠️ ONE CONTAINER, NOT TWO, AND THAT IS THE WHOLE FIX FOR THE RAGGED LEFT EDGE.
+            // See the harmony block at the top of this file: the settings drawer and the action
+            // stack used to be two hosts at two anchors with two scales, so their left edges
+            // differed by 20 px and their widths by 80. A single `VerticalLayoutGroup` with
+            // `childForceExpandWidth` on gives every child the rail's width by construction, and
+            // there is no arithmetic left to get wrong.
+            //
+            // ⚠️ IT IS A DIRECT CHILD OF THE CANVAS, NOT OF `Body`. `Body` is a full-screen
+            // `VerticalLayoutGroup` and anything parented into it is positioned by that group,
+            // which would fight the corner anchor below and win.
+            var host = new GameObject("LobbyLeftRail");
+            host.transform.SetParent(canvasRoot, false);
 
             var rect = host.AddComponent<RectTransform>();
             rect.anchorMin = Vector2.zero;
             rect.anchorMax = Vector2.zero;
+
+            // ⚠️ THE PIVOT IS THE BOTTOM-LEFT CORNER, so the rail GROWS UPWARD when the drawer
+            // opens. With a centred pivot, opening the settings would have slid START MATCH down
+            // off the bottom of the screen by half the drawer's height.
             rect.pivot = Vector2.zero;
-            rect.anchoredPosition = new Vector2(SettingsRailLeft, SettingsRailBottom);
-            rect.sizeDelta = new Vector2(SettingsWidth, 100.0f);
+            rect.anchoredPosition = new Vector2(EdgeMargin, BottomMargin);
+            rect.sizeDelta = new Vector2(LeftWidth, 100.0f);
 
             var layout = host.AddComponent<VerticalLayoutGroup>();
-            layout.spacing = 6;
-            // The closed rail is deliberately narrower than the expanded controls. Let each
-            // child keep its own width so opening the drawer can grow right temporarily without
-            // making the always-visible header cover the first character.
-            layout.childControlWidth = false;
+            layout.spacing = RailSpacing;
+            layout.childControlWidth = true;
             layout.childControlHeight = true;
             layout.childForceExpandWidth = true;
             layout.childForceExpandHeight = false;
-            layout.childAlignment = TextAnchor.UpperLeft;
+            layout.childAlignment = TextAnchor.LowerLeft;
+
+            // ⚠⚠ THE TOGGLE AND ITS SUMMARY ARE ONE BLOCK, NOT TWO RAIL CHILDREN. 🧑 2026-08-28:
+            // *"space BETWEEN MATCH settinsg and start mathch too biug"*. As siblings they took a
+            // full RailSpacing above AND below the summary, so the caption ON the button was as
+            // far from it as START MATCH was, and the eye read three unrelated rows instead of a
+            // labelled control and an action. Nesting them costs one GameObject and makes the gap
+            // that matters (HeaderGap 2) independent of the gap between pieces of furniture.
+            var header = new GameObject("SettingsHeader");
+            header.transform.SetParent(host.transform, false);
+            header.AddComponent<RectTransform>();
+
+            var headerLayout = header.AddComponent<VerticalLayoutGroup>();
+            headerLayout.spacing = HeaderGap;
+            headerLayout.childControlWidth = true;
+            headerLayout.childControlHeight = true;
+            headerLayout.childForceExpandWidth = true;
+            headerLayout.childForceExpandHeight = false;
+
+            var headerElement = header.AddComponent<LayoutElement>();
+            headerElement.minHeight = ToggleHeight + HeaderGap + SummaryHeight;
+            headerElement.preferredHeight = ToggleHeight + HeaderGap + SummaryHeight;
+            headerElement.flexibleHeight = 0.0f;
 
             var fitter = host.AddComponent<ContentSizeFitter>();
             fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
@@ -626,27 +1285,47 @@ namespace TumbangPreso.UI
             // The drawer header is the only furniture visible until the player asks to edit the
             // match. This follows the lobby hierarchy in the reference: cast first, settings on
             // demand, primary action always available.
-            var toggle = MenuKit.WoodButton(host.transform, "MATCH SETTINGS  ▼", Vector2.zero,
+            var toggle = MenuKit.WoodButton(header.transform, "MATCH SETTINGS  ▼", Vector2.zero,
                                             Vector2.zero,
-                                            new Vector2(SettingsCollapsedWidth, SettingsHeaderHeight), null,
+                                            new Vector2(LeftWidth, ToggleHeight), null,
                                             "WoodAmberButton");
-            var toggleElement = toggle.gameObject.AddComponent<LayoutElement>();
-            toggleElement.minHeight = SettingsHeaderHeight;
-            toggleElement.preferredHeight = SettingsHeaderHeight;
+            toggle.name = "SettingsDrawerToggle";
 
-            var summary = MenuKit.Label(host.transform, "", 18, UiTheme.CreamMuted,
+            // ⚠️ THE CAPTION IS SIZED AGAINST THE RAIL RATHER THAN LEFT AT THE VARIATION'S
+            // AUTHORED SIZE. `WoodAmberButton` is drawn for short words like BACK, so
+            // `MATCH SETTINGS ▼` sat small in the middle of a 460 px pill with air on both sides,
+            // which is half of what 🧑 meant by *"big ass empty space left and right"*.
+            var toggleCaption = toggle.GetComponentInChildren<Text>();
+            if (toggleCaption != null)
+            {
+                toggleCaption.fontSize = 26;
+                MenuKit.Fit(toggleCaption, LeftWidth - 48.0f);
+            }
+
+            var toggleElement = toggle.gameObject.AddComponent<LayoutElement>();
+            toggleElement.minHeight = ToggleHeight;
+            toggleElement.preferredHeight = ToggleHeight;
+            toggleElement.flexibleHeight = 0.0f;
+
+            // ⚠️ CENTRED, ON REQUEST: *"make this middle aligned"*. It is a caption ON the button
+            // above it rather than a line of prose, and the button's own label is centred, so a
+            // left-aligned caption under a centred label reads as two unrelated things that happen
+            // to share a left edge.
+            var summary = MenuKit.Label(header.transform, "", SummarySize, UiTheme.CreamMuted,
                                         Vector2.zero, Vector2.zero,
-                                        new Vector2(SettingsCollapsedWidth, 28.0f),
-                                        TextAnchor.MiddleLeft);
+                                        new Vector2(LeftWidth, SummaryHeight),
+                                        TextAnchor.MiddleCenter);
+            summary.name = "SettingsSummary";
             summary.raycastTarget = false;
             var summaryElement = summary.gameObject.AddComponent<LayoutElement>();
-            summaryElement.minHeight = 28.0f;
-            summaryElement.preferredHeight = 28.0f;
+            summaryElement.minHeight = SummaryHeight;
+            summaryElement.preferredHeight = SummaryHeight;
+            summaryElement.flexibleHeight = 0.0f;
 
             var body = new GameObject("SettingsBody");
             body.transform.SetParent(host.transform, false);
             var bodyImage = body.AddComponent<Image>();
-            bodyImage.rectTransform.sizeDelta = new Vector2(SettingsWidth, SettingsBodyHeight);
+            bodyImage.rectTransform.sizeDelta = new Vector2(LeftWidth, SettingsBodyHeight);
             bodyImage.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
             bodyImage.type = Image.Type.Sliced;
             bodyImage.color = Color.white;
@@ -654,9 +1333,10 @@ namespace TumbangPreso.UI
             var bodyElement = body.AddComponent<LayoutElement>();
             bodyElement.minHeight = SettingsBodyHeight;
             bodyElement.preferredHeight = SettingsBodyHeight;
+            bodyElement.flexibleHeight = 0.0f;
 
             var bodyLayout = body.AddComponent<VerticalLayoutGroup>();
-            bodyLayout.padding = new RectOffset(18, 18, 16, 16);
+            bodyLayout.padding = new RectOffset(16, 16, 16, 16);
             bodyLayout.spacing = 8;
             bodyLayout.childControlWidth = true;
             bodyLayout.childControlHeight = true;
@@ -669,12 +1349,27 @@ namespace TumbangPreso.UI
             if (rows != null)
             {
                 rows.SetParent(body.transform, false);
+
+                float rowsHeight = (SettingsRowHeight * 3.0f) + 16.0f;
+
                 var rowsElement = rows.GetComponent<LayoutElement>();
                 if (rowsElement == null) rowsElement = rows.gameObject.AddComponent<LayoutElement>();
-                rowsElement.minHeight = 338.0f;
-                rowsElement.preferredHeight = 338.0f;
+                rowsElement.minHeight = rowsHeight;
+                rowsElement.preferredHeight = rowsHeight;
                 rowsElement.flexibleHeight = 0.0f;
-                Narrow(rows as RectTransform, SettingsWidth - 36.0f);
+
+                var rowsLayout = rows.GetComponent<HorizontalOrVerticalLayoutGroup>();
+                if (rowsLayout != null) rowsLayout.spacing = 8.0f;
+
+                Narrow(rows as RectTransform, LeftWidth - 32.0f);
+
+                DressSelectorRow(rows, "MapRow", "MapCaption", "MAP", "MapSelector",
+                                 "MapPrevButton", "MapValueLabel", "MapNextButton");
+                DressSelectorRow(rows, "ModeRow", "ModeCaption", "MODE", "ModeSelector",
+                                 "ModePrevButton", "ModeValueLabel", "ModeNextButton");
+                DressSelectorRow(rows, "DifficultyRow", "DifficultyCaption", "BOTS",
+                                 "DifficultySelector", "DifficultyPrevButton",
+                                 "DifficultyValueLabel", "DifficultyNextButton");
             }
 
             var detail = find("DetailBox");
@@ -684,8 +1379,25 @@ namespace TumbangPreso.UI
                 var detailElement = detail.GetComponent<LayoutElement>();
                 if (detailElement == null)
                     detailElement = detail.gameObject.AddComponent<LayoutElement>();
-                detailElement.minHeight = 44.0f;
-                detailElement.preferredHeight = 44.0f;
+                detailElement.minHeight = SettingsDetailHeight;
+                detailElement.preferredHeight = SettingsDetailHeight;
+                detailElement.flexibleHeight = 0.0f;
+
+                // ⚠️ THE MAP'S DETAIL LINE IS PROSE AND HAS TO WRAP. It is authored `Overflow`
+                // like every other converted label, and "LRT Gilmore strip. Viaduct pillars, PC
+                // Express, pisonet." is 58 characters against a 714 px box: at the authored 21
+                // units it drew straight past the panel's right border and over the cast.
+                // `ConvertedMatchSetup.FitAsBlock` already lists `DetailLabel`, and `FitBlock`
+                // only takes the height once the label is allowed to wrap in the first place.
+                var detailLabel = Descend(detail, "DetailLabel")?.GetComponent<Text>();
+                if (detailLabel != null)
+                {
+                    detailLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
+                    detailLabel.alignment = TextAnchor.UpperLeft;
+                    detailLabel.color = UiTheme.CreamMuted;
+                    detailLabel.fontSize = MenuKit.MinReadableUnits;
+                    detailLabel.raycastTarget = false;
+                }
             }
 
             config.gameObject.SetActive(false);
@@ -700,10 +1412,17 @@ namespace TumbangPreso.UI
 
             Action refreshSummary = () =>
             {
+                if (summary == null) return;
+
                 summary.text = $"{value("MapValueLabel")}  •  {value("ModeValueLabel")}  •  " +
                                $"{value("DifficultyValueLabel")}";
-                MenuKit.Fit(summary, SettingsCollapsedWidth - 18.0f, 13);
+                summary.fontSize = SummarySize;
+                MenuKit.Fit(summary, LeftWidth - 8.0f, 14);
             };
+
+            // See `Parts.RefreshSummary`: the screen calls this from `Refresh`, because that is
+            // what actually changes the three values this line is a view of.
+            parts.RefreshSummary = refreshSummary;
 
             var toggleLabel = toggle.GetComponentInChildren<Text>();
             bool open = false;
@@ -726,6 +1445,245 @@ namespace TumbangPreso.UI
                 Canvas.ForceUpdateCanvases();
                 RepairActionLabels(find);
             });
+
+            // ⚠️⚠️ THE ACTION AND THE STATUS LINE JOIN THE SAME RAIL, WHICH IS THE OTHER HALF OF
+            // THE HARMONY FIX. They stayed in the authored `LeftColumn` before this, at a different
+            // anchor and a different scale, which is why `Lobby-v35.png` has START MATCH starting
+            // 20 px to the left of the MATCH SETTINGS pill above it and running 80 px wider.
+            //
+            // ⚠️ BOTH ACTION BUTTONS ARE MOVED, AND `RefreshActionButtons` STILL DECIDES WHICH IS
+            // VISIBLE. Only one is ever active, so the group leaves no gap for the hidden one.
+            foreach (string name in new[] { "StartButton", "PrimaryButton", "StatusLabel" })
+            {
+                var node = Descend(leftColumn, name);
+                if (node == null) continue;
+
+                node.SetParent(host.transform, false);
+            }
+
+            // ⚠️ THE AUTHORED COLUMN IS EMPTIED AND SWITCHED OFF, NOT DESTROYED. `Classic` is a
+            // working screen at every commit (`docs/TODO.md` § 68.3) and `LobbyChrome.Style` is the
+            // one line that chooses; destroying the column would make the revert a repair.
+            leftColumn.gameObject.SetActive(false);
+
+            var status = Descend(host.transform, "StatusLabel");
+            if (status != null)
+            {
+                var statusElement = status.GetComponent<LayoutElement>();
+                if (statusElement == null)
+                    statusElement = status.gameObject.AddComponent<LayoutElement>();
+                statusElement.minHeight = 56.0f;
+                statusElement.preferredHeight = 56.0f;
+                statusElement.flexibleHeight = 0.0f;
+
+                var statusText = status.GetComponent<Text>();
+                if (statusText != null)
+                {
+                    // ⚠️ IT WRAPS. `AutoHost`'s refusal message names the port, the likely cause
+                    // and the way out, which is well over one line of a 560 px rail; authored
+                    // `Overflow` drew it straight across the cast's feet.
+                    statusText.horizontalOverflow = HorizontalWrapMode.Wrap;
+                    statusText.alignment = TextAnchor.UpperCenter;
+                    statusText.fontSize = 20;
+                    statusText.raycastTarget = false;
+                }
+
+                // ⚠️⚠️ IT STARTS HIDDEN AND ONLY AN ALERT OPENS IT. 🧑 2026-08-28, pointing under
+                // START MATCH: *"remove undertext for start match"*. The line was carrying `Lobby
+                // open. Share the code, or press JOIN.` permanently, which is a sentence describing
+                // a state the screen already shows: the join code is in the drawer, the JOIN button
+                // is on it, and the tab says MULTIPLAYER.
+                //
+                // ⚠️ IT IS NOT DELETED THOUGH, AND THE REASON IS THE FOUR FAILURE MESSAGES.
+                // `AutoHost` writes the refused-port reason here, `HandleClientDisconnected` writes
+                // why a connection ended, `ToggleOnline` writes why a relay room could not open,
+                // and `OnPrimaryPressed` writes "still connecting". Those are the only things on
+                // this screen a player has to ACT on, and deleting the label would leave all four
+                // with nowhere to land. `ConvertedMatchSetup.WriteStatus` shows it for an alert and
+                // hides it for news, so the chatter goes and the errors stay.
+                status.gameObject.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// Turns one authored selector row into the shape the whole panel is built from: a fixed
+        /// caption column on the left, and a stepper of a fixed height on the right.
+        ///
+        /// See <see cref="SettingsRowHeight"/> for the two measured faults this fixes (the 52-unit
+        /// caption over the 34-unit value, and the three ragged caption widths). What follows is
+        /// what each line is for.
+        ///
+        /// ⚠️⚠️ THE AUTHORED NODES ARE RESTYLED, NEVER REBUILT. `MapPrevButton`,
+        /// `MapValueLabel` and `MapNextButton` carry the wiring `ConvertedMatchSetup.Wire` put on
+        /// them, the `TextureButtonFeedback` that makes an arrow press, and the `GodotOutline`
+        /// that gives the type its ink edge. Building fresh ones would be four names to reproduce
+        /// per row and a silent break of `docs/TODO.md` § 68.4 if any were spelled differently.
+        ///
+        /// ⚠️ EVERY STEP IS GUARDED SEPARATELY, so a row whose caption was renamed loses its
+        /// caption and keeps its stepper rather than throwing halfway and leaving the panel in
+        /// neither layout.
+        /// </summary>
+        private static void DressSelectorRow(Transform rows, string row, string caption,
+                                             string word, string selector, string prev,
+                                             string value, string next)
+        {
+            var rowNode = Descend(rows, row) as RectTransform;
+            if (rowNode == null) return;
+
+            var rowElement = rowNode.GetComponent<LayoutElement>();
+            if (rowElement == null) rowElement = rowNode.gameObject.AddComponent<LayoutElement>();
+            rowElement.minHeight = SettingsRowHeight;
+            rowElement.preferredHeight = SettingsRowHeight;
+            rowElement.flexibleHeight = 0.0f;
+
+            var rowLayout = rowNode.GetComponent<HorizontalLayoutGroup>();
+            if (rowLayout != null)
+            {
+                rowLayout.padding = new RectOffset(0, 0, 0, 0);
+                rowLayout.spacing = 14.0f;
+                rowLayout.childControlWidth = true;
+                rowLayout.childControlHeight = true;
+                rowLayout.childForceExpandWidth = false;
+                rowLayout.childForceExpandHeight = true;
+                rowLayout.childAlignment = TextAnchor.MiddleLeft;
+            }
+
+            // ⚠️⚠️ THE CAPTION COLUMN IS FIXED AND THAT IS THE HALF NOBODY SEES. MAP:, MODE: and
+            // BOTS: are three different widths, and the authored group sized each caption to its
+            // own string, so the three steppers started at three different x positions. Nothing in
+            // the panel lined up with anything, which is most of what "ugly" was.
+            var captionNode = Descend(rowNode, caption);
+            var captionText = captionNode == null ? null : captionNode.GetComponent<Text>();
+
+            if (captionText != null)
+            {
+                // ⚠️⚠️ THE COLON GOES, AND IT IS WORTH 54 px OF THE RAIL. The scene authors these
+                // as `'MAP:'`, `'MODE:'` and `'BOTS:'`, and the caption column has to be as wide as
+                // the longest of them; dropping the colon takes the longest from `BOTS:` to `BOTS`
+                // and let `SettingsCaptionWidth` come down from 150 to 96. 🧑 2026-08-28, of the
+                // rail: *"do u not feel weird that theres b ig ass empty space left and right"*.
+                // That space came out of the caption column, which was mostly air, rather than out
+                // of the value's type size, which is what a reader is actually looking at.
+                //
+                // ⚠️ THE COLON IS ALSO REDUNDANT HERE IN A WAY IT WAS NOT IN THE AUTHORED PANEL.
+                // A colon says "what follows is the value"; the value now sits in its own recessed
+                // well with an arrow either side, which says it louder.
+                captionText.text = word;
+                captionText.fontSize = CaptionSize;
+                captionText.color = UiTheme.Amber;
+                captionText.alignment = TextAnchor.MiddleLeft;
+                captionText.horizontalOverflow = HorizontalWrapMode.Overflow;
+                captionText.verticalOverflow = VerticalWrapMode.Overflow;
+                captionText.raycastTarget = false;
+
+                var element = captionNode.GetComponent<LayoutElement>();
+                if (element == null) element = captionNode.gameObject.AddComponent<LayoutElement>();
+                element.minWidth = SettingsCaptionWidth;
+                element.preferredWidth = SettingsCaptionWidth;
+                element.flexibleWidth = 0.0f;
+
+                MenuKit.Fit(captionText, SettingsCaptionWidth - 8.0f);
+            }
+
+            var selectorNode = Descend(rowNode, selector) as RectTransform;
+            if (selectorNode != null)
+            {
+                // The authored plate is the recessed well the value sits in. Repainted dark so the
+                // value reads as SET INTO the panel rather than as another plank on top of it.
+                var plate = selectorNode.GetComponent<Image>();
+                if (plate != null)
+                {
+                    plate.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
+                    plate.type = Image.Type.Sliced;
+                    plate.color = Color.white;
+                    plate.raycastTarget = false;
+                }
+
+                var element = selectorNode.GetComponent<LayoutElement>();
+                if (element == null)
+                    element = selectorNode.gameObject.AddComponent<LayoutElement>();
+                element.minWidth = 0.0f;
+                element.preferredWidth = -1.0f;
+                element.flexibleWidth = 1.0f;
+                element.minHeight = SettingsRowHeight - 8.0f;
+                element.preferredHeight = SettingsRowHeight - 8.0f;
+
+                // ⚠️ THE AUTHORED INSET IS 45x27 AND IT WAS CUTTING THE ROW IN HALF VERTICALLY.
+                // `Inner` is a stretched child of the plate, so 27 off a 62 px stepper leaves the
+                // arrows 35 px tall inside a 62 px well. 10 keeps a visible border and gives the
+                // arrows the height they were drawn at.
+                var inner = Descend(selectorNode, "Inner") as RectTransform;
+                if (inner != null)
+                {
+                    inner.anchorMin = Vector2.zero;
+                    inner.anchorMax = Vector2.one;
+                    inner.offsetMin = new Vector2(10.0f, 8.0f);
+                    inner.offsetMax = new Vector2(-10.0f, -8.0f);
+
+                    var innerLayout = inner.GetComponent<HorizontalLayoutGroup>();
+                    if (innerLayout != null)
+                    {
+                        innerLayout.padding = new RectOffset(0, 0, 0, 0);
+                        innerLayout.spacing = 6.0f;
+                        innerLayout.childControlWidth = true;
+                        innerLayout.childControlHeight = true;
+                        innerLayout.childForceExpandWidth = false;
+                        innerLayout.childForceExpandHeight = true;
+                        innerLayout.childAlignment = TextAnchor.MiddleCenter;
+                    }
+                }
+            }
+
+            Arrow(rowNode, prev);
+            Arrow(rowNode, next);
+
+            var valueNode = Descend(rowNode, value);
+            var valueText = valueNode == null ? null : valueNode.GetComponent<Text>();
+
+            if (valueText != null)
+            {
+                valueText.fontSize = ValueSize;
+                valueText.color = UiTheme.Cream;
+                valueText.alignment = TextAnchor.MiddleCenter;
+                valueText.horizontalOverflow = HorizontalWrapMode.Overflow;
+                valueText.verticalOverflow = VerticalWrapMode.Overflow;
+                valueText.raycastTarget = false;
+
+                var element = valueNode.GetComponent<LayoutElement>();
+                if (element == null) element = valueNode.gameObject.AddComponent<LayoutElement>();
+
+                // ⚠️ FLEXIBLE, WITH THE TWO ARROWS FIXED EITHER SIDE. The authored row gave the
+                // value a preferred width, so a short word like NONE left the two arrows floating
+                // in the middle of the well and a long one like ILALIM NG TULAY pushed them out of
+                // it. Pinning the arrows and letting the value take what is left is what makes the
+                // three rows read as one control repeated.
+                element.minWidth = 0.0f;
+                element.preferredWidth = -1.0f;
+                element.flexibleWidth = 1.0f;
+            }
+        }
+
+        /// <summary>One stepper arrow: square, fixed, and never resized by the value beside it.
+        /// ⚠️ THE ARROWS ARE TEXTURES, NOT TYPE (`TextureButtonFeedback` over an `Image`), so
+        /// their size is a rect and not a font size, and the font's missing `◀` glyph cannot
+        /// reach them.</summary>
+        private static void Arrow(Transform row, string name)
+        {
+            var node = Descend(row, name);
+            if (node == null) return;
+
+            var element = node.GetComponent<LayoutElement>();
+            if (element == null) element = node.gameObject.AddComponent<LayoutElement>();
+
+            element.minWidth = SettingsArrowSize;
+            element.preferredWidth = SettingsArrowSize;
+            element.flexibleWidth = 0.0f;
+            element.minHeight = SettingsArrowSize;
+            element.preferredHeight = SettingsArrowSize;
+            element.flexibleHeight = 0.0f;
+
+            var image = node.GetComponent<Image>();
+            if (image != null) image.preserveAspect = true;
         }
 
         private static void RepairActionLabels(Func<string, Transform> find)
@@ -778,6 +1736,19 @@ namespace TumbangPreso.UI
             return null;
         }
 
+        /// <summary>
+        /// Puts an AUTHORED column into a bottom corner at <see cref="RightScale"/>.
+        ///
+        /// ⚠️⚠️ ONLY THE RIGHT-HAND COLUMN GOES THROUGH THIS NOW. The left side is built as a real
+        /// rail by `BuildLeftRail` and is not scaled at all; see the harmony block at the top of
+        /// this file for why the two-scaled-hosts arrangement had to go. This is kept because the
+        /// lobby drawer's contents are authored against a 500 px column and rebuilding them is a
+        /// different job.
+        ///
+        /// ⚠️ THE `toTop` ARM WENT WITH THE TOP RAIL IT SERVED. Nothing is corner-anchored to the
+        /// top any more: BACK, the tabs and the player card each place themselves against
+        /// <see cref="TopMargin"/>.
+        /// </summary>
         private static void Corner(RectTransform column, float width, bool toLeft, bool toTop)
         {
             if (column == null) return;
@@ -788,7 +1759,7 @@ namespace TumbangPreso.UI
             column.anchorMax = new Vector2(toLeft ? 0.0f : 1.0f, y);
             column.pivot = new Vector2(toLeft ? 0.0f : 1.0f, y);
             column.anchoredPosition = new Vector2(toLeft ? EdgeMargin : -EdgeMargin,
-                                                  toTop ? -TopRailOffset : BottomMargin);
+                                                  toTop ? -TopMargin : BottomMargin);
             column.sizeDelta = new Vector2(width, column.sizeDelta.y);
 
             // ⚠️⚠️ THE SIZE IS SET **AND** THE COLUMN IS SCALED, AND THE SCALE IS THE HALF THAT
@@ -805,8 +1776,7 @@ namespace TumbangPreso.UI
             // ⚠️ THE PIVOT IS THE CORNER THE COLUMN IS ANCHORED TO, so it shrinks TOWARD that
             // corner and the margin stays the margin. With a centred pivot the same scale would
             // have pulled the panel away from the edge by half the difference.
-            float scale = toLeft ? LeftScale : RightScale;
-            column.localScale = new Vector3(scale, scale, 1.0f);
+            column.localScale = new Vector3(RightScale, RightScale, 1.0f);
 
             var fitter = column.GetComponent<ContentSizeFitter>();
             if (fitter == null) fitter = column.gameObject.AddComponent<ContentSizeFitter>();
@@ -924,8 +1894,8 @@ namespace TumbangPreso.UI
         /// one-load-per-frame latch would not even deduplicate it, because that latch is scoped to
         /// a single frame on purpose.
         /// </summary>
-        private static Tabs BuildTabs(Transform root, Func<string, Transform> find,
-                                      bool isLobby, Action<bool> onTab)
+        private static void BuildTabs(Transform root, Func<string, Transform> find,
+                                      bool isLobby, Action<bool> onTab, Parts parts)
         {
             var banner = find("Banner");
             Transform parent = banner != null ? banner.parent : root;
@@ -937,23 +1907,20 @@ namespace TumbangPreso.UI
             barRect.anchorMin = new Vector2(0.5f, 1.0f);
             barRect.anchorMax = new Vector2(0.5f, 1.0f);
             barRect.pivot = new Vector2(0.5f, 1.0f);
-            barRect.anchoredPosition = new Vector2(0.0f, -34.0f);
-            barRect.sizeDelta = new Vector2((TabWidth * 2.0f) + 12.0f, TabHeight);
+            barRect.anchoredPosition = new Vector2(0.0f, -TopMargin);
+            barRect.sizeDelta = new Vector2((TabWidth * 2.0f) + RailSpacing, HeaderHeight);
 
             var layout = bar.AddComponent<HorizontalLayoutGroup>();
-            layout.spacing = 12;
+            layout.spacing = RailSpacing;
             layout.childControlWidth = true;
             layout.childControlHeight = true;
             layout.childForceExpandWidth = true;
             layout.childForceExpandHeight = true;
 
-            return new Tabs
-            {
-                Practice = Tab(bar.transform, "PracticeTab", "PRACTICE", !isLobby,
-                               () => onTab?.Invoke(false)),
-                Multiplayer = Tab(bar.transform, "MultiplayerTab", "MULTIPLAYER", isLobby,
-                                  () => onTab?.Invoke(true)),
-            };
+            parts.Practice = Tab(bar.transform, "PracticeTab", "PRACTICE", !isLobby,
+                                 () => onTab?.Invoke(false));
+            parts.Multiplayer = Tab(bar.transform, "MultiplayerTab", "MULTIPLAYER", isLobby,
+                                    () => onTab?.Invoke(true));
         }
 
         private static Button Tab(Transform parent, string name, string text, bool active,
@@ -964,13 +1931,13 @@ namespace TumbangPreso.UI
             // whichever state the skin writes next, which is how a hovered button ends up the
             // wrong colour a frame later.
             var button = MenuKit.WoodButton(parent, text, Vector2.zero, Vector2.zero,
-                                            new Vector2(TabWidth, TabHeight), onClick,
+                                            new Vector2(TabWidth, HeaderHeight), onClick,
                                             active ? "WoodAmberButton" : "WoodButton");
             button.name = name;
 
             var element = button.gameObject.AddComponent<LayoutElement>();
-            element.minHeight = TabHeight;
-            element.preferredHeight = TabHeight;
+            element.minHeight = HeaderHeight;
+            element.preferredHeight = HeaderHeight;
 
             var label = button.GetComponentInChildren<Text>();
 

@@ -232,8 +232,20 @@ namespace TumbangPreso.Tests
         public void GuidedTrainingCoversTheLiveGameWithoutCallingVerbsForThePlayer()
         {
             string training = File.ReadAllText(Path.Combine(RuntimeRoot, "GuidedTraining.cs"));
-            string panel = File.ReadAllText(Path.Combine(
-                RuntimeRoot, "UI", "ConvertedTutorialPanel.cs"));
+
+            // ⚠️⚠️ THE ROUTE'S ENTRY POINT MOVED, AND THAT IS WHY THIS READS TWO FILES INSTEAD OF
+            // ONE. It used to live on `ConvertedTutorialPanel` as a button at the bottom of a
+            // six-page reference card. 🧑 2026-08-28: *"the text based tutorial is stale and should
+            // be deleted and completley replaced by game tutorial"*, and *"i want it so that if u
+            // click tutorial u go straight to training"*. The panel is deleted; TUTORIAL on the
+            // title screen enters the route directly.
+            //
+            // ⚠️ BOTH HALVES ARE ASSERTED BECAUSE EITHER ONE ALONE IS SILENT. A `SceneFlow` that
+            // can start training which nothing presses is a dead feature, and a menu button
+            // pointing at a method that no longer sets `GuidedTutorial` is a button that loads
+            // Eskinita as an ordinary practice match with no lessons in it and no error anywhere.
+            string flow = File.ReadAllText(Path.Combine(RuntimeRoot, "UI", "SceneFlow.cs"));
+            string menu = File.ReadAllText(Path.Combine(RuntimeRoot, "UI", "ConvertedMainMenu.cs"));
 
             foreach (string lesson in new[]
             {
@@ -257,10 +269,56 @@ namespace TumbangPreso.Tests
                     "training completed a gameplay verb for the player instead of observing input");
             }
 
-            StringAssert.Contains("START TRAINING", panel,
-                "the existing How to Play panel has no way to launch playable training");
+            StringAssert.Contains("GuidedTutorial = true", flow,
+                "SceneFlow.StartTraining no longer arms the guided route, so the TUTORIAL button "
+                + "loads Eskinita as an ordinary practice match with no lessons in it");
+
+            StringAssert.Contains("SceneFlow.StartTraining", menu,
+                "the title screen's TUTORIAL button no longer reaches playable training, and the "
+                + "text panel that used to carry the only other way in is deleted");
+
             Assert.AreEqual(17, GuidedTraining.LessonCount,
                 "the objective counter no longer agrees with the complete training route");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ ONE PRESS IS ONE SOUND, AND FOR A WHILE IT WAS THREE. The UI click is added in
+        /// three independent layers (the control on pointer down, `ConvertedScreen.WireOne` on the
+        /// click it raises, and several handlers on top of that), and `AudioDirector.PlayAtVaried`
+        /// has no dedupe: a map arrow started three copies of the same 40 ms recording in one
+        /// frame, which sum to about +9.5 dB and read as a clipped clack. `MenuSfx.Play` is where
+        /// the rule lives; this is what stops somebody "simplifying" the guard away or routing a
+        /// call site straight back at the director.
+        ///
+        /// ⚠️ IT IS A SOURCE TEST BECAUSE THE OBSERVABLE IS A SOUND. `GameServices.Audio` is null
+        /// outside a running game, so `MenuSfx.Play` is a no-op that returns void and there is
+        /// nothing for an assertion to look at. What CAN be asserted is that the guard is still
+        /// written down and that the one bypass that existed has not come back.
+        /// </summary>
+        [Test]
+        public void EveryMenuSoundGoesThroughTheOncePerFrameGuard()
+        {
+            string sfx = File.ReadAllText(Path.Combine(RuntimeRoot, "UI", "MenuSfx.cs"));
+
+            StringAssert.Contains("Time.frameCount", sfx,
+                "MenuSfx no longer guards a cue to one play per frame, so a single press fires "
+                + "the click once per layer that noticed it. See its header.");
+
+            foreach (string file in new[] { "ConvertedScreen.cs", "GodotButton.cs",
+                                            "ArrowButtonView.cs", "TextureButtonFeedback.cs" })
+            {
+                string text = File.ReadAllText(Path.Combine(RuntimeRoot, "UI", file));
+
+                StringAssert.DoesNotContain("PlayAt(\"ui_", text,
+                    $"{file} plays a UI cue straight at the AudioDirector, which routes around "
+                    + "MenuSfx's one-per-frame guard and re-opens the stacked click.");
+            }
+
+            string screen = File.ReadAllText(Path.Combine(RuntimeRoot, "UI", "ConvertedScreen.cs"));
+
+            StringAssert.Contains("ui_back", screen,
+                "a BACK button no longer plays `ui_back`, so the button and the Escape key that "
+                + "do the identical thing answer with two different sounds. See WireOne.");
         }
 
         private static string ReadRuntimeSource()
