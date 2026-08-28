@@ -59,17 +59,25 @@ TALL_WARNING = 0.160
 class Recipe:
     """One roster id and the source it is cut from.
 
-    `split` picks the shoe out of a pair:
-      "pair"  cluster the loose parts in two and keep the heavier half
-      "names" keep only the objects whose name contains one of `keep`
-      "whole" the source is already a single shoe, take all of it
+    The two stages run in this order and are independent:
 
-    ⚠️ PREFER "names" WHENEVER THE SOURCE LABELS ITS LEFT AND RIGHT. Clustering is a
-    guess and it guessed wrong on the clog: 🧑 2026-08-28, looking at the render,
-    *"yo what sup with crocs why is there 2"*. The heel strap of the right shoe sits
-    closer to the left shoe's centroid than to its own, so 2-means claimed it and the
-    prop shipped with a floating fragment of the other foot. The clog source names its
-    objects `sabo_L_*` and `Sabo_R_*`, which is not a guess at all.
+    `keep`   name fragments. Only objects whose name contains one of them survive.
+             Empty keeps everything.
+    `split`  "pair"  cluster what is left in two and keep the heavier half
+             "whole" what is left is already a single shoe
+
+    ⚠️ PREFER A NAME FILTER OVER CLUSTERING WHENEVER THE SOURCE LABELS ITS PARTS.
+    Clustering is a guess and it guessed wrong on the clog: 🧑 2026-08-28, looking at
+    the render, *"yo what sup with crocs why is there 2"*. The heel strap of the right
+    shoe sits closer to the left shoe's centroid than to its own, so 2-means claimed it
+    and the prop shipped with a floating fragment of the other foot. That source names
+    its objects `sabo_L_*` and `Sabo_R_*`, which is not a guess at all.
+
+    ⚠️ AND THE TWO STAGES COMPOSE BECAUSE A SOURCE CAN NEED BOTH. The loafer source is
+    a shop display: five objects, of which four are a pillar, a booth and a wooden
+    shelf standing under the shoes rather than being them. The name filter drops the
+    furniture and the pair split then picks one shoe out of what is left. Neither
+    stage alone would have produced a shoe.
     """
 
     def __init__(self, entry_id, source, split="pair", keep=(), credit=""):
@@ -83,12 +91,40 @@ class Recipe:
 RECIPES = (
     Recipe("tsinelas", "src_tsinelas_flip_flops.glb", "pair",
            credit="Flip Flops by Remie07, CC-BY"),
-    Recipe("pantulog", "src_pantulog_rubber_slide.glb", "pair",
-           credit="Slippers, CC-BY"),
+    # ⚠️ PANTULOG AND PANGBANYO ARE TWO DIFFERENT SHOES AND THE INDEX IS WHY THEY BOTH EXIST.
+    # 🧑 2026-08-28: *"the current pantulog should be renamed to another slipper, keep the
+    # currentpantulog js give it a diff name"*, *"this one should be pantulog"*. PANTULOG
+    # is slipper index 2 and that index crosses the wire, so the id cannot move: the
+    # fuzzy house slipper takes over index 2's MODEL, and the rubber bathroom slide it
+    # displaced is appended as PANGBANYO at index 10 rather than renamed in place.
+    Recipe("pantulog", "src_pantulog_fuzzy.glb", "pair",
+           credit="Fuzzy Slippers by Benz, CC-BY"),
+    Recipe("pangbanyo", "src_pangbanyo_rubber_slide.glb", "pair",
+           credit="Worn rubber slide, CC-BY"),
     Recipe("alpombra", "src_alpombra_heel_mule.glb", "pair",
            credit="Fashion heel sandals, CC-BY"),
-    Recipe("crocs", "src_crocs_sabo_clog.glb", "names", keep=("sabo_L_",),
+    Recipe("crocs", "src_crocs_sabo_clog.glb", "whole", keep=("sabo_L_",),
            credit="[XYZ School] HW6-Detailing. Sabo by andrew.rudik, CC-BY"),
+
+    # These three arrive as a single shoe already, so there is nothing to split.
+    # ⚠️ THE BUILD PRINTS EACH FINISHED SIZE AND THAT IS THE CHECK ON "whole". A single
+    # shoe comes out about 0.432 x 0.17; anything near 0.432 x 0.30 is two of them and
+    # the recipe is wrong.
+    Recipe("spartan", "src_spartan_worn_flip_flop.glb", "whole",
+           credit="Worn Flip Flop by inciprocal, CC-BY"),
+    Recipe("heels", "src_heels_plateau_sandal.glb", "whole",
+           credit="Plateau Sandal Heels by hiirusama, CC-BY"),
+    Recipe("sandals", "src_sandals_chappal.glb", "whole",
+           credit="Chappal by Amad Junaid, CC-BY"),
+
+    # ⚠️ THE LOAFER SOURCE IS A SHOP DISPLAY, NOT A PAIR OF SHOES. Five objects, and
+    # four of them are a pillar, a booth panel and a wooden shelf that the shoes stand
+    # ON: `PIllar 3.014_Display_Wood_0`, `PIllar 3.014_Booth_White_0`,
+    # `PIllar 3.014_BlackMatte_0` and `Group_6_8.317_White.009_0`, all sitting between
+    # z 27 and z 135 with the shoes at z 143 to 172. Importing it whole would have put
+    # a shop fitting in somebody's hand.
+    Recipe("loafers", "src_loafers_school.glb", "pair", keep=("Plane.039",),
+           credit="Shoes Loafers (A6-2) by eeelabvisual, CC-BY"),
 )
 
 
@@ -210,6 +246,76 @@ def keep_one_shoe(parts):
     return [o for _, _, o in groups[keep_index]]
 
 
+def level(obj):
+    """Lay the shoe flat, sole down, before anything measures it.
+
+    ⚠️⚠️ WITHOUT THIS, TWO SOURCES CAME OUT STANDING ON END. `align_to_x` only ever
+    corrected YAW, on the assumption that every source already had its sole in the
+    ground plane. That held for the first four and broke on the second four: the heel
+    and the loafer are both photographed on a shop display, pitched back on a slanted
+    shelf, so the shoe is rotated about a horizontal axis as well. The build's own
+    height warning is what caught it, reporting a 0.432 m loafer as 0.361 m TALL when a
+    loafer is about 0.10, and a render confirmed the shoe was tipped rather than tall.
+
+    ⚠️ THE THREE AXES COME FROM THE VERTEX COVARIANCE, NOT THE BOUNDING BOX. A box drawn
+    round a tilted shoe is bigger than the shoe on every axis and its proportions say
+    nothing about which way is up. The eigenvectors of the covariance are the shoe's own
+    length, width and thickness whatever angle it was exported at, and a shoe is always
+    longest down its length and shortest through its sole, so the ordering is stable.
+
+    ⚠️ AND WHICH END OF THE SHORT AXIS IS "UP" IS DECIDED BY FOOTPRINT, NOT BY GUESSING.
+    An eigenvector has no sign. A shoe spreads out at the sole and narrows through the
+    upper, so the half with the larger XY footprint is the bottom. Getting this backwards
+    puts every slipper in the game sole-up in the hand, which is exactly the class of
+    fault `Slipper.CarryRotation`'s note already records once.
+    """
+    verts = [obj.matrix_world @ v.co for v in obj.data.vertices]
+    n = len(verts)
+    mean = Vector((sum(v.x for v in verts) / n,
+                   sum(v.y for v in verts) / n,
+                   sum(v.z for v in verts) / n))
+
+    cov = [[0.0] * 3 for _ in range(3)]
+    for v in verts:
+        d = (v.x - mean.x, v.y - mean.y, v.z - mean.z)
+        for i in range(3):
+            for j in range(3):
+                cov[i][j] += d[i] * d[j]
+
+    import numpy
+
+    values, vectors = numpy.linalg.eigh(numpy.array(cov))
+    order = list(numpy.argsort(values))[::-1]          # length, width, thickness
+    axes = [Vector(vectors[:, k]) for k in order]
+
+    # Right-handed, or the mesh comes through mirrored and every logo reads backwards.
+    if axes[0].cross(axes[1]).dot(axes[2]) < 0.0:
+        axes[2] = -axes[2]
+
+    basis = Matrix((axes[0], axes[1], axes[2])).to_4x4()
+    obj.matrix_world = basis @ obj.matrix_world
+    flatten(obj)
+
+    low, high = bounds((obj,))
+    mid_z = (low.z + high.z) * 0.5
+    halves = [[], []]
+    for v in obj.data.vertices:
+        w = obj.matrix_world @ v.co
+        halves[0 if w.z < mid_z else 1].append(w)
+
+    def footprint(group):
+        if not group:
+            return 0.0
+        return ((max(p.x for p in group) - min(p.x for p in group))
+                * (max(p.y for p in group) - min(p.y for p in group)))
+
+    if footprint(halves[1]) > footprint(halves[0]):
+        obj.matrix_world = Matrix.Rotation(math.pi, 4, "X") @ obj.matrix_world
+        flatten(obj)
+        return True
+    return False
+
+
 def align_to_x(obj):
     """Turn the shoe about Z until it lies along +X, toe first.
 
@@ -272,7 +378,7 @@ def build(recipe):
     for o in meshes:
         flatten(o)
 
-    if recipe.split == "names":
+    if recipe.keep:
         wanted = [o for o in meshes
                   if any(fragment in o.name for fragment in recipe.keep)]
         if not wanted:
@@ -283,8 +389,9 @@ def build(recipe):
             if o not in wanted:
                 bpy.data.objects.remove(o, do_unlink=True)
         print(f"    kept by name: {[o.name for o in wanted]}")
-        model = join_all(wanted)
-    elif recipe.split == "pair":
+        meshes = wanted
+
+    if recipe.split == "pair":
         joined = join_all(meshes)
         parts = loose_parts(joined)
         kept = keep_one_shoe(parts)
@@ -292,8 +399,10 @@ def build(recipe):
     else:
         model = join_all(meshes)
 
+    flipped = level(model)
     turned = align_to_x(model)
-    print(f"    turned {turned:+.1f} deg to lie along +X")
+    print(f"    levelled{' and turned sole-down' if flipped else ''}, "
+          f"then {turned:+.1f} deg to lie along +X")
 
     low, high = bounds((model,))
     length = high.x - low.x

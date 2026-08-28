@@ -37,21 +37,15 @@ MAX_HEIGHT = 0.160
 # these are not the models we used"*. The finding recorded there is the rule here:
 # TWO GENERATORS MUST NEVER SHARE AN OUTPUT PATH.
 #
-# ⚠️ THE THREE ROWS BELOW ARE STILL LIVE AND THIS SCRIPT IS NOT DEAD CODE. PAMBAHAY has
-# no replacement and still wants the old flat treatment. SPARTAN and HEELS are queued
-# for replacement in `docs/TODO.md` § 70.8 but nothing has been downloaded for them yet,
-# so this is what currently builds them. Delete a row the moment its replacement lands,
-# in the same commit, not afterwards.
+# ⚠️ PAMBAHAY IS THE ONLY ROW LEFT, AND THAT IS THE WHOLE REASON THIS FILE STILL EXISTS.
+# SPARTAN, HEELS and SANDALS were deleted from this table on 2026-08-28 in the same
+# commit that gave them new sources, alongside TSINELAS and ALPOMBRA earlier the same
+# day. Every one of them writes to a `tsinelas_<id>.glb` that
+# `tools/build_slipper_models.py` now owns, so a row left here is not dead code, it is a
+# generator that silently reverts somebody else's art on its next run.
 RECIPES = (
-    # id, source, object-name fragments, optional (axis, keep-positive), colours
     ("pambahay", "source_tsinelas_flip_flops.glb", ("group1162052169",), None,
      ((0.18, 0.10, 0.20, 1.0), (0.73, 0.38, 0.56, 1.0))),
-    ("spartan", "source_spartan_flip_flops.glb", ("Box003", "Line005"), None,
-     ((0.055, 0.048, 0.045, 1.0), (0.70, 0.055, 0.075, 1.0))),
-    ("heels", "source_heels_stiletto.glb", ("Stillettos",), (1, False),
-     ((0.085, 0.065, 0.075, 1.0), (0.62, 0.10, 0.22, 1.0))),
-    ("sandals", "source_sandals.glb", ("Sandal",), None,
-     ((0.22, 0.25, 0.10, 1.0), (0.18, 0.095, 0.055, 1.0))),
 )
 
 

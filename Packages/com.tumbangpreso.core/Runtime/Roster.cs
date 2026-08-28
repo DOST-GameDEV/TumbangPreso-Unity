@@ -196,6 +196,14 @@ namespace TumbangPreso.Core
             new RosterEntry("pambahay",  "PAMBAHAY",   4,    2,    4),
             new RosterEntry("heels",     "HEELS",      2,    5,    1),
             new RosterEntry("sandals",   "SANDALS",    4,    3,    2),
+            new RosterEntry("loafers",   "LOAFERS",    3,    4,    3),
+            // ⚠️ PANGBANYO IS THE SHOE THAT USED TO BE PANTULOG, APPENDED RATHER THAN
+            // RENAMED IN PLACE. 🧑 wanted the fuzzy house slipper to be PANTULOG and the
+            // rubber bathroom slide it displaced kept under another name. PANTULOG is
+            // index 2 and that index crosses the wire, so the id stays put and only its
+            // MODEL changed; moving the slide down to a new id here is what keeps every
+            // existing peer's slipper_index of 2 meaning the same seat it always did.
+            new RosterEntry("pangbanyo", "PANGBANYO",  3,    2,    4),
         };
 
         /// <summary>

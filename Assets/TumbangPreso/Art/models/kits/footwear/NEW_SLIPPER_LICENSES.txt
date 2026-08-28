@@ -23,9 +23,17 @@ Creative Commons Attribution 4.0
 https://creativecommons.org/licenses/by/4.0/
 
 PANTULOG
-Worn rubber slide, downloaded 2026-08-28
+"Fuzzy Slippers" by Benz
+https://sketchfab.com/3d-models/fuzzy-slippers-f6dcfa2215324d8d9b96216f06490d52
 Creative Commons Attribution 4.0
 https://creativecommons.org/licenses/by/4.0/
+
+PANGBANYO
+Worn rubber bathroom slide, downloaded 2026-08-28
+Creative Commons Attribution 4.0
+https://creativecommons.org/licenses/by/4.0/
+NOTE: this is the shoe that WAS pantulog. It kept its model and took a new id at
+slipper index 10 rather than being renamed in place, because index 2 crosses the wire.
 
 ALPOMBRA
 Fashion block-heel mule, downloaded 2026-08-28
@@ -48,22 +56,31 @@ Creative Commons Attribution 3.0
 https://creativecommons.org/licenses/by/3.0/
 
 SPARTAN
-"Flip flops" by Poly by Google
-https://poly.pizza/m/aIMn3mC1FJ-
-Creative Commons Attribution 3.0
-https://creativecommons.org/licenses/by/3.0/
+"Worn Flip Flop" by inciprocal
+https://sketchfab.com/3d-models/worn-flip-flop-000074a334c541878360457c672b6c2e
+Creative Commons Attribution 4.0
+https://creativecommons.org/licenses/by/4.0/
 
 HEELS
-"Stiletto" by jeremy
-https://poly.pizza/m/bn9fdr4k-FU
-Creative Commons Attribution 3.0
-https://creativecommons.org/licenses/by/3.0/
+"Plateau Sandal Heels" by hiirusama
+https://sketchfab.com/3d-models/plateau-sandal-heels-f47312e36fac4030bf8432a8bc0c5d68
+Creative Commons Attribution 4.0
+https://creativecommons.org/licenses/by/4.0/
 
 SANDALS
-"Sandal" by jeremy
-https://poly.pizza/m/4_4lQugjiRa
-Creative Commons Attribution 3.0
-https://creativecommons.org/licenses/by/3.0/
+"Chappal" by Amad Junaid
+https://sketchfab.com/3d-models/chappal-39e80a5521a5441aafe5a35978c57ca9
+Creative Commons Attribution 4.0
+https://creativecommons.org/licenses/by/4.0/
+NOTE: carries a small raised maker's tab on the upper. See docs/TODO.md section 70.8.
+
+LOAFERS
+"Shoes Loafers (A6-2)" by eeelabvisual
+https://sketchfab.com/3d-models/shoes-loafers-a6-2-96a6dea700564a34a514fb085774fc09
+Creative Commons Attribution 4.0
+https://creativecommons.org/licenses/by/4.0/
+NOTE: the source is a shop display. Only the "Plane.039" object is the shoes; the other
+four are a pillar, a booth panel and a shelf. See the recipe in build_slipper_models.py.
 
 IKE
 sike_sandals.glb, retained as-is. Only its material was corrected; see the note in
@@ -75,8 +92,9 @@ section 6 has it first in the replacement queue for that reason.
 REMOVED 2026-08-28
 ==================
 
-The Poly-era sources for TSINELAS, PANTULOG, CROCS and ALPOMBRA were deleted with the
-props built from them. Recoverable from git history if a replacement is ever rejected.
+The Poly-era sources for TSINELAS, PANTULOG, CROCS, ALPOMBRA, SPARTAN, HEELS and
+SANDALS were deleted with the props built from them. PAMBAHAY's source is the only
+"source_" file left, and it is the only row build_slipper_roster.py still owns. Recoverable from git history if a replacement is ever rejected.
 
 
 CHANGES BY THIS PROJECT
