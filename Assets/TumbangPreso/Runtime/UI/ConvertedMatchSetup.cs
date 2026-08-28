@@ -318,7 +318,13 @@ namespace TumbangPreso.UI
 
             SetStatus("Opening your lobby...");
 
-            bool ok = await net.StartHostAsync();
+            // ⚠️ THE PORT IS THE DEFAULT UNLESS A COMMAND LINE OVERRODE IT, which only a
+            // two-process test on ONE machine ever does. See `NetBootstrap.LobbySwitch`: without
+            // it the second process always lands in the bind-refused fallback and the host to
+            // leave to join path can never be reached.
+            int port = NetBootstrap.LobbyPort > 0 ? NetBootstrap.LobbyPort : LobbySession.DefaultPort;
+
+            bool ok = await net.StartHostAsync(port);
 
             if (this == null) return;
 
@@ -333,7 +339,7 @@ namespace TumbangPreso.UI
                 // overwrite it, so a refused port, a dead adapter and a wedged previous session
                 // all read identically. `ConvertedMultiplayerSetup.Reason` records what that cost.
                 string detail = string.IsNullOrWhiteSpace(net.Status) ? "" : $"  ({net.Status})";
-                SetStatus($"Could not open a lobby on port {LobbySession.DefaultPort}. " +
+                SetStatus($"Could not open a lobby on port {port}. " +
                           $"Another copy of the game may already have it. Press JOIN to enter " +
                           $"somebody else's instead.{detail}");
 
@@ -341,6 +347,53 @@ namespace TumbangPreso.UI
             }
 
             Refresh();
+
+            DriveAutomation();
+        }
+
+        /// <summary>
+        /// Presses JOIN and says one line, when a command line asked for it.
+        ///
+        /// ⚠️⚠️ THIS IS THE ACCEPTANCE TEST'S HANDS AND IT PRESSES THE REAL CONTROLS. Same rule
+        /// `NetAutomationProbe` follows: it goes through `LobbyJoinPanel`'s own join path and
+        /// `MatchRpc.SendChatServerRpc`, not a private shortcut, so a run proves what a player
+        /// would do rather than a parallel path only the test has.
+        ///
+        /// ⚠️ IT RUNS AFTER `AutoHost` HAS SETTLED, which is the whole point: joining from here
+        /// means STOPPING a host this process is already running, and that is `docs/TODO.md`
+        /// § 65.1 and § 63.1 in the one order nothing has ever exercised.
+        /// </summary>
+        private async void DriveAutomation()
+        {
+            if (string.IsNullOrEmpty(NetBootstrap.LobbyJoin) &&
+                string.IsNullOrEmpty(NetBootstrap.LobbyChat)) return;
+
+            if (!string.IsNullOrEmpty(NetBootstrap.LobbyJoin) && _joinPanel != null)
+            {
+                Debug.Log($"[LobbyAuto] joining {NetBootstrap.LobbyJoin}");
+
+                _joinPanel.Open();
+                bool joined = await _joinPanel.AutomationJoin(NetBootstrap.LobbyJoin);
+
+                if (this == null) return;
+
+                Debug.Log($"[LobbyAuto] join result {joined}");
+            }
+
+            if (string.IsNullOrEmpty(NetBootstrap.LobbyChat)) return;
+
+            // ⚠️ LONG ENOUGH FOR APPROVAL AND THE FIRST ROSTER. `IsListening` goes true at
+            // `StartClient` and not at approval, so a line sent before that reaches a transport
+            // with nowhere to send it. `SendChatServerRpc` reports that rather than swallowing it,
+            // which is what makes the `sent=` below worth printing.
+            await System.Threading.Tasks.Task.Delay(4000);
+
+            if (this == null) return;
+
+            bool sent = MatchRpc.Instance != null &&
+                        MatchRpc.Instance.SendChatServerRpc(NetBootstrap.LobbyChat);
+
+            Debug.Log($"[LobbyAuto] chat '{NetBootstrap.LobbyChat}' sent={sent}");
         }
 
         /// <summary>
@@ -632,7 +685,7 @@ namespace TumbangPreso.UI
             var rect = previewNode as RectTransform;
             if (rect != null && _cast != null)
             {
-                _nameplates = LobbyNameplates.Attach(rect, _preview, _cast);
+                _nameplates = LobbyNameplates.Attach(rect, _preview, _cast, TakeSeat);
             }
 
             ApplyCastVisibility();
@@ -653,6 +706,45 @@ namespace TumbangPreso.UI
 
             if (_nameplates != null) _nameplates.gameObject.SetActive(IsLobby);
             if (_chat != null) _chat.gameObject.SetActive(IsLobby);
+
+            RefreshSeatRowVisibility();
+        }
+
+        /// <summary>
+        /// Hides the four authored `P1..P4` rows wherever the cast is on screen saying the same
+        /// thing.
+        ///
+        /// ⚠️⚠️ HIDDEN, NOT DELETED, AND STILL WIRED. 🧑 2026-08-28, pointing at the rows: *"i want
+        /// to remove ts"*. They duplicated the nameplates in a smaller font, and the nameplates are
+        /// the seat control now (`LobbyNameplates`). But `ConvertedScreen` finds every node by the
+        /// name Godot gave it and logs an ERROR on a miss, so destroying them would break the
+        /// wiring loudly and the `Classic` fallback silently. `SetActive(false)` costs nothing and
+        /// keeps both.
+        ///
+        /// ⚠️⚠️ THE PRACTICE TAB KEEPS THEM, and that is not an inconsistency. There is no cast on
+        /// that screen (see `ApplyCastVisibility`), so there is no plate to press, and the rows are
+        /// the only way to choose which seat you play offline. Hiding them there would delete a
+        /// feature rather than move it.
+        ///
+        /// ⚠️ AND `Classic` KEEPS THEM EVERYWHERE, because `Classic` is the authored screen and its
+        /// whole job is to be what shipped.
+        /// </summary>
+        private void RefreshSeatRowVisibility()
+        {
+            bool platesInstead = IsLobby && LobbyChrome.Style == LobbyStyle.Street && _nameplates != null;
+
+            for (int seat = 0; seat < Balance.PlayerCount; seat++)
+            {
+                var node = Node($"SeatButton{seat}");
+                if (node != null) node.gameObject.SetActive(!platesInstead);
+            }
+
+            // The hint describes whichever control is actually on screen.
+            if (!platesInstead) return;
+
+            SetText("SeatHint", NetAuthority.IsHost
+                    ? "You pick the map and the mode. Click a free character to take that seat."
+                    : "The leader picks the map and the mode. Click a free character to move.");
         }
 
         /// <summary>
@@ -759,11 +851,7 @@ namespace TumbangPreso.UI
 
                 if (_nameplates == null) continue;
 
-                string who = mine
-                    ? "YOU"
-                    : occupied
-                        ? (string.IsNullOrEmpty(info?.Name) ? $"PLAYER {seat + 1}" : info.Name)
-                        : "BOT";
+                string who = mine ? "YOU" : occupied ? PlayerLabel(info, seat) : "BOT";
 
                 // ⚠️ THE TICK IS THE HOST'S ANSWER FOR EVERY SEAT NOW, AND THE LOCAL SEAT IS
                 // STILL ALLOWED TO BE AHEAD OF IT. `LobbySeatInfo.Ready` travels with the roster,
@@ -773,12 +861,29 @@ namespace TumbangPreso.UI
                 // to the host, and the one person watching for it is the one who pressed it.
                 bool ready = (info != null && info.Ready) || (mine && _localReady);
 
+                // ⚠️ THE SAME RULE `RefreshSeats` APPLIES TO THE ROWS: nobody may press a chair
+                // somebody else is in, or their own. A spectator may press a free one, because
+                // that is how you stop spectating.
+                bool occupiedByOther = live && !mine && info != null && info.Occupied;
+                bool matchRunning = live && net != null && net.Lobby.MatchInProgress;
+
+                bool canTake = live
+                    ? (!mine && !occupiedByOther && !matchRunning)
+                    : (!GameLaunch.Spectator && !mine);
+
                 _nameplates.SetSeat(seat, who,
                                     ready: ready,
                                     taya: seat == defender,
-                                    you: mine);
+                                    you: mine,
+                                    canTake: canTake);
             }
 
+            // ⚠️ THE LINE IS CENTRED ON THIS MACHINE'S OWN SEAT. See `LobbyCast.SetLocalSeat`.
+            int localSeat = GameLaunch.Spectator
+                ? -1
+                : (live ? (net != null ? net.LocalSlot : 0) : GameLaunch.SoloSeat);
+
+            _cast.SetLocalSeat(localSeat);
             _cast.Show(_castPicks, SceneFlow.SelectedMode);
         }
 
@@ -800,8 +905,38 @@ namespace TumbangPreso.UI
             _chat = LobbyChat.Attach(canvas.transform, inMatch: false);
             if (_chat == null) return;
 
-            _chat.PlaceAt(new Vector2(676.0f, 40.0f), 620.0f);
+            // ⚠️ CENTRED IN THE BAND BELOW BOTH COLUMNS, measured off the renders: the config
+            // column's plate ends around y 945 and the seat column's around y 940, so the strip
+            // under them is the only place on this screen where a panel covers nothing. Centring
+            // it on the gap between the columns rather than on the screen keeps it under the cast
+            // instead of under the START button.
+            _chat.PlaceAt(new Vector2(610.0f, 34.0f), 700.0f);
             _chat.gameObject.SetActive(IsLobby);
+        }
+
+        /// <summary>
+        /// What to draw over a seat somebody else is sitting in.
+        ///
+        /// ⚠️⚠️ THE DEFAULT NAME IS "Player" AND TWO OF THEM ARE INDISTINGUISHABLE.
+        /// `NetSession.ConfigureClientHello` sends `Settings.PlayerName` and falls back to the
+        /// literal "Player" when it is blank, which is what it is until somebody edits it. So the
+        /// empty-string check that was here caught the case that never happens and missed the one
+        /// that always does: a lobby of four people who have not set a name drew four plates
+        /// reading "Player" and nobody could tell which body was whose. Treating the default as
+        /// unnamed and falling back to the seat is what makes them tellable apart.
+        ///
+        /// ⚠️ IT IS COMPARED CASE-INSENSITIVELY AND TRIMMED, because the fallback is written in
+        /// one place and typed in another, and "player" from a settings file should not defeat it.
+        /// </summary>
+        private static string PlayerLabel(LobbySeatInfo info, int seat)
+        {
+            string name = info == null ? null : info.Name;
+            name = string.IsNullOrWhiteSpace(name) ? "" : name.Trim();
+
+            bool anonymous = name.Length == 0 ||
+                             string.Equals(name, "Player", StringComparison.OrdinalIgnoreCase);
+
+            return anonymous ? $"PLAYER {seat + 1}" : name;
         }
 
         private void OpenJoinPanel()
@@ -1199,27 +1334,39 @@ namespace TumbangPreso.UI
                 if (button == null) continue;
 
                 button.onClick.RemoveAllListeners();
-                button.onClick.AddListener(() =>
-                {
-                    MenuSfx.Click();
-
-                    var session = NetSession.Instance;
-                    if (session != null && session.IsNetworked)
-                    {
-                        // ⚠⚠ IT ASKS THE HOST. `GameLaunch.SoloSeat` is read by the OFFLINE
-                        // practice match and by nothing else, so writing it here was the whole of
-                        // what pressing a seat in a networked lobby did. See the CHOOSING A CHAIR
-                        // section of `MatchRpc` for what the request does instead.
-                        MatchRpc.Instance?.RequestSeatServerRpc(seat);
-                        return;
-                    }
-
-                    GameLaunch.SoloSeat = seat;
-                    GameLaunch.Spectator = false;
-                    RefreshSeats();
-                });
+                button.onClick.AddListener(() => TakeSeat(seat));
             }
 
+            RefreshSeats();
+        }
+
+        /// <summary>
+        /// Ask for a chair. The one place that decides what pressing a seat MEANS, whichever
+        /// control was pressed.
+        ///
+        /// ⚠️⚠️ IT IS A METHOD BECAUSE THERE ARE TWO CONTROLS NOW. The authored `SeatButton0..3`
+        /// rows still call it on the practice screen, and in the lobby the NAMEPLATE over each
+        /// character calls it instead. Duplicating the body into the nameplate would be two places
+        /// to remember the host-authoritative rule, and the last time that rule was written twice
+        /// (`docs/TODO.md` § 55) one copy wrote `GameLaunch.SoloSeat`, which the offline match
+        /// reads and the networked one does not, so pressing a seat in a lobby did nothing at all.
+        ///
+        /// ⚠⚠ IT ASKS THE HOST. `GameLaunch.SoloSeat` is read by the OFFLINE practice match and by
+        /// nothing else. See the CHOOSING A CHAIR section of `MatchRpc` for what the request does.
+        /// </summary>
+        private void TakeSeat(int seat)
+        {
+            MenuSfx.Click();
+
+            var session = NetSession.Instance;
+            if (session != null && session.IsNetworked)
+            {
+                MatchRpc.Instance?.RequestSeatServerRpc(seat);
+                return;
+            }
+
+            GameLaunch.SoloSeat = seat;
+            GameLaunch.Spectator = false;
             RefreshSeats();
         }
 

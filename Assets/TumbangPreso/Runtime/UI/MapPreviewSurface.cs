@@ -81,7 +81,7 @@ namespace TumbangPreso.UI
         /// which lifts the line about 10 per cent of the frame: measured, feet from y 810 to about
         /// y 700 at 1080p, clear of the panels' top edge.
         /// </summary>
-        public const float LobbyLookHeight = 0.85f;
+        public const float LobbyLookHeight = 0.70f;
 
         /// <summary>From `MatchSetup.tscn`'s Camera3D. The one property of that node that IS
         /// read, because `_apply_camera` writes position and basis but never the FOV.</summary>

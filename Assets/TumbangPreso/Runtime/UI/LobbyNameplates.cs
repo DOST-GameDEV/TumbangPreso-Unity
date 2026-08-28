@@ -49,6 +49,24 @@ namespace TumbangPreso.UI
         private MapPreviewSurface _surface;
         private LobbyCast _cast;
 
+        /// <summary>
+        /// What a plate does when it is pressed: take that chair.
+        ///
+        /// ⚠️⚠️ THE PLATE IS THE SEAT BUTTON NOW. 🧑 2026-08-28, pointing at the four `P1..P4` rows
+        /// in the right-hand panel: *"i want to remove ts"*. They were the only way to move seats
+        /// and they said the same thing the cast already says, twice, in a smaller font. Moving the
+        /// press onto the plate over each character puts the control where the information is,
+        /// which is the whole argument for standing the cast in the room in the first place.
+        ///
+        /// ⚠️ THE AUTHORED ROWS ARE HIDDEN, NOT DELETED, and they still carry their own handler.
+        /// `ConvertedScreen` finds every control by name and logs an error on a miss, and the
+        /// PRACTICE tab has no cast to click, so it keeps them. See
+        /// `ConvertedMatchSetup.RefreshSeatRowVisibility`.
+        /// </summary>
+        private System.Action<int> _onSeatPressed;
+
+        private readonly Button[] _buttons = new Button[Balance.PlayerCount];
+
         private readonly RectTransform[] _plates = new RectTransform[Balance.PlayerCount];
         private readonly Image[] _plateFills = new Image[Balance.PlayerCount];
         private readonly Text[] _names = new Text[Balance.PlayerCount];
@@ -57,7 +75,7 @@ namespace TumbangPreso.UI
         private readonly bool[] _shown = new bool[Balance.PlayerCount];
 
         public static LobbyNameplates Attach(RectTransform surfaceRect, MapPreviewSurface surface,
-                                             LobbyCast cast)
+                                             LobbyCast cast, System.Action<int> onSeatPressed)
         {
             if (surfaceRect == null || surface == null || cast == null) return null;
 
@@ -71,6 +89,7 @@ namespace TumbangPreso.UI
             plates._surfaceRect = surfaceRect;
             plates._surface = surface;
             plates._cast = cast;
+            plates._onSeatPressed = onSeatPressed;
             plates.Construct();
 
             return plates;
@@ -88,11 +107,29 @@ namespace TumbangPreso.UI
                 fill.type = Image.Type.Sliced;
                 fill.color = Color.white;
 
-                // ⚠️ IT EATS NO CLICKS. The seat rows and the selectors are underneath this
-                // full-surface layer, and `UiClickProbe` reports a control the player can see and
-                // cannot press as unreachable, which is correct and is the single most confusing
-                // failure a menu can have.
-                fill.raycastTarget = false;
+                // ⚠️⚠️ THE PLATE ITSELF TAKES CLICKS AND NOTHING ELSE THIS COMPONENT DRAWS DOES.
+                // It is the seat button (see `_onSeatPressed`), so it has to be hit-testable; the
+                // name and the taya tag inside it must NOT be, or a press on the word lands on the
+                // label instead of the button under it. `UiClickProbe` reports a control the
+                // player can see and cannot press as unreachable, which is the single most
+                // confusing failure a menu can have.
+                fill.raycastTarget = true;
+
+                int pressed = seat;
+                var button = plate.AddComponent<Button>();
+                button.targetGraphic = fill;
+
+                // ⚠️⚠️ NO TINT TRANSITION, BECAUSE UNITY'S DISABLED GREY ATE THE PLAYER'S OWN
+                // PLATE. `Button` defaults to `ColorTint`, and a non-interactable one multiplies
+                // its target graphic by a pale grey: the local player's plate is deliberately
+                // non-interactable (you cannot take the chair you are in), so in
+                // `Logs/shots-runtime/Lobby-v12.png` the "YOU" plate is the one plate on screen
+                // with no wooden box behind it, which reads as a rendering fault. This component
+                // paints the fill itself in `SetSeat` for ready and not-ready, and two writers on
+                // one graphic is the fault, not the grey.
+                button.transition = Selectable.Transition.None;
+                button.onClick.AddListener(() => _onSeatPressed?.Invoke(pressed));
+                _buttons[seat] = button;
 
                 var plateRect = fill.rectTransform;
                 plateRect.anchorMin = Vector2.zero;
@@ -142,9 +179,16 @@ namespace TumbangPreso.UI
         /// Writes one seat's plate. Called from the lobby's `Refresh`, so it must be cheap and
         /// must not allocate a rebuild.
         /// </summary>
-        public void SetSeat(int seat, string displayName, bool ready, bool taya, bool you)
+        public void SetSeat(int seat, string displayName, bool ready, bool taya, bool you,
+                            bool canTake = false)
         {
             if (seat < 0 || seat >= _plates.Length) return;
+
+            // ⚠️ THE SAME RULE THE SEAT ROWS FOLLOW, NOT A NEW ONE. Nobody may press a chair
+            // somebody else is in, or their own, which would be a request that changes nothing.
+            // The authority is still `LobbySession.TryTakeSeat`: this is the display half, and
+            // greying it is what stops a live-looking plate that silently refuses.
+            if (_buttons[seat] != null) _buttons[seat].interactable = canTake;
 
             _shown[seat] = !string.IsNullOrEmpty(displayName);
             _plates[seat].gameObject.SetActive(_shown[seat]);

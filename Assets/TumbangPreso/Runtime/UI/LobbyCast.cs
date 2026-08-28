@@ -52,8 +52,16 @@ namespace TumbangPreso.UI
         /// line, bodies included, at about 640: it fits the gap with a few pixels either side.
         /// 1.75 was the first pass, measured against the frame, and it put the local player's own
         /// character behind the config panel.
+        ///
+        /// ⚠️ WIDENED FROM 1.20 TO 1.45 ON REQUEST, 🧑 2026-08-28: *"maybe increase space apart
+        /// from them"*. At 1.20 the four stood shoulder to shoulder and read as one clump rather
+        /// than as four people. The camera moved back with it (`MapEntry.LobbyDistance` 13.2 to
+        /// 14.2) so the line still lands in the gap: at 133 px per metre the centres span 577 px
+        /// and the whole line about 696, against a 625 px gap, so the outer two overlap the
+        /// panels by about 36 px at the FEET only. The panels start at y 425 and the heads are
+        /// above that, which is why that overlap is acceptable and a wider one would not be.
         /// </summary>
-        public const float Spacing = 1.20f;
+        public const float Spacing = 1.45f;
 
         /// <summary>
         /// How far the whole line is pushed along the camera's right, in metres.
@@ -65,9 +73,11 @@ namespace TumbangPreso.UI
         /// the frame put the LEFTMOST character, which is the local player's own body, entirely
         /// behind the config panel: the one seat whose occupant is definitely looking for it.
         ///
-        /// 0.62 m is 89 px at this framing, which clears the config panel's edge with a margin.
+        /// 0.30 m is 38 px at this framing. It was 0.62 while the band was 625 px wide and its
+        /// centre sat at x 1032; once `LobbyChrome` opened the band to 846 px its centre moved back
+        /// to about x 1012, so most of that push is no longer needed.
         /// </summary>
-        public const float LateralOffset = 0.62f;
+        public const float LateralOffset = 0.30f;
 
         /// <summary>
         /// How far each seat is pushed toward or away from the camera, in metres, by seat index.
@@ -81,7 +91,7 @@ namespace TumbangPreso.UI
         /// map cycle and every seat change, so the line would visibly shuffle every time somebody
         /// pressed an arrow. It also keeps the shot reproducible for a render.
         /// </summary>
-        private static readonly float[] DepthStagger = { 0.00f, -0.38f, 0.22f, -0.16f };
+        private static readonly float[] DepthStagger = { 0.00f, -0.28f, 0.18f, -0.12f };
 
         /// <summary>
         /// How far each seat is turned off square, in degrees, by seat index.
@@ -141,6 +151,46 @@ namespace TumbangPreso.UI
 
         private float _clock;
         private bool _placed;
+
+        /// <summary>
+        /// Which seat is this machine's, so it can stand in the middle of the line.
+        ///
+        /// ⚠️⚠️ THE LINE IS ORDERED BY DISPLAY POSITION, NOT BY SEAT NUMBER. 🧑 2026-08-28: *"put
+        /// YOU in middle"*. Seat 0 is leftmost by construction, so whoever holds it sees their own
+        /// character at the far left with three strangers to the right, and whoever holds seat 3
+        /// sees the mirror of that. Every reference lobby puts YOU in the middle because it is the
+        /// one body you look at first.
+        ///
+        /// ⚠️ THE ROTATION PRESERVES THE ORDER OF THE OTHERS. `(seat - local + Centre) % 4` slides
+        /// the whole ring rather than swapping two entries, so the four never appear to shuffle
+        /// past each other when somebody changes chairs: the line rotates by one.
+        ///
+        /// ⚠️ AND -1 IS A SPECTATOR, WHICH IS NOT A ROTATION. Somebody with no seat has no "their
+        /// own body" to centre, so the line stays in seat order for them.
+        /// </summary>
+        private int _localSeat = -1;
+
+        /// <summary>Where the local player stands, counting from the left. Second of four: with an
+        /// even cast there is no exact middle, and the left of the two centre spots is the one the
+        /// eye lands on first in a left-to-right read.</summary>
+        private const int CentreSlot = 1;
+
+        public void SetLocalSeat(int seat)
+        {
+            if (_localSeat == seat) return;
+
+            _localSeat = seat;
+            Place();
+        }
+
+        /// <summary>Where a seat stands in the line, left to right.</summary>
+        private int DisplaySlot(int seat)
+        {
+            if (_localSeat < 0) return seat;
+
+            int count = _bodies.Length;
+            return ((seat - _localSeat + CentreSlot) % count + count) % count;
+        }
 
         public static LobbyCast Attach(MapPreviewSurface surface)
         {
@@ -381,8 +431,15 @@ namespace TumbangPreso.UI
                 var body = _bodies[seat];
                 if (body == null) continue;
 
-                float lateral = (seat - (_bodies.Length - 1) * 0.5f) * Spacing;
-                float depth = DepthStagger[seat % DepthStagger.Length];
+                int slot = DisplaySlot(seat);
+
+                float lateral = (slot - (_bodies.Length - 1) * 0.5f) * Spacing;
+
+                // ⚠️ THE STAGGER IS INDEXED BY THE DISPLAY SLOT, NOT BY THE SEAT. It exists to
+                // break up a straight line of four, which is a property of WHERE somebody stands,
+                // not of which chair they hold: keyed by seat, the pattern would rotate with the
+                // line and two neighbours could end up at the same depth.
+                float depth = DepthStagger[slot % DepthStagger.Length];
 
                 Vector3 spot = pivot + (right * (lateral + LateralOffset)) + (forward * depth);
 
@@ -393,7 +450,7 @@ namespace TumbangPreso.UI
 
                 body.transform.position = spot;
                 body.transform.rotation = Quaternion.LookRotation(-forward, Vector3.up)
-                                          * Quaternion.Euler(0.0f, TurnStagger[seat % TurnStagger.Length], 0.0f);
+                                          * Quaternion.Euler(0.0f, TurnStagger[slot % TurnStagger.Length], 0.0f);
             }
 
             _placed = true;

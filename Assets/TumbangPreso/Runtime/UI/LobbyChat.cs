@@ -107,6 +107,19 @@ namespace TumbangPreso.UI
 
             _rect = rect;
 
+            // ⚠️⚠️ THE PANEL IS AS TALL AS ITS CONTENT, NOT AS TALL AS ITS CAPACITY. Six reserved
+            // line slots at a fixed height meant an empty lobby drew a 224 px wooden slab with one
+            // input at the bottom and five rows of nothing above it, which is most of what
+            // `Logs/shots-runtime/Lobby-v11.png` is. `SetLines` gives an empty line a height of
+            // zero and this fitter collapses the panel onto whatever is left.
+            //
+            // ⚠️ THE PIVOT IS THE BOTTOM-LEFT (set above), so the panel GROWS UPWARD as lines
+            // arrive and the entry field never moves under the player's cursor. With a centred
+            // pivot the field would drift down half a line per message.
+            var fitter = gameObject.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
             var column = gameObject.AddComponent<VerticalLayoutGroup>();
             column.spacing = 4;
             column.padding = new RectOffset(12, 12, 10, 10);
@@ -151,10 +164,30 @@ namespace TumbangPreso.UI
 
             BuildField();
 
-            // ⚠️ NO BACKING PLATE. In a match this is a WINDOW rather than furniture, and
-            // `UiTheme.HeroPlate`'s note is the reasoning: the thing the player is looking at is
-            // the court. The lines carry their own ink outline through the theme's label style, so
-            // they read over a bright road without a slab behind them.
+            // ⚠️⚠️ THE LOBBY GETS A PLATE AND THE MATCH DOES NOT, AND THAT IS `UiTheme.HeroPlate`'S
+            // DISTINCTION APPLIED RATHER THAN IGNORED. Its note: a menu panel is FURNITURE, it is
+            // the thing you are looking at, and it may be opaque; a combat overlay is a WINDOW
+            // whose job is to disappear and let the court behind it read. This one component is
+            // both screens, so it is both things, decided by the same flag that decides whether
+            // the field is always open.
+            //
+            // ⚠️ IN THE LOBBY IT SITS IN THE BAND BELOW BOTH COLUMNS, which is the one horizontal
+            // strip on that screen with nothing in it: the config column ends around y 945 and the
+            // seat column around y 940, and everything under that was bare road. A floating input
+            // with no plate there read as a stray control rather than as the chat.
+            if (!_inMatch)
+            {
+                var plate = gameObject.AddComponent<Image>();
+                plate.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
+                plate.type = Image.Type.Sliced;
+                plate.color = Color.white;
+
+                // ⚠️ IT DOES EAT CLICKS, unlike everything else this component draws. A chat panel
+                // you can click THROUGH into the seat rows behind it is a panel that steals half
+                // its own presses and mis-seats somebody.
+                plate.raycastTarget = true;
+            }
+
             SetLines();
         }
 
@@ -347,7 +380,26 @@ namespace TumbangPreso.UI
         {
             foreach (var line in _lines)
             {
+                var element = line.GetComponent<LayoutElement>();
+
+                // ⚠️ AN EMPTY SLOT TAKES NO ROOM. See the fitter in `Construct`: this is the half
+                // that makes the panel collapse, and without it the fitter measures six reserved
+                // rows and the box is full height with nothing in it.
+                if (string.IsNullOrEmpty(line.text))
+                {
+                    if (element != null)
+                    {
+                        element.minHeight = 0.0f;
+                        element.preferredHeight = 0.0f;
+                    }
+
+                    continue;
+                }
+
                 line.color = UiTheme.Cream;
+
+                if (element != null) element.minHeight = LineHeight;
+
                 MenuKit.FitBlock(line, LineHeight * 2.0f);
             }
         }

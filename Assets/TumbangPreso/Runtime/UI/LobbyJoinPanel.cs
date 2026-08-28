@@ -490,6 +490,30 @@ namespace TumbangPreso.UI
             }
         }
 
+        /// <summary>
+        /// The join path, driven by a command line instead of by a finger. See
+        /// `ConvertedMatchSetup.DriveAutomation`.
+        ///
+        /// ⚠️ IT GOES THROUGH `Connect` AND RAISES `Joined`, exactly as a press does, so an
+        /// automated run and a human run take the same code. A test that reaches past the panel
+        /// into `NetSession` would prove the transport works and say nothing about whether the
+        /// button does.
+        /// </summary>
+        public async System.Threading.Tasks.Task<bool> AutomationJoin(string typed)
+        {
+            if (_entry != null) _entry.text = typed;
+
+            bool joined = await Connect(typed);
+
+            if (this == null) return false;
+
+            if (!joined) return false;
+
+            Close();
+            Joined?.Invoke();
+            return true;
+        }
+
         private async System.Threading.Tasks.Task<bool> Connect(string typed)
         {
             // ⚠️ AN ADDRESS IS ANYTHING THAT LOOKS LIKE ONE. A join code is four characters out

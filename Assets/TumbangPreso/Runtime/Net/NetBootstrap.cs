@@ -34,6 +34,35 @@ namespace TumbangPreso.Net
     /// </summary>
     public static class NetBootstrap
     {
+        /// <summary>
+        /// Land in the MULTIPLAYER lobby instead of the title, so the LOBBY's own paths can be
+        /// driven from a command line.
+        ///
+        /// ⚠️⚠️ `-tp-host` CANNOT TEST ANY OF THIS, WHICH IS WHY THESE EXIST. That switch skips
+        /// `ConvertedMatchSetup` entirely and drops the process straight into the arena, so it
+        /// verifies the MATCH and says nothing about the auto-host, the join panel, the LAN/online
+        /// switch, the cast, the ready ticks or chat. `docs/TODO.md` § 68.14 step 7 is a list of
+        /// things that only fail with two processes in a lobby, and every one of them is on the
+        /// far side of this switch.
+        ///
+        /// ⚠️ THE PORT OVERRIDE IS NOT A CONVENIENCE. Two processes on ONE machine both
+        /// auto-hosting want the same 8910, so without it the second one always lands in the
+        /// bind-refused fallback and the host to leave to join path (§ 68.6) can never be reached.
+        /// </summary>
+        public const string LobbySwitch = "-tp-lobby";
+        public const string LobbyPortSwitch = "-tp-lobbyport";
+        public const string LobbyJoinSwitch = "-tp-lobbyjoin";
+        public const string LobbyChatSwitch = "-tp-lobbychat";
+
+        /// <summary>The port this process's lobby auto-hosts on, or 0 for the default.</summary>
+        public static int LobbyPort { get; private set; }
+
+        /// <summary>An address or join code to press JOIN with once the lobby has settled.</summary>
+        public static string LobbyJoin { get; private set; }
+
+        /// <summary>One line to say once this process is connected.</summary>
+        public static string LobbyChat { get; private set; }
+
         public const string HostSwitch = "-tp-host";
         public const string DedicatedSwitch = "-tp-dedicated";
         public const string JoinSwitch = "-tp-join";
@@ -73,6 +102,33 @@ namespace TumbangPreso.Net
             }
 
             string map = Value(args, MapSwitch) ?? UI.SceneFlow.Eskinita;
+
+            // ⚠️ READ BEFORE THE HOST AND JOIN BRANCHES BELOW AND HANDLED BEFORE THEM, because
+            // `-tp-lobby` is the opposite request: those two skip the menus to reach the ARENA and
+            // this one skips them to reach the LOBBY. Falling through into either would start a
+            // second transport under the one the lobby is about to open.
+            if (Has(args, LobbySwitch) || !string.IsNullOrEmpty(Value(args, LobbyJoinSwitch)))
+            {
+                if (int.TryParse(Value(args, LobbyPortSwitch), out int lobbyPort) && lobbyPort > 0)
+                    LobbyPort = lobbyPort;
+
+                LobbyJoin = Value(args, LobbyJoinSwitch);
+                LobbyChat = Value(args, LobbyChatSwitch);
+
+                Requested = true;
+                Application.runInBackground = true;
+
+                Debug.Log($"[NetBoot] lobby requested, port={(LobbyPort > 0 ? LobbyPort : NetSession.DefaultPort)} " +
+                          $"join='{LobbyJoin}' chat='{LobbyChat}'");
+
+                Defer(() =>
+                {
+                    UI.SceneFlow.Networked = true;
+                    UI.SceneFlow.Go(UI.SceneFlow.MatchSetup);
+                });
+
+                return;
+            }
 
             bool explicitJoin = !string.IsNullOrEmpty(Value(args, JoinSwitch));
             bool explicitHost = Has(args, HostSwitch) || Has(args, "-host") || Has(args, "--host");

@@ -72,11 +72,17 @@ namespace TumbangPreso.UI
         /// <summary>
         /// How much the two authored columns shrink in the `Street` arrangement.
         ///
-        /// ⚠️⚠️ MEASURED OFF `Logs/shots-runtime/Lobby-v5.png`. The config panel draws 820 px wide
-        /// and 395 tall there and the seat panel 560 wide, so the clear band between them is
-        /// 320 px and four characters need about 790. At 0.72 the left panel is 590 wide and at
-        /// 0.86 the right is 482, which opens the middle to about 800: enough for the cast with a
-        /// margin at both ends.
+        /// ⚠️⚠️ MEASURED OFF THE RENDERS, AND TIGHTENED TWICE. The config panel draws 820 px wide
+        /// and the seat panel 560, so unscaled the clear band between them is 320 px and four
+        /// characters need about 700. 0.72 and 0.86 opened it to 625, which fit the cast at
+        /// `LobbyCast.Spacing` 1.20 and stopped fitting the moment the spacing was widened on
+        /// request: `Lobby-v10.png` has the outer two behind the furniture again. 0.66 and 0.78
+        /// give 846 px, which holds the wider line with about 70 px of margin at each end.
+        ///
+        /// ⚠️ THIS IS NEAR THE FLOOR AND THE FLOOR IS REAL. The smallest type in the left column
+        /// is the map detail line at 20 units, which at 0.66 renders as 13: below that it stops
+        /// being a sentence and becomes texture. Widening the band any further has to come from
+        /// moving the camera back, not from shrinking the furniture again.
         ///
         /// ⚠️ THE TWO DIFFER BECAUSE THEIR CONTENTS DO. The seat panel is four rows of a name and
         /// a tick, and it is the thing a player reads to find out who is here, so it keeps more of
@@ -88,8 +94,8 @@ namespace TumbangPreso.UI
         /// checks the authored number and cannot see a scaled parent, so this is the one place
         /// that bound has to be respected by hand.
         /// </summary>
-        private const float LeftScale = 0.72f;
-        private const float RightScale = 0.86f;
+        private const float LeftScale = 0.66f;
+        private const float RightScale = 0.78f;
 
         /// <summary>How tall the gradient bands are, as a fraction of the screen.</summary>
         private const float TopBandFraction = 0.24f;
@@ -106,6 +112,16 @@ namespace TumbangPreso.UI
         /// </summary>
         private const float TopBandAlpha = 0.52f;
         private const float BottomBandAlpha = 0.30f;
+
+        /// <summary>
+        /// How far below the top the settings stack begins.
+        ///
+        /// ⚠️ MEASURED AGAINST THE BANNER, NOT GUESSED. `MatchSetup.tscn` puts the `Banner` at
+        /// 648x144 anchored top-left with an anchored y of -112, so its plate runs from about y 40
+        /// to y 184. 208 clears it with a 24 px gap and still leaves the settings block well above
+        /// the cast's heads.
+        /// </summary>
+        private const float TopStackY = 208.0f;
 
         private const float TabHeight = 52.0f;
         private const float TabWidth = 260.0f;
@@ -323,18 +339,86 @@ namespace TumbangPreso.UI
             var columnsRect = columns as RectTransform;
             if (columnsRect != null) MenuKit.Stretch(columnsRect, 0.0f);
 
-            Corner(left as RectTransform, LeftWidth, toLeft: true);
-            Corner(right as RectTransform, RightWidth, toLeft: false);
+            Corner(left as RectTransform, LeftWidth, toLeft: true, toTop: false);
+
+            // ⚠️ THE LOBBY CARD GOES TOP-RIGHT, OPPOSITE THE SETTINGS. Once `LiftSettings` moved
+            // the four cyclers under the banner and the `P1..P4` rows were removed, the right card
+            // was a short block floating alone in the bottom corner with a screen of empty road
+            // above it. Both blocks of INFORMATION now sit along the top and the bottom belongs to
+            // the two things you ACT with: START and the chat.
+            Corner(right as RectTransform, RightWidth, toLeft: false, toTop: true);
+
+            LiftSettings(find, left);
         }
 
-        private static void Corner(RectTransform column, float width, bool toLeft)
+        /// <summary>
+        /// Moves the MAP / MODE / BOTS / CHARACTER block up under the banner, and leaves the
+        /// action buttons in the bottom corner.
+        ///
+        /// ⚠️⚠️ THE LEFT COLUMN WAS TWO DIFFERENT THINGS IN ONE STACK. 🧑 2026-08-28, pointing at
+        /// the settings block sitting above START: *"maybe put this right below lobby? looks ugly
+        /// there"*. They are two different KINDS of control and the reference separates them for a
+        /// reason: the four cyclers are SETTINGS, which you read and adjust before you are ready,
+        /// and START is the ACTION, which wants to be alone in the corner your hand rests in.
+        /// Stacked together, the action reads as the fifth row of the settings.
+        ///
+        /// ⚠️ THE NODES ARE REPARENTED, NOT REBUILT. `ConvertedScreen` indexes every node by name
+        /// in `Start`, BEFORE this runs, and it holds `Transform` references: moving one to a new
+        /// parent does not change what `Node("MapValueLabel")` returns. Rebuilding them would.
+        ///
+        /// ⚠️ AND THE DETAIL LINE GOES WITH THEM. "ESKINITA  Urban side street" is a caption on
+        /// the MAP row, not a status line; leaving it at the bottom would strand it under a START
+        /// button describing a map picker that is no longer next to it.
+        /// </summary>
+        private static void LiftSettings(Func<string, Transform> find, Transform leftColumn)
+        {
+            var config = find("ConfigPanel");
+            if (config == null || leftColumn == null) return;
+
+            var host = new GameObject("SettingsStack");
+            host.transform.SetParent(leftColumn.parent, false);
+
+            var rect = host.AddComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.0f, 1.0f);
+            rect.anchorMax = new Vector2(0.0f, 1.0f);
+            rect.pivot = new Vector2(0.0f, 1.0f);
+            rect.anchoredPosition = new Vector2(EdgeMargin, -TopStackY);
+            rect.sizeDelta = new Vector2(LeftWidth, 100.0f);
+            rect.localScale = new Vector3(LeftScale, LeftScale, 1.0f);
+
+            var layout = host.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 10;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+            layout.childAlignment = TextAnchor.UpperLeft;
+
+            var fitter = host.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            // ⚠️ ORDER MATTERS AND IT IS THE AUTHORED ONE: the panel then its caption. Reparenting
+            // in the other order would put the map's description above the map row.
+            config.SetParent(host.transform, false);
+
+            var detail = find("DetailBox");
+            if (detail != null) detail.SetParent(host.transform, false);
+
+            Narrow(rect, LeftWidth);
+        }
+
+        private static void Corner(RectTransform column, float width, bool toLeft, bool toTop)
         {
             if (column == null) return;
 
-            column.anchorMin = new Vector2(toLeft ? 0.0f : 1.0f, 0.0f);
-            column.anchorMax = new Vector2(toLeft ? 0.0f : 1.0f, 0.0f);
-            column.pivot = new Vector2(toLeft ? 0.0f : 1.0f, 0.0f);
-            column.anchoredPosition = new Vector2(toLeft ? EdgeMargin : -EdgeMargin, BottomMargin);
+            float y = toTop ? 1.0f : 0.0f;
+
+            column.anchorMin = new Vector2(toLeft ? 0.0f : 1.0f, y);
+            column.anchorMax = new Vector2(toLeft ? 0.0f : 1.0f, y);
+            column.pivot = new Vector2(toLeft ? 0.0f : 1.0f, y);
+            column.anchoredPosition = new Vector2(toLeft ? EdgeMargin : -EdgeMargin,
+                                                  toTop ? -TopStackY : BottomMargin);
             column.sizeDelta = new Vector2(width, column.sizeDelta.y);
 
             // ⚠️⚠️ THE SIZE IS SET **AND** THE COLUMN IS SCALED, AND THE SCALE IS THE HALF THAT
