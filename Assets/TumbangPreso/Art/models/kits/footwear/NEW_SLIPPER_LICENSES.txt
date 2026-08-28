@@ -6,11 +6,13 @@ beside this note. Two pipelines write them and they are NOT interchangeable:
   tools/build_slipper_models.py   the "src_" sources. Geometry, materials and textures
                                   go through UNTOUCHED. Only the pair split, a uniform
                                   scale to the game's 0.432 m and the seating move.
-  tools/build_slipper_roster.py   the "source_" sources. The older pass, which also
-                                  recolours to a flat palette and bevels the silhouette.
+  (deleted 2026-08-28)            build_slipper_roster.py was the older pass, which also
+                                  recoloured to a flat palette and bevelled the silhouette.
+                                  Its last row was PAMBAHAY; when that took a new source
+                                  the script owned nothing and was removed. Recoverable
+                                  from git history.
 
-Delete a source the moment nothing builds from it. Both scripts write to the same
-tsinelas_<id>.glb names, so a stale recipe silently overwrites the other one's output.
+Delete a source the moment nothing builds from it.
 
 
 CURRENT SOURCES
@@ -28,12 +30,6 @@ https://sketchfab.com/3d-models/fuzzy-slippers-f6dcfa2215324d8d9b96216f06490d52
 Creative Commons Attribution 4.0
 https://creativecommons.org/licenses/by/4.0/
 
-PANGBANYO
-Worn rubber bathroom slide, downloaded 2026-08-28
-Creative Commons Attribution 4.0
-https://creativecommons.org/licenses/by/4.0/
-NOTE: this is the shoe that WAS pantulog. It kept its model and took a new id at
-slipper index 10 rather than being renamed in place, because index 2 crosses the wire.
 
 ALPOMBRA
 Fashion block-heel mule, downloaded 2026-08-28
@@ -50,10 +46,14 @@ NOTE: this mesh carries a raised CROCS wordmark on the heel strap, as its own
 See docs/TODO.md section 70.8.
 
 PAMBAHAY
-"flip flops" by Tiff Eidmann
-https://poly.pizza/m/aVbWCpQLno8
-Creative Commons Attribution 3.0
-https://creativecommons.org/licenses/by/3.0/
+Worn rubber bathroom slide, downloaded 2026-08-28
+Creative Commons Attribution 4.0
+https://creativecommons.org/licenses/by/4.0/
+NOTE: this is the shoe that was briefly PANTULOG. Both ids changed shoe and neither
+index moved: PANTULOG at 2 took the fuzzy slipper, PAMBAHAY at 6 took this, and the
+purple Poly flip-flop that was here is retired. Deleting a row would shift HEELS,
+SANDALS and LOAFERS down one on every peer and save file that still holds the old
+number, which is what the append-only rule in Roster.cs exists to prevent.
 
 SPARTAN
 "Worn Flip Flop" by inciprocal
@@ -92,9 +92,9 @@ section 6 has it first in the replacement queue for that reason.
 REMOVED 2026-08-28
 ==================
 
-The Poly-era sources for TSINELAS, PANTULOG, CROCS, ALPOMBRA, SPARTAN, HEELS and
-SANDALS were deleted with the props built from them. PAMBAHAY's source is the only
-"source_" file left, and it is the only row build_slipper_roster.py still owns. Recoverable from git history if a replacement is ever rejected.
+Every Poly-era source was deleted with the prop built from it: TSINELAS, PANTULOG,
+CROCS, ALPOMBRA, SPARTAN, HEELS, SANDALS and finally PAMBAHAY. No "source_" file
+remains. Recoverable from git history if a replacement is ever rejected.
 
 
 CHANGES BY THIS PROJECT

@@ -61,6 +61,7 @@ namespace TumbangPreso.Visual
         private static readonly int MainTexId = Shader.PropertyToID("_MainTex");
         private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
         private static readonly int OutlineWidthId = Shader.PropertyToID("_OutlineWidth");
+        private static readonly int CutoffId = Shader.PropertyToID("_Cutoff");
 
         // ------------------------------------------------------------------ § THE RENDER STYLE
         //
@@ -141,6 +142,37 @@ namespace TumbangPreso.Visual
         };
 
         private static Shader _shader;
+        private static Shader _transparentShader;
+
+        private static readonly int ZOffsetFactorId = Shader.PropertyToID("_ZOffsetFactor");
+        private static readonly int ZOffsetUnitsId = Shader.PropertyToID("_ZOffsetUnits");
+
+        /// <summary>
+        /// The blend-mode twin, for a material whose texture carries real transparency.
+        ///
+        /// ⚠️ IT FALLS BACK TO THE OPAQUE SHADER RATHER THAN TO NULL. A missing shader on
+        /// this path would render the fur as magenta, which is louder than rendering it
+        /// opaque and is not obviously better; the opaque one at least shows the shoe.
+        /// </summary>
+        public static Shader TransparentShader
+        {
+            get
+            {
+                if (_transparentShader != null) return _transparentShader;
+
+                _transparentShader = UnityEngine.Shader.Find("TumbangPreso/ToonTransparent");
+
+                if (_transparentShader == null)
+                {
+                    Debug.LogError("[Toon] TumbangPreso/ToonTransparent is missing from the " +
+                                   "build. Add it to GameBuilder.EnsureRuntimeShaders: a shader " +
+                                   "only Shader.Find references is stripped from the player.");
+                    _transparentShader = Shader;
+                }
+
+                return _transparentShader;
+            }
+        }
 
         public static Shader Shader
         {
@@ -260,7 +292,7 @@ namespace TumbangPreso.Visual
                 var source = sources[i];
                 if (source != null && Origin.TryGetValue(source, out var origin)) source = origin;
 
-                dressed[i] = Variant(source, key, modelWidth, palette);
+                dressed[i] = Variant(source, key, modelWidth, palette, i);
                 changed |= dressed[i] != sources[i];
             }
 
@@ -323,11 +355,14 @@ namespace TumbangPreso.Visual
             return value & 0x7fffffff;
         }
 
-        private static Material Variant(Material source, int key, float modelWidth, Color[] palette)
+        private static Material Variant(Material source, int key, float modelWidth, Color[] palette,
+                                        int slot = 0)
         {
             if (Cache.TryGetValue((source, key), out var cached) && cached != null) return cached;
 
-            var material = new Material(Shader)
+            bool transparent = source != null && source.renderQueue >= 2450;
+
+            var material = new Material(transparent ? TransparentShader : Shader)
             {
                 name = source == null ? "Toon" : $"{source.name}_Toon",
             };
@@ -359,8 +394,11 @@ namespace TumbangPreso.Visual
                 }
             }
 
-            // Alpha is not carried: these are all opaque surfaces and an alpha under 1 arriving
-            // from an importer would render the character see-through on an opaque queue.
+            // ⚠️ THE COLOUR'S alpha is dropped, the TEXTURE's is not. A `baseColorFactor`
+            // alpha under 1 arriving from an importer would render a whole character
+            // see-through on an opaque queue, which is never what a toon prop wants. The
+            // texture's alpha is a different thing: it is a mask saying which texels are
+            // geometry at all, and the cutout branch below is what reads it.
             albedo.a = 1.0f;
 
             material.SetColor(ColorId, albedo);
@@ -380,7 +418,39 @@ namespace TumbangPreso.Visual
             {
                 material.SetFloat(UsePaletteId, 0.0f);
             }
-            material.SetFloat(OutlineWidthId, modelWidth);
+            // ⚠️⚠️ A TRANSPARENT SOURCE GOES ON A DIFFERENT SHADER, IT IS NOT CLIPPED.
+            // 🧑 2026-08-28, over the fuzzy house slipper: *"instead of cleaving my model's
+            // shit js create independent shaders for shit with fuzz or detailed shit"*, *"i
+            // dont want u to cleave my ike and fuzz off"*. `TumbangPreso/ToonTransparent`
+            // carries the reasoning in full; the short version is that a fur alpha map is
+            // soft, so any clip threshold deletes the strands and leaves a moulded slipper.
+            //
+            // ⚠️ THE OUTLINE IS ZERO ON THAT BRANCH BECAUSE THE SHADER HAS NO OUTLINE PASS.
+            // Setting the width is harmless there, but writing it would be a lie about what
+            // renders, and the prop still gets an ink edge from its opaque submesh.
+            //
+            // ⚠️ THE TEST IS THE RENDER QUEUE, NOT A KEYWORD OR A `_Mode` FLOAT. glTFast, the
+            // built-in importer and URP's Lit all disagree about how they spell "this is
+            // transparent", and two of the three do not set `_Mode` at all. All three move
+            // the queue: 2450 is AlphaTest and 3000 is Transparent, so anything at or above
+            // the first has real detail in its alpha whichever importer claimed the file.
+            if (!transparent)
+            {
+                material.SetFloat(OutlineWidthId, modelWidth);
+            }
+
+            // ⚠️ THE DEPTH BIAS IS FOR A SUBMESH DRAWN OVER ANOTHER ONE, and the IKE swoosh is
+            // the case that needed it: SVG-derived flat geometry laid on the upper, a
+            // 925-vertex island sharing no vertices with the 33,108-vertex body and marked
+            // doubleSided, so it z-fights itself and reads as moving speckle. Slot 0 is the
+            // base surface and never takes a bias; a later slot is an overlay by construction.
+            // On a submesh that is NOT coplanar with anything this changes nothing visible,
+            // which is why it can be applied by position rather than by detection.
+            if (slot > 0 && !transparent)
+            {
+                material.SetFloat(ZOffsetFactorId, -1.0f);
+                material.SetFloat(ZOffsetUnitsId, -1.0f);
+            }
 
             Cache[(source, key)] = material;
 

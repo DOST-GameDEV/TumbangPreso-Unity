@@ -91,15 +91,15 @@ class Recipe:
 RECIPES = (
     Recipe("tsinelas", "src_tsinelas_flip_flops.glb", "pair",
            credit="Flip Flops by Remie07, CC-BY"),
-    # ⚠️ PANTULOG AND PANGBANYO ARE TWO DIFFERENT SHOES AND THE INDEX IS WHY THEY BOTH EXIST.
+    # ⚠️ TWO IDS CHANGED SHOE HERE AND NEITHER INDEX MOVED, WHICH IS THE WHOLE POINT.
     # 🧑 2026-08-28: *"the current pantulog should be renamed to another slipper, keep the
     # currentpantulog js give it a diff name"*, *"this one should be pantulog"*. PANTULOG
     # is slipper index 2 and that index crosses the wire, so the id cannot move: the
     # fuzzy house slipper takes over index 2's MODEL, and the rubber bathroom slide it
-    # displaced is appended as PANGBANYO at index 10 rather than renamed in place.
+    # displaced took over PAMBAHAY at index 6, whose purple Poly flip-flop was retired.
     Recipe("pantulog", "src_pantulog_fuzzy.glb", "pair",
            credit="Fuzzy Slippers by Benz, CC-BY"),
-    Recipe("pangbanyo", "src_pangbanyo_rubber_slide.glb", "pair",
+    Recipe("pambahay", "src_pambahay_rubber_slide.glb", "pair",
            credit="Worn rubber slide, CC-BY"),
     Recipe("alpombra", "src_alpombra_heel_mule.glb", "pair",
            credit="Fashion heel sandals, CC-BY"),

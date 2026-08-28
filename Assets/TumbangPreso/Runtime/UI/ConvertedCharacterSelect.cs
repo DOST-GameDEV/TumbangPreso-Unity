@@ -853,10 +853,9 @@ namespace TumbangPreso.UI
                 case "sike": return "Definitely not the real brand. Light, loud, and the quickest thing off a hand on this street.";
                 case "spartan": return "Black rubber and a red Y-strap, straight from the kanto. Hits harder than the basic pair, but takes longer to settle back into your hand.";
                 case "alpombra": return "Somebody's good pair, block heel and a stoned buckle, borrowed off the rack by the door. It drops early and lands quiet, and it is back in your hand before the taya turns.";
-                case "pambahay": return "The loud spare pair beside the door. Light on the throw, quick through the air, and always ready for another round.";
+                case "pambahay": return "The scuffed white slide that lives by the shower, somebody's toes moulded into the footbed. Light rubber that lands flat and soft, and you have it back before the puddle has dried.";
                 case "heels": return "Completely impractical and brutally effective. Short-ranged, slow to recover, and the last thing anyone wants to body-block.";
                 case "sandals": return "Strapped down and built for walking. Fast and steady through the air, but not made for rapid-fire throws.";
-                case "pangbanyo": return "The scuffed white slide that lives by the shower, somebody's toes moulded into the footbed. Light rubber that lands flat and soft, and you have it back before the puddle has dried.";
                 case "loafers": return "Somebody's school shoe, buckle and all, still warm. Stiff leather with no give in it, so it does not sail, but it lands like a brick with homework in it.";
 
                 default: return "";

@@ -27,6 +27,10 @@ Shader "TumbangPreso/Toon"
         _Color ("Albedo", Color) = (1, 1, 1, 1)
         _MainTex ("Albedo Map", 2D) = "white" {}
 
+        // See the Offset block in the SubShader. 0,0 is "behave exactly as before".
+        _ZOffsetFactor ("Depth Bias Factor", Float) = 0
+        _ZOffsetUnits ("Depth Bias Units", Float) = 0
+
         // See the palette block below. 0 samples the atlas, 1 remaps it.
         [Toggle] _UsePalette ("Palette Remap", Float) = 0
 
@@ -109,6 +113,24 @@ Shader "TumbangPreso/Toon"
     SubShader
     {
         Tags { "RenderType" = "Opaque" "Queue" = "Geometry" }
+
+        // ⚠️⚠️ § THE DEPTH BIAS, AND WHY IT IS A PROPERTY RATHER THAN A CONSTANT.
+        // The IKE swoosh is SVG-derived flat geometry laid ON the upper: measured, it is a
+        // 925-vertex island with ZERO vertices shared with the 33,108-vertex body, sitting
+        // flush against it and marked doubleSided. Two surfaces at the same depth resolve per
+        // pixel per frame, so it reads as moving black-and-white speckle rather than as a
+        // misplaced logo. 🧑 2026-08-28: *"wtf is this can u fix the shaders"*.
+        //
+        // ⚠️ THE FIX IS A DEPTH BIAS AND NOT A MESH EDIT, ON INSTRUCTION. Lifting the decal
+        // 0.8 mm along its normals was tried first and did not clear it, which is itself the
+        // evidence that the fight is the decal against ITSELF (a zero-thickness double-sided
+        // plane) rather than against the body. 🧑: *"i dont want u to cleave my ike and fuzz
+        // off"*, so nothing here touches a vertex.
+        //
+        // ⚠️ 0, 0 IS THE DEFAULT AND IT IS EXACTLY WHAT THE SHADER DID BEFORE. Every material
+        // that does not opt in is bit-identical; `ToonSkin` raises it only for a submesh that
+        // is drawn over another one.
+        Offset [_ZOffsetFactor], [_ZOffsetUnits]
         LOD 200
 
         // -------------------------------------------------------------------

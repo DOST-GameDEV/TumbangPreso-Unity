@@ -193,17 +193,20 @@ namespace TumbangPreso.Core
             // would make two peers render different footwear for the same pick with no error.
             new RosterEntry("spartan",   "SPARTAN",    3,    4,    2),
             new RosterEntry("alpombra",  "ALPOMBRA",   2,    1,    5),
-            new RosterEntry("pambahay",  "PAMBAHAY",   4,    2,    4),
+            // ⚠️⚠️ PAMBAHAY IS A DIFFERENT SHOE NOW AND THE ID DELIBERATELY DID NOT MOVE.
+            // 🧑 2026-08-28: *"delete pambahay"*, of the purple Poly flip-flop, then *"hwo
+            // about just rename pangbanyo"*. Deleting row 6 is the one thing this list's own
+            // header forbids: every index above it shifts, so HEELS, SANDALS and LOAFERS each
+            // become the entry below them on any peer or save file that still holds the old
+            // number, silently and with no error. Retiring the MODEL while keeping the ROW
+            // gets the same thing on screen at none of that cost.
+            //
+            // It now wears the worn rubber bathroom slide, and carries that shoe's stats
+            // rather than the flip-flop's 4/2/4.
+            new RosterEntry("pambahay",  "PAMBAHAY",   3,    2,    4),
             new RosterEntry("heels",     "HEELS",      2,    5,    1),
             new RosterEntry("sandals",   "SANDALS",    4,    3,    2),
             new RosterEntry("loafers",   "LOAFERS",    3,    4,    3),
-            // ⚠️ PANGBANYO IS THE SHOE THAT USED TO BE PANTULOG, APPENDED RATHER THAN
-            // RENAMED IN PLACE. 🧑 wanted the fuzzy house slipper to be PANTULOG and the
-            // rubber bathroom slide it displaced kept under another name. PANTULOG is
-            // index 2 and that index crosses the wire, so the id stays put and only its
-            // MODEL changed; moving the slide down to a new id here is what keeps every
-            // existing peer's slipper_index of 2 meaning the same seat it always did.
-            new RosterEntry("pangbanyo", "PANGBANYO",  3,    2,    4),
         };
 
         /// <summary>
