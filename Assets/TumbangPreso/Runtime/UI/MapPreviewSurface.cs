@@ -71,6 +71,28 @@ namespace TumbangPreso.UI
         /// read, because `_apply_camera` writes position and basis but never the FOV.</summary>
         private const float FieldOfView = 58.0f;
 
+        /// <summary>
+        /// The LOBBY shot's field of view, which is narrower than the map shot's on purpose.
+        ///
+        /// ⚠️⚠️ A CLOSE SHOT AT 58 DEGREES DISTORTS THE PEOPLE ON THE ENDS OF THE LINE, and
+        /// solving the framing by moving the camera alone cannot avoid it. 58 vertical on 16:9 is
+        /// about 89 degrees horizontal; framing four characters to fill half the height at that
+        /// angle puts the camera around 3 m away, which leaves the outer two at 34 degrees off
+        /// axis and visibly stretched, widest at the shoulders, exactly the sort of thing
+        /// `ModelPreview`'s own header records being reported as *"model isnt movable and its
+        /// stretched"*.
+        ///
+        /// At 32 degrees the same framing sits about 7 m back and the outer characters are 17
+        /// degrees off axis. It is also the reason the arena behind them still reads: a longer
+        /// lens keeps more of the street at a usable size instead of hurling it toward the
+        /// vanishing point.
+        ///
+        /// ⚠️ THE MAP SHOT KEEPS 58, which is the value `MatchSetup.tscn`'s own Camera3D carries
+        /// and the one every map's `Distance` and `Height` were tuned against. Changing it would
+        /// silently re-frame all three arenas on the practice screen.
+        /// </summary>
+        private const float LobbyFieldOfView = 32.0f;
+
         /// <summary>Half the screen is enough behind a scrim, and it halves the cost.</summary>
         private const int Width = 960;
         private const int Height = 540;
@@ -104,6 +126,71 @@ namespace TumbangPreso.UI
         private Camera _camera;
         private string _showing;
         private bool _busy;
+
+        /// <summary>
+        /// The camera that photographs the arena, for anything that has to project a world point
+        /// into this surface's rect.
+        ///
+        /// ⚠️ IT IS NULL UNTIL THE FIRST SWAP COMPLETES. `EnsureCamera` runs at the END of
+        /// `Swap`, after the scene load, so a caller that reads this from its own `Start` gets
+        /// nothing. Wait for <see cref="MapShown"/>.
+        /// </summary>
+        public Camera Camera => _camera;
+
+        /// <summary>Where the play area is, in world space: the average of the map's spawn
+        /// markers. See <see cref="AimAt"/>.</summary>
+        public Vector3 Pivot => _pivot;
+
+        /// <summary>The map currently in the surface, or null before the first swap.</summary>
+        public string Showing => _showing;
+
+        /// <summary>The tuned angle, without the sway. A caller placing something in front of
+        /// the camera wants the shot's yaw, not this frame's wobble.</summary>
+        public float Yaw => _yaw;
+
+        /// <summary>
+        /// Raised when a map has finished loading and the camera exists, with the map's id.
+        ///
+        /// ⚠️⚠️ NOTHING ELSE CAN TELL. `Show` starts a coroutine and returns immediately, so a
+        /// caller that loads a map and then places something into it on the next line places it
+        /// into a scene that is not there yet. That is a silent no-op followed by a cast standing
+        /// at the world origin, inside the menu camera's view, which is the exact class of fault
+        /// `PreviewLayer`'s note describes as "the grey band across every menu".
+        /// </summary>
+        public event System.Action<string> MapShown;
+
+        /// <summary>
+        /// Swaps between the MAP shot (wide, high, for picking an arena) and the LOBBY shot
+        /// (close, low, for looking at four people). See <see cref="SceneFlow.MapEntry"/>.
+        ///
+        /// ⚠️ IT RE-AIMS IMMEDIATELY RATHER THAN WAITING FOR THE NEXT SWAP, because the lobby
+        /// turns it on after the first map is already showing and the practice screen turns it
+        /// off on a screen the player is looking at.
+        /// </summary>
+        public bool LobbyShot
+        {
+            get => _lobbyShot;
+            set
+            {
+                if (_lobbyShot == value) return;
+
+                _lobbyShot = value;
+
+                if (_showing != null) AimAt(_showing);
+
+                if (_camera != null)
+                {
+                    // ⚠️ THE LENS AS WELL AS THE POSITION. `EnsureCamera` sets the FOV and only
+                    // runs on a map swap, so flipping this on a screen that is already showing a
+                    // map moved the camera and left it on the wide lens: the four-person framing
+                    // measured for 32 degrees, rendered at 58.
+                    _camera.fieldOfView = _lobbyShot ? LobbyFieldOfView : FieldOfView;
+                    ApplyCamera();
+                }
+            }
+        }
+
+        private bool _lobbyShot;
 
         private Vector3 _pivot;
         private float _yaw = DefaultYaw;
@@ -198,6 +285,42 @@ namespace TumbangPreso.UI
             _surface.color = Color.white;
 
             _busy = false;
+
+            // ⚠️ LAST, AFTER THE CAMERA AND THE ENVIRONMENT. A listener's whole reason to exist
+            // is to put something INTO this map, and the two things it needs (a camera to be
+            // framed by and a scene to be parented into) are both set up above.
+            MapShown?.Invoke(map);
+        }
+
+        /// <summary>
+        /// Moves a GameObject into the arena currently on screen, on the preview layer, so it is
+        /// lit by that map's sun, fogged by its fog and graded by its grade.
+        ///
+        /// ⚠️⚠️ THIS IS WHY THE LOBBY CAST IS NOT A SECOND RENDER TEXTURE. Compositing four
+        /// `ModelPreview` rigs over this surface would be four cameras and four targets, each lit
+        /// by its own private key light and none of them by anything the map knows about: the
+        /// characters would sit ON the picture rather than IN it. Parenting into the arena costs
+        /// nothing extra to draw and gets the map's whole lighting environment for free.
+        ///
+        /// ⚠️ THE LAYER IS SET AFTER THE REPARENT, NOT BEFORE. `SetLayerRecursively` walks the
+        /// subtree it is given, and a model instantiated under a different parent may have had
+        /// children added since; doing it here means a caller cannot forget, and forgetting is
+        /// what puts geometry in front of every menu (see <see cref="PreviewLayer"/>).
+        ///
+        /// ⚠️ IT RETURNS FALSE RATHER THAN THROWING WHEN THE MAP IS NOT LOADED YET. `Show` is a
+        /// coroutine; a caller that has not waited for <see cref="MapShown"/> gets an honest no.
+        /// </summary>
+        public bool Adopt(GameObject go)
+        {
+            if (go == null) return false;
+            if (_showing == null) return false;
+            if (!_cache.TryGetValue(_showing, out var scene)) return false;
+            if (!scene.IsValid() || !scene.isLoaded) return false;
+
+            SceneManager.MoveGameObjectToScene(go, scene);
+            SetLayerRecursively(go.transform, PreviewLayer);
+
+            return true;
         }
 
         /// <summary>
@@ -250,8 +373,12 @@ namespace TumbangPreso.UI
 
             var entry = SceneFlow.PreviewFor(map);
             _yaw = entry.Yaw;
-            _distance = entry.Distance;
-            _height = entry.Height;
+
+            // ⚠️ THE LOBBY IS A DIFFERENT SHOT OF THE SAME SET, AND IT SHARES THE YAW ON PURPOSE.
+            // See `MapEntry.LobbyDistance`: the angle is a judgement about which way to look down
+            // the street and does not change with range; only how close and how high do.
+            _distance = _lobbyShot ? entry.LobbyDistance : entry.Distance;
+            _height = _lobbyShot ? entry.LobbyHeight : entry.Height;
 
             if (!_cache.TryGetValue(map, out var scene) || !scene.IsValid()) return;
 
@@ -518,7 +645,7 @@ namespace TumbangPreso.UI
                 go.transform.SetParent(null, true);
             }
 
-            _camera.fieldOfView = FieldOfView;
+            _camera.fieldOfView = _lobbyShot ? LobbyFieldOfView : FieldOfView;
             _camera.targetTexture = _target;
             _camera.clearFlags = CameraClearFlags.Skybox;
             _camera.depth = -10;

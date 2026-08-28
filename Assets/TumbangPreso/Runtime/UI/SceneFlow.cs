@@ -52,8 +52,31 @@ namespace TumbangPreso.UI
             public readonly float Distance;
             public readonly float Height;
 
+            /// <summary>
+            /// The LOBBY's shot of the same arena: close enough that four people standing in a
+            /// line read as faces rather than as figures.
+            ///
+            /// ⚠️⚠️ IT IS A SECOND SHOT, NOT A TWEAK TO THE FIRST. `Distance` and `Height` frame
+            /// an EMPTY street from 22 m back and 16 m up, which is the right picture of a MAP
+            /// and the wrong picture of a CAST: at that range four voxel people are 40 px tall
+            /// between them and the nameplates would be wider than the bodies. Overwriting the
+            /// map shot instead of adding to it would also have broken the offline practice
+            /// screen, which has no cast and wants the wide view.
+            ///
+            /// ⚠️ THE YAW IS SHARED DELIBERATELY. It is the angle somebody chose so the camera
+            /// looks INTO the street rather than at the back of a facade, and that judgement does
+            /// not change with distance. Only how close and how high move.
+            ///
+            /// ⚠️ AND IT LIVES HERE RATHER THAN IN THE MAP SCENE, for the reason this struct's
+            /// header already gives: `tools/maps/build_*.py` emit the arenas WHOLESALE, so a
+            /// camera placed in one by hand survives exactly until the next layout run.
+            /// </summary>
+            public readonly float LobbyDistance;
+            public readonly float LobbyHeight;
+
             public MapEntry(string id, string name, string tagline,
-                            float yaw, float distance, float height)
+                            float yaw, float distance, float height,
+                            float lobbyDistance = 9.2f, float lobbyHeight = 2.9f)
             {
                 Id = id;
                 Name = name;
@@ -61,6 +84,8 @@ namespace TumbangPreso.UI
                 Yaw = yaw;
                 Distance = distance;
                 Height = height;
+                LobbyDistance = lobbyDistance;
+                LobbyHeight = lobbyHeight;
             }
 
             /// <summary>The setup screen's detail line: the arena's name then what it is, in the

@@ -23,6 +23,32 @@ namespace TumbangPreso.UI
 
         protected override string CancelTarget => SceneFlow.ModeSelect;
 
+        /// <summary>
+        /// ⚠️ ESCAPE CLOSES THE JOIN CARD FIRST AND LEAVES THE LOBBY SECOND. `ConvertedScreen`
+        /// documents why this is an ACTION rather than a scene name: half the screens back out by
+        /// closing something in place, and a `CancelTarget` alone cannot say so. Without this,
+        /// Escape over an open join card would stop the transport and drop the player to the mode
+        /// picker, which is two steps for one press.
+        ///
+        /// ⚠️ AND IT STOPS THE SESSION ON THE WAY OUT, which the BACK button already did and
+        /// Escape did not. A lobby left listening behind the player keeps its port, keeps
+        /// beaconing on the LAN and still shows up in other people's browsers as a game they can
+        /// join and nobody is in.
+        /// </summary>
+        protected override bool Cancel()
+        {
+            if (_joinPanel != null && _joinPanel.IsOpen)
+            {
+                _joinPanel.Close();
+                return true;
+            }
+
+            var net = NetSession.Instance;
+            if (net != null && net.IsNetworked) net.Stop();
+
+            return base.Cancel();
+        }
+
         private const float CycleGuard = 0.12f;
         private float _lastCycle = -1.0f;
 
@@ -42,6 +68,31 @@ namespace TumbangPreso.UI
         private Text _codeText;
         private Button _codeCopyBtn;
         private Text _codeCopyBtnText;
+
+        /// <summary>The four ways into somebody else's game, on this screen now. See
+        /// <see cref="LobbyJoinPanel"/> and `docs/TODO.md` § 68.11.</summary>
+        private LobbyJoinPanel _joinPanel;
+
+        private GameObject _lobbyEntryRow;
+        private Button _joinButton;
+        private Button _onlineButton;
+
+        /// <summary>True while a LAN/online swap is in flight. See <see cref="ToggleOnline"/>.</summary>
+        private bool _switchingHost;
+
+        /// <summary>The four bodies standing in the arena behind this screen, and their floating
+        /// names. Null on the practice screen, which has no cast. See <see cref="LobbyCast"/>.</summary>
+        private LobbyCast _cast;
+        private LobbyNameplates _nameplates;
+
+        /// <summary>
+        /// What each seat is wearing, rebuilt on every refresh and handed to the cast.
+        ///
+        /// ⚠️ ONE ARRAY, REUSED. `Refresh` runs on every arrow press, every seat message, every
+        /// ready tally and every pick table; allocating a four-int array on each of those is the
+        /// shape `docs/TODO.md` § 52.3 measured costing 952 bytes a frame on the HUD.
+        /// </summary>
+        private readonly int[] _castPicks = new int[Balance.PlayerCount];
 
         private readonly int[] _replicatedPicks = new int[Balance.PlayerCount * 4];
 
@@ -78,11 +129,46 @@ namespace TumbangPreso.UI
         private static int DifficultyOptionCount
             => SceneFlow.Networked ? Difficulties.Length - 1 : Difficulties.Length;
 
+        /// <summary>
+        /// ⚠️⚠️ "THIS IS THE MULTIPLAYER LOBBY" AND "A TRANSPORT IS UP" ARE TWO DIFFERENT
+        /// QUESTIONS, AND UNTIL 2026-08-28 THIS SCREEN ONLY HAD ONE OF THEM. Every branch here
+        /// asked `NetSession.IsNetworked` and read a false as "practice mode", which was correct
+        /// only because the player could not REACH this screen in multiplayer without having
+        /// already hosted or joined on a previous one.
+        ///
+        /// MULTIPLAYER now lands here directly (`ConvertedModeSelect`), so there is a real window
+        /// where the answer to the first question is yes and to the second is no: while the
+        /// auto-host is starting, and afterwards for good if the port bind was refused. Asking
+        /// `IsNetworked` in that window drew the multiplayer lobby as PRACTICE MODE, with a
+        /// START MATCH button that would have launched a solo game against bots out from under
+        /// somebody waiting for a friend to join.
+        ///
+        /// `IsLobby` is the SCREEN's identity and comes from `SceneFlow.Networked`. `IsLive` is
+        /// the TRANSPORT's state. Anything the player reads (the headline, the hint, whether the
+        /// join panel is open) hangs off the first; anything that touches the wire hangs off the
+        /// second. See `docs/TODO.md` § 68.5 for the four states this produces.
+        /// </summary>
+        private static bool IsLobby => SceneFlow.Networked;
+
+        private static bool IsLive
+        {
+            get
+            {
+                var net = NetSession.Instance;
+                return net != null && net.IsNetworked;
+            }
+        }
+
         protected override void Wire()
         {
             for (int i = 0; i < _replicatedPicks.Length; i++) _replicatedPicks[i] = -1;
 
-            var net = NetSession.Instance;
+            // ⚠️ THE SESSION IS CREATED HERE WHEN THIS IS THE LOBBY, rather than inherited from
+            // a screen that ran first. `NetSession.Instance` was guaranteed non-null only because
+            // `ConvertedMultiplayerSetup.Wire` called `Ensure()` before navigating here; arriving
+            // straight from the mode picker skips that, and every `if (net != null)` block below
+            // would then be quietly skipped, leaving a lobby subscribed to nothing.
+            var net = IsLobby ? NetSession.Ensure() : NetSession.Instance;
             bool isNetworked = net != null && net.IsNetworked;
 
             if (net != null)
@@ -110,6 +196,8 @@ namespace TumbangPreso.UI
             var previewNode = Node("MapPreview");
             if (previewNode != null) _preview = previewNode.GetComponent<MapPreviewSurface>();
 
+            BuildCast(previewNode);
+
             _characterPanel = Node("CharacterSelectPanel");
 
             OnClick("MapPrevButton", () => OnMapCycle(-1));
@@ -126,6 +214,16 @@ namespace TumbangPreso.UI
             OnClick("StartButton", OnStartPressed);
             OnClick("BackButton", () =>
             {
+                // ⚠️ BACK CLOSES THE JOIN CARD BEFORE IT LEAVES THE SCREEN. Same rule
+                // `ConvertedMultiplayerSetup` already applied to its two browser boxes: a modal
+                // over a screen has to be dismissable by the button the player's hand is already
+                // on, or BACK reads as having skipped a step.
+                if (_joinPanel != null && _joinPanel.IsOpen)
+                {
+                    _joinPanel.Close();
+                    return;
+                }
+
                 if (net != null && net.IsNetworked) net.Stop();
                 SceneFlow.Go(SceneFlow.ModeSelect);
             });
@@ -134,6 +232,7 @@ namespace TumbangPreso.UI
             if (modeRow != null) modeRow.gameObject.SetActive(true);
 
             BuildRightPanelNetwork();
+            BuildLobbyEntryControls(net);
             WireSeats();
 
             MatchRpc.OnMapChanged += HandleMapSynced;
@@ -164,6 +263,64 @@ namespace TumbangPreso.UI
             Refresh();
 
             RejoinRunningMatch();
+
+            AutoHost();
+        }
+
+        /// <summary>
+        /// Opens a LAN room the moment the player arrives, so MULTIPLAYER lands them somewhere
+        /// rather than on a form.
+        ///
+        /// ⚠️⚠️ IT MUST FAIL SOFT. Binding <see cref="LobbySession.DefaultPort"/> is the one thing
+        /// on this path that can be refused by something outside the game, and the commonest
+        /// reason is the player's OWN second copy running for a two-machine test. A hard failure
+        /// here would strand somebody on a lobby with no host, no explanation and no way forward,
+        /// which is the exact shape `NetSession.ClientDisconnected` was written to stop. So a
+        /// refusal leaves the screen in the fourth state of § 68.5: still the lobby, no transport,
+        /// the real reason on the status label, and the join panel already open, because joining
+        /// somebody else is the way out of a port you cannot have.
+        ///
+        /// ⚠️ AND IT IS SKIPPED WHEN A SESSION IS ALREADY LIVE. Arriving here as a client, or as a
+        /// host coming back from a finished match, must not tear down the session that brought
+        /// the player. `IsNetworked` is the whole test.
+        ///
+        /// ⚠️ THE `this == null` CHECK IS NOT DEFENSIVE PADDING. This is an async void continuing
+        /// after an await, and the player can press BACK or ESC during the handshake; the screen
+        /// is then a destroyed Unity object that still answers a C# reference, and touching a
+        /// label on it throws inside a continuation nothing is watching.
+        /// </summary>
+        private async void AutoHost()
+        {
+            if (!IsLobby) return;
+
+            var net = NetSession.Instance;
+            if (net == null || net.IsNetworked) return;
+
+            SetStatus("Opening your lobby...");
+
+            bool ok = await net.StartHostAsync();
+
+            if (this == null) return;
+
+            if (ok)
+            {
+                SetStatus("Your lobby is open. Read the code out, or press JOIN to enter somebody else's.");
+            }
+            else
+            {
+                // ⚠️ THE TRANSPORT'S OWN REASON, NOT A FIXED SENTENCE. `NetSession` writes a
+                // precise status on the way out of each failure and every caller used to
+                // overwrite it, so a refused port, a dead adapter and a wedged previous session
+                // all read identically. `ConvertedMultiplayerSetup.Reason` records what that cost.
+                string detail = string.IsNullOrWhiteSpace(net.Status) ? "" : $"  ({net.Status})";
+                SetStatus($"Could not open a lobby on port {LobbySession.DefaultPort}. " +
+                          $"Another copy of the game may already have it. Press JOIN to enter " +
+                          $"somebody else's instead.{detail}");
+
+                OpenJoinPanel();
+            }
+
+            Refresh();
         }
 
         /// <summary>
@@ -364,6 +521,285 @@ namespace TumbangPreso.UI
             _codeCopyBtnText = _codeCopyBtn.GetComponentInChildren<Text>();
         }
 
+        /// <summary>
+        /// The row that gets you OUT of your own lobby and into somebody else's, plus the switch
+        /// between a LAN room and an online one.
+        ///
+        /// ⚠️⚠️ ONLINE IS A FIRST-CLASS LOBBY AND NOT A LEFTOVER. 🧑 2026-08-28: *"make sure u can
+        /// do online server lobby too"*. Auto-hosting on LAN is the LANDING state, not the only
+        /// one, so GO ONLINE re-hosts the same lobby through Relay and publishes it to the online
+        /// pool. The join side is already symmetric: `ResolveCodeAsync` answers `IsLan` and
+        /// `LobbyJoinPanel` branches on it, so one four-character code reaches either kind and a
+        /// player reading a code out never has to know which they are in.
+        ///
+        /// ⚠️ THE SWITCH IS A SECOND HOST → LEAVE → HOST IN ONE LAUNCH, which is `docs/TODO.md`
+        /// § 65.1 from a third direction. It works because every `NetSession` start opens with
+        /// `EnsureStoppedAsync`; it is on the two-process list because "works by construction" is
+        /// what was believed the first three times.
+        /// </summary>
+        private void BuildLobbyEntryControls(NetSession net)
+        {
+            if (!IsLobby || net == null) return;
+
+            var canvas = GetComponentInParent<Canvas>();
+            if (canvas == null) return;
+
+            _joinPanel = LobbyJoinPanel.Build(canvas.transform, net);
+            _joinPanel.Status += SetStatus;
+            _joinPanel.Joined += HandleJoinedInPlace;
+
+            if (_codeRow == null || _codeRow.transform.parent == null) return;
+
+            var row = new GameObject("LobbyEntryRow");
+            row.transform.SetParent(_codeRow.transform.parent, false);
+            row.transform.SetSiblingIndex(_codeRow.transform.GetSiblingIndex() + 1);
+
+            var layout = row.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = 10;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = true;
+
+            var element = row.AddComponent<LayoutElement>();
+            element.minHeight = 44;
+            element.preferredHeight = 44;
+            element.flexibleWidth = 1;
+
+            _joinButton = MenuKit.WoodButton(row.transform, "JOIN A GAME", Vector2.zero,
+                                             Vector2.zero, new Vector2(0.0f, 44.0f),
+                                             OpenJoinPanel);
+            _joinButton.name = "OpenJoinButton";
+            _joinButton.gameObject.AddComponent<LayoutElement>().minHeight = 44;
+
+            _onlineButton = MenuKit.WoodButton(row.transform, "GO ONLINE", Vector2.zero,
+                                               Vector2.zero, new Vector2(0.0f, 44.0f),
+                                               ToggleOnline);
+            _onlineButton.name = "GoOnlineButton";
+            _onlineButton.gameObject.AddComponent<LayoutElement>().minHeight = 44;
+
+            _lobbyEntryRow = row;
+        }
+
+        /// <summary>
+        /// Stands the cast in the arena behind the screen, and hangs their names over them.
+        ///
+        /// ⚠️⚠️ THE PRACTICE SCREEN GETS THE MAP SHOT AND NO CAST, AND THAT IS NOT AN OVERSIGHT.
+        /// Offline this screen is a MAP PICKER with a bots row in it: the thing being chosen is
+        /// the arena, so the wide shot from 22 m that every map's `Distance` and `Height` were
+        /// tuned for is the correct picture, and four motionless strangers standing in the middle
+        /// of it would be four seats nobody is sitting in. The lobby is the screen where who is
+        /// here is the question.
+        /// </summary>
+        private void BuildCast(Transform previewNode)
+        {
+            if (_preview == null || previewNode == null) return;
+
+            _preview.LobbyShot = IsLobby;
+
+            if (!IsLobby) return;
+
+            _cast = LobbyCast.Attach(_preview);
+
+            var rect = previewNode as RectTransform;
+            if (rect != null && _cast != null)
+            {
+                _nameplates = LobbyNameplates.Attach(rect, _preview, _cast);
+            }
+        }
+
+        /// <summary>
+        /// Puts each seat's PICKED character in its chair and writes its plate.
+        ///
+        /// ⚠️⚠️ THE PICK COMES FROM THE SEAT TABLE, WHICH IS THE SAME INT `MatchInstaller` BUILDS
+        /// THE REAL BODY FROM. 🧑 2026-08-28: *"make sure the character for everyone corresponds
+        /// to their actual character in the game"*. `LobbySeatInfo.CharacterPick` is host
+        /// authoritative and already on the wire; resolving it through the same
+        /// `RosterBook.PersonArt(index, mode)` the match uses is what makes the lobby a promise
+        /// rather than a decoration.
+        ///
+        /// ⚠️ AND THE LOCAL SEAT READS FROM SETTINGS, NOT FROM THE TABLE. A pick made on this
+        /// machine is applied the moment the character panel closes and only reaches the table
+        /// after a round trip to the host; reading the table for your own seat would leave your
+        /// own body a second behind your own choice, which is the one case somebody is watching
+        /// for.
+        ///
+        /// ⚠️⚠️ THE READY TICK IS LOCAL-ONLY UNTIL THE WIRE CARRIES IT. `LobbySeatInfo` has no
+        /// `Ready` field and `OnLobbyReadyChanged` is a COUNT, so the host knows how many are
+        /// ready and nobody knows WHICH. Adding the field is a protocol bump, and `docs/TODO.md`
+        /// § 68.2 holds every bump until § 69's chat so there is exactly one. Until then a remote
+        /// seat's plate is honest about what it knows: the name, and no claim about readiness.
+        /// </summary>
+        private void RefreshCast()
+        {
+            if (_cast == null) return;
+
+            var net = NetSession.Instance;
+            bool live = IsLive;
+            var settings = Settings.SettingsStore.Current;
+            var people = Roster.GetPeople(SceneFlow.SelectedMode);
+
+            int defender = MatchRules.DefenderSlotFor(1);
+
+            for (int seat = 0; seat < _castPicks.Length; seat++)
+            {
+                bool mine = !GameLaunch.Spectator &&
+                            (live ? (net != null && net.LocalSlot == seat) : (seat == GameLaunch.SoloSeat));
+
+                var info = live ? MatchRpc.Instance?.GetSeatInfo(seat) : null;
+                bool occupied = mine || (info != null && info.Occupied);
+
+                int pick = mine
+                    ? settings.CharacterPick
+                    : (info != null && info.CharacterPick >= 0 ? info.CharacterPick : seat);
+
+                if (people == null || people.Count == 0) pick = 0;
+                else pick = ((pick % people.Count) + people.Count) % people.Count;
+
+                _castPicks[seat] = pick;
+
+                if (_nameplates == null) continue;
+
+                string who = mine
+                    ? "YOU"
+                    : occupied
+                        ? (string.IsNullOrEmpty(info?.Name) ? $"PLAYER {seat + 1}" : info.Name)
+                        : "BOT";
+
+                _nameplates.SetSeat(seat, who,
+                                    ready: mine && _localReady,
+                                    taya: seat == defender,
+                                    you: mine);
+            }
+
+            _cast.Show(_castPicks, SceneFlow.SelectedMode);
+        }
+
+        private void OpenJoinPanel()
+        {
+            if (_joinPanel == null) return;
+
+            _joinPanel.Open();
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A JOIN THAT LANDS HERE REDRAWS, IT DOES NOT RELOAD. `ConvertedMultiplayerSetup`
+        /// finished every join with `SceneFlow.Go(MatchSetup)` because it was on a different
+        /// scene; from here that would destroy the map preview's cached arenas, both render
+        /// textures and the cast, and `SceneFlow.Go`'s latch is scoped to one frame so it would
+        /// not even be deduplicated.
+        ///
+        /// ⚠️⚠️ AND `RejoinRunningMatch` HAS TO BE ASKED AGAIN. It runs from `Wire()`, which a
+        /// join in place never re-enters, and it is the ONLY thing that sends a client who joined
+        /// a game already in progress into the arena. Its own header records the hole:
+        /// *"you'll only get ported back to the lobby with no way of joining back"*. The seating
+        /// packet that sets `MatchInProgress` can arrive either side of this, which is why the
+        /// question is asked on arrival AND on the packet.
+        /// </summary>
+        private void HandleJoinedInPlace()
+        {
+            _localReady = false;
+            _readyCount = 0;
+            _readyExpected = 0;
+
+            var s = Settings.SettingsStore.Current;
+            MatchRpc.Instance?.SelectLobbyPickServerRpc(s.CharacterPick, s.CanPick, s.SlipperPick);
+
+            Refresh();
+            RejoinRunningMatch();
+        }
+
+        /// <summary>
+        /// Swaps this lobby between a LAN room and a Relay one, in place.
+        ///
+        /// ⚠️ HOST ONLY, AND SILENTLY IMPOSSIBLE OTHERWISE. A client pressing this would tear
+        /// down its own connection to become a host of nothing. The button is hidden rather than
+        /// greyed for a client, because "go online" on a peer that is already in somebody's
+        /// online game is not a disabled action, it is a meaningless one.
+        /// </summary>
+        private async void ToggleOnline()
+        {
+            var net = NetSession.Instance;
+            if (net == null || !NetAuthority.IsHost) return;
+            if (_switchingHost) return;
+
+            _switchingHost = true;
+            RefreshEntryControls();
+
+            try
+            {
+                bool goingOnline = !net.IsRelay;
+
+                SetStatus(goingOnline
+                          ? "Opening an online room..."
+                          : "Moving your room back onto your network...");
+
+                bool ok = goingOnline
+                    ? await net.StartRelayHost()
+                    : await net.StartHostAsync();
+
+                if (this == null) return;
+
+                SetStatus(ok
+                          ? (goingOnline
+                             ? "Your room is online. Read the code out to anybody, anywhere."
+                             : "Your room is back on your own network.")
+                          : ReasonFor(net, goingOnline
+                                      ? "Could not open an online room."
+                                      : "Could not reopen a room on your network."));
+            }
+            finally
+            {
+                _switchingHost = false;
+
+                if (this != null) Refresh();
+            }
+        }
+
+        /// <summary>Headline plus the session's own detail. See `LobbyJoinPanel.Reason`.</summary>
+        private static string ReasonFor(NetSession net, string headline)
+        {
+            string detail = net != null ? net.Status : null;
+            return string.IsNullOrWhiteSpace(detail) ? headline : $"{headline}  ({detail})";
+        }
+
+        private void RefreshEntryControls()
+        {
+            if (_lobbyEntryRow == null) return;
+
+            bool live = IsLive;
+            bool host = NetAuthority.IsHost;
+
+            _lobbyEntryRow.SetActive(IsLobby);
+
+            if (_joinButton != null)
+            {
+                // ⚠️ IT STAYS PRESSABLE WHILE HOSTING, because leaving your own empty room to
+                // join a friend's is the normal case, not an edge one. It is refused only while a
+                // switch is already in flight.
+                _joinButton.interactable = !_switchingHost;
+
+                var label = _joinButton.GetComponentInChildren<Text>();
+                if (label != null) label.text = live && !host ? "LEAVE AND JOIN ANOTHER" : "JOIN A GAME";
+            }
+
+            if (_onlineButton != null)
+            {
+                _onlineButton.gameObject.SetActive(live && host);
+                _onlineButton.interactable = !_switchingHost;
+
+                var net = NetSession.Instance;
+                var label = _onlineButton.GetComponentInChildren<Text>();
+
+                if (label != null)
+                {
+                    label.text = _switchingHost
+                        ? "SWITCHING..."
+                        : (net != null && net.IsRelay ? "GO BACK TO LAN" : "GO ONLINE");
+                }
+            }
+        }
+
         private void OnAddressCopyPressed()
         {
             if (_addressText == null || string.IsNullOrEmpty(_addressText.text)) return;
@@ -554,11 +990,41 @@ namespace TumbangPreso.UI
         /// own client, so the guard is kept here as well rather than relying on one at a
         /// distance: a host bounced out of its own lobby by a peer leaving would be absurd.
         /// </summary>
+        /// <summary>
+        /// ⚠️⚠️ IT STAYS ON THIS SCREEN NOW. This used to navigate to `MultiplayerSetup`, which
+        /// was the only place a refused or dropped client could try again from. That screen is no
+        /// longer on the path (`ConvertedModeSelect`), and sending somebody there would drop them
+        /// out of a lobby into a form they never chose to open.
+        ///
+        /// ⚠️ THE REASON IS SHOWN HERE RATHER THAN CARRIED. `NetSession.LastDisconnectReason`
+        /// exists because the refusal used to arrive seconds after the join screen had already
+        /// navigated away, so the one actionable line (a protocol mismatch is a thing a player can
+        /// fix) was written to a label nobody was looking at. Landing on the screen that can act
+        /// on it removes the whole problem, so the reason is read and cleared right here.
+        ///
+        /// ⚠️ AND THE JOIN PANEL OPENS, because "your connection ended" with no way to start
+        /// another one is the same dead end from a different direction.
+        /// </summary>
         private void HandleClientDisconnected(string reason)
         {
             if (NetAuthority.IsHost) return;
 
-            SceneFlow.Go(SceneFlow.MultiplayerSetup);
+            string detail = !string.IsNullOrWhiteSpace(reason)
+                ? reason
+                : NetSession.LastDisconnectReason;
+
+            NetSession.LastDisconnectReason = "";
+
+            SetStatus(string.IsNullOrWhiteSpace(detail)
+                      ? "The connection to the host ended. Press JOIN to try again."
+                      : detail);
+
+            _localReady = false;
+            _readyCount = 0;
+            _readyExpected = 0;
+
+            OpenJoinPanel();
+            Refresh();
         }
 
         private void HandleLobbyRosterSynced(LobbySeatInfo[] seats) => RefreshSeats();
@@ -573,24 +1039,13 @@ namespace TumbangPreso.UI
             // ⚠️ THE LOCAL TICK FOLLOWS THE HOST'S TALLY RATHER THAN A LOCAL BOOL. The button
             // used to toggle a field this screen owned, so a press the host refused (a spectator,
             // a peer with no seat) still drew as READY on the one screen that mattered.
-            var net = NetSession.Instance;
-            RefreshReadyLabel(net != null && net.IsNetworked);
+            //
+            // ⚠️ `RefreshActionButtons` REPLACED `RefreshReadyLabel` HERE, and it is not merely a
+            // rename: the old one wrote to `PrimaryButton` unconditionally, which on a host now
+            // writes a READY label onto a hidden node while START, the button the host can
+            // actually see, kept a stale tally.
+            RefreshActionButtons();
             RefreshSeats();
-        }
-
-        private void RefreshReadyLabel(bool isNetworked)
-        {
-            if (!isNetworked) return;
-
-            var primNode = Node("PrimaryButton");
-            if (primNode == null) return;
-
-            string label = GameLaunch.Spectator
-                ? "SPECTATING"
-                : _localReady ? "WAITING" : "READY";
-
-            if (_readyExpected > 1) label += $"   {_readyCount}/{_readyExpected}";
-            SetText("PrimaryButton", label);
         }
 
         private void HandleLobbyPicksSynced(int[] table)
@@ -825,7 +1280,12 @@ namespace TumbangPreso.UI
             // ⚠️ NOT TO BE CONFUSED WITH `HeroKit.PracticeMode`, which is an unrelated internal
             // flag for the between-round buffer where an ultimate is free. Same two words, two
             // different things, and neither is wrong: do not merge them.
-            SetHeadline("BannerLabel", isNetworked ? "LOBBY" : "PRACTICE MODE", 66);
+            //
+            // ⚠️⚠️ THE HEADLINE ASKS `IsLobby`, NOT `IsNetworked`, AND THE DIFFERENCE IS A WHOLE
+            // SECOND OF EVERY MULTIPLAYER SESSION. The transport is not up yet while the auto-host
+            // is starting, so the old test drew the multiplayer lobby as PRACTICE MODE for the
+            // length of the handshake and permanently if the port bind was refused. See `IsLobby`.
+            SetHeadline("BannerLabel", IsLobby ? "LOBBY" : "PRACTICE MODE", 66);
             SetText("MapValueLabel", mapName);
 
             SetText("ModeValueLabel", SceneFlow.SelectedMode == GameMode.HeroStrike ? "HERO STRIKE" : "CLASSIC");
@@ -850,31 +1310,20 @@ namespace TumbangPreso.UI
             SetText("CharacterButton", $"{person} · {can} · {slipper}  ▸");
 
             // Heading & hints
-            if (isNetworked)
+            if (IsLobby && isNetworked)
             {
                 SetText("SeatHeading", NetAuthority.IsHost ? "LOBBY  ·  YOU ARE HOSTING" : "LOBBY  ·  CONNECTED");
-                SetText("SeatHint",
-                        "You pick the map and the mode for everyone. Click a free seat to move. "
-                        + "Empty seats are played by bots. Read the code above out to the others.");
+                SetText("SeatHint", NetAuthority.IsHost
+                        ? "You pick the map and the mode for everyone. Click a free seat to move. "
+                          + "Empty seats are played by bots. Read the code out to the others."
+                        : "The lobby leader picks the map and the mode. Click a free seat to move. "
+                          + "Empty seats are played by bots. Press READY when you are.");
 
                 // Network rows
                 if (_addressRow != null)
                 {
                     _addressRow.SetActive(true);
-                    string hostAddr = "127.0.0.1:8910";
-                    if (net != null)
-                    {
-                        var ips = System.Net.Dns.GetHostAddresses(System.Net.Dns.GetHostName());
-                        foreach (var ip in ips)
-                        {
-                            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork && !System.Net.IPAddress.IsLoopback(ip))
-                            {
-                                hostAddr = $"{ip}:8910";
-                                break;
-                            }
-                        }
-                    }
-                    if (_addressText != null) _addressText.text = hostAddr;
+                    if (_addressText != null) _addressText.text = HostAddress();
                 }
 
                 if (_codeRow != null)
@@ -883,21 +1332,19 @@ namespace TumbangPreso.UI
                     _codeRow.SetActive(!string.IsNullOrEmpty(code));
                     if (_codeText != null) _codeText.text = code;
                 }
+            }
+            else if (IsLobby)
+            {
+                // ⚠️ THE LOBBY WITHOUT A TRANSPORT. Either the auto-host is still handshaking or
+                // it was refused; `AutoHost` has already written which on the status label, and
+                // the join panel is open in the refused case. Nothing here may touch the wire.
+                SetText("SeatHeading", "LOBBY  ·  NOT CONNECTED");
+                SetText("SeatHint",
+                        "Opening a room on your network. If it does not open, press JOIN and "
+                        + "enter somebody else's game with their code or address.");
 
-                // Primary & Start button controls
-                var primNode = Node("PrimaryButton");
-                if (primNode != null)
-                {
-                    RefreshReadyLabel(true);
-                    var btn = primNode.GetComponent<Button>();
-                    if (btn != null) btn.interactable = !GameLaunch.Spectator;
-                }
-
-                var startNode = Node("StartButton");
-                if (startNode != null)
-                {
-                    startNode.gameObject.SetActive(NetAuthority.IsHost);
-                }
+                if (_addressRow != null) _addressRow.SetActive(false);
+                if (_codeRow != null) _codeRow.SetActive(false);
             }
             else
             {
@@ -908,21 +1355,151 @@ namespace TumbangPreso.UI
 
                 if (_addressRow != null) _addressRow.SetActive(false);
                 if (_codeRow != null) _codeRow.SetActive(false);
-
-                var primNode = Node("PrimaryButton");
-                if (primNode != null)
-                {
-                    SetText("PrimaryButton", "START MATCH");
-                    var btn = primNode.GetComponent<Button>();
-                    if (btn != null) btn.interactable = true;
-                }
-
-                var startNode = Node("StartButton");
-                if (startNode != null) startNode.gameObject.SetActive(false);
             }
 
+            RefreshActionButtons();
+            RefreshLeaderControls();
+            RefreshEntryControls();
             RefreshSeats();
+            RefreshCast();
         }
+
+        /// <summary>
+        /// This machine's LAN address, for the row a joiner types in.
+        ///
+        /// ⚠️ THE PORT COMES FROM `LobbySession.DefaultPort`, NOT FROM AN 8910 WRITTEN OUT TWICE.
+        /// It was a literal here and a literal in the fallback string beside it, so changing the
+        /// port would have left this screen advertising the old one to every joiner.
+        /// </summary>
+        private static string HostAddress()
+        {
+            int port = LobbySession.DefaultPort;
+
+            try
+            {
+                var ips = System.Net.Dns.GetHostAddresses(System.Net.Dns.GetHostName());
+                foreach (var ip in ips)
+                {
+                    if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork &&
+                        !System.Net.IPAddress.IsLoopback(ip))
+                    {
+                        return $"{ip}:{port}";
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                // ⚠️ A MACHINE WITH NO RESOLVABLE HOSTNAME STILL GETS A LOBBY. This throws on a
+                // box with no DNS suffix and the old code let it escape into `Refresh`, which
+                // would have taken the seat rows and the map preview down with it.
+                Debug.LogWarning($"[Lobby] could not read this machine's address: {e.Message}");
+            }
+
+            return $"127.0.0.1:{port}";
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ ONE BUTTON, TWO MEANINGS, AND THE HOST NEVER SEES BOTH. 🧑 2026-08-28: *"start
+        /// should be ready for everyone else except for host"*. Until then the host saw READY and
+        /// START MATCH side by side, and pressing READY as the host declared readiness to a gate
+        /// the host is not blocked on: a control that reads as the way to begin and is not.
+        ///
+        /// ⚠️ THIS IS A LAYOUT CHANGE, NOT A RULE CHANGE. `docs/TODO.md` § 59.3 already made
+        /// readiness an ANSWER the host reads rather than a trigger, on request, and the host's
+        /// START is deliberately live whatever the tally says because a host plus three bots is a
+        /// legitimate match. Both nodes keep their own handlers; only one is on screen.
+        ///
+        /// ⚠️ AND THE TALLY FOLLOWS THE VISIBLE BUTTON. It used to be appended to READY only, so
+        /// the host, the one person who has to decide when to start, was the one person who could
+        /// not see how many people were ready.
+        /// </summary>
+        private void RefreshActionButtons()
+        {
+            var primNode = Node("PrimaryButton");
+            var startNode = Node("StartButton");
+
+            bool live = IsLive;
+            bool host = NetAuthority.IsHost;
+
+            string tally = _readyExpected > 1 ? $"   {_readyCount}/{_readyExpected}" : "";
+
+            if (IsLobby && live && host)
+            {
+                if (primNode != null) primNode.gameObject.SetActive(false);
+                if (startNode != null)
+                {
+                    startNode.gameObject.SetActive(true);
+                    SetText("StartButton", $"START MATCH{tally}");
+                    var btn = startNode.GetComponent<Button>();
+                    if (btn != null) btn.interactable = true;
+                }
+                return;
+            }
+
+            if (startNode != null) startNode.gameObject.SetActive(false);
+            if (primNode == null) return;
+
+            primNode.gameObject.SetActive(true);
+            var prim = primNode.GetComponent<Button>();
+
+            if (!IsLobby)
+            {
+                SetText("PrimaryButton", "START MATCH");
+                if (prim != null) prim.interactable = true;
+                return;
+            }
+
+            if (!live)
+            {
+                // ⚠️ NOT "START MATCH". A multiplayer lobby with no transport that offers to start
+                // a match would drop somebody waiting for a friend into a solo game against bots.
+                SetText("PrimaryButton", "CONNECTING...");
+                if (prim != null) prim.interactable = false;
+                return;
+            }
+
+            string label = GameLaunch.Spectator
+                ? "SPECTATING"
+                : _localReady ? "WAITING" : "READY";
+
+            SetText("PrimaryButton", $"{label}{tally}");
+            if (prim != null) prim.interactable = !GameLaunch.Spectator;
+        }
+
+        /// <summary>
+        /// Greys the three cycle rows for anybody who is not the lobby leader.
+        ///
+        /// ⚠️⚠️ THEY USED TO LIGHT UP, CLICK, PLAY THEIR SOUND AND CHANGE NOTHING. `OnMapCycle`,
+        /// `OnModeCycle` and `OnDifficultyCycle` each open with
+        /// `if (!NetAuthority.IsHost &amp;&amp; SceneFlow.Networked) return;`, which is the correct
+        /// authority and was the whole of the feedback: a live-looking arrow that silently does
+        /// nothing is indistinguishable from a broken one, and "the buttons dont work" is a report
+        /// this project has already chased four separate causes for.
+        ///
+        /// ⚠️ THE GUARDS STAY. This is the DISPLAY half; the refusal is still enforced in the
+        /// handler, because a client that reaches the method by any other route must still be
+        /// refused. Never replace a guard with a greyed button.
+        /// </summary>
+        private void RefreshLeaderControls()
+        {
+            bool allowed = !IsLobby || NetAuthority.IsHost;
+
+            foreach (string node in LeaderOnlyButtons)
+            {
+                foreach (var t in Nodes(node))
+                {
+                    var btn = t.GetComponent<Button>();
+                    if (btn != null) btn.interactable = allowed;
+                }
+            }
+        }
+
+        private static readonly string[] LeaderOnlyButtons =
+        {
+            "MapPrevButton", "MapNextButton",
+            "ModePrevButton", "ModeNextButton",
+            "DifficultyPrevButton", "DifficultyNextButton",
+        };
 
         private void HandleJoinCodeChanged(string code)
         {
@@ -940,6 +1517,19 @@ namespace TumbangPreso.UI
             {
                 net.Lobby.JoinCodeChanged -= HandleJoinCodeChanged;
                 net.SeatingChanged -= HandleSeatingChanged;
+            }
+
+            // ⚠️ THE CAST IS DESTROYED BY NAME RATHER THAN LEFT TO THE SCENE UNLOAD. Its root is
+            // parented into the ADDITIVELY loaded arena, which `MapPreviewSurface` keeps cached
+            // and deactivated across map cycles on purpose; a single-scene load does take those
+            // with it, but a lobby that is reloaded while the same arena is cached would leave a
+            // second stage of four bodies inside it and photograph both.
+            if (_cast != null) Destroy(_cast.gameObject);
+
+            if (_joinPanel != null)
+            {
+                _joinPanel.Status -= SetStatus;
+                _joinPanel.Joined -= HandleJoinedInPlace;
             }
 
             MatchRpc.OnMapChanged -= HandleMapSynced;

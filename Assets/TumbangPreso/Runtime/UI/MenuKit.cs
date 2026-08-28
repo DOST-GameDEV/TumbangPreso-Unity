@@ -334,6 +334,65 @@ namespace TumbangPreso.UI
             return group;
         }
 
+        /// <summary>
+        /// Shrinks a label until it fits the width it was given, and reports whether it managed.
+        ///
+        /// ⚠️⚠️ THIS IS THE FIFTH TIME A STRING HAS RUN OUT OF ITS BOX IN THIS PROJECT AND THE
+        /// FIRST TIME THE FIX IS SHARED. `ConvertedScreen.SetHeadline` records three of them in
+        /// one session (the objective card's "-5 / SECOND" off the screen edge, the deck tile's
+        /// "RECAST", the character ribbon's "CHOOSE YOUR HERO"), `GameVersion.ApplyTo` records the
+        /// fourth (a 132 px corner label cut a branch name in half), and `docs/TODO.md` § 18 is a
+        /// whole section of them. Every one was the same two facts:
+        ///
+        ///   1. Legacy `Text` defaults to WRAP, so an overflow is SILENT: the line simply
+        ///      reflows into a box that has no room for a second line and the bottom half is
+        ///      clipped rather than drawn somewhere obvious.
+        ///   2. Every label `MenuKit` and the converter make is `Overflow` instead, which is
+        ///      honest but draws straight past the edge.
+        ///
+        /// Neither is a size that fits. This measures through the component itself, which is what
+        /// `Hud.WorstCaseNameWidth` and `SetHeadline` both do and for the same reason:
+        /// `preferredWidth` is what THIS text, in THIS font, with THESE generator settings will
+        /// actually lay out to, and a spare font metric is a different number.
+        ///
+        /// ⚠️ IT ONLY EVER SHRINKS, never grows, so a short string cannot inflate and change a
+        /// row's height from screen to screen.
+        ///
+        /// ⚠️ AND IT STOPS AT <see cref="MinReadableUnits"/> RATHER THAN AT WHATEVER FITS.
+        /// `AspectRatioProbes` fails a label below that floor, so shrinking past it to dodge an
+        /// overflow would trade a visible bug for a failing test. When it cannot fit at the floor
+        /// it returns false, and the caller must give it more room or fewer words. A caller that
+        /// ignores the answer has an overflow it has been told about.
+        /// </summary>
+        public static bool Fit(Text label, float room, int floorSize = MinReadableUnits)
+        {
+            if (label == null) return true;
+
+            // A rect that has not been laid out yet reports 0 and would drive the font to its
+            // floor for no reason. Leaving the authored size alone is what shipped.
+            if (room <= 1.0f) return true;
+
+            label.horizontalOverflow = HorizontalWrapMode.Overflow;
+            label.verticalOverflow = VerticalWrapMode.Overflow;
+
+            while (label.fontSize > floorSize && label.preferredWidth > room)
+                label.fontSize -= 1;
+
+            return label.preferredWidth <= room;
+        }
+
+        /// <summary>
+        /// <see cref="Fit"/> against the label's own rect, for the common case where the box is
+        /// already the right size and only the type has to give.
+        ///
+        /// ⚠️ CALL IT AFTER A LAYOUT PASS. A label inside a `HorizontalLayoutGroup` has no width
+        /// until the group has run, so measuring in the same frame it was built reads zero and
+        /// this returns without doing anything. `Canvas.ForceUpdateCanvases()` first, or call it
+        /// from the end of the frame.
+        /// </summary>
+        public static bool FitBox(Text label)
+            => label == null || Fit(label, label.rectTransform.rect.width);
+
         public static void Place(RectTransform rt, Vector2 anchor, Vector2 offset, Vector2 size)
         {
             rt.anchorMin = anchor;
